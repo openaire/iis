@@ -1,0 +1,10 @@
+@namespace("eu.dnetlib.iis.auxiliary.schemas")
+protocol IIS{
+
+    record UrlContent {
+//      document url
+        string url;
+//      document full-text in the PDF format
+        union { null , bytes } pdf = null;
+    }
+}

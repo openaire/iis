@@ -1,0 +1,6 @@
+@namespace("eu.dnetlib.iis.core.examples.schemas.documentandauthor")
+protocol IIS{
+   record PersonAge{
+      int age;
+   }
+}

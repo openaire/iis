@@ -1,0 +1,2 @@
+## This is a classpath-based import file (this header is required)
+transformer_export_documenttoproject_without_imported_data classpath eu/dnetlib/iis/transformers/export/documenttoproject_without_imported_data/oozie_app

@@ -1,0 +1,816 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	
+	<modelVersion>4.0.0</modelVersion>
+    
+	<parent>
+    		<groupId>eu.dnetlib.iis</groupId>
+	        <artifactId>iis</artifactId>
+            <version>1.2.0-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>iis-workflows</artifactId>
+	<packaging>pom</packaging>
+
+	
+	<modules>
+       <module>iis-workflows-documentssimilarity</module>
+       <module>iis-workflows-citationmatching</module>
+       <module>iis-workflows-citationmatching-direct</module>
+       <module>iis-workflows-collapsers</module>
+       <module>iis-workflows-documentsclassification</module>
+       <module>iis-workflows-documentsclustering</module>
+       <module>iis-workflows-export-actionmanager</module>
+       <module>iis-workflows-import</module>
+       <module>iis-workflows-ingest</module>
+       <module>iis-workflows-ingest-pmc</module>
+       <module>iis-workflows-metadataextraction</module>
+       <module>iis-workflows-projectreferencesmerger</module>
+       <module>iis-workflows-referenceextraction</module>
+       <module>iis-workflows-statistics</module>
+       <module>iis-workflows-top</module>
+       <module>iis-workflows-transformers</module>
+       <module>iis-workflows-websiteusage</module>
+    </modules>
+
+
+
+    <properties>
+        <maven.build.timestamp.format>yyyy-MM-dd_HH_mm</maven.build.timestamp.format>
+        <oozie.data.dir>${project.build.directory}/test-data</oozie.data.dir>
+        <!-- default Oozie installer properties requred to be defined at pom.xml level -->
+        <!-- other project properties are defined in project-default.properties -->
+        <oozie.package.file.name>oozie-package</oozie.package.file.name>
+        <!-- notice: sandboxName is generated based on workflow.source.dir property -->
+        <workflow.source.dir>src/test/resources/define/path/pointing/to/directory/holding/oozie_app</workflow.source.dir>
+        <iis.hadoop.frontend.user.name>${user.name}</iis.hadoop.frontend.user.name>
+        <iis.hadoop.frontend.user.dir>${iis.hadoop.frontend.user.name}</iis.hadoop.frontend.user.dir>
+        <iis.hadoop.frontend.home.dir>/mnt/tmp</iis.hadoop.frontend.home.dir>
+        <iis.hadoop.master.host.name>localhost</iis.hadoop.master.host.name>
+        <iis.hadoop.frontend.host.name>localhost</iis.hadoop.frontend.host.name>
+        <iis.hadoop.frontend.port.ssh>22</iis.hadoop.frontend.port.ssh>
+        <oozieServiceLoc>http://${iis.hadoop.master.host.name}:11000/oozie</oozieServiceLoc>
+        <oozieAppDir>oozie_app</oozieAppDir>
+        <nameNode>hdfs://${iis.hadoop.master.host.name}:8020</nameNode>
+        <jobTracker>${iis.hadoop.master.host.name}:8021</jobTracker>
+        <queueName>default</queueName>
+        <primed.dir>primed</primed.dir>
+        <oozie.package.dependencies.scope>runtime</oozie.package.dependencies.scope>
+        <oozie.execution.log.file.location>target/extract-and-run-on-remote-host.log</oozie.execution.log.file.location>
+        <output.dir.name>${maven.build.timestamp}</output.dir.name>        
+    </properties>
+
+
+	<dependencies>
+		
+		<dependency>
+			<groupId>eu.dnetlib.iis</groupId>
+			<artifactId>iis-assembly-resources</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+	</dependencies>
+	
+	
+	<profiles>
+		<profile>
+			<!-- This profiles provides test resources for oozie package. 
+				 To be used only with 'oozie' profile -->
+			<id>attach-test-resources</id>
+			<properties>
+				<!--overriding default scope (set to 'runtime') with the 'test' value. 
+					Test resources attached to oozie package requires all test dependancies. -->
+				<oozie.package.dependencies.scope>test</oozie.package.dependencies.scope>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-test-resources-compile</id>
+								<phase>test-compile</phase>
+								<goals>
+									<goal>testCompile</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-test-resources-package</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>test-jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>oozie-package</id>
+			<build>
+				<plugins>
+					<plugin>
+		                <groupId>com.google.code.maven-svn-revision-number-plugin</groupId>
+		                <artifactId>svn-revision-number-maven-plugin</artifactId>
+		                <version>1.13</version>
+		                <dependencies>
+							<dependency>
+							    <groupId>org.tmatesoft.svnkit</groupId>
+							    <artifactId>svnkit</artifactId>
+								<version>1.8.5</version>
+							</dependency>
+						</dependencies>
+		                <executions>
+		                    <execution>
+		                        <goals>
+		                            <goal>revision</goal>
+		                        </goals>
+		                    </execution>
+		                </executions>
+		                <configuration>
+		                    <entries>
+		                        <entry>
+		                            <prefix>svn</prefix>
+		                        </entry>
+		                    </entries>
+		                </configuration>
+		            </plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+									<id>copy dependencies</id>
+									<phase>prepare-package</phase>
+									<goals>
+										<goal>copy-dependencies</goal>
+									</goals>
+									<configuration>
+										<includeScope>${oozie.package.dependencies.scope}</includeScope>
+									</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					
+					<plugin>
+		                <groupId>eu.dnetlib.primer</groupId>
+		                <artifactId>primer-maven-plugin</artifactId>
+		                <executions>
+		                    <execution>
+		                        <id>priming</id>
+		                        <phase>prepare-package</phase>
+		                        <goals><goal>prime</goal></goals>
+		                        <configuration>
+		                            <classProviderFiles>
+		                                <classProviderFile>${project.build.directory}/dependency/*.jar</classProviderFile>
+		                                <classProviderFile>${project.build.directory}/*-tests.jar</classProviderFile>
+		                                <classProviderFile>${project.build.directory}/classes</classProviderFile>
+		                            </classProviderFiles>
+		                            <coansysPackageDir>${project.build.directory}/dependency</coansysPackageDir>
+		                            <destination>${project.build.directory}/${primed.dir}</destination>
+		                            <classpath>${workflow.source.dir}</classpath>
+		                        </configuration>
+		                    </execution>
+		                </executions>
+		            </plugin>
+		            
+					<!-- reading job.properties to use them in .sh scripts -->
+					<plugin>
+						<groupId>org.kuali.maven.plugins</groupId>
+						<artifactId>properties-maven-plugin</artifactId>
+						<version>1.3.2</version>
+						<dependencies>
+							<dependency>
+								<groupId>eu.dnetlib.iis</groupId>
+								<artifactId>iis-assembly-resources</artifactId>
+								<version>${project.version}</version>
+								<!-- contains project-default.properties -->
+							</dependency>
+						</dependencies>
+						<executions>
+							<execution>
+								<id>read-default-properties</id>
+								<phase>initialize</phase>
+								<goals>
+									<goal>read-project-properties</goal>
+								</goals>
+								<configuration>
+									<locations>
+										<param>classpath:project-default.properties</param>
+									</locations>
+									<quiet>true</quiet>
+								</configuration>
+							</execution>
+							<execution>
+								<id>read-job-properties</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>read-project-properties</goal>
+								</goals>
+								<configuration>
+									<locations>
+										<param>${project.build.directory}/${primed.dir}/job.properties</param>
+										<param>job-override.properties</param>
+									</locations>
+									<quiet>true</quiet>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					
+					<plugin>
+						<groupId>eu.dnetlib.iis</groupId>
+						<artifactId>iis-properties-maven-plugin</artifactId>
+						<executions>
+							<execution>
+		                        <phase>validate</phase>
+		                        <goals>
+		                            <goal>generate-properties</goal>
+		                            <!-- generates sandboxName based on workflow.source.dir 
+		                            	when not specified as commandline parameter -->
+		                        </goals>
+		                        <configuration>
+		                        </configuration>
+		                    </execution>
+							<execution>
+								<id>write-job-properties</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>write-project-properties</goal>
+								</goals>
+								<configuration>
+									<outputFile>target/${oozie.package.file.name}/job.properties</outputFile>
+									<!-- notice: dots are not allowed for job.properties! -->
+									<include>nameNode,jobTracker,queueName,
+									workingDir,oozie.wf.application.path</include>
+									<includeSystemProperties>true</includeSystemProperties>
+									<includePropertyKeysFromFiles>
+										<!-- 
+										<param>${workflow.source.dir}/job.properties</param>
+										 -->
+										<param>${project.build.directory}/${primed.dir}/job.properties</param>
+										<param>job-override.properties</param>
+									</includePropertyKeysFromFiles>
+								</configuration>
+							</execution>
+							<execution>
+								<id>write-version-properties</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>write-project-properties</goal>
+								</goals>
+								<configuration>
+									<outputFile>target/${oozie.package.file.name}/${oozieAppDir}/version.properties</outputFile>
+									<include>svn.revision,svn.repository,svn.path</include>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<version>2.3</version>
+						<dependencies>
+							<dependency>
+								<groupId>eu.dnetlib.iis</groupId>
+								<artifactId>iis-assembly-resources</artifactId>
+								<version>${project.version}</version>
+							</dependency>
+						</dependencies>
+						<executions>
+							<execution>
+								<id>assembly-oozie-installer</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<appendAssemblyId>false</appendAssemblyId>
+		        					<finalName>${oozie.package.file.name}_shell_scripts</finalName>
+		        					<descriptorRefs>
+							        	<descriptorRef>oozie-installer</descriptorRef>
+							       	</descriptorRefs>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					
+					<plugin>
+						<!-- this plugin prepares oozie installer package-->
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<!-- extracting shared resources phase -->
+							<execution>
+					          <id>installer-copy-custom</id>
+					          <phase>process-resources</phase>
+					          <goals>
+					              <goal>run</goal>
+					          </goals>
+					          <configuration>
+					              <tasks>
+					                  <property name="assembly-resources.loc" value="${maven.dependency.eu.dnetlib.iis.iis-assembly-resources.jar.path}" />
+					                  <unjar src="${assembly-resources.loc}" dest="${project.build.directory}/assembly-resources" />                                                                     
+					              </tasks>
+					          </configuration>
+					      	</execution>
+							<!-- packaging phase -->
+							<execution>
+								<phase>package</phase>
+								<configuration>
+									<tasks>
+										<!-- copying workflow resources -->
+										<mkdir dir="target/${oozie.package.file.name}" />
+										<mkdir dir="target/${oozie.package.file.name}/${oozieAppDir}" />
+										<copy todir="target/${oozie.package.file.name}/${oozieAppDir}">
+											<!-- 
+											<fileset dir="${workflow.source.dir}/${oozieAppDir}" />
+											replacing with primed dir location
+											 -->
+											<fileset dir="target/${primed.dir}/${oozieAppDir}" />
+										</copy>
+										<!-- copying all jars to oozie lib directory -->
+										<mkdir dir="target/${oozie.package.file.name}/${oozieAppDir}/lib" />
+										<copy todir="target/${oozie.package.file.name}/${oozieAppDir}/lib">
+											<fileset dir="${project.build.directory}/dependency" />
+										</copy>
+										<!-- copying current module lib -->
+										<copy todir="target/${oozie.package.file.name}/${oozieAppDir}/lib">
+											<fileset dir="${project.build.directory}">
+												<include name="*.jar" />
+											</fileset>
+										</copy>
+										
+										<!-- creating tar.gz package -->
+										<tar destfile="target/${oozie.package.file.name}.tar.gz" compression="gzip">
+											<tarfileset dir="target/${oozie.package.file.name}" />
+											<tarfileset dir="target/${oozie.package.file.name}_shell_scripts" filemode="0755">
+												<include name="**/*.sh" />
+											</tarfileset>
+											<tarfileset dir="target/${oozie.package.file.name}_shell_scripts" filemode="0644">
+												<exclude name="**/*.sh" />
+											</tarfileset>
+										</tar>
+										<!-- cleanup -->
+										<delete dir="target/${oozie.package.file.name}" />
+										<delete dir="target/${oozie.package.file.name}_shell_scripts" />
+									</tasks>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>deploy</id>
+			<build>
+				<plugins>
+			        <plugin>
+					  <groupId>org.codehaus.mojo</groupId>
+					  <artifactId>exec-maven-plugin</artifactId>
+					  <version>1.3.2</version>
+					  <executions>
+					  	<execution>
+				          <id>create-target-dir</id>
+				          <phase>package</phase>
+				          <goals>
+				            <goal>exec</goal>
+				          </goals>
+				          <configuration>
+				          	<executable>ssh</executable>
+						    <arguments>
+								<argument>${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name}</argument>
+								<argument>-p ${iis.hadoop.frontend.port.ssh}</argument>
+								<argument>-o StrictHostKeyChecking=no</argument>
+								<argument>rm -rf ${iis.hadoop.frontend.home.dir}/${iis.hadoop.frontend.user.dir}/oozie-packages/${sandboxName}/${output.dir.name}/; mkdir -p ${iis.hadoop.frontend.home.dir}/${iis.hadoop.frontend.user.dir}/oozie-packages/${sandboxName}/${output.dir.name}/</argument>
+						    </arguments>
+				          </configuration>
+				        </execution>
+					  	<execution>
+				          <id>upload-oozie-package</id>
+				          <phase>package</phase>
+				          <goals>
+				            <goal>exec</goal>
+				          </goals>
+				          <configuration>
+				          	<executable>scp</executable>
+						    <arguments>
+						    	<argument>-P ${iis.hadoop.frontend.port.ssh}</argument>
+						    	<argument>-o StrictHostKeyChecking=no</argument>
+								<argument>target/${oozie.package.file.name}.tar.gz</argument>
+								<argument>${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name}:${iis.hadoop.frontend.home.dir}/${iis.hadoop.frontend.user.dir}/oozie-packages/${sandboxName}/${output.dir.name}/${oozie.package.file.name}.tar.gz</argument>
+						    </arguments>
+				          </configuration>
+				        </execution>
+					  
+					    <execution>
+					      <id>extract-and-upload-to-hdfs</id>
+					      <phase>package</phase>
+					      <goals>
+					        <goal>exec</goal>
+					      </goals>
+					      <configuration>
+						    <executable>ssh</executable>
+						    <arguments>
+								<argument>${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name}</argument>
+								<argument>-p ${iis.hadoop.frontend.port.ssh}</argument>
+								<argument>-o StrictHostKeyChecking=no</argument>
+								<argument>cd ${iis.hadoop.frontend.home.dir}/${iis.hadoop.frontend.user.dir}/oozie-packages/${sandboxName}/${output.dir.name}/; </argument>
+								<argument>tar -zxvf oozie-package.tar.gz; </argument>
+								<argument>rm ${iis.hadoop.frontend.home.dir}/${iis.hadoop.frontend.user.dir}/oozie-packages/${sandboxName}/${output.dir.name}/oozie-package.tar.gz; </argument>
+								<argument>./upload_workflow.sh</argument> 
+						    </arguments>
+						  </configuration>
+					    </execution>
+					  </executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>run</id>
+			<build>
+				<plugins>
+			        <plugin>
+					  <groupId>org.codehaus.mojo</groupId>
+					  <artifactId>exec-maven-plugin</artifactId>
+					  <version>1.3.2</version>
+					  <executions>
+					    <execution>
+					      <id>run-job</id>
+					      <phase>package</phase>
+					      <goals>
+					        <goal>exec</goal>
+					      </goals>
+					      <configuration>
+						    <executable>ssh</executable>
+						    <!-- this file will be used by test verification profile reading job identifier -->
+						    <outputFile>${oozie.execution.log.file.location}</outputFile>
+						    <arguments>
+								<argument>${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name}</argument>
+								<argument>-p ${iis.hadoop.frontend.port.ssh}</argument>
+								<argument>-o StrictHostKeyChecking=no</argument>
+								<argument>cd ${iis.hadoop.frontend.home.dir}/${iis.hadoop.frontend.user.dir}/oozie-packages/${sandboxName}/${output.dir.name}/; </argument>
+								<argument>./run_workflow.sh</argument>
+						    </arguments>
+						  </configuration>
+					    </execution>
+					    
+					    <execution>
+					      <id>show-run-log-on-stdout</id>
+					      <phase>package</phase>
+					      <goals>
+					        <goal>exec</goal>
+					      </goals>
+					      <configuration>
+						    <executable>cat</executable>
+						    <arguments>
+								<argument>${oozie.execution.log.file.location}</argument>
+						    </arguments>
+						  </configuration>
+					    </execution>
+					  </executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>monitor</id>
+			<build>
+				<plugins>
+			        <plugin>
+						<groupId>eu.dnetlib.iis</groupId>
+						<artifactId>iis-oozie-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>read-job-id</id>
+		                        <phase>package</phase>
+		                        <goals>
+		                            <goal>read-job-id</goal>
+		                        </goals>
+		                        <configuration>
+		                        	<logFileLocation>${oozie.execution.log.file.location}</logFileLocation>
+		                        </configuration>
+		                    </execution>
+		                    <execution>
+								<id>check-job-status</id>
+		                        <phase>package</phase>
+		                        <goals>
+		                            <goal>check-job-status</goal>
+		                        </goals>
+		                        <configuration>
+		                        	<jobId>${oozieJobId}</jobId>
+		                        	<oozieLocation>${oozieServiceLoc}</oozieLocation>
+		                        	<maxExecutionTimeMins>180</maxExecutionTimeMins>
+		                        	<checkIntervalSecs>60</checkIntervalSecs>
+		                        </configuration>
+		                    </execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>deploy-local</id>
+			<build>
+				<plugins>
+			        <plugin>
+					  <groupId>org.codehaus.mojo</groupId>
+					  <artifactId>exec-maven-plugin</artifactId>
+					  <version>1.3.2</version>
+					  <executions>
+					  	<execution>
+					      <id>mkdir</id>
+					      <phase>package</phase>
+					      <goals>
+					        <goal>exec</goal>
+					      </goals>
+					      <configuration>
+						    <executable>mkdir</executable>
+						    <arguments>
+								<argument>target/local-upload</argument>
+						    </arguments>
+						  </configuration>
+					    </execution>
+					    <execution>
+					      <id>untar</id>
+					      <phase>package</phase>
+					      <goals>
+					        <goal>exec</goal>
+					      </goals>
+					      <configuration>
+						    <executable>tar</executable>
+						    <arguments>
+								<argument>-zxvf</argument>
+								<argument>${project.build.directory}/${oozie.package.file.name}.tar.gz</argument>
+								<argument>-C</argument>
+								<argument>${project.build.directory}/local-upload</argument>
+						    </arguments>
+						  </configuration>
+					    </execution>
+					    <execution>
+					      <id>upload-to-local-cluster</id>
+					      <phase>package</phase>
+					      <goals>
+					        <goal>exec</goal>
+					      </goals>
+					      <configuration>
+						    <executable>sh</executable>
+						    <arguments>
+						    	<argument>${project.build.directory}/local-upload/upload_workflow.sh</argument>
+						    	<argument>${project.build.directory}/local-upload</argument>
+						    </arguments>
+						  </configuration>
+					    </execution>
+					  </executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>run-local</id>
+			<build>
+				<plugins>
+			        <plugin>
+					  <groupId>org.codehaus.mojo</groupId>
+					  <artifactId>exec-maven-plugin</artifactId>
+					  <version>1.3.2</version>
+					  <executions>
+					    <execution>
+					      <id>run-on-local-cluster</id>
+					      <phase>package</phase>
+					      <goals>
+					        <goal>exec</goal>
+					      </goals>
+					      <configuration>
+						    <executable>sh</executable>
+						    <arguments>
+						    	<argument>${project.build.directory}/local-upload/run_workflow.sh</argument>
+						    	<argument>${project.build.directory}/local-upload</argument>
+						    </arguments>
+						  </configuration>
+					    </execution>
+					  </executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<!-- this profile is handling unit and integration test definitions 
+				of all child modules -->
+			<id>child-tests</id>
+			<build>
+			<plugins>
+				<!-- integration tests related --> 
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<executions>
+						<execution>
+							<id>integration-test-compile</id>
+							<phase>integration-test</phase>
+							<goals>
+								<goal>testCompile</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<executions>
+						<execution>
+							<id>integration-test-package</id>
+							<phase>integration-test</phase>
+							<goals>
+								<goal>test-jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<executions>
+						<execution>
+							<id>integration-test-copy-dependencies</id>
+							<phase>integration-test</phase>
+							<goals>
+								<goal>copy-dependencies</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<!-- 
+				<plugin>
+	                <groupId>eu.dnetlib.primer</groupId>
+	                <artifactId>primer-maven-plugin</artifactId>
+	                <executions>
+	                    <execution>
+	                        <id>integration-test-priming</id>
+	                        <phase>integration-test</phase>
+	                        <goals><goal>prime</goal></goals>
+	                        <configuration>
+	                            <classProviderFiles>
+	                                <classProviderFile>${project.build.directory}/dependency/*.jar</classProviderFile>
+	                                <classProviderFile>${project.build.directory}/*-tests.jar</classProviderFile>
+	                                <classProviderFile>${project.build.directory}/classes</classProviderFile>
+	                            </classProviderFiles>
+	                            <coansysPackageDir>${project.build.directory}/dependency</coansysPackageDir>
+	                            <destination>${project.build.directory}/${primed.dir}</destination>
+	                        </configuration>
+	                    </execution>
+	                </executions>
+	            </plugin>
+	            -->
+	            <!--  -->
+				<!-- end of plugins required by integration test priming -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.11</version>
+					<dependencies>
+						<dependency>
+							<groupId>org.apache.maven.surefire</groupId>
+							<artifactId>surefire-junit47</artifactId>
+							<version>2.12</version>
+						</dependency>
+					</dependencies>
+					<configuration>
+						<skip>true</skip>
+					</configuration>
+					<executions>
+						<execution>
+							<id>unit-test</id>
+							<phase>test</phase>
+							<goals>
+								<goal>test</goal>
+							</goals>
+							<configuration>
+								<skip>false</skip>
+								<excludedGroups>eu.dnetlib.iis.IntegrationTest</excludedGroups>
+							</configuration>
+						</execution>
+						<execution>
+							<id>integration-test</id>
+							<phase>integration-test</phase>
+							<goals>
+								<goal>test</goal>
+							</goals>
+							<configuration>
+								<skip>false</skip>
+								<forkMode>always</forkMode>
+								<argLine>-Xmx1024m</argLine>
+								<systemPropertiesVariables>
+									<hadoop.log.dir>/tmp</hadoop.log.dir>
+									<oozie.data.dir>${oozie.data.dir}</oozie.data.dir>
+								</systemPropertiesVariables>
+								<groups>eu.dnetlib.iis.IntegrationTest</groups>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+			</build>
+			<activation>
+				<file>
+					<missing>src/main/resources/parent.marker</missing>
+				</file>
+			</activation>
+		</profile>
+		<profile>
+			<!-- This profile sets test cluster properties. 
+			This way we don't need to provide parameters explicitly when running maven command on jenkins. 
+			Should be picked as the first profile on the list. -->
+			<id>init-test-cluster-config</id>
+			<properties>
+				<iis.hadoop.frontend.user.name>jenkins</iis.hadoop.frontend.user.name>
+				<iis.hadoop.frontend.host.name>ci-test.hadoop.iis.openaire.eu</iis.hadoop.frontend.host.name>
+				<iis.hadoop.frontend.home.dir>/mnt/tmp</iis.hadoop.frontend.home.dir>
+				<oozieServiceLoc>http://ci-test.hadoop.iis.openaire.eu:11000/oozie</oozieServiceLoc>
+				<nameNode>hdfs://ci-test.hadoop.iis.openaire.eu:8020</nameNode>
+				<jobTracker>ci-test.hadoop.iis.openaire.eu:8021</jobTracker>
+				<output.dir.name>integration-test</output.dir.name>
+			</properties>
+		</profile>		
+	</profiles>
+	
+	<build>
+		<plugins>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.kuali.maven.plugins
+										</groupId>
+										<artifactId>
+											properties-maven-plugin
+										</artifactId>
+										<versionRange>
+											[1.3.2,)
+										</versionRange>
+										<goals>
+											<goal>
+												read-project-properties
+											</goal>
+											<goal>
+												write-project-properties
+											</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+								<!-- copy-dependency plugin -->
+			                    <pluginExecution>
+			                        <pluginExecutionFilter>
+			                            <groupId>org.apache.maven.plugins</groupId>
+			                            <artifactId>maven-dependency-plugin</artifactId>
+			                            <versionRange>[1.0.0,)</versionRange>
+			                            <goals>
+			                                <goal>copy-dependencies</goal>
+			                            </goals>
+			                        </pluginExecutionFilter>
+			                        <action>
+			                            <ignore />
+			                        </action>
+                    </pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+	
+
+</project>

@@ -1,0 +1,12 @@
+@namespace("eu.dnetlib.iis.statistics.schemas")
+protocol IIS{
+
+	import idl "CommonBasicCitationStatistics.avdl";
+	
+	record DocumentToDocumentStatistics {
+//		ID of the document, foreign key: Document.id ("document" data store)
+		string documentId;
+
+		CommonBasicCitationStatistics statistics;
+	}
+}

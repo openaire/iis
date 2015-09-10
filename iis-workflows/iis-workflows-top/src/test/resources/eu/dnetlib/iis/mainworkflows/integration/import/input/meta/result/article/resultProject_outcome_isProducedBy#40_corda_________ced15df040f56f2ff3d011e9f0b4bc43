@@ -1,0 +1,35 @@
+{
+  kind: relation
+  rel: {
+    relType: resultProject
+    source: "50|crossref____::003b0746ef72ff253ef1e465c758c961"
+    target: "40|corda_______::ced15df040f56f2ff3d011e9f0b4bc43"
+    child: false
+    resultProject: {
+      outcome: {
+	      relMetadata: {
+	        semantics: {
+	          classid: "isProducedBy"
+	          classname: "isProducedBy"
+	          schemeid: "dnet:result_project_relations"
+	          schemename: "dnet:result_project_relations"
+	        }
+	      }
+	   }
+    }
+    subRelType: outcome
+    relClass: "isProducedBy"
+  }
+  dataInfo: {
+    inferred: false
+    deletedbyinference: false
+    trust: "0.8"
+    provenanceaction: {
+      classid: ""
+      classname: ""
+      schemeid: "dnet:provenanceActions"
+      schemename: "dnet:provenanceActions"
+    }
+  }
+  timestamp: 1372359095915
+}

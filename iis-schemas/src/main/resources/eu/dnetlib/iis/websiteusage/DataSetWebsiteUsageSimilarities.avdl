@@ -1,0 +1,12 @@
+@namespace("eu.dnetlib.iis.websiteusage.schemas")
+protocol IIS{
+    
+    record DataSetWebsiteUsageSimilarities {
+//      coefficient from [0, 1] range,
+//      the greater the number, the more similar the datasets w.r.t
+//      being visited together
+        union { null , float } covisitedSimilarity = null;
+//      some other similarity metrics, to be specified by NKUA
+    }
+
+}

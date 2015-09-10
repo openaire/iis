@@ -1,0 +1,8 @@
+@namespace("eu.dnetlib.iis.core.schemas.standardexamples")
+protocol IIS{
+   record Document{
+      int id;
+      union {null, string} title=null;
+      array<int> authorIds;
+   }
+}

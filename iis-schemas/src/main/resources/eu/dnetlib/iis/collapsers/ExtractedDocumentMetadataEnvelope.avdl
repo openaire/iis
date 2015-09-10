@@ -1,0 +1,13 @@
+@namespace("eu.dnetlib.iis.collapsers.schemas")
+protocol IIS{
+
+    import idl "../metadataextraction/ExtractedDocumentMetadata.avdl";
+    
+    
+    record ExtractedDocumentMetadataEnvelope {
+        eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata data;
+        string origin;
+    }
+    
+}
+

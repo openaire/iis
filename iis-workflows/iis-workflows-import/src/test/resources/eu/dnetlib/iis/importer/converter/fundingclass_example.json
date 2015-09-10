@@ -1,0 +1,23 @@
+<fundingtree>
+    <funder>
+        <id>wt__________::WT</id>
+        <shortname>WT</shortname>
+        <name>Wellcome Trust</name>
+        <jurisdiction/>
+    </funder>
+    <funding_level_1>
+        <id>wt__________::WT::Non-Stream Activity - GM</id>
+        <description>Non-Stream Activity - GM</description>
+        <name>Non-Stream Activity - GM</name>
+        <class>wt:fundingStream</class>
+        <parent>
+            <funding_level_0>
+                <id>wt__________::WT</id>
+                <description>Wellcome Trust Funding Stream</description>
+                <name>WT</name>
+                <parent/>
+                <class>wt:fundingStream</class>
+            </funding_level_0>
+        </parent>
+    </funding_level_1>
+</fundingtree>

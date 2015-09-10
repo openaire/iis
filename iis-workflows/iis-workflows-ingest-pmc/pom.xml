@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>eu.dnetlib.iis</groupId>
+        <artifactId>iis-workflows</artifactId>
+        <version>1.2.0-SNAPSHOT</version>
+    </parent>
+    
+    <artifactId>iis-workflows-ingest-pmc</artifactId>
+    <packaging>jar</packaging>
+    
+    <dependencies>
+        
+        <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        
+        <dependency>
+			<groupId>eu.dnetlib.iis</groupId>
+			<artifactId>iis-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		
+        <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-core</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        
+        
+        <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-schemas</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        
+        
+        <!-- required after introducing 'provided' scope for hadoop libs -->
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-core</artifactId>
+            <version>${iis.hadoop.core.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>${iis.hadoop.common.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Needed by Avro { -->
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>${iis.avro.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro-mapred</artifactId>
+            <version>${iis.avro.version}</version>
+            <classifier>hadoop2</classifier>
+        </dependency>
+        <!-- Needed by Oozie tests { -->
+        <dependency>
+            <groupId>org.apache.oozie</groupId>
+            <artifactId>oozie-core</artifactId>
+            <version>${iis.oozie.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.oozie</groupId>
+            <artifactId>oozie-core</artifactId>
+            <version>${iis.oozie.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs</artifactId>
+            <version>${iis.hadoop.hdfs.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs</artifactId>
+            <version>${iis.hadoop.hdfs.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-test</artifactId>
+            <version>${iis.hadoop.test.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>${iis.hadoop.common.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <!-- Needed by Oozie tests } -->
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>1.1</version>
+            <type>jar</type>
+        </dependency>
+
+		<!-- required for affiliation parsing -->
+		<dependency>
+			<groupId>pl.edu.icm.cermine</groupId>
+			<artifactId>cermine-impl</artifactId>
+			<version>1.6</version>
+		</dependency>
+    </dependencies>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.0.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,9 @@
+@namespace("eu.dnetlib.iis.metrics.primary.schemas")
+protocol IIS{
+
+    record AuthorPrimaryMetrics {
+        union { null , int } numberOfCitationsToTheDocumentsAuthoredByThisPerson = null;
+    }
+    
+}
+

@@ -1,0 +1,26 @@
+/**Here the namespace is different from other definitions of Avro schemas. 
+ * This is because we're using a record called "Document" and a record
+ * with this name is already defined by "Document.avdl" file in the 
+ * "eu.dnetlib.iis.core.examples.schemas.documentandauthor" namespace.
+ *
+ * The main goal of this schema is to show that using records with the same
+ * name but different schema is possible. However, because both types of the
+ * "Document" records are used in more-or-less same places, in practice it
+ * would be probably tedious to have records with the same name but in 
+ * different namespaces. In such case, a probably better idea would be to
+ * store them in the same namespace, but change the name of one of them.
+ */
+
+@namespace("eu.dnetlib.iis.core.examples.schemas.documentandauthor.personwithdocuments")
+protocol IIS{
+
+   record Document{
+      int id;
+      union{null, string} title;
+   }
+
+   record PersonWithDocuments{
+      int personId;
+      array<Document> documents;
+   }
+}

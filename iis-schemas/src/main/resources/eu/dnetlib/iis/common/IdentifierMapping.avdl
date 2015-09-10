@@ -1,0 +1,10 @@
+@namespace("eu.dnetlib.iis.common.schemas")
+protocol IIS{
+
+    record IdentifierMapping {
+//		original document identifier
+        string originalId;
+//		new document identifier        
+        string newId;
+    }
+}

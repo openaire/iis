@@ -1,0 +1,22 @@
+[
+{
+  "type_source": "SVN", 
+  "goal": "package -U -T 4C source:jar", 
+  "url": "http://svn-public.driver.research-infrastructures.eu/driver/dnet40/modules/icm-iis-citationmatching-direct/trunk/", 
+  "deploy_repository": "dnet4-snapshots", 
+  "version": "4",
+  "mail": "m.horst@icm.edu.pl",
+  "deploy_repository_url": "http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-snapshots", 
+  "name": "icm-iis-citationmatching-direct"
+},
+{
+  "type_source": "SVN",
+  "goal": "clean verify -U -e -X",
+  "url": "http://svn-public.driver.research-infrastructures.eu/driver/dnet40/modules/icm-iis-citationmatching-direct/trunk/",
+  "nightly" : "true",
+  "cron" : "H H * * *",
+  "version": "4",
+  "mail": "m.horst@icm.edu.pl",
+  "name": "icm-iis-citationmatching-direct-embedded-integration-test"
+}
+]

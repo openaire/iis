@@ -1,0 +1,8 @@
+@namespace("eu.dnetlib.iis.metrics.primary.schemas")
+protocol IIS{
+
+        record PersonId {
+//              person identifier
+                string id;
+        }
+}

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai="http://www.openarchives.org/OAI/2.0/"
+	xmlns:dri="http://www.driver-repository.eu/namespace/dri" xmlns:dr="http://www.driver-repository.eu/namespace/dr"
+	xmlns:oaf="http://namespace.openaire.eu/oaf">
+	<header>
+		<dri:objIdentifier>datacite____::00003c53ac987dd641a599987fe73b3f
+		</dri:objIdentifier>
+		<dri:recordIdentifier>oai:oai.datacite.org:562278
+		</dri:recordIdentifier>
+		<dri:dateOfCollection>2014-02-13T11:04:30+01:00</dri:dateOfCollection>
+		<dr:dateOfCollection>2014-02-13T11:04:30+01:00</dr:dateOfCollection>
+		<dri:repositoryId />
+		<oaf:datasourceprefix>datacite____</oaf:datasourceprefix>
+		<identifier>oai:oai.datacite.org:562278</identifier>
+		<datestamp>2014-02-07T14:54:05Z</datestamp>
+		<setSpec>TIB</setSpec>
+		<setSpec>TIB.WIP</setSpec>
+	</header>
+	<metadata>
+		<resource xmlns="http://datacite.org/schema/kernel-2.2"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:schemaLocation="http://datacite.org/schema/kernel-2.2 http://schema.datacite.org/meta/kernel-2.2/metadata.xsd">
+			<identifier identifierType="DOI">10.4229/25thEUPVSEC2010-1CO.10.6</identifier>
+			<creators>
+				<creator>
+					<creatorName>Meiss, J.</creatorName>
+				</creator>
+				<creator>
+					<creatorName>Pfützner, S.</creatorName>
+				</creator>
+				<creator>
+					<creatorName>Hummert, M.</creatorName>
+				</creator>
+				<creator>
+					<creatorName>Menke, T.</creatorName>
+				</creator>
+				<creator>
+					<creatorName>Leo, K.</creatorName>
+				</creator>
+				<creator>
+					<creatorName>Riede, M.</creatorName>
+				</creator>
+			</creators>
+			<titles>
+				<title>ITO-Free, Semitransparent Small-Molecule Organic Solar Cells with Dibenzoperiflanthene as Absorber</title>
+			</titles>
+			<publisher>WIP-Munich</publisher>
+			<publicationYear>2010</publicationYear>
+			<subjects>
+				<subject>Advanced Photovoltaics: New Concepts and Ultra-high Efficiency</subject>
+				<subject>Organic-based PV</subject>
+				<subject/>
+			</subjects>
+			<dates>
+				<date dateType="Valid">2010-10-28</date>
+				<date/>
+			</dates>
+			<language>eng</language>
+			<resourceType resourceTypeGeneral="Text">Article</resourceType>
+			<alternateIdentifiers>
+				<alternateIdentifier alternateIdentifierType="ISBN">3-936338-26-4</alternateIdentifier>
+			</alternateIdentifiers>
+			<sizes>
+				<size>3 pages</size>
+				<size>2919 kb</size>
+			</sizes>
+			<formats>
+				<format>application/pdf</format>
+			</formats>
+			<descriptions>
+				<description/>
+				<description descriptionType="SeriesInformation">25th European Photovoltaic
+					Solar Energy Conference and Exhibition / 5th World Conference on
+					Photovoltaic Energy Conversion, 6-10 September 2010, Valencia,
+					Spain; 303-305</description>
+				<description descriptionType="Abstract">
+					In this contribution, we present semitransparent small molecule
+					organic solar cells (OSC). If only the
+					standard absorber materials zinc phthalocyanine (absorption 600-750 nm) and
+					C60 (absorption maximum at 450 nm)
+					are used, many OSC suffer from narrow absorption bands. We present
+					devices that employ bulk heterojunctions of
+					dibenzoperiflanthene and C60 to achieve uniform coverage of a wide part of the solar
+					spectrum to utilise a wide
+					wavelength range. Using thin multilayer metal contacts and organic capping
+					layers, we achieve in first experiments
+					semitransparent OSC (“power windows”) with a power conversion efficiency of 1.6 ±
+					0.1%, having a high open
+					circuit voltage of 0.81 V. By using only nm-thin metal electrodes, the OSC
+					can be made without ITO or other
+					transparent conductive oxides.
+				</description>
+			</descriptions>
+		</resource>
+		<oaf:collectedDatasourceid>openaire____::datacite
+		</oaf:collectedDatasourceid>
+		<oaf:collectedFrom name="Datacite" id="openaire____::datacite" />
+		<oaf:hostedBy name="Datacite" id="openaire____::datacite" />
+	</metadata>
+</record>

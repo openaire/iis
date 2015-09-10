@@ -1,0 +1,1214 @@
+{
+  "id": "50|od_______908::c84fe76a7bc6232a6732dab8c72ef9ea",
+  "externalIdentifiers": {
+          "pmid": "16528104"
+  },
+  "entityType": "research-article",
+  "journal": null,
+  "references": [
+    {
+      "basicMetadata": {
+        "title": "The \u03c370 family: sequence conservation and evolutionary relationships",
+        "authors": [
+          "Lonetto, M.",
+          "Gribskov, M.",
+          "Gross, C.A."
+          ],
+        "pages": {
+          "start": "3843",
+          "end": "3849"
+        },
+        "source": "J. Bacteriol.",
+        "volume": "174",
+        "year": "1992",
+        "issue": null,
+        "externalIds": {
+          "pmid": "1597408"
+        }
+      },
+      "position": 1,
+      "text": "Lonetto, M., Gribskov, M., Gross, C.A.. The \u03c370 family: sequence conservation and evolutionary relationships. J. Bacteriol.. 1992; 174: 3843-3849"
+    },
+    {
+      "basicMetadata": {
+        "title": "Eubacterial sigma-factors",
+        "authors": [
+          "Wosten, M.M.S.M."
+          ],
+        "pages": {
+          "start": "127",
+          "end": "150"
+        },
+        "source": "FEMS Microbiol. Rev.",
+        "volume": "22",
+        "year": "1998",
+        "issue": null,
+        "externalIds": {
+          "pmid": "9818380"
+        }
+      },
+      "position": 2,
+      "text": "Wosten, M.M.S.M.. Eubacterial sigma-factors. FEMS Microbiol. Rev.. 1998; 22: 127-150"
+    },
+    {
+      "basicMetadata": {
+        "title": "Competition among seven Escherichia coli sigma subunits: relative binding affinities to the core RNA polymerase",
+        "authors": [
+          "Maeda, H.",
+          "Fujita, N.",
+          "Ishihama, A."
+          ],
+        "pages": {
+          "start": "3497",
+          "end": "3503"
+        },
+        "source": "Nucleic Acids Res.",
+        "volume": "28",
+        "year": "2000",
+        "issue": null,
+        "externalIds": {
+          "pmid": "10982868"
+        }
+      },
+      "position": 3,
+      "text": "Maeda, H., Fujita, N., Ishihama, A.. Competition among seven Escherichia coli sigma subunits: relative binding affinities to the core RNA polymerase. Nucleic Acids Res.. 2000; 28: 3497-3503"
+    },
+    {
+      "basicMetadata": {
+        "title": "An inventory of genes encoding RNA polymerase sigma factors in 31 completely sequenced eubacterial genomes",
+        "authors": [
+          "Mittenhuber, G."
+          ],
+        "pages": {
+          "start": "77",
+          "end": "91"
+        },
+        "source": "J. Mol. Microbiol. Biotechnol.",
+        "volume": "4",
+        "year": "2002",
+        "issue": null,
+        "externalIds": {
+          "pmid": "11763973"
+        }
+      },
+      "position": 4,
+      "text": "Mittenhuber, G.. An inventory of genes encoding RNA polymerase sigma factors in 31 completely sequenced eubacterial genomes. J. Mol. Microbiol. Biotechnol.. 2002; 4: 77-91"
+    },
+    {
+      "basicMetadata": {
+        "title": "The sigma70 family of sigma factors",
+        "authors": [
+          "Paget, M.S.",
+          "Helmann, J.D."
+          ],
+        "pages": {
+          "start": "203.1",
+          "end": "203.6"
+        },
+        "source": "Genome Biol.",
+        "volume": "4",
+        "year": "2003",
+        "issue": null,
+        "externalIds": {
+          "pmid": "12540296"
+        }
+      },
+      "position": 5,
+      "text": "Paget, M.S., Helmann, J.D.. The sigma70 family of sigma factors. Genome Biol.. 2003; 4: 203.1-203.6"
+    },
+    {
+      "basicMetadata": {
+        "title": "Analysis of E.coli promoter sequences",
+        "authors": [
+          "Harley, C.B.",
+          "Reynolds, R.P."
+          ],
+        "pages": {
+          "start": "2343",
+          "end": "2361"
+        },
+        "source": "Nucleic Acids Res.",
+        "volume": "15",
+        "year": "1987",
+        "issue": null,
+        "externalIds": {
+          "pmid": "3550697"
+        }
+      },
+      "position": 6,
+      "text": "Harley, C.B., Reynolds, R.P.. Analysis of E.coli promoter sequences. Nucleic Acids Res.. 1987; 15: 2343-2361"
+    },
+    {
+      "basicMetadata": {
+        "title": "Compilation of E.coli mRNA promoter sequences",
+        "authors": [
+          "Lisser, S.",
+          "Margalit, H."
+          ],
+        "pages": {
+          "start": "1507",
+          "end": "1516"
+        },
+        "source": "Nucleic Acids Res.",
+        "volume": "21",
+        "year": "1993",
+        "issue": null,
+        "externalIds": {
+          "pmid": "8479900"
+        }
+      },
+      "position": 7,
+      "text": "Lisser, S., Margalit, H.. Compilation of E.coli mRNA promoter sequences. Nucleic Acids Res.. 1993; 21: 1507-1516"
+    },
+    {
+      "basicMetadata": {
+        "title": "Structural basis of transcription initiation: RNA polymerase holoenzyme at 4 A resolution",
+        "authors": [
+          "Murakami, K.S.",
+          "Masuda, S.",
+          "Darst, S.A."
+          ],
+        "pages": {
+          "start": "1280",
+          "end": "1284"
+        },
+        "source": "Science",
+        "volume": "296",
+        "year": "2002",
+        "issue": null,
+        "externalIds": {
+          "pmid": "12016306"
+        }
+      },
+      "position": 8,
+      "text": "Murakami, K.S., Masuda, S., Darst, S.A.. Structural basis of transcription initiation: RNA polymerase holoenzyme at 4 A resolution. Science. 2002; 296: 1280-1284"
+    },
+    {
+      "basicMetadata": {
+        "title": "The minus 35-recognition region of Escherichia coli sigma 70 is inessential for initiation of transcription at an \u2018Extended minus 10\u2019 promoter",
+        "authors": [
+          "Kumar, A.",
+          "Malloch, R.A.",
+          "Fujita, N.",
+          "Smillie, D.A.",
+          "Ishihama, A.",
+          "Hayward, R.S."
+          ],
+        "pages": {
+          "start": "406",
+          "end": "418"
+        },
+        "source": "J. Mol. Biol.",
+        "volume": "232",
+        "year": "1993",
+        "issue": null,
+        "externalIds": {
+          "pmid": "8345519"
+        }
+      },
+      "position": 9,
+      "text": "Kumar, A., Malloch, R.A., Fujita, N., Smillie, D.A., Ishihama, A., Hayward, R.S.. The minus 35-recognition region of Escherichia coli sigma 70 is inessential for initiation of transcription at an \u2018Extended minus 10\u2019 promoter. J. Mol. Biol.. 1993; 232: 406-418"
+    },
+    {
+      "basicMetadata": {
+        "title": "Region 2.5 of the Escherichia coli RNA polymerase sigma70 subunit is responsible for the recognition of the \u2018extended-10\u2019 motif at promoters",
+        "authors": [
+          "Barne, K.A.",
+          "Bown, J.",
+          "Busby, S.J.",
+          "Minchin, S.D."
+          ],
+        "pages": {
+          "start": "4034",
+          "end": "4040"
+        },
+        "source": "EMBO J.",
+        "volume": "16",
+        "year": "1997",
+        "issue": null,
+        "externalIds": {
+          "pmid": "9233812"
+        }
+      },
+      "position": 10,
+      "text": "Barne, K.A., Bown, J., Busby, S.J., Minchin, S.D.. Region 2.5 of the Escherichia coli RNA polymerase sigma70 subunit is responsible for the recognition of the \u2018extended-10\u2019 motif at promoters. EMBO J.. 1997; 16: 4034-4040"
+    },
+    {
+      "basicMetadata": {
+        "title": "Structure of the bacterial RNA polymerase promoter especificity sigma subunit",
+        "authors": [
+          "Campbell, E.A.",
+          "Muzzin, O.",
+          "Chlenov, M.",
+          "Sun, J.L.",
+          "Olson, C.A.",
+          "Weinman, O.",
+          "Trester-Zedlitz, M.L.",
+          "Darst, S.A."
+          ],
+        "pages": {
+          "start": "527",
+          "end": "539"
+        },
+        "source": "Mol. Cell.",
+        "volume": "9",
+        "year": "2002",
+        "issue": null,
+        "externalIds": {
+          "pmid": "11931761"
+        }
+      },
+      "position": 11,
+      "text": "Campbell, E.A., Muzzin, O., Chlenov, M., Sun, J.L., Olson, C.A., Weinman, O., Trester-Zedlitz, M.L., Darst, S.A.. Structure of the bacterial RNA polymerase promoter especificity sigma subunit. Mol. Cell.. 2002; 9: 527-539"
+    },
+    {
+      "basicMetadata": {
+        "title": "The partitioned Rhizobium etli genome: Genetic and metabolic redundancy in seven interacting replicons",
+        "authors": [
+          "Gonz\u00e1lez, null"
+          ],
+        "pages": {
+          "start": "3834",
+          "end": "3839"
+        },
+        "source": "Proc. Natl Acad. Sci. USA",
+        "volume": "103",
+        "year": "2005",
+        "issue": null,
+        "externalIds": {
+          
+        }
+      },
+      "position": 12,
+      "text": "Gonz\u00e1lez, null. The partitioned Rhizobium etli genome: Genetic and metabolic redundancy in seven interacting replicons. Proc. Natl Acad. Sci. USA. 2005; 103: 3834-3839"
+    },
+    {
+      "basicMetadata": {
+        "title": "Cloning of the rpoD analog from Rhizobium etli: sigA of R.etli is growth phase regulated",
+        "authors": [
+          "Luka, S.",
+          "Patriarca, E.J.",
+          "Riccio, A.",
+          "Iaccarino, M.",
+          "Defez, R."
+          ],
+        "pages": {
+          "start": "7138",
+          "end": "7143"
+        },
+        "source": "J. Bacteriol.",
+        "volume": "178",
+        "year": "1996",
+        "issue": null,
+        "externalIds": {
+          "pmid": "8955394"
+        }
+      },
+      "position": 13,
+      "text": "Luka, S., Patriarca, E.J., Riccio, A., Iaccarino, M., Defez, R.. Cloning of the rpoD analog from Rhizobium etli: sigA of R.etli is growth phase regulated. J. Bacteriol.. 1996; 178: 7138-7143"
+    },
+    {
+      "basicMetadata": {
+        "title": "The RNA polymerase alpha subunit from Shinorhizobium meliloti can assemble with RNA polymerase subunits from Escherichia coli and function in basal and activated transcription both in vivo and in vitro",
+        "authors": [
+          "Peck, M.C.",
+          "Gaal, T.",
+          "Fisher, R.F.",
+          "Gourse, R.L.",
+          "Long, S.R."
+          ],
+        "pages": {
+          "start": "3808",
+          "end": "3814"
+        },
+        "source": "J. Bacteriol.",
+        "volume": "184",
+        "year": "2002",
+        "issue": null,
+        "externalIds": {
+          "pmid": "12081950"
+        }
+      },
+      "position": 14,
+      "text": "Peck, M.C., Gaal, T., Fisher, R.F., Gourse, R.L., Long, S.R.. The RNA polymerase alpha subunit from Shinorhizobium meliloti can assemble with RNA polymerase subunits from Escherichia coli and function in basal and activated transcription both in vivo and in vitro. J. Bacteriol.. 2002; 184: 3808-3814"
+    },
+    {
+      "basicMetadata": {
+        "title": "Characterization of the Rhodobacter capsulatus housekeeping RNA polymerase. In vitro transcripcion of photosynthesis and other genes",
+        "authors": [
+          "Cullen, P.J.",
+          "Kaufman, C.K.",
+          "Bowman, W.C.",
+          "Kranz, R.G."
+          ],
+        "pages": {
+          "start": "27266",
+          "end": "27273"
+        },
+        "source": "J. Biol. Chem.",
+        "volume": "272",
+        "year": "1997",
+        "issue": null,
+        "externalIds": {
+          "pmid": "9341173"
+        }
+      },
+      "position": 15,
+      "text": "Cullen, P.J., Kaufman, C.K., Bowman, W.C., Kranz, R.G.. Characterization of the Rhodobacter capsulatus housekeeping RNA polymerase. In vitro transcripcion of photosynthesis and other genes. J. Biol. Chem.. 1997; 272: 27266-27273"
+    },
+    {
+      "basicMetadata": {
+        "title": "Purification, characterization, and reconstitution of DNA-dependent RNA polymerases from Caulobacter crescentus",
+        "authors": [
+          "Wu, J.",
+          "Ohta, N.",
+          "Benson, A.K.",
+          "Ninfa, A.J.",
+          "Newton, A."
+          ],
+        "pages": {
+          "start": "21558",
+          "end": "21564"
+        },
+        "source": "J. Biol. Chem.",
+        "volume": "272",
+        "year": "1997",
+        "issue": null,
+        "externalIds": {
+          "pmid": "9261176"
+        }
+      },
+      "position": 16,
+      "text": "Wu, J., Ohta, N., Benson, A.K., Ninfa, A.J., Newton, A.. Purification, characterization, and reconstitution of DNA-dependent RNA polymerases from Caulobacter crescentus. J. Biol. Chem.. 1997; 272: 21558-21564"
+    },
+    {
+      "basicMetadata": {
+        "title": "Rhizobium phaseoli symbiotic mutants with transposon Tn5 insertions",
+        "authors": [
+          "Noel, K.D.",
+          "S\u00e1nchez, A.",
+          "Fern\u00e1ndez, L.",
+          "Leemans, J.",
+          "Cevallos, M.A."
+          ],
+        "pages": {
+          "start": "148",
+          "end": "155"
+        },
+        "source": "J. Bacteriol.",
+        "volume": "158",
+        "year": "1984",
+        "issue": null,
+        "externalIds": {
+          "pmid": "6325385"
+        }
+      },
+      "position": 17,
+      "text": "Noel, K.D., S\u00e1nchez, A., Fern\u00e1ndez, L., Leemans, J., Cevallos, M.A.. Rhizobium phaseoli symbiotic mutants with transposon Tn5 insertions. J. Bacteriol.. 1984; 158: 148-155"
+    },
+    {
+      "basicMetadata": {
+        "title": "Ammonium assimilation in Rhizobium phaseoli by the glutamine synthetase-glutamate synthase pathway",
+        "authors": [
+          "Bravo, A.",
+          "Mora, J."
+          ],
+        "pages": {
+          "start": "980",
+          "end": "984"
+        },
+        "source": "J. Bacteriol.",
+        "volume": "170",
+        "year": "1988",
+        "issue": null,
+        "externalIds": {
+          "pmid": "2892829"
+        }
+      },
+      "position": 18,
+      "text": "Bravo, A., Mora, J.. Ammonium assimilation in Rhizobium phaseoli by the glutamine synthetase-glutamate synthase pathway. J. Bacteriol.. 1988; 170: 980-984"
+    },
+    {
+      "basicMetadata": {
+        "title": null,
+        "authors": [
+          "Sambrook, J.",
+          "Fritsch, E.F.",
+          "Maniatis, T."
+          ],
+        "pages": null,
+        "source": "Molecular Cloning. A Laboratory Manual",
+        "volume": null,
+        "year": "1989",
+        "issue": null,
+        "externalIds": {
+          
+        }
+      },
+      "position": 19,
+      "text": "Sambrook, J., Fritsch, E.F., Maniatis, T.. Molecular Cloning. A Laboratory Manual. 1989"
+    },
+    {
+      "basicMetadata": {
+        "title": "The nolL gene from Rhizobium etli determines nodulation efficiency by mediating the acetylation of the fucosyl residue in the nodulation factor",
+        "authors": [
+          "Corvera, A.",
+          "Prom\u00e9, D.",
+          "Prom\u00e9, J.C.",
+          "Mart\u00ednez-Romero, E.",
+          "Romero, D."
+          ],
+        "pages": {
+          "start": "236",
+          "end": "246"
+        },
+        "source": "Mol. Plant\u2013Microbe Interact.",
+        "volume": "12",
+        "year": "1999",
+        "issue": null,
+        "externalIds": {
+          
+        }
+      },
+      "position": 20,
+      "text": "Corvera, A., Prom\u00e9, D., Prom\u00e9, J.C., Mart\u00ednez-Romero, E., Romero, D.. The nolL gene from Rhizobium etli determines nodulation efficiency by mediating the acetylation of the fucosyl residue in the nodulation factor. Mol. Plant\u2013Microbe Interact.. 1999; 12: 236-246"
+    },
+    {
+      "basicMetadata": {
+        "title": "The Escherichia coli gus operon, induction and expression of the gus operon in E.coli and the occurrence and use of GUS in other bacteria",
+        "authors": [
+          "Wilson, K.J.",
+          "Huges, S.G.",
+          "Jefferson, R.A.",
+          "Gallagher, S.R."
+          ],
+        "pages": {
+          "start": "7",
+          "end": "23"
+        },
+        "source": "Gus Protocols, Using the Gus Gene as a Reporter of Gene Expression",
+        "volume": "Vol. 1",
+        "year": "1992",
+        "issue": null,
+        "externalIds": {
+          
+        }
+      },
+      "position": 21,
+      "text": "Wilson, K.J., Huges, S.G., Jefferson, R.A., Gallagher, S.R.. The Escherichia coli gus operon, induction and expression of the gus operon in E.coli and the occurrence and use of GUS in other bacteria. Gus Protocols, Using the Gus Gene as a Reporter of Gene Expression. 1992; Vol. 1: 7-23"
+    },
+    {
+      "basicMetadata": {
+        "title": "Use of T7 RNA polymerase to direct expression of cloned genes",
+        "authors": [
+          "Studier, F.W.",
+          "Rosenberg, A.H.",
+          "Dunn, J.J.",
+          "Dubendorff, J.W."
+          ],
+        "pages": {
+          "start": "60",
+          "end": "89"
+        },
+        "source": "Meth. Enzymol.",
+        "volume": "185",
+        "year": "1990",
+        "issue": null,
+        "externalIds": {
+          "pmid": "2199796"
+        }
+      },
+      "position": 22,
+      "text": "Studier, F.W., Rosenberg, A.H., Dunn, J.J., Dubendorff, J.W.. Use of T7 RNA polymerase to direct expression of cloned genes. Meth. Enzymol.. 1990; 185: 60-89"
+    },
+    {
+      "basicMetadata": {
+        "title": "Rapid RNA polymerase genetics: one-day, no column preparation of reconstituted recombinant Escherichia coli RNA polymerase",
+        "authors": [
+          "Tang, H.",
+          "Severinov, K.",
+          "Goldfarb, A.",
+          "Ebright, H."
+          ],
+        "pages": {
+          "start": "4902",
+          "end": "4906"
+        },
+        "source": "Proc. Natl Acad. Sci. USA",
+        "volume": "92",
+        "year": "1995",
+        "issue": null,
+        "externalIds": {
+          "pmid": "7761421"
+        }
+      },
+      "position": 23,
+      "text": "Tang, H., Severinov, K., Goldfarb, A., Ebright, H.. Rapid RNA polymerase genetics: one-day, no column preparation of reconstituted recombinant Escherichia coli RNA polymerase. Proc. Natl Acad. Sci. USA. 1995; 92: 4902-4906"
+    },
+    {
+      "basicMetadata": {
+        "title": "CLUSTAL W: improving the sensitivity of progressive multiple sequence alignment through sequence weighting, position-specific gap penalties and weight matrix choice",
+        "authors": [
+          "Higgins, D.",
+          "Thompson, J.",
+          "Gibson,Thompson, J.D.",
+          "Higgins, D.G.",
+          "Gibson, T.J."
+          ],
+        "pages": {
+          "start": "4673",
+          "end": "4680"
+        },
+        "source": "Nucleic Acids Res.",
+        "volume": "22",
+        "year": "1994",
+        "issue": null,
+        "externalIds": {
+          "pmid": "7984417"
+        }
+      },
+      "position": 24,
+      "text": "Higgins, D., Thompson, J., Gibson,Thompson, J.D., Higgins, D.G., Gibson, T.J.. CLUSTAL W: improving the sensitivity of progressive multiple sequence alignment through sequence weighting, position-specific gap penalties and weight matrix choice. Nucleic Acids Res.. 1994; 22: 4673-4680"
+    },
+    {
+      "basicMetadata": {
+        "title": "Multiple sequence alignment with hierarchical clustering",
+        "authors": [
+          "Corpet, F."
+          ],
+        "pages": {
+          "start": "10881",
+          "end": "10890"
+        },
+        "source": "Nucleic Acids Res.",
+        "volume": "16",
+        "year": "1988",
+        "issue": null,
+        "externalIds": {
+          "pmid": "2849754"
+        }
+      },
+      "position": 25,
+      "text": "Corpet, F.. Multiple sequence alignment with hierarchical clustering. Nucleic Acids Res.. 1988; 16: 10881-10890"
+    },
+    {
+      "basicMetadata": {
+        "title": "Identifying DNA and protein patterns with statistically significant alignments of multiple sequences",
+        "authors": [
+          "Hertz, G.Z.",
+          "Stormo, G.D."
+          ],
+        "pages": {
+          "start": "563",
+          "end": "577"
+        },
+        "source": "Bioinformatics",
+        "volume": "15",
+        "year": "1999",
+        "issue": null,
+        "externalIds": {
+          "pmid": "10487864"
+        }
+      },
+      "position": 26,
+      "text": "Hertz, G.Z., Stormo, G.D.. Identifying DNA and protein patterns with statistically significant alignments of multiple sequences. Bioinformatics. 1999; 15: 563-577"
+    },
+    {
+      "basicMetadata": {
+        "title": "DNA analysis servers: plot.it, bend.it, model.it and IS",
+        "authors": [
+          "Vlahovicek, K.",
+          "Kaj\u00e1n, L.",
+          "Pongor, S."
+          ],
+        "pages": {
+          "start": "3686",
+          "end": "3687"
+        },
+        "source": "Nucleic Acids Res.",
+        "volume": "31",
+        "year": "2003",
+        "issue": null,
+        "externalIds": {
+          "pmid": "12824394"
+        }
+      },
+      "position": 27,
+      "text": "Vlahovicek, K., Kaj\u00e1n, L., Pongor, S.. DNA analysis servers: plot.it, bend.it, model.it and IS. Nucleic Acids Res.. 2003; 31: 3686-3687"
+    },
+    {
+      "basicMetadata": {
+        "title": "Improved thermodynamic parameters and helix initiation factors to predict stability of DNA duplexes",
+        "authors": [
+          "Sugimoto, N.",
+          "Nakano, S.",
+          "Yoneyama, M.",
+          "Honda, K."
+          ],
+        "pages": {
+          "start": "4501",
+          "end": "4505"
+        },
+        "source": "Nucleic Acids Res.",
+        "volume": "24",
+        "year": "1996",
+        "issue": null,
+        "externalIds": {
+          "pmid": "8948641"
+        }
+      },
+      "position": 28,
+      "text": "Sugimoto, N., Nakano, S., Yoneyama, M., Honda, K.. Improved thermodynamic parameters and helix initiation factors to predict stability of DNA duplexes. Nucleic Acids Res.. 1996; 24: 4501-4505"
+    },
+    {
+      "basicMetadata": {
+        "title": "An optimized potential function for the calculation of nucleic acid interaction energies I. Base stacking",
+        "authors": [
+          "Ornstein, R.L.",
+          "Rein, R.",
+          "Breen, D.L.",
+          "MacElroy, R.D."
+          ],
+        "pages": {
+          "start": "2341",
+          "end": "2360"
+        },
+        "source": "Biopolymers",
+        "volume": "17",
+        "year": "1978",
+        "issue": null,
+        "externalIds": {
+          
+        }
+      },
+      "position": 29,
+      "text": "Ornstein, R.L., Rein, R., Breen, D.L., MacElroy, R.D.. An optimized potential function for the calculation of nucleic acid interaction energies I. Base stacking. Biopolymers. 1978; 17: 2341-2360"
+    },
+    {
+      "basicMetadata": {
+        "title": "Two discrete elements are required for the replication of repABC plasmid: an antisense RNA and a stem\u2013loop structure",
+        "authors": [
+          "Venkova-Canova, T.",
+          "Sober\u00f3n, N.E.",
+          "Ram\u00edrez-Romero, M.A.",
+          "Cevallos, Miguel A."
+          ],
+        "pages": {
+          "start": "1431",
+          "end": "1444"
+        },
+        "source": "Mol. Microbiol.",
+        "volume": "54",
+        "year": "2004",
+        "issue": null,
+        "externalIds": {
+          "pmid": "15554980"
+        }
+      },
+      "position": 30,
+      "text": "Venkova-Canova, T., Sober\u00f3n, N.E., Ram\u00edrez-Romero, M.A., Cevallos, Miguel A.. Two discrete elements are required for the replication of repABC plasmid: an antisense RNA and a stem\u2013loop structure. Mol. Microbiol.. 2004; 54: 1431-1444"
+    },
+    {
+      "basicMetadata": {
+        "title": "RepA negatively autoregulates the transcription of the repABC operon of the Rhizobium etli symbiotic plasmid basic replicon",
+        "authors": [
+          "Ram\u00edrez-Romero, M.A.",
+          "T\u00e9llez-Sosa, J.",
+          "Barrios, H.",
+          "P\u00e9rez-Oseguera, A.",
+          "Rosas, V.",
+          "Cevallos, M.A."
+          ],
+        "pages": {
+          "start": "195",
+          "end": "204"
+        },
+        "source": "Mol. Microbiol.",
+        "volume": "42",
+        "year": "2001",
+        "issue": null,
+        "externalIds": {
+          "pmid": "11679078"
+        }
+      },
+      "position": 31,
+      "text": "Ram\u00edrez-Romero, M.A., T\u00e9llez-Sosa, J., Barrios, H., P\u00e9rez-Oseguera, A., Rosas, V., Cevallos, M.A.. RepA negatively autoregulates the transcription of the repABC operon of the Rhizobium etli symbiotic plasmid basic replicon. Mol. Microbiol.. 2001; 42: 195-204"
+    },
+    {
+      "basicMetadata": {
+        "title": "Expressi\u00f3n of thiamin biosynthetic genes (thiCOGE) and production of symbiotic terminal oxidase cbb3 in Rhizobium etli",
+        "authors": [
+          "Miranda-Rios, J.",
+          "Morera, C.",
+          "Taboada, H.",
+          "D\u00e1valos, A.",
+          "Encarnaci\u00f3n, S.",
+          "Mora, J.",
+          "Sober\u00f3n, M."
+          ],
+        "pages": {
+          "start": "6887",
+          "end": "6893"
+        },
+        "source": "J. Bacteriol.",
+        "volume": "179",
+        "year": "1997",
+        "issue": null,
+        "externalIds": {
+          "pmid": "9371431"
+        }
+      },
+      "position": 32,
+      "text": "Miranda-Rios, J., Morera, C., Taboada, H., D\u00e1valos, A., Encarnaci\u00f3n, S., Mora, J., Sober\u00f3n, M.. Expressi\u00f3n of thiamin biosynthetic genes (thiCOGE) and production of symbiotic terminal oxidase cbb3 in Rhizobium etli. J. Bacteriol.. 1997; 179: 6887-6893"
+    },
+    {
+      "basicMetadata": {
+        "title": "Characterization of the promoter of the Rhizobium etli recA gene",
+        "authors": [
+          "Tapias, A.",
+          "Fern\u00e1ndez de Henestrosa, A.R.",
+          "Barb\u00e9, J."
+          ],
+        "pages": {
+          "start": "1573",
+          "end": "1579"
+        },
+        "source": "J. Bacteriol.",
+        "volume": "179",
+        "year": "1997",
+        "issue": null,
+        "externalIds": {
+          "pmid": "9045815"
+        }
+      },
+      "position": 33,
+      "text": "Tapias, A., Fern\u00e1ndez de Henestrosa, A.R., Barb\u00e9, J.. Characterization of the promoter of the Rhizobium etli recA gene. J. Bacteriol.. 1997; 179: 1573-1579"
+    },
+    {
+      "basicMetadata": {
+        "title": "Cloning and transcriptional an\u00e1lisis of the lipA (lipoic acid synthetase) gene from Rhizobium etli",
+        "authors": [
+          "Tat\u00e9, R.",
+          "Riccio, A.",
+          "Iaccarino, M.",
+          "Patriarca, E.J."
+          ],
+        "pages": {
+          "start": "165",
+          "end": "172"
+        },
+        "source": "FEMS Microbiol. Lett.",
+        "volume": "149",
+        "year": "1997",
+        "issue": null,
+        "externalIds": {
+          "pmid": "9141657"
+        }
+      },
+      "position": 34,
+      "text": "Tat\u00e9, R., Riccio, A., Iaccarino, M., Patriarca, E.J.. Cloning and transcriptional an\u00e1lisis of the lipA (lipoic acid synthetase) gene from Rhizobium etli. FEMS Microbiol. Lett.. 1997; 149: 165-172"
+    },
+    {
+      "basicMetadata": {
+        "title": "The ntrBC genes of Rhizobium leguminosarum are part of a complex operon subject to negative regulation",
+        "authors": [
+          "Patriarca, E.J.",
+          "Riccio, A.",
+          "Tat\u00e9, R.",
+          "Colonna-Romano, S.",
+          "Iaccarino, M.",
+          "Defez, R."
+          ],
+        "pages": {
+          "start": "569",
+          "end": "577"
+        },
+        "source": "Mol Microbiol.",
+        "volume": "9",
+        "year": "1993",
+        "issue": null,
+        "externalIds": {
+          "pmid": "8412703"
+        }
+      },
+      "position": 35,
+      "text": "Patriarca, E.J., Riccio, A., Tat\u00e9, R., Colonna-Romano, S., Iaccarino, M., Defez, R.. The ntrBC genes of Rhizobium leguminosarum are part of a complex operon subject to negative regulation. Mol Microbiol.. 1993; 9: 569-577"
+    },
+    {
+      "basicMetadata": {
+        "title": "A DNA structural atlas for Escherichia coli",
+        "authors": [
+          "Pedersen, A.G.",
+          "Jensen, L.J.",
+          "Brunak, S.",
+          "Staerfeldt, H.H.",
+          "Ussery, D.W."
+          ],
+        "pages": {
+          "start": "907",
+          "end": "930"
+        },
+        "source": "J. Mol. Biol.",
+        "volume": "299",
+        "year": "2000",
+        "issue": null,
+        "externalIds": {
+          "pmid": "10843847"
+        }
+      },
+      "position": 36,
+      "text": "Pedersen, A.G., Jensen, L.J., Brunak, S., Staerfeldt, H.H., Ussery, D.W.. A DNA structural atlas for Escherichia coli. J. Mol. Biol.. 2000; 299: 907-930"
+    },
+    {
+      "basicMetadata": {
+        "title": "A consensus promoter sequence for Caulobacter crescentus genes involved in biosynthetic and housekeeping functions",
+        "authors": [
+          "Malakooti, J.",
+          "Wang, S.P.",
+          "Ely, B."
+          ],
+        "pages": {
+          "start": "4372",
+          "end": "4376"
+        },
+        "source": "J. Bacteriol.",
+        "volume": "177",
+        "year": "1995",
+        "issue": null,
+        "externalIds": {
+          "pmid": "7543475"
+        }
+      },
+      "position": 37,
+      "text": "Malakooti, J., Wang, S.P., Ely, B.. A consensus promoter sequence for Caulobacter crescentus genes involved in biosynthetic and housekeeping functions. J. Bacteriol.. 1995; 177: 4372-4376"
+    },
+    {
+      "basicMetadata": {
+        "title": "Rhodobacter capsulatus nifA1 promoter: High-GC\u221210 regions in high-GC bacteria and basis for their transcription",
+        "authors": [
+          "Richard, C.L.",
+          "Tandon, A.",
+          "Kranz, R.G."
+          ],
+        "pages": {
+          "start": "740",
+          "end": "749"
+        },
+        "source": "J. Bacteriol.",
+        "volume": "186",
+        "year": "2004",
+        "issue": null,
+        "externalIds": {
+          "pmid": "14729700"
+        }
+      },
+      "position": 38,
+      "text": "Richard, C.L., Tandon, A., Kranz, R.G.. Rhodobacter capsulatus nifA1 promoter: High-GC\u221210 regions in high-GC bacteria and basis for their transcription. J. Bacteriol.. 2004; 186: 740-749"
+    },
+    {
+      "basicMetadata": {
+        "title": "Compilation and analysis of Bacillus subtilis \u03c3A-dependent promoter sequences: evidence for extended contact between RNA polymerase and upstream promoter DNA",
+        "authors": [
+          "Helmann, J.D."
+          ],
+        "pages": {
+          "start": "2351",
+          "end": "2360"
+        },
+        "source": "Nucleic Acids Res.",
+        "volume": "23",
+        "year": "1995",
+        "issue": null,
+        "externalIds": {
+          "pmid": "7630711"
+        }
+      },
+      "position": 39,
+      "text": "Helmann, J.D.. Compilation and analysis of Bacillus subtilis \u03c3A-dependent promoter sequences: evidence for extended contact between RNA polymerase and upstream promoter DNA. Nucleic Acids Res.. 1995; 23: 2351-2360"
+    },
+    {
+      "basicMetadata": {
+        "title": "Non-canonical sequence elements in the promoter structure. Cluster analysis of promoters recognized by Escherichia coli RNA polymerase",
+        "authors": [
+          "Ozoline, O.N.",
+          "Deev, A.A.",
+          "Arkhipova, M.V."
+          ],
+        "pages": {
+          "start": "4703",
+          "end": "4709"
+        },
+        "source": "Nucleic Acids Res.",
+        "volume": "25",
+        "year": "1997",
+        "issue": null,
+        "externalIds": {
+          "pmid": "9365247"
+        }
+      },
+      "position": 40,
+      "text": "Ozoline, O.N., Deev, A.A., Arkhipova, M.V.. Non-canonical sequence elements in the promoter structure. Cluster analysis of promoters recognized by Escherichia coli RNA polymerase. Nucleic Acids Res.. 1997; 25: 4703-4709"
+    },
+    {
+      "basicMetadata": {
+        "title": "Sigma70 promoters in Escherichia coli: specific transcription in dense regions of overlapping promoter-like signals",
+        "authors": [
+          "Huerta, M.A.",
+          "Collado-Vides, J."
+          ],
+        "pages": {
+          "start": "261",
+          "end": "278"
+        },
+        "source": "J. Mol. Biol.",
+        "volume": "333",
+        "year": "2003",
+        "issue": null,
+        "externalIds": {
+          "pmid": "14529615"
+        }
+      },
+      "position": 41,
+      "text": "Huerta, M.A., Collado-Vides, J.. Sigma70 promoters in Escherichia coli: specific transcription in dense regions of overlapping promoter-like signals. J. Mol. Biol.. 2003; 333: 261-278"
+    },
+    {
+      "basicMetadata": {
+        "title": "Experimental and computer analysis of transcriptional start sites in the cyanobacterium Prochlorococcus MED4",
+        "authors": [
+          "Vogel, J.",
+          "Axmann, I.M.",
+          "Herzel, H.",
+          "Hess, W.R."
+          ],
+        "pages": {
+          "start": "2890",
+          "end": "2899"
+        },
+        "source": "Nucleic Acids Res.",
+        "volume": "31",
+        "year": "2003",
+        "issue": null,
+        "externalIds": {
+          "pmid": "12771216"
+        }
+      },
+      "position": 42,
+      "text": "Vogel, J., Axmann, I.M., Herzel, H., Hess, W.R.. Experimental and computer analysis of transcriptional start sites in the cyanobacterium Prochlorococcus MED4. Nucleic Acids Res.. 2003; 31: 2890-2899"
+    },
+    {
+      "basicMetadata": {
+        "title": "DNA sequence elements located immediately upstream of the \u221210 hexamer in Escherichia coli promoters: a systematic study",
+        "authors": [
+          "Burr, T.",
+          "Mitchell, J.",
+          "Kolb, A.",
+          "Minchin, S.",
+          "Busby, S."
+          ],
+        "pages": {
+          "start": "1864",
+          "end": "1870"
+        },
+        "source": "Nucleic Acids Res.",
+        "volume": "28",
+        "year": "2000",
+        "issue": null,
+        "externalIds": {
+          "pmid": "10756184"
+        }
+      },
+      "position": 43,
+      "text": "Burr, T., Mitchell, J., Kolb, A., Minchin, S., Busby, S.. DNA sequence elements located immediately upstream of the \u221210 hexamer in Escherichia coli promoters: a systematic study. Nucleic Acids Res.. 2000; 28: 1864-1870"
+    },
+    {
+      "basicMetadata": {
+        "title": "Identification and analysis of \u2018extended \u201310\u2019 promoters in Escherichia coli",
+        "authors": [
+          "Mitchell, J.E.",
+          "Zheng, D.",
+          "Busby, S.J.",
+          "Minchin, S.D."
+          ],
+        "pages": {
+          "start": "4689",
+          "end": "4695"
+        },
+        "source": "Nucleic Acids Res.",
+        "volume": "31",
+        "year": "2003",
+        "issue": null,
+        "externalIds": {
+          "pmid": "12907708"
+        }
+      },
+      "position": 44,
+      "text": "Mitchell, J.E., Zheng, D., Busby, S.J., Minchin, S.D.. Identification and analysis of \u2018extended \u201310\u2019 promoters in Escherichia coli. Nucleic Acids Res.. 2003; 31: 4689-4695"
+    },
+    {
+      "basicMetadata": {
+        "title": "Determination of common structural features in Escherichia coli promoters by computer analysis",
+        "authors": [
+          "Lisser, S.",
+          "Margalit, H."
+          ],
+        "pages": {
+          "start": "823",
+          "end": "830"
+        },
+        "source": "Eur. J. Biochem.",
+        "volume": "223",
+        "year": "1994",
+        "issue": null,
+        "externalIds": {
+          "pmid": "8055959"
+        }
+      },
+      "position": 45,
+      "text": "Lisser, S., Margalit, H.. Determination of common structural features in Escherichia coli promoters by computer analysis. Eur. J. Biochem.. 1994; 223: 823-830"
+    },
+    {
+      "basicMetadata": {
+        "title": "Sttreptococcus pneumoniae possesses canonical Escherichia coli (sigma 70) promoters",
+        "authors": [
+          "Morrison, D.A.",
+          "Jaurin, B."
+          ],
+        "pages": {
+          "start": "1143",
+          "end": "1152"
+        },
+        "source": "Mol. Microbiol.",
+        "volume": "4",
+        "year": "1990",
+        "issue": null,
+        "externalIds": {
+          "pmid": "2233251"
+        }
+      },
+      "position": 46,
+      "text": "Morrison, D.A., Jaurin, B.. Sttreptococcus pneumoniae possesses canonical Escherichia coli (sigma 70) promoters. Mol. Microbiol.. 1990; 4: 1143-1152"
+    },
+    {
+      "basicMetadata": {
+        "title": "Studies on transformation of Escherichia coli with plasmids",
+        "authors": [
+          "Hanahan, D."
+          ],
+        "pages": {
+          "start": "557",
+          "end": "580"
+        },
+        "source": "J. Mol. Biol.",
+        "volume": "166",
+        "year": "1983",
+        "issue": null,
+        "externalIds": {
+          "pmid": "6345791"
+        }
+      },
+      "position": 47,
+      "text": "Hanahan, D.. Studies on transformation of Escherichia coli with plasmids. J. Mol. Biol.. 1983; 166: 557-580"
+    },
+    {
+      "basicMetadata": {
+        "title": "Construction of new \u03b2-glucuronidase cassettes for making transcriptional fusions and their use with new methods for allele replacement",
+        "authors": [
+          "Metcalf, W.W.",
+          "Wanner, B.L."
+          ],
+        "pages": {
+          "start": "17",
+          "end": "25"
+        },
+        "source": "Gene",
+        "volume": "129",
+        "year": "1993",
+        "issue": null,
+        "externalIds": {
+          "pmid": "8335256"
+        }
+      },
+      "position": 48,
+      "text": "Metcalf, W.W., Wanner, B.L.. Construction of new \u03b2-glucuronidase cassettes for making transcriptional fusions and their use with new methods for allele replacement. Gene. 1993; 129: 17-25"
+    },
+    {
+      "basicMetadata": {
+        "title": "Four new derivatives of the broad-host range cloning vector pBBR1MCS, carrying different antibiotic resistance cassettes",
+        "authors": [
+          "Kovach, M.E.",
+          "Elzer, P.H.",
+          "Hill, D.S.",
+          "Robertson, G.T.",
+          "Farris, M.A.",
+          "Roop, R.M.",
+          "Peterson, K.M."
+          ],
+        "pages": {
+          "start": "175",
+          "end": "176"
+        },
+        "source": "Gene",
+        "volume": "166",
+        "year": "1995",
+        "issue": null,
+        "externalIds": {
+          "pmid": "8529885"
+        }
+      },
+      "position": 49,
+      "text": "Kovach, M.E., Elzer, P.H., Hill, D.S., Robertson, G.T., Farris, M.A., Roop, R.M., Peterson, K.M.. Four new derivatives of the broad-host range cloning vector pBBR1MCS, carrying different antibiotic resistance cassettes. Gene. 1995; 166: 175-176"
+    },
+    {
+      "basicMetadata": {
+        "title": "Improved broad-host range plasmids for DNA cloning in gram-negative bacteria",
+        "authors": [
+	  "Keen, N.T.", 
+	  "Tamaki, S.", 
+	  "Kobayashi, D.", 
+	  "Trollinger, D."
+	],
+        "pages": {
+          "start": "191",
+          "end": "197"
+        },
+        "source": "Gene",
+        "volume": "70",
+        "year": "1988",
+        "issue": null,
+        "externalIds": {
+          "pmid": "2853689"
+        }
+      },
+      "position": 50,
+      "text": "Keen, N.T., Tamaki, S., Kobayashi, D., Trollinger, D.. Improved broad-host range plasmids for DNA cloning in gram-negative bacteria. Gene. 1988; 70: 191-197"
+    }
+  ],
+  "affiliations": [
+    {
+      "organization": "Programa de Geno\u0301mica Evolutiva, Centro de Ciencias Geno\u0301micas, Universidad Nacional Auto\u0301noma de Me\u0301xicoApartado Postal 565-A, C.",
+      "countryName": "Me\u0301xico",
+      "countryCode": "MX",
+      "address": "P 62210, Cuernavaca, Morelos",
+      "rawText": "Programa de Geno\u0301mica Evolutiva, Centro de Ciencias Geno\u0301micas, Universidad Nacional Auto\u0301noma de Me\u0301xicoApartado Postal 565-A, C.P 62210, Cuernavaca, Morelos, Me\u0301xico"
+    }
+  ],
+  "pages": {
+    "start": "1470",
+    "end": "1480"
+  }
+}
+{
+  "id": "50|od_______908::14ddacb589be0a68489f89818647f27a",
+  
+  "externalIdentifiers": {
+          "pmid": "5490870"
+  },
+  "entityType": "research-article",
+  "journal": null,
+  "references": null,
+  "affiliations": null,
+  "pages": {
+    "start": "71",
+    "end": "75"
+  }
+}

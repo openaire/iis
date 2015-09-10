@@ -1,0 +1,13 @@
+@namespace("eu.dnetlib.iis.metrics.primary.schemas")
+protocol IIS{
+
+        record DocumentWithAuthorsAndCitations {
+//              ID of the document
+                string documentId;
+//      author IDs
+                array<string> authorIds;
+//      referenced documents IDs
+        array<string> referencedIds;
+        }
+}
+

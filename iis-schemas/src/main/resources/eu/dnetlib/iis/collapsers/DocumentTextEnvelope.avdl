@@ -1,0 +1,13 @@
+@namespace("eu.dnetlib.iis.collapsers.schemas")
+protocol IIS{
+
+    import idl "../metadataextraction/DocumentText.avdl";
+    
+    
+    record DocumentTextEnvelope {
+        eu.dnetlib.iis.metadataextraction.schemas.DocumentText data;
+        string origin;
+    }
+    
+}
+

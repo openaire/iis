@@ -1,0 +1,259 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="mainworkflows_preprocessing_import">
+	<parameters>
+		<property>
+            <name>remove_sideproducts</name>
+            <value>true</value>
+            <description>flag indicating inference side products will be erased</description>
+        </property>
+		<!-- import concepts related -->
+		<property>
+			<name>islookup_service_location</name>
+			<description>IS Lookup service location</description>
+		</property>
+		<property>
+			<name>project_concepts_context_ids_csv</name>
+			<description>comma separated list of concepts context identifiers to be picked by ISLookup</description>
+		</property>
+		<!-- import project related -->
+		<property>
+			<name>database_service_location</name>
+			<value>$UNDEFINED$</value>
+			<description>Database service (not WSDL) location URL</description>
+		</property>
+		<property>
+			<name>database_dbname</name>
+			<value>dnet_openaireplus_node6_t</value>
+			<description>database name</description>
+		</property>
+		<!-- import datacite related -->
+		<property>
+			<name>mdstore_service_location</name>
+			<value>$UNDEFINED$</value>
+			<description>MDStore service (not WSDL) location URL</description>
+		</property>
+		<property>
+			<name>dataset_mdstore_ids_csv</name>
+			<value>$UNDEFINED$</value>
+			<description>Dataset MDStore identifier</description>
+		</property>
+		<!-- import content related -->
+		<property>
+			<name>objectstore_service_location</name>
+			<value>$UNDEFINED$</value>
+			<description>object store service location required for content retrieval</description>
+		</property>
+		<property>
+			<name>approved_objectstores_csv</name>
+			<value>$UNDEFINED$</value>
+			<description>CSV list of object stores identifiers to be processed</description>
+		</property>
+		<property>
+			<name>wos_plaintext_objectstores_csv</name>
+			<value>$UNDEFINED$</value>
+			<description>CSV list of plaintext WoS object stores identifiers to be processed</description>
+		</property>
+		<property>
+			<name>mimetypes_pdf</name>
+			<description>pdf mime types</description>
+		</property>
+		<property>
+			<name>mimetypes_text</name>
+			<description>text mime types</description>
+		</property>
+		<property>
+			<name>mimetypes_html</name>
+			<description>html mime types</description>
+		</property>
+		<property>
+			<name>mimetypes_xml_pmc</name>
+			<description>xml pmc types</description>
+		</property>
+		<property>
+			<name>mimetypes_wos</name>
+			<description>WoS text mime types</description>
+		</property>
+		<!-- import timeouts related -->
+		<property>
+			<name>resultset_client_read_timeout</name>
+			<value>60000</value>
+			<description>resultset client read timeout</description>
+		</property>
+		<property>
+			<name>content_connection_timeout</name>
+			<value>60000</value>
+			<description>import content connection timeout</description>
+		</property>
+		<property>
+			<name>content_read_timeout</name>
+			<value>60000</value>
+			<description>import content read timeout</description>
+		</property>
+		<!-- metadata extraction related -->
+		<property>
+			<name>metadataextraction_excluded_checksums</name>
+			<value>$UNDEFINED$</value>
+			<description>list of content checksums excluded from metadataextraction processing</description>
+		</property>
+		<property>
+			<name>metadataextraction_max_file_size_mb</name>
+			<value>$UNDEFINED$</value>
+			<description>maximum allowed file size in Megabytes</description>
+		</property>
+		<property>
+			<name>metadataextraction_default_cache_location</name>
+			<value>/cache/metadataextraction</value>
+			<description>metadata extraction HDFS cache location</description>
+		</property>
+		<property>
+			<name>metadataimport_output_name_project</name>
+			<value>project</value>
+			<description>metadata import project output subdirectory name</description>
+		</property>
+		<!-- output parameters -->
+		<property>
+			<name>output_extracted_document_metadata</name>
+			<description>extracted document metadata output directory</description>
+		</property>
+		<property>
+			<name>output_metadataimport_root</name>
+			<value>$UNDEFINED$</value>
+			<description>metadata importer output root directory, required when ${active_import_metadata}=true</description>
+		</property>
+		<property>
+			<name>output_dataset</name>
+			<description>dataset importer output directory holding dataset metadata, required when ${active_import_dataset}=true</description>
+		</property>
+		<property>
+			<name>output_dataset_to_mdstore</name>
+			<description>dataset importer output directory holding dataset to mdstore mappings, required when ${active_import_dataset}=true</description>
+		</property>
+		<property>
+			<name>output_document_text</name>
+			<description>text import output directory. merged from three different sources</description>
+		</property>
+		<property>
+			<name>output_wos_text</name>
+			<description>WoS text import output directory</description>
+		</property>
+		<property>
+			<name>output_wos</name>
+			<description>WoS text import output directory from common import.
+				Should replace output_wos_text parameter!</description>
+		</property>
+		<property>
+			<name>output_project_concept</name>
+			<description>project concepts output directory</description>
+		</property>
+		<property>
+			<name>output_faults</name>
+			<description>processing faults output directory</description>
+		</property>
+	</parameters>
+	
+	<global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapred.job.queue.name</name>
+                <value>${queueName}</value>
+            </property>
+		</configuration>
+	</global>
+	 
+	<start to="import_forking" />
+	
+	<fork name="import_forking">
+    	<path start="common_import"/>
+    	<path start="wos_url_import"/>
+    </fork>
+
+	<action name="common_import">
+		<sub-workflow>
+            <app-path>${wf:appPath()}/mainworkflows_common_import</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/mainworkflows_common_import/working_dir</value>
+                </property>
+                <!-- importing modes -->
+				<property>
+					<name>active_import_metadata</name>
+					<value>false</value>
+				</property>
+				<property>
+					<name>active_import_dataset</name>
+					<value>true</value>
+				</property>
+				<property>
+					<name>active_import_concept</name>
+					<value>true</value>
+				</property>
+				<!-- all the other properties autmatically propagated-->
+			</configuration>
+        </sub-workflow>
+		<ok to="import_joining" />
+		<error to="fail" />
+	</action>
+
+	<action name="wos_url_import">
+		<sub-workflow>
+            <app-path>${wf:appPath()}/import_content_url</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/wos_url_import/working_dir</value>
+                </property>
+				<property>
+					<name>approved_objectstores_csv</name>
+					<value>${wos_plaintext_objectstores_csv}</value>
+				</property>
+				<property>
+					<name>output_root</name>
+					<value>${workingDir}/wos_url_import/imported</value>
+				</property>
+				<property>
+					<name>output_name_wos</name>
+					<value>wos</value>
+				</property>
+				<!-- all the other properties autmatically propagated-->
+			</configuration>
+        </sub-workflow>
+		<ok to="wos_import_plaintext" />
+		<error to="fail" />
+	</action>
+
+	<action name="wos_import_plaintext">
+		<sub-workflow>
+            <app-path>${wf:appPath()}/import_plaintext</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/wos_import_plaintext/working_dir</value>
+                </property>
+                <property>
+					<name>input</name>
+					<value>${workingDir}/wos_url_import/imported/wos</value>
+				</property>
+            	<property>
+					<name>output</name>
+					<value>${output_wos_text}</value>
+				</property>
+				<!-- all the other properties are autmatically propagated-->
+			</configuration>
+        </sub-workflow>
+		<ok to="import_joining" />
+		<error to="fail" />
+	</action>
+
+	<join name="import_joining" to="end"/>
+    
+	<kill name="fail">
+		<message>Unfortunately, the process failed -- error message:
+			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+	</kill>
+	<end name="end" />
+</workflow-app>

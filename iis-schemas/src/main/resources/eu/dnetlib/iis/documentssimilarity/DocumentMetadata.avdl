@@ -1,0 +1,12 @@
+@namespace("eu.dnetlib.iis.documentssimilarity.schemas")
+protocol IIS{
+    import idl "../importer/Person.avdl";
+
+    record DocumentMetadata {
+        string id;
+        union { null , string } title = null;
+        union { null , string } abstract = null;
+        union { null , array<string> } keywords = null;
+        union { null , array<eu.dnetlib.iis.importer.schemas.Person> } authors = null;
+    }
+}

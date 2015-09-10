@@ -1,0 +1,30 @@
+[{
+  "type_source": "SVN", 
+  "goal": "package -U -T 4C source:jar", 
+  "url": "http://svn-public.driver.research-infrastructures.eu/driver/dnet40/modules/icm-iis-mainworkflows/trunk/", 
+  "deploy_repository": "dnet4-snapshots", 
+  "version": "4",
+  "mail": "m.horst@icm.edu.pl",
+  "deploy_repository_url": "http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-snapshots", 
+  "name": "icm-iis-mainworkflows"
+},
+{
+  "type_source": "SVN",
+  "goal": "clean package -Pattach-test-resources,oozie-package,deploy,run,monitor -Dworkflow.source.dir=eu/dnetlib/iis/mainworkflows/integration/import -Diis.hadoop.frontend.user.name=jenkins -Diis.hadoop.frontend.host.name=ci-test.hadoop.iis.openaire.eu -Diis.hadoop.frontend.home.dir=/mnt/tmp -DoozieServiceLoc=http://ci-test.hadoop.iis.openaire.eu:11000/oozie -DnameNode=hdfs://ci-test.hadoop.iis.openaire.eu:8020 -DjobTracker=ci-test.hadoop.iis.openaire.eu:8021 -Doutput.dir.name=integration-test", 
+  "url": "http://svn-public.driver.research-infrastructures.eu/driver/dnet40/modules/icm-iis-mainworkflows/trunk/", 
+  "nightly" : "true",
+  "cron" : "H H * * *",
+  "version": "4",
+  "mail": "m.horst@icm.edu.pl",
+  "name": "icm-iis-mainworkflows_import-integration-test"
+},
+{
+  "type_source": "SVN",
+  "goal": "clean package -Pattach-test-resources,oozie-package,deploy,run,monitor -Dworkflow.source.dir=eu/dnetlib/iis/mainworkflows/integration/primary/processing -Diis.hadoop.frontend.user.name=jenkins -Diis.hadoop.frontend.host.name=ci-test.hadoop.iis.openaire.eu -Diis.hadoop.frontend.home.dir=/mnt/tmp -DoozieServiceLoc=http://ci-test.hadoop.iis.openaire.eu:11000/oozie -DnameNode=hdfs://ci-test.hadoop.iis.openaire.eu:8020 -DjobTracker=ci-test.hadoop.iis.openaire.eu:8021 -Doutput.dir.name=integration-test", 
+  "url": "http://svn-public.driver.research-infrastructures.eu/driver/dnet40/modules/icm-iis-mainworkflows/trunk/", 
+  "nightly" : "true",
+  "cron" : "H H * * *",
+  "version": "4",
+  "mail": "m.horst@icm.edu.pl",
+  "name": "icm-iis-mainworkflows_primary_processing-integration-test"
+}]

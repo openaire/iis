@@ -1,0 +1,12 @@
+@namespace("eu.dnetlib.iis.documentsclassification.schemas")
+protocol IIS{
+
+    record DocumentMetadata {
+//      ID of the document, foreign key: Document.id ("document" data store)
+        string id;
+
+//      abstract or description
+        string abstract;
+    }
+
+}

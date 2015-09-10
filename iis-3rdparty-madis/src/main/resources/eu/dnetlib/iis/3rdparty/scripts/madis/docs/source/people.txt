@@ -1,0 +1,12 @@
+People
+======
+
+Core developers
+---------------
+- Lefteris Stamatogiannakis
+- Mei Li Triantafyllidi
+
+Extensions developers
+---------------------
+- Maria Vayanou
+- Marialena Kyriakidi

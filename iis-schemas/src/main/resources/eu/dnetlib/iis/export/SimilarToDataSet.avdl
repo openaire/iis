@@ -1,0 +1,12 @@
+@namespace("eu.dnetlib.iis.export.schemas")
+protocol IIS{
+
+    import idl "../websiteusage/DataSetWebsiteUsageSimilarities.avdl";
+
+    record SimilarToDataSet {
+//      foreign key: DataSetWithInferencedData.id "data set with inferenced data" data store)
+        string dataSetId;
+        union { null , eu.dnetlib.iis.websiteusage.schemas.DataSetWebsiteUsageSimilarities } similarities = null;
+    }
+    
+}

@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<!-- Note that documentation placed in comments in this file uses the
+"markdown" syntax (along with its way of dividing text into sections). -->
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="referenceextraction_dataset_main_sqlite">
+	
+	<parameters>
+		<property>
+			<name>input_document_text</name>
+			<description>input document text</description>
+		</property>
+		<property>
+			<name>input_dataset_db</name>
+			<description>input dataset SQLite DB path</description>
+		</property>
+		<property>
+			<name>output_document_to_dataset</name>
+			<description>output document to dataset</description>
+		</property>
+	</parameters>
+
+	<start to="generate-schema" />
+
+	<action name="generate-schema">
+	    <java>
+    		<job-tracker>${jobTracker}</job-tracker>
+        	<name-node>${nameNode}</name-node>
+	        <main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
+	        <arg>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</arg>
+	        <arg>eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet</arg>
+	        <capture-output />
+	    </java>
+	    <ok to="main_sqlite" />
+	    <error to="fail" />
+	</action>
+
+    <action name="main_sqlite">
+        <map-reduce>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <delete path="${nameNode}${output_document_to_dataset}"/>
+            </prepare>
+            <streaming>
+            	<!-- Here, we give the relative path to the script and pass it
+            	the parameters of the workflow node. The script is held
+            	in a directory having the same name as the workflow node.
+
+            	The parameters should be passed as **named** arguments. This
+            	convention of passing them as named arguments makes the code
+            	more readable/maintainable.
+            	 -->
+                <mapper>scripts/madis/mexec.py -d dataset.db -f scripts/finddatacite.sql</mapper>
+            </streaming>
+            <configuration>
+            	<!-- # Standard settings for our framework -->
+                <property>
+                    <name>mapred.output.format.class</name>
+                    <value>com.cloudera.science.avro.streaming.AvroAsJSONOutputFormat</value>
+                </property>
+                <property>
+                    <name>mapred.input.format.class</name>
+                    <value>com.cloudera.science.avro.streaming.AvroAsJSONInputFormat</value>
+                </property>
+                <!-- # Custom settings for this workflow node -->
+                <!-- We do not use any reducers, so we set their number to 0 -->
+                <property>
+                    <name>mapred.reduce.tasks</name>
+                    <value>0</value>
+                </property>
+                
+                <!-- INPUT -->
+                <property>
+                    <name>mapred.input.dir</name>
+                    <value>${input_document_text}</value>
+                </property>
+
+                <property>
+                    <name>input.schema.literal</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.DocumentText']}</value>
+                </property>
+
+				<!-- OUTPUT -->
+                <property>
+                    <name>mapred.output.dir</name>
+                    <value>${output_document_to_dataset}</value>
+                </property>          
+
+                <property>
+                    <name>output.schema.literal</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet']}</value>
+                </property>
+
+				<!-- this one is requred due to the large amount of time taken 
+					by process storing plaintexts into the database -->
+				<property>
+					<name>mapred.task.timeout</name>
+					<value>1800000</value>
+				</property>
+				<property>
+					<name>mapreduce.task.timeout</name>
+					<value>1800000</value>
+				</property>
+				
+            </configuration>
+            <file>${input_dataset_db}#dataset.db</file>
+            
+        </map-reduce>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+        			[${wf:errorMessage(wf:lastErrorNode())}]
+        		</message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

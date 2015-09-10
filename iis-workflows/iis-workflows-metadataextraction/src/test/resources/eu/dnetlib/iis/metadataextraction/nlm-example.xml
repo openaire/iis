@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<article>
+    <front>
+        <journal-meta>
+            <journal-title-group>
+                <journal-title>
+                    International Journal of Digital Multimedia Broadcasting
+                </journal-title>
+            </journal-title-group>
+            <publisher>
+                <publisher-name>Hindawi Publishing Corporation</publisher-name>
+            </publisher>
+        </journal-meta>
+        <article-meta>
+            <title-group>
+                <article-title>
+                    Video Quality Prediction Models Based on Video Content Dynamics for H.264 Video over UMTS Networks
+                </article-title>
+            </title-group>
+            <article-id pub-id-type="hindawi-id">608138</article-id>
+            <article-id pub-id-type="doi">10.1155/2010/608138</article-id>
+            <contrib-group>
+                <contrib contrib-type="author">
+                    <string-name>Lingfen Sun</string-name>
+                    <xref ref-type="aff" rid="2">2</xref>
+                    <xref ref-type="aff" rid="0">0</xref>
+                </contrib>
+                <contrib contrib-type="author">
+                    <string-name>Fidel Liberal</string-name>
+                    <xref ref-type="aff" rid="1">1</xref>
+                </contrib>
+                <contrib contrib-type="author">
+                    <string-name>Harilaos Koumaras</string-name>
+                    <xref ref-type="aff" rid="0">0</xref>
+                </contrib>
+                <aff id="0">
+                    <label>0</label><institution>Institute of Informatics and Telecommunications, NCSR Demokritos</institution>, <addr-line>15310 Athens</addr-line>, <country country="GR">Greece</country>
+                </aff>
+                <aff id="1">
+                    <label>1</label><institution>Department of Electronics and Telecommunications, University of the Basque Country (UPV/EHU)</institution>, <addr-line>48013 Bilbao</addr-line>, <country country="ES">Spain</country>
+                </aff>
+                <aff id="2">
+                    <label>2</label><institution>Centre for Signal Processing and Multimedia Communication, School of Computing</institution>, Communications and Electronics, <institution>University of Plymouth</institution>, Plymouth PL4 8AA, <country>UK</country>
+                </aff>
+            </contrib-group>
+            <abstract>
+                <p>
+                    The aim of this paper is to present video quality prediction models for objective non-intrusive, prediction of H.264 encoded video for all content types combining parameters both in the physical and application layer over Universal Mobile Telecommunication Systems (UMTS) networks. In order to characterize the Quality of Service (QoS) level, a learning model based on Adaptive Neural Fuzzy Inference System (ANFIS) and a second model based on non-linear regression analysis is proposed to predict the video quality in terms of the Mean Opinion Score (MOS). The objective of the paper is two-fold. First, to find the impact of QoS parameters on end-to-end video quality for H.264 encoded video. Second, to develop learning models based on ANFIS and nonlinear regression analysis to predict video quality over UMTS networks by considering the impact of radio link loss models. The loss models considered are 2-state Markov models. Both the models are trained with a combination of physical and application layer parameters and validated with unseen dataset. Preliminary results show that good prediction accuracy was obtained from both the models. The work should help in the development of a reference-free video prediction model and QoS control methods for video over UMTS networks.
+                </p>
+            </abstract>
+            <volume>2010</volume>
+            <issue>issue-5</issue>
+            <fpage>50</fpage>
+            <lpage>60</lpage>
+            <pub-date>
+                <year>2010</year>
+            </pub-date>
+            <history>
+                <date date-type="accepted">
+                    <day>18</day>
+                    <month>2</month>
+                    <year>2010</year>
+                </date>
+                <date date-type="received">
+                    <day>30</day>
+                    <month>10</month>
+                    <year>2009</year>
+                </date>
+            </history>
+            <kwd-group>
+                <kwd>keyword 1</kwd>
+                <kwd>keyword 2</kwd>
+            </kwd-group>
+        </article-meta>
+    </front>
+    <back>
+        <ref-list>
+            <ref>
+                <mixed-citation>
+                    [1]
+                    <string-name>
+                        <given-names>E.</given-names>
+                        <surname>Braunwald</surname>
+                    </string-name>
+                    , “
+                    <article-title>Shattuck lecture: cardiovascular medicine at the turn of the millennium: triumphs</article-title>
+                    , concerns, and opportunities,”
+                    <source>New England Journal of Medicine</source>
+                    , vol.
+                    <volume>337</volume>
+                    , no.
+                    <issue>19</issue>
+                    , pp.
+                    <fpage>1360</fpage>
+                    –
+                    <lpage>1369</lpage>
+                    ,
+                    <year>1997</year>
+                    .
+                </mixed-citation>
+            </ref>
+            <ref>
+                <mixed-citation>
+                    [2]
+                    <string-name>
+                        <given-names>R. L.</given-names>
+                        <surname>Campbell</surname>
+                    </string-name>
+                    ,
+                    <string-name>
+                        <given-names>R.</given-names>
+                        <surname>Banner</surname>
+                    </string-name>
+                    ,
+                    <string-name>
+                        <given-names>J.</given-names>
+                        <surname>Konick-McMahan</surname>
+                        , and
+                    </string-name>
+                    <string-name>
+                        <given-names>M. D.</given-names>
+                        <surname>Naylor</surname>
+                    </string-name>
+                    , “
+                    <article-title>Discharge planning and home follow-up of the elderly patient with heart failure</article-title>
+                    ,”
+                    <source>The Nursing Clinics of North America</source>
+                    , vol.
+                    <volume>33</volume>
+                    , no.
+                    <issue>3</issue>
+                    , pp.
+                    <fpage>497</fpage>
+                    ,
+                    <year>1998</year>
+                    .
+                </mixed-citation>
+            </ref>
+        </ref-list>
+    </back>
+</article>

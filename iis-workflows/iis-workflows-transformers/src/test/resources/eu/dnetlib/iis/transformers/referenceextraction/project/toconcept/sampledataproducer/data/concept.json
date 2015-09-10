@@ -1,0 +1,3 @@
+{"id": "concept-id1", "label": "concept id1", "params": {"CD_PROJECT_NUMBER": "123456", "CD_FRAMEWORK": "FP7"}}
+{"id": "concept-id2", "label": "concept id2", "params": {"CD_PROJECT_NUMBER": "654321", "CD_FRAMEWORK": "FP7"}}
+{"id": "concept-id3", "label": "concept id3", "params": {"CD_PROJECT_NUMBER": "999999", "CD_FRAMEWORK": "FP7"}}

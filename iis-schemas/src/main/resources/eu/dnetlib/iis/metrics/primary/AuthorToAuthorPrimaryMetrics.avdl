@@ -1,0 +1,11 @@
+@namespace("eu.dnetlib.iis.metrics.primary.schemas")
+protocol IIS{
+
+    import idl "AuthorPrimaryMetrics.avdl";
+
+    record AuthorToAuthorPrimaryMetrics {
+//      ID of the author
+        string personId;
+        union { null , AuthorPrimaryMetrics } primaryMetrics = null;
+    }
+}

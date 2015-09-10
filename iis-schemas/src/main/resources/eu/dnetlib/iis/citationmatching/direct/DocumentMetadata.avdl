@@ -1,0 +1,19 @@
+@namespace("eu.dnetlib.iis.citationmatching.direct.schemas")
+protocol IIS{
+
+	record ReferenceMetadata {
+        // reference position in the bibliography
+        int position;
+        // external identifiers
+		union { null , map<string> } externalIds = null;
+    }
+    
+    record DocumentMetadata {
+        string id;
+//      alternative identifier (e.g. internal publisher's identifiers)
+        union { null , map<string> } externalIdentifiers = null;
+//      detailed publication type name, originates from extracted metadata
+        union { null , string } publicationTypeName = null;
+        array<ReferenceMetadata> references;
+    }
+}

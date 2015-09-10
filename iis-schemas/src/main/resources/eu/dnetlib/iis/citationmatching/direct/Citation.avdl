@@ -1,0 +1,12 @@
+@namespace("eu.dnetlib.iis.citationmatching.direct.schemas")
+protocol IIS{
+
+    record Citation {
+//      citing document OA+ identifier
+        string sourceDocumentId;
+//      position of citation in the bibliography of the source document
+        int position;
+//      cited document OA+ identifier
+        string destinationDocumentId;
+    }
+}

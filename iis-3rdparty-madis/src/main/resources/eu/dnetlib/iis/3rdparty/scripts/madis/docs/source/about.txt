@@ -1,0 +1,54 @@
+About
+**********
+
+madIS is a extensible relational database system build upon the SQLite database and with extensions written in Python.
+
+It was designed and created by a small team of developers at the MaDgIK lab of the National and Kapodistrian University of Athens, under the surpevising of professor Yannis Ioannidis.
+
+The extensibility permits quick experimentation concerning data analysis tasks, rapid development of data processing workflows and serves in general as a simple and easy environment to test database related ideas without much effort.
+madIS' query language is SQL with some syntactic "extensions" aiming to simplify query composition.
+
+
+madIS main design goals are:
+
+- To be easy, and versatile
+
+- To be extremely productive for data analysis and data processing tasks
+
+- Maximum reusability of extensions
+
+In practice madIS has proved to be extremely easy when adding new functionalities to it, very fast in developing new workflows and most of all the majority of the external functions written for madIS, have proven to be reusable in new tasks for which they were not designed for.
+
+madIS is suitable for
+=======================
+
+Complex data analysis tasks
+----------------------------
+
+In madIS it is very easy to create additional relational functions, or join against external files without first importing them into the database.
+
+Additionally madIS offers a very fast multidimensional index, greatly speeding up multi-constraint joins, even when joining against external sources.
+
+Data transformations
+---------------------
+
+madIS can already use the file system or network sources as tables. In addition, with a little Python knowledge, complex data transformation functions can be created and be used inside the database. All these can be done even without importing anything inside the database.
+
+In addition madIS offers a very easy, to work with, workflow engine to automate the data transformation steps.
+
+Database research
+-------------------
+
+If you wish to develop and test a new indexing structure, it can easily be developed in madIS. madIS uses Python for its extensions and already has plenty of code to start from.
+
+
+.. note::
+   Due to madIS' SQLite core, the database format of madIS is exactly the same as SQLite's one.
+   This means that all SQLite databases are directly usable with madIS.
+
+.. seealso::
+
+    * `SQLite <http://www.sqlite.org>`_
+    * `Python <http://www.python.org>`_
+    * `APSW <http://code.google.com/p/apsw/>`_
+

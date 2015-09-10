@@ -1,0 +1,7 @@
+{"documentId": "docId1", "conceptId": "concept1", "confidenceLevel": 0.9}
+{"documentId": "docId1", "conceptId": "concept1", "confidenceLevel": null}
+{"documentId": "docId2", "conceptId": "concept1", "confidenceLevel": 0.9}
+{"documentId": "docId2", "conceptId": "concept2", "confidenceLevel": 0.8}
+{"documentId": "docId3", "conceptId": "concept3", "confidenceLevel": 0.7}
+{"documentId": "docId3", "conceptId": "concept2", "confidenceLevel": null}
+{"documentId": "docId3", "conceptId": "concept1", "confidenceLevel": 0.7}

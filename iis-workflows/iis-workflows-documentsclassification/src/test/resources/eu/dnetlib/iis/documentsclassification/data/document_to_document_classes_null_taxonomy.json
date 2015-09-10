@@ -1,0 +1,91 @@
+{
+  "documentId": "50",
+  "classes": {
+    "arXivClasses": [
+      {
+        "classLabels": [
+          "General Relativity and Quantum Cosmology"
+        ],
+        "confidenceLevel": 0.99
+      }
+    ],
+    "WoSClasses": [
+      {
+        "classLabels": [
+          "AUTOMATION \u0026 CONTROL SYSTEMS"
+        ],
+        "confidenceLevel": 0.99
+      },
+      {
+        "classLabels": [
+          "MATHEMATICS"
+        ],
+        "confidenceLevel": 0.99
+      },
+      {
+        "classLabels": [
+          "PARASITOLOGY"
+        ],
+        "confidenceLevel": 0.99
+      },
+      {
+        "classLabels": [
+          "PHYSICS, FLUIDS \u0026 PLASMAS"
+        ],
+        "confidenceLevel": 0.99
+      }
+    ],
+    "DDCClasses": [
+      {
+        "classLabels": [
+          "Social sciences",
+          "Statistics"
+        ],
+        "confidenceLevel": 0.99
+      },
+      {
+        "classLabels": [
+          "Science",
+          "Biology"
+        ],
+        "confidenceLevel": 0.99
+      },
+      {
+        "classLabels": [
+          "Science",
+          "Science"
+        ],
+        "confidenceLevel": 0.99
+      },
+      {
+        "classLabels": [
+          "Language",
+          "Other languages"
+        ],
+        "confidenceLevel": 0.99
+      },
+      {
+        "classLabels": [
+          "Science",
+          "Mathematics"
+        ],
+        "confidenceLevel": 0.99
+      }
+    ],
+    "meshEuroPMCClasses": null,
+    "ACMClasses": [
+      {
+        "classLabels": [
+          "TheoryofComputation_LOGICSANDMEANINGSOFPROGRAMS"
+        ],
+        "confidenceLevel": 0.99
+      },
+      {
+        "classLabels": [
+          "Hardware_ARITHMETICANDLOGICSTRUCTURES"
+        ],
+        "confidenceLevel": 0.99
+      }
+    ]
+  }
+}

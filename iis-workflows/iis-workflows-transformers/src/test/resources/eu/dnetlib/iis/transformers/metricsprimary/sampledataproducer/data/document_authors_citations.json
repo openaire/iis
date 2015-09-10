@@ -1,0 +1,4 @@
+{"referencedIds": ["id-2", "id-4"], "authorIds": ["id-1", "id-2", "id-123", "id-800"], "documentId": "id-1"}
+{"referencedIds": [], "authorIds": ["id-1", "id-3", "id-123"], "documentId": "id-2"}
+{"referencedIds": ["id-4"], "authorIds": ["id-345"], "documentId": "id-3"}
+{"referencedIds": ["id-1", "id-2"], "authorIds": [], "documentId": "id-4"}

@@ -1,0 +1,16 @@
+{
+  "type" : "record",
+  "name" : "Person",
+  "namespace" : "eu.dnetlib.iis.core.examples.schemas.documentandauthor",
+  "fields" : [ {
+    "name" : "id",
+    "type" : "int"
+  }, {
+    "name" : "name",
+    "type" : ["null", "string"],
+    "default" : null
+  }, {
+    "name" : "age",
+    "type" : "int"
+  } ]
+}

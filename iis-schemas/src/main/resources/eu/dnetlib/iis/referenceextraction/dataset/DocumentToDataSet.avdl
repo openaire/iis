@@ -1,0 +1,12 @@
+@namespace("eu.dnetlib.iis.referenceextraction.dataset.schemas")
+protocol IIS{
+
+    record DocumentToDataSet {
+//      document ID, foreign key: DocumentText.id
+        string documentId;
+//      dataset ID, foreign key: DataSetReference.id
+        string datasetId; 
+//		Find more details on `confidenceLevel` constraints in eu/dnetlib/iis/README.markdown file.
+        union { null , float } confidenceLevel = null;
+    }
+}

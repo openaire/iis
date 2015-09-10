@@ -1,0 +1,26 @@
+## This is a classpath-based import file (this header is required)
+transformers_metadatamerger classpath eu/dnetlib/iis/transformers/metadatamerger/oozie_app
+transformers_citationmatching classpath eu/dnetlib/iis/transformers/citationmatching/fuzzy/oozie_app
+transformers_citationmatching_direct classpath eu/dnetlib/iis/transformers/citationmatching/direct/oozie_app
+citationmatching_chain classpath eu/dnetlib/iis/citationmatching/chain/oozie_app
+citationmatching_direct classpath eu/dnetlib/iis/citationmatching/direct/oozie_app
+transformers_statistics classpath eu/dnetlib/iis/transformers/statistics/oozie_app
+referenceextraction_project classpath eu/dnetlib/iis/referenceextraction/project/main/oozie_app
+referenceextraction_dataset classpath eu/dnetlib/iis/referenceextraction/dataset/main/oozie_app
+referenceextraction_researchinitiative classpath eu/dnetlib/iis/referenceextraction/researchinitiative/main/oozie_app
+referenceextraction_pdb classpath eu/dnetlib/iis/referenceextraction/pdb/main/oozie_app
+transformers_export_researchinitiatives classpath eu/dnetlib/iis/transformers/export/researchinitiatives/oozie_app
+transformers_documentsclassification classpath eu/dnetlib/iis/transformers/documentsclassification/oozie_app
+documentsclassification_main classpath eu/dnetlib/iis/documentsclassification/main/oozie_app
+transformers_documentssimilarity classpath eu/dnetlib/iis/transformers/documentssimilarity/oozie_app
+documentssimilarity_chain classpath eu/dnetlib/iis/documentssimilarity/chain/oozie_app
+statistics classpath eu/dnetlib/iis/statistics/main/oozie_app
+collapsers_multiple_input_collapser classpath eu/dnetlib/iis/collapsers/multiple_input_collapser/oozie_app
+collapsers_basic_collapser classpath eu/dnetlib/iis/collapsers/basic_collapser/oozie_app
+transformers_citations_from_matching classpath eu/dnetlib/iis/transformers/common/citations/from/citationmatching/oozie_app
+transformers_citations_from_ingestpmc classpath eu/dnetlib/iis/transformers/common/citations/from/ingest.pmc/oozie_app
+transformers_citations_from_referencemetadata classpath eu/dnetlib/iis/transformers/common/citations/from/referencemetadata/oozie_app
+transformers_common_union classpath eu/dnetlib/iis/transformers/common/union/oozie_app
+transformers_common_union3 classpath eu/dnetlib/iis/transformers/common/union3/oozie_app
+transformers_export_citations classpath eu/dnetlib/iis/transformers/export/citations/oozie_app
+transformers_project_toconcept classpath eu/dnetlib/iis/transformers/referenceextraction/project/toconcept/oozie_app

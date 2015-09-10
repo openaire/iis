@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	
+	<modelVersion>4.0.0</modelVersion>
+    
+	<parent>
+    		<groupId>eu.dnetlib.iis</groupId>
+	        <artifactId>iis-workflows</artifactId>
+            <version>1.2.0-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>iis-workflows-export-actionmanager</artifactId>
+	<packaging>jar</packaging>
+	
+	
+	<dependencies>
+		
+		
+		<dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-schemas</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+		<dependency>
+			<groupId>eu.dnetlib</groupId>
+			<artifactId>dnet-actionmanager-common</artifactId>
+			<version>[2.0.0, 3.0.0)</version>
+			<exclusions>
+				<!-- excluding all libraries which are defined in IIS as provided -->
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-common</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-hdfs</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.hbase</groupId>
+					<artifactId>hbase</artifactId>
+				</exclusion>
+				<!-- excluding org.slf4j:slf4j-jdk14:jar:1.3.1 causing conflicts -->
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-jdk14</artifactId>
+				</exclusion>
+				<!-- excluding duplicated dependencies -->
+				<exclusion>
+					<groupId>apache</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+				<!-- excluding duplicated dependencies -->
+				<exclusion>
+					<groupId>eu.dnetlib</groupId>
+					<artifactId>dnet-openaire-data-protos</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- required after introducing 'provided' scope for hadoop libs -->
+		<dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-core</artifactId>
+            <version>${iis.hadoop.core.version}</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-common</artifactId>
+			<version>${iis.hadoop.common.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hbase</groupId>
+			<artifactId>hbase</artifactId>
+			<version>${iis.hbase.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		
+		<!-- required for SOAP communication with MDStore -->
+		<dependency>
+			<groupId>eu.dnetlib</groupId>
+			<artifactId>cnr-service-utils</artifactId>
+			<version>[1.0.0, 2.0.0)</version>
+			<exclusions>
+				<!-- excluding duplicated dependencies -->
+				<exclusion>
+					<groupId>apache</groupId>
+					<artifactId>commons-cli</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>apache</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- required to access MDStore API -->
+		<dependency>
+			<groupId>eu.dnetlib</groupId>
+			<artifactId>cnr-rmi-api</artifactId>
+			<version>[2.0.0, 3.0.0)</version>
+		</dependency>
+		<dependency>
+			<groupId>eu.dnetlib</groupId>
+			<artifactId>cnr-resultset-client</artifactId>
+			<version>[2.0.0, 3.0.0)</version>
+			<exclusions>
+				<exclusion>
+					<groupId>apache</groupId>
+					<artifactId>commons-io</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>apache</groupId>
+					<artifactId>commons-cli</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- proper spring context version required by cnr-resultset-client -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+	        <groupId>org.apache.cxf</groupId>
+	        <artifactId>cxf-bundle-jaxrs</artifactId>
+	        <version>${cxf.version}</version>
+	        <exclusions>
+	            <exclusion>
+	                <groupId>org.eclipse.jetty</groupId>
+	                <artifactId>jetty-server</artifactId>
+	            </exclusion>
+	            <!-- excluding org.slf4j:slf4j-jdk14:jar:1.3.1 causing conflicts -->
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-jdk14</artifactId>
+				</exclusion>
+	        </exclusions>
+		</dependency>
+		
+		<!-- required by hadoop, not sure why, need to ivestigate this -->
+		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<version>1.4.01</version>
+		</dependency>
+		
+		<!-- required by dnet-actionmanager-common on CNR cluster only 
+			for XSLT tansformations when exporting entities -->
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+			<version>2.7.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.4.7</version>
+		</dependency>
+		
+	
+	</dependencies>
+	<build>
+	</build>
+</project>

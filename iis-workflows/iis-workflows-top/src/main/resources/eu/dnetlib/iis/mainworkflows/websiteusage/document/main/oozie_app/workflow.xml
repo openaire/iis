@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="mainworkflows_websiteusage_document_main">
+
+	<parameters>
+		<property>
+			<name>input_logs</name>
+			<description>input containing log entries</description>
+		</property>
+		<property>
+			<name>input_id_mapping</name>
+			<description>input containing deduplication mappings</description>
+		</property>
+		<property>
+			<name>input_document_id</name>
+			<description>input containing valid publications (including datasets) identifiers</description>
+		</property>
+		<property>
+			<name>output</name>
+			<description>output containing website usage similarities</description>
+		</property>
+	</parameters>
+
+	<global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapred.job.queue.name</name>
+                <value>${queueName}</value>
+            </property>
+		</configuration>
+	</global>
+	
+	<start to="websiteusage_community_builder" />
+	
+	<!-- building webiste usage communities grouping publications -->
+	<action name="websiteusage_community_builder">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/websiteusage_community_builder</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/websiteusage_community_builder/working_dir</value>
+                </property>
+            	<property>
+					<name>input_logs</name>
+					<value>${input_logs}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${workingDir}/websiteusage_community_builder/output</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="transformers_idreplacer"/>
+		<error to="fail" />
+    </action>
+	
+	<!-- replacing deduplicated identifiers coming from older log entries -->
+    <action name="transformers_idreplacer">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_idreplacer</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_idreplacer/working_dir</value>
+                </property>
+                <property>
+                    <name>id_field_to_replace1</name>
+                    <value>SimilarDocid</value>
+                </property>
+				<property>
+                    <name>schema</name>
+                    <value>eu.dnetlib.iis.websiteusage.schemas.DocumentToCommunity</value>
+                </property>
+                <property>
+                    <name>input</name>
+                    <value>${workingDir}/websiteusage_community_builder/output</value>
+                </property>
+                <property>
+                    <name>input_id_mapping</name>
+                    <value>${input_id_mapping}</value>
+                </property>
+				<property>
+                    <name>output</name>
+                    <value>${workingDir}/transformers_idreplacer/output</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="transformers_websiteusage_community_filter"/>
+        <error to="fail"/>
+    </action>
+
+	<!-- filtering publications retrieved from logs by 
+	joining them with InformationSpace publications and datasets identifiers -->
+	<action name="transformers_websiteusage_community_filter">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_websiteusage_community_filter</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_websiteusage_community_filter/working_dir</value>
+                </property>
+               	<property>
+                    <name>input_community</name>
+                    <value>${workingDir}/transformers_idreplacer/output</value>
+                </property>
+                <property>
+                    <name>input_document_id</name>
+                    <value>${input_document_id}</value>
+                </property>
+				<property>
+                    <name>output</name>
+                    <value>${workingDir}/transformers_websiteusage_community_filter/output</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="websiteusage_community_to_similarity"/>
+        <error to="fail"/>
+    </action>
+
+	<!-- transforming communities into publication to publication similarities -->
+	<action name="websiteusage_community_to_similarity">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/websiteusage_community_to_similarity</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/websiteusage_community_to_similarity/working_dir</value>
+                </property>
+               	<property>
+                    <name>input</name>
+                    <value>${workingDir}/transformers_websiteusage_community_filter/output</value>
+                </property>
+				<property>
+                    <name>output</name>
+                    <value>${output}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+   			[${wf:errorMessage(wf:lastErrorNode())}]
+   		</message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

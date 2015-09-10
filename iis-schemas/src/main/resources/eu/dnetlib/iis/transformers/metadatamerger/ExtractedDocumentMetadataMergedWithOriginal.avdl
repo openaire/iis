@@ -1,0 +1,55 @@
+@namespace("eu.dnetlib.iis.transformers.metadatamerger.schemas")
+protocol IIS{
+
+    import idl "../../metadataextraction/ReferenceMetadata.avdl";
+    
+    record PublicationType {
+        boolean article = false;
+        boolean dataset = false;
+    }
+
+    record ExtractedDocumentMetadataMergedWithOriginal {
+//      ID of the document, foreign key: Document.id ("document" data store)
+        string id;
+//      original metadata merged with extracted from pdf document
+        
+//      moved from DocumentBasicMetadata        
+//      title
+        union { null , string } title = null;
+//      abstract or description
+        union { null , string } abstract = null;
+        union { null , string } language = null;
+//      list of keywords (free form)
+        union { null , array<string> } keywords = null;
+//      alternative identifier (e.g. internal publisher's identifiers)
+        union { null , map<string> } externalIdentifiers = null;
+//      name of journal in which the article is published
+        union { null , string } journal = null;
+//      year of publication
+        union { null , int } year = null;
+//      publisher name
+        union { null , string } publisher = null;
+//      end of: moved from DocumentBasicMetadata    
+//      publication type, originates from metadata
+        PublicationType publicationType;
+        
+//      references extracted from pfd document
+        union { null , array<eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata> } references = null;
+//      author names extracted from pdf document
+        union { null , array<string> } extractedAuthorFullNames = null;
+//      author ids retrieved from "document" datastore
+        union { null , array<string> } authorIds = null;
+
+//      additional fields extracted from PDF document
+//      journal volume in which the article is published
+        union { null , string } volume = null;
+//      journal issue in which the article is published
+        union { null , string } issue = null;
+//      page range in which the article is published
+        union { null , eu.dnetlib.iis.metadataextraction.schemas.Range } pages = null;
+        
+//      detailed publication type name, originates from extracted metadata
+        union { null , string } publicationTypeName = null;
+    }
+
+}

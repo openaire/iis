@@ -1,0 +1,1 @@
+This directory contains "library" functions which are used from more than one places.

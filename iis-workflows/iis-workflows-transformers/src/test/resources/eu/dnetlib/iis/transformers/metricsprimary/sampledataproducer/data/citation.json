@@ -1,0 +1,5 @@
+{"sourceDocumentId": "id-1", "destinationDocumentId": "id-2", "confidenceLevel": 0.9, "position": 1}
+{"sourceDocumentId": "id-1", "destinationDocumentId": "id-4", "confidenceLevel": 0.9, "position": 2}
+{"sourceDocumentId": "id-3", "destinationDocumentId": "id-4", "confidenceLevel": 0.9, "position": 1}
+{"sourceDocumentId": "id-4", "destinationDocumentId": "id-1", "confidenceLevel": 0.9, "position": 1}
+{"sourceDocumentId": "id-4", "destinationDocumentId": "id-2", "confidenceLevel": 0.9, "position": 2}

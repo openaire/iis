@@ -1,0 +1,43 @@
+@namespace("eu.dnetlib.iis.metrics.extended.schemas")
+protocol IIS{
+
+    record FrequentKeyword {
+        union { null , string } name = null;
+        union { null , int } count = null;
+    }
+ 
+    record FrequentCoAuthor {
+        union { null , string } firstName = null;
+        union { null , string } lastName = null;
+        union { null , int } count = null;
+    }
+    
+    record AuthorExtendedMetrics {
+            
+        union { null , int } numberOfCitableDocuments = null;
+        union { null , float } averageNumberOfCitationsPerPaper = null;
+        union { null , int } numberOfRenownedPapers500 = null;
+        union { null , int } numberOfFamousPapers250 = null;
+        union { null , int } numberOfVeryWellKnownPapers100 = null;
+        union { null , int } numberOfWellKnownPapers50 = null;
+        union { null , int } numberOfKnownPapers10 = null;
+        union { null , int } numberOfLessKnownPapers1 = null;
+        union { null , int } numberOfUnknownPapers0 = null;
+        union { null , int } hIndex = null;
+        union { null , int } numberOfCitablePublishedPapers = null;
+        union { null , int } numberOfPublishedPapersCitations = null;
+        union { null , float } averageNumberOfCitationsPerPublishedPaper = null;
+        union { null , int } numberOfRenownedPublishedPapers500 = null;
+        union { null , int } numberOfFamousPublishedPapers250 = null;
+        union { null , int } numberOfVeryWellKnownPublishedPapers100 = null;
+        union { null , int } numberOfWellKnownPublishedPapers50 = null;
+        union { null , int } numberOfKnownPublishedPapers10 = null;
+        union { null , int } numberOfLessKnownPublishedPapers1 = null;
+        union { null , int } numberOfUnknownPublishedPapers0 = null;
+        union { null , int } hIndexPublishedPapers = null;
+        union { null , array<FrequentKeyword> } frequentKeywords = null;
+        union { null , array<FrequentCoAuthor> } frequentCoAuthors = null;
+    }
+    
+}
+

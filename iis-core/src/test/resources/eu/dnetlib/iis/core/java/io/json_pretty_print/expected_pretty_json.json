@@ -1,0 +1,13 @@
+{
+  "name": "Johnny",
+  "surname": "Mnemonic",
+  "storedData": {
+    "magicNumber": 1234,
+    "compromisingPhoto": null,
+    "passPhrase": "secret!"
+  },
+  "friends": [
+    "Dolphin",
+    "Orca"
+  ]
+}

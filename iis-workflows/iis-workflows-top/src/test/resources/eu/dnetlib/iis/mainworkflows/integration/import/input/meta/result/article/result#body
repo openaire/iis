@@ -1,0 +1,85 @@
+{
+  kind: entity
+  entity: {
+    type: result
+    id: "50|crossref____::003b0746ef72ff253ef1e465c758c961"
+    result: {
+      metadata: {
+        title: {
+          value: "Human urinary peptide database for multiple disease biomarker discovery"
+          qualifier: {
+            classid: "main title"
+            classname: "main title"
+            schemeid: "dnet:dataCite_title"
+            schemename: "dnet:dataCite_title"
+          }
+        }
+        dateofacceptance: {
+          value: "2011-01-01"
+        }
+        resulttype: {
+          classid: "publication"
+          classname: "publication"
+          schemeid: "dnet:result_typologies"
+          schemename: "dnet:result_typologies"
+        }
+        storagedate: { 
+        	value: "2012-10-18"
+        }
+        language: {
+          classid: "und"
+          classname: "Undetermined"
+          schemeid: "dnet:languages"
+          schemename: "dnet:languages"
+        }
+      }
+      
+      instance: {
+	    licence: {
+	      classid: "OPEN"
+	      classname: "Open Access"
+	      schemeid: "dnet:access_modes"
+	      schemename: "dnet:access_modes"
+	    }
+	    instancetype: {
+	      classid: "0001"
+	      classname: "Article"
+	      schemeid: "dnet:publication_resource"
+	      schemename: "dnet:publication_resource"
+	    }
+	    hostedby: {
+	      key: "10|opendoar____::9766527f2b5d3e95d4a733fcfb77bd7e"
+	      value: "INRIA a CCSD electronic archive server"
+	    }
+	    url: "http://hal.archives-ouvertes.fr/hal-00613125"
+	  }
+
+    }
+    originalId: "crossref____::003b0746ef72ff253ef1e465c758c961"
+    collectedfrom: {
+      key: "10|openaire____::081b82f96300b6a6e3d282bad31cb6e2"
+      value: "Crossref"
+    }
+    pid: {
+      value: "doi:10.1002/prca.201000155"
+      qualifier: {
+        classid: "doi"
+        classname: "doi"
+        schemeid: "dnet:pid_types"
+        schemename: "dnet:pid_types"
+      }
+    }
+  }
+  dataInfo: {
+    inferred: false
+    deletedbyinference: false
+    trust: "NEUTRAL"
+    provenanceaction: {
+      classid: "user:claim:doi"
+      classname: "user:claim:doi"
+      schemeid: "dnet:provenanceActions"
+      schemename: "dnet:provenanceActions"
+    }
+  }
+  timestamp: 1372359095914
+}

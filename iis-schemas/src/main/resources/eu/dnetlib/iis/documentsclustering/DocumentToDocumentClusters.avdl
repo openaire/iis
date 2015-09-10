@@ -1,0 +1,13 @@
+@namespace("eu.dnetlib.iis.documentsclustering.schemas")
+protocol IIS{
+
+    import idl "DocumentClusters.avdl";
+
+    record DocumentToDocumentClusters {
+//      foreign key: Document.id ("document" data store)
+        string documentId;
+//      Information about the clusters given document belongs to
+//      There might be many parallel clusterings given document belongs to.
+        union { null , DocumentClusters } clusters = null;
+    }
+}

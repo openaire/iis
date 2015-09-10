@@ -1,0 +1,16 @@
+## This is a classpath-based import file (this header is required)
+import_mapred classpath eu/dnetlib/iis/importer/mapred_import/oozie_app
+import_project classpath eu/dnetlib/iis/importer/database/project/oozie_app
+import_dataset classpath eu/dnetlib/iis/importer/dataset/oozie_app
+import_concept classpath eu/dnetlib/iis/importer/concept/oozie_app
+import_content_url classpath eu/dnetlib/iis/mainworkflows/importer/content_url/oozie_app
+import_plaintext classpath eu/dnetlib/iis/importer/plaintext/oozie_app
+ingest_html_plaintext classpath eu/dnetlib/iis/ingest/html/plaintext/oozie_app
+ingest_pmc_plaintext classpath eu/dnetlib/iis/ingest/pmc/plaintext/oozie_app
+ingest_pmc_metadata classpath eu/dnetlib/iis/ingest/pmc/metadata/oozie_app
+multiple_input_collapser classpath eu/dnetlib/iis/collapsers/multiple_input_collapser/oozie_app
+metadataextraction classpath eu/dnetlib/iis/metadataextraction/oozie_app
+metadataextraction_cached classpath eu/dnetlib/iis/mainworkflows/metadataextraction/cached_by_checksum/oozie_app
+transformers_common_union4 classpath eu/dnetlib/iis/transformers/common/union4/oozie_app
+transformers_idextractor classpath eu/dnetlib/iis/transformers/importer/documentmetadata/idextractor/oozie_app
+transformers_ingest_pmc_metadata classpath eu/dnetlib/iis/transformers/ingest/pmc/metadata/oozie_app

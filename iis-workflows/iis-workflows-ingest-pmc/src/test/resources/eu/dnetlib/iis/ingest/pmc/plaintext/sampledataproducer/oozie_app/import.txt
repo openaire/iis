@@ -1,0 +1,2 @@
+## This is a classpath-based import file (this header is required)
+ingest_pmc_plaintext classpath eu/dnetlib/iis/ingest/pmc/plaintext/oozie_app

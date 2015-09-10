@@ -1,0 +1,4 @@
+## This is a classpath-based import file (this header is required)
+coansys coansys pl.edu.icm.coansys:document-similarity-oap-uberworkflow
+avro_to_protobuf classpath eu/dnetlib/iis/common/protobuf/converter/avro_to_protobuf/oozie_app
+tsv_to_avro classpath eu/dnetlib/iis/documentssimilarity/converter/tsv_to_avro/oozie_app

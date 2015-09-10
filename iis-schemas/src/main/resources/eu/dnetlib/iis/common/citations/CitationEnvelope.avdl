@@ -1,0 +1,13 @@
+@namespace("eu.dnetlib.iis.common.citations.schemas")
+protocol IIS{
+
+    import idl "Citation.avdl";
+    
+    
+    record CitationEnvelope {
+        eu.dnetlib.iis.common.citations.schemas.Citation data;
+        string origin;
+    }
+    
+}
+

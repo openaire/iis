@@ -1,0 +1,15 @@
+@namespace("eu.dnetlib.iis.documentssimilarity_with_fulltext.schemas")
+protocol IIS{
+
+    record DocumentSimilarity {
+//      document identifier
+//      foreign key: Document.id ("updated document" data store)
+        string documentId;
+//      identifier of a similar document,
+//      foreign key: Document.id ("updated document" data store)
+        string otherDocumentId;
+//      level of similarity: coefficient from [0, 1] range,
+//      the greater the number, the more similar the documents
+        union { null , float } similarity = null;
+    }
+}

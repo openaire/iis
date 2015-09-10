@@ -1,0 +1,7 @@
+@namespace("eu.dnetlib.iis.statistics.schemas")
+protocol IIS{
+
+        record ProjectId {
+                string id;
+        }
+}

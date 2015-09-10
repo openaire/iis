@@ -1,0 +1,15 @@
+@namespace("eu.dnetlib.iis.statistics.schemas")
+protocol IIS{
+
+    // statistics containing total citation counts
+    // suitable for a single document, person, project or global
+    record BasicCitationStatistics {
+
+        int numberOfCitations;
+        
+        // keys: years
+        map<int> numberOfCitationsPerYear;
+
+    }
+
+}

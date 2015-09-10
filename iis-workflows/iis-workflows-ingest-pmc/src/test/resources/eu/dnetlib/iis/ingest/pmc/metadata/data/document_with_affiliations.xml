@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML" article-type="research-article">
+  <front>
+    <article-meta>
+    
+	<!-- contrib affiliation -->    
+    <contrib-group>
+	  <contrib contrib-type="author" corresp="yes">
+	    <name>
+	      <surname>Tanabe</surname>
+	      <given-names>Lorraine</given-names>
+	    </name>
+	    <aff>National Center for Biotechnology Information, National Library of Medicine, NIH, 8600 Rockville Pike, Bethesda, MD, USA</aff>
+	  </contrib>
+	  <contrib contrib-type="author">
+	    <name>
+	      <surname>Thom</surname>
+	      <given-names>Lynne H.</given-names>
+	    </name>
+	    <aff>Consolidated Safety Services, 10335 Democracy Lane, Suite 202, Fairfax, VA, USA</aff>
+	  </contrib>
+	</contrib-group>
+    
+    <!-- contrib-group affiliation -->   
+    <contrib-group>
+	  <contrib contrib-type="author">
+	    <name>
+	      <surname>Marth</surname>
+	      <given-names>Gabor T.</given-names>
+	    </name>
+	    <xref ref-type="author-notes" rid="FN1">1</xref>
+	  </contrib>
+	  <contrib contrib-type="author">
+	    <name>
+	      <surname>Czabarka</surname>
+	      <given-names>Eva</given-names>
+	    </name>
+	  </contrib>
+	  <contrib contrib-type="author">
+	    <name>
+	      <surname>Murvai</surname>
+	      <given-names>Janos</given-names>
+	    </name>
+	  </contrib>
+	  <contrib contrib-type="author">
+	    <name>
+	      <surname>Sherry</surname>
+	      <given-names>Stephen T.</given-names>
+	    </name>
+	  </contrib>
+	  <aff>National Center for Biotechnology Information, National Library of Medicine, National Institutes of Health, Bethesda, Maryland 20894</aff>
+	</contrib-group>
+    
+    <!-- referenced affiliation -->
+      <contrib-group>
+        <contrib contrib-type="author" id="A1">
+          <name>
+            <surname>Azuma</surname>
+            <given-names>Yusuke</given-names>
+          </name>
+          <xref ref-type="aff" rid="I1">1</xref>
+          <email>yazuma@bio.titech.ac.jp</email>
+        </contrib>
+        <contrib contrib-type="author" corresp="yes" id="A2">
+          <name>
+            <surname>Ota</surname>
+            <given-names>Motonori</given-names>
+          </name>
+          <xref ref-type="aff" rid="I2">2</xref>
+          <email>mota@is.nagoya-u.ac.jp</email>
+        </contrib>
+      </contrib-group>
+      <aff id="I1"><label>1</label>Graduate School of Bioscience and Biotechnology, Tokyo Institute of Technology, Nagatsuta-cho, Midori-ku, Yokohama 226-8501, Japan</aff>
+      <aff id="I2"><label>2</label>Graduate School of Information Science, Nagoya University, Furo-cho, Chikusa-ku, Nagoya 464-8601, Japan</aff>
+    </article-meta>
+  </front>
+</article>

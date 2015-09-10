@@ -1,0 +1,14 @@
+@namespace("eu.dnetlib.iis.documentsclassification.schemas")
+protocol IIS{
+
+    import idl "DocumentClasses.avdl";
+
+    record DocumentToDocumentClasses {
+//      foreign key: Document.id ("document" data store)
+        string documentId;
+//      Information about the classes given document belongs to
+//      There might be many parallel classification systems given document might belong to 
+//      (e.g. classification w.r.t. importance of the document, classification w.r.t. popularity).
+        union { null , DocumentClasses } classes = null;
+    }
+}

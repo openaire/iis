@@ -1,0 +1,11 @@
+@namespace("eu.dnetlib.iis.importer.schemas")
+protocol IIS{
+
+    record DocumentRelation {
+//      document identifier
+//      foreign key: DocumentMetadata.id ("raw document metadata" data store)
+        string id;
+//      document or dataset ids linked with 'resultResult' relation
+        array<string> referencedIds;
+    }
+}

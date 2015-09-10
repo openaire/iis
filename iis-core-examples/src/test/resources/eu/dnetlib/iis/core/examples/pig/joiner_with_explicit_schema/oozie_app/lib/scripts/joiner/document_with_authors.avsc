@@ -1,0 +1,32 @@
+{
+  "type" : "record",
+  "name" : "DocumentWithAuthors",
+  "namespace" : "eu.dnetlib.iis.core.examples.schemas.documentandauthor",
+  "fields" : [ {
+    "name" : "id",
+    "type" : "int"
+  }, {
+    "name" : "title",
+    "type" : ["null", "string"]
+  }, {
+    "name" : "authors",
+    "type" : {
+      "type" : "array",
+      "items" : {
+        "type" : "record",
+        "name" : "Person",
+        "fields" : [ {
+          "name" : "id",
+          "type" : "int"
+        }, {
+          "name" : "name",
+          "type" : ["null", "string"],
+          "default" : null
+        }, {
+          "name" : "age",
+          "type" : "int"
+        } ]
+      }
+    }
+  } ]
+}

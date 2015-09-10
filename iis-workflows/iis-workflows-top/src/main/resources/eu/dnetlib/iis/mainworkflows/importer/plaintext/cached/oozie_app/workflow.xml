@@ -1,0 +1,388 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="mainworkflows_importer_plaintext_cached">
+	
+	<parameters>
+		<property>
+			<name>input</name>
+			<description>input document content directory</description>
+		</property>
+		<property>
+			<name>output</name>
+			<description>plaintext importer output directory</description>
+		</property>
+		<property>
+			<name>content_connection_timeout</name>
+			<value>60000</value>
+			<description>streaming content connection timeout</description>
+		</property>
+		<property>
+			<name>content_read_timeout</name>
+			<value>60000</value>
+			<description>streaming content read timeout</description>
+		</property>
+		<property>
+			<name>zk_session_timeout</name>
+			<value>60000</value>
+			<description>zookeeper session timeout when handling locks</description>
+		</property>
+		<property>
+			<name>default_cache_location</name>
+			<description>default cache location stored in HDFS</description>
+		</property>
+		<property>
+			<name>mapred_max_split_size</name>
+			<value>50000</value>
+			<description>maximum input data split size, required by streaming version reading DocumentContentUrl to split input data into more chunks</description>
+		</property>
+	</parameters>
+
+	<global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapred.job.queue.name</name>
+                <value>${queueName}</value>
+            </property>
+		</configuration>
+	</global>
+
+	<start to="check_input_isempty" />
+	
+	<action name="check_input_isempty">
+		<java>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.utils.EmptyDatastoreVerifierProcess</arg>
+			<arg>-Iinput=${input}</arg>
+			<capture-output />
+		</java>
+		<ok to="decision-is-input-empty" />
+		<error to="fail" />
+	</action>
+
+	<decision name="decision-is-input-empty">
+        <switch>
+        	<!-- skipping metadataextraction merging process -->
+            <case to="get-existing-cache-id">${wf:actionData('check_input_isempty')['isEmpty'] eq "false"}</case>
+            <default to="generate-empty-output"/>
+        </switch>
+    </decision>
+
+	<action name="generate-empty-output">
+        <java>
+			<prepare>
+				<!-- notice: directory have to aligned with skipped action output -->
+				<delete path="${nameNode}${output}" />
+			</prepare>
+            <main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
+			<arg>-C{plaintext,
+				eu.dnetlib.iis.metadataextraction.schemas.DocumentText,
+			eu/dnetlib/iis/mainworkflows/data/empty.json}</arg>
+            <arg>-Oplaintext=${output}</arg>
+        </java>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+	<action name='get-existing-cache-id'>
+		<java>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess</arg>
+			<arg>-Pdefault_cache_location=${default_cache_location}</arg>
+			<arg>-Pmode=read_current_id</arg>
+			<capture-output />
+		</java>
+		<ok to="decision-is-cache-empty" />
+		<error to="fail" />
+	</action>
+
+	<decision name="decision-is-cache-empty">
+        <switch>
+            <case to="importer_plaintext_on_full_input">${wf:actionData('get-existing-cache-id')['cache_id'] eq "$UNDEFINED$"}</case>
+            <default to="transformers_importer_plaintext_skip_extracted"/>
+        </switch>
+    </decision>
+	
+	<!-- end of cache based processing block, cache was provided as an input -->
+	<action name="transformers_importer_plaintext_skip_extracted">
+		<sub-workflow>
+            <app-path>${wf:appPath()}/transformers_importer_plaintext_skip_extracted</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_importer_plaintext_skip_extracted/working_dir</value>
+                </property>
+                <property>
+					<name>input_document_content</name>
+					<value>${input}</value>
+				</property>
+				<property>
+					<name>input_document_text</name>
+					<value>${default_cache_location}/${wf:actionData('get-existing-cache-id')['cache_id']}</value>
+				</property>
+				<property>
+					<name>output_document_content</name>
+					<value>${workingDir}/transformers_importer_plaintext_skip_extracted/tobeprocessed_content</value>
+				</property>
+				<property>
+					<name>output_document_text</name>
+					<value>${workingDir}/transformers_importer_plaintext_skip_extracted/tobereturned_text</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="importer_plaintext_on_filtered_input"/>
+		<error to="fail" />
+	</action>
+	
+	<action name="importer_plaintext_on_filtered_input">
+		<sub-workflow>
+            <app-path>${wf:appPath()}/importer_plaintext</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/importer_plaintext/working_dir</value>
+                </property>
+            	<property>
+					<name>input</name>
+					<value>${workingDir}/transformers_importer_plaintext_skip_extracted/tobeprocessed_content</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${workingDir}/importer_plaintext/output</value>
+				</property>
+				<!-- all the other properties are autmatically propagated-->
+            </configuration>
+        </sub-workflow>
+		<ok to="transformers_common_union_plaintext_merge_outputs"/>
+		<error to="fail" />
+	</action>
+
+    <action name="transformers_common_union_plaintext_merge_outputs">
+		<sub-workflow>
+            <app-path>${wf:appPath()}/transformers_common_union</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+					<name>input_a</name>
+					<value>${workingDir}/transformers_importer_plaintext_skip_extracted/tobereturned_text</value>
+				</property>
+				<property>
+					<name>input_b</name>
+					<value>${workingDir}/importer_plaintext/output</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${output}</value>
+				</property>
+				<property>
+					<name>schema</name>
+					<value>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="check_importer_plaintext_output_isempty"/>
+		<error to="fail" />
+	</action>
+    
+    <action name='check_importer_plaintext_output_isempty'>
+		<java>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.utils.EmptyDatastoreVerifierProcess</arg>
+			<arg>-Iinput=${workingDir}/importer_plaintext/output</arg>
+			<capture-output />
+		</java>
+		<ok to="decision-is-importer_plaintext-output-empty" />
+		<error to="fail" />
+	</action>
+    
+    <decision name="decision-is-importer_plaintext-output-empty">
+        <switch>
+        	<!-- skipping metadataextraction merging process -->
+            <case to="obtain-lock_for_merging">${wf:actionData('check_importer_plaintext_output_isempty')['isEmpty'] eq "false"}</case>
+            <default to="end"/>
+        </switch>
+    </decision>
+    
+    <action name="obtain-lock_for_merging">
+        <java>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
+            <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
+            <arg>-Pnode_id=${default_cache_location}</arg>
+            <arg>-Pmode=obtain</arg>
+        </java>
+        <ok to="get-new-cache-id_for_merging"/>
+        <error to="release-lock-and-fail"/>
+    </action>
+    
+    <action name='get-new-cache-id_for_merging'>
+		<java>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess</arg>
+			<arg>-Pdefault_cache_location=${default_cache_location}</arg>
+			<arg>-Pmode=generate_new_id</arg>
+			<capture-output />
+		</java>
+		<ok to="transformers_common_union_plaintext_merge_cache" />
+		<error to="release-lock-and-fail" />
+	</action>
+    
+    <action name="transformers_common_union_plaintext_merge_cache">
+		<sub-workflow>
+            <app-path>${wf:appPath()}/transformers_common_union</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+					<name>input_a</name>
+					<value>${default_cache_location}/${wf:actionData('get-existing-cache-id')['cache_id']}</value>
+				</property>
+				<property>
+					<name>input_b</name>
+					<value>${workingDir}/importer_plaintext/output</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${default_cache_location}/${wf:actionData('get-new-cache-id_for_merging')['cache_id']}</value>
+				</property>
+				<property>
+					<name>schema</name>
+					<value>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="write-new-cache-id_for_merging"/>
+		<error to="fail-merge_cache-temp_files_cleanup" />
+	</action>
+    
+	<action name="fail-merge_cache-temp_files_cleanup">
+        <fs>
+            <delete path="${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_merging')['cache_id']}" />
+        </fs>
+        <ok to="release-lock-and-fail"/>
+        <error to="release-lock-and-fail"/>
+    </action>
+	
+	<action name='write-new-cache-id_for_merging'>
+		<java>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess</arg>
+			<arg>-Pdefault_cache_location=${default_cache_location}</arg>
+			<arg>-Pmode=write_id</arg>
+			<arg>-Pid=${wf:actionData('get-new-cache-id_for_merging')['cache_id']}</arg>
+			<capture-output />
+		</java>
+		<ok to="release-lock-and-end" />
+		<error to="fail-merge_cache-temp_files_cleanup" />
+	</action>
+	
+	<!-- end of cache based processing block, cache was provided as an input -->
+    
+    <!-- full input processing block, no cache was provided as an input -->
+    <action name="importer_plaintext_on_full_input">
+		<sub-workflow>
+            <app-path>${wf:appPath()}/importer_plaintext</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/importer_plaintext/working_dir</value>
+                </property>
+				<!-- all the other properties are autmatically propagated-->
+            </configuration>
+        </sub-workflow>
+		<ok to="obtain-lock_for_initializing"/>
+		<error to="fail" />
+	</action>
+    
+    <action name="obtain-lock_for_initializing">
+        <java>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
+            <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
+            <arg>-Pnode_id=${default_cache_location}</arg>
+            <arg>-Pmode=obtain</arg>
+        </java>
+        <ok to="get-new-cache-id_for_initializing"/>
+        <error to="release-lock-and-fail"/>
+    </action>
+    
+    <action name='get-new-cache-id_for_initializing'>
+		<java>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess</arg>
+			<arg>-Pdefault_cache_location=${default_cache_location}</arg>
+			<arg>-Pmode=generate_new_id</arg>
+			<capture-output />
+		</java>
+		<ok to="initialize_plaintext_cache" />
+		<error to="release-lock-and-fail" />
+	</action>
+    
+    <action name="initialize_plaintext_cache">
+       <distcp xmlns="uri:oozie:distcp-action:0.1">
+           <job-tracker>${jobTracker}</job-tracker>
+           <name-node>${nameNode}</name-node>
+           <arg>${nameNode}${output}</arg>
+           <arg>${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}</arg>
+           </distcp>
+       <ok to="write-new-cache-id_for_initializing"/>
+       <error to="fail-initialize_cache-temp_files_cleanup"/>
+	</action>
+	
+	<action name="fail-initialize_cache-temp_files_cleanup">
+        <fs>
+            <delete path="${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}" />
+        </fs>
+        <ok to="release-lock-and-fail"/>
+        <error to="release-lock-and-fail"/>
+    </action>
+	
+	<action name='write-new-cache-id_for_initializing'>
+		<java>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess</arg>
+			<arg>-Pdefault_cache_location=${default_cache_location}</arg>
+			<arg>-Pmode=write_id</arg>
+			<arg>-Pid=${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}</arg>
+			<capture-output />
+		</java>
+		<ok to="release-lock-and-end" />
+		<error to="fail-initialize_cache-temp_files_cleanup" />
+	</action>
+	
+    <!-- end of full input processing block, no cache was provided as an input -->
+    
+    <!-- lock releasing actions -->
+    <action name="release-lock-and-fail">
+        <java>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
+            <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
+            <arg>-Pnode_id=${default_cache_location}</arg>
+            <arg>-Pmode=release</arg>
+        </java>
+        <ok to="fail"/>
+        <error to="fail"/>
+    </action>
+    
+    <action name="release-lock-and-end">
+        <java>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
+            <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
+            <arg>-Pnode_id=${default_cache_location}</arg>
+            <arg>-Pmode=release</arg>
+        </java>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+    <!-- end of lock releasing actions -->
+    
+	<kill name="fail">
+		<message>Unfortunately, the process failed -- error message:
+			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+	</kill>
+	<end name="end" />
+</workflow-app>

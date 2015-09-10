@@ -1,0 +1,216 @@
+<?xml version="1.0"?>
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML" article-type="research-article">
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="nlm-ta">BMC Syst Biol</journal-id>
+      <journal-title-group>
+        <journal-title>BMC Systems Biology</journal-title>
+      </journal-title-group>
+      <issn pub-type="epub">1752-0509</issn>
+      <publisher>
+        <publisher-name>BioMed Central</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="pmc">2789071</article-id>
+      <article-id pub-id-type="publisher-id">1752-0509-3-111</article-id>
+      <article-id pub-id-type="pmid">19943949</article-id>
+      <article-id pub-id-type="doi">10.1186/1752-0509-3-111</article-id>
+      <article-categories>
+        <subj-group subj-group-type="heading">
+          <subject>Research article</subject>
+        </subj-group>
+      </article-categories>
+      <title-group>
+        <article-title>An evaluation of minimal cellular functions to sustain a bacterial cell</article-title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author" id="A1">
+          <name>
+            <surname>Azuma</surname>
+            <given-names>Yusuke</given-names>
+          </name>
+          <xref ref-type="aff" rid="I1">1</xref>
+          <email>yazuma@bio.titech.ac.jp</email>
+        </contrib>
+        <contrib contrib-type="author" corresp="yes" id="A2">
+          <name>
+            <surname>Ota</surname>
+            <given-names>Motonori</given-names>
+          </name>
+          <xref ref-type="aff" rid="I2">2</xref>
+          <email>mota@is.nagoya-u.ac.jp</email>
+        </contrib>
+      </contrib-group>
+      <aff id="I1"><label>1</label>Graduate School of Bioscience and Biotechnology, Tokyo Institute of Technology, Nagatsuta-cho, Midori-ku, Yokohama 226-8501, Japan</aff>
+      <aff id="I2"><label>2</label>Graduate School of Information Science, Nagoya University, Furo-cho, Chikusa-ku, Nagoya 464-8601, Japan</aff>
+      <pub-date pub-type="collection">
+        <year>2009</year>
+      </pub-date>
+      <pub-date pub-type="epub">
+        <day>28</day>
+        <month>11</month>
+        <year>2009</year>
+      </pub-date>
+      <volume>3</volume>
+      <fpage>111</fpage>
+      <lpage>111</lpage>
+      <history>
+        <date date-type="received">
+          <day>25</day>
+          <month>8</month>
+          <year>2009</year>
+        </date>
+        <date date-type="accepted">
+          <day>28</day>
+          <month>11</month>
+          <year>2009</year>
+        </date>
+      </history>
+      <permissions>
+        <copyright-statement>Copyright 2009 Azuma and Ota; licensee BioMed Central Ltd.</copyright-statement>
+        <copyright-year>2009</copyright-year>
+        <copyright-holder>Azuma and Ota; licensee BioMed Central Ltd.</copyright-holder>
+        <license license-type="open-access" xlink:href="http://creativecommons.org/licenses/by/2.0">
+          <license-p>This is an Open Access article distributed under the terms of the Creative Commons Attribution License (<ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/2.0">http://creativecommons.org/licenses/by/2.0</ext-link>), which permits unrestricted use, distribution, and reproduction in any medium, provided the original work is properly cited.</license-p>
+        </license>
+      </permissions>
+      <self-uri xlink:href="http://www.biomedcentral.com/1752-0509/3/111"/>
+      <abstract>
+        <sec>
+          <title>Background</title>
+          <p>Both computational and experimental approaches have been used to determine the minimal gene set required to sustain a bacterial cell. Such studies have provided clues to the minimal cellular-function set needed for life. We evaluate a minimal cellular-function set directly, instead of a geneset.</p>
+        </sec>
+        <sec>
+          <title>Results</title>
+          <p>We estimated the essentialities of KEGG pathway maps as the entities of cellular functions, based on comparative genomics and metabolic network analyses. The former examined the evolutionary conservation of each pathway map by homology searches, and detected "conserved pathway maps". The latter identified "organism-specific pathway maps" that supply compounds required for the conserved pathway maps. We defined both pathway maps as "autonomous pathway maps". Among the set of autonomous pathway maps, the one that could synthesize all of the biomass components (the essential constituents for the cellular component of Escherichia coli/Bacillus subtilis), and that was composed of a minimal number of pathway maps, was determined for each of E. coli and B. subtilis, as "minimal pathway maps". We consider that they correspond to a minimal cellular-function set. The network of minimal pathway maps, composed of 20 conserved pathway maps and 21 organism-specific pathway maps for E. coli, starts a sequence of catabolic processes from carbohydrate metabolism. The catabolized compounds are used for anabolism, thus creating materials for cell components and for genetic information processing.</p>
+        </sec>
+        <sec>
+          <title>Conclusion</title>
+          <p>Our analyses of these pathway maps revealed that those functioning in "genetic information processing" are likely to be conserved, but those for catabolism are not, reflecting an evolutionary aspect of cellular functions. Minimal pathway maps were compared with a systematic gene knockout experiment, other computational results and parasitic genomes, and showed qualitative agreement, with some reasonable exceptions due to the experimental conditions or differences of computational methods. Our method provides an alternative way to explore the minimal cellular function set.</p>
+        </sec>
+      </abstract>
+    </article-meta>
+  </front>
+  <body>
+    <sec>
+      <title>Background</title>
+      <p>Advances in sequencing technology have allowed the complete genome sequences of more than 750 prokaryotes and 20 eukaryotes to be determined thus far. One of the possible subjects to be solved using this advance of data is the identification of a minimal gene set i.e. an estimation of the genes that are necessary and sufficient for sustaining a functional cell under certain conditions [<xref ref-type="bibr" rid="B1">1</xref>]. This type of research has attracted a lot of attention, not only for its scientific meaning, but also for its industrial applications. Both computational and experimental approaches have been employed to estimate minimal gene sets.</p>
+      <p>In the computational approach, it is assumed that the genes shared by distantly related organisms are likely to be essential, and that a catalogue of these genes might comprise a minimal gene set for cellular life [<xref ref-type="bibr" rid="B1">1</xref>]. Soon after the two first bacterial genomes from <italic>Haemophilus influenzae </italic>[<xref ref-type="bibr" rid="B2">2</xref>] and <italic>Mycoplasma genitalium </italic>[<xref ref-type="bibr" rid="B3">3</xref>] were sequenced, Mushegian and Koonin compared them and proposed 256 genes as a close estimate of a minimal gene set [<xref ref-type="bibr" rid="B4">4</xref>]. After this pioneering work, many computational analyses were performed [<xref ref-type="bibr" rid="B5">5</xref>-<xref ref-type="bibr" rid="B14">14</xref>]. In general, computational analysis is likely to underestimate a minimal gene set, because it considers only orthologous genes. By contrast, for a substantial number of essential functions, non-orthologous, and in some cases non-homologous, genes play the same role in different organisms. The existence of two or more distinct (distantly related or non-homologous) sets of genes that are responsible for the same function in different organisms is called non-orthologous gene displacement (NOGD). Wider genome comparisons have revealed that NOGD even occurs with essential genes, including the central components of the translation, transcription and, especially, replication machineries [<xref ref-type="bibr" rid="B1">1</xref>].</p>
+      <p>In the experimental approach, the essential genes that are indispensable for cell growth are determined by large-scale gene disruption, and they are considered to comprise a minimal gene set. The first experimental attempt along this line was performed by Itaya, before the advent of comparative genomics [<xref ref-type="bibr" rid="B15">15</xref>]. He investigated 79 random gene-knockouts in <italic>Bacillus subtilis</italic>, and found that six of them were lethal. Based on this ratio, he estimated the minimal genome size could be 318~562 kbp (270~470 genes, if one protein is 400 aa long). Many subsequent experimental reports utilized individual knockouts [<xref ref-type="bibr" rid="B16">16</xref>-<xref ref-type="bibr" rid="B18">18</xref>], RNA interference [<xref ref-type="bibr" rid="B19">19</xref>], transposon mutagenesis [<xref ref-type="bibr" rid="B20">20</xref>-<xref ref-type="bibr" rid="B25">25</xref>], antisense RNA [<xref ref-type="bibr" rid="B26">26</xref>,<xref ref-type="bibr" rid="B27">27</xref>] and high-throughput gene disruption [<xref ref-type="bibr" rid="B28">28</xref>]. Because a gene-knockout may just retard cell growth, the numbers of essential genes tend to be overestimated. In contrast, individual gene-knockout studies might underestimate the number of a minimal gene set for a metabolic system, because simultaneous gene knockouts tend to be lethal [<xref ref-type="bibr" rid="B12">12</xref>]. In addition, the estimation of essential genes depends on the experimental conditions, such as nutrients contained in culture media.</p>
+      <p>Considering these difficulties in detecting a minimal gene set by both the computational and experimental approaches, we adopted a different strategy. Instead of a minimal gene set, we computationally explored a minimal cellular-function set. The cellular functions are functional modules composed of a group of genes, for example, glycolysis, TCA cycle and aminoacyl-tRNA biosynthesis. Since one of the final aims of minimal gene set determination is to reveal the functional components of a living cell, and these components are sometimes debated in terms of the combination of the cellular functions, detection of the minimal cellular-function set is a more direct method. In addition, this approach is more robust, because the acceptance of a given cellular function could be possible regardless of NOGD (see Methods). In this work, we regard the KEGG (Kyoto Encyclopedia of Genes and Genomes) pathway maps as the entities of the cellular functions. The KEGG database classifies the genes of sequenced genomes into more than 100 functional modules, named pathway maps, in which the reactions, substrates and products of the corresponding genes (proteins) are shown. Based on this information, not only the network of genes and compounds, but also the network of pathway maps (cellular-functions) can be illustrated.</p>
+    </sec>
+    <sec sec-type="methods">
+      <title>Methods</title>
+      <sec>
+        <title>Outline</title>
+        <p>Figure <xref ref-type="fig" rid="F1">1</xref> shows the schematic procedure for determining a pathway map set. It is divided into three parts. In the first part, the conserved pathway maps among many genomes are determined, based on the comparative genomics. In the second part, by checking the compounds imported to and synthesized in the conserved pathway maps, an initial pathway-map network is obtained. Finally, the pathway maps that provide the necessary compounds for the conserved pathway maps are connected to the pathway-map network, until there are no more suitable pathway maps to be added. We regard the final pathway-map network as a candidate for the minimal pathway map (cellular-function) set, and assessed them in terms of biomass production and the number of components (explained later).</p>
+        <fig id="F1" position="float">
+          <label>Figure 1</label>
+          <caption>
+            <p><bold>Schematic procedure to derive minimal pathway maps</bold>.</p>
+          </caption>
+          <graphic xlink:href="1752-0509-3-111-1"/>
+        </fig>
+      </sec>
+      <sec>
+        <title>Representative genomes and orthologous genes</title>
+        <p>As of December 2008, more than 700 bacterial genomes have been completely sequenced. We divided them into three lineages: proteobacteria, firmicutes, and others, with reference to the classical phylogenetic classification (data from KEGG). We selected 10 representative genomes from each lineage, taking the genome size, the phylogenetic distance, and the annotation availability into account (see the Legend of Additional file <xref ref-type="supplementary-material" rid="S1">1</xref>: Table S1 for detail). Thus there are three lineages, each composed of 10 genomes, in the total of 30 genomes (Additional file <xref ref-type="supplementary-material" rid="S1">1</xref>: Table S1). Within a given triplet composed of three genomes, one from each lineage, exhaustive homology searches were performed. Conserved orthologous genes among the three genomes [<xref ref-type="bibr" rid="B29">29</xref>] were detected by the bidirectional best-hits method [<xref ref-type="bibr" rid="B30">30</xref>]. All of the triplet combinations (1,000) were examined. The influence of the selection of representative genomes is shown in Additional file <xref ref-type="supplementary-material" rid="S1">1</xref>: Table S2.</p>
+      </sec>
+      <sec>
+        <title>Ortholog fraction</title>
+        <p>The KEGG database provides classifications of functionally identified genes of available genomes and presents them as more than 100 functional modules, "reference pathway maps". For each reference pathway map, the customized pathway map for each genome (organism) was constructed by highlighting the genes assigned to the pathway map. We evaluated the evolutionary conservation of each pathway map, based on the conserved orthologous genes derived as above. For the KEGG pathway maps of a given genome in a triplet, all of the conserved orthologous genes were assigned. Since the total number of genes assigned to a pathway map depends on the genome (organism), we defined the ortholog fraction (OF) of pathway map <italic>i </italic>as,<disp-formula><graphic xlink:href="1752-0509-3-111-i1.gif"/></disp-formula></p>
+        <p>where <italic>N</italic><sub><italic>i</italic>, <italic>orth </italic></sub>is the number of orthologous genes detected in pathway map <italic>i </italic>using a given triplet, and <italic>Na</italic><sub><italic>i</italic>, <italic>min </italic></sub>is the minimum total-number of genes appearing in pathway map <italic>i </italic>of the three genomes. <italic>OF</italic><sub><italic>i </italic></sub>was averaged over 1,000 triplets. The pathway maps with high OF values are considered to be the "conserved pathway maps", and they will be the "core" of a minimal cellular-function set. Referring to the descending order of OF values, we chose &#x3B3; pathway maps and classified them as the conserved pathway maps<sub>&#x3B3;</sub>.</p>
+      </sec>
+      <sec>
+        <title>Reconstruction of the metabolic network in a pathway map</title>
+        <p>A metabolic network within each pathway map was reconstructed, based on the enzymatic reactions of a particular organism provided by the KEGG API service and the reaction_mapformula.lst file on the KEGG FTP site, where the substrates and the products for all reactions in a pathway map are described, mainly as a binary relation (Figure <xref ref-type="fig" rid="F2">2a</xref>). We used <italic>Escherichia coli </italic>(<italic>E. coli</italic>) and <italic>Bacillus subtilis </italic>(<italic>B. subtilis</italic>) as the model organisms in this work, because there are many experimental and computational data that can be compared. In the network reconstruction process, we regarded the same compounds as one node, and a substrate-product relation as an edge. Therefore a set of reactions in a pathway map was transformed into a unique network (Figure <xref ref-type="fig" rid="F2">2b</xref>). The reversibility or irreversibility assigned to each reaction in the reaction_mapformula.lst file indicates the stream of compounds in the reconstructed network. We regarded compounds at the upstream termini as the initial substrates (circles in Figure <xref ref-type="fig" rid="F2">2b</xref>), and all the compounds in the network as products of the pathway map. When a network terminus consists of many initial compounds that are connected by reversible reactions, either one of them can be the initial substrate at the terminus (Figure <xref ref-type="fig" rid="F2">2c</xref>). We assumed that if all the initial substrates of a pathway map were provided, then all of the reactions would take place there, and all products in the pathway map synthesized. Cofactors were taken into account only if they were described in the chemical reactions as substrates or products. Because such cases are unlikely to be common, cofactors were implicitly assumed to be abundant in the cell, and used if they were required. When a compound is only produced or only consumed in the pathway map, a gap (dead end) exists. At this stage we did not take into account the dead end of the pathway maps. The only-produced compounds are the downstream termini of the network, and the only-consumed compounds are the initial substrates. When the chemical reactions are presented in the indescribable form by the binary relation as, A + B &#x2192; C + D, both A and B should be the substrates for each of C and D. The network in this case is shown in Figure <xref ref-type="fig" rid="F2">2d</xref>.</p>
+        <fig id="F2" position="float">
+          <label>Figure 2</label>
+          <caption>
+            <p><bold>Reconstruction of the metabolic network from chemical reactions</bold>. (a) Chemical reactions in the binary relation with reversible/irreversible information (arrows). (b) The reconstructed network using chemical reactions in (a). Enclosed characters indicate the initial substrates. (c) The reconstructed network using chemical reactions in (a) and E &#x2194; F. (d) The reconstructed network from the chemical reactions A + B &#x2192; C + D. it represents two initial substrates are required to produce each of two products.</p>
+          </caption>
+          <graphic xlink:href="1752-0509-3-111-2"/>
+        </fig>
+      </sec>
+      <sec>
+        <title>Construction of the pathway-map network</title>
+        <p>We randomly selected an initial substrate (in the above case, exceptionally, both A and B) in a pathway map, and tried to connect it to the same compound in another pathway map, regardless of the dead end material. If it was possible, two pathway maps were linked with a directed edge, and a new large network with a new set of initial substrates and products was created. Repeating this procedure for all conserved pathway maps<sub>&#x3B3;</sub>, an initial pathway-map network was constructed. It should be noted that the initial substrates and network configuration of the initial pathway-map network depended on the order of selection of the initial substrate and the product being connected. In our method, the only-consumed dead end compounds were supplied from the other pathway maps, and the only-produced dead end compounds were assumed to be initial substrates for the other pathway maps or removed by virtual transporters.</p>
+      </sec>
+      <sec>
+        <title>Extension of the pathway-map network</title>
+        <p>A pathway map that can provide the initial substrates of the pathway-map network was chosen randomly from those other than the components of the pathway-map network, and was connected into the pathway-map network to create a new one. In this process, only a part of the pathway map, i.e., minimal sequential chemical reactions necessary to synthesize the initial substrate, was connected, so that the extra reactions for the initial-pathway map network were excluded. Since the added pathway maps are non-conserved and depend on the organism, we called them the organism-specific pathway maps. Referring to each of the <italic>E. coli </italic>and the <italic>B. subtilis </italic>pathway maps, this selection and connection process was repeated until there were no more pathway maps to be connected. The resultant network defined the network of "autonomous pathway maps", because it was expected to synthesize most of the necessary compounds inside the network. The initial substrates of the autonomous pathway maps were defined as nutrients imported from the extracellular environment. We generated 10,000 autonomous pathway maps from the initial pathway-map construction process using different random seeds. As the autonomous pathway-map network depends on the &#x3B3; parameter (the number of conserved pathway maps), we started from the conserved pathway maps<sub>&#x3B3; </sub>and constructed 10,000 patterns of the autonomous pathway maps<sub>&#x3B3;</sub>, at each &#x3B3;.</p>
+      </sec>
+      <sec>
+        <title>Estimation of minimal pathway maps</title>
+        <p>We assumed the autonomous pathway maps have to synthesize at least indispensable compounds for the organism by themselves. The attained autonomous pathway maps were assessed to determine whether they satisfied this condition. As the indispensable compounds, we employed the biomass components estimated by Feist et al. for <italic>E. coli </italic>[<xref ref-type="bibr" rid="B31">31</xref>] and by Oh et al. for <italic>B. subtilis </italic>[<xref ref-type="bibr" rid="B32">32</xref>], the numbers of which are 61 and 64, respectively. The biomass components are the major and essential constituents that make up the cellular content of organisms. For <italic>E. coli</italic>, they were determined quantitatively using the dry weight composition data for an average <italic>E. coli </italic>B/r cell, which grew exponentially at 37&#xB0;C under aerobic conditions in a glucose minimal medium [<xref ref-type="bibr" rid="B31">31</xref>]. Among the set of autonomous pathway maps, the one that could synthesize all of the biomass components was selected, and denoted as the "autonomous pathway maps*". Minimal pathway maps were decided as the autonomous pathway maps* composed of a minimal number of pathway maps.</p>
+      </sec>
+    </sec>
+    <sec>
+      <title>Results and discussion</title>
+      <sec>
+        <title>Pathway maps with high ortholog fractions</title>
+        <p>The ortholog fraction was calculated for each pathway map (see Table <xref ref-type="table" rid="T1">1</xref>). It revealed that the pathway maps classified as "genetic information processing", i.e., "ribosome", "aminoacyl-tRNA biosynthesis", "RNA polymerase" and "protein export", have high OF values (Table <xref ref-type="table" rid="T1">1</xref>. Also refer to the classification columns in Table <xref ref-type="table" rid="T2">2</xref>). "DNA polymerase" is also involved in "genetic information processing", but its OF value is lower than the others. This pathway map includes DNA polymerases I-V and DNA polymerase bacteriophage-type. The genes encoding them, except for DNA polymerase III, are not well conserved. The most conserved pathway map is "riboflavin metabolism", which is a member of the "cofactors and vitamins" category. The other members belonging to this class, i.e., "one carbon pool by folate", "pantothenate and CoA biosynthesis" and "porphyrin and chlorophyll metabolism", also have high OF values. This may reflect the importance of these compounds because cofactors and vitamins are involved in many kinds of reactions.</p>
+      </sec>
+      <sec>
+        <title>Comparison with computational data</title>
+        <p>The results of computational studies, the persistent genes of <italic>E. coli </italic>and the functional genomic core of <italic>B. subtilis</italic>, were compared with our results. The former results are the orthologous genes conserved in most of 228 bacterial genomes [<xref ref-type="bibr" rid="B14">14</xref>] and the latter results are the genes adopting highly biased codon usage[<xref ref-type="bibr" rid="B11">11</xref>]. These two data sets were selected from many studies on the minimal gene sets, because they are based on <italic>E. coli </italic>and <italic>B. subtilis </italic>genomes, anonymously accessible, and easy to convert from original ID to the KEGG ID. The "computationally-derived essential pathway maps" were assigned by the same process described in the "comparison with experimental data" section, but we used thresholds 3 and 1 for <italic>E. coli </italic>and <italic>B. subtilis</italic>, respectively, because these values were appropriate to identify a comparable number of computationally-derived essential pathway maps, so that we compared them with the minimal pathway maps.</p>
+        <p>42 and 46 computationally-derived essential pathway maps were defined for <italic>E. coli </italic>and <italic>B. subtilis</italic>, respectively. Among them, 31 and 27 were in common with the minimal pathway maps of <italic>E. coli </italic>and <italic>B. subtilis</italic>, respectively. The good consistency observed in <italic>E. coli </italic>(the Jaccard coefficient, 0.60 in total. See Table <xref ref-type="table" rid="T3">3</xref>) could be due to the similarity of methodologies that detect minimal pathway maps and persistent genes. Both methods relied on the conservation of genes among many bacterial genomes. The lower consistency in <italic>B. subtilis </italic>(0.45) might be explained as follows. We noticed that the computationally-derived essential pathway maps for <italic>B. subtilis </italic>were abundant in catabolism ("carbohydrate" and "energy" categories). Such pathway maps occupy 35% of all computationally-derived essential pathway maps. On the other hand, the occupancies of pathway maps of catabolism in our results and in the experimental results, are only 17% and 22%, respectively. This is probably because the genes used in catabolism are likely to be under codon usage, to be expressed abundantly and ubiquitously, so that the bacteria adapt a specific environment in which they should survive.</p>
+      </sec>
+      <sec>
+        <title>Comparison with parasitic genomes</title>
+        <p><italic>Buchnera aphidicola </italic>(<italic>B. aphidicola</italic>) strains (<italic>APS</italic>, <italic>Sg</italic>, <italic>Bp</italic>, <italic>Cc</italic>, <italic>5A </italic>and <italic>Tuc7</italic>) and <italic>Wigglesworthia glossinidia </italic>(<italic>W. glossinidia</italic>) are parasitic organisms and phylogenetically close to <italic>E. coli </italic>[<xref ref-type="bibr" rid="B34">34</xref>]. We compared the minimal pathway maps of <italic>E. coli </italic>with their genomes. The pathway maps that the genomes hold were taken from the KEGG database. In Table <xref ref-type="table" rid="T2">2</xref>, the pathway maps of <italic>B. aphidicola APS </italic>are shown in the "Par" (Parasite) column. Against these data, the Jaccard coefficients of minimal pathway maps of <italic>E. coli </italic>are calculated and shown in the "Parasite" column in Table <xref ref-type="table" rid="T3">3</xref>.</p>
+        <p>In the "carbohydrate" and "lipid" categories, the coefficients were lower than those against the experimental and the computational results, but in the "energy" and "other amino acids" categories, the coefficients were higher than those against the experimental and the computational results. The total Jaccard coefficients against the data of <italic>B. aphidicola APS</italic>, <italic>Sg</italic>, <italic>Bp</italic>, <italic>Cc</italic>, <italic>5A</italic>, <italic>Tuc7 </italic>and <italic>W. glossinidia</italic>, were 0.59, 0.59, 0.59, 0.56, 0.59, 0.60 and 0.52, respectively, indicating minimal pathway maps show better consistency with the data of <italic>B. aphidicola </italic>strains than with the data of <italic>W. glossinidia</italic>. The minimal pathway maps were also compared with the KEGG pathway maps of <italic>Mycoplasma genitalium</italic>. This organism is not a close relative of <italic>E. coli</italic>. The Jaccard coefficient was 0.49 in total.</p>
+        <p>The high Jaccard coefficients between the minimal pathway maps of <italic>E. coli </italic>and the pathway maps of several parasitic genomes imply that the minimal cellular functions are represented in the minimal pathway maps of <italic>E. coli</italic>. Also the slight differences seen in the Jaccard coefficients may reflect the phylogenetic distances between <italic>E. coli </italic>and the parasites.</p>
+      </sec>
+      <sec>
+        <title>Remarkable features of network construction</title>
+        <p>We demonstrated that there were good consistencies in the comparisons between the minimal pathway maps and the experimental, computational and parasitic data. However, we noticed that these results depended on how the essential genes to the essential pathway maps were converted. We used "number" of essential genes in the pathway maps to define the essential pathway maps. When we employed the "fraction" of essential genes in the pathway maps, as was applied to define the conserved pathway maps (OF value), instead of the number, the results were slightly different. In both experimental and computational results for <italic>E. coli</italic>, the fractions of essential genes for all pathway maps in "genetic information processing" were higher than 30% (data not shown). However, the fractions of essential genes for all pathway maps in catabolism ("carbohydrate" and "energy" categories) were lower than 30%, except the fraction for "C5-Branched dibasic acid metabolism" in the computational results (50%). This is because the computationally-determined essential genes are the conserved genes, and genes in "genetic information processing" are strongly conserved. Also these genes tend to code proteins that have no substitutions, e.g., each of the ribosomal proteins. Disrupting them is likely to be lethal. Apparently, the computational method referring only to the gene conservation can hardly clarify the significance of catabolism. On the other hand, we first identify the conserved pathway maps that include conserved orthologous genes. Subsequently, the pathway maps that supply the substrates for the conserved pathway maps are identified. In this case, the pathway maps in catabolism are naturally introduced. Although this method relies on the reliability of chemical reactions or pathway-map network data employed, the framework is very simple. The significance of catabolism may be still under discussion and one may consider only the genes in "genetic information processing" and a small number of additional genes are enough to constitute a living cell in very rich media, even though there are no genes in catabolism. We cannot argue for the possibility of such a virtual organism at this stage, but we can point out that in each bacterial genome the portion of genes for catabolism is considerable (in <italic>E. coli </italic>7%), and to shed light on their significance, our method is effective. We consider this methodology provides an alternative way to explore a minimal cellular-function set, other than current experimental and computational approaches.</p>
+      </sec>
+    </sec>
+    <sec>
+      <title>Conclusion</title>
+      <p>The method to evaluate the minimal KEGG pathway maps proposed here identified 41 pathway maps, including 20 conserved pathway maps and 21 organism-specific pathway maps for <italic>E. coli</italic>, and 41 pathway maps, including 25 conserved pathway maps and 16 organism-specific pathway maps for <italic>B. subtilis</italic>. The conserved pathway maps include many pathway maps classified as "genetic information processing", whereas the organism-specific pathway maps mainly include pathway maps for catabolism, reflecting evolutionary aspects. The consistencies between minimal pathway maps and the experimental, computational, and parasitic data indicate that our procedure is realistic.</p>
+      <p>In the case of KEGG data analysis, since our method to detect organism-specific pathway maps is applicable to only the enzymatic reactions, it is insufficient to estimate the essentialities of "membrane transport", "signal transduction" or "cell motility", for which the chemical reactions are not provided in the reaction_mapformula.lst file. However, our method can be applied to the other data for biochemical reactions, instead of the KEGG data, e.g., a genome-scale metabolic model of <italic>E. coli</italic>, iAF1260 [<xref ref-type="bibr" rid="B31">31</xref>] and that of <italic>B. subtilis</italic>, iYO844 [<xref ref-type="bibr" rid="B32">32</xref>]. By analyzing the other data as well as modifying our algorithm, we can refine our results.</p>
+      <p>As mentioned in the Background, a minimal genome and a minimal cellular-function set depend on the environment or nutrients, and their general definitions are very difficult. However, an estimation of minimal cellular-functions to realize a specific biological system is useful to design an efficient biological process, from the viewpoints of synthetic biology and cell engineering. For instance, we could design a bacterial genome that will degrade harmful chemicals, such as dioxin, or synthesize beneficial materials, such as ethanol, in large quantities through photosynthesis, by considering only minimal pathway maps related to their efficient catalysis.</p>
+    </sec>
+    <sec>
+      <title>Authors' contributions</title>
+      <p>YA performed the computational experiments, analyzed the data and wrote the manuscript. MO supervised the study, analyzed the data and wrote the manuscript.</p>
+    </sec>
+    <sec sec-type="supplementary-material">
+      <title>Supplementary Material</title>
+      <supplementary-material content-type="local-data" id="S1">
+        <caption>
+          <title>Additional file 1</title>
+          <p><bold>Table S1 and S2.</bold>. The 30 representative genomes (Table S1) and the pathway maps with high OF values recalculated using 30 genomes that were partly different from the original 30 genomes (Table S2).</p>
+        </caption>
+        <media xlink:href="1752-0509-3-111-S1.doc" mimetype="application" mime-subtype="msword">
+          <caption>
+            <p>Click here for file</p>
+          </caption>
+        </media>
+      </supplementary-material>
+      <supplementary-material content-type="local-data" id="S2">
+        <caption>
+          <title>Additional file 2</title>
+          <p><bold>Table S3</bold>. Compounds exchanged between the pathway maps and nutrients imported from extracellular environment in Figure <xref ref-type="fig" rid="F4">4</xref>.</p>
+        </caption>
+        <media xlink:href="1752-0509-3-111-S2.xls" mimetype="application" mime-subtype="vnd.ms-excel">
+          <caption>
+            <p>Click here for file</p>
+          </caption>
+        </media>
+      </supplementary-material>
+    </sec>
+  </body>
+  <back>
+    <sec>
+      <title>Acknowledgements</title>
+      <p>We would like to thank Kenta Nakai, Kengo Kinoshita and Shuichi Onami for their help with this research. YA is grateful to his colleagues in the Ota laboratory (at Tokyo Institute of Technology and Nagoya University), the Nakai and Kinoshita laboratory (at The University of Tokyo) and the Onami laboratory (at RIKEN) for discussions. YA is supported by the Global COE program awarded to the Graduate School of Bioscience and Biotechnology at Tokyo Institute of Technology.</p>
+    </sec>
+    <ref-list>
+	    <ref id="pone.0052832-Jemal1"><label>2</label><mixed-citation publication-type="journal"> <name><surname>Jemal</surname><given-names>A</given-names></name>, <name><surname>Bray</surname><given-names>F</given-names></name>, <name><surname>Center</surname><given-names>MM</given-names></name>, <name><surname>Ferlay</surname><given-names>J</given-names></name>, <name><surname>Ward</surname><given-names>E</given-names></name>, <etal>et al</etal>  (<year>2011</year>)  <article-title>Global cancer statistics</article-title>.  <source>CA Cancer J Clin</source> <volume>61</volume>: <fpage>69</fpage>-<lpage>90</lpage> <pub-id pub-id-type="pmid">21296855</pub-id> </mixed-citation></ref>
+    </ref-list>
+  </back>
+</article>

@@ -1,0 +1,27 @@
+@namespace("eu.dnetlib.iis.documentsclassification.schemas")
+protocol IIS{
+
+    record DocumentClass {
+//      The class assigned to the document.
+//      The array stores all labels laying on the path from the root to the
+//      leaf assigned to given document in a particular taxonomy tree, e.g.
+//      ["Computer Science", "Machine Learning"]
+        union { null , array<string> } classLabels = null;
+//		Find more details on `confidenceLevel` constraints in eu/dnetlib/iis/README.markdown file.
+        union { null , float } confidenceLevel = null;
+}
+
+    record DocumentClasses {
+//      All classes from arXiv taxonomy assigned to the document.
+        union { null , array<DocumentClass> } arXivClasses = null;
+//      All classes from WoS taxonomy assigned to the document.
+        union { null , array<DocumentClass> } WoSClasses = null;
+//      All classes from DDC taxonomy assigned to the document.
+        union { null , array<DocumentClass> } DDCClasses = null;
+//      All classes from europePMC taxonomy assigned to the document.
+        union { null , array<DocumentClass> } meshEuroPMCClasses = null;
+//      All classes from ACM taxonomy assigned to the document.
+        union { null , array<DocumentClass> } ACMClasses = null;
+    }
+
+}

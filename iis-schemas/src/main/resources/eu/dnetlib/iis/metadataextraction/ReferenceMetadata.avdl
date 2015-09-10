@@ -1,0 +1,15 @@
+@namespace("eu.dnetlib.iis.metadataextraction.schemas")
+protocol IIS{
+
+    import idl "ReferenceBasicMetadata.avdl";
+
+    record ReferenceMetadata {
+        ReferenceBasicMetadata basicMetadata;
+//      reference position in bibliography, starting with '1'
+        union { null , int } position = null;
+//      raw citation string held here just in case - maybe we will be able to use it
+//      instead of basicMetadata if the latter one turns out to be of a low quality
+        union { null , string } text = null;
+    }
+
+}

@@ -1,0 +1,135 @@
+{
+  "id": "doc-id-1",
+  "title": null,
+  "abstract": null,
+  "language": null,
+  "keywords": null,
+  "externalIdentifiers": null,
+  "journal": "journal1",
+  "year": null,
+  "publisher": null,
+  "references": [
+    {
+      "basicMetadata": {
+        "title": "Interview with the Vampire",
+        "authors": [
+          "A. Rice",
+          "B. Pasta"
+        ],
+        "pages": {
+          "start": "1",
+          "end": "222"
+        },
+        "source": "Vampire Journal",
+        "volume": "12",
+        "year": "1997",
+        "edition": null,
+        "publisher": null,
+        "location": null,
+        "series": null,
+        "issue": "1",
+        "url": null,
+        "externalIds": {
+          "other": "00000"
+        }
+      },
+      "position": 1,
+      "text": "A. Rice, Interview with the Vampire"
+    },
+    {
+      "basicMetadata": {
+        "title": "The Lord of the Rings",
+        "authors": [
+          "J.R.R. Tolkien"
+        ],
+        "pages": {
+          "start": "1",
+          "end": "333"
+        },
+        "source": null,
+        "volume": null,
+        "year": "2012",
+        "edition": null,
+        "publisher": null,
+        "location": null,
+        "series": null,
+        "issue": null,
+        "url": null,
+        "externalIds": {
+          "other": "11111"
+        }
+      },
+      "position": 2,
+      "text": "J.R.R. Tolkien, The Lord of the Rings, 2012"
+    }
+  ],
+  "authors": [],
+  "affiliations": null,
+  "volume": null,
+  "issue": null,
+  "pages": {
+    "start": "1",
+    "end": "2"
+  },
+  "publicationTypeName": "article"
+}
+{
+  "id": "doc-id-2",
+  "title": null,
+  "abstract": null,
+  "language": null,
+  "keywords": null,
+  "externalIdentifiers": null,
+  "journal": "journal2",
+  "year": null,
+  "publisher": null,
+  "references": [],
+  "authors": [],
+  "affiliations": null,
+  "volume": null,
+  "issue": null,
+  "pages": {
+    "start": "10",
+    "end": "20"
+  },
+  "publicationTypeName": "article"
+}
+{
+  "id": "doc-id-3",
+  "title": null,
+  "abstract": null,
+  "language": null,
+  "keywords": null,
+  "externalIdentifiers": null,
+  "journal": null,
+  "year": null,
+  "publisher": null,
+  "references": [],
+  "authors": [],
+  "affiliations": null,
+  "volume": null,
+  "issue": null,
+  "pages": {
+    "start": "1",
+    "end": "3"
+  },
+  "publicationTypeName": "article"
+}
+{
+  "id": "doc-id-4",
+  "title": null,
+  "abstract": null,
+  "language": null,
+  "keywords": null,
+  "externalIdentifiers": null,
+  "journal": null,
+  "year": null,
+  "publisher": null,
+  "references": [],
+  "authors": [],
+  "affiliations": null,
+  "volume": null,
+  "issue": null,
+  "pages": null,
+  "publicationTypeName": "article"
+}

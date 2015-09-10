@@ -1,0 +1,11 @@
+@namespace("eu.dnetlib.iis.metrics.schemas")
+protocol IIS{
+
+    import idl "DocumentMetrics.avdl";
+    
+    record DocumentToDocumentMetrics {
+//      ID of the document, foreign key: Document.id ("document" data store)
+        string documentId;
+        union { null , DocumentMetrics } metrics = null;
+    }
+}

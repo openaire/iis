@@ -1,0 +1,28 @@
+@namespace("eu.dnetlib.iis.metadataextraction.schemas")
+protocol IIS{
+
+    record Range {
+        union { null , string } start = null;
+        union { null , string } end = null;
+    }
+    
+    record ReferenceBasicMetadata {
+        union { null , string } title = null;
+//      author names (a single string corresponds to a single author)
+        union { null , array<string> } authors = null;
+        union { null , Range } pages = null;
+//      the name of a journal, a book or anything that the article comes from
+        union { null , string } source = null;
+        union { null , string } volume = null;
+        union { null , string } year = null;
+        
+        union { null , string } edition = null;
+        union { null , string } publisher = null;
+        union { null , string } location = null;
+        union { null , string } series = null;
+        union { null , string } issue = null;
+        union { null , string } url = null;
+        union { null , map<string> } externalIds = null;
+    }
+
+}

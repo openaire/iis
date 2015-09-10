@@ -1,0 +1,69 @@
+<workflow-app xmlns="uri:oozie:workflow:0.3" name="forking_subworkflow">
+    <start to="fork"/>
+    
+    <!-- STEP 1 - FORKING --> 
+    <fork name="fork">
+        <path start="person_producer"/>
+        <path start="document_producer"/>
+    </fork>
+    <!-- STEP 1 -->
+
+    <!-- STEP 2A - PRODUCE PERSON -->
+    <action name="person_producer">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/person_producer" />
+                <mkdir path="${nameNode}${workingDir}/person_producer" />
+            </prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+            <main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.core.examples.java.PersonProducer</arg>
+            <arg>-Operson=${output_person}</arg>
+        </java>
+        <ok to="join"/>
+        <error to="fail"/>
+    </action>
+    <!-- STEP 2A -->
+
+    <!-- STEP 2B - PRODUCE DOCUMENT -->
+    <action name="document_producer">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/document_producer" />
+                <mkdir path="${nameNode}${workingDir}/document_producer" />
+            </prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+            <main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.core.examples.java.DocumentProducer</arg>
+            <arg>-Odocument=${output_document}</arg>
+        </java>
+        <ok to="join"/>
+        <error to="fail"/>
+    </action>
+    <!-- STEP 2B -->
+
+    <!-- STEP 3 - JOINER -->
+    <join name="join" to="end"/>
+    <!-- STEP 3 -->
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message: [${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+
+
+    <end name="end"/>
+</workflow-app>

@@ -1,0 +1,14 @@
+@namespace("eu.dnetlib.iis.importer.schemas")
+protocol IIS{
+
+    record Project {
+//      InformationSpace project identifier
+        string id;
+//      project grant identifier, 6-digit number
+        union { null , string } projectGrantId = null;
+//      project acronym
+        union { null , string } projectAcronym = null;
+//      project funding class e.g. FP7 or WT
+        union { null , string } fundingClass = null;
+    }
+}

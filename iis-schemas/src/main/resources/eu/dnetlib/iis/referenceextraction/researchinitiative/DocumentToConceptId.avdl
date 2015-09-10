@@ -1,0 +1,11 @@
+@namespace("eu.dnetlib.iis.referenceextraction.researchinitiative.schemas")
+protocol IIS{
+
+    record DocumentToConceptId {
+//      document ID, foreign key: DocumentText.id
+        string documentId;
+        string conceptId;
+//		Find more details on `confidenceLevel` constraints in eu/dnetlib/iis/README.markdown file.
+        union { null , float } confidenceLevel = null;
+    }
+}

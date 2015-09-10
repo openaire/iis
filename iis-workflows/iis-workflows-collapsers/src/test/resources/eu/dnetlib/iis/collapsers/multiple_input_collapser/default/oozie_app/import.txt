@@ -1,0 +1,2 @@
+## This is a classpath-based import file (this header is required)
+multiple_input_collapser classpath eu/dnetlib/iis/collapsers/multiple_input_collapser/oozie_app

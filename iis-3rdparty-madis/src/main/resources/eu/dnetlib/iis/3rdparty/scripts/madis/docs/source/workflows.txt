@@ -1,0 +1,12 @@
+executing madSQL workflow
+
+logging on workflows
+    flowname
+
+variables in workflows
+
+passing variable in new workflow execution
+
+Transcactions in workflows
+
+

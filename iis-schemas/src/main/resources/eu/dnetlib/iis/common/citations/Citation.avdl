@@ -1,0 +1,12 @@
+@namespace("eu.dnetlib.iis.common.citations.schemas")
+protocol IIS{
+
+    import idl "CitationEntry.avdl";
+    
+	record Citation {
+//		citing document OA+ identifier
+		string sourceDocumentId;
+		eu.dnetlib.iis.common.citations.schemas.CitationEntry entry;
+	}
+}
+

@@ -1,0 +1,2 @@
+## This is a classpath-based import file (this header is required)
+transformer_metricsprimary classpath eu/dnetlib/iis/transformers/metricsprimary/oozie_app

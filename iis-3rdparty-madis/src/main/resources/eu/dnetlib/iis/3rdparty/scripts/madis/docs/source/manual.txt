@@ -1,0 +1,564 @@
+.. highlight:: sql
+
+Manual
+#########
+
+Functions
+*********
+
+Functions are the main mechanism with which extensions are implemented.
+The are three kinds of functions:
+
+- Row functions
+
+- Aggregate functions
+
+- Virtual tables
+
+madIS also provides syntactic extensions, in its supported SQL, that simplify the use of above functions.
+
+.. seealso::
+
+    * :ref:`row-functions-list`
+    * :ref:`aggregate-functions-list`
+    * :ref:`vtable-functions-list`
+
+Row functions
+
+Programmable row functions work in a similar way as standard SQL row functions such as *abs()*, *lower()* and *upper()*.
+Their implementation is done in Python, and they are able to use all Python facilities and libraries.
+
+An example of an SQL statement using an external row function is::
+
+   mterm> select detectlang('Il en est des livres comme du feu de nos foyers'); 
+   french 
+
+Above statement executes the *detectlang* function, which tries to detect the language of a snippet of text by analysing its statistical properties.
+On the above example the snippet is a Voltaire quote, and the correct answer from *detectlang* is that it is in french.
+
+If we wished to do the same for multiple quotes then we could use the following SQL statement (assuming the existence of a *quotes_table* which contains the column *quote*)::
+
+   mterm> select detectlang(quote) from quotes_table; 
+   french
+   english
+   ...
+
+In general external row functions can be used in exactly the same way as SQLite's internal row functions.
+
+.. seealso::
+
+    * :ref:`row-functions-list`
+    * :func:`~functions.row.langtools.detectlang`
+
+Creating and using a simple row function
+----------------------------------------
+
+Python files that implement row functions live in "/src/functions/row". A single python file can contain many row functions.
+Now lets create a simple "hello world" row function.
+
+Go to the "src/functions/row/" path of madIS, and create "hello.py". Then write the following code in it:
+
+.. sourcecode:: python
+
+   def hello(*args):
+       return "hello "+args[0] 
+   
+   hello.registered=True 
+
+The code above, looks like and indeed is, a simple python function that takes multiple arguments.
+The only peculiarity is the "hello.registered=True" line.
+What this line does, is to instruct madIS to register this function with the SQLite core.
+This way, Python functions that we don't wish to become SQLite row functions, can simply be used without any change to them.
+
+To execute the above row function we start madIS and execute an SQL query which uses the new *hello* row function::
+
+   % python mterm.py
+   mterm> select hello("world"); 
+   hello world 
+   
+
+The SQL query above, shows the results of calling *hello* function with "world" as a parameter.
+As happens very often in SQL queries, parameter values are retrieved from tables.
+Below we show such an example::
+
+   mterm> select "world" as a UNION select "all" as a; 
+   all 
+   world 
+   Query executed in 0 min. 0 sec 3 msec 
+   mterm> select hello(a) from (select "world" as a UNION select "all" as a); 
+   hello all 
+   hello world 
+   Query executed in 0 min. 0 sec 7 msec 
+
+When developing custom row functions it is very useful to browse through the already developed row functions, in the "functions/row" path of madIS.
+Most of the time a custom function can be based on an already existing one.
+
+.. note::
+   If a developer wishes to add a row function that in essence is a part of a pre-existing Python library.
+   The madIS convention is to put the library files in the "src/lib/" path of madIS and then create a row function in the "row" path of madIS which imports and calls the necessary methods of the actual library in "lib" path.
+   For an example of this see *detectlang.*
+
+.. seealso::
+
+    * :ref:`row-functions-list`
+
+Aggregate functions
+
+Programmable aggregate functions work in a similar way as standard SQL aggregate functions such as *sum()*, *min()* and *max()*.
+Their implementation is done in Python, and as is also the case for row functions, all Python facilities and libraries are available.
+
+An example of an SQL statement using an external aggregate function is::
+
+   mterm> select "term1+term2" as a UNION select "term2 term3" as a;
+   term1+term2
+   term2 term3
+   mterm> select concatterms(a) 
+   from (select "term1+term2" as a UNION select "term2 term3" as a); 
+   term1+term2 term2 term3
+
+The statement above, executes the :func:`~functions.aggregate.text.concatterms` function, which concatenates strings of terms together, while keeping the terms disjoint.
+
+Using the aggregate function above, together with a row function is also possible.
+To concatenate together only the input string keywords we could execute the following SQL::
+
+   mterm> select concatterms(keywords(a))
+            from (select "term1+term2" as a UNION select "term2 term3" as a);
+   term1 term2 term2 term3 
+
+.. seealso::
+
+    * :ref:`aggregate-functions-list`
+    * :func:`~functions.aggregate.text.concatterms`
+    * :func:`~functions.row.keywords.keywords`
+
+
+Creating and using a simple aggregate function
+----------------------------------------------
+
+Python files that implement aggregate functions live in
+"/src/functions/aggregate". A single python file can contain many aggregate functions.
+Now, lets create a simple aggregate function.
+
+Go to the "src/functions/aggregate/" path of madIS, and create "myconcat.py". Then write the following code in it:
+
+.. sourcecode:: python
+
+    class quotedconcatterms:
+   
+       registered=True 
+   
+       def __init__(self): 
+           self.result=[] 
+   
+       def step(self, *args): 
+           if len(args[0])!=0: 
+               self.result.append("'"+args[0]+"'") 
+   
+       def final(self): 
+           return ' '.join(self.result) 
+
+What the aggregate function above does, is to concatenate strings of terms together while inserting single quotes around each string.
+
+In the "__init__" method of class *quotedconcatterms* we initialize all needed variables (self.result).
+The "step" method, is called by SQLite's engine for every tuple of the group which is fed into the aggregate function.
+At the end of the group, the "final" method is called to return the final result.
+
+The "registered=True" line above, as in row functions, instructs madIS to load the class into the SQLite engine as an aggregate function.
+
+To execute the above aggregate function we start madIS and execute an SQL query which uses the new *quotedconcatterms*
+aggregate function (notice the single quotes around each input string in the results)::
+
+   % python mterm.py
+   mterm> select quotedconcatterms(keywords(a)) from (select "term1+term2" as a UNION select "term2 term3" as a); 
+   'term1 term2' 'term2 term3' 
+
+As is the case with aggregate functions it is very useful to browse through the
+already developed aggregate functions, in the "functions/aggregate" path of
+madIS, to find snippets of code implementing wished for, functionality.
+
+.. seealso::
+
+    * :ref:`aggregate-functions-list`
+
+Virtual tables
+
+Virtual tables are actually functions that take parameters and output table like data. They can be used in the SQL syntax wherever
+a regular table would be placed.
+
+Virtual tables are one of the most powerful function classes in madIS. They can function in a regular table fashion,
+where the output data is finite in number, or in a streaming fashion, where the output stream can be infinite.
+
+This, together with the SQL syntax extensions of madIS, creates a very powerful environment with which a variety
+of standard madIS features have been developed, such as the *multisets*, *workflow engine*,
+*direct data load from filesystem or network*, etc.
+
+
+Typical examples of virtual tables sources are files, SQL query resulsets, or even external programs output.
+
+In addition to the above, virtual tables can also function as programmable indexes on the input data,
+negotiating with the database engine about which constraints or ordering they'll be able to answer/produce quickly.
+The only madIS virtual table that implements and works as an index is :ref:`cache <tutcache>`, which offers, a created on the fly,
+multidimensional index.
+
+Using virtual tables can be done in a variety of ways.
+The first is **parametric table**::
+
+   % python mterm.py
+   mterm> select * from file('./demo/continents.tsv') limit 2; 
+   Asia|AF 
+   Europe|AL 
+
+What the example above does, is to read the tab separated "continents.tsv" filesystem file as a table.
+Using the standard *limit* SQL directive, the output is limited to only 2 rows.
+
+An example showing the streaming nature of virtual tables is::
+
+   mterm> select output from pipe('query:date'); 
+   Fri Feb 1 12:34:55 EET 2000 
+   "" 
+   mterm> select strsplit(output,'delimiter: ') from pipe('query:date'); 
+   Mon|Feb||1|12:34:56|EET|2000 
+
+The first of the above examples executes system's "date" command through the use of the :mod:`~functions.vtable.pipe` virtual table.
+Notice that the :mod:`~functions.vtable.pipe` virtual table has a default returned schema, having one column named *output.*
+
+The second of the above examples does the same as the previous one, however it also splits :mod:`~functions.vtable.pipe`'s output,
+using space as a delimiter, into multiple columns through :func:`~functions.row.formating.strsplit` row function.
+
+At this point, we should skip a little ahead, and mention two peculiarities on the queries above.
+The first one is the "query:date" parameter of :mod:`~functions.vtable.pipe`.
+This in madIS is called a *named parameter*, where the part before the ":" is a parameter's name and the second part is a parameter's value.
+
+The second peculiarity is the that the row function :func:`~functions.row.formating.strsplit` returns multiple columns.
+This is a :ref:`multiset <tutmultiset>` function, able to return as many columns and rows as it wishes.
+To see the column names and column types of second query above, we can execute::
+
+   mterm> coltypes select strsplit(output,'delimiter: ') from pipe('query:date'); 
+   C1|text 
+   C2|text 
+   C3|text 
+   C4|text 
+   C5|text 
+   C6|text 
+   C7|text 
+   
+
+The "coltypes" in the above query may look like a special function of the terminal but in essence it is also
+a virtual table that takes as input a query and returns a table having as first column the column names
+of the inside query and as second column the column types of the inside query.
+
+
+.. note::
+    - :mod:`~functions.vtable.coltypes` is able to be used in front of a query because it is in its :ref:`inverted form <inversion>`.
+      We'll discuss madIS SQL extensions in the following section.
+    - We won't present a simple virtual table implementation as they are too complex to be presented here.
+      For more see the already existing tables in the "/src/functions/vtable" path of madIS, and the
+      `APSW documentation <http://apidoc.apsw.googlecode.com/hg/vtable.html>`_ concerning virtual tables.
+
+.. seealso::
+
+    * :ref:`vtable-functions-list`
+    * :mod:`~functions.vtable.file`
+    * :mod:`~functions.vtable.pipe`
+    * :func:`~functions.row.formating.strsplit`
+    * :mod:`~functions.vtable.coltypes`
+
+.. _inversion:
+
+madIS SQL extensions
+********************
+
+While developing madIS, we realized that some simple ideas like virtual table chaining, were too difficult to be written in plain SQL.
+In addition using a virtual table was more difficult than it needed to be, due to having to "create" a virtual table before using it.
+
+To solve the problems above, we've extended SQL with the following features:
+
+- Parametric virtual tables are automatically created and deleted
+
+- Syntax inversion
+
+The first of above features, is quite apparent. The user doesn't have to manage virtual tables,
+madIS does everything it is needed automatically in the background, creating a virtual table just before a query using it, is executed, and
+deleting it after the query's execution completes. This is why we could directly
+read from the file system, with the *file* virtual table, in the previous section.
+
+Inversions are slightly more complex.
+So lets start with a simple virtual table chaining example and invert it::
+
+   mterm> select * from output('d.txt', "query:select * from pipe('query:date')"); 
+   1 
+
+What the query above does, is to call system's "date" command, through the *pipe* virtual table, and write the output back to the file system (in the file named "d.txt").
+The *output* virtual table returns back if it succeeded or not (1 or 0).
+
+Because chaining virtual tables on the manner shown above, proved to require a lot of effort and in addition was error prone, syntax inversion was added to madIS' accepted SQL syntax.
+The inversion syntax is::
+
+   VTname 'param1' 'param2'... namedparam1:valueofnamedparam1 ... SQL_query
+   
+
+Whenever madIS' SQL preprocessor "sees" above syntax it turns it into::
+
+   select * from Vtname('param1', 'param2' ..., 'namedparam1:valueofnamedparam1' ... , 'query:SQL_query')
+
+So lets use the inverted syntax, to reissue the query above::
+
+   mterm> output 'd.txt' pipe date;
+   1
+
+In practice a wide range of functionalities has been possible with inversions.
+The *coltypes* example shown in the previous section "feels" like special functionality that is implemented execution engine in other DB systems.
+In madIS, most of the special commands are in essence virtual tables (or row functions) in their inverted form.
+
+The same inverted syntax is also offered by madIS, for row functions.
+So instead of::
+
+   mterm> select detectlang('Il en est des livres comme du feu de nos foyers'); 
+   french 
+
+We could have written it as such::
+
+   mterm> detectlang 'Il en est des livres comme du feu de nos foyers'; 
+   french 
+
+A problem arises with row inversions.
+How to distinguish between the case of passing the actual query to a row function, and passing the **results** of the query to the row function.
+
+madIS has the *var* row function, which sets and retrieves a madIS variable.
+Some examples of its usage::
+
+   mterm> var 'demo' 'time'; -- This puts value 'time' to the variable named 'demo'
+   time 
+   mterm> var 'demo'; -- This retrieves the value of variable 'demo'
+   time 
+   mterm> select var('demo','time');--The same queries in their not inverted forms
+   time
+   mterm> select var('demo');
+   time
+
+What would happen if instead of the value "time" we had a plain query?::
+
+   mterm> var 'demo2' select var('demo'); 
+   select var('demo') 
+   mterm> var 'demo2';
+   select var('demo') 
+
+We see above, that instead of putting the result of the query "select var('demo')" into "demo2", it put the query's text in it.
+This makes it complex to pass values between variables, forcing us to do::
+
+   mterm> select var('demo2', (select var('demo'))); --Non inverted syntax
+   time
+   mterm> var 'demo2';
+   time
+
+Due to this, a directive which forces the use of the results of the embedded query has been created, to ease use cases such as above::
+
+   mterm> var 'demo2' 'essence of';
+   essence of
+   mterm> var 'demo' 'time';
+   time
+   mterm> var 'demo2' FROM var 'demo';
+   time
+   mterm> var 'demo2';
+   time
+
+Notice the "FROM" keyword after the "var 'demo2'" part of the query.
+What "FROM" does is to transform the query in its non inverted syntax shown above.
+
+.. note::
+   Both "FROM" and "OF" are accepted as synonyms, when specifying the use of embedded query results.
+
+.. seealso::
+
+    * :mod:`~functions.vtable.output`
+    * :mod:`~functions.vtable.pipe`
+    * :func:`~functions.row.langtools.detectlang`
+    * :func:`~functions.row.variables.var`
+
+
+.. _tutmultiset:
+
+Multisets
+*********
+
+Early in the development of madIS, the need to return multiple rows and columns from row and aggregate functions, arose.
+This need was satisfied through the use of *expand* virtual table and an accompanying Python API (*CompBuffer*) to create multisets.
+
+Virtual table *expand* works by looking into the results of a SQL query, and if
+it finds a specially formatted tuple (in *CompBuffer's* format), it decompresses it,
+looks for schema information, and then starts returning one by one the compressed data to the outside query.
+If more than one *CompBuffers* are found, then their schemata are consolidated into one.
+
+CompBuffer tries to avoid writing on the hard disk, by compressing in memory, the data fed
+into it and only after a threshold of 10 Mb of compressed data is reached, spilling over into the hard disk.
+
+To make multiset usage transparent to the user, madIS' SQL preprocessor, inserts automatically
+the *expand* virtual table whenever a multiset producing function is met.
+To flag a row or aggregate function as a multiset one, the programmer has to set the function's attribute
+"multiset" to "True". This is done in the same way as for the "registered" function's attribute.
+
+
+An example of a multiset row function which produces multiple columns is::
+
+   mterm> select strsplit("one,two,three"); 
+   one|two|three 
+
+And one which produces multiple rows is::
+
+   mterm> select strsplitv("one,two,three"); 
+   one 
+   two 
+   three 
+
+Both of the functions above, break their input on "comma" by default.
+
+.. seealso::
+
+    * :func:`~functions.row.formating.strsplit`
+    * :func:`~functions.row.formating.strsplitv`
+
+
+.. _tutcache:
+
+On the fly multidimensional indexing (the *cache* virtual table)
+****************************************************************
+
+Working with external sources directly, has the major problem of not being able to put acceleration structures on them (indexing), unless materializing them in the form of a database table.
+Joins with external sources, in particular, are very slow, forcing the SQLite core to do multiple sequential passes on the virtual tables tied to the external sources.
+
+To solve the problems above, the *cache* virtual table was created.
+The way it works is this:
+
+- At the beginning it does one pass over the results of the input query, and keeps them in memory
+
+- Then it negotiates with SQLite's core about what constraints and order bys, the core would like to have answered as fast as possible
+
+- It builds a very fast multidimensional index based on the negotiations above
+
+- It waits until the core starts sending queries on the above constraints, and returns the results using the just build multidimensional index
+
+- At the end of the query it throws away the cached query's data and the multidimensional index
+
+The multidimensional index is based on kd-trees and is implemented in Python, using the virtual table indexing API.
+It is a very fast to be build index, and extremely fast on answering queries involving many constraints.
+The multidimensional index is also designed to be memory efficient, needing O(number_of_dataset_rows) memory no matter the number of indexed dimensions.
+
+In practice, it has been up to 10 times faster on interval joins compared to SQLite's native indexing, and as the dimensions grow in number its speed advantage becomes bigger.
+
+An example of *cache* use is::
+
+   % cd demo
+   % python mterm.py
+   mterm> select country.c2, continent.c1 
+     from file('countries.tsv') as country, 
+          file('continents.tsv') as continent 
+     where country.c1=continent.c2;
+   Aruba|Americas
+   Antigua and Barbuda|Americas
+   United Arab Emirates|Asia
+   Afghanistan|Asia
+   . . . . . . . . .
+   Query executed in 0 min 2 sec 40 msec
+   mterm> select country.c2, continent.c1 
+     from file('countries.tsv') as country, 
+          (CACHE file 'continents.tsv') as continent 
+     where country.c1=continent.c2;
+   Aruba|Americas
+   Antigua and Barbuda|Americas
+   United Arab Emirates|Asia
+   Afghanistan|Asia
+   . . . . . . . . .
+   Query executed in 0 min 0 sec 71 msec
+
+The queries above, do a direct join on the filesystem's files "countries.tsv" and "continents.tsv" (in the "demo" path of madIS).
+The first query doesn't do any caching at all, so it is forced to do multiple sequential reads of the "continents" file, to execute the join.
+The second query, using the inverted syntax, caches the "continents" file and creates the required indexes to execute the join quickly.
+
+The speed difference between the two queries is quite significant (cached version of query is 28x faster).
+For bigger datasets and more constraints the speed advantage could be even greater.
+
+.. seealso::
+
+    * :mod:`~functions.vtable.cache`
+    * :mod:`~functions.vtable.file`
+
+Workflows
+*********
+
+From the beginning madIS was designed for building complete data processing systems with it.
+In madIS, workflows are viewed as a series of queries to be executed sequentially.
+
+The main function that implements madIS' workflow engine is :mod:`~functions.vtable.exec` virtual table::
+
+   mterm> select 'select 5';
+   select 5
+   mterm> exec select 'select 5';
+   1
+
+Virtual table :mod:`~functions.vtable.exec`, takes as input an SQL query, executes it and then operates on the **results** of the input query, executing them sequentially and returning "1" if all the queries executed successfully, or throwing an error if any queries failed to execute correctly.
+
+This peculiar design (its a meta-meta function), enables :mod:`~functions.vtable.exec` to work in tandem with other virtual tables that feed to it the workflows to be executed.
+The most frequent combination is::
+
+   mterm> exec flow file 'workflow.sql';
+
+What the query above does, is to open and read the "workflow.sql" filesystem file via
+the *file* virtual table, then feed its results into the *flow* virtual table
+which collects in one line the "broken into multiple lines" queries, and finally
+to feed the resulting queries to :mod:`~functions.vtable.exec` virtual table which will execute them.
+
+The above combination of virtual tables presents, one the most powerful aspects of madIS.
+Namely the ability to create complex functionality (in this instance a workflow engine), by quickly combining simple entities.
+
+.. note::
+    Another benefit of using (or abusing) a relational database to implement a workflow engine, is that all ACID properties
+    of the database are still present during the workflow processing. Unfortunately due to limitations of the SQLite core, 
+    transactional execution of madIS workflows isn't fully working yet (see :ref:`tutlimitations`).
+
+.. seealso::
+
+    * :mod:`~functions.vtable.exec`
+    * :mod:`~functions.vtable.flow`
+    * :mod:`~functions.vtable.file`
+
+Designing and building a data processing system with madIS
+**********************************************************
+
+Concerning the design of a data processing system.
+The required steps that have to be made when **designing** a data processing system with madIS are:
+
+1. Define the problem you are trying to solve
+
+2. Break the problem into workflows
+
+3. Break the workflows into queries
+
+4. Find the functions that the queries will need
+
+5. Find the Python libraries that the functions will need
+
+The steps above, are mostly self evident, and should be made in the order that they are presented.
+
+To **build** the data processing system, the above steps have to be followed, finding/building the required entities (functions, queries), for each step, **going from bottom to top** (Step 5 to Step 2),
+
+In practice we have found that there is always some overlap between the designing and building stages and between steps.
+Great care should be given, when designing, on the most difficult and time consuming step, which is step 1. When step 1 is successfully executed, the speed with which the rest of the steps are designed and following that, building them from bottom to top, is extremely fast in our experience.
+
+.. note::
+
+    An example of a madIS workflow can be found in the :ref:`examples section <applexample>`.
+
+.. _tutlimitations:
+
+Limitations of madIS
+********************
+
+The limitations of madIS are:
+
+- Due to SQLite's inability to simultaneously use multiple CPUs to execute a query, madIS' query execution is done by only one CPU.
+  This will be partially solved in the future through the use of the *map* virtual table, which will be able to execute a row function on multiple data rows in parallel.
+  For more heavy processing concurrency, functions and virtual tables enabling madIS to be used on clusters are in the planning stage
+
+- Due to SQLite's locking semantics, workflows inside a parent workflow, aren't in their own transactions.
+  So when a child workflow fails, the whole parent transaction rolls back.
+  This will be solved whenever SQLite fixes the problem where the database's system schema table is locked whenever a table is deleted

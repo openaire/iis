@@ -1,0 +1,61 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="transformers_websiteusage_document_community_filter">
+    <parameters>
+        <property>
+            <name>input_community</name>
+            <description>input communities</description>
+        </property>
+        <property>
+            <name>input_document_id</name>
+            <description>ids of documents existent in OA+</description>
+        </property>
+        <property>
+            <name>output</name>
+            <description>filtered communities</description>
+        </property>
+    </parameters>
+
+    <start to="generate-schema"/>
+    
+    <action name="generate-schema">
+	    <java>
+    		<job-tracker>${jobTracker}</job-tracker>
+        	<name-node>${nameNode}</name-node>
+	        <main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
+	        <arg>eu.dnetlib.iis.websiteusage.schemas.DocumentToCommunity</arg>
+	        <arg>eu.dnetlib.iis.common.schemas.DocumentId</arg>
+	        <capture-output />
+	    </java>
+	    <ok to="filter" />
+	    <error to="fail" />
+	</action>
+
+    <action name="filter">
+        <pig>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <delete path="${nameNode}${output}" />
+            </prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+            <!-- Path to PIG script the workflow executes. -->
+            <script>lib/scripts/filter.pig</script>
+            <param>input_community=${input_community}</param>
+            <param>input_document_id=${input_document_id}</param>
+            <param>output=${output}</param>
+            <param>schema_community=${wf:actionData('generate-schema')['eu.dnetlib.iis.websiteusage.schemas.DocumentToCommunity']}</param>
+            <param>schema_document_id=${wf:actionData('generate-schema')['eu.dnetlib.iis.common.schemas.DocumentId']}</param>
+        </pig>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+    <kill name="fail">
+        <message>Unfortunately, the workflow failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+    <end name="end"/>
+</workflow-app>

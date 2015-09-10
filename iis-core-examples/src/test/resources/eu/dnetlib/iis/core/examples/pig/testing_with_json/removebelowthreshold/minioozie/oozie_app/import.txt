@@ -1,0 +1,2 @@
+## This is a classpath-based import file (this header is required)
+removebelowthreshold classpath eu/dnetlib/iis/core/examples/pig/testing_with_json/removebelowthreshold/oozie_app

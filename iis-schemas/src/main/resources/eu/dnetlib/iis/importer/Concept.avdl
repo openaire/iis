@@ -1,0 +1,9 @@
+@namespace("eu.dnetlib.iis.importer.schemas")
+protocol IIS{
+
+    record Concept {
+        string id;
+        string label;
+        map<string> params;
+    }
+}

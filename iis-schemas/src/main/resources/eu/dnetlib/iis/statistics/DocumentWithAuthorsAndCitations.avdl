@@ -1,0 +1,18 @@
+@namespace("eu.dnetlib.iis.statistics.schemas")
+protocol IIS{
+
+        record DocumentWithAuthorsAndCitations {
+                string documentId;
+
+                boolean isPublished;
+
+                string year;
+
+                array<string> authorIds;
+
+                array<string> referencedDocumentsIds;
+
+                array<string> projectIds;
+        }
+}
+

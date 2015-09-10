@@ -1,0 +1,19 @@
+@namespace("eu.dnetlib.iis.statistics.schemas")
+protocol IIS{
+
+    import idl "CoreStatistics.avdl";
+
+    // core statistics of two kinds:
+    // - counted for all papers in the group
+    // - counted only for published papers
+    record CommonCoreStatistics {
+    
+        // core statistics for all papers
+        CoreStatistics allPapers;
+
+        // core statistics for published papers
+        CoreStatistics publishedPapers;
+
+    }
+
+}

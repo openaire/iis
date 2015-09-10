@@ -1,0 +1,4 @@
+{"documentId": "id-1", "statistics": {"citationsFromAllPapers": {"numberOfCitations": 0, "numberOfCitationsPerYear": {}}, "citationsFromPublishedPapers": {"numberOfCitations": 0, "numberOfCitationsPerYear": {}}}}
+{"documentId": "id-2", "statistics": {"citationsFromAllPapers": {"numberOfCitations": 2, "numberOfCitationsPerYear": {"2001": 2}}, "citationsFromPublishedPapers": {"numberOfCitations": 1, "numberOfCitationsPerYear": {"2001": 1}}}}
+{"documentId": "id-3", "statistics": {"citationsFromAllPapers": {"numberOfCitations": 2, "numberOfCitationsPerYear": {"2001": 2}}, "citationsFromPublishedPapers": {"numberOfCitations": 1, "numberOfCitationsPerYear": {"2001": 1}}}}
+{"documentId": "id-4", "statistics": {"citationsFromAllPapers": {"numberOfCitations": 3, "numberOfCitationsPerYear": {"2010": 1, "2001": 2}}, "citationsFromPublishedPapers": {"numberOfCitations": 2, "numberOfCitationsPerYear": {"2010": 1, "2001": 1}}}}

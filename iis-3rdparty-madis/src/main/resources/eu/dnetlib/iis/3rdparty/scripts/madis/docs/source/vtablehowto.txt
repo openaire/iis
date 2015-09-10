@@ -1,0 +1,175 @@
+Virtual table concept in madIS
+==============================
+
+Virtual table can be any piece of code that returns its results as list of lists. It will be used in madSQL in the FROM part of a query.
+
+Example::
+
+  select * from file('data.tsv');
+
+In this case data are produced from external sources. Many madis virtual tables take a query as an input, execute it and returns its results transformed.
+(See :ref:`Query parameter <unoteqparameter>`). In that case the vtable "call" could be inverted in the query. (see :ref:`SQL extensions <inversion>`).
+
+Example::
+
+  rowidvt select * from table1 limit 3;
+
+
+Creating a virtual table function
+----------------------------------------
+
+Virtual table fuctions are the most advanced operator in madIS. Existing virtual table functions can be organized by increasing implementation complexity in three categories:
+
+    - Single boolean output vt functions with query input: Virtual table functions that take an input, do sth and return 1 or 0. Example table fuctions are :mod:`~functions.vtable.exec`
+
+    - Iterative output: Vts that take input and returns many data (iterator of list).
+    Its call of the iterator retuns a list with each row data. In this category falls :mod:`~functions.vtable.file` operator, as well as :mod:`~functions.vtable.expand`, :mod:`~functions.vtable.rowidvt`, etc.
+
+    - Advanced: Advanced vt's that need the index capability of virtual tables. In this category falls only :mod:`~functions.vtable.cache` functions. These functions must implement virtual tables from scratch as described in
+    `APSW documentation <http://apidoc.apsw.googlecode.com/hg/vtable.html>`_.
+
+
+All virtual table functions are created in XXXX folder. Every virtual table function must be single module. 
+Detailed documentation of virtual table API could be found in `APSW documentation <http://apidoc.apsw.googlecode.com/hg/vtable.html>`_.
+In madIS there are used mostly two specific types of Virtual table functions, that helper libraries have been implemented to simplify
+their implementation.
+So implementing a virtual table function, is feasible either by following the `APSW API <http://apidoc.apsw.googlecode.com/hg/vtable.html>`_
+and adding the flags for madIS, either by using the helper libraries, as explained below.
+To continue reading, have a look to the Virtual table function API in APSW and play with toggle function and a virtual table call.
+Example::
+
+    mterm> toggle tracing;
+    tracing is now: True
+    Query executed in 0 min. 0 sec 4 msec
+
+    mterm> select * from (file 'data.csv');
+    executetrace(u"create virtual table temp.vt_144176563 using file('data.csv','automatic_vtable:1')")
+    executetrace(u'select * from (SELECT * FROM vt_144176563 );',None)
+    ...
+    executetrace(u'drop table temp.vt_144176563;')
+    Query executed in 0 min. 0 sec 14 msec
+
+    mterm> toggle vtdebug;
+    executetrace(u"SELECT toggle('vtdebug');",None)
+    vtdebug is now: True
+    Query executed in 0 min. 0 sec 4 msec
+
+    mterm> select * from (file 'data.csv');
+    ....
+
+Toggle is a row function that toggles the value of :ref:`madIS global settings<>`
+
+Important flags for madIS VT functions
+--------------------------------------
+
+  registered=True # set this flag to register in madis the function, if set to false the module is not loaded.
+
+  external_stream=True # Set this flag if no query parameter can be used.
+
+
+
+
+
+Impementing single boolean output virtual table function
+--------------------------------------------------------
+
+The
+
+    def function()
+    from madis.vtout import SourceNtoOne
+
+    class SourceNtoOne:
+        def __init__(self,func,boolargs=None,nonstringargs=None,needsescape=None,notsplit=None,connectionhandler=False,retalways=False):
+
+
+To create iterative VT's the madIS vtiterable could be used that hide some of the implementation details, or it can be build from scratch as in APSW, documentation. (http://apsw.googlecode.com/svn/publish/vtable.html) If vtiterable is not used, no standard parameter parsing will be available.
+
+MUST BE SET TO USE VT in madis:
+    One VT - one file in vtable folder
+    registered=True ( as in all operators)
+    external_stream=True (if the operator does not accept query parameter)
+
+    Source function must be implemented!!
+
+
+
+::
+
+    #Cursor Iterator
+
+    class TableCursor: # INTERFACE
+        def __init__(self): # when called for first time, it must probably identify the schema, if it is not dynamic
+            pass
+        def __iter__(self):
+            pass
+        def next(self):
+            pass
+        def close(self):
+            pass
+
+::
+
+
+    class TableVT: #INTERFACE       
+        
+        def __init__(self,envdict,largs,dictargs): #DO NOT DO ANYTHING HEAVY it, will be called before querying the table
+            pass
+
+        def getdescription(self):
+            """
+            must return a list of tuples (column name, columntype), if type not available leave it empty or None eg.(col,)
+            example:
+            [('column1','int'),('column2',),('column3','text')]
+            """
+            return schemalist
+
+        def open(self):
+            """
+            After the first time it is called getdescription function must return table instance schema
+            Must returns VT cursor
+            """
+            return TableCursor()
+        
+        def destroy(self):  # Called when Table instance is destroyed (on drop statement), OPTIONAL
+            pass
+
+.. function:: TableVT.__init__(self,envdict,largs,dictargs)
+
+Parameters:
+
+    :envdict:
+        Dictionary with enviromental variables (correspond to APSW parameters of VTModule.Create)
+        :tablename: name of the table that will be created.
+        :db: instance of the connection to the database
+        :dbname: database name
+        :modulename: The string name under which the module was registered???????
+
+    :largs: table function list arguments
+
+    :dictargs: dictionary table function named arguments eg. type:int -> dictargs['type']='int'
+
+
+
+def Source():
+    return SourceVT(TableVT,boolargs,nonstringargs,needsescape,notsplit)
+
+class SourceVT:
+    def __init__(self,table,boolargs=None,nonstringargs=None,needsescape=None,staticschema=False,notsplit=None):
+
+.. params:
+
+Parameters
+
+    :table: Class implementing TableVT interface
+    :boolargs: List of parameter names that will be chnged to True/False if they are accordingly t/f
+    :nonstringargs: Dictionary of parameter names that will be tranformed according to their value , eg. string input to dialect object {'dialect':{'line':line(),'tsv':tsv(),'csv':defaultcsv()}}
+    :needsescape: List of parameter names that that include escape sequences eg. \n, \t etc.
+    :staticschema: True if TableVT.open does not need to be executed before getdescription can be called
+    :notsplit: List of parameter names that should not be splitted in named parameters eg. ['http'] for do not splitting http://server.com
+
+
+
+
+
+
+

@@ -1,0 +1,14 @@
+@namespace("eu.dnetlib.iis.metrics.schemas")
+protocol IIS{
+
+    import idl "extended/AuthorExtendedMetrics.avdl";
+    import idl "primary/AuthorPrimaryMetrics.avdl";
+    
+
+    record AuthorMetrics {
+        union { null , eu.dnetlib.iis.metrics.primary.schemas.AuthorPrimaryMetrics } primary = null;
+        union { null , eu.dnetlib.iis.metrics.extended.schemas.AuthorExtendedMetrics } extended = null;
+    }
+    
+}
+

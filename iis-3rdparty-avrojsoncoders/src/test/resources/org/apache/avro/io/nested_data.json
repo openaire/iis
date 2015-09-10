@@ -1,0 +1,2 @@
+{"id":1,"name":null,"document":{"id":33,"title":"Some title","authorIds":[1,3,5]},"documentWithNullLast":{"id":33,"title":"Some title","authorIds":[1,3,5]},"documentWithNullDefault":{"id":33,"title":"Some title","authorIds":[1,3,5]},"documents":[{"id":11,"title":"Some title11","authorIds":[1,3,5]},{"id":33,"title":"Some title33","authorIds":[2,4,6]}]}
+{"id":1,"name":"Some name","document":{"id":33,"title":"Some title","authorIds":[1,3,5]},"documentWithNullLast":null,"documentWithNullDefault":null,"documents":null}

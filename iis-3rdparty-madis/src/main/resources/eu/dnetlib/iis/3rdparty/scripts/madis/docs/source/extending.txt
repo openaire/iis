@@ -1,0 +1,20 @@
+Where to create functions
+-------------------------
+
+Row functions HOWTO
+-------------------
+
+Aggregate functions HOWTO
+-------------------------
+
+
+Virtual table functions HOWTO
+-----------------------------
+
+
+Debugging
+---------
+
+
+Global settings
+---------------

@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="websiteusage_document_communities_builder">
+	
+	<parameters>
+		<property>
+			<name>input_logs</name>
+			<description>input logs file</description>
+		</property>
+		<property>
+			<name>output</name>
+			<description>output publication to communities mappings</description>
+		</property>
+	</parameters>
+
+	<start to="generate-schema" />
+
+	<action name="generate-schema">
+	    <java>
+    		<job-tracker>${jobTracker}</job-tracker>
+        	<name-node>${nameNode}</name-node>
+	        <main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
+	        <arg>eu.dnetlib.iis.websiteusage.schemas.LogEntry</arg>
+	        <arg>eu.dnetlib.iis.websiteusage.schemas.DocumentToCommunity</arg>
+	        <capture-output />
+	    </java>
+	    <ok to="communities_builder" />
+	    <error to="fail" />
+	</action>
+
+    <action name="communities_builder">
+        <map-reduce>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <delete path="${nameNode}${output}"/>
+            </prepare>
+            <streaming>
+                <mapper>scripts/madis/mexec.py -f scripts/createCommunities.sql -w communities.db</mapper>
+            </streaming>
+            <configuration>
+                <property>
+                    <name>mapred.output.format.class</name>
+                    <value>com.cloudera.science.avro.streaming.AvroAsJSONOutputFormat</value>
+                </property>
+                <property>
+                    <name>mapred.input.format.class</name>
+                    <value>com.cloudera.science.avro.streaming.AvroAsJSONInputFormat</value>
+                </property>
+                <property>
+                    <name>mapred.reduce.tasks</name>
+                    <value>0</value>
+                </property>
+                <property>
+                    <name>mapred.input.dir</name>
+                    <value>${input_logs}</value>
+                </property>
+                <property>
+                    <name>input.schema.literal</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.websiteusage.schemas.LogEntry']}</value>
+                </property>
+                <property>
+                    <name>mapred.output.dir</name>
+                    <value>${output}</value>
+                </property>          
+                <property>
+                    <name>output.schema.literal</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.websiteusage.schemas.DocumentToCommunity']}</value>
+                </property>
+				<property>
+					<name>mapred.task.timeout</name>
+					<value>1800000</value>
+				</property>
+				<property>
+					<name>mapreduce.task.timeout</name>
+					<value>1800000</value>
+				</property>
+				
+            </configuration>
+            <!-- 
+            <file>${input_dataset_db}#dataset.db</file>
+             -->
+        </map-reduce>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+    
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+        			[${wf:errorMessage(wf:lastErrorNode())}]
+        		</message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

@@ -1,0 +1,418 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	
+	<modelVersion>4.0.0</modelVersion>
+	
+	<groupId>eu.dnetlib.iis</groupId>
+	<artifactId>iis</artifactId>
+	<version>1.2.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<url>http://www.d-net.research-infrastructures.eu</url>
+
+
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
+	
+	
+	
+	<modules>
+	   <module>iis-3rdparty-avro-json</module>
+	   <module>iis-3rdparty-avrojsoncoders</module>
+	   <module>iis-3rdparty-madis</module>
+	   <module>iis-3rdparty-pig-avrostorage</module>
+	   <module>iis-assembly-resources</module>
+	   <module>iis-common</module>
+	   <module>iis-core</module>
+	   <module>iis-core-examples</module>
+       <module>iis-functionality-api</module>
+       <module>iis-oozie-maven-plugin</module>
+       <module>iis-properties-maven-plugin</module>
+       <module>iis-schemas</module>
+       <module>iis-workflows</module>
+       
+	</modules>
+	
+
+	<issueManagement>
+		<system>Trac</system>
+		<url>http://issue.driver.research-infrastructures.eu/</url>
+	</issueManagement>
+	
+	<ciManagement>
+		<system>jenkins</system>
+		<url>http://ci.research-infrastructures.eu/view/D-Net</url>
+	</ciManagement>
+	
+	<pluginRepositories> </pluginRepositories>
+	
+	
+	
+	
+	<repositories>
+
+		<repository>
+  	         	<id>ceon</id>
+		        <url>https://maven.ceon.pl/artifactory/repo/</url>
+		</repository>
+		    
+
+		<repository>
+			<id>dnet-deps</id>
+			<name>dnet-dependencies</name>
+			<url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet-deps</url>
+			<layout>default</layout>
+		</repository>
+		
+		<repository>
+			<id>dnet4-snapshots</id>
+			<name>D-Net 4 Snapshots</name>
+			<url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-snapshots</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		
+		<repository>
+			<id>dnet4-releases</id>
+			<name>D-Net 4 Releases</name>
+			<url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-releases</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>				
+			</releases>
+		</repository>
+		
+		<repository>
+		<id>cloudera</id>
+            <name>Cloudera Repository</name>
+            <url>https://repository.cloudera.com/artifactory/cloudera-repos</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        
+	</repositories>
+	
+	<build>
+		<directory>target</directory>
+		<outputDirectory>target/classes</outputDirectory>
+		<finalName>${project.artifactId}-${project.version}</finalName>
+		<testOutputDirectory>target/test-classes</testOutputDirectory>
+		
+		
+		<pluginManagement>
+          
+          <plugins>
+
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.18.1</version>
+                <configuration>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/AllTests.java</exclude>
+                        <exclude>**/Abstract*Test.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.3</version>
+                <configuration>
+                    <detectLinks>true</detectLinks>
+                </configuration>
+            </plugin>   
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+            </plugin>
+            
+            <!-- Plugin that generates Java classes from Avro schemas -->
+            <plugin>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-maven-plugin</artifactId>
+                <version>1.7.4</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>schema</goal>
+                            <goal>idl-protocol</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/test/resources/</sourceDirectory>
+                            <outputDirectory>${project.basedir}/target/generated-sources/java/</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+                
+             <!--This plugin's configuration is used to store Eclipse m2e settings 
+                    only. It has no influence on the Maven build itself. -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.apache.avro
+                                        </groupId>
+                                        <artifactId>
+                                            avro-maven-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [1.7.4,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>idl-protocol</goal>
+                                            <goal>schema</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.codehaus.mojo
+                                        </groupId>
+                                        <artifactId>
+                                            build-helper-maven-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [1.7,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>add-source</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    
+    
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.2</version>
+            </plugin>
+
+        </plugins>
+        
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>2.4</version>
+			</extension>
+		</extensions>
+	
+    </build>
+
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>dnet4-snapshots</id>
+			<name>D-Net 4 Snapshots</name>
+			<url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-snapshots</url>
+			<layout>default</layout>
+		</snapshotRepository>
+		<repository>
+			<id>dnet4-releases</id>
+			<url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-releases/</url>
+		</repository>
+	</distributionManagement>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<detectLinks>true</detectLinks>
+				</configuration>
+			</plugin>			
+		</plugins>
+	</reporting>
+	
+	
+	
+	<dependencies>
+	
+	   <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+	
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>[1.2.17]</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.sun.jmx</groupId>
+					<artifactId>jmxri</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.jdmk</groupId>
+					<artifactId>jmxtools</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	
+	</dependencies>
+	
+	<dependencyManagement>
+	   <dependencies>
+	   
+		   <dependency>
+	            <groupId>org.apache.hadoop</groupId>
+	            <artifactId>hadoop-common</artifactId>
+	            <version>${iis.hadoop.common.version}</version>
+	            <scope>provided</scope>
+	            <exclusions>
+	                <exclusion>
+	                    <artifactId>jdk.tools</artifactId>
+	                    <groupId>jdk.tools</groupId>
+	                </exclusion>
+	            </exclusions>
+	        </dependency>
+	        
+           <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-common</artifactId>
+                <version>${iis.hadoop.common.version}</version>
+                <scope>test</scope>
+                <type>test-jar</type>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>jdk.tools</artifactId>
+                        <groupId>jdk.tools</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+	       
+	   </dependencies>
+	</dependencyManagement>
+	
+	
+	<properties>
+		<maven.compiler.source.version>1.8</maven.compiler.source.version>
+		<maven.compiler.target.version>1.8</maven.compiler.target.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<dnet.container.context>app</dnet.container.context>
+		<dnet.container.port>8280</dnet.container.port>
+		<spring.version>[4.0.0.RELEASE]</spring.version>
+		<cxf.version>[2.7.8]</cxf.version>
+		<exist.version>1.2.4</exist.version>
+		<akka.version>2.0.4</akka.version>
+		<google.coll.version>1.0</google.coll.version>
+		<google.guava.version>18.0</google.guava.version>
+		<google.gson.version>2.2.2</google.gson.version>
+		<mongodb.driver.version>3.0.3</mongodb.driver.version>
+		<apache.solr.version>4.9.0</apache.solr.version>
+		<google.protobuf.version>2.4.1</google.protobuf.version>
+		<dom4j.version>[1.6.1]</dom4j.version>
+		<junit.version>4.8.2</junit.version>
+		<javax.servlet.version>[3.1.0]</javax.servlet.version>
+		<!-- apache commons properties -->
+		<commons.codec.version>1.8</commons.codec.version>
+		<commons.lang.version>2.6</commons.lang.version>
+		<commons.io.version>2.4</commons.io.version>
+		<commons.logging.version>1.1.3</commons.logging.version>
+		<commons.collections.version>3.2.1</commons.collections.version>
+		<!-- hadoop DM cluster properties -->
+		<hadoop.core.version>2.0.0-mr1-cdh4.3.0</hadoop.core.version>
+		<hadoop.common.version>2.0.0-cdh4.3.0</hadoop.common.version>
+		<hadoop.hdfs.version>2.0.0-cdh4.3.0</hadoop.hdfs.version>
+		<apache.hbase.version>0.94.6-cdh4.3.0</apache.hbase.version>
+		<apache.oozie.version>3.3.2-cdh4.3.0</apache.oozie.version>
+		<!-- new cluster IIS properties -->
+		<iis.cdh.version>cdh4.3.1</iis.cdh.version>
+		<iis.hbase.version>0.94.6-${iis.cdh.version}</iis.hbase.version>
+		<iis.oozie.version>3.3.2-${iis.cdh.version}</iis.oozie.version>
+		<iis.pig.version>0.11.0-${iis.cdh.version}</iis.pig.version>
+		<iis.hive.version>0.10.0-${iis.cdh.version}</iis.hive.version>
+		<iis.hadoop.streaming.version>${iis.hadoop.mr1.version}</iis.hadoop.streaming.version>
+		<iis.avro.version>1.7.4</iis.avro.version>
+		<!-- shared IIS properties -->
+		<iis.hadoop.version>2.0.0-${iis.cdh.version}</iis.hadoop.version>
+		<iis.hadoop.mr1.version>2.0.0-mr1-${iis.cdh.version}</iis.hadoop.mr1.version>
+		<iis.hadoop.common.version>${iis.hadoop.version}</iis.hadoop.common.version>
+		<iis.hadoop.core.version>${iis.hadoop.mr1.version}</iis.hadoop.core.version>
+		<iis.hadoop.hdfs.version>${iis.hadoop.version}</iis.hadoop.hdfs.version>
+		<iis.hadoop.test.version>${iis.hadoop.mr1.version}</iis.hadoop.test.version>
+		
+		<apache.solr.version>4.7.0</apache.solr.version>
+		<iis.coansys.version>1.8</iis.coansys.version>
+		<scala.version>2.10.3</scala.version>
+        <scala.binary.version>2.10</scala.binary.version>
+		    
+		    
+	</properties>
+</project>
+

@@ -1,0 +1,18 @@
+{
+  "type" : "record",
+  "name" : "Document",
+  "namespace" : "eu.dnetlib.iis.core.examples.schemas.documentandauthor",
+  "fields" : [ {
+    "name" : "id",
+    "type" : "int"
+  }, {
+    "name" : "title",
+    "type" : ["null", "string"]
+  }, {
+    "name" : "authorIds",
+    "type" : {
+      "type" : "array",
+      "items" : "int"
+    }
+  } ]
+}

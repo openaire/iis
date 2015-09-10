@@ -1,0 +1,87 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="websiteusage_document_community_to_similarity">
+    	
+	<parameters>
+		<property>
+			<name>input</name>
+			<description>website usage community input</description>
+		</property>
+        <property>
+			<name>output</name>
+			<description>website usage similarity output</description>
+		</property>
+	</parameters>
+    
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapred.job.queue.name</name>
+                <value>${queueName}</value>
+            </property>
+		</configuration>
+	</global>
+    
+    <start to="generate-schema"/>
+    
+    <action name="generate-schema">
+		<java>
+			<main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
+			<arg>eu.dnetlib.iis.websiteusage.schemas.DocumentToCommunity</arg>
+			<arg>eu.dnetlib.iis.websiteusage.schemas.DocumentsWithWebsiteUsageSimilarities</arg>
+			<capture-output />
+		</java>
+		<ok to="transformer" />
+		<error to="fail" />
+	</action>
+    
+    <action name="transformer">
+        <hive xmlns="uri:oozie:hive-action:0.2">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/transformer" />
+                <delete path="${nameNode}${output}"/>
+				<mkdir path="${nameNode}${workingDir}/transformer" />
+            </prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+                <property>
+                    <name>oozie.hive.defaults</name>
+                    <value>hive-site.xml</value>
+                </property>
+                 <property>
+                    <name>hive.exec.scratchdir</name>
+                    <value>/tmp/hive-${wf:user()}</value>
+                </property>
+                <property>
+                    <name>mapred.reduce.tasks</name>
+                    <value>50</value>
+                </property>
+                <!-- 
+                <property>
+                    <name>mapred.child.java.opts</name>
+                    <value>-Xmx2048M</value>
+                </property>
+                 -->
+            </configuration>
+            <script>lib/scripts/transformer.q</script>
+    
+            <param>input=${input}</param>
+            <param>schema_input=${wf:actionData('generate-schema')['eu.dnetlib.iis.websiteusage.schemas.DocumentToCommunity']}</param>
+            
+            <param>output=${output}</param>
+            <param>schema_output=${wf:actionData('generate-schema')['eu.dnetlib.iis.websiteusage.schemas.DocumentsWithWebsiteUsageSimilarities']}</param>
+        </hive>   
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+    <kill name="fail">
+		<message>Unfortunately, the workflow failed -- error message:
+			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+    <end name="end"/>
+</workflow-app>

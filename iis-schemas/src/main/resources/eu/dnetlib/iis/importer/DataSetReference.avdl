@@ -1,0 +1,27 @@
+@namespace("eu.dnetlib.iis.importer.schemas")
+protocol IIS{
+
+    record DataSetReference {
+//      a technical ID of a data set reference (primary key)
+        string id;
+//      type name of the referenced id, e.g. doi
+        string referenceType;
+//      Data set identifier. Its definition follows the convention of a given data set
+//      reference type defined by "referenceType"
+        string idForGivenType;
+//      Note that the ("typeID", "idForGivenType") pair unambiguously identifies a data
+//      set, this is also true for the "id" field, i.e. ("typeID", "idForGivenType") is
+//      a candidate key; "id" is also a candidate key.
+
+//      additional fields
+        union { null , array<string> } creatorNames = null;
+        union { null , array<string> } titles = null;
+        union { null , string } description = null;
+        union { null , string } publisher = null;
+        union { null , string } publicationYear = null;
+        union { null , array<string> } formats = null;
+        union { null , string } resourceTypeClass = null;
+        union { null , string } resourceTypeValue = null;
+    }
+}
+

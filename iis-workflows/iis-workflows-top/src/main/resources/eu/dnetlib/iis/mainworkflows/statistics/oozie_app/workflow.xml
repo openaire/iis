@@ -1,0 +1,509 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="mainworkflows_statistics">
+	
+	<parameters>
+		<!-- import metadata related -->
+		<property>
+			<name>import_hbase_input_table</name>
+			<description>HBase input table holding InformationSpace, available on local cluster</description>
+		</property>
+		<property>
+			<name>import_hbase_approved_datasources_csv</name>
+			<value>$UNDEFINED$</value>
+			<description>CSV list of datasource ids to be approved during import. Applied on result and person entities.</description>
+		</property>
+		<property>
+			<name>trust_level_threshold</name>
+			<value>$UNDEFINED$</value>
+			<description>trust level threshold represented as float value, ignored when set to $UNDEFINED$ value</description>
+		</property>
+		<!-- import content related -->
+		<property>
+			<name>import_content_object_store_location</name>
+			<value>$UNDEFINED$</value>
+			<description>object store service location required for content retrieval</description>
+		</property>
+		<property>
+			<name>import_content_objectstores_csv</name>
+			<value>$UNDEFINED$</value>
+			<description>CSV list of object stores identifiers to be processed</description>
+		</property>
+		<property>
+			<name>import_content_mimetypes_pdf</name>
+			<value>pdf,application/pdf</value>
+			<description>pdf mime types</description>
+		</property>
+		<property>
+			<name>import_content_mimetypes_text</name>
+			<value>text,text/plain</value>
+			<description>text mime types</description>
+		</property>
+		<property>
+			<name>import_content_mimetypes_html</name>
+			<value>text/html</value>
+			<description>html mime types</description>
+		</property>
+		<property>
+			<name>import_content_mimetypes_xml_pmc</name>
+			<value>xml</value>
+			<description>xml pmc types</description>
+		</property>
+		<property>
+			<name>import_content_mimetypes_wos</name>
+			<value>file::WoS</value>
+			<description>WoS types</description>
+		</property>
+		<!-- import timeouts related -->
+		<property>
+			<name>import_resultset_client_read_timeout</name>
+			<value>60000</value>
+			<description>resultset client read timeout</description>
+		</property>
+		<property>
+			<name>import_content_connection_timeout</name>
+			<value>60000</value>
+			<description>import content connection timeout</description>
+		</property>
+		<property>
+			<name>import_content_read_timeout</name>
+			<value>60000</value>
+			<description>import content read timeout</description>
+		</property>
+		<!-- metadata extraction related -->
+		<property>
+			<name>metadataextraction_excluded_checksums</name>
+			<value>$UNDEFINED$</value>
+			<description>list of content checksums excluded from metadataextraction processing</description>
+		</property>
+		<property>
+			<name>metadataextraction_max_file_size_mb</name>
+			<value>500</value>
+			<description>maximum allowed file size in Megabytes</description>
+		</property>
+		<property>
+			<name>metadataextraction_default_cache_location</name>
+			<value>/cache/metadataextraction</value>
+			<description>metadata extraction HDFS cache location</description>
+		</property>
+		<property>
+			<name>metadataextraction_processing_mode</name>
+			<value>StreamingMetadataExtractorMapper</value>
+			<description>metadata extraction processing mode</description>
+		</property>
+		<property>
+			<name>metadataextraction_input_classname</name>
+			<value>eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl</value>
+			<description>metadata extraction input classname</description>
+		</property>
+		<!-- export related -->
+		<property>
+			<name>export_action_hbase_table_name</name>
+			<description>action manager hbase table name</description>
+		</property>
+		<property>
+			<name>export_action_hbase_table_initialize</name>
+			<description>flag indicating input table should be initialized</description>
+		</property>
+		<!-- action set id properties -->
+		<property>
+			<name>export_action_set_id</name>
+			<value>$UNDEFINED$</value>
+			<description>action-set identifier of exported data</description>
+		</property>
+		<property>
+			<name>export_action_set_id_person_statistics</name>
+			<value>$UNDEFINED$</value>
+			<description>person_statistics action-set identifier of exported data</description>
+		</property>
+		<property>
+			<name>export_action_set_id_project_statistics</name>
+			<value>$UNDEFINED$</value>
+			<description>project_statistics action-set identifier of exported data</description>
+		</property>
+		<property>
+			<name>export_action_set_id_document_statistics</name>
+			<value>$UNDEFINED$</value>
+			<description>document_statistics action-set identifier of exported data</description>
+		</property>
+		<property>
+			<name>export_action_hbase_remote_zookeeper_quorum</name>
+			<value>$UNDEFINED$</value>
+			<description>external hbase zookeeper quorum, set to empty value by default which means data will be exported to local hbase instance</description>
+		</property>
+		<property>
+			<name>export_action_hbase_remote_zookeeper_clientport</name>
+			<value>$UNDEFINED$</value>
+			<description>external hbase zookeeper client port, required only whe zookeeper quorum property is set</description>
+		</property>
+	</parameters>
+	
+	<global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapred.job.queue.name</name>
+                <value>${queueName}</value>
+            </property>
+		</configuration>
+	</global>
+	
+	<start to="import" />
+
+	<action name="import">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/mainworkflows_common_import</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/mainworkflows_common_import/working_dir</value>
+                </property>
+                <!-- importing modes -->
+				<property>
+					<name>active_import_metadata</name>
+					<value>true</value>
+				</property>
+				<property>
+					<name>active_import_dataset</name>
+					<value>false</value>
+				</property>
+				<property>
+					<name>active_ingest_pmc</name>
+					<value>false</value>
+				</property>
+				<property>
+					<name>active_import_concept</name>
+					<value>false</value>
+				</property>
+                <!-- import metadata related -->
+				<property>
+					<name>hbase_input_table</name>
+					<value>${import_hbase_input_table}</value>
+				</property>
+				<property>
+					<name>hbase_approved_datasources_csv</name>
+					<value>${import_hbase_approved_datasources_csv}</value>
+				</property>
+				<property>
+					<!-- including inferenced data -->
+					<name>inference_provenance_blacklist</name>
+					<value>$UNDEFINED$</value>
+				</property>
+				<property>
+					<name>trust_level_threshold</name>
+					<value>${trust_level_threshold}</value>
+				</property>
+				<property>
+					<name>merge_body_with_updates</name>
+					<value>true</value>
+				</property>
+				<!-- import content related -->
+				<property>
+					<name>objectstore_service_location</name>
+					<value>${import_content_object_store_location}</value>
+				</property>
+				<property>
+					<name>approved_objectstores_csv</name>
+					<value>${import_content_objectstores_csv}</value>
+				</property>
+				<property>
+					<name>mimetypes_pdf</name>
+					<value>${import_content_mimetypes_pdf}</value>
+				</property>
+				<property>
+					<name>mimetypes_text</name>
+					<value>${import_content_mimetypes_text}</value>
+				</property>
+				<property>
+					<name>mimetypes_html</name>
+					<value>${import_content_mimetypes_html}</value>
+				</property>
+				<property>
+					<name>mimetypes_xml_pmc</name>
+					<value>${import_content_mimetypes_xml_pmc}</value>
+				</property>
+				<property>
+					<name>mimetypes_wos</name>
+					<value>${import_content_mimetypes_wos}</value>
+				</property>
+				<!-- import timeouts related -->
+				<property>
+					<name>resultset_client_read_timeout</name>
+					<value>${import_resultset_client_read_timeout}</value>
+				</property>
+				<property>
+					<name>content_connection_timeout</name>
+					<value>${import_content_connection_timeout}</value>
+				</property>
+				<property>
+					<name>content_read_timeout</name>
+					<value>${import_content_read_timeout}</value>
+				</property>
+				<!-- metadata extraction related -->
+				<property>
+					<name>metadataextraction_excluded_checksums</name>
+					<value>${metadataextraction_excluded_checksums}</value>
+				</property>
+				<property>
+					<name>metadataextraction_max_file_size_mb</name>
+					<value>${metadataextraction_max_file_size_mb}</value>
+				</property>
+				<property>
+					<name>metadataextraction_default_cache_location</name>
+					<value>${metadataextraction_default_cache_location}</value>
+				</property>
+				<!-- metadatainput and metadataextraction output subdirectory names -->
+				<property>
+					<name>metadataimport_output_name_document_meta</name>
+					<value>docmeta</value>
+				</property>
+				<property>
+					<name>metadataimport_output_name_citation</name>
+					<value>citation</value>
+				</property>
+				<property>
+					<name>metadataimport_output_name_document_project</name>
+					<value>docproject</value>
+				</property>
+				<property>
+					<name>metadataimport_output_name_project</name>
+					<value>project</value>
+				</property>
+				<property>
+					<name>metadataimport_output_name_person</name>
+					<value>person</value>
+				</property>
+				<!-- output parameters -->
+				<property>
+					<name>output_extracted_document_metadata</name>
+					<value>${workingDir}/mainworkflows_common_import/extracted_document_metadata</value>
+				</property>
+				<property>
+					<name>output_metadataimport_root</name>
+					<value>${workingDir}/mainworkflows_common_import/metadataimport</value>
+				</property>
+				<property>
+					<name>output_dataset</name>
+					<value>${workingDir}/mainworkflows_common_import/dataset</value>
+				</property>
+				<property>
+					<name>output_dataset_to_mdstore</name>
+					<value>${workingDir}/mainworkflows_common_import/dataset_to_mdstore</value>
+				</property>
+				<property>
+					<name>output_document_text</name>
+					<value>${workingDir}/mainworkflows_common_import/document-text</value>
+				</property>
+				<property>
+					<name>output_project_concept</name>
+					<value>${workingDir}/mainworkflows_common_import/project-concept</value>
+				</property>
+				<property>
+					<name>output_wos</name>
+					<value>${workingDir}/mainworkflows_common_import/wos</value>
+				</property>
+				<property>
+					<name>output_faults</name>
+					<value>${workingDir}/mainworkflows_common_import/faults</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="transformers_metadatamerger"/>
+		<error to="fail" />
+    </action>
+
+	 <action name="transformers_metadatamerger">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_metadatamerger</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_metadatamerger/working_dir</value>
+                </property>
+            	<property>
+					<name>input_base_metadata</name>
+					<value>${workingDir}/mainworkflows_common_import/metadataimport/docmeta</value>
+				</property>
+				<property>
+					<name>input_extracted_metadata</name>
+					<value>${workingDir}/mainworkflows_common_import/metadataextraction/meta</value>
+				</property>
+				<property>
+					<name>output_merged_metadata</name>
+					<value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+
+		<ok to="transformers_statistics"/>
+		<error to="fail" />
+    </action>
+	
+    <action name="transformers_statistics">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_statistics</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_statistics/working_dir</value>
+                </property>
+            	<property>
+					<name>input_document</name>
+					<value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
+				</property>
+				<property>
+					<name>input_citation</name>
+					<value>${workingDir}/mainworkflows_common_import/metadataimport/citation</value>
+				</property>
+				<property>
+					<name>input_document_to_project</name>
+					<value>${workingDir}/mainworkflows_common_import/metadataimport/docproject</value>
+				</property>
+				<property>
+					<name>input_person</name>
+					<value>${workingDir}/mainworkflows_common_import/metadataimport/person</value>
+				</property>
+				<property>
+					<name>input_project</name>
+					<value>${workingDir}/mainworkflows_common_import/metadataimport/project</value>
+				</property>
+				<property>
+					<name>output_document_authors_citations</name>
+					<value>${workingDir}/transformers_statistics/output_document_authors_citations</value>
+				</property>
+				<property>
+					<name>output_person_id</name>
+					<value>${workingDir}/transformers_statistics/output_person_id</value>
+				</property>
+				<property>
+					<name>output_project_id</name>
+					<value>${workingDir}/transformers_statistics/output_project_id</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="statistics"/>
+		<error to="fail" />
+    </action>
+    
+    <action name="statistics">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/statistics</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/statistics/working_dir</value>
+                </property>
+            	<property>
+					<name>input_document_authors_citations</name>
+					<value>${workingDir}/transformers_statistics/output_document_authors_citations</value>
+				</property>
+				<property>
+					<name>input_person_id</name>
+					<value>${workingDir}/transformers_statistics/output_person_id</value>
+				</property>
+				<property>
+					<name>input_project_id</name>
+					<value>${workingDir}/transformers_statistics/output_project_id</value>
+				</property>
+				<property>
+					<name>output_document_statistics</name>
+					<value>${workingDir}/statistics/document_statistics</value>
+				</property>
+				<property>
+					<name>output_author_statistics</name>
+					<value>${workingDir}/statistics/author_statistics</value>
+				</property>
+				<property>
+					<name>output_project_statistics</name>
+					<value>${workingDir}/statistics/project_statistics</value>
+				</property>
+				<property>
+					<name>output_global_statistics</name>
+					<value>${workingDir}/statistics/global_statistics</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="export"/>
+		<error to="fail" />
+    </action>
+    
+    <action name="export">
+		<sub-workflow>
+            <app-path>${wf:appPath()}/mainworkflows_common_export</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/mainworkflows_common_export/working_dir</value>
+                </property>
+                <!-- input ports -->
+				<property>
+					<name>input_document_statistics</name>
+					<value>${workingDir}/statistics/document_statistics</value>
+				</property>
+				<property>
+					<name>input_author_statistics</name>
+					<value>${workingDir}/statistics/author_statistics</value>
+				</property>
+				<property>
+					<name>input_project_statistics</name>
+					<value>${workingDir}/statistics/project_statistics</value>
+				</property>
+				<!-- entities exporting modes -->
+				<property>
+					<name>active_export_referenceddataset_datasets</name>
+					<value>false</value>
+				</property>
+				<property>
+					<name>active_export_referencedproject_entities</name>
+					<value>false</value>
+				</property>
+				<!-- export related -->
+				<property>
+					<name>action_hbase_table_name</name>
+					<value>${export_action_hbase_table_name}</value>
+				</property>
+				<property>
+					<name>action_hbase_table_initialize</name>
+					<value>${export_action_hbase_table_initialize}</value>
+				</property>
+				<!-- action set id properties -->
+				<property>
+					<name>action_set_id</name>
+					<value>${export_action_set_id}</value>
+				</property>
+				<property>
+					<name>action_set_id_person_statistics</name>
+					<value>${export_action_set_id_person_statistics}</value>
+				</property>
+				<property>
+					<name>action_set_id_project_statistics</name>
+					<value>${export_action_set_id_project_statistics}</value>
+				</property>
+				<property>
+					<name>action_set_id_document_statistics</name>
+					<value>${export_action_set_id_document_statistics}</value>
+				</property>
+				<property>
+					<name>action_hbase_remote_zookeeper_quorum</name>
+					<value>${export_action_hbase_remote_zookeeper_quorum}</value>
+				</property>
+				<property>
+					<name>action_hbase_remote_zookeeper_clientport</name>
+					<value>${export_action_hbase_remote_zookeeper_clientport}</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="end"/>
+		<error to="fail" />
+	</action>
+    
+	<kill name="fail">
+		<message>Unfortunately, the process failed -- error message:
+			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+	</kill>
+	<end name="end" />
+</workflow-app>

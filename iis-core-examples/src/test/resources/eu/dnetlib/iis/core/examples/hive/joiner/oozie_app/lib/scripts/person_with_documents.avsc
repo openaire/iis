@@ -1,0 +1,25 @@
+{
+  "type" : "record",
+  "name" : "PersonWithDocuments",
+  "namespace" : "eu.dnetlib.iis.core.examples.schemas.documentandauthor.personwithdocuments",
+  "fields" : [ {
+    "name" : "personId",
+    "type" : "int"
+  }, {
+    "name" : "documents",
+    "type" : {
+      "type" : "array",
+      "items" : {
+        "type" : "record",
+        "name" : "Document",
+        "fields" : [ {
+          "name" : "id",
+          "type" : "int"
+        }, {
+          "name" : "title",
+          "type" : ["null", "string"]
+        } ]
+      }
+    }
+  } ]
+}

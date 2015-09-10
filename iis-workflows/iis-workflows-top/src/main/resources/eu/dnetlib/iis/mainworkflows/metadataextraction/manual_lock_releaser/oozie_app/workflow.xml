@@ -1,0 +1,46 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="mainworkflows_metadataextraction_manual_lock_releaser">
+	
+	<parameters>
+		<property>
+			<name>zk_session_timeout</name>
+			<value>60000</value>
+			<description>zookeeper session timeout when handling locks</description>
+		</property>
+		<property>
+			<name>default_cache_location</name>
+			<value>/cache/metadataextraction</value>
+			<description>default cache location stored in HDFS</description>
+		</property>
+	</parameters>
+
+	<start to="release-lock-and-end" />
+
+    <action name="release-lock-and-end">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+			<prepare>
+			</prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
+            <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
+            <arg>-Pnode_id=${default_cache_location}</arg>
+            <arg>-Pmode=release</arg>
+        </java>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+    <!-- end of lock releasing actions -->
+    
+	<kill name="fail">
+		<message>Unfortunately, the process failed -- error message:
+			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+	</kill>
+	<end name="end" />
+</workflow-app>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	
+	<modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+    		<groupId>eu.dnetlib.iis</groupId>
+	        <artifactId>iis-workflows</artifactId>
+            <version>1.2.0-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>iis-workflows-referenceextraction</artifactId>
+	<packaging>jar</packaging>
+		
+	
+
+    <dependencies>
+    
+		 <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-schemas</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-core</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-3rdparty-madis</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-3rdparty-avro-json</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+		
+		
+		<!-- required after introducing 'provided' scope for hadoop libs -->
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-hdfs</artifactId>
+			<version>${iis.hadoop.hdfs.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.oozie</groupId>
+			<artifactId>oozie-core</artifactId>
+			<version>${iis.oozie.version}</version>
+			
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-common</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-streaming</artifactId>
+			<version>${iis.hadoop.streaming.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+            		<artifactId>hadoop-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- Needed by our Hadoop Streaming workflow node }-->
+		<!-- Needed by Oozie tests { -->
+		<dependency>
+			<groupId>org.apache.oozie</groupId>
+			<artifactId>oozie-core</artifactId>
+			<version>${iis.oozie.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.oozie</groupId>
+            		<artifactId>oozie-sharelib-streaming</artifactId>
+            		<version>${iis.oozie.version}</version>
+            		<type>jar</type>
+        	</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-hdfs</artifactId>
+			<version>${iis.hadoop.hdfs.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-test</artifactId>
+			<version>${iis.hadoop.test.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-common</artifactId>
+			<type>test-jar</type>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<!-- Plugin that generates Java classes from Avro schemas -->
+			<plugin>
+				<groupId>org.apache.avro</groupId>
+				<artifactId>avro-maven-plugin</artifactId>
+			</plugin>
+			<!-- This plugin makes the Maven->Update Project Configuration not forget 
+				about the "target/generated-sources/java" source path -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/java/</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		
+	</build>
+</project>

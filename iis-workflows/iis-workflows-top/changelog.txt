@@ -1,0 +1,23 @@
+ongoing [rev 35174] (since 2015-02-24 snapshot [rev 34702])
+#1133 dropping redundant working_dir creation for java, streaming, pig and hive nodes
+#1147 introducing HTML import and HTML plaintext ingestion in main workflows: primary and preprocessing
+#1153 utilizing ${user.name} placeholder in ${workingDir} generation process, copying version.properties from oozie_app to mark execution environment with application version
+#1154 bugfixing project reference extraction Madis SQL script: supporting null acronyms and empty projects datasetore
+#1169 fixing duplicate Result#context attribute issue, introducing integration test proving implemented solution works properly
+#1172 introducing support for ${active_export} parameter in both preprocessing and primary workflows
+#1176 introducing side products removal in common import and collapsers by maintaining ${remove_sideproducts} flag set to true by default
+[...]
+
+2015-02-24 snapshot [rev 34702] (since 2015-01-20 snapshot [rev 34008])
+#118 website usage logs analysis integrated with IIS
+#720 improved document classification confidence level distribution
+#1038 introducing ranges in dependencies definition for all IIS modules
+#1070 introducing support for multiple contexts in FET projects mining (import_project_concepts_context_id replaced with import_project_concepts_context_ids_csv)
+#1080 extending task timeout to 18000
+#1083 fixing project reference extraction run on webcrawl by extracting and processing FX field from XML record
+#1109 improved project acronyms handling during IIS import by setting NULL for 'unknown' and 'undefined' values
+
+2015-01-20 snapshot [rev 34008] (since 1.0.0 release [rev 33954])
+#1065 FCT projects mining integrated with IIS
+#1072 dropping IIS feature filtering out already existing project and dataset references from IIS export
+

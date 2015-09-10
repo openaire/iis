@@ -1,0 +1,59 @@
+@namespace("eu.dnetlib.iis.metadataextraction.schemas")
+protocol IIS{
+
+	import idl "Affiliation.avdl";
+	import idl "ReferenceBasicMetadata.avdl";
+	import idl "ReferenceMetadata.avdl";
+    
+    record Author {
+//      author name extracted from pdf document
+        union { null , string } authorFullName = null;
+//		position on affiliations list        
+        union { null , array<int> } affiliationPositions = null;
+    }
+    
+    record ExtractedDocumentMetadata {
+//      ID of the document, foreign key: Document.id ("document" data store)
+        string id;
+                
+//      moved from DocumentBasicMetadata        
+//      title
+        union { null , string } title = null;
+//      abstract or description
+        union { null , string } abstract = null;
+        union { null , string } language = null;
+//      list of keywords (free form)
+        union { null , array<string> } keywords = null;
+//      alternative identifier (e.g. internal publisher's identifiers)
+        union { null , map<string> } externalIdentifiers = null;
+//      name of journal in which the article is published
+        union { null , string } journal = null;
+//      year of publication
+        union { null , int } year = null;
+//      publisher name
+        union { null , string } publisher = null;
+//      end of: moved from DocumentBasicMetadata
+        
+//      references extracted from pfd document
+        union { null , array<ReferenceMetadata> } references = null;
+//      author names extracted from pdf document
+//        union { null , array<string> } authorFullNames = null;
+//		authors extracted from PDF document along with position of affiliations list
+        union { null , array<Author> } authors = null;
+
+//      affiliations extracted from PDF document
+        union { null , array<Affiliation> } affiliations = null;
+        
+//      additional fields supplementing basicMetadata
+//      journal volume in which the article is published
+        union { null , string } volume = null;
+//      journal issue in which the article is published
+        union { null , string } issue = null;
+//      page range in which the article is published
+        union { null , Range } pages = null;
+        
+//      propagated from pmc ExtractedDocumentMetadata#entityType
+		union { null , string } publicationTypeName = null;
+    }
+
+}

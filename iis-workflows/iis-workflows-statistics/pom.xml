@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>eu.dnetlib.iis</groupId>
+        <artifactId>iis-workflows</artifactId>
+        <version>1.2.0-SNAPSHOT</version>
+    </parent>
+    
+    <artifactId>iis-workflows-statistics</artifactId>
+    <packaging>jar</packaging>
+
+     
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    <dependencies>
+            
+        <dependency>
+			<groupId>eu.dnetlib.iis</groupId>
+			<artifactId>iis-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>eu.dnetlib.iis</groupId>
+			<artifactId>iis-core</artifactId>
+			<version>${project.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		
+        <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-schemas</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        
+        
+        <!-- required after introducing 'provided' scope for hadoop libs -->
+        <dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-common</artifactId>
+		</dependency>
+		<!-- Needed by Oozie tests { -->
+		<!-- required after introducing 'provided' scope for hadoop dependencies -->
+		<dependency>
+			<groupId>org.apache.oozie</groupId>
+			<artifactId>oozie-core</artifactId>
+			<version>${iis.oozie.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-hdfs</artifactId>
+			<version>${iis.hadoop.hdfs.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- end of required after introducing 'provided' scope for hadoop dependencies -->
+		<dependency>
+			<groupId>org.apache.oozie</groupId>
+			<artifactId>oozie-core</artifactId>
+			<version>${iis.oozie.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-hdfs</artifactId>
+			<version>${iis.hadoop.hdfs.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-test</artifactId>
+			<version>${iis.hadoop.test.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-common</artifactId>
+			<type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-exec</artifactId>
+            <version>${iis.hive.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-cli</artifactId>
+            <version>${iis.hive.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-builtins</artifactId>
+            <version>${iis.hive.version}</version>
+        </dependency>
+    </dependencies>
+      
+</project>

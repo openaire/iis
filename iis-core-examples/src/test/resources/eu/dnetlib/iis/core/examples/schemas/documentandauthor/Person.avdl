@@ -1,0 +1,8 @@
+@namespace("eu.dnetlib.iis.core.examples.schemas.documentandauthor")
+protocol IIS{
+   record Person{
+      int id;
+      union {null, string} name=null;
+      int age;
+   }
+}

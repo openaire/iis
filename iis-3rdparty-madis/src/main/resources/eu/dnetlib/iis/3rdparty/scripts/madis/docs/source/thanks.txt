@@ -1,0 +1,18 @@
+Thanks
+======
+madIS project wouldn't exist without the amazing work of several other people, and the
+Open Source spirit.
+
+Specifically we would like to thank:
+
+- APSW's Roger Binns
+- SQLite's authors
+
+In both of above projects, the work ethic and quality of their code are of an
+extremely high level. Nearly every line of their code is extensively tested.
+
+In madIS we stressed the code of both of above projects as much as we could, and
+they handled it beautifully.
+
+
+

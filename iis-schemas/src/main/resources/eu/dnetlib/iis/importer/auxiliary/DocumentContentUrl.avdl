@@ -1,0 +1,13 @@
+@namespace("eu.dnetlib.iis.importer.auxiliary.schemas")
+protocol IIS{
+
+	record DocumentContentUrl {
+//		document identifier
+		string id;
+		string url;
+		union { null , string } mimeType = null;
+		union { null , string } contentChecksum = null;
+		union { null , long } contentSizeKB = null;
+	}
+
+}

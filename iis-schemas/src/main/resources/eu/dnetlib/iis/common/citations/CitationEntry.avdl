@@ -1,0 +1,22 @@
+@namespace("eu.dnetlib.iis.common.citations.schemas")
+protocol IIS{
+
+// At least one of rawText, destinationDocumentId, externalDestinationDocumentIds fields is not empty.
+    record CitationEntry {
+//      position of citation in the bibliography of the source document
+        int position;
+//      raw citation text
+        union { null , string } rawText = null;
+//      cited document OA+ identifier (if referenced document is present in OA+)
+        union { null , string }  destinationDocumentId = null;
+//      A number from [0, 1] range. The greater the value, the greater the
+//      confidence that the document->document citation link is correct.
+//      The `confidenceLevel` field is null if and only if the `destinationDocumentId` is null.
+//		Find more details on `confidenceLevel` constraints in eu/dnetlib/iis/README.markdown file.
+        union { null , float } confidenceLevel = null;
+//      cited document identifiers (id type -> id)
+//      WARNING: Id types are extracted from PMC data without any processing thus are subject to change without notice.
+//               Currently (2014-05-12), the most popular types are "pmid" (PubMed ID) and "doi".
+        map<string> externalDestinationDocumentIds;
+    }
+}

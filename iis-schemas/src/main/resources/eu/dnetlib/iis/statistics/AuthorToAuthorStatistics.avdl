@@ -1,0 +1,14 @@
+@namespace("eu.dnetlib.iis.statistics.schemas")
+protocol IIS{
+
+    import idl "AuthorStatistics.avdl";
+    
+    record AuthorToAuthorStatistics {
+//      ID of the author, foreign key: Person.id ("person" data store)
+        string authorId;
+
+        AuthorStatistics statistics;
+    }
+    
+}
+

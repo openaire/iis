@@ -1,0 +1,85 @@
+{
+  kind: entity
+  entity: {
+    type: result
+    id: "50|od______1106::138537e0568c27c402756042b15e7858"
+    result: {
+      metadata: {
+        title: {
+          value: "Santa Rosa [ciruelo]"
+          qualifier: {
+            classid: "main title"
+            classname: "main title"
+            schemeid: "dnet:dataCite_title"
+            schemename: "dnet:dataCite_title"
+          }
+        }
+        dateofacceptance: {
+          value: "1964-12-01"
+        }
+        resulttype: {
+          classid: "publication"
+          classname: "publication"
+          schemeid: "dnet:result_typologies"
+          schemename: "dnet:result_typologies"
+        }
+        storagedate: { 
+        	value: "2012-10-18"
+        }
+        language: {
+          classid: "und"
+          classname: "Undetermined"
+          schemeid: "dnet:languages"
+          schemename: "dnet:languages"
+        }
+      }
+      
+      instance: {
+	    licence: {
+	      classid: "OPEN"
+	      classname: "Open Access"
+	      schemeid: "dnet:access_modes"
+	      schemename: "dnet:access_modes"
+	    }
+	    instancetype: {
+	      classid: "0021"
+	      classname: "Dataset"
+	      schemeid: "dnet:publication_resource"
+	      schemename: "dnet:publication_resource"
+	    }
+	    hostedby: {
+	      key: "10|opendoar____::c9f95a0a5af052bffce5c89917335f67"
+	      value: "Digital.CSIC"
+	    }
+	    url: "http://hdl.handle.net/10261/86687"
+	  }
+
+    }
+    originalId: "oai:digital.csic.es:10261/86687"
+    collectedfrom: {
+      key: "10|opendoar____::c9f95a0a5af052bffce5c89917335f67"
+      value: "Digital.CSIC"
+    }
+    pid: {
+      value: "oai:digital.csic.es:10261/86687"
+      qualifier: {
+        classid: "oai"
+        classname: "Open Archives Initiative"
+        schemeid: "dnet:pid_types"
+        schemename: "dnet:pid_types"
+      }
+    }
+  }
+  dataInfo: {
+    inferred: false
+    deletedbyinference: false
+    trust: "0.9"
+    provenanceaction: {
+      classid: "sysimport:crosswalk:repository"
+      classname: "sysimport:crosswalk:repository"
+      schemeid: "dnet:provenanceActions"
+      schemename: "dnet:provenanceActions"
+    }
+  }
+  timestamp: 1423856239322
+}

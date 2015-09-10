@@ -1,0 +1,12 @@
+@namespace("eu.dnetlib.iis.websiteusage.schemas")
+protocol IIS{
+
+    record LogEntry {
+		// WARNING: the records in data store conforming to this schema have to be ordered by 'timestamp' field from the oldest to the newest.   
+        string timestamp;
+        string action;
+        union { null , string } user = null;
+        union { null , string } session = null;
+        union { null , string } data = null;
+    }
+}

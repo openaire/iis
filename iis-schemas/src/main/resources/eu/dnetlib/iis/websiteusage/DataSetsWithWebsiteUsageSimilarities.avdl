@@ -1,0 +1,13 @@
+@namespace("eu.dnetlib.iis.websiteusage.schemas")
+protocol IIS{
+    
+    import idl "DataSetWebsiteUsageSimilarities.avdl";
+    
+    record DataSetsWithWebsiteUsageSimilarities {
+//      foreign key: DataSetReference.id ("data set" data store)
+        string dataSetId;
+//      foreign key: DataSetReference.id ("data set" data store)
+        string otherDataSetId;
+        union { null , DataSetWebsiteUsageSimilarities } similarities = null;
+    }
+}

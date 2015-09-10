@@ -1,0 +1,49 @@
+.. madIS documentation master file, created by
+   sphinx-quickstart on Thu Nov 26 16:25:19 2009.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+madIS documentation
+===================
+
++--------------------------------------------------------------+
+|                                                              |
+|" Making the simple complicated is commonplace;               |
+| making the complicated simple, awesomely simple...           |
+| that's creativity. "                                         |
+|                                                              |
++--------------------------------------------------------------+
+
+.. centered:: madIS |version|
+
+madIS is a extensible relational database system build upon the SQLite database and with extensions written in Python.
+
+The extensibility permits quick experimentation concerning data analysis tasks, rapid development of data processing workflows and serves in general as a simple and easy environment to test database related ideas without much effort.
+madIS' query language is SQL with some syntactic "extensions" aiming to simplify query composition.
+
+madIS is hosted at http://code.google.com/p/madis/
+
+Contents:
+
+.. toctree::
+   :maxdepth: 3
+   
+   install
+   about
+   manual
+   usefulnotes
+   examples
+   row
+   aggregate
+   vtable
+   people
+   license
+   thanks
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+

@@ -1,0 +1,2 @@
+## This is a classpath-based import file (this header is required)
+documentsclassification classpath eu/dnetlib/iis/documentsclassification/main/oozie_app

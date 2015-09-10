@@ -1,0 +1,27 @@
+@namespace("eu.dnetlib.iis.audit.schemas")
+protocol IIS{
+
+	record Cause {
+//		generic cause code, root exception class name when derived from exception         
+        string code;
+//		cause message
+		union { null , string } message = null;
+	}
+
+    record Fault {
+//      input object identifier
+        string inputObjectId;
+//		fault creation timestamp        
+        long timestamp;
+//      generic fault code, root exception class name when derived from exception         
+        string code;
+//		fault message
+		union { null , string } message = null;
+//		stack trace
+		union { null , string } stackTrace = null;
+//		fault causes, array is indexed with cause depth         
+        union { null , array<Cause> } causes = null;
+//		fault supplementary data related to fault context
+		union { null , map<string> } supplementaryData = null;        
+    }
+}

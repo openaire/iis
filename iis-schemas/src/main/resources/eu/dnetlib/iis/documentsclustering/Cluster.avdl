@@ -1,0 +1,14 @@
+@namespace("eu.dnetlib.iis.documentsclustering.schemas")
+protocol IIS{
+
+    record Cluster {
+//      ID of the cluster
+        int id;
+//      pointer to parent cluster, null in case of root cluster,
+//      foreign key: Cluster.id ("cluster" data store)
+        union { null , int } parent = null;
+//      name of cluster (possibly empty in case of all clusters except for the root cluster)
+        union { null , string } name = null;
+    }
+    
+}

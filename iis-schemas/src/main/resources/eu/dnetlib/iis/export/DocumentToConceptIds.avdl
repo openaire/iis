@@ -1,0 +1,16 @@
+@namespace("eu.dnetlib.iis.export.schemas")
+protocol IIS{
+
+	record Concept {
+//		concept identifier	
+		string id;
+//		Find more details on `confidenceLevel` constraints in eu/dnetlib/iis/README.markdown file.
+        union { null , float } confidenceLevel = null;
+    }
+
+    record DocumentToConceptIds {
+//      document ID, foreign key: DocumentText.id
+        string documentId;
+		array<Concept> concepts;
+    }
+}

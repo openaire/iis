@@ -1,0 +1,14 @@
+@namespace("eu.dnetlib.iis.websiteusage.schemas")
+protocol IIS{
+
+    import idl "PersonWebsiteUsageSimilarities.avdl";
+
+    record PersonsWithWebsiteUsageSimilarities {
+//      foreign key: Person.id ("person" data store)
+        string personId;
+//      foreign key: Person.id ("person" data store)
+        string otherPersonId;
+        union { null , PersonWebsiteUsageSimilarities } similarities = null;
+    }
+    
+}

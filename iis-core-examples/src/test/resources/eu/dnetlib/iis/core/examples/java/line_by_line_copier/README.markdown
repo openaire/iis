@@ -1,0 +1,1 @@
+Attention: this workflow is set explicitly to run only on Hadoop installed on localhost (through `job.properties` file in this directory), so you won't be able to run it on OpenAIRE cluster. In order to do it, you would have to change the contents of the `job.properties` file.

@@ -1,0 +1,192 @@
+Examples
+********
+
+.. _pivoting:
+
+.. highlight:: mysql
+
+Pivot
+=====
+
+First import data from a tsv file (Tab Separated Values) with :func:`~functions.vtable.file.file` virtual table function.
+:download:`sales.tsv <../../functions/row/testing/sales.tsv>`
+
+.. code-block:: python
+
+        >>> sql("""create table sales as
+        ...             select Product,Region,Month,cast(Sales as int) as Sales
+        ...                 from
+        ...                     (file 'testing/sales.tsv' 'dialect:tsv' header:t)""")
+        >>> sql("select * from sales")
+        Product | Region | Month   | Sales
+        ----------------------------------
+        Cars    | Athens | 2010-01 | 200
+        Cars    | Athens | 2010-02 | 130
+        Bikes   | NY     | 2010-01 | 10
+        Bikes   | NY     | 2010-02 | 30
+        Cars    | NY     | 2010-01 | 100
+        Cars    | NY     | 2010-02 | 160
+        Cars    | Paris  | 2010-01 | 70
+        Cars    | Paris  | 2010-02 | 20
+        Bikes   | Paris  | 2010-01 | 100
+        Bikes   | Paris  | 2010-02 | 20
+        Boats   | Paris  | 2010-01 | 200
+
+Let's say we want the result to be a table with columns:
+
+- Product
+- NY: the total sales in NY for this product
+- Paris: the total sales in Paris for this product
+- Athens: the total sales in Athens for this product
+
+We will perform the aggregate function *sum* over *Sales* column, grouping by *Product* and *Region* columns.
+Then :func:`~functions.aggregate.packing.vecpack` must be performed over *Region* and *Sales* sums, grouping on *Product*.
+
+To use :func:`~functions.aggregate.packing.vecpack` the first argument must be a pack of the dimensions. This is the
+result of packing the distinct *Region* values, grouping over all the table.
+
+.. code-block:: python
+
+    >>> sql("""select Product,unpackcol(vpck)
+    ...      from
+    ...        (select Product,vecpack(rpk,Region,salessum) as vpck
+    ...         from
+    ...             (select pack(distinct Region) as rpk from sales),
+    ...             (select Product,Region,sum(sales) as salessum
+    ...                 from sales group by Product,Region)
+    ...         group by Product)""")
+    Product | Paris | NY  | Athens
+    ------------------------------
+    Bikes   | 120   | 40  | 0
+    Boats   | 200   | 0   | 0
+    Cars    | 90    | 260 | 330
+
+
+.. _applexample:
+
+
+Application scenario
+====================
+
+
+In this example we implement a simple application for query recommendation based on user's country of origin. The input data come from a web portal's logs.
+
+The query mining workflow includes the following five main steps:
+
+1. Import the portal log files into a relational table
+2. Use time-heuristics so as to identify coherent query sessions.
+   Assign and store a new, reconstructed session id for each record in the logs
+3. Preprocess and clean logged queries text
+4. Retrieve IP-to-country information from the web and combine this with the IP information from portal log files
+   so as to assign a country code to each one of the logged sessions
+5. Apply an `Apriori-based <http://en.wikipedia.org/wiki/Apriori_algorithm>`_ technique for extracting frequent term sets per country.
+
+A sample from the log file used is presented below:
+
+.. code-block:: none
+
+   36506	guest	X.X.X.134	p93t9q5eqaa0u0p8isd9skp1n6	en	("paradis riedinger")	search_sim  2010-01-01 00:28:23
+   36507	guest	X.X.X.134	p93t9q5eqaa0u0p8isd9skp1n6	en	("paradis riedinger")	view_brief  2010-01-01 00:28:34
+   36508	guest	X.X.X.134	p93t9q5eqaa0u0p8isd9skp1n6	en	("paradis riedinger")	view_brief  2010-01-01 00:28:34
+   36509	guest	X.X.X.134	p93t9q5eqaa0u0p8isd9skp1n6	en	("paradis riedinger")	view_full  2010-01-01 00:28:42
+   36510	guest	X.X.X.55	a9qo379qnl5hbbria6tj6nlp95	de  (creator all "frank leonhard")  search_adv  2010-01-01 00:28:44
+   36511	guest	X.X.X.55	a9qo379qnl5hbbria6tj6nlp95	de  (creator all "frank leonhard")	view_brief  2010-01-01 00:29:10
+   36512	guest	X.X.X.55	a9qo379qnl5hbbria6tj6nlp95	de  (creator all "frank leonhard")	search_res  2010-01-01 00:29:18
+
+
+**Step 1**
+
+Initially, log files which are available in the Tab Separated Value format, are imported into a relational table.
+The import process is easily implemented in madIS using the :func:`~functions.vtable.file.file` function,
+by selecting the appropriate columns from the ".tsv" file. 
+
+::
+
+   create table logs as
+      select C1 as id, C2 as userid, C3 as userip, C4 as sesid, C6 as query, c7 as action, C8 as date
+      from file('raw_logs.tsv','delimiter:\t','quoting:QUOTE_NONE');
+
+**Step 2**
+
+Thereafter, session reconstruction, a common task in web usage mining, is performed.
+In this example it uses a predefined inactivity thresholds to break in-coming sessions.
+Such functionality is performed in madIS through the :func:`~functions.aggregate.subgroup.datediffbreak` function,
+which takes as an argument the inactivity threshold (as well as some additional parameters) and returns the new session ids.
+In the following madSQL segment, where the efficient employment of the described function is presented,
+the inactivity threshold has been set to 30 minutes (provided in milliseconds).
+
+::
+
+   alter table logs add sesidnew text;
+   update logs
+   	set sesidnew=
+   	(select bgroupid
+   		from
+   		( cache select datediffbreak(sesid,id,date,30*60*1000,'order',date,id)
+   				from logs
+   				where sesid not null group by sesid)
+   		where C1=id )
+   	where sesid is not null;
+
+**Step 3**
+
+Then, focusing on issued queries, the distinct queries per session are retrieved from the logs
+and a variety of query text processing steps take place.
+However, a great amount of malformed queries has been observed, so it is only queries of valid text in utf8 encoding that are selected.
+This filtering step is performed using the :func:`~functions.row.text.isvalidutf8` function in the where clause of the corresponding madSQL fragment. 
+
+Thereafter, stop word removal is performed over the selected queries through the corresponding function.
+Moreover, since queries are issued and logged using the Common Query Language (CQL) syntax, an additional filtering step is executed for removing *CQL* constructs,
+through the madIS function :func:`~functions.row.text.cqlkeywords`. The processed queries are then stored in table *QueriesPerSession*.
+One of the advantages offered by madIS framework, is that all the powerful Python capabilities and
+open source libraries for text processing can be exploited for the rapid implementation of customized functions,
+hence significantly easing the “flow-level programming”, in madSQL.
+
+::
+
+   create table QueriesPerSession as
+   select filterstopwords(cqlkeywords(query)) as cleanquery , sesidnew, userid
+   from logs
+   where action like 'search%' and cleanquery!='' and isvalidutf8(query)
+   group by query, sesidnew;
+
+**Step 4**
+
+Aiming towards the extraction of term associations per country, an external data source is fetched from the web,
+containing the mapping between IP ranges and countries.
+Again, the :func:`~functions.vtable.file.file` function is employed for fetching the URL resource and importing the corresponding data in a main memory
+indexed table using the :func:`~functions.vtable.cache.cache` function of madIS. The fetched data source specifies the IP ranges in IP long number format,
+so the logged IPs have to be converted to the same format by using :func:`~functions.row.iptools.ip2long` function, and then to be subsequently matched
+to the imported ranges. However, since each session may contain requests from multiple IPs (due to dynamic IPs, etc.),
+it is only the first encountered IP that is considered for each session.
+The first IP for each session is obtained using the :func:`~functions.aggregate.selection.minrow` function, comparing the corresponding records’ ids.
+The generated mapping from each session to a country code is stored in table Session2Country.
+
+::
+
+   create temporary table Session2Country as
+   select sesidnew, CountryCode
+   from
+   	(select ip2long(minrow(id,userip)) as iplong, sesidnew
+		from logs
+		group by sesidnew),
+	(cache select cast(C3 as integer) as ipfrom, cast(C4 as integer) as ipto, C5 as CountryCode
+		from file('http://.../GeoIPCountryCSV.zip','dialect:csv','compression:t'))
+   where iplong>=ipfrom and iplong <= ipto;
+
+**Step 5**
+
+Then information regarding text of queries, and session to country mappings is jointly used so as to extract term associations,
+with an `apriori-like <http://en.wikipedia.org/wiki/Apriori_algorithm>`_ technique, using the aggregate function :func:`~functions.aggregate.mining.freqitemsets`.
+Frequent query term sets are computed over each one of the country codes that occur in Session2Country table.
+
+::
+
+   create table FrequentItemsets as
+   select 'nat', CountryCode,
+	freqitemsets(cleanquery,'threshold:2','maxlen:5')
+   from QueriesPerSession as qs, Session2Country as sc
+   where  qs.sesidnew = sc.sesidnew
+   group by CountryCode;
+
+

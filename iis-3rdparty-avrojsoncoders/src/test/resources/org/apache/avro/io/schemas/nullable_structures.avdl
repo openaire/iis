@@ -1,0 +1,22 @@
+@namespace("org.apache.avro.io.schemas")
+protocol IIS{
+   record Document{
+      int id;
+      union {null, string} title=null;
+      array<int> authorIds;
+   }
+   
+   record PersonWithDocument{
+      int id;
+      union{null, string} name=null;
+      union {null, Document} document;
+      union {Document, null} documentWithNullLast;
+      union {null, Document} documentWithNullDefault=null;
+      union {null, array<Document>} documents;
+   }
+   
+   record PersonEntry{
+      int id;
+      union{int, string} externalId;
+   }
+}

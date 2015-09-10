@@ -1,0 +1,12 @@
+@namespace("eu.dnetlib.iis.export.schemas")
+protocol IIS{
+    
+    import idl "../websiteusage/PersonWebsiteUsageSimilarities.avdl";
+
+    record SimilarToPerson {
+//      foreign key: PersonWithInferencedData.id ("person with inferenced data" data store)
+        string personId;
+        union { null , eu.dnetlib.iis.websiteusage.schemas.PersonWebsiteUsageSimilarities } similarities = null;
+    }
+
+}

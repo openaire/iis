@@ -1,0 +1,16 @@
+@namespace("eu.dnetlib.iis.documentssimilarity_with_fulltext.schemas")
+protocol IIS{
+    import idl "../importer/Person.avdl";
+
+    record DocumentMetadata {
+        string id;
+        union { null , string } title = null;
+        union { null , string } abstract = null;
+//      document fulltext
+//      warning: may be a raw, non-normalised text,
+//      i.e. may contain non-alphanumeric characters, page numbers, etc.
+        union { null , string } text = null;
+        union { null , array<string> } keywords = null;
+        union { null , array<eu.dnetlib.iis.importer.schemas.Person> } authors = null;
+    }
+}

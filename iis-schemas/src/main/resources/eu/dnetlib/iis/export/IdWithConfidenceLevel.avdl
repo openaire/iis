@@ -1,0 +1,10 @@
+@namespace("eu.dnetlib.iis.export.schemas")
+protocol IIS{
+
+    record IdWithConfidenceLevel {
+        string id;
+//		Find more details on `confidenceLevel` constraints in eu/dnetlib/iis/README.markdown file.
+        union { null , float } confidenceLevel = null;
+    }
+
+}

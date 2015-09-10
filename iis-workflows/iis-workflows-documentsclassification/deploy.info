@@ -1,0 +1,52 @@
+[
+{
+  "type_source": "SVN", 
+  "goal": "package -U -T 4C source:jar", 
+  "url": "http://svn-public.driver.research-infrastructures.eu/driver/dnet40/modules/uoa-iis-documentsclassification/trunk/", 
+  "deploy_repository": "dnet4-snapshots", 
+  "version": "4",
+  "mail": "m.horst@icm.edu.pl,d.tkaczyk@icm.edu.pl",
+  "deploy_repository_url": "http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-snapshots", 
+  "name": "uoa-iis-documentsclassification"
+},
+{
+  "type_source": "SVN",
+  "goal": "clean package -Pinit-test-cluster-config,attach-test-resources,oozie-package,deploy,run,monitor -Dworkflow.source.dir=eu/dnetlib/iis/documentsclassification/main/sampletest",
+  "url": "http://svn-public.driver.research-infrastructures.eu/driver/dnet40/modules/uoa-iis-documentsclassification/trunk/",
+  "nightly" : "true",
+  "cron" : "H H * * *",
+  "version": "4",
+  "mail": "m.horst@icm.edu.pl",
+  "name": "uoa-iis-documentsclassification-integration-test"
+},
+{
+  "type_source": "SVN",
+  "goal": "clean package -Pinit-test-cluster-config,attach-test-resources,oozie-package,deploy,run,monitor -Dworkflow.source.dir=eu/dnetlib/iis/documentsclassification/main/sampletest_empty_input",
+  "url": "http://svn-public.driver.research-infrastructures.eu/driver/dnet40/modules/uoa-iis-documentsclassification/trunk/",
+  "nightly" : "true",
+  "cron" : "H H * * *",
+  "version": "4",
+  "mail": "m.horst@icm.edu.pl",
+  "name": "uoa-iis-documentsclassification-empty-input-integration-test"
+},
+{
+  "type_source": "SVN",
+  "goal": "clean package -Pinit-test-cluster-config,attach-test-resources,oozie-package,deploy,run,monitor -Dworkflow.source.dir=eu/dnetlib/iis/documentsclassification/main/sampletest_empty_abstract",
+  "url": "http://svn-public.driver.research-infrastructures.eu/driver/dnet40/modules/uoa-iis-documentsclassification/trunk/",
+  "nightly" : "true",
+  "cron" : "H H * * *",
+  "version": "4",
+  "mail": "m.horst@icm.edu.pl",
+  "name": "uoa-iis-documentsclassification-empty-abstract-integration-test"
+},
+{
+  "type_source": "SVN",
+  "goal": "clean package -Pinit-test-cluster-config,attach-test-resources,oozie-package,deploy,run,monitor -Dworkflow.source.dir=eu/dnetlib/iis/documentsclassification/main/sampletest_null_taxonomy",
+  "url": "http://svn-public.driver.research-infrastructures.eu/driver/dnet40/modules/uoa-iis-documentsclassification/trunk/",
+  "nightly" : "true",
+  "cron" : "H H * * *",
+  "version": "4",
+  "mail": "m.horst@icm.edu.pl",
+  "name": "uoa-iis-documentsclassification-null-taxonomy-integration-test"
+}
+]

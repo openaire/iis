@@ -1,0 +1,11 @@
+@namespace("eu.dnetlib.iis.importer.schemas")
+protocol IIS{
+
+    record DocumentContent {
+//      document identifier
+//      foreign key: DocumentMetadata.id ("raw document metadata" data store)
+        string id;
+//      document full-text in the PDF format
+        union { null , bytes } pdf = null;
+    }
+}
