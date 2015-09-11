@@ -19,13 +19,11 @@
        <module>iis-workflows-citationmatching-direct</module>
        <module>iis-workflows-collapsers</module>
        <module>iis-workflows-documentsclassification</module>
-       <module>iis-workflows-documentsclustering</module>
        <module>iis-workflows-export-actionmanager</module>
        <module>iis-workflows-import</module>
        <module>iis-workflows-ingest</module>
        <module>iis-workflows-ingest-pmc</module>
        <module>iis-workflows-metadataextraction</module>
-       <module>iis-workflows-projectreferencesmerger</module>
        <module>iis-workflows-referenceextraction</module>
        <module>iis-workflows-statistics</module>
        <module>iis-workflows-top</module>
@@ -659,7 +657,6 @@
 						</execution>
 					</executions>
 				</plugin>
-				<!-- 
 				<plugin>
 	                <groupId>eu.dnetlib.primer</groupId>
 	                <artifactId>primer-maven-plugin</artifactId>
@@ -680,7 +677,6 @@
 	                    </execution>
 	                </executions>
 	            </plugin>
-	            -->
 	            <!--  -->
 				<!-- end of plugins required by integration test priming -->
 				<plugin>

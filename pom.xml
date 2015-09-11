@@ -30,7 +30,6 @@
 	   <module>iis-common</module>
 	   <module>iis-core</module>
 	   <module>iis-core-examples</module>
-       <module>iis-functionality-api</module>
        <module>iis-oozie-maven-plugin</module>
        <module>iis-properties-maven-plugin</module>
        <module>iis-schemas</module>
@@ -105,6 +104,68 @@
         </repository>
         
 	</repositories>
+
+    <dependencies>
+    
+       <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+    
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>[1.2.17]</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.sun.jmx</groupId>
+                    <artifactId>jmxri</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jdmk</groupId>
+                    <artifactId>jmxtools</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    
+    </dependencies>
+    
+    <dependencyManagement>
+       <dependencies>
+       
+           <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-common</artifactId>
+                <version>${iis.hadoop.common.version}</version>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>jdk.tools</artifactId>
+                        <groupId>jdk.tools</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            
+           <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-common</artifactId>
+                <version>${iis.hadoop.common.version}</version>
+                <scope>test</scope>
+                <type>test-jar</type>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>jdk.tools</artifactId>
+                        <groupId>jdk.tools</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+           
+       </dependencies>
+    </dependencyManagement>
+    
+
 	
 	<build>
 		<directory>target</directory>
@@ -126,6 +187,12 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
             </plugin>
 
             <plugin>
@@ -299,66 +366,7 @@
 	
 	
 	
-	<dependencies>
-	
-	   <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
-	
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>[1.2.17]</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.sun.jmx</groupId>
-					<artifactId>jmxri</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.sun.jdmk</groupId>
-					<artifactId>jmxtools</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-	
-	</dependencies>
-	
-	<dependencyManagement>
-	   <dependencies>
-	   
-		   <dependency>
-	            <groupId>org.apache.hadoop</groupId>
-	            <artifactId>hadoop-common</artifactId>
-	            <version>${iis.hadoop.common.version}</version>
-	            <scope>provided</scope>
-	            <exclusions>
-	                <exclusion>
-	                    <artifactId>jdk.tools</artifactId>
-	                    <groupId>jdk.tools</groupId>
-	                </exclusion>
-	            </exclusions>
-	        </dependency>
-	        
-           <dependency>
-                <groupId>org.apache.hadoop</groupId>
-                <artifactId>hadoop-common</artifactId>
-                <version>${iis.hadoop.common.version}</version>
-                <scope>test</scope>
-                <type>test-jar</type>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>jdk.tools</artifactId>
-                        <groupId>jdk.tools</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-	       
-	   </dependencies>
-	</dependencyManagement>
-	
+
 	
 	<properties>
 		<maven.compiler.source.version>1.8</maven.compiler.source.version>

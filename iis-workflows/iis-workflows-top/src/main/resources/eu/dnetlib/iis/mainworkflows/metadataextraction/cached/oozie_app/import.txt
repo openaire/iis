@@ -1,4 +1,0 @@
-## This is a classpath-based import file (this header is required)
-metadata_extractor classpath eu/dnetlib/iis/metadataextraction/oozie_app
-transformers_metadataextraction_skip_extracted classpath eu/dnetlib/iis/transformers/metadataextraction/skip_extracted/oozie_app
-transformers_common_union classpath eu/dnetlib/iis/transformers/common/union/oozie_app

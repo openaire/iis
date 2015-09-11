@@ -1,0 +1,3 @@
+## This is a classpath-based import file (this header is required)
+union classpath eu/dnetlib/iis/workflows/collapsers/union/oozie_app
+origins_collapser classpath eu/dnetlib/iis/workflows/collapsers/origins_collapser/oozie_app

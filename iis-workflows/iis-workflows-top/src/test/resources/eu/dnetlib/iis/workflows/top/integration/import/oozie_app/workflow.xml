@@ -1,0 +1,165 @@
+<workflow-app xmlns="uri:oozie:workflow:0.3" name="test-mainworkflows_integration_import">
+	<start to="importer" />
+	<action name="importer">
+		<sub-workflow>
+            <app-path>${wf:appPath()}/mapred_import</app-path>
+            <propagate-configuration/>
+            <configuration>
+				<property>
+				<!-- TODO possibly not needed -->
+					<name>actionmanager_avro_storage_dir</name>
+					<value>${workingDir}/exporter</value>
+				</property>
+				<property>
+					<name>mapreduce_inputformat_class</name>
+					<value>eu.dnetlib.iis.workflows.top.importer.mapred.PredefinedTableInputFormat</value>
+				</property>
+				<property>
+					<name>inputformat_idx_props_location</name>
+					<value>eu/dnetlib/iis/workflows/top/integration/import/input/meta/mappings.properties</value>
+				</property>
+				<property>
+					<name>inference_provenance_blacklist</name>
+					<value>iis::.*</value>
+				</property>
+				<property>
+					<name>skip_deleted_by_inference</name>
+					<value>true</value>
+				</property>
+				<property>
+					<name>hbase_input_table</name>
+					<value>undefined</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${workingDir}/mr_import</value>
+				</property>
+			</configuration>
+        </sub-workflow>
+		
+		<ok to="forking" />
+		
+		<error to="fail" />
+	</action>
+    
+    <fork name="forking">
+    	<path start="consumer-dedupmapping"/>
+    	<path start="consumer-docproject"/>
+    	<path start="consumer-document"/>
+    	<path start="consumer-person"/>
+        <path start="consumer-project"/>
+    </fork>
+    
+	<action name="consumer-dedupmapping">
+		<java>
+			<job-tracker>${jobTracker}</job-tracker>
+			<name-node>${nameNode}</name-node>
+			<configuration>
+				<property>
+					<name>mapred.job.queue.name</name>
+					<value>${queueName}</value>
+				</property>
+			</configuration>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
+			<arg>-C{dedupmapping,
+				eu.dnetlib.iis.common.schemas.IdentifierMapping,
+				eu/dnetlib/iis/workflows/top/integration/import/output/dedupmapping.json}</arg>
+			<arg>-Idedupmapping=${workingDir}/mr_import/dedupmapping</arg>
+		</java>
+		<ok to="joining" />
+		<error to="fail" />
+	</action>
+	
+	<action name="consumer-docproject">
+		<java>
+			<job-tracker>${jobTracker}</job-tracker>
+			<name-node>${nameNode}</name-node>
+			<configuration>
+				<property>
+					<name>mapred.job.queue.name</name>
+					<value>${queueName}</value>
+				</property>
+			</configuration>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
+			<arg>-C{docproject,
+				eu.dnetlib.iis.importer.schemas.DocumentToProject,
+				eu/dnetlib/iis/workflows/top/integration/import/output/docproject.json}</arg>
+			<arg>-Idocproject=${workingDir}/mr_import/docproject</arg>
+		</java>
+		<ok to="joining" />
+		<error to="fail" />
+	</action>
+    
+    <action name="consumer-person">
+		<java>
+			<job-tracker>${jobTracker}</job-tracker>
+			<name-node>${nameNode}</name-node>
+			<configuration>
+				<property>
+					<name>mapred.job.queue.name</name>
+					<value>${queueName}</value>
+				</property>
+			</configuration>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
+			<arg>-C{person,
+				eu.dnetlib.iis.importer.schemas.Person,
+				eu/dnetlib/iis/workflows/top/integration/import/output/person.json}</arg>
+			<arg>-Iperson=${workingDir}/mr_import/person</arg>
+		</java>
+		<ok to="joining" />
+		<error to="fail" />
+	</action>
+	
+	<action name="consumer-project">
+		<java>
+			<job-tracker>${jobTracker}</job-tracker>
+			<name-node>${nameNode}</name-node>
+			<configuration>
+				<property>
+					<name>mapred.job.queue.name</name>
+					<value>${queueName}</value>
+				</property>
+			</configuration>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
+			<arg>-C{project,
+				eu.dnetlib.iis.importer.schemas.Project,
+				eu/dnetlib/iis/workflows/top/integration/import/output/project.json}</arg>
+			<arg>-Iproject=${workingDir}/mr_import/project</arg>
+		</java>
+		<ok to="joining" />
+		<error to="fail" />
+	</action>
+	
+	<action name="consumer-document">
+		<java>
+			<job-tracker>${jobTracker}</job-tracker>
+			<name-node>${nameNode}</name-node>
+			<configuration>
+				<property>
+					<name>mapred.job.queue.name</name>
+					<value>${queueName}</value>
+				</property>
+			</configuration>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
+			<arg>-C{document,
+				eu.dnetlib.iis.importer.schemas.DocumentMetadata,
+				eu/dnetlib/iis/workflows/top/integration/import/output/document.json}</arg>
+			<arg>-Idocument=${workingDir}/mr_import/docmeta</arg>
+		</java>
+		<ok to="joining" />
+		<error to="fail" />
+	</action>
+    
+    <join name="joining" to="end"/>
+     
+	<kill name="fail">
+		<message>Unfortunately, the process failed -- error message:
+			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+	</kill>
+	<end name="end" />
+</workflow-app>

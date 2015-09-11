@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-removebelowthreshold classpath eu/dnetlib/iis/projectreferencesmerger/removebelowthreshold/oozie_app

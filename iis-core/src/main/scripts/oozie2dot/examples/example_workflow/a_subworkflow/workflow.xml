@@ -587,41 +587,41 @@
 			<!-- Specification of the output ports -->
             <arg>-C{extracted_document_metadata,
 				eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
-				eu/dnetlib/iis/mainworkflows/data/empty.json}</arg>
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
             <arg>-C{citation,
 				eu.dnetlib.iis.citationmatching.schemas.Citation,
-				eu/dnetlib/iis/mainworkflows/data/empty.json}</arg>
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
             <arg>-C{document_to_project,
 				eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject,
-				eu/dnetlib/iis/mainworkflows/data/empty.json}</arg>
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
             <arg>-C{document_to_dataset,
 				eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet,
-				eu/dnetlib/iis/mainworkflows/data/empty.json}</arg>
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
 			<arg>-C{document_to_research_initiative,
 				eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId,
-				eu/dnetlib/iis/mainworkflows/data/empty.json}</arg>
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
             <arg>-C{document_to_document_clusters,
 				eu.dnetlib.iis.documentsclustering.schemas.DocumentToDocumentClusters,
-				eu/dnetlib/iis/mainworkflows/data/empty.json}</arg>    
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>    
             <arg>-C{document_to_document_classes,
 				eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses,
-				eu/dnetlib/iis/mainworkflows/data/empty.json}</arg>    
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>    
             <arg>-C{document_to_document_statistics,
 				eu.dnetlib.iis.statistics.schemas.DocumentToDocumentStatistics,
-				eu/dnetlib/iis/mainworkflows/data/empty.json}</arg>    
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>    
             <arg>-C{document_with_website_usage_similarities,
 				eu.dnetlib.iis.websiteusage.schemas.DocumentsWithWebsiteUsageSimilarities,
-				eu/dnetlib/iis/mainworkflows/data/empty.json}</arg>
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
 			<!-- this one is required by dataset id generator, it is impossible to check
 			existing dataset records therefore generating empty datastore -->	
 			<arg>-C{dataset_existing_id,
 				eu.dnetlib.iis.importer.schemas.DocumentId,
-				eu/dnetlib/iis/mainworkflows/data/empty.json}</arg>
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
 			<!-- this one is required by WoS document exporter, it is impossible to check
 			existing WoS publications therefore generating empty datastore -->	
 			<arg>-C{document_existing_meta,
 				eu.dnetlib.iis.importer.schemas.DocumentMetadata,
-				eu/dnetlib/iis/mainworkflows/data/empty.json}</arg>
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
             <arg>-Oextracted_document_metadata=${workingDir}/producer/extracted_document_metadata</arg>
             <arg>-Ocitation=${workingDir}/producer/citation</arg>
@@ -789,7 +789,7 @@
 				</property>
 			</configuration>
 			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.export.actionmanager.entity.dataset.DatasetExporterProcess</arg>
+			<arg>eu.dnetlib.iis.workflows.export.actionmanager.entity.dataset.DatasetExporterProcess</arg>
 			<arg>-Iinput=${workingDir}/identifier/datasets</arg>
 			
 			<arg>-Pimport.datacite.mdstore.service.location=${import_mdstore_service_location}</arg>
@@ -840,7 +840,7 @@
 				</property>
 			</configuration>
 			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.export.actionmanager.entity.document.DocumentExporterProcess</arg>
+			<arg>eu.dnetlib.iis.workflows.export.actionmanager.entity.document.DocumentExporterProcess</arg>
 			<arg>-Iinput=${workingDir}/identifier/documents</arg>
 			
 			<arg>-Pimport.document.mdstore.service.location=${import_mdstore_service_location}</arg>

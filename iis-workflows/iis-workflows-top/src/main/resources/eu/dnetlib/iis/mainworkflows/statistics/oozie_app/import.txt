@@ -1,6 +1,0 @@
-## This is a classpath-based import file (this header is required)
-mainworkflows_common_import classpath eu/dnetlib/iis/mainworkflows/common/import/oozie_app
-transformers_metadatamerger classpath eu/dnetlib/iis/transformers/metadatamerger/oozie_app
-transformers_statistics classpath eu/dnetlib/iis/transformers/statistics/oozie_app
-statistics classpath eu/dnetlib/iis/statistics/main/oozie_app
-mainworkflows_common_export classpath eu/dnetlib/iis/mainworkflows/common/export/oozie_app

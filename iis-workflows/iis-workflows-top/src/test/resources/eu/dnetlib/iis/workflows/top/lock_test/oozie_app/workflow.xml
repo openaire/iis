@@ -1,0 +1,158 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="lock_test">
+
+	<parameters>
+		<property>
+			<name>node_id</name>
+		</property>
+		<property>
+			<name>zk_session_timeout</name>
+		</property>
+	</parameters>
+
+	<start to="forking" />
+	
+	<fork name="forking">
+    	<path start="lock_1"/>
+        <path start="lock_2"/>
+    </fork>
+
+	<!-- path_1 -->
+	<action name="lock_1">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+			<prepare>
+			</prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
+            <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
+            <arg>-Pnode_id=${node_id}</arg>
+            <arg>-Pmode=obtain</arg>
+        </java>
+        <ok to="timeout_node_1"/>
+        <error to="fail"/>
+    </action>
+
+	<action name="timeout_node_1">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+			<prepare>
+			</prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.workflows.top.nodes.timeout.TimeoutProcess</arg>
+            <arg>-Pnode_id=timeout_node_1</arg>
+            <arg>-Ptimeout=10000</arg>
+        </java>
+        <ok to="unlock_1"/>
+        <error to="fail"/>
+    </action>
+
+	<action name="unlock_1">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+			<prepare>
+			</prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
+            <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
+            <arg>-Pnode_id=${node_id}</arg>
+            <arg>-Pmode=release</arg>
+        </java>
+        <ok to="joining"/>
+        <error to="fail"/>
+    </action>
+
+	<!-- path_2 -->
+	<action name="lock_2">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+			<prepare>
+			</prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
+            <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
+            <arg>-Pnode_id=${node_id}</arg>
+            <arg>-Pmode=obtain</arg>
+        </java>
+        <ok to="timeout_node_2"/>
+        <error to="fail"/>
+    </action>
+
+	<action name="timeout_node_2">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+			<prepare>
+			</prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.workflows.top.nodes.timeout.TimeoutProcess</arg>
+            <arg>-Pnode_id=timeout_node_2</arg>
+            <arg>-Ptimeout=30000</arg>
+        </java>
+        <ok to="unlock_2"/>
+        <error to="fail"/>
+    </action>
+
+	<action name="unlock_2">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+			<prepare>
+			</prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
+            <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
+            <arg>-Pnode_id=${node_id}</arg>
+            <arg>-Pmode=release</arg>
+        </java>
+        <ok to="joining"/>
+        <error to="fail"/>
+    </action>
+
+	<join name="joining" to="end"/>
+	
+	<kill name="fail">
+		<message>Unfortunately, the process failed -- error message:
+			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+	</kill>
+	<end name="end" />
+</workflow-app>

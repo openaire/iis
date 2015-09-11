@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-transformer_project_toconcept classpath eu/dnetlib/iis/transformers/referenceextraction/project/toconcept/oozie_app

@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-transformer_metadataextraction_checksum_postprocessing_meta classpath eu/dnetlib/iis/transformers/metadataextraction/checksum/postprocessing/meta/oozie_app

@@ -1,0 +1,9 @@
+## This is a classpath-based import file (this header is required)
+mainworkflows_preprocessing_import classpath eu/dnetlib/iis/workflows/top/preprocessing/import/oozie_app
+ingest_webcrawl_fundings classpath eu/dnetlib/iis/workflows/ingest/webcrawl/fundings/oozie_app
+referenceextraction_project classpath eu/dnetlib/iis/workflows/referenceextraction/project/main/oozie_app
+referenceextraction_dataset classpath eu/dnetlib/iis/workflows/referenceextraction/dataset/main/oozie_app
+transformers_project_toconcept classpath eu/dnetlib/iis/workflows/transformers/referenceextraction/project/toconcept/oozie_app
+transformers_export_researchinitiatives classpath eu/dnetlib/iis/workflows/transformers/export/researchinitiatives/oozie_app
+mainworkflows_common_export_to_json classpath eu/dnetlib/iis/workflows/top/common/export_to_json/oozie_app
+mainworkflows_common_export classpath eu/dnetlib/iis/workflows/top/common/export/oozie_app

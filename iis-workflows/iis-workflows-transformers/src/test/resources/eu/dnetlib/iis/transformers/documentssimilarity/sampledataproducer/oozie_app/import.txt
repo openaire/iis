@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-transformer_documentssimilarity classpath eu/dnetlib/iis/transformers/documentssimilarity/oozie_app

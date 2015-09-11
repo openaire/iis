@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-statistics_main classpath eu/dnetlib/iis/statistics/main/oozie_app

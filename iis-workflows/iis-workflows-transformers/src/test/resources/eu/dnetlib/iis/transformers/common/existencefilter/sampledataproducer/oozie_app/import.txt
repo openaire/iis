@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-existencefilter classpath eu/dnetlib/iis/transformers/common/existencefilter/oozie_app
