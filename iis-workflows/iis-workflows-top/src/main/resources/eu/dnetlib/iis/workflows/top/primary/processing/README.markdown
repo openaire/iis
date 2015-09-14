@@ -1,10 +1,11 @@
-Subworkfow ancapsulating all KDM nodes definitions including:
+Subworkfow encapsulating all inference modules including:
+
 * project reference extraction
 * dataset reference extraction
-* research inititive reference extraction
+* research initiative reference extraction
 * documents classification
 * documents similarity
 * citation matching
 * statistics
 
-Does not import anything from InformationSpace nor export to InformationSpace, produces intermediate output datastores only.
+Does not import anything from Information Space nor export to it; produces intermediate output data stores only.

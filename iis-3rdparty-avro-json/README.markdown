@@ -4,6 +4,8 @@ This project is a patched version of
 
 The goal of this patch is to introduce a way of passing fully qualified names of classes that define the input and output schemas in the Oozie description. The default approach of this library is to accept either a full schema given in XML property or a path to a file stored somewhere in the filesystem.
 
+**TODO**: **The text below is deprecated** - it's a leftover from the code before restructuring.
+
 See the parent directory of this directory for:
  
  - the original source,
