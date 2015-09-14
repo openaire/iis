@@ -1,8 +1,8 @@
 IIS module importing data from Information Space HBase.
+
 Contains classes and import workflow definitions used for testing purposes. 
 
-
-**Mafju review (2015-09-04)**: the input descriptions below are surely outdated since we don't use Protocol Buffers any more
+**TODO (2015-09-04)**: the input descriptions below are surely outdated since we don't use Protocol Buffers any more
 
 input:		hbase 
 output1:	eu.dnetlib.iis.schemas.protobuf.ProjectFundingProto.ProjectFunding

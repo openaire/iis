@@ -1,3 +1,5 @@
+General information
+===================
 In order to run the application, you need to have Cloudera's Hadoop installed. Among its facilities, you need to have Oozie installed as well; installing HBase might not be needed in your case, unless you specifically know that you will be using it. The steps of installation and configuration of Hadoop and its facilities are given below.
 
 ---
@@ -216,4 +218,4 @@ may cause problems when deploying HBase Master with Region Server. The following
 
 		org.apache.hadoop.hbase.client.RetriesExhaustedException: Failed setting up proxy interface org.apache.hadoop.hbase.ipc.HRegionInterface to localhost/127.0.0.1:60020 after attempts=1
 
-may occur in hbase-master log file. As a solution: 127.0.1.1 entry should be removed from /etc/hosts file.
+may occur in hbase-master log file. As a solution: 127.0.1.1 entry should be removed from `/etc/hosts` file.

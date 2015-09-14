@@ -1,8 +1,8 @@
-IIS KDM module responsible for metadata and fulltext extraction. Based on ICM Cermine library.
+IIS module responsible for metadata and fulltext extraction. Based on ICM [CERMINE library](https://github.com/CeON/CERMINE).
 
 Contains all required classes and testing workflow.
 
-**Mafju review (2015-09-04)**: the input descriptions below are surely outdated since we don't use Protocol Buffers any more
+**TODO (2015-09-04)**: the input descriptions below are surely outdated since we don't use Protocol Buffers any more
 
 input1:		eu.dnetlib.iis.schemas.protobuf.DocumentContentProto.DocumentContent 
 output1:	eu.dnetlib.iis.schemas.protobuf.DocumentWithBasicMetadataProto.DocumentWithBasicMetadata
