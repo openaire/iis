@@ -1,4 +1,4 @@
-Maven plugin module utilized by `iis-parent-container` for proper `job.properties` file building.
+Maven plugin module utilized by `iis-workflows` for proper `job.properties` file building.
 
 It is based on http://site.kuali.org/maven/plugins/properties-maven-plugin/1.3.2/write-project-properties-mojo.html and supplemented with:
 

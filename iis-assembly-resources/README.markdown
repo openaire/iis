@@ -1,4 +1,4 @@
-Module utilized by `iis-parent-container`.
+Module utilized by `iis-workflows`.
 
 Contains all required resources by this parent module:
 
