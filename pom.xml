@@ -29,14 +29,11 @@
 	   <module>iis-assembly-resources</module>
 	   <module>iis-common</module>
 	   <module>iis-core</module>
-	   <module>iis-core-examples</module>
-       <module>iis-oozie-maven-plugin</module>
-       <module>iis-properties-maven-plugin</module>
-       <module>iis-schemas</module>
-       <module>iis-workflows</module>
-       
+	   <module>iis-oozie-maven-plugin</module>
+	   <module>iis-properties-maven-plugin</module>
+	   <module>iis-schemas</module>
+	   <module>iis-workflows</module>
 	</modules>
-	
 
 	<issueManagement>
 		<system>Trac</system>
@@ -50,16 +47,12 @@
 	
 	<pluginRepositories> </pluginRepositories>
 	
-	
-	
-	
 	<repositories>
 
 		<repository>
   	         	<id>ceon</id>
 		        <url>https://maven.ceon.pl/artifactory/repo/</url>
 		</repository>
-		    
 
 		<repository>
 			<id>dnet-deps</id>
@@ -90,19 +83,45 @@
 				<enabled>true</enabled>				
 			</releases>
 		</repository>
-		
+
 		<repository>
-		<id>cloudera</id>
-            <name>Cloudera Repository</name>
-            <url>https://repository.cloudera.com/artifactory/cloudera-repos</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        
+			<id>dnet4-bootstrap-snapshot</id>
+			<name>dnet4 bootstrap snapshot</name>
+			<url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-bootstrap-snapshot</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<layout>default</layout>
+		</repository>
+
+		<repository>
+			<id>dnet4-bootstrap-release</id>
+			<name>dnet4 bootstrap release</name>
+			<url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-bootstrap-release</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<layout>default</layout>
+		</repository>
+
+		<repository>
+			<id>cloudera</id>
+			<name>Cloudera Repository</name>
+			<url>https://repository.cloudera.com/artifactory/cloudera-repos</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+
 	</repositories>
 
     <dependencies>
@@ -308,6 +327,25 @@
                                     <action>
                                         <ignore />
                                     </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                	<pluginExecutionFilter>
+                                		<groupId>
+                                			org.apache.maven.plugins
+                                		</groupId>
+                                		<artifactId>
+                                			maven-plugin-plugin
+                                		</artifactId>
+                                		<versionRange>
+                                			[3.2,)
+                                		</versionRange>
+                                		<goals>
+                                			<goal>descriptor</goal>
+                                		</goals>
+                                	</pluginExecutionFilter>
+                                	<action>
+                                		<ignore></ignore>
+                                	</action>
                                 </pluginExecution>
                             </pluginExecutions>
                         </lifecycleMappingMetadata>

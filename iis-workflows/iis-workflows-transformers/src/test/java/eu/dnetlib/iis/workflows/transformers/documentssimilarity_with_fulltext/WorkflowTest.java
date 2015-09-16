@@ -18,7 +18,7 @@ public class WorkflowTest extends AbstractWorkflowTestCase {
 	public void testWorkflow() throws Exception {
         WorkflowConfiguration wf = new WorkflowConfiguration();
         wf.setTimeoutInSeconds(720);
-        runWorkflow("eu/dnetlib/iis/transformers/documentssimilarity_with_fulltext/sampledataproducer/oozie_app", wf);
+        runWorkflow("eu/dnetlib/iis/workflows/transformers/documentssimilarity_with_fulltext/sampledataproducer/oozie_app", wf);
     }
 
 }

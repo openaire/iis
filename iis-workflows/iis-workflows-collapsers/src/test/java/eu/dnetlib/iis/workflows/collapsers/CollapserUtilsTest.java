@@ -100,11 +100,11 @@ public class CollapserUtilsTest {
         assertNull(CollapserUtils.getNestedFieldValue(SampleData.metadataRecord11, "id.field"));
         
         assertEquals("id-1", CollapserUtils.getNestedFieldValue(SampleData.metadataRecord11, "id"));
-        assertEquals(1990+"", CollapserUtils.getNestedFieldValue(SampleData.metadataRecord11, "year"));
+        assertEquals(new Integer(1990), CollapserUtils.getNestedFieldValue(SampleData.metadataRecord11, "year"));
         assertEquals(true, CollapserUtils.getNestedFieldValue(SampleData.metadataRecord11, "publicationType.article"));
         
         assertEquals("id-1", CollapserUtils.getNestedFieldValue(SampleData.envMetadataRecord11, "data.id"));
-        assertEquals(1990+"", CollapserUtils.getNestedFieldValue(SampleData.envMetadataRecord11, "data.year"));
+        assertEquals(new Integer(1990), CollapserUtils.getNestedFieldValue(SampleData.envMetadataRecord11, "data.year"));
         assertEquals(true, CollapserUtils.getNestedFieldValue(SampleData.envMetadataRecord11, "data.publicationType.article"));
     }
     

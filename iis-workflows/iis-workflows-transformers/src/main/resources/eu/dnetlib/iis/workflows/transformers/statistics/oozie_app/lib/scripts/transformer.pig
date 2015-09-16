@@ -35,7 +35,7 @@ org.apache.pig.piggybank.storage.avro.AvroStorage(
 'schema', '$schema_output_project_id');
 
 
-define CREATE_ARRAY eu.dnetlib.iis.transformers.udfs.NullToEmptyBag;
+define CREATE_ARRAY eu.dnetlib.iis.workflows.transformers.udfs.NullToEmptyBag;
 
 document = load '$input_document' using avro_load_document;
 citation = load '$input_citation' using avro_load_citation;

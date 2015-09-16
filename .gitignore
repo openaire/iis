@@ -5,3 +5,9 @@
 **/*/target
 */target
 /target/
+**/*/build
+*/build
+/build/
+**/*/bin
+*/bin
+/bin/

@@ -18,14 +18,14 @@ public class WorkflowTest extends AbstractWorkflowTestCase {
 	public void testDefaultWorkflow() throws Exception {
         WorkflowConfiguration wc = new WorkflowConfiguration();
         wc.setTimeoutInSeconds(720);
-    	runWorkflow("eu/dnetlib/iis/collapsers/multiple_input_collapser/default/oozie_app", wc);
+    	runWorkflow("eu/dnetlib/iis/workflows/collapsers/multiple_input_collapser/default/oozie_app", wc);
     }
    
     @Test
 	public void testDocumentTextWorkflow() throws Exception {
         WorkflowConfiguration wc = new WorkflowConfiguration();
         wc.setTimeoutInSeconds(720);
-    	runWorkflow("eu/dnetlib/iis/collapsers/multiple_input_collapser/documenttext/oozie_app", wc);
+    	runWorkflow("eu/dnetlib/iis/workflows/collapsers/multiple_input_collapser/documenttext/oozie_app", wc);
     }
 
 }

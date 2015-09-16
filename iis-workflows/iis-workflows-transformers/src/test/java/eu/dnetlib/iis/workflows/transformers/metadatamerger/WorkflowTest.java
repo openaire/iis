@@ -15,7 +15,7 @@ public class WorkflowTest extends AbstractWorkflowTestCase {
 
     @Test
 	public void testJoin() throws Exception {
-        runWorkflow("eu/dnetlib/iis/transformers/metadatamerger/sampledataproducer/oozie_app");
+        runWorkflow("eu/dnetlib/iis/workflows/transformers/metadatamerger/sampledataproducer/oozie_app");
     }
 
 }

@@ -15,12 +15,12 @@ public class WorkflowTest extends AbstractWorkflowTestCase {
 
     @Test
 	public void testWorkflow2Inputs() throws Exception {
-    	runWorkflow("eu/dnetlib/iis/collapsers/union/input_2/oozie_app");
+    	runWorkflow("eu/dnetlib/iis/workflows/collapsers/union/input_2/oozie_app");
     }
 
     @Test
 	public void testWorkflow3Inputs() throws Exception {
-    	runWorkflow("eu/dnetlib/iis/collapsers/union/input_3/oozie_app");
+    	runWorkflow("eu/dnetlib/iis/workflows/collapsers/union/input_3/oozie_app");
     }
     
 }

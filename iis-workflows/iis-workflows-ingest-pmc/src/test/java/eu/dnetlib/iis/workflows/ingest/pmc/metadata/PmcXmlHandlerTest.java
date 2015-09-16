@@ -48,7 +48,7 @@ public class PmcXmlHandlerTest {
 	
 	@Test
 	public void testParsing() throws Exception {
-		String filePath = "/eu/dnetlib/iis/ingest/pmc/metadata/data/document.xml";
+		String filePath = "/eu/dnetlib/iis/workflows/ingest/pmc/metadata/data/document.xml";
 		InputStream inputStream = null;
 		try {
 			SAXParserFactory saxFactory = SAXParserFactory.newInstance();
@@ -84,7 +84,7 @@ public class PmcXmlHandlerTest {
 	
 	@Test
 	public void testParsingLargeFile() throws Exception {
-		String filePath = "/eu/dnetlib/iis/ingest/pmc/metadata/data/od_______908__365a50343d53774f68fa13800349d372.xml";
+		String filePath = "/eu/dnetlib/iis/workflows/ingest/pmc/metadata/data/od_______908__365a50343d53774f68fa13800349d372.xml";
 		InputStream inputStream = null;
 		try {
 			SAXParserFactory saxFactory = SAXParserFactory.newInstance();
@@ -115,7 +115,7 @@ public class PmcXmlHandlerTest {
 	
 	@Test
 	public void testParsingAffiliation() throws Exception {
-		String filePath = "/eu/dnetlib/iis/ingest/pmc/metadata/data/document_with_affiliations.xml";
+		String filePath = "/eu/dnetlib/iis/workflows/ingest/pmc/metadata/data/document_with_affiliations.xml";
 		InputStream inputStream = null;
 		try {
 			SAXParserFactory saxFactory = SAXParserFactory.newInstance();
@@ -156,7 +156,7 @@ public class PmcXmlHandlerTest {
 	
 	@Test
 	public void testSingleRefParsing() throws Exception {
-		String filePath = "/eu/dnetlib/iis/ingest/pmc/metadata/data/single-ref-document.xml";
+		String filePath = "/eu/dnetlib/iis/workflows/ingest/pmc/metadata/data/single-ref-document.xml";
 		InputStream inputStream = null;
 		try {
 			SAXParserFactory saxFactory = SAXParserFactory.newInstance();
@@ -202,7 +202,7 @@ public class PmcXmlHandlerTest {
 	@Test
 	public void testMixedTitleParsing() throws Exception {
 //		files causing parsing problems
-		String filePath = "/eu/dnetlib/iis/ingest/pmc/metadata/data/od_______908__0451fa1ded79a63729296731e53335c0.xml";
+		String filePath = "/eu/dnetlib/iis/workflows/ingest/pmc/metadata/data/od_______908__0451fa1ded79a63729296731e53335c0.xml";
 		InputStream inputStream = null;
 		try {
 			SAXParserFactory saxFactory = SAXParserFactory.newInstance();
@@ -247,7 +247,7 @@ public class PmcXmlHandlerTest {
 	@Test
 	public void testElementCitation() throws Exception {
 //		files causing parsing problems
-		String filePath = "/eu/dnetlib/iis/ingest/pmc/metadata/data/od_______908__0452195ccf851072fd097fc49bfbb9da.xml";
+		String filePath = "/eu/dnetlib/iis/workflows/ingest/pmc/metadata/data/od_______908__0452195ccf851072fd097fc49bfbb9da.xml";
 		InputStream inputStream = null;
 		try {
 			SAXParserFactory saxFactory = SAXParserFactory.newInstance();

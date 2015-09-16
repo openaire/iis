@@ -46,7 +46,7 @@ public class ProjectDBProducer implements Process {
 		Map<String, Path> output = portBindings.getOutput();
 
         FileSystem fs = FileSystem.get(conf);
-		InputStream inStream = IOUtils.getResourceAsStream("eu/dnetlib/iis/referenceextraction/project/data/projects.db", -1);
+		InputStream inStream = IOUtils.getResourceAsStream("eu/dnetlib/iis/workflows/referenceextraction/project/data/projects.db", -1);
 		OutputStream outStream = fs.create(new FileSystemPath(fs, output.get(projectDBPort)).getPath());
 		IOUtils.copyStream(inStream, outStream);
 	}

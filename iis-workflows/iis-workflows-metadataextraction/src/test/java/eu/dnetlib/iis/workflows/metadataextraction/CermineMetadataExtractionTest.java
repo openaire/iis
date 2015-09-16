@@ -21,7 +21,7 @@ import pl.edu.icm.cermine.exception.AnalysisException;
  */
 public class CermineMetadataExtractionTest extends TestCase {
 
-    private static final String PDF_FILE = "/eu/dnetlib/iis/metadataextraction/example-1.pdf";
+    private static final String PDF_FILE = "/eu/dnetlib/iis/workflows/metadataextraction/example-1.pdf";
 
 	@Test
 	public void testMetadataExtraction() throws AnalysisException, IOException, JDOMException {

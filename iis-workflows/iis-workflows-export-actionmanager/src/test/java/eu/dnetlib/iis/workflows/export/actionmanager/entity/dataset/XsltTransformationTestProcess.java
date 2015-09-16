@@ -33,7 +33,7 @@ public class XsltTransformationTestProcess implements Process {
 	public static final String PARAM_TRANSFORMER_FACTORY = "transformer_factory";
 
 	private final Resource recordDataciteInputStream = new ClassPathResource(
-			"/eu/dnetlib/iis/export/actionmanager/xslt_test/data/recordDatacite.xml");
+			"/eu/dnetlib/iis/workflows/export/actionmanager/xslt_test/data/recordDatacite.xml");
 
 	private ActionFactory actionFactory;
 
@@ -72,7 +72,7 @@ public class XsltTransformationTestProcess implements Process {
 		actionFactory = new ActionFactory();
 		Map<String, Resource> xslts = Maps.newHashMap();
 		xslts.put(dataciteXSLT, new ClassPathResource(
-				"/eu/dnetlib/iis/export/actionmanager/xslt_test/data/datacite2insertActions.xslt"));
+				"/eu/dnetlib/iis/workflows/export/actionmanager/xslt_test/data/datacite2insertActions.xslt"));
 		actionFactory.setXslts(xslts);
 
 		String record = IOUtils.toString(recordDataciteInputStream.getInputStream());

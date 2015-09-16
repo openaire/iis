@@ -24,7 +24,7 @@ import org.junit.Test;
  */
 public class NlmToDocumentWithBasicMetadataConverterTest {
 
-    private static final String testXML = "/eu/dnetlib/iis/metadataextraction/nlm-example.xml";
+    private static final String testXML = "/eu/dnetlib/iis/workflows/metadataextraction/nlm-example.xml";
     
     
     @Test

@@ -15,7 +15,7 @@ public class WorkflowTest extends AbstractWorkflowTestCase {
 
     @Test
     public void testIdExtraction() throws Exception {
-        runWorkflow("eu/dnetlib/iis/transformers/importer/documentmetadata/idextractor/sampledataproducer/oozie_app");
+        runWorkflow("eu/dnetlib/iis/workflows/transformers/importer/documentmetadata/idextractor/sampledataproducer/oozie_app");
     }
 
 }

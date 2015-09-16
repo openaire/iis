@@ -15,7 +15,7 @@ public class WorkflowTest extends AbstractWorkflowTestCase {
 
     @Test
 	public void testWorkflow() throws Exception {
-        runWorkflow("eu/dnetlib/iis/transformers/export/documenttoproject_without_imported_data/sampledataproducer/oozie_app");
+        runWorkflow("eu/dnetlib/iis/workflows/transformers/export/documenttoproject_without_imported_data/sampledataproducer/oozie_app");
     }
 
 }
