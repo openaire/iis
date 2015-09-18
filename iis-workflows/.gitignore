@@ -1,0 +1,10 @@
+.*
+!.gitignore
+!.gitkeep
+
+/*/target
+/target
+/*/build
+/build
+/*/bin
+/bin
