@@ -12,7 +12,10 @@ hidden var 'wtpospos' from select jmergeregexp(jgroup(c1)) from (select * from w
 create temp table pubs as setschema 'c1,c2' select jsonpath(c1, '$.id', '$.text') from stdinput();
 
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8) from (
-select docid,id from (select docid,upper(regexpr("(\w+.*\d+)",middle)) as match,id,grantid  from (setschema 'docid,prev,middle,next' select c1 as docid,textwindow2s(c2,12,1,5,"(.+\/\w+\/\d{4}\W*\Z)|(\d{6,7})|(\w{2}\d{4,})") from (setschema 'c1,c2' select * from pubs where c2 is not null) ) , grants where match = grantid and (fundingclass1 in ("FCT","ARC") or ( fundingclass1 = "NHMRC" and regexprmatches("nhmrc|medical research|national health medical",filterstopwords(normalizetext(lower(j2s(prev,middle,next)))))))) group by docid,id)
+
+select docid,id from (select docid,upper(regexpr("(\w+.*\d+)",middle)) as match,id,grantid,middle  from (setschema 'docid,prev,middle,next' select c1 as docid,textwindow2s(c2,12,1,5,"(.+\/\w+\/\d{4}\W*\Z)|(\d{6,7})|(\w{2}\d{4,})|(\w*\/[\w,\.]*\/\w*)") from (setschema 'c1,c2' select * from pubs where c2 is not null) ) , grants where (match = grantid and (fundingclass1 in ("FCT","ARC") or ( fundingclass1 = "NHMRC" and regexprmatches("nhmrc|medical research|national health medical",filterstopwords(normalizetext(lower(j2s(prev,middle,next)))))))) or (regexpr("(\w*\/[\w,\.]*\/\w*)",middle)=grantid and fundingclass1 = "SFI")) group by docid,id
+
+)
 
 union all 
 
