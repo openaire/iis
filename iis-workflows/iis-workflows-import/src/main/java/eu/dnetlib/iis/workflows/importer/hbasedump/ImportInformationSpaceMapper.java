@@ -63,10 +63,11 @@ public class ImportInformationSpaceMapper
 			put.add(Bytes.toBytes(split[1]), 
 					Bytes.toBytes(split[2]), 
 					oafBuilder.build().toByteArray());
+//			skipping writing to WAL
+			put.setWriteToWAL(false);
 			putCache.add(put);
 			if (putCache.size()>cacheThreshold) {
-//				FIXME testing without puts, changed also in cleanup()
-//				hTable.put(putCache);
+				hTable.put(putCache);
 				putCache.clear();
 			}
 		}	
@@ -75,18 +76,17 @@ public class ImportInformationSpaceMapper
 	@Override
 	protected void cleanup(Context context)
 			throws IOException, InterruptedException {
-//		FIXME testing without puts
-//		if (hTable!=null) {
-//			try {
-//				if (!putCache.isEmpty()) {
-//					hTable.put(putCache);
-//					putCache.clear();
-//				}	
-//			} finally {
-//				hTable.flushCommits();
-//				hTable.close();
-//			}
-//		}
+		if (hTable!=null) {
+			try {
+				if (!putCache.isEmpty()) {
+					hTable.put(putCache);
+					putCache.clear();
+				}	
+			} finally {
+				hTable.flushCommits();
+				hTable.close();
+			}
+		}
 	}
 	
 }
