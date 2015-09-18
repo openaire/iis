@@ -1,7 +1,7 @@
 General notes
 ====================
 
-Oozie-installer is a utility allowing building, uploading and running oozie workflows. In practice, it creates a `*.tar.gz` package that contains resouces that define a workflow and some helper scripts. See the `iis-core-examples` project for examples of usage.
+Oozie-installer is a utility allowing building, uploading and running oozie workflows. In practice, it creates a `*.tar.gz` package that contains resouces that define a workflow and some helper scripts. See the `iis-workflows-core-examples` project for examples of usage.
 
 This module is automatically executed when running: 
 

@@ -203,8 +203,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>1.6</source>
+                    <target>1.6</target>
                 </configuration>
             </plugin>
 
@@ -402,42 +402,12 @@
 		</plugins>
 	</reporting>
 	
-	
-	
-
-	
 	<properties>
-		<maven.compiler.source.version>1.8</maven.compiler.source.version>
-		<maven.compiler.target.version>1.8</maven.compiler.target.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<dnet.container.context>app</dnet.container.context>
-		<dnet.container.port>8280</dnet.container.port>
 		<spring.version>[4.0.0.RELEASE]</spring.version>
 		<cxf.version>[2.7.8]</cxf.version>
-		<exist.version>1.2.4</exist.version>
-		<akka.version>2.0.4</akka.version>
-		<google.coll.version>1.0</google.coll.version>
-		<google.guava.version>18.0</google.guava.version>
 		<google.gson.version>2.2.2</google.gson.version>
-		<mongodb.driver.version>3.0.3</mongodb.driver.version>
-		<apache.solr.version>4.9.0</apache.solr.version>
-		<google.protobuf.version>2.4.1</google.protobuf.version>
-		<dom4j.version>[1.6.1]</dom4j.version>
-		<junit.version>4.8.2</junit.version>
-		<javax.servlet.version>[3.1.0]</javax.servlet.version>
-		<!-- apache commons properties -->
-		<commons.codec.version>1.8</commons.codec.version>
-		<commons.lang.version>2.6</commons.lang.version>
-		<commons.io.version>2.4</commons.io.version>
-		<commons.logging.version>1.1.3</commons.logging.version>
-		<commons.collections.version>3.2.1</commons.collections.version>
-		<!-- hadoop DM cluster properties -->
-		<hadoop.core.version>2.0.0-mr1-cdh4.3.0</hadoop.core.version>
-		<hadoop.common.version>2.0.0-cdh4.3.0</hadoop.common.version>
-		<hadoop.hdfs.version>2.0.0-cdh4.3.0</hadoop.hdfs.version>
-		<apache.hbase.version>0.94.6-cdh4.3.0</apache.hbase.version>
-		<apache.oozie.version>3.3.2-cdh4.3.0</apache.oozie.version>
-		<!-- new cluster IIS properties -->
+
 		<iis.cdh.version>cdh4.3.1</iis.cdh.version>
 		<iis.hbase.version>0.94.6-${iis.cdh.version}</iis.hbase.version>
 		<iis.oozie.version>3.3.2-${iis.cdh.version}</iis.oozie.version>
@@ -453,12 +423,8 @@
 		<iis.hadoop.hdfs.version>${iis.hadoop.version}</iis.hadoop.hdfs.version>
 		<iis.hadoop.test.version>${iis.hadoop.mr1.version}</iis.hadoop.test.version>
 		
-		<apache.solr.version>4.7.0</apache.solr.version>
 		<iis.coansys.version>1.8</iis.coansys.version>
 		<scala.version>2.10.3</scala.version>
-        <scala.binary.version>2.10</scala.binary.version>
-		    
-		    
 	</properties>
 </project>
 
