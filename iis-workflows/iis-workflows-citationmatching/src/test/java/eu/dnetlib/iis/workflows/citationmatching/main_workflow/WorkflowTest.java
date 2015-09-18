@@ -17,7 +17,7 @@ public class WorkflowTest extends AbstractWorkflowTestCase {
 
     @Test
 	public void testMainWorkflow() throws Exception {
-    	runWorkflow("eu/dnetlib/iis/citationmatching/main_workflow/oozie_app",
+    	runWorkflow("eu/dnetlib/iis/workflows/citationmatching/main_workflow/oozie_app",
     			new WorkflowConfiguration().setTimeoutInSeconds(3600));
 	}
 }

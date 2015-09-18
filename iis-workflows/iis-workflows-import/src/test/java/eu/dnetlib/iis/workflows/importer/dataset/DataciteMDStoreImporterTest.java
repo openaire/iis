@@ -65,7 +65,7 @@ public class DataciteMDStoreImporterTest {
 		String db = "dnet_openaireplus_node6_t";
 		
 		InputStream in = this.getClass().getClassLoader()
-                .getResourceAsStream("eu/dnetlib/iis/importer/database/project/sql/read_project_details.sql");
+                .getResourceAsStream("eu/dnetlib/iis/workflows/importer/database/project/sql/read_project_details.sql");
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(in, writer, "utf-8");
 		String sql = writer.toString();

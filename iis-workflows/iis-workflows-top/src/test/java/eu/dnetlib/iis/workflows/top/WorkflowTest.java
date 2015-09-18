@@ -23,7 +23,7 @@ public class WorkflowTest extends AbstractWorkflowTestCase {
 	public void testIntegrationImportWorkflow() throws Exception {
 		WorkflowConfiguration wfConf = new WorkflowConfiguration();
 		wfConf.setTimeoutInSeconds(720);
-		runWorkflow("eu/dnetlib/iis/mainworkflows/integration/import/oozie_app", wfConf);
+		runWorkflow("eu/dnetlib/iis/workflows/top/integration/import/oozie_app", wfConf);
 	}
 
 //	@Test
@@ -36,7 +36,7 @@ public class WorkflowTest extends AbstractWorkflowTestCase {
 		Properties props = new Properties();
 		props.put("oozie.wf.validate.ForkJoin", "false");
 		wfConf.setJobProps(props);
-		runWorkflow("eu/dnetlib/iis/mainworkflows/integration/primary/processing/oozie_app", wfConf);
+		runWorkflow("eu/dnetlib/iis/workflows/top/integration/primary/processing/oozie_app", wfConf);
 	}
 
 }

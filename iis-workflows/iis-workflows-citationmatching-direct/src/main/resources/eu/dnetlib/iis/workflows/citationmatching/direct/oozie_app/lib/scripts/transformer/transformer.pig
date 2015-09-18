@@ -8,7 +8,7 @@ org.apache.pig.piggybank.storage.avro.AvroStorage(
 'schema', '$schema_output');
 
 define NullToEmptyBag datafu.pig.bags.NullToEmptyBag();
-define DeduplicateIdsWithDocumentType eu.dnetlib.iis.citationmatching.direct.udfs.DeduplicateIdsWithDocumentType;
+define DeduplicateIdsWithDocumentType eu.dnetlib.iis.workflows.citationmatching.direct.udfs.DeduplicateIdsWithDocumentType;
 
 documentMetadata = load '$input' using avro_load_metadata;
 

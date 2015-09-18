@@ -11,9 +11,9 @@ org.apache.pig.piggybank.storage.avro.AvroStorage(
 'index', '0',
 'schema', '$schema_output_citation_metadata');
 
-define CREATE_ARRAY eu.dnetlib.iis.transformers.udfs.NullToEmptyBag;
-define LIST_TO_INDEXED_LIST eu.dnetlib.iis.transformers.udfs.StringListToListWithIndexes;
-define FIRST_NOT_EMPTY eu.dnetlib.iis.transformers.udfs.StringFirstNotEmpty;
+define CREATE_ARRAY eu.dnetlib.iis.workflows.transformers.udfs.NullToEmptyBag;
+define LIST_TO_INDEXED_LIST eu.dnetlib.iis.workflows.transformers.udfs.StringListToListWithIndexes;
+define FIRST_NOT_EMPTY eu.dnetlib.iis.workflows.transformers.udfs.StringFirstNotEmpty;
 
 person = load '$input_person' using avro_load_person;
 metadata = load '$input_metadata' using avro_load_metadata;

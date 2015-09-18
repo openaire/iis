@@ -7,7 +7,7 @@ org.apache.pig.piggybank.storage.avro.AvroStorage(
 'index', '0',
 'schema', '$schema_output');
 
-define EMPTY_MAP eu.dnetlib.iis.transformers.udfs.EmptyMap;
+define EMPTY_MAP eu.dnetlib.iis.workflows.transformers.udfs.EmptyMap;
 
 input_citations = load '$input' using avro_load_input_citations;
 

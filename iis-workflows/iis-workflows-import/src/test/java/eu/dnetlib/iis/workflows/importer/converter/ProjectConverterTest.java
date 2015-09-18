@@ -22,7 +22,7 @@ public class ProjectConverterTest {
 	public void testFundingClassExtraction() throws Exception {
 		StringWriter strWriter = new StringWriter();
 		IOUtils.copy(ProjectConverter.class.getResourceAsStream(
-				"/eu/dnetlib/iis/importer/converter/fundingclass_example.json"), 
+				"/eu/dnetlib/iis/workflows/importer/converter/fundingclass_example.json"), 
 				strWriter, "utf8");
 		List<String> fundingTreeList = Collections.singletonList(strWriter.toString());
 		String fundingClass = ProjectConverter.extractFundingClass(fundingTreeList);

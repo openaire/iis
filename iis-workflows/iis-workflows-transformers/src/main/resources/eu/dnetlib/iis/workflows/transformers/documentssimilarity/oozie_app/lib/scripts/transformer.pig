@@ -13,7 +13,7 @@ org.apache.pig.piggybank.storage.avro.AvroStorage(
 'schema', '$schema_output_document_metadata');
 
 
-define NULL_EMPTY eu.dnetlib.iis.transformers.udfs.EmptyBagToNull;
+define NULL_EMPTY eu.dnetlib.iis.workflows.transformers.udfs.EmptyBagToNull;
 
 person = load '$input_person' using avro_load_input_person;
 metadata = load '$input_metadata' using avro_load_input_metadata;

@@ -18,8 +18,8 @@ import eu.dnetlib.iis.workflows.ingest.pmc.plaintext.NlmToDocumentTextConverter;
  */
 public class NlmToDocumentTextConverterTest extends TestCase {
 
-    private static final String testXML = "/eu/dnetlib/iis/ingest/pmc/plaintext/document.nxml";
-    private static final String testTXT = "/eu/dnetlib/iis/ingest/pmc/plaintext/document.txt";
+    private static final String testXML = "/eu/dnetlib/iis/workflows/ingest/pmc/plaintext/document.nxml";
+    private static final String testTXT = "/eu/dnetlib/iis/workflows/ingest/pmc/plaintext/document.txt";
     
     @Test
 	public void testConvertFull() throws Exception {

@@ -15,22 +15,22 @@ public class WorkflowTest extends AbstractWorkflowTestCase {
 
     @Test
 	public void testMainWorkflow() throws Exception {
-    	runWorkflow("eu/dnetlib/iis/documentsclassification/main/sampletest/oozie_app");
+    	runWorkflow("eu/dnetlib/iis/workflows/documentsclassification/main/sampletest/oozie_app");
 	}
 
     @Test
 	public void testMainEmptyInputWorkflow() throws Exception {
-    	runWorkflow("eu/dnetlib/iis/documentsclassification/main/sampletest_empty_input/oozie_app");
+    	runWorkflow("eu/dnetlib/iis/workflows/documentsclassification/main/sampletest_empty_input/oozie_app");
 	}
     
     @Test
 	public void testMainEmptyAbstractWorkflow() throws Exception {
-    	runWorkflow("eu/dnetlib/iis/documentsclassification/main/sampletest_empty_abstract/oozie_app");
+    	runWorkflow("eu/dnetlib/iis/workflows/documentsclassification/main/sampletest_empty_abstract/oozie_app");
 	}
    
     @Test
 	public void testMainNullTaxonomyWorkflow() throws Exception {
-    	runWorkflow("eu/dnetlib/iis/documentsclassification/main/sampletest_null_taxonomy/oozie_app");
+    	runWorkflow("eu/dnetlib/iis/workflows/documentsclassification/main/sampletest_null_taxonomy/oozie_app");
 	}
     
 }

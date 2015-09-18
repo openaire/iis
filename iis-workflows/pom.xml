@@ -14,6 +14,7 @@
 
 	
 	<modules>
+       <module>iis-workflows-core-examples</module>
        <module>iis-workflows-documentssimilarity</module>
        <module>iis-workflows-citationmatching</module>
        <module>iis-workflows-citationmatching-direct</module>
@@ -31,7 +32,21 @@
        <module>iis-workflows-websiteusage</module>
     </modules>
 
-
+    <pluginRepositories>
+      <pluginRepository>
+	<id>dnet4-bootstrap-release-plugin</id>
+	<name>dnet4 bootstrap release plugin</name>
+	<url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-bootstrap-release</url>
+	<layout>default</layout>
+      </pluginRepository>
+      <!-- drop snapshot repository when releasing -->
+      <pluginRepository>
+	<id>dnet4-bootstrap-snapshot-plugin</id>
+	<name>dnet4 bootstrap snapshot plugin</name>
+	<url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-bootstrap-snapshot</url>
+	<layout>default</layout>
+      </pluginRepository>
+    </pluginRepositories>
 
     <properties>
         <maven.build.timestamp.format>yyyy-MM-dd_HH_mm</maven.build.timestamp.format>

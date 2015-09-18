@@ -57,7 +57,7 @@ To sum up, when implementing a new type of workflow node, these are the things t
 
 Current state of implementation
 ===============================
-Currently we don't have the format of the XML workflow definition file defined, as a consequence we also don't have the translator program defined. Because of this, when creating a new workflow or implementation of workflow node, we have to **conform to the described conventions**. You can look at the source code of example workflows in the `iis-core-examples` module for examples of how workflows and workflow nodes are defined. Conforming to the conventions is important, since in future we would like to convert these workflows to the (not yet available) XML workflow definition file format.
+Currently we don't have the format of the XML workflow definition file defined, as a consequence we also don't have the translator program defined. Because of this, when creating a new workflow or implementation of workflow node, we have to **conform to the described conventions**. You can look at the source code of example workflows in the `iis-workflows-core-examples` module for examples of how workflows and workflow nodes are defined. Conforming to the conventions is important, since in future we would like to convert these workflows to the (not yet available) XML workflow definition file format.
 
 Currently (as of 2013-03-29), examples of the following workflow nodes conforming to these conventions are **available**:
 

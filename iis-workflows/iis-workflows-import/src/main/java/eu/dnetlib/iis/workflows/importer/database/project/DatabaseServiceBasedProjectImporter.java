@@ -103,7 +103,7 @@ public class DatabaseServiceBasedProjectImporter implements Process {
 //			reading sql query content
 			StringWriter writer = new StringWriter();
 			IOUtils.copy(this.getClass().getClassLoader()
-	                .getResourceAsStream("eu/dnetlib/iis/importer/database/project/sql/read_project_details_v2.sql"), 
+	                .getResourceAsStream("eu/dnetlib/iis/workflows/importer/database/project/sql/read_project_details_v2.sql"), 
 	                writer, "utf-8");
 			
 			W3CEndpointReference eprResult = databaseService.searchSQL(
