@@ -42,7 +42,15 @@
                 </property>
                 <property>
 					<name>mapreduce.outputformat.class</name>
-					<value>org.apache.hadoop.mapreduce.lib.output.NullOutputFormat</value>
+					<value>org.apache.hadoop.hbase.mapreduce.TableOutputFormat</value>
+				</property>
+				<property>
+					<name>mapred.mapoutput.key.class</name>
+					<value>org.apache.hadoop.hbase.io.ImmutableBytesWritable</value>
+				</property>
+				<property>
+					<name>mapred.mapoutput.value.class</name>
+					<value>org.apache.hadoop.hbase.client.Put</value>
 				</property>
 				<property>
                     <name>mapreduce.map.class</name>
@@ -57,9 +65,24 @@
                     <value>${input}</value>
                 </property>
                <property>
-                   <name>output.table.name</name>
+                   <name>hbase.mapred.outputtable</name>
                    <value>${output_table_name}</value>
                </property>
+               <property>
+                   <name>hbase.mapreduce.outputtable</name>
+                   <value>${output_table_name}</value>
+               </property>
+               <!-- deprecated since cdh5 -->
+               <property>
+                   <name>mapred.map.tasks.speculative.execution</name>
+                   <value>false</value>
+               </property>
+               <!-- supported since hadoop 2.3.0 -->
+               <property>
+                   <name>mapreduce.map.speculative</name>
+                   <value>false</value>
+               </property>
+               
             </configuration>
         </map-reduce>
         <ok to="end" />
