@@ -4,7 +4,8 @@
 	<parameters>
         <property>
             <name>input</name>
-            <description>source hdfs directory holding hbase dump</description>
+            <description>Source hdfs directory holding hbase dump.
+            The dump has a custom format (as exported from Info Space) and is enclosed in a sequence file.</description>
         </property>
         <property>
             <name>output_table_name</name>
@@ -36,11 +37,11 @@
     <action name="import">
         <map-reduce>
             <configuration>
-                <property>
-                    <name>mapreduce.inputformat.class</name>
-                    <value>org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat</value>
-                </property>
-                <property>
+				<property>
+					<name>mapreduce.inputformat.class</name>
+					<value>org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat</value>
+				</property>
+				<property>
 					<name>mapreduce.outputformat.class</name>
 					<value>org.apache.hadoop.hbase.mapreduce.TableOutputFormat</value>
 				</property>
@@ -53,36 +54,35 @@
 					<value>org.apache.hadoop.hbase.client.Put</value>
 				</property>
 				<property>
-                    <name>mapreduce.map.class</name>
-                    <value>eu.dnetlib.iis.workflows.importer.hbasedump.ImportInformationSpaceMapper</value>
-                </property>
-                <property>
-                   <name>mapred.reduce.tasks</name>
-                   <value>0</value>
-               </property>
-               <property>
-                    <name>mapred.input.dir</name>
-                    <value>${input}</value>
-                </property>
-               <property>
-                   <name>hbase.mapred.outputtable</name>
-                   <value>${output_table_name}</value>
-               </property>
-               <property>
-                   <name>hbase.mapreduce.outputtable</name>
-                   <value>${output_table_name}</value>
-               </property>
-               <!-- deprecated since cdh5 -->
-               <property>
-                   <name>mapred.map.tasks.speculative.execution</name>
-                   <value>false</value>
-               </property>
-               <!-- supported since hadoop 2.3.0 -->
-               <property>
-                   <name>mapreduce.map.speculative</name>
-                   <value>false</value>
-               </property>
-               
+					<name>mapreduce.map.class</name>
+					<value>eu.dnetlib.iis.workflows.importer.hbasedump.ImportInformationSpaceMapper</value>
+				</property>
+				<property>
+					<name>mapred.reduce.tasks</name>
+					<value>0</value>
+				</property>
+				<property>
+					<name>mapred.input.dir</name>
+					<value>${input}</value>
+				 </property>
+				<property>
+					<name>hbase.mapred.outputtable</name>
+					<value>${output_table_name}</value>
+				</property>
+				<property>
+					<name>hbase.mapreduce.outputtable</name>
+					<value>${output_table_name}</value>
+				</property>
+				<!-- deprecated since cdh5 -->
+				<property>
+					<name>mapred.map.tasks.speculative.execution</name>
+					<value>false</value>
+				</property>
+				<!-- supported since hadoop 2.3.0 -->
+				<property>
+					<name>mapreduce.map.speculative</name>
+					<value>false</value>
+				</property>
             </configuration>
         </map-reduce>
         <ok to="end" />

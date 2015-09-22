@@ -35,16 +35,20 @@ public class ImportInformationSpaceMapper
 	protected void map(Text key, Text value,
 			Mapper<Text, Text, ImmutableBytesWritable, Put>.Context context)
 			throws IOException, InterruptedException {
-//		rowkey@columnFamily@qualifier
 		String oafJson = value.toString();
 		if (StringUtils.isNotBlank(oafJson)) {
 			String[] split = StringUtils.split(key.toString(), KEY_SEPARATOR);
+			if (split.length!=3) {
+				throw new IOException("invalid key, "
+						+ "expected 'rowkey@columnFamily@qualifier', got: " + key);
+			}
+			byte[] rowKey = Bytes.toBytes(split[0]);
+			byte[] columnFamily = Bytes.toBytes(split[1]);
+			byte[] qualifier = Bytes.toBytes(split[2]);
 			Oaf.Builder oafBuilder = Oaf.newBuilder();
 			JsonFormat.merge(oafJson, oafBuilder);
-			byte[] rowKey = Bytes.toBytes(split[0]);
 			Put put = new Put(rowKey);
-			put.add(Bytes.toBytes(split[1]), 
-					Bytes.toBytes(split[2]), 
+			put.add(columnFamily, qualifier, 
 					oafBuilder.build().toByteArray());
 //			skipping writing to WAL to speed up importing process
 			put.setWriteToWAL(false);
