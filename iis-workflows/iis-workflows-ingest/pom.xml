@@ -47,32 +47,27 @@
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-core</artifactId>
-            <version>${iis.hadoop.core.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-common</artifactId>
-            <version>${iis.hadoop.common.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- Needed by Avro { -->
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
-            <version>${iis.avro.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro-mapred</artifactId>
-            <version>${iis.avro.version}</version>
             <classifier>hadoop2</classifier>
         </dependency>
         <!-- html to text conversion -->
         <dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
-			<version>1.8.1</version>
 		</dependency>
     </dependencies>
     <build>

@@ -47,7 +47,6 @@
         <dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-common</artifactId>
-			<version>${iis.hadoop.common.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- Needed by Oozie tests { -->
@@ -55,47 +54,40 @@
 		<dependency>
 			<groupId>org.apache.oozie</groupId>
 			<artifactId>oozie-core</artifactId>
-			<version>${iis.oozie.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- PigMain was moved to oozie-sharelib-pig since cdh4.3.1 -->
 		<dependency>
 			<groupId>org.apache.oozie</groupId>
 			<artifactId>oozie-sharelib-pig</artifactId>
-			<version>${iis.oozie.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-hdfs</artifactId>
-			<version>${iis.hadoop.hdfs.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- end of required after introducing 'provided' scope for hadoop dependencies -->
 		<dependency>
 			<groupId>org.apache.oozie</groupId>
 			<artifactId>oozie-core</artifactId>
-			<version>${iis.oozie.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-hdfs</artifactId>
-			<version>${iis.hadoop.hdfs.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-test</artifactId>
-			<version>${iis.hadoop.test.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-common</artifactId>
-			<version>${iis.hadoop.common.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
@@ -104,7 +96,6 @@
 		<dependency>
 			<groupId>org.apache.pig</groupId>
 			<artifactId>pig</artifactId>
-			<version>${iis.pig.version}</version>
 			<!-- this lib cannot be set to provided -->
 		</dependency>
 
@@ -114,13 +105,11 @@
 		<dependency>
 			<groupId>org.apache.pig</groupId>
 			<artifactId>piggybank</artifactId>
-			<version>${iis.pig.version}</version>
 		</dependency>
 		-->
 		<dependency>
 		  <groupId>com.linkedin.datafu</groupId>
 		  <artifactId>datafu</artifactId>
-		  <version>1.2.0</version>
 		</dependency>
 		<!-- Needed to run Pig jobs } -->
 	</dependencies>

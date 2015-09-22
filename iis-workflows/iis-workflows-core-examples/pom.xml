@@ -74,48 +74,41 @@
         <dependency>
             <groupId>org.apache.oozie</groupId>
             <artifactId>oozie-core</artifactId>
-            <version>${iis.oozie.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- PigMain was moved to oozie-sharelib-pig since cdh4.3.1 -->
         <dependency>
             <groupId>org.apache.oozie</groupId>
             <artifactId>oozie-sharelib-pig</artifactId>
-            <version>${iis.oozie.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- StreamingMain was moved to oozie-sharelib-pig since cdh4.3.1 -->
         <dependency>
             <groupId>org.apache.oozie</groupId>
             <artifactId>oozie-sharelib-streaming</artifactId>
-            <version>${iis.oozie.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- Needed by Oozie tests { -->
         <dependency>
             <groupId>org.apache.oozie</groupId>
             <artifactId>oozie-core</artifactId>
-            <version>${iis.oozie.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-hdfs</artifactId>
-            <version>${iis.hadoop.hdfs.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-hdfs</artifactId>
-            <version>${iis.hadoop.hdfs.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-test</artifactId>
-            <version>${iis.hadoop.test.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -128,30 +121,25 @@
         <dependency>
             <groupId>org.apache.pig</groupId>
             <artifactId>pig</artifactId>
-            <version>${iis.pig.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.pig</groupId>
             <artifactId>pigunit</artifactId>
-            <version>${iis.pig.version}</version>
         </dependency>
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr-runtime</artifactId>
-            <version>3.4</version>
         </dependency>
         
         <!-- Needed by Avro { -->
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
-            <version>${iis.avro.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro-mapred</artifactId>
-            <version>${iis.avro.version}</version>
             <classifier>hadoop2</classifier>
         </dependency>
 
@@ -162,7 +150,6 @@
         <dependency>
             <groupId>com.thoughtworks.paranamer</groupId>
             <artifactId>paranamer</artifactId>
-            <version>2.5.2</version>
         </dependency>
         <!-- Needed by Avro } -->
         <!-- Needed by our Hadoop Streaming workflow node {-->
@@ -170,42 +157,33 @@
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-streaming</artifactId>
-            <version>${iis.hadoop.streaming.version}</version>
         </dependency>
         <!-- Needed by our Hadoop Streaming workflow node }-->
         <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-serde</artifactId>
-            <version>${iis.hive.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.cloudera.cdh</groupId>
             <artifactId>hive-root</artifactId>
-            <version>${iis.hive.version}</version>
             <type>pom</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-cli</artifactId>
-            <version>${iis.hive.version}</version>
             <scope>test</scope>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-exec</artifactId>
-            <version>${iis.hive.version}</version>
             <scope>test</scope>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-builtins</artifactId>
-            <version>${iis.hive.version}</version>
             <scope>test</scope>
-            <type>jar</type>
         </dependency>
     </dependencies>
     <build>

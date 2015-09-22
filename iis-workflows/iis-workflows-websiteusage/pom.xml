@@ -46,74 +46,58 @@
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-hdfs</artifactId>
-			<version>${iis.hadoop.hdfs.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.oozie</groupId>
 			<artifactId>oozie-core</artifactId>
-			<version>${iis.oozie.version}</version>
+			<scope>compile</scope>
 		</dependency>
 				<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-common</artifactId>
-			<version>${iis.hadoop.common.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-streaming</artifactId>
-			<version>${iis.hadoop.streaming.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.hadoop</groupId>
-            		<artifactId>hadoop-core</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<!-- hive related -->
 		<dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-exec</artifactId>
-            <version>${iis.hive.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-cli</artifactId>
-            <version>${iis.hive.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-builtins</artifactId>
-            <version>${iis.hive.version}</version>
         </dependency>
 		<!-- Needed by our Hadoop Streaming workflow node }-->
 		<!-- Needed by Oozie tests { -->
 		<dependency>
 			<groupId>org.apache.oozie</groupId>
 			<artifactId>oozie-core</artifactId>
-			<version>${iis.oozie.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-hdfs</artifactId>
-			<version>${iis.hadoop.hdfs.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-test</artifactId>
-			<version>${iis.hadoop.test.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-common</artifactId>
-			<version>${iis.hadoop.common.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
