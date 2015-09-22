@@ -49,64 +49,54 @@
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-core</artifactId>
-            <version>${iis.hadoop.core.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-common</artifactId>
-            <version>${iis.hadoop.common.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- Needed by Avro { -->
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
-            <version>${iis.avro.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro-mapred</artifactId>
-            <version>${iis.avro.version}</version>
             <classifier>hadoop2</classifier>
         </dependency>
         <!-- Needed by Oozie tests { -->
         <dependency>
             <groupId>org.apache.oozie</groupId>
             <artifactId>oozie-core</artifactId>
-            <version>${iis.oozie.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.oozie</groupId>
             <artifactId>oozie-core</artifactId>
-            <version>${iis.oozie.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-hdfs</artifactId>
-            <version>${iis.hadoop.hdfs.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-hdfs</artifactId>
-            <version>${iis.hadoop.hdfs.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-test</artifactId>
-            <version>${iis.hadoop.test.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-common</artifactId>
-            <version>${iis.hadoop.common.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
@@ -114,15 +104,12 @@
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom</artifactId>
-            <version>1.1</version>
-            <type>jar</type>
         </dependency>
 
 		<!-- required for affiliation parsing -->
 		<dependency>
 			<groupId>pl.edu.icm.cermine</groupId>
 			<artifactId>cermine-impl</artifactId>
-			<version>1.6</version>
 		</dependency>
     </dependencies>
     <build>

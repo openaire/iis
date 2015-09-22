@@ -37,7 +37,6 @@
 		<dependency>
 			<groupId>eu.dnetlib</groupId>
 			<artifactId>dnet-actionmanager-common</artifactId>
-			<version>[2.0.0, 3.0.0)</version>
 			<exclusions>
 				<!-- excluding all libraries which are defined in IIS as provided -->
 				<exclusion>
@@ -77,20 +76,16 @@
 		<dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-core</artifactId>
-            <version>${iis.hadoop.core.version}</version>
-            <type>jar</type>
             <scope>provided</scope>
         </dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-common</artifactId>
-			<version>${iis.hadoop.common.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hbase</groupId>
 			<artifactId>hbase</artifactId>
-			<version>${iis.hbase.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		
@@ -99,7 +94,6 @@
 		<dependency>
 			<groupId>eu.dnetlib</groupId>
 			<artifactId>cnr-service-utils</artifactId>
-			<version>[1.0.0, 2.0.0)</version>
 			<exclusions>
 				<!-- excluding duplicated dependencies -->
 				<exclusion>
@@ -116,12 +110,10 @@
 		<dependency>
 			<groupId>eu.dnetlib</groupId>
 			<artifactId>cnr-rmi-api</artifactId>
-			<version>[2.0.0, 3.0.0)</version>
 		</dependency>
 		<dependency>
 			<groupId>eu.dnetlib</groupId>
 			<artifactId>cnr-resultset-client</artifactId>
-			<version>[2.0.0, 3.0.0)</version>
 			<exclusions>
 				<exclusion>
 					<groupId>apache</groupId>
@@ -137,30 +129,16 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 	        <groupId>org.apache.cxf</groupId>
 	        <artifactId>cxf-bundle-jaxrs</artifactId>
-	        <version>${cxf.version}</version>
-	        <exclusions>
-	            <exclusion>
-	                <groupId>org.eclipse.jetty</groupId>
-	                <artifactId>jetty-server</artifactId>
-	            </exclusion>
-	            <!-- excluding org.slf4j:slf4j-jdk14:jar:1.3.1 causing conflicts -->
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-jdk14</artifactId>
-				</exclusion>
-	        </exclusions>
 		</dependency>
 		
 		<!-- required by hadoop, not sure why, need to ivestigate this -->
 		<dependency>
 			<groupId>xml-apis</groupId>
 			<artifactId>xml-apis</artifactId>
-			<version>1.4.01</version>
 		</dependency>
 		
 		<!-- required by dnet-actionmanager-common on CNR cluster only 
@@ -168,12 +146,10 @@
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
-			<version>2.7.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
-			<version>1.4.7</version>
 		</dependency>
 		
 	

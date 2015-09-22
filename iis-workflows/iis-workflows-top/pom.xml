@@ -183,7 +183,7 @@
 		<dependency>
 			<groupId>org.apache.oozie</groupId>
 			<artifactId>oozie-core</artifactId>
-			<version>${iis.oozie.version}</version>
+			<scope>compile</scope>
 			<!-- oozie-core doesn't seem to be provided on cluster! 
 			<scope>provided</scope>
 			 -->
@@ -206,7 +206,6 @@
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-hdfs</artifactId>
-			<version>${iis.hadoop.hdfs.version}</version>
 			<scope>provided</scope>
 			<exclusions>
 				<!-- has to be excluded explicitly due to the missing 
@@ -221,7 +220,6 @@
 		<dependency>
 			<groupId>org.apache.hbase</groupId>
 			<artifactId>hbase</artifactId>
-			<version>${iis.hbase.version}</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -240,7 +238,6 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.1</version>
 		</dependency>
 		
 		<!-- incompatible version is conveyed by iis-workflows-citationmatching -->
@@ -249,7 +246,6 @@
 		<dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-client</artifactId>
-            <version>${iis.hadoop.version}</version>
         </dependency>
 		 -->
 		<!-- Needed by Oozie tests { -->
@@ -261,7 +257,6 @@
 		<dependency>
 			<groupId>org.apache.oozie</groupId>
 			<artifactId>oozie-core</artifactId>
-			<version>${iis.oozie.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 			<exclusions>
@@ -275,27 +270,23 @@
 		<dependency>
 			<groupId>org.apache.oozie</groupId>
 			<artifactId>oozie-sharelib-pig</artifactId>
-			<version>${iis.oozie.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- StreamingMain was moved to oozie-sharelib-pig since cdh4.3.1 -->
 		<dependency>
 			<groupId>org.apache.oozie</groupId>
 			<artifactId>oozie-sharelib-streaming</artifactId>
-			<version>${iis.oozie.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-hdfs</artifactId>
-			<version>${iis.hadoop.hdfs.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-test</artifactId>
-			<version>${iis.hadoop.test.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
