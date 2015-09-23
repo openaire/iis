@@ -46,7 +46,6 @@ import org.apache.pig.piggybank.storage.avro.PigSchema2Avro;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestAvroStorage {
@@ -471,7 +470,6 @@ public class TestAvroStorage {
     }
 
     @Test
-    @Ignore // iis-3rdparty-pig-avrostorage will be removed in cdh5
     public void testMultipleSchemas1() throws IOException {
         // Verify that multiple primitive types can be loaded.
         // Input Avro files have the following schemas:
@@ -513,7 +511,6 @@ public class TestAvroStorage {
     }
 
     @Test
-    @Ignore // iis-3rdparty-pig-avrostorage will be removed in cdh5
     public void testMultipleSchemas2() throws IOException {
         // Verify that multiple complex types (records) can be loaded.
         // Input Avro files have the following schemas:
