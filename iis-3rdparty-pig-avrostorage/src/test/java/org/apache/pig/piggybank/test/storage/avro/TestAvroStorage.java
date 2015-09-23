@@ -16,8 +16,18 @@
  */
 package org.apache.pig.piggybank.test.storage.avro;
 
+import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.avro.file.DataFileStream;
 import org.apache.avro.generic.GenericDatumReader;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -25,7 +35,6 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.PathFilter;
-import org.apache.hadoop.mapreduce.Job;
 import org.apache.pig.ExecType;
 import org.apache.pig.PigServer;
 import org.apache.pig.backend.executionengine.ExecException;
@@ -33,22 +42,12 @@ import org.apache.pig.backend.executionengine.ExecJob;
 import org.apache.pig.backend.executionengine.ExecJob.JOB_STATUS;
 import org.apache.pig.backend.hadoop.executionengine.mapReduceLayer.JobCreationException;
 import org.apache.pig.impl.logicalLayer.FrontendException;
-import org.apache.pig.piggybank.storage.avro.AvroStorage;
 import org.apache.pig.piggybank.storage.avro.PigSchema2Avro;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
-import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class TestAvroStorage {
 
@@ -58,7 +57,7 @@ public class TestAvroStorage {
 
     final private static String basedir = "src/test/java/org/apache/pig/piggybank/test/storage/avro/avro_test_files/";
 
-    final private static String outbasedir = "/tmp/TestAvroStorage/";
+    final private static String outbasedir = encodeEscape(FileUtils.getTempDirectoryPath()) + "TestAvroStorage/";
 
     public static final PathFilter hiddenPathFilter = new PathFilter() {
         public boolean accept(Path p) {
@@ -68,9 +67,17 @@ public class TestAvroStorage {
       };
 
     private static String getInputFile(String file) {
-        return "file://" + System.getProperty("user.dir") + "/" + basedir + file;
+        return "file://" + getUserDir() + "/" + basedir + file;
     }
 
+    private static String getUserDir() {
+        String userDir = System.getProperty("user.dir");
+        if (!userDir.startsWith("/")) {
+            userDir = "/" + userDir;
+        }
+        return encodeEscape(userDir);
+    }
+    
     final private String testDir1 = getInputFile("test_dir1");
     final private String testDir1AllFiles = getInputFile("test_dir1/*");
     final private String testDir1Files123 = getInputFile("test_dir1/test_glob{1,2,3}.avro");
@@ -464,6 +471,7 @@ public class TestAvroStorage {
     }
 
     @Test
+    @Ignore // iis-3rdparty-pig-avrostorage will be removed in cdh5
     public void testMultipleSchemas1() throws IOException {
         // Verify that multiple primitive types can be loaded.
         // Input Avro files have the following schemas:
@@ -505,6 +513,7 @@ public class TestAvroStorage {
     }
 
     @Test
+    @Ignore // iis-3rdparty-pig-avrostorage will be removed in cdh5
     public void testMultipleSchemas2() throws IOException {
         // Verify that multiple complex types (records) can be loaded.
         // Input Avro files have the following schemas:
@@ -1157,5 +1166,12 @@ public class TestAvroStorage {
         }
         return ret;
   }
+
+    
+    public static String encodeEscape(String str) {
+        String regex = "\\\\";
+        //String replacement = Matcher.quoteReplacement("\\\\");
+        return str.replaceAll(regex, "/");
+    }
 
 }
