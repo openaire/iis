@@ -40,7 +40,7 @@ public class ImportInformationSpaceMapper
 			String[] split = StringUtils.split(key.toString(), KEY_SEPARATOR);
 			if (split.length!=3) {
 				throw new IOException("invalid key, "
-						+ "expected 'rowkey@columnFamily@qualifier', got: " + key);
+						+ "expected 'rowkey"+KEY_SEPARATOR+"columnFamily"+KEY_SEPARATOR+"qualifier', got: " + key);
 			}
 			byte[] rowKey = Bytes.toBytes(split[0]);
 			byte[] columnFamily = Bytes.toBytes(split[1]);

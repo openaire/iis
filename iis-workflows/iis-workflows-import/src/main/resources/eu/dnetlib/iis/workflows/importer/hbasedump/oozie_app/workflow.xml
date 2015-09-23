@@ -2,44 +2,47 @@
 <workflow-app xmlns="uri:oozie:workflow:0.4" name="import_hbasedump">
 
 	<parameters>
-        <property>
-            <name>input</name>
-            <description>Source hdfs directory holding hbase dump.
-            The dump has a custom format (as exported from Info Space) and is enclosed in a sequence file.</description>
-        </property>
-        <property>
-            <name>output_table_name</name>
-            <description>hbase destination table name</description>
-        </property>
-    </parameters>
+		<property>
+			<name>input</name>
+			<description>Source hdfs directory holding hbase dump.
+				The dump has a custom format (as exported from Info Space) and is
+				enclosed in a sequence file.
+			</description>
+		</property>
+		<property>
+			<name>output_table_name</name>
+			<description>hbase destination table name</description>
+		</property>
+	</parameters>
 
-    <global>
-        <job-tracker>${jobTracker}</job-tracker>
-        <name-node>${nameNode}</name-node>
-        <configuration>
-            <property>
-                <name>mapred.mapper.new-api</name>
-                <value>true</value>
-            </property>
-            <property>
-                <name>mapred.reducer.new-api</name>
-                <value>true</value>
-            </property>
-            <property>
+	<global>
+		<job-tracker>${jobTracker}</job-tracker>
+		<name-node>${nameNode}</name-node>
+		<configuration>
+			<property>
+				<name>mapred.mapper.new-api</name>
+				<value>true</value>
+			</property>
+			<property>
+				<name>mapred.reducer.new-api</name>
+				<value>true</value>
+			</property>
+			<property>
 				<name>mapred.job.queue.name</name>
 				<value>${queueName}</value>
 			</property>
-        </configuration>
-    </global>
+		</configuration>
+	</global>
 
-    <start to="import" />
+	<start to="import" />
 
-    <action name="import">
-        <map-reduce>
-            <configuration>
+	<action name="import">
+		<map-reduce>
+			<configuration>
 				<property>
 					<name>mapreduce.inputformat.class</name>
-					<value>org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat</value>
+					<value>org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat
+					</value>
 				</property>
 				<property>
 					<name>mapreduce.outputformat.class</name>
@@ -55,7 +58,8 @@
 				</property>
 				<property>
 					<name>mapreduce.map.class</name>
-					<value>eu.dnetlib.iis.workflows.importer.hbasedump.ImportInformationSpaceMapper</value>
+					<value>eu.dnetlib.iis.workflows.importer.hbasedump.ImportInformationSpaceMapper
+					</value>
 				</property>
 				<property>
 					<name>mapred.reduce.tasks</name>
@@ -64,7 +68,7 @@
 				<property>
 					<name>mapred.input.dir</name>
 					<value>${input}</value>
-				 </property>
+				</property>
 				<property>
 					<name>hbase.mapred.outputtable</name>
 					<value>${output_table_name}</value>
@@ -83,16 +87,16 @@
 					<name>mapreduce.map.speculative</name>
 					<value>false</value>
 				</property>
-            </configuration>
-        </map-reduce>
-        <ok to="end" />
-        <error to="fail" />
-    </action>
+			</configuration>
+		</map-reduce>
+		<ok to="end" />
+		<error to="fail" />
+	</action>
 
-    <kill name="fail">
-        <message>Unfortunately, the process failed -- error message:
-            [${wf:errorMessage(wf:lastErrorNode())}]
-        </message>
-    </kill>
-    <end name="end" />
+	<kill name="fail">
+		<message>Unfortunately, the process failed -- error message:
+			[${wf:errorMessage(wf:lastErrorNode())}]
+		</message>
+	</kill>
+	<end name="end" />
 </workflow-app>
