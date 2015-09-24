@@ -1,17 +1,18 @@
 <workflow-app xmlns="uri:oozie:workflow:0.4" name="mainworkflows_primary_main">
-	
+
 	<parameters>
 		<property>
-            <name>remove_sideproducts</name>
-            <value>true</value>
-            <description>flag indicating inference side products will be erased</description>
-        </property>
+			<name>remove_sideproducts</name>
+			<value>true</value>
+			<description>flag indicating inference side products will be erased</description>
+		</property>
 		<property>
 			<name>match_content_with_metadata</name>
 			<value>true</value>
 			<description>flag indicating contents should be filtered and their identifiers should be deduplicated against metadata entries retrieved from InformationSpace.
-			This way only contents having metadata representation will be processed. 
-			To be disabled when processing new contents which metadata is not available in hbase or when original identifiers should be preserved (contents will not be filtered as well).</description>
+				This way only contents having metadata representation will be processed.
+				To be disabled when processing new contents which metadata is not available in hbase or when original identifiers should be preserved (contents will not be filtered as well).
+			</description>
 		</property>
 		<!-- processing modes -->
 		<property>
@@ -96,8 +97,8 @@
 		<property>
 			<name>import_hbase_dump_location</name>
 			<value>$UNDEFINED$</value>
-			<description>HBase dump location, usually points to remote cluster HDFS location. 
-			Import will be omitted when set to $UNDEFINED$ value.</description>
+			<description>HBase dump location, usually points to remote cluster HDFS location.
+				Import will be omitted when set to $UNDEFINED$ value.</description>
 		</property>
 		<property>
 			<name>import_hbase_approved_datasources_csv</name>
@@ -344,117 +345,118 @@
 			<description>working directory</description>
 		</property>
 	</parameters>
-	
+
 	<global>
-        <job-tracker>${jobTracker}</job-tracker>
-        <name-node>${nameNode}</name-node>
-        <configuration>
-            <property>
-                <name>mapred.job.queue.name</name>
-                <value>${queueName}</value>
-            </property>
+		<job-tracker>${jobTracker}</job-tracker>
+		<name-node>${nameNode}</name-node>
+		<configuration>
+			<property>
+				<name>mapred.job.queue.name</name>
+				<value>${queueName}</value>
+			</property>
 		</configuration>
 	</global>
-	
-	<start to="init-workingDir"/>
+
+	<start to="init-workingDir" />
 
 	<action name="init-workingDir">
-         <fs>
-            <delete path="${nameNode}${workingDir}" />
+		<fs>
+			<delete path="${nameNode}${workingDir}" />
 			<mkdir path="${nameNode}${workingDir}" />
-        </fs>
-        <ok to="copy-version"/>
-        <error to="fail"/>
-    </action>
-	
+		</fs>
+		<ok to="copy-version" />
+		<error to="fail" />
+	</action>
+
 	<action name="copy-version">
-       <distcp xmlns="uri:oozie:distcp-action:0.1">
-           <job-tracker>${jobTracker}</job-tracker>
-           <name-node>${nameNode}</name-node>
-           <arg>${wf:appPath()}/version.properties</arg>
-           <arg>${nameNode}${workingDir}</arg>
-           </distcp>
-       <ok to="decision-import_hbase_dump"/>
-       <error to="fail"/>
+		<distcp xmlns="uri:oozie:distcp-action:0.1">
+			<job-tracker>${jobTracker}</job-tracker>
+			<name-node>${nameNode}</name-node>
+			<arg>${wf:appPath()}/version.properties</arg>
+			<arg>${nameNode}${workingDir}</arg>
+		</distcp>
+		<ok to="decision-import_hbase_dump" />
+		<error to="fail" />
 	</action>
 
 	<decision name="decision-import_hbase_dump">
-        <switch>
-            <case to="import">${import_hbase_dump_location eq "$UNDEFINED$"}</case>
-            <default to="distcp_hbase_dump"/>
-        </switch>
-    </decision>
+		<switch>
+			<case to="import">${import_hbase_dump_location eq "$UNDEFINED$"}</case>
+			<default to="distcp_hbase_dump" />
+		</switch>
+	</decision>
 
-	<!-- importing hbase dump from remote cluster -->	
+	<!-- importing hbase dump from remote cluster -->
 	<action name="distcp_hbase_dump">
-       <distcp xmlns="uri:oozie:distcp-action:0.1">
-           <job-tracker>${jobTracker}</job-tracker>
-           <name-node>${nameNode}</name-node>
-           <arg>${import_hbase_dump_location}</arg>
-           <arg>${nameNode}${workingDir}/hbase_dump</arg>
-       </distcp>
-       <ok to="truncate_hbase_table"/>
-       <error to="fail"/>
+		<distcp xmlns="uri:oozie:distcp-action:0.1">
+			<job-tracker>${jobTracker}</job-tracker>
+			<name-node>${nameNode}</name-node>
+			<arg>${import_hbase_dump_location}</arg>
+			<arg>${nameNode}${workingDir}/hbase_dump</arg>
+		</distcp>
+		<ok to="truncate_hbase_table" />
+		<error to="fail" />
 	</action>
-	
+
 	<action name="truncate_hbase_table">
-        <shell xmlns="uri:oozie:shell-action:0.1">
-            <job-tracker>${jobTracker}</job-tracker>
-            <name-node>${nameNode}</name-node>
-            <configuration>
-                <property>
-                  <name>mapred.job.queue.name</name>
-                  <value>${queueName}</value>
-                </property>
-            </configuration>
-            <exec>sh</exec>
-            <argument>truncate_hbase_table.sh</argument>
-            <argument>${import_hbase_input_table}</argument>
-            <file>scripts/truncate_hbase_table.sh</file>
-        </shell>
-        <ok to="import_hbase_dump"/>
-        <error to="fail"/>
-    </action>
-	
+		<shell xmlns="uri:oozie:shell-action:0.1">
+			<job-tracker>${jobTracker}</job-tracker>
+			<name-node>${nameNode}</name-node>
+			<configuration>
+				<property>
+					<name>mapred.job.queue.name</name>
+					<value>${queueName}</value>
+				</property>
+			</configuration>
+			<exec>sh</exec>
+			<argument>truncate_hbase_table.sh</argument>
+			<argument>${import_hbase_input_table}</argument>
+			<file>scripts/truncate_hbase_table.sh</file>
+		</shell>
+		<ok to="import_hbase_dump" />
+		<error to="fail" />
+	</action>
+
 	<action name="import_hbase_dump">
 		<sub-workflow>
-            <app-path>${wf:appPath()}/import_hbasedump</app-path>
-            <propagate-configuration/>
-            <configuration>
-                <property>
+			<app-path>${wf:appPath()}/import_hbasedump</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
 					<name>input</name>
 					<value>${workingDir}/hbase_dump</value>
 				</property>
-            	<property>
+				<property>
 					<name>output_table_name</name>
 					<value>${import_hbase_input_table}</value>
 				</property>
 			</configuration>
-        </sub-workflow>
+		</sub-workflow>
 		<ok to="purge_hbase_dump" />
 		<error to="fail" />
 	</action>
 
 	<action name="purge_hbase_dump">
-         <fs>
-            <delete path="${nameNode}${workingDir}/hbase_dump" />
-        </fs>
-        <ok to="import"/>
-        <error to="fail"/>
-    </action>
+		<fs>
+			<delete path="${nameNode}${workingDir}/hbase_dump" />
+		</fs>
+		<ok to="import" />
+		<error to="fail" />
+	</action>
 	<!-- end of importing hbase dump from remote cluster -->
 
 	<action name="import">
-	    <sub-workflow>
-            <app-path>${wf:appPath()}/mainworkflows_common_import</app-path>
-            <propagate-configuration/>
-            <configuration>
-            	<property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/mainworkflows_common_import/working_dir</value>
-                </property>
-                <!-- importing modes -->
-                <property>
+		<sub-workflow>
+			<app-path>${wf:appPath()}/mainworkflows_common_import</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/mainworkflows_common_import/working_dir
+					</value>
+				</property>
+				<!-- importing modes -->
+				<property>
 					<name>match_content_with_metadata</name>
 					<value>${match_content_with_metadata}</value>
 				</property>
@@ -475,7 +477,7 @@
 					<!-- enabling when either citation matching is enabled or metadata export which may include pmc affiliations -->
 					<value>${active_citationmatching eq "true" or active_metadataextraction_export eq "true"}</value>
 				</property>
-                <!-- import metadata related -->
+				<!-- import metadata related -->
 				<property>
 					<name>hbase_input_table</name>
 					<value>${import_hbase_input_table}</value>
@@ -544,7 +546,7 @@
 					<name>content_read_timeout</name>
 					<value>${import_content_read_timeout}</value>
 				</property>
-				<!-- metadata extraction related are autmatically propagated-->
+				<!-- metadata extraction related are autmatically propagated -->
 				<!-- metadatainput and metadataextraction output subdirectory names -->
 				<property>
 					<name>metadataimport_output_name_document_meta</name>
@@ -599,76 +601,82 @@
 					<name>output_faults</name>
 					<value>${workingDir}/mainworkflows_common_import/faults</value>
 				</property>
-            </configuration>
-        </sub-workflow>
-		<ok to="decision-import_logs"/>
+			</configuration>
+		</sub-workflow>
+		<ok to="decision-import_logs" />
 		<error to="fail" />
-    </action>
+	</action>
 
 	<decision name="decision-import_logs">
-        <switch>
-            <case to="import_logs">${active_websiteusage_analysis eq "true"}</case>
-            <default to="mainworkflows_primary_processing"/>
-        </switch>
-    </decision>
+		<switch>
+			<case to="import_logs">${active_websiteusage_analysis eq "true"}</case>
+			<default to="mainworkflows_primary_processing" />
+		</switch>
+	</decision>
 
 	<action name="import_logs">
 		<sub-workflow>
-            <app-path>${wf:appPath()}/import_logs</app-path>
-            <propagate-configuration/>
-            <configuration>
-            	<property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/websiteusage_analysis/import_logs/working_dir</value>
-                </property>
-                <property>
+			<app-path>${wf:appPath()}/import_logs</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/websiteusage_analysis/import_logs/working_dir
+					</value>
+				</property>
+				<property>
 					<name>input</name>
 					<value>${portal_logs_location}</value>
 				</property>
-            	<property>
+				<property>
 					<name>output</name>
 					<value>${workingDir}/websiteusage_analysis/import_logs/output</value>
 				</property>
 			</configuration>
-        </sub-workflow>
+		</sub-workflow>
 		<ok to="mainworkflows_primary_processing" />
 		<error to="fail" />
 	</action>
 
 	<action name="mainworkflows_primary_processing">
 		<sub-workflow>
-            <app-path>${wf:appPath()}/mainworkflows_primary_processing</app-path>
-            <propagate-configuration/>
-            <configuration>
-            	<property>
-                    <name>input_document_metadata</name>
-                    <value>${workingDir}/mainworkflows_common_import/metadataimport/docmeta</value>
-                </property>
-                <property>
-                    <name>input_document_to_project</name>
-                    <value>${workingDir}/mainworkflows_common_import/metadataimport/docproject</value>
-                </property>
-                <property>
-                    <name>input_document_text</name>
-                    <value>${workingDir}/mainworkflows_common_import/document-text</value>
-                </property>
-                <property>
-                    <name>input_document_text_wos</name>
-                    <value>${workingDir}/mainworkflows_common_import/wos</value>
-                </property>
-                <property>
-                    <name>input_project</name>
-                    <value>${workingDir}/mainworkflows_common_import/metadataimport/project</value>
-                </property>
-                <property>
-                    <name>input_person</name>
-                    <value>${workingDir}/mainworkflows_common_import/metadataimport/person</value>
-                </property>
-                <property>
-                    <name>input_dataset</name>
-                    <value>${workingDir}/mainworkflows_common_import/dataset</value>
-                </property>
-                <property>
+			<app-path>${wf:appPath()}/mainworkflows_primary_processing</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>input_document_metadata</name>
+					<value>${workingDir}/mainworkflows_common_import/metadataimport/docmeta
+					</value>
+				</property>
+				<property>
+					<name>input_document_to_project</name>
+					<value>${workingDir}/mainworkflows_common_import/metadataimport/docproject
+					</value>
+				</property>
+				<property>
+					<name>input_document_text</name>
+					<value>${workingDir}/mainworkflows_common_import/document-text
+					</value>
+				</property>
+				<property>
+					<name>input_document_text_wos</name>
+					<value>${workingDir}/mainworkflows_common_import/wos</value>
+				</property>
+				<property>
+					<name>input_project</name>
+					<value>${workingDir}/mainworkflows_common_import/metadataimport/project
+					</value>
+				</property>
+				<property>
+					<name>input_person</name>
+					<value>${workingDir}/mainworkflows_common_import/metadataimport/person
+					</value>
+				</property>
+				<property>
+					<name>input_dataset</name>
+					<value>${workingDir}/mainworkflows_common_import/dataset</value>
+				</property>
+				<property>
 					<name>input_extracted_document_metadata</name>
 					<value>${workingDir}/mainworkflows_common_import/extracted_document_metadata</value>
 				</property>
@@ -677,119 +685,126 @@
 					<value>${workingDir}/mainworkflows_common_import/project-concept</value>
 				</property>
 				<property>
-                    <name>output_document_to_project</name>
-                    <value>${workingDir}/exported/document_to_project</value>
-                </property>
-                <property>
-                    <name>output_document_to_project_concepts</name>
-                    <value>${workingDir}/exported/document_to_project_concepts</value>
-                </property>
-                <property>
-                    <name>output_document_to_dataset</name>
-                    <value>${workingDir}/exported/document_to_dataset</value>
-                </property>
-                <property>
-                    <name>output_document_to_research_initiatives</name>
-                    <value>${workingDir}/exported/document_to_research_initiatives</value>
-                </property>
-                <property>
-                    <name>output_document_to_pdb</name>
-                    <value>${workingDir}/exported/document_to_pdb</value>
-                </property>
-                <property>
-                    <name>output_document_to_document_classes</name>
-                    <value>${workingDir}/exported/document_to_document_classes</value>
-                </property>
-                <property>
-                    <name>output_citation</name>
-                    <value>${workingDir}/exported/citation</value>
-                </property>
-                <property>
-                    <name>output_document_similarity</name>
-                    <value>${workingDir}/exported/document_similarity</value>
-                </property>
+					<name>output_document_to_project</name>
+					<value>${workingDir}/exported/document_to_project</value>
+				</property>
 				<property>
-                    <name>output_document_statistics</name>
-                    <value>${workingDir}/exported/document_statistics</value>
-                </property>                
-                <property>
-                    <name>output_author_statistics</name>
-                    <value>${workingDir}/exported/author_statistics</value>
-                </property>
-                <property>
-                    <name>output_project_statistics</name>
-                    <value>${workingDir}/exported/project_statistics</value>
-                </property>
-            </configuration>
-        </sub-workflow>
-		<ok to="decision-websiteusage_analysis"/>
+					<name>output_document_to_project_concepts</name>
+					<value>${workingDir}/exported/document_to_project_concepts</value>
+				</property>
+				<property>
+					<name>output_document_to_dataset</name>
+					<value>${workingDir}/exported/document_to_dataset</value>
+				</property>
+				<property>
+					<name>output_document_to_research_initiatives</name>
+					<value>${workingDir}/exported/document_to_research_initiatives
+					</value>
+				</property>
+				<property>
+					<name>output_document_to_pdb</name>
+					<value>${workingDir}/exported/document_to_pdb</value>
+				</property>
+				<property>
+					<name>output_document_to_document_classes</name>
+					<value>${workingDir}/exported/document_to_document_classes</value>
+				</property>
+				<property>
+					<name>output_citation</name>
+					<value>${workingDir}/exported/citation</value>
+				</property>
+				<property>
+					<name>output_document_similarity</name>
+					<value>${workingDir}/exported/document_similarity</value>
+				</property>
+				<property>
+					<name>output_document_statistics</name>
+					<value>${workingDir}/exported/document_statistics</value>
+				</property>
+				<property>
+					<name>output_author_statistics</name>
+					<value>${workingDir}/exported/author_statistics</value>
+				</property>
+				<property>
+					<name>output_project_statistics</name>
+					<value>${workingDir}/exported/project_statistics</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="decision-websiteusage_analysis" />
 		<error to="fail" />
 	</action>
-    
-    <!-- website usage analysis block -->
-    <decision name="decision-websiteusage_analysis">
-        <switch>
-            <case to="websiteusage-idextractor">${active_websiteusage_analysis eq "true"}</case>
-            <default to="skip-websiteusage"/>
-        </switch>
-    </decision>
-    
-    <action name="websiteusage-idextractor">
-        <sub-workflow>
-            <app-path>${wf:appPath()}/transformers_idextractor</app-path>
-            <propagate-configuration/>
-            <configuration>
-                <property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/websiteusage_analysis/transformers_idextractor/working_dir</value>
-                </property>
-                <property>
-                    <name>input_document_metadata</name>
-                    <value>${workingDir}/mainworkflows_common_import/metadataimport/docmeta</value>
-                </property>
-                <property>
-                    <name>output_identifier</name>
-                    <value>${workingDir}/websiteusage_analysis/transformers_idextractor/output</value>
-                </property>
-            </configuration>
-        </sub-workflow>
-        <ok to="mainworkflows_websiteusage_document"/>
-        <error to="fail"/>
-    </action>
-    
-    <action name="mainworkflows_websiteusage_document">
-        <sub-workflow>
-            <app-path>${wf:appPath()}/mainworkflows_websiteusage_document</app-path>
-            <propagate-configuration/>
-            <configuration>
-                <property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/websiteusage_analysis/working_dir</value>
-                </property>
-                <property>
-                    <name>input_logs</name>
-                    <value>${workingDir}/websiteusage_analysis/import_logs/output</value>
-                </property>
-                <property>
-                    <name>input_id_mapping</name>
-                    <value>${workingDir}/mainworkflows_common_import/metadataimport/dedupmapping</value>
-                </property>
-                <property>
-                    <name>input_document_id</name>
-                    <value>${workingDir}/websiteusage_analysis/transformers_idextractor/output</value>
-                </property>
-                <property>
-                    <name>output</name>
-                    <value>${workingDir}/websiteusage_analysis/output</value>
-                </property>
-            </configuration>
-        </sub-workflow>
-        <ok to="decision-transform-metadataextraction-for-export"/>
-        <error to="fail"/>
-    </action>    
-    
-    <action name="skip-websiteusage">
-        <java>
+
+	<!-- website usage analysis block -->
+	<decision name="decision-websiteusage_analysis">
+		<switch>
+			<case to="websiteusage-idextractor">${active_websiteusage_analysis eq "true"}</case>
+			<default to="skip-websiteusage" />
+		</switch>
+	</decision>
+
+	<action name="websiteusage-idextractor">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_idextractor</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/websiteusage_analysis/transformers_idextractor/working_dir
+					</value>
+				</property>
+				<property>
+					<name>input_document_metadata</name>
+					<value>${workingDir}/mainworkflows_common_import/metadataimport/docmeta
+					</value>
+				</property>
+				<property>
+					<name>output_identifier</name>
+					<value>${workingDir}/websiteusage_analysis/transformers_idextractor/output
+					</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="mainworkflows_websiteusage_document" />
+		<error to="fail" />
+	</action>
+
+	<action name="mainworkflows_websiteusage_document">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/mainworkflows_websiteusage_document</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/websiteusage_analysis/working_dir</value>
+				</property>
+				<property>
+					<name>input_logs</name>
+					<value>${workingDir}/websiteusage_analysis/import_logs/output
+					</value>
+				</property>
+				<property>
+					<name>input_id_mapping</name>
+					<value>${workingDir}/mainworkflows_common_import/metadataimport/dedupmapping
+					</value>
+				</property>
+				<property>
+					<name>input_document_id</name>
+					<value>${workingDir}/websiteusage_analysis/transformers_idextractor/output
+					</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${workingDir}/websiteusage_analysis/output</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="decision-transform-metadataextraction-for-export" />
+		<error to="fail" />
+	</action>
+
+	<action name="skip-websiteusage">
+		<java>
 			<prepare>
 				<!-- notice: directory have to aligned with skipped action output -->
 				<delete path="${nameNode}${workingDir}/websiteusage_analysis" />
@@ -797,48 +812,51 @@
 			</prepare>
 			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
-            <arg>-C{websiteusage_analysis_document,
+			<arg>-C{websiteusage_analysis_document,
 				eu.dnetlib.iis.websiteusage.schemas.DocumentsWithWebsiteUsageSimilarities,
 				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
-            <arg>-Owebsiteusage_analysis_document=${workingDir}/websiteusage_analysis/output</arg>
-        </java>
-        <ok to="decision-transform-metadataextraction-for-export"/>
-        <error to="fail"/>
-    </action>
-    <!-- end of website usage analysis block -->
-    
-    <decision name="decision-transform-metadataextraction-for-export">
-        <switch>
-            <case to="transformers_export_documentmetadata">${active_metadataextraction_export eq "true"}</case>
-            <default to="skip-transformers_export_documentmetadata"/>
-        </switch>
-    </decision>
-    
-    <action name="transformers_export_documentmetadata">
-        <sub-workflow>
-            <app-path>${wf:appPath()}/transformers_export_documentmetadata</app-path>
-            <propagate-configuration/>
-            <configuration>
-                <property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/transformers_export_documentmetadata/working_dir</value>
-                </property>
-                <property>
-                    <name>input_extracted_metadata</name>
-                    <value>${workingDir}/mainworkflows_common_import/extracted_document_metadata</value>
-                </property>
-                <property>
-                    <name>output_metadata</name>
-                    <value>${workingDir}/transformers_export_documentmetadata/output_metadata</value>
-                </property>
-            </configuration>
-        </sub-workflow>
-        <ok to="decision-export-to-hbase"/>
-        <error to="fail"/>
-    </action>
-    
-    <action name="skip-transformers_export_documentmetadata">
-        <java>
+			<arg>-Owebsiteusage_analysis_document=${workingDir}/websiteusage_analysis/output</arg>
+		</java>
+		<ok to="decision-transform-metadataextraction-for-export" />
+		<error to="fail" />
+	</action>
+	<!-- end of website usage analysis block -->
+
+	<decision name="decision-transform-metadataextraction-for-export">
+		<switch>
+			<case to="transformers_export_documentmetadata">${active_metadataextraction_export eq "true"}</case>
+			<default to="skip-transformers_export_documentmetadata" />
+		</switch>
+	</decision>
+
+	<action name="transformers_export_documentmetadata">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_export_documentmetadata</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/transformers_export_documentmetadata/working_dir
+					</value>
+				</property>
+				<property>
+					<name>input_extracted_metadata</name>
+					<value>${workingDir}/mainworkflows_common_import/extracted_document_metadata
+					</value>
+				</property>
+				<property>
+					<name>output_metadata</name>
+					<value>${workingDir}/transformers_export_documentmetadata/output_metadata
+					</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="decision-export-to-hbase" />
+		<error to="fail" />
+	</action>
+
+	<action name="skip-transformers_export_documentmetadata">
+		<java>
 			<prepare>
 				<!-- notice: directory have to aligned with skipped action output -->
 				<delete path="${nameNode}${workingDir}/transformers_export_documentmetadata" />
@@ -846,38 +864,39 @@
 			</prepare>
 			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
-            <arg>-C{document_metadata,
+			<arg>-C{document_metadata,
 				eu.dnetlib.iis.export.schemas.DocumentMetadata,
 				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
-            <!-- notice: directory have to aligned with skipped action output -->
-            <arg>-Odocument_metadata=${workingDir}/transformers_export_documentmetadata/output_metadata</arg>
-        </java>
-        <ok to="decision-export-to-hbase"/>
-        <error to="fail"/>
-    </action>
-    
-    <decision name="decision-export-to-hbase">
-        <switch>
-            <case to="export-to-hbase">${active_export_to_hbase eq "true"}</case>
-            <default to="decision-export-to-json"/>
-        </switch>
-    </decision>
-    
-    <action name="export-to-hbase">
+			<!-- notice: directory have to aligned with skipped action output -->
+			<arg>-Odocument_metadata=${workingDir}/transformers_export_documentmetadata/output_metadata</arg>
+		</java>
+		<ok to="decision-export-to-hbase" />
+		<error to="fail" />
+	</action>
+
+	<decision name="decision-export-to-hbase">
+		<switch>
+			<case to="export-to-hbase">${active_export_to_hbase eq "true"}</case>
+			<default to="decision-export-to-json" />
+		</switch>
+	</decision>
+
+	<action name="export-to-hbase">
 		<sub-workflow>
-            <app-path>${wf:appPath()}/mainworkflows_common_export</app-path>
-            <propagate-configuration/>
-            <configuration>
-            	<property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/mainworkflows_common_export/working_dir</value>
-                </property>
-                <!-- input ports -->
-                <property>
+			<app-path>${wf:appPath()}/mainworkflows_common_export</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/mainworkflows_common_export/working_dir
+					</value>
+				</property>
+				<!-- input ports -->
+				<property>
 					<name>input_document_metadata</name>
 					<value>${workingDir}/transformers_export_documentmetadata/output_metadata</value>
 				</property>
-                <property>
+				<property>
 					<name>input_document_to_project</name>
 					<value>${workingDir}/exported/document_to_project</value>
 				</property>
@@ -1012,7 +1031,7 @@
 					<name>action_set_id_entity_dataset</name>
 					<value>${export_action_set_id_entity_dataset}</value>
 				</property>
-				
+
 				<property>
 					<name>trust_level_threshold</name>
 					<value>${export_trust_level_threshold}</value>
@@ -1049,30 +1068,30 @@
 					<name>referenceextraction_pdb_url_root</name>
 					<value>${export_referenceextraction_pdb_url_root}</value>
 				</property>
-            </configuration>
-        </sub-workflow>
-		<ok to="decision-export-to-json"/>
+			</configuration>
+		</sub-workflow>
+		<ok to="decision-export-to-json" />
 		<error to="fail" />
 	</action>
-    
-    <decision name="decision-export-to-json">
-        <switch>
-            <case to="export-to-json">${active_export_to_json eq "true"}</case>
-            <default to="end"/>
-        </switch>
-    </decision>
-    
-    <action name="export-to-json">
+
+	<decision name="decision-export-to-json">
+		<switch>
+			<case to="export-to-json">${active_export_to_json eq "true"}</case>
+			<default to="end" />
+		</switch>
+	</decision>
+
+	<action name="export-to-json">
 		<sub-workflow>
-            <app-path>${wf:appPath()}/mainworkflows_common_export_to_json</app-path>
-            <propagate-configuration/>
-            <configuration>
-                <!-- input ports -->
-                <property>
+			<app-path>${wf:appPath()}/mainworkflows_common_export_to_json</app-path>
+			<propagate-configuration />
+			<configuration>
+				<!-- input ports -->
+				<property>
 					<name>input_document_metadata</name>
 					<value>${workingDir}/transformers_export_documentmetadata/output_metadata</value>
 				</property>
-                <property>
+				<property>
 					<name>input_document_to_project</name>
 					<value>${workingDir}/exported/document_to_project</value>
 				</property>
@@ -1128,12 +1147,12 @@
 					<name>output_root</name>
 					<value>${workingDir}/exported_as_json</value>
 				</property>
-            </configuration>
-        </sub-workflow>
-		<ok to="end"/>
+			</configuration>
+		</sub-workflow>
+		<ok to="end" />
 		<error to="fail" />
 	</action>
-    
+
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:
 			[${wf:errorMessage(wf:lastErrorNode())}]</message>
