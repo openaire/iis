@@ -76,7 +76,7 @@ public class HackedJsonEncoder extends ParsingEncoder implements Parser.ActionHa
     JsonGenerator g
       = new JsonFactory().createJsonGenerator(out, JsonEncoding.UTF8);
     MinimalPrettyPrinter pp = new MinimalPrettyPrinter();
-    pp.setRootValueSeparator(System.getProperty("line.separator"));
+    pp.setRootValueSeparator("\n");
     g.setPrettyPrinter(pp);
     return g;
   }
