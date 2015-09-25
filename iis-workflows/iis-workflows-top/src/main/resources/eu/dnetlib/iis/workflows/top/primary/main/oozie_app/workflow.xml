@@ -411,7 +411,7 @@
 			<exec>sh</exec>
 			<argument>truncate_hbase_table.sh</argument>
 			<argument>${import_hbase_input_table}</argument>
-			<file>scripts/truncate_hbase_table.sh</file>
+			<file>import_hbasedump/scripts/truncate_hbase_table.sh</file>
 		</shell>
 		<ok to="import_hbase_dump" />
 		<error to="fail" />

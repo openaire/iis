@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#notice: same model is processed by iis-workflows/iis-workflows-import/src/main/java/eu/dnetlib/iis/workflows/importer/mapred/IISDataImporterMapper.java
+#all changes introduced in this script should be reflected in IISDataImporterMapper code
+
 import_hbase_input_table=$1
 
 echo "truncating table $import_hbase_input_table"
