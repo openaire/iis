@@ -58,8 +58,12 @@ import eu.dnetlib.iis.workflows.importer.input.approver.OriginDatasourceApprover
 import eu.dnetlib.iis.workflows.importer.input.approver.ResultApprover;
 
 /**
- * IIS generic data importer mapper.
- * Handles all kinds of entities: result, person and project.
+ * IIS generic data importer mapper reading columns from InformationSpace HBase table. 
+ * Handles all kinds of entities: result, person and project along with their relations.
+ * 
+ * Notice: hbase table model is created by: 
+ * iis-workflows/iis-workflows-import/src/main/resources/eu/dnetlib/iis/workflows/importer/hbasedump/oozie_app/scripts/truncate_hbase_table.sh
+ * script. All changes introduced in {@link IISDataImporterMapper} must be in sync with the model created by the script.
  * 
  * @author mhorst
  *

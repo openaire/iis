@@ -1,5 +1,6 @@
 ## This is a classpath-based import file (this header is required)
 import_logs classpath eu/dnetlib/iis/workflows/importer/logs/oozie_app
+import_hbasedump classpath eu/dnetlib/iis/workflows/importer/hbasedump/oozie_app
 mainworkflows_common_import classpath eu/dnetlib/iis/workflows/top/common/import/oozie_app
 mainworkflows_primary_processing classpath eu/dnetlib/iis/workflows/top/primary/processing/oozie_app
 transformers_export_documentmetadata classpath eu/dnetlib/iis/workflows/transformers/export/documentmetadata/oozie_app
