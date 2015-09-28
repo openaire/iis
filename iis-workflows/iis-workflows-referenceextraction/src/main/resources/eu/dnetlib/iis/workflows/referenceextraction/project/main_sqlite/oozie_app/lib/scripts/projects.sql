@@ -20,7 +20,7 @@ select docid,id from (select docid,upper(regexpr("(\w+.*\d+)",middle)) as match,
 union all 
 
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min(1.49,confidence)/1.5)) from ( select docid,id,max(confidence) as confidence from ( select docid, id,
-      case when fundingClass1="WT" then /*wellcome trust confidence*/
+      case when fundingClass2="WT" then /*wellcome trust confidence*/
                 (regexpcountwords(var('wtpospos'),j2s(prevpack,nextpack)) * regexpcountwords('(?:collaborative|joint call)',j2s(prevpack,nextpack)))*0.33 +
                 regexprmatches('\d{5}ma(?:\b|_)',middle)+
                 regexprmatches('(?:\d{5}_)(?:z|c|b|a)(?:_\d{2}_)(?:z|c|b|a)',middle)*2+
@@ -35,7 +35,7 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min
                 regexpcountwithpositions(var('wtneglight'),prevpacksmall,0,1,0.5)*0.18 -
                 0.45*regexpcountwithpositions(var('wtneglight'),nextpack) -
                 0.21*regexpcountwithpositions(var('wtnegheavy'),nextpack,1) 
-       else /* fp7 confidence */
+       when fundingClass2="FP7"/* fp7 confidence */ then
 		regexprmatches(var('fp7middlepos'),middle)+
                 regexprmatches('(?:\b|_|\d)'||normalizedacro||'(?:\b|_|\d)',j2s(middle,prevpacksmall,nextpack))*2  +
                 regexprmatches('fp7',prev15)*0.4 +
@@ -51,9 +51,12 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min
                 (((regexpcountwords(('\b_*\d+_*\b'),prevpacksmall)+ (regexpcountwords(('\b_*\d+_*\b'),nextpack)))/4))*0.2 -
                 regexpcountwithpositions(var('fp7neglight'),nextpack)*0.03 -
                 regexpcountwithpositions(var('fp7negheavy'),nextpack,1)*0.08
+       when fundingClass2="H2020" then
+            regexprmatches("h2020|horizon 2020|european research council|research council|erc",j2s(prevpack,middle,nextpack))
+            
        end as confidence
                 from
-                ( select id,fundingClass1,docid,normalizedacro, j2s(prev14,prev15) as prev,grantid,prev15,j2s(prev1, prev2, prev3, prev4, prev5,prev6,prev7,prev8,prev9,prev10,prev11,prev12,prev13,prev14,prev15) as prevpack ,j2s(prev9,prev10,prev11,prev12,prev13,prev14,prev15) as prevpacksmall , middle, j2s(next1, next2, next3) as nextpack
+                ( select id,fundingClass1,fundingClass2,docid,normalizedacro, j2s(prev14,prev15) as prev,grantid,prev15,j2s(prev1, prev2, prev3, prev4, prev5,prev6,prev7,prev8,prev9,prev10,prev11,prev12,prev13,prev14,prev15) as prevpack ,j2s(prev9,prev10,prev11,prev12,prev13,prev14,prev15) as prevpacksmall , middle, j2s(next1, next2, next3) as nextpack
                     from
                         ( 
                          select * from (setschema 'docid,prev1, prev2, prev3, prev4, prev5, prev6, prev7, prev8, prev9, prev10, prev11, prev12, prev13, prev14, prev15, middle, next1, next2, next3' select  c1 as docid ,textwindow(regexpr('(\b\S*?[^0-9\s_]\S*?\s_?)(\d{3})(\s)(\d{3})(_?\s\S*?[^0-9\s_]\S*?\b)',filterstopwords(normalizetext(lower(c2))),'\1\2\4\5'),15,3,'((?:(?:\b|\D)0|_|\b|\D)(?:\d{5}))|(((\D|\b)\d{6}(\D|\b))) ' )
