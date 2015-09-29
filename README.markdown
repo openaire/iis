@@ -12,9 +12,10 @@ IIS was initially developed during [OpenAIREplus](http://cordis.europa.eu/projec
 
 The original code was migrated to GitHub from [D-NET](http://www.d-net.research-infrastructures.eu/) SVN repository. The public read-only interface of the repository is available at [https://svn-public.driver.research-infrastructures.eu/driver/dnet40/modules/](https://svn-public.driver.research-infrastructures.eu/driver/dnet40/modules/) and this is where you can find the history of the code base before the migration (IIS-related Maven projects are the ones matching glob pattern `*-iis-*`).
 
-# Content of the most important subdirectories
+# Content of the most important subdirectories and files
 
 - `docs` - basic documentation
 - `iis-core` - generic common utilities used by other projects
 - `iis-common` - OpenAIRE-related common utilities
 - `iis-workflows` - definitions of workflows used in the system
+- `CONTRIBUTORS.markdown` - list of contributors to the project
