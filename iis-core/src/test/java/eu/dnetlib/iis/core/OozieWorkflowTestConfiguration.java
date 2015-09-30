@@ -5,10 +5,15 @@ import java.util.Properties;
 import org.apache.oozie.client.WorkflowJob;
 
 /**
- * Configuration of the testing workflow
+ * Configuration of workflow test.
+ * It contains additional criteria that must met for test to pass.
+ * 
+ * TODO: clean unused properties after removing mini oozie from project 
+ * 
  * @author Mateusz Kobos
+ * @author madryk
  */
-public class WorkflowConfiguration {
+public class OozieWorkflowTestConfiguration {
 	
 	/** I had to change the duration of the wait from the original 
 	 * 15 seconds because the original time wasn't enough for my 
@@ -25,7 +30,7 @@ public class WorkflowConfiguration {
 	private int timeoutInSeconds = defaultTimeoutInSeconds;
 	private WorkflowJob.Status expectedFinishStatus = defaultExpectedFinishStatus;
 	
-	public WorkflowConfiguration(){
+	public OozieWorkflowTestConfiguration(){
 	}
 
 	/**
@@ -38,7 +43,7 @@ public class WorkflowConfiguration {
 	/**
 	 * @param jobProps job properties
 	 */
-	public WorkflowConfiguration setJobProps(Properties jobProps) {
+	public OozieWorkflowTestConfiguration setJobProps(Properties jobProps) {
 		this.jobProps = jobProps;
 		return this;
 	}
@@ -53,7 +58,7 @@ public class WorkflowConfiguration {
 	 * @param timeoutInSeconds timeout in seconds. Workflow will be killed
      * if timeout is exceeded
 	 */
-	public WorkflowConfiguration setTimeoutInSeconds(int timeoutInSeconds) {
+	public OozieWorkflowTestConfiguration setTimeoutInSeconds(int timeoutInSeconds) {
 		this.timeoutInSeconds = timeoutInSeconds;
 		return this;
 	}
@@ -69,7 +74,7 @@ public class WorkflowConfiguration {
 	 * @param expectedFinishStatus expected status of the workflow after its
 	 * finish
 	 */
-	public WorkflowConfiguration setExpectedFinishStatus(WorkflowJob.Status expectedFinishStatus) {
+	public OozieWorkflowTestConfiguration setExpectedFinishStatus(WorkflowJob.Status expectedFinishStatus) {
 		this.expectedFinishStatus = expectedFinishStatus;
 		return this;
 	}

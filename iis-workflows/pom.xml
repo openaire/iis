@@ -56,20 +56,15 @@
         <oozie.package.file.name>oozie-package</oozie.package.file.name>
         <!-- notice: sandboxName is generated based on workflow.source.dir property -->
         <workflow.source.dir>src/test/resources/define/path/pointing/to/directory/holding/oozie_app</workflow.source.dir>
-        <iis.hadoop.frontend.user.name>${user.name}</iis.hadoop.frontend.user.name>
-        <iis.hadoop.frontend.user.dir>${iis.hadoop.frontend.user.name}</iis.hadoop.frontend.user.dir>
-        <iis.hadoop.frontend.home.dir>/mnt/tmp</iis.hadoop.frontend.home.dir>
-        <iis.hadoop.master.host.name>localhost</iis.hadoop.master.host.name>
-        <iis.hadoop.frontend.host.name>localhost</iis.hadoop.frontend.host.name>
-        <iis.hadoop.frontend.port.ssh>22</iis.hadoop.frontend.port.ssh>
-        <oozieServiceLoc>http://${iis.hadoop.master.host.name}:11000/oozie</oozieServiceLoc>
         <oozieAppDir>oozie_app</oozieAppDir>
-        <nameNode>hdfs://${iis.hadoop.master.host.name}:8020</nameNode>
-        <jobTracker>${iis.hadoop.master.host.name}:8021</jobTracker>
         <queueName>default</queueName>
         <primed.dir>primed</primed.dir>
+        
         <oozie.package.dependencies.scope>runtime</oozie.package.dependencies.scope>
-        <oozie.execution.log.file.location>target/extract-and-run-on-remote-host.log</oozie.execution.log.file.location>
+        <oozie.package.skip.test.jar>true</oozie.package.skip.test.jar>
+        <default.iis.properties.file>classpath:application-default.properties</default.iis.properties.file>
+        <user.iis.properties.file>${user.home}/.iis/application.properties</user.iis.properties.file>
+        
         <output.dir.name>${maven.build.timestamp}</output.dir.name>        
     </properties>
 
@@ -86,45 +81,23 @@
 	
 	
 	<profiles>
+	<profile><id>attach-test-resources</id></profile>
 		<profile>
-			<!-- This profiles provides test resources for oozie package. 
-				 To be used only with 'oozie' profile -->
+			<!-- This profile sets properties that are required for test oozie workflows 
+				 To be used only with 'oozie-package' profile -->
 			<id>attach-test-resources</id>
 			<properties>
 				<!--overriding default scope (set to 'runtime') with the 'test' value. 
-					Test resources attached to oozie package requires all test dependancies. -->
+					Test resources attached to oozie package requires all test dependencies. -->
 				<oozie.package.dependencies.scope>test</oozie.package.dependencies.scope>
+				
+				<!-- Do not skip creation of test jar for priming (in oozie-package profile) -->
+				<oozie.package.skip.test.jar>false</oozie.package.skip.test.jar>
+				
+				<!-- Switch to integration test properties files -->
+				<default.iis.properties.file>classpath:integration-test-default.properties</default.iis.properties.file>
+        		<user.iis.properties.file>${user.home}/.iis/integration-test.properties</user.iis.properties.file>
 			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>attach-test-resources-compile</id>
-								<phase>test-compile</phase>
-								<goals>
-									<goal>testCompile</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>attach-test-resources-package</id>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>test-jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 		
 		<profile>
@@ -174,6 +147,25 @@
 						</executions>
 					</plugin>
 					
+					<!-- Plugin originally defined in attach-test-resources
+						It was moved here to ensure that it will execute before priming -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-test-resources-package</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>test-jar</goal>
+								</goals>
+								<configuration>
+								<skip>${oozie.package.skip.test.jar}</skip>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					
 					<plugin>
 		                <groupId>eu.dnetlib.primer</groupId>
 		                <artifactId>primer-maven-plugin</artifactId>
@@ -212,13 +204,13 @@
 						<executions>
 							<execution>
 								<id>read-default-properties</id>
-								<phase>initialize</phase>
+								<phase>prepare-package</phase>
 								<goals>
 									<goal>read-project-properties</goal>
 								</goals>
 								<configuration>
 									<locations>
-										<param>classpath:project-default.properties</param>
+										<location>classpath:project-default.properties</location>
 									</locations>
 									<quiet>true</quiet>
 								</configuration>
@@ -272,6 +264,7 @@
 										 -->
 										<param>${project.build.directory}/${primed.dir}/job.properties</param>
 										<param>job-override.properties</param>
+										
 									</includePropertyKeysFromFiles>
 								</configuration>
 							</execution>
@@ -614,6 +607,7 @@
 					      </goals>
 					      <configuration>
 						    <executable>sh</executable>
+						    <outputFile>${oozie.execution.log.file.location}</outputFile>
 						    <arguments>
 						    	<argument>${project.build.directory}/local-upload/run_workflow.sh</argument>
 						    	<argument>${project.build.directory}/local-upload</argument>
@@ -762,11 +756,49 @@
 				<output.dir.name>integration-test</output.dir.name>
 			</properties>
 		</profile>		
+
 	</profiles>
 	
+	
 	<build>
+
 		<plugins>
+			<plugin>
+				<groupId>org.kuali.maven.plugins</groupId>
+				<artifactId>properties-maven-plugin</artifactId>
+				<version>1.3.2</version>
+				<dependencies>
+					<dependency>
+						<groupId>eu.dnetlib.iis</groupId>
+						<artifactId>iis-core</artifactId>
+						<version>${project.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>eu.dnetlib.iis</groupId>
+						<artifactId>iis-core</artifactId>
+						<version>${project.version}</version>
+						<type>test-jar</type>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<id>reading-iis-properties</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>read-project-properties</goal>
+						</goals>
+						<configuration>
+							<locations>
+								<location>${default.iis.properties.file}</location>
+								<location>${user.iis.properties.file}</location>
+							</locations>
+							<quiet>true</quiet>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
+		
 		<pluginManagement>
 			<plugins>
 				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
