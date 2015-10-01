@@ -89,10 +89,12 @@
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-cli</artifactId>
         </dependency>
+        <!-- not available in CDH5 
         <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-builtins</artifactId>
         </dependency>
+         -->
     </dependencies>
       
 </project>

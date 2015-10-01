@@ -34,15 +34,6 @@
             <version>${project.version}</version>
         </dependency>
         
-        <!-- replacing hacked pig-avrostorage with original pig -->
-        <dependency>
-            <groupId>eu.dnetlib.iis</groupId>
-            <artifactId>iis-3rdparty-pig-avrostorage</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
-        </dependency>
-        
-        
         <!-- required after introducing 'provided' scope for hadoop libs -->
         <dependency>
 			<groupId>org.apache.hadoop</groupId>
@@ -99,14 +90,11 @@
 			<!-- this lib cannot be set to provided -->
 		</dependency>
 
-		
-		<!-- FIXME change to version bound with CDH5 when upgrading cluster -->
-		<!--
 		<dependency>
 			<groupId>org.apache.pig</groupId>
 			<artifactId>piggybank</artifactId>
 		</dependency>
-		-->
+
 		<dependency>
 		  <groupId>com.linkedin.datafu</groupId>
 		  <artifactId>datafu</artifactId>

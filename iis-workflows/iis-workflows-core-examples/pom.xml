@@ -59,15 +59,6 @@
         </dependency>
         
         <dependency>
-            <groupId>eu.dnetlib.iis</groupId>
-            <artifactId>iis-3rdparty-pig-avrostorage</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-            <type>jar</type>
-        </dependency>
-        
-        
-        <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-common</artifactId>
         </dependency>
@@ -124,6 +115,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+			<groupId>org.apache.pig</groupId>
+			<artifactId>piggybank</artifactId>
+		</dependency>
+        <dependency>
             <groupId>org.apache.pig</groupId>
             <artifactId>pigunit</artifactId>
         </dependency>
@@ -165,12 +160,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.cloudera.cdh</groupId>
-            <artifactId>hive-root</artifactId>
-            <type>pom</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-cli</artifactId>
             <scope>test</scope>
@@ -180,11 +169,13 @@
             <artifactId>hive-exec</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- not available in CDH5
         <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-builtins</artifactId>
             <scope>test</scope>
         </dependency>
+        -->
     </dependencies>
     <build>
         <plugins>

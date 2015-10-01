@@ -64,8 +64,13 @@ public class DatasetDBBuilder implements Process {
 		Map<String, Path> output = portBindings.getOutput();
 		FileSystem fs = FileSystem.get(conf);
 		
+		String targetDbLocation = System.getProperty("java.io.tmpdir") + 
+				File.separatorChar + "datasets.db";
+		File targetDbFile = new File(targetDbLocation);
+		targetDbFile.setWritable(true);
+		
         java.lang.Process process = Runtime.getRuntime().exec(
-                "python scripts/madis/mexec.py -w scripts/datasets.db -f scripts/builddatacitedb.sql");
+                "python scripts/madis/mexec.py -w " + targetDbLocation + " -f scripts/builddatacitedb.sql");
         BufferedOutputStream stdin = new BufferedOutputStream(process.getOutputStream());
         InputStream errorStream = process.getErrorStream();
     
@@ -109,7 +114,7 @@ public class DatasetDBBuilder implements Process {
         InputStream inStream = null;
         OutputStream outStream = null;
         try {
-            inStream = new FileInputStream(new File("scripts/datasets.db"));
+            inStream = new FileInputStream(targetDbFile);
             outStream = fs.create(new FileSystemPath(fs, output.get(datasetDBPort)).getPath());
             IOUtils.copyStream(inStream, outStream);  
         } finally {

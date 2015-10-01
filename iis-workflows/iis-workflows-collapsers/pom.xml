@@ -35,16 +35,6 @@
             <version>${project.version}</version>
         </dependency>
         
-        
-        <!-- replacing hacked pig-avrostorage with original pig -->
-        <dependency>
-            <groupId>eu.dnetlib.iis</groupId>
-            <artifactId>iis-3rdparty-pig-avrostorage</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
-        </dependency>
-        
-        
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
@@ -111,13 +101,10 @@
 			<!-- this lib cannot be set to provided -->
 		</dependency>
 		
-		<!-- FIXME change to version bound with CDH5 when upgrading cluster -->
-		<!--
 		<dependency>
 			<groupId>org.apache.pig</groupId>
 			<artifactId>piggybank</artifactId>
 		</dependency>
-		-->
 		
 		<!-- Needed to run Pig jobs } -->
         <dependency>

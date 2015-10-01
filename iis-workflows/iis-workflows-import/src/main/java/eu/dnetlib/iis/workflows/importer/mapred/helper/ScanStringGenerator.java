@@ -1,7 +1,5 @@
 package eu.dnetlib.iis.workflows.importer.mapred.helper;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -19,6 +17,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.PrefixFilter;
+import org.apache.hadoop.hbase.protobuf.ProtobufUtil;
+import org.apache.hadoop.hbase.protobuf.generated.ClientProtos;
 import org.apache.hadoop.hbase.util.Base64;
 
 /**
@@ -98,10 +98,14 @@ public class ScanStringGenerator {
     }
 
     private static String convertScanToString(Scan scan) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        DataOutputStream dos = new DataOutputStream(out);
-        scan.write(dos);
-        return Base64.encodeBytes(out.toByteArray());
+//    	CDH4 version
+//      ByteArrayOutputStream out = new ByteArrayOutputStream();
+//      DataOutputStream dos = new DataOutputStream(out);
+//      scan.write(dos);
+//    	CDH5 version: HBase talks with protobufs
+//    	based on TableMapReduceUtil#convertScanToString()
+    	ClientProtos.Scan out = ProtobufUtil.toScan(scan);
+    	return Base64.encodeBytes(out.toByteArray());
     }
     
     /**

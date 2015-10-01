@@ -32,13 +32,16 @@
             <artifactId>iis-common</artifactId>
             <version>${project.version}</version>
         </dependency>
-   
 	
 		<dependency>
 			<groupId>org.apache.hbase</groupId>
-			<artifactId>hbase</artifactId>
-			<scope>provided</scope>
+			<artifactId>hbase-client</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.hbase</groupId>
+			<artifactId>hbase-server</artifactId>
+		</dependency>
+		
 		<!-- required after introducing 'provided' scope for hadoop libs -->
 		<dependency>
             <groupId>org.apache.hadoop</groupId>

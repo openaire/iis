@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -64,8 +65,14 @@ public class ProjectDBBuilder implements Process {
 		Map<String, Path> output = portBindings.getOutput();
 		FileSystem fs = FileSystem.get(conf);
 		
+		String targetDbLocation = System.getProperty("java.io.tmpdir") + 
+				File.separatorChar + "base_projects.db";
+		File targetDbFile = new File(targetDbLocation);
+		FileUtils.copyFile(	new File("scripts/base_projects.db"), targetDbFile);
+		targetDbFile.setWritable(true);
+		
         java.lang.Process process = Runtime.getRuntime().exec(
-                "python scripts/madis/mexec.py -d scripts/base_projects.db -f scripts/buildprojectdb.sql");
+                "python scripts/madis/mexec.py -d " + targetDbLocation + " -f scripts/buildprojectdb.sql");
         BufferedOutputStream stdin = new BufferedOutputStream(process.getOutputStream());
         InputStream errorStream = process.getErrorStream();
     
@@ -107,7 +114,7 @@ public class ProjectDBBuilder implements Process {
         InputStream inStream = null;
         OutputStream outStream = null;
         try {
-            inStream = new FileInputStream(new File("scripts/base_projects.db"));
+            inStream = new FileInputStream(targetDbFile);
             outStream = fs.create(new FileSystemPath(fs, output.get(projectDBPort)).getPath());
             IOUtils.copyStream(inStream, outStream);  
         } finally {

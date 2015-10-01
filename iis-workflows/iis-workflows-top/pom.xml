@@ -219,8 +219,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hbase</groupId>
-			<artifactId>hbase</artifactId>
-			<scope>provided</scope>
+			<artifactId>hbase-client</artifactId>
 			<exclusions>
 				<exclusion>
 					<groupId>org.mortbay.jetty</groupId>

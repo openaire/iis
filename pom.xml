@@ -25,7 +25,6 @@
 	   <module>iis-3rdparty-avro-json</module>
 	   <module>iis-3rdparty-avrojsoncoders</module>
 	   <module>iis-3rdparty-madis</module>
-	   <module>iis-3rdparty-pig-avrostorage</module>
 	   <module>iis-assembly-resources</module>
 	   <module>iis-common</module>
 	   <module>iis-core</module>
@@ -157,9 +156,39 @@
 			<!-- Hadoop dependencies -->
             <dependency>
                 <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-yarn-common</artifactId>
+                <version>${iis.hadoop.common.version}</version>
+                <!-- does not seem to be provided on CDH5 cluster
+                <scope>provided</scope>
+                 -->
+                <exclusions>
+                    <exclusion>
+                        <artifactId>jdk.tools</artifactId>
+                        <groupId>jdk.tools</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
                 <artifactId>hadoop-common</artifactId>
                 <version>${iis.hadoop.common.version}</version>
+                <!-- does not seem to be provided on cluster
                 <scope>provided</scope>
+                 -->
+                <exclusions>
+                    <exclusion>
+                        <artifactId>jdk.tools</artifactId>
+                        <groupId>jdk.tools</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-yarn-common</artifactId>
+                <version>${iis.hadoop.common.version}</version>
+                <scope>test</scope>
+                <type>test-jar</type>
                 <exclusions>
                     <exclusion>
                         <artifactId>jdk.tools</artifactId>
@@ -267,16 +296,11 @@
 				<artifactId>pig</artifactId>
 				<version>${iis.pig.version}</version>
 			</dependency>
-			
-			<!-- FIXME change to version bound with CDH5 when upgrading cluster -->
-			<!--
 			<dependency>
 				<groupId>org.apache.pig</groupId>
 				<artifactId>piggybank</artifactId>
 				<version>${iis.pig.version}</version>
 			</dependency>
-			-->
-			
 			<dependency>
 				<groupId>org.apache.oozie</groupId>
 				<artifactId>oozie-sharelib-pig</artifactId>
@@ -288,8 +312,8 @@
 		    	<artifactId>pigunit</artifactId>
 		    	<version>${iis.pig.version}</version>
 		    </dependency>
-			
-			
+		    
+		    
 			<!-- Hadoop streaming -->
 			<dependency>
 				<groupId>org.apache.hadoop</groupId>
@@ -328,13 +352,13 @@
 				<artifactId>hive-cli</artifactId>
 				<version>${iis.hive.version}</version>
 			</dependency>
-			
+			<!-- not available in CDH5
 			<dependency>
 				<groupId>org.apache.hive</groupId>
 				<artifactId>hive-builtins</artifactId>
 				<version>${iis.hive.version}</version>
 			</dependency>
-			
+			-->
 			<dependency>
 				<groupId>com.cloudera.cdh</groupId>
 				<artifactId>hive-root</artifactId>
@@ -345,11 +369,22 @@
 			
 			<dependency>
 				<groupId>org.apache.hbase</groupId>
-				<artifactId>hbase</artifactId>
+				<artifactId>hbase-client</artifactId>
 				<version>${iis.hbase.version}</version>
+				<!-- doesn't seem to be provided on CDH5 cluster-->
+				<!-- 
 				<scope>provided</scope>
+				-->
 			</dependency>
-			
+			<dependency>
+	            <groupId>org.apache.hbase</groupId>
+	            <artifactId>hbase-server</artifactId>
+	            <version>${iis.hbase.version}</version>
+	            <!-- doesn't seem to be provided on CDH5 cluster -->
+				<!-- 
+				<scope>provided</scope>
+				-->
+			</dependency>
 			
 			<!-- Cermine dependencies -->
 			<dependency>
@@ -626,8 +661,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
 
@@ -829,22 +864,22 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>[4.0.0.RELEASE]</spring.version>
 
-		<iis.cdh.version>cdh4.3.1</iis.cdh.version>
-		<iis.hbase.version>0.94.6-${iis.cdh.version}</iis.hbase.version>
-		<iis.oozie.version>3.3.2-${iis.cdh.version}</iis.oozie.version>
-		<iis.pig.version>0.11.0-${iis.cdh.version}</iis.pig.version>
-		<iis.hive.version>0.10.0-${iis.cdh.version}</iis.hive.version>
+		<iis.cdh.version>cdh5.4.2</iis.cdh.version>
+		<iis.hbase.version>1.0.0-${iis.cdh.version}</iis.hbase.version>
+		<iis.oozie.version>4.1.0-${iis.cdh.version}</iis.oozie.version>
+		<iis.pig.version>0.12.0-${iis.cdh.version}</iis.pig.version>
+		<iis.hive.version>1.1.0-${iis.cdh.version}</iis.hive.version>
 		<iis.hadoop.streaming.version>${iis.hadoop.mr1.version}</iis.hadoop.streaming.version>
-		<iis.avro.version>1.7.4</iis.avro.version>
+		<iis.avro.version>1.7.6-${iis.cdh.version}</iis.avro.version>
 		<!-- shared IIS properties -->
-		<iis.hadoop.version>2.0.0-${iis.cdh.version}</iis.hadoop.version>
-		<iis.hadoop.mr1.version>2.0.0-mr1-${iis.cdh.version}</iis.hadoop.mr1.version>
+		<iis.hadoop.version>2.6.0-${iis.cdh.version}</iis.hadoop.version>
+		<iis.hadoop.mr1.version>2.6.0-mr1-${iis.cdh.version}</iis.hadoop.mr1.version>
 		<iis.hadoop.common.version>${iis.hadoop.version}</iis.hadoop.common.version>
 		<iis.hadoop.core.version>${iis.hadoop.mr1.version}</iis.hadoop.core.version>
 		<iis.hadoop.hdfs.version>${iis.hadoop.version}</iis.hadoop.hdfs.version>
 		<iis.hadoop.test.version>${iis.hadoop.mr1.version}</iis.hadoop.test.version>
 		
-		<iis.coansys.version>1.8</iis.coansys.version>
+		<iis.coansys.version>1.9</iis.coansys.version>
 		<scala.version>2.10.3</scala.version>
 	</properties>
 </project>

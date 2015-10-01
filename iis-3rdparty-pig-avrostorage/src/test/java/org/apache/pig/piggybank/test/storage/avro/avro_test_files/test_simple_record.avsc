@@ -1,8 +1,0 @@
-{
-    "type": "record",
-    "name": "simple",
-    "fields": [ 
-        {"name": "member_id", "type": "int"},
-        {"name": "count", "type": "long"}
-        ]
-}
