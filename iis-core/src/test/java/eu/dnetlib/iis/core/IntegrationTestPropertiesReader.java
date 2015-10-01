@@ -12,8 +12,8 @@ import com.google.common.base.Preconditions;
 
 /**
  * Reader of properties for integration tests.<br/>
- * It uses file {@literal classpath:integration-test-default.properties} as source of properties 
- * and allow to override them in ${user.home}/.iis/integration-test.properties
+ * It uses file {@literal classpath:integration-test-default.properties} as a source of properties 
+ * and allows for overriding them in ${user.home}/.iis/integration-test.properties
  * 
  * @author madryk
  *
@@ -27,6 +27,8 @@ public class IntegrationTestPropertiesReader {
 	private Properties integrationTestProperties = new Properties();
 	
 	
+	//------------------------ CONSTRUCTORS --------------------------
+	
 	/**
 	 * Default constructor. It handles reading properties from files.
 	 */
@@ -37,6 +39,9 @@ public class IntegrationTestPropertiesReader {
 	    integrationTestProperties.putAll(defaultProperties);
 	    integrationTestProperties.putAll(userProperties);
 	}
+	
+	
+	//------------------------ LOGIC --------------------------
 	
 	/**
 	 * Returns value of property with key provided as argument
@@ -49,45 +54,47 @@ public class IntegrationTestPropertiesReader {
 	}
 	
 	
+	//------------------------ PRIVATE --------------------------
+	
 	private Properties readDefaultProperties() {
 		Properties defaultProperties = new Properties();
-		
-	    InputStream inputStream = null;
-	    try {
-	    	
-	        inputStream = IntegrationTestPropertiesReader.class.getResourceAsStream(DEFAULT_PROPERTIES_CLASSPATH);
-	        defaultProperties.load(inputStream);
-	        inputStream.close();
-	    } catch (IOException e) {
-	    	throw new RuntimeException(e);
-	    } finally {
-	    	IOUtils.closeQuietly(inputStream);
-	    }
-	    
-	    return defaultProperties;
+
+		InputStream inputStream = null;
+		try {
+
+			inputStream = IntegrationTestPropertiesReader.class.getResourceAsStream(DEFAULT_PROPERTIES_CLASSPATH);
+			defaultProperties.load(inputStream);
+			inputStream.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} finally {
+			IOUtils.closeQuietly(inputStream);
+		}
+
+		return defaultProperties;
 	}
 	
 	private Properties readUserProperties() {
-		Properties userOverridenProperties = new Properties();
-		
+		Properties userProperties = new Properties();
+
 		InputStream inputStream = null;
-	    try {
-	    	File userPropertiesFile = new File(USER_PROPERTIES_PATH);
-	    	
-	    	if (!userPropertiesFile.exists()) {
-	    		return userOverridenProperties;
-	    	}
-	    	
-	        inputStream = new FileInputStream(userPropertiesFile);
-	        userOverridenProperties.load(inputStream);
-	        inputStream.close();
-	    } catch (IOException e) {
-	    	throw new RuntimeException(e);
-	    } finally {
-	    	IOUtils.closeQuietly(inputStream);
-	    }
-	    
-		return userOverridenProperties;
+		try {
+			File userPropertiesFile = new File(USER_PROPERTIES_PATH);
+
+			if (!userPropertiesFile.exists()) {
+				return userProperties;
+			}
+
+			inputStream = new FileInputStream(userPropertiesFile);
+			userProperties.load(inputStream);
+			inputStream.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} finally {
+			IOUtils.closeQuietly(inputStream);
+		}
+
+		return userProperties;
 	}
 	
 }

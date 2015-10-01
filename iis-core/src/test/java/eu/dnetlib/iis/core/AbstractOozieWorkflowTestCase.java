@@ -71,26 +71,26 @@ public abstract class AbstractOozieWorkflowTestCase {
 	}
 	
 	/**
-	 * Tests workflow located under {@literal workflowLocation} parameter.
+	 * Tests workflow located under {@literal workflowPath} parameter.
 	 * Internally uses {@link #testWorkflow(String, OozieWorkflowTestConfiguration)}
 	 * with default {@link OozieWorkflowTestConfiguration}
 	 */
-	protected void testWorkflow(String workflowLocation) {
-		testWorkflow(workflowLocation, new OozieWorkflowTestConfiguration());
+	protected void testWorkflow(String workflowPath) {
+		testWorkflow(workflowPath, new OozieWorkflowTestConfiguration());
 	}
 	
 	/**
-	 * Tests workflow located under {@literal workflowLocation} parameter.
+	 * Tests workflow located under {@literal workflowPath} parameter.
 	 * 
-	 * @param workflowLocation - Folder that contains workflow data.
+	 * @param workflowPath - Folder that contains workflow data.
 	 *  	It must contain file {@literal oozie_app/workflow.xml} with workflow definition.
 	 * @param configuration - some additional test pass criteria
-	 *  	(for example timeout - workflow must finish its execution before specified amount of time, 
-	 *   	otherwise test will automatically fail)
+	 *  	(for example timeout - a workflow must finish its execution before specified amount of time, 
+	 *   	otherwise the test will automatically fail)
 	 */
-	protected void testWorkflow(String workflowLocation, OozieWorkflowTestConfiguration configuration) {
+	protected void testWorkflow(String workflowPath, OozieWorkflowTestConfiguration configuration) {
 		
-		Process p = runMavenTestWorkflow(workflowLocation);
+		Process p = runMavenTestWorkflow(workflowPath);
 
 		logMavenOutput(p);
 		
@@ -102,6 +102,8 @@ public abstract class AbstractOozieWorkflowTestCase {
 		assertJobStatus(jobId, jobStatus);
 	}
 	
+	
+	//------------------------ PRIVATE --------------------------
 	
 	private Process runMavenTestWorkflow(String workflowSource) {
 		
@@ -183,14 +185,14 @@ public abstract class AbstractOozieWorkflowTestCase {
 	}
 	
 	private Status waitForJobFinish(String jobId, long timeoutInSeconds) {
-		
+
 		long timeout = 1000L * timeoutInSeconds;
-    	long checkInterval = 1000L * 1;
-    	long startTime = System.currentTimeMillis();
-    	List<Status> jobFinishedStatuses = Lists.newArrayList(Status.SUCCEEDED, Status.FAILED, Status.KILLED, Status.SUSPENDED); 
-		
-    	while ((System.currentTimeMillis()-startTime)<timeout) {
-    		Status status;
+		long checkInterval = 1000L * 1;
+		long startTime = System.currentTimeMillis();
+		List<Status> jobFinishedStatuses = Lists.newArrayList(Status.SUCCEEDED, Status.FAILED, Status.KILLED, Status.SUSPENDED);
+
+		while ((System.currentTimeMillis()-startTime)<timeout) {
+			Status status;
 			try {
 				Thread.sleep(checkInterval);
 				status = oozieClient.getJobInfo(jobId).getStatus();
@@ -199,35 +201,36 @@ public abstract class AbstractOozieWorkflowTestCase {
 			} catch (InterruptedException e) {
 				throw new RuntimeException(e);
 			}
-			
+
 			if (jobFinishedStatuses.contains(status)) {
 				return status;
 			}
-    		
+
 			System.out.println("Job " + jobId + " is still running with status: " + status + " [" + (System.currentTimeMillis()-startTime) + " ms]");
-//    		log.debug("Job {} is still running with status: {} [{} ms]", new Object[] { jobId, status, System.currentTimeMillis()-startTime });
-    	}
-    	try {
-			log.info(oozieClient.getJobLog(jobId));
-		} catch (OozieClientException e) {
-			log.warn("Unable to check job log");
+			// log.debug("Job {} is still running with status: {} [{} ms]", new Object[] { jobId, status, System.currentTimeMillis()-startTime });
 		}
-    	Assert.fail("Execution of job " + jobId + " exceeded waiting time limit");
-    	
-    	return null;
+		
+		printOozieJobLog(jobId);
+		Assert.fail("Execution of job " + jobId + " exceeded waiting time limit");
+
+		return null;
 	}
 	
 	private void assertJobStatus(String jobId, Status status) {
 		if (status == Status.FAILED || status == Status.KILLED || status == Status.SUSPENDED) {
 			
-			try {
-				log.error(oozieClient.getJobLog(jobId));
-			} catch (OozieClientException e) {
-				log.warn("Unable to check oozie job log");
-			}
+			printOozieJobLog(jobId);
 			Assert.fail("Job has finished with status: " + status);
 		}
 		
 		log.info("Job has finished sucessfully");
+	}
+	
+	private void printOozieJobLog(String jobId) {
+		try {
+			log.info(oozieClient.getJobLog(jobId));
+		} catch (OozieClientException e) {
+			log.warn("Unable to check oozie job log");
+		}
 	}
 }
