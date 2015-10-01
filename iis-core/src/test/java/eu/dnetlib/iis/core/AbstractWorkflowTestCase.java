@@ -64,12 +64,12 @@ public abstract class AbstractWorkflowTestCase extends MiniOozieTestCase {
 	}
    
 	/**
-	 * See {@link #runWorkflow(String resourcesOozieAppLocalPath, WorkflowConfiguration config)}
+	 * See {@link #runWorkflow(String resourcesOozieAppLocalPath, OozieWorkflowTestConfiguration config)}
 	 * method for description of parameters
 	 */
 	public RemoteOozieAppManager runWorkflow(String resourcesOozieAppLocalPath) 
 			throws IOException, OozieClientException{
-		return runWorkflow(resourcesOozieAppLocalPath, new WorkflowConfiguration());
+		return runWorkflow(resourcesOozieAppLocalPath, new OozieWorkflowTestConfiguration());
 	}
 	
 	/**
@@ -79,7 +79,7 @@ public abstract class AbstractWorkflowTestCase extends MiniOozieTestCase {
      * @param config optional configuration of the workflow
 	 */
 	public RemoteOozieAppManager runWorkflow(
-			String resourcesOozieAppLocalPath, WorkflowConfiguration config)
+			String resourcesOozieAppLocalPath, OozieWorkflowTestConfiguration config)
 					throws IOException, OozieClientException{
 		return runWorkflow(resourcesOozieAppLocalPath, config, false);
 	}
@@ -92,7 +92,7 @@ public abstract class AbstractWorkflowTestCase extends MiniOozieTestCase {
      * @param skipPredefinedJobProperties skips reading predefined job.properties if any set
 	 */
 	public RemoteOozieAppManager runWorkflow(
-			String resourcesOozieAppLocalPath, WorkflowConfiguration config,
+			String resourcesOozieAppLocalPath, OozieWorkflowTestConfiguration config,
 			boolean skipPredefinedJobProperties)
 					throws IOException, OozieClientException{
 //		File oozieAppLocalPath = 
@@ -144,19 +144,19 @@ public abstract class AbstractWorkflowTestCase extends MiniOozieTestCase {
 	public void runWorkflow(Path oozieAppPath, Path workingDir) 
 					throws OozieClientException, IOException{
 		runWorkflow(oozieAppPath, workingDir, 
-				WorkflowConfiguration.defaultJobProperties);
+				OozieWorkflowTestConfiguration.defaultJobProperties);
 	}
 	
 	/**
 	 * Run the workflow
-	 * @deprecated Replaced by {@link #runWorkflow(String, WorkflowConfiguration)}
+	 * @deprecated Replaced by {@link #runWorkflow(String, OozieWorkflowTestConfiguration)}
 	 */
 	@Deprecated
 	public void runWorkflow(Path oozieAppPath, Path workingDir,
 			Properties jobProperties) 
 					throws OozieClientException, IOException{
-		WorkflowConfiguration config = 
-				new WorkflowConfiguration().setJobProps(jobProperties);
+		OozieWorkflowTestConfiguration config = 
+				new OozieWorkflowTestConfiguration().setJobProps(jobProperties);
 		Properties props = createWorkflowConfiguration(
 				createJobConf(), getTestUser(),	oozieAppPath, 
 				workingDir, null, config.getJobProps());

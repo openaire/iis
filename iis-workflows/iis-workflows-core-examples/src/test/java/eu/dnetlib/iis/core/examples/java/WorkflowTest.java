@@ -13,9 +13,9 @@ import org.junit.experimental.categories.Category;
 
 import eu.dnetlib.iis.IntegrationTest;
 import eu.dnetlib.iis.core.AbstractWorkflowTestCase;
+import eu.dnetlib.iis.core.OozieWorkflowTestConfiguration;
 import eu.dnetlib.iis.core.RemoteOozieAppManager;
 import eu.dnetlib.iis.core.TestsIOUtils;
-import eu.dnetlib.iis.core.WorkflowConfiguration;
 import eu.dnetlib.iis.core.examples.StandardDataStoreExamples;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.DocumentWithAuthors;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person;
@@ -41,7 +41,7 @@ public class WorkflowTest extends AbstractWorkflowTestCase {
 //		is set explicitly to run only on Hadoop installed on localhost.
 		RemoteOozieAppManager appManager = runWorkflow(
 				"eu/dnetlib/iis/core/examples/java/line_by_line_copier/oozie_app", 
-				new WorkflowConfiguration(), true);
+				new OozieWorkflowTestConfiguration(), true);
 		
 		File localDir = new File(getTestCaseDir());
 		final File actualDocument = new File(localDir, "doc_copy.csv");
@@ -84,7 +84,7 @@ public class WorkflowTest extends AbstractWorkflowTestCase {
 	public void testJsonBasedProducerAndConsumerFailing() 
 			throws IOException, OozieClientException{
 		runWorkflow("eu/dnetlib/iis/core/examples/java/json_based_producer_and_consumer-failing/oozie_app",
-				new WorkflowConfiguration().setExpectedFinishStatus(WorkflowJob.Status.KILLED));	
+				new OozieWorkflowTestConfiguration().setExpectedFinishStatus(WorkflowJob.Status.KILLED));	
 	}
 	
 	@Test
