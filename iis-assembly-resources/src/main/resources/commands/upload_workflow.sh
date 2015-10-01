@@ -2,7 +2,7 @@
 set -x ## print every executed command
 
 
-if [ $# == "0" ] ; then
+if [ $# = 0 ] ; then
     target_dir_root=`pwd`'/${oozieAppDir}'
 else
     target_dir_root=`readlink -f $1`'/${oozieAppDir}'
