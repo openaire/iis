@@ -425,6 +425,26 @@
                     	<groupId>org.apache.hadoop</groupId>
                     	<artifactId>hadoop-core</artifactId>
                 	</exclusion>
+                	<exclusion>
+                    	<groupId>org.apache.hadoop</groupId>
+                    	<artifactId>hadoop-yarn-api</artifactId>
+                	</exclusion>
+                	<exclusion>
+                    	<groupId>org.apache.hadoop</groupId>
+                    	<artifactId>hadoop-yarn-client</artifactId>
+                	</exclusion>
+                	<exclusion>
+                    	<groupId>org.apache.hadoop</groupId>
+                    	<artifactId>hadoop-mapreduce-client-app</artifactId>
+                	</exclusion>
+                	<exclusion>
+                    	<groupId>org.apache.hadoop</groupId>
+                    	<artifactId>hadoop-mapreduce-client-common</artifactId>
+                	</exclusion>
+                	<exclusion>
+                    	<groupId>org.apache.hadoop</groupId>
+                    	<artifactId>hadoop-mapreduce-client-core</artifactId>
+                	</exclusion>
             	</exclusions>
         	</dependency>
         	
@@ -434,6 +454,28 @@
             	<version>${iis.coansys.version}</version>
             	<type>tar.gz</type>
             	<classifier>oozie-job</classifier>
+            	<exclusions>
+            		<exclusion>
+                    	<groupId>org.apache.hadoop</groupId>
+                    	<artifactId>hadoop-client</artifactId>
+                	</exclusion>
+                	<exclusion>
+                    	<groupId>org.apache.hadoop</groupId>
+                    	<artifactId>hadoop-yarn-client</artifactId>
+                	</exclusion>
+                	<exclusion>
+                    	<groupId>org.apache.hadoop</groupId>
+                    	<artifactId>hadoop-mapreduce-client-app</artifactId>
+                	</exclusion>
+                	<exclusion>
+                    	<groupId>org.apache.hadoop</groupId>
+                    	<artifactId>hadoop-mapreduce-client-common</artifactId>
+                	</exclusion>
+                	<exclusion>
+                    	<groupId>org.apache.hadoop</groupId>
+                    	<artifactId>hadoop-mapreduce-client-core</artifactId>
+                	</exclusion>
+                </exclusions>
         	</dependency>
         	
         	<dependency>
@@ -442,6 +484,37 @@
             	<version>${iis.coansys.version}</version>
             	<classifier>oozie-job</classifier>
             	<type>tar.gz</type>
+            	<exclusions>
+                	<exclusion>
+                    	<groupId>org.apache.avro</groupId>
+                    	<artifactId>avro-mapred</artifactId>
+                	</exclusion>
+                	<!-- excluding all hadoop libs which are 'provided' by environment -->
+                	<exclusion>
+                    	<groupId>org.apache.hadoop</groupId>
+                    	<artifactId>hadoop-client</artifactId>
+                	</exclusion>
+                	<exclusion>
+                    	<groupId>org.apache.hadoop</groupId>
+                    	<artifactId>hadoop-yarn-api</artifactId>
+                	</exclusion>
+                	<exclusion>
+                    	<groupId>org.apache.hadoop</groupId>
+                    	<artifactId>hadoop-yarn-client</artifactId>
+                	</exclusion>
+                	<exclusion>
+                    	<groupId>org.apache.hadoop</groupId>
+                    	<artifactId>hadoop-mapreduce-client-app</artifactId>
+                	</exclusion>
+                	<exclusion>
+                    	<groupId>org.apache.hadoop</groupId>
+                    	<artifactId>hadoop-mapreduce-client-common</artifactId>
+                	</exclusion>
+                	<exclusion>
+                    	<groupId>org.apache.hadoop</groupId>
+                    	<artifactId>hadoop-mapreduce-client-core</artifactId>
+                	</exclusion>
+            	</exclusions>
         	</dependency>
         	
         	
@@ -661,8 +734,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
 
@@ -871,7 +944,7 @@
 		<iis.hive.version>1.1.0-${iis.cdh.version}</iis.hive.version>
 		<iis.hadoop.streaming.version>${iis.hadoop.mr1.version}</iis.hadoop.streaming.version>
 		<iis.avro.version>1.7.6-${iis.cdh.version}</iis.avro.version>
-		<!-- shared IIS properties -->
+		
 		<iis.hadoop.version>2.6.0-${iis.cdh.version}</iis.hadoop.version>
 		<iis.hadoop.mr1.version>2.6.0-mr1-${iis.cdh.version}</iis.hadoop.mr1.version>
 		<iis.hadoop.common.version>${iis.hadoop.version}</iis.hadoop.common.version>
