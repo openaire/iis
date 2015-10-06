@@ -24,7 +24,7 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	@Test 
 	public void testBasic() {
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addOutputAvroDataStoreToInclude("cloner2/person");
+		conf.addExpectedOutputAvroDataStore("cloner2/person");
 		
 		WorkflowTestResult workflowTestResult = 
 				testWorkflow("eu/dnetlib/iis/core/examples/subworkflow/cloners", conf);

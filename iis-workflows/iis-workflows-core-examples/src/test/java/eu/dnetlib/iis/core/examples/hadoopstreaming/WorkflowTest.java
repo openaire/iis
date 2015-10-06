@@ -35,7 +35,7 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	@Test
 	public void testClonerWithoutReducerWithExplicitSchemaFile() throws Exception{
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addOutputAvroDataStoreToInclude("cloner/person");
+		conf.addExpectedOutputAvroDataStore("cloner/person");
 		
 		WorkflowTestResult workflowTestResult = 
 				testWorkflow("eu/dnetlib/iis/core/examples/hadoopstreaming/cloner_without_reducer_with_explicit_schema_file", conf);
@@ -50,7 +50,7 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	@Test
 	public void testClonerWithoutReducerWithSubworkflow() throws Exception{
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addOutputAvroDataStoreToInclude("my_subworkflow/person");
+		conf.addExpectedOutputAvroDataStore("my_subworkflow/person");
 		
 		WorkflowTestResult workflowTestResult = 
 				testWorkflow("eu/dnetlib/iis/core/examples/hadoopstreaming/cloner_without_reducer_with_subworkflow", conf);
@@ -75,7 +75,7 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	@Test
 	public void testClonerWithUnicodeEscapeCodes() throws Exception{
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addOutputAvroDataStoreToInclude("python_cloner/document_text");
+		conf.addExpectedOutputAvroDataStore("python_cloner/document_text");
 		
 		WorkflowTestResult workflowTestResult = 
 				testWorkflow("eu/dnetlib/iis/core/examples/hadoopstreaming/cloner_with_unicode_escape_codes", conf);

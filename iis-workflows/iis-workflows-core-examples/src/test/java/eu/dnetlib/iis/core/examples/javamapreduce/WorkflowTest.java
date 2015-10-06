@@ -26,7 +26,7 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	@Test
 	public void testClonerWithExplicitJSONSchema() {
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addOutputAvroDataStoreToInclude("cloner/person");
+		conf.addExpectedOutputAvroDataStore("cloner/person");
 		
 		WorkflowTestResult workflowTestResult = 
 				testWorkflow("eu/dnetlib/iis/core/examples/javamapreduce/cloner_with_explicit_schema", conf);
@@ -41,7 +41,7 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	@Test
 	public void testCloner() {
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addOutputAvroDataStoreToInclude("cloner/person");
+		conf.addExpectedOutputAvroDataStore("cloner/person");
 		
 		WorkflowTestResult workflowTestResult = testWorkflow("eu/dnetlib/iis/core/examples/javamapreduce/cloner", conf);
 		
@@ -55,7 +55,7 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	@Test
 	public void testReverseRelation() {
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addOutputAvroDataStoreToInclude("mr_reverse_relation/person");
+		conf.addExpectedOutputAvroDataStore("mr_reverse_relation/person");
 		
 		WorkflowTestResult workflowTestResult = 
 				testWorkflow("eu/dnetlib/iis/core/examples/javamapreduce/reverse_relation", conf);
@@ -71,7 +71,7 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	@Test
 	public void testClonerWithoutReducer() {
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addOutputAvroDataStoreToInclude("cloner/person");
+		conf.addExpectedOutputAvroDataStore("cloner/person");
 		
 		WorkflowTestResult workflowTestResult = 
 				testWorkflow("eu/dnetlib/iis/core/examples/javamapreduce/cloner_without_reducer", conf);
@@ -86,8 +86,8 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	@Test 
 	public void testClonerMultipleOutput() {
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addOutputAvroDataStoreToInclude("cloner/person");
-		conf.addOutputAvroDataStoreToInclude("mr_cloner/age");
+		conf.addExpectedOutputAvroDataStore("cloner/person");
+		conf.addExpectedOutputAvroDataStore("mr_cloner/age");
 		
 		WorkflowTestResult workflowTestResult = 
 				testWorkflow("eu/dnetlib/iis/core/examples/javamapreduce/cloner_with_multiple_output", conf);
@@ -106,8 +106,8 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	@Test 
 	public void testClonerMultipleOutputWithExplicitJSONSchema() {
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addOutputAvroDataStoreToInclude("cloner/person");
-		conf.addOutputAvroDataStoreToInclude("mr_cloner/age");
+		conf.addExpectedOutputAvroDataStore("cloner/person");
+		conf.addExpectedOutputAvroDataStore("mr_cloner/age");
 		
 		WorkflowTestResult workflowTestResult = 
 				testWorkflow("eu/dnetlib/iis/core/examples/javamapreduce/cloner_with_multiple_output_with_explicit_schema", conf);
@@ -126,8 +126,8 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	@Test 
 	public void testClonerMultipleOutputWithoutReducerWithExplicitJSONSchema() {
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addOutputAvroDataStoreToInclude("cloner/person");
-		conf.addOutputAvroDataStoreToInclude("mr_cloner/age");
+		conf.addExpectedOutputAvroDataStore("cloner/person");
+		conf.addExpectedOutputAvroDataStore("mr_cloner/age");
 		
 		WorkflowTestResult workflowTestResult = 
 			testWorkflow("eu/dnetlib/iis/core/examples/javamapreduce/cloner_with_multiple_output_without_reducer_with_explicit_schema", conf);
@@ -146,8 +146,8 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	@Test 
 	public void testClonerMultipleOutputWithoutReducer() {
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addOutputAvroDataStoreToInclude("cloner/person");
-		conf.addOutputAvroDataStoreToInclude("mr_cloner/age");
+		conf.addExpectedOutputAvroDataStore("cloner/person");
+		conf.addExpectedOutputAvroDataStore("mr_cloner/age");
 		
 		WorkflowTestResult workflowTestResult = 
 			testWorkflow("eu/dnetlib/iis/core/examples/javamapreduce/cloner_with_multiple_output_without_reducer", conf);

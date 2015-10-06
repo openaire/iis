@@ -37,6 +37,10 @@ public class WorkflowTestResult {
 		return workflowOutputFiles.get(filepath);
 	}
 	
+	public void setWorkflowOutputFiles(Map<String, File> workflowOutputFiles) {
+		this.workflowOutputFiles = workflowOutputFiles;
+	}
+
 	/**
 	 * Adds avro datastore located under path parameter to test results
 	 */
@@ -53,5 +57,8 @@ public class WorkflowTestResult {
 		return avroDataStore;
 	}
 	
+	public void setWorkflowOutputAvroDataStores(Map<String, List<? extends SpecificRecord>> workflowOutputAvroDataStores) {
+		this.workflowOutputAvroDataStores = workflowOutputAvroDataStores;
+	}
 	
 }

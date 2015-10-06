@@ -34,8 +34,8 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	@Test
 	public void testSimpleLineByLineCopier() throws Exception{
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addOutputFileToInclude("copier/doc_copy.csv");
-		conf.addOutputFileToInclude("copier/person_copy.csv");
+		conf.addExpectedOutputFile("copier/doc_copy.csv");
+		conf.addExpectedOutputFile("copier/person_copy.csv");
 		
 		WorkflowTestResult workflowTestResult = testWorkflow(
 				"eu/dnetlib/iis/core/examples/java/line_by_line_copier",
@@ -55,7 +55,7 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	@Test 
 	public void testPassingParameter() {
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addOutputAvroDataStoreToInclude("cloner/person");
+		conf.addExpectedOutputAvroDataStore("cloner/person");
 		
 		WorkflowTestResult workflowTestResult = 
 			testWorkflow("eu/dnetlib/iis/core/examples/java/cloner", conf);
@@ -79,9 +79,9 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	@Test
 	public void testJoinTask() {
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addOutputAvroDataStoreToInclude("joiner/document_with_authors");
-		conf.addOutputAvroDataStoreToInclude("joiner/person_with_documents");
-		conf.addOutputAvroDataStoreToInclude("joiner/person_age");
+		conf.addExpectedOutputAvroDataStore("joiner/document_with_authors");
+		conf.addExpectedOutputAvroDataStore("joiner/person_with_documents");
+		conf.addExpectedOutputAvroDataStore("joiner/person_age");
 		
 		WorkflowTestResult workflowTestResult = 
 				testWorkflow("eu/dnetlib/iis/core/examples/java/joiner");

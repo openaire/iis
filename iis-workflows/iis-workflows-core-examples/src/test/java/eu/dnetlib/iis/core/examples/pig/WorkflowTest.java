@@ -32,7 +32,7 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	@Test
 	public void testOnSimpleCSVFiles() throws Exception{
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addOutputFileToInclude("pig_node/person_id/part-m-00000");
+		conf.addExpectedOutputFile("pig_node/person_id/part-m-00000");
 		
 		WorkflowTestResult workflowTestResult = testWorkflow("eu/dnetlib/iis/core/examples/pig/basic", conf);
 		
@@ -44,9 +44,9 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	@Test
 	public void testJoin() throws Exception {
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addOutputAvroDataStoreToInclude("joiner/document_with_authors");
-		conf.addOutputAvroDataStoreToInclude("joiner/person_with_documents");
-		conf.addOutputAvroDataStoreToInclude("joiner/person_age");
+		conf.addExpectedOutputAvroDataStore("joiner/document_with_authors");
+		conf.addExpectedOutputAvroDataStore("joiner/person_with_documents");
+		conf.addExpectedOutputAvroDataStore("joiner/person_age");
 
 		WorkflowTestResult workflowTestResult = 
 				testWorkflow("eu/dnetlib/iis/core/examples/pig/joiner", conf);
@@ -77,9 +77,9 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	@Test
 	public void testJoinWithExplicitSchema() throws Exception {
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addOutputAvroDataStoreToInclude("joiner/document_with_authors");
-		conf.addOutputAvroDataStoreToInclude("joiner/person_with_documents");
-		conf.addOutputAvroDataStoreToInclude("joiner/person_age");
+		conf.addExpectedOutputAvroDataStore("joiner/document_with_authors");
+		conf.addExpectedOutputAvroDataStore("joiner/person_with_documents");
+		conf.addExpectedOutputAvroDataStore("joiner/person_age");
 		
 		WorkflowTestResult workflowTestResult = 
 				testWorkflow("eu/dnetlib/iis/core/examples/pig/joiner_with_explicit_schema", conf);
@@ -110,7 +110,7 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	@Test
 	public void testPersonFilteredByDocumentsNumber() throws Exception {
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addOutputAvroDataStoreToInclude("filter/person_with_documents");
+		conf.addExpectedOutputAvroDataStore("filter/person_with_documents");
 
 		WorkflowTestResult workflowTestResult = 
 				testWorkflow("eu/dnetlib/iis/core/examples/pig/person_by_docs_filter", conf);
@@ -134,7 +134,7 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	@Test
 	public void testPersonFilteredByDocumentsNumberWithSubworkflow() throws Exception {
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addOutputAvroDataStoreToInclude("my_subworkflow/person_with_documents");
+		conf.addExpectedOutputAvroDataStore("my_subworkflow/person_with_documents");
 
 		WorkflowTestResult workflowTestResult = 
 				testWorkflow("eu/dnetlib/iis/core/examples/pig/person_by_docs_filter_with_subworkflow");

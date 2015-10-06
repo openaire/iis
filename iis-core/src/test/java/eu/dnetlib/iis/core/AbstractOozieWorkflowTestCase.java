@@ -4,26 +4,19 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
+import org.apache.oozie.client.AuthOozieClient;
 import org.apache.oozie.client.OozieClient;
 import org.apache.oozie.client.OozieClientException;
-import org.apache.oozie.client.WorkflowJob;
 import org.apache.oozie.client.WorkflowJob.Status;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -33,9 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
-
-import eu.dnetlib.iis.core.java.io.DataStore;
-import eu.dnetlib.iis.core.java.io.FileSystemPath;
 
 /**
  * Base class for testing oozie workflows on cluster
@@ -71,6 +61,10 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	private FileSystem hadoopFilesystem;
 	
+	private OozieTestHelper oozieTestHelper;
+	
+	private HdfsTestHelper hdfsTestHelper;
+	
 	private File tempDir;
 	
 	
@@ -84,26 +78,21 @@ public abstract class AbstractOozieWorkflowTestCase {
 	public static void classSetUp() {
 		propertiesReader = new IntegrationTestPropertiesReader();
 		
-		
 	}
 	
 	@Before
 	public void setUp() throws IOException {
 		
 		log.debug("Setting up OozieClient at {}", getOozieServiceLoc());
-		oozieClient = new OozieClient(getOozieServiceLoc());
-		
-		
-		String s = "<?xml-stylesheet type=\"text/xsl\" href=\"configuration.xsl\"?>"
-				+ "<configuration>"
-				+ "<property><name>fs.defaultFS</name><value>" + getNameNode() + "</value></property>"
-				+ "</configuration>";
-		
+		oozieClient = new AuthOozieClient(getOozieServiceLoc());
 		
 		Configuration hdfsConf = new Configuration(false);
-		hdfsConf.addResource(new ReaderInputStream(new StringReader(s)));
+		hdfsConf.set("fs.defaultFS", getNameNode());
 		
 		hadoopFilesystem = FileSystem.get(hdfsConf);
+		
+		oozieTestHelper = new OozieTestHelper(oozieClient);
+		hdfsTestHelper = new HdfsTestHelper(hadoopFilesystem);
 		
 		tempDir = Files.createTempDir();
 	}
@@ -138,7 +127,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 		logMavenOutput(p);
 		
 		
-		String jobId = getJobId();
+		String jobId = OozieTestHelper.readJobIdFromLogFile(new File(getRunOoozieJobLogFilename()));
 		
 		
 		Status jobStatus = waitForJobFinish(jobId, configuration.getTimeoutInSeconds());
@@ -146,45 +135,23 @@ public abstract class AbstractOozieWorkflowTestCase {
 		assertJobStatus(jobId, jobStatus, configuration.getExpectedFinishStatus());
 		
 		
-		Properties jobProperties = fetchJobProperties(jobId);
+		Properties jobProperties = oozieTestHelper.fetchJobProperties(jobId);
 		String workflowWorkingDir = jobProperties.getProperty("workingDir");
 		
 		WorkflowTestResult result = new WorkflowTestResult();
 		
-		importFilesFromHdfs(result, configuration.getOutputFilesToInclude(), workflowWorkingDir);
-		importAvroDatastoresFromHdfs(result, configuration.getOutputAvroDataStoreToInclude(), workflowWorkingDir);
+		Map<String, File> workflowOutputFiles = hdfsTestHelper.importFilesFromHdfs(workflowWorkingDir, configuration.getExpectedOutputFiles(), tempDir);
+		result.setWorkflowOutputFiles(workflowOutputFiles);
+		
+		Map<String, List<? extends SpecificRecord>> workflowOutputDataStores = 
+				hdfsTestHelper.importAvroDatastoresFromHdfs( workflowWorkingDir, configuration.getExpectedOutputAvroDataStore());
+		result.setWorkflowOutputAvroDataStores(workflowOutputDataStores);
 		
 		return result;
 	}
 	
 	
 	//------------------------ PRIVATE --------------------------
-	
-	private Properties fetchJobProperties(String jobId) {
-		Properties jobProperties = new Properties();
-		
-		try {
-			WorkflowJob jobInfo = oozieClient.getJobInfo(jobId);
-			String jobConfigurationString = jobInfo.getConf();
-			
-			SAXBuilder builder = new SAXBuilder();
-			Document doc = builder.build(new StringReader(jobConfigurationString));
-			
-			for (Object o : doc.getRootElement().getChildren()) {
-				Element propertyElement = (Element) o;
-				String propertyName = propertyElement.getChildText("name");
-				String propertyValue = propertyElement.getChildText("value");
-				
-				jobProperties.put(propertyName, propertyValue);
-				
-			}
-			
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		
-		return jobProperties;
-	}
 	
 	private Process runMavenTestWorkflow(String workflowSource) {
 		
@@ -253,22 +220,6 @@ public abstract class AbstractOozieWorkflowTestCase {
 		return propertiesReader.getProperty(NAME_NODE_KEY);
 	}
 	
-	private String getJobId() {
-		
-		String jobId;
-		try {
-			jobId = FileUtils.readFileToString(new File(getRunOoozieJobLogFilename()));
-		} catch (IOException e) {
-			throw new RuntimeException("Unable to read run oozie job log file", e);
-		}
-		Pattern pattern = Pattern.compile("^job: (\\S*)$", Pattern.MULTILINE);
-		Matcher matcher = pattern.matcher(jobId);
-		matcher.find();
-		jobId = matcher.group(1);
-		
-		return jobId;
-	}
-	
 	private Status waitForJobFinish(String jobId, long timeoutInSeconds) {
 
 		long timeout = 1000L * timeoutInSeconds;
@@ -315,36 +266,6 @@ public abstract class AbstractOozieWorkflowTestCase {
 			log.info(oozieClient.getJobLog(jobId));
 		} catch (OozieClientException e) {
 			log.warn("Unable to check oozie job log");
-		}
-	}
-	
-	private void importFilesFromHdfs(WorkflowTestResult result, List<String> filesPaths, String workingDir) {
-
-		for (String filePath : filesPaths) {
-			String tempFilename = new File(filePath).getName();
-
-			try {
-				hadoopFilesystem.copyToLocalFile(new Path(workingDir, filePath), new Path(tempDir.getAbsolutePath(), tempFilename));
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-
-			result.addWorkflowOutputFiles(filePath, new File(tempDir, tempFilename));
-		}
-	}
-	
-	private void importAvroDatastoresFromHdfs(WorkflowTestResult result, List<String> datastoresPaths, String workingDir) {
-		
-		for (String requestedDataStore : datastoresPaths) {
-			List<SpecificRecord> dataStore = null;
-			
-			try {
-				dataStore = DataStore.read(new FileSystemPath(hadoopFilesystem, new Path(workingDir, requestedDataStore)));
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-			
-			result.addAvroDataStore(requestedDataStore, dataStore);
 		}
 	}
 	
