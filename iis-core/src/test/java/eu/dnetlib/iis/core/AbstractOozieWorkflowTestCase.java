@@ -13,7 +13,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.oozie.client.AuthOozieClient;
 import org.apache.oozie.client.OozieClient;
 import org.apache.oozie.client.OozieClientException;
 import org.apache.oozie.client.WorkflowJob.Status;
@@ -84,7 +83,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 	public void setUp() throws IOException {
 		
 		log.debug("Setting up OozieClient at {}", getOozieServiceLoc());
-		oozieClient = new AuthOozieClient(getOozieServiceLoc());
+		oozieClient = new OozieClient(getOozieServiceLoc());
 		
 		Configuration hdfsConf = new Configuration(false);
 		hdfsConf.set("fs.defaultFS", getNameNode());
