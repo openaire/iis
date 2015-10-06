@@ -1,21 +1,17 @@
 package eu.dnetlib.iis.core.examples.java;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.oozie.client.OozieClientException;
 import org.apache.oozie.client.WorkflowJob;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import eu.dnetlib.iis.IntegrationTest;
-import eu.dnetlib.iis.core.AbstractWorkflowTestCase;
+import eu.dnetlib.iis.core.AbstractOozieWorkflowTestCase;
 import eu.dnetlib.iis.core.OozieWorkflowTestConfiguration;
-import eu.dnetlib.iis.core.RemoteOozieAppManager;
 import eu.dnetlib.iis.core.TestsIOUtils;
+import eu.dnetlib.iis.core.WorkflowTestResult;
 import eu.dnetlib.iis.core.examples.StandardDataStoreExamples;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.DocumentWithAuthors;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person;
@@ -28,31 +24,25 @@ import eu.dnetlib.iis.core.examples.schemas.documentandauthor.personwithdocument
  *
  */
 @Category(IntegrationTest.class)
-public class WorkflowTest extends AbstractWorkflowTestCase {
+public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 
 	@Test 
-	public void testIfSimpleClonerJustWorks() throws IOException, OozieClientException{
-		runWorkflow("eu/dnetlib/iis/core/examples/java/cloner/oozie_app");
+	public void testIfSimpleClonerJustWorks() {
+		testWorkflow("eu/dnetlib/iis/core/examples/java/cloner");
 	}
 	
 	@Test
 	public void testSimpleLineByLineCopier() throws Exception{
-//		notice: we have to skip reading job.properties file which by default 
-//		is set explicitly to run only on Hadoop installed on localhost.
-		RemoteOozieAppManager appManager = runWorkflow(
-				"eu/dnetlib/iis/core/examples/java/line_by_line_copier/oozie_app", 
-				new OozieWorkflowTestConfiguration(), true);
+		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
+		conf.addOutputFileToInclude("copier/doc_copy.csv");
+		conf.addOutputFileToInclude("copier/person_copy.csv");
 		
-		File localDir = new File(getTestCaseDir());
-		final File actualDocument = new File(localDir, "doc_copy.csv");
-		final File actualPerson = new File(localDir, "person_copy.csv");
-		@SuppressWarnings("serial")
-		Map<String, File> hdfsFileNameToLocalFileNameMap = 
-				new HashMap<String, File>(){{
-					put("copier/doc_copy.csv", actualDocument);
-					put("copier/person_copy.csv", actualPerson);
-				}};			
-		appManager.copyFilesFromWorkingDir(hdfsFileNameToLocalFileNameMap);
+		WorkflowTestResult workflowTestResult = testWorkflow(
+				"eu/dnetlib/iis/core/examples/java/line_by_line_copier",
+				new OozieWorkflowTestConfiguration());
+		
+		final File actualDocument = workflowTestResult.getWorkflowOutputFile("copier/doc_copy.csv");
+		final File actualPerson = workflowTestResult.getWorkflowOutputFile("copier/person_copy.csv");
 		
 		TestsIOUtils.assertContentsEqual(
 				"eu/dnetlib/iis/core/examples/simple_csv_data/person.csv", 
@@ -63,44 +53,45 @@ public class WorkflowTest extends AbstractWorkflowTestCase {
 	}
 	
 	@Test 
-	public void testPassingParameter() 
-			throws IOException, OozieClientException{
-		RemoteOozieAppManager appManager = 
-			runWorkflow("eu/dnetlib/iis/core/examples/java/cloner/oozie_app");
+	public void testPassingParameter() {
+		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
+		conf.addOutputAvroDataStoreToInclude("cloner/person");
 		
-		List<Person> person = appManager.readDataStoreFromWorkingDir(
-				"cloner/person");
+		WorkflowTestResult workflowTestResult = 
+			testWorkflow("eu/dnetlib/iis/core/examples/java/cloner", conf);
+		
+		List<Person> person = workflowTestResult.getAvroDataStore("cloner/person");
 		TestsIOUtils.assertEqualSets(
-				StandardDataStoreExamples.getPersonRepeated(3),	person);		
+				StandardDataStoreExamples.getPersonRepeated(3),	person);
 	}
 	
 	@Test 
-	public void testJsonBasedProducerAndConsumer() 
-			throws IOException, OozieClientException{
-		runWorkflow("eu/dnetlib/iis/core/examples/java/json_based_producer_and_consumer/oozie_app");
+	public void testJsonBasedProducerAndConsumer() {
+		testWorkflow("eu/dnetlib/iis/core/examples/java/json_based_producer_and_consumer");
 	}
 	
 	@Test 
-	public void testJsonBasedProducerAndConsumerFailing() 
-			throws IOException, OozieClientException{
-		runWorkflow("eu/dnetlib/iis/core/examples/java/json_based_producer_and_consumer-failing/oozie_app",
-				new OozieWorkflowTestConfiguration().setExpectedFinishStatus(WorkflowJob.Status.KILLED));	
+	public void testJsonBasedProducerAndConsumerFailing() {
+		testWorkflow("eu/dnetlib/iis/core/examples/java/json_based_producer_and_consumer-failing",
+				new OozieWorkflowTestConfiguration().setExpectedFinishStatus(WorkflowJob.Status.KILLED));
 	}
 	
 	@Test
-	public void testJoinTask() throws Exception{
-		RemoteOozieAppManager appManager = 
-				runWorkflow("eu/dnetlib/iis/core/examples/java/joiner/oozie_app");
+	public void testJoinTask() {
+		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
+		conf.addOutputAvroDataStoreToInclude("joiner/document_with_authors");
+		conf.addOutputAvroDataStoreToInclude("joiner/person_with_documents");
+		conf.addOutputAvroDataStoreToInclude("joiner/person_age");
+		
+		WorkflowTestResult workflowTestResult = 
+				testWorkflow("eu/dnetlib/iis/core/examples/java/joiner");
 		
 		List<DocumentWithAuthors> documentWithAuthors = 
-			appManager.readDataStoreFromWorkingDir(
-					"joiner/document_with_authors");
+				workflowTestResult.getAvroDataStore("joiner/document_with_authors");
 		List<PersonWithDocuments> personWithDocuments = 
-			appManager.readDataStoreFromWorkingDir(
-					"joiner/person_with_documents");
+				workflowTestResult.getAvroDataStore("joiner/person_with_documents");
 		List<PersonAge> personAge =
-			appManager.readDataStoreFromWorkingDir(
-					"joiner/person_age");
+				workflowTestResult.getAvroDataStore("joiner/person_age");
 
 		TestsIOUtils.assertEqualSets(
 				StandardDataStoreExamples.getDocumentWithAuthors(),
@@ -114,12 +105,12 @@ public class WorkflowTest extends AbstractWorkflowTestCase {
 	}
 	
 	@Test
-	public void testIfEmptyDataStoreIsCreatedEvenWhenWorkflowNodeDoesNotExplicitlyCreateOutputDataStore() throws IOException, OozieClientException{
-		runWorkflow("eu/dnetlib/iis/core/examples/java/no_output/oozie_app");	
+	public void testIfEmptyDataStoreIsCreatedEvenWhenWorkflowNodeDoesNotExplicitlyCreateOutputDataStore() {
+		testWorkflow("eu/dnetlib/iis/core/examples/java/no_output");
 	}
 	
 	@Test
-	public void testIfEmptyDataStoreIsCreatedEvenWhenWorkflowNodeCreatesEmptyOutputDirs() throws IOException, OozieClientException{
-		runWorkflow("eu/dnetlib/iis/core/examples/java/no_output_empty_dirs/oozie_app");	
+	public void testIfEmptyDataStoreIsCreatedEvenWhenWorkflowNodeCreatesEmptyOutputDirs() {
+		testWorkflow("eu/dnetlib/iis/core/examples/java/no_output_empty_dirs");
 	}
 }

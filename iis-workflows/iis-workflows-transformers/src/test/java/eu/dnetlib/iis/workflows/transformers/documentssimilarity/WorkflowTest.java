@@ -1,10 +1,11 @@
 package eu.dnetlib.iis.workflows.transformers.documentssimilarity;
 
-import eu.dnetlib.iis.IntegrationTest;
-import eu.dnetlib.iis.core.AbstractWorkflowTestCase;
-import eu.dnetlib.iis.core.OozieWorkflowTestConfiguration;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import eu.dnetlib.iis.IntegrationTest;
+import eu.dnetlib.iis.core.AbstractOozieWorkflowTestCase;
+import eu.dnetlib.iis.core.OozieWorkflowTestConfiguration;
 
 /**
  * 
@@ -12,13 +13,13 @@ import org.junit.experimental.categories.Category;
  *
  */
 @Category(IntegrationTest.class)
-public class WorkflowTest extends AbstractWorkflowTestCase {
+public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 
     @Test
 	public void testWorkflow() throws Exception {
     	OozieWorkflowTestConfiguration wf = new OozieWorkflowTestConfiguration();
         wf.setTimeoutInSeconds(720);
-        runWorkflow("eu/dnetlib/iis/workflows/transformers/documentssimilarity/sampledataproducer/oozie_app", wf);
+        testWorkflow("eu/dnetlib/iis/workflows/transformers/documentssimilarity/sampledataproducer", wf);
     }
 
 }

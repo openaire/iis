@@ -6,9 +6,10 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import eu.dnetlib.iis.IntegrationTest;
-import eu.dnetlib.iis.core.AbstractWorkflowTestCase;
-import eu.dnetlib.iis.core.RemoteOozieAppManager;
+import eu.dnetlib.iis.core.AbstractOozieWorkflowTestCase;
+import eu.dnetlib.iis.core.OozieWorkflowTestConfiguration;
 import eu.dnetlib.iis.core.TestsIOUtils;
+import eu.dnetlib.iis.core.WorkflowTestResult;
 import eu.dnetlib.iis.core.examples.StandardDataStoreExamples;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person;
 import eu.dnetlib.iis.core.examples.schemas.documenttext.DocumentText;
@@ -19,25 +20,28 @@ import eu.dnetlib.iis.core.examples.schemas.documenttext.DocumentText;
  *
  */
 @Category(IntegrationTest.class)
-public class WorkflowTest extends AbstractWorkflowTestCase {
+public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 
 	@Test
 	public void testClonerWithoutReducer() throws Exception{
-		runWorkflow("eu/dnetlib/iis/core/examples/hadoopstreaming/cloner_without_reducer/oozie_app");
+		testWorkflow("eu/dnetlib/iis/core/examples/hadoopstreaming/cloner_without_reducer");
 	}
 
 	@Test
 	public void testCloner() throws Exception{
-		runWorkflow("eu/dnetlib/iis/core/examples/hadoopstreaming/cloner/oozie_app");
+		testWorkflow("eu/dnetlib/iis/core/examples/hadoopstreaming/cloner");
 	}
 	
 	@Test
 	public void testClonerWithoutReducerWithExplicitSchemaFile() throws Exception{
-		RemoteOozieAppManager appManager = 
-			runWorkflow("eu/dnetlib/iis/core/examples/hadoopstreaming/cloner_without_reducer_with_explicit_schema_file/oozie_app");
+		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
+		conf.addOutputAvroDataStoreToInclude("cloner/person");
+		
+		WorkflowTestResult workflowTestResult = 
+				testWorkflow("eu/dnetlib/iis/core/examples/hadoopstreaming/cloner_without_reducer_with_explicit_schema_file", conf);
 		
 		List<Person> person = 
-			appManager.readDataStoreFromWorkingDir("cloner/person");
+				workflowTestResult.getAvroDataStore("cloner/person");
 	
 		TestsIOUtils.assertEqualSets(
 				StandardDataStoreExamples.getPersonRepeated(6),person);
@@ -45,11 +49,14 @@ public class WorkflowTest extends AbstractWorkflowTestCase {
 
 	@Test
 	public void testClonerWithoutReducerWithSubworkflow() throws Exception{
-		RemoteOozieAppManager appManager = 
-			runWorkflow("eu/dnetlib/iis/core/examples/hadoopstreaming/cloner_without_reducer_with_subworkflow/oozie_app");
+		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
+		conf.addOutputAvroDataStoreToInclude("my_subworkflow/person");
+		
+		WorkflowTestResult workflowTestResult = 
+				testWorkflow("eu/dnetlib/iis/core/examples/hadoopstreaming/cloner_without_reducer_with_subworkflow", conf);
 		
 		List<Person> person = 
-			appManager.readDataStoreFromWorkingDir("my_subworkflow/person");
+				workflowTestResult.getAvroDataStore("my_subworkflow/person");
 	
 		TestsIOUtils.assertEqualSets(
 				StandardDataStoreExamples.getPersonRepeated(6),person);
@@ -57,21 +64,24 @@ public class WorkflowTest extends AbstractWorkflowTestCase {
 	
     @Test
 	public void testWordCount() throws Exception{
-		runWorkflow("eu/dnetlib/iis/core/examples/hadoopstreaming/wordcount/oozie_app");
+    	testWorkflow("eu/dnetlib/iis/core/examples/hadoopstreaming/wordcount");
 	}
 
     @Test
 	public void testWordCountWithSQLiteDBPlacedInDistribuedCache() throws Exception{
-		runWorkflow("eu/dnetlib/iis/core/examples/hadoopstreaming/wordcount_with_distributed_cache/oozie_app");
+    	testWorkflow("eu/dnetlib/iis/core/examples/hadoopstreaming/wordcount_with_distributed_cache");
 	}
 
 	@Test
 	public void testClonerWithUnicodeEscapeCodes() throws Exception{
-		RemoteOozieAppManager appManager = 
-			runWorkflow("eu/dnetlib/iis/core/examples/hadoopstreaming/cloner_with_unicode_escape_codes/oozie_app");
+		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
+		conf.addOutputAvroDataStoreToInclude("python_cloner/document_text");
+		
+		WorkflowTestResult workflowTestResult = 
+				testWorkflow("eu/dnetlib/iis/core/examples/hadoopstreaming/cloner_with_unicode_escape_codes", conf);
 		
 		List<DocumentText> documentText = 
-			appManager.readDataStoreFromWorkingDir("python_cloner/document_text");
+				workflowTestResult.getAvroDataStore("python_cloner/document_text");
 	
 		TestsIOUtils.assertEqualSets(
 				StandardDataStoreExamples.getDocumentTextRepeated(3), documentText);
