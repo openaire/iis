@@ -1,9 +1,10 @@
 package eu.dnetlib.iis.workflows.collapsers.union;
 
-import eu.dnetlib.iis.IntegrationTest;
-import eu.dnetlib.iis.core.AbstractWorkflowTestCase;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import eu.dnetlib.iis.IntegrationTest;
+import eu.dnetlib.iis.core.AbstractOozieWorkflowTestCase;
 
 /**
  * 
@@ -11,16 +12,16 @@ import org.junit.experimental.categories.Category;
  *
  */
 @Category(IntegrationTest.class)
-public class WorkflowTest extends AbstractWorkflowTestCase {
+public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 
     @Test
 	public void testWorkflow2Inputs() throws Exception {
-    	runWorkflow("eu/dnetlib/iis/workflows/collapsers/union/input_2/oozie_app");
+    	testWorkflow("eu/dnetlib/iis/workflows/collapsers/union/input_2");
     }
 
     @Test
 	public void testWorkflow3Inputs() throws Exception {
-    	runWorkflow("eu/dnetlib/iis/workflows/collapsers/union/input_3/oozie_app");
+    	testWorkflow("eu/dnetlib/iis/workflows/collapsers/union/input_3");
     }
     
 }
