@@ -63,7 +63,7 @@
 				eu.dnetlib.iis.metadataextraction.schemas.DocumentText,
 				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
 			<arg>-C{document_text_classpath,
-				eu.dnetlib.iis.workflows.schemas.DocumentContentClasspath,
+				eu.dnetlib.iis.workflows.top.schemas.DocumentContentClasspath,
 				eu/dnetlib/iis/workflows/top/integration/primary/processing/input/metadataextraction/document_text_classpath.json}</arg>
             <arg>-Odocument_metadata=${workingDir}/producer/document_metadata</arg>
             <arg>-Odocument_to_project=${workingDir}/producer/document_to_project</arg>
