@@ -5,14 +5,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Map;
+import java.util.Properties;
 
+import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.oozie.client.OozieClient;
 import org.apache.oozie.client.OozieClientException;
 import org.apache.oozie.client.WorkflowJob.Status;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -20,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 
 /**
  * Base class for testing oozie workflows on cluster
@@ -38,6 +43,8 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	private final static String OOZIE_WORKFLOW_DEPLOY_MODE_KEY = "deploy.mode";
 	
+	private final static String NAME_NODE_KEY = "nameNode";
+	
 	private final static String WORKFLOW_SOURCE_DIR_KEY = "workflow.source.dir";
 	
 	private final static String MAVEN_TEST_WORKFLOW_PHASE = "clean package";
@@ -51,6 +58,14 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	private OozieClient oozieClient;
 	
+	private FileSystem hadoopFilesystem;
+	
+	private OozieJobPropertiesFetcher oozieJobPropertiesFetcher;
+	
+	private HdfsTestHelper hdfsTestHelper;
+	
+	private File tempDir;
+	
 	
 	private enum DeployMode {
 		LOCAL,
@@ -61,13 +76,29 @@ public abstract class AbstractOozieWorkflowTestCase {
 	@BeforeClass
 	public static void classSetUp() {
 		propertiesReader = new IntegrationTestPropertiesReader();
+		
 	}
 	
 	@Before
-	public void setUp() {
+	public void setUp() throws IOException {
 		
 		log.debug("Setting up OozieClient at {}", getOozieServiceLoc());
 		oozieClient = new OozieClient(getOozieServiceLoc());
+		
+		Configuration hdfsConf = new Configuration(false);
+		hdfsConf.set("fs.defaultFS", getNameNode());
+		
+		hadoopFilesystem = FileSystem.get(hdfsConf);
+		
+		oozieJobPropertiesFetcher = new OozieJobPropertiesFetcher(oozieClient);
+		hdfsTestHelper = new HdfsTestHelper(hadoopFilesystem);
+		
+		tempDir = Files.createTempDir();
+	}
+	
+	@After
+	public void cleanup() throws IOException {
+		FileUtils.deleteDirectory(tempDir);
 	}
 	
 	/**
@@ -75,8 +106,8 @@ public abstract class AbstractOozieWorkflowTestCase {
 	 * Internally uses {@link #testWorkflow(String, OozieWorkflowTestConfiguration)}
 	 * with default {@link OozieWorkflowTestConfiguration}
 	 */
-	protected void testWorkflow(String workflowPath) {
-		testWorkflow(workflowPath, new OozieWorkflowTestConfiguration());
+	protected WorkflowTestResult testWorkflow(String workflowPath) {
+		return testWorkflow(workflowPath, new OozieWorkflowTestConfiguration());
 	}
 	
 	/**
@@ -88,18 +119,34 @@ public abstract class AbstractOozieWorkflowTestCase {
 	 *  	(for example timeout - a workflow must finish its execution before specified amount of time, 
 	 *   	otherwise the test will automatically fail)
 	 */
-	protected void testWorkflow(String workflowPath, OozieWorkflowTestConfiguration configuration) {
+	protected WorkflowTestResult testWorkflow(String workflowPath, OozieWorkflowTestConfiguration configuration) {
 		
 		Process p = runMavenTestWorkflow(workflowPath);
 
 		logMavenOutput(p);
 		
 		
-		String jobId = getJobId();
+		String jobId = OozieLogFileParser.readJobIdFromLogFile(new File(getRunOoozieJobLogFilename()));
+		
 		
 		Status jobStatus = waitForJobFinish(jobId, configuration.getTimeoutInSeconds());
 		
-		assertJobStatus(jobId, jobStatus);
+		assertJobStatus(jobId, jobStatus, configuration.getExpectedFinishStatus());
+		
+		
+		Properties jobProperties = oozieJobPropertiesFetcher.fetchJobProperties(jobId);
+		String workflowWorkingDir = jobProperties.getProperty("workingDir");
+		
+		WorkflowTestResult result = new WorkflowTestResult();
+		
+		Map<String, File> workflowOutputFiles = hdfsTestHelper.copyFilesFromHdfs(workflowWorkingDir, configuration.getExpectedOutputFiles(), tempDir);
+		result.setWorkflowOutputFiles(workflowOutputFiles);
+		
+		Map<String, List<? extends SpecificRecord>> workflowOutputDataStores = 
+				hdfsTestHelper.readAvroDatastoresFromHdfs( workflowWorkingDir, configuration.getExpectedOutputAvroDataStore());
+		result.setWorkflowOutputAvroDataStores(workflowOutputDataStores);
+		
+		return result;
 	}
 	
 	
@@ -168,20 +215,8 @@ public abstract class AbstractOozieWorkflowTestCase {
 		return propertiesReader.getProperty(OOZIE_RUN_WORKFLOW_LOG_FILE_KEY);
 	}
 	
-	private String getJobId() {
-		
-		String jobId;
-		try {
-			jobId = FileUtils.readFileToString(new File(getRunOoozieJobLogFilename()));
-		} catch (IOException e) {
-			throw new RuntimeException("Unable to read run oozie job log file", e);
-		}
-		Pattern pattern = Pattern.compile("^job: (\\S*)$", Pattern.MULTILINE);
-		Matcher matcher = pattern.matcher(jobId);
-		matcher.find();
-		jobId = matcher.group(1);
-		
-		return jobId;
+	private String getNameNode() {
+		return propertiesReader.getProperty(NAME_NODE_KEY);
 	}
 	
 	private Status waitForJobFinish(String jobId, long timeoutInSeconds) {
@@ -216,11 +251,10 @@ public abstract class AbstractOozieWorkflowTestCase {
 		return null;
 	}
 	
-	private void assertJobStatus(String jobId, Status status) {
-		if (status == Status.FAILED || status == Status.KILLED || status == Status.SUSPENDED) {
-			
+	private void assertJobStatus(String jobId, Status status, Status expectedStatus) {
+		if (status != expectedStatus) {
 			printOozieJobLog(jobId);
-			Assert.fail("Job has finished with status: " + status);
+			Assert.fail("Job has finished with status: " + status + " but " + expectedStatus + " was expected");
 		}
 		
 		log.info("Job has finished sucessfully");
@@ -233,4 +267,5 @@ public abstract class AbstractOozieWorkflowTestCase {
 			log.warn("Unable to check oozie job log");
 		}
 	}
+	
 }
