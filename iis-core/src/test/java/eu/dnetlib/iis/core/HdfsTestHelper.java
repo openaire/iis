@@ -26,19 +26,25 @@ class HdfsTestHelper {
 
 	private FileSystem hadoopFilesystem;
 	
+	
+	//------------------------ CONSTRUCTORS --------------------------
+	
 	public HdfsTestHelper(FileSystem hadoopFilesystem) {
 		this.hadoopFilesystem = hadoopFilesystem;
 	}
 	
+	
+	//------------------------ LOGIC --------------------------
+	
 	/**
-	 * Imports files from hdfs to local filesystem
+	 * Copies files from hdfs to local filesystem
 	 * 
 	 * @param basePath - common path in hdfs for all files in filePaths parameter
 	 * @param filesPaths - relative to provided basePath
 	 * @param targetDir - directory where imported files will be stored
 	 * @return map with entries in form {original path from hdfs; corresponding imported files}
 	 */
-	public Map<String, File> importFilesFromHdfs(String basePath, List<String> filesPaths, File targetDir) {
+	public Map<String, File> copyFilesFromHdfs(String basePath, List<String> filesPaths, File targetDir) {
 		Map<String, File> importedFiles = Maps.newHashMap();
 		
 		for (String filePath : filesPaths) {
@@ -59,13 +65,13 @@ class HdfsTestHelper {
 	}
 	
 	/**
-	 * Imports avro datastore from hdfs filesystem
+	 * Reads avro datastores from hdfs filesystem
 	 * 
 	 * @param basePath - common path in hdfs for all datastores in datastoresPaths parameter
 	 * @param datastoresPaths - relative to provided basePath
 	 * @return map with entries in form {original path from hdfs; corresponding datastore}
 	 */
-	public Map<String, List<? extends SpecificRecord>> importAvroDatastoresFromHdfs(String basePath, List<String> datastoresPaths) {
+	public Map<String, List<? extends SpecificRecord>> readAvroDatastoresFromHdfs(String basePath, List<String> datastoresPaths) {
 		Map<String, List<? extends SpecificRecord>> importedFiles = Maps.newHashMap();
 		
 		for (String datastorePath : datastoresPaths) {

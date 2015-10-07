@@ -60,7 +60,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	private FileSystem hadoopFilesystem;
 	
-	private OozieTestHelper oozieTestHelper;
+	private OozieJobPropertiesFetcher oozieJobPropertiesFetcher;
 	
 	private HdfsTestHelper hdfsTestHelper;
 	
@@ -90,7 +90,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 		
 		hadoopFilesystem = FileSystem.get(hdfsConf);
 		
-		oozieTestHelper = new OozieTestHelper(oozieClient);
+		oozieJobPropertiesFetcher = new OozieJobPropertiesFetcher(oozieClient);
 		hdfsTestHelper = new HdfsTestHelper(hadoopFilesystem);
 		
 		tempDir = Files.createTempDir();
@@ -126,7 +126,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 		logMavenOutput(p);
 		
 		
-		String jobId = OozieTestHelper.readJobIdFromLogFile(new File(getRunOoozieJobLogFilename()));
+		String jobId = OozieLogFileParser.readJobIdFromLogFile(new File(getRunOoozieJobLogFilename()));
 		
 		
 		Status jobStatus = waitForJobFinish(jobId, configuration.getTimeoutInSeconds());
@@ -134,16 +134,16 @@ public abstract class AbstractOozieWorkflowTestCase {
 		assertJobStatus(jobId, jobStatus, configuration.getExpectedFinishStatus());
 		
 		
-		Properties jobProperties = oozieTestHelper.fetchJobProperties(jobId);
+		Properties jobProperties = oozieJobPropertiesFetcher.fetchJobProperties(jobId);
 		String workflowWorkingDir = jobProperties.getProperty("workingDir");
 		
 		WorkflowTestResult result = new WorkflowTestResult();
 		
-		Map<String, File> workflowOutputFiles = hdfsTestHelper.importFilesFromHdfs(workflowWorkingDir, configuration.getExpectedOutputFiles(), tempDir);
+		Map<String, File> workflowOutputFiles = hdfsTestHelper.copyFilesFromHdfs(workflowWorkingDir, configuration.getExpectedOutputFiles(), tempDir);
 		result.setWorkflowOutputFiles(workflowOutputFiles);
 		
 		Map<String, List<? extends SpecificRecord>> workflowOutputDataStores = 
-				hdfsTestHelper.importAvroDatastoresFromHdfs( workflowWorkingDir, configuration.getExpectedOutputAvroDataStore());
+				hdfsTestHelper.readAvroDatastoresFromHdfs( workflowWorkingDir, configuration.getExpectedOutputAvroDataStore());
 		result.setWorkflowOutputAvroDataStores(workflowOutputDataStores);
 		
 		return result;
