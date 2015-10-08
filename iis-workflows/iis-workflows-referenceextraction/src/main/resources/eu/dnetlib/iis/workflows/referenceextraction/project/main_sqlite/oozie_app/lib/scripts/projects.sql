@@ -17,6 +17,7 @@ select docid,id from (select docid,upper(regexpr("(\w+.*\d+)",middle)) as match,
 
 )
 
+
 union all 
 
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min(1.49,confidence)/1.5)) from ( select docid,id,max(confidence) as confidence from ( select docid, id,
@@ -35,9 +36,11 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min
                 regexpcountwithpositions(var('wtneglight'),prevpacksmall,0,1,0.5)*0.18 -
                 0.45*regexpcountwithpositions(var('wtneglight'),nextpack) -
                 0.21*regexpcountwithpositions(var('wtnegheavy'),nextpack,1) 
+       when fundingClass1="NSF" then
+            regexpcountwords("\bnsf\b|national science foundation",j2s(prevpack,middle,nextpack))
        when fundingClass1="EC"/* fp7 confidence */ then
             case when fundingClass2 = "FP7" THEN
-		regexprmatches(var('fp7middlepos'),middle)+
+		        regexprmatches(var('fp7middlepos'),middle)+
                 regexprmatches('(?:\b|_|\d)'||normalizedacro||'(?:\b|_|\d)',j2s(middle,prevpacksmall,nextpack))*2  +
                 regexprmatches('fp7',prev15)*0.4 +
                 0.4*regexpcountwithpositions(var('fp7pospos'),prevpacksmall) +
@@ -53,16 +56,16 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min
                 regexpcountwithpositions(var('fp7neglight'),nextpack)*0.03 -
                 regexpcountwithpositions(var('fp7negheavy'),nextpack,1)*0.08
                 when fundingClass2="H2020" then
-                    regexprmatches("h2020|horizon 2020|european research council|\berc\b",j2s(prevpack,middle,nextpack))
+                    regexpcountwords("h2020|horizon 2020|european research council|\berc\b",j2s(prevpack,middle,nextpack))
             end
        end as confidence
                 from
                 ( select id,fundingClass1,fundingClass2,docid,normalizedacro, j2s(prev14,prev15) as prev,grantid,prev15,j2s(prev1, prev2, prev3, prev4, prev5,prev6,prev7,prev8,prev9,prev10,prev11,prev12,prev13,prev14,prev15) as prevpack ,j2s(prev9,prev10,prev11,prev12,prev13,prev14,prev15) as prevpacksmall , middle, j2s(next1, next2, next3) as nextpack
                     from
                         ( 
-                         select * from (setschema 'docid,prev1, prev2, prev3, prev4, prev5, prev6, prev7, prev8, prev9, prev10, prev11, prev12, prev13, prev14, prev15, middle, next1, next2, next3' select  c1 as docid ,textwindow(regexpr('(\b\S*?[^0-9\s_]\S*?\s_?)(\d{3})(\s)(\d{3})(_?\s\S*?[^0-9\s_]\S*?\b)',filterstopwords(normalizetext(lower(c2))),'\1\2\4\5'),15,3,'((?:(?:\b|\D)0|_|\b|\D)(?:\d{5}))|(((\D|\b)\d{6}(\D|\b))) ' )
+                         select * from (setschema 'docid,prev1, prev2, prev3, prev4, prev5, prev6, prev7, prev8, prev9, prev10, prev11, prev12, prev13, prev14, prev15, middle, next1, next2, next3' select  c1 as docid ,textwindow(regexpr('(\b\S*?[^0-9\s_]\S*?\s_?)(\d{3})(\s)(\d{3})(_?\s\S*?[^0-9\s_]\S*?\b)',filterstopwords(normalizetext(lower(c2))),'\1\2\4\5'),15,3,'((?:(?:\b|\D)0|_|\b|\D)(?:\d{5}))|(((\D|\b)\d{6}(\D|\b)))|(?:(?:\D|\b)(?:\d{7})(?:\D|\b)) ' )
                             from   (setschema 'c1,c2' select * from  pubs where c2 is not null)) ,grants
-                            where  (not regexprmatches( '(?:0|\D|\b)+(?:\d{8,})',middle) and regexpr('(?:0|\D|\b)+(\d{5})',middle) = grantid and fundingclass1  in ('WT', 'EC') ) or ((not regexprmatches('(\d{6,}(?:\d|i\d{3}_?\b))|(jana\d{6,})', middle))
-                        and regexpr('(\d{6})',middle) = grantid and fundingclass1 in ('WT', 'EC'))
+                            where  (not regexprmatches( '(?:0|\D|\b)+(?:\d{8,})',middle) and not regexprmatches('(?:\D|\b)(?:\d{7})(?:\D|\b)',middle) and regexpr('(?:0|\D|\b)+(\d{5})',middle) = grantid and fundingclass1  in ('WT', 'EC') ) or ((not regexprmatches('(\d{6,}(?:\d|i\d{3}_?\b))|(jana\d{6,})', middle)) and not regexprmatches('(?:\D|\b)(?:\d{7})(?:\D|\b)',middle) 
+                        and regexpr('(\d{6})',middle) = grantid and fundingclass1 in ('WT', 'EC')) or (regexprmatches('(?:(?:\D|\b)(?:\d{7})(?:\D|\b))',middle) and regexpr("(\d{7})",middle) = grantid and fundingclass1='NSF' )
                         )
                       ) where confidence > 0.16) group by docid,id);
