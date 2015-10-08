@@ -391,6 +391,7 @@
 		<distcp xmlns="uri:oozie:distcp-action:0.1">
 			<job-tracker>${jobTracker}</job-tracker>
 			<name-node>${nameNode}</name-node>
+			<arg>-pb</arg>
 			<arg>${import_hbase_dump_location}</arg>
 			<arg>${nameNode}${workingDir}/hbase_dump</arg>
 		</distcp>
