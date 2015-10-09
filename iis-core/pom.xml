@@ -34,13 +34,6 @@
 			<scope>provided</scope>
 		</dependency>
 		
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-common</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		
 		<!-- This is needed by map-reduce-related classes -->
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
@@ -48,36 +41,22 @@
 			<scope>provided</scope>
 		</dependency>
 		
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-hdfs</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-hdfs</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-client</artifactId>
-			<scope>test</scope>
-		</dependency>
-		
         <dependency>
             <groupId>org.apache.oozie</groupId>
             <artifactId>oozie-core</artifactId>
             <scope>provided</scope>
         </dependency>
+        
+        <dependency>
+			<groupId>org.apache.oozie</groupId>
+			<artifactId>oozie-client</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jdom</groupId>
+			<artifactId>jdom</artifactId>
+		</dependency>
 		
 		<!-- Needed by Avro { -->
 		<dependency>
@@ -91,12 +70,6 @@
 		</dependency>
 		<!-- Needed by Avro } -->
 		<!-- Jar containing testing classes that have been missing -->
-		<dependency>
-			<groupId>org.apache.oozie</groupId>
-			<artifactId>oozie-core</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>

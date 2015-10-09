@@ -224,14 +224,6 @@
 				<artifactId>oozie-core</artifactId>
 				<version>${iis.oozie.version}</version>
     		</dependency>
-    		
-    		<dependency>
-				<groupId>org.apache.oozie</groupId>
-				<artifactId>oozie-core</artifactId>
-				<version>${iis.oozie.version}</version>
-				<type>test-jar</type>
-				<scope>test</scope>
-			</dependency>
 			
 			<dependency>
 				<groupId>org.apache.oozie</groupId>
@@ -276,12 +268,6 @@
 				<version>${iis.pig.version}</version>
 			</dependency>
 			-->
-			
-			<dependency>
-				<groupId>org.apache.oozie</groupId>
-				<artifactId>oozie-sharelib-pig</artifactId>
-				<version>${iis.oozie.version}</version>
-			</dependency>
 		    
 		    <dependency>
 		    	<groupId>org.apache.pig</groupId>
@@ -302,12 +288,6 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-			
-			<dependency>
-            	<groupId>org.apache.oozie</groupId>
-            	<artifactId>oozie-sharelib-streaming</artifactId>
-            	<version>${iis.oozie.version}</version>
-        	</dependency>
 			
 			
 			<!-- Hive dependencies -->
