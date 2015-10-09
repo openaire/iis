@@ -8,6 +8,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.avro.mapred.AvroKey;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.xml.sax.InputSource;
@@ -28,7 +29,7 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
     protected void map(AvroKey<DocumentText> key, NullWritable value, Context context)
             throws IOException, InterruptedException {
         DocumentText nlm = key.datum();
-        if (nlm.getText()!=null) {
+        if (!StringUtils.isBlank(nlm.getText())) {
             final ExtractedDocumentMetadata.Builder output = ExtractedDocumentMetadata.newBuilder();
             output.setId(nlm.getId());
             try {
