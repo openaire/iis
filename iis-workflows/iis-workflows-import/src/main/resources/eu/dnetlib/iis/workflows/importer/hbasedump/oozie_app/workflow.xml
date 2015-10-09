@@ -13,6 +13,14 @@
 			<name>output_table_name</name>
 			<description>hbase destination table name</description>
 		</property>
+		<property>
+			<name>hbase_remote_zookeeper_quorum</name>
+			<description>hbase zookeeper quorum, have to be provided explicitly</description>
+		</property>
+		<property>
+			<name>hbase_remote_zookeeper_clientport</name>
+			<description>external hbase zookeeper client port, have to be provided explicitly</description>
+		</property>
 	</parameters>
 
 	<global>
@@ -76,6 +84,14 @@
 				<property>
 					<name>hbase.mapreduce.outputtable</name>
 					<value>${output_table_name}</value>
+				</property>
+				<property>
+					<name>hbase.zookeeper.quorum</name>
+					<value>${hbase_remote_zookeeper_quorum}</value>
+				</property>
+				<property>
+					<name>hbase.zookeeper.property.clientPort</name>
+					<value>${hbase_remote_zookeeper_clientport}</value>
 				</property>
 				<!-- deprecated since cdh5 -->
 				<property>
