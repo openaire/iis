@@ -39,7 +39,7 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 		
 		WorkflowTestResult workflowTestResult = testWorkflow(
 				"eu/dnetlib/iis/core/examples/java/line_by_line_copier",
-				new OozieWorkflowTestConfiguration());
+				conf);
 		
 		final File actualDocument = workflowTestResult.getWorkflowOutputFile("copier/doc_copy.csv");
 		final File actualPerson = workflowTestResult.getWorkflowOutputFile("copier/person_copy.csv");
@@ -84,7 +84,7 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 		conf.addExpectedOutputAvroDataStore("joiner/person_age");
 		
 		WorkflowTestResult workflowTestResult = 
-				testWorkflow("eu/dnetlib/iis/core/examples/java/joiner");
+				testWorkflow("eu/dnetlib/iis/core/examples/java/joiner", conf);
 		
 		List<DocumentWithAuthors> documentWithAuthors = 
 				workflowTestResult.getAvroDataStore("joiner/document_with_authors");

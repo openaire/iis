@@ -68,28 +68,6 @@
         </dependency>
         <!-- Needed by Avro } -->
         <!-- Needed by Oozie tests { -->
-        <dependency>
-            <groupId>org.apache.oozie</groupId>
-            <artifactId>oozie-core</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-hdfs</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-common</artifactId>
-            <type>test-jar</type>
-        </dependency>
         
         <dependency>
 			<groupId>de.sven-jacobs</groupId>
@@ -108,12 +86,6 @@
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <!-- required after introducing 'provided' scope for hadoop libs -->
-        <dependency>
-            <groupId>org.apache.oozie</groupId>
-            <artifactId>oozie-core</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

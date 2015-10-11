@@ -56,7 +56,7 @@ public class TestAvroStorage {
 
     final private static String basedir = "src/test/java/org/apache/pig/piggybank/test/storage/avro/avro_test_files/";
 
-    final private static String outbasedir = encodeEscape(FileUtils.getTempDirectoryPath()) + "TestAvroStorage/";
+    final private static String outbasedir = encodeEscape(FileUtils.getTempDirectoryPath()) + "/TestAvroStorage/";
 
     public static final PathFilter hiddenPathFilter = new PathFilter() {
         public boolean accept(Path p) {
