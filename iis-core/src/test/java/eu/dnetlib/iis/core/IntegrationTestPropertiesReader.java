@@ -22,7 +22,7 @@ public class IntegrationTestPropertiesReader {
 
 	private final static String DEFAULT_PROPERTIES_CLASSPATH = "/integration-test-default.properties";
 	
-	private final static String USER_PROPERTIES_PATH = System.getProperty("user.home") + "/.iis/integration-test.properties";
+	private final static String DEFAULT_USER_PROPERTIES_PATH = System.getProperty("user.home") + "/.iis/integration-test.properties";
 	
 	private Properties integrationTestProperties = new Properties();
 	
@@ -53,6 +53,14 @@ public class IntegrationTestPropertiesReader {
 		return integrationTestProperties.getProperty(key);
 	}
 	
+	public String getPropertiesFilePath() {
+		String userPropertiesPath = System.getProperty("connectionProperties");
+		if (userPropertiesPath == null) {
+			return DEFAULT_USER_PROPERTIES_PATH;
+		}
+		return userPropertiesPath;
+	}
+	
 	
 	//------------------------ PRIVATE --------------------------
 	
@@ -79,7 +87,7 @@ public class IntegrationTestPropertiesReader {
 
 		InputStream inputStream = null;
 		try {
-			File userPropertiesFile = new File(USER_PROPERTIES_PATH);
+			File userPropertiesFile = new File(getPropertiesFilePath());
 
 			if (!userPropertiesFile.exists()) {
 				return userProperties;

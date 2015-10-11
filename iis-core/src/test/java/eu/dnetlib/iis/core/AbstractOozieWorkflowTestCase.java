@@ -41,17 +41,13 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	private final static String OOZIE_RUN_WORKFLOW_LOG_FILE_KEY = "oozie.execution.log.file.location";
 	
-	private final static String OOZIE_WORKFLOW_DEPLOY_MODE_KEY = "deploy.mode";
-	
 	private final static String NAME_NODE_KEY = "nameNode";
 	
 	private final static String WORKFLOW_SOURCE_DIR_KEY = "workflow.source.dir";
 	
 	private final static String MAVEN_TEST_WORKFLOW_PHASE = "clean package";
 	
-	private final static String MAVEN_TEST_WORKFLOW_LOCALLY_PROFILE = "attach-test-resources,oozie-package,deploy-local,run-local";
-	
-	private final static String MAVEN_TEST_WORKFLOW_REMOTELY_PROFILE = "attach-test-resources,oozie-package,deploy,run";
+	private final static String MAVEN_TEST_WORKFLOW_PROFILE = "attach-test-resources,oozie-package,deploy,run";
 	
 
 	private static IntegrationTestPropertiesReader propertiesReader;
@@ -65,12 +61,6 @@ public abstract class AbstractOozieWorkflowTestCase {
 	private HdfsTestHelper hdfsTestHelper;
 	
 	private File tempDir;
-	
-	
-	private enum DeployMode {
-		LOCAL,
-		SSH
-	}
 	
 	
 	@BeforeClass
@@ -153,12 +143,13 @@ public abstract class AbstractOozieWorkflowTestCase {
 	//------------------------ PRIVATE --------------------------
 	
 	private Process runMavenTestWorkflow(String workflowSource) {
-		
+		System.out.println("PROPERTIES FILE: " + propertiesReader.getPropertiesFilePath());
 		Process p;
 		try {
 			p = Runtime.getRuntime().exec("mvn " + MAVEN_TEST_WORKFLOW_PHASE + " -DskipTests "
-					+ " -P" + chooseProfiles()
+					+ " -P" + MAVEN_TEST_WORKFLOW_PROFILE
 					+ " -D" + WORKFLOW_SOURCE_DIR_KEY + "=" + workflowSource
+					+ " -DconnectionProperties=" + propertiesReader.getPropertiesFilePath()
 					);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -196,15 +187,6 @@ public abstract class AbstractOozieWorkflowTestCase {
 		} finally {
 			IOUtils.closeQuietly(stdError);
 		}
-	}
-	
-	private String chooseProfiles() {
-		return getDeployMode() == DeployMode.LOCAL ? MAVEN_TEST_WORKFLOW_LOCALLY_PROFILE : MAVEN_TEST_WORKFLOW_REMOTELY_PROFILE;
-	}
-	
-	private DeployMode getDeployMode() {
-		String deployModeString  = propertiesReader.getProperty(OOZIE_WORKFLOW_DEPLOY_MODE_KEY);
-		return DeployMode.valueOf(deployModeString);
 	}
 	
 	private String getOozieServiceLoc() {
