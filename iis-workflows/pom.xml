@@ -547,65 +547,65 @@
 			<build>
 			<plugins>
 				<!-- integration tests related --> 
-<!-- 				<plugin> -->
-<!-- 					<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 					<artifactId>maven-compiler-plugin</artifactId> -->
-<!-- 					<executions> -->
-<!-- 						<execution> -->
-<!-- 							<id>integration-test-compile</id> -->
-<!-- 							<phase>integration-test</phase> -->
-<!-- 							<goals> -->
-<!-- 								<goal>testCompile</goal> -->
-<!-- 							</goals> -->
-<!-- 						</execution> -->
-<!-- 					</executions> -->
-<!-- 				</plugin> -->
-<!-- 				<plugin> -->
-<!-- 					<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 					<artifactId>maven-jar-plugin</artifactId> -->
-<!-- 					<executions> -->
-<!-- 						<execution> -->
-<!-- 							<id>integration-test-package</id> -->
-<!-- 							<phase>integration-test</phase> -->
-<!-- 							<goals> -->
-<!-- 								<goal>test-jar</goal> -->
-<!-- 							</goals> -->
-<!-- 						</execution> -->
-<!-- 					</executions> -->
-<!-- 				</plugin> -->
-<!-- 				<plugin> -->
-<!-- 					<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 					<artifactId>maven-dependency-plugin</artifactId> -->
-<!-- 					<executions> -->
-<!-- 						<execution> -->
-<!-- 							<id>integration-test-copy-dependencies</id> -->
-<!-- 							<phase>integration-test</phase> -->
-<!-- 							<goals> -->
-<!-- 								<goal>copy-dependencies</goal> -->
-<!-- 							</goals> -->
-<!-- 						</execution> -->
-<!-- 					</executions> -->
-<!-- 				</plugin> -->
-<!-- 				<plugin> -->
-<!-- 	                <groupId>eu.dnetlib.primer</groupId> -->
-<!-- 	                <artifactId>primer-maven-plugin</artifactId> -->
-<!-- 	                <executions> -->
-<!-- 	                    <execution> -->
-<!-- 	                        <id>integration-test-priming</id> -->
-<!-- 	                        <phase>integration-test</phase> -->
-<!-- 	                        <goals><goal>prime</goal></goals> -->
-<!-- 	                        <configuration> -->
-<!-- 	                            <classProviderFiles> -->
-<!-- 	                                <classProviderFile>${project.build.directory}/dependency/*.jar</classProviderFile> -->
-<!-- 	                                <classProviderFile>${project.build.directory}/*-tests.jar</classProviderFile> -->
-<!-- 	                                <classProviderFile>${project.build.directory}/classes</classProviderFile> -->
-<!-- 	                            </classProviderFiles> -->
-<!-- 	                            <coansysPackageDir>${project.build.directory}/dependency</coansysPackageDir> -->
-<!-- 	                            <destination>${project.build.directory}/${primed.dir}</destination> -->
-<!-- 	                        </configuration> -->
-<!-- 	                    </execution> -->
-<!-- 	                </executions> -->
-<!-- 	            </plugin> -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<executions>
+						<execution>
+							<id>integration-test-compile</id>
+							<phase>integration-test</phase>
+							<goals>
+								<goal>testCompile</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<executions>
+						<execution>
+							<id>integration-test-package</id>
+							<phase>integration-test</phase>
+							<goals>
+								<goal>test-jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<executions>
+						<execution>
+							<id>integration-test-copy-dependencies</id>
+							<phase>integration-test</phase>
+							<goals>
+								<goal>copy-dependencies</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+	                <groupId>eu.dnetlib.primer</groupId>
+	                <artifactId>primer-maven-plugin</artifactId>
+	                <executions>
+	                    <execution>
+	                        <id>integration-test-priming</id>
+	                        <phase>integration-test</phase>
+	                        <goals><goal>prime</goal></goals>
+	                        <configuration>
+	                            <classProviderFiles>
+	                                <classProviderFile>${project.build.directory}/dependency/*.jar</classProviderFile>
+	                                <classProviderFile>${project.build.directory}/*-tests.jar</classProviderFile>
+	                                <classProviderFile>${project.build.directory}/classes</classProviderFile>
+	                            </classProviderFiles>
+	                            <coansysPackageDir>${project.build.directory}/dependency</coansysPackageDir>
+	                            <destination>${project.build.directory}/${primed.dir}</destination>
+	                        </configuration>
+	                    </execution>
+	                </executions>
+	            </plugin>
 	            
 				<!-- end of plugins required by integration test priming -->
 				<plugin>
