@@ -57,60 +57,12 @@
         </dependency>
 		
 		
-		<!-- required after introducing 'provided' scope for hadoop libs -->
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-hdfs</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.oozie</groupId>
-			<artifactId>oozie-core</artifactId>
-			<scope>compile</scope>
-			
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-yarn-common</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-common</artifactId>
-		</dependency>
-		
+		<!-- Needed by our Hadoop Streaming workflow node {-->
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-streaming</artifactId>
 		</dependency>
 		<!-- Needed by our Hadoop Streaming workflow node }-->
-		<!-- Needed by Oozie tests { -->
-		<dependency>
-			<groupId>org.apache.oozie</groupId>
-			<artifactId>oozie-core</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-        <dependency>
-            <groupId>org.apache.oozie</groupId>
-            <artifactId>oozie-sharelib-streaming</artifactId>
-        </dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-hdfs</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-yarn-common</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
 
 	</dependencies>
 	<build>

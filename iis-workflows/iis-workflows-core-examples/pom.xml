@@ -62,52 +62,19 @@
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-common</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
         <dependency>
             <groupId>org.apache.oozie</groupId>
             <artifactId>oozie-core</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- PigMain was moved to oozie-sharelib-pig since cdh4.3.1 -->
-        <dependency>
-            <groupId>org.apache.oozie</groupId>
-            <artifactId>oozie-sharelib-pig</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- StreamingMain was moved to oozie-sharelib-pig since cdh4.3.1 -->
-        <dependency>
-            <groupId>org.apache.oozie</groupId>
-            <artifactId>oozie-sharelib-streaming</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- Needed by Oozie tests { -->
-        <dependency>
-            <groupId>org.apache.oozie</groupId>
-            <artifactId>oozie-core</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-hdfs</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-hdfs</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-common</artifactId>
-            <type>test-jar</type>
-        </dependency>
-        <!-- Needed by Oozie tests } -->
+        
         <!-- Needed to run Pig jobs { -->
         <dependency>
             <groupId>org.apache.pig</groupId>
@@ -121,6 +88,7 @@
         <dependency>
             <groupId>org.apache.pig</groupId>
             <artifactId>pigunit</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.antlr</groupId>

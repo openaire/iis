@@ -63,31 +63,7 @@
 			<artifactId>paranamer</artifactId>
 		</dependency>
 		<!-- Needed by Avro } -->
-		<!-- Needed by Oozie tests { -->
-		<dependency>
-			<groupId>org.apache.oozie</groupId>
-			<artifactId>oozie-core</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-hdfs</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-common</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-        <!-- Needed by Oozie tests } -->
+		
         <dependency>
             <groupId>pl.edu.icm.coansys</groupId>
             <artifactId>models</artifactId>
@@ -108,12 +84,6 @@
             <artifactId>hadoop-core</artifactId>
             <scope>provided</scope>
         </dependency>
-        
-		<dependency>
-			<groupId>org.apache.oozie</groupId>
-			<artifactId>oozie-core</artifactId>
-			<scope>provided</scope>
-		</dependency>
 		
         <!-- coansys containing citationmatching workflow -->
 		 <dependency>

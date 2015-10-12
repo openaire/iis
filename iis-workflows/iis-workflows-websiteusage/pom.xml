@@ -44,11 +44,6 @@
         
         
 		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-hdfs</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.oozie</groupId>
 			<artifactId>oozie-core</artifactId>
 			<scope>compile</scope>
@@ -59,10 +54,13 @@
 			<scope>provided</scope>
 		</dependency>
 		
+		<!-- Needed by our Hadoop Streaming workflow node {-->
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-streaming</artifactId>
 		</dependency>
+		<!-- Needed by our Hadoop Streaming workflow node }-->
+		
 		<!-- hive related -->
 		<dependency>
             <groupId>org.apache.hive</groupId>
@@ -78,32 +76,6 @@
             <artifactId>hive-builtins</artifactId>
         </dependency>
         -->
-		<!-- Needed by our Hadoop Streaming workflow node }-->
-		<!-- Needed by Oozie tests { -->
-		<dependency>
-			<groupId>org.apache.oozie</groupId>
-			<artifactId>oozie-core</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-hdfs</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-common</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<!-- Needed by Oozie tests } -->
 		
 	</dependencies>
 	
