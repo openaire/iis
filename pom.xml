@@ -252,6 +252,12 @@
 				<groupId>org.apache.oozie</groupId>
 				<artifactId>oozie-core</artifactId>
 				<version>${iis.oozie.version}</version>
+				<exclusions>
+                    <exclusion>
+                        <artifactId>jdk.tools</artifactId>
+                        <groupId>jdk.tools</groupId>
+                    </exclusion>
+                </exclusions>
     		</dependency>
 			
 			<dependency>
@@ -287,7 +293,14 @@
 				<groupId>org.apache.pig</groupId>
 				<artifactId>pig</artifactId>
 				<version>${iis.pig.version}</version>
+				<exclusions>
+				    <exclusion>
+                        <artifactId>jdk.tools</artifactId>
+                        <groupId>jdk.tools</groupId>
+                    </exclusion>
+                </exclusions>
 			</dependency>
+			
 			<dependency>
 				<groupId>org.apache.pig</groupId>
 				<artifactId>piggybank</artifactId>
@@ -356,7 +369,14 @@
 				<!-- 
 				<scope>provided</scope>
 				-->
+				<exclusions>
+                    <exclusion>
+                        <artifactId>jdk.tools</artifactId>
+                        <groupId>jdk.tools</groupId>
+                    </exclusion>
+                </exclusions>
 			</dependency>
+
 			<dependency>
 	            <groupId>org.apache.hbase</groupId>
 	            <artifactId>hbase-server</artifactId>
@@ -426,6 +446,10 @@
                     	<groupId>org.apache.hadoop</groupId>
                     	<artifactId>hadoop-mapreduce-client-core</artifactId>
                 	</exclusion>
+                	<exclusion>
+                        <artifactId>jdk.tools</artifactId>
+                        <groupId>jdk.tools</groupId>
+                    </exclusion>
             	</exclusions>
         	</dependency>
         	
@@ -715,8 +739,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
 
@@ -934,7 +958,7 @@
 		<iis.hadoop.test.version>${iis.hadoop.mr1.version}</iis.hadoop.test.version>
 		
 		<iis.coansys.version>1.9</iis.coansys.version>
-		<scala.version>2.10.3</scala.version>
+		<scala.version>2.11.7</scala.version>
 	</properties>
 </project>
 
