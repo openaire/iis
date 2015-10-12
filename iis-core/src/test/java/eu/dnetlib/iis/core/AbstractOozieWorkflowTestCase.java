@@ -98,7 +98,9 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	@After
 	public void cleanup() throws IOException {
-		FileUtils.deleteDirectory(tempDir);
+		if (tempDir != null) {
+			FileUtils.deleteDirectory(tempDir);
+		}
 	}
 	
 	/**
