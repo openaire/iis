@@ -19,7 +19,6 @@ import org.apache.hadoop.hbase.client.HTableInterface;
 import org.apache.hadoop.hbase.client.Put;
 
 import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.actionmanager.actions.XsltInfoPackageAction;
 import eu.dnetlib.actionmanager.common.Provenance;
 import eu.dnetlib.actionmanager.rmi.ActionManagerException;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
@@ -116,22 +115,6 @@ public class HBaseActionManagerServiceFacade implements
 			}
 		}
 	}
-
-	@Override
-	public void storeAction(XsltInfoPackageAction action)
-			throws ActionManagerException {
-		if (action!=null) {
-			putCache.addAll(action.asPutOperations());
-			if (putCache.size()>cacheThreshold) {
-				try {
-					hTable.put(putCache);
-					putCache.clear();
-				} catch (IOException e) {
-					throw new ActionManagerException(e);
-				}
-			}
-		}
-	}	
 	
 	@Override
 	public void close() throws ActionManagerException {

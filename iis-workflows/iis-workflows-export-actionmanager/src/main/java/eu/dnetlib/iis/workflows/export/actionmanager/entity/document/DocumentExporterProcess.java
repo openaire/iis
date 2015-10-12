@@ -1,12 +1,15 @@
 package eu.dnetlib.iis.workflows.export.actionmanager.entity.document;
 
-import static eu.dnetlib.iis.workflows.export.actionmanager.ExportWorkflowRuntimeParameters.*;
+import static eu.dnetlib.iis.workflows.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_ACTION_SETID;
+import static eu.dnetlib.iis.workflows.export.actionmanager.ExportWorkflowRuntimeParameters.IMPORT_DOCUMENT_MDSTORE_ID;
+import static eu.dnetlib.iis.workflows.export.actionmanager.ExportWorkflowRuntimeParameters.IMPORT_DOCUMENT_MDSTORE_SERVICE_LOCATION;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidParameterException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,6 +22,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import eu.dnetlib.actionmanager.actions.ActionFactory;
+import eu.dnetlib.actionmanager.actions.AtomicAction;
+import eu.dnetlib.actionmanager.actions.XsltInfoPackageAction;
 import eu.dnetlib.actionmanager.common.Operation;
 import eu.dnetlib.data.mdstore.DocumentNotFoundException;
 import eu.dnetlib.data.mdstore.MDStoreService;
@@ -143,13 +148,22 @@ public class DocumentExporterProcess implements Process {
 						String mdStoreRecord = mdStore.deliverRecord(
 								mdStoreId, convertToMDStoreId(documentId));
 						if (mdStoreRecord!=null) {
-							actionManager.storeAction(actionFactory.generateInfoPackageAction(
+							XsltInfoPackageAction xsltAction = actionFactory.generateInfoPackageAction(
 									documentXSLT, actionSetId, 
 									configProvider.provideAgent(), 
 									Operation.INSERT, mdStoreRecord,
 									configProvider.provideProvenance(),
 									configProvider.provideNamespacePrefix(),
-									configProvider.provideActionTrust()));
+									configProvider.provideActionTrust());
+							if (xsltAction!=null) {
+								List<AtomicAction> atomicActions = xsltAction.asAtomicActions();
+								if (atomicActions!=null) {
+									actionManager.storeAction(atomicActions,
+											configProvider.provideProvenance(),
+											configProvider.provideActionTrust(),
+											configProvider.provideNamespacePrefix());	
+								}
+							}
 							counter++;
 							if (counter%10000==0) {
 								log.warn("exported " + counter + " documents in " +
