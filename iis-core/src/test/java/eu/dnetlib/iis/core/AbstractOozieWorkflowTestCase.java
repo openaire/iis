@@ -17,6 +17,7 @@ import org.apache.oozie.client.OozieClient;
 import org.apache.oozie.client.OozieClientException;
 import org.apache.oozie.client.WorkflowJob.Status;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -91,6 +92,11 @@ public abstract class AbstractOozieWorkflowTestCase {
 		FileUtils.deleteDirectory(tempDir);
 	}
 	
+	@AfterClass
+	public static void classCleanup() {
+		propertiesReader.clean();
+	}
+	
 	/**
 	 * Tests workflow located under {@literal workflowPath} parameter.
 	 * Internally uses {@link #testWorkflow(String, OozieWorkflowTestConfiguration)}
@@ -143,7 +149,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 	//------------------------ PRIVATE --------------------------
 	
 	private Process runMavenTestWorkflow(String workflowSource) {
-		System.out.println("PROPERTIES FILE: " + propertiesReader.getPropertiesFilePath());
+		
 		Process p;
 		try {
 			p = Runtime.getRuntime().exec("mvn " + MAVEN_TEST_WORKFLOW_PHASE + " -DskipTests "
