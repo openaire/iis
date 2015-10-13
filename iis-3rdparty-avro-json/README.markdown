@@ -1,6 +1,6 @@
 This project is a patched version of 
 
-**Cloudera's Avro-JSON proxy for Hadoop Streaming**
+**Cloudera's [Avro-JSON proxy for Hadoop Streaming](https://github.com/jwills/avro-json)**
 
 The goal of this patch is to introduce a way of passing fully qualified names of classes that define the input and output schemas in the Oozie description. The default approach of this library is to accept either a full schema given in XML property or a path to a file stored somewhere in the filesystem.
 
