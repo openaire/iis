@@ -205,7 +205,7 @@
 								</goals>
 								<configuration>
 									<locations>
-										<location>${connectionProperties}</location>
+										<location>${iisConnectionProperties}</location>
 									</locations>
 									<quiet>false</quiet>
 								</configuration>
@@ -648,7 +648,9 @@
 								<systemPropertiesVariables>
 									<hadoop.log.dir>/tmp</hadoop.log.dir>
 									<oozie.data.dir>${oozie.data.dir}</oozie.data.dir>
-									<connectionProperties>${connectionProperties}</connectionProperties>
+									<!-- if iisConnectionProperties is not defined, 
+										then ${user.home}/.iis/integration-test.properties will be used -->
+									<iisConnectionProperties>${iisConnectionProperties}</iisConnectionProperties>
 								</systemPropertiesVariables>
 								<groups>eu.dnetlib.iis.IntegrationTest</groups>
 							</configuration>

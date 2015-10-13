@@ -51,7 +51,9 @@ public abstract class AbstractOozieWorkflowTestCase {
 	private final static String MAVEN_TEST_WORKFLOW_PROFILE = "attach-test-resources,oozie-package,deploy,run";
 	
 
-	private static IntegrationTestPropertiesReader propertiesReader;
+	private static IntegrationTestPropertiesReader propertiesReader = new IntegrationTestPropertiesReader();
+	
+	private static File propertiesFile;
 	
 	private OozieClient oozieClient;
 	
@@ -65,9 +67,8 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	
 	@BeforeClass
-	public static void classSetUp() {
-		propertiesReader = new IntegrationTestPropertiesReader();
-		
+	public static void classSetUp() throws IOException {
+		propertiesFile = PropertiesFileUtils.createTemporaryPropertiesFile(propertiesReader.getProperties(), "iis-integration-test");
 	}
 	
 	@Before
@@ -94,7 +95,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	@AfterClass
 	public static void classCleanup() {
-		propertiesReader.clean();
+		propertiesFile.delete();
 	}
 	
 	/**
@@ -155,7 +156,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 			p = Runtime.getRuntime().exec("mvn " + MAVEN_TEST_WORKFLOW_PHASE + " -DskipTests "
 					+ " -P" + MAVEN_TEST_WORKFLOW_PROFILE
 					+ " -D" + WORKFLOW_SOURCE_DIR_KEY + "=" + workflowSource
-					+ " -DconnectionProperties=" + propertiesReader.getPropertiesFilePath()
+					+ " -DiisConnectionProperties=" + propertiesFile.getAbsolutePath()
 					);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
