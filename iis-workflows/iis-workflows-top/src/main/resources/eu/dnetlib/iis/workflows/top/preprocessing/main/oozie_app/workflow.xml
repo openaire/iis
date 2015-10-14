@@ -115,9 +115,9 @@
 		</property>
 		<!-- export related -->
 		<property>
-			<name>active_export_to_hbase</name>
+			<name>active_export_to_actionmanager</name>
 			<value>true</value>
-			<description>flag indicating hbase export should be performed</description>
+			<description>flag indicating export to action manager should be performed</description>
 		</property>
 		<property>
 			<name>active_export_to_json</name>
@@ -181,6 +181,12 @@
 			<name>export_trust_level_threshold_document_referencedDatasets</name>
 			<value>$UNDEFINED$</value>
 			<description>document_referencedDatasets trust level threshold</description>
+		</property>
+		<property>
+			<name>output_remote_location</name>
+			<value>$UNDEFINED$</value>
+			<description>optional remote cluster output location where inference output dump should be distcped as sequence files.
+			When not specified results will be exported straight to the ActionManager HBase.</description>
 		</property>
 		<!--  -->
 		<!-- working directory related -->
@@ -498,12 +504,12 @@
     
     <decision name="decision-export-to-hbase">
         <switch>
-            <case to="export-to-hbase">${active_export_to_hbase eq "true"}</case>
+            <case to="export-to-actionmanager">${active_export_to_actionmanager eq "true"}</case>
             <default to="decision-export-to-json"/>
         </switch>
     </decision>
     
-  	<action name="export-to-hbase">
+  	<action name="export-to-actionmanager">
 		<sub-workflow>
             <app-path>${wf:appPath()}/mainworkflows_common_export</app-path>
             <propagate-configuration/>

@@ -1,6 +1,9 @@
 package eu.dnetlib.iis.workflows.export.actionmanager.entity.document;
 
 import static eu.dnetlib.iis.workflows.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_ACTION_SETID;
+import static eu.dnetlib.iis.workflows.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_SEQ_FILE_ACTIVE;
+import static eu.dnetlib.iis.workflows.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_SEQ_FILE_OUTPUT_DIR_NAME;
+import static eu.dnetlib.iis.workflows.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_SEQ_FILE_OUTPUT_DIR_ROOT;
 import static eu.dnetlib.iis.workflows.export.actionmanager.ExportWorkflowRuntimeParameters.IMPORT_DOCUMENT_MDSTORE_ID;
 import static eu.dnetlib.iis.workflows.export.actionmanager.ExportWorkflowRuntimeParameters.IMPORT_DOCUMENT_MDSTORE_SERVICE_LOCATION;
 
@@ -41,6 +44,7 @@ import eu.dnetlib.iis.core.java.porttype.PortType;
 import eu.dnetlib.iis.export.auxiliary.schemas.Identifier;
 import eu.dnetlib.iis.workflows.export.actionmanager.api.ActionManagerServiceFacade;
 import eu.dnetlib.iis.workflows.export.actionmanager.api.HBaseActionManagerServiceFacade;
+import eu.dnetlib.iis.workflows.export.actionmanager.api.SequenceFileActionManagerServiceFacade;
 import eu.dnetlib.iis.workflows.export.actionmanager.cfg.ActionManagerConfigurationProvider;
 import eu.dnetlib.iis.workflows.export.actionmanager.cfg.StaticConfigurationProvider;
 
@@ -97,7 +101,14 @@ public class DocumentExporterProcess implements Process {
 		String actionSetId = ProcessUtils.getParameterValue(
 				EXPORT_ACTION_SETID, 
 				conf, parameters);
-		
+
+		boolean seqFileExportMode = Boolean.valueOf(ProcessUtils.getParameterValue(
+				EXPORT_SEQ_FILE_ACTIVE, conf, parameters));
+		String outputDirRoot = ProcessUtils.getParameterValue(EXPORT_SEQ_FILE_OUTPUT_DIR_ROOT, 
+				conf, parameters);
+		String outputDirName = ProcessUtils.getParameterValue(EXPORT_SEQ_FILE_OUTPUT_DIR_NAME, 
+				conf, parameters);
+
 		if (mdStoreLocation==null || WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(mdStoreLocation)) {
 			throw new InvalidParameterException("unable to export document entities to action manager, " + 
 					"unknown MDStore service location. "
@@ -129,8 +140,9 @@ public class DocumentExporterProcess implements Process {
 		ActionFactory actionFactory = new ActionFactory();
 		actionFactory.setXslts(xslts);
 		
-		ActionManagerServiceFacade actionManager = new HBaseActionManagerServiceFacade(
-				conf, parameters);
+		ActionManagerServiceFacade actionManager = seqFileExportMode?
+				new SequenceFileActionManagerServiceFacade(conf, outputDirRoot, outputDirName):
+				new HBaseActionManagerServiceFacade(conf, parameters);
 		ActionManagerConfigurationProvider configProvider = new StaticConfigurationProvider(
 				StaticConfigurationProvider.AGENT_DEFAULT,
 				StaticConfigurationProvider.PROVENANCE_DEFAULT,
