@@ -69,6 +69,8 @@
         <!-- Needed by Avro } -->
         <!-- Needed by Oozie tests { -->
         
+       
+        
         <dependency>
 			<groupId>de.sven-jacobs</groupId>
 			<artifactId>loremipsum</artifactId>

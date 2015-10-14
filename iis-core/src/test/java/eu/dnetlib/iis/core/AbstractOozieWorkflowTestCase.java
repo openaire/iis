@@ -11,6 +11,7 @@ import java.util.Properties;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.oozie.client.OozieClient;
@@ -156,9 +157,15 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	private Process runMavenTestWorkflow(String workflowSource) {
 		
+	    String mvn = "mvn";
+		
+	    if (SystemUtils.IS_OS_WINDOWS) {
+		    mvn = "mvn.bat";
+		}
+	    
 		Process p;
 		try {
-			p = Runtime.getRuntime().exec("mvn " + MAVEN_TEST_WORKFLOW_PHASE + " -DskipTests "
+			p = Runtime.getRuntime().exec(mvn + " " + MAVEN_TEST_WORKFLOW_PHASE + " -DskipTests "
 					+ " -P" + chooseProfiles()
 					+ " -D" + WORKFLOW_SOURCE_DIR_KEY + "=" + workflowSource
 					);

@@ -6,7 +6,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Arrays;
 import java.util.Stack;
 
@@ -14,11 +15,11 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.junit.Test;
+import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ReferenceMetadata;
-import eu.dnetlib.iis.workflows.ingest.pmc.metadata.PmcXmlHandler;
 
 /**
  * {@link PmcXmlHandler} test class.
@@ -49,8 +50,8 @@ public class PmcXmlHandlerTest {
 	@Test
 	public void testParsing() throws Exception {
 		String filePath = "/eu/dnetlib/iis/workflows/ingest/pmc/metadata/data/document.xml";
-		InputStream inputStream = null;
-		try {
+		Reader fileReader = null;
+        try {
 			SAXParserFactory saxFactory = SAXParserFactory.newInstance();
 			saxFactory.setValidating(false);
 			SAXParser saxParser = saxFactory.newSAXParser();
@@ -62,9 +63,10 @@ public class PmcXmlHandlerTest {
 			ExtractedDocumentMetadata.Builder metaBuilder = ExtractedDocumentMetadata.newBuilder();
 			metaBuilder.setId("some-id");
 			PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(metaBuilder);
-			saxParser.parse(inputStream = PmcXmlHandler.class.getResourceAsStream(filePath), 
-					pmcXmlHandler);
-			ExtractedDocumentMetadata meta = metaBuilder.build();
+			fileReader = new InputStreamReader(PmcXmlHandler.class.getResourceAsStream(filePath), "UTF-8");
+            InputSource inputSource = new InputSource(fileReader);
+            saxParser.parse(inputSource, pmcXmlHandler);
+            ExtractedDocumentMetadata meta = metaBuilder.build();
 			assertEquals("BMC Systems Biology", meta.getJournal());
 			assertEquals("111", meta.getPages().getStart());
 			assertEquals("111", meta.getPages().getEnd());
@@ -76,17 +78,17 @@ public class PmcXmlHandlerTest {
 			assertEquals(2, meta.getAffiliations().size());
 			
 		} finally {
-			if (inputStream!=null) {
-				inputStream.close();
-			}
+            if (fileReader!=null) { 
+                fileReader.close();
+            }
 		}
 	}
 	
 	@Test
 	public void testParsingLargeFile() throws Exception {
 		String filePath = "/eu/dnetlib/iis/workflows/ingest/pmc/metadata/data/od_______908__365a50343d53774f68fa13800349d372.xml";
-		InputStream inputStream = null;
-		try {
+		Reader fileReader = null;
+        try {
 			SAXParserFactory saxFactory = SAXParserFactory.newInstance();
 			saxFactory.setValidating(false);
 			SAXParser saxParser = saxFactory.newSAXParser();
@@ -98,26 +100,27 @@ public class PmcXmlHandlerTest {
 			ExtractedDocumentMetadata.Builder metaBuilder = ExtractedDocumentMetadata.newBuilder();
 			metaBuilder.setId("some-id");
 			PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(metaBuilder);
-			saxParser.parse(inputStream = PmcXmlHandler.class.getResourceAsStream(filePath), 
-					pmcXmlHandler);
-			ExtractedDocumentMetadata meta = metaBuilder.build();
+			fileReader = new InputStreamReader(PmcXmlHandler.class.getResourceAsStream(filePath), "UTF-8");
+            InputSource inputSource = new InputSource(fileReader);
+            saxParser.parse(inputSource, pmcXmlHandler);
+            ExtractedDocumentMetadata meta = metaBuilder.build();
 			assertEquals("ZooKeys", meta.getJournal());
 			assertEquals("1", meta.getPages().getStart());
 			assertEquals("972", meta.getPages().getEnd());
 			assertNotNull(meta.getReferences());
 			assertEquals(2643, meta.getReferences().size());
 		} finally {
-			if (inputStream!=null) {
-				inputStream.close();
-			}
+            if (fileReader!=null) { 
+                fileReader.close();
+            }
 		}
 	}
 	
 	@Test
 	public void testParsingAffiliation() throws Exception {
 		String filePath = "/eu/dnetlib/iis/workflows/ingest/pmc/metadata/data/document_with_affiliations.xml";
-		InputStream inputStream = null;
-		try {
+		Reader fileReader = null;
+        try {
 			SAXParserFactory saxFactory = SAXParserFactory.newInstance();
 			saxFactory.setValidating(false);
 			SAXParser saxParser = saxFactory.newSAXParser();
@@ -129,9 +132,10 @@ public class PmcXmlHandlerTest {
 			ExtractedDocumentMetadata.Builder metaBuilder = ExtractedDocumentMetadata.newBuilder();
 			metaBuilder.setId("some-id");
 			PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(metaBuilder);
-			saxParser.parse(inputStream = PmcXmlHandler.class.getResourceAsStream(filePath), 
-					pmcXmlHandler);
-			ExtractedDocumentMetadata meta = metaBuilder.build();
+			fileReader = new InputStreamReader(PmcXmlHandler.class.getResourceAsStream(filePath), "UTF-8");
+            InputSource inputSource = new InputSource(fileReader);
+            saxParser.parse(inputSource, pmcXmlHandler);
+            ExtractedDocumentMetadata meta = metaBuilder.build();
 			
 			assertNotNull(meta.getAffiliations());
 			assertEquals(5, meta.getAffiliations().size());
@@ -148,17 +152,17 @@ public class PmcXmlHandlerTest {
 			assertEquals("Graduate School of Information Science, Nagoya University", meta.getAffiliations().get(4).getOrganization());
 			
 		} finally {
-			if (inputStream!=null) {
-				inputStream.close();
-			}
+            if (fileReader!=null) { 
+                fileReader.close();
+            }
 		}
 	}
 	
 	@Test
 	public void testSingleRefParsing() throws Exception {
 		String filePath = "/eu/dnetlib/iis/workflows/ingest/pmc/metadata/data/single-ref-document.xml";
-		InputStream inputStream = null;
-		try {
+		Reader fileReader = null;
+        try {
 			SAXParserFactory saxFactory = SAXParserFactory.newInstance();
 			saxFactory.setValidating(false);
 			SAXParser saxParser = saxFactory.newSAXParser();
@@ -170,9 +174,10 @@ public class PmcXmlHandlerTest {
 			ExtractedDocumentMetadata.Builder metaBuilder = ExtractedDocumentMetadata.newBuilder();
 			metaBuilder.setId("some-id");
 			PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(metaBuilder);
-			saxParser.parse(inputStream = PmcXmlHandler.class.getResourceAsStream(filePath), 
-					pmcXmlHandler);
-			ExtractedDocumentMetadata meta = metaBuilder.build();
+			fileReader = new InputStreamReader(PmcXmlHandler.class.getResourceAsStream(filePath), "UTF-8");
+            InputSource inputSource = new InputSource(fileReader);
+            saxParser.parse(inputSource, pmcXmlHandler);
+            ExtractedDocumentMetadata meta = metaBuilder.build();
 			assertNotNull(meta.getReferences());
 			assertEquals(1, meta.getReferences().size());
 			ReferenceMetadata refMeta = meta.getReferences().get(0);
@@ -193,9 +198,9 @@ public class PmcXmlHandlerTest {
 			assertEquals(1, refMeta.getBasicMetadata().getExternalIds().size());
 			assertEquals("21296855", refMeta.getBasicMetadata().getExternalIds().get("pmid"));
 		} finally {
-			if (inputStream!=null) {
-				inputStream.close();
-			}
+            if (fileReader!=null) { 
+                fileReader.close();
+            }
 		}
 	}
 	
@@ -203,7 +208,7 @@ public class PmcXmlHandlerTest {
 	public void testMixedTitleParsing() throws Exception {
 //		files causing parsing problems
 		String filePath = "/eu/dnetlib/iis/workflows/ingest/pmc/metadata/data/od_______908__0451fa1ded79a63729296731e53335c0.xml";
-		InputStream inputStream = null;
+		Reader fileReader = null;
 		try {
 			SAXParserFactory saxFactory = SAXParserFactory.newInstance();
 			saxFactory.setValidating(false);
@@ -216,11 +221,15 @@ public class PmcXmlHandlerTest {
 			ExtractedDocumentMetadata.Builder metaBuilder = ExtractedDocumentMetadata.newBuilder();
 			metaBuilder.setId("some-id");
 			PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(metaBuilder);
-			saxParser.parse(inputStream = PmcXmlHandler.class.getResourceAsStream(filePath), 
-					pmcXmlHandler);
+			
+			fileReader = new InputStreamReader(PmcXmlHandler.class.getResourceAsStream(filePath), "UTF-8");
+			InputSource inputSource = new InputSource(fileReader);
+			
+			saxParser.parse(inputSource, pmcXmlHandler);
 			ExtractedDocumentMetadata meta = metaBuilder.build();
 			assertNotNull(meta.getReferences());
 			ReferenceMetadata refMeta = meta.getReferences().get(12);
+			
 			assertEquals("13 Shearer KD, Silverstein J, Plisetskaya EM (1997) Role of adiposity in food intake control of juvenile chinook salmon (Oncorhynchus tshawytscha). Comp Biochem Physiol A 118: 1209–1215",
 					refMeta.getText());
 			assertEquals(new Integer(13), refMeta.getPosition());
@@ -238,8 +247,8 @@ public class PmcXmlHandlerTest {
 			assertEquals(0, refMeta.getBasicMetadata().getExternalIds().size());
 			
 		} finally {
-			if (inputStream!=null) {
-				inputStream.close();
+			if (fileReader!=null) { 
+			    fileReader.close();
 			}
 		}
 	}
@@ -248,8 +257,8 @@ public class PmcXmlHandlerTest {
 	public void testElementCitation() throws Exception {
 //		files causing parsing problems
 		String filePath = "/eu/dnetlib/iis/workflows/ingest/pmc/metadata/data/od_______908__0452195ccf851072fd097fc49bfbb9da.xml";
-		InputStream inputStream = null;
-		try {
+		Reader fileReader = null;
+        try {
 			SAXParserFactory saxFactory = SAXParserFactory.newInstance();
 			saxFactory.setValidating(false);
 			SAXParser saxParser = saxFactory.newSAXParser();
@@ -261,9 +270,10 @@ public class PmcXmlHandlerTest {
 			ExtractedDocumentMetadata.Builder metaBuilder = ExtractedDocumentMetadata.newBuilder();
 			metaBuilder.setId("some-id");
 			PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(metaBuilder);
-			saxParser.parse(inputStream = PmcXmlHandler.class.getResourceAsStream(filePath), 
-					pmcXmlHandler);
-			ExtractedDocumentMetadata meta = metaBuilder.build();
+			fileReader = new InputStreamReader(PmcXmlHandler.class.getResourceAsStream(filePath), "UTF-8");
+            InputSource inputSource = new InputSource(fileReader);
+            saxParser.parse(inputSource, pmcXmlHandler);
+            ExtractedDocumentMetadata meta = metaBuilder.build();
 			assertNotNull(meta.getReferences());
 			
 			ReferenceMetadata refMeta = meta.getReferences().get(0);
@@ -284,8 +294,8 @@ public class PmcXmlHandlerTest {
 			assertEquals(1, refMeta.getBasicMetadata().getExternalIds().size());
 			assertEquals("11892494", refMeta.getBasicMetadata().getExternalIds().get("pmid"));
 		} finally {
-			if (inputStream!=null) {
-				inputStream.close();
+			if (fileReader!=null) {
+				fileReader.close();
 			}
 		}
 	}
