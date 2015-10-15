@@ -17,21 +17,17 @@ import org.apache.commons.io.IOUtils;
 public class PropertiesFileUtils {
 
 	/**
-	 * Creates property file in system temporary directory
+	 * Writes properties to file
 	 */
-	public static File createTemporaryPropertiesFile(Properties properties, String filenamePrefix) throws IOException {
+	public static void writePropertiesToFile(Properties properties, File file) throws IOException {
 		Writer writer = null;
-		File temporaryPropertiesFile;
 
 		try {
-			temporaryPropertiesFile = File.createTempFile(filenamePrefix, ".properties");
-			writer = new FileWriter(temporaryPropertiesFile);
+			writer = new FileWriter(file);
 			properties.store(writer, null);
 			writer.close();
 		} finally {
 			IOUtils.closeQuietly(writer);
 		}
-
-		return temporaryPropertiesFile;
 	}
 }

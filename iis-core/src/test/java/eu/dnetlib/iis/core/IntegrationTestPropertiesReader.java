@@ -8,8 +8,6 @@ import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 
-import com.google.common.base.Preconditions;
-
 /**
  * Reader of properties for integration tests.<br/>
  * It uses file {@literal classpath:integration-test-default.properties} as a source of properties 
@@ -27,45 +25,25 @@ public class IntegrationTestPropertiesReader {
 	
 	private final static String DEFAULT_USER_PROPERTIES_PATH = System.getProperty("user.home") + "/.iis/integration-test.properties";
 	
-	private Properties integrationTestProperties;
-	
 	
 	//------------------------ LOGIC --------------------------
 	
 	/**
-	 * Returns value of property with key provided as argument
-	 */
-	public String getProperty(String key) {
-		loadProperties();
-		Preconditions.checkNotNull(key);
-		Preconditions.checkArgument(integrationTestProperties.containsKey(key), "Property '%s' is not defined for integration tests", key);
-		
-		return integrationTestProperties.getProperty(key);
-	}
-	
-	/**
 	 * Returns all properties
 	 */
-	public Properties getProperties() {
-		loadProperties();
+	public Properties readProperties() {
+		Properties defaultProperties = readDefaultProperties();
+		Properties userProperties = readUserProperties();
+
+		Properties integrationTestProperties = new Properties();
+		integrationTestProperties.putAll(defaultProperties);
+		integrationTestProperties.putAll(userProperties);
+		
 		return integrationTestProperties;
 	}
 	
 	
 	//------------------------ PRIVATE --------------------------
-	
-	private void loadProperties() {
-		if (integrationTestProperties != null) {
-			return;
-		}
-
-		Properties defaultProperties = readDefaultProperties();
-		Properties userProperties = readUserProperties();
-
-		integrationTestProperties = new Properties();
-		integrationTestProperties.putAll(defaultProperties);
-		integrationTestProperties.putAll(userProperties);
-	}
 	
 	private Properties readDefaultProperties() {
 		Properties defaultProperties = new Properties();

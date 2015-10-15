@@ -24,6 +24,7 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
@@ -50,8 +51,8 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	private final static String MAVEN_TEST_WORKFLOW_PROFILE = "attach-test-resources,oozie-package,deploy,run";
 	
-
-	private static IntegrationTestPropertiesReader propertiesReader = new IntegrationTestPropertiesReader();
+	
+	private static Properties properties;
 	
 	private static File propertiesFile;
 	
@@ -68,7 +69,11 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	@BeforeClass
 	public static void classSetUp() throws IOException {
-		propertiesFile = PropertiesFileUtils.createTemporaryPropertiesFile(propertiesReader.getProperties(), "iis-integration-test");
+		IntegrationTestPropertiesReader propertiesReader = new IntegrationTestPropertiesReader();
+		properties = propertiesReader.readProperties();
+		
+		propertiesFile = File.createTempFile("iis-integration-test", ".properties");
+		PropertiesFileUtils.writePropertiesToFile(properties, propertiesFile);
 	}
 	
 	@Before
@@ -197,15 +202,20 @@ public abstract class AbstractOozieWorkflowTestCase {
 	}
 	
 	private String getOozieServiceLoc() {
-		return propertiesReader.getProperty(OOZIE_SERVICE_LOC_KEY);
+		return getProperty(OOZIE_SERVICE_LOC_KEY);
 	}
 	
 	private String getRunOoozieJobLogFilename() {
-		return propertiesReader.getProperty(OOZIE_RUN_WORKFLOW_LOG_FILE_KEY);
+		return getProperty(OOZIE_RUN_WORKFLOW_LOG_FILE_KEY);
 	}
 	
 	private String getNameNode() {
-		return propertiesReader.getProperty(NAME_NODE_KEY);
+		return getProperty(NAME_NODE_KEY);
+	}
+	
+	private String getProperty(String key) {
+		Preconditions.checkArgument(properties.containsKey(key), "Property '%s' is not defined for integration tests", key);
+		return properties.getProperty(key);
 	}
 	
 	private Status waitForJobFinish(String jobId, long timeoutInSeconds) {
