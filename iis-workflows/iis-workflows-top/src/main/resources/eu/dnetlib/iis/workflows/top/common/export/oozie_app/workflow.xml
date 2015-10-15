@@ -334,8 +334,8 @@
 			<arg>-Pexport.action.hbase.remote.zookeeper.quorum=${action_hbase_remote_zookeeper_quorum}</arg>
 			<arg>-Pexport.action.hbase.remote.zookeeper.clientport=${action_hbase_remote_zookeeper_clientport}</arg>
 			<arg>-Pexport.seq.file.active=${output_remote_location ne "$UNDEFINED$"}</arg>
-			<arg>-Pexport.seq.file.output.dir.root=${workingDir}/output</arg>
-			<arg>-Pexport.seq.file.output.dir.name=entities_dataset</arg>
+			<arg>-Pexport.seq.file.output.dir.root=${workingDir}/output/entities_dataset</arg>
+			<arg>-Pexport.seq.file.output.dir.name=${action_set_id_entity_dataset}</arg>
 		</java>
 		<ok to="export_entities_joining" />
 		<error to="fail" />
@@ -385,8 +385,8 @@
 			<arg>-Pexport.action.hbase.remote.zookeeper.quorum=${action_hbase_remote_zookeeper_quorum}</arg>
 			<arg>-Pexport.action.hbase.remote.zookeeper.clientport=${action_hbase_remote_zookeeper_clientport}</arg>
 			<arg>-Pexport.seq.file.active=${output_remote_location ne "$UNDEFINED$"}</arg>
-			<arg>-Pexport.seq.file.output.dir.root=${workingDir}/output</arg>
-			<arg>-Pexport.seq.file.output.dir.name=entities_document</arg>
+			<arg>-Pexport.seq.file.output.dir.root=${workingDir}/output/entities_document</arg>
+			<arg>-Pexport.seq.file.output.dir.name=${action_set_id_entity_wos}</arg>
 		</java>
 		<ok to="export_entities_joining" />
 		<error to="fail" />

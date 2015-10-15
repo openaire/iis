@@ -483,6 +483,9 @@
 	
 	<action name="exporter-document-metadata">
 		<map-reduce>
+			<prepare>
+				<mkdir path="${nameNode}${output}/document_affiliations" />
+			</prepare>
 			<configuration>
 				<property>
 					<name>export.action.builder.factory.classname</name>
@@ -498,7 +501,7 @@
 				</property>
 				<property>
 					<name>mapred.output.dir</name>
-					<value>${output}/document_metadata</value>
+					<value>${output}/document_affiliations/${action_set_id_document_affiliations}</value>
 				</property>
 			</configuration>
 		</map-reduce>
@@ -508,6 +511,9 @@
 	
 	<action name="exporter-document-to-project">
 		<map-reduce>
+			<prepare>
+				<mkdir path="${nameNode}${output}/document_referencedProjects" />
+			</prepare>
 			<configuration>
 				<property>
 					<name>export.action.builder.factory.classname</name>
@@ -523,7 +529,7 @@
 				</property>
 				<property>
 					<name>mapred.output.dir</name>
-					<value>${output}/document_to_project</value>
+					<value>${output}/document_referencedProjects/${action_set_id_document_referencedProjects}</value>
 				</property>
 			</configuration>
 		</map-reduce>
@@ -533,6 +539,9 @@
 	
 	<action name="exporter-document-to-dataset">
 		<map-reduce>
+			<prepare>
+				<mkdir path="${nameNode}${output}/document_referencedDatasets" />
+			</prepare>
 			<configuration>
 				<property>
 					<name>export.action.builder.factory.classname</name>
@@ -548,7 +557,7 @@
 				</property>
 				<property>
 					<name>mapred.output.dir</name>
-					<value>${output}/document_to_dataset</value>
+					<value>${output}/document_referencedDatasets/${action_set_id_document_referencedDatasets}</value>
 				</property>
 			</configuration>
 		</map-reduce>
@@ -558,6 +567,9 @@
 
 	<action name="exporter-document-to-project-concepts">
 		<map-reduce>
+			<prepare>
+				<mkdir path="${nameNode}${output}/document_to_project_concepts" />
+			</prepare>
 			<configuration>
 				<property>
 					<name>export.action.builder.factory.classname</name>
@@ -573,7 +585,7 @@
 				</property>
 				<property>
 					<name>mapred.output.dir</name>
-					<value>${output}/document_to_project_concepts</value>
+					<value>${output}/document_to_project_concepts/${action_set_id_document_referencedProjects}</value>
 				</property>
 			</configuration>
 		</map-reduce>
@@ -583,6 +595,9 @@
 
 	<action name="exporter-document-to-researchinitiatives">
 		<map-reduce>
+			<prepare>
+				<mkdir path="${nameNode}${output}/document_research_initiative" />
+			</prepare>
 			<configuration>
 				<property>
 					<name>export.action.builder.factory.classname</name>
@@ -598,7 +613,7 @@
 				</property>
 				<property>
 					<name>mapred.output.dir</name>
-					<value>${output}/document_to_research_initiatives</value>
+					<value>${output}/document_research_initiative/${action_set_id_document_research_initiative}</value>
 				</property>
 			</configuration>
 		</map-reduce>
@@ -608,6 +623,9 @@
 	
 	<action name="exporter-document-to-pdb">
 		<map-reduce>
+			<prepare>
+				<mkdir path="${nameNode}${output}/document_pdb" />
+			</prepare>
 			<configuration>
 				<property>
 					<name>export.action.builder.factory.classname</name>
@@ -627,7 +645,7 @@
 				</property>
 				<property>
 					<name>mapred.output.dir</name>
-					<value>${output}/document_to_pdb</value>
+					<value>${output}/document_pdb/${action_set_id_document_pdb}</value>
 				</property>
 			</configuration>
 		</map-reduce>
@@ -637,6 +655,9 @@
 	
 	<action name="exporter-document-to-documentclasses">
 		<map-reduce>
+			<prepare>
+				<mkdir path="${nameNode}${output}/document_classes" />
+			</prepare>
 			<configuration>
 				<property>
 					<name>export.action.builder.factory.classname</name>
@@ -652,7 +673,7 @@
 				</property>
 				<property>
 					<name>mapred.output.dir</name>
-					<value>${output}/document_to_document_classes</value>
+					<value>${output}/document_classes/${action_set_id_document_classes}</value>
 				</property>
 			</configuration>
 		</map-reduce>
@@ -662,6 +683,9 @@
 	
 	<action name="exporter-citation">
 		<map-reduce>
+			<prepare>
+				<mkdir path="${nameNode}${output}/document_referencedDocuments" />
+			</prepare>
 			<configuration>
 				<property>
 					<name>export.action.builder.factory.classname</name>
@@ -677,7 +701,7 @@
 				</property>
 				<property>
 					<name>mapred.output.dir</name>
-					<value>${output}/citations</value>
+					<value>${output}/document_referencedDocuments/${action_set_id_document_referencedDocuments}</value>
 				</property>
 			</configuration>
 		</map-reduce>
@@ -687,6 +711,9 @@
 	
 	<action name="exporter-document-similiarity">
 		<map-reduce>
+			<prepare>
+				<mkdir path="${nameNode}${output}/document_similarities_standard" />
+			</prepare>
 			<configuration>
 				<property>
 					<name>export.action.builder.factory.classname</name>
@@ -702,7 +729,7 @@
 				</property>
 				<property>
 					<name>mapred.output.dir</name>
-					<value>${output}/document_similarity</value>
+					<value>${output}/document_similarities_standard/${action_set_id_document_similarities_standard}</value>
 				</property>
 				<property>
 					<name>export.documentssimilarity.threshold</name>
@@ -716,6 +743,9 @@
 	
 	<action name="exporter-document-statistics">
 		<map-reduce>
+			<prepare>
+				<mkdir path="${nameNode}${output}/document_statistics" />
+			</prepare>
 			<configuration>
 				<property>
 					<name>export.action.builder.factory.classname</name>
@@ -731,7 +761,7 @@
 				</property>
 				<property>
 					<name>mapred.output.dir</name>
-					<value>${output}/document_statistics</value>
+					<value>${output}/document_statistics/${action_set_id_document_statistics}</value>
 				</property>
 			</configuration>
 		</map-reduce>
@@ -741,6 +771,9 @@
 
 	<action name="exporter-person-statistics">
 		<map-reduce>
+			<prepare>
+				<mkdir path="${nameNode}${output}/person_statistics" />
+			</prepare>
 			<configuration>
 				<property>
 					<name>export.action.builder.factory.classname</name>
@@ -756,7 +789,7 @@
 				</property>
 				<property>
 					<name>mapred.output.dir</name>
-					<value>${output}/author_statistics</value>
+					<value>${output}/person_statistics/${action_set_id_person_statistics}</value>
 				</property>
 			</configuration>
 		</map-reduce>
@@ -766,6 +799,9 @@
 		
 	<action name="exporter-project-statistics">
 		<map-reduce>
+			<prepare>
+				<mkdir path="${nameNode}${output}/project_statistics" />
+			</prepare>
 			<configuration>
 				<property>
 					<name>export.action.builder.factory.classname</name>
@@ -781,7 +817,7 @@
 				</property>
 				<property>
 					<name>mapred.output.dir</name>
-					<value>${output}/project_statistics</value>
+					<value>${output}/project_statistics/${action_set_id_project_statistics}</value>
 				</property>
 			</configuration>
 		</map-reduce>
@@ -791,6 +827,9 @@
 	
 	<action name="exporter-document-websiteusage-similiarity">
 		<map-reduce>
+			<prepare>
+				<mkdir path="${nameNode}${output}/document_similarities_websiteusage" />
+			</prepare>
 			<configuration>
 				<property>
 					<name>export.action.builder.factory.classname</name>
@@ -806,7 +845,7 @@
 				</property>
 				<property>
 					<name>mapred.output.dir</name>
-					<value>${output}/document_websiteusage_similarity</value>
+					<value>${output}/document_similarities_websiteusage/${action_set_id_document_similarities_websiteusage}</value>
 				</property>
 			</configuration>
 		</map-reduce>
