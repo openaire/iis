@@ -674,9 +674,17 @@
                     <value>${workingDir}/import_plaintext_pmc/imported</value>
                 </property>
                 <property>
-                    <name>output</name>
+                    <name>output_root</name>
                     <value>${workingDir}/ingest_pmc_metadata/out</value>
                 </property>
+                <property>
+					<name>output_name_meta</name>
+					<value>meta</value>
+				</property>
+				<property>
+					<name>output_name_fault</name>
+					<value>fault</value>
+				</property>
             </configuration>
         </sub-workflow>
 		<ok to="transformers_ingest_pmc_metadata"/>
@@ -694,7 +702,7 @@
                 </property>
                 <property>
                     <name>input</name>
-                    <value>${workingDir}/ingest_pmc_metadata/out</value>
+                    <value>${workingDir}/ingest_pmc_metadata/out/meta</value>
                 </property>
                 <property>
                     <name>output</name>
@@ -710,16 +718,26 @@
         <java>
 			<prepare>
 				<!-- notice: directory have to aligned with skipped action output -->
+				<delete path="${nameNode}${workingDir}/ingest_pmc_metadata"/>
 				<delete path="${nameNode}${workingDir}/transformers_ingest_pmc_metadata"/>
+				<mkdir path="${nameNode}${workingDir}/ingest_pmc_metadata/out"/>
 				<mkdir path="${nameNode}${workingDir}/transformers_ingest_pmc_metadata" />
 			</prepare>
 			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
-				<arg>-C{metadata_pmc,
+			<arg>-C{metadata_transformed,
 				eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
 				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+			<arg>-C{metadata_pmc,
+				eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata,
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+			<arg>-C{fault_pmc,
+				eu.dnetlib.iis.audit.schemas.Fault,
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
             <!-- notice: directory have to aligned with skipped action output -->
-            <arg>-Ometadata_pmc=${workingDir}/transformers_ingest_pmc_metadata/out</arg>
+            <arg>-Ometadata_transformed=${workingDir}/transformers_ingest_pmc_metadata/out</arg>
+            <arg>-Ometadata_pmc=${workingDir}/ingest_pmc_metadata/out/meta</arg>
+            <arg>-Ofault_pmc=${workingDir}/ingest_pmc_metadata/out/fault</arg>
         </java>
         <ok to="ingest_pmc_joining"/>
         <error to="fail"/>
@@ -991,21 +1009,32 @@
             <delete path="${nameNode}${output_faults}" />
 			<mkdir path="${nameNode}${output_faults}" />
         </fs>
-        <ok to="preserve-faults"/>
+        <ok to="preserve-metadataextraction-faults"/>
         <error to="fail"/>
     </action>
     
-    <action name="preserve-faults">
+    <action name="preserve-metadataextraction-faults">
        <distcp xmlns="uri:oozie:distcp-action:0.1">
            <job-tracker>${jobTracker}</job-tracker>
            <name-node>${nameNode}</name-node>
            <arg>${nameNode}${workingDir}/metadata_extractor/out/fault</arg>
            <arg>${nameNode}${output_faults}/metadataextraction</arg>
            </distcp>
-       <ok to="finalize"/>
+       <ok to="preserve-ingest_pmc_metadata-faults"/>
        <error to="fail"/>
 	</action>
 
+	<action name="preserve-ingest_pmc_metadata-faults">
+       <distcp xmlns="uri:oozie:distcp-action:0.1">
+           <job-tracker>${jobTracker}</job-tracker>
+           <name-node>${nameNode}</name-node>
+           <arg>${nameNode}${workingDir}/ingest_pmc_metadata/out/fault</arg>
+           <arg>${nameNode}${output_faults}/ingest_pmc_metadata</arg>
+           </distcp>
+       <ok to="finalize"/>
+       <error to="fail"/>
+	</action>
+	
     <decision name="finalize">
 		<switch>
 			<case to="remove_sideproducts">${remove_sideproducts eq "true"}</case>
