@@ -1,9 +1,13 @@
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="transformers_export_citations">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="transformers_sentimentanalysis">
 	
 	<parameters>
 		<property>
-			<name>input</name>
-			<description>input directory</description>
+			<name>input_extracted_document_metadata</name>
+			<description>input containing references</description>
+		</property>
+		<property>
+			<name>input_text</name>
+			<description>input containing plain text</description>
 		</property>
 		<property>
 			<name>output</name>
@@ -18,8 +22,10 @@
     		<job-tracker>${jobTracker}</job-tracker>
         	<name-node>${nameNode}</name-node>
 	        <main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
-	        <arg>eu.dnetlib.iis.export.schemas.CitationWithSentimentLabels</arg>
-	        <arg>eu.dnetlib.iis.export.schemas.Citations</arg>
+	        <arg>eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata</arg>
+	        <arg>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</arg>
+	        <arg>eu.dnetlib.iis.sentimentanalysis.schemas.DocumentTextWithReferences</arg>
+	        
 	        <capture-output />
 	    </java>
 	    <ok to="transformer" />
@@ -43,11 +49,14 @@
             <!-- Path to PIG script the workflow executes. -->
             <script>lib/scripts/transformer.pig</script>
 
-            <param>input=${input}</param>
-            <param>schema_input=${wf:actionData('generate-schema')['eu.dnetlib.iis.export.schemas.CitationWithSentimentLabels']}</param>
+            <param>input_extracted_document_metadata=${input_extracted_document_metadata}</param>
+            <param>schema_input_extracted_document_metadata=${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata']}</param>
+           
+			<param>input_text=${input_text}</param>
+            <param>schema_input_text=${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.DocumentText']}</param>
            
             <param>output=${output}</param>
-            <param>schema_output=${wf:actionData('generate-schema')['eu.dnetlib.iis.export.schemas.Citations']}</param>
+            <param>schema_output=${wf:actionData('generate-schema')['eu.dnetlib.iis.sentimentanalysis.schemas.DocumentTextWithReferences']}</param>
         </pig>
         <ok to="end"/>
         <error to="fail"/>

@@ -1,0 +1,15 @@
+@namespace("eu.dnetlib.iis.sentimentanalysis.schemas")
+protocol IIS{
+
+    record ReferenceWithSentimentLabels {
+//      ID of the document, foreign key: Document.id ("document" data store)
+        string id;
+//		reference position in bibliography, starting with '1'
+		int referencePosition;
+//		Sentiment labels conforming to CITO ontology expressed as IRI.
+//		Example labels:
+//		"http://purl.org/spar/cito/confirms","http://purl.org/spar/cito/disputes"
+		array<string> labels;
+    }
+
+}
