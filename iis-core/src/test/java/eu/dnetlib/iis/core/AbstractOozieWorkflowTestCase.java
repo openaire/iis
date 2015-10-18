@@ -17,12 +17,14 @@ import org.apache.oozie.client.OozieClient;
 import org.apache.oozie.client.OozieClientException;
 import org.apache.oozie.client.WorkflowJob.Status;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
@@ -41,20 +43,18 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	private final static String OOZIE_RUN_WORKFLOW_LOG_FILE_KEY = "oozie.execution.log.file.location";
 	
-	private final static String OOZIE_WORKFLOW_DEPLOY_MODE_KEY = "deploy.mode";
-	
 	private final static String NAME_NODE_KEY = "nameNode";
 	
 	private final static String WORKFLOW_SOURCE_DIR_KEY = "workflow.source.dir";
 	
 	private final static String MAVEN_TEST_WORKFLOW_PHASE = "clean package";
 	
-	private final static String MAVEN_TEST_WORKFLOW_LOCALLY_PROFILE = "attach-test-resources,oozie-package,deploy-local,run-local";
+	private final static String MAVEN_TEST_WORKFLOW_PROFILE = "attach-test-resources,oozie-package,deploy,run";
 	
-	private final static String MAVEN_TEST_WORKFLOW_REMOTELY_PROFILE = "attach-test-resources,oozie-package,deploy,run";
 	
-
-	private static IntegrationTestPropertiesReader propertiesReader;
+	private static Properties properties;
+	
+	private static File propertiesFile;
 	
 	private OozieClient oozieClient;
 	
@@ -67,16 +67,13 @@ public abstract class AbstractOozieWorkflowTestCase {
 	private File tempDir;
 	
 	
-	private enum DeployMode {
-		LOCAL,
-		SSH
-	}
-	
-	
 	@BeforeClass
-	public static void classSetUp() {
-		propertiesReader = new IntegrationTestPropertiesReader();
+	public static void classSetUp() throws IOException {
+		IntegrationTestPropertiesReader propertiesReader = new IntegrationTestPropertiesReader();
+		properties = propertiesReader.readProperties();
 		
+		propertiesFile = File.createTempFile("iis-integration-test", ".properties");
+		PropertiesFileUtils.writePropertiesToFile(properties, propertiesFile);
 	}
 	
 	@Before
@@ -101,6 +98,11 @@ public abstract class AbstractOozieWorkflowTestCase {
 		if (tempDir != null) {
 			FileUtils.deleteDirectory(tempDir);
 		}
+	}
+	
+	@AfterClass
+	public static void classCleanup() {
+		propertiesFile.delete();
 	}
 	
 	/**
@@ -159,8 +161,9 @@ public abstract class AbstractOozieWorkflowTestCase {
 		Process p;
 		try {
 			p = Runtime.getRuntime().exec("mvn " + MAVEN_TEST_WORKFLOW_PHASE + " -DskipTests "
-					+ " -P" + chooseProfiles()
+					+ " -P" + MAVEN_TEST_WORKFLOW_PROFILE
 					+ " -D" + WORKFLOW_SOURCE_DIR_KEY + "=" + workflowSource
+					+ " -DiisConnectionProperties=" + propertiesFile.getAbsolutePath()
 					);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -200,25 +203,21 @@ public abstract class AbstractOozieWorkflowTestCase {
 		}
 	}
 	
-	private String chooseProfiles() {
-		return getDeployMode() == DeployMode.LOCAL ? MAVEN_TEST_WORKFLOW_LOCALLY_PROFILE : MAVEN_TEST_WORKFLOW_REMOTELY_PROFILE;
-	}
-	
-	private DeployMode getDeployMode() {
-		String deployModeString  = propertiesReader.getProperty(OOZIE_WORKFLOW_DEPLOY_MODE_KEY);
-		return DeployMode.valueOf(deployModeString);
-	}
-	
 	private String getOozieServiceLoc() {
-		return propertiesReader.getProperty(OOZIE_SERVICE_LOC_KEY);
+		return getProperty(OOZIE_SERVICE_LOC_KEY);
 	}
 	
 	private String getRunOoozieJobLogFilename() {
-		return propertiesReader.getProperty(OOZIE_RUN_WORKFLOW_LOG_FILE_KEY);
+		return getProperty(OOZIE_RUN_WORKFLOW_LOG_FILE_KEY);
 	}
 	
 	private String getNameNode() {
-		return propertiesReader.getProperty(NAME_NODE_KEY);
+		return getProperty(NAME_NODE_KEY);
+	}
+	
+	private String getProperty(String key) {
+		Preconditions.checkArgument(properties.containsKey(key), "Property '%s' is not defined for integration tests", key);
+		return properties.getProperty(key);
 	}
 	
 	private Status waitForJobFinish(String jobId, long timeoutInSeconds) {
