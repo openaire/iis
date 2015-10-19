@@ -630,6 +630,12 @@
 									<iisConnectionProperties>${iisConnectionProperties}</iisConnectionProperties>
 								</systemPropertiesVariables>
 								<groups>eu.dnetlib.iis.IntegrationTest</groups>
+								<includes>
+									<include>**/*Test.java</include>
+									<include>**/IT*.java</include>
+									<include>**/*IT.java</include>
+									<include>**/*ITCase.java</include>
+								</includes>
 							</configuration>
 						</execution>
 					</executions>

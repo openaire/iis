@@ -56,6 +56,11 @@
             <version>${project.version}</version>
         </dependency>
 		
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-common</artifactId>
+			<scope>provided</scope>
+		</dependency>
 		
 		<!-- Needed by our Hadoop Streaming workflow node {-->
 		<dependency>
