@@ -83,8 +83,8 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-hdfs</artifactId>
+			<groupId>net.schmizz</groupId>
+			<artifactId>sshj</artifactId>
 			<scope>test</scope>
 		</dependency>
 		
