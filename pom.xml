@@ -535,6 +535,12 @@
 				<version>1.0</version>
 			</dependency>
 			
+			<dependency>
+				<groupId>net.schmizz</groupId>
+				<artifactId>sshj</artifactId>
+				<version>0.10.0</version>
+			</dependency>
+			
 			<!-- Needed to run Avro-based map-reduce -->
 			<dependency>
 				<groupId>com.thoughtworks.paranamer</groupId>

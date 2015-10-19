@@ -9,10 +9,10 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.avro.specific.SpecificRecord;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
+import org.apache.commons.lang.StringUtils;
 import org.apache.oozie.client.OozieClient;
 import org.apache.oozie.client.OozieClientException;
 import org.apache.oozie.client.WorkflowJob.Status;
@@ -43,7 +43,15 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	private final static String OOZIE_RUN_WORKFLOW_LOG_FILE_KEY = "oozie.execution.log.file.location";
 	
-	private final static String NAME_NODE_KEY = "nameNode";
+	private final static String REMOTE_HOST_NAME_KEY = "iis.hadoop.frontend.host.name";
+	
+	private final static String REMOTE_USER_NAME_KEY = "iis.hadoop.frontend.user.name";
+	
+	private final static String REMOTE_HOME_DIR_KEY = "iis.hadoop.frontend.home.dir";
+	
+	private final static String REMOTE_USER_DIR_KEY = "iis.hadoop.frontend.user.dir";
+	
+	private final static String REMOTE_USER_PASSWORD = "iis.hadoop.frontend.user.password";
 	
 	private final static String WORKFLOW_SOURCE_DIR_KEY = "workflow.source.dir";
 	
@@ -57,8 +65,6 @@ public abstract class AbstractOozieWorkflowTestCase {
 	private static File propertiesFile;
 	
 	private OozieClient oozieClient;
-	
-	private FileSystem hadoopFilesystem;
 	
 	private OozieJobPropertiesFetcher oozieJobPropertiesFetcher;
 	
@@ -77,20 +83,31 @@ public abstract class AbstractOozieWorkflowTestCase {
 	}
 	
 	@Before
-	public void setUp() throws IOException {
+	public void setUp() throws IOException, OozieClientException {
 		
 		log.debug("Setting up OozieClient at {}", getOozieServiceLoc());
 		oozieClient = new OozieClient(getOozieServiceLoc());
 		
-		Configuration hdfsConf = new Configuration(false);
-		hdfsConf.set("fs.defaultFS", getNameNode());
-		
-		hadoopFilesystem = FileSystem.get(hdfsConf);
+		if (StringUtils.isNotEmpty(getRemoteUserPassword())) {
+			oozieClient.setHeader("Authorization", generateAuthHeaderValue(
+					getRemoteUserName(), getRemoteUserPassword()));
+		}
 		
 		oozieJobPropertiesFetcher = new OozieJobPropertiesFetcher(oozieClient);
-		hdfsTestHelper = new HdfsTestHelper(hadoopFilesystem);
+		
+		SshBasedHdfsFileFetcher hdfsFileFetcher = new SshBasedHdfsFileFetcher(
+				getRemoteHostName(), getRemoteUserName(),
+				getRemoteHomeDir() + "/" + getRemoteUserDir());
+		hdfsTestHelper = new HdfsTestHelper(hdfsFileFetcher);
 		
 		tempDir = Files.createTempDir();
+	}
+	
+	private String generateAuthHeaderValue(String username, String password) {
+		String userpass = username + ":" + password;
+		String basicAuth = "Basic " + new String(new Base64().encode(userpass.getBytes())).trim();
+		
+		return basicAuth;
 	}
 	
 	@After
@@ -211,8 +228,24 @@ public abstract class AbstractOozieWorkflowTestCase {
 		return getProperty(OOZIE_RUN_WORKFLOW_LOG_FILE_KEY);
 	}
 	
-	private String getNameNode() {
-		return getProperty(NAME_NODE_KEY);
+	private String getRemoteHostName() {
+		return getProperty(REMOTE_HOST_NAME_KEY);
+	}
+	
+	private String getRemoteUserName() {
+		return getProperty(REMOTE_USER_NAME_KEY);
+	}
+	
+	private String getRemoteHomeDir() {
+		return getProperty(REMOTE_HOME_DIR_KEY);
+	}
+	
+	private String getRemoteUserDir() {
+		return getProperty(REMOTE_USER_DIR_KEY);
+	}
+	
+	private String getRemoteUserPassword() {
+		return getProperty(REMOTE_USER_PASSWORD);
 	}
 	
 	private String getProperty(String key) {

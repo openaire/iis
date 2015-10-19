@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.avro.specific.SpecificRecord;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
+import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 
 import com.google.common.collect.Maps;
+import com.google.common.io.Files;
 
 import eu.dnetlib.iis.core.java.io.DataStore;
 import eu.dnetlib.iis.core.java.io.FileSystemPath;
@@ -23,14 +23,14 @@ import eu.dnetlib.iis.core.java.io.FileSystemPath;
  *
  */
 class HdfsTestHelper {
-
-	private FileSystem hadoopFilesystem;
+	
+	private SshBasedHdfsFileFetcher hdfsFileFetcher;
 	
 	
 	//------------------------ CONSTRUCTORS --------------------------
 	
-	public HdfsTestHelper(FileSystem hadoopFilesystem) {
-		this.hadoopFilesystem = hadoopFilesystem;
+	public HdfsTestHelper(SshBasedHdfsFileFetcher hdfsFileFetcher) {
+		this.hdfsFileFetcher = hdfsFileFetcher;
 	}
 	
 	
@@ -45,23 +45,23 @@ class HdfsTestHelper {
 	 * @return map with entries in form {original path from hdfs; corresponding imported files}
 	 */
 	public Map<String, File> copyFilesFromHdfs(String basePath, List<String> filesPaths, File targetDir) {
-		Map<String, File> importedFiles = Maps.newHashMap();
+		Map<String, File> copiedFiles = Maps.newHashMap();
 		
 		for (String filePath : filesPaths) {
-			String filename = new File(filePath).getName();
-
+			File copiedFile = null;
+			
 			try {
-				hadoopFilesystem.copyToLocalFile(new Path(basePath, filePath), new Path(targetDir.getAbsolutePath(), filename));
+				copiedFile = hdfsFileFetcher.fetchFile(basePath + "/" + filePath, targetDir);
 			} catch (FileNotFoundException e) {
 				Assert.fail("Expected file: " + filePath + " has not been found");
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
 
-			importedFiles.put(filePath, new File(targetDir, filename));
+			copiedFiles.put(filePath, copiedFile);
 		}
 		
-		return importedFiles;
+		return copiedFiles;
 	}
 	
 	/**
@@ -72,22 +72,28 @@ class HdfsTestHelper {
 	 * @return map with entries in form {original path from hdfs; corresponding datastore}
 	 */
 	public Map<String, List<? extends SpecificRecord>> readAvroDatastoresFromHdfs(String basePath, List<String> datastoresPaths) {
-		Map<String, List<? extends SpecificRecord>> importedFiles = Maps.newHashMap();
+		Map<String, List<? extends SpecificRecord>> importedDatastores = Maps.newHashMap();
 		
 		for (String datastorePath : datastoresPaths) {
 			List<SpecificRecord> dataStore = null;
+			File targetDir = Files.createTempDir();
 			
 			try {
-				dataStore = DataStore.read(new FileSystemPath(hadoopFilesystem, new Path(basePath, datastorePath)));
+				File localDatastorePath = hdfsFileFetcher.fetchFile(basePath + "/" + datastorePath, targetDir);
+				
+				dataStore = DataStore.read(new FileSystemPath(localDatastorePath));
+				
 			} catch (FileNotFoundException e) {
 				Assert.fail("Expected datastore: " + datastorePath + " has not been found");
 			} catch (IOException e) {
 				throw new RuntimeException(e);
+			} finally {
+				FileUtils.deleteQuietly(targetDir);
 			}
 			
-			importedFiles.put(datastorePath, dataStore);
+			importedDatastores.put(datastorePath, dataStore);
 		}
 		
-		return importedFiles;
+		return importedDatastores;
 	}
 }
