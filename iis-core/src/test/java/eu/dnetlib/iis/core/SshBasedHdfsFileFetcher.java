@@ -18,7 +18,7 @@ import net.schmizz.sshj.connection.channel.direct.Session.Command;
  */
 public class SshBasedHdfsFileFetcher {
 	
-	public final static String REMOTE_SEPARATOR = "/";
+	public final static String FILE_PATH_SEPARATOR = "/";
 	
 	public final static int SSH_EXEC_TIMEOUT_IN_SEC = 5;
 	
@@ -35,7 +35,7 @@ public class SshBasedHdfsFileFetcher {
 	public SshBasedHdfsFileFetcher(String remoteHost, String remoteUser, String remoteUserDir) {
 		this.remoteHost = remoteHost;
 		this.remoteUser = remoteUser;
-		this.remoteUserDir = appendRemoteSeparatorIfMissing(remoteUserDir);
+		this.remoteUserDir = appendFilePathSeparatorIfMissing(remoteUserDir);
 	}
 	
 	
@@ -50,6 +50,7 @@ public class SshBasedHdfsFileFetcher {
 		
 		String filename = new File(hdfsPath).getName();
 		File localTargetFile = new File(targetDir, filename);
+		String remoteFileTempDir = remoteUserDir + "temp_copy_" + System.currentTimeMillis() + FILE_PATH_SEPARATOR;
 		
 		SSHClient sshClient = new SSHClient();
 		
@@ -60,11 +61,13 @@ public class SshBasedHdfsFileFetcher {
 
 			checkIfFileExistsOnHdfs(sshClient, hdfsPath);
 
-			copyFromHdfsOnRemote(sshClient, hdfsPath, remoteUserDir);
+			makeDirOnRemote(sshClient, remoteFileTempDir);
 
-			downloadFromRemote(sshClient, remoteUserDir + filename, localTargetFile);
+			copyFromHdfsOnRemote(sshClient, hdfsPath, remoteFileTempDir);
 
-			removeFromRemote(sshClient, remoteUserDir + filename);
+			downloadFromRemote(sshClient, remoteFileTempDir + filename, localTargetFile);
+
+			removeFromRemote(sshClient, remoteFileTempDir);
 
 		} finally {
 			sshClient.close();
@@ -80,6 +83,10 @@ public class SshBasedHdfsFileFetcher {
 		if (sshExec(sshClient, "hadoop fs -test -e " + hdfsPath, false) != 0) {
 			throw new FileNotFoundException("File " + hdfsPath + " not found on hdfs");
 		}
+	}
+	
+	private void makeDirOnRemote(SSHClient sshClient, String hdfsPath) throws IOException {
+		sshExec(sshClient, "mkdir -p " + hdfsPath);
 	}
 	
 	private void copyFromHdfsOnRemote(SSHClient sshClient, String hdfsSource, String remoteTarget) throws IOException {
@@ -126,8 +133,8 @@ public class SshBasedHdfsFileFetcher {
 		return exitStatus;
 	}
 	
-	private String appendRemoteSeparatorIfMissing(String directoryPath) {
-		return directoryPath + (directoryPath.endsWith(REMOTE_SEPARATOR) ? "" : REMOTE_SEPARATOR);
+	private String appendFilePathSeparatorIfMissing(String directoryPath) {
+		return directoryPath + (directoryPath.endsWith(FILE_PATH_SEPARATOR) ? "" : FILE_PATH_SEPARATOR);
 	}
 	
 }
