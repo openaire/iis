@@ -3,12 +3,8 @@ package eu.dnetlib.iis.core;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import net.schmizz.sshj.SSHClient;
-import net.schmizz.sshj.common.IOUtils;
-import net.schmizz.sshj.connection.channel.direct.Session;
-import net.schmizz.sshj.connection.channel.direct.Session.Command;
 
 /**
  * Service for fetching files from hdfs using ssh protocol
@@ -19,8 +15,6 @@ import net.schmizz.sshj.connection.channel.direct.Session.Command;
 public class SshBasedHdfsFileFetcher {
 	
 	public final static String FILE_PATH_SEPARATOR = "/";
-	
-	public final static int SSH_EXEC_TIMEOUT_IN_SEC = 5;
 	
 	
 	private String remoteHost;
@@ -80,17 +74,17 @@ public class SshBasedHdfsFileFetcher {
 	//------------------------ PRIVATE --------------------------
 	
 	private void checkIfFileExistsOnHdfs(SSHClient sshClient, String hdfsPath) throws IOException {
-		if (sshExec(sshClient, "hadoop fs -test -e " + hdfsPath, false) != 0) {
+		if (SshExecUtils.sshExec(sshClient, "hadoop fs -test -e " + hdfsPath, false).getExitStatus() != 0) {
 			throw new FileNotFoundException("File " + hdfsPath + " not found on hdfs");
 		}
 	}
 	
 	private void makeDirOnRemote(SSHClient sshClient, String hdfsPath) throws IOException {
-		sshExec(sshClient, "mkdir -p " + hdfsPath);
+		SshExecUtils.sshExec(sshClient, "mkdir -p " + hdfsPath);
 	}
 	
 	private void copyFromHdfsOnRemote(SSHClient sshClient, String hdfsSource, String remoteTarget) throws IOException {
-		sshExec(sshClient, "hadoop fs -get " + hdfsSource + " " + remoteTarget);
+		SshExecUtils.sshExec(sshClient, "hadoop fs -get " + hdfsSource + " " + remoteTarget);
 	}
 	
 	private void downloadFromRemote(SSHClient sshClient, String remoteSource, File localTarget) throws IOException {
@@ -101,37 +95,9 @@ public class SshBasedHdfsFileFetcher {
 	}
 	
 	private void removeFromRemote(SSHClient sshClient, String remotePath) throws IOException {
-		sshExec(sshClient, "rm -r " + remotePath);
+		SshExecUtils.sshExec(sshClient, "rm -r " + remotePath);
 	}
 	
-	
-	private int sshExec(SSHClient sshClient, String command) throws IOException {
-		return sshExec(sshClient, command, true);
-	}
-	
-	private int sshExec(SSHClient sshClient, String command, boolean throwExceptionOnCommandError) throws IOException {
-		Session sshSession = null;
-		int exitStatus;
-		try {
-			sshSession = sshClient.startSession();
-
-			Command cmd = sshSession.exec(command);
-			
-			cmd.join(SSH_EXEC_TIMEOUT_IN_SEC, TimeUnit.SECONDS);
-			
-			exitStatus = cmd.getExitStatus();
-			if (exitStatus != 0 && throwExceptionOnCommandError) {
-				throw new RuntimeException("Error executing command: " + command 
-						+ "\n" + IOUtils.readFully(cmd.getErrorStream()).toString());
-			}
-		} finally {
-			if (sshSession != null) {
-				sshSession.close();
-			}
-		}
-		
-		return exitStatus;
-	}
 	
 	private String appendFilePathSeparatorIfMissing(String directoryPath) {
 		return directoryPath + (directoryPath.endsWith(FILE_PATH_SEPARATOR) ? "" : FILE_PATH_SEPARATOR);
