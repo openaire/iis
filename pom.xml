@@ -674,6 +674,12 @@
 				<version>1.0</version>
 			</dependency>
 			
+			<dependency>
+				<groupId>net.schmizz</groupId>
+				<artifactId>sshj</artifactId>
+				<version>0.10.0</version>
+			</dependency>
+			
 			<!-- Needed to run Avro-based map-reduce -->
 			<dependency>
 				<groupId>com.thoughtworks.paranamer</groupId>
@@ -947,6 +953,7 @@
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<spring.version>[4.0.0.RELEASE]</spring.version>
 
 		<iis.cdh.version>cdh5.4.2</iis.cdh.version>

@@ -8,12 +8,13 @@ import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 
-import com.google.common.base.Preconditions;
-
 /**
  * Reader of properties for integration tests.<br/>
  * It uses file {@literal classpath:integration-test-default.properties} as a source of properties 
- * and allows for overriding them in ${user.home}/.iis/integration-test.properties
+ * and allows for overriding them with user properties.<br/>
+ * User properties should be stored in file defined in ${iisConnectionProperties} system property.
+ * If ${iisConnectionProperties} is not present, then ${user.home}/.iis/integration-test.properties
+ * will be used.<br/>
  * 
  * @author madryk
  *
@@ -22,35 +23,23 @@ public class IntegrationTestPropertiesReader {
 
 	private final static String DEFAULT_PROPERTIES_CLASSPATH = "/integration-test-default.properties";
 	
-	private final static String USER_PROPERTIES_PATH = System.getProperty("user.home") + "/.iis/integration-test.properties";
-	
-	private Properties integrationTestProperties = new Properties();
-	
-	
-	//------------------------ CONSTRUCTORS --------------------------
-	
-	/**
-	 * Default constructor. It handles reading properties from files.
-	 */
-	public IntegrationTestPropertiesReader() {
-	    Properties defaultProperties = readDefaultProperties();
-	    Properties userProperties = readUserProperties();
-	    
-	    integrationTestProperties.putAll(defaultProperties);
-	    integrationTestProperties.putAll(userProperties);
-	}
+	private final static String DEFAULT_USER_PROPERTIES_PATH = System.getProperty("user.home") + "/.iis/integration-test.properties";
 	
 	
 	//------------------------ LOGIC --------------------------
 	
 	/**
-	 * Returns value of property with key provided as argument
+	 * Returns all properties
 	 */
-	public String getProperty(String key) {
-		Preconditions.checkNotNull(key);
-		Preconditions.checkArgument(integrationTestProperties.containsKey(key), "Property '%s' is not defined for integration tests", key);
+	public Properties readProperties() {
+		Properties defaultProperties = readDefaultProperties();
+		Properties userProperties = readUserProperties();
+
+		Properties integrationTestProperties = new Properties();
+		integrationTestProperties.putAll(defaultProperties);
+		integrationTestProperties.putAll(userProperties);
 		
-		return integrationTestProperties.getProperty(key);
+		return integrationTestProperties;
 	}
 	
 	
@@ -79,7 +68,7 @@ public class IntegrationTestPropertiesReader {
 
 		InputStream inputStream = null;
 		try {
-			File userPropertiesFile = new File(USER_PROPERTIES_PATH);
+			File userPropertiesFile = new File(resolveUserPropertiesFilePath());
 
 			if (!userPropertiesFile.exists()) {
 				return userProperties;
@@ -95,6 +84,14 @@ public class IntegrationTestPropertiesReader {
 		}
 
 		return userProperties;
+	}
+	
+	private String resolveUserPropertiesFilePath() {
+		String userPropertiesPath = System.getProperty("iisConnectionProperties");
+		if (userPropertiesPath == null) {
+			return DEFAULT_USER_PROPERTIES_PATH;
+		}
+		return userPropertiesPath;
 	}
 	
 }

@@ -30,8 +30,11 @@ class OozieLogFileParser {
 		}
 		Pattern pattern = Pattern.compile("^job: (\\S*)$", Pattern.MULTILINE);
 		Matcher matcher = pattern.matcher(jobId);
-		matcher.find();
-		jobId = matcher.group(1);
+		if (matcher.find()) {
+			jobId = matcher.group(1);
+		} else {
+			throw new RuntimeException("Unable to find jobId in oozie job log file. Check if oozie job has started");
+		}
 		
 		return jobId;
 	}
