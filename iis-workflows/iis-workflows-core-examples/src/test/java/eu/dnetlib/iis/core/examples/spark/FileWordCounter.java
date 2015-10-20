@@ -20,6 +20,9 @@ import com.google.common.base.Preconditions;
 
 public class FileWordCounter {
   
+    
+    //------------------------ LOGIC --------------------------
+    
     public static void main(String[] args) {
         
         Preconditions.checkArgument(args.length > 1, "You must enter the input file and output directory");
@@ -35,7 +38,7 @@ public class FileWordCounter {
         JavaPairRDD<String, Integer> wordCounts = words.reduceByKey((x, y) -> x+y);
         
         
-        wordCounts.saveAsTextFile(args[1]);
+        wordCounts.coalesce(1).saveAsTextFile(args[1]);
         
         sc.close(); 
     }

@@ -18,7 +18,7 @@ import eu.dnetlib.iis.testutils.PigJsonTest;
  */
 public class PigUnitTest {
 	
-    //@Test
+    //@Test - doesn't work on windows since 2.6.0 hadoop2
     public void testJsonInput() throws IOException, ParseException {
         // Parameters to be substituted in Pig Latin script before the
         // test is run.  Format is one string for each parameter,
