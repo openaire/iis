@@ -64,6 +64,9 @@
         <oozie.package.skip.test.jar>true</oozie.package.skip.test.jar>
         
         <output.dir.name>${maven.build.timestamp}</output.dir.name>        
+        
+        <projectTestJarFile>${project.artifactId}-${project.version}-tests.jar</projectTestJarFile>
+        <oozie.use.system.libpath>true</oozie.use.system.libpath>
     </properties>
 
 
@@ -277,7 +280,7 @@
 									<outputFile>target/${oozie.package.file.name}/job.properties</outputFile>
 									<!-- notice: dots are not allowed for job.properties! -->
 									<include>nameNode,jobTracker,queueName,
-									workingDir,oozie.wf.application.path</include>
+									workingDir,oozie.wf.application.path,projectTestJarFile,oozie.use.system.libpath</include>
 									<includeSystemProperties>true</includeSystemProperties>
 									<includePropertyKeysFromFiles>
 										<!-- 

@@ -65,8 +65,7 @@
         
         <dependency>
             <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-core</artifactId>
-            <scope>provided</scope>
+            <artifactId>hadoop-mapreduce-client-core</artifactId>
         </dependency>
         
         <dependency>
@@ -75,11 +74,15 @@
             <scope>provided</scope>
         </dependency>
         
+        <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-core_2.10</artifactId>
+        </dependency>
+            
         <!-- Needed to run Pig jobs { -->
         <dependency>
             <groupId>org.apache.pig</groupId>
             <artifactId>pig</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
 			<groupId>org.apache.pig</groupId>
@@ -106,6 +109,11 @@
             <classifier>hadoop2</classifier>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-mapreduce-client-app</artifactId>
+        </dependency>
+
         <!-- It seems that this dependency is needed, if it is not here,
         running Oozie tests of Avro-based map-reduce ends up with
         "java.lang.NoClassDefFoundError" exception and statement that
@@ -117,11 +125,7 @@
         <!-- Needed by Avro } -->
         <!-- Needed by our Hadoop Streaming workflow node {-->
         
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-streaming</artifactId>
-        </dependency>
-        <!-- Needed by our Hadoop Streaming workflow node }-->
+       <!-- Needed by our Hadoop Streaming workflow node }-->
         <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-serde</artifactId>
