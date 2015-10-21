@@ -1,15 +1,10 @@
 package eu.dnetlib.iis.core;
 
-import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.oozie.client.WorkflowJob.Status;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
-
-import net.schmizz.sshj.SSHClient;
+import net.schmizz.sshj.connection.channel.direct.Session.Command;
 
 /**
  * Service for retrieving informations about jobs on running oozie instance.
@@ -20,20 +15,13 @@ import net.schmizz.sshj.SSHClient;
  */
 public class SshOozieClient {
 	
-	private Logger log = LoggerFactory.getLogger(getClass());
 	
+	private SshConnectionManager sshConnectionManager;
 	
 	private OozieCmdLineAnswerParser oozieCmdLineParser = new OozieCmdLineAnswerParser();
 	
 	
-	private String remoteHost;
-	
-	private String remoteUser;
-	
 	private String oozieUrl;
-	
-	
-	private SSHClient sshClient;
 	
 	
 	//------------------------ CONSTRUCTORS --------------------------
@@ -41,56 +29,28 @@ public class SshOozieClient {
 	/**
 	 * Default constructor
 	 * 
-	 * @param remoteHost - address of host that will be responsible for communication with oozie
-	 * @param remoteUser - name of user on host machine
+	 * @param sshConnectionManager
 	 * @param oozieUrl - address of oozie (from remote host viewpoint) 
 	 */
-	public SshOozieClient(String remoteHost, String remoteUser, String oozieUrl) {
-		this.remoteHost = remoteHost;
-		this.remoteUser = remoteUser;
+	public SshOozieClient(SshConnectionManager sshConnectionManager, String oozieUrl) {
 		this.oozieUrl = oozieUrl;
+		this.sshConnectionManager = sshConnectionManager;
 	}
 	
 	
 	//------------------------ LOGIC --------------------------
 	
 	/**
-	 * Opens ssh connection.<br/>
-	 * Method must be executed before any attempt to read from remote host.
-	 */
-	public void openConnection() throws IOException {
-		if (sshClient != null) {
-			log.warn("Attempt to open new connection when the old one is still opened. Will use old connection.");
-			return;
-		}
-		
-		sshClient = new SSHClient();
-
-		sshClient.loadKnownHosts();
-		sshClient.connect(remoteHost);
-		sshClient.authPublickey(remoteUser);
-	}
-	
-	/**
-	 * Closes ssh connection.<br/>
-	 * After executing this method any attempt to read from remote host
-	 * will fail until connection will be open again (see {@link #openConnection()}).
-	 */
-	public void closeConnection() throws IOException {
-		if (sshClient != null) {
-			sshClient.close();
-			sshClient = null;
-		}
-	}
-	
-	/**
 	 * Returns job status with provided id
 	 */
-	public Status getJobStatus(String jobId) throws IOException {
-		Preconditions.checkArgument(isConnectionOpen(), "Connection must be opened first");
+	public Status getJobStatus(String jobId) {
 		
-		String jobInfoString = SshExecUtils.readCommandOutput(
-				SshExecUtils.sshExec(sshClient, buildOozieJobCommand(jobId, "info")));
+		SshSimpleConnection sshConnection = sshConnectionManager.getConnection();
+		
+		Command execResults = sshConnection.execute(buildOozieJobCommand(jobId, "info"));
+		
+		String jobInfoString = SshExecUtils.readCommandOutput(execResults);
+		
 		
 		return oozieCmdLineParser.readStatusFromJobInfo(jobInfoString);
 	}
@@ -98,11 +58,14 @@ public class SshOozieClient {
 	/**
 	 * Returns log of job with provided id
 	 */
-	public String getJobLog(String jobId) throws IOException {
-		Preconditions.checkArgument(isConnectionOpen(), "Connection must be opened first");
+	public String getJobLog(String jobId) {
 		
-		String jobLog = SshExecUtils.readCommandOutput(
-				SshExecUtils.sshExec(sshClient, buildOozieJobCommand(jobId, "log")));
+		SshSimpleConnection sshConnection = sshConnectionManager.getConnection();
+		
+		Command execResults = sshConnection.execute(buildOozieJobCommand(jobId, "log"));
+		
+		String jobLog = SshExecUtils.readCommandOutput(execResults);
+		
 		
 		return jobLog;
 	}
@@ -110,11 +73,14 @@ public class SshOozieClient {
 	/**
 	 * Returns properties of job with provided id
 	 */
-	public Properties getJobProperties(String jobId) throws IOException {
-		Preconditions.checkArgument(isConnectionOpen(), "Connection must be opened first");
+	public Properties getJobProperties(String jobId) {
 		
-		String jobPropertiesString = SshExecUtils.readCommandOutput(
-				SshExecUtils.sshExec(sshClient, buildOozieJobCommand(jobId, "configcontent")));
+		SshSimpleConnection sshConnection = sshConnectionManager.getConnection();
+		
+		Command execResults = sshConnection.execute(buildOozieJobCommand(jobId, "configcontent"));
+		
+		String jobPropertiesString = SshExecUtils.readCommandOutput(execResults);
+		
 		
 		return oozieCmdLineParser.parseJobProperties(jobPropertiesString); 
 	}
@@ -124,10 +90,6 @@ public class SshOozieClient {
 	
 	private String buildOozieJobCommand(String jobId, String commandName) {
 		return "oozie job -oozie " + oozieUrl + " -" + commandName + " " + jobId;
-	}
-	
-	private boolean isConnectionOpen() {
-		return sshClient != null;
 	}
 	
 }

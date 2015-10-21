@@ -24,12 +24,12 @@ import eu.dnetlib.iis.core.java.io.FileSystemPath;
  */
 class HdfsTestHelper {
 	
-	private SshBasedHdfsFileFetcher hdfsFileFetcher;
+	private SshHdfsFileFetcher hdfsFileFetcher;
 	
 	
 	//------------------------ CONSTRUCTORS --------------------------
 	
-	public HdfsTestHelper(SshBasedHdfsFileFetcher hdfsFileFetcher) {
+	public HdfsTestHelper(SshHdfsFileFetcher hdfsFileFetcher) {
 		this.hdfsFileFetcher = hdfsFileFetcher;
 	}
 	
@@ -54,8 +54,6 @@ class HdfsTestHelper {
 				copiedFile = hdfsFileFetcher.fetchFile(basePath + "/" + filePath, targetDir);
 			} catch (FileNotFoundException e) {
 				Assert.fail("Expected file: " + filePath + " has not been found");
-			} catch (IOException e) {
-				throw new RuntimeException(e);
 			}
 
 			copiedFiles.put(filePath, copiedFile);

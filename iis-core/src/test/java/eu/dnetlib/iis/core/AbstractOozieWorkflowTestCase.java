@@ -48,6 +48,8 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	private final static String REMOTE_USER_DIR_KEY = "iis.hadoop.frontend.user.dir";
 	
+	private final static String REMOTE_SSH_PORT_KEY = "iis.hadoop.frontend.port.ssh";
+	
 	private final static String WORKFLOW_SOURCE_DIR_KEY = "workflow.source.dir";
 	
 	private final static String MAVEN_TEST_WORKFLOW_PHASE = "clean package";
@@ -58,6 +60,8 @@ public abstract class AbstractOozieWorkflowTestCase {
 	private static Properties properties;
 	
 	private static File propertiesFile;
+	
+	private SshConnectionManager sshConnectionManager;
 	
 	private SshOozieClient sshOozieClient;
 	
@@ -79,11 +83,10 @@ public abstract class AbstractOozieWorkflowTestCase {
 	public void setUp() throws IOException, OozieClientException {
 		
 		log.debug("Setting up OozieClient at {}", getOozieServiceLoc());
-		sshOozieClient = new SshOozieClient(getRemoteHostName(), getRemoteUserName(), getOozieServiceLoc());
-		sshOozieClient.openConnection();
+		SshConnectionManager sshConnectionManager = new SshConnectionManager(getRemoteHostName(), getRemoteSshPort(), getRemoteUserName());
+		sshOozieClient = new SshOozieClient(sshConnectionManager, getOozieServiceLoc());
 		
-		SshBasedHdfsFileFetcher hdfsFileFetcher = new SshBasedHdfsFileFetcher(
-				getRemoteHostName(), getRemoteUserName(),
+		SshHdfsFileFetcher hdfsFileFetcher = new SshHdfsFileFetcher(sshConnectionManager,
 				getRemoteHomeDir() + "/" + getRemoteUserDir());
 		hdfsTestHelper = new HdfsTestHelper(hdfsFileFetcher);
 		
@@ -95,7 +98,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 		if (tempDir != null) {
 			FileUtils.deleteDirectory(tempDir);
 		}
-		sshOozieClient.closeConnection();
+		sshConnectionManager.closeConnection();
 	}
 	
 	@AfterClass
@@ -136,12 +139,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 		assertJobStatus(jobId, jobStatus, configuration.getExpectedFinishStatus());
 		
 		
-		Properties jobProperties;
-		try {
-			jobProperties = sshOozieClient.getJobProperties(jobId);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		Properties jobProperties = sshOozieClient.getJobProperties(jobId);
 		String workflowWorkingDir = jobProperties.getProperty("workingDir");
 		
 		WorkflowTestResult result = new WorkflowTestResult();
@@ -230,6 +228,10 @@ public abstract class AbstractOozieWorkflowTestCase {
 		return getProperty(REMOTE_USER_DIR_KEY);
 	}
 	
+	private int getRemoteSshPort() {
+		return Integer.valueOf(getProperty(REMOTE_SSH_PORT_KEY));
+	}
+	
 	private String getProperty(String key) {
 		Preconditions.checkArgument(properties.containsKey(key), "Property '%s' is not defined for integration tests", key);
 		return properties.getProperty(key);
@@ -247,8 +249,6 @@ public abstract class AbstractOozieWorkflowTestCase {
 			try {
 				Thread.sleep(checkInterval);
 				status = sshOozieClient.getJobStatus(jobId);
-			} catch (IOException e) {
-				throw new RuntimeException("Unable to check oozie job status", e);
 			} catch (InterruptedException e) {
 				throw new RuntimeException(e);
 			}
@@ -277,11 +277,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 	}
 	
 	private void printOozieJobLog(String jobId) {
-		try {
-			log.info(sshOozieClient.getJobLog(jobId));
-		} catch (IOException e) {
-			log.warn("Unable to check oozie job log");
-		}
+		log.info(sshOozieClient.getJobLog(jobId));
 	}
 	
 }
