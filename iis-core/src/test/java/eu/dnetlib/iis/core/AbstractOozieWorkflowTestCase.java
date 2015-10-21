@@ -9,12 +9,9 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.avro.specific.SpecificRecord;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
-import org.apache.oozie.client.OozieClient;
 import org.apache.oozie.client.OozieClientException;
 import org.apache.oozie.client.WorkflowJob.Status;
 import org.junit.After;
@@ -52,7 +49,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	private final static String REMOTE_USER_DIR_KEY = "iis.hadoop.frontend.user.dir";
 	
-	private final static String REMOTE_USER_PASSWORD = "iis.hadoop.frontend.user.password";
+	private final static String REMOTE_SSH_PORT_KEY = "iis.hadoop.frontend.port.ssh";
 	
 	private final static String WORKFLOW_SOURCE_DIR_KEY = "workflow.source.dir";
 	
@@ -65,9 +62,9 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	private static File propertiesFile;
 	
-	private OozieClient oozieClient;
+	private SshConnectionManager sshConnectionManager;
 	
-	private OozieJobPropertiesFetcher oozieJobPropertiesFetcher;
+	private SshOozieClient sshOozieClient;
 	
 	private HdfsTestHelper hdfsTestHelper;
 	
@@ -87,28 +84,14 @@ public abstract class AbstractOozieWorkflowTestCase {
 	public void setUp() throws IOException, OozieClientException {
 		
 		log.debug("Setting up OozieClient at {}", getOozieServiceLoc());
-		oozieClient = new OozieClient(getOozieServiceLoc());
+		SshConnectionManager sshConnectionManager = new SshConnectionManager(getRemoteHostName(), getRemoteSshPort(), getRemoteUserName());
+		sshOozieClient = new SshOozieClient(sshConnectionManager, getOozieServiceLoc());
 		
-		if (StringUtils.isNotEmpty(getRemoteUserPassword())) {
-			oozieClient.setHeader("Authorization", generateAuthHeaderValue(
-					getRemoteUserName(), getRemoteUserPassword()));
-		}
-		
-		oozieJobPropertiesFetcher = new OozieJobPropertiesFetcher(oozieClient);
-		
-		SshBasedHdfsFileFetcher hdfsFileFetcher = new SshBasedHdfsFileFetcher(
-				getRemoteHostName(), getRemoteUserName(),
+		SshHdfsFileFetcher hdfsFileFetcher = new SshHdfsFileFetcher(sshConnectionManager,
 				getRemoteHomeDir() + "/" + getRemoteUserDir());
 		hdfsTestHelper = new HdfsTestHelper(hdfsFileFetcher);
 		
 		tempDir = Files.createTempDir();
-	}
-	
-	private String generateAuthHeaderValue(String username, String password) {
-		String userpass = username + ":" + password;
-		String basicAuth = "Basic " + new String(new Base64().encode(userpass.getBytes())).trim();
-		
-		return basicAuth;
 	}
 	
 	@After
@@ -116,6 +99,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 		if (tempDir != null) {
 			FileUtils.deleteDirectory(tempDir);
 		}
+		sshConnectionManager.closeConnection();
 	}
 	
 	@AfterClass
@@ -156,7 +140,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 		assertJobStatus(jobId, jobStatus, configuration.getExpectedFinishStatus());
 		
 		
-		Properties jobProperties = oozieJobPropertiesFetcher.fetchJobProperties(jobId);
+		Properties jobProperties = sshOozieClient.getJobProperties(jobId);
 		String workflowWorkingDir = jobProperties.getProperty("workingDir");
 		
 		WorkflowTestResult result = new WorkflowTestResult();
@@ -251,8 +235,8 @@ public abstract class AbstractOozieWorkflowTestCase {
 		return getProperty(REMOTE_USER_DIR_KEY);
 	}
 	
-	private String getRemoteUserPassword() {
-		return getProperty(REMOTE_USER_PASSWORD);
+	private int getRemoteSshPort() {
+		return Integer.valueOf(getProperty(REMOTE_SSH_PORT_KEY));
 	}
 	
 	private String getProperty(String key) {
@@ -271,9 +255,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 			Status status;
 			try {
 				Thread.sleep(checkInterval);
-				status = oozieClient.getJobInfo(jobId).getStatus();
-			} catch (OozieClientException e) {
-				throw new RuntimeException("Unable to check oozie job status", e);
+				status = sshOozieClient.getJobStatus(jobId);
 			} catch (InterruptedException e) {
 				throw new RuntimeException(e);
 			}
@@ -302,11 +284,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 	}
 	
 	private void printOozieJobLog(String jobId) {
-		try {
-			log.info(oozieClient.getJobLog(jobId));
-		} catch (OozieClientException e) {
-			log.warn("Unable to check oozie job log");
-		}
+		log.info(sshOozieClient.getJobLog(jobId));
 	}
 	
 }
