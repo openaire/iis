@@ -84,7 +84,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 	public void setUp() throws IOException, OozieClientException {
 		
 		log.debug("Setting up OozieClient at {}", getOozieServiceLoc());
-		SshConnectionManager sshConnectionManager = new SshConnectionManager(getRemoteHostName(), getRemoteSshPort(), getRemoteUserName());
+		sshConnectionManager = new SshConnectionManager(getRemoteHostName(), getRemoteSshPort(), getRemoteUserName());
 		sshOozieClient = new SshOozieClient(sshConnectionManager, getOozieServiceLoc());
 		
 		SshHdfsFileFetcher hdfsFileFetcher = new SshHdfsFileFetcher(sshConnectionManager,
