@@ -72,17 +72,15 @@
             <groupId>pl.edu.icm.coansys</groupId>
             <artifactId>citations-impl</artifactId>
         </dependency>
-        <!-- proper version of hadoop client -->
+
         <dependency>
         	<groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-client</artifactId>
-            <scope>provided</scope>
+            <artifactId>hadoop-mapreduce-client-core</artifactId>
         </dependency>
-        <!-- proper version of hadoop common -->
+
         <dependency>
             <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-core</artifactId>
-            <scope>provided</scope>
+            <artifactId>hadoop-common</artifactId>
         </dependency>
 		
         <!-- coansys containing citationmatching workflow -->
