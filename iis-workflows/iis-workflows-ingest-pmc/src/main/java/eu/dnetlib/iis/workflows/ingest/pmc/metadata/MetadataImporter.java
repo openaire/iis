@@ -14,6 +14,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -23,6 +27,7 @@ import eu.dnetlib.iis.common.fault.FaultUtils;
 import eu.dnetlib.iis.core.javamapreduce.MultipleOutputs;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
+import eu.dnetlib.iis.workflows.ingest.pmc.plaintext.NlmToDocumentTextConverter;
 
 /**
  * @author Michal Oniszczuk (m.oniszczuk@icm.edu.pl)
@@ -33,6 +38,10 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
 	protected final Logger log = Logger.getLogger(this.getClass());
 
 	public static final String FAULT_TEXT = "text";
+	
+	public static final String PARAM_INGEST_METADATA = "ingest.metadata";
+	
+	boolean ingestMetadata = true;
 
 	/**
 	 * Multiple outputs.
@@ -61,6 +70,11 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
 			throw new RuntimeException("no named output provided for fault");
 		}
 		mos = new MultipleOutputs(context);
+		
+		String ingestMeta = context.getConfiguration().get(PARAM_INGEST_METADATA);
+    	if (ingestMeta!=null) {
+    		ingestMetadata = Boolean.valueOf(ingestMeta);
+    	}
 	}
 
 	@Override
@@ -71,17 +85,33 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
 			final ExtractedDocumentMetadata.Builder output = ExtractedDocumentMetadata.newBuilder();
 			output.setId(nlm.getId());
 			try {
-				// disabling validation
-				SAXParserFactory saxFactory = SAXParserFactory.newInstance();
-				saxFactory.setValidating(false);
-				SAXParser saxParser = saxFactory.newSAXParser();
-				XMLReader reader = saxParser.getXMLReader();
-				reader.setFeature("http://xml.org/sax/features/validation", false);
-				reader.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
-				reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-
-				PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(output);
-				saxParser.parse(new InputSource(new StringReader(nlm.getText().toString())), pmcXmlHandler);
+//            	extracting text
+            	SAXBuilder builder = new SAXBuilder();
+                builder.setValidation(false);
+                builder.setFeature("http://xml.org/sax/features/validation", false);
+                builder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+                builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+                StringReader textReader = new StringReader(nlm.getText().toString());
+                Document document = builder.build(textReader);
+                Element sourceDocument = document.getRootElement();
+                output.setText(NlmToDocumentTextConverter.getDocumentText(sourceDocument));
+//            	extracting metadata
+                if (ingestMetadata) {
+                	SAXParserFactory saxFactory = SAXParserFactory.newInstance();
+        			saxFactory.setValidating(false);
+        			SAXParser saxParser = saxFactory.newSAXParser();
+        			XMLReader reader = saxParser.getXMLReader();
+        			reader.setFeature("http://xml.org/sax/features/validation", false);
+        			reader.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+        			reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        			PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(output);
+    				saxParser.parse(new InputSource(
+    						new StringReader(nlm.getText().toString())), 
+    						pmcXmlHandler);	
+                } else {
+//                	setting required field
+                	output.setEntityType("");
+                }
 				mos.write(namedOutputMeta, new AvroKey<ExtractedDocumentMetadata>(output.build()));
 			} catch (ParserConfigurationException e) {
 				handleException(nlm, e);
@@ -118,4 +148,5 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
 		mos.close();
 		log.debug("cleanup: multiple outputs closed");
 	}
+
 }

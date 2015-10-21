@@ -6,11 +6,9 @@ import_concept classpath eu/dnetlib/iis/workflows/importer/concept/oozie_app
 import_content_url classpath eu/dnetlib/iis/workflows/top/importer/content_url/oozie_app
 import_plaintext classpath eu/dnetlib/iis/workflows/importer/plaintext/oozie_app
 ingest_html_plaintext classpath eu/dnetlib/iis/workflows/ingest/html/plaintext/oozie_app
-ingest_pmc_plaintext classpath eu/dnetlib/iis/workflows/ingest/pmc/plaintext/oozie_app
 ingest_pmc_metadata classpath eu/dnetlib/iis/workflows/ingest/pmc/metadata/oozie_app
-multiple_input_collapser classpath eu/dnetlib/iis/workflows/collapsers/multiple_input_collapser/oozie_app
 metadataextraction classpath eu/dnetlib/iis/workflows/metadataextraction/oozie_app
 metadataextraction_cached classpath eu/dnetlib/iis/workflows/top/metadataextraction/cached_by_checksum/oozie_app
-transformers_common_union4 classpath eu/dnetlib/iis/workflows/transformers/common/union4/oozie_app
+transformers_common_union classpath eu/dnetlib/iis/workflows/transformers/common/union/oozie_app
 transformers_idextractor classpath eu/dnetlib/iis/workflows/transformers/importer/documentmetadata/idextractor/oozie_app
 transformers_ingest_pmc_metadata classpath eu/dnetlib/iis/workflows/transformers/ingest/pmc/metadata/oozie_app

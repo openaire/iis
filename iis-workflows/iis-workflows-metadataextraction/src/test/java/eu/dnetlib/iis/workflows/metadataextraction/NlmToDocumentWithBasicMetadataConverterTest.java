@@ -36,7 +36,7 @@ public class NlmToDocumentWithBasicMetadataConverterTest {
         String id = "predefinedId";
 
         ExtractedDocumentMetadata result = 
-                NlmToDocumentWithBasicMetadataConverter.convertFull(id, document);
+                NlmToDocumentWithBasicMetadataConverter.convertFull(id, document, "text");
         
 		assertNotNull(result);
         assertEquals(id, result.getId());

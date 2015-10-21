@@ -61,6 +61,7 @@ public class PmcXmlHandlerTest {
 			
 			ExtractedDocumentMetadata.Builder metaBuilder = ExtractedDocumentMetadata.newBuilder();
 			metaBuilder.setId("some-id");
+			metaBuilder.setText("");
 			PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(metaBuilder);
 			saxParser.parse(inputStream = PmcXmlHandler.class.getResourceAsStream(filePath), 
 					pmcXmlHandler);
@@ -97,6 +98,7 @@ public class PmcXmlHandlerTest {
 			
 			ExtractedDocumentMetadata.Builder metaBuilder = ExtractedDocumentMetadata.newBuilder();
 			metaBuilder.setId("some-id");
+			metaBuilder.setText("");
 			PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(metaBuilder);
 			saxParser.parse(inputStream = PmcXmlHandler.class.getResourceAsStream(filePath), 
 					pmcXmlHandler);
@@ -128,6 +130,7 @@ public class PmcXmlHandlerTest {
 			
 			ExtractedDocumentMetadata.Builder metaBuilder = ExtractedDocumentMetadata.newBuilder();
 			metaBuilder.setId("some-id");
+			metaBuilder.setText("");
 			PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(metaBuilder);
 			saxParser.parse(inputStream = PmcXmlHandler.class.getResourceAsStream(filePath), 
 					pmcXmlHandler);
@@ -169,6 +172,7 @@ public class PmcXmlHandlerTest {
 			
 			ExtractedDocumentMetadata.Builder metaBuilder = ExtractedDocumentMetadata.newBuilder();
 			metaBuilder.setId("some-id");
+			metaBuilder.setText("");
 			PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(metaBuilder);
 			saxParser.parse(inputStream = PmcXmlHandler.class.getResourceAsStream(filePath), 
 					pmcXmlHandler);
@@ -215,6 +219,7 @@ public class PmcXmlHandlerTest {
 			
 			ExtractedDocumentMetadata.Builder metaBuilder = ExtractedDocumentMetadata.newBuilder();
 			metaBuilder.setId("some-id");
+			metaBuilder.setText("");
 			PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(metaBuilder);
 			saxParser.parse(inputStream = PmcXmlHandler.class.getResourceAsStream(filePath), 
 					pmcXmlHandler);
@@ -260,6 +265,7 @@ public class PmcXmlHandlerTest {
 			
 			ExtractedDocumentMetadata.Builder metaBuilder = ExtractedDocumentMetadata.newBuilder();
 			metaBuilder.setId("some-id");
+			metaBuilder.setText("");
 			PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(metaBuilder);
 			saxParser.parse(inputStream = PmcXmlHandler.class.getResourceAsStream(filePath), 
 					pmcXmlHandler);

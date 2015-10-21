@@ -63,6 +63,11 @@
 			<description>flag indicating statistics generation should be enabled</description>
 		</property>
 		<property>
+			<name>active_sentimentanalysis</name>
+			<value>false</value>
+			<description>flag indicating sentiment analysis should be enabled</description>
+		</property>
+		<property>
 			<name>active_websiteusage_analysis</name>
 			<value>false</value>
 			<description>flag indicating logs should be imported from HDFS log file into avro datastore 

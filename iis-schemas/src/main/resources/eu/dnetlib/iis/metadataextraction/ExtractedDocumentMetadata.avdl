@@ -54,6 +54,9 @@ protocol IIS{
         
 //      propagated from pmc ExtractedDocumentMetadata#entityType
 		union { null , string } publicationTypeName = null;
+		
+//      document fulltext
+        string text;
     }
 
 }

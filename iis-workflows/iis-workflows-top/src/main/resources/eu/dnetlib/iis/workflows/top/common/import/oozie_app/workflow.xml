@@ -643,62 +643,25 @@
 				</property>
 				<!-- all the other properties are autmatically propagated -->
 			</configuration>
-		</sub-workflow>
-		<ok to="ingest_pmc_forking" />
+        </sub-workflow>
+		<ok to="ingest_pmc_metadata_with_text" />
 		<error to="fail" />
 	</action>
-
-	<fork name="ingest_pmc_forking">
-		<path start="ingest_pmc_plaintext" />
-		<path start="decision-ingest_pmc_metadata" />
-	</fork>
-
-	<action name="ingest_pmc_plaintext">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/ingest_pmc_plaintext</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/ingest_pmc_plaintext/working_dir</value>
-				</property>
-				<property>
-					<name>input_document_nlm</name>
-					<value>${workingDir}/import_plaintext_pmc/imported</value>
-				</property>
-				<property>
-					<name>output_document_plaintext</name>
-					<value>${workingDir}/ingest_pmc_plaintext/imported</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="ingest_pmc_joining" />
-		<error to="fail" />
-	</action>
-
-	<decision name="decision-ingest_pmc_metadata">
-		<switch>
-			<!-- define ingest_pmc_metadata_joining here when introducing pmc metadata 
-				ingestion -->
-			<case to="ingest_pmc_metadata">${active_import_metadata eq "true" and active_ingest_pmc eq "true"}</case>
-			<default to="skip-ingest_pmc_metadata" />
-		</switch>
-	</decision>
-
-	<action name="ingest_pmc_metadata">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/ingest_pmc_metadata</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/ingest_pmc_metadata/working_dir</value>
-				</property>
-				<property>
-					<name>input</name>
-					<value>${workingDir}/import_plaintext_pmc/imported</value>
-				</property>
-				<property>
+	
+	<action name="ingest_pmc_metadata_with_text">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/ingest_pmc_metadata</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/ingest_pmc_metadata/working_dir</value>
+                </property>
+                <property>
+                    <name>input</name>
+                    <value>${workingDir}/import_plaintext_pmc/imported</value>
+                </property>
+                <property>
 					<name>output_root</name>
 					<value>${workingDir}/ingest_pmc_metadata/out</value>
 				</property>
@@ -710,65 +673,38 @@
 					<name>output_name_fault</name>
 					<value>fault</value>
 				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="transformers_ingest_pmc_metadata" />
-		<error to="fail" />
-	</action>
+                <property>
+                    <name>ingest_metadata</name>
+                    <value>${active_import_metadata eq "true" and active_ingest_pmc eq "true"}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+		<ok to="transformers_ingest_pmc_metadata"/>
+        <error to="fail"/>
+    </action>
 
 	<action name="transformers_ingest_pmc_metadata">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_ingest_pmc_metadata</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/transformers_ingest_pmc_metadata/working_dir</value>
-				</property>
-				<property>
-					<name>input</name>
-					<value>${workingDir}/ingest_pmc_metadata/out/meta</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${workingDir}/transformers_ingest_pmc_metadata/out</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="ingest_pmc_joining" />
-		<error to="fail" />
-	</action>
-
-	<action name="skip-ingest_pmc_metadata">
-		<java>
-			<prepare>
-				<!-- notice: directory have to aligned with skipped action output -->
-				<delete path="${nameNode}${workingDir}/ingest_pmc_metadata" />
-				<delete path="${nameNode}${workingDir}/transformers_ingest_pmc_metadata" />
-				<mkdir path="${nameNode}${workingDir}/ingest_pmc_metadata/out" />
-				<mkdir path="${nameNode}${workingDir}/transformers_ingest_pmc_metadata" />
-			</prepare>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
-			<arg>-C{metadata_transformed,
-				eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
-				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
-			<arg>-C{metadata_pmc,
-				eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata,
-				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
-			<arg>-C{fault_pmc,
-				eu.dnetlib.iis.audit.schemas.Fault,
-				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
-			<!-- notice: directory have to aligned with skipped action output -->
-			<arg>-Ometadata_transformed=${workingDir}/transformers_ingest_pmc_metadata/out</arg>
-			<arg>-Ometadata_pmc=${workingDir}/ingest_pmc_metadata/out/meta</arg>
-			<arg>-Ofault_pmc=${workingDir}/ingest_pmc_metadata/out/fault</arg>
-		</java>
-		<ok to="ingest_pmc_joining" />
-		<error to="fail" />
-	</action>
-
-	<join name="ingest_pmc_joining" to="import_urlbased_joining" />
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_ingest_pmc_metadata</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_ingest_pmc_metadata/working_dir</value>
+                </property>
+                <property>
+                    <name>input</name>
+                    <value>${workingDir}/ingest_pmc_metadata/out/meta</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${workingDir}/transformers_ingest_pmc_metadata/out</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+		<ok to="import_urlbased_joining"/>
+        <error to="fail"/>
+    </action>
 
 	<!-- html import and plaintext ingestion section -->
 	<action name="import_html">
@@ -857,10 +793,6 @@
 					<value>meta</value>
 				</property>
 				<property>
-					<name>output_name_plaintext</name>
-					<value>plaintext</value>
-				</property>
-				<property>
 					<name>output_name_fault</name>
 					<value>fault</value>
 				</property>
@@ -911,10 +843,6 @@
 					<value>meta</value>
 				</property>
 				<property>
-					<name>output_name_plaintext</name>
-					<value>plaintext</value>
-				</property>
-				<property>
 					<name>output_name_fault</name>
 					<value>fault</value>
 				</property>
@@ -932,32 +860,25 @@
 
 	<join name="import_urlbased_joining" to="transformers_common_union_document_text" />
 
-	<!-- merging document text datastores: 1) retrieved directly from objectstore 
-		2) generated by metadataextraction 3) ingested from PMC XMLs 3) ingested 
-		from HTML -->
+    <!-- merging document text datastores: 
+    	1) retrieved directly from objectstore 
+    	3) ingested from HTML
+    -->
 	<action name="transformers_common_union_document_text">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_common_union4</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/transformers_common_union_document_text/working_dir</value>
-				</property>
-				<property>
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_common_union</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_common_union_document_text/working_dir</value>
+                </property>
+            	<property>
 					<name>input_a</name>
 					<value>${workingDir}/import_plaintext/imported</value>
 				</property>
 				<property>
 					<name>input_b</name>
-					<value>${workingDir}/metadata_extractor/out/plaintext</value>
-				</property>
-				<property>
-					<name>input_c</name>
-					<value>${workingDir}/ingest_pmc_plaintext/imported</value>
-				</property>
-				<property>
-					<name>input_d</name>
 					<value>${workingDir}/ingest_html_plaintext/imported</value>
 				</property>
 				<property>
@@ -968,38 +889,31 @@
 					<name>schema</name>
 					<value>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</value>
 				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="extracted_document_metadata_collapser" />
+            </configuration>
+        </sub-workflow>
+        <ok to="union_extracted_document_metadata"/>
 		<error to="fail" />
 	</action>
 
-	<!-- merging extracted document metadata datastores: 1) extracted from PDF 
-		documents 2) ingested from PMC documents -->
-	<action name="extracted_document_metadata_collapser">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/multiple_input_collapser</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/extracted_document_metadata_collapser/working_dir
-					</value>
-				</property>
-				<property>
-					<name>origin_1</name>
-					<value>pmc_ingestion</value>
-				</property>
-				<property>
-					<name>input_1</name>
+	<!-- merging extracted document metadata datastores (including new text field):
+    	1) extracted from PDF documents 
+    	2) ingested from PMC documents
+   	-->
+   	<action name="union_extracted_document_metadata">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_common_union</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_common_union_extracted_document_metadata/working_dir</value>
+                </property>
+            	<property>
+					<name>input_a</name>
 					<value>${workingDir}/transformers_ingest_pmc_metadata/out</value>
 				</property>
 				<property>
-					<name>origin_2</name>
-					<value>cermine</value>
-				</property>
-				<property>
-					<name>input_2</name>
+					<name>input_b</name>
 					<value>${workingDir}/metadata_extractor/out/meta</value>
 				</property>
 				<property>
@@ -1007,23 +921,15 @@
 					<value>${output_extracted_document_metadata}</value>
 				</property>
 				<property>
-					<name>blocking_field</name>
-					<value>id</value>
-				</property>
-				<property>
-					<name>schema_input</name>
+					<name>schema</name>
 					<value>eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata</value>
 				</property>
-				<property>
-					<name>schema_input_envelope</name>
-					<value>eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadataEnvelope</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="import_joining" />
+            </configuration>
+        </sub-workflow>
+        <ok to="import_joining"/>
 		<error to="fail" />
-	</action>
-
+    </action>
+    
 	<join name="import_joining" to="init-faults-dir" />
 
 	<action name="init-faults-dir">

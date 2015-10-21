@@ -16,7 +16,8 @@
 	"volume": "19", 
 	"issue": "2",
 	"pages": {"start": "121", "end": "132"},
-	"publicationTypeName": null
+	"publicationTypeName": null,
+	"text":"document 1 text"
 }
 {	
 	"id": "id-2", 
@@ -34,7 +35,8 @@
 	"volume": "3", 
 	"issue": null,
 	"pages": {"start": "4428", "end": "4445"},
-	"publicationTypeName": null
+	"publicationTypeName": null,
+	"text":""
 }
 {	
 	"id": "id-3", 
@@ -75,5 +77,6 @@
 	"volume": null, 
 	"issue": "0",
 	"pages": {"start": "69", "end": "110"},
-	"publicationTypeName": null
+	"publicationTypeName": null,
+	"text":"document 3 text"
 }

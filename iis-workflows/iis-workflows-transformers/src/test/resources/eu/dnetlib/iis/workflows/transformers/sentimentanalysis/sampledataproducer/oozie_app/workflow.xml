@@ -22,11 +22,7 @@
             <arg>-C{meta,
 				eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
 				eu/dnetlib/iis/workflows/transformers/sentimentanalysis/sampledataproducer/data/extracted_document_metadata.json}</arg>
-			<arg>-C{document_text,
-				eu.dnetlib.iis.metadataextraction.schemas.DocumentText,
-				eu/dnetlib/iis/workflows/transformers/sentimentanalysis/sampledataproducer/data/document_text.json}</arg>
             <arg>-Ometa=${workingDir}/producer/meta</arg>
-            <arg>-Odocument_text=${workingDir}/producer/document_text</arg>
         </java>
         <ok to="transformer_sentimentanalysis"/>
         <error to="fail"/>
@@ -55,10 +51,6 @@
                 <property>
                     <name>input_extracted_document_metadata</name>
                     <value>${workingDir}/producer/meta</value>
-                </property>
-                <property>
-                    <name>input_text</name>
-                    <value>${workingDir}/producer/document_text</value>
                 </property>
                 <property>
                     <name>output</name>

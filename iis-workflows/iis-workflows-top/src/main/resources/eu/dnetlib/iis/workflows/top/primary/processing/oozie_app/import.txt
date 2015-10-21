@@ -23,4 +23,8 @@ transformers_citations_from_referencemetadata classpath eu/dnetlib/iis/workflows
 transformers_common_union classpath eu/dnetlib/iis/workflows/transformers/common/union/oozie_app
 transformers_common_union3 classpath eu/dnetlib/iis/workflows/transformers/common/union3/oozie_app
 transformers_export_citations classpath eu/dnetlib/iis/workflows/transformers/export/citations/oozie_app
+transformer_export_citationwithsentimentlabels classpath eu/dnetlib/iis/workflows/transformers/export/citationwithsentimentlabels/oozie_app
 transformers_project_toconcept classpath eu/dnetlib/iis/workflows/transformers/referenceextraction/project/toconcept/oozie_app
+transformer_metadataextraction_documenttext classpath eu/dnetlib/iis/workflows/transformers/metadataextraction/documenttext/oozie_app
+transformer_sentimentanalysis classpath eu/dnetlib/iis/workflows/transformers/sentimentanalysis/oozie_app
+sentiment_analysis classpath eu/dnetlib/iis/workflows/sentimentanalysis/oozie_app

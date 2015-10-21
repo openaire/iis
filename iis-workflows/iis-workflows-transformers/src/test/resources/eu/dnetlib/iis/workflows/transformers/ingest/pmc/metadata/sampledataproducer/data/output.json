@@ -71,7 +71,8 @@
     "start": "1",
     "end": "2"
   },
-  "publicationTypeName": "article"
+  "publicationTypeName": "article",
+  "text": "doc 1 text"
 }
 {
   "id": "doc-id-2",
@@ -92,7 +93,8 @@
     "start": "10",
     "end": "20"
   },
-  "publicationTypeName": "article"
+  "publicationTypeName": "article",
+  "text": "doc 2 text"
 }
 {
   "id": "doc-id-3",
@@ -113,7 +115,8 @@
     "start": "1",
     "end": "3"
   },
-  "publicationTypeName": "article"
+  "publicationTypeName": "article",
+  "text": "doc 3 text"
 }
 {
   "id": "doc-id-4",
@@ -131,5 +134,6 @@
   "volume": null,
   "issue": null,
   "pages": null,
-  "publicationTypeName": "article"
+  "publicationTypeName": "article",
+  "text": "doc 4 text"
 }

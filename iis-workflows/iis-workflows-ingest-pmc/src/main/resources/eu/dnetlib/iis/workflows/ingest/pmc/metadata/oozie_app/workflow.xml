@@ -22,6 +22,12 @@
 			'text' - pmc xml record causing fault
 			</description>
 		</property>
+		<property>
+			<name>ingest_metadata</name>
+			<value>true</value>
+			<description>Flag indicating metadata fields should be extracted.
+			Only plaintext will be provided when flag set to false.</description>
+		</property>
 	</parameters>
 
 	<start to="generate-schema" />
@@ -106,7 +112,6 @@
 					<name>avro.schema.input.key</name>
 					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.DocumentText']}</value>
 				</property>
-
 				<property>
 					<name>avro.mapreduce.multipleoutputs</name>
 					<value>${output_name_meta} ${output_name_fault}</value>
@@ -153,6 +158,10 @@
 					<name>mapred.reduce.tasks</name>
 					<value>0</value>
 				</property>
+				<property>
+                    <name>ingest.metadata</name>
+                    <value>${ingest_metadata}</value>
+                </property>
 			</configuration>
 		</map-reduce>
 		<ok to="end" />
@@ -164,4 +173,5 @@
 			[${wf:errorMessage(wf:lastErrorNode())}]</message>
 	</kill>
 	<end name="end" />
+
 </workflow-app>

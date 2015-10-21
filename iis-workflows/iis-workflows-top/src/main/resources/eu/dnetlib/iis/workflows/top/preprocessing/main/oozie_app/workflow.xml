@@ -365,9 +365,63 @@
     </action>
 	
 	<fork name="referenceextraction_forking">
-		<path start="referenceextraction_dataset"/>
+		<path start="transformers_extracted_document_metadata_to_text"/>
     	<path start="ingest_webcrawl_fundings"/>
     </fork>
+	
+	<action name="transformers_extracted_document_metadata_to_text">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/transformer_metadataextraction_documenttext</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformer_metadataextraction_documenttext/working_dir</value>
+                </property>
+            	<property>
+					<name>input</name>
+					<value>${workingDir}/mainworkflows_preprocessing_import/extracted_document_metadata</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${workingDir}/transformer_metadataextraction_documenttext/out</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="transformers_common_union_document_text"/>
+		<error to="fail" />
+    </action>
+	
+	<action name="transformers_common_union_document_text">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_common_union</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_common_union_document_text/working_dir</value>
+                </property>
+            	<property>
+					<name>input_a</name>
+					<value>${workingDir}/transformer_metadataextraction_documenttext/out</value>
+				</property>
+				<property>
+					<name>input_b</name>
+					<value>${workingDir}/mainworkflows_preprocessing_import/document-text</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${workingDir}/transformers_common_union_document_text/out</value>
+				</property>
+				<property>
+					<name>schema</name>
+					<value>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+        <ok to="referenceextraction_dataset"/>
+		<error to="fail" />
+    </action>
 	
 	<action name="referenceextraction_dataset">
 	    <sub-workflow>
@@ -380,7 +434,7 @@
                 </property>
             	<property>
 					<name>input_document_text</name>
-					<value>${workingDir}/mainworkflows_preprocessing_import/document-text</value>
+					<value>${workingDir}/transformers_common_union_document_text/out</value>
 				</property>
 				<property>
 					<name>input_dataset</name>

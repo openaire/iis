@@ -25,7 +25,6 @@ import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.fault.FaultUtils;
 import eu.dnetlib.iis.core.javamapreduce.MultipleOutputs;
-import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import pl.edu.icm.cermine.ContentExtractor;
 import pl.edu.icm.cermine.exception.AnalysisException;
@@ -75,11 +74,6 @@ public abstract class AbstractMetadataExtractorMapper<T> extends Mapper<AvroKey<
 	protected String namedOutputMeta;
 	
 	/**
-	 * Document plaintext named output.
-	 */
-	protected String namedOutputPlaintext;
-	
-	/**
 	 * Fault named output.
 	 */
 	protected String namedOutputFault;
@@ -125,10 +119,6 @@ public abstract class AbstractMetadataExtractorMapper<T> extends Mapper<AvroKey<
 		namedOutputMeta = context.getConfiguration().get("output.meta");
 		if (namedOutputMeta==null || namedOutputMeta.isEmpty()) {
 			throw new RuntimeException("no named output provided for metadata");
-		}
-		namedOutputPlaintext = context.getConfiguration().get("output.plaintext");
-		if (namedOutputPlaintext==null || namedOutputPlaintext.isEmpty()) {
-			throw new RuntimeException("no named output provided for plaintext");
 		}
 		namedOutputFault = context.getConfiguration().get("output.fault");
 		if (namedOutputFault==null || namedOutputFault.isEmpty()) {
@@ -198,11 +188,7 @@ public abstract class AbstractMetadataExtractorMapper<T> extends Mapper<AvroKey<
 //    					writing empty metadata
     					mos.write(namedOutputMeta, new AvroKey<ExtractedDocumentMetadata>(
 							NlmToDocumentWithBasicMetadataConverter.convertFull(
-									documentId.toString(), null)));
-//    					writing empty plaintext
-    					mos.write(namedOutputPlaintext, new AvroKey<DocumentText>(
-								NlmToDocumentContentConverter.convert(
-										documentId.toString(), null)));
+									documentId.toString(), null, null)));
     					return;
     				} catch (TransformationException e2) {
             			log.debug("closing multiple outputs...");
@@ -221,20 +207,25 @@ public abstract class AbstractMetadataExtractorMapper<T> extends Mapper<AvroKey<
             		}
 				}
 				
-//				TODO switch back to debug when setting debug level on oozie
-				log.warn("starting processing for id: " + documentId);
+				log.debug("starting processing for id: " + documentId);
 				long startTime = System.currentTimeMillis();
 				ContentExtractor extractor = new ContentExtractor();
 				try {
-                    extractor.uploadPDF(contentStream);
+                    extractor.setPDF(contentStream);
                     try {
                     	Element resultElem = extractor.getNLMContent();
                         Document doc = new Document(resultElem);
     					XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     					log.debug("got NLM content: \n" + outputter.outputString(resultElem));
+    					String text = null;
+    					try {
+    						text = extractor.getRawFullText();
+    					} catch (AnalysisException e) {
+    						log.error("unable to extract plaintext, trying with metadata extraction...", e);
+    					}
 						mos.write(namedOutputMeta, new AvroKey<ExtractedDocumentMetadata>(
 								NlmToDocumentWithBasicMetadataConverter.convertFull(
-										documentId.toString(), doc)));
+										documentId.toString(), doc, text)));
                     } catch (JDOMException e) {
             			log.debug("closing multiple outputs...");
             			mos.close();
@@ -261,7 +252,7 @@ public abstract class AbstractMetadataExtractorMapper<T> extends Mapper<AvroKey<
 //            					writing empty result
             					mos.write(namedOutputMeta, new AvroKey<ExtractedDocumentMetadata>(
     								NlmToDocumentWithBasicMetadataConverter.convertFull(
-    										documentId.toString(), null)));
+    										documentId.toString(), null, null)));
 //            					writing fault result
             					mos.write(namedOutputFault, new AvroKey<Fault>(
             							FaultUtils.exceptionToFault(documentId, e, auditSupplementaryData)));
@@ -289,7 +280,7 @@ public abstract class AbstractMetadataExtractorMapper<T> extends Mapper<AvroKey<
 //            					writing empty result
             					mos.write(namedOutputMeta, new AvroKey<ExtractedDocumentMetadata>(
     								NlmToDocumentWithBasicMetadataConverter.convertFull(
-    										documentId.toString(), null)));
+    										documentId.toString(), null, null)));
 //            					writing fault result
             					mos.write(namedOutputFault, new AvroKey<Fault>(
             							FaultUtils.exceptionToFault(documentId, e, auditSupplementaryData)));
@@ -306,32 +297,6 @@ public abstract class AbstractMetadataExtractorMapper<T> extends Mapper<AvroKey<
                     		} 
             			}
             		}
-					try {
-						mos.write(namedOutputPlaintext, new AvroKey<DocumentText>(
-								NlmToDocumentContentConverter.convert(
-										documentId.toString(), extractor.getRawFullText())));
-					} catch (AnalysisException e) {
-						if (analysisExceptionAsCritical) {
-            				log.debug("closing multiple outputs...");
-            				mos.close();
-            				log.debug("multiple outputs closed");
-            				throw new RuntimeException(e);
-            			} else {
-            				if (e.getCause() instanceof InvalidPdfException) {
-            					log.error("Invalid PDF file when retrieving plaintext", e);
-            				} else {
-            					log.error("got unexpected analysis exception "
-            							+ "when retrieving plaintext, just logging", e);	
-            				}
-//        					writing empty result
-        					mos.write(namedOutputPlaintext, new AvroKey<DocumentText>(
-    								NlmToDocumentContentConverter.convert(
-    										documentId.toString(), null)));
-//        					writing fault result
-        					mos.write(namedOutputFault, new AvroKey<Fault>(
-        							FaultUtils.exceptionToFault(documentId, e, auditSupplementaryData)));
-            			}
-					}
 				} finally {
 					if (contentStream!=null) {
 						contentStream.close();	
@@ -350,8 +315,7 @@ public abstract class AbstractMetadataExtractorMapper<T> extends Mapper<AvroKey<
 							setCode(FAULT_CODE_PROCESSING_TIME_THRESHOLD_EXCEEDED).
 							setSupplementaryData(supplementaryData).build()));
 				}
-//				TODO switch back to debug when setting debug level on oozie
-				log.warn("finished processing for id " + documentId + " in " +
+				log.debug("finished processing for id " + documentId + " in " +
 						(processingTime/1000) + " secs");
 			}
 		} catch (AnalysisException e) {

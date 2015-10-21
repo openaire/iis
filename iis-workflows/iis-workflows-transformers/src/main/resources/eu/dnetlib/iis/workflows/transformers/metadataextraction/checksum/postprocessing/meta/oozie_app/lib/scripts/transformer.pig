@@ -33,6 +33,7 @@ outputDocumentMeta = foreach joined generate
 		sourceDocumentMeta::volume as volume,
 		sourceDocumentMeta::issue as issue,
 		sourceDocumentMeta::pages as pages,
-		sourceDocumentMeta::publicationTypeName as publicationTypeName;
+		sourceDocumentMeta::publicationTypeName as publicationTypeName,
+		sourceDocumentMeta::text as text;
 
 store outputDocumentMeta into '$output' using avro_store_extracted_document_metadata;

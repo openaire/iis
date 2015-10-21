@@ -20,12 +20,12 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
     }
     
     @Test
-    public void testChecksumPostprocessingText() throws Exception {
-        testWorkflow("eu/dnetlib/iis/workflows/transformers/metadataextraction/checksum/postprocessing/text/sampledataproducer");
+    public void testChecksumPostprocessingMeta() throws Exception {
+        testWorkflow("eu/dnetlib/iis/workflows/transformers/metadataextraction/checksum/postprocessing/meta/sampledataproducer");
     }
     
     @Test
-    public void testChecksumPostprocessingMeta() throws Exception {
-        testWorkflow("eu/dnetlib/iis/workflows/transformers/metadataextraction/checksum/postprocessing/meta/sampledataproducer");
+    public void testToDocumentTextConversion() throws Exception {
+        testWorkflow("eu/dnetlib/iis/workflows/transformers/metadataextraction/documenttext/sampledataproducer");
     }
 }

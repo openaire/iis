@@ -3,11 +3,7 @@
 	<parameters>
 		<property>
 			<name>input_extracted_document_metadata</name>
-			<description>input containing references</description>
-		</property>
-		<property>
-			<name>input_text</name>
-			<description>input containing plain text</description>
+			<description>input containing both references and text</description>
 		</property>
 		<property>
 			<name>output</name>
@@ -23,9 +19,7 @@
         	<name-node>${nameNode}</name-node>
 	        <main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
 	        <arg>eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata</arg>
-	        <arg>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</arg>
 	        <arg>eu.dnetlib.iis.sentimentanalysis.schemas.DocumentTextWithReferences</arg>
-	        
 	        <capture-output />
 	    </java>
 	    <ok to="transformer" />
@@ -51,9 +45,6 @@
 
             <param>input_extracted_document_metadata=${input_extracted_document_metadata}</param>
             <param>schema_input_extracted_document_metadata=${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata']}</param>
-           
-			<param>input_text=${input_text}</param>
-            <param>schema_input_text=${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.DocumentText']}</param>
            
             <param>output=${output}</param>
             <param>schema_output=${wf:actionData('generate-schema')['eu.dnetlib.iis.sentimentanalysis.schemas.DocumentTextWithReferences']}</param>

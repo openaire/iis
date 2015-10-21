@@ -50,7 +50,8 @@ output_metadata = foreach pmc_metadata {
 		null as volume:chararray,
 		null as issue:chararray,
     	pages as pages,
-    	entityType as publicationTypeName:chararray;
+    	entityType as publicationTypeName:chararray,
+    	text as text:chararray;
 }
 
 store output_metadata into '$output' using avro_store_metadata;
