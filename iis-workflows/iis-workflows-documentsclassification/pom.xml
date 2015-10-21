@@ -62,13 +62,6 @@
 			<scope>provided</scope>
 		</dependency>
 		
-		<!-- Needed by our Hadoop Streaming workflow node {-->
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-streaming</artifactId>
-		</dependency>
-		<!-- Needed by our Hadoop Streaming workflow node }-->
-
 	</dependencies>
 	<build>
 		<plugins>
