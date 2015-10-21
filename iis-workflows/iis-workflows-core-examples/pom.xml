@@ -122,10 +122,7 @@
             <groupId>com.thoughtworks.paranamer</groupId>
             <artifactId>paranamer</artifactId>
         </dependency>
-        <!-- Needed by Avro } -->
-        <!-- Needed by our Hadoop Streaming workflow node {-->
-        
-       <!-- Needed by our Hadoop Streaming workflow node }-->
+       
         <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-serde</artifactId>
