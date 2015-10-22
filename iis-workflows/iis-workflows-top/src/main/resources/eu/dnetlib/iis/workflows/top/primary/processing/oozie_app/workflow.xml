@@ -802,6 +802,7 @@
     <action name="transformer_sentimentanalysis">
         <sub-workflow>
             <app-path>${wf:appPath()}/transformer_sentimentanalysis</app-path>
+            <propagate-configuration/>
             <configuration>
                 <property>
                     <name>workingDir</name>
@@ -824,6 +825,7 @@
     <action name="sentimentanalysis">
         <sub-workflow>
             <app-path>${wf:appPath()}/sentiment_analysis</app-path>
+            <propagate-configuration/>
             <configuration>
                 <property>
                     <name>workingDir</name>
@@ -1110,6 +1112,7 @@
     <action name="transformer_export_citationwithsentimentlabels">
         <sub-workflow>
             <app-path>${wf:appPath()}/transformer_export_citationwithsentimentlabels</app-path>
+            <propagate-configuration/>
             <configuration>
                 <property>
                     <name>workingDir</name>
