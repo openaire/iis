@@ -25,7 +25,7 @@ import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.core.java.ProcessUtils;
 
 /**
- * HBase backed action manager service facade.
+ * HBase-backed action manager service facade.
  * This implementation is not thread-safe.
  * @author mhorst
  *

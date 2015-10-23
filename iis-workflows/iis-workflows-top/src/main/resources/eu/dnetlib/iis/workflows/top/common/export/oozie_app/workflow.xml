@@ -328,7 +328,7 @@
 			<arg>eu.dnetlib.iis.workflows.export.actionmanager.entity.dataset.DatasetExporterProcess</arg>
 			<arg>-Iinput=${workingDir}/identifier/datasets</arg>
 			
-			<arg>-Pimport.datacite.mdstore.service.location=${mdstore_service_location}</arg>
+			<arg>-Pexport.entity.mdstore.service.location=${mdstore_service_location}</arg>
 			<arg>-Pexport.action.setid=${action_set_id_entity_dataset}</arg>
 			<arg>-Pexport.action.hbase.table.name=${action_hbase_table_name}</arg>
 			<arg>-Pexport.action.hbase.remote.zookeeper.quorum=${action_hbase_remote_zookeeper_quorum}</arg>
@@ -378,8 +378,8 @@
 			<arg>eu.dnetlib.iis.workflows.export.actionmanager.entity.document.DocumentExporterProcess</arg>
 			<arg>-Iinput=${workingDir}/identifier/documents</arg>
 			
-			<arg>-Pimport.document.mdstore.service.location=${mdstore_service_location}</arg>
-			<arg>-Pimport.document.mdstore.id=${wos_mdstore_id}</arg>
+			<arg>-Pexport.entity.mdstore.service.location=${mdstore_service_location}</arg>
+			<arg>-Pexport.entity.mdstore.id=${wos_mdstore_id}</arg>
 			<arg>-Pexport.action.setid=${action_set_id_entity_wos}</arg>
 			<arg>-Pexport.action.hbase.table.name=${action_hbase_table_name}</arg>
 			<arg>-Pexport.action.hbase.remote.zookeeper.quorum=${action_hbase_remote_zookeeper_quorum}</arg>

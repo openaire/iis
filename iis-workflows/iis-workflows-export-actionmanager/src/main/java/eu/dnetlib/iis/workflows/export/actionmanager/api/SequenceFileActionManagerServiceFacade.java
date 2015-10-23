@@ -16,29 +16,25 @@ import eu.dnetlib.actionmanager.common.Provenance;
 import eu.dnetlib.actionmanager.rmi.ActionManagerException;
 
 /**
- * HBase backed action manager service facade. This implementation is not
- * thread-safe.
+ * Sequence file based action manager service facade. 
  * 
  * @author mhorst
  *
  */
 public class SequenceFileActionManagerServiceFacade implements ActionManagerServiceFacade {
 
-	private Text keyOut;
-	private Text valueOut;
+	
 	private final SequenceFile.Writer writer;
 
 	/**
 	 * Default constructor.
 	 * 
-	 * @param hadoopConf
-	 * @param outputDirRoot
-	 * @param outputDirName
+	 * @param hadoopConf hadoop configuration
+	 * @param outputDirRoot root output directory
+	 * @param outputDirName output subdirectory name
 	 */
 	public SequenceFileActionManagerServiceFacade(Configuration hadoopConf, 
 			String outputDirRoot, String outputDirName) throws IOException {
-		this.keyOut = new Text();
-		this.valueOut = new Text();
 		this.writer = SequenceFile.createWriter(hadoopConf, 
 				Writer.file(new Path(new Path(outputDirRoot, outputDirName),"part-m-00000")),
 				Writer.keyClass(Text.class), 
@@ -52,6 +48,8 @@ public class SequenceFileActionManagerServiceFacade implements ActionManagerServ
 		if (actions != null) {
 			for (AtomicAction action : actions) {
 				try {
+					Text keyOut = new Text();
+					Text valueOut = new Text();
 					keyOut.set(action.getRowKey());
 					valueOut.set(action.toString());
 					writer.append(keyOut, valueOut);

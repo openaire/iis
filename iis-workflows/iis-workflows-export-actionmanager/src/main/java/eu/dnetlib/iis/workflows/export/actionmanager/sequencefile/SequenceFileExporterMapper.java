@@ -48,17 +48,10 @@ public class SequenceFileExporterMapper
 
 	private AlgorithmMapper<String> actionSetIdProvider;
 	
-	private Text keyOut;
-
-	private Text valueOut;
-
 	/** This is the place you can access map-reduce workflow node parameters */
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void setup(Context context) throws IOException, InterruptedException {
-		keyOut = new Text();
-		valueOut = new Text();
-		
 		if (context.getConfiguration().get(EXPORT_TRUST_LEVEL) != null) {
 			this.predefinedTrust = context.getConfiguration().get(EXPORT_TRUST_LEVEL);
 		}
@@ -95,7 +88,7 @@ public class SequenceFileExporterMapper
 	 * @param algorithmName
 	 * @return trust level threshold or null if not defined
 	 */
-	private Float provideTrustLevelThreshold(Context context, AlgorithmName algorithmName) {
+	private static Float provideTrustLevelThreshold(Context context, AlgorithmName algorithmName) {
 		String algorithmTrustLevelThreshold = context.getConfiguration()
 				.get(EXPORT_TRUST_LEVEL_THRESHOLD + EXPORT_ALGORITHM_PROPERTY_SEPARATOR + algorithmName.name());
 		if (algorithmTrustLevelThreshold != null
@@ -111,7 +104,7 @@ public class SequenceFileExporterMapper
 		return null;
 	}
 
-	private AlgorithmMapper<String> provideAlgorithmToActionSetMapper(Context context) {
+	private static AlgorithmMapper<String> provideAlgorithmToActionSetMapper(Context context) {
 		String defaultActionSetId = null;
 		if (context.getConfiguration().get(EXPORT_ACTION_SETID) != null
 				&& !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE
@@ -164,6 +157,8 @@ public class SequenceFileExporterMapper
 		List<AtomicAction> actions = createActions(key.datum());
 		if (actions != null) {
 			for (AtomicAction action : actions) {
+				Text keyOut = new Text();
+				Text valueOut = new Text();
 				keyOut.set(action.getRowKey());
 				valueOut.set(action.toString());
 				context.write(keyOut, valueOut);

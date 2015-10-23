@@ -1,5 +1,5 @@
 <workflow-app xmlns="uri:oozie:workflow:0.4" name="export_actionmanager_sequencefile">
-	
+
 	<parameters>
 		<property>
 			<name>input_document_metadata</name>
@@ -53,11 +53,9 @@
 			<name>input_project_statistics</name>
 			<value>$UNDEFINED$</value>
 		</property>
-		
 		<property>
 			<name>output</name>
 		</property>
-
 		<!-- actionset id section -->
 		<property>
 			<name>action_set_id</name>
@@ -129,7 +127,7 @@
 			<value>$UNDEFINED$</value>
 			<description>document to protein databank action-set identifier of exported data</description>
 		</property>
-		<!--  -->
+		<!-- -->
 		<!-- trust level threshold section -->
 		<property>
 			<name>trust_level_threshold</name>
@@ -169,14 +167,14 @@
 	</parameters>
 
 	<global>
-        <job-tracker>${jobTracker}</job-tracker>
-        <name-node>${nameNode}</name-node>
-        <configuration>
-            <property>
-                <name>mapred.job.queue.name</name>
-                <value>${queueName}</value>
-            </property>
-           	<property>
+		<job-tracker>${jobTracker}</job-tracker>
+		<name-node>${nameNode}</name-node>
+		<configuration>
+			<property>
+				<name>mapred.job.queue.name</name>
+				<value>${queueName}</value>
+			</property>
+			<property>
 				<name>mapreduce.inputformat.class</name>
 				<value>org.apache.avro.mapreduce.AvroKeyInputFormat</value>
 			</property>
@@ -184,7 +182,6 @@
 				<name>mapreduce.outputformat.class</name>
 				<value>org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat</value>
 			</property>
-			
 			<property>
 				<name>mapred.mapoutput.key.class</name>
 				<value>org.apache.hadoop.io.Text</value>
@@ -201,7 +198,7 @@
 				<name>mapred.output.value.class</name>
 				<value>org.apache.hadoop.io.Text</value>
 			</property>
-			
+
 			<property>
 				<name>mapred.reduce.tasks.speculative.execution</name>
 				<value>false</value>
@@ -218,7 +215,7 @@
 				<name>mapreduce.reduce.speculative</name>
 				<value>false</value>
 			</property>
-			
+
 			<property>
 				<name>mapred.compress.map.output</name>
 				<value>true</value>
@@ -231,19 +228,17 @@
 				<name>mapred.output.compression.type</name>
 				<value>BLOCK</value>
 			</property>
-			
-			 <property>
-                   <name>mapred.reduce.tasks</name>
-                   <value>0</value>
-               </property>
+
 			<property>
-				<name>io.serializations</name>
-				<value>org.apache.hadoop.io.serializer.WritableSerialization,org.apache.hadoop.io.serializer.avro.AvroSpecificSerialization,org.apache.hadoop.io.serializer.avro.AvroReflectSerialization,org.apache.avro.hadoop.io.AvroSerialization
-				</value>
+				<name>mapred.reduce.tasks</name>
+				<value>0</value>
 			</property>
 			<property>
-				<name>rpc.engine.org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolPB
-				</name>
+				<name>io.serializations</name>
+				<value>org.apache.hadoop.io.serializer.WritableSerialization,org.apache.hadoop.io.serializer.avro.AvroSpecificSerialization,org.apache.hadoop.io.serializer.avro.AvroReflectSerialization,org.apache.avro.hadoop.io.AvroSerialization</value>
+			</property>
+			<property>
+				<name>rpc.engine.org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolPB</name>
 				<value>org.apache.hadoop.ipc.ProtobufRpcEngine</value>
 			</property>
 			<property>
@@ -263,7 +258,7 @@
 				<name>export.action.setid</name>
 				<value>${action_set_id}</value>
 			</property>
-            <property>
+			<property>
 				<name>export.action.setid.person_similarities_websiteusage</name>
 				<value>${action_set_id_person_similarities_websiteusage}</value>
 			</property>
@@ -307,7 +302,7 @@
 				<name>export.action.setid.document_referencedDocuments</name>
 				<value>${action_set_id_document_referencedDocuments}</value>
 			</property>
-            <property>
+			<property>
 				<name>export.action.setid.document_research_initiative</name>
 				<value>${action_set_id_document_research_initiative}</value>
 			</property>
@@ -336,151 +331,152 @@
 				<name>export.trust.level.threshold.document_pdb</name>
 				<value>${trust_level_threshold_document_pdb}</value>
 			</property>
-        </configuration>
-    </global>
+		</configuration>
+	</global>
 
 	<start to="generate-schema" />
 
-	<!-- watch out for oozie.action.max.output.data limit set in oozie-site.xml
-		it cannot be exceeded when capturing output of schemas generated as properties.
-		When exceeded: either limit can be raised or multiple schema generating actions defined.
-	 -->
+	<!-- watch out for oozie.action.max.output.data limit set in oozie-site.xml 
+		it cannot be exceeded when capturing output of schemas generated as properties. 
+		When exceeded: either limit can be raised or multiple schema generating actions 
+		defined. -->
 	<action name="generate-schema">
-	    <java>
-	        <main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
-	        <arg>eu.dnetlib.iis.export.schemas.DocumentMetadata</arg>
-	        <arg>eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject</arg>
-	        <arg>eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet</arg>
-	        <arg>eu.dnetlib.iis.export.schemas.DocumentToConceptIds</arg>
-	        <arg>eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses</arg>
-	        <arg>eu.dnetlib.iis.export.schemas.Citations</arg>
-	        <arg>eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity</arg>
-	        <arg>eu.dnetlib.iis.statistics.schemas.DocumentToDocumentStatistics</arg>
+		<java>
+			<main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator
+			</main-class>
+			<arg>eu.dnetlib.iis.export.schemas.DocumentMetadata</arg>
+			<arg>eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject</arg>
+			<arg>eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet</arg>
+			<arg>eu.dnetlib.iis.export.schemas.DocumentToConceptIds</arg>
+			<arg>eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses</arg>
+			<arg>eu.dnetlib.iis.export.schemas.Citations</arg>
+			<arg>eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity</arg>
+			<arg>eu.dnetlib.iis.statistics.schemas.DocumentToDocumentStatistics</arg>
 			<arg>eu.dnetlib.iis.statistics.schemas.AuthorToAuthorStatistics</arg>
 			<arg>eu.dnetlib.iis.statistics.schemas.ProjectToProjectStatistics</arg>
 			<arg>eu.dnetlib.iis.websiteusage.schemas.DocumentsWithWebsiteUsageSimilarities</arg>
-	        <capture-output />
-	    </java>
-	    <ok to="prepare" />
-	    <error to="fail" />
+			<capture-output />
+		</java>
+		<ok to="prepare" />
+		<error to="fail" />
 	</action>
-	
+
 	<action name="prepare">
-        <fs>
-            <delete path="${nameNode}${output}" />
-            <mkdir path="${nameNode}${output}" />
-        </fs>
-        <ok to="forking"/>
-        <error to="fail"/>
-    </action>
+		<fs>
+			<delete path="${nameNode}${output}" />
+			<mkdir path="${nameNode}${output}" />
+		</fs>
+		<ok to="forking" />
+		<error to="fail" />
+	</action>
 
 	<fork name="forking">
-		<path start="decision-exporter-document-metadata"/>
-		<path start="decision-exporter-document-to-dataset"/>
-		<path start="decision-exporter-document-to-project"/>
-		<path start="decision-exporter-document-to-project-concepts"/>
-		<path start="decision-exporter-document-to-researchinitiatives"/>
-		<path start="decision-exporter-document-to-pdb"/>
-		<path start="decision-exporter-document-to-documentclasses"/>
-		<path start="decision-exporter-citation"/>
-        <path start="decision-exporter-document-similiarity"/>
-        <path start="decision-exporter-document-statistics"/>
-        <path start="decision-exporter-person-statistics"/>
-        <path start="decision-exporter-project-statistics"/>
-        <path start="decision-exporter-websiteusage"/>
-    </fork>
-	
+		<path start="decision-exporter-document-metadata" />
+		<path start="decision-exporter-document-to-dataset" />
+		<path start="decision-exporter-document-to-project" />
+		<path start="decision-exporter-document-to-project-concepts" />
+		<path start="decision-exporter-document-to-researchinitiatives" />
+		<path start="decision-exporter-document-to-pdb" />
+		<path start="decision-exporter-document-to-documentclasses" />
+		<path start="decision-exporter-citation" />
+		<path start="decision-exporter-document-similiarity" />
+		<path start="decision-exporter-document-statistics" />
+		<path start="decision-exporter-person-statistics" />
+		<path start="decision-exporter-project-statistics" />
+		<path start="decision-exporter-websiteusage" />
+	</fork>
+
 	<decision name="decision-exporter-document-metadata">
-        <switch>
-            <case to="joining">${input_document_metadata eq "$UNDEFINED$"}</case>
-            <default to="exporter-document-metadata"/>
-        </switch>
-    </decision>
-	
+		<switch>
+			<case to="joining">${input_document_metadata eq "$UNDEFINED$"}</case>
+			<default to="exporter-document-metadata" />
+		</switch>
+	</decision>
+
 	<decision name="decision-exporter-document-to-project">
-        <switch>
-            <case to="joining">${input_document_to_project eq "$UNDEFINED$"}</case>
-            <default to="exporter-document-to-project"/>
-        </switch>
-    </decision>
-	
+		<switch>
+			<case to="joining">${input_document_to_project eq "$UNDEFINED$"}</case>
+			<default to="exporter-document-to-project" />
+		</switch>
+	</decision>
+
 	<decision name="decision-exporter-document-to-dataset">
-        <switch>
-            <case to="joining">${input_document_to_dataset eq "$UNDEFINED$"}</case>
-            <default to="exporter-document-to-dataset"/>
-        </switch>
-    </decision>
-	
+		<switch>
+			<case to="joining">${input_document_to_dataset eq "$UNDEFINED$"}</case>
+			<default to="exporter-document-to-dataset" />
+		</switch>
+	</decision>
+
 	<decision name="decision-exporter-document-to-project-concepts">
-        <switch>
-            <case to="joining">${input_document_to_project_concepts eq "$UNDEFINED$"}</case>
-            <default to="exporter-document-to-project-concepts"/>
-        </switch>
-    </decision>
-	
+		<switch>
+			<case to="joining">${input_document_to_project_concepts eq "$UNDEFINED$"}</case>
+			<default to="exporter-document-to-project-concepts" />
+		</switch>
+	</decision>
+
 	<decision name="decision-exporter-document-to-researchinitiatives">
-        <switch>
-            <case to="joining">${input_document_to_research_initiatives eq "$UNDEFINED$"}</case>
-            <default to="exporter-document-to-researchinitiatives"/>
-        </switch>
-    </decision>
-    
-    <decision name="decision-exporter-document-to-pdb">
-        <switch>
-            <case to="joining">${input_document_to_pdb eq "$UNDEFINED$"}</case>
-            <default to="exporter-document-to-pdb"/>
-        </switch>
-    </decision>
-    
-    <decision name="decision-exporter-document-to-documentclasses">
-        <switch>
-            <case to="joining">${input_document_to_document_classes eq "$UNDEFINED$"}</case>
-            <default to="exporter-document-to-documentclasses"/>
-        </switch>
-    </decision>
-    
-    <decision name="decision-exporter-citation">
-        <switch>
-            <case to="joining">${input_citations eq "$UNDEFINED$"}</case>
-            <default to="exporter-citation"/>
-        </switch>
-    </decision>
-	
-    <decision name="decision-exporter-document-similiarity">
-        <switch>
-            <case to="joining">${input_document_similarity eq "$UNDEFINED$"}</case>
-            <default to="exporter-document-similiarity"/>
-        </switch>
-    </decision>
-    
-    <decision name="decision-exporter-websiteusage">
-        <switch>
-            <case to="joining">${input_document_websiteusage_similarity eq "$UNDEFINED$"}</case>
-            <default to="exporter-document-websiteusage-similiarity"/>
-        </switch>
-    </decision>
-	
+		<switch>
+			<case to="joining">${input_document_to_research_initiatives eq "$UNDEFINED$"}</case>
+			<default to="exporter-document-to-researchinitiatives" />
+		</switch>
+	</decision>
+
+	<decision name="decision-exporter-document-to-pdb">
+		<switch>
+			<case to="joining">${input_document_to_pdb eq "$UNDEFINED$"}</case>
+			<default to="exporter-document-to-pdb" />
+		</switch>
+	</decision>
+
+	<decision name="decision-exporter-document-to-documentclasses">
+		<switch>
+			<case to="joining">${input_document_to_document_classes eq "$UNDEFINED$"}</case>
+			<default to="exporter-document-to-documentclasses" />
+		</switch>
+	</decision>
+
+	<decision name="decision-exporter-citation">
+		<switch>
+			<case to="joining">${input_citations eq "$UNDEFINED$"}</case>
+			<default to="exporter-citation" />
+		</switch>
+	</decision>
+
+	<decision name="decision-exporter-document-similiarity">
+		<switch>
+			<case to="joining">${input_document_similarity eq "$UNDEFINED$"}</case>
+			<default to="exporter-document-similiarity" />
+		</switch>
+	</decision>
+
+	<decision name="decision-exporter-websiteusage">
+		<switch>
+			<case to="joining">${input_document_websiteusage_similarity eq "$UNDEFINED$"}</case>
+			<default to="exporter-document-websiteusage-similiarity" />
+		</switch>
+	</decision>
+
 	<decision name="decision-exporter-document-statistics">
-        <switch>
-            <case to="joining">${input_document_statistics eq "$UNDEFINED$"}</case>
-            <default to="exporter-document-statistics"/>
-        </switch>
-    </decision>
-	
+		<switch>
+			<case to="joining">${input_document_statistics eq "$UNDEFINED$"}</case>
+			<default to="exporter-document-statistics" />
+		</switch>
+	</decision>
+
 	<decision name="decision-exporter-person-statistics">
-        <switch>
-            <case to="joining">${input_author_statistics eq "$UNDEFINED$"}</case>
-            <default to="exporter-person-statistics"/>
-        </switch>
-    </decision>
-	
+		<switch>
+			<case to="joining">${input_author_statistics eq "$UNDEFINED$"}</case>
+			<default to="exporter-person-statistics" />
+		</switch>
+	</decision>
+
 	<decision name="decision-exporter-project-statistics">
-        <switch>
-            <case to="joining">${input_project_statistics eq "$UNDEFINED$"}</case>
-            <default to="exporter-project-statistics"/>
-        </switch>
-    </decision>
-	
+		<switch>
+			<case to="joining">${input_project_statistics eq "$UNDEFINED$"}</case>
+			<default to="exporter-project-statistics" />
+		</switch>
+	</decision>
+
 	<action name="exporter-document-metadata">
 		<map-reduce>
 			<prepare>
@@ -508,7 +504,7 @@
 		<ok to="joining" />
 		<error to="fail" />
 	</action>
-	
+
 	<action name="exporter-document-to-project">
 		<map-reduce>
 			<prepare>
@@ -536,7 +532,7 @@
 		<ok to="joining" />
 		<error to="fail" />
 	</action>
-	
+
 	<action name="exporter-document-to-dataset">
 		<map-reduce>
 			<prepare>
@@ -563,7 +559,7 @@
 		</map-reduce>
 		<ok to="joining" />
 		<error to="fail" />
-	</action>	
+	</action>
 
 	<action name="exporter-document-to-project-concepts">
 		<map-reduce>
@@ -620,7 +616,7 @@
 		<ok to="joining" />
 		<error to="fail" />
 	</action>
-	
+
 	<action name="exporter-document-to-pdb">
 		<map-reduce>
 			<prepare>
@@ -652,7 +648,7 @@
 		<ok to="joining" />
 		<error to="fail" />
 	</action>
-	
+
 	<action name="exporter-document-to-documentclasses">
 		<map-reduce>
 			<prepare>
@@ -680,7 +676,7 @@
 		<ok to="joining" />
 		<error to="fail" />
 	</action>
-	
+
 	<action name="exporter-citation">
 		<map-reduce>
 			<prepare>
@@ -708,7 +704,7 @@
 		<ok to="joining" />
 		<error to="fail" />
 	</action>
-	
+
 	<action name="exporter-document-similiarity">
 		<map-reduce>
 			<prepare>
@@ -740,7 +736,7 @@
 		<ok to="joining" />
 		<error to="fail" />
 	</action>
-	
+
 	<action name="exporter-document-statistics">
 		<map-reduce>
 			<prepare>
@@ -796,7 +792,7 @@
 		<ok to="joining" />
 		<error to="fail" />
 	</action>
-		
+
 	<action name="exporter-project-statistics">
 		<map-reduce>
 			<prepare>
@@ -824,7 +820,7 @@
 		<ok to="joining" />
 		<error to="fail" />
 	</action>
-	
+
 	<action name="exporter-document-websiteusage-similiarity">
 		<map-reduce>
 			<prepare>
@@ -852,12 +848,13 @@
 		<ok to="joining" />
 		<error to="fail" />
 	</action>
-	
-	<join name="joining" to="end"/>
-	
+
+	<join name="joining" to="end" />
+
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:
-			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+			[${wf:errorMessage(wf:lastErrorNode())}]
+		</message>
 	</kill>
 	<end name="end" />
 

@@ -25,7 +25,6 @@ public abstract class ExportWorkflowRuntimeParameters {
 	
 	public static final String EXPORT_DOCUMENTSSIMILARITY_THRESHOLD = "export.documentssimilarity.threshold";
 	
-	public static final String IMPORT_DOCUMENT_MDSTORE_SERVICE_LOCATION = "import.document.mdstore.service.location";
-	public static final String IMPORT_DOCUMENT_MDSTORE_ID = "import.document.mdstore.id";
-	public static final String IMPORT_DATACITE_MDSTORE_SERVICE_LOCATION = "import.datacite.mdstore.service.location";
+	public static final String EXPORT_ENTITY_MDSTORE_SERVICE_LOCATION = "export.entity.mdstore.service.location";
+	public static final String EXPORT_ENTITY_MDSTORE_ID = "export.entity.mdstore.id";
 }
