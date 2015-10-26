@@ -366,7 +366,6 @@
                 <groupId>org.apache.hbase</groupId>
                 <artifactId>hbase-client</artifactId>
                 <version>${iis.hbase.version}</version>
-                <scope>provided</scope>
                 <exclusions>
                     <exclusion>
                         <artifactId>jdk.tools</artifactId>
