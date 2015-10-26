@@ -3,7 +3,6 @@ package eu.dnetlib.iis.workflows.export.actionmanager.api;
 import java.util.Collection;
 
 import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.actionmanager.actions.XsltInfoPackageAction;
 import eu.dnetlib.actionmanager.common.Provenance;
 import eu.dnetlib.actionmanager.rmi.ActionManagerException;
 
@@ -29,13 +28,6 @@ public interface ActionManagerServiceFacade {
 			Provenance provenance,
 			String trust,
 			String nsprefix) throws ActionManagerException;
-	
-	/**
-	 * Stores {@link XsltInfoPackageAction} in action manager.
-	 * @param action
-	 * @throws ActionManagerException
-	 */
-	void storeAction(XsltInfoPackageAction action) throws ActionManagerException;
 	
 	/**
 	 * Performs finalization operations over action manager.

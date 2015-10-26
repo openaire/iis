@@ -1,16 +1,13 @@
 package eu.dnetlib.iis.workflows.export.actionmanager;
 
 import static eu.dnetlib.iis.workflows.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_ACTION_BUILDER_FACTORY_CLASSNAME;
-import static eu.dnetlib.iis.workflows.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_ACTION_SETID;
 import static eu.dnetlib.iis.workflows.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_ALGORITHM_PROPERTY_SEPARATOR;
 import static eu.dnetlib.iis.workflows.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_TRUST_LEVEL;
 import static eu.dnetlib.iis.workflows.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_TRUST_LEVEL_THRESHOLD;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.avro.mapred.AvroKey;
 import org.apache.avro.specific.SpecificRecordBase;
@@ -27,7 +24,6 @@ import eu.dnetlib.iis.workflows.export.actionmanager.module.ActionBuilderFactory
 import eu.dnetlib.iis.workflows.export.actionmanager.module.ActionBuilderModule;
 import eu.dnetlib.iis.workflows.export.actionmanager.module.AlgorithmMapper;
 import eu.dnetlib.iis.workflows.export.actionmanager.module.AlgorithmName;
-import eu.dnetlib.iis.workflows.export.actionmanager.module.MappingNotDefinedException;
 import eu.dnetlib.iis.workflows.export.actionmanager.module.TrustLevelThresholdExceededException;
 
 /**
@@ -66,7 +62,8 @@ extends Mapper<AvroKey<? extends SpecificRecordBase>, NullWritable, NullWritable
 				EXPORT_ACTION_BUILDER_FACTORY_CLASSNAME);
 		if (moduleClassName!=null) {
 			try {
-				actionSetIdProvider = provideAlgorithmToActionSetMapper(context);
+				actionSetIdProvider = AlgorithmToActionSetMapper.instantiate(
+						context.getConfiguration());
 				Class<?> clazz = Class.forName(moduleClassName);
 				Constructor<?> constructor = clazz.getConstructor();
 				actionBuilderFactory = (ActionBuilderFactory<SpecificRecordBase>) constructor.newInstance();
@@ -119,45 +116,7 @@ extends Mapper<AvroKey<? extends SpecificRecordBase>, NullWritable, NullWritable
 		return null;
 	}
 	
-	private AlgorithmMapper<String> provideAlgorithmToActionSetMapper(Context context) {
-		String defaultActionSetId = null;
-		if (context.getConfiguration().get(EXPORT_ACTION_SETID)!=null && 
-				!WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(
-						context.getConfiguration().get(EXPORT_ACTION_SETID))) {
-			defaultActionSetId = context.getConfiguration().get(
-					EXPORT_ACTION_SETID);	
-		}
-		final Map<AlgorithmName, String> algoToActionSetMap = new HashMap<AlgorithmName, String>();
-		for (AlgorithmName currentAlgorithm : AlgorithmName.values()) {
-			String propertyKey = EXPORT_ACTION_SETID + EXPORT_ALGORITHM_PROPERTY_SEPARATOR + 
-					currentAlgorithm.name();
-			if (context.getConfiguration().get(propertyKey)!=null && 
-					!WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(
-							context.getConfiguration().get(propertyKey))) {
-				algoToActionSetMap.put(currentAlgorithm,
-						context.getConfiguration().get(propertyKey));
-			} else {
-				algoToActionSetMap.put(currentAlgorithm,
-						defaultActionSetId);
-			}
-		}
-		return new AlgorithmMapper<String>() {
-			@Override
-			public String getValue(AlgorithmName algorithmName)
-					throws MappingNotDefinedException {
-				String actionSetId = algoToActionSetMap.get(algorithmName);
-				if (actionSetId!=null && 
-						!WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(
-								actionSetId)) {
-					return actionSetId;
-				} else {
-					throw new MappingNotDefinedException(
-							"no action set identifier defined "
-							+ "for algorithm: " + algorithmName.name());
-				}
-			}
-		};
-	}
+	
 	
 	/**
 	 * Builds action manager instance.
