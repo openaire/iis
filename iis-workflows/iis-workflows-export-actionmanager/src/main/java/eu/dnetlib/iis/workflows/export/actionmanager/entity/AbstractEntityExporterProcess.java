@@ -6,6 +6,7 @@ import static eu.dnetlib.iis.workflows.export.actionmanager.ExportWorkflowRuntim
 import static eu.dnetlib.iis.workflows.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_SEQ_FILE_OUTPUT_DIR_NAME;
 import static eu.dnetlib.iis.workflows.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_SEQ_FILE_OUTPUT_DIR_ROOT;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidParameterException;
 import java.util.Collections;
@@ -29,6 +30,7 @@ import eu.dnetlib.actionmanager.actions.ActionFactory;
 import eu.dnetlib.actionmanager.actions.AtomicAction;
 import eu.dnetlib.actionmanager.actions.XsltInfoPackageAction;
 import eu.dnetlib.actionmanager.common.Operation;
+import eu.dnetlib.actionmanager.rmi.ActionManagerException;
 import eu.dnetlib.data.mdstore.DocumentNotFoundException;
 import eu.dnetlib.data.mdstore.MDStoreService;
 import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
@@ -64,7 +66,7 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
 	protected final Schema inputPortSchema;
 	protected final String entityXSLTName;
 	protected final String entityXSLTLocation;
-	protected final String entityNamespacePrefix;
+	protected final ActionManagerConfigurationProvider configProvider;
 	
 	static {
 		try {
@@ -88,100 +90,54 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
 		this.inputPortSchema = inputPortSchema;
 		this.entityXSLTName = entityXSLTName;
 		this.entityXSLTLocation = entityXSLTLocation;
-		this.entityNamespacePrefix = entityNamespacePrefix;
+		this.configProvider = new StaticConfigurationProvider(
+				StaticConfigurationProvider.AGENT_DEFAULT, 
+				StaticConfigurationProvider.PROVENANCE_DEFAULT,
+				StaticConfigurationProvider.ACTION_TRUST_0_9, 
+				entityNamespacePrefix);
 	}
 	
 	@Override
 	public void run(PortBindings portBindings, Configuration conf, Map<String, String> parameters) throws Exception {
-		FileSystem fs = FileSystem.get(conf);
 		String mdStoreLocation = ProcessUtils.getParameterValue(
-				EXPORT_ENTITY_MDSTORE_SERVICE_LOCATION, 
-				conf, parameters);
+				EXPORT_ENTITY_MDSTORE_SERVICE_LOCATION, conf, parameters);
 		String actionSetId = ProcessUtils.getParameterValue(
-				EXPORT_ACTION_SETID, 
-				conf, parameters);
-
-		boolean seqFileExportMode = Boolean.valueOf(ProcessUtils.getParameterValue(
-				EXPORT_SEQ_FILE_ACTIVE, conf, parameters));
-
-		ActionManagerServiceFacade actionManager = seqFileExportMode?
-				new SequenceFileActionManagerServiceFacade(conf, 
-						ProcessUtils.getParameterValue(EXPORT_SEQ_FILE_OUTPUT_DIR_ROOT, 
-								conf, parameters), 
-						ProcessUtils.getParameterValue(EXPORT_SEQ_FILE_OUTPUT_DIR_NAME, 
-								conf, parameters)):
-				new HBaseActionManagerServiceFacade(conf, parameters);
-
+				EXPORT_ACTION_SETID, conf, parameters);
 		if (mdStoreLocation==null || WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(mdStoreLocation)) {
 			throw new InvalidParameterException("unable to export document entities to action manager, " + 
 					"unknown MDStore service location. "
 					+ "Required parameter '" + EXPORT_ENTITY_MDSTORE_SERVICE_LOCATION + "' is missing!");
 		}
-		
 		if (actionSetId==null || WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(actionSetId)) {
 			throw new RuntimeException("unable to export document entities to action manager, " +
 					"no '" + EXPORT_ACTION_SETID + "' required parameter provided!");
 		}
 		
-		W3CEndpointReferenceBuilder eprBuilder = new W3CEndpointReferenceBuilder();
-		eprBuilder.address(mdStoreLocation);
-		eprBuilder.build();
-		MDStoreService mdStore = new JaxwsServiceResolverImpl().getService(
-				MDStoreService.class, eprBuilder.build());
-		ActionManagerConfigurationProvider configProvider = new StaticConfigurationProvider(
-				StaticConfigurationProvider.AGENT_DEFAULT,
-				StaticConfigurationProvider.PROVENANCE_DEFAULT,
-				StaticConfigurationProvider.ACTION_TRUST_0_9,
-				entityNamespacePrefix);
+		MDStoreService mdStore = buildMDStoreClient(mdStoreLocation);
+		ActionManagerServiceFacade actionManager = buildActionManager(conf, parameters);
 		ActionFactory actionFactory = buildActionFactory();
 		CloseableIterator<T> it = DataStore.<T>getReader(
-				new FileSystemPath(fs, portBindings.getInput().get(inputPort)));
+				new FileSystemPath(FileSystem.get(conf), portBindings.getInput().get(inputPort)));
 		
-		Set<String> exportedEntityIds = new HashSet<String>();
 		try {
-			long timeSplit = System.currentTimeMillis();
 			int counter = 0;
+			Set<String> exportedEntityIds = new HashSet<String>();
 			while (it.hasNext()) {
-				MDStoreIdWithEntityId mdStoreIds = deliverMDStoreIds(it.next());
-				String mdStoreId = mdStoreIds.mdStoreId;
-				String entityId = mdStoreIds.entityId;
-				String mdRecordId = convertToMDStoreId(mdStoreIds.entityId);
-				if (!exportedEntityIds.contains(entityId)) {
+				MDStoreIdWithEntityId mdStoreComplexId = deliverMDStoreIds(it.next());
+				if (!exportedEntityIds.contains(mdStoreComplexId.getEntityId())) {
+					String mdRecordId = convertToMDStoreId(mdStoreComplexId.getEntityId());
 					try {
-						String mdStoreRecord = mdStore.deliverRecord(
-								mdStoreId, mdRecordId);
-						if (mdStoreRecord!=null) {
-							XsltInfoPackageAction xsltAction = actionFactory.generateInfoPackageAction(
-									entityXSLTName, actionSetId, 
-									configProvider.provideAgent(), 
-									Operation.INSERT, mdStoreRecord,
-									configProvider.provideProvenance(),
-									configProvider.provideNamespacePrefix(),
-									configProvider.provideActionTrust());
-							if (xsltAction!=null) {
-								List<AtomicAction> atomicActions = xsltAction.asAtomicActions();
-								if (atomicActions!=null) {
-									actionManager.storeAction(atomicActions,
-											configProvider.provideProvenance(),
-											configProvider.provideActionTrust(),
-											configProvider.provideNamespacePrefix());	
-								}
-							}
-							counter++;
-							if (counter%10000==0) {
-								log.warn("exported " + counter + " entities in " +
-										((System.currentTimeMillis()-timeSplit)/1000) + " secs");
-								timeSplit = System.currentTimeMillis();
-							}
-						}
-						exportedEntityIds.add(entityId);	
+						handleRecord(mdStore.deliverRecord(mdStoreComplexId.getMdStoreId(), mdRecordId), 
+								actionSetId, actionFactory, actionManager);
+						exportedEntityIds.add(mdStoreComplexId.getEntityId());
+						counter++;
 					} catch (DocumentNotFoundException e) {
 						log.error("mdrecord: " + mdRecordId + 
-									" wasn't found in mdstore: " + mdStoreId ,e);
+									" wasn't found in mdstore: " + mdStoreComplexId.getMdStoreId() ,e);
 //						TODO write missing document identifiers in output datastore
 					}  catch (Exception e) {
 						log.error("got exception when trying to retrieve "
-								+ "MDStore record for mdstore id " + mdStoreId + 
+								+ "MDStore record for mdstore id " + mdStoreComplexId.getMdStoreId() + 
 								", and document id: " + mdRecordId, e);
 						throw e;
 					}
@@ -194,14 +150,86 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
 		}
 	}
 	
-	public class MDStoreIdWithEntityId {
-		String mdStoreId;
-		String entityId;
+	/**
+	 * Handles single MDStore record.
+	 * @param mdStoreRecord
+	 * @param actionSetId
+	 * @param actionFactory
+	 * @param actionManager
+	 * @throws ActionManagerException 
+	 */
+	protected void handleRecord(String mdStoreRecord, 
+			String actionSetId, ActionFactory actionFactory, 
+			ActionManagerServiceFacade actionManager) throws DocumentNotFoundException, ActionManagerException {
+		if (mdStoreRecord!=null) {
+			XsltInfoPackageAction xsltAction = actionFactory.generateInfoPackageAction(
+					entityXSLTName, actionSetId, 
+					configProvider.provideAgent(), 
+					Operation.INSERT, mdStoreRecord,
+					configProvider.provideProvenance(),
+					configProvider.provideNamespacePrefix(),
+					configProvider.provideActionTrust());
+			if (xsltAction!=null) {
+				List<AtomicAction> atomicActions = xsltAction.asAtomicActions();
+				if (atomicActions!=null) {
+					actionManager.storeAction(atomicActions,
+							configProvider.provideProvenance(),
+							configProvider.provideActionTrust(),
+							configProvider.provideNamespacePrefix());	
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Provides action manager instance.
+	 * @param conf
+	 * @param parameters
+	 * @return action manager instance
+	 * @throws IOException
+	 */
+	protected ActionManagerServiceFacade buildActionManager(
+			Configuration conf, Map<String, String> parameters) throws IOException {
+		boolean seqFileExportMode = Boolean.valueOf(ProcessUtils.getParameterValue(
+				EXPORT_SEQ_FILE_ACTIVE, conf, parameters));
+		return seqFileExportMode?
+				new SequenceFileActionManagerServiceFacade(conf, 
+						ProcessUtils.getParameterValue(EXPORT_SEQ_FILE_OUTPUT_DIR_ROOT, 
+								conf, parameters), 
+						ProcessUtils.getParameterValue(EXPORT_SEQ_FILE_OUTPUT_DIR_NAME, 
+								conf, parameters)):
+				new HBaseActionManagerServiceFacade(conf, parameters);
+	}
+	
+	/**
+	 * Builds mdstore service client.
+	 * @param mdStoreLocation
+	 * @return {@link MDStoreService} client
+	 */
+	protected MDStoreService buildMDStoreClient(String mdStoreLocation) {
+		W3CEndpointReferenceBuilder eprBuilder = new W3CEndpointReferenceBuilder();
+		eprBuilder.address(mdStoreLocation);
+		eprBuilder.build();
+		return new JaxwsServiceResolverImpl().getService(
+				MDStoreService.class, eprBuilder.build());
+	}
+	
+	class MDStoreIdWithEntityId {
+		private final String mdStoreId;
+		private final String entityId;
 		
 		public MDStoreIdWithEntityId(String mdStoreId, 
 				String entityId) {
 			this.mdStoreId = mdStoreId;
 			this.entityId = entityId;
+		}
+		
+		public String getMdStoreId() {
+			return mdStoreId;
+		}
+
+		public String getEntityId() {
+			return entityId;
 		}
 	}
 	
