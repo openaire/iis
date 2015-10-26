@@ -5,7 +5,6 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -16,10 +15,8 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import eu.dnetlib.iis.audit.schemas.Fault;
@@ -113,9 +110,7 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
                 	output.setEntityType("");
                 }
 				mos.write(namedOutputMeta, new AvroKey<ExtractedDocumentMetadata>(output.build()));
-			} catch (ParserConfigurationException e) {
-				handleException(nlm, e);
-			} catch (SAXException e) {
+			} catch (Exception e) {
 				handleException(nlm, e);
 			}
 		}
