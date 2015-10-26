@@ -7,7 +7,6 @@ import org.apache.log4j.Logger;
 
 import eu.dnetlib.actionmanager.actions.AbstractAction;
 import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.actionmanager.actions.XsltInfoPackageAction;
 import eu.dnetlib.actionmanager.common.Provenance;
 import eu.dnetlib.actionmanager.rmi.ActionManagerException;
 
@@ -38,12 +37,6 @@ public class ActionManagerServiceFacadeMock implements
 	@Override
 	public void close() throws ActionManagerException {
 		log.log(predefinedLevel, "closing action manager facade");
-	}
-
-	@Override
-	public void storeAction(XsltInfoPackageAction action)
-			throws ActionManagerException {
-		log.log(predefinedLevel, "creating action: " + action.toString());
 	}
 
 }
