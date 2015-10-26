@@ -2,13 +2,9 @@ package eu.dnetlib.iis.workflows.metadataextraction;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,18 +19,17 @@ import org.jdom.JDOMException;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import pl.edu.icm.cermine.ContentExtractor;
-import pl.edu.icm.cermine.exception.AnalysisException;
-import pl.edu.icm.cermine.exception.TransformationException;
-
 import com.itextpdf.text.exceptions.InvalidPdfException;
 
-import eu.dnetlib.iis.audit.schemas.Cause;
 import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
+import eu.dnetlib.iis.common.fault.FaultUtils;
 import eu.dnetlib.iis.core.javamapreduce.MultipleOutputs;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
+import pl.edu.icm.cermine.ContentExtractor;
+import pl.edu.icm.cermine.exception.AnalysisException;
+import pl.edu.icm.cermine.exception.TransformationException;
 
 /**
  * Abstract class containing shared code of metadata extraction.
@@ -269,7 +264,7 @@ public abstract class AbstractMetadataExtractorMapper<T> extends Mapper<AvroKey<
     										documentId.toString(), null)));
 //            					writing fault result
             					mos.write(namedOutputFault, new AvroKey<Fault>(
-            							exceptionToFault(documentId, e, auditSupplementaryData)));
+            							FaultUtils.exceptionToFault(documentId, e, auditSupplementaryData)));
             				} catch (TransformationException e2) {
                     			log.debug("closing multiple outputs...");
                     			mos.close();
@@ -297,7 +292,7 @@ public abstract class AbstractMetadataExtractorMapper<T> extends Mapper<AvroKey<
     										documentId.toString(), null)));
 //            					writing fault result
             					mos.write(namedOutputFault, new AvroKey<Fault>(
-            							exceptionToFault(documentId, e, auditSupplementaryData)));
+            							FaultUtils.exceptionToFault(documentId, e, auditSupplementaryData)));
             				} catch (TransformationException e2) {
                     			log.debug("closing multiple outputs...");
                     			mos.close();
@@ -334,7 +329,7 @@ public abstract class AbstractMetadataExtractorMapper<T> extends Mapper<AvroKey<
     										documentId.toString(), null)));
 //        					writing fault result
         					mos.write(namedOutputFault, new AvroKey<Fault>(
-        							exceptionToFault(documentId, e, auditSupplementaryData)));
+        							FaultUtils.exceptionToFault(documentId, e, auditSupplementaryData)));
             			}
 					}
 				} finally {
@@ -367,40 +362,7 @@ public abstract class AbstractMetadataExtractorMapper<T> extends Mapper<AvroKey<
 		}
 	}
 	
-	protected static Fault exceptionToFault(CharSequence entityId, Throwable e,
-			Map<CharSequence, CharSequence> auditSupplementaryData) {
-		Fault.Builder faultBuilder = Fault.newBuilder();
-		faultBuilder.setInputObjectId(entityId);
-		faultBuilder.setTimestamp(System.currentTimeMillis());
-		faultBuilder.setCode(e.getClass().getName());
-		faultBuilder.setMessage(e.getMessage());
-		StringWriter strWriter = new StringWriter();
-		PrintWriter pw = new PrintWriter(strWriter);
-		e.printStackTrace(pw);
-		pw.close();
-		faultBuilder.setStackTrace(strWriter.toString());
-		if (e.getCause()!=null) {
-			faultBuilder.setCauses(appendThrowableToCauses(
-					e.getCause(), new ArrayList<Cause>()));
-		}
-		if (auditSupplementaryData!=null && !auditSupplementaryData.isEmpty()) {
-			faultBuilder.setSupplementaryData(auditSupplementaryData);	
-		}
-		return faultBuilder.build();
-	}
 	
-	protected static List<Cause> appendThrowableToCauses(Throwable e, List<Cause> causes) {
-		Cause.Builder causeBuilder = Cause.newBuilder();
-		causeBuilder.setCode(e.getClass().getName());
-		causeBuilder.setMessage(e.getMessage());
-		causes.add(causeBuilder.build());
-		if (e.getCause()!=null) {
-			return appendThrowableToCauses(
-					e.getCause(),causes);
-		} else {
-			return causes;	
-		}
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.apache.hadoop.mapreduce.Mapper#cleanup(org.apache.hadoop.mapreduce.Mapper.Context)
