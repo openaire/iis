@@ -129,6 +129,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 		Process p = runMavenTestWorkflow(workflowPath);
 
 		logMavenOutput(p);
+		checkMavenExitStatus(p);
 		
 		
 		String jobId = OozieLogFileParser.readJobIdFromLogFile(new File(getRunOoozieJobLogFilename()));
@@ -201,6 +202,19 @@ public abstract class AbstractOozieWorkflowTestCase {
 			throw new RuntimeException(e);
 		} finally {
 			IOUtils.closeQuietly(stdError);
+		}
+	}
+	
+	private void checkMavenExitStatus(Process p) {
+		int exitStatus;
+		try {
+			exitStatus = p.waitFor();
+		} catch (InterruptedException e) {
+			throw new RuntimeException("Error in waiting for maven process to finish", e);
+		}
+		
+		if (exitStatus != 0) {
+			Assert.fail("Maven run workflow process failed");
 		}
 	}
 	
