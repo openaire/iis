@@ -434,6 +434,10 @@
                     	<groupId>org.apache.avro</groupId>
                     	<artifactId>avro-mapred</artifactId>
                 	</exclusion>
+                	<exclusion>
+                    	<groupId>org.slf4j</groupId>
+                    	<artifactId>slf4j-simple</artifactId>
+                	</exclusion>
                 	<!-- excluding all hadoop libs which are 'provided' by environment -->
                 	<exclusion>
                     	<groupId>org.apache.hadoop</groupId>
@@ -497,6 +501,10 @@
                     	<groupId>org.apache.hadoop</groupId>
                     	<artifactId>hadoop-mapreduce-client-core</artifactId>
                 	</exclusion>
+                	<exclusion>
+                    	<groupId>org.slf4j</groupId>
+                    	<artifactId>slf4j-simple</artifactId>
+                	</exclusion>
                 </exclusions>
         	</dependency>
         	
@@ -510,6 +518,10 @@
                 	<exclusion>
                     	<groupId>org.apache.avro</groupId>
                     	<artifactId>avro-mapred</artifactId>
+                	</exclusion>
+                	<exclusion>
+                    	<groupId>org.slf4j</groupId>
+                    	<artifactId>slf4j-simple</artifactId>
                 	</exclusion>
                 	<!-- excluding all hadoop libs which are 'provided' by environment -->
                 	<exclusion>

@@ -264,8 +264,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 				return status;
 			}
 
-			System.out.println("Job " + jobId + " is still running with status: " + status + " [" + (System.currentTimeMillis()-startTime) + " ms]");
-			// log.debug("Job {} is still running with status: {} [{} ms]", new Object[] { jobId, status, System.currentTimeMillis()-startTime });
+			log.debug("Job {} is still running with status: {} [{} ms]", new Object[] { jobId, status, System.currentTimeMillis()-startTime });
 		}
 		
 		printOozieJobLog(jobId);
