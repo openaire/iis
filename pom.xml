@@ -383,7 +383,6 @@
                 <groupId>org.apache.hbase</groupId>
                 <artifactId>hbase-common</artifactId>
                 <version>${iis.hbase.version}</version>
-                <scope>provided</scope>
                 <exclusions>
                     <exclusion>
                         <artifactId>jdk.tools</artifactId>
@@ -401,7 +400,6 @@
                 <groupId>org.apache.hbase</groupId>
                 <artifactId>hbase-server</artifactId>
                 <version>${iis.hbase.version}</version>
-                <scope>provided</scope>
 			</dependency>
 			
 			<!-- Cermine dependencies -->
