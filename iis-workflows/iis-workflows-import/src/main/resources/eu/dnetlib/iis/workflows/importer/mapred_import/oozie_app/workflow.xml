@@ -3,7 +3,7 @@
 	<parameters>
 		<property>
 			<name>mapreduce_inputformat_class</name>
-			<value>eu.dnetlib.iis.workflows.importer.javamapreduce.hack.TableInputFormat</value>
+			<value>org.apache.hadoop.hbase.mapreduce.TableInputFormat</value>
 			<description>class to be used as mapreduce InputFormat</description>
 		</property>
 		<property>
@@ -61,12 +61,10 @@
 		
 		<property>
 			<name>hbase_remote_zookeeper_quorum</name>
-			<value>$UNDEFINED$</value>
 			<description>remote zookeeper quorum location, disabled when set to $UNDEFINED$ value</description>
 		</property>
 		<property>
 			<name>hbase_remote_zookeeper_clientport</name>
-			<value>$UNDEFINED$</value>
 			<description>remote zookeeper client port, disabled when set to $UNDEFINED$ value</description>
 		</property>
 		<property>
@@ -159,13 +157,12 @@
 				<delete path="${nameNode}${output}" />
 			</prepare>
 			<configuration>
-				<!-- external zookeeper configuration, skipped when set to $UNDEFINED$ value -->
 				<property>
-					<name>import.hbase.remote.zookeeper.quorum</name>
+					<name>hbase.zookeeper.quorum</name>
 					<value>${hbase_remote_zookeeper_quorum}</value>
 				</property>
 				<property>
-					<name>import.hbase.remote.zookeeper.clientport</name>
+					<name>hbase.zookeeper.property.clientPort</name>
 					<value>${hbase_remote_zookeeper_clientport}</value>
 				</property>
 				<!-- This is required for new api usage -->
