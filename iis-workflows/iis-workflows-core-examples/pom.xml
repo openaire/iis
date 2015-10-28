@@ -103,11 +103,6 @@
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.avro</groupId>
-            <artifactId>avro-mapred</artifactId>
-            <classifier>hadoop2</classifier>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.hadoop</groupId>
@@ -145,6 +140,12 @@
             <scope>test</scope>
         </dependency>
         -->
+        
+        <dependency>
+             <groupId>com.beust</groupId>
+             <artifactId>jcommander</artifactId>
+        </dependency>
+        
     </dependencies>
     <build>
         <plugins>
@@ -199,7 +200,11 @@
                     </execution>
                 </executions>
             </plugin>
-        </plugins>
+            
+            
+              
+
+	    </plugins>
         
     </build>
 </project>
