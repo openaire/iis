@@ -65,7 +65,7 @@
         
         <output.dir.name>${maven.build.timestamp}</output.dir.name>        
         
-        <projectTestJarFile>${project.artifactId}-${project.version}-tests.jar</projectTestJarFile>
+        <projectJarFileName>${project.artifactId}-${project.version}</projectJarFileName>
         <oozie.use.system.libpath>true</oozie.use.system.libpath>
     </properties>
 
@@ -177,6 +177,7 @@
 						</executions>
 					</plugin>
 					
+										
 					<plugin>
 		                <groupId>eu.dnetlib.primer</groupId>
 		                <artifactId>primer-maven-plugin</artifactId>
@@ -280,7 +281,7 @@
 									<outputFile>target/${oozie.package.file.name}/job.properties</outputFile>
 									<!-- notice: dots are not allowed for job.properties! -->
 									<include>nameNode,jobTracker,queueName,
-									workingDir,oozie.wf.application.path,projectTestJarFile,oozie.use.system.libpath</include>
+									workingDir,oozie.wf.application.path,projectJarFileName,oozie.use.system.libpath</include>
 									<includeSystemProperties>true</includeSystemProperties>
 									<includePropertyKeysFromFiles>
 										<!-- 
@@ -334,6 +335,20 @@
 						</executions>
 					</plugin>
 					
+					<plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>2.4.1</version>
+                        <executions>
+                          <execution>
+                            <phase>package</phase>
+                            <goals>
+                              <goal>shade</goal>
+                            </goals>
+                          </execution>
+                        </executions>
+                    </plugin>
+                    
 					<plugin>
 						<!-- this plugin prepares oozie installer package-->
 						<artifactId>maven-antrun-plugin</artifactId>
