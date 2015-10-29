@@ -11,7 +11,7 @@
 		</property>
 		<property>
 			<name>output</name>
-			<description>output directory</description>
+			<description>output directory containing citations tagged with sentiment labels</description>
 		</property>
 	</parameters>
     

@@ -3,11 +3,11 @@
 	<parameters>
 		<property>
 			<name>input_extracted_document_metadata</name>
-			<description>input containing both references and text</description>
+			<description>extracted metadata input including both references and text</description>
 		</property>
 		<property>
 			<name>output</name>
-			<description>output directory</description>
+			<description>output directory containing references and text only</description>
 		</property>
 	</parameters>
     

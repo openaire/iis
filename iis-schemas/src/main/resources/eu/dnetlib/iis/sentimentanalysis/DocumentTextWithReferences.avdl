@@ -1,14 +1,14 @@
 @namespace("eu.dnetlib.iis.sentimentanalysis.schemas")
 protocol IIS{
 
-	import idl "../metadataextraction/ReferenceMetadata.avdl";
+    import idl "../metadataextraction/ReferenceMetadata.avdl";
     
     record DocumentTextWithReferences {
 //      ID of the document, foreign key: Document.id ("document" data store)
         string id;
-//		document fulltext
-		string text;
-//		bibliographic references
+//      document fulltext
+        string text;
+//      bibliographic references
         array<eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata> references;
     }
 

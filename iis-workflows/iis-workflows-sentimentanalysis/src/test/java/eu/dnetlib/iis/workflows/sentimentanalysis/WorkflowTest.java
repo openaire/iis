@@ -15,8 +15,8 @@ import eu.dnetlib.iis.core.AbstractOozieWorkflowTestCase;
 public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 
     @Test
-	public void testSentimentAnalysis() throws Exception {
-    	testWorkflow("eu/dnetlib/iis/workflows/sentimentanalysis/sampledataproducer");
+    public void testSentimentAnalysis() throws Exception {
+        testWorkflow("eu/dnetlib/iis/workflows/sentimentanalysis/sampledataproducer");
     }
 
 }
