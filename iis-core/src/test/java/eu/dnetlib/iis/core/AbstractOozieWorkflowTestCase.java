@@ -19,6 +19,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,12 +27,15 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
+import eu.dnetlib.iis.IntegrationTest;
+
 /**
  * Base class for testing oozie workflows on cluster
  * 
  * @author madryk
  *
  */
+@Category(IntegrationTest.class)
 public abstract class AbstractOozieWorkflowTestCase {
 	
 	private final static Logger log = LoggerFactory.getLogger(AbstractOozieWorkflowTestCase.class);

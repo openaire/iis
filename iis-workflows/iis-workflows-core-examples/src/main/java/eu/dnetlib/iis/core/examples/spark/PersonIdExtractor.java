@@ -9,7 +9,7 @@ import com.clearspring.analytics.util.Preconditions;
 
 /**
  * Service for extracting ids from person saved in comma separated file and
- * storing results to the given directory
+ * storing results in the given directory
  * 
  * @author madryk
  *
