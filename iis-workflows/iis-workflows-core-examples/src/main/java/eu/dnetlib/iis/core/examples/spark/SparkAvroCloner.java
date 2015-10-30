@@ -55,7 +55,7 @@ public class SparkAvroCloner {
        
         conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
         
-        Schema schema = AvroUtils.toSchema(params.inputAvroClass);
+        Schema schema = AvroUtils.toSchema(params.avroSchemaClass);
         Job job = Job.getInstance();
         AvroJob.setInputKeySchema(job, schema);
         AvroJob.setOutputKeySchema(job, schema);
@@ -65,7 +65,7 @@ public class SparkAvroCloner {
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
     
             @SuppressWarnings("unchecked")
-            JavaPairRDD<AvroKey<GenericRecord>, NullWritable> inputRecords = (JavaPairRDD<AvroKey<GenericRecord>, NullWritable>)sc.newAPIHadoopFile(params.inputAvroHdfsFilePath, AvroKeyInputFormat.class, GenericRecord.class, NullWritable.class, job.getConfiguration());
+            JavaPairRDD<AvroKey<GenericRecord>, NullWritable> inputRecords = (JavaPairRDD<AvroKey<GenericRecord>, NullWritable>)sc.newAPIHadoopFile(params.inputAvroPath, AvroKeyInputFormat.class, GenericRecord.class, NullWritable.class, job.getConfiguration());
         
             
             int numberOfCopies = params.numberOfCopies;
@@ -74,7 +74,7 @@ public class SparkAvroCloner {
                                                                  for (int i=0; i<numberOfCopies; i++) {records.add(record);}
                                                                  return records;});
             
-            inputRecords.saveAsNewAPIHadoopFile(params.outputAvroHdfsFilePath, AvroKey.class, NullWritable.class, AvroKeyOutputFormat.class, job.getConfiguration());
+            inputRecords.saveAsNewAPIHadoopFile(params.outputAvroPath, AvroKey.class, NullWritable.class, AvroKeyOutputFormat.class, job.getConfiguration());
         
             
         }
@@ -88,14 +88,14 @@ public class SparkAvroCloner {
     @Parameters(separators = "=")
     private static class SparkClonerParameters {
         
-        @Parameter(names = "-inputAvroHdfsFilePath", required = true)
-        private String inputAvroHdfsFilePath;
+        @Parameter(names = "-inputAvroPath", required = true)
+        private String inputAvroPath;
         
-        @Parameter(names = "-inputAvroClass", required = true, description = "fully qualified name of the class generated from avro schema")
-        private String inputAvroClass;
+        @Parameter(names = "-avroSchemaClass", required = true, description = "fully qualified name of the class generated from avro schema")
+        private String avroSchemaClass;
         
-        @Parameter(names = "-outputAvroHdfsFilePath", required = true)
-        private String outputAvroHdfsFilePath;
+        @Parameter(names = "-outputAvroPath", required = true)
+        private String outputAvroPath;
         
         @Parameter(names= "-numberOfCopies", required = true)
         private int numberOfCopies;

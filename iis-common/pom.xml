@@ -59,6 +59,10 @@
             <artifactId>gson</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
         	<!-- required by caching mechanism for setting chmod -->
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
