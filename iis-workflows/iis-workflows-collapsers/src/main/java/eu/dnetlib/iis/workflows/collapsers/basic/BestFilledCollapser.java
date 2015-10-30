@@ -5,7 +5,7 @@ import eu.dnetlib.iis.workflows.collapsers.CollapserUtils;
 import java.util.List;
 
 import org.apache.avro.generic.IndexedRecord;
-import org.python.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 /**
  * Collapses objects by choosing one representative 

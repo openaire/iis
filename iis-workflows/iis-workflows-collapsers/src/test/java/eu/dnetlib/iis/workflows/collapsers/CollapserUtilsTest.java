@@ -8,7 +8,7 @@ import org.apache.avro.generic.IndexedRecord;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.python.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 import eu.dnetlib.iis.workflows.collapsers.CollapserUtils;
 

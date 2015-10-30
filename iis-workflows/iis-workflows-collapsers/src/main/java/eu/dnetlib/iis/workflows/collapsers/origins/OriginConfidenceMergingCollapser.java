@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.avro.generic.IndexedRecord;
-import org.python.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 /**
  * Collapses a map of objects coming from various origins 
