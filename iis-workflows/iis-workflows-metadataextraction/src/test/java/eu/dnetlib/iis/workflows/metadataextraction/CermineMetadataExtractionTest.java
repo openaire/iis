@@ -1,17 +1,20 @@
 package eu.dnetlib.iis.workflows.metadataextraction;
 
-import com.google.common.collect.Sets;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import junit.framework.TestCase;
+
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.xpath.XPath;
 import org.junit.Test;
+
+import com.google.common.collect.Sets;
+
+import junit.framework.TestCase;
 import pl.edu.icm.cermine.ContentExtractor;
 import pl.edu.icm.cermine.exception.AnalysisException;
 
@@ -31,7 +34,7 @@ public class CermineMetadataExtractionTest extends TestCase {
         InputStream is = CermineMetadataExtractionTest.class.getResourceAsStream(PDF_FILE);
         Element extractedContent;
         try {
-            extractor.uploadPDF(is);
+            extractor.setPDF(is);
             extractedContent = extractor.getNLMContent();
         } finally {
             is.close();

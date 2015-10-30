@@ -12,7 +12,7 @@ input_citations = load '$input' using avro_load_input_citations;
 grouppedCitations = group input_citations by sourceDocumentId;
 output_citations = foreach grouppedCitations {
     citations = foreach input_citations generate 
-    	entry.position, entry.rawText, entry.destinationDocumentId, entry.confidenceLevel, entry.externalDestinationDocumentIds;
+    	entry.position, entry.rawText, entry.destinationDocumentId, entry.confidenceLevel, entry.externalDestinationDocumentIds, entry.labels;
     orderedCitations = order citations by position;
     generate group as documentId, orderedCitations;
 }

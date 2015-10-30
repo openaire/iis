@@ -1,0 +1,15 @@
+{
+  "id": "id-2",
+  "referencePosition": 5,
+  "labels": ["label1", "label2"]
+}
+{
+  "id": "id-2",
+  "referencePosition": 100,
+  "labels": ["label1"]
+}
+{
+  "id": "id-10",
+  "referencePosition": 1,
+  "labels": ["label1"]
+}

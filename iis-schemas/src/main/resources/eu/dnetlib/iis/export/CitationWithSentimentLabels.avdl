@@ -1,0 +1,12 @@
+@namespace("eu.dnetlib.iis.export.schemas")
+protocol IIS{
+
+    import idl "CitationEntryWithSentimentLabels.avdl";
+    
+	record CitationWithSentimentLabels {
+//		citing document OA+ identifier
+		string sourceDocumentId;
+		eu.dnetlib.iis.export.schemas.CitationEntryWithSentimentLabels entry;
+	}
+}
+

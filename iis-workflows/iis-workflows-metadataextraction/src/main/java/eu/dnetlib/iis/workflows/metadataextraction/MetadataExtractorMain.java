@@ -23,7 +23,7 @@ public class MetadataExtractorMain {
 				ContentExtractor extractor = new ContentExtractor();
 				InputStream inputStream = new FileInputStream(new File(fileLoc));
 				try {
-                    extractor.uploadPDF(inputStream);
+                    extractor.setPDF(inputStream);
 					Element resultElem = extractor.getNLMContent();
 					XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
 					System.out.println(outputter.outputString(resultElem));

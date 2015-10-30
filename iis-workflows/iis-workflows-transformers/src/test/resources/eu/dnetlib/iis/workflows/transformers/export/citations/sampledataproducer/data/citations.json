@@ -1,0 +1,34 @@
+{
+  "documentId": "id-1",
+  "citations": [
+    {
+      "position": 1,
+      "rawText": "citation 1 pos 1 text",
+      "destinationDocumentId": null,
+      "confidenceLevel": null,
+      "externalDestinationDocumentIds": {},
+      "labels": ["label_1-1"]
+    },
+    {
+      "position": 2,
+      "rawText": "citation 1 pos 2 text",
+      "destinationDocumentId": "destId",
+      "confidenceLevel": 0.9,
+      "externalDestinationDocumentIds": {},
+      "labels": []
+    }
+  ]
+}
+{
+  "documentId": "id-2",
+  "citations": [
+    {
+      "position": 5,
+      "rawText": "citation 2 text",
+      "destinationDocumentId": "someDestId",
+      "confidenceLevel": 0.8,
+      "externalDestinationDocumentIds": {"pmid": "1234567"},
+      "labels": ["label_2-1", "label_2-2"]
+    }
+  ]
+}

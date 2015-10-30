@@ -335,7 +335,11 @@
 			<dependency>
 				<groupId>pl.edu.icm.cermine</groupId>
 				<artifactId>cermine-impl</artifactId>
+				<!-- 
 				<version>1.6</version>
+				 -->
+				<!-- version required by sentiment analysis -->
+            	<version>1.7-SNAPSHOT</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>

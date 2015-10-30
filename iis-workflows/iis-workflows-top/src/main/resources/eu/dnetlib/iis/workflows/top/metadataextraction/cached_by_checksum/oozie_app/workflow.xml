@@ -50,11 +50,6 @@
 			<description>metadata output subdirectory name</description>
 		</property>
 		<property>
-			<name>output_name_plaintext</name>
-			<value>plaintext</value>
-			<description>plaintext output subdirectory name</description>
-		</property>
-		<property>
 			<name>output_name_fault</name>
 			<value>fault</value>
 			<description>fault output subdirectory name</description>
@@ -124,7 +119,6 @@
     
     <fork name="postprocessing-forking">
     	<path start="postprocessing-meta"/>
-        <path start="postprocessing-text"/>
         <path start="postprocessing-fault"/>
     </fork>
     
@@ -148,33 +142,6 @@
 				<property>
 					<name>output</name>
 					<value>${output_root}/${output_name_meta}</value>
-				</property>
-            </configuration>
-        </sub-workflow>
-		<ok to="postprocessing-joining"/>
-		<error to="fail" />
-	</action>
-    
-    <action name="postprocessing-text">
-		<sub-workflow>
-            <app-path>${wf:appPath()}/transformers_metadataextraction_checksum_postprocessing_text</app-path>
-            <propagate-configuration/>
-            <configuration>
-            	<property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/postprocessing_text/working_dir</value>
-                </property>
-                <property>
-					<name>input_document_content_url</name>
-					<value>${input}</value>
-				</property>
-				<property>
-					<name>input_document_text</name>
-					<value>${workingDir}/mainworkflows_metadataextraction_cached/out/${output_name_plaintext}</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${output_root}/${output_name_plaintext}</value>
 				</property>
             </configuration>
         </sub-workflow>

@@ -50,11 +50,6 @@
 			<description>metadata output subdirectory name</description>
 		</property>
 		<property>
-			<name>output_name_plaintext</name>
-			<value>plaintext</value>
-			<description>plaintext output subdirectory name</description>
-		</property>
-		<property>
 			<name>output_name_fault</name>
 			<value>fault</value>
 			<description>fault output subdirectory name</description>
@@ -105,14 +100,10 @@
             <arg>-C{meta,
 				eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
 				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
-			<arg>-C{plaintext,
-				eu.dnetlib.iis.metadataextraction.schemas.DocumentText,
-			eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
 			<arg>-C{fault,
 				eu.dnetlib.iis.audit.schemas.Fault,
 			eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
             <arg>-Ometa=${output_root}/${output_name_meta}</arg>
-            <arg>-Oplaintext=${output_root}/${output_name_plaintext}</arg>
             <arg>-Ofault=${output_root}/${output_name_fault}</arg>
         </java>
         <ok to="end"/>
@@ -153,10 +144,6 @@
 					<value>${input}</value>
 				</property>
 				<property>
-					<name>input_document_text</name>
-					<value>${default_cache_location}/${wf:actionData('get-existing-cache-id')['cache_id']}/plaintext</value>
-				</property>
-				<property>
 					<name>input_document_meta</name>
 					<value>${default_cache_location}/${wf:actionData('get-existing-cache-id')['cache_id']}/meta</value>
 				</property>
@@ -165,14 +152,9 @@
 					<value>${workingDir}/transformers_metadataextraction_skip_extracted/tobeprocessed_content</value>
 				</property>
 				<property>
-					<name>output_document_text</name>
-					<value>${workingDir}/transformers_metadataextraction_skip_extracted/tobereturned_text</value>
-				</property>
-				<property>
 					<name>output_document_meta</name>
 					<value>${workingDir}/transformers_metadataextraction_skip_extracted/tobereturned_meta</value>
 				</property>
-                
             </configuration>
         </sub-workflow>
 		<ok to="metadata_extractor_on_filtered_input"/>
@@ -213,7 +195,6 @@
 
     <fork name="merge_outputs">
     	<path start="postprocessing-fault"/>
-    	<path start="transformers_common_union_plaintext_merge_outputs"/>
         <path start="transformers_common_union_meta_merge_outputs"/>
     </fork>
     
@@ -229,33 +210,6 @@
            </distcp>
        <ok to="merge_joining"/>
        <error to="fail"/>
-	</action>
-    
-    <action name="transformers_common_union_plaintext_merge_outputs">
-		<sub-workflow>
-            <app-path>${wf:appPath()}/transformers_common_union</app-path>
-            <propagate-configuration/>
-            <configuration>
-            	<property>
-					<name>input_a</name>
-					<value>${workingDir}/transformers_metadataextraction_skip_extracted/tobereturned_text</value>
-				</property>
-				<property>
-					<name>input_b</name>
-					<value>${workingDir}/metadata_extractor/output_root/${output_name_plaintext}</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${output_root}/${output_name_plaintext}</value>
-				</property>
-				<property>
-					<name>schema</name>
-					<value>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</value>
-				</property>
-            </configuration>
-        </sub-workflow>
-		<ok to="merge_joining"/>
-		<error to="fail" />
 	</action>
     
     <action name="transformers_common_union_meta_merge_outputs">
@@ -294,17 +248,6 @@
 			<arg>-Iinput=${workingDir}/metadata_extractor/output_root/${output_name_meta}</arg>
 			<capture-output />
 		</java>
-		<ok to="check_metadataextraction_output_plaintext_isempty" />
-		<error to="fail" />
-	</action>
-    
-    <action name='check_metadataextraction_output_plaintext_isempty'>
-		<java>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.common.utils.EmptyDatastoreVerifierProcess</arg>
-			<arg>-Iinput=${workingDir}/metadata_extractor/output_root/${output_name_plaintext}</arg>
-			<capture-output />
-		</java>
 		<ok to="decision-is-metadataextraction-output-empty" />
 		<error to="fail" />
 	</action>
@@ -312,7 +255,7 @@
     <decision name="decision-is-metadataextraction-output-empty">
         <switch>
         	<!-- skipping metadataextraction merging process -->
-            <case to="obtain-lock_for_merging">${wf:actionData('check_metadataextraction_output_plaintext_isempty')['isEmpty'] eq "false" or wf:actionData('check_metadataextraction_output_meta_isempty')['isEmpty'] eq "false"}</case>
+            <case to="obtain-lock_for_merging">${wf:actionData('check_metadataextraction_output_meta_isempty')['isEmpty'] eq "false"}</case>
             <default to="end"/>
         </switch>
     </decision>
@@ -345,41 +288,9 @@
         <fs>
             <mkdir path="${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_merging')['cache_id']}" />
         </fs>
-        <ok to="merge_cache"/>
+        <ok to="transformers_common_union_meta_merge_cache"/>
         <error to="release-lock-and-fail"/>
     </action>
-    
-    <fork name="merge_cache">
-    	<path start="transformers_common_union_plaintext_merge_cache"/>
-        <path start="transformers_common_union_meta_merge_cache"/>
-    </fork>
-    
-    <action name="transformers_common_union_plaintext_merge_cache">
-		<sub-workflow>
-            <app-path>${wf:appPath()}/transformers_common_union</app-path>
-            <propagate-configuration/>
-            <configuration>
-            	<property>
-					<name>input_a</name>
-					<value>${default_cache_location}/${wf:actionData('get-existing-cache-id')['cache_id']}/plaintext</value>
-				</property>
-				<property>
-					<name>input_b</name>
-					<value>${workingDir}/metadata_extractor/output_root/${output_name_plaintext}</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${default_cache_location}/${wf:actionData('get-new-cache-id_for_merging')['cache_id']}/plaintext</value>
-				</property>
-				<property>
-					<name>schema</name>
-					<value>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</value>
-				</property>
-            </configuration>
-        </sub-workflow>
-		<ok to="joining-merge_cache"/>
-		<error to="fail-merge_cache-temp_files_cleanup" />
-	</action>
     
     <action name="transformers_common_union_meta_merge_cache">
 		<sub-workflow>
@@ -404,7 +315,7 @@
 				</property>
             </configuration>
         </sub-workflow>
-		<ok to="joining-merge_cache"/>
+		<ok to="write-new-cache-id_for_merging"/>
 		<error to="fail-merge_cache-temp_files_cleanup" />
 	</action>
 
@@ -415,8 +326,6 @@
         <ok to="release-lock-and-fail"/>
         <error to="release-lock-and-fail"/>
     </action>
-	
-	<join name="joining-merge_cache" to="write-new-cache-id_for_merging"/>
 	
 	<action name='write-new-cache-id_for_merging'>
 		<java>
@@ -486,25 +395,9 @@
         <fs>
             <mkdir path="${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}" />
         </fs>
-        <ok to="initialize_cache"/>
+        <ok to="initialize_meta_cache"/>
         <error to="release-lock-and-fail"/>
     </action>
-    
-    <fork name="initialize_cache">
-    	<path start="initialize_plaintext_cache"/>
-        <path start="initialize_meta_cache"/>
-    </fork>
-    
-    <action name="initialize_plaintext_cache">
-       <distcp xmlns="uri:oozie:distcp-action:0.1">
-           <job-tracker>${jobTracker}</job-tracker>
-           <name-node>${nameNode}</name-node>
-           <arg>${nameNode}${output_root}/${output_name_plaintext}</arg>
-           <arg>${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}/plaintext</arg>
-           </distcp>
-       <ok to="joining-initialize_cache"/>
-       <error to="fail-initialize_cache-temp_files_cleanup"/>
-	</action>
    
 	<action name="initialize_meta_cache">
        <distcp xmlns="uri:oozie:distcp-action:0.1">
@@ -513,7 +406,7 @@
            <arg>${nameNode}${output_root}/${output_name_meta}</arg>
            <arg>${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}/meta</arg>
            </distcp>
-       <ok to="joining-initialize_cache"/>
+       <ok to="write-new-cache-id_for_initializing"/>
        <error to="fail-initialize_cache-temp_files_cleanup"/>
 	</action>
 	
@@ -524,8 +417,6 @@
         <ok to="release-lock-and-fail"/>
         <error to="release-lock-and-fail"/>
     </action>
-	
-	<join name="joining-initialize_cache" to="write-new-cache-id_for_initializing"/>
 	
 	<action name='write-new-cache-id_for_initializing'>
 		<java>
