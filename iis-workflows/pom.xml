@@ -132,7 +132,7 @@
 												<file>${iisConnectionProperties}</file>
 											</files>
 											<message>
-												Connection properties file doesn't exist in ${iisConnectionProperties}. Please create this file or override it's location with -DiisConnectionProperties property.
+												The file with connection properties could not be found. Please, create the ${iisConnectionProperties} file or set the location to another already created file by using -DiisConnectionProperties property.
 											</message>
 										</requireFilesExist>
 									</rules>
