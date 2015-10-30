@@ -423,7 +423,7 @@
 								<argument>${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name}</argument>
 								<argument>-p ${iis.hadoop.frontend.port.ssh}</argument>
 								<argument>-o StrictHostKeyChecking=no</argument>
-								<argument>rm -rf ${iis.hadoop.frontend.home.dir}/${iis.hadoop.frontend.user.dir}/oozie-packages/${sandboxName}/${output.dir.name}/; mkdir -p ${iis.hadoop.frontend.home.dir}/${iis.hadoop.frontend.user.dir}/oozie-packages/${sandboxName}/${output.dir.name}/</argument>
+								<argument>rm -rf ${iis.hadoop.frontend.temp.dir}/oozie-packages/${sandboxName}/${output.dir.name}/; mkdir -p ${iis.hadoop.frontend.temp.dir}/oozie-packages/${sandboxName}/${output.dir.name}/</argument>
 						    </arguments>
 				          </configuration>
 				        </execution>
@@ -439,7 +439,7 @@
 						    	<argument>-P ${iis.hadoop.frontend.port.ssh}</argument>
 						    	<argument>-o StrictHostKeyChecking=no</argument>
 								<argument>target/${oozie.package.file.name}.tar.gz</argument>
-								<argument>${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name}:${iis.hadoop.frontend.home.dir}/${iis.hadoop.frontend.user.dir}/oozie-packages/${sandboxName}/${output.dir.name}/${oozie.package.file.name}.tar.gz</argument>
+								<argument>${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name}:${iis.hadoop.frontend.temp.dir}/oozie-packages/${sandboxName}/${output.dir.name}/${oozie.package.file.name}.tar.gz</argument>
 						    </arguments>
 				          </configuration>
 				        </execution>
@@ -456,9 +456,9 @@
 								<argument>${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name}</argument>
 								<argument>-p ${iis.hadoop.frontend.port.ssh}</argument>
 								<argument>-o StrictHostKeyChecking=no</argument>
-								<argument>cd ${iis.hadoop.frontend.home.dir}/${iis.hadoop.frontend.user.dir}/oozie-packages/${sandboxName}/${output.dir.name}/; </argument>
+								<argument>cd ${iis.hadoop.frontend.temp.dir}/oozie-packages/${sandboxName}/${output.dir.name}/; </argument>
 								<argument>tar -zxvf oozie-package.tar.gz; </argument>
-								<argument>rm ${iis.hadoop.frontend.home.dir}/${iis.hadoop.frontend.user.dir}/oozie-packages/${sandboxName}/${output.dir.name}/oozie-package.tar.gz; </argument>
+								<argument>rm ${iis.hadoop.frontend.temp.dir}/oozie-packages/${sandboxName}/${output.dir.name}/oozie-package.tar.gz; </argument>
 								<argument>./upload_workflow.sh</argument> 
 						    </arguments>
 						  </configuration>
@@ -492,7 +492,7 @@
 								<argument>${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name}</argument>
 								<argument>-p ${iis.hadoop.frontend.port.ssh}</argument>
 								<argument>-o StrictHostKeyChecking=no</argument>
-								<argument>cd ${iis.hadoop.frontend.home.dir}/${iis.hadoop.frontend.user.dir}/oozie-packages/${sandboxName}/${output.dir.name}/; </argument>
+								<argument>cd ${iis.hadoop.frontend.temp.dir}/oozie-packages/${sandboxName}/${output.dir.name}/; </argument>
 								<argument>./run_workflow.sh</argument>
 						    </arguments>
 						  </configuration>

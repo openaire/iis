@@ -21,8 +21,8 @@ public class SshHdfsFileFetcher {
 	
 	//------------------------ CONSTRUCTORS --------------------------
 	
-	public SshHdfsFileFetcher(SshConnectionManager sshConnectionManager, String remoteUserDir) {
-		this.remoteUserDir = appendFilePathSeparatorIfMissing(remoteUserDir);
+	public SshHdfsFileFetcher(SshConnectionManager sshConnectionManager, String remoteTempDir) {
+		this.remoteUserDir = appendFilePathSeparatorIfMissing(remoteTempDir);
 		this.sshConnectionManager = sshConnectionManager;
 	}
 	
