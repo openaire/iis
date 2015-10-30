@@ -22,7 +22,6 @@ import pl.edu.icm.cermine.ContentExtractor;
 import pl.edu.icm.cermine.bibref.model.BibEntry;
 import pl.edu.icm.cermine.bibref.sentiment.model.CiTOProperty;
 import pl.edu.icm.cermine.bibref.sentiment.model.CitationSentiment;
-import pl.edu.icm.cermine.exception.AnalysisException;
 
 /**
  * Sentiment analysis module. Facade to cermine's sentiment extraction.
@@ -49,7 +48,7 @@ public class SentimentAnalyzer extends
             for (ReferenceWithSentimentLabels result : results) {
                 context.write(new AvroKey<ReferenceWithSentimentLabels>(result), NullWritable.get());
             }
-        } catch (AnalysisException e) {
+        } catch (Exception e) {
             log.error("exception occurred when extracting sentiment for document: " + input.getId(), e);
         }
     }
