@@ -64,6 +64,8 @@
         <oozie.package.dependencies.scope>runtime</oozie.package.dependencies.scope>
         <oozie.package.skip.test.jar>true</oozie.package.skip.test.jar>
         
+        <iisConnectionProperties>${user.home}/.iis/application.properties</iisConnectionProperties>
+        
         <output.dir.name>${maven.build.timestamp}</output.dir.name>        
     </properties>
 
@@ -113,6 +115,34 @@
 			<build>
 				<plugins>
 				
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-enforcer-plugin</artifactId>
+						<version>1.4.1</version>
+						<executions>
+							<execution>
+								<id>enforce-connection-properties-file-existence</id>
+								<phase>initialize</phase>
+								<goals>
+									<goal>enforce</goal>
+								</goals>
+								<configuration>
+									<rules>
+										<requireFilesExist>
+											<files>
+												<file>${iisConnectionProperties}</file>
+											</files>
+											<message>
+												The file with connection properties could not be found. Please, create the ${iisConnectionProperties} file or set the location to another already created file by using -DiisConnectionProperties property.
+											</message>
+										</requireFilesExist>
+									</rules>
+									<fail>true</fail>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					
 					<plugin>
 		                <groupId>com.google.code.maven-svn-revision-number-plugin</groupId>
 		                <artifactId>svn-revision-number-maven-plugin</artifactId>
