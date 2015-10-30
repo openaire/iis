@@ -19,6 +19,11 @@ import eu.dnetlib.iis.core.java.io.FileSystemPath;
 public class AvroTestUtils {
 
     
+    //------------------------ LOGIC --------------------------
+    
+    /**
+     * Reads records from avro files from local filesystem
+     */
     public static <T> List<T> readLocalAvroDataStore(String outputDirPath) throws IOException {
         Path outputPath = new Path(new File(outputDirPath).getAbsolutePath());
         
@@ -29,6 +34,9 @@ public class AvroTestUtils {
     }
 
 
+    /**
+     * Creates directory and saves in it the passed objects (in avro files).
+     */
     public static <T extends GenericContainer> void createLocalAvroDataStore(List<T> objects, String inputDirPath) throws IOException {
         
         File inputDir = new File(inputDirPath);
@@ -42,6 +50,8 @@ public class AvroTestUtils {
         
     }
     
+    
+    //------------------------ PRIVATE --------------------------
 
     private static FileSystem createLocalFileSystem() throws IOException {
         Configuration conf = new Configuration();
