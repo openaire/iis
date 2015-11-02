@@ -65,11 +65,11 @@
             
             <!-- <spark-opts>- - jars ${wf:conf('oozie.wf.application.path')}/lib/${projectJarFileName}-tests.jar</spark-opts> -->
             
-            <arg>-inputAvroHdfsFilePath = ${workingDir}/data_producer/person</arg>
+            <arg>-inputAvroPath = ${workingDir}/data_producer/person</arg>
             
-            <arg>-inputAvroClass = eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person</arg>
+            <arg>-avroSchemaClass = eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person</arg>
             
-            <arg>-outputAvroHdfsFilePath = ${workingDir}/spark_cloner_node/person</arg>
+            <arg>-outputAvroPath = ${workingDir}/spark_cloner_node/person</arg>
             
             <arg>-numberOfCopies = 2</arg>
             
