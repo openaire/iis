@@ -4,7 +4,7 @@ import eu.dnetlib.iis.collapsers.schemas.DocumentTextEnvelope;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import java.util.List;
 import java.util.Map;
-import org.python.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 /**
  * Collapses DocumentText records coming from various origins

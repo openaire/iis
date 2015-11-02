@@ -18,7 +18,7 @@
     		<job-tracker>${jobTracker}</job-tracker>
         	<name-node>${nameNode}</name-node>
 	        <main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
-	        <arg>eu.dnetlib.iis.common.citations.schemas.Citation</arg>
+	        <arg>eu.dnetlib.iis.export.schemas.CitationWithSentimentLabels</arg>
 	        <arg>eu.dnetlib.iis.export.schemas.Citations</arg>
 	        <capture-output />
 	    </java>
@@ -44,7 +44,7 @@
             <script>lib/scripts/transformer.pig</script>
 
             <param>input=${input}</param>
-            <param>schema_input=${wf:actionData('generate-schema')['eu.dnetlib.iis.common.citations.schemas.Citation']}</param>
+            <param>schema_input=${wf:actionData('generate-schema')['eu.dnetlib.iis.export.schemas.CitationWithSentimentLabels']}</param>
            
             <param>output=${output}</param>
             <param>schema_output=${wf:actionData('generate-schema')['eu.dnetlib.iis.export.schemas.Citations']}</param>

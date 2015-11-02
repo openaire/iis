@@ -26,6 +26,7 @@
        <module>iis-workflows-ingest-pmc</module>
        <module>iis-workflows-metadataextraction</module>
        <module>iis-workflows-referenceextraction</module>
+       <module>iis-workflows-sentimentanalysis</module>
        <module>iis-workflows-statistics</module>
        <module>iis-workflows-top</module>
        <module>iis-workflows-transformers</module>
@@ -62,6 +63,8 @@
         
         <oozie.package.dependencies.scope>runtime</oozie.package.dependencies.scope>
         <oozie.package.skip.test.jar>true</oozie.package.skip.test.jar>
+        
+        <iisConnectionProperties>${user.home}/.iis/application.properties</iisConnectionProperties>
         
         <output.dir.name>${maven.build.timestamp}</output.dir.name>        
         
@@ -115,6 +118,34 @@
 			<build>
 				<plugins>
 				
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-enforcer-plugin</artifactId>
+						<version>1.4.1</version>
+						<executions>
+							<execution>
+								<id>enforce-connection-properties-file-existence</id>
+								<phase>initialize</phase>
+								<goals>
+									<goal>enforce</goal>
+								</goals>
+								<configuration>
+									<rules>
+										<requireFilesExist>
+											<files>
+												<file>${iisConnectionProperties}</file>
+											</files>
+											<message>
+												The file with connection properties could not be found. Please, create the ${iisConnectionProperties} file or set the location to another already created file by using -DiisConnectionProperties property.
+											</message>
+										</requireFilesExist>
+									</rules>
+									<fail>true</fail>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					
 					<plugin>
 		                <groupId>com.google.code.maven-svn-revision-number-plugin</groupId>
 		                <artifactId>svn-revision-number-maven-plugin</artifactId>
@@ -452,7 +483,7 @@
 								<argument>${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name}</argument>
 								<argument>-p ${iis.hadoop.frontend.port.ssh}</argument>
 								<argument>-o StrictHostKeyChecking=no</argument>
-								<argument>rm -rf ${iis.hadoop.frontend.home.dir}/${iis.hadoop.frontend.user.dir}/oozie-packages/${sandboxName}/${output.dir.name}/; mkdir -p ${iis.hadoop.frontend.home.dir}/${iis.hadoop.frontend.user.dir}/oozie-packages/${sandboxName}/${output.dir.name}/</argument>
+								<argument>rm -rf ${iis.hadoop.frontend.temp.dir}/oozie-packages/${sandboxName}/${output.dir.name}/; mkdir -p ${iis.hadoop.frontend.temp.dir}/oozie-packages/${sandboxName}/${output.dir.name}/</argument>
 						    </arguments>
 				          </configuration>
 				        </execution>
@@ -468,7 +499,7 @@
 						    	<argument>-P ${iis.hadoop.frontend.port.ssh}</argument>
 						    	<argument>-o StrictHostKeyChecking=no</argument>
 								<argument>target/${oozie.package.file.name}.tar.gz</argument>
-								<argument>${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name}:${iis.hadoop.frontend.home.dir}/${iis.hadoop.frontend.user.dir}/oozie-packages/${sandboxName}/${output.dir.name}/${oozie.package.file.name}.tar.gz</argument>
+								<argument>${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name}:${iis.hadoop.frontend.temp.dir}/oozie-packages/${sandboxName}/${output.dir.name}/${oozie.package.file.name}.tar.gz</argument>
 						    </arguments>
 				          </configuration>
 				        </execution>
@@ -485,9 +516,9 @@
 								<argument>${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name}</argument>
 								<argument>-p ${iis.hadoop.frontend.port.ssh}</argument>
 								<argument>-o StrictHostKeyChecking=no</argument>
-								<argument>cd ${iis.hadoop.frontend.home.dir}/${iis.hadoop.frontend.user.dir}/oozie-packages/${sandboxName}/${output.dir.name}/; </argument>
+								<argument>cd ${iis.hadoop.frontend.temp.dir}/oozie-packages/${sandboxName}/${output.dir.name}/; </argument>
 								<argument>tar -zxvf oozie-package.tar.gz; </argument>
-								<argument>rm ${iis.hadoop.frontend.home.dir}/${iis.hadoop.frontend.user.dir}/oozie-packages/${sandboxName}/${output.dir.name}/oozie-package.tar.gz; </argument>
+								<argument>rm ${iis.hadoop.frontend.temp.dir}/oozie-packages/${sandboxName}/${output.dir.name}/oozie-package.tar.gz; </argument>
 								<argument>./upload_workflow.sh</argument> 
 						    </arguments>
 						  </configuration>
@@ -521,7 +552,7 @@
 								<argument>${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name}</argument>
 								<argument>-p ${iis.hadoop.frontend.port.ssh}</argument>
 								<argument>-o StrictHostKeyChecking=no</argument>
-								<argument>cd ${iis.hadoop.frontend.home.dir}/${iis.hadoop.frontend.user.dir}/oozie-packages/${sandboxName}/${output.dir.name}/; </argument>
+								<argument>cd ${iis.hadoop.frontend.temp.dir}/oozie-packages/${sandboxName}/${output.dir.name}/; </argument>
 								<argument>./run_workflow.sh</argument>
 						    </arguments>
 						  </configuration>

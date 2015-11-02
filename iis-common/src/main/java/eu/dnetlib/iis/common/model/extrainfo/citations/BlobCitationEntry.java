@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.common.model.extrainfo.citations;
 
 import java.text.DecimalFormatSymbols;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -36,6 +37,11 @@ public class BlobCitationEntry implements Comparable<BlobCitationEntry> {
 	@XStreamImplicit
 	protected List<TypedId> identifiers;
 
+	/**
+	 * Sentiment labels.
+	 */
+	protected String[] sentimentLabels;
+	
 	@XStreamOmitField
 	private final static Pattern alphaNumChunkPattern = Pattern.compile("(\\d+\\" + 
 			new DecimalFormatSymbols(Locale.getDefault()).getDecimalSeparator() + "\\d+)|(\\d+)|(\\D+)");;
@@ -65,6 +71,14 @@ public class BlobCitationEntry implements Comparable<BlobCitationEntry> {
 		this.identifiers = identifiers;
 	}
 
+	public String[] getSentimentLabels() {
+		return sentimentLabels;
+	}
+
+	public void setSentimentLabels(String[] sentimentLabels) {
+		this.sentimentLabels = sentimentLabels;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -73,6 +87,7 @@ public class BlobCitationEntry implements Comparable<BlobCitationEntry> {
 				+ ((identifiers == null) ? 0 : identifiers.hashCode());
 		result = prime * result + position;
 		result = prime * result + ((rawText == null) ? 0 : rawText.hashCode());
+		result = prime * result + Arrays.hashCode(sentimentLabels);
 		return result;
 	}
 
@@ -96,6 +111,8 @@ public class BlobCitationEntry implements Comparable<BlobCitationEntry> {
 			if (other.rawText != null)
 				return false;
 		} else if (!rawText.equals(other.rawText))
+			return false;
+		if (!Arrays.equals(sentimentLabels, other.sentimentLabels))
 			return false;
 		return true;
 	}

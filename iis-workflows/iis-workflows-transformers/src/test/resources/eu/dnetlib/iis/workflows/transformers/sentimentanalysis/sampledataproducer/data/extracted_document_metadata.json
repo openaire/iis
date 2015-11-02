@@ -1,0 +1,82 @@
+{	
+	"id": "id-1", 
+	"title": "Video Quality Prediction Models Based on Video Content Dynamics for H.264 Video over UMTS Networks",
+	"abstract": "The aim of this paper is to present video quality prediction models for objective non-intrusive, prediction of H.264 encoded video for all content types combining parameters both in the physical and application layer over Universal Mobile Telecommunication Systems (UMTS) networks. In order to characterize the Quality of Service (QoS) level, a learning model based on Adaptive Neural Fuzzy Inference System (ANFIS) and a second model based on non-linear regression analysis is proposed to predict the video quality in terms of the Mean Opinion Score (MOS). The objective of the paper is two-fold. First, to find the impact of QoS parameters on end-to-end video quality for H.264 encoded video. Second, to develop learning models based on ANFIS and nonlinear regression analysis to predict video quality over UMTS networks by considering the impact of radio link loss models. The loss models considered are 2-state Markov models. Both the models are trained with a combination of physical and application layer parameters and validated with unseen dataset. Preliminary results show that good prediction accuracy was obtained from both the models. The work should help in the development of a reference-free video prediction model and QoS control methods for video over UMTS networks.",
+	"language": "eng",
+	"keywords": null,
+	"externalIdentifiers": {
+            "pmid": "1234567"
+    }, 
+	"journal": "International Journal of Digital Multimedia Broadcasting", 
+	"year": null, 	
+	"publisher": null,
+	"references": null,  
+	"authors": null, 
+ 	"affiliations": null,
+	"volume": "19", 
+	"issue": "2",
+	"pages": {"start": "121", "end": "132"},
+	"publicationTypeName": null,
+	"text":"document 1 text"
+}
+{	
+	"id": "id-2", 
+	"title": "Stability Criteria of Fullerene-like Nanoparticles: Comparing V2O5 to Layered Metal Dichalcogenides and Dihalides",
+	"abstract": "Numerous examples of closed-cage nanostructures, such as nested fullerene-like nanoparticles and nanotubes, formed by the folding of materials with layered structure are known. These compounds include WS2, NiCl2, CdCl2, Cs2O, and recently V2O5. Layered materials, whose chemical bonds are highly ionic in character, possess relatively stiff layers, which cannot be evenly folded. Thus, stress-relief generally results in faceted nanostructures seamed by edge-defects. V2O5, is a metal oxide compound with a layered structure. The study of the seams in nearly perfect inorganic fullerene-like hollow V2O5 nanoparticles (NIFV2O5) synthesized by pulsed laser ablation (PLA), is discussed in the present work. The relation between the formation mechanism and the seams between facets is examined. The formation mechanism of the NIF-V2O5 is discussed in comparison to fullerene-like structures of other layered materials, like IF structures of MoS2, CdCl2, and Cs2O. The criteria for the perfect seaming of such hollow closed structures are highlighted.",
+	"language": "eng",
+	"keywords": null,
+	"externalIdentifiers": null, 
+	"journal": "Materials", 
+	"year": null, 	
+	"publisher": null,
+	"references": null,  
+	"authors": null, 
+ 	"affiliations": null,
+	"volume": "3", 
+	"issue": null,
+	"pages": {"start": "4428", "end": "4445"},
+	"publicationTypeName": null,
+	"text":""
+}
+{	
+	"id": "id-3", 
+	"title": "Optimization with Sparsity-Inducing Penalties",
+	"abstract": null,
+	"language": "eng",
+	"keywords": null,
+	"externalIdentifiers": null, 
+	"journal": "Materials", 
+	"year": null, 	
+	"publisher": null,
+	"references": [
+		{
+			"position": 1, 
+			"basicMetadata": {
+				"publisher": null, 
+				"title": "A new approach to collaborative filtering: Operator estimation with spectral regularization", 
+				"url": null, 
+				"series": null, 
+				"authors": ["J. Abernethy", "F. Bach", "T. Evgeniou", "J.-P. Vert"], 
+				"volume": "10", 
+				"edition": null, 
+				"source": "Journal of Machine Learning Research", 
+				"year": "2009", 
+				"issue": null, 
+				"pages": {
+					"start": "803", 
+					"end": "826"
+				}, 
+				"location": null,
+				"externalIds": null
+			}, 
+			"text": "J. Abernethy, F. Bach, T. Evgeniou, and J.-P. Vert. A new approach to collaborative filtering: Operator estimation with spectral regularization. Journal of Machine Learning Research, 10:803-826, 2009."
+		}
+	],  
+	"authors": null, 
+ 	"affiliations": null,
+	"volume": null, 
+	"issue": "0",
+	"pages": {"start": "69", "end": "110"},
+	"publicationTypeName": null,
+	"text":"document 3 text"
+}

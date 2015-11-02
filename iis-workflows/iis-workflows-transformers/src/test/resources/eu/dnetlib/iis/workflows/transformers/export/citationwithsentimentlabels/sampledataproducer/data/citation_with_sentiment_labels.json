@@ -1,0 +1,22 @@
+{
+  "sourceDocumentId": "id-1",
+  "entry": {
+      "position": 1,
+      "rawText": "citation 1 text",
+      "destinationDocumentId": null,
+      "confidenceLevel": null,
+      "externalDestinationDocumentIds": {},
+      "labels": []
+  }
+}
+{
+  "sourceDocumentId": "id-2",
+  "entry": {
+      "position": 5,
+      "rawText": "citation 2 text",
+      "destinationDocumentId": "someDestId",
+      "confidenceLevel": 0.8,
+      "externalDestinationDocumentIds": {"pmid": "1234567"},
+      "labels": ["label1", "label2"]
+  }
+}

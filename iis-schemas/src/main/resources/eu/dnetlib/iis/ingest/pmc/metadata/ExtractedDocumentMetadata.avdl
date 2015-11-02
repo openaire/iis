@@ -21,6 +21,9 @@ protocol IIS{
         
 //      page range in which the article is published
         union { null , Range } pages = null;
+        
+//      document fulltext
+        string text;
     }
 
 }

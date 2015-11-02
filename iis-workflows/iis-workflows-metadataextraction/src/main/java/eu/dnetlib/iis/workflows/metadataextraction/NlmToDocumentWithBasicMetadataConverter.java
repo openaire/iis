@@ -340,12 +340,13 @@ public final class NlmToDocumentWithBasicMetadataConverter {
 	 * @throws JDOMException 
 	 * @throws TransformationException 
 	 */
-	public static ExtractedDocumentMetadata convertFull(String id, Document source) throws JDOMException, TransformationException {
+	public static ExtractedDocumentMetadata convertFull(String id, Document source, String text) throws JDOMException, TransformationException {
 		if (id==null) {
 			throw new RuntimeException("unable to set null id");
 		}
 		ExtractedDocumentMetadata.Builder builder = ExtractedDocumentMetadata.newBuilder();
 		builder.setId(id);
+		builder.setText(text!=null?text:"");
 		if (source==null) {
 //			allowing returning empty extracted metadata
 			return builder.build();

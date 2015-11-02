@@ -469,11 +469,19 @@
 			<dependency>
 				<groupId>pl.edu.icm.cermine</groupId>
 				<artifactId>cermine-impl</artifactId>
+				<!-- 
 				<version>1.6</version>
+				 -->
+				<!-- version required by sentiment analysis -->
+            	<version>1.7-SNAPSHOT</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
 						<artifactId>jcl-over-slf4j</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.bouncycastle</groupId>
+						<artifactId>bcprov-jdk14</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
@@ -663,7 +671,7 @@
 			<dependency>
 				<groupId>eu.dnetlib</groupId>
 				<artifactId>dnet-actionmanager-common</artifactId>
-				<version>[2.0.0, 3.0.0)</version>
+				<version>[3.0.0, 4.0.0)</version>
 			</dependency>
 			
 			<dependency>

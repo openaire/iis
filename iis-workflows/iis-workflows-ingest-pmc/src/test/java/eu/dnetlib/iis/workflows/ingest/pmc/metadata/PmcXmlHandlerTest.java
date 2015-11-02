@@ -62,6 +62,7 @@ public class PmcXmlHandlerTest {
 			
 			ExtractedDocumentMetadata.Builder metaBuilder = ExtractedDocumentMetadata.newBuilder();
 			metaBuilder.setId("some-id");
+			metaBuilder.setText("");
 			PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(metaBuilder);
 			fileReader = new InputStreamReader(PmcXmlHandler.class.getResourceAsStream(filePath), "UTF-8");
             InputSource inputSource = new InputSource(fileReader);
@@ -99,6 +100,7 @@ public class PmcXmlHandlerTest {
 			
 			ExtractedDocumentMetadata.Builder metaBuilder = ExtractedDocumentMetadata.newBuilder();
 			metaBuilder.setId("some-id");
+			metaBuilder.setText("");
 			PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(metaBuilder);
 			fileReader = new InputStreamReader(PmcXmlHandler.class.getResourceAsStream(filePath), "UTF-8");
             InputSource inputSource = new InputSource(fileReader);
@@ -131,6 +133,7 @@ public class PmcXmlHandlerTest {
 			
 			ExtractedDocumentMetadata.Builder metaBuilder = ExtractedDocumentMetadata.newBuilder();
 			metaBuilder.setId("some-id");
+			metaBuilder.setText("");
 			PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(metaBuilder);
 			fileReader = new InputStreamReader(PmcXmlHandler.class.getResourceAsStream(filePath), "UTF-8");
             InputSource inputSource = new InputSource(fileReader);
@@ -173,6 +176,7 @@ public class PmcXmlHandlerTest {
 			
 			ExtractedDocumentMetadata.Builder metaBuilder = ExtractedDocumentMetadata.newBuilder();
 			metaBuilder.setId("some-id");
+			metaBuilder.setText("");
 			PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(metaBuilder);
 			fileReader = new InputStreamReader(PmcXmlHandler.class.getResourceAsStream(filePath), "UTF-8");
             InputSource inputSource = new InputSource(fileReader);
@@ -220,6 +224,7 @@ public class PmcXmlHandlerTest {
 			
 			ExtractedDocumentMetadata.Builder metaBuilder = ExtractedDocumentMetadata.newBuilder();
 			metaBuilder.setId("some-id");
+			metaBuilder.setText("");
 			PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(metaBuilder);
 			
 			fileReader = new InputStreamReader(PmcXmlHandler.class.getResourceAsStream(filePath), "UTF-8");
@@ -269,6 +274,7 @@ public class PmcXmlHandlerTest {
 			
 			ExtractedDocumentMetadata.Builder metaBuilder = ExtractedDocumentMetadata.newBuilder();
 			metaBuilder.setId("some-id");
+			metaBuilder.setText("");
 			PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(metaBuilder);
 			fileReader = new InputStreamReader(PmcXmlHandler.class.getResourceAsStream(filePath), "UTF-8");
             InputSource inputSource = new InputSource(fileReader);

@@ -2,7 +2,7 @@ package eu.dnetlib.iis.workflows.collapsers.basic;
 
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import java.util.List;
-import org.python.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 /**
  * Collapses DocumentText records by concatenating their text.

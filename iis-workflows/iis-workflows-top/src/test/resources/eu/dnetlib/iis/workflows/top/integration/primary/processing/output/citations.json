@@ -6,7 +6,8 @@
       "rawText": "J. Abernethy, F. Bach, T. Evgeniou, and J.-P. Vert. A new approach to collaborative filtering: Operator estimation with spectral regularization. Journal of Machine Learning Research, 10:803-826, 2009.",
       "destinationDocumentId": null,
       "confidenceLevel": null,
-      "externalDestinationDocumentIds": {}
+      "externalDestinationDocumentIds": {},
+      "labels": []
     },
     {
       "position": 3,
@@ -15,14 +16,16 @@
       "confidenceLevel": 1.0,
       "externalDestinationDocumentIds": {
         "pmid": "1234567"
-      }
+      },
+      "labels": []
     },
     {
       "position": 9,
       "rawText": "F. Bach. Exploring large feature spaces with hierarchical multiple kernel learning. In Advances in Neural Information Processing Systems (NIPS), 2008.",
       "destinationDocumentId": "id-4",
       "confidenceLevel": 0.7486356,
-      "externalDestinationDocumentIds": {}
+      "externalDestinationDocumentIds": {},
+      "labels": []
     }
   ]
 }

@@ -10,7 +10,7 @@ import java.util.List;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
-import org.python.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 /**
  * 

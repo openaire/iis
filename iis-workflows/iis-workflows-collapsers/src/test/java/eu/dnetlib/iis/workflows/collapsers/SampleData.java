@@ -10,7 +10,7 @@ import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.IndexedRecord;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.python.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 /**
  *

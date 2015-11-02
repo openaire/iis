@@ -21,7 +21,9 @@ protocol IIS{
 		union { null , string } stackTrace = null;
 //		fault causes, array is indexed with cause depth         
         union { null , array<Cause> } causes = null;
-//		fault supplementary data related to fault context
+//		Other supplementary data related to specific type of fault. 
+//		See parameters description in oozie workflow.xml documentation of modules 
+//		that use this structure for information what exactly can be stored as supplementary data.
 		union { null , map<string> } supplementaryData = null;        
     }
 }

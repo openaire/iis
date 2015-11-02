@@ -15,14 +15,14 @@
 			<description>metadata output subdirectory name</description>
 		</property>
 		<property>
-			<name>output_name_plaintext</name>
-			<value>plaintext</value>
-			<description>plaintext output subdirectory name</description>
-		</property>
-		<property>
 			<name>output_name_fault</name>
 			<value>fault</value>
-			<description>fault output subdirectory name</description>
+			<description>Fault output subdirectory name.
+			Fault#supplementaryData conveys data identified with the following keys:
+			'url' - PDF document URL causing failure
+			'processing_time' - time taken by cermine to process PDF document, expressed in milliseconds, 
+				generated only when log_fault_processing_time_threshold_secs is exceeded
+			</description>
 		</property>
 		<property>
 			<name>excluded_ids</name>
@@ -173,16 +173,11 @@
                 
                 <property>
 					<name>avro.mapreduce.multipleoutputs</name>
-					<value>${output_name_meta} ${output_name_plaintext} ${output_name_fault}</value>
+					<value>${output_name_meta} ${output_name_fault}</value>
 				</property>
                 <!-- ## Output classes for all output ports -->
 				<property>
 					<name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_meta}.format
-					</name>
-					<value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
-				</property>
-				<property>
-					<name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_plaintext}.format
 					</name>
 					<value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
 				</property>
@@ -195,10 +190,6 @@
 				<property>
 					<name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_meta}.keyschema</name>
 					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata']}</value>
-				</property>
-				<property>
-					<name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_plaintext}.keyschema</name>
-					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.DocumentText']}</value>
 				</property>
 				<property>
 					<name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_fault}.keyschema</name>
@@ -217,10 +208,6 @@
 				    <name>output.meta</name>
 				   <value>${output_name_meta}</value>
 				</property>
-				<property>
-				    <name>output.plaintext</name>
-				   <value>${output_name_plaintext}</value>
-				</property>  
 				<property>
 				    <name>output.fault</name>
 				   <value>${output_name_fault}</value>

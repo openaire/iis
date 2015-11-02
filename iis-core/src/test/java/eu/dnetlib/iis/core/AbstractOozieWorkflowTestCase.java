@@ -49,9 +49,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	private final static String REMOTE_USER_NAME_KEY = "iis.hadoop.frontend.user.name";
 	
-	private final static String REMOTE_HOME_DIR_KEY = "iis.hadoop.frontend.home.dir";
-	
-	private final static String REMOTE_USER_DIR_KEY = "iis.hadoop.frontend.user.dir";
+	private final static String REMOTE_TEMP_DIR_KEY = "iis.hadoop.frontend.temp.dir";
 	
 	private final static String REMOTE_SSH_PORT_KEY = "iis.hadoop.frontend.port.ssh";
 	
@@ -91,8 +89,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 		sshConnectionManager = new SshConnectionManager(getRemoteHostName(), getRemoteSshPort(), getRemoteUserName());
 		sshOozieClient = new SshOozieClient(sshConnectionManager, getOozieServiceLoc());
 		
-		SshHdfsFileFetcher hdfsFileFetcher = new SshHdfsFileFetcher(sshConnectionManager,
-				getRemoteHomeDir() + "/" + getRemoteUserDir());
+		SshHdfsFileFetcher hdfsFileFetcher = new SshHdfsFileFetcher(sshConnectionManager, getRemoteTempDir());
 		hdfsTestHelper = new HdfsTestHelper(hdfsFileFetcher);
 		
 		tempDir = Files.createTempDir();
@@ -134,6 +131,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 		Process p = runMavenTestWorkflow(workflowPath);
 
 		logMavenOutput(p);
+		checkMavenExitStatus(p);
 		
 		
 		String jobId = OozieLogFileParser.readJobIdFromLogFile(new File(getRunOoozieJobLogFilename()));
@@ -215,6 +213,19 @@ public abstract class AbstractOozieWorkflowTestCase {
 		}
 	}
 	
+	private void checkMavenExitStatus(Process p) {
+		int exitStatus;
+		try {
+			exitStatus = p.waitFor();
+		} catch (InterruptedException e) {
+			throw new RuntimeException("Error in waiting for maven process to finish", e);
+		}
+		
+		if (exitStatus != 0) {
+			Assert.fail("Maven run workflow process failed");
+		}
+	}
+	
 	private String getOozieServiceLoc() {
 		return getProperty(OOZIE_SERVICE_LOC_KEY);
 	}
@@ -231,12 +242,8 @@ public abstract class AbstractOozieWorkflowTestCase {
 		return getProperty(REMOTE_USER_NAME_KEY);
 	}
 	
-	private String getRemoteHomeDir() {
-		return getProperty(REMOTE_HOME_DIR_KEY);
-	}
-	
-	private String getRemoteUserDir() {
-		return getProperty(REMOTE_USER_DIR_KEY);
+	private String getRemoteTempDir() {
+		return getProperty(REMOTE_TEMP_DIR_KEY);
 	}
 	
 	private int getRemoteSshPort() {
