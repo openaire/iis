@@ -29,15 +29,15 @@ public class AvroTestUtils {
         
         FileSystem fs = createLocalFileSystem();
         
-        List<T> people = DataStore.read(new FileSystemPath(fs, outputPath));
-        return people;
+        List<T> records = DataStore.read(new FileSystemPath(fs, outputPath));
+        return records;
     }
 
 
     /**
      * Creates directory and saves in it the passed objects (in avro files).
      */
-    public static <T extends GenericContainer> void createLocalAvroDataStore(List<T> objects, String inputDirPath) throws IOException {
+    public static <T extends GenericContainer> void createLocalAvroDataStore(List<T> records, String inputDirPath) throws IOException {
         
         File inputDir = new File(inputDirPath);
         inputDir.mkdir();
@@ -46,7 +46,7 @@ public class AvroTestUtils {
         
         FileSystem fs = createLocalFileSystem();
         
-        DataStore.create(objects, new FileSystemPath(fs, inputPath));
+        DataStore.create(records, new FileSystemPath(fs, inputPath));
         
     }
     
