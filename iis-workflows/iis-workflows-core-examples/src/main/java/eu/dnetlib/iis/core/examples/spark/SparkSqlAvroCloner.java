@@ -82,7 +82,6 @@ public class SparkSqlAvroCloner {
             DataFrame outputDf = sqlContext.createDataFrame(rows, inputDf.schema());
             
             SparkAvroSaver.saveDataFrame(outputDf, schema, params.outputAvroPath);
-            //AvroFileUtils.saveJavaRDD(rows, schema, params.outputAvroPath);
             
         }
         
