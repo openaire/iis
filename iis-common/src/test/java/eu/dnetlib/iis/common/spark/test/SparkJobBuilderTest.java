@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.common.test.spark;
+package eu.dnetlib.iis.common.spark.test;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
@@ -38,10 +38,11 @@ public class SparkJobBuilderTest {
         
         // execute
         
-        builder.setMaster("local[3]");
+        SparkJobBuilder retBuilder = builder.setMaster("local[3]");
         
         // assert
         
+        assertTrue(retBuilder == builder);
         verify(sparkJob).setMaster("local[3]");
         verifyNoMoreInteractions(sparkJob);
     }
@@ -52,10 +53,11 @@ public class SparkJobBuilderTest {
         
         // execute
         
-        builder.setAppName("AppName");
+        SparkJobBuilder retBuilder = builder.setAppName("AppName");
         
         // assert
         
+        assertTrue(retBuilder == builder);
         verify(sparkJob).setAppName("AppName");
         verifyNoMoreInteractions(sparkJob);
     }
@@ -66,10 +68,11 @@ public class SparkJobBuilderTest {
         
         // execute
         
-        builder.setMainClass(this.getClass());
+        SparkJobBuilder retBuilder = builder.setMainClass(this.getClass());
         
         // assert
         
+        assertTrue(retBuilder == builder);
         verify(sparkJob).setMainClass(this.getClass());
         verifyNoMoreInteractions(sparkJob);
     }
@@ -80,11 +83,12 @@ public class SparkJobBuilderTest {
     
         // execute
         
-        builder.addArg("argName", "argValue");
+        SparkJobBuilder retBuilder = builder.addArg("argName", "argValue");
 
 
         // assert
         
+        assertTrue(retBuilder == builder);
         verify(sparkJob).addArg("argName", "argValue");
         verifyNoMoreInteractions(sparkJob);
 
@@ -95,11 +99,12 @@ public class SparkJobBuilderTest {
     
         // execute
         
-        builder.setArgNameValueSeparator(":");
+        SparkJobBuilder retBuilder = builder.setArgNameValueSeparator(":");
 
 
         // assert
         
+        assertTrue(retBuilder == builder);
         verify(sparkJob).setArgNameValueSeparator(":");
         verifyNoMoreInteractions(sparkJob);
 
@@ -110,11 +115,12 @@ public class SparkJobBuilderTest {
     
         // execute
         
-        builder.addJobProperty("propName", "propValue");
+        SparkJobBuilder retBuilder = builder.addJobProperty("propName", "propValue");
 
 
         // assert
         
+        assertTrue(retBuilder == builder);
         verify(sparkJob).addJobProperty("propName", "propValue");
         verifyNoMoreInteractions(sparkJob);
 

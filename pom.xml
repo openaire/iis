@@ -158,16 +158,6 @@
         	</exclusions>
         </dependency>
         <dependency>
-        	<groupId>org.apache.hive</groupId>
-        	<artifactId>hive-cli</artifactId>
-        	<exclusions>
-        		<exclusion>
-        			<artifactId>servlet-api</artifactId>
-        			<groupId>javax.servlet</groupId>
-        		</exclusion>
-        	</exclusions>
-        </dependency>
-        <dependency>
         	<groupId>org.apache.hadoop</groupId>
         	<artifactId>hadoop-common</artifactId>
         	<exclusions>
@@ -187,16 +177,7 @@
         		</exclusion>
         	</exclusions>
         </dependency>
-        <dependency>
-        	<groupId>org.apache.oozie</groupId>
-        	<artifactId>oozie-core</artifactId>
-        	<exclusions>
-        		<exclusion>
-        			<artifactId>servlet-api</artifactId>
-        			<groupId>javax.servlet</groupId>
-        		</exclusion>
-        	</exclusions>
-        </dependency>
+ 
         
         <dependency>
             <groupId>org.mockito</groupId>
@@ -205,12 +186,20 @@
             <scope>test</scope>
         </dependency>
         
+        
+	    <dependency>
+	       <groupId>javax.servlet</groupId>
+	       <artifactId>javax.servlet-api</artifactId>
+	       <version>3.1.0</version>
+	       <scope>runtime</scope>
+	   </dependency>
+
+        
     </dependencies>
 
     <dependencyManagement>
         <dependencies>
         
-			<!-- Hadoop dependencies -->
             
             <dependency>
                 <groupId>org.apache.hadoop</groupId>
@@ -312,6 +301,14 @@
                         <artifactId>jdk.tools</artifactId>
                         <groupId>jdk.tools</groupId>
                     </exclusion>
+	                <exclusion>
+	                    <artifactId>servlet-api</artifactId>
+	                    <groupId>javax.servlet</groupId>
+	                </exclusion>
+	                <exclusion>
+	                    <artifactId>jetty-all</artifactId>
+	                    <groupId>org.eclipse.jetty.aggregate</groupId>
+	                </exclusion>
                 </exclusions>
     		</dependency>
 			
@@ -332,6 +329,34 @@
                 <artifactId>spark-core_2.10</artifactId>
                 <version>${iis.spark.version}</version>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>javax.servlet</artifactId>
+                        <groupId>org.eclipse.jetty.orbit</groupId>
+                    </exclusion>
+                </exclusions>
+                
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-sql_2.10</artifactId>
+                <version>${iis.spark.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-hive_2.10</artifactId>
+                <version>${iis.spark.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            
+            
+            <dependency>
+                <groupId>com.databricks</groupId>
+                <artifactId>spark-avro_2.10</artifactId>
+                <version>1.0.0</version>
             </dependency>
             
             <!-- Avro dependencies -->
@@ -408,6 +433,16 @@
 				<groupId>org.apache.hive</groupId>
 				<artifactId>hive-cli</artifactId>
 				<version>${iis.hive.version}</version>
+				<exclusions>
+	                <exclusion>
+	                    <artifactId>servlet-api</artifactId>
+	                    <groupId>javax.servlet</groupId>
+	                </exclusion>
+	                <exclusion>
+	                    <artifactId>jetty-all</artifactId>
+	                    <groupId>org.eclipse.jetty.aggregate</groupId>
+	                </exclusion>
+                </exclusions>
 			</dependency>
 			<!-- not available in CDH5
 			<dependency>
@@ -917,6 +952,29 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>2.10</version>
             </plugin>
+
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>3.2.2</version>
+                <executions>
+                    <execution>
+                        <id>scala-compile-first</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>scala-test-compile</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             
             <!-- Plugin that generates Java classes from Avro schemas -->
             <plugin>
@@ -1014,6 +1072,8 @@
     
     
         <plugins>
+
+            
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

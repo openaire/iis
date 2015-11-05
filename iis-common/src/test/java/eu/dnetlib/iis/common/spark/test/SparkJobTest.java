@@ -1,10 +1,12 @@
-package eu.dnetlib.iis.common.test.spark;
+package eu.dnetlib.iis.common.spark.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
+
+import eu.dnetlib.iis.common.spark.test.SparkJob;
 
 /**
  * @author Łukasz Dumiszewski
