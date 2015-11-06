@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.common.test.spark;
+package eu.dnetlib.iis.common.spark.test;
 
 import com.google.common.base.Preconditions;
 
@@ -74,8 +74,9 @@ public class SparkJobBuilder {
     /**
      * See {@link SparkJob#setArgNameValueSeparator(String)}
      */
-    public void setArgNameValueSeparator(String separator) {
+    public SparkJobBuilder setArgNameValueSeparator(String separator) {
         sparkJob.setArgNameValueSeparator(separator);
+        return this;
     }
     
     public SparkJob build() {

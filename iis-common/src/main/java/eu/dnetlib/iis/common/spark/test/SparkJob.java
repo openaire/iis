@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.common.test.spark;
+package eu.dnetlib.iis.common.spark.test;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
