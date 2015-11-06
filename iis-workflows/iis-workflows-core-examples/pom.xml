@@ -38,8 +38,6 @@
             <groupId>eu.dnetlib.iis</groupId>
             <artifactId>iis-common</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
-            <type>jar</type>
         </dependency>
         
         <dependency>

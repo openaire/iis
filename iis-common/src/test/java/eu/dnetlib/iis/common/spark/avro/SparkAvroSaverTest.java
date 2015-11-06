@@ -15,6 +15,7 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.sql.DataFrame;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -24,12 +25,14 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import scala.Tuple2;
+import eu.dnetlib.iis.IntegrationTest;
 
 
 /**
  * @author Łukasz Dumiszewski
  */
 @RunWith(MockitoJUnitRunner.class)
+@Category(IntegrationTest.class)
 public class SparkAvroSaverTest {
 
     
