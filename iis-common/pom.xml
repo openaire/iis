@@ -110,13 +110,12 @@
                         <configuration>
                             <stringType>String</stringType>
                             <sourceDirectory>${project.basedir}/src/test/resources/eu/dnetlib/iis/common/avro</sourceDirectory>
-                            <outputDirectory>${project.basedir}/target/generated-test-sources/java/</outputDirectory>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/java/</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            <!-- This plugin makes the Maven->Update Project Configuration 
-            not forget about the "target/generated-test-sources/java" source path-->
+            
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -125,7 +124,7 @@
                         <id>add-source</id>
                         <phase>generate-test-sources</phase>
                         <goals>
-                            <goal>add-source</goal>
+                            <goal>add-test-source</goal>
                         </goals>
                         <configuration>
                             <sources>
