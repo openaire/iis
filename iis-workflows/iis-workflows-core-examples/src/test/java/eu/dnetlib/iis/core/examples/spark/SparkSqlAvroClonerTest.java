@@ -30,9 +30,9 @@ import eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person;
  * @author Łukasz Dumiszewski
  */
 @Category(IntegrationTest.class)
-public class SparkAvroClonerTest {
+public class SparkSqlAvroClonerTest {
 
-    private Logger log = LoggerFactory.getLogger(SparkAvroClonerTest.class);
+    private Logger log = LoggerFactory.getLogger(SparkSqlAvroClonerTest.class);
     
     private SparkJobExecutor executor = new SparkJobExecutor();
     
@@ -64,8 +64,8 @@ public class SparkAvroClonerTest {
         
         // given
         
-        String inputDirPath = workingDir + "/spark_avro_cloner/input";
-        String outputDirPath = workingDir + "/spark_avro_cloner/output";
+        String inputDirPath = workingDir + "/spark_sql_avro_cloner/input";
+        String outputDirPath = workingDir + "/spark_sql_avro_cloner/output";
         
         
         AvroTestUtils.createLocalAvroDataStore(StandardDataStoreExamples.getPerson(), inputDirPath);
@@ -76,9 +76,9 @@ public class SparkAvroClonerTest {
         SparkJob sparkJob = SparkJobBuilder
                                            .create()
                                            
-                                           .setAppName("Spark Avro Cloner")
+                                           .setAppName("Spark SQL Avro Cloner")
         
-                                           .setMainClass(SparkAvroCloner.class)
+                                           .setMainClass(SparkSqlAvroCloner.class)
                                            .addArg("-avroSchemaClass", Person.class.getName())
                                            .addArg("-inputAvroPath", inputDirPath)
                                            .addArg("-outputAvroPath", outputDirPath)

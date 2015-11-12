@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.common.test.spark;
+package eu.dnetlib.iis.common.spark.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -11,6 +11,9 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import eu.dnetlib.iis.common.spark.test.SparkJob;
+import eu.dnetlib.iis.common.spark.test.SparkJobExecutor;
 
 /**
  * @author Łukasz Dumiszewski
