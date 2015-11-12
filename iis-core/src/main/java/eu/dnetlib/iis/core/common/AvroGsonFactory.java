@@ -9,24 +9,32 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
-
+/**
+ * Factory for gson object that supports serializing avro generated classes
+ * 
+ * @author madryk
+ *
+ */
 public class AvroGsonFactory {
 
+	
+	//------------------------ LOGIC --------------------------
+	
 	public static Gson create() {
 		GsonBuilder builder = new GsonBuilder();
-		
+
 		builder.registerTypeAdapter(CharSequence.class, new CharSequenceDeserializer());
-		
+
 		return builder.create();
 	}
-	
-    public static class CharSequenceDeserializer implements JsonDeserializer<CharSequence> {
+
+	public static class CharSequenceDeserializer implements JsonDeserializer<CharSequence> {
 
 		@Override
 		public CharSequence deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 				throws JsonParseException {
 			return json.getAsString();
 		}
-    	
-    }
+
+	}
 }
