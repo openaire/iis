@@ -28,7 +28,13 @@ public class SparkPipeExecutor implements Serializable {
 	//------------------------ LOGIC --------------------------
 	
 	/**
-	 * Imitates map part of hadoop streaming job
+	 * Imitates map part of hadoop streaming job.
+	 * It executes provided script for every key in inputRecords rdd.
+	 * <br/><br/>
+	 * It is assumed that provided script will read records from standard input (one line for one record)
+	 * and write mapped record into standard output (also one line for one record).
+	 * Mapped record can be a key/value pair. In that case script should return key and value
+	 * splitted by tab (\t) character in single line. 
 	 */
 	public JavaPairRDD<String, String> doMap(JavaPairRDD<AvroKey<GenericRecord>, NullWritable> inputRecords, String scriptName, String args) {
 
@@ -44,7 +50,13 @@ public class SparkPipeExecutor implements Serializable {
 	}
 
 	/**
-	 * Imitates reduce part of hadoop streaming job
+	 * Imitates reduce part of hadoop streaming job.
+	 * <br/><br/>
+	 * It is assumed that provided script will read records from standard input (one line for one record)
+	 * and group records with the same key into single record (reduce).
+	 * Method assures that all input records with the same key will be transfered in adjacent lines.
+	 * Reduced records should be written by script into standard output (one line for one record).
+	 * Reduced records must be json strings of class provided as argument.
 	 */
 	public JavaPairRDD<AvroKey<GenericRecord>, NullWritable> doReduce(JavaPairRDD<String, String> inputRecords, String scriptName, String args, Class<? extends GenericRecord> outputClass) {
 

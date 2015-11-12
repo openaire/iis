@@ -39,13 +39,13 @@ import eu.dnetlib.iis.core.common.AvroUtils;
  *
  */
 public class SparkPipeMapReduce {
-	
-	
-	//------------------------ LOGIC --------------------------
-	
-	public static void main(String[] args) throws IOException, ClassNotFoundException {
-		
-		
+    
+    
+    //------------------------ LOGIC --------------------------
+    
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+        
+        
         SparkPipeMapReduceParameters params = parseParameters(args);
         
         SparkConf conf = new SparkConf();
@@ -64,37 +64,37 @@ public class SparkPipeMapReduce {
         
         
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
-        	
-        	sc.addFile(params.mapperScript);
-        	sc.addFile(params.reducerScript);
-        	
-        	String mapperScriptName = new File(params.mapperScript).getName();
-        	String reducerScriptName = new File(params.reducerScript).getName();
-        	
-        	SparkPipeExecutor pipeExecutor = new SparkPipeExecutor();
-        	
-        	
+            
+            sc.addFile(params.mapperScript);
+            sc.addFile(params.reducerScript);
+            
+            String mapperScriptName = new File(params.mapperScript).getName();
+            String reducerScriptName = new File(params.reducerScript).getName();
+            
+            SparkPipeExecutor pipeExecutor = new SparkPipeExecutor();
+            
+            
             @SuppressWarnings("unchecked")
             JavaPairRDD<AvroKey<GenericRecord>, NullWritable> inputRecords = (JavaPairRDD<AvroKey<GenericRecord>, NullWritable>)sc.newAPIHadoopFile(params.inputAvroPath, AvroKeyInputFormat.class, GenericRecord.class, NullWritable.class, job.getConfiguration());
             
             
             
             JavaPairRDD<String, String> mappedRecords = 
-            		pipeExecutor.doMap(inputRecords, mapperScriptName, params.mapperScriptArgs);
+                    pipeExecutor.doMap(inputRecords, mapperScriptName, params.mapperScriptArgs);
             
             
             JavaPairRDD<AvroKey<GenericRecord>, NullWritable> reducedRecords = 
-            		pipeExecutor.doReduce(mappedRecords, reducerScriptName, params.reducerScriptArgs, outputAvroClass);
+                    pipeExecutor.doReduce(mappedRecords, reducerScriptName, params.reducerScriptArgs, outputAvroClass);
             
             
             
             reducedRecords.saveAsNewAPIHadoopFile(params.outputAvroPath, AvroKey.class, NullWritable.class, AvroKeyOutputFormat.class, job.getConfiguration());
         }
-	}
-	
-	
-	//------------------------ PRIVATE --------------------------
-	
+    }
+
+
+    //------------------------ PRIVATE --------------------------
+
 	private static SparkPipeMapReduceParameters parseParameters(String[] args) {
         SparkPipeMapReduceParameters params = new SparkPipeMapReduceParameters();
         
@@ -103,9 +103,9 @@ public class SparkPipeMapReduce {
         jcommander.parse(args);
         
         return params;
-	}
-	
-	
+    }
+
+
     @Parameters(separators = "=")
     private static class SparkPipeMapReduceParameters {
         
