@@ -1,7 +1,7 @@
 .*
 !.gitignore
 !.gitkeep
-
+**/job.properties
 /*/target
 /target
 /*/build
