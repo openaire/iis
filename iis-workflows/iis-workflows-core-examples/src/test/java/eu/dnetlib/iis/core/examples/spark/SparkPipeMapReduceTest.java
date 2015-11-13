@@ -20,9 +20,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.Files;
 
 import eu.dnetlib.iis.IntegrationTest;
-import eu.dnetlib.iis.common.test.spark.SparkJob;
-import eu.dnetlib.iis.common.test.spark.SparkJobBuilder;
-import eu.dnetlib.iis.common.test.spark.SparkJobExecutor;
+import eu.dnetlib.iis.common.spark.test.SparkJob;
+import eu.dnetlib.iis.common.spark.test.SparkJobBuilder;
+import eu.dnetlib.iis.common.spark.test.SparkJobExecutor;
 import eu.dnetlib.iis.core.common.AvroTestUtils;
 import eu.dnetlib.iis.core.examples.StandardDataStoreExamples;
 import eu.dnetlib.iis.core.examples.schemas.WordCount;
