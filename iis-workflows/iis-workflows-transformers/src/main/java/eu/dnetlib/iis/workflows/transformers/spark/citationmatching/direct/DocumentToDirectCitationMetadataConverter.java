@@ -3,6 +3,8 @@ package eu.dnetlib.iis.workflows.transformers.spark.citationmatching.direct;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.commons.collections.MapUtils;
+
 import com.google.common.collect.Lists;
 
 import eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata;
@@ -49,10 +51,7 @@ public class DocumentToDirectCitationMetadataConverter implements Serializable {
 
 	private eu.dnetlib.iis.citationmatching.direct.schemas.ReferenceMetadata convertReference(eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata refMetadata) {
 
-		if (refMetadata.getBasicMetadata().getExternalIds() == null) {
-			return null;
-		}
-		if (refMetadata.getBasicMetadata().getExternalIds().isEmpty()) {
+		if (MapUtils.isEmpty(refMetadata.getBasicMetadata().getExternalIds())) {
 			return null;
 		}
 

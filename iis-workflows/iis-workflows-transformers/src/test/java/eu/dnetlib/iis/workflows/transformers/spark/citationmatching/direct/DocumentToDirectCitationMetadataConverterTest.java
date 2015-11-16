@@ -124,7 +124,7 @@ public class DocumentToDirectCitationMetadataConverterTest {
 	
 	
 	@Test
-	public void conver_NULL_REFERENCES_EXTERNAL_IDS() {
+	public void convert_NULL_REFERENCES_EXTERNAL_IDS() {
 
 		// given
 		
@@ -149,7 +149,7 @@ public class DocumentToDirectCitationMetadataConverterTest {
 	
 	
 	@Test
-	public void conver_EMPTY_REFERENCES_EXTERNAL_IDS() {
+	public void convert_EMPTY_REFERENCES_EXTERNAL_IDS() {
 
 		// given
 		

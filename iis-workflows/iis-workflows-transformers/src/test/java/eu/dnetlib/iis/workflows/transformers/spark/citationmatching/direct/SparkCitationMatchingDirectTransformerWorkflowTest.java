@@ -17,6 +17,6 @@ public class SparkCitationMatchingDirectTransformerWorkflowTest extends Abstract
 	@Test
 	public void testTransformer() {
 		
-		testWorkflow("eu/dnetlib/iis/workflows/transformers/spark/citationmatching/direct/sampledataproducer");
+		testWorkflow("eu/dnetlib/iis/workflows/transformers/spark/citationmatching/direct/with_sample_data");
 	}
 }

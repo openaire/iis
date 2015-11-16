@@ -34,7 +34,7 @@ public class AvroAssertTestUtil {
 
         List<T> avroDatastore = AvroTestUtils.readLocalAvroDataStore(avroDatastorePath);
 
-        List<T> jsonDatastore = JsonTestUtils.readJsonDataStore(jsonDatastorePath, recordsClass);
+        List<T> jsonDatastore = JsonAvroTestUtils.readJsonDataStore(jsonDatastorePath, recordsClass);
 
         assertEquals(
                 jsonDatastore.stream().map(T::toString).collect(Collectors.toList()),

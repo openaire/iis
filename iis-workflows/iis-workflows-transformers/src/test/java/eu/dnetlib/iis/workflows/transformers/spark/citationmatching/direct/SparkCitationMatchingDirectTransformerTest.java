@@ -18,7 +18,7 @@ import eu.dnetlib.iis.common.spark.test.SparkJobBuilder;
 import eu.dnetlib.iis.common.spark.test.SparkJobExecutor;
 import eu.dnetlib.iis.core.common.AvroAssertTestUtil;
 import eu.dnetlib.iis.core.common.AvroTestUtils;
-import eu.dnetlib.iis.core.common.JsonTestUtils;
+import eu.dnetlib.iis.core.common.JsonAvroTestUtils;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 
 /**
@@ -62,12 +62,12 @@ public class SparkCitationMatchingDirectTransformerTest {
         String inputDirPath = workingDir + "/spark_citation_matching_direct_transformer/input";
         String outputDirPath = workingDir + "/spark_citation_matching_direct_transformer/output";
         
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/workflows/transformers/spark/citationmatching/direct/sampledataproducer/data/metadata.json";
-        String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/workflows/transformers/spark/citationmatching/direct/sampledataproducer/data/citation_metadata.json";
+        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/workflows/transformers/spark/citationmatching/direct/with_sample_data/data/metadata.json";
+        String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/workflows/transformers/spark/citationmatching/direct/with_sample_data/data/citation_metadata.json";
         
         
         AvroTestUtils.createLocalAvroDataStore(
-                JsonTestUtils.readJsonDataStore(jsonInputFile, ExtractedDocumentMetadataMergedWithOriginal.class),
+                JsonAvroTestUtils.readJsonDataStore(jsonInputFile, ExtractedDocumentMetadataMergedWithOriginal.class),
                 inputDirPath);
         
         

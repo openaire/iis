@@ -16,12 +16,12 @@ import com.google.gson.Gson;
  * @author madryk
  *
  */
-public class JsonTestUtils {
+public class JsonAvroTestUtils {
 
 
     //------------------------ CONSTRUCTORS --------------------------
 
-    private JsonTestUtils() {
+    private JsonAvroTestUtils() {
         throw new IllegalStateException("may not be instantiated");
     }
 
@@ -29,9 +29,9 @@ public class JsonTestUtils {
     //------------------------ LOGIC --------------------------
 
     /**
-     * Reads avro objects from json file
+     * Reads records from json file (jsonFilePath) as objects of recordClass class
      */
-    public static <T extends GenericRecord> List<T> readJsonDataStore(String jsonFilePath, Class<T> recordsClass) throws IOException {
+    public static <T extends GenericRecord> List<T> readJsonDataStore(String jsonFilePath, Class<T> recordClass) throws IOException {
         Gson gson = AvroGsonFactory.create();
         List<T> jsonDatastore = Lists.newArrayList();
 
@@ -40,7 +40,7 @@ public class JsonTestUtils {
             List<String> recordsStrings = IOUtils.readLines(reader);
 
             for (String recordString : recordsStrings) {
-                T element = gson.fromJson(recordString, recordsClass);
+                T element = gson.fromJson(recordString, recordClass);
                 jsonDatastore.add(element);
             }
         }
