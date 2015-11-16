@@ -20,43 +20,50 @@ import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetad
  */
 public class DocumentToDirectCitationMetadataConverter implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
 
-	//------------------------ LOGIC --------------------------
+    //------------------------ LOGIC --------------------------
 
-	/**
-	 * Converts {@link ExtractedDocumentMetadataMergedWithOriginal} to {@link DocumentMetadata}
-	 */
-	public DocumentMetadata convert(ExtractedDocumentMetadataMergedWithOriginal docMetadata) {
-		List<ReferenceMetadata> citationReferencesMetadata = Lists.newArrayList();
+    /**
+     * Converts {@link ExtractedDocumentMetadataMergedWithOriginal} to {@link DocumentMetadata}
+     */
+    public DocumentMetadata convert(ExtractedDocumentMetadataMergedWithOriginal docMetadata) {
 
-		if (docMetadata.getReferences() != null) {
-			for (eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata docReferenceMetadata : docMetadata.getReferences()) {
+        List<ReferenceMetadata> citationReferencesMetadata = convertReferences(docMetadata.getReferences());
 
-				ReferenceMetadata citationReferenceMetadata = convertReference(docReferenceMetadata);
-
-				if (citationReferenceMetadata != null) {
-					citationReferencesMetadata.add(citationReferenceMetadata);
-				}
-			}
-		}
-
-		return new DocumentMetadata(docMetadata.getId(), docMetadata.getExternalIdentifiers(), docMetadata.getPublicationTypeName(),
-				citationReferencesMetadata);
-	}
+        return new DocumentMetadata(docMetadata.getId(), docMetadata.getExternalIdentifiers(), docMetadata.getPublicationTypeName(),
+                citationReferencesMetadata);
+    }
 
 
-	//------------------------ PRIVATE --------------------------
+    //------------------------ PRIVATE --------------------------
 
-	private eu.dnetlib.iis.citationmatching.direct.schemas.ReferenceMetadata convertReference(eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata refMetadata) {
+    private List<ReferenceMetadata> convertReferences(List<eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata> referencesMetadata) {
+        List<ReferenceMetadata> citationReferencesMetadata = Lists.newArrayList();
 
-		if (MapUtils.isEmpty(refMetadata.getBasicMetadata().getExternalIds())) {
-			return null;
-		}
+        if (referencesMetadata != null) {
+            for (eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata docReferenceMetadata : referencesMetadata) {
 
-		return new eu.dnetlib.iis.citationmatching.direct.schemas.ReferenceMetadata(
-				refMetadata.getPosition(),
-				refMetadata.getBasicMetadata().getExternalIds());
-	}
+                ReferenceMetadata citationReferenceMetadata = convertReference(docReferenceMetadata);
+
+                if (citationReferenceMetadata != null) {
+                    citationReferencesMetadata.add(citationReferenceMetadata);
+                }
+            }
+        }
+
+        return citationReferencesMetadata;
+    }
+
+    private ReferenceMetadata convertReference(eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata refMetadata) {
+
+        if (MapUtils.isEmpty(refMetadata.getBasicMetadata().getExternalIds())) {
+            return null;
+        }
+
+        return new eu.dnetlib.iis.citationmatching.direct.schemas.ReferenceMetadata(
+                refMetadata.getPosition(),
+                refMetadata.getBasicMetadata().getExternalIds());
+    }
 }
