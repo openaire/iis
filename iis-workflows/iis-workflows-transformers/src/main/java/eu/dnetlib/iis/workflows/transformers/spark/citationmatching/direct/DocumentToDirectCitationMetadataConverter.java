@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.collections.MapUtils;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata;
@@ -29,6 +30,7 @@ public class DocumentToDirectCitationMetadataConverter implements Serializable {
      * Converts {@link ExtractedDocumentMetadataMergedWithOriginal} to {@link DocumentMetadata}
      */
     public DocumentMetadata convert(ExtractedDocumentMetadataMergedWithOriginal docMetadata) {
+        Preconditions.checkNotNull(docMetadata);
 
         List<ReferenceMetadata> citationReferencesMetadata = convertReferences(docMetadata.getReferences());
 
