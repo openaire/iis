@@ -205,6 +205,13 @@
 			<value>eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl</value>
 			<description>metadata extraction input classname</description>
 		</property>
+		<!-- project reference extraction related -->
+        <property>
+            <name>referenceextraction_project_fundingclass_blacklist_regex</name>
+            <value>$^</value>
+            <description>regexp matching funding class, describes projects which 
+            should be blacklisted by reference extraction algorithm</description>
+        </property>
 		<!-- export related -->
 		<property>
 			<name>export_action_hbase_table_name</name>
