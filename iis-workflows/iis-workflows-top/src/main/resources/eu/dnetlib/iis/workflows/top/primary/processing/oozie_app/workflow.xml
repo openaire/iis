@@ -271,6 +271,7 @@
     <action name="transformers_project_filter">
         <sub-workflow>
             <app-path>${wf:appPath()}/transformers_project_filter</app-path>
+            <propagate-configuration />
             <configuration>
                 <property>
                     <name>workingDir</name>
