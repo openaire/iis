@@ -1,2 +1,3 @@
 {"id":"projId1","projectAcronym":"project 1","projectGrantId":"123456","fundingClass":"EC::FP7"}
 {"id":"projId3","projectAcronym":"project 3","projectGrantId":"999999","fundingClass":"WT::WT"}
+{"id":"projId4","projectAcronym":"project 4","projectGrantId":"111111","fundingClass":null}

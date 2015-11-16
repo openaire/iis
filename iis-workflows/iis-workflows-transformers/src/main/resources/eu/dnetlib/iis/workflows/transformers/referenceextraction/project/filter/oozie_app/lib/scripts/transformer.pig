@@ -9,6 +9,6 @@ org.apache.pig.piggybank.storage.avro.AvroStorage(
 
 project = load '$input' using avro_load_project;
 
-outputProject = FILTER project BY NOT(fundingClass MATCHES '$fundingclass_blacklist_regex');
+outputProject = FILTER project BY (fundingClass is null) or (NOT(fundingClass MATCHES '$fundingclass_blacklist_regex'));
 
 store outputProject into '$output' using avro_store_project;
