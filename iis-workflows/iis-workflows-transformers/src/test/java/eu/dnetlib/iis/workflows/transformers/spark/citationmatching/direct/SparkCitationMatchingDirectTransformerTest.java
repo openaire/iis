@@ -62,8 +62,8 @@ public class SparkCitationMatchingDirectTransformerTest {
         String inputDirPath = workingDir + "/spark_citation_matching_direct_transformer/input";
         String outputDirPath = workingDir + "/spark_citation_matching_direct_transformer/output";
         
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/workflows/transformers/spark/citationmatching/direct/with_sample_data/data/metadata.json";
-        String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/workflows/transformers/spark/citationmatching/direct/with_sample_data/data/citation_metadata.json";
+        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/workflows/transformers/spark/citationmatching/direct/test/data/metadata.json";
+        String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/workflows/transformers/spark/citationmatching/direct/test/data/citation_metadata.json";
         
         
         AvroTestUtils.createLocalAvroDataStore(
