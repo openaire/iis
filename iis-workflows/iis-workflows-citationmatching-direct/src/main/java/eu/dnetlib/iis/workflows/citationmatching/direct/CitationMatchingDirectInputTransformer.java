@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.workflows.transformers.spark.citationmatching.direct;
+package eu.dnetlib.iis.workflows.citationmatching.direct;
 
 import java.io.IOException;
 
@@ -15,14 +15,14 @@ import eu.dnetlib.iis.common.spark.avro.SparkAvroLoader;
 import eu.dnetlib.iis.common.spark.avro.SparkAvroSaver;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 
-public class SparkCitationMatchingDirectTransformer {
+public class CitationMatchingDirectInputTransformer {
 
     
     //------------------------ LOGIC --------------------------
     
     public static void main(String[] args) throws IOException {
         
-        SparkCMDirectTransformerParameters params = new SparkCMDirectTransformerParameters();
+        CMDirectInputTransformerParameters params = new CMDirectInputTransformerParameters();
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
         
@@ -49,9 +49,8 @@ public class SparkCitationMatchingDirectTransformer {
     
     //------------------------ PRIVATE --------------------------
     
-    
     @Parameters(separators = "=")
-    private static class SparkCMDirectTransformerParameters {
+    private static class CMDirectInputTransformerParameters {
         
         @Parameter(names = "-inputAvroPath", required = true)
         private String inputAvroPath;

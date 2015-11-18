@@ -1,0 +1,20 @@
+{
+  "sourceDocumentId": "id-1",
+  "position": 1,
+  "destinationDocumentId": "id-2"
+}
+{
+  "sourceDocumentId": "id-1",
+  "position": 2,
+  "destinationDocumentId": "id-3"
+}
+{
+  "sourceDocumentId": "id-4",
+  "position": 5,
+  "destinationDocumentId": "id-5"
+}
+{
+  "sourceDocumentId": "id-4",
+  "position": 6,
+  "destinationDocumentId": "id-5"
+}

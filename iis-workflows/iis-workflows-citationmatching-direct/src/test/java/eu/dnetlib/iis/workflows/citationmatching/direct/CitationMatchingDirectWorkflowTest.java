@@ -13,13 +13,13 @@ import eu.dnetlib.iis.core.OozieWorkflowTestConfiguration;
  *
  */
 @Category(IntegrationTest.class)
-public class WorkflowTest extends AbstractOozieWorkflowTestCase {
+public class CitationMatchingDirectWorkflowTest extends AbstractOozieWorkflowTestCase {
 
     @Test
 	public void testWorkflow() throws Exception {
         OozieWorkflowTestConfiguration wf = new OozieWorkflowTestConfiguration();
         wf.setTimeoutInSeconds(720);
-        testWorkflow("eu/dnetlib/iis/workflows/citationmatching/direct/sampledataproducer", wf);
+        testWorkflow("eu/dnetlib/iis/workflows/citationmatching/direct/test", wf);
     }
 
 }
