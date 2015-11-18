@@ -846,7 +846,7 @@
 				</property>
 			</configuration>
 		</sub-workflow>
-		<ok to="transformers_citationmatching_direct" />
+		<ok to="citationmatching_direct" />
 		<error to="fail" />
 	</action>
 
@@ -865,34 +865,10 @@
 			<!-- notice: directory have to aligned with skipped action output -->
 			<arg>-Osentiment_labels=${workingDir}/sentiment_analysis/out</arg>
 		</java>
-		<ok to="transformers_citationmatching_direct" />
-		<error to="fail" />
-	</action>
-	<!-- end of sentiment analysis block -->
-
-	<!-- preparing citation matching input -->
-	<action name="transformers_citationmatching_direct">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_citationmatching_direct</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/transformers_citationmatching_direct/working_dir</value>
-				</property>
-				<property>
-					<name>input</name>
-					<value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${workingDir}/transformers_citationmatching_direct/output_citation_metadata</value>
-				</property>
-			</configuration>
-		</sub-workflow>
 		<ok to="citationmatching_direct" />
 		<error to="fail" />
 	</action>
+	<!-- end of sentiment analysis block -->
 
 	<action name="citationmatching_direct">
 		<sub-workflow>
@@ -905,7 +881,7 @@
 				</property>
 				<property>
 					<name>input</name>
-					<value>${workingDir}/transformers_citationmatching_direct/output_citation_metadata</value>
+					<value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
 				</property>
 				<property>
 					<name>output</name>

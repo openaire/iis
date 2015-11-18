@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.workflows.transformers.spark.citationmatching.direct;
+package eu.dnetlib.iis.workflows.citationmatching.direct;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,8 +62,8 @@ public class SparkCitationMatchingDirectTransformerTest {
         String inputDirPath = workingDir + "/spark_citation_matching_direct_transformer/input";
         String outputDirPath = workingDir + "/spark_citation_matching_direct_transformer/output";
         
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/workflows/transformers/spark/citationmatching/direct/test/data/metadata.json";
-        String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/workflows/transformers/spark/citationmatching/direct/test/data/citation_metadata.json";
+        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/workflows/citationmatching/direct/input_transformer_data/metadata.json";
+        String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/workflows/citationmatching/direct/input_transformer_data/citation_metadata.json";
         
         
         AvroTestUtils.createLocalAvroDataStore(
@@ -78,7 +78,7 @@ public class SparkCitationMatchingDirectTransformerTest {
                                            
                                            .setAppName("Spark Avro Cloner")
         
-                                           .setMainClass(SparkCitationMatchingDirectTransformer.class)
+                                           .setMainClass(CitationMatchingDirectInputTransformer.class)
                                            .addArg("-inputAvroPath", inputDirPath)
                                            .addArg("-outputAvroPath", outputDirPath)
                                            
