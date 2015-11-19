@@ -21,10 +21,10 @@
 			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
             <!-- Specification of the output ports -->
             <arg>-C{metadata,
-            eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata,
-            eu/dnetlib/iis/workflows/citationmatching/direct/sampledataproducer/data/metadata.json}</arg>
+            eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal,
+            eu/dnetlib/iis/workflows/citationmatching/direct/test/data/document_metadata.json}</arg>
             <!-- All input and output ports have to be bound to paths in HDFS -->
-            <arg>-Ometadata=${workingDir}/producer/metadata</arg>
+            <arg>-Ometadata=${workingDir}/producer/document_metadata</arg>
         </java>
         <ok to="ingest_citations"/>
         <error to="fail"/>
@@ -32,7 +32,7 @@
     
     <action name="ingest_citations">
         <sub-workflow>
-            <app-path>${wf:appPath()}/transformer</app-path>
+            <app-path>${wf:appPath()}/citationmatching_direct</app-path>
             <configuration>
                 <property>
                     <name>jobTracker</name>
@@ -46,10 +46,22 @@
                     <name>queueName</name>
                     <value>${queueName}</value>
                 </property>
+                <property>
+                    <name>oozieTopWfApplicationPath</name>
+                    <value>${oozieTopWfApplicationPath}</value>
+                </property>
+                <property>
+                    <name>projectJarFileName</name>
+                    <value>${projectJarFileName}</value>
+                </property>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/citationmatching/workingDir</value>
+                </property>
                 <!-- Input ports. -->
                 <property>
                     <name>input</name>
-                    <value>${workingDir}/producer/metadata</value>
+                    <value>${workingDir}/producer/document_metadata</value>
                 </property>
                 <!-- Output port bound to given path -->
                 <property>
@@ -78,7 +90,7 @@
 			<!-- Specification of the input ports -->
 			<arg>-C{citation,
                 eu.dnetlib.iis.citationmatching.direct.schemas.Citation,
-                eu/dnetlib/iis/workflows/citationmatching/direct/sampledataproducer/data/citation.json}</arg>
+                eu/dnetlib/iis/workflows/citationmatching/direct/test/data/direct_citation.json}</arg>
     		<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Icitation=${workingDir}/transformer/citation</arg>
 		</java>

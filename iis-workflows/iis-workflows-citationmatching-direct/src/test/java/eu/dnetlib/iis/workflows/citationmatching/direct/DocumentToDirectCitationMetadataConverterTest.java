@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.workflows.transformers.spark.citationmatching.direct;
+package eu.dnetlib.iis.workflows.citationmatching.direct;
 
 import static org.junit.Assert.assertEquals;
 
