@@ -37,7 +37,8 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min
                 0.45*regexpcountwithpositions(var('wtneglight'),nextpack) -
                 0.21*regexpcountwithpositions(var('wtnegheavy'),nextpack,1) 
        when fundingClass1="NSF" then
-            regexpcountwords("\bnsf\b|national science foundation",j2s(prevpack,middle,nextpack))
+            regexpcountwords("\bnsf\b|national science foundation",j2s(prevpack,middle,nextpack)) - 
+            5 * regexpcountwords("china|shanghai|danish|nsfc|\bsnf\b|bulgarian|\bbnsf\b|norwegian|rustaveli|israel|\biran\b|shota|georgia|functionalization|manufacturing",j2s(prevpack,middle,nextpack))
        when fundingClass1="EC"/* fp7 confidence */ then
             case when fundingClass2 = "FP7" THEN
 		        regexprmatches(var('fp7middlepos'),middle)+
