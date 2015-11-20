@@ -10,8 +10,10 @@
 			<name>match_content_with_metadata</name>
 			<value>true</value>
 			<description>flag indicating contents should be filtered and their identifiers should be deduplicated against metadata entries retrieved from InformationSpace.
-				This way only contents having metadata representation will be processed.
-				To be disabled when processing new contents which metadata is not available in hbase or when original identifiers should be preserved (contents will not be filtered as well).
+				This way only contents having metadata
+				representation will be processed.
+				To be disabled when processing new contents which metadata is not available in hbase or when original identifiers should be preserved (contents will not be
+				filtered as well).
 			</description>
 		</property>
 		<!-- processing modes -->
@@ -70,8 +72,9 @@
 		<property>
 			<name>active_websiteusage_analysis</name>
 			<value>false</value>
-			<description>flag indicating logs should be imported from HDFS log file into avro datastore 
-				and website usage analysis should be performed</description>
+			<description>flag indicating logs should be imported from HDFS log file into avro datastore
+				and website usage analysis should be performed
+			</description>
 		</property>
 		<property>
 			<name>active_export_to_actionmanager</name>
@@ -103,7 +106,8 @@
 			<name>import_hbase_dump_location</name>
 			<value>$UNDEFINED$</value>
 			<description>HBase dump location, usually points to remote cluster HDFS location.
-				Import will be omitted when set to $UNDEFINED$ value.</description>
+				Import will be omitted when set to $UNDEFINED$ value.
+			</description>
 		</property>
 		<property>
 			<name>import_hbase_approved_datasources_csv</name>
@@ -205,6 +209,15 @@
 			<value>eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl</value>
 			<description>metadata extraction input classname</description>
 		</property>
+		<!-- project reference extraction related -->
+		<property>
+			<name>referenceextraction_project_fundingclass_blacklist_regex</name>
+			<value>a^</value>
+			<description>regexp matching funding class, describes projects which
+				should be ignored by reference extraction algorithm.
+				Set to 'a^' by default to guarantee nothing will be matched.
+			</description>
+		</property>
 		<!-- export related -->
 		<property>
 			<name>export_action_hbase_table_name</name>
@@ -285,7 +298,7 @@
 			<value>$UNDEFINED$</value>
 			<description>document to protein databank action-set identifier of exported data</description>
 		</property>
-		<!--  -->
+		<!-- -->
 		<property>
 			<name>export_action_set_id_entity_dataset</name>
 			<value>$UNDEFINED$</value>
@@ -327,7 +340,7 @@
 			<value>$UNDEFINED$</value>
 			<description>document to protein databank trust level threshold</description>
 		</property>
-		<!--  -->
+		<!-- -->
 		<property>
 			<name>export_documentssimilarity_threshold</name>
 			<value>$UNDEFINED$</value>
@@ -342,7 +355,8 @@
 			<name>output_remote_location</name>
 			<value>$UNDEFINED$</value>
 			<description>optional remote cluster output location where inference output dump should be distcped as sequence files.
-			When not specified results will be exported straight to the ActionManager HBase.</description>
+				When not specified results will be exported straight to the ActionManager HBase.
+			</description>
 		</property>
 		<!-- working directory related -->
 		<property>

@@ -1,0 +1,4 @@
+{"id":"projId1","projectAcronym":"project 1","projectGrantId":"123456","fundingClass":"EC::FP7"}
+{"id":"projId2","projectAcronym":"project 2","projectGrantId":"654321","fundingClass":"EC::H2020"}
+{"id":"projId3","projectAcronym":"project 3","projectGrantId":"999999","fundingClass":"WT::WT"}
+{"id":"projId4","projectAcronym":"project 4","projectGrantId":"111111","fundingClass":null}
