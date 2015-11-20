@@ -18,3 +18,13 @@
   "position": 6,
   "destinationDocumentId": "id-5"
 }
+{
+  "sourceDocumentId": "id-7",
+  "position": 11,
+  "destinationDocumentId": "id-8"
+}
+{
+  "sourceDocumentId": "id-7",
+  "position": 11,
+  "destinationDocumentId": "id-9"
+}
