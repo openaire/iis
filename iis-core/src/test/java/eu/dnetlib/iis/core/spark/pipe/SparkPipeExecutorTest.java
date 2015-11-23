@@ -9,6 +9,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.mapred.AvroKey;
 import org.apache.hadoop.io.NullWritable;
@@ -26,8 +28,8 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import eu.dnetlib.iis.core.schemas.standardexamples.personwithdocuments.Document;
 import scala.Tuple2;
+import eu.dnetlib.iis.core.schemas.standardexamples.personwithdocuments.Document;
 
 /**
  * 
@@ -105,7 +107,7 @@ public class SparkPipeExecutorTest {
 		assertTrue(mappedKeyValueRDD == retMappedRDD);
 		
 		verify(avroKeyValueRDD).keys();
-		verify(avroRDD).pipe("/some/spark/dir/mapScriptName -arg=value");
+		verify(avroRDD).pipe(new File("/some/spark/dir/mapScriptName").getAbsolutePath() + " -arg=value");
 		
 		verify(mappedStringRDD).mapToPair(stringToKeyValueFunctionArg.capture());
 		assertStringToKeyValueFunction(stringToKeyValueFunctionArg.getValue());
@@ -140,7 +142,7 @@ public class SparkPipeExecutorTest {
 		verify(sortedKeyValueRDD).map(keyValueToStringFunctionArg.capture());
 		assertKeyValueToStringFunction(keyValueToStringFunctionArg.getValue());
 		
-		verify(stringRDD).pipe("/some/spark/dir/reducerScriptName -arg=value");
+		verify(stringRDD).pipe(new File("/some/spark/dir/reducerScriptName").getAbsolutePath() + " -arg=value");
 		
 		verify(reducedStringRDD).map(jsonToAvroDocumentFunctionArg.capture());
 		assertJsonToAvroDocumentFunction(jsonToAvroDocumentFunctionArg.getValue());

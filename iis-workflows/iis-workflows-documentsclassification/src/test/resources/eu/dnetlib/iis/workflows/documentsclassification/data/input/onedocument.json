@@ -1,0 +1,228 @@
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"A note on digitized angles",
+    "issue":null,
+    "abstract":"we studi the configur of pixel that occur when two digit straight line meet each other",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Computer-Generated Photorealistic Hair",
+    "issue":null,
+    "abstract":"this paper present an effici method for generat and render photorealist hair in two dimension pictur the method consist of three major step simul an artist draw is use to design the rough hair shape a convolut base filter is then use to generat photorealist hair patch a refin procedur is final use to blend the boundari of the patch with surround area this method can be use to creat all type of photorealist human hair head hair facial hair and bodi hair it is also suitabl for fur and grass generat applic of this method includ hairstyl design edit damag hair imag restor human hair anim virtual makeov of a human and landscap creation",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Embedded Reflection Mapping",
+    "issue":null,
+    "abstract":"environ map are use to simul reflect off curv object we present a techniqu to reflect a user or a group of user in a real environ onto a virtual object in a virtual realiti applic use the live video feed from a set of camera in real time our setup can be use in a varieti of environ rang from outdoor or indoor scene",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"The Persint visualization program for the ATLAS experiment",
+    "issue":null,
+    "abstract":"the persint program is design for the three dimension represent of object and for the interfac and access to a varieti of independ applic in a fulli interact way facil are provid for the spatial navig and the definit of the visual properti in order to interact set the view and view point and to obtain the desir perspect in parallel applic may be launch through the use of dedic interfac such as the interact reconstruct and display of physic event recent develop have focal on the interfac to the xml atlas general detector descript agdd make it a wide use tool for xml develop the graphic capabl of this program were exploit in the context of the atlas 2002 muon testbeam where it was use as an onlin event display integr in the onlin softwar framework and particip in the commiss and debug of the detector system",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"GraXML - Modular Geometric Modeler",
+    "issue":null,
+    "abstract":"mani entiti manag by hep softwar framework repres spatial 3 dimension real object effect definit manipul and visual of such object is an indispens function graxml is a modular geometr model toolkit capabl of process geometr data of various kind detector geometri event geometri from differ sourc and deliv them in way suitabl for further use geometr data are first model in one of the generic model those model are then use to popul power geometr model base on the java3d technolog while java3d has been origin creat just to provid visual of 3d object it light weight and high function allow an effect reus as a general geometr compon this is possibl also thank to a larg overlap between graphic and general geometr function and modular design of java3d itself it graphic function also allow a natur visual of all manipul element all these techniqu have been develop primarili or onli for the java environ it is howev possibl to interfac them transpar to framework built in other languag like for exampl c the graxml toolkit has been test with data from sever sourc as for exampl atlas and alic detector descript and atlas event data prototyp for other sourc like geometri descript markup languag gdml exist too and interfac to ani other sourc is easi to add",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"The FRED Event Display: an Extensible HepRep Client for GLAST",
+    "issue":null,
+    "abstract":"a new graphic client prototyp for the heprep protocol is present base on modern toolkit and high level languag c and rubi fred is an experi to test applic of script facil to the high energi physic event display domain it flexibl structur extens and the use of the heprep protocol are key featur for it use in the astroparticl experi glast",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}

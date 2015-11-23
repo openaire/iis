@@ -12,7 +12,7 @@ import eu.dnetlib.iis.core.AbstractOozieWorkflowTestCase;
  *
  */
 @Category(IntegrationTest.class)
-public class WorkflowTest extends AbstractOozieWorkflowTestCase {
+public class DocumentClassificationWorkflowTest extends AbstractOozieWorkflowTestCase {
 
     @Test
 	public void testMainWorkflow() throws Exception {

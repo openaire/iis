@@ -61,9 +61,7 @@
         
             <class>eu.dnetlib.iis.core.examples.spark.SparkAvroCloner</class>
             
-            <jar>${wf:conf('oozie.wf.application.path')}/lib/${projectJarFileName}.jar</jar>
-            
-            <!-- <spark-opts>- - jars ${wf:conf('oozie.wf.application.path')}/lib/${projectJarFileName}-tests.jar</spark-opts> -->
+            <jar>${wf:conf('oozie.wf.application.path')}/lib/iis-workflows-core-examples-${projectVersion}.jar</jar>
             
             <arg>-inputAvroPath = ${workingDir}/data_producer/person</arg>
             

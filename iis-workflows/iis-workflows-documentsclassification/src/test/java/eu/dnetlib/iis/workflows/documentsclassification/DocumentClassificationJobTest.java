@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.workflows.citationmatching.direct;
+package eu.dnetlib.iis.workflows.documentsclassification;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,27 +7,24 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import com.google.common.io.Files;
 
-import eu.dnetlib.iis.IntegrationTest;
-import eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata;
 import eu.dnetlib.iis.common.spark.test.SparkJob;
 import eu.dnetlib.iis.common.spark.test.SparkJobBuilder;
 import eu.dnetlib.iis.common.spark.test.SparkJobExecutor;
 import eu.dnetlib.iis.core.common.AvroAssertTestUtil;
 import eu.dnetlib.iis.core.common.AvroTestUtils;
 import eu.dnetlib.iis.core.common.JsonAvroTestUtils;
+import eu.dnetlib.iis.documentsclassification.schemas.DocumentMetadata;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 
 /**
- * 
- * @author madryk
- *
+ * @author Łukasz Dumiszewski
  */
-@Category(IntegrationTest.class)
-public class SparkCitationMatchingDirectTransformerTest {
+
+public class DocumentClassificationJobTest {
+
     
     private SparkJobExecutor executor = new SparkJobExecutor();
     
@@ -54,16 +51,16 @@ public class SparkCitationMatchingDirectTransformerTest {
     //------------------------ TESTS --------------------------
     
     @Test
-    public void citationMatchingDirectTransformer() throws IOException {
+    public void documentClassificationJob() throws IOException {
         
         
         // given
         
-        String inputDirPath = workingDir + "/spark_citation_matching_direct_transformer/input";
-        String outputDirPath = workingDir + "/spark_citation_matching_direct_transformer/output";
+        String inputDirPath = workingDir + "/document_classification/input";
+        String outputDirPath = workingDir + "/document_classification/output";
         
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/workflows/citationmatching/direct/input_transformer_data/metadata.json";
-        String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/workflows/citationmatching/direct/input_transformer_data/citation_metadata.json";
+        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/workflows/documentsclassification/data/input/spark_job_test_documents.json";
+        String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/workflows/documentsclassification/data/expected_output/spark_job_test_dc_metadata.json";
         
         
         AvroTestUtils.createLocalAvroDataStore(
@@ -78,7 +75,7 @@ public class SparkCitationMatchingDirectTransformerTest {
                                            
                                            .setAppName(getClass().getName())
         
-                                           .setMainClass(CitationMatchingDirectInputTransformer.class)
+                                           .setMainClass(DocumentClassificationJob.class)
                                            .addArg("-inputAvroPath", inputDirPath)
                                            .addArg("-outputAvroPath", outputDirPath)
                                            
@@ -94,7 +91,6 @@ public class SparkCitationMatchingDirectTransformerTest {
         // assert
         
         AvroAssertTestUtil.assertEqualsWithJson(outputDirPath, jsonOutputFile, DocumentMetadata.class);
-        
-        
     }
+        
 }

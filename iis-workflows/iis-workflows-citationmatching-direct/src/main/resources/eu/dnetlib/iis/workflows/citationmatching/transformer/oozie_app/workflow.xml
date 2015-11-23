@@ -26,7 +26,7 @@
             <mode>cluster</mode>
             <name>citationmatching_direct_input_transformer</name>
             <class>eu.dnetlib.iis.workflows.transformers.spark.citationmatching.direct.SparkCitationMatchingDirectTransformer</class>
-            <jar>${oozieTopWfApplicationPath}/lib/${projectJarFileName}.jar</jar>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-workflows-transformers-${projectVersion}.jar</jar>
             
             <arg>-inputAvroPath=${input}</arg>
             <arg>-outputAvroPath=${output}</arg>

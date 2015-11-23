@@ -13,7 +13,7 @@
             <mode>cluster</mode>
             <name>fileWordCounter</name>
             <class>eu.dnetlib.iis.core.examples.spark.FileWordCounter</class>
-            <jar>${wf:conf('oozie.wf.application.path')}/lib/${projectJarFileName}.jar</jar>
+            <jar>${wf:conf('oozie.wf.application.path')}/lib/iis-workflows-core-examples-${projectVersion}.jar</jar>
             <arg>${wf:conf('oozie.wf.application.path')}/input/data.txt</arg>
             <arg>${nameNode}${workingDir}/output</arg>
         </spark>

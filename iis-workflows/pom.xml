@@ -68,7 +68,7 @@
         
         <output.dir.name>${maven.build.timestamp}</output.dir.name>        
         
-        <projectJarFileName>${project.artifactId}-${project.version}</projectJarFileName>
+        <projectVersion>${project.version}</projectVersion>
         <oozie.use.system.libpath>true</oozie.use.system.libpath>
     </properties>
 
@@ -313,7 +313,7 @@
 									<!-- notice: dots are not allowed for job.properties! -->
 									<include>nameNode,jobTracker,queueName,
 									workingDir,oozieTopWfApplicationPath,
-									oozie.wf.application.path,projectJarFileName,oozie.use.system.libpath</include>
+									oozie.wf.application.path,projectVersion,oozie.use.system.libpath</include>
 									<includeSystemProperties>true</includeSystemProperties>
 									<includePropertyKeysFromFiles>
 										<!-- 
@@ -442,6 +442,8 @@
 												<include name="*.jar" />
 											</fileset>
 										</copy>
+										
+										<fixcrlf srcdir="target/${oozie.package.file.name}/${oozieAppDir}/" includes="**/*.sh,**/*.json,**/*.py,**/*.sql" eol="lf"/>
 										
 										<!-- creating tar.gz package -->
 										<tar destfile="target/${oozie.package.file.name}.tar.gz" compression="gzip">

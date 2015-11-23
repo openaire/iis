@@ -39,18 +39,18 @@ public class SparkAvroLoader {
      * Loads java rdd filled with records of type specified as argument
      * from avro datastore directory 
      */
-    public static <T extends GenericRecord> JavaRDD<T> loadJavaRDD(JavaSparkContext sc, String avroDatastorePath, Class<T> avroRecordsClass) {
+    public static <T extends GenericRecord> JavaRDD<T> loadJavaRDD(JavaSparkContext sc, String avroDatastorePath, Class<T> avroRecordClass) {
         Preconditions.checkNotNull(sc);
         Preconditions.checkNotNull(avroDatastorePath);
-        Preconditions.checkNotNull(avroRecordsClass);
+        Preconditions.checkNotNull(avroRecordClass);
 
 
-        Schema schema = AvroUtils.toSchema(avroRecordsClass.getName());
+        Schema schema = AvroUtils.toSchema(avroRecordClass.getName());
         Job job = getJob(schema);
 
         @SuppressWarnings("unchecked")
         JavaPairRDD<AvroKey<T>, NullWritable> inputRecords = (JavaPairRDD<AvroKey<T>, NullWritable>)
-                sc.newAPIHadoopFile(avroDatastorePath, AvroKeyInputFormat.class, avroRecordsClass, NullWritable.class, job.getConfiguration());
+                sc.newAPIHadoopFile(avroDatastorePath, AvroKeyInputFormat.class, avroRecordClass, NullWritable.class, job.getConfiguration());
 
         JavaRDD<T> input = inputRecords.map(tuple -> tuple._1.datum());
 

@@ -19,16 +19,17 @@
 					<value>${queueName}</value>
 				</property>
 			</configuration>
-			<!-- This is simple wrapper for the Java code -->
+			
 			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<!-- The business Java code that gets to be executed -->
+			
 			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
-			<!-- Specification of the output ports -->
-			<arg>-C{document_metadata, 
-				eu.dnetlib.iis.documentsclassification.schemas.DocumentMetadata,
-				eu/dnetlib/iis/workflows/documentsclassification/data/document_metadata_empty_abstract.json}</arg>
-			<!-- All input and output ports have to be bound to paths in HDFS -->
-			<arg>-Odocument_metadata=${workingDir}/producer/document_metadata</arg>
+			
+			<arg>-C{documents, 
+                eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal,
+                eu/dnetlib/iis/workflows/documentsclassification/data/input/documents_with_empty_abstract.json}</arg>
+            
+            <arg>-Odocuments=${workingDir}/documentsclassification/producer/documents</arg>
+
 		</java>
 		<ok to="documentsclassification" />
 		<error to="fail" />
@@ -37,6 +38,7 @@
     <action name="documentsclassification">
         <sub-workflow>
             <app-path>${wf:appPath()}/documentsclassification</app-path>
+            <propagate-configuration/>
             <configuration>
                 <property>
                     <name>jobTracker</name>
@@ -56,8 +58,8 @@
                     <value>${workingDir}/documentsclassification/working_dir</value>
                 </property>
                 <property>
-                    <name>input_document_metadata</name>
-                    <value>${workingDir}/producer/document_metadata</value>
+                    <name>input_documents</name>
+                    <value>${workingDir}/documentsclassification/producer/documents</value>
                 </property>
                 <property>
                     <name>output_document_to_document_classes</name>

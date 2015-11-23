@@ -40,6 +40,7 @@ public class JsonAvroTestUtils {
             List<String> recordsStrings = IOUtils.readLines(reader);
 
             for (String recordString : recordsStrings) {
+                recordString = recordString.replaceAll("\"abstract\"\\s*:\\s*", "\"abstract\\$\": ");
                 T element = gson.fromJson(recordString, recordClass);
                 jsonDatastore.add(element);
             }

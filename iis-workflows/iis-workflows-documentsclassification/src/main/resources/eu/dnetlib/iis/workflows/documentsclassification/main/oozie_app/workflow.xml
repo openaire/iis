@@ -5,8 +5,8 @@
 	
 	<parameters>
 		<property>
-			<name>input_document_metadata</name>
-			<description>input document metadata</description>
+			<name>input_documents</name>
+			<description>input source documents</description>
 		</property>
 		<property>
 			<name>output_document_to_document_classes</name>
@@ -14,20 +14,47 @@
 		</property>
 	</parameters>
 
-	<start to="generate-schema" />
+    <start to="generate-schema" />
 
-	<action name="generate-schema">
-	    <java>
-    		<job-tracker>${jobTracker}</job-tracker>
-        	<name-node>${nameNode}</name-node>
-	        <main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
-	        <arg>eu.dnetlib.iis.documentsclassification.schemas.DocumentMetadata</arg>
-	        <arg>eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses</arg>
-	        <capture-output />
-	    </java>
-	    <ok to="documentsclassification_main" />
-	    <error to="fail" />
-	</action>
+    <action name="generate-schema">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
+            <arg>eu.dnetlib.iis.documentsclassification.schemas.DocumentMetadata</arg>
+            <arg>eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses</arg>
+            <capture-output />
+        </java>
+        <ok to="document_classification_job" />
+        <error to="fail" />
+    </action>
+
+	<action name="document_classification_job"> <!-- for now it's only the input transformer -->
+        <spark xmlns="uri:oozie:spark-action:0.1">
+            
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            
+            <prepare>
+                <delete path="${nameNode}${workingDir}/transformer_output" />
+            </prepare>
+            
+            <master>yarn-cluster</master>
+            
+            <mode>cluster</mode>
+            
+            <name>document_classification_job</name>
+            
+            <class>eu.dnetlib.iis.workflows.documentsclassification.DocumentClassificationJob</class>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-workflows-documentsclassification-${projectVersion}.jar</jar>
+            <arg>-inputAvroPath=${input_documents}</arg>
+            <arg>-outputAvroPath=${workingDir}/transformer_output</arg>
+            
+        </spark>
+        <ok to="documentsclassification_main"/>
+        <error to="fail"/>
+    </action>
+
 
     <action name="documentsclassification_main">
         <map-reduce>
@@ -67,7 +94,7 @@
                 <!-- INPUT -->
                 <property>
                     <name>mapred.input.dir</name>
-                    <value>${input_document_metadata}</value>
+                    <value>${workingDir}/transformer_output</value>
                 </property>
 
                 <property>
