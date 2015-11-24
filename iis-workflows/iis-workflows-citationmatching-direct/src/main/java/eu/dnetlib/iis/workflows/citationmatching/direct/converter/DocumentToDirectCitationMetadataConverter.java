@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.workflows.citationmatching.direct;
+package eu.dnetlib.iis.workflows.citationmatching.direct.converter;
 
 import java.io.Serializable;
 import java.util.List;
@@ -29,25 +29,25 @@ public class DocumentToDirectCitationMetadataConverter implements Serializable {
     /**
      * Converts {@link ExtractedDocumentMetadataMergedWithOriginal} to {@link DocumentMetadata}
      */
-    public DocumentMetadata convert(ExtractedDocumentMetadataMergedWithOriginal docMetadata) {
-        Preconditions.checkNotNull(docMetadata);
+    public DocumentMetadata convert(ExtractedDocumentMetadataMergedWithOriginal document) {
+        Preconditions.checkNotNull(document);
 
-        List<ReferenceMetadata> citationReferencesMetadata = convertReferences(docMetadata.getReferences());
+        List<ReferenceMetadata> citationReferencesMetadata = convertReferences(document.getReferences());
 
-        return new DocumentMetadata(docMetadata.getId(), docMetadata.getExternalIdentifiers(), docMetadata.getPublicationTypeName(),
+        return new DocumentMetadata(document.getId(), document.getExternalIdentifiers(), document.getPublicationTypeName(),
                 citationReferencesMetadata);
     }
 
 
     //------------------------ PRIVATE --------------------------
 
-    private List<ReferenceMetadata> convertReferences(List<eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata> referencesMetadata) {
+    private List<ReferenceMetadata> convertReferences(List<eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata> documentReferences) {
         List<ReferenceMetadata> citationReferencesMetadata = Lists.newArrayList();
 
-        if (referencesMetadata != null) {
-            for (eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata docReferenceMetadata : referencesMetadata) {
+        if (documentReferences != null) {
+            for (eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata documentReference : documentReferences) {
 
-                ReferenceMetadata citationReferenceMetadata = convertReference(docReferenceMetadata);
+                ReferenceMetadata citationReferenceMetadata = convertReference(documentReference);
 
                 if (citationReferenceMetadata != null) {
                     citationReferencesMetadata.add(citationReferenceMetadata);
@@ -58,14 +58,14 @@ public class DocumentToDirectCitationMetadataConverter implements Serializable {
         return citationReferencesMetadata;
     }
 
-    private ReferenceMetadata convertReference(eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata refMetadata) {
+    private ReferenceMetadata convertReference(eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata documentReference) {
 
-        if (MapUtils.isEmpty(refMetadata.getBasicMetadata().getExternalIds())) {
+        if (MapUtils.isEmpty(documentReference.getBasicMetadata().getExternalIds())) {
             return null;
         }
 
         return new eu.dnetlib.iis.citationmatching.direct.schemas.ReferenceMetadata(
-                refMetadata.getPosition(),
-                refMetadata.getBasicMetadata().getExternalIds());
+                documentReference.getPosition(),
+                documentReference.getBasicMetadata().getExternalIds());
     }
 }

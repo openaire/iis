@@ -17,7 +17,6 @@ statistics classpath eu/dnetlib/iis/workflows/statistics/main/oozie_app
 collapsers_multiple_input_collapser classpath eu/dnetlib/iis/workflows/collapsers/multiple_input_collapser/oozie_app
 collapsers_basic_collapser classpath eu/dnetlib/iis/workflows/collapsers/basic_collapser/oozie_app
 transformers_citations_from_matching classpath eu/dnetlib/iis/workflows/transformers/common/citations/from/citationmatching/oozie_app
-transformers_citations_from_ingestpmc classpath eu/dnetlib/iis/workflows/transformers/common/citations/from/ingest.pmc/oozie_app
 transformers_citations_from_referencemetadata classpath eu/dnetlib/iis/workflows/transformers/common/citations/from/referencemetadata/oozie_app
 transformers_common_union classpath eu/dnetlib/iis/workflows/transformers/common/union/oozie_app
 transformers_common_union3 classpath eu/dnetlib/iis/workflows/transformers/common/union3/oozie_app
