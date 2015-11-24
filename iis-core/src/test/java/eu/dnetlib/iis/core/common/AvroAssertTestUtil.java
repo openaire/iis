@@ -1,6 +1,8 @@
 package eu.dnetlib.iis.core.common;
 
 import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.Matchers.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,6 +41,22 @@ public class AvroAssertTestUtil {
         assertEquals(
                 jsonDatastore.stream().map(T::toString).collect(Collectors.toList()),
                 avroDatastore.stream().map(T::toString).collect(Collectors.toList()));
+
+    }
+    
+    /**
+     * Asserts equality of avro datastore to json datastore ignoring order of records
+     */
+    public static <T extends GenericRecord> void assertEqualsWithJsonIgnoreOrder(String avroDatastorePath, String jsonDatastorePath, Class<T> recordsClass) throws IOException {
+
+        List<T> avroDatastore = AvroTestUtils.readLocalAvroDataStore(avroDatastorePath);
+
+        List<T> jsonDatastore = JsonAvroTestUtils.readJsonDataStore(jsonDatastorePath, recordsClass);
+
+        List<String> jsonStringDatastore = jsonDatastore.stream().map(T::toString).collect(Collectors.toList());
+        List<String> avroStringDatastore = avroDatastore.stream().map(T::toString).collect(Collectors.toList());
+        
+        assertThat(avroStringDatastore, containsInAnyOrder(jsonStringDatastore.toArray()));
 
     }
 

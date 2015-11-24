@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.workflows.citationmatching.direct;
+package eu.dnetlib.iis.workflows.citationmatching.direct.converters;
 
 import java.io.Serializable;
 import java.util.List;

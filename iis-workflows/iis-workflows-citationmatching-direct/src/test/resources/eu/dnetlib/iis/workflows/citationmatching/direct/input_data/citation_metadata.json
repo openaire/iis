@@ -1,6 +1,0 @@
-{"id": "id-1", "externalIdentifiers": {"doi": "doi.A", "pmid": "pmid.I"}, "publicationTypeName": null, "references": [{"position": 1, "externalIds": {"pmid": "pmid.II"}},{"position": 2, "externalIds": {"doi": "doi.B"}},{"position": 101, "externalIds": null},{"position": 102, "externalIds": {"pmid": "pmid.MMM"}},{"position": 103, "externalIds": {"doi": "doi.Z"}}]}
-{"id": "id-2", "externalIdentifiers": {"pmid": "pmid.II"}, "publicationTypeName": null, "references": []}
-{"id": "id-3", "externalIdentifiers": {"doi": "doi.B"}, "publicationTypeName": null, "references": []}
-{"id": "id-4", "externalIdentifiers": {"pmid": "pmid.III"}, "publicationTypeName": null, "references": [{"position": 5, "externalIds": {"doi": "doi.C", "pmid": "pmid.IV"}}, {"position": 6, "externalIds": {"doi": "doi.C"}}]}
-{"id": "id-5", "externalIdentifiers": {"doi": "doi.C"}, "publicationTypeName": null, "references": []}
-{"id": "id-6", "externalIdentifiers": {"pmid": "pmid.IV"}, "publicationTypeName": null, "references": []}
