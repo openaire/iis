@@ -16,22 +16,22 @@ public class DocumentClassificationWorkflowTest extends AbstractOozieWorkflowTes
 
     @Test
 	public void testMainWorkflow() throws Exception {
-    	testWorkflow("eu/dnetlib/iis/workflows/documentsclassification/main/sampletest");
+    	testWorkflow("eu/dnetlib/iis/workflows/documentsclassification/sampletest");
 	}
 
     @Test
 	public void testMainEmptyInputWorkflow() throws Exception {
-    	testWorkflow("eu/dnetlib/iis/workflows/documentsclassification/main/sampletest_empty_input");
+    	testWorkflow("eu/dnetlib/iis/workflows/documentsclassification/sampletest_empty_input");
 	}
     
     @Test
 	public void testMainEmptyAbstractWorkflow() throws Exception {
-    	testWorkflow("eu/dnetlib/iis/workflows/documentsclassification/main/sampletest_empty_abstract");
+    	testWorkflow("eu/dnetlib/iis/workflows/documentsclassification/sampletest_empty_abstract");
 	}
    
     @Test
 	public void testMainNullTaxonomyWorkflow() throws Exception {
-    	testWorkflow("eu/dnetlib/iis/workflows/documentsclassification/main/sampletest_null_taxonomy");
+    	testWorkflow("eu/dnetlib/iis/workflows/documentsclassification/sampletest_null_taxonomy");
 	}
     
 }
