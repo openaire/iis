@@ -73,8 +73,8 @@ public class CitationMatchingDirectJobTest {
         
         // given
         
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/workflows/citationmatching/direct/input_data/document_metadata.json";
-        String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/workflows/citationmatching/direct/expected_data/citations.json";
+        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/workflows/citationmatching/direct/data/input/documents.json";
+        String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/workflows/citationmatching/direct/data/expected_output/citations.json";
         
         
         AvroTestUtils.createLocalAvroDataStore(
@@ -101,7 +101,7 @@ public class CitationMatchingDirectJobTest {
         
         // given
         
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/workflows/citationmatching/direct/input_data/document_metadata_multiple_same_doi.json";
+        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/workflows/citationmatching/direct/data/input/documents_multiple_same_doi.json";
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(jsonInputFile, ExtractedDocumentMetadataMergedWithOriginal.class),
                 inputDirPath);
@@ -130,7 +130,7 @@ public class CitationMatchingDirectJobTest {
         
         // given
         
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/workflows/citationmatching/direct/input_data/document_metadata_multiple_same_pmid.json";
+        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/workflows/citationmatching/direct/data/input/documents_multiple_same_pmid.json";
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(jsonInputFile, ExtractedDocumentMetadataMergedWithOriginal.class),
                 inputDirPath);
@@ -159,7 +159,7 @@ public class CitationMatchingDirectJobTest {
         
         // given
         
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/workflows/citationmatching/direct/input_data/document_metadata_multiple_same_pmid_with_type.json";
+        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/workflows/citationmatching/direct/data/input/documents_multiple_same_pmid_with_type.json";
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(jsonInputFile, ExtractedDocumentMetadataMergedWithOriginal.class),
                 inputDirPath);

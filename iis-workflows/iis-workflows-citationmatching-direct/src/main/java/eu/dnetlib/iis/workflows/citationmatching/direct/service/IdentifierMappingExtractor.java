@@ -19,26 +19,29 @@ public class IdentifierMappingExtractor implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+
+    //------------------------ LOGIC --------------------------
+    
     /**
-     * Extracts from document metadata mapping from external id to internal id
+     * Extracts an 'external to internal id' mapping from documents
      * 
-     * @param documentsMetadata
+     * @param documents
      * @param idType - type of external identifier (e.g. doi, pmid)
      * @param pickSingle - function used in case there will be more than one document with the same external identifier.
      *      Function should pick one of those documents and return it as a result.
      * @return pair rdd where keys are external ids of {@literal idType} type
      *      and values are documents ids
      */
-    public JavaPairRDD<String, String> extractIdMapping(JavaRDD<DocumentMetadata> documentsMetadata, String idType, Function<Iterable<DocumentMetadata>, DocumentMetadata> pickSingle) {
+    public JavaPairRDD<String, String> extractIdMapping(JavaRDD<DocumentMetadata> documents, String idType, Function<Iterable<DocumentMetadata>, DocumentMetadata> pickSingle) {
         
-        JavaPairRDD<String, String> doiToId = documentsMetadata
-                .filter(docMetadata -> docMetadata.getExternalIdentifiers() != null && docMetadata.getExternalIdentifiers().containsKey(idType))
-                .keyBy(docMetadata -> docMetadata.getExternalIdentifiers().get(idType).toString())
+        JavaPairRDD<String, String> externalIdToId = documents
+                .filter(document -> document.getExternalIdentifiers() != null && document.getExternalIdentifiers().containsKey(idType))
+                .keyBy(document -> document.getExternalIdentifiers().get(idType).toString())
                 .groupByKey()
                 .mapValues(pickSingle)
-                .mapValues(docMetadata -> docMetadata.getId().toString());
+                .mapValues(document -> document.getId().toString());
         
-        return doiToId;
+        return externalIdToId;
         
     }
 }

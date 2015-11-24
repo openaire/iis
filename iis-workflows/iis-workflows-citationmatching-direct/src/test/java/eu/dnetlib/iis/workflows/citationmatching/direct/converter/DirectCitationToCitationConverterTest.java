@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.workflows.citationmatching.direct.converters;
+package eu.dnetlib.iis.workflows.citationmatching.direct.converter;
 
 import static org.junit.Assert.assertEquals;
 
@@ -8,7 +8,6 @@ import com.google.common.collect.Maps;
 
 import eu.dnetlib.iis.common.citations.schemas.Citation;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
-import eu.dnetlib.iis.workflows.citationmatching.direct.converters.DirectCitationToCitationConverter;
 
 /**
  * 

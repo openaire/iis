@@ -30,7 +30,7 @@ public class AvroAssertTestUtil {
     //------------------------ LOGIC --------------------------
 
     /**
-     * Asserts equality of avro datastore to json datastore
+     * Asserts equality of an avro datastore and a json datastore
      */
     public static <T extends GenericRecord> void assertEqualsWithJson(String avroDatastorePath, String jsonDatastorePath, Class<T> recordsClass) throws IOException {
 
@@ -45,7 +45,7 @@ public class AvroAssertTestUtil {
     }
     
     /**
-     * Asserts equality of avro datastore to json datastore ignoring order of records
+     * Asserts equality of an avro datastore and a json datastore, ignores order of records
      */
     public static <T extends GenericRecord> void assertEqualsWithJsonIgnoreOrder(String avroDatastorePath, String jsonDatastorePath, Class<T> recordsClass) throws IOException {
 

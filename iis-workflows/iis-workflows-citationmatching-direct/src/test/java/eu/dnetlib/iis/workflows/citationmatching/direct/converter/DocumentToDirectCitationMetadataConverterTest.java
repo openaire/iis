@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.workflows.citationmatching.direct.converters;
+package eu.dnetlib.iis.workflows.citationmatching.direct.converter;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,7 +16,6 @@ import eu.dnetlib.iis.metadataextraction.schemas.ReferenceBasicMetadata;
 import eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.PublicationType;
-import eu.dnetlib.iis.workflows.citationmatching.direct.converters.DocumentToDirectCitationMetadataConverter;
 
 /**
  * 

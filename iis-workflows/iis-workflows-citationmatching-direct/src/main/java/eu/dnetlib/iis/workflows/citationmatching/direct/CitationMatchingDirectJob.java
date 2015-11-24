@@ -1,9 +1,7 @@
 package eu.dnetlib.iis.workflows.citationmatching.direct;
 
 import java.io.IOException;
-import java.util.Iterator;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -18,13 +16,23 @@ import eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata;
 import eu.dnetlib.iis.common.spark.avro.SparkAvroLoader;
 import eu.dnetlib.iis.common.spark.avro.SparkAvroSaver;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
-import eu.dnetlib.iis.workflows.citationmatching.direct.converters.DirectCitationToCitationConverter;
-import eu.dnetlib.iis.workflows.citationmatching.direct.converters.DocumentToDirectCitationMetadataConverter;
+import eu.dnetlib.iis.workflows.citationmatching.direct.converter.DirectCitationToCitationConverter;
+import eu.dnetlib.iis.workflows.citationmatching.direct.converter.DocumentToDirectCitationMetadataConverter;
 import eu.dnetlib.iis.workflows.citationmatching.direct.model.IdWithPosition;
 import eu.dnetlib.iis.workflows.citationmatching.direct.service.ExternalIdCitationMatcher;
+import eu.dnetlib.iis.workflows.citationmatching.direct.service.PickResearchArticleDocumentFunction;
+import eu.dnetlib.iis.workflows.citationmatching.direct.service.PickFirstDocumentFunction;
 
 
 public class CitationMatchingDirectJob {
+    
+    
+    private static DocumentToDirectCitationMetadataConverter documentToDirectCitationMetadataConverter = new DocumentToDirectCitationMetadataConverter();
+    
+    private static ExternalIdCitationMatcher externalIdCitationMatcher = new ExternalIdCitationMatcher();
+    
+    private static DirectCitationToCitationConverter directCitationToCitationConverter = new DirectCitationToCitationConverter();
+    
     
     
     //------------------------ LOGIC --------------------------
@@ -44,22 +52,21 @@ public class CitationMatchingDirectJob {
         
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
             
-            JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> documentsMetadata = SparkAvroLoader.loadJavaRDD(sc, params.inputAvroPath, ExtractedDocumentMetadataMergedWithOriginal.class);
+            JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> documents = SparkAvroLoader.loadJavaRDD(sc, params.inputAvroPath, ExtractedDocumentMetadataMergedWithOriginal.class);
             
             
-            DocumentToDirectCitationMetadataConverter documentMetadataConverter = new DocumentToDirectCitationMetadataConverter();
-            JavaRDD<DocumentMetadata> simplifiedDocumentsMetadata = documentsMetadata.map(metadata -> documentMetadataConverter.convert(metadata));
+            JavaRDD<DocumentMetadata> simplifiedDocuments = documents.map(document -> documentToDirectCitationMetadataConverter.convert(document));
 //            simplifiedDocumentsMetadata = simplifiedDocumentsMetadata.cache(); // FIXME: https://github.com/openaire/iis/issues/128
             
-            JavaRDD<Citation> directDoiCitations = matchDoiCitations(simplifiedDocumentsMetadata);
             
-            JavaRDD<Citation> directPmidCitations = matchPmidCitations(simplifiedDocumentsMetadata);
+            JavaRDD<Citation> directDoiCitations = externalIdCitationMatcher.matchCitations(simplifiedDocuments, "doi", new PickFirstDocumentFunction());
+            
+            JavaRDD<Citation> directPmidCitations = externalIdCitationMatcher.matchCitations(simplifiedDocuments, "pmid", new PickResearchArticleDocumentFunction());
             
             JavaRDD<Citation> directCitations = mergeCitations(directDoiCitations, directPmidCitations);
             
             
             
-            DirectCitationToCitationConverter directCitationToCitationConverter = new DirectCitationToCitationConverter();
             JavaRDD<eu.dnetlib.iis.common.citations.schemas.Citation> citations = 
                     directCitations.map(directCitation -> directCitationToCitationConverter.convert(directCitation));
             
@@ -71,33 +78,6 @@ public class CitationMatchingDirectJob {
     
     
     //------------------------ PRIVATE --------------------------
-    
-    
-    private static JavaRDD<Citation> matchDoiCitations(JavaRDD<DocumentMetadata> directCitationMetadata) {
-        ExternalIdCitationMatcher externalIdCitationMatcher = new ExternalIdCitationMatcher();
-        
-        return externalIdCitationMatcher.matchCitations(directCitationMetadata, "doi", x -> x.iterator().next());
-    }
-    
-    
-    private static JavaRDD<Citation> matchPmidCitations(JavaRDD<DocumentMetadata> directCitationMetadata) {
-        ExternalIdCitationMatcher externalIdCitationMatcher = new ExternalIdCitationMatcher();
-        
-        return externalIdCitationMatcher.matchCitations(directCitationMetadata, "pmid", x -> {
-            Iterator<DocumentMetadata> it = x.iterator();
-            
-            DocumentMetadata current = null;
-            while(it.hasNext()) {
-                DocumentMetadata docMeta = it.next();
-                if (StringUtils.equals(docMeta.getPublicationTypeName(), "research-article")) {
-                    return docMeta;
-                }
-                
-                current = docMeta;
-            }
-            return current;
-        });
-    }
     
     
     private static JavaRDD<Citation> mergeCitations(JavaRDD<Citation> directDoiCitations, JavaRDD<Citation> directPmidCitations) {

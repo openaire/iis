@@ -22,7 +22,7 @@
             <!-- Specification of the output ports -->
             <arg>-C{metadata,
             eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal,
-            eu/dnetlib/iis/workflows/citationmatching/direct/input_data/document_metadata.json}</arg>
+            eu/dnetlib/iis/workflows/citationmatching/direct/data/input/documents.json}</arg>
             <!-- All input and output ports have to be bound to paths in HDFS -->
             <arg>-Ometadata=${workingDir}/producer/document_metadata</arg>
         </java>
@@ -86,7 +86,7 @@
 			<!-- Specification of the input ports -->
 			<arg>-C{citation,
                 eu.dnetlib.iis.common.citations.schemas.Citation,
-                eu/dnetlib/iis/workflows/citationmatching/direct/expected_data/citations.json}</arg>
+                eu/dnetlib/iis/workflows/citationmatching/direct/data/expected_output/citations.json}</arg>
     		<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Icitation=${workingDir}/output/citation</arg>
 		</java>
