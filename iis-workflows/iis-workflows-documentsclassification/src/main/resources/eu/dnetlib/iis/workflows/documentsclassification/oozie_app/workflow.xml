@@ -1,0 +1,141 @@
+<?xml version="1.0"?>
+<!-- Note that documentation placed in comments in this file uses the
+"markdown" syntax (along with its way of dividing text into sections). -->
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="documentsclassification_main">
+	
+	<parameters>
+		<property>
+			<name>input_documents</name>
+			<description>input source documents</description>
+		</property>
+		<property>
+			<name>output_document_to_document_classes</name>
+			<description>output document to document classes</description>
+		</property>
+	</parameters>
+
+    <start to="generate-schema" />
+
+    <action name="generate-schema">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
+            <arg>eu.dnetlib.iis.documentsclassification.schemas.DocumentMetadata</arg>
+            <arg>eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses</arg>
+            <capture-output />
+        </java>
+        <ok to="document_classification_job" />
+        <error to="fail" />
+    </action>
+
+	<action name="document_classification_job"> <!-- for now it's only the input transformer -->
+        <spark xmlns="uri:oozie:spark-action:0.1">
+            
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            
+            <prepare>
+                <delete path="${nameNode}${workingDir}/transformer_output" />
+            </prepare>
+            
+            <master>yarn-cluster</master>
+            
+            <mode>cluster</mode>
+            
+            <name>document_classification_job</name>
+            
+            <class>eu.dnetlib.iis.workflows.documentsclassification.DocumentClassificationJob</class>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-workflows-documentsclassification-${projectVersion}.jar</jar>
+            <arg>-inputAvroPath=${input_documents}</arg>
+            <arg>-outputAvroPath=${workingDir}/transformer_output</arg>
+            
+        </spark>
+        <ok to="documentsclassification_main"/>
+        <error to="fail"/>
+    </action>
+
+
+    <action name="documentsclassification_main">
+        <map-reduce>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <delete path="${nameNode}${output_document_to_document_classes}"/>
+            </prepare>
+            <streaming>
+            	<!-- Here, we give the relative path to the script and pass it
+            	the parameters of the workflow node. The script is held
+            	in a directory having the same name as the workflow node.
+
+            	The parameters should be passed as **named** arguments. This
+            	convention of passing them as named arguments makes the code
+            	more readable/maintainable.
+            	 -->
+                <mapper>scripts/classify_documents.sh</mapper>
+            </streaming>
+            <configuration>
+            	<!-- # Standard settings for our framework -->
+                <property>
+                    <name>mapred.output.format.class</name>
+                    <value>com.cloudera.science.avro.streaming.AvroAsJSONOutputFormat</value>
+                </property>
+                <property>
+                    <name>mapred.input.format.class</name>
+                    <value>com.cloudera.science.avro.streaming.AvroAsJSONInputFormat</value>
+                </property>
+                <!-- # Custom settings for this workflow node -->
+                <!-- We do not use any reducers, so we set their number to 0 -->
+                <property>
+                    <name>mapred.reduce.tasks</name>
+                    <value>0</value>
+                </property>
+                
+                <!-- INPUT -->
+                <property>
+                    <name>mapred.input.dir</name>
+                    <value>${workingDir}/transformer_output</value>
+                </property>
+
+                <property>
+                    <name>input.schema.literal</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.documentsclassification.schemas.DocumentMetadata']}</value>
+                </property>
+
+				<!-- OUTPUT -->
+                <property>
+                    <name>mapred.output.dir</name>
+                    <value>${output_document_to_document_classes}</value>
+                </property>          
+
+                <property>
+                    <name>output.schema.literal</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses']}</value>
+                </property>
+
+				<!-- this one is required due to the large amount of time taken 
+					by process storing plaintexts into the database -->
+				<property>
+					<name>mapred.task.timeout</name>
+					<value>1800000</value>
+				</property>
+				<property>
+					<name>mapreduce.task.timeout</name>
+					<value>1800000</value>
+				</property>
+				
+            </configuration>
+            
+        </map-reduce>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+        			[${wf:errorMessage(wf:lastErrorNode())}]
+        		</message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

@@ -711,46 +711,24 @@
 	<!-- start of documents classification part -->
 	<decision name="decision-documentsclassification">
 		<switch>
-			<case to="transformers_documentsclassification">${active_documentsclassification eq "true"}</case>
+			<case to="documentsclassification">${active_documentsclassification eq "true"}</case>
 			<default to="skip-documentsclassification" />
 		</switch>
 	</decision>
 
-	<action name="transformers_documentsclassification">
+	
+	<action name="documentsclassification">
 		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_documentsclassification</app-path>
+			<app-path>${wf:appPath()}/documentsclassification</app-path>
 			<propagate-configuration />
 			<configuration>
 				<property>
 					<name>workingDir</name>
-					<value>${workingDir}/transformers_documentsclassification/working_dir</value>
+					<value>${workingDir}/documentsclassification/working_dir</value>
 				</property>
 				<property>
-					<name>input_merged_metadata</name>
+					<name>input_documents</name>
 					<value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
-				</property>
-				<property>
-					<name>output_document_metadata</name>
-					<value>${workingDir}/transformers_documentsclassification/output_document_metadata</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="documentsclassification_main" />
-		<error to="fail" />
-	</action>
-
-	<action name="documentsclassification_main">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/documentsclassification_main</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/documentsclassification_main/working_dir</value>
-				</property>
-				<property>
-					<name>input_document_metadata</name>
-					<value>${workingDir}/transformers_documentsclassification/output_document_metadata</value>
 				</property>
 				<property>
 					<name>output_document_to_document_classes</name>
@@ -766,9 +744,9 @@
 		<java>
 			<prepare>
 				<!-- notice: directory have to aligned with skipped action output -->
-				<delete path="${nameNode}${workingDir}/documentsclassification_main" />
+				<delete path="${nameNode}${workingDir}/documentsclassification" />
 				<delete path="${nameNode}${output_document_to_document_classes}" />
-				<mkdir path="${nameNode}${workingDir}/documentsclassification_main" />
+				<mkdir path="${nameNode}${workingDir}/documentsclassification" />
 				<mkdir path="${nameNode}${output_document_to_document_classes}" />
 			</prepare>
 			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
