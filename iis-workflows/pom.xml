@@ -443,7 +443,7 @@
 											</fileset>
 										</copy>
 										
-										<fixcrlf srcdir="target/${oozie.package.file.name}/${oozieAppDir}/" includes="**/*.sh,**/*.json,**/*.py,**/*.sql" eol="lf"/>
+										<fixcrlf srcdir="target/${oozie.package.file.name}/${oozieAppDir}/" encoding="UTF-8" outputencoding="UTF-8" includes="**/*.sh,**/*.json,**/*.py,**/*.sql" eol="lf"/>
 										
 										<!-- creating tar.gz package -->
 										<tar destfile="target/${oozie.package.file.name}.tar.gz" compression="gzip">

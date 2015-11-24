@@ -23,7 +23,7 @@
 			
 			<arg>-C{documents, 
 				eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal,
-				eu/dnetlib/iis/workflows/documentsclassification/data/input/onedocument.json}</arg>
+				eu/dnetlib/iis/workflows/documentsclassification/data/input/documents.json}</arg>
 			
 			<arg>-Odocuments=${workingDir}/documentsclassification/producer/documents</arg>
 		</java>

@@ -1472,7 +1472,6 @@
     ],
     "references":null,
     "id":"Glioblastoma Multiforme Segmentation in MRI Data with a Balloon\n  Inflation Approach",
-    ,
     "issue":null,
     "abstract":"glioma are the most common primari brain tumor evolv from the cerebr support cell for clinic follow up the evalu of the preoper tumor volum is essenti volumetr assess of tumor volum with manual segment of it outlin is a time consum process that can be overcom with the help of comput assist segment method in this paper a semi automat approach for world health organ who grade iv glioma segment is introduc that use balloon inflat forc and reli on the detect of high intens tumor boundari that are coupl by use contrast agent gadolinium the present method is evalu on 27 magnet reson imag mri data set and the ground truth data of the tumor boundari for evalu of the result are manual extract by neurosurgeon",
     "publicationType":{
@@ -1516,6 +1515,67 @@
     "publicationType":{
         "article":false,
         "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Ballantine Books",
+    "language":"eng",
+    "title":null,
+    "externalIdentifiers":{
+        "id-1":"val-extr-1",
+        "id-3":"val-extr-3"
+    },
+    "journal":null,
+    "extractedAuthorFullNames":null,
+    "pages":{
+        "start":"3",
+        "end":"503"
+    },
+    "volume":null,
+    "authorIds":null,
+    "year":1997,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_5",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"id-4",
+    "issue":"2",
+    "abstract":"",
+    "publicationType":{
+        "article":true,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":null,
+    "language":null,
+    "title":"Harry Potter and the Sorcerer's Stone",
+    "externalIdentifiers":null,
+    "journal":null,
+    "extractedAuthorFullNames":null,
+    "pages":null,
+    "volume":null,
+    "authorIds":null,
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"id-5",
+    "issue":null,
+    "abstract":null,
+    "publicationType":{
+        "article":false,
+        "dataset":true
     },
     "publicationTypeName":null
 }
