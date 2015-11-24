@@ -6,6 +6,7 @@ import eu.dnetlib.iis.documentsclassification.schemas.DocumentMetadata;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 
 /**
+ * {@link ExtractedDocumentMetadataMergedWithOriginal} to {@link DocumentMetadata} converter
  * @author Łukasz Dumiszewski
  */
 
@@ -13,6 +14,12 @@ public class DocumentToDocClassificationMetadataConverter {
 
     
     
+    //------------------------ LOGIC --------------------------
+    
+    
+    /**
+     * Converts the given {@link ExtractedDocumentMetadataMergedWithOriginal} to {@link DocumentMetadata}
+     */
     public DocumentMetadata convert(ExtractedDocumentMetadataMergedWithOriginal document) {
         
         Preconditions.checkNotNull(document);
