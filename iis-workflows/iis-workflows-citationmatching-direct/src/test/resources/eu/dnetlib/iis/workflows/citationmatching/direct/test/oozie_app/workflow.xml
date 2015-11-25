@@ -22,7 +22,7 @@
             <!-- Specification of the output ports -->
             <arg>-C{metadata,
             eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal,
-            eu/dnetlib/iis/workflows/citationmatching/direct/test/data/document_metadata.json}</arg>
+            eu/dnetlib/iis/workflows/citationmatching/direct/data/input/documents.json}</arg>
             <!-- All input and output ports have to be bound to paths in HDFS -->
             <arg>-Ometadata=${workingDir}/producer/document_metadata</arg>
         </java>
@@ -54,10 +54,6 @@
                     <name>projectJarFileName</name>
                     <value>${projectJarFileName}</value>
                 </property>
-                <property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/citationmatching/workingDir</value>
-                </property>
                 <!-- Input ports. -->
                 <property>
                     <name>input</name>
@@ -66,7 +62,7 @@
                 <!-- Output port bound to given path -->
                 <property>
                     <name>output</name>
-                    <value>${workingDir}/transformer/citation</value>
+                    <value>${workingDir}/output/citation</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -89,10 +85,10 @@
 			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
 			<!-- Specification of the input ports -->
 			<arg>-C{citation,
-                eu.dnetlib.iis.citationmatching.direct.schemas.Citation,
-                eu/dnetlib/iis/workflows/citationmatching/direct/test/data/direct_citation.json}</arg>
+                eu.dnetlib.iis.common.citations.schemas.Citation,
+                eu/dnetlib/iis/workflows/citationmatching/direct/data/expected_output/citations.json}</arg>
     		<!-- All input and output ports have to be bound to paths in HDFS -->
-			<arg>-Icitation=${workingDir}/transformer/citation</arg>
+			<arg>-Icitation=${workingDir}/output/citation</arg>
 		</java>
 		<ok to="end" />
 		<error to="fail" />
