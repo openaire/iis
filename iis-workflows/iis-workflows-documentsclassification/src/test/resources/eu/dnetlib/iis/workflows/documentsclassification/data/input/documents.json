@@ -1,0 +1,1581 @@
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"A note on digitized angles",
+    "issue":null,
+    "abstract":"we studi the configur of pixel that occur when two digit straight line meet each other",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Computer-Generated Photorealistic Hair",
+    "issue":null,
+    "abstract":"this paper present an effici method for generat and render photorealist hair in two dimension pictur the method consist of three major step simul an artist draw is use to design the rough hair shape a convolut base filter is then use to generat photorealist hair patch a refin procedur is final use to blend the boundari of the patch with surround area this method can be use to creat all type of photorealist human hair head hair facial hair and bodi hair it is also suitabl for fur and grass generat applic of this method includ hairstyl design edit damag hair imag restor human hair anim virtual makeov of a human and landscap creation",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Embedded Reflection Mapping",
+    "issue":null,
+    "abstract":"environ map are use to simul reflect off curv object we present a techniqu to reflect a user or a group of user in a real environ onto a virtual object in a virtual realiti applic use the live video feed from a set of camera in real time our setup can be use in a varieti of environ rang from outdoor or indoor scene",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"The Persint visualization program for the ATLAS experiment",
+    "issue":null,
+    "abstract":"the persint program is design for the three dimension represent of object and for the interfac and access to a varieti of independ applic in a fulli interact way facil are provid for the spatial navig and the definit of the visual properti in order to interact set the view and view point and to obtain the desir perspect in parallel applic may be launch through the use of dedic interfac such as the interact reconstruct and display of physic event recent develop have focal on the interfac to the xml atlas general detector descript agdd make it a wide use tool for xml develop the graphic capabl of this program were exploit in the context of the atlas 2002 muon testbeam where it was use as an onlin event display integr in the onlin softwar framework and particip in the commiss and debug of the detector system",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"GraXML - Modular Geometric Modeler",
+    "issue":null,
+    "abstract":"mani entiti manag by hep softwar framework repres spatial 3 dimension real object effect definit manipul and visual of such object is an indispens function graxml is a modular geometr model toolkit capabl of process geometr data of various kind detector geometri event geometri from differ sourc and deliv them in way suitabl for further use geometr data are first model in one of the generic model those model are then use to popul power geometr model base on the java3d technolog while java3d has been origin creat just to provid visual of 3d object it light weight and high function allow an effect reus as a general geometr compon this is possibl also thank to a larg overlap between graphic and general geometr function and modular design of java3d itself it graphic function also allow a natur visual of all manipul element all these techniqu have been develop primarili or onli for the java environ it is howev possibl to interfac them transpar to framework built in other languag like for exampl c the graxml toolkit has been test with data from sever sourc as for exampl atlas and alic detector descript and atlas event data prototyp for other sourc like geometri descript markup languag gdml exist too and interfac to ani other sourc is easi to add",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"The FRED Event Display: an Extensible HepRep Client for GLAST",
+    "issue":null,
+    "abstract":"a new graphic client prototyp for the heprep protocol is present base on modern toolkit and high level languag c and rubi fred is an experi to test applic of script facil to the high energi physic event display domain it flexibl structur extens and the use of the heprep protocol are key featur for it use in the astroparticl experi glast",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"The Use of HepRep in GLAST",
+    "issue":null,
+    "abstract":"heprep is a generic hierarch format for descript of graphic represent that can be augment by physic inform and relat properti it was develop for high energi physic event display applic and is especi suit to client server or compon framework the glast experi an intern effort led by nasa for a gamma ray telescop to launch in 2006 chose heprep to provid a flexibl extens and maintain framework for their event display without tie their user to ani one graphic applic to support heprep in their guadi infrastructur glast develop a heprep filler and builder architectur the architectur hide the detail of xml and corba in a set of base and helper class allow physic expert to focus on what data they want to repres glast has two gaudi servic heprepsvc which regist heprep filler in a global registri and allow the heprep to be export to xml and corbasvc which allow the heprep to be publish through a corba interfac and which allow the client applic to feed command back to gaudi such as start next event or run some gaudi algorithm glast s heprep solut give user a choic of client applic wire written in java or fred written in c and rubi and leav them free to move to ani futur heprep compliant event display",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Application of interactive parallel visualization for commodity-based\n  clusters using visualization APIs",
+    "issue":null,
+    "abstract":"we present an effici and inexpens to develop applic for interact high perform parallel visual we extend popular api such as open inventor and vtk to support commod base cluster visual our implement follow a standard master slave concept the general idea is to have a master node which will intercept a sequenti graphic user interfac gui and broadcast it to the slave node the interact between the node are implement use mpi the parallel remot render use chromium this paper is main the report of our implement experi we present in detail the propos model and key aspect of it implement also we present perform measur we benchmark and quantit demonstr the depend of the visual speed on the data size and the network bandwidth and we identifi the singular and draw conclus on chromium s sort first render architectur the most origin part of this work is the combin use of open inventor and chromium",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Visualization of variations in human brain morphology using\n  differentiating reflection functions",
+    "issue":null,
+    "abstract":"convent visual media such as mri print and comput screen are inher two dimension make them incap of display true 3d volum data set by appli onli transpar or intens project and ignor light matter interact result will like fail to give optim result littl research has been done on use reflect function to visual separ the various segment of a mri volum we will explor if appli specif reflect function to individu anatom structur can help in build an intuit 2d imag from a 3d dataset we will test our hypothesi by visual a statist analysi of the genet influenc on variat in human brain morpholog becaus it inher contain complex and mani differ type of data make it a good candid for our approach",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"An Algorithm for Transforming Color Images into Tactile Graphics",
+    "issue":null,
+    "abstract":"this paper present an algorithm that transform color visual imag like photograph or paint into tactil graphic in the algorithm the edg of object are detect and color of the object are estim then the edg and the color are encod into line and textur in the output tactil imag design of the method is substanti by various qualiti of haptic recogn of imag also mean of present of the tactil imag in printout are discuss exampl translat imag are shown",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Interactive visualization of higher dimensional data in a multiview\n  environment",
+    "issue":null,
+    "abstract":"we develop multipl view visual of higher dimension data our work was chiefli motiv by the need to extract insight from four dimension quantum chromodynam qcd data we develop visual where multipl view general view of 3d project or slice of a higher dimension data are tight coupl not onli by their specif order but also by a view synchron interact style and an intern defin interact languag the tight coupl of the differ view allow a fast and well coordin explor of the data in particular the visual allow us to easili make consist check of the 4d qcd data and to infer the correct of particl properti calcul the softwar develop was also success appli in materi studi in particular studi of meteorit properti our implement use the vtk api to handl a larg number of view slice project and to still maintain good resolut we use ibm t221 display 3840 x 2400 pixel",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Lattice Gas Cellular Automata for Computational Fluid Animation",
+    "issue":null,
+    "abstract":"the past two decad show a rapid grow of physic base model of fluid for comput graphic applic in this area a common top down approach is to model the fluid dynam by navier stoke equat and appli a numer techniqu such as finit differ or finit element for the simul in this paper we focus on fluid model through lattic gas cellular automata lgca for comput graphic applic lgca are discret model base on point particl that move on a lattic accord to suitabl and simpl rule in order to mimic a fulli molecular dynam by chapman enskog expans a known multiscal techniqu in this area it can be demonstr that the navier stoke model can be reproduc by the lgca techniqu thus with lgca we get a fluid model that doe not requir solut of complic equat therefor we combin the advantag of the low comput cost of lgca and it abil to mimic the realist fluid dynam to develop a new anim framework for comput graphic applic in this work we discuss the theoret element of our propos and show experiment result",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Methods for Analytical Understanding of Agent-Based Modeling of Complex\n  Systems",
+    "issue":null,
+    "abstract":"von neuman s work on univers machin and the hardwar develop have allow the simul of dynam system through a larg set of interact agent this is a bottom up approach which tri to deriv global properti of a complex system through local interact rule and agent behaviour tradit such system are model and simul through top down method base on differenti equat agent base model has the advantag of simplic and low comput cost howev unlik differenti equat there is no standard way to express agent behaviour besid it is not clear how to analyt predict the result obtain by the simul in this paper we survey some of these method for express agent behaviour formal method like stochast process algebra have been use such approach is use if the global properti of interest can be express as a function of stochast time seri howev if space variabl must be consid we shall chang the focus in this case multiscal techniqu base on chapman enskog expans was use to establish the connect between the microscop dynam and the macroscop observ also we use data mine techniqu like princip compon analysi pca to studi agent system like cellular automata with the help of these tool we will discuss a simpl societi model a lattic gas automaton for fluid model and knowledg discoveri in ca databas besid we show the capabl of the netlogo a softwar for agent simul of complex system and show our experi about",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"MathPSfrag: Creating Publication-Quality Labels in Mathematica Plots",
+    "issue":null,
+    "abstract":"this articl introduc a mathematica packag provid a graphic export function that automat replac mathematica express in a graphic by the correspond latex construct and posit them correct it thus facilit the creation of public qualiti enscapul postscript ep graphic",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Graphics Turing Test",
+    "issue":null,
+    "abstract":"we defin a graphic ture test to measur graphic perform in a similar manner to the definit of the tradit ture test to pass the test one need to reach a comput scale the graphic ture scale for which comput generat imageri becom compar indistinguish from real imag while also be interact we deriv an estim for this comput scale which although larg is within reach of today supercomput we consid advantag and disadvantag of various comput system design to pass the graphic ture test final we discuss commerci applic from the creation of such a system in particular interact cinema",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Interactive Hatching and Stippling by Example",
+    "issue":null,
+    "abstract":"we describ a system that let a design interact draw pattern of stroke in the pictur plane then guid the synthesi of similar pattern over new pictur region synthesi is base on an initi user assist analysi phase in which the system recogn distinct type of stroke hatch and stippl and organ them accord to perceptu group criteria the synthes stroke are produc by combin properti eg length orient parallel proxim of the stroke group extract from the input exampl we illustr our techniqu with a draw applic that allow the control of attribut and scale depend reproduct of the synthes pattern",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Non-photorealistic image rendering with a labyrinthine tiling",
+    "issue":null,
+    "abstract":"the paper describ a new imag process for a non photorealist render the algorithm is base on a random generat of gray tone and compet statist requir the gray tone valu of each pixel in the start imag is replac select among random generat tone valu accord to the statist of nearest neighbor and next nearest neighbor pixel two compet condit for replac the tone valu one posit on the local mean valu the other on the local varianc produc a peculiar pattern on the imag this pattern has a labyrinthin tile aspect for certain subject the pattern enhanc the look of the imag",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Vector field visualization with streamlines",
+    "issue":null,
+    "abstract":"we have recent develop an algorithm for vector field visual with orient streamlin abl to depict the flow direct everywher in a dens vector field and the sens of the local orient the algorithm has use applic in the visual of the director field in nemat liquid crystal here we propos an improv of the algorithm abl to enhanc the visual of the local magnitud of the field this new approach of the algorithm is compar with the same procedur appli to the line integr convolut lic visual",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Shape preservation behavior of spline curves",
+    "issue":null,
+    "abstract":"shape preserv behavior of a spline consist of criteri condit for preserv convex inflect collinear torsion and coplanar shape of data polgon arc we present our result which act as an improv in the definit of and provid geometr insight into each of the abov shape preserv criteria we also investig the effect of various result from the literatur on various shape preserv criteria these result have not been earlier refer in the context of shape preserv behaviour of spline we point out that each curv segment need to satisfi more than one shape preserv criteria we investig the conflict between differ shape preserv criteria 1 on each curv segment and 2 of adjac curv segment we deriv simplifi formula for shape preserv criteria for cubic curv segment we studi the shape preserv behavior of cubic catmul rom spline and see that though be veri simpl spline curv it inde satisfi all the shape preserv criteria",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Virtual Environments for Training: From Individual Learning to\n  Collaboration with Humanoids",
+    "issue":null,
+    "abstract":"the next generat of virtual environ for train is orient toward collabor aspect therefor we have decid to enhanc our platform for virtual train environ ad collabor opportun and integr humanoid in this paper we put forward a model of humanoid that suit both virtual human and represent of real user accord to collabor train activ we suggest adapt to the scenario model of our platform make it possibl to write collabor procedur we introduc a mechan of action select made up of a global repartit and an individu choic these model are current be integr and valid in gvt a virtual train tool for mainten of militari equip develop in collabor with the french compani nexter group",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Virtual Texturing",
+    "issue":null,
+    "abstract":"in this thesi a render system and an accompani tool chain for virtual textur is present our tool allow to automat retextur exist geometri in order to appli uniqu textur on each face furthermor we investig sever techniqu that tri to minim visual artifact in the case that onli a small amount of page can be stream per frame we analyz the influenc of differ heurist that are respons for the page select alongsid these result we present a measur method to allow the comparison of our heurist",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Realistic Haptic Rendering of Interacting Deformable Objects in Virtual\n  Environments",
+    "issue":null,
+    "abstract":"a new comput haptic algorithm to be use in general interact manipul of deform virtual object is present in multimod interact simul haptic feedback comput often come from contact forc subsequ the fidel of haptic render depend signific on contact space model contact and friction law between deform model are often simplifi in up to date method they do not allow a realist render of the subtleti of contact space physic phenomena such as slip and stick effect due to friction or mechan coupl between contact in this paper we use signorini s contact law and coulomb s friction law as a comput haptic basi real time perform is made possibl thank to a linear of the behavior in the contact space formul as the so call delassus oper and iter solv by a gauss seidel type algorithm dynam deform use corot global formul to obtain the delassus oper in which the mass and stiff ratio are dissoci from the simul time step this last point is crucial to keep stabl haptic feedback this global approach has been packag implement and test stabl and realist 6d haptic feedback is demonstr through a clip task experi",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Efficient Binary and Run Length Morphology and its Application to\n  Document Image Processing",
+    "issue":null,
+    "abstract":"this paper describ the implement and evalu of an open sourc librari for mathemat morpholog base on pack binari and run length compress imag for document imag applic abstract and pattern use in the implement of the interv oper are describ a number of benchmark and comparison to bit blit base implement on standard document imag are provid",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Toward the Graphics Turing Scale on a Blue Gene Supercomputer",
+    "issue":null,
+    "abstract":"we investig raytrac perform that can be achiev on a class of blue gene supercomput we measur a 822 time speedup over a pentium iv on a 6144 processor blue gene l we measur the comput perform as a function of number of processor and problem size to determin the scale perform of the raytrac calcul on the blue gene we find nontrivi scale behavior at larg number of processor we discuss applic of this technolog to scientif visual with advanc light and high resolut we util three rack of a blue gene l in our calcul which is less than three percent of the the capac of the world largest blue gene comput",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"MathPSfrag 2: Convenient LaTeX Labels in Mathematica",
+    "issue":null,
+    "abstract":"this articl introduc the next version of mathpsfrag mathpsfrag is a mathematica packag that dure export automat replac all express in a plot by correspond latex command the new version can also produc latex independ imag e g pdf file for inclus in pdflatex moreov from these file a preview is generat and shown within mathematica",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Dynamic Deformation of Uniform Elastic Two-Layer Objects",
+    "issue":null,
+    "abstract":"this thesi present a two layer uniform facet elast object for real time simul base on physic model method it describ the elast object procedur model algorithm with particl system from the simplest one dimension object to more complex two dimension and three dimension object the doubl layer elast object consist of inner and outer elast mass spring surfac and compress intern pressur the densiti of the inner layer can be set differ from the densiti of the outer layer the motion of the inner layer can be opposit to the motion of the outer layer these special featur which cannot be achiev by a singl layer object result in improv imit of a soft bodi such as tissu s liquid non uniform deform the construct of the doubl layer elast object is closer to the real tissu s physic structur the inerti behavior of the elast object is well illustr in environ with graviti and collis with wall ceil and floor the collis detect is defin by elast collis penalti method and the motion of the object is guid by the ordinari differenti equat comput user can interact with the model object deform them and observ the respons to their action in real time",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Yet Another Pacman 3D Adventures",
+    "issue":null,
+    "abstract":"this game is meant to be extens of the over beaten pacman style game code name yet anoth pacman 3d adventur or yap3dad from the propos idea and other project with advanc visual and comput graphic featur includ a game in a game approach the project is an open sourc project publish on sourceforg net for possibl futur develop and extens",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Secure Watermarking Scheme for Color Image Using Intensity of Pixel and\n  LSB Substitution",
+    "issue":null,
+    "abstract":"in this paper a novel spatial domain lsb base watermark scheme for color imag is propos the propos scheme is of type blind and invis watermark our scheme introduc the concept of store variabl number of bit in each pixel base on the actual color valu of pixel equal or higher the color valu of channel with respect to intens of pixel store higher number of watermark bit the red green and blue channel of the color imag has been use for watermark embed the watermark is embed into select channel of pixel the propos method support high watermark embed capac which is equival to the size of cover imag the secur of watermark is preserv by permut the watermark bit use secret key the propos scheme is found robust to various imag process oper such as imag compress blur salt and pepper nois filter and crop",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Resolution scalability improvement for JPEG2000 standard color image",
+    "issue":null,
+    "abstract":"remov by arxiv administr this articl was plagiaris from http www dmi unict it battiato download nsip_2003_vq pdf and other locat",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Spatial Domain Watermarking Scheme for Colored Images Based on\n  Log-average Luminance",
+    "issue":null,
+    "abstract":"in this paper a new watermark scheme is present base on log averag lumin a color imag is divid into block after convert the rgb color imag to ycbcr color space a monochrom imag of 1024 byte is use as the watermark to emb the watermark 16 block of size 8x8 are select and use to emb the watermark imag into the origin imag the select block are chosen spiral begin form the center of the imag among the block that have log averag lumin higher than or equal the log averag lumin of the entir imag each byte of the monochrom watermark is ad by updat a lumin valu of a pixel of the imag if the byte of the watermark imag repres white color 255 a valu alpha is ad to the imag pixel lumin valu if it is black 0 the alpha is subtract from the lumin valu to extract the watermark the select block are chosen as the abov if the differ between the lumin valu of the watermark imag pixel and the origin imag pixel is greater than 0 the watermark pixel is suppos to be white otherwis it suppos to be black experiment result show that the propos scheme is effici against chang the watermark imag to grayscal imag crop and jpeg compress",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Text/Graphics Separation and Skew Correction of Text Regions of Business\n  Card Images for Mobile Devices",
+    "issue":null,
+    "abstract":"separ of the text region from background textur and graphic is an import step of ani optic charact recognit system for the imag contain both text and graphic in this paper we have present a novel text graphic separ techniqu and a method for skew correct of text region extract from busi card imag captur with a cell phone camera at first the background is elimin at a coars level base on intens varianc this make the foreground compon distinct from each other then the non text compon are remov use various characterist featur of text and graphic final the text region are skew correct for further process experi with busi card imag of various resolut we have found an optimum perform of 98.25 recal with 0.75 mp imag that take 0.17 second process time and 1.1 mb peak memori on a moder power comput dualcor 1.73 ghz processor 1 gb ram 1 mb l2 cach the develop techniqu is comput effici and consum low memori so as to be applic on mobil devic",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Text/Graphics Separation for Business Card Images for Mobile Devices",
+    "issue":null,
+    "abstract":"separ of the text region from background textur and graphic is an import step of ani optic charact recognit sytem for the imag conta both text and graphic in this paper we have present a novel text graphic separ techniqu for busi card imag captur with a cell phone camera at first the background is elimin at a coars level base on intens varianc this make the foreground compon distinct from each other then the non text compon are remov use various characterist featur of text and graphic final the text region are skew correct and binar for further process experi with busi card imag of various resolut we have found an optimum perform of 98.54 with 0.75 mp imag that take 0.17 second process time and 1.1 mb peak memori on a moder power comput dualcor 1.73 ghz processor 1 gb ram 1 mb l2 cach the develop techniqu is comput effici and consum low memori so as to be applic on mobil devic",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Finding and Classifying Critical Points of 2D Vector Fields: A\n  Cell-Oriented Approach Using Group Theory",
+    "issue":null,
+    "abstract":"we present a novel approach to find critic point in cell wise barycentr or bilinear interpol vector field on surfac the poincar e index of the critic point is determin by investig the qualit behavior of 0 level set of the interpol of the vector field compon in paramet space use precomput combinatori result thus avoid the comput of the jacobian of the vector field at the critic point in order to determin it index the locat of the critic point within a cell are determin analyt to achiev accur result this approach lead to a correct treatment of case with two first order critic point or one second order critic point of bilinear interpol vector field within one cell which would be miss by examin the linear field onli we show that for the consid interpol scheme determin the index of a critic point can be seen as a color problem of cell edg a complet classif of all possibl color in term of the type and number of critic point yield by each color is given use comput group theori we present an effici algorithm that make use of these precomput classif in order to find and classifi critic point in a cell by cell fashion issu of numer stabil construct of the topolog skeleton topolog simplif and the statist of the differ type of critic point are also discuss",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Geoglyphs of Titicaca as an ancient example of graphic design",
+    "issue":null,
+    "abstract":"the paper propos an ancient landscap design as an exampl of graphic design for an age and place where no written document exist it is creat by a network of earthwork which constitut the remain of an extens ancient agricultur system it can be seen by mean of the googl satellit imageri on the peruvian region near the titicaca lake as a textur superimpos to the background landform in this textur mani draw geoglyph can be observ",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Across Browsers SVG Implementation",
+    "issue":null,
+    "abstract":"in this work svg will be translat into vml or html by use javascript base on backbas client framework the target of this project is to implement svg to be view in internet explor without ani plug in and work togeth with other backbas client framework languag the result of this project will be ad as an extens to the current backbas client framework",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"High Speed and Area Efficient 2D DWT Processor based Image Compression\"\n  Signal & Image Processing",
+    "issue":null,
+    "abstract":"this paper present a high speed and area effici dwt processor base design for imag compress applic in this propos design pipelin partial serial architectur has been use to enhanc the speed along with optim util and resourc avail on target fpga the propos model has been design and simul use simulink and system generat block synthes with xilinx synthesi tool xst and implement on spartan 2 and 3 base xc2s100 5tq144 and xc3s500e 4fg320 target devic the result show that propos design can oper at maximum frequenc 231 mhz in case of spartan 3 by consum power of 117mw at 28 degre c junction temperatur the result comparison has shown an improv of 15 in speed",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Improving the Performance of K-Means for Color Quantization",
+    "issue":null,
+    "abstract":"color quantiz is an import oper with mani applic in graphic and imag process most quantiz method are essenti base on data cluster algorithm howev despit it popular as a general purpos cluster algorithm k mean has not receiv much respect in the color quantiz literatur becaus of it high comput requir and sensit to initi in this paper we investig the perform of k mean as a color quantiz we implement fast and exact variant of k mean with sever initi scheme and then compar the result quantiz to some of the most popular quantiz in the literatur experi on a divers set of imag demonstr that an effici implement of k mean with an appropri initi strategi can in fact serv as a veri effect color quantiz",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Ray-Based Reflectance Model for Diffraction",
+    "issue":null,
+    "abstract":"we present a novel method of simul wave effect in graphic use ray base render with a new function the wave bsdf bidirect scatter distribut function reflect from neighbor surfac patch repres by local bsdfs are mutual independ howev in mani surfac with wavelength scale microstructur interfer and diffract requir a joint analysi of reflect wavefront from neighbor patch we demonstr a simpl method to comput the bsdf for the entir microstructur which can be use independ for each patch this allow us to use tradit ray base render pipelin to synthes wave effect of light and sound we exploit the wigner distribut function wdf to creat transmiss reflect and emiss bsdfs for various diffract phenomena in a physic accur way in contrast to previous method for comput interfer we circumv the need to explicit keep track of the phase of the wave by use bsdfs that includ posit as well as negat coeffici we describ and compar the theori in relat to well understood concept in render and demonstr a straightforward implement in conjunct with standard raytrac such as pbrt we demonstr wave effect for a rang of scenario such as multi bounc diffract materi hologram and reflect of high frequenc surfac",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Glioblastoma Multiforme Segmentation in MRI Data with a Balloon\n  Inflation Approach",
+    "issue":null,
+    "abstract":"glioma are the most common primari brain tumor evolv from the cerebr support cell for clinic follow up the evalu of the preoper tumor volum is essenti volumetr assess of tumor volum with manual segment of it outlin is a time consum process that can be overcom with the help of comput assist segment method in this paper a semi automat approach for world health organ who grade iv glioma segment is introduc that use balloon inflat forc and reli on the detect of high intens tumor boundari that are coupl by use contrast agent gadolinium the present method is evalu on 27 magnet reson imag mri data set and the ground truth data of the tumor boundari for evalu of the result are manual extract by neurosurgeon",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Mathematics of Human Motion: from Animation towards Simulation (A View\n  form the Outside)",
+    "issue":null,
+    "abstract":"simul of human motion is the subject of studi in a number of disciplin biomechan robot comput anim control theori neurophysiolog medicin ergonom sinc the author has never visit ani of these field this review is inde a passer by s impress on the other hand he happen to be a human who occasion is move and as everybodi els rate himself an expert in appli common sens thus the author hope that this view from the em outsid will be of some interest not onli for the stranger like himself but for those who are em insid as well two flaw of the text that follow are inevit first some essenti issu that are too familar to the specialist to discuss them may be miss second the author probabl fail to provid the uniform level of detail for this wide rang of topic",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Ballantine Books",
+    "language":"eng",
+    "title":null,
+    "externalIdentifiers":{
+        "id-1":"val-extr-1",
+        "id-3":"val-extr-3"
+    },
+    "journal":null,
+    "extractedAuthorFullNames":null,
+    "pages":{
+        "start":"3",
+        "end":"503"
+    },
+    "volume":null,
+    "authorIds":null,
+    "year":1997,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_5",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"id-4",
+    "issue":"2",
+    "abstract":"",
+    "publicationType":{
+        "article":true,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":null,
+    "language":null,
+    "title":"Harry Potter and the Sorcerer's Stone",
+    "externalIdentifiers":null,
+    "journal":null,
+    "extractedAuthorFullNames":null,
+    "pages":null,
+    "volume":null,
+    "authorIds":null,
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"id-5",
+    "issue":null,
+    "abstract":null,
+    "publicationType":{
+        "article":false,
+        "dataset":true
+    },
+    "publicationTypeName":null
+}

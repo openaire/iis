@@ -165,7 +165,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 	    String mvn = "mvn";
 		
 	    if (SystemUtils.IS_OS_WINDOWS) {
-		    mvn = "mvn.bat";
+		    mvn = "mvn.cmd";
 		}
 	    
 		Process p;

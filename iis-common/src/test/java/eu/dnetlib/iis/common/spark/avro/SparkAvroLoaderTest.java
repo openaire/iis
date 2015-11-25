@@ -2,7 +2,8 @@ package eu.dnetlib.iis.common.spark.avro;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -24,8 +25,8 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import eu.dnetlib.iis.common.avro.Country;
 import scala.Tuple2;
+import eu.dnetlib.iis.common.avro.Country;
 
 /**
  * 
@@ -61,7 +62,7 @@ public class SparkAvroLoaderTest {
         
         doReturn(javaPairRDD).when(sparkContext).newAPIHadoopFile(eq("/avro/datastore"), eq(AvroKeyInputFormat.class), eq(Country.class), 
                 eq(NullWritable.class), any(Configuration.class));
-        doReturn(javaRDD).when(javaPairRDD).map(any(Function.class));
+        doReturn(javaRDD).when(javaPairRDD).map(any());
         
         
         // execute

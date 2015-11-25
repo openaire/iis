@@ -30,6 +30,12 @@
 		</dependency>
 		
 		<dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+		
+		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
 			<artifactId>iis-core</artifactId>
 			<version>${project.version}</version>
@@ -61,6 +67,22 @@
 			<artifactId>hadoop-common</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_2.10</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_2.10</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
+        </dependency>
+        
 		
 	</dependencies>
 	<build>
