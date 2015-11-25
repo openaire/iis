@@ -181,6 +181,7 @@
 									</goals>
 									<configuration>
 										<includeScope>${oozie.package.dependencies.scope}</includeScope>
+										<silent>true</silent>
 									</configuration>
 							</execution>
 						</executions>
@@ -482,12 +483,13 @@
 					      </goals>
 					      <configuration>
 						    <executable>ssh</executable>
+<!-- 						    <outputFile>target/redirected_upload.log</outputFile> -->
 						    <arguments>
 								<argument>${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name}</argument>
 								<argument>-p ${iis.hadoop.frontend.port.ssh}</argument>
 								<argument>-o StrictHostKeyChecking=no</argument>
 								<argument>cd ${iis.hadoop.frontend.temp.dir}/oozie-packages/${sandboxName}/${output.dir.name}/; </argument>
-								<argument>tar -zxvf oozie-package.tar.gz; </argument>
+								<argument>tar -zxf oozie-package.tar.gz; </argument>
 								<argument>rm ${iis.hadoop.frontend.temp.dir}/oozie-packages/${sandboxName}/${output.dir.name}/oozie-package.tar.gz; </argument>
 								<argument>./upload_workflow.sh</argument> 
 						    </arguments>
@@ -651,7 +653,7 @@
 								<goal>verify</goal>
 							</goals>
 							<configuration>
-								<redirectTestOutputToFile>true</redirectTestOutputToFile>
+								<redirectTestOutputToFile>false</redirectTestOutputToFile>
 								<argLine>-Xmx1024m</argLine>
 								<systemPropertiesVariables>
 									<hadoop.log.dir>/tmp</hadoop.log.dir>
