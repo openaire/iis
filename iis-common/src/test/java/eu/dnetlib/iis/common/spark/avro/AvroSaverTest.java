@@ -18,13 +18,14 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pl.edu.icm.sparkutils.test.SparkJob;
+import pl.edu.icm.sparkutils.test.SparkJobBuilder;
+import pl.edu.icm.sparkutils.test.SparkJobExecutor;
+
 import com.google.common.io.Files;
 
 import eu.dnetlib.iis.IntegrationTest;
 import eu.dnetlib.iis.common.avro.Country;
-import eu.dnetlib.iis.common.spark.test.SparkJob;
-import eu.dnetlib.iis.common.spark.test.SparkJobBuilder;
-import eu.dnetlib.iis.common.spark.test.SparkJobExecutor;
 import eu.dnetlib.iis.core.common.AvroTestUtils;
 
 /**

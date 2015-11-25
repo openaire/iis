@@ -40,6 +40,10 @@
             <version>${project.version}</version>
         </dependency>
         
+		<dependency>
+            <groupId>pl.edu.icm.spark-utils</groupId>
+            <artifactId>spark-utils</artifactId>
+        </dependency>
 		
 		<!-- Needed to run Pig jobs { -->
 		<dependency>

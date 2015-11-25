@@ -179,6 +179,7 @@
             <artifactId>spark-sql_2.10</artifactId>
         </dependency>
         
+       
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
@@ -376,6 +377,14 @@
                 <artifactId>spark-avro_2.10</artifactId>
                 <version>1.0.0</version>
             </dependency>
+            
+            <dependency>
+                <groupId>pl.edu.icm.spark-utils</groupId>
+                <artifactId>spark-utils</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+        
+            
             
             <!-- Avro dependencies -->
             <dependency>
