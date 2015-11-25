@@ -79,6 +79,12 @@
         </dependency>
         
         <dependency>
+            <groupId>pl.edu.icm.spark-utils</groupId>
+            <artifactId>spark-utils</artifactId>
+        </dependency>
+        
+        
+        <dependency>
             <groupId>com.beust</groupId>
             <artifactId>jcommander</artifactId>
         </dependency>

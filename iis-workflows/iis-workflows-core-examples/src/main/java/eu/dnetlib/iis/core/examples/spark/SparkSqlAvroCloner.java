@@ -18,7 +18,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
-import eu.dnetlib.iis.common.spark.avro.SparkAvroSaver;
+import eu.dnetlib.iis.common.spark.avro.AvroSaver;
 import eu.dnetlib.iis.core.common.AvroUtils;
 
 /**
@@ -81,7 +81,7 @@ public class SparkSqlAvroCloner {
             
             DataFrame outputDf = sqlContext.createDataFrame(rows, inputDf.schema());
             
-            SparkAvroSaver.saveDataFrame(outputDf, schema, params.outputAvroPath);
+            AvroSaver.save(outputDf, schema, params.outputAvroPath);
             
         }
         

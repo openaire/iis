@@ -11,16 +11,15 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pl.edu.icm.sparkutils.test.SparkJob;
+import pl.edu.icm.sparkutils.test.SparkJobBuilder;
+import pl.edu.icm.sparkutils.test.SparkJobExecutor;
+
 import com.google.common.io.Files;
 
-import eu.dnetlib.iis.IntegrationTest;
-import eu.dnetlib.iis.common.spark.test.SparkJob;
-import eu.dnetlib.iis.common.spark.test.SparkJobBuilder;
-import eu.dnetlib.iis.common.spark.test.SparkJobExecutor;
 import eu.dnetlib.iis.core.common.AvroTestUtils;
 import eu.dnetlib.iis.core.examples.StandardDataStoreExamples;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person;
@@ -29,7 +28,6 @@ import eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person;
 /**
  * @author Łukasz Dumiszewski
  */
-@Category(IntegrationTest.class)
 public class SparkAvroClonerTest {
 
     private Logger log = LoggerFactory.getLogger(SparkAvroClonerTest.class);
