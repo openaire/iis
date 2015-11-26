@@ -19,13 +19,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import pl.edu.icm.sparkutils.test.SparkJob;
+import pl.edu.icm.sparkutils.test.SparkJobBuilder;
+import pl.edu.icm.sparkutils.test.SparkJobExecutor;
+
 import com.google.common.io.Files;
 
 import eu.dnetlib.iis.common.citations.schemas.Citation;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
-import eu.dnetlib.iis.common.spark.test.SparkJob;
-import eu.dnetlib.iis.common.spark.test.SparkJobBuilder;
-import eu.dnetlib.iis.common.spark.test.SparkJobExecutor;
 import eu.dnetlib.iis.core.common.AvroAssertTestUtil;
 import eu.dnetlib.iis.core.common.AvroTestUtils;
 import eu.dnetlib.iis.core.common.JsonAvroTestUtils;

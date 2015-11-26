@@ -7,21 +7,22 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
+import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
+import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
+
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 import eu.dnetlib.iis.citationmatching.direct.schemas.Citation;
 import eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata;
-import eu.dnetlib.iis.common.spark.avro.SparkAvroLoader;
-import eu.dnetlib.iis.common.spark.avro.SparkAvroSaver;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import eu.dnetlib.iis.workflows.citationmatching.direct.converter.DirectCitationToCitationConverter;
 import eu.dnetlib.iis.workflows.citationmatching.direct.converter.DocumentToDirectCitationMetadataConverter;
 import eu.dnetlib.iis.workflows.citationmatching.direct.model.IdWithPosition;
 import eu.dnetlib.iis.workflows.citationmatching.direct.service.ExternalIdCitationMatcher;
-import eu.dnetlib.iis.workflows.citationmatching.direct.service.PickResearchArticleDocumentFunction;
 import eu.dnetlib.iis.workflows.citationmatching.direct.service.PickFirstDocumentFunction;
+import eu.dnetlib.iis.workflows.citationmatching.direct.service.PickResearchArticleDocumentFunction;
 
 
 public class CitationMatchingDirectJob {

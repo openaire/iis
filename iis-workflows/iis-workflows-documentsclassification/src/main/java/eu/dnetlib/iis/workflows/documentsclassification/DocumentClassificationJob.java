@@ -7,12 +7,13 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
+import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
+import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
+
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
-import eu.dnetlib.iis.common.spark.avro.SparkAvroLoader;
-import eu.dnetlib.iis.common.spark.avro.SparkAvroSaver;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentMetadata;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 
