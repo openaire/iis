@@ -60,13 +60,9 @@ public class DocumentClassificationJob {
             
             String scriptRootDir = SparkFiles.getRootDirectory().replaceAll("\\\\", "/")+"/scripts";
             
-            System.out.println(scriptRootDir);
-            
             JavaRDD<String> stringDocumentClasses = metadataRecords.pipe("sh -c 'cd " + scriptRootDir + " && sh " + scriptRootDir+ "/classify_documents.sh'");
             
             JavaRDD<DocumentToDocumentClasses> documentClasses = stringDocumentClasses.map(recordString -> AvroGsonFactory.create().fromJson(recordString, DocumentToDocumentClasses.class));
-            
-            System.out.println(documentClasses.collect().toString());
             
             SparkAvroSaver.saveJavaRDD(documentClasses, DocumentToDocumentClasses.SCHEMA$, params.outputAvroPath);
         
