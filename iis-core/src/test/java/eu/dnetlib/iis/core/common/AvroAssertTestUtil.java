@@ -1,8 +1,8 @@
 package eu.dnetlib.iis.core.common;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -55,6 +55,7 @@ public class AvroAssertTestUtil {
 
         List<String> jsonStringDatastore = jsonDatastore.stream().map(T::toString).collect(Collectors.toList());
         List<String> avroStringDatastore = avroDatastore.stream().map(T::toString).collect(Collectors.toList());
+        
         
         assertThat(avroStringDatastore, containsInAnyOrder(jsonStringDatastore.toArray()));
 

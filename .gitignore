@@ -9,3 +9,4 @@
 /*/bin
 /bin
 dependency-reduced-pom.xml
+*.pyc

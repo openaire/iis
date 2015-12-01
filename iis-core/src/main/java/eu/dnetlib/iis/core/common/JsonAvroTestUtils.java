@@ -1,14 +1,15 @@
 package eu.dnetlib.iis.core.common;
 
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
-import org.apache.commons.io.IOUtils;
 
 import com.google.common.collect.Lists;
-import com.google.gson.Gson;
+
+import eu.dnetlib.iis.core.java.io.JsonStreamReader;
 
 /**
  * Utils class for operating on avro objects saved in json files
@@ -31,18 +32,17 @@ public class JsonAvroTestUtils {
     /**
      * Reads records from json file (jsonFilePath) as objects of recordClass class
      */
-    public static <T extends GenericRecord> List<T> readJsonDataStore(String jsonFilePath, Class<T> recordClass) throws IOException {
-        Gson gson = AvroGsonFactory.create();
+    public static <T extends GenericRecord> List<T> readJsonDataStore(String jsonFilePath, Class<T> avroRecordClass) throws IOException {
         List<T> jsonDatastore = Lists.newArrayList();
 
-        try (FileReader reader = new FileReader(jsonFilePath)) {
+        Schema schema = AvroUtils.toSchema(avroRecordClass.getName());
+        
+        try (JsonStreamReader<T> reader = new JsonStreamReader<T>(schema, new FileInputStream(jsonFilePath), avroRecordClass)) {
 
-            List<String> recordsStrings = IOUtils.readLines(reader);
-
-            for (String recordString : recordsStrings) {
-                recordString = recordString.replaceAll("\"abstract\"\\s*:\\s*", "\"abstract\\$\": ");
-                T element = gson.fromJson(recordString, recordClass);
-                jsonDatastore.add(element);
+            while(reader.hasNext()) {
+                T record = reader.next();
+            
+                  jsonDatastore.add(record);
             }
         }
 

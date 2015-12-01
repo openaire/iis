@@ -107,7 +107,7 @@ public class SparkPipeExecutorTest {
 		assertTrue(mappedKeyValueRDD == retMappedRDD);
 		
 		verify(avroKeyValueRDD).keys();
-		verify(avroRDD).pipe(new File("/some/spark/dir/mapScriptName").getAbsolutePath() + " -arg=value");
+		verify(avroRDD).pipe("python " + new File("/some/spark/dir/mapScriptName").getAbsolutePath() + " -arg=value");
 		
 		verify(mappedStringRDD).mapToPair(stringToKeyValueFunctionArg.capture());
 		assertStringToKeyValueFunction(stringToKeyValueFunctionArg.getValue());
@@ -142,7 +142,7 @@ public class SparkPipeExecutorTest {
 		verify(sortedKeyValueRDD).map(keyValueToStringFunctionArg.capture());
 		assertKeyValueToStringFunction(keyValueToStringFunctionArg.getValue());
 		
-		verify(stringRDD).pipe(new File("/some/spark/dir/reducerScriptName").getAbsolutePath() + " -arg=value");
+		verify(stringRDD).pipe("python " + new File("/some/spark/dir/reducerScriptName").getAbsolutePath() + " -arg=value");
 		
 		verify(reducedStringRDD).map(jsonToAvroDocumentFunctionArg.capture());
 		assertJsonToAvroDocumentFunction(jsonToAvroDocumentFunctionArg.getValue());

@@ -9,8 +9,8 @@ import org.apache.spark.SparkFiles;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 
-import eu.dnetlib.iis.core.common.AvroGsonFactory;
 import scala.Tuple2;
+import eu.dnetlib.iis.core.common.AvroGsonFactory;
 
 
 /**
@@ -38,7 +38,7 @@ public class SparkPipeExecutor implements Serializable {
 	 */
 	public JavaPairRDD<String, String> doMap(JavaPairRDD<AvroKey<GenericRecord>, NullWritable> inputRecords, String scriptName, String args) {
 
-		JavaRDD<String> mappedRecords = inputRecords.keys().pipe(SparkFiles.get(scriptName) + " " + args);
+		JavaRDD<String> mappedRecords = inputRecords.keys().pipe("python " + SparkFiles.get(scriptName) + " " + args);
 
 		JavaPairRDD<String, String> outputRecords = mappedRecords
 				.mapToPair(line -> {
@@ -62,7 +62,7 @@ public class SparkPipeExecutor implements Serializable {
 
 		JavaRDD<String> reducedRecords = inputRecords.sortByKey()
 				.map(record -> record._1 + ((record._2 == null) ? "" : ("\t" + record._2)))
-				.pipe(SparkFiles.get(scriptName) + " " + args);
+				.pipe("python " + SparkFiles.get(scriptName) + " " + args);
 
 		JavaPairRDD<AvroKey<GenericRecord>, NullWritable> outputRecords = reducedRecords
 				.map(recordString -> AvroGsonFactory.create().fromJson(recordString, outputClass))

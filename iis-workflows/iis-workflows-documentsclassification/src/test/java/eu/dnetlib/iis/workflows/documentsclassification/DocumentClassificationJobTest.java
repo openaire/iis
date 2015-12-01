@@ -2,11 +2,15 @@ package eu.dnetlib.iis.workflows.documentsclassification;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
@@ -17,7 +21,7 @@ import com.google.common.io.Files;
 import eu.dnetlib.iis.core.common.AvroAssertTestUtil;
 import eu.dnetlib.iis.core.common.AvroTestUtils;
 import eu.dnetlib.iis.core.common.JsonAvroTestUtils;
-import eu.dnetlib.iis.documentsclassification.schemas.DocumentMetadata;
+import eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 
 /**
@@ -60,8 +64,8 @@ public class DocumentClassificationJobTest {
         String inputDirPath = workingDir + "/document_classification/input";
         String outputDirPath = workingDir + "/document_classification/output";
         
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/workflows/documentsclassification/data/input/spark_job_test_documents.json";
-        String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/workflows/documentsclassification/data/expected_output/spark_job_test_dc_metadata.json";
+        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/workflows/documentsclassification/data/input/few_documents.json";
+        String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/workflows/documentsclassification/data/expected_output/few_document_to_document_classes.json";
         
         
         AvroTestUtils.createLocalAvroDataStore(
@@ -69,6 +73,10 @@ public class DocumentClassificationJobTest {
                 inputDirPath);
         
         
+        String destDirectory = this.getClass().getResource("/eu/dnetlib/iis/workflows/documentsclassification/oozie_app/lib/scripts").getPath();
+        
+        
+        copyMadis(destDirectory + "/madis");
         
         
         SparkJob sparkJob = SparkJobBuilder
@@ -79,7 +87,7 @@ public class DocumentClassificationJobTest {
                                            .setMainClass(DocumentClassificationJob.class)
                                            .addArg("-inputAvroPath", inputDirPath)
                                            .addArg("-outputAvroPath", outputDirPath)
-                                           
+                                           .addArg("-scriptDirPath", destDirectory)
                                            .build();
         
         
@@ -91,7 +99,28 @@ public class DocumentClassificationJobTest {
         
         // assert
         
-        AvroAssertTestUtil.assertEqualsWithJson(outputDirPath, jsonOutputFile, DocumentMetadata.class);
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputFile, DocumentToDocumentClasses.class);
     }
         
+    
+    
+    //------------------------ PRIVATE --------------------------
+    
+    private void copyMadis(String destDirectory) throws IOException {
+        String directoryToScan = "/eu/dnetlib/iis/3rdparty/scripts/madis/";
+        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        Resource[] resources = resolver.getResources(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + directoryToScan + "**");
+        for (Resource resource : resources) {
+            if (resource.exists() & resource.isReadable() & (resource.contentLength() > 0 || resource.getFilename().equals("__init__.py"))) {
+                URL url = resource.getURL();
+                String urlString = url.toExternalForm();
+                String targetName = urlString.substring(urlString.indexOf(directoryToScan)+directoryToScan.length());
+                File destination = new File(destDirectory, targetName);
+                FileUtils.copyURLToFile(url, destination);
+                System.out.println("Copied " + url + " to " + destination.getAbsolutePath());
+            } else {
+                System.out.println("Did not copy, seems to be directory: " + resource.getDescription());
+            }
+        }
+    }
 }

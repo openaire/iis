@@ -1,1 +1,1 @@
-scripts/madis/mexec.py -d scripts/taxonomies.db -f scripts/classify.sql | scripts/complete_taxonomies.py
+python ./madis/mexec.py -d taxonomies.db -f classify.sql | python complete_taxonomies.py
