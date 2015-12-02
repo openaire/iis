@@ -1,5 +1,8 @@
 package eu.dnetlib.iis.core.examples.spark;
 
+import java.io.FileInputStream;
+
+import org.apache.oozie.util.IOUtils;
 import org.junit.Test;
 
 import eu.dnetlib.iis.core.AbstractOozieWorkflowTestCase;
@@ -27,8 +30,7 @@ public class PersonIdExtractorWorkflowTest extends AbstractOozieWorkflowTestCase
         
         
         // assert
-        TestsIOUtils.assertContentsEqual(
-                "eu/dnetlib/iis/core/examples/simple_csv_data/person_id.csv", 
-                workflowTestResult.getWorkflowOutputFile("output/person_id/part-00000"));
+        TestsIOUtils.assertUtf8TextContentsEqual(IOUtils.getResourceAsStream("eu/dnetlib/iis/core/examples/simple_csv_data/person_id.csv", 0),
+                new FileInputStream(workflowTestResult.getWorkflowOutputFile("output/person_id/part-00000")));
     }
 }

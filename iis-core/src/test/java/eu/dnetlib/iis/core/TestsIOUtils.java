@@ -1,16 +1,21 @@
 package eu.dnetlib.iis.core;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.Assert;
+import org.junit.Assert;
+
 import eu.dnetlib.iis.core.java.io.JsonUtils;
 
 /**
@@ -142,6 +147,30 @@ public class TestsIOUtils {
 						resourcePath), 
 				new FileInputStream(otherFile));
 	}
+	
+    /**
+     * Checks whether the passed input streams are equal. The input streams are considered to be equal if their content is
+     * the same utf-8 text (windows/unix new line differences do not matter - they are treated as if they were the same).
+    */
+    public static void assertUtf8TextContentsEqual(InputStream in0, InputStream in1) {
+	    
+        String line1 = null;
+        String line2 = null;
+        
+        try (BufferedReader br1 = new BufferedReader(new InputStreamReader(in0, "UTF-8"))) {
+            try (BufferedReader br2 = new BufferedReader(new InputStreamReader(in1, "UTF-8"))) {
+                while ((line1 = br1.readLine()) != null & (line2 = br2.readLine()) != null) {
+                    assertEquals(line1, line2);
+                }
+                if (line1 != null || line2 != null) {
+                    Assert.fail();
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+	
 	
 	/**
 	 * Assume that the contents of two input streams is equal.
