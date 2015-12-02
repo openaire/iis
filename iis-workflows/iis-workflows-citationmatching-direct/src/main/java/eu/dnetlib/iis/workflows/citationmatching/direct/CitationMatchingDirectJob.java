@@ -57,7 +57,7 @@ public class CitationMatchingDirectJob {
             
             
             JavaRDD<DocumentMetadata> simplifiedDocuments = documents.map(document -> documentToDirectCitationMetadataConverter.convert(document));
-//            simplifiedDocumentsMetadata = simplifiedDocumentsMetadata.cache(); // FIXME: https://github.com/openaire/iis/issues/128
+            simplifiedDocuments = simplifiedDocuments.cache();
             
             
             JavaRDD<Citation> directDoiCitations = externalIdCitationMatcher.matchCitations(simplifiedDocuments, "doi", new PickFirstDocumentFunction());
