@@ -24,7 +24,7 @@ import eu.dnetlib.data.proto.OrganizationProtos.Organization;
 import eu.dnetlib.data.proto.RelTypeProtos.RelType;
 import eu.dnetlib.data.proto.ResultOrganizationProtos.ResultOrganization;
 import eu.dnetlib.data.proto.TypeProtos.Type;
-import eu.dnetlib.data.transform.xml.AbstractDNetOafXsltFunctions;
+import eu.dnetlib.data.transform.xml.AbstractDNetXsltFunctions;
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.export.schemas.DocumentMetadata;
 import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
@@ -195,7 +195,7 @@ public class DocumentAffiliationsActionBuilderModuleFactory
 		 * @return OA+ organization identifier
 		 */
 		String buildOrganizationIndetifier(String organizationText) {
-			return AbstractDNetOafXsltFunctions.oafId(
+			return AbstractDNetXsltFunctions.oafId(
 	        		Type.organization.name(), IIS_NS_PREFIX, organizationText);
 		}
 		
