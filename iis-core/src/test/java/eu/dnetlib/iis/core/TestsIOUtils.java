@@ -148,13 +148,13 @@ public class TestsIOUtils {
 				new FileInputStream(otherFile));
 	}
 	
-	/**
-	 * Checks whether the passed input streams are equal. The input streams are considered to be equal if their content is
-	 * the same utf-8 text (windows/unix new line differences do not matter - they are treated as if they were the same).
-	 */
-	public static void assertUtf8TextContentsEqual(InputStream in0, InputStream in1) {
+    /**
+     * Checks whether the passed input streams are equal. The input streams are considered to be equal if their content is
+     * the same utf-8 text (windows/unix new line differences do not matter - they are treated as if they were the same).
+    */
+    public static void assertUtf8TextContentsEqual(InputStream in0, InputStream in1) {
 	    
-	    String line1 = null;
+        String line1 = null;
         String line2 = null;
         
         try (BufferedReader br1 = new BufferedReader(new InputStreamReader(in0, "UTF-8"))) {
@@ -169,7 +169,7 @@ public class TestsIOUtils {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-	}
+    }
 	
 	
 	/**
