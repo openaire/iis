@@ -12,7 +12,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import eu.dnetlib.data.proto.TypeProtos.Type;
-import eu.dnetlib.data.transform.xml.AbstractDNetOafXsltFunctions;
+import eu.dnetlib.data.transform.xml.AbstractDNetXsltFunctions;
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.importer.schemas.Project;
 import eu.dnetlib.iis.workflows.importer.converter.ProjectConverter;
@@ -132,7 +132,7 @@ public class DatabaseProjectXmlHandler extends DefaultHandler {
 				throw new SAXException("unexpected projectId format: " + this.projectId + 
 						", unable to split into two by " + HBaseConstants.ID_NAMESPACE_SEPARATOR);
 			}
-			projectBuilder.setId(AbstractDNetOafXsltFunctions.oafId(
+			projectBuilder.setId(AbstractDNetXsltFunctions.oafId(
 					Type.project.name(), 
 					tokenizedProjectId[0], tokenizedProjectId[1]));	
 		}

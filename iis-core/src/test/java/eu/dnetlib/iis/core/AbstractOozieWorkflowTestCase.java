@@ -1,17 +1,13 @@
 package eu.dnetlib.iis.core;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.apache.oozie.client.OozieClientException;
 import org.apache.oozie.client.WorkflowJob.Status;
 import org.junit.After;
@@ -53,12 +49,8 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	private final static String REMOTE_SSH_PORT_KEY = "iis.hadoop.frontend.port.ssh";
 	
-	private final static String WORKFLOW_SOURCE_DIR_KEY = "workflow.source.dir";
 	
-	private final static String MAVEN_TEST_WORKFLOW_PHASE = "clean package";
-	
-	private final static String MAVEN_TEST_WORKFLOW_PROFILE = "attach-test-resources,oozie-package,deploy,run";
-	
+	private static MavenTestWorkflowRunner mvnTestWorkflowRunner;
 	
 	private static Properties properties;
 	
@@ -70,6 +62,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	private HdfsTestHelper hdfsTestHelper;
 	
+	
 	private File tempDir;
 	
 	
@@ -80,6 +73,8 @@ public abstract class AbstractOozieWorkflowTestCase {
 		
 		propertiesFile = File.createTempFile("iis-integration-test", ".properties");
 		PropertiesFileUtils.writePropertiesToFile(properties, propertiesFile);
+		
+		mvnTestWorkflowRunner = new MavenTestWorkflowRunner();
 	}
 	
 	@Before
@@ -127,11 +122,11 @@ public abstract class AbstractOozieWorkflowTestCase {
 	 *   	otherwise the test will automatically fail)
 	 */
 	protected WorkflowTestResult testWorkflow(String workflowPath, OozieWorkflowTestConfiguration configuration) {
-		
-		Process p = runMavenTestWorkflow(workflowPath);
 
-		logMavenOutput(p);
-		checkMavenExitStatus(p);
+	    int exitStatus = mvnTestWorkflowRunner.runTestWorkflow(workflowPath, propertiesFile.getAbsolutePath());
+	    if (exitStatus != 0) {
+	        Assert.fail("Maven run workflow process failed");
+	    }
 		
 		
 		String jobId = OozieLogFileParser.readJobIdFromLogFile(new File(getRunOoozieJobLogFilename()));
@@ -159,72 +154,6 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	
 	//------------------------ PRIVATE --------------------------
-	
-	private Process runMavenTestWorkflow(String workflowSource) {
-		
-	    String mvn = "mvn";
-		
-	    if (SystemUtils.IS_OS_WINDOWS) {
-		    mvn = "mvn.cmd";
-		}
-	    
-		Process p;
-		try {
-			p = Runtime.getRuntime().exec(mvn + " " + MAVEN_TEST_WORKFLOW_PHASE + " -DskipTests "
-					+ " -P" + MAVEN_TEST_WORKFLOW_PROFILE
-					+ " -D" + WORKFLOW_SOURCE_DIR_KEY + "=" + workflowSource
-					+ " -DiisConnectionProperties=" + propertiesFile.getAbsolutePath()
-					);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		
-		return p;
-	}
-	
-	private void logMavenOutput(Process p) {
-		
-		BufferedReader stdInput = new BufferedReader(new
-				InputStreamReader(p.getInputStream()));
-		try {
-			String s = null;
-			while ((s = stdInput.readLine()) != null) {
-				System.out.println(s);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} finally {
-			IOUtils.closeQuietly(stdInput);
-		}
-		
-
-		BufferedReader stdError = new BufferedReader(new
-				InputStreamReader(p.getErrorStream()));
-		try {
-			String s = null;
-			while ((s = stdError.readLine()) != null) {
-				System.out.println(s);
-			}
-			
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} finally {
-			IOUtils.closeQuietly(stdError);
-		}
-	}
-	
-	private void checkMavenExitStatus(Process p) {
-		int exitStatus;
-		try {
-			exitStatus = p.waitFor();
-		} catch (InterruptedException e) {
-			throw new RuntimeException("Error in waiting for maven process to finish", e);
-		}
-		
-		if (exitStatus != 0) {
-			Assert.fail("Maven run workflow process failed");
-		}
-	}
 	
 	private String getOozieServiceLoc() {
 		return getProperty(OOZIE_SERVICE_LOC_KEY);

@@ -91,6 +91,15 @@
 			<name>input_project_concept</name>
 			<description>input project concept directory</description>
 		</property>
+		<!-- project reference extraction related -->
+		<property>
+			<name>referenceextraction_project_fundingclass_blacklist_regex</name>
+			<value>a^</value>
+			<description>regexp matching funding class, describes projects which
+				should be ignored by reference extraction algorithm.
+				Set to 'a^' by default to guarantee nothing will be matched.
+			</description>
+		</property>
 		<!-- citation matching related -->
 		<property>
 			<name>cit_genAuthorIdxJavaOpts</name>
@@ -248,18 +257,43 @@
 	<fork name="forking">
 		<path start="decision-referenceextraction_project" />
 		<path start="decision-referenceextraction_dataset" />
-		<path start="decision-referenceextraction_researchinitiative" />
 		<path start="decision-referenceextraction_pdb" />
-		<path start="extracted_document_metadata_collapser" />
 	</fork>
 
 	<!-- start of project reference extraction block -->
 	<decision name="decision-referenceextraction_project">
 		<switch>
-			<case to="referenceextraction_project">${active_referenceextraction_project eq "true"}</case>
+			<case to="transformers_project_filter">${active_referenceextraction_project eq "true"}</case>
 			<default to="skip-referenceextraction_project" />
 		</switch>
 	</decision>
+
+	<action name="transformers_project_filter">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_project_filter</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/transformers_project_filter/working_dir</value>
+				</property>
+				<property>
+					<name>fundingclass_blacklist_regex</name>
+					<value>${referenceextraction_project_fundingclass_blacklist_regex}</value>
+				</property>
+				<property>
+					<name>input</name>
+					<value>${input_project}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${workingDir}/transformers_project_filter/output</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="referenceextraction_project" />
+		<error to="fail" />
+	</action>
 
 	<action name="referenceextraction_project">
 		<sub-workflow>
@@ -276,7 +310,7 @@
 				</property>
 				<property>
 					<name>input_project</name>
-					<value>${input_project}</value>
+					<value>${workingDir}/transformers_project_filter/output</value>
 				</property>
 				<property>
 					<name>output_document_to_project</name>
@@ -434,6 +468,87 @@
 	</action>
 	<!-- end of dataset reference extraction block -->
 
+	<!-- start of pdb reference extraction block -->
+	<decision name="decision-referenceextraction_pdb">
+		<switch>
+			<case to="referenceextraction_pdb">${active_referenceextraction_pdb eq "true"}</case>
+			<default to="skip-referenceextraction_pdb" />
+		</switch>
+	</decision>
+
+	<action name="referenceextraction_pdb">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/referenceextraction_pdb</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/referenceextraction_pdb/working_dir</value>
+				</property>
+				<property>
+					<name>input_document_text</name>
+					<value>${workingDir}/transformers_common_union_document_text/out</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${workingDir}/referenceextraction_pdb/output</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="transformers_export_pdb" />
+		<error to="fail" />
+	</action>
+
+	<action name="transformers_export_pdb">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_export_researchinitiatives</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/transformers_export_pdb/working_dir</value>
+				</property>
+				<property>
+					<name>input_document_to_research_initiative</name>
+					<value>${workingDir}/referenceextraction_pdb/output</value>
+				</property>
+				<property>
+					<name>output_document_to_research_initiatives</name>
+					<value>${output_document_to_pdb}</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+
+		<ok to="joining" />
+		<error to="fail" />
+	</action>
+
+	<action name="skip-referenceextraction_pdb">
+		<java>
+			<prepare>
+				<!-- notice: directory have to aligned with skipped action output -->
+				<delete path="${nameNode}${workingDir}/transformers_export_pdb" />
+				<delete path="${nameNode}${output_document_to_pdb}" />
+				<mkdir path="${nameNode}${workingDir}/transformers_export_pdb" />
+				<mkdir path="${nameNode}${output_document_to_pdb}" />
+			</prepare>
+			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
+			<arg>-C{referenceextraction_pdb,
+				eu.dnetlib.iis.export.schemas.DocumentToConceptIds,
+				eu/dnetlib/iis/workflows/top/data/empty.json}
+			</arg>
+			<!-- notice: directory have to aligned with skipped action output -->
+			<arg>-Oreferenceextraction_pdb=${output_document_to_pdb}</arg>
+		</java>
+		<ok to="joining" />
+		<error to="fail" />
+	</action>
+	<!-- end of pdb reference extraction block -->
+
+
+	<join name="joining" to="decision-referenceextraction_researchinitiative" />
+
 	<!-- start of researchinitiative reference extraction block -->
 	<decision name="decision-referenceextraction_researchinitiative">
 		<switch>
@@ -536,7 +651,7 @@
 			</configuration>
 		</sub-workflow>
 
-		<ok to="joining" />
+		<ok to="extracted_document_metadata_collapser" />
 		<error to="fail" />
 	</action>
 
@@ -558,88 +673,10 @@
 			<!-- notice: directory have to aligned with skipped action output -->
 			<arg>-Oreferenceextraction_researchinitiatives=${output_document_to_research_initiatives}</arg>
 		</java>
-		<ok to="joining" />
+		<ok to="extracted_document_metadata_collapser" />
 		<error to="fail" />
 	</action>
 	<!-- end of researchinitiative reference extraction block -->
-
-	<!-- start of pdb reference extraction block -->
-	<decision name="decision-referenceextraction_pdb">
-		<switch>
-			<case to="referenceextraction_pdb">${active_referenceextraction_pdb eq "true"}</case>
-			<default to="skip-referenceextraction_pdb" />
-		</switch>
-	</decision>
-
-	<action name="referenceextraction_pdb">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/referenceextraction_pdb</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/referenceextraction_pdb/working_dir</value>
-				</property>
-				<property>
-					<name>input_document_text</name>
-					<value>${workingDir}/transformers_common_union_document_text/out</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${workingDir}/referenceextraction_pdb/output</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="transformers_export_pdb" />
-		<error to="fail" />
-	</action>
-
-	<action name="transformers_export_pdb">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_export_researchinitiatives</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/transformers_export_pdb/working_dir</value>
-				</property>
-				<property>
-					<name>input_document_to_research_initiative</name>
-					<value>${workingDir}/referenceextraction_pdb/output</value>
-				</property>
-				<property>
-					<name>output_document_to_research_initiatives</name>
-					<value>${output_document_to_pdb}</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-
-		<ok to="joining" />
-		<error to="fail" />
-	</action>
-
-	<action name="skip-referenceextraction_pdb">
-		<java>
-			<prepare>
-				<!-- notice: directory have to aligned with skipped action output -->
-				<delete path="${nameNode}${workingDir}/transformers_export_pdb" />
-				<delete path="${nameNode}${output_document_to_pdb}" />
-				<mkdir path="${nameNode}${workingDir}/transformers_export_pdb" />
-				<mkdir path="${nameNode}${output_document_to_pdb}" />
-			</prepare>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
-			<arg>-C{referenceextraction_pdb,
-				eu.dnetlib.iis.export.schemas.DocumentToConceptIds,
-				eu/dnetlib/iis/workflows/top/data/empty.json}
-			</arg>
-			<!-- notice: directory have to aligned with skipped action output -->
-			<arg>-Oreferenceextraction_pdb=${output_document_to_pdb}</arg>
-		</java>
-		<ok to="joining" />
-		<error to="fail" />
-	</action>
-	<!-- end of pdb reference extraction block -->
 
 	<!-- collapsed extracted metadata records branch -->
 
@@ -736,7 +773,7 @@
 				</property>
 			</configuration>
 		</sub-workflow>
-		<ok to="joining" />
+		<ok to="decision-citationmatching" />
 		<error to="fail" />
 	</action>
 
@@ -758,12 +795,10 @@
 			<!-- notice: directory have to aligned with skipped action output -->
 			<arg>-Odocumentsclassification=${output_document_to_document_classes}</arg>
 		</java>
-		<ok to="joining" />
+		<ok to="decision-citationmatching" />
 		<error to="fail" />
 	</action>
 	<!-- end of documents classification part -->
-
-	<join name="joining" to="decision-citationmatching" />
 
 	<!-- citation matching part -->
 	<decision name="decision-citationmatching">

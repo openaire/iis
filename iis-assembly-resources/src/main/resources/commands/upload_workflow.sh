@@ -1,4 +1,6 @@
 #!/bin/bash
+exec 3>&1
+BASH_XTRACEFD=3
 set -x ## print every executed command
 
 

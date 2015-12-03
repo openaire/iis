@@ -18,7 +18,6 @@ doi_to_oaid_nondedup = filter doi_to_oaid_with_nulls by originalId is not null;
 doi_to_oaid_nondedup_groupped = group doi_to_oaid_nondedup by originalId;
 doi_to_oaid = foreach doi_to_oaid_nondedup_groupped {
     first_record = LIMIT doi_to_oaid_nondedup 1;
---	FIXME it works but what if empty bag was returned?!
     generate group as originalId, flatten(first_record.newId) as newId;
 }
 
@@ -29,9 +28,8 @@ pmid_to_oaid_with_nulls = foreach documentMetadata generate externalIdentifiers#
 pmid_to_oaid_nondedup = filter pmid_to_oaid_with_nulls by originalId is not null;
 pmid_to_oaid_nondedup_groupped = group pmid_to_oaid_nondedup by originalId;
 pmid_to_oaid = foreach pmid_to_oaid_nondedup_groupped {
-     idsWithPublicationType = foreach pmid_to_oaid_nondedup generate originalId, newId, publicationTypeName;
+     idsWithPublicationType = foreach pmid_to_oaid_nondedup generate newId, publicationTypeName;
      dedupIdsWithPublicationType = DeduplicateIdsWithDocumentType(idsWithPublicationType);
---	 FIXME it works, but what if null was returned?!    
      generate group as originalId, flatten(dedupIdsWithPublicationType.newId) as newId;
  }
 

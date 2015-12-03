@@ -12,7 +12,7 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
 import com.google.common.collect.Lists;
 
 /**
- * Deduplicates bag of tuples where tuple[0] is pmid, tuple[1] is document type.
+ * Deduplicates bag of tuples where tuple[0] is oaid, tuple[1] is pmid document type.
  * 'research-article' type has precedence over any other type when more than one entry provided.
  * Identifiers are sorted lexicographically.
  *
@@ -45,7 +45,7 @@ public class DeduplicateIdsWithDocumentType extends EvalFunc<DataBag> {
         	}
         	count++;
         }
-		if (count==1) {
+		if (firstTuple!=null) {
 			return BagFactory.getInstance().newDefaultBag(
     				Lists.<Tuple>newArrayList(firstTuple));
 		}
