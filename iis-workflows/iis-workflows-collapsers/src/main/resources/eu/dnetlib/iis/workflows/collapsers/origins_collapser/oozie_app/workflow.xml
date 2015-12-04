@@ -34,7 +34,7 @@
 		<property>
 			<name>mapred_child_java_opts</name>
 			<value>-Xmx2048M</value>
-			<description>java-opts, e.g. maximum heap size for oozie</description>
+			<description>java-opts, e.g. maximum heap size for a single JVM running MapReduce</description>
 		</property>
 	</parameters>
 
