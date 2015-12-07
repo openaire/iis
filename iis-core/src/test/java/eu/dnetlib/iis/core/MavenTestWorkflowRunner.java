@@ -26,7 +26,7 @@ public class MavenTestWorkflowRunner {
     private final static String MAVEN_TEST_WORKFLOW_PROFILE = "attach-test-resources,oozie-package,deploy,run";
     
     
-    private String mavenExecutable = "mvn";
+    private String mavenExecutable;
     
     
     //------------------------ CONSTRUCTORS --------------------------
