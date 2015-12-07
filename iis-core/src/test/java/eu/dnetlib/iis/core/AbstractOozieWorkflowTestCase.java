@@ -45,12 +45,14 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	private final static String REMOTE_SSH_PORT_KEY = "iis.hadoop.frontend.port.ssh";
 	
+	private final static String MAVEN_EXECUTABLE = "maven.executable";
 	
-	private static MavenTestWorkflowRunner mvnTestWorkflowRunner;
 	
 	private static Properties properties;
 	
 	private static File propertiesFile;
+	
+	private MavenTestWorkflowRunner mvnTestWorkflowRunner;
 	
 	private SshConnectionManager sshConnectionManager;
 	
@@ -70,12 +72,13 @@ public abstract class AbstractOozieWorkflowTestCase {
 		propertiesFile = File.createTempFile("iis-integration-test", ".properties");
 		PropertiesFileUtils.writePropertiesToFile(properties, propertiesFile);
 		
-		mvnTestWorkflowRunner = new MavenTestWorkflowRunner();
 	}
 	
 	@Before
 	public void setUp() throws IOException, OozieClientException {
 		
+	    mvnTestWorkflowRunner = new MavenTestWorkflowRunner(getMavenExecutable());
+	    
 		log.debug("Setting up OozieClient at {}", getOozieServiceLoc());
 		sshConnectionManager = new SshConnectionManager(getRemoteHostName(), getRemoteSshPort(), getRemoteUserName());
 		sshOozieClient = new SshOozieClient(sshConnectionManager, getOozieServiceLoc());
@@ -173,6 +176,10 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	private int getRemoteSshPort() {
 		return Integer.valueOf(getProperty(REMOTE_SSH_PORT_KEY));
+	}
+	
+	private String getMavenExecutable() {
+	    return getProperty(MAVEN_EXECUTABLE);
 	}
 	
 	private String getProperty(String key) {
