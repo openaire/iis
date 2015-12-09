@@ -47,20 +47,20 @@ public class DocumentClassificationJob {
         
         SparkConf conf = new SparkConf();
         conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
+        conf.set("spark.kryo.registrator", "eu.dnetlib.iis.core.spark.AvroCompatibleKryoRegistrator");
         
         
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
-            
+          
             sc.sc().addFile(params.scriptDirPath, true);
             
             JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> documents = SparkAvroLoader.loadJavaRDD(sc, params.inputAvroPath, ExtractedDocumentMetadataMergedWithOriginal.class);
             
-            
             JavaRDD<DocumentMetadata> metadataRecords = documents.map(document -> converter.convert(document)).filter(metadata->StringUtils.isNotBlank(metadata.getAbstract$()));
             
-            String scriptRootDir = SparkFiles.getRootDirectory().replaceAll("\\\\", "/")+"/scripts";
             
-            JavaRDD<String> stringDocumentClasses = metadataRecords.pipe("sh -c 'cd " + scriptRootDir + " && sh " + scriptRootDir+ "/classify_documents.sh'");
+            String dir = SparkFiles.getRootDirectory().replace("\\", "/")+"/scripts";
+            JavaRDD<String> stringDocumentClasses = metadataRecords.pipe("sh " + dir + "/classify_documents.sh " + dir);
             
             JavaRDD<DocumentToDocumentClasses> documentClasses = stringDocumentClasses.map(recordString -> AvroGsonFactory.create().fromJson(recordString, DocumentToDocumentClasses.class));
             
