@@ -1,0 +1,344 @@
+{
+  "documentId": "Across Browsers SVG Implementation",
+  "classes": {
+    "arXivClasses": [
+      {
+        "classLabels": [
+          "Computer Science",
+          "Digital Libraries"
+        ],
+        "confidenceLevel": 0.77
+      },
+      {
+        "classLabels": [
+          "Computer Science",
+          "Multimedia"
+        ],
+        "confidenceLevel": 0.647
+      },
+      {
+        "classLabels": [
+          "Computer Science",
+          "Programming Languages"
+        ],
+        "confidenceLevel": 0.595
+      },
+      {
+        "classLabels": [
+          "Computer Science",
+          "Other"
+        ],
+        "confidenceLevel": 0.227
+      },
+      {
+        "classLabels": [
+          "Computer Science",
+          "Software Engineering"
+        ],
+        "confidenceLevel": 0.227
+      }
+    ],
+    "WoSClasses": [
+      {
+        "classLabels": [
+          "COMPUTER SCIENCE, INFORMATION SYSTEMS"
+        ],
+        "confidenceLevel": 0.99
+      },
+      {
+        "classLabels": [
+          "COMPUTER SCIENCE, HARDWARE \u0026 ARCHITECTURE"
+        ],
+        "confidenceLevel": 0.298
+      },
+      {
+        "classLabels": [
+          "ENGINEERING, AEROSPACE"
+        ],
+        "confidenceLevel": 0.298
+      },
+      {
+        "classLabels": [
+          "COMPUTER SCIENCE, ARTIFICIAL INTELLIGENCE"
+        ],
+        "confidenceLevel": 0.298
+      },
+      {
+        "classLabels": [
+          "TELECOMMUNICATIONS"
+        ],
+        "confidenceLevel": 0.298
+      }
+    ],
+    "DDCClasses": [
+      {
+        "classLabels": [
+          "Computer science, information \u0026 general works",
+          "Library \u0026 information sciences"
+        ],
+        "confidenceLevel": 0.77
+      },
+      {
+        "classLabels": [
+          "Social sciences",
+          "Customs, etiquette \u0026 folklore"
+        ],
+        "confidenceLevel": 0.7
+      },
+      {
+        "classLabels": [
+          "Technology",
+          "Chemical engineering"
+        ],
+        "confidenceLevel": 0.298
+      },
+      {
+        "classLabels": [
+          "Religion",
+          "Other religions"
+        ],
+        "confidenceLevel": 0.298
+      },
+      {
+        "classLabels": [
+          "Science",
+          "Plants (Botany)"
+        ],
+        "confidenceLevel": 0.227
+      }
+    ],
+    "meshEuroPMCClasses": [
+      {
+        "classLabels": [
+          "information science"
+        ],
+        "confidenceLevel": 0.227
+      },
+      {
+        "classLabels": [
+          "natural sciences"
+        ],
+        "confidenceLevel": 0.227
+      },
+      {
+        "classLabels": [
+          "education"
+        ],
+        "confidenceLevel": 0.227
+      },
+      {
+        "classLabels": [
+          "health care economics and organizations"
+        ],
+        "confidenceLevel": 0.227
+      },
+      {
+        "classLabels": [
+          "genetic processes"
+        ],
+        "confidenceLevel": 0.175
+      }
+    ],
+    "ACMClasses": [
+      {
+        "classLabels": [
+          "ComputingMethodologies_DOCUMENTANDTEXTPROCESSING"
+        ],
+        "confidenceLevel": 0.84
+      },
+      {
+        "classLabels": [
+          "InformationSystems_GENERAL"
+        ],
+        "confidenceLevel": 0.472
+      },
+      {
+        "classLabels": [
+          "ComputerApplications_GENERAL"
+        ],
+        "confidenceLevel": 0.175
+      },
+      {
+        "classLabels": [
+          "Data_MISCELLANEOUS"
+        ],
+        "confidenceLevel": 0.122
+      }
+    ]
+  }
+}
+{
+  "documentId": "Dynamic Deformation of Uniform Elastic Two-Layer Objects",
+  "classes": {
+    "arXivClasses": [
+      {
+        "classLabels": [
+          "Computer Science",
+          "Databases"
+        ],
+        "confidenceLevel": 0.333
+      },
+      {
+        "classLabels": [
+          "Physics",
+          "Fluid Dynamics"
+        ],
+        "confidenceLevel": 0.175
+      },
+      {
+        "classLabels": [
+          "Astrophysics",
+          "Earth and Planetary Astrophysics"
+        ],
+        "confidenceLevel": 0.175
+      },
+      {
+        "classLabels": [
+          "Quantitative Biology",
+          "Tissues and Organs"
+        ],
+        "confidenceLevel": 0.175
+      },
+      {
+        "classLabels": [
+          "Physics",
+          "Medical Physics"
+        ],
+        "confidenceLevel": 0.14
+      }
+    ],
+    "WoSClasses": [
+      {
+        "classLabels": [
+          "AGRONOMY"
+        ],
+        "confidenceLevel": 0.56
+      },
+      {
+        "classLabels": [
+          "ENGINEERING, GEOLOGICAL"
+        ],
+        "confidenceLevel": 0.368
+      },
+      {
+        "classLabels": [
+          "REPRODUCTIVE BIOLOGY"
+        ],
+        "confidenceLevel": 0.298
+      },
+      {
+        "classLabels": [
+          "SPORT SCIENCES"
+        ],
+        "confidenceLevel": 0.227
+      },
+      {
+        "classLabels": [
+          "MINING \u0026 MINERAL PROCESSING"
+        ],
+        "confidenceLevel": 0.227
+      }
+    ],
+    "DDCClasses": [
+      {
+        "classLabels": [
+          "Science",
+          "Astronomy"
+        ],
+        "confidenceLevel": 0.78
+      },
+      {
+        "classLabels": [
+          "Science",
+          "Physics"
+        ],
+        "confidenceLevel": 0.72
+      },
+      {
+        "classLabels": [
+          "Technology",
+          "Engineering"
+        ],
+        "confidenceLevel": 0.7
+      },
+      {
+        "classLabels": [
+          "Technology",
+          "Construction of buildings"
+        ],
+        "confidenceLevel": 0.63
+      },
+      {
+        "classLabels": [
+          "Technology",
+          "Agriculture"
+        ],
+        "confidenceLevel": 0.56
+      }
+    ],
+    "meshEuroPMCClasses": [
+      {
+        "classLabels": [
+          "fungi"
+        ],
+        "confidenceLevel": 0.368
+      },
+      {
+        "classLabels": [
+          "food and beverages"
+        ],
+        "confidenceLevel": 0.333
+      },
+      {
+        "classLabels": [
+          "sense organs"
+        ],
+        "confidenceLevel": 0.315
+      },
+      {
+        "classLabels": [
+          "body regions"
+        ],
+        "confidenceLevel": 0.192
+      },
+      {
+        "classLabels": [
+          "humanities"
+        ],
+        "confidenceLevel": 0.158
+      }
+    ],
+    "ACMClasses": [
+      {
+        "classLabels": [
+          "ComputingMethodologies_COMPUTERGRAPHICS"
+        ],
+        "confidenceLevel": 0.82
+      },
+      {
+        "classLabels": [
+          "ComputingMethodologies_IMAGEPROCESSINGANDCOMPUTERVISION"
+        ],
+        "confidenceLevel": 0.49
+      },
+      {
+        "classLabels": [
+          "Data_GENERAL"
+        ],
+        "confidenceLevel": 0.455
+      },
+      {
+        "classLabels": [
+          "ComputerApplications_COMPUTERSINOTHERSYSTEMS"
+        ],
+        "confidenceLevel": 0.455
+      },
+      {
+        "classLabels": [
+          "GeneralLiterature_MISCELLANEOUS"
+        ],
+        "confidenceLevel": 0.298
+      }
+    ]
+  }
+}
