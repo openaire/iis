@@ -16,7 +16,7 @@
 
     <start to="document_classification_job" />
 
-	<action name="document_classification_job"> <!-- for now it's only the input transformer -->
+	<action name="document_classification_job"> 
         <spark xmlns="uri:oozie:spark-action:0.1">
             
             <job-tracker>${jobTracker}</job-tracker>

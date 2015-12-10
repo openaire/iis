@@ -21,9 +21,9 @@ import eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 
 /**
- * Document classification spark job
+ * Document classification spark job.
  * <br/><br/>
- * Temporarily - only the input transformer, eventually the whole document classification job
+ * Processes documents {link ExtractedDocumentMetadataMergedWithOriginal} and calculates {@link DocumentToDocumentClasses} out of them.
  * 
  * @author Łukasz Dumiszewski
  */
