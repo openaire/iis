@@ -1,0 +1,76 @@
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Across Browsers SVG Implementation",
+    "issue":null,
+    "abstract":"in this work svg will be translat into vml or html by use javascript base on backbas client framework the target of this project is to implement svg to be view in internet explor without ani plug in and work togeth with other backbas client framework languag the result of this project will be ad as an extens to the current backbas client framework",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "publisher":"Tor Science Fiction",
+    "language":"eng",
+    "title":"Ender's Game",
+    "externalIdentifiers":null,
+    "journal":"Journal-1",
+    "extractedAuthorFullNames":[
+        "author-1",
+        "author-2",
+        "author-3"
+    ],
+    "pages":{
+        "start":"123",
+        "end":"128"
+    },
+    "volume":null,
+    "authorIds":[
+        "id-1",
+        "id-2",
+        "id-3"
+    ],
+    "year":null,
+    "keywords":[
+        "kwd_1",
+        "kwd_3",
+        "kwd_2",
+        "kwd_4"
+    ],
+    "references":null,
+    "id":"Dynamic Deformation of Uniform Elastic Two-Layer Objects",
+    "issue":null,
+    "abstract":"this thesi present a two layer uniform facet elast object for real time simul base on physic model method it describ the elast object procedur model algorithm with particl system from the simplest one dimension object to more complex two dimension and three dimension object the doubl layer elast object consist of inner and outer elast mass spring surfac and compress intern pressur the densiti of the inner layer can be set differ from the densiti of the outer layer the motion of the inner layer can be opposit to the motion of the outer layer these special featur which cannot be achiev by a singl layer object result in improv imit of a soft bodi such as tissu s liquid non uniform deform the construct of the doubl layer elast object is closer to the real tissu s physic structur the inerti behavior of the elast object is well illustr in environ with graviti and collis with wall ceil and floor the collis detect is defin by elast collis penalti method and the motion of the object is guid by the ordinari differenti equat comput user can interact with the model object deform them and observ the respons to their action in real time",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}

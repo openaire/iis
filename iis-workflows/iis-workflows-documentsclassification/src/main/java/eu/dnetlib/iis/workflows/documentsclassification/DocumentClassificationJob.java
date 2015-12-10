@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.SparkConf;
+import org.apache.spark.SparkFiles;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
@@ -14,13 +15,15 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
+import eu.dnetlib.iis.core.common.AvroGsonFactory;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentMetadata;
+import eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 
 /**
- * Document classification spark job
+ * Document classification spark job.
  * <br/><br/>
- * Temporarily - only the input transformer, eventually the whole document classification job
+ * Processes documents {link ExtractedDocumentMetadataMergedWithOriginal} and calculates {@link DocumentToDocumentClasses} out of them.
  * 
  * @author Łukasz Dumiszewski
  */
@@ -44,19 +47,24 @@ public class DocumentClassificationJob {
         
         SparkConf conf = new SparkConf();
         conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
-        
+        conf.set("spark.kryo.registrator", "eu.dnetlib.iis.core.spark.AvroCompatibleKryoRegistrator");
         
         
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
-            
+          
+            sc.sc().addFile(params.scriptDirPath, true);
             
             JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> documents = SparkAvroLoader.loadJavaRDD(sc, params.inputAvroPath, ExtractedDocumentMetadataMergedWithOriginal.class);
-            
             
             JavaRDD<DocumentMetadata> metadataRecords = documents.map(document -> converter.convert(document)).filter(metadata->StringUtils.isNotBlank(metadata.getAbstract$()));
             
             
-            SparkAvroSaver.saveJavaRDD(metadataRecords, DocumentMetadata.SCHEMA$, params.outputAvroPath);
+            String dir = SparkFiles.getRootDirectory().replace("\\", "/")+"/scripts";
+            JavaRDD<String> stringDocumentClasses = metadataRecords.pipe("sh " + dir + "/classify_documents.sh " + dir);
+            
+            JavaRDD<DocumentToDocumentClasses> documentClasses = stringDocumentClasses.map(recordString -> AvroGsonFactory.create().fromJson(recordString, DocumentToDocumentClasses.class));
+            
+            SparkAvroSaver.saveJavaRDD(documentClasses, DocumentToDocumentClasses.SCHEMA$, params.outputAvroPath);
         
         }
         
@@ -74,6 +82,9 @@ public class DocumentClassificationJob {
         
         @Parameter(names = "-outputAvroPath", required = true)
         private String outputAvroPath;
+        
+        @Parameter(names = "-scriptDirPath", required = true, description = "path to directory with scripts")
+        private String scriptDirPath;
         
         
     }
