@@ -70,7 +70,7 @@ public class DocumentToProjectActionBuilderModuleFactory
 			oafBuilder.setDataInfo(object.getConfidenceLevel()!=null?
 							buildInference(object.getConfidenceLevel()):
 							buildInference());
-			oafBuilder.setTimestamp(System.currentTimeMillis());
+			oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
 			Oaf oaf = oafBuilder.build();
 			Oaf oafInv = invertRelationAndBuild(oafBuilder);
 			return Arrays.asList(new AtomicAction[] {
@@ -116,7 +116,7 @@ public class DocumentToProjectActionBuilderModuleFactory
 						relBuilder.getResultProjectBuilder().getOutcomeBuilder().getRelMetadataBuilder().getSemanticsBuilder().setClassname(REL_CLASS_PRODUCES);
 					}
 					builder.setRel(relBuilder.build());
-					builder.setTimestamp(System.currentTimeMillis());
+					builder.setLastupdatetimestamp(System.currentTimeMillis());
 					return builder.build();
 				} else {
 					throw new RuntimeException("invalid state: " +

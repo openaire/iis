@@ -96,7 +96,7 @@ public abstract class AbstractBuilderModule {
 		if (dataInfo!=null) {
 			oafBuilder.setDataInfo(dataInfo);
 		}
-		oafBuilder.setTimestamp(System.currentTimeMillis());
+		oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
 		return oafBuilder.build();
 	}
 	
@@ -178,7 +178,7 @@ public abstract class AbstractBuilderModule {
 				relBuilder.setSource(target);
 				relBuilder.setTarget(source);
 				builder.setRel(relBuilder.build());
-				builder.setTimestamp(System.currentTimeMillis());
+				builder.setLastupdatetimestamp(System.currentTimeMillis());
 				return builder.build();
 			} else {
 				throw new RuntimeException("invalid state: " +

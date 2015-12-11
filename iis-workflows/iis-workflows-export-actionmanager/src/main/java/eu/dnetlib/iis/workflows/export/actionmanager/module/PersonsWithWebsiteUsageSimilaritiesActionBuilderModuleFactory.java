@@ -113,7 +113,7 @@ public class PersonsWithWebsiteUsageSimilaritiesActionBuilderModuleFactory
 			oafBuilder.setKind(Kind.relation);
 			oafBuilder.setRel(relBuilder.build());
 			oafBuilder.setDataInfo(buildInference());
-			oafBuilder.setTimestamp(System.currentTimeMillis());
+			oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
 			return oafBuilder.build();
 		}
 	}
