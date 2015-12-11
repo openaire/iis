@@ -62,16 +62,6 @@
 		</repository>
 		
 		<repository>
-			<id>dnet4-snapshots</id>
-			<name>D-Net 4 Snapshots</name>
-			<url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-snapshots</url>
-			<layout>default</layout>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		
-		<repository>
 			<id>dnet4-releases</id>
 			<name>D-Net 4 Releases</name>
 			<url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-releases</url>
@@ -80,21 +70,8 @@
 				<enabled>false</enabled>
 			</snapshots>
 			<releases>
-				<enabled>true</enabled>				
-			</releases>
-		</repository>
-
-		<repository>
-			<id>dnet4-bootstrap-snapshot</id>
-			<name>dnet4 bootstrap snapshot</name>
-			<url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-bootstrap-snapshot</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
 				<enabled>true</enabled>
-			</snapshots>
-			<layout>default</layout>
+			</releases>
 		</repository>
 
 		<repository>
@@ -803,14 +780,14 @@
 
 	<distributionManagement>
 		<snapshotRepository>
-			<id>dnet4-snapshots</id>
-			<name>D-Net 4 Snapshots</name>
-			<url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-snapshots</url>
+			<id>iis-snapshots</id>
+			<name>IIS Snapshots</name>
+			<url>http://maven.ceon.pl/artifactory/iis-snapshots/</url>
 			<layout>default</layout>
 		</snapshotRepository>
 		<repository>
-			<id>dnet4-releases</id>
-			<url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-releases/</url>
+			<id>iis-releases</id>
+			<url>http://maven.ceon.pl/artifactory/iis-releases/</url>
 		</repository>
 	</distributionManagement>
 
