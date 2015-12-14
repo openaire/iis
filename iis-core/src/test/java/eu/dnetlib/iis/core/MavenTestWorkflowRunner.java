@@ -27,6 +27,18 @@ public class MavenTestWorkflowRunner {
     private final static String MAVEN_TEST_WORKFLOW_PROFILE = "attach-test-resources,oozie-package,deploy,run";
     
     
+    private String mavenExecutable;
+    
+    
+    //------------------------ CONSTRUCTORS --------------------------
+    
+    /**
+     * Default constructor
+     */
+    public MavenTestWorkflowRunner(String mavenExecutable) {
+        this.mavenExecutable = mavenExecutable;
+    }
+    
     //------------------------ LOGIC --------------------------
     
     /**
@@ -58,7 +70,7 @@ public class MavenTestWorkflowRunner {
         
         Process p;
         try {
-            p = Runtime.getRuntime().exec(mvn + " " + MAVEN_TEST_WORKFLOW_PHASE + " -DskipTests "
+            p = Runtime.getRuntime().exec(mavenExecutable + " " + MAVEN_TEST_WORKFLOW_PHASE + " -DskipTests "
                     + " -P" + MAVEN_TEST_WORKFLOW_PROFILE
                     + " -D" + WORKFLOW_SOURCE_DIR_KEY + "=" + workflowSource
                     + " -DiisConnectionProperties=" + connectionPropertiesFilePath

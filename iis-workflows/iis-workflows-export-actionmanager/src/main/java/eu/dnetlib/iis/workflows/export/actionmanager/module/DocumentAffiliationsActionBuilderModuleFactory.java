@@ -139,7 +139,7 @@ public class DocumentAffiliationsActionBuilderModuleFactory
 					relBuilder.setResultOrganization(resOrganizationBuilder.build());
 					oafBuilder.setRel(relBuilder.build());
 					oafBuilder.setDataInfo(buildInference());
-					oafBuilder.setTimestamp(System.currentTimeMillis());
+					oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
 					Oaf oaf = oafBuilder.build();
 					Oaf oafInverted = invertBidirectionalRelationAndBuild(oafBuilder);
 					actions.add(actionFactory.createAtomicAction(actionSetId,

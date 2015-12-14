@@ -2,7 +2,7 @@
 
 Information Inference Service (IIS) a flexible data processing system for handling big data based on Apache Hadoop technologies. It is a subsystem of the OpenAIRE system ([www.openaire.eu](http://www.openaire.eu) is its public web front-end) - see Fig.1 for a high-level overview.
 
-![](https://raw.githubusercontent.com/openaire/iis/master/docs/system_architecture_pics/oa_architecture.png "An example of dimensionality reduction and outliers detection in PCA")
+![](docs/system_architecture_pics/oa_architecture.png "An example of dimensionality reduction and outliers detection in PCA")
 
 **Fig.1**: The center of OpenAIRE system is the Information Space system which stores all information available in the system. IIS ingests data from Information Space, runs processing workflows, and produces inferred data which, in turn, is ingested by Information Space.
 

@@ -40,13 +40,6 @@
 	<url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-bootstrap-release</url>
 	<layout>default</layout>
       </pluginRepository>
-      <!-- drop snapshot repository when releasing -->
-      <pluginRepository>
-	<id>dnet4-bootstrap-snapshot-plugin</id>
-	<name>dnet4 bootstrap snapshot plugin</name>
-	<url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-bootstrap-snapshot</url>
-	<layout>default</layout>
-      </pluginRepository>
     </pluginRepositories>
 
     <properties>

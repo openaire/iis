@@ -68,7 +68,7 @@ public class DocumentToDataSetActionBuilderModuleFactory
 			oafBuilder.setDataInfo(object.getConfidenceLevel()!=null?
 					buildInference(object.getConfidenceLevel()):
 					buildInference());
-			oafBuilder.setTimestamp(System.currentTimeMillis());
+			oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
 			Oaf oaf = oafBuilder.build();
 			Oaf oafInverted = invertBidirectionalRelationAndBuild(oafBuilder);
 			return Arrays.asList(new AtomicAction[] {

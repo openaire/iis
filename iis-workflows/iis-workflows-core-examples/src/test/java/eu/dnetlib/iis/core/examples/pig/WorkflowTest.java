@@ -137,7 +137,7 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 		conf.addExpectedOutputAvroDataStore("my_subworkflow/person_with_documents");
 
 		WorkflowTestResult workflowTestResult = 
-				testWorkflow("eu/dnetlib/iis/core/examples/pig/person_by_docs_filter_with_subworkflow");
+				testWorkflow("eu/dnetlib/iis/core/examples/pig/person_by_docs_filter_with_subworkflow", conf);
 
 		List<PersonWithDocuments> testPersonWithDocuments = 
 				workflowTestResult.getAvroDataStore("my_subworkflow/person_with_documents");

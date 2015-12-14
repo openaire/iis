@@ -33,7 +33,7 @@ public class ProtoBuffMergingTest {
 	Oaf buildOaf(String contextId) {
 		Oaf.Builder oafBuilder = Oaf.newBuilder();
 		oafBuilder.setKind(Kind.entity);
-		oafBuilder.setTimestamp(System.currentTimeMillis());
+		oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
 		OafEntity.Builder entityBuilder = OafEntity.newBuilder();
 		entityBuilder.setId("id");
 		entityBuilder.setType(Type.result);
