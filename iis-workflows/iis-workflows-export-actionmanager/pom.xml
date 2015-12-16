@@ -75,21 +75,22 @@
 		<!-- required after introducing 'provided' scope for hadoop libs -->
 		<dependency>
             <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-core</artifactId>
-            <scope>provided</scope>
+            <artifactId>hadoop-mapreduce-client-core</artifactId>
         </dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-common</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.hbase</groupId>
-			<artifactId>hbase</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		
-		
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-client</artifactId>
+        </dependency>
+        
+		 <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+        </dependency>
+        
 		<!-- required for SOAP communication with MDStore -->
 		<dependency>
 			<groupId>eu.dnetlib</groupId>

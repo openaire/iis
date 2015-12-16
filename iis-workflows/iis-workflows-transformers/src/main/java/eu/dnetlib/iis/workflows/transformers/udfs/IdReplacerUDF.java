@@ -3,10 +3,12 @@ package eu.dnetlib.iis.workflows.transformers.udfs;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.backend.executionengine.ExecException;
+import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.FrontendException;
@@ -128,7 +130,10 @@ public class IdReplacerUDF extends EvalFunc<Tuple> {
     @Override
     public Schema outputSchema(Schema input) {
         try {
-            return getRecordSchema(input);
+        	return new Schema(new Schema.FieldSchema(getSchemaName(
+            		getClass().getName().toLowerCase(), 
+            		input),
+            		getRecordSchema(input), DataType.TUPLE));
         } catch (FrontendException ex) {
             return null;
         }

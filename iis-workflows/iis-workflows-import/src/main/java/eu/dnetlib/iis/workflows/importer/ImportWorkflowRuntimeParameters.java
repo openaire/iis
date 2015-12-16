@@ -19,9 +19,7 @@ public abstract class ImportWorkflowRuntimeParameters {
 	public static final String IMPORT_CONTENT_OBJECSTORE_PAGESIZE = "import.content.objectstore.resultset.pagesize";
 	
 	public static final String IMPORT_HBASE_TABLE_NAME = "import.hbase.table.name";
-	public static final String IMPORT_HBASE_REMOTE_ZOOKEEPER_QUORUM = "import.hbase.remote.zookeeper.quorum";
-	public static final String IMPORT_HBASE_REMOTE_ZOOKEEPER_CLIENTPORT = "import.hbase.remote.zookeeper.clientport";
-	
+		
 	public static final String IMPORT_CONTENT_OBJECT_STORE_LOC = "import.content.object.store.location";
 	public static final String IMPORT_CONTENT_LOOKUP_SERVICE_LOC = "import.content.lookup.service.location";
 	public static final String IMPORT_CONTENT_OBJECT_STORE_IDS_CSV = "import.content.object.store.ids.csv";

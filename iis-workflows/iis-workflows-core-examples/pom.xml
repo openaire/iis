@@ -38,8 +38,6 @@
             <groupId>eu.dnetlib.iis</groupId>
             <artifactId>iis-common</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
-            <type>jar</type>
         </dependency>
         
         <dependency>
@@ -58,38 +56,45 @@
             <scope>test</scope>
         </dependency>
         
-        <dependency>
-            <groupId>eu.dnetlib.iis</groupId>
-            <artifactId>iis-3rdparty-pig-avrostorage</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-            <type>jar</type>
-        </dependency>
+        
         
         
         <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-common</artifactId>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_2.10</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_2.10</artifactId>
         </dependency>
         
         <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-core</artifactId>
-            <scope>provided</scope>
+            <groupId>pl.edu.icm.spark-utils</groupId>
+            <artifactId>spark-utils</artifactId>
         </dependency>
         
+
         <dependency>
-            <groupId>org.apache.oozie</groupId>
-            <artifactId>oozie-core</artifactId>
-            <scope>provided</scope>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-hive_2.10</artifactId>
         </dependency>
-        
+
+        <dependency>
+            <groupId>com.databricks</groupId>
+            <artifactId>spark-avro_2.10</artifactId>
+        </dependency>
+ 
+            
         <!-- Needed to run Pig jobs { -->
         <dependency>
             <groupId>org.apache.pig</groupId>
             <artifactId>pig</artifactId>
-            <scope>test</scope>
         </dependency>
+        <dependency>
+			<groupId>org.apache.pig</groupId>
+			<artifactId>piggybank</artifactId>
+		</dependency>
         <dependency>
             <groupId>org.apache.pig</groupId>
             <artifactId>pigunit</artifactId>
@@ -105,10 +110,10 @@
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
         </dependency>
+
         <dependency>
-            <groupId>org.apache.avro</groupId>
-            <artifactId>avro-mapred</artifactId>
-            <classifier>hadoop2</classifier>
+            <groupId>org.apache.oozie</groupId>
+            <artifactId>oozie-core</artifactId>
         </dependency>
 
         <!-- It seems that this dependency is needed, if it is not here,
@@ -119,28 +124,10 @@
             <groupId>com.thoughtworks.paranamer</groupId>
             <artifactId>paranamer</artifactId>
         </dependency>
-        <!-- Needed by Avro } -->
-        <!-- Needed by our Hadoop Streaming workflow node {-->
-        
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-streaming</artifactId>
-        </dependency>
-        <!-- Needed by our Hadoop Streaming workflow node }-->
+       
         <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-serde</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.cloudera.cdh</groupId>
-            <artifactId>hive-root</artifactId>
-            <type>pom</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hive</groupId>
-            <artifactId>hive-cli</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -148,11 +135,19 @@
             <artifactId>hive-exec</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- not available in CDH5
         <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-builtins</artifactId>
             <scope>test</scope>
         </dependency>
+        -->
+        
+        <dependency>
+             <groupId>com.beust</groupId>
+             <artifactId>jcommander</artifactId>
+        </dependency>
+        
     </dependencies>
     <build>
         <plugins>
@@ -207,7 +202,11 @@
                     </execution>
                 </executions>
             </plugin>
-        </plugins>
+            
+            
+              
+
+	    </plugins>
         
     </build>
 </project>

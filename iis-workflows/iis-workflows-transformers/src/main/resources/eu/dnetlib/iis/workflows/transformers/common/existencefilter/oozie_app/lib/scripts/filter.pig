@@ -12,7 +12,7 @@ org.apache.pig.piggybank.storage.avro.AvroStorage(
 'schema', '$schema_data');
 
 data = load '$input_data' using AVRO_LOAD_DATA;
-ids = load '$input_existent_id' using AVRO_LOAD_EXISTENT_IDS as (id:chararray);
+ids = load '$input_existent_id' using AVRO_LOAD_EXISTENT_IDS as (id:chararray,dummy:chararray);
 
 existentData = join data by id, ids by id;
 outputData = foreach existentData generate data::id as id, url, mimeType, contentChecksum, contentSizeKB;

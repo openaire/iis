@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +61,12 @@ public class MavenTestWorkflowRunner {
     //------------------------ PRIVATE --------------------------
     
     private Process runMavenTestWorkflow(String workflowSource, String connectionPropertiesFilePath) {
+        
+        String mvn = "mvn";
+        
+        if (SystemUtils.IS_OS_WINDOWS) {
+            mvn = "mvn.cmd";
+        }
         
         Process p;
         try {

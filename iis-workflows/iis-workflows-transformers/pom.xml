@@ -28,19 +28,33 @@
         
         <dependency>
             <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
             <artifactId>iis-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         
-        <!-- replacing hacked pig-avrostorage with original pig -->
         <dependency>
-            <groupId>eu.dnetlib.iis</groupId>
-            <artifactId>iis-3rdparty-pig-avrostorage</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_2.10</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_2.10</artifactId>
+        </dependency>
+        
+       <dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
+        </dependency>
+        
         
         <!-- required after introducing 'provided' scope for hadoop libs -->
         <dependency>
@@ -55,15 +69,12 @@
 			<artifactId>pig</artifactId>
 			<!-- this lib cannot be set to provided -->
 		</dependency>
-
 		
-		<!-- FIXME change to version bound with CDH5 when upgrading cluster -->
-		<!--
 		<dependency>
 			<groupId>org.apache.pig</groupId>
 			<artifactId>piggybank</artifactId>
 		</dependency>
-		-->
+		
 		<dependency>
 		  <groupId>com.linkedin.datafu</groupId>
 		  <artifactId>datafu</artifactId>

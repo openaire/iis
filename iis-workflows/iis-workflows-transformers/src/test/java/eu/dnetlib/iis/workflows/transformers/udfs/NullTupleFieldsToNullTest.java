@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import eu.dnetlib.iis.workflows.transformers.udfs.NullTupleFieldsToNull;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import junit.framework.TestCase;
 
@@ -27,7 +28,7 @@ public class NullTupleFieldsToNullTest extends TestCase {
         BagFactory bagFactory = BagFactory.getInstance();
         
         DataBag emptyBag = bagFactory.newDefaultBag();
-        DataBag bag = bagFactory.newDefaultBag(Lists.newArrayList(tupleFactory.newTuple("tup1"), null));
+        DataBag bag = bagFactory.newDefaultBag(Arrays.asList(new Tuple[]{tupleFactory.newTuple("tup1")}));
         Tuple nullTuple = tupleFactory.newTuple(Lists.newArrayList(null, null, null));
         Tuple tuple = tupleFactory.newTuple(Lists.newArrayList(null, null, "tup1"));
         

@@ -60,6 +60,9 @@
         <iisConnectionProperties>${user.home}/.iis/application.properties</iisConnectionProperties>
         
         <output.dir.name>${maven.build.timestamp}</output.dir.name>        
+        
+        <projectVersion>${project.version}</projectVersion>
+        <oozie.use.system.libpath>true</oozie.use.system.libpath>
     </properties>
 
 
@@ -199,6 +202,7 @@
 						</executions>
 					</plugin>
 					
+										
 					<plugin>
 		                <groupId>eu.dnetlib.primer</groupId>
 		                <artifactId>primer-maven-plugin</artifactId>
@@ -302,7 +306,8 @@
 									<outputFile>target/${oozie.package.file.name}/job.properties</outputFile>
 									<!-- notice: dots are not allowed for job.properties! -->
 									<include>nameNode,jobTracker,queueName,
-									workingDir,oozie.wf.application.path</include>
+									workingDir,oozieTopWfApplicationPath,
+									oozie.wf.application.path,projectVersion,oozie.use.system.libpath</include>
 									<includeSystemProperties>true</includeSystemProperties>
 									<includePropertyKeysFromFiles>
 										<!-- 
@@ -357,6 +362,37 @@
 					</plugin>
 					
 					<plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>2.4.1</version>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>*:*:jar:*</include>
+                                </includes>
+                            </artifactSet>
+						    <filters>
+						        <filter>
+						            <artifact>*:*</artifact>
+						            <excludes>
+						                <exclude>META-INF/*.SF</exclude>
+						                <exclude>META-INF/*.DSA</exclude>
+						                <exclude>META-INF/*.RSA</exclude>
+						            </excludes>
+						        </filter>
+						    </filters>
+						</configuration>
+                        <executions>
+                          <execution>
+                            <phase>package</phase>
+                            <goals>
+                              <goal>shade</goal>
+                            </goals>
+                          </execution>
+                        </executions>
+                    </plugin>
+                    
+					<plugin>
 						<!-- this plugin prepares oozie installer package-->
 						<artifactId>maven-antrun-plugin</artifactId>
 						<executions>
@@ -400,6 +436,8 @@
 												<include name="*.jar" />
 											</fileset>
 										</copy>
+										
+										<fixcrlf srcdir="target/${oozie.package.file.name}/${oozieAppDir}/" encoding="UTF-8" outputencoding="UTF-8" includes="**/*.sh,**/*.json,**/*.py,**/*.sql" eol="lf"/>
 										
 										<!-- creating tar.gz package -->
 										<tar destfile="target/${oozie.package.file.name}.tar.gz" compression="gzip">

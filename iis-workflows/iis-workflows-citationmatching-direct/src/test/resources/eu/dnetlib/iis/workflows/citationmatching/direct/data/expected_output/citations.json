@@ -1,0 +1,4 @@
+{"sourceDocumentId": "id-1", "entry": {"position": 1, "destinationDocumentId": "id-2", "confidenceLevel": 1, "rawText": null, "externalDestinationDocumentIds": {} }}
+{"sourceDocumentId": "id-1", "entry": {"position": 2, "destinationDocumentId": "id-3", "confidenceLevel": 1, "rawText": null, "externalDestinationDocumentIds": {} }}
+{"sourceDocumentId": "id-4", "entry": {"position": 5, "destinationDocumentId": "id-5", "confidenceLevel": 1, "rawText": null, "externalDestinationDocumentIds": {} }}
+{"sourceDocumentId": "id-4", "entry": {"position": 6, "destinationDocumentId": "id-5", "confidenceLevel": 1, "rawText": null, "externalDestinationDocumentIds": {} }}

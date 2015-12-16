@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.connection.channel.direct.Session.Command;
+import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 
 /**
  * Class used for executing commands on remote machine through ssh protocol.
@@ -93,7 +94,7 @@ public class SshSimpleConnection {
 	 */
 	void openConnection(String remoteHost, int sshPort, String remoteUser) {
 		try {
-			sshClient.loadKnownHosts();
+			sshClient.addHostKeyVerifier(new PromiscuousVerifier());
 			sshClient.connect(remoteHost, sshPort);
 			sshClient.authPublickey(remoteUser);
 		} catch (IOException e) {

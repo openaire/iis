@@ -305,14 +305,12 @@
 			<description>action-set identifier of exported data containing dataset entities</description>
 		</property>
 		<property>
-			<name>export_action_hbase_remote_zookeeper_quorum</name>
-			<value>$UNDEFINED$</value>
-			<description>external hbase zookeeper quorum, set to empty value by default which means data will be exported to local hbase instance</description>
+			<name>hbase_remote_zookeeper_quorum</name>
+			<description>hbase zookeeper quorum, have to be provided explicitly</description>
 		</property>
 		<property>
-			<name>export_action_hbase_remote_zookeeper_clientport</name>
-			<value>$UNDEFINED$</value>
-			<description>external hbase zookeeper client port, required only whe zookeeper quorum property is set</description>
+			<name>hbase_remote_zookeeper_clientport</name>
+			<description>external hbase zookeeper client port, have to be provided explicitly</description>
 		</property>
 		<!-- trust level threshold section -->
 		<property>
@@ -1080,11 +1078,11 @@
 				</property>
 				<property>
 					<name>action_hbase_remote_zookeeper_quorum</name>
-					<value>${export_action_hbase_remote_zookeeper_quorum}</value>
+					<value>${hbase_remote_zookeeper_quorum}</value>
 				</property>
 				<property>
 					<name>action_hbase_remote_zookeeper_clientport</name>
-					<value>${export_action_hbase_remote_zookeeper_clientport}</value>
+					<value>${hbase_remote_zookeeper_clientport}</value>
 				</property>
 				<property>
 					<name>documentssimilarity_threshold</name>

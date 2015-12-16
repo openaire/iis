@@ -30,6 +30,12 @@
 		</dependency>
 		
 		<dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+		
+		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
 			<artifactId>iis-core</artifactId>
 			<version>${project.version}</version>
@@ -62,13 +68,28 @@
 			<scope>provided</scope>
 		</dependency>
 		
-		<!-- Needed by our Hadoop Streaming workflow node {-->
 		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-streaming</artifactId>
-		</dependency>
-		<!-- Needed by our Hadoop Streaming workflow node }-->
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_2.10</artifactId>
+        </dependency>
 
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_2.10</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>pl.edu.icm.spark-utils</groupId>
+            <artifactId>spark-utils</artifactId>
+        </dependency>
+        
+        
+        <dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
+        </dependency>
+        
+		
 	</dependencies>
 	<build>
 		<plugins>

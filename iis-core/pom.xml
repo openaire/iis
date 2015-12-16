@@ -20,6 +20,12 @@
 		</dependency>
 		
 		<dependency>
+			<groupId>eu.dnetlib.iis</groupId>
+			<artifactId>iis-assembly-resources</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
@@ -30,17 +36,15 @@
 		
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-common</artifactId>
+			<artifactId>hadoop-mapreduce-client-common</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		
-		<!-- This is needed by map-reduce-related classes -->
 		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-core</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+        </dependency>
+        
         <dependency>
             <groupId>org.apache.oozie</groupId>
             <artifactId>oozie-core</artifactId>
@@ -80,6 +84,12 @@
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+		</dependency>
+		
 	</dependencies>
 	
 	
