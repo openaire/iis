@@ -192,14 +192,10 @@ public abstract class AbstractMetadataExtractorMapper<T>
                                         .convertFull(documentId.toString(), null, null)));
                         return;
                     } catch (TransformationException e2) {
-                        log.debug("closing multiple outputs...");
                         mos.close();
-                        log.debug("multiple outputs closed");
                         throw new RuntimeException(e2);
                     } catch (JDOMException e2) {
-                        log.debug("closing multiple outputs...");
                         mos.close();
-                        log.debug("multiple outputs closed");
                         throw new RuntimeException(e2);
                     } finally {
                         if (contentStream != null) {
@@ -208,7 +204,7 @@ public abstract class AbstractMetadataExtractorMapper<T>
                     }
                 }
 
-                log.debug("starting processing for id: " + documentId);
+                log.info("starting processing for id: " + documentId);
                 long startTime = System.currentTimeMillis();
                 ContentExtractor extractor = new ContentExtractor();
                 try {
@@ -227,20 +223,14 @@ public abstract class AbstractMetadataExtractorMapper<T>
                         mos.write(namedOutputMeta, new AvroKey<ExtractedDocumentMetadata>(
                                 NlmToDocumentWithBasicMetadataConverter.convertFull(documentId.toString(), doc, text)));
                     } catch (JDOMException e) {
-                        log.debug("closing multiple outputs...");
                         mos.close();
-                        log.debug("multiple outputs closed");
                         throw new RuntimeException(e);
                     } catch (TransformationException e) {
-                        log.debug("closing multiple outputs...");
                         mos.close();
-                        log.debug("multiple outputs closed");
                         throw new RuntimeException(e);
                     } catch (AnalysisException e) {
                         if (analysisExceptionAsCritical) {
-                            log.debug("closing multiple outputs...");
                             mos.close();
-                            log.debug("multiple outputs closed");
                             throw new RuntimeException(e);
                         } else {
                             if (e.getCause() instanceof InvalidPdfException) {
@@ -257,22 +247,16 @@ public abstract class AbstractMetadataExtractorMapper<T>
                                 mos.write(namedOutputFault, new AvroKey<Fault>(
                                         FaultUtils.exceptionToFault(documentId, e, auditSupplementaryData)));
                             } catch (TransformationException e2) {
-                                log.debug("closing multiple outputs...");
                                 mos.close();
-                                log.debug("multiple outputs closed");
                                 throw new RuntimeException(e2);
                             } catch (JDOMException e2) {
-                                log.debug("closing multiple outputs...");
                                 mos.close();
-                                log.debug("multiple outputs closed");
                                 throw new RuntimeException(e2);
                             }
                         }
                     } catch (Exception e) {
                         if (otherExceptionAsCritical) {
-                            log.debug("closing multiple outputs...");
                             mos.close();
-                            log.debug("multiple outputs closed");
                             throw new RuntimeException(e);
                         } else {
                             log.error("got unexpected exception, just logging", e);
@@ -285,14 +269,10 @@ public abstract class AbstractMetadataExtractorMapper<T>
                                 mos.write(namedOutputFault, new AvroKey<Fault>(
                                         FaultUtils.exceptionToFault(documentId, e, auditSupplementaryData)));
                             } catch (TransformationException e2) {
-                                log.debug("closing multiple outputs...");
                                 mos.close();
-                                log.debug("multiple outputs closed");
                                 throw new RuntimeException(e2);
                             } catch (JDOMException e2) {
-                                log.debug("closing multiple outputs...");
                                 mos.close();
-                                log.debug("multiple outputs closed");
                                 throw new RuntimeException(e2);
                             }
                         }
@@ -316,12 +296,10 @@ public abstract class AbstractMetadataExtractorMapper<T>
                                     .setCode(FAULT_CODE_PROCESSING_TIME_THRESHOLD_EXCEEDED)
                                     .setSupplementaryData(supplementaryData).build()));
                 }
-                log.debug("finished processing for id " + documentId + " in " + (processingTime / 1000) + " secs");
+                log.info("finished processing for id " + documentId + " in " + (processingTime / 1000) + " secs");
             }
         } catch (AnalysisException e) {
-            log.debug("closing multiple outputs...");
             mos.close();
-            log.debug("multiple outputs closed");
             throw new RuntimeException(e);
         }
     }
@@ -335,9 +313,7 @@ public abstract class AbstractMetadataExtractorMapper<T>
      */
     @Override
     public void cleanup(Context context) throws IOException, InterruptedException {
-        log.debug("cleanup: closing multiple outputs...");
         mos.close();
-        log.debug("cleanup: multiple outputs closed");
     }
 
     /**
