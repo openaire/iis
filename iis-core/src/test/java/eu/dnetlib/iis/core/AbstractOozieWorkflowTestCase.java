@@ -190,7 +190,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 	private Status waitForJobFinish(String jobId, long timeoutInSeconds) {
 
 		long timeout = 1000L * timeoutInSeconds;
-		long checkInterval = 1000L * 1;
+		long checkInterval = 1000L * 10;
 		long startTime = System.currentTimeMillis();
 		List<Status> jobFinishedStatuses = Lists.newArrayList(Status.SUCCEEDED, Status.FAILED, Status.KILLED, Status.SUSPENDED);
 
