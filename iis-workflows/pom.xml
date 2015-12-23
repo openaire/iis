@@ -40,6 +40,12 @@
 	<url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-bootstrap-release</url>
 	<layout>default</layout>
       </pluginRepository>
+		<pluginRepository>
+				<id>iis-releases</id>
+				<name>iis releases plugin repository</name>
+				<url>http://maven.ceon.pl/artifactory/iis-releases</url>
+				<layout>default</layout>
+		</pluginRepository>
     </pluginRepositories>
 
     <properties>
