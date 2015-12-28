@@ -65,7 +65,7 @@ public class SentimentAnalyzer extends
      */
     protected static List<ReferenceWithSentimentLabels> convertCitationSentiment(CharSequence publicationId,
             List<ReferenceMetadata> references, List<CitationSentiment> sentiments) {
-        Preconditions.checkArgument(references.size() != sentiments.size(),
+        Preconditions.checkArgument(references.size() == sentiments.size(),
                 "number of sentiments: %s is not equal the number of input references: %s", sentiments.size(),
                 references.size());
         List<ReferenceWithSentimentLabels> results = new ArrayList<ReferenceWithSentimentLabels>(references.size());
