@@ -104,7 +104,7 @@ By default, all data produced by a given workflow node is stored in a directory 
 Here:
 
 - `workingDir` corresponds to a directory where the node can store results of its intermediate computations, temporary files etc. In case of this node being a subworkflow, this is the place where directories of its child workflow nodes are stored. This directory is named `working_dir` in the file system.
-- The "sample_processor" directory is recreated in the `<prepare>` section of the Oozie's action. This is to ensure that the workflow can be properly restarted in case of transient errors and possibly stopped and resumed (I'm not sure about the latter two -- this has to be checked in practice).
+- In Oozie definition, `working_dir` and output data store directories are removed in the `<prepare>` XML section to ensure that the action can be restarted whenever an unexpected error occurs. Note we cannot just remove `sample_processor` directory to achieve this goal because output directories may be defined by a workflow calling this workflow (see below) as residing outside given node directory structure.
 
 In case when workflow A calls workflow B, the **paths to directories where B saves its output data stores are passed from workflow A as parameters**. Then for certain workflow nodes in B, the output data store directories won't be subdirectories of the directory corresponding to this workflow node.
 
