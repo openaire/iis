@@ -2,7 +2,7 @@
 
 **Abstract**. This document describes the conventions that we use when defining Oozie workflows.
 
-**Data processing pipeline**. Each Oozie workflow describes an imperative implementation of a higher-level declarative data processing pipeline. The pipeline representation follows **"Pipes an filters"** pattern from the book by Gregor Hohpe, Bobby Woolf: "Enterprise Integration Patterns: Designing, Building, and Deploying Messaging Solutions", Addison-Wesley, 2003. The pipeline consists of workflow **nodes**, known as "actions" in Oozie parlance, that consume data arriving on their **input ports** and produce data to their **output ports**. Each port has a name and a type (defined by Avro schema). Output port of a producer is connected to the input port of a consumer; in order for this connection to work properly, the types of these ports have to "match". The data passed between the nodes is called **data store** and in practice this is simply a directory containing one or more [Avro Object Container Files][]. This document describes mostly how this high-level model is implemented in practice in Oozie workflows used in the project.
+**Data processing pipeline**. Each Oozie workflow describes an imperative implementation of a higher-level declarative data processing pipeline. The pipeline representation follows **"Pipes and filters"** pattern from the book by Gregor Hohpe, Bobby Woolf: "Enterprise Integration Patterns: Designing, Building, and Deploying Messaging Solutions", Addison-Wesley, 2003. The pipeline consists of workflow **nodes**, known as "actions" in Oozie parlance, that consume data arriving on their **input ports** and produce data to their **output ports**. Each port has a name and a type (defined by Avro schema). Output port of a producer is connected to the input port of a consumer; in order for this connection to work properly, the types of these ports have to "match". The data passed between the nodes is called **data store** and in practice this is simply a directory containing one or more [Avro Object Container Files][]. This document describes mostly how this high-level model is implemented in practice in Oozie workflows used in the project.
 
 **Data processing language**. Note that the original idea was that Oozie workflows conforming to the conventions described in this document would be automatically generated from a description of data processing pipeline. However, implementation of such description language has not been a priority and as of 2015-12-22 probably it won't be done. You can read a description of this language in a [Google doc][].
 
@@ -98,7 +98,7 @@ By default, all data produced by a given workflow node is stored in a directory 
     |
     |- working_dir/
     |- processed_person/
-	\- processed_document/
+    \- processed_document/
 
 
 Here:
@@ -106,6 +106,6 @@ Here:
 - `workingDir` corresponds to a directory where the node can store results of its intermediate computations, temporary files etc. In case of this node being a subworkflow, this is the place where directories of its child workflow nodes are stored. This directory is named `working_dir` in the file system.
 - The "sample_processor" directory is recreated in the `<prepare>` section of the Oozie's action. This is to ensure that the workflow can be properly restarted in case of transient errors and possibly stopped and resumed (I'm not sure about the latter two -- this has to be checked in practice).
 
-As an alternative, the **path to the output directory can be passed as a parameter to the workflow** containing the node. In such case, the output directory won't be a subdirectory of the directory corresponding to the workflow node.
+In case when workflow A calls workflow B, the **paths to directories where B saves its output data stores are passed from workflow A as parameters**. Then for certain workflow nodes in B, the output data store directories won't be subdirectories of the directory corresponding to this workflow node.
 
 [Avro Object Container Files]: http://avro.apache.org/docs/1.7.7/spec.html#Object+Container+Files
