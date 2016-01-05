@@ -51,7 +51,7 @@ public class SparkPipeMapReduce {
         SparkConf conf = new SparkConf();
         
         conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
-        conf.set("spark.kryo.registrator", "eu.dnetlib.iis.core.spark.AvroCompatibleKryoRegistrator");
+        conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
         
         
         Class<? extends GenericRecord> outputAvroClass = Class.forName(params.outputAvroSchemaClass).asSubclass(GenericRecord.class);

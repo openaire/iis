@@ -47,7 +47,7 @@ public class DocumentClassificationJob {
         
         SparkConf conf = new SparkConf();
         conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
-        conf.set("spark.kryo.registrator", "eu.dnetlib.iis.core.spark.AvroCompatibleKryoRegistrator");
+        conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
         
         
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
