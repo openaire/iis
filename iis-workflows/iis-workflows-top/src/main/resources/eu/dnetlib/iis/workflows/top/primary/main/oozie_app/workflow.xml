@@ -177,6 +177,11 @@
 			<value>60000</value>
 			<description>import content read timeout</description>
 		</property>
+		<property>
+			<name>text_xml_max_file_size_mb</name>
+			<value>2</value>
+			<description>maximum allowed xml or text file size in Megabytes</description>
+		</property>
 		<!-- import logs related -->
 		<property>
 			<name>portal_logs_location</name>
@@ -190,9 +195,9 @@
 			<description>list of content checksums excluded from metadataextraction processing</description>
 		</property>
 		<property>
-			<name>metadataextraction_max_file_size_mb</name>
+			<name>pdf_max_file_size_mb</name>
 			<value>500</value>
-			<description>maximum allowed file size in Megabytes</description>
+			<description>maximum allowed pdf file size in Megabytes</description>
 		</property>
 		<property>
 			<name>metadataextraction_default_cache_location</name>
