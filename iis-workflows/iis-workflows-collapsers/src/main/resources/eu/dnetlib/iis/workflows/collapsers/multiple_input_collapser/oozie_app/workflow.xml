@@ -59,6 +59,11 @@
             <value>true</value>
             <description>flag collapser's side products will be erased</description>
         </property>
+        <property>
+			<name>mapred_child_java_opts</name>
+			<value>-Xmx2048M</value>
+			<description>java-opts, e.g. maximum heap size for a single JVM running MapReduce</description>
+		</property>
 	</parameters>
     
     <start to="union" />
@@ -122,6 +127,10 @@
                     <name>schema_output</name>
                     <value>${schema_input_envelope}</value>
                 </property>
+                <property>
+                    <name>mapred_child_java_opts</name>
+                    <value>${mapred_child_java_opts}</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="origins_collapser"/>
@@ -178,6 +187,10 @@
                 <property>
                     <name>output</name>
                     <value>${output}</value>
+                </property>
+                <property>
+                    <name>mapred_child_java_opts</name>
+                    <value>${mapred_child_java_opts}</value>
                 </property>
             </configuration>
         </sub-workflow>
