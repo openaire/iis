@@ -155,6 +155,11 @@
 			<value>60000</value>
 			<description>import content read timeout</description>
 		</property>
+		<property>
+			<name>text_xml_max_file_size_mb</name>
+			<value>$UNDEFINED$</value>
+			<description>maximum allowed xml or text file size in Megabytes</description>
+		</property>
 		<!-- metadata extraction related -->
 		<property>
 			<name>metadataextraction_excluded_checksums</name>
@@ -164,9 +169,9 @@
 			</description>
 		</property>
 		<property>
-			<name>metadataextraction_max_file_size_mb</name>
+			<name>pdf_max_file_size_mb</name>
 			<value>$UNDEFINED$</value>
-			<description>maximum allowed file size in Megabytes</description>
+			<description>maximum allowed pdf file size in Megabytes</description>
 		</property>
 		<property>
 			<name>metadataextraction_default_cache_location</name>
@@ -605,6 +610,10 @@
 					<value>${workingDir}/import_content_url/imported/text</value>
 				</property>
 				<property>
+					<name>max_file_size_mb</name>
+					<value>${text_xml_max_file_size_mb}</value>
+				</property>
+				<property>
 					<name>output</name>
 					<value>${workingDir}/import_plaintext/imported</value>
 				</property>
@@ -629,6 +638,10 @@
 					<value>${workingDir}/import_content_url/imported/wos</value>
 				</property>
 				<property>
+					<name>max_file_size_mb</name>
+					<value>${text_xml_max_file_size_mb}</value>
+				</property>
+				<property>
 					<name>output</name>
 					<value>${output_wos}</value>
 				</property>
@@ -651,6 +664,10 @@
 				<property>
 					<name>input</name>
 					<value>${workingDir}/import_content_url/imported/xmlpmc</value>
+				</property>
+				<property>
+					<name>max_file_size_mb</name>
+					<value>${text_xml_max_file_size_mb}</value>
 				</property>
 				<property>
 					<name>output</name>
@@ -736,6 +753,10 @@
 					<value>${workingDir}/import_content_url/imported/html</value>
 				</property>
 				<property>
+					<name>max_file_size_mb</name>
+					<value>${text_xml_max_file_size_mb}</value>
+				</property>
+				<property>
 					<name>output</name>
 					<value>${workingDir}/import_html/imported</value>
 				</property>
@@ -797,7 +818,7 @@
 				</property>
 				<property>
 					<name>max_file_size_mb</name>
-					<value>${metadataextraction_max_file_size_mb}</value>
+					<value>${pdf_max_file_size_mb}</value>
 				</property>
 				<property>
 					<name>default_cache_location</name>
@@ -850,7 +871,7 @@
 				</property>
 				<property>
 					<name>max_file_size_mb</name>
-					<value>${metadataextraction_max_file_size_mb}</value>
+					<value>${pdf_max_file_size_mb}</value>
 				</property>
 				<property>
 					<name>output_name_meta</name>

@@ -1,3 +1,5 @@
+SET mapred.child.java.opts $mapred_child_java_opts
+
 define avro_load_input
 org.apache.pig.piggybank.storage.avro.AvroStorage(
 'schema', '$schema_input');

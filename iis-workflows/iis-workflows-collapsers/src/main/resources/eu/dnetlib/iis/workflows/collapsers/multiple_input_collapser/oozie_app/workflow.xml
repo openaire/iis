@@ -1,197 +1,209 @@
 <?xml version="1.0"?>
 <workflow-app xmlns="uri:oozie:workflow:0.4" name="multiple_input_collapser">
-	<!-- This collapser has many input ports. Each one has an origin string assigned.  
-	Their order is important and used later to do the de-duplication of the
-	records. -->
+	<!-- This collapser has many input ports. Each one has an origin string assigned. Their order is important and used later to do the de-duplication of the records. -->
 	<parameters>
-        <property>
-            <name>origin_1</name>
-            <description>name of the origin of the first port</description>
-        </property>
-        <property>
-            <name>input_1</name>
-            <description>first port</description>
-        </property>
-        <property>
-            <name>origin_2</name>
-            <description>name of the origin of the second port</description>
-        </property>
-        <property>
-            <name>input_2</name>
-            <description>second port</description>
-        </property>
-        <property>
-            <name>origin_3</name>
-            <value>$UNDEFINED$</value>
-            <description>name of the origin of the third port; optional</description>
-        </property>
-        <property>
-            <name>input_3</name>
-            <value>$UNDEFINED$</value>
-            <description>third port; optional</description>
-        </property>
-        <property>
+		<property>
+			<name>origin_1</name>
+			<description>name of the origin of the first port</description>
+		</property>
+		<property>
+			<name>input_1</name>
+			<description>first port</description>
+		</property>
+		<property>
+			<name>origin_2</name>
+			<description>name of the origin of the second port</description>
+		</property>
+		<property>
+			<name>input_2</name>
+			<description>second port</description>
+		</property>
+		<property>
+			<name>origin_3</name>
+			<value>$UNDEFINED$</value>
+			<description>name of the origin of the third port; optional</description>
+		</property>
+		<property>
+			<name>input_3</name>
+			<value>$UNDEFINED$</value>
+			<description>third port; optional</description>
+		</property>
+		<property>
 			<name>blocking_field</name>
 			<description>"blocking" field name to group duplicate records by</description>
 		</property>
-        <property>
+		<property>
 			<name>schema_input</name>
 			<description>input schema</description>
 		</property>
-        <property>
+		<property>
 			<name>output</name>
 			<description>output port</description>
 		</property>
-        <property>
+		<property>
 			<name>schema_input_envelope</name>
-			<description>Schema of the envelope structure used internally. 
-			
-			Generally, this schema should be generated internally in an automated way, but 
-			so far we haven't found the time to implement it.</description>
+			<description>Schema of the envelope structure used internally.
+
+				Generally, this schema should be generated internally in an automated way, but
+				so far we haven't found the time to implement it.
+			</description>
 		</property>
-        <property>
+		<property>
 			<name>record_collapser</name>
-            <value>eu.dnetlib.iis.workflows.collapsers.origins.OriginConfidenceCollapser</value>
+			<value>eu.dnetlib.iis.workflows.collapsers.origins.OriginConfidenceCollapser</value>
 			<description></description>
 		</property>
 		<property>
-            <name>remove_sideproducts</name>
-            <value>true</value>
-            <description>flag collapser's side products will be erased</description>
-        </property>
+			<name>remove_sideproducts</name>
+			<value>true</value>
+			<description>flag collapser's side products will be erased</description>
+		</property>
+		<property>
+			<name>mapred_child_java_opts</name>
+			<value>-Xmx2048M</value>
+			<description>java-opts, e.g. maximum heap size for a single JVM running MapReduce</description>
+		</property>
 	</parameters>
-    
-    <start to="union" />
-	
-    <action name="union">
-        <sub-workflow>
-            <app-path>${wf:appPath()}/union</app-path>
-            <configuration>
-                <property>
-                    <name>jobTracker</name>
-                    <value>${jobTracker}</value>
-                </property>
-                <property>
-                    <name>nameNode</name>
-                    <value>${nameNode}</value>
-                </property>
-                <property>
-                    <name>queueName</name>
-                    <value>${queueName}</value>
-                </property>
-                <!-- Working directory of the subworkflow -->
-                <property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/union/working_dir</value>
-                </property>
-                <!-- Input ports & parameters. -->
-                <property>
-                    <name>origin_1</name>
-                    <value>${origin_1}</value>
-                </property>
-                <property>
-                    <name>input_1</name>
-                    <value>${input_1}</value>
-                </property>
-                <property>
-                    <name>origin_2</name>
-                    <value>${origin_2}</value>
-                </property>
-                <property>
-                    <name>input_2</name>
-                    <value>${input_2}</value>
-                </property>
-                <property>
-                    <name>origin_3</name>
-                    <value>${origin_3}</value>
-                </property>
-                <property>
-                    <name>input_3</name>
-                    <value>${input_3}</value>
-                </property>
-                <property>
-                    <name>schema_input</name>
-                    <value>${schema_input}</value>
-                </property>
-                <!-- Output port bound to given path -->
-                <property>
-                    <name>output</name>
-                    <value>${workingDir}/union/output</value>
-                </property>
-                <property>
-                    <name>schema_output</name>
-                    <value>${schema_input_envelope}</value>
-                </property>
-            </configuration>
-        </sub-workflow>
-        <ok to="origins_collapser"/>
-        <error to="fail"/>
-    </action>
-    
-    <action name="origins_collapser">
-        <sub-workflow>
-            <app-path>${wf:appPath()}/origins_collapser</app-path>
-            <configuration>
-                <property>
-                    <name>jobTracker</name>
-                    <value>${jobTracker}</value>
-                </property>
-                <property>
-                    <name>nameNode</name>
-                    <value>${nameNode}</value>
-                </property>
-                <property>
-                    <name>queueName</name>
-                    <value>${queueName}</value>
-                </property>
-                <!-- Working directory of the subworkflow -->
-                <property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/origins_collapser/working_dir</value>
-                </property>
-                <property>
-                    <name>blocking_field</name>
-                    <value>data.${blocking_field}</value>
-                </property>
-                <property>
-                    <name>origins</name>
-                    <value>${origin_1},${origin_2},${origin_3}</value>
-                </property>
-                <property>
-                    <name>record_collapser</name>
-                    <value>${record_collapser}</value>
-                </property>
-                <property>
-                    <name>schema_input</name>
-                    <value>${schema_input_envelope}</value>
-                </property>
-                <property>
-                    <name>schema_output</name>
-                    <value>${schema_input}</value>
-                </property>
-                <!-- Input ports. -->
-                <property>
-                    <name>input</name>
-                    <value>${workingDir}/union/output</value>
-                </property>
-                <!-- Output port bound to given path -->
-                <property>
-                    <name>output</name>
-                    <value>${output}</value>
-                </property>
-            </configuration>
-        </sub-workflow>
-        <ok to="finalize"/>
-        <error to="fail"/>
-    </action>
-    
-    <decision name="finalize">
+
+	<start to="union" />
+
+	<action name="union">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/union</app-path>
+			<configuration>
+				<property>
+					<name>jobTracker</name>
+					<value>${jobTracker}</value>
+				</property>
+				<property>
+					<name>nameNode</name>
+					<value>${nameNode}</value>
+				</property>
+				<property>
+					<name>queueName</name>
+					<value>${queueName}</value>
+				</property>
+				<!-- Working directory of the subworkflow -->
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/union/working_dir</value>
+				</property>
+				<!-- Input ports & parameters. -->
+				<property>
+					<name>origin_1</name>
+					<value>${origin_1}</value>
+				</property>
+				<property>
+					<name>input_1</name>
+					<value>${input_1}</value>
+				</property>
+				<property>
+					<name>origin_2</name>
+					<value>${origin_2}</value>
+				</property>
+				<property>
+					<name>input_2</name>
+					<value>${input_2}</value>
+				</property>
+				<property>
+					<name>origin_3</name>
+					<value>${origin_3}</value>
+				</property>
+				<property>
+					<name>input_3</name>
+					<value>${input_3}</value>
+				</property>
+				<property>
+					<name>schema_input</name>
+					<value>${schema_input}</value>
+				</property>
+				<!-- Output port bound to given path -->
+				<property>
+					<name>output</name>
+					<value>${workingDir}/union/output</value>
+				</property>
+				<property>
+					<name>schema_output</name>
+					<value>${schema_input_envelope}</value>
+				</property>
+				<property>
+					<name>mapred_child_java_opts</name>
+					<value>${mapred_child_java_opts}</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="origins_collapser" />
+		<error to="fail" />
+	</action>
+
+	<action name="origins_collapser">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/origins_collapser</app-path>
+			<configuration>
+				<property>
+					<name>jobTracker</name>
+					<value>${jobTracker}</value>
+				</property>
+				<property>
+					<name>nameNode</name>
+					<value>${nameNode}</value>
+				</property>
+				<property>
+					<name>queueName</name>
+					<value>${queueName}</value>
+				</property>
+				<!-- Working directory of the subworkflow -->
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/origins_collapser/working_dir</value>
+				</property>
+				<property>
+					<name>blocking_field</name>
+					<value>data.${blocking_field}</value>
+				</property>
+				<property>
+					<name>origins</name>
+					<value>${origin_1},${origin_2},${origin_3}</value>
+				</property>
+				<property>
+					<name>record_collapser</name>
+					<value>${record_collapser}</value>
+				</property>
+				<property>
+					<name>schema_input</name>
+					<value>${schema_input_envelope}</value>
+				</property>
+				<property>
+					<name>schema_output</name>
+					<value>${schema_input}</value>
+				</property>
+				<!-- Input ports. -->
+				<property>
+					<name>input</name>
+					<value>${workingDir}/union/output</value>
+				</property>
+				<!-- Output port bound to given path -->
+				<property>
+					<name>output</name>
+					<value>${output}</value>
+				</property>
+				<property>
+					<name>mapred_child_java_opts</name>
+					<value>${mapred_child_java_opts}</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="finalize" />
+		<error to="fail" />
+	</action>
+
+	<decision name="finalize">
 		<switch>
 			<case to="remove_sideproducts">${remove_sideproducts eq "true"}</case>
 			<default to="end" />
 		</switch>
 	</decision>
-	
+
 	<action name="remove_sideproducts">
 		<fs>
 			<delete path="${nameNode}${workingDir}/union" />
@@ -200,7 +212,7 @@
 		<ok to="end" />
 		<error to="fail" />
 	</action>
-    
+
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:
 			[${wf:errorMessage(wf:lastErrorNode())}]

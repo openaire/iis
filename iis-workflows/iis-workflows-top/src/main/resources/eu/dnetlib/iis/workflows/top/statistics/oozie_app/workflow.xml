@@ -75,9 +75,9 @@
 			<description>list of content checksums excluded from metadataextraction processing</description>
 		</property>
 		<property>
-			<name>metadataextraction_max_file_size_mb</name>
+			<name>pdf_max_file_size_mb</name>
 			<value>500</value>
-			<description>maximum allowed file size in Megabytes</description>
+			<description>maximum allowed pdf file size in Megabytes</description>
 		</property>
 		<property>
 			<name>metadataextraction_default_cache_location</name>
@@ -251,8 +251,8 @@
 					<value>${metadataextraction_excluded_checksums}</value>
 				</property>
 				<property>
-					<name>metadataextraction_max_file_size_mb</name>
-					<value>${metadataextraction_max_file_size_mb}</value>
+					<name>pdf_max_file_size_mb</name>
+					<value>${pdf_max_file_size_mb}</value>
 				</property>
 				<property>
 					<name>metadataextraction_default_cache_location</name>
