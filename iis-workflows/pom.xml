@@ -44,7 +44,7 @@
         </pluginRepository>
     </pluginRepositories>
       
-    </pluginRepositories>
+
 
     <properties>
         <maven.build.timestamp.format>yyyy-MM-dd_HH_mm</maven.build.timestamp.format>
@@ -190,11 +190,7 @@
 							</execution>
 						</executions>
 					</plugin>
-<<<<<<< HEAD
-					
-										
-=======
->>>>>>> master
+
 					<plugin>
 						<groupId>eu.dnetlib.primer</groupId>
 						<artifactId>primer-maven-plugin</artifactId>
@@ -297,12 +293,9 @@
 									<outputFile>target/${oozie.package.file.name}/job.properties</outputFile>
 									<!-- notice: dots are not allowed for job.properties! -->
 									<include>nameNode,jobTracker,queueName,
-<<<<<<< HEAD
 									workingDir,oozieTopWfApplicationPath,
 									oozie.wf.application.path,projectVersion,oozie.use.system.libpath</include>
-=======
-										workingDir,oozie.wf.application.path</include>
->>>>>>> master
+
 									<includeSystemProperties>true</includeSystemProperties>
 									<includePropertyKeysFromFiles>
 										<!-- <param>${workflow.source.dir}/job.properties</param> -->
@@ -361,7 +354,7 @@
 						</executions>
 					</plugin>
 					<plugin>
-<<<<<<< HEAD
+
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-shade-plugin</artifactId>
                         <version>2.4.1</version>
@@ -394,9 +387,7 @@
                     
 					<plugin>
 						<!-- this plugin prepares oozie installer package-->
-=======
-						<!-- this plugin prepares oozie installer package -->
->>>>>>> master
+
 						<artifactId>maven-antrun-plugin</artifactId>
 						<executions>
 							<!-- extracting shared resources phase -->
@@ -436,13 +427,11 @@
 												<include name="*.jar" />
 											</fileset>
 										</copy>
-<<<<<<< HEAD
+
 										
 										<fixcrlf srcdir="target/${oozie.package.file.name}/${oozieAppDir}/" encoding="UTF-8" outputencoding="UTF-8" includes="**/*.sh,**/*.json,**/*.py,**/*.sql" eol="lf"/>
 										
-=======
 
->>>>>>> master
 										<!-- creating tar.gz package -->
 										<tar destfile="target/${oozie.package.file.name}.tar.gz" compression="gzip">
 											<tarfileset dir="target/${oozie.package.file.name}" />
