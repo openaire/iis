@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.transform.TransformerException;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 
 import org.apache.avro.Schema;
@@ -23,6 +24,7 @@ import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.log4j.Logger;
+import org.dom4j.DocumentException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -156,11 +158,11 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
 	 * @param actionSetId
 	 * @param actionFactory
 	 * @param actionManager
-	 * @throws ActionManagerException 
+	 * @throws Exception 
 	 */
 	protected void handleRecord(String mdStoreRecord, 
 			String actionSetId, ActionFactory actionFactory, 
-			ActionManagerServiceFacade actionManager) throws DocumentNotFoundException, ActionManagerException {
+			ActionManagerServiceFacade actionManager) throws Exception {
 		if (mdStoreRecord!=null) {
 			XsltInfoPackageAction xsltAction = actionFactory.generateInfoPackageAction(
 					entityXSLTName, actionSetId, 

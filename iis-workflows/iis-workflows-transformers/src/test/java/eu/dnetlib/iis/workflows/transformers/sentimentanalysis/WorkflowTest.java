@@ -19,7 +19,7 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	public void testWorkflow() throws Exception {
     	OozieWorkflowTestConfiguration wf = new OozieWorkflowTestConfiguration();
         wf.setTimeoutInSeconds(720);
-        testWorkflow("eu/dnetlib/iis/workflows/transformers/sentimentanalysis/sampledataproducer/oozie_app", wf);
+        testWorkflow("eu/dnetlib/iis/workflows/transformers/sentimentanalysis/sampledataproducer", wf);
     }
 
 }

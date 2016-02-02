@@ -44,6 +44,13 @@
 		<url>http://ci.research-infrastructures.eu/view/D-Net</url>
 	</ciManagement>
 	
+	<scm>
+		<connection>scm:git:ssh://git@github.com/openaire/iis.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/openaire/iis.git</developerConnection>
+		<url>https://github.com/openaire/iis</url>
+		<tag>HEAD</tag>
+	</scm>
+	
 	<pluginRepositories> </pluginRepositories>
 	
 	<repositories>

@@ -2,10 +2,16 @@ package eu.dnetlib.iis.core;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.schmizz.sshj.SSHClient;
+import net.schmizz.sshj.connection.ConnectionException;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.connection.channel.direct.Session.Command;
+import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 
 /**
@@ -16,7 +22,13 @@ import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
  */
 public class SshSimpleConnection {
 	
+	private final static Logger log = LoggerFactory.getLogger(SshSimpleConnection.class);
+	
 	private final static int SSH_EXEC_TIMEOUT_IN_SEC = 5;
+	
+	private final static int SSH_MAX_RETRY_COUNT = 5;
+	
+	private final static int SSH_RETRY_COOLDOWN_IN_SEC = 10;
 	
 	
 	private SSHClient sshClient = new SSHClient();
@@ -42,30 +54,18 @@ public class SshSimpleConnection {
 	 * @return command execution results
 	 */
 	public Command execute(String command, boolean throwExceptionOnCommandError) {
-		Session sshSession = null;
 		Command cmd = null;
 		
 		try {
-			sshSession = sshClient.startSession();
 			
-			cmd = sshSession.exec(command);
-			
-			cmd.join(SSH_EXEC_TIMEOUT_IN_SEC, TimeUnit.SECONDS);
+			cmd = executeCommandWithRetries(command);
 			
 			if (throwExceptionOnCommandError && cmd.getExitStatus() != 0) {
 				throw new RuntimeException("Error executing command: " + command 
 						+ "\n" + SshExecUtils.readCommandError(cmd));
 			}
 		} catch (IOException e) {
-			throw new RuntimeException("Error in communication with remote machine", e);
-		} finally {
-			if (sshSession != null) {
-				try {
-					sshSession.close();
-				} catch (IOException e) {
-					throw new RuntimeException("Error in closing ssh session", e);
-				}
-			}
+			throw new RuntimeException("Error in communication with remote machine: " + e.getMessage(), e);
 		}
 		
 		return cmd;
@@ -115,4 +115,62 @@ public class SshSimpleConnection {
 		}
 	}
 	
+	
+	//------------------------ PRIVATE --------------------------
+	
+	private Command executeCommandWithRetries(String command) throws TransportException, ConnectionException {
+		int currentRetryCount = 0;
+		Command cmd = null;
+		
+		while(true) {
+			
+			cmd = executeCommand(command);
+			
+			if (cmd == null) {
+				if (currentRetryCount >= SSH_MAX_RETRY_COUNT) {
+					throw new RuntimeException("Retry limit exceeded when trying to execute ssh command.");
+				}
+				
+				++currentRetryCount;
+				log.debug("Timeout when trying to execute ssh command. Will try again in " + SSH_RETRY_COOLDOWN_IN_SEC + " seconds");
+				
+				try {
+					Thread.sleep(1000 * SSH_RETRY_COOLDOWN_IN_SEC);
+				} catch (InterruptedException e1) {
+					throw new RuntimeException(e1);
+				}
+				
+				continue;
+			}
+			
+			break;
+		}
+		
+		return cmd;
+	}
+	
+	private Command executeCommand(String command) throws TransportException, ConnectionException {
+		Session sshSession = null;
+		Command cmd = null;
+		
+		try {
+			sshSession = sshClient.startSession();
+			
+			cmd = sshSession.exec(command);
+			
+			cmd.join(SSH_EXEC_TIMEOUT_IN_SEC, TimeUnit.SECONDS);
+			
+		} catch (ConnectionException e) {
+			if (e.getCause() instanceof TimeoutException) {
+				return null;
+			}
+			throw e;
+		} finally {
+			if (sshSession != null) {
+				sshSession.close();
+			}
+		}
+		
+		return cmd;
+	}
 }

@@ -12,12 +12,6 @@
     <artifactId>iis-workflows-ingest</artifactId>
     <packaging>jar</packaging>
     
-    <scm>
-      <developerConnection>
-        scm:svn:https://svn.driver.research-infrastructures.eu/driver/dnet40/modules/icm-iis-ingest/trunk
-      </developerConnection>
-    </scm>
-
     <dependencies>
         
         <dependency>

@@ -20,7 +20,7 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
         OozieWorkflowTestConfiguration wf = new OozieWorkflowTestConfiguration();
         wf.setTimeoutInSeconds(720);
         testWorkflow(
-                "eu/dnetlib/iis/workflows/transformers/export/citationwithsentimentlabels/sampledataproducer/oozie_app",
+                "eu/dnetlib/iis/workflows/transformers/export/citationwithsentimentlabels/sampledataproducer",
                 wf);
     }
 
