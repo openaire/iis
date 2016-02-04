@@ -89,19 +89,6 @@
             <artifactId>hadoop-common</artifactId>
         </dependency>
 		
-        <!-- coansys containing citationmatching workflow -->
-<!-- 		 <dependency> -->
-<!--             <groupId>pl.edu.icm.coansys</groupId> -->
-<!--             <artifactId>citation-matching-core-workflow</artifactId> -->
-<!--             <classifier>oozie-job</classifier> -->
-<!--             <type>tar.gz</type> -->
-<!--         </dependency> -->
-
-<!--         <dependency> -->
-<!--             <groupId>pl.edu.icm.coansys</groupId> -->
-<!--             <artifactId>citations-core-code</artifactId> -->
-<!--             <version>1.10-SPARK-CIT-SNAPSHOT</version> -->
-<!--         </dependency> -->
 	</dependencies>
 	<build>
 		<plugins>
