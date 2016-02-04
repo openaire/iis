@@ -57,21 +57,22 @@ public class AvroDocumentMetadataReferencesToProtoBufMatchableEntityMapper
 
     public static CitationMatchingProtos.MatchableEntityData referenceToMatchableEntityData(
             String id, ReferenceMetadata reference) {
-        CitationMatchingProtos.MatchableEntityData.Builder builder = MatchableEntity.fromBasicMetadata(id,
-                Util.avroBasicMetadataToProtoBuf(reference.getBasicMetadata())).data().toBuilder();
-
-        String rawText;
-        if (reference.getRawText() != null) {
-            rawText = reference.getRawText().toString();
-        }
-        else {
-            rawText = builder.getAuthor() + ": " + builder.getTitle() + ". " + builder.getSource() +
-                    " (" + builder.getYear() + ") " + builder.getPages();
-        }
-        if (rawText.length() > MAX_CITATION_LENGTH) {
-            throw new IllegalArgumentException("Citation string exceeds length limit (" + MAX_CITATION_LENGTH + ").");
-        }
-        builder.addAuxiliary(CitationMatchingProtos.KeyValue.newBuilder().setKey("rawText").setValue(rawText));
-        return builder.build();
+//        CitationMatchingProtos.MatchableEntityData.Builder builder = MatchableEntity.fromBasicMetadata(id,
+//                Util.avroBasicMetadataToProtoBuf(reference.getBasicMetadata())).data().toBuilder();
+//
+//        String rawText;
+//        if (reference.getRawText() != null) {
+//            rawText = reference.getRawText().toString();
+//        }
+//        else {
+//            rawText = builder.getAuthor() + ": " + builder.getTitle() + ". " + builder.getSource() +
+//                    " (" + builder.getYear() + ") " + builder.getPages();
+//        }
+//        if (rawText.length() > MAX_CITATION_LENGTH) {
+//            throw new IllegalArgumentException("Citation string exceeds length limit (" + MAX_CITATION_LENGTH + ").");
+//        }
+//        builder.addAuxiliary(CitationMatchingProtos.KeyValue.newBuilder().setKey("rawText").setValue(rawText));
+//        return builder.build();
+    	return null;
     }
 }

@@ -1,2 +1,1 @@
 ## This is a classpath-based import file (this header is required)
-coansys coansys pl.edu.icm.coansys:citations-core-workflow

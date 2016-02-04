@@ -34,8 +34,9 @@ public class AvroDocumentMetadataToProtoBufMatchableEntityMapper
             docIdWritable.set(docId);
 
             // TODO MiconCodeReview: I would extract a method 'private static MatchableEntity getMatchableEntity(AvroKey<DocumentMetadata> fromAvro)'
-            MatchableEntity entity = MatchableEntity.fromBasicMetadata(docId,
-                    Util.avroBasicMetadataToProtoBuf(avro.datum().getBasicMetadata()));
+//            MatchableEntity entity = MatchableEntity.fromBasicMetadata(docId,
+//                    Util.avroBasicMetadataToProtoBuf(avro.datum().getBasicMetadata()));
+            MatchableEntity entity = null;
             byte[] metaBytes = entity.data().toByteArray();
             docMetaWritable.set(metaBytes, 0, metaBytes.length);
 

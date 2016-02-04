@@ -21,6 +21,12 @@
 			<version>${project.version}</version>
 		</dependency>
 		
+        <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-3rdparty-avrojsoncoders</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+		
 		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
 			<artifactId>iis-core</artifactId>
@@ -70,7 +76,7 @@
         </dependency>
         <dependency>
             <groupId>pl.edu.icm.coansys</groupId>
-            <artifactId>citations-impl</artifactId>
+            <artifactId>citation-matching-core-code</artifactId>
         </dependency>
 
         <dependency>
@@ -84,12 +90,18 @@
         </dependency>
 		
         <!-- coansys containing citationmatching workflow -->
-		 <dependency>
-            <groupId>pl.edu.icm.coansys</groupId>
-            <artifactId>citations-core-workflow</artifactId>
-            <classifier>oozie-job</classifier>
-            <type>tar.gz</type>
-        </dependency>
+<!-- 		 <dependency> -->
+<!--             <groupId>pl.edu.icm.coansys</groupId> -->
+<!--             <artifactId>citation-matching-core-workflow</artifactId> -->
+<!--             <classifier>oozie-job</classifier> -->
+<!--             <type>tar.gz</type> -->
+<!--         </dependency> -->
+
+<!--         <dependency> -->
+<!--             <groupId>pl.edu.icm.coansys</groupId> -->
+<!--             <artifactId>citations-core-code</artifactId> -->
+<!--             <version>1.10-SPARK-CIT-SNAPSHOT</version> -->
+<!--         </dependency> -->
 	</dependencies>
 	<build>
 		<plugins>

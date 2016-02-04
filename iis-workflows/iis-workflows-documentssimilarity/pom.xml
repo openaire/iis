@@ -85,7 +85,7 @@
             <groupId>pl.edu.icm.coansys</groupId>
             <artifactId>document-similarity-oap-uberworkflow</artifactId>
             <type>tar.gz</type>
-            <classifier>oozie-job</classifier>
+            <classifier>oozie-wf</classifier>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
