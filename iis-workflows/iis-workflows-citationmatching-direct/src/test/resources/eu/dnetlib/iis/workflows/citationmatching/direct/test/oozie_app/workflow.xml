@@ -51,8 +51,8 @@
                     <value>${oozieTopWfApplicationPath}</value>
                 </property>
                 <property>
-                    <name>projectJarFileName</name>
-                    <value>${projectJarFileName}</value>
+                    <name>projectVersion</name>
+                    <value>${projectVersion}</value>
                 </property>
                 <!-- Input ports. -->
                 <property>
