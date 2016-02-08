@@ -16,41 +16,7 @@
             <name>output</name>
             <description>output directory holding eu.dnetlib.iis.citationmatching.schemas.Citation avro datastore</description>
         </property>
-        <property>
-            <name>reduceTasks</name>
-            <value>30</value>
-        </property>
-        <property>
-            <name>remove_sideproducts</name>
-            <value>true</value>
-        </property>
     </parameters>
-
-    <global>
-        <job-tracker>${jobTracker}</job-tracker>
-        <name-node>${nameNode}</name-node>
-        <configuration>
-            <property>
-                <name>io.serializations</name>
-                <value>org.apache.hadoop.io.serializer.WritableSerialization,org.apache.hadoop.io.serializer.avro.AvroSpecificSerialization,org.apache.hadoop.io.serializer.avro.AvroReflectSerialization,org.apache.avro.hadoop.io.AvroSerialization
-                </value>
-            </property>
-            <property>
-                <name>rpc.engine.org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolPB
-                </name>
-                <value>org.apache.hadoop.ipc.ProtobufRpcEngine</value>
-            </property>
-            <!-- ## This is required for new MapReduce API usage -->
-            <property>
-                <name>mapred.mapper.new-api</name>
-                <value>true</value>
-            </property>
-            <property>
-                <name>mapred.reducer.new-api</name>
-                <value>true</value>
-            </property>
-        </configuration>
-    </global>
 
     <start to="citation-matching" />
 
@@ -69,30 +35,14 @@
             <mode>cluster</mode>
             <name>citation-matching</name>
 
-            <class>pl.edu.icm.coansys.citations.CitationMatchingJob</class>
+            <class>eu.dnetlib.iis.workflows.citationmatching.IisCitationMatchingJob</class>
 
             <jar>${oozieTopWfApplicationPath}/lib/iis-workflows-citationmatching-${projectVersion}.jar</jar>
         
-            <arg>-citationPath = ${input}</arg>
-            <arg>-documentPath = ${input}</arg>
-            
-            <arg>-hashGeneratorClasses = pl.edu.icm.coansys.citations.hashers.CitationNameYearPagesHashGenerator:pl.edu.icm.coansys.citations.hashers.DocumentNameYearPagesHashGenerator</arg>
-            <arg>-hashGeneratorClasses = pl.edu.icm.coansys.citations.hashers.CitationNameYearPagesHashGenerator:pl.edu.icm.coansys.citations.hashers.DocumentNameYearNumNumHashGenerator</arg>
-            <arg>-hashGeneratorClasses = pl.edu.icm.coansys.citations.hashers.CitationNameYearHashGenerator:pl.edu.icm.coansys.citations.hashers.DocumentNameYearStrictHashGenerator</arg>
-            <arg>-hashGeneratorClasses = pl.edu.icm.coansys.citations.hashers.CitationNameYearHashGenerator:pl.edu.icm.coansys.citations.hashers.DocumentNameYearHashGenerator</arg>
+            <arg>-fullDocumentPath = ${input}</arg>
             
             <arg>-outputDirPath = ${output}</arg>
-            <arg>-maxHashBucketSize = 10000</arg>
             <arg>-numberOfPartitions = 5</arg>
-            
-            <arg>-inputDocumentReaderClass = eu.dnetlib.iis.workflows.citationmatching.DocumentMetadataInputReader</arg>
-            <arg>-inputDocumentConverterClass = eu.dnetlib.iis.workflows.citationmatching.DocumentMetadataInputConverter</arg>
-            
-            <arg>-inputCitationReaderClass = eu.dnetlib.iis.workflows.citationmatching.ReferenceMetadataInputReader</arg>
-            <arg>-inputCitationConverterClass = eu.dnetlib.iis.workflows.citationmatching.ReferenceMetadataInputConverter</arg>
-            
-            <arg>-outputConverterClass = eu.dnetlib.iis.workflows.citationmatching.CitationOutputConverter</arg>
-            <arg>-outputWriterClass = eu.dnetlib.iis.workflows.citationmatching.CitationOutputWriter</arg>
             
         </spark>
         <ok to="end"/>

@@ -27,6 +27,8 @@ public class DocumentMetadataInputConverter implements InputDocumentConverter<St
     /**
      * Converts rdd with documents of type {@link DocumentMetadata}
      * to rdd with documents of type {@link MatchableEntity}.
+     * Method assumes that keys of input rdd will contain document id.
+     * Keys in returned rdd will be unchanged.
      */
     @Override
     public JavaPairRDD<String, MatchableEntity> convertDocuments(JavaPairRDD<String, DocumentMetadata> inputDocuments) {

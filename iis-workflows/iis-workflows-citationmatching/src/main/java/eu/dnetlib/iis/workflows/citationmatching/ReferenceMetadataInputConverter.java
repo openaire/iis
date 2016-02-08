@@ -36,6 +36,8 @@ public class ReferenceMetadataInputConverter implements InputCitationConverter<S
     /**
      * Converts rdd with citations of type {@link ReferenceMetadata}
      * to rdd with citations of type {@link MatchableEntity}.
+     * Method assumes that keys of input rdd will contain citation id.
+     * Keys in returned rdd will be unchanged.
      */
     @Override
     public JavaPairRDD<String, MatchableEntity> convertCitations(JavaPairRDD<String, ReferenceMetadata> inputCitations) {
