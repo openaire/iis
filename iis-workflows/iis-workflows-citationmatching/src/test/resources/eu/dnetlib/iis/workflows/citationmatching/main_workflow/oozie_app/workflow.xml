@@ -49,7 +49,7 @@
                 </property>
                 <property>
                     <name>output</name>
-                    <value>${workingDir}/citation</value>
+                    <value>${workingDir}/citation/output</value>
                 </property>
                 <property>
                     <name>workingDir</name>
@@ -79,7 +79,7 @@
 			<arg>-C{citation,
 				eu.dnetlib.iis.citationmatching.schemas.Citation,
 				eu/dnetlib/iis/workflows/citationmatching/main_workflow/data/citation.json}</arg>
-			<arg>-Icitation=${workingDir}/citation</arg>
+			<arg>-Icitation=${workingDir}/citation/output</arg>
 		</java>
 		<ok to="end" />
 		<error to="fail" />

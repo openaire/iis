@@ -541,7 +541,7 @@
         	
         	<dependency>
             	<groupId>pl.edu.icm.coansys</groupId>
-            	<artifactId>citations-impl</artifactId>
+            	<artifactId>citation-matching-core-code</artifactId>
             	<version>${iis.coansys.version}</version>
             	<exclusions>
                 	<exclusion>
@@ -593,7 +593,7 @@
             	<artifactId>document-similarity-oap-uberworkflow</artifactId>
             	<version>${iis.coansys.version}</version>
             	<type>tar.gz</type>
-            	<classifier>oozie-job</classifier>
+            	<classifier>oozie-wf</classifier>
             	<exclusions>
             		<exclusion>
                     	<groupId>org.apache.hadoop</groupId>
@@ -624,7 +624,7 @@
         	
         	<dependency>
             	<groupId>pl.edu.icm.coansys</groupId>
-            	<artifactId>citations-core-workflow</artifactId>
+            	<artifactId>citation-matching-core-workflow</artifactId>
             	<version>${iis.coansys.version}</version>
             	<classifier>oozie-job</classifier>
             	<type>tar.gz</type>
@@ -1150,7 +1150,7 @@
 		<iis.avro.version>1.7.6-${iis.cdh.version}</iis.avro.version>
 		<iis.hadoop.version>2.6.0-${iis.cdh.version}</iis.hadoop.version>
 		<iis.spark.version>1.3.0-${iis.cdh.version}</iis.spark.version>
-		<iis.coansys.version>1.9</iis.coansys.version>
+		<iis.coansys.version>1.10-SPARK-CIT-SNAPSHOT</iis.coansys.version>
 		<scala.version>2.10.6</scala.version>
 	</properties>
 </project>
