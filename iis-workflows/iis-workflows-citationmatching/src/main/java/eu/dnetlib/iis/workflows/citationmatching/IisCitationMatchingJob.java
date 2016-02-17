@@ -116,7 +116,7 @@ public class IisCitationMatchingJob {
         private long maxHashBucketSize = 10000;
         
         @Parameter(names="-numberOfPartitions", required = false, description = "number of partitions used for rdds with citations and documents read from input files, if not set it will depend on the input format")
-        private Integer numberOfPartitions;
+        private Integer numberOfPartitions = 5;
         
     }
 }
