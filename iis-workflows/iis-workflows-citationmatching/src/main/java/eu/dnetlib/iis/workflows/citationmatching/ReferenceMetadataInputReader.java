@@ -32,10 +32,9 @@ public class ReferenceMetadataInputReader implements InputCitationReader<String,
      * Id of citation is built by adding {@literal cit_} prefix
      * and {@literal _position} to document id.
      * Values of returned rdd will contain citation in form of {@link ReferenceMetadata} object.
-     * Method completely ignores numberOfPartitions parameter.
      */
     @Override
-    public JavaPairRDD<String, ReferenceMetadata> readCitations(JavaSparkContext sparkContext, String inputCitationsPath, Integer numOfPartitions) {
+    public JavaPairRDD<String, ReferenceMetadata> readCitations(JavaSparkContext sparkContext, String inputCitationsPath) {
 
         JavaRDD<DocumentMetadata> fullDocuments = SparkAvroLoader.loadJavaRDD(sparkContext, inputCitationsPath, DocumentMetadata.class);
 
