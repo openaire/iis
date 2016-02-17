@@ -28,10 +28,9 @@ public class DocumentMetadataInputReader implements InputDocumentReader<String, 
      * Reads input documents rdd from avro {@link DocumentMetadata} datastore.
      * Keys of returned rdd will contain document id with added {@literal doc_} prefix.
      * Values of returned rdd will contain document in form of {@link DocumentMetadata} object.
-     * Method completely ignores numberOfPartitions parameter.
      */
     @Override
-    public JavaPairRDD<String, DocumentMetadata> readDocuments(JavaSparkContext sparkContext, String inputDocumentsPath, Integer numberOfPartitions) {
+    public JavaPairRDD<String, DocumentMetadata> readDocuments(JavaSparkContext sparkContext, String inputDocumentsPath) {
 
         JavaRDD<DocumentMetadata> documents = SparkAvroLoader.loadJavaRDD(sparkContext, inputDocumentsPath, DocumentMetadata.class);
 

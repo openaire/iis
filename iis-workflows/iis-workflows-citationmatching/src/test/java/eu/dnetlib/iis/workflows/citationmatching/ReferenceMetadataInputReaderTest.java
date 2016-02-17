@@ -70,7 +70,7 @@ public class ReferenceMetadataInputReaderTest {
 
 
         // execute
-        JavaPairRDD<String, ReferenceMetadata> retCitations = referenceMetadataInputReader.readCitations(sparkContext, "/some/path", 4);
+        JavaPairRDD<String, ReferenceMetadata> retCitations = referenceMetadataInputReader.readCitations(sparkContext, "/some/path");
 
 
         // assert

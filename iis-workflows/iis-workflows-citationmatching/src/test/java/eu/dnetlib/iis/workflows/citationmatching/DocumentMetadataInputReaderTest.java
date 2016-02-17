@@ -69,7 +69,7 @@ public class DocumentMetadataInputReaderTest {
 
         // execute
 
-        JavaPairRDD<String, DocumentMetadata> retDocuments = documentMetadataInputReader.readDocuments(sparkContext, "/some/path", 4);
+        JavaPairRDD<String, DocumentMetadata> retDocuments = documentMetadataInputReader.readDocuments(sparkContext, "/some/path");
 
 
         // assert
