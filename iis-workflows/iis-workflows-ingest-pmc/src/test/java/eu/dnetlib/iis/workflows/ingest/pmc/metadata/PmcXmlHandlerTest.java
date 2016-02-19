@@ -66,6 +66,45 @@ public class PmcXmlHandlerTest {
 			saxParser.parse(inputStream = PmcXmlHandler.class.getResourceAsStream(filePath), 
 					pmcXmlHandler);
 			ExtractedDocumentMetadata meta = metaBuilder.build();
+			assertEquals("research-article", meta.getEntityType());
+			assertEquals("BMC Systems Biology", meta.getJournal());
+			assertEquals("111", meta.getPages().getStart());
+			assertEquals("111", meta.getPages().getEnd());
+			
+			assertNotNull(meta.getReferences());
+			assertEquals(34, meta.getReferences().size());
+			
+			assertNotNull(meta.getAffiliations());
+			assertEquals(2, meta.getAffiliations().size());
+			
+		} finally {
+			if (inputStream!=null) {
+				inputStream.close();
+			}
+		}
+	}
+	
+	@Test
+	public void testParsingNestedInOAI() throws Exception {
+		String filePath = "/eu/dnetlib/iis/workflows/ingest/pmc/metadata/data/document_nested_in_oai.xml";
+		InputStream inputStream = null;
+		try {
+			SAXParserFactory saxFactory = SAXParserFactory.newInstance();
+			saxFactory.setValidating(false);
+			SAXParser saxParser = saxFactory.newSAXParser();
+			XMLReader reader = saxParser.getXMLReader();
+			reader.setFeature("http://xml.org/sax/features/validation", false);
+			reader.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+			reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			
+			ExtractedDocumentMetadata.Builder metaBuilder = ExtractedDocumentMetadata.newBuilder();
+			metaBuilder.setId("some-id");
+			metaBuilder.setText("");
+			PmcXmlHandler pmcXmlHandler = new PmcXmlHandler(metaBuilder);
+			saxParser.parse(inputStream = PmcXmlHandler.class.getResourceAsStream(filePath), 
+					pmcXmlHandler);
+			ExtractedDocumentMetadata meta = metaBuilder.build();
+			assertEquals("research-article", meta.getEntityType());
 			assertEquals("BMC Systems Biology", meta.getJournal());
 			assertEquals("111", meta.getPages().getStart());
 			assertEquals("111", meta.getPages().getEnd());

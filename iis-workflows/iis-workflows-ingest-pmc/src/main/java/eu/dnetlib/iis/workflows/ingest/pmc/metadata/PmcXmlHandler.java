@@ -30,6 +30,9 @@ import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
  */
 public class PmcXmlHandler extends DefaultHandler {
 
+//	article root element, relevant when parsing article record nested inside oai record.
+	private static final String ELEM_ARTICLE = "article";
+	
 //	front journal
 	private static final String ELEM_JOURNAL_TITLE = "journal-title";
 	private static final String ELEM_JOURNAL_TITLE_GROUP = "journal-title-group";
@@ -109,11 +112,18 @@ public class PmcXmlHandler extends DefaultHandler {
 			Attributes attributes) throws SAXException {
 		if (rootElement) {
 			rootElement = false;
+//			extracting article-type from root element
 			String articleType = attributes.getValue(ATTR_ARTICLE_TYPE);
 			if (articleType!=null) {
 				builder.setEntityType(articleType);	
 			} else {
 				builder.setEntityType("unknown");
+			}
+		} else if (isWithinElement(qName, ELEM_ARTICLE, null)) {
+//			extracting article-type from article element nested in oai record 
+			String articleType = attributes.getValue(ATTR_ARTICLE_TYPE);
+			if (articleType!=null) {
+				builder.setEntityType(articleType);	
 			}
 		} else if (isWithinElement(qName, ELEM_JOURNAL_TITLE, ELEM_JOURNAL_TITLE_GROUP)) {
 			this.currentValue = new StringBuilder();
