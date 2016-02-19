@@ -3,6 +3,7 @@ package eu.dnetlib.iis.workflows.ingest.pmc.plaintext;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import org.jdom.Element;
+import org.jdom.Namespace;
 import org.jdom.Text;
 
 import java.util.List;
@@ -20,25 +21,43 @@ public final class NlmToDocumentTextConverter {
     private NlmToDocumentTextConverter() {
     }
 
-    public static String getDocumentText(Element source) {
+    public static String getDocumentText(Element source, Namespace namespace) {
+    	Element articleElement = getArticleElement(source, namespace);
         return Joiner.on("\n").skipNulls().join(
-                getMetadataText(source),
-                getBodyText(source),
-                getReferencesText(source)
+                getMetadataText(articleElement),
+                getBodyText(articleElement),
+                getReferencesText(articleElement)
         );
     }
 
-    public static String getMetadataText(Element source) {
+    /**
+     * Provides article element as root element or nested inside oai record. 
+     * @param source
+     * @param oaiNamespace
+     * @return article root element or child of oai:metadata element.
+     */
+    private static Element getArticleElement(Element source, Namespace oaiNamespace) {
+    	Element metadata = source.getChild("metadata", oaiNamespace);
+    	if (metadata!=null) {
+    		Element article = metadata.getChild("article");
+    		return article!=null?article:source;
+    	} else {
+//    		source element is not wrapped with oai:metadata element
+    		return source;
+    	}
+    }
+    
+    private static String getMetadataText(Element source) {
         return source.getChild("front") == null ? null :
                 getText(source.getChild("front"), Lists.newArrayList("journal-meta", "article-meta", "abstract"));
     }
 
-    public static String getBodyText(Element source) {
+    private static String getBodyText(Element source) {
         return source.getChild("body") == null ? null :
                 getText(source.getChild("body"), Lists.newArrayList("sec", "p", "title"));
     }
 
-    public static String getReferencesText(Element source) {
+    private static String getReferencesText(Element source) {
         return source.getChild("back") == null ? null :
                 "References\n" + getText(source.getChild("back"), Lists.newArrayList("ref"));
     }

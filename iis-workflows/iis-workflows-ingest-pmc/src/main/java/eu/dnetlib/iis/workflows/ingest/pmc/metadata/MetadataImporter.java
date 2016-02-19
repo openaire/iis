@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
+import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -40,8 +41,12 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
     public static final String FAULT_TEXT = "text";
 
     public static final String PARAM_INGEST_METADATA = "ingest.metadata";
+    
+    public static final String PARAM_INGEST_METADATA_OAI_NAMESPACE = "ingest.metadata.oai.element.namespace";
 
     boolean ingestMetadata = true;
+    
+    Namespace oaiNamespace = null;
 
     /**
      * Multiple outputs.
@@ -75,6 +80,9 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
         if (ingestMeta != null) {
             ingestMetadata = Boolean.valueOf(ingestMeta);
         }
+
+		oaiNamespace = Namespace.getNamespace(context.getConfiguration().get(PARAM_INGEST_METADATA_OAI_NAMESPACE,
+				"http://www.openarchives.org/OAI/2.0/"));
     }
 
     @Override
@@ -86,7 +94,7 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
             output.setId(nlm.getId());
             try {
                 String pmcXml = nlm.getText().toString();
-                output.setText(extractText(pmcXml));
+                output.setText(extractText(pmcXml, oaiNamespace));
                 if (ingestMetadata) {
                     extractMetadata(pmcXml, output);
                 } else {
@@ -103,12 +111,13 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
     /**
      * Extracts plain text from given xml input.
      * 
-     * @param input
+     * @param xmlInput
+     * @param oaiNamespace
      * @return plaintext extracted from xml input
      * @throws JDOMException
      * @throws IOException
      */
-    protected static CharSequence extractText(String xmlInput) throws JDOMException, IOException {
+    protected static CharSequence extractText(String xmlInput, Namespace oaiNamespace) throws JDOMException, IOException {
         SAXBuilder builder = new SAXBuilder();
         builder.setValidation(false);
         builder.setFeature("http://xml.org/sax/features/validation", false);
@@ -117,7 +126,7 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
         StringReader textReader = new StringReader(xmlInput);
         Document document = builder.build(textReader);
         Element sourceDocument = document.getRootElement();
-        return NlmToDocumentTextConverter.getDocumentText(sourceDocument);
+        return NlmToDocumentTextConverter.getDocumentText(sourceDocument, oaiNamespace);
     }
 
     /**
