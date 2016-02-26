@@ -38,10 +38,6 @@
 			<name>input_document_similarity</name>
 			<value>$UNDEFINED$</value>
 		</property>
-		<property>
-			<name>input_document_websiteusage_similarity</name>
-			<value>$UNDEFINED$</value>
-		</property>
 		
 		<!-- output root directory -->
 		<property>
@@ -72,7 +68,6 @@
 		<path start="exporter-document-to-documentclasses"/>
 		<path start="exporter-citation"/>
         <path start="exporter-document-similiarity"/>
-        <path start="exporter-websiteusage"/>
     </fork>
  
  	<action name="exporter-document-metadata">
@@ -239,25 +234,6 @@
                 <property>
                     <name>output</name>
                     <value>${output_root}/document_similarity</value>
-                </property>
-			</configuration>
-		</sub-workflow>
-		<ok to="joining"/>
-		<error to="fail" />
-     </action>
- 	
- 	<action name="exporter-websiteusage">
-		<sub-workflow>
-            <app-path>${wf:appPath()}/transformers_avro2json</app-path>
-            <propagate-configuration/>
-            <configuration>
-            	<property>
-                    <name>input</name>
-                    <value>${input_document_websiteusage_similarity}</value>
-                </property>
-                <property>
-                    <name>output</name>
-                    <value>${output_root}/document_websiteusage_similarity</value>
                 </property>
 			</configuration>
 		</sub-workflow>

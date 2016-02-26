@@ -143,12 +143,6 @@
 		
 		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
-			<artifactId>iis-workflows-websiteusage</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>eu.dnetlib.iis</groupId>
 			<artifactId>iis-workflows-citationmatching</artifactId>
 			<version>${project.version}</version>
 			<exclusions>

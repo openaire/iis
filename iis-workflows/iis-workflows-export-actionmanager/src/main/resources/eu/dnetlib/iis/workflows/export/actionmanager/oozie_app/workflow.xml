@@ -37,10 +37,6 @@
 			<name>input_document_similarity</name>
 			<value>$UNDEFINED$</value>
 		</property>
-		<property>
-			<name>input_document_websiteusage_similarity</name>
-			<value>$UNDEFINED$</value>
-		</property>
 
 		<property>
 			<name>action_hbase_table_name</name>
@@ -58,19 +54,9 @@
 			<description>default action-set identifier of exported data</description>
 		</property>
 		<property>
-			<name>action_set_id_person_similarities_websiteusage</name>
-			<value>$UNDEFINED$</value>
-			<description>person_similarities_websiteusage action-set identifier of exported data</description>
-		</property>
-		<property>
 			<name>action_set_id_document_similarities_standard</name>
 			<value>$UNDEFINED$</value>
 			<description>document_similarities_standard action-set identifier of exported data</description>
-		</property>
-		<property>
-			<name>action_set_id_document_similarities_websiteusage</name>
-			<value>$UNDEFINED$</value>
-			<description>document_similarities_websiteusage action-set identifier of exported data</description>
 		</property>
 		<property>
 			<name>action_set_id_document_affiliations</name>
@@ -226,17 +212,9 @@
 				<name>export.action.setid</name>
 				<value>${action_set_id}</value>
 			</property>
-            <property>
-				<name>export.action.setid.person_similarities_websiteusage</name>
-				<value>${action_set_id_person_similarities_websiteusage}</value>
-			</property>
 			<property>
 				<name>export.action.setid.document_similarities_standard</name>
 				<value>${action_set_id_document_similarities_standard}</value>
-			</property>
-			<property>
-				<name>export.action.setid.document_similarities_websiteusage</name>
-				<value>${action_set_id_document_similarities_websiteusage}</value>
 			</property>
 			<property>
 				<name>export.action.setid.document_affiliations</name>
@@ -306,7 +284,6 @@
 	        <arg>eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses</arg>
 	        <arg>eu.dnetlib.iis.export.schemas.Citations</arg>
 	        <arg>eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity</arg>
-			<arg>eu.dnetlib.iis.websiteusage.schemas.DocumentsWithWebsiteUsageSimilarities</arg>
 	        <capture-output />
 	    </java>
 	    <ok to="table-initializer" />
@@ -336,7 +313,6 @@
 		<path start="decision-exporter-document-to-documentclasses"/>
 		<path start="decision-exporter-citation"/>
         <path start="decision-exporter-document-similiarity"/>
-        <path start="decision-exporter-websiteusage"/>
     </fork>
 	
 	<decision name="decision-exporter-document-metadata">
@@ -399,13 +375,6 @@
         <switch>
             <case to="joining">${input_document_similarity eq "$UNDEFINED$"}</case>
             <default to="exporter-document-similiarity"/>
-        </switch>
-    </decision>
-    
-    <decision name="decision-exporter-websiteusage">
-        <switch>
-            <case to="joining">${input_document_websiteusage_similarity eq "$UNDEFINED$"}</case>
-            <default to="exporter-document-websiteusage-similiarity"/>
         </switch>
     </decision>
 	
@@ -601,27 +570,6 @@
 					<value>${documentssimilarity_threshold}</value>
 				</property>
 				
-			</configuration>
-		</map-reduce>
-		<ok to="joining" />
-		<error to="fail" />
-	</action>
-	
-	<action name="exporter-document-websiteusage-similiarity">
-		<map-reduce>
-			<configuration>
-				<property>
-					<name>export.action.builder.factory.classname</name>
-					<value>eu.dnetlib.iis.workflows.export.actionmanager.module.DocumentsWithWebsiteUsageSimilaritiesActionBuilderModuleFactory</value>
-				</property>
-				<property>
-					<name>avro.schema.input.key</name>
-					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.websiteusage.schemas.DocumentsWithWebsiteUsageSimilarities']}</value>
-				</property>
-				<property>
-					<name>mapred.input.dir</name>
-					<value>${input_document_websiteusage_similarity}</value>
-				</property>
 			</configuration>
 		</map-reduce>
 		<ok to="joining" />
