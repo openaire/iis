@@ -41,18 +41,6 @@
 			<name>input_document_websiteusage_similarity</name>
 			<value>$UNDEFINED$</value>
 		</property>
-		<property>
-			<name>input_document_statistics</name>
-			<value>$UNDEFINED$</value>
-		</property>
-		<property>
-			<name>input_author_statistics</name>
-			<value>$UNDEFINED$</value>
-		</property>
-		<property>
-			<name>input_project_statistics</name>
-			<value>$UNDEFINED$</value>
-		</property>
 
 		<property>
 			<name>action_hbase_table_name</name>
@@ -75,16 +63,6 @@
 			<description>person_similarities_websiteusage action-set identifier of exported data</description>
 		</property>
 		<property>
-			<name>action_set_id_person_statistics</name>
-			<value>$UNDEFINED$</value>
-			<description>person_statistics action-set identifier of exported data</description>
-		</property>
-		<property>
-			<name>action_set_id_project_statistics</name>
-			<value>$UNDEFINED$</value>
-			<description>project_statistics action-set identifier of exported data</description>
-		</property>
-		<property>
 			<name>action_set_id_document_similarities_standard</name>
 			<value>$UNDEFINED$</value>
 			<description>document_similarities_standard action-set identifier of exported data</description>
@@ -98,11 +76,6 @@
 			<name>action_set_id_document_affiliations</name>
 			<value>$UNDEFINED$</value>
 			<description>document_affiliations action-set identifier of exported data</description>
-		</property>
-		<property>
-			<name>action_set_id_document_statistics</name>
-			<value>$UNDEFINED$</value>
-			<description>document_statistics action-set identifier of exported data</description>
 		</property>
 		<property>
 			<name>action_set_id_document_classes</name>
@@ -258,14 +231,6 @@
 				<value>${action_set_id_person_similarities_websiteusage}</value>
 			</property>
 			<property>
-				<name>export.action.setid.person_statistics</name>
-				<value>${action_set_id_person_statistics}</value>
-			</property>
-			<property>
-				<name>export.action.setid.project_statistics</name>
-				<value>${action_set_id_project_statistics}</value>
-			</property>
-			<property>
 				<name>export.action.setid.document_similarities_standard</name>
 				<value>${action_set_id_document_similarities_standard}</value>
 			</property>
@@ -276,10 +241,6 @@
 			<property>
 				<name>export.action.setid.document_affiliations</name>
 				<value>${action_set_id_document_affiliations}</value>
-			</property>
-			<property>
-				<name>export.action.setid.document_statistics</name>
-				<value>${action_set_id_document_statistics}</value>
 			</property>
 			<property>
 				<name>export.action.setid.document_classes</name>
@@ -345,9 +306,6 @@
 	        <arg>eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses</arg>
 	        <arg>eu.dnetlib.iis.export.schemas.Citations</arg>
 	        <arg>eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity</arg>
-	        <arg>eu.dnetlib.iis.statistics.schemas.DocumentToDocumentStatistics</arg>
-			<arg>eu.dnetlib.iis.statistics.schemas.AuthorToAuthorStatistics</arg>
-			<arg>eu.dnetlib.iis.statistics.schemas.ProjectToProjectStatistics</arg>
 			<arg>eu.dnetlib.iis.websiteusage.schemas.DocumentsWithWebsiteUsageSimilarities</arg>
 	        <capture-output />
 	    </java>
@@ -378,9 +336,6 @@
 		<path start="decision-exporter-document-to-documentclasses"/>
 		<path start="decision-exporter-citation"/>
         <path start="decision-exporter-document-similiarity"/>
-        <path start="decision-exporter-document-statistics"/>
-        <path start="decision-exporter-person-statistics"/>
-        <path start="decision-exporter-project-statistics"/>
         <path start="decision-exporter-websiteusage"/>
     </fork>
 	
@@ -451,27 +406,6 @@
         <switch>
             <case to="joining">${input_document_websiteusage_similarity eq "$UNDEFINED$"}</case>
             <default to="exporter-document-websiteusage-similiarity"/>
-        </switch>
-    </decision>
-	
-	<decision name="decision-exporter-document-statistics">
-        <switch>
-            <case to="joining">${input_document_statistics eq "$UNDEFINED$"}</case>
-            <default to="exporter-document-statistics"/>
-        </switch>
-    </decision>
-	
-	<decision name="decision-exporter-person-statistics">
-        <switch>
-            <case to="joining">${input_author_statistics eq "$UNDEFINED$"}</case>
-            <default to="exporter-person-statistics"/>
-        </switch>
-    </decision>
-	
-	<decision name="decision-exporter-project-statistics">
-        <switch>
-            <case to="joining">${input_project_statistics eq "$UNDEFINED$"}</case>
-            <default to="exporter-project-statistics"/>
         </switch>
     </decision>
 	
@@ -667,69 +601,6 @@
 					<value>${documentssimilarity_threshold}</value>
 				</property>
 				
-			</configuration>
-		</map-reduce>
-		<ok to="joining" />
-		<error to="fail" />
-	</action>
-	
-	<action name="exporter-document-statistics">
-		<map-reduce>
-			<configuration>
-				<property>
-					<name>export.action.builder.factory.classname</name>
-					<value>eu.dnetlib.iis.workflows.export.actionmanager.module.DocumentToDocumentStatisticsActionBuilderModuleFactory</value>
-				</property>
-				<property>
-					<name>avro.schema.input.key</name>
-					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.statistics.schemas.DocumentToDocumentStatistics']}</value>
-				</property>
-				<property>
-					<name>mapred.input.dir</name>
-					<value>${input_document_statistics}</value>
-				</property>
-			</configuration>
-		</map-reduce>
-		<ok to="joining" />
-		<error to="fail" />
-	</action>
-
-	<action name="exporter-person-statistics">
-		<map-reduce>
-			<configuration>
-				<property>
-					<name>export.action.builder.factory.classname</name>
-					<value>eu.dnetlib.iis.workflows.export.actionmanager.module.AuthorToAuthorStatisticsActionBuilderModuleFactory</value>
-				</property>
-				<property>
-					<name>avro.schema.input.key</name>
-					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.statistics.schemas.AuthorToAuthorStatistics']}</value>
-				</property>
-				<property>
-					<name>mapred.input.dir</name>
-					<value>${input_author_statistics}</value>
-				</property>
-			</configuration>
-		</map-reduce>
-		<ok to="joining" />
-		<error to="fail" />
-	</action>
-		
-	<action name="exporter-project-statistics">
-		<map-reduce>
-			<configuration>
-				<property>
-					<name>export.action.builder.factory.classname</name>
-					<value>eu.dnetlib.iis.workflows.export.actionmanager.module.ProjectToProjectStatisticsActionBuilderModuleFactory</value>
-				</property>
-				<property>
-					<name>avro.schema.input.key</name>
-					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.statistics.schemas.ProjectToProjectStatistics']}</value>
-				</property>
-				<property>
-					<name>mapred.input.dir</name>
-					<value>${input_project_statistics}</value>
-				</property>
 			</configuration>
 		</map-reduce>
 		<ok to="joining" />

@@ -4,7 +4,6 @@ transformers_citationmatching classpath eu/dnetlib/iis/workflows/transformers/ci
 transformers_citationmatching_direct classpath eu/dnetlib/iis/workflows/transformers/citationmatching/direct/oozie_app
 citationmatching_chain classpath eu/dnetlib/iis/workflows/citationmatching/chain/oozie_app
 citationmatching_direct classpath eu/dnetlib/iis/workflows/citationmatching/direct/oozie_app
-transformers_statistics classpath eu/dnetlib/iis/workflows/transformers/statistics/oozie_app
 referenceextraction_project classpath eu/dnetlib/iis/workflows/referenceextraction/project/main/oozie_app
 referenceextraction_dataset classpath eu/dnetlib/iis/workflows/referenceextraction/dataset/main/oozie_app
 referenceextraction_researchinitiative classpath eu/dnetlib/iis/workflows/referenceextraction/researchinitiative/main/oozie_app
@@ -14,7 +13,6 @@ transformers_documentsclassification classpath eu/dnetlib/iis/workflows/transfor
 documentsclassification_main classpath eu/dnetlib/iis/workflows/documentsclassification/main/oozie_app
 transformers_documentssimilarity classpath eu/dnetlib/iis/workflows/transformers/documentssimilarity/oozie_app
 documentssimilarity_chain classpath eu/dnetlib/iis/workflows/documentssimilarity/chain/oozie_app
-statistics classpath eu/dnetlib/iis/workflows/statistics/main/oozie_app
 collapsers_basic_collapser classpath eu/dnetlib/iis/workflows/collapsers/basic_collapser/oozie_app
 transformers_citations_from_matching classpath eu/dnetlib/iis/workflows/transformers/common/citations/from/citationmatching/oozie_app
 transformers_citations_from_ingestpmc classpath eu/dnetlib/iis/workflows/transformers/common/citations/from/ingest.pmc/oozie_app

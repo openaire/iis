@@ -22,7 +22,6 @@
 		<module>iis-workflows-metadataextraction</module>
 		<module>iis-workflows-referenceextraction</module>
 		<module>iis-workflows-sentimentanalysis</module>
-		<module>iis-workflows-statistics</module>
 		<module>iis-workflows-top</module>
 		<module>iis-workflows-transformers</module>
 		<module>iis-workflows-websiteusage</module>

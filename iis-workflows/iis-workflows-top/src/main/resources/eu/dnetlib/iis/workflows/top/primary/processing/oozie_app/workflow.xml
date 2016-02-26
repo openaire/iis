@@ -49,11 +49,6 @@
 			<value>false</value>
 			<description>flag indicating sentiment analysis should be enabled</description>
 		</property>
-		<property>
-			<name>active_statistics</name>
-			<value>false</value>
-			<description>flag indicating statistics generation should be enabled</description>
-		</property>
 		<!-- input ports -->
 		<property>
 			<name>input_document_metadata</name>
@@ -172,18 +167,6 @@
 		<property>
 			<name>output_document_similarity</name>
 			<description>output document similarity directory</description>
-		</property>
-		<property>
-			<name>output_document_statistics</name>
-			<description>output document statistics directory</description>
-		</property>
-		<property>
-			<name>output_author_statistics</name>
-			<description>output author statistics directory</description>
-		</property>
-		<property>
-			<name>output_project_statistics</name>
-			<description>output project statistics directory</description>
 		</property>
 	</parameters>
 
@@ -1309,7 +1292,7 @@
 				</property>
 			</configuration>
 		</sub-workflow>
-		<ok to="decision-statistics" />
+		<ok to="end" />
 		<error to="fail" />
 	</action>
 
@@ -1331,151 +1314,10 @@
 			<!-- notice: directory have to aligned with skipped action output -->
 			<arg>-Odocumentssimilarity=${output_document_similarity}</arg>
 		</java>
-		<ok to="decision-statistics" />
+		<ok to="end" />
 		<error to="fail" />
 	</action>
 	<!-- end of documents similarity part -->
-
-	<!-- statistics are calculated at the end, because they are taking two forked paths outcome into account: transformers_metadatamerger and referenceextraction_project -->
-	<!-- statistics part -->
-	<decision name="decision-statistics">
-		<switch>
-			<case to="transformers_statistics">${active_statistics eq "true"}</case>
-			<default to="skip-statistics" />
-		</switch>
-	</decision>
-
-	<action name="transformers_statistics">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_statistics</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/transformers_statistics/working_dir</value>
-				</property>
-				<property>
-					<name>input_document</name>
-					<value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
-				</property>
-				<property>
-					<name>input_citation</name>
-					<value>${workingDir}/citationmatching_chain/output</value>
-				</property>
-				<property>
-					<!-- NOTICE: reference extraction will have to be enabled to get this input -->
-					<name>input_document_to_project</name>
-					<value>${output_document_to_project}</value>
-				</property>
-				<property>
-					<name>input_person</name>
-					<value>${input_person}</value>
-				</property>
-				<property>
-					<name>input_project</name>
-					<value>${input_project}</value>
-				</property>
-				<property>
-					<name>output_document_authors_citations</name>
-					<value>${workingDir}/transformers_statistics/output_document_authors_citations</value>
-				</property>
-				<property>
-					<name>output_person_id</name>
-					<value>${workingDir}/transformers_statistics/output_person_id</value>
-				</property>
-				<property>
-					<name>output_project_id</name>
-					<value>${workingDir}/transformers_statistics/output_project_id</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="statistics" />
-		<error to="fail" />
-	</action>
-
-	<action name="statistics">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/statistics</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/statistics/working_dir</value>
-				</property>
-				<property>
-					<name>input_document_authors_citations</name>
-					<value>${workingDir}/transformers_statistics/output_document_authors_citations</value>
-				</property>
-				<property>
-					<name>input_person_id</name>
-					<value>${workingDir}/transformers_statistics/output_person_id</value>
-				</property>
-				<property>
-					<name>input_project_id</name>
-					<value>${workingDir}/transformers_statistics/output_project_id</value>
-				</property>
-				<property>
-					<name>output_document_statistics</name>
-					<value>${output_document_statistics}</value>
-				</property>
-				<property>
-					<name>output_author_statistics</name>
-					<value>${output_author_statistics}</value>
-				</property>
-				<property>
-					<name>output_project_statistics</name>
-					<value>${output_project_statistics}</value>
-				</property>
-				<property>
-					<name>output_global_statistics</name>
-					<value>${workingDir}/statistics/output_global_statistics</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="end" />
-		<error to="fail" />
-	</action>
-
-	<action name="skip-statistics">
-		<java>
-			<prepare>
-				<!-- notice: directory have to aligned with skipped action output -->
-				<delete path="${nameNode}${workingDir}/statistics" />
-				<delete path="${nameNode}${output_document_statistics}" />
-				<delete path="${nameNode}${output_author_statistics}" />
-				<delete path="${nameNode}${output_project_statistics}" />
-				<mkdir path="${nameNode}${workingDir}/statistics" />
-				<mkdir path="${nameNode}${output_document_statistics}" />
-				<mkdir path="${nameNode}${output_author_statistics}" />
-				<mkdir path="${nameNode}${output_project_statistics}" />
-			</prepare>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
-			<arg>-C{document_statistics,
-				eu.dnetlib.iis.statistics.schemas.DocumentToDocumentStatistics,
-				eu/dnetlib/iis/workflows/top/data/empty.json}
-			</arg>
-			<arg>-C{author_statistics,
-				eu.dnetlib.iis.statistics.schemas.AuthorToAuthorStatistics,
-				eu/dnetlib/iis/workflows/top/data/empty.json}
-			</arg>
-			<arg>-C{project_statistics,
-				eu.dnetlib.iis.statistics.schemas.ProjectToProjectStatistics,
-				eu/dnetlib/iis/workflows/top/data/empty.json}
-			</arg>
-			<!-- FIXME currently global statistics are not available -->
-			<!-- <arg>-C{global_statistics, eu.dnetlib.iis.statistics.schemas., eu/dnetlib/iis/workflows/top/data/empty.json}</arg> -->
-			<!-- notice: directory have to aligned with skipped action output -->
-			<arg>-Odocument_statistics=${output_document_statistics}</arg>
-			<arg>-Oauthor_statistics=${output_author_statistics}</arg>
-			<arg>-Oproject_statistics=${output_project_statistics}</arg>
-			<!-- FIXME currently global statistics are not available -->
-			<!-- <arg>-Oglobal_statistics=${workingDir}/statistics/output_global_statistics</arg> -->
-		</java>
-		<ok to="end" />
-		<error to="fail" />
-	</action>
-	<!-- end of statistics part -->
 
 
 	<kill name="fail">

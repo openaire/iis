@@ -43,18 +43,6 @@
 			<value>$UNDEFINED$</value>
 		</property>
 		<property>
-			<name>input_document_statistics</name>
-			<value>$UNDEFINED$</value>
-		</property>
-		<property>
-			<name>input_author_statistics</name>
-			<value>$UNDEFINED$</value>
-		</property>
-		<property>
-			<name>input_project_statistics</name>
-			<value>$UNDEFINED$</value>
-		</property>
-		<property>
 			<name>input_document_websiteusage_similarity</name>
 			<value>$UNDEFINED$</value>
 		</property>
@@ -109,16 +97,6 @@
 			<description>person_similarities_websiteusage action-set identifier of exported data</description>
 		</property>
 		<property>
-			<name>action_set_id_person_statistics</name>
-			<value>$UNDEFINED$</value>
-			<description>person_statistics action-set identifier of exported data</description>
-		</property>
-		<property>
-			<name>action_set_id_project_statistics</name>
-			<value>$UNDEFINED$</value>
-			<description>project_statistics action-set identifier of exported data</description>
-		</property>
-		<property>
 			<name>action_set_id_document_similarities_standard</name>
 			<value>$UNDEFINED$</value>
 			<description>document_similarities_standard action-set identifier of exported data</description>
@@ -132,11 +110,6 @@
 			<name>action_set_id_document_affiliations</name>
 			<value>$UNDEFINED$</value>
 			<description>document_affiliations action-set identifier of exported data</description>
-		</property>
-		<property>
-			<name>action_set_id_document_statistics</name>
-			<value>$UNDEFINED$</value>
-			<description>document_statistics action-set identifier of exported data</description>
 		</property>
 		<property>
 			<name>action_set_id_document_classes</name>
