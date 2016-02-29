@@ -30,14 +30,18 @@ import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
  */
 public class PmcXmlHandler extends DefaultHandler {
 
+//	article root element, relevant when parsing article record nested inside oai record.
+	private static final String ELEM_ARTICLE = "article";
+	
 //	front journal
 	private static final String ELEM_JOURNAL_TITLE = "journal-title";
-	private static final String ELEM_JOURNAL_TITLE_GROUP = "journal-title-group";
+	private static final String ELEM_JOURNAL_META = "journal-meta";
 //	front article
 	private static final String ELEM_ARTICLE_META = "article-meta";
 	private static final String ELEM_ARTICLE_ID = "article-id";
 	private static final String ELEM_AFFILIATION = "aff";
 	private static final String ELEM_LABEL = "label";
+	private static final String ELEM_SUP = "sup";
 	
 //	back citations
 	private static final String ELEM_REF_LIST = "ref-list";
@@ -109,13 +113,20 @@ public class PmcXmlHandler extends DefaultHandler {
 			Attributes attributes) throws SAXException {
 		if (rootElement) {
 			rootElement = false;
+//			extracting article-type from root element
 			String articleType = attributes.getValue(ATTR_ARTICLE_TYPE);
 			if (articleType!=null) {
 				builder.setEntityType(articleType);	
 			} else {
 				builder.setEntityType("unknown");
 			}
-		} else if (isWithinElement(qName, ELEM_JOURNAL_TITLE, ELEM_JOURNAL_TITLE_GROUP)) {
+		} else if (isWithinElement(qName, ELEM_ARTICLE, null)) {
+//			extracting article-type from article element nested in oai record 
+			String articleType = attributes.getValue(ATTR_ARTICLE_TYPE);
+			if (articleType!=null) {
+				builder.setEntityType(articleType);	
+			}
+		} else if (hasAmongParents(qName, ELEM_JOURNAL_TITLE, this.parents, ELEM_JOURNAL_META)) {
 			this.currentValue = new StringBuilder();
 		} else if (isWithinElement(qName, ELEM_ARTICLE_ID, ELEM_ARTICLE_META)) {
 			this.currentArticleIdType = attributes.getValue(PUB_ID_TYPE);
@@ -157,8 +168,11 @@ public class PmcXmlHandler extends DefaultHandler {
 			throws SAXException {
 		try {
 		this.parents.pop();
-		if (isWithinElement(qName, ELEM_JOURNAL_TITLE, ELEM_JOURNAL_TITLE_GROUP)) {
-			builder.setJournal(this.currentValue.toString().trim());
+		if (hasAmongParents(qName, ELEM_JOURNAL_TITLE, this.parents, ELEM_JOURNAL_META)) {
+			if (!builder.hasJournal()) {
+//				taking only first journal title into account when more than one specified
+				builder.setJournal(this.currentValue.toString().trim());	
+			}
 		} else if (isWithinElement(qName, ELEM_ARTICLE_ID, ELEM_ARTICLE_META) &&
 				PUB_ID_TYPE_PMID.equals(this.currentArticleIdType)) {
 			Map<CharSequence,CharSequence> idMapping = new HashMap<CharSequence, CharSequence>();
@@ -284,7 +298,8 @@ public class PmcXmlHandler extends DefaultHandler {
 		String currentElement = this.parents.pop();
 		try {
 //			skipping affiliation position element
-			if (isWithinElement(currentElement, ELEM_LABEL, ELEM_AFFILIATION)) {
+			if (isWithinElement(currentElement, ELEM_LABEL, ELEM_AFFILIATION) ||
+					isWithinElement(currentElement, ELEM_SUP, ELEM_AFFILIATION)) {
 				return;
 			}
 			

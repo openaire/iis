@@ -88,6 +88,11 @@
 			<value>60000</value>
 			<description>import content read timeout</description>
 		</property>
+		<property>
+			<name>text_xml_max_file_size_mb</name>
+			<value>$UNDEFINED$</value>
+			<description>maximum allowed xml or text file size in Megabytes</description>
+		</property>
 		<!-- metadata extraction related -->
 		<property>
 			<name>metadataextraction_excluded_checksums</name>
@@ -95,9 +100,9 @@
 			<description>list of content checksums excluded from metadataextraction processing</description>
 		</property>
 		<property>
-			<name>metadataextraction_max_file_size_mb</name>
+			<name>pdf_max_file_size_mb</name>
 			<value>$UNDEFINED$</value>
-			<description>maximum allowed file size in Megabytes</description>
+			<description>maximum allowed pdf file size in Megabytes</description>
 		</property>
 		<property>
 			<name>metadataextraction_default_cache_location</name>
@@ -237,6 +242,10 @@
                 <property>
 					<name>input</name>
 					<value>${workingDir}/wos_url_import/imported/wos</value>
+				</property>
+				<property>
+					<name>max_file_size_mb</name>
+					<value>${text_xml_max_file_size_mb}</value>
 				</property>
             	<property>
 					<name>output</name>

@@ -1,7 +1,6 @@
 package eu.dnetlib.iis.workflows.export.actionmanager.module;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
@@ -17,12 +16,12 @@ import eu.dnetlib.data.proto.FieldTypeProtos.ExtraInfo;
 import eu.dnetlib.data.proto.OafProtos.Oaf;
 import eu.dnetlib.data.proto.OafProtos.OafEntity;
 import eu.dnetlib.data.proto.TypeProtos.Type;
+import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.common.model.extrainfo.ExtraInfoConstants;
 import eu.dnetlib.iis.common.model.extrainfo.citations.BlobCitationEntry;
 import eu.dnetlib.iis.common.model.extrainfo.citations.TypedId;
 import eu.dnetlib.iis.common.model.extrainfo.converter.CitationsExtraInfoConverter;
-import eu.dnetlib.iis.export.schemas.CitationEntryWithSentimentLabels;
 import eu.dnetlib.iis.export.schemas.Citations;
 
 
@@ -99,10 +98,10 @@ public class CitationsActionBuilderModuleFactory
 		 * @param source
 		 * @return {@link BlobCitationEntry} objects having confidence level value normalized.
 		 */
-		private SortedSet<BlobCitationEntry> normalize(List<CitationEntryWithSentimentLabels> source) {
+		private SortedSet<BlobCitationEntry> normalize(List<CitationEntry> source) {
 			if (source!=null) {
 				SortedSet<BlobCitationEntry> results = new TreeSet<BlobCitationEntry>();
-				for (CitationEntryWithSentimentLabels currentEntry : source) {
+				for (CitationEntry currentEntry : source) {
 					if (currentEntry.getExternalDestinationDocumentIds().isEmpty()) {
 						currentEntry.setExternalDestinationDocumentIds(null);
 					}
@@ -127,7 +126,7 @@ public class CitationsActionBuilderModuleFactory
 		return new CitationActionBuilderModule(predefinedTrust, trustLevelThreshold);
 	}
 	
-	public static BlobCitationEntry build(CitationEntryWithSentimentLabels entry, float confidenceToTrustLevelFactor) {
+	public static BlobCitationEntry build(CitationEntry entry, float confidenceToTrustLevelFactor) {
 		BlobCitationEntry result = new BlobCitationEntry(
 				entry.getRawText()!=null?entry.getRawText().toString():null);
 		result.setPosition(entry.getPosition());
@@ -151,13 +150,6 @@ public class CitationsActionBuilderModuleFactory
 						extId.getKey().toString(),
 						1f*confidenceToTrustLevelFactor));
 			}
-		}
-		if (entry.getLabels()!=null) {
-			String[] labels = new String[entry.getLabels().size()];
-			for (int i=0; i<entry.getLabels().size(); i++) {
-				labels[i] = entry.getLabels().get(i).toString();
-			}
-			result.setSentimentLabels(labels);
 		}
 		return result;
 	}

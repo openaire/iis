@@ -4,7 +4,7 @@
           "pmid": "16528104"
   },
   "entityType": "research-article",
-  "journal": null,
+  "journal": "Nucleic Acids Research",
   "references": [
     {
       "basicMetadata": {
@@ -1205,7 +1205,7 @@
           "pmid": "5490870"
   },
   "entityType": "research-article",
-  "journal": null,
+  "journal": "The Yale Journal of Biology and Medicine",
   "references": null,
   "affiliations": null,
   "pages": {

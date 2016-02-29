@@ -9,7 +9,6 @@
 	<artifactId>iis-workflows</artifactId>
 	<packaging>pom</packaging>
 	<modules>
-
        <module>iis-workflows-core-examples</module>
        <module>iis-workflows-documentssimilarity</module>
        <module>iis-workflows-citationmatching</module>
@@ -22,13 +21,9 @@
        <module>iis-workflows-ingest-pmc</module>
        <module>iis-workflows-metadataextraction</module>
        <module>iis-workflows-referenceextraction</module>
-       <module>iis-workflows-sentimentanalysis</module>
-       <module>iis-workflows-statistics</module>
        <module>iis-workflows-top</module>
        <module>iis-workflows-transformers</module>
-       <module>iis-workflows-websiteusage</module>
     </modules>
-
     <pluginRepositories>
       <pluginRepository>
 	<id>dnet4-bootstrap-release-plugin</id>
@@ -43,9 +38,6 @@
             <layout>default</layout>
         </pluginRepository>
     </pluginRepositories>
-      
-
-
     <properties>
         <maven.build.timestamp.format>yyyy-MM-dd_HH_mm</maven.build.timestamp.format>
         <oozie.data.dir>${project.build.directory}/test-data</oozie.data.dir>
@@ -68,8 +60,6 @@
         <projectVersion>${project.version}</projectVersion>
         <oozie.use.system.libpath>true</oozie.use.system.libpath>
     </properties>
-
-
 	<dependencies>
 		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>

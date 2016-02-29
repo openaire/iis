@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-sentiment_analysis classpath eu/dnetlib/iis/workflows/sentimentanalysis/oozie_app

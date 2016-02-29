@@ -7,7 +7,7 @@ protocol IIS{
 		string url;
 		union { null , string } mimeType = null;
 		union { null , string } contentChecksum = null;
-		union { null , long } contentSizeKB = null;
+		long contentSizeKB;
 	}
 
 }

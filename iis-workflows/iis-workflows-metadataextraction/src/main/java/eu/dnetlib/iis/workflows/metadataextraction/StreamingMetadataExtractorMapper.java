@@ -52,10 +52,7 @@ public class StreamingMetadataExtractorMapper extends AbstractMetadataExtractorM
 		con.setReadTimeout(this.readTimeout);
 		Map<CharSequence, CharSequence> auditSupplementaryData = new HashMap<CharSequence, CharSequence>();
 		auditSupplementaryData.put(FAULT_SUPPLEMENTARY_DATA_URL, contentUrl.getUrl());
-		processStream(contentUrl.getId(), 
-				con.getInputStream(),
-				contentUrl.getContentSizeKB()!=null?contentUrl.getContentSizeKB():0,
-						auditSupplementaryData);
+		processStream(contentUrl.getId(), con.getInputStream(), contentUrl.getContentSizeKB(), auditSupplementaryData);
 	}
 	
 }
