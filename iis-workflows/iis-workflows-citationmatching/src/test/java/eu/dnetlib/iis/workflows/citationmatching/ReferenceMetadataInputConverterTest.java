@@ -26,8 +26,8 @@ import com.google.common.collect.Lists;
 import eu.dnetlib.iis.citationmatching.schemas.ReferenceMetadata;
 import eu.dnetlib.iis.workflows.citationmatching.converter.ReferenceMetadataToMatchableConverter;
 import pl.edu.icm.coansys.citations.data.MatchableEntity;
+import scala.Option;
 import scala.Tuple2;
-import scalaz.std.option;
 
 /**
  * @author madryk
@@ -89,7 +89,7 @@ public class ReferenceMetadataInputConverterTest {
         MatchableEntity matchableEntity = mock(MatchableEntity.class);
 
         when(converter.convertToMatchableEntity("cit_id_3", referenceMetadata)).thenReturn(matchableEntity);
-        doReturn(option.some("some raw text")).when(matchableEntity).rawText();
+        doReturn(Option.apply("some raw text")).when(matchableEntity).rawText();
 
 
         Iterable<Tuple2<String, MatchableEntity>> retConverted = function.call(new Tuple2<>("cit_id_3", referenceMetadata));
@@ -107,7 +107,7 @@ public class ReferenceMetadataInputConverterTest {
         MatchableEntity matchableEntity = mock(MatchableEntity.class);
 
         when(converter.convertToMatchableEntity("cit_id_3", referenceMetadata)).thenReturn(matchableEntity);
-        doReturn(option.some(StringUtils.repeat('a', 10001))).when(matchableEntity).rawText();
+        doReturn(Option.apply(StringUtils.repeat('a', 10001))).when(matchableEntity).rawText();
 
 
         Iterable<Tuple2<String, MatchableEntity>> retConverted = function.call(new Tuple2<>("cit_id_3", referenceMetadata));
