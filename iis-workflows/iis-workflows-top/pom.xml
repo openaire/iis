@@ -89,12 +89,6 @@
 		
 		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
-			<artifactId>iis-workflows-sentimentanalysis</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>eu.dnetlib.iis</groupId>
 			<artifactId>iis-workflows-transformers</artifactId>
 			<version>${project.version}</version>
 			<exclusions>

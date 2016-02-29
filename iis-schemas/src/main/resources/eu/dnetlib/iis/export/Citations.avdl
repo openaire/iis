@@ -1,11 +1,11 @@
 @namespace("eu.dnetlib.iis.export.schemas")
 protocol IIS{
 
-	import idl "CitationEntryWithSentimentLabels.avdl";
+	import idl "../common/citations/CitationEntry.avdl";
 
     record Citations {
 //      citing document OA+ identifier
         string documentId;
-        array<eu.dnetlib.iis.export.schemas.CitationEntryWithSentimentLabels> citations;
+        array<eu.dnetlib.iis.common.citations.schemas.CitationEntry> citations;
     }
 }

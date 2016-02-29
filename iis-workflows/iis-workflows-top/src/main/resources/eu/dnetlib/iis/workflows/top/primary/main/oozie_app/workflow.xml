@@ -60,11 +60,6 @@
 			<description>flag indicating citation matching should be enabled</description>
 		</property>
 		<property>
-			<name>active_sentimentanalysis</name>
-			<value>false</value>
-			<description>flag indicating sentiment analysis should be enabled</description>
-		</property>
-		<property>
 			<name>active_export_to_actionmanager</name>
 			<value>true</value>
 			<description>flag indicating export to action manager should be performed</description>

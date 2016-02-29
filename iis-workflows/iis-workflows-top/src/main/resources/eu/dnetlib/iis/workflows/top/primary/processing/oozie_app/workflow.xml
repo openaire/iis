@@ -44,11 +44,6 @@
 			<value>false</value>
 			<description>flag indicating citation matching should be enabled</description>
 		</property>
-		<property>
-			<name>active_sentimentanalysis</name>
-			<value>false</value>
-			<description>flag indicating sentiment analysis should be enabled</description>
-		</property>
 		<!-- input ports -->
 		<property>
 			<name>input_document_metadata</name>
@@ -811,85 +806,11 @@
 	<!-- citation matching part -->
 	<decision name="decision-citationmatching">
 		<switch>
-			<case to="decision-sentimentanalysis">${active_citationmatching eq "true"}</case>
+			<case to="transformers_citationmatching_direct">${active_citationmatching eq "true"}</case>
 			<default to="skip-citationmatching" />
 		</switch>
 	</decision>
 
-	<!-- start of sentiment analysis block -->
-	<!-- sentiment analysis have to be performed on deduplicated extracted metadata but before merging them with information space meta (as it is not required by sentiment analysis) -->
-	<decision name="decision-sentimentanalysis">
-		<switch>
-			<case to="transformer_sentimentanalysis">${active_sentimentanalysis eq "true"}</case>
-			<default to="skip-sentimentanalysis" />
-		</switch>
-	</decision>
-
-	<action name="transformer_sentimentanalysis">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformer_sentimentanalysis</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/transformer_sentimentanalysis/working_dir</value>
-				</property>
-				<property>
-					<name>input_extracted_document_metadata</name>
-					<value>${workingDir}/extracted_document_metadata_collapser/output</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${workingDir}/transformer_sentimentanalysis/output</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="sentimentanalysis" />
-		<error to="fail" />
-	</action>
-
-	<action name="sentimentanalysis">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/sentiment_analysis</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/sentiment_analysis/working_dir</value>
-				</property>
-				<property>
-					<name>input</name>
-					<value>${workingDir}/transformer_sentimentanalysis/output</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${workingDir}/sentiment_analysis/out</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="transformers_citationmatching_direct" />
-		<error to="fail" />
-	</action>
-
-	<action name="skip-sentimentanalysis">
-		<java>
-			<prepare>
-				<delete path="${nameNode}${workingDir}/sentiment_analysis" />
-				<mkdir path="${nameNode}${workingDir}/sentiment_analysis" />
-			</prepare>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
-			<arg>-C{sentiment_labels,
-				eu.dnetlib.iis.sentimentanalysis.schemas.ReferenceWithSentimentLabels,
-				eu/dnetlib/iis/workflows/top/data/empty.json}
-			</arg>
-			<!-- notice: directory have to aligned with skipped action output -->
-			<arg>-Osentiment_labels=${workingDir}/sentiment_analysis/out</arg>
-		</java>
-		<ok to="transformers_citationmatching_direct" />
-		<error to="fail" />
-	</action>
-	<!-- end of sentiment analysis block -->
 
 	<!-- preparing citation matching input -->
 	<action name="transformers_citationmatching_direct">
@@ -1131,34 +1052,6 @@
 				</property>
 			</configuration>
 		</sub-workflow>
-		<ok to="transformer_export_citationwithsentimentlabels" />
-		<error to="fail" />
-	</action>
-
-	<!-- merging citations with sentiment labels -->
-	<action name="transformer_export_citationwithsentimentlabels">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformer_export_citationwithsentimentlabels</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/transformer_export_citationwithsentimentlabels/working_dir</value>
-				</property>
-				<property>
-					<name>input_citation</name>
-					<value>${workingDir}/citations_collapser/output</value>
-				</property>
-				<property>
-					<name>input_sentiment_labels</name>
-					<value>${workingDir}/sentiment_analysis/out</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${workingDir}/transformer_export_citationwithsentimentlabels/output</value>
-				</property>
-			</configuration>
-		</sub-workflow>
 		<ok to="transformers_export_citations" />
 		<error to="fail" />
 	</action>
@@ -1175,7 +1068,7 @@
 				</property>
 				<property>
 					<name>input</name>
-					<value>${workingDir}/transformer_export_citationwithsentimentlabels/output</value>
+					<value>${workingDir}/citations_collapser/output</value>
 				</property>
 				<property>
 					<name>output</name>
