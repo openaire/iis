@@ -1,5 +1,0 @@
-## This is a classpath-based import file (this header is required)
-transformers_idreplacer classpath eu/dnetlib/iis/workflows/transformers/idreplacer/oozie_app
-transformers_websiteusage_community_filter classpath eu/dnetlib/iis/workflows/transformers/websiteusage/document/community_filter/oozie_app
-websiteusage_community_builder classpath eu/dnetlib/iis/workflows/websiteusage/document/community_builder/oozie_app
-websiteusage_community_to_similarity classpath eu/dnetlib/iis/workflows/websiteusage/document/community_to_similarity/oozie_app

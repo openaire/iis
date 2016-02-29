@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-transformer_statistics classpath eu/dnetlib/iis/workflows/transformers/statistics/oozie_app

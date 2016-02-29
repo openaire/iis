@@ -1,4 +1,0 @@
-{"projectIds": ["4", "7", "2"], "referencedDocumentsIds": ["id-2", "id-4"], "authorIds": ["id-1", "id-2", "id-123", "id-800"], "isPublished": true, "documentId": "id-1", "year": "unknown"}
-{"projectIds": ["7", "4"], "referencedDocumentsIds": [], "authorIds": ["id-1", "id-3", "id-123"], "isPublished": false, "documentId": "id-2", "year": "1993"}
-{"projectIds": [], "referencedDocumentsIds": ["id-4"], "authorIds": ["id-345"], "isPublished": true, "documentId": "id-3", "year": "2003"}
-{"projectIds": ["7"], "referencedDocumentsIds": ["id-1", "id-2"], "authorIds": [], "isPublished": false, "documentId": "id-4", "year": "2000"}
