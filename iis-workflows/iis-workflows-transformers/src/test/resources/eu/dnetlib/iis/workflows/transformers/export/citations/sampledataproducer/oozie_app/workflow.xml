@@ -20,8 +20,8 @@
 			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
 			<arg>-C{citation,
-				eu.dnetlib.iis.export.schemas.CitationWithSentimentLabels,
-				eu/dnetlib/iis/workflows/transformers/export/citations/sampledataproducer/data/citation_with_sentiment_labels.json}
+				eu.dnetlib.iis.common.citations.schemas.Citation,
+				eu/dnetlib/iis/workflows/transformers/export/citations/sampledataproducer/data/common_citations.json}
 			</arg>
 			<arg>-Ocitation=${workingDir}/producer/citation</arg>
 		</java>

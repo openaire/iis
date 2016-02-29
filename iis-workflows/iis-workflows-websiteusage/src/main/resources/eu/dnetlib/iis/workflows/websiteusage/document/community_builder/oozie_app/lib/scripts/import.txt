@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-madis classpath eu/dnetlib/iis/3rdparty/scripts/madis

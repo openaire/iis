@@ -219,10 +219,6 @@
                     <name>active_documentssimilarity</name>
                     <value>false</value>
                 </property>
-                <property>
-                    <name>active_statistics</name>
-                    <value>false</value>
-                </property>
             	<property>
                     <name>input_document_metadata</name>
                     <value>${workingDir}/producer/document_metadata</value>
@@ -291,18 +287,6 @@
                     <name>output_document_similarity</name>
                     <value>${workingDir}/exported/document_similarity</value>
                 </property>
-                <property>
-                    <name>output_document_statistics</name>
-                    <value>${workingDir}/exported/document_statistics</value>
-                </property>                
-                <property>
-                    <name>output_author_statistics</name>
-                    <value>${workingDir}/exported/author_statistics</value>
-                </property>
-                <property>
-                    <name>output_project_statistics</name>
-                    <value>${workingDir}/exported/project_statistics</value>
-                </property>
             </configuration>
         </sub-workflow>
 		<ok to="consumer"/>
@@ -342,18 +326,6 @@
 				eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity,
 				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
 			<arg>-Idocument_similarity=${workingDir}/exported/document_similarity</arg>
-			<arg>-C{document_statistics,
-				eu.dnetlib.iis.statistics.schemas.DocumentToDocumentStatistics,
-				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
-			<arg>-Idocument_statistics=${workingDir}/exported/document_statistics</arg>
-			<arg>-C{author_statistics,
-				eu.dnetlib.iis.statistics.schemas.AuthorToAuthorStatistics,
-				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
-			<arg>-Iauthor_statistics=${workingDir}/exported/author_statistics</arg>
-			<arg>-C{project_statistics,
-				eu.dnetlib.iis.statistics.schemas.ProjectToProjectStatistics,
-				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
-			<arg>-Iproject_statistics=${workingDir}/exported/project_statistics</arg>
 		</java>
 		<ok to="end" />
 		<error to="fail" />
