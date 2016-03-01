@@ -784,34 +784,10 @@
 	<!-- citation matching part -->
 	<decision name="decision-citationmatching">
 		<switch>
-			<case to="transformers_citationmatching_direct">${active_citationmatching eq "true"}</case>
+			<case to="citationmatching_direct">${active_citationmatching eq "true"}</case>
 			<default to="skip-citationmatching" />
 		</switch>
 	</decision>
-
-	<!-- preparing citation matching input -->
-	<action name="transformers_citationmatching_direct">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_citationmatching_direct</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/transformers_citationmatching_direct/working_dir</value>
-				</property>
-				<property>
-					<name>input</name>
-					<value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${workingDir}/transformers_citationmatching_direct/output_citation_metadata</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="citationmatching_direct" />
-		<error to="fail" />
-	</action>
 
 	<action name="citationmatching_direct">
 		<sub-workflow>
