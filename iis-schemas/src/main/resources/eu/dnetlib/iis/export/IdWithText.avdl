@@ -1,9 +1,0 @@
-@namespace("eu.dnetlib.iis.export.schemas")
-protocol IIS{
-
-    record IdWithText {
-        string id;
-        string text;
-    }
-
-}
