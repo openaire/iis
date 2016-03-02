@@ -1,8 +1,0 @@
-@namespace("eu.dnetlib.iis.metrics.extended.schemas")
-protocol IIS{
-    
-    record DocumentExtendedMetrics {
-        union { null , int } numberOfCitationsPerYear = null;
-    }
-
-}

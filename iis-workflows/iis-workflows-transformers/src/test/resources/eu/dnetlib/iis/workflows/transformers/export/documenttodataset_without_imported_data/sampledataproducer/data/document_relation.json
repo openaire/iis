@@ -1,6 +1,0 @@
-{"id": "id-1", "referencedIds": []}
-{"id": "id-3", "referencedIds": ["refid-4", "refid-2"]}
-{"id": "id-2", "referencedIds": ["refid-1", "refid-4", "refid-2", "refid-48", "refid-32"]}
-{"id": "id-4", "referencedIds": []}
-{"id": "id-5", "referencedIds": ["refid-4"]}
-{"id": "id-6", "referencedIds": ["refid-4", "refid-48", "refid-32"]}

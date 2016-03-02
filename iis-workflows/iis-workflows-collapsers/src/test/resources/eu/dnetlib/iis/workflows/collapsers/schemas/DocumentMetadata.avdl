@@ -1,0 +1,43 @@
+@namespace("eu.dnetlib.iis.collapsers.schemas")
+protocol IIS{
+
+    record PublicationType {
+        boolean article = false;
+        boolean dataset = false;
+    }
+
+    record DocumentMetadata {
+//      document identifier
+        string id;
+        
+//      moved from DocumentBasicMetadata        
+//      title
+        union { null , string } title = null;
+//      abstract or description
+        union { null , string } abstract = null;
+        union { null , string } language = null;
+//      list of keywords (free form)
+        union { null , array<string> } keywords = null;
+//      alternative identifier (e.g. internal publisher's identifiers)
+        union { null , map<string> } externalIdentifiers = null;
+//      name of journal in which the article is published
+        union { null , string } journal = null;
+//      year of publication
+        union { null , int } year = null;
+//      publisher name
+        union { null , string } publisher = null;
+//      end of: moved from DocumentBasicMetadata        
+//      publication type
+        PublicationType publicationType;
+        
+//      foreign key: Person.id ("raw person" data store)
+        union { null , array<string> } authorIds = null;
+        
+//      identifiers of datasources given document originates from
+        union { null , array<string> } datasourceIds = null;
+        
+    }
+    
+}
+
+ 
