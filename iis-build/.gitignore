@@ -1,0 +1,9 @@
+tignore
+!.gitkeep
+**/job.properties
+/*/target
+/target
+/*/build
+/build
+/*/bin
+/bin

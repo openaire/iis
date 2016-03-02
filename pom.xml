@@ -25,7 +25,7 @@
 	   <module>iis-3rdparty-avro-json</module>
 	   <module>iis-3rdparty-avrojsoncoders</module>
 	   <module>iis-3rdparty-madis</module>
-	   <module>iis-assembly-resources</module>
+	   <module>iis-build</module>
 	   <module>iis-common</module>
 	   <module>iis-oozie-maven-plugin</module>
 	   <module>iis-properties-maven-plugin</module>
