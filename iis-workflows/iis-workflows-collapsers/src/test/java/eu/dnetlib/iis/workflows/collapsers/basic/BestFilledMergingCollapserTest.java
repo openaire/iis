@@ -1,16 +1,16 @@
 package eu.dnetlib.iis.workflows.collapsers.basic;
 
-import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
-import eu.dnetlib.iis.workflows.collapsers.SampleData;
-import eu.dnetlib.iis.workflows.collapsers.basic.BestFilledMergingCollapser;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertNull;
-
 import org.junit.Test;
+
 import com.google.common.collect.Lists;
+
+import eu.dnetlib.iis.collapsers.schemas.DocumentMetadata;
+import eu.dnetlib.iis.workflows.collapsers.SampleData;
 
 /**
  * 

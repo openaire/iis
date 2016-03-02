@@ -1,11 +1,11 @@
 @namespace("eu.dnetlib.iis.collapsers.schemas")
 protocol IIS{
 
-    import idl "../importer/DocumentMetadata.avdl";
+    import idl "DocumentMetadata.avdl";
     
     
     record DocumentMetadataEnvelope {
-        eu.dnetlib.iis.importer.schemas.DocumentMetadata data;
+        eu.dnetlib.iis.collapsers.schemas.DocumentMetadata data;
         string origin;
     }
     
