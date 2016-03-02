@@ -103,6 +103,35 @@
                 </executions>
             </plugin>
 
+            <!-- Plugin that generates Java classes from Avro schemas -->
+            <plugin>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-maven-plugin</artifactId>
+            </plugin>
+
+            <!-- This plugin makes the Maven->Update Project Configuration 
+            not forget about the "target/generated-sources/java" source path-->
+ 
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/java/</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+             </plugin>
+             
         </plugins>
     </build>
 

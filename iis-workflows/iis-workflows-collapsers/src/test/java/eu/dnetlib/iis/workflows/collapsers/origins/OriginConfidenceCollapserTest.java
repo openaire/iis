@@ -1,7 +1,7 @@
 package eu.dnetlib.iis.workflows.collapsers.origins;
 
 import eu.dnetlib.iis.collapsers.schemas.DocumentMetadataEnvelope;
-import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
+import eu.dnetlib.iis.collapsers.schemas.DocumentMetadata;
 import eu.dnetlib.iis.workflows.collapsers.SampleData;
 import eu.dnetlib.iis.workflows.collapsers.origins.OriginConfidenceCollapser;
 

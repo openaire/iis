@@ -1,16 +1,20 @@
 package eu.dnetlib.iis.workflows.collapsers;
 
-import eu.dnetlib.iis.collapsers.schemas.DocumentMetadataEnvelope;
-import eu.dnetlib.iis.collapsers.schemas.DocumentTextEnvelope;
-import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
-import eu.dnetlib.iis.importer.schemas.PublicationType;
-import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
-import java.util.List;
-import org.apache.avro.generic.GenericData;
-import org.apache.avro.generic.IndexedRecord;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
+import org.apache.avro.generic.GenericData;
+import org.apache.avro.generic.IndexedRecord;
+
 import com.google.common.collect.Lists;
+
+import eu.dnetlib.iis.collapsers.schemas.DocumentMetadata;
+import eu.dnetlib.iis.collapsers.schemas.DocumentMetadataEnvelope;
+import eu.dnetlib.iis.collapsers.schemas.DocumentTextEnvelope;
+import eu.dnetlib.iis.collapsers.schemas.PublicationType;
+import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 
 /**
  *
