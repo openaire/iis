@@ -6,7 +6,7 @@
 	    <java>
     		<job-tracker>${jobTracker}</job-tracker>
         	<name-node>${nameNode}</name-node>
-	        <main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
+	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
 	        <arg>eu.dnetlib.iis.core.examples.schemas.documentandauthor.Document</arg>
 	        <arg>eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person</arg>
 	        <arg>eu.dnetlib.iis.core.examples.schemas.documentandauthor.personwithdocuments.PersonWithDocuments</arg>
@@ -31,7 +31,7 @@
                     <value>${queueName}</value>
                 </property>
             </configuration>
-            <main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.core.examples.java.SampleDataProducer</arg>
             <!-- All input and output ports have to be bound to paths in 
             HDFS, working directory has to be specified as well -->

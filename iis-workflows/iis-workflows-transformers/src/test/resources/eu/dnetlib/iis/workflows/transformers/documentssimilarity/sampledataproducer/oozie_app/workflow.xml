@@ -16,9 +16,9 @@
                 </property>
             </configuration>
             <!-- This is simple wrapper for the Java code -->
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<!-- The business Java code that gets to be executed -->
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
 			<!-- Specification of the output ports -->
             <arg>-C{input_person,
 				eu.dnetlib.iis.importer.schemas.Person,
@@ -85,9 +85,9 @@
 				</property>
 			</configuration>
 			<!-- This is simple wrapper for the Java code -->
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<!-- The business Java code that gets to be executed -->
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
 			<!-- Specification of the input ports -->
 			<arg>-C{output_document_metadata,
 				eu.dnetlib.iis.documentssimilarity.schemas.DocumentMetadata,

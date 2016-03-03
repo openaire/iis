@@ -31,9 +31,9 @@
 				<mkdir path="${nameNode}${workingDir}/producer" />
 			</prepare>
             <!-- This is simple wrapper for the Java code -->
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<!-- The business Java code that gets to be executed -->
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
 			<!-- Specification of the output ports -->
 			<arg>-C{input_from_project_reference_extraction,
                 eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject,
@@ -77,9 +77,9 @@
     <action name="consumer">
 		<java>
 			<!-- This is simple wrapper for the Java code -->
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<!-- The business Java code that gets to be executed -->
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
 			<!-- Specification of the input ports -->
 			<arg>-C{output,
 				eu.dnetlib.iis.importer.schemas.DocumentToProject,

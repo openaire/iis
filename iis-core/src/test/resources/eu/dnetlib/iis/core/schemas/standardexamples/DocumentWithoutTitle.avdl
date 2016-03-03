@@ -1,7 +1,0 @@
-@namespace("eu.dnetlib.iis.core.schemas.standardexamples")
-protocol IIS{
-   record DocumentWithoutTitle{
-      int id;
-      array<int> authorIds;
-   }
-}

@@ -276,7 +276,7 @@
 	 -->
 	<action name="generate-schema">
 	    <java>
-	        <main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
+	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
 	        <arg>eu.dnetlib.iis.export.schemas.DocumentMetadata</arg>
 	        <arg>eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject</arg>
 	        <arg>eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet</arg>
@@ -292,7 +292,7 @@
 
 	<action name="table-initializer">
 		<java>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.workflows.export.actionmanager.TableCreatorProcess</arg>
 			<arg>-Pexport.action.hbase.table.name=${action_hbase_table_name}</arg>
 			<arg>-Pexport.action.hbase.table.initialize=${action_hbase_table_initialize}</arg>

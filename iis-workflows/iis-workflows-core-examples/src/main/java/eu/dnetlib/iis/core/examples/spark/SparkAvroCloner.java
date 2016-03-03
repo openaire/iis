@@ -22,7 +22,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
-import eu.dnetlib.iis.core.common.AvroUtils;
+import eu.dnetlib.iis.common.utils.AvroUtils;
 
 /**
  * A spark generic avro cloner. Parameters: 

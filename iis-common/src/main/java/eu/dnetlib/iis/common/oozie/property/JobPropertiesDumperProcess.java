@@ -10,9 +10,9 @@ import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.porttype.AnyPortType;
-import eu.dnetlib.iis.core.java.porttype.PortType;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.porttype.AnyPortType;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 
 /**
  * Job properties dumper process. 
@@ -21,7 +21,7 @@ import eu.dnetlib.iis.core.java.porttype.PortType;
  * @author mhorst
  *
  */
-public class JobPropertiesDumperProcess implements eu.dnetlib.iis.core.java.Process {
+public class JobPropertiesDumperProcess implements eu.dnetlib.iis.common.java.Process {
 
 	public static final String OUTPUT_PORT = "output";
 

@@ -16,9 +16,9 @@
                 </property>
             </configuration>
             <!-- This is simple wrapper for the Java code -->
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<!-- The business Java code that gets to be executed -->
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
 			<!-- Specification of the output ports -->
             <arg>-C{document_content_url,
 				eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl,
@@ -81,8 +81,8 @@
 				</property>
 			</configuration>
 			<!-- This is simple wrapper for the Java code -->
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
 			<arg>-C{output_metadata,
 				eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
 				eu/dnetlib/iis/workflows/transformers/metadataextraction/checksum/postprocessing/meta/sampledataproducer/data/output_extracted_document_metadata.json}</arg>

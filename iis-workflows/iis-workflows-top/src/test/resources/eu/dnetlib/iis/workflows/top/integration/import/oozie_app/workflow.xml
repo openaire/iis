@@ -60,8 +60,8 @@
 					<value>${queueName}</value>
 				</property>
 			</configuration>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
 			<arg>-C{dedupmapping,
 				eu.dnetlib.iis.common.schemas.IdentifierMapping,
 				eu/dnetlib/iis/workflows/top/integration/import/output/dedupmapping.json}</arg>
@@ -81,8 +81,8 @@
 					<value>${queueName}</value>
 				</property>
 			</configuration>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
 			<arg>-C{docproject,
 				eu.dnetlib.iis.importer.schemas.DocumentToProject,
 				eu/dnetlib/iis/workflows/top/integration/import/output/docproject.json}</arg>
@@ -102,8 +102,8 @@
 					<value>${queueName}</value>
 				</property>
 			</configuration>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
 			<arg>-C{person,
 				eu.dnetlib.iis.importer.schemas.Person,
 				eu/dnetlib/iis/workflows/top/integration/import/output/person.json}</arg>
@@ -123,8 +123,8 @@
 					<value>${queueName}</value>
 				</property>
 			</configuration>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
 			<arg>-C{project,
 				eu.dnetlib.iis.importer.schemas.Project,
 				eu/dnetlib/iis/workflows/top/integration/import/output/project.json}</arg>
@@ -144,8 +144,8 @@
 					<value>${queueName}</value>
 				</property>
 			</configuration>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
 			<arg>-C{document,
 				eu.dnetlib.iis.importer.schemas.DocumentMetadata,
 				eu/dnetlib/iis/workflows/top/integration/import/output/document.json}</arg>

@@ -19,9 +19,9 @@ import eu.dnetlib.actionmanager.common.Agent.AGENT_TYPE;
 import eu.dnetlib.actionmanager.common.Operation;
 import eu.dnetlib.actionmanager.common.Provenance;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.Process;
-import eu.dnetlib.iis.core.java.porttype.PortType;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.Process;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 
 /**
  * XSLT transformation test process.

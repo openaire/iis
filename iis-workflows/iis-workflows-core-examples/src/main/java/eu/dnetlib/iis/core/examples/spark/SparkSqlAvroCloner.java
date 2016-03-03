@@ -19,7 +19,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 import eu.dnetlib.iis.common.spark.avro.AvroSaver;
-import eu.dnetlib.iis.core.common.AvroUtils;
+import eu.dnetlib.iis.common.utils.AvroUtils;
 
 /**
  * A spark generic avro cloner which uses sparkSql to read and write avro data. Parameters: 

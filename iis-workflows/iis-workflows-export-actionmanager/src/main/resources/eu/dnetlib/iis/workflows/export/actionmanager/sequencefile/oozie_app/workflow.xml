@@ -281,7 +281,7 @@
 		defined. -->
 	<action name="generate-schema">
 		<java>
-			<main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator
+			<main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator
 			</main-class>
 			<arg>eu.dnetlib.iis.export.schemas.DocumentMetadata</arg>
 			<arg>eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject</arg>

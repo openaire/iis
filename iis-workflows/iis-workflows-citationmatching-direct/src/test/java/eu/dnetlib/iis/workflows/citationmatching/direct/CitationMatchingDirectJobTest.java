@@ -27,9 +27,9 @@ import com.google.common.io.Files;
 
 import eu.dnetlib.iis.common.citations.schemas.Citation;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
-import eu.dnetlib.iis.core.common.AvroAssertTestUtil;
-import eu.dnetlib.iis.core.common.AvroTestUtils;
-import eu.dnetlib.iis.core.common.JsonAvroTestUtils;
+import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
+import eu.dnetlib.iis.common.utils.AvroTestUtils;
+import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 
 /**

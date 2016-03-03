@@ -24,7 +24,7 @@ import com.itextpdf.text.exceptions.InvalidPdfException;
 import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.fault.FaultUtils;
-import eu.dnetlib.iis.core.javamapreduce.MultipleOutputs;
+import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import pl.edu.icm.cermine.ContentExtractor;
 import pl.edu.icm.cermine.exception.AnalysisException;

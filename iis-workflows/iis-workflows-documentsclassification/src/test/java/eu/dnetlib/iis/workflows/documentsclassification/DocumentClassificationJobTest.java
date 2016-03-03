@@ -21,9 +21,9 @@ import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
 import com.google.common.io.Files;
 
-import eu.dnetlib.iis.core.common.AvroAssertTestUtil;
-import eu.dnetlib.iis.core.common.AvroTestUtils;
-import eu.dnetlib.iis.core.common.JsonAvroTestUtils;
+import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
+import eu.dnetlib.iis.common.utils.AvroTestUtils;
+import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 

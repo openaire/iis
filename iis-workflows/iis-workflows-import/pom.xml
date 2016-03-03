@@ -17,9 +17,19 @@
 	
 	   <dependency>
             <groupId>eu.dnetlib.iis</groupId>
-            <artifactId>iis-core</artifactId>
+            <artifactId>iis-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>iis-common</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        
+        
         
         <dependency>
             <groupId>eu.dnetlib.iis</groupId>
@@ -27,13 +37,7 @@
             <version>${project.version}</version>
         </dependency>
         
-        <dependency>
-            <groupId>eu.dnetlib.iis</groupId>
-            <artifactId>iis-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-	   
-	   <dependency>
+       <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
         </dependency>

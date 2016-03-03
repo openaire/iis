@@ -30,7 +30,7 @@
     
     <action name="generate-schema">
 	    <java>
-	        <main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
+	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
 	        <arg>eu.dnetlib.iis.importer.schemas.Person</arg>
 	        <arg>eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal</arg>
 	        <arg>eu.dnetlib.iis.documentssimilarity.schemas.DocumentMetadata</arg>

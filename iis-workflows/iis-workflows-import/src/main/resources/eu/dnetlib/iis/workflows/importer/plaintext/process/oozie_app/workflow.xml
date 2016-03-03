@@ -28,7 +28,7 @@
 				</property>
 			</configuration>
 			<!-- This is simple wrapper for the Java code -->
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.workflows.importer.content.DocumentTextUrlBasedImporterProcess</arg>
 			<arg>-Icontent_url=${input}</arg>
 			<arg>-Otext=${output}</arg>

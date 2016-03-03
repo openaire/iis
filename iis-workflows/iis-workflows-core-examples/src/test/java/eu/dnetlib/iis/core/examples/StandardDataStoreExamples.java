@@ -1,5 +1,8 @@
 package eu.dnetlib.iis.core.examples;
 
+import eu.dnetlib.iis.common.java.io.DataStore;
+import eu.dnetlib.iis.common.java.io.FileSystemPath;
+import eu.dnetlib.iis.common.java.io.JsonUtils;
 import eu.dnetlib.iis.core.examples.schemas.WordCount;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.Document;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.DocumentWithAuthors;
@@ -7,9 +10,7 @@ import eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.PersonAge;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.personwithdocuments.PersonWithDocuments;
 import eu.dnetlib.iis.core.examples.schemas.documenttext.DocumentText;
-import eu.dnetlib.iis.core.java.io.DataStore;
-import eu.dnetlib.iis.core.java.io.FileSystemPath;
-import eu.dnetlib.iis.core.java.io.JsonUtils;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;

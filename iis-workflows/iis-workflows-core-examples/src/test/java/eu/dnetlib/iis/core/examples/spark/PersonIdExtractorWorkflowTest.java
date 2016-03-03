@@ -5,10 +5,10 @@ import java.io.FileInputStream;
 import org.apache.oozie.util.IOUtils;
 import org.junit.Test;
 
-import eu.dnetlib.iis.core.AbstractOozieWorkflowTestCase;
-import eu.dnetlib.iis.core.OozieWorkflowTestConfiguration;
-import eu.dnetlib.iis.core.TestsIOUtils;
-import eu.dnetlib.iis.core.WorkflowTestResult;
+import eu.dnetlib.iis.common.AbstractOozieWorkflowTestCase;
+import eu.dnetlib.iis.common.OozieWorkflowTestConfiguration;
+import eu.dnetlib.iis.common.TestsIOUtils;
+import eu.dnetlib.iis.common.WorkflowTestResult;
 
 /**
  * 

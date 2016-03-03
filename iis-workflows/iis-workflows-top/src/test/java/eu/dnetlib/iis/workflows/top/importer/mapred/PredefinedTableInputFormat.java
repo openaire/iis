@@ -27,7 +27,7 @@ import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import com.googlecode.protobuf.format.JsonFormat;
 
 import eu.dnetlib.data.proto.OafProtos.Oaf;
-import eu.dnetlib.iis.core.javamapreduce.hack.SchemaSetter;
+import eu.dnetlib.iis.common.javamapreduce.hack.SchemaSetter;
 
 
 /**

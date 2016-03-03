@@ -85,11 +85,6 @@
 			<artifactId>gson</artifactId>
 		</dependency>
 		
-		<dependency>
-			<groupId>com.beust</groupId>
-			<artifactId>jcommander</artifactId>
-		</dependency>
-		
 	</dependencies>
 	
 	

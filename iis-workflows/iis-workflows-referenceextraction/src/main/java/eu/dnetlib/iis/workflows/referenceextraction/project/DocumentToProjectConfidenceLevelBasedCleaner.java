@@ -9,13 +9,13 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.log4j.Logger;
 
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.ProcessUtils;
-import eu.dnetlib.iis.core.java.io.CloseableIterator;
-import eu.dnetlib.iis.core.java.io.DataStore;
-import eu.dnetlib.iis.core.java.io.FileSystemPath;
-import eu.dnetlib.iis.core.java.porttype.AvroPortType;
-import eu.dnetlib.iis.core.java.porttype.PortType;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.ProcessUtils;
+import eu.dnetlib.iis.common.java.io.CloseableIterator;
+import eu.dnetlib.iis.common.java.io.DataStore;
+import eu.dnetlib.iis.common.java.io.FileSystemPath;
+import eu.dnetlib.iis.common.java.porttype.AvroPortType;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 
 /**
@@ -23,7 +23,7 @@ import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
  * @author mhorst
  *
  */
-public class DocumentToProjectConfidenceLevelBasedCleaner implements eu.dnetlib.iis.core.java.Process {
+public class DocumentToProjectConfidenceLevelBasedCleaner implements eu.dnetlib.iis.common.java.Process {
 
 	public static final String CONFIDENCE_LEVEL_THRESHOLD = "export.document_to_project.confidence.level.threshold";
 	

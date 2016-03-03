@@ -9,9 +9,9 @@ import java.util.Properties;
 
 import org.apache.hadoop.conf.Configuration;
 
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.Process;
-import eu.dnetlib.iis.core.java.porttype.PortType;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.Process;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 
 /**
  * This process is a solution for setting dynamic properties in oozie workflow definition.

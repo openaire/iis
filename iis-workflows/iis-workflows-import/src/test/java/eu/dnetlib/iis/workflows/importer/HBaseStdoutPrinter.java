@@ -14,8 +14,8 @@ import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.porttype.PortType;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 
 /**
  * Simple hbase reader testing hbase connection from oozie workflow.
@@ -23,7 +23,7 @@ import eu.dnetlib.iis.core.java.porttype.PortType;
  * @author mhorst
  *
  */
-public class HBaseStdoutPrinter implements eu.dnetlib.iis.core.java.Process {
+public class HBaseStdoutPrinter implements eu.dnetlib.iis.common.java.Process {
 
 	/**
 	 * Encoding to be used when building identifiers from byte[].

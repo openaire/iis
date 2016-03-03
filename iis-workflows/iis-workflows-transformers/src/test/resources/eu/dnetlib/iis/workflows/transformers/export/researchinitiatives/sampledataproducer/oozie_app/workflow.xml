@@ -17,8 +17,8 @@
                     <value>${queueName}</value>
                 </property>
             </configuration>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
             <arg>-C{document_to_concept_id,
 				eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId,
 				eu/dnetlib/iis/workflows/transformers/export/researchinitiatives/sampledataproducer/data/document_to_concept_id.json}</arg>
@@ -72,8 +72,8 @@
 					<value>${queueName}</value>
 				</property>
 			</configuration>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
 			<arg>-C{output,
 				eu.dnetlib.iis.export.schemas.DocumentToConceptIds,
 				eu/dnetlib/iis/workflows/transformers/export/researchinitiatives/sampledataproducer/data/document_to_concept_ids.json}</arg>

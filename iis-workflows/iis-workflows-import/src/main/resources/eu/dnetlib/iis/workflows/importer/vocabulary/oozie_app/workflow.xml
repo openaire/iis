@@ -31,7 +31,7 @@
 					<value>${queueName}</value>
 				</property>
 			</configuration>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.workflows.importer.vocabulary.ISLookupServiceBasedVocabularyImporter</arg>
 			<arg>-Pimport.islookup.service.location=${islookup_service_location}</arg>
 			<arg>-Pimport.vocabulary.output.filename=${output_filename}</arg>

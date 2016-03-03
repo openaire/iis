@@ -708,8 +708,8 @@
 				<delete path="${nameNode}${workingDir}/transformers_export_documentmetadata" />
 				<mkdir path="${nameNode}${workingDir}/transformers_export_documentmetadata" />
 			</prepare>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
 			<arg>-C{document_metadata,
 				eu.dnetlib.iis.export.schemas.DocumentMetadata,
 				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>

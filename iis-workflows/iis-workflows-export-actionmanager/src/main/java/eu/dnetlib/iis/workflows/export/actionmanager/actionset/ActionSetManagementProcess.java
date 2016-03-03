@@ -16,10 +16,10 @@ import eu.dnetlib.actionmanager.set.ActionManagerSet;
 import eu.dnetlib.actionmanager.set.ActionManagerSet.ImpactTypes;
 import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.Process;
-import eu.dnetlib.iis.core.java.ProcessUtils;
-import eu.dnetlib.iis.core.java.porttype.PortType;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.Process;
+import eu.dnetlib.iis.common.java.ProcessUtils;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 
 /**
  * Simple process removing and recreating action set.

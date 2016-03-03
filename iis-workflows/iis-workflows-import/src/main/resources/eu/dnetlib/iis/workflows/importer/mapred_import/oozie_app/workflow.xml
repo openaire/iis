@@ -119,7 +119,7 @@
 
 	<action name="generate-schema">
 	    <java>
-	        <main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
+	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
 			<arg>eu.dnetlib.iis.importer.schemas.DocumentMetadata</arg>
 			<arg>eu.dnetlib.iis.citationmatching.schemas.Citation</arg>
 			<arg>eu.dnetlib.iis.importer.schemas.DocumentToProject</arg>

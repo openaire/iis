@@ -1,0 +1,8 @@
+@namespace("eu.dnetlib.iis.common.avro")
+protocol IIS{
+   record Document{
+      int id;
+      union {null, string} title=null;
+      array<int> authorIds;
+   }
+}

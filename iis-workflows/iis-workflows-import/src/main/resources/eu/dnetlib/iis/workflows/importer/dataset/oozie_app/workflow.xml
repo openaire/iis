@@ -54,7 +54,7 @@
 					<value>${queueName}</value>
 				</property>
 			</configuration>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.workflows.importer.dataset.DataciteMDStoreImporter</arg>
 			<arg>-Pimport.datacite.mdstore.service.location=${mdstore_service_location}</arg>
 			<arg>-Pimport.datacite.mdstore.ids.csv=${mdstore_ids_csv}</arg>

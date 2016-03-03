@@ -27,7 +27,6 @@
 	   <module>iis-3rdparty-madis</module>
 	   <module>iis-assembly-resources</module>
 	   <module>iis-common</module>
-	   <module>iis-core</module>
 	   <module>iis-oozie-maven-plugin</module>
 	   <module>iis-properties-maven-plugin</module>
 	   <module>iis-schemas</module>

@@ -26,7 +26,7 @@
                 </property>
             </configuration>
 
-            <main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 
             <arg>eu.dnetlib.iis.core.examples.java.SampleDataProducer</arg>
 
@@ -98,7 +98,7 @@
                 </property>
             </configuration>
             
-            <main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             
             <arg>eu.dnetlib.iis.core.examples.java.PersonCloner</arg>
         

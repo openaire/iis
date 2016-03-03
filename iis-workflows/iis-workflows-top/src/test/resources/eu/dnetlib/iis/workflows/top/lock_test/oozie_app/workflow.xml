@@ -29,7 +29,7 @@
                     <value>${queueName}</value>
                 </property>
             </configuration>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
             <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
             <arg>-Pnode_id=${node_id}</arg>
@@ -51,7 +51,7 @@
                     <value>${queueName}</value>
                 </property>
             </configuration>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.workflows.top.nodes.timeout.TimeoutProcess</arg>
             <arg>-Pnode_id=timeout_node_1</arg>
             <arg>-Ptimeout=10000</arg>
@@ -72,7 +72,7 @@
                     <value>${queueName}</value>
                 </property>
             </configuration>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
             <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
             <arg>-Pnode_id=${node_id}</arg>
@@ -95,7 +95,7 @@
                     <value>${queueName}</value>
                 </property>
             </configuration>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
             <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
             <arg>-Pnode_id=${node_id}</arg>
@@ -117,7 +117,7 @@
                     <value>${queueName}</value>
                 </property>
             </configuration>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.workflows.top.nodes.timeout.TimeoutProcess</arg>
             <arg>-Pnode_id=timeout_node_2</arg>
             <arg>-Ptimeout=30000</arg>
@@ -138,7 +138,7 @@
                     <value>${queueName}</value>
                 </property>
             </configuration>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
             <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
             <arg>-Pnode_id=${node_id}</arg>

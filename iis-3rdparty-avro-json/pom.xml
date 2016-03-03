@@ -51,8 +51,8 @@
   <dependencies>
     
     <dependency>
-      <groupId>eu.dnetlib.iis</groupId>
-      <artifactId>iis-core</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>iis-common</artifactId>
       <version>${project.version}</version>
     </dependency>
     

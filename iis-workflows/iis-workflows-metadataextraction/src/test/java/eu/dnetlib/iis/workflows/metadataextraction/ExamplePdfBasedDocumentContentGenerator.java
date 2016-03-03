@@ -11,11 +11,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.io.DataStore;
-import eu.dnetlib.iis.core.java.io.FileSystemPath;
-import eu.dnetlib.iis.core.java.porttype.AvroPortType;
-import eu.dnetlib.iis.core.java.porttype.PortType;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.io.DataStore;
+import eu.dnetlib.iis.common.java.io.FileSystemPath;
+import eu.dnetlib.iis.common.java.porttype.AvroPortType;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.importer.schemas.DocumentContent;
 
 /**
@@ -24,7 +24,7 @@ import eu.dnetlib.iis.importer.schemas.DocumentContent;
  * @author Dominika Tkaczyk
  *
  */
-public class ExamplePdfBasedDocumentContentGenerator implements eu.dnetlib.iis.core.java.Process {
+public class ExamplePdfBasedDocumentContentGenerator implements eu.dnetlib.iis.common.java.Process {
 	
 	private static final String PORT_OUT_DOC_CONTENT = "doc_content";
 	private static final String PARAM_PDF_SOURCE_DIR = "pdfs_resource_dir";

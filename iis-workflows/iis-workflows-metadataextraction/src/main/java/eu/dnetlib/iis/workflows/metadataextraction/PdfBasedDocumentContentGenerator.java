@@ -15,11 +15,11 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.RemoteIterator;
 import org.apache.log4j.Logger;
 
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.io.DataStore;
-import eu.dnetlib.iis.core.java.io.FileSystemPath;
-import eu.dnetlib.iis.core.java.porttype.AvroPortType;
-import eu.dnetlib.iis.core.java.porttype.PortType;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.io.DataStore;
+import eu.dnetlib.iis.common.java.io.FileSystemPath;
+import eu.dnetlib.iis.common.java.porttype.AvroPortType;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.importer.schemas.DocumentContent;
 
 /**
@@ -28,7 +28,7 @@ import eu.dnetlib.iis.importer.schemas.DocumentContent;
  * @author mhorst
  *
  */
-public class PdfBasedDocumentContentGenerator implements eu.dnetlib.iis.core.java.Process {
+public class PdfBasedDocumentContentGenerator implements eu.dnetlib.iis.common.java.Process {
 
 	public static final String PARAM_HDFS_CONTENT_DIR = "hdfsContentDir";
 	
