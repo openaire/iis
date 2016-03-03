@@ -7,7 +7,7 @@ org.apache.pig.piggybank.storage.avro.AvroStorage(
 'index', '0',
 'schema', '$schema_output_document_to_research_initiatives');
 
-define DEDUPLICATE_IDS_WITH_CONFIDENCE eu.dnetlib.iis.workflows.transformers.udfs.DeduplicateIdsWithConfidence;
+define DEDUPLICATE_IDS_WITH_CONFIDENCE eu.dnetlib.iis.core.pig.udfs.DeduplicateIdsWithConfidence;
 
 documentToResearchInitiative = load '$input_document_to_research_initiative' using avro_load_document_to_research_initiative;
 

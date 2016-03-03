@@ -7,7 +7,7 @@ org.apache.pig.piggybank.storage.avro.AvroStorage(
 'index', '0',
 'schema', '$schema_output');
 
-define EMPTY_TO_NULL eu.dnetlib.iis.workflows.transformers.udfs.EmptyBagToNull;
+define EMPTY_TO_NULL eu.dnetlib.iis.core.pig.udfs.EmptyBagToNull;
 
 pmc_metadata = load '$input' using avro_load_metadata;
 

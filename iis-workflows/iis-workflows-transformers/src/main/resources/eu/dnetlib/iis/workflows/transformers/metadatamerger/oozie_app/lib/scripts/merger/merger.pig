@@ -11,11 +11,11 @@ org.apache.pig.piggybank.storage.avro.AvroStorage(
 'index', '0',
 'schema', '$schema_output_merged_metadata');
 
-define FIRST_NOT_NULL_STR eu.dnetlib.iis.workflows.transformers.udfs.StringFirstNotEmpty;
-define FIRST_NOT_NULL_INT eu.dnetlib.iis.workflows.transformers.udfs.IntegerFirstNotEmpty;
-define MERGE_ARRAYS eu.dnetlib.iis.workflows.transformers.udfs.StringBagsMerger;
-define MERGE_HASHES eu.dnetlib.iis.workflows.transformers.udfs.StringMapsMerger;
-define EMPTY_TO_NULL eu.dnetlib.iis.workflows.transformers.udfs.EmptyBagToNull;
+define FIRST_NOT_NULL_STR eu.dnetlib.iis.core.pig.udfs.StringFirstNotEmpty;
+define FIRST_NOT_NULL_INT eu.dnetlib.iis.core.pig.udfs.IntegerFirstNotEmpty;
+define MERGE_ARRAYS eu.dnetlib.iis.core.pig.udfs.StringBagsMerger;
+define MERGE_HASHES eu.dnetlib.iis.core.pig.udfs.StringMapsMerger;
+define EMPTY_TO_NULL eu.dnetlib.iis.core.pig.udfs.EmptyBagToNull;
 
 
 base_meta = load '$input_base_metadata' using avro_load_base_metadata;
