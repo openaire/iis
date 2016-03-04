@@ -7,19 +7,20 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.jdom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import pl.edu.icm.cermine.metadata.affiliation.CRFAffiliationParser;
 import eu.dnetlib.iis.common.affiliation.AffiliationBuilder;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.Range;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ReferenceBasicMetadata;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ReferenceMetadata;
 import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
+import pl.edu.icm.cermine.exception.AnalysisException;
+import pl.edu.icm.cermine.exception.TransformationException;
+import pl.edu.icm.cermine.metadata.affiliation.CRFAffiliationParser;
 
 
 /**
@@ -69,8 +70,6 @@ public class PmcXmlHandler extends DefaultHandler {
 	
 	public static final String PUB_ID_TYPE_PMID = "pmid";
 	
-	private final Logger log = Logger.getLogger(this.getClass());
-	
 	private Stack<String> parents;
 	
 	private StringBuilder currentValue = new StringBuilder();
@@ -81,7 +80,7 @@ public class PmcXmlHandler extends DefaultHandler {
 	private String currentGivenNames = null;
 	
 	private List<CharSequence> currentRefAuthorList;
-	private StringBuffer currentReferenceText;
+	private StringBuilder currentReferenceText = new StringBuilder();
 	private boolean currentReferenceTextExplicitlySet = false;
 	private String currentReferenceIdType = null;
 	
@@ -126,36 +125,32 @@ public class PmcXmlHandler extends DefaultHandler {
 			if (articleType!=null) {
 				builder.setEntityType(articleType);	
 			}
-		} else if (hasAmongParents(qName, ELEM_JOURNAL_TITLE, this.parents, ELEM_JOURNAL_META)) {
-			this.currentValue = new StringBuilder();
-		} else if (isWithinElement(qName, ELEM_ARTICLE_ID, ELEM_ARTICLE_META)) {
-			this.currentArticleIdType = attributes.getValue(PUB_ID_TYPE);
-			this.currentValue = new StringBuilder();
 		} else if (isWithinElement(qName, ELEM_FPAGE, ELEM_ARTICLE_META) ||
-				isWithinElement(qName, ELEM_LPAGE, ELEM_ARTICLE_META)) {
-			this.currentValue = new StringBuilder();
-		} else if (hasAmongParents(qName, ELEM_AFFILIATION, this.parents, ELEM_ARTICLE_META)) {
-			this.currentValue = new StringBuilder();
-		} else if (hasAmongParents(qName, ELEM_ARTICLE_TITLE, this.parents, ELEM_REF, ELEM_REF_LIST) ||
+				isWithinElement(qName, ELEM_LPAGE, ELEM_ARTICLE_META) ||
+				isWithinElement(qName, ELEM_SURNAME, ELEM_NAME) ||
+				isWithinElement(qName, ELEM_GIVEN_NAMES, ELEM_NAME) ||
+				hasAmongParents(qName, ELEM_JOURNAL_TITLE, this.parents, ELEM_JOURNAL_META) ||
+				hasAmongParents(qName, ELEM_AFFILIATION, this.parents, ELEM_ARTICLE_META) ||
+				hasAmongParents(qName, ELEM_ARTICLE_TITLE, this.parents, ELEM_REF, ELEM_REF_LIST) ||
 				hasAmongParents(qName, ELEM_SOURCE, this.parents, ELEM_REF, ELEM_REF_LIST) ||
 				hasAmongParents(qName, ELEM_YEAR, this.parents, ELEM_REF, ELEM_REF_LIST) ||
 				hasAmongParents(qName, ELEM_VOLUME, this.parents, ELEM_REF, ELEM_REF_LIST) ||
 				hasAmongParents(qName, ELEM_ISSUE, this.parents, ELEM_REF, ELEM_REF_LIST) ||
 				hasAmongParents(qName, ELEM_FPAGE, this.parents, ELEM_REF, ELEM_REF_LIST) ||
 				hasAmongParents(qName, ELEM_LPAGE, this.parents, ELEM_REF, ELEM_REF_LIST)) {
-			this.currentValue = new StringBuilder();
-		} else if (isWithinElement(qName, ELEM_SURNAME, ELEM_NAME) ||
-				isWithinElement(qName, ELEM_GIVEN_NAMES, ELEM_NAME)) {
-			this.currentValue = new StringBuilder();
+			this.currentValue.delete(0, currentValue.length());
+		} else if (isWithinElement(qName, ELEM_ARTICLE_ID, ELEM_ARTICLE_META)) {
+			this.currentArticleIdType = attributes.getValue(PUB_ID_TYPE);
+			this.currentValue.delete(0, currentValue.length());
 		} else if (isWithinElement(qName, ELEM_PUB_ID, ELEM_CITATION) ||
 				isWithinElement(qName, ELEM_PUB_ID, ELEM_ELEMENT_CITATION) ||
 				isWithinElement(qName, ELEM_PUB_ID, ELEM_MIXED_CITATION)) {
 			this.currentReferenceIdType = attributes.getValue(PUB_ID_TYPE);
-			this.currentValue = new StringBuilder();
+			this.currentValue.delete(0, currentValue.length());
 		} else if (isWithinElement(qName, ELEM_REF, ELEM_REF_LIST)) {
 			this.currentRefMetaBuilder = ReferenceMetadata.newBuilder();
 			this.currentRefAuthorList = new ArrayList<CharSequence>();
-			this.currentReferenceText = new StringBuffer();
+			this.currentReferenceText.delete(0, this.currentReferenceText.length());
 			ReferenceBasicMetadata.Builder basicMetaBuilder = ReferenceBasicMetadata.newBuilder();
 			basicMetaBuilder.setExternalIds(new HashMap<CharSequence, CharSequence>());
 			this.currentRefMetaBuilder.setBasicMetadata(basicMetaBuilder.build());
@@ -166,7 +161,6 @@ public class PmcXmlHandler extends DefaultHandler {
 	@Override
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
-		try {
 		this.parents.pop();
 		if (hasAmongParents(qName, ELEM_JOURNAL_TITLE, this.parents, ELEM_JOURNAL_META)) {
 			if (!builder.hasJournal()) {
@@ -190,10 +184,10 @@ public class PmcXmlHandler extends DefaultHandler {
 			builder.getPages().setEnd(this.currentValue.toString().trim());
 			
 		} else if (hasAmongParents(qName, ELEM_AFFILIATION, this.parents, ELEM_ARTICLE_META)) {
-			CRFAffiliationParser affiliationParser = new CRFAffiliationParser();
-			String affStr = this.currentValue.toString();
-			if (affStr.trim().length()>0) {
-				try {
+			try {
+				CRFAffiliationParser affiliationParser = new CRFAffiliationParser();
+				String affStr = this.currentValue.toString();
+				if (affStr.trim().length()>0) {
 					Element parsedAffiliation = affiliationParser.parse(affStr);
 					if (parsedAffiliation!=null) {
 						if (builder.getAffiliations()==null) {
@@ -206,10 +200,13 @@ public class PmcXmlHandler extends DefaultHandler {
 							aff.setRawText(affStr);
 						}
 					}	
-				} catch (IndexOutOfBoundsException e) {
-//					FIXME remove this catch block when upgrading cermine version
-					log.error("exception occurred when parsing affiliation: " + affStr, e);
 				}
+			} catch (AnalysisException e) {
+				throw new SAXException("unexpected exception while parsing "
+						+ "affiliations for document: " + builder.getId(), e);
+			} catch (TransformationException e) {
+				throw new SAXException("unexpected exception while parsing "
+						+ "affiliations for document: " + builder.getId(), e);
 			}
 		} else if (hasAmongParents(qName, ELEM_ARTICLE_TITLE, this.parents, ELEM_REF, ELEM_REF_LIST)) {
 			currentRefMetaBuilder.getBasicMetadata().setTitle(this.currentValue.toString());
@@ -251,7 +248,7 @@ public class PmcXmlHandler extends DefaultHandler {
 				isWithinElement(qName, ELEM_MIXED_CITATION, ELEM_REF)) {
 			if (!this.currentRefMetaBuilder.hasText() && 
 					this.currentReferenceTextExplicitlySet && 
-					this.currentReferenceText!=null && this.currentReferenceText.length()>0) {
+					this.currentReferenceText.length()>0) {
 				String trimmedRefText = this.currentReferenceText.toString().trim().replaceAll(" +", " ");
 				if (!trimmedRefText.isEmpty()) {
 					this.currentRefMetaBuilder.setText(trimmedRefText);
@@ -275,14 +272,9 @@ public class PmcXmlHandler extends DefaultHandler {
 //			reference fields cleanup
 			this.currentRefMetaBuilder = null;
 			this.currentRefAuthorList = null;
-			this.currentReferenceText = null;
+			this.currentReferenceText.delete(0, currentReferenceText.length());
 			this.currentReferenceTextExplicitlySet = false;
 			this.currentReferenceIdType = null;
-		}
-		} catch (Exception e) {
-//			FIXME remote this catch
-			throw new RuntimeException("unexpected exception while processing doc: " + 
-					builder.getId(), e);
 		}
 	}
 
