@@ -83,8 +83,8 @@ public class SparkPipeMapReduceTest {
                 .addArg("-outputAvroPath", outputDirPath)
                 .addArg("-outputAvroSchemaClass", WordCount.class.getName())
                 
-                .addArg("-mapperScript", "src/test/resources/eu/dnetlib/iis/core/examples/spark/pipe_cloner/oozie_app/scripts/wordcount_mapper.py")
-                .addArg("-reducerScript", "src/test/resources/eu/dnetlib/iis/core/examples/spark/pipe_cloner/oozie_app/scripts/wordcount_reducer.py")
+                .addArg("-mapperScript", "src/main/resources/eu/dnetlib/iis/core/examples/spark/pipe_cloner/oozie_app/scripts/wordcount_mapper.py")
+                .addArg("-reducerScript", "src/main/resources/eu/dnetlib/iis/core/examples/spark/pipe_cloner/oozie_app/scripts/wordcount_reducer.py")
                 
                 .build();
         
@@ -126,9 +126,9 @@ public class SparkPipeMapReduceTest {
                 .addArg("-outputAvroPath", outputDirPath)
                 .addArg("-outputAvroSchemaClass", Person.class.getName())
                 
-                .addArg("-mapperScript", "src/test/resources/eu/dnetlib/iis/core/examples/spark/pipe_cloner/oozie_app/scripts/cloner.py")
+                .addArg("-mapperScript", "src/main/resources/eu/dnetlib/iis/core/examples/spark/pipe_cloner/oozie_app/scripts/cloner.py")
                 .addArg("-mapperScriptArgs", "--copies 3")
-                .addArg("-reducerScript", "src/test/resources/eu/dnetlib/iis/core/examples/spark/pipe_cloner/oozie_app/scripts/cloner.py")
+                .addArg("-reducerScript", "src/main/resources/eu/dnetlib/iis/core/examples/spark/pipe_cloner/oozie_app/scripts/cloner.py")
                 .addArg("-reducerScriptArgs", "--copies 2")
                 
                 .build();

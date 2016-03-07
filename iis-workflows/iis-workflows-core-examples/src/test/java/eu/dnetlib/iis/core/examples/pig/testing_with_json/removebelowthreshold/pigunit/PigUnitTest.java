@@ -43,7 +43,7 @@ public class PigUnitTest {
         // "input_from_project_reference_extraction" is the alias to override with the input data.
         test.loadFromJson(
                 "input_from_project_reference_extraction",
-                "src/test/resources/eu/dnetlib/iis/core/examples/pig/testing_with_json/removebelowthreshold/data/input_from_project_reference_extraction.json",
+                "src/main/resources/eu/dnetlib/iis/core/examples/pig/testing_with_json/removebelowthreshold/data/input_from_project_reference_extraction.json",
                 "documentId:chararray,projectId:chararray,confidenceLevel:double");
 
         final String[] output = {

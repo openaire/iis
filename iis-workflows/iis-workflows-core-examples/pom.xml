@@ -147,7 +147,7 @@
                             <goal>idl-protocol</goal>
                         </goals>
                         <configuration>
-                            <sourceDirectory>${project.basedir}/src/test/resources/</sourceDirectory>
+                            <sourceDirectory>${project.basedir}/src/main/resources/</sourceDirectory>
                             <outputDirectory>${project.basedir}/target/generated-sources/java/</outputDirectory>
                         </configuration>
                     </execution>
