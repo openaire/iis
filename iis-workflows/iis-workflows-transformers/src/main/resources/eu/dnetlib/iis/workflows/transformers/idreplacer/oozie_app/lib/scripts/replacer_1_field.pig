@@ -13,7 +13,7 @@ org.apache.pig.piggybank.storage.avro.AvroStorage(
 'schema', '$schema_output');
 
 
-define IDREPLACE eu.dnetlib.iis.workflows.transformers.udfs.IdReplacerUDF;
+define IDREPLACE eu.dnetlib.iis.common.pig.udfs.IdReplacerUDF;
 
 
 idMapping = load '$input_id_mapping' using avro_load_id_mapping;
