@@ -27,7 +27,7 @@
                     <value>${queueName}</value>
                 </property>
             </configuration>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
             <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
             <arg>-Pnode_id=${default_cache_location}</arg>

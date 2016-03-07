@@ -11,8 +11,8 @@ import org.junit.Test;
 import com.google.common.io.Files;
 
 import eu.dnetlib.iis.citationmatching.schemas.Citation;
-import eu.dnetlib.iis.core.common.AvroAssertTestUtil;
-import eu.dnetlib.iis.core.common.AvroTestUtils;
+import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
+import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.workflows.citationmatching.converter.DocumentAvroDatastoreProducer;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;

@@ -15,13 +15,6 @@
     <dependencies>
         
         <dependency>
-            <groupId>eu.dnetlib.iis</groupId>
-            <artifactId>iis-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-        
-        <dependency>
 			<groupId>eu.dnetlib.iis</groupId>
 			<artifactId>iis-common</artifactId>
 			<version>${project.version}</version>
@@ -30,7 +23,7 @@
 		
         <dependency>
             <groupId>eu.dnetlib.iis</groupId>
-            <artifactId>iis-core</artifactId>
+            <artifactId>iis-common</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>

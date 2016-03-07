@@ -7,15 +7,15 @@ import java.util.Map.Entry;
 
 import org.apache.hadoop.conf.Configuration;
 
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.porttype.PortType;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 
 /**
  * Simple context configuration stdout printer.
  * @author mhorst
  *
  */
-public class ContextConfigurationStdoutPrinter implements eu.dnetlib.iis.core.java.Process {
+public class ContextConfigurationStdoutPrinter implements eu.dnetlib.iis.common.java.Process {
 
 	/**
 	 * Encoding to be used when building identifiers from byte[].

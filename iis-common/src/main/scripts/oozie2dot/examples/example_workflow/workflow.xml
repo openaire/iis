@@ -1,0 +1,950 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="mainworkflows_mainchain">
+	
+	<parameters>
+		<!-- processing modes -->
+		<property>
+			<name>active_referenceextraction_project</name>
+			<value>true</value>
+			<description>flag indicating project reference extraction should be enabled</description>
+		</property>
+		<property>
+			<name>active_referenceextraction_dataset</name>
+			<value>true</value>
+			<description>flag indicating dataset reference extraction should be enabled</description>
+		</property>
+		<property>
+			<!-- currently disabled by default -->
+			<name>active_referenceextraction_researchinitiative</name>
+			<value>false</value>
+			<description>flag indicating researchinitiative reference extraction should be enabled</description>
+		</property>
+		<property>
+			<name>active_documentsclassification</name>
+			<value>true</value>
+			<description>flag indicating documents classification should be enabled</description>
+		</property>
+		<property>
+			<name>active_documentssimilarity</name>
+			<value>true</value>
+			<description>flag indicating documents similarity should be enabled</description>
+		</property>
+		<property>
+			<name>active_citationmatching</name>
+			<!-- currently disabled by default -->
+			<value>false</value>
+			<description>flag indicating citation matching should be enabled</description>
+		</property>
+		<property>
+			<name>active_statistics</name>
+			<!-- currently disabled by default -->
+			<value>false</value>
+			<description>flag indicating statistics generation should be enabled</description>
+		</property>
+		<!-- input ports -->
+		<property>
+			<name>input_document_metadata</name>
+			<description>input document metadata directory</description>
+		</property>
+		<property>
+			<name>input_document_text</name>
+			<description>input document text directory</description>
+		</property>
+		<property>
+			<name>input_project</name>
+			<description>input project directory</description>
+		</property>
+		<property>
+			<name>input_person</name>
+			<description>input person directory</description>
+		</property>
+		<property>
+			<name>input_dataset</name>
+			<description>input dataset directory</description>
+		</property>
+		<property>
+			<name>input_extracted_document_metadata</name>
+			<description>input extracted document metadata directory</description>
+		</property>
+		<property>
+			<name>input_citation</name>
+			<description>input citation directory</description>
+		</property>
+		<property>
+			<name>input_deduplication_mapping</name>
+			<description>input deduplication mapping directory</description>
+		</property>
+		<!-- citation matching related -->
+		<property>
+            <name>cit_genAuthorIdxJavaOpts</name>
+            <value>-Xmx8g</value>
+            <description>java opts for author index creation for citation purposes</description>
+        </property>
+        <!-- document similarity related -->
+        <property>
+            <name>ds_parallel</name>
+            <value>40</value>
+            <description>document similarity pig parallel</description>
+        </property>
+        <property>
+            <name>ds_removal_rate</name>
+            <value>0.99</value>
+            <description>document similarity removal rate</description>
+        </property>
+        <property>
+            <name>ds_removal_least_used</name>
+            <value>10</value>
+            <description>document similarity least used removal</description>
+        </property>
+		<!-- output ports -->
+		<property>
+			<name>output_document_similarity</name>
+			<description>output document similarity directory</description>
+		</property>
+		<property>
+			<name>output_document_with_inferenced_data</name>
+			<description>output inferenced document directory</description>
+		</property>
+		<property>
+			<name>output_dataset_with_inferenced_data</name>
+			<description>output inferenced dataset directory</description>
+		</property>
+		<property>
+			<name>output_person_with_inferenced_data</name>
+			<description>output inferenced person directory</description>
+		</property>
+		<property>
+			<name>output_project_statistics</name>
+			<description>output project statistics directory</description>
+		</property>
+	</parameters>
+
+	<start to="forking" />
+    
+    <fork name="forking">
+    	<path start="decision-referenceextraction_project"/>
+    	<path start="decision-referenceextraction_dataset"/>
+    	<path start="decision-referenceextraction_researchinitiative"/>
+        <path start="transformers_metadatamerger"/>
+    </fork>
+    
+    <!-- start of project reference extraction block -->
+    <decision name="decision-referenceextraction_project">
+        <switch>
+            <case to="referenceextraction_project">${active_referenceextraction_project eq "true"}</case>
+            <default to="skip-referenceextraction_project"/>
+        </switch>
+    </decision>
+    
+    <action name="referenceextraction_project">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/referenceextraction_project</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/referenceextraction_project/working_dir</value>
+                </property>
+            	<property>
+					<name>input_document_text</name>
+					<value>${input_document_text}</value>
+				</property>
+				<property>
+					<name>input_project</name>
+					<value>${input_project}</value>
+				</property>
+				<property>
+					<name>output_document_to_project</name>
+					<!-- referenceextraction_project directory is created at subworkflow prepare phase -->
+					<value>${workingDir}/referenceextraction_project/document_projects</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="joining"/>
+		<error to="fail" />
+    </action>
+    
+    <action name="skip-referenceextraction_project">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+			<prepare>
+				<!-- notice: directory have to aligned with skipped action output -->
+				<delete path="${nameNode}${workingDir}/referenceextraction_project" />
+				<mkdir path="${nameNode}${workingDir}/referenceextraction_project" />
+			</prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{referenceextraction_project,
+				eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject,
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+            <!-- notice: directory have to aligned with skipped action output -->
+            <arg>-Oreferenceextraction_project=${workingDir}/referenceextraction_project/document_projects</arg>
+   
+        </java>
+        <ok to="joining"/>
+        <error to="fail"/>
+    </action>
+    <!-- end of project reference extraction block -->
+    
+    <!-- start of dataset reference extraction block -->
+    <decision name="decision-referenceextraction_dataset">
+        <switch>
+            <case to="referenceextraction_dataset">${active_referenceextraction_dataset eq "true"}</case>
+            <default to="skip-referenceextraction_dataset"/>
+        </switch>
+    </decision>
+    
+    <action name="referenceextraction_dataset">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/referenceextraction_dataset</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/referenceextraction_dataset/working_dir</value>
+                </property>
+            	<property>
+					<name>input_document_text</name>
+					<value>${input_document_text}</value>
+				</property>
+				<property>
+					<name>input_dataset</name>
+					<value>${input_dataset}</value>
+				</property>
+				<property>
+					<name>output_document_to_dataset</name>
+					<!-- referenceextraction_dataset directory is created at subworkflow prepare phase -->
+					<value>${workingDir}/referenceextraction_dataset/document_datasets</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="joining"/>
+		<error to="fail" />
+    </action>
+    
+    <action name="skip-referenceextraction_dataset">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+			<prepare>
+				<!-- notice: directory have to aligned with skipped action output -->
+				<delete path="${nameNode}${workingDir}/referenceextraction_dataset" />
+				<mkdir path="${nameNode}${workingDir}/referenceextraction_dataset" />
+			</prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{referenceextraction_dataset,
+				eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet,
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+            <!-- notice: directory have to aligned with skipped action output -->
+            <arg>-Oreferenceextraction_dataset=${workingDir}/referenceextraction_dataset/document_datasets</arg>
+        </java>
+        <ok to="joining"/>
+        <error to="fail"/>
+    </action>
+    <!-- end of dataset reference extraction block -->
+    
+    <!-- start of researchinitiative reference extraction block -->
+    <decision name="decision-referenceextraction_researchinitiative">
+        <switch>
+            <case to="referenceextraction_researchinitiative">${active_referenceextraction_researchinitiative eq "true"}</case>
+            <default to="skip-referenceextraction_researchinitiative"/>
+        </switch>
+    </decision>
+    
+    <action name="referenceextraction_researchinitiative">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/referenceextraction_researchinitiative</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/referenceextraction_researchinitiative/working_dir</value>
+                </property>
+            	<property>
+					<name>input_document_text</name>
+					<value>${input_document_text}</value>
+				</property>
+				<property>
+					<name>output_document_to_research_initiative</name>
+					<!-- referenceextraction_researchinitiative directory is created at subworkflow prepare phase -->
+					<value>${workingDir}/referenceextraction_researchinitiative/document_researchinitiative</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="joining"/>
+		<error to="fail" />
+    </action>
+    
+    <action name="skip-referenceextraction_researchinitiative">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+			<prepare>
+				<!-- notice: directory have to aligned with skipped action output -->
+				<delete path="${nameNode}${workingDir}/referenceextraction_researchinitiative" />
+				<mkdir path="${nameNode}${workingDir}/referenceextraction_researchinitiative" />
+			</prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{referenceextraction_researchinitiative,
+				eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId,
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+            <!-- notice: directory have to aligned with skipped action output -->
+            <arg>-Oreferenceextraction_researchinitiative=${workingDir}/referenceextraction_researchinitiative/document_researchinitiative</arg>
+        </java>
+        <ok to="joining"/>
+        <error to="fail"/>
+    </action>
+    <!-- end of researchinitiative reference extraction block -->
+    
+    <!-- metadatamerger branch -->
+    <action name="transformers_metadatamerger">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_metadatamerger</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_metadatamerger/working_dir</value>
+                </property>
+            	<property>
+					<name>input_base_metadata</name>
+					<value>${input_document_metadata}</value>
+				</property>
+				<property>
+					<name>input_extracted_metadata</name>
+					<value>${input_extracted_document_metadata}</value>
+				</property>
+				<property>
+					<name>output_merged_metadata</name>
+					<value>${workingDir}/transformers_metadatamerger/working_dir/meta</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+
+		<ok to="forking-transformers_metadatamerger_based"/>
+		<error to="fail" />
+    </action>
+    
+     <fork name="forking-transformers_metadatamerger_based">
+    	<path start="decision-documentsclassification"/>
+        <path start="decision-documentssimilarity"/>
+        <path start="decision-citationmatching"/>
+    </fork>
+    
+    <!-- start of documents classification part -->
+    <decision name="decision-documentsclassification">
+        <switch>
+            <case to="transformers_documentsclassification">${active_documentsclassification eq "true"}</case>
+            <default to="skip-documentsclassification"/>
+        </switch>
+    </decision>
+    
+    <action name="transformers_documentsclassification">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_documentsclassification</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_documentsclassification/working_dir</value>
+                </property>
+            	<property>
+					<name>input_merged_metadata</name>
+					<value>${workingDir}/transformers_metadatamerger/working_dir/meta</value>
+				</property>
+				<property>
+					<name>output_document_metadata</name>
+					<value>${workingDir}/transformers_documentsclassification/working_dir/meta</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="documentsclassification_main"/>
+		<error to="fail" />
+    </action>
+    
+    <action name="documentsclassification_main">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/documentsclassification_main</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/documentsclassification_main/working_dir</value>
+                </property>
+            	<property>
+					<name>input_document_metadata</name>
+					<value>${workingDir}/transformers_documentsclassification/working_dir/meta</value>
+				</property>
+				<property>
+					<name>output_document_to_document_classes</name>
+					<value>${workingDir}/documentsclassification_main/document_to_document_classes</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="joining-transformers_metadatamerger_based"/>
+		<error to="fail" />
+    </action>
+    
+    <action name="skip-documentsclassification">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+			<prepare>
+				<!-- notice: directory have to aligned with skipped action output -->
+				<delete path="${nameNode}${workingDir}/documentsclassification_main" />
+				<mkdir path="${nameNode}${workingDir}/documentsclassification_main" />
+			</prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{documentsclassification,
+				eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses,
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+            <!-- notice: directory have to aligned with skipped action output -->
+            <arg>-Odocumentsclassification=${workingDir}/documentsclassification_main/document_to_document_classes</arg>
+        </java>
+        <ok to="joining-transformers_metadatamerger_based"/>
+        <error to="fail"/>
+    </action>
+    <!-- end of documents classification part -->
+    
+    <!-- start of documents similarity part -->
+    <decision name="decision-documentssimilarity">
+        <switch>
+            <case to="transformers_documentssimilarity">${active_documentssimilarity eq "true"}</case>
+            <default to="skip-documentssimilarity"/>
+        </switch>
+    </decision>
+    
+    <action name="transformers_documentssimilarity">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_documentssimilarity</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_documentssimilarity/working_dir</value>
+                </property>
+            	<property>
+					<name>input_person</name>
+					<value>${input_person}</value>
+				</property>
+				<property>
+					<name>input_metadata</name>
+					<value>${workingDir}/transformers_metadatamerger/working_dir/meta</value>
+				</property>
+				<property>
+					<name>output_document_metadata</name>
+					<value>${workingDir}/transformers_documentssimilarity/working_dir/meta</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="documentssimilarity_chain"/>
+		<error to="fail" />
+    </action>
+    
+    <action name="documentssimilarity_chain">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/documentssimilarity_chain</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/documentssimilarity_chain/working_dir</value>
+                </property>
+            	<property>
+					<name>document</name>
+					<value>${workingDir}/transformers_documentssimilarity/working_dir/meta</value>
+				</property>
+				<property>
+					<name>documents_similarity</name>
+					<value>${output_document_similarity}</value>
+				</property>
+				<property>
+		            <name>ds_parallel</name>
+		            <value>${ds_parallel}</value>
+		        </property>
+		        <property>
+		            <name>ds_removal_rate</name>
+		            <value>${ds_removal_rate}</value>
+		        </property>
+		        <property>
+		            <name>ds_removal_least_used</name>
+		            <value>${ds_removal_least_used}</value>
+		        </property>
+            </configuration>
+        </sub-workflow>
+		<ok to="joining-transformers_metadatamerger_based"/>
+		<error to="fail" />
+    </action>
+    
+    <action name="skip-documentssimilarity">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+			<prepare>
+				<!-- notice: directory have to aligned with skipped action output -->
+				<delete path="${nameNode}${workingDir}/documentssimilarity_chain" />
+				<delete path="${nameNode}${output_document_similarity}" />
+				<mkdir path="${nameNode}${workingDir}/documentssimilarity_chain" />
+				<mkdir path="${nameNode}${output_document_similarity}" />
+			</prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{documentssimilarity,
+				eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity,
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+            <!-- notice: directory have to aligned with skipped action output -->
+            <arg>-Odocumentssimilarity=${output_document_similarity}</arg>
+        </java>
+        <ok to="joining-transformers_metadatamerger_based"/>
+        <error to="fail"/>
+    </action>
+    <!-- end of documents similarity part -->
+    
+    <!-- citation matching part -->
+    <decision name="decision-citationmatching">
+        <switch>
+            <case to="transformers_citationmatching">${active_citationmatching eq "true"}</case>
+            <default to="skip-citationmatching"/>
+        </switch>
+    </decision>
+    
+    <action name="transformers_citationmatching">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_citationmatching</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_citationmatching/working_dir</value>
+                </property>
+            	<property>
+					<name>input_metadata</name>
+					<value>${workingDir}/transformers_metadatamerger/working_dir/meta</value>
+				</property>
+				<property>
+					<name>input_person</name>
+					<value>${input_person}</value>
+				</property>
+				<property>
+					<name>output_citation_metadata</name>
+					<value>${workingDir}/transformers_citationmatching/working_dir/citation-meta</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="citationmatching_chain"/>
+		<error to="fail" />
+    </action>
+    
+    <action name="citationmatching_chain">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/citationmatching_chain</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/citationmatching_chain/working_dir</value>
+                </property>
+            	<property>
+					<name>input</name>
+					<value>${workingDir}/transformers_citationmatching/working_dir/citation-meta</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${workingDir}/citationmatching_chain/citation</value>
+				</property>
+				<property>
+            		<name>cit_genAuthorIdxJavaOpts</name>
+        		    <value>${cit_genAuthorIdxJavaOpts}</value>
+		        </property>
+            </configuration>
+        </sub-workflow>
+		<ok to="decision-statistics"/>
+		<error to="fail" />
+    </action>
+        
+    <action name="skip-citationmatching">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+			<prepare>
+				<!-- notice: directory have to aligned with skipped action output -->
+				<delete path="${nameNode}${workingDir}/citationmatching_chain" />
+				<mkdir path="${nameNode}${workingDir}/citationmatching_chain" />
+			</prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{citation,
+				eu.dnetlib.iis.citationmatching.schemas.Citation,
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+            <!-- notice: directory have to aligned with skipped action output -->
+            <arg>-Ocitation=${workingDir}/citationmatching_chain/citation</arg>
+        </java>
+        <ok to="decision-statistics"/>
+        <error to="fail"/>
+    </action>
+    <!-- end of citation matching part -->
+    
+    <!-- statistics part -->
+    <decision name="decision-statistics">
+        <switch>
+            <case to="transformers_statistics">${active_statistics eq "true"}</case>
+            <default to="skip-statistics"/>
+        </switch>
+    </decision>
+    
+        <action name="transformers_statistics">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_statistics</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_statistics/working_dir</value>
+                </property>
+            	<property>
+					<name>input_document</name>
+					<value>${workingDir}/transformers_metadatamerger/working_dir/meta</value>
+				</property>
+				<property>
+					<name>input_citation</name>
+					<value>${workingDir}/citationmatching_chain/citation</value>
+				</property>
+				<property>
+					<!-- NOTICE: reference extraction will have to be enabled to get this input -->
+					<name>input_document_to_project</name>
+					<value>${workingDir}/referenceextraction_project/document_projects</value>
+				</property>
+				<property>
+					<name>input_person</name>
+					<value>${input_person}</value>
+				</property>
+				<property>
+					<name>input_project</name>
+					<value>${input_project}</value>
+				</property>
+				<property>
+					<name>output_document_authors_citations</name>
+					<value>${workingDir}/transformers_statistics/working_dir/document</value>
+				</property>
+				<property>
+					<name>output_person_id</name>
+					<value>${workingDir}/transformers_statistics/working_dir/person-id</value>
+				</property>
+				<property>
+					<name>output_project_id</name>
+					<value>${workingDir}/transformers_statistics/working_dir/project-id</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="statistics"/>
+		<error to="fail" />
+    </action>
+    
+    <action name="statistics">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/statistics</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/statistics/working_dir</value>
+                </property>
+            	<property>
+					<name>input_document_authors_citations</name>
+					<value>${workingDir}/transformers_statistics/working_dir/document</value>
+				</property>
+				<property>
+					<name>input_person_id</name>
+					<value>${workingDir}/transformers_statistics/working_dir/person-id</value>
+				</property>
+				<property>
+					<name>input_project_id</name>
+					<value>${workingDir}/transformers_statistics/working_dir/project-id</value>
+				</property>
+				<property>
+					<name>output_document_statistics</name>
+					<value>${workingDir}/statistics/document_statistics</value>
+				</property>
+				<property>
+					<name>output_author_statistics</name>
+					<value>${workingDir}/statistics/working_dir/author_statistics</value>
+				</property>
+				<property>
+					<name>output_project_statistics</name>
+					<value>${output_project_statistics}</value>
+				</property>
+				<property>
+					<name>output_global_statistics</name>
+					<value>${workingDir}/statistics/working_dir/global_statistics</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="joining-transformers_metadatamerger_based"/>
+		<error to="fail" />
+    </action>
+    
+    <action name="skip-statistics">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+			<prepare>
+				<!-- notice: directory have to aligned with skipped action output -->
+				<delete path="${nameNode}${workingDir}/statistics" />
+				<mkdir path="${nameNode}${workingDir}/statistics" />
+			</prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{document_statistics,
+				eu.dnetlib.iis.statistics.schemas.DocumentToDocumentStatistics,
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+			<arg>-C{author_statistics,
+				eu.dnetlib.iis.statistics.schemas.AuthorToAuthorStatistics,
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+			<arg>-C{project_statistics,
+				eu.dnetlib.iis.statistics.schemas.ProjectToProjectStatistics,
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+			<!-- FIXME currently global statistics are not available -->
+			<!-- 
+			<arg>-C{global_statistics,
+				eu.dnetlib.iis.statistics.schemas.,
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+			-->
+            <!-- notice: directory have to aligned with skipped action output -->
+            <arg>-Odocument_statistics=${workingDir}/statistics/document_statistics</arg>
+            <arg>-Oauthor_statistics=${workingDir}/statistics/working_dir/author_statistics</arg>
+            <arg>-Oproject_statistics=${output_project_statistics}</arg>
+            <!-- FIXME currently global statistics are not available -->
+            <!-- 
+            <arg>-Oglobal_statistics=${workingDir}/statistics/working_dir/global_statistics</arg>
+             -->
+        </java>
+        <ok to="joining-transformers_metadatamerger_based"/>
+        <error to="fail"/>
+    </action>
+    
+    <!-- end of statistics part -->
+    
+    <join name="joining-transformers_metadatamerger_based" to="joining"/>
+    
+    <join name="joining" to="forking-transformers_export"/>
+    
+    <fork name="forking-transformers_export">
+    	<path start="transformers_export_document_producer"/>
+        <path start="transformers_export_person_producer"/>
+        <path start="transformers_export_dataset_producer"/>
+    </fork>
+    
+    <!-- this node is required due to the PIG limitation 
+    	disallowing empty directories as input avro storages -->
+    <action name="transformers_export_document_producer">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+			<!-- The data generated by this node is deleted in this section -->
+			<prepare>
+				<delete path="${nameNode}${workingDir}/producer_export_document" />
+				<mkdir path="${nameNode}${workingDir}/producer_export_document" />
+			</prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{document_to_document_clusters,
+				eu.dnetlib.iis.documentsclustering.schemas.DocumentToDocumentClusters,
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>    
+            <arg>-C{document_with_website_usage_similarities,
+				eu.dnetlib.iis.websiteusage.schemas.DocumentsWithWebsiteUsageSimilarities,
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+            <arg>-Odocument_to_document_clusters=${workingDir}/producer_export_document/document_to_document_clusters</arg>
+            <arg>-Odocument_with_website_usage_similarities=${workingDir}/producer_export_document/document_with_website_usage_similarities</arg>    
+        </java>
+        <ok to="transformers_export_document"/>
+        <error to="fail"/>
+    </action>
+    
+    <action name="transformers_export_document">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_export_document</app-path>
+            <propagate-configuration/>
+            <configuration>
+				<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_export_document/working_dir</value>
+                </property>
+                <!-- real input datastores -->
+				<property>
+					<name>input_extracted_document_metadata</name>
+					<value>${input_extracted_document_metadata}</value>
+				</property>
+				<property>
+					<name>input_document_to_project</name>
+					<value>${workingDir}/referenceextraction_project/document_projects</value>
+				</property>
+				<property>
+					<name>input_document_to_dataset</name>
+					<value>${workingDir}/referenceextraction_dataset/document_datasets</value>
+				</property>
+				<property>
+                    <name>input_document_to_research_initiative</name>
+                    <value>${workingDir}/referenceextraction_researchinitiative/document_researchinitiative</value>
+                </property>
+				<property>
+					<name>input_document_to_document_classes</name>
+					<value>${workingDir}/documentsclassification_main/document_to_document_classes</value>
+				</property>
+				<property>
+					<name>input_citation</name>
+					<value>${workingDir}/citationmatching_chain/citation</value>
+				</property>
+				<property>
+					<name>input_document_to_document_statistics</name>
+					<value>${workingDir}/statistics/document_statistics</value>
+				</property>
+				<!-- fake input datastores -->
+				<property>
+					<name>input_document_to_document_clusters</name>
+					<value>${workingDir}/producer_export_document/document_to_document_clusters</value>
+				</property>
+				<property>
+					<name>input_document_with_website_usage_similarities</name>
+					<value>${workingDir}/producer_export_document/document_with_website_usage_similarities</value>
+				</property>
+				<!-- output datastore -->
+				<property>
+					<name>output_document_with_inferenced_data</name>
+					<value>${output_document_with_inferenced_data}</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="joining-transformers_export"/>
+		<error to="fail" />
+    </action>
+    
+    <!-- this node is required due to the PIG limitation 
+    	disallowing empty directories as input avro storages -->
+    <action name="transformers_export_person_producer">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+			<!-- The data generated by this node is deleted in this section -->
+			<prepare>
+				<delete path="${nameNode}${workingDir}/producer_export_person" />
+				<mkdir path="${nameNode}${workingDir}/producer_export_person" />
+			</prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{person_with_website_usage_similarities,
+				eu.dnetlib.iis.websiteusage.schemas.PersonWebsiteUsageSimilarities,
+				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+            <arg>-Operson_with_website_usage_similarities=${workingDir}/producer_export_person/person_with_website_usage_similarities</arg>    
+        </java>
+        <ok to="transformers_export_person"/>
+        <error to="fail"/>
+    </action>
+    
+    <action name="transformers_export_person">
+	    <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_export_person</app-path>
+            <propagate-configuration/>
+            <configuration>
+				<property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_export_person/working_dir</value>
+                </property>
+                <!-- real input datastores -->
+				<property>
+					<name>input_person</name>
+					<value>${input_person}</value>
+				</property>
+				<property>
+					<name>input_author_to_author_statistics</name>
+					<value>${workingDir}/statistics/working_dir/author_statistics</value>
+				</property>
+				<!-- fake input datastores -->
+				<property>
+					<name>input_persons_with_website_usage_similarities</name>
+					<value>${workingDir}/producer_export_person/person_with_website_usage_similarities</value>
+				</property>
+				<!-- output datastore -->
+				<property>
+					<name>output_person_with_inferenced_data</name>
+					<value>${output_person_with_inferenced_data}</value>
+				</property>
+            </configuration>
+        </sub-workflow>
+		<ok to="joining-transformers_export"/>
+		<error to="fail" />
+    </action>
+    	
+    <action name="transformers_export_dataset_producer">
+         <fs>
+            <delete path="${nameNode}${output_dataset_with_inferenced_data}" />
+			<mkdir path="${nameNode}${output_dataset_with_inferenced_data}" />
+        </fs>
+        <ok to="joining-transformers_export"/>
+        <error to="fail"/>
+    </action>
+    
+    <join name="joining-transformers_export" to="end"/>
+    
+	<kill name="fail">
+		<message>Unfortunately, the process failed -- error message:
+			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+	</kill>
+	<end name="end" />
+</workflow-app>

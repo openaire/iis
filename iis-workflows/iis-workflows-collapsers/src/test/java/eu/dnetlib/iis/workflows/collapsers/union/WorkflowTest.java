@@ -3,8 +3,8 @@ package eu.dnetlib.iis.workflows.collapsers.union;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import eu.dnetlib.iis.IntegrationTest;
-import eu.dnetlib.iis.core.AbstractOozieWorkflowTestCase;
+import eu.dnetlib.iis.common.AbstractOozieWorkflowTestCase;
+import eu.dnetlib.iis.common.IntegrationTest;
 
 /**
  * 

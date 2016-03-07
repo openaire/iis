@@ -25,7 +25,7 @@ import org.xml.sax.XMLReader;
 
 import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.fault.FaultUtils;
-import eu.dnetlib.iis.core.javamapreduce.MultipleOutputs;
+import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.workflows.ingest.pmc.plaintext.NlmToDocumentTextConverter;

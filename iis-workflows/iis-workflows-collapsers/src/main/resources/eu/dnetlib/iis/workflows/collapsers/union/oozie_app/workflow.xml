@@ -61,7 +61,7 @@
 
 	<action name="generate-schema">
 		<java>
-			<main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
+			<main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
 			<arg>${schema_input}</arg>
 			<arg>${schema_output}</arg>
 			<capture-output />

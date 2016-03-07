@@ -9,15 +9,15 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-import eu.dnetlib.iis.core.TestsIOUtils;
+import eu.dnetlib.iis.common.TestsIOUtils;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.Process;
+import eu.dnetlib.iis.common.java.io.DataStore;
+import eu.dnetlib.iis.common.java.io.FileSystemPath;
+import eu.dnetlib.iis.common.java.porttype.AvroPortType;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.core.examples.StandardDataStoreExamples;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person;
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.Process;
-import eu.dnetlib.iis.core.java.io.DataStore;
-import eu.dnetlib.iis.core.java.io.FileSystemPath;
-import eu.dnetlib.iis.core.java.porttype.AvroPortType;
-import eu.dnetlib.iis.core.java.porttype.PortType;
 
 /**
  * Reads the Person data store and compares it with the sample Person data

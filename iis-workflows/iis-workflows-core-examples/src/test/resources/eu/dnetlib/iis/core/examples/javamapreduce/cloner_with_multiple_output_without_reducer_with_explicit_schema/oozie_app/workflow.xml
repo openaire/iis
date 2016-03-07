@@ -20,7 +20,7 @@
 				</property>
 			</configuration>
 			<!-- This is simple wrapper for the Java code -->
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<!-- The business Java code that gets to be executed -->
 			<arg>eu.dnetlib.iis.core.examples.java.SampleDataProducer</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
@@ -288,7 +288,7 @@
 				</property>
 			</configuration>
 			<!-- This is simple wrapper for the Java code -->
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<!-- The business Java code that gets to be executed -->
 			<arg>eu.dnetlib.iis.core.examples.java.PersonCloner</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->

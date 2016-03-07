@@ -1,6 +1,5 @@
 package eu.dnetlib.iis.workflows.collapsers;
 
-import eu.dnetlib.iis.core.common.AvroUtils;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -12,6 +11,8 @@ import org.apache.avro.mapred.AvroKey;
 import org.apache.avro.mapred.AvroValue;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Reducer;
+
+import eu.dnetlib.iis.common.utils.AvroUtils;
 
 /**
  * @author Dominika Tkaczyk

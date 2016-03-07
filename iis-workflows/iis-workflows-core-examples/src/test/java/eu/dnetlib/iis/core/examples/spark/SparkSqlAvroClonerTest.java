@@ -20,7 +20,7 @@ import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
 import com.google.common.io.Files;
 
-import eu.dnetlib.iis.core.common.AvroTestUtils;
+import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.core.examples.StandardDataStoreExamples;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person;
 

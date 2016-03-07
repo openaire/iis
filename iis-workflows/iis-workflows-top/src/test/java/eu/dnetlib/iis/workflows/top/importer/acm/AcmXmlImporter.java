@@ -15,12 +15,12 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.Process;
-import eu.dnetlib.iis.core.java.io.DataStore;
-import eu.dnetlib.iis.core.java.io.FileSystemPath;
-import eu.dnetlib.iis.core.java.porttype.AvroPortType;
-import eu.dnetlib.iis.core.java.porttype.PortType;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.Process;
+import eu.dnetlib.iis.common.java.io.DataStore;
+import eu.dnetlib.iis.common.java.io.FileSystemPath;
+import eu.dnetlib.iis.common.java.porttype.AvroPortType;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.workflows.importer.dataset.DataFileRecordReceiver;
 

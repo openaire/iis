@@ -24,8 +24,7 @@ import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-
-import eu.dnetlib.iis.core.common.AvroUtils;
+import eu.dnetlib.iis.common.utils.AvroUtils;
 /**
  * Some changes introduced in the original code by Mateusz Kobos
  */

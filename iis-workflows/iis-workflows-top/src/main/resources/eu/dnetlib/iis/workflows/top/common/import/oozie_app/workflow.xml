@@ -319,8 +319,8 @@
 				<delete path="${nameNode}${output_project_concept}" />
 				<mkdir path="${nameNode}${workingDir}/import_concept" />
 			</prepare>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
 			<arg>-C{concept,
 				eu.dnetlib.iis.importer.schemas.Concept,
 				eu/dnetlib/iis/workflows/top/data/empty.json}
@@ -462,8 +462,8 @@
 				<delete path="${nameNode}${output_dataset_to_mdstore}" />
 				<mkdir path="${nameNode}${workingDir}/import_dataset" />
 			</prepare>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
 			<arg>-C{dataset,
 				eu.dnetlib.iis.importer.schemas.DataSetReference,
 				eu/dnetlib/iis/workflows/top/data/empty.json}
@@ -489,7 +489,7 @@
 
 	<action name='input_id_mapping-path-setter'>
 		<java>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.oozie.property.ConditionalPropertySetter</arg>
 			<arg>-Pcondition=${active_import_metadata eq "true" and match_content_with_metadata eq "true"}</arg>
 			<arg>-PinCaseOfTrue=${output_metadataimport_root}/${metadataimport_output_name_dedup_mapping}</arg>
@@ -502,7 +502,7 @@
 
 	<action name='input_id-path-setter'>
 		<java>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.oozie.property.ConditionalPropertySetter</arg>
 			<arg>-Pcondition=${active_import_metadata eq "true" and match_content_with_metadata eq "true"}</arg>
 			<arg>-PinCaseOfTrue=${workingDir}/transformers_idextractor/output</arg>
@@ -570,8 +570,8 @@
 				<delete path="${nameNode}${output_extracted_document_metadata}" />
 				<mkdir path="${nameNode}${workingDir}/import_content_url" />
 			</prepare>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
 			<arg>-C{document_text,
 				eu.dnetlib.iis.metadataextraction.schemas.DocumentText,
 				eu/dnetlib/iis/workflows/top/data/empty.json}

@@ -8,8 +8,8 @@ import org.apache.avro.specific.SpecificRecord;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.log4j.Logger;
 
-import eu.dnetlib.iis.core.java.io.DataStore;
-import eu.dnetlib.iis.core.java.io.FileSystemPath;
+import eu.dnetlib.iis.common.java.io.DataStore;
+import eu.dnetlib.iis.common.java.io.FileSystemPath;
 
 
 /**

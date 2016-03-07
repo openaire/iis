@@ -8,8 +8,8 @@ import java.util.Map;
 import org.apache.hadoop.conf.Configuration;
 
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.ProcessUtils;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.ProcessUtils;
 import eu.dnetlib.iis.export.auxiliary.schemas.Identifier;
 import eu.dnetlib.iis.workflows.export.actionmanager.cfg.StaticConfigurationProvider;
 import eu.dnetlib.iis.workflows.export.actionmanager.entity.AbstractEntityExporterProcess;

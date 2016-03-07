@@ -23,17 +23,16 @@
 	
 	
 		<dependency>
-			<groupId>eu.dnetlib.iis</groupId>
-			<artifactId>iis-core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		
-		<dependency>
             <groupId>eu.dnetlib.iis</groupId>
             <artifactId>iis-schemas</artifactId>
             <version>${project.version}</version>
         </dependency>
 		
+		<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>iis-3rdparty-avrojsoncoders</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 		
 		<dependency>
 			<groupId>eu.dnetlib</groupId>
@@ -94,6 +93,18 @@
     		<groupId>org.apache.hive</groupId>
     		<artifactId>hive-cli</artifactId>
     	</dependency>
+    	
+        <dependency>
+            <groupId>net.schmizz</groupId>
+            <artifactId>sshj</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
+        </dependency>
+
 	</dependencies>
 
 	<build>
@@ -109,7 +120,7 @@
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro-maven-plugin</artifactId>
                 <executions>
-                    <execution>
+                   <execution>
                         <phase>generate-test-sources</phase>
                         <goals>
                             <goal>schema</goal>
@@ -129,7 +140,7 @@
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>add-source</id>
+                        <id>add-test-sources</id>
                         <phase>generate-test-sources</phase>
                         <goals>
                             <goal>add-test-source</goal>
@@ -142,6 +153,21 @@
                     </execution>
                 </executions>
              </plugin>
+             
+             
+            <!-- Plugin that generates jar with test classes -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+             
         </plugins>
 	</build>
 	

@@ -8,12 +8,12 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.Process;
+import eu.dnetlib.iis.common.java.porttype.AvroPortType;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.Document;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person;
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.Process;
-import eu.dnetlib.iis.core.java.porttype.AvroPortType;
-import eu.dnetlib.iis.core.java.porttype.PortType;
 
 /** Do not produce any output data. 
  * 

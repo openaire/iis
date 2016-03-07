@@ -278,7 +278,7 @@
  
  	<action name="exporter-dataset-entities">
 		<java>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.workflows.export.actionmanager.entity.dataset.DatasetExporterProcess</arg>
 			<arg>-Iinput=${workingDir}/identifier/datasets</arg>
 			
@@ -328,7 +328,7 @@
  
  	<action name="exporter-document-entities">
 		<java>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.workflows.export.actionmanager.entity.document.DocumentExporterProcess</arg>
 			<arg>-Iinput=${workingDir}/identifier/documents</arg>
 			

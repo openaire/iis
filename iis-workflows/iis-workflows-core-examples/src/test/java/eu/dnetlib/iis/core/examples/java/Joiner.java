@@ -10,17 +10,17 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.Process;
+import eu.dnetlib.iis.common.java.io.DataStore;
+import eu.dnetlib.iis.common.java.io.FileSystemPath;
+import eu.dnetlib.iis.common.java.porttype.AvroPortType;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.Document;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.DocumentWithAuthors;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.PersonAge;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.personwithdocuments.PersonWithDocuments;
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.Process;
-import eu.dnetlib.iis.core.java.io.DataStore;
-import eu.dnetlib.iis.core.java.io.FileSystemPath;
-import eu.dnetlib.iis.core.java.porttype.AvroPortType;
-import eu.dnetlib.iis.core.java.porttype.PortType;
 
 /** Processes input files and produces files in a certain way
  *  that would require SQL JOINs when done in context of relational databases 

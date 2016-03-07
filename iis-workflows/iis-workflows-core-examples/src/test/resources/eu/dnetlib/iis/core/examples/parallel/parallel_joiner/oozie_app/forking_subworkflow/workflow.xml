@@ -23,7 +23,7 @@
                     <value>${queueName}</value>
                 </property>
             </configuration>
-            <main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.core.examples.java.PersonProducer</arg>
             <arg>-Operson=${output_person}</arg>
         </java>
@@ -47,7 +47,7 @@
                     <value>${queueName}</value>
                 </property>
             </configuration>
-            <main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.core.examples.java.DocumentProducer</arg>
             <arg>-Odocument=${output_document}</arg>
         </java>

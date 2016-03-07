@@ -6,10 +6,10 @@ import java.util.Map;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.log4j.Logger;
 
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.porttype.PortType;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 
-public class TimeoutProcess implements eu.dnetlib.iis.core.java.Process {
+public class TimeoutProcess implements eu.dnetlib.iis.common.java.Process {
 
 	public static final String PARAM_TIMEOUT = "timeout";
 	

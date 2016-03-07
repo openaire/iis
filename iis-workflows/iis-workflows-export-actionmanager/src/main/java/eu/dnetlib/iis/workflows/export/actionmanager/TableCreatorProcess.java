@@ -19,10 +19,10 @@ import com.google.common.collect.Sets;
 
 import eu.dnetlib.actionmanager.ActionManagerConstants;
 import eu.dnetlib.actionmanager.ActionManagerConstants.COLUMN_FAMILIES;
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.Process;
-import eu.dnetlib.iis.core.java.ProcessUtils;
-import eu.dnetlib.iis.core.java.porttype.PortType;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.Process;
+import eu.dnetlib.iis.common.java.ProcessUtils;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.workflows.export.actionmanager.api.HBaseActionManagerServiceFacade;
 
 /**

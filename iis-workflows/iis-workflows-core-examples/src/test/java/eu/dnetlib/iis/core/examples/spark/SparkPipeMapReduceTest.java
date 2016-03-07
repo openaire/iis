@@ -16,18 +16,17 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pl.edu.icm.sparkutils.test.SparkJob;
-import pl.edu.icm.sparkutils.test.SparkJobBuilder;
-import pl.edu.icm.sparkutils.test.SparkJobExecutor;
-
 import com.google.common.io.Files;
 
-import eu.dnetlib.iis.core.common.AvroTestUtils;
+import eu.dnetlib.iis.common.avro.Document;
+import eu.dnetlib.iis.common.spark.pipe.SparkPipeMapReduce;
+import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.core.examples.StandardDataStoreExamples;
 import eu.dnetlib.iis.core.examples.schemas.WordCount;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person;
-import eu.dnetlib.iis.core.schemas.standardexamples.Document;
-import eu.dnetlib.iis.core.spark.pipe.SparkPipeMapReduce;
+import pl.edu.icm.sparkutils.test.SparkJob;
+import pl.edu.icm.sparkutils.test.SparkJobBuilder;
+import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
 
 /**

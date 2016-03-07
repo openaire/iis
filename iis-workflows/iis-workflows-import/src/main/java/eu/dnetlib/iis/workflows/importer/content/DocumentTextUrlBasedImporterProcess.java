@@ -13,12 +13,12 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.log4j.Logger;
 
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.io.CloseableIterator;
-import eu.dnetlib.iis.core.java.io.DataStore;
-import eu.dnetlib.iis.core.java.io.FileSystemPath;
-import eu.dnetlib.iis.core.java.porttype.AvroPortType;
-import eu.dnetlib.iis.core.java.porttype.PortType;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.io.CloseableIterator;
+import eu.dnetlib.iis.common.java.io.DataStore;
+import eu.dnetlib.iis.common.java.io.FileSystemPath;
+import eu.dnetlib.iis.common.java.porttype.AvroPortType;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 
@@ -27,7 +27,7 @@ import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
  * @author mhorst
  *
  */
-public class DocumentTextUrlBasedImporterProcess implements eu.dnetlib.iis.core.java.Process {
+public class DocumentTextUrlBasedImporterProcess implements eu.dnetlib.iis.common.java.Process {
 
 	private final Logger log = Logger.getLogger(DocumentTextUrlBasedImporterProcess.class);
 	

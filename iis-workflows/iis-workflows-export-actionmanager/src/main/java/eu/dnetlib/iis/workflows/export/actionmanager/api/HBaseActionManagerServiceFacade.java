@@ -22,7 +22,7 @@ import eu.dnetlib.actionmanager.actions.AtomicAction;
 import eu.dnetlib.actionmanager.common.Provenance;
 import eu.dnetlib.actionmanager.rmi.ActionManagerException;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
-import eu.dnetlib.iis.core.java.ProcessUtils;
+import eu.dnetlib.iis.common.java.ProcessUtils;
 
 /**
  * HBase-backed action manager service facade.

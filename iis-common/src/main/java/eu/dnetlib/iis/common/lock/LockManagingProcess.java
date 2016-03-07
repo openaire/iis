@@ -14,8 +14,8 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.porttype.PortType;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 
 /**
  * Zookeeper lock managing process.
@@ -23,7 +23,7 @@ import eu.dnetlib.iis.core.java.porttype.PortType;
  * @author mhorst
  *
  */
-public class LockManagingProcess implements eu.dnetlib.iis.core.java.Process {
+public class LockManagingProcess implements eu.dnetlib.iis.common.java.Process {
 
 	public static final String DEFAULT_ROOT_NODE = "/cache";
 	

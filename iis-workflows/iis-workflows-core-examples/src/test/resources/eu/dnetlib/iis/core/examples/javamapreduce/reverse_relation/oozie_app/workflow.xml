@@ -19,7 +19,7 @@ Note that documentation placed in comments in this file uses the
 	    <java>
     		<job-tracker>${jobTracker}</job-tracker>
         	<name-node>${nameNode}</name-node>
-	        <main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
+	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
 	        <arg>eu.dnetlib.iis.core.examples.schemas.documentandauthor.personwithdocuments.Document</arg>
 	        <arg>eu.dnetlib.iis.core.examples.schemas.documentandauthor.personwithdocuments.PersonWithDocuments</arg>
 	        <arg>org.apache.avro.Schema.Type.INT</arg>
@@ -45,7 +45,7 @@ Note that documentation placed in comments in this file uses the
 				</property>
 			</configuration>
 			<!-- This is simple wrapper for the Java code -->
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<!-- The business Java code that gets to be executed -->
 			<arg>eu.dnetlib.iis.core.examples.java.SampleDataProducer</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->

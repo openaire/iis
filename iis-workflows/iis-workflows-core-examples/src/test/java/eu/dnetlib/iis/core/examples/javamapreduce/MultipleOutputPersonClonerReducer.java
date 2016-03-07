@@ -7,9 +7,9 @@ import org.apache.avro.mapred.AvroValue;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Reducer;
 
+import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.PersonAge;
-import eu.dnetlib.iis.core.javamapreduce.MultipleOutputs;
 
 /**
  * @author Mateusz Kobos

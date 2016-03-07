@@ -20,8 +20,8 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 
 import eu.dnetlib.iis.common.FsShellPermissions;
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.porttype.PortType;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 
 /**
  * CacheMetadata managing process.
@@ -29,7 +29,7 @@ import eu.dnetlib.iis.core.java.porttype.PortType;
  * @author mhorst
  *
  */
-public class CacheMetadataManagingProcess implements eu.dnetlib.iis.core.java.Process {
+public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.Process {
 
 	public static final String OUTPUT_PROPERTY_CACHE_ID = "cache_id";
 	

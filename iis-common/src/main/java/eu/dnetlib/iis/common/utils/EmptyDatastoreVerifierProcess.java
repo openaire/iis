@@ -11,14 +11,14 @@ import java.util.Properties;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.Ports;
-import eu.dnetlib.iis.core.java.Process;
-import eu.dnetlib.iis.core.java.io.CloseableIterator;
-import eu.dnetlib.iis.core.java.io.DataStore;
-import eu.dnetlib.iis.core.java.io.FileSystemPath;
-import eu.dnetlib.iis.core.java.porttype.AnyPortType;
-import eu.dnetlib.iis.core.java.porttype.PortType;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.Ports;
+import eu.dnetlib.iis.common.java.Process;
+import eu.dnetlib.iis.common.java.io.CloseableIterator;
+import eu.dnetlib.iis.common.java.io.DataStore;
+import eu.dnetlib.iis.common.java.io.FileSystemPath;
+import eu.dnetlib.iis.common.java.porttype.AnyPortType;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 
 /**
  * Simple process verifying whether given datastore is empty.

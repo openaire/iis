@@ -1,8 +1,0 @@
-@namespace("eu.dnetlib.iis.core.schemas.standardexamples")
-protocol IIS{
-   record Person{
-      int id;
-      string name;
-      int age;
-   }
-}

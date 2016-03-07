@@ -15,7 +15,7 @@
 
 	<action name="generate-schema">
 	    <java>
-	        <main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
+	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
 	        <arg>eu.dnetlib.iis.workflows.top.schemas.DocumentContentClasspath</arg>
 	        <arg>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</arg>
 	        <arg>org.apache.avro.Schema.Type.NULL</arg>
@@ -33,8 +33,8 @@
 				<mkdir path="${nameNode}${workingDir}/producer" />
 			</prepare>
             <!-- This is simple wrapper for the Java code -->
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
             <arg>-C{document_metadata,
 				eu.dnetlib.iis.importer.schemas.DocumentMetadata,
 				eu/dnetlib/iis/workflows/top/integration/primary/processing/input/meta/document_metadata.json}</arg>
@@ -295,8 +295,8 @@
 	
 	<action name="consumer">
 		<java>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.TestingConsumer</arg>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
 			<!-- TODO prepare proper json generated datastores -->
 			<arg>-C{document_to_document_classes,
 				eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses,

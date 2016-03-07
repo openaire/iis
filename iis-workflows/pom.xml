@@ -637,7 +637,7 @@
 							</dependency>
 						</dependencies>
 						<configuration>
-							<excludedGroups>eu.dnetlib.iis.IntegrationTest</excludedGroups>
+							<excludedGroups>eu.dnetlib.iis.common.IntegrationTest</excludedGroups>
 						</configuration>
 						<executions>
 							<execution>
@@ -668,7 +668,7 @@
 										<!-- if iisConnectionProperties is not defined, then ${user.home}/.iis/integration-test.properties will be used -->
 										<iisConnectionProperties>${iisConnectionProperties}</iisConnectionProperties>
 									</systemPropertiesVariables>
-									<groups>eu.dnetlib.iis.IntegrationTest</groups>
+									<groups>eu.dnetlib.iis.common.IntegrationTest</groups>
 									<includes>
 										<include>**/*Test.java</include>
 										<include>**/IT*.java</include>

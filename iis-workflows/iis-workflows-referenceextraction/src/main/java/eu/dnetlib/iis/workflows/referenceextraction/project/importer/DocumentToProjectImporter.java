@@ -16,12 +16,12 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.log4j.Logger;
 
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.ProcessUtils;
-import eu.dnetlib.iis.core.java.io.DataStore;
-import eu.dnetlib.iis.core.java.io.FileSystemPath;
-import eu.dnetlib.iis.core.java.porttype.AvroPortType;
-import eu.dnetlib.iis.core.java.porttype.PortType;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.ProcessUtils;
+import eu.dnetlib.iis.common.java.io.DataStore;
+import eu.dnetlib.iis.common.java.io.FileSystemPath;
+import eu.dnetlib.iis.common.java.porttype.AvroPortType;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 import eu.dnetlib.iis.workflows.referenceextraction.shared.importer.SharedImporterUtils;
 
@@ -31,7 +31,7 @@ import eu.dnetlib.iis.workflows.referenceextraction.shared.importer.SharedImport
  * @author mhorst
  *
  */
-public class DocumentToProjectImporter implements eu.dnetlib.iis.core.java.Process {
+public class DocumentToProjectImporter implements eu.dnetlib.iis.common.java.Process {
 
 	private final Logger log = Logger.getLogger(this.getClass());
 	

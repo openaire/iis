@@ -11,10 +11,10 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.oozie.util.IOUtils;
 
-import eu.dnetlib.iis.core.java.PortBindings;
-import eu.dnetlib.iis.core.java.Process;
-import eu.dnetlib.iis.core.java.porttype.AnyPortType;
-import eu.dnetlib.iis.core.java.porttype.PortType;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.Process;
+import eu.dnetlib.iis.common.java.porttype.AnyPortType;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 
 /** Processes input files in a specific way
  * @author Mateusz Kobos

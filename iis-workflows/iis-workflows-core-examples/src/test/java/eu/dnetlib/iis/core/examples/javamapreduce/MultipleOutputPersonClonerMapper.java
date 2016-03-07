@@ -6,9 +6,9 @@ import org.apache.avro.mapred.AvroKey;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Mapper;
 
+import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.PersonAge;
-import eu.dnetlib.iis.core.javamapreduce.MultipleOutputs;
 
 /**
  * Mapper that writes to multiple outputs.

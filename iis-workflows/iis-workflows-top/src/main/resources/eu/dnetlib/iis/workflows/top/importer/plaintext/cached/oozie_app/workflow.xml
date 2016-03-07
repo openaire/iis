@@ -50,7 +50,7 @@
 	
 	<action name="check_input_isempty">
 		<java>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.utils.EmptyDatastoreVerifierProcess</arg>
 			<arg>-Iinput=${input}</arg>
 			<capture-output />
@@ -73,8 +73,8 @@
 				<!-- notice: directory have to aligned with skipped action output -->
 				<delete path="${nameNode}${output}" />
 			</prepare>
-            <main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.core.java.jsonworkflownodes.Producer</arg>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
 			<arg>-C{plaintext,
 				eu.dnetlib.iis.metadataextraction.schemas.DocumentText,
 			eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
@@ -86,7 +86,7 @@
 
 	<action name='get-existing-cache-id'>
 		<java>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess</arg>
 			<arg>-Pdefault_cache_location=${default_cache_location}</arg>
 			<arg>-Pmode=read_current_id</arg>
@@ -188,7 +188,7 @@
     
     <action name='check_importer_plaintext_output_isempty'>
 		<java>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.utils.EmptyDatastoreVerifierProcess</arg>
 			<arg>-Iinput=${workingDir}/importer_plaintext/output</arg>
 			<capture-output />
@@ -207,7 +207,7 @@
     
     <action name="obtain-lock_for_merging">
         <java>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
             <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
             <arg>-Pnode_id=${default_cache_location}</arg>
@@ -219,7 +219,7 @@
     
     <action name='get-new-cache-id_for_merging'>
 		<java>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess</arg>
 			<arg>-Pdefault_cache_location=${default_cache_location}</arg>
 			<arg>-Pmode=generate_new_id</arg>
@@ -266,7 +266,7 @@
 	
 	<action name='write-new-cache-id_for_merging'>
 		<java>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess</arg>
 			<arg>-Pdefault_cache_location=${default_cache_location}</arg>
 			<arg>-Pmode=write_id</arg>
@@ -298,7 +298,7 @@
     
     <action name="obtain-lock_for_initializing">
         <java>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
             <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
             <arg>-Pnode_id=${default_cache_location}</arg>
@@ -310,7 +310,7 @@
     
     <action name='get-new-cache-id_for_initializing'>
 		<java>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess</arg>
 			<arg>-Pdefault_cache_location=${default_cache_location}</arg>
 			<arg>-Pmode=generate_new_id</arg>
@@ -341,7 +341,7 @@
 	
 	<action name='write-new-cache-id_for_initializing'>
 		<java>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess</arg>
 			<arg>-Pdefault_cache_location=${default_cache_location}</arg>
 			<arg>-Pmode=write_id</arg>
@@ -357,7 +357,7 @@
     <!-- lock releasing actions -->
     <action name="release-lock-and-fail">
         <java>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
             <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
             <arg>-Pnode_id=${default_cache_location}</arg>
@@ -369,7 +369,7 @@
     
     <action name="release-lock-and-end">
         <java>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
             <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
             <arg>-Pnode_id=${default_cache_location}</arg>

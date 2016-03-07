@@ -109,7 +109,7 @@
 
 	<action name="generate-schema">
 	    <java>
-	        <main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
+	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
 	        <arg>eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl</arg>
 	        <arg>org.apache.avro.Schema.Type.NULL</arg>
 	        <arg>org.apache.avro.Schema.Type.STRING</arg>
@@ -125,7 +125,7 @@
 			<prepare>
 				<delete path="${nameNode}${workingDir}/imported-urls" />
 			</prepare>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.workflows.importer.content.ObjectStoreDocumentContentUrlImporterProcess</arg>
 			<arg>-Pimport.content.object.store.location=${objectstore_service_location}</arg>
 			<arg>-Pimport.content.approved.objectstores.csv=${approved_objectstores_csv}</arg>
@@ -141,7 +141,7 @@
 	
 	<action name='input_id_mapping-path-setter'>
 		<java>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.oozie.property.ConditionalPropertySetter</arg>
 			<arg>-Pcondition=${input_id_mapping eq "$UNDEFINED$"}</arg>
 			<arg>-PinCaseOfTrue=${workingDir}/imported-urls</arg>
@@ -196,7 +196,7 @@
 	
 	<action name='input_id-path-setter'>
 		<java>
-			<main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.oozie.property.ConditionalPropertySetter</arg>
 			<arg>-Pcondition=${input_id eq "$UNDEFINED$"}</arg>
 			<arg>-PinCaseOfTrue=${wf:actionData('input_id_mapping-path-setter')['result']}</arg>

@@ -24,7 +24,7 @@
 	    <java>
     		<job-tracker>${jobTracker}</job-tracker>
         	<name-node>${nameNode}</name-node>
-	        <main-class>eu.dnetlib.iis.core.javamapreduce.hack.AvroSchemaGenerator</main-class>
+	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
 	        <arg>${schema}</arg>
 	        <capture-output />
 	    </java>

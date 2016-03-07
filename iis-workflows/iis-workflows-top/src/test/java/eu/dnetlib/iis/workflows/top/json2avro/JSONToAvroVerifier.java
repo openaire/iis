@@ -6,7 +6,7 @@ import java.security.InvalidParameterException;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 
-import eu.dnetlib.iis.core.java.io.JsonStreamReader;
+import eu.dnetlib.iis.common.java.io.JsonStreamReader;
 
 /**
  * JSON to Avro verifier.

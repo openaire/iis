@@ -8,11 +8,11 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import eu.dnetlib.iis.IntegrationTest;
-import eu.dnetlib.iis.core.AbstractOozieWorkflowTestCase;
-import eu.dnetlib.iis.core.OozieWorkflowTestConfiguration;
-import eu.dnetlib.iis.core.TestsIOUtils;
-import eu.dnetlib.iis.core.WorkflowTestResult;
+import eu.dnetlib.iis.common.AbstractOozieWorkflowTestCase;
+import eu.dnetlib.iis.common.IntegrationTest;
+import eu.dnetlib.iis.common.OozieWorkflowTestConfiguration;
+import eu.dnetlib.iis.common.TestsIOUtils;
+import eu.dnetlib.iis.common.WorkflowTestResult;
 import eu.dnetlib.iis.core.examples.StandardDataStoreExamples;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.DocumentWithAuthors;
 import eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person;

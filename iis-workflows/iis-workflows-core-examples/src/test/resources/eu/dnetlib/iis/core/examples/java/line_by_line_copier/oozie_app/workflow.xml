@@ -15,7 +15,7 @@
                     <value>${queueName}</value>
                 </property>
             </configuration>
-            <main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.core.examples.java.TextDataProducer</arg>
             <!-- All input and output ports have to be bound to paths in 
             HDFS, working directory has to be specified as well -->
@@ -40,7 +40,7 @@
                     <value>${queueName}</value>
                 </property>
             </configuration>
-            <main-class>eu.dnetlib.iis.core.java.ProcessWrapper</main-class>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.core.examples.java.LineByLineCopier</arg>
             <!-- All input and output ports have to be bound to paths in 
             HDFS, working directory has to be specified as well -->
