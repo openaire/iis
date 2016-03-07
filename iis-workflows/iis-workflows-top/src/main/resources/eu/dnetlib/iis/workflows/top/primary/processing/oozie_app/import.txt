@@ -7,7 +7,7 @@ referenceextraction_project classpath eu/dnetlib/iis/workflows/referenceextracti
 referenceextraction_dataset classpath eu/dnetlib/iis/workflows/referenceextraction/dataset/main/oozie_app
 referenceextraction_researchinitiative classpath eu/dnetlib/iis/workflows/referenceextraction/researchinitiative/main/oozie_app
 referenceextraction_pdb classpath eu/dnetlib/iis/workflows/referenceextraction/pdb/main/oozie_app
-transformers_export_researchinitiatives classpath eu/dnetlib/iis/workflows/transformers/export/researchinitiatives/oozie_app
+transformers_export_researchinitiatives classpath eu/dnetlib/iis/workflows/referenceextraction/output_transformer/oozie_app
 documentsclassification classpath eu/dnetlib/iis/workflows/documentsclassification/oozie_app
 transformers_documentssimilarity classpath eu/dnetlib/iis/workflows/documentsclassification/input_transformer/oozie_app
 documentssimilarity_chain classpath eu/dnetlib/iis/workflows/documentssimilarity/chain/oozie_app

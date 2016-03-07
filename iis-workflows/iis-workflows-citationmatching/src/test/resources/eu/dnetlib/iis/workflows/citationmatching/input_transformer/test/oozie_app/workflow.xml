@@ -22,10 +22,10 @@
 			<!-- Specification of the output ports -->
 			<arg>-C{person,
 				eu.dnetlib.iis.importer.schemas.Person,
-				eu/dnetlib/iis/workflows/transformers/citationmatching/fuzzy/sampledataproducer/data/person.json}</arg>
+				eu/dnetlib/iis/workflows/citationmatching/input_transformer/test/data/person.json}</arg>
             <arg>-C{metadata,
 				eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal,
-				eu/dnetlib/iis/workflows/transformers/citationmatching/fuzzy/sampledataproducer/data/metadata.json}</arg>
+				eu/dnetlib/iis/workflows/citationmatching/input_transformer/test/data/metadata.json}</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
             <arg>-Operson=${workingDir}/producer/person</arg>
             <arg>-Ometadata=${workingDir}/producer/metadata</arg>
@@ -90,7 +90,7 @@
 			<!-- Specification of the input ports -->
 			<arg>-C{citation_metadata,
 				eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata,
-				eu/dnetlib/iis/workflows/transformers/citationmatching/fuzzy/sampledataproducer/data/citation_metadata.json}</arg>
+				eu/dnetlib/iis/workflows/citationmatching/input_transformer/test/data/citation_metadata.json}</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Icitation_metadata=${workingDir}/transformer_citationmatching/citation_metadata</arg>
 		</java>

@@ -12,11 +12,11 @@ import eu.dnetlib.iis.common.IntegrationTest;
  *
  */
 @Category(IntegrationTest.class)
-public class WorkflowTest extends AbstractOozieWorkflowTestCase {
+public class CitationMatchingInputTransformerWorkflowTest extends AbstractOozieWorkflowTestCase {
 
     @Test
 	public void testJoin() throws Exception {
-    	testWorkflow("eu/dnetlib/iis/workflows/citationmatching/input_transformer");
+    	testWorkflow("eu/dnetlib/iis/workflows/citationmatching/input_transformer/test");
     }
 
 }

@@ -23,7 +23,7 @@
 			<!-- Specification of the output ports -->
 			<arg>-C{project,
 				eu.dnetlib.iis.importer.schemas.Project,
-				eu/dnetlib/iis/workflows/transformers/referenceextraction/project/filter/sampledataproducer/data/project.json}
+				eu/dnetlib/iis/workflows/referenceextraction/project/input_filter/test/data/project.json}
 			</arg>
 			<arg>-Oproject=${workingDir}/producer/project</arg>
 		</java>
@@ -86,7 +86,7 @@
 			<!-- Specification of the input ports -->
 			<arg>-C{output,
 				eu.dnetlib.iis.importer.schemas.Project,
-				eu/dnetlib/iis/workflows/transformers/referenceextraction/project/filter/sampledataproducer/data/output.json}
+				eu/dnetlib/iis/workflows/referenceextraction/project/input_filter/test/data/output.json}
 			</arg>
 			<arg>-Ioutput=${workingDir}/transformers_project_filter/output</arg>
 		</java>

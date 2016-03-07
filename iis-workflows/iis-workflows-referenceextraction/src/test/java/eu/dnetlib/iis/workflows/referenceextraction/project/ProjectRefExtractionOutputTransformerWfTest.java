@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.workflows.referenceextraction.project.output;
+package eu.dnetlib.iis.workflows.referenceextraction.project;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -13,7 +13,7 @@ import eu.dnetlib.iis.core.OozieWorkflowTestConfiguration;
  *
  */
 @Category(IntegrationTest.class)
-public class WorkflowTest extends AbstractOozieWorkflowTestCase {
+public class ProjectRefExtractionOutputTransformerWfTest extends AbstractOozieWorkflowTestCase {
 
     @Test
 	public void testProjectToConceptWorkflow() throws Exception {
