@@ -39,7 +39,6 @@
             <artifactId>iis-common</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
-            <scope>test</scope>
         </dependency>
         
         
