@@ -3,7 +3,6 @@ package eu.dnetlib.iis.workflows.ingest.pmc.metadata;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 import org.apache.commons.lang.StringUtils;
@@ -68,8 +67,6 @@ public class PmcXmlHandler extends DefaultHandler {
 	private static final String PUB_ID_TYPE = "pub-id-type";
 	private static final String ATTR_ARTICLE_TYPE = "article-type";
 	
-	public static final String PUB_ID_TYPE_PMID = "pmid";
-	
 	private Stack<String> parents;
 	
 	private StringBuilder currentValue = new StringBuilder();
@@ -99,6 +96,9 @@ public class PmcXmlHandler extends DefaultHandler {
 	public PmcXmlHandler(ExtractedDocumentMetadata.Builder builder) {
 		super();
 		this.builder = builder;
+		if (!this.builder.hasExternalIdentifiers()) {
+			this.builder.setExternalIdentifiers(new HashMap<CharSequence, CharSequence>());
+		}
 	}
 	
 	@Override
@@ -168,10 +168,9 @@ public class PmcXmlHandler extends DefaultHandler {
 				builder.setJournal(this.currentValue.toString().trim());	
 			}
 		} else if (isWithinElement(qName, ELEM_ARTICLE_ID, ELEM_ARTICLE_META) &&
-				PUB_ID_TYPE_PMID.equals(this.currentArticleIdType)) {
-			Map<CharSequence,CharSequence> idMapping = new HashMap<CharSequence, CharSequence>();
-			idMapping.put(PUB_ID_TYPE_PMID, this.currentValue.toString().trim());
-			builder.setExternalIdentifiers(idMapping);
+				this.currentArticleIdType != null) {
+			builder.getExternalIdentifiers().put(this.currentArticleIdType, 
+					this.currentValue.toString().trim());
 		} else if (isWithinElement(qName, ELEM_FPAGE, ELEM_ARTICLE_META)) {
 			if (builder.getPages()==null) {
 				builder.setPages(Range.newBuilder().build());
