@@ -106,10 +106,9 @@ public class PmcXmlHandlerTest {
 		ExtractedDocumentMetadata meta = metaBuilder.build();
 		assertEquals("research-article", meta.getEntityType());
 		assertEquals("Frontiers in Neuroscience", meta.getJournal());
-		assertNull(meta.getExternalIdentifiers());
-
+		assertEquals(1, meta.getExternalIdentifiers().size());
+		assertEquals("10.3389/fnins.2014.00351", meta.getExternalIdentifiers().get("doi"));
 		assertNull(meta.getPages());
-
 		assertNotNull(meta.getReferences());
 		assertEquals(130, meta.getReferences().size());
 		// checking first reference
@@ -274,8 +273,11 @@ public class PmcXmlHandlerTest {
 	private void checkJats10Metadata(ExtractedDocumentMetadata meta) throws Exception {
 		assertEquals("research-article", meta.getEntityType());
 		assertEquals("BMC Systems Biology", meta.getJournal());
-		assertEquals(1, meta.getExternalIdentifiers().size());
+		assertEquals(4, meta.getExternalIdentifiers().size());
 		assertEquals("19943949", meta.getExternalIdentifiers().get("pmid"));
+		assertEquals("1752-0509-3-111", meta.getExternalIdentifiers().get("publisher-id"));
+		assertEquals("2789071", meta.getExternalIdentifiers().get("pmc"));
+		assertEquals("10.1186/1752-0509-3-111", meta.getExternalIdentifiers().get("doi"));
 		assertEquals("111", meta.getPages().getStart());
 		assertEquals("111", meta.getPages().getEnd());
 
