@@ -57,23 +57,6 @@
 			<scope>provided</scope>
 		</dependency>
 		
-		<!-- Needed to run Pig jobs { -->
-		<dependency>
-			<groupId>org.apache.pig</groupId>
-			<artifactId>pig</artifactId>
-			<!-- this lib cannot be set to provided -->
-		</dependency>
-		
-		<dependency>
-			<groupId>org.apache.pig</groupId>
-			<artifactId>piggybank</artifactId>
-		</dependency>
-		
-		<dependency>
-		  <groupId>com.linkedin.datafu</groupId>
-		  <artifactId>datafu</artifactId>
-		</dependency>
-		<!-- Needed to run Pig jobs } -->
 	</dependencies>
 	
 </project>

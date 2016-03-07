@@ -8,7 +8,7 @@ org.apache.pig.piggybank.storage.avro.AvroStorage(
 'schema', '$schema_output');
 
 define NullToEmptyBag datafu.pig.bags.NullToEmptyBag();
-define EMPTY_MAP eu.dnetlib.iis.workflows.transformers.udfs.EmptyMap;
+define EMPTY_MAP eu.dnetlib.iis.common.pig.udfs.EmptyMap;
 
 documentMetadata = load '$input' using avro_load_input_metadata;
 

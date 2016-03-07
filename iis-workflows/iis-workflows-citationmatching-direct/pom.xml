@@ -38,18 +38,6 @@
             <groupId>pl.edu.icm.spark-utils</groupId>
             <artifactId>spark-utils</artifactId>
         </dependency>
-		
-		<!-- Needed to run Pig jobs { -->
-		<dependency>
-			<groupId>org.apache.pig</groupId>
-			<artifactId>pig</artifactId>
-		</dependency>
-
-		<dependency>
-		  <groupId>com.linkedin.datafu</groupId>
-		  <artifactId>datafu</artifactId>
-		</dependency>
-		<!-- Needed to run Pig jobs } -->
 	</dependencies>
 	
 </project>
