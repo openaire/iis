@@ -63,7 +63,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
-			<artifactId>iis-assembly-resources</artifactId>
+			<artifactId>iis-build-assembly-resources</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -76,6 +76,11 @@
 			<artifactId>sshj</artifactId>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <scope>test</scope>
+        </dependency>
 	</dependencies>
 	<profiles>
 		<profile>
@@ -212,7 +217,7 @@
 						<dependencies>
 							<dependency>
 								<groupId>eu.dnetlib.iis</groupId>
-								<artifactId>iis-assembly-resources</artifactId>
+								<artifactId>iis-build-assembly-resources</artifactId>
 								<version>${project.version}</version>
 								<!-- contains project-default.properties -->
 							</dependency>
@@ -322,7 +327,7 @@
 						<dependencies>
 							<dependency>
 								<groupId>eu.dnetlib.iis</groupId>
-								<artifactId>iis-assembly-resources</artifactId>
+								<artifactId>iis-build-assembly-resources</artifactId>
 								<version>${project.version}</version>
 							</dependency>
 						</dependencies>
@@ -389,7 +394,7 @@
 								</goals>
 								<configuration>
 									<tasks>
-										<property name="assembly-resources.loc" value="${maven.dependency.eu.dnetlib.iis.iis-assembly-resources.jar.path}" />
+										<property name="assembly-resources.loc" value="${maven.dependency.eu.dnetlib.iis.iis-build-assembly-resources.jar.path}" />
 										<unjar src="${assembly-resources.loc}" dest="${project.build.directory}/assembly-resources" />
 									</tasks>
 								</configuration>
