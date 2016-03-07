@@ -138,19 +138,19 @@ public class PmcXmlHandler extends DefaultHandler {
 				hasAmongParents(qName, ELEM_ISSUE, this.parents, ELEM_REF, ELEM_REF_LIST) ||
 				hasAmongParents(qName, ELEM_FPAGE, this.parents, ELEM_REF, ELEM_REF_LIST) ||
 				hasAmongParents(qName, ELEM_LPAGE, this.parents, ELEM_REF, ELEM_REF_LIST)) {
-			this.currentValue.delete(0, currentValue.length());
+			this.currentValue.setLength(0);
 		} else if (isWithinElement(qName, ELEM_ARTICLE_ID, ELEM_ARTICLE_META)) {
 			this.currentArticleIdType = attributes.getValue(PUB_ID_TYPE);
-			this.currentValue.delete(0, currentValue.length());
+			this.currentValue.setLength(0);
 		} else if (isWithinElement(qName, ELEM_PUB_ID, ELEM_CITATION) ||
 				isWithinElement(qName, ELEM_PUB_ID, ELEM_ELEMENT_CITATION) ||
 				isWithinElement(qName, ELEM_PUB_ID, ELEM_MIXED_CITATION)) {
 			this.currentReferenceIdType = attributes.getValue(PUB_ID_TYPE);
-			this.currentValue.delete(0, currentValue.length());
+			this.currentValue.setLength(0);
 		} else if (isWithinElement(qName, ELEM_REF, ELEM_REF_LIST)) {
 			this.currentRefMetaBuilder = ReferenceMetadata.newBuilder();
 			this.currentRefAuthorList = new ArrayList<CharSequence>();
-			this.currentReferenceText.delete(0, this.currentReferenceText.length());
+			this.currentReferenceText.setLength(0);
 			ReferenceBasicMetadata.Builder basicMetaBuilder = ReferenceBasicMetadata.newBuilder();
 			basicMetaBuilder.setExternalIds(new HashMap<CharSequence, CharSequence>());
 			this.currentRefMetaBuilder.setBasicMetadata(basicMetaBuilder.build());
@@ -185,9 +185,9 @@ public class PmcXmlHandler extends DefaultHandler {
 			
 		} else if (hasAmongParents(qName, ELEM_AFFILIATION, this.parents, ELEM_ARTICLE_META)) {
 			try {
-				CRFAffiliationParser affiliationParser = new CRFAffiliationParser();
 				String affStr = this.currentValue.toString();
-				if (affStr.trim().length()>0) {
+				if (StringUtils.isNotBlank(affStr)) {
+					CRFAffiliationParser affiliationParser = new CRFAffiliationParser();
 					Element parsedAffiliation = affiliationParser.parse(affStr);
 					if (parsedAffiliation!=null) {
 						if (builder.getAffiliations()==null) {
@@ -272,7 +272,7 @@ public class PmcXmlHandler extends DefaultHandler {
 //			reference fields cleanup
 			this.currentRefMetaBuilder = null;
 			this.currentRefAuthorList = null;
-			this.currentReferenceText.delete(0, currentReferenceText.length());
+			this.currentReferenceText.setLength(0);
 			this.currentReferenceTextExplicitlySet = false;
 			this.currentReferenceIdType = null;
 		}
