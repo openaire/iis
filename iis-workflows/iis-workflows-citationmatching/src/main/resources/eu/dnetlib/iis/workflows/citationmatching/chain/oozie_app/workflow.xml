@@ -14,7 +14,7 @@
         <property>
             <!-- TODO MiconCodeReview: Property name could be more meaningful, like 'outputCitations'. -->
             <name>output</name>
-            <description>output directory holding eu.dnetlib.iis.citationmatching.schemas.Citation avro datastore</description>
+            <description>output directory holding eu.dnetlib.iis.common.citations.schemas.Citation avro datastore</description>
         </property>
     </parameters>
 
@@ -28,7 +28,7 @@
             <name-node>${nameNode}</name-node>
            
             <prepare>
-                <delete path="${output}" />
+                <delete path="${workingDir}/main_citations" />
             </prepare>
             
             <master>yarn-cluster</master>
@@ -41,8 +41,36 @@
         
             <arg>-fullDocumentPath = ${input}</arg>
             
-            <arg>-outputDirPath = ${output}</arg>
+            <arg>-outputDirPath = ${workingDir}/main_citations</arg>
             <arg>-numberOfPartitions = 5</arg>
+            
+        </spark>
+        <ok to="citation-matching-output-transformer"/>
+        <error to="fail"/>
+    
+    </action>
+    
+        <action name="citation-matching-output-transformer">
+    
+        <spark xmlns="uri:oozie:spark-action:0.1">
+
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+           
+            <prepare>
+                <delete path="${output}" />
+            </prepare>
+            
+            <master>yarn-cluster</master>
+            <mode>cluster</mode>
+            <name>citation-matching-output-transformer</name>
+
+            <class>eu.dnetlib.iis.workflows.citationmatching.output.CitationMatchingOutputTransformerJob</class>
+
+            <jar>${oozieTopWfApplicationPath}/lib/iis-workflows-citationmatching-${projectVersion}.jar</jar>
+        
+            <arg>-input = ${workingDir}/main_citations</arg>
+            <arg>-output = ${output}</arg>
             
         </spark>
         <ok to="end"/>
