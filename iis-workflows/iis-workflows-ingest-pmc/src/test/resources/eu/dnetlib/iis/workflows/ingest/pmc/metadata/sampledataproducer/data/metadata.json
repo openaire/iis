@@ -1,6 +1,8 @@
 {
   "id": "50|od_______908::c84fe76a7bc6232a6732dab8c72ef9ea",
   "externalIdentifiers": {
+          "pmcid": "1401509",
+          "doi": "10.1093/nar/gkl023",
           "pmid": "16528104"
   },
   "entityType": "research-article",
@@ -1202,6 +1204,7 @@
   "id": "50|od_______908::14ddacb589be0a68489f89818647f27a",
   
   "externalIdentifiers": {
+          "pmcid": "2591554",
           "pmid": "5490870"
   },
   "entityType": "research-article",
