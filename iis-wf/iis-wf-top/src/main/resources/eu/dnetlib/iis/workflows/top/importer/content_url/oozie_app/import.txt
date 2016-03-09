@@ -1,3 +1,0 @@
-## This is a classpath-based import file (this header is required)
-transformers_idreplacer classpath eu/dnetlib/iis/workflows/transformers/idreplacer/oozie_app
-transformers_common_existencefilter classpath eu/dnetlib/iis/workflows/transformers/common/existencefilter/oozie_app

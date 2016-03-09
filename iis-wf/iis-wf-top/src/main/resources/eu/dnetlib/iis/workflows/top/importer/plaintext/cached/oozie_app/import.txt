@@ -1,4 +1,0 @@
-## This is a classpath-based import file (this header is required)
-importer_plaintext classpath eu/dnetlib/iis/workflows/importer/plaintext/oozie_app
-transformers_importer_plaintext_skip_extracted classpath eu/dnetlib/iis/workflows/transformers/importer/plaintext/skip_extracted/oozie_app
-transformers_common_union classpath eu/dnetlib/iis/workflows/transformers/common/union/oozie_app

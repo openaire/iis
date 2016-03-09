@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-citationmatching_direct classpath eu/dnetlib/iis/workflows/citationmatching/direct/oozie_app

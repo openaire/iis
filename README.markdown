@@ -17,7 +17,7 @@ The original code was migrated to GitHub from [D-NET](http://www.d-net.research-
 - `docs` - basic documentation
 - `iis-core` - generic common utilities used by other projects
 - `iis-common` - OpenAIRE-related common utilities
-- `iis-workflows` - definitions of workflows used in the system
+- `iis-wf` - definitions of workflows used in the system
 - `CONTRIBUTORS.markdown` - list of contributors to the project
 
 # License

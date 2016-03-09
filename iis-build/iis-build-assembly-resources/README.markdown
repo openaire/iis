@@ -1,4 +1,4 @@
-Module utilized by `iis-workflows`.
+Module utilized by `iis-wf`.
 
 Contains all required resources by this parent module:
 

@@ -50,7 +50,7 @@
 
 			<class>eu.dnetlib.iis.common.spark.pipe.SparkPipeMapReduce</class>
 
-			<jar>${wf:conf('oozie.wf.application.path')}/lib/iis-workflows-core-examples-${projectVersion}.jar
+			<jar>${wf:conf('oozie.wf.application.path')}/lib/iis-wf-core-examples-${projectVersion}.jar
 			</jar>
 
 			
