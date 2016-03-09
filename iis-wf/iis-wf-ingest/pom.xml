@@ -5,22 +5,27 @@
     
     <parent>
         <groupId>eu.dnetlib.iis</groupId>
-        <artifactId>iis-workflows</artifactId>
+        <artifactId>iis-wf</artifactId>
         <version>1.2.0-SNAPSHOT</version>
     </parent>
     
-    <artifactId>iis-workflows-ingest-pmc</artifactId>
+    <artifactId>iis-wf-ingest</artifactId>
     <packaging>jar</packaging>
     
     <dependencies>
         
         <dependency>
-			<groupId>eu.dnetlib.iis</groupId>
-			<artifactId>iis-common</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		
-		
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-schemas</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
         <dependency>
             <groupId>eu.dnetlib.iis</groupId>
             <artifactId>iis-common</artifactId>
@@ -29,15 +34,9 @@
             <scope>test</scope>
         </dependency>
         
-        
-        <dependency>
-            <groupId>eu.dnetlib.iis</groupId>
-            <artifactId>iis-schemas</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-        
-        
+       
+
+
         <!-- required after introducing 'provided' scope for hadoop libs -->
         <dependency>
             <groupId>org.apache.hadoop</groupId>
@@ -57,40 +56,14 @@
             <artifactId>avro-mapred</artifactId>
             <classifier>hadoop2</classifier>
         </dependency>
+        <!-- html to text conversion -->
         <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jdom</artifactId>
-        </dependency>
-
-		<!-- required for affiliation parsing -->
-		<dependency>
-			<groupId>pl.edu.icm.cermine</groupId>
-			<artifactId>cermine-impl</artifactId>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
 		</dependency>
     </dependencies>
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.0.2</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
     </build>
+    <repositories>
+    </repositories>
 </project>

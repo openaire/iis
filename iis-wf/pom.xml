@@ -6,23 +6,23 @@
 		<artifactId>iis</artifactId>
 		<version>1.2.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>iis-workflows</artifactId>
+	<artifactId>iis-wf</artifactId>
 	<packaging>pom</packaging>
 	<modules>
-       <module>iis-workflows-core-examples</module>
-       <module>iis-workflows-documentssimilarity</module>
-       <module>iis-workflows-citationmatching</module>
-       <module>iis-workflows-citationmatching-direct</module>
-       <module>iis-workflows-collapsers</module>
-       <module>iis-workflows-documentsclassification</module>
-       <module>iis-workflows-export-actionmanager</module>
-       <module>iis-workflows-import</module>
-       <module>iis-workflows-ingest</module>
-       <module>iis-workflows-ingest-pmc</module>
-       <module>iis-workflows-metadataextraction</module>
-       <module>iis-workflows-referenceextraction</module>
-       <module>iis-workflows-top</module>
-       <module>iis-workflows-transformers</module>
+       <module>iis-wf-core-examples</module>
+       <module>iis-wf-documentssimilarity</module>
+       <module>iis-wf-citationmatching</module>
+       <module>iis-wf-citationmatching-direct</module>
+       <module>iis-wf-collapsers</module>
+       <module>iis-wf-documentsclassification</module>
+       <module>iis-wf-export-actionmanager</module>
+       <module>iis-wf-import</module>
+       <module>iis-wf-ingest</module>
+       <module>iis-wf-ingest-pmc</module>
+       <module>iis-wf-metadataextraction</module>
+       <module>iis-wf-referenceextraction</module>
+       <module>iis-wf-top</module>
+       <module>iis-wf-transformers</module>
     </modules>
     <pluginRepositories>
       <pluginRepository>

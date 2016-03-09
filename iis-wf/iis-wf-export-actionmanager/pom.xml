@@ -5,11 +5,11 @@
     
 	<parent>
     		<groupId>eu.dnetlib.iis</groupId>
-	        <artifactId>iis-workflows</artifactId>
+	        <artifactId>iis-wf</artifactId>
             <version>1.2.0-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>iis-workflows-export-actionmanager</artifactId>
+	<artifactId>iis-wf-export-actionmanager</artifactId>
 	<packaging>jar</packaging>
 	
 	

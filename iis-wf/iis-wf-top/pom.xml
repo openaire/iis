@@ -5,11 +5,11 @@
     
     <parent>
    		<groupId>eu.dnetlib.iis</groupId>
-        <artifactId>iis-workflows</artifactId>
+        <artifactId>iis-wf</artifactId>
         <version>1.2.0-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>iis-workflows-top</artifactId>
+	<artifactId>iis-wf-top</artifactId>
 	<packaging>jar</packaging>
 	
 	<dependencies>
@@ -30,7 +30,7 @@
 		
 		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
-			<artifactId>iis-workflows-import</artifactId>
+			<artifactId>iis-wf-import</artifactId>
 			<version>${project.version}</version>
 			<exclusions>
 			<!-- conflicts with ingest-pmc dependency and causes failures -->
@@ -43,7 +43,7 @@
 		
 		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
-			<artifactId>iis-workflows-ingest-pmc</artifactId>
+			<artifactId>iis-wf-ingest-pmc</artifactId>
 			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>
@@ -54,13 +54,13 @@
 		</dependency>
 		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
-			<artifactId>iis-workflows-ingest</artifactId>
+			<artifactId>iis-wf-ingest</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
-			<artifactId>iis-workflows-export-actionmanager</artifactId>
+			<artifactId>iis-wf-export-actionmanager</artifactId>
 			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>
@@ -72,7 +72,7 @@
 		
 		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
-			<artifactId>iis-workflows-metadataextraction</artifactId>
+			<artifactId>iis-wf-metadataextraction</artifactId>
 			<version>${project.version}</version>
 				<exclusions>
 					<exclusion>
@@ -89,7 +89,7 @@
 		
 		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
-			<artifactId>iis-workflows-transformers</artifactId>
+			<artifactId>iis-wf-transformers</artifactId>
 			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>
@@ -110,7 +110,7 @@
 		
 		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
-			<artifactId>iis-workflows-citationmatching-direct</artifactId>
+			<artifactId>iis-wf-citationmatching-direct</artifactId>
 			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>
@@ -131,13 +131,13 @@
 		
 		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
-			<artifactId>iis-workflows-collapsers</artifactId>
+			<artifactId>iis-wf-collapsers</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
-			<artifactId>iis-workflows-citationmatching</artifactId>
+			<artifactId>iis-wf-citationmatching</artifactId>
 			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>
@@ -150,19 +150,19 @@
 		
 		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
-			<artifactId>iis-workflows-referenceextraction</artifactId>
+			<artifactId>iis-wf-referenceextraction</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
-			<artifactId>iis-workflows-documentsclassification</artifactId>
+			<artifactId>iis-wf-documentsclassification</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
-			<artifactId>iis-workflows-documentssimilarity</artifactId>
+			<artifactId>iis-wf-documentssimilarity</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		
@@ -227,7 +227,7 @@
 			<artifactId>commons-io</artifactId>
 		</dependency>
 		
-		<!-- incompatible version is conveyed by iis-workflows-citationmatching -->
+		<!-- incompatible version is conveyed by iis-wf-citationmatching -->
 		<!-- unfortunatelly it adds JobACLsManager which breaks dependancy -->
 		<!-- 
 		<dependency>
