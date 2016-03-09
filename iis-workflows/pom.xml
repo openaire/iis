@@ -267,7 +267,7 @@
 					</plugin>
 					<plugin>
 						<groupId>eu.dnetlib.iis</groupId>
-						<artifactId>iis-properties-maven-plugin</artifactId>
+						<artifactId>iis-build-properties-maven-plugin</artifactId>
 						<executions>
 							<execution>
 								<phase>validate</phase>
@@ -569,7 +569,7 @@
 				<plugins>
 					<plugin>
 						<groupId>eu.dnetlib.iis</groupId>
-						<artifactId>iis-oozie-maven-plugin</artifactId>
+						<artifactId>iis-build-oozie-maven-plugin</artifactId>
 						<executions>
 							<execution>
 								<id>read-job-id</id>
