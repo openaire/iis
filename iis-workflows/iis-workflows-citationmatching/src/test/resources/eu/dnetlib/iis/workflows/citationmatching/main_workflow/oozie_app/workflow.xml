@@ -77,7 +77,7 @@
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
 			<!-- Specification of the input ports -->
 			<arg>-C{citation,
-				eu.dnetlib.iis.citationmatching.schemas.Citation,
+				eu.dnetlib.iis.common.citations.schemas.Citation,
 				eu/dnetlib/iis/workflows/citationmatching/main_workflow/data/commonCitation.json}</arg>
 			<arg>-Icitation=${workingDir}/citation/output</arg>
 		</java>
