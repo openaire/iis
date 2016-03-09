@@ -1,0 +1,8 @@
+## This is a classpath-based import file (this header is required)
+import_hbasedump classpath eu/dnetlib/iis/wf/importer/hbasedump/oozie_app
+mainworkflows_common_import classpath eu/dnetlib/iis/wf/top/common/import/oozie_app
+mainworkflows_primary_processing classpath eu/dnetlib/iis/wf/top/primary/processing/oozie_app
+transformers_export_documentmetadata classpath eu/dnetlib/iis/wf/transformers/export/documentmetadata/oozie_app
+transformers_idextractor classpath eu/dnetlib/iis/wf/transformers/importer/documentmetadata/idextractor/oozie_app
+mainworkflows_common_export classpath eu/dnetlib/iis/wf/top/common/export/oozie_app
+mainworkflows_common_export_to_json classpath eu/dnetlib/iis/wf/top/common/export_to_json/oozie_app

@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!-- Note that documentation placed in comments in this file uses the
+"markdown" syntax (along with its way of dividing text into sections). -->
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="documentsclassification_main">
+	
+	<parameters>
+		<property>
+			<name>input_documents</name>
+			<description>input source documents</description>
+		</property>
+		<property>
+			<name>output_document_to_document_classes</name>
+			<description>output document to document classes</description>
+		</property>
+	</parameters>
+
+    <start to="document_classification_job" />
+
+	<action name="document_classification_job"> 
+        <spark xmlns="uri:oozie:spark-action:0.1">
+            
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            
+            <prepare>
+                <delete path="${nameNode}${output_document_to_document_classes}" />
+            </prepare>
+            
+            <master>yarn-cluster</master>
+            
+            <mode>cluster</mode>
+            
+            <name>document_classification_job</name>
+            
+            <class>eu.dnetlib.iis.wf.documentsclassification.DocumentClassificationJob</class>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-documentsclassification-${projectVersion}.jar</jar>
+            <arg>-inputAvroPath=${input_documents}</arg>
+            <arg>-outputAvroPath=${output_document_to_document_classes}</arg>
+            <arg>-scriptDirPath=${wf:conf('oozie.wf.application.path')}/lib/scripts</arg>
+            
+        </spark>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+        			[${wf:errorMessage(wf:lastErrorNode())}]
+        		</message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

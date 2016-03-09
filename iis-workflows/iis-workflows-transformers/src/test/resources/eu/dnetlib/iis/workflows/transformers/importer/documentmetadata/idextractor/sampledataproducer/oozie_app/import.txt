@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-transformers_idextractor classpath eu/dnetlib/iis/workflows/transformers/importer/documentmetadata/idextractor/oozie_app

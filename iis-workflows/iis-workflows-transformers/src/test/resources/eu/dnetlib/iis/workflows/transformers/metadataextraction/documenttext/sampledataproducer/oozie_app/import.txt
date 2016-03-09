@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-transformer_metadataextraction_documenttext classpath eu/dnetlib/iis/workflows/transformers/metadataextraction/documenttext/oozie_app

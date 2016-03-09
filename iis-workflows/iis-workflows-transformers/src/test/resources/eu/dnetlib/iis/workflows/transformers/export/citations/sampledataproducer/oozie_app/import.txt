@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-transformer_export_citations classpath eu/dnetlib/iis/workflows/transformers/export/citations/oozie_app
