@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- Note that documentation placed in comments in this file uses the
 "markdown" syntax (along with its way of dividing text into sections). -->
-<workflow-app xmlns="uri:oozie:workflow:0.3" name="test-documentsclassification_main_sampletest_empty_abstract">
+<workflow-app xmlns="uri:oozie:workflow:0.3" name="test-documentsclassification_main_sampletest_null_taxonomy">
 	<start to="producer" />
 
 	<action name="producer">
