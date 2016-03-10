@@ -12,7 +12,6 @@ documentsclassification classpath eu/dnetlib/iis/workflows/documentsclassificati
 transformers_documentssimilarity classpath eu/dnetlib/iis/workflows/documentsclassification/input_transformer/oozie_app
 documentssimilarity_chain classpath eu/dnetlib/iis/workflows/documentssimilarity/chain/oozie_app
 collapsers_basic_collapser classpath eu/dnetlib/iis/workflows/collapsers/basic_collapser/oozie_app
-transformers_citations_from_matching classpath eu/dnetlib/iis/workflows/citationmatching/output_transformer/oozie_app
 transformers_citations_from_referencemetadata classpath eu/dnetlib/iis/workflows/transformers/common/citations/from/referencemetadata/oozie_app
 transformers_common_union classpath eu/dnetlib/iis/workflows/transformers/common/union/oozie_app
 transformers_common_union3 classpath eu/dnetlib/iis/workflows/transformers/common/union3/oozie_app

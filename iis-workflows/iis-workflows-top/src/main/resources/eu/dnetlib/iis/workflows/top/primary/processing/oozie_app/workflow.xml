@@ -863,30 +863,6 @@
 				</property>
 			</configuration>
 		</sub-workflow>
-		<ok to="transformers_citations_from_matching" />
-		<error to="fail" />
-	</action>
-
-	<!-- normalize and group citations part -->
-	<action name="transformers_citations_from_matching">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_citations_from_matching</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/transformers_citations_from_matching/working_dir</value>
-				</property>
-				<property>
-					<name>input</name>
-					<value>${workingDir}/citationmatching_chain/output</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${workingDir}/transformers_citations_from_matching/output</value>
-				</property>
-			</configuration>
-		</sub-workflow>
 		<ok to="transformers_citations_from_referencemetadata" />
 		<error to="fail" />
 	</action>
@@ -929,7 +905,7 @@
 				</property>
 				<property>
 					<name>input_b</name>
-					<value>${workingDir}/transformers_citations_from_matching/output</value>
+					<value>${workingDir}/citationmatching_chain/output</value>
 				</property>
 				<property>
 					<name>input_c</name>
