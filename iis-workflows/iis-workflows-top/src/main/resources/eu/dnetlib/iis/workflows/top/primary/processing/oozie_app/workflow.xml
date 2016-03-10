@@ -863,7 +863,7 @@
 				</property>
 			</configuration>
 		</sub-workflow>
-		<ok to="transformers_citations_from_matching" />
+		<ok to="transformers_citations_from_referencemetadata" />
 		<error to="fail" />
 	</action>
 
