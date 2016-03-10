@@ -1,4 +1,4 @@
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="mainworkflows_metadataextraction_manual_lock_releaser">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="metadataextraction_cache_manual_lock_releaser">
 	
 	<parameters>
 		<property>
