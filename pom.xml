@@ -594,7 +594,7 @@
             	<artifactId>document-similarity-oap-uberworkflow</artifactId>
             	<version>${iis.coansys.version}</version>
             	<type>tar.gz</type>
-            	<classifier>oozie-wf</classifier>
+            	<classifier>oozie-job</classifier>
             	<exclusions>
             		<exclusion>
                     	<groupId>org.apache.hadoop</groupId>
@@ -621,49 +621,6 @@
                     	<artifactId>slf4j-simple</artifactId>
                 	</exclusion>
                 </exclusions>
-        	</dependency>
-        	
-        	<dependency>
-            	<groupId>pl.edu.icm.coansys</groupId>
-            	<artifactId>citation-matching-core-workflow</artifactId>
-            	<version>${iis.coansys.version}</version>
-            	<classifier>oozie-job</classifier>
-            	<type>tar.gz</type>
-            	<exclusions>
-                	<exclusion>
-                    	<groupId>org.apache.avro</groupId>
-                    	<artifactId>avro-mapred</artifactId>
-                	</exclusion>
-                	<exclusion>
-                    	<groupId>org.slf4j</groupId>
-                    	<artifactId>slf4j-simple</artifactId>
-                	</exclusion>
-                	<!-- excluding all hadoop libs which are 'provided' by environment -->
-                	<exclusion>
-                    	<groupId>org.apache.hadoop</groupId>
-                    	<artifactId>hadoop-client</artifactId>
-                	</exclusion>
-                	<exclusion>
-                    	<groupId>org.apache.hadoop</groupId>
-                    	<artifactId>hadoop-yarn-api</artifactId>
-                	</exclusion>
-                	<exclusion>
-                    	<groupId>org.apache.hadoop</groupId>
-                    	<artifactId>hadoop-yarn-client</artifactId>
-                	</exclusion>
-                	<exclusion>
-                    	<groupId>org.apache.hadoop</groupId>
-                    	<artifactId>hadoop-mapreduce-client-app</artifactId>
-                	</exclusion>
-                	<exclusion>
-                    	<groupId>org.apache.hadoop</groupId>
-                    	<artifactId>hadoop-mapreduce-client-common</artifactId>
-                	</exclusion>
-                	<exclusion>
-                    	<groupId>org.apache.hadoop</groupId>
-                    	<artifactId>hadoop-mapreduce-client-core</artifactId>
-                	</exclusion>
-            	</exclusions>
         	</dependency>
         	
         	
