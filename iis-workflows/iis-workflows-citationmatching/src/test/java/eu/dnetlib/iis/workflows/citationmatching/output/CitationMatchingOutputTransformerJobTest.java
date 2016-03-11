@@ -23,6 +23,9 @@ import pl.edu.icm.sparkutils.test.SparkJobExecutor;
  */
 public class CitationMatchingOutputTransformerJobTest {
 
+    private static final String DATA_DIRECTORY_PATH = "src/test/resources/eu/dnetlib/iis/workflows/citationmatching/data/output_transformer";
+    
+    
     private SparkJobExecutor executor = new SparkJobExecutor();
     
     private File workingDir;
@@ -57,8 +60,8 @@ public class CitationMatchingOutputTransformerJobTest {
         
         // given
         
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/workflows/citationmatching/main_workflow/data/citation.json";
-        String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/workflows/citationmatching/main_workflow/data/commonCitation.json";
+        String jsonInputFile = DATA_DIRECTORY_PATH + "/citation.json";
+        String jsonOutputFile = DATA_DIRECTORY_PATH + "/commonCitation.json";
         
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(jsonInputFile, Citation.class),

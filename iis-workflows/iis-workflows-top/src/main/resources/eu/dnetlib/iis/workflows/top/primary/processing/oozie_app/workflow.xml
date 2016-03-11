@@ -808,19 +808,18 @@
 				</property>
 			</configuration>
 		</sub-workflow>
-		<ok to="transformers_citationmatching" />
+		<ok to="citationmatching_fuzzy" />
 		<error to="fail" />
 	</action>
 
-	<!-- preparing citation matching input -->
-	<action name="transformers_citationmatching">
+	<action name="citationmatching_fuzzy">
 		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_citationmatching</app-path>
+			<app-path>${wf:appPath()}/citationmatching_fuzzy</app-path>
 			<propagate-configuration />
 			<configuration>
 				<property>
 					<name>workingDir</name>
-					<value>${workingDir}/transformers_citationmatching/working_dir</value>
+					<value>${workingDir}/citationmatching_fuzzy/working_dir</value>
 				</property>
 				<property>
 					<name>input_metadata</name>
@@ -831,35 +830,8 @@
 					<value>${input_person}</value>
 				</property>
 				<property>
-					<name>output_citation_metadata</name>
-					<value>${workingDir}/transformers_citationmatching/output_citation_metadata</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="citationmatching_chain" />
-		<error to="fail" />
-	</action>
-
-	<action name="citationmatching_chain">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/citationmatching_chain</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/citationmatching_chain/working_dir</value>
-				</property>
-				<property>
-					<name>input</name>
-					<value>${workingDir}/transformers_citationmatching/output_citation_metadata</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${workingDir}/citationmatching_chain/output</value>
-				</property>
-				<property>
-					<name>cit_genAuthorIdxJavaOpts</name>
-					<value>${cit_genAuthorIdxJavaOpts}</value>
+					<name>output_citations</name>
+					<value>${workingDir}/citationmatching_fuzzy/output</value>
 				</property>
 			</configuration>
 		</sub-workflow>
@@ -905,7 +877,7 @@
 				</property>
 				<property>
 					<name>input_b</name>
-					<value>${workingDir}/citationmatching_chain/output</value>
+					<value>${workingDir}/citationmatching_fuzzy/output</value>
 				</property>
 				<property>
 					<name>input_c</name>
