@@ -1,0 +1,12 @@
+{
+    "id": "person-id-1", 
+    "fullname": "Jan Kowalski", 
+    "firstname": "Jan", 
+    "secondnames": ["Kowalski"]
+}
+{
+    "id": "person-id-2", 
+    "fullname": "Zygmunt Nowak", 
+    "firstname": "Zygmunt", 
+    "secondnames": ["Nowak"]
+}

@@ -53,6 +53,14 @@ public class AvroAssertTestUtil {
     public static <T extends GenericRecord> void assertEqualsWithJsonIgnoreOrder(String avroDatastorePath, String jsonDatastorePath, Class<T> recordsClass) throws IOException {
 
         List<T> avroDatastore = AvroTestUtils.readLocalAvroDataStore(avroDatastorePath);
+        
+        assertEqualsWithJsonIgnoreOrder(avroDatastore, jsonDatastorePath, recordsClass);
+    }
+    
+    /**
+     * Asserts equality of an avro datastore and a json datastore, ignores order of records
+     */
+    public static <T extends GenericRecord> void assertEqualsWithJsonIgnoreOrder(List<T> avroDatastore, String jsonDatastorePath, Class<T> recordsClass) throws IOException {
 
         List<T> jsonDatastore = JsonAvroTestUtils.readJsonDataStore(jsonDatastorePath, recordsClass);
 

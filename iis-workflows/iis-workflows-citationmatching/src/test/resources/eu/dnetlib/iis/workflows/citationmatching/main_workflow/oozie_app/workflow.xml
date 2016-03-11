@@ -3,12 +3,6 @@
 <!-- Note that documentation placed in comments in this file uses the
 "markdown" syntax (along with division into sections). -->
 <workflow-app xmlns="uri:oozie:workflow:0.4" name="test-citationmatching_main_workflow">
-    <parameters>
-        <property>
-            <name>reduceTasks</name>
-            <value>2</value>
-        </property>
-    </parameters>
 
     <start to="data_producer" />
 
@@ -30,30 +24,42 @@
             <!-- This is simple wrapper for the Java code -->
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <!-- The business Java code that gets to be executed -->
-            <arg>eu.dnetlib.iis.workflows.citationmatching.converter.DocumentAvroDatastoreProducer</arg>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <!-- Specification of the output ports -->
+            <arg>-C{document_metadata,
+                eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal,
+                eu/dnetlib/iis/workflows/citationmatching/main_workflow/data/document_metadata.json}</arg>
+            <arg>-C{persons,
+                eu.dnetlib.iis.importer.schemas.Person,
+                eu/dnetlib/iis/workflows/citationmatching/main_workflow/data/person.json}</arg>
             <!-- All input and output ports have to be bound to paths in HDFS -->
-            <arg>-Odocument=${workingDir}/data_producer/document</arg>
+            <arg>-Odocument_metadata=${workingDir}/data_producer/document</arg>
+            <arg>-Opersons=${workingDir}/data_producer/person</arg>
         </java>
-        <ok to="chain" />
+        <ok to="citation_matching" />
         <error to="fail" />
     </action>
     
-    <action name="chain">
+    <action name="citation_matching">
         <sub-workflow>
-            <app-path>${wf:appPath()}/chain</app-path>
+            <app-path>${wf:appPath()}/citation_matching</app-path>
             <propagate-configuration/>
             <configuration>
                 <property>
-                    <name>input</name>
+                    <name>input_metadata</name>
                     <value>${workingDir}/data_producer/document</value>
                 </property>
                 <property>
-                    <name>output</name>
+                    <name>input_person</name>
+                    <value>${workingDir}/data_producer/person</value>
+                </property>
+                <property>
+                    <name>output_citations</name>
                     <value>${workingDir}/citation/output</value>
                 </property>
                 <property>
                     <name>workingDir</name>
-                    <value>${workingDir}/chain</value>
+                    <value>${workingDir}/citation_matching</value>
                 </property>
             </configuration>
         </sub-workflow>

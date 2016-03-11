@@ -1,0 +1,117 @@
+{
+    "id": "id-1", 
+    "title": "A new method of something", 
+    "journal": "Journal of something",
+    "authorIds": ["person-id-1"], 
+    "pages": {"start": "1", "end": "2"}, 
+    "year": 2001,
+    "references": [
+        {
+            "position": 1, 
+            "basicMetadata": {
+                "externalIds": null, 
+                "publisher": null, 
+                "title": "How to do it?", 
+                "url": null, 
+                "series": null, 
+                "authors": ["Jan Kowalski", "Zygmunt Nowak"], 
+                "volume": null, 
+                "edition": null, 
+                "source": "Something Journal", 
+                "year": "2002", 
+                "issue": null, 
+                "pages": {"start": "2", "end": "3"}, 
+                "location": null
+            }, 
+            "text": null
+        },
+        {
+            "position": 2, 
+            "basicMetadata": {
+                "externalIds": null, 
+                "publisher": null, 
+                "title": "Our great tool", 
+                "url": null, 
+                "series": null, 
+                "authors": ["Zygmunt Nowak"], 
+                "volume": null, 
+                "edition": null, 
+                "source": "Everything Journal", 
+                "year": "2003", 
+                "issue": null, 
+                "pages": {"start": "3", "end": "4"}, 
+                "location": null
+            }, 
+            "text": null
+        }
+    ],
+    "externalIdentifiers": null, 
+    "language": null, 
+    "publisher": null, 
+    "volume": null, 
+    "issue": null, 
+    "keywords": null, 
+    "abstract": null, 
+    "publicationTypeName": null,
+    "publicationType": {"article": true, "dataset": false},
+    "extractedAuthorFullNames": null
+}
+
+{
+    "id": "id-2", 
+    "title": "How to do it?", 
+    "journal": "Something Journal", 
+    "authorIds": ["person-id-1", "person-id-2"], 
+    "pages": {"start": "2", "end": "3"}, 
+    "year": 2002,
+    "references": [
+        {
+            "position": 1, 
+            "basicMetadata": {
+                "title": "Our great tool", 
+                "authors": ["Zygmunt Nowak"], 
+                "source": "Everything Journal", 
+                "year": "2003", 
+                "pages": {"start": "3", "end": "4"}, 
+                "externalIds": null, 
+                "publisher": null, 
+                "series": null, 
+                "volume": null, 
+                "issue": null, 
+                "edition": null, 
+                "location": null,
+                "url": null
+            }, 
+            "text": null
+        },
+        {
+            "position": 2, 
+            "basicMetadata": {
+                "title": "Big and great system", 
+                "authors": ["Zygmunt Nowak", "Jan Kowalski"], 
+                "source": "Advances in everything", 
+                "year": "2004", 
+                "pages": {"start": "4", "end": "5"}, 
+                "externalIds": null, 
+                "publisher": null, 
+                "series": null, 
+                "volume": null, 
+                "issue": null, 
+                "edition": null, 
+                "location": null,
+                "url": null 
+            }, 
+            "text": null
+        }
+    ],
+    "externalIdentifiers": null, 
+    "language": null,  
+    "publisher": null, 
+    "volume": null, 
+    "issue": null, 
+    "keywords": null, 
+    "abstract": null, 
+    "publicationTypeName": null, 
+    "publicationType": {"article": true, "dataset": false},
+    "extractedAuthorFullNames": null 
+}
