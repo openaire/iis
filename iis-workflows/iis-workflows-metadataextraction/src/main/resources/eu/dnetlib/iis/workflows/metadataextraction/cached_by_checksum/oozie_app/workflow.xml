@@ -1,4 +1,4 @@
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="mainworkflows_metadataextraction_cached_by_checksum">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="metadataextraction_cached_by_checksum">
 	
 	<parameters>
 		<property>

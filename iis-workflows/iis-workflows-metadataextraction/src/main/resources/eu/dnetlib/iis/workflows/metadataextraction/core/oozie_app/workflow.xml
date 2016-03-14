@@ -1,4 +1,4 @@
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="metadataextraction">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="metadataextraction_core">
 	
 	<parameters>
 		<property>
