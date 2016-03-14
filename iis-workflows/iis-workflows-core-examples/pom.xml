@@ -140,7 +140,6 @@
                 <artifactId>avro-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>src-schemas</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>schema</goal>
@@ -150,9 +149,6 @@
                             <sourceDirectory>${project.basedir}/src/main/resources/</sourceDirectory>
                             <outputDirectory>${project.basedir}/target/generated-sources/java/</outputDirectory>
                         </configuration>
-                    </execution>
-                    <execution>
-                        <phase>none</phase>
                     </execution>
                 </executions>
             </plugin>
