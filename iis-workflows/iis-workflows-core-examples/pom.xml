@@ -140,19 +140,6 @@
                 <artifactId>avro-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>test-schemas</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>schema</goal>
-                            <goal>idl-protocol</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirectory>${project.basedir}/src/main/resources/</sourceDirectory>
-                            <outputDirectory>${project.basedir}/target/generated-sources/java/</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>src-schemas</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>schema</goal>
