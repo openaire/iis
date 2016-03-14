@@ -53,6 +53,14 @@
                     <name>workingDir</name>
                     <value>${workingDir}/chain</value>
                 </property>
+                <property>
+                    <name>mapredChildJavaOpts</name>
+                    <value>-Xmx1g</value>
+                </property>
+                <property>
+                    <name>similarityTopnDocumentPerDocument</name>
+                    <value>3</value>
+                </property>
 			</configuration>
         </sub-workflow>
     	<ok to="consumer" />
@@ -64,11 +72,9 @@
 			<!-- This is simple wrapper for the Java code -->
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<!-- The business Java code that gets to be executed -->
-			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.RecordCountTestConsumer</arg>
 			<!-- Specification of the input ports -->
-			<arg>-C{docsim,
-				eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity,
-				eu/dnetlib/iis/workflows/documentssimilarity/main_workflow/data/documents_similarity.json}</arg>
+			<arg>-C{docsim,eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity,1,750}</arg>
 			<arg>-Idocsim=${workingDir}/documents_similarity</arg>
 		</java>
 		<ok to="end" />
