@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.workflows.documentssimilarity;
+package eu.dnetlib.iis.wf.documentssimilarity;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
