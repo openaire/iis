@@ -1,0 +1,31 @@
+<workflow-app xmlns="uri:oozie:workflow:0.5" name="file-word-counter-in-oozie" >
+    <start to="fileWordCounterNode" />
+    
+    
+    <action name="fileWordCounterNode">
+        <spark xmlns="uri:oozie:spark-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+               <delete path="${nameNode}${workingDir}/output"/>
+            </prepare>
+            <master>yarn-cluster</master>
+            <mode>cluster</mode>
+            <name>fileWordCounter</name>
+            <class>eu.dnetlib.iis.core.examples.spark.FileWordCounter</class>
+            <jar>${wf:conf('oozie.wf.application.path')}/lib/iis-wf-core-examples-${projectVersion}.jar</jar>
+            <arg>${wf:conf('oozie.wf.application.path')}/input/data.txt</arg>
+            <arg>${nameNode}${workingDir}/output</arg>
+        </spark>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+
+    <kill name="fail">
+        <message>Workflow failed, error
+            message[${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+    <end name='end' />
+  
+</workflow-app>

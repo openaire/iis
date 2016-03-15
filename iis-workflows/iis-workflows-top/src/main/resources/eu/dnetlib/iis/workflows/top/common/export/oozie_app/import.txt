@@ -1,5 +1,0 @@
-## This is a classpath-based import file (this header is required)
-export_actionmanager classpath eu/dnetlib/iis/workflows/export/actionmanager/oozie_app
-export_actionmanager_sequencefile classpath eu/dnetlib/iis/workflows/export/actionmanager/sequencefile/oozie_app
-transformers_export_identifier_document_to_dataset classpath eu/dnetlib/iis/workflows/transformers/export/identifier/documenttodataset/oozie_app
-transformers_export_identifier_document_to_project classpath eu/dnetlib/iis/workflows/transformers/export/identifier/documenttoproject/oozie_app

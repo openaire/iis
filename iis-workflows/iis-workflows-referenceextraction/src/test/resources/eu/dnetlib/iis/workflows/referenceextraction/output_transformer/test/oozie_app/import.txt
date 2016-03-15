@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-transformer_export_researchinitiatives classpath eu/dnetlib/iis/workflows/referenceextraction/output_transformer/oozie_app

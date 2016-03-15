@@ -1,0 +1,2 @@
+## This is a classpath-based import file (this header is required)
+mapred_import classpath eu/dnetlib/iis/wf/importer/mapred_import/oozie_app

@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-ingest_pmc_metadata classpath eu/dnetlib/iis/workflows/ingest/pmc/metadata/oozie_app

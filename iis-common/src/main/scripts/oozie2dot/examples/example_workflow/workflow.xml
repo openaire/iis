@@ -182,7 +182,7 @@
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
             <arg>-C{referenceextraction_project,
 				eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject,
-				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+				eu/dnetlib/iis/wf/top/data/empty.json}</arg>
             <!-- notice: directory have to aligned with skipped action output -->
             <arg>-Oreferenceextraction_project=${workingDir}/referenceextraction_project/document_projects</arg>
    
@@ -247,7 +247,7 @@
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
             <arg>-C{referenceextraction_dataset,
 				eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet,
-				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+				eu/dnetlib/iis/wf/top/data/empty.json}</arg>
             <!-- notice: directory have to aligned with skipped action output -->
             <arg>-Oreferenceextraction_dataset=${workingDir}/referenceextraction_dataset/document_datasets</arg>
         </java>
@@ -307,7 +307,7 @@
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
             <arg>-C{referenceextraction_researchinitiative,
 				eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId,
-				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+				eu/dnetlib/iis/wf/top/data/empty.json}</arg>
             <!-- notice: directory have to aligned with skipped action output -->
             <arg>-Oreferenceextraction_researchinitiative=${workingDir}/referenceextraction_researchinitiative/document_researchinitiative</arg>
         </java>
@@ -424,7 +424,7 @@
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
             <arg>-C{documentsclassification,
 				eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses,
-				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+				eu/dnetlib/iis/wf/top/data/empty.json}</arg>
             <!-- notice: directory have to aligned with skipped action output -->
             <arg>-Odocumentsclassification=${workingDir}/documentsclassification_main/document_to_document_classes</arg>
         </java>
@@ -524,7 +524,7 @@
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
             <arg>-C{documentssimilarity,
 				eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity,
-				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+				eu/dnetlib/iis/wf/top/data/empty.json}</arg>
             <!-- notice: directory have to aligned with skipped action output -->
             <arg>-Odocumentssimilarity=${output_document_similarity}</arg>
         </java>
@@ -614,7 +614,7 @@
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
             <arg>-C{citation,
 				eu.dnetlib.iis.citationmatching.schemas.Citation,
-				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+				eu/dnetlib/iis/wf/top/data/empty.json}</arg>
             <!-- notice: directory have to aligned with skipped action output -->
             <arg>-Ocitation=${workingDir}/citationmatching_chain/citation</arg>
         </java>
@@ -741,18 +741,18 @@
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
             <arg>-C{document_statistics,
 				eu.dnetlib.iis.statistics.schemas.DocumentToDocumentStatistics,
-				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+				eu/dnetlib/iis/wf/top/data/empty.json}</arg>
 			<arg>-C{author_statistics,
 				eu.dnetlib.iis.statistics.schemas.AuthorToAuthorStatistics,
-				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+				eu/dnetlib/iis/wf/top/data/empty.json}</arg>
 			<arg>-C{project_statistics,
 				eu.dnetlib.iis.statistics.schemas.ProjectToProjectStatistics,
-				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+				eu/dnetlib/iis/wf/top/data/empty.json}</arg>
 			<!-- FIXME currently global statistics are not available -->
 			<!-- 
 			<arg>-C{global_statistics,
 				eu.dnetlib.iis.statistics.schemas.,
-				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+				eu/dnetlib/iis/wf/top/data/empty.json}</arg>
 			-->
             <!-- notice: directory have to aligned with skipped action output -->
             <arg>-Odocument_statistics=${workingDir}/statistics/document_statistics</arg>
@@ -800,10 +800,10 @@
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
             <arg>-C{document_to_document_clusters,
 				eu.dnetlib.iis.documentsclustering.schemas.DocumentToDocumentClusters,
-				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>    
+				eu/dnetlib/iis/wf/top/data/empty.json}</arg>    
             <arg>-C{document_with_website_usage_similarities,
 				eu.dnetlib.iis.websiteusage.schemas.DocumentsWithWebsiteUsageSimilarities,
-				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+				eu/dnetlib/iis/wf/top/data/empty.json}</arg>
             <arg>-Odocument_to_document_clusters=${workingDir}/producer_export_document/document_to_document_clusters</arg>
             <arg>-Odocument_with_website_usage_similarities=${workingDir}/producer_export_document/document_with_website_usage_similarities</arg>    
         </java>
@@ -890,7 +890,7 @@
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
             <arg>-C{person_with_website_usage_similarities,
 				eu.dnetlib.iis.websiteusage.schemas.PersonWebsiteUsageSimilarities,
-				eu/dnetlib/iis/workflows/top/data/empty.json}</arg>
+				eu/dnetlib/iis/wf/top/data/empty.json}</arg>
             <arg>-Operson_with_website_usage_similarities=${workingDir}/producer_export_person/person_with_website_usage_similarities</arg>    
         </java>
         <ok to="transformers_export_person"/>

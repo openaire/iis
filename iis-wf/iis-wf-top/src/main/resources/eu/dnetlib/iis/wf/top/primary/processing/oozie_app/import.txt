@@ -1,0 +1,21 @@
+## This is a classpath-based import file (this header is required)
+transformers_metadatamerger classpath eu/dnetlib/iis/wf/transformers/metadatamerger/oozie_app
+transformers_citationmatching classpath eu/dnetlib/iis/wf/citationmatching/input_transformer/oozie_app
+citationmatching_chain classpath eu/dnetlib/iis/wf/citationmatching/chain/oozie_app
+citationmatching_direct classpath eu/dnetlib/iis/wf/citationmatching/direct/oozie_app
+referenceextraction_project classpath eu/dnetlib/iis/wf/referenceextraction/project/main/oozie_app
+referenceextraction_dataset classpath eu/dnetlib/iis/wf/referenceextraction/dataset/main/oozie_app
+referenceextraction_researchinitiative classpath eu/dnetlib/iis/wf/referenceextraction/researchinitiative/main/oozie_app
+referenceextraction_pdb classpath eu/dnetlib/iis/wf/referenceextraction/pdb/main/oozie_app
+transformers_export_researchinitiatives classpath eu/dnetlib/iis/wf/referenceextraction/output_transformer/oozie_app
+documentsclassification classpath eu/dnetlib/iis/wf/documentsclassification/oozie_app
+transformers_documentssimilarity classpath eu/dnetlib/iis/wf/documentsclassification/input_transformer/oozie_app
+documentssimilarity_chain classpath eu/dnetlib/iis/wf/documentssimilarity/chain/oozie_app
+collapsers_basic_collapser classpath eu/dnetlib/iis/wf/collapsers/basic_collapser/oozie_app
+transformers_citations_from_referencemetadata classpath eu/dnetlib/iis/wf/transformers/common/citations/from/referencemetadata/oozie_app
+transformers_common_union classpath eu/dnetlib/iis/wf/transformers/common/union/oozie_app
+transformers_common_union3 classpath eu/dnetlib/iis/wf/transformers/common/union3/oozie_app
+transformers_export_citations classpath eu/dnetlib/iis/wf/transformers/export/citations/oozie_app
+transformers_project_toconcept classpath eu/dnetlib/iis/wf/referenceextraction/project/output_transformer/oozie_app
+transformers_project_filter classpath eu/dnetlib/iis/wf/referenceextraction/project/input_filter/oozie_app
+transformer_metadataextraction_documenttext classpath eu/dnetlib/iis/wf/transformers/metadataextraction/documenttext/oozie_app

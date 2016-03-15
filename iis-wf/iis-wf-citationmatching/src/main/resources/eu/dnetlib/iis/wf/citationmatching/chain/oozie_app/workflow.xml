@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<!-- TODO MiconCodeReview: From external project user viewpoint, it would be more appropriate to call this a 'main' instead of 'chain' workflow. -->
+<!-- TODO MiconCodeReview: E.g.: the main workflow in icm-iis-collapsers is called just 'main'. -->
+<!-- TODO MiconCodeReview: Also, 'citationmatching_' prefix is unnecessary (it's encoded in the path eu.dnetlib.iis.citationmatching). -->
+<!-- TODO MiconCodeReview: In case of renaming, the package should be renamed accordingly ('chain' -> 'main'). -->
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="citationmatching_chain">
+
+	<parameters>
+        <property>
+            <!-- TODO MiconCodeReview: Property name could be more meaningful, like 'inputMetadata'. -->
+            <name>input</name>
+            <description>input directory holding eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata avro datastore</description>
+        </property>
+        <property>
+            <!-- TODO MiconCodeReview: Property name could be more meaningful, like 'outputCitations'. -->
+            <name>output</name>
+            <description>output directory holding eu.dnetlib.iis.common.citations.schemas.Citation avro datastore</description>
+        </property>
+    </parameters>
+
+    <start to="citation-matching" />
+
+    <action name="citation-matching">
+    
+        <spark xmlns="uri:oozie:spark-action:0.1">
+
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+           
+            <prepare>
+                <delete path="${workingDir}/main_citations" />
+            </prepare>
+            
+            <master>yarn-cluster</master>
+            <mode>cluster</mode>
+            <name>citation-matching</name>
+
+            <class>eu.dnetlib.iis.wf.citationmatching.IisCitationMatchingJob</class>
+
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}.jar</jar>
+        
+            <arg>-fullDocumentPath = ${input}</arg>
+            
+            <arg>-outputDirPath = ${workingDir}/main_citations</arg>
+            <arg>-numberOfPartitions = 5</arg>
+            
+        </spark>
+        <ok to="citation-matching-output-transformer"/>
+        <error to="fail"/>
+    
+    </action>
+    
+        <action name="citation-matching-output-transformer">
+    
+        <spark xmlns="uri:oozie:spark-action:0.1">
+
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+           
+            <prepare>
+                <delete path="${output}" />
+            </prepare>
+            
+            <master>yarn-cluster</master>
+            <mode>cluster</mode>
+            <name>citation-matching-output-transformer</name>
+
+            <class>eu.dnetlib.iis.wf.citationmatching.output.CitationMatchingOutputTransformerJob</class>
+
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}.jar</jar>
+        
+            <arg>-input = ${workingDir}/main_citations</arg>
+            <arg>-output = ${output}</arg>
+            
+        </spark>
+        <ok to="end"/>
+        <error to="fail"/>
+    
+    </action>
+    
+    
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+    <end name="end" />
+</workflow-app>
