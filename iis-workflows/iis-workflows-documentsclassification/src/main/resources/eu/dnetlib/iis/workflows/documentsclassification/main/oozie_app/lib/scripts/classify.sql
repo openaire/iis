@@ -3,6 +3,7 @@ PRAGMA temp_store_directory = '.';
 hidden var 'classCountLog' from select pyfun('math.log', cast((select count(*) from (select distinct taxonomy,class from taxonomies)) as float) ,2);
 
 create temp table pubs as setschema 'title,text' select jsonpath(c1, '$.id', '$.abstract') from stdinput();
+insert into pubs select "","";
 
 
 DROP TABLE IF EXISTS preclassifier;
@@ -29,6 +30,7 @@ setschema 'wordcount, title, top1, top2, top3'
     )
     group by title,c1
 )) where p >= 0.1;
+
 
 
 select jdict(
