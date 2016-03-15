@@ -431,13 +431,13 @@
     {
       "authorFullName": "Paolo Manghi",
       "affiliationPositions": [
-        2
+        1
       ]
     },
     {
       "authorFullName": "Natalia Manola",
       "affiliationPositions": [
-        1
+        2
       ]
     },
     {
@@ -456,18 +456,18 @@
       "rawText": "Interdisciplinary Centre for Mathematical and Computational Modelling, University of Warsaw, Pawinskiego 5a, 02-106 Warsaw, Poland"
     },
     {
-      "organization": "Department of Informatics and Telecommunications, University of Athens",
-      "countryName": "Greece",
-      "countryCode": "GR",
-      "address": "Panepistimiopolis, 15784 Ilissia, Athens",
-      "rawText": "Department of Informatics and Telecommunications, University of Athens, Panepistimiopolis, 15784 Ilissia, Athens, Greece"
-    },
-    {
       "organization": "Istituto di Scienza e Tecnologie dell\u0027Informazione “A. Faedo”, Consiglio Nazionale delle Ricerche",
       "countryName": "Italy",
       "countryCode": "IT",
       "address": "via G. Moruzzi 1, 56124 Pisa",
       "rawText": "Istituto di Scienza e Tecnologie dell\u0027Informazione “A. Faedo”, Consiglio Nazionale delle Ricerche, via G. Moruzzi 1, 56124 Pisa, Italy"
+    },
+    {
+      "organization": "Department of Informatics and Telecommunications, University of Athens",
+      "countryName": "Greece",
+      "countryCode": "GR",
+      "address": "Panepistimiopolis, 15784 Ilissia, Athens",
+      "rawText": "Department of Informatics and Telecommunications, University of Athens, Panepistimiopolis, 15784 Ilissia, Athens, Greece"
     },
     {
       "organization": "Department of Library Technology and Knowledge Management, Bielefeld University",
