@@ -1,7 +1,6 @@
 ## This is a classpath-based import file (this header is required)
 transformers_metadatamerger classpath eu/dnetlib/iis/wf/transformers/metadatamerger/oozie_app
-transformers_citationmatching classpath eu/dnetlib/iis/wf/citationmatching/input_transformer/oozie_app
-citationmatching_chain classpath eu/dnetlib/iis/wf/citationmatching/chain/oozie_app
+citationmatching_fuzzy classpath eu/dnetlib/iis/wf/citationmatching/fuzzy/oozie_app
 citationmatching_direct classpath eu/dnetlib/iis/wf/citationmatching/direct/oozie_app
 referenceextraction_project classpath eu/dnetlib/iis/wf/referenceextraction/project/main/oozie_app
 referenceextraction_dataset classpath eu/dnetlib/iis/wf/referenceextraction/dataset/main/oozie_app
@@ -9,7 +8,7 @@ referenceextraction_researchinitiative classpath eu/dnetlib/iis/wf/referenceextr
 referenceextraction_pdb classpath eu/dnetlib/iis/wf/referenceextraction/pdb/main/oozie_app
 transformers_export_researchinitiatives classpath eu/dnetlib/iis/wf/referenceextraction/output_transformer/oozie_app
 documentsclassification classpath eu/dnetlib/iis/wf/documentsclassification/oozie_app
-transformers_documentssimilarity classpath eu/dnetlib/iis/wf/documentsclassification/input_transformer/oozie_app
+transformers_documentssimilarity classpath eu/dnetlib/iis/wf/documentssimilarity/input_transformer/oozie_app
 documentssimilarity_chain classpath eu/dnetlib/iis/wf/documentssimilarity/chain/oozie_app
 collapsers_basic_collapser classpath eu/dnetlib/iis/wf/collapsers/basic_collapser/oozie_app
 transformers_citations_from_referencemetadata classpath eu/dnetlib/iis/wf/transformers/common/citations/from/referencemetadata/oozie_app

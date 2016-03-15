@@ -1,2 +1,2 @@
 ## This is a classpath-based import file (this header is required)
-chain classpath eu/dnetlib/iis/wf/citationmatching/chain/oozie_app
+citation_matching classpath eu/dnetlib/iis/wf/citationmatching/fuzzy/oozie_app
