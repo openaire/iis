@@ -51,12 +51,6 @@
 		
 		<!-- required after introducing 'provided' scope for hadoop libs -->
 		<dependency>
-			<groupId>org.apache.oozie</groupId>
-			<artifactId>oozie-core</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		
-		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-common</artifactId>
 		</dependency>

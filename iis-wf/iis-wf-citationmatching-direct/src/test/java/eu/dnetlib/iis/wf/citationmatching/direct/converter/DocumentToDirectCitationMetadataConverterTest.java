@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata;
 import eu.dnetlib.iis.metadataextraction.schemas.ReferenceBasicMetadata;
@@ -204,6 +203,10 @@ public class DocumentToDirectCitationMetadataConverterTest {
     }
 
     private Map<CharSequence, CharSequence> buildExternalIds(String ... idKeys) {
-        return Maps.asMap(Sets.newHashSet(idKeys), x -> "value_for_" + x);
+        Map<CharSequence, CharSequence> externalIds = Maps.newHashMap();
+        for (String id: idKeys) {
+            externalIds.put(id, "value_for_" + id);
+        }
+        return externalIds;
     }
 }

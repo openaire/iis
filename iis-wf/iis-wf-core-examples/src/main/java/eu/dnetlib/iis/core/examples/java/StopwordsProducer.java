@@ -6,10 +6,10 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.oozie.util.IOUtils;
 
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
@@ -46,9 +46,9 @@ public class StopwordsProducer implements Process {
 		Map<String, Path> output = portBindings.getOutput();
 
         FileSystem fs = FileSystem.get(conf);
-		InputStream inStream = IOUtils.getResourceAsStream("eu/dnetlib/iis/core/examples/data/stopwords.db", -1);
+		InputStream inStream = StopwordsProducer.class.getResourceAsStream("eu/dnetlib/iis/core/examples/data/stopwords.db");
 		OutputStream outStream = fs.create(new FileSystemPath(fs, output.get(stopwordsPort)).getPath());
-		IOUtils.copyStream(inStream, outStream);
+		IOUtils.copy(inStream, outStream);
 	}
 
 }
