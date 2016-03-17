@@ -12,10 +12,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.oozie.util.IOUtils;
 
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
@@ -116,7 +116,7 @@ public class DatasetDBBuilder implements Process {
         try {
             inStream = new FileInputStream(targetDbFile);
             outStream = fs.create(new FileSystemPath(fs, output.get(datasetDBPort)).getPath());
-            IOUtils.copyStream(inStream, outStream);  
+            IOUtils.copy(inStream, outStream);  
         } finally {
             if (inStream != null) {
                 inStream.close();
