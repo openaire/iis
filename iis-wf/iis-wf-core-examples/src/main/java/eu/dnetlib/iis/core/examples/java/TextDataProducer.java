@@ -6,10 +6,10 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.oozie.util.IOUtils;
 
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
@@ -57,9 +57,9 @@ public class TextDataProducer implements Process {
 	public static void copyResourceToHDFS(
 			FileSystem fs, String resourcePath, Path destination)
 					throws IOException {
-		InputStream in = IOUtils.getResourceAsStream(resourcePath, -1);
+		InputStream in = TextDataProducer.class.getResourceAsStream(resourcePath);
 		OutputStream out = fs.create(destination);
-		IOUtils.copyStream(in, out);
+		IOUtils.copy(in, out);
 	}
 
 }

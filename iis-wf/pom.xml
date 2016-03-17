@@ -50,7 +50,8 @@
         <queueName>default</queueName>
         <primed.dir>primed</primed.dir>
         
-        <oozie.package.dependencies.scope>runtime</oozie.package.dependencies.scope>
+        <oozie.package.dependencies.include.scope>runtime</oozie.package.dependencies.include.scope>
+        <oozie.package.dependencies.exclude.scope></oozie.package.dependencies.exclude.scope>
         <oozie.package.skip.test.jar>true</oozie.package.skip.test.jar>
         
         <iisConnectionProperties>${user.home}/.iis/application.properties</iisConnectionProperties>
@@ -88,7 +89,8 @@
 			<id>attach-test-resources</id>
 			<properties>
 				<!--overriding default scope (set to 'runtime') with the 'test' value. Test resources attached to oozie package requires all test dependencies. -->
-				<oozie.package.dependencies.scope>test</oozie.package.dependencies.scope>
+				<oozie.package.dependencies.include.scope></oozie.package.dependencies.include.scope>
+				<oozie.package.dependencies.exclude.scope>provided</oozie.package.dependencies.exclude.scope>
 				<!-- Do not skip creation of test jar for priming (in oozie-package profile) -->
 				<oozie.package.skip.test.jar>false</oozie.package.skip.test.jar>
 			</properties>
@@ -162,7 +164,8 @@
 									<goal>copy-dependencies</goal>
 								</goals>
 								<configuration>
-									<includeScope>${oozie.package.dependencies.scope}</includeScope>
+									<includeScope>${oozie.package.dependencies.include.scope}</includeScope>
+									<excludeScope>${oozie.package.dependencies.exclude.scope}</excludeScope>
 									<silent>true</silent>
 								</configuration>
 							</execution>
