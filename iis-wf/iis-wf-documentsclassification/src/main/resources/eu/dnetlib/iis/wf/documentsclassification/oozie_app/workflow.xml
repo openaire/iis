@@ -34,6 +34,9 @@
             
             <class>eu.dnetlib.iis.wf.documentsclassification.DocumentClassificationJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-documentsclassification-${projectVersion}.jar</jar>
+            
+
+            
             <arg>-inputAvroPath=${input_documents}</arg>
             <arg>-outputAvroPath=${output_document_to_document_classes}</arg>
             <arg>-scriptDirPath=${wf:conf('oozie.wf.application.path')}/lib/scripts</arg>

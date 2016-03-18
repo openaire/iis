@@ -33,7 +33,7 @@ import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetad
 
 public class DocumentClassificationJobTest {
 
-    private static Logger log = LoggerFactory.getLogger(DocumentClassificationJobTest.class);
+    private static final Logger log = LoggerFactory.getLogger(DocumentClassificationJobTest.class);
     
     
     private SparkJobExecutor executor = new SparkJobExecutor();

@@ -8,9 +8,6 @@ import org.apache.spark.SparkFiles;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
-import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
-import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
@@ -19,6 +16,8 @@ import eu.dnetlib.iis.common.utils.AvroGsonFactory;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentMetadata;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
+import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
+import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 /**
  * Document classification spark job.
@@ -29,7 +28,6 @@ import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetad
  */
 
 public class DocumentClassificationJob {
-
     
     private static DocumentToDocClassificationMetadataConverter converter = new DocumentToDocClassificationMetadataConverter();
     
@@ -54,13 +52,17 @@ public class DocumentClassificationJob {
           
             sc.sc().addFile(params.scriptDirPath, true);
             
+            
             JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> documents = SparkAvroLoader.loadJavaRDD(sc, params.inputAvroPath, ExtractedDocumentMetadataMergedWithOriginal.class);
             
             JavaRDD<DocumentMetadata> metadataRecords = documents.map(document -> converter.convert(document)).filter(metadata->StringUtils.isNotBlank(metadata.getAbstract$()));
             
             
-            String dir = SparkFiles.getRootDirectory().replace("\\", "/")+"/scripts";
-            JavaRDD<String> stringDocumentClasses = metadataRecords.pipe("sh " + dir + "/classify_documents.sh " + dir);
+            String scriptsDirOnWorkerNode = (sc.isLocal()) ? SparkFiles.get("scripts") : "scripts";
+            
+            JavaRDD<String> stringDocumentClasses = metadataRecords.pipe("sh " + scriptsDirOnWorkerNode + "/classify_documents.sh" + " " + scriptsDirOnWorkerNode);
+            
+            
             
             JavaRDD<DocumentToDocumentClasses> documentClasses = stringDocumentClasses.map(recordString -> AvroGsonFactory.create().fromJson(recordString, DocumentToDocumentClasses.class));
             
