@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<workflow-app xmlns="uri:oozie:workflow:0.3" name="test-documentsclassification_main_sampletest">
+<workflow-app xmlns="uri:oozie:workflow:0.3" name="test-documentsclassification_main_sampletest_empty_input">
     <start to="producer" />
 
     <action name="producer">
