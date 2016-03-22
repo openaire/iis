@@ -46,9 +46,14 @@ public class StopwordsProducer implements Process {
 		Map<String, Path> output = portBindings.getOutput();
 
         FileSystem fs = FileSystem.get(conf);
-		InputStream inStream = StopwordsProducer.class.getResourceAsStream("eu/dnetlib/iis/core/examples/data/stopwords.db");
-		OutputStream outStream = fs.create(new FileSystemPath(fs, output.get(stopwordsPort)).getPath());
-		IOUtils.copy(inStream, outStream);
+        
+        try (
+                InputStream inStream = StopwordsProducer.class.getResourceAsStream("/eu/dnetlib/iis/core/examples/data/stopwords.db");
+                OutputStream outStream = fs.create(new FileSystemPath(fs, output.get(stopwordsPort)).getPath())) {
+            
+            IOUtils.copy(inStream, outStream);
+        }
+        
 	}
 
 }

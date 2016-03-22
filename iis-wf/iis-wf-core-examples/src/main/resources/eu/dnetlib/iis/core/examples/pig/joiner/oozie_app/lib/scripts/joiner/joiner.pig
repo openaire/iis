@@ -1,25 +1,22 @@
 define AVRO_LOAD_PERSON
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'schema', '$schema_input_person');
+AvroStorage(
+'$schema_input_person');
 
 define AVRO_LOAD_DOCUMENT
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'schema', '$schema_input_document');
+AvroStorage(
+'$schema_input_document');
 
 define AVRO_STORE_DOCS
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'index', '0',
-'schema', '$schema_output_document_with_authors');
+AvroStorage(
+'$schema_output_document_with_authors');
 
 define AVRO_STORE_AUTHORS
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'index', '1',
-'schema', '$schema_output_person_with_documents');
+AvroStorage(
+'$schema_output_person_with_documents');
 
 define AVRO_STORE_AGE
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'index', '2',
-'schema', '$schema_output_person_age');
+AvroStorage(
+'$schema_output_person_age');
 
 people = load '$input_person' using AVRO_LOAD_PERSON;
 docs = load '$input_document' using AVRO_LOAD_DOCUMENT;

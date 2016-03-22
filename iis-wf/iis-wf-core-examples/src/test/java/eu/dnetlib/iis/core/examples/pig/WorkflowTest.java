@@ -75,39 +75,6 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	}
 
 	@Test
-	public void testJoinWithExplicitSchema() throws Exception {
-		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
-		conf.addExpectedOutputAvroDataStore("joiner/document_with_authors");
-		conf.addExpectedOutputAvroDataStore("joiner/person_with_documents");
-		conf.addExpectedOutputAvroDataStore("joiner/person_age");
-		
-		WorkflowTestResult workflowTestResult = 
-				testWorkflow("eu/dnetlib/iis/core/examples/pig/joiner_with_explicit_schema", conf);
-
-		List<DocumentWithAuthors> documentWithAuthors = workflowTestResult.getAvroDataStore("joiner/document_with_authors");
-		List<PersonWithDocuments> personWithDocuments = workflowTestResult.getAvroDataStore("joiner/person_with_documents");
-		List<PersonAge> personAge = workflowTestResult.getAvroDataStore("joiner/person_age");
-
-		/*
-		 * DocumentWithAuthors and PersonWithDocuments objects include nested 
-		 * lists of elements (authors and documents lists, respectively). 
-		 * The order of the elements in the lists does not matter and should 
-		 * not affect the sets comparison. To achieve this, before we can 
-		 * compare the sets, the nested authors and documents lists need to be 
-		 * sorted.
-		 */
-		TestsIOUtils.assertEqualSets(
-				sortAuthorLists(StandardDataStoreExamples.getDocumentWithAuthors()),
-				sortAuthorLists(documentWithAuthors));
-		TestsIOUtils.assertEqualSets(
-				sortDocLists(StandardDataStoreExamples.getPersonWithDocuments()),
-				sortDocLists(personWithDocuments));
-		TestsIOUtils.assertEqualSets(
-				StandardDataStoreExamples.getPersonAge(),
-				personAge);
-	}
-
-	@Test
 	public void testPersonFilteredByDocumentsNumber() throws Exception {
 		OozieWorkflowTestConfiguration conf = new OozieWorkflowTestConfiguration();
 		conf.addExpectedOutputAvroDataStore("filter/person_with_documents");
