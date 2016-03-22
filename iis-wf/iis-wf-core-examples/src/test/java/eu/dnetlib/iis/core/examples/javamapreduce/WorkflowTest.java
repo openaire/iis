@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.core.examples.javamapreduce;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -64,8 +65,8 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 				workflowTestResult.getAvroDataStore("mr_reverse_relation/person");
 	
 		TestsIOUtils.assertEqualSets(
-				StandardDataStoreExamples.getPersonWithDocumentsWithoutDocumentlessPersons(),
-				person);
+		        sortDocuments(StandardDataStoreExamples.getPersonWithDocumentsWithoutDocumentlessPersons()),
+		        sortDocuments(person));
 	}
 	
 	@Test
@@ -194,5 +195,12 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 //		
 //	}
 //	
-	
+
+    private List<PersonWithDocuments> sortDocuments(List<PersonWithDocuments> personsWithDocuments) {
+
+        for (PersonWithDocuments personWithDocuments : personsWithDocuments) {
+            Collections.sort(personWithDocuments.getDocuments(), (x, y) -> x.getId().compareTo(y.getId()));
+        }
+        return personsWithDocuments;
+	}
 }

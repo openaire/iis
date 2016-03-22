@@ -40,15 +40,20 @@ public class DatasetDBProducer implements Process {
 		return outputPorts;	
 	}
 	
-	@Override
-	public void run(PortBindings portBindings, Configuration conf,
-			Map<String, String> parameters)	throws IOException{
-		Map<String, Path> output = portBindings.getOutput();
-
+    @Override
+    public void run(PortBindings portBindings, Configuration conf,
+            Map<String, String> parameters)	throws IOException{
+        Map<String, Path> output = portBindings.getOutput();
+        
         FileSystem fs = FileSystem.get(conf);
-		InputStream inStream = this.getClass().getResourceAsStream("eu/dnetlib/iis/wf/referenceextraction/dataset/data/datasets.db");
-		OutputStream outStream = fs.create(new FileSystemPath(fs, output.get(datasetDBPort)).getPath());
-		IOUtils.copy(inStream, outStream);
+        
+        try (
+                InputStream inStream = this.getClass().getResourceAsStream("/eu/dnetlib/iis/wf/referenceextraction/dataset/data/datasets.db");
+                OutputStream outStream = fs.create(new FileSystemPath(fs, output.get(datasetDBPort)).getPath())) {
+            
+            IOUtils.copy(inStream, outStream);
+        }
+        
 	}
 
 }

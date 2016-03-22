@@ -49,17 +49,21 @@ public class TextDataProducer implements Process {
 		FileSystem fs = FileSystem.get(conf);
 		
 		final String resourceDir = 
-				"eu/dnetlib/iis/core/examples/simple_csv_data";
+				"/eu/dnetlib/iis/core/examples/simple_csv_data";
 		copyResourceToHDFS(fs, resourceDir+"/person.csv", output.get(personPort));
 		copyResourceToHDFS(fs, resourceDir+"/document.csv", output.get(documentPort));
 	}
-	
-	public static void copyResourceToHDFS(
-			FileSystem fs, String resourcePath, Path destination)
-					throws IOException {
-		InputStream in = TextDataProducer.class.getResourceAsStream(resourcePath);
-		OutputStream out = fs.create(destination);
-		IOUtils.copy(in, out);
-	}
+
+    public static void copyResourceToHDFS(
+            FileSystem fs, String resourcePath, Path destination) throws IOException {
+        
+        try (
+                InputStream in = TextDataProducer.class.getResourceAsStream(resourcePath);
+                OutputStream out = fs.create(destination)) {
+            
+            IOUtils.copy(in, out);
+        }
+        
+    }
 
 }

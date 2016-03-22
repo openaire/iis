@@ -29,7 +29,7 @@ public class PersonIdExtractorWorkflowTest extends AbstractOozieWorkflowTestCase
         
         
         // assert
-        TestsIOUtils.assertUtf8TextContentsEqual(this.getClass().getResourceAsStream("eu/dnetlib/iis/core/examples/simple_csv_data/person_id.csv"),
+        TestsIOUtils.assertUtf8TextContentsEqual(this.getClass().getResourceAsStream("/eu/dnetlib/iis/core/examples/simple_csv_data/person_id.csv"),
                 new FileInputStream(workflowTestResult.getWorkflowOutputFile("output/person_id/part-00000")));
     }
 }
