@@ -17,9 +17,9 @@ public class DocumentsSimilarityWorkflowTest extends AbstractOozieWorkflowTestCa
 	public void documentssimilarity_main_workflow() {
 		
 		OozieWorkflowTestConfiguration testConfig = new OozieWorkflowTestConfiguration();
-		testConfig.setTimeoutInSeconds(40*60);
+		testConfig.setTimeoutInSeconds(3600);
 		
-		testWorkflow("eu/dnetlib/iis/workflows/documentssimilarity/main_workflow", testConfig);
+		testWorkflow("eu/dnetlib/iis/wf/documentssimilarity/main_workflow", testConfig);
 		
 	}
 }
