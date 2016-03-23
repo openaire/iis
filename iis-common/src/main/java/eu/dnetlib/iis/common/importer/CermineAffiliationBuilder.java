@@ -27,7 +27,7 @@ public class CermineAffiliationBuilder {
 	 * Creates {@link CermineAffiliation} based on the given node. It is assumed that the node is the result
 	 * of the cermine parsing of some affiliation text. 
 	 */
-	public CermineAffiliation build(Element affNode) {
+    public CermineAffiliation build(Element affNode) {
 	    
         Preconditions.checkNotNull(affNode);
         
