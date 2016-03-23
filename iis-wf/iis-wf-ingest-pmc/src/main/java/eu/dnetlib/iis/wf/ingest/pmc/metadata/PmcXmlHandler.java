@@ -11,12 +11,13 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import eu.dnetlib.iis.common.affiliation.AffiliationBuilder;
+import eu.dnetlib.iis.common.importer.CermineAffiliation;
+import eu.dnetlib.iis.common.importer.CermineAffiliationBuilder;
+import eu.dnetlib.iis.ingest.pmc.metadata.schemas.Affiliation;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.Range;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ReferenceBasicMetadata;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ReferenceMetadata;
-import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
 import pl.edu.icm.cermine.exception.AnalysisException;
 import pl.edu.icm.cermine.exception.TransformationException;
 import pl.edu.icm.cermine.metadata.affiliation.CRFAffiliationParser;
@@ -70,6 +71,10 @@ public class PmcXmlHandler extends DefaultHandler {
 	private Stack<String> parents;
 	
 	private StringBuilder currentValue = new StringBuilder();
+	
+	private CermineAffiliationBuilder cermineAffiliationBuilder = new CermineAffiliationBuilder();
+	private CermineToIngestAffConverter cermineToIngestAffConverter = new CermineToIngestAffConverter();
+	
 	
 	private ReferenceMetadata.Builder currentRefMetaBuilder;
 	
@@ -192,7 +197,8 @@ public class PmcXmlHandler extends DefaultHandler {
 						if (builder.getAffiliations()==null) {
 							builder.setAffiliations(new ArrayList<Affiliation>());
 						}
-						Affiliation aff = AffiliationBuilder.build(parsedAffiliation);
+						CermineAffiliation cAff = cermineAffiliationBuilder.build(parsedAffiliation);
+						Affiliation aff = cermineToIngestAffConverter.convert(cAff);
 						if (aff.getRawText().length()>0) {
 							builder.getAffiliations().add(aff);	
 						} else {
