@@ -86,7 +86,22 @@
   "publisher": null,
   "references": [],
   "authors": [],
-  "affiliations": null,
+   "affiliations": [
+    {
+      "organization": "ICM, UW",
+      "countryName": "Poland",
+      "countryCode": "PL",
+      "address": "Prosta 69, Warszawa",
+      "rawText": "some raw text"
+    },
+    {
+      "organization":"CNR", 
+      "countryName":"Italy", 
+      "countryCode":"IT", 
+      "address":"some address", 
+      "rawText":"some raw text"
+    }
+  ],
   "volume": null,
   "issue": null,
   "pages": {

@@ -15,17 +15,18 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.xpath.XPath;
 
-import pl.edu.icm.cermine.bibref.model.BibEntry;
-import pl.edu.icm.cermine.bibref.transformers.NLMElementToBibEntryConverter;
-import pl.edu.icm.cermine.exception.TransformationException;
-import eu.dnetlib.iis.common.affiliation.AffiliationBuilder;
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
+import eu.dnetlib.iis.common.importer.CermineAffiliation;
+import eu.dnetlib.iis.common.importer.CermineAffiliationBuilder;
 import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
 import eu.dnetlib.iis.metadataextraction.schemas.Author;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.metadataextraction.schemas.Range;
 import eu.dnetlib.iis.metadataextraction.schemas.ReferenceBasicMetadata;
 import eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata;
+import pl.edu.icm.cermine.bibref.model.BibEntry;
+import pl.edu.icm.cermine.bibref.transformers.NLMElementToBibEntryConverter;
+import pl.edu.icm.cermine.exception.TransformationException;
 
 /**
  * NLM {@link Element} converter building {@link DocumentWithBasicMetadata} objects.
@@ -36,6 +37,10 @@ public final class NlmToDocumentWithBasicMetadataConverter {
 
 	private static final Logger log = Logger.getLogger(NlmToDocumentWithBasicMetadataConverter.class);
 	
+	private static CermineToMetadataAffConverter cermineToMetadataAffConverter = new CermineToMetadataAffConverter();
+	
+	private static CermineAffiliationBuilder cermineAffiliationBuilder = new CermineAffiliationBuilder();
+    
 	/**
 	 * Private constructor.
 	 */
@@ -51,9 +56,10 @@ public final class NlmToDocumentWithBasicMetadataConverter {
             }
             Map<String, Affiliation> affiliations = new HashMap<String, Affiliation>();
             for (Element node : nodeList) {
+                CermineAffiliation cAff = cermineAffiliationBuilder.build(node);
                 affiliations.put(
                 		node.getAttributeValue("id"), 
-                		AffiliationBuilder.build(node));
+                		cermineToMetadataAffConverter.convert(cAff));
             }
             return affiliations;
         } catch (JDOMException ex) {
