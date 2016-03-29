@@ -204,10 +204,6 @@
 					<name>output_document_content</name>
 					<value>${workingDir}/transformers_metadataextraction_skip_extracted/tobeprocessed_content</value>
 				</property>
-				<property>
-					<name>output_document_meta</name>
-					<value>${workingDir}/transformers_metadataextraction_skip_extracted/tobereturned_meta</value>
-				</property>
             </configuration>
         </sub-workflow>
 		<ok to="metadata_extractor_on_filtered_input"/>
