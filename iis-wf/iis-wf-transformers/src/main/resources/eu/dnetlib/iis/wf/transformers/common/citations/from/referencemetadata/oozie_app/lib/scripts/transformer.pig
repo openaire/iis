@@ -1,11 +1,6 @@
-define avro_load_input_metadata
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'schema', '$schema_input');
+define avro_load_input_metadata AvroStorage('$schema_input');
 
-define avro_store_output_citations
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'index', '0',
-'schema', '$schema_output');
+define avro_store_output_citations AvroStorage('$schema_output');
 
 define NullToEmptyBag datafu.pig.bags.NullToEmptyBag();
 define EMPTY_MAP eu.dnetlib.iis.common.pig.udfs.EmptyMap;

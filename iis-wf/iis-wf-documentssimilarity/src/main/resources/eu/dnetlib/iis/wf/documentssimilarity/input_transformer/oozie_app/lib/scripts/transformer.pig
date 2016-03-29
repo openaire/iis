@@ -1,16 +1,9 @@
-define avro_load_input_person
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'schema', '$schema_input_person');
+define avro_load_input_person AvroStorage('$schema_input_person');
 
-define avro_load_input_metadata
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'schema', '$schema_input_metadata');
+define avro_load_input_metadata AvroStorage('$schema_input_metadata');
 
 
-define avro_store_output_document_metadata
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'index', '0',
-'schema', '$schema_output_document_metadata');
+define avro_store_output_document_metadata AvroStorage('$schema_output_document_metadata');
 
 
 define NULL_EMPTY eu.dnetlib.iis.common.pig.udfs.EmptyBagToNull;

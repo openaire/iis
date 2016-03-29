@@ -1,11 +1,6 @@
-define avro_load_document_to_research_initiative
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'schema', '$schema_input_document_to_research_initiative');
+define avro_load_document_to_research_initiative AvroStorage('$schema_input_document_to_research_initiative');
 
-define avro_store_document_to_research_initiatives
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'index', '0',
-'schema', '$schema_output_document_to_research_initiatives');
+define avro_store_document_to_research_initiatives AvroStorage('$schema_output_document_to_research_initiatives');
 
 define DEDUPLICATE_IDS_WITH_CONFIDENCE eu.dnetlib.iis.common.pig.udfs.DeduplicateIdsWithConfidence;
 

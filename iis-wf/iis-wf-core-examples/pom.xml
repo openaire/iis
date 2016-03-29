@@ -75,10 +75,6 @@
             <artifactId>pig</artifactId>
         </dependency>
         <dependency>
-			<groupId>org.apache.pig</groupId>
-			<artifactId>piggybank</artifactId>
-		</dependency>
-        <dependency>
             <groupId>org.apache.pig</groupId>
             <artifactId>pigunit</artifactId>
             <scope>test</scope>

@@ -58,11 +58,6 @@
 			<!-- this lib cannot be set to provided -->
 		</dependency>
 		
-		<dependency>
-			<groupId>org.apache.pig</groupId>
-			<artifactId>piggybank</artifactId>
-		</dependency>
-		
 		<!-- Needed to run Pig jobs } -->
         <dependency>
             <groupId>com.google.guava</groupId>

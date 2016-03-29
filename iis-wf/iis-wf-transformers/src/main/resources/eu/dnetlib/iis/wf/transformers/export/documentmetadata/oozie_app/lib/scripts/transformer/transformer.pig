@@ -1,11 +1,6 @@
-define avro_load_extracted_metadata
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'schema', '$schema_input_extracted_metadata');
+define avro_load_extracted_metadata AvroStorage('$schema_input_extracted_metadata');
 
-define avro_store_metadata
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'index', '0',
-'schema', '$schema_output_metadata');
+define avro_store_metadata AvroStorage('$schema_output_metadata');
 
 extr_meta = load '$input_extracted_metadata' using avro_load_extracted_metadata;
 
