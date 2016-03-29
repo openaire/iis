@@ -1,15 +1,8 @@
-define avro_load_base_metadata
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'schema', '$schema_input_base_metadata');
+define avro_load_base_metadata AvroStorage('$schema_input_base_metadata');
 
-define avro_load_extracted_metadata
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'schema', '$schema_input_extracted_metadata');
+define avro_load_extracted_metadata AvroStorage('$schema_input_extracted_metadata');
 
-define avro_store_merged_metadata
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'index', '0',
-'schema', '$schema_output_merged_metadata');
+define avro_store_merged_metadata AvroStorage('$schema_output_merged_metadata');
 
 define FIRST_NOT_NULL_STR eu.dnetlib.iis.common.pig.udfs.StringFirstNotEmpty;
 define FIRST_NOT_NULL_INT eu.dnetlib.iis.common.pig.udfs.IntegerFirstNotEmpty;

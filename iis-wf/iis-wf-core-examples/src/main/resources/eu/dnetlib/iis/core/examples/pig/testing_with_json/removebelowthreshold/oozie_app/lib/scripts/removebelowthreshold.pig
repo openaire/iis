@@ -1,11 +1,6 @@
-define avro_load_input_from_project_reference_extraction
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'schema', '$schema_input_from_project_reference_extraction');
+define avro_load_input_from_project_reference_extraction AvroStorage('$schema_input_from_project_reference_extraction');
 
-define avro_store_output
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'index', '0',
-'schema', '$schema_output');
+define avro_store_output AvroStorage('$schema_output');
 
 
 input_from_project_reference_extraction = load '$input_from_project_reference_extraction' using avro_load_input_from_project_reference_extraction;

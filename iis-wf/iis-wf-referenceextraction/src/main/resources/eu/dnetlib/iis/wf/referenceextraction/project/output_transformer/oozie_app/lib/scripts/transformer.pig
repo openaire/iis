@@ -1,19 +1,10 @@
-define avro_load_document_to_project
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'schema', '$schema_input_document_to_project');
+define avro_load_document_to_project AvroStorage('$schema_input_document_to_project');
 
-define avro_load_project
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'schema', '$schema_input_project');
+define avro_load_project AvroStorage('$schema_input_project');
 
-define avro_load_concept
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'schema', '$schema_input_concept');
+define avro_load_concept AvroStorage('$schema_input_concept');
 
-define avro_store_document_to_concept
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'index', '0',
-'schema', '$schema_output');
+define avro_store_document_to_concept AvroStorage('$schema_output');
 
 documentToProject = load '$input_document_to_project' using avro_load_document_to_project;
 

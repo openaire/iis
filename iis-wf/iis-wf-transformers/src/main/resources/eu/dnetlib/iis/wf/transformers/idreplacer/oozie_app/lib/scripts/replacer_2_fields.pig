@@ -1,16 +1,9 @@
-define avro_load_input
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'schema', '$schema_input_main');
+define avro_load_input AvroStorage('$schema_input_main');
 
-define avro_load_id_mapping
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'schema', '$schema_input_id_mapping');
+define avro_load_id_mapping AvroStorage('$schema_input_id_mapping');
 
 
-define avro_store_output
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'index', '0',
-'schema', '$schema_output');
+define avro_store_output AvroStorage('$schema_output');
 
 
 define IDREPLACE eu.dnetlib.iis.common.pig.udfs.IdReplacerUDF;

@@ -1,11 +1,6 @@
-define avro_load_project
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'schema', '$schema');
+define avro_load_project AvroStorage('$schema');
 
-define avro_store_project
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'index', '0',
-'schema', '$schema');
+define avro_store_project AvroStorage('$schema');
 
 project = load '$input' using avro_load_project;
 

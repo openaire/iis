@@ -1,20 +1,10 @@
-define avro_load_document_content
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'schema', '$schema_document_content');
+define avro_load_document_content AvroStorage('$schema_document_content');
 
-define avro_load_document_meta
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'schema', '$schema_document_meta');
+define avro_load_document_meta AvroStorage('$schema_document_meta');
 
-define avro_store_document_content
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'index', '0',
-'schema', '$schema_document_content');
+define avro_store_document_content AvroStorage('$schema_document_content');
 
-define avro_store_document_meta
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'index', '1',
-'schema', '$schema_document_meta');
+define avro_store_document_meta AvroStorage('$schema_document_meta');
 
 documentContent = load '$input_document_content' using avro_load_document_content;
 documentMeta = load '$input_document_meta' using avro_load_document_meta;
