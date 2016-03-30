@@ -28,10 +28,5 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	public void testMainEmptyAbstractWorkflow() throws Exception {
     	testWorkflow("eu/dnetlib/iis/workflows/documentsclassification/main/sampletest_empty_abstract");
 	}
-   
-    @Test
-	public void testMainNullTaxonomyWorkflow() throws Exception {
-    	testWorkflow("eu/dnetlib/iis/workflows/documentsclassification/main/sampletest_null_taxonomy");
-	}
     
 }
