@@ -28,4 +28,9 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
     public void testToDocumentTextConversion() throws Exception {
         testWorkflow("eu/dnetlib/iis/wf/transformers/metadataextraction/documenttext/sampledataproducer");
     }
+    
+    @Test
+    public void testSkipExtractedWithoutMeta() throws Exception {
+        testWorkflow("eu/dnetlib/iis/wf/transformers/metadataextraction/skip_extracted_without_meta/sampledataproducer");
+    }
 }
