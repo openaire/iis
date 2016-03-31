@@ -423,22 +423,18 @@
 
 	<action name="import">
 		<sub-workflow>
-			<app-path>${wf:appPath()}/mainworkflows_common_import</app-path>
+			<app-path>${wf:appPath()}/mainworkflows_primary_import</app-path>
 			<propagate-configuration />
 			<configuration>
 				<property>
 					<name>workingDir</name>
-					<value>${workingDir}/mainworkflows_common_import/working_dir
+					<value>${workingDir}/mainworkflows_primary_import/working_dir
 					</value>
 				</property>
 				<!-- importing modes -->
 				<property>
 					<name>match_content_with_metadata</name>
 					<value>${match_content_with_metadata}</value>
-				</property>
-				<property>
-					<name>active_import_metadata</name>
-					<value>true</value>
 				</property>
 				<property>
 					<name>active_import_dataset</name>
@@ -547,35 +543,35 @@
 				<!-- output parameters -->
 				<property>
 					<name>output_extracted_document_metadata</name>
-					<value>${workingDir}/mainworkflows_common_import/extracted_document_metadata</value>
+					<value>${workingDir}/mainworkflows_primary_import/extracted_document_metadata</value>
 				</property>
 				<property>
 					<name>output_metadataimport_root</name>
-					<value>${workingDir}/mainworkflows_common_import/metadataimport</value>
+					<value>${workingDir}/mainworkflows_primary_import/metadataimport</value>
 				</property>
 				<property>
 					<name>output_dataset</name>
-					<value>${workingDir}/mainworkflows_common_import/dataset</value>
+					<value>${workingDir}/mainworkflows_primary_import/dataset</value>
 				</property>
 				<property>
 					<name>output_dataset_to_mdstore</name>
-					<value>${workingDir}/mainworkflows_common_import/dataset_to_mdstore</value>
+					<value>${workingDir}/mainworkflows_primary_import/dataset_to_mdstore</value>
 				</property>
 				<property>
 					<name>output_document_text</name>
-					<value>${workingDir}/mainworkflows_common_import/document-text</value>
+					<value>${workingDir}/mainworkflows_primary_import/document-text</value>
 				</property>
 				<property>
 					<name>output_project_concept</name>
-					<value>${workingDir}/mainworkflows_common_import/project-concept</value>
+					<value>${workingDir}/mainworkflows_primary_import/project-concept</value>
 				</property>
 				<property>
 					<name>output_wos</name>
-					<value>${workingDir}/mainworkflows_common_import/wos</value>
+					<value>${workingDir}/mainworkflows_primary_import/wos</value>
 				</property>
 				<property>
 					<name>output_faults</name>
-					<value>${workingDir}/mainworkflows_common_import/faults</value>
+					<value>${workingDir}/mainworkflows_primary_import/faults</value>
 				</property>
 			</configuration>
 		</sub-workflow>
@@ -590,44 +586,44 @@
 			<configuration>
 				<property>
 					<name>input_document_metadata</name>
-					<value>${workingDir}/mainworkflows_common_import/metadataimport/docmeta
+					<value>${workingDir}/mainworkflows_primary_import/metadataimport/docmeta
 					</value>
 				</property>
 				<property>
 					<name>input_document_to_project</name>
-					<value>${workingDir}/mainworkflows_common_import/metadataimport/docproject
+					<value>${workingDir}/mainworkflows_primary_import/metadataimport/docproject
 					</value>
 				</property>
 				<property>
 					<name>input_document_text</name>
-					<value>${workingDir}/mainworkflows_common_import/document-text
+					<value>${workingDir}/mainworkflows_primary_import/document-text
 					</value>
 				</property>
 				<property>
 					<name>input_document_text_wos</name>
-					<value>${workingDir}/mainworkflows_common_import/wos</value>
+					<value>${workingDir}/mainworkflows_primary_import/wos</value>
 				</property>
 				<property>
 					<name>input_project</name>
-					<value>${workingDir}/mainworkflows_common_import/metadataimport/project
+					<value>${workingDir}/mainworkflows_primary_import/metadataimport/project
 					</value>
 				</property>
 				<property>
 					<name>input_person</name>
-					<value>${workingDir}/mainworkflows_common_import/metadataimport/person
+					<value>${workingDir}/mainworkflows_primary_import/metadataimport/person
 					</value>
 				</property>
 				<property>
 					<name>input_dataset</name>
-					<value>${workingDir}/mainworkflows_common_import/dataset</value>
+					<value>${workingDir}/mainworkflows_primary_import/dataset</value>
 				</property>
 				<property>
 					<name>input_extracted_document_metadata</name>
-					<value>${workingDir}/mainworkflows_common_import/extracted_document_metadata</value>
+					<value>${workingDir}/mainworkflows_primary_import/extracted_document_metadata</value>
 				</property>
 				<property>
 					<name>input_project_concept</name>
-					<value>${workingDir}/mainworkflows_common_import/project-concept</value>
+					<value>${workingDir}/mainworkflows_primary_import/project-concept</value>
 				</property>
 				<property>
 					<name>output_document_to_project</name>
@@ -687,7 +683,7 @@
 				</property>
 				<property>
 					<name>input_extracted_metadata</name>
-					<value>${workingDir}/mainworkflows_common_import/extracted_document_metadata
+					<value>${workingDir}/mainworkflows_primary_import/extracted_document_metadata
 					</value>
 				</property>
 				<property>
@@ -756,7 +752,7 @@
 				</property>
 				<property>
 					<name>input_document_to_mdstore</name>
-					<value>${workingDir}/mainworkflows_common_import/dataset_to_mdstore</value>
+					<value>${workingDir}/mainworkflows_primary_import/dataset_to_mdstore</value>
 				</property>
 				<property>
 					<name>input_document_to_research_initiatives</name>
@@ -911,7 +907,7 @@
 				</property>
 				<property>
 					<name>input_document_to_mdstore</name>
-					<value>${workingDir}/mainworkflows_common_import/dataset_to_mdstore</value>
+					<value>${workingDir}/mainworkflows_primary_import/dataset_to_mdstore</value>
 				</property>
 				<property>
 					<name>input_document_to_research_initiatives</name>
