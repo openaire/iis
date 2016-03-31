@@ -725,12 +725,12 @@
 
 	<action name="export-to-actionmanager">
 		<sub-workflow>
-			<app-path>${wf:appPath()}/mainworkflows_common_export</app-path>
+			<app-path>${wf:appPath()}/mainworkflows_primary_export</app-path>
 			<propagate-configuration />
 			<configuration>
 				<property>
 					<name>workingDir</name>
-					<value>${workingDir}/mainworkflows_common_export/working_dir
+					<value>${workingDir}/mainworkflows_primary_export/working_dir
 					</value>
 				</property>
 				<!-- input ports -->
@@ -881,7 +881,7 @@
 
 	<action name="export-to-json">
 		<sub-workflow>
-			<app-path>${wf:appPath()}/mainworkflows_common_export_to_json</app-path>
+			<app-path>${wf:appPath()}/mainworkflows_primary_export_to_json</app-path>
 			<propagate-configuration />
 			<configuration>
 				<!-- input ports -->
