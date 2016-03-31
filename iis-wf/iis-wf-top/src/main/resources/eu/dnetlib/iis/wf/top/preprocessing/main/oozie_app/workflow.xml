@@ -567,12 +567,12 @@
 
 	<action name="export-to-actionmanager">
 		<sub-workflow>
-			<app-path>${wf:appPath()}/mainworkflows_common_export</app-path>
+			<app-path>${wf:appPath()}/mainworkflows_preprocessing_export</app-path>
 			<propagate-configuration />
 			<configuration>
 				<property>
 					<name>workingDir</name>
-					<value>${workingDir}/mainworkflows_common_export/working_dir</value>
+					<value>${workingDir}/mainworkflows_preprocessing_export/working_dir</value>
 				</property>
 				<!-- input ports -->
 				<property>
@@ -592,14 +592,6 @@
 					<value>${workingDir}/mainworkflows_preprocessing_import/dataset_to_mdstore</value>
 				</property>
 				<!-- entities exporting modes -->
-				<property>
-					<name>active_export_referenceddataset_datasets</name>
-					<value>true</value>
-				</property>
-				<property>
-					<name>active_export_referencedproject_entities</name>
-					<value>true</value>
-				</property>
 				<property>
 					<name>mdstore_service_location</name>
 					<value>${import_mdstore_service_location}</value>
@@ -673,7 +665,7 @@
 
 	<action name="export-to-json">
 		<sub-workflow>
-			<app-path>${wf:appPath()}/mainworkflows_common_export_to_json</app-path>
+			<app-path>${wf:appPath()}/mainworkflows_preprocessing_export_to_json</app-path>
 			<propagate-configuration />
 			<configuration>
 				<property>

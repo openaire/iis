@@ -780,10 +780,6 @@
 					<value>${active_referenceextraction_dataset}</value>
 				</property>
 				<property>
-					<name>active_export_referencedproject_entities</name>
-					<value>false</value>
-				</property>
-				<property>
 					<name>mdstore_service_location</name>
 					<value>${import_mdstore_service_location}</value>
 				</property>

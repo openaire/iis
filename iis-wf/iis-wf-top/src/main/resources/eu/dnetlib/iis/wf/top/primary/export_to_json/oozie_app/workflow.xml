@@ -1,4 +1,4 @@
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="mainworkflows_common_export_to_json">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="mainworkflows_primary_export_to_json">
 	
 	<parameters>
 		<!-- input ports -->

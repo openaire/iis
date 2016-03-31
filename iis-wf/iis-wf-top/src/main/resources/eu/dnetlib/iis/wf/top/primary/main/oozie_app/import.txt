@@ -4,5 +4,5 @@ mainworkflows_primary_import classpath eu/dnetlib/iis/wf/top/primary/import/oozi
 mainworkflows_primary_processing classpath eu/dnetlib/iis/wf/top/primary/processing/oozie_app
 transformers_export_documentmetadata classpath eu/dnetlib/iis/wf/transformers/export/documentmetadata/oozie_app
 transformers_idextractor classpath eu/dnetlib/iis/wf/transformers/importer/documentmetadata/idextractor/oozie_app
-mainworkflows_common_export classpath eu/dnetlib/iis/wf/top/common/export/oozie_app
-mainworkflows_common_export_to_json classpath eu/dnetlib/iis/wf/top/common/export_to_json/oozie_app
+mainworkflows_primary_export classpath eu/dnetlib/iis/wf/top/primary/export/oozie_app
+mainworkflows_primary_export_to_json classpath eu/dnetlib/iis/wf/top/primary/export_to_json/oozie_app
