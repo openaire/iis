@@ -1,13 +1,6 @@
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="mainworkflows_common_import">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="mainworkflows_primary_import">
 	<parameters>
 		<!-- importing modes -->
-		<property>
-			<name>active_import_metadata</name>
-			<value>false</value>
-			<description>flag indicating HBase metadata import should be enabled,
-				when set to false db-based project import will be performed
-			</description>
-		</property>
 		<property>
 			<name>active_import_dataset</name>
 			<value>false</value>
@@ -85,18 +78,6 @@
 				set to true
 			</description>
 		</property>
-		<!-- import project related -->
-		<!-- will be used when active_import_metadata=false -->
-		<property>
-			<name>database_service_location</name>
-			<value>$UNDEFINED$</value>
-			<description>Database service (not WSDL) location URL</description>
-		</property>
-		<property>
-			<name>database_dbname</name>
-			<value>dnet_openaireplus_node6_t</value>
-			<description>database name</description>
-		</property>
 		<!-- import datacite related -->
 		<property>
 			<name>mdstore_service_location</name>
@@ -111,7 +92,6 @@
 		<!-- import content related -->
 		<property>
 			<name>objectstore_service_location</name>
-			<value>$UNDEFINED$</value>
 			<description>object store service location required for content	retrieval</description>
 		</property>
 		<property>
@@ -175,7 +155,6 @@
 		</property>
 		<property>
 			<name>metadataextraction_default_cache_location</name>
-			<value>/cache/metadataextraction</value>
 			<description>metadata extraction HDFS cache location</description>
 		</property>
 		<!-- metadata import output subdirectory names -->
@@ -215,9 +194,7 @@
 		<property>
 			<name>output_metadataimport_root</name>
 			<value>$UNDEFINED$</value>
-			<description>metadata importer output root directory, required when
-				${active_import_metadata}=true
-			</description>
+			<description>metadata importer output root directory</description>
 		</property>
 		<property>
 			<name>output_dataset</name>
@@ -273,7 +250,7 @@
 
 	<fork name="import_forking">
 		<path start="decision-import_concept" />
-		<path start="decision-metadata_importer" />
+		<path start="metadata_importer" />
 		<path start="decision-import_dataset" />
 	</fork>
 
@@ -330,13 +307,6 @@
 		<ok to="import_joining" />
 		<error to="fail" />
 	</action>
-
-	<decision name="decision-metadata_importer">
-		<switch>
-			<case to="metadata_importer">${active_import_metadata eq "true"}</case>
-			<default to="import_project" />
-		</switch>
-	</decision>
 
 	<action name="metadata_importer">
 		<sub-workflow>
@@ -402,27 +372,7 @@
 				</property>
 			</configuration>
 		</sub-workflow>
-		<ok to="decision-import_content_url" />
-		<error to="fail" />
-	</action>
-
-	<action name="import_project">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/import_project</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/import_project/working_dir</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${output_metadataimport_root}/${metadataimport_output_name_project}</value>
-				</property>
-				<!-- all the other properties are autmatically propagated -->
-			</configuration>
-		</sub-workflow>
-		<ok to="decision-import_content_url" />
+		<ok to="input_id_mapping-path-setter" />
 		<error to="fail" />
 	</action>
 
@@ -480,18 +430,11 @@
 		<error to="fail" />
 	</action>
 
-	<decision name="decision-import_content_url">
-		<switch>
-			<case to="skip-import_content_url">${objectstore_service_location eq "$UNDEFINED$"}</case>
-			<default to="input_id_mapping-path-setter" />
-		</switch>
-	</decision>
-
 	<action name='input_id_mapping-path-setter'>
 		<java>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.oozie.property.ConditionalPropertySetter</arg>
-			<arg>-Pcondition=${active_import_metadata eq "true" and match_content_with_metadata eq "true"}</arg>
+			<arg>-Pcondition=${match_content_with_metadata eq "true"}</arg>
 			<arg>-PinCaseOfTrue=${output_metadataimport_root}/${metadataimport_output_name_dedup_mapping}</arg>
 			<arg>-PelseCase=$UNDEFINED$</arg>
 			<capture-output />
@@ -504,7 +447,7 @@
 		<java>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.oozie.property.ConditionalPropertySetter</arg>
-			<arg>-Pcondition=${active_import_metadata eq "true" and match_content_with_metadata eq "true"}</arg>
+			<arg>-Pcondition=${match_content_with_metadata eq "true"}</arg>
 			<arg>-PinCaseOfTrue=${workingDir}/transformers_idextractor/output</arg>
 			<arg>-PelseCase=$UNDEFINED$</arg>
 			<capture-output />
@@ -561,39 +504,12 @@
 		<error to="fail" />
 	</action>
 
-	<action name="skip-import_content_url">
-		<java>
-			<prepare>
-				<!-- notice: directory have to aligned with skipped action output -->
-				<delete path="${nameNode}${workingDir}/import_content_url" />
-				<delete path="${nameNode}${output_document_text}" />
-				<delete path="${nameNode}${output_extracted_document_metadata}" />
-				<mkdir path="${nameNode}${workingDir}/import_content_url" />
-			</prepare>
-			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
-			<arg>-C{document_text,
-				eu.dnetlib.iis.metadataextraction.schemas.DocumentText,
-				eu/dnetlib/iis/wf/top/data/empty.json}
-			</arg>
-			<arg>-C{extracted_document_metadata,
-				eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
-				eu/dnetlib/iis/wf/top/data/empty.json}
-			</arg>
-			<!-- notice: directory have to aligned with skipped action output -->
-			<arg>-Odocument_text=${output_document_text}</arg>
-			<arg>-Oextracted_document_metadata=${output_extracted_document_metadata}</arg>
-		</java>
-		<ok to="import_joining" />
-		<error to="fail" />
-	</action>
-
 	<fork name="import_urlbased_forking">
 		<path start="import_plaintext" />
 		<path start="import_wos" />
 		<path start="import_plaintext_pmc" />
 		<path start="import_html" />
-		<path start="decision-metadata_extractor_use_cache" />
+		<path start="metadata_extractor_cached" />
 	</fork>
 
 	<action name="import_plaintext">
@@ -707,7 +623,7 @@
 				</property>
 				<property>
 					<name>ingest_metadata</name>
-					<value>${active_import_metadata eq "true" and active_ingest_pmc eq "true"}</value>
+					<value>${active_ingest_pmc eq "true"}</value>
 				</property>
 			</configuration>
 		</sub-workflow>
@@ -767,7 +683,6 @@
 		<error to="fail" />
 	</action>
 
-
 	<action name="ingest_html_plaintext">
 		<sub-workflow>
 			<app-path>${wf:appPath()}/ingest_html_plaintext</app-path>
@@ -790,14 +705,6 @@
 		<ok to="import_urlbased_joining" />
 		<error to="fail" />
 	</action>
-
-	<!-- metadata extraction section -->
-	<decision name="decision-metadata_extractor_use_cache">
-		<switch>
-			<case to="metadata_extractor">${metadataextraction_default_cache_location eq "$UNDEFINED$"}</case>
-			<default to="metadata_extractor_cached" />
-		</switch>
-	</decision>
 
 	<action name="metadata_extractor_cached">
 		<sub-workflow>
@@ -843,56 +750,6 @@
 		<error to="fail" />
 	</action>
 
-	<action name="metadata_extractor">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/metadataextraction</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/metadata_extractor/working_dir</value>
-				</property>
-				<!-- enabling streaming mode -->
-				<property>
-					<name>processing_mode</name>
-					<value>StreamingMetadataExtractorMapper</value>
-				</property>
-				<property>
-					<name>inputport_classname</name>
-					<value>eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl</value>
-				</property>
-				<property>
-					<name>input</name>
-					<value>${workingDir}/import_content_url/imported/pdf</value>
-				</property>
-				<property>
-					<name>excluded_ids</name>
-					<value>${metadataextraction_excluded_checksums}</value>
-				</property>
-				<property>
-					<name>max_file_size_mb</name>
-					<value>${pdf_max_file_size_mb}</value>
-				</property>
-				<property>
-					<name>output_name_meta</name>
-					<value>meta</value>
-				</property>
-				<property>
-					<name>output_name_fault</name>
-					<value>fault</value>
-				</property>
-				<property>
-					<name>output_root</name>
-					<value>${workingDir}/metadata_extractor/out</value>
-				</property>
-				<!-- all the other properties are autmatically propagated -->
-			</configuration>
-		</sub-workflow>
-		<ok to="import_urlbased_joining" />
-		<error to="fail" />
-	</action>
-	<!-- end of metadata extraction section -->
-
 	<join name="import_urlbased_joining" to="transformers_common_union_document_text" />
 
 	<!-- merging document text datastores: 1) retrieved directly from objectstore 
@@ -929,7 +786,7 @@
 	</action>
 
 	<!-- merging extracted document metadata datastores (including new text 
-		field): 1) extracted from PDF documents 2) ingested from PMC documents -->
+		field): 1) extracted from PDF documents 2) ingested from XML JATS documents -->
 	<action name="union_extracted_document_metadata">
 		<sub-workflow>
 			<app-path>${wf:appPath()}/transformers_common_union</app-path>

@@ -1,4 +1,4 @@
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="mainworkflows_common_export">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="mainworkflows_primary_export">
 	
 	<parameters>
 		<!-- input ports -->
@@ -54,18 +54,9 @@
 			<description>flag indicating dataset entities should be exported</description>
 		</property>
 		<property>
-			<name>active_export_referencedproject_entities</name>
-			<description>flag indicating publication entities should be exported</description>
-		</property>
-		<property>
 			<name>mdstore_service_location</name>
 			<value>$UNDEFINED$</value>
-			<description>mdstore service location required for reading dataset and publication entities which will be exported to action manager</description>
-		</property>
-		<property>
-			<name>wos_mdstore_id</name>
-			<value>$UNDEFINED$</value>
-			<description>mdstore holding WoS publication entities to be exported</description>
+			<description>mdstore service location required for reading dataset entities which will be exported to action manager</description>
 		</property>
 		<!-- export related -->
 		<property>
@@ -121,11 +112,6 @@
 			<name>action_set_id_document_pdb</name>
 			<value>$UNDEFINED$</value>
 			<description>document protein databank action-set identifier of exported data</description>
-		</property>
-		<property>
-			<name>action_set_id_entity_wos</name>
-			<value>$UNDEFINED$</value>
-			<description>action-set identifier of exported data containing wos entities</description>
 		</property>
 		<property>
 			<name>action_set_id_entity_dataset</name>
@@ -212,7 +198,7 @@
                 </property>
             </configuration>
         </sub-workflow>
-		<ok to="export_entities_forking"/>
+		<ok to="decision-exporter-dataset-entities"/>
 		<error to="fail" />
 	</action>
  
@@ -231,21 +217,16 @@
                 </property>
             </configuration>
         </sub-workflow>
-		<ok to="export_entities_forking"/>
+		<ok to="decision-exporter-dataset-entities"/>
 		<error to="fail" />
 	</action>
- 
- 	<fork name="export_entities_forking">
-    	<path start="decision-exporter-dataset-entities"/>
-    	<path start="decision-exporter-document-entities"/>
-    </fork>
  
  	<!-- dataset entities export section -->
  	<decision name="decision-exporter-dataset-entities">
         <switch>
         	<!-- exporting dataset entities only when export flag is set AND input path was defined -->
             <case to="transformers_export_identifier_document_to_dataset">${active_export_referenceddataset_datasets eq "true" and input_document_to_dataset ne "$UNDEFINED$"}</case>
-            <default to="export_entities_joining"/>
+            <default to="decision-distcp_output"/>
         </switch>
     </decision>
  	
@@ -291,63 +272,10 @@
 			<arg>-Pexport.seq.file.output.dir.root=${workingDir}/output/entities_dataset</arg>
 			<arg>-Pexport.seq.file.output.dir.name=${action_set_id_entity_dataset}</arg>
 		</java>
-		<ok to="export_entities_joining" />
+		<ok to="decision-distcp_output" />
 		<error to="fail" />
 	</action>
     <!-- end of dataset entities export section -->
-    
-    <!-- publication entities export section -->
-    <decision name="decision-exporter-document-entities">
-        <switch>
-            <case to="transformers_export_identifier_document_to_project">${active_export_referencedproject_entities eq "true" and input_document_to_project ne "$UNDEFINED$"}</case>
-            <default to="export_entities_joining"/>
-        </switch>
-    </decision>
- 	<action name="transformers_export_identifier_document_to_project">
-	    <sub-workflow>
-            <app-path>${wf:appPath()}/transformers_export_identifier_document_to_project</app-path>
-            <propagate-configuration/>
-            <configuration>
-				<property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/export_identifier_documents/working_dir</value>
-                </property>
-                <property>
-					<name>input_document_to_project</name>
-					<value>${input_document_to_project}</value>
-				</property>
-				<property>
-					<name>output_identifier</name>
-					<value>${workingDir}/identifier/documents</value>
-				</property>
-            </configuration>
-        </sub-workflow>
-        <ok to="exporter-document-entities"/>
-		<error to="fail" />
-    </action>
- 
- 	<action name="exporter-document-entities">
-		<java>
-			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.wf.export.actionmanager.entity.document.DocumentExporterProcess</arg>
-			<arg>-Iinput=${workingDir}/identifier/documents</arg>
-			
-			<arg>-Pexport.entity.mdstore.service.location=${mdstore_service_location}</arg>
-			<arg>-Pexport.entity.mdstore.id=${wos_mdstore_id}</arg>
-			<arg>-Pexport.action.setid=${action_set_id_entity_wos}</arg>
-			<arg>-Pexport.action.hbase.table.name=${action_hbase_table_name}</arg>
-			<arg>-Pexport.action.hbase.remote.zookeeper.quorum=${action_hbase_remote_zookeeper_quorum}</arg>
-			<arg>-Pexport.action.hbase.remote.zookeeper.clientport=${action_hbase_remote_zookeeper_clientport}</arg>
-			<arg>-Pexport.seq.file.active=${output_remote_location ne "$UNDEFINED$"}</arg>
-			<arg>-Pexport.seq.file.output.dir.root=${workingDir}/output/entities_document</arg>
-			<arg>-Pexport.seq.file.output.dir.name=${action_set_id_entity_wos}</arg>
-		</java>
-		<ok to="export_entities_joining" />
-		<error to="fail" />
-	</action>
-    <!-- end of publication entities export section -->
-    
-    <join name="export_entities_joining" to="decision-distcp_output"/>
 
     <decision name="decision-distcp_output">
         <switch>
