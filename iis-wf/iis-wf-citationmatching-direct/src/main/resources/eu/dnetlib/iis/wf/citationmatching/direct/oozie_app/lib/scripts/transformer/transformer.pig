@@ -1,11 +1,6 @@
-define avro_load_metadata
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'schema', '$schema_input');
+define avro_load_metadata AvroStorage('$schema_input');
 
-define avro_store_citation
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'index', '0',
-'schema', '$schema_output');
+define avro_store_citation AvroStorage('$schema_output');
 
 define NullToEmptyBag datafu.pig.bags.NullToEmptyBag();
 define DeduplicateIdsWithDocumentType eu.dnetlib.iis.wf.citationmatching.direct.udfs.DeduplicateIdsWithDocumentType;

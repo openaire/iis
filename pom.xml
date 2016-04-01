@@ -419,13 +419,6 @@
             
 			</dependency>
 
-         
-						
-			<dependency>
-				<groupId>org.apache.pig</groupId>
-				<artifactId>piggybank</artifactId>
-				<version>${iis.pig.version}</version>
-			</dependency>
 		    
 		    <dependency>
 		    	<groupId>org.apache.pig</groupId>

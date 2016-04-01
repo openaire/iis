@@ -1,11 +1,6 @@
-define avro_load_metadata
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'schema', '$schema_input');
+define avro_load_metadata AvroStorage('$schema_input');
 
-define avro_store_metadata
-org.apache.pig.piggybank.storage.avro.AvroStorage(
-'index', '0',
-'schema', '$schema_output');
+define avro_store_metadata AvroStorage('$schema_output');
 
 define EMPTY_TO_NULL eu.dnetlib.iis.common.pig.udfs.EmptyBagToNull;
 
@@ -15,7 +10,7 @@ output_metadata = foreach pmc_metadata {
     refsWithFlatMeta = foreach references generate position, flatten(basicMetadata), text;
     parsed_flat_references = foreach refsWithFlatMeta generate 
         position as position:int,
-        basicMetadata::authors as authors,
+        basicMetadata::authors as refAuthors,
         basicMetadata::title as title:chararray, 
         basicMetadata::source as source:chararray,
         basicMetadata::volume as volume:chararray,
@@ -28,10 +23,9 @@ output_metadata = foreach pmc_metadata {
         null as url:chararray, 
         text as text:chararray,
         basicMetadata::externalIds as externalIds,
---		notice: we cannot place anything after flattened pages, avro serialization error occurs otherwise        
-        flatten(basicMetadata::pages) as (start:chararray, end:chararray);
+        basicMetadata::pages as pages;
     parsed_references = foreach parsed_flat_references generate
-      	(title, authors, (start, end), source, volume, year, edition, publisher, location, series, issue, url, externalIds) as basicMetadata,
+      	(title, refAuthors, pages, source, volume, year, edition, publisher, location, series, issue, url, externalIds) as basicMetadata,
       	position as position:int, 
       	text as text:chararray;
     empty_authors = (bag{tuple(chararray,bag{tuple(int)})}){};

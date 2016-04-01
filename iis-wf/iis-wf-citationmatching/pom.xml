@@ -97,11 +97,6 @@
         </dependency>
         
         <dependency>
-            <groupId>org.apache.pig</groupId>
-            <artifactId>piggybank</artifactId>
-        </dependency>
-        
-        <dependency>
           <groupId>com.linkedin.datafu</groupId>
           <artifactId>datafu</artifactId>
         </dependency>
