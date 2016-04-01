@@ -360,12 +360,8 @@
 				<!-- metadata extraction related are autmatically propagated -->
 				<!-- output parameters -->
 				<property>
-					<name>output_extracted_document_metadata</name>
-					<value>${workingDir}/mainworkflows_preprocessing_import/extracted_document_metadata</value>
-				</property>
-				<property>
-					<name>output_metadataimport_root</name>
-					<value>${workingDir}/mainworkflows_preprocessing_import/metadataimport</value>
+					<name>output_project</name>
+					<value>${workingDir}/mainworkflows_preprocessing_import/project</value>
 				</property>
 				<property>
 					<name>output_dataset</name>
@@ -391,11 +387,6 @@
 					<name>output_faults</name>
 					<value>${workingDir}/mainworkflows_preprocessing_import/faults</value>
 				</property>
-				<!-- TODO output_wos is part of common/import and should replace output_wos_text!!! Currently this directory is not used!!! -->
-				<property>
-					<name>output_wos</name>
-					<value>${workingDir}/mainworkflows_preprocessing_import/wos</value>
-				</property>
 			</configuration>
 		</sub-workflow>
 		<ok to="referenceextraction_forking" />
@@ -403,63 +394,9 @@
 	</action>
 
 	<fork name="referenceextraction_forking">
-		<path start="transformers_extracted_document_metadata_to_text" />
+		<path start="referenceextraction_dataset" />
 		<path start="ingest_webcrawl_fundings" />
 	</fork>
-
-	<action name="transformers_extracted_document_metadata_to_text">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformer_metadataextraction_documenttext</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/transformer_metadataextraction_documenttext/working_dir</value>
-				</property>
-				<property>
-					<name>input</name>
-					<value>${workingDir}/mainworkflows_preprocessing_import/extracted_document_metadata</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${workingDir}/transformer_metadataextraction_documenttext/out</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="transformers_common_union_document_text" />
-		<error to="fail" />
-	</action>
-
-	<action name="transformers_common_union_document_text">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_common_union</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/transformers_common_union_document_text/working_dir</value>
-				</property>
-				<property>
-					<name>input_a</name>
-					<value>${workingDir}/transformer_metadataextraction_documenttext/out</value>
-				</property>
-				<property>
-					<name>input_b</name>
-					<value>${workingDir}/mainworkflows_preprocessing_import/document-text</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${workingDir}/transformers_common_union_document_text/out</value>
-				</property>
-				<property>
-					<name>schema</name>
-					<value>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="referenceextraction_dataset" />
-		<error to="fail" />
-	</action>
 
 	<action name="referenceextraction_dataset">
 		<sub-workflow>
@@ -472,7 +409,7 @@
 				</property>
 				<property>
 					<name>input_document_text</name>
-					<value>${workingDir}/transformers_common_union_document_text/out</value>
+					<value>${workingDir}/mainworkflows_preprocessing_import/document-text</value>
 				</property>
 				<property>
 					<name>input_dataset</name>
@@ -526,7 +463,7 @@
 				</property>
 				<property>
 					<name>input</name>
-					<value>${workingDir}/mainworkflows_preprocessing_import/metadataimport/project</value>
+					<value>${workingDir}/mainworkflows_preprocessing_import/project</value>
 				</property>
 				<property>
 					<name>output</name>
@@ -580,7 +517,7 @@
 				</property>
 				<property>
 					<name>input_project</name>
-					<value>${workingDir}/mainworkflows_preprocessing_import/metadataimport/project</value>
+					<value>${workingDir}/mainworkflows_preprocessing_import/project</value>
 				</property>
 				<property>
 					<name>input_concept</name>
@@ -630,12 +567,12 @@
 
 	<action name="export-to-actionmanager">
 		<sub-workflow>
-			<app-path>${wf:appPath()}/mainworkflows_common_export</app-path>
+			<app-path>${wf:appPath()}/mainworkflows_preprocessing_export</app-path>
 			<propagate-configuration />
 			<configuration>
 				<property>
 					<name>workingDir</name>
-					<value>${workingDir}/mainworkflows_common_export/working_dir</value>
+					<value>${workingDir}/mainworkflows_preprocessing_export/working_dir</value>
 				</property>
 				<!-- input ports -->
 				<property>
@@ -655,14 +592,6 @@
 					<value>${workingDir}/mainworkflows_preprocessing_import/dataset_to_mdstore</value>
 				</property>
 				<!-- entities exporting modes -->
-				<property>
-					<name>active_export_referenceddataset_datasets</name>
-					<value>true</value>
-				</property>
-				<property>
-					<name>active_export_referencedproject_entities</name>
-					<value>true</value>
-				</property>
 				<property>
 					<name>mdstore_service_location</name>
 					<value>${import_mdstore_service_location}</value>
@@ -736,7 +665,7 @@
 
 	<action name="export-to-json">
 		<sub-workflow>
-			<app-path>${wf:appPath()}/mainworkflows_common_export_to_json</app-path>
+			<app-path>${wf:appPath()}/mainworkflows_preprocessing_export_to_json</app-path>
 			<propagate-configuration />
 			<configuration>
 				<property>
