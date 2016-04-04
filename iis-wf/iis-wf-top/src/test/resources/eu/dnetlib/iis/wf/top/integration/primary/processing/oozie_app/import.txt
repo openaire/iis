@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-mainworkflows_primary_processing classpath eu/dnetlib/iis/wf/top/primary/processing/oozie_app

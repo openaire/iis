@@ -1,4 +1,4 @@
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="metadataextraction_cached_by_checksum">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="importer_plaintext_cached_by_checksum">
 	
 	<parameters>
 		<property>
@@ -6,18 +6,8 @@
 			<description>input document content directory</description>
 		</property>
 		<property>
-			<name>output_root</name>
-			<description>metadata extraction output directory</description>
-		</property>
-		<property>
-			<name>excluded_ids</name>
-			<value>$UNDEFINED$</value>
-			<description>list of content identifiers excluded from metadataextraction processing</description>
-		</property>
-		<property>
-			<name>max_file_size_mb</name>
-			<value>500</value>
-			<description>maximum allowed file size in Megabytes</description>
+			<name>output</name>
+			<description>plaintext importer output directory</description>
 		</property>
 		<property>
 			<name>content_connection_timeout</name>
@@ -36,23 +26,12 @@
 		</property>
 		<property>
 			<name>default_cache_location</name>
-			<value>/cache/metadataextraction</value>
 			<description>default cache location stored in HDFS</description>
 		</property>
 		<property>
 			<name>mapred_max_split_size</name>
 			<value>50000</value>
 			<description>maximum input data split size, required by streaming version reading DocumentContentUrl to split input data into more chunks</description>
-		</property>
-		<property>
-			<name>output_name_meta</name>
-			<value>meta</value>
-			<description>metadata output subdirectory name</description>
-		</property>
-		<property>
-			<name>output_name_fault</name>
-			<value>fault</value>
-			<description>fault output subdirectory name</description>
 		</property>
 	</parameters>
 
@@ -88,18 +67,18 @@
 				</property>
             </configuration>
         </sub-workflow>
-		<ok to="metadataextraction_cached"/>
+		<ok to="importer_plaintext_cached"/>
 		<error to="fail" />
 	</action>
 	
-	<action name="metadataextraction_cached">
+	<action name="importer_plaintext_cached">
 		<sub-workflow>
-            <app-path>${wf:appPath()}/metadataextraction_cached</app-path>
+            <app-path>${wf:appPath()}/importer_plaintext_cached</app-path>
             <propagate-configuration/>
             <configuration>
             	<property>
                     <name>workingDir</name>
-                    <value>${workingDir}/metadataextraction_cached/working_dir</value>
+                    <value>${workingDir}/importer_plaintext_cached/working_dir</value>
                 </property>
                 <property>
                 	<!-- checksum identified input -->
@@ -107,63 +86,42 @@
 					<value>${workingDir}/preprocessing/output</value>
 				</property>
 				<property>
-					<name>output_root</name>
-					<value>${workingDir}/metadataextraction_cached/out</value>
+					<name>output</name>
+					<value>${workingDir}/importer_plaintext_cached/out</value>
 				</property>
 				<!-- all the other properties are autmatically propagated-->
             </configuration>
         </sub-workflow>
-		<ok to="postprocessing-forking"/>
+		<ok to="postprocessing-text"/>
 		<error to="fail" />
 	</action>
     
-    <fork name="postprocessing-forking">
-    	<path start="postprocessing-meta"/>
-        <path start="postprocessing-fault"/>
-    </fork>
-    
-    <action name="postprocessing-meta">
+    <action name="postprocessing-text">
 		<sub-workflow>
-            <app-path>${wf:appPath()}/transformers_metadataextraction_checksum_postprocessing_meta</app-path>
+            <app-path>${wf:appPath()}/transformers_metadataextraction_checksum_postprocessing_text</app-path>
             <propagate-configuration/>
             <configuration>
             	<property>
                     <name>workingDir</name>
-                    <value>${workingDir}/postprocessing_meta/working_dir</value>
+                    <value>${workingDir}/postprocessing_text/working_dir</value>
                 </property>
                 <property>
 					<name>input_document_content_url</name>
 					<value>${input}</value>
 				</property>
 				<property>
-					<name>input_extracted_document_metadata</name>
-					<value>${workingDir}/metadataextraction_cached/out/${output_name_meta}</value>
+					<name>input_document_text</name>
+					<value>${workingDir}/importer_plaintext_cached/out</value>
 				</property>
 				<property>
 					<name>output</name>
-					<value>${output_root}/${output_name_meta}</value>
+					<value>${output}</value>
 				</property>
             </configuration>
         </sub-workflow>
-		<ok to="postprocessing-joining"/>
+		<ok to="end"/>
 		<error to="fail" />
 	</action>
-    
-    <action name="postprocessing-fault">
-       <distcp xmlns="uri:oozie:distcp-action:0.1">
-           <job-tracker>${jobTracker}</job-tracker>
-           <name-node>${nameNode}</name-node>
-           <prepare>
-				<delete path="${nameNode}${output_root}/${output_name_fault}" />
-		   </prepare>
-           <arg>${nameNode}${workingDir}/metadataextraction_cached/out/${output_name_fault}</arg>
-           <arg>${nameNode}${output_root}/${output_name_fault}</arg>
-           </distcp>
-       <ok to="postprocessing-joining"/>
-       <error to="fail"/>
-	</action>
-    
-    <join name="postprocessing-joining" to="end"/>
     
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:

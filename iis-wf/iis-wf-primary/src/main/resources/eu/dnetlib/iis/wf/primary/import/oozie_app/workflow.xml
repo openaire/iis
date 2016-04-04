@@ -1,0 +1,874 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="primary_import">
+	<parameters>
+		<!-- importing modes -->
+		<property>
+			<name>active_import_dataset</name>
+			<value>false</value>
+			<description>flag indicating dataset import should be enabled</description>
+		</property>
+		<property>
+			<name>active_ingest_pmc</name>
+			<value>false</value>
+			<description>flag indicating pmc metadata and citations ingestions
+				should be performed</description>
+		</property>
+		<property>
+			<name>active_import_concept</name>
+			<value>false</value>
+			<description>flag indicating concept import should be executed</description>
+		</property>
+		<property>
+			<name>match_content_with_metadata</name>
+			<value>true</value>
+			<description>flag indicating contents should be filtered and their
+				identifiers should be deduplicated against metadata entries
+				retrieved from InformationSpace. This way only contents having
+				metadata representation will be processed.
+				To be disabled when processing new contents which metadata is not
+				available in hbase or when original identifiers should be preserved
+				(contents will not be filtered as well).</description>
+		</property>
+		<!-- import metadata related -->
+		<property>
+			<name>hbase_input_table</name>
+			<value>$UNDEFINED$</value>
+			<description>HBase input table holding InformationSpace, available on local cluster</description>
+		</property>
+		<property>
+			<name>hbase_approved_datasources_csv</name>
+			<value>$UNDEFINED$</value>
+			<description>CSV list of datasource ids to be approved during import.
+				Applied on result and person entities.
+			</description>
+		</property>
+		<property>
+			<name>inference_provenance_blacklist</name>
+			<value>iis::.*</value>
+			<description>list of blacklisted inference provenance which sould not
+				be taken into account by importer, skipped when set to $UNDEFINED$
+			</description>
+		</property>
+		<property>
+			<name>trust_level_threshold</name>
+			<value>$UNDEFINED$</value>
+			<description>trust level threshold represented as float value,
+				ignored when set to $UNDEFINED$ value
+			</description>
+		</property>
+		<property>
+			<name>merge_body_with_updates</name>
+			<value>false</value>
+			<description>flag indicating Oaf objects strored in body qualifier
+				should be merged with Oaf objects stored in update qualifier
+			</description>
+		</property>
+		<!-- import concepts related -->
+		<property>
+			<name>islookup_service_location</name>
+			<value>$UNDEFINED$</value>
+			<description>IS Lookup service location, required only when
+				active_import_concept is set to true
+			</description>
+		</property>
+		<property>
+			<name>project_concepts_context_ids_csv</name>
+			<value>$UNDEFINED$</value>
+			<description>comma separated list of concepts context identifiers to
+				be picked by ISLookup, required only when active_import_concept is
+				set to true
+			</description>
+		</property>
+		<!-- import datacite related -->
+		<property>
+			<name>mdstore_service_location</name>
+			<value>$UNDEFINED$</value>
+			<description>MDStore service (not WSDL) location URL</description>
+		</property>
+		<property>
+			<name>dataset_mdstore_ids_csv</name>
+			<value>$UNDEFINED$</value>
+			<description>MDStore identifier</description>
+		</property>
+		<!-- import content related -->
+		<property>
+			<name>objectstore_service_location</name>
+			<description>object store service location required for content	retrieval</description>
+		</property>
+		<property>
+			<name>approved_objectstores_csv</name>
+			<value>$UNDEFINED$</value>
+			<description>CSV list of object stores identifiers to be processed</description>
+		</property>
+		<property>
+			<name>mimetypes_pdf</name>
+			<description>pdf mime types</description>
+		</property>
+		<property>
+			<name>mimetypes_text</name>
+			<description>text mime types</description>
+		</property>
+		<property>
+			<name>mimetypes_html</name>
+			<description>html mime types</description>
+		</property>
+		<property>
+			<name>mimetypes_xml_pmc</name>
+			<description>xml pmc types</description>
+		</property>
+		<property>
+			<name>mimetypes_wos</name>
+			<description>wos types</description>
+		</property>
+		<!-- import timeouts related -->
+		<property>
+			<name>resultset_client_read_timeout</name>
+			<value>60000</value>
+			<description>resultset client read timeout</description>
+		</property>
+		<property>
+			<name>content_connection_timeout</name>
+			<value>60000</value>
+			<description>import content connection timeout</description>
+		</property>
+		<property>
+			<name>content_read_timeout</name>
+			<value>60000</value>
+			<description>import content read timeout</description>
+		</property>
+		<property>
+			<name>text_xml_max_file_size_mb</name>
+			<value>$UNDEFINED$</value>
+			<description>maximum allowed xml or text file size in Megabytes</description>
+		</property>
+		<!-- metadata extraction related -->
+		<property>
+			<name>metadataextraction_excluded_checksums</name>
+			<value>$UNDEFINED$</value>
+			<description>list of content checksums excluded from
+				metadataextraction processing
+			</description>
+		</property>
+		<property>
+			<name>pdf_max_file_size_mb</name>
+			<value>$UNDEFINED$</value>
+			<description>maximum allowed pdf file size in Megabytes</description>
+		</property>
+		<property>
+			<name>metadataextraction_default_cache_location</name>
+			<description>metadata extraction HDFS cache location</description>
+		</property>
+		<!-- metadata import output subdirectory names -->
+		<property>
+			<name>metadataimport_output_name_document_meta</name>
+			<value>docmeta</value>
+			<description>metadata import docmeta output subdirectory name</description>
+		</property>
+		<property>
+			<name>metadataimport_output_name_document_project</name>
+			<value>docproject</value>
+			<description>metadata import document to project relation
+				subdirectory name
+			</description>
+		</property>
+		<property>
+			<name>metadataimport_output_name_project</name>
+			<value>project</value>
+			<description>metadata import project output subdirectory name</description>
+		</property>
+		<property>
+			<name>metadataimport_output_name_person</name>
+			<value>person</value>
+			<description>metadata import person output subdirectory name</description>
+		</property>
+		<property>
+			<name>metadataimport_output_name_dedup_mapping</name>
+			<value>dedupmapping</value>
+			<description>metadata import deduplication mapping output
+				subdirectory name</description>
+		</property>
+		<!-- output parameters -->
+		<property>
+			<name>output_extracted_document_metadata</name>
+			<description>extracted document metadata output directory</description>
+		</property>
+		<property>
+			<name>output_metadataimport_root</name>
+			<value>$UNDEFINED$</value>
+			<description>metadata importer output root directory</description>
+		</property>
+		<property>
+			<name>output_dataset</name>
+			<description>dataset importer output directory holding dataset
+				metadata, required when ${active_import_dataset}=true
+			</description>
+		</property>
+		<property>
+			<name>output_dataset_to_mdstore</name>
+			<description>dataset importer output directory holding dataset to
+				mdstore mappings, required when ${active_import_dataset}=true
+			</description>
+		</property>
+		<property>
+			<name>output_document_text</name>
+			<description>text import output directory. merged from three
+				different sources</description>
+		</property>
+		<property>
+			<name>output_wos</name>
+			<description>wos import output directory</description>
+		</property>
+		<property>
+			<name>output_project_concept</name>
+			<description>project concepts output directory</description>
+		</property>
+		<property>
+			<name>output_faults</name>
+			<description>processing faults output directory</description>
+		</property>
+		<property>
+			<name>remove_sideproducts</name>
+			<value>true</value>
+			<description>flag indicating whole workingDir will be erased.
+				Notice: do not provide any output directory location 
+				pointing to workingDir subdirectory!
+			</description>
+		</property>
+	</parameters>
+
+	<global>
+		<job-tracker>${jobTracker}</job-tracker>
+		<name-node>${nameNode}</name-node>
+		<configuration>
+			<property>
+				<name>mapred.job.queue.name</name>
+				<value>${queueName}</value>
+			</property>
+		</configuration>
+	</global>
+
+	<start to="import_forking" />
+
+	<fork name="import_forking">
+		<path start="decision-import_concept" />
+		<path start="metadata_importer" />
+		<path start="decision-import_dataset" />
+	</fork>
+
+	<decision name="decision-import_concept">
+		<switch>
+			<case to="import_concept">${active_import_concept eq "true"}</case>
+			<default to="skip-import_concept" />
+		</switch>
+	</decision>
+
+	<action name="import_concept">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/import_concept</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/import_concept/working_dir</value>
+				</property>
+				<property>
+					<name>islookup_service_location</name>
+					<value>${islookup_service_location}</value>
+				</property>
+				<property>
+					<name>context_ids_csv</name>
+					<value>${project_concepts_context_ids_csv}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${output_project_concept}</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="import_joining" />
+		<error to="fail" />
+	</action>
+
+	<action name="skip-import_concept">
+		<java>
+			<prepare>
+				<!-- notice: directory have to aligned with skipped action output -->
+				<delete path="${nameNode}${workingDir}/import_concept" />
+				<delete path="${nameNode}${output_project_concept}" />
+				<mkdir path="${nameNode}${workingDir}/import_concept" />
+			</prepare>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+			<arg>-C{concept,
+				eu.dnetlib.iis.importer.schemas.Concept,
+				eu/dnetlib/iis/common/data/empty.json}
+			</arg>
+			<arg>-Oconcept=${output_project_concept}</arg>
+		</java>
+		<ok to="import_joining" />
+		<error to="fail" />
+	</action>
+
+	<action name="metadata_importer">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/import_mapred</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/import/working_dir</value>
+				</property>
+				<property>
+					<name>approved_datasources_csv</name>
+					<value>${hbase_approved_datasources_csv}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${output_metadataimport_root}</value>
+				</property>
+				<!-- subdirectory names -->
+				<property>
+					<name>output_name_document_meta</name>
+					<value>${metadataimport_output_name_document_meta}</value>
+				</property>
+				<property>
+					<name>output_name_document_project</name>
+					<value>${metadataimport_output_name_document_project}</value>
+				</property>
+				<property>
+					<name>output_name_project</name>
+					<value>${metadataimport_output_name_project}</value>
+				</property>
+				<property>
+					<name>output_name_person</name>
+					<value>${metadataimport_output_name_person}</value>
+				</property>
+				<property>
+					<name>output_name_dedup_mapping</name>
+					<value>${metadataimport_output_name_dedup_mapping}</value>
+				</property>
+				<!-- all the other properties are autmatically propagated -->
+			</configuration>
+		</sub-workflow>
+		<ok to="transformers-idextractor" />
+		<error to="fail" />
+	</action>
+
+	<action name="transformers-idextractor">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_idextractor</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/transformers_idextractor/working_dir</value>
+				</property>
+				<property>
+					<name>input_document_metadata</name>
+					<value>${output_metadataimport_root}/${metadataimport_output_name_document_meta}</value>
+				</property>
+				<property>
+					<name>output_identifier</name>
+					<value>${workingDir}/transformers_idextractor/output</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="input_id_mapping-path-setter" />
+		<error to="fail" />
+	</action>
+
+	<decision name="decision-import_dataset">
+		<switch>
+			<case to="import_dataset">${active_import_dataset eq "true"}</case>
+			<default to="skip-import_dataset" />
+		</switch>
+	</decision>
+
+	<action name="import_dataset">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/import_dataset</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/import_dataset/working_dir</value>
+				</property>
+				<property>
+					<name>mdstore_ids_csv</name>
+					<value>${dataset_mdstore_ids_csv}</value>
+				</property>
+				<!-- all the other properties are autmatically propagated -->
+			</configuration>
+		</sub-workflow>
+		<ok to="import_joining" />
+		<error to="fail" />
+	</action>
+
+	<action name="skip-import_dataset">
+		<java>
+			<prepare>
+				<!-- notice: directory have to aligned with skipped action output -->
+				<delete path="${nameNode}${workingDir}/import_dataset" />
+				<delete path="${nameNode}${output_dataset}" />
+				<delete path="${nameNode}${output_dataset_to_mdstore}" />
+				<mkdir path="${nameNode}${workingDir}/import_dataset" />
+			</prepare>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+			<arg>-C{dataset,
+				eu.dnetlib.iis.importer.schemas.DataSetReference,
+				eu/dnetlib/iis/common/data/empty.json}
+			</arg>
+			<arg>-C{dataset_to_mdstore,
+				eu.dnetlib.iis.importer.schemas.DocumentToMDStore,
+				eu/dnetlib/iis/common/data/empty.json}
+			</arg>
+			<!-- notice: directory have to aligned with skipped action output -->
+			<arg>-Odataset=${output_dataset}</arg>
+			<arg>-Odataset_to_mdstore=${output_dataset_to_mdstore}</arg>
+		</java>
+		<ok to="import_joining" />
+		<error to="fail" />
+	</action>
+
+	<action name='input_id_mapping-path-setter'>
+		<java>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.oozie.property.ConditionalPropertySetter</arg>
+			<arg>-Pcondition=${match_content_with_metadata eq "true"}</arg>
+			<arg>-PinCaseOfTrue=${output_metadataimport_root}/${metadataimport_output_name_dedup_mapping}</arg>
+			<arg>-PelseCase=$UNDEFINED$</arg>
+			<capture-output />
+		</java>
+		<ok to="input_id-path-setter" />
+		<error to="fail" />
+	</action>
+
+	<action name='input_id-path-setter'>
+		<java>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.oozie.property.ConditionalPropertySetter</arg>
+			<arg>-Pcondition=${match_content_with_metadata eq "true"}</arg>
+			<arg>-PinCaseOfTrue=${workingDir}/transformers_idextractor/output</arg>
+			<arg>-PelseCase=$UNDEFINED$</arg>
+			<capture-output />
+		</java>
+		<ok to="import_content_url" />
+		<error to="fail" />
+	</action>
+
+	<action name="import_content_url">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/import_content_url</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/import_content_url/working_dir</value>
+				</property>
+				<property>
+					<name>input_id</name>
+					<value>${wf:actionData('input_id-path-setter')['result']}</value>
+				</property>
+				<property>
+					<name>input_id_mapping</name>
+					<value>${wf:actionData('input_id_mapping-path-setter')['result']}</value>
+				</property>
+				<property>
+					<name>output_root</name>
+					<value>${workingDir}/import_content_url/imported</value>
+				</property>
+				<property>
+					<name>output_name_pdf</name>
+					<value>pdf</value>
+				</property>
+				<property>
+					<name>output_name_text</name>
+					<value>text</value>
+				</property>
+				<property>
+					<name>output_name_html</name>
+					<value>html</value>
+				</property>
+				<property>
+					<name>output_name_xml_pmc</name>
+					<value>xmlpmc</value>
+				</property>
+				<property>
+					<name>output_name_wos</name>
+					<value>wos</value>
+				</property>
+				<!-- all the other properties are autmatically propagated -->
+			</configuration>
+		</sub-workflow>
+		<ok to="import_urlbased_forking" />
+		<error to="fail" />
+	</action>
+
+	<fork name="import_urlbased_forking">
+		<path start="import_plaintext" />
+		<path start="import_wos" />
+		<path start="import_plaintext_pmc" />
+		<path start="import_html" />
+		<path start="metadata_extractor_cached" />
+	</fork>
+
+	<action name="import_plaintext">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/import_plaintext</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/import_plaintext/working_dir</value>
+				</property>
+				<property>
+					<name>input</name>
+					<value>${workingDir}/import_content_url/imported/text</value>
+				</property>
+				<property>
+					<name>max_file_size_mb</name>
+					<value>${text_xml_max_file_size_mb}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${workingDir}/import_plaintext/imported</value>
+				</property>
+				<!-- all the other properties are autmatically propagated -->
+			</configuration>
+		</sub-workflow>
+		<ok to="import_urlbased_joining" />
+		<error to="fail" />
+	</action>
+
+	<action name="import_wos">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/import_plaintext</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/import_wos/working_dir</value>
+				</property>
+				<property>
+					<name>input</name>
+					<value>${workingDir}/import_content_url/imported/wos</value>
+				</property>
+				<property>
+					<name>max_file_size_mb</name>
+					<value>${text_xml_max_file_size_mb}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${output_wos}</value>
+				</property>
+				<!-- all the other properties are autmatically propagated -->
+			</configuration>
+		</sub-workflow>
+		<ok to="import_urlbased_joining" />
+		<error to="fail" />
+	</action>
+
+	<action name="import_plaintext_pmc">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/import_plaintext</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/import_plaintext_pmc/working_dir</value>
+				</property>
+				<property>
+					<name>input</name>
+					<value>${workingDir}/import_content_url/imported/xmlpmc</value>
+				</property>
+				<property>
+					<name>max_file_size_mb</name>
+					<value>${text_xml_max_file_size_mb}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${workingDir}/import_plaintext_pmc/imported</value>
+				</property>
+				<!-- all the other properties are autmatically propagated -->
+			</configuration>
+		</sub-workflow>
+		<ok to="ingest_pmc_metadata_with_text" />
+		<error to="fail" />
+	</action>
+
+	<action name="ingest_pmc_metadata_with_text">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/ingest_pmc_metadata</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/ingest_pmc_metadata/working_dir</value>
+				</property>
+				<property>
+					<name>input</name>
+					<value>${workingDir}/import_plaintext_pmc/imported</value>
+				</property>
+				<property>
+					<name>output_root</name>
+					<value>${workingDir}/ingest_pmc_metadata/out</value>
+				</property>
+				<property>
+					<name>output_name_meta</name>
+					<value>meta</value>
+				</property>
+				<property>
+					<name>output_name_fault</name>
+					<value>fault</value>
+				</property>
+				<property>
+					<name>ingest_metadata</name>
+					<value>${active_ingest_pmc eq "true"}</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="transformers_ingest_pmc_metadata" />
+		<error to="fail" />
+	</action>
+
+	<action name="transformers_ingest_pmc_metadata">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_ingest_pmc_metadata</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/transformers_ingest_pmc_metadata/working_dir</value>
+				</property>
+				<property>
+					<name>input</name>
+					<value>${workingDir}/ingest_pmc_metadata/out/meta</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${workingDir}/transformers_ingest_pmc_metadata/out</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="import_urlbased_joining" />
+		<error to="fail" />
+	</action>
+
+	<!-- html import and plaintext ingestion section -->
+	<action name="import_html">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/import_plaintext</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/import_html/working_dir</value>
+				</property>
+				<property>
+					<name>input</name>
+					<value>${workingDir}/import_content_url/imported/html</value>
+				</property>
+				<property>
+					<name>max_file_size_mb</name>
+					<value>${text_xml_max_file_size_mb}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${workingDir}/import_html/imported</value>
+				</property>
+				<!-- all the other properties are autmatically propagated -->
+			</configuration>
+		</sub-workflow>
+		<ok to="ingest_html_plaintext" />
+		<error to="fail" />
+	</action>
+
+	<action name="ingest_html_plaintext">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/ingest_html_plaintext</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/ingest_html_plaintext/working_dir</value>
+				</property>
+				<property>
+					<name>input</name>
+					<value>${workingDir}/import_html/imported</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${workingDir}/ingest_html_plaintext/imported</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="import_urlbased_joining" />
+		<error to="fail" />
+	</action>
+
+	<action name="metadata_extractor_cached">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/metadataextraction_cached</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/metadata_extractor/working_dir</value>
+				</property>
+				<property>
+					<name>input</name>
+					<value>${workingDir}/import_content_url/imported/pdf</value>
+				</property>
+				<property>
+					<name>excluded_ids</name>
+					<value>${metadataextraction_excluded_checksums}</value>
+				</property>
+				<property>
+					<name>max_file_size_mb</name>
+					<value>${pdf_max_file_size_mb}</value>
+				</property>
+				<property>
+					<name>default_cache_location</name>
+					<value>${metadataextraction_default_cache_location}</value>
+				</property>
+				<property>
+					<name>output_name_meta</name>
+					<value>meta</value>
+				</property>
+				<property>
+					<name>output_name_fault</name>
+					<value>fault</value>
+				</property>
+				<property>
+					<name>output_root</name>
+					<value>${workingDir}/metadata_extractor/out</value>
+				</property>
+				<!-- all the other properties are autmatically propagated -->
+			</configuration>
+		</sub-workflow>
+		<ok to="import_urlbased_joining" />
+		<error to="fail" />
+	</action>
+
+	<join name="import_urlbased_joining" to="transformers_common_union_document_text" />
+
+	<!-- merging document text datastores: 1) retrieved directly from objectstore 
+		3) ingested from HTML -->
+	<action name="transformers_common_union_document_text">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_common_union</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/transformers_common_union_document_text/working_dir</value>
+				</property>
+				<property>
+					<name>input_a</name>
+					<value>${workingDir}/import_plaintext/imported</value>
+				</property>
+				<property>
+					<name>input_b</name>
+					<value>${workingDir}/ingest_html_plaintext/imported</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${output_document_text}</value>
+				</property>
+				<property>
+					<name>schema</name>
+					<value>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="union_extracted_document_metadata" />
+		<error to="fail" />
+	</action>
+
+	<!-- merging extracted document metadata datastores (including new text 
+		field): 1) extracted from PDF documents 2) ingested from XML JATS documents -->
+	<action name="union_extracted_document_metadata">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_common_union</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/transformers_common_union_extracted_document_metadata/working_dir</value>
+				</property>
+				<property>
+					<name>input_a</name>
+					<value>${workingDir}/transformers_ingest_pmc_metadata/out</value>
+				</property>
+				<property>
+					<name>input_b</name>
+					<value>${workingDir}/metadata_extractor/out/meta</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${output_extracted_document_metadata}</value>
+				</property>
+				<property>
+					<name>schema</name>
+					<value>eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="import_joining" />
+		<error to="fail" />
+	</action>
+
+	<join name="import_joining" to="init-faults-dir" />
+
+	<action name="init-faults-dir">
+		<fs>
+			<delete path="${nameNode}${output_faults}" />
+			<mkdir path="${nameNode}${output_faults}" />
+		</fs>
+		<ok to="preserve-metadataextraction-faults" />
+		<error to="fail" />
+	</action>
+
+	<action name="preserve-metadataextraction-faults">
+		<distcp xmlns="uri:oozie:distcp-action:0.1">
+			<job-tracker>${jobTracker}</job-tracker>
+			<name-node>${nameNode}</name-node>
+			<arg>${nameNode}${workingDir}/metadata_extractor/out/fault</arg>
+			<arg>${nameNode}${output_faults}/metadataextraction</arg>
+		</distcp>
+		<ok to="preserve-ingest_pmc_metadata-faults" />
+		<error to="fail" />
+	</action>
+
+	<action name="preserve-ingest_pmc_metadata-faults">
+		<distcp xmlns="uri:oozie:distcp-action:0.1">
+			<job-tracker>${jobTracker}</job-tracker>
+			<name-node>${nameNode}</name-node>
+			<arg>${nameNode}${workingDir}/ingest_pmc_metadata/out/fault</arg>
+			<arg>${nameNode}${output_faults}/ingest_pmc_metadata</arg>
+		</distcp>
+		<ok to="finalize" />
+		<error to="fail" />
+	</action>
+
+	<decision name="finalize">
+		<switch>
+			<case to="remove_sideproducts">${remove_sideproducts eq "true"}</case>
+			<default to="end" />
+		</switch>
+	</decision>
+
+	<action name="remove_sideproducts">
+		<fs>
+			<delete path="${nameNode}${workingDir}" />
+		</fs>
+		<ok to="end" />
+		<error to="fail" />
+	</action>
+
+	<kill name="fail">
+		<message>Unfortunately, the process failed -- error message:
+			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+	</kill>
+	<end name="end" />
+</workflow-app>

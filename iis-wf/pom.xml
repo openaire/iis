@@ -21,7 +21,8 @@
        <module>iis-wf-ingest-pmc</module>
        <module>iis-wf-metadataextraction</module>
        <module>iis-wf-referenceextraction</module>
-       <module>iis-wf-top</module>
+       <module>iis-wf-preprocessing</module>
+       <module>iis-wf-primary</module>
        <module>iis-wf-transformers</module>
     </modules>
     <pluginRepositories>
