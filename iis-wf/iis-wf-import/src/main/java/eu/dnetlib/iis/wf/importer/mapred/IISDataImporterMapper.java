@@ -43,12 +43,14 @@ import eu.dnetlib.iis.common.schemas.IdentifierMapping;
 import eu.dnetlib.iis.common.utils.ByteArrayUtils;
 import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
 import eu.dnetlib.iis.importer.schemas.DocumentToProject;
+import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.importer.schemas.Person;
 import eu.dnetlib.iis.importer.schemas.Project;
 import eu.dnetlib.iis.wf.importer.converter.CitationConverter;
 import eu.dnetlib.iis.wf.importer.converter.DeduplicationMappingConverter;
 import eu.dnetlib.iis.wf.importer.converter.DocumentMetadataConverter;
 import eu.dnetlib.iis.wf.importer.converter.DocumentToProjectConverter;
+import eu.dnetlib.iis.wf.importer.converter.OrganizationConverter;
 import eu.dnetlib.iis.wf.importer.converter.PersonConverter;
 import eu.dnetlib.iis.wf.importer.converter.ProjectConverter;
 import eu.dnetlib.iis.wf.importer.input.approver.ComplexApprover;
@@ -83,6 +85,8 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 	private static final String OUTPUT_NAME_PERSON = "output.name.person";
 	
 	private static final String OUTPUT_NAME_DEDUP_MAPPING = "output.name.dedup_mapping";
+
+    private static final String OUTPUT_NAME_ORGANIZATION = "output.name.organization";
 	
 	private String outputNameDocumentMeta;
 	
@@ -95,6 +99,8 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 	private String outputNamePerson;
 	
 	private String outputNameDedupMapping;
+	
+	private String outputNameOrganization;
 	
 	private String encoding = HBaseConstants.STATIC_FIELDS_ENCODING_UTF8;
 
@@ -115,6 +121,9 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 	private PersonConverter personConverter;
 	
 	private ProjectConverter projectConverter;
+	
+	private OrganizationConverter organizationConverter;
+	
 	
 	/**
 	 * Flag indicating Oaf retrieved from body CF should be merged with all update collumns.
@@ -184,6 +193,8 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 						Outcome.RelName.isProducedBy.toString()));
 		personConverter = new PersonConverter(encoding, resultApprover);
 		projectConverter = new ProjectConverter(encoding, resultApprover);
+		organizationConverter = new OrganizationConverter();
+		
 		mos = new MultipleOutputs(context);
 		
 //		setting output subdirectory names
@@ -211,6 +222,11 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 		if (outputNameDedupMapping==null) {
 			throw new RuntimeException("deduplication mapping output name not provided!");
 		}
+		outputNameOrganization = context.getConfiguration().get(OUTPUT_NAME_ORGANIZATION);
+        if (outputNameOrganization==null) {
+            throw new RuntimeException("organization output name not provided!");
+        }
+        
 	}
 	
 	@Override
@@ -226,16 +242,29 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 	@Override
 	public void map(ImmutableBytesWritable row, Result value, Context context)
 			throws InterruptedException, IOException {
-		final byte[] idBytes = row.get();
+		
+	    final byte[] idBytes = row.get();
+		
 		if (ByteArrayUtils.startsWith(idBytes, HBaseConstants.ROW_PREFIX_RESULT)) {
 			handleResult(idBytes, value, context);
-		} else if (ByteArrayUtils.startsWith(idBytes, HBaseConstants.ROW_PREFIX_PERSON)) {
+		} 
+		
+		else if (ByteArrayUtils.startsWith(idBytes, HBaseConstants.ROW_PREFIX_PERSON)) {
 			handlePerson(idBytes, value, context);
-		} else if (ByteArrayUtils.startsWith(idBytes, HBaseConstants.ROW_PREFIX_PROJECT)) {
+		} 
+		
+		else if (ByteArrayUtils.startsWith(idBytes, HBaseConstants.ROW_PREFIX_PROJECT)) {
 			handleProject(idBytes, value, context);
 		}
+		
+		else if (ByteArrayUtils.startsWith(idBytes, HBaseConstants.ROW_PREFIX_ORGANIZATION)) {
+            handleOrganization(idBytes, value, context);
+        }
 	}
 
+	
+	//------------------------ PRIVATE --------------------------
+	
 	/**
 	 * Handles result row.
 	 * @param row
@@ -294,23 +323,44 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 	}
 	
 	/**
-	 * Handles project row.
-	 * @param idBytes
-	 * @param value
-	 * @param context
-	 * @throws InterruptedException
-	 * @throws IOException
+	 * Handles organization row.
+	 * 
 	 */
-	private void handleProject(final byte[] idBytes, 
-			Result value, Context context) throws InterruptedException, IOException {
-		Oaf oafObj = buildOafObject(idBytes, value, HBaseConstants.getCollumnFamily(Type.project));
-		if (resultApprover.approveBeforeBuilding(oafObj)) {
-			Project projectCandidate = projectConverter.buildObject(value, oafObj);
-			if (projectCandidate!=null) {
-				mos.write(outputNameProject, new AvroKey<Project>(projectCandidate));
+	private void handleOrganization(final byte[] idBytes, Result value, Context context) throws InterruptedException, IOException {
+		
+	    Oaf oafObj = buildOafObject(idBytes, value, HBaseConstants.getCollumnFamily(Type.organization));
+		
+	    if (resultApprover.approveBeforeBuilding(oafObj)) {
+	        
+			Organization organization = organizationConverter.buildObject(value, oafObj);
+			
+			if (organization != null) {
+			    
+				mos.write(outputNameOrganization, new AvroKey<Organization>(organization));
 			}
 		}
+	    
 	}
+	
+	
+	 /**
+     * Handles project row.
+     * @param idBytes
+     * @param value
+     * @param context
+     * @throws InterruptedException
+     * @throws IOException
+     */
+    private void handleProject(final byte[] idBytes, 
+            Result value, Context context) throws InterruptedException, IOException {
+        Oaf oafObj = buildOafObject(idBytes, value, HBaseConstants.getCollumnFamily(Type.project));
+        if (resultApprover.approveBeforeBuilding(oafObj)) {
+            Project projectCandidate = projectConverter.buildObject(value, oafObj);
+            if (projectCandidate!=null) {
+                mos.write(outputNameProject, new AvroKey<Project>(projectCandidate));
+            }
+        }
+    }
 	
 	/**
 	 * Builds {@link Oaf} object from HBase result.

@@ -34,6 +34,15 @@
 					<name>output</name>
 					<value>${workingDir}/mr_import</value>
 				</property>
+               <property>
+                    <name>hbase_remote_zookeeper_quorum</name>
+                    <value>dummy</value>
+                </property>
+                <property>
+                    <name>hbase_remote_zookeeper_clientport</name>
+                    <value>dummy</value>
+                </property>
+				
 			</configuration>
         </sub-workflow>
 		
@@ -48,6 +57,7 @@
     	<path start="consumer-document"/>
     	<path start="consumer-person"/>
         <path start="consumer-project"/>
+        <path start="consumer-organization"/>
     </fork>
     
 	<action name="consumer-dedupmapping">
@@ -154,6 +164,29 @@
 		<ok to="joining" />
 		<error to="fail" />
 	</action>
+    
+    
+    <action name="consumer-organization">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            <arg>-C{organization,
+                eu.dnetlib.iis.importer.schemas.Organization,
+                eu/dnetlib/iis/wf/top/integration/import/output/organization.json}</arg>
+            <arg>-Iorganization=${workingDir}/mr_import/organization</arg>
+        </java>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
+    
     
     <join name="joining" to="end"/>
      
