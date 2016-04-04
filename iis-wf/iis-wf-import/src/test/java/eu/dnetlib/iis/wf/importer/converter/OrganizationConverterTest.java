@@ -58,20 +58,6 @@ public class OrganizationConverterTest {
     
     
 
-    @Test(expected = NullPointerException.class)
-    public void buildObject_source_NULL() throws Exception {
-        
-        // given
-        
-        Oaf oaf = Oaf.newBuilder().setKind(Kind.entity).build();
-        
-        // execute
-        
-        converter.buildObject(null, oaf);
-        
-    }
-    
-    
     
     @Test
     public void buildObject_organization_metadata_name_empty() throws Exception {

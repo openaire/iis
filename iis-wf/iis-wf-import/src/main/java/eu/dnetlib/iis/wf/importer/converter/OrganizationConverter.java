@@ -30,20 +30,20 @@ public class OrganizationConverter implements AvroConverter<Organization> {
     //------------------------ LOGIC --------------------------
     
     /**
-     * Converts {@link Oaf} object containing {@link eu.dnetlib.data.proto.OrganizationProtos.Organization}
+     * Converts {@link Oaf} object (resolvedOafObject) containing {@link eu.dnetlib.data.proto.OrganizationProtos.Organization}
      * into {@link Organization}
+     * @param source NOT USED, given for the compatibility with the {@link AvroConverter}
      */
     @Override
     public Organization buildObject(Result source, Oaf resolvedOafObject) throws UnsupportedEncodingException {
         
         
         Preconditions.checkNotNull(resolvedOafObject);
-        Preconditions.checkNotNull(source);
         
         OafEntity oafEntity = resolvedOafObject.getEntity();
 
         
-        if (!isDataCorrect(source, oafEntity)) {
+        if (!isDataCorrect(oafEntity)) {
         
             return null;
         
@@ -77,7 +77,7 @@ public class OrganizationConverter implements AvroConverter<Organization> {
 
     //------------------------ PRIVATE --------------------------
     
-    private boolean isDataCorrect(Result source, OafEntity oafEntity) throws UnsupportedEncodingException {
+    private boolean isDataCorrect(OafEntity oafEntity) throws UnsupportedEncodingException {
         
 
         eu.dnetlib.data.proto.OrganizationProtos.Organization srcOrganization = oafEntity.getOrganization();
