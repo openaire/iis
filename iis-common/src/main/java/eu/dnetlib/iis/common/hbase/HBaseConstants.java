@@ -24,6 +24,7 @@ public final class HBaseConstants {
 	public static final byte[] ROW_PREFIX_RESULT;
 	public static final byte[] ROW_PREFIX_PROJECT;
 	public static final byte[] ROW_PREFIX_PERSON;
+	public static final byte[] ROW_PREFIX_ORGANIZATION;
 	
 	public static final byte[] QUALIFIER_BODY;
 	
@@ -64,6 +65,7 @@ public final class HBaseConstants {
 			ROW_PREFIX_RESULT = "50|".getBytes(STATIC_FIELDS_ENCODING_UTF8);
 			ROW_PREFIX_PROJECT = "40|".getBytes(STATIC_FIELDS_ENCODING_UTF8);
 			ROW_PREFIX_PERSON = "30|".getBytes(STATIC_FIELDS_ENCODING_UTF8);
+			ROW_PREFIX_ORGANIZATION = "20|".getBytes(STATIC_FIELDS_ENCODING_UTF8);
 			
 			QUALIFIER_BODY = "body".getBytes(STATIC_FIELDS_ENCODING_UTF8);
 

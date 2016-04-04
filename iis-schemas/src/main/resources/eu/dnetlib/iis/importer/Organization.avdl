@@ -1,0 +1,27 @@
+@namespace("eu.dnetlib.iis.importer.schemas")
+
+protocol IIS {
+
+    record Organization {
+        
+        // InformationSpace organization identifier
+        string id;
+        
+        // Organization's name
+        string name;
+        
+        // Organization's short name
+        union {null , string} shortName;
+        
+        // Country name
+        union {null , string} countryName;
+        
+        // country iso code
+        union {null , string} countryCode;
+        
+        // Website url of the organization
+        union {null , string} websiteUrl;
+    }
+    
+    
+}
