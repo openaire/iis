@@ -222,12 +222,13 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 		if (outputNameDedupMapping==null) {
 			throw new RuntimeException("deduplication mapping output name not provided!");
 		}
-		outputNameOrganization = context.getConfiguration().get(OUTPUT_NAME_ORGANIZATION);
+        
+        outputNameOrganization = context.getConfiguration().get(OUTPUT_NAME_ORGANIZATION);
         if (outputNameOrganization==null) {
             throw new RuntimeException("organization output name not provided!");
         }
         
-	}
+    }
 	
 	@Override
 	public void cleanup(Context context) 
@@ -257,10 +258,10 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 			handleProject(idBytes, value, context);
 		}
 		
-		else if (ByteArrayUtils.startsWith(idBytes, HBaseConstants.ROW_PREFIX_ORGANIZATION)) {
+        else if (ByteArrayUtils.startsWith(idBytes, HBaseConstants.ROW_PREFIX_ORGANIZATION)) {
             handleOrganization(idBytes, value, context);
         }
-	}
+    }
 
 	
 	//------------------------ PRIVATE --------------------------

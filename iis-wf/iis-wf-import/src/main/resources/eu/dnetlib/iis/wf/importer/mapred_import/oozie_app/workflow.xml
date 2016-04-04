@@ -348,8 +348,7 @@
 					<value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
 				</property>
 				<property>
-                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_organization}.format
-                    </name>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_organization}.format</name>
                     <value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
                 </property>
 				
