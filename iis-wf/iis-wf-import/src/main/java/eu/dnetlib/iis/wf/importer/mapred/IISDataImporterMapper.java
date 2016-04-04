@@ -86,7 +86,7 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 	
 	private static final String OUTPUT_NAME_DEDUP_MAPPING = "output.name.dedup_mapping";
 
-    private static final String OUTPUT_NAME_ORGANIZATION = "output.name.organization";
+	private static final String OUTPUT_NAME_ORGANIZATION = "output.name.organization";
 	
 	private String outputNameDocumentMeta;
 	
