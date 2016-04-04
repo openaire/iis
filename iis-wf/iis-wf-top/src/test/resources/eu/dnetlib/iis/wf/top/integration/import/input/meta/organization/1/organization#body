@@ -1,0 +1,76 @@
+{
+    kind: entity
+    dataInfo: {
+        trust: "0.91"
+        provenanceaction: {
+            classid: "sysimport:crosswalk:entityregistry"
+            classname: "sysimport:crosswalk:entityregistry"
+            schemename: "dnet:provenanceActions"
+            schemeid: "dnet:provenanceActions"
+        }
+        deletedbyinference: false
+        inferred: true
+        inferenceprovenance: "dedup-similarity-organization-simple"
+    }
+    entity: {
+        originalId: [
+            "Corda_______::996845042"
+        ]
+        collectedfrom: [{
+            value: "CORDA - COmmon Research DAta Warehouse"
+            key: "10|openaire____::b30dac7baac631f3da7c2bb18dd9891f"
+        }]
+        organization: {
+            metadata: {
+                eclegalbody: {
+                    value: "false"
+                }
+                eclegalperson: {
+                    value: "true"
+                }
+                ecinternationalorganization: {
+                    value: "false"
+                }
+                legalshortname: {
+                    value: "DBE TEC"
+                }
+                ecresearchorganization: {
+                    value: "false"
+                }
+                ecnonprofit: {
+                    value: "false"
+                }
+                ecenterprise: {
+                    value: "true"
+                }
+                websiteurl: {
+                    value: "http://www.dbetec.de"
+                }
+                ecnutscode: {
+                    value: "false"
+                }
+                ecinternationalorganizationeurinterests: {
+                    value: "false"
+                }
+                legalname: {
+                    value: "DBE TECHNOLOGY GmbH"
+                }
+                country: {
+                    classid: "DE"
+                    classname: "Germany"
+                    schemename: "dnet:countries"
+                    schemeid: "dnet:countries"
+                }
+                echighereducation: {
+                    value: "false"
+                }
+                ecsmevalidated: {
+                    value: "false"
+                }
+            }
+        }
+        dateofcollection: "2015-08-24"
+        type:organization
+        id: "20|corda_______::00028253e3a6b255fe98b7eaf13c6976"
+    }
+}
