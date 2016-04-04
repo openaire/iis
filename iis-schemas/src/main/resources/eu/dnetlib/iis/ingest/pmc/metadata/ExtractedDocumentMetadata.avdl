@@ -3,6 +3,7 @@ protocol IIS{
 
 	import idl "ReferenceMetadata.avdl";
 	import idl "Affiliation.avdl";
+	import idl "Author.avdl";
 	
     record ExtractedDocumentMetadata {
 
@@ -23,6 +24,8 @@ protocol IIS{
         
         // affiliations extracted from XML document
         union { null , array<Affiliation> } affiliations = null;
+        
+        union { null , array<Author> } authors = null;
         
         // page range in which the article is published
         union { null , Range } pages = null;

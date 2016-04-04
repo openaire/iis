@@ -1,0 +1,12 @@
+@namespace("eu.dnetlib.iis.ingest.pmc.metadata.schemas")
+protocol IIS{
+
+    record Author {
+        
+        string fullname;
+        
+        union { null , array<int> } affiliationPositions = null;
+        
+    }
+
+}
