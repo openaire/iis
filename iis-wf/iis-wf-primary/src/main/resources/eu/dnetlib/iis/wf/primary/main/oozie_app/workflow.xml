@@ -305,7 +305,8 @@
 			<name>output_remote_location</name>
 			<value>$UNDEFINED$</value>
 			<description>optional remote cluster output location where inference output dump should be distcped as sequence files.
-				When not specified results will be exported straight to the ActionManager HBase.
+				When not specified results will be exported straight to the ActionManager
+				HBase.
 			</description>
 		</property>
 		<!-- working directory related -->

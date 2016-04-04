@@ -10,7 +10,8 @@
 			<name>active_ingest_pmc</name>
 			<value>false</value>
 			<description>flag indicating pmc metadata and citations ingestions
-				should be performed</description>
+				should be performed
+			</description>
 		</property>
 		<property>
 			<name>active_import_concept</name>
@@ -23,10 +24,13 @@
 			<description>flag indicating contents should be filtered and their
 				identifiers should be deduplicated against metadata entries
 				retrieved from InformationSpace. This way only contents having
-				metadata representation will be processed.
+				metadata
+				representation will be processed.
 				To be disabled when processing new contents which metadata is not
 				available in hbase or when original identifiers should be preserved
-				(contents will not be filtered as well).</description>
+				(contents will not be filtered
+				as well).
+			</description>
 		</property>
 		<!-- import metadata related -->
 		<property>
@@ -92,7 +96,7 @@
 		<!-- import content related -->
 		<property>
 			<name>objectstore_service_location</name>
-			<description>object store service location required for content	retrieval</description>
+			<description>object store service location required for content retrieval</description>
 		</property>
 		<property>
 			<name>approved_objectstores_csv</name>
@@ -184,7 +188,8 @@
 			<name>metadataimport_output_name_dedup_mapping</name>
 			<value>dedupmapping</value>
 			<description>metadata import deduplication mapping output
-				subdirectory name</description>
+				subdirectory name
+			</description>
 		</property>
 		<!-- output parameters -->
 		<property>
@@ -211,7 +216,8 @@
 		<property>
 			<name>output_document_text</name>
 			<description>text import output directory. merged from three
-				different sources</description>
+				different sources
+			</description>
 		</property>
 		<property>
 			<name>output_wos</name>
@@ -229,7 +235,7 @@
 			<name>remove_sideproducts</name>
 			<value>true</value>
 			<description>flag indicating whole workingDir will be erased.
-				Notice: do not provide any output directory location 
+				Notice: do not provide any output directory location
 				pointing to workingDir subdirectory!
 			</description>
 		</property>
@@ -752,8 +758,7 @@
 
 	<join name="import_urlbased_joining" to="transformers_common_union_document_text" />
 
-	<!-- merging document text datastores: 1) retrieved directly from objectstore 
-		3) ingested from HTML -->
+	<!-- merging document text datastores: 1) retrieved directly from objectstore 3) ingested from HTML -->
 	<action name="transformers_common_union_document_text">
 		<sub-workflow>
 			<app-path>${wf:appPath()}/transformers_common_union</app-path>
@@ -785,8 +790,7 @@
 		<error to="fail" />
 	</action>
 
-	<!-- merging extracted document metadata datastores (including new text 
-		field): 1) extracted from PDF documents 2) ingested from XML JATS documents -->
+	<!-- merging extracted document metadata datastores (including new text field): 1) extracted from PDF documents 2) ingested from XML JATS documents -->
 	<action name="union_extracted_document_metadata">
 		<sub-workflow>
 			<app-path>${wf:appPath()}/transformers_common_union</app-path>

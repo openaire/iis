@@ -1,5 +1,5 @@
 <workflow-app xmlns="uri:oozie:workflow:0.4" name="primary_export">
-	
+
 	<parameters>
 		<!-- input ports -->
 		<property>
@@ -46,7 +46,8 @@
 			<name>output_remote_location</name>
 			<value>$UNDEFINED$</value>
 			<description>optional remote cluster output location where inference output dump should be distcped as sequence files.
-			When not specified results will be exported straight to the ActionManager HBase.</description>
+				When not specified results will be exported straight to the ActionManager HBase.
+			</description>
 		</property>
 		<!-- entities exporting modes -->
 		<property>
@@ -144,7 +145,7 @@
 			<value>$UNDEFINED$</value>
 			<description>document to protein databank trust level threshold</description>
 		</property>
-		<!--  -->
+		<!-- -->
 		<property>
 			<name>action_hbase_remote_zookeeper_quorum</name>
 			<value>$UNDEFINED$</value>
@@ -168,77 +169,77 @@
 	</parameters>
 
 	<global>
-        <job-tracker>${jobTracker}</job-tracker>
-        <name-node>${nameNode}</name-node>
-        <configuration>
-            <property>
-                <name>mapred.job.queue.name</name>
-                <value>${queueName}</value>
-            </property>
+		<job-tracker>${jobTracker}</job-tracker>
+		<name-node>${nameNode}</name-node>
+		<configuration>
+			<property>
+				<name>mapred.job.queue.name</name>
+				<value>${queueName}</value>
+			</property>
 		</configuration>
 	</global>
 
 	<start to="decision-export_to_sequencefile_or_hbase" />
-    
-    <decision name="decision-export_to_sequencefile_or_hbase">
-        <switch>
-            <case to="export_actionmanager">${output_remote_location eq "$UNDEFINED$"}</case>
-            <default to="export_actionmanager_sequencefile"/>
-        </switch>
-    </decision>
-    
-  	<action name="export_actionmanager">
+
+	<decision name="decision-export_to_sequencefile_or_hbase">
+		<switch>
+			<case to="export_actionmanager">${output_remote_location eq "$UNDEFINED$"}</case>
+			<default to="export_actionmanager_sequencefile" />
+		</switch>
+	</decision>
+
+	<action name="export_actionmanager">
 		<sub-workflow>
-            <app-path>${wf:appPath()}/export_actionmanager</app-path>
-            <propagate-configuration/>
-            <configuration>
-            	<property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/export_actionmanager/working_dir</value>
-                </property>
-            </configuration>
-        </sub-workflow>
-		<ok to="decision-exporter-dataset-entities"/>
-		<error to="fail" />
-	</action>
- 
- 	<action name="export_actionmanager_sequencefile">
-		<sub-workflow>
-            <app-path>${wf:appPath()}/export_actionmanager_sequencefile</app-path>
-            <propagate-configuration/>
-            <configuration>
-            	<property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/export_actionmanager_sequencefile/working_dir</value>
-                </property>
-                <property>
-                    <name>output</name>
-                    <value>${workingDir}/output</value>
-                </property>
-            </configuration>
-        </sub-workflow>
-		<ok to="decision-exporter-dataset-entities"/>
-		<error to="fail" />
-	</action>
- 
- 	<!-- dataset entities export section -->
- 	<decision name="decision-exporter-dataset-entities">
-        <switch>
-        	<!-- exporting dataset entities only when export flag is set AND input path was defined -->
-            <case to="transformers_export_identifier_document_to_dataset">${active_export_referenceddataset_datasets eq "true" and input_document_to_dataset ne "$UNDEFINED$"}</case>
-            <default to="decision-distcp_output"/>
-        </switch>
-    </decision>
- 	
- 	<action name="transformers_export_identifier_document_to_dataset">
-	    <sub-workflow>
-            <app-path>${wf:appPath()}/transformers_export_identifier_document_to_dataset</app-path>
-            <propagate-configuration/>
-            <configuration>
+			<app-path>${wf:appPath()}/export_actionmanager</app-path>
+			<propagate-configuration />
+			<configuration>
 				<property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/export_identifier_document_to_dataset/working_dir</value>
-                </property>
+					<name>workingDir</name>
+					<value>${workingDir}/export_actionmanager/working_dir</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="decision-exporter-dataset-entities" />
+		<error to="fail" />
+	</action>
+
+	<action name="export_actionmanager_sequencefile">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/export_actionmanager_sequencefile</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/export_actionmanager_sequencefile/working_dir</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${workingDir}/output</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="decision-exporter-dataset-entities" />
+		<error to="fail" />
+	</action>
+
+	<!-- dataset entities export section -->
+	<decision name="decision-exporter-dataset-entities">
+		<switch>
+			<!-- exporting dataset entities only when export flag is set AND input path was defined -->
+			<case to="transformers_export_identifier_document_to_dataset">${active_export_referenceddataset_datasets eq "true" and input_document_to_dataset ne "$UNDEFINED$"}</case>
+			<default to="decision-distcp_output" />
+		</switch>
+	</decision>
+
+	<action name="transformers_export_identifier_document_to_dataset">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_export_identifier_document_to_dataset</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/export_identifier_document_to_dataset/working_dir</value>
+				</property>
 				<property>
 					<name>input_document_to_dataset</name>
 					<value>${input_document_to_dataset}</value>
@@ -251,18 +252,18 @@
 					<name>output_document_to_mdstore</name>
 					<value>${workingDir}/identifier/datasets</value>
 				</property>
-            </configuration>
-        </sub-workflow>
-        <ok to="exporter-dataset-entities"/>
+			</configuration>
+		</sub-workflow>
+		<ok to="exporter-dataset-entities" />
 		<error to="fail" />
-    </action>
- 
- 	<action name="exporter-dataset-entities">
+	</action>
+
+	<action name="exporter-dataset-entities">
 		<java>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.wf.export.actionmanager.entity.dataset.DatasetExporterProcess</arg>
 			<arg>-Iinput=${workingDir}/identifier/datasets</arg>
-			
+
 			<arg>-Pexport.entity.mdstore.service.location=${mdstore_service_location}</arg>
 			<arg>-Pexport.action.setid=${action_set_id_entity_dataset}</arg>
 			<arg>-Pexport.action.hbase.table.name=${action_hbase_table_name}</arg>
@@ -275,15 +276,15 @@
 		<ok to="decision-distcp_output" />
 		<error to="fail" />
 	</action>
-    <!-- end of dataset entities export section -->
+	<!-- end of dataset entities export section -->
 
-    <decision name="decision-distcp_output">
-        <switch>
-            <case to="distcp_output">${output_remote_location ne "$UNDEFINED$"}</case>
-            <default to="end"/>
-        </switch>
-    </decision>
-    
+	<decision name="decision-distcp_output">
+		<switch>
+			<case to="distcp_output">${output_remote_location ne "$UNDEFINED$"}</case>
+			<default to="end" />
+		</switch>
+	</decision>
+
 	<action name="distcp_output">
 		<distcp xmlns="uri:oozie:distcp-action:0.1">
 			<job-tracker>${jobTracker}</job-tracker>
@@ -295,7 +296,7 @@
 		<ok to="end" />
 		<error to="fail" />
 	</action>
-    
+
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:
 			[${wf:errorMessage(wf:lastErrorNode())}]</message>

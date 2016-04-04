@@ -1,5 +1,5 @@
 <workflow-app xmlns="uri:oozie:workflow:0.4" name="importer_plaintext_cached_by_checksum">
-	
+
 	<parameters>
 		<property>
 			<name>input</name>
@@ -36,28 +36,28 @@
 	</parameters>
 
 	<global>
-        <job-tracker>${jobTracker}</job-tracker>
-        <name-node>${nameNode}</name-node>
-        <configuration>
-            <property>
-                <name>mapred.job.queue.name</name>
-                <value>${queueName}</value>
-            </property>
+		<job-tracker>${jobTracker}</job-tracker>
+		<name-node>${nameNode}</name-node>
+		<configuration>
+			<property>
+				<name>mapred.job.queue.name</name>
+				<value>${queueName}</value>
+			</property>
 		</configuration>
 	</global>
 
 	<start to="preprocessing" />
-		
+
 	<action name="preprocessing">
 		<sub-workflow>
-            <app-path>${wf:appPath()}/transformers_metadataextraction_checksum_preprocessing</app-path>
-            <propagate-configuration/>
-            <configuration>
-            	<property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/preprocessing/working_dir</value>
-                </property>
-                <property>
+			<app-path>${wf:appPath()}/transformers_metadataextraction_checksum_preprocessing</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/preprocessing/working_dir</value>
+				</property>
+				<property>
 					<name>input</name>
 					<value>${input}</value>
 				</property>
@@ -65,23 +65,23 @@
 					<name>output</name>
 					<value>${workingDir}/preprocessing/output</value>
 				</property>
-            </configuration>
-        </sub-workflow>
-		<ok to="importer_plaintext_cached"/>
+			</configuration>
+		</sub-workflow>
+		<ok to="importer_plaintext_cached" />
 		<error to="fail" />
 	</action>
-	
+
 	<action name="importer_plaintext_cached">
 		<sub-workflow>
-            <app-path>${wf:appPath()}/importer_plaintext_cached</app-path>
-            <propagate-configuration/>
-            <configuration>
-            	<property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/importer_plaintext_cached/working_dir</value>
-                </property>
-                <property>
-                	<!-- checksum identified input -->
+			<app-path>${wf:appPath()}/importer_plaintext_cached</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/importer_plaintext_cached/working_dir</value>
+				</property>
+				<property>
+					<!-- checksum identified input -->
 					<name>input</name>
 					<value>${workingDir}/preprocessing/output</value>
 				</property>
@@ -89,23 +89,23 @@
 					<name>output</name>
 					<value>${workingDir}/importer_plaintext_cached/out</value>
 				</property>
-				<!-- all the other properties are autmatically propagated-->
-            </configuration>
-        </sub-workflow>
-		<ok to="postprocessing-text"/>
+				<!-- all the other properties are autmatically propagated -->
+			</configuration>
+		</sub-workflow>
+		<ok to="postprocessing-text" />
 		<error to="fail" />
 	</action>
-    
-    <action name="postprocessing-text">
+
+	<action name="postprocessing-text">
 		<sub-workflow>
-            <app-path>${wf:appPath()}/transformers_metadataextraction_checksum_postprocessing_text</app-path>
-            <propagate-configuration/>
-            <configuration>
-            	<property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/postprocessing_text/working_dir</value>
-                </property>
-                <property>
+			<app-path>${wf:appPath()}/transformers_metadataextraction_checksum_postprocessing_text</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/postprocessing_text/working_dir</value>
+				</property>
+				<property>
 					<name>input_document_content_url</name>
 					<value>${input}</value>
 				</property>
@@ -117,15 +117,16 @@
 					<name>output</name>
 					<value>${output}</value>
 				</property>
-            </configuration>
-        </sub-workflow>
-		<ok to="end"/>
+			</configuration>
+		</sub-workflow>
+		<ok to="end" />
 		<error to="fail" />
 	</action>
-    
+
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:
-			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+			[${wf:errorMessage(wf:lastErrorNode())}]
+		</message>
 	</kill>
 	<end name="end" />
 </workflow-app>

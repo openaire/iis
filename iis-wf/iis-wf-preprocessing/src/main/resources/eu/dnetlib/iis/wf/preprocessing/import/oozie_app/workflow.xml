@@ -1,10 +1,10 @@
 <workflow-app xmlns="uri:oozie:workflow:0.4" name="preprocessing_import">
 	<parameters>
 		<property>
-            <name>remove_sideproducts</name>
-            <value>true</value>
-            <description>flag indicating inference side products will be erased</description>
-        </property>
+			<name>remove_sideproducts</name>
+			<value>true</value>
+			<description>flag indicating inference side products will be erased</description>
+		</property>
 		<!-- import concepts related -->
 		<property>
 			<name>islookup_service_location</name>
@@ -137,27 +137,27 @@
 			<description>processing faults output directory</description>
 		</property>
 	</parameters>
-	
+
 	<global>
-        <job-tracker>${jobTracker}</job-tracker>
-        <name-node>${nameNode}</name-node>
-        <configuration>
-            <property>
-                <name>mapred.job.queue.name</name>
-                <value>${queueName}</value>
-            </property>
+		<job-tracker>${jobTracker}</job-tracker>
+		<name-node>${nameNode}</name-node>
+		<configuration>
+			<property>
+				<name>mapred.job.queue.name</name>
+				<value>${queueName}</value>
+			</property>
 		</configuration>
 	</global>
-	 
+
 	<start to="import_forking" />
-	
+
 	<fork name="import_forking">
-    	<path start="import_dataset"/>
-    	<path start="import_concept"/>
-    	<path start="import_project"/>
-    	<path start="wos_url_import"/>
-    </fork>
-	
+		<path start="import_dataset" />
+		<path start="import_concept" />
+		<path start="import_project" />
+		<path start="wos_url_import" />
+	</fork>
+
 	<!-- start of common import part -->
 	<action name="import_dataset">
 		<sub-workflow>
@@ -493,9 +493,7 @@
 
 	<join name="import_urlbased_joining" to="union_extracted_document_metadata" />
 
-	<!-- merging extracted document metadata datastores (including new text field): 
-			1) extracted from PDF documents 
-			2) ingested from XML JATS documents -->
+	<!-- merging extracted document metadata datastores (including new text field): 1) extracted from PDF documents 2) ingested from XML JATS documents -->
 	<action name="union_extracted_document_metadata">
 		<sub-workflow>
 			<app-path>${wf:appPath()}/transformers_common_union</app-path>
@@ -526,7 +524,7 @@
 		<ok to="transformers_extracted_document_metadata_to_text" />
 		<error to="fail" />
 	</action>
-	
+
 	<action name="transformers_extracted_document_metadata_to_text">
 		<sub-workflow>
 			<app-path>${wf:appPath()}/transformer_metadataextraction_documenttext</app-path>
@@ -550,10 +548,7 @@
 		<error to="fail" />
 	</action>
 
-	<!-- merging document text datastores: 
-		1) retrieved directly from objectstore
-		2) extracted from extracted_document_metadata
-		3) ingested from HTML -->
+	<!-- merging document text datastores: 1) retrieved directly from objectstore 2) extracted from extracted_document_metadata 3) ingested from HTML -->
 	<action name="transformers_common_union_document_text">
 		<sub-workflow>
 			<app-path>${wf:appPath()}/transformers_common_union3</app-path>
@@ -588,16 +583,16 @@
 		<ok to="import_joining" />
 		<error to="fail" />
 	</action>
-	
+
 	<action name="wos_url_import">
 		<sub-workflow>
-            <app-path>${wf:appPath()}/import_content_url</app-path>
-            <propagate-configuration/>
-            <configuration>
-            	<property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/wos_url_import/working_dir</value>
-                </property>
+			<app-path>${wf:appPath()}/import_content_url</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/wos_url_import/working_dir</value>
+				</property>
 				<property>
 					<name>approved_objectstores_csv</name>
 					<value>${wos_plaintext_objectstores_csv}</value>
@@ -610,23 +605,23 @@
 					<name>output_name_wos</name>
 					<value>wos</value>
 				</property>
-				<!-- all the other properties autmatically propagated-->
+				<!-- all the other properties autmatically propagated -->
 			</configuration>
-        </sub-workflow>
+		</sub-workflow>
 		<ok to="wos_import_plaintext" />
 		<error to="fail" />
 	</action>
 
 	<action name="wos_import_plaintext">
 		<sub-workflow>
-            <app-path>${wf:appPath()}/import_plaintext</app-path>
-            <propagate-configuration/>
-            <configuration>
-            	<property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/wos_import_plaintext/working_dir</value>
-                </property>
-                <property>
+			<app-path>${wf:appPath()}/import_plaintext</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/wos_import_plaintext/working_dir</value>
+				</property>
+				<property>
 					<name>input</name>
 					<value>${workingDir}/wos_url_import/imported/wos</value>
 				</property>
@@ -634,13 +629,13 @@
 					<name>max_file_size_mb</name>
 					<value>${text_xml_max_file_size_mb}</value>
 				</property>
-            	<property>
+				<property>
 					<name>output</name>
 					<value>${output_wos_text}</value>
 				</property>
-				<!-- all the other properties are autmatically propagated-->
+				<!-- all the other properties are autmatically propagated -->
 			</configuration>
-        </sub-workflow>
+		</sub-workflow>
 		<ok to="import_joining" />
 		<error to="fail" />
 	</action>
@@ -692,7 +687,7 @@
 		<ok to="end" />
 		<error to="fail" />
 	</action>
-    
+
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:
 			[${wf:errorMessage(wf:lastErrorNode())}]</message>

@@ -734,7 +734,7 @@
 		</switch>
 	</decision>
 
-	
+
 	<action name="documentsclassification">
 		<sub-workflow>
 			<app-path>${wf:appPath()}/documentsclassification</app-path>

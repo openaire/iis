@@ -1,5 +1,5 @@
 <workflow-app xmlns="uri:oozie:workflow:0.4" name="metadataextraction_cached">
-	
+
 	<parameters>
 		<property>
 			<name>input</name>
@@ -57,18 +57,18 @@
 	</parameters>
 
 	<global>
-        <job-tracker>${jobTracker}</job-tracker>
-        <name-node>${nameNode}</name-node>
-        <configuration>
-            <property>
-                <name>mapred.job.queue.name</name>
-                <value>${queueName}</value>
-            </property>
+		<job-tracker>${jobTracker}</job-tracker>
+		<name-node>${nameNode}</name-node>
+		<configuration>
+			<property>
+				<name>mapred.job.queue.name</name>
+				<value>${queueName}</value>
+			</property>
 		</configuration>
 	</global>
 
 	<start to="check_input_isempty" />
-	
+
 	<action name='check_input_isempty'>
 		<java>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
@@ -81,34 +81,36 @@
 	</action>
 
 	<decision name="decision_is_intput_empty">
-        <switch>
-        	<!-- skipping metadataextraction merging process -->
-            <case to="get-existing-cache-id">${wf:actionData('check_input_isempty')['isEmpty'] eq "false"}</case>
-            <default to="generate-empty-output"/>
-        </switch>
-    </decision>
+		<switch>
+			<!-- skipping metadataextraction merging process -->
+			<case to="get-existing-cache-id">${wf:actionData('check_input_isempty')['isEmpty'] eq "false"}</case>
+			<default to="generate-empty-output" />
+		</switch>
+	</decision>
 
 	<action name="generate-empty-output">
-        <java>
+		<java>
 			<prepare>
 				<!-- notice: directory have to aligned with skipped action output -->
 				<delete path="${nameNode}${output_root}" />
 				<mkdir path="${nameNode}${output_root}" />
 			</prepare>
-            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
-            <arg>-C{meta,
+			<arg>-C{meta,
 				eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
-				eu/dnetlib/iis/common/data/empty.json}</arg>
+				eu/dnetlib/iis/common/data/empty.json}
+			</arg>
 			<arg>-C{fault,
 				eu.dnetlib.iis.audit.schemas.Fault,
-			eu/dnetlib/iis/common/data/empty.json}</arg>
-            <arg>-Ometa=${output_root}/${output_name_meta}</arg>
-            <arg>-Ofault=${output_root}/${output_name_fault}</arg>
-        </java>
-        <ok to="end"/>
-        <error to="fail"/>
-    </action>
+				eu/dnetlib/iis/common/data/empty.json}
+			</arg>
+			<arg>-Ometa=${output_root}/${output_name_meta}</arg>
+			<arg>-Ofault=${output_root}/${output_name_fault}</arg>
+		</java>
+		<ok to="end" />
+		<error to="fail" />
+	</action>
 
 	<action name='get-existing-cache-id'>
 		<java>
@@ -123,23 +125,23 @@
 	</action>
 
 	<decision name="decision-is-cache-empty">
-        <switch>
-            <case to="metadata_extractor_on_full_input">${wf:actionData('get-existing-cache-id')['cache_id'] eq "$UNDEFINED$"}</case>
-            <default to="transformer_metadataextraction_skip_extracted"/>
-        </switch>
-    </decision>
-	
+		<switch>
+			<case to="metadata_extractor_on_full_input">${wf:actionData('get-existing-cache-id')['cache_id'] eq "$UNDEFINED$"}</case>
+			<default to="transformer_metadataextraction_skip_extracted" />
+		</switch>
+	</decision>
+
 	<!-- end of cache based processing block, cache was provided as an input -->
 	<action name="transformer_metadataextraction_skip_extracted">
 		<sub-workflow>
-            <app-path>${wf:appPath()}/transformers_metadataextraction_skip_extracted</app-path>
-            <propagate-configuration/>
-            <configuration>
-            	<property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/transformers_metadataextraction_skip_extracted/working_dir</value>
-                </property>
-                <property>
+			<app-path>${wf:appPath()}/transformers_metadataextraction_skip_extracted</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/transformers_metadataextraction_skip_extracted/working_dir</value>
+				</property>
+				<property>
 					<name>input_document_content</name>
 					<value>${input}</value>
 				</property>
@@ -155,18 +157,18 @@
 					<name>output_document_meta</name>
 					<value>${workingDir}/transformers_metadataextraction_skip_extracted/tobereturned_meta</value>
 				</property>
-            </configuration>
-        </sub-workflow>
-		<ok to="metadata_extractor_on_filtered_input"/>
+			</configuration>
+		</sub-workflow>
+		<ok to="metadata_extractor_on_filtered_input" />
 		<error to="fail" />
 	</action>
-	
+
 	<action name="metadata_extractor_on_filtered_input">
 		<sub-workflow>
-            <app-path>${wf:appPath()}/metadata_extractor</app-path>
-            <propagate-configuration/>
-            <configuration>
-            	<property>
+			<app-path>${wf:appPath()}/metadata_extractor</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
 					<name>processing_mode</name>
 					<value>StreamingMetadataExtractorMapper</value>
 				</property>
@@ -174,11 +176,11 @@
 					<name>inputport_classname</name>
 					<value>eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl</value>
 				</property>
-            	<property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/metadata_extractor/working_dir</value>
-                </property>
-            	<property>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/metadata_extractor/working_dir</value>
+				</property>
+				<property>
 					<name>input</name>
 					<value>${workingDir}/transformers_metadataextraction_skip_extracted/tobeprocessed_content</value>
 				</property>
@@ -186,38 +188,38 @@
 					<name>output_root</name>
 					<value>${workingDir}/metadata_extractor/output_root</value>
 				</property>
-				<!-- all the other properties are autmatically propagated-->
-            </configuration>
-        </sub-workflow>
-		<ok to="merge_outputs"/>
+				<!-- all the other properties are autmatically propagated -->
+			</configuration>
+		</sub-workflow>
+		<ok to="merge_outputs" />
 		<error to="fail" />
 	</action>
 
-    <fork name="merge_outputs">
-    	<path start="postprocessing-fault"/>
-        <path start="transformers_common_union_meta_merge_outputs"/>
-    </fork>
-    
-    <action name="postprocessing-fault">
-       <distcp xmlns="uri:oozie:distcp-action:0.1">
-           <job-tracker>${jobTracker}</job-tracker>
-           <name-node>${nameNode}</name-node>
-           <prepare>
+	<fork name="merge_outputs">
+		<path start="postprocessing-fault" />
+		<path start="transformers_common_union_meta_merge_outputs" />
+	</fork>
+
+	<action name="postprocessing-fault">
+		<distcp xmlns="uri:oozie:distcp-action:0.1">
+			<job-tracker>${jobTracker}</job-tracker>
+			<name-node>${nameNode}</name-node>
+			<prepare>
 				<delete path="${nameNode}${output_root}/${output_name_fault}" />
 			</prepare>
-           <arg>${nameNode}${workingDir}/metadata_extractor/output_root/${output_name_fault}</arg>
-           <arg>${nameNode}${output_root}/${output_name_fault}</arg>
-           </distcp>
-       <ok to="merge_joining"/>
-       <error to="fail"/>
+			<arg>${nameNode}${workingDir}/metadata_extractor/output_root/${output_name_fault}</arg>
+			<arg>${nameNode}${output_root}/${output_name_fault}</arg>
+		</distcp>
+		<ok to="merge_joining" />
+		<error to="fail" />
 	</action>
-    
-    <action name="transformers_common_union_meta_merge_outputs">
+
+	<action name="transformers_common_union_meta_merge_outputs">
 		<sub-workflow>
-            <app-path>${wf:appPath()}/transformers_common_union</app-path>
-            <propagate-configuration/>
-            <configuration>
-            	<property>
+			<app-path>${wf:appPath()}/transformers_common_union</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
 					<name>input_a</name>
 					<value>${workingDir}/transformers_metadataextraction_skip_extracted/tobereturned_meta</value>
 				</property>
@@ -233,15 +235,15 @@
 					<name>schema</name>
 					<value>eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata</value>
 				</property>
-            </configuration>
-        </sub-workflow>
-		<ok to="merge_joining"/>
+			</configuration>
+		</sub-workflow>
+		<ok to="merge_joining" />
 		<error to="fail" />
 	</action>
-    
-    <join name="merge_joining" to="check_metadataextraction_output_meta_isempty"/>
-    
-    <action name='check_metadataextraction_output_meta_isempty'>
+
+	<join name="merge_joining" to="check_metadataextraction_output_meta_isempty" />
+
+	<action name='check_metadataextraction_output_meta_isempty'>
 		<java>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.utils.EmptyDatastoreVerifierProcess</arg>
@@ -251,28 +253,28 @@
 		<ok to="decision-is-metadataextraction-output-empty" />
 		<error to="fail" />
 	</action>
-    
-    <decision name="decision-is-metadataextraction-output-empty">
-        <switch>
-        	<!-- skipping metadataextraction merging process -->
-            <case to="obtain-lock_for_merging">${wf:actionData('check_metadataextraction_output_meta_isempty')['isEmpty'] eq "false"}</case>
-            <default to="end"/>
-        </switch>
-    </decision>
-    
-    <action name="obtain-lock_for_merging">
-        <java>
+
+	<decision name="decision-is-metadataextraction-output-empty">
+		<switch>
+			<!-- skipping metadataextraction merging process -->
+			<case to="obtain-lock_for_merging">${wf:actionData('check_metadataextraction_output_meta_isempty')['isEmpty'] eq "false"}</case>
+			<default to="end" />
+		</switch>
+	</decision>
+
+	<action name="obtain-lock_for_merging">
+		<java>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
-            <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
-            <arg>-Pnode_id=${default_cache_location}</arg>
-            <arg>-Pmode=obtain</arg>
-        </java>
-        <ok to="get-new-cache-id_for_merging"/>
-        <error to="release-lock-and-fail"/>
-    </action>
-    
-    <action name='get-new-cache-id_for_merging'>
+			<arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
+			<arg>-Pnode_id=${default_cache_location}</arg>
+			<arg>-Pmode=obtain</arg>
+		</java>
+		<ok to="get-new-cache-id_for_merging" />
+		<error to="release-lock-and-fail" />
+	</action>
+
+	<action name='get-new-cache-id_for_merging'>
 		<java>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess</arg>
@@ -283,21 +285,21 @@
 		<ok to="prepare_cache_for_merging" />
 		<error to="release-lock-and-fail" />
 	</action>
-    
-    <action name="prepare_cache_for_merging">
-        <fs>
-            <mkdir path="${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_merging')['cache_id']}" />
-        </fs>
-        <ok to="transformers_common_union_meta_merge_cache"/>
-        <error to="release-lock-and-fail"/>
-    </action>
-    
-    <action name="transformers_common_union_meta_merge_cache">
+
+	<action name="prepare_cache_for_merging">
+		<fs>
+			<mkdir path="${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_merging')['cache_id']}" />
+		</fs>
+		<ok to="transformers_common_union_meta_merge_cache" />
+		<error to="release-lock-and-fail" />
+	</action>
+
+	<action name="transformers_common_union_meta_merge_cache">
 		<sub-workflow>
-            <app-path>${wf:appPath()}/transformers_common_union</app-path>
-            <propagate-configuration/>
-            <configuration>
-            	<property>
+			<app-path>${wf:appPath()}/transformers_common_union</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
 					<name>input_a</name>
 					<value>${default_cache_location}/${wf:actionData('get-existing-cache-id')['cache_id']}/meta</value>
 				</property>
@@ -313,20 +315,20 @@
 					<name>schema</name>
 					<value>eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata</value>
 				</property>
-            </configuration>
-        </sub-workflow>
-		<ok to="write-new-cache-id_for_merging"/>
+			</configuration>
+		</sub-workflow>
+		<ok to="write-new-cache-id_for_merging" />
 		<error to="fail-merge_cache-temp_files_cleanup" />
 	</action>
 
 	<action name="fail-merge_cache-temp_files_cleanup">
-        <fs>
-            <delete path="${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_merging')['cache_id']}" />
-        </fs>
-        <ok to="release-lock-and-fail"/>
-        <error to="release-lock-and-fail"/>
-    </action>
-	
+		<fs>
+			<delete path="${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_merging')['cache_id']}" />
+		</fs>
+		<ok to="release-lock-and-fail" />
+		<error to="release-lock-and-fail" />
+	</action>
+
 	<action name='write-new-cache-id_for_merging'>
 		<java>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
@@ -339,16 +341,16 @@
 		<ok to="release-lock-and-end" />
 		<error to="fail-merge_cache-temp_files_cleanup" />
 	</action>
-	
+
 	<!-- end of cache based processing block, cache was provided as an input -->
-    
-    <!-- full input processing block, no cache was provided as an input -->
-    <action name="metadata_extractor_on_full_input">
+
+	<!-- full input processing block, no cache was provided as an input -->
+	<action name="metadata_extractor_on_full_input">
 		<sub-workflow>
-            <app-path>${wf:appPath()}/metadata_extractor</app-path>
-            <propagate-configuration/>
-            <configuration>
-            	<property>
+			<app-path>${wf:appPath()}/metadata_extractor</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
 					<name>processing_mode</name>
 					<value>StreamingMetadataExtractorMapper</value>
 				</property>
@@ -356,30 +358,30 @@
 					<name>inputport_classname</name>
 					<value>eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl</value>
 				</property>
-            	<property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/metadata_extractor/working_dir</value>
-                </property>
-				<!-- all the other properties are autmatically propagated-->
-            </configuration>
-        </sub-workflow>
-		<ok to="obtain-lock_for_initializing"/>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/metadata_extractor/working_dir</value>
+				</property>
+				<!-- all the other properties are autmatically propagated -->
+			</configuration>
+		</sub-workflow>
+		<ok to="obtain-lock_for_initializing" />
 		<error to="fail" />
 	</action>
-    
-    <action name="obtain-lock_for_initializing">
-        <java>
+
+	<action name="obtain-lock_for_initializing">
+		<java>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
-            <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
-            <arg>-Pnode_id=${default_cache_location}</arg>
-            <arg>-Pmode=obtain</arg>
-        </java>
-        <ok to="get-new-cache-id_for_initializing"/>
-        <error to="release-lock-and-fail"/>
-    </action>
-    
-    <action name='get-new-cache-id_for_initializing'>
+			<arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
+			<arg>-Pnode_id=${default_cache_location}</arg>
+			<arg>-Pmode=obtain</arg>
+		</java>
+		<ok to="get-new-cache-id_for_initializing" />
+		<error to="release-lock-and-fail" />
+	</action>
+
+	<action name='get-new-cache-id_for_initializing'>
 		<java>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess</arg>
@@ -390,34 +392,34 @@
 		<ok to="prepare_cache_for_initializing" />
 		<error to="release-lock-and-fail" />
 	</action>
-    
-    <action name="prepare_cache_for_initializing">
-        <fs>
-            <mkdir path="${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}" />
-        </fs>
-        <ok to="initialize_meta_cache"/>
-        <error to="release-lock-and-fail"/>
-    </action>
-   
-	<action name="initialize_meta_cache">
-       <distcp xmlns="uri:oozie:distcp-action:0.1">
-           <job-tracker>${jobTracker}</job-tracker>
-           <name-node>${nameNode}</name-node>
-           <arg>${nameNode}${output_root}/${output_name_meta}</arg>
-           <arg>${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}/meta</arg>
-           </distcp>
-       <ok to="write-new-cache-id_for_initializing"/>
-       <error to="fail-initialize_cache-temp_files_cleanup"/>
+
+	<action name="prepare_cache_for_initializing">
+		<fs>
+			<mkdir path="${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}" />
+		</fs>
+		<ok to="initialize_meta_cache" />
+		<error to="release-lock-and-fail" />
 	</action>
-	
+
+	<action name="initialize_meta_cache">
+		<distcp xmlns="uri:oozie:distcp-action:0.1">
+			<job-tracker>${jobTracker}</job-tracker>
+			<name-node>${nameNode}</name-node>
+			<arg>${nameNode}${output_root}/${output_name_meta}</arg>
+			<arg>${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}/meta</arg>
+		</distcp>
+		<ok to="write-new-cache-id_for_initializing" />
+		<error to="fail-initialize_cache-temp_files_cleanup" />
+	</action>
+
 	<action name="fail-initialize_cache-temp_files_cleanup">
-        <fs>
-            <delete path="${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}" />
-        </fs>
-        <ok to="release-lock-and-fail"/>
-        <error to="release-lock-and-fail"/>
-    </action>
-	
+		<fs>
+			<delete path="${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}" />
+		</fs>
+		<ok to="release-lock-and-fail" />
+		<error to="release-lock-and-fail" />
+	</action>
+
 	<action name='write-new-cache-id_for_initializing'>
 		<java>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
@@ -430,35 +432,35 @@
 		<ok to="release-lock-and-end" />
 		<error to="fail-initialize_cache-temp_files_cleanup" />
 	</action>
-	
-    <!-- end of full input processing block, no cache was provided as an input -->
-    
-    <!-- lock releasing actions -->
-    <action name="release-lock-and-fail">
-        <java>
+
+	<!-- end of full input processing block, no cache was provided as an input -->
+
+	<!-- lock releasing actions -->
+	<action name="release-lock-and-fail">
+		<java>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
-            <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
-            <arg>-Pnode_id=${default_cache_location}</arg>
-            <arg>-Pmode=release</arg>
-        </java>
-        <ok to="fail"/>
-        <error to="fail"/>
-    </action>
-    
-    <action name="release-lock-and-end">
-        <java>
+			<arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
+			<arg>-Pnode_id=${default_cache_location}</arg>
+			<arg>-Pmode=release</arg>
+		</java>
+		<ok to="fail" />
+		<error to="fail" />
+	</action>
+
+	<action name="release-lock-and-end">
+		<java>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
-            <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
-            <arg>-Pnode_id=${default_cache_location}</arg>
-            <arg>-Pmode=release</arg>
-        </java>
-        <ok to="end"/>
-        <error to="fail"/>
-    </action>
-    <!-- end of lock releasing actions -->
-    
+			<arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
+			<arg>-Pnode_id=${default_cache_location}</arg>
+			<arg>-Pmode=release</arg>
+		</java>
+		<ok to="end" />
+		<error to="fail" />
+	</action>
+	<!-- end of lock releasing actions -->
+
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:
 			[${wf:errorMessage(wf:lastErrorNode())}]</message>
