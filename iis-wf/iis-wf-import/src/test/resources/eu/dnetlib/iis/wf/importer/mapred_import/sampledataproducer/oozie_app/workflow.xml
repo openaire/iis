@@ -174,7 +174,7 @@
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
             <arg>-C{organization,
                 eu.dnetlib.iis.importer.schemas.Organization,
-                eu/dnetlib/iis/wf/top/integration/import/output/organization.json}</arg>
+                eu/dnetlib/iis/wf/importer/mapred_import/sampledataproducer/output/organization.json}</arg>
             <arg>-Iorganization=${workingDir}/mr_import/organization</arg>
         </java>
         <ok to="joining" />
