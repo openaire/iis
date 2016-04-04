@@ -33,10 +33,10 @@ import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ReferenceMetadata;
  */
 public class PmcXmlHandlerTest {
 
-	Reader fileReader;
-	SAXParser saxParser;
-	ExtractedDocumentMetadata.Builder metaBuilder;
-	PmcXmlHandler pmcXmlHandler;
+	private Reader fileReader;
+	private SAXParser saxParser;
+	private ExtractedDocumentMetadata.Builder metaBuilder;
+	private PmcXmlHandler pmcXmlHandler;
 
 	static final String xmlResourcesRootClassPath = "/eu/dnetlib/iis/wf/ingest/pmc/metadata/data/";
 
@@ -64,24 +64,6 @@ public class PmcXmlHandlerTest {
 		}
 	}
 
-	@Test
-	public void testHasAmongParents() throws Exception {
-		Stack<String> parents = new Stack<String>();
-		parents.add("ref-list");
-		parents.add("ref");
-		parents.add("something");
-		parents.add("name");
-		assertTrue(
-				PmcXmlHandler.hasAmongParents("surname", "surname", parents, "name", "something", "ref", "ref-list"));
-		assertTrue(PmcXmlHandler.hasAmongParents("surname", "surname", parents, "name", "ref", "ref-list"));
-		assertTrue(PmcXmlHandler.hasAmongParents("surname", "surname", parents, "name", "ref"));
-		assertTrue(PmcXmlHandler.hasAmongParents("name", "name", parents, "name"));
-		assertTrue(PmcXmlHandler.hasAmongParents("name", "name", parents, "ref"));
-		assertTrue(PmcXmlHandler.hasAmongParents("name", "name", parents, "ref-list"));
-		assertFalse(PmcXmlHandler.hasAmongParents("surname", "surname", parents, "ref", "name"));
-		assertFalse(PmcXmlHandler.hasAmongParents("surname", "surname", parents, "ref-list", "ref"));
-		assertFalse(PmcXmlHandler.hasAmongParents("name", "name", parents, "xxx"));
-	}
 
 	@Test
 	public void testParsingJats10() throws Exception {
