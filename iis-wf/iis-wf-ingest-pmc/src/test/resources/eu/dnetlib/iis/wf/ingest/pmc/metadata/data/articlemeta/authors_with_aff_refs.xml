@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+    <article-meta>
+      <article-id pub-id-type="pmc">2789071</article-id>
+      <article-id pub-id-type="publisher-id">1752-0509-3-111</article-id>
+      <article-id pub-id-type="pmid">19943949</article-id>
+      <article-id pub-id-type="doi">10.1186/1752-0509-3-111</article-id>
+      <article-categories>
+        <subj-group subj-group-type="heading">
+          <subject>Research article</subject>
+        </subj-group>
+      </article-categories>
+      <title-group>
+        <article-title>An evaluation of minimal cellular functions to sustain a bacterial cell</article-title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author" id="A1">
+          <name>
+            <surname>Azuma</surname>
+            <given-names>Yusuke</given-names>
+          </name>
+          <xref ref-type="aff" rid="I1">1</xref>
+          <email>yazuma@bio.titech.ac.jp</email>
+        </contrib>
+        <contrib contrib-type="author" corresp="yes" id="A2">
+          <name>
+            <surname>Ota</surname>
+            <given-names>Motonori</given-names>
+          </name>
+          <xref ref-type="aff" rid="I2">2</xref>
+          <email>mota@is.nagoya-u.ac.jp</email>
+        </contrib>
+      </contrib-group>
+      <aff id="I1"><label>1</label>Graduate School of Bioscience and Biotechnology, Tokyo Institute of Technology, Nagatsuta-cho, Midori-ku, Yokohama 226-8501, Japan</aff>
+      <aff id="I2"><label>2</label>Graduate School of Information Science, Nagoya University, Furo-cho, Chikusa-ku, Nagoya 464-8601, Japan</aff>
+      <volume>3</volume>
+      <fpage>111</fpage>
+      <lpage>111</lpage>
+    </article-meta>
+
