@@ -15,6 +15,10 @@ public class CermineAffiliation {
     private String rawText;
     
     
+    //------------------------ CONSTRUCTORS --------------------------
+    
+    CermineAffiliation() {}
+    
     
     //------------------------ GETTERS --------------------------
     
@@ -34,6 +38,11 @@ public class CermineAffiliation {
         return address;
     }
     
+    /** 
+     * Affiliation raw text. <br/>
+     * Cermine enriches the affiliation it parses with tags. It does NOT remove any affiliation data even if it is not
+     * able to generate any sensible tag. This method returns the affiliation text without tags (the tags are removed).
+     * */
     public String getRawText() {
         return rawText;
     }
@@ -42,23 +51,23 @@ public class CermineAffiliation {
     
     //------------------------ SETTERS --------------------------
     
-    public void setInstitution(String institution) {
+    void setInstitution(String institution) {
         this.institution = institution;
     }
     
-    public void setCountryName(String countryName) {
+    void setCountryName(String countryName) {
         this.countryName = countryName;
     }
     
-    public void setCountryCode(String countryCode) {
+    void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
     }
     
-    public void setAddress(String address) {
+    void setAddress(String address) {
         this.address = address;
     }
     
-    public void setRawText(String rawText) {
+    void setRawText(String rawText) {
         this.rawText = rawText;
     }
     
