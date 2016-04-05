@@ -168,10 +168,15 @@
 	</dependencies>
 	<build>
 		<plugins>
-			<!-- Plugin that generates Java classes from Avro schemas -->
+			<!-- Disable the artifact from parent -->
 			<plugin>
 				<groupId>org.apache.avro</groupId>
 				<artifactId>avro-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>none</phase>
+					</execution>
+				</executions>
 			</plugin>
 			<!-- This plugin makes the Maven->Update Project Configuration not forget about the "target/generated-sources/java" source path -->
 			<plugin>
