@@ -3,7 +3,7 @@ define avro_load_input AvroStorage('$schema_input_main');
 define avro_load_id_mapping AvroStorage('$schema_input_id_mapping');
 
 
-define avro_store_output AvroStorage('$schema_output');
+define avro_store_output AvroStorage('$schema_output', '-doublecolons');
 
 
 define IDREPLACE eu.dnetlib.iis.common.pig.udfs.IdReplacerUDF;
@@ -18,5 +18,7 @@ joinedEmpty = filter joined by IsEmpty(idMapping);
 empty = foreach joinedEmpty generate null, flatten(main);
 emptyAndToRewrite = union toRewrite, empty;
 replacedIds = foreach emptyAndToRewrite generate flatten(IDREPLACE('$id_field_to_replace1', *));
+
+DESCRIBE replacedIds;
 
 store replacedIds into '$output' using avro_store_output;
