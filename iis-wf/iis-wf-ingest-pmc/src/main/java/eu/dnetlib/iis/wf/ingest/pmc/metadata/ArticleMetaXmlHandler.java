@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.ingest.pmc.metadata;
 
-import static eu.dnetlib.iis.wf.ingest.pmc.metadata.PmcXmlConstants.*;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.*;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.TagHierarchyUtils.*;
 
 import java.util.List;
@@ -25,11 +25,11 @@ import pl.edu.icm.cermine.exception.TransformationException;
 import pl.edu.icm.cermine.metadata.affiliation.CRFAffiliationParser;
 
 /**
- * Sax xml handler of &lt;article-meta&gt; tag in pmc xml
+ * Sax xml handler of &lt;article-meta&gt; tag in JATS xml
  * 
  * @author madryk
  */
-public class ArticleMetaXmlHandler extends DefaultHandler implements ParentAwareXmlHandler {
+public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingFinishedAwareXmlHandler {
     
     private Stack<String> parents;
     
@@ -45,9 +45,9 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ParentAware
     private StringBuilder affiliationText = new StringBuilder();
     private String currentAffiliationId = null;
     
-    private PmcIngestAuthor currentAuthor;
-    private List<PmcIngestAuthor> currentAuthorsGroup = Lists.newArrayList();
-    private List<PmcIngestAuthor> currentAuthors = Lists.newArrayList();
+    private JatsAuthor currentAuthor;
+    private List<JatsAuthor> currentAuthorsGroup = Lists.newArrayList();
+    private List<JatsAuthor> currentAuthors = Lists.newArrayList();
     
     
     //------------------------ CONSTRUCTOS --------------------------
@@ -78,7 +78,7 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ParentAware
             currentArticleIdType = attributes.getValue(PUB_ID_TYPE);
         } else if (isElement(qName, ELEM_CONTRIBUTOR)) {
             if (ATTR_VALUE_AUTHOR.equals(attributes.getValue(ATTR_CONTRIBUTOR_TYPE))) {
-                currentAuthor = new PmcIngestAuthor();
+                currentAuthor = new JatsAuthor();
             }
         } else if (isWithinElement(qName, ELEM_XREF, parents, ELEM_CONTRIBUTOR)) {
             if (currentAuthor != null && ATTR_AFFILIATION_XREF.equals(attributes.getValue(ATTR_XREF_TYPE))) {
@@ -150,9 +150,8 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ParentAware
     
     @Override
     public void endDocument() throws SAXException {
-        for (PmcIngestAuthor pmcAuthor : currentAuthors) {
+        for (JatsAuthor pmcAuthor : currentAuthors) {
             Author author = Author.newBuilder()
-                    .setAffiliationPositions(Lists.newArrayList())
                     .setFullname(pmcAuthor.getSurname() + ", " + pmcAuthor.getGivenNames())
                     .setAffiliationPositions(pmcAuthor.getAffiliationPos())
                     .build();
@@ -161,8 +160,8 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ParentAware
     }
 
     @Override
-    public Stack<String> getParents() {
-        return parents;
+    public boolean hasFinished() {
+        return parents.isEmpty();
     }
     
     
@@ -206,22 +205,22 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ParentAware
     }
     
     private boolean assignAuthorsForAffiliation(Affiliation currentAffiliation, int currentAffiliationPosition) throws SAXException {
-        boolean atLeasOneAuthorAssigned = false;
+        boolean atLeastOneAuthorAssigned = false;
         
         if (hasAmongParents(parents, ELEM_CONTRIBUTOR)) {
             currentAuthor.getAffiliationPos().add(currentAffiliationPosition);
-            atLeasOneAuthorAssigned = true;
+            atLeastOneAuthorAssigned = true;
         } else if (hasAmongParents(parents, ELEM_CONTRIBUTOR_GROUP)) {
-            for (PmcIngestAuthor author : currentAuthorsGroup) {
+            for (JatsAuthor author : currentAuthorsGroup) {
                 author.getAffiliationPos().add(currentAffiliationPosition);
-                atLeasOneAuthorAssigned = true;
+                atLeastOneAuthorAssigned = true;
             }
         } else if (currentAffiliationId != null) {
-            for (PmcIngestAuthor author : currentAuthors) {
+            for (JatsAuthor author : currentAuthors) {
                 for (String affRefId : author.getAffiliationRefId()) {
                     if (StringUtils.equals(currentAffiliationId, affRefId)) {
                         author.getAffiliationPos().add(currentAffiliationPosition);
-                        atLeasOneAuthorAssigned = true;
+                        atLeastOneAuthorAssigned = true;
                     }
                 }
             }
@@ -229,6 +228,6 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ParentAware
             throw new SAXException("unable to connect affiliation with corresponding authors (" + currentAffiliation + ")");
         }
         
-        return atLeasOneAuthorAssigned;
+        return atLeastOneAuthorAssigned;
     }
 }

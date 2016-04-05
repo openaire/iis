@@ -5,12 +5,12 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 /**
- * Helper author class used in pmc xml handlers
+ * Helper author class used in JATS xml handlers
  * 
  * @author madryk
  *
  */
-public class PmcIngestAuthor {
+public class JatsAuthor {
 
     private String surname;
     

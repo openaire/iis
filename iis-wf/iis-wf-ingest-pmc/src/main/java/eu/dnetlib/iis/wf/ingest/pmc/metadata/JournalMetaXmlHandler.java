@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.ingest.pmc.metadata;
 
-import static eu.dnetlib.iis.wf.ingest.pmc.metadata.PmcXmlConstants.*;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.*;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.TagHierarchyUtils.*;
 
 import java.util.Stack;
@@ -12,13 +12,13 @@ import org.xml.sax.helpers.DefaultHandler;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
 
 /**
- * Sax xml handler of &lt;journal-meta&gt; tag in pmc xml
+ * Sax xml handler of &lt;journal-meta&gt; tag in JATS xml
  * 
  * @author mhorst
  * @author madryk
  *
  */
-public class JournalMetaXmlHandler extends DefaultHandler implements ParentAwareXmlHandler {
+public class JournalMetaXmlHandler extends DefaultHandler implements ProcessingFinishedAwareXmlHandler {
     
     private Stack<String> parents;
     
@@ -70,8 +70,8 @@ public class JournalMetaXmlHandler extends DefaultHandler implements ParentAware
     }
 
     @Override
-    public Stack<String> getParents() {
-        return parents;
+    public boolean hasFinished() {
+        return parents.isEmpty();
     }
     
     

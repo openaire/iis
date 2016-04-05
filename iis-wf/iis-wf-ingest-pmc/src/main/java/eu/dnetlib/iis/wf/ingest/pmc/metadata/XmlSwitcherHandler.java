@@ -10,7 +10,7 @@ import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
 
 /**
  * Sax xml handler which can switch between different implementations of
- * {@link ParentAwareXmlHandler} content handlers.
+ * {@link ProcessingFinishedAwareXmlHandler} content handlers.
  * Each implementation is responsible for processing only part of
  * xml enclosed by specified tag name.
  * 
@@ -19,9 +19,9 @@ import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
  */
 public class XmlSwitcherHandler extends DefaultHandler {
 
-    private ParentAwareXmlHandler currentHandler;
+    private ProcessingFinishedAwareXmlHandler currentHandler;
     
-    private Map<String, ParentAwareXmlHandler> handlers;
+    private Map<String, ProcessingFinishedAwareXmlHandler> handlers;
     
     
     //------------------------ CONSTRUCTORS --------------------------
@@ -34,7 +34,7 @@ public class XmlSwitcherHandler extends DefaultHandler {
      *      In key there should be a name of xml tag that is handled by handler specified
      *      as value.
      */
-    public XmlSwitcherHandler(ExtractedDocumentMetadata.Builder builder, Map<String, ParentAwareXmlHandler> handlers) {
+    public XmlSwitcherHandler(ExtractedDocumentMetadata.Builder builder, Map<String, ProcessingFinishedAwareXmlHandler> handlers) {
         this.currentHandler = null;
         this.handlers = handlers;
     }
@@ -70,7 +70,7 @@ public class XmlSwitcherHandler extends DefaultHandler {
         if (currentHandler != null) {
             currentHandler.endElement(uri, localName, qName);
             
-            if (currentHandler.getParents().isEmpty()) {
+            if (currentHandler.hasFinished()) {
                 currentHandler.endDocument();
                 currentHandler = null;
             }

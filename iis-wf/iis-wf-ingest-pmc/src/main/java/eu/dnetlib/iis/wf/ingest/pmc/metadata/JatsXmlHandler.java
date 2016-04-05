@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.ingest.pmc.metadata;
 
-import static eu.dnetlib.iis.wf.ingest.pmc.metadata.PmcXmlConstants.*;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.*;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.TagHierarchyUtils.*;
 
 import java.util.HashMap;
@@ -16,12 +16,12 @@ import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
 
 
 /**
- * PMC XML SAX handler.
+ * JATS XML SAX handler.
  * 
  * @author mhorst
  *
  */
-public class PmcXmlHandler extends DefaultHandler {
+public class JatsXmlHandler extends DefaultHandler {
 
     private boolean rootElement = true;
 
@@ -29,24 +29,30 @@ public class PmcXmlHandler extends DefaultHandler {
     
     private XmlSwitcherHandler xmlSwitcherHandler;
 
+    
+    //------------------------ CONSTRUCTORS --------------------------
+    
     /**
      * Default constructor.
      * @param receiver
      */
-    public PmcXmlHandler(ExtractedDocumentMetadata.Builder builder) {
+    public JatsXmlHandler(ExtractedDocumentMetadata.Builder builder) {
         super();
         this.builder = builder;
         if (!this.builder.hasExternalIdentifiers()) {
             this.builder.setExternalIdentifiers(new HashMap<CharSequence, CharSequence>());
         }
         
-        Map<String, ParentAwareXmlHandler> handlers = Maps.newHashMap();
+        Map<String, ProcessingFinishedAwareXmlHandler> handlers = Maps.newHashMap();
         handlers.put(ELEM_JOURNAL_META, new JournalMetaXmlHandler(builder));
         handlers.put(ELEM_ARTICLE_META, new ArticleMetaXmlHandler(builder));
         handlers.put(ELEM_REF_LIST, new RefListXmlHandler(builder));
         xmlSwitcherHandler = new XmlSwitcherHandler(builder, handlers);
     }
 
+    
+    //------------------------ LOGIC --------------------------
+    
     @Override
     public void startDocument() throws SAXException {
         clearAllFields();
@@ -87,6 +93,9 @@ public class PmcXmlHandler extends DefaultHandler {
         xmlSwitcherHandler.characters(ch, start, length);
     }
 
+    
+    //------------------------ PRIVATE --------------------------
+    
     private void clearAllFields() {
         this.rootElement = true;
     }

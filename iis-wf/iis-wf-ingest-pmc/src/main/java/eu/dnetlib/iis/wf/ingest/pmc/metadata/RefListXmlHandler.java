@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.ingest.pmc.metadata;
 
-import static eu.dnetlib.iis.wf.ingest.pmc.metadata.PmcXmlConstants.*;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.*;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.TagHierarchyUtils.*;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ReferenceMetadata;
  * @author madryk
  *
  */
-public class RefListXmlHandler extends DefaultHandler implements ParentAwareXmlHandler {
+public class RefListXmlHandler extends DefaultHandler implements ProcessingFinishedAwareXmlHandler {
     
     private Stack<String> parents;
     
@@ -195,8 +195,8 @@ public class RefListXmlHandler extends DefaultHandler implements ParentAwareXmlH
     }
     
     @Override
-    public Stack<String> getParents() {
-        return parents;
+    public boolean hasFinished() {
+        return parents.isEmpty();
     }
     
     //------------------------ PRIVATE --------------------------

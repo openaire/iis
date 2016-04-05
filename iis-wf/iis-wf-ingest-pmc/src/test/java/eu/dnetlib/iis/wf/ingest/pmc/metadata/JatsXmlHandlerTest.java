@@ -1,14 +1,12 @@
 package eu.dnetlib.iis.wf.ingest.pmc.metadata;
 
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.AssertExtractedDocumentMetadata.*;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Stack;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -26,17 +24,17 @@ import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ReferenceBasicMetadata;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ReferenceMetadata;
 
 /**
- * {@link PmcXmlHandler} test class.
+ * {@link JatsXmlHandler} test class.
  * 
  * @author mhorst
  *
  */
-public class PmcXmlHandlerTest {
+public class JatsXmlHandlerTest {
 
 	private Reader fileReader;
 	private SAXParser saxParser;
 	private ExtractedDocumentMetadata.Builder metaBuilder;
-	private PmcXmlHandler pmcXmlHandler;
+	private JatsXmlHandler jatsXmlHandler;
 
 	static final String xmlResourcesRootClassPath = "/eu/dnetlib/iis/wf/ingest/pmc/metadata/data/";
 
@@ -54,7 +52,7 @@ public class PmcXmlHandlerTest {
 		metaBuilder = ExtractedDocumentMetadata.newBuilder();
 		metaBuilder.setId("some-id");
 		metaBuilder.setText("");
-		pmcXmlHandler = new PmcXmlHandler(metaBuilder);
+		jatsXmlHandler = new JatsXmlHandler(metaBuilder);
 	}
 
 	@After
@@ -67,28 +65,28 @@ public class PmcXmlHandlerTest {
 
 	@Test
 	public void testParsingJats10() throws Exception {
-		fileReader = new InputStreamReader(PmcXmlHandler.class.getResourceAsStream(
+		fileReader = new InputStreamReader(JatsXmlHandler.class.getResourceAsStream(
 				xmlResourcesRootClassPath + "document_jats10.xml"), "UTF-8");
 		InputSource inputSource = new InputSource(fileReader);
-		saxParser.parse(inputSource, pmcXmlHandler);
+		saxParser.parse(inputSource, jatsXmlHandler);
 		checkJats10Metadata(metaBuilder.build());
 	}
 
 	@Test
 	public void testParsingJats10NestedInOAI() throws Exception {
-		fileReader = new InputStreamReader(PmcXmlHandler.class.getResourceAsStream(
+		fileReader = new InputStreamReader(JatsXmlHandler.class.getResourceAsStream(
 				xmlResourcesRootClassPath + "document_jats10_nested_in_oai.xml"), "UTF-8");
 		InputSource inputSource = new InputSource(fileReader);
-		saxParser.parse(inputSource, pmcXmlHandler);
+		saxParser.parse(inputSource, jatsXmlHandler);
 		checkJats10Metadata(metaBuilder.build());
 	}
 
 	@Test
 	public void testParsingJats23NestedInOAI() throws Exception {
-		fileReader = new InputStreamReader(PmcXmlHandler.class.getResourceAsStream(
+		fileReader = new InputStreamReader(JatsXmlHandler.class.getResourceAsStream(
 				xmlResourcesRootClassPath + "document_jats23_nested_in_oai.xml"), "UTF-8");
 		InputSource inputSource = new InputSource(fileReader);
-		saxParser.parse(inputSource, pmcXmlHandler);
+		saxParser.parse(inputSource, jatsXmlHandler);
 		ExtractedDocumentMetadata meta = metaBuilder.build();
 		assertEquals("research-article", meta.getEntityType());
 		assertEquals("Frontiers in Neuroscience", meta.getJournal());
@@ -138,10 +136,10 @@ public class PmcXmlHandlerTest {
 
 	@Test
 	public void testParsingLargeFile() throws Exception {
-		fileReader = new InputStreamReader(PmcXmlHandler.class.getResourceAsStream(
+		fileReader = new InputStreamReader(JatsXmlHandler.class.getResourceAsStream(
 				xmlResourcesRootClassPath + "od_______908__365a50343d53774f68fa13800349d372.xml"), "UTF-8");
 		InputSource inputSource = new InputSource(fileReader);
-		saxParser.parse(inputSource, pmcXmlHandler);
+		saxParser.parse(inputSource, jatsXmlHandler);
 		ExtractedDocumentMetadata meta = metaBuilder.build();
 		assertEquals("ZooKeys", meta.getJournal());
 		assertEquals("1", meta.getPages().getStart());
@@ -151,11 +149,11 @@ public class PmcXmlHandlerTest {
 	}
 
 	@Test
-	public void testParsingAffiliation() throws Exception {
-		fileReader = new InputStreamReader(PmcXmlHandler.class.getResourceAsStream(
+	public void testParsingAuthorsWithAffiliation() throws Exception {
+		fileReader = new InputStreamReader(JatsXmlHandler.class.getResourceAsStream(
 				xmlResourcesRootClassPath + "document_with_affiliations.xml"), "UTF-8");
 		InputSource inputSource = new InputSource(fileReader);
-		saxParser.parse(inputSource, pmcXmlHandler);
+		saxParser.parse(inputSource, jatsXmlHandler);
 		ExtractedDocumentMetadata meta = metaBuilder.build();
 
 		assertNotNull(meta.getAffiliations());
@@ -176,14 +174,28 @@ public class PmcXmlHandlerTest {
 		assertEquals("JP", meta.getAffiliations().get(4).getCountryCode());
 		assertEquals("Graduate School of Information Science, Nagoya University",
 				meta.getAffiliations().get(4).getOrganization());
+		
+		
+		assertNotNull(meta.getAuthors());
+		assertEquals(8, meta.getAuthors().size());
+		
+		assertAuthor(meta.getAuthors().get(0), "Tanabe, Lorraine", 0);
+		assertAuthor(meta.getAuthors().get(1), "Thom, Lynne H.", 1);
+		assertAuthor(meta.getAuthors().get(2), "Marth, Gabor T.", 2);
+		assertAuthor(meta.getAuthors().get(3), "Czabarka, Eva", 2);
+		assertAuthor(meta.getAuthors().get(4), "Murvai, Janos", 2);
+		assertAuthor(meta.getAuthors().get(5), "Sherry, Stephen T.", 2);
+		assertAuthor(meta.getAuthors().get(6), "Azuma, Yusuke", 3);
+		assertAuthor(meta.getAuthors().get(7), "Ota, Motonori", 4);
+		
 	}
 
 	@Test
 	public void testSingleRefParsing() throws Exception {
-		fileReader = new InputStreamReader(PmcXmlHandler.class.getResourceAsStream(
+		fileReader = new InputStreamReader(JatsXmlHandler.class.getResourceAsStream(
 				xmlResourcesRootClassPath + "single-ref-document.xml"), "UTF-8");
 		InputSource inputSource = new InputSource(fileReader);
-		saxParser.parse(inputSource, pmcXmlHandler);
+		saxParser.parse(inputSource, jatsXmlHandler);
 		ExtractedDocumentMetadata meta = metaBuilder.build();
 		assertNotNull(meta.getReferences());
 		assertEquals(1, meta.getReferences().size());
@@ -208,10 +220,10 @@ public class PmcXmlHandlerTest {
 	@Test
 	public void testMixedTitleParsing() throws Exception {
 		// files causing parsing problems
-		fileReader = new InputStreamReader(PmcXmlHandler.class.getResourceAsStream(
+		fileReader = new InputStreamReader(JatsXmlHandler.class.getResourceAsStream(
 				xmlResourcesRootClassPath + "od_______908__0451fa1ded79a63729296731e53335c0.xml"), "UTF-8");
 		InputSource inputSource = new InputSource(fileReader);
-		saxParser.parse(inputSource, pmcXmlHandler);
+		saxParser.parse(inputSource, jatsXmlHandler);
 		ExtractedDocumentMetadata meta = metaBuilder.build();
 		assertNotNull(meta.getReferences());
 		ReferenceMetadata refMeta = meta.getReferences().get(12);
@@ -235,10 +247,10 @@ public class PmcXmlHandlerTest {
 	@Test
 	public void testElementCitation() throws Exception {
 		// files causing parsing problems
-		fileReader = new InputStreamReader(PmcXmlHandler.class.getResourceAsStream(
+		fileReader = new InputStreamReader(JatsXmlHandler.class.getResourceAsStream(
 				xmlResourcesRootClassPath + "od_______908__0452195ccf851072fd097fc49bfbb9da.xml"), "UTF-8");
 		InputSource inputSource = new InputSource(fileReader);
-		saxParser.parse(inputSource, pmcXmlHandler);
+		saxParser.parse(inputSource, jatsXmlHandler);
 		ExtractedDocumentMetadata meta = metaBuilder.build();
 		assertNotNull(meta.getReferences());
 

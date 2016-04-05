@@ -1,13 +1,13 @@
 package eu.dnetlib.iis.wf.ingest.pmc.metadata;
 
 /**
- * Constants defining element names, attribute names and attribute values from pmc xml
+ * Constants defining element names, attribute names and attribute values from JATS xml
  * 
  * @author mhorst
  * @author madryk
  *
  */
-public interface PmcXmlConstants {
+public interface JatsXmlConstants {
 
 //  article root element, relevant when parsing article record nested inside oai record.
     String ELEM_ARTICLE = "article";

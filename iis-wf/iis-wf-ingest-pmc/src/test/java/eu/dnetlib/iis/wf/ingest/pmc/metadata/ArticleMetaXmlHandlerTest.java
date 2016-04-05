@@ -1,7 +1,7 @@
 package eu.dnetlib.iis.wf.ingest.pmc.metadata;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.AssertExtractedDocumentMetadata.assertAffiliation;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.AssertExtractedDocumentMetadata.assertAuthor;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -166,24 +166,4 @@ public class ArticleMetaXmlHandlerTest {
         
     }
     
-    
-    //------------------------ PRIVATE --------------------------
-    
-    private void assertAuthor(Author actualAuthor, String expectedFullName, Integer ... expectedAffPositions) {
-        
-        assertEquals(expectedFullName, actualAuthor.getFullname());
-        assertThat(actualAuthor.getAffiliationPositions(), containsInAnyOrder(expectedAffPositions));
-        
-    }
-    
-    private void assertAffiliation(Affiliation actualAffiliation, String expectedOrganization, String expectedAddress,
-            String expectedCountryCode, String expectedCountryName, String expectedRawText) {
-        
-        assertEquals(expectedOrganization, actualAffiliation.getOrganization());
-        assertEquals(expectedAddress, actualAffiliation.getAddress());
-        assertEquals(expectedCountryCode, actualAffiliation.getCountryCode());
-        assertEquals(expectedCountryName, actualAffiliation.getCountryName());
-        assertEquals(expectedRawText, actualAffiliation.getRawText());
-        
-    }
 }
