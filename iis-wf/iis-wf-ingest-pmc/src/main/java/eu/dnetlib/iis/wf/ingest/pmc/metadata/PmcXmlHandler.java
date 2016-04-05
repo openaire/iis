@@ -199,11 +199,7 @@ public class PmcXmlHandler extends DefaultHandler {
 						}
 						CermineAffiliation cAff = cermineAffiliationBuilder.build(parsedAffiliation);
 						Affiliation aff = cermineToIngestAffConverter.convert(cAff);
-						if (aff.getRawText().length()>0) {
-							builder.getAffiliations().add(aff);	
-						} else {
-							aff.setRawText(affStr);
-						}
+						builder.getAffiliations().add(aff);	
 					}	
 				}
 			} catch (AnalysisException e) {
