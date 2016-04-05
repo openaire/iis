@@ -5,9 +5,7 @@ hidden var 'classCountLog' from select pyfun('math.log', cast((select count(*) f
 create temp table pubs as setschema 'title,text' select jsonpath(c1, '$.id', '$.abstract') from stdinput();
 insert into pubs select "","";
 
-
-DROP TABLE IF EXISTS preclassifier;
-create table preclassifier as 
+create temp table preclassifier as 
 select title, top3,top1,round(p,3) as p from (select title,top3,top1,round(((top2*1.0) / (wordcount * var('classCountLog'))),3) as p from (
 
 setschema 'wordcount, title, top1, top2, top3'
