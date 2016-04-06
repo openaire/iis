@@ -1,5 +1,5 @@
 <workflow-app xmlns='uri:oozie:workflow:0.4' name='importer_mapred_import'>
-	
+
 	<parameters>
 		<property>
 			<name>mapreduce_inputformat_class</name>
@@ -41,24 +41,14 @@
 			<description>hbase table encoding, usually UTF-8</description>
 		</property>
 		<!-- disabling, currently content import is conducted by dedicated module -->
-		<!-- 
-		<property>
-			<name>object_store_location</name>
-			<value>$UNDEFINED$</value>
-			<description>object store service location required for content retrieval</description>
-		</property>
-		<property>
-			<name>lookup_service_location</name>
-			<value>$UNDEFINED$</value>
-			<description>lookup service location required for content retrieval, finding object store id based on repository id</description>
-		</property>
-		 -->
+		<!-- <property> <name>object_store_location</name> <value>$UNDEFINED$</value> <description>object store service location required for content retrieval</description> </property> <property> <name>lookup_service_location</name> 
+			<value>$UNDEFINED$</value> <description>lookup service location required for content retrieval, finding object store id based on repository id</description> </property> -->
 		<property>
 			<name>approved_datasources_csv</name>
 			<value>$UNDEFINED$</value>
 			<description>CSV list of datasource ids to be approved during import. Applied on result and person entities.</description>
 		</property>
-		
+
 		<property>
 			<name>hbase_remote_zookeeper_quorum</name>
 			<description>remote zookeeper quorum location, disabled when set to $UNDEFINED$ value</description>
@@ -102,30 +92,30 @@
 			<value>dedupmapping</value>
 			<description>deduplication mapping output subdirectory name</description>
 		</property>
-        <property>
-            <name>output_name_organization</name>
-            <value>organization</value>
-            <description>organization output subdirectory name</description>
-        </property>
+		<property>
+			<name>output_name_organization</name>
+			<value>organization</value>
+			<description>organization output subdirectory name</description>
+		</property>
 
 	</parameters>
 
 	<global>
-        <job-tracker>${jobTracker}</job-tracker>
-        <name-node>${nameNode}</name-node>
-        <configuration>
-            <property>
-                <name>mapred.job.queue.name</name>
-                <value>${queueName}</value>
-            </property>
+		<job-tracker>${jobTracker}</job-tracker>
+		<name-node>${nameNode}</name-node>
+		<configuration>
+			<property>
+				<name>mapred.job.queue.name</name>
+				<value>${queueName}</value>
+			</property>
 		</configuration>
 	</global>
 
 	<start to="generate-schema" />
 
 	<action name="generate-schema">
-	    <java>
-	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
+		<java>
+			<main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
 			<arg>eu.dnetlib.iis.importer.schemas.DocumentMetadata</arg>
 			<arg>eu.dnetlib.iis.citationmatching.schemas.Citation</arg>
 			<arg>eu.dnetlib.iis.importer.schemas.DocumentToProject</arg>
@@ -133,31 +123,24 @@
 			<arg>eu.dnetlib.iis.importer.schemas.Person</arg>
 			<arg>eu.dnetlib.iis.importer.schemas.Project</arg>
 			<arg>eu.dnetlib.iis.importer.schemas.Organization</arg>
-	        <capture-output />
-	    </java>
-	    <ok to="get-scanner" />
-	    <error to="fail" />
+			<capture-output />
+		</java>
+		<ok to="get-scanner" />
+		<error to="fail" />
 	</action>
-	
+
 	<action name='get-scanner'>
 		<java>
 			<main-class>eu.dnetlib.iis.wf.importer.mapred.helper.ScanStringGenerator</main-class>
-			<!--
-			start 
-			<arg>-s datasource|2a78ddb2-3ef4-4304-97e2-827951fde71e</arg>
-			end
-			<arg>-e organization|JORG_Q29wZXJuaWN1cyBHZXNlbGxzY2hhZnQgbWJIIChUQyk=</arg>
-			-->
-			<!-- 
-			column family:
-			 -->
+			<!-- start <arg>-s datasource|2a78ddb2-3ef4-4304-97e2-827951fde71e</arg> end <arg>-e organization|JORG_Q29wZXJuaWN1cyBHZXNlbGxzY2hhZnQgbWJIIChUQyk=</arg> -->
+			<!-- column family: -->
 			<arg>-f person, project, organization, result, resultProject_outcome_isProducedBy, personResult_authorship_hasAuthor, resultResult_dedup_merges</arg>
 			<capture-output />
 		</java>
 		<ok to="mr_import" />
 		<error to="fail" />
 	</action>
-	
+
 	<action name='mr_import'>
 		<map-reduce>
 			<prepare>
@@ -193,8 +176,7 @@
 				<!-- MAPPER CONFIGURATIONS -->
 				<property>
 					<!-- this property is required for PredefinedTableInputFormat -->
-					<!-- has to be declared here otherwise integration test will not work,
-						try to find better solution -->
+					<!-- has to be declared here otherwise integration test will not work, try to find better solution -->
 					<name>import.input.format.idx.props.location</name>
 					<value>${inputformat_idx_props_location}</value>
 				</property>
@@ -224,7 +206,7 @@
 					<name>mapreduce.map.class</name>
 					<value>eu.dnetlib.iis.wf.importer.mapred.IISDataImporterMapper</value>
 				</property>
-				
+
 				<property>
 					<name>mapred.output.key.class</name>
 					<value>org.apache.avro.mapred.AvroKey</value>
@@ -257,64 +239,65 @@
 				</property>
 
 				<!-- # Job-specific options -->
-		        <property>
-		            <name>import.inference.provenance.blacklist</name>
-		            <value>${inference_provenance_blacklist}</value>
-		        </property>
-		        <property>
-		            <name>import.skip.deleted.by.inference</name>
-		            <value>${skip_deleted_by_inference}</value>
-		        </property>
-		        <property>
-		            <name>import.trust.level.threshold</name>
-		            <value>${trust_level_threshold}</value>
-		        </property>
-		        <property>
-		            <name>import.merge.body.with.updates</name>
-		            <value>${merge_body_with_updates}</value>
-		        </property>
-		        <property>
-		            <name>hbase.table.encoding</name>
-		            <value>${hbase_table_encoding}</value>
-		        </property>
-		        <!-- subdirectory names -->
-		        <property>
-		            <name>output.name.document_meta</name>
-		            <value>${output_name_document_meta}</value>
-		        </property>
-		        <property>
-		            <name>output.name.citation</name>
-		            <value>${output_name_citation}</value>
-		        </property>
-		        <property>
-		            <name>output.name.document_project</name>
-		            <value>${output_name_document_project}</value>
-		        </property>
-		        <property>
-		            <name>output.name.project</name>
-		            <value>${output_name_project}</value>
-		        </property>
-		        <property>
-		            <name>output.name.person</name>
-		            <value>${output_name_person}</value>
-		        </property>
-		        <property>
-		            <name>output.name.dedup_mapping</name>
-		            <value>${output_name_dedup_mapping}</value>
-		        </property>
-                <property>
-                    <name>output.name.organization</name>
-                    <value>${output_name_organization}</value>
-                </property>
-		        <property>
-		            <name>import.approved.datasources.csv</name>
-		            <value>${approved_datasources_csv}</value>
-		        </property>
-				
+				<property>
+					<name>import.inference.provenance.blacklist</name>
+					<value>${inference_provenance_blacklist}</value>
+				</property>
+				<property>
+					<name>import.skip.deleted.by.inference</name>
+					<value>${skip_deleted_by_inference}</value>
+				</property>
+				<property>
+					<name>import.trust.level.threshold</name>
+					<value>${trust_level_threshold}</value>
+				</property>
+				<property>
+					<name>import.merge.body.with.updates</name>
+					<value>${merge_body_with_updates}</value>
+				</property>
+				<property>
+					<name>hbase.table.encoding</name>
+					<value>${hbase_table_encoding}</value>
+				</property>
+				<!-- subdirectory names -->
+				<property>
+					<name>output.name.document_meta</name>
+					<value>${output_name_document_meta}</value>
+				</property>
+				<property>
+					<name>output.name.citation</name>
+					<value>${output_name_citation}</value>
+				</property>
+				<property>
+					<name>output.name.document_project</name>
+					<value>${output_name_document_project}</value>
+				</property>
+				<property>
+					<name>output.name.project</name>
+					<value>${output_name_project}</value>
+				</property>
+				<property>
+					<name>output.name.person</name>
+					<value>${output_name_person}</value>
+				</property>
+				<property>
+					<name>output.name.dedup_mapping</name>
+					<value>${output_name_dedup_mapping}</value>
+				</property>
+				<property>
+					<name>output.name.organization</name>
+					<value>${output_name_organization}</value>
+				</property>
+				<property>
+					<name>import.approved.datasources.csv</name>
+					<value>${approved_datasources_csv}</value>
+				</property>
+
 				<!-- ## Names of all output ports -->
 				<property>
 					<name>avro.mapreduce.multipleoutputs</name>
-					<value>${output_name_document_meta} ${output_name_citation} ${output_name_document_project} ${output_name_dedup_mapping} ${output_name_person} ${output_name_project} ${output_name_organization}</value>
+					<value>${output_name_document_meta} ${output_name_citation} ${output_name_document_project} ${output_name_dedup_mapping} ${output_name_person} ${output_name_project} ${output_name_organization}
+					</value>
 				</property>
 				<!-- ## Output classes for all output ports -->
 				<property>
@@ -348,10 +331,10 @@
 					<value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
 				</property>
 				<property>
-                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_organization}.format</name>
-                    <value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
-                </property>
-				
+					<name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_organization}.format</name>
+					<value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
+				</property>
+
 				<!-- ### Schema of multiple output ports. -->
 				<property>
 					<name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_document_meta}.keyschema</name>
@@ -378,14 +361,14 @@
 					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.Project']}</value>
 				</property>
 				<property>
-                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_organization}.keyschema</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.Organization']}</value>
-                </property>
-				
+					<name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_organization}.keyschema</name>
+					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.Organization']}</value>
+				</property>
+
 				<property>
-                    <name>mapred.reduce.tasks</name>
-                    <value>0</value>
-                </property>
+					<name>mapred.reduce.tasks</name>
+					<value>0</value>
+				</property>
 			</configuration>
 		</map-reduce>
 		<ok to="end" />
@@ -393,7 +376,8 @@
 	</action>
 	<kill name="fail">
 		<message>Map/Reduce failed, error
-			message[${wf:errorMessage(wf:lastErrorNode())}]</message>
+			message[${wf:errorMessage(wf:lastErrorNode())}]
+		</message>
 	</kill>
 	<end name='end' />
 </workflow-app>

@@ -1,4 +1,0 @@
-## This is a classpath-based import file (this header is required)
-mainworkflows_importer_plaintext_cached classpath eu/dnetlib/iis/wf/top/importer/plaintext/cached/oozie_app
-transformers_metadataextraction_checksum_preprocessing classpath eu/dnetlib/iis/wf/transformers/metadataextraction/checksum/preprocessing/oozie_app
-transformers_metadataextraction_checksum_postprocessing_text classpath eu/dnetlib/iis/wf/transformers/metadataextraction/checksum/postprocessing/text/oozie_app
