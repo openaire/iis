@@ -21,7 +21,7 @@ outputDocumentMeta = foreach joined generate
 		sourceDocumentMeta::year as year,
 		sourceDocumentMeta::publisher as publisher,
 		sourceDocumentMeta::references as references,
-		sourceDocumentMeta::authors as authors,
+		sourceDocumentMeta::authors as authorsMeta,
 		sourceDocumentMeta::affiliations as affiliations,
 		sourceDocumentMeta::volume as volume,
 		sourceDocumentMeta::issue as issue,
