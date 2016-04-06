@@ -1,0 +1,252 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="primary_export_to_json">
+
+	<parameters>
+		<!-- input ports -->
+		<property>
+			<name>input_document_metadata</name>
+			<value>$UNDEFINED$</value>
+		</property>
+		<property>
+			<name>input_document_to_project</name>
+			<value>$UNDEFINED$</value>
+		</property>
+		<property>
+			<name>input_document_to_project_concepts</name>
+			<value>$UNDEFINED$</value>
+		</property>
+		<property>
+			<name>input_document_to_dataset</name>
+			<value>$UNDEFINED$</value>
+		</property>
+		<property>
+			<name>input_document_to_research_initiatives</name>
+			<value>$UNDEFINED$</value>
+		</property>
+		<property>
+			<name>input_document_to_pdb</name>
+			<value>$UNDEFINED$</value>
+		</property>
+		<property>
+			<name>input_document_to_document_classes</name>
+			<value>$UNDEFINED$</value>
+		</property>
+		<property>
+			<name>input_citations</name>
+			<value>$UNDEFINED$</value>
+		</property>
+		<property>
+			<name>input_document_similarity</name>
+			<value>$UNDEFINED$</value>
+		</property>
+
+		<!-- output root directory -->
+		<property>
+			<name>output_root</name>
+		</property>
+	</parameters>
+
+	<global>
+		<job-tracker>${jobTracker}</job-tracker>
+		<name-node>${nameNode}</name-node>
+		<configuration>
+			<property>
+				<name>mapred.job.queue.name</name>
+				<value>${queueName}</value>
+			</property>
+		</configuration>
+	</global>
+
+	<start to="forking" />
+
+	<fork name="forking">
+		<path start="exporter-document-metadata" />
+		<path start="exporter-document-to-dataset" />
+		<path start="exporter-document-to-project" />
+		<path start="exporter-document-to-project-concepts" />
+		<path start="exporter-document-to-researchinitiatives" />
+		<path start="exporter-document-to-pdb" />
+		<path start="exporter-document-to-documentclasses" />
+		<path start="exporter-citation" />
+		<path start="exporter-document-similiarity" />
+	</fork>
+
+	<action name="exporter-document-metadata">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_avro2json</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>input</name>
+					<value>${input_document_metadata}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${output_root}/document_metadata</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="joining" />
+		<error to="fail" />
+	</action>
+
+	<action name="exporter-document-to-dataset">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_avro2json</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>input</name>
+					<value>${input_document_to_dataset}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${output_root}/document_to_dataset</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="joining" />
+		<error to="fail" />
+	</action>
+
+	<action name="exporter-document-to-project">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_avro2json</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>input</name>
+					<value>${input_document_to_project}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${output_root}/document_to_project</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="joining" />
+		<error to="fail" />
+	</action>
+
+	<action name="exporter-document-to-project-concepts">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_avro2json</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>input</name>
+					<value>${input_document_to_project_concepts}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${output_root}/document_to_project_concepts</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="joining" />
+		<error to="fail" />
+	</action>
+
+	<action name="exporter-document-to-researchinitiatives">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_avro2json</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>input</name>
+					<value>${input_document_to_research_initiatives}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${output_root}/document_to_research_initiatives</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="joining" />
+		<error to="fail" />
+	</action>
+
+	<action name="exporter-document-to-pdb">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_avro2json</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>input</name>
+					<value>${input_document_to_pdb}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${output_root}/document_to_pdb</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="joining" />
+		<error to="fail" />
+	</action>
+
+	<action name="exporter-document-to-documentclasses">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_avro2json</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>input</name>
+					<value>${input_document_to_document_classes}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${output_root}/document_to_document_classes</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="joining" />
+		<error to="fail" />
+	</action>
+
+	<action name="exporter-citation">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_avro2json</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>input</name>
+					<value>${input_citations}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${output_root}/citations</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="joining" />
+		<error to="fail" />
+	</action>
+
+	<action name="exporter-document-similiarity">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_avro2json</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>input</name>
+					<value>${input_document_similarity}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${output_root}/document_similarity</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="joining" />
+		<error to="fail" />
+	</action>
+
+	<join name="joining" to="end" />
+
+	<kill name="fail">
+		<message>Unfortunately, the process failed -- error message:
+			[${wf:errorMessage(wf:lastErrorNode())}]
+		</message>
+	</kill>
+	<end name="end" />
+</workflow-app>
