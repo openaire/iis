@@ -19,6 +19,4 @@ empty = foreach joinedEmpty generate null, flatten(main);
 emptyAndToRewrite = union toRewrite, empty;
 replacedIds = foreach emptyAndToRewrite generate flatten(IDREPLACE('$id_field_to_replace1', *));
 
-DESCRIBE replacedIds;
-
 store replacedIds into '$output' using avro_store_output;
