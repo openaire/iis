@@ -10,7 +10,8 @@ groupedFilteredDocumentContentUrl = GROUP filteredDocumentContentUrl by contentC
 
 -- this piece of script is responsible for removing all checksum duplicates
 dedupGroupedFilteredDocumentContentUrl = FOREACH groupedFilteredDocumentContentUrl {
-      top_record = LIMIT filteredDocumentContentUrl 1;
+      ordered_records = ORDER filteredDocumentContentUrl BY id;
+      top_record = LIMIT ordered_records 1;
       GENERATE FLATTEN(top_record);
 };
 
