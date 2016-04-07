@@ -17,7 +17,7 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 * @author Łukasz Dumiszewski
 */
 
-public class AffMatchOrganizerConverterTest {
+public class AffMatchOrganizationConverterTest {
 
     
     @InjectMocks
@@ -102,7 +102,7 @@ public class AffMatchOrganizerConverterTest {
         Organization org = new Organization();
         
         org.setId("ABC123");
-        org.setName("Interdyscyplinary Centre");
+        org.setName("Interdisciplinary Centre");
         org.setShortName("ICM");
         org.setCountryCode("PL");
         org.setCountryName("Poland");
