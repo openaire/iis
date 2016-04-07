@@ -131,7 +131,7 @@ public class IdReplacerUDF extends EvalFunc<Tuple> {
     public Schema outputSchema(Schema input) {
         try {
         	return new Schema(new Schema.FieldSchema(getSchemaName(
-            		getClass().getName().toLowerCase(), 
+            		getClass().getName().toLowerCase().replace('.', '_'), 
             		input),
             		getRecordSchema(input), DataType.TUPLE));
         } catch (FrontendException ex) {
