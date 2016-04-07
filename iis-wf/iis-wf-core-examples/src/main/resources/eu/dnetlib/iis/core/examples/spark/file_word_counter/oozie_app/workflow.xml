@@ -1,4 +1,21 @@
 <workflow-app xmlns="uri:oozie:workflow:0.5" name="file-word-counter-in-oozie" >
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapred.job.queue.name</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
     <start to="fileWordCounterNode" />
     
     

@@ -1,10 +1,25 @@
-<workflow-app xmlns="uri:oozie:workflow:0.3" name="my_subworkflow">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="my_subworkflow">
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapred.job.queue.name</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
     <start to="generate-schema" />
 
 	<action name="generate-schema">
 	    <java>
-    		<job-tracker>${jobTracker}</job-tracker>
-        	<name-node>${nameNode}</name-node>
 	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
 	        <arg>eu.dnetlib.iis.core.examples.schemas.documentandauthor.personwithdocuments.PersonWithDocuments</arg>
 	        <capture-output />
@@ -15,14 +30,6 @@
 	
     <action name="filter">
         <pig>
-            <job-tracker>${jobTracker}</job-tracker>
-            <name-node>${nameNode}</name-node>
-            <configuration>
-                <property>
-                    <name>mapred.job.queue.name</name>
-                    <value>${queueName}</value>
-                </property>
-            </configuration>
             <!-- Path to PIG script the workflow executes. -->
             <script>lib/scripts/filter/filter.pig</script>
             <!-- Input ports. -->

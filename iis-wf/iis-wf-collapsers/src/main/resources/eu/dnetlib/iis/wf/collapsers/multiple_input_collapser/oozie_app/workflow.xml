@@ -65,6 +65,23 @@
 		</property>
 	</parameters>
 
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapred.job.queue.name</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
 	<start to="union" />
 
 	<action name="union">
@@ -83,6 +100,10 @@
 					<name>queueName</name>
 					<value>${queueName}</value>
 				</property>
+                <property>
+                    <name>oozieLauncherQueueName</name>
+                    <value>${oozieLauncherQueueName}</value>
+                </property>
 				<!-- Working directory of the subworkflow -->
 				<property>
 					<name>workingDir</name>
@@ -152,6 +173,10 @@
 					<name>queueName</name>
 					<value>${queueName}</value>
 				</property>
+                <property>
+                    <name>oozieLauncherQueueName</name>
+                    <value>${oozieLauncherQueueName}</value>
+                </property>
 				<!-- Working directory of the subworkflow -->
 				<property>
 					<name>workingDir</name>

@@ -14,12 +14,26 @@
 		</property>
 	</parameters>
 
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapred.job.queue.name</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
 	<start to="generate-schema" />
 
 	<action name="generate-schema">
 	    <java>
-    		<job-tracker>${jobTracker}</job-tracker>
-        	<name-node>${nameNode}</name-node>
 	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
 	        <arg>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</arg>
 	        <arg>eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId</arg>
@@ -31,8 +45,6 @@
 
     <action name="main">
         <map-reduce>
-            <job-tracker>${jobTracker}</job-tracker>
-            <name-node>${nameNode}</name-node>
             <prepare>
                 <delete path="${nameNode}${output}"/>
             </prepare>

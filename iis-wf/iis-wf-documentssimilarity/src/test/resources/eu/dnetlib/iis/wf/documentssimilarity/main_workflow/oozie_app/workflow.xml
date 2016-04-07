@@ -3,13 +3,17 @@
 "markdown" syntax (along with division into sections). -->
 <workflow-app xmlns="uri:oozie:workflow:0.4" name="test-documentssimilarity_main_workflow">
 
-	<global>
+    <global>
         <job-tracker>${jobTracker}</job-tracker>
         <name-node>${nameNode}</name-node>
         <configuration>
             <property>
                 <name>mapred.job.queue.name</name>
                 <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
             </property>
         </configuration>
     </global>
