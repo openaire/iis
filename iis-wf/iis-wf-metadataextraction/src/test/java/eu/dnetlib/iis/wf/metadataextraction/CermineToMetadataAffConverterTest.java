@@ -1,6 +1,8 @@
 package eu.dnetlib.iis.wf.metadataextraction;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 
@@ -37,14 +39,14 @@ public class CermineToMetadataAffConverterTest {
         
         // given
         
-        CermineAffiliation cAff = new CermineAffiliation();
-        cAff.setAddress("some address");
-        cAff.setCountryCode("PL");
-        cAff.setCountryName("Poland");
-        cAff.setInstitution("ICM, UW");
-        cAff.setRawText("ICM, UW, Poland, some address");
+        CermineAffiliation cAff = mock(CermineAffiliation.class);
+        when(cAff.getAddress()).thenReturn("some address");
+        when(cAff.getCountryCode()).thenReturn("PL");
+        when(cAff.getCountryName()).thenReturn("Poland");
+        when(cAff.getInstitution()).thenReturn("ICM, UW");
+        when(cAff.getRawText()).thenReturn("ICM, UW, Poland, some address");
         
-        
+                
         // execute
         
         Affiliation aff = cermineToMetadataAffConverter.convert(cAff);
@@ -52,11 +54,12 @@ public class CermineToMetadataAffConverterTest {
         
         // assert
         
-        assertEquals(cAff.getAddress(), aff.getAddress());
-        assertEquals(cAff.getCountryCode(), aff.getCountryCode());
-        assertEquals(cAff.getCountryName(), aff.getCountryName());
-        assertEquals(cAff.getInstitution(), aff.getOrganization());
-        assertEquals(cAff.getRawText(), aff.getRawText());
+        assertEquals("some address", aff.getAddress());
+        assertEquals("PL", aff.getCountryCode());
+        assertEquals("Poland", aff.getCountryName());
+        assertEquals("ICM, UW", aff.getOrganization());
+        assertEquals("ICM, UW, Poland, some address", aff.getRawText());
+        
         
     }
 
