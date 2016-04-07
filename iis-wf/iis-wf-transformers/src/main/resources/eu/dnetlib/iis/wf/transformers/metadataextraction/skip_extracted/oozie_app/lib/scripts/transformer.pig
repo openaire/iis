@@ -31,7 +31,7 @@ documentMetaFiltered = foreach joinedDocumentMeta generate
 	documentMeta::year as year,
 	documentMeta::publisher as publisher,
 	documentMeta::references as references,
-	documentMeta::authors as authors,
+	documentMeta::authors as authorsMeta,
 	documentMeta::affiliations as affiliations,
 	documentMeta::volume as volume,
 	documentMeta::issue as issue,
