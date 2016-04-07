@@ -8,6 +8,8 @@ import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 
 /**
+ * Converter of {@link Organization} into {@link AffMatchOrganization}
+ * 
 * @author Łukasz Dumiszewski
 */
 

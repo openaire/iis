@@ -3,8 +3,11 @@ package eu.dnetlib.iis.wf.affmatching;
 import org.apache.commons.lang3.StringUtils;
 
 import eu.dnetlib.iis.common.string.StringNormalizer;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 
 /**
+ * Normalizer of an organization's website url. See {@link AffMatchOrganization#getWebsiteUrl()}
+ * 
 * @author Łukasz Dumiszewski
 */
 
