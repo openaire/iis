@@ -10,6 +10,7 @@
 	<packaging>pom</packaging>
 	<modules>
        <module>iis-wf-core-examples</module>
+       <module>iis-wf-affmatching</module>
        <module>iis-wf-documentssimilarity</module>
        <module>iis-wf-citationmatching</module>
        <module>iis-wf-citationmatching-direct</module>
