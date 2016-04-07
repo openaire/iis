@@ -16,6 +16,10 @@
                 <value>${queueName}</value>
             </property>
             <property>
+                <name>oozieLauncherQueueName</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+            <property>
                 <name>nameNode</name>
                 <value>${nameNode}</value>
             </property>
