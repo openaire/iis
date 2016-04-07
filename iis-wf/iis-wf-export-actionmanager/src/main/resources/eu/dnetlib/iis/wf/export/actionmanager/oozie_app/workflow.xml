@@ -151,6 +151,10 @@
                 <name>mapred.job.queue.name</name>
                 <value>${queueName}</value>
             </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
            	<property>
 				<name>mapreduce.inputformat.class</name>
 				<value>org.apache.avro.mapreduce.AvroKeyInputFormat</value>

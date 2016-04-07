@@ -1,4 +1,21 @@
-<workflow-app xmlns="uri:oozie:workflow:0.3" name="test-importer_mapred_import_sampledataproducer">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-importer_mapred_import_sampledataproducer">
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapred.job.queue.name</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
 	<start to="importer" />
 	<action name="importer">
 		<sub-workflow>
@@ -56,14 +73,6 @@
 
 	<action name="consumer-dedupmapping">
 		<java>
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
-			<configuration>
-				<property>
-					<name>mapred.job.queue.name</name>
-					<value>${queueName}</value>
-				</property>
-			</configuration>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
 			<arg>-C{dedupmapping,
@@ -78,14 +87,6 @@
 
 	<action name="consumer-docproject">
 		<java>
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
-			<configuration>
-				<property>
-					<name>mapred.job.queue.name</name>
-					<value>${queueName}</value>
-				</property>
-			</configuration>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
 			<arg>-C{docproject,
@@ -100,14 +101,6 @@
 
 	<action name="consumer-person">
 		<java>
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
-			<configuration>
-				<property>
-					<name>mapred.job.queue.name</name>
-					<value>${queueName}</value>
-				</property>
-			</configuration>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
 			<arg>-C{person,
@@ -122,14 +115,6 @@
 
 	<action name="consumer-project">
 		<java>
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
-			<configuration>
-				<property>
-					<name>mapred.job.queue.name</name>
-					<value>${queueName}</value>
-				</property>
-			</configuration>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
 			<arg>-C{project,
@@ -144,14 +129,6 @@
 
 	<action name="consumer-document">
 		<java>
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
-			<configuration>
-				<property>
-					<name>mapred.job.queue.name</name>
-					<value>${queueName}</value>
-				</property>
-			</configuration>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
 			<arg>-C{document,
@@ -167,14 +144,6 @@
 
 	<action name="consumer-organization">
 		<java>
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
-			<configuration>
-				<property>
-					<name>mapred.job.queue.name</name>
-					<value>${queueName}</value>
-				</property>
-			</configuration>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
 			<arg>-C{organization,

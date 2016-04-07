@@ -1,4 +1,21 @@
-<workflow-app xmlns="uri:oozie:workflow:0.3" name="forking_subworkflow">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="forking_subworkflow">
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapred.job.queue.name</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
     <start to="fork"/>
     
     <!-- STEP 1 - FORKING --> 
@@ -11,18 +28,10 @@
     <!-- STEP 2A - PRODUCE PERSON -->
     <action name="person_producer">
         <java>
-            <job-tracker>${jobTracker}</job-tracker>
-            <name-node>${nameNode}</name-node>
             <prepare>
                 <delete path="${nameNode}${workingDir}/person_producer" />
                 <mkdir path="${nameNode}${workingDir}/person_producer" />
             </prepare>
-            <configuration>
-                <property>
-                    <name>mapred.job.queue.name</name>
-                    <value>${queueName}</value>
-                </property>
-            </configuration>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.core.examples.java.PersonProducer</arg>
             <arg>-Operson=${output_person}</arg>
@@ -35,18 +44,10 @@
     <!-- STEP 2B - PRODUCE DOCUMENT -->
     <action name="document_producer">
         <java>
-            <job-tracker>${jobTracker}</job-tracker>
-            <name-node>${nameNode}</name-node>
             <prepare>
                 <delete path="${nameNode}${workingDir}/document_producer" />
                 <mkdir path="${nameNode}${workingDir}/document_producer" />
             </prepare>
-            <configuration>
-                <property>
-                    <name>mapred.job.queue.name</name>
-                    <value>${queueName}</value>
-                </property>
-            </configuration>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.core.examples.java.DocumentProducer</arg>
             <arg>-Odocument=${output_document}</arg>

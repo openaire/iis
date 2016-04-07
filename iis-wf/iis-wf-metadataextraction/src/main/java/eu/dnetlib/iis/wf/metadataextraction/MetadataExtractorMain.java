@@ -20,14 +20,16 @@ public class MetadataExtractorMain {
 	public static void main(String[] args) throws Exception {
 		if (args.length>0) {
 			for (String fileLoc : args) {
+			    System.out.println("PROCESSING: " + fileLoc);
 				ContentExtractor extractor = new ContentExtractor();
+				extractor.getConf().setTimeDebug(true);
 				InputStream inputStream = new FileInputStream(new File(fileLoc));
 				try {
                     extractor.setPDF(inputStream);
 					Element resultElem = extractor.getNLMContent();
-					XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
-					System.out.println(outputter.outputString(resultElem));
-					System.out.println();
+//					XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
+//					System.out.println(outputter.outputString(resultElem));
+//					System.out.println();
 				} finally {
 					inputStream.close();
 				}

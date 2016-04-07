@@ -1,4 +1,21 @@
-<workflow-app xmlns="uri:oozie:workflow:0.3" name="test-importer_hbase_test">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-importer_hbase_test">
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapred.job.queue.name</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
 	<!-- 
 		This example writes to multiple datastores: 2 sequence files with persons of odd and even age. 
 		Then another MR job reads both datastores and clones all persons.
@@ -6,16 +23,8 @@
 	<start to="hbase_test" />
 	<action name="hbase_test">
 		<java>
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
 			<prepare>
 			</prepare>
-			<configuration>
-				<property>
-					<name>mapred.job.queue.name</name>
-					<value>${queueName}</value>
-				</property>
-			</configuration>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.wf.importer.HBaseStdoutPrinter</arg>
 			<arg>-Pimport.hbase.table.name=mhorst_test</arg>
