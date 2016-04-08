@@ -118,28 +118,6 @@ public class DocumentClassificationJobTest {
         executeJobAndAssert(jsonOutputFile);
     }
     
-    
-    @Test
-    public void documentClassificationJob_NULL_TAXONOMY() throws IOException {
-        
-        
-        // given
-        
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/wf/documentsclassification/data/input/documents_with_null_taxonomy.json";
-        String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/wf/documentsclassification/data/expected_output/document_to_document_classes_null_taxonomy.json";
-        
-        
-        AvroTestUtils.createLocalAvroDataStore(
-                JsonAvroTestUtils.readJsonDataStore(jsonInputFile, ExtractedDocumentMetadataMergedWithOriginal.class),
-                inputDirPath);
-        
-        
-        // execute & assert
-        
-        executeJobAndAssert(jsonOutputFile);
-    }
-    
-    
     @Test
     public void documentClassificationJob_EMPTY() throws IOException {
         
