@@ -35,7 +35,6 @@ import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
 import eu.dnetlib.data.proto.ResultProjectProtos.ResultProject.Outcome;
 import eu.dnetlib.data.proto.TypeProtos;
 import eu.dnetlib.data.proto.TypeProtos.Type;
-import eu.dnetlib.iis.citationmatching.schemas.Citation;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
@@ -46,7 +45,7 @@ import eu.dnetlib.iis.importer.schemas.DocumentToProject;
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.importer.schemas.Person;
 import eu.dnetlib.iis.importer.schemas.Project;
-import eu.dnetlib.iis.wf.importer.converter.CitationConverter;
+
 import eu.dnetlib.iis.wf.importer.converter.DeduplicationMappingConverter;
 import eu.dnetlib.iis.wf.importer.converter.DocumentMetadataConverter;
 import eu.dnetlib.iis.wf.importer.converter.DocumentToProjectConverter;
@@ -76,8 +75,6 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 	
 	private static final String OUTPUT_NAME_DOCUMENT_META = "output.name.document_meta";
 	
-	private static final String OUTPUT_NAME_CITATION = "output.name.citation";
-	
 	private static final String OUTPUT_NAME_DOCUMENT_PROJECT = "output.name.document_project";
 	
 	private static final String OUTPUT_NAME_PROJECT = "output.name.project";
@@ -89,8 +86,6 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 	private static final String OUTPUT_NAME_ORGANIZATION = "output.name.organization";
 	
 	private String outputNameDocumentMeta;
-	
-	private String outputNameCitation;
 	
 	private String outputNameDocumentProject;
 	
@@ -111,8 +106,6 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 	private FieldApprover fieldApprover;
 	
 	private DocumentMetadataConverter docMetaConverter;
-	
-	private CitationConverter citationConverter;
 	
 	private DocumentToProjectConverter docProjectConverter;
 	
@@ -182,7 +175,6 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 				this.resultApprover, this.fieldApprover,
 				getCollumnFamily(RelType.personResult, SubRelType.authorship, 
 						Authorship.RelName.hasAuthor.toString()));
-		citationConverter = new CitationConverter(encoding, this.resultApprover);
 		deduplicationMappingConverter = new DeduplicationMappingConverter(
 				encoding, resultApprover, 
 				getCollumnFamily(RelType.resultResult, SubRelType.dedup, 
@@ -201,10 +193,6 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 		outputNameDocumentMeta = context.getConfiguration().get(OUTPUT_NAME_DOCUMENT_META);
 		if (outputNameDocumentMeta==null) {
 			throw new RuntimeException("document metadata output name not provided!");
-		}
-		outputNameCitation = context.getConfiguration().get(OUTPUT_NAME_CITATION);
-		if (outputNameCitation==null) {
-			throw new RuntimeException("citation output name not provided!");
 		}
 		outputNameDocumentProject = context.getConfiguration().get(OUTPUT_NAME_DOCUMENT_PROJECT);
 		if (outputNameDocumentProject==null) {
@@ -280,13 +268,6 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 		if (resultApprover.approveBeforeBuilding(oafObj)) {
 			mos.write(outputNameDocumentMeta, new AvroKey<DocumentMetadata>(
 					docMetaConverter.buildObject(value, oafObj)));
-//			handling citations retrieved from ExtraInfo XML blob
-			Citation[] citations = citationConverter.buildObject(value, oafObj);
-			if (citations!=null && citations.length>0) {
-				for (Citation citation : citations) {
-					mos.write(outputNameCitation, new AvroKey<Citation>(citation));	
-				}
-			}
 //			hadling project relations
 			DocumentToProject[] docProjects = docProjectConverter.buildObject(value, oafObj);
 			if (docProjects!=null && docProjects.length>0) {

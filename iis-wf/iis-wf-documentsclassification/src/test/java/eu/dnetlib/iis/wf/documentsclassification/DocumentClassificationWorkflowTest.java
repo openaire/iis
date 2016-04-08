@@ -29,9 +29,4 @@ public class DocumentClassificationWorkflowTest extends AbstractOozieWorkflowTes
     	testWorkflow("eu/dnetlib/iis/wf/documentsclassification/sampletest_empty_abstract");
 	}
    
-    @Test
-	public void testMainNullTaxonomyWorkflow() throws Exception {
-    	testWorkflow("eu/dnetlib/iis/wf/documentsclassification/sampletest_null_taxonomy");
-	}
-    
 }

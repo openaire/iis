@@ -68,11 +68,6 @@
 			<description>document metadata output subdirectory name</description>
 		</property>
 		<property>
-			<name>output_name_citation</name>
-			<value>citation</value>
-			<description>citation output subdirectory name</description>
-		</property>
-		<property>
 			<name>output_name_document_project</name>
 			<value>docproject</value>
 			<description>document to project relation output subdirectory name</description>
@@ -121,7 +116,6 @@
 		<java>
 			<main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
 			<arg>eu.dnetlib.iis.importer.schemas.DocumentMetadata</arg>
-			<arg>eu.dnetlib.iis.citationmatching.schemas.Citation</arg>
 			<arg>eu.dnetlib.iis.importer.schemas.DocumentToProject</arg>
 			<arg>eu.dnetlib.iis.common.schemas.IdentifierMapping</arg>
 			<arg>eu.dnetlib.iis.importer.schemas.Person</arg>
@@ -269,10 +263,6 @@
 					<value>${output_name_document_meta}</value>
 				</property>
 				<property>
-					<name>output.name.citation</name>
-					<value>${output_name_citation}</value>
-				</property>
-				<property>
 					<name>output.name.document_project</name>
 					<value>${output_name_document_project}</value>
 				</property>
@@ -300,17 +290,12 @@
 				<!-- ## Names of all output ports -->
 				<property>
 					<name>avro.mapreduce.multipleoutputs</name>
-					<value>${output_name_document_meta} ${output_name_citation} ${output_name_document_project} ${output_name_dedup_mapping} ${output_name_person} ${output_name_project} ${output_name_organization}
+					<value>${output_name_document_meta} ${output_name_document_project} ${output_name_dedup_mapping} ${output_name_person} ${output_name_project} ${output_name_organization}
 					</value>
 				</property>
 				<!-- ## Output classes for all output ports -->
 				<property>
 					<name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_document_meta}.format
-					</name>
-					<value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
-				</property>
-				<property>
-					<name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_citation}.format
 					</name>
 					<value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
 				</property>
@@ -343,10 +328,6 @@
 				<property>
 					<name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_document_meta}.keyschema</name>
 					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.DocumentMetadata']}</value>
-				</property>
-				<property>
-					<name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_citation}.keyschema</name>
-					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.citationmatching.schemas.Citation']}</value>
 				</property>
 				<property>
 					<name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_document_project}.keyschema</name>
