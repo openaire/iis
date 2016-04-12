@@ -7,6 +7,8 @@ import java.util.Map;
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
+import org.apache.pig.impl.util.Utils;
+import org.apache.pig.parser.ParserException;
 
 /**
  * Returns empty map.
@@ -22,7 +24,12 @@ public class EmptyMap extends EvalFunc<Map<String, String>> {
 
     @Override
     public Schema outputSchema(Schema input) {
-    	return null;
+        try {
+            Schema schema = Utils.getSchemaFromString("m:map[chararray]");
+            return schema;
+        } catch (ParserException e) {
+            return null;
+        }
     }
     
 }

@@ -42,7 +42,7 @@
 			<mode>cluster</mode>
 			<name>citationmatching_direct_input_transformer</name>
 			<class>eu.dnetlib.iis.wf.citationmatching.direct.CitationMatchingDirectJob</class>
-			<jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-direct-${projectVersion}.jar</jar>
+			<jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-direct-${projectVersion}-uber.jar</jar>
 
 			<arg>-inputAvroPath=${input}</arg>
 			<arg>-outputAvroPath=${output}</arg>

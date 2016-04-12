@@ -28,7 +28,6 @@ output_metadata = foreach pmc_metadata {
       	(title, refAuthors, pages, source, volume, year, edition, publisher, location, series, issue, url, externalIds) as basicMetadata,
       	position as position:int, 
       	text as text:chararray;
-    empty_authors = (bag{tuple(chararray,bag{tuple(int)})}){};
     generate id as id,
     	null as title:chararray,
 		null as abstract:chararray,
@@ -39,7 +38,7 @@ output_metadata = foreach pmc_metadata {
 		null as year:int,
 		null as publisher:chararray,
     	parsed_references as references,
-		empty_authors as authors,
+		authors as authors,
 		affiliations as affiliations,
 		null as volume:chararray,
 		null as issue:chararray,

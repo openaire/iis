@@ -56,7 +56,7 @@
 
             <class>eu.dnetlib.iis.wf.citationmatching.input.CitationMatchingInputTransformerJob</class>
 
-            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}.jar</jar>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}-uber.jar</jar>
         
             <arg>-inputMetadata = ${input_metadata}</arg>
             <arg>-inputPerson = ${input_person}</arg>
@@ -85,7 +85,7 @@
 
             <class>eu.dnetlib.iis.wf.citationmatching.IisCitationMatchingJob</class>
 
-            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}.jar</jar>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}-uber.jar</jar>
         
             <arg>-fullDocumentPath = ${workingDir}/documents_with_authors</arg>
             
@@ -115,7 +115,7 @@
 
             <class>eu.dnetlib.iis.wf.citationmatching.output.CitationMatchingOutputTransformerJob</class>
 
-            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}.jar</jar>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}-uber.jar</jar>
         
             <arg>-input = ${workingDir}/matched_citations</arg>
             <arg>-output = ${output_citations}</arg>

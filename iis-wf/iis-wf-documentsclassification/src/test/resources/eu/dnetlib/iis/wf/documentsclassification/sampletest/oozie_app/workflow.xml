@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 
 <workflow-app xmlns="uri:oozie:workflow:0.4" name="test-documentsclassification_main_sampletest">
-	<start to="producer" />
 
     <global>
         <job-tracker>${jobTracker}</job-tracker>
@@ -18,6 +17,8 @@
         </configuration>
     </global>
     
+    
+    <start to="producer" />
     
 	<action name="producer">
 		<java>

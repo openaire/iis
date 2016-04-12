@@ -63,7 +63,7 @@
       "text": "J.R.R. Tolkien, The Lord of the Rings, 2012"
     }
   ],
-  "authors": [],
+  "authors": [{"authorFullName": "Jane Doe", "affiliationPositions": []}],
   "affiliations": null,
   "volume": null,
   "issue": null,
@@ -85,8 +85,12 @@
   "year": null,
   "publisher": null,
   "references": [],
-  "authors": [],
-   "affiliations": [
+  "authors": [
+    {"authorFullName": "Jane Doe", "affiliationPositions": [0, 1]},
+    {"authorFullName": "John Doe", "affiliationPositions": [0]},
+    {"authorFullName": "Mark Doe", "affiliationPositions": []}
+  ],
+  "affiliations": [
     {
       "organization": "ICM, UW",
       "countryName": "Poland",
