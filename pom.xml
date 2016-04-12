@@ -482,9 +482,10 @@
                         <groupId>jdk.tools</groupId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>org.apache.hadoop</artifactId>
-                        <groupId>hadoop-core</groupId>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-core</artifactId>
                     </exclusion>
+                    
             
                 </exclusions>
             </dependency>
@@ -499,8 +500,8 @@
                         <groupId>jdk.tools</groupId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>org.apache.hadoop</artifactId>
-                        <groupId>hadoop-core</groupId>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-core</artifactId>
                     </exclusion>
             
                 </exclusions>
@@ -510,6 +511,12 @@
                 <groupId>org.apache.hbase</groupId>
                 <artifactId>hbase-server</artifactId>
                 <version>${iis.hbase.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-core</artifactId>
+                    </exclusion>
+                </exclusions>
 			</dependency>
 			
 			<!-- Cermine dependencies -->
@@ -628,6 +635,12 @@
 				<groupId>eu.dnetlib</groupId>
 				<artifactId>dnet-openaireplus-mapping-utils</artifactId>
 				<version>[3.0.0, 4.0.0)</version>
+				<exclusions>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-core</artifactId>
+                    </exclusion>
+				</exclusions>
 			</dependency>
 			
 			<dependency>

@@ -1,0 +1,2 @@
+## This is a classpath-based import file (this header is required)
+citations_from_referencemetadata classpath eu/dnetlib/iis/wf/transformers/common/citations/from/referencemetadata/oozie_app

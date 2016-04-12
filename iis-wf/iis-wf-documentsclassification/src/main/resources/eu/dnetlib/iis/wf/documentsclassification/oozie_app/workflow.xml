@@ -49,7 +49,7 @@
             <name>document_classification_job</name>
             
             <class>eu.dnetlib.iis.wf.documentsclassification.DocumentClassificationJob</class>
-            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-documentsclassification-${projectVersion}.jar</jar>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-documentsclassification-${projectVersion}-uber.jar</jar>
             
 
             

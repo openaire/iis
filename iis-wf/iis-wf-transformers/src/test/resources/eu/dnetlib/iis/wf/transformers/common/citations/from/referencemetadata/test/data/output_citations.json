@@ -1,0 +1,50 @@
+{
+    "sourceDocumentId": "id-2",
+    "entry": {
+        "position": 1,
+        "destinationDocumentId": null,
+        "confidenceLevel": null,
+        "externalDestinationDocumentIds": {},
+        "rawText": "A. Rice, Interview with the Vampire"
+    }
+}
+{
+    "sourceDocumentId": "id-2",
+    "entry": {
+        "position": 2,
+        "destinationDocumentId": null,
+        "confidenceLevel": null,
+        "externalDestinationDocumentIds": {"ext-id-type1":"ext-id-1", "ext-id-type2":"ext-id-2"},
+        "rawText": "J.R.R. Tolkien, The Lord of the Rings, 2012"
+    }
+}
+{
+    "sourceDocumentId": "id-2",
+    "entry": {
+        "position": 3,
+        "destinationDocumentId": null,
+        "confidenceLevel": null,
+        "externalDestinationDocumentIds": {},
+        "rawText": "Ursula K. Le Guin, The Other Wind, 2003"
+    }
+}
+{
+    "sourceDocumentId": "id-3",
+    "entry": {
+        "position": 1,
+        "destinationDocumentId": null,
+        "confidenceLevel": null,
+        "externalDestinationDocumentIds": {},
+        "rawText": "A. Rice, Interview with the Vampire"
+    }
+}
+{
+    "sourceDocumentId": "id-3",
+    "entry": {
+        "position": 3,
+        "destinationDocumentId": null,
+        "confidenceLevel": null,
+        "externalDestinationDocumentIds": {},
+        "rawText": "Ursula K. Le Guin, The Other Wind, 2003"
+    }
+}

@@ -355,37 +355,6 @@
 							</execution>
 						</executions>
 					</plugin>
-					<plugin>
-
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-shade-plugin</artifactId>
-                        <version>2.4.1</version>
-                        <configuration>
-                            <artifactSet>
-                                <includes>
-                                    <include>*:*:jar:*</include>
-                                </includes>
-                            </artifactSet>
-						    <filters>
-						        <filter>
-						            <artifact>*:*</artifact>
-						            <excludes>
-						                <exclude>META-INF/*.SF</exclude>
-						                <exclude>META-INF/*.DSA</exclude>
-						                <exclude>META-INF/*.RSA</exclude>
-						            </excludes>
-						        </filter>
-						    </filters>
-						</configuration>
-                        <executions>
-                          <execution>
-                            <phase>package</phase>
-                            <goals>
-                              <goal>shade</goal>
-                            </goals>
-                          </execution>
-                        </executions>
-                    </plugin>
                     
 					<plugin>
 						<!-- this plugin prepares oozie installer package-->
@@ -700,7 +669,44 @@
 			</activation>
 		</profile>
 	</profiles>
+	
 	<build>
+        <plugins>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <artifactSet>
+                        <includes>
+                            <include>*:*:jar:*</include>
+                        </includes>
+                    </artifactSet>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                    <shadedClassifierName>uber</shadedClassifierName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+
 		<pluginManagement>
 			<plugins>
 				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
