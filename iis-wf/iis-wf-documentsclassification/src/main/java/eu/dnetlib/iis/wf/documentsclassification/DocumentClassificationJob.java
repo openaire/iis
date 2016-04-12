@@ -60,7 +60,7 @@ public class DocumentClassificationJob {
             
             String scriptsDirOnWorkerNode = (sc.isLocal()) ? SparkFiles.get("scripts") : "scripts";
             
-            JavaRDD<String> stringDocumentClasses = metadataRecords.pipe("sh " + scriptsDirOnWorkerNode + "/classify_documents.sh" + " " + scriptsDirOnWorkerNode);
+            JavaRDD<String> stringDocumentClasses = metadataRecords.pipe("bash " + scriptsDirOnWorkerNode + "/classify_documents.sh" + " " + scriptsDirOnWorkerNode);
             
             
             
