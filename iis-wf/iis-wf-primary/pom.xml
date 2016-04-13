@@ -194,7 +194,10 @@
 			</exclusions>
 		</dependency>
 
-
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+        </dependency>
 
 		<dependency>
 			<groupId>commons-io</groupId>
