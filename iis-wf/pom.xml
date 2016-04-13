@@ -682,6 +682,9 @@
                         <includes>
                             <include>*:*:jar:*</include>
                         </includes>
+                        <excludes>
+                            <exclude>org.bouncycastle:*</exclude>
+                        </excludes>
                     </artifactSet>
                     <filters>
                         <filter>
