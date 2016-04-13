@@ -113,7 +113,7 @@
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-C{document_to_dataset,
 				eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet,
-				eu/dnetlib/iis/wf/referenceextraction/dataset/data/document_to_dataset.json}</arg>
+				eu/dnetlib/iis/wf/referenceextraction/dataset/data/document_to_dataset-old.json}</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Idocument_to_dataset=${workingDir}/referenceextraction_dataset/document_to_dataset</arg>
 		</java>
