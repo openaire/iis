@@ -17,17 +17,23 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 * @author Łukasz Dumiszewski
 */
 
-public class AffMatchOrganizationConverterTest {
+public class OrganizationConverterTest {
 
     
     @InjectMocks
-    private AffMatchOrganizationConverter converter = new AffMatchOrganizationConverter();
+    private OrganizationConverter converter = new OrganizationConverter();
     
     @Mock
     private StringNormalizer organizationNameNormalizer;
 
     @Mock
+    private StringNormalizer organizationShortNameNormalizer;
+    
+    @Mock
     private StringNormalizer countryNameNormalizer;
+    
+    @Mock
+    private StringNormalizer countryCodeNormalizer;
     
     @Mock
     private StringNormalizer websiteUrlNormalizer;
@@ -45,7 +51,9 @@ public class AffMatchOrganizationConverterTest {
         organization = createOrganization();
         
         when(organizationNameNormalizer.normalize(organization.getName().toString())).thenReturn("interdyscyplinary centre");
+        when(organizationShortNameNormalizer.normalize(organization.getShortName().toString())).thenReturn("icm");
         when(countryNameNormalizer.normalize(organization.getCountryName().toString())).thenReturn("poland");
+        when(countryCodeNormalizer.normalize(organization.getCountryCode().toString())).thenReturn("pl");
         when(websiteUrlNormalizer.normalize(organization.getWebsiteUrl().toString())).thenReturn("icm.edu.pl");
         
     }
@@ -62,6 +70,18 @@ public class AffMatchOrganizationConverterTest {
     }
     
     
+    @Test(expected = IllegalArgumentException.class)
+    public void convert_blank_organization_id() {
+        
+        // given
+        organization.setId(" ");
+        
+        // execute
+        converter.convert(organization);
+        
+    }
+    
+    
     @Test
     public void convert() {
         
@@ -73,6 +93,42 @@ public class AffMatchOrganizationConverterTest {
         assertOrg("interdyscyplinary centre", affMatchOrg);
     }
     
+    
+    @Test
+    public void convert_null_properties() {
+        
+        // given
+        
+        organization.setName(null);
+        organization.setShortName(null);
+        organization.setCountryCode(null);
+        organization.setCountryName(null);
+        organization.setWebsiteUrl(null);
+        
+
+        when(organizationNameNormalizer.normalize("")).thenReturn("X");
+        when(organizationShortNameNormalizer.normalize("")).thenReturn("X");
+        when(countryNameNormalizer.normalize("")).thenReturn("X");
+        when(countryCodeNormalizer.normalize("")).thenReturn("X");
+        when(websiteUrlNormalizer.normalize("")).thenReturn("X");
+        
+        
+        
+        // execute 
+        
+        AffMatchOrganization affMatchOrg = converter.convert(organization);
+        
+        // assert
+        
+        assertEquals(organization.getId(), affMatchOrg.getId());
+        assertEquals("X", affMatchOrg.getName());
+        assertEquals("X", affMatchOrg.getShortName());
+        assertEquals("X", affMatchOrg.getCountryName());
+        assertEquals("X", affMatchOrg.getCountryCode());
+        assertEquals("X", affMatchOrg.getWebsiteUrl());
+        
+        
+    }
     
     
     @Test
@@ -115,9 +171,9 @@ public class AffMatchOrganizationConverterTest {
     private void assertOrg(String expectedOrgName, AffMatchOrganization affMatchOrg) {
         assertEquals(organization.getId(), affMatchOrg.getId());
         assertEquals(expectedOrgName, affMatchOrg.getName());
-        assertEquals(organization.getShortName(), affMatchOrg.getShortName());
+        assertEquals("icm", affMatchOrg.getShortName());
         assertEquals("poland", affMatchOrg.getCountryName());
-        assertEquals(organization.getCountryCode(), affMatchOrg.getCountryCode());
+        assertEquals("pl", affMatchOrg.getCountryCode());
         assertEquals("icm.edu.pl", affMatchOrg.getWebsiteUrl());
     }
 

@@ -20,7 +20,7 @@ package eu.dnetlib.iis.common.string;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * An implementation of {@link StringNormalizer) that normalizes strings for non-strict comparisons
+ * An implementation of {@link StringNormalizer} that normalizes strings for non-strict comparisons
  * in which one does not care about characters other than letters and digits or about differently written diacritics.
  *
  * @author Łukasz Dumiszewski

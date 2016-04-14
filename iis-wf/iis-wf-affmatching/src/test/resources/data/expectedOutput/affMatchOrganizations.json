@@ -1,24 +1,24 @@
 {
      "id":"20|ABC1",
      "name":"interdisciplinary centre of mathematical and computer modelling",
-     "shortName":"ICM",
+     "shortName":"icm",
      "countryName":"poland",
-     "countryCode":"PL",
+     "countryCode":"pl",
      "websiteUrl":"icm.edu.pl"
 }
 {
      "id":"20|ABC2",
      "name":"uniwersytet warszawski",
-     "shortName":"UW",
+     "shortName":"uw",
      "countryName":"poland",
-     "countryCode":"PL",
+     "countryCode":"pl",
      "websiteUrl":"uw.edu.pl"
 }
 {
      "id":"20|ABC3",
      "name":"the consiglio nazionale delle ricerche",
-     "shortName":"CNR",
+     "shortName":"cnr",
      "countryName":"italy",
-     "countryCode":"IT",
+     "countryCode":"it",
      "websiteUrl":"cnr.it"
 }
