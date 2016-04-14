@@ -1,0 +1,75 @@
+ {
+    "id":"ABC",
+    "title":"Quantum Theory of...",
+    "abstract":null,
+    "language":null,
+    "keywords":null,
+    "externalIdentifiers":null,
+    "journal":null,
+    "year":null,
+    "publisher":null,
+    "references":null,
+    "authors":null,
+    "affiliations":[
+        {
+        "organization":"Uniwersytet   Warszawski ",
+        "countryName":"Poland ",
+        "countryCode":"PL",
+        "address":null,
+        "rawText":""
+        },
+        {
+        "organization":null,
+        "countryName":"Poland ",
+        "countryCode":"PL",
+        "address":null,
+        "rawText":""
+        },
+        {
+        "organization":"MIT",
+        "countryName":null,
+        "countryCode":null,
+        "address":null,
+        "rawText":""
+        }
+    ],
+    "volume":null,
+    "issue":null,
+    "pages":null,
+    "publicationTypeName":null,
+    "text":""
+}
+{
+    "id":"20002AX",
+    "title":"O krasnoludkach i sierotce Marysi",
+    "abstract":null,
+    "language":null,
+    "keywords":null,
+    "externalIdentifiers":null,
+    "journal":null,
+    "year":null,
+    "publisher":null,
+    "references":null,
+    "authors":null,
+    "affiliations":[
+        {
+        "organization":"Uniwersytet   Warszawski ",
+        "countryName":"Poland ",
+        "countryCode":"PL",
+        "address":null,
+        "rawText":""
+        },
+        {
+        "organization":"Politechnika-Wrocławska",
+        "countryName":" ",
+        "countryCode":null,
+        "address":null,
+        "rawText":""
+        }
+    ],
+    "volume":null,
+    "issue":null,
+    "pages":null,
+    "publicationTypeName":null,
+    "text":""
+}
