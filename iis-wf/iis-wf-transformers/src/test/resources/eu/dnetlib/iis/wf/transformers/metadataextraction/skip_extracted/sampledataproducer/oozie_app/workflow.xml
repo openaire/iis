@@ -84,6 +84,14 @@
 					<name>output_document_meta</name>
 					<value>${workingDir}/transformer/output_document_meta</value>
 				</property>
+				<property>
+					<name>mapred_map_child_java_opts</name>
+					<value>-Xmx200m</value>
+				</property>
+				<property>
+					<name>mapred_reduce_child_java_opts</name>
+					<value>-Xmx200m</value>
+				</property>
 			</configuration>
 		</sub-workflow>
 		<ok to="consumer_document_content" />
@@ -110,7 +118,7 @@
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
 			<arg>-C{document_content_url,
-				eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl,
+				eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
 				eu/dnetlib/iis/wf/transformers/metadataextraction/skip_extracted/sampledataproducer/data/output_extracted_document_metadata.json}
 			</arg>
 			<arg>-Idocument_content_url=${workingDir}/transformer/output_document_meta</arg>

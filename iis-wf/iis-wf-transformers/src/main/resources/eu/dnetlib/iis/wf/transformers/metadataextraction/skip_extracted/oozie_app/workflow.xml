@@ -17,6 +17,16 @@
 			<name>output_document_meta</name>
 			<description>document extracted metadata ouput: all metadata records which were already processed, found in input_document_meta</description>
 		</property>
+		<property>
+			<name>mapred_map_child_java_opts</name>
+			<value>-Xmx4g</value>
+			<description>mapper java-opts, e.g. maximum heap size for a single JVM running MapReduce</description>
+		</property>
+		<property>
+			<name>mapred_reduce_child_java_opts</name>
+			<value>-Xmx4g</value>
+			<description>reducer java-opts, e.g. maximum heap size for a single JVM running MapReduce</description>
+		</property>
 	</parameters>
     
     <global>
@@ -58,11 +68,11 @@
             <configuration>
                 <property>
                     <name>mapred.map.child.java.opts</name>
-                    <value>-Xmx4g</value>
+                    <value>${mapred_map_child_java_opts}</value>
                 </property>
                 <property>
                     <name>mapred.reduce.child.java.opts</name>
-                    <value>-Xmx4g</value>
+                    <value>${mapred_reduce_child_java_opts}</value>
                 </property>
             </configuration>
             <!-- Path to PIG script the workflow executes. -->
