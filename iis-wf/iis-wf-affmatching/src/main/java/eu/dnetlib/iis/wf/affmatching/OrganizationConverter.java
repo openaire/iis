@@ -82,8 +82,13 @@ public class OrganizationConverter {
         this.countryNameNormalizer = countryNameNormalizer;
     }
     
+    public void setCountryCodeNormalizer(StringNormalizer countryCodeNormalizer) {
+        this.countryCodeNormalizer = countryCodeNormalizer;
+    }
+    
     public void setWebsiteUrlNormalizer(StringNormalizer websiteUrlNormalizer) {
         this.websiteUrlNormalizer = websiteUrlNormalizer;
     }
+
     
 }

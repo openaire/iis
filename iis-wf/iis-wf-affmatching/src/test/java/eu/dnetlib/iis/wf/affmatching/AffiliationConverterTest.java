@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -131,10 +130,7 @@ public class AffiliationConverterTest {
         ExtractedDocumentMetadata document = new ExtractedDocumentMetadata();
         document.setId("XYZ");
         
-        Affiliation aff1 = createAffiliation();
-        aff1.setOrganization(null);
-        aff1.setCountryName(null);
-        aff1.setCountryCode(null);
+        Affiliation aff1 = createAffiliation(null, null, null);
         
         when(organizationNameNormalizer.normalize("")).thenReturn("X");
         when(countryNameNormalizer.normalize("")).thenReturn("X");
@@ -166,9 +162,9 @@ public class AffiliationConverterTest {
         ExtractedDocumentMetadata document = new ExtractedDocumentMetadata();
         document.setId("XYZ");
         
-        Affiliation aff1 = createAffiliation();
-        Affiliation aff2 = createAffiliation();
-        Affiliation aff3 = createAffiliation();
+        Affiliation aff1 = createAffiliation("ABC", "PL", "Poland");
+        Affiliation aff2 = createAffiliation("DEF", "DE", "Deutschland");
+        Affiliation aff3 = createAffiliation("GHI", "SL", "Slovakia");
         
         when(organizationNameNormalizer.normalize(aff1.getOrganization().toString())).thenReturn("abc inst name");
         when(organizationNameNormalizer.normalize(aff2.getOrganization().toString())).thenReturn("def inst name");
@@ -204,11 +200,11 @@ public class AffiliationConverterTest {
     
     //------------------------ PRIVATE --------------------------
 
-    private Affiliation createAffiliation() {
+    private Affiliation createAffiliation(String orgName, String countryCode, String countryName) {
         Affiliation aff = new Affiliation();
-        aff.setOrganization(RandomStringUtils.randomAlphabetic(20));
-        aff.setCountryCode(RandomStringUtils.randomAlphabetic(2));
-        aff.setCountryName(RandomStringUtils.randomAlphabetic(10));
+        aff.setOrganization(orgName);
+        aff.setCountryCode(countryCode);
+        aff.setCountryName(countryName);
         return aff;
     }
     
