@@ -8,6 +8,10 @@
 				<name>mapred.job.queue.name</name>
 				<value>${queueName}</value>
 			</property>
+			<property>
+				<name>oozie.launcher.mapred.job.queue.name</name>
+				<value>${oozieLauncherQueueName}</value>
+			</property>
 		</configuration>
 	</global>
 
@@ -71,6 +75,7 @@
 	<action name="export_actionmanager_sequencefile">
 		<sub-workflow>
 			<app-path>${wf:appPath()}/export_actionmanager_sequencefile</app-path>
+			<propagate-configuration />
 			<configuration>
 				<property>
 					<name>workingDir</name>
@@ -112,56 +117,52 @@
 					<name>output</name>
 					<value>${workingDir}/output</value>
 				</property>
+				<property>
+					<name>action_set_id_document_similarities_standard</name>
+					<value>actionset-id</value>
+				</property>
+				<property>
+					<name>action_set_id_document_classes</name>
+					<value>actionset-id</value>
+				</property>
+				<property>
+					<name>action_set_id_document_referencedProjects</name>
+					<value>actionset-id</value>
+				</property>
+				<property>
+					<name>action_set_id_document_referencedDatasets</name>
+					<value>actionset-id</value>
+				</property>
+				<property>
+					<name>action_set_id_document_referencedDocuments</name>
+					<value>actionset-id</value>
+				</property>
+				<property>
+					<name>action_set_id_document_research_initiative</name>
+					<value>actionset-id</value>
+				</property>
+				<property>
+					<name>action_set_id_document_pdb</name>
+					<value>actionset-id</value>
+				</property>
+				<property>
+					<name>referenceextraction_pdb_url_root</name>
+					<value>http://www.rcsb.org/pdb/explore/explore.do?structureId=</value>
+				</property>
 			</configuration>
 		</sub-workflow>
 		<ok to="end" />
 		<error to="fail" />
 	</action>
-<!-- 
-	<action name="consumer">
-		<java>
-			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
-			<arg>-C{document_to_document_classes,
-				eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses,
-				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_classes.json}
-			</arg>
-			<arg>-Idocument_to_document_classes=${workingDir}/exported/document_to_document_classes</arg>
-			<arg>-C{document_to_dataset,
-				eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet,
-				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_dataset.json}
-			</arg>
-			<arg>-Idocument_to_dataset=${workingDir}/exported/document_to_dataset</arg>
-			<arg>-C{document_to_project,
-				eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject,
-				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_project.json}
-			</arg>
-			<arg>-Idocument_to_project=${workingDir}/exported/document_to_project</arg>
-			<arg>-C{document_to_project_concepts,
-				eu.dnetlib.iis.export.schemas.DocumentToConceptIds,
-				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_project_concepts.json}
-			</arg>
-			<arg>-Idocument_to_project_concepts=${workingDir}/exported/document_to_project_concepts</arg>
-			<arg>-C{document_to_research_initiatives,
-				eu.dnetlib.iis.export.schemas.DocumentToConceptIds,
-				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_research_initiatives.json}
-			</arg>
-			<arg>-Idocument_to_research_initiatives=${workingDir}/exported/document_to_research_initiatives</arg>
-			<arg>-C{citation,
-				eu.dnetlib.iis.export.schemas.Citations,
-				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/citations.json}
-			</arg>
-			<arg>-Icitation=${workingDir}/exported/citation</arg>
-			<arg>-C{document_similarity,
-				eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity,
-				eu/dnetlib/iis/common/data/empty.json}
-			</arg>
-			<arg>-Idocument_similarity=${workingDir}/exported/document_similarity</arg>
-		</java>
-		<ok to="end" />
-		<error to="fail" />
-	</action>
- -->
+	<!-- <action name="consumer"> <java> <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class> <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg> <arg>-C{document_to_document_classes, 
+		eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses, eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_classes.json} </arg> <arg>-Idocument_to_document_classes=${workingDir}/exported/document_to_document_classes</arg> 
+		<arg>-C{document_to_dataset, eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet, eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_dataset.json} </arg> <arg>-Idocument_to_dataset=${workingDir}/exported/document_to_dataset</arg> 
+		<arg>-C{document_to_project, eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject, eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_project.json} </arg> <arg>-Idocument_to_project=${workingDir}/exported/document_to_project</arg> 
+		<arg>-C{document_to_project_concepts, eu.dnetlib.iis.export.schemas.DocumentToConceptIds, eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_project_concepts.json} </arg> <arg>-Idocument_to_project_concepts=${workingDir}/exported/document_to_project_concepts</arg> 
+		<arg>-C{document_to_research_initiatives, eu.dnetlib.iis.export.schemas.DocumentToConceptIds, eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_research_initiatives.json} </arg> 
+		<arg>-Idocument_to_research_initiatives=${workingDir}/exported/document_to_research_initiatives</arg> <arg>-C{citation, eu.dnetlib.iis.export.schemas.Citations, eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/citations.json} 
+		</arg> <arg>-Icitation=${workingDir}/exported/citation</arg> <arg>-C{document_similarity, eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity, eu/dnetlib/iis/common/data/empty.json} </arg> <arg>-Idocument_similarity=${workingDir}/exported/document_similarity</arg> 
+		</java> <ok to="end" /> <error to="fail" /> </action> -->
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:
 			[${wf:errorMessage(wf:lastErrorNode())}]

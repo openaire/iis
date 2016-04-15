@@ -1,5 +1,5 @@
 {
-  "documentId": "id-3",
+  "documentId": "50|oaid-3",
   "citations": [
     {
       "position": 1,
@@ -11,7 +11,7 @@
     {
       "position": 3,
       "rawText": "Kovach, M.E., Elzer, P.H., Hill, D.S., Robertson, G.T., Farris, M.A., Roop, R.M., Peterson, K.M.. Four new derivatives of the broad-host range cloning vector pBBR1MCS, carrying different antibiotic resistance cassettes. Gene. 1995; 166: 175-176",
-      "destinationDocumentId": "id-1",
+      "destinationDocumentId": "50|oaid-1",
       "confidenceLevel": 1.0,
       "externalDestinationDocumentIds": {
         "pmid": "1234567"
@@ -20,7 +20,7 @@
     {
       "position": 9,
       "rawText": "F. Bach. Exploring large feature spaces with hierarchical multiple kernel learning. In Advances in Neural Information Processing Systems (NIPS), 2008.",
-      "destinationDocumentId": "id-4",
+      "destinationDocumentId": "50|oaid-4",
       "confidenceLevel": 0.7486356,
       "externalDestinationDocumentIds": {}
     }
