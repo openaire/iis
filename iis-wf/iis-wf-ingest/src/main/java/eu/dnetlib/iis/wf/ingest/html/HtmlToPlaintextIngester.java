@@ -21,29 +21,28 @@ public class HtmlToPlaintextIngester extends Mapper<AvroKey<DocumentText>, NullW
 
 	private final Logger log = Logger.getLogger(this.getClass());
 	
+    private final static Document.OutputSettings outputSettings = new Document.OutputSettings().prettyPrint(false);
+	
     @Override
     protected void map(AvroKey<DocumentText> key, NullWritable value, Context context)
             throws IOException, InterruptedException {
-        DocumentText nlm = key.datum();
-        if (nlm.getText()!=null) {
+        DocumentText htmlText = key.datum();
+        if (htmlText.getText()!=null) {
             final DocumentText.Builder output = DocumentText.newBuilder();
-            output.setId(nlm.getId());
+            output.setId(htmlText.getId());
             try {
-//            	skipping newlines
-//            	output.setText(Jsoup.parse(nlm.getText().toString()).text());
 //            	preserving newlines
-            	output.setText(cleanNoMarkup(nlm.getText().toString()));
+            	output.setText(cleanNoMarkup(htmlText.getText().toString()));
                 context.write(new AvroKey<DocumentText>(output.build()), 
                 		NullWritable.get());	
             } catch (Exception e) {
             	log.error("exception thrown when trying to extract text representation "
-            			+ "from html document identified with: " + nlm.getId(), e);
+            			+ "from html document identified with: " + htmlText.getId(), e);
             }
         }
     }
     
     private static String cleanNoMarkup(String input) {
-        final Document.OutputSettings outputSettings = new Document.OutputSettings().prettyPrint(false);
         String output = Jsoup.clean(input, "", Whitelist.none(), outputSettings);
         return output!=null?output.replace("&nbsp;", ""):null;
 
