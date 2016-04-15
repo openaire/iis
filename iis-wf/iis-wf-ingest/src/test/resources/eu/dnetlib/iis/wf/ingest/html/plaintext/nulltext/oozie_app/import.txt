@@ -1,0 +1,2 @@
+## This is a classpath-based import file (this header is required)
+ingest_html_plaintext classpath eu/dnetlib/iis/wf/ingest/html/plaintext/oozie_app
