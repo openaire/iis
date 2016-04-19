@@ -17,6 +17,8 @@
  */
 package eu.dnetlib.iis.common.string;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -26,12 +28,15 @@ import org.apache.commons.lang3.StringUtils;
  * @author Łukasz Dumiszewski
  *
  */
-public final class LenientComparisonStringNormalizer implements StringNormalizer {
+public final class LenientComparisonStringNormalizer implements StringNormalizer, Serializable {
 
+
+    private static final long serialVersionUID = 1L;
+    
+    
     
     //------------------------ LOGIC --------------------------
 
-    
     
     
     /**

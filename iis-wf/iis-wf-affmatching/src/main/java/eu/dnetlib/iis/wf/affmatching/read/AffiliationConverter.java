@@ -1,7 +1,8 @@
-package eu.dnetlib.iis.wf.affmatching;
+package eu.dnetlib.iis.wf.affmatching.read;
 
 import static eu.dnetlib.iis.common.string.CharSequenceUtils.toStringWithNullToEmpty;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.Preconditions;
 
-import eu.dnetlib.iis.common.string.LenientComparisonStringNormalizer;
-import eu.dnetlib.iis.common.string.StringNormalizer;
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
@@ -25,15 +24,11 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
  * @author Łukasz Dumiszewski
 */
 
-public class AffiliationConverter {
+public class AffiliationConverter implements Serializable {
 
     
-    private StringNormalizer organizationNameNormalizer = new LenientComparisonStringNormalizer();
-    
-    private StringNormalizer countryNameNormalizer = new LenientComparisonStringNormalizer();
-    
-    private StringNormalizer countryCodeNormalizer = new LenientComparisonStringNormalizer();
-    
+    private static final long serialVersionUID = 1L;
+
     
     
     
@@ -78,38 +73,22 @@ public class AffiliationConverter {
     
     private AffMatchAffiliation convertAffiliation(CharSequence documentId, int positionInDocument, Affiliation aff) {
         
-        AffMatchAffiliation affMatchAff = new AffMatchAffiliation();
+        AffMatchAffiliation affMatchAff = new AffMatchAffiliation(documentId.toString(), positionInDocument);
         
-        
-        affMatchAff.setDocumentId(documentId);
-        
-        affMatchAff.setPosition(positionInDocument);
         
         String orgName = toStringWithNullToEmpty(aff.getOrganization());
-        affMatchAff.setOrganizationName(organizationNameNormalizer.normalize(orgName));
+        affMatchAff.setOrganizationName(orgName);
         
         String countryCode = toStringWithNullToEmpty(aff.getCountryCode());
-        affMatchAff.setCountryCode(countryCodeNormalizer.normalize(countryCode));
+        affMatchAff.setCountryCode(countryCode);
         
         String countryName = toStringWithNullToEmpty(aff.getCountryName());
-        affMatchAff.setCountryName(countryNameNormalizer.normalize(countryName));
+        affMatchAff.setCountryName(countryName);
         
         return affMatchAff;
         
     }
 
 
-    //------------------------ SETTERS --------------------------
-
-    public void setOrganizationNameNormalizer(StringNormalizer organizationNameNormalizer) {
-        this.organizationNameNormalizer = organizationNameNormalizer;
-    }
-
-    public void setCountryNameNormalizer(StringNormalizer countryNameNormalizer) {
-        this.countryNameNormalizer = countryNameNormalizer;
-    }
-
-    public void setCountryCodeNormalizer(StringNormalizer countryCodeNormalizer) {
-        this.countryCodeNormalizer = countryCodeNormalizer;
-    }
+    
 }
