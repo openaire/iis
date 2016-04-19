@@ -45,6 +45,7 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
     private StringBuilder affiliationText = new StringBuilder();
     private String currentAffiliationId = null;
     
+    private StringBuilder authorText = new StringBuilder();
     private JatsAuthor currentAuthor;
     private List<JatsAuthor> currentAuthorsGroup = Lists.newArrayList();
     private List<JatsAuthor> currentAuthors = Lists.newArrayList();
@@ -72,7 +73,6 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
         
         
         if (isElement(qName, ELEM_AFFILIATION)) {
-            affiliationText.setLength(0);
             currentAffiliationId = attributes.getValue(ATTR_AFFILIATION_ID);
         } else if (isElement(qName, ELEM_ARTICLE_ID)) {
             currentArticleIdType = attributes.getValue(PUB_ID_TYPE);
@@ -102,9 +102,11 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
             
             // skipping affiliation position element
             if (!hasAmongParents(parents, ELEM_LABEL) && !hasAmongParents(parents, ELEM_SUP)) {
-                this.affiliationText.append(new String(ch, start, length));
+                this.affiliationText.append(currentValue);
             }
             
+        } else if (currentAuthor != null) {
+            this.authorText.append(currentValue);
         }
         
     }
@@ -132,11 +134,14 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
             if (currentAuthor != null) { // currently handling a contributor which is an author
                 
                 if (isWithinElement(qName, ELEM_SURNAME, parents, ELEM_NAME)) {
-                    currentAuthor.setSurname(currentValue.trim());
+                    currentAuthor.setSurname(authorText.toString().trim());
+                    authorText.setLength(0);
                 } else if (isWithinElement(qName, ELEM_GIVEN_NAMES, parents, ELEM_NAME)) {
-                    currentAuthor.setGivenNames(currentValue.trim());
+                    currentAuthor.setGivenNames(authorText.toString().trim());
+                    authorText.setLength(0);
                 } else if (isElement(qName, ELEM_CONTRIBUTOR)) {
                     currentAuthorsGroup.add(currentAuthor);
+                    authorText.setLength(0);
                     currentAuthor = null;
                 }
                 
@@ -178,6 +183,8 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
             }
             
         }
+        
+        affiliationText.setLength(0);
     }
     
     private Affiliation buildAffiliation() throws SAXException {
