@@ -166,4 +166,30 @@ public class ArticleMetaXmlHandlerTest {
         
     }
     
+    
+    @Test
+    public void testAuthorsWithEncodedCharacters() throws Exception {
+        
+        // given
+        File xmlFile = new File(XML_BASE_PATH + "/authors_with_encoded_characters.xml");
+        
+        
+        // execute
+        
+        saxParser.parse(xmlFile, articleMetaXmlHandler);
+        
+        ExtractedDocumentMetadata metadata = metaBuilder.build();
+        
+        
+        // assert
+        
+        List<Author> authors = metadata.getAuthors();
+        assertEquals(3, authors.size());
+        
+        assertAuthor(authors.get(0), "Ramírez-Romero, Miguel A.");
+        assertAuthor(authors.get(1), "González, Víctor");
+        assertAuthor(authors.get(2), "Dávila, Guillermo");
+        
+    }
+    
 }
