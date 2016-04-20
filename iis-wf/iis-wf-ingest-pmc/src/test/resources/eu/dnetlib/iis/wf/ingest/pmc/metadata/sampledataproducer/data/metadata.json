@@ -1194,6 +1194,13 @@
       "rawText": "Programa de Geno\u0301mica Evolutiva, Centro de Ciencias Geno\u0301micas, Universidad Nacional Auto\u0301noma de Me\u0301xicoApartado Postal 565-A, C.P 62210, Cuernavaca, Morelos, Me\u0301xico"
     }
   ],
+  "authors": [
+    {"fullname": "Ramírez-Romero, Miguel A.", "affiliationPositions": [0]},
+    {"fullname": "Masulis, Irina", "affiliationPositions": [0]},
+    {"fullname": "Cevallos, Miguel A.", "affiliationPositions": [0]},
+    {"fullname": "González, Víctor", "affiliationPositions": [0]},
+    {"fullname": "Dávila, Guillermo", "affiliationPositions": [0]}
+  ],
   "pages": {
     "start": "1470",
     "end": "1480"
@@ -1210,7 +1217,11 @@
   "entityType": "research-article",
   "journal": "The Yale Journal of Biology and Medicine",
   "references": null,
-  "affiliations": null,
+  "affiliations": [],
+  "authors": [
+    {"fullname": "Crelin, E. S.", "affiliationPositions": []},
+    {"fullname": "Dueker, D. K.", "affiliationPositions": []}
+  ],
   "pages": {
     "start": "71",
     "end": "75"
