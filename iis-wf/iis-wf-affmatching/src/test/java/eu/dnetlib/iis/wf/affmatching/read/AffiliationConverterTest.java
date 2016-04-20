@@ -1,23 +1,17 @@
-package eu.dnetlib.iis.wf.affmatching;
+package eu.dnetlib.iis.wf.affmatching.read;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import com.beust.jcommander.internal.Lists;
 
-import eu.dnetlib.iis.common.string.StringNormalizer;
 import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
@@ -28,26 +22,10 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 
 public class AffiliationConverterTest {
 
-    @InjectMocks
     private AffiliationConverter converter = new AffiliationConverter();
     
-    @Mock
-    private StringNormalizer organizationNameNormalizer;
     
-    @Mock
-    private StringNormalizer countryNameNormalizer;
    
-    @Mock
-    private StringNormalizer countryCodeNormalizer;
-    
-    
-    
-    @Before
-    public void before() {
-        
-        MockitoAnnotations.initMocks(this);
-        
-    }
     
     
     //------------------------ TESTS --------------------------
@@ -132,9 +110,6 @@ public class AffiliationConverterTest {
         
         Affiliation aff1 = createAffiliation(null, null, null);
         
-        when(organizationNameNormalizer.normalize("")).thenReturn("X");
-        when(countryNameNormalizer.normalize("")).thenReturn("X");
-        when(countryCodeNormalizer.normalize("")).thenReturn("X");
         
         List<Affiliation> affiliations = Lists.newArrayList(aff1);
         document.setAffiliations(affiliations);
@@ -148,7 +123,7 @@ public class AffiliationConverterTest {
         // assert
         
         assertNotNull(affMatchAffiliations);
-        assertAffiliation(affMatchAffiliations.get(0), "XYZ", 1, "X", "X", "X");
+        assertAffiliation(affMatchAffiliations.get(0), "XYZ", 1, "", "", "");
         
     }
 
@@ -166,18 +141,6 @@ public class AffiliationConverterTest {
         Affiliation aff2 = createAffiliation("DEF", "DE", "Deutschland");
         Affiliation aff3 = createAffiliation("GHI", "SL", "Slovakia");
         
-        when(organizationNameNormalizer.normalize(aff1.getOrganization().toString())).thenReturn("abc inst name");
-        when(organizationNameNormalizer.normalize(aff2.getOrganization().toString())).thenReturn("def inst name");
-        when(organizationNameNormalizer.normalize(aff3.getOrganization().toString())).thenReturn("ghi inst name");
-        
-        when(countryNameNormalizer.normalize(aff1.getCountryName().toString())).thenReturn("Poland");
-        when(countryNameNormalizer.normalize(aff2.getCountryName().toString())).thenReturn("Germany");
-        when(countryNameNormalizer.normalize(aff3.getCountryName().toString())).thenReturn("Slovakia");
-        
-        when(countryCodeNormalizer.normalize(aff1.getCountryCode().toString())).thenReturn("pl");
-        when(countryCodeNormalizer.normalize(aff2.getCountryCode().toString())).thenReturn("de");
-        when(countryCodeNormalizer.normalize(aff3.getCountryCode().toString())).thenReturn("sl");
-        
         List<Affiliation> affiliations = Lists.newArrayList(aff1, aff2, aff3);
         document.setAffiliations(affiliations);
 
@@ -190,9 +153,9 @@ public class AffiliationConverterTest {
         // assert
         
         assertNotNull(affMatchAffiliations);
-        assertAffiliation(affMatchAffiliations.get(0), "XYZ", 1, "abc inst name", "Poland", "pl");
-        assertAffiliation(affMatchAffiliations.get(1), "XYZ", 2, "def inst name", "Germany", "de");
-        assertAffiliation(affMatchAffiliations.get(2), "XYZ", 3, "ghi inst name", "Slovakia", "sl");
+        assertAffiliation(affMatchAffiliations.get(0), "XYZ", 1, "ABC", "Poland", "PL");
+        assertAffiliation(affMatchAffiliations.get(1), "XYZ", 2, "DEF", "Deutschland", "DE");
+        assertAffiliation(affMatchAffiliations.get(2), "XYZ", 3, "GHI", "Slovakia", "SL");
         
     }
 

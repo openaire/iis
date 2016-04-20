@@ -1,4 +1,6 @@
-package eu.dnetlib.iis.wf.affmatching;
+package eu.dnetlib.iis.wf.affmatching.normalize;
+
+import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -11,8 +13,14 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 * @author Łukasz Dumiszewski
 */
 
-public class WebsiteUrlNormalizer implements StringNormalizer {
+public class WebsiteUrlNormalizer implements StringNormalizer, Serializable {
 
+    
+    private static final long serialVersionUID = 1L;
+
+    
+    //------------------------ LOGIC --------------------------
+    
     
     /**
      * Normalizes the given value:
