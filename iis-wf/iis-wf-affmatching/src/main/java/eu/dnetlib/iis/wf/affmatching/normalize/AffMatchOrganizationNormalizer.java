@@ -1,23 +1,24 @@
-package eu.dnetlib.iis.wf.affmatching;
+package eu.dnetlib.iis.wf.affmatching.normalize;
 
-import static eu.dnetlib.iis.common.string.CharSequenceUtils.toStringWithNullToEmpty;
-
-import org.apache.commons.lang3.StringUtils;
+import java.io.Serializable;
 
 import com.google.common.base.Preconditions;
 
 import eu.dnetlib.iis.common.string.LenientComparisonStringNormalizer;
 import eu.dnetlib.iis.common.string.StringNormalizer;
-import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 
 /**
- * Converter of {@link Organization} into {@link AffMatchOrganization}
  * 
-* @author Łukasz Dumiszewski
+ * Normalizer of {@link AffMatchOrganization} properties
+ * 
+ * @author Łukasz Dumiszewski
 */
 
-public class OrganizationConverter {
+public class AffMatchOrganizationNormalizer implements Serializable {
+
+    
+    private static final long serialVersionUID = 1L;
 
     
     private StringNormalizer organizationNameNormalizer = new LenientComparisonStringNormalizer();
@@ -29,44 +30,35 @@ public class OrganizationConverter {
     private StringNormalizer countryCodeNormalizer = new LenientComparisonStringNormalizer();
     
     private StringNormalizer websiteUrlNormalizer = new WebsiteUrlNormalizer();
-    
-    
+
     
     
     //------------------------ LOGIC --------------------------
     
-    
     /**
-     * Converts {@link Organization} into {@link AffMatchOrganization}
+     * Creates a new {@link AffMatchOrganization} based on <code>affMatchOrganization</code>, with its properties normalized
+     * by corresponding normalizers (see setters).
      */
-    public AffMatchOrganization convert(Organization organization) {
-        
-        Preconditions.checkNotNull(organization);
-        Preconditions.checkArgument(StringUtils.isNotBlank(organization.getId()));
-        
-        
-        AffMatchOrganization affMatchOrg = new AffMatchOrganization();
-        
-        affMatchOrg.setId(organization.getId());
-        
-        
-        affMatchOrg.setName(organizationNameNormalizer.normalize(toStringWithNullToEmpty(organization.getName())));
-        
-        if (affMatchOrg.getName().equals("missing legal name")) {
-            affMatchOrg.setName("");
-        }
-        
-        affMatchOrg.setShortName(organizationShortNameNormalizer.normalize(toStringWithNullToEmpty(organization.getShortName())));
-        
-        affMatchOrg.setCountryName(countryNameNormalizer.normalize(toStringWithNullToEmpty(organization.getCountryName())));
-        
-        affMatchOrg.setCountryCode(countryCodeNormalizer.normalize(toStringWithNullToEmpty(organization.getCountryCode())));
-        
-        affMatchOrg.setWebsiteUrl(websiteUrlNormalizer.normalize(toStringWithNullToEmpty(organization.getWebsiteUrl())));
-        
-        return affMatchOrg;
-    }
+    public AffMatchOrganization normalize(AffMatchOrganization affMatchOrganization) {
     
+        Preconditions.checkNotNull(affMatchOrganization);
+        
+        AffMatchOrganization normalizedOrganization = new AffMatchOrganization(affMatchOrganization.getId());
+        
+        normalizedOrganization.setName(organizationNameNormalizer.normalize(affMatchOrganization.getName()));
+    
+        normalizedOrganization.setShortName(organizationShortNameNormalizer.normalize(affMatchOrganization.getShortName()));
+        
+        normalizedOrganization.setCountryName(countryNameNormalizer.normalize(affMatchOrganization.getCountryName()));
+        
+        normalizedOrganization.setCountryCode(countryCodeNormalizer.normalize(affMatchOrganization.getCountryCode()));
+        
+        normalizedOrganization.setWebsiteUrl(websiteUrlNormalizer.normalize(affMatchOrganization.getWebsiteUrl()));
+    
+        return normalizedOrganization;
+    }
+
+
     
     //------------------------ SETTERS --------------------------
 
@@ -81,14 +73,13 @@ public class OrganizationConverter {
     public void setCountryNameNormalizer(StringNormalizer countryNameNormalizer) {
         this.countryNameNormalizer = countryNameNormalizer;
     }
-    
+
     public void setCountryCodeNormalizer(StringNormalizer countryCodeNormalizer) {
         this.countryCodeNormalizer = countryCodeNormalizer;
     }
-    
+
     public void setWebsiteUrlNormalizer(StringNormalizer websiteUrlNormalizer) {
         this.websiteUrlNormalizer = websiteUrlNormalizer;
     }
-
     
 }

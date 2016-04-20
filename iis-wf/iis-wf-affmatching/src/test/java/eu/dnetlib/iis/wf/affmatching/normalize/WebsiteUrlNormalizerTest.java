@@ -1,8 +1,10 @@
-package eu.dnetlib.iis.wf.affmatching;
+package eu.dnetlib.iis.wf.affmatching.normalize;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+
+import eu.dnetlib.iis.wf.affmatching.normalize.WebsiteUrlNormalizer;
 
 /**
 * @author Łukasz Dumiszewski

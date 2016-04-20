@@ -10,13 +10,10 @@ import org.junit.Test;
 
 import com.google.common.io.Files;
 
-import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
@@ -38,8 +35,6 @@ public class AffMatchingJobTest {
     
     private String outputDirPath;
     
-    private String outputAffDirPath;
-    
     
     @Before
     public void before() {
@@ -49,7 +44,6 @@ public class AffMatchingJobTest {
         inputOrgDirPath = workingDir + "/affiliation_matching/input/organizations";
         inputAffDirPath = workingDir + "/affiliation_matching/input/affiliations";
         outputDirPath = workingDir + "/affiliation_matching/output";
-        outputAffDirPath = workingDir + "/affiliation_matching/output/affiliations";
         
         
     }
@@ -73,8 +67,7 @@ public class AffMatchingJobTest {
         
         String jsonInputOrgPath = "src/test/resources/data/input/organizations.json";
         String jsonInputAffPath = "src/test/resources/data/input/affiliations.json";
-        String jsonOutputOrgFile = "src/test/resources/data/expectedOutput/affMatchOrganizations.json";
-        String jsonOutputAffFile = "src/test/resources/data/expectedOutput/affMatchAffiliations.json";
+        String jsonOutputPath = "src/test/resources/data/expectedOutput/affMatchOrganizations.json";
         
         
         AvroTestUtils.createLocalAvroDataStore(
@@ -85,7 +78,7 @@ public class AffMatchingJobTest {
         
         // execute & assert
         
-        executeJobAndAssert(jsonOutputOrgFile, jsonOutputAffFile);
+        executeJobAndAssert(jsonOutputPath);
     }
     
     
@@ -94,7 +87,7 @@ public class AffMatchingJobTest {
     //------------------------ PRIVATE --------------------------
     
     
-    private void executeJobAndAssert(String jsonOutputFile, String jsonOutputAffFile) throws IOException {
+    private void executeJobAndAssert(String jsonOutputPath) throws IOException {
 
         SparkJob sparkJob = SparkJobBuilder
                                            .create()
@@ -105,7 +98,6 @@ public class AffMatchingJobTest {
                                            .addArg("-inputAvroOrgPath", inputOrgDirPath)
                                            .addArg("-inputAvroAffPath", inputAffDirPath)
                                            .addArg("-outputAvroPath", outputDirPath)
-                                           .addArg("-outputAvroAffPath", outputAffDirPath)
                                            .build();
         
         
@@ -117,8 +109,6 @@ public class AffMatchingJobTest {
         
         // assert
         
-        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputFile, AffMatchOrganization.class);
-        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputAffDirPath, jsonOutputAffFile, AffMatchAffiliation.class);
     }
 
 
