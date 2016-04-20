@@ -32,21 +32,22 @@ public class AffMatchAffiliationNormalizer implements Serializable {
     //------------------------ LOGIC --------------------------
     
     /**
-     * Normalizes properties of <code>affMatchAffiliation</code> with corresponding normalizers (see
-     * setters)<br/><br/>
-     * This method <b>changes the passed object and returns it</b>. It does NOT create a new one.
+     * Creates a new {@link AffMatchAffiliation} based on <code>affMatchAffiliation</code>, with its properties normalized
+     * by corresponding normalizers (see setters).
      */
     public AffMatchAffiliation normalize(AffMatchAffiliation affMatchAffiliation) {
     
         Preconditions.checkNotNull(affMatchAffiliation);
         
-        affMatchAffiliation.setOrganizationName(organizationNameNormalizer.normalize(affMatchAffiliation.getOrganizationName()));
+        AffMatchAffiliation normalizedAffiliation = new AffMatchAffiliation(affMatchAffiliation.getDocumentId(), affMatchAffiliation.getPosition());
         
-        affMatchAffiliation.setCountryName(countryNameNormalizer.normalize(affMatchAffiliation.getCountryName()));
+        normalizedAffiliation.setOrganizationName(organizationNameNormalizer.normalize(affMatchAffiliation.getOrganizationName()));
         
-        affMatchAffiliation.setCountryCode(countryCodeNormalizer.normalize(affMatchAffiliation.getCountryCode()));
+        normalizedAffiliation.setCountryName(countryNameNormalizer.normalize(affMatchAffiliation.getCountryName()));
+        
+        normalizedAffiliation.setCountryCode(countryCodeNormalizer.normalize(affMatchAffiliation.getCountryCode()));
     
-        return affMatchAffiliation;
+        return normalizedAffiliation;
     }
 
 

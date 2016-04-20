@@ -9,6 +9,6 @@ import java.io.Serializable;
 public interface BucketHasher<T> extends Serializable {
 
     
-    public String hash(T affiliation);
+    public String hash(T object);
     
 }

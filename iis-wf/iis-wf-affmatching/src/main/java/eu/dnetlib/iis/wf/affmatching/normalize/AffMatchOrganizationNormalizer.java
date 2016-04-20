@@ -36,25 +36,26 @@ public class AffMatchOrganizationNormalizer implements Serializable {
     //------------------------ LOGIC --------------------------
     
     /**
-     * Normalizes properties of <code>affMatchOrganization</code> with corresponding normalizers (see
-     * setters).<br/><br/>
-     * This method <b>changes the passed object and returns it</b>. It does NOT create a new one.
+     * Creates a new {@link AffMatchOrganization} based on <code>affMatchOrganization</code>, with its properties normalized
+     * by corresponding normalizers (see setters).
      */
     public AffMatchOrganization normalize(AffMatchOrganization affMatchOrganization) {
     
         Preconditions.checkNotNull(affMatchOrganization);
         
-        affMatchOrganization.setName(organizationNameNormalizer.normalize(affMatchOrganization.getName()));
+        AffMatchOrganization normalizedOrganization = new AffMatchOrganization(affMatchOrganization.getId());
+        
+        normalizedOrganization.setName(organizationNameNormalizer.normalize(affMatchOrganization.getName()));
     
-        affMatchOrganization.setShortName(organizationShortNameNormalizer.normalize(affMatchOrganization.getShortName()));
+        normalizedOrganization.setShortName(organizationShortNameNormalizer.normalize(affMatchOrganization.getShortName()));
         
-        affMatchOrganization.setCountryName(countryNameNormalizer.normalize(affMatchOrganization.getCountryName()));
+        normalizedOrganization.setCountryName(countryNameNormalizer.normalize(affMatchOrganization.getCountryName()));
         
-        affMatchOrganization.setCountryCode(countryCodeNormalizer.normalize(affMatchOrganization.getCountryCode()));
+        normalizedOrganization.setCountryCode(countryCodeNormalizer.normalize(affMatchOrganization.getCountryCode()));
         
-        affMatchOrganization.setWebsiteUrl(websiteUrlNormalizer.normalize(affMatchOrganization.getWebsiteUrl()));
+        normalizedOrganization.setWebsiteUrl(websiteUrlNormalizer.normalize(affMatchOrganization.getWebsiteUrl()));
     
-        return affMatchOrganization;
+        return normalizedOrganization;
     }
 
 

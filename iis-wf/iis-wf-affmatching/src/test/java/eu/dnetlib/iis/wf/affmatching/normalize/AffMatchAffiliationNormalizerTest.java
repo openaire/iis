@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.affmatching.normalize;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -75,6 +76,9 @@ public class AffMatchAffiliationNormalizerTest {
         
         // assert
         
+        assertTrue(aff != normalizedAff);
+        assertEquals("XXX", normalizedAff.getDocumentId());
+        assertEquals(1, normalizedAff.getPosition());
         assertEquals("icm long", normalizedAff.getOrganizationName());
         assertEquals("pl", normalizedAff.getCountryCode());
         assertEquals("poland", normalizedAff.getCountryName());
