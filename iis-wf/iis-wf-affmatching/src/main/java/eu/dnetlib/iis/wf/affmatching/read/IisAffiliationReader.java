@@ -21,6 +21,8 @@ public class IisAffiliationReader implements Serializable, AffiliationReader {
     private static final long serialVersionUID = 1L;
     
     
+    private SparkAvroLoader avroLoader = new SparkAvroLoader();
+    
     private AffiliationConverter affiliationConverter = new AffiliationConverter();
     
     
@@ -34,7 +36,7 @@ public class IisAffiliationReader implements Serializable, AffiliationReader {
     @Override
     public JavaRDD<AffMatchAffiliation> readAffiliations(JavaSparkContext sc, String inputPath) {
         
-        JavaRDD<ExtractedDocumentMetadata> sourceAffiliations = SparkAvroLoader.loadJavaRDD(sc, inputPath, ExtractedDocumentMetadata.class);
+        JavaRDD<ExtractedDocumentMetadata> sourceAffiliations = avroLoader.loadJavaRDD(sc, inputPath, ExtractedDocumentMetadata.class);
         JavaRDD<AffMatchAffiliation> affiliations = sourceAffiliations.flatMap(srcAff -> affiliationConverter.convert(srcAff));  
         
         return affiliations;

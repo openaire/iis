@@ -29,6 +29,9 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 public class DocumentClassificationJob {
     
+    private static SparkAvroLoader avroLoader = new SparkAvroLoader();
+    private static SparkAvroSaver avroSaver = new SparkAvroSaver();
+
     private static DocumentToDocClassificationMetadataConverter converter = new DocumentToDocClassificationMetadataConverter();
     
     
@@ -53,7 +56,7 @@ public class DocumentClassificationJob {
             sc.sc().addFile(params.scriptDirPath, true);
             
             
-            JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> documents = SparkAvroLoader.loadJavaRDD(sc, params.inputAvroPath, ExtractedDocumentMetadataMergedWithOriginal.class);
+            JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> documents = avroLoader.loadJavaRDD(sc, params.inputAvroPath, ExtractedDocumentMetadataMergedWithOriginal.class);
             
             JavaRDD<DocumentMetadata> metadataRecords = documents.map(document -> converter.convert(document)).filter(metadata->StringUtils.isNotBlank(metadata.getAbstract$()));
             
@@ -66,7 +69,7 @@ public class DocumentClassificationJob {
             
             JavaRDD<DocumentToDocumentClasses> documentClasses = stringDocumentClasses.map(recordString -> AvroGsonFactory.create().fromJson(recordString, DocumentToDocumentClasses.class));
             
-            SparkAvroSaver.saveJavaRDD(documentClasses, DocumentToDocumentClasses.SCHEMA$, params.outputAvroPath);
+            avroSaver.saveJavaRDD(documentClasses, DocumentToDocumentClasses.SCHEMA$, params.outputAvroPath);
         
         }
         

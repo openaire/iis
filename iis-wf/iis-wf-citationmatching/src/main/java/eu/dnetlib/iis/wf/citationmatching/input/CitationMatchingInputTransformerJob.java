@@ -25,6 +25,9 @@ import scala.Tuple2;
  */
 public class CitationMatchingInputTransformerJob {
     
+    private static SparkAvroLoader avroLoader = new SparkAvroLoader();
+    private static SparkAvroSaver avroSaver = new SparkAvroSaver();
+    
     private static DocumentToCitationDocumentConverter documentToCitationDocumentConverter = new DocumentToCitationDocumentConverter();
     
     private static AuthorNameMappingExtractor authorNameMappingExtractor = new AuthorNameMappingExtractor();
@@ -46,8 +49,8 @@ public class CitationMatchingInputTransformerJob {
         
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
             
-            JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> inputDocuments = SparkAvroLoader.loadJavaRDD(sc, params.inputMetadata, ExtractedDocumentMetadataMergedWithOriginal.class);
-            JavaRDD<Person> inputPersons = SparkAvroLoader.loadJavaRDD(sc, params.inputPerson, Person.class);
+            JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> inputDocuments = avroLoader.loadJavaRDD(sc, params.inputMetadata, ExtractedDocumentMetadataMergedWithOriginal.class);
+            JavaRDD<Person> inputPersons = avroLoader.loadJavaRDD(sc, params.inputPerson, Person.class);
             
             
             
@@ -62,7 +65,7 @@ public class CitationMatchingInputTransformerJob {
             
             
             
-            SparkAvroSaver.saveJavaRDD(documentsWithAuthorNames.values(), DocumentMetadata.SCHEMA$, params.output);
+            avroSaver.saveJavaRDD(documentsWithAuthorNames.values(), DocumentMetadata.SCHEMA$, params.output);
             
         }
         

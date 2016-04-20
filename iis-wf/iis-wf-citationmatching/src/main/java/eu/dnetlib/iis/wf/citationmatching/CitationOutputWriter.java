@@ -20,6 +20,9 @@ public class CitationOutputWriter implements OutputWriter<Citation, NullWritable
     private static final long serialVersionUID = 1L;
 
 
+    private SparkAvroSaver avroSaver = new SparkAvroSaver();
+
+
     //------------------------ LOGIC --------------------------
 
     /**
@@ -28,7 +31,7 @@ public class CitationOutputWriter implements OutputWriter<Citation, NullWritable
     @Override
     public void writeMatchedCitations(JavaPairRDD<Citation, NullWritable> matchedCitations, String path) {
 
-        SparkAvroSaver.saveJavaRDD(matchedCitations.keys(), Citation.SCHEMA$, path);
+        avroSaver.saveJavaRDD(matchedCitations.keys(), Citation.SCHEMA$, path);
 
     }
 

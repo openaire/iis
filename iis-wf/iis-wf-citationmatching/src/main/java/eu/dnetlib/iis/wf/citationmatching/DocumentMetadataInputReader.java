@@ -22,6 +22,8 @@ public class DocumentMetadataInputReader implements InputDocumentReader<String, 
     private static final long serialVersionUID = 1L;
 
 
+    private SparkAvroLoader avroLoader = new SparkAvroLoader();
+
     //------------------------ LOGIC --------------------------
 
     /**
@@ -32,7 +34,7 @@ public class DocumentMetadataInputReader implements InputDocumentReader<String, 
     @Override
     public JavaPairRDD<String, DocumentMetadata> readDocuments(JavaSparkContext sparkContext, String inputDocumentsPath) {
 
-        JavaRDD<DocumentMetadata> documents = SparkAvroLoader.loadJavaRDD(sparkContext, inputDocumentsPath, DocumentMetadata.class);
+        JavaRDD<DocumentMetadata> documents = avroLoader.loadJavaRDD(sparkContext, inputDocumentsPath, DocumentMetadata.class);
 
         return documents.mapToPair(doc -> new Tuple2<>(buildDocumentId(doc), doc));
     }

@@ -24,6 +24,8 @@ public class ReferenceMetadataInputReader implements InputCitationReader<String,
     private static final long serialVersionUID = 1L;
 
 
+    private SparkAvroLoader avroLoader = new SparkAvroLoader();
+
     //------------------------ LOGIC --------------------------
 
     /**
@@ -36,7 +38,7 @@ public class ReferenceMetadataInputReader implements InputCitationReader<String,
     @Override
     public JavaPairRDD<String, ReferenceMetadata> readCitations(JavaSparkContext sparkContext, String inputCitationsPath) {
 
-        JavaRDD<DocumentMetadata> fullDocuments = SparkAvroLoader.loadJavaRDD(sparkContext, inputCitationsPath, DocumentMetadata.class);
+        JavaRDD<DocumentMetadata> fullDocuments = avroLoader.loadJavaRDD(sparkContext, inputCitationsPath, DocumentMetadata.class);
 
         JavaPairRDD<String, ReferenceMetadata> references = fullDocuments
                 .flatMapToPair(fullDocument -> fullDocument.getReferences().stream()
