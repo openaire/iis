@@ -42,5 +42,16 @@ public class IisOrganizationReader implements Serializable, OrganizationReader {
     
         return organizations;
     }
+
+
+    //------------------------ SETTERS --------------------------
+
+    public void setAvroLoader(SparkAvroLoader avroLoader) {
+        this.avroLoader = avroLoader;
+    }
+
+    public void setOrganizationConverter(OrganizationConverter organizationConverter) {
+        this.organizationConverter = organizationConverter;
+    }
     
 }
