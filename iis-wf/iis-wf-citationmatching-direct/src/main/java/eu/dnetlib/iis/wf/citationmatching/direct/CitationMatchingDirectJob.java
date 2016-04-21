@@ -27,6 +27,8 @@ import eu.dnetlib.iis.wf.citationmatching.direct.service.PickResearchArticleDocu
 
 public class CitationMatchingDirectJob {
     
+    private static SparkAvroLoader avroLoader = new SparkAvroLoader();
+    private static SparkAvroSaver avroSaver = new SparkAvroSaver();
     
     private static DocumentToDirectCitationMetadataConverter documentToDirectCitationMetadataConverter = new DocumentToDirectCitationMetadataConverter();
     
@@ -53,7 +55,7 @@ public class CitationMatchingDirectJob {
         
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
             
-            JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> documents = SparkAvroLoader.loadJavaRDD(sc, params.inputAvroPath, ExtractedDocumentMetadataMergedWithOriginal.class);
+            JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> documents = avroLoader.loadJavaRDD(sc, params.inputAvroPath, ExtractedDocumentMetadataMergedWithOriginal.class);
             
             
             JavaRDD<DocumentMetadata> simplifiedDocuments = documents.map(document -> documentToDirectCitationMetadataConverter.convert(document));
@@ -72,7 +74,7 @@ public class CitationMatchingDirectJob {
                     directCitations.map(directCitation -> directCitationToCitationConverter.convert(directCitation));
             
             
-            SparkAvroSaver.saveJavaRDD(citations, eu.dnetlib.iis.common.citations.schemas.Citation.SCHEMA$, params.outputAvroPath);
+            avroSaver.saveJavaRDD(citations, eu.dnetlib.iis.common.citations.schemas.Citation.SCHEMA$, params.outputAvroPath);
         }
         
     }

@@ -22,6 +22,9 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
  */
 public class CitationMatchingOutputTransformerJob {
 
+    private static SparkAvroLoader avroLoader = new SparkAvroLoader();
+    private static SparkAvroSaver avroSaver = new SparkAvroSaver();
+    
     private static CitationToCommonCitationConverter citationToCommonCitationConverter = new CitationToCommonCitationConverter();
     
     
@@ -38,14 +41,14 @@ public class CitationMatchingOutputTransformerJob {
         
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
             
-            JavaRDD<Citation> inputCitations = SparkAvroLoader.loadJavaRDD(sc, params.input, Citation.class);
+            JavaRDD<Citation> inputCitations = avroLoader.loadJavaRDD(sc, params.input, Citation.class);
             
             
             JavaRDD<eu.dnetlib.iis.common.citations.schemas.Citation> outputCitations = 
                     inputCitations.map(inputCitation -> citationToCommonCitationConverter.convert(inputCitation));
             
             
-            SparkAvroSaver.saveJavaRDD(outputCitations, eu.dnetlib.iis.common.citations.schemas.Citation.SCHEMA$, params.output);
+            avroSaver.saveJavaRDD(outputCitations, eu.dnetlib.iis.common.citations.schemas.Citation.SCHEMA$, params.output);
             
         }
         
