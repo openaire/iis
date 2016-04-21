@@ -42,6 +42,17 @@ public class IisAffiliationReader implements Serializable, AffiliationReader {
         return affiliations;
         
     }
+
+
+    //------------------------ SETTERS --------------------------
+
+    public void setAvroLoader(SparkAvroLoader avroLoader) {
+        this.avroLoader = avroLoader;
+    }
+
+    public void setAffiliationConverter(AffiliationConverter affiliationConverter) {
+        this.affiliationConverter = affiliationConverter;
+    }
     
     
 }
