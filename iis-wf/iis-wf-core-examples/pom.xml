@@ -119,15 +119,11 @@
                             <goal>schema</goal>
                             <goal>idl-protocol</goal>
                         </goals>
-                        <configuration>
-                            <sourceDirectory>${project.basedir}/src/main/resources/</sourceDirectory>
-                            <outputDirectory>${project.basedir}/target/generated-sources/java/</outputDirectory>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
             <!-- This plugin makes the Maven->Update Project Configuration not forget
-                about the "target/generated-sources/java" source path -->
+                about the "target/generated-sources/avro" source path -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -140,17 +136,12 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.build.directory}/generated-sources/java/</source>
+                                <source>${project.build.directory}/generated-sources/avro/</source>
                             </sources>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            
-            
-              
-
 	    </plugins>
-        
     </build>
 </project>
