@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.export.actionmanager.sequencefile;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -51,7 +52,7 @@ public class TestingConsumer implements Process {
 	
 	public TestingConsumer() {
 		accessor = new FieldAccessor();
-		accessor.registerDecoder("TargetValue", new OafFieldDecoder());
+		accessor.registerDecoder("targetValue", new OafFieldDecoder());
 	}
 
 	@Override
@@ -61,60 +62,56 @@ public class TestingConsumer implements Process {
 
 	@Override
 	public Map<String, PortType> getOutputPorts() {
-		return new HashMap<String, PortType>();
+		return Collections.emptyMap();
 	}
 
 	@Override
 	public void run(PortBindings portBindings, Configuration configuration, Map<String, String> parameters)
 			throws Exception {
-		String propertiesPathsCSV = parameters.get(PROPERTIES_CSV);
 		Path inputPath = portBindings.getInput().get(PORT_INPUT);
+		String propertiesPathsCSV = parameters.get(PROPERTIES_CSV);
 		if (StringUtils.isEmpty(propertiesPathsCSV)) {
 			throw new Exception("no " + PROPERTIES_CSV + " property value provided, "
 					+ "output requirements were not specified!");
 		}
 		String[] recordsSpecs = StringUtils.split(propertiesPathsCSV, ',');
 		FileSystem fs = FileSystem.get(configuration);
-		if (fs.exists(inputPath)) {
-			SequenceFileTextValueReader it = new SequenceFileTextValueReader(
-					new FileSystemPath(fs, inputPath));
-			try {
-				int actionsCount = 0;
-				while (it.hasNext()) {
-					AtomicAction action = AtomicAction.fromJSON(it.next().toString());
-					actionsCount++;
-					if (actionsCount > recordsSpecs.length) {
-						throw new Exception("got more records than expected: " + "unable to verify record no " + actionsCount
-								+ ", no field specification provided! Record contents: " + action);
-					} else {
-						String currentSpecLocation = recordsSpecs[actionsCount - 1];
-						log.info("output specification location: " + currentSpecLocation);
-						Properties specProps = new OrderedProperties();
-						specProps.load(TestingConsumer.class.getResourceAsStream(
-								currentSpecLocation.trim()));
-						Iterator<Entry<Object,Object>> propsIter = specProps.entrySet().iterator();
-						while (propsIter.hasNext()) {
-							Entry<Object,Object> entry = propsIter.next();
-							Object currentValue = accessor.getValue((String)entry.getKey(), action);
-							if ((currentValue != null && !entry.getValue().equals(currentValue.toString())) 
-									|| (currentValue == null && !NULL_VALUE_INDICATOR.equals(entry.getValue()))) {
-								throw new Exception(
-										"invalid field value for path: " + entry.getKey()
-												+ ", expected: '" + entry.getValue() + "', "
-												+ "got: '" + currentValue + "' Full object content: " + action);
-							}
+		if (!fs.exists(inputPath)) {
+			throw new Exception(inputPath + " hdfs location does not exist!");
+		}
+		try (SequenceFileTextValueReader it = new SequenceFileTextValueReader(
+				new FileSystemPath(fs, inputPath))) {
+			int actionsCount = 0;
+			while (it.hasNext()) {
+				AtomicAction action = AtomicAction.fromJSON(it.next().toString());
+				actionsCount++;
+				if (actionsCount > recordsSpecs.length) {
+					throw new Exception("got more records than expected: " + "unable to verify record no " + actionsCount
+							+ ", no field specification provided! Record contents: " + action);
+				} else {
+					String currentSpecLocation = recordsSpecs[actionsCount - 1];
+					log.info("output specification location: " + currentSpecLocation);
+					Properties specProps = new OrderedProperties();
+					specProps.load(TestingConsumer.class.getResourceAsStream(
+							currentSpecLocation.trim()));
+					Iterator<Entry<Object,Object>> propsIter = specProps.entrySet().iterator();
+					while (propsIter.hasNext()) {
+						Entry<Object,Object> entry = propsIter.next();
+						Object currentValue = accessor.getValue((String)entry.getKey(), action);
+						if ((currentValue != null && !entry.getValue().equals(currentValue.toString())) 
+								|| (currentValue == null && !NULL_VALUE_INDICATOR.equals(entry.getValue()))) {
+							throw new Exception(
+									"invalid field value for path: " + entry.getKey()
+											+ ", expected: '" + entry.getValue() + "', "
+											+ "got: '" + currentValue + "' Full object content: " + action);
 						}
 					}
 				}
-				if (actionsCount < recordsSpecs.length) {
-					throw new Exception(
-							"records count mismatch: " + "got: " + actionsCount + " expected: " + recordsSpecs.length);
-				}
-			} finally {
-				it.close();
 			}
-		} else {
-			throw new Exception(inputPath + " hdfs location does not exist!");
+			if (actionsCount < recordsSpecs.length) {
+				throw new Exception(
+						"records count mismatch: " + "got: " + actionsCount + " expected: " + recordsSpecs.length);
+			}
 		}
 	}
 }

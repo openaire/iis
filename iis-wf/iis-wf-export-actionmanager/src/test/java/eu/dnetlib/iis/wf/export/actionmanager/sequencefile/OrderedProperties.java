@@ -39,7 +39,7 @@ public class OrderedProperties extends Properties {
 	}
 
 	public Enumeration<Object> elements() {
-		throw new RuntimeException("Method elements is not supported in LinkedProperties class");
+		return Collections.enumeration(linkMap.values());
 	}
 
 	public Set<Map.Entry<Object, Object>> entrySet() {
