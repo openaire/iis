@@ -109,18 +109,12 @@
                             <goal>schema</goal>
                             <goal>idl-protocol</goal>
                         </goals>
-                        <!-- FIXME try with default configuration -->
-                        <configuration>
-                            <sourceDirectory>${project.basedir}/src/test/resources/</sourceDirectory>
-                            <outputDirectory>${project.build.directory}/generated-test-sources/java/</outputDirectory>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
 
             <!-- This plugin makes the Maven->Update Project Configuration 
-            not forget about the "target/generated-sources/java" source path-->
- 
+            not forget about the "target/generated-test-sources/avro" source path-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -133,16 +127,12 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.build.directory}/generated-test-sources/java/</source>
+                                <source>${project.build.directory}/generated-test-sources/avro/</source>
                             </sources>
                         </configuration>
                     </execution>
                 </executions>
              </plugin>
-             
         </plugins>
     </build>
-
-	
-
 </project>

@@ -120,7 +120,6 @@
                 <artifactId>scala-maven-plugin</artifactId>
            </plugin>
 	       
-	       
 	        <!-- Plugin that generates Java classes from Avro schemas -->
             <plugin>
                 <groupId>org.apache.avro</groupId>
@@ -132,11 +131,8 @@
                             <goal>schema</goal>
                             <goal>idl-protocol</goal>
                         </goals>
-                        <!-- FIXME try with default configuration -->
                         <configuration>
                             <stringType>String</stringType>
-                            <sourceDirectory>${project.basedir}/src/test/resources/eu/dnetlib/iis/common/avro</sourceDirectory>
-                            <outputDirectory>${project.build.directory}/generated-test-sources/java/</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -154,7 +150,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.build.directory}/generated-test-sources/java/</source>
+                                <source>${project.build.directory}/generated-test-sources/avro/</source>
                             </sources>
                         </configuration>
                     </execution>
