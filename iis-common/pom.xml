@@ -132,6 +132,7 @@
                             <goal>schema</goal>
                             <goal>idl-protocol</goal>
                         </goals>
+                        <!-- FIXME try with default configuration -->
                         <configuration>
                             <stringType>String</stringType>
                             <sourceDirectory>${project.basedir}/src/test/resources/eu/dnetlib/iis/common/avro</sourceDirectory>
@@ -159,7 +160,6 @@
                     </execution>
                 </executions>
              </plugin>
-             
              
             <!-- Plugin that generates jar with test classes -->
             <plugin>

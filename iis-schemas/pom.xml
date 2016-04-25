@@ -33,13 +33,15 @@
 							<goal>schema</goal>
 							<goal>idl-protocol</goal>
 						</goals>
+						<!-- FIXME try with default configuration -->
 						<configuration>
+							<!-- FIXME excludes doesn't seem to be needed! -->
 							<excludes>
                                 <exclude>**/schemas/avro/**</exclude>
                                 <exclude>**/schemas/protobuf/**</exclude>
                             </excludes>
 							<sourceDirectory>${project.basedir}/src/main/resources/eu/dnetlib/iis/</sourceDirectory>
-							<outputDirectory>${project.basedir}/target/generated-sources/java/</outputDirectory>
+							<outputDirectory>${project.build.directory}/generated-sources/java/</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
