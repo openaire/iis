@@ -13,6 +13,12 @@
 		<property>
 			<name>schema</name>
 		</property>
+		<property>
+			<name>combine_splits</name>
+			<!-- zero will use the Pig default -->
+			<value>0</value>
+			<description>Value for pig.maxCombinedSplitSize Pig property</description>
+		</property>
 	</parameters>
     
     <start to="generate-schema"/>
@@ -42,6 +48,10 @@
                     <name>mapred.job.queue.name</name>
                     <value>${queueName}</value>
                 </property>
+		<property>
+		  <name>pig.maxCombinedSplitSize</name>
+		  <value>${combine_splits}</value>
+		</property>
             </configuration>
             <!-- Path to PIG script the workflow executes. -->
             <script>lib/scripts/union.pig</script>
