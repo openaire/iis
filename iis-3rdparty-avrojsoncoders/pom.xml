@@ -24,35 +24,40 @@
 	
 	<build>
 		<plugins>
-
 			<plugin>
 				<groupId>org.apache.avro</groupId>
 				<artifactId>avro-maven-plugin</artifactId>
+				<executions>
+                   <execution>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>schema</goal>
+                            <goal>idl-protocol</goal>
+                        </goals>
+                    </execution>
+                </executions>
 			</plugin>
 
 			<!-- This plugin makes the Maven->Update Project Configuration not forget 
-				about the "target/generated-sources/java" source path -->
+				about the "target/generated-test-sources/avro" source path -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<executions>
-					<execution>
-						<id>add-source</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>${project.build.directory}/generated-sources/java/</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
+                    <execution>
+                        <id>add-test-sources</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-test-sources/avro/</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
 			</plugin>
 		</plugins>
-		
 	</build>
-	<repositories>
-	</repositories>
 </project>

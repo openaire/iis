@@ -215,14 +215,21 @@
 			<plugin>
 				<groupId>org.apache.avro</groupId>
 				<artifactId>avro-maven-plugin</artifactId>
+				<executions>
+                   <execution>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>schema</goal>
+                            <goal>idl-protocol</goal>
+                        </goals>
+                    </execution>
+                </executions>
 			</plugin>
-
-			<!-- This plugin makes the Maven->Update Project Configuration not forget about the "target/generated-sources/java" source path -->
-
+			<!-- This plugin makes the Maven->Update Project Configuration 
+			not forget about the "target/generated-test-sources/avro" source path -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.8</version>
 				<executions>
 					<execution>
 						<id>add-test-source</id>
@@ -232,14 +239,12 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>${project.build.directory}/generated-sources/java/</source>
+								<source>${project.build.directory}/generated-test-sources/avro/</source>
 							</sources>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 		</plugins>
-
-
 	</build>
 </project>
