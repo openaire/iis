@@ -47,6 +47,8 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	private final static String MAVEN_EXECUTABLE = "maven.executable";
 	
+	private final static String OUTPUT_DIR_NAME = "output.dir.name";
+	
 	
 	private static Properties properties;
 	
@@ -77,7 +79,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 	@Before
 	public void setUp() throws IOException, OozieClientException {
 		
-	    mvnTestWorkflowRunner = new MavenTestWorkflowRunner(getMavenExecutable());
+	    mvnTestWorkflowRunner = new MavenTestWorkflowRunner(getMavenExecutable(), getOutputDirNameOrNull());
 	    
 		log.debug("Setting up OozieClient at {}", getOozieServiceLoc());
 		sshConnectionManager = new SshConnectionManager(getRemoteHostName(), getRemoteSshPort(), getRemoteUserName());
@@ -180,6 +182,10 @@ public abstract class AbstractOozieWorkflowTestCase {
 	
 	private String getMavenExecutable() {
 	    return getProperty(MAVEN_EXECUTABLE);
+	}
+	
+	private String getOutputDirNameOrNull() {
+	    return properties.getProperty(OUTPUT_DIR_NAME, System.getProperty(OUTPUT_DIR_NAME));
 	}
 	
 	private String getProperty(String key) {

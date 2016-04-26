@@ -8,6 +8,8 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+
 /**
  * Runner of test workflows using maven
  * 
@@ -28,14 +30,19 @@ public class MavenTestWorkflowRunner {
     
     private String mavenExecutable;
     
+    private String outputDirName;
+    
     
     //------------------------ CONSTRUCTORS --------------------------
     
     /**
      * Default constructor
      */
-    public MavenTestWorkflowRunner(String mavenExecutable) {
+    public MavenTestWorkflowRunner(String mavenExecutable, String outputDirName) {
+        Preconditions.checkNotNull(mavenExecutable);
+        
         this.mavenExecutable = mavenExecutable;
+        this.outputDirName = outputDirName;
     }
     
     //------------------------ LOGIC --------------------------
@@ -63,11 +70,18 @@ public class MavenTestWorkflowRunner {
         
         Process p;
         try {
-            p = Runtime.getRuntime().exec(mavenExecutable + " " + MAVEN_TEST_WORKFLOW_PHASE + " -DskipTests "
-                    + " -P" + MAVEN_TEST_WORKFLOW_PROFILE
-                    + " -D" + WORKFLOW_SOURCE_DIR_KEY + "=" + workflowSource
-                    + " -DiisConnectionProperties=" + connectionPropertiesFilePath
-                    );
+            StringBuilder mvnCommandBuilder = new StringBuilder();
+            
+            mvnCommandBuilder.append(mavenExecutable + " " + MAVEN_TEST_WORKFLOW_PHASE + " -DskipTests ");
+            mvnCommandBuilder.append(" -P" + MAVEN_TEST_WORKFLOW_PROFILE);
+            mvnCommandBuilder.append(" -D" + WORKFLOW_SOURCE_DIR_KEY + "=" + workflowSource);
+            if (outputDirName != null) {
+                mvnCommandBuilder.append(" -D" + "output.dir.name" + "=" + outputDirName);
+            }
+            mvnCommandBuilder.append(" -DiisConnectionProperties=" + connectionPropertiesFilePath);
+            System.out.println("MVN COMMAND: " + mvnCommandBuilder.toString());
+            p = Runtime.getRuntime().exec(mvnCommandBuilder.toString());
+            
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
