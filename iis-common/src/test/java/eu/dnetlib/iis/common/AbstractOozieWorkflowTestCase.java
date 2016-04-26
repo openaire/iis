@@ -49,6 +49,8 @@ public abstract class AbstractOozieWorkflowTestCase {
 	private final static String REMOTE_SSH_PORT_KEY = "iis.hadoop.frontend.port.ssh";
 	
 	private final static String MAVEN_EXECUTABLE = "maven.executable";
+    
+    private final static String OUTPUT_DIR_NAME = "output.dir.name";
 	
 	
 	private static Properties properties;
@@ -80,7 +82,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 	@Before
 	public void setUp() throws IOException, OozieClientException {
 		
-	    mvnTestWorkflowRunner = new MavenTestWorkflowRunner(getMavenExecutable());
+	    mvnTestWorkflowRunner = new MavenTestWorkflowRunner(getMavenExecutable(), getOutputDirNameOrNull());
 	    
 		log.debug("Setting up OozieClient at {}", getOozieServiceLoc());
 		sshConnectionManager = new SshConnectionManager(getRemoteHostName(), getRemoteSshPort(), getRemoteUserName());
@@ -185,6 +187,10 @@ public abstract class AbstractOozieWorkflowTestCase {
 	    return getProperty(MAVEN_EXECUTABLE);
 	}
 	
+    private String getOutputDirNameOrNull() {
+        return properties.getProperty(OUTPUT_DIR_NAME, System.getProperty(OUTPUT_DIR_NAME));
+    }
+   
 	private String getProperty(String key) {
 		Preconditions.checkArgument(properties.containsKey(key), "Property '%s' is not defined for integration tests", key);
 		return properties.getProperty(key);

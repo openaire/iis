@@ -42,7 +42,6 @@
     </pluginRepositories>
     <properties>
         <maven.build.timestamp.format>yyyy-MM-dd_HH_mm</maven.build.timestamp.format>
-        <oozie.data.dir>${project.build.directory}/test-data</oozie.data.dir>
         <!-- default Oozie installer properties requred to be defined at pom.xml level -->
         <!-- other project properties are defined in project-default.properties -->
         <oozie.package.file.name>oozie-package</oozie.package.file.name>
@@ -63,7 +62,6 @@
         
         <projectVersion>${project.version}</projectVersion>
         <oozie.use.system.libpath>true</oozie.use.system.libpath>
-        <oozie.wf.subworkflow.classpath.inheritance>true</oozie.wf.subworkflow.classpath.inheritance>
     </properties>
 	<dependencies>
 		<dependency>
@@ -644,10 +642,9 @@
 									<redirectTestOutputToFile>false</redirectTestOutputToFile>
 									<argLine>-Xmx1024m</argLine>
 									<systemPropertiesVariables>
-										<hadoop.log.dir>/tmp</hadoop.log.dir>
-										<oozie.data.dir>${oozie.data.dir}</oozie.data.dir>
 										<!-- if iisConnectionProperties is not defined, then ${user.home}/.iis/integration-test.properties will be used -->
 										<iisConnectionProperties>${iisConnectionProperties}</iisConnectionProperties>
+										<output.dir.name>${output.dir.name}</output.dir.name>
 									</systemPropertiesVariables>
 									<groups>eu.dnetlib.iis.common.IntegrationTest</groups>
 									<includes>

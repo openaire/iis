@@ -11,8 +11,6 @@ import com.google.common.collect.Lists;
  * Configuration of workflow test.
  * It contains additional criteria that must met for test to pass.
  * 
- * TODO: clean unused properties after removing mini oozie from project 
- * 
  * @author Mateusz Kobos
  * @author madryk
  */
@@ -21,9 +19,7 @@ public class OozieWorkflowTestConfiguration {
 	public static final int defaultTimeoutInSeconds = 360;
 	public static final WorkflowJob.Status defaultExpectedFinishStatus = 
 			WorkflowJob.Status.SUCCEEDED;
-	public static final Properties defaultJobProperties = null;
 	
-	private Properties jobProps = defaultJobProperties; 
 	private int timeoutInSeconds = defaultTimeoutInSeconds;
 	private WorkflowJob.Status expectedFinishStatus = defaultExpectedFinishStatus;
 	
@@ -32,21 +28,7 @@ public class OozieWorkflowTestConfiguration {
 	
 	public OozieWorkflowTestConfiguration(){
 	}
-
-	/**
-	 * See {@link #setJobProps} for description
-	 * @return
-	 */
-	public Properties getJobProps() {
-		return jobProps;
-	}
-	/**
-	 * @param jobProps job properties
-	 */
-	public OozieWorkflowTestConfiguration setJobProps(Properties jobProps) {
-		this.jobProps = jobProps;
-		return this;
-	}
+	
 	
 	/**
 	 * See {@link #setTimeoutInSeconds} for description
