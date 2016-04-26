@@ -39,7 +39,7 @@ public class MavenTestWorkflowRunner {
     /**
      * Default constructor
      */
-    public MavenTestWorkflowRunner(String mavenExecutable) {
+    public MavenTestWorkflowRunner(String mavenExecutable, String outputDirName) {
         Preconditions.checkNotNull(mavenExecutable);
         
         this.mavenExecutable = mavenExecutable;
