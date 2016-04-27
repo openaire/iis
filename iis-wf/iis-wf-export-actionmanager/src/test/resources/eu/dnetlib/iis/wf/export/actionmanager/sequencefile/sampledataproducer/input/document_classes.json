@@ -1,0 +1,17 @@
+{
+  "documentId": "id-4",
+  "classes": {
+    "arXivClasses": null,
+    "WoSClasses": null,
+    "DDCClasses": null,
+    "meshEuroPMCClasses": null,
+    "ACMClasses": [
+      {
+        "classLabels": [
+          "ComputingMethodologies_PATTERNRECOGNITION"
+        ],
+        "confidenceLevel": 0.819
+      }
+    ]
+  }
+}
