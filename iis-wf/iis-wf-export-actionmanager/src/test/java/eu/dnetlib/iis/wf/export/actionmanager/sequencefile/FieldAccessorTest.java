@@ -24,6 +24,8 @@ import eu.dnetlib.data.proto.OafProtos;
  */
 public class FieldAccessorTest {
 
+	//------------------------ TESTS ---------------------------------
+	
 	@Test
 	public void testAccessingValuesUsingDecoder() throws Exception {
 		FieldAccessor accessor = new FieldAccessor();
@@ -47,7 +49,7 @@ public class FieldAccessorTest {
 		assertEquals("resultProject", accessor.getValue("$targetValue.rel.relType", action).toString());
 	}
 
-	@Test(expected=Exception.class)
+	@Test(expected=FieldAccessorException.class)
 	public void testAccessingValuesForInvalidPath() throws Exception {
 		FieldAccessor accessor = new FieldAccessor();
 		accessor.registerDecoder("targetValue", new OafFieldDecoder());
@@ -78,7 +80,7 @@ public class FieldAccessorTest {
 		assertEquals("name-2", accessor.getValue("names[1]", object));
 	}
 	
-	@Test(expected=Exception.class)
+	@Test(expected=FieldAccessorException.class)
 	public void testAccessingNonExistingArrayElement() throws Exception {
 		FieldAccessor accessor = new FieldAccessor();
 		ArrayWrapper object = new ArrayWrapper(new String[] {"name-1","name-2"});
@@ -92,19 +94,19 @@ public class FieldAccessorTest {
 		try {
 			assertEquals("name-1", accessor.getValue("names[[0]", object));
 			fail("Exception should be thrown when accessing array with invalid field path");
-		} catch(Exception e) {
+		} catch(FieldAccessorException e) {
 //			OK
 		}
 		try {
 			assertEquals("name-1", accessor.getValue("names[", object));
 			fail("Exception should be thrown when accessing array with invalid field path");
-		} catch(Exception e) {
+		} catch(FieldAccessorException e) {
 //			OK
 		}
 		try {
 			assertEquals("name-1", accessor.getValue("names]", object));
 			fail("Exception should be thrown when accessing array with invalid field path");
-		} catch(Exception e) {
+		} catch(FieldAccessorException e) {
 //			OK
 		}
 //		we should be able to handle this scenario
@@ -119,7 +121,7 @@ public class FieldAccessorTest {
 		assertEquals("name-2", accessor.getValue("names[1]", object));
 	}
 	
-	@Test(expected=Exception.class)
+	@Test(expected=FieldAccessorException.class)
 	public void testAccessingNonExistingListElement() throws Exception {
 		FieldAccessor accessor = new FieldAccessor();
 		ListWrapper object = new ListWrapper(Arrays.asList(new String[] {"name-1", "name-2"}));
@@ -142,6 +144,16 @@ public class FieldAccessorTest {
 		assertEquals(array, PropertyUtils.getProperty(object, "names"));
 		assertEquals("name-1", PropertyUtils.getIndexedProperty(object, "names", 0));
 	}
+
+	//------------------------ PRIVATE -------------------------------
+	
+	private byte[] decodeTargetValue(final String json) throws Exception {
+		OafProtos.Oaf.Builder oaf = OafProtos.Oaf.newBuilder();
+		JsonFormat.merge(json, oaf);
+		return oaf.build().toByteArray();
+	}
+	
+	//------------------------ INNER CLASSES  ------------------------
 	
 	public static class ArrayWrapper {
 		final String[] _names;
@@ -183,12 +195,5 @@ public class FieldAccessorTest {
 		public boolean canHandle(Object source) {
 			return true;
 		}
-		
-	}
-	
-	private byte[] decodeTargetValue(final String json) throws Exception {
-		OafProtos.Oaf.Builder oaf = OafProtos.Oaf.newBuilder();
-		JsonFormat.merge(json, oaf);
-		return oaf.build().toByteArray();
 	}
 }

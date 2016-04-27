@@ -26,7 +26,9 @@ public class FieldAccessor {
 	private static final char DECODER_PREFIX = '$';
 
 	private Map<String, FieldDecoder> decoders = new HashMap<String, FieldDecoder>();
-
+	
+	//------------------------ LOGIC ---------------------------------
+	
 	/**
 	 * Registers field decoder.
 	 * 
@@ -81,6 +83,8 @@ public class FieldAccessor {
 		}
 	}
 
+	//------------------------ PRIVATE -------------------------------
+	
 	/**
 	 * Decodes source object using decoder defined in token.
 	 * @param decoderName decoder name
@@ -135,6 +139,5 @@ public class FieldAccessor {
 	 */
 	private static int getArrayPositionFromToken(String token) {
 		return Integer.parseInt(StringUtils.substringBetween(token, "[", "]"));
-	}
-	
+	}	
 }

@@ -34,11 +34,12 @@ public class SequenceFileTextValueReader implements CloseableIterator<Text> {
 
 	private Text toBeReturned;
 
+	//------------------------ CONSTRUCTORS --------------------------
+	
 	/**
 	 * Default constructor.
 	 * 
-	 * @param path
-	 *            HDFS path along with associated FileSystem
+	 * @param path HDFS path along with associated FileSystem
 	 * @throws IOException
 	 */
 	public SequenceFileTextValueReader(final FileSystemPath path) throws IOException {
@@ -52,6 +53,58 @@ public class SequenceFileTextValueReader implements CloseableIterator<Text> {
 		}
 	}
 
+	//------------------------ LOGIC ---------------------------------
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Iterator#hasNext()
+	 */
+	@Override
+	public boolean hasNext() {
+		// check and provide next when already returned
+		if (toBeReturned == null) {
+			toBeReturned = getNext();
+		}
+		return toBeReturned != null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Iterator#next()
+	 */
+	@Override
+	public Text next() {
+		if (toBeReturned != null) {
+			// element fetched while executing hasNext()
+			Text result = toBeReturned;
+			toBeReturned = null;
+			return result;
+		} else {
+			Text resultCandidate = getNext();
+			if (resultCandidate!=null) {
+				return resultCandidate;
+			} else {
+				throw new NoSuchElementException();
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see eu.dnetlib.iis.exp.iterator.ClosableIterator#close()
+	 */
+	@Override
+	public void close() throws IOException {
+		if (sequenceReader != null) {
+			sequenceReader.close();
+		}
+	}
+	
+	//------------------------ PRIVATE -------------------------------
+	
 	private final Reader getNextSequenceReader() throws IOException {
 		while (fileIt != null && fileIt.hasNext()) {
 			LocatedFileStatus currentFileStatus = fileIt.next();
@@ -101,54 +154,6 @@ public class SequenceFileTextValueReader implements CloseableIterator<Text> {
 			return null;
 		} catch (IOException e) {
 			throw new RuntimeException(e);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.Iterator#hasNext()
-	 */
-	@Override
-	public boolean hasNext() {
-		// check and provide next when already returned
-		if (toBeReturned == null) {
-			toBeReturned = getNext();
-		}
-		return toBeReturned != null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.Iterator#next()
-	 */
-	@Override
-	public Text next() {
-		if (toBeReturned != null) {
-			// element fetched while executing hasNext()
-			Text result = toBeReturned;
-			toBeReturned = null;
-			return result;
-		} else {
-			Text resultCandidate = getNext();
-			if (resultCandidate!=null) {
-				return resultCandidate;
-			} else {
-				throw new NoSuchElementException();
-			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see eu.dnetlib.iis.exp.iterator.ClosableIterator#close()
-	 */
-	@Override
-	public void close() throws IOException {
-		if (sequenceReader != null) {
-			sequenceReader.close();
 		}
 	}
 }

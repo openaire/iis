@@ -50,11 +50,15 @@ public class TestingConsumer implements Process {
 		inputPorts.put(PORT_INPUT, new AnyPortType());
 	}
 	
+	//------------------------ CONSTRUCTORS --------------------------
+	
 	public TestingConsumer() {
 		accessor = new FieldAccessor();
 		accessor.registerDecoder("targetValue", new OafFieldDecoder());
 	}
 
+	//------------------------ LOGIC ---------------------------------
+	
 	@Override
 	public Map<String, PortType> getInputPorts() {
 		return inputPorts;
