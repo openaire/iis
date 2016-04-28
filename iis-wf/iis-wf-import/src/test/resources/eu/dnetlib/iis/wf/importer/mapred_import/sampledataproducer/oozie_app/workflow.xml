@@ -69,6 +69,7 @@
 		<path start="consumer-person" />
 		<path start="consumer-project" />
 		<path start="consumer-organization" />
+		<path start="consumer-projectorg" />
 	</fork>
 
 	<action name="consumer-dedupmapping">
@@ -141,7 +142,6 @@
 		<error to="fail" />
 	</action>
 
-
 	<action name="consumer-organization">
 		<java>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
@@ -156,6 +156,19 @@
 		<error to="fail" />
 	</action>
 
+	<action name="consumer-projectorg">
+		<java>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+			<arg>-C{projectorg,
+				eu.dnetlib.iis.importer.schemas.ProjectToOrganization,
+				eu/dnetlib/iis/wf/importer/mapred_import/sampledataproducer/output/project_organization.json}
+			</arg>
+			<arg>-Iprojectorg=${workingDir}/mr_import/projectorg</arg>
+		</java>
+		<ok to="joining" />
+		<error to="fail" />
+	</action>
 
 	<join name="joining" to="end" />
 

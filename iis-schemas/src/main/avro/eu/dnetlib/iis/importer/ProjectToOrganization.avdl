@@ -1,0 +1,10 @@
+@namespace("eu.dnetlib.iis.importer.schemas")
+protocol IIS{
+
+    record ProjectToOrganization {
+//      Project identifier
+        string projectId;
+//      Organization identifier
+        string organizationId;
+    }
+}

@@ -30,6 +30,7 @@ import eu.dnetlib.data.mapreduce.util.OafRelDecoder;
 import eu.dnetlib.data.proto.DedupProtos.Dedup;
 import eu.dnetlib.data.proto.OafProtos.Oaf;
 import eu.dnetlib.data.proto.PersonResultProtos.PersonResult.Authorship;
+import eu.dnetlib.data.proto.ProjectOrganizationProtos.ProjectOrganization;
 import eu.dnetlib.data.proto.RelTypeProtos.RelType;
 import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
 import eu.dnetlib.data.proto.ResultProjectProtos.ResultProject.Outcome;
@@ -45,13 +46,14 @@ import eu.dnetlib.iis.importer.schemas.DocumentToProject;
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.importer.schemas.Person;
 import eu.dnetlib.iis.importer.schemas.Project;
-
+import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.wf.importer.converter.DeduplicationMappingConverter;
 import eu.dnetlib.iis.wf.importer.converter.DocumentMetadataConverter;
 import eu.dnetlib.iis.wf.importer.converter.DocumentToProjectConverter;
 import eu.dnetlib.iis.wf.importer.converter.OrganizationConverter;
 import eu.dnetlib.iis.wf.importer.converter.PersonConverter;
 import eu.dnetlib.iis.wf.importer.converter.ProjectConverter;
+import eu.dnetlib.iis.wf.importer.converter.ProjectToOrganizationConverter;
 import eu.dnetlib.iis.wf.importer.input.approver.ComplexApprover;
 import eu.dnetlib.iis.wf.importer.input.approver.DataInfoBasedApprover;
 import eu.dnetlib.iis.wf.importer.input.approver.FieldApprover;
@@ -85,6 +87,8 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 
 	private static final String OUTPUT_NAME_ORGANIZATION = "output.name.organization";
 	
+	private static final String OUTPUT_NAME_PROJECT_ORGANIZATION = "output.name.project_organization";
+	
 	private String outputNameDocumentMeta;
 	
 	private String outputNameDocumentProject;
@@ -96,6 +100,8 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 	private String outputNameDedupMapping;
 	
 	private String outputNameOrganization;
+	
+	private String outputNameProjectOrganization;
 	
 	private String encoding = HBaseConstants.STATIC_FIELDS_ENCODING_UTF8;
 
@@ -116,6 +122,8 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 	private ProjectConverter projectConverter;
 	
 	private OrganizationConverter organizationConverter;
+	
+	private ProjectToOrganizationConverter projectOrganizationConverter;
 	
 	
 	/**
@@ -186,7 +194,10 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 		personConverter = new PersonConverter(encoding, resultApprover);
 		projectConverter = new ProjectConverter(encoding, resultApprover);
 		organizationConverter = new OrganizationConverter();
-		
+		projectOrganizationConverter = new ProjectToOrganizationConverter(
+				encoding, resultApprover, 
+				getCollumnFamily(RelType.projectOrganization, SubRelType.participation, 
+						ProjectOrganization.Participation.RelName.hasParticipant.toString()));
 		mos = new MultipleOutputs(context);
 		
 //		setting output subdirectory names
@@ -216,6 +227,10 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
             throw new RuntimeException("organization output name not provided!");
         }
         
+        outputNameProjectOrganization = context.getConfiguration().get(OUTPUT_NAME_PROJECT_ORGANIZATION);
+        if (outputNameProjectOrganization==null) {
+            throw new RuntimeException("project to organization output name not provided!");
+        }
     }
 	
 	@Override
@@ -341,6 +356,13 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
             if (projectCandidate!=null) {
                 mos.write(outputNameProject, new AvroKey<Project>(projectCandidate));
             }
+//			hadling participants
+			ProjectToOrganization[] projOrgs = projectOrganizationConverter.buildObject(value, oafObj);
+			if (projOrgs!=null && projOrgs.length>0) {
+				for (ProjectToOrganization projOrg : projOrgs) {
+					mos.write(outputNameProjectOrganization, new AvroKey<ProjectToOrganization>(projOrg));	
+				}
+			}
         }
     }
 	
