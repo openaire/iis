@@ -3,22 +3,23 @@ package eu.dnetlib.iis.wf.affmatching;
 import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
-import eu.dnetlib.iis.wf.affmatching.bucket.AffiliationNameFirstLettersBucketHasher;
-import eu.dnetlib.iis.wf.affmatching.bucket.BucketHasher;
-import eu.dnetlib.iis.wf.affmatching.bucket.OrganizationNameFirstLettersBucketHasher;
+import com.google.common.base.Preconditions;
+
+import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
 import eu.dnetlib.iis.wf.affmatching.normalize.AffMatchAffiliationNormalizer;
 import eu.dnetlib.iis.wf.affmatching.normalize.AffMatchOrganizationNormalizer;
 import eu.dnetlib.iis.wf.affmatching.read.AffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.IisOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.read.OrganizationReader;
-import scala.Tuple2;
+import eu.dnetlib.iis.wf.affmatching.write.AffMatchResultWriter;
+import eu.dnetlib.iis.wf.affmatching.write.IisAffMatchResultWriter;
 
 /**
  * Configurable affiliation matching service.<br/><br/>
@@ -45,13 +46,17 @@ public class AffMatchingService implements Serializable {
     private AffMatchOrganizationNormalizer affMatchOrganizationNormalizer = new AffMatchOrganizationNormalizer();
     
     
-    private BucketHasher<AffMatchAffiliation> affiliationBucketHasher = new AffiliationNameFirstLettersBucketHasher();
+    private AffOrgMatcher affOrgMatcher = new AffOrgMatcher();
     
-    private BucketHasher<AffMatchOrganization> organizationBucketHasher = new OrganizationNameFirstLettersBucketHasher();
+    
+    private AffMatchResultWriter affMatchResultWriter = new IisAffMatchResultWriter();
+    
+    
     
     
     
     //------------------------ LOGIC --------------------------
+    
     
     /**
      * Matches the affiliations from <code>inputAffPath</code> with organizations from <code>inputOrgPath</code>.
@@ -65,26 +70,20 @@ public class AffMatchingService implements Serializable {
         JavaRDD<AffMatchOrganization> organizations = organizationReader.readOrganizations(sc, inputOrgPath).filter(org -> (StringUtils.isNotBlank(org.getName())));
         
         
+        Preconditions.checkNotNull(affiliations);
+        
+        Preconditions.checkNotNull(organizations);
+        
         
         JavaRDD<AffMatchAffiliation> normalizedAffiliations = affiliations.map(aff -> affMatchAffiliationNormalizer.normalize(aff));
         
         JavaRDD<AffMatchOrganization> normalizedOrganizations = organizations.map(org -> affMatchOrganizationNormalizer.normalize(org));
         
         
-        
-        JavaPairRDD<String, AffMatchAffiliation> hashAffiliations = normalizedAffiliations.mapToPair(aff -> new Tuple2<String, AffMatchAffiliation>(affiliationBucketHasher.hash(aff), aff)); 
-        
-        JavaPairRDD<String, AffMatchOrganization> hashOrganizations = normalizedOrganizations.mapToPair(org -> new Tuple2<String, AffMatchOrganization>(organizationBucketHasher.hash(org), org)); 
-
+        JavaRDD<AffMatchResult> matchedAffOrgs = affOrgMatcher.match(normalizedAffiliations, normalizedOrganizations);        
         
         
-        JavaPairRDD<String, Tuple2<AffMatchAffiliation, AffMatchOrganization>> hashAffOrg = hashAffiliations.join(hashOrganizations);
-        
-        
-        //SparkAvroSaver.saveJavaRDD(organizations, AffMatchOrganization.SCHEMA$, params.outputAvroPath);
-
-        //SparkAvroSaver.saveJavaRDD(affiliations, AffMatchAffiliation.SCHEMA$, params.outputAvroAffPath);
-
+        affMatchResultWriter.write(matchedAffOrgs, outputPath);
         
     }
     
@@ -108,12 +107,11 @@ public class AffMatchingService implements Serializable {
         this.affMatchOrganizationNormalizer = affMatchOrganizationNormalizer;
     }
 
-    public void setAffiliationBucketHasher(BucketHasher<AffMatchAffiliation> affiliationBucketHasher) {
-        this.affiliationBucketHasher = affiliationBucketHasher;
+    public void setAffMatcher(AffOrgMatcher affMatcher) {
+        this.affOrgMatcher = affMatcher;
     }
 
-    public void setOrganizationBucketHasher(BucketHasher<AffMatchOrganization> organizationBucketHasher) {
-        this.organizationBucketHasher = organizationBucketHasher;
-    }
+    
+   
     
 }

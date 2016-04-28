@@ -1,9 +1,10 @@
 package eu.dnetlib.iis.wf.affmatching.read;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -12,7 +13,6 @@ import java.util.List;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -28,100 +28,92 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 
 /**
- * @author madryk
- */
+* @author Łukasz Dumiszewski
+*/
+
 @RunWith(MockitoJUnitRunner.class)
 public class IisAffiliationReaderTest {
 
     @InjectMocks
-    private IisAffiliationReader affiliationReader = new IisAffiliationReader();
+    private IisAffiliationReader reader = new IisAffiliationReader();
     
     @Mock
-    private SparkAvroLoader avroLoader = new SparkAvroLoader();
+    private AffiliationConverter affiliationConverter;
     
     @Mock
-    private AffiliationConverter affiliationConverter = new AffiliationConverter();
-    
+    private SparkAvroLoader sparkAvroLoader;
     
     @Mock
     private JavaSparkContext sparkContext;
-    
-    
+
     @Mock
-    private JavaRDD<ExtractedDocumentMetadata> loadedDocumentMetadata;
+    private JavaRDD<ExtractedDocumentMetadata> inputDocuments;
+
+    @Mock
+    private JavaRDD<AffMatchAffiliation> affMatchAffiliations;
+
     
     @Captor
-    private ArgumentCaptor<FlatMapFunction<ExtractedDocumentMetadata, AffMatchAffiliation>> extractAffiliationsFunction;
-    
-    @Mock
-    private JavaRDD<AffMatchAffiliation> affiliations;
+    private ArgumentCaptor<FlatMapFunction<ExtractedDocumentMetadata, AffMatchAffiliation>> convertFunction;
+
     
     
-    @Before
-    public void setUp() {
-        
-        doReturn(loadedDocumentMetadata).when(avroLoader).loadJavaRDD(sparkContext, "/path/to/affiliations/", ExtractedDocumentMetadata.class);
-        doReturn(affiliations).when(loadedDocumentMetadata).flatMap(any());
-        
-    }
     
     //------------------------ TESTS --------------------------
-
-    @Test(expected = NullPointerException.class)
-    public void readAffiliations_NULL_CONTEXT() {
-        
-        // execute
-        affiliationReader.readAffiliations(null, "/path/to/affiliations/");
-        
-    }
-    
-    
-    @Test(expected = NullPointerException.class)
-    public void readAffiliations_NULL_PATH() {
-        
-        // execute
-        affiliationReader.readAffiliations(sparkContext, null);
-        
-    }
-    
     
     @Test
     public void readAffiliations() throws Exception {
         
+        // given
+        
+        String inputPath = "/data/affiliations";
+        
+        
+        when(sparkAvroLoader.loadJavaRDD(sparkContext, inputPath, ExtractedDocumentMetadata.class)).thenReturn(inputDocuments);
+        
+        doReturn(affMatchAffiliations).when(inputDocuments).flatMap(any());
+
+        
         // execute
         
-        JavaRDD<AffMatchAffiliation> retAffiliations = affiliationReader.readAffiliations(sparkContext, "/path/to/affiliations/");
+        JavaRDD<AffMatchAffiliation> retAffMatchAffiliations = reader.readAffiliations(sparkContext, inputPath);
+        
         
         // assert
         
-        assertTrue(retAffiliations == affiliations);
+        assertTrue(affMatchAffiliations == retAffMatchAffiliations);
         
-        verify(avroLoader).loadJavaRDD(sparkContext, "/path/to/affiliations/", ExtractedDocumentMetadata.class);
-        
-        verify(loadedDocumentMetadata).flatMap(extractAffiliationsFunction.capture());
-        assertExtractAffiliationsFunction(extractAffiliationsFunction.getValue());
+        verify(inputDocuments).flatMap(convertFunction.capture());
+        assertConvertFunction(convertFunction.getValue());
     }
     
     
-    //------------------------ PRIVATE --------------------------
-    
-    public void assertExtractAffiliationsFunction(FlatMapFunction<ExtractedDocumentMetadata, AffMatchAffiliation> function) throws Exception {
+    //------------------------ TESTS --------------------------
+
+    private void assertConvertFunction(FlatMapFunction<ExtractedDocumentMetadata, AffMatchAffiliation> function) throws Exception {
+
+        // given
         
-        AffMatchAffiliation firstAff = mock(AffMatchAffiliation.class);
-        AffMatchAffiliation secondAff = mock(AffMatchAffiliation.class);
-        ExtractedDocumentMetadata doc = mock(ExtractedDocumentMetadata.class);
+        ExtractedDocumentMetadata doc = new ExtractedDocumentMetadata();
+        doc.setId("DOC1");
         
-        when(affiliationConverter.convert(doc)).thenReturn(Lists.newArrayList(firstAff, secondAff));
+        AffMatchAffiliation affMatchAff1 = new AffMatchAffiliation("DOC1", 1);
+        AffMatchAffiliation affMatchAff2 = new AffMatchAffiliation("DOC1", 2);
         
+        when(affiliationConverter.convert(doc)).thenReturn(Lists.newArrayList(affMatchAff1, affMatchAff2));
+
         
-        Iterable<AffMatchAffiliation> retAffiliations = function.call(doc);
+        // execute
         
+        List<AffMatchAffiliation> affs = Lists.newArrayList(function.call(doc));
+
         
-        List<AffMatchAffiliation> retAffiliationList = Lists.newArrayList(retAffiliations);
+        // assert
         
-        assertTrue(retAffiliationList.get(0) == firstAff);
-        assertTrue(retAffiliationList.get(1) == secondAff);
+        assertNotNull(affs);
+        assertEquals(2, affs.size());
+        assertTrue(affs.contains(affMatchAff1));
+        assertTrue(affs.contains(affMatchAff2));
         
     }
-    
 }

@@ -3,14 +3,12 @@ package eu.dnetlib.iis.wf.affmatching.read;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -24,97 +22,92 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 
 /**
- * @author madryk
- */
+* @author Łukasz Dumiszewski
+*/
+
 @RunWith(MockitoJUnitRunner.class)
 public class IisOrganizationReaderTest {
 
-    @InjectMocks
-    private IisOrganizationReader organizationReader = new IisOrganizationReader();
     
-    @Mock
-    private SparkAvroLoader avroLoader;
+    
+    @InjectMocks
+    private IisOrganizationReader reader = new IisOrganizationReader();
     
     @Mock
     private OrganizationConverter organizationConverter;
     
+    @Mock
+    private SparkAvroLoader sparkAvroLoader;
     
     @Mock
     private JavaSparkContext sparkContext;
-    
-    
+
     @Mock
-    private JavaRDD<Organization> loadedOrganizations;
+    private JavaRDD<Organization> inputOrganizations;
+
+    @Mock
+    private JavaRDD<AffMatchOrganization> affMatchOrganizations;
+
     
     @Captor
-    private ArgumentCaptor<Function<Organization, AffMatchOrganization>> mapOrganizationFunction;
+    private ArgumentCaptor<Function<Organization, AffMatchOrganization>> convertFunction;
+
     
-    @Mock
-    private JavaRDD<AffMatchOrganization> organizations;
-    
-    
-    @Before
-    public void setUp() {
-        
-        doReturn(loadedOrganizations).when(avroLoader).loadJavaRDD(sparkContext, "/path/to/organizations/", Organization.class);
-        doReturn(organizations).when(loadedOrganizations).map(any());
-        
-    }
     
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
-    public void readOrganizations_NULL_CONTEXT() {
-        
-        // execute
-        organizationReader.readOrganizations(null, "/path/to/organizations/");
-        
-    }
-    
-    
-    @Test(expected = NullPointerException.class)
-    public void readOrganizations_NULL_PATH() {
-        
-        // execute
-        organizationReader.readOrganizations(sparkContext, null);
-        
-    }
-    
-    
     @Test
     public void readOrganizations() throws Exception {
         
+        // given
+        
+        String inputPath = "/data/organizations";
+        
+        
+        when(sparkAvroLoader.loadJavaRDD(sparkContext, inputPath, Organization.class)).thenReturn(inputOrganizations);
+        
+        doReturn(affMatchOrganizations).when(inputOrganizations).map(any());
+
+        
         // execute
         
-        JavaRDD<AffMatchOrganization> retOrganizations = organizationReader.readOrganizations(sparkContext, "/path/to/organizations/");
+        JavaRDD<AffMatchOrganization> retAffMatchOrganizations = reader.readOrganizations(sparkContext, inputPath);
         
         
         // assert
         
-        assertTrue(retOrganizations == organizations);
+        assertTrue(affMatchOrganizations == retAffMatchOrganizations);
         
-        verify(avroLoader).loadJavaRDD(sparkContext, "/path/to/organizations/", Organization.class);
-        
-        verify(loadedOrganizations).map(mapOrganizationFunction.capture());
-        assertMapOrganizationFunction(mapOrganizationFunction.getValue());
+        verify(inputOrganizations).map(convertFunction.capture());
+        assertConvertFunction(convertFunction.getValue());
     }
     
     
-    //------------------------ PRIVATE --------------------------
     
-    private void assertMapOrganizationFunction(Function<Organization, AffMatchOrganization> function) throws Exception {
+    //------------------------ TESTS --------------------------
+
+    
+    private void assertConvertFunction(Function<Organization, AffMatchOrganization> function) throws Exception {
+
+        // given
         
-        Organization organization = mock(Organization.class);
-        AffMatchOrganization mappedOrganization = mock(AffMatchOrganization.class);
+        Organization org = new Organization();
+        org.setId("ORG1");
         
-        when(organizationConverter.convert(organization)).thenReturn(mappedOrganization);
+        AffMatchOrganization affMatchOrg = new AffMatchOrganization("ORG1");
         
+        when(organizationConverter.convert(org)).thenReturn(affMatchOrg);
+
         
-        AffMatchOrganization retOrganization = function.call(organization);
+        // execute
         
+        AffMatchOrganization retAffMatchOrg = function.call(org);
+
         
-        assertTrue(retOrganization == mappedOrganization);
+        // assert
+        
+        assertTrue(retAffMatchOrg == affMatchOrg);
+        
     }
-    
 }

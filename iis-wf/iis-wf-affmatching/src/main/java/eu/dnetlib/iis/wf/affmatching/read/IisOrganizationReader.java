@@ -22,9 +22,9 @@ public class IisOrganizationReader implements Serializable, OrganizationReader {
     private static final long serialVersionUID = 1L;
     
     
-    private SparkAvroLoader avroLoader = new SparkAvroLoader();
-    
     private OrganizationConverter organizationConverter = new OrganizationConverter();
+    
+    private SparkAvroLoader sparkAvroLoader = new SparkAvroLoader();
     
     
 
@@ -36,7 +36,7 @@ public class IisOrganizationReader implements Serializable, OrganizationReader {
     @Override
     public JavaRDD<AffMatchOrganization> readOrganizations(JavaSparkContext sc, String inputPath) {
 
-        JavaRDD<Organization> sourceOrganizations = avroLoader.loadJavaRDD(sc, inputPath, Organization.class);
+        JavaRDD<Organization> sourceOrganizations = sparkAvroLoader.loadJavaRDD(sc, inputPath, Organization.class);
         
         JavaRDD<AffMatchOrganization> organizations = sourceOrganizations.map(srcOrg -> organizationConverter.convert(srcOrg));
     
@@ -44,14 +44,6 @@ public class IisOrganizationReader implements Serializable, OrganizationReader {
     }
 
 
-    //------------------------ SETTERS --------------------------
 
-    public void setAvroLoader(SparkAvroLoader avroLoader) {
-        this.avroLoader = avroLoader;
-    }
-
-    public void setOrganizationConverter(OrganizationConverter organizationConverter) {
-        this.organizationConverter = organizationConverter;
-    }
     
 }

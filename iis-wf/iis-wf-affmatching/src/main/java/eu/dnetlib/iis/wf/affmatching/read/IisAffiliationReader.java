@@ -10,8 +10,7 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 
 /**
- * Implementation of {@link AffiliationReader} that reads IIS affiliations, {@link Affiliation} objects written
- * in avro files. 
+ * Implementation of {@link AffiliationReader} that reads IIS affiliations, {@link Affiliation} objects from avro files. 
 
  * @author Łukasz Dumiszewski
 */
@@ -21,10 +20,9 @@ public class IisAffiliationReader implements Serializable, AffiliationReader {
     private static final long serialVersionUID = 1L;
     
     
-    private SparkAvroLoader avroLoader = new SparkAvroLoader();
-    
     private AffiliationConverter affiliationConverter = new AffiliationConverter();
     
+    private SparkAvroLoader sparkAvroLoader = new SparkAvroLoader();
     
     
     
@@ -36,7 +34,8 @@ public class IisAffiliationReader implements Serializable, AffiliationReader {
     @Override
     public JavaRDD<AffMatchAffiliation> readAffiliations(JavaSparkContext sc, String inputPath) {
         
-        JavaRDD<ExtractedDocumentMetadata> sourceAffiliations = avroLoader.loadJavaRDD(sc, inputPath, ExtractedDocumentMetadata.class);
+        JavaRDD<ExtractedDocumentMetadata> sourceAffiliations = sparkAvroLoader.loadJavaRDD(sc, inputPath, ExtractedDocumentMetadata.class);
+        
         JavaRDD<AffMatchAffiliation> affiliations = sourceAffiliations.flatMap(srcAff -> affiliationConverter.convert(srcAff));  
         
         return affiliations;
@@ -44,15 +43,6 @@ public class IisAffiliationReader implements Serializable, AffiliationReader {
     }
 
 
-    //------------------------ SETTERS --------------------------
-
-    public void setAvroLoader(SparkAvroLoader avroLoader) {
-        this.avroLoader = avroLoader;
-    }
-
-    public void setAffiliationConverter(AffiliationConverter affiliationConverter) {
-        this.affiliationConverter = affiliationConverter;
-    }
     
     
 }

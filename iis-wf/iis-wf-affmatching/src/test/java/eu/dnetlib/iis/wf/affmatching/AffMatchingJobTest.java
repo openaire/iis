@@ -10,10 +10,12 @@ import org.junit.Test;
 
 import com.google.common.io.Files;
 
+import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
+import eu.dnetlib.iis.wf.affmatching.model.MatchedAffiliation;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
@@ -67,7 +69,7 @@ public class AffMatchingJobTest {
         
         String jsonInputOrgPath = "src/test/resources/data/input/organizations.json";
         String jsonInputAffPath = "src/test/resources/data/input/affiliations.json";
-        String jsonOutputPath = "src/test/resources/data/expectedOutput/affMatchOrganizations.json";
+        String jsonOutputPath = "src/test/resources/data/expectedOutput/matchedAffiliations.json";
         
         
         AvroTestUtils.createLocalAvroDataStore(
@@ -108,7 +110,8 @@ public class AffMatchingJobTest {
         
         
         // assert
-        
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputPath, MatchedAffiliation.class);
+
     }
 
 
