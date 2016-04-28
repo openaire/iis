@@ -2,8 +2,11 @@ package eu.dnetlib.iis.wf.affmatching.read;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+
+import com.google.common.base.Preconditions;
 
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
@@ -36,6 +39,11 @@ public class IisOrganizationReader implements Serializable, OrganizationReader {
     @Override
     public JavaRDD<AffMatchOrganization> readOrganizations(JavaSparkContext sc, String inputPath) {
 
+        Preconditions.checkNotNull(sc);
+        
+        Preconditions.checkArgument(StringUtils.isNotBlank(inputPath));
+
+        
         JavaRDD<Organization> sourceOrganizations = sparkAvroLoader.loadJavaRDD(sc, inputPath, Organization.class);
         
         JavaRDD<AffMatchOrganization> organizations = sourceOrganizations.map(srcOrg -> organizationConverter.convert(srcOrg));

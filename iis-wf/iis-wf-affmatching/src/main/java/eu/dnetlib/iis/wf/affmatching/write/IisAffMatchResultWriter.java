@@ -1,6 +1,9 @@
 package eu.dnetlib.iis.wf.affmatching.write;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.api.java.JavaRDD;
+
+import com.google.common.base.Preconditions;
 
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
 import eu.dnetlib.iis.wf.affmatching.model.MatchedAffiliation;
@@ -29,6 +32,11 @@ public class IisAffMatchResultWriter implements AffMatchResultWriter {
      */
     @Override
     public void write(JavaRDD<AffMatchResult> matchedAffOrgs, String outputPath) {
+        
+        Preconditions.checkNotNull(matchedAffOrgs);
+        
+        Preconditions.checkArgument(StringUtils.isNotBlank(outputPath));
+
         
         JavaRDD<MatchedAffiliation> matchedAffiliations = matchedAffOrgs.map(affOrgMatch -> affMatchResultConverter.convert(affOrgMatch));
         

@@ -55,6 +55,15 @@ public class AffMatchResult {
     public float getMatchStrength() {
         return matchStrength;
     }
+
+    
+    //------------------------ toString --------------------------
+
+    @Override
+    public String toString() {
+        return "AffMatchResult [affiliation=" + affiliation + ", organization=" + organization
+                + ", matchStrength=" + matchStrength + "]";
+    }
     
     
     

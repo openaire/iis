@@ -39,9 +39,9 @@ public class AffOrgHashBucketJoiner implements AffOrgJoiner {
         
         JavaPairRDD<String, AffMatchOrganization> hashOrganizations = organizations.mapToPair(org -> new Tuple2<String, AffMatchOrganization>(organizationBucketHasher.hash(org), org)); 
         
-        JavaPairRDD<String, Tuple2<AffMatchAffiliation, AffMatchOrganization>> hashAffOrg = hashAffiliations.join(hashOrganizations);
+        JavaPairRDD<String, Tuple2<AffMatchAffiliation, AffMatchOrganization>> hashAffOrgs = hashAffiliations.join(hashOrganizations);
 
-        return hashAffOrg.values();
+        return hashAffOrgs.values();
     }
 
 

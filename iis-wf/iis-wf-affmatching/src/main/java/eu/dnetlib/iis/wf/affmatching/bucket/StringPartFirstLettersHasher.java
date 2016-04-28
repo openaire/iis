@@ -48,11 +48,13 @@ class StringPartFirstLettersHasher implements Serializable {
         
         String[] parts = value.split("\\s+");
         
-        if (parts.length < numberOfParts) {
-            numberOfParts = parts.length;
+        int realNumberOfParts = this.numberOfParts;
+        
+        if (parts.length < this.numberOfParts) {
+            realNumberOfParts = parts.length;
         }
 
-        return generateHash(numberOfParts, numberOfLettersPerPart, parts);
+        return generateHash(realNumberOfParts, this.numberOfLettersPerPart, parts);
     }
 
     

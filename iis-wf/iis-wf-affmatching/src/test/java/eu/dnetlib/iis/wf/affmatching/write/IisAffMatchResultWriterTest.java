@@ -53,6 +53,25 @@ public class IisAffMatchResultWriterTest {
     
     //------------------------ TESTS --------------------------
     
+    @Test(expected = NullPointerException.class)
+    public void write_matchedAffOrgs_null() {
+        
+        // execute
+        
+        writer.write(null, "/aaa");
+        
+    }
+    
+
+    @Test(expected = IllegalArgumentException.class)
+    public void write_outputPath_blank() {
+        
+        // execute
+        
+        writer.write(affMatchResults, "  ");
+        
+    }
+    
     @Test
     public void write() throws Exception {
         

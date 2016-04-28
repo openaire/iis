@@ -57,6 +57,25 @@ public class IisOrganizationReaderTest {
     
     //------------------------ TESTS --------------------------
     
+    @Test(expected = NullPointerException.class)
+    public void readOrganizations_sparkContext_null() {
+        
+        // execute
+        
+        reader.readOrganizations(null, "/aaa");
+        
+    }
+    
+
+    @Test(expected = IllegalArgumentException.class)
+    public void readOrganizations_inputPath_blank() {
+        
+        // execute
+        
+        reader.readOrganizations(sparkContext, "  ");
+        
+    }
+    
     @Test
     public void readOrganizations() throws Exception {
         

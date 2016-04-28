@@ -34,6 +34,7 @@ import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 @RunWith(MockitoJUnitRunner.class)
 public class IisAffiliationReaderTest {
 
+    
     @InjectMocks
     private IisAffiliationReader reader = new IisAffiliationReader();
     
@@ -60,6 +61,26 @@ public class IisAffiliationReaderTest {
     
     
     //------------------------ TESTS --------------------------
+    
+    @Test(expected = NullPointerException.class)
+    public void readAffiliations_sparkContext_null() {
+        
+        // execute
+        
+        reader.readAffiliations(null, "/aaa");
+        
+    }
+    
+
+    @Test(expected = IllegalArgumentException.class)
+    public void readAffiliations_inputPath_blank() {
+        
+        // execute
+        
+        reader.readAffiliations(sparkContext, "  ");
+        
+    }
+    
     
     @Test
     public void readAffiliations() throws Exception {

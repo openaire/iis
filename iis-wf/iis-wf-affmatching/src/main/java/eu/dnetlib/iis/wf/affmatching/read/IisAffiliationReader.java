@@ -2,9 +2,13 @@ package eu.dnetlib.iis.wf.affmatching.read;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
+import com.google.common.base.Preconditions;
+
+import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
@@ -33,6 +37,11 @@ public class IisAffiliationReader implements Serializable, AffiliationReader {
      */
     @Override
     public JavaRDD<AffMatchAffiliation> readAffiliations(JavaSparkContext sc, String inputPath) {
+        
+        Preconditions.checkNotNull(sc);
+        
+        Preconditions.checkArgument(StringUtils.isNotBlank(inputPath));
+        
         
         JavaRDD<ExtractedDocumentMetadata> sourceAffiliations = sparkAvroLoader.loadJavaRDD(sc, inputPath, ExtractedDocumentMetadata.class);
         

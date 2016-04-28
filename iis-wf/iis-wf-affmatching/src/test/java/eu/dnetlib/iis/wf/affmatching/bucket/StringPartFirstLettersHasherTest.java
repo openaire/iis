@@ -98,4 +98,21 @@ public class StringPartFirstLettersHasherTest {
     }
     
     
+    @Test
+    public void hash_less_parts_twice() {
+        
+        // given
+        
+        hasher.setNumberOfParts(3);
+        hasher.setNumberOfLettersPerPart(4);
+        
+        
+        // execute & assert
+        
+        assertEquals("Al__has_", hasher.hash("Al has"));
+        assertEquals("Al__has_a___", hasher.hash("Al has a cat"));
+        
+    }
+    
+    
 }
