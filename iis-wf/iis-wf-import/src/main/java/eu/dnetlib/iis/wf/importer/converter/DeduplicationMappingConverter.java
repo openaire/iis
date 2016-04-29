@@ -29,14 +29,13 @@ public class DeduplicationMappingConverter extends AbstractAvroConverter<Identif
 	
 	/**
 	 * Default constructor.
-	 * @param encoding
 	 * @param resultApprover
 	 * @param resultResultDedupMergesColumnFamilyBytes
 	 */
-	public DeduplicationMappingConverter(String encoding,
+	public DeduplicationMappingConverter(
 			ResultApprover resultApprover,
 			byte[] resultResultDedupMergesColumnFamilyBytes) {
-		super(encoding, resultApprover);
+		super(resultApprover);
 		this.resultResultDedupMergesColumnFamilyBytes = OafHelper.copyArrayWhenNotNull(
 				resultResultDedupMergesColumnFamilyBytes);
 	}

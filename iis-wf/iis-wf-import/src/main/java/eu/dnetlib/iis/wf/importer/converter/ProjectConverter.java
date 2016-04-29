@@ -18,9 +18,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.log4j.Logger;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -35,12 +32,9 @@ import eu.dnetlib.iis.wf.importer.input.approver.ResultApprover;
  * @author mhorst
  *
  */
-public class ProjectConverter extends AbstractAvroConverter<Project> {
+public class ProjectConverter extends AbstractEncodingAwareAvroConverter<Project> {
 
 	protected static final Logger log = Logger.getLogger(ProjectConverter.class);
-	
-	private static final String ELEM_FUNDING_TREE_PARENT = "parent";
-	private static final String ELEM_FUNDING_TREE_NAME = "name";
 	
 	private static final String FUNDER_FUNDING_SEPARATOR = "::";
 

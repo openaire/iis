@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 import java.util.NavigableMap;
 
 import org.apache.avro.mapred.AvroKey;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
@@ -181,22 +182,19 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 //		initializing converters
 		docMetaConverter = new DocumentMetadataConverter(encoding, 
 				this.resultApprover, this.fieldApprover,
-				getCollumnFamily(RelType.personResult, SubRelType.authorship, 
+				getColumnFamily(RelType.personResult, SubRelType.authorship, 
 						Authorship.RelName.hasAuthor.toString()));
-		deduplicationMappingConverter = new DeduplicationMappingConverter(
-				encoding, resultApprover, 
-				getCollumnFamily(RelType.resultResult, SubRelType.dedup, 
+		deduplicationMappingConverter = new DeduplicationMappingConverter(resultApprover, 
+				getColumnFamily(RelType.resultResult, SubRelType.dedup, 
 						Dedup.RelName.merges.toString()));
-		docProjectConverter = new DocumentToProjectConverter(
-				encoding, resultApprover, 
-				getCollumnFamily(RelType.resultProject, SubRelType.outcome, 
+		docProjectConverter = new DocumentToProjectConverter(resultApprover, 
+				getColumnFamily(RelType.resultProject, SubRelType.outcome, 
 						Outcome.RelName.isProducedBy.toString()));
 		personConverter = new PersonConverter(encoding, resultApprover);
 		projectConverter = new ProjectConverter(encoding, resultApprover);
 		organizationConverter = new OrganizationConverter();
-		projectOrganizationConverter = new ProjectToOrganizationConverter(
-				encoding, resultApprover, 
-				getCollumnFamily(RelType.projectOrganization, SubRelType.participation, 
+		projectOrganizationConverter = new ProjectToOrganizationConverter(resultApprover, 
+				getColumnFamily(RelType.projectOrganization, SubRelType.participation, 
 						ProjectOrganization.Participation.RelName.hasParticipant.toString()));
 		mos = new MultipleOutputs(context);
 		
@@ -279,7 +277,7 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 	 */
 	private void handleResult(final byte[] idBytes, 
 			Result value, Context context) throws InterruptedException, IOException {
-		Oaf oafObj = buildOafObject(idBytes, value, HBaseConstants.getCollumnFamily(Type.result));
+		Oaf oafObj = buildOafObject(idBytes, value, HBaseConstants.getColumnFamily(Type.result));
 		if (resultApprover.approveBeforeBuilding(oafObj)) {
 			mos.write(outputNameDocumentMeta, new AvroKey<DocumentMetadata>(
 					docMetaConverter.buildObject(value, oafObj)));
@@ -310,7 +308,7 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 	 */
 	private void handlePerson(final byte[] idBytes, 
 			Result value, Context context) throws InterruptedException, IOException {
-		Oaf oafObj = buildOafObject(idBytes, value, HBaseConstants.getCollumnFamily(Type.person));
+		Oaf oafObj = buildOafObject(idBytes, value, HBaseConstants.getColumnFamily(Type.person));
 		if (resultApprover.approveBeforeBuilding(oafObj)) {
 			Person personCandidate = personConverter.buildObject(value, oafObj);
 			if (personCandidate!=null) {
@@ -325,7 +323,7 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 	 */
 	private void handleOrganization(final byte[] idBytes, Result value, Context context) throws InterruptedException, IOException {
 		
-	    Oaf oafObj = buildOafObject(idBytes, value, HBaseConstants.getCollumnFamily(Type.organization));
+	    Oaf oafObj = buildOafObject(idBytes, value, HBaseConstants.getColumnFamily(Type.organization));
 		
 	    if (resultApprover.approveBeforeBuilding(oafObj)) {
 	        
@@ -350,15 +348,15 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
      */
     private void handleProject(final byte[] idBytes, 
             Result value, Context context) throws InterruptedException, IOException {
-        Oaf oafObj = buildOafObject(idBytes, value, HBaseConstants.getCollumnFamily(Type.project));
+        Oaf oafObj = buildOafObject(idBytes, value, HBaseConstants.getColumnFamily(Type.project));
         if (resultApprover.approveBeforeBuilding(oafObj)) {
             Project projectCandidate = projectConverter.buildObject(value, oafObj);
             if (projectCandidate!=null) {
                 mos.write(outputNameProject, new AvroKey<Project>(projectCandidate));
             }
 //			hadling participants
-			ProjectToOrganization[] projOrgs = projectOrganizationConverter.buildObject(value, oafObj);
-			if (projOrgs!=null && projOrgs.length>0) {
+			Collection<ProjectToOrganization> projOrgs = projectOrganizationConverter.buildObject(value, oafObj);
+			if (!CollectionUtils.isEmpty(projOrgs)) {
 				for (ProjectToOrganization projOrg : projOrgs) {
 					mos.write(outputNameProjectOrganization, new AvroKey<ProjectToOrganization>(projOrg));	
 				}
@@ -413,7 +411,7 @@ public class IISDataImporterMapper extends TableMapper<NullWritable, NullWritabl
 		return encoding;
 	}
 	
-	private static final byte[] getCollumnFamily(RelType relType, SubRelType subRelType,
+	private static final byte[] getColumnFamily(RelType relType, SubRelType subRelType,
 			String relClass) {
 		try {
 			return OafRelDecoder.getCFQ(relType, subRelType, relClass).getBytes(

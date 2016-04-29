@@ -13,30 +13,16 @@ import eu.dnetlib.iis.wf.importer.input.approver.ResultApprover;
 public abstract class AbstractAvroConverter<T> implements AvroConverter<T> {
 	
 	/**
-	 * Data encoding.
-	 */
-	private final String encoding;
-	
-	/**
 	 * Result approver.
 	 */
 	protected final ResultApprover resultApprover;
 	
-	
 	/**
 	 * Default constructor.
-	 * @param encoding
 	 * @param resultApprover
 	 */
-	public AbstractAvroConverter(String encoding,
-			ResultApprover resultApprover) {
-		this.encoding = encoding;
+	public AbstractAvroConverter(ResultApprover resultApprover) {
 		this.resultApprover = resultApprover;
-	}
-	
-
-	public String getEncoding() {
-		return encoding;
 	}
 	
 }

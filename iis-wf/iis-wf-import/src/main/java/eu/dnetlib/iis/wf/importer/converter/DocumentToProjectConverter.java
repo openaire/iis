@@ -29,14 +29,13 @@ public class DocumentToProjectConverter extends AbstractAvroConverter<DocumentTo
 	
 	/**
 	 * Default constructor.
-	 * @param encoding
 	 * @param resultApprover
 	 * @param resultProjectOutcomeIsProducedByColumnFamilyBytes
 	 */
-	public DocumentToProjectConverter(String encoding,
+	public DocumentToProjectConverter(
 			ResultApprover resultApprover,
 			byte[] resultProjectOutcomeIsProducedByColumnFamilyBytes) {
-		super(encoding, resultApprover);
+		super( resultApprover);
 		this.resultProjectOutcomeIsProducedByColumnFamilyBytes = OafHelper.copyArrayWhenNotNull(
 				resultProjectOutcomeIsProducedByColumnFamilyBytes);
 	}

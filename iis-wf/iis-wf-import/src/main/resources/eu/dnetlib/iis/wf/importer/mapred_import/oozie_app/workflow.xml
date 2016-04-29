@@ -65,37 +65,37 @@
 		<property>
 			<name>output_name_document_meta</name>
 			<value>docmeta</value>
-			<description>document metadata output subdirectory name</description>
+			<description>document metadata output name</description>
 		</property>
 		<property>
 			<name>output_name_document_project</name>
 			<value>docproject</value>
-			<description>document to project relation output subdirectory name</description>
+			<description>document-project relation output name</description>
 		</property>
 		<property>
 			<name>output_name_project</name>
 			<value>project</value>
-			<description>project output subdirectory name</description>
+			<description>project output name</description>
 		</property>
 		<property>
 			<name>output_name_person</name>
 			<value>person</value>
-			<description>person output subdirectory name</description>
+			<description>person output name</description>
 		</property>
 		<property>
 			<name>output_name_dedup_mapping</name>
 			<value>dedupmapping</value>
-			<description>deduplication mapping output subdirectory name</description>
+			<description>deduplication mapping output name</description>
 		</property>
 		<property>
 			<name>output_name_organization</name>
 			<value>organization</value>
-			<description>organization output subdirectory name</description>
+			<description>organization output name</description>
 		</property>
 		<property>
 			<name>output_name_project_organization</name>
 			<value>projectorg</value>
-			<description>project to organization output subdirectory name</description>
+			<description>project-organization output name</description>
 		</property>
 		
 

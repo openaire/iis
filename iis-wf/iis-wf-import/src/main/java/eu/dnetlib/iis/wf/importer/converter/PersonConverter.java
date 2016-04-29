@@ -17,7 +17,7 @@ import eu.dnetlib.iis.wf.importer.input.approver.ResultApprover;
  * @author mhorst
  *
  */
-public class PersonConverter extends AbstractAvroConverter<Person> {
+public class PersonConverter extends AbstractEncodingAwareAvroConverter<Person> {
 
 	
 	protected static final Logger log = Logger.getLogger(PersonConverter.class);

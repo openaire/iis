@@ -2,9 +2,9 @@
 protocol IIS{
 
     record ProjectToOrganization {
-//      Project identifier
+        // Project identifier
         string projectId;
-//      Organization identifier
+        // Organization identifier
         string organizationId;
     }
 }

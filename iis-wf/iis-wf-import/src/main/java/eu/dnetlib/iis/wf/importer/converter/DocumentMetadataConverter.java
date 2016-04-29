@@ -32,7 +32,7 @@ import eu.dnetlib.iis.wf.importer.input.approver.ResultApprover;
  * HBase {@link Result} to avro {@link DocumentMetadata} converter.
  * @author mhorst
  *
- */public class DocumentMetadataConverter extends AbstractAvroConverter<DocumentMetadata>{
+ */public class DocumentMetadataConverter extends AbstractEncodingAwareAvroConverter<DocumentMetadata>{
 	
 	protected static final Logger log = Logger.getLogger(DocumentMetadataConverter.class);
 	

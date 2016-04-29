@@ -75,11 +75,11 @@ public final class HBaseConstants {
 	}
 	
 	/**
-	 * Returns collumn family name for given entity type.
+	 * Returns column family name for given entity type.
 	 * @param entityType
-	 * @return collumn family name for given entity type
+	 * @return column family name for given entity type
 	 */
-	public static byte[] getCollumnFamily(Type entityType) {
+	public static byte[] getColumnFamily(Type entityType) {
 		try {
 			return entityType.name().getBytes(STATIC_FIELDS_ENCODING_UTF8);
 		} catch (UnsupportedEncodingException e) {
