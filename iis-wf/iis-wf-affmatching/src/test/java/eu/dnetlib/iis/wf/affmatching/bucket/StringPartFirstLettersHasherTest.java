@@ -52,7 +52,7 @@ public class StringPartFirstLettersHasherTest {
         
         // execute & assert
         
-        assertEquals("", hasher.hash(" "));
+        assertEquals("", hasher.hash(null));
         
     }
     

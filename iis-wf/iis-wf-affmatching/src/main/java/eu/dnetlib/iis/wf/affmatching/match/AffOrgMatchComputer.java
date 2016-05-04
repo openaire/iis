@@ -52,7 +52,7 @@ public class AffOrgMatchComputer implements Serializable {
     
     /**
      * Computes the match strength of every passed pair of affiliation and organization. The returned strengths are in the range
-     * of (0, 1>. The pairs which have the match strength equal to 0 are filtered out and not returned.<br/><br/>
+     * of (0, 1]. The pairs which have the match strength equal to 0 are filtered out and not returned.<br/><br/>
      * The match strength of the given affiliation-organization pair depends on how many of the {@link #setAffOrgMatchVoters(List)}
      * say the pair matches.
      */
