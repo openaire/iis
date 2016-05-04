@@ -2,8 +2,11 @@ package eu.dnetlib.iis.wf.affmatching.read;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+
+import com.google.common.base.Preconditions;
 
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
@@ -22,9 +25,9 @@ public class IisOrganizationReader implements Serializable, OrganizationReader {
     private static final long serialVersionUID = 1L;
     
     
-    private SparkAvroLoader avroLoader = new SparkAvroLoader();
-    
     private OrganizationConverter organizationConverter = new OrganizationConverter();
+    
+    private SparkAvroLoader sparkAvroLoader = new SparkAvroLoader();
     
     
 
@@ -36,7 +39,12 @@ public class IisOrganizationReader implements Serializable, OrganizationReader {
     @Override
     public JavaRDD<AffMatchOrganization> readOrganizations(JavaSparkContext sc, String inputPath) {
 
-        JavaRDD<Organization> sourceOrganizations = avroLoader.loadJavaRDD(sc, inputPath, Organization.class);
+        Preconditions.checkNotNull(sc);
+        
+        Preconditions.checkArgument(StringUtils.isNotBlank(inputPath));
+
+        
+        JavaRDD<Organization> sourceOrganizations = sparkAvroLoader.loadJavaRDD(sc, inputPath, Organization.class);
         
         JavaRDD<AffMatchOrganization> organizations = sourceOrganizations.map(srcOrg -> organizationConverter.convert(srcOrg));
     
@@ -44,14 +52,6 @@ public class IisOrganizationReader implements Serializable, OrganizationReader {
     }
 
 
-    //------------------------ SETTERS --------------------------
 
-    public void setAvroLoader(SparkAvroLoader avroLoader) {
-        this.avroLoader = avroLoader;
-    }
-
-    public void setOrganizationConverter(OrganizationConverter organizationConverter) {
-        this.organizationConverter = organizationConverter;
-    }
     
 }

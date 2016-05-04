@@ -80,10 +80,8 @@ public class OrganizationNameFirstLettersBucketHasherTest {
         
         AffMatchOrganization org = new AffMatchOrganization("XXX");
         org.setName("ICM");
-        hasher.setNumberOfParts(4);
-        hasher.setNumberOfLettersPerPart(3);
         
-        when(stringPartFirstLettersHasher.hash("ICM", 4, 3)).thenReturn("HASH");
+        when(stringPartFirstLettersHasher.hash("ICM")).thenReturn("HASH");
         
         
         // execute

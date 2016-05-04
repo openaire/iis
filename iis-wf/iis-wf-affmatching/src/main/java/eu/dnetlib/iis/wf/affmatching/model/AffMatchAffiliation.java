@@ -1,9 +1,17 @@
 package eu.dnetlib.iis.wf.affmatching.model;
 
+import java.util.Objects;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.Preconditions;
 
+/**
+ * Affiliation data that the affiliation matching module operates on. 
+ * 
+ * @author Łukasz Dumiszewski
+ *
+ */
 public class AffMatchAffiliation {
   
     
@@ -65,7 +73,17 @@ public class AffMatchAffiliation {
         return countryCode;
     }
     
+    //------------------------ LOGIC --------------------------
     
+    /**
+     * Returns {@link #getDocumentId()} + "###" + {@link #getPosition()} 
+     */
+    public String getId() {
+        return getDocumentId() + "###" + getPosition();
+    }
+
+    
+ 
     //------------------------ SETTERS --------------------------
     
     public void setOrganizationName(String organizationName) {
@@ -79,5 +97,40 @@ public class AffMatchAffiliation {
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
     }
+
+
+    //------------------------ HashCode & Equals --------------------------
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(documentId, position);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+         }
+         
+         if (getClass() != obj.getClass()) {
+            return false;
+         }
+         
+         final AffMatchAffiliation other = (AffMatchAffiliation) obj;
+         
+         return Objects.equals(documentId, other.documentId) &&
+                Objects.equals(position, other.position);
+    }
+    
+    
+    //------------------------ toString --------------------------
+    
+    @Override
+    public String toString() {
+        return "AffMatchAffiliation [documentId=" + documentId + ", position=" + position
+                + ", organizationName=" + organizationName + ", countryName=" + countryName
+                + ", countryCode=" + countryCode + "]";
+    }
+   
 
 }

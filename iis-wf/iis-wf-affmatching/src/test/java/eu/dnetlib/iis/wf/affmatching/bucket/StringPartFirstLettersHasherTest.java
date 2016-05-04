@@ -19,9 +19,9 @@ public class StringPartFirstLettersHasherTest {
     @Test(expected = IllegalArgumentException.class)
     public void hash_numberOfParts_less_than_1() {
         
-        // execute & assert
+        // execute
         
-        hasher.hash("Alice has a cat", 0, 2);
+        hasher.setNumberOfParts(0);
         
     }
 
@@ -29,9 +29,10 @@ public class StringPartFirstLettersHasherTest {
     @Test(expected = IllegalArgumentException.class)
     public void hash_numberOfLettersPerPart_less_than_1() {
         
-        // execute & assert
+        // execute
         
-        hasher.hash("Alice has a cat", 1, 0);
+        hasher.setNumberOfLettersPerPart(0);
+        
         
     }
     
@@ -41,7 +42,7 @@ public class StringPartFirstLettersHasherTest {
         
         // execute & assert
         
-        assertEquals("", hasher.hash(" ", 1, 1));
+        assertEquals("", hasher.hash(" "));
         
     }
     
@@ -51,7 +52,7 @@ public class StringPartFirstLettersHasherTest {
         
         // execute & assert
         
-        assertEquals("", hasher.hash(" ", 1, 1));
+        assertEquals("", hasher.hash(null));
         
     }
     
@@ -61,7 +62,7 @@ public class StringPartFirstLettersHasherTest {
         
         // execute & assert
         
-        assertEquals("Alha", hasher.hash("Alice has a cat", 2, 2));
+        assertEquals("Alha", hasher.hash("Alice has a cat"));
         
     }
 
@@ -69,19 +70,47 @@ public class StringPartFirstLettersHasherTest {
     @Test
     public void hash_short_words() {
         
+        // given
+        
+        hasher.setNumberOfParts(3);
+        hasher.setNumberOfLettersPerPart(4);
+        
         // execute & assert
         
-        assertEquals("Al__has_a___", hasher.hash("Al has a cat", 3, 4));
+        assertEquals("Al__has_a___", hasher.hash("Al has a cat"));
         
     }
     
     
     @Test
-    public void hash_too_less_parts() {
+    public void hash_less_parts() {
+        
+        // given
+        
+        hasher.setNumberOfParts(3);
+        hasher.setNumberOfLettersPerPart(4);
+        
         
         // execute & assert
         
-        assertEquals("Al__has_", hasher.hash("Al has", 3, 4));
+        assertEquals("Al__has_", hasher.hash("Al has"));
+        
+    }
+    
+    
+    @Test
+    public void hash_less_parts_twice() {
+        
+        // given
+        
+        hasher.setNumberOfParts(3);
+        hasher.setNumberOfLettersPerPart(4);
+        
+        
+        // execute & assert
+        
+        assertEquals("Al__has_", hasher.hash("Al has"));
+        assertEquals("Al__has_a___", hasher.hash("Al has a cat"));
         
     }
     
