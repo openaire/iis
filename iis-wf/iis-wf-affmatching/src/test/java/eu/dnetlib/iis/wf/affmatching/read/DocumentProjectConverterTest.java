@@ -4,17 +4,17 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
-import eu.dnetlib.iis.wf.affmatching.model.ProjectOrganization;
+import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
+import eu.dnetlib.iis.wf.affmatching.model.DocumentProject;
 
 public class DocumentProjectConverterTest {
 
-	private ProjectOrganizationConverter converter = new ProjectOrganizationConverter();
+	private DocumentProjectConverter converter = new DocumentProjectConverter();
 
+	private final String docId = "docId";
 	private final String projId = "projId";
-	private final String orgId = "orgId";
-	
-	
+	private final Float confidenceLevel = 0.9f;
+
 	// ------------------------ TESTS --------------------------
 
 	@Test(expected = NullPointerException.class)
@@ -23,30 +23,46 @@ public class DocumentProjectConverterTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void convert_blank_organization_id() {
-		converter.convert(new ProjectToOrganization(projId, " "));
+	public void convert_blank_document_id() {
+		converter.convert(new DocumentToProject(" ", projId, 1f));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void convert_blank_project_id() {
-		converter.convert(new ProjectToOrganization(" ", orgId));
+		converter.convert(new DocumentToProject(docId, " ", 1f));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void convert_null_organization_id() {
-		converter.convert(new ProjectToOrganization(projId, null));
+	public void convert_out_of_right_range_confidence_level() {
+		converter.convert(new DocumentToProject(docId, projId, 2f));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void convert_out_of_left_range_confidence_level() {
+		converter.convert(new DocumentToProject(docId, projId, -1f));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void convert_null_document_id() {
+		converter.convert(new DocumentToProject(null, projId, confidenceLevel));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void convert_null_project_id() {
-		converter.convert(new ProjectToOrganization(null, orgId));
+		converter.convert(new DocumentToProject(docId, null, confidenceLevel));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void convert_null_confidence_level() {
+		converter.convert(new DocumentToProject(docId, projId, null));
 	}
 
 	@Test
 	public void convert() {
-		ProjectOrganization result = converter.convert(new ProjectToOrganization(projId, orgId));
+		DocumentProject result = converter.convert(new DocumentToProject(docId, projId, confidenceLevel));
+		assertEquals(docId, result.getDocumentId());
 		assertEquals(projId, result.getProjectId());
-		assertEquals(orgId, result.getOrganizationId());
+		assertEquals(confidenceLevel, result.getConfidenceLevel());
 	}
 
 }
