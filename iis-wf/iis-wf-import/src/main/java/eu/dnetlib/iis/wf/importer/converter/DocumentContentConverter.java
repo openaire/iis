@@ -16,7 +16,7 @@ import eu.dnetlib.iis.wf.importer.input.approver.ResultApprover;
  * @author mhorst
  *
  */
-public class DocumentContentConverter extends AbstractEncodingAwareAvroConverter<DocumentContent> {
+public class DocumentContentConverter extends AbstractAvroConverter<DocumentContent> {
 
 	
 	protected static final Logger log = Logger.getLogger(DocumentContentConverter.class);
@@ -27,6 +27,11 @@ public class DocumentContentConverter extends AbstractEncodingAwareAvroConverter
 	private final ContentProviderService contentProviderService;
 	
 	/**
+	 * Row text encoding.
+	 */
+	private final String encoding;
+	
+	/**
 	 * Default constructor.
 	 * @param encoding
 	 * @param resultApprover
@@ -35,7 +40,8 @@ public class DocumentContentConverter extends AbstractEncodingAwareAvroConverter
 	public DocumentContentConverter(String encoding, 
 			ResultApprover resultApprover,
 			ContentProviderService contentProviderService) {
-		super(encoding, resultApprover);
+		super(resultApprover);
+		this.encoding = encoding;
 		this.contentProviderService = contentProviderService;
 	}
 	
@@ -45,7 +51,7 @@ public class DocumentContentConverter extends AbstractEncodingAwareAvroConverter
 				resolvedOafObject.getEntity().getResult():null;
 		if (sourceResult==null) {
 			log.error("skipping: no result object " +
-					"for a row " + new String(source.getRow(), getEncoding()));
+					"for a row " + new String(source.getRow(), encoding));
 			return null;
 		}
 		if (resolvedOafObject.getEntity().getId()!=null) {
@@ -61,7 +67,7 @@ public class DocumentContentConverter extends AbstractEncodingAwareAvroConverter
 			
 		} else {
 			log.error("skipping: no id specified for " +
-					"result of a row " + new String(source.getRow(), getEncoding()));
+					"result of a row " + new String(source.getRow(), encoding));
 			return null;
 		}
 	}

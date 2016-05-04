@@ -32,7 +32,7 @@ import eu.dnetlib.iis.wf.importer.input.approver.ResultApprover;
  * HBase {@link Result} to avro {@link DocumentMetadata} converter.
  * @author mhorst
  *
- */public class DocumentMetadataConverter extends AbstractEncodingAwareAvroConverter<DocumentMetadata>{
+ */public class DocumentMetadataConverter extends AbstractAvroConverter<DocumentMetadata>{
 	
 	protected static final Logger log = Logger.getLogger(DocumentMetadataConverter.class);
 	
@@ -44,6 +44,11 @@ import eu.dnetlib.iis.wf.importer.input.approver.ResultApprover;
 	 * Person-result relation column family.
 	 */
 	private final byte[] personResultAuthorshipHasAuthorColumnFamilyBytes;
+	
+	/**
+	 * Row text encoding.
+	 */
+	private final String encoding;
 	
 	/**
 	 * Field approver.
@@ -60,7 +65,8 @@ import eu.dnetlib.iis.wf.importer.input.approver.ResultApprover;
 	public DocumentMetadataConverter(String encoding, 
 			ResultApprover resultApprover, FieldApprover fieldApprover, 
 			byte[] personResultAuthorshipHasAuthorColumnFamilyBytes) {
-		super(encoding, resultApprover);
+		super(resultApprover);
+		this.encoding = encoding;
 		this.fieldApprover = fieldApprover;
 		this.personResultAuthorshipHasAuthorColumnFamilyBytes = OafHelper.copyArrayWhenNotNull(
 				personResultAuthorshipHasAuthorColumnFamilyBytes);
@@ -73,7 +79,7 @@ import eu.dnetlib.iis.wf.importer.input.approver.ResultApprover;
 				resolvedOafObject.getEntity().getResult():null;
 		if (sourceResult==null) {
 			log.error("skipping: no result object " +
-					"for a row " + new String(hbaseResult.getRow(), getEncoding()));
+					"for a row " + new String(hbaseResult.getRow(), encoding));
 			return null;
 		}
 		if (resolvedOafObject.getEntity().getId()!=null) {
@@ -86,7 +92,7 @@ import eu.dnetlib.iis.wf.importer.input.approver.ResultApprover;
 			return builder.build();
 		} else {
 			log.error("skipping: no id specified for " +
-					"result of a row " + new String(hbaseResult.getRow(), getEncoding()));
+					"result of a row " + new String(hbaseResult.getRow(), encoding));
 			return null;
 		}
 	}

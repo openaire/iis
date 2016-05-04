@@ -17,11 +17,15 @@ import eu.dnetlib.iis.wf.importer.input.approver.ResultApprover;
  * @author mhorst
  *
  */
-public class PersonConverter extends AbstractEncodingAwareAvroConverter<Person> {
+public class PersonConverter extends AbstractAvroConverter<Person> {
 
 	
 	protected static final Logger log = Logger.getLogger(PersonConverter.class);
 
+	/**
+	 * Row text encoding.
+	 */
+	private final String encoding;
 
 	/**
 	 * @param encoding
@@ -29,7 +33,8 @@ public class PersonConverter extends AbstractEncodingAwareAvroConverter<Person> 
 	 */
 	public PersonConverter(String encoding,
 			ResultApprover resultApprover) {
-		super(encoding, resultApprover);
+		super(resultApprover);
+		this.encoding = encoding;
 	}
 	
 	/**
@@ -46,7 +51,7 @@ public class PersonConverter extends AbstractEncodingAwareAvroConverter<Person> 
 				resolvedOafObject.getEntity().getPerson():null;
 		if (sourcePerson==null) {
 			log.error("skipping: no person object " +
-					"for a row " + new String(source.getRow(), getEncoding()));
+					"for a row " + new String(source.getRow(), encoding));
 			return null;
 		}
 		if (resolvedOafObject.getEntity().getId()!=null) {
@@ -81,12 +86,12 @@ public class PersonConverter extends AbstractEncodingAwareAvroConverter<Person> 
 				return builder.build();
 			} else {
 				log.error("skipping: no metadata specified for " +
-						"person of a row " + new String(source.getRow(), getEncoding()));
+						"person of a row " + new String(source.getRow(), encoding));
 				return null;
 			}
 		} else {
 			log.error("skipping: no id specified for " +
-					"person of a row " + new String(source.getRow(), getEncoding()));
+					"person of a row " + new String(source.getRow(), encoding));
 			return null;
 		}
 	}

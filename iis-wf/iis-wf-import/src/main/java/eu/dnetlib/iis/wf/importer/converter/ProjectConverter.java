@@ -32,7 +32,7 @@ import eu.dnetlib.iis.wf.importer.input.approver.ResultApprover;
  * @author mhorst
  *
  */
-public class ProjectConverter extends AbstractEncodingAwareAvroConverter<Project> {
+public class ProjectConverter extends AbstractAvroConverter<Project> {
 
 	protected static final Logger log = Logger.getLogger(ProjectConverter.class);
 	
@@ -42,13 +42,19 @@ public class ProjectConverter extends AbstractEncodingAwareAvroConverter<Project
 			Arrays.asList("undefined", "unknown"));
 	
 	/**
+	 * Row text encoding.
+	 */
+	private final String encoding;
+	
+	/**
 	 * Default constructor.
 	 * @param encoding
 	 * @param resultApprover
 	 */
 	public ProjectConverter(String encoding,
 			ResultApprover resultApprover) {
-		super(encoding, resultApprover);
+		super(resultApprover);
+		this.encoding = encoding;
 	}
 
 	@Override
@@ -57,7 +63,7 @@ public class ProjectConverter extends AbstractEncodingAwareAvroConverter<Project
 				resolvedOafObject.getEntity().getProject():null;
 		if (sourceProject==null) {
 			log.error("skipping: no project object " +
-					"for a row " + new String(source.getRow(), getEncoding()));
+					"for a row " + new String(source.getRow(), encoding));
 			return null;
 		}
 		if (resolvedOafObject.getEntity().getId()!=null && 
