@@ -1,9 +1,16 @@
 package eu.dnetlib.iis.wf.affmatching.model;
 
+import java.util.Objects;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.Preconditions;
 
+/**
+ * Organization data that the affiliation matching module operates on.
+ * @author Łukasz Dumiszewski
+ *
+ */
 public class AffMatchOrganization {
     
     
@@ -73,7 +80,6 @@ public class AffMatchOrganization {
 
     
     
-    
     //------------------------ SETTERS --------------------------
     
     
@@ -97,6 +103,41 @@ public class AffMatchOrganization {
         this.websiteUrl = websiteUrl;
     }
 
+
+    
+    //------------------------ HashCode & Equals --------------------------
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+         }
+         
+         if (getClass() != obj.getClass()) {
+            return false;
+         }
+         
+         final AffMatchOrganization other = (AffMatchOrganization) obj;
+         
+         return Objects.equals(id, other.id);
+    }
+
+
+    //------------------------ toString --------------------------
+
+    @Override
+    public String toString() {
+        return "AffMatchOrganization [id=" + id + ", name=" + name + ", shortName=" + shortName
+                + ", countryName=" + countryName + ", countryCode=" + countryCode + ", websiteUrl="
+                + websiteUrl + "]";
+    }
+    
+    
 
 
 }

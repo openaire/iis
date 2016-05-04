@@ -18,7 +18,7 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 public class AffiliationNameFirstLettersBucketHasherTest {
 
     @InjectMocks
-    private AffiliationNameFirstLettersBucketHasher hasher = new AffiliationNameFirstLettersBucketHasher();
+    private AffiliationOrgNameFirstLettersBucketHasher hasher = new AffiliationOrgNameFirstLettersBucketHasher();
     
     @Mock
     private StringPartFirstLettersHasher stringPartFirstLettersHasher;
@@ -80,10 +80,8 @@ public class AffiliationNameFirstLettersBucketHasherTest {
         
         AffMatchAffiliation aff = new AffMatchAffiliation("XXX", 1);
         aff.setOrganizationName("ICM");
-        hasher.setNumberOfParts(4);
-        hasher.setNumberOfLettersPerPart(3);
         
-        when(stringPartFirstLettersHasher.hash("ICM", 4, 3)).thenReturn("HASH");
+        when(stringPartFirstLettersHasher.hash("ICM")).thenReturn("HASH");
         
         
         // execute

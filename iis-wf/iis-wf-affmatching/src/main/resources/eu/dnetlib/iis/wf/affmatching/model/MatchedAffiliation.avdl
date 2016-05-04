@@ -1,0 +1,22 @@
+
+@namespace("eu.dnetlib.iis.wf.affmatching.model")
+
+protocol IIS {
+
+    record MatchedAffiliation {
+
+        // eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata#id
+        string documentId;
+        
+        // position in the document (from 1)
+        int position;
+        
+        // eu.dnetlib.iis.importer.schemas.Organization#id       
+        string organizationId;
+        
+        // match strength
+        float matchStrength;
+        
+    }
+
+}
