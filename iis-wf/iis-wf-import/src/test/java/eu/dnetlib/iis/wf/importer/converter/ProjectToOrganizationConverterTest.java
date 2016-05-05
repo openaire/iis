@@ -53,11 +53,13 @@ public class ProjectToOrganizationConverterTest {
 
 	@Test(expected = NullPointerException.class)
 	public void constructor_relationColumnFamilyBytes_NULL() throws Exception {
+		// execute
 		new ProjectToOrganizationConverter(defaultApprover, null);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void constructor_resultApprover_NULL() throws Exception {
+		// execute
 		new ProjectToOrganizationConverter(null, relationColumnFamilyBytes);
 	}
 
