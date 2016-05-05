@@ -1,12 +1,11 @@
 package eu.dnetlib.iis.wf.affmatching.match;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.Serializable;
 
 import org.apache.spark.api.java.JavaRDD;
 
-import com.google.common.base.Preconditions;
-
-import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgHashBucketJoiner;
 import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgJoiner;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
@@ -25,9 +24,9 @@ public class AffOrgMatcher implements Serializable {
     
     private static final long serialVersionUID = 1L;
 
-    private AffOrgJoiner affOrgJoiner = new AffOrgHashBucketJoiner();
+    private AffOrgJoiner affOrgJoiner;
     
-    private AffOrgMatchComputer affOrgMatchComputer = new AffOrgMatchComputer();
+    private AffOrgMatchComputer affOrgMatchComputer;
     
     private BestAffMatchResultPicker bestAffMatchResultPicker = new BestAffMatchResultPicker();
     
@@ -47,8 +46,11 @@ public class AffOrgMatcher implements Serializable {
      */
     public JavaRDD<AffMatchResult> match(JavaRDD<AffMatchAffiliation> affiliations, JavaRDD<AffMatchOrganization> organizations) {
         
-        Preconditions.checkNotNull(affiliations);
-        Preconditions.checkNotNull(organizations);
+        checkNotNull(affiliations);
+        checkNotNull(organizations);
+        
+        checkNotNull(affOrgJoiner, "affOrgJoiner has not been set");
+        checkNotNull(affOrgMatchComputer, "affOrgMatchComputer has not been set");
         
         
         JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> joinedAffOrgs = affOrgJoiner.join(affiliations, organizations);        
