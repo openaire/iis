@@ -19,32 +19,31 @@ import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 
 public class IisProjectOrganizationReader implements Serializable, ProjectOrganizationReader {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private SparkAvroLoader avroLoader = new SparkAvroLoader();
+    private SparkAvroLoader avroLoader = new SparkAvroLoader();
 
-	private ProjectOrganizationConverter converter = new ProjectOrganizationConverter();
+    private ProjectOrganizationConverter converter = new ProjectOrganizationConverter();
 
-	// ------------------------ LOGIC --------------------------
+    // ------------------------ LOGIC --------------------------
 
-	/**
-	 * Reads {@link Organization}s written as avro files under
-	 * <code>inputPath</code>
-	 */
-	@Override
-	public JavaRDD<ProjectOrganization> readProjectOrganization(JavaSparkContext sc, String inputPath) {
-		return avroLoader.loadJavaRDD(sc, inputPath, ProjectToOrganization.class)
-				.map(srcProjOrg -> converter.convert(srcProjOrg));
-	}
+    /**
+     * Reads {@link Organization}s written as avro files under <code>inputPath</code>
+     */
+    @Override
+    public JavaRDD<ProjectOrganization> readProjectOrganization(JavaSparkContext sc, String inputPath) {
+        return avroLoader.loadJavaRDD(sc, inputPath, ProjectToOrganization.class)
+                .map(srcProjOrg -> converter.convert(srcProjOrg));
+    }
 
-	// ------------------------ SETTERS --------------------------
+    // ------------------------ SETTERS --------------------------
 
-	public void setAvroLoader(SparkAvroLoader avroLoader) {
-		this.avroLoader = avroLoader;
-	}
+    public void setAvroLoader(SparkAvroLoader avroLoader) {
+        this.avroLoader = avroLoader;
+    }
 
-	public void setProjectOrganizationConverter(ProjectOrganizationConverter converter) {
-		this.converter = converter;
-	}
+    public void setProjectOrganizationConverter(ProjectOrganizationConverter converter) {
+        this.converter = converter;
+    }
 
 }

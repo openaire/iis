@@ -17,21 +17,21 @@ import eu.dnetlib.iis.wf.affmatching.model.DocumentProject;
 
 public class DocumentProjectConverter implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	// ------------------------ LOGIC --------------------------
+    // ------------------------ LOGIC --------------------------
 
-	/**
-	 * Converts {@link DocumentToProject} into {@link DocumentProject}
-	 */
-	public DocumentProject convert(DocumentToProject documentProject) {
-		Preconditions.checkNotNull(documentProject);
-		Preconditions.checkArgument(StringUtils.isNotBlank(documentProject.getDocumentId()));
-		Preconditions.checkArgument(StringUtils.isNotBlank(documentProject.getProjectId()));
-		Preconditions.checkArgument(documentProject.getConfidenceLevel() != null
-				&& documentProject.getConfidenceLevel() >= 0 && documentProject.getConfidenceLevel() <= 1);
-		return new DocumentProject(documentProject.getDocumentId().toString(),
-				documentProject.getProjectId().toString(), documentProject.getConfidenceLevel());
-	}
+    /**
+     * Converts {@link DocumentToProject} into {@link DocumentProject}
+     */
+    public DocumentProject convert(DocumentToProject documentProject) {
+        Preconditions.checkNotNull(documentProject);
+        Preconditions.checkArgument(StringUtils.isNotBlank(documentProject.getDocumentId()));
+        Preconditions.checkArgument(StringUtils.isNotBlank(documentProject.getProjectId()));
+        Preconditions.checkArgument(documentProject.getConfidenceLevel() != null
+                && documentProject.getConfidenceLevel() >= 0 && documentProject.getConfidenceLevel() <= 1);
+        return new DocumentProject(documentProject.getDocumentId().toString(),
+                documentProject.getProjectId().toString(), documentProject.getConfidenceLevel());
+    }
 
 }

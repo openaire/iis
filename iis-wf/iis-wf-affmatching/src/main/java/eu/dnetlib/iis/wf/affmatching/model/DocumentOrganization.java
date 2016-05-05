@@ -13,60 +13,60 @@ import com.google.common.base.Preconditions;
  */
 public class DocumentOrganization {
 
-	private String documentId;
+    private String documentId;
 
-	private String organizationId;
+    private String organizationId;
 
-	// ------------------------ CONSTRUCTORS --------------------------
+    // ------------------------ CONSTRUCTORS --------------------------
 
-	public DocumentOrganization(String documentId, String organizationId) {
-		Preconditions.checkArgument(StringUtils.isNotBlank(documentId));
-		Preconditions.checkArgument(StringUtils.isNotBlank(organizationId));
-		this.documentId = documentId;
-		this.organizationId = organizationId;
-	}
+    public DocumentOrganization(String documentId, String organizationId) {
+        Preconditions.checkArgument(StringUtils.isNotBlank(documentId));
+        Preconditions.checkArgument(StringUtils.isNotBlank(organizationId));
+        this.documentId = documentId;
+        this.organizationId = organizationId;
+    }
 
-	// ------------------------ GETTERS --------------------------
+    // ------------------------ GETTERS --------------------------
 
-	/**
-	 * Document identifier.
-	 */
-	public String getDocumentId() {
-		return documentId;
-	}
+    /**
+     * Document identifier.
+     */
+    public String getDocumentId() {
+        return documentId;
+    }
 
-	/**
-	 * Organization identifier.
-	 */
-	public String getOrganizationId() {
-		return organizationId;
-	}
+    /**
+     * Organization identifier.
+     */
+    public String getOrganizationId() {
+        return organizationId;
+    }
 
-	// ------------------------ SETTERS --------------------------
+    // ------------------------ SETTERS --------------------------
 
-	public void setDocumentId(String documentId) {
-		this.documentId = documentId;
-	}
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
+    }
 
-	public void setOrganizationId(String organizationId) {
-		this.organizationId = organizationId;
-	}
+    public void setOrganizationId(String organizationId) {
+        this.organizationId = organizationId;
+    }
 
-	// ------------------------ HashCode & Equals ----------------
+    // ------------------------ HashCode & Equals ----------------
 
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(documentId, organizationId);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(documentId, organizationId);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof DocumentOrganization) {
-			final DocumentOrganization other = (DocumentOrganization) obj;
-			return Objects.equal(documentId, other.getDocumentId())
-					&& Objects.equal(organizationId, other.getOrganizationId());
-		} else {
-			return false;
-		}
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof DocumentOrganization) {
+            final DocumentOrganization other = (DocumentOrganization) obj;
+            return Objects.equal(documentId, other.getDocumentId())
+                    && Objects.equal(organizationId, other.getOrganizationId());
+        } else {
+            return false;
+        }
+    }
 }

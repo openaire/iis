@@ -14,58 +14,58 @@ import com.google.common.base.Preconditions;
  */
 public class DocumentProject {
 
-	private String documentId;
+    private String documentId;
 
-	private String projectId;
-	
-	private Float confidenceLevel;
+    private String projectId;
 
-	//------------------------ CONSTRUCTORS --------------------------
-	
-	public DocumentProject(String documentId, String projectId, Float confidenceLevel) {
-		Preconditions.checkArgument(StringUtils.isNotBlank(documentId));
-		Preconditions.checkArgument(StringUtils.isNotBlank(projectId));
-		Preconditions.checkArgument(confidenceLevel!=null && confidenceLevel>=0 && confidenceLevel<=1);
-		this.documentId = documentId;
-		this.projectId = projectId;
-		this.confidenceLevel = confidenceLevel;
-	}
+    private Float confidenceLevel;
 
-	//------------------------ GETTERS --------------------------
+    // ------------------------ CONSTRUCTORS --------------------------
 
-	/**
-	 * Document identifier.
-	 */
-	public String getDocumentId() {
-		return documentId;
-	}
+    public DocumentProject(String documentId, String projectId, Float confidenceLevel) {
+        Preconditions.checkArgument(StringUtils.isNotBlank(documentId));
+        Preconditions.checkArgument(StringUtils.isNotBlank(projectId));
+        Preconditions.checkArgument(confidenceLevel != null && confidenceLevel >= 0 && confidenceLevel <= 1);
+        this.documentId = documentId;
+        this.projectId = projectId;
+        this.confidenceLevel = confidenceLevel;
+    }
 
-	/**
-	 * Project identifier.
-	 */
-	public String getProjectId() {
-		return projectId;
-	}
+    // ------------------------ GETTERS --------------------------
 
-	/**
-	 * Document and project relation confidence level. Expressed as <0,1> range.
-	 */
-	public Float getConfidenceLevel() {
-		return confidenceLevel;
-	}
-	
-	//------------------------ SETTERS --------------------------
-	
-	public void setDocumentId(String documentId) {
-		this.documentId = documentId;
-	}
+    /**
+     * Document identifier.
+     */
+    public String getDocumentId() {
+        return documentId;
+    }
 
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
+    /**
+     * Project identifier.
+     */
+    public String getProjectId() {
+        return projectId;
+    }
 
-	public void setConfidenceLevel(Float confidenceLevel) {
-		this.confidenceLevel = confidenceLevel;
-	}
+    /**
+     * Document and project relation confidence level. Expressed as <0,1> range.
+     */
+    public Float getConfidenceLevel() {
+        return confidenceLevel;
+    }
+
+    // ------------------------ SETTERS --------------------------
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
+    public void setConfidenceLevel(Float confidenceLevel) {
+        this.confidenceLevel = confidenceLevel;
+    }
 
 }

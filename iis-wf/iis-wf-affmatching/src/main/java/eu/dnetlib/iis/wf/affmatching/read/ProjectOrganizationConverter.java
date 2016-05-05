@@ -17,19 +17,19 @@ import eu.dnetlib.iis.wf.affmatching.model.ProjectOrganization;
 
 public class ProjectOrganizationConverter implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	// ------------------------ LOGIC --------------------------
+    // ------------------------ LOGIC --------------------------
 
-	/**
-	 * Converts {@link ProjectToOrganization} into {@link ProjectOrganization}
-	 */
-	public ProjectOrganization convert(ProjectToOrganization projectOrganization) {
-		Preconditions.checkNotNull(projectOrganization);
-		Preconditions.checkArgument(StringUtils.isNotBlank(projectOrganization.getProjectId()));
-		Preconditions.checkArgument(StringUtils.isNotBlank(projectOrganization.getOrganizationId()));
-		return new ProjectOrganization(projectOrganization.getProjectId().toString(),
-				projectOrganization.getOrganizationId().toString());
-	}
+    /**
+     * Converts {@link ProjectToOrganization} into {@link ProjectOrganization}
+     */
+    public ProjectOrganization convert(ProjectToOrganization projectOrganization) {
+        Preconditions.checkNotNull(projectOrganization);
+        Preconditions.checkArgument(StringUtils.isNotBlank(projectOrganization.getProjectId()));
+        Preconditions.checkArgument(StringUtils.isNotBlank(projectOrganization.getOrganizationId()));
+        return new ProjectOrganization(projectOrganization.getProjectId().toString(),
+                projectOrganization.getOrganizationId().toString());
+    }
 
 }

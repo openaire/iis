@@ -19,32 +19,31 @@ import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 
 public class IisDocumentProjectReader implements Serializable, DocumentProjectReader {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private SparkAvroLoader avroLoader = new SparkAvroLoader();
+    private SparkAvroLoader avroLoader = new SparkAvroLoader();
 
-	private DocumentProjectConverter converter = new DocumentProjectConverter();
+    private DocumentProjectConverter converter = new DocumentProjectConverter();
 
-	// ------------------------ LOGIC --------------------------
+    // ------------------------ LOGIC --------------------------
 
-	/**
-	 * Reads {@link Organization}s written as avro files under
-	 * <code>inputPath</code>
-	 */
-	@Override
-	public JavaRDD<DocumentProject> readDocumentProject(JavaSparkContext sc, String inputPath) {
-		return avroLoader.loadJavaRDD(sc, inputPath, DocumentToProject.class)
-				.map(srcDocProj -> converter.convert(srcDocProj));
-	}
+    /**
+     * Reads {@link Organization}s written as avro files under <code>inputPath</code>
+     */
+    @Override
+    public JavaRDD<DocumentProject> readDocumentProject(JavaSparkContext sc, String inputPath) {
+        return avroLoader.loadJavaRDD(sc, inputPath, DocumentToProject.class)
+                .map(srcDocProj -> converter.convert(srcDocProj));
+    }
 
-	// ------------------------ SETTERS --------------------------
+    // ------------------------ SETTERS --------------------------
 
-	public void setAvroLoader(SparkAvroLoader avroLoader) {
-		this.avroLoader = avroLoader;
-	}
+    public void setAvroLoader(SparkAvroLoader avroLoader) {
+        this.avroLoader = avroLoader;
+    }
 
-	public void setDocumentProjectConverter(DocumentProjectConverter converter) {
-		this.converter = converter;
-	}
+    public void setDocumentProjectConverter(DocumentProjectConverter converter) {
+        this.converter = converter;
+    }
 
 }

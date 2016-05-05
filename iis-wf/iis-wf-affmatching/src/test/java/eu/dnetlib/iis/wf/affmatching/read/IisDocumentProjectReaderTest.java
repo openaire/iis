@@ -31,64 +31,69 @@ public class IisDocumentProjectReaderTest {
 
     @InjectMocks
     private IisDocumentProjectReader documentProjectReader = new IisDocumentProjectReader();
-    
+
     @Mock
     private SparkAvroLoader avroLoader;
-    
+
     @Mock
     private DocumentProjectConverter documentProjectConverter;
-    
+
     @Mock
     private JavaSparkContext sparkContext;
-    
+
     @Mock
     private JavaRDD<DocumentToProject> loadedDocumentProjects;
-    
+
     @Captor
     private ArgumentCaptor<Function<DocumentToProject, DocumentProject>> mapDocumentProjectFunction;
-    
+
     @Mock
     private JavaRDD<DocumentProject> documentProjects;
-    
+
     private final String predefinedPath = "/path/to/document_pojects/";
-    
+
     @Before
     public void setUp() {
-        doReturn(loadedDocumentProjects).when(avroLoader).loadJavaRDD(sparkContext, predefinedPath, DocumentToProject.class);
+        doReturn(loadedDocumentProjects).when(avroLoader).loadJavaRDD(sparkContext, predefinedPath,
+                DocumentToProject.class);
         doReturn(documentProjects).when(loadedDocumentProjects).map(any());
     }
-    
-    //------------------------ TESTS --------------------------
-    
+
+    // ------------------------ TESTS --------------------------
+
     @Test(expected = NullPointerException.class)
     public void readDocumentProject_NULL_CONTEXT() {
+        // execute
         documentProjectReader.readDocumentProject(null, predefinedPath);
     }
-    
+
     @Test(expected = NullPointerException.class)
     public void readDocumentProject_NULL_PATH() {
+        // execute
         documentProjectReader.readDocumentProject(sparkContext, null);
     }
-    
+
     @Test
     public void readDocumentProject() throws Exception {
-        JavaRDD<DocumentProject> retDocumentProject = documentProjectReader.readDocumentProject(
-        		sparkContext, predefinedPath);
-        
+        // execute
+        JavaRDD<DocumentProject> retDocumentProject = documentProjectReader.readDocumentProject(sparkContext,
+                predefinedPath);
+        // assert
         assertTrue(retDocumentProject == documentProjects);
         verify(avroLoader).loadJavaRDD(sparkContext, predefinedPath, DocumentToProject.class);
         verify(loadedDocumentProjects).map(mapDocumentProjectFunction.capture());
         assertMapDocumentProjectFunction(mapDocumentProjectFunction.getValue());
     }
-    
-    //------------------------ PRIVATE --------------------------
-    
-    private void assertMapDocumentProjectFunction(Function<DocumentToProject, DocumentProject> function) throws Exception {
+
+    // ------------------------ PRIVATE --------------------------
+
+    private void assertMapDocumentProjectFunction(Function<DocumentToProject, DocumentProject> function)
+            throws Exception {
         DocumentToProject documentProject = mock(DocumentToProject.class);
         DocumentProject mappedDocumentProject = mock(DocumentProject.class);
         when(documentProjectConverter.convert(documentProject)).thenReturn(mappedDocumentProject);
         DocumentProject retDocumentProject = function.call(documentProject);
         assertTrue(retDocumentProject == mappedDocumentProject);
     }
-    
+
 }

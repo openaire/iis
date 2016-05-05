@@ -13,12 +13,11 @@ import eu.dnetlib.iis.wf.affmatching.model.DocumentProject;
 
 public interface DocumentProjectReader {
 
-	/**
-	 * Reads document to project relations that are in <code>inputPath</code>.
-	 * The relations that are in <code>inputPath</code> can be in any format.
-	 * The implementation of the reader, however, must return them as rdd of
-	 * {@link DocumentProject}.
-	 */
-	public JavaRDD<DocumentProject> readDocumentProject(JavaSparkContext sc, String inputPath);
+    /**
+     * Reads document to project relations that are in <code>inputPath</code>.
+     * The relations that are in <code>inputPath</code> can be in any format.
+     * The implementation of the reader, however, must return them as rdd of {@link DocumentProject}.
+     */
+    public JavaRDD<DocumentProject> readDocumentProject(JavaSparkContext sc, String inputPath);
 
 }

@@ -12,43 +12,43 @@ import com.google.common.base.Preconditions;
  */
 public class ProjectOrganization {
 
-	private String projectId;
+    private String projectId;
 
-	private String organizationId;
+    private String organizationId;
 
-	//------------------------ CONSTRUCTORS --------------------------
-	
-	public ProjectOrganization(String projecttId, String organizationId) {
-		Preconditions.checkArgument(StringUtils.isNotBlank(projecttId));
-		Preconditions.checkArgument(StringUtils.isNotBlank(organizationId));
-		this.projectId = projecttId;
-		this.organizationId = organizationId;
-	}
+    // ------------------------ CONSTRUCTORS --------------------------
 
-	//------------------------ GETTERS --------------------------
-	
-	/**
-	 * Project identifier.
-	 */
-	public String getProjectId() {
-		return projectId;
-	}
+    public ProjectOrganization(String projecttId, String organizationId) {
+        Preconditions.checkArgument(StringUtils.isNotBlank(projecttId));
+        Preconditions.checkArgument(StringUtils.isNotBlank(organizationId));
+        this.projectId = projecttId;
+        this.organizationId = organizationId;
+    }
 
-	/**
-	 * Organization identifier.
-	 */
-	public String getOrganizationId() {
-		return organizationId;
-	}
+    // ------------------------ GETTERS --------------------------
 
-	//------------------------ SETTERS --------------------------
-	
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
+    /**
+     * Project identifier.
+     */
+    public String getProjectId() {
+        return projectId;
+    }
 
-	public void setOrganizationId(String organizationId) {
-		this.organizationId = organizationId;
-	}
+    /**
+     * Organization identifier.
+     */
+    public String getOrganizationId() {
+        return organizationId;
+    }
+
+    // ------------------------ SETTERS --------------------------
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
+    public void setOrganizationId(String organizationId) {
+        this.organizationId = organizationId;
+    }
 
 }
