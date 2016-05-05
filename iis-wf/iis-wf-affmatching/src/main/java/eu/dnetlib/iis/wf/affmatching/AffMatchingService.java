@@ -1,8 +1,12 @@
 package eu.dnetlib.iis.wf.affmatching;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
@@ -15,11 +19,9 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
 import eu.dnetlib.iis.wf.affmatching.normalize.AffMatchAffiliationNormalizer;
 import eu.dnetlib.iis.wf.affmatching.normalize.AffMatchOrganizationNormalizer;
 import eu.dnetlib.iis.wf.affmatching.read.AffiliationReader;
-import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
-import eu.dnetlib.iis.wf.affmatching.read.IisOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.read.OrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.AffMatchResultWriter;
-import eu.dnetlib.iis.wf.affmatching.write.IisAffMatchResultWriter;
+import scala.Tuple2;
 
 /**
  * Configurable affiliation matching service.<br/><br/>
@@ -36,9 +38,9 @@ public class AffMatchingService implements Serializable {
     private static final long serialVersionUID = 1L;
 
     
-    private OrganizationReader organizationReader = new IisOrganizationReader();
+    private OrganizationReader organizationReader;
     
-    private AffiliationReader affiliationReader = new IisAffiliationReader();
+    private AffiliationReader affiliationReader;
     
     
     private AffMatchAffiliationNormalizer affMatchAffiliationNormalizer = new AffMatchAffiliationNormalizer();
@@ -46,10 +48,10 @@ public class AffMatchingService implements Serializable {
     private AffMatchOrganizationNormalizer affMatchOrganizationNormalizer = new AffMatchOrganizationNormalizer();
     
     
-    private AffOrgMatcher affOrgMatcher = new AffOrgMatcher();
+    private List<AffOrgMatcher> affOrgMatchers;
     
     
-    private AffMatchResultWriter affMatchResultWriter = new IisAffMatchResultWriter();
+    private AffMatchResultWriter affMatchResultWriter;
     
     
     
@@ -63,6 +65,10 @@ public class AffMatchingService implements Serializable {
      * Saves the result in <code>outputPath</code>.
      */
     public void matchAffiliations(JavaSparkContext sc, String inputAffPath, String inputOrgPath, String outputPath) {
+
+        checkArguments(sc, inputAffPath, inputOrgPath, outputPath);
+        
+        checkState();
         
         
         JavaRDD<AffMatchAffiliation> affiliations = affiliationReader.readAffiliations(sc, inputAffPath).filter(aff -> (StringUtils.isNotBlank(aff.getOrganizationName())));
@@ -70,21 +76,72 @@ public class AffMatchingService implements Serializable {
         JavaRDD<AffMatchOrganization> organizations = organizationReader.readOrganizations(sc, inputOrgPath).filter(org -> (StringUtils.isNotBlank(org.getName())));
         
         
-        Preconditions.checkNotNull(affiliations);
-        
-        Preconditions.checkNotNull(organizations);
-        
-        
         JavaRDD<AffMatchAffiliation> normalizedAffiliations = affiliations.map(aff -> affMatchAffiliationNormalizer.normalize(aff));
         
         JavaRDD<AffMatchOrganization> normalizedOrganizations = organizations.map(org -> affMatchOrganizationNormalizer.normalize(org));
         
+
+        JavaRDD<AffMatchResult> allMatchedAffOrgs = doMatch(sc, normalizedAffiliations, normalizedOrganizations);
         
-        JavaRDD<AffMatchResult> matchedAffOrgs = affOrgMatcher.match(normalizedAffiliations, normalizedOrganizations);        
+        
+        affMatchResultWriter.write(allMatchedAffOrgs, outputPath);
+        
+    }
+
+
+
+    
+    
+    //------------------------ PRIVATE --------------------------
+
+    
+    private void checkState() {
+        
+        Preconditions.checkNotNull(organizationReader, "organizationReader has not been set");
+        
+        Preconditions.checkNotNull(affiliationReader, "affiliationReader has not been set");
+        
+        Preconditions.checkNotNull(affMatchResultWriter, "affMatchResultWriter has not been set");
+        
+        Preconditions.checkState(CollectionUtils.isNotEmpty(affOrgMatchers), "no AffOrgMatcher has been set");
+    }
+
+
+    
+
+    private void checkArguments(JavaSparkContext sc, String inputAffPath, String inputOrgPath, String outputPath) {
+        
+        Preconditions.checkNotNull(sc);
+        
+        Preconditions.checkArgument(StringUtils.isNotBlank(inputAffPath));
+        
+        Preconditions.checkArgument(StringUtils.isNotBlank(inputOrgPath));
+        
+        Preconditions.checkArgument(StringUtils.isNotBlank(outputPath));
+    }
+
+
+
+    private JavaRDD<AffMatchResult> doMatch(JavaSparkContext sc, JavaRDD<AffMatchAffiliation> normalizedAffiliations, JavaRDD<AffMatchOrganization> normalizedOrganizations) {
+        
+        JavaPairRDD<String, AffMatchAffiliation> idAffiliations = normalizedAffiliations.keyBy(aff -> aff.getId());
+        
+        JavaRDD<AffMatchResult> allMatchedAffOrgs = sc.parallelize(new ArrayList<>());
         
         
-        affMatchResultWriter.write(matchedAffOrgs, outputPath);
+        for (AffOrgMatcher affOrgMatcher : affOrgMatchers) {
+            
+            JavaRDD<AffMatchResult> matchedAffOrgs = affOrgMatcher.match(idAffiliations.values(), normalizedOrganizations);
+            
+            allMatchedAffOrgs = allMatchedAffOrgs.union(matchedAffOrgs);
+            
+            
+            JavaPairRDD<String, String> matchedAffIds = matchedAffOrgs.mapToPair(affMatchOrg -> new Tuple2<>(affMatchOrg.getAffiliation().getId(), ""));
+            
+            idAffiliations = idAffiliations.subtractByKey(matchedAffIds);
+        }
         
+        return allMatchedAffOrgs;
     }
     
     
@@ -99,16 +156,12 @@ public class AffMatchingService implements Serializable {
         this.affiliationReader = affiliationReader;
     }
 
-    public void setAffMatchAffiliationNormalizer(AffMatchAffiliationNormalizer affMatchAffiliationNormalizer) {
-        this.affMatchAffiliationNormalizer = affMatchAffiliationNormalizer;
+    public void setAffOrgMatchers(List<AffOrgMatcher> affOrgMatchers) {
+        this.affOrgMatchers = affOrgMatchers;
     }
 
-    public void setAffMatchOrganizationNormalizer(AffMatchOrganizationNormalizer affMatchOrganizationNormalizer) {
-        this.affMatchOrganizationNormalizer = affMatchOrganizationNormalizer;
-    }
-
-    public void setAffMatcher(AffOrgMatcher affMatcher) {
-        this.affOrgMatcher = affMatcher;
+    public void setAffMatchResultWriter(AffMatchResultWriter affMatchResultWriter) {
+        this.affMatchResultWriter = affMatchResultWriter;
     }
 
     

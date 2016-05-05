@@ -1,15 +1,15 @@
 package eu.dnetlib.iis.wf.affmatching.match;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.spark.api.java.JavaRDD;
 
-import com.google.common.base.Preconditions;
-
 import eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.NameCountryStrictMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
@@ -29,22 +29,13 @@ public class AffOrgMatchComputer implements Serializable {
     private static final long serialVersionUID = 1L;
 
     
-    private List<AffOrgMatchVoter> affOrgMatchVoters = new ArrayList<>();
+    private List<AffOrgMatchVoter> affOrgMatchVoters;
     
     private AffOrgMatchVoterStrengthCalculator voterStrengthCalculator = new AffOrgMatchVoterStrengthCalculator();
 
     private AffOrgMatchStrengthRecalculator affOrgMatchStrengthRecalculator = new AffOrgMatchStrengthRecalculator();
     
     
-    
-    
-    //------------------------ CONSTRUCTORS --------------------------
-    
-    public AffOrgMatchComputer() {
-        
-        affOrgMatchVoters.add(new NameCountryStrictMatchVoter());
-        
-    }
     
     
     
@@ -58,7 +49,9 @@ public class AffOrgMatchComputer implements Serializable {
      */
     public JavaRDD<AffMatchResult> computeMatches(JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> joinedAffOrgs) {
         
-        Preconditions.checkNotNull(joinedAffOrgs);
+        checkNotNull(joinedAffOrgs);
+    
+        checkState(CollectionUtils.isNotEmpty(affOrgMatchVoters), "no AffOrgMatchVoter has been set");
         
         
         JavaRDD<AffMatchResult> affMatchResults = joinedAffOrgs.map(kv->new AffMatchResult(kv._1(), kv._2(), 0));
@@ -89,6 +82,7 @@ public class AffOrgMatchComputer implements Serializable {
 
 
     //------------------------ SETTERS --------------------------
+    
     /**
      * List of match voters that will be used to match affiliations with organization.
      * @see #computeMatches(JavaRDD) 

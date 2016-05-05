@@ -22,6 +22,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.beust.jcommander.internal.Lists;
+
 import eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
@@ -104,6 +106,21 @@ public class AffOrgMatchComputerTest {
         // execute
         
         affOrgMatchComputer.computeMatches(null);
+        
+    }
+    
+    
+    @Test(expected = IllegalStateException.class)
+    public void computeMatches_no_voters() {
+        
+        // given
+        
+        affOrgMatchComputer.setAffOrgMatchVoters(Lists.newArrayList());
+        
+        
+        // execute
+        
+        affOrgMatchComputer.computeMatches(joinedAffOrgs);
         
     }
     

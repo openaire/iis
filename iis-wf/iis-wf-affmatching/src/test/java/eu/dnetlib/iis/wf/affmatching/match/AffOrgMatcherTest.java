@@ -75,6 +75,36 @@ public class AffOrgMatcherTest {
         
     }
 
+
+    @Test(expected = NullPointerException.class)
+    public void match_affOrgMatchComputer_null() {
+        
+        // given
+        
+        matcher.setAffOrgMatchComputer(null);
+        
+        
+        // execute
+        
+        matcher.match(affiliations, organizations);
+        
+    }
+
+    
+    @Test(expected = NullPointerException.class)
+    public void match_affOrgJoiner_null() {
+        
+        // given
+        
+        matcher.setAffOrgJoiner(null);
+        
+        
+        // execute
+        
+        matcher.match(affiliations, organizations);
+        
+    }
+
     
     @Test
     public void match() {

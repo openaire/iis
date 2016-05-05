@@ -9,6 +9,16 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
+import datafu.com.google.common.collect.Lists;
+import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgHashBucketJoiner;
+import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgJoiner;
+import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchComputer;
+import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
+import eu.dnetlib.iis.wf.affmatching.match.voter.NameCountryStrictMatchVoter;
+import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
+import eu.dnetlib.iis.wf.affmatching.read.IisOrganizationReader;
+import eu.dnetlib.iis.wf.affmatching.write.IisAffMatchResultWriter;
+
 /**
  * Job matching affiliations with organizations.
  * 
@@ -19,7 +29,9 @@ import com.beust.jcommander.Parameters;
 
 public class AffMatchingJob {
     
-    private static AffMatchingService affMatchingService = new AffMatchingService();
+    private static AffMatchingService affMatchingService = createAffMatchingService();
+
+
     
     
     //------------------------ LOGIC --------------------------
@@ -58,6 +70,43 @@ public class AffMatchingJob {
         @Parameter(names = "-outputAvroPath", required = true)
         private String outputAvroPath;
         
+    }
+    
+    
+    
+    private static AffMatchingService createAffMatchingService() {
+        
+        AffMatchingService affMatchingService = new AffMatchingService();
+        
+        
+        // readers
+        
+        affMatchingService.setAffiliationReader(new IisAffiliationReader());
+        affMatchingService.setOrganizationReader(new IisOrganizationReader());
+        
+        
+        // writer
+        
+        affMatchingService.setAffMatchResultWriter(new IisAffMatchResultWriter());
+        
+        
+        // affOrgHashBucketMatcher
+        
+        AffOrgJoiner affOrgHashBucketJoiner = new AffOrgHashBucketJoiner();
+        
+        AffOrgMatchComputer affOrgHashMatchComputer = new AffOrgMatchComputer();
+        affOrgHashMatchComputer.setAffOrgMatchVoters(Lists.newArrayList(new NameCountryStrictMatchVoter()));
+        
+        AffOrgMatcher affOrgHashBucketMatcher = new AffOrgMatcher();
+        affOrgHashBucketMatcher.setAffOrgJoiner(affOrgHashBucketJoiner);
+        affOrgHashBucketMatcher.setAffOrgMatchComputer(affOrgHashMatchComputer);
+        
+        
+        
+        
+        affMatchingService.setAffOrgMatchers(Lists.newArrayList(affOrgHashBucketMatcher));
+        
+        return affMatchingService;
     }
     
     
