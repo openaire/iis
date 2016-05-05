@@ -25,59 +25,58 @@ import eu.dnetlib.iis.wf.importer.input.approver.ResultApprover;
  */
 public class ProjectToOrganizationConverter extends AbstractAvroConverter<List<ProjectToOrganization>> {
 
-	/**
-	 * Project-organization relation column family.
-	 */
-	private final byte[] relationColumnFamilyBytes;
+    /**
+     * Project-organization relation column family.
+     */
+    private final byte[] relationColumnFamilyBytes;
 
-	// ------------------------ CONSTRUCTORS --------------------------
+    // ------------------------ CONSTRUCTORS --------------------------
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @param resultApprover relation approver
-	 * @param relationColumnFamilyBytes project-organization column family
-	 */
-	public ProjectToOrganizationConverter(ResultApprover resultApprover, byte[] relationColumnFamilyBytes) {
-		super(resultApprover);
-		Preconditions.checkNotNull(resultApprover);
-		Preconditions.checkNotNull(relationColumnFamilyBytes);
-		this.relationColumnFamilyBytes = OafHelper.copyArrayWhenNotNull(relationColumnFamilyBytes);
-	}
+    /**
+     * Default constructor.
+     * 
+     * @param resultApprover relation approver
+     * @param relationColumnFamilyBytes project-organization column family
+     */
+    public ProjectToOrganizationConverter(ResultApprover resultApprover, byte[] relationColumnFamilyBytes) {
+        super(resultApprover);
+        Preconditions.checkNotNull(resultApprover);
+        Preconditions.checkNotNull(relationColumnFamilyBytes);
+        this.relationColumnFamilyBytes = OafHelper.copyArrayWhenNotNull(relationColumnFamilyBytes);
+    }
 
-	// ------------------------ LOGIC --------------------------
+    // ------------------------ LOGIC --------------------------
 
-	/**
-	 * Builds {@link List} of {@link ProjectToOrganization} objects for given
-	 * hbase input.
-	 * 
-	 * @param hbaseResult full hbase record
-	 * @param resolvedOafObject resolved Oaf object
-	 * @return list of {@link ProjectToOrganization} or empty list when no relations in hbaseResult 
-	 * @throws InvalidProtocolBufferException thrown when unable to deserialize object
-	 */
-	@Override
-	public List<ProjectToOrganization> buildObject(Result hbaseResult, Oaf resolvedOafObject)
-			throws InvalidProtocolBufferException {
-		Preconditions.checkNotNull(hbaseResult);
-		NavigableMap<byte[], byte[]> projOrgRelations = hbaseResult.getFamilyMap(relationColumnFamilyBytes);
-		if (!MapUtils.isEmpty(projOrgRelations)) {
-			List<ProjectToOrganization> projectOrganizationList = new ArrayList<ProjectToOrganization>(
-					projOrgRelations.size());
-			for (byte[] projOrgBytes : projOrgRelations.values()) {
-				Oaf projOrgOaf = OafHelper.buildOaf(projOrgBytes);
-				if (resultApprover.approveBeforeBuilding(projOrgOaf)) {
-					OafRel projOrgRel = projOrgOaf.getRel();
-					ProjectToOrganization.Builder builder = ProjectToOrganization.newBuilder();
-					builder.setProjectId(projOrgRel.getSource());
-					builder.setOrganizationId(projOrgRel.getTarget());
-					projectOrganizationList.add(builder.build());
-				}
-			}
-			return projectOrganizationList;
-		} else {
-			return Collections.emptyList();			
-		}
-	}
+    /**
+     * Builds {@link List} of {@link ProjectToOrganization} objects for given hbase input.
+     * 
+     * @param hbaseResult full hbase record
+     * @param resolvedOafObject resolved Oaf object
+     * @return list of {@link ProjectToOrganization} or empty list when no relations in hbaseResult
+     * @throws InvalidProtocolBufferException thrown when unable to deserialize object
+     */
+    @Override
+    public List<ProjectToOrganization> buildObject(Result hbaseResult, Oaf resolvedOafObject)
+            throws InvalidProtocolBufferException {
+        Preconditions.checkNotNull(hbaseResult);
+        NavigableMap<byte[], byte[]> projOrgRelations = hbaseResult.getFamilyMap(relationColumnFamilyBytes);
+        if (!MapUtils.isEmpty(projOrgRelations)) {
+            List<ProjectToOrganization> projectOrganizationList = new ArrayList<ProjectToOrganization>(
+                    projOrgRelations.size());
+            for (byte[] projOrgBytes : projOrgRelations.values()) {
+                Oaf projOrgOaf = OafHelper.buildOaf(projOrgBytes);
+                if (resultApprover.approveBeforeBuilding(projOrgOaf)) {
+                    OafRel projOrgRel = projOrgOaf.getRel();
+                    ProjectToOrganization.Builder builder = ProjectToOrganization.newBuilder();
+                    builder.setProjectId(projOrgRel.getSource());
+                    builder.setOrganizationId(projOrgRel.getTarget());
+                    projectOrganizationList.add(builder.build());
+                }
+            }
+            return projectOrganizationList;
+        } else {
+            return Collections.emptyList();
+        }
+    }
 
 }
