@@ -1,7 +1,6 @@
 package eu.dnetlib.iis.wf.importer.converter;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.NavigableMap;
@@ -24,7 +23,7 @@ import eu.dnetlib.iis.wf.importer.input.approver.ResultApprover;
  * @author mhorst
  *
  */
-public class ProjectToOrganizationConverter extends AbstractAvroConverter<Collection<ProjectToOrganization>> {
+public class ProjectToOrganizationConverter extends AbstractAvroConverter<List<ProjectToOrganization>> {
 
 	/**
 	 * Project-organization relation column family.
@@ -49,16 +48,16 @@ public class ProjectToOrganizationConverter extends AbstractAvroConverter<Collec
 	// ------------------------ LOGIC --------------------------
 
 	/**
-	 * Builds collection of {@link ProjectToOrganization} objects for given
+	 * Builds {@link List} of {@link ProjectToOrganization} objects for given
 	 * hbase input.
 	 * 
 	 * @param hbaseResult full hbase record
 	 * @param resolvedOafObject resolved Oaf object
-	 * @return collection of {@link ProjectToOrganization}
+	 * @return list of {@link ProjectToOrganization} or empty list when no relations in hbaseResult 
 	 * @throws InvalidProtocolBufferException thrown when unable to deserialize object
 	 */
 	@Override
-	public Collection<ProjectToOrganization> buildObject(Result hbaseResult, Oaf resolvedOafObject)
+	public List<ProjectToOrganization> buildObject(Result hbaseResult, Oaf resolvedOafObject)
 			throws InvalidProtocolBufferException {
 		Preconditions.checkNotNull(hbaseResult);
 		NavigableMap<byte[], byte[]> projOrgRelations = hbaseResult.getFamilyMap(relationColumnFamilyBytes);
