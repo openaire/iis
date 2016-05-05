@@ -6,37 +6,25 @@ import eu.dnetlib.iis.wf.importer.input.approver.ResultApprover;
 
 /**
  * Abstract Hbase {@link Result} to avro object converter.
+ * 
  * @author mhorst
  *
  * @param <T>
  */
 public abstract class AbstractAvroConverter<T> implements AvroConverter<T> {
-	
-	/**
-	 * Data encoding.
-	 */
-	private final String encoding;
-	
-	/**
-	 * Result approver.
-	 */
-	protected final ResultApprover resultApprover;
-	
-	
-	/**
-	 * Default constructor.
-	 * @param encoding
-	 * @param resultApprover
-	 */
-	public AbstractAvroConverter(String encoding,
-			ResultApprover resultApprover) {
-		this.encoding = encoding;
-		this.resultApprover = resultApprover;
-	}
-	
 
-	public String getEncoding() {
-		return encoding;
-	}
-	
+    /**
+     * Result approver.
+     */
+    protected final ResultApprover resultApprover;
+
+    /**
+     * Default constructor.
+     * 
+     * @param resultApprover
+     */
+    public AbstractAvroConverter(ResultApprover resultApprover) {
+        this.resultApprover = resultApprover;
+    }
+
 }
