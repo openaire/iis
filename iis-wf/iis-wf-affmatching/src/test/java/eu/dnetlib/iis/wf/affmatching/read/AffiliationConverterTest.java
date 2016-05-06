@@ -10,10 +10,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.Lists;
 
-import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
-import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
+import eu.dnetlib.data.proto.ResultOrganizationProtos.ResultOrganization.Affiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 
 /**

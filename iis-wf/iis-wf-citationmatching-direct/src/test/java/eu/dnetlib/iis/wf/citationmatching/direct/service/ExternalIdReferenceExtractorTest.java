@@ -20,12 +20,9 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.beust.jcommander.internal.Maps;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
-import eu.dnetlib.iis.citationmatching.direct.schemas.Citation;
-import eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata;
-import eu.dnetlib.iis.citationmatching.direct.schemas.ReferenceMetadata;
 import scala.Tuple2;
 
 /**
