@@ -3,6 +3,7 @@ package eu.dnetlib.iis.wf.affmatching.normalize;
 import java.io.Serializable;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 import eu.dnetlib.iis.common.string.LenientComparisonStringNormalizer;
 import eu.dnetlib.iis.common.string.StringNormalizer;
@@ -21,7 +22,7 @@ public class AffMatchAffiliationNormalizer implements Serializable {
     private static final long serialVersionUID = 1L;
 
     
-    private StringNormalizer organizationNameNormalizer = new LenientComparisonStringNormalizer();
+    private StringNormalizer organizationNameNormalizer = new BracketsPreFilteringNormalizer(new LenientComparisonStringNormalizer(Lists.newArrayList(',', ';')));
     
     private StringNormalizer countryNameNormalizer = new LenientComparisonStringNormalizer();
     

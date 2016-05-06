@@ -8,13 +8,9 @@ import org.junit.Test;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 
-/**
-* @author Łukasz Dumiszewski
-*/
+public class CountryCodeLooseMatchVoterTest {
 
-public class NameCountryStrictEqVoterTest {
-
-    private NameCountryStrictMatchVoter voter = new NameCountryStrictMatchVoter();
+    private CountryCodeLooseMatchVoter voter = new CountryCodeLooseMatchVoter();
     
     private AffMatchAffiliation affiliation = new AffMatchAffiliation("DOC1", 1);
     
@@ -23,17 +19,13 @@ public class NameCountryStrictEqVoterTest {
     
     //------------------------ TESTS --------------------------
     
-    
     @Test
-    public void voteMatch_match() {
+    public void voteMatch_match_same_country_code() {
         
         // given
         
-        affiliation.setOrganizationName("mickey mouse's ice creams");
-        affiliation.setCountryCode("us");
-        
-        organization.setName("mickey mouse's ice creams");
-        organization.setCountryCode("us");
+        affiliation.setCountryCode("pl");
+        organization.setCountryCode("pl");
         
         
         // execute & assert
@@ -43,16 +35,12 @@ public class NameCountryStrictEqVoterTest {
         
     }
     
-    
     @Test
-    public void voteMatch_dont_match_diff_org_name() {
+    public void voteMatch_dont_match_different_country_code() {
         
         // given
         
-        affiliation.setOrganizationName("donald duck's ice creams");
-        affiliation.setCountryCode("us");
-        
-        organization.setName("mickey mouse's ice creams");
+        affiliation.setCountryCode("pl");
         organization.setCountryCode("us");
         
         
@@ -63,23 +51,33 @@ public class NameCountryStrictEqVoterTest {
         
     }
     
-    
     @Test
-    public void voteMatch_dont_match_diff_country_codes() {
+    public void voteMatch_match_one_empty_country_code() {
         
         // given
         
-        affiliation.setOrganizationName("mickey mouse's ice creams");
-        affiliation.setCountryCode("ca");
-        
-        organization.setName("mickey mouse's ice creams");
-        organization.setCountryCode("us");
+        affiliation.setCountryCode("pl");
+        organization.setCountryCode("");
         
         
         // execute & assert
         
-        assertFalse(voter.voteMatch(affiliation, organization));
+        assertTrue(voter.voteMatch(affiliation, organization));
         
+    }
+    
+    @Test
+    public void voteMatch_dont_match_both_empty_country_code() {
+        
+        // given
+        
+        affiliation.setCountryCode("");
+        organization.setCountryCode("");
+        
+        
+        // execute & assert
+        
+        assertTrue(voter.voteMatch(affiliation, organization));
         
     }
 

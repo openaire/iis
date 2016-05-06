@@ -18,8 +18,11 @@
 package eu.dnetlib.iis.common.string;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.collect.Lists;
 
 /**
  * An implementation of {@link StringNormalizer} that normalizes strings for non-strict comparisons
@@ -34,6 +37,23 @@ public final class LenientComparisonStringNormalizer implements StringNormalizer
     private static final long serialVersionUID = 1L;
     
     
+    private List<Character> whitelistCharacters;
+    
+    
+    //------------------------ CONSTRUCTORS --------------------------
+    
+    public LenientComparisonStringNormalizer() {
+        this(Lists.newArrayList());
+    }
+    
+    /**
+     * @param whitelistCharacters - non alphanumeric characters that will not be removed
+     *      during normalization
+     */
+    public LenientComparisonStringNormalizer(List<Character> whitelistCharacters) {
+        this.whitelistCharacters = whitelistCharacters;
+    }
+    
     
     //------------------------ LOGIC --------------------------
 
@@ -45,7 +65,7 @@ public final class LenientComparisonStringNormalizer implements StringNormalizer
      * neither letters nor digits; about accidental spaces or different diacritics etc. <br/><br/>
      * This method:
      * <ul>
-     * <li>Replaces all characters that are not letters or digits with spaces</li>
+     * <li>Replaces all characters that are not letters or digits with spaces (except those on whitelist characters list)</li>
      * <li>Replaces white spaces with spaces </li>
      * <li>Trims</li>
      * <li>Compacts multi-space gaps to one-space gaps</li>
@@ -68,11 +88,11 @@ public final class LenientComparisonStringNormalizer implements StringNormalizer
         }
         
         
-        String result = null;
-        
-        result = removeNonLetterDigitCharacters(value);
+        String result = value;
         
         result = DiacriticsRemover.removeDiacritics(result);
+        
+        result = removeNonLetterDigitCharacters(result);
         
         result = result.toLowerCase();
         
@@ -95,7 +115,7 @@ public final class LenientComparisonStringNormalizer implements StringNormalizer
    
             char c = value.charAt(i);
             
-            if (Character.isLetterOrDigit(c)) {
+            if (Character.isLetterOrDigit(c) || whitelistCharacters.contains(c)) {
                 sb.append(c);
             } else {
                 sb.append(" ");
