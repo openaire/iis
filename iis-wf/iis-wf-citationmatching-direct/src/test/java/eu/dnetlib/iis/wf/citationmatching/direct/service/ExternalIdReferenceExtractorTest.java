@@ -23,6 +23,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import eu.dnetlib.iis.citationmatching.direct.schemas.Citation;
+import eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata;
+import eu.dnetlib.iis.citationmatching.direct.schemas.ReferenceMetadata;
 import scala.Tuple2;
 
 /**
