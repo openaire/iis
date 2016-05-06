@@ -1,5 +1,11 @@
 package eu.dnetlib.iis.wf.affmatching;
 
+import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory.createNameCountryStrictMatchVoter;
+import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory.createNameStrictCountryLooseMatchVoter;
+import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory.createSectionedNameLevenshteinCountryLooseMatchVoter;
+import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory.createSectionedNameStrictCountryLooseMatchVoter;
+import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory.createSectionedShortNameStrictCountryLooseMatchVoter;
+
 import java.io.IOException;
 
 import org.apache.spark.SparkConf;
@@ -8,13 +14,13 @@ import org.apache.spark.api.java.JavaSparkContext;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgHashBucketJoiner;
 import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgJoiner;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchComputer;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
-import eu.dnetlib.iis.wf.affmatching.match.voter.NameCountryStrictMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.IisOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.IisAffMatchResultWriter;
@@ -95,7 +101,13 @@ public class AffMatchingJob {
         AffOrgJoiner affOrgHashBucketJoiner = new AffOrgHashBucketJoiner();
         
         AffOrgMatchComputer affOrgHashMatchComputer = new AffOrgMatchComputer();
-        affOrgHashMatchComputer.setAffOrgMatchVoters(Lists.newArrayList(new NameCountryStrictMatchVoter()));
+        
+        affOrgHashMatchComputer.setAffOrgMatchVoters(ImmutableList.of(
+                createNameCountryStrictMatchVoter(),
+                createNameStrictCountryLooseMatchVoter(),
+                createSectionedNameStrictCountryLooseMatchVoter(),
+                createSectionedNameLevenshteinCountryLooseMatchVoter(),
+                createSectionedShortNameStrictCountryLooseMatchVoter()));
         
         AffOrgMatcher affOrgHashBucketMatcher = new AffOrgMatcher();
         affOrgHashBucketMatcher.setAffOrgJoiner(affOrgHashBucketJoiner);
