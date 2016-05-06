@@ -28,7 +28,7 @@ public class SectionedNameStrictMatchVoter extends AbstractSectionedMatchVoter {
     
     
     @Override
-    protected boolean containsSection(List<String> sections, String sectionToFind) {
+    protected boolean containsMatchingSection(List<String> sections, String sectionToFind) {
         return sections.contains(sectionToFind);
     }
     

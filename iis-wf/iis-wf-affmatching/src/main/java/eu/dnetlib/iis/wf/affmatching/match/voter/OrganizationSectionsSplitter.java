@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 /**
@@ -13,12 +14,10 @@ import com.google.common.collect.Lists;
  */
 class OrganizationSectionsSplitter {
 
-    private static final List<String> RESTRICTED_SECTIONS = Lists.newArrayList();
-    
-    static {
-        RESTRICTED_SECTIONS.add("ltd");
-        RESTRICTED_SECTIONS.add("inc");
-    }
+    private static final List<String> RESTRICTED_SECTIONS = ImmutableList.<String>builder()
+            .add("ltd")
+            .add("inc")
+            .build();
     
     
     //------------------------ CONSTRUCTORS --------------------------

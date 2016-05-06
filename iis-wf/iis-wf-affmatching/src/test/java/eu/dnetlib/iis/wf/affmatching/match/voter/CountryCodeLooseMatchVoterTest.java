@@ -67,7 +67,7 @@ public class CountryCodeLooseMatchVoterTest {
     }
     
     @Test
-    public void voteMatch_dont_match_both_empty_country_code() {
+    public void voteMatch_match_both_empty_country_code() {
         
         // given
         

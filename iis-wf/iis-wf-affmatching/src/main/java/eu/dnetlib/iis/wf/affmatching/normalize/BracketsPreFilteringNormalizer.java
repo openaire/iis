@@ -36,7 +36,7 @@ public class BracketsPreFilteringNormalizer implements StringNormalizer, Seriali
     @Override
     public String normalize(String value) {
         
-        String filteredValue = StringUtils.replacePattern(value, "\\(.*?\\)", "");
+        String filteredValue = StringUtils.removePattern(value, "\\(.*?\\)");
         
         return stringNormalizer.normalize(filteredValue);
     }

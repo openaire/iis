@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 
 /**
  * An implementation of {@link StringNormalizer} that normalizes strings for non-strict comparisons
@@ -43,7 +43,7 @@ public final class LenientComparisonStringNormalizer implements StringNormalizer
     //------------------------ CONSTRUCTORS --------------------------
     
     public LenientComparisonStringNormalizer() {
-        this(Lists.newArrayList());
+        this(ImmutableList.of());
     }
     
     /**

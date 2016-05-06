@@ -50,6 +50,9 @@ public class NameStrictWithCharFilteringMatchVoter implements AffOrgMatchVoter {
         return filteredAffName.equals(filteredOrgName);
     }
     
+    
+    //------------------------ PRIVATE --------------------------
+    
     private String filterName(String name) {
         
         String filteredName = name;

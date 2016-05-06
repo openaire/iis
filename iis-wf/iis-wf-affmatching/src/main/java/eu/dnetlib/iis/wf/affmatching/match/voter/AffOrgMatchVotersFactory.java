@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 
 /**
  * @author madryk
@@ -8,45 +8,50 @@ import com.google.common.collect.Lists;
 public class AffOrgMatchVotersFactory {
     
     
+    //------------------------ CONSTRUCTORS --------------------------
+    
+    private AffOrgMatchVotersFactory() { }
+    
+    
     //------------------------ LOGIC --------------------------
     
-    public AffOrgMatchVoter createNameCountryStrictMatchVoter() {
+    public static AffOrgMatchVoter createNameCountryStrictMatchVoter() {
         
-        return new CompositeMatchVoter(Lists.newArrayList(
+        return new CompositeMatchVoter(ImmutableList.of(
                 new CountryCodeStrictMatchVoter(), 
-                new NameStrictWithCharFilteringMatchVoter(Lists.newArrayList(',', ';'))));
+                new NameStrictWithCharFilteringMatchVoter(ImmutableList.of(',', ';'))));
         
     }
     
-    public AffOrgMatchVoter createNameStrictCountryLooseMatchVoter() {
+    public static AffOrgMatchVoter createNameStrictCountryLooseMatchVoter() {
         
-        return new CompositeMatchVoter(Lists.newArrayList(
+        return new CompositeMatchVoter(ImmutableList.of(
                 new CountryCodeLooseMatchVoter(), 
-                new NameStrictWithCharFilteringMatchVoter(Lists.newArrayList(',', ';'))));
+                new NameStrictWithCharFilteringMatchVoter(ImmutableList.of(',', ';'))));
         
     }
     
-    public AffOrgMatchVoter createSectionedNameStrictCountryLooseMatchVoter() {
+    public static AffOrgMatchVoter createSectionedNameStrictCountryLooseMatchVoter() {
         
-        return new CompositeMatchVoter(Lists.newArrayList(
+        return new CompositeMatchVoter(ImmutableList.of(
                 new CountryCodeLooseMatchVoter(), 
                 new SectionedNameStrictMatchVoter()));
         
     }
     
-    public AffOrgMatchVoter createSectionedShortNameStrictCountryLooseMatchVoter() {
+    public static AffOrgMatchVoter createSectionedShortNameStrictCountryLooseMatchVoter() {
         
-        return new CompositeMatchVoter(Lists.newArrayList(
+        return new CompositeMatchVoter(ImmutableList.of(
                 new CountryCodeLooseMatchVoter(), 
                 new SectionedShortNameStrictMatchVoter()));
         
     }
     
-    public AffOrgMatchVoter createSectionedNameLevensteinCountryLooseMatchVoter() {
+    public static AffOrgMatchVoter createSectionedNameLevenshteinCountryLooseMatchVoter() {
         
-        return new CompositeMatchVoter(Lists.newArrayList(
+        return new CompositeMatchVoter(ImmutableList.of(
                 new CountryCodeLooseMatchVoter(), 
-                new SectionedNameLevensteinMatchVoter(0.9)));
+                new SectionedNameLevenshteinMatchVoter(0.9)));
         
     }
 }

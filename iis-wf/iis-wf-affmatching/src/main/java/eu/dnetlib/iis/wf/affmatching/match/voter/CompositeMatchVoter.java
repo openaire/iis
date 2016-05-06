@@ -24,7 +24,7 @@ public class CompositeMatchVoter implements AffOrgMatchVoter {
     
     public CompositeMatchVoter(List<AffOrgMatchVoter> voters) {
         Preconditions.checkNotNull(voters);
-        Preconditions.checkState(voters.size() > 0);
+        Preconditions.checkArgument(voters.size() > 0);
         
         this.voters = voters;
     }

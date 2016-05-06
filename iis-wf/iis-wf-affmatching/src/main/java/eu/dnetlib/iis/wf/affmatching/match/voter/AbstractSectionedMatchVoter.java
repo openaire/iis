@@ -32,7 +32,7 @@ public abstract class AbstractSectionedMatchVoter implements AffOrgMatchVoter {
         
         for (String orgSection : orgSections) {
             
-            if (!containsSection(affSections, orgSection)) {
+            if (!containsMatchingSection(affSections, orgSection)) {
                 return false;
             }
             
@@ -52,9 +52,9 @@ public abstract class AbstractSectionedMatchVoter implements AffOrgMatchVoter {
     protected abstract String getOrganizationName(AffMatchOrganization organization);
     
     /**
-     * Returns true if section list contains provided section.
+     * Returns true if sectionToFind matches to one of the section in provided list.
      */
-    protected abstract boolean containsSection(List<String> sections, String sectionToFind);
+    protected abstract boolean containsMatchingSection(List<String> sections, String sectionToFind);
     
     
 }

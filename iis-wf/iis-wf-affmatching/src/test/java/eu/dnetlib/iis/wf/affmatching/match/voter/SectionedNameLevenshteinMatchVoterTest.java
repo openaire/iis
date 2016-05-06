@@ -11,9 +11,9 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 /**
  * @author madryk
  */
-public class SectionedNameLevensteinMatchVoterTest {
+public class SectionedNameLevenshteinMatchVoterTest {
 
-    private SectionedNameLevensteinMatchVoter voter = new SectionedNameLevensteinMatchVoter(0.9);
+    private SectionedNameLevenshteinMatchVoter voter = new SectionedNameLevenshteinMatchVoter(0.9);
     
     
     private AffMatchAffiliation affiliation = new AffMatchAffiliation("DOC1", 1);

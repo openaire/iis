@@ -10,7 +10,7 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 /**
  * @author madryk
  */
-public class SectionedNameLevensteinMatchVoter extends AbstractSectionedMatchVoter {
+public class SectionedNameLevenshteinMatchVoter extends AbstractSectionedMatchVoter {
     
     private static final long serialVersionUID = 1L;
     
@@ -20,7 +20,7 @@ public class SectionedNameLevensteinMatchVoter extends AbstractSectionedMatchVot
     
     //------------------------ CONSTRUCTORS --------------------------
     
-    public SectionedNameLevensteinMatchVoter(double minSimilarity) {
+    public SectionedNameLevenshteinMatchVoter(double minSimilarity) {
         this.minSimilarity = minSimilarity;
     }
     
@@ -40,7 +40,7 @@ public class SectionedNameLevensteinMatchVoter extends AbstractSectionedMatchVot
     
     
     @Override
-    protected boolean containsSection(List<String> sections, String sectionToFind) {
+    protected boolean containsMatchingSection(List<String> sections, String sectionToFind) {
         for (String section : sections) {
             
             int distance = StringUtils.getLevenshteinDistance(section, sectionToFind);
