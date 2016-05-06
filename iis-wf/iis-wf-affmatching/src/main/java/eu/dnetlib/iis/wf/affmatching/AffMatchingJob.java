@@ -14,7 +14,7 @@ import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgHashBucketJoiner;
 import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgJoiner;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchComputer;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
-import eu.dnetlib.iis.wf.affmatching.match.voter.NameCountryStrictMatchVoter;
+import eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory;
 import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.IisOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.IisAffMatchResultWriter;
@@ -95,7 +95,13 @@ public class AffMatchingJob {
         AffOrgJoiner affOrgHashBucketJoiner = new AffOrgHashBucketJoiner();
         
         AffOrgMatchComputer affOrgHashMatchComputer = new AffOrgMatchComputer();
-        affOrgHashMatchComputer.setAffOrgMatchVoters(Lists.newArrayList(new NameCountryStrictMatchVoter()));
+        AffOrgMatchVotersFactory votersFactory = new AffOrgMatchVotersFactory();
+        affOrgHashMatchComputer.setAffOrgMatchVoters(Lists.newArrayList(
+                votersFactory.createNameCountryStrictMatchVoter(),
+                votersFactory.createNameStrictCountryLooseMatchVoter(),
+                votersFactory.createSectionedNameStrictCountryLooseMatchVoter(),
+                votersFactory.createSectionedNameLevensteinCountryLooseMatchVoter(),
+                votersFactory.createSectionedShortNameStrictCountryLooseMatchVoter()));
         
         AffOrgMatcher affOrgHashBucketMatcher = new AffOrgMatcher();
         affOrgHashBucketMatcher.setAffOrgJoiner(affOrgHashBucketJoiner);
