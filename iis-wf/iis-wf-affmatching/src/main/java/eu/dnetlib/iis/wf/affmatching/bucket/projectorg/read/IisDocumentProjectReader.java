@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.affmatching.read;
+package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read;
 
 import java.io.Serializable;
 
@@ -7,7 +7,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
-import eu.dnetlib.iis.wf.affmatching.model.DocumentProject;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentProject;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 
 /**
@@ -31,7 +31,7 @@ public class IisDocumentProjectReader implements Serializable, DocumentProjectRe
      * Reads {@link Organization}s written as avro files under <code>inputPath</code>
      */
     @Override
-    public JavaRDD<DocumentProject> readDocumentProject(JavaSparkContext sc, String inputPath) {
+    public JavaRDD<AffMatchDocumentProject> readDocumentProject(JavaSparkContext sc, String inputPath) {
         return avroLoader.loadJavaRDD(sc, inputPath, DocumentToProject.class)
                 .map(srcDocProj -> converter.convert(srcDocProj));
     }

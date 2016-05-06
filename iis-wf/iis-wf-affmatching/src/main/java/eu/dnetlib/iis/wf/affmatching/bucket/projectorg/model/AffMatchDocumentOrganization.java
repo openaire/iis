@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.affmatching.model;
+package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -11,7 +11,7 @@ import com.google.common.base.Preconditions;
  * @author mhorst
  *
  */
-public class DocumentOrganization {
+public class AffMatchDocumentOrganization {
 
     private String documentId;
 
@@ -19,7 +19,7 @@ public class DocumentOrganization {
 
     // ------------------------ CONSTRUCTORS --------------------------
 
-    public DocumentOrganization(String documentId, String organizationId) {
+    public AffMatchDocumentOrganization(String documentId, String organizationId) {
         Preconditions.checkArgument(StringUtils.isNotBlank(documentId));
         Preconditions.checkArgument(StringUtils.isNotBlank(organizationId));
         this.documentId = documentId;
@@ -61,8 +61,8 @@ public class DocumentOrganization {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof DocumentOrganization) {
-            final DocumentOrganization other = (DocumentOrganization) obj;
+        if (obj instanceof AffMatchDocumentOrganization) {
+            final AffMatchDocumentOrganization other = (AffMatchDocumentOrganization) obj;
             return Objects.equal(documentId, other.getDocumentId())
                     && Objects.equal(organizationId, other.getOrganizationId());
         } else {

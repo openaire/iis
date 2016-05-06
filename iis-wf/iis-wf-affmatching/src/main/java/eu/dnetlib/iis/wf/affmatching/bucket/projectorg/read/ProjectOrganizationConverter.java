@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.affmatching.read;
+package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read;
 
 import java.io.Serializable;
 
@@ -7,10 +7,10 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.base.Preconditions;
 
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
-import eu.dnetlib.iis.wf.affmatching.model.ProjectOrganization;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchProjectOrganization;
 
 /**
- * Converter of {@link ProjectToOrganization} into {@link ProjectOrganization}
+ * Converter of {@link ProjectToOrganization} into {@link AffMatchProjectOrganization}
  * 
  * @author mhorst
  */
@@ -22,13 +22,13 @@ public class ProjectOrganizationConverter implements Serializable {
     // ------------------------ LOGIC --------------------------
 
     /**
-     * Converts {@link ProjectToOrganization} into {@link ProjectOrganization}
+     * Converts {@link ProjectToOrganization} into {@link AffMatchProjectOrganization}
      */
-    public ProjectOrganization convert(ProjectToOrganization projectOrganization) {
+    public AffMatchProjectOrganization convert(ProjectToOrganization projectOrganization) {
         Preconditions.checkNotNull(projectOrganization);
         Preconditions.checkArgument(StringUtils.isNotBlank(projectOrganization.getProjectId()));
         Preconditions.checkArgument(StringUtils.isNotBlank(projectOrganization.getOrganizationId()));
-        return new ProjectOrganization(projectOrganization.getProjectId().toString(),
+        return new AffMatchProjectOrganization(projectOrganization.getProjectId().toString(),
                 projectOrganization.getOrganizationId().toString());
     }
 

@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.affmatching.model;
+package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -12,20 +12,20 @@ import com.google.common.base.Preconditions;
  * @author mhorst
  *
  */
-public class DocumentProject {
+public class AffMatchDocumentProject {
 
     private String documentId;
 
     private String projectId;
 
-    private Float confidenceLevel;
+    private float confidenceLevel;
 
     // ------------------------ CONSTRUCTORS --------------------------
 
-    public DocumentProject(String documentId, String projectId, Float confidenceLevel) {
+    public AffMatchDocumentProject(String documentId, String projectId, float confidenceLevel) {
         Preconditions.checkArgument(StringUtils.isNotBlank(documentId));
         Preconditions.checkArgument(StringUtils.isNotBlank(projectId));
-        Preconditions.checkArgument(confidenceLevel != null && confidenceLevel >= 0 && confidenceLevel <= 1);
+        Preconditions.checkArgument(confidenceLevel >= 0 && confidenceLevel <= 1);
         this.documentId = documentId;
         this.projectId = projectId;
         this.confidenceLevel = confidenceLevel;
@@ -50,7 +50,7 @@ public class DocumentProject {
     /**
      * Document and project relation confidence level. Expressed as <0,1> range.
      */
-    public Float getConfidenceLevel() {
+    public float getConfidenceLevel() {
         return confidenceLevel;
     }
 
@@ -64,7 +64,7 @@ public class DocumentProject {
         this.projectId = projectId;
     }
 
-    public void setConfidenceLevel(Float confidenceLevel) {
+    public void setConfidenceLevel(float confidenceLevel) {
         this.confidenceLevel = confidenceLevel;
     }
 

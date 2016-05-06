@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.affmatching.read;
+package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -20,7 +20,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
-import eu.dnetlib.iis.wf.affmatching.model.ProjectOrganization;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchProjectOrganization;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisProjectOrganizationReader;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.ProjectOrganizationConverter;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 
 /**
@@ -45,17 +47,16 @@ public class IisProjectOrganizationReaderTest {
     private JavaRDD<ProjectToOrganization> loadedProjectOrganizations;
 
     @Captor
-    private ArgumentCaptor<Function<ProjectToOrganization, ProjectOrganization>> mapProjectOrganizationFunction;
+    private ArgumentCaptor<Function<ProjectToOrganization, AffMatchProjectOrganization>> convertProjectOrganizationMapFunction;
 
     @Mock
-    private JavaRDD<ProjectOrganization> projectOrganizations;
+    private JavaRDD<AffMatchProjectOrganization> projectOrganizations;
 
     private final String predefinedPath = "/path/to/poject_organizations/";
 
     @Before
     public void setUp() {
-        doReturn(loadedProjectOrganizations).when(avroLoader).loadJavaRDD(sparkContext, predefinedPath,
-                ProjectToOrganization.class);
+        when(avroLoader.loadJavaRDD(sparkContext, predefinedPath, ProjectToOrganization.class)).thenReturn(loadedProjectOrganizations);
         doReturn(projectOrganizations).when(loadedProjectOrganizations).map(any());
     }
 
@@ -76,23 +77,26 @@ public class IisProjectOrganizationReaderTest {
     @Test
     public void readProjectOrganization() throws Exception {
         // execute
-        JavaRDD<ProjectOrganization> retProjectOrganization = projectOrganizationReader
+        JavaRDD<AffMatchProjectOrganization> retProjectOrganization = projectOrganizationReader
                 .readProjectOrganization(sparkContext, predefinedPath);
         // assert
         assertTrue(retProjectOrganization == projectOrganizations);
         verify(avroLoader).loadJavaRDD(sparkContext, predefinedPath, ProjectToOrganization.class);
-        verify(loadedProjectOrganizations).map(mapProjectOrganizationFunction.capture());
-        assertMapProjectOrganizationFunction(mapProjectOrganizationFunction.getValue());
+        verify(loadedProjectOrganizations).map(convertProjectOrganizationMapFunction.capture());
+        assertMapProjectOrganizationFunction(convertProjectOrganizationMapFunction.getValue());
     }
 
     // ------------------------ PRIVATE --------------------------
 
-    private void assertMapProjectOrganizationFunction(Function<ProjectToOrganization, ProjectOrganization> function)
+    private void assertMapProjectOrganizationFunction(Function<ProjectToOrganization, AffMatchProjectOrganization> function)
             throws Exception {
+        // given
         ProjectToOrganization projectOrganization = mock(ProjectToOrganization.class);
-        ProjectOrganization mappedProjectOrganization = mock(ProjectOrganization.class);
+        AffMatchProjectOrganization mappedProjectOrganization = mock(AffMatchProjectOrganization.class);
         when(projectOrganizationConverter.convert(projectOrganization)).thenReturn(mappedProjectOrganization);
-        ProjectOrganization retProjectOrganization = function.call(projectOrganization);
+        // execute
+        AffMatchProjectOrganization retProjectOrganization = function.call(projectOrganization);
+        // assert
         assertTrue(retProjectOrganization == mappedProjectOrganization);
     }
 

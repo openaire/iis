@@ -1,11 +1,12 @@
-package eu.dnetlib.iis.wf.affmatching.read;
+package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
-import eu.dnetlib.iis.wf.affmatching.model.ProjectOrganization;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchProjectOrganization;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.ProjectOrganizationConverter;
 
 public class ProjectOrganizationConverterTest {
 
@@ -49,7 +50,7 @@ public class ProjectOrganizationConverterTest {
     @Test
     public void convert() {
         // execute
-        ProjectOrganization result = converter.convert(new ProjectToOrganization(projId, orgId));
+        AffMatchProjectOrganization result = converter.convert(new ProjectToOrganization(projId, orgId));
         // assert
         assertEquals(projId, result.getProjectId());
         assertEquals(orgId, result.getOrganizationId());

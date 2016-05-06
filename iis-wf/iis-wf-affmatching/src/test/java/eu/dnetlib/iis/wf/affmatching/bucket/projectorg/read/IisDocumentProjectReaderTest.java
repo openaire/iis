@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.affmatching.read;
+package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -20,7 +20,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
-import eu.dnetlib.iis.wf.affmatching.model.DocumentProject;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentProject;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentProjectConverter;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisDocumentProjectReader;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 
 /**
@@ -45,17 +47,16 @@ public class IisDocumentProjectReaderTest {
     private JavaRDD<DocumentToProject> loadedDocumentProjects;
 
     @Captor
-    private ArgumentCaptor<Function<DocumentToProject, DocumentProject>> mapDocumentProjectFunction;
+    private ArgumentCaptor<Function<DocumentToProject, AffMatchDocumentProject>> mapDocumentProjectFunction;
 
     @Mock
-    private JavaRDD<DocumentProject> documentProjects;
+    private JavaRDD<AffMatchDocumentProject> documentProjects;
 
     private final String predefinedPath = "/path/to/document_pojects/";
 
     @Before
     public void setUp() {
-        doReturn(loadedDocumentProjects).when(avroLoader).loadJavaRDD(sparkContext, predefinedPath,
-                DocumentToProject.class);
+        when(avroLoader.loadJavaRDD(sparkContext, predefinedPath, DocumentToProject.class)).thenReturn(loadedDocumentProjects);
         doReturn(documentProjects).when(loadedDocumentProjects).map(any());
     }
 
@@ -76,7 +77,7 @@ public class IisDocumentProjectReaderTest {
     @Test
     public void readDocumentProject() throws Exception {
         // execute
-        JavaRDD<DocumentProject> retDocumentProject = documentProjectReader.readDocumentProject(sparkContext,
+        JavaRDD<AffMatchDocumentProject> retDocumentProject = documentProjectReader.readDocumentProject(sparkContext,
                 predefinedPath);
         // assert
         assertTrue(retDocumentProject == documentProjects);
@@ -87,12 +88,15 @@ public class IisDocumentProjectReaderTest {
 
     // ------------------------ PRIVATE --------------------------
 
-    private void assertMapDocumentProjectFunction(Function<DocumentToProject, DocumentProject> function)
+    private void assertMapDocumentProjectFunction(Function<DocumentToProject, AffMatchDocumentProject> function)
             throws Exception {
+        // given
         DocumentToProject documentProject = mock(DocumentToProject.class);
-        DocumentProject mappedDocumentProject = mock(DocumentProject.class);
+        AffMatchDocumentProject mappedDocumentProject = mock(AffMatchDocumentProject.class);
         when(documentProjectConverter.convert(documentProject)).thenReturn(mappedDocumentProject);
-        DocumentProject retDocumentProject = function.call(documentProject);
+        // execute
+        AffMatchDocumentProject retDocumentProject = function.call(documentProject);
+        // assert
         assertTrue(retDocumentProject == mappedDocumentProject);
     }
 

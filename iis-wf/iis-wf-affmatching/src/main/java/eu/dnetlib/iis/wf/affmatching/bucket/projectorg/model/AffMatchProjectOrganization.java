@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.affmatching.model;
+package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -10,7 +10,7 @@ import com.google.common.base.Preconditions;
  * @author mhorst
  *
  */
-public class ProjectOrganization {
+public class AffMatchProjectOrganization {
 
     private String projectId;
 
@@ -18,7 +18,7 @@ public class ProjectOrganization {
 
     // ------------------------ CONSTRUCTORS --------------------------
 
-    public ProjectOrganization(String projecttId, String organizationId) {
+    public AffMatchProjectOrganization(String projecttId, String organizationId) {
         Preconditions.checkArgument(StringUtils.isNotBlank(projecttId));
         Preconditions.checkArgument(StringUtils.isNotBlank(organizationId));
         this.projectId = projecttId;

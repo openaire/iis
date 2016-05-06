@@ -1,11 +1,12 @@
-package eu.dnetlib.iis.wf.affmatching.read;
+package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
-import eu.dnetlib.iis.wf.affmatching.model.DocumentProject;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentProject;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentProjectConverter;
 
 public class DocumentProjectConverterTest {
 
@@ -13,7 +14,7 @@ public class DocumentProjectConverterTest {
 
     private final String docId = "docId";
     private final String projId = "projId";
-    private final Float confidenceLevel = 0.9f;
+    private final float confidenceLevel = 0.9f;
 
     // ------------------------ TESTS --------------------------
 
@@ -68,11 +69,11 @@ public class DocumentProjectConverterTest {
     @Test
     public void convert() {
         // execute
-        DocumentProject result = converter.convert(new DocumentToProject(docId, projId, confidenceLevel));
+        AffMatchDocumentProject result = converter.convert(new DocumentToProject(docId, projId, confidenceLevel));
         // assert
         assertEquals(docId, result.getDocumentId());
         assertEquals(projId, result.getProjectId());
-        assertEquals(confidenceLevel, result.getConfidenceLevel());
+        assertEquals(confidenceLevel, result.getConfidenceLevel(), 0);
     }
 
 }
