@@ -1,12 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
-    
+
     <parent>
         <groupId>eu.dnetlib.iis</groupId>
         <artifactId>iis-wf</artifactId>
         <version>1.2.0-SNAPSHOT</version>
     </parent>
-    
+
     <artifactId>iis-wf-affmatching</artifactId>
     <packaging>jar</packaging>
 
@@ -19,13 +20,13 @@
             <artifactId>iis-schemas</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>iis-common</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>iis-common</artifactId>
@@ -33,7 +34,7 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-core_2.10</artifactId>
@@ -43,20 +44,24 @@
             <groupId>pl.edu.icm.spark-utils</groupId>
             <artifactId>spark-utils</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>com.beust</groupId>
             <artifactId>jcommander</artifactId>
         </dependency>
-        
-        
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
     </dependencies>
 
-    
+
     <build>
         <plugins>
             <!-- Plugin that generates Java classes from Avro schemas -->
-             <plugin>
+            <plugin>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro-maven-plugin</artifactId>
                 <executions>
@@ -73,8 +78,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- This plugin makes the Maven->Update Project Configuration not forget
-                about the "target/generated-sources/java" source path -->
+            <!-- This plugin makes the Maven->Update Project Configuration not forget about the "target/generated-sources/java" source path -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -94,7 +98,5 @@
                 </executions>
             </plugin>
         </plugins>
-        
     </build>
-    
 </project>
