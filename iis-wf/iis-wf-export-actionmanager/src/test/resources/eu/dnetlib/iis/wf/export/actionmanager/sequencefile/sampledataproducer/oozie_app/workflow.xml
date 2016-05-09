@@ -149,6 +149,11 @@
 					<name>referenceextraction_pdb_url_root</name>
 					<value>http://www.rcsb.org/pdb/explore/explore.do?structureId=</value>
 				</property>
+                <property>
+                    <!-- preserving input order -->
+                    <name>reduce_tasks</name>
+                    <value>0</value>
+                </property>
 			</configuration>
 		</sub-workflow>
 		<ok to="forking" />
@@ -162,7 +167,6 @@
 		<path start="consumer-document_similarity" />
 		<path start="consumer-document_to_dataset" />
 		<path start="consumer-document_to_project" />
-		<path start="consumer-document_to_project_concepts" />
 		<path start="consumer-document_to_research_initiatives" />
 	</fork>
 
@@ -226,18 +230,7 @@
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
 			<arg>-Iseqfile=${workingDir}/output/document_referencedProjects/actionset-id</arg>
-			<arg>-Pexpectation_properties_csv=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_project_1.properties,/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_project_2.properties</arg>
-		</java>
-		<ok to="joining" />
-		<error to="fail" />
-	</action>
-	
-	<action name="consumer-document_to_project_concepts">
-		<java>
-			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
-			<arg>-Iseqfile=${workingDir}/output/document_to_project_concepts/actionset-id</arg>
-			<arg>-Pexpectation_properties_csv=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_project_concepts.properties</arg>
+			<arg>-Pexpectation_properties_csv=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_project_1.properties,/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_project_2.properties,/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_project_concepts.properties</arg>
 		</java>
 		<ok to="joining" />
 		<error to="fail" />

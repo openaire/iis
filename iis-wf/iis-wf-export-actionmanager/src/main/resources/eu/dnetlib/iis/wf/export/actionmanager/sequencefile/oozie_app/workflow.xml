@@ -40,6 +40,12 @@
 		<property>
 			<name>output</name>
 		</property>
+        <property>
+            <name>reduce_tasks</name>
+            <value>1</value>
+            <description>Number of reducers to be used when exporting output. Affects number of output files.
+            When set to 0 reducing phase is omitted, input ordering is preserved and number of output files depends on number of mappers.</description>
+        </property>
 		<!-- actionset id section -->
 		<property>
 			<name>action_set_id</name>
@@ -178,7 +184,10 @@
 				<name>mapreduce.reduce.speculative</name>
 				<value>false</value>
 			</property>
-
+            <property>
+                <name>mapred.reduce.tasks</name>
+                <value>${reduce_tasks}</value>
+            </property>
 			<property>
 				<name>mapred.compress.map.output</name>
 				<value>true</value>
