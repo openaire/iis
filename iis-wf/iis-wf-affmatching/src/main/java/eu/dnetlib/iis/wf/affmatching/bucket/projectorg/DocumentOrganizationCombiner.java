@@ -31,7 +31,7 @@ public class DocumentOrganizationCombiner implements Serializable {
      * @param docProjConfidenceLevelThreshold document project relation confidence level threshold,
      * confidence level check is skipped when this parameter is set to null
      */
-    public JavaRDD<AffMatchDocumentOrganization> build(JavaRDD<AffMatchDocumentProject> docProjRDD,
+    public JavaRDD<AffMatchDocumentOrganization> combine(JavaRDD<AffMatchDocumentProject> docProjRDD,
             JavaRDD<AffMatchProjectOrganization> projOrgRDD, Float docProjConfidenceLevelThreshold) {
         Preconditions.checkNotNull(docProjRDD);
         Preconditions.checkNotNull(projOrgRDD);

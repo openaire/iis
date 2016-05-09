@@ -62,7 +62,7 @@ public class DocumentOrganizationCombinerTest {
     private JavaPairRDD<String, Tuple2<AffMatchDocumentProject, AffMatchProjectOrganization>> documentOrganizationJoinedRdd;
 
     @Captor
-    private ArgumentCaptor<Function<Tuple2<String, Tuple2<AffMatchDocumentProject, AffMatchProjectOrganization>>, AffMatchDocumentOrganization>> mapDocProjJoinedWithProjOrgToDocOrgFunction;
+    private ArgumentCaptor<Function<Tuple2<String, Tuple2<AffMatchDocumentProject, AffMatchProjectOrganization>>, AffMatchDocumentOrganization>> createDocumentOrganizationMapFunction;
 
     @Mock
     private JavaRDD<AffMatchDocumentOrganization> documentOrganizationMappedRdd;
@@ -83,13 +83,13 @@ public class DocumentOrganizationCombinerTest {
     @Test(expected = NullPointerException.class)
     public void build_NULL_DOCUMENT_PROJECT() {
         // execute
-        builder.build(null, projectOrganizationRdd, null);
+        builder.combine(null, projectOrganizationRdd, null);
     }
 
     @Test(expected = NullPointerException.class)
     public void build_NULL_PROJECT_ORGANIZATION() {
         // execute
-        builder.build(documentProjectRdd, null, null);
+        builder.combine(documentProjectRdd, null, null);
     }
 
     @Test
@@ -98,7 +98,7 @@ public class DocumentOrganizationCombinerTest {
         stub();
         Float docProjConfidenceLevelThreshold = null;
         // execute
-        JavaRDD<AffMatchDocumentOrganization> result = builder.build(documentProjectRdd, projectOrganizationRdd,
+        JavaRDD<AffMatchDocumentOrganization> result = builder.combine(documentProjectRdd, projectOrganizationRdd,
                 docProjConfidenceLevelThreshold);
         // assert
         assertResults(result, docProjConfidenceLevelThreshold);
@@ -110,7 +110,7 @@ public class DocumentOrganizationCombinerTest {
         stub();
         Float docProjConfidenceLevelThreshold = 0.5f;
         // execute
-        JavaRDD<AffMatchDocumentOrganization> result = builder.build(documentProjectRdd, projectOrganizationRdd,
+        JavaRDD<AffMatchDocumentOrganization> result = builder.combine(documentProjectRdd, projectOrganizationRdd,
                 docProjConfidenceLevelThreshold);
         // assert        
         assertResults(result, docProjConfidenceLevelThreshold);
@@ -138,8 +138,8 @@ public class DocumentOrganizationCombinerTest {
         verify(projectOrganizationRdd).keyBy(keyByProjectOrganizationFunction.capture());
         assertKeyByProjectOrganizationFunction(keyByProjectOrganizationFunction.getValue());
         verify(documentProjectPairedFilteredRdd).join(projectOrganizationPairedRdd);
-        verify(documentOrganizationJoinedRdd).map(mapDocProjJoinedWithProjOrgToDocOrgFunction.capture());
-        assertMapDocumentOrganizationFunction(mapDocProjJoinedWithProjOrgToDocOrgFunction.getValue());
+        verify(documentOrganizationJoinedRdd).map(createDocumentOrganizationMapFunction.capture());
+        assertMapDocumentOrganizationFunction(createDocumentOrganizationMapFunction.getValue());
         verify(documentOrganizationMappedRdd).distinct();
     }
 
@@ -155,15 +155,18 @@ public class DocumentOrganizationCombinerTest {
 
     private void assertFilterDocumentProjectFunction(Function<Tuple2<String, AffMatchDocumentProject>, Boolean> function,
             Float confidenceLevelThreshold) throws Exception {
-        assertTrue(function.call(
-                new Tuple2<String, AffMatchDocumentProject>(projectId, new AffMatchDocumentProject(documentId, projectId, 0.6f))));
-        float confidenceLevel = 0.4f;
-        boolean result = function.call(
-                new Tuple2<String, AffMatchDocumentProject>(projectId, new AffMatchDocumentProject(documentId, projectId, confidenceLevel)));
-        if (confidenceLevelThreshold == null || confidenceLevelThreshold <= confidenceLevel) {
-            assertTrue(result);
+        if (confidenceLevelThreshold != null) {
+            // given
+            float greaterConfidenceLevel = confidenceLevelThreshold+0.1f;
+            // execute & assert
+            assertTrue(function.call(new Tuple2<String, AffMatchDocumentProject>(projectId, new AffMatchDocumentProject(documentId, projectId, greaterConfidenceLevel))));
+            // given
+            float smallerConfidenceLevel = confidenceLevelThreshold-0.1f;
+            // execute & assert
+            assertFalse(function.call(new Tuple2<String, AffMatchDocumentProject>(projectId, new AffMatchDocumentProject(documentId, projectId, smallerConfidenceLevel))));
         } else {
-            assertFalse(result);
+            // execute & assert
+            assertTrue(function.call(new Tuple2<String, AffMatchDocumentProject>(projectId, new AffMatchDocumentProject(documentId, projectId, 0.0001f))));
         }
     }
 
