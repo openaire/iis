@@ -14,7 +14,9 @@ import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.importer.schemas.Organization;
+import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
+import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 import eu.dnetlib.iis.wf.affmatching.model.MatchedAffiliation;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
@@ -35,6 +37,10 @@ public class AffMatchingJobTest {
     
     private String inputAffDirPath;
     
+    private String inputDocProjDirPath;
+    
+    private String inputProjOrgDirPath;
+    
     private String outputDirPath;
     
     
@@ -45,6 +51,8 @@ public class AffMatchingJobTest {
         
         inputOrgDirPath = workingDir + "/affiliation_matching/input/organizations";
         inputAffDirPath = workingDir + "/affiliation_matching/input/affiliations";
+        inputDocProjDirPath = workingDir + "/affiliation_matching/input/doc_proj";
+        inputProjOrgDirPath = workingDir + "/affiliation_matching/input/proj_org";
         outputDirPath = workingDir + "/affiliation_matching/output";
         
         
@@ -69,6 +77,9 @@ public class AffMatchingJobTest {
         
         String jsonInputOrgPath = "src/test/resources/data/input/organizations.json";
         String jsonInputAffPath = "src/test/resources/data/input/affiliations.json";
+        String jsonInputDocProjPath = "src/test/resources/data/input/docProj.json";
+        String jsonInputProjOrgPath = "src/test/resources/data/input/projOrg.json";
+        
         String jsonOutputPath = "src/test/resources/data/expectedOutput/matchedAffiliations.json";
         
         
@@ -77,6 +88,12 @@ public class AffMatchingJobTest {
         
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(jsonInputAffPath, ExtractedDocumentMetadata.class), inputAffDirPath);
+        
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(jsonInputDocProjPath, DocumentToProject.class), inputDocProjDirPath);
+        
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(jsonInputProjOrgPath, ProjectToOrganization.class), inputProjOrgDirPath);
         
         // execute & assert
         

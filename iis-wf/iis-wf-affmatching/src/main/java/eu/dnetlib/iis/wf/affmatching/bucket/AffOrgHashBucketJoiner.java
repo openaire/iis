@@ -3,6 +3,7 @@ package eu.dnetlib.iis.wf.affmatching.bucket;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import scala.Tuple2;
@@ -33,7 +34,8 @@ public class AffOrgHashBucketJoiner implements AffOrgJoiner {
      * {@link #setOrganizationBucketHasher(BucketHasher)}. Returns pairs of affiliations and organizations that have the same hashes.
      */
     @Override
-    public JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> join(JavaRDD<AffMatchAffiliation> affiliations, JavaRDD<AffMatchOrganization> organizations) {
+    public JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> join(JavaRDD<AffMatchAffiliation> affiliations, JavaRDD<AffMatchOrganization> organizations,
+            JavaRDD<AffMatchDocumentOrganization> documentOrganizations) {
 
         JavaPairRDD<String, AffMatchAffiliation> hashAffiliations = affiliations.mapToPair(aff -> new Tuple2<String, AffMatchAffiliation>(affiliationBucketHasher.hash(aff), aff)); 
         

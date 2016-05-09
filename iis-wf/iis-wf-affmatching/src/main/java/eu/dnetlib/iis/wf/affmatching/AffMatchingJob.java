@@ -15,10 +15,14 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgHashBucketJoiner;
 import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgJoiner;
+import eu.dnetlib.iis.wf.affmatching.bucket.DocOrgRelationAffOrgJoiner;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.DocumentOrganizationCombiner;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationReader;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisDocumentProjectReader;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisProjectOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchComputer;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
 import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
@@ -55,7 +59,8 @@ public class AffMatchingJob {
         
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
           
-            affMatchingService.matchAffiliations(sc, params.inputAvroAffPath, params.inputAvroOrgPath, params.outputAvroPath);
+            affMatchingService.matchAffiliations(sc, params.inputAvroAffPath, params.inputAvroOrgPath, 
+                    params.inputAvroDocProjPath, params.inputAvroProjOrgPath, params.outputAvroPath);
             
         }
     }
@@ -72,6 +77,12 @@ public class AffMatchingJob {
         
         @Parameter(names = "-inputAvroAffPath", required = true, description="path to directory with avro files containing affiliations")
         private String inputAvroAffPath;
+        
+        @Parameter(names = "-inputAvroDocProjPath", required = true, description="")
+        private String inputAvroDocProjPath;
+        
+        @Parameter(names = "-inputAvroProjOrgPath", required = true, description="")
+        private String inputAvroProjOrgPath;
         
         @Parameter(names = "-outputAvroPath", required = true)
         private String outputAvroPath;
@@ -90,10 +101,35 @@ public class AffMatchingJob {
         affMatchingService.setAffiliationReader(new IisAffiliationReader());
         affMatchingService.setOrganizationReader(new IisOrganizationReader());
         
+        DocumentOrganizationReader documentOrganizationReader = new DocumentOrganizationReader();
+        documentOrganizationReader.setDocumentProjectReader(new IisDocumentProjectReader());
+        documentOrganizationReader.setProjectOrganizationReader(new IisProjectOrganizationReader());
+        documentOrganizationReader.setDocumentOrganizationCombiner(new DocumentOrganizationCombiner());
+        documentOrganizationReader.setDocProjConfidenceLevelThreshold(null);
+        
+        affMatchingService.setDocumentOrganizationReader(documentOrganizationReader);
+        
         
         // writer
         
         affMatchingService.setAffMatchResultWriter(new IisAffMatchResultWriter());
+        
+        
+        // docOrgRelationAffOrgMatcher
+        
+        DocOrgRelationAffOrgJoiner docOrgRelationAffOrgJoiner = new DocOrgRelationAffOrgJoiner();
+        
+        AffOrgMatchComputer docOrgRelationAffOrgMatchComputer = new AffOrgMatchComputer();
+        docOrgRelationAffOrgMatchComputer.setAffOrgMatchVoters(ImmutableList.of(
+                createNameCountryStrictMatchVoter(),
+                createNameStrictCountryLooseMatchVoter(),
+                createSectionedNameStrictCountryLooseMatchVoter(),
+                createSectionedNameLevenshteinCountryLooseMatchVoter(),
+                createSectionedShortNameStrictCountryLooseMatchVoter()));
+        
+        AffOrgMatcher docOrgRelationAffOrgMatcher = new AffOrgMatcher();
+        docOrgRelationAffOrgMatcher.setAffOrgJoiner(docOrgRelationAffOrgJoiner);
+        docOrgRelationAffOrgMatcher.setAffOrgMatchComputer(docOrgRelationAffOrgMatchComputer);
         
         
         // affOrgHashBucketMatcher
@@ -116,7 +152,7 @@ public class AffMatchingJob {
         
         
         
-        affMatchingService.setAffOrgMatchers(Lists.newArrayList(affOrgHashBucketMatcher));
+        affMatchingService.setAffOrgMatchers(ImmutableList.of(affOrgHashBucketMatcher));
         
         return affMatchingService;
     }

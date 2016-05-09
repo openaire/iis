@@ -12,6 +12,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgHashBucketJoiner;
 import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgJoiner;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
@@ -40,7 +41,10 @@ public class AffOrgMatcherTest {
     private JavaRDD<AffMatchAffiliation> affiliations;
     
     @Mock
-    private JavaRDD<AffMatchOrganization> organizations; 
+    private JavaRDD<AffMatchOrganization> organizations;
+    
+    @Mock
+    private JavaRDD<AffMatchDocumentOrganization> documentOrganizations; 
     
     @Mock
     private JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> joinedAffOrgs;
@@ -61,7 +65,7 @@ public class AffOrgMatcherTest {
         
         // execute
         
-        matcher.match(null, organizations);
+        matcher.match(null, organizations, documentOrganizations);
         
     }
 
@@ -71,7 +75,17 @@ public class AffOrgMatcherTest {
         
         // execute
         
-        matcher.match(affiliations, null);
+        matcher.match(affiliations, null, documentOrganizations);
+        
+    }
+
+
+    @Test(expected = NullPointerException.class)
+    public void match_documentOrganizations_null() {
+        
+        // execute
+        
+        matcher.match(affiliations, organizations, null);
         
     }
 
@@ -86,7 +100,7 @@ public class AffOrgMatcherTest {
         
         // execute
         
-        matcher.match(affiliations, organizations);
+        matcher.match(affiliations, organizations, documentOrganizations);
         
     }
 
@@ -101,7 +115,7 @@ public class AffOrgMatcherTest {
         
         // execute
         
-        matcher.match(affiliations, organizations);
+        matcher.match(affiliations, organizations, documentOrganizations);
         
     }
 
@@ -111,14 +125,14 @@ public class AffOrgMatcherTest {
         
         // given
         
-        doReturn(joinedAffOrgs).when(affOrgJoiner).join(affiliations, organizations);
+        doReturn(joinedAffOrgs).when(affOrgJoiner).join(affiliations, organizations, documentOrganizations);
         doReturn(matchedAffOrgs).when(affOrgMatchComputer).computeMatches(joinedAffOrgs);
         doReturn(bestMatchedAffOrgs).when(bestAffMatchResultPicker).pickBestAffMatchResults(matchedAffOrgs);
         
         
         // execute
         
-        JavaRDD<AffMatchResult> affMatchResults = matcher.match(affiliations, organizations);
+        JavaRDD<AffMatchResult> affMatchResults = matcher.match(affiliations, organizations, documentOrganizations);
         
         
         // assert
