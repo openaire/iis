@@ -5,12 +5,16 @@ import java.io.Serializable;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.DocumentOrganizationCombiner;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentOrganization;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentProject;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchProjectOrganization;
 
 /**
+ * Reader of document-organization relations ({@link AffMatchDocumentOrganization}).<br />
+ * This reader internally uses {@link DocumentProjectReader} and {@link ProjectOrganizationReader}
+ * to read document-project and project-organization relations respectively and then
+ * combines them using {@link DocumentOrganizationCombiner}.
+ *  
  * 
  * @author madryk
  */
@@ -29,6 +33,10 @@ public class DocumentOrganizationReader implements Serializable {
     
     //------------------------ LOGIC --------------------------
     
+    /**
+     * Reads document-project and project-organization relations and combines them into document-organization
+     * relations ({@link AffMatchDocumentOrganization}).
+     */
     public JavaRDD<AffMatchDocumentOrganization> readDocumentOrganization(JavaSparkContext sc, String docProjPath, String projOrgPath) {
         
         JavaRDD<AffMatchDocumentProject> docProj = documentProjectReader.readDocumentProject(sc, docProjPath);

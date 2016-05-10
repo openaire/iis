@@ -19,7 +19,7 @@ import com.google.common.collect.ImmutableList;
 import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgHashBucketJoiner;
 import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgJoiner;
 import eu.dnetlib.iis.wf.affmatching.bucket.DocOrgRelationAffOrgJoiner;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.DocumentOrganizationCombiner;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationCombiner;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisDocumentProjectReader;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisProjectOrganizationReader;
@@ -39,10 +39,6 @@ import eu.dnetlib.iis.wf.affmatching.write.IisAffMatchResultWriter;
 
 public class AffMatchingJob {
     
-    private static AffMatchingService affMatchingService = createAffMatchingService();
-
-
-    
     
     //------------------------ LOGIC --------------------------
     
@@ -52,6 +48,7 @@ public class AffMatchingJob {
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
         
+        AffMatchingService affMatchingService = createAffMatchingService(params);
         
         SparkConf conf = new SparkConf();
         conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
@@ -78,10 +75,13 @@ public class AffMatchingJob {
         @Parameter(names = "-inputAvroAffPath", required = true, description="path to directory with avro files containing affiliations")
         private String inputAvroAffPath;
         
-        @Parameter(names = "-inputAvroDocProjPath", required = true, description="")
+        @Parameter(names = "-inputAvroDocProjPath", required = true, description="path to directory with avro files containing document to project relations")
         private String inputAvroDocProjPath;
         
-        @Parameter(names = "-inputAvroProjOrgPath", required = true, description="")
+        @Parameter(names = "-inputDocProjConfidenceThreshold", required = false, description="minimal confidence level for document to project relations (no limit by default)")
+        private Float inputDocProjConfidenceThreshold = null;
+        
+        @Parameter(names = "-inputAvroProjOrgPath", required = true, description="path to directory with avro files containing project to organization relations")
         private String inputAvroProjOrgPath;
         
         @Parameter(names = "-outputAvroPath", required = true)
@@ -91,7 +91,7 @@ public class AffMatchingJob {
     
     
     
-    private static AffMatchingService createAffMatchingService() {
+    private static AffMatchingService createAffMatchingService(AffMatchingJobParameters params) {
         
         AffMatchingService affMatchingService = new AffMatchingService();
         
@@ -105,7 +105,7 @@ public class AffMatchingJob {
         documentOrganizationReader.setDocumentProjectReader(new IisDocumentProjectReader());
         documentOrganizationReader.setProjectOrganizationReader(new IisProjectOrganizationReader());
         documentOrganizationReader.setDocumentOrganizationCombiner(new DocumentOrganizationCombiner());
-        documentOrganizationReader.setDocProjConfidenceLevelThreshold(null);
+        documentOrganizationReader.setDocProjConfidenceLevelThreshold(params.inputDocProjConfidenceThreshold);
         
         affMatchingService.setDocumentOrganizationReader(documentOrganizationReader);
         
@@ -152,7 +152,7 @@ public class AffMatchingJob {
         
         
         
-        affMatchingService.setAffOrgMatchers(ImmutableList.of(affOrgHashBucketMatcher));
+        affMatchingService.setAffOrgMatchers(ImmutableList.of(docOrgRelationAffOrgMatcher, affOrgHashBucketMatcher));
         
         return affMatchingService;
     }

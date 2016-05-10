@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.affmatching.bucket.projectorg;
+package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read;
 
 import java.io.Serializable;
 

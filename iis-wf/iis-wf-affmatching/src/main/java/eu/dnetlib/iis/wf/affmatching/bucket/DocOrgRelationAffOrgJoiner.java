@@ -9,6 +9,8 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import scala.Tuple2;
 
 /**
+ * Implementation of {@link AffOrgJoiner} that joins {@link AffMatchAffiliation} with {@link AffMatchOrganization}
+ * based on document-organization relations.
  * 
  * @author madryk
  */
@@ -19,6 +21,11 @@ public class DocOrgRelationAffOrgJoiner implements AffOrgJoiner {
 
     //------------------------ LOGIC --------------------------
 
+    /**
+     * Joins the given affiliations with organizations based on document-organization relations.<br />
+     * Affiliation will be joined with the organization if documentOrganizations rdd will
+     * contain pair ({@link AffMatchAffiliation#getDocumentId()}, {@link AffMatchOrganization#getId()})
+     */
     @Override
     public JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> join(JavaRDD<AffMatchAffiliation> affiliations, JavaRDD<AffMatchOrganization> organizations,
             JavaRDD<AffMatchDocumentOrganization> documentOrganizations) {

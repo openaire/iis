@@ -39,6 +39,8 @@ public class AffMatchingJobTest {
     
     private String inputDocProjDirPath;
     
+    private float inputDocProjConfidenceThreshold = 0.8f;
+    
     private String inputProjOrgDirPath;
     
     private String outputDirPath;
@@ -116,6 +118,9 @@ public class AffMatchingJobTest {
                                            .setMainClass(AffMatchingJob.class)
                                            .addArg("-inputAvroOrgPath", inputOrgDirPath)
                                            .addArg("-inputAvroAffPath", inputAffDirPath)
+                                           .addArg("-inputAvroDocProjPath", inputDocProjDirPath)
+                                           .addArg("-inputDocProjConfidenceThreshold", String.valueOf(inputDocProjConfidenceThreshold))
+                                           .addArg("-inputAvroProjOrgPath", inputProjOrgDirPath)
                                            .addArg("-outputAvroPath", outputDirPath)
                                            .build();
         
