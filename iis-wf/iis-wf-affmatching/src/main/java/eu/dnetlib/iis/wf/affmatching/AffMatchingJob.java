@@ -15,10 +15,14 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgHashBucketJoiner;
 import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgJoiner;
+import eu.dnetlib.iis.wf.affmatching.bucket.DocOrgRelationAffOrgJoiner;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationCombiner;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationFetcher;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisDocumentProjectReader;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisProjectOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchComputer;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
 import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
@@ -35,10 +39,6 @@ import eu.dnetlib.iis.wf.affmatching.write.IisAffMatchResultWriter;
 
 public class AffMatchingJob {
     
-    private static AffMatchingService affMatchingService = createAffMatchingService();
-
-
-    
     
     //------------------------ LOGIC --------------------------
     
@@ -48,6 +48,7 @@ public class AffMatchingJob {
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
         
+        AffMatchingService affMatchingService = createAffMatchingService(params);
         
         SparkConf conf = new SparkConf();
         conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
@@ -55,7 +56,8 @@ public class AffMatchingJob {
         
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
           
-            affMatchingService.matchAffiliations(sc, params.inputAvroAffPath, params.inputAvroOrgPath, params.outputAvroPath);
+            affMatchingService.matchAffiliations(sc, params.inputAvroAffPath, params.inputAvroOrgPath, 
+                    params.inputAvroDocProjPath, params.inputAvroProjOrgPath, params.outputAvroPath);
             
         }
     }
@@ -73,6 +75,15 @@ public class AffMatchingJob {
         @Parameter(names = "-inputAvroAffPath", required = true, description="path to directory with avro files containing affiliations")
         private String inputAvroAffPath;
         
+        @Parameter(names = "-inputAvroDocProjPath", required = true, description="path to directory with avro files containing document to project relations")
+        private String inputAvroDocProjPath;
+        
+        @Parameter(names = "-inputDocProjConfidenceThreshold", required = false, description="minimal confidence level for document to project relations (no limit by default)")
+        private Float inputDocProjConfidenceThreshold = null;
+        
+        @Parameter(names = "-inputAvroProjOrgPath", required = true, description="path to directory with avro files containing project to organization relations")
+        private String inputAvroProjOrgPath;
+        
         @Parameter(names = "-outputAvroPath", required = true)
         private String outputAvroPath;
         
@@ -80,7 +91,7 @@ public class AffMatchingJob {
     
     
     
-    private static AffMatchingService createAffMatchingService() {
+    private static AffMatchingService createAffMatchingService(AffMatchingJobParameters params) {
         
         AffMatchingService affMatchingService = new AffMatchingService();
         
@@ -90,10 +101,35 @@ public class AffMatchingJob {
         affMatchingService.setAffiliationReader(new IisAffiliationReader());
         affMatchingService.setOrganizationReader(new IisOrganizationReader());
         
+        DocumentOrganizationFetcher documentOrganizationFetcher = new DocumentOrganizationFetcher();
+        documentOrganizationFetcher.setDocumentProjectReader(new IisDocumentProjectReader());
+        documentOrganizationFetcher.setProjectOrganizationReader(new IisProjectOrganizationReader());
+        documentOrganizationFetcher.setDocumentOrganizationCombiner(new DocumentOrganizationCombiner());
+        documentOrganizationFetcher.setDocProjConfidenceLevelThreshold(params.inputDocProjConfidenceThreshold);
+        
+        affMatchingService.setDocumentOrganizationFetcher(documentOrganizationFetcher);
+        
         
         // writer
         
         affMatchingService.setAffMatchResultWriter(new IisAffMatchResultWriter());
+        
+        
+        // docOrgRelationAffOrgMatcher
+        
+        DocOrgRelationAffOrgJoiner docOrgRelationAffOrgJoiner = new DocOrgRelationAffOrgJoiner();
+        
+        AffOrgMatchComputer docOrgRelationAffOrgMatchComputer = new AffOrgMatchComputer();
+        docOrgRelationAffOrgMatchComputer.setAffOrgMatchVoters(ImmutableList.of(
+                createNameCountryStrictMatchVoter(),
+                createNameStrictCountryLooseMatchVoter(),
+                createSectionedNameStrictCountryLooseMatchVoter(),
+                createSectionedNameLevenshteinCountryLooseMatchVoter(),
+                createSectionedShortNameStrictCountryLooseMatchVoter()));
+        
+        AffOrgMatcher docOrgRelationAffOrgMatcher = new AffOrgMatcher();
+        docOrgRelationAffOrgMatcher.setAffOrgJoiner(docOrgRelationAffOrgJoiner);
+        docOrgRelationAffOrgMatcher.setAffOrgMatchComputer(docOrgRelationAffOrgMatchComputer);
         
         
         // affOrgHashBucketMatcher
@@ -116,7 +152,7 @@ public class AffMatchingJob {
         
         
         
-        affMatchingService.setAffOrgMatchers(Lists.newArrayList(affOrgHashBucketMatcher));
+        affMatchingService.setAffOrgMatchers(ImmutableList.of(docOrgRelationAffOrgMatcher, affOrgHashBucketMatcher));
         
         return affMatchingService;
     }

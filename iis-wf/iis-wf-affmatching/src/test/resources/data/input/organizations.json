@@ -22,3 +22,11 @@
      "countryCode":"IT",
      "websiteUrl":"www.cnr.it"
 }
+{
+     "id":"20|UCB",
+     "name":"University of California at Berkeley",
+     "shortName":"UC Berkeley",
+     "countryName":"United States",
+     "countryCode":"US",
+     "websiteUrl":""
+}

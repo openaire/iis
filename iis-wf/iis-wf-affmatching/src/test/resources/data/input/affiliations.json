@@ -73,3 +73,64 @@
     "publicationTypeName":null,
     "text":""
 }
+{
+    "id":"DOC_3",
+    "title":"doc 3",
+    "abstract":null,
+    "language":null,
+    "keywords":null,
+    "externalIdentifiers":null,
+    "journal":null,
+    "year":null,
+    "publisher":null,
+    "references":null,
+    "authors":null,
+    "affiliations":[
+        {
+        "organization":"Department of Molecular and Cell Biology, University of California at Berkeley",
+        "countryName":"United States",
+        "countryCode":"US",
+        "address":null,
+        "rawText":""
+        },
+        {
+        "organization":"Department of Demography, University of California at Berkeley",
+        "countryName":null,
+        "countryCode":null,
+        "address":null,
+        "rawText":""
+        }
+    ],
+    "volume":null,
+    "issue":null,
+    "pages":null,
+    "publicationTypeName":null,
+    "text":""
+}
+{
+    "id":"DOC_4",
+    "title":"doc 4",
+    "abstract":null,
+    "language":null,
+    "keywords":null,
+    "externalIdentifiers":null,
+    "journal":null,
+    "year":null,
+    "publisher":null,
+    "references":null,
+    "authors":null,
+    "affiliations":[
+        {
+        "organization":"Department of Molecular and Cell Biology, University of California at Berkeley",
+        "countryName":"United States",
+        "countryCode":"US",
+        "address":null,
+        "rawText":""
+        }
+    ],
+    "volume":null,
+    "issue":null,
+    "pages":null,
+    "publicationTypeName":null,
+    "text":""
+}
