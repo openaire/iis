@@ -27,6 +27,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.google.common.collect.Lists;
 
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentOrganization;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationFetcher;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
@@ -58,6 +60,9 @@ public class AffMatchingServiceTest {
     private AffiliationReader affiliationReader;
     
     @Mock
+    private DocumentOrganizationFetcher documentOrganizationFetcher;
+    
+    @Mock
     private AffMatchAffiliationNormalizer affMatchAffiliationNormalizer;
     
     @Mock
@@ -83,6 +88,10 @@ public class AffMatchingServiceTest {
     
     private String inputOrgPath = "/input/orgs";
     
+    private String inputDocProjPath = "/input/doc_proj";
+    
+    private String inputProjOrgPath = "/input/proj_org"; 
+    
     private String outputPath = "/output";
     
     
@@ -91,6 +100,9 @@ public class AffMatchingServiceTest {
     
     @Mock
     private JavaRDD<AffMatchOrganization> organizations;
+    
+    @Mock
+    private JavaRDD<AffMatchDocumentOrganization> documentOrganizations;
 
 
     @Mock
@@ -184,7 +196,7 @@ public class AffMatchingServiceTest {
         
         // execute
         
-        affMatchingService.matchAffiliations(null, inputAffPath, inputOrgPath, outputPath);
+        affMatchingService.matchAffiliations(null, inputAffPath, inputOrgPath, inputDocProjPath, inputProjOrgPath, outputPath);
         
     }
     
@@ -194,7 +206,7 @@ public class AffMatchingServiceTest {
         
         // execute
         
-        affMatchingService.matchAffiliations(sc, "  ", inputOrgPath, outputPath);
+        affMatchingService.matchAffiliations(sc, "  ", inputOrgPath, inputDocProjPath, inputProjOrgPath, outputPath);
         
     }
 
@@ -204,7 +216,27 @@ public class AffMatchingServiceTest {
         
         // execute
         
-        affMatchingService.matchAffiliations(sc, inputAffPath, " ", outputPath);
+        affMatchingService.matchAffiliations(sc, inputAffPath, " ", inputDocProjPath, inputProjOrgPath, outputPath);
+        
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void matchAffiliations_inputDocProjPath_blank() {
+        
+        // execute
+        
+        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, " ", inputProjOrgPath, outputPath);
+        
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void matchAffiliations_inputProjOrgPath_blank() {
+        
+        // execute
+        
+        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, inputDocProjPath, "  ", outputPath);
         
     }
 
@@ -214,7 +246,7 @@ public class AffMatchingServiceTest {
         
         // execute
         
-        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, "   ");
+        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, inputDocProjPath, inputProjOrgPath, "   ");
         
     }
 
@@ -229,7 +261,7 @@ public class AffMatchingServiceTest {
         
         // execute
         
-        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath);
+        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, inputDocProjPath, inputProjOrgPath, outputPath);
         
     }
 
@@ -244,7 +276,7 @@ public class AffMatchingServiceTest {
         
         // execute
         
-        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath);
+        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, inputDocProjPath, inputProjOrgPath, outputPath);
         
     }
     
@@ -259,7 +291,7 @@ public class AffMatchingServiceTest {
         
         // execute
         
-        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath);
+        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, inputDocProjPath, inputProjOrgPath, outputPath);
         
     }
 
@@ -274,7 +306,7 @@ public class AffMatchingServiceTest {
         
         // execute
         
-        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath);
+        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, inputDocProjPath, inputProjOrgPath, outputPath);
         
     }
 
@@ -286,6 +318,7 @@ public class AffMatchingServiceTest {
         
         when(affiliationReader.readAffiliations(sc, inputAffPath)).thenReturn(affiliations);
         when(organizationReader.readOrganizations(sc, inputOrgPath)).thenReturn(organizations);
+        when(documentOrganizationFetcher.readDocumentOrganization(sc, inputDocProjPath, inputProjOrgPath)).thenReturn(documentOrganizations);
         
         when(affiliations.filter(Mockito.any())).thenReturn(filteredAffiliations);
         when(organizations.filter(Mockito.any())).thenReturn(filteredOrganizations);
@@ -301,14 +334,14 @@ public class AffMatchingServiceTest {
         
         //- first matcher
         when(idAffiliations.values()).thenReturn(idAffiliationValues);
-        when(affOrgMatcher1.match(idAffiliationValues, normalizedOrganizations)).thenReturn(matchedAffOrgs1);
+        when(affOrgMatcher1.match(idAffiliationValues, normalizedOrganizations, documentOrganizations)).thenReturn(matchedAffOrgs1);
         when(parallelizedAffMatchResults.union(matchedAffOrgs1)).thenReturn(allAffMatchResults1);
         doReturn(matchedAffIds1).when(matchedAffOrgs1).mapToPair(Mockito.any());
         when(idAffiliations.subtractByKey(matchedAffIds1)).thenReturn(idAffiliations1);
         
         //- second matcher
         when(idAffiliations1.values()).thenReturn(idAffiliation1Values);
-        when(affOrgMatcher2.match(idAffiliation1Values, normalizedOrganizations)).thenReturn(matchedAffOrgs2);
+        when(affOrgMatcher2.match(idAffiliation1Values, normalizedOrganizations, documentOrganizations)).thenReturn(matchedAffOrgs2);
         when(allAffMatchResults1.union(matchedAffOrgs2)).thenReturn(allAffMatchResults2);
         doReturn(matchedAffIds2).when(matchedAffOrgs2).mapToPair(Mockito.any());
         when(idAffiliations1.subtractByKey(matchedAffIds2)).thenReturn(idAffiliations2);
@@ -317,12 +350,16 @@ public class AffMatchingServiceTest {
         
         // execute
         
-        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath);
+        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, inputDocProjPath, inputProjOrgPath, outputPath);
         
         
         // assert
         
         verify(affMatchResultWriter).write(allAffMatchResults2, outputPath);
+        
+        verify(affiliationReader).readAffiliations(sc, inputAffPath);
+        verify(organizationReader).readOrganizations(sc, inputOrgPath);
+        verify(documentOrganizationFetcher).readDocumentOrganization(sc, inputDocProjPath, inputProjOrgPath);
         
         verify(affiliations).filter(affFilterFunction.capture());
         assertAffFilterFunction(affFilterFunction.getValue());

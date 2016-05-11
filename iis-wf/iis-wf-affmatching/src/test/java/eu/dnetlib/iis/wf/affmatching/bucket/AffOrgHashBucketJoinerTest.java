@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import org.apache.spark.api.java.JavaPairRDD;
@@ -18,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import scala.Tuple2;
@@ -43,6 +45,9 @@ public class AffOrgHashBucketJoinerTest {
     
     @Mock
     private JavaRDD<AffMatchOrganization> organizations;
+    
+    @Mock
+    private JavaRDD<AffMatchDocumentOrganization> documentOrganizations;
     
     @Mock
     private JavaPairRDD<String, AffMatchAffiliation> hashAffiliations;
@@ -80,7 +85,7 @@ public class AffOrgHashBucketJoinerTest {
         
         // execute
         
-        JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> retJoinedAffOrgs = affOrgJoiner.join(affiliations, organizations);  
+        JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> retJoinedAffOrgs = affOrgJoiner.join(affiliations, organizations, documentOrganizations);
         
         
         // assert
@@ -92,6 +97,8 @@ public class AffOrgHashBucketJoinerTest {
         
         verify(organizations).mapToPair(orgHashFunction.capture());
         assertOrgHashFunction(orgHashFunction.getValue());
+        
+        verifyZeroInteractions(documentOrganizations);
     }
     
     
