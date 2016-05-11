@@ -52,7 +52,6 @@ public class AffMatchResultConverterTest {
         
         assertNotNull(matchedAff);
         assertEquals("DOC1", matchedAff.getDocumentId());
-        assertEquals(1, matchedAff.getPosition().intValue());
         assertEquals("ORG1", matchedAff.getOrganizationId());
         assertEquals(0.85f, matchedAff.getMatchStrength().floatValue(), 0.002);
         

@@ -1,12 +1,16 @@
 package eu.dnetlib.iis.wf.affmatching.write;
 
+import static com.google.common.collect.ImmutableList.of;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
 import org.junit.Test;
@@ -15,7 +19,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
@@ -33,11 +36,20 @@ public class IisAffMatchResultWriterTest {
     @InjectMocks
     private IisAffMatchResultWriter writer = new IisAffMatchResultWriter();
     
+    
+    // SERVICES
+    
     @Mock
     private AffMatchResultConverter affMatchResultConverter;
     
     @Mock
+    private BestMatchedAffiliationWithinDocumentPicker bestMatchedAffiliationWithinDocumentPicker;
+    
+    @Mock
     private SparkAvroSaver sparkAvroSaver;
+    
+    
+    // DATA
     
     @Mock
     private JavaRDD<AffMatchResult> affMatchResults;
@@ -45,8 +57,29 @@ public class IisAffMatchResultWriterTest {
     @Mock
     private JavaRDD<MatchedAffiliation> matchedAffiliations;
     
+    @Mock
+    private JavaPairRDD<CharSequence, MatchedAffiliation> matchedAffiliationsDocIdKey;
+    
+    @Mock
+    private JavaPairRDD<CharSequence, Iterable<MatchedAffiliation>> matchedAffiliationsGroupedByDocId;
+    
+    @Mock
+    private JavaPairRDD<CharSequence, MatchedAffiliation> matchedAffiliationsBestPicked;
+    
+    @Mock
+    private JavaRDD<MatchedAffiliation> matchedAffiliationsBestPickedValues;
+    
+    
+    // FUNCTIONS CAPTORS
+    
     @Captor
     private ArgumentCaptor<Function<AffMatchResult, MatchedAffiliation>> convertFunction;
+    
+    @Captor
+    private ArgumentCaptor<Function<MatchedAffiliation, CharSequence>> extractDocIdFunction;
+    
+    @Captor
+    private ArgumentCaptor<Function<Iterable<MatchedAffiliation>, MatchedAffiliation>> pickBestMatchFunction;
     
     
     
@@ -79,7 +112,11 @@ public class IisAffMatchResultWriterTest {
         
         String outputPath = "/data/matchedAffiliations";
         
-        doReturn(matchedAffiliations).when(affMatchResults).map(Mockito.any());
+        doReturn(matchedAffiliations).when(affMatchResults).map(any());
+        doReturn(matchedAffiliationsDocIdKey).when(matchedAffiliations).keyBy(any());
+        doReturn(matchedAffiliationsGroupedByDocId).when(matchedAffiliationsDocIdKey).groupByKey();
+        doReturn(matchedAffiliationsBestPicked).when(matchedAffiliationsGroupedByDocId).mapValues(any());
+        doReturn(matchedAffiliationsBestPickedValues).when(matchedAffiliationsBestPicked).values();
         
         
         // execute
@@ -89,11 +126,21 @@ public class IisAffMatchResultWriterTest {
         
         // assert
         
-        verify(sparkAvroSaver).saveJavaRDD(matchedAffiliations, MatchedAffiliation.SCHEMA$, outputPath);
+        verify(sparkAvroSaver).saveJavaRDD(matchedAffiliationsBestPickedValues, MatchedAffiliation.SCHEMA$, outputPath);
+        
         
         verify(affMatchResults).map(convertFunction.capture());
-        
         assertConvertFunction(convertFunction.getValue());
+        
+        verify(matchedAffiliations).keyBy(extractDocIdFunction.capture());
+        assertExtractDocIdFunction(extractDocIdFunction.getValue());
+        
+        verify(matchedAffiliationsDocIdKey).groupByKey();
+        
+        verify(matchedAffiliationsGroupedByDocId).mapValues(pickBestMatchFunction.capture());
+        assertPickBestMatchFunction(pickBestMatchFunction.getValue());
+        
+        verify(matchedAffiliationsBestPicked).values();
     }
     
     
@@ -121,5 +168,38 @@ public class IisAffMatchResultWriterTest {
         assertNotNull(retMatchedAff);
         assertTrue(matchedAff == retMatchedAff);
         
+    }
+    
+    private void assertExtractDocIdFunction(Function<MatchedAffiliation, CharSequence> function) throws Exception {
+        
+        // given
+        MatchedAffiliation matchedAff = new MatchedAffiliation("DOC_ID", "ORG_ID", 0.6f);
+        
+        // execute
+        CharSequence extractedDocId = function.call(matchedAff);
+        
+        // assert
+        assertEquals("DOC_ID", extractedDocId);
+    }
+    
+    private void assertPickBestMatchFunction(Function<Iterable<MatchedAffiliation>, MatchedAffiliation> function) throws Exception {
+        
+        // given
+        
+        MatchedAffiliation matchedAff1 = mock(MatchedAffiliation.class);
+        MatchedAffiliation matchedAff2 = mock(MatchedAffiliation.class);
+        
+        when(bestMatchedAffiliationWithinDocumentPicker.pickBest(of(matchedAff1, matchedAff2))).thenReturn(matchedAff2);
+        
+        
+        // execute
+        
+        MatchedAffiliation retMatchedAff = function.call(of(matchedAff1, matchedAff2));
+        
+        
+        // assert
+        
+        assertNotNull(retMatchedAff);
+        assertTrue(retMatchedAff == matchedAff2);
     }
 }

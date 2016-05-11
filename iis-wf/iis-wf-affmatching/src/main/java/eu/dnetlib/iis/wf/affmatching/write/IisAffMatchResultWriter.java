@@ -22,13 +22,15 @@ public class IisAffMatchResultWriter implements AffMatchResultWriter {
     
     private AffMatchResultConverter affMatchResultConverter = new AffMatchResultConverter();
     
+    private BestMatchedAffiliationWithinDocumentPicker bestMatchedAffiliationWithinDocumentPicker = new BestMatchedAffiliationWithinDocumentPicker();
+    
     private SparkAvroSaver sparkAvroSaver = new SparkAvroSaver();
     
     
     //------------------------ LOGIC --------------------------
     
     /**
-     * Writes the given rdd of {@link AffMatchResult}s under the given path as avro objects - {@link MatchedAffiliation}s
+     * Writes the given rdd of {@link AffMatchResult}s under the given path as avro objects - {@link DocumentOrganizationMatch}s
      */
     @Override
     public void write(JavaRDD<AffMatchResult> matchedAffOrgs, String outputPath) {
@@ -37,10 +39,18 @@ public class IisAffMatchResultWriter implements AffMatchResultWriter {
         
         Preconditions.checkArgument(StringUtils.isNotBlank(outputPath));
 
-        
+
         JavaRDD<MatchedAffiliation> matchedAffiliations = matchedAffOrgs.map(affOrgMatch -> affMatchResultConverter.convert(affOrgMatch));
         
-        sparkAvroSaver.saveJavaRDD(matchedAffiliations, MatchedAffiliation.SCHEMA$, outputPath);
+        JavaRDD<MatchedAffiliation> documentUniqueMatchedAffiliations = matchedAffiliations
+                .keyBy(match -> match.getDocumentId())
+                .groupByKey()
+                .mapValues(matches -> bestMatchedAffiliationWithinDocumentPicker.pickBest(matches))
+                .values();
+        
+        
+        sparkAvroSaver.saveJavaRDD(documentUniqueMatchedAffiliations, MatchedAffiliation.SCHEMA$, outputPath);
     }
+    
     
 }
