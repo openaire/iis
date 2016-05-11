@@ -30,7 +30,7 @@ public class IisAffMatchResultWriter implements AffMatchResultWriter {
     //------------------------ LOGIC --------------------------
     
     /**
-     * Writes the given rdd of {@link AffMatchResult}s under the given path as avro objects - {@link DocumentOrganizationMatch}s
+     * Writes the given rdd of {@link AffMatchResult}s under the given path as avro objects - {@link MatchedAffiliation}s
      */
     @Override
     public void write(JavaRDD<AffMatchResult> matchedAffOrgs, String outputPath) {
