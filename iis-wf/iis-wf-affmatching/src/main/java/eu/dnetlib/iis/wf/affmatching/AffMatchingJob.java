@@ -20,7 +20,7 @@ import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgHashBucketJoiner;
 import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgJoiner;
 import eu.dnetlib.iis.wf.affmatching.bucket.DocOrgRelationAffOrgJoiner;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationCombiner;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationReader;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationFetcher;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisDocumentProjectReader;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisProjectOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchComputer;
@@ -101,13 +101,13 @@ public class AffMatchingJob {
         affMatchingService.setAffiliationReader(new IisAffiliationReader());
         affMatchingService.setOrganizationReader(new IisOrganizationReader());
         
-        DocumentOrganizationReader documentOrganizationReader = new DocumentOrganizationReader();
-        documentOrganizationReader.setDocumentProjectReader(new IisDocumentProjectReader());
-        documentOrganizationReader.setProjectOrganizationReader(new IisProjectOrganizationReader());
-        documentOrganizationReader.setDocumentOrganizationCombiner(new DocumentOrganizationCombiner());
-        documentOrganizationReader.setDocProjConfidenceLevelThreshold(params.inputDocProjConfidenceThreshold);
+        DocumentOrganizationFetcher documentOrganizationFetcher = new DocumentOrganizationFetcher();
+        documentOrganizationFetcher.setDocumentProjectReader(new IisDocumentProjectReader());
+        documentOrganizationFetcher.setProjectOrganizationReader(new IisProjectOrganizationReader());
+        documentOrganizationFetcher.setDocumentOrganizationCombiner(new DocumentOrganizationCombiner());
+        documentOrganizationFetcher.setDocProjConfidenceLevelThreshold(params.inputDocProjConfidenceThreshold);
         
-        affMatchingService.setDocumentOrganizationReader(documentOrganizationReader);
+        affMatchingService.setDocumentOrganizationFetcher(documentOrganizationFetcher);
         
         
         // writer

@@ -44,6 +44,10 @@ public class AffOrgMatcher implements Serializable {
      * <li>computing a match strength of each pair, performed by {@link #setAffOrgMatchComputer(AffOrgMatchComputer)}
      * <li>choosing the best matching affiliation-organization pair for each affiliation, done by {@link BestAffMatchResultPicker}
      * </ul> 
+     * Method takes documentOrganizations rdd parameter containing document-organization pairs.
+     * Doc-org pair indicates that document is somehow related to organization.
+     * This rdd can be taken as a hint for matching algorithm (due to high probability that affiliation of document present in
+     * documentOrganizations rdd should be matched to one of the organization from doc-org pairs).
      */
     public JavaRDD<AffMatchResult> match(JavaRDD<AffMatchAffiliation> affiliations, JavaRDD<AffMatchOrganization> organizations, 
             JavaRDD<AffMatchDocumentOrganization> documentOrganizations) {

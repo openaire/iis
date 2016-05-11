@@ -13,7 +13,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import com.google.common.base.Preconditions;
 
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentOrganization;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationReader;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationFetcher;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
@@ -44,7 +44,7 @@ public class AffMatchingService implements Serializable {
     
     private AffiliationReader affiliationReader;
     
-    private DocumentOrganizationReader documentOrganizationReader;
+    private DocumentOrganizationFetcher documentOrganizationFetcher;
     
     
     private AffMatchAffiliationNormalizer affMatchAffiliationNormalizer = new AffMatchAffiliationNormalizer();
@@ -81,7 +81,7 @@ public class AffMatchingService implements Serializable {
         
         JavaRDD<AffMatchOrganization> organizations = organizationReader.readOrganizations(sc, inputOrgPath).filter(org -> (StringUtils.isNotBlank(org.getName())));
         
-        JavaRDD<AffMatchDocumentOrganization> documentOrganizations = documentOrganizationReader.readDocumentOrganization(sc, inputDocProjPath, inputProjOrgPath);
+        JavaRDD<AffMatchDocumentOrganization> documentOrganizations = documentOrganizationFetcher.readDocumentOrganization(sc, inputDocProjPath, inputProjOrgPath);
         
         
         JavaRDD<AffMatchAffiliation> normalizedAffiliations = affiliations.map(aff -> affMatchAffiliationNormalizer.normalize(aff));
@@ -109,7 +109,7 @@ public class AffMatchingService implements Serializable {
         
         Preconditions.checkNotNull(affiliationReader, "affiliationReader has not been set");
         
-        Preconditions.checkNotNull(documentOrganizationReader, "documentOrganizationReader has not been set");
+        Preconditions.checkNotNull(documentOrganizationFetcher, "documentOrganizationFetcher has not been set");
         
         Preconditions.checkNotNull(affMatchResultWriter, "affMatchResultWriter has not been set");
         
@@ -171,8 +171,8 @@ public class AffMatchingService implements Serializable {
         this.affiliationReader = affiliationReader;
     }
 
-    public void setDocumentOrganizationReader(DocumentOrganizationReader documentOrganizationReader) {
-        this.documentOrganizationReader = documentOrganizationReader;
+    public void setDocumentOrganizationFetcher(DocumentOrganizationFetcher documentOrganizationFetcher) {
+        this.documentOrganizationFetcher = documentOrganizationFetcher;
     }
 
     public void setAffOrgMatchers(List<AffOrgMatcher> affOrgMatchers) {

@@ -10,15 +10,15 @@ import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentPro
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchProjectOrganization;
 
 /**
- * Reader of document-organization relations ({@link AffMatchDocumentOrganization}).<br />
- * This reader internally uses {@link DocumentProjectReader} and {@link ProjectOrganizationReader}
+ * Fetcher of document-organization relations ({@link AffMatchDocumentOrganization}).<br />
+ * This fetcher internally uses {@link DocumentProjectReader} and {@link ProjectOrganizationReader}
  * to read document-project and project-organization relations respectively and then
  * combines them using {@link DocumentOrganizationCombiner}.
  *  
  * 
  * @author madryk
  */
-public class DocumentOrganizationReader implements Serializable {
+public class DocumentOrganizationFetcher implements Serializable {
 
     private static final long serialVersionUID = 1L;
     

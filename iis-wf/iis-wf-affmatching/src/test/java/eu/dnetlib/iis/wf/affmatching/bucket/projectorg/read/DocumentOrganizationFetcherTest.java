@@ -19,10 +19,10 @@ import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchProjectOrga
  * @author madryk
  */
 @RunWith(MockitoJUnitRunner.class)
-public class DocumentOrganizationReaderTest {
+public class DocumentOrganizationFetcherTest {
 
     @InjectMocks
-    private DocumentOrganizationReader documentOrganizationReader = new DocumentOrganizationReader();
+    private DocumentOrganizationFetcher documentOrganizationFetcher = new DocumentOrganizationFetcher();
     
     @Mock
     private DocumentProjectReader documentProjectReader;
@@ -55,7 +55,7 @@ public class DocumentOrganizationReaderTest {
     
     @Before
     public void setup() {
-        documentOrganizationReader.setDocProjConfidenceLevelThreshold(docProjConfidenceLevelThreshold);
+        documentOrganizationFetcher.setDocProjConfidenceLevelThreshold(docProjConfidenceLevelThreshold);
     }
     
     
@@ -73,7 +73,7 @@ public class DocumentOrganizationReaderTest {
         
         // execute
         
-        JavaRDD<AffMatchDocumentOrganization> retDocumentOrganizations = documentOrganizationReader.readDocumentOrganization(sc, docProjPath, projOrgPath);
+        JavaRDD<AffMatchDocumentOrganization> retDocumentOrganizations = documentOrganizationFetcher.readDocumentOrganization(sc, docProjPath, projOrgPath);
         
         
         // assert

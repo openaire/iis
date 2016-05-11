@@ -28,7 +28,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.google.common.collect.Lists;
 
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentOrganization;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationReader;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationFetcher;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
@@ -60,7 +60,7 @@ public class AffMatchingServiceTest {
     private AffiliationReader affiliationReader;
     
     @Mock
-    private DocumentOrganizationReader documentOrganizationReader;
+    private DocumentOrganizationFetcher documentOrganizationFetcher;
     
     @Mock
     private AffMatchAffiliationNormalizer affMatchAffiliationNormalizer;
@@ -318,7 +318,7 @@ public class AffMatchingServiceTest {
         
         when(affiliationReader.readAffiliations(sc, inputAffPath)).thenReturn(affiliations);
         when(organizationReader.readOrganizations(sc, inputOrgPath)).thenReturn(organizations);
-        when(documentOrganizationReader.readDocumentOrganization(sc, inputDocProjPath, inputProjOrgPath)).thenReturn(documentOrganizations);
+        when(documentOrganizationFetcher.readDocumentOrganization(sc, inputDocProjPath, inputProjOrgPath)).thenReturn(documentOrganizations);
         
         when(affiliations.filter(Mockito.any())).thenReturn(filteredAffiliations);
         when(organizations.filter(Mockito.any())).thenReturn(filteredOrganizations);
@@ -359,7 +359,7 @@ public class AffMatchingServiceTest {
         
         verify(affiliationReader).readAffiliations(sc, inputAffPath);
         verify(organizationReader).readOrganizations(sc, inputOrgPath);
-        verify(documentOrganizationReader).readDocumentOrganization(sc, inputDocProjPath, inputProjOrgPath);
+        verify(documentOrganizationFetcher).readDocumentOrganization(sc, inputDocProjPath, inputProjOrgPath);
         
         verify(affiliations).filter(affFilterFunction.capture());
         assertAffFilterFunction(affFilterFunction.getValue());
