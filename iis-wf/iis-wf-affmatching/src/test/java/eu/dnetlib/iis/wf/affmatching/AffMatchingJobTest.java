@@ -82,7 +82,7 @@ public class AffMatchingJobTest {
         String jsonInputDocProjPath = "src/test/resources/data/input/docProj.json";
         String jsonInputProjOrgPath = "src/test/resources/data/input/projOrg.json";
         
-        String jsonOutputPath = "src/test/resources/data/expectedOutput/matchedAffiliations.json";
+        String jsonOutputPath = "src/test/resources/data/expectedOutput/matchedOrganizations.json";
         
         
         AvroTestUtils.createLocalAvroDataStore(
