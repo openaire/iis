@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.google.common.base.Preconditions;
 
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
-import eu.dnetlib.iis.wf.affmatching.model.MatchedAffiliation;
+import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
 
 /**
  * Converter of {@link AffMatchResult} into {@link MatchedAffiliation}. 
@@ -23,23 +23,21 @@ public class AffMatchResultConverter implements Serializable {
     //------------------------ LOGIC --------------------------
     
     /**
-     * Converts {@link AffMatchResult} into {@link MatchedAffiliation} 
+     * Converts {@link AffMatchResult} into {@link MatchedOrganization} 
      */
-    public MatchedAffiliation convert(AffMatchResult affMatchResult) {
+    public MatchedOrganization convert(AffMatchResult affMatchResult) {
         
         Preconditions.checkNotNull(affMatchResult);
         
-        MatchedAffiliation matchedAffiliation = new MatchedAffiliation();
+        MatchedOrganization matchedOrganization = new MatchedOrganization();
         
-        matchedAffiliation.setDocumentId(affMatchResult.getAffiliation().getDocumentId());
+        matchedOrganization.setDocumentId(affMatchResult.getAffiliation().getDocumentId());
         
-        matchedAffiliation.setPosition(affMatchResult.getAffiliation().getPosition());
+        matchedOrganization.setOrganizationId(affMatchResult.getOrganization().getId());
         
-        matchedAffiliation.setOrganizationId(affMatchResult.getOrganization().getId());
+        matchedOrganization.setMatchStrength(affMatchResult.getMatchStrength());
         
-        matchedAffiliation.setMatchStrength(affMatchResult.getMatchStrength());
-        
-        return matchedAffiliation;
+        return matchedOrganization;
     }
     
     

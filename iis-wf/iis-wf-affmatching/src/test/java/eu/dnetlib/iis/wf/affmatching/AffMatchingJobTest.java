@@ -17,7 +17,7 @@ import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
-import eu.dnetlib.iis.wf.affmatching.model.MatchedAffiliation;
+import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
@@ -132,7 +132,7 @@ public class AffMatchingJobTest {
         
         
         // assert
-        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputPath, MatchedAffiliation.class);
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputPath, MatchedOrganization.class);
 
     }
 

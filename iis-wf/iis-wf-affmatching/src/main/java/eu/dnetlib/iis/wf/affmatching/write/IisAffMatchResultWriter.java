@@ -6,7 +6,7 @@ import org.apache.spark.api.java.JavaRDD;
 import com.google.common.base.Preconditions;
 
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
-import eu.dnetlib.iis.wf.affmatching.model.MatchedAffiliation;
+import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 /**
@@ -22,13 +22,15 @@ public class IisAffMatchResultWriter implements AffMatchResultWriter {
     
     private AffMatchResultConverter affMatchResultConverter = new AffMatchResultConverter();
     
+    private BestMatchedOrganizationWithinDocumentPicker bestMatchedOrganizationWithinDocumentPicker = new BestMatchedOrganizationWithinDocumentPicker();
+    
     private SparkAvroSaver sparkAvroSaver = new SparkAvroSaver();
     
     
     //------------------------ LOGIC --------------------------
     
     /**
-     * Writes the given rdd of {@link AffMatchResult}s under the given path as avro objects - {@link MatchedAffiliation}s
+     * Writes the given rdd of {@link AffMatchResult}s under the given path as avro objects - {@link MatchedOrganization}s
      */
     @Override
     public void write(JavaRDD<AffMatchResult> matchedAffOrgs, String outputPath) {
@@ -37,10 +39,18 @@ public class IisAffMatchResultWriter implements AffMatchResultWriter {
         
         Preconditions.checkArgument(StringUtils.isNotBlank(outputPath));
 
+
+        JavaRDD<MatchedOrganization> matchedOrganizations = matchedAffOrgs.map(affOrgMatch -> affMatchResultConverter.convert(affOrgMatch));
         
-        JavaRDD<MatchedAffiliation> matchedAffiliations = matchedAffOrgs.map(affOrgMatch -> affMatchResultConverter.convert(affOrgMatch));
+        JavaRDD<MatchedOrganization> documentUniqueMatchedOrganizations = matchedOrganizations
+                .keyBy(match -> match.getDocumentId())
+                .groupByKey()
+                .mapValues(matches -> bestMatchedOrganizationWithinDocumentPicker.pickBest(matches))
+                .values();
         
-        sparkAvroSaver.saveJavaRDD(matchedAffiliations, MatchedAffiliation.SCHEMA$, outputPath);
+        
+        sparkAvroSaver.saveJavaRDD(documentUniqueMatchedOrganizations, MatchedOrganization.SCHEMA$, outputPath);
     }
+    
     
 }

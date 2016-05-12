@@ -3,13 +3,10 @@
 
 protocol IIS {
 
-    record MatchedAffiliation {
+    record MatchedOrganization {
 
         // eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata#id
         string documentId;
-        
-        // position in the document (from 1)
-        int position;
         
         // eu.dnetlib.iis.importer.schemas.Organization#id       
         string organizationId;

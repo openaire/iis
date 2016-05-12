@@ -8,7 +8,7 @@ import org.junit.Test;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
-import eu.dnetlib.iis.wf.affmatching.model.MatchedAffiliation;
+import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
 
 /**
 * @author Łukasz Dumiszewski
@@ -45,16 +45,15 @@ public class AffMatchResultConverterTest {
         
         // execute
         
-        MatchedAffiliation matchedAff = converter.convert(affMatchResult);
+        MatchedOrganization matchedOrg = converter.convert(affMatchResult);
         
         
         // assert
         
-        assertNotNull(matchedAff);
-        assertEquals("DOC1", matchedAff.getDocumentId());
-        assertEquals(1, matchedAff.getPosition().intValue());
-        assertEquals("ORG1", matchedAff.getOrganizationId());
-        assertEquals(0.85f, matchedAff.getMatchStrength().floatValue(), 0.002);
+        assertNotNull(matchedOrg);
+        assertEquals("DOC1", matchedOrg.getDocumentId());
+        assertEquals("ORG1", matchedOrg.getOrganizationId());
+        assertEquals(0.85f, matchedOrg.getMatchStrength().floatValue(), 0.002);
         
     }
 
