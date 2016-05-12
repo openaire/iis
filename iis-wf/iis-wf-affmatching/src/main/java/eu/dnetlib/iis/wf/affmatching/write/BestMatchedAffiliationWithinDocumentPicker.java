@@ -49,10 +49,10 @@ public class BestMatchedAffiliationWithinDocumentPicker implements Serializable 
         
         for (MatchedAffiliation matched : matchedAffs) {
             
-            if (!matchedGroupedByOrgId.containsKey(matched.getOrganizationId())) {
-                matchedGroupedByOrgId.put(matched.getOrganizationId(), Lists.newArrayList(matched));
-            } else {
+            if (matchedGroupedByOrgId.containsKey(matched.getOrganizationId())) {
                 matchedGroupedByOrgId.get(matched.getOrganizationId()).add(matched);
+            } else {
+                matchedGroupedByOrgId.put(matched.getOrganizationId(), Lists.newArrayList(matched));
             }
             
         }
