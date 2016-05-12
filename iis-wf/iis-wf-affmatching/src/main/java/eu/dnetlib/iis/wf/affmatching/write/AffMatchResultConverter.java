@@ -33,8 +33,6 @@ public class AffMatchResultConverter implements Serializable {
         
         matchedAffiliation.setDocumentId(affMatchResult.getAffiliation().getDocumentId());
         
-        matchedAffiliation.setPosition(affMatchResult.getAffiliation().getPosition());
-        
         matchedAffiliation.setOrganizationId(affMatchResult.getOrganization().getId());
         
         matchedAffiliation.setMatchStrength(affMatchResult.getMatchStrength());
