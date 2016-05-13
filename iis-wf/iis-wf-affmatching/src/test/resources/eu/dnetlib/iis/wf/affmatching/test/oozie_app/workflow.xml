@@ -1,0 +1,116 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-affiliation-matching">
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapred.job.queue.name</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+
+    <start to="data_producer" />
+
+
+    <action name="data_producer">
+        <java>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/data_producer" />
+                <mkdir path="${nameNode}${workingDir}/data_producer" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            
+            <arg>-C{documents_metadata, eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
+                data/input/affiliations.json}</arg>
+            
+            <arg>-C{organizations, eu.dnetlib.iis.importer.schemas.Organization,
+                data/input/organizations.json}</arg>
+            
+            <arg>-C{document_to_project, eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject,
+                data/input/docProj.json}</arg>
+            
+            <arg>-C{project_to_organization, eu.dnetlib.iis.importer.schemas.ProjectToOrganization,
+                data/input/projOrg.json}</arg>
+            
+            <arg>-Odocuments_metadata=${workingDir}/data_producer/document</arg>
+            <arg>-Oorganizations=${workingDir}/data_producer/organization</arg>
+            <arg>-Odocument_to_project=${workingDir}/data_producer/document_to_project</arg>
+            <arg>-Oproject_to_organization=${workingDir}/data_producer/project_to_organization</arg>
+            
+        </java>
+        <ok to="affiliation_matching" />
+        <error to="fail" />
+    </action>
+
+
+    <action name="affiliation_matching">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/affiliation_matching</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>input_documents_metadata</name>
+                    <value>${workingDir}/data_producer/document</value>
+                </property>
+                <property>
+                    <name>input_organizations</name>
+                    <value>${workingDir}/data_producer/organization</value>
+                </property>
+                <property>
+                    <name>input_document_to_project</name>
+                    <value>${workingDir}/data_producer/document_to_project</value>
+                </property>
+                <property>
+                    <name>input_project_to_organization</name>
+                    <value>${workingDir}/data_producer/project_to_organization</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${workingDir}/matched</value>
+                </property>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/affmatching</value>
+                </property>
+                
+                <property>
+                    <name>document_project_confidence_threshold</name>
+                    <value>0.8</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="consumer"/>
+        <error to="fail"/>
+    </action>
+
+
+    <action name="consumer">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            
+            <arg>-C{matched, eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization,
+                data/expectedOutput/matchedOrganizations.json}</arg>
+            
+            <arg>-Imatched=${workingDir}/matched</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message: [${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+
+    <end name="end" />
+
+</workflow-app>
