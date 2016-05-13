@@ -3,7 +3,8 @@
     <parameters>
         <property>
             <name>input_documents_metadata</name>
-            <description>input containing document metadata avro records (eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata)</description>
+            <description>input containing document metadata avro records (eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata).
+                Document metadata is the source of affiliations.</description>
         </property>
         <property>
             <name>input_organizations</name>
@@ -11,16 +12,20 @@
         </property>
         <property>
             <name>input_document_to_project</name>
-            <description>input containing document-project relation avro records (eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject)</description>
+            <description>input containing document-project relation avro records (eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject).
+                These relations (alongside with project-organization relations) are used to generate document-organization pairs 
+                which are used as a hint for matching affiliations</description>
         </property>
         <property>
             <name>input_project_to_organization</name>
-            <description>input containing project-organization avro records (eu.dnetlib.iis.importer.schemas.ProjectToOrganization)</description>
+            <description>input containing project-organization avro records (eu.dnetlib.iis.importer.schemas.ProjectToOrganization).
+                These relations (alongside with document-project relations) are used to generate document-organization pairs 
+                which are used as a hint for matching affiliations</description>
         </property>
         
         <property>
             <name>output</name>
-            <description>output path for matched affiliations (eu.dnetlib.iis.wf.affmatching.model.MatchedAffiliation)</description>
+            <description>output path for matched affiliations (eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization)</description>
         </property>
         
         <property>
