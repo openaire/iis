@@ -10,10 +10,8 @@
 			<name>match_content_with_metadata</name>
 			<value>true</value>
 			<description>flag indicating contents should be filtered and their identifiers should be deduplicated against metadata entries retrieved from InformationSpace.
-				This way only contents having metadata
-				representation will be processed.
-				To be disabled when processing new contents which metadata is not available in hbase or when original identifiers should be preserved (contents will not be
-				filtered as well).
+				This way only contents having metadata representation will be processed.
+				To be disabled when processing new contents which metadata is not available in hbase or when original identifiers should be preserved (contents will not be filtered as well).
 			</description>
 		</property>
 		<!-- processing modes -->
@@ -81,21 +79,8 @@
 		</property>
 		<!-- import metadata related -->
 		<property>
-			<name>import_hbase_input_table</name>
-			<value>db_openaireplus_services_from_dump</value>
-			<description>HBase input table holding InformationSpace, available on local cluster</description>
-		</property>
-		<property>
 			<name>import_hbase_dump_location</name>
-			<value>$UNDEFINED$</value>
-			<description>HBase dump location, usually points to remote cluster HDFS location.
-				Import will be omitted when set to $UNDEFINED$ value.
-			</description>
-		</property>
-		<property>
-			<name>import_hbase_approved_datasources_csv</name>
-			<value>$UNDEFINED$</value>
-			<description>CSV list of datasource ids to be approved during import. Applied on result and person entities.</description>
+			<description>InformationSpace HBase dump location, usually points to remote cluster HDFS location.</description>
 		</property>
 		<!-- import datacite related -->
 		<property>
@@ -305,8 +290,7 @@
 			<name>output_remote_location</name>
 			<value>$UNDEFINED$</value>
 			<description>optional remote cluster output location where inference output dump should be distcped as sequence files.
-				When not specified results will be exported straight to the ActionManager
-				HBase.
+				When not specified results will be exported straight to the ActionManager HBase.
 			</description>
 		</property>
 		<!-- working directory related -->
@@ -355,76 +339,9 @@
 			<arg>${wf:appPath()}/version.properties</arg>
 			<arg>${nameNode}${workingDir}</arg>
 		</distcp>
-		<ok to="decision-import_hbase_dump" />
-		<error to="fail" />
-	</action>
-
-	<decision name="decision-import_hbase_dump">
-		<switch>
-			<case to="import">${import_hbase_dump_location eq "$UNDEFINED$"}</case>
-			<default to="distcp_hbase_dump" />
-		</switch>
-	</decision>
-
-	<!-- importing hbase dump from remote cluster -->
-	<action name="distcp_hbase_dump">
-		<distcp xmlns="uri:oozie:distcp-action:0.1">
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
-			<arg>-pb</arg>
-			<arg>${import_hbase_dump_location}</arg>
-			<arg>${nameNode}${workingDir}/hbase_dump</arg>
-		</distcp>
-		<ok to="truncate_hbase_table" />
-		<error to="fail" />
-	</action>
-
-	<action name="truncate_hbase_table">
-		<shell xmlns="uri:oozie:shell-action:0.1">
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
-			<configuration>
-				<property>
-					<name>mapred.job.queue.name</name>
-					<value>${queueName}</value>
-				</property>
-			</configuration>
-			<exec>sh</exec>
-			<argument>truncate_hbase_table.sh</argument>
-			<argument>${import_hbase_input_table}</argument>
-			<file>import_hbasedump/scripts/truncate_hbase_table.sh</file>
-		</shell>
-		<ok to="import_hbase_dump" />
-		<error to="fail" />
-	</action>
-
-	<action name="import_hbase_dump">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/import_hbasedump</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>input</name>
-					<value>${workingDir}/hbase_dump</value>
-				</property>
-				<property>
-					<name>output_table_name</name>
-					<value>${import_hbase_input_table}</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="purge_hbase_dump" />
-		<error to="fail" />
-	</action>
-
-	<action name="purge_hbase_dump">
-		<fs>
-			<delete path="${nameNode}${workingDir}/hbase_dump" />
-		</fs>
 		<ok to="import" />
 		<error to="fail" />
 	</action>
-	<!-- end of importing hbase dump from remote cluster -->
 
 	<action name="import">
 		<sub-workflow>
@@ -456,12 +373,8 @@
 				</property>
 				<!-- import metadata related -->
 				<property>
-					<name>hbase_input_table</name>
-					<value>${import_hbase_input_table}</value>
-				</property>
-				<property>
-					<name>hbase_approved_datasources_csv</name>
-					<value>${import_hbase_approved_datasources_csv}</value>
+					<name>hbase_dump_location</name>
+					<value>${import_hbase_dump_location}</value>
 				</property>
 				<!-- import datacite related -->
 				<property>

@@ -3,6 +3,8 @@ package eu.dnetlib.iis.wf.importer;
 import java.util.Arrays;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.googlecode.protobuf.format.JsonFormat;
+import com.googlecode.protobuf.format.JsonFormat.ParseException;
 
 import eu.dnetlib.data.proto.OafProtos.Oaf;
 
@@ -24,6 +26,17 @@ public class OafHelper {
 		oafBuilder.mergeFrom(input);
 		return oafBuilder.build();
 	}
+	
+	/**
+     * Builds {@link Oaf} object from JSON representation.
+     * @param input JSON representation of {@link Oaf} object
+	 * @throws ParseException 
+     */
+    public static Oaf buildOaf(String input) throws ParseException {
+        Oaf.Builder oafBuilder = Oaf.newBuilder();
+        JsonFormat.merge(input, oafBuilder);
+        return oafBuilder.build();
+    }
 	
 	/**
 	  * Copies array or returns null when source is null.

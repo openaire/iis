@@ -1,12 +1,6 @@
 package eu.dnetlib.iis.wf.importer.converter;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.junit.Test;
 
@@ -17,9 +11,7 @@ import eu.dnetlib.data.proto.OafProtos.OafEntity;
 import eu.dnetlib.data.proto.ResultProtos.Result;
 import eu.dnetlib.data.proto.ResultProtos.Result.Metadata;
 import eu.dnetlib.data.proto.TypeProtos.Type;
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
-import eu.dnetlib.iis.wf.importer.converter.DocumentMetadataConverter;
-import eu.dnetlib.iis.wf.importer.mapred.IISDataImporterMapper;
+import eu.dnetlib.iis.wf.importer.infospace.converter.DocumentMetadataConverter;
 
 /**
  * {@link DocumentMetadataConverter} test class.
@@ -27,33 +19,6 @@ import eu.dnetlib.iis.wf.importer.mapred.IISDataImporterMapper;
  *
  */
 public class DocumentMetadataConverterTest {
-
-	@Test
-	public void testCompare() throws Exception {
-		Set<byte[]> sortedSet = new TreeSet<byte[]>(new Comparator<byte[]>() {
-			@Override
-			public int compare(byte[] o1, byte[] o2) {
-				return IISDataImporterMapper.compare(o1, o2);
-			}
-		});
-		
-		String str1 = "test_01";
-		String str2 = "test_012";
-		String str3 = "test_2";
-		
-		sortedSet.add(str3.getBytes());
-		sortedSet.add(str2.getBytes());
-		sortedSet.add(str1.getBytes());
-		Iterator<byte[]> it = sortedSet.iterator();
-		assertEquals(str1, new String(it.next()));
-		assertEquals(str2, new String(it.next()));
-		assertEquals(str3, new String(it.next()));
-		assertFalse(it.hasNext());
-		
-		assertEquals(IISDataImporterMapper.compare(
-				"body".getBytes(HBaseConstants.STATIC_FIELDS_ENCODING_UTF8), 
-				HBaseConstants.QUALIFIER_BODY), 0);
-	}
 	
 	@Test
 	public void testMerge() throws Exception {

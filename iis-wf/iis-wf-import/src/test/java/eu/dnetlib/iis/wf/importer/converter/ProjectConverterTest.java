@@ -9,7 +9,7 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
-import eu.dnetlib.iis.wf.importer.converter.ProjectConverter;
+import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectConverter;
 
 /**
  * {@link ProjectConverter} test class.
