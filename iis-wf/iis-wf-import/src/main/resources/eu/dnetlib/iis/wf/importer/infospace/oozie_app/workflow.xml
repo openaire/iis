@@ -4,8 +4,7 @@
         <property>
             <name>input</name>
             <description>Source hdfs directory holding hbase dump.
-                The dump has a custom format (as exported from Info Space) and is enclosed in a sequence file.
-            </description>
+                The dump has a custom format (as exported from Info Space) and is enclosed in a sequence file.</description>
         </property>
         <property>
             <name>inference_provenance_blacklist</name>

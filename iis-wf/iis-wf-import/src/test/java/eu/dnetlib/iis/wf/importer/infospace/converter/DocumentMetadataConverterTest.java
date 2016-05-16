@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.importer.converter;
+package eu.dnetlib.iis.wf.importer.infospace.converter;
 
 import static org.junit.Assert.assertEquals;
 

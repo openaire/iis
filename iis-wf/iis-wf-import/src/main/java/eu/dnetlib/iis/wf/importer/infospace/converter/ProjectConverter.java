@@ -73,10 +73,7 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
 
     /**
      * Extracts funding class from funding tree defined as XML.
-     * 
-     * @param fundingTreeList
-     * @return extracted funding class
-     * @throws IOException
+     * @throws IOException exception thrown when unable to parse XML document
      */
     public static String extractFundingClass(List<String> fundingTreeList) throws IOException {
         if (!CollectionUtils.isEmpty(fundingTreeList)) {
@@ -104,8 +101,6 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
 
     /**
      * Verifies whether acronym should be considered as valid.
-     * 
-     * @param acronym
      * @return true if valid, false otherwise
      */
     public static boolean isAcronymValid(String acronym) {
@@ -117,9 +112,6 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
     
     /**
      * Extracts string values from {@link StringField} list.
-     * 
-     * @param source
-     * @return string values extracted from {@link StringField} list
      */
     private static List<String> extractStringValues(List<StringField> source) {
         if (source != null) {
@@ -135,8 +127,6 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
 
     /**
      * Verifies whether acronym should be considered as valid.
-     * 
-     * @param acronym
      * @return true if valid, false otherwise
      */
     private static boolean isAcronymValid(StringField acronym) {
