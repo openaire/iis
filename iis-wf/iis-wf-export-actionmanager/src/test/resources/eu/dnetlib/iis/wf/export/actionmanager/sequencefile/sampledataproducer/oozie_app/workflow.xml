@@ -62,11 +62,17 @@
 				eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_similarity.json}
 			</arg>
 			<arg>-Odocument_similarity=${workingDir}/producer/document_similarity</arg>
+            
 			<arg>-C{document_pdb,
 				eu.dnetlib.iis.export.schemas.DocumentToConceptIds,
 				eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_pdb.json}
 			</arg>
 			<arg>-Odocument_pdb=${workingDir}/producer/document_pdb</arg>
+            <arg>-C{matched_org,
+                eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization,
+                eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_affiliations.json}
+            </arg>
+            <arg>-Omatched_org=${workingDir}/producer/document_affiliations</arg>
 		</java>
 		<ok to="export_actionmanager_sequencefile" />
 		<error to="fail" />
@@ -113,6 +119,11 @@
 					<name>input_document_similarity</name>
 					<value>${workingDir}/producer/document_similarity</value>
 				</property>
+                <property>
+                    <name>input_document_affiliations</name>
+                    <value>${workingDir}/producer/document_affiliations</value>
+                </property>
+                
 				<property>
 					<name>output</name>
 					<value>${workingDir}/output</value>
@@ -145,6 +156,10 @@
 					<name>action_set_id_document_pdb</name>
 					<value>actionset-id</value>
 				</property>
+                <property>
+                    <name>action_set_id_document_affiliations</name>
+                    <value>actionset-id</value>
+                </property>
 				<property>
 					<name>referenceextraction_pdb_url_root</name>
 					<value>http://www.rcsb.org/pdb/explore/explore.do?structureId=</value>
@@ -168,6 +183,7 @@
 		<path start="consumer-document_to_dataset" />
 		<path start="consumer-document_to_project" />
 		<path start="consumer-document_to_research_initiatives" />
+        <path start="consumer-document_affiliations" />
 	</fork>
 
 	<action name="consumer-citations">
@@ -246,6 +262,17 @@
 		<ok to="joining" />
 		<error to="fail" />
 	</action>
+    
+    <action name="consumer-document_affiliations">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
+            <arg>-Iseqfile=${workingDir}/output/document_affiliations/actionset-id</arg>
+            <arg>-Pexpectation_properties_csv=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_affiliations.properties</arg>
+        </java>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
 
 	<join name="joining" to="end" />
 	

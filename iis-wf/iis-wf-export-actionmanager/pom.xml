@@ -30,11 +30,14 @@
             <scope>test</scope>
         </dependency>
         
-        
-        
         <dependency>
             <groupId>eu.dnetlib.iis</groupId>
             <artifactId>iis-schemas</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-wf-affmatching</artifactId>
             <version>${project.version}</version>
         </dependency>
         
