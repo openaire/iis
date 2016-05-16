@@ -1,0 +1,91 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="affiliation-matching">
+
+    <parameters>
+        <property>
+            <name>input_documents_metadata</name>
+            <description>input containing document metadata avro records (eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata).
+                Document metadata is the source of affiliations.</description>
+        </property>
+        <property>
+            <name>input_organizations</name>
+            <description>input containing organization avro records (eu.dnetlib.iis.importer.schemas.Organization)</description>
+        </property>
+        <property>
+            <name>input_document_to_project</name>
+            <description>input containing document-project relation avro records (eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject).
+                These relations (alongside with project-organization relations) are used to generate document-organization pairs 
+                which are used as a hint for matching affiliations</description>
+        </property>
+        <property>
+            <name>input_project_to_organization</name>
+            <description>input containing project-organization avro records (eu.dnetlib.iis.importer.schemas.ProjectToOrganization).
+                These relations (alongside with document-project relations) are used to generate document-organization pairs 
+                which are used as a hint for matching affiliations</description>
+        </property>
+        
+        <property>
+            <name>output</name>
+            <description>output path for matched affiliations (eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization)</description>
+        </property>
+        
+        <property>
+            <name>document_project_confidence_threshold</name>
+            <value>0.5</value>
+            <description>confidence level threshold for loading document-project relations</description>
+        </property>
+    </parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapred.job.queue.name</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
+    <start to="affiliation-matching" />
+
+    <action name="affiliation-matching">
+        <spark xmlns="uri:oozie:spark-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            
+            <prepare>
+                <delete path="${nameNode}${output}" />
+            </prepare>
+
+            <master>yarn-cluster</master>
+            <mode>cluster</mode>
+            <name>Affiliations Matching</name>
+            <class>eu.dnetlib.iis.wf.affmatching.AffMatchingJob</class>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-affmatching-${projectVersion}-uber.jar</jar>
+
+            <arg>-inputAvroOrgPath=${input_organizations}</arg>
+            <arg>-inputAvroAffPath=${input_documents_metadata}</arg>
+            <arg>-inputAvroDocProjPath=${input_document_to_project}</arg>
+            <arg>-inputAvroProjOrgPath=${input_project_to_organization}</arg>
+            
+            <arg>-outputAvroPath=${output}</arg>
+            
+            <arg>-inputDocProjConfidenceThreshold=${document_project_confidence_threshold}</arg>
+            
+        </spark>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
+    <kill name="fail">
+        <message>Unfortunately, the workflow failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+    <end name="end" />
+</workflow-app>
