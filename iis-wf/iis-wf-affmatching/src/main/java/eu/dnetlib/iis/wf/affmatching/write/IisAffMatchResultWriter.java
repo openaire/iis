@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
 import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
+import scala.Tuple2;
 
 /**
  * IIS specific implementation of {@link AffMatchResultWriter}
@@ -22,7 +23,7 @@ public class IisAffMatchResultWriter implements AffMatchResultWriter {
     
     private AffMatchResultConverter affMatchResultConverter = new AffMatchResultConverter();
     
-    private BestMatchedOrganizationWithinDocumentPicker bestMatchedOrganizationWithinDocumentPicker = new BestMatchedOrganizationWithinDocumentPicker();
+    private DuplicateMatchedOrgStrengthRecalculator matchedOrgStrengthRecalculation = new DuplicateMatchedOrgStrengthRecalculator();
     
     private SparkAvroSaver sparkAvroSaver = new SparkAvroSaver();
     
@@ -40,16 +41,17 @@ public class IisAffMatchResultWriter implements AffMatchResultWriter {
         Preconditions.checkArgument(StringUtils.isNotBlank(outputPath));
 
 
+        
         JavaRDD<MatchedOrganization> matchedOrganizations = matchedAffOrgs.map(affOrgMatch -> affMatchResultConverter.convert(affOrgMatch));
         
-        JavaRDD<MatchedOrganization> documentUniqueMatchedOrganizations = matchedOrganizations
-                .keyBy(match -> match.getDocumentId())
-                .groupByKey()
-                .mapValues(matches -> bestMatchedOrganizationWithinDocumentPicker.pickBest(matches))
+        
+        JavaRDD<MatchedOrganization> distinctMatchedOrganizations = matchedOrganizations
+                .keyBy(match -> new Tuple2<>(match.getDocumentId(), match.getOrganizationId()))
+                .reduceByKey((match1, match2) -> matchedOrgStrengthRecalculation.recalculateStrength(match1, match2))
                 .values();
         
         
-        sparkAvroSaver.saveJavaRDD(documentUniqueMatchedOrganizations, MatchedOrganization.SCHEMA$, outputPath);
+        sparkAvroSaver.saveJavaRDD(distinctMatchedOrganizations, MatchedOrganization.SCHEMA$, outputPath);
     }
     
     
