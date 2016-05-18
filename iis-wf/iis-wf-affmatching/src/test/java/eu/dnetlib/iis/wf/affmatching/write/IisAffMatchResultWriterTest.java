@@ -1,6 +1,5 @@
 package eu.dnetlib.iis.wf.affmatching.write;
 
-import static com.google.common.collect.ImmutableList.of;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -13,6 +12,7 @@ import static org.mockito.Mockito.when;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.function.Function2;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -24,6 +24,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
 import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
+import scala.Tuple2;
 
 /**
 * @author Łukasz Dumiszewski
@@ -43,7 +44,7 @@ public class IisAffMatchResultWriterTest {
     private AffMatchResultConverter affMatchResultConverter;
     
     @Mock
-    private BestMatchedOrganizationWithinDocumentPicker bestMatchedOrganizationWithinDocumentPicker;
+    private DuplicateMatchedOrgStrengthRecalculator duplicateMatchedOrgStrengthRecalculator;
     
     @Mock
     private SparkAvroSaver sparkAvroSaver;
@@ -58,16 +59,13 @@ public class IisAffMatchResultWriterTest {
     private JavaRDD<MatchedOrganization> matchedOrganizations;
     
     @Mock
-    private JavaPairRDD<CharSequence, MatchedOrganization> matchedOrganizationsDocIdKey;
+    private JavaPairRDD<Tuple2<CharSequence, CharSequence>, MatchedOrganization> matchedOrganizationsDocOrgIdKey;
     
     @Mock
-    private JavaPairRDD<CharSequence, Iterable<MatchedOrganization>> matchedOrganizationsGroupedByDocId;
+    private JavaPairRDD<Tuple2<CharSequence, CharSequence>, MatchedOrganization> distinctMatchedOrganizations;
     
     @Mock
-    private JavaPairRDD<CharSequence, MatchedOrganization> matchedOrganizationsBestPicked;
-    
-    @Mock
-    private JavaRDD<MatchedOrganization> matchedOrganizationsBestPickedValues;
+    private JavaRDD<MatchedOrganization> distinctMatchedOrganizationsValues;
     
     
     // FUNCTIONS CAPTORS
@@ -76,10 +74,10 @@ public class IisAffMatchResultWriterTest {
     private ArgumentCaptor<Function<AffMatchResult, MatchedOrganization>> convertFunction;
     
     @Captor
-    private ArgumentCaptor<Function<MatchedOrganization, CharSequence>> extractDocIdFunction;
+    private ArgumentCaptor<Function<MatchedOrganization, Tuple2<CharSequence, CharSequence>>> extractDocOrgIdFunction;
     
     @Captor
-    private ArgumentCaptor<Function<Iterable<MatchedOrganization>, MatchedOrganization>> pickBestMatchFunction;
+    private ArgumentCaptor<Function2<MatchedOrganization, MatchedOrganization, MatchedOrganization>> duplicateMatchedOrgsReduceFunction;
     
     
     
@@ -113,10 +111,9 @@ public class IisAffMatchResultWriterTest {
         String outputPath = "/data/matchedAffiliations";
         
         doReturn(matchedOrganizations).when(affMatchResults).map(any());
-        doReturn(matchedOrganizationsDocIdKey).when(matchedOrganizations).keyBy(any());
-        doReturn(matchedOrganizationsGroupedByDocId).when(matchedOrganizationsDocIdKey).groupByKey();
-        doReturn(matchedOrganizationsBestPicked).when(matchedOrganizationsGroupedByDocId).mapValues(any());
-        doReturn(matchedOrganizationsBestPickedValues).when(matchedOrganizationsBestPicked).values();
+        doReturn(matchedOrganizationsDocOrgIdKey).when(matchedOrganizations).keyBy(any());
+        doReturn(distinctMatchedOrganizations).when(matchedOrganizationsDocOrgIdKey).reduceByKey(any());
+        doReturn(distinctMatchedOrganizationsValues).when(distinctMatchedOrganizations).values();
         
         
         // execute
@@ -126,21 +123,19 @@ public class IisAffMatchResultWriterTest {
         
         // assert
         
-        verify(sparkAvroSaver).saveJavaRDD(matchedOrganizationsBestPickedValues, MatchedOrganization.SCHEMA$, outputPath);
+        verify(sparkAvroSaver).saveJavaRDD(distinctMatchedOrganizationsValues, MatchedOrganization.SCHEMA$, outputPath);
         
         
         verify(affMatchResults).map(convertFunction.capture());
         assertConvertFunction(convertFunction.getValue());
         
-        verify(matchedOrganizations).keyBy(extractDocIdFunction.capture());
-        assertExtractDocIdFunction(extractDocIdFunction.getValue());
+        verify(matchedOrganizations).keyBy(extractDocOrgIdFunction.capture());
+        assertExtractDocOrgIdFunction(extractDocOrgIdFunction.getValue());
         
-        verify(matchedOrganizationsDocIdKey).groupByKey();
+        verify(matchedOrganizationsDocOrgIdKey).reduceByKey(duplicateMatchedOrgsReduceFunction.capture());
+        assertDuplicateMatchedOrgsReduceFunction(duplicateMatchedOrgsReduceFunction.getValue());
         
-        verify(matchedOrganizationsGroupedByDocId).mapValues(pickBestMatchFunction.capture());
-        assertPickBestMatchFunction(pickBestMatchFunction.getValue());
-        
-        verify(matchedOrganizationsBestPicked).values();
+        verify(distinctMatchedOrganizations).values();
     }
     
     
@@ -170,36 +165,38 @@ public class IisAffMatchResultWriterTest {
         
     }
     
-    private void assertExtractDocIdFunction(Function<MatchedOrganization, CharSequence> function) throws Exception {
+    private void assertExtractDocOrgIdFunction(Function<MatchedOrganization, Tuple2<CharSequence, CharSequence>> function) throws Exception {
         
         // given
         MatchedOrganization matchedOrg = new MatchedOrganization("DOC_ID", "ORG_ID", 0.6f);
         
         // execute
-        CharSequence extractedDocId = function.call(matchedOrg);
+        Tuple2<CharSequence, CharSequence> extractedDocOrgId = function.call(matchedOrg);
         
         // assert
-        assertEquals("DOC_ID", extractedDocId);
+        assertEquals("DOC_ID", extractedDocOrgId._1);
+        assertEquals("ORG_ID", extractedDocOrgId._2);
     }
     
-    private void assertPickBestMatchFunction(Function<Iterable<MatchedOrganization>, MatchedOrganization> function) throws Exception {
+    private void assertDuplicateMatchedOrgsReduceFunction(Function2<MatchedOrganization, MatchedOrganization, MatchedOrganization> function) throws Exception {
         
         // given
         
         MatchedOrganization matchedOrg1 = mock(MatchedOrganization.class);
         MatchedOrganization matchedOrg2 = mock(MatchedOrganization.class);
+        MatchedOrganization newMatchedOrg = mock(MatchedOrganization.class);
         
-        when(bestMatchedOrganizationWithinDocumentPicker.pickBest(of(matchedOrg1, matchedOrg2))).thenReturn(matchedOrg2);
+        when(duplicateMatchedOrgStrengthRecalculator.recalculateStrength(matchedOrg1, matchedOrg2)).thenReturn(newMatchedOrg);
         
         
         // execute
         
-        MatchedOrganization retMatchedOrg = function.call(of(matchedOrg1, matchedOrg2));
+        MatchedOrganization retMatchedOrg = function.call(matchedOrg1, matchedOrg2);
         
         
         // assert
         
         assertNotNull(retMatchedOrg);
-        assertTrue(retMatchedOrg == matchedOrg2);
+        assertTrue(retMatchedOrg == newMatchedOrg);
     }
 }
