@@ -18,7 +18,9 @@ import com.google.common.collect.ImmutableList;
 
 import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgHashBucketJoiner;
 import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgJoiner;
+import eu.dnetlib.iis.wf.affmatching.bucket.AffiliationMainSectionBucketHasher;
 import eu.dnetlib.iis.wf.affmatching.bucket.DocOrgRelationAffOrgJoiner;
+import eu.dnetlib.iis.wf.affmatching.bucket.OrganizationMainSectionBucketHasher;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationCombiner;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationFetcher;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisDocumentProjectReader;
@@ -132,27 +134,49 @@ public class AffMatchingJob {
         docOrgRelationAffOrgMatcher.setAffOrgMatchComputer(docOrgRelationAffOrgMatchComputer);
         
         
-        // affOrgHashBucketMatcher
+        // affOrgMainSectionHashBucketMatcher
         
-        AffOrgJoiner affOrgHashBucketJoiner = new AffOrgHashBucketJoiner();
+        AffOrgHashBucketJoiner mainSectionHashBucketJoiner = new AffOrgHashBucketJoiner();
         
-        AffOrgMatchComputer affOrgHashMatchComputer = new AffOrgMatchComputer();
+        mainSectionHashBucketJoiner.setAffiliationBucketHasher(new AffiliationMainSectionBucketHasher());
+        mainSectionHashBucketJoiner.setOrganizationBucketHasher(new OrganizationMainSectionBucketHasher());
         
-        affOrgHashMatchComputer.setAffOrgMatchVoters(ImmutableList.of(
+        AffOrgMatchComputer mainSectionHashMatchComputer = new AffOrgMatchComputer();
+        
+        mainSectionHashMatchComputer.setAffOrgMatchVoters(ImmutableList.of(
                 createNameCountryStrictMatchVoter(),
                 createNameStrictCountryLooseMatchVoter(),
                 createSectionedNameStrictCountryLooseMatchVoter(),
                 createSectionedNameLevenshteinCountryLooseMatchVoter(),
                 createSectionedShortNameStrictCountryLooseMatchVoter()));
         
-        AffOrgMatcher affOrgHashBucketMatcher = new AffOrgMatcher();
-        affOrgHashBucketMatcher.setAffOrgJoiner(affOrgHashBucketJoiner);
-        affOrgHashBucketMatcher.setAffOrgMatchComputer(affOrgHashMatchComputer);
+        AffOrgMatcher mainSectionHashBucketMatcher = new AffOrgMatcher();
+        mainSectionHashBucketMatcher.setAffOrgJoiner(mainSectionHashBucketJoiner);
+        mainSectionHashBucketMatcher.setAffOrgMatchComputer(mainSectionHashMatchComputer);
+        
+        
+        // affOrgFirstWordsHashBucketMatcher
+        
+        AffOrgJoiner firstWordsHashBucketJoiner = new AffOrgHashBucketJoiner();
+        
+        AffOrgMatchComputer firstWordsHashMatchComputer = new AffOrgMatchComputer();
+        
+        firstWordsHashMatchComputer.setAffOrgMatchVoters(ImmutableList.of(
+                createNameCountryStrictMatchVoter(),
+                createNameStrictCountryLooseMatchVoter(),
+                createSectionedNameStrictCountryLooseMatchVoter(),
+                createSectionedNameLevenshteinCountryLooseMatchVoter(),
+                createSectionedShortNameStrictCountryLooseMatchVoter()));
+        
+        AffOrgMatcher firstWordsHashBucketMatcher = new AffOrgMatcher();
+        firstWordsHashBucketMatcher.setAffOrgJoiner(firstWordsHashBucketJoiner);
+        firstWordsHashBucketMatcher.setAffOrgMatchComputer(firstWordsHashMatchComputer);
         
         
         
         
-        affMatchingService.setAffOrgMatchers(ImmutableList.of(docOrgRelationAffOrgMatcher, affOrgHashBucketMatcher));
+        affMatchingService.setAffOrgMatchers(ImmutableList
+                .of(docOrgRelationAffOrgMatcher, mainSectionHashBucketMatcher, firstWordsHashBucketMatcher));
         
         return affMatchingService;
     }
