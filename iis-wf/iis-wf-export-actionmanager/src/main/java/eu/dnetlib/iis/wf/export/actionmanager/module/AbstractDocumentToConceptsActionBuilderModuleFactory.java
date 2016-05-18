@@ -16,6 +16,7 @@ import eu.dnetlib.data.proto.ResultProtos.Result.Metadata;
 import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.iis.export.schemas.Concept;
 import eu.dnetlib.iis.export.schemas.DocumentToConceptIds;
+import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 
 /**
  * {@link DocumentToResearchInitiatives} action builder module.
@@ -23,34 +24,31 @@ import eu.dnetlib.iis.export.schemas.DocumentToConceptIds;
  *
  */
 public abstract class AbstractDocumentToConceptsActionBuilderModuleFactory 
-	implements ActionBuilderFactory<DocumentToConceptIds> {
+	extends AbstractBuilderFactory<DocumentToConceptIds> {
 
-	protected final AlgorithmName algorithmName;
-	
 	/**
 	 * Default constructor.
 	 * @param algorithmName
 	 */
 	public AbstractDocumentToConceptsActionBuilderModuleFactory(
 			AlgorithmName algorithmName) {
-		this.algorithmName = algorithmName;
+		super(algorithmName);
 	}
 	
-	class DocumentToConceptsActionBuilderModule extends
-	AbstractBuilderModule implements ActionBuilderModule<DocumentToConceptIds> {
+	class DocumentToConceptsActionBuilderModule extends AbstractBuilderModule<DocumentToConceptIds> {
 
-		/**
-		 * Default constructor.
-		 * @param predefinedTrust
-		 */
-		public DocumentToConceptsActionBuilderModule(
-				String predefinedTrust,  Float trustLevelThreshold) {
-			super(predefinedTrust, trustLevelThreshold, algorithmName);
+        /**
+         * @param trustLevelThreshold trust level threshold or null when all records should be exported
+         * @param agent action manager agent details
+         * @param actionSetId action set identifier
+         */
+		public DocumentToConceptsActionBuilderModule(Float trustLevelThreshold,
+		        Agent agent, String actionSetId) {
+			super(trustLevelThreshold, buildInferenceProvenance(), agent ,actionSetId);
 		}
 	
 		@Override
-		public List<AtomicAction> build(DocumentToConceptIds object,
-				Agent agent, String actionSetId) {
+		public List<AtomicAction> build(DocumentToConceptIds object) {
 			Oaf oaf = buildOAFResearchInitiativeConcepts(object);
 			if (oaf!=null) {
 				return actionFactory.createUpdateActions(
@@ -76,8 +74,8 @@ public abstract class AbstractDocumentToConceptsActionBuilderModuleFactory
 				for (Concept concept : source.getConcepts()) {
 					Context.Builder contextBuilder = Context.newBuilder();
 					contextBuilder.setId(concept.getId().toString());
-//					confidence level is omitted because it is always set to 1
-					contextBuilder.setDataInfo(buildInference());
+					contextBuilder.setDataInfo(
+					        buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
 					contexts.add(contextBuilder.build());
 				}
 				metaBuilder.addAllContext(contexts);
@@ -99,14 +97,9 @@ public abstract class AbstractDocumentToConceptsActionBuilderModuleFactory
 	}
 
 	@Override
-	public ActionBuilderModule<DocumentToConceptIds> instantiate(
-			String predefinedTrust, Float trustLevelThreshold, Configuration config) {
+	public ActionBuilderModule<DocumentToConceptIds> instantiate(Configuration config, Agent agent, String actionSetId) {
 		return new DocumentToConceptsActionBuilderModule(
-				predefinedTrust, trustLevelThreshold);
+		        provideTrustLevelThreshold(config), agent, actionSetId);
 	}
-	
-	@Override
-	public AlgorithmName getAlgorithName() {
-		return algorithmName;
-	}
+
 }

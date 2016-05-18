@@ -25,34 +25,36 @@ import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
  * @author mhorst
  *
  */
-public class MatchedOrganizationActionBuilderModuleFactory implements ActionBuilderFactory<MatchedOrganization> {
+public class MatchedOrganizationActionBuilderModuleFactory extends AbstractBuilderFactory<MatchedOrganization> {
 
     private static final String REL_CLASS_IS_AFFILIATED_WITH = Affiliation.RelName.isAffiliatedWith.toString();
 
     private static final String SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_ORG = "dnet:result_organization_relations";
 
-    private static final AlgorithmName algorithmName = AlgorithmName.document_affiliations;
 
+    public MatchedOrganizationActionBuilderModuleFactory() {
+        super(AlgorithmName.document_affiliations);
+    }
+    
     /**
      * {@link MatchedOrganization} action builder module.
      *
      */
-    class MatchedOrganizationActionBuilderModule extends AbstractBuilderModule implements ActionBuilderModule<MatchedOrganization> {
+    class MatchedOrganizationActionBuilderModule extends AbstractBuilderModule<MatchedOrganization> {
 
         /**
-         * @param predefinedTrust default trust level
          * @param trustLevelThreshold trust level threshold or null when all records should be exported
+         * @param agent action manager agent details
+         * @param actionSetId action set identifier
          */
-        public MatchedOrganizationActionBuilderModule(String predefinedTrust, Float trustLevelThreshold) {
-            super(predefinedTrust, trustLevelThreshold, algorithmName);
+        public MatchedOrganizationActionBuilderModule( Float trustLevelThreshold, Agent agent, String actionSetId) {
+            super(trustLevelThreshold, buildInferenceProvenance(), 
+                    Preconditions.checkNotNull(agent), Preconditions.checkNotNull(actionSetId));
         }
 
         @Override
-        public List<AtomicAction> build(MatchedOrganization object, Agent agent, String actionSetId)
-                throws TrustLevelThresholdExceededException {
+        public List<AtomicAction> build(MatchedOrganization object) throws TrustLevelThresholdExceededException {
             Preconditions.checkNotNull(object);
-            Preconditions.checkNotNull(agent);
-            Preconditions.checkNotNull(actionSetId);
             String docId = object.getDocumentId().toString();
             String orgId = object.getOrganizationId().toString();
             Oaf.Builder oafBuilder = Oaf.newBuilder();
@@ -79,13 +81,8 @@ public class MatchedOrganizationActionBuilderModuleFactory implements ActionBuil
     }
 
     @Override
-    public ActionBuilderModule<MatchedOrganization> instantiate(String predefinedTrust, Float trustLevelThreshold,
-            Configuration config) {
-        return new MatchedOrganizationActionBuilderModule(predefinedTrust, trustLevelThreshold);
+    public ActionBuilderModule<MatchedOrganization> instantiate(Configuration config, Agent agent, String actionSetId) {
+        return new MatchedOrganizationActionBuilderModule(provideTrustLevelThreshold(config), agent, actionSetId);
     }
 
-    @Override
-    public AlgorithmName getAlgorithName() {
-        return algorithmName;
-    }
 }

@@ -149,16 +149,6 @@
 			<value>false</value>
 			<description>flag indicating json export should be performed</description>
 		</property>
-		<property>
-			<name>export_action_hbase_table_name</name>
-			<value>$UNDEFINED$</value>
-			<description>action manager hbase table name</description>
-		</property>
-		<property>
-			<name>export_action_hbase_table_initialize</name>
-			<value>false</value>
-			<description>flag indicating input table should be initialized</description>
-		</property>
 		<!-- action set id properties -->
 		<property>
 			<name>export_action_set_id</name>
@@ -191,20 +181,6 @@
 				dataset entities
 			</description>
 		</property>
-		<property>
-			<name>export_action_hbase_remote_zookeeper_quorum</name>
-			<value>$UNDEFINED$</value>
-			<description>external hbase zookeeper quorum, set to empty value by
-				default which means data will be exported to local hbase instance
-			</description>
-		</property>
-		<property>
-			<name>export_action_hbase_remote_zookeeper_clientport</name>
-			<value>$UNDEFINED$</value>
-			<description>external hbase zookeeper client port, required only whe
-				zookeeper quorum property is set
-			</description>
-		</property>
 		<!-- trust level threshold section -->
 		<property>
 			<name>export_trust_level_threshold</name>
@@ -223,12 +199,7 @@
 		</property>
 		<property>
 			<name>output_remote_location</name>
-			<value>$UNDEFINED$</value>
-			<description>optional remote cluster output location where inference
-				output dump should be distcped as sequence files.
-				When not specified results will be exported straight to the
-				ActionManager HBase.
-			</description>
+			<description>remote cluster output location where inference	output dump should be distcped as sequence files</description>
 		</property>
 		<!-- -->
 		<!-- working directory related -->
@@ -606,15 +577,6 @@
 					<name>wos_mdstore_id</name>
 					<value>${import_wos_mdstore_id}</value>
 				</property>
-				<!-- export related -->
-				<property>
-					<name>action_hbase_table_name</name>
-					<value>${export_action_hbase_table_name}</value>
-				</property>
-				<property>
-					<name>action_hbase_table_initialize</name>
-					<value>${export_action_hbase_table_initialize}</value>
-				</property>
 				<!-- action set id properties -->
 				<property>
 					<name>action_set_id</name>
@@ -647,14 +609,6 @@
 				<property>
 					<name>trust_level_threshold_document_referencedDatasets</name>
 					<value>${export_trust_level_threshold_document_referencedDatasets}</value>
-				</property>
-				<property>
-					<name>action_hbase_remote_zookeeper_quorum</name>
-					<value>${export_action_hbase_remote_zookeeper_quorum}</value>
-				</property>
-				<property>
-					<name>action_hbase_remote_zookeeper_clientport</name>
-					<value>${export_action_hbase_remote_zookeeper_clientport}</value>
 				</property>
 			</configuration>
 		</sub-workflow>

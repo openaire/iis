@@ -23,6 +23,7 @@ import eu.dnetlib.iis.common.model.extrainfo.citations.BlobCitationEntry;
 import eu.dnetlib.iis.common.model.extrainfo.citations.TypedId;
 import eu.dnetlib.iis.common.model.extrainfo.converter.CitationsExtraInfoConverter;
 import eu.dnetlib.iis.export.schemas.Citations;
+import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 
 
 /**
@@ -30,31 +31,31 @@ import eu.dnetlib.iis.export.schemas.Citations;
  * @author mhorst
  *
  */
-public class CitationsActionBuilderModuleFactory 
-		implements ActionBuilderFactory<Citations> {
+public class CitationsActionBuilderModuleFactory extends AbstractBuilderFactory<Citations> {
 	
 	private static final String EXTRA_INFO_NAME = ExtraInfoConstants.NAME_CITATIONS;
 	private static final String EXTRA_INFO_TYPOLOGY = ExtraInfoConstants.TYPOLOGY_CITATIONS;
 	
-	private static final AlgorithmName algorithmName = AlgorithmName.document_referencedDocuments;
+	public CitationsActionBuilderModuleFactory() {
+	    super(AlgorithmName.document_referencedDocuments);
+	}
 	
-	class CitationActionBuilderModule extends AbstractBuilderModule
-	implements ActionBuilderModule<Citations> {
+	class CitationActionBuilderModule extends AbstractBuilderModule<Citations> {
 	
 		CitationsExtraInfoConverter converter = new CitationsExtraInfoConverter();
 		
-		/**
-		 * Default constructor.
-		 * @param predefinedTrust
-		 * @param trustLevelThreshold
-		 */
-		public CitationActionBuilderModule(String predefinedTrust, 
-				Float trustLevelThreshold) {
-			super(predefinedTrust, trustLevelThreshold, algorithmName);
+		
+        /**
+         * @param trustLevelThreshold trust level threshold or null when all records should be exported
+         * @param agent action manager agent details
+         * @param actionSetId action set identifier
+         */
+		public CitationActionBuilderModule(Float trustLevelThreshold, Agent agent, String actionSetId) {
+			super(trustLevelThreshold, buildInferenceProvenance(), agent, actionSetId);
 		}
 	
 		@Override
-		public List<AtomicAction> build(Citations object, Agent agent, String actionSetId) {
+		public List<AtomicAction> build(Citations object) {
 			Oaf oaf = buildOAFCitations(object);
 			if (oaf!=null) {
 				return actionFactory.createUpdateActions(
@@ -83,7 +84,7 @@ public class CitationsActionBuilderModuleFactory
 				extraInfoBuilder.setName(EXTRA_INFO_NAME);
 				extraInfoBuilder.setTypology(EXTRA_INFO_TYPOLOGY);
 				extraInfoBuilder.setProvenance(this.inferenceProvenance);
-				extraInfoBuilder.setTrust(getPredefinedTrust());
+				extraInfoBuilder.setTrust(StaticConfigurationProvider.ACTION_TRUST_0_9);
 				entityBuilder.addExtraInfo(extraInfoBuilder.build());
 				entityBuilder.setType(Type.result);
 				return buildOaf(entityBuilder.build());
@@ -121,9 +122,8 @@ public class CitationsActionBuilderModuleFactory
 	}
 
 	@Override
-	public ActionBuilderModule<Citations> instantiate(String predefinedTrust,
-			Float trustLevelThreshold, Configuration config) {
-		return new CitationActionBuilderModule(predefinedTrust, trustLevelThreshold);
+	public ActionBuilderModule<Citations> instantiate(Configuration config, Agent agent, String actionSetId) {
+		return new CitationActionBuilderModule(provideTrustLevelThreshold(config), agent, actionSetId);
 	}
 	
 	public static BlobCitationEntry build(CitationEntry entry, float confidenceToTrustLevelFactor) {
@@ -154,8 +154,4 @@ public class CitationsActionBuilderModuleFactory
 		return result;
 	}
 
-	@Override
-	public AlgorithmName getAlgorithName() {
-		return algorithmName;
-	}
 }

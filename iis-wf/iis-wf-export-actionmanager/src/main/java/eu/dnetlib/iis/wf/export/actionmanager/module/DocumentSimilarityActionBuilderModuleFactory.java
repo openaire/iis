@@ -23,39 +23,39 @@ import eu.dnetlib.data.proto.ResultResultProtos.ResultResult.Similarity.Type;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity;
+import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 
 /**
  * {@link DocumentSimilarity} based action builder module.
  * @author mhorst
  *
  */
-public class DocumentSimilarityActionBuilderModuleFactory  
-	implements ActionBuilderFactory<DocumentSimilarity> {
+public class DocumentSimilarityActionBuilderModuleFactory extends AbstractBuilderFactory<DocumentSimilarity> {
 
-	private static final AlgorithmName algorithmName = AlgorithmName.document_similarities_standard;
-	
 	private final Logger log = Logger.getLogger(this.getClass());
 	
-	class DocumentSimilarityActionBuilderModule extends AbstractBuilderModule 
-	implements ActionBuilderModule<DocumentSimilarity> {
+	public DocumentSimilarityActionBuilderModuleFactory() {
+	    super(AlgorithmName.document_similarities_standard);
+    }
+	
+	class DocumentSimilarityActionBuilderModule extends AbstractBuilderModule<DocumentSimilarity> {
 	
 		private final Float similarityThreshold;
 		
 		/**
-		 * Default constructor.
-		 * @param predefinedTrust
-		 * @param threshold similarity threshold, skipped when null
-		 */
-		public DocumentSimilarityActionBuilderModule(
-				String predefinedTrust, Float trustLevelThreshold,
-				Float similarityThreshold) {
-			super(predefinedTrust, trustLevelThreshold, algorithmName);
+         * @param trustLevelThreshold trust level threshold or null when all records should be exported
+         * @param similarityThreshold similarity threshold, skipped when null
+         * @param agent action manager agent details
+         * @param actionSetId action set identifier
+         */
+		public DocumentSimilarityActionBuilderModule(Float trustLevelThreshold, Float similarityThreshold,
+		        Agent agent, String actionSetId) {
+			super(trustLevelThreshold, buildInferenceProvenance(), agent ,actionSetId);
 			this.similarityThreshold = similarityThreshold;
 		}
 		
 		@Override
-		public List<AtomicAction> build(DocumentSimilarity object, Agent agent,
-				String actionSetId) {
+		public List<AtomicAction> build(DocumentSimilarity object) {
 			if (object==null) {
 				return Collections.emptyList();
 			}
@@ -150,15 +150,14 @@ public class DocumentSimilarityActionBuilderModuleFactory
 			Oaf.Builder oafBuilder = Oaf.newBuilder();
 			oafBuilder.setKind(Kind.relation);
 			oafBuilder.setRel(relBuilder.build());
-			oafBuilder.setDataInfo(buildInference());
+			oafBuilder.setDataInfo(buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
 			oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
 			return oafBuilder.build();
 		}
 	}
 
 	@Override
-	public ActionBuilderModule<DocumentSimilarity> instantiate(
-			String predefinedTrust, Float trustLevelThreshold, Configuration config) {
+	public ActionBuilderModule<DocumentSimilarity> instantiate(Configuration config, Agent agent, String actionSetId) {
 		String thresholdStr = config.get(
 				EXPORT_DOCUMENTSSIMILARITY_THRESHOLD);
 		Float similarityThreshold = null;
@@ -168,11 +167,7 @@ public class DocumentSimilarityActionBuilderModuleFactory
 			log.warn("setting documents similarity exporter threshold to: " + similarityThreshold);
 		}
 		return new DocumentSimilarityActionBuilderModule(
-				predefinedTrust, trustLevelThreshold, similarityThreshold);
+				provideTrustLevelThreshold(config) ,similarityThreshold, agent, actionSetId);
 	}
-	
-	@Override
-	public AlgorithmName getAlgorithName() {
-		return algorithmName;
-	}
+
 }

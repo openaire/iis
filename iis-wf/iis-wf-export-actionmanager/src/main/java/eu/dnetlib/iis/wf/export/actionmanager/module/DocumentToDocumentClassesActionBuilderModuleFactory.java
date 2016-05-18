@@ -18,33 +18,33 @@ import eu.dnetlib.data.proto.ResultProtos.Result.Metadata;
 import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses;
+import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 
 /**
  * {@link DocumentToDocumentClasses} based action builder module.
  * @author mhorst
  *
  */
-public class DocumentToDocumentClassesActionBuilderModuleFactory 
-	implements ActionBuilderFactory<DocumentToDocumentClasses> {
+public class DocumentToDocumentClassesActionBuilderModuleFactory extends AbstractBuilderFactory<DocumentToDocumentClasses> {
 
-	private static final AlgorithmName algorithmName = AlgorithmName.document_classes;
+	public DocumentToDocumentClassesActionBuilderModuleFactory() {
+	    super(AlgorithmName.document_classes);
+	}
 	
-	class DocumentToDocumentClassesActionBuilderModule extends
-	AbstractBuilderModule implements ActionBuilderModule<DocumentToDocumentClasses> {
+	class DocumentToDocumentClassesActionBuilderModule extends AbstractBuilderModule<DocumentToDocumentClasses> {
 
-		
-		/**
-		 * Default constructor.
-		 * @param predefinedTrust
-		 */
+        /**
+         * @param trustLevelThreshold trust level threshold or null when all records should be exported
+         * @param agent action manager agent details
+         * @param actionSetId action set identifier
+         */
 		public DocumentToDocumentClassesActionBuilderModule(
-				String predefinedTrust, Float trustLevelThreshold) {
-			super(predefinedTrust, trustLevelThreshold, algorithmName);
+				Float trustLevelThreshold, Agent agent, String actionSetId) {
+			super(trustLevelThreshold, buildInferenceProvenance(), agent ,actionSetId);
 		}
 	
 		@Override
-		public List<AtomicAction> build(DocumentToDocumentClasses object,
-				Agent agent, String actionSetId) {
+		public List<AtomicAction> build(DocumentToDocumentClasses object) {
 			Oaf oaf = buildOAFClasses(object);
 			if (oaf!=null) {
 				return actionFactory.createUpdateActions(
@@ -156,7 +156,7 @@ public class DocumentToDocumentClassesActionBuilderModuleFactory
 					builder.setDataInfo(buildInference(
 							confidenceLevel<1?confidenceLevel:1));
 				} else {
-					builder.setDataInfo(buildInference());
+					builder.setDataInfo(buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
 				}
 				return builder.build();
 			} else {
@@ -166,14 +166,9 @@ public class DocumentToDocumentClassesActionBuilderModuleFactory
 	}
 
 	@Override
-	public ActionBuilderModule<DocumentToDocumentClasses> instantiate(
-			String predefinedTrust, Float trustLevelThreshold, Configuration config) {
+	public ActionBuilderModule<DocumentToDocumentClasses> instantiate(Configuration config, Agent agent, String actionSetId) {
 		return new DocumentToDocumentClassesActionBuilderModule(
-				predefinedTrust, trustLevelThreshold);
+				provideTrustLevelThreshold(config), agent, actionSetId);
 	}
-	
-	@Override
-	public AlgorithmName getAlgorithName() {
-		return algorithmName;
-	}
+
 }

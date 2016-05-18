@@ -17,35 +17,34 @@ import eu.dnetlib.data.proto.ResultResultProtos.ResultResult;
 import eu.dnetlib.data.proto.ResultResultProtos.ResultResult.PublicationDataset;
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet;
+import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 
 /**
  * {@link DocumentToDataSet} based action builder module.
  * @author mhorst
  *
  */
-public class DocumentToDataSetActionBuilderModuleFactory 
-		implements ActionBuilderFactory<DocumentToDataSet> {
+public class DocumentToDataSetActionBuilderModuleFactory extends AbstractBuilderFactory<DocumentToDataSet> {
 
 	public static final String REL_CLASS_ISRELATEDTO = PublicationDataset.RelName.isRelatedTo.toString();
 	
-	private static final AlgorithmName algorithmName = AlgorithmName.document_referencedDatasets;
+	public DocumentToDataSetActionBuilderModuleFactory() {
+	    super(AlgorithmName.document_referencedDatasets);
+	}
 	
-	class DocumentToDataSetActionBuilderModule extends AbstractBuilderModule
-	implements ActionBuilderModule<DocumentToDataSet> {
+	class DocumentToDataSetActionBuilderModule extends AbstractBuilderModule<DocumentToDataSet> {
 	
-		/**
-		 * Default constructor.
-		 * @param predefinedTrust
-		 * @param trustLevelThreshold
-		 */
-		public DocumentToDataSetActionBuilderModule(
-				String predefinedTrust, Float trustLevelThreshold) {
-			super(predefinedTrust, trustLevelThreshold, algorithmName);
+        /**
+         * @param trustLevelThreshold trust level threshold or null when all records should be exported
+         * @param agent action manager agent details
+         * @param actionSetId action set identifier
+         */
+		public DocumentToDataSetActionBuilderModule(Float trustLevelThreshold, Agent agent, String actionSetId) {
+			super(trustLevelThreshold, buildInferenceProvenance(), agent ,actionSetId);
 		}
 	
 		@Override
-		public List<AtomicAction> build(DocumentToDataSet object, Agent agent,
-				String actionSetId) throws TrustLevelThresholdExceededException {
+		public List<AtomicAction> build(DocumentToDataSet object) throws TrustLevelThresholdExceededException {
 			String docId = object.getDocumentId().toString();
 			String currentRefId = object.getDatasetId().toString();
 			Oaf.Builder oafBuilder = Oaf.newBuilder();
@@ -67,7 +66,7 @@ public class DocumentToDataSetActionBuilderModuleFactory
 			oafBuilder.setRel(relBuilder.build());
 			oafBuilder.setDataInfo(object.getConfidenceLevel()!=null?
 					buildInference(object.getConfidenceLevel()):
-					buildInference());
+					buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
 			oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
 			Oaf oaf = oafBuilder.build();
 			Oaf oafInverted = invertBidirectionalRelationAndBuild(oafBuilder);
@@ -90,14 +89,8 @@ public class DocumentToDataSetActionBuilderModuleFactory
 	}
 
 	@Override
-	public ActionBuilderModule<DocumentToDataSet> instantiate(
-			String predefinedTrust, Float trustLevelThreshold, Configuration config) {
+	public ActionBuilderModule<DocumentToDataSet> instantiate(Configuration config, Agent agent, String actionSetId) {
 		return new DocumentToDataSetActionBuilderModule(
-				predefinedTrust, trustLevelThreshold);
-	}
-	
-	@Override
-	public AlgorithmName getAlgorithName() {
-		return algorithmName;
+				provideTrustLevelThreshold(config), agent, actionSetId);
 	}
 }

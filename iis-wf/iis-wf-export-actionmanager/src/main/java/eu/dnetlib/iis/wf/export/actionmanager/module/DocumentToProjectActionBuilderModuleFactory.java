@@ -17,37 +17,37 @@ import eu.dnetlib.data.proto.ResultProjectProtos.ResultProject;
 import eu.dnetlib.data.proto.ResultProjectProtos.ResultProject.Outcome;
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
+import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 
 /**
  * {@link DocumentToProject} based action builder module.
  * @author mhorst
  *
  */
-public class DocumentToProjectActionBuilderModuleFactory 
-	implements ActionBuilderFactory<DocumentToProject> {
+public class DocumentToProjectActionBuilderModuleFactory extends AbstractBuilderFactory<DocumentToProject> {
 
 	public static final String REL_CLASS_ISPRODUCEDBY = Outcome.RelName.isProducedBy.toString();
 	
 	public static final String REL_CLASS_PRODUCES = Outcome.RelName.produces.toString();
 
-	private static final AlgorithmName algorithmName = AlgorithmName.document_referencedProjects;
 	
-	class DocumentToProjectActionBuilderModule extends AbstractBuilderModule
-	implements ActionBuilderModule<DocumentToProject> {
+	public DocumentToProjectActionBuilderModuleFactory() {
+	    super(AlgorithmName.document_referencedProjects);
+	}
+	
+	class DocumentToProjectActionBuilderModule extends AbstractBuilderModule<DocumentToProject> {
 	
 		/**
-		 * Default constructor.
-		 * @param predefinedTrust
-		 * @param trustLevelThreshold
+         * @param trustLevelThreshold trust level threshold or null when all records should be exported
+         * @param agent action manager agent details
+         * @param actionSetId action set identifier
 		 */
-		public DocumentToProjectActionBuilderModule(
-				String predefinedTrust, Float trustLevelThreshold) {
-			super(predefinedTrust, trustLevelThreshold, algorithmName);
+		public DocumentToProjectActionBuilderModule(Float trustLevelThreshold, Agent agent, String actionSetId) {
+			super(trustLevelThreshold, buildInferenceProvenance(), agent ,actionSetId);
 		}
 	
 		@Override
-		public List<AtomicAction> build(DocumentToProject object, 
-				Agent agent, String actionSetId) throws TrustLevelThresholdExceededException {
+		public List<AtomicAction> build(DocumentToProject object) throws TrustLevelThresholdExceededException {
 			String docId = object.getDocumentId().toString();
 			String currentProjectIdStr = object.getProjectId().toString();
 			Oaf.Builder oafBuilder = Oaf.newBuilder();
@@ -69,7 +69,7 @@ public class DocumentToProjectActionBuilderModuleFactory
 			oafBuilder.setRel(relBuilder.build());
 			oafBuilder.setDataInfo(object.getConfidenceLevel()!=null?
 							buildInference(object.getConfidenceLevel()):
-							buildInference());
+							buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
 			oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
 			Oaf oaf = oafBuilder.build();
 			Oaf oafInv = invertRelationAndBuild(oafBuilder);
@@ -130,14 +130,8 @@ public class DocumentToProjectActionBuilderModuleFactory
 	}
 
 	@Override
-	public ActionBuilderModule<DocumentToProject> instantiate(
-			String predefinedTrust, Float trustLevelThreshold, Configuration config) {
-		return new DocumentToProjectActionBuilderModule(
-				predefinedTrust, trustLevelThreshold);
+	public ActionBuilderModule<DocumentToProject> instantiate(Configuration config, Agent agent, String actionSetId) {
+		return new DocumentToProjectActionBuilderModule(provideTrustLevelThreshold(config), agent, actionSetId);
 	}
-	
-	@Override
-	public AlgorithmName getAlgorithName() {
-		return algorithmName;
-	}
+
 }

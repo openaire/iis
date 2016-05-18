@@ -17,39 +17,39 @@ import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.export.schemas.Concept;
 import eu.dnetlib.iis.export.schemas.DocumentToConceptIds;
+import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 
 /**
  * {@link DocumentToConceptIds} holding protein data bank identifiers action builder module.
  * @author mhorst
  *
  */
-public class DocumentToPdbActionBuilderModuleFactory 
-	implements ActionBuilderFactory<DocumentToConceptIds> {
+public class DocumentToPdbActionBuilderModuleFactory extends AbstractBuilderFactory<DocumentToConceptIds> {
 
 	public static final String EXPORT_PDB_URL_ROOT = "export.referenceextraction.pdb.url.root";
 	
-	private final AlgorithmName algorithmName = AlgorithmName.document_pdb;
+	public DocumentToPdbActionBuilderModuleFactory() {
+	    super(AlgorithmName.document_pdb);
+	}
 	
-	class DocumentToPdbActionBuilderModule extends
-	AbstractBuilderModule implements ActionBuilderModule<DocumentToConceptIds> {
+	class DocumentToPdbActionBuilderModule extends AbstractBuilderModule<DocumentToConceptIds> {
 
 		private final String pdbUrlRoot;
 		
-		/**
-		 * Default constructor.
-		 * @param predefinedTrust
-		 * @param trustLevelThreshold
-		 * @param pdbUrlRoot
-		 */
+        /**
+         * @param trustLevelThreshold trust level threshold or null when all records should be exported
+         * @param pdbUrlRoot protein databank root url
+         * @param agent action manager agent details
+         * @param actionSetId action set identifier
+         */
 		public DocumentToPdbActionBuilderModule(
-				String predefinedTrust, Float trustLevelThreshold, String pdbUrlRoot) {
-			super(predefinedTrust, trustLevelThreshold, algorithmName);
+				Float trustLevelThreshold, String pdbUrlRoot, Agent agent, String actionSetId) {
+			super(trustLevelThreshold, buildInferenceProvenance(), agent ,actionSetId);
 			this.pdbUrlRoot = pdbUrlRoot;
 		}
 	
 		@Override
-		public List<AtomicAction> build(DocumentToConceptIds object,
-				Agent agent, String actionSetId) throws TrustLevelThresholdExceededException {
+		public List<AtomicAction> build(DocumentToConceptIds object) throws TrustLevelThresholdExceededException {
 			Oaf oaf = buildOAFWithPdb(object);
 			if (oaf!=null) {
 				return actionFactory.createUpdateActions(
@@ -92,7 +92,8 @@ public class DocumentToPdbActionBuilderModuleFactory
 					externalRefBuilder.setRefidentifier(pdbId);
 					externalRefBuilder.setDataInfo(
 							concept.getConfidenceLevel()!=null?
-									buildInference(concept.getConfidenceLevel()):buildInference());
+									buildInference(concept.getConfidenceLevel()):
+									    buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
 					externalRefs.add(externalRefBuilder.build());
 				}
 				resultBuilder.addAllExternalReference(externalRefs);
@@ -111,14 +112,9 @@ public class DocumentToPdbActionBuilderModuleFactory
 	}
 
 	@Override
-	public ActionBuilderModule<DocumentToConceptIds> instantiate(
-			String predefinedTrust, Float trustLevelThreshold, Configuration config) {
+	public ActionBuilderModule<DocumentToConceptIds> instantiate(Configuration config, Agent agent, String actionSetId) {
 		return new DocumentToPdbActionBuilderModule(
-				predefinedTrust, trustLevelThreshold, config.get(EXPORT_PDB_URL_ROOT));
+				provideTrustLevelThreshold(config), config.get(EXPORT_PDB_URL_ROOT), agent, actionSetId);
 	}
-	
-	@Override
-	public AlgorithmName getAlgorithName() {
-		return algorithmName;
-	}
+
 }
