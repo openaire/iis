@@ -27,21 +27,21 @@ import eu.dnetlib.iis.wf.export.actionmanager.module.MatchedOrganizationActionBu
  */
 public class MatchedOrganizationActionBuilderModuleFactoryTest {
 
-    MatchedOrganizationActionBuilderModule module;
+    private MatchedOrganizationActionBuilderModule module;
 
-    Float trustLevelThreshold = 0.5f;
+    private Float trustLevelThreshold = 0.5f;
 
-    String actionSetId = "someActionSetId";
+    private String actionSetId = "someActionSetId";
 
-    Agent agent = new Agent("agentId", "agent name", Agent.AGENT_TYPE.service);
+    private Agent agent = new Agent("agentId", "agent name", Agent.AGENT_TYPE.service);
 
-    String docId = "documentId";
+    private String docId = "documentId";
 
-    String orgId = "organizationId";
+    private String orgId = "organizationId";
 
-    float matchStrength = 0.9f;
+    private float matchStrength = 0.9f;
 
-    MatchedOrganization matchedOrg = buildMatchedOrganization(docId, orgId, matchStrength);
+    private MatchedOrganization matchedOrg = buildMatchedOrganization(docId, orgId, matchStrength);
 
     @Before
     public void initModule() {
