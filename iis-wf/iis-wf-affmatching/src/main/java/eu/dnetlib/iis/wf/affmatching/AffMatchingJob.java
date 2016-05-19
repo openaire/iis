@@ -18,9 +18,11 @@ import com.google.common.collect.ImmutableList;
 
 import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgHashBucketJoiner;
 import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgJoiner;
-import eu.dnetlib.iis.wf.affmatching.bucket.AffiliationMainSectionBucketHasher;
+import eu.dnetlib.iis.wf.affmatching.bucket.AffiliationOrgNameBucketHasher;
 import eu.dnetlib.iis.wf.affmatching.bucket.DocOrgRelationAffOrgJoiner;
-import eu.dnetlib.iis.wf.affmatching.bucket.OrganizationMainSectionBucketHasher;
+import eu.dnetlib.iis.wf.affmatching.bucket.MainSectionBucketHasher;
+import eu.dnetlib.iis.wf.affmatching.bucket.MainSectionBucketHasher.FallbackSectionPickStrategy;
+import eu.dnetlib.iis.wf.affmatching.bucket.OrganizationNameBucketHasher;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationCombiner;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationFetcher;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisDocumentProjectReader;
@@ -134,12 +136,27 @@ public class AffMatchingJob {
         docOrgRelationAffOrgMatcher.setAffOrgMatchComputer(docOrgRelationAffOrgMatchComputer);
         
         
+        
+        // affOrgMainSectionHashBucketMatcher - affiliation hasher
+        
+        AffiliationOrgNameBucketHasher mainSectionAffBucketHasher = new AffiliationOrgNameBucketHasher();
+        MainSectionBucketHasher mainSectionStringAffBucketHasher = new MainSectionBucketHasher();
+        mainSectionStringAffBucketHasher.setFallbackSectionPickStrategy(FallbackSectionPickStrategy.LAST_SECTION);
+        mainSectionAffBucketHasher.setStringHasher(mainSectionStringAffBucketHasher);
+        
+        // affOrgMainSectionHashBucketMatcher - organization hasher
+        
+        OrganizationNameBucketHasher mainSectionOrgBucketHasher = new OrganizationNameBucketHasher();
+        MainSectionBucketHasher mainSectionStringOrgBucketHasher = new MainSectionBucketHasher();
+        mainSectionStringOrgBucketHasher.setFallbackSectionPickStrategy(FallbackSectionPickStrategy.FIRST_SECTION);
+        mainSectionOrgBucketHasher.setStringHasher(mainSectionStringOrgBucketHasher);
+        
         // affOrgMainSectionHashBucketMatcher
         
         AffOrgHashBucketJoiner mainSectionHashBucketJoiner = new AffOrgHashBucketJoiner();
         
-        mainSectionHashBucketJoiner.setAffiliationBucketHasher(new AffiliationMainSectionBucketHasher());
-        mainSectionHashBucketJoiner.setOrganizationBucketHasher(new OrganizationMainSectionBucketHasher());
+        mainSectionHashBucketJoiner.setAffiliationBucketHasher(mainSectionAffBucketHasher);
+        mainSectionHashBucketJoiner.setOrganizationBucketHasher(mainSectionOrgBucketHasher);
         
         AffOrgMatchComputer mainSectionHashMatchComputer = new AffOrgMatchComputer();
         

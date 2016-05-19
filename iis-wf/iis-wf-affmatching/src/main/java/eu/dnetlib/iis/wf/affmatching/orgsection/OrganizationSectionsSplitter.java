@@ -93,11 +93,9 @@ public class OrganizationSectionsSplitter implements Serializable {
     private int findWordStartingWithAny(String[] words, String ... wordStart) {
         
         for (int i=0; i<words.length; ++i) {
-            for (int j=0; j<wordStart.length; ++j) {
-                
-                if (words[i].startsWith(wordStart[j])) {
-                    return i;
-                }
+            
+            if (StringUtils.startsWithAny(words[i], wordStart)) {
+                return i;
             }
         }
         return -1;

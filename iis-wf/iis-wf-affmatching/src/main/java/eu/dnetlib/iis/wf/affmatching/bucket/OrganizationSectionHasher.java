@@ -14,8 +14,6 @@ import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSection;
 public class OrganizationSectionHasher implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    private static final int SECTION_NUMBER_OF_LETTERS = 3;
     
     
     private int numberOfLettersPerWord = 3;
@@ -58,7 +56,7 @@ public class OrganizationSectionHasher implements Serializable {
         String wordBefore = (typeSignificantWordPos <= 0) ? "" : words[typeSignificantWordPos - 1];
         String wordAfter = (typeSignificantWordPos >= words.length-1) ? "" : words[typeSignificantWordPos + 1];
         
-        return generateWordHash(section.getType().name(), SECTION_NUMBER_OF_LETTERS) 
+        return generateWordHash(section.getType().name(), OrganizationSection.SECTION_NUMBER_OF_LETTERS) 
                 + generateWordHash(wordBefore) + generateWordHash(wordAfter);
     }
     
@@ -69,7 +67,7 @@ public class OrganizationSectionHasher implements Serializable {
         String firstWord = words.length == 0 ? "" : words[0];
         String secondWord = words.length <= 1 ? "" : words[1];
         
-        return generateWordHash(section.getType().name(), SECTION_NUMBER_OF_LETTERS) 
+        return generateWordHash(section.getType().name(), OrganizationSection.SECTION_NUMBER_OF_LETTERS) 
                 + generateWordHash(firstWord) + generateWordHash(secondWord);
     }
     

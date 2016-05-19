@@ -13,7 +13,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.google.common.collect.ImmutableList;
 
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
+import eu.dnetlib.iis.wf.affmatching.bucket.MainSectionBucketHasher.FallbackSectionPickStrategy;
 import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSection;
 import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSection.OrgSectionType;
 import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSectionsSplitter;
@@ -22,10 +22,10 @@ import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSectionsSplitter;
  * @author madryk
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AffiliationMainSectionBucketHasherTest {
+public class MainSectionBucketHasherTest {
 
     @InjectMocks
-    private AffiliationMainSectionBucketHasher affMainSectionBucketHasher = new AffiliationMainSectionBucketHasher();
+    private MainSectionBucketHasher mainSectionBucketHasher = new MainSectionBucketHasher();
     
     @Mock
     private OrganizationSectionsSplitter sectionsSplitter;
@@ -34,14 +34,12 @@ public class AffiliationMainSectionBucketHasherTest {
     private OrganizationSectionHasher sectionHasher;
     
     
-    private AffMatchAffiliation affiliation = new AffMatchAffiliation("DOC_ID", 1);
-    
     private String organizationName = "ORG_NAME";
     
     
     @Before
     public void setup() {
-        affiliation.setOrganizationName(organizationName);
+        mainSectionBucketHasher.setFallbackSectionPickStrategy(FallbackSectionPickStrategy.FIRST_SECTION);
     }
     
     
@@ -65,7 +63,7 @@ public class AffiliationMainSectionBucketHasherTest {
         
         // execute
         
-        String retHash = affMainSectionBucketHasher.hash(affiliation);
+        String retHash = mainSectionBucketHasher.hash(organizationName);
         
         
         // assert
@@ -77,9 +75,39 @@ public class AffiliationMainSectionBucketHasherTest {
     }
     
     @Test
-    public void hash_fallback_section() {
+    public void hash_fallback_first_section() {
         
         // given
+        
+        OrganizationSection section1 = new OrganizationSection(OrgSectionType.UNKNOWN, new String[]{"unknown1"}, -1);
+        OrganizationSection section2 = new OrganizationSection(OrgSectionType.UNKNOWN, new String[]{"unknown2"}, -1);
+        OrganizationSection section3 = new OrganizationSection(OrgSectionType.UNKNOWN, new String[]{"unknown3"}, -1);
+        
+        String section1_hash = "section1_hash";
+        
+        when(sectionsSplitter.splitToSectionsDetailed(organizationName)).thenReturn(ImmutableList.of(section1, section2, section3));
+        when(sectionHasher.hash(section1)).thenReturn(section1_hash);
+        
+        
+        // execute
+        
+        String retHash = mainSectionBucketHasher.hash(organizationName);
+        
+        
+        // assert
+        
+        assertEquals(section1_hash, retHash);
+        
+        verify(sectionsSplitter).splitToSectionsDetailed(organizationName);
+        verify(sectionHasher).hash(section1);
+    }
+    
+    @Test
+    public void hash_fallback_last_section() {
+        
+        // given
+        
+        mainSectionBucketHasher.setFallbackSectionPickStrategy(FallbackSectionPickStrategy.LAST_SECTION);
         
         OrganizationSection section1 = new OrganizationSection(OrgSectionType.UNKNOWN, new String[]{"unknown1"}, -1);
         OrganizationSection section2 = new OrganizationSection(OrgSectionType.UNKNOWN, new String[]{"unknown2"}, -1);
@@ -93,7 +121,7 @@ public class AffiliationMainSectionBucketHasherTest {
         
         // execute
         
-        String retHash = affMainSectionBucketHasher.hash(affiliation);
+        String retHash = mainSectionBucketHasher.hash(organizationName);
         
         
         // assert
@@ -103,5 +131,4 @@ public class AffiliationMainSectionBucketHasherTest {
         verify(sectionsSplitter).splitToSectionsDetailed(organizationName);
         verify(sectionHasher).hash(section3);
     }
-    
 }

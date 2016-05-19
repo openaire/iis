@@ -1,18 +1,16 @@
 package eu.dnetlib.iis.wf.affmatching.bucket;
 
-import java.io.Serializable;
-
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Preconditions;
 
 /**
- * Class that generates hash of the given string. 
+ * An implementation of {@link BucketHasher} that generates hash of the given string.
  * 
  * @author Łukasz Dumiszewski
 */
 
-class StringPartFirstLettersHasher implements Serializable {
+class StringPartFirstLettersHasher implements BucketHasher<String> {
 
     
     private static final long serialVersionUID = 1L;

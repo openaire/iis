@@ -15,6 +15,11 @@ public class OrganizationSection implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Number of first letters of {@link OrgSectionType#name()} that
+     * ensures uniqueness among other section types.
+     */
+    public static final int SECTION_NUMBER_OF_LETTERS = 3;
 
     public enum OrgSectionType {
         UNIVERSITY,
