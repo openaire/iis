@@ -13,19 +13,19 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
  * @author Łukasz Dumiszewski
 */
 
-public class OrganizationNameFirstLettersBucketHasher implements BucketHasher<AffMatchOrganization> {
+public class OrganizationNameBucketHasher implements BucketHasher<AffMatchOrganization> {
     
     
     private static final long serialVersionUID = 1L;
 
-    private StringPartFirstLettersHasher stringPartFirstLettersHasher = new StringPartFirstLettersHasher();
+    private BucketHasher<String> stringHasher = new StringPartFirstLettersHasher();
     
     
     //------------------------ LOGIC --------------------------
     
     /**
      * Returns a hash of the passed organization. The hash is generated from {@link AffMatchOrganization#getName()}.<br/>
-     * The method uses {@link StringPartFirstLettersHasher} internally.
+     * The method uses {@link BucketHasher#hash(String)} internally.
      */
     @Override
     public String hash(AffMatchOrganization organization) {
@@ -33,7 +33,7 @@ public class OrganizationNameFirstLettersBucketHasher implements BucketHasher<Af
         Preconditions.checkNotNull(organization);
         Preconditions.checkArgument(StringUtils.isNotBlank(organization.getName()));
         
-        return stringPartFirstLettersHasher.hash(organization.getName());
+        return stringHasher.hash(organization.getName());
     }
 
 
@@ -42,8 +42,8 @@ public class OrganizationNameFirstLettersBucketHasher implements BucketHasher<Af
     /**
      * Hasher that will be used in {@link #hash(AffMatchOrganization)} to generate hash from the name of the organization. 
      */
-    public void setStringPartFirstLettersHasher(StringPartFirstLettersHasher stringPartFirstLettersHasher) {
-        this.stringPartFirstLettersHasher = stringPartFirstLettersHasher;
+    public void setStringHasher(BucketHasher<String> stringHasher) {
+        this.stringHasher = stringHasher;
     }
 
     

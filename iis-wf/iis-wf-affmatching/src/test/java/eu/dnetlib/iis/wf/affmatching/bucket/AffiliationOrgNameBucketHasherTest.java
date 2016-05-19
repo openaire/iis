@@ -15,13 +15,13 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 * @author Łukasz Dumiszewski
 */
 
-public class AffiliationNameFirstLettersBucketHasherTest {
+public class AffiliationOrgNameBucketHasherTest {
 
     @InjectMocks
-    private AffiliationOrgNameFirstLettersBucketHasher hasher = new AffiliationOrgNameFirstLettersBucketHasher();
+    private AffiliationOrgNameBucketHasher hasher = new AffiliationOrgNameBucketHasher();
     
     @Mock
-    private StringPartFirstLettersHasher stringPartFirstLettersHasher;
+    private BucketHasher<String> stringHasher;
     
     
     
@@ -81,7 +81,7 @@ public class AffiliationNameFirstLettersBucketHasherTest {
         AffMatchAffiliation aff = new AffMatchAffiliation("XXX", 1);
         aff.setOrganizationName("ICM");
         
-        when(stringPartFirstLettersHasher.hash("ICM")).thenReturn("HASH");
+        when(stringHasher.hash("ICM")).thenReturn("HASH");
         
         
         // execute
