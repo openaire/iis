@@ -7,7 +7,6 @@ import java.io.Serializable;
 import org.apache.spark.api.java.JavaRDD;
 
 import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgJoiner;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
@@ -44,23 +43,17 @@ public class AffOrgMatcher implements Serializable {
      * <li>computing a match strength of each pair, performed by {@link #setAffOrgMatchComputer(AffOrgMatchComputer)}
      * <li>choosing the best matching affiliation-organization pair for each affiliation, done by {@link BestAffMatchResultPicker}
      * </ul> 
-     * Method takes documentOrganizations rdd parameter containing document-organization pairs.
-     * Doc-org pair indicates that document is somehow related to organization.
-     * This rdd can be taken as a hint for matching algorithm (due to high probability that affiliation of document present in
-     * documentOrganizations rdd should be matched to one of the organization from doc-org pairs).
      */
-    public JavaRDD<AffMatchResult> match(JavaRDD<AffMatchAffiliation> affiliations, JavaRDD<AffMatchOrganization> organizations, 
-            JavaRDD<AffMatchDocumentOrganization> documentOrganizations) {
+    public JavaRDD<AffMatchResult> match(JavaRDD<AffMatchAffiliation> affiliations, JavaRDD<AffMatchOrganization> organizations) {
         
         checkNotNull(affiliations);
         checkNotNull(organizations);
-        checkNotNull(documentOrganizations);
         
         checkNotNull(affOrgJoiner, "affOrgJoiner has not been set");
         checkNotNull(affOrgMatchComputer, "affOrgMatchComputer has not been set");
         
         
-        JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> joinedAffOrgs = affOrgJoiner.join(affiliations, organizations, documentOrganizations);
+        JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> joinedAffOrgs = affOrgJoiner.join(affiliations, organizations);
         
         JavaRDD<AffMatchResult> matchedAffOrgs = affOrgMatchComputer.computeMatches(joinedAffOrgs);
            

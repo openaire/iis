@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import org.apache.spark.api.java.JavaRDD;
 
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import scala.Tuple2;
@@ -25,9 +24,7 @@ public interface AffOrgJoiner extends Serializable {
     /**
      * Joins the given affiliations with organizations according to a certain rule. Returns joined pairs of {@link AffMatchAffiliation}
      * and {@link AffMatchAffiliation}.
-     * Given document-organization pairs is additional parameter that can be used for joining affiliations and organizations.
      */
-    public JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> join(JavaRDD<AffMatchAffiliation> affiliations, JavaRDD<AffMatchOrganization> organizations,
-            JavaRDD<AffMatchDocumentOrganization> documentOrganizations);
+    public JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> join(JavaRDD<AffMatchAffiliation> affiliations, JavaRDD<AffMatchOrganization> organizations);
     
 }

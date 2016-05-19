@@ -48,7 +48,6 @@ public class AffMatchingJob {
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
         
-        AffMatchingService affMatchingService = createAffMatchingService(params);
         
         SparkConf conf = new SparkConf();
         conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
@@ -56,8 +55,9 @@ public class AffMatchingJob {
         
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
           
-            affMatchingService.matchAffiliations(sc, params.inputAvroAffPath, params.inputAvroOrgPath, 
-                    params.inputAvroDocProjPath, params.inputAvroProjOrgPath, params.outputAvroPath);
+            AffMatchingService affMatchingService = createAffMatchingService(sc, params);
+            
+            affMatchingService.matchAffiliations(sc, params.inputAvroAffPath, params.inputAvroOrgPath, params.outputAvroPath);
             
         }
     }
@@ -91,7 +91,7 @@ public class AffMatchingJob {
     
     
     
-    private static AffMatchingService createAffMatchingService(AffMatchingJobParameters params) {
+    private static AffMatchingService createAffMatchingService(JavaSparkContext sparkContext, AffMatchingJobParameters params) {
         
         AffMatchingService affMatchingService = new AffMatchingService();
         
@@ -101,14 +101,6 @@ public class AffMatchingJob {
         affMatchingService.setAffiliationReader(new IisAffiliationReader());
         affMatchingService.setOrganizationReader(new IisOrganizationReader());
         
-        DocumentOrganizationFetcher documentOrganizationFetcher = new DocumentOrganizationFetcher();
-        documentOrganizationFetcher.setDocumentProjectReader(new IisDocumentProjectReader());
-        documentOrganizationFetcher.setProjectOrganizationReader(new IisProjectOrganizationReader());
-        documentOrganizationFetcher.setDocumentOrganizationCombiner(new DocumentOrganizationCombiner());
-        documentOrganizationFetcher.setDocProjConfidenceLevelThreshold(params.inputDocProjConfidenceThreshold);
-        
-        affMatchingService.setDocumentOrganizationFetcher(documentOrganizationFetcher);
-        
         
         // writer
         
@@ -117,7 +109,17 @@ public class AffMatchingJob {
         
         // docOrgRelationAffOrgMatcher
         
+        DocumentOrganizationFetcher documentOrganizationFetcher = new DocumentOrganizationFetcher();
+        documentOrganizationFetcher.setDocumentProjectReader(new IisDocumentProjectReader());
+        documentOrganizationFetcher.setProjectOrganizationReader(new IisProjectOrganizationReader());
+        documentOrganizationFetcher.setDocumentOrganizationCombiner(new DocumentOrganizationCombiner());
+        documentOrganizationFetcher.setDocProjConfidenceLevelThreshold(params.inputDocProjConfidenceThreshold);
+        documentOrganizationFetcher.setSparkContext(sparkContext);
+        documentOrganizationFetcher.setDocProjPath(params.inputAvroDocProjPath);
+        documentOrganizationFetcher.setProjOrgPath(params.inputAvroProjOrgPath);
+        
         DocOrgRelationAffOrgJoiner docOrgRelationAffOrgJoiner = new DocOrgRelationAffOrgJoiner();
+        docOrgRelationAffOrgJoiner.setDocumentOrganizationFetcher(documentOrganizationFetcher);
         
         AffOrgMatchComputer docOrgRelationAffOrgMatchComputer = new AffOrgMatchComputer();
         docOrgRelationAffOrgMatchComputer.setAffOrgMatchVoters(ImmutableList.of(

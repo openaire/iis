@@ -63,22 +63,22 @@ public class IisProjectOrganizationReaderTest {
     // ------------------------ TESTS --------------------------
 
     @Test(expected = NullPointerException.class)
-    public void readProjectOrganization_NULL_CONTEXT() {
+    public void readProjectOrganizations_NULL_CONTEXT() {
         // execute
-        projectOrganizationReader.readProjectOrganization(null, predefinedPath);
+        projectOrganizationReader.readProjectOrganizations(null, predefinedPath);
     }
 
     @Test(expected = NullPointerException.class)
-    public void readProjectOrganization_NULL_PATH() {
+    public void readProjectOrganizations_NULL_PATH() {
         // execute
-        projectOrganizationReader.readProjectOrganization(sparkContext, null);
+        projectOrganizationReader.readProjectOrganizations(sparkContext, null);
     }
 
     @Test
-    public void readProjectOrganization() throws Exception {
+    public void readProjectOrganizations() throws Exception {
         // execute
         JavaRDD<AffMatchProjectOrganization> retProjectOrganization = projectOrganizationReader
-                .readProjectOrganization(sparkContext, predefinedPath);
+                .readProjectOrganizations(sparkContext, predefinedPath);
         // assert
         assertTrue(retProjectOrganization == projectOrganizations);
         verify(avroLoader).loadJavaRDD(sparkContext, predefinedPath, ProjectToOrganization.class);

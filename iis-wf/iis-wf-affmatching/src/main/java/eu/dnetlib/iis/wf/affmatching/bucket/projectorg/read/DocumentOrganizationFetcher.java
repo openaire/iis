@@ -31,16 +31,23 @@ public class DocumentOrganizationFetcher implements Serializable {
     private Float docProjConfidenceLevelThreshold;
     
     
+    private transient JavaSparkContext sparkContext;
+    
+    private String docProjPath;
+    
+    private String projOrgPath;
+    
+    
     //------------------------ LOGIC --------------------------
     
     /**
      * Reads document-project and project-organization relations and combines them into document-organization
      * relations ({@link AffMatchDocumentOrganization}).
      */
-    public JavaRDD<AffMatchDocumentOrganization> readDocumentOrganization(JavaSparkContext sc, String docProjPath, String projOrgPath) {
+    public JavaRDD<AffMatchDocumentOrganization> fetchDocumentOrganizations() {
         
-        JavaRDD<AffMatchDocumentProject> docProj = documentProjectReader.readDocumentProject(sc, docProjPath);
-        JavaRDD<AffMatchProjectOrganization> projOrg = projectOrganizationReader.readProjectOrganization(sc, projOrgPath);
+        JavaRDD<AffMatchDocumentProject> docProj = documentProjectReader.readDocumentProjects(sparkContext, docProjPath);
+        JavaRDD<AffMatchProjectOrganization> projOrg = projectOrganizationReader.readProjectOrganizations(sparkContext, projOrgPath);
         
         JavaRDD<AffMatchDocumentOrganization> docOrg = documentOrganizationCombiner.combine(docProj, projOrg, docProjConfidenceLevelThreshold);
         
@@ -64,5 +71,17 @@ public class DocumentOrganizationFetcher implements Serializable {
 
     public void setDocProjConfidenceLevelThreshold(Float docProjConfidenceLevelThreshold) {
         this.docProjConfidenceLevelThreshold = docProjConfidenceLevelThreshold;
+    }
+
+    public void setSparkContext(JavaSparkContext sparkContext) {
+        this.sparkContext = sparkContext;
+    }
+
+    public void setDocProjPath(String docProjPath) {
+        this.docProjPath = docProjPath;
+    }
+
+    public void setProjOrgPath(String projOrgPath) {
+        this.projOrgPath = projOrgPath;
     }
 }
