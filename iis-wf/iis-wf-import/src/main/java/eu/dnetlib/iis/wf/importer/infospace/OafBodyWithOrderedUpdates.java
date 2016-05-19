@@ -40,7 +40,7 @@ public class OafBodyWithOrderedUpdates {
         return orderedUpdates;
     }
     
-    // ------------------------ LOGIC --------------------------
+    // ------------------------ CONSTRUCTORS --------------------------
     
     /**
      * @param infoSpaceRecords list of {@link QualifiedOafJsonRecord} entities 
@@ -50,13 +50,13 @@ public class OafBodyWithOrderedUpdates {
         // to be instantiated later because in most cases updates are not available
         SortedMap<String, String> updatesOrderedByQualifier = null;
         for (QualifiedOafJsonRecord record : infoSpaceRecords) {
-            if (BODY_QUALIFIER_NAME.equals(record.getQualifier().toString())) {
-                this.body = record.getOafJson().toString();
+            if (BODY_QUALIFIER_NAME.equals(record.getQualifier())) {
+                this.body = record.getOafJson();
             } else {
                 if (updatesOrderedByQualifier==null) {
                     updatesOrderedByQualifier = Maps.newTreeMap();
                 }
-                updatesOrderedByQualifier.put(record.getQualifier().toString(), record.getOafJson().toString());
+                updatesOrderedByQualifier.put(record.getQualifier(), record.getOafJson());
             }
         }
         this.orderedUpdates = updatesOrderedByQualifier!=null?updatesOrderedByQualifier.values():Collections.emptyList();

@@ -104,7 +104,7 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
      * @return true if valid, false otherwise
      */
     public static boolean isAcronymValid(String acronym) {
-        return acronym != null && !acronym.isEmpty()
+        return !StringUtils.isEmpty(acronym)
                 && !ACRONYM_SKIP_LOWERCASED_VALUES.contains(acronym.trim().toLowerCase());
     }
     

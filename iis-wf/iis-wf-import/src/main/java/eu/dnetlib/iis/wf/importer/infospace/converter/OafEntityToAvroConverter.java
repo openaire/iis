@@ -12,7 +12,7 @@ import eu.dnetlib.data.proto.OafProtos.OafEntity;
  * 
  * @author mhorst
  *
- * @param <T>
+ * @param <T> avro record type to be produced
  */
 public interface OafEntityToAvroConverter<T extends SpecificRecord> {
 

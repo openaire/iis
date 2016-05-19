@@ -16,7 +16,7 @@ import eu.dnetlib.iis.wf.importer.infospace.QualifiedOafJsonRecord;
  * 
  * @author mhorst
  *
- * @param <T>
+ * @param <T> avro record type to be produced
  */
 public interface OafEntityWithRelsToAvroConverter<T extends SpecificRecord> {
 

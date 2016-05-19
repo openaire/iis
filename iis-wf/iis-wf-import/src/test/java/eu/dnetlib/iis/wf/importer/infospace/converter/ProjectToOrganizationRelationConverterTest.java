@@ -13,15 +13,15 @@ import eu.dnetlib.data.proto.RelMetadataProtos.RelMetadata;
 import eu.dnetlib.data.proto.RelTypeProtos.RelType;
 import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
-import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectToOrganizationConverter;
+import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectToOrganizationRelationConverter;
 
 /**
  * @author mhorst
  */
 
-public class ProjectToOrganizationConverterTest {
+public class ProjectToOrganizationRelationConverterTest {
 
-    ProjectToOrganizationConverter converter = new ProjectToOrganizationConverter();
+    ProjectToOrganizationRelationConverter converter = new ProjectToOrganizationRelationConverter();
 
 
     // ------------------------ TESTS --------------------------

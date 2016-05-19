@@ -11,7 +11,7 @@ import eu.dnetlib.iis.importer.schemas.DocumentToProject;
  * @author mhorst
  *
  */
-public class DocumentToProjectConverter implements OafRelToAvroConverter<DocumentToProject> {
+public class DocumentToProjectRelationConverter implements OafRelToAvroConverter<DocumentToProject> {
 
     @Override
     public DocumentToProject convert(OafRel oafRel) {

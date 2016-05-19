@@ -11,7 +11,7 @@ import eu.dnetlib.iis.wf.importer.infospace.InfoSpaceRecord;
 import eu.dnetlib.iis.wf.importer.infospace.QualifiedOafJsonRecord;
 
 /**
- * {@link InfoSpaceRecord}e related utility class.
+ * {@link InfoSpaceRecord} related utility class.
  * @author mhorst
  *
  */
@@ -27,11 +27,8 @@ public class InfoSpaceRecordUtils {
         Preconditions.checkNotNull(records);
         Map<String, List<QualifiedOafJsonRecord>> oafRecordsByFamilyMap = Maps.newHashMap();
         for (InfoSpaceRecord record : records) {
-            String columnFamily = record.getColumnFamily().toString();
-            List<QualifiedOafJsonRecord> storedRecords = oafRecordsByFamilyMap.get(columnFamily);
-            if (storedRecords==null) {
-                oafRecordsByFamilyMap.put(columnFamily, storedRecords = Lists.newArrayList());
-            }
+            List<QualifiedOafJsonRecord> storedRecords = 
+                    oafRecordsByFamilyMap.computeIfAbsent(record.getColumnFamily().toString(), k -> Lists.newArrayList());
             storedRecords.add(new QualifiedOafJsonRecord(record.getQualifier().toString(), record.getOafJson().toString()));
         }
         return oafRecordsByFamilyMap;

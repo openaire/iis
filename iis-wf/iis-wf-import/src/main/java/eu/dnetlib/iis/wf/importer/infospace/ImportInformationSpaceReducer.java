@@ -31,6 +31,7 @@ import eu.dnetlib.data.proto.RelTypeProtos.RelType;
 import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
 import eu.dnetlib.data.proto.ResultProjectProtos.ResultProject.Outcome;
 import eu.dnetlib.data.proto.TypeProtos.Type;
+import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
 import eu.dnetlib.iis.common.utils.ByteArrayUtils;
@@ -41,18 +42,18 @@ import eu.dnetlib.iis.wf.importer.infospace.approver.DataInfoBasedApprover;
 import eu.dnetlib.iis.wf.importer.infospace.approver.ResultApprover;
 import eu.dnetlib.iis.wf.importer.infospace.converter.DeduplicationMappingConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.DocumentMetadataConverter;
-import eu.dnetlib.iis.wf.importer.infospace.converter.DocumentToProjectConverter;
+import eu.dnetlib.iis.wf.importer.infospace.converter.DocumentToProjectRelationConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.InfoSpaceRecordUtils;
 import eu.dnetlib.iis.wf.importer.infospace.converter.OafEntityToAvroConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.OafRelToAvroConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.OrganizationConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.PersonConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectConverter;
-import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectToOrganizationConverter;
+import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectToOrganizationRelationConverter;
 
 /**
  * InformationSpace reducer phase importing {@link InfoSpaceRecord}s grouped by row identifier.
- * Emits entities and relations as avro records written to mulitple outputs. 
+ * Emits entities and relations as avro records written to multiple outputs. 
  * Each output is associated with individual entity or relation type.
  * 
  * @author mhorst
@@ -110,7 +111,7 @@ public class ImportInformationSpaceReducer
     
     private DocumentMetadataConverter docMetaConverter;
 
-    private DocumentToProjectConverter docProjectConverter;
+    private DocumentToProjectRelationConverter docProjectConverter;
 
     private DeduplicationMappingConverter deduplicationMappingConverter;
 
@@ -120,18 +121,18 @@ public class ImportInformationSpaceReducer
 
     private OrganizationConverter organizationConverter;
 
-    private ProjectToOrganizationConverter projectOrganizationConverter;
+    private ProjectToOrganizationRelationConverter projectOrganizationConverter;
 
     // others
     
-    private String encoding = HBaseConstants.STATIC_FIELDS_ENCODING_UTF8;
+    private String encoding;
     
-    private MultipleOutputs mos;
+    private MultipleOutputs outputs;
     
     private ResultApprover resultApprover;
     
     /**
-     * Flag indicating {@link Oaf} retrieved from body column family should be merged with all update collumns. 
+     * Flag indicating {@link Oaf} retrieved from body column family should be merged with all update columns. 
      * Set to false by default.
      */
     private boolean mergeBodyWithUpdates;
@@ -142,11 +143,8 @@ public class ImportInformationSpaceReducer
     public void setup(Context context) {
         setOutputDirs(context);
 
-        if (context.getConfiguration().get(HBASE_ENCODING) != null) {
-            encoding = context.getConfiguration().get(HBASE_ENCODING);
-        }
-        mergeBodyWithUpdates = context.getConfiguration().get(IMPORT_MERGE_BODY_WITH_UPDATES) != null
-                ? Boolean.valueOf(context.getConfiguration().get(IMPORT_MERGE_BODY_WITH_UPDATES)) : false;
+        encoding = context.getConfiguration().get(HBASE_ENCODING, HBaseConstants.STATIC_FIELDS_ENCODING_UTF8);
+        mergeBodyWithUpdates = context.getConfiguration().getBoolean(IMPORT_MERGE_BODY_WITH_UPDATES, false);
 
         DataInfoBasedApprover dataInfoBasedApprover = buildApprover(context);
         this.resultApprover = dataInfoBasedApprover;
@@ -154,11 +152,11 @@ public class ImportInformationSpaceReducer
         // initializing converters
         docMetaConverter = new DocumentMetadataConverter(this.resultApprover, dataInfoBasedApprover);
         deduplicationMappingConverter = new DeduplicationMappingConverter();
-        docProjectConverter = new DocumentToProjectConverter();
+        docProjectConverter = new DocumentToProjectRelationConverter();
         personConverter = new PersonConverter();
         projectConverter = new ProjectConverter();
         organizationConverter = new OrganizationConverter();
-        projectOrganizationConverter = new ProjectToOrganizationConverter();
+        projectOrganizationConverter = new ProjectToOrganizationRelationConverter();
     }
     
     @Override
@@ -167,7 +165,7 @@ public class ImportInformationSpaceReducer
         try {
             super.cleanup(context);
         } finally {
-            mos.close();
+            outputs.close();
         }
     }
     
@@ -197,21 +195,21 @@ public class ImportInformationSpaceReducer
      * @param context hadoop context providing directories output names
      */
     private void setOutputDirs(Context context) {
-        Preconditions.checkNotNull(outputNameDocumentMeta = context.getConfiguration().get(OUTPUT_NAME_DOCUMENT_META),
+        outputNameDocumentMeta = Preconditions.checkNotNull(context.getConfiguration().get(OUTPUT_NAME_DOCUMENT_META),
                 "document metadata output name not provided!");
-        Preconditions.checkNotNull(outputNameDocumentProject = context.getConfiguration().get(OUTPUT_NAME_DOCUMENT_PROJECT),
+        outputNameDocumentProject = Preconditions.checkNotNull(context.getConfiguration().get(OUTPUT_NAME_DOCUMENT_PROJECT),
                 "document project relation output name not provided!");
-        Preconditions.checkNotNull(outputNameProject = context.getConfiguration().get(OUTPUT_NAME_PROJECT),
+        outputNameProject = Preconditions.checkNotNull(context.getConfiguration().get(OUTPUT_NAME_PROJECT),
                 "project output name not provided!");
-        Preconditions.checkNotNull(outputNamePerson = context.getConfiguration().get(OUTPUT_NAME_PERSON),
+        outputNamePerson = Preconditions.checkNotNull(context.getConfiguration().get(OUTPUT_NAME_PERSON),
                 "person output name not provided!");
-        Preconditions.checkNotNull(outputNameDedupMapping = context.getConfiguration().get(OUTPUT_NAME_DEDUP_MAPPING),
+        outputNameDedupMapping = Preconditions.checkNotNull(context.getConfiguration().get(OUTPUT_NAME_DEDUP_MAPPING),
                 "deduplication mapping output name not provided!");
-        Preconditions.checkNotNull(outputNameOrganization = context.getConfiguration().get(OUTPUT_NAME_ORGANIZATION),
+        outputNameOrganization = Preconditions.checkNotNull(context.getConfiguration().get(OUTPUT_NAME_ORGANIZATION),
                 "organization output name not provided!");
-        Preconditions.checkNotNull(outputNameProjectOrganization = context.getConfiguration().get(OUTPUT_NAME_PROJECT_ORGANIZATION),
+        outputNameProjectOrganization = Preconditions.checkNotNull(context.getConfiguration().get(OUTPUT_NAME_PROJECT_ORGANIZATION),
                 "project to organization output name not provided!");
-        mos = new MultipleOutputs(context);
+        outputs = new MultipleOutputs(context);
     }
     
     /**
@@ -219,18 +217,18 @@ public class ImportInformationSpaceReducer
      */
     private DataInfoBasedApprover buildApprover(Context context) {
         boolean skipDeletedByInference = true;
-        String skipDeletedByInferenceParamValue = ImportInformationSpaceUtils.getParamValue(IMPORT_SKIP_DELETED_BY_INFERENCE, context);
+        String skipDeletedByInferenceParamValue = WorkflowRuntimeParameters.getParamValue(IMPORT_SKIP_DELETED_BY_INFERENCE, context);
         if (skipDeletedByInferenceParamValue != null) {
             skipDeletedByInference = Boolean.valueOf(skipDeletedByInferenceParamValue);
         }
         
         Float trustLevelThreshold = null;
-        String trustLevelThresholdParamValue = ImportInformationSpaceUtils.getParamValue(IMPORT_TRUST_LEVEL_THRESHOLD, context);
+        String trustLevelThresholdParamValue = WorkflowRuntimeParameters.getParamValue(IMPORT_TRUST_LEVEL_THRESHOLD, context);
         if (trustLevelThresholdParamValue != null) {
             trustLevelThreshold = Float.valueOf(trustLevelThresholdParamValue);
         }
         
-        return new DataInfoBasedApprover(ImportInformationSpaceUtils.getParamValue(IMPORT_INFERENCE_PROVENANCE_BLACKLIST, context), 
+        return new DataInfoBasedApprover(WorkflowRuntimeParameters.getParamValue(IMPORT_INFERENCE_PROVENANCE_BLACKLIST, context), 
                 skipDeletedByInference, trustLevelThreshold);
     }
     
@@ -248,7 +246,7 @@ public class ImportInformationSpaceReducer
         if (resultApprover.approve(oafObj)) {
             DocumentMetadata docMeta = docMetaConverter.convert(oafObj.getEntity(), mappedRecords);
             if (docMeta!=null) {
-                mos.write(outputNameDocumentMeta, new AvroKey<DocumentMetadata>(docMeta));    
+                outputs.write(outputNameDocumentMeta, new AvroKey<DocumentMetadata>(docMeta));    
             }
             // hadling project relations
             handleRelation(mappedRecords.get(resProjColumnFamily), docProjectConverter, outputNameDocumentProject);
@@ -268,7 +266,7 @@ public class ImportInformationSpaceReducer
                 if (resultApprover.approve(relOaf)) {
                     T avroRelation = converter.convert(relOaf.getRel());
                     if (avroRelation!=null) {
-                        mos.write(outputName, new AvroKey<T>(avroRelation));    
+                        outputs.write(outputName, new AvroKey<T>(avroRelation));    
                     }
                 }
             }
@@ -277,7 +275,7 @@ public class ImportInformationSpaceReducer
     
     /**
      * Handles entity by converting it to avro format and writing to output.
-     * Each entity may constit of many parts: body with updates.
+     * Each entity may consist of many parts: body with updates.
      * Optional relations are expected as the last parameters.
      */
     private <T extends SpecificRecord> void handleEntity(final byte[] idBytes, 
@@ -291,7 +289,7 @@ public class ImportInformationSpaceReducer
         if (resultApprover.approve(oafObj)) {
             T avroEntity = converter.convert(oafObj.getEntity());
             if (avroEntity != null) {
-                mos.write(outputName, new AvroKey<T>(avroEntity));
+                outputs.write(outputName, new AvroKey<T>(avroEntity));
             }
             // handing relations
             if (relationConversionDTO!=null) {

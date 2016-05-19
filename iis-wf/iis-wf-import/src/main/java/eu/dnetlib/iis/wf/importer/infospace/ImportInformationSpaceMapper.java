@@ -16,6 +16,8 @@ import org.apache.hadoop.mapreduce.Mapper;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Sets;
 
+import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
+
 /**
  * Hbase dump importer mapper. Reads records from sequence file and groups them by row identifier.
  * 
@@ -36,7 +38,7 @@ public class ImportInformationSpaceMapper extends Mapper<Text, Text, ImmutableBy
     protected void setup(final Context context) throws IOException, InterruptedException {
         super.setup(context);
         ibw = new ImmutableBytesWritable();
-        String approvedColumnFamiliesCSV = ImportInformationSpaceUtils.getParamValue(IMPORT_APPROVED_COLUMNFAMILIES_CSV, context);
+        String approvedColumnFamiliesCSV = WorkflowRuntimeParameters.getParamValue(IMPORT_APPROVED_COLUMNFAMILIES_CSV, context);
         if (StringUtils.isNotBlank(approvedColumnFamiliesCSV)) {
             approvedColumnFamilies = Sets.newHashSet(Splitter.on(DEFAULT_CSV_DELIMITER).trimResults().split(approvedColumnFamiliesCSV));
         }

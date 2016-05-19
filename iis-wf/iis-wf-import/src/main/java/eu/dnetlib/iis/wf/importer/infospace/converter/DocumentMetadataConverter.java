@@ -68,14 +68,13 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
     // ------------------------ CONSTRUCTORS --------------------------
     
     /**
-     * Default constructor.
      * 
-     * @param resultApprover
-     * @param fieldApprover
+     * @param resultApprover approves {@link OafRel} objects 
+     * @param fieldApprover approves fields
      */
     public DocumentMetadataConverter(ResultApprover resultApprover, FieldApprover fieldApprover) {
-        Preconditions.checkNotNull(this.resultApprover = resultApprover);
-        Preconditions.checkNotNull(this.fieldApprover = fieldApprover);
+        this.resultApprover = Preconditions.checkNotNull(resultApprover);
+        this.fieldApprover = Preconditions.checkNotNull(fieldApprover);
         this.personResultColumnFamily = OafRelDecoder.getCFQ(RelType.personResult, SubRelType.authorship, Authorship.RelName.hasAuthor.toString());
     }
 
@@ -139,6 +138,7 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
                 for (StructuredProperty titleProp : titleList) {
                     if (fieldApprover.approve(titleProp.getDataInfo())) {
                         metaBuilder.setTitle(titleProp.getValue());
+                        break;
                     }
                 }
             }

@@ -11,7 +11,7 @@ import eu.dnetlib.data.proto.OafProtos.OafRel;
  * 
  * @author mhorst
  *
- * @param <T>
+ * @param <T> avro record type to be produced
  */
 public interface OafRelToAvroConverter<T extends SpecificRecord> {
 

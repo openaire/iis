@@ -38,12 +38,4 @@ public class ComplexApprover implements ResultApprover {
         return true;
     }
 
-    /**
-     * Appends new approver to the list.
-     * 
-     */
-    public void appendApprover(ResultApprover approver) {
-        this.approvers.add(approver);
-    }
-
 }

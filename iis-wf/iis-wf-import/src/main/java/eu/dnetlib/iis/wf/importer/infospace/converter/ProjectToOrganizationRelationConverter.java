@@ -11,7 +11,7 @@ import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
  * @author mhorst
  *
  */
-public class ProjectToOrganizationConverter implements OafRelToAvroConverter<ProjectToOrganization> {
+public class ProjectToOrganizationRelationConverter implements OafRelToAvroConverter<ProjectToOrganization> {
 
     /**
      * Builds {@link ProjectToOrganization} object from given {@link OafRel} relation.
