@@ -52,9 +52,9 @@ public class AffiliationMainSectionBucketHasherTest {
         
         // given
         
-        OrganizationSection section1 = new OrganizationSection(OrgSectionType.UNKNOWN, new String[]{"unknown1"}, 0);
+        OrganizationSection section1 = new OrganizationSection(OrgSectionType.UNKNOWN, new String[]{"unknown1"}, -1);
         OrganizationSection section2 = new OrganizationSection(OrgSectionType.UNIVERSITY, new String[]{"university2"}, 0);
-        OrganizationSection section3 = new OrganizationSection(OrgSectionType.UNKNOWN, new String[]{"unknown3"}, 0);
+        OrganizationSection section3 = new OrganizationSection(OrgSectionType.UNKNOWN, new String[]{"unknown3"}, -1);
         OrganizationSection section4 = new OrganizationSection(OrgSectionType.UNIVERSITY, new String[]{"university4"}, 0);
         
         String section2_hash = "section2_hash";
@@ -81,9 +81,9 @@ public class AffiliationMainSectionBucketHasherTest {
         
         // given
         
-        OrganizationSection section1 = new OrganizationSection(OrgSectionType.UNKNOWN, new String[]{"unknown1"}, 0);
-        OrganizationSection section2 = new OrganizationSection(OrgSectionType.UNKNOWN, new String[]{"unknown2"}, 0);
-        OrganizationSection section3 = new OrganizationSection(OrgSectionType.UNKNOWN, new String[]{"unknown3"}, 0);
+        OrganizationSection section1 = new OrganizationSection(OrgSectionType.UNKNOWN, new String[]{"unknown1"}, -1);
+        OrganizationSection section2 = new OrganizationSection(OrgSectionType.UNKNOWN, new String[]{"unknown2"}, -1);
+        OrganizationSection section3 = new OrganizationSection(OrgSectionType.UNKNOWN, new String[]{"unknown3"}, -1);
         
         String section3_hash = "section3_hash";
         
