@@ -17,6 +17,6 @@ public interface ProjectOrganizationReader {
      * Reads project to organization relations that are in <code>inputPath</code>. The relations that are in <code>inputPath</code>
      * can be in any format. The implementation of the reader, however, must return them as rdd of {@link AffMatchProjectOrganization}.
      */
-    public JavaRDD<AffMatchProjectOrganization> readProjectOrganization(JavaSparkContext sc, String inputPath);
+    public JavaRDD<AffMatchProjectOrganization> readProjectOrganizations(JavaSparkContext sc, String inputPath);
 
 }

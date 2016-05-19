@@ -31,7 +31,7 @@ public class IisProjectOrganizationReader implements Serializable, ProjectOrgani
      * Reads {@link Organization}s written as avro files under <code>inputPath</code>
      */
     @Override
-    public JavaRDD<AffMatchProjectOrganization> readProjectOrganization(JavaSparkContext sc, String inputPath) {
+    public JavaRDD<AffMatchProjectOrganization> readProjectOrganizations(JavaSparkContext sc, String inputPath) {
         return avroLoader.loadJavaRDD(sc, inputPath, ProjectToOrganization.class)
                 .map(srcProjOrg -> converter.convert(srcProjOrg));
     }
