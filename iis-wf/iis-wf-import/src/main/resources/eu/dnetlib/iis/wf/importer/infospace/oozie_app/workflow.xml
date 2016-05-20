@@ -1,0 +1,308 @@
+<?xml version="1.0"?>
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="import_infospace">
+    <parameters>
+        <property>
+            <name>input</name>
+            <description>Source hdfs directory holding hbase dump.
+                The dump has a custom format (as exported from Info Space) and is enclosed in a sequence file.</description>
+        </property>
+        <property>
+            <name>inference_provenance_blacklist</name>
+            <value>iis</value>
+            <description>list of blacklisted inference provenance which sould not be taken into account by importer, skipped when set to $UNDEFINED$</description>
+        </property>
+        <property>
+            <name>skip_deleted_by_inference</name>
+            <value>true</value>
+            <description>flag indicating records deleted by inference should be skipped</description>
+        </property>
+        <property>
+            <name>trust_level_threshold</name>
+            <value>$UNDEFINED$</value>
+            <description>trust level threshold represented as float value, ignored when set to $UNDEFINED$ value</description>
+        </property>
+        <property>
+            <name>merge_body_with_updates</name>
+            <value>false</value>
+            <description>flag indicating Oaf objects strored in body qualifier should be merged with Oaf objects stored as updates</description>
+        </property>
+        <property>
+            <name>hbase_table_encoding</name>
+            <value>UTF-8</value>
+            <description>hbase table dump encoding</description>
+        </property>
+        <property>
+            <name>output</name>
+            <description>output root directory</description>
+        </property>
+        <!-- output subdirectory names -->
+        <property>
+            <name>output_name_document_meta</name>
+            <value>docmeta</value>
+            <description>document metadata output name</description>
+        </property>
+        <property>
+            <name>output_name_document_project</name>
+            <value>docproject</value>
+            <description>document-project relation output name</description>
+        </property>
+        <property>
+            <name>output_name_project</name>
+            <value>project</value>
+            <description>project output name</description>
+        </property>
+        <property>
+            <name>output_name_person</name>
+            <value>person</value>
+            <description>person output name</description>
+        </property>
+        <property>
+            <name>output_name_dedup_mapping</name>
+            <value>dedupmapping</value>
+            <description>deduplication mapping output name</description>
+        </property>
+        <property>
+            <name>output_name_organization</name>
+            <value>organization</value>
+            <description>organization output name</description>
+        </property>
+        <property>
+            <name>output_name_project_organization</name>
+            <value>projectorg</value>
+            <description>project-organization output name</description>
+        </property>
+    </parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapred.mapper.new-api</name>
+                <value>true</value>
+            </property>
+            <property>
+                <name>mapred.reducer.new-api</name>
+                <value>true</value>
+            </property>
+            <property>
+                <name>mapred.job.queue.name</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+    <start to="generate-schema" />
+    
+    <action name="generate-schema">
+        <java>
+            <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
+            <arg>eu.dnetlib.iis.importer.schemas.DocumentMetadata</arg>
+            <arg>eu.dnetlib.iis.importer.schemas.DocumentToProject</arg>
+            <arg>eu.dnetlib.iis.importer.schemas.ProjectToOrganization</arg>
+            <arg>eu.dnetlib.iis.common.schemas.IdentifierMapping</arg>
+            <arg>eu.dnetlib.iis.importer.schemas.Person</arg>
+            <arg>eu.dnetlib.iis.importer.schemas.Project</arg>
+            <arg>eu.dnetlib.iis.importer.schemas.Organization</arg>
+            <capture-output />
+        </java>
+        <ok to="import" />
+        <error to="fail" />
+    </action>
+
+    <action name="import">
+        <map-reduce>
+            <prepare>
+                <delete path="${nameNode}${output}" />
+            </prepare>
+            <configuration>
+                <property>
+                    <name>mapreduce.job.reduces</name>
+                    <value>30</value>
+                </property>
+                <property>
+                    <name>mapreduce.map.class</name>
+                    <value>eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceMapper</value>
+                </property>
+                <property>
+                    <name>mapreduce.reduce.class</name>
+                    <value>eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceReducer</value>
+                </property>
+                <!-- input configuration based on hbasedump importer-->
+                <property>
+                    <name>mapred.input.dir</name>
+                    <value>${input}</value>
+                </property>
+                <property>
+                    <name>mapreduce.inputformat.class</name>
+                    <value>org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat</value>
+                </property>
+                <property>
+                    <name>mapred.mapoutput.key.class</name>
+                    <value>org.apache.hadoop.hbase.io.ImmutableBytesWritable</value>
+                </property>
+                <property>
+                    <name>mapred.mapoutput.value.class</name>
+                    <value>eu.dnetlib.iis.wf.importer.infospace.InfoSpaceRecord</value>
+                </property>
+                <!-- supported since hadoop 2.3.0 -->
+                <property>
+                    <name>mapreduce.map.speculative</name>
+                    <value>false</value>
+                </property>
+                <!-- output configuration based on mapred_import importer-->
+                <property>
+                    <name>mapred.output.key.class</name>
+                    <value>org.apache.avro.mapred.AvroKey</value>
+                </property>
+                <property>
+                    <name>mapred.output.value.class</name>
+                    <value>org.apache.avro.mapred.AvroValue</value>
+                </property>
+                <property>
+                    <name>io.serializations</name>
+                    <value>org.apache.hadoop.io.serializer.WritableSerialization,org.apache.hadoop.io.serializer.avro.AvroSpecificSerialization,org.apache.hadoop.io.serializer.avro.AvroReflectSerialization,org.apache.avro.hadoop.io.AvroSerialization
+                    </value>
+                </property>
+                <property>
+                    <name>rpc.engine.org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolPB</name>
+                    <value>org.apache.hadoop.ipc.ProtobufRpcEngine</value>
+                </property>
+                <property>
+                    <name>mapred.output.dir</name>
+                    <value>${output}</value>
+                </property>
+                <!-- # Job-specific options -->
+                <property>
+                    <name>import.approved.columnfamilies.csv</name>
+                    <value>person,project,organization,result,resultProject_outcome_isProducedBy,personResult_authorship_hasAuthor,resultResult_dedup_merges,projectOrganization_participation_hasParticipant</value>
+                </property>
+                <property>
+                    <name>import.inference.provenance.blacklist</name>
+                    <value>${inference_provenance_blacklist}</value>
+                </property>
+                <property>
+                    <name>import.skip.deleted.by.inference</name>
+                    <value>${skip_deleted_by_inference}</value>
+                </property>
+                <property>
+                    <name>import.trust.level.threshold</name>
+                    <value>${trust_level_threshold}</value>
+                </property>
+                <property>
+                    <name>import.merge.body.with.updates</name>
+                    <value>${merge_body_with_updates}</value>
+                </property>
+                <property>
+                    <name>hbase.table.encoding</name>
+                    <value>${hbase_table_encoding}</value>
+                </property>
+                <!-- subdirectory names -->
+                <property>
+                    <name>output.name.document_meta</name>
+                    <value>${output_name_document_meta}</value>
+                </property>
+                <property>
+                    <name>output.name.document_project</name>
+                    <value>${output_name_document_project}</value>
+                </property>
+                <property>
+                    <name>output.name.project_organization</name>
+                    <value>${output_name_project_organization}</value>
+                </property>
+                <property>
+                    <name>output.name.project</name>
+                    <value>${output_name_project}</value>
+                </property>
+                <property>
+                    <name>output.name.person</name>
+                    <value>${output_name_person}</value>
+                </property>
+                <property>
+                    <name>output.name.dedup_mapping</name>
+                    <value>${output_name_dedup_mapping}</value>
+                </property>
+                <property>
+                    <name>output.name.organization</name>
+                    <value>${output_name_organization}</value>
+                </property>
+                <!-- ## Names of all output ports -->
+                <property>
+                    <name>avro.mapreduce.multipleoutputs</name>
+                    <value>${output_name_document_meta} ${output_name_document_project} ${output_name_dedup_mapping} ${output_name_person} ${output_name_project} ${output_name_organization} ${output_name_project_organization}</value>
+                </property>
+                <!-- ## Output classes for all output ports -->
+                <property>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_document_meta}.format</name>
+                    <value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
+                </property>
+                <property>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_document_project}.format</name>
+                    <value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
+                </property>
+                <property>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_project_organization}.format</name>
+                    <value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
+                </property>
+                <property>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_dedup_mapping}.format</name>
+                    <value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
+                </property>
+                <property>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_person}.format</name>
+                    <value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
+                </property>
+                <property>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_project}.format</name>
+                    <value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
+                </property>
+                <property>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_organization}.format</name>
+                    <value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
+                </property>
+                <!-- ### Schema of multiple output ports. -->
+                <property>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_document_meta}.keyschema</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.DocumentMetadata']}</value>
+                </property>
+                <property>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_document_project}.keyschema</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.DocumentToProject']}</value>
+                </property>
+                <property>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_project_organization}.keyschema</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.ProjectToOrganization']}</value>
+                </property>
+                <property>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_dedup_mapping}.keyschema</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.common.schemas.IdentifierMapping']}</value>
+                </property>
+                <property>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_person}.keyschema</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.Person']}</value>
+                </property>
+                <property>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_project}.keyschema</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.Project']}</value>
+                </property>
+                <property>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_organization}.keyschema</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.Organization']}</value>
+                </property>
+            </configuration>
+        </map-reduce>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+    <end name="end" />
+</workflow-app>

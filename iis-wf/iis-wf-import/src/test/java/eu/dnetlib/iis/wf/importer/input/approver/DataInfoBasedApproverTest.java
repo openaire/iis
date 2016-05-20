@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import eu.dnetlib.data.proto.FieldTypeProtos.DataInfo;
 import eu.dnetlib.data.proto.FieldTypeProtos.Qualifier;
-import eu.dnetlib.iis.wf.importer.input.approver.DataInfoBasedApprover;
+import eu.dnetlib.iis.wf.importer.infospace.approver.DataInfoBasedApprover;
 
 /**
  * {@link DataInfoBasedApprover} test class.
