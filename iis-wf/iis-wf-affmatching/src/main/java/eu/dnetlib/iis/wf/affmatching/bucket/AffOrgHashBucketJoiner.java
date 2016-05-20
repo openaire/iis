@@ -20,9 +20,9 @@ public class AffOrgHashBucketJoiner implements AffOrgJoiner {
     private static final long serialVersionUID = 1L;
     
     
-    private BucketHasher<AffMatchAffiliation> affiliationBucketHasher = new AffiliationOrgNameFirstLettersBucketHasher();
+    private BucketHasher<AffMatchAffiliation> affiliationBucketHasher = new AffiliationOrgNameBucketHasher();
     
-    private BucketHasher<AffMatchOrganization> organizationBucketHasher = new OrganizationNameFirstLettersBucketHasher();
+    private BucketHasher<AffMatchOrganization> organizationBucketHasher = new OrganizationNameBucketHasher();
     
     
     

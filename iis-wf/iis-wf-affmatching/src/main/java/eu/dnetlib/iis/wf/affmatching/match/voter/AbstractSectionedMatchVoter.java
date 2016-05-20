@@ -4,6 +4,7 @@ import java.util.List;
 
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSectionsSplitter;
 
 /**
  * Abstract match voter that splits organization name and affiliation name into sections.
@@ -16,14 +17,15 @@ public abstract class AbstractSectionedMatchVoter implements AffOrgMatchVoter {
     
     private static final long serialVersionUID = 1L;
     
+    private OrganizationSectionsSplitter sectionsSplitter = new OrganizationSectionsSplitter();
     
     //------------------------ LOGIC --------------------------
     
     @Override
     public boolean voteMatch(AffMatchAffiliation affiliation, AffMatchOrganization organization) {
         
-        List<String> affSections = OrganizationSectionsSplitter.splitToSections(getAffiliationName(affiliation));
-        List<String> orgSections = OrganizationSectionsSplitter.splitToSections(getOrganizationName(organization));
+        List<String> affSections = sectionsSplitter.splitToSections(getAffiliationName(affiliation));
+        List<String> orgSections = sectionsSplitter.splitToSections(getOrganizationName(organization));
         
         if (affSections.isEmpty() || orgSections.isEmpty()) {
             return false;

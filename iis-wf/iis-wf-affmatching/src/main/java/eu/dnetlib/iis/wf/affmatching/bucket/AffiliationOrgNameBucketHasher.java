@@ -12,12 +12,12 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
  * 
  * @author Łukasz Dumiszewski
 */
-public class AffiliationOrgNameFirstLettersBucketHasher implements BucketHasher<AffMatchAffiliation> {
+public class AffiliationOrgNameBucketHasher implements BucketHasher<AffMatchAffiliation> {
 
     
     private static final long serialVersionUID = 1L;
 
-    private StringPartFirstLettersHasher stringPartFirstLettersHasher = new StringPartFirstLettersHasher();
+    private BucketHasher<String> stringHasher = new StringPartFirstLettersHasher();
     
     
     
@@ -25,7 +25,7 @@ public class AffiliationOrgNameFirstLettersBucketHasher implements BucketHasher<
     
     /**
      * Returns a hash of the passed affiliation. The hash is generated from {@link AffMatchAffiliation#getOrganizationName()}.<br/>
-     * The method uses {@link StringPartFirstLettersHasher#hash(String, int, int)} internally.
+     * The method uses {@link BucketHasher#hash(String)} internally.
      */
     @Override
     public String hash(AffMatchAffiliation affiliation) {
@@ -33,7 +33,7 @@ public class AffiliationOrgNameFirstLettersBucketHasher implements BucketHasher<
         Preconditions.checkNotNull(affiliation);
         Preconditions.checkArgument(StringUtils.isNotBlank(affiliation.getOrganizationName()));
         
-        return stringPartFirstLettersHasher.hash(affiliation.getOrganizationName());
+        return stringHasher.hash(affiliation.getOrganizationName());
     }
 
 
@@ -42,8 +42,8 @@ public class AffiliationOrgNameFirstLettersBucketHasher implements BucketHasher<
     /**
      * Hasher that will be used in {@link #hash(AffMatchAffiliation)} to generate hash from the name of the organization. 
      */
-    public void setStringPartFirstLettersHasher(StringPartFirstLettersHasher stringPartFirstLettersHasher) {
-        this.stringPartFirstLettersHasher = stringPartFirstLettersHasher;
+    public void setStringHasher(BucketHasher<String> stringHasher) {
+        this.stringHasher = stringHasher;
     }
 
         
