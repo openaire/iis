@@ -1,6 +1,5 @@
 package eu.dnetlib.iis.wf.importer.infospace;
 
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.HBASE_ENCODING;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_INFERENCE_PROVENANCE_BLACKLIST;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_MERGE_BODY_WITH_UPDATES;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_SKIP_DELETED_BY_INFERENCE;
@@ -14,8 +13,8 @@ import java.util.Map;
 import org.apache.avro.mapred.AvroKey;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.log4j.Logger;
 
@@ -34,7 +33,6 @@ import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
-import eu.dnetlib.iis.common.utils.ByteArrayUtils;
 import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.wf.importer.OafHelper;
@@ -60,7 +58,7 @@ import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectToOrganizationRelat
  *
  */
 public class ImportInformationSpaceReducer
-        extends Reducer<ImmutableBytesWritable, InfoSpaceRecord, NullWritable, NullWritable> {
+        extends Reducer<Text, InfoSpaceRecord, NullWritable, NullWritable> {
 
     // context property names
     
@@ -125,8 +123,6 @@ public class ImportInformationSpaceReducer
 
     // others
     
-    private String encoding;
-    
     private MultipleOutputs outputs;
     
     private ResultApprover resultApprover;
@@ -143,7 +139,6 @@ public class ImportInformationSpaceReducer
     public void setup(Context context) {
         setOutputDirs(context);
 
-        encoding = context.getConfiguration().get(HBASE_ENCODING, HBaseConstants.STATIC_FIELDS_ENCODING_UTF8);
         mergeBodyWithUpdates = context.getConfiguration().getBoolean(IMPORT_MERGE_BODY_WITH_UPDATES, false);
 
         DataInfoBasedApprover dataInfoBasedApprover = buildApprover(context);
@@ -170,21 +165,21 @@ public class ImportInformationSpaceReducer
     }
     
     @Override
-    public void reduce(ImmutableBytesWritable key, Iterable<InfoSpaceRecord> values, Context context)
+    public void reduce(Text key, Iterable<InfoSpaceRecord> values, Context context)
             throws IOException, InterruptedException {
-        byte[] idBytes = key.get();
+        String id = key.toString();
         Map<String, List<QualifiedOafJsonRecord>> mappedRecords = InfoSpaceRecordUtils.mapByColumnFamily(values);
         
-        if (ByteArrayUtils.startsWith(idBytes, HBaseConstants.ROW_PREFIX_RESULT)) {
-            handleResult(idBytes, mappedRecords);
-        } else if (ByteArrayUtils.startsWith(idBytes, HBaseConstants.ROW_PREFIX_PERSON)) {
-            handleEntity(idBytes, mappedRecords.get(Type.person.name()), personConverter, outputNamePerson);
-        } else if (ByteArrayUtils.startsWith(idBytes, HBaseConstants.ROW_PREFIX_PROJECT)) {
-            handleEntity(idBytes, mappedRecords.get(Type.project.name()), projectConverter, outputNameProject,
+        if (id.startsWith(HBaseConstants.ROW_PREFIX_RESULT)) {
+            handleResult(id, mappedRecords);
+        } else if (id.startsWith(HBaseConstants.ROW_PREFIX_PERSON)) {
+            handleEntity(id, mappedRecords.get(Type.person.name()), personConverter, outputNamePerson);
+        } else if (id.startsWith(HBaseConstants.ROW_PREFIX_PROJECT)) {
+            handleEntity(id, mappedRecords.get(Type.project.name()), projectConverter, outputNameProject,
                     new RelationConversionDTO<ProjectToOrganization>(mappedRecords.get(projOrgColumnFamily),
                             projectOrganizationConverter, outputNameProjectOrganization));
-        } else if (ByteArrayUtils.startsWith(idBytes, HBaseConstants.ROW_PREFIX_ORGANIZATION)) {
-            handleEntity(idBytes, mappedRecords.get(Type.organization.name()), organizationConverter, outputNameOrganization);
+        } else if (id.startsWith(HBaseConstants.ROW_PREFIX_ORGANIZATION)) {
+            handleEntity(id, mappedRecords.get(Type.organization.name()), organizationConverter, outputNameOrganization);
         }
     }
     
@@ -236,11 +231,11 @@ public class ImportInformationSpaceReducer
      * Handles result entity with relations.
      * 
      */
-    private void handleResult(final byte[] idBytes, Map<String, List<QualifiedOafJsonRecord>> mappedRecords)
+    private void handleResult(final String id, Map<String, List<QualifiedOafJsonRecord>> mappedRecords)
             throws InterruptedException, IOException {
         Oaf oafObj = buildOafObject(mappedRecords.get(Type.result.name()));
         if (oafObj == null) {
-            log.error("missing 'body' qualifier value for record " + new String(idBytes, encoding));
+            log.error("missing 'body' qualifier value for record " + id);
             return;
         }
         if (resultApprover.approve(oafObj)) {
@@ -278,12 +273,12 @@ public class ImportInformationSpaceReducer
      * Each entity may consist of many parts: body with updates.
      * Optional relations are expected as the last parameters.
      */
-    private <T extends SpecificRecord> void handleEntity(final byte[] idBytes, 
+    private <T extends SpecificRecord> void handleEntity(final String id, 
             List<QualifiedOafJsonRecord> bodyParts, OafEntityToAvroConverter<T> converter, String outputName,
             RelationConversionDTO<?>... relationConversionDTO) throws InterruptedException, IOException {
         Oaf oafObj = buildOafObject(bodyParts);
         if (oafObj == null) {
-            log.error("missing 'body' qualifier value for record " + new String(idBytes, encoding));
+            log.error("missing 'body' qualifier value for record " + id);
             return;
         }
         if (resultApprover.approve(oafObj)) {

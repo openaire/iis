@@ -143,7 +143,7 @@
                 </property>
                 <property>
                     <name>mapred.mapoutput.key.class</name>
-                    <value>org.apache.hadoop.hbase.io.ImmutableBytesWritable</value>
+                    <value>org.apache.hadoop.io.Text</value>
                 </property>
                 <property>
                     <name>mapred.mapoutput.value.class</name>

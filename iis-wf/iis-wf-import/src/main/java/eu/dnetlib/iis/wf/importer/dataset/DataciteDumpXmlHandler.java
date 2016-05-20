@@ -197,10 +197,7 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
 						throw new SAXException("header identifier was not found!");
 					}
 					if (ELEM_OBJ_IDENTIFIER.equals(mainIdFieldName)) {
-						datasetId = new String(
-								HBaseConstants.ROW_PREFIX_RESULT, 
-								HBaseConstants.STATIC_FIELDS_ENCODING_UTF8) + 
-								this.headerId; 
+						datasetId = HBaseConstants.ROW_PREFIX_RESULT + this.headerId; 
 						dataSetRefBuilder.setId(datasetId);	
 						documentToMDStoreBuilder.setDocumentId(datasetId);
 					} else {
