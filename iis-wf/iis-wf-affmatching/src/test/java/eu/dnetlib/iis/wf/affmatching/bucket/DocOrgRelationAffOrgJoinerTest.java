@@ -2,6 +2,7 @@ package eu.dnetlib.iis.wf.affmatching.bucket;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.mockito.Mockito.*;
 
 import java.util.List;
 
@@ -11,10 +12,15 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.google.common.collect.ImmutableList;
 
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentOrganization;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationFetcher;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import scala.Tuple2;
@@ -22,9 +28,15 @@ import scala.Tuple2;
 /**
  * @author madryk
  */
+@RunWith(MockitoJUnitRunner.class)
 public class DocOrgRelationAffOrgJoinerTest {
 
+    @InjectMocks
     private DocOrgRelationAffOrgJoiner docOrgRelationAffOrgJoiner = new DocOrgRelationAffOrgJoiner();
+    
+    @Mock
+    private DocumentOrganizationFetcher documentOrganizationFetcher;
+    
     
     private JavaSparkContext sparkContext;
     
@@ -81,10 +93,12 @@ public class DocOrgRelationAffOrgJoinerTest {
                 new AffMatchDocumentOrganization("DOC3", "ORG5"), // organization not present in organizations rdd
                 new AffMatchDocumentOrganization("DOC4", "ORG2"))); // document not present in affiliations rdd
         
+        when(documentOrganizationFetcher.fetchDocumentOrganizations()).thenReturn(documentOrganizations);
+        
         
         // execute
         
-        JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> affOrgPairsRDD = docOrgRelationAffOrgJoiner.join(affiliations, organizations, documentOrganizations);
+        JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> affOrgPairsRDD = docOrgRelationAffOrgJoiner.join(affiliations, organizations);
         
         
         // assert

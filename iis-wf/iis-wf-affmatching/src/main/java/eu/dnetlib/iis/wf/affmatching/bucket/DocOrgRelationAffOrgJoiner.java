@@ -4,6 +4,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentOrganization;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationFetcher;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import scala.Tuple2;
@@ -19,20 +20,25 @@ public class DocOrgRelationAffOrgJoiner implements AffOrgJoiner {
     private static final long serialVersionUID = 1L;
 
 
+    private DocumentOrganizationFetcher documentOrganizationFetcher;
+
+
     //------------------------ LOGIC --------------------------
 
     /**
      * Joins the given affiliations with organizations based on document-organization relations.<br />
-     * Affiliation will be joined with the organization if documentOrganizations rdd will
+     * Method uses {@link DocumentOrganizationFetcher} internally to fetch document-organization pairs.<br/>
+     * 
+     * Affiliation will be joined with the organization if fetched document-organization relations will
      * contain pair ({@link AffMatchAffiliation#getDocumentId()}, {@link AffMatchOrganization#getId()})
      */
     @Override
-    public JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> join(JavaRDD<AffMatchAffiliation> affiliations, JavaRDD<AffMatchOrganization> organizations,
-            JavaRDD<AffMatchDocumentOrganization> documentOrganizations) {
+    public JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> join(JavaRDD<AffMatchAffiliation> affiliations, JavaRDD<AffMatchOrganization> organizations) {
         
         JavaPairRDD<String, AffMatchAffiliation> affiliationsDocIdKey = affiliations.keyBy(aff -> aff.getDocumentId());
         JavaPairRDD<String, AffMatchOrganization> organizationsOrgIdKey = organizations.keyBy(org -> org.getId());
         
+        JavaRDD<AffMatchDocumentOrganization> documentOrganizations = documentOrganizationFetcher.fetchDocumentOrganizations();
         JavaPairRDD<String, AffMatchDocumentOrganization> documentOrganizationDocIdKey = documentOrganizations.keyBy(docOrg -> docOrg.getDocumentId());
         
         JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> affOrgBucketPairs = affiliationsDocIdKey
@@ -43,6 +49,13 @@ public class DocOrgRelationAffOrgJoiner implements AffOrgJoiner {
         
         
         return affOrgBucketPairs;
+    }
+
+
+    //------------------------ SETTERS --------------------------
+    
+    public void setDocumentOrganizationFetcher(DocumentOrganizationFetcher documentOrganizationFetcher) {
+        this.documentOrganizationFetcher = documentOrganizationFetcher;
     }
 
 }

@@ -12,8 +12,6 @@ import org.apache.spark.api.java.JavaSparkContext;
 
 import com.google.common.base.Preconditions;
 
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentOrganization;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationFetcher;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
@@ -44,8 +42,6 @@ public class AffMatchingService implements Serializable {
     
     private AffiliationReader affiliationReader;
     
-    private DocumentOrganizationFetcher documentOrganizationFetcher;
-    
     
     private AffMatchAffiliationNormalizer affMatchAffiliationNormalizer = new AffMatchAffiliationNormalizer();
     
@@ -66,13 +62,11 @@ public class AffMatchingService implements Serializable {
     
     /**
      * Matches the affiliations from <code>inputAffPath</code> with organizations from <code>inputOrgPath</code>.
-     * It uses <code>inputDocProjPath</code> and <code>inputProjOrgPath</code> to obtain document-organization pairs
-     * which can be used in matching algorithm. 
      * Saves the result in <code>outputPath</code>.
      */
-    public void matchAffiliations(JavaSparkContext sc, String inputAffPath, String inputOrgPath, String inputDocProjPath, String inputProjOrgPath, String outputPath) {
+    public void matchAffiliations(JavaSparkContext sc, String inputAffPath, String inputOrgPath, String outputPath) {
 
-        checkArguments(sc, inputAffPath, inputOrgPath, inputDocProjPath, inputProjOrgPath, outputPath);
+        checkArguments(sc, inputAffPath, inputOrgPath, outputPath);
         
         checkState();
         
@@ -81,15 +75,13 @@ public class AffMatchingService implements Serializable {
         
         JavaRDD<AffMatchOrganization> organizations = organizationReader.readOrganizations(sc, inputOrgPath).filter(org -> (StringUtils.isNotBlank(org.getName())));
         
-        JavaRDD<AffMatchDocumentOrganization> documentOrganizations = documentOrganizationFetcher.readDocumentOrganization(sc, inputDocProjPath, inputProjOrgPath);
-        
         
         JavaRDD<AffMatchAffiliation> normalizedAffiliations = affiliations.map(aff -> affMatchAffiliationNormalizer.normalize(aff));
         
         JavaRDD<AffMatchOrganization> normalizedOrganizations = organizations.map(org -> affMatchOrganizationNormalizer.normalize(org));
         
 
-        JavaRDD<AffMatchResult> allMatchedAffOrgs = doMatch(sc, normalizedAffiliations, normalizedOrganizations, documentOrganizations);
+        JavaRDD<AffMatchResult> allMatchedAffOrgs = doMatch(sc, normalizedAffiliations, normalizedOrganizations);
         
         
         affMatchResultWriter.write(allMatchedAffOrgs, outputPath);
@@ -109,8 +101,6 @@ public class AffMatchingService implements Serializable {
         
         Preconditions.checkNotNull(affiliationReader, "affiliationReader has not been set");
         
-        Preconditions.checkNotNull(documentOrganizationFetcher, "documentOrganizationFetcher has not been set");
-        
         Preconditions.checkNotNull(affMatchResultWriter, "affMatchResultWriter has not been set");
         
         Preconditions.checkState(CollectionUtils.isNotEmpty(affOrgMatchers), "no AffOrgMatcher has been set");
@@ -119,7 +109,7 @@ public class AffMatchingService implements Serializable {
 
     
 
-    private void checkArguments(JavaSparkContext sc, String inputAffPath, String inputOrgPath, String inputDocProjPath, String inputProjOrgPath, String outputPath) {
+    private void checkArguments(JavaSparkContext sc, String inputAffPath, String inputOrgPath, String outputPath) {
         
         Preconditions.checkNotNull(sc);
         
@@ -127,17 +117,12 @@ public class AffMatchingService implements Serializable {
         
         Preconditions.checkArgument(StringUtils.isNotBlank(inputOrgPath));
         
-        Preconditions.checkArgument(StringUtils.isNotBlank(inputDocProjPath));
-        
-        Preconditions.checkArgument(StringUtils.isNotBlank(inputProjOrgPath));
-        
         Preconditions.checkArgument(StringUtils.isNotBlank(outputPath));
     }
 
 
 
-    private JavaRDD<AffMatchResult> doMatch(JavaSparkContext sc, JavaRDD<AffMatchAffiliation> normalizedAffiliations, JavaRDD<AffMatchOrganization> normalizedOrganizations,
-            JavaRDD<AffMatchDocumentOrganization> documentOrganizations) {
+    private JavaRDD<AffMatchResult> doMatch(JavaSparkContext sc, JavaRDD<AffMatchAffiliation> normalizedAffiliations, JavaRDD<AffMatchOrganization> normalizedOrganizations) {
         
         JavaPairRDD<String, AffMatchAffiliation> idAffiliations = normalizedAffiliations.keyBy(aff -> aff.getId());
         
@@ -146,7 +131,7 @@ public class AffMatchingService implements Serializable {
         
         for (AffOrgMatcher affOrgMatcher : affOrgMatchers) {
             
-            JavaRDD<AffMatchResult> matchedAffOrgs = affOrgMatcher.match(idAffiliations.values(), normalizedOrganizations, documentOrganizations);
+            JavaRDD<AffMatchResult> matchedAffOrgs = affOrgMatcher.match(idAffiliations.values(), normalizedOrganizations);
             
             allMatchedAffOrgs = allMatchedAffOrgs.union(matchedAffOrgs);
             
@@ -169,10 +154,6 @@ public class AffMatchingService implements Serializable {
     
     public void setAffiliationReader(AffiliationReader affiliationReader) {
         this.affiliationReader = affiliationReader;
-    }
-
-    public void setDocumentOrganizationFetcher(DocumentOrganizationFetcher documentOrganizationFetcher) {
-        this.documentOrganizationFetcher = documentOrganizationFetcher;
     }
 
     public void setAffOrgMatchers(List<AffOrgMatcher> affOrgMatchers) {

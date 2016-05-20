@@ -56,32 +56,34 @@ public class DocumentOrganizationFetcherTest {
     @Before
     public void setup() {
         documentOrganizationFetcher.setDocProjConfidenceLevelThreshold(docProjConfidenceLevelThreshold);
+        documentOrganizationFetcher.setDocProjPath(docProjPath);
+        documentOrganizationFetcher.setProjOrgPath(projOrgPath);
     }
     
     
     //------------------------ TESTS --------------------------
     
     @Test
-    public void readDocumentOrganization() {
+    public void fetchDocumentOrganizations() {
         
         // given
         
-        when(documentProjectReader.readDocumentProject(sc, docProjPath)).thenReturn(documentProject);
-        when(projectOrganizationReader.readProjectOrganization(sc, projOrgPath)).thenReturn(projectOrganization);
+        when(documentProjectReader.readDocumentProjects(sc, docProjPath)).thenReturn(documentProject);
+        when(projectOrganizationReader.readProjectOrganizations(sc, projOrgPath)).thenReturn(projectOrganization);
         when(documentOrganizationCombiner.combine(documentProject, projectOrganization, docProjConfidenceLevelThreshold)).thenReturn(documentOrganizations);
         
         
         // execute
         
-        JavaRDD<AffMatchDocumentOrganization> retDocumentOrganizations = documentOrganizationFetcher.readDocumentOrganization(sc, docProjPath, projOrgPath);
+        JavaRDD<AffMatchDocumentOrganization> retDocumentOrganizations = documentOrganizationFetcher.fetchDocumentOrganizations();
         
         
         // assert
         
         assertTrue(retDocumentOrganizations == documentOrganizations);
         
-        verify(documentProjectReader).readDocumentProject(sc, docProjPath);
-        verify(projectOrganizationReader).readProjectOrganization(sc, projOrgPath);
+        verify(documentProjectReader).readDocumentProjects(sc, docProjPath);
+        verify(projectOrganizationReader).readProjectOrganizations(sc, projOrgPath);
         verify(documentOrganizationCombiner).combine(documentProject, projectOrganization, docProjConfidenceLevelThreshold);
         
     }

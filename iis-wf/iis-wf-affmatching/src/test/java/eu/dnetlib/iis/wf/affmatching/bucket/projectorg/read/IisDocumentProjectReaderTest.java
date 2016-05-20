@@ -63,21 +63,21 @@ public class IisDocumentProjectReaderTest {
     // ------------------------ TESTS --------------------------
 
     @Test(expected = NullPointerException.class)
-    public void readDocumentProject_NULL_CONTEXT() {
+    public void readDocumentProjects_NULL_CONTEXT() {
         // execute
-        documentProjectReader.readDocumentProject(null, predefinedPath);
+        documentProjectReader.readDocumentProjects(null, predefinedPath);
     }
 
     @Test(expected = NullPointerException.class)
-    public void readDocumentProject_NULL_PATH() {
+    public void readDocumentProjects_NULL_PATH() {
         // execute
-        documentProjectReader.readDocumentProject(sparkContext, null);
+        documentProjectReader.readDocumentProjects(sparkContext, null);
     }
 
     @Test
-    public void readDocumentProject() throws Exception {
+    public void readDocumentProjects() throws Exception {
         // execute
-        JavaRDD<AffMatchDocumentProject> retDocumentProject = documentProjectReader.readDocumentProject(sparkContext,
+        JavaRDD<AffMatchDocumentProject> retDocumentProject = documentProjectReader.readDocumentProjects(sparkContext,
                 predefinedPath);
         // assert
         assertTrue(retDocumentProject == documentProjects);

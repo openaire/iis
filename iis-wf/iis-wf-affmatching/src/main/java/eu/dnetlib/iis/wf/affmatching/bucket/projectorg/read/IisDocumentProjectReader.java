@@ -31,7 +31,7 @@ public class IisDocumentProjectReader implements Serializable, DocumentProjectRe
      * Reads {@link Organization}s written as avro files under <code>inputPath</code>
      */
     @Override
-    public JavaRDD<AffMatchDocumentProject> readDocumentProject(JavaSparkContext sc, String inputPath) {
+    public JavaRDD<AffMatchDocumentProject> readDocumentProjects(JavaSparkContext sc, String inputPath) {
         return avroLoader.loadJavaRDD(sc, inputPath, DocumentToProject.class)
                 .map(srcDocProj -> converter.convert(srcDocProj));
     }
