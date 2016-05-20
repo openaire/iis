@@ -7,7 +7,6 @@ import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParame
 import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_SEQ_FILE_OUTPUT_DIR_ROOT;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.InvalidParameterException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.transform.TransformerException;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 
 import org.apache.avro.Schema;
@@ -24,7 +22,6 @@ import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.log4j.Logger;
-import org.dom4j.DocumentException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -32,7 +29,6 @@ import eu.dnetlib.actionmanager.actions.ActionFactory;
 import eu.dnetlib.actionmanager.actions.AtomicAction;
 import eu.dnetlib.actionmanager.actions.XsltInfoPackageAction;
 import eu.dnetlib.actionmanager.common.Operation;
-import eu.dnetlib.actionmanager.rmi.ActionManagerException;
 import eu.dnetlib.data.mdstore.DocumentNotFoundException;
 import eu.dnetlib.data.mdstore.MDStoreService;
 import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
@@ -63,21 +59,12 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
 
 	protected final static String inputPort = "input";
 	
-	protected final static String entityIdPrefix;
+	protected final static String entityIdPrefix = HBaseConstants.ROW_PREFIX_RESULT;
 	
 	protected final Schema inputPortSchema;
 	protected final String entityXSLTName;
 	protected final String entityXSLTLocation;
 	protected final ActionManagerConfigurationProvider configProvider;
-	
-	static {
-		try {
-			entityIdPrefix = new String(HBaseConstants.ROW_PREFIX_RESULT,
-					HBaseConstants.STATIC_FIELDS_ENCODING_UTF8);
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
-	}
 	
 	/**
 	 * Default constructor.

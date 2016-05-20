@@ -8,8 +8,6 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
-import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
@@ -24,11 +22,11 @@ import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
  * @author mhorst
  *
  */
-public class ImportInformationSpaceMapper extends Mapper<Text, Text, ImmutableBytesWritable, InfoSpaceRecord> {
+public class ImportInformationSpaceMapper extends Mapper<Text, Text, Text, InfoSpaceRecord> {
 
     private static final char KEY_SEPARATOR = '@';
 
-    private ImmutableBytesWritable ibw;
+    private Text id;
 
     private Set<String> approvedColumnFamilies = Collections.emptySet();
 
@@ -37,7 +35,7 @@ public class ImportInformationSpaceMapper extends Mapper<Text, Text, ImmutableBy
     @Override
     protected void setup(final Context context) throws IOException, InterruptedException {
         super.setup(context);
-        ibw = new ImmutableBytesWritable();
+        id = new Text();
         String approvedColumnFamiliesCSV = WorkflowRuntimeParameters.getParamValue(IMPORT_APPROVED_COLUMNFAMILIES_CSV, context);
         if (StringUtils.isNotBlank(approvedColumnFamiliesCSV)) {
             approvedColumnFamilies = Sets.newHashSet(Splitter.on(DEFAULT_CSV_DELIMITER).trimResults().split(approvedColumnFamiliesCSV));
@@ -45,7 +43,7 @@ public class ImportInformationSpaceMapper extends Mapper<Text, Text, ImmutableBy
     }
 
     @Override
-    protected void map(Text key, Text value, Mapper<Text, Text, ImmutableBytesWritable, InfoSpaceRecord>.Context context)
+    protected void map(Text key, Text value, Mapper<Text, Text, Text, InfoSpaceRecord>.Context context)
                     throws IOException, InterruptedException {
         String oafJson = value.toString();
         if (StringUtils.isNotBlank(oafJson)) {
@@ -55,8 +53,8 @@ public class ImportInformationSpaceMapper extends Mapper<Text, Text, ImmutableBy
                         + KEY_SEPARATOR + "qualifier', got: " + key);
             }
             if (approvedColumnFamilies.contains(split[1])) {
-                ibw.set(Bytes.toBytes(split[0]));
-                context.write(ibw, new InfoSpaceRecord(new Text(split[1]), new Text(split[2]), new Text(oafJson)));
+                id.set(split[0]);
+                context.write(id, new InfoSpaceRecord(new Text(split[1]), new Text(split[2]), new Text(oafJson)));
             }
         }
     }

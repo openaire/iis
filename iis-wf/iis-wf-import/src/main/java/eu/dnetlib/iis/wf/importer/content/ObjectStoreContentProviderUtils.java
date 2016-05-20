@@ -101,21 +101,16 @@ public class ObjectStoreContentProviderUtils {
 	 */
 	public static String extractResultIdFromObjectId(String objectId) {
 		if (objectId!=null && objectId.indexOf(objectIdSeparator)>0) {
-			try {
-				StringBuffer strBuff = new StringBuffer();
-				strBuff.append(new String(HBaseConstants.ROW_PREFIX_RESULT, 
-						HBaseConstants.STATIC_FIELDS_ENCODING_UTF8));
-				String[] split = objectId.split(objectIdSeparator);
-				if (split.length>=2) {
-					strBuff.append(split[0]);
-					strBuff.append(objectIdSeparator);
-					strBuff.append(split[1]);
-					return strBuff.toString();
-				} else {
-					throw new RuntimeException("invalid object identifier: ");
-				}
-			} catch (UnsupportedEncodingException e) {
-				throw new RuntimeException(e);
+			StringBuffer strBuff = new StringBuffer();
+			strBuff.append(HBaseConstants.ROW_PREFIX_RESULT);
+			String[] split = objectId.split(objectIdSeparator);
+			if (split.length>=2) {
+				strBuff.append(split[0]);
+				strBuff.append(objectIdSeparator);
+				strBuff.append(split[1]);
+				return strBuff.toString();
+			} else {
+				throw new RuntimeException("invalid object identifier: ");
 			}
 		} else {
 			return null;
