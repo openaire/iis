@@ -9,9 +9,7 @@
 		<property>
 			<name>active_ingest_pmc</name>
 			<value>false</value>
-			<description>flag indicating pmc metadata and citations ingestions
-				should be performed
-			</description>
+			<description>flag indicating pmc metadata and citations ingestions should be performed</description>
 		</property>
 		<property>
 			<name>active_import_concept</name>
@@ -21,66 +19,41 @@
 		<property>
 			<name>match_content_with_metadata</name>
 			<value>true</value>
-			<description>flag indicating contents should be filtered and their
-				identifiers should be deduplicated against metadata entries
-				retrieved from InformationSpace. This way only contents having
-				metadata
-				representation will be processed.
-				To be disabled when processing new contents which metadata is not
-				available in hbase or when original identifiers should be preserved
-				(contents will not be filtered
-				as well).
-			</description>
+			<description>flag indicating contents should be filtered and their identifiers should be deduplicated against metadata entries retrieved from InformationSpace.
+                This way only contents having metadata representation will be processed.
+                To be disabled when processing new contents which metadata is not available in hbase or when original identifiers should be preserved (contents will not be filtered as well).
+            </description>
 		</property>
 		<!-- import metadata related -->
-		<property>
-			<name>hbase_input_table</name>
-			<value>$UNDEFINED$</value>
-			<description>HBase input table holding InformationSpace, available on local cluster</description>
-		</property>
-		<property>
-			<name>hbase_approved_datasources_csv</name>
-			<value>$UNDEFINED$</value>
-			<description>CSV list of datasource ids to be approved during import.
-				Applied on result and person entities.
-			</description>
-		</property>
+        <property>
+            <name>hbase_dump_location</name>
+            <description>InformationSpace HBase dump location, usually points to remote cluster HDFS location.</description>
+        </property>
 		<property>
 			<name>inference_provenance_blacklist</name>
 			<value>iis::.*</value>
-			<description>list of blacklisted inference provenance which sould not
-				be taken into account by importer, skipped when set to $UNDEFINED$
-			</description>
+			<description>list of blacklisted inference provenance which sould not be taken into account by importer, skipped when set to $UNDEFINED$</description>
 		</property>
 		<property>
 			<name>trust_level_threshold</name>
 			<value>$UNDEFINED$</value>
-			<description>trust level threshold represented as float value,
-				ignored when set to $UNDEFINED$ value
-			</description>
+			<description>trust level threshold represented as float value, ignored when set to $UNDEFINED$ value</description>
 		</property>
 		<property>
 			<name>merge_body_with_updates</name>
 			<value>false</value>
-			<description>flag indicating Oaf objects strored in body qualifier
-				should be merged with Oaf objects stored in update qualifier
-			</description>
+			<description>flag indicating Oaf objects strored in body qualifier should be merged with Oaf objects stored in update qualifier</description>
 		</property>
 		<!-- import concepts related -->
 		<property>
 			<name>islookup_service_location</name>
 			<value>$UNDEFINED$</value>
-			<description>IS Lookup service location, required only when
-				active_import_concept is set to true
-			</description>
+			<description>IS Lookup service location, required only when active_import_concept is set to true</description>
 		</property>
 		<property>
 			<name>project_concepts_context_ids_csv</name>
 			<value>$UNDEFINED$</value>
-			<description>comma separated list of concepts context identifiers to
-				be picked by ISLookup, required only when active_import_concept is
-				set to true
-			</description>
+			<description>comma separated list of concepts context identifiers to be picked by ISLookup, required only when active_import_concept is set to true</description>
 		</property>
 		<!-- import datacite related -->
 		<property>
@@ -148,9 +121,7 @@
 		<property>
 			<name>metadataextraction_excluded_checksums</name>
 			<value>$UNDEFINED$</value>
-			<description>list of content checksums excluded from
-				metadataextraction processing
-			</description>
+			<description>list of content checksums excluded from metadataextraction processing</description>
 		</property>
 		<property>
 			<name>pdf_max_file_size_mb</name>
@@ -170,9 +141,7 @@
 		<property>
 			<name>metadataimport_output_name_document_project</name>
 			<value>docproject</value>
-			<description>metadata import document to project relation
-				subdirectory name
-			</description>
+			<description>metadata import document to project relation subdirectory name</description>
 		</property>
 		<property>
 			<name>metadataimport_output_name_project</name>
@@ -187,9 +156,7 @@
 		<property>
 			<name>metadataimport_output_name_dedup_mapping</name>
 			<value>dedupmapping</value>
-			<description>metadata import deduplication mapping output
-				subdirectory name
-			</description>
+			<description>metadata import deduplication mapping output subdirectory name</description>
 		</property>
 		<!-- output parameters -->
 		<property>
@@ -203,21 +170,15 @@
 		</property>
 		<property>
 			<name>output_dataset</name>
-			<description>dataset importer output directory holding dataset
-				metadata, required when ${active_import_dataset}=true
-			</description>
+			<description>dataset importer output directory holding dataset	metadata, required when ${active_import_dataset}=true</description>
 		</property>
 		<property>
 			<name>output_dataset_to_mdstore</name>
-			<description>dataset importer output directory holding dataset to
-				mdstore mappings, required when ${active_import_dataset}=true
-			</description>
+			<description>dataset importer output directory holding dataset to mdstore mappings, required when ${active_import_dataset}=true</description>
 		</property>
 		<property>
 			<name>output_document_text</name>
-			<description>text import output directory. merged from three
-				different sources
-			</description>
+			<description>text import output directory. merged from three different sources</description>
 		</property>
 		<property>
 			<name>output_wos</name>
@@ -235,9 +196,7 @@
 			<name>remove_sideproducts</name>
 			<value>true</value>
 			<description>flag indicating whole workingDir will be erased.
-				Notice: do not provide any output directory location
-				pointing to workingDir subdirectory!
-			</description>
+				Notice: do not provide any output directory locationpointing to workingDir subdirectory!</description>
 		</property>
 	</parameters>
 
@@ -260,7 +219,7 @@
 
 	<fork name="import_forking">
 		<path start="decision-import_concept" />
-		<path start="metadata_importer" />
+		<path start="distcp_hbase_dump" />
 		<path start="decision-import_dataset" />
 	</fork>
 
@@ -318,50 +277,72 @@
 		<error to="fail" />
 	</action>
 
-	<action name="metadata_importer">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/import_mapred</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/import/working_dir</value>
-				</property>
-				<property>
-					<name>approved_datasources_csv</name>
-					<value>${hbase_approved_datasources_csv}</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${output_metadataimport_root}</value>
-				</property>
-				<!-- subdirectory names -->
-				<property>
-					<name>output_name_document_meta</name>
-					<value>${metadataimport_output_name_document_meta}</value>
-				</property>
-				<property>
-					<name>output_name_document_project</name>
-					<value>${metadataimport_output_name_document_project}</value>
-				</property>
-				<property>
-					<name>output_name_project</name>
-					<value>${metadataimport_output_name_project}</value>
-				</property>
-				<property>
-					<name>output_name_person</name>
-					<value>${metadataimport_output_name_person}</value>
-				</property>
-				<property>
-					<name>output_name_dedup_mapping</name>
-					<value>${metadataimport_output_name_dedup_mapping}</value>
-				</property>
-				<!-- all the other properties are autmatically propagated -->
-			</configuration>
-		</sub-workflow>
-		<ok to="transformers-idextractor" />
-		<error to="fail" />
-	</action>
+    <!-- importing hbase dump from remote cluster -->
+    <action name="distcp_hbase_dump">
+        <distcp xmlns="uri:oozie:distcp-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <arg>-pb</arg>
+            <arg>${hbase_dump_location}</arg>
+            <arg>${nameNode}${workingDir}/hbase_dump</arg>
+        </distcp>
+        <ok to="import_infospace" />
+        <error to="fail" />
+    </action>
+
+    <action name="import_infospace">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/import_infospace</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/import_infospace/working_dir</value>
+                </property>
+                <property>
+                    <name>input</name>
+                    <value>${workingDir}/hbase_dump</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${output_metadataimport_root}</value>
+                </property>
+                <!-- subdirectory names -->
+                <property>
+                    <name>output_name_document_meta</name>
+                    <value>${metadataimport_output_name_document_meta}</value>
+                </property>
+                <property>
+                    <name>output_name_document_project</name>
+                    <value>${metadataimport_output_name_document_project}</value>
+                </property>
+                <property>
+                    <name>output_name_project</name>
+                    <value>${metadataimport_output_name_project}</value>
+                </property>
+                <property>
+                    <name>output_name_person</name>
+                    <value>${metadataimport_output_name_person}</value>
+                </property>
+                <property>
+                    <name>output_name_dedup_mapping</name>
+                    <value>${metadataimport_output_name_dedup_mapping}</value>
+                </property>
+                <!-- all the other properties are autmatically propagated -->
+            </configuration>
+        </sub-workflow>
+        <ok to="purge_hbase_dump" />
+        <error to="fail" />
+    </action>
+
+    <action name="purge_hbase_dump">
+        <fs>
+            <delete path="${nameNode}${workingDir}/hbase_dump" />
+        </fs>
+        <ok to="transformers-idextractor" />
+        <error to="fail" />
+    </action>
+    <!-- end of importing InformationSpace -->
 
 	<action name="transformers-idextractor">
 		<sub-workflow>
