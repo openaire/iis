@@ -151,10 +151,12 @@
 		</property>
 		<property>
 			<name>export_action_hbase_table_name</name>
+			<value>$UNDEFINED$</value>
 			<description>action manager hbase table name</description>
 		</property>
 		<property>
 			<name>export_action_hbase_table_initialize</name>
+			<value>false</value>
 			<description>flag indicating input table should be initialized</description>
 		</property>
 		<!-- action set id properties -->
