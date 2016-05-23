@@ -26,6 +26,10 @@
 			<name>input_document_to_pdb</name>
 			<value>$UNDEFINED$</value>
 		</property>
+        <property>
+            <name>input_document_to_software_urls</name>
+            <value>$UNDEFINED$</value>
+        </property>
 		<property>
 			<name>input_document_to_document_classes</name>
 			<value>$UNDEFINED$</value>
@@ -114,6 +118,11 @@
 			<value>$UNDEFINED$</value>
 			<description>document protein databank action-set identifier of exported data</description>
 		</property>
+        <property>
+            <name>action_set_id_document_software_url</name>
+            <value>$UNDEFINED$</value>
+            <description>document to software url action-set identifier of exported data</description>
+        </property>
 		<property>
 			<name>action_set_id_entity_dataset</name>
 			<value>$UNDEFINED$</value>
@@ -145,6 +154,11 @@
 			<value>$UNDEFINED$</value>
 			<description>document to protein databank trust level threshold</description>
 		</property>
+        <property>
+            <name>trust_level_threshold_document_software_url</name>
+            <value>$UNDEFINED$</value>
+            <description>document to software url trust level threshold</description>
+        </property>
 		<!-- -->
 		<property>
 			<name>action_hbase_remote_zookeeper_quorum</name>

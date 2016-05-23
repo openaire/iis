@@ -68,10 +68,10 @@
             </arg>
             <arg>-Odocument_pdb=${workingDir}/producer/document_pdb</arg>
             <arg>-C{document_software_url,
-                eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrl,
-                eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_software_url.json}
+                eu.dnetlib.iis.export.schemas.DocumentToSoftwareUrls,
+                eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_software_urls.json}
             </arg>
-            <arg>-Odocument_software_url=${workingDir}/producer/document_software_url</arg>
+            <arg>-Odocument_software_url=${workingDir}/producer/document_software_urls</arg>
             <arg>-C{matched_org,
                 eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization,
                 eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/matched_doc_organizations.json}
@@ -112,8 +112,8 @@
                     <value>${workingDir}/producer/document_pdb</value>
                 </property>
                 <property>
-                    <name>input_document_to_software_url</name>
-                    <value>${workingDir}/producer/document_software_url</value>
+                    <name>input_document_to_software_urls</name>
+                    <value>${workingDir}/producer/document_software_urls</value>
                 </property>
                 <property>
                     <name>input_document_to_document_classes</name>
@@ -237,7 +237,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/document_software_url/actionset-id</arg>
-            <arg>-Pexpectation_properties_csv=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_software_url.properties</arg>
+            <arg>-Pexpectation_properties_csv=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_software_urls.properties</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />

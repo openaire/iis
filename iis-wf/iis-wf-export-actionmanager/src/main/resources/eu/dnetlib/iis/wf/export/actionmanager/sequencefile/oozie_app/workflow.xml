@@ -38,7 +38,7 @@
             <value>$UNDEFINED$</value>
         </property>
         <property>
-            <name>input_document_to_software_url</name>
+            <name>input_document_to_software_urls</name>
             <value>$UNDEFINED$</value>
         </property>
         <property>
@@ -325,7 +325,7 @@
             <arg>eu.dnetlib.iis.export.schemas.Citations</arg>
             <arg>eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity</arg>
             <arg>eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization</arg>
-            <arg>eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrl</arg>
+            <arg>eu.dnetlib.iis.export.schemas.DocumentToSoftwareUrls</arg>
             <capture-output />
         </java>
         <ok to="prepare" />
@@ -391,7 +391,7 @@
 
     <decision name="decision-exporter-document-to-software_url">
         <switch>
-            <case to="joining">${input_document_to_software_url eq "$UNDEFINED$"}</case>
+            <case to="joining">${input_document_to_software_urls eq "$UNDEFINED$"}</case>
             <default to="exporter-document-to-software_url" />
         </switch>
     </decision>
@@ -582,11 +582,11 @@
                 </property>
                 <property>
                     <name>avro.schema.input.key</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrl']}</value>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.export.schemas.DocumentToSoftwareUrls']}</value>
                 </property>
                 <property>
                     <name>mapred.input.dir</name>
-                    <value>${input_document_to_software_url}</value>
+                    <value>${input_document_to_software_urls}</value>
                 </property>
                 <property>
                     <name>mapred.output.dir</name>

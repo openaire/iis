@@ -1,0 +1,3 @@
+{"documentId": "docId1", "softwareUrls": [{"softwareUrl": "https://github.com/openaire/iis", "confidenceLevel": 0.9}]}
+{"documentId": "docId2", "softwareUrls": [{"softwareUrl": "https://github.com/openaire/iis", "confidenceLevel": 0.9},{"softwareUrl": "https://github.com/openaire/primer", "confidenceLevel": 0.8}]}
+{"documentId": "docId3", "softwareUrls": [{"softwareUrl": "https://github.com/openaire/iis", "confidenceLevel": 0.7},{"softwareUrl": "https://github.com/openaire/primer", "confidenceLevel": null},{"softwareUrl": "https://github.com/openaire/vipe", "confidenceLevel": 0.7}]}

@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import eu.dnetlib.actionmanager.actions.AtomicAction;
@@ -17,7 +18,8 @@ import eu.dnetlib.data.proto.KindProtos;
 import eu.dnetlib.data.proto.OafProtos.Oaf;
 import eu.dnetlib.data.proto.ResultProtos.Result.ExternalReference;
 import eu.dnetlib.data.proto.TypeProtos.Type;
-import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrl;
+import eu.dnetlib.iis.export.schemas.DocumentToSoftwareUrls;
+import eu.dnetlib.iis.export.schemas.SoftwareUrl;
 import eu.dnetlib.iis.wf.export.actionmanager.module.DocumentToSoftwareUrlActionBuilderModuleFactory.DocumentToSoftwareUrlActionBuilderModule;
 
 /**
@@ -40,7 +42,7 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactoryTest {
 
     private float matchStrength = 0.9f;
 
-    private DocumentToSoftwareUrl documentToSoftwareUrl = buildDocumentToSoftwareUrl(docId, softwareUrl, matchStrength);
+    private DocumentToSoftwareUrls documentToSoftwareUrl = buildDocumentToSoftwareUrl(docId, softwareUrl, matchStrength);
 
     @Before
     public void initModule() {
@@ -71,7 +73,7 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactoryTest {
     @Test(expected = TrustLevelThresholdExceededException.class)
     public void test_build_below_threshold() throws Exception {
         // given
-        DocumentToSoftwareUrl matchedOrgBelowThreshold = buildDocumentToSoftwareUrl(docId, softwareUrl, 0.4f);
+        DocumentToSoftwareUrls matchedOrgBelowThreshold = buildDocumentToSoftwareUrl(docId, softwareUrl, 0.4f);
         // execute
         module.build(matchedOrgBelowThreshold, agent, actionSetId);
     }
@@ -95,11 +97,13 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactoryTest {
 
     // ----------------------- PRIVATE --------------------------
 
-    private static DocumentToSoftwareUrl buildDocumentToSoftwareUrl(String docId, String softUrl, float confidenceLevel) {
-        DocumentToSoftwareUrl.Builder builder = DocumentToSoftwareUrl.newBuilder();
+    private static DocumentToSoftwareUrls buildDocumentToSoftwareUrl(String docId, String softUrl, float confidenceLevel) {
+        DocumentToSoftwareUrls.Builder builder = DocumentToSoftwareUrls.newBuilder();
         builder.setDocumentId(docId);
-        builder.setSoftwareUrl(softUrl);
-        builder.setConfidenceLevel(confidenceLevel);
+        SoftwareUrl.Builder softBuilder = SoftwareUrl.newBuilder();
+        softBuilder.setSoftwareUrl(softUrl);
+        softBuilder.setConfidenceLevel(confidenceLevel);
+        builder.setSoftwareUrls(Lists.newArrayList(softBuilder.build()));
         return builder.build();
     }
 
@@ -120,8 +124,6 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactoryTest {
         assertEquals(softwareUrl, externalReference.getUrl());
         
         assertNotNull(externalReference.getQualifier());
-        // TODO check other fields that are currently not set
-
         assertNotNull(externalReference.getDataInfo());
 
         float normalizedTrust = matchStrength * module.getConfidenceToTrustLevelNormalizationFactor();

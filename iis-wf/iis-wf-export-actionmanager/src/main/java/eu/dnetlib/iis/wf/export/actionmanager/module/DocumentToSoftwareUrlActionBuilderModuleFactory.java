@@ -15,22 +15,23 @@ import eu.dnetlib.data.proto.OafProtos.OafEntity;
 import eu.dnetlib.data.proto.ResultProtos.Result;
 import eu.dnetlib.data.proto.ResultProtos.Result.ExternalReference;
 import eu.dnetlib.data.proto.TypeProtos.Type;
-import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrl;
+import eu.dnetlib.iis.export.schemas.DocumentToSoftwareUrls;
+import eu.dnetlib.iis.export.schemas.SoftwareUrl;
 
 /**
- * {@link DocumentToSoftwareUrl} holding link to software action builder module.
+ * {@link DocumentToSoftwareUrls} holding link to software action builder module.
  * 
  * @author mhorst
  *
  */
-public class DocumentToSoftwareUrlActionBuilderModuleFactory implements ActionBuilderFactory<DocumentToSoftwareUrl> {
+public class DocumentToSoftwareUrlActionBuilderModuleFactory implements ActionBuilderFactory<DocumentToSoftwareUrls> {
 
     private final AlgorithmName algorithmName = AlgorithmName.document_software_url;
     
     // ---------------------- LOGIC ----------------------------
 
     @Override
-    public ActionBuilderModule<DocumentToSoftwareUrl> instantiate(String predefinedTrust, Float trustLevelThreshold,
+    public ActionBuilderModule<DocumentToSoftwareUrls> instantiate(String predefinedTrust, Float trustLevelThreshold,
             Configuration config) {
         return new DocumentToSoftwareUrlActionBuilderModule(predefinedTrust, trustLevelThreshold);
     }
@@ -43,7 +44,7 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactory implements ActionBu
     // ---------------------- INNER CLASSES ----------------------------
 
     class DocumentToSoftwareUrlActionBuilderModule extends AbstractBuilderModule
-            implements ActionBuilderModule<DocumentToSoftwareUrl> {
+            implements ActionBuilderModule<DocumentToSoftwareUrls> {
 
         // ---------------------- CONSTRUCTORS ----------------------------
         
@@ -54,7 +55,7 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactory implements ActionBu
         // ---------------------- LOGIC ----------------------------
 
         @Override
-        public List<AtomicAction> build(DocumentToSoftwareUrl object, Agent agent, String actionSetId)
+        public List<AtomicAction> build(DocumentToSoftwareUrls object, Agent agent, String actionSetId)
                 throws TrustLevelThresholdExceededException {
             Preconditions.checkNotNull(object);
             Preconditions.checkNotNull(agent);
@@ -78,29 +79,30 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactory implements ActionBu
          * @return OAF object containing pdb external references
          * @throws TrustLevelThresholdExceededException
          */
-        private Oaf buildOAFWithPdb(DocumentToSoftwareUrl source) throws TrustLevelThresholdExceededException {
-            Result.Builder resultBuilder = Result.newBuilder();
-            ExternalReference.Builder externalRefBuilder = ExternalReference.newBuilder();
-            externalRefBuilder.setUrl(source.getSoftwareUrl().toString());
-            Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
-            // TODO set proper qualifer
-            qualifierBuilder.setClassid("accessionNumber");
-            qualifierBuilder.setClassname("accessionNumber");
-            qualifierBuilder.setSchemeid("dnet:externalReference_typologies");
-            qualifierBuilder.setSchemename("dnet:externalReference_typologies");
-            externalRefBuilder.setQualifier(qualifierBuilder.build());
-            // TODO set missing values
-            // externalRefBuilder.setSitename(value);
-            // externalRefBuilder.setRefidentifier(value);
-            externalRefBuilder.setDataInfo(source.getConfidenceLevel() != null
-                    ? buildInference(source.getConfidenceLevel()) : buildInference());
-            resultBuilder.addExternalReference(externalRefBuilder.build());
-
-            OafEntity.Builder entityBuilder = OafEntity.newBuilder();
-            entityBuilder.setId(source.getDocumentId().toString());
-            entityBuilder.setType(Type.result);
-            entityBuilder.setResult(resultBuilder.build());
-            return buildOaf(entityBuilder.build());
+        private Oaf buildOAFWithPdb(DocumentToSoftwareUrls source) throws TrustLevelThresholdExceededException {
+            if (!source.getSoftwareUrls().isEmpty()) {
+                Result.Builder resultBuilder = Result.newBuilder();
+                for (SoftwareUrl sofwareUrl : source.getSoftwareUrls()) {
+                    ExternalReference.Builder externalRefBuilder = ExternalReference.newBuilder();
+                    externalRefBuilder.setUrl(sofwareUrl.getSoftwareUrl().toString());
+                    Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
+                    qualifierBuilder.setClassid("accessionNumber");
+                    qualifierBuilder.setClassname("accessionNumber");
+                    qualifierBuilder.setSchemeid("dnet:externalReference_typologies");
+                    qualifierBuilder.setSchemename("dnet:externalReference_typologies");
+                    externalRefBuilder.setQualifier(qualifierBuilder.build());
+                    externalRefBuilder.setDataInfo(sofwareUrl.getConfidenceLevel() != null
+                            ? buildInference(sofwareUrl.getConfidenceLevel()) : buildInference());
+                    resultBuilder.addExternalReference(externalRefBuilder.build());
+                }
+                OafEntity.Builder entityBuilder = OafEntity.newBuilder();
+                entityBuilder.setId(source.getDocumentId().toString());
+                entityBuilder.setType(Type.result);
+                entityBuilder.setResult(resultBuilder.build());
+                return buildOaf(entityBuilder.build());
+    
+            }
+            return null;
         }
     }
 
