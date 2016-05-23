@@ -554,19 +554,6 @@
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>integration-test-compile</id>
-								<phase>integration-test</phase>
-								<goals>
-									<goal>testCompile</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-jar-plugin</artifactId>
 						<executions>
 							<execution>
@@ -581,52 +568,23 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.18.1</version>
-						<dependencies>
-							<dependency>
-								<groupId>org.apache.maven.surefire</groupId>
-								<artifactId>surefire-junit47</artifactId>
-								<version>2.18.1</version>
-							</dependency>
-						</dependencies>
 						<configuration>
 							<excludedGroups>eu.dnetlib.iis.common.IntegrationTest</excludedGroups>
 						</configuration>
-						<executions>
-							<execution>
-								<id>default-test</id>
-								<goals>
-									<goal>test</goal>
-								</goals>
-							</execution>
-						</executions>
 					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-failsafe-plugin</artifactId>
-						<version>2.18.1</version>
 						<executions>
 							<execution>
 								<id>default-integration-test</id>
-								<goals>
-									<goal>integration-test</goal>
-									<goal>verify</goal>
-								</goals>
 								<configuration>
-									<redirectTestOutputToFile>false</redirectTestOutputToFile>
 									<argLine>-Xmx1024m</argLine>
 									<systemPropertiesVariables>
 										<!-- if iisConnectionProperties is not defined, then ${user.home}/.iis/integration-test.properties will be used -->
 										<iisConnectionProperties>${iisConnectionProperties}</iisConnectionProperties>
 										<output.dir.name>${output.dir.name}</output.dir.name>
 									</systemPropertiesVariables>
-									<groups>eu.dnetlib.iis.common.IntegrationTest</groups>
-									<includes>
-										<include>**/*Test.java</include>
-										<include>**/IT*.java</include>
-										<include>**/*IT.java</include>
-										<include>**/*ITCase.java</include>
-									</includes>
 								</configuration>
 							</execution>
 						</executions>
