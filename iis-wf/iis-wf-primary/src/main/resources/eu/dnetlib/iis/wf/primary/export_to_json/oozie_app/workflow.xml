@@ -1,53 +1,53 @@
 <workflow-app xmlns="uri:oozie:workflow:0.4" name="primary_export_to_json">
 
-	<parameters>
-		<!-- input ports -->
-		<property>
-			<name>input_document_to_project</name>
-			<value>$UNDEFINED$</value>
-		</property>
-		<property>
-			<name>input_document_to_project_concepts</name>
-			<value>$UNDEFINED$</value>
-		</property>
-		<property>
-			<name>input_document_to_dataset</name>
-			<value>$UNDEFINED$</value>
-		</property>
-		<property>
-			<name>input_document_to_research_initiatives</name>
-			<value>$UNDEFINED$</value>
-		</property>
-		<property>
-			<name>input_document_to_pdb</name>
-			<value>$UNDEFINED$</value>
-		</property>
+    <parameters>
+        <!-- input ports -->
+        <property>
+            <name>input_document_to_project</name>
+            <value>$UNDEFINED$</value>
+        </property>
+        <property>
+            <name>input_document_to_project_concepts</name>
+            <value>$UNDEFINED$</value>
+        </property>
+        <property>
+            <name>input_document_to_dataset</name>
+            <value>$UNDEFINED$</value>
+        </property>
+        <property>
+            <name>input_document_to_research_initiatives</name>
+            <value>$UNDEFINED$</value>
+        </property>
+        <property>
+            <name>input_document_to_pdb</name>
+            <value>$UNDEFINED$</value>
+        </property>
         <property>
             <name>input_document_to_software_urls</name>
             <value>$UNDEFINED$</value>
         </property>
-		<property>
-			<name>input_document_to_document_classes</name>
-			<value>$UNDEFINED$</value>
-		</property>
-		<property>
-			<name>input_citations</name>
-			<value>$UNDEFINED$</value>
-		</property>
-		<property>
-			<name>input_document_similarity</name>
-			<value>$UNDEFINED$</value>
-		</property>
-		<property>
-			<name>input_matched_doc_organizations</name>
-			<value>$UNDEFINED$</value>
-		</property>
+        <property>
+            <name>input_document_to_document_classes</name>
+            <value>$UNDEFINED$</value>
+        </property>
+        <property>
+            <name>input_citations</name>
+            <value>$UNDEFINED$</value>
+        </property>
+        <property>
+            <name>input_document_similarity</name>
+            <value>$UNDEFINED$</value>
+        </property>
+        <property>
+            <name>input_matched_doc_organizations</name>
+            <value>$UNDEFINED$</value>
+        </property>
 
-		<!-- output root directory -->
-		<property>
-			<name>output_root</name>
-		</property>
-	</parameters>
+        <!-- output root directory -->
+        <property>
+            <name>output_root</name>
+        </property>
+    </parameters>
 
     <global>
         <job-tracker>${jobTracker}</job-tracker>
@@ -64,116 +64,116 @@
         </configuration>
     </global>
 
-	<start to="forking" />
+    <start to="forking" />
 
-	<fork name="forking">
-		<path start="exporter-document-to-dataset" />
-		<path start="exporter-document-to-project" />
-		<path start="exporter-document-to-project-concepts" />
-		<path start="exporter-document-to-researchinitiatives" />
-		<path start="exporter-document-to-pdb" />
+    <fork name="forking">
+        <path start="exporter-document-to-dataset" />
+        <path start="exporter-document-to-project" />
+        <path start="exporter-document-to-project-concepts" />
+        <path start="exporter-document-to-researchinitiatives" />
+        <path start="exporter-document-to-pdb" />
         <path start="exporter-document-to-software_url" />
-		<path start="exporter-document-to-documentclasses" />
-		<path start="exporter-citation" />
-		<path start="exporter-document-similiarity" />
-		<path start="exporter-matched-doc-organizations" />
-	</fork>
+        <path start="exporter-document-to-documentclasses" />
+        <path start="exporter-citation" />
+        <path start="exporter-document-similiarity" />
+        <path start="exporter-matched-doc-organizations" />
+    </fork>
 
-	<action name="exporter-document-to-dataset">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_avro2json</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>input</name>
-					<value>${input_document_to_dataset}</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${output_root}/document_to_dataset</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="joining" />
-		<error to="fail" />
-	</action>
+    <action name="exporter-document-to-dataset">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_avro2json</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>input</name>
+                    <value>${input_document_to_dataset}</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${output_root}/document_to_dataset</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
 
-	<action name="exporter-document-to-project">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_avro2json</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>input</name>
-					<value>${input_document_to_project}</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${output_root}/document_to_project</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="joining" />
-		<error to="fail" />
-	</action>
+    <action name="exporter-document-to-project">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_avro2json</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>input</name>
+                    <value>${input_document_to_project}</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${output_root}/document_to_project</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
 
-	<action name="exporter-document-to-project-concepts">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_avro2json</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>input</name>
-					<value>${input_document_to_project_concepts}</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${output_root}/document_to_project_concepts</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="joining" />
-		<error to="fail" />
-	</action>
+    <action name="exporter-document-to-project-concepts">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_avro2json</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>input</name>
+                    <value>${input_document_to_project_concepts}</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${output_root}/document_to_project_concepts</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
 
-	<action name="exporter-document-to-researchinitiatives">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_avro2json</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>input</name>
-					<value>${input_document_to_research_initiatives}</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${output_root}/document_to_research_initiatives</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="joining" />
-		<error to="fail" />
-	</action>
+    <action name="exporter-document-to-researchinitiatives">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_avro2json</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>input</name>
+                    <value>${input_document_to_research_initiatives}</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${output_root}/document_to_research_initiatives</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
 
-	<action name="exporter-document-to-pdb">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_avro2json</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>input</name>
-					<value>${input_document_to_pdb}</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${output_root}/document_to_pdb</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="joining" />
-		<error to="fail" />
-	</action>
-    
+    <action name="exporter-document-to-pdb">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_avro2json</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>input</name>
+                    <value>${input_document_to_pdb}</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${output_root}/document_to_pdb</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
+
     <action name="exporter-document-to-software_url">
         <sub-workflow>
             <app-path>${wf:appPath()}/transformers_avro2json</app-path>
@@ -193,62 +193,62 @@
         <error to="fail" />
     </action>
 
-	<action name="exporter-document-to-documentclasses">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_avro2json</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>input</name>
-					<value>${input_document_to_document_classes}</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${output_root}/document_to_document_classes</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="joining" />
-		<error to="fail" />
-	</action>
+    <action name="exporter-document-to-documentclasses">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_avro2json</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>input</name>
+                    <value>${input_document_to_document_classes}</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${output_root}/document_to_document_classes</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
 
-	<action name="exporter-citation">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_avro2json</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>input</name>
-					<value>${input_citations}</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${output_root}/citations</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="joining" />
-		<error to="fail" />
-	</action>
+    <action name="exporter-citation">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_avro2json</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>input</name>
+                    <value>${input_citations}</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${output_root}/citations</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
 
-	<action name="exporter-document-similiarity">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_avro2json</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>input</name>
-					<value>${input_document_similarity}</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${output_root}/document_similarity</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="joining" />
-		<error to="fail" />
-	</action>
+    <action name="exporter-document-similiarity">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_avro2json</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>input</name>
+                    <value>${input_document_similarity}</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${output_root}/document_similarity</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
 
 	<action name="exporter-matched-doc-organizations">
 		<sub-workflow>
@@ -271,10 +271,10 @@
 
 	<join name="joining" to="end" />
 
-	<kill name="fail">
-		<message>Unfortunately, the process failed -- error message:
-			[${wf:errorMessage(wf:lastErrorNode())}]
-		</message>
-	</kill>
-	<end name="end" />
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+    <end name="end" />
 </workflow-app>

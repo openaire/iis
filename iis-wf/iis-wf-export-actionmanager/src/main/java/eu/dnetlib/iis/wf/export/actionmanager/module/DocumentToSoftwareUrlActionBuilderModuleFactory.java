@@ -19,7 +19,7 @@ import eu.dnetlib.iis.export.schemas.DocumentToSoftwareUrls;
 import eu.dnetlib.iis.export.schemas.SoftwareUrl;
 
 /**
- * {@link DocumentToSoftwareUrls} holding link to software action builder module.
+ * Converts {@link DocumentToSoftwareUrls} holding links to software into {@link AtomicAction} objects.
  * 
  * @author mhorst
  *
@@ -61,7 +61,7 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactory implements ActionBu
             Preconditions.checkNotNull(agent);
             Preconditions.checkNotNull(actionSetId);
             
-            Oaf oaf = buildOAFWithPdb(object);
+            Oaf oaf = buildOafWithSoftwareUrl(object);
             if (oaf != null) {
                 return actionFactory.createUpdateActions(actionSetId, agent, object.getDocumentId().toString(),
                         Type.result, oaf.toByteArray());
@@ -73,13 +73,13 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactory implements ActionBu
         // ---------------------- PRIVATE ----------------------------
         
         /**
-         * Builds OAF object containing external reference to url hosting software.
+         * Builds {@link Oaf} object containing external reference to url hosting software.
          * 
-         * @param source
-         * @return OAF object containing pdb external references
+         * @param source document to software urls
+         * @return {@link Oaf} object containing external references pointing to software urls
          * @throws TrustLevelThresholdExceededException
          */
-        private Oaf buildOAFWithPdb(DocumentToSoftwareUrls source) throws TrustLevelThresholdExceededException {
+        private Oaf buildOafWithSoftwareUrl(DocumentToSoftwareUrls source) throws TrustLevelThresholdExceededException {
             if (!source.getSoftwareUrls().isEmpty()) {
                 Result.Builder resultBuilder = Result.newBuilder();
                 for (SoftwareUrl sofwareUrl : source.getSoftwareUrls()) {
