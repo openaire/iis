@@ -265,7 +265,7 @@ public class AffMatchingRetainedAffPosQualityTest {
         List<SimpleAffMatchResult> notMatched = expectedMatches.stream()
                 .filter(x -> fetchMatchedOrganizationId(actualMatches, x.getDocumentId(), x.getAffiliationPosition()) == null)
                 .collect(toList());
-        System.out.println("NM: " + notMatched.size());
+        
         System.out.println("\n\tnot matched");
         for (SimpleAffMatchResult match : notMatched) {
             
@@ -321,10 +321,6 @@ public class AffMatchingRetainedAffPosQualityTest {
     }
     
     private Organization fetchOrganization(List<Organization> organizations, String organizationId) {
-        Organization o = organizations.stream().filter(x -> StringUtils.equals(x.getId().toString(), organizationId.toString())).findFirst().orElse(null);
-        if (o == null) {
-            throw new RuntimeException("not found: " + organizationId);
-        }
         return organizations.stream().filter(x -> StringUtils.equals(x.getId().toString(), organizationId.toString())).findFirst().get();
         
     }
