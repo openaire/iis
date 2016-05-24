@@ -30,13 +30,13 @@ public class JsonAvroTestUtils {
     //------------------------ LOGIC --------------------------
 
     /**
-     * Reads records from json file (jsonFilePath) as objects of recordClass class
+     * Reads records from json file as avro objects
      */
     public static <T extends GenericRecord> List<T> readJsonDataStore(String jsonFilePath, Class<T> avroRecordClass) throws IOException {
         List<T> jsonDatastore = Lists.newArrayList();
 
         Schema schema = AvroUtils.toSchema(avroRecordClass.getName());
-        
+
         try (JsonStreamReader<T> reader = new JsonStreamReader<T>(schema, new FileInputStream(jsonFilePath), avroRecordClass)) {
 
             while(reader.hasNext()) {
@@ -49,4 +49,16 @@ public class JsonAvroTestUtils {
         return jsonDatastore;
     }
 
+    /**
+     * Reads records from multiple json files as avro objects
+     */
+    public static <T extends GenericRecord> List<T> readMultipleJsonDataStores(List<String> jsonFilePaths, Class<T> avroRecordClass) throws IOException {
+        List<T> jsonDatastoresRecords = Lists.newArrayList();
+        
+        for (String jsonFilePath : jsonFilePaths) {
+            jsonDatastoresRecords.addAll(readJsonDataStore(jsonFilePath, avroRecordClass));
+        }
+        
+        return jsonDatastoresRecords;
+    }
 }

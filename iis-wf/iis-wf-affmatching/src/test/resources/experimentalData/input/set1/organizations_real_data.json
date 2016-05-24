@@ -1,0 +1,320 @@
+  {
+    "id": "20|opendoar____::36ac23b056f6a3b327484de59793f5b3",
+    "name": "Universidade Federal Fluminense",
+    "shortName": "UFF",
+    "countryName": "Brazil",
+    "countryCode": "BR",
+    "websiteUrl": null
+  }
+  {
+    "id": "20|corda_______::1e67295ca2d41d9870fc8885a5468abb",
+    "name": "INSTYTUT MEDYCYNY PRACY IMIENIA PROF. DRA MED. JERZEGO NOFERA W LODZI",
+    "shortName": "NIOM",
+    "countryName": "Poland",
+    "countryCode": "PL",
+    "websiteUrl": null
+  }
+  {
+    "id":"20|dedup_wf_001::131ba55de245f09922fb7e293e0d6f0d",
+    "name":"University of Nevada Las Vegas",
+    "shortName":"",
+    "countryName":"United States",
+    "countryCode":"US",
+    "websiteUrl":"http://www.unlv.edu/"
+  }
+  {
+    "id": "20|re3data_____::bd2ada67fcf76c0da5c2c9ef733a1c28",
+    "name": "University of California at Los Angeles, Department of Molecular, Cellular, and Developmental Biology",
+    "shortName": "UCLA mcdb",
+    "countryName": "United States",
+    "countryCode": "US",
+    "websiteUrl": null
+  }
+  {
+    "id":"20|dedup_wf_001::3e54f816d05da5f423d849e5eb618572",
+    "name":"University of North Carolina Greensboro",
+    "shortName":"",
+    "countryName":"United States",
+    "countryCode":"US",
+    "websiteUrl":""
+  }
+  {
+    "id": "20|nsf_________::4c4fc90be8aadf359a2c3bb75a2131bf",
+    "name": "University of California-San Francisco",
+    "shortName": "",
+    "countryName": "United States",
+    "countryCode": "US",
+    "websiteUrl": ""
+  }
+  {
+    "id":"20|dedup_wf_001::ba09ecaee170d029bc9ffcd9f5063f4f",
+    "name":"Case Western Reserve University",
+    "shortName":"Case",
+    "countryName":"United States",
+    "countryCode":"US",
+    "websiteUrl":"http://www.cwru.edu/"
+  }
+  {
+    "id": "20|dedup_wf_001::3bc725c456b1c8d961d8364d9db2459e",
+    "name": "UNIVERSITA DEGLI STUDI DI BRESCIA",
+    "shortName": "UNIBS",
+    "countryName": "Italy",
+    "countryCode": "IT",
+    "websiteUrl": null
+  }
+  {
+    "id": "20|corda_______::092e807c0e94ff7a8b33531b1b7d3727",
+    "name": "AZIENDA OSPEDALIERA, OSPEDALE LUIGI SACCO - POLO UNIVERSITARIO",
+    "shortName": "",
+    "countryName": "Italy",
+    "countryCode": "IT",
+    "websiteUrl": null
+  }
+  {
+    "id": "20|wt__________::870731bad81040d63cfe4eaa9e34dfb4",
+    "name": "Centre for Cellular and Molecular Biology, India",
+    "shortName": null,
+    "countryName": "",
+    "countryCode": "",
+    "websiteUrl": ""
+  }
+  {
+    "id":"20|corda__h2020::e00281bdbfd20a067d402dccc9f04ff3",
+    "name":"UNIVERSIDAD DE SANTIAGO DE COMPOSTELA",
+    "shortName":"USC",
+    "countryName":"Spain",
+    "countryCode":"ES",
+    "websiteUrl":"http://www.usc.es"
+  }
+  {
+    "id": "20|opendoar____::fd2b02039e23ebdfcf7c9b900d32fd6d",
+    "name": "Universidad de Puerto Rico",
+    "shortName": "UPR",
+    "countryName": "Puerto Rico",
+    "countryCode": "PR",
+    "websiteUrl": null
+  }
+  {
+    "id": "20|wt__________::80b729645d1087c828977065ad9b6937",
+    "name": "University of Lund",
+    "shortName": "University of Lund",
+    "countryName": "",
+    "countryCode": "",
+    "websiteUrl": ""
+  }
+  {
+    "id": "20|nsf_________::18a0ac6debb5e01cec73dea257d1dec3",
+    "name": "Rutgers, The State University of New Jersey-RBHS-New Jersey Med",
+    "shortName": "",
+    "countryName": "United States",
+    "countryCode": "US",
+    "websiteUrl": ""
+  }
+  {
+    "id":"20|dedup_wf_001::dd6d7cf33f43c0e261f7149e85e9449c",
+    "name":"Massachusetts Institute of Technology",
+    "shortName":"MIT",
+    "countryName":"United States",
+    "countryCode":"US",
+    "websiteUrl":"http://web.mit.edu/"
+  }
+  {
+    "id":"20|dedup_wf_001::9c766b232da25c8e1bc070f6c898f4bb",
+    "name":"Fayetteville State University",
+    "shortName":"FSU",
+    "countryName":"United States",
+    "countryCode":"US",
+    "websiteUrl":"http://www.uncfsu.edu/"
+  }
+  {
+    "id":"20|corda__h2020::1a5a90d361ace0a9821c09849877e1e7",
+    "name":"MERSIN UNIVERSITESI",
+    "shortName":"MEU",
+    "countryName":"Turkey",
+    "countryCode":"TR",
+    "websiteUrl":"www.mersin.edu.tr"
+  }
+  {
+    "id": "20|nsf_________::7d0fb7c571469cef26550952d26c003d",
+    "name": "Clemson University",
+    "shortName": "",
+    "countryName": "United States",
+    "countryCode": "US",
+    "websiteUrl": ""
+  }
+  {
+    "id": "20|dedup_wf_001::485fdd5c599092ff82a0b911cb774000",
+    "name": "EGE UNIVERSITESI",
+    "shortName": "EGE UNIVERSITESI",
+    "countryName": "Turkey",
+    "countryCode": "TR",
+    "websiteUrl": null
+  }
+  {
+    "id": "20|nsf_________::fb6a880869e6aa3b2803a5d35d97a721",
+    "name": "The Scripps Research Institute",
+    "shortName": "",
+    "countryName": "United States",
+    "countryCode": "US",
+    "websiteUrl": ""
+  }
+  {
+    "id": "20|wt__________::d44056811f15abe29bdea38be0a6c249",
+    "name": "University of Debrecen",
+    "shortName": "University of Debrecen",
+    "countryName": "",
+    "countryCode": "",
+    "websiteUrl": ""
+  }
+  {
+    "id":"20|dedup_wf_001::08fed41d0ba6d153736a0b8e06e30515",
+    "name":"McGill University",
+    "shortName":"McGill University",
+    "countryName":"Canada",
+    "countryCode":"CA",
+    "websiteUrl":"http://www.mcgill.ca/"
+  }
+  {
+    "id":"20|dedup_wf_001::86f40acd706436c44f220bcec383796b",
+    "name":"Massachusetts General Hospital",
+    "shortName":"Massachusetts General Hospital",
+    "countryName":"United States",
+    "countryCode":"US",
+    "websiteUrl":"http://www.massgeneral.org/"
+  }
+  {
+    "id":"20|dedup_wf_001::3e6df17b8e8d631bacf12ef28d7c4ddb",
+    "name":"University of Massachusetts Medical School",
+    "shortName":"UMASS",
+    "countryName":"United States",
+    "countryCode":"US",
+    "websiteUrl":"http://www.umassmed.edu/"
+  }
+  {
+    "id":"20|nsf_________::1b276a01908a7b2983181a392e5c26b6",
+    "name":"Washington University School of Medicine",
+    "shortName":"",
+    "countryName":"United States",
+    "countryCode":"US",
+    "websiteUrl":""
+  }
+  {
+    "id":"20|dedup_wf_001::6b635d7c7984a36341604c31213d804c",
+    "name":"University of Alberta",
+    "shortName":"",
+    "countryName":"Canada",
+    "countryCode":"CA",
+    "websiteUrl":"http://www.ualberta.ca/"
+  }
+  {
+    "id": "20|corda_______::6d0521daee99515d9145ebaa39404f69",
+    "name": "UNIVERSITY OF SOUTH AUSTRALIA",
+    "shortName": "University of South",
+    "countryName": "Australia",
+    "countryCode": "AU",
+    "websiteUrl": null
+  }
+  {
+    "id":"20|dedup_wf_001::2ff2c9f1112a3c4f6f99927457bcbd07",
+    "name":"UNIVERSITY OF MANITOBA",
+    "shortName":"MICB",
+    "countryName":"Canada",
+    "countryCode":"CA",
+    "websiteUrl":"www.umanitoba.ca"
+  }
+  {
+    "id": "20|dedup_wf_001::4509b22e7d9e325333806f2f593c0802",
+    "name": "NATIONAL UNIVERSITY OF SINGAPORE PUBLIC COMPANY LIMITED BY GUARANTEE",
+    "shortName": "NUS",
+    "countryName": "Singapore",
+    "countryCode": "SG",
+    "websiteUrl": null
+  }
+  {
+    "id":"20|dedup_wf_001::acbc50573cff220051f1aeb0b00aedf4",
+    "name":"Indian Institute of Technology Delhi",
+    "shortName":"IITD",
+    "countryName":"India",
+    "countryCode":"IN",
+    "websiteUrl":"http://www.iitd.ac.in"
+  }
+  {
+    "id": "20|re3data_____::61f76a0ab94c195bf0975b81a54f3ebb",
+    "name": "Howard Hughes Medical Institute",
+    "shortName": "HHMI",
+    "countryName": "United States",
+    "countryCode": "US",
+    "websiteUrl": null
+  }
+  {
+    "id": "20|corda_______::29011ac2c8e050ec7e72653060605e4c",
+    "name": "Fourth Military Medical University",
+    "shortName": "not applicable",
+    "countryName": null,
+    "countryCode": "CN",
+    "websiteUrl": null
+  }
+  {
+    "id":"20|re3data_____::7b4a386977dd467af8b5bcaef3c7a082",
+    "name":"Chinese Academy of Sciences, Institute of Geographical Sciences and Natural Resources Research",
+    "shortName":"CAS, IGSNRR",
+    "countryName":"China (People's Republic of)",
+    "countryCode":"CN",
+    "websiteUrl":"http://eng.wdc.cn/geonetwork/srv/en/main.home"
+  }
+  {
+    "id":"20|corda_______::8645ce28cd5c430c97764f80829c9efd",
+    "name":"THE OHIO STATE UNIVERSITY",
+    "shortName":"OSU",
+    "countryName":"United States",
+    "countryCode":"US",
+    "websiteUrl":"http://www.osu.edu"
+  }
+  {
+    "id": "20|corda_______::fe6aa2b1a97924a7f56ff10e6a16ee9b",
+    "name": "KING SAUD UNIVERSITY",
+    "shortName": "KSU",
+    "countryName": "Saudi Arabia",
+    "countryCode": "SA",
+    "websiteUrl": null
+  }
+  {
+    "id": "20|dedup_wf_001::4561b5e081c447170a2ce29151b096aa",
+    "name": "INSTITUT NATIONAL DE LA RECHERCHE AGRONOMIQUE",
+    "shortName": "INRA",
+    "countryName": "France",
+    "countryCode": "FR",
+    "websiteUrl": null
+  }
+  {
+    "id":"20|dedup_wf_001::579d8fe8395cbd382d397e6532611b80",
+    "name":"NEW YORK UNIVERSITY",
+    "shortName":"NY-U",
+    "countryName":"United States",
+    "countryCode":"US",
+    "websiteUrl":"www.nyu.edu/osp"
+  }
+  {
+    "id":"20|dedup_wf_001::95d74eefcd9550ac7ce005ff8f940e57",
+    "name":"Virginia Commonwealth University",
+    "shortName":"",
+    "countryName":"United States",
+    "countryCode":"US",
+    "websiteUrl":"http://www.vcu.edu/"
+  }
+  {
+    "id":"20|dedup_wf_001::2e36d07c4e1a3dae60f86a1fc7e69ab2",
+    "name":"University of Tokyo",
+    "shortName":"東京大学",
+    "countryName":"Japan",
+    "countryCode":"JP",
+    "websiteUrl":"http://interface.t.u-tokyo.ac.jp/"
+  }
+  {
+    "id":"20|dedup_wf_001::7b8ec0dd1a886d25a3dc2e11c8644a06",
+    "name":"INSTITUT PASTEUR",
+    "shortName":"IP",
+    "countryName":"France",
+    "countryCode":"FR",
+    "websiteUrl":"http://www.pasteur.fr"
+  }

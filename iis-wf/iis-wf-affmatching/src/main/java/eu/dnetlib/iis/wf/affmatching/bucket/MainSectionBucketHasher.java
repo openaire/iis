@@ -38,7 +38,7 @@ public class MainSectionBucketHasher implements BucketHasher<String> {
     /**
      * Returns a hash of the passed organization name string.<br/>
      * Hash is generated from main (most significant) section of organization name
-     * using using {@link OrganizationSectionHasher}.<br/>
+     * using {@link OrganizationSectionHasher}.<br/>
      * <br/>
      * Section is considered to be most significant when it is the first section
      * with type {@link #setMainSectionType(OrgSectionType)}
