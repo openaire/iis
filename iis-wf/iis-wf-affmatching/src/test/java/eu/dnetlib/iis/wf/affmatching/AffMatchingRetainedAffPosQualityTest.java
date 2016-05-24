@@ -55,8 +55,8 @@ import eu.dnetlib.iis.wf.affmatching.write.SimpleAffMatchResultWriter;
  */
 public class AffMatchingRetainedAffPosQualityTest {
 
-    private final static boolean PRINT_NOT_MATCHED = true;
-    private final static boolean PRINT_FALSE_POSITIVE_MATCHES = true;
+    private final static boolean PRINT_NOT_MATCHED = false;
+    private final static boolean PRINT_FALSE_POSITIVE_MATCHES = false;
     
     private AffMatchingService affMatchingService;
     
@@ -263,9 +263,9 @@ public class AffMatchingRetainedAffPosQualityTest {
         List<Organization> organizations = readLocalAvroDataStore(inputOrgDirPath);
         
         List<SimpleAffMatchResult> notMatched = expectedMatches.stream()
-                .filter(x -> !actualMatches.contains(x))
+                .filter(x -> fetchMatchedOrganizationId(actualMatches, x.getDocumentId(), x.getAffiliationPosition()) == null)
                 .collect(toList());
-        
+        System.out.println("NM: " + notMatched.size());
         System.out.println("\n\tnot matched");
         for (SimpleAffMatchResult match : notMatched) {
             
