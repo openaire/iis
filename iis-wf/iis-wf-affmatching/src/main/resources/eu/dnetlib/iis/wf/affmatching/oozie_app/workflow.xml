@@ -12,15 +12,21 @@
         </property>
         <property>
             <name>input_document_to_project</name>
-            <description>input containing document-project relation avro records (eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject).
-                These relations (alongside with project-organization relations) are used to generate document-organization pairs 
-                which are used as a hint for matching affiliations</description>
+            <description>input containing document-project relation avro records (eu.dnetlib.iis.importer.schemas.DocumentToProject).
+                These relations (alongside with inferred document-project and project-organization relations)
+                are used to generate document-organization pairs which are used as a hint for matching affiliations</description>
+        </property>
+        <property>
+            <name>input_inferred_document_to_project</name>
+            <description>input containing inferred document-project relation avro records (eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject).
+                These relations (alongside with document-project and project-organization relations)
+                are used to generate document-organization pairs which are used as a hint for matching affiliations</description>
         </property>
         <property>
             <name>input_project_to_organization</name>
             <description>input containing project-organization avro records (eu.dnetlib.iis.importer.schemas.ProjectToOrganization).
-                These relations (alongside with document-project relations) are used to generate document-organization pairs 
-                which are used as a hint for matching affiliations</description>
+                These relations (alongside with infered document-project and document-project relations)
+                are used to generate document-organization pairs which are used as a hint for matching affiliations</description>
         </property>
         
         <property>
@@ -31,7 +37,7 @@
         <property>
             <name>document_project_confidence_threshold</name>
             <value>0.5</value>
-            <description>confidence level threshold for loading document-project relations</description>
+            <description>confidence level threshold for loading inferred document-project relations</description>
         </property>
     </parameters>
 
@@ -61,7 +67,7 @@
             <prepare>
                 <delete path="${nameNode}${output}" />
             </prepare>
-
+    
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>Affiliations Matching</name>
@@ -71,6 +77,7 @@
             <arg>-inputAvroOrgPath=${input_organizations}</arg>
             <arg>-inputAvroAffPath=${input_documents_metadata}</arg>
             <arg>-inputAvroDocProjPath=${input_document_to_project}</arg>
+            <arg>-inputAvroInferredDocProjPath=${input_inferred_document_to_project}</arg>
             <arg>-inputAvroProjOrgPath=${input_project_to_organization}</arg>
             
             <arg>-outputAvroPath=${output}</arg>

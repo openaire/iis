@@ -25,10 +25,10 @@ public class DocumentOrganizationFetcherTest {
     private DocumentOrganizationFetcher documentOrganizationFetcher = new DocumentOrganizationFetcher();
     
     @Mock
-    private DocumentProjectReader documentProjectReader;
+    private ProjectOrganizationReader projectOrganizationReader;
     
     @Mock
-    private ProjectOrganizationReader projectOrganizationReader;
+    private DocumentProjectFetcher documentProjectFetcher;
     
     @Mock
     private DocumentOrganizationCombiner documentOrganizationCombiner;
@@ -39,7 +39,6 @@ public class DocumentOrganizationFetcherTest {
     @Mock
     private JavaSparkContext sc;
     
-    private String docProjPath = "/input/doc_proj";
     
     private String projOrgPath = "/input/proj_org";
     
@@ -56,7 +55,6 @@ public class DocumentOrganizationFetcherTest {
     @Before
     public void setup() {
         documentOrganizationFetcher.setDocProjConfidenceLevelThreshold(docProjConfidenceLevelThreshold);
-        documentOrganizationFetcher.setDocProjPath(docProjPath);
         documentOrganizationFetcher.setProjOrgPath(projOrgPath);
     }
     
@@ -68,7 +66,7 @@ public class DocumentOrganizationFetcherTest {
         
         // given
         
-        when(documentProjectReader.readDocumentProjects(sc, docProjPath)).thenReturn(documentProject);
+        when(documentProjectFetcher.fetchDocumentProjects()).thenReturn(documentProject);
         when(projectOrganizationReader.readProjectOrganizations(sc, projOrgPath)).thenReturn(projectOrganization);
         when(documentOrganizationCombiner.combine(documentProject, projectOrganization, docProjConfidenceLevelThreshold)).thenReturn(documentOrganizations);
         
@@ -82,7 +80,7 @@ public class DocumentOrganizationFetcherTest {
         
         assertTrue(retDocumentOrganizations == documentOrganizations);
         
-        verify(documentProjectReader).readDocumentProjects(sc, docProjPath);
+        verify(documentProjectFetcher).fetchDocumentProjects();
         verify(projectOrganizationReader).readProjectOrganizations(sc, projOrgPath);
         verify(documentOrganizationCombiner).combine(documentProject, projectOrganization, docProjConfidenceLevelThreshold);
         

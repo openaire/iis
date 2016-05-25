@@ -34,8 +34,11 @@
             <arg>-C{organizations, eu.dnetlib.iis.importer.schemas.Organization,
                 data/input/organizations.json}</arg>
             
-            <arg>-C{document_to_project, eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject,
+            <arg>-C{document_to_project, eu.dnetlib.iis.importer.schemas.DocumentToProject,
                 data/input/docProj.json}</arg>
+            
+            <arg>-C{inferred_document_to_project, eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject,
+                data/input/docProjInferred.json}</arg>
             
             <arg>-C{project_to_organization, eu.dnetlib.iis.importer.schemas.ProjectToOrganization,
                 data/input/projOrg.json}</arg>
@@ -43,6 +46,7 @@
             <arg>-Odocuments_metadata=${workingDir}/data_producer/document</arg>
             <arg>-Oorganizations=${workingDir}/data_producer/organization</arg>
             <arg>-Odocument_to_project=${workingDir}/data_producer/document_to_project</arg>
+            <arg>-Oinferred_document_to_project=${workingDir}/data_producer/document_to_project_inferred</arg>
             <arg>-Oproject_to_organization=${workingDir}/data_producer/project_to_organization</arg>
             
         </java>
@@ -67,6 +71,10 @@
                 <property>
                     <name>input_document_to_project</name>
                     <value>${workingDir}/data_producer/document_to_project</value>
+                </property>
+                <property>
+                    <name>input_inferred_document_to_project</name>
+                    <value>${workingDir}/data_producer/document_to_project_inferred</value>
                 </property>
                 <property>
                     <name>input_project_to_organization</name>

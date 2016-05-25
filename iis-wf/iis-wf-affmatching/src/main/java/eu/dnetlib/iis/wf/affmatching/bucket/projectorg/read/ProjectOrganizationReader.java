@@ -1,5 +1,7 @@
 package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read;
 
+import java.io.Serializable;
+
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
@@ -11,7 +13,7 @@ import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchProjectOrga
  * @author mhorst
  */
 
-public interface ProjectOrganizationReader {
+public interface ProjectOrganizationReader extends Serializable {
 
     /**
      * Reads project to organization relations that are in <code>inputPath</code>. The relations that are in <code>inputPath</code>

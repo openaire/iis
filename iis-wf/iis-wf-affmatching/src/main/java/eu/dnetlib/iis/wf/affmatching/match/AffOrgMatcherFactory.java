@@ -20,7 +20,10 @@ import eu.dnetlib.iis.wf.affmatching.bucket.MainSectionBucketHasher.FallbackSect
 import eu.dnetlib.iis.wf.affmatching.bucket.OrganizationNameBucketHasher;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationCombiner;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationFetcher;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentProjectFetcher;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentProjectMerger;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisDocumentProjectReader;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisInferredDocumentProjectReader;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisProjectOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
@@ -49,17 +52,27 @@ public class AffOrgMatcherFactory {
      * @param inputAvroProjOrgPath - source of project-document relations saved in avro files (with {@link ProjectToOrganization} schema)
      * @param inputDocProjConfidenceThreshold - minimal confidence level for {@link DocumentToProject} relations
      */
-    public static AffOrgMatcher createDocOrgRelationMatcher(JavaSparkContext sparkContext, String inputAvroDocProjPath, String inputAvroProjOrgPath, Float inputDocProjConfidenceThreshold) {
+    public static AffOrgMatcher createDocOrgRelationMatcher(JavaSparkContext sparkContext, String inputAvroDocProjPath, String inputAvroInferredDocProjPath, 
+            String inputAvroProjOrgPath, Float inputDocProjConfidenceThreshold) {
         
         // joiner
         
         DocumentOrganizationFetcher documentOrganizationFetcher = new DocumentOrganizationFetcher();
-        documentOrganizationFetcher.setDocumentProjectReader(new IisDocumentProjectReader());
+        
+        DocumentProjectFetcher documentProjectFetcher = new DocumentProjectFetcher();
+        documentProjectFetcher.setFirstDocumentProjectReader(new IisDocumentProjectReader());
+        documentProjectFetcher.setSecondDocumentProjectReader(new IisInferredDocumentProjectReader());
+        documentProjectFetcher.setDocumentProjectMerger(new DocumentProjectMerger());
+        documentProjectFetcher.setSparkContext(sparkContext);
+        documentProjectFetcher.setFirstDocProjPath(inputAvroDocProjPath);
+        documentProjectFetcher.setSecondDocProjPath(inputAvroInferredDocProjPath);
+        
+        documentOrganizationFetcher.setDocumentProjectFetcher(documentProjectFetcher);
+        
         documentOrganizationFetcher.setProjectOrganizationReader(new IisProjectOrganizationReader());
         documentOrganizationFetcher.setDocumentOrganizationCombiner(new DocumentOrganizationCombiner());
         documentOrganizationFetcher.setDocProjConfidenceLevelThreshold(inputDocProjConfidenceThreshold);
         documentOrganizationFetcher.setSparkContext(sparkContext);
-        documentOrganizationFetcher.setDocProjPath(inputAvroDocProjPath);
         documentOrganizationFetcher.setProjOrgPath(inputAvroProjOrgPath);
         
         DocOrgRelationAffOrgJoiner docOrgRelationJoiner = new DocOrgRelationAffOrgJoiner();

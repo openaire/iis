@@ -1,5 +1,7 @@
 package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read;
 
+import java.io.Serializable;
+
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
@@ -11,7 +13,7 @@ import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentPro
  * @author mhorst
  */
 
-public interface DocumentProjectReader {
+public interface DocumentProjectReader extends Serializable {
 
     /**
      * Reads document to project relations that are in <code>inputPath</code>.
