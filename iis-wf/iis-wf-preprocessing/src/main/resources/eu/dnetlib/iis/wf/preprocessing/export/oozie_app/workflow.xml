@@ -269,6 +269,7 @@
 			<job-tracker>${jobTracker}</job-tracker>
 			<name-node>${nameNode}</name-node>
 			<arg>-pb</arg>
+			<arg>-overwrite</arg>
 			<arg>${nameNode}${workingDir}/output</arg>
 			<arg>${output_remote_location}</arg>
 		</distcp>
