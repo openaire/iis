@@ -35,7 +35,9 @@ public class AvroTestUtils {
 
 
     /**
-     * Creates directory and saves in it the passed objects (in avro files).
+     * Creates directory and saves in it the passed objects (in avro files).<br/>
+     * Passed object list cannot be empty (use {@link #createLocalAvroDataStore(List, String, Class)}
+     * for empty lists).
      */
     public static <T extends GenericContainer> void createLocalAvroDataStore(List<T> records, String inputDirPath) throws IOException {
         
@@ -47,6 +49,23 @@ public class AvroTestUtils {
         FileSystem fs = createLocalFileSystem();
         
         DataStore.create(records, new FileSystemPath(fs, inputPath));
+        
+    }
+    
+    /**
+     * Creates directory and saves in it the passed objects (in avro files).<br/>
+     */
+    public static <T extends GenericContainer> void createLocalAvroDataStore(List<T> records, String inputDirPath, Class<T> recordsClass) throws IOException {
+        
+
+        File inputDir = new File(inputDirPath);
+        inputDir.mkdir();
+        Path inputPath = new Path(inputDir.getAbsolutePath());
+        
+        
+        FileSystem fs = createLocalFileSystem();
+        
+        DataStore.create(records, new FileSystemPath(fs, inputPath), AvroUtils.toSchema(recordsClass.getName()));
         
     }
     

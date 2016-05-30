@@ -71,14 +71,14 @@ public class AffMatchingService implements Serializable {
         checkState();
         
         
-        JavaRDD<AffMatchAffiliation> affiliations = affiliationReader.readAffiliations(sc, inputAffPath).filter(aff -> (StringUtils.isNotBlank(aff.getOrganizationName())));
+        JavaRDD<AffMatchAffiliation> affiliations = affiliationReader.readAffiliations(sc, inputAffPath);
         
-        JavaRDD<AffMatchOrganization> organizations = organizationReader.readOrganizations(sc, inputOrgPath).filter(org -> (StringUtils.isNotBlank(org.getName())));
+        JavaRDD<AffMatchOrganization> organizations = organizationReader.readOrganizations(sc, inputOrgPath);
         
         
-        JavaRDD<AffMatchAffiliation> normalizedAffiliations = affiliations.map(aff -> affMatchAffiliationNormalizer.normalize(aff));
+        JavaRDD<AffMatchAffiliation> normalizedAffiliations = affiliations.map(aff -> affMatchAffiliationNormalizer.normalize(aff)).filter(aff -> (StringUtils.isNotBlank(aff.getOrganizationName())));
         
-        JavaRDD<AffMatchOrganization> normalizedOrganizations = organizations.map(org -> affMatchOrganizationNormalizer.normalize(org));
+        JavaRDD<AffMatchOrganization> normalizedOrganizations = organizations.map(org -> affMatchOrganizationNormalizer.normalize(org)).filter(org -> (StringUtils.isNotBlank(org.getName())));
         
 
         JavaRDD<AffMatchResult> allMatchedAffOrgs = doMatch(sc, normalizedAffiliations, normalizedOrganizations);

@@ -1,10 +1,9 @@
 package eu.dnetlib.iis.wf.affmatching;
 
-import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory.createNameCountryStrictMatchVoter;
-import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory.createNameStrictCountryLooseMatchVoter;
-import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory.createSectionedNameLevenshteinCountryLooseMatchVoter;
-import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory.createSectionedNameStrictCountryLooseMatchVoter;
-import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory.createSectionedShortNameStrictCountryLooseMatchVoter;
+import static com.google.common.collect.ImmutableList.of;
+import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createFirstWordsHashBucketMatcher;
+import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createDocOrgRelationMatcher;
+import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createMainSectionHashBucketMatcher;
 
 import java.io.IOException;
 
@@ -14,20 +13,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.google.common.collect.ImmutableList;
 
-import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgHashBucketJoiner;
-import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgJoiner;
-import eu.dnetlib.iis.wf.affmatching.bucket.AffiliationOrgNameBucketHasher;
-import eu.dnetlib.iis.wf.affmatching.bucket.DocOrgRelationAffOrgJoiner;
-import eu.dnetlib.iis.wf.affmatching.bucket.MainSectionBucketHasher;
-import eu.dnetlib.iis.wf.affmatching.bucket.MainSectionBucketHasher.FallbackSectionPickStrategy;
-import eu.dnetlib.iis.wf.affmatching.bucket.OrganizationNameBucketHasher;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationCombiner;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationFetcher;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisDocumentProjectReader;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisProjectOrganizationReader;
-import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchComputer;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
 import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.IisOrganizationReader;
@@ -111,91 +97,19 @@ public class AffMatchingJob {
         affMatchingService.setAffMatchResultWriter(new IisAffMatchResultWriter());
         
         
-        // docOrgRelationAffOrgMatcher
+        // matchers
         
-        DocumentOrganizationFetcher documentOrganizationFetcher = new DocumentOrganizationFetcher();
-        documentOrganizationFetcher.setDocumentProjectReader(new IisDocumentProjectReader());
-        documentOrganizationFetcher.setProjectOrganizationReader(new IisProjectOrganizationReader());
-        documentOrganizationFetcher.setDocumentOrganizationCombiner(new DocumentOrganizationCombiner());
-        documentOrganizationFetcher.setDocProjConfidenceLevelThreshold(params.inputDocProjConfidenceThreshold);
-        documentOrganizationFetcher.setSparkContext(sparkContext);
-        documentOrganizationFetcher.setDocProjPath(params.inputAvroDocProjPath);
-        documentOrganizationFetcher.setProjOrgPath(params.inputAvroProjOrgPath);
+        AffOrgMatcher docOrgRelationMatcher = 
+                createDocOrgRelationMatcher(sparkContext, params.inputAvroDocProjPath, params.inputAvroProjOrgPath, params.inputDocProjConfidenceThreshold);
         
-        DocOrgRelationAffOrgJoiner docOrgRelationAffOrgJoiner = new DocOrgRelationAffOrgJoiner();
-        docOrgRelationAffOrgJoiner.setDocumentOrganizationFetcher(documentOrganizationFetcher);
+        AffOrgMatcher mainSectionHashBucketMatcher = createMainSectionHashBucketMatcher();
         
-        AffOrgMatchComputer docOrgRelationAffOrgMatchComputer = new AffOrgMatchComputer();
-        docOrgRelationAffOrgMatchComputer.setAffOrgMatchVoters(ImmutableList.of(
-                createNameCountryStrictMatchVoter(),
-                createNameStrictCountryLooseMatchVoter(),
-                createSectionedNameStrictCountryLooseMatchVoter(),
-                createSectionedNameLevenshteinCountryLooseMatchVoter(),
-                createSectionedShortNameStrictCountryLooseMatchVoter()));
-        
-        AffOrgMatcher docOrgRelationAffOrgMatcher = new AffOrgMatcher();
-        docOrgRelationAffOrgMatcher.setAffOrgJoiner(docOrgRelationAffOrgJoiner);
-        docOrgRelationAffOrgMatcher.setAffOrgMatchComputer(docOrgRelationAffOrgMatchComputer);
-        
-        
-        
-        // affOrgMainSectionHashBucketMatcher - affiliation hasher
-        
-        AffiliationOrgNameBucketHasher mainSectionAffBucketHasher = new AffiliationOrgNameBucketHasher();
-        MainSectionBucketHasher mainSectionStringAffBucketHasher = new MainSectionBucketHasher();
-        mainSectionStringAffBucketHasher.setFallbackSectionPickStrategy(FallbackSectionPickStrategy.LAST_SECTION);
-        mainSectionAffBucketHasher.setStringHasher(mainSectionStringAffBucketHasher);
-        
-        // affOrgMainSectionHashBucketMatcher - organization hasher
-        
-        OrganizationNameBucketHasher mainSectionOrgBucketHasher = new OrganizationNameBucketHasher();
-        MainSectionBucketHasher mainSectionStringOrgBucketHasher = new MainSectionBucketHasher();
-        mainSectionStringOrgBucketHasher.setFallbackSectionPickStrategy(FallbackSectionPickStrategy.FIRST_SECTION);
-        mainSectionOrgBucketHasher.setStringHasher(mainSectionStringOrgBucketHasher);
-        
-        // affOrgMainSectionHashBucketMatcher
-        
-        AffOrgHashBucketJoiner mainSectionHashBucketJoiner = new AffOrgHashBucketJoiner();
-        
-        mainSectionHashBucketJoiner.setAffiliationBucketHasher(mainSectionAffBucketHasher);
-        mainSectionHashBucketJoiner.setOrganizationBucketHasher(mainSectionOrgBucketHasher);
-        
-        AffOrgMatchComputer mainSectionHashMatchComputer = new AffOrgMatchComputer();
-        
-        mainSectionHashMatchComputer.setAffOrgMatchVoters(ImmutableList.of(
-                createNameCountryStrictMatchVoter(),
-                createNameStrictCountryLooseMatchVoter(),
-                createSectionedNameStrictCountryLooseMatchVoter(),
-                createSectionedNameLevenshteinCountryLooseMatchVoter(),
-                createSectionedShortNameStrictCountryLooseMatchVoter()));
-        
-        AffOrgMatcher mainSectionHashBucketMatcher = new AffOrgMatcher();
-        mainSectionHashBucketMatcher.setAffOrgJoiner(mainSectionHashBucketJoiner);
-        mainSectionHashBucketMatcher.setAffOrgMatchComputer(mainSectionHashMatchComputer);
-        
-        
-        // affOrgFirstWordsHashBucketMatcher
-        
-        AffOrgJoiner firstWordsHashBucketJoiner = new AffOrgHashBucketJoiner();
-        
-        AffOrgMatchComputer firstWordsHashMatchComputer = new AffOrgMatchComputer();
-        
-        firstWordsHashMatchComputer.setAffOrgMatchVoters(ImmutableList.of(
-                createNameCountryStrictMatchVoter(),
-                createNameStrictCountryLooseMatchVoter(),
-                createSectionedNameStrictCountryLooseMatchVoter(),
-                createSectionedNameLevenshteinCountryLooseMatchVoter(),
-                createSectionedShortNameStrictCountryLooseMatchVoter()));
-        
-        AffOrgMatcher firstWordsHashBucketMatcher = new AffOrgMatcher();
-        firstWordsHashBucketMatcher.setAffOrgJoiner(firstWordsHashBucketJoiner);
-        firstWordsHashBucketMatcher.setAffOrgMatchComputer(firstWordsHashMatchComputer);
+        AffOrgMatcher firstWordsHashBucketMatcher = createFirstWordsHashBucketMatcher();
         
         
         
         
-        affMatchingService.setAffOrgMatchers(ImmutableList
-                .of(docOrgRelationAffOrgMatcher, mainSectionHashBucketMatcher, firstWordsHashBucketMatcher));
+        affMatchingService.setAffOrgMatchers(of(docOrgRelationMatcher, mainSectionHashBucketMatcher, firstWordsHashBucketMatcher));
         
         return affMatchingService;
     }
