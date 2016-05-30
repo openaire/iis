@@ -65,6 +65,9 @@ public class AffMatchingJob {
         @Parameter(names = "-inputAvroAffPath", required = true, description="path to directory with avro files containing affiliations")
         private String inputAvroAffPath;
         
+        @Parameter(names = "-inputAvroInferredDocProjPath", required = true, description="path to directory with avro files containing inferred document to project relations")
+        private String inputAvroInferredDocProjPath;
+        
         @Parameter(names = "-inputAvroDocProjPath", required = true, description="path to directory with avro files containing document to project relations")
         private String inputAvroDocProjPath;
         
@@ -100,7 +103,7 @@ public class AffMatchingJob {
         // matchers
         
         AffOrgMatcher docOrgRelationMatcher = 
-                createDocOrgRelationMatcher(sparkContext, params.inputAvroDocProjPath, params.inputAvroProjOrgPath, params.inputDocProjConfidenceThreshold);
+                createDocOrgRelationMatcher(sparkContext, params.inputAvroDocProjPath, params.inputAvroInferredDocProjPath, params.inputAvroProjOrgPath, params.inputDocProjConfidenceThreshold);
         
         AffOrgMatcher mainSectionHashBucketMatcher = createMainSectionHashBucketMatcher();
         

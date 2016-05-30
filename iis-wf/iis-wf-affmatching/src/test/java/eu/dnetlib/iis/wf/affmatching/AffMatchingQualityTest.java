@@ -54,6 +54,8 @@ public class AffMatchingQualityTest {
     
     private String inputDocProjDirPath;
     
+    private String inputInferredDocProjDirPath;
+    
     private float inputDocProjConfidenceThreshold = 0.8f;
     
     private String inputProjOrgDirPath;
@@ -69,6 +71,7 @@ public class AffMatchingQualityTest {
         inputOrgDirPath = workingDir + "/affiliation_matching/input/organizations";
         inputAffDirPath = workingDir + "/affiliation_matching/input/affiliations";
         inputDocProjDirPath = workingDir + "/affiliation_matching/input/doc_proj";
+        inputInferredDocProjDirPath = workingDir + "/affiliation_matching/input/doc_proj_inferred";
         inputProjOrgDirPath = workingDir + "/affiliation_matching/input/proj_org";
         outputDirPath = workingDir + "/affiliation_matching/output";
         
@@ -95,7 +98,7 @@ public class AffMatchingQualityTest {
         createInputDataFromJsonFiles(
                 of("src/test/resources/experimentalData/input/all_organizations.json"),
                 of("src/test/resources/experimentalData/input/set1/docs_with_aff_real_data.json"),
-                of(), of());
+                of(), of(), of());
         
         
         // execute
@@ -118,7 +121,7 @@ public class AffMatchingQualityTest {
         createInputDataFromJsonFiles(
                 of("src/test/resources/experimentalData/input/all_organizations.json"),
                 of("src/test/resources/experimentalData/input/set2/docs_with_aff_real_data.json"),
-                of(), of());
+                of(), of(), of());
         
         
         // execute
@@ -144,7 +147,7 @@ public class AffMatchingQualityTest {
                 of(
                         "src/test/resources/experimentalData/input/set1/docs_with_aff_real_data.json",
                         "src/test/resources/experimentalData/input/set2/docs_with_aff_real_data.json"),
-                of(), of());
+                of(), of(), of());
         
         
         // execute
@@ -176,6 +179,7 @@ public class AffMatchingQualityTest {
                 .addArg("-inputAvroOrgPath", inputOrgDirPath)
                 .addArg("-inputAvroAffPath", inputAffDirPath)
                 .addArg("-inputAvroDocProjPath", inputDocProjDirPath)
+                .addArg("-inputAvroInferredDocProjPath", inputInferredDocProjDirPath)
                 .addArg("-inputDocProjConfidenceThreshold", String.valueOf(inputDocProjConfidenceThreshold))
                 .addArg("-inputAvroProjOrgPath", inputProjOrgDirPath)
                 .addArg("-outputAvroPath", outputDirPath)
@@ -246,14 +250,15 @@ public class AffMatchingQualityTest {
         
     }
     
-    private void createInputDataFromJsonFiles(List<String> jsonInputOrgPaths, List<String> jsonInputAffPaths, List<String> jsonInputDocProjPaths, List<String> jsonInputProjOrgPaths) throws IOException {
-
+    private void createInputDataFromJsonFiles(List<String> jsonInputOrgPaths, List<String> jsonInputAffPaths, List<String> jsonInputDocProjPaths, List<String> jsonInputInferredDocProjPaths, List<String> jsonInputProjOrgPaths) throws IOException {
+        
         createLocalAvroDataStore(readMultipleJsonDataStores(jsonInputOrgPaths, Organization.class), inputOrgDirPath, Organization.class);
         createLocalAvroDataStore(readMultipleJsonDataStores(jsonInputAffPaths, ExtractedDocumentMetadata.class), inputAffDirPath, ExtractedDocumentMetadata.class);
         
-        createLocalAvroDataStore(readMultipleJsonDataStores(jsonInputDocProjPaths, DocumentToProject.class), inputDocProjDirPath, DocumentToProject.class);
+        createLocalAvroDataStore(readMultipleJsonDataStores(jsonInputDocProjPaths, eu.dnetlib.iis.importer.schemas.DocumentToProject.class), inputDocProjDirPath, eu.dnetlib.iis.importer.schemas.DocumentToProject.class);
+        createLocalAvroDataStore(readMultipleJsonDataStores(jsonInputInferredDocProjPaths, DocumentToProject.class), inputInferredDocProjDirPath, DocumentToProject.class);
         createLocalAvroDataStore(readMultipleJsonDataStores(jsonInputProjOrgPaths, ProjectToOrganization.class), inputProjOrgDirPath, ProjectToOrganization.class);
-
+        
     }
     
     

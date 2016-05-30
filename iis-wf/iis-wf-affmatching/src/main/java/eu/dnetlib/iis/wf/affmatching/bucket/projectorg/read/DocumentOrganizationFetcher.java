@@ -11,8 +11,8 @@ import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchProjectOrga
 
 /**
  * Fetcher of document-organization relations ({@link AffMatchDocumentOrganization}).<br />
- * This fetcher internally uses {@link DocumentProjectReader} and {@link ProjectOrganizationReader}
- * to read document-project and project-organization relations respectively and then
+ * This fetcher internally uses {@link DocumentProjectFetcher} and {@link ProjectOrganizationReader}
+ * to get document-project and project-organization relations respectively and then
  * combines them using {@link DocumentOrganizationCombiner}.
  *  
  * 
@@ -23,17 +23,15 @@ public class DocumentOrganizationFetcher implements Serializable {
     private static final long serialVersionUID = 1L;
     
     
-    private DocumentProjectReader documentProjectReader;
     private ProjectOrganizationReader projectOrganizationReader;
     
+    private DocumentProjectFetcher documentProjectFetcher;
     private DocumentOrganizationCombiner documentOrganizationCombiner;
     
     private Float docProjConfidenceLevelThreshold;
     
     
     private transient JavaSparkContext sparkContext;
-    
-    private String docProjPath;
     
     private String projOrgPath;
     
@@ -46,7 +44,8 @@ public class DocumentOrganizationFetcher implements Serializable {
      */
     public JavaRDD<AffMatchDocumentOrganization> fetchDocumentOrganizations() {
         
-        JavaRDD<AffMatchDocumentProject> docProj = documentProjectReader.readDocumentProjects(sparkContext, docProjPath);
+        JavaRDD<AffMatchDocumentProject> docProj = documentProjectFetcher.fetchDocumentProjects();
+        
         JavaRDD<AffMatchProjectOrganization> projOrg = projectOrganizationReader.readProjectOrganizations(sparkContext, projOrgPath);
         
         JavaRDD<AffMatchDocumentOrganization> docOrg = documentOrganizationCombiner.combine(docProj, projOrg, docProjConfidenceLevelThreshold);
@@ -56,13 +55,13 @@ public class DocumentOrganizationFetcher implements Serializable {
 
 
     //------------------------ SETTERS --------------------------
-    
-    public void setDocumentProjectReader(DocumentProjectReader documentProjectReader) {
-        this.documentProjectReader = documentProjectReader;
-    }
 
     public void setProjectOrganizationReader(ProjectOrganizationReader projectOrganizationReader) {
         this.projectOrganizationReader = projectOrganizationReader;
+    }
+
+    public void setDocumentProjectFetcher(DocumentProjectFetcher documentProjectFetcher) {
+        this.documentProjectFetcher = documentProjectFetcher;
     }
 
     public void setDocumentOrganizationCombiner(DocumentOrganizationCombiner documentOrganizationCombiner) {
@@ -77,11 +76,8 @@ public class DocumentOrganizationFetcher implements Serializable {
         this.sparkContext = sparkContext;
     }
 
-    public void setDocProjPath(String docProjPath) {
-        this.docProjPath = docProjPath;
-    }
-
     public void setProjOrgPath(String projOrgPath) {
         this.projOrgPath = projOrgPath;
     }
+
 }
