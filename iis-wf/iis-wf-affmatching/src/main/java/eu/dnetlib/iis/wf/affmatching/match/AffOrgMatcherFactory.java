@@ -48,7 +48,10 @@ public class AffOrgMatcherFactory {
      * Document-organization relations are fetched from combined inputs of document-project and project-organization
      * relations.
      * 
-     * @param inputAvroDocProjPath - source of document-project relations saved in avro files (with {@link DocumentToProject} schema)
+     * @param inputAvroDocProjPath - source of document-project relations saved in avro files 
+     *      (with {@link eu.dnetlib.iis.importer.schemas.DocumentToProject} schema)
+     * @param inputAvroInferredDocProjPath - source of document-project relations inferred by iis
+     *      saved in avro files (with {@link eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject} schema)
      * @param inputAvroProjOrgPath - source of project-document relations saved in avro files (with {@link ProjectToOrganization} schema)
      * @param inputDocProjConfidenceThreshold - minimal confidence level for {@link DocumentToProject} relations
      */
