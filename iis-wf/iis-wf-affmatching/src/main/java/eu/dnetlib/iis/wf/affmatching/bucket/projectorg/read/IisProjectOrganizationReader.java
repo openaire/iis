@@ -1,7 +1,5 @@
 package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read;
 
-import java.io.Serializable;
-
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
@@ -17,7 +15,7 @@ import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
  * @author mhorst
  */
 
-public class IisProjectOrganizationReader implements Serializable, ProjectOrganizationReader {
+public class IisProjectOrganizationReader implements ProjectOrganizationReader {
 
     private static final long serialVersionUID = 1L;
 

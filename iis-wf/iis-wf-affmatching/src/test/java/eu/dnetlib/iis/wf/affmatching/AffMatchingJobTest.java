@@ -37,6 +37,8 @@ public class AffMatchingJobTest {
     
     private String inputAffDirPath;
     
+    private String inputInferredDocProjDirPath;
+    
     private String inputDocProjDirPath;
     
     private float inputDocProjConfidenceThreshold = 0.8f;
@@ -53,6 +55,7 @@ public class AffMatchingJobTest {
         
         inputOrgDirPath = workingDir + "/affiliation_matching/input/organizations";
         inputAffDirPath = workingDir + "/affiliation_matching/input/affiliations";
+        inputInferredDocProjDirPath = workingDir + "/affiliation_matching/input/doc_proj_inferred";
         inputDocProjDirPath = workingDir + "/affiliation_matching/input/doc_proj";
         inputProjOrgDirPath = workingDir + "/affiliation_matching/input/proj_org";
         outputDirPath = workingDir + "/affiliation_matching/output";
@@ -79,6 +82,7 @@ public class AffMatchingJobTest {
         
         String jsonInputOrgPath = "src/test/resources/data/input/organizations.json";
         String jsonInputAffPath = "src/test/resources/data/input/affiliations.json";
+        String jsonInputInferredDocProjPath = "src/test/resources/data/input/docProjInferred.json";
         String jsonInputDocProjPath = "src/test/resources/data/input/docProj.json";
         String jsonInputProjOrgPath = "src/test/resources/data/input/projOrg.json";
         
@@ -92,7 +96,10 @@ public class AffMatchingJobTest {
                 JsonAvroTestUtils.readJsonDataStore(jsonInputAffPath, ExtractedDocumentMetadata.class), inputAffDirPath);
         
         AvroTestUtils.createLocalAvroDataStore(
-                JsonAvroTestUtils.readJsonDataStore(jsonInputDocProjPath, DocumentToProject.class), inputDocProjDirPath);
+                JsonAvroTestUtils.readJsonDataStore(jsonInputInferredDocProjPath, DocumentToProject.class), inputInferredDocProjDirPath);
+        
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(jsonInputDocProjPath, eu.dnetlib.iis.importer.schemas.DocumentToProject.class), inputDocProjDirPath);
         
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(jsonInputProjOrgPath, ProjectToOrganization.class), inputProjOrgDirPath);
@@ -119,6 +126,7 @@ public class AffMatchingJobTest {
                                            .addArg("-inputAvroOrgPath", inputOrgDirPath)
                                            .addArg("-inputAvroAffPath", inputAffDirPath)
                                            .addArg("-inputAvroDocProjPath", inputDocProjDirPath)
+                                           .addArg("-inputAvroInferredDocProjPath", inputInferredDocProjDirPath)
                                            .addArg("-inputDocProjConfidenceThreshold", String.valueOf(inputDocProjConfidenceThreshold))
                                            .addArg("-inputAvroProjOrgPath", inputProjOrgDirPath)
                                            .addArg("-outputAvroPath", outputDirPath)

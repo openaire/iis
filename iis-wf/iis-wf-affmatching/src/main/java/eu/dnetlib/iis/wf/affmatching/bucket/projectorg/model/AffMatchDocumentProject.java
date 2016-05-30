@@ -2,6 +2,7 @@ package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 /**
@@ -66,6 +67,37 @@ public class AffMatchDocumentProject {
 
     public void setConfidenceLevel(float confidenceLevel) {
         this.confidenceLevel = confidenceLevel;
+    }
+
+
+    //------------------------ hashCode & equals --------------------------
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(documentId, projectId, confidenceLevel);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AffMatchDocumentProject other = (AffMatchDocumentProject) obj;
+        return Objects.equal(documentId, other.documentId) &&
+                Objects.equal(projectId, other.projectId) &&
+                Objects.equal(confidenceLevel, other.confidenceLevel);
+    }
+
+
+    //------------------------ toString --------------------------
+
+    @Override
+    public String toString() {
+        return "AffMatchDocumentProject [documentId=" + documentId + ", projectId=" + projectId + ", confidenceLevel="
+                + confidenceLevel + "]";
     }
 
 }

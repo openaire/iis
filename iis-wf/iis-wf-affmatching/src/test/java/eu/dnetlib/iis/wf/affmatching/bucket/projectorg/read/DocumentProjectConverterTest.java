@@ -4,76 +4,68 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
+import eu.dnetlib.iis.importer.schemas.DocumentToProject;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentProject;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentProjectConverter;
 
+/**
+ * @author madryk
+ */
 public class DocumentProjectConverterTest {
 
     private DocumentProjectConverter converter = new DocumentProjectConverter();
-
-    private final String docId = "docId";
-    private final String projId = "projId";
-    private final float confidenceLevel = 0.9f;
-
-    // ------------------------ TESTS --------------------------
-
+    
+    private String documentId = "DOC1";
+    private String projectId = "PROJ1";
+    
+    
+    //------------------------ TESTS --------------------------
+    
     @Test(expected = NullPointerException.class)
-    public void convert_null() {
+    public void convert_NULL_DOC_PROJ() {
+        
         // execute
         converter.convert(null);
     }
-
+    
     @Test(expected = IllegalArgumentException.class)
-    public void convert_blank_document_id() {
+    public void convert_NULL_DOC_ID() {
+        
         // execute
-        converter.convert(new DocumentToProject(" ", projId, 1f));
+        converter.convert(new DocumentToProject(null, projectId));
     }
-
+    
     @Test(expected = IllegalArgumentException.class)
-    public void convert_blank_project_id() {
+    public void convert_BLANK_DOC_ID() {
+        
         // execute
-        converter.convert(new DocumentToProject(docId, " ", 1f));
+        converter.convert(new DocumentToProject(" ", projectId));
     }
-
+    
     @Test(expected = IllegalArgumentException.class)
-    public void convert_out_of_right_range_confidence_level() {
+    public void convert_NULL_ORG_ID() {
+        
         // execute
-        converter.convert(new DocumentToProject(docId, projId, 2f));
+        converter.convert(new DocumentToProject(documentId, null));
     }
-
+    
     @Test(expected = IllegalArgumentException.class)
-    public void convert_out_of_left_range_confidence_level() {
+    public void convert_BLANK_ORG_ID() {
+        
         // execute
-        converter.convert(new DocumentToProject(docId, projId, -1f));
+        converter.convert(new DocumentToProject(documentId, "  "));
     }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void convert_null_document_id() {
-        // execute
-        converter.convert(new DocumentToProject(null, projId, confidenceLevel));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void convert_null_project_id() {
-        // execute
-        converter.convert(new DocumentToProject(docId, null, confidenceLevel));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void convert_null_confidence_level() {
-        // execute
-        converter.convert(new DocumentToProject(docId, projId, null));
-    }
-
+    
     @Test
     public void convert() {
+        // given
+        DocumentToProject documentProject = new DocumentToProject(documentId, projectId);
+        
         // execute
-        AffMatchDocumentProject result = converter.convert(new DocumentToProject(docId, projId, confidenceLevel));
+        AffMatchDocumentProject retAffMatchDocProj = converter.convert(documentProject);
+        
         // assert
-        assertEquals(docId, result.getDocumentId());
-        assertEquals(projId, result.getProjectId());
-        assertEquals(confidenceLevel, result.getConfidenceLevel(), 0);
+        assertEquals(new AffMatchDocumentProject(documentId, projectId, 1f), retAffMatchDocProj);
     }
-
+    
+    
 }

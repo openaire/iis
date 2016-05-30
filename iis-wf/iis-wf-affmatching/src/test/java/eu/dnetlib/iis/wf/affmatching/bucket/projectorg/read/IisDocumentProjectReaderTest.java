@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -19,85 +18,101 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
+import eu.dnetlib.iis.importer.schemas.DocumentToProject;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentProject;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentProjectConverter;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisDocumentProjectReader;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 
 /**
- * @author mhorst
+ * @author madryk
  */
 @RunWith(MockitoJUnitRunner.class)
 public class IisDocumentProjectReaderTest {
-
+    
     @InjectMocks
     private IisDocumentProjectReader documentProjectReader = new IisDocumentProjectReader();
-
+    
     @Mock
     private SparkAvroLoader avroLoader;
-
+    
     @Mock
     private DocumentProjectConverter documentProjectConverter;
-
+    
+    
     @Mock
     private JavaSparkContext sparkContext;
-
+    
+    private String inputDocProjPath = "/path/to/document_pojects/";
+    
     @Mock
-    private JavaRDD<DocumentToProject> loadedDocumentProjects;
-
-    @Captor
-    private ArgumentCaptor<Function<DocumentToProject, AffMatchDocumentProject>> mapDocumentProjectFunction;
-
+    private JavaRDD<DocumentToProject> documentToProjectRdd;
+    
     @Mock
     private JavaRDD<AffMatchDocumentProject> documentProjects;
-
-    private final String predefinedPath = "/path/to/document_pojects/";
-
-    @Before
-    public void setUp() {
-        when(avroLoader.loadJavaRDD(sparkContext, predefinedPath, DocumentToProject.class)).thenReturn(loadedDocumentProjects);
-        doReturn(documentProjects).when(loadedDocumentProjects).map(any());
-    }
-
-    // ------------------------ TESTS --------------------------
-
+    
+    @Captor
+    private ArgumentCaptor<Function<DocumentToProject, AffMatchDocumentProject>> convertDocumentProjectFunction;
+    
+    
+    //------------------------ TESTS --------------------------
+    
     @Test(expected = NullPointerException.class)
     public void readDocumentProjects_NULL_CONTEXT() {
+        
         // execute
-        documentProjectReader.readDocumentProjects(null, predefinedPath);
+        documentProjectReader.readDocumentProjects(null, inputDocProjPath);
     }
-
-    @Test(expected = NullPointerException.class)
-    public void readDocumentProjects_NULL_PATH() {
+    
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void readDocumentProjects_BLANK_PATH() {
+        
         // execute
-        documentProjectReader.readDocumentProjects(sparkContext, null);
+        documentProjectReader.readDocumentProjects(sparkContext, "  ");
     }
-
+    
+    
     @Test
     public void readDocumentProjects() throws Exception {
-        // execute
-        JavaRDD<AffMatchDocumentProject> retDocumentProject = documentProjectReader.readDocumentProjects(sparkContext,
-                predefinedPath);
-        // assert
-        assertTrue(retDocumentProject == documentProjects);
-        verify(avroLoader).loadJavaRDD(sparkContext, predefinedPath, DocumentToProject.class);
-        verify(loadedDocumentProjects).map(mapDocumentProjectFunction.capture());
-        assertMapDocumentProjectFunction(mapDocumentProjectFunction.getValue());
-    }
-
-    // ------------------------ PRIVATE --------------------------
-
-    private void assertMapDocumentProjectFunction(Function<DocumentToProject, AffMatchDocumentProject> function)
-            throws Exception {
+        
         // given
-        DocumentToProject documentProject = mock(DocumentToProject.class);
-        AffMatchDocumentProject mappedDocumentProject = mock(AffMatchDocumentProject.class);
-        when(documentProjectConverter.convert(documentProject)).thenReturn(mappedDocumentProject);
+        
+        when(avroLoader.loadJavaRDD(sparkContext, inputDocProjPath, DocumentToProject.class)).thenReturn(documentToProjectRdd);
+        doReturn(documentProjects).when(documentToProjectRdd).map(any());
+        
+        
         // execute
-        AffMatchDocumentProject retDocumentProject = function.call(documentProject);
+        
+        JavaRDD<AffMatchDocumentProject> retDocumentProjects = documentProjectReader.readDocumentProjects(sparkContext, inputDocProjPath);
+        
+        
         // assert
-        assertTrue(retDocumentProject == mappedDocumentProject);
+        
+        assertTrue(retDocumentProjects == documentProjects);
+        
+        verify(avroLoader).loadJavaRDD(sparkContext, inputDocProjPath, DocumentToProject.class);
+        
+        verify(documentToProjectRdd).map(convertDocumentProjectFunction.capture());
+        assertConvertDocumentProjectFunction(convertDocumentProjectFunction.getValue());
     }
-
+    
+    
+    //------------------------ PRIVATE --------------------------
+    
+    private void assertConvertDocumentProjectFunction(Function<DocumentToProject, AffMatchDocumentProject> function) throws Exception {
+        
+        // given
+        
+        DocumentToProject inputDocProj = mock(DocumentToProject.class);
+        AffMatchDocumentProject outputDocProj = mock(AffMatchDocumentProject.class);
+        
+        when(documentProjectConverter.convert(inputDocProj)).thenReturn(outputDocProj);
+        
+        // execute
+        
+        AffMatchDocumentProject retDocProj = function.call(inputDocProj);
+        
+        // assert
+        
+        assertTrue(retDocProj == outputDocProj);
+    }
 }
