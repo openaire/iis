@@ -460,6 +460,14 @@
 					<name>metadataimport_output_name_dedup_mapping</name>
 					<value>dedupmapping</value>
 				</property>
+				<property>
+					<name>metadataimport_output_name_organization</name>
+					<value>organization</value>
+				</property>
+				<property>
+					<name>metadataimport_output_name_project_organization</name>
+					<value>projectorg</value>
+				</property>
 				<!-- output parameters -->
 				<property>
 					<name>output_extracted_document_metadata</name>
@@ -506,18 +514,19 @@
 			<configuration>
 				<property>
 					<name>input_document_metadata</name>
-					<value>${workingDir}/primary_import/metadataimport/docmeta
-					</value>
+					<value>${workingDir}/primary_import/metadataimport/docmeta</value>
 				</property>
 				<property>
 					<name>input_document_to_project</name>
-					<value>${workingDir}/primary_import/metadataimport/docproject
-					</value>
+					<value>${workingDir}/primary_import/metadataimport/docproject</value>
+				</property>
+				<property>
+					<name>input_project_to_organization</name>
+					<value>${workingDir}/primary_import/metadataimport/projectorg</value>
 				</property>
 				<property>
 					<name>input_document_text</name>
-					<value>${workingDir}/primary_import/document-text
-					</value>
+					<value>${workingDir}/primary_import/document-text</value>
 				</property>
 				<property>
 					<name>input_document_text_wos</name>
@@ -525,13 +534,15 @@
 				</property>
 				<property>
 					<name>input_project</name>
-					<value>${workingDir}/primary_import/metadataimport/project
-					</value>
+					<value>${workingDir}/primary_import/metadataimport/project</value>
 				</property>
 				<property>
 					<name>input_person</name>
-					<value>${workingDir}/primary_import/metadataimport/person
-					</value>
+					<value>${workingDir}/primary_import/metadataimport/person</value>
+				</property>
+				<property>
+					<name>input_organization</name>
+					<value>${workingDir}/primary_import/metadataimport/organization</value>
 				</property>
 				<property>
 					<name>input_dataset</name>
@@ -559,8 +570,7 @@
 				</property>
 				<property>
 					<name>output_document_to_research_initiatives</name>
-					<value>${workingDir}/exported/document_to_research_initiatives
-					</value>
+					<value>${workingDir}/exported/document_to_research_initiatives</value>
 				</property>
 				<property>
 					<name>output_document_to_pdb</name>
@@ -578,60 +588,12 @@
 					<name>output_document_similarity</name>
 					<value>${workingDir}/exported/document_similarity</value>
 				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="decision-transform-metadataextraction-for-export" />
-		<error to="fail" />
-	</action>
-
-	<decision name="decision-transform-metadataextraction-for-export">
-		<switch>
-			<case to="transformers_export_documentmetadata">${active_metadataextraction_export eq "true"}</case>
-			<default to="skip-transformers_export_documentmetadata" />
-		</switch>
-	</decision>
-
-	<action name="transformers_export_documentmetadata">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_export_documentmetadata</app-path>
-			<propagate-configuration />
-			<configuration>
 				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/transformers_export_documentmetadata/working_dir
-					</value>
-				</property>
-				<property>
-					<name>input_extracted_metadata</name>
-					<value>${workingDir}/primary_import/extracted_document_metadata
-					</value>
-				</property>
-				<property>
-					<name>output_metadata</name>
-					<value>${workingDir}/transformers_export_documentmetadata/output_metadata
-					</value>
+					<name>output_matched_affiliation</name>
+					<value>${workingDir}/exported/matched_affiliation</value>
 				</property>
 			</configuration>
 		</sub-workflow>
-		<ok to="decision-export-to-hbase" />
-		<error to="fail" />
-	</action>
-
-	<action name="skip-transformers_export_documentmetadata">
-		<java>
-			<prepare>
-				<!-- notice: directory have to aligned with skipped action output -->
-				<delete path="${nameNode}${workingDir}/transformers_export_documentmetadata" />
-				<mkdir path="${nameNode}${workingDir}/transformers_export_documentmetadata" />
-			</prepare>
-			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
-			<arg>-C{document_metadata,
-				eu.dnetlib.iis.export.schemas.DocumentMetadata,
-				eu/dnetlib/iis/common/data/empty.json}</arg>
-			<!-- notice: directory have to aligned with skipped action output -->
-			<arg>-Odocument_metadata=${workingDir}/transformers_export_documentmetadata/output_metadata</arg>
-		</java>
 		<ok to="decision-export-to-hbase" />
 		<error to="fail" />
 	</action>
@@ -654,10 +616,6 @@
 					</value>
 				</property>
 				<!-- input ports -->
-				<property>
-					<name>input_document_metadata</name>
-					<value>${workingDir}/transformers_export_documentmetadata/output_metadata</value>
-				</property>
 				<property>
 					<name>input_document_to_project</name>
 					<value>${workingDir}/exported/document_to_project</value>
@@ -693,6 +651,10 @@
 				<property>
 					<name>input_document_similarity</name>
 					<value>${workingDir}/exported/document_similarity</value>
+				</property>
+				<property>
+					<name>input_document_affiliations</name>
+					<value>${workingDir}/exported/matched_affiliation</value>
 				</property>
 				<!-- entities exporting modes -->
 				<property>
@@ -806,10 +768,6 @@
 			<configuration>
 				<!-- input ports -->
 				<property>
-					<name>input_document_metadata</name>
-					<value>${workingDir}/transformers_export_documentmetadata/output_metadata</value>
-				</property>
-				<property>
 					<name>input_document_to_project</name>
 					<value>${workingDir}/exported/document_to_project</value>
 				</property>
@@ -844,6 +802,10 @@
 				<property>
 					<name>input_document_similarity</name>
 					<value>${workingDir}/exported/document_similarity</value>
+				</property>
+				<property>
+					<name>input_document_affiliations</name>
+					<value>${workingDir}/exported/matched_affiliation</value>
 				</property>
 				<property>
 					<name>output_root</name>

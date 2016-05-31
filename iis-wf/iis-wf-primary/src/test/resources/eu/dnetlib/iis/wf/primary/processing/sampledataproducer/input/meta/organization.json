@@ -1,0 +1,24 @@
+{
+     "id":"20|UW",
+     "name":" Uniwersytet   Warszawski!",
+     "shortName":"UW",
+     "countryName":"Poland",
+     "countryCode":"PL",
+     "websiteUrl":"http://www.uw.edu.pl "
+}
+{
+     "id":"20|UCB",
+     "name":"University of California at Berkeley",
+     "shortName":"UC Berkeley",
+     "countryName":"United States",
+     "countryCode":"US",
+     "websiteUrl":""
+}
+{
+     "id":"20|WIS",
+     "name":"Weizmann Institute of Science",
+     "shortName":"UC Berkeley",
+     "countryName":"Israel",
+     "countryCode":"IL",
+     "websiteUrl":""
+}

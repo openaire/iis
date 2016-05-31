@@ -178,6 +178,13 @@
 			<classifier>uber</classifier>
 		</dependency>
 
+        <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-wf-affmatching</artifactId>
+            <version>${project.version}</version>
+            <classifier>uber</classifier>
+        </dependency>
+
 		<!-- required after introducing 'provided' scope for hadoop libs -->
 		<dependency>
 			<groupId>org.apache.hbase</groupId>
