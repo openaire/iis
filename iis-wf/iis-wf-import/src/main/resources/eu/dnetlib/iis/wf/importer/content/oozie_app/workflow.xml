@@ -3,7 +3,7 @@
 	<parameters>
 		<property>
 			<name>input</name>
-			<description>PDF importer output directory</description>
+			<description>PDF importer input directory with content URLs</description>
 		</property>
 		<property>
 			<name>mapred_max_split_size</name>
@@ -12,7 +12,7 @@
 		</property>
 		<property>
 			<name>output</name>
-			<description>PDF importer output directory</description>
+			<description>PDF importer output directory with content bytes</description>
 		</property>
 	</parameters>
 
@@ -22,7 +22,7 @@
         <configuration>
             <property>
                 <name>mapred.job.queue.name</name>
-                <value>${queueName}</value>
+                <value>${importerQueueName}</value>
             </property>
             <property>
                 <name>oozie.launcher.mapred.job.queue.name</name>
