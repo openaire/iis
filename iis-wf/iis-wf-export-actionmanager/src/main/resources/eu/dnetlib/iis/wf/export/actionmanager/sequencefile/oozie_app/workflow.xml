@@ -34,7 +34,7 @@
             <value>$UNDEFINED$</value>
         </property>
         <property>
-            <name>input_document_affiliations</name>
+            <name>input_matched_doc_organizations</name>
             <value>$UNDEFINED$</value>
         </property>
         <property>
@@ -89,7 +89,7 @@
             <description>document to protein databank action-set identifier of exported data</description>
         </property>
         <property>
-            <name>action_set_id_document_affiliations</name>
+            <name>action_set_id_matched_doc_organizations</name>
             <value>$UNDEFINED$</value>
             <description>document to organization action-set identifier of exported data</description>
         </property>
@@ -121,7 +121,7 @@
             <description>document to protein databank trust level threshold</description>
         </property>
         <property>
-            <name>trust_level_threshold_document_affiliations</name>
+            <name>trust_level_threshold_matched_doc_organizations</name>
             <value>$UNDEFINED$</value>
             <description>document to organization trust level threshold</description>
         </property>
@@ -237,8 +237,8 @@
                 <value>${action_set_id_document_similarities_standard}</value>
             </property>
             <property>
-                <name>export.action.setid.document_affiliations</name>
-                <value>${action_set_id_document_affiliations}</value>
+                <name>export.action.setid.matched_doc_organizations</name>
+                <value>${action_set_id_matched_doc_organizations}</value>
             </property>
             <property>
                 <name>export.action.setid.document_classes</name>
@@ -327,7 +327,7 @@
         <path start="decision-exporter-document-to-documentclasses" />
         <path start="decision-exporter-citation" />
         <path start="decision-exporter-document-similiarity" />
-        <path start="decision-exporter-document-affiliations" />
+        <path start="decision-exporter-matched-doc-organizations" />
     </fork>
 
     <decision name="decision-exporter-document-to-project">
@@ -386,10 +386,10 @@
         </switch>
     </decision>
 
-    <decision name="decision-exporter-document-affiliations">
+    <decision name="decision-exporter-matched-doc-organizations">
         <switch>
-            <case to="joining">${input_document_affiliations eq "$UNDEFINED$"}</case>
-            <default to="exporter-document-affiliations" />
+            <case to="joining">${input_matched_doc_organizations eq "$UNDEFINED$"}</case>
+            <default to="exporter-matched-doc-organizations" />
         </switch>
     </decision>
 
@@ -627,10 +627,10 @@
         <error to="fail" />
     </action>
 
-    <action name="exporter-document-affiliations">
+    <action name="exporter-matched-doc-organizations">
         <map-reduce>
             <prepare>
-                <mkdir path="${nameNode}${output}/document_affiliations" />
+                <mkdir path="${nameNode}${output}/matched_doc_organizations" />
             </prepare>
             <configuration>
                 <property>
@@ -643,11 +643,11 @@
                 </property>
                 <property>
                     <name>mapred.input.dir</name>
-                    <value>${input_document_affiliations}</value>
+                    <value>${input_matched_doc_organizations}</value>
                 </property>
                 <property>
                     <name>mapred.output.dir</name>
-                    <value>${output}/document_affiliations/${action_set_id_document_affiliations}</value>
+                    <value>${output}/matched_doc_organizations/${action_set_id_matched_doc_organizations}</value>
                 </property>
             </configuration>
         </map-reduce>

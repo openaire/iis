@@ -267,7 +267,7 @@
 					<value>${workingDir}/producer/person</value>
 				</property>
 				<property>
-					<name>input_organization</name>
+					<name>input_organizations</name>
 					<value>${workingDir}/producer/organization</value>
 				</property>
 				<property>
@@ -311,7 +311,7 @@
 					<value>${workingDir}/exported/document_similarity</value>
 				</property>
 				<property>
-					<name>output_matched_affiliation</name>
+					<name>output_matched_doc_organizations</name>
 					<value>${workingDir}/exported/matched_affiliation</value>
 				</property>
 			</configuration>

@@ -74,7 +74,7 @@
 			<description>input person directory</description>
 		</property>
 		<property>
-			<name>input_organization</name>
+			<name>input_organizations</name>
 			<description>input organization directory</description>
 		</property>
 		<property>
@@ -172,8 +172,8 @@
 			<description>output document similarity directory</description>
 		</property>
 		<property>
-			<name>output_matched_affiliation</name>
-			<description>output matched affiliations directory</description>
+			<name>output_matched_doc_organizations</name>
+			<description>output matched document organizations directory</description>
 		</property>
 	</parameters>
 
@@ -1112,12 +1112,12 @@
 			<propagate-configuration />
 			<configuration>
 				<property>
-					<name>input_documents_metadata</name>
+					<name>input_document_metadata</name>
 					<value>${input_extracted_document_metadata}</value>
 				</property>
 				<property>
 					<name>input_organizations</name>
-					<value>${input_organization}</value>
+					<value>${input_organizations}</value>
 				</property>
 				<property>
 					<name>input_document_to_project</name>
@@ -1133,7 +1133,7 @@
 				</property>
 				<property>
 					<name>output</name>
-					<value>${output_matched_affiliation}</value>
+					<value>${output_matched_doc_organizations}</value>
 				</property>
 			</configuration>
 		</sub-workflow>
