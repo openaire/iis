@@ -3,10 +3,6 @@
 	<parameters>
 		<!-- input ports -->
 		<property>
-			<name>input_document_metadata</name>
-			<value>$UNDEFINED$</value>
-		</property>
-		<property>
 			<name>input_document_to_project</name>
 			<value>$UNDEFINED$</value>
 		</property>
@@ -40,6 +36,10 @@
 		</property>
 		<property>
 			<name>input_document_similarity</name>
+			<value>$UNDEFINED$</value>
+		</property>
+		<property>
+			<name>input_matched_doc_organizations</name>
 			<value>$UNDEFINED$</value>
 		</property>
 		<property>
@@ -80,9 +80,9 @@
 			<description>document_similarities_standard action-set identifier of exported data</description>
 		</property>
 		<property>
-			<name>action_set_id_document_affiliations</name>
+			<name>action_set_id_matched_doc_organizations</name>
 			<value>$UNDEFINED$</value>
-			<description>document_affiliations action-set identifier of exported data</description>
+			<description>matched document organizations action-set identifier of exported data</description>
 		</property>
 		<property>
 			<name>action_set_id_document_classes</name>

@@ -70,9 +70,9 @@
             <arg>-Odocument_pdb=${workingDir}/producer/document_pdb</arg>
             <arg>-C{matched_org,
                 eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization,
-                eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_affiliations.json}
+                eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/matched_doc_organizations.json}
             </arg>
-            <arg>-Omatched_org=${workingDir}/producer/document_affiliations</arg>
+            <arg>-Omatched_org=${workingDir}/producer/matched_doc_organizations</arg>
         </java>
         <ok to="export_actionmanager_sequencefile" />
         <error to="fail" />
@@ -120,8 +120,8 @@
                     <value>${workingDir}/producer/document_similarity</value>
                 </property>
                 <property>
-                    <name>input_document_affiliations</name>
-                    <value>${workingDir}/producer/document_affiliations</value>
+                    <name>input_matched_doc_organizations</name>
+                    <value>${workingDir}/producer/matched_doc_organizations</value>
                 </property>
 
                 <property>
@@ -157,7 +157,7 @@
                     <value>actionset-id</value>
                 </property>
                 <property>
-                    <name>action_set_id_document_affiliations</name>
+                    <name>action_set_id_matched_doc_organizations</name>
                     <value>actionset-id</value>
                 </property>
                 <property>
@@ -183,7 +183,7 @@
         <path start="consumer-document_to_dataset" />
         <path start="consumer-document_to_project" />
         <path start="consumer-document_to_research_initiatives" />
-        <path start="consumer-document_affiliations" />
+        <path start="consumer-matched_doc_organizations" />
     </fork>
 
     <action name="consumer-citations">
@@ -266,12 +266,12 @@
         <error to="fail" />
     </action>
 
-    <action name="consumer-document_affiliations">
+    <action name="consumer-matched_doc_organizations">
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
-            <arg>-Iseqfile=${workingDir}/output/document_affiliations/actionset-id</arg>
-            <arg>-Pexpectation_properties_csv=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_affiliations.properties</arg>
+            <arg>-Iseqfile=${workingDir}/output/matched_doc_organizations/actionset-id</arg>
+            <arg>-Pexpectation_properties_csv=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/matched_doc_organizations.properties</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />

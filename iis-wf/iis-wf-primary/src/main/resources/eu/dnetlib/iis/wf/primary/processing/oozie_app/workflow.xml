@@ -54,6 +54,10 @@
 			<description>input document to project relation directory</description>
 		</property>
 		<property>
+			<name>input_project_to_organization</name>
+			<description>input project to organization relation directory</description>
+		</property>
+		<property>
 			<name>input_document_text</name>
 			<description>input document text directory</description>
 		</property>
@@ -68,6 +72,10 @@
 		<property>
 			<name>input_person</name>
 			<description>input person directory</description>
+		</property>
+		<property>
+			<name>input_organizations</name>
+			<description>input organization directory</description>
 		</property>
 		<property>
 			<name>input_dataset</name>
@@ -162,6 +170,10 @@
 		<property>
 			<name>output_document_similarity</name>
 			<description>output document similarity directory</description>
+		</property>
+		<property>
+			<name>output_matched_doc_organizations</name>
+			<description>output matched document organizations directory</description>
 		</property>
 	</parameters>
 
@@ -1067,7 +1079,7 @@
 				</property>
 			</configuration>
 		</sub-workflow>
-		<ok to="end" />
+		<ok to="affiliation-matching" />
 		<error to="fail" />
 	</action>
 
@@ -1089,11 +1101,45 @@
 			<!-- notice: directory have to aligned with skipped action output -->
 			<arg>-Odocumentssimilarity=${output_document_similarity}</arg>
 		</java>
-		<ok to="end" />
+		<ok to="affiliation-matching" />
 		<error to="fail" />
 	</action>
 	<!-- end of documents similarity part -->
 
+	<action name="affiliation-matching">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/affiliation_matching</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>input_document_metadata</name>
+					<value>${input_extracted_document_metadata}</value>
+				</property>
+				<property>
+					<name>input_organizations</name>
+					<value>${input_organizations}</value>
+				</property>
+				<property>
+					<name>input_document_to_project</name>
+					<value>${input_document_to_project}</value>
+				</property>
+				<property>
+					<name>input_inferred_document_to_project</name>
+					<value>${output_document_to_project}</value>
+				</property>
+				<property>
+					<name>input_project_to_organization</name>
+					<value>${input_project_to_organization}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${output_matched_doc_organizations}</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="end" />
+		<error to="fail" />
+	</action>
 
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:

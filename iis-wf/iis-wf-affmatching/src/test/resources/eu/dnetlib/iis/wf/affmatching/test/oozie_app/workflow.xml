@@ -61,7 +61,7 @@
             <propagate-configuration/>
             <configuration>
                 <property>
-                    <name>input_documents_metadata</name>
+                    <name>input_document_metadata</name>
                     <value>${workingDir}/data_producer/document</value>
                 </property>
                 <property>

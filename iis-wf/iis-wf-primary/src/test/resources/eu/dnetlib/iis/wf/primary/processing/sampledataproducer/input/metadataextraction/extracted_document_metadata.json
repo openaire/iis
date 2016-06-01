@@ -31,7 +31,9 @@
 	"publisher": null,
 	"references": null,  
 	"authors": null, 
- 	"affiliations": null,
+ 	"affiliations": [
+ 		{"organization":"Wweizmann Institute of Science", "countryName":null, "countryCode":"IL", "address":null, "rawText":""}
+ 	],
 	"volume": "3", 
 	"issue": null,
 	"pages": {"start": "4428", "end": "4445"},
@@ -117,6 +119,29 @@
 	"volume": null, 
 	"issue": "0",
 	"pages": {"start": "69", "end": "110"},
+	"publicationTypeName": null,
+	"text": ""
+}
+{	
+	"id": "id-4",
+	"title": "",
+	"abstract": null,
+	"language": "eng",
+	"keywords": null,
+	"externalIdentifiers": null,
+	"journal": "Materials",
+	"year": null,
+	"publisher": null,
+	"references": null,
+	"authors": null,
+	"affiliations": [
+		{"organization":"Department of Molecular and Cell Biology, Unversity of California at Berkeley", "countryName":"United States", "countryCode":"US", "address":null, "rawText":""},
+		{"organization":"Uniwersytet Warszawski", "countryName":"Poland", "countryCode":"PL", "address":null, "rawText":""},
+		{"organization":"Ohio State University", "countryName":null, "countryCode":null, "address":null, "rawText":""}
+	],
+	"volume": null,
+	"issue": null,
+	"pages": null,
 	"publicationTypeName": null,
 	"text": ""
 }
