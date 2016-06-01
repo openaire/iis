@@ -158,6 +158,16 @@
 			<value>dedupmapping</value>
 			<description>metadata import deduplication mapping output subdirectory name</description>
 		</property>
+		<property>
+			<name>metadataimport_output_name_organization</name>
+			<value>organization</value>
+			<description>metadata import organization output name</description>
+		</property>
+		<property>
+			<name>metadataimport_output_name_project_organization</name>
+			<value>projectorg</value>
+			<description>metadata import project-organization output name</description>
+		</property>
 		<!-- output parameters -->
 		<property>
 			<name>output_extracted_document_metadata</name>
@@ -327,6 +337,14 @@
                 <property>
                     <name>output_name_dedup_mapping</name>
                     <value>${metadataimport_output_name_dedup_mapping}</value>
+                </property>
+                <property>
+                    <name>output_name_organization</name>
+                    <value>${metadataimport_output_name_organization}</value>
+                </property>
+                <property>
+                    <name>output_name_project_organization</name>
+                    <value>${metadataimport_output_name_project_organization}</value>
                 </property>
                 <!-- all the other properties are autmatically propagated -->
             </configuration>

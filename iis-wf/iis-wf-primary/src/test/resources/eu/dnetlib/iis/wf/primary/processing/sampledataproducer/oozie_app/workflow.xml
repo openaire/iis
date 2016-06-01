@@ -41,11 +41,19 @@
 			</arg>
 			<arg>-C{document_to_project,
 				eu.dnetlib.iis.importer.schemas.DocumentToProject,
-				eu/dnetlib/iis/common/data/empty.json}
+				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/input/meta/document_to_project.json}
+			</arg>
+			<arg>-C{project_to_organization,
+				eu.dnetlib.iis.importer.schemas.ProjectToOrganization,
+				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/input/meta/project_to_organization.json}
 			</arg>
 			<arg>-C{person,
 				eu.dnetlib.iis.importer.schemas.Person,
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/input/meta/person.json}
+			</arg>
+			<arg>-C{organization,
+				eu.dnetlib.iis.importer.schemas.Organization,
+				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/input/meta/organization.json}
 			</arg>
 			<arg>-C{project,
 				eu.dnetlib.iis.importer.schemas.Project,
@@ -73,7 +81,9 @@
 			</arg>
 			<arg>-Odocument_metadata=${workingDir}/producer/document_metadata</arg>
 			<arg>-Odocument_to_project=${workingDir}/producer/document_to_project</arg>
+			<arg>-Oproject_to_organization=${workingDir}/producer/project_to_organization</arg>
 			<arg>-Operson=${workingDir}/producer/person</arg>
+			<arg>-Oorganization=${workingDir}/producer/organization</arg>
 			<arg>-Oproject=${workingDir}/producer/project</arg>
 			<arg>-Oproject_concept=${workingDir}/producer/project_concept</arg>
 			<arg>-Odataset=${workingDir}/producer/dataset</arg>
@@ -233,6 +243,10 @@
 					<value>${workingDir}/producer/document_to_project</value>
 				</property>
 				<property>
+					<name>input_project_to_organization</name>
+					<value>${workingDir}/producer/project_to_organization</value>
+				</property>
+				<property>
 					<name>input_document_text</name>
 					<value>${workingDir}/text-producer/document_text</value>
 				</property>
@@ -251,6 +265,10 @@
 				<property>
 					<name>input_person</name>
 					<value>${workingDir}/producer/person</value>
+				</property>
+				<property>
+					<name>input_organizations</name>
+					<value>${workingDir}/producer/organization</value>
 				</property>
 				<property>
 					<name>input_dataset</name>
@@ -291,6 +309,10 @@
 				<property>
 					<name>output_document_similarity</name>
 					<value>${workingDir}/exported/document_similarity</value>
+				</property>
+				<property>
+					<name>output_matched_doc_organizations</name>
+					<value>${workingDir}/exported/matched_affiliation</value>
 				</property>
 			</configuration>
 		</sub-workflow>
@@ -338,6 +360,11 @@
 				eu/dnetlib/iis/common/data/empty.json}
 			</arg>
 			<arg>-Idocument_similarity=${workingDir}/exported/document_similarity</arg>
+			<arg>-C{matched_organization,
+				eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization,
+				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/matched_organization.json}
+			</arg>
+			<arg>-Imatched_organization=${workingDir}/exported/matched_affiliation</arg>
 		</java>
 		<ok to="end" />
 		<error to="fail" />

@@ -10,6 +10,7 @@ transformers_export_researchinitiatives classpath eu/dnetlib/iis/wf/referenceext
 documentsclassification classpath eu/dnetlib/iis/wf/documentsclassification/oozie_app
 transformers_documentssimilarity classpath eu/dnetlib/iis/wf/documentssimilarity/input_transformer/oozie_app
 documentssimilarity_chain classpath eu/dnetlib/iis/wf/documentssimilarity/chain/oozie_app
+affiliation_matching classpath eu/dnetlib/iis/wf/affmatching/oozie_app
 collapsers_basic_collapser classpath eu/dnetlib/iis/wf/collapsers/basic_collapser/oozie_app
 transformers_citations_from_referencemetadata classpath eu/dnetlib/iis/wf/transformers/common/citations/from/referencemetadata/oozie_app
 transformers_common_union classpath eu/dnetlib/iis/wf/transformers/common/union/oozie_app

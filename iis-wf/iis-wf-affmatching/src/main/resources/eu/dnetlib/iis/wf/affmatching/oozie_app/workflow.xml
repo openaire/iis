@@ -2,7 +2,7 @@
 
     <parameters>
         <property>
-            <name>input_documents_metadata</name>
+            <name>input_document_metadata</name>
             <description>input containing document metadata avro records (eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata).
                 Document metadata is the source of affiliations.</description>
         </property>
