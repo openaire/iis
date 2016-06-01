@@ -27,7 +27,7 @@
         <configuration>
             <property>
                 <name>mapred.job.queue.name</name>
-                <value>${queueName}</value>
+                <value>${importerQueueName}</value>
             </property>
             <property>
                 <name>oozie.launcher.mapred.job.queue.name</name>
