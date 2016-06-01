@@ -1,0 +1,3 @@
+Documents chosen randomly. 
+
+Affiliations matched with organizations by looking at names, countries (text data).
