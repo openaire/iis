@@ -49,6 +49,7 @@
         <workflow.source.dir>src/test/resources/define/path/pointing/to/directory/holding/oozie_app</workflow.source.dir>
         <oozieAppDir>oozie_app</oozieAppDir>
         <queueName>default</queueName>
+        <importerQueueName>default</importerQueueName>
         <oozieLauncherQueueName>default</oozieLauncherQueueName>
         <primed.dir>primed</primed.dir>
         
@@ -266,7 +267,7 @@
 								<configuration>
 									<outputFile>target/${oozie.package.file.name}/job.properties</outputFile>
 									<!-- notice: dots are not allowed for job.properties! -->
-									<include>nameNode,jobTracker,queueName,oozieLauncherQueueName,
+									<include>nameNode,jobTracker,queueName,importerQueueName,oozieLauncherQueueName,
 									workingDir,oozieTopWfApplicationPath,
 									oozie.wf.application.path,projectVersion,oozie.use.system.libpath</include>
 
