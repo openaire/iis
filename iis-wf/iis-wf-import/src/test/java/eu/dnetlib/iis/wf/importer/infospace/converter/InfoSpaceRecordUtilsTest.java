@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.importer.infospace;
+package eu.dnetlib.iis.wf.importer.infospace.converter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -10,7 +10,8 @@ import java.util.Map;
 import org.apache.hadoop.io.Text;
 import org.junit.Test;
 
-import eu.dnetlib.iis.wf.importer.infospace.converter.InfoSpaceRecordUtils;
+import eu.dnetlib.iis.wf.importer.infospace.InfoSpaceRecord;
+import eu.dnetlib.iis.wf.importer.infospace.QualifiedOafJsonRecord;
 
 public class InfoSpaceRecordUtilsTest {
 
