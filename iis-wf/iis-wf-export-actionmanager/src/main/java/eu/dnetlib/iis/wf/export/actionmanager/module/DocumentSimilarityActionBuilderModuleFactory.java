@@ -113,7 +113,7 @@ public class DocumentSimilarityActionBuilderModuleFactory extends AbstractBuilde
          */
         private List<AtomicAction> createActions(DocumentSimilarity object, String actionSet, Agent agent,
                 boolean backwardMode) {
-            Oaf oafObjectRel = buildOAFRel(object.getDocumentId().toString(), object.getOtherDocumentId().toString(),
+            Oaf oafObjectRel = buildOaf(object.getDocumentId().toString(), object.getOtherDocumentId().toString(),
                     object.getSimilarity(), backwardMode);
             List<AtomicAction> actionList = new ArrayList<AtomicAction>();
             AtomicAction currentAction = actionFactory.createAtomicAction(actionSet, agent,
@@ -128,15 +128,22 @@ public class DocumentSimilarityActionBuilderModuleFactory extends AbstractBuilde
         /**
          * Builds {@link Oaf} object encapsulating relation details fom {@link OafRel}.
          */
-        private Oaf buildOAFRel(String sourceId, String targetDocId, float score, boolean invert) {
+        private Oaf buildOaf(String sourceId, String targetDocId, float score, boolean invert) {
+            Oaf.Builder oafBuilder = Oaf.newBuilder();
+            oafBuilder.setKind(Kind.relation);
+            oafBuilder.setRel(buildOafRel(sourceId, targetDocId, score, invert));
+            oafBuilder.setDataInfo(buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
+            oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
+            return oafBuilder.build();
+        }
+        
+        /**
+         * Builds {@link OafRel} object with similarity details.
+         */
+        private OafRel buildOafRel(String sourceId, String targetDocId, float score, boolean invert) {
             OafRel.Builder relBuilder = OafRel.newBuilder();
-            if (!invert) {
-                relBuilder.setSource(sourceId);
-                relBuilder.setTarget(targetDocId);
-            } else {
-                relBuilder.setSource(targetDocId);
-                relBuilder.setTarget(sourceId);
-            }
+            relBuilder.setSource(invert?targetDocId:sourceId);
+            relBuilder.setTarget(invert?sourceId:targetDocId);
             String relClass = invert ? Similarity.RelName.isAmongTopNSimilarDocuments.toString()
                     : Similarity.RelName.hasAmongTopNSimilarDocuments.toString();
             relBuilder.setChild(false);
@@ -151,13 +158,7 @@ public class DocumentSimilarityActionBuilderModuleFactory extends AbstractBuilde
             similarityBuilder.setType(Type.STANDARD);
             resultResultBuilder.setSimilarity(similarityBuilder.build());
             relBuilder.setResultResult(resultResultBuilder.build());
-
-            Oaf.Builder oafBuilder = Oaf.newBuilder();
-            oafBuilder.setKind(Kind.relation);
-            oafBuilder.setRel(relBuilder.build());
-            oafBuilder.setDataInfo(buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
-            oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
-            return oafBuilder.build();
+            return relBuilder.build();
         }
     }
 

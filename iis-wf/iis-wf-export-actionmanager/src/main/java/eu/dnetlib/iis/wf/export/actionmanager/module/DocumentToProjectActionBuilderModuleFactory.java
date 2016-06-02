@@ -64,38 +64,47 @@ public class DocumentToProjectActionBuilderModuleFactory extends AbstractBuilder
 
         @Override
         public List<AtomicAction> build(DocumentToProject object) throws TrustLevelThresholdExceededException {
+            Oaf.Builder oafBuilder = instantiateOafBuilder(object);
+            Oaf oaf = oafBuilder.build();
+            Oaf oafInv = invertRelationAndBuild(oafBuilder);
+            return Arrays.asList(new AtomicAction[] {
+                    actionFactory.createAtomicAction(actionSetId, agent, object.getDocumentId().toString(), OafDecoder.decode(oaf).getCFQ(),
+                            object.getProjectId().toString(), oaf.toByteArray()),
+                    // setting reverse relation in project object
+                    actionFactory.createAtomicAction(actionSetId, agent, object.getProjectId().toString(),
+                            OafDecoder.decode(oafInv).getCFQ(), object.getDocumentId().toString(), oafInv.toByteArray())});
+        }
+
+        // ------------------------ PRIVATE ----------------------------------
+
+        private Oaf.Builder instantiateOafBuilder(DocumentToProject object) throws TrustLevelThresholdExceededException {
             String docId = object.getDocumentId().toString();
-            String currentProjectIdStr = object.getProjectId().toString();
+            String projectId = object.getProjectId().toString();
             Oaf.Builder oafBuilder = Oaf.newBuilder();
             oafBuilder.setKind(Kind.relation);
+            oafBuilder.setRel(buildOafRel(docId, projectId));
+            oafBuilder.setDataInfo(object.getConfidenceLevel() != null ? buildInference(object.getConfidenceLevel())
+                    : buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
+            oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
+            return oafBuilder;
+        }
+        
+        private OafRel buildOafRel(String docId, String projectId) {
             OafRel.Builder relBuilder = OafRel.newBuilder();
             relBuilder.setChild(false);
             relBuilder.setRelType(RelType.resultProject);
             relBuilder.setSubRelType(SubRelType.outcome);
             relBuilder.setRelClass(REL_CLASS_ISPRODUCEDBY);
             relBuilder.setSource(docId);
-            relBuilder.setTarget(currentProjectIdStr);
+            relBuilder.setTarget(projectId);
             ResultProject.Builder resProjBuilder = ResultProject.newBuilder();
             Outcome.Builder outcomeBuilder = Outcome.newBuilder();
             outcomeBuilder.setRelMetadata(buildRelMetadata(HBaseConstants.SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_PROJECT,
                     REL_CLASS_ISPRODUCEDBY));
             resProjBuilder.setOutcome(outcomeBuilder.build());
             relBuilder.setResultProject(resProjBuilder.build());
-            oafBuilder.setRel(relBuilder.build());
-            oafBuilder.setDataInfo(object.getConfidenceLevel() != null ? buildInference(object.getConfidenceLevel())
-                    : buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
-            oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
-            Oaf oaf = oafBuilder.build();
-            Oaf oafInv = invertRelationAndBuild(oafBuilder);
-            return Arrays.asList(new AtomicAction[] {
-                    actionFactory.createAtomicAction(actionSetId, agent, docId, OafDecoder.decode(oaf).getCFQ(),
-                            currentProjectIdStr, oaf.toByteArray()),
-                    // setting reverse relation in project object
-                    actionFactory.createAtomicAction(actionSetId, agent, currentProjectIdStr,
-                            OafDecoder.decode(oafInv).getCFQ(), docId, oafInv.toByteArray()) });
+            return relBuilder.build();
         }
-
-        // ------------------------ PRIVATE ----------------------------------
         
         /**
          * Clones builder provided as parameter, inverts relations and builds {@link Oaf} object.

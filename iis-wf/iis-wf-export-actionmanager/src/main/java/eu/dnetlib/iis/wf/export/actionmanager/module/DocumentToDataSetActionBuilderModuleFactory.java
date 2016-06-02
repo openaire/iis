@@ -62,10 +62,32 @@ public class DocumentToDataSetActionBuilderModuleFactory extends AbstractBuilder
         
         @Override
         public List<AtomicAction> build(DocumentToDataSet object) throws TrustLevelThresholdExceededException {
+            Oaf.Builder oafBuilder = instantiateOafBuilder(object);
+            Oaf oaf = oafBuilder.build();
+            Oaf oafInverted = invertBidirectionalRelationAndBuild(oafBuilder);
+            return Arrays.asList(new AtomicAction[] {
+                    actionFactory.createAtomicAction(actionSetId, agent, object.getDocumentId().toString(), OafDecoder.decode(oaf).getCFQ(),
+                            object.getDatasetId().toString(), oaf.toByteArray()),
+                    // setting reverse relation in referenced object
+                    actionFactory.createAtomicAction(actionSetId, agent, object.getDatasetId().toString(),
+                            OafDecoder.decode(oafInverted).getCFQ(), object.getDocumentId().toString(), oafInverted.toByteArray()) });
+        }
+
+        // ------------------------ PRIVATE --------------------------
+        
+        private Oaf.Builder instantiateOafBuilder(DocumentToDataSet object) throws TrustLevelThresholdExceededException {
             String docId = object.getDocumentId().toString();
             String currentRefId = object.getDatasetId().toString();
             Oaf.Builder oafBuilder = Oaf.newBuilder();
             oafBuilder.setKind(Kind.relation);
+            oafBuilder.setRel(buildOafRel(docId, currentRefId));
+            oafBuilder.setDataInfo(object.getConfidenceLevel() != null ? buildInference(object.getConfidenceLevel())
+                    : buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
+            oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
+            return oafBuilder;
+        }
+        
+        private OafRel buildOafRel(String docId, String currentRefId) {
             OafRel.Builder relBuilder = OafRel.newBuilder();
             relBuilder.setChild(false);
             relBuilder.setRelType(RelType.resultResult);
@@ -79,18 +101,7 @@ public class DocumentToDataSetActionBuilderModuleFactory extends AbstractBuilder
                     HBaseConstants.SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_RESULT, REL_CLASS_ISRELATEDTO));
             resResultBuilder.setPublicationDataset(pubDatasetBuilder.build());
             relBuilder.setResultResult(resResultBuilder.build());
-            oafBuilder.setRel(relBuilder.build());
-            oafBuilder.setDataInfo(object.getConfidenceLevel() != null ? buildInference(object.getConfidenceLevel())
-                    : buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
-            oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
-            Oaf oaf = oafBuilder.build();
-            Oaf oafInverted = invertBidirectionalRelationAndBuild(oafBuilder);
-            return Arrays.asList(new AtomicAction[] {
-                    actionFactory.createAtomicAction(actionSetId, agent, docId, OafDecoder.decode(oaf).getCFQ(),
-                            currentRefId, oaf.toByteArray()),
-                    // setting reverse relation in referenced object
-                    actionFactory.createAtomicAction(actionSetId, agent, currentRefId,
-                            OafDecoder.decode(oafInverted).getCFQ(), docId, oafInverted.toByteArray()) });
+            return relBuilder.build();
         }
     }
 }
