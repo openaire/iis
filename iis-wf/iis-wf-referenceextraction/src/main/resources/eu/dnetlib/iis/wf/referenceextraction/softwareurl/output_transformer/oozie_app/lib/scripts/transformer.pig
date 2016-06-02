@@ -8,7 +8,7 @@ documentToSoftwareUrl = load '$input' using avro_load;
 
 documentToSoftwareUrlGroupped = group documentToSoftwareUrl by documentId;
 softwareUrls = foreach documentToSoftwareUrlGroupped {
-    urlsWithConfidence = foreach documentToSoftwareUrl generate softwareUrl, confidenceLevel;
+    urlsWithConfidence = foreach documentToSoftwareUrl generate softwareUrl, repositoryName, confidenceLevel;
     dedupUrlsWithConfidence = DEDUPLICATE_IDS_WITH_CONFIDENCE(urlsWithConfidence);
     generate group as documentId, dedupUrlsWithConfidence as softwareUrls;
 }

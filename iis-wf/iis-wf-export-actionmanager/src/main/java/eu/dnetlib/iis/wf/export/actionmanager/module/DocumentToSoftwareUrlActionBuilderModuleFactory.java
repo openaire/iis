@@ -83,17 +83,7 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactory implements ActionBu
             if (!source.getSoftwareUrls().isEmpty()) {
                 Result.Builder resultBuilder = Result.newBuilder();
                 for (SoftwareUrl sofwareUrl : source.getSoftwareUrls()) {
-                    ExternalReference.Builder externalRefBuilder = ExternalReference.newBuilder();
-                    externalRefBuilder.setUrl(sofwareUrl.getSoftwareUrl().toString());
-                    Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
-                    qualifierBuilder.setClassid("accessionNumber");
-                    qualifierBuilder.setClassname("accessionNumber");
-                    qualifierBuilder.setSchemeid("dnet:externalReference_typologies");
-                    qualifierBuilder.setSchemename("dnet:externalReference_typologies");
-                    externalRefBuilder.setQualifier(qualifierBuilder.build());
-                    externalRefBuilder.setDataInfo(sofwareUrl.getConfidenceLevel() != null
-                            ? buildInference(sofwareUrl.getConfidenceLevel()) : buildInference());
-                    resultBuilder.addExternalReference(externalRefBuilder.build());
+                    resultBuilder.addExternalReference(buildExternalReference(sofwareUrl));
                 }
                 OafEntity.Builder entityBuilder = OafEntity.newBuilder();
                 entityBuilder.setId(source.getDocumentId().toString());
@@ -104,6 +94,20 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactory implements ActionBu
             }
             return null;
         }
+        
+        private ExternalReference buildExternalReference(SoftwareUrl sofwareUrl) throws TrustLevelThresholdExceededException {
+            ExternalReference.Builder externalRefBuilder = ExternalReference.newBuilder();
+            externalRefBuilder.setUrl(sofwareUrl.getSoftwareUrl().toString());
+            externalRefBuilder.setSitename(sofwareUrl.getRepositoryName().toString());
+            Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
+            qualifierBuilder.setClassid("software");
+            qualifierBuilder.setClassname("software");
+            qualifierBuilder.setSchemeid("dnet:externalReference_typologies");
+            qualifierBuilder.setSchemename("dnet:externalReference_typologies");
+            externalRefBuilder.setQualifier(qualifierBuilder.build());
+            externalRefBuilder.setDataInfo(sofwareUrl.getConfidenceLevel() != null
+                    ? buildInference(sofwareUrl.getConfidenceLevel()) : buildInference());
+            return externalRefBuilder.build();
+        }
     }
-
 }

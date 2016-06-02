@@ -251,7 +251,7 @@
                 <value>${action_set_id_document_similarities_standard}</value>
             </property>
             <property>
-                <name>export.action.setid.matched_doc_organizations</name>
+                <name>export.action.setid.document_affiliations</name>
                 <value>${action_set_id_matched_doc_organizations}</value>
             </property>
             <property>

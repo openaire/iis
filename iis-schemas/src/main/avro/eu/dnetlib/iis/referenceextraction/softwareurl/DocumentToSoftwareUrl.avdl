@@ -6,6 +6,8 @@ protocol IIS{
         string documentId;
         // software url
         string softwareUrl;
+        // repository name
+        string repositoryName;
         // Find more details on `confidenceLevel` constraints in eu/dnetlib/iis/README.markdown file.
         union { null , float } confidenceLevel = null;
     }

@@ -39,10 +39,12 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactoryTest {
     private String docId = "documentId";
 
     private String softwareUrl = "https://github.com/openaire/iis";
+    
+    private String repositoryName = "GitHub";
 
     private float matchStrength = 0.9f;
 
-    private DocumentToSoftwareUrls documentToSoftwareUrl = buildDocumentToSoftwareUrl(docId, softwareUrl, matchStrength);
+    private DocumentToSoftwareUrls documentToSoftwareUrl = buildDocumentToSoftwareUrl(docId, softwareUrl, repositoryName, matchStrength);
 
     @Before
     public void initModule() {
@@ -73,7 +75,8 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactoryTest {
     @Test(expected = TrustLevelThresholdExceededException.class)
     public void test_build_below_threshold() throws Exception {
         // given
-        DocumentToSoftwareUrls matchedOrgBelowThreshold = buildDocumentToSoftwareUrl(docId, softwareUrl, 0.4f);
+        DocumentToSoftwareUrls matchedOrgBelowThreshold = buildDocumentToSoftwareUrl(
+                docId, softwareUrl, repositoryName, 0.4f);
         // execute
         module.build(matchedOrgBelowThreshold, agent, actionSetId);
     }
@@ -97,11 +100,13 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactoryTest {
 
     // ----------------------- PRIVATE --------------------------
 
-    private static DocumentToSoftwareUrls buildDocumentToSoftwareUrl(String docId, String softUrl, float confidenceLevel) {
+    private static DocumentToSoftwareUrls buildDocumentToSoftwareUrl(String docId, String softUrl, 
+            String repositoryName, float confidenceLevel) {
         DocumentToSoftwareUrls.Builder builder = DocumentToSoftwareUrls.newBuilder();
         builder.setDocumentId(docId);
         SoftwareUrl.Builder softBuilder = SoftwareUrl.newBuilder();
         softBuilder.setSoftwareUrl(softUrl);
+        softBuilder.setRepositoryName(repositoryName);
         softBuilder.setConfidenceLevel(confidenceLevel);
         builder.setSoftwareUrls(Lists.newArrayList(softBuilder.build()));
         return builder.build();
@@ -122,6 +127,7 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactoryTest {
         ExternalReference externalReference = oaf.getEntity().getResult().getExternalReferenceList().get(0);
         assertNotNull(externalReference);
         assertEquals(softwareUrl, externalReference.getUrl());
+        assertEquals(repositoryName, externalReference.getSitename());
         
         assertNotNull(externalReference.getQualifier());
         assertNotNull(externalReference.getDataInfo());
