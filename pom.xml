@@ -470,55 +470,6 @@
                 <type>pom</type>
             </dependency>
 
-
-
-            <dependency>
-                <groupId>org.apache.hbase</groupId>
-                <artifactId>hbase-client</artifactId>
-                <version>${iis.hbase.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>jdk.tools</artifactId>
-                        <groupId>jdk.tools</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.hadoop</groupId>
-                        <artifactId>hadoop-core</artifactId>
-                    </exclusion>
-
-
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.hbase</groupId>
-                <artifactId>hbase-common</artifactId>
-                <version>${iis.hbase.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>jdk.tools</artifactId>
-                        <groupId>jdk.tools</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.hadoop</groupId>
-                        <artifactId>hadoop-core</artifactId>
-                    </exclusion>
-
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.hbase</groupId>
-                <artifactId>hbase-server</artifactId>
-                <version>${iis.hbase.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.hadoop</groupId>
-                        <artifactId>hadoop-core</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
             <!-- Cermine dependencies -->
             <dependency>
                 <groupId>pl.edu.icm.cermine</groupId>
@@ -1123,7 +1074,6 @@
 
         <iis.cdh.version>cdh5.5.2</iis.cdh.version>
 
-        <iis.hbase.version>1.0.0-${iis.cdh.version}</iis.hbase.version>
         <iis.oozie.version>4.1.0-${iis.cdh.version}</iis.oozie.version>
         <iis.pig.version>0.12.0-${iis.cdh.version}</iis.pig.version>
         <iis.hive.version>1.1.0-${iis.cdh.version}</iis.hive.version>

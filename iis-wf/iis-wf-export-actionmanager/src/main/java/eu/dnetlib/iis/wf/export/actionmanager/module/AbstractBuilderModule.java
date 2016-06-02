@@ -48,7 +48,6 @@ public abstract class AbstractBuilderModule<T> implements ActionBuilderModule<T>
      */
     protected final String actionSetId;
     
-    
     /**
      * Action factory to be used for building actions.
      */
@@ -61,7 +60,6 @@ public abstract class AbstractBuilderModule<T> implements ActionBuilderModule<T>
 
     // ------------------------ CONSTRUCTORS --------------------------
 
-
     public AbstractBuilderModule(Float trustLevelThreshold, String inferenceProvenance,
             Agent agent, String actionSetId) {
         this.trustLevelThreshold = trustLevelThreshold;
@@ -70,7 +68,7 @@ public abstract class AbstractBuilderModule<T> implements ActionBuilderModule<T>
         this.actionSetId = Preconditions.checkNotNull(actionSetId);
     }
 
-    // ------------------------ GETTERS --------------------------
+    // ------------------------ GETTERS -------------------------------
 
     /**
      * @return confidence to trust level normalization factor
@@ -79,7 +77,7 @@ public abstract class AbstractBuilderModule<T> implements ActionBuilderModule<T>
         return confidenceToTrustLevelNormalizationFactor;
     }
 
-    // ------------------------ LOGIC --------------------------
+    // ------------------------ LOGIC ---------------------------------
 
     /**
      * Builds {@link Oaf} object for given entity.
@@ -136,9 +134,6 @@ public abstract class AbstractBuilderModule<T> implements ActionBuilderModule<T>
         builder.setInferenceprovenance(inferenceProvenance);
         return builder.build();
     }
-
-    
-
     
     /**
      * Builds relation metadata.

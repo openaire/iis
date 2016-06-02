@@ -31,10 +31,20 @@ public class MatchedOrganizationActionBuilderModuleFactory extends AbstractBuild
 
     private static final String SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_ORG = "dnet:result_organization_relations";
 
-
+    // ------------------------ CONSTRUCTORS --------------------------
+    
     public MatchedOrganizationActionBuilderModuleFactory() {
         super(AlgorithmName.document_affiliations);
     }
+
+    // ------------------------ LOGIC ---------------------------------
+    
+    @Override
+    public ActionBuilderModule<MatchedOrganization> instantiate(Configuration config, Agent agent, String actionSetId) {
+        return new MatchedOrganizationActionBuilderModule(provideTrustLevelThreshold(config), agent, actionSetId);
+    }
+    
+    // ------------------------ INNER CLASS ---------------------------------
     
     /**
      * {@link MatchedOrganization} action builder module.
@@ -42,16 +52,21 @@ public class MatchedOrganizationActionBuilderModuleFactory extends AbstractBuild
      */
     class MatchedOrganizationActionBuilderModule extends AbstractBuilderModule<MatchedOrganization> {
 
+        
+        // ------------------------ CONSTRUCTORS --------------------------
+        
         /**
          * @param trustLevelThreshold trust level threshold or null when all records should be exported
          * @param agent action manager agent details
          * @param actionSetId action set identifier
          */
-        public MatchedOrganizationActionBuilderModule( Float trustLevelThreshold, Agent agent, String actionSetId) {
-            super(trustLevelThreshold, buildInferenceProvenance(), 
-                    Preconditions.checkNotNull(agent), Preconditions.checkNotNull(actionSetId));
+        public MatchedOrganizationActionBuilderModule(Float trustLevelThreshold, Agent agent, String actionSetId) {
+            super(trustLevelThreshold, buildInferenceProvenance(), Preconditions.checkNotNull(agent),
+                    Preconditions.checkNotNull(actionSetId));
         }
 
+        // ------------------------ LOGIC ---------------------------------
+        
         @Override
         public List<AtomicAction> build(MatchedOrganization object) throws TrustLevelThresholdExceededException {
             Preconditions.checkNotNull(object);
@@ -68,7 +83,8 @@ public class MatchedOrganizationActionBuilderModuleFactory extends AbstractBuild
             relBuilder.setTarget(orgId);
             ResultOrganization.Builder resOrgBuilder = ResultOrganization.newBuilder();
             Affiliation.Builder affBuilder = Affiliation.newBuilder();
-            affBuilder.setRelMetadata(buildRelMetadata(SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_ORG, REL_CLASS_IS_AFFILIATED_WITH));
+            affBuilder.setRelMetadata(
+                    buildRelMetadata(SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_ORG, REL_CLASS_IS_AFFILIATED_WITH));
             resOrgBuilder.setAffiliation(affBuilder.build());
             relBuilder.setResultOrganization(resOrgBuilder.build());
             oafBuilder.setRel(relBuilder.build());
@@ -79,10 +95,4 @@ public class MatchedOrganizationActionBuilderModuleFactory extends AbstractBuild
                     OafDecoder.decode(oaf).getCFQ(), orgId, oaf.toByteArray()));
         }
     }
-
-    @Override
-    public ActionBuilderModule<MatchedOrganization> instantiate(Configuration config, Agent agent, String actionSetId) {
-        return new MatchedOrganizationActionBuilderModule(provideTrustLevelThreshold(config), agent, actionSetId);
-    }
-
 }

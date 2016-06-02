@@ -13,7 +13,7 @@ import eu.dnetlib.iis.common.hbase.HBaseConstants;
  * 
  * @author mhorst
  *
- * @param <T>
+ * @param <T> avro input type
  */
 public abstract class AbstractBuilderFactory<T> implements ActionBuilderFactory<T> {
 
@@ -28,7 +28,7 @@ public abstract class AbstractBuilderFactory<T> implements ActionBuilderFactory<
         this.algorithmName = algorithmName;
     }
 
-    // ------------------ LOGIC -----------------------
+    // ------------------ LOGIC ------------------------------
     
     @Override
     public AlgorithmName getAlgorithName() {
