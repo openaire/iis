@@ -1,6 +1,8 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import com.google.common.base.Preconditions;
 
@@ -56,12 +58,14 @@ public abstract class AbstractBuilderModule<T> implements ActionBuilderModule<T>
     /**
      * Trust level format.
      */
-    private final DecimalFormat decimalFormat = new DecimalFormat("#.####");
+    private final DecimalFormat decimalFormat;
 
     // ------------------------ CONSTRUCTORS --------------------------
 
     public AbstractBuilderModule(Float trustLevelThreshold, String inferenceProvenance,
             Agent agent, String actionSetId) {
+        this.decimalFormat = (DecimalFormat) NumberFormat.getInstance(Locale.ENGLISH);
+        this.decimalFormat.applyPattern("#.####");
         this.trustLevelThreshold = trustLevelThreshold;
         this.inferenceProvenance = Preconditions.checkNotNull(inferenceProvenance);
         this.agent = Preconditions.checkNotNull(agent);
