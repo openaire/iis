@@ -75,7 +75,7 @@
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-affmatching-${projectVersion}-uber.jar</jar>
 
             <arg>-inputAvroOrgPath=${input_organizations}</arg>
-            <arg>-inputAvroAffPath=${input_documents_metadata}</arg>
+            <arg>-inputAvroAffPath=${input_document_metadata}</arg>
             <arg>-inputAvroDocProjPath=${input_document_to_project}</arg>
             <arg>-inputAvroInferredDocProjPath=${input_inferred_document_to_project}</arg>
             <arg>-inputAvroProjOrgPath=${input_project_to_organization}</arg>
