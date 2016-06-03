@@ -1,0 +1,18 @@
+@namespace("eu.dnetlib.iis.export.schemas")
+protocol IIS{
+
+    record SoftwareUrl {
+        // software URL	
+        string softwareUrl;
+        // repository name
+        string repositoryName;
+        // find more details on `confidenceLevel` constraints in eu/dnetlib/iis/README.markdown file.
+        union { null , float } confidenceLevel = null;
+    }
+
+    record DocumentToSoftwareUrls {
+        // document ID
+        string documentId;
+        array<SoftwareUrl> softwareUrls;
+    }
+}
