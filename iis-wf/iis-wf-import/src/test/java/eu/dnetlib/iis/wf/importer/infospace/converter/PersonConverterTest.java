@@ -34,6 +34,11 @@ public class PersonConverterTest {
     }
 
     @Test
+    /*
+     * NOTE: If this test fails after https://github.com/openaire/iis/issues/438
+     * is fixed, that's *good*, and the test has to be updated for the expected behaviour.
+     * See also: https://github.com/openaire/iis/pull/442#discussion_r65579874
+     */
     public void convert_unset_person() {
         // given
         OafEntity oafEntity = emptyEntityBuilder(PERSON_ID).build();

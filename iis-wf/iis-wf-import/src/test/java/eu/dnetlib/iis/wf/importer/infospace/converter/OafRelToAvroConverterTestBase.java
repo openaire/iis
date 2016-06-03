@@ -37,16 +37,6 @@ public abstract class OafRelToAvroConverterTestBase<T extends SpecificRecord> {
      */
     protected Function<T, CharSequence> getTargetId;
 
-    /**
-     * Required by the PB schema, unused by the converters
-     */
-    protected RelType irrelevantType;
-
-    /**
-     * Required by the PB schema, unused by the converters
-     */
-    protected SubRelType irrelevantSubtype;
-
     // ------------------------ TESTS --------------------------
 
     @Test(expected = NullPointerException.class)
@@ -71,10 +61,10 @@ public abstract class OafRelToAvroConverterTestBase<T extends SpecificRecord> {
 
     //------------------------ PRIVATE --------------------------
 
-    private OafRel createOafRelObject() {
+    private static OafRel createOafRelObject() {
         return OafRel.newBuilder().setSource(SOURCE_ID).setTarget(TARGET_ID)
                 // the following values do not matter for the converters but the fields are required
-                .setRelType(irrelevantType).setSubRelType(irrelevantSubtype)
+                .setRelType(RelType.resultResult).setSubRelType(SubRelType.provision)
                 .setRelClass("irrelevantRelClass").setChild(false)
                 .build();
     }
