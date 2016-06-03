@@ -1,6 +1,8 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import eu.dnetlib.actionmanager.actions.ActionFactory;
 import eu.dnetlib.data.proto.FieldTypeProtos.DataInfo;
@@ -47,7 +49,7 @@ public abstract class AbstractBuilderModule {
 	/**
 	 * Trust level format.
 	 */
-	private final DecimalFormat decimalFormat = new DecimalFormat("#.####");
+	private final DecimalFormat decimalFormat;
 	
 	/**
 	 * Default constructor.
@@ -58,6 +60,8 @@ public abstract class AbstractBuilderModule {
 	public AbstractBuilderModule(String predefinedTrust,
 			Float trustLevelThreshold,
 			AlgorithmName algorithmName) {
+	    this.decimalFormat = (DecimalFormat) NumberFormat.getInstance(Locale.ENGLISH);
+	    this.decimalFormat.applyPattern("#.####");
 		this.predefinedTrust = predefinedTrust;
 		this.trustLevelThreshold = trustLevelThreshold;
 		this.inferenceProvenance = buildInferenceProvenance(algorithmName);

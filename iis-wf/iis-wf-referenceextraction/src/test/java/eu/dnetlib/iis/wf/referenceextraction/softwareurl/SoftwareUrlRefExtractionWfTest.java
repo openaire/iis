@@ -15,23 +15,22 @@ import eu.dnetlib.iis.common.IntegrationTest;
 public class SoftwareUrlRefExtractionWfTest extends AbstractOozieWorkflowTestCase {
 
     @Test
-	public void testMainWorkflow() throws Exception {
-    	testWorkflow("eu/dnetlib/iis/wf/referenceextraction/softwareurl/main/sampletest");
-	}
+    public void testMainWorkflow() throws Exception {
+        testWorkflow("eu/dnetlib/iis/wf/referenceextraction/softwareurl/main/sampletest");
+    }
 
     @Test
-	public void testMainWorkflowWithoutReferences() throws Exception {
+    public void testMainWorkflowWithoutReferences() throws Exception {
         testWorkflow("eu/dnetlib/iis/wf/referenceextraction/softwareurl/main/sampletest_without_references");
-	}
+    }
 
     @Test
-	public void testMainWorkflowWithOnlyNullText() throws Exception {
+    public void testMainWorkflowWithOnlyNullText() throws Exception {
         testWorkflow("eu/dnetlib/iis/wf/referenceextraction/softwareurl/main/sampletest_with_only_null_text");
-	}
+    }
 
     @Test
-	public void testMainWorkflowEmptyInput() throws Exception {
+    public void testMainWorkflowEmptyInput() throws Exception {
         testWorkflow("eu/dnetlib/iis/wf/referenceextraction/softwareurl/main/sampletest_empty_input");
-	}
-
+    }
 }
