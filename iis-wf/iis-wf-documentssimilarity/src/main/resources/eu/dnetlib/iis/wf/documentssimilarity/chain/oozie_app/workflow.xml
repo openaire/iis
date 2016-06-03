@@ -141,6 +141,10 @@
                     <value>${queueName}</value>
                 </property>
                 <property>
+                    <name>oozieLauncherQueueName</name>
+                    <value>${oozieLauncherQueueName}</value>
+                </property>
+                <property>
                     <name>project</name>
                     <value>coansys</value>
                 </property>
@@ -166,7 +170,7 @@
                 </property>
                 <property>
                     <name>commonJarsPath</name>
-                    <value>/usr/lib/hbase/lib/zookeeper.jar</value>
+                    <value>piggybank.jar</value> <!-- docsim workflow requires that this param points to some existing jar, but doesn't really use it (so it can be any jar) -->
                 </property>
                 <property>
                     <name>bwndataMetadataInputPath</name>
