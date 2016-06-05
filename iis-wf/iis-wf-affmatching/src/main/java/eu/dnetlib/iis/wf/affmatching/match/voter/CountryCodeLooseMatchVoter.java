@@ -20,6 +20,10 @@ public class CountryCodeLooseMatchVoter implements AffOrgMatchVoter {
     
     //------------------------ LOGIC --------------------------
     
+    /**
+     * Returns true if countryCode of affiliation and organization are equal
+     * or one of them is empty.
+     */
     @Override
     public boolean voteMatch(AffMatchAffiliation affiliation, AffMatchOrganization organization) {
         
