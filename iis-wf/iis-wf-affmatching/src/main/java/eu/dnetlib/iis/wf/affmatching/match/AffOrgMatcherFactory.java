@@ -1,6 +1,5 @@
 package eu.dnetlib.iis.wf.affmatching.match;
 
-import static com.google.common.collect.ImmutableList.of;
 import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory.createNameCountryStrictMatchVoter;
 import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory.createNameStrictCountryLooseMatchVoter;
 import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory.createSectionedNameLevenshteinCountryLooseMatchVoter;
@@ -8,6 +7,8 @@ import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory
 import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory.createSectionedShortNameStrictCountryLooseMatchVoter;
 
 import org.apache.spark.api.java.JavaSparkContext;
+
+import com.google.common.collect.ImmutableList;
 
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
@@ -25,6 +26,7 @@ import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentProjectMerge
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisDocumentProjectReader;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisInferredDocumentProjectReader;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisProjectOrganizationReader;
+import eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 
@@ -84,17 +86,26 @@ public class AffOrgMatcherFactory {
         // computer
         
         AffOrgMatchComputer docOrgRelationMatchComputer = new AffOrgMatchComputer();
-        docOrgRelationMatchComputer.setAffOrgMatchVoters(of(
-                createNameCountryStrictMatchVoter(),
-                createNameStrictCountryLooseMatchVoter(),
-                createSectionedNameStrictCountryLooseMatchVoter(),
-                createSectionedNameLevenshteinCountryLooseMatchVoter(),
-                createSectionedShortNameStrictCountryLooseMatchVoter()));
+        docOrgRelationMatchComputer.setAffOrgMatchVoters(createDocOrgRelationMatcherVoters());
         
         // matcher
         
         return createAffOrgMatcher(docOrgRelationJoiner, docOrgRelationMatchComputer);
     }
+
+    /**
+     * Creates {@link AffOrgMatchVoter}s for {@link #createDocOrgRelationMatcher(JavaSparkContext, String, String, String, Float)} 
+     */
+    public static ImmutableList<AffOrgMatchVoter> createDocOrgRelationMatcherVoters() {
+        return ImmutableList.of(
+                createNameCountryStrictMatchVoter(),
+                createNameStrictCountryLooseMatchVoter(),
+                createSectionedNameStrictCountryLooseMatchVoter(),
+                createSectionedNameLevenshteinCountryLooseMatchVoter(),
+                createSectionedShortNameStrictCountryLooseMatchVoter());
+    }
+    
+    
     
     /**
      * Returns {@link AffOrgMatcher} that uses hashing of affiliations and organizations to create buckets.<br/>
@@ -130,17 +141,25 @@ public class AffOrgMatcherFactory {
         
         AffOrgMatchComputer mainSectionHashMatchComputer = new AffOrgMatchComputer();
         
-        mainSectionHashMatchComputer.setAffOrgMatchVoters(of(
-                createNameCountryStrictMatchVoter(),
-                createNameStrictCountryLooseMatchVoter(),
-                createSectionedNameStrictCountryLooseMatchVoter(),
-                createSectionedNameLevenshteinCountryLooseMatchVoter(),
-                createSectionedShortNameStrictCountryLooseMatchVoter()));
+        mainSectionHashMatchComputer.setAffOrgMatchVoters(createMainSectionHashBucketMatcherVoters());
         
         // matcher
         
         return createAffOrgMatcher(mainSectionHashBucketJoiner, mainSectionHashMatchComputer);
     }
+    
+    /**
+     * Creates {@link AffOrgMatchVoter}s for {@link #createMainSectionHashBucketMatcher()} 
+     */
+    public static ImmutableList<AffOrgMatchVoter> createMainSectionHashBucketMatcherVoters() {
+        return ImmutableList.of(
+                createNameCountryStrictMatchVoter(),
+                createNameStrictCountryLooseMatchVoter(),
+                createSectionedNameStrictCountryLooseMatchVoter(),
+                createSectionedNameLevenshteinCountryLooseMatchVoter(),
+                createSectionedShortNameStrictCountryLooseMatchVoter());
+    }
+    
     
     /**
      * Returns {@link AffOrgMatcher} that uses hashing of affiliations and organizations to create buckets.<br/>
@@ -157,16 +176,24 @@ public class AffOrgMatcherFactory {
         
         AffOrgMatchComputer firstWordsHashMatchComputer = new AffOrgMatchComputer();
         
-        firstWordsHashMatchComputer.setAffOrgMatchVoters(of(
-                createNameCountryStrictMatchVoter(),
-                createNameStrictCountryLooseMatchVoter(),
-                createSectionedNameStrictCountryLooseMatchVoter(),
-                createSectionedNameLevenshteinCountryLooseMatchVoter(),
-                createSectionedShortNameStrictCountryLooseMatchVoter()));
+        firstWordsHashMatchComputer.setAffOrgMatchVoters(createFirstWordsHashBucketMatcherVoters());
         
         // matcher
         
         return createAffOrgMatcher(firstWordsHashBucketJoiner, firstWordsHashMatchComputer);
+    }
+    
+    
+    /**
+     * Creates {@link AffOrgMatchVoter}s for {@link #createFirstWordsHashBucketMatcher()} 
+     */
+    public static ImmutableList<AffOrgMatchVoter> createFirstWordsHashBucketMatcherVoters() {
+        return ImmutableList.of(
+                createNameCountryStrictMatchVoter(),
+                createNameStrictCountryLooseMatchVoter(),
+                createSectionedNameStrictCountryLooseMatchVoter(),
+                createSectionedNameLevenshteinCountryLooseMatchVoter(),
+                createSectionedShortNameStrictCountryLooseMatchVoter());
     }
     
     

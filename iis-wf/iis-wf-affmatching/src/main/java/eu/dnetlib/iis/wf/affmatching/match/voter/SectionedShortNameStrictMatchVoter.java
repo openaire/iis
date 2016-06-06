@@ -31,4 +31,12 @@ public class SectionedShortNameStrictMatchVoter extends AbstractSectionedMatchVo
     protected boolean containsMatchingSection(List<String> sections, String sectionToFind) {
         return sections.contains(sectionToFind);
     }
+
+    
+    //------------------------ toString --------------------------
+
+    @Override
+    public String toString() {
+        return "SectionedShortNameStrictMatchVoter []";
+    }
 }

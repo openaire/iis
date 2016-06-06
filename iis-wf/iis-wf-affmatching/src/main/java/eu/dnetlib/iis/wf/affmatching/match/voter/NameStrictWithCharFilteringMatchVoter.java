@@ -63,4 +63,12 @@ public class NameStrictWithCharFilteringMatchVoter implements AffOrgMatchVoter {
         
         return filteredName;
     }
+
+    
+    //------------------------ toString --------------------------
+    
+    @Override
+    public String toString() {
+        return "NameStrictWithCharFilteringMatchVoter [charsToFilter=" + charsToFilter + "]";
+    }
 }
