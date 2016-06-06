@@ -1,9 +1,7 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -21,7 +19,6 @@ import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.common.model.extrainfo.ExtraInfoConstants;
 import eu.dnetlib.iis.common.model.extrainfo.citations.BlobCitationEntry;
-import eu.dnetlib.iis.common.model.extrainfo.citations.TypedId;
 import eu.dnetlib.iis.common.model.extrainfo.converter.CitationsExtraInfoConverter;
 import eu.dnetlib.iis.export.schemas.Citations;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
@@ -32,7 +29,7 @@ import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
  * @author mhorst
  *
  */
-public class CitationsActionBuilderModuleFactory extends AbstractBuilderFactory<Citations> {
+public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFactory<Citations> {
 
     private static final String EXTRA_INFO_NAME = ExtraInfoConstants.NAME_CITATIONS;
     private static final String EXTRA_INFO_TYPOLOGY = ExtraInfoConstants.TYPOLOGY_CITATIONS;
@@ -50,35 +47,6 @@ public class CitationsActionBuilderModuleFactory extends AbstractBuilderFactory<
         return new CitationActionBuilderModule(provideTrustLevelThreshold(config), agent, actionSetId);
     }
 
-    /**
-     * Creates {@link BlobCitationEntry} from {@link CitationEntry}.
-     * Translates confirence level into trust level applying confidenceToTrustLevelFactor.
-     */
-    public static BlobCitationEntry build(CitationEntry entry, float confidenceToTrustLevelFactor) {
-        BlobCitationEntry result = new BlobCitationEntry(
-                entry.getRawText() != null ? entry.getRawText().toString() : null);
-        result.setPosition(entry.getPosition());
-        if (entry.getDestinationDocumentId() != null) {
-            result.setIdentifiers(new ArrayList<TypedId>());
-            result.getIdentifiers()
-                    .add(new TypedId(entry.getDestinationDocumentId().toString(),
-                            ExtraInfoConstants.CITATION_TYPE_OPENAIRE,
-                            entry.getConfidenceLevel() != null
-                                    ? (entry.getConfidenceLevel() * confidenceToTrustLevelFactor)
-                                    : 1f * confidenceToTrustLevelFactor));
-        }
-        if (entry.getExternalDestinationDocumentIds() != null && !entry.getExternalDestinationDocumentIds().isEmpty()) {
-            if (result.getIdentifiers() == null) {
-                result.setIdentifiers(new ArrayList<TypedId>());
-            }
-            for (Entry<CharSequence, CharSequence> extId : entry.getExternalDestinationDocumentIds().entrySet()) {
-                result.getIdentifiers().add(new TypedId(extId.getValue().toString(), extId.getKey().toString(),
-                        1f * confidenceToTrustLevelFactor));
-            }
-        }
-        return result;
-    }
-    
     // ------------------------ INNER CLASS  --------------------------
     
     class CitationActionBuilderModule extends AbstractBuilderModule<Citations> {
@@ -153,7 +121,7 @@ public class CitationsActionBuilderModuleFactory extends AbstractBuilderFactory<
                                 StringUtils.split(currentEntry.getDestinationDocumentId().toString(),
                                         HBaseConstants.ROW_PREFIX_SEPARATOR)[1]);
                     }
-                    results.add(CitationsActionBuilderModuleFactory.build(currentEntry,
+                    results.add(CitationsActionBuilderModuleUtils.build(currentEntry,
                             getConfidenceToTrustLevelNormalizationFactor()));
                 }
                 return results;

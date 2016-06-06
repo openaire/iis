@@ -25,7 +25,7 @@ import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
  * @author mhorst
  *
  */
-public class DocumentToPdbActionBuilderModuleFactory extends AbstractBuilderFactory<DocumentToConceptIds> {
+public class DocumentToPdbActionBuilderModuleFactory extends AbstractActionBuilderFactory<DocumentToConceptIds> {
 
     public static final String EXPORT_PDB_URL_ROOT = "export.referenceextraction.pdb.url.root";
 

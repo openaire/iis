@@ -25,7 +25,7 @@ import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
  * @author mhorst
  *
  */
-public class DocumentToProjectActionBuilderModuleFactory extends AbstractBuilderFactory<DocumentToProject> {
+public class DocumentToProjectActionBuilderModuleFactory extends AbstractActionBuilderFactory<DocumentToProject> {
 
     public static final String REL_CLASS_ISPRODUCEDBY = Outcome.RelName.isProducedBy.toString();
 

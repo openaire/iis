@@ -31,7 +31,7 @@ import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
  * @author mhorst
  *
  */
-public class DocumentSimilarityActionBuilderModuleFactory extends AbstractBuilderFactory<DocumentSimilarity> {
+public class DocumentSimilarityActionBuilderModuleFactory extends AbstractActionBuilderFactory<DocumentSimilarity> {
 
     private final Logger log = Logger.getLogger(this.getClass());
 
@@ -45,11 +45,11 @@ public class DocumentSimilarityActionBuilderModuleFactory extends AbstractBuilde
     
     @Override
     public ActionBuilderModule<DocumentSimilarity> instantiate(Configuration config, Agent agent, String actionSetId) {
-        String thresholdStr = config.get(EXPORT_DOCUMENTSSIMILARITY_THRESHOLD);
         Float similarityThreshold = null;
-        if (thresholdStr != null && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(thresholdStr)) {
+        String thresholdStr = WorkflowRuntimeParameters.getParamValue(EXPORT_DOCUMENTSSIMILARITY_THRESHOLD, config);
+        if (thresholdStr != null) {
             similarityThreshold = Float.valueOf(thresholdStr);
-            log.warn("setting documents similarity exporter threshold to: " + similarityThreshold);
+            log.info("setting documents similarity exporter threshold to: " + similarityThreshold);
         }
         return new DocumentSimilarityActionBuilderModule(provideTrustLevelThreshold(config), similarityThreshold, agent,
                 actionSetId);

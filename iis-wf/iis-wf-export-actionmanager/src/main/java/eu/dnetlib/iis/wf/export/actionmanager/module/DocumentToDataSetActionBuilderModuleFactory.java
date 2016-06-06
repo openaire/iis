@@ -25,7 +25,7 @@ import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
  * @author mhorst
  *
  */
-public class DocumentToDataSetActionBuilderModuleFactory extends AbstractBuilderFactory<DocumentToDataSet> {
+public class DocumentToDataSetActionBuilderModuleFactory extends AbstractActionBuilderFactory<DocumentToDataSet> {
 
     public static final String REL_CLASS_ISRELATEDTO = PublicationDataset.RelName.isRelatedTo.toString();
 

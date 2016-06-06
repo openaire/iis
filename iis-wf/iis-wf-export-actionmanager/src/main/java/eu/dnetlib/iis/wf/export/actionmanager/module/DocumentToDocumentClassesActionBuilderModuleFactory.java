@@ -29,7 +29,7 @@ import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
  * @author mhorst
  *
  */
-public class DocumentToDocumentClassesActionBuilderModuleFactory extends AbstractBuilderFactory<DocumentToDocumentClasses> {
+public class DocumentToDocumentClassesActionBuilderModuleFactory extends AbstractActionBuilderFactory<DocumentToDocumentClasses> {
 
     // ------------------------ CONSTRUCTORS --------------------------
 

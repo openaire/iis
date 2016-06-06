@@ -15,7 +15,7 @@ import eu.dnetlib.iis.common.hbase.HBaseConstants;
  *
  * @param <T> avro input type
  */
-public abstract class AbstractBuilderFactory<T> implements ActionBuilderFactory<T> {
+public abstract class AbstractActionBuilderFactory<T> implements ActionBuilderFactory<T> {
 
     /**
      * Algorithm name associated with builder.
@@ -24,7 +24,7 @@ public abstract class AbstractBuilderFactory<T> implements ActionBuilderFactory<
 
     // ------------------ CONSTRUCTORS -----------------------
 
-    AbstractBuilderFactory(AlgorithmName algorithmName) {
+    AbstractActionBuilderFactory(AlgorithmName algorithmName) {
         this.algorithmName = algorithmName;
     }
 
@@ -41,19 +41,14 @@ public abstract class AbstractBuilderFactory<T> implements ActionBuilderFactory<
      * @return trust level threshold or null if not defined
      */
     protected Float provideTrustLevelThreshold(Configuration conf) {
-        String algorithmTrustLevelThreshold = conf
-                .get(EXPORT_TRUST_LEVEL_THRESHOLD + EXPORT_ALGORITHM_PROPERTY_SEPARATOR + algorithmName.name());
-        if (algorithmTrustLevelThreshold != null
-                && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(algorithmTrustLevelThreshold)) {
-            return Float.valueOf(algorithmTrustLevelThreshold);
+        String trustLevelThresholdStr = WorkflowRuntimeParameters.getParamValue(
+                EXPORT_TRUST_LEVEL_THRESHOLD + EXPORT_ALGORITHM_PROPERTY_SEPARATOR + algorithmName.name(), 
+                EXPORT_TRUST_LEVEL_THRESHOLD, conf);
+        if (trustLevelThresholdStr!=null) {
+            return Float.valueOf(trustLevelThresholdStr);
+        } else {
+            return null;
         }
-        String defaultTrustLevelThresholdStr = conf.get(EXPORT_TRUST_LEVEL_THRESHOLD);
-        if (defaultTrustLevelThresholdStr != null
-                && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(defaultTrustLevelThresholdStr)) {
-            return Float.valueOf(defaultTrustLevelThresholdStr);
-        }
-        // fallback: threshold was not defined
-        return null;
     }
 
     /**

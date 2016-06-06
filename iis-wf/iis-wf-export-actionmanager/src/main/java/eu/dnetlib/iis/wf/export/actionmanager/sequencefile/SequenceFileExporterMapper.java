@@ -86,18 +86,14 @@ public class SequenceFileExporterMapper extends Mapper<AvroKey<? extends Specifi
      * @throws MappingNotDefinedException thrown when action set identifier not specified in configuration
      */
     private static String getActionSetId(AlgorithmName algorithmName, Configuration cfg) throws MappingNotDefinedException {
-        String propertyValue = cfg.get(EXPORT_ACTION_SETID + EXPORT_ALGORITHM_PROPERTY_SEPARATOR + algorithmName.name());
-        if (StringUtils.isNotBlank(propertyValue) && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(propertyValue)) {
-            return propertyValue;
+        String actionSetId = WorkflowRuntimeParameters.getParamValue(
+                EXPORT_ACTION_SETID + EXPORT_ALGORITHM_PROPERTY_SEPARATOR + algorithmName.name(), 
+                EXPORT_ACTION_SETID, cfg);
+        if (actionSetId!=null) {
+            return actionSetId;
         } else {
-            // providing default actionset identifier
-            propertyValue = cfg.get(EXPORT_ACTION_SETID);
-            if (StringUtils.isNotBlank(propertyValue) && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(propertyValue)) {
-                return propertyValue;
-            } else {
-                throw new MappingNotDefinedException(
-                        "no action set identifier defined " + "for algorithm: " + algorithmName.name());
-            }
+            throw new MappingNotDefinedException(
+                    "no action set identifier defined " + "for algorithm: " + algorithmName.name());
         }
     }
 

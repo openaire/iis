@@ -26,7 +26,7 @@ import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
  *
  */
 public abstract class AbstractDocumentToConceptsActionBuilderModuleFactory
-        extends AbstractBuilderFactory<DocumentToConceptIds> {
+        extends AbstractActionBuilderFactory<DocumentToConceptIds> {
 
     // ------------------------ CONSTRUCTORS --------------------------
     

@@ -25,7 +25,7 @@ import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
  * @author mhorst
  *
  */
-public class DocumentToSoftwareUrlActionBuilderModuleFactory extends AbstractBuilderFactory<DocumentToSoftwareUrls> {
+public class DocumentToSoftwareUrlActionBuilderModuleFactory extends AbstractActionBuilderFactory<DocumentToSoftwareUrls> {
 
     // ------------------------ CONSTRUCTORS --------------------------
     
