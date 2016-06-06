@@ -55,4 +55,12 @@ public class SectionedNameLevenshteinMatchVoter extends AbstractSectionedMatchVo
         
         return false;
     }
+
+
+    //------------------------ toString --------------------------
+    
+    @Override
+    public String toString() {
+        return "SectionedNameLevenshteinMatchVoter [minSimilarity=" + minSimilarity + "]";
+    }
 }

@@ -50,4 +50,12 @@ public class CompositeMatchVoter implements AffOrgMatchVoter {
         return true;
     }
 
+    
+    //------------------------ toString --------------------------
+
+    @Override
+    public String toString() {
+        return "CompositeMatchVoter [voters=" + voters + "]";
+    }
+
 }
