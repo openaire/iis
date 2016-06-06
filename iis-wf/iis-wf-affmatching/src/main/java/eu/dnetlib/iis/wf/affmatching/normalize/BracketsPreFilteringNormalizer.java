@@ -33,6 +33,11 @@ public class BracketsPreFilteringNormalizer implements StringNormalizer, Seriali
     
     //------------------------ LOGIC --------------------------
     
+    /**
+     * Normalizes the given value.<br/>
+     * First it removes any text between brackets and then
+     * it uses internal {@link StringNormalizer} for further normalization.
+     */
     @Override
     public String normalize(String value) {
         
