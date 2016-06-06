@@ -1,11 +1,11 @@
 package eu.dnetlib.iis.wf.affmatching.normalize;
 
-import static com.google.common.collect.ImmutableMap.of;
-
 import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.collect.ImmutableMap;
 
 import eu.dnetlib.iis.common.string.StringNormalizer;
 
@@ -19,8 +19,7 @@ public class CountryCodeNormalizer implements StringNormalizer, Serializable {
     private static final long serialVersionUID = 1L;
     
     
-    private static final Map<String, String> COUNTRY_CODE_REPLACEMENTS = of(
-            "uk", "gb");
+    private static final Map<String, String> COUNTRY_CODE_REPLACEMENTS = ImmutableMap.of("uk", "gb");
     
     
     //------------------------ LOGIC --------------------------

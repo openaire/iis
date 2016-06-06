@@ -1,11 +1,10 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
+import static com.google.common.collect.ImmutableList.of;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-
-import static com.google.common.collect.ImmutableList.of;
 
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
@@ -100,7 +99,7 @@ public class FittingOrgWordsMatchVoterTest {
         
         // given
         aff.setOrganizationName("George's Hospital Medical School");
-        org.setName("Saint George's Hospital Medical School");
+        org.setName("Saint George's Hospital Medical School"); // 4 out of 5 words matched
         
         // execute & assert
         assertTrue(voter.voteMatch(aff, org));
@@ -137,7 +136,22 @@ public class FittingOrgWordsMatchVoterTest {
         
         // given
         aff.setOrganizationName("Molecular and Cell Biology Program, Ohio University");
-        org.setName("Ohio State University");
+        org.setName("Ohio State University"); // 2 out of 3 words matched - too low
+        
+        // execute & assert
+        assertFalse(voter.voteMatch(aff, org));
+    }
+    
+    @Test
+    public void voteMatch_NOT_MATCH_TOO_LOW_SIMILARITY() {
+        
+        // given
+        aff.setOrganizationName("Technical University of Denmark");
+        org.setName("Danmarks Tekniske Universitet");
+        
+        // Jaro-Winkler similarity: [denmark] [danmarks] 0.83
+        // Jaro-Winkler similarity: [technical] [tekniske] 0.72 - too low
+        // Jaro-Winkler similarity: [university] [universitet] 0.94
         
         // execute & assert
         assertFalse(voter.voteMatch(aff, org));

@@ -24,7 +24,7 @@ public class FittingOrgWordsMatchVoter implements AffOrgMatchVoter {
     
     private List<Character> charsToFilter;
     
-    private double minFittingOrgWordsPercentage;
+    private double minFittingOrgWordsRatio;
     
     private double minFittingWordSimilarity;
     
@@ -40,8 +40,9 @@ public class FittingOrgWordsMatchVoter implements AffOrgMatchVoter {
      * @param minWordLength - words with length equal or less than 
      *      this value will be filtered out before comparing words.
      *      Setting it to zero disables this feature.
-     * @param minFittingOrgWordsPercentage - percentage of {@link AffMatchOrganization#getName()}
-     *      words that have to be found in {@link AffMatchAffiliation#getOrganizationName()}.
+     * @param minFittingOrgWordsRatio - minimum ratio of {@link AffMatchOrganization#getName()}
+     *      words that have to be found in {@link AffMatchAffiliation#getOrganizationName()}
+     *      to all {@link AffMatchOrganization#getName()} words.
      *      Value must be between (0,1].
      * @param minFittingWordSimilarity - minimum similarity for two words to be found the same.
      *      Value must be between (0,1] (value equal to one means that two words must be identical).
@@ -49,16 +50,16 @@ public class FittingOrgWordsMatchVoter implements AffOrgMatchVoter {
      * @see StringUtils#getJaroWinklerDistance(CharSequence, CharSequence)
      */
     public FittingOrgWordsMatchVoter(List<Character> charsToFilter, int minWordLength, 
-            double minFittingOrgWordsPercentage, double minFittingWordSimilarity) {
+            double minFittingOrgWordsRatio, double minFittingWordSimilarity) {
         Preconditions.checkNotNull(charsToFilter);
         Preconditions.checkArgument(minWordLength >= 0);
-        Preconditions.checkArgument(minFittingOrgWordsPercentage > 0 && minFittingOrgWordsPercentage <= 1);
+        Preconditions.checkArgument(minFittingOrgWordsRatio > 0 && minFittingOrgWordsRatio <= 1);
         Preconditions.checkArgument(minFittingWordSimilarity > 0 && minFittingWordSimilarity <= 1);
         
         
         this.charsToFilter = charsToFilter;
         this.minWordLength = minWordLength;
-        this.minFittingOrgWordsPercentage = minFittingOrgWordsPercentage;
+        this.minFittingOrgWordsRatio = minFittingOrgWordsRatio;
         this.minFittingWordSimilarity = minFittingWordSimilarity;
     }
     
@@ -92,9 +93,9 @@ public class FittingOrgWordsMatchVoter implements AffOrgMatchVoter {
             }
         }
         
-        double fittingWordsPercentage = (double)fittingWordsCount/orgWordsCount;
+        double fittingWordsRatio = (double)fittingWordsCount/orgWordsCount;
         
-        return fittingWordsPercentage >= minFittingOrgWordsPercentage;
+        return fittingWordsRatio >= minFittingOrgWordsRatio;
     }
 
     
