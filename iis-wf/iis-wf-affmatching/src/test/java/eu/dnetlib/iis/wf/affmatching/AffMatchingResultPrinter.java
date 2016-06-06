@@ -14,7 +14,11 @@ import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.wf.affmatching.model.SimpleAffMatchResult;
 
 /**
-* @author Łukasz Dumiszewski
+ * A helper that prints results of affiliation matching (actual matched affiliations in relation to
+ * the expected ones). Used in classes that test affiliation matching quality. 
+ * 
+ *  
+ * @author Łukasz Dumiszewski
 */
 
 public class AffMatchingResultPrinter {

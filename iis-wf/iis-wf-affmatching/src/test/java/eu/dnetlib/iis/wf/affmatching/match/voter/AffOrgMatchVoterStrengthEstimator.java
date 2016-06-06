@@ -201,6 +201,7 @@ public class AffOrgMatchVoterStrengthEstimator {
         
         AffOrgMatchComputer affOrgMatchComputer = new AffOrgMatchComputer();
         
+        
         for (AffOrgMatchVoter voter : voters) {
             
             printVoterHeader(voter);
@@ -217,9 +218,10 @@ public class AffOrgMatchVoterStrengthEstimator {
             
             // log
             
-            printResult(of("src/test/resources/experimentalData/expectedOutput/set1/matched_aff.json",
-                           "src/test/resources/experimentalData/expectedOutput/set2/matched_aff.json",
-                           "src/test/resources/experimentalData/expectedOutput/set4/matched_aff.json"));
+            calcAndPrintResult(of("src/test/resources/experimentalData/expectedOutput/set1/matched_aff.json",
+                                  "src/test/resources/experimentalData/expectedOutput/set2/matched_aff.json",
+                                  "src/test/resources/experimentalData/expectedOutput/set4/matched_aff.json"));
+            
             
             FileUtils.deleteDirectory(new File(outputDirPath));
         
@@ -255,18 +257,18 @@ public class AffOrgMatchVoterStrengthEstimator {
     }
     
 
-    private void printResult(List<String> expectedResultsJsonPaths) throws IOException {
+    private void calcAndPrintResult(List<String> expectedResultsJsonPaths) throws IOException {
         
         List<SimpleAffMatchResult> actualMatches = readJson(outputDirPath + "/part-00000", SimpleAffMatchResult.class);
         List<SimpleAffMatchResult> expectedMatches = readMultipleJsons(expectedResultsJsonPaths, SimpleAffMatchResult.class);
         
-        List<SimpleAffMatchResult> truePositives = actualMatches.stream().filter(x -> expectedMatches.contains(x)).collect(toList());
+        List<SimpleAffMatchResult> correctMatches = actualMatches.stream().filter(x -> expectedMatches.contains(x)).collect(toList());
         List<SimpleAffMatchResult> falsePositives = actualMatches.stream().filter(x -> !expectedMatches.contains(x)).collect(toList());
         
-        calcAndPrintMatchStrength(actualMatches.size(), truePositives.size());
+        calcAndPrintMatchStrength(actualMatches.size(), correctMatches.size());
         
         if (PRINT_NUMBER_DETAILS) {
-            printNumberDetails(expectedMatches.size(), actualMatches.size(), truePositives.size(), falsePositives.size());
+            printNumberDetails(expectedMatches.size(), actualMatches.size(), correctMatches.size(), falsePositives.size());
         }
         
         out.println();
