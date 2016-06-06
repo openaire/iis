@@ -20,10 +20,7 @@
 		</property>
 		<property>
 			<name>output_remote_location</name>
-			<value>$UNDEFINED$</value>
-			<description>optional remote cluster output location where inference output dump should be distcped as sequence files.
-				When not specified results will be exported straight to the ActionManager HBase.
-			</description>
+			<description>remote cluster output location where inference output dump should be distcped as sequence files</description>
 		</property>
 		<property>
 			<name>mdstore_service_location</name>
@@ -34,15 +31,6 @@
 			<name>wos_mdstore_id</name>
 			<value>$UNDEFINED$</value>
 			<description>mdstore holding WoS publication entities to be exported</description>
-		</property>
-		<!-- export related -->
-		<property>
-			<name>action_hbase_table_name</name>
-			<description>action manager hbase table name</description>
-		</property>
-		<property>
-			<name>action_hbase_table_initialize</name>
-			<description>flag indicating input table should be initialized</description>
 		</property>
 		<!-- action set id properties -->
 		<property>
@@ -86,17 +74,6 @@
 			<value>$UNDEFINED$</value>
 			<description>document_referencedDatasets trust level threshold</description>
 		</property>
-		<!-- -->
-		<property>
-			<name>action_hbase_remote_zookeeper_quorum</name>
-			<value>$UNDEFINED$</value>
-			<description>external hbase zookeeper quorum, set to empty value by default which means data will be exported to local hbase instance</description>
-		</property>
-		<property>
-			<name>action_hbase_remote_zookeeper_clientport</name>
-			<value>$UNDEFINED$</value>
-			<description>external hbase zookeeper client port, required only whe zookeeper quorum property is set</description>
-		</property>
 	</parameters>
 
     <global>
@@ -114,29 +91,8 @@
         </configuration>
     </global>
 
-	<start to="decision-export_to_sequencefile_or_hbase" />
+	<start to="export_actionmanager_sequencefile" />
 
-	<decision name="decision-export_to_sequencefile_or_hbase">
-		<switch>
-			<case to="export_actionmanager">${output_remote_location eq "$UNDEFINED$"}</case>
-			<default to="export_actionmanager_sequencefile" />
-		</switch>
-	</decision>
-
-	<action name="export_actionmanager">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/export_actionmanager</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/export_actionmanager/working_dir</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="export_entities_forking" />
-		<error to="fail" />
-	</action>
 
 	<action name="export_actionmanager_sequencefile">
 		<sub-workflow>
@@ -195,13 +151,8 @@
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.wf.export.actionmanager.entity.dataset.DatasetExporterProcess</arg>
 			<arg>-Iinput=${workingDir}/identifier/datasets</arg>
-
 			<arg>-Pexport.entity.mdstore.service.location=${mdstore_service_location}</arg>
 			<arg>-Pexport.action.setid=${action_set_id_entity_dataset}</arg>
-			<arg>-Pexport.action.hbase.table.name=${action_hbase_table_name}</arg>
-			<arg>-Pexport.action.hbase.remote.zookeeper.quorum=${action_hbase_remote_zookeeper_quorum}</arg>
-			<arg>-Pexport.action.hbase.remote.zookeeper.clientport=${action_hbase_remote_zookeeper_clientport}</arg>
-			<arg>-Pexport.seq.file.active=${output_remote_location ne "$UNDEFINED$"}</arg>
 			<arg>-Pexport.seq.file.output.dir.root=${workingDir}/output/entities_dataset</arg>
 			<arg>-Pexport.seq.file.output.dir.name=${action_set_id_entity_dataset}</arg>
 		</java>
@@ -239,14 +190,9 @@
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.wf.export.actionmanager.entity.document.DocumentExporterProcess</arg>
 			<arg>-Iinput=${workingDir}/identifier/documents</arg>
-
 			<arg>-Pexport.entity.mdstore.service.location=${mdstore_service_location}</arg>
 			<arg>-Pexport.entity.mdstore.id=${wos_mdstore_id}</arg>
 			<arg>-Pexport.action.setid=${action_set_id_entity_wos}</arg>
-			<arg>-Pexport.action.hbase.table.name=${action_hbase_table_name}</arg>
-			<arg>-Pexport.action.hbase.remote.zookeeper.quorum=${action_hbase_remote_zookeeper_quorum}</arg>
-			<arg>-Pexport.action.hbase.remote.zookeeper.clientport=${action_hbase_remote_zookeeper_clientport}</arg>
-			<arg>-Pexport.seq.file.active=${output_remote_location ne "$UNDEFINED$"}</arg>
 			<arg>-Pexport.seq.file.output.dir.root=${workingDir}/output/entities_document</arg>
 			<arg>-Pexport.seq.file.output.dir.name=${action_set_id_entity_wos}</arg>
 		</java>
@@ -255,14 +201,7 @@
 	</action>
 	<!-- end of publication entities export section -->
 
-	<join name="export_entities_joining" to="decision-distcp_output" />
-
-	<decision name="decision-distcp_output">
-		<switch>
-			<case to="distcp_output">${output_remote_location ne "$UNDEFINED$"}</case>
-			<default to="end" />
-		</switch>
-	</decision>
+	<join name="export_entities_joining" to="distcp_output" />
 
 	<action name="distcp_output">
 		<distcp xmlns="uri:oozie:distcp-action:0.1">

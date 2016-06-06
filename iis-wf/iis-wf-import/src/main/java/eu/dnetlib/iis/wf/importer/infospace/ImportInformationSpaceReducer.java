@@ -212,18 +212,18 @@ public class ImportInformationSpaceReducer
      */
     private DataInfoBasedApprover buildApprover(Context context) {
         boolean skipDeletedByInference = true;
-        String skipDeletedByInferenceParamValue = WorkflowRuntimeParameters.getParamValue(IMPORT_SKIP_DELETED_BY_INFERENCE, context);
+        String skipDeletedByInferenceParamValue = WorkflowRuntimeParameters.getParamValue(IMPORT_SKIP_DELETED_BY_INFERENCE, context.getConfiguration());
         if (skipDeletedByInferenceParamValue != null) {
             skipDeletedByInference = Boolean.valueOf(skipDeletedByInferenceParamValue);
         }
         
         Float trustLevelThreshold = null;
-        String trustLevelThresholdParamValue = WorkflowRuntimeParameters.getParamValue(IMPORT_TRUST_LEVEL_THRESHOLD, context);
+        String trustLevelThresholdParamValue = WorkflowRuntimeParameters.getParamValue(IMPORT_TRUST_LEVEL_THRESHOLD, context.getConfiguration());
         if (trustLevelThresholdParamValue != null) {
             trustLevelThreshold = Float.valueOf(trustLevelThresholdParamValue);
         }
         
-        return new DataInfoBasedApprover(WorkflowRuntimeParameters.getParamValue(IMPORT_INFERENCE_PROVENANCE_BLACKLIST, context), 
+        return new DataInfoBasedApprover(WorkflowRuntimeParameters.getParamValue(IMPORT_INFERENCE_PROVENANCE_BLACKLIST, context.getConfiguration()), 
                 skipDeletedByInference, trustLevelThreshold);
     }
     

@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.common;
 
-import org.apache.hadoop.mapreduce.JobContext;
+import org.apache.commons.lang.StringUtils;
+import org.apache.hadoop.conf.Configuration;
 
 /**
  * Utility class holding parameter names and method simplifying access to parameters from hadoop context.
@@ -16,15 +17,24 @@ public abstract class WorkflowRuntimeParameters {
 	public static final String UNDEFINED_NONEMPTY_VALUE = "$UNDEFINED$";
 	
 	/**
-     * Retrieves parameter from context when set to value different than {@link WorkflowRuntimeParameters#UNDEFINED_NONEMPTY_VALUE}.
+     * Retrieves parameter from hadoop context configuration when set to value different than {@link WorkflowRuntimeParameters#UNDEFINED_NONEMPTY_VALUE}.
      */
-    public static String getParamValue(String paramName, JobContext context) {
-        String paramValue = context.getConfiguration().get(paramName);
-        if (paramValue != null && !UNDEFINED_NONEMPTY_VALUE.equals(paramValue)) {
+    public static String getParamValue(String paramName, Configuration configuration) {
+        String paramValue = configuration.get(paramName);
+        if (StringUtils.isNotBlank(paramValue) && !UNDEFINED_NONEMPTY_VALUE.equals(paramValue)) {
             return paramValue;
         } else {
             return null;
         }
     }
 	
+    /**
+     * Retrieves parameter from hadoop context configuration when set to value different than {@link WorkflowRuntimeParameters#UNDEFINED_NONEMPTY_VALUE}.
+     * If requested parameter was not set, fallback parameter is retrieved using the same logic.
+     */
+    public static String getParamValue(String paramName, String fallbackParamName, Configuration configuration) {
+        String resultCandidate = getParamValue(paramName, configuration);
+        return resultCandidate!=null?resultCandidate:getParamValue(fallbackParamName, configuration);
+    }
+    
 }

@@ -36,7 +36,7 @@ public class ImportInformationSpaceMapper extends Mapper<Text, Text, Text, InfoS
     protected void setup(final Context context) throws IOException, InterruptedException {
         super.setup(context);
         id = new Text();
-        String approvedColumnFamiliesCSV = WorkflowRuntimeParameters.getParamValue(IMPORT_APPROVED_COLUMNFAMILIES_CSV, context);
+        String approvedColumnFamiliesCSV = WorkflowRuntimeParameters.getParamValue(IMPORT_APPROVED_COLUMNFAMILIES_CSV, context.getConfiguration());
         if (StringUtils.isNotBlank(approvedColumnFamiliesCSV)) {
             approvedColumnFamilies = Sets.newHashSet(Splitter.on(DEFAULT_CSV_DELIMITER).trimResults().split(approvedColumnFamiliesCSV));
         }

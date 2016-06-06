@@ -53,13 +53,13 @@ public class CitationsActionBuilderModuleFactoryTest {
 		externalDoiDestinationDocumentIds.put("custom-id", "12345");
 		externalDoiCitationEntryBuilder.setExternalDestinationDocumentIds(externalDoiDestinationDocumentIds);
 		
-		sortedCitations.add(CitationsActionBuilderModuleFactory.build(internalCitationEntryBuilder.build()
+		sortedCitations.add(CitationsActionBuilderModuleUtils.build(internalCitationEntryBuilder.build()
 				,HBaseConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR));
-		sortedCitations.add(CitationsActionBuilderModuleFactory.build(externalPmidCitationEntryBuilder.build()
+		sortedCitations.add(CitationsActionBuilderModuleUtils.build(externalPmidCitationEntryBuilder.build()
 				,HBaseConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR));
-		sortedCitations.add(CitationsActionBuilderModuleFactory.build(externalDoiCitationEntryBuilder.build()
+		sortedCitations.add(CitationsActionBuilderModuleUtils.build(externalDoiCitationEntryBuilder.build()
 				,HBaseConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR));
-		sortedCitations.add(CitationsActionBuilderModuleFactory.build(rawTextCitationEntryBuilder.build()
+		sortedCitations.add(CitationsActionBuilderModuleUtils.build(rawTextCitationEntryBuilder.build()
 				,HBaseConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR));
 		
 		CitationsExtraInfoConverter converter = new CitationsExtraInfoConverter();

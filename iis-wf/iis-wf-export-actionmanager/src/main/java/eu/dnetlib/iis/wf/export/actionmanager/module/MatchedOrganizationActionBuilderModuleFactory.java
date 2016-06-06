@@ -25,34 +25,51 @@ import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
  * @author mhorst
  *
  */
-public class MatchedOrganizationActionBuilderModuleFactory implements ActionBuilderFactory<MatchedOrganization> {
+public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActionBuilderFactory<MatchedOrganization> {
 
     private static final String REL_CLASS_IS_AFFILIATED_WITH = Affiliation.RelName.isAffiliatedWith.toString();
 
     private static final String SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_ORG = "dnet:result_organization_relations";
 
-    private static final AlgorithmName algorithmName = AlgorithmName.document_affiliations;
+    // ------------------------ CONSTRUCTORS --------------------------
+    
+    public MatchedOrganizationActionBuilderModuleFactory() {
+        super(AlgorithmName.document_affiliations);
+    }
 
+    // ------------------------ LOGIC ---------------------------------
+    
+    @Override
+    public ActionBuilderModule<MatchedOrganization> instantiate(Configuration config, Agent agent, String actionSetId) {
+        return new MatchedOrganizationActionBuilderModule(provideTrustLevelThreshold(config), agent, actionSetId);
+    }
+    
+    // ------------------------ INNER CLASS ---------------------------------
+    
     /**
      * {@link MatchedOrganization} action builder module.
      *
      */
-    class MatchedOrganizationActionBuilderModule extends AbstractBuilderModule implements ActionBuilderModule<MatchedOrganization> {
+    class MatchedOrganizationActionBuilderModule extends AbstractBuilderModule<MatchedOrganization> {
 
+        
+        // ------------------------ CONSTRUCTORS --------------------------
+        
         /**
-         * @param predefinedTrust default trust level
          * @param trustLevelThreshold trust level threshold or null when all records should be exported
+         * @param agent action manager agent details
+         * @param actionSetId action set identifier
          */
-        public MatchedOrganizationActionBuilderModule(String predefinedTrust, Float trustLevelThreshold) {
-            super(predefinedTrust, trustLevelThreshold, algorithmName);
+        public MatchedOrganizationActionBuilderModule(Float trustLevelThreshold, Agent agent, String actionSetId) {
+            super(trustLevelThreshold, buildInferenceProvenance(), Preconditions.checkNotNull(agent),
+                    Preconditions.checkNotNull(actionSetId));
         }
 
+        // ------------------------ LOGIC ---------------------------------
+        
         @Override
-        public List<AtomicAction> build(MatchedOrganization object, Agent agent, String actionSetId)
-                throws TrustLevelThresholdExceededException {
+        public List<AtomicAction> build(MatchedOrganization object) throws TrustLevelThresholdExceededException {
             Preconditions.checkNotNull(object);
-            Preconditions.checkNotNull(agent);
-            Preconditions.checkNotNull(actionSetId);
             String docId = object.getDocumentId().toString();
             String orgId = object.getOrganizationId().toString();
             Oaf.Builder oafBuilder = Oaf.newBuilder();
@@ -66,7 +83,8 @@ public class MatchedOrganizationActionBuilderModuleFactory implements ActionBuil
             relBuilder.setTarget(orgId);
             ResultOrganization.Builder resOrgBuilder = ResultOrganization.newBuilder();
             Affiliation.Builder affBuilder = Affiliation.newBuilder();
-            affBuilder.setRelMetadata(buildRelMetadata(SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_ORG, REL_CLASS_IS_AFFILIATED_WITH));
+            affBuilder.setRelMetadata(
+                    buildRelMetadata(SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_ORG, REL_CLASS_IS_AFFILIATED_WITH));
             resOrgBuilder.setAffiliation(affBuilder.build());
             relBuilder.setResultOrganization(resOrgBuilder.build());
             oafBuilder.setRel(relBuilder.build());
@@ -76,16 +94,5 @@ public class MatchedOrganizationActionBuilderModuleFactory implements ActionBuil
             return Lists.newArrayList(actionFactory.createAtomicAction(actionSetId, agent, docId,
                     OafDecoder.decode(oaf).getCFQ(), orgId, oaf.toByteArray()));
         }
-    }
-
-    @Override
-    public ActionBuilderModule<MatchedOrganization> instantiate(String predefinedTrust, Float trustLevelThreshold,
-            Configuration config) {
-        return new MatchedOrganizationActionBuilderModule(predefinedTrust, trustLevelThreshold);
-    }
-
-    @Override
-    public AlgorithmName getAlgorithName() {
-        return algorithmName;
     }
 }

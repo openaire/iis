@@ -1,8 +1,10 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
 /**
- * List of algorithm names.
- * Those names are also used as action set identifier property key suffixes.
+ * List of algorithm names. 
+ * 
+ * Those names are also used as action set identifier and trust level threshold property keys suffixes.
+ * 
  * @author mhorst
  *
  */
@@ -17,5 +19,5 @@ public enum AlgorithmName {
 	document_research_initiative,
 	document_pdb,
 	document_software_url
-	
+
 }
