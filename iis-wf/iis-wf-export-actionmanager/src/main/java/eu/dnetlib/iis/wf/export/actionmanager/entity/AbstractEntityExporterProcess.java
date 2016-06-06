@@ -2,7 +2,6 @@ package eu.dnetlib.iis.wf.export.actionmanager.entity;
 
 import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_ACTION_SETID;
 import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_ENTITY_MDSTORE_SERVICE_LOCATION;
-import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_SEQ_FILE_ACTIVE;
 import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_SEQ_FILE_OUTPUT_DIR_NAME;
 import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_SEQ_FILE_OUTPUT_DIR_ROOT;
 
@@ -43,7 +42,6 @@ import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.wf.export.actionmanager.api.ActionManagerServiceFacade;
-import eu.dnetlib.iis.wf.export.actionmanager.api.HBaseActionManagerServiceFacade;
 import eu.dnetlib.iis.wf.export.actionmanager.api.SequenceFileActionManagerServiceFacade;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.ActionManagerConfigurationProvider;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
@@ -177,17 +175,11 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
 	 * @return action manager instance
 	 * @throws IOException
 	 */
-	protected ActionManagerServiceFacade buildActionManager(
-			Configuration conf, Map<String, String> parameters) throws IOException {
-		boolean seqFileExportMode = Boolean.valueOf(ProcessUtils.getParameterValue(
-				EXPORT_SEQ_FILE_ACTIVE, conf, parameters));
-		return seqFileExportMode?
-				new SequenceFileActionManagerServiceFacade(conf, 
-						ProcessUtils.getParameterValue(EXPORT_SEQ_FILE_OUTPUT_DIR_ROOT, 
-								conf, parameters), 
-						ProcessUtils.getParameterValue(EXPORT_SEQ_FILE_OUTPUT_DIR_NAME, 
-								conf, parameters)):
-				new HBaseActionManagerServiceFacade(conf, parameters);
+	protected ActionManagerServiceFacade buildActionManager(Configuration conf, Map<String, String> parameters)
+            throws IOException {
+        return new SequenceFileActionManagerServiceFacade(conf,
+                ProcessUtils.getParameterValue(EXPORT_SEQ_FILE_OUTPUT_DIR_ROOT, conf, parameters),
+                ProcessUtils.getParameterValue(EXPORT_SEQ_FILE_OUTPUT_DIR_NAME, conf, parameters));
 	}
 	
 	/**

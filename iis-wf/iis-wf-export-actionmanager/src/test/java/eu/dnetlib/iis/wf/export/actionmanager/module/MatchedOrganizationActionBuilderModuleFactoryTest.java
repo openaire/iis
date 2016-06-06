@@ -27,7 +27,7 @@ import eu.dnetlib.iis.wf.export.actionmanager.module.MatchedOrganizationActionBu
  */
 public class MatchedOrganizationActionBuilderModuleFactoryTest {
 
-    private MatchedOrganizationActionBuilderModule module;
+    private MatchedOrganizationActionBuilderModuleFactory factory;
 
     private Float trustLevelThreshold = 0.5f;
 
@@ -44,44 +44,47 @@ public class MatchedOrganizationActionBuilderModuleFactoryTest {
     private MatchedOrganization matchedOrg = buildMatchedOrganization(docId, orgId, matchStrength);
 
     @Before
-    public void initModule() {
-        MatchedOrganizationActionBuilderModuleFactory factory = new MatchedOrganizationActionBuilderModuleFactory();
-        module = (MatchedOrganizationActionBuilderModule) factory.instantiate(null, trustLevelThreshold, null);
+    public void initFactory() {
+        factory = new MatchedOrganizationActionBuilderModuleFactory();
     }
 
     // ----------------------- TESTS --------------------------
 
     @Test(expected = NullPointerException.class)
+    public void test_constructor_null_agent() throws Exception {
+        // execute
+        factory.new MatchedOrganizationActionBuilderModule(trustLevelThreshold, null, actionSetId);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void test_constructor_null_actionsetid() throws Exception {
+        // execute
+        factory.new MatchedOrganizationActionBuilderModule(trustLevelThreshold, agent, null);
+    }
+
+    @Test(expected = NullPointerException.class)
     public void test_build_null_object() throws Exception {
+        // given
+        MatchedOrganizationActionBuilderModule module = factory.new MatchedOrganizationActionBuilderModule(trustLevelThreshold, agent, actionSetId);
         // execute
-        module.build(null, agent, actionSetId);
+        module.build(null);
     }
-
-    @Test(expected = NullPointerException.class)
-    public void test_build_null_agent() throws Exception {
-        // execute
-        module.build(matchedOrg, null, actionSetId);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void test_build_null_actionsetid() throws Exception {
-        // execute
-        module.build(matchedOrg, agent, null);
-    }
-
+    
     @Test(expected = TrustLevelThresholdExceededException.class)
     public void test_build_below_threshold() throws Exception {
         // given
         MatchedOrganization matchedOrgBelowThreshold = buildMatchedOrganization(docId, orgId, 0.4f);
+        MatchedOrganizationActionBuilderModule module = factory.new MatchedOrganizationActionBuilderModule(trustLevelThreshold, agent, actionSetId);
         // execute
-        module.build(matchedOrgBelowThreshold, agent, actionSetId);
+        module.build(matchedOrgBelowThreshold);
     }
 
     @Test
     public void test_build() throws Exception {
+        // given
+        MatchedOrganizationActionBuilderModule module = factory.new MatchedOrganizationActionBuilderModule(trustLevelThreshold, agent, actionSetId);
         // execute
-        List<AtomicAction> actions = module.build(matchedOrg, agent, actionSetId);
-
+        List<AtomicAction> actions = module.build(matchedOrg);
         // assert
         assertNotNull(actions);
         assertEquals(1, actions.size());
@@ -93,7 +96,7 @@ public class MatchedOrganizationActionBuilderModuleFactoryTest {
         assertEquals(docId, action.getTargetRowKey());
         assertEquals(RelType.resultOrganization.toString() + '_' + SubRelType.affiliation + '_'
                 + Affiliation.RelName.isAffiliatedWith, action.getTargetColumnFamily());
-        assertOaf(action.getTargetValue());
+        assertOaf(action.getTargetValue(), module.getConfidenceToTrustLevelNormalizationFactor());
     }
 
     // ----------------------- PRIVATE --------------------------
@@ -106,7 +109,7 @@ public class MatchedOrganizationActionBuilderModuleFactoryTest {
         return builder.build();
     }
 
-    private void assertOaf(byte[] oafBytes) throws InvalidProtocolBufferException {
+    private void assertOaf(byte[] oafBytes, float normalizationFactory) throws InvalidProtocolBufferException {
         assertNotNull(oafBytes);
         Oaf.Builder oafBuilder = Oaf.newBuilder();
         oafBuilder.mergeFrom(oafBytes);
@@ -122,7 +125,7 @@ public class MatchedOrganizationActionBuilderModuleFactoryTest {
 
         assertNotNull(oaf.getDataInfo());
 
-        float normalizedTrust = matchStrength * module.getConfidenceToTrustLevelNormalizationFactor();
+        float normalizedTrust = matchStrength * normalizationFactory;
         assertEquals(normalizedTrust, Float.parseFloat(oaf.getDataInfo().getTrust()), 0.0001);
     }
 }

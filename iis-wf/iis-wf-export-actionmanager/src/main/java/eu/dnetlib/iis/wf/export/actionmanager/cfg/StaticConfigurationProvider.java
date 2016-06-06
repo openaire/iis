@@ -33,16 +33,6 @@ public class StaticConfigurationProvider implements ActionManagerConfigurationPr
 	
 	private final String namespacePrefix;
 	
-//	/**
-//	 * Default constructor.
-//	 */
-//	public StaticConfigurationProvider() {
-//		this(AGENT_DEFAULT,
-//				PROVENANCE_DEFAULT, 
-//				ACTION_TRUST_DEFAULT, 
-//				NAMESPACE_PREFIX_DEFAULT);
-//	}
-	
 	/**
 	 * Default constructor.
 	 * @param agent

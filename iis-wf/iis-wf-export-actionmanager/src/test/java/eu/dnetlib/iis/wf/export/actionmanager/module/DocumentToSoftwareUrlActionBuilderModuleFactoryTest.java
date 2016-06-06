@@ -28,7 +28,7 @@ import eu.dnetlib.iis.wf.export.actionmanager.module.DocumentToSoftwareUrlAction
  */
 public class DocumentToSoftwareUrlActionBuilderModuleFactoryTest {
 
-    private DocumentToSoftwareUrlActionBuilderModule module;
+    private DocumentToSoftwareUrlActionBuilderModuleFactory factory;
 
     private Float trustLevelThreshold = 0.5f;
 
@@ -48,43 +48,48 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactoryTest {
 
     @Before
     public void initModule() {
-        DocumentToSoftwareUrlActionBuilderModuleFactory factory = new DocumentToSoftwareUrlActionBuilderModuleFactory();
-        module = (DocumentToSoftwareUrlActionBuilderModule) factory.instantiate(null, trustLevelThreshold, null);
+        factory = new DocumentToSoftwareUrlActionBuilderModuleFactory();
     }
 
     // ----------------------- TESTS --------------------------
 
     @Test(expected = NullPointerException.class)
+    public void test_constructor_null_agent() throws Exception {
+        // execute
+        factory.new DocumentToSoftwareUrlActionBuilderModule(trustLevelThreshold, null, actionSetId);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void test_constructor_null_actionsetid() throws Exception {
+        // execute
+        factory.new DocumentToSoftwareUrlActionBuilderModule(trustLevelThreshold, agent, null);
+    }
+
+    @Test(expected = NullPointerException.class)
     public void test_build_null_object() throws Exception {
+        // given
+        DocumentToSoftwareUrlActionBuilderModule module = factory.new DocumentToSoftwareUrlActionBuilderModule(trustLevelThreshold, agent, actionSetId);
         // execute
-        module.build(null, agent, actionSetId);
+        module.build(null);
     }
-
-    @Test(expected = NullPointerException.class)
-    public void test_build_null_agent() throws Exception {
-        // execute
-        module.build(documentToSoftwareUrl, null, actionSetId);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void test_build_null_actionsetid() throws Exception {
-        // execute
-        module.build(documentToSoftwareUrl, agent, null);
-    }
-
+    
     @Test(expected = TrustLevelThresholdExceededException.class)
     public void test_build_below_threshold() throws Exception {
         // given
-        DocumentToSoftwareUrls matchedOrgBelowThreshold = buildDocumentToSoftwareUrl(
+        DocumentToSoftwareUrls documentToSoftwareBelowThreshold = buildDocumentToSoftwareUrl(
                 docId, softwareUrl, repositoryName, 0.4f);
+        DocumentToSoftwareUrlActionBuilderModule module = factory.new DocumentToSoftwareUrlActionBuilderModule(trustLevelThreshold, agent, actionSetId);
         // execute
-        module.build(matchedOrgBelowThreshold, agent, actionSetId);
+        module.build(documentToSoftwareBelowThreshold);
     }
 
     @Test
     public void test_build() throws Exception {
+        // given
+        DocumentToSoftwareUrlActionBuilderModule module = factory.new DocumentToSoftwareUrlActionBuilderModule(trustLevelThreshold, agent, actionSetId);
+        
         // execute
-        List<AtomicAction> actions = module.build(documentToSoftwareUrl, agent, actionSetId);
+        List<AtomicAction> actions = module.build(documentToSoftwareUrl);
 
         // assert
         assertNotNull(actions);
@@ -95,7 +100,7 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactoryTest {
         assertEquals(actionSetId, action.getRawSet());
         assertEquals(docId, action.getTargetRowKey());
         assertEquals(Type.result.toString(), action.getTargetColumnFamily());
-        assertOaf(action.getTargetValue());
+        assertOaf(action.getTargetValue(), module.getConfidenceToTrustLevelNormalizationFactor());
     }
 
     // ----------------------- PRIVATE --------------------------
@@ -112,7 +117,7 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactoryTest {
         return builder.build();
     }
 
-    private void assertOaf(byte[] oafBytes) throws InvalidProtocolBufferException {
+    private void assertOaf(byte[] oafBytes, float normalizationFactory) throws InvalidProtocolBufferException {
         assertNotNull(oafBytes);
         Oaf.Builder oafBuilder = Oaf.newBuilder();
         oafBuilder.mergeFrom(oafBytes);
@@ -132,7 +137,7 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactoryTest {
         assertNotNull(externalReference.getQualifier());
         assertNotNull(externalReference.getDataInfo());
 
-        float normalizedTrust = matchStrength * module.getConfidenceToTrustLevelNormalizationFactor();
+        float normalizedTrust = matchStrength * normalizationFactory;
         assertEquals(normalizedTrust, Float.parseFloat(externalReference.getDataInfo().getTrust()), 0.0001);
     }
 }

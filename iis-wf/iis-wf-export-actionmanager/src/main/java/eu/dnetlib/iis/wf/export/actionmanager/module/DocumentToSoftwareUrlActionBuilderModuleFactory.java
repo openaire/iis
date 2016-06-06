@@ -17,6 +17,7 @@ import eu.dnetlib.data.proto.ResultProtos.Result.ExternalReference;
 import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.iis.export.schemas.DocumentToSoftwareUrls;
 import eu.dnetlib.iis.export.schemas.SoftwareUrl;
+import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 
 /**
  * Converts {@link DocumentToSoftwareUrls} holding links to software into {@link AtomicAction} objects.
@@ -24,16 +25,19 @@ import eu.dnetlib.iis.export.schemas.SoftwareUrl;
  * @author mhorst
  *
  */
-public class DocumentToSoftwareUrlActionBuilderModuleFactory implements ActionBuilderFactory<DocumentToSoftwareUrls> {
+public class DocumentToSoftwareUrlActionBuilderModuleFactory extends AbstractActionBuilderFactory<DocumentToSoftwareUrls> {
 
-    private final AlgorithmName algorithmName = AlgorithmName.document_software_url;
+    // ------------------------ CONSTRUCTORS --------------------------
+    
+    public DocumentToSoftwareUrlActionBuilderModuleFactory() {
+        super(AlgorithmName.document_software_url);
+    }
     
     // ---------------------- LOGIC ----------------------------
 
     @Override
-    public ActionBuilderModule<DocumentToSoftwareUrls> instantiate(String predefinedTrust, Float trustLevelThreshold,
-            Configuration config) {
-        return new DocumentToSoftwareUrlActionBuilderModule(predefinedTrust, trustLevelThreshold);
+    public ActionBuilderModule<DocumentToSoftwareUrls> instantiate(Configuration config, Agent agent, String actionSetId) {
+        return new DocumentToSoftwareUrlActionBuilderModule(provideTrustLevelThreshold(config), agent, actionSetId);
     }
 
     @Override
@@ -43,23 +47,24 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactory implements ActionBu
     
     // ---------------------- INNER CLASSES ----------------------------
 
-    class DocumentToSoftwareUrlActionBuilderModule extends AbstractBuilderModule
-            implements ActionBuilderModule<DocumentToSoftwareUrls> {
+    class DocumentToSoftwareUrlActionBuilderModule extends AbstractBuilderModule<DocumentToSoftwareUrls> {
 
         // ---------------------- CONSTRUCTORS ----------------------------
         
-        public DocumentToSoftwareUrlActionBuilderModule(String predefinedTrust, Float trustLevelThreshold) {
-            super(predefinedTrust, trustLevelThreshold, algorithmName);
+        /**
+         * @param trustLevelThreshold trust level threshold or null when all records should be exported
+         * @param agent action manager agent details
+         * @param actionSetId action set identifier
+         */
+        public DocumentToSoftwareUrlActionBuilderModule(Float trustLevelThreshold, Agent agent, String actionSetId) {
+            super(trustLevelThreshold, buildInferenceProvenance(), agent, actionSetId);
         }
         
         // ---------------------- LOGIC ----------------------------
 
         @Override
-        public List<AtomicAction> build(DocumentToSoftwareUrls object, Agent agent, String actionSetId)
-                throws TrustLevelThresholdExceededException {
+        public List<AtomicAction> build(DocumentToSoftwareUrls object) throws TrustLevelThresholdExceededException {
             Preconditions.checkNotNull(object);
-            Preconditions.checkNotNull(agent);
-            Preconditions.checkNotNull(actionSetId);
             
             Oaf oaf = buildOafWithSoftwareUrl(object);
             if (oaf != null) {
@@ -106,7 +111,8 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactory implements ActionBu
             qualifierBuilder.setSchemename("dnet:externalReference_typologies");
             externalRefBuilder.setQualifier(qualifierBuilder.build());
             externalRefBuilder.setDataInfo(sofwareUrl.getConfidenceLevel() != null
-                    ? buildInference(sofwareUrl.getConfidenceLevel()) : buildInference());
+                    ? buildInference(sofwareUrl.getConfidenceLevel()) : 
+                        buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
             return externalRefBuilder.build();
         }
     }
