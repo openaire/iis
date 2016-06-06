@@ -26,7 +26,7 @@ public class AffMatchAffiliationNormalizer implements Serializable {
     
     private StringNormalizer countryNameNormalizer = new LenientComparisonStringNormalizer();
     
-    private StringNormalizer countryCodeNormalizer = new LenientComparisonStringNormalizer();
+    private StringNormalizer countryCodeNormalizer = new CountryCodeNormalizer();
     
     
     

@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import eu.dnetlib.iis.common.string.LenientComparisonStringNormalizer;
 import eu.dnetlib.iis.common.string.StringNormalizer;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 
@@ -24,13 +23,13 @@ public class AffMatchAffiliationNormalizerTest {
     private AffMatchAffiliationNormalizer normalizer = new AffMatchAffiliationNormalizer();
     
     @Mock
-    private StringNormalizer organizationNameNormalizer = new LenientComparisonStringNormalizer();
+    private StringNormalizer organizationNameNormalizer;
     
     @Mock
-    private StringNormalizer countryNameNormalizer = new LenientComparisonStringNormalizer();
+    private StringNormalizer countryNameNormalizer;
     
     @Mock
-    private StringNormalizer countryCodeNormalizer = new LenientComparisonStringNormalizer();
+    private StringNormalizer countryCodeNormalizer;
 
     
     
