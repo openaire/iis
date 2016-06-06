@@ -29,5 +29,13 @@ public class CountryCodeStrictMatchVoter implements AffOrgMatchVoter {
         
         return affiliation.getCountryCode().equals(organization.getCountryCode());
     }
+
+
+    //------------------------ toString --------------------------
+    
+    @Override
+    public String toString() {
+        return "CountryCodeStrictMatchVoter []";
+    }
     
 }
