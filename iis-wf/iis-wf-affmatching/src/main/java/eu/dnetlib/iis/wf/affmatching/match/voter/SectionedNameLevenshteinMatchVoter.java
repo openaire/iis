@@ -34,6 +34,7 @@ public class SectionedNameLevenshteinMatchVoter extends AbstractSectionedMatchVo
      * @param minSimilarity - minimum similarity for two sections to be found similar.
      *      Value must be between (0,1] (minimum similarity equal to one means
      *      that two sections must be equal).
+     * @see #containsOrgSection(List, String)
      */
     public SectionedNameLevenshteinMatchVoter(double minSimilarity) {
         Preconditions.checkArgument(minSimilarity > 0 && minSimilarity <= 1);
