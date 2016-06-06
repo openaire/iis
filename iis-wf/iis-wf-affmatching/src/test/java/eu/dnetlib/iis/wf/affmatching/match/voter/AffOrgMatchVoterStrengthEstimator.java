@@ -1,6 +1,5 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
-import static com.google.common.collect.ImmutableList.of;
 import static eu.dnetlib.iis.common.utils.AvroTestUtils.createLocalAvroDataStore;
 import static eu.dnetlib.iis.common.utils.JsonAvroTestUtils.readMultipleJsonDataStores;
 import static eu.dnetlib.iis.common.utils.JsonTestUtils.readJson;
@@ -29,6 +28,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
@@ -115,13 +115,13 @@ public class AffOrgMatchVoterStrengthEstimator {
         affMatchingService = createAffMatchingService();
         
         createInputDataFromJsonFiles(
-                of("src/test/resources/experimentalData/input/all_organizations.json"),
-                of("src/test/resources/experimentalData/input/set1/docs_with_aff_real_data.json",
+                ImmutableList.of("src/test/resources/experimentalData/input/all_organizations.json"),
+                ImmutableList.of("src/test/resources/experimentalData/input/set1/docs_with_aff_real_data.json",
                    "src/test/resources/experimentalData/input/set2/docs_with_aff_real_data.json",
                    "src/test/resources/experimentalData/input/set4/docs_with_aff_real_data.json"),
-                of("src/test/resources/experimentalData/input/set4/doc_project.json"), 
-                of(),
-                of("src/test/resources/experimentalData/input/set4/org_project.json"));
+                ImmutableList.of("src/test/resources/experimentalData/input/set4/doc_project.json"), 
+                ImmutableList.of(),
+                ImmutableList.of("src/test/resources/experimentalData/input/set4/org_project.json"));
         
     }
     
@@ -197,7 +197,7 @@ public class AffOrgMatchVoterStrengthEstimator {
         
         // given
         
-        affMatchingService.setAffOrgMatchers(of(affOrgMatcher));
+        affMatchingService.setAffOrgMatchers(ImmutableList.of(affOrgMatcher));
         
         AffOrgMatchComputer affOrgMatchComputer = new AffOrgMatchComputer();
         
@@ -218,7 +218,8 @@ public class AffOrgMatchVoterStrengthEstimator {
             
             // log
             
-            calcAndPrintResult(of("src/test/resources/experimentalData/expectedOutput/set1/matched_aff.json",
+            calcAndPrintResult(ImmutableList.of(
+                                  "src/test/resources/experimentalData/expectedOutput/set1/matched_aff.json",
                                   "src/test/resources/experimentalData/expectedOutput/set2/matched_aff.json",
                                   "src/test/resources/experimentalData/expectedOutput/set4/matched_aff.json"));
             

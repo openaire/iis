@@ -1,6 +1,5 @@
 package eu.dnetlib.iis.wf.affmatching.match;
 
-import static com.google.common.collect.ImmutableList.of;
 import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory.createNameCountryStrictMatchVoter;
 import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory.createNameStrictCountryLooseMatchVoter;
 import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory.createSectionedNameLevenshteinCountryLooseMatchVoter;
@@ -98,7 +97,7 @@ public class AffOrgMatcherFactory {
      * Creates {@link AffOrgMatchVoter}s for {@link #createDocOrgRelationMatcher(JavaSparkContext, String, String, String, Float)} 
      */
     public static ImmutableList<AffOrgMatchVoter> createDocOrgRelationMatcherVoters() {
-        return of(
+        return ImmutableList.of(
                 createNameCountryStrictMatchVoter(),
                 createNameStrictCountryLooseMatchVoter(),
                 createSectionedNameStrictCountryLooseMatchVoter(),
@@ -153,7 +152,7 @@ public class AffOrgMatcherFactory {
      * Creates {@link AffOrgMatchVoter}s for {@link #createMainSectionHashBucketMatcher()} 
      */
     public static ImmutableList<AffOrgMatchVoter> createMainSectionHashBucketMatcherVoters() {
-        return of(
+        return ImmutableList.of(
                 createNameCountryStrictMatchVoter(),
                 createNameStrictCountryLooseMatchVoter(),
                 createSectionedNameStrictCountryLooseMatchVoter(),
@@ -189,7 +188,7 @@ public class AffOrgMatcherFactory {
      * Creates {@link AffOrgMatchVoter}s for {@link #createFirstWordsHashBucketMatcher()} 
      */
     public static ImmutableList<AffOrgMatchVoter> createFirstWordsHashBucketMatcherVoters() {
-        return of(
+        return ImmutableList.of(
                 createNameCountryStrictMatchVoter(),
                 createNameStrictCountryLooseMatchVoter(),
                 createSectionedNameStrictCountryLooseMatchVoter(),

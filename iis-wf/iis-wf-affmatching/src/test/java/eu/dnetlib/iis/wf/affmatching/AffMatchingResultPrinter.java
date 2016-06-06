@@ -24,6 +24,10 @@ import eu.dnetlib.iis.wf.affmatching.model.SimpleAffMatchResult;
 public class AffMatchingResultPrinter {
     
     
+    
+    
+    //------------------------ LOGIC --------------------------
+    
     /**
      * Prints affiliations that have been matched incorrectly 
      */
