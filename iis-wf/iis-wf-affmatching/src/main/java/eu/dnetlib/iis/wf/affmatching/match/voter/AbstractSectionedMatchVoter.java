@@ -21,8 +21,12 @@ public abstract class AbstractSectionedMatchVoter implements AffOrgMatchVoter {
     
     //------------------------ LOGIC --------------------------
     
+    /**
+     * Returns true if all of the organization sections in {@link AffMatchOrganization} 
+     * matches to affiliation sections in {@link AffMatchAffiliation}.
+     */
     @Override
-    public boolean voteMatch(AffMatchAffiliation affiliation, AffMatchOrganization organization) {
+    public final boolean voteMatch(AffMatchAffiliation affiliation, AffMatchOrganization organization) {
         
         List<String> affSections = sectionsSplitter.splitToSections(getAffiliationName(affiliation));
         List<String> orgSections = sectionsSplitter.splitToSections(getOrganizationName(organization));
@@ -34,7 +38,7 @@ public abstract class AbstractSectionedMatchVoter implements AffOrgMatchVoter {
         
         for (String orgSection : orgSections) {
             
-            if (!containsMatchingSection(affSections, orgSection)) {
+            if (!containsOrgSection(affSections, orgSection)) {
                 return false;
             }
             
@@ -54,9 +58,11 @@ public abstract class AbstractSectionedMatchVoter implements AffOrgMatchVoter {
     protected abstract String getOrganizationName(AffMatchOrganization organization);
     
     /**
-     * Returns true if sectionToFind matches to one of the section in provided list.
+     * Returns true if affOrgNameSections contains orgNameSection.<br/>
+     * Implementations of this method can check if affOrgNameSections contains
+     * orgNameSection based on equality or similarity of strings.
      */
-    protected abstract boolean containsMatchingSection(List<String> sections, String sectionToFind);
+    protected abstract boolean containsOrgSection(List<String> affOrgNameSections, String orgNameSection);
     
     
 }

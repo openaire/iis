@@ -20,6 +20,10 @@ public class CountryCodeStrictMatchVoter implements AffOrgMatchVoter {
     
     //------------------------ LOGIC --------------------------
     
+    /**
+     * Returns true if {@link AffMatchAffiliation#getCountryCode()} and
+     * {@link AffMatchOrganization#getCountryCode()} are non-empty and equal.
+     */
     @Override
     public boolean voteMatch(AffMatchAffiliation affiliation, AffMatchOrganization organization) {
         
