@@ -104,12 +104,6 @@
                 Set to 'a^' by default to guarantee nothing will be matched.
             </description>
         </property>
-        <!-- citation matching related -->
-        <property>
-            <name>cit_genAuthorIdxJavaOpts</name>
-            <value>-Xmx8g</value>
-            <description>java opts for author index creation for citation purposes</description>
-        </property>
         <!-- document similarity related -->
         <property>
             <name>ds_parallel</name>
