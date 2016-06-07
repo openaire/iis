@@ -1,0 +1,160 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-importer_infospace_sampledataproducer">
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapred.job.queue.name</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+    <start to="importer" />
+    <action name="importer">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/infospace_import</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>mapreduce_inputformat_class</name>
+                    <value>org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat</value>
+                </property>
+                <property>
+                    <name>input</name>
+                    <value>${wf:appPath()}/input</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${workingDir}/mr_import</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+
+        <ok to="forking" />
+
+        <error to="fail" />
+    </action>
+
+    <fork name="forking">
+        <path start="consumer-dedupmapping" />
+        <path start="consumer-docproject" />
+        <path start="consumer-document" />
+        <path start="consumer-person" />
+        <path start="consumer-project" />
+        <path start="consumer-organization" />
+        <path start="consumer-projectorg" />
+    </fork>
+
+    <action name="consumer-dedupmapping">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            <arg>-C{dedupmapping,
+                eu.dnetlib.iis.common.schemas.IdentifierMapping,
+                eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/dedupmapping.json}
+            </arg>
+            <arg>-Idedupmapping=${workingDir}/mr_import/dedupmapping</arg>
+        </java>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
+
+    <action name="consumer-docproject">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            <arg>-C{docproject,
+                eu.dnetlib.iis.importer.schemas.DocumentToProject,
+                eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/docproject.json}
+            </arg>
+            <arg>-Idocproject=${workingDir}/mr_import/docproject</arg>
+        </java>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
+
+    <action name="consumer-person">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            <arg>-C{person,
+                eu.dnetlib.iis.importer.schemas.Person,
+                eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/person.json}
+            </arg>
+            <arg>-Iperson=${workingDir}/mr_import/person</arg>
+        </java>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
+
+    <action name="consumer-project">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            <arg>-C{project,
+                eu.dnetlib.iis.importer.schemas.Project,
+                eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/project.json}
+            </arg>
+            <arg>-Iproject=${workingDir}/mr_import/project</arg>
+        </java>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
+
+    <action name="consumer-document">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            <arg>-C{document,
+                eu.dnetlib.iis.importer.schemas.DocumentMetadata,
+                eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/document.json}
+            </arg>
+            <arg>-Idocument=${workingDir}/mr_import/docmeta</arg>
+        </java>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
+
+    <action name="consumer-organization">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            <arg>-C{organization,
+                eu.dnetlib.iis.importer.schemas.Organization,
+                eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/organization.json}
+            </arg>
+            <arg>-Iorganization=${workingDir}/mr_import/organization</arg>
+        </java>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
+
+    <action name="consumer-projectorg">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            <arg>-C{projectorg,
+                eu.dnetlib.iis.importer.schemas.ProjectToOrganization,
+                eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/project_organization.json}
+            </arg>
+            <arg>-Iprojectorg=${workingDir}/mr_import/projectorg</arg>
+        </java>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
+
+    <join name="joining" to="end" />
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+    <end name="end" />
+</workflow-app>
