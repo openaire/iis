@@ -1,0 +1,2 @@
+## This is a classpath-based import file (this header is required)
+infospace_import classpath eu/dnetlib/iis/wf/importer/infospace/oozie_app
