@@ -35,6 +35,10 @@
             <name>output</name>
             <description>output root directory</description>
         </property>
+        <property>
+          <name>mapreduce_inputformat_class</name>
+          <value>org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat</value>
+        </property>
         <!-- output subdirectory names -->
         <property>
             <name>output_name_document_meta</name>
@@ -139,7 +143,7 @@
                 </property>
                 <property>
                     <name>mapreduce.inputformat.class</name>
-                    <value>org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat</value>
+                    <value>${mapreduce_inputformat_class}</value>
                 </property>
                 <property>
                     <name>mapred.mapoutput.key.class</name>
