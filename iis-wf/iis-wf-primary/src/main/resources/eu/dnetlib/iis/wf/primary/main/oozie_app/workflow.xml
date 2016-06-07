@@ -274,6 +274,11 @@
             <value>$UNDEFINED$</value>
             <description>document to software url trust level threshold</description>
         </property>
+        <property>
+            <name>export_trust_level_threshold_matched_doc_organizations</name>
+            <value>$UNDEFINED$</value>
+            <description>document to organization trust level threshold</description>
+        </property>
         <!-- -->
         <property>
             <name>export_documentssimilarity_threshold</name>
@@ -726,6 +731,10 @@
                 <property>
                     <name>trust_level_threshold_document_software_url</name>
                     <value>${export_trust_level_threshold_document_software_url}</value>
+                </property>
+                <property>
+                    <name>trust_level_threshold_matched_doc_organizations</name>
+                    <value>${export_trust_level_threshold_matched_doc_organizations}</value>
                 </property>
                 <property>
                     <name>documentssimilarity_threshold</name>

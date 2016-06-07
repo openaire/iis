@@ -147,6 +147,12 @@
             <value>$UNDEFINED$</value>
             <description>document to software url trust level threshold</description>
         </property>
+        <property>
+            <name>trust_level_threshold_matched_doc_organizations</name>
+            <value>$UNDEFINED$</value>
+            <description>document to organization trust level threshold</description>
+        </property>
+        
         <!-- -->
         <property>
             <name>documentssimilarity_threshold</name>
