@@ -307,6 +307,10 @@
                 <name>export.trust.level.threshold.document_software_url</name>
                 <value>${trust_level_threshold_document_software_url}</value>
             </property>
+            <property>
+                <name>export.trust.level.threshold.document_affiliations</name>
+                <value>${trust_level_threshold_matched_doc_organizations}</value>
+            </property>
         </configuration>
     </global>
 
