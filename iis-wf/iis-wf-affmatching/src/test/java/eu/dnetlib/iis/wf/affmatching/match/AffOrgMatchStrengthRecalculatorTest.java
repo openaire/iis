@@ -3,6 +3,7 @@ package eu.dnetlib.iis.wf.affmatching.match;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -55,7 +56,7 @@ public class AffOrgMatchStrengthRecalculatorTest {
         
         // execute
         
-        recalculator.recalculateMatchStrength(null, voter, 2);
+        recalculator.recalculateMatchStrength(null, voter);
     
     }
 
@@ -65,37 +66,28 @@ public class AffOrgMatchStrengthRecalculatorTest {
         
         // execute
         
-        recalculator.recalculateMatchStrength(affMatchResult, null, 2);
+        recalculator.recalculateMatchStrength(affMatchResult, null);
     
     }
 
-    
-    @Test(expected = IllegalArgumentException.class)
-    public void recalculateMatchStrength_voter_strength_less_than_one() {
-        
-        // execute
-        
-        recalculator.recalculateMatchStrength(affMatchResult, voter, 0);
-    
-    }
-    
     
     @Test
     public void recalculateMatchStrength_match() {
         
         // given
         
-        doReturn(true).when(voter).voteMatch(affiliation, organization);
-        
+        when(voter.voteMatch(affiliation, organization)).thenReturn(true);
+        when(affMatchResult.getMatchStrength()).thenReturn(0.7f);
+        when(voter.getMatchStrength()).thenReturn(0.5f);
         
         // execute
         
-        AffMatchResult recalcAffMatchResult = recalculator.recalculateMatchStrength(affMatchResult, voter, 10);
+        AffMatchResult recalcAffMatchResult = recalculator.recalculateMatchStrength(affMatchResult, voter);
         
         
         // assert
         
-        assertEquals(30f, recalcAffMatchResult.getMatchStrength(), 0.01);
+        assertEquals(0.85f, recalcAffMatchResult.getMatchStrength(), 0.0001f);
         assertTrue(affiliation == recalcAffMatchResult.getAffiliation());
         assertTrue(organization == recalcAffMatchResult.getOrganization());
         
@@ -108,17 +100,19 @@ public class AffOrgMatchStrengthRecalculatorTest {
         
         // given
         
-        doReturn(false).when(voter).voteMatch(affiliation, organization);
+        when(voter.voteMatch(affiliation, organization)).thenReturn(false);
+        when(affMatchResult.getMatchStrength()).thenReturn(0.7f);
+        when(voter.getMatchStrength()).thenReturn(0.5f);
         
         
         // execute
         
-        AffMatchResult recalcAffMatchResult = recalculator.recalculateMatchStrength(affMatchResult, voter, 10);
+        AffMatchResult recalcAffMatchResult = recalculator.recalculateMatchStrength(affMatchResult, voter);
         
         
         // assert
         
-        assertEquals(20f, recalcAffMatchResult.getMatchStrength(), 0.01);
+        assertEquals(0.7f, recalcAffMatchResult.getMatchStrength(), 0.0001);
         assertTrue(affiliation == recalcAffMatchResult.getAffiliation());
         assertTrue(organization == recalcAffMatchResult.getOrganization());
         

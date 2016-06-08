@@ -56,7 +56,7 @@ public class AffOrgMatchVoterStrengthEstimator {
 
     private final static boolean PRINT_NOT_MATCHED = false;
     
-    private final static boolean PRINT_FALSE_POSITIVES = true;
+    private final static boolean PRINT_FALSE_POSITIVES = false;
     
     private final static boolean PRINT_NUMBER_DETAILS = true;
     
@@ -114,15 +114,6 @@ public class AffOrgMatchVoterStrengthEstimator {
         
         affMatchingService = createAffMatchingService();
         
-        createInputDataFromJsonFiles(
-                ImmutableList.of("src/test/resources/experimentalData/input/all_organizations.json"),
-                ImmutableList.of("src/test/resources/experimentalData/input/set1/docs_with_aff_real_data.json",
-                   "src/test/resources/experimentalData/input/set2/docs_with_aff_real_data.json",
-                   "src/test/resources/experimentalData/input/set4/docs_with_aff_real_data.json"),
-                ImmutableList.of("src/test/resources/experimentalData/input/set4/doc_project.json"), 
-                ImmutableList.of(),
-                ImmutableList.of("src/test/resources/experimentalData/input/set4/org_project.json"));
-        
     }
     
     
@@ -149,12 +140,25 @@ public class AffOrgMatchVoterStrengthEstimator {
     @Test
     public void estimateVoterMatchStrengths_for_DocOrgRelationMatcher() throws IOException {
         
+        // given
+        
+        createInputDataFromJsonFiles(
+                ImmutableList.of("src/test/resources/experimentalData/input/all_organizations.json"),
+                ImmutableList.of("src/test/resources/experimentalData/input/set4/docs_with_aff_real_data.json"),
+                ImmutableList.of("src/test/resources/experimentalData/input/set4/doc_project.json"), 
+                ImmutableList.of(),
+                ImmutableList.of("src/test/resources/experimentalData/input/set4/org_project.json"));
+
+        
         AffOrgMatcher affOrgMatcher = createDocOrgRelationMatcher(sparkContext, inputDocProjDirPath, inputInferredDocProjDirPath, inputProjOrgDirPath, inputDocProjConfidenceThreshold);
         
         List<AffOrgMatchVoter> voters = createDocOrgRelationMatcherVoters();
         
+        // execute
         
-        estimateVoterMatchStrengths(affOrgMatcher, "Doc-Org Relation Matcher", voters);
+        estimateVoterMatchStrengths(affOrgMatcher, "Doc-Org Relation Matcher", voters,
+                                    ImmutableList.of("src/test/resources/experimentalData/expectedOutput/set4/matched_aff.json"));
+
         
     }
     
@@ -163,12 +167,25 @@ public class AffOrgMatchVoterStrengthEstimator {
     @Test
     public void estimateVoterMatchStrengths_for_MainSectionHashBucketMatcher() throws IOException {
         
+        // given
+        
+        createInputDataFromJsonFiles(ImmutableList.of("src/test/resources/experimentalData/input/all_organizations.json"),
+                                     ImmutableList.of("src/test/resources/experimentalData/input/set1/docs_with_aff_real_data.json",
+                                                      "src/test/resources/experimentalData/input/set2/docs_with_aff_real_data.json"),
+                                     ImmutableList.of(), ImmutableList.of(), ImmutableList.of());
+
+        
         AffOrgMatcher affOrgMatcher = createMainSectionHashBucketMatcher();
         
         List<AffOrgMatchVoter> voters = createMainSectionHashBucketMatcherVoters();
         
         
-        estimateVoterMatchStrengths(affOrgMatcher, "Main Section Hash Bucket Matcher", voters);
+        // execute
+        
+        estimateVoterMatchStrengths(affOrgMatcher, "Main Section Hash Bucket Matcher", voters,
+                                    ImmutableList.of("src/test/resources/experimentalData/expectedOutput/set1/matched_aff.json",
+                                                     "src/test/resources/experimentalData/expectedOutput/set2/matched_aff.json"));
+
         
     }
     
@@ -176,12 +193,23 @@ public class AffOrgMatchVoterStrengthEstimator {
     @Test
     public void estimateVoterMatchStrengths_for_FirstWordsHashBucketMatcher() throws IOException {
         
+        // given
+        
+        createInputDataFromJsonFiles(ImmutableList.of("src/test/resources/experimentalData/input/all_organizations.json"),
+                                     ImmutableList.of("src/test/resources/experimentalData/input/set1/docs_with_aff_real_data.json",
+                                                      "src/test/resources/experimentalData/input/set2/docs_with_aff_real_data.json"),
+                                     ImmutableList.of(), ImmutableList.of(), ImmutableList.of());
+
         AffOrgMatcher affOrgMatcher = createFirstWordsHashBucketMatcher();
         
         List<AffOrgMatchVoter> voters = createFirstWordsHashBucketMatcherVoters();
         
         
-        estimateVoterMatchStrengths(affOrgMatcher, "First Words Hash Bucket Matcher", voters);
+        // execute
+        
+        estimateVoterMatchStrengths(affOrgMatcher, "First Words Hash Bucket Matcher", voters, 
+                                    ImmutableList.of("src/test/resources/experimentalData/expectedOutput/set1/matched_aff.json",
+                                                     "src/test/resources/experimentalData/expectedOutput/set2/matched_aff.json"));
         
     }
     
@@ -190,7 +218,7 @@ public class AffOrgMatchVoterStrengthEstimator {
     //------------------------ PRIVATE --------------------------
 
     
-    private void estimateVoterMatchStrengths(AffOrgMatcher affOrgMatcher, String affOrgMatcherName, List<AffOrgMatchVoter> voters) throws IOException {
+    private void estimateVoterMatchStrengths(AffOrgMatcher affOrgMatcher, String affOrgMatcherName, List<AffOrgMatchVoter> voters, List<String> matchedAffPaths) throws IOException {
         
         printMatcherHeader(affOrgMatcherName);
         
@@ -218,10 +246,7 @@ public class AffOrgMatchVoterStrengthEstimator {
             
             // log
             
-            calcAndPrintResult(ImmutableList.of(
-                                  "src/test/resources/experimentalData/expectedOutput/set1/matched_aff.json",
-                                  "src/test/resources/experimentalData/expectedOutput/set2/matched_aff.json",
-                                  "src/test/resources/experimentalData/expectedOutput/set4/matched_aff.json"));
+            calcAndPrintResult(matchedAffPaths);
             
             
             FileUtils.deleteDirectory(new File(outputDirPath));

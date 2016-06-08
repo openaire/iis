@@ -17,7 +17,7 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
  * 
  * @author madryk
  */
-public class FittingOrgWordsMatchVoter implements AffOrgMatchVoter {
+public class FittingOrgWordsMatchVoter extends AbstractAffOrgMatchVoter {
 
     private static final long serialVersionUID = 1L;
     
@@ -28,7 +28,7 @@ public class FittingOrgWordsMatchVoter implements AffOrgMatchVoter {
     
     private double minFittingWordSimilarity;
     
-    private int minWordLength;
+    private int minLengthWordToRemove;
     
     
     //------------------------ CONSTRUCTORS --------------------------
@@ -37,7 +37,7 @@ public class FittingOrgWordsMatchVoter implements AffOrgMatchVoter {
      * Default constructor
      * 
      * @param charsToFilter - list of characters that will be filtered out before comparing words
-     * @param minWordLength - words with length equal or less than 
+     * @param minLengthWordToRemove - words with length equal or less than 
      *      this value will be filtered out before comparing words.
      *      Setting it to zero disables this feature.
      * @param minFittingOrgWordsRatio - minimum ratio of {@link AffMatchOrganization#getName()}
@@ -49,16 +49,16 @@ public class FittingOrgWordsMatchVoter implements AffOrgMatchVoter {
      *      Similarity is measured by Jaro-Winkler distance algorithm.
      * @see StringUtils#getJaroWinklerDistance(CharSequence, CharSequence)
      */
-    public FittingOrgWordsMatchVoter(List<Character> charsToFilter, int minWordLength, 
+    public FittingOrgWordsMatchVoter(List<Character> charsToFilter, int minLengthWordToRemove, 
             double minFittingOrgWordsRatio, double minFittingWordSimilarity) {
         Preconditions.checkNotNull(charsToFilter);
-        Preconditions.checkArgument(minWordLength >= 0);
+        Preconditions.checkArgument(minLengthWordToRemove >= 0);
         Preconditions.checkArgument(minFittingOrgWordsRatio > 0 && minFittingOrgWordsRatio <= 1);
         Preconditions.checkArgument(minFittingWordSimilarity > 0 && minFittingWordSimilarity <= 1);
         
         
         this.charsToFilter = charsToFilter;
-        this.minWordLength = minWordLength;
+        this.minLengthWordToRemove = minLengthWordToRemove;
         this.minFittingOrgWordsRatio = minFittingOrgWordsRatio;
         this.minFittingWordSimilarity = minFittingWordSimilarity;
     }
@@ -121,11 +121,21 @@ public class FittingOrgWordsMatchVoter implements AffOrgMatchVoter {
             filteredName = StringUtils.remove(filteredName, charToFilter);
         }
         
-        if (minWordLength > 0) {
-            filteredName = StringUtils.removePattern(filteredName, "\\b\\w{1," + minWordLength + "}\\b");
+        if (minLengthWordToRemove > 0) {
+            filteredName = StringUtils.removePattern(filteredName, "\\b\\w{1," + minLengthWordToRemove + "}\\b");
             filteredName = filteredName.trim().replaceAll(" +", " ");
         }
         
         return filteredName;
+    }
+
+    //------------------------ toString --------------------------
+    
+    @Override
+    public String toString() {
+        return "FittingOrgWordsMatchVoter [charsToFilter=" + charsToFilter
+                + ", minFittingOrgWordsRatio=" + minFittingOrgWordsRatio
+                + ", minFittingWordSimilarity=" + minFittingWordSimilarity
+                + ", minLengthWordToRemove=" + minLengthWordToRemove + "]";
     }
 }

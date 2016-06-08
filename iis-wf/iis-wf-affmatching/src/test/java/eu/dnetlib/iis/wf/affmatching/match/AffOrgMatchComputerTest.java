@@ -1,6 +1,5 @@
 package eu.dnetlib.iis.wf.affmatching.match;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -41,12 +40,6 @@ public class AffOrgMatchComputerTest {
     private AffOrgMatchComputer affOrgMatchComputer = new AffOrgMatchComputer();
     
     @Mock
-    private List<AffOrgMatchVoter> affOrgMatchVoters;
-    
-    @Mock
-    private AffOrgMatchVoterStrengthCalculator voterStrengthCalculator;
-
-    @Mock
     private AffOrgMatchStrengthRecalculator affOrgMatchStrengthRecalculator;
  
     @Mock
@@ -55,6 +48,8 @@ public class AffOrgMatchComputerTest {
     @Mock
     private AffOrgMatchVoter affOrgMatchVoter2;
     
+    private List<AffOrgMatchVoter> affOrgMatchVoters;
+        
     @Mock
     private JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> joinedAffOrgs;
 
@@ -87,17 +82,16 @@ public class AffOrgMatchComputerTest {
     private ArgumentCaptor<Function<AffMatchResult, AffMatchResult>> unifyMatchStrengthFunction;
     
     
-    
     @Before
     public void before() {
         
-        doReturn(2).when(affOrgMatchVoters).size();
-        doReturn(affOrgMatchVoter1).when(affOrgMatchVoters).get(0);
-        doReturn(affOrgMatchVoter2).when(affOrgMatchVoters).get(1);
+        affOrgMatchVoters = Lists.newArrayList(affOrgMatchVoter1, affOrgMatchVoter2);
+        
+        affOrgMatchComputer.setAffOrgMatchVoters(affOrgMatchVoters);
         
     }
     
-
+    
     //------------------------ TESTS --------------------------
     
     @Test(expected = NullPointerException.class)
@@ -131,12 +125,9 @@ public class AffOrgMatchComputerTest {
         // given
         
         doReturn(affMatchResults).when(joinedAffOrgs).map(Mockito.any());
-        doReturn(8).when(voterStrengthCalculator).calculateStrength(0, 2);
-        doReturn(4).when(voterStrengthCalculator).calculateStrength(1, 2);
         doReturn(recalcAffMatchResults1).when(affMatchResults).map(Mockito.any());
         doReturn(recalcAffMatchResults2).when(recalcAffMatchResults1).map(Mockito.any());
         doReturn(filteredAffMatchResults).when(recalcAffMatchResults2).filter(Mockito.any());
-        doReturn(unifiedStrengthAffMatchResults).when(filteredAffMatchResults).map(Mockito.any());
         
         
         // execute
@@ -147,22 +138,20 @@ public class AffOrgMatchComputerTest {
         // assert
         
         assertNotNull(retAffMatchResults);
-        assertTrue(unifiedStrengthAffMatchResults == retAffMatchResults);
+        assertTrue(filteredAffMatchResults == retAffMatchResults);
         
         verify(joinedAffOrgs).map(mapToMatchResultFunction.capture());
         assertMapToMatchResultFunction(mapToMatchResultFunction.getValue());
         
         verify(affMatchResults).map(recalcMatchStrengthFunction.capture());
-        assertRecalcMatchStrengthFunction(recalcMatchStrengthFunction.getValue(), affOrgMatchVoter1, 8);
+        assertRecalcMatchStrengthFunction(recalcMatchStrengthFunction.getValue(), affOrgMatchVoter1);
         
         verify(recalcAffMatchResults1).map(recalcMatchStrengthFunction.capture());
-        assertRecalcMatchStrengthFunction(recalcMatchStrengthFunction.getValue(), affOrgMatchVoter2, 4);
+        assertRecalcMatchStrengthFunction(recalcMatchStrengthFunction.getValue(), affOrgMatchVoter2);
         
         verify(recalcAffMatchResults2).filter(filterAffMatchResultFunction.capture());
         assertFilterRecalcAffMatchResultFunction(filterAffMatchResultFunction.getValue());
         
-        verify(filteredAffMatchResults).map(unifyMatchStrengthFunction.capture());
-        assertUnifyAffMatchResultFunction(unifyMatchStrengthFunction.getValue());
     }
 
     
@@ -192,14 +181,14 @@ public class AffOrgMatchComputerTest {
     }
     
     
-    private void assertRecalcMatchStrengthFunction(Function<AffMatchResult, AffMatchResult> function, AffOrgMatchVoter voter, int voterStrength) throws Exception {
+    private void assertRecalcMatchStrengthFunction(Function<AffMatchResult, AffMatchResult> function, AffOrgMatchVoter voter) throws Exception {
         
         // given
         
         AffMatchResult affMatchResult = mock(AffMatchResult.class);
         AffMatchResult expectedRecalcAffMatchResult = mock(AffMatchResult.class);
         
-        doReturn(expectedRecalcAffMatchResult).when(affOrgMatchStrengthRecalculator).recalculateMatchStrength(affMatchResult, voter, voterStrength);
+        doReturn(expectedRecalcAffMatchResult).when(affOrgMatchStrengthRecalculator).recalculateMatchStrength(affMatchResult, voter);
         
         
         // execute
@@ -233,33 +222,7 @@ public class AffOrgMatchComputerTest {
     }
     
     
-    private void assertUnifyAffMatchResultFunction(Function<AffMatchResult, AffMatchResult> function) throws Exception {
-        
-        // given
-        
-        AffMatchResult affMatchResult = mock(AffMatchResult.class);
-        AffMatchAffiliation affiliation = mock(AffMatchAffiliation.class);
-        AffMatchOrganization organization = mock(AffMatchOrganization.class);
-        
-        doReturn(affiliation).when(affMatchResult).getAffiliation();
-        doReturn(organization).when(affMatchResult).getOrganization();
-        doReturn(4f).when(affMatchResult).getMatchStrength();
-        
-        
-        // execute 
-        
-        AffMatchResult recalcAffMatchResult = function.call(affMatchResult);
-        
-        
-        // assert
-        
-        assertNotNull(recalcAffMatchResult);
-        assertTrue(affMatchResult != recalcAffMatchResult);
-        assertTrue(affiliation == recalcAffMatchResult.getAffiliation());
-        assertTrue(organization == recalcAffMatchResult.getOrganization());
-        assertEquals(4/12f, recalcAffMatchResult.getMatchStrength(), 0.001);
-        
-    }
+    
     
     
 }

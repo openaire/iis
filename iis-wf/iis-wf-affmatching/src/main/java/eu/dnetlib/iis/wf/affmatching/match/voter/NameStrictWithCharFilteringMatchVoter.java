@@ -11,7 +11,7 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 * @author Łukasz Dumiszewski
 */
 
-public class NameStrictWithCharFilteringMatchVoter implements AffOrgMatchVoter {
+public class NameStrictWithCharFilteringMatchVoter extends AbstractAffOrgMatchVoter {
 
     
     private static final long serialVersionUID = 1L;

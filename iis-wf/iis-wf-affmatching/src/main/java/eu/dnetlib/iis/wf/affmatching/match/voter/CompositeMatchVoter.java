@@ -13,7 +13,7 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
  * @author madryk
  *
  */
-public class CompositeMatchVoter implements AffOrgMatchVoter {
+public class CompositeMatchVoter extends AbstractAffOrgMatchVoter {
 
     private static final long serialVersionUID = 1L;
     

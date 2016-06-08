@@ -1,25 +1,25 @@
 {
     "documentId":"ABC",
     "organizationId":"20|UW",
-    "matchStrength":0.9677419
+    "matchStrength":1.0
 }
 {
     "documentId":"20002AX",
     "organizationId":"20|UW",
-    "matchStrength":0.9677419
+    "matchStrength":1.0
 }
 {
     "documentId":"DOC_3",
     "organizationId":"20|UCB",
-    "matchStrength":0.24557751
+    "matchStrength":1.0
 }
 {
     "documentId":"DOC_3",
     "organizationId":"20|ICMUW",
-    "matchStrength":0.4516129
+    "matchStrength":1.0
 }
 {
     "documentId":"DOC_4",
     "organizationId":"20|UCB",
-    "matchStrength":0.06451613
+    "matchStrength":1.0
 }
