@@ -19,7 +19,7 @@ public class RefExtractionOutputTransformerWfTest extends AbstractOozieWorkflowT
 	public void testWorkflow() throws Exception {
     	OozieWorkflowTestConfiguration wf = new OozieWorkflowTestConfiguration();
         wf.setTimeoutInSeconds(720);
-        testWorkflow("eu/dnetlib/iis/wf/referenceextraction/output_transformer/test", wf);
+        testWorkflow("eu/dnetlib/iis/wf/referenceextraction/researchinitiative/output_transformer/test", wf);
     }
 
 }
