@@ -217,6 +217,10 @@
 					<name>active_referenceextraction_researchinitiative</name>
 					<value>true</value>
 				</property>
+                <property>
+                    <name>active_referenceextraction_software_url</name>
+                    <value>true</value>
+                </property>
 				<property>
 					<name>active_referenceextraction_pdb</name>
 					<value>false</value>
@@ -294,6 +298,10 @@
 					<name>output_document_to_research_initiatives</name>
 					<value>${workingDir}/exported/document_to_research_initiatives</value>
 				</property>
+                <property>
+                    <name>output_document_to_software_urls</name>
+                    <value>${workingDir}/exported/document_to_software_urls</value>
+                </property>
 				<property>
 					<name>output_document_to_pdb</name>
 					<value>${workingDir}/exported/document_to_pdb</value>
@@ -350,6 +358,11 @@
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_research_initiatives.json}
 			</arg>
 			<arg>-Idocument_to_research_initiatives=${workingDir}/exported/document_to_research_initiatives</arg>
+            <arg>-C{document_to_software_urls,
+                eu.dnetlib.iis.export.schemas.DocumentToSoftwareUrls,
+                eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_software_urls.json}
+            </arg>
+            <arg>-Idocument_to_software_urls=${workingDir}/exported/document_to_software_urls</arg>
 			<arg>-C{citation,
 				eu.dnetlib.iis.export.schemas.Citations,
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/citations.json}

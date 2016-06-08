@@ -1,0 +1,11 @@
+This is sample text containing link to madis library: 
+
+https://github.com/madgik/madis 
+
+This should be picked up by reference extraction algorithm.
+
+Madis is heavily used in IIS:
+
+https://github.com/openaire/iis
+
+Information Inference Service.
