@@ -36,7 +36,7 @@ class AffOrgMatchStrengthRecalculator implements Serializable {
         
         if (voter.voteMatch(affMatchResult.getAffiliation(), affMatchResult.getOrganization())) {
             
-            matchStrength = (matchStrength + voter.getMatchStrength()) - matchStrength * voter.getMatchStrength(); // bear in mind: strengths are less that one
+            matchStrength = (matchStrength + voter.getMatchStrength()) - matchStrength * voter.getMatchStrength(); // bear in mind: the strengths are less that one
             
         } 
         
