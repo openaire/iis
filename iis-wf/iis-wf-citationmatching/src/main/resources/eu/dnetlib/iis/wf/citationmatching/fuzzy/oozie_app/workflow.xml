@@ -20,7 +20,7 @@
         </property>
          <property>
             <name>sparkExecutorMemory</name>
-            <value>6G</value>
+            <value>7G</value>
             <description>memory for individual executor</description>
         </property>
         <property>
@@ -30,7 +30,7 @@
         </property>
         <property>
             <name>sparkExecutorsNumber</name>
-            <value>300</value>
+            <value>200</value>
             <description>total number of executors</description>
         </property>
     </parameters>
