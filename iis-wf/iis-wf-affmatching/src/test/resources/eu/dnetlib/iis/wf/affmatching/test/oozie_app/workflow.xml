@@ -93,6 +93,19 @@
                     <name>document_project_confidence_threshold</name>
                     <value>0.8</value>
                 </property>
+                
+                <property>
+                    <name>sparkExecutorMemory</name>
+                    <value>1G</value>
+                </property>
+                <property>
+                    <name>sparkExecutorCores</name>
+                    <value>1</value>
+                </property>
+                <property>
+                    <name>sparkExecutorsNumber</name>
+                    <value>2</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="consumer"/>
