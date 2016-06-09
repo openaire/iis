@@ -600,7 +600,7 @@
         <error to="fail" />
     </action>
 
-    <action name="skip-referenceextraction_pdb">
+    <action name="skip-referenceextraction_software_url">
         <java>
             <prepare>
                 <!-- notice: directory have to aligned with skipped action output -->
