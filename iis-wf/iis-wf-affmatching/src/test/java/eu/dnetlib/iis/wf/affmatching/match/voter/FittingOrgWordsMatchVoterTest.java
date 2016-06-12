@@ -3,8 +3,17 @@ package eu.dnetlib.iis.wf.affmatching.match.voter;
 import static com.google.common.collect.ImmutableList.of;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
@@ -12,14 +21,33 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 /**
  * @author madryk
  */
+@RunWith(MockitoJUnitRunner.class)
 public class FittingOrgWordsMatchVoterTest {
 
+    @InjectMocks
     private FittingOrgWordsMatchVoter voter = new FittingOrgWordsMatchVoter(of(','), 2, 0.8, 0.8);
+    
+    @Mock
+    private StringFilter stringFilter;
+    
+    @Mock
+    private StringSimilarityChecker similarityChecker;
     
     
     private AffMatchAffiliation aff = new AffMatchAffiliation("DOC_ID", 1);
     
+    private String affOrgName = "AFF_ORG_NAME";
+    
     private AffMatchOrganization org = new AffMatchOrganization("ORG_ID");
+    
+    private String orgName = "ORG_NAME";
+    
+    
+    @Before
+    public void setup() {
+        aff.setOrganizationName(affOrgName);
+        org.setName(orgName);
+    }
     
     
     //------------------------ TESTS --------------------------
@@ -62,96 +90,52 @@ public class FittingOrgWordsMatchVoterTest {
     
     
     @Test
-    public void voteMatch_EQUAL_ORG_NAMES() {
+    public void voteMatch_ORG_CONTAINS_ALL_AFF_WORDS() {
         
         // given
-        aff.setOrganizationName("University of Toronto");
-        org.setName("University of Toronto");
+        
+        when(stringFilter.filterCharsAndShortWords(affOrgName, ImmutableList.of(','), 2)).thenReturn("Department Chemistry University Toronto");
+        when(stringFilter.filterCharsAndShortWords(orgName, ImmutableList.of(','), 2)).thenReturn("University Toronto");
+        
+        when(similarityChecker.containSimilarString(ImmutableSet.of("Department", "Chemistry", "University", "Toronto"), "University", 0.8)).thenReturn(true);
+        when(similarityChecker.containSimilarString(ImmutableSet.of("Department", "Chemistry", "University", "Toronto"), "Toronto", 0.8)).thenReturn(true);
+        
         
         // execute & assert
         assertTrue(voter.voteMatch(aff, org));
     }
     
     @Test
-    public void voteMatch_REARRENGED_ORG_WORDS() {
+    public void voteMatch_ORG_CONTAINS_NOT_ALL_AFF_WORDS() {
         
         // given
-        aff.setOrganizationName("Institute Max Planck");
-        org.setName("Max Planck Institute");
+        
+        when(stringFilter.filterCharsAndShortWords(affOrgName, ImmutableList.of(','), 2)).thenReturn("George's Hospital Medical School");
+        when(stringFilter.filterCharsAndShortWords(orgName, ImmutableList.of(','), 2)).thenReturn("Saint George's Hospital Medical School");
+        
+        when(similarityChecker.containSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "Saint", 0.8)).thenReturn(false);
+        when(similarityChecker.containSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "George's", 0.8)).thenReturn(true);
+        when(similarityChecker.containSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "Hospital", 0.8)).thenReturn(true);
+        when(similarityChecker.containSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "Medical", 0.8)).thenReturn(true);
+        when(similarityChecker.containSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "School", 0.8)).thenReturn(true);
+        
         
         // execute & assert
         assertTrue(voter.voteMatch(aff, org));
     }
     
     @Test
-    public void voteMatch_AFF_ADDITIONAL_WORDS() {
+    public void voteMatch_NOT_MATCH_ORG_CONTAINS_TOO_LESS_AFF_WORDS() {
         
         // given
-        aff.setOrganizationName("Department of Condensed Matter Physics, The Weizmann Institute of Science");
-        org.setName("Weizmann Institute");
         
-        // execute & assert
-        assertTrue(voter.voteMatch(aff, org));
-    }
-    
-    @Test
-    public void voteMatch_NOT_ALL_ORG_WORDS_MATCHED() {
+        when(stringFilter.filterCharsAndShortWords(affOrgName, ImmutableList.of(','), 2)).thenReturn("Ohio University");
+        when(stringFilter.filterCharsAndShortWords(orgName, ImmutableList.of(','), 2)).thenReturn("Ohio State University");
         
-        // given
-        aff.setOrganizationName("George's Hospital Medical School");
-        org.setName("Saint George's Hospital Medical School"); // 4 out of 5 words matched
+        when(similarityChecker.containSimilarString(ImmutableSet.of("Ohio", "University"), "Ohio", 0.8)).thenReturn(true);
+        when(similarityChecker.containSimilarString(ImmutableSet.of("Ohio", "University"), "State", 0.8)).thenReturn(false);
+        when(similarityChecker.containSimilarString(ImmutableSet.of("Ohio", "University"), "University", 0.8)).thenReturn(true);
         
-        // execute & assert
-        assertTrue(voter.voteMatch(aff, org));
-    }
-    
-    @Test
-    public void voteMatch_ORG_NAME_WITH_SHORT_WORDS() {
-        
-        // given
-        aff.setOrganizationName("University of Toronto");
-        org.setName("a b c University d of e Toronto fg hi");
-        
-        // execute & assert
-        assertTrue(voter.voteMatch(aff, org));
-    }
-    
-    @Test
-    public void voteMatch_SIMILAR_WORDS() {
-        
-        // given
-        aff.setOrganizationName("Adam Mickiewicz University");
-        org.setName("Uniwersytet Adama Mickiewicza");
-        
-        // Jaro-Winkler similarity: [university] [uniwersytet] 0.86
-        // Jaro-Winkler similarity: [adam] [adama] 0.96
-        // Jaro-Winkler similarity: [mickiewicz] [mickiewicza] 0.98
-        
-        // execute & assert
-        assertTrue(voter.voteMatch(aff, org));
-    }
-    
-    @Test
-    public void voteMatch_NOT_MATCH_TOO_LESS_MATCHED_WORDS() {
-        
-        // given
-        aff.setOrganizationName("Molecular and Cell Biology Program, Ohio University");
-        org.setName("Ohio State University"); // 2 out of 3 words matched - too low
-        
-        // execute & assert
-        assertFalse(voter.voteMatch(aff, org));
-    }
-    
-    @Test
-    public void voteMatch_NOT_MATCH_TOO_LOW_SIMILARITY() {
-        
-        // given
-        aff.setOrganizationName("Technical University of Denmark");
-        org.setName("Danmarks Tekniske Universitet");
-        
-        // Jaro-Winkler similarity: [denmark] [danmarks] 0.83
-        // Jaro-Winkler similarity: [technical] [tekniske] 0.72 - too low
-        // Jaro-Winkler similarity: [university] [universitet] 0.94
         
         // execute & assert
         assertFalse(voter.voteMatch(aff, org));

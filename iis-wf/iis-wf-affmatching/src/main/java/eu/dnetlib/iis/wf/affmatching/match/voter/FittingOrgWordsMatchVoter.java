@@ -22,13 +22,17 @@ public class FittingOrgWordsMatchVoter implements AffOrgMatchVoter {
     private static final long serialVersionUID = 1L;
     
     
+    private StringFilter stringFilter = new StringFilter();
+    
+    private StringSimilarityChecker similarityChecker = new StringSimilarityChecker();
+    
     private List<Character> charsToFilter;
     
     private double minFittingOrgWordsRatio;
     
     private double minFittingWordSimilarity;
     
-    private int minWordLength;
+    private int wordToRemoveMaxLength;
     
     
     //------------------------ CONSTRUCTORS --------------------------
@@ -37,7 +41,7 @@ public class FittingOrgWordsMatchVoter implements AffOrgMatchVoter {
      * Default constructor
      * 
      * @param charsToFilter - list of characters that will be filtered out before comparing words
-     * @param minWordLength - words with length equal or less than 
+     * @param wordToRemoveMaxLength - words with length equal or less than 
      *      this value will be filtered out before comparing words.
      *      Setting it to zero disables this feature.
      * @param minFittingOrgWordsRatio - minimum ratio of {@link AffMatchOrganization#getName()}
@@ -47,18 +51,18 @@ public class FittingOrgWordsMatchVoter implements AffOrgMatchVoter {
      * @param minFittingWordSimilarity - minimum similarity for two words to be found the same.
      *      Value must be between (0,1] (value equal to one means that two words must be identical).
      *      Similarity is measured by Jaro-Winkler distance algorithm.
-     * @see StringUtils#getJaroWinklerDistance(CharSequence, CharSequence)
+     * @see StringSimilarityChecker#containSimilarString(java.util.Collection, String, double)
      */
-    public FittingOrgWordsMatchVoter(List<Character> charsToFilter, int minWordLength, 
+    public FittingOrgWordsMatchVoter(List<Character> charsToFilter, int wordToRemoveMaxLength, 
             double minFittingOrgWordsRatio, double minFittingWordSimilarity) {
         Preconditions.checkNotNull(charsToFilter);
-        Preconditions.checkArgument(minWordLength >= 0);
+        Preconditions.checkArgument(wordToRemoveMaxLength >= 0);
         Preconditions.checkArgument(minFittingOrgWordsRatio > 0 && minFittingOrgWordsRatio <= 1);
         Preconditions.checkArgument(minFittingWordSimilarity > 0 && minFittingWordSimilarity <= 1);
         
         
         this.charsToFilter = charsToFilter;
-        this.minWordLength = minWordLength;
+        this.wordToRemoveMaxLength = wordToRemoveMaxLength;
         this.minFittingOrgWordsRatio = minFittingOrgWordsRatio;
         this.minFittingWordSimilarity = minFittingWordSimilarity;
     }
@@ -74,8 +78,8 @@ public class FittingOrgWordsMatchVoter implements AffOrgMatchVoter {
     @Override
     public boolean voteMatch(AffMatchAffiliation affiliation, AffMatchOrganization organization) {
         
-        String filteredAffName = filterName(affiliation.getOrganizationName());
-        String filteredOrgName = filterName(organization.getName());
+        String filteredAffName = stringFilter.filterCharsAndShortWords(affiliation.getOrganizationName(), charsToFilter, wordToRemoveMaxLength);
+        String filteredOrgName = stringFilter.filterCharsAndShortWords(organization.getName(), charsToFilter, wordToRemoveMaxLength);
         
         if (StringUtils.isEmpty(filteredAffName) || StringUtils.isEmpty(filteredOrgName)) {
             return false;
@@ -88,7 +92,7 @@ public class FittingOrgWordsMatchVoter implements AffOrgMatchVoter {
         int fittingWordsCount = 0;
         
         for (String orgWord : orgWords) {
-            if (wordsContainsSimilarWord(affWords, orgWord)) {
+            if (similarityChecker.containSimilarString(affWords, orgWord, minFittingWordSimilarity)) {
                 ++fittingWordsCount;
             }
         }
@@ -96,36 +100,5 @@ public class FittingOrgWordsMatchVoter implements AffOrgMatchVoter {
         double fittingWordsRatio = (double)fittingWordsCount/orgWordsCount;
         
         return fittingWordsRatio >= minFittingOrgWordsRatio;
-    }
-
-    
-    //------------------------ PRIVATE --------------------------
-    
-    private boolean wordsContainsSimilarWord(Set<String> affWords, String orgWord) {
-        
-        for (String affWord : affWords) {
-            double similarity = StringUtils.getJaroWinklerDistance(affWord, orgWord);
-            
-            if (similarity >= minFittingWordSimilarity) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    private String filterName(String name) {
-        
-        String filteredName = name;
-        
-        for (Character charToFilter : charsToFilter) {
-            filteredName = StringUtils.remove(filteredName, charToFilter);
-        }
-        
-        if (minWordLength > 0) {
-            filteredName = StringUtils.removePattern(filteredName, "\\b\\w{1," + minWordLength + "}\\b");
-            filteredName = filteredName.trim().replaceAll(" +", " ");
-        }
-        
-        return filteredName;
     }
 }
