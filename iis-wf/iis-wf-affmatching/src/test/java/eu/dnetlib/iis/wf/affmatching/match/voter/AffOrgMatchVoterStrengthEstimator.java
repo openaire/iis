@@ -14,20 +14,23 @@ import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createMai
 import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createMainSectionHashBucketMatcherVoters;
 import static java.lang.System.out;
 import static java.util.stream.Collectors.toList;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.junit.After;
+import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
@@ -62,6 +65,11 @@ public class AffOrgMatchVoterStrengthEstimator {
     
     private final static String INPUT_DATA_DIR_PATH = "src/test/resources/experimentalData/input";
     
+    private final static int VOTER_MATCH_STRENGTH_SCALE = 3; // number of decimal places
+    
+    List<InvalidVoterStrength> invalidVoterStrengths = Lists.newArrayList();
+    
+        
     private AffMatchingService affMatchingService;
     
     private static JavaSparkContext sparkContext;
@@ -117,13 +125,6 @@ public class AffOrgMatchVoterStrengthEstimator {
     }
     
     
-    @After
-    public void cleanup() throws IOException {
-        
-        FileUtils.deleteDirectory(workingDir);
-    }
-    
-    
     @AfterClass
     public static void classCleanup() throws IOException {
         
@@ -136,9 +137,33 @@ public class AffOrgMatchVoterStrengthEstimator {
     
     //------------------------ TESTS --------------------------
     
-   
     @Test
-    public void estimateVoterMatchStrengths_for_DocOrgRelationMatcher() throws IOException {
+    public void estimateAndCheckVoterStrengths() throws IOException {
+        
+        // execute
+        
+        estimateDocOrgRelationMatcherVoterStrengths();
+        estimateMainSectionHashBucketMatcherVoterStrengths();
+        estimateFirstWordsHashBucketMatcherVoterStrengths();
+        
+        // assert
+        
+        if (CollectionUtils.isNotEmpty(invalidVoterStrengths)) {
+            System.out.println("Invalid Voter Strengths. Change them manually to the calculated values (in the code):\n");
+            invalidVoterStrengths.forEach(System.out::println);
+        }
+        
+        assertThat(invalidVoterStrengths, Matchers.emptyIterable());
+        
+        
+    }
+   
+
+    
+    //------------------------ PRIVATE --------------------------
+
+    
+    private void estimateDocOrgRelationMatcherVoterStrengths() throws IOException {
         
         // given
         
@@ -164,8 +189,7 @@ public class AffOrgMatchVoterStrengthEstimator {
     
     
     
-    @Test
-    public void estimateVoterMatchStrengths_for_MainSectionHashBucketMatcher() throws IOException {
+    private void estimateMainSectionHashBucketMatcherVoterStrengths() throws IOException {
         
         // given
         
@@ -190,8 +214,7 @@ public class AffOrgMatchVoterStrengthEstimator {
     }
     
     
-    @Test
-    public void estimateVoterMatchStrengths_for_FirstWordsHashBucketMatcher() throws IOException {
+    private void estimateFirstWordsHashBucketMatcherVoterStrengths() throws IOException {
         
         // given
         
@@ -211,11 +234,9 @@ public class AffOrgMatchVoterStrengthEstimator {
                                     ImmutableList.of("src/test/resources/experimentalData/expectedOutput/set1/matched_aff.json",
                                                      "src/test/resources/experimentalData/expectedOutput/set2/matched_aff.json"));
         
+        
     }
     
-
-    
-    //------------------------ PRIVATE --------------------------
 
     
     private void estimateVoterMatchStrengths(AffOrgMatcher affOrgMatcher, String affOrgMatcherName, List<AffOrgMatchVoter> voters, List<String> matchedAffPaths) throws IOException {
@@ -246,8 +267,9 @@ public class AffOrgMatchVoterStrengthEstimator {
             
             // log
             
-            calcAndPrintResult(matchedAffPaths);
+            float calculatedVoterStrength = calcAndPrintResult(matchedAffPaths);
             
+            checkIfVoterStrengthSetCorrectly(affOrgMatcherName, voter, calculatedVoterStrength);
             
             FileUtils.deleteDirectory(new File(outputDirPath));
         
@@ -255,8 +277,25 @@ public class AffOrgMatchVoterStrengthEstimator {
         
         out.println("\n\n");
         
+        FileUtils.deleteDirectory(workingDir);
+        
     }
 
+    
+    private void checkIfVoterStrengthSetCorrectly(String affOrgMatcherName, AffOrgMatchVoter voter, float calculatedVoterStrength) {
+        
+        double voterStrengthEpsilon = 5/Math.pow(10, 1+VOTER_MATCH_STRENGTH_SCALE);
+        
+        if ((calculatedVoterStrength <= voter.getMatchStrength() - voterStrengthEpsilon) || 
+            (calculatedVoterStrength >= voter.getMatchStrength() + voterStrengthEpsilon)) {
+        
+                String voterName = affOrgMatcherName + ":" + voter.toString();
+                invalidVoterStrengths.add(new InvalidVoterStrength(voterName, calculatedVoterStrength, voter.getMatchStrength()));
+        
+        }
+    }
+
+    
     
     private void printVoterHeader(AffOrgMatchVoter voter) {
         out.println("\n\n");
@@ -283,7 +322,7 @@ public class AffOrgMatchVoterStrengthEstimator {
     }
     
 
-    private void calcAndPrintResult(List<String> expectedResultsJsonPaths) throws IOException {
+    private float calcAndPrintResult(List<String> expectedResultsJsonPaths) throws IOException {
         
         List<SimpleAffMatchResult> actualMatches = readJson(outputDirPath + "/part-00000", SimpleAffMatchResult.class);
         List<SimpleAffMatchResult> expectedMatches = readMultipleJsons(expectedResultsJsonPaths, SimpleAffMatchResult.class);
@@ -291,7 +330,10 @@ public class AffOrgMatchVoterStrengthEstimator {
         List<SimpleAffMatchResult> correctMatches = actualMatches.stream().filter(x -> expectedMatches.contains(x)).collect(toList());
         List<SimpleAffMatchResult> falsePositives = actualMatches.stream().filter(x -> !expectedMatches.contains(x)).collect(toList());
         
-        calcAndPrintMatchStrength(actualMatches.size(), correctMatches.size());
+        float matchStrength = calcMatchStrength(actualMatches.size(), correctMatches.size());
+        
+        printMatchStrength(matchStrength);
+        
         
         if (PRINT_NUMBER_DETAILS) {
             printNumberDetails(expectedMatches.size(), actualMatches.size(), correctMatches.size(), falsePositives.size());
@@ -306,13 +348,18 @@ public class AffOrgMatchVoterStrengthEstimator {
         if (PRINT_NOT_MATCHED) {
             printNotMatched(inputAffDirPath, inputOrgDirPath, expectedMatches, actualMatches);
         }
+        
+        return matchStrength;
     }
 
     
-    private void calcAndPrintMatchStrength(int numberOfActualMatches, int numberOfCorrectMatches) {
-        double matchStrength = ((double)numberOfCorrectMatches)/numberOfActualMatches;
+    private float calcMatchStrength(int numberOfActualMatches, int numberOfCorrectMatches) {
+        return ((float)numberOfCorrectMatches)/numberOfActualMatches;
+    }
+    
+    private void printMatchStrength(float matchStrength) {
         out.println("");
-        out.printf("%s %1.3f", "MATCH STRENGTH: ", matchStrength);
+        out.printf("%s %1." + VOTER_MATCH_STRENGTH_SCALE + "f", "MATCH STRENGTH: ", matchStrength);
     }
 
 
@@ -356,5 +403,38 @@ public class AffOrgMatchVoterStrengthEstimator {
         
         
         return affMatchingService;
+    }
+    
+    //------------------------ INNER CLASSES --------------------------
+    
+    private static class InvalidVoterStrength {
+        
+        private String voterName;
+        
+        private float calculatedStrength;
+        
+        private float setStrength;
+        
+        
+        
+        //------------------------ SETTERS --------------------------
+        
+        public InvalidVoterStrength(String voterName, float calculatedStrength, float setStrength) {
+            super();
+            this.voterName = voterName;
+            this.calculatedStrength = calculatedStrength;
+            this.setStrength = setStrength;
+        }
+        
+        
+        //------------------------ toString --------------------------
+        
+        @Override
+        public String toString() {
+            return Objects.toStringHelper(this).add("voterName", voterName)
+                                        .add("calculatedStrength", String.format("%1." + VOTER_MATCH_STRENGTH_SCALE + "f", calculatedStrength))
+                                        .add("setStrength", String.format("%1." + VOTER_MATCH_STRENGTH_SCALE + "f", setStrength))
+                                        .toString();
+        }
     }
 }
