@@ -18,6 +18,21 @@
             <name>output_citations</name>
             <description>output directory holding eu.dnetlib.iis.common.citations.schemas.Citation avro datastore</description>
         </property>
+         <property>
+            <name>sparkExecutorMemory</name>
+            <value>7G</value>
+            <description>memory for individual executor</description>
+        </property>
+        <property>
+            <name>sparkExecutorCores</name>
+            <value>1</value>
+            <description>number of cores used by single executor</description>
+        </property>
+        <property>
+            <name>sparkExecutorsNumber</name>
+            <value>200</value>
+            <description>total number of executors</description>
+        </property>
     </parameters>
 
     <global>
@@ -86,11 +101,13 @@
             <class>eu.dnetlib.iis.wf.citationmatching.IisCitationMatchingJob</class>
 
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}-uber.jar</jar>
+            
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --num-executors ${sparkExecutorsNumber}</spark-opts>
         
             <arg>-fullDocumentPath = ${workingDir}/documents_with_authors</arg>
             
             <arg>-outputDirPath = ${workingDir}/matched_citations</arg>
-            <arg>-numberOfPartitions = 5</arg>
+            <arg>-numberOfPartitions = 1000</arg>
             
         </spark>
         <ok to="citation-matching-output-transformer"/>
