@@ -5,7 +5,7 @@
         <name-node>${nameNode}</name-node>
         <configuration>
             <property>
-                <name>mapred.job.queue.name</name>
+                <name>mapreduce.job.queuename</name>
                 <value>${queueName}</value>
             </property>
             <property>
@@ -43,7 +43,7 @@
 			</prepare>
             <configuration>
                 <property><!-- TODO: What is this? Delete it? -->
-                    <name>mapred.compress.map.output</name>
+                    <name>mapreduce.map.output.compress</name>
                     <value>true</value>
                 </property>
             </configuration>

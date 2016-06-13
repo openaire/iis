@@ -8,7 +8,7 @@
         <name-node>${nameNode}</name-node>
         <configuration>
             <property>
-                <name>mapred.job.queue.name</name>
+                <name>mapreduce.job.queuename</name>
                 <value>${queueName}</value>
             </property>
             <property>
@@ -79,7 +79,7 @@
                 </property>
                 <!-- # Custom settings for this workflow node -->
                 <property>
-                    <name>mapred.input.dir</name>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${workingDir}/producer/person</value>
                 </property>
                 <property>
@@ -87,7 +87,7 @@
 				    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.core.examples.schemas.documentandauthor.Person']}</value>
 				</property>
                 <property>
-                    <name>mapred.output.dir</name>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${workingDir}/cloner/person</value>
                 </property>
 				<property>

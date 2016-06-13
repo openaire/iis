@@ -26,7 +26,7 @@
         <name-node>${nameNode}</name-node>
         <configuration>
             <property>
-                <name>mapred.job.queue.name</name>
+                <name>mapreduce.job.queuename</name>
                 <value>${importerQueueName}</value>
             </property>
             <property>
@@ -59,32 +59,32 @@
 			</prepare>
 			<configuration>
 				<property>
-					<name>mapreduce.inputformat.class</name>
+					<name>mapreduce.job.inputformat.class</name>
 					<value>org.apache.avro.mapreduce.AvroKeyInputFormat</value>
 				</property>
 				<!-- The output format seems to be required, JSON is written when missing -->
 				<property>
-					<name>mapreduce.outputformat.class</name>
+					<name>mapreduce.job.outputformat.class</name>
 					<value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
 				</property>
 				<property>
-					<name>mapred.mapoutput.key.class</name>
+					<name>mapreduce.map.output.key.class</name>
 					<value>org.apache.avro.mapred.AvroKey</value>
 				</property>
 				<property>
-					<name>mapred.mapoutput.value.class</name>
+					<name>mapreduce.map.output.value.class</name>
 					<value>org.apache.avro.mapred.AvroValue</value>
 				</property>
 				<property>
-					<name>mapred.output.key.class</name>
+					<name>mapreduce.job.output.key.class</name>
 					<value>org.apache.avro.mapred.AvroKey</value>
 				</property>
 				<property>
-					<name>mapred.output.value.class</name>
+					<name>mapreduce.job.output.value.class</name>
 					<value>org.apache.avro.mapred.AvroValue</value>
 				</property>
 				<property>
-					<name>mapred.output.key.comparator.class</name>
+					<name>mapreduce.job.output.key.comparator.class</name>
 					<value>org.apache.avro.hadoop.io.AvroKeyComparator</value>
 				</property>
 				<property>
@@ -93,7 +93,7 @@
 					</value>
 				</property>
 				<property>
-					<name>mapred.output.value.groupfn.class</name>
+					<name>mapreduce.job.output.group.comparator.class</name>
 					<value>org.apache.avro.hadoop.io.AvroKeyComparator</value>
 				</property>
 
@@ -144,11 +144,11 @@
 				</property>
 
 				<property>
-					<name>mapred.input.dir</name>
+					<name>mapreduce.input.fileinputformat.inputdir</name>
 					<value>${input}</value>
 				</property>
 				<property>
-					<name>mapred.output.dir</name>
+					<name>mapreduce.output.fileoutputformat.outputdir</name>
 					<value>${output}</value>
 				</property>
 				<property>
@@ -156,12 +156,12 @@
 					<value>${max_file_size_mb}</value>
 				</property>
 				<property>
-					<name>mapred.max.split.size</name>
+					<name>mapreduce.input.fileinputformat.split.maxsize</name>
 					<value>${mapred_max_split_size}</value>
 				</property>
 				<!-- disabling speculative run to be less invasive to ObjectStore -->
 				<property>
-					<name>mapred.map.tasks.speculative.execution</name>
+					<name>mapreduce.map.speculative</name>
 					<value>false</value>
 				</property>
 				<property>
@@ -170,11 +170,11 @@
 					<value>false</value>
 				</property>
 				<property>
-					<name>mapreduce.map.class</name>
+					<name>mapreduce.job.map.class</name>
 					<value>eu.dnetlib.iis.wf.importer.content.DocumentTextUrlBasedImporterMapper</value>
 				</property>
 				<property>
-					<name>mapred.reduce.tasks</name>
+					<name>mapreduce.job.reduces</name>
 					<value>0</value>
 				</property>
 			</configuration>

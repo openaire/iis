@@ -9,7 +9,7 @@
         <name-node>${nameNode}</name-node>
         <configuration>
             <property>
-                <name>mapred.job.queue.name</name>
+                <name>mapreduce.job.queuename</name>
                 <value>${queueName}</value>
             </property>
             <property>
@@ -57,31 +57,31 @@
 				<!-- ## Various options -->
 
 				<!--This property seems to not be needed -->
-				<!--<property> <name>mapred.job.queue.name</name> <value>${queueName}</value> 
+				<!--<property> <name>mapreduce.job.queuename</name> <value>${queueName}</value> 
 					</property> -->
 				<property>
-					<name>mapreduce.inputformat.class</name>
+					<name>mapreduce.job.inputformat.class</name>
 					<value>org.apache.avro.mapreduce.AvroKeyInputFormat</value>
 				</property>
 				<!-- The output format is not needed since there is no Reduce phase -->
 				<property>
-					<name>mapred.mapoutput.key.class</name>
+					<name>mapreduce.map.output.key.class</name>
 					<value>org.apache.avro.mapred.AvroKey</value>
 				</property>
 				<property>
-					<name>mapred.mapoutput.value.class</name>
+					<name>mapreduce.map.output.value.class</name>
 					<value>org.apache.avro.mapred.AvroValue</value>
 				</property>
 				<property>
-					<name>mapred.output.key.class</name>
+					<name>mapreduce.job.output.key.class</name>
 					<value>org.apache.avro.mapred.AvroKey</value>
 				</property>
 				<property>
-					<name>mapred.output.value.class</name>
+					<name>mapreduce.job.output.value.class</name>
 					<value>org.apache.avro.mapred.AvroValue</value>
 				</property>
 				<property>
-					<name>mapred.output.key.comparator.class</name>
+					<name>mapreduce.job.output.key.comparator.class</name>
 					<value>org.apache.avro.hadoop.io.AvroKeyComparator</value>
 				</property>
 				<property>
@@ -90,7 +90,7 @@
 					</value>
 				</property>
 				<property>
-					<name>mapred.output.value.groupfn.class</name>
+					<name>mapreduce.job.output.group.comparator.class</name>
 					<value>org.apache.avro.hadoop.io.AvroKeyComparator</value>
 				</property>
 				<property>
@@ -116,7 +116,7 @@
 				<!-- Since there is no reduce phase, there should be no
 				reduce tasks -->
 				<property>
-                    <name>mapred.reduce.tasks</name>
+                    <name>mapreduce.job.reduces</name>
                     <value>0</value>
                 </property>
 
@@ -143,7 +143,7 @@
 				<!-- ## Classes of mapper and reducer -->
 
 				<property>
-					<name>mapreduce.map.class</name>
+					<name>mapreduce.job.map.class</name>
 					<value>eu.dnetlib.iis.core.examples.javamapreduce.MultipleOutputPersonClonerMapper</value>
 				</property>
 				
@@ -255,14 +255,14 @@
 				<!-- ## Specification of the input and output data store -->
 
 				<property>
-					<name>mapred.input.dir</name>
+					<name>mapreduce.input.fileinputformat.inputdir</name>
 					<value>${workingDir}/data_producer/person</value>
 				</property>
 				<!-- This directory does not correspond to a data store. In fact,
 				this directory only contains multiple data stores. It has to
 				be set to the name of the workflow node.-->
 				<property>
-					<name>mapred.output.dir</name>
+					<name>mapreduce.output.fileoutputformat.outputdir</name>
 					<value>${workingDir}/mr_cloner</value>
 				</property>
 				

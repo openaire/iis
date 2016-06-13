@@ -23,7 +23,7 @@
         <name-node>${nameNode}</name-node>
         <configuration>
             <property>
-                <name>mapred.job.queue.name</name>
+                <name>mapreduce.job.queuename</name>
                 <value>${queueName}</value>
             </property>
             <property>
@@ -76,13 +76,13 @@
                 <!-- # Custom settings for this workflow node -->
                 <!-- We do not use any reducers, so we set their number to 0 -->
                 <property>
-                    <name>mapred.reduce.tasks</name>
+                    <name>mapreduce.job.reduces</name>
                     <value>0</value>
                 </property>
                 
                 <!-- INPUT -->
                 <property>
-                    <name>mapred.input.dir</name>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${input_document_text}</value>
                 </property>
 
@@ -93,7 +93,7 @@
 
 				<!-- OUTPUT -->
                 <property>
-                    <name>mapred.output.dir</name>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${output_document_to_dataset}</value>
                 </property>          
 
@@ -105,7 +105,7 @@
 				<!-- this one is requred due to the large amount of time taken 
 					by process storing plaintexts into the database -->
 				<property>
-					<name>mapred.task.timeout</name>
+					<name>mapreduce.task.timeout</name>
 					<value>1800000</value>
 				</property>
 				<property>
