@@ -24,7 +24,7 @@
         <name-node>${nameNode}</name-node>
         <configuration>
             <property>
-                <name>mapred.job.queue.name</name>
+                <name>mapreduce.job.queuename</name>
                 <value>${queueName}</value>
             </property>
             <property>
@@ -57,11 +57,11 @@
 			</prepare>
             <configuration>
                 <property>
-                    <name>mapred.map.child.java.opts</name>
+                    <name>mapreduce.map.java.opts</name>
                     <value>-Xmx4g</value>
                 </property>
                 <property>
-                    <name>mapred.reduce.child.java.opts</name>
+                    <name>mapreduce.reduce.java.opts</name>
                     <value>-Xmx4g</value>
                 </property>
             </configuration>

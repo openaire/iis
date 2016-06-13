@@ -8,7 +8,7 @@
         <name-node>${nameNode}</name-node>
         <configuration>
             <property>
-                <name>mapred.job.queue.name</name>
+                <name>mapreduce.job.queuename</name>
                 <value>${queueName}</value>
             </property>
             <property>
@@ -83,7 +83,7 @@
                 </property>
                 <!-- # Custom settings for this workflow node -->
                 <property>
-                    <name>mapred.input.dir</name>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${workingDir}/producer/document</value>
                 </property>
                 <property>
@@ -91,7 +91,7 @@
 				    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.core.examples.schemas.documentandauthor.Document']}</value>
 				</property>
                 <property>
-                    <name>mapred.output.dir</name>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${workingDir}/title_wordcount/wordcount</value>
                 </property>
 				<property>
