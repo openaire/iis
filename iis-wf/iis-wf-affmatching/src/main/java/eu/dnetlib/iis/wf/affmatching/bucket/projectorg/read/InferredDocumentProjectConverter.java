@@ -28,8 +28,7 @@ public class InferredDocumentProjectConverter implements Serializable {
         Preconditions.checkNotNull(documentProject);
         Preconditions.checkArgument(StringUtils.isNotBlank(documentProject.getDocumentId()));
         Preconditions.checkArgument(StringUtils.isNotBlank(documentProject.getProjectId()));
-        Preconditions.checkArgument(documentProject.getConfidenceLevel() != null
-                && documentProject.getConfidenceLevel() >= 0 && documentProject.getConfidenceLevel() <= 1);
+        Preconditions.checkArgument(documentProject.getConfidenceLevel() >= 0 && documentProject.getConfidenceLevel() <= 1);
         return new AffMatchDocumentProject(documentProject.getDocumentId().toString(),
                 documentProject.getProjectId().toString(), documentProject.getConfidenceLevel());
     }

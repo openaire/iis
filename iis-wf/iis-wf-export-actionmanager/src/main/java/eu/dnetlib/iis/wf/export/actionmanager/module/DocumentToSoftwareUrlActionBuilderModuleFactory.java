@@ -17,7 +17,6 @@ import eu.dnetlib.data.proto.ResultProtos.Result.ExternalReference;
 import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.iis.export.schemas.DocumentToSoftwareUrls;
 import eu.dnetlib.iis.export.schemas.SoftwareUrl;
-import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 
 /**
  * Converts {@link DocumentToSoftwareUrls} holding links to software into {@link AtomicAction} objects.
@@ -110,9 +109,7 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactory extends AbstractAct
             qualifierBuilder.setSchemeid("dnet:externalReference_typologies");
             qualifierBuilder.setSchemename("dnet:externalReference_typologies");
             externalRefBuilder.setQualifier(qualifierBuilder.build());
-            externalRefBuilder.setDataInfo(sofwareUrl.getConfidenceLevel() != null
-                    ? buildInference(sofwareUrl.getConfidenceLevel()) : 
-                        buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
+            externalRefBuilder.setDataInfo(buildInference(sofwareUrl.getConfidenceLevel()));
             return externalRefBuilder.build();
         }
     }

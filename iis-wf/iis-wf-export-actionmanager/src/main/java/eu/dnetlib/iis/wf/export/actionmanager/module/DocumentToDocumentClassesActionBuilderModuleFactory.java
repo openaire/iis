@@ -21,7 +21,6 @@ import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentClass;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentClasses;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses;
-import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 
 /**
  * {@link DocumentToDocumentClasses} based action builder module.
@@ -151,12 +150,8 @@ public class DocumentToDocumentClassesActionBuilderModuleFactory extends Abstrac
                 builder.setQualifier(qualifierBuilder.build());
                 builder.setValue(
                         StringUtils.join(source.getClassLabels(), HBaseConstants.CLASSIFICATION_HIERARCHY_SEPARATOR));
-                Float confidenceLevel = source.getConfidenceLevel();
-                if (confidenceLevel != null) {
-                    builder.setDataInfo(buildInference(confidenceLevel < 1 ? confidenceLevel : 1));
-                } else {
-                    builder.setDataInfo(buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
-                }
+                float confidenceLevel = source.getConfidenceLevel();
+                builder.setDataInfo(buildInference(confidenceLevel < 1 ? confidenceLevel : 1));
                 return builder.build();
             } else {
                 return null;

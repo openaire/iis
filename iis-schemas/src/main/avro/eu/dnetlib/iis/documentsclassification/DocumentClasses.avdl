@@ -8,7 +8,7 @@ protocol IIS{
 //      ["Computer Science", "Machine Learning"]
         union { null , array<string> } classLabels = null;
 //		Find more details on `confidenceLevel` constraints in eu/dnetlib/iis/README.markdown file.
-        union { null , float } confidenceLevel = null;
+        float confidenceLevel;
 }
 
     record DocumentClasses {
