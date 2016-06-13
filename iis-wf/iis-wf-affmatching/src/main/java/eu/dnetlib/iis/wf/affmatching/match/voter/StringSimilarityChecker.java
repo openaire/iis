@@ -15,7 +15,7 @@ class StringSimilarityChecker {
     //------------------------ LOGIC --------------------------
     
     /**
-     * Returns true if provided string values contains at least one
+     * Returns true if provided string values contain at least one
      * value similar to searchValue string.<br/>
      * Similarity is measured based on Jaro-Winkler distance.<br/>
      * Strings must have similarity greater or equal to minSimilarity

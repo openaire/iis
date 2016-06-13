@@ -2,6 +2,7 @@ package eu.dnetlib.iis.wf.affmatching.match.voter;
 
 import static com.google.common.collect.ImmutableList.of;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -92,54 +93,54 @@ public class FittingAffWordsMatchVoterTest {
     }
     
     
-//    @Test
-//    public void voteMatch_AFF_SECTION_CONTAINS_ALL_ORG_WORDS() {
-//        
-//        // given
-//        when(sectionsSplitter.splitToSections(affOrgName)).thenReturn(ImmutableList.of("section1", "section2"));
-//        
-//        when(stringFilter.filterCharsAndShortWords("section1", ImmutableList.of(','), 2)).thenReturn("Department Chemistry");
-//        when(stringFilter.filterCharsAndShortWords("section2", ImmutableList.of(','), 2)).thenReturn("University Toronto");
-//        
-//        when(stringFilter.filterCharsAndShortWords(orgName, ImmutableList.of(','), 2)).thenReturn("University Toronto");
-//        
-//        when(similarityChecker.containsSimilarString(ImmutableSet.of("University", "Toronto"), "Department", 0.8)).thenReturn(false);
-//        when(similarityChecker.containsSimilarString(ImmutableSet.of("University", "Toronto"), "Chemistry", 0.8)).thenReturn(false);
-//        
-//        when(similarityChecker.containsSimilarString(ImmutableSet.of("University", "Toronto"), "University", 0.8)).thenReturn(true);
-//        when(similarityChecker.containsSimilarString(ImmutableSet.of("University", "Toronto"), "Toronto", 0.8)).thenReturn(true);
-//        
-//        
-//        // execute & assert
-//        assertTrue(voter.voteMatch(aff, org));
-//    }
-//    
-//    @Test
-//    public void voteMatch_AFF_SECTION_CONTAINS_NOT_ALL_ORG_WORDS() {
-//        
-//        // given
-//        when(sectionsSplitter.splitToSections(affOrgName)).thenReturn(ImmutableList.of("section1", "section2"));
-//        
-//        when(stringFilter.filterCharsAndShortWords("section1", ImmutableList.of(','), 2)).thenReturn("Institute Medical Biomedical Education");
-//        when(stringFilter.filterCharsAndShortWords("section2", ImmutableList.of(','), 2)).thenReturn("Saint George's Hospital Medical School");
-//        
-//        when(stringFilter.filterCharsAndShortWords(orgName, ImmutableList.of(','), 2)).thenReturn("George's Hospital Medical School");
-//        
-//        when(similarityChecker.containsSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "Institute", 0.8)).thenReturn(false);
-//        when(similarityChecker.containsSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "Medical", 0.8)).thenReturn(true);
-//        when(similarityChecker.containsSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "Biomedical", 0.8)).thenReturn(false);
-//        when(similarityChecker.containsSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "Education", 0.8)).thenReturn(false);
-//        
-//        when(similarityChecker.containsSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "Saint", 0.8)).thenReturn(false);
-//        when(similarityChecker.containsSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "George's", 0.8)).thenReturn(true);
-//        when(similarityChecker.containsSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "Hospital", 0.8)).thenReturn(true);
-//        when(similarityChecker.containsSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "Medical", 0.8)).thenReturn(true);
-//        when(similarityChecker.containsSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "School", 0.8)).thenReturn(true);
-//        
-//        
-//        // execute & assert
-//        assertTrue(voter.voteMatch(aff, org));
-//    }
+    @Test
+    public void voteMatch_AFF_SECTION_CONTAINS_ALL_ORG_WORDS() {
+        
+        // given
+        when(sectionsSplitter.splitToSections(affOrgName)).thenReturn(ImmutableList.of("section1", "section2"));
+        
+        when(stringFilter.filterCharsAndShortWords("section1", ImmutableList.of(','), 2)).thenReturn("Department Chemistry");
+        when(stringFilter.filterCharsAndShortWords("section2", ImmutableList.of(','), 2)).thenReturn("University Toronto");
+        
+        when(stringFilter.filterCharsAndShortWords(orgName, ImmutableList.of(','), 2)).thenReturn("University Toronto");
+        
+        when(similarityChecker.containSimilarString(ImmutableSet.of("University", "Toronto"), "Department", 0.8)).thenReturn(false);
+        when(similarityChecker.containSimilarString(ImmutableSet.of("University", "Toronto"), "Chemistry", 0.8)).thenReturn(false);
+        
+        when(similarityChecker.containSimilarString(ImmutableSet.of("University", "Toronto"), "University", 0.8)).thenReturn(true);
+        when(similarityChecker.containSimilarString(ImmutableSet.of("University", "Toronto"), "Toronto", 0.8)).thenReturn(true);
+        
+        
+        // execute & assert
+        assertTrue(voter.voteMatch(aff, org));
+    }
+    
+    @Test
+    public void voteMatch_AFF_SECTION_CONTAINS_NOT_ALL_ORG_WORDS() {
+        
+        // given
+        when(sectionsSplitter.splitToSections(affOrgName)).thenReturn(ImmutableList.of("section1", "section2"));
+        
+        when(stringFilter.filterCharsAndShortWords("section1", ImmutableList.of(','), 2)).thenReturn("Institute Medical Biomedical Education");
+        when(stringFilter.filterCharsAndShortWords("section2", ImmutableList.of(','), 2)).thenReturn("Saint George's Hospital Medical School");
+        
+        when(stringFilter.filterCharsAndShortWords(orgName, ImmutableList.of(','), 2)).thenReturn("George's Hospital Medical School");
+        
+        when(similarityChecker.containSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "Institute", 0.8)).thenReturn(false);
+        when(similarityChecker.containSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "Medical", 0.8)).thenReturn(true);
+        when(similarityChecker.containSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "Biomedical", 0.8)).thenReturn(false);
+        when(similarityChecker.containSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "Education", 0.8)).thenReturn(false);
+        
+        when(similarityChecker.containSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "Saint", 0.8)).thenReturn(false);
+        when(similarityChecker.containSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "George's", 0.8)).thenReturn(true);
+        when(similarityChecker.containSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "Hospital", 0.8)).thenReturn(true);
+        when(similarityChecker.containSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "Medical", 0.8)).thenReturn(true);
+        when(similarityChecker.containSimilarString(ImmutableSet.of("George's", "Hospital", "Medical", "School"), "School", 0.8)).thenReturn(true);
+        
+        
+        // execute & assert
+        assertTrue(voter.voteMatch(aff, org));
+    }
     
     @Test
     public void voteMatch_NOT_MATCH_AFF_SECTION_CONTAINS_TOO_LESS_ORG_WORDS() {
