@@ -16,6 +16,8 @@ public class NameStrictWithCharFilteringMatchVoter implements AffOrgMatchVoter {
     
     private static final long serialVersionUID = 1L;
 
+    private StringFilter stringFilter = new StringFilter();
+    
     private List<Character> charsToFilter;
     
     
@@ -39,8 +41,8 @@ public class NameStrictWithCharFilteringMatchVoter implements AffOrgMatchVoter {
     @Override
     public boolean voteMatch(AffMatchAffiliation affiliation, AffMatchOrganization organization) {
         
-        String filteredAffName = filterName(affiliation.getOrganizationName());
-        String filteredOrgName = filterName(organization.getName());
+        String filteredAffName = stringFilter.filterChars(affiliation.getOrganizationName(), charsToFilter);
+        String filteredOrgName = stringFilter.filterChars(organization.getName(), charsToFilter);
         
         
         if (StringUtils.isEmpty(filteredAffName) || StringUtils.isEmpty(filteredOrgName)) {
@@ -48,20 +50,6 @@ public class NameStrictWithCharFilteringMatchVoter implements AffOrgMatchVoter {
         }
         
         return filteredAffName.equals(filteredOrgName);
-    }
-    
-    
-    //------------------------ PRIVATE --------------------------
-    
-    private String filterName(String name) {
-        
-        String filteredName = name;
-        
-        for (Character charToFilter : charsToFilter) {
-            filteredName = StringUtils.remove(filteredName, charToFilter);
-        }
-        
-        return filteredName;
     }
 
     

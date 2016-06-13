@@ -10,17 +10,20 @@ import com.google.common.collect.Sets;
 
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSectionsSplitter;
 
 /**
- * Match voter that checks if {@link AffMatchOrganization#getName()} words
- * are present in {@link AffMatchAffiliation#getOrganizationName()} words.
+ * Match voter that checks if {@link AffMatchAffiliation#getOrganizationName()} section 
+ * words are present in {@link AffMatchOrganization#getName()} words.
  * 
  * @author madryk
  */
-public class FittingOrgWordsMatchVoter implements AffOrgMatchVoter {
+public class FittingAffWordsMatchVoter implements AffOrgMatchVoter {
 
     private static final long serialVersionUID = 1L;
     
+    
+    private OrganizationSectionsSplitter organizationSectionsSplitter = new OrganizationSectionsSplitter();
     
     private StringFilter stringFilter = new StringFilter();
     
@@ -44,16 +47,16 @@ public class FittingOrgWordsMatchVoter implements AffOrgMatchVoter {
      * @param wordToRemoveMaxLength - words with length equal or less than 
      *      this value will be filtered out before comparing words.
      *      Setting it to zero disables this feature.
-     * @param minFittingOrgWordsRatio - minimum ratio of {@link AffMatchOrganization#getName()}
-     *      words that have to be found in {@link AffMatchAffiliation#getOrganizationName()}
-     *      to all {@link AffMatchOrganization#getName()} words.
+     * @param minFittingOrgWordsRatio - minimum ratio of {@link AffMatchAffiliation#getOrganizationName()}
+     *      section words that are also in {@link AffMatchOrganization#getName()}
+     *      to all {@link AffMatchAffiliation#getOrganizationName()} section words.
      *      Value must be between (0,1].
      * @param minFittingWordSimilarity - minimum similarity for two words to be found the same.
      *      Value must be between (0,1] (value equal to one means that two words must be identical).
      *      Similarity is measured by Jaro-Winkler distance algorithm.
-     * @see StringSimilarityChecker#containSimilarString(java.util.Collection, String, double)
+     * @see StringUtils#getJaroWinklerDistance(CharSequence, CharSequence)
      */
-    public FittingOrgWordsMatchVoter(List<Character> charsToFilter, int wordToRemoveMaxLength, 
+    public FittingAffWordsMatchVoter(List<Character> charsToFilter, int wordToRemoveMaxLength, 
             double minFittingOrgWordsRatio, double minFittingWordSimilarity) {
         Preconditions.checkNotNull(charsToFilter);
         Preconditions.checkArgument(wordToRemoveMaxLength >= 0);
@@ -67,38 +70,63 @@ public class FittingOrgWordsMatchVoter implements AffOrgMatchVoter {
         this.minFittingWordSimilarity = minFittingWordSimilarity;
     }
     
+    
     //------------------------ LOGIC --------------------------
     
     /**
      * Returns true if minFittingOrgWordsPercentage of {@link AffMatchOrganization#getName()} words
-     * are found in {@link AffMatchAffiliation#getOrganizationName()}.
+     * are found in any section of {@link AffMatchAffiliation#getOrganizationName()}.
      * 
-     * @see #FittingOrgWordsMatchVoter(List, int, double, double)
+     * @see #FittingAffWordsMatchVoter(List, int, double, double)
      */
     @Override
     public boolean voteMatch(AffMatchAffiliation affiliation, AffMatchOrganization organization) {
         
-        String filteredAffName = stringFilter.filterCharsAndShortWords(affiliation.getOrganizationName(), charsToFilter, wordToRemoveMaxLength);
         String filteredOrgName = stringFilter.filterCharsAndShortWords(organization.getName(), charsToFilter, wordToRemoveMaxLength);
         
-        if (StringUtils.isEmpty(filteredAffName) || StringUtils.isEmpty(filteredOrgName)) {
+        if (StringUtils.isEmpty(filteredOrgName)) {
             return false;
         }
         
-        Set<String> affWords = Sets.newHashSet(StringUtils.split(filteredAffName));
         Set<String> orgWords = Sets.newHashSet(StringUtils.split(filteredOrgName));
         
-        int orgWordsCount = orgWords.size();
+        
+        List<String> affSections = organizationSectionsSplitter.splitToSections(affiliation.getOrganizationName());
+        
+        for (String affSection : affSections) {
+            
+            String filteredAffSectionName = stringFilter.filterCharsAndShortWords(affSection, charsToFilter, wordToRemoveMaxLength);
+            
+            if (StringUtils.isEmpty(filteredAffSectionName)) {
+                continue;
+            }
+            
+            Set<String> affWords = Sets.newHashSet(StringUtils.split(filteredAffSectionName));
+            
+            if (voteSectionMatch(affWords, orgWords)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    
+    //------------------------ PRIVATE --------------------------
+    
+    private boolean voteSectionMatch(Set<String> affSectionWords, Set<String> orgWords) {
+        int affWordsCount = affSectionWords.size();
         int fittingWordsCount = 0;
         
-        for (String orgWord : orgWords) {
-            if (similarityChecker.containSimilarString(affWords, orgWord, minFittingWordSimilarity)) {
+        for (String affSectionWord : affSectionWords) {
+            if (similarityChecker.containSimilarString(orgWords, affSectionWord, minFittingWordSimilarity)) {
                 ++fittingWordsCount;
             }
         }
         
-        double fittingWordsRatio = (double)fittingWordsCount/orgWordsCount;
+        double fittingWordsRatio = (double)fittingWordsCount/affWordsCount;
         
         return fittingWordsRatio >= minFittingOrgWordsRatio;
     }
+
 }
