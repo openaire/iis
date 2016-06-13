@@ -2,6 +2,7 @@ package eu.dnetlib.iis.wf.affmatching.match.voter;
 
 import java.util.List;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
@@ -13,7 +14,7 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
  * @author madryk
  *
  */
-public class CompositeMatchVoter implements AffOrgMatchVoter {
+public class CompositeMatchVoter extends AbstractAffOrgMatchVoter {
 
     private static final long serialVersionUID = 1L;
     
@@ -49,13 +50,15 @@ public class CompositeMatchVoter implements AffOrgMatchVoter {
         
         return true;
     }
-
     
     //------------------------ toString --------------------------
-
+    
     @Override
     public String toString() {
-        return "CompositeMatchVoter [voters=" + voters + "]";
+        return Objects.toStringHelper(this).add("matchStrength", getMatchStrength()).add("voters", voters).toString();   
     }
+
+    
+    
 
 }

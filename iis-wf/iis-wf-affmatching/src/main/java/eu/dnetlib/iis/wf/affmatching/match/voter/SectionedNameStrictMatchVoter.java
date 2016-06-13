@@ -47,11 +47,5 @@ public class SectionedNameStrictMatchVoter extends AbstractSectionedMatchVoter {
     }
 
 
-    //------------------------ toString --------------------------
-    
-    @Override
-    public String toString() {
-        return "SectionedNameStrictMatchVoter []";
-    }
     
 }

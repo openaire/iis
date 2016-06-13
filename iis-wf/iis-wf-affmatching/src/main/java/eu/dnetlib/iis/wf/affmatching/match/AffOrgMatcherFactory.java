@@ -27,6 +27,7 @@ import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisDocumentProjectRe
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisInferredDocumentProjectReader;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisProjectOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVoter;
+import eu.dnetlib.iis.wf.affmatching.match.voter.FittingOrgWordsMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 
@@ -97,12 +98,17 @@ public class AffOrgMatcherFactory {
      * Creates {@link AffOrgMatchVoter}s for {@link #createDocOrgRelationMatcher(JavaSparkContext, String, String, String, Float)} 
      */
     public static ImmutableList<AffOrgMatchVoter> createDocOrgRelationMatcherVoters() {
+
+        FittingOrgWordsMatchVoter fitOrgWordsMatchVoter = new FittingOrgWordsMatchVoter(ImmutableList.of(','), 3, 0.8f, 0.9f);
+        fitOrgWordsMatchVoter.setMatchStrength(1f);
+        
         return ImmutableList.of(
-                createNameCountryStrictMatchVoter(),
-                createNameStrictCountryLooseMatchVoter(),
-                createSectionedNameStrictCountryLooseMatchVoter(),
-                createSectionedNameLevenshteinCountryLooseMatchVoter(),
-                createSectionedShortNameStrictCountryLooseMatchVoter());
+                createNameCountryStrictMatchVoter(1f),
+                createNameStrictCountryLooseMatchVoter(1f),
+                createSectionedNameStrictCountryLooseMatchVoter(1f),
+                createSectionedNameLevenshteinCountryLooseMatchVoter(1f),
+                createSectionedShortNameStrictCountryLooseMatchVoter(1f),
+                fitOrgWordsMatchVoter);
     }
     
     
@@ -153,11 +159,11 @@ public class AffOrgMatcherFactory {
      */
     public static ImmutableList<AffOrgMatchVoter> createMainSectionHashBucketMatcherVoters() {
         return ImmutableList.of(
-                createNameCountryStrictMatchVoter(),
-                createNameStrictCountryLooseMatchVoter(),
-                createSectionedNameStrictCountryLooseMatchVoter(),
-                createSectionedNameLevenshteinCountryLooseMatchVoter(),
-                createSectionedShortNameStrictCountryLooseMatchVoter());
+                createNameCountryStrictMatchVoter(1f),
+                createNameStrictCountryLooseMatchVoter(1f),
+                createSectionedNameStrictCountryLooseMatchVoter(0.914f),
+                createSectionedNameLevenshteinCountryLooseMatchVoter(0.845f),
+                createSectionedShortNameStrictCountryLooseMatchVoter(0.750f));
     }
     
     
@@ -189,11 +195,11 @@ public class AffOrgMatcherFactory {
      */
     public static ImmutableList<AffOrgMatchVoter> createFirstWordsHashBucketMatcherVoters() {
         return ImmutableList.of(
-                createNameCountryStrictMatchVoter(),
-                createNameStrictCountryLooseMatchVoter(),
-                createSectionedNameStrictCountryLooseMatchVoter(),
-                createSectionedNameLevenshteinCountryLooseMatchVoter(),
-                createSectionedShortNameStrictCountryLooseMatchVoter());
+                createNameCountryStrictMatchVoter(1f),
+                createNameStrictCountryLooseMatchVoter(1f),
+                createSectionedNameStrictCountryLooseMatchVoter(1f),
+                createSectionedNameLevenshteinCountryLooseMatchVoter(0.923f),
+                createSectionedShortNameStrictCountryLooseMatchVoter(1f));
     }
     
     

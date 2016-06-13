@@ -13,7 +13,7 @@ import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSectionsSplitter;
  * 
  * @author madryk
  */
-public abstract class AbstractSectionedMatchVoter implements AffOrgMatchVoter {
+public abstract class AbstractSectionedMatchVoter extends AbstractAffOrgMatchVoter {
     
     private static final long serialVersionUID = 1L;
     
