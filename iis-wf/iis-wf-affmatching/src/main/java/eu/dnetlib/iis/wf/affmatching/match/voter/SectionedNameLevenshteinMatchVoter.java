@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
@@ -86,11 +87,11 @@ public class SectionedNameLevenshteinMatchVoter extends AbstractSectionedMatchVo
         return false;
     }
 
-
     //------------------------ toString --------------------------
     
     @Override
     public String toString() {
-        return "SectionedNameLevenshteinMatchVoter [minSimilarity=" + minSimilarity + "]";
+        return Objects.toStringHelper(this).add("matchStrength", getMatchStrength()).add("minSimilarity", minSimilarity).toString();
     }
+    
 }

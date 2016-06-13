@@ -43,7 +43,8 @@ import pl.edu.icm.sparkutils.test.SparkJobExecutor;
  */
 public class AffMatchingDocOrgQualityTest {
     
-    
+    private final static String INPUT_DATA_DIR_PATH = "src/test/resources/experimentalData/input";
+     
     private SparkJobExecutor executor = new SparkJobExecutor();
     
     private File workingDir;
@@ -96,8 +97,8 @@ public class AffMatchingDocOrgQualityTest {
         // given
         
         createInputDataFromJsonFiles(
-                of("src/test/resources/experimentalData/input/all_organizations.json"),
-                of("src/test/resources/experimentalData/input/set1/docs_with_aff_real_data.json"),
+                of(INPUT_DATA_DIR_PATH + "/all_organizations.json"),
+                of(INPUT_DATA_DIR_PATH + "/set1/docs_with_aff_real_data.json"),
                 of(), of(), of());
         
         
@@ -119,8 +120,8 @@ public class AffMatchingDocOrgQualityTest {
         // given
         
         createInputDataFromJsonFiles(
-                of("src/test/resources/experimentalData/input/all_organizations.json"),
-                of("src/test/resources/experimentalData/input/set2/docs_with_aff_real_data.json"),
+                of(INPUT_DATA_DIR_PATH + "/all_organizations.json"),
+                of(INPUT_DATA_DIR_PATH + "/set2/docs_with_aff_real_data.json"),
                 of(), of(), of());
         
         
@@ -143,11 +144,11 @@ public class AffMatchingDocOrgQualityTest {
         // given
         
         createInputDataFromJsonFiles(
-                of("src/test/resources/experimentalData/input/set3/organizations_real_data.json"),
-                of("src/test/resources/experimentalData/input/set3/docs_with_aff_real_data.json"),
-                of("src/test/resources/experimentalData/input/set3/doc_project.json"), 
+                of(INPUT_DATA_DIR_PATH + "/set3/organizations_real_data.json"),
+                of(INPUT_DATA_DIR_PATH + "/set3/docs_with_aff_real_data.json"),
+                of(INPUT_DATA_DIR_PATH + "/set3/doc_project.json"), 
                 of(),
-                of("src/test/resources/experimentalData/input/set3/org_project.json"));
+                of(INPUT_DATA_DIR_PATH + "/set3/org_project.json"));
         
         
         // execute
@@ -168,11 +169,11 @@ public class AffMatchingDocOrgQualityTest {
         // given
         
         createInputDataFromJsonFiles(
-                of("src/test/resources/experimentalData/input/all_organizations.json"),
-                of("src/test/resources/experimentalData/input/set4/docs_with_aff_real_data.json"),
-                of("src/test/resources/experimentalData/input/set4/doc_project.json"), 
+                of(INPUT_DATA_DIR_PATH + "/all_organizations.json"),
+                of(INPUT_DATA_DIR_PATH + "/set4/docs_with_aff_real_data.json"),
+                of(INPUT_DATA_DIR_PATH + "/set4/doc_project.json"), 
                 of(),
-                of("src/test/resources/experimentalData/input/set4/org_project.json"));
+                of(INPUT_DATA_DIR_PATH + "/set4/org_project.json"));
         
         
         // execute
@@ -195,15 +196,13 @@ public class AffMatchingDocOrgQualityTest {
         // given
         
         createInputDataFromJsonFiles(
-                of(
-                        "src/test/resources/experimentalData/input/all_organizations.json"),
-                of(
-                        "src/test/resources/experimentalData/input/set1/docs_with_aff_real_data.json",
-                        "src/test/resources/experimentalData/input/set2/docs_with_aff_real_data.json",
-                        "src/test/resources/experimentalData/input/set4/docs_with_aff_real_data.json"),
-                of("src/test/resources/experimentalData/input/set4/doc_project.json"),
+                of(INPUT_DATA_DIR_PATH + "/all_organizations.json"),
+                of(INPUT_DATA_DIR_PATH + "/set1/docs_with_aff_real_data.json",
+                   INPUT_DATA_DIR_PATH + "/set2/docs_with_aff_real_data.json",
+                   INPUT_DATA_DIR_PATH + "/set4/docs_with_aff_real_data.json"),
+                of(INPUT_DATA_DIR_PATH + "/set4/doc_project.json"),
                 of(),
-                of("src/test/resources/experimentalData/input/set4/org_project.json"));
+                of(INPUT_DATA_DIR_PATH + "/set4/org_project.json"));
         
         
         // execute

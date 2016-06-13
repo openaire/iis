@@ -35,12 +35,6 @@ public class CountryCodeLooseMatchVoter extends AbstractAffOrgMatchVoter {
         return affiliation.getCountryCode().equals(organization.getCountryCode());
     }
 
-
-    //------------------------ toString --------------------------
     
-    @Override
-    public String toString() {
-        return "CountryCodeLooseMatchVoter []";
-    }
     
 }

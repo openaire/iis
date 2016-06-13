@@ -35,11 +35,4 @@ public class CountryCodeStrictMatchVoter extends AbstractAffOrgMatchVoter {
     }
 
 
-    //------------------------ toString --------------------------
-    
-    @Override
-    public String toString() {
-        return "CountryCodeStrictMatchVoter []";
-    }
-    
 }

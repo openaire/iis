@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
+import datafu.com.google.common.base.Objects;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 
@@ -130,12 +131,15 @@ public class FittingOrgWordsMatchVoter extends AbstractAffOrgMatchVoter {
     }
 
     //------------------------ toString --------------------------
-    
     @Override
     public String toString() {
-        return "FittingOrgWordsMatchVoter [charsToFilter=" + charsToFilter
-                + ", minFittingOrgWordsRatio=" + minFittingOrgWordsRatio
-                + ", minFittingWordSimilarity=" + minFittingWordSimilarity
-                + ", wordToRemoveMaxLength=" + wordToRemoveMaxLength + "]";
+        return Objects.toStringHelper(this).add("matchStength", getMatchStrength())
+                                           .add("charsToFilter", charsToFilter)
+                                           .add("minFittingOrgWordsRatio", minFittingOrgWordsRatio)
+                                           .add("minFittingOrgWordSimilarity", minFittingWordSimilarity)
+                                           .add("wordToRemoveMaxLength", wordToRemoveMaxLength)
+                                           .toString();
     }
+
+ 
 }

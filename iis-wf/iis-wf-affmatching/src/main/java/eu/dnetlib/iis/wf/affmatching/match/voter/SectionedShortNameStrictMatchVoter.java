@@ -45,11 +45,4 @@ public class SectionedShortNameStrictMatchVoter extends AbstractSectionedMatchVo
         return affOrgNameSections.contains(orgNameSection);
     }
 
-    
-    //------------------------ toString --------------------------
-
-    @Override
-    public String toString() {
-        return "SectionedShortNameStrictMatchVoter []";
-    }
 }

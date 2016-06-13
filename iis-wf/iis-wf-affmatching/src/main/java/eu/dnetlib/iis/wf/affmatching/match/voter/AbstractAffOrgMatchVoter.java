@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 /**
@@ -35,4 +36,12 @@ public abstract class AbstractAffOrgMatchVoter implements AffOrgMatchVoter {
         this.matchStrength = matchStrength;
     
     }
+    
+    //------------------------ toString --------------------------
+    
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("matchStrength", matchStrength).toString();   
+    }
+  
 }
