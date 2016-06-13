@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.base.Objects;
+
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 
@@ -11,7 +13,7 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 * @author Łukasz Dumiszewski
 */
 
-public class NameStrictWithCharFilteringMatchVoter implements AffOrgMatchVoter {
+public class NameStrictWithCharFilteringMatchVoter extends AbstractAffOrgMatchVoter {
 
     
     private static final long serialVersionUID = 1L;
@@ -64,11 +66,11 @@ public class NameStrictWithCharFilteringMatchVoter implements AffOrgMatchVoter {
         return filteredName;
     }
 
-    
     //------------------------ toString --------------------------
     
     @Override
     public String toString() {
-        return "NameStrictWithCharFilteringMatchVoter [charsToFilter=" + charsToFilter + "]";
+        return Objects.toStringHelper(this).add("matchStrength", getMatchStrength()).add("charsToFilter", charsToFilter).toString();
     }
+   
 }

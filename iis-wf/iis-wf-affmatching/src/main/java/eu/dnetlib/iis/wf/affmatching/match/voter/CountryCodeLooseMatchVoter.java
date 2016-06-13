@@ -13,7 +13,7 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
  * 
  * @author madryk
  */
-public class CountryCodeLooseMatchVoter implements AffOrgMatchVoter {
+public class CountryCodeLooseMatchVoter extends AbstractAffOrgMatchVoter {
 
     private static final long serialVersionUID = 1L;
     
@@ -35,12 +35,6 @@ public class CountryCodeLooseMatchVoter implements AffOrgMatchVoter {
         return affiliation.getCountryCode().equals(organization.getCountryCode());
     }
 
-
-    //------------------------ toString --------------------------
     
-    @Override
-    public String toString() {
-        return "CountryCodeLooseMatchVoter []";
-    }
     
 }

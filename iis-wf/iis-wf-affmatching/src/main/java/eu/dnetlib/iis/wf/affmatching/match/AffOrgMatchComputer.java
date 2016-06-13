@@ -31,8 +31,6 @@ public class AffOrgMatchComputer implements Serializable {
     
     private List<AffOrgMatchVoter> affOrgMatchVoters;
     
-    private AffOrgMatchVoterStrengthCalculator voterStrengthCalculator = new AffOrgMatchVoterStrengthCalculator();
-
     private AffOrgMatchStrengthRecalculator affOrgMatchStrengthRecalculator = new AffOrgMatchStrengthRecalculator();
     
     
@@ -57,26 +55,15 @@ public class AffOrgMatchComputer implements Serializable {
         JavaRDD<AffMatchResult> affMatchResults = joinedAffOrgs.map(kv->new AffMatchResult(kv._1(), kv._2(), 0));
         
         
-        int voterStrengthSum = 0;
-        
-        for (int i = 0; i < affOrgMatchVoters.size(); i++) {
+        for (AffOrgMatchVoter voter : affOrgMatchVoters) {
             
-            int voterStrength = voterStrengthCalculator.calculateStrength(i, affOrgMatchVoters.size());
-            
-            voterStrengthSum += voterStrength;
-            
-            AffOrgMatchVoter eqVoter = affOrgMatchVoters.get(i);
-            
-            affMatchResults = affMatchResults.map(affOrgMatch ->  affOrgMatchStrengthRecalculator.recalculateMatchStrength(affOrgMatch, eqVoter, voterStrength));
+            affMatchResults = affMatchResults.map(affOrgMatch ->  affOrgMatchStrengthRecalculator.recalculateMatchStrength(affOrgMatch, voter));
             
         }
         
         affMatchResults = affMatchResults.filter(affOrgMatch -> affOrgMatch.getMatchStrength() > 0);
         
-        
-        int maxVoterStrength = voterStrengthSum;
-
-        return affMatchResults.map(affOrgMatch -> new AffMatchResult(affOrgMatch.getAffiliation(), affOrgMatch.getOrganization(), affOrgMatch.getMatchStrength()/maxVoterStrength));
+        return affMatchResults;
         
     }
 

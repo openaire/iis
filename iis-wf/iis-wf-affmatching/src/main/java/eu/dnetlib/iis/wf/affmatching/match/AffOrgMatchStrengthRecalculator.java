@@ -27,17 +27,16 @@ class AffOrgMatchStrengthRecalculator implements Serializable {
      * returns true, or returning unchanged strength otherwise.<br/>
      * Note, the method does not change the passed affMatchResult. 
      */
-    public AffMatchResult recalculateMatchStrength(AffMatchResult affMatchResult, AffOrgMatchVoter voter, int voterStrength) { 
+    public AffMatchResult recalculateMatchStrength(AffMatchResult affMatchResult, AffOrgMatchVoter voter) { 
 
         Preconditions.checkNotNull(affMatchResult);
         Preconditions.checkNotNull(voter);
-        Preconditions.checkArgument(voterStrength > 0);
         
         float matchStrength = affMatchResult.getMatchStrength();
         
         if (voter.voteMatch(affMatchResult.getAffiliation(), affMatchResult.getOrganization())) {
             
-            matchStrength += voterStrength;
+            matchStrength = (matchStrength + voter.getMatchStrength()) - matchStrength * voter.getMatchStrength(); // bear in mind: the strengths are less that one
             
         } 
         
