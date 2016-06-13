@@ -8,6 +8,6 @@ protocol IIS{
 //      foreign key: Project.id
         string projectId;
 //		Find more details on `confidenceLevel` constraints in eu/dnetlib/iis/README.markdown file.
-        union { null , float } confidenceLevel = null;
+        float confidenceLevel;
     }
 }

@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentProject;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.InferredDocumentProjectConverter;
 
 public class InferredDocumentProjectConverterTest {
 
@@ -58,12 +57,6 @@ public class InferredDocumentProjectConverterTest {
     public void convert_null_project_id() {
         // execute
         converter.convert(new DocumentToProject(docId, null, confidenceLevel));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void convert_null_confidence_level() {
-        // execute
-        converter.convert(new DocumentToProject(docId, projId, null));
     }
 
     @Test

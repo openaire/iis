@@ -7,6 +7,6 @@ protocol IIS{
 //      dataset ID, foreign key: DataSetReference.id
         string datasetId; 
 //		Find more details on `confidenceLevel` constraints in eu/dnetlib/iis/README.markdown file.
-        union { null , float } confidenceLevel = null;
+        float confidenceLevel;
     }
 }
