@@ -201,6 +201,37 @@ public class AffMatchingAffOrgQualityTest {
     }
     
     @Test
+    public void matchAffiliations_docs_assigned_to_orgs_via_projects_2() throws IOException {
+        
+        // given
+        
+        AffOrgMatcher docOrgRelationMatcher = 
+                createDocOrgRelationMatcher(sparkContext, inputDocProjDirPath, inputInferredDocProjDirPath, inputProjOrgDirPath, inputDocProjConfidenceThreshold);
+        
+        affMatchingService.setAffOrgMatchers(of(docOrgRelationMatcher));
+
+        
+        createInputDataFromJsonFiles(
+                of("src/test/resources/experimentalData/input/all_organizations.json"),
+                of("src/test/resources/experimentalData/input/set5/docs_with_aff_real_data.json"),
+                of("src/test/resources/experimentalData/input/set5/doc_project.json"), 
+                of(),
+                of("src/test/resources/experimentalData/input/set5/org_project.json"));
+        
+        
+        // execute
+        
+        affMatchingService.matchAffiliations(sparkContext, inputAffDirPath, inputOrgDirPath, outputDirPath);
+        
+        
+        // log
+        
+        System.out.println("\nDOCUMENTS ASSIGNED TO ORGANIZATIONS VIA PROJECT 2 (docOrgRelationMatcher only)");
+        
+        readResultsAndPrintQualityRate(of("src/test/resources/experimentalData/expectedOutput/set5/matched_aff.json"));
+    }
+    
+    @Test
     public void matchAffiliations_docs_assigned_to_orgs_via_projects_and_names() throws IOException {
         
         // given
