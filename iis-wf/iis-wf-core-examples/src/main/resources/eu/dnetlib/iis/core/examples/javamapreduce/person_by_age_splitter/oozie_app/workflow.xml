@@ -10,11 +10,11 @@
         <name-node>${nameNode}</name-node>
         <configuration>
             <property>
-                <name>mapred.job.queue.name</name>
+                <name>mapreduce.job.queuename</name>
                 <value>${queueName}</value>
             </property>
             <property>
-                <name>oozie.launcher.mapred.job.queue.name</name>
+                <name>oozie.launcher.mapreduce.job.queuename</name>
                 <value>${oozieLauncherQueueName}</value>
             </property>
         </configuration>
@@ -61,42 +61,42 @@
 
 				<!-- Standard stuff for our framework -->
 				<property>
-					<name>mapred.mapoutput.key.class</name>
+					<name>mapreduce.map.output.key.class</name>
 					<value>org.apache.hadoop.io.Text</value>
 				</property>
 				<property>
-					<name>mapred.mapoutput.value.class</name>
+					<name>mapreduce.map.output.value.class</name>
 					<value>org.apache.hadoop.io.BytesWritable</value>
 				</property>
 				<property>
-					<name>mapred.output.key.class</name>
+					<name>mapreduce.job.output.key.class</name>
 					<value>org.apache.hadoop.io.Text</value>
 				</property>
 				<property>
-					<name>mapred.output.value.class</name>
+					<name>mapreduce.job.output.value.class</name>
 					<value>org.apache.hadoop.io.BytesWritable</value>
 				</property>
 				<property>
-					<name>mapreduce.inputformat.class</name>
+					<name>mapreduce.job.inputformat.class</name>
 					<value>org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat
 					</value>
 				</property>
 				<property>
-					<name>mapreduce.outputformat.class</name>
+					<name>mapreduce.job.outputformat.class</name>
 					<value>org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat
 					</value>
 				</property>
 				<!-- Other stuff -->
 				<property>
-					<name>mapreduce.map.class</name>
+					<name>mapreduce.job.map.class</name>
 					<value>eu.dnetlib.iis.core.examples.javamapreduce.PersonByAgeSplitter</value>
 				</property>
 				<property>
-					<name>mapred.input.dir</name>
+					<name>mapreduce.input.fileinputformat.inputdir</name>
 					<value>${workingDir}/data_producer/person</value>
 				</property>
 				<property>
-					<name>mapred.output.dir</name>
+					<name>mapreduce.output.fileoutputformat.outputdir</name>
 					<value>${workingDir}/mr_splitter</value>
 				</property>
 				<!-- multiple output definitions -->
@@ -135,49 +135,44 @@
 
 				<!-- Standard stuff for our framework -->
 				<property>
-					<name>mapred.mapoutput.key.class</name>
+					<name>mapreduce.map.output.key.class</name>
 					<value>org.apache.hadoop.io.Text</value>
 				</property>
 				<property>
-					<name>mapred.mapoutput.value.class</name>
+					<name>mapreduce.map.output.value.class</name>
 					<value>org.apache.hadoop.io.BytesWritable</value>
 				</property>
 				<property>
-					<name>mapred.output.key.class</name>
+					<name>mapreduce.job.output.key.class</name>
 					<value>org.apache.hadoop.io.Text</value>
 				</property>
 				<property>
-					<name>mapred.output.value.class</name>
+					<name>mapreduce.job.output.value.class</name>
 					<value>org.apache.hadoop.io.BytesWritable</value>
 				</property>
 				<property>
-					<name>mapreduce.inputformat.class</name>
+					<name>mapreduce.job.inputformat.class</name>
 					<value>org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat
 					</value>
 				</property>
 				<property>
-					<name>mapreduce.outputformat.class</name>
+					<name>mapreduce.job.outputformat.class</name>
 					<value>org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat
 					</value>
 				</property>
-				<!-- This is an outdated property -->
-				<!-- <property> 
-					<name>mapred.map.tasks</name>
-					<value>1</value> 
-				</property> -->
 
 				<!-- Other stuff -->
 				<property>
-					<name>mapreduce.map.class</name>
+					<name>mapreduce.job.map.class</name>
 					<value>eu.dnetlib.iis.core.examples.javamapreduce.PersonClonerMapper</value>
 				</property>
 				<property>
-					<name>mapred.input.dir</name>
+					<name>mapreduce.input.fileinputformat.inputdir</name>
 					<!-- simply setting multiple inputs as CSV -->
 					<value>${workingDir}/mr_splitter/${outputAgeEven},${workingDir}/mr_splitter/${outputAgeOdd}</value>
 				</property>
 				<property>
-					<name>mapred.output.dir</name>
+					<name>mapreduce.output.fileoutputformat.outputdir</name>
 					<value>${workingDir}/mr_cloner_with_multiple_input/person</value>
 				</property>
 				<!-- Workflow node parameters -->

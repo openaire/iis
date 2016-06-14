@@ -156,44 +156,44 @@
         <name-node>${nameNode}</name-node>
         <configuration>
             <property>
-                <name>mapred.job.queue.name</name>
+                <name>mapreduce.job.queuename</name>
                 <value>${queueName}</value>
             </property>
             <property>
-                <name>oozie.launcher.mapred.job.queue.name</name>
+                <name>oozie.launcher.mapreduce.job.queuename</name>
                 <value>${oozieLauncherQueueName}</value>
             </property>
             <property>
-                <name>mapreduce.inputformat.class</name>
+                <name>mapreduce.job.inputformat.class</name>
                 <value>org.apache.avro.mapreduce.AvroKeyInputFormat</value>
             </property>
             <property>
-                <name>mapreduce.outputformat.class</name>
+                <name>mapreduce.job.outputformat.class</name>
                 <value>org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat</value>
             </property>
             <property>
-                <name>mapred.mapoutput.key.class</name>
+                <name>mapreduce.map.output.key.class</name>
                 <value>org.apache.hadoop.io.Text</value>
             </property>
             <property>
-                <name>mapred.mapoutput.value.class</name>
+                <name>mapreduce.map.output.value.class</name>
                 <value>org.apache.hadoop.io.Text</value>
             </property>
             <property>
-                <name>mapred.output.key.class</name>
+                <name>mapreduce.job.output.key.class</name>
                 <value>org.apache.hadoop.io.Text</value>
             </property>
             <property>
-                <name>mapred.output.value.class</name>
+                <name>mapreduce.job.output.value.class</name>
                 <value>org.apache.hadoop.io.Text</value>
             </property>
 
             <property>
-                <name>mapred.reduce.tasks.speculative.execution</name>
+                <name>mapreduce.reduce.speculative</name>
                 <value>false</value>
             </property>
             <property>
-                <name>mapred.map.tasks.speculative.execution</name>
+                <name>mapreduce.map.speculative</name>
                 <value>false</value>
             </property>
             <property>
@@ -205,19 +205,19 @@
                 <value>false</value>
             </property>
             <property>
-                <name>mapred.reduce.tasks</name>
+                <name>mapreduce.job.reduces</name>
                 <value>${reduce_tasks}</value>
             </property>
             <property>
-                <name>mapred.compress.map.output</name>
+                <name>mapreduce.map.output.compress</name>
                 <value>true</value>
             </property>
             <property>
-                <name>mapred.output.compress</name>
+                <name>mapreduce.output.fileoutputformat.compress</name>
                 <value>true</value>
             </property>
             <property>
-                <name>mapred.output.compression.type</name>
+                <name>mapreduce.output.fileoutputformat.compress.type</name>
                 <value>BLOCK</value>
             </property>
             <property>
@@ -238,7 +238,7 @@
                 <value>true</value>
             </property>
             <property>
-                <name>mapreduce.map.class</name>
+                <name>mapreduce.job.map.class</name>
                 <value>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.SequenceFileExporterMapper</value>
             </property>
             <!-- actionset related -->
@@ -444,11 +444,11 @@
                     <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject']}</value>
                 </property>
                 <property>
-                    <name>mapred.input.dir</name>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${input_document_to_project}</value>
                 </property>
                 <property>
-                    <name>mapred.output.dir</name>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${workingDir}/document_referencedProjects/${action_set_id_document_referencedProjects}</value>
                 </property>
             </configuration>
@@ -472,11 +472,11 @@
                     <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet']}</value>
                 </property>
                 <property>
-                    <name>mapred.input.dir</name>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${input_document_to_dataset}</value>
                 </property>
                 <property>
-                    <name>mapred.output.dir</name>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${output}/document_referencedDatasets/${action_set_id_document_referencedDatasets}</value>
                 </property>
             </configuration>
@@ -501,11 +501,11 @@
                     <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.export.schemas.DocumentToConceptIds']}</value>
                 </property>
                 <property>
-                    <name>mapred.input.dir</name>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${input_document_to_project_concepts}</value>
                 </property>
                 <property>
-                    <name>mapred.output.dir</name>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${workingDir}/document_to_project_concepts/${action_set_id_document_referencedProjects}</value>
                 </property>
             </configuration>
@@ -529,11 +529,11 @@
                     <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.export.schemas.DocumentToConceptIds']}</value>
                 </property>
                 <property>
-                    <name>mapred.input.dir</name>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${input_document_to_research_initiatives}</value>
                 </property>
                 <property>
-                    <name>mapred.output.dir</name>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${output}/document_research_initiative/${action_set_id_document_research_initiative}</value>
                 </property>
             </configuration>
@@ -557,7 +557,7 @@
                     <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.export.schemas.DocumentToConceptIds']}</value>
                 </property>
                 <property>
-                    <name>mapred.input.dir</name>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${input_document_to_pdb}</value>
                 </property>
                 <property>
@@ -565,7 +565,7 @@
                     <value>${referenceextraction_pdb_url_root}</value>
                 </property>
                 <property>
-                    <name>mapred.output.dir</name>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${output}/document_pdb/${action_set_id_document_pdb}</value>
                 </property>
             </configuration>
@@ -589,11 +589,11 @@
                     <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.export.schemas.DocumentToSoftwareUrls']}</value>
                 </property>
                 <property>
-                    <name>mapred.input.dir</name>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${input_document_to_software_urls}</value>
                 </property>
                 <property>
-                    <name>mapred.output.dir</name>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${output}/document_software_url/${action_set_id_document_software_url}</value>
                 </property>
             </configuration>
@@ -617,11 +617,11 @@
                     <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses']}</value>
                 </property>
                 <property>
-                    <name>mapred.input.dir</name>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${input_document_to_document_classes}</value>
                 </property>
                 <property>
-                    <name>mapred.output.dir</name>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${output}/document_classes/${action_set_id_document_classes}</value>
                 </property>
             </configuration>
@@ -645,11 +645,11 @@
                     <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.export.schemas.Citations']}</value>
                 </property>
                 <property>
-                    <name>mapred.input.dir</name>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${input_citations}</value>
                 </property>
                 <property>
-                    <name>mapred.output.dir</name>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${output}/document_referencedDocuments/${action_set_id_document_referencedDocuments}</value>
                 </property>
             </configuration>
@@ -673,11 +673,11 @@
                     <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity']}</value>
                 </property>
                 <property>
-                    <name>mapred.input.dir</name>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${input_document_similarity}</value>
                 </property>
                 <property>
-                    <name>mapred.output.dir</name>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${output}/document_similarities_standard/${action_set_id_document_similarities_standard}</value>
                 </property>
                 <property>
@@ -705,11 +705,11 @@
                     <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization']}</value>
                 </property>
                 <property>
-                    <name>mapred.input.dir</name>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${input_matched_doc_organizations}</value>
                 </property>
                 <property>
-                    <name>mapred.output.dir</name>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${output}/matched_doc_organizations/${action_set_id_matched_doc_organizations}</value>
                 </property>
             </configuration>
@@ -752,16 +752,16 @@
             </prepare>
             <configuration>
                 <property>
-                    <name>mapred.input.dir</name>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${workingDir}/document_referencedProjects/${action_set_id_document_referencedProjects},${workingDir}/document_to_project_concepts/${action_set_id_document_referencedProjects}
                     </value>
                 </property>
                 <property>
-                    <name>mapred.output.dir</name>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${output}/document_referencedProjects/${action_set_id_document_referencedProjects}</value>
                 </property>
                 <property>
-                    <name>mapreduce.inputformat.class</name>
+                    <name>mapreduce.job.inputformat.class</name>
                     <value>org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat</value>
                 </property>
                 <property>
@@ -773,7 +773,7 @@
                     <value>org.apache.hadoop.io.Text</value>
                 </property>
                 <property>
-                    <name>mapreduce.map.class</name>
+                    <name>mapreduce.job.map.class</name>
                     <value>org.apache.hadoop.mapreduce.Mapper</value>
                 </property>
             </configuration>

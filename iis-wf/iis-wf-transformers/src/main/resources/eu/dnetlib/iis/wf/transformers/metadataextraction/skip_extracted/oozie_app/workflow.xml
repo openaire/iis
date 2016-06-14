@@ -34,11 +34,11 @@
         <name-node>${nameNode}</name-node>
         <configuration>
             <property>
-                <name>mapred.job.queue.name</name>
+                <name>mapreduce.job.queuename</name>
                 <value>${queueName}</value>
             </property>
             <property>
-                <name>oozie.launcher.mapred.job.queue.name</name>
+                <name>oozie.launcher.mapreduce.job.queuename</name>
                 <value>${oozieLauncherQueueName}</value>
             </property>
         </configuration>
@@ -67,11 +67,11 @@
 			</prepare>
             <configuration>
                 <property>
-                    <name>mapred.map.child.java.opts</name>
+                    <name>mapreduce.map.java.opts</name>
                     <value>${mapred_map_child_java_opts}</value>
                 </property>
                 <property>
-                    <name>mapred.reduce.child.java.opts</name>
+                    <name>mapreduce.reduce.java.opts</name>
                     <value>${mapred_reduce_child_java_opts}</value>
                 </property>
             </configuration>

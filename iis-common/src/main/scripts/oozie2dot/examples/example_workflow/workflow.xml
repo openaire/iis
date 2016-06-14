@@ -174,7 +174,7 @@
 			</prepare>
             <configuration>
                 <property>
-                    <name>mapred.job.queue.name</name>
+                    <name>mapreduce.job.queuename</name>
                     <value>${queueName}</value>
                 </property>
             </configuration>
@@ -239,7 +239,7 @@
 			</prepare>
             <configuration>
                 <property>
-                    <name>mapred.job.queue.name</name>
+                    <name>mapreduce.job.queuename</name>
                     <value>${queueName}</value>
                 </property>
             </configuration>
@@ -299,7 +299,7 @@
 			</prepare>
             <configuration>
                 <property>
-                    <name>mapred.job.queue.name</name>
+                    <name>mapreduce.job.queuename</name>
                     <value>${queueName}</value>
                 </property>
             </configuration>
@@ -416,7 +416,7 @@
 			</prepare>
             <configuration>
                 <property>
-                    <name>mapred.job.queue.name</name>
+                    <name>mapreduce.job.queuename</name>
                     <value>${queueName}</value>
                 </property>
             </configuration>
@@ -516,7 +516,7 @@
 			</prepare>
             <configuration>
                 <property>
-                    <name>mapred.job.queue.name</name>
+                    <name>mapreduce.job.queuename</name>
                     <value>${queueName}</value>
                 </property>
             </configuration>
@@ -606,7 +606,7 @@
 			</prepare>
             <configuration>
                 <property>
-                    <name>mapred.job.queue.name</name>
+                    <name>mapreduce.job.queuename</name>
                     <value>${queueName}</value>
                 </property>
             </configuration>
@@ -733,7 +733,7 @@
 			</prepare>
             <configuration>
                 <property>
-                    <name>mapred.job.queue.name</name>
+                    <name>mapreduce.job.queuename</name>
                     <value>${queueName}</value>
                 </property>
             </configuration>
@@ -792,7 +792,7 @@
 			</prepare>
             <configuration>
                 <property>
-                    <name>mapred.job.queue.name</name>
+                    <name>mapreduce.job.queuename</name>
                     <value>${queueName}</value>
                 </property>
             </configuration>
@@ -882,7 +882,7 @@
 			</prepare>
             <configuration>
                 <property>
-                    <name>mapred.job.queue.name</name>
+                    <name>mapreduce.job.queuename</name>
                     <value>${queueName}</value>
                 </property>
             </configuration>

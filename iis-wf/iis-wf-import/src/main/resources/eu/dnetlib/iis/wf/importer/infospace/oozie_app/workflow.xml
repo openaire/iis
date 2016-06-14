@@ -90,11 +90,11 @@
                 <value>true</value>
             </property>
             <property>
-                <name>mapred.job.queue.name</name>
+                <name>mapreduce.job.queuename</name>
                 <value>${queueName}</value>
             </property>
             <property>
-                <name>oozie.launcher.mapred.job.queue.name</name>
+                <name>oozie.launcher.mapreduce.job.queuename</name>
                 <value>${oozieLauncherQueueName}</value>
             </property>
         </configuration>
@@ -129,28 +129,28 @@
                     <value>30</value>
                 </property>
                 <property>
-                    <name>mapreduce.map.class</name>
+                    <name>mapreduce.job.map.class</name>
                     <value>eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceMapper</value>
                 </property>
                 <property>
-                    <name>mapreduce.reduce.class</name>
+                    <name>mapreduce.job.reduce.class</name>
                     <value>eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceReducer</value>
                 </property>
                 <!-- input configuration based on hbasedump importer-->
                 <property>
-                    <name>mapred.input.dir</name>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${input}</value>
                 </property>
                 <property>
-                    <name>mapreduce.inputformat.class</name>
+                    <name>mapreduce.job.inputformat.class</name>
                     <value>${mapreduce_inputformat_class}</value>
                 </property>
                 <property>
-                    <name>mapred.mapoutput.key.class</name>
+                    <name>mapreduce.map.output.key.class</name>
                     <value>org.apache.hadoop.io.Text</value>
                 </property>
                 <property>
-                    <name>mapred.mapoutput.value.class</name>
+                    <name>mapreduce.map.output.value.class</name>
                     <value>eu.dnetlib.iis.wf.importer.infospace.InfoSpaceRecord</value>
                 </property>
                 <!-- supported since hadoop 2.3.0 -->
@@ -160,11 +160,11 @@
                 </property>
                 <!-- output configuration based on mapred_import importer-->
                 <property>
-                    <name>mapred.output.key.class</name>
+                    <name>mapreduce.job.output.key.class</name>
                     <value>org.apache.avro.mapred.AvroKey</value>
                 </property>
                 <property>
-                    <name>mapred.output.value.class</name>
+                    <name>mapreduce.job.output.value.class</name>
                     <value>org.apache.avro.mapred.AvroValue</value>
                 </property>
                 <property>
@@ -177,7 +177,7 @@
                     <value>org.apache.hadoop.ipc.ProtobufRpcEngine</value>
                 </property>
                 <property>
-                    <name>mapred.output.dir</name>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${output}</value>
                 </property>
                 <!-- # Job-specific options -->

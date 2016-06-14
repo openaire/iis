@@ -18,11 +18,11 @@
         <name-node>${nameNode}</name-node>
         <configuration>
             <property>
-                <name>mapred.job.queue.name</name>
+                <name>mapreduce.job.queuename</name>
                 <value>${queueName}</value>
             </property>
             <property>
-                <name>oozie.launcher.mapred.job.queue.name</name>
+                <name>oozie.launcher.mapreduce.job.queuename</name>
                 <value>${oozieLauncherQueueName}</value>
             </property>
         </configuration>
@@ -50,32 +50,32 @@
 			</prepare>
             <configuration>
             	<property>
-					<name>mapreduce.inputformat.class</name>
+					<name>mapreduce.job.inputformat.class</name>
 					<value>org.apache.avro.mapreduce.AvroKeyInputFormat</value>
 				</property>
 				<!-- The output format seems to be required, JSON is written when missing -->
 				<property>
-					<name>mapreduce.outputformat.class</name>
+					<name>mapreduce.job.outputformat.class</name>
 					<value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
 				</property>
             	<property>
-					<name>mapred.mapoutput.key.class</name>
+					<name>mapreduce.map.output.key.class</name>
 					<value>org.apache.avro.mapred.AvroKey</value>
 				</property>
 				<property>
-					<name>mapred.mapoutput.value.class</name>
+					<name>mapreduce.map.output.value.class</name>
 					<value>org.apache.avro.mapred.AvroValue</value>
 				</property>
 				<property>
-					<name>mapred.output.key.class</name>
+					<name>mapreduce.job.output.key.class</name>
 					<value>org.apache.avro.mapred.AvroKey</value>
 				</property>
 				<property>
-					<name>mapred.output.value.class</name>
+					<name>mapreduce.job.output.value.class</name>
 					<value>org.apache.avro.mapred.AvroValue</value>
 				</property>
 				<property>
-					<name>mapred.output.key.comparator.class</name>
+					<name>mapreduce.job.output.key.comparator.class</name>
 					<value>org.apache.avro.hadoop.io.AvroKeyComparator</value>
 				</property>
 				<property>
@@ -84,7 +84,7 @@
 					</value>
 				</property>
 				<property>
-					<name>mapred.output.value.groupfn.class</name>
+					<name>mapreduce.job.output.group.comparator.class</name>
 					<value>org.apache.avro.hadoop.io.AvroKeyComparator</value>
 				</property>
 				
@@ -135,19 +135,19 @@
 		        </property>
                 
 				<property>
-                    <name>mapred.input.dir</name>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${input}</value>
                 </property>
                 <property>
-                    <name>mapred.output.dir</name>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${output}</value>
                 </property>
                 <property>
-                    <name>mapreduce.map.class</name>
+                    <name>mapreduce.job.map.class</name>
                     <value>eu.dnetlib.iis.wf.ingest.webcrawl.fundings.WebcrawlFundingsIngester</value>
                 </property>
                 <property>
-                    <name>mapred.reduce.tasks</name>
+                    <name>mapreduce.job.reduces</name>
                     <value>0</value>
                 </property>
             </configuration>
