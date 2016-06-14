@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
+import datafu.com.google.common.base.Objects;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSectionsSplitter;
@@ -18,7 +19,7 @@ import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSectionsSplitter;
  * 
  * @author madryk
  */
-public class FittingAffWordsMatchVoter implements AffOrgMatchVoter {
+public class FittingAffWordsMatchVoter extends AbstractAffOrgMatchVoter {
 
     private static final long serialVersionUID = 1L;
     
@@ -127,6 +128,19 @@ public class FittingAffWordsMatchVoter implements AffOrgMatchVoter {
         double fittingWordsRatio = (double)fittingWordsCount/affWordsCount;
         
         return fittingWordsRatio >= minFittingOrgWordsRatio;
+    }
+
+
+    //------------------------ toString --------------------------
+    
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("matchStength", getMatchStrength())
+                                           .add("charsToFilter", charsToFilter)
+                                           .add("minFittingOrgWordsRatio", minFittingOrgWordsRatio)
+                                           .add("minFittingOrgWordSimilarity", minFittingWordSimilarity)
+                                           .add("wordToRemoveMaxLength", wordToRemoveMaxLength)
+                                           .toString();
     }
 
 }

@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -9,8 +10,11 @@ import org.apache.commons.lang3.StringUtils;
  * 
  * @author madryk
  */
-class StringFilter {
+class StringFilter implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    
+    
     //------------------------ LOGIC --------------------------
     
     /**

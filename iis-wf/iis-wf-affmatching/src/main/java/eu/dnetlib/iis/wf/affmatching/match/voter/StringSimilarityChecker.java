@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import org.apache.commons.lang3.StringUtils;
@@ -9,7 +10,9 @@ import org.apache.commons.lang3.StringUtils;
  * 
  * @author madryk
  */
-class StringSimilarityChecker {
+class StringSimilarityChecker implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
 
     //------------------------ LOGIC --------------------------
