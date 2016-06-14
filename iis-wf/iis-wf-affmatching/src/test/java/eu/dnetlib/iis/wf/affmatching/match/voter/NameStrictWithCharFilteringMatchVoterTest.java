@@ -1,10 +1,16 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
+import static org.mockito.Mockito.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
@@ -13,10 +19,15 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 /**
 * @author Łukasz Dumiszewski
 */
-
+@RunWith(MockitoJUnitRunner.class)
 public class NameStrictWithCharFilteringMatchVoterTest {
 
+    @InjectMocks
     private NameStrictWithCharFilteringMatchVoter voter = new NameStrictWithCharFilteringMatchVoter(Lists.newArrayList(','));
+    
+    @Mock
+    private StringFilter stringFilter;
+    
     
     private AffMatchAffiliation affiliation = new AffMatchAffiliation("DOC1", 1);
     
@@ -35,6 +46,8 @@ public class NameStrictWithCharFilteringMatchVoterTest {
         
         organization.setName("mickey mouse's ice creams");
         
+        when(stringFilter.filterChars("mickey mouse's ice creams", ImmutableList.of(','))).thenReturn("mickey mouse's ice creams");
+        
         
         // execute & assert
         
@@ -52,6 +65,9 @@ public class NameStrictWithCharFilteringMatchVoterTest {
         
         organization.setName("mickey mouse's ice creams");
         
+        when(stringFilter.filterChars("mickey mouse's, ice creams", ImmutableList.of(','))).thenReturn("mickey mouse's ice creams");
+        when(stringFilter.filterChars("mickey mouse's ice creams", ImmutableList.of(','))).thenReturn("mickey mouse's ice creams");
+        
         
         // execute & assert
         
@@ -66,10 +82,11 @@ public class NameStrictWithCharFilteringMatchVoterTest {
         // given
         
         affiliation.setOrganizationName("donald duck's ice creams");
-        affiliation.setCountryCode("us");
         
         organization.setName("mickey mouse's ice creams");
-        organization.setCountryCode("us");
+        
+        when(stringFilter.filterChars("donald duck's ice creams", ImmutableList.of(','))).thenReturn("donald duck's ice creams");
+        when(stringFilter.filterChars("mickey mouse's ice creams", ImmutableList.of(','))).thenReturn("mickey mouse's ice creams");
         
         
         // execute & assert
