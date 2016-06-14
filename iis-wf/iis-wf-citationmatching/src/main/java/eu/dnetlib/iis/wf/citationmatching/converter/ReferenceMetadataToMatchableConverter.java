@@ -8,6 +8,8 @@ import static eu.dnetlib.iis.wf.citationmatching.converter.BasicMetadataDataExtr
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.StringUtils;
+
 import eu.dnetlib.iis.citationmatching.schemas.BasicMetadata;
 import eu.dnetlib.iis.citationmatching.schemas.ReferenceMetadata;
 import pl.edu.icm.coansys.citations.data.MatchableEntity;
@@ -38,7 +40,7 @@ public class ReferenceMetadataToMatchableConverter implements Serializable {
         String title = extractTitle(metadata);
         String year = extractYear(metadata);
 
-        String rawText = (refMetadata.getRawText() != null)
+        String rawText = StringUtils.isNotBlank(refMetadata.getRawText())
                 ? refMetadata.getRawText().toString()
                 : (authors + ": " + title + ". " + journal + " (" + year + ") " + pages);
 
