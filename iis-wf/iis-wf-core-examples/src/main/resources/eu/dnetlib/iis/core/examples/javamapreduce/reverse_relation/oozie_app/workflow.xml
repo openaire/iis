@@ -74,9 +74,6 @@ Note that documentation placed in comments in this file uses the
 
 				<!-- ## Various options -->
 
-				<!--This property seems to not be needed -->
-				<!--<property> <name>mapreduce.job.queuename</name> <value>${queueName}</value> 
-					</property> -->
 				<property>
 					<name>mapreduce.job.inputformat.class</name>
 					<value>org.apache.avro.mapreduce.AvroKeyInputFormat</value>

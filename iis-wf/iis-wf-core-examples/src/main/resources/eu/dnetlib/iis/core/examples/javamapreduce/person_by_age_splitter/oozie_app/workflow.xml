@@ -160,11 +160,6 @@
 					<value>org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat
 					</value>
 				</property>
-				<!-- This is an outdated property -->
-				<!-- <property> 
-					<name>mapreduce.job.maps</name>
-					<value>1</value> 
-				</property> -->
 
 				<!-- Other stuff -->
 				<property>
