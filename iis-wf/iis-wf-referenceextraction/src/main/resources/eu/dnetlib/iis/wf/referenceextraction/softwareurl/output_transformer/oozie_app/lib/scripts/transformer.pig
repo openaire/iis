@@ -2,7 +2,7 @@ define avro_load AvroStorage('$schema_input');
 
 define avro_store AvroStorage('$schema_output');
 
-define DEDUPLICATE_IDS_WITH_CONFIDENCE eu.dnetlib.iis.common.pig.udfs.DeduplicateIdsWithConfidence;
+define DEDUPLICATE_IDS_WITH_CONFIDENCE eu.dnetlib.iis.common.pig.udfs.DeduplicateIdsWithConfidence('2');
 
 documentToSoftwareUrl = load '$input' using avro_load;
 
