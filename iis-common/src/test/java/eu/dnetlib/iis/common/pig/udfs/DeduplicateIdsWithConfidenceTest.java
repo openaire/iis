@@ -21,7 +21,6 @@ import com.google.common.collect.Lists;
  */
 public class DeduplicateIdsWithConfidenceTest {
 	
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testUDF() throws IOException {
 		DeduplicateIdsWithConfidence udf = new DeduplicateIdsWithConfidence();
