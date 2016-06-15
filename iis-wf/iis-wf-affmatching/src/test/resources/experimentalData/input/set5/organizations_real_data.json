@@ -79,7 +79,7 @@
 {"id":"20|corda_______::67ae87295f30d3aac458f70f9fdbb3cb","name":"ILIA STATE UNIVERSITY*ILIAUNI","shortName":"ILIAUNI","countryName":"Georgia","countryCode":"GE","websiteUrl":"www.iliauni.edu.ge"}
 {"id":"20|corda_______::6a3434a15397eeae50e62931afd6e2da","name":"UNIVERSITAET WIEN","shortName":"UNIVIE","countryName":"Austria","countryCode":"AT","websiteUrl":"www.univie.ac.at"}
 {"id":"20|corda_______::6b612a76139360e4379f0d9d11fe006b","name":"SAGEMCOM ENERGY & TELECOM SAS","shortName":"Sagemcom Energy and Telecom","countryName":"France","countryCode":"FR","websiteUrl":""}
-{"id":"20|corda_______::6b7f0d75e26f4f97cbaaec40995209c3","name":"THE JACKSON LABORATORY NON PROFIT CORPORATION","shortName":"","countryName":"United States","countryCode":"US","websiteUrl":"www.jax.org"
+{"id":"20|corda_______::6b7f0d75e26f4f97cbaaec40995209c3","name":"THE JACKSON LABORATORY NON PROFIT CORPORATION","shortName":"","countryName":"United States","countryCode":"US","websiteUrl":"www.jax.org"}
 {"id":"20|corda_______::6d1b8093f133e58bef3b264a90453da6","name":"ECOLOGICAL CONSULTANCY SERVICES LIMITED","shortName":"ECOSERVE","countryName":"Ireland","countryCode":"IE","websiteUrl":""}
 {"id":"20|corda_______::6d5302692be2e08662d6f8354c3a96d0","name":"National University Corporation, Kyoto University","shortName":"Kyoto University","countryName":"Japan","countryCode":"JP","websiteUrl":"http://www.kyoto-u.ac.jp/en"}
 {"id":"20|corda_______::6d9218ba51416593e4757a1d009d49b0","name":"ISLENSK ERFDAGREINING EHF","shortName":"DECODE","countryName":"Iceland","countryCode":"IS","websiteUrl":"www.decode.com"}
@@ -308,7 +308,7 @@
 {"id":"20|dedup_wf_001::479a205f2df034b3308fc8fb11568367","name":"UNIVERSITE D'AIX MARSEILLE","shortName":"AMU","countryName":"France","countryCode":"FR","websiteUrl":""}
 {"id":"20|dedup_wf_001::4839c069b623e75ea7f192ff862584bc","name":"LIBRE SOCIETA A RESPONSABILITA LIMITATA","shortName":"LIB","countryName":"Italy","countryCode":"IT","websiteUrl":"www.piandbi.com"}
 {"id":"20|dedup_wf_001::492a74445d1c4220ee162d379ecf778c","name":"UNIVERSITAET AUGSBURG","shortName":"UAU","countryName":"Germany","countryCode":"DE","websiteUrl":"www.uni-augsburg.de"}
-{"id":"20|dedup_wf_001::496afbd8d90a675a8181a5738b35a3dc","name":"PLYMOUTH MARINE LABORATORY","shortName":"PML","countryName":"United Kingdom","countryCode":"GB","websiteUrl":"http://www.pml.ac.uk/"},
+{"id":"20|dedup_wf_001::496afbd8d90a675a8181a5738b35a3dc","name":"PLYMOUTH MARINE LABORATORY","shortName":"PML","countryName":"United Kingdom","countryCode":"GB","websiteUrl":"http://www.pml.ac.uk/"}
 {"id":"20|dedup_wf_001::496bf6e2e977b839671eeedd3882a326","name":"TECNOLOGIAS SERVICIOS TELEMATICOS Y SISTEMAS S.A.","shortName":"TST","countryName":"Spain","countryCode":"ES","websiteUrl":"www.tst-sistemas.es"}
 {"id":"20|dedup_wf_001::49ba1cca3106443e128f67bee2d3e544","name":"UNIVERSITAET POTSDAM","shortName":"UP","countryName":"Germany","countryCode":"DE","websiteUrl":"www.uni-potsdam.de"}
 {"id":"20|dedup_wf_001::4a04cdf6a52c98e9a2625e01bdef7332","name":"NATIONAL  RESEARCH COUNCIL CANADA","shortName":"NRC","countryName":"Canada","countryCode":"CA","websiteUrl":"http://pubs.nrc-cnrc.gc.ca/eng/home.html"}
@@ -375,21 +375,21 @@
 {"id":"20|dedup_wf_001::6d312374fd1b6ca90d4a07b5d1aa80d0","name":"FYZIKALNY USTAV SLOVENSKEJ AKADEMIE VIED","shortName":"FU SAV","countryName":"Slovakia","countryCode":"SK","websiteUrl":"www.fu.sav.sk"}
 {"id":"20|dedup_wf_001::6d94dddb8f331f4e1c91dc40d550f485","name":"GATC BIOTECH AG","shortName":"GATC","countryName":"Germany","countryCode":"DE","websiteUrl":"www.gatc-biotech.com"}
 {"id":"20|dedup_wf_001::6da6d2c002f0480e1b30282b3cc58247","name":"MAKERERE UNIVERSITY","shortName":"MAKERERE","countryName":"Uganda","countryCode":"UG","websiteUrl":"http://www.mak.ac.ug/"}
-{"id":"20|dedup_wf_001::6dc1a1bcf286c6d68f1d818ac1b18ed3","name":"OESTERREICHISCHE AKADEMIE DER WISSENSCHAFTEN","shortName":"OEAW","countryName":"Austria","countryCode":"AT","websiteUrl":"www.oeaw.ac.at"},
+{"id":"20|dedup_wf_001::6dc1a1bcf286c6d68f1d818ac1b18ed3","name":"OESTERREICHISCHE AKADEMIE DER WISSENSCHAFTEN","shortName":"OEAW","countryName":"Austria","countryCode":"AT","websiteUrl":"www.oeaw.ac.at"}
 {"id":"20|dedup_wf_001::6f4c36522bf75427acc112b3a5820d3e","name":"SCIENCE AND TECHNOLOGY FACILITIES COUNCIL","shortName":"STFC","countryName":"United Kingdom","countryCode":"GB","websiteUrl":"www.scitech.ac.uk"}
-{"id":"20|dedup_wf_001::710087e3688f3a6cc2f24181a8040f47","name":"MILTENYI BIOTEC GMBH","shortName":"Miltenyi","countryName":"Germany","countryCode":"DE","websiteUrl":"www.miltenyibiotec.com"},
+{"id":"20|dedup_wf_001::710087e3688f3a6cc2f24181a8040f47","name":"MILTENYI BIOTEC GMBH","shortName":"Miltenyi","countryName":"Germany","countryCode":"DE","websiteUrl":"www.miltenyibiotec.com"}
 {"id":"20|dedup_wf_001::71d0d8f0fb10fde2c7bf7f734dd399ed","name":"RUPRECHT-KARLS-UNIVERSITAET HEIDELBERG","shortName":"UHEI","countryName":"Germany","countryCode":"DE","websiteUrl":"www.uni-heidelberg.de"}
 {"id":"20|dedup_wf_001::732788ddffb8276020c59ee27acb56f9","name":"UNIVERSITA DEGLI STUDI DI ROMA LA SAPIENZA","shortName":"SAPIENZA","countryName":"Italy","countryCode":"IT","websiteUrl":"www.uniroma1.it"}
 {"id":"20|dedup_wf_001::74d4d0d65b689e71060b7a542b05fa18","name":"HELMHOLTZ ZENTRUM MUENCHEN DEUTSCHES FORSCHUNGSZENTRUM FUER GESUNDHEIT UND UMWELT GMBH","shortName":"HMGU","countryName":"Germany","countryCode":"DE","websiteUrl":"www.helmholtz-muenchen.de"}
 {"id":"20|dedup_wf_001::75121cd3a4699b2baa0db5cd35bd00df","name":"NORGES TEKNISK-NATURVITENSKAPELIGE UNIVERSITET NTNU","shortName":"NTNU","countryName":"Norway","countryCode":"NO","websiteUrl":"www.ntnu.no"}
-{"id":"20|dedup_wf_001::75328999371efd9371389a34b41ecc1c","name":"UNIVERSITAIR MEDISCH CENTRUM UTRECHT","shortName":"UMC UTRECHT","countryName":"Netherlands","countryCode":"NL","websiteUrl":"www.umcutrecht.nl"},
-{"id":"20|dedup_wf_001::76c68e0cc781b7d1c48094c5df01cb4f","name":"INSTYTUT OCEANOLOGII POLSKIEJ AKADEMII NAUK","shortName":"IO PAN","countryName":"Poland","countryCode":"PL","websiteUrl":"www.iopan.gda.pl"},
+{"id":"20|dedup_wf_001::75328999371efd9371389a34b41ecc1c","name":"UNIVERSITAIR MEDISCH CENTRUM UTRECHT","shortName":"UMC UTRECHT","countryName":"Netherlands","countryCode":"NL","websiteUrl":"www.umcutrecht.nl"}
+{"id":"20|dedup_wf_001::76c68e0cc781b7d1c48094c5df01cb4f","name":"INSTYTUT OCEANOLOGII POLSKIEJ AKADEMII NAUK","shortName":"IO PAN","countryName":"Poland","countryCode":"PL","websiteUrl":"www.iopan.gda.pl"}
 {"id":"20|dedup_wf_001::7725919dd42e5c4f7cfb4354f8ed7da2","name":"ISTITUTO NAZIONALE DI FISICA NUCLEARE","shortName":"INFN","countryName":"Italy","countryCode":"IT","websiteUrl":"www.infn.it"}
-{"id":"20|dedup_wf_001::773f77a921c5af0228a3778b03ac1ecf","name":"HELMHOLTZ-ZENTRUM DRESDEN-ROSSENDORF EV","shortName":"HZDR","countryName":"Germany","countryCode":"DE","websiteUrl":"www.hzdr.de"},
-{"id":"20|dedup_wf_001::7910cfbedd367dad7f8dc2f7f44f59b8","name":"ISTITUTO NAZIONALE DI ASTROFISICA","shortName":"INAF","countryName":"Italy","countryCode":"IT","websiteUrl":"www.inaf.it"},
-{"id":"20|dedup_wf_001::79c6c7b264e3e5eab74a8d4db8cb758f","name":"UNIVERSITY OF NEBRASKA","shortName":"","countryName":"United States","countryCode":"US","websiteUrl":"www.unl.edu"},
+{"id":"20|dedup_wf_001::773f77a921c5af0228a3778b03ac1ecf","name":"HELMHOLTZ-ZENTRUM DRESDEN-ROSSENDORF EV","shortName":"HZDR","countryName":"Germany","countryCode":"DE","websiteUrl":"www.hzdr.de"}
+{"id":"20|dedup_wf_001::7910cfbedd367dad7f8dc2f7f44f59b8","name":"ISTITUTO NAZIONALE DI ASTROFISICA","shortName":"INAF","countryName":"Italy","countryCode":"IT","websiteUrl":"www.inaf.it"}
+{"id":"20|dedup_wf_001::79c6c7b264e3e5eab74a8d4db8cb758f","name":"UNIVERSITY OF NEBRASKA","shortName":"","countryName":"United States","countryCode":"US","websiteUrl":"www.unl.edu"}
 {"id":"20|dedup_wf_001::7a4f97bd0f229f880eec55ad7f820dec","name":"UNIVERSITY OF PORTSMOUTH HIGHER EDUCATION CORPORATION","shortName":"UNIVERSITY OF PORTSMOUTH HIGHER EDUCATION CORPORATION","countryName":"United Kingdom","countryCode":"GB","websiteUrl":"www.port.ac.uk"}
-{"id":"20|dedup_wf_001::7acf3c61303bf181527565d422c74770","name":"MINISTERIE VAN VOLKSGEZONDHEID, WELZIJN EN SPORT","shortName":"NLNA","countryName":"Netherlands","countryCode":"NL","websiteUrl":""},
+{"id":"20|dedup_wf_001::7acf3c61303bf181527565d422c74770","name":"MINISTERIE VAN VOLKSGEZONDHEID, WELZIJN EN SPORT","shortName":"NLNA","countryName":"Netherlands","countryCode":"NL","websiteUrl":""}
 {"id":"20|dedup_wf_001::7b740c27ae6421a980e5a687e3aa3f2b","name":"KING'S COLLEGE LONDON","shortName":"KCL","countryName":"United Kingdom","countryCode":"GB","websiteUrl":"www.kcl.ac.uk"}
 {"id":"20|dedup_wf_001::7b8ec0dd1a886d25a3dc2e11c8644a06","name":"INSTITUT PASTEUR","shortName":"IP","countryName":"France","countryCode":"FR","websiteUrl":"http://www.pasteur.fr"}
 {"id":"20|dedup_wf_001::7bf251ac3765b5e89d82270a1763d09f","name":"MARINE INSTITUTE","shortName":"MI","countryName":"Ireland","countryCode":"IE","websiteUrl":"www.marine.ie"}
@@ -403,7 +403,7 @@
 {"id":"20|dedup_wf_001::8154407fd9a084cbe4f83c4a7cabc9d2","name":"INSTITUT FUER MOLEKULARE BIOTECHNOLOGIE GMBH","shortName":"IMBA","countryName":"Austria","countryCode":"AT","websiteUrl":"www.imba.oeaw.ac.at"}
 {"id":"20|dedup_wf_001::820e705835c217749c9c63e31ca4cc7a","name":"CARLETON UNIVERSITY","shortName":"","countryName":"Canada","countryCode":"CA","websiteUrl":"http://www.carleton.ca/"}
 {"id":"20|dedup_wf_001::8215e43cbb306e3d41e6ce30065b792b","name":"FUNDACAO CALOUSTE GULBENKIAN","shortName":"FCG-IGC","countryName":"Portugal","countryCode":"PT","websiteUrl":"http://www.gulbenkian.pt/Institucional/pt/Homepage"}
-{"id":"20|dedup_wf_001::8265fd7ef437ee7b1ff382f3bbf5b846","name":"UNIVERSITEIT LEIDEN","shortName":"UNIVERSITEIT LEIDEN","countryName":"Netherlands","countryCode":"NL","websiteUrl":"http://www.leidenuniv.nl"},
+{"id":"20|dedup_wf_001::8265fd7ef437ee7b1ff382f3bbf5b846","name":"UNIVERSITEIT LEIDEN","shortName":"UNIVERSITEIT LEIDEN","countryName":"Netherlands","countryCode":"NL","websiteUrl":"http://www.leidenuniv.nl"}
 {"id":"20|dedup_wf_001::82c87f641bb6219626a0ceca81e0d434","name":"Sabanci University","shortName":"Sabanci University","countryName":"Turkey","countryCode":"TR","websiteUrl":"http://www.sabanciuniv.edu/eng/"}
 {"id":"20|dedup_wf_001::82cf127585e76ec1b29cde4e3d9d268f","name":"M V LOMONOSOV MOSCOW STATE UNIVERSITY","shortName":"MSU","countryName":"Russian Federation","countryCode":"RU","websiteUrl":"www.msu.ru"}
 {"id":"20|dedup_wf_001::82edf81ea7bfb23bcad52ccfc148c122","name":"GRUPO ANTOLIN-INGENIERIA SA","shortName":"ANTOLIN","countryName":"Spain","countryCode":"ES","websiteUrl":"www.grupoantolin.com"}
@@ -434,7 +434,7 @@
 {"id":"20|dedup_wf_001::95e5310fcf607c054ec17b6874e8d527","name":"UNIVERSITY OF SUNDERLAND","shortName":"UoS","countryName":"United Kingdom","countryCode":"GB","websiteUrl":"http://www.sunderland.ac.uk/"}
 {"id":"20|dedup_wf_001::96617479dbd857acee4ae173be351fc6","name":"NORGES MILJO-OG BIOVITENSKAPLIGE UNIVERSITET","shortName":"NORWEGIAN UNIVERSITY OF LIFE SCIENCES","countryName":"Norway","countryCode":"NO","websiteUrl":"http://www.umb.no"}
 {"id":"20|dedup_wf_001::969c1ac556eff11f8e79457fc3a31e3f","name":"EUROPEAN MOLECULAR BIOLOGY LABORATORY","shortName":"EMBL","countryName":"Germany","countryCode":"DE","websiteUrl":"www.embl.org"}
-{"id":"20|dedup_wf_001::97b9a0eeb3bb04f1ecc87a21c44ea3a5","name":"BAYER CROPSCIENCE NV","shortName":"Bayer","countryName":"Belgium","countryCode":"BE","websiteUrl":"www.bayercropscience.com"},
+{"id":"20|dedup_wf_001::97b9a0eeb3bb04f1ecc87a21c44ea3a5","name":"BAYER CROPSCIENCE NV","shortName":"Bayer","countryName":"Belgium","countryCode":"BE","websiteUrl":"www.bayercropscience.com"}
 {"id":"20|dedup_wf_001::98ceb289f59d68ccf81152897a4a42b7","name":"SVERIGES LANTBRUKSUNIVERSITET","shortName":"SLU","countryName":"Sweden","countryCode":"SE","websiteUrl":"http://www.slu.se"}
 {"id":"20|dedup_wf_001::98e99e8303b36c44be4a214cf2589029","name":"UNIVERSITAET ZUERICH","shortName":"UZH","countryName":"Switzerland","countryCode":"CH","websiteUrl":"http://www.uzh.ch"}
 {"id":"20|dedup_wf_001::99c7b023e47717e114d60f304599553d","name":"STICHTING BIOMEDICAL PRIMATE RESEARCH CENTER","shortName":"BPRC","countryName":"Netherlands","countryCode":"NL","websiteUrl":"www.bprc.nl"}
@@ -442,7 +442,7 @@
 {"id":"20|dedup_wf_001::9a330344165b98bf2361bafd58cb5edc","name":"RHEINISCHE FRIEDRICH-WILHELMS-UNIVERSITAT BONN","shortName":"UBO","countryName":"Germany","countryCode":"DE","websiteUrl":"www.uni-bonn.de"}
 {"id":"20|dedup_wf_001::9ada34109c95f1eadf3d8a1a1151ab73","name":"NACIONALNI INSTITUT ZA BIOLOGIJO","shortName":"NIB","countryName":"Slovenia","countryCode":"SI","websiteUrl":"www.nib.si"}
 {"id":"20|dedup_wf_001::9b483649200d94f9ed4103f027f976db","name":"Associated Universities, Inc. / National Radio Astronomy Observatory","shortName":"NRAO","countryName":"United States","countryCode":"US","websiteUrl":"www.nrao.edu"}
-{"id":"20|dedup_wf_001::9b4deec7a23d28c4b0d318015ef45d83","name":"UNIVERSITAET PADERBORN","shortName":"UPB","countryName":"Germany","countryCode":"DE","websiteUrl":"www.uni-paderborn.de"},
+{"id":"20|dedup_wf_001::9b4deec7a23d28c4b0d318015ef45d83","name":"UNIVERSITAET PADERBORN","shortName":"UPB","countryName":"Germany","countryCode":"DE","websiteUrl":"www.uni-paderborn.de"}
 {"id":"20|dedup_wf_001::9cb306830d170f6ddb09c7b08097e46b","name":"FONDATION EUROPEENNE DE LA SCIENCE","shortName":"ESF","countryName":"France","countryCode":"FR","websiteUrl":"www.esf.org"}
 {"id":"20|dedup_wf_001::9cbd0dcfe9a0e4ccffb762993b354e2d","name":"THE UNIVERSITY OF EDINBURGH","shortName":"UEDIN","countryName":"United Kingdom","countryCode":"GB","websiteUrl":"www.ed.ac.uk"}
 {"id":"20|dedup_wf_001::9d6b100b052cd55ef5ebcfa538ee2335","name":"UNIVERSITY OF LEEDS","shortName":"UNIVLEEDS","countryName":"United Kingdom","countryCode":"GB","websiteUrl":"www.leeds.ac.uk"}
@@ -528,7 +528,7 @@
 {"id":"20|dedup_wf_001::dffa9041f52f09baa6968dabe6fafa5b","name":"INSTITUT DE RECHERCHE POUR LE DEVELOPPEMENT","shortName":"IRD","countryName":"France","countryCode":"FR","websiteUrl":"www.ird.fr"}
 {"id":"20|dedup_wf_001::e096ef5c3eb9d519c519e260d06a5f47","name":"NATIONAL RESEARCH FOUNDATION","shortName":"OAD","countryName":"South Africa","countryCode":"ZA","websiteUrl":"www.nrf.ac.za"}
 {"id":"20|dedup_wf_001::e0c7ecad01fc35af22931dddd8032ea3","name":"FORSCHUNGSZENTRUM JULICH GMBH","shortName":"FORSCHUNGSZENTRUM JUELICH GMBH","countryName":"Germany","countryCode":"DE","websiteUrl":"www.fz-juelich.de"}
-{"id":"20|dedup_wf_001::e0cd3122f0bdf6d2db3cf37f83bc2582","name":"INSTITUT SCIENTIFIQUE DE SANTE PUBLIQUE","shortName":"WIV-ISP (IPH)","countryName":"Belgium","countryCode":"BE","websiteUrl":"www.wiv-isp.be"},
+{"id":"20|dedup_wf_001::e0cd3122f0bdf6d2db3cf37f83bc2582","name":"INSTITUT SCIENTIFIQUE DE SANTE PUBLIQUE","shortName":"WIV-ISP (IPH)","countryName":"Belgium","countryCode":"BE","websiteUrl":"www.wiv-isp.be"}
 {"id":"20|dedup_wf_001::e1b4522fc7ade130f082e54ff6052e6d","name":"AGENCIA ESTATAL CONSEJO SUPERIOR DE INVESTIGACIONES CIENTIFICAS","shortName":"CSIC","countryName":"Spain","countryCode":"ES","websiteUrl":"http://www.csic.es"}
 {"id":"20|dedup_wf_001::e62dc7a974c14196bfb65cd430237cb7","name":"THE HEBREW UNIVERSITY OF JERUSALEM","shortName":"THE HEBREW UNIVERSITY OF JERUSALEM","countryName":"Israel","countryCode":"IL","websiteUrl":"www.huji.ac.il"}
 {"id":"20|dedup_wf_001::e871829af55b6964dabf21ebab6ec230","name":"BEN-GURION UNIVERSITY OF THE NEGEV","shortName":"BGU","countryName":"Israel","countryCode":"IL","websiteUrl":"www.bgu.ac.il"}
@@ -547,7 +547,7 @@
 {"id":"20|dedup_wf_001::f101ad66ae981db77d065d79eda42e69","name":"UNIVERSITY OF GUELPH","shortName":"","countryName":"Canada","countryCode":"CA","websiteUrl":"www.uoguelph.ca"}
 {"id":"20|dedup_wf_001::f2323f9ed70f0f3a93fdfbb92f715e0e","name":"CENTRE NATIONAL DE LA RECHERCHE SCIENTIFIQUE","shortName":"CNRS-LN2","countryName":"France","countryCode":"FR","websiteUrl":"www.cnrs.fr"}
 {"id":"20|dedup_wf_001::f23e962632dcc83e85c1ab6e7fcdd53a","name":"MEDIZINISCHE HOCHSCHULE HANNOVER","shortName":"MHH","countryName":"Germany","countryCode":"DE","websiteUrl":"www.mh-hannover.de"}
-{"id":"20|dedup_wf_001::f38d3dfca609a292b0c643c5bb207fc9","name":"ARISTOTELIO PANEPISTIMIO THESSALONIKIS","shortName":"AUTH","countryName":"Greece","countryCode":"GR","websiteUrl":"www.auth.gr"},
+{"id":"20|dedup_wf_001::f38d3dfca609a292b0c643c5bb207fc9","name":"ARISTOTELIO PANEPISTIMIO THESSALONIKIS","shortName":"AUTH","countryName":"Greece","countryCode":"GR","websiteUrl":"www.auth.gr"}
 {"id":"20|dedup_wf_001::f4dfcb3a3961e84a2a9ce3ad6d7a5c1d","name":"UNIVERSITY OF PLYMOUTH","shortName":"UOP","countryName":"United Kingdom","countryCode":"GB","websiteUrl":""}
 {"id":"20|dedup_wf_001::f5755adbea56317814165a5d5a4ce557","name":"JULIUS-MAXIMILIANS UNIVERSITAET WUERZBURG","shortName":"UNI WUE","countryName":"Germany","countryCode":"DE","websiteUrl":"http://www.uni-wuerzburg.de"}
 {"id":"20|dedup_wf_001::f5ffd22229a743a6d71537907cafea7d","name":"UNIVERSITY OF SASKATCHEWAN","shortName":"USASK","countryName":"Canada","countryCode":"CA","websiteUrl":"www.usask.ca"}
