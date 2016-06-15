@@ -1,0 +1,841 @@
+
+{"id": "50|dedup_wf_001::55b38cca37bdd8f48d419ac933cadf18",
+    "affiliations": [
+        {"organization":"B.J.A. Watt, P. Motylinski and R.S. Thorne Department Of Physics and Astronomy, University College London Gower Place","countryName":"UK","countryCode":"UK","address":"London, WC1E 6BT","rawText":"B.J.A. Watt, P. Motylinski and R.S. Thorne Department Of Physics and Astronomy, University College London Gower Place, London, WC1E 6BT, UK"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::47e7ee48f4bf45cc9528e7396e72c4cd",
+    "affiliations": [
+        {"organization":"Max Planck Institute for Marine Microbiology","countryName":"Germany","countryCode":"DE","address":"Bremen","rawText":"Max Planck Institute for Marine Microbiology, Bremen, Germany"},
+        {"organization":"Research Group for Marine Geochemistry, Institute for Chemistry and Biology of the Marine Environment (ICBM), University of Oldenburg","countryName":"Germany","countryCode":"DE","address":"Oldenburg","rawText":"Research Group for Marine Geochemistry, Institute for Chemistry and Biology of the Marine Environment (ICBM), University of Oldenburg, Oldenburg, Germany"},
+        {"organization":"School of Biosciences, University of Birmingham","countryName":"United Kingdom","countryCode":"UK","address":"Birmingham","rawText":"School of Biosciences, University of Birmingham, Birmingham, United Kingdom"},
+        {"organization":"Department of Biological Oceanography, Leibniz-Institute for Baltic Sea Research Warnemuende (IOW)","countryName":"Germany","countryCode":"DE","address":"Rostock","rawText":"Department of Biological Oceanography, Leibniz-Institute for Baltic Sea Research Warnemuende (IOW), Rostock, Germany"},
+        {"organization":"University of New South Wales","countryName":"Australia","countryCode":"AU","address":null,"rawText":"University of New South Wales, Australia"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::706eaa3c94d66704de70d0bea0206b02",
+    "affiliations": [
+        {"organization":"Institute of Biochemistry, Department of Biology, Swiss Federal Institute of Technology Zürich","countryName":"Switzerland","countryCode":"CH","address":"CH-8093 Zürich","rawText":"Institute of Biochemistry, Department of Biology, Swiss Federal Institute of Technology Zürich, CH-8093 Zürich, Switzerland"},
+        {"organization":"Integrative Systems Biology Unit, Okinawa Institute of Science and Technology","countryName":"Japan","countryCode":"JP","address":"Kunigami, Okinawa 904-0412","rawText":"Integrative Systems Biology Unit, Okinawa Institute of Science and Technology, Kunigami, Okinawa 904-0412, Japan"},
+        {"organization":"Department of Biochemistry, Molecular Biology, and Cell Biology, Northwestern University","countryName":null,"countryCode":null,"address":"Evanston, IL 60208","rawText":"Department of Biochemistry, Molecular Biology, and Cell Biology, Northwestern University, Evanston, IL 60208"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::c7b4be89d7cad0db0edf48063c592ae3",
+    "affiliations": [
+        {"organization":"Laboratory of Vaccinology and Mucosal Immunity, Université Libre de Bruxelles","countryName":"Belgium","countryCode":"BE","address":"Brussels","rawText":"Laboratory of Vaccinology and Mucosal Immunity, Université Libre de Bruxelles, Brussels, Belgium"},
+        {"organization":"Nephrology Department, Hôpital Erasme, Université Libre de Bruxelles","countryName":"Belgium","countryCode":"BE","address":"Brussels","rawText":"Nephrology Department, Hôpital Erasme, Université Libre de Bruxelles, Brussels, Belgium"},
+        {"organization":"Nephrology Department, Hôpital Brugmann, Université Libre de Bruxelles","countryName":"Belgium","countryCode":"BE","address":"Brussels","rawText":"Nephrology Department, Hôpital Brugmann, Université Libre de Bruxelles, Brussels, Belgium"},
+        {"organization":"INSERM","countryName":"France","countryCode":"FR","address":"Lille","rawText":"INSERM, Lille, France"},
+        {"organization":"Institut Pasteur de Lille, Center for Infection and Immunity of Lille","countryName":"France","countryCode":"FR","address":"Lille","rawText":"Institut Pasteur de Lille, Center for Infection and Immunity of Lille, Lille, France"},
+        {"organization":"CNRS UMR8204","countryName":"France","countryCode":"FR","address":"Lille","rawText":"CNRS UMR8204, Lille, France"},
+        {"organization":"Université Lille Nord de France","countryName":"France","countryCode":"FR","address":"Lille","rawText":"Université Lille Nord de France, Lille, France"},
+        {"organization":"Service de Gestion du Risque Infectieux, des Vigilances et d'Infectiologie, CHRU","countryName":"France","countryCode":"FR","address":"Lille","rawText":"Service de Gestion du Risque Infectieux, des Vigilances et d'Infectiologie, CHRU, Lille, France"},
+        {"organization":"Immunobiology Clinic, Hôpital Erasme, Université Libre de Bruxelles","countryName":"Belgium","countryCode":"BE","address":"Brussels","rawText":"Immunobiology Clinic, Hôpital Erasme, Université Libre de Bruxelles, Brussels, Belgium"},
+        {"organization":"Johns Hopkins University School of Medicine","countryName":"United States of America","countryCode":"US","address":null,"rawText":"Johns Hopkins University School of Medicine, United States of America"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::b5c0d7bb319d3f8bdc1c15338d60d69d",
+    "affiliations": [
+        {"organization":"Trypanosome Cell Biology Unit, Institut Pasteur and CNRS URA 2581         Paris","countryName":"France","countryCode":"FR","address":null,"rawText":"Trypanosome Cell Biology Unit, Institut Pasteur and CNRS URA 2581         Paris, France"},
+        {"organization":"Unit of Veterinary Protozoology, Department of Biomedical Sciences, Institute of Tropical Medicine         Antwerp","countryName":"Belgium","countryCode":"BE","address":null,"rawText":"Unit of Veterinary Protozoology, Department of Biomedical Sciences, Institute of Tropical Medicine         Antwerp, Belgium"},
+        {"organization":"Laboratory of Zoophysiology, Department of Physiology, University of Ghent         Ghent","countryName":"Belgium","countryCode":"BE","address":null,"rawText":"Laboratory of Zoophysiology, Department of Physiology, University of Ghent         Ghent, Belgium"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::38533019a6a435e2d1ca9d795a0ace1d",
+    "affiliations": [
+        {"organization":"Department of Astronomy, Yale University","countryName":"USA","countryCode":"US","address":"P.O. Box 208101, New Haven CT 06520-8101","rawText":"Department of Astronomy, Yale University, P.O. Box 208101, New Haven CT 06520-8101, USA"},
+        {"organization":"Homi Bhabha Centre for Science Education","countryName":"India","countryCode":"IN","address":"TIFR, V. N. Purav Marg, Mankhurd, Mumbai 400088","rawText":"Homi Bhabha Centre for Science Education, TIFR, V. N. Purav Marg, Mankhurd, Mumbai 400088, India"},
+        {"organization":"Astronomical Institute 'Anton Pannekoek', University of Amsterdam","countryName":"the Netherlands","countryCode":"NL","address":"Science Park 904, 1098 HX Amsterdam","rawText":"Astronomical Institute 'Anton Pannekoek', University of Amsterdam, Science Park 904, 1098 HX Amsterdam, the Netherlands"},
+        {"organization":"Stellar Astrophysics Centre, Department of Physics and Astronomy, Aarhus University","countryName":"Denmark","countryCode":"DK","address":"Ny Munkegade 120, DK-8000 Aarhus C","rawText":"Stellar Astrophysics Centre, Department of Physics and Astronomy, Aarhus University, Ny Munkegade 120, DK-8000 Aarhus C, Denmark"},
+        {"organization":"School of Physics and Astronomy, University of Birmingham","countryName":"UK","countryCode":"UK","address":"Edgbaston, Birmingham B15 2TT","rawText":"School of Physics and Astronomy, University of Birmingham, Edgbaston, Birmingham B15 2TT, UK"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::6ce82948fedbd9d58097af791f029565",
+    "affiliations": [
+        {"organization":"Facultad de Matema ́ticas, Universidad Complutense de Madrid","countryName":null,"countryCode":null,"address":null,"rawText":"Facultad de Matema ́ticas, Universidad Complutense de Madrid"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::5bee60f0e9694683dc46a58bd86a7df9",
+    "affiliations": [
+        {"organization":"Clarendon Laboratory, University of Oxford","countryName":"UK","countryCode":"UK","address":"Parks Road, Oxford OX1 3PU","rawText":"Clarendon Laboratory, University of Oxford, Parks Road, Oxford OX1 3PU, UK"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::49b9ab822225164ca537f36082732b09",
+    "affiliations": [
+        {"organization":"Miguel Navascu ́es School of Physics, University of Bristol","countryName":null,"countryCode":null,"address":"Bristol BS8 1TL, U.K","rawText":"Miguel Navascu ́es School of Physics, University of Bristol, Bristol BS8 1TL, U.K"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::e4916b7bd23644e863b1e0e015c0f66e",
+    "affiliations": [
+        {"organization":"John Innes Centre","countryName":"UK","countryCode":"UK","address":"Norwich Research Park, Norwich, Norfolk, NR4 7UH","rawText":"John Innes Centre, Norwich Research Park, Norwich, Norfolk, NR4 7UH, UK"},
+        {"organization":"The University of Queensland, Institute for Molecular Bioscience","countryName":"Australia","countryCode":"AU","address":"St Lucia, Queensland","rawText":"The University of Queensland, Institute for Molecular Bioscience, St Lucia, Queensland, Australia"},
+        {"organization":"Current Address: Institut Jean-Pierre Bourgin, UMR1318 INRA-AgroParisTech, Bâtiment 7, INRA Centre de Versailles-Grignon","countryName":"France","countryCode":"FR","address":"Route de St-Cyr (RD10), 78026 Versailles Cedex","rawText":"Current Address: Institut Jean-Pierre Bourgin, UMR1318 INRA-AgroParisTech, Bâtiment 7, INRA Centre de Versailles-Grignon, Route de St-Cyr (RD10), 78026 Versailles Cedex France"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::a8fcfa9bf3d689289ebc045ef11441ca",
+    "affiliations": [
+        {"organization":"RIKEN Brain Science Institute Wako City","countryName":"Japan","countryCode":"JP","address":null,"rawText":"RIKEN Brain Science Institute Wako City Japan"},
+        {"organization":"Neurotechnology Group Berlin Institute of Technology Berlin","countryName":"Germany","countryCode":"DE","address":null,"rawText":"Neurotechnology Group Berlin Institute of Technology Berlin Germany"},
+        {"organization":"Bernstein Focus: Neurotechnology Berlin","countryName":"Germany","countryCode":"DE","address":null,"rawText":"Bernstein Focus: Neurotechnology Berlin Germany"},
+        {"organization":"Bernstein Center for Computational Neuroscience Berlin","countryName":"Germany","countryCode":"DE","address":null,"rawText":"Bernstein Center for Computational Neuroscience Berlin Germany"},
+        {"organization":"Institute of Neuroscience and Medicine (INM-6) Computational and Systems Neuroscience Research Center J ̈ulich J ̈ulich","countryName":"Germany","countryCode":"DE","address":null,"rawText":"Institute of Neuroscience and Medicine (INM-6) Computational and Systems Neuroscience Research Center J ̈ulich J ̈ulich Germany"},
+        {"organization":"Medical Faculty RWTH Aachen University Aachen","countryName":"Germany","countryCode":"DE","address":null,"rawText":"Medical Faculty RWTH Aachen University Aachen Germany"},
+        {"organization":"Theoretical Systems Neurobiology RWTH Aachen University Aachen","countryName":"Germany","countryCode":"DE","address":null,"rawText":"Theoretical Systems Neurobiology RWTH Aachen University Aachen Germany"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::89ae151bbced65f7e048554132cba737",
+    "affiliations": [
+        {"organization":"Diabetes Complications Division, Baker IDI Heart and Diabetes Institute & Department of Medicine, Monash University","countryName":"Australia","countryCode":"AU","address":"Melbourne","rawText":"Diabetes Complications Division, Baker IDI Heart and Diabetes Institute & Department of Medicine, Monash University, Melbourne, Australia"},
+        {"organization":"Department of Pharmacology and Cardiovascular Research Institute Maastricht and Faculty of Medicine, Health & Life Science, Maastricht University","countryName":"the Netherlands","countryCode":"NL","address":"Maastricht","rawText":"Department of Pharmacology and Cardiovascular Research Institute Maastricht and Faculty of Medicine, Health & Life Science, Maastricht University, Maastricht, the Netherlands"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::7c7ccf5183f0959e9af55d24b7f5cdc1",
+    "affiliations": [
+        {"organization":"School of Life Science and Technology, Harbin Institute of Technology","countryName":"China","countryCode":"CN","address":"Harbin","rawText":"School of Life Science and Technology, Harbin Institute of Technology, Harbin, China"},
+        {"organization":"Department of Chemistry and Molecular Biology, University of Gothenburg","countryName":"Sweden","countryCode":"SE","address":"Göteborg","rawText":"Department of Chemistry and Molecular Biology, University of Gothenburg, Göteborg, Sweden"},
+        {"organization":"Department of Medical Biochemistry and Cell Biology, University of Gothenburg","countryName":"Sweden","countryCode":"SE","address":"Göteborg","rawText":"Department of Medical Biochemistry and Cell Biology, University of Gothenburg, Göteborg, Sweden"},
+        {"organization":"Mathematical Sciences, University of Gothenburg","countryName":"Sweden","countryCode":"SE","address":"Gothenburg","rawText":"Mathematical Sciences, University of Gothenburg, Gothenburg, Sweden"},
+        {"organization":"Mathematical Sciences, Chalmers University of Technology","countryName":"Sweden","countryCode":"SE","address":"Gothenburg","rawText":"Mathematical Sciences, Chalmers University of Technology, Gothenburg, Sweden"},
+        {"organization":"Centre for Cellular Imaging, University of Gothenburg","countryName":"Sweden","countryCode":"SE","address":"Göteborg","rawText":"Centre for Cellular Imaging, University of Gothenburg, Göteborg, Sweden"},
+        {"organization":"The University of Arizona","countryName":"United States of America","countryCode":"US","address":null,"rawText":"The University of Arizona, United States of America"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::fb631ab632affb8e50fcb65201c44495",
+    "affiliations": [
+        {"organization":"Department of Medical Genetics, Oslo University Hospital, Ullevål","countryName":"Norway","countryCode":"NO","address":"Oslo","rawText":"Department of Medical Genetics, Oslo University Hospital, Ullevål, Oslo, Norway"},
+        {"organization":"Institute of Medical Genetics, University of Oslo","countryName":"Norway","countryCode":"NO","address":"Oslo","rawText":"Institute of Medical Genetics, University of Oslo, Oslo, Norway"},
+        {"organization":"Institute of Immunology, Oslo University Hospital","countryName":"Norway","countryCode":"NO","address":"Rikshospitalet, Oslo","rawText":"Institute of Immunology, Oslo University Hospital, Rikshospitalet, Oslo, Norway"},
+        {"organization":"Section of Endocrinology, Institute of Medicine, University of Bergen","countryName":"Norway","countryCode":"NO","address":"Bergen","rawText":"Section of Endocrinology, Institute of Medicine, University of Bergen, Bergen, Norway"},
+        {"organization":"Department of Medicine, Haukeland University Hospital","countryName":"Norway","countryCode":"NO","address":"Bergen","rawText":"Department of Medicine, Haukeland University Hospital, Bergen, Norway"},
+        {"organization":"Department of Rheumatology, Diakonhjemmet Hospital","countryName":"Norway","countryCode":"NO","address":"Oslo","rawText":"Department of Rheumatology, Diakonhjemmet Hospital, Oslo, Norway"},
+        {"organization":"Department of Rheumatology, Oslo University Hospital","countryName":"Norway","countryCode":"NO","address":"Rikshospitalet, Oslo","rawText":"Department of Rheumatology, Oslo University Hospital, Rikshospitalet, Oslo, Norway"},
+        {"organization":"Department of Paediatrics, Oslo University Hospital, Ullevål","countryName":"Norway","countryCode":"NO","address":"Oslo","rawText":"Department of Paediatrics, Oslo University Hospital, Ullevål, Oslo, Norway"},
+        {"organization":"Institute of Health Management and Health Economics, University of Oslo","countryName":"Norway","countryCode":"NO","address":"Oslo","rawText":"Institute of Health Management and Health Economics, University of Oslo, Oslo, Norway"},
+        {"organization":"Department of Clinical Medicine, University of Bergen","countryName":"Norway","countryCode":"NO","address":"Bergen","rawText":"Department of Clinical Medicine, University of Bergen, Bergen, Norway"},
+        {"organization":"Department of Paediatrics, Haukeland University Hospital","countryName":"Norway","countryCode":"NO","address":"Bergen","rawText":"Department of Paediatrics, Haukeland University Hospital, Bergen, Norway"},
+        {"organization":"Institute of Forensic Medicine, University of Oslo","countryName":"Norway","countryCode":"NO","address":"Oslo","rawText":"Institute of Forensic Medicine, University of Oslo, Oslo, Norway"},
+        {"organization":"Health, Care and Welfare, Oslo University College","countryName":"Norway","countryCode":"NO","address":"Oslo","rawText":"Health, Care and Welfare, Oslo University College, Oslo, Norway"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::6dbc6e6232a7d8f1d101e3da2717d8a4",
+    "affiliations": [
+        {"organization":"Department of Physics & Astronomy, University of Alabama","countryName":"USA","countryCode":"US","address":"Tuscaloosa, AL, 35487-0324","rawText":"Department of Physics & Astronomy, University of Alabama, Tuscaloosa, AL, 35487-0324, USA"},
+        {"organization":"Jeremiah Horrocks Insitute, University of Central Lancashire","countryName":"UK","countryCode":"UK","address":"Preston, PR1 2HE","rawText":"Jeremiah Horrocks Insitute, University of Central Lancashire, Preston, PR1 2HE, UK"},
+        {"organization":"Departamento de Física Teórica, Universidad Autónoma de Madrid","countryName":"Spain","countryCode":"ES","address":"Cantoblanco, Madrid, E28049","rawText":"Departamento de Física Teórica, Universidad Autónoma de Madrid, Cantoblanco, Madrid, E28049, Spain"},
+        {"organization":"Max-Planck-Institut für Astronomie","countryName":"Germany","countryCode":"DE","address":"Königstuhl 17, Heidelberg, 69117","rawText":"Max-Planck-Institut für Astronomie, Königstuhl 17, Heidelberg, 69117, Germany"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::7b9dded201cfdd3ee11d935ba3679b37",
+    "affiliations": [
+        {"organization":"Thales Research and Technology","countryName":"France, B","countryCode":null,"address":"1, Av. A. Fresnel, 91767 Palaiseau","rawText":"Thales Research and Technology, 1, Av. A. Fresnel, 91767 Palaiseau, France, B"},
+        {"organization":"Universite ́ Europe ́ enne de Bretagne (UEB), CNRS-Foton laboratory (UMR 6082)/Universite ́ de Rennes 1","countryName":"France","countryCode":"FR","address":"Enssat, BP 80518, 22305 Lannion Cedex","rawText":"Universite ́ Europe ́ enne de Bretagne (UEB), CNRS-Foton laboratory (UMR 6082)/Universite ́ de Rennes 1, Enssat, BP 80518, 22305 Lannion Cedex, France"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::dd2c1c62331bb6f37ea638922e83bfc7",
+    "affiliations": [
+        {"organization":"EMBL/CRG Systems Biology Research Unit, Centre for Genomic Regulation (CRG)           UPF","countryName":"Spain","countryCode":"ES","address":"Barcelona","rawText":"EMBL/CRG Systems Biology Research Unit, Centre for Genomic Regulation (CRG)           UPF, Barcelona, Spain"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::1e87105b3fecd3f9222959c66777b96d",
+    "affiliations": [
+        {"organization":"Max-Planck-Institut für Plasmaphysik","countryName":"Germany","countryCode":"DE","address":"Boltzmannstraße 2, D-85748 Garching","rawText":"Max-Planck-Institut für Plasmaphysik, Boltzmannstraße 2, D-85748 Garching, Germany"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::a2620492c785ec709bcf4ea7b4a71cd5",
+    "affiliations": [
+        {"organization":"CABI Europe-UK","countryName":"United Kingdom","countryCode":"UK","address":"Egham","rawText":"CABI Europe-UK, Egham, United Kingdom"},
+        {"organization":"W. Stefański Institute of Parasitology (PAS)","countryName":"Poland","countryCode":"PL","address":"Warsaw","rawText":"W. Stefański Institute of Parasitology (PAS), Warsaw, Poland"},
+        {"organization":"Natural History Museum","countryName":"United Kingdom","countryCode":"UK","address":"London","rawText":"Natural History Museum, London, United Kingdom"},
+        {"organization":"SOURCE (OR PART OF THE FOLLOWING SOURCE): Type article Title Fauna Europaea: Helminths (Animal Parasitic) Author(s) D.I. Gibson, R.A. Bray, et al. Faculty FNWI: Institute for Biodiversity and Ecosystem Dynamics (IBED), FNWI: Institute for Biodiversity and Ecosystem Dynamics (IBED) Year 2014","countryName":null,"countryCode":null,"address":"D. Hunt, B.B. Georgiev, T. Scholz, P.D. Harris, T.A. Bakke, T. Pojmanska, K. Niewiadomska, A. Kostadinova, V. Tkach, O. Bain","rawText":"SOURCE (OR PART OF THE FOLLOWING SOURCE): Type article Title Fauna Europaea: Helminths (Animal Parasitic) Author(s) D.I. Gibson, R.A. Bray, D. Hunt, B.B. Georgiev, T. Scholz, P.D. Harris, T.A. Bakke, T. Pojmanska, K. Niewiadomska, A. Kostadinova, V. Tkach, O. Bain, et al. Faculty FNWI: Institute for Biodiversity and Ecosystem Dynamics (IBED), FNWI: Institute for Biodiversity and Ecosystem Dynamics (IBED) Year 2014"},
+        {"organization":"Central Laboratory of General Ecology (BAS)","countryName":"Bulgaria","countryCode":"BG","address":"Sofia","rawText":"Central Laboratory of General Ecology (BAS), Sofia, Bulgaria"},
+        {"organization":"University of Oslo","countryName":"Norway","countryCode":"NO","address":"Oslo","rawText":"University of Oslo, Oslo, Norway"},
+        {"organization":"Biology Centre (CAS)","countryName":"Czech Republic","countryCode":"CZ","address":"České Budějovice","rawText":"Biology Centre (CAS), České Budějovice, Czech Republic"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::6e525d08e710c51b4a9a182b5ec27ea6",
+    "affiliations": [
+        {"organization":"David Rittenhouse Laboratories, University of Pennsylvania","countryName":null,"countryCode":null,"address":"209 S 33","rawText":"David Rittenhouse Laboratories, University of Pennsylvania, 209 S 33"},
+        {"organization":"Institute for Theoretical Physics, University of Amsterdam","countryName":"The Netherlands","countryCode":"NL","address":"Science Park 904, Postbus 94485, 1090 GL Amsterdam","rawText":"Institute for Theoretical Physics, University of Amsterdam, Science Park 904, Postbus 94485, 1090 GL Amsterdam, The Netherlands"},
+        {"organization":"Laboratoire de Physics Th ́eorique","countryName":null,"countryCode":null,"address":"E","rawText":"Laboratoire de Physics Th ́eorique, E"},
+        {"organization":"SOURCE (OR PART OF THE FOLLOWING SOURCE): Type article Title The entropy of a hole in spacetime Author(s) V. Balasubramanian, B.D. Chowdhury, B. Czech, J. de Boer Faculty FNWI: Institute for Theoretical Physics (ITF) Year 2013","countryName":null,"countryCode":null,"address":null,"rawText":"SOURCE (OR PART OF THE FOLLOWING SOURCE): Type article Title The entropy of a hole in spacetime Author(s) V. Balasubramanian, B.D. Chowdhury, B. Czech, J. de Boer Faculty FNWI: Institute for Theoretical Physics (ITF) Year 2013"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::6a7845c9b4d31547a6bb6c0287e35291",
+    "affiliations": [
+        {"organization":"Wigner Research Centre for Physics, Hungarian Academy of Sciences","countryName":null,"countryCode":null,"address":"H-1525 Budapest, P.O.Box 49, Hungary, Dated: February 27, 2013","rawText":"Wigner Research Centre for Physics, Hungarian Academy of Sciences, H-1525 Budapest, P.O.Box 49, Hungary, Dated: February 27, 2013"},
+        {"organization":"Department of Theoretical Physics, University of the Basque Country UPV/EHU","countryName":"Spain","countryCode":"ES","address":"P.O. Box 644, E-48080 Bilbao","rawText":"Department of Theoretical Physics, University of the Basque Country UPV/EHU, P.O. Box 644, E-48080 Bilbao, Spain"},
+        {"organization":"ICFO-Institut de Ciencies Fotoniques","countryName":"Spain","countryCode":"ES","address":"Mediterranean Technology Park, 08860 Castelldefels (Barcelona)","rawText":"ICFO-Institut de Ciencies Fotoniques, Mediterranean Technology Park, 08860 Castelldefels (Barcelona), Spain"},
+        {"organization":"IKERBASQUE, Basque Foundation for Science","countryName":"Spain","countryCode":"ES","address":"E-48011 Bilbao","rawText":"IKERBASQUE, Basque Foundation for Science, E-48011 Bilbao, Spain"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::47612b921d2df4b02086b5290223cfbf",
+    "affiliations": [
+        {"organization":"University of Amsterdam, Swammerdam Institute for Life Sciences","countryName":null,"countryCode":null,"address":"The Netherland","rawText":"University of Amsterdam, Swammerdam Institute for Life Sciences, The Netherland"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::0b94749e31f8237508a2de51ee605a47",
+    "affiliations": [
+        {"organization":"IFW Dresden","countryName":"Germany","countryCode":"DE","address":"Helmholtzstr. 20, 01069 Dresden","rawText":"IFW Dresden, Helmholtzstr. 20, 01069 Dresden, Germany"},
+        {"organization":"TU Dresden","countryName":"Germany","countryCode":"DE","address":"01062 Dresden","rawText":"TU Dresden, 01062 Dresden, Germany"},
+        {"organization":"Karlsruhe Institute of Technology (KIT)","countryName":"Germany","countryCode":"DE","address":"Hermann-von-Helmholtz-Platz 1, 76344 Eggenstein-Leopoldshafen","rawText":"Karlsruhe Institute of Technology (KIT), Hermann-von-Helmholtz-Platz 1, 76344 Eggenstein-Leopoldshafen, Germany"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::eab46bf4a9de3dc670a0d0a3d051d0e8",
+    "affiliations": [
+        {"organization":"Centro de Física and Departamento de Física, Universidade do Minho, Campus de Gualtar","countryName":"Portugal","countryCode":"PT","address":"Braga 4710-057","rawText":"Centro de Física and Departamento de Física, Universidade do Minho, Campus de Gualtar, Braga 4710-057, Portugal"},
+        {"organization":"Nonlinear Physics Center, Research School of Physics and Engineering, Australian National University","countryName":"Australia","countryCode":"AU","address":"Canberra ACT 0200","rawText":"Nonlinear Physics Center, Research School of Physics and Engineering, Australian National University, Canberra ACT 0200, Australia"},
+        {"organization":"ITMO University","countryName":"Russia","countryCode":"RU","address":"St. Petersburg 197101","rawText":"ITMO University, St. Petersburg 197101, Russia"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::461d3c8399908e96039efb20578d4425",
+    "affiliations": [
+        {"organization":"Avram and Stella Goldstein-Goren Department of Biotechnology Engineering, Ben-Gurion University of the Negev","countryName":"Israel","countryCode":"IL","address":"Beer-Sheva","rawText":"Avram and Stella Goldstein-Goren Department of Biotechnology Engineering, Ben-Gurion University of the Negev, Beer-Sheva, Israel"},
+        {"organization":"The Ilse Katz Institute for Nanoscale Science and Technology, Ben-Gurion University of the Negev","countryName":"Israel","countryCode":"IL","address":"Beer-Sheva","rawText":"The Ilse Katz Institute for Nanoscale Science and Technology, Ben-Gurion University of the Negev, Beer-Sheva, Israel"},
+        {"organization":"Department of Bioengineering, School of Engineering, Santa Clara University","countryName":"United States of America","countryCode":"US","address":"Santa Clara, California","rawText":"Department of Bioengineering, School of Engineering, Santa Clara University, Santa Clara, California, United States of America"},
+        {"organization":"Deutsches Krebsforschungszentrum","countryName":"Germany","countryCode":"DE","address":null,"rawText":"Deutsches Krebsforschungszentrum, Germany"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::76e511b94e0c50ea7a2bf89892389336",
+    "affiliations": [
+        {"organization":"Joint Institute for VLBI in Europe","countryName":"The Netherlands","countryCode":"NL","address":"Oude Hoogeveensedijk 4, 7991 PD Dwingeloo","rawText":"Joint Institute for VLBI in Europe, Oude Hoogeveensedijk 4, 7991 PD Dwingeloo, The Netherlands"},
+        {"organization":"Max Planck Institut für Radioastronomie (MPIfR)","countryName":"Germany","countryCode":"DE","address":"Auf dem Hügel 69, D-53121 Bonn","rawText":"Max Planck Institut für Radioastronomie (MPIfR), Auf dem Hügel 69, D-53121 Bonn, Germany"},
+        {"organization":"Argelander Institut für Astronomie (AIfA), University of Bonn","countryName":"Germany","countryCode":"DE","address":"Auf dem Hügel 71, D-53121 Bonn","rawText":"Argelander Institut für Astronomie (AIfA), University of Bonn, Auf dem Hügel 71, D-53121 Bonn, Germany"},
+        {"organization":"Department of Earth and Space Sciences, Chalmers University of Technology, Onsala Space Observatory","countryName":"Sweden","countryCode":"SE","address":"SE-439 92 Onsala","rawText":"Department of Earth and Space Sciences, Chalmers University of Technology, Onsala Space Observatory, SE-439 92 Onsala, Sweden"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::bd1bfae0fb1c44997d3bfe4176ae6c4f",
+    "affiliations": [
+        {"organization":"Special Botany, Institute for Biology I, RWTH Aachen University","countryName":"Germany","countryCode":"DE","address":"Aachen","rawText":"Special Botany, Institute for Biology I, RWTH Aachen University, Aachen, Germany"},
+        {"organization":"Department of Medical Biochemistry and Biophysics, Division of Physiological Chemistry II, Karolinska Institute","countryName":"Sweden","countryCode":"SE","address":"Stockholm","rawText":"Department of Medical Biochemistry and Biophysics, Division of Physiological Chemistry II, Karolinska Institute, Stockholm, Sweden"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::c8494fb482cbcd284935d082cabb7c8b",
+    "affiliations": [
+        {"organization":"Centre for Mathematical Modelling of Infectious Diseases, London School of Hygiene and Tropical Medicine","countryName":"UK","countryCode":"UK","address":"Keppel Street, London WC1E 7HT","rawText":"Centre for Mathematical Modelling of Infectious Diseases, London School of Hygiene and Tropical Medicine, Keppel Street, London WC1E 7HT, UK"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::8938f1b669a91e23b95f92cf6ff05f9a",
+    "affiliations": [
+        {"organization":"Institute of Statistics, Universit ́e catholique de Louvain","countryName":"Belgium","countryCode":"BE","address":"Voie du Roman Pays 20, B 1348 Louvain-la-Neuve","rawText":"Institute of Statistics, Universit ́e catholique de Louvain, Voie du Roman Pays 20, B 1348 Louvain-la-Neuve, Belgium"},
+        {"organization":"Department of Economics, London School of Economics","countryName":"UK","countryCode":"UK","address":"Houghton Street, London WC2A 2AE","rawText":"Department of Economics, London School of Economics, Houghton Street, London WC2A 2AE, UK"},
+        {"organization":"Department of Economics, University of Mannheim","countryName":"Germany","countryCode":"DE","address":"L7, 3-5, 68131 Mannheim","rawText":"Department of Economics, University of Mannheim, L7, 3-5, 68131 Mannheim, Germany"},
+        {"organization":"Cass Business School","countryName":"UK","countryCode":"UK","address":"106, Bunhill Row, London EC1Y 8TZ","rawText":"Cass Business School, 106, Bunhill Row, London EC1Y 8TZ, UK"},
+        {"organization":"Linton","countryName":null,"countryCode":null,"address":"Mammen, Nielsen and Van Keilegom","rawText":"Linton, Mammen, Nielsen and Van Keilegom"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::9bb3caa86526ef51557adf7a69243ae5",
+    "affiliations": [
+        {"organization":"University of Edinburgh, Centre for Cognitive and Neural Systems (CCNS)","countryName":null,"countryCode":null,"address":"1 George Square, Edinburgh, EH8 9JZ.","rawText":"University of Edinburgh, Centre for Cognitive and Neural Systems (CCNS), 1 George Square, Edinburgh, EH8 9JZ."}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::62db5f3dd0a8e419ed3c39b884d28c42",
+    "affiliations": [
+        {"organization":"A. Yu. Nikitin","countryName":null,"countryCode":null,"address":null,"rawText":"A. Yu. Nikitin"},
+        {"organization":"CIC nanoGUNE Consolider","countryName":"Spain","countryCode":"ES","address":"20018 Donostia-San Sebastian","rawText":"CIC nanoGUNE Consolider, 20018 Donostia-San Sebastian, Spain"},
+        {"organization":"Ikerbasque, Basque Foundation for Science","countryName":"Spain","countryCode":"ES","address":"48011 Bilbao","rawText":"Ikerbasque, Basque Foundation for Science, 48011 Bilbao, Spain"},
+        {"organization":"IBM Thomas J. Watson Research Center","countryName":"USA","countryCode":"US","address":"Yorktown Heights, New York 10598","rawText":"IBM Thomas J. Watson Research Center, Yorktown Heights, New York 10598, USA"},
+        {"organization":"Instituto de Ciencia de Materiales de Aragon and Departamento de Fisica de la Materia Condensada, CSIC-Universidad de Zaragoza","countryName":"Spain","countryCode":"ES","address":"E-50009 Zaragoza","rawText":"Instituto de Ciencia de Materiales de Aragon and Departamento de Fisica de la Materia Condensada, CSIC-Universidad de Zaragoza, E-50009 Zaragoza, Spain"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::ea19c99af046122a76374b84e5e97bb6",
+    "affiliations": [
+        {"organization":"Max Planck Institute for Biology of Ageing","countryName":"Germany","countryCode":"DE","address":"Cologne","rawText":"Max Planck Institute for Biology of Ageing, Cologne, Germany"},
+        {"organization":"Institute of Healthy Ageing, and Department of Genetics, University College London","countryName":"United Kingdom","countryCode":"UK","address":"Evolution and Environment","rawText":"Institute of Healthy Ageing, and Department of Genetics, Evolution and Environment, University College London, London, United Kingdom"},
+        {"organization":"Stanford University","countryName":"United States of America","countryCode":"US","address":null,"rawText":"Stanford University, United States of America"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::3e22230a4739584a7503874af58a3eb3",
+    "affiliations": [
+        {"organization":"The Jenner Institute, University of Oxford","countryName":"United Kingdom","countryCode":"UK","address":"Oxford","rawText":"The Jenner Institute, University of Oxford, Oxford, United Kingdom"},
+        {"organization":"Laboratory of Malaria and Vector Research, National Institute of Allergy and Infectious Diseases/National Institutes of Health","countryName":"United States of America","countryCode":"US","address":"Rockville, Maryland","rawText":"Laboratory of Malaria and Vector Research, National Institute of Allergy and Infectious Diseases/National Institutes of Health, Rockville, Maryland, United States of America"},
+        {"organization":"Liverpool School of Tropical Medicine","countryName":"United Kingdom","countryCode":"UK","address":"Liverpool","rawText":"Liverpool School of Tropical Medicine, Liverpool, United Kingdom"},
+        {"organization":"Imaxio SA","countryName":"France","countryCode":"FR","address":"Lyon","rawText":"Imaxio SA, Lyon, France"},
+        {"organization":"Federal University of São Paulo","countryName":"Brazil","countryCode":"BR","address":null,"rawText":"Federal University of São Paulo, Brazil"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::03f197b3ba4270d7ca7d677f604f3e35",
+    "affiliations": [
+        {"organization":"Tilmann Gneiting, University of Heidelberg Heidelberg","countryName":"Germany","countryCode":"DE","address":null,"rawText":"Tilmann Gneiting, University of Heidelberg Heidelberg, Germany"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::1f661734891e40f16170c84387af5b87",
+    "affiliations": [
+        {"organization":"Sorbonne Universités, Université Pierre et Marie Curie-Paris 06, Laboratoire d'Océanographie de Villefranche","countryName":"France","countryCode":"FR","address":"Observatoire océanologique, Villefranche/mer","rawText":"Sorbonne Universités, Université Pierre et Marie Curie-Paris 06, Laboratoire d'Océanographie de Villefranche, Observatoire océanologique, Villefranche/mer, France"},
+        {"organization":"Centre National de la Recherche Scientifique-Institut National des Sciences de l'Univers, Laboratoire d'Océanographie de Villefranche","countryName":"France","countryCode":"FR","address":"Observatoire océanologique, Villefranche/mer","rawText":"Centre National de la Recherche Scientifique-Institut National des Sciences de l'Univers, Laboratoire d'Océanographie de Villefranche, Observatoire océanologique, Villefranche/mer, France"},
+        {"organization":"Department of Ecosystem Studies, Royal Netherlands Institute for Sea Research","countryName":"The Netherlands","countryCode":"NL","address":"Yerseke","rawText":"Department of Ecosystem Studies, Royal Netherlands Institute for Sea Research, Yerseke, The Netherlands"},
+        {"organization":"Faculty of Geosciences, Utrecht University","countryName":"The Netherlands","countryCode":"NL","address":"Utrecht","rawText":"Faculty of Geosciences, Utrecht University, Utrecht, The Netherlands"},
+        {"organization":"Institute of Marine Research","countryName":"Norway","countryCode":"NO","address":null,"rawText":"Institute of Marine Research, Norway"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::f05d056239ce591b78033a32887e9f1f",
+    "affiliations": [
+        {"organization":"MRC Laboratory of Molecular Biology","countryName":"UK","countryCode":"UK","address":"Hills Road, Cambridge CB2 0QH","rawText":"MRC Laboratory of Molecular Biology, Hills Road, Cambridge CB2 0QH, UK"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::ec6b1c2961de30874fb274b72fe66ec8",
+    "affiliations": [
+        {"organization":"Wellcome Trust Centre for Stem Cell Research & Department of Biochemistry, University of Cambridge","countryName":"United Kingdom","countryCode":"UK","address":"Tennis Court Road, Cambridge","rawText":"Wellcome Trust Centre for Stem Cell Research & Department of Biochemistry, University of Cambridge, Tennis Court Road, Cambridge, United Kingdom, CB2 1QR"},
+        {"organization":"Max-Planck Institute of Immunobiology","countryName":"Germany","countryCode":"DE","address":"Stubeweg 51, D-79108 Freiburg","rawText":"Max-Planck Institute of Immunobiology, Stubeweg 51, D-79108 Freiburg, Germany"},
+        {"organization":"World Wide Medicinal Chemistry, Pfizer Ltd","countryName":"United Kingdom","countryCode":"UK","address":"Sandwich, Kent, CT13 9NJ","rawText":"World Wide Medicinal Chemistry, Pfizer Ltd, Sandwich, Kent, CT13 9NJ, United Kingdom"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::f98830c67b0fbc7089af7900f7defeb3",
+    "affiliations": [
+        {"organization":"Institute of Information Systems, Vienna University of Technology","countryName":"Austria","countryCode":"AT","address":"A-1040 Vienna","rawText":"Institute of Information Systems, Vienna University of Technology, A-1040 Vienna, Austria"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::cce6c39826d86efd1a57541b2b2e8e16",
+    "affiliations": [
+        {"organization":"Institute of Molecular Biosciences, University of Graz","countryName":"Austria","countryCode":"AT","address":"Graz","rawText":"Institute of Molecular Biosciences, University of Graz, Graz, Austria"},
+        {"organization":"INSERM, U848","countryName":"France","countryCode":"FR","address":"Villejuif","rawText":"INSERM, U848, Villejuif, France"},
+        {"organization":"Institut Gustave Roussy","countryName":"France","countryCode":"FR","address":"Villejuif","rawText":"Institut Gustave Roussy, Villejuif, France"},
+        {"organization":"Université Paris Sud","countryName":"France","countryCode":"FR","address":"Paris 11, Villejuif","rawText":"Université Paris Sud, Paris 11, Villejuif, France"},
+        {"organization":"Genetik. Institut für Biologie, FU Berlin","countryName":"Germany","countryCode":"DE","address":"Berlin","rawText":"Genetik. Institut für Biologie, FU Berlin, Berlin, Germany"},
+        {"organization":"NeuroCure Cluster of Excellence","countryName":"Germany","countryCode":"DE","address":"Charité Berlin, Berlin","rawText":"NeuroCure Cluster of Excellence, Charité Berlin, Berlin, Germany"},
+        {"organization":"Newcastle University","countryName":"United Kingdom","countryCode":"UK","address":null,"rawText":"Newcastle University, United Kingdom"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::0c2b25573e443d68b4118a44504dd35a",
+    "affiliations": [
+        {"organization":"From the ‡Department of Proteomics and Signal Transduction, Max-Planck Institute of Biochemistry","countryName":"Germany","countryCode":"DE","address":"Am Klopferspitz 18, D-82152 Martinsried","rawText":"From the ‡Department of Proteomics and Signal Transduction, Max-Planck Institute of Biochemistry, Am Klopferspitz 18, D-82152 Martinsried, Germany"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::cf0203df4b065da44e88b8e565b142f0",
+    "affiliations": [
+        {"organization":"Department of Economics and Related Studies, University of York","countryName":"United Kingdom","countryCode":"UK","address":"York YO10 5DD","rawText":"Department of Economics and Related Studies, University of York, York YO10 5DD, United Kingdom"},
+        {"organization":"CMPO, University of Bristol","countryName":"United Kingdom","countryCode":"UK","address":"2 Priory Road, Bristol BS8 1TX","rawText":"CMPO, University of Bristol, 2 Priory Road, Bristol BS8 1TX, United Kingdom"},
+        {"organization":"MRC Centre for Causal Analysis in Translational Epidemiology (CAiTE), School of Social and Community Medicine, University of Bristol","countryName":"United Kingdom","countryCode":"UK","address":"Oakfield House, Oakfield Grove, Bristol BS8 2BN","rawText":"MRC Centre for Causal Analysis in Translational Epidemiology (CAiTE), School of Social and Community Medicine, University of Bristol, Oakfield House, Oakfield Grove, Bristol BS8 2BN, United Kingdom"},
+        {"organization":"Imperial College Business School, Imperial College London","countryName":"United Kingdom","countryCode":"UK","address":"South Kensington Campus, London SW7 2AZ","rawText":"Imperial College Business School, Imperial College London, South Kensington Campus, London SW7 2AZ, United Kingdom"},
+        {"organization":"Department of Economics, University of Bristol","countryName":"United Kingdom","countryCode":"UK","address":"8 Woodland Road, Bristol BS8 1TN","rawText":"Department of Economics, University of Bristol, 8 Woodland Road, Bristol BS8 1TN, United Kingdom"},
+        {"organization":"Centre for Microdata, Methods and Practice, Institute for Fiscal Studies","countryName":"United Kingdom","countryCode":"UK","address":"7 Ridgmount Street, London WC1E 7AE","rawText":"Centre for Microdata, Methods and Practice, Institute for Fiscal Studies, 7 Ridgmount Street, London WC1E 7AE, United Kingdom"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::62036a5bb8d52913107c581212c4c53e",
+    "affiliations": [
+        {"organization":"Mathematics Department, Columbia University","countryName":"USA","countryCode":"US","address":"2990 Broadway, New York, NY 10027","rawText":"Mathematics Department, Columbia University, 2990 Broadway, New York, NY 10027, USA"},
+        {"organization":"Dipartimento di Matematica, Universita` degli Studi di Milano","countryName":"Italy","countryCode":"IT","address":"Via Cesare Saldini 50, 20133 Milano","rawText":"Dipartimento di Matematica, Universita` degli Studi di Milano, Via Cesare Saldini 50, 20133 Milano, Italy"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::ddf706e8921cd707ba92e6a078466c7b",
+    "affiliations": [
+        {"organization":"Department of Bioinformatics and Computational Biology, The University of Texas M D Anderson Cancer Center","countryName":"USA","countryCode":"US","address":"1515 Holcombe Blvd Houston, TX 77030","rawText":"Department of Bioinformatics and Computational Biology, The University of Texas M D Anderson Cancer Center, 1515 Holcombe Blvd Houston, TX 77030, USA"},
+        {"organization":"Institute of Chemical and Biological Technology, Universidade Nova de Lisboa","countryName":"Portugal","countryCode":"PT","address":"Oeiras","rawText":"Institute of Chemical and Biological Technology, Universidade Nova de Lisboa, Oeiras, Portugal"},
+        {"organization":"Research Center for Intelligent Media, Furtwangen University","countryName":"Germany","countryCode":"DE","address":"Furtwangen","rawText":"Research Center for Intelligent Media, Furtwangen University, Furtwangen, Germany"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::34627ddf90dc8811c090bd7923ff4f15",
+    "affiliations": [
+        {"organization":"Computational Medicine Research Group, Institute of Clinical Medicine, Biocenter Oulu, University of Oulu","countryName":"Finland","countryCode":"FI","address":"Oulu","rawText":"Computational Medicine Research Group, Institute of Clinical Medicine, Biocenter Oulu, University of Oulu, Oulu, Finland"},
+        {"organization":"Institute for Molecular Medicine Finland, University of Helsinki","countryName":"Finland","countryCode":"FI","address":"Helsinki","rawText":"Institute for Molecular Medicine Finland, University of Helsinki, Helsinki, Finland"},
+        {"organization":"Department of Epidemiology and Biostatistics, Imperial College London","countryName":"U.K.","countryCode":"UK","address":"London","rawText":"Department of Epidemiology and Biostatistics, Imperial College London, London, U.K."},
+        {"organization":"Folkhälsan Research Center, University of Helsinki","countryName":"Finland","countryCode":"FI","address":"Helsinki","rawText":"Folkhälsan Research Center, University of Helsinki, Helsinki, Finland"},
+        {"organization":"Department of Medicine, Helsinki University Central Hospital","countryName":"Finland","countryCode":"FI","address":"Helsinki","rawText":"Department of Medicine, Helsinki University Central Hospital, Helsinki, Finland"},
+        {"organization":"NMR Metabonomics Laboratory, Department of Biosciences, University of Eastern Finland","countryName":"Finland","countryCode":"FI","address":"Kuopio","rawText":"NMR Metabonomics Laboratory, Department of Biosciences, University of Eastern Finland, Kuopio, Finland"},
+        {"organization":"Department of Chronic Disease Prevention, National Institute for Health and Welfare","countryName":"Finland","countryCode":"FI","address":"Helsinki","rawText":"Department of Chronic Disease Prevention, National Institute for Health and Welfare, Helsinki, Finland"},
+        {"organization":"Department of Internal Medicine, Clinical Research Center, Biocenter Oulu, University of Oulu","countryName":"Finland","countryCode":"FI","address":"Oulu","rawText":"Department of Internal Medicine, Clinical Research Center, Biocenter Oulu, University of Oulu, Oulu, Finland"},
+        {"organization":"LIKES Research Center for Sport and Health Sciences","countryName":"Finland","countryCode":"FI","address":"Jyväskylä","rawText":"LIKES Research Center for Sport and Health Sciences, Jyväskylä, Finland"},
+        {"organization":"Department of Medicine, Turku University Hospital, University of Turku","countryName":"Finland","countryCode":"FI","address":"Turku","rawText":"Department of Medicine, Turku University Hospital, University of Turku, Turku, Finland"},
+        {"organization":"Department of Clinical Physiology, Tampere University Hospital, University of Tampere","countryName":"Finland","countryCode":"FI","address":"Tampere","rawText":"Department of Clinical Physiology, Tampere University Hospital, University of Tampere, Tampere, Finland"},
+        {"organization":"Department of Clinical Chemistry, Tampere University Hospital, University of Tampere","countryName":"Finland","countryCode":"FI","address":"Tampere","rawText":"Department of Clinical Chemistry, Tampere University Hospital, University of Tampere, Tampere, Finland"},
+        {"organization":"Wellcome Trust Sanger Institute","countryName":"U.K.","countryCode":"UK","address":"Hinxton","rawText":"Wellcome Trust Sanger Institute, Hinxton, U.K."},
+        {"organization":"Research Centre of Applied and Preventive Cardiovascular Medicine, University of Turku","countryName":"Finland","countryCode":"FI","address":"Turku","rawText":"Research Centre of Applied and Preventive Cardiovascular Medicine, University of Turku, Turku, Finland"},
+        {"organization":"Department of Clinical Physiology, Turku University Hospital, University of Turku","countryName":"Finland","countryCode":"FI","address":"Turku","rawText":"Department of Clinical Physiology, Turku University Hospital, University of Turku, Turku, Finland"},
+        {"organization":"Department of Children, National Institute for Health and Welfare","countryName":"Finland","countryCode":"FI","address":"Young People, and Families","rawText":"Department of Children, Young People, and Families, National Institute for Health and Welfare, Helsinki, Finland"},
+        {"organization":"Institute of Health Sciences, Biocenter Oulu, University of Oulu","countryName":"Finland","countryCode":"FI","address":"Oulu","rawText":"Institute of Health Sciences, Biocenter Oulu, University of Oulu, Oulu, Finland"},
+        {"organization":"Medical Research Council Health Protection Agency, Centre for Environment and Health, Imperial College London","countryName":"U.K.","countryCode":"UK","address":"London","rawText":"Medical Research Council Health Protection Agency, Centre for Environment and Health, Imperial College London, London, U.K."}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::dd500c043257aff21441940c42d0ee5d",
+    "affiliations": [
+        {"organization":"From the ‡Department of Proteomics and Signal Transduction, Max-Planck-Institute of Biochemistry","countryName":"Germany;","countryCode":"DE","address":"Am Klopferspitz 18, 82152 Martinsried","rawText":"From the ‡Department of Proteomics and Signal Transduction, Max-Planck-Institute of Biochemistry, Am Klopferspitz 18, 82152 Martinsried, Germany;"},
+        {"organization":"Organelle Architecture and Dynamics, Max-Planck-Institute of Biochemistry","countryName":"Germany","countryCode":"DE","address":"Am Klopferspitz 18, 82152 Martinsried","rawText":"Organelle Architecture and Dynamics, Max-Planck-Institute of Biochemistry, Am Klopferspitz 18, 82152 Martinsried, Germany"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::e1a3e611c91589b5d73520d3e718633b",
+    "affiliations": [
+        {"organization":"Hubrecht Institute and University Medical Center Utrecht","countryName":"The Netherlands","countryCode":"NL","address":"Uppsalalaan 8, 3584 CT Utrecht","rawText":"Hubrecht Institute and University Medical Center Utrecht, Uppsalalaan 8, 3584 CT Utrecht, The Netherlands"},
+        {"organization":"Current affiliation: Laboratory of Pediatric Gastroenterology, Wilhelmina Children's Hospital, University Medical Centre","countryName":"The Netherlands","countryCode":"NL","address":"Lundlaan 6, 3584 EA Utrecht","rawText":"Current affiliation: Laboratory of Pediatric Gastroenterology, Wilhelmina Children's Hospital, University Medical Centre, Lundlaan 6, 3584 EA Utrecht, The Netherlands"},
+        {"organization":"Department of Genetics, Cell Biology and Anatomy, 985805 University of Nebraska Medical Center","countryName":"USA","countryCode":"US","address":"Omaha, Nebraska, 68198-5805","rawText":"Department of Genetics, Cell Biology and Anatomy, 985805 University of Nebraska Medical Center, Omaha, Nebraska, 68198-5805, USA"},
+        {"organization":"Medical Research Council Clinical Sciences Centre, Imperial College London, Hammersmith Hospital Campus","countryName":"UK","countryCode":"UK","address":"Du Cane Road, London, W12 0NN","rawText":"Medical Research Council Clinical Sciences Centre, Imperial College London, Hammersmith Hospital Campus, Du Cane Road, London, W12 0NN, UK"},
+        {"organization":"Current affiliation: McArdle Laboratory for Cancer Research, Department of Oncology, University of Wisconsin","countryName":"USA","countryCode":"US","address":"Madison, Wisconsin, 53706-1599","rawText":"Current affiliation: McArdle Laboratory for Cancer Research, Department of Oncology, University of Wisconsin, Madison, Wisconsin, 53706-1599, USA"},
+        {"organization":"Department of Medical Genetics, UMC Utrecht","countryName":"The Netherlands","countryCode":"NL","address":"Universiteitsweg 100, 3584 GG Utrecht","rawText":"Department of Medical Genetics, UMC Utrecht, Universiteitsweg 100, 3584 GG Utrecht, The Netherlands"},
+        {"organization":"Current affiliation: Laboratory of Genome Structure and Ageing; European Research Institute for the Biology of Ageing; RuG and UMC Groningen","countryName":"The Netherlands","countryCode":"NL","address":"Antonius Deusinglaan 1, 9713 AV, Groningen","rawText":"Current affiliation: Laboratory of Genome Structure and Ageing; European Research Institute for the Biology of Ageing; RuG and UMC Groningen, Antonius Deusinglaan 1, 9713 AV, Groningen, The Netherlands"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::f32576882050bf996b18d6c969280100",
+    "affiliations": [
+        {"organization":"Department of Physics, CERN Theory Division CH - 1211","countryName":null,"countryCode":null,"address":"Geneva 23, SWITZERLAND","rawText":"Department of Physics, CERN Theory Division CH - 1211 Geneva 23, SWITZERLAND"},
+        {"organization":"CCPP, Department of Physics","countryName":"USA","countryCode":"US","address":"NYU 4 Washington Pl., New York NY 10003","rawText":"CCPP, Department of Physics, NYU 4 Washington Pl., New York NY 10003, USA"},
+        {"organization":"INFN - Laboratori Nazionali di Frascati Via Enrico Fermi 40","countryName":null,"countryCode":null,"address":"I-00044 Frascati, ITALY","rawText":"INFN - Laboratori Nazionali di Frascati Via Enrico Fermi 40, I-00044 Frascati, ITALY"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::6e4dd03449ef06ba96d26c2e2d30fc79",
+    "affiliations": [
+        {"organization":"MRC National Institute for Medical Research","countryName":"United Kingdom","countryCode":"UK","address":"Mill Hill, London","rawText":"MRC National Institute for Medical Research, Mill Hill, London, United Kingdom"},
+        {"organization":"Collegium Budapest (Institute for Advanced Study)","countryName":"Hungary","countryCode":"HU","address":"Budapest","rawText":"Collegium Budapest (Institute for Advanced Study), Budapest, Hungary"},
+        {"organization":"Parmenides Foundation","countryName":"Germany","countryCode":"DE","address":"Munich","rawText":"Parmenides Foundation, Munich, Germany"},
+        {"organization":"Institute of Biology, Eötvös University","countryName":"Hungary","countryCode":"HU","address":"Budapest","rawText":"Institute of Biology, Eötvös University, Budapest, Hungary"},
+        {"organization":"University of Minnesota","countryName":"United States of America","countryCode":"US","address":null,"rawText":"University of Minnesota, United States of America"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::f70a6bc2e18963e92b9ff5ed18b86b22",
+    "affiliations": [
+        {"organization":"Research Programs Unit, Molecular Medicine, University of Helsinki","countryName":"Finland","countryCode":"FI","address":"Helsinki","rawText":"Research Programs Unit, Molecular Medicine, University of Helsinki, Helsinki, Finland"},
+        {"organization":"Department of Veterinary Biosciences and Department of Medical Genetics, University of Helsinki","countryName":"Finland","countryCode":"FI","address":"Helsinki","rawText":"Department of Veterinary Biosciences and Department of Medical Genetics, University of Helsinki, Helsinki, Finland"},
+        {"organization":"Folkhälsan Institute of Genetics","countryName":"Finland","countryCode":"FI","address":"Helsinki","rawText":"Folkhälsan Institute of Genetics, Helsinki, Finland"},
+        {"organization":"Department of Small Animal Clinical Sciences, University of Copenhagen","countryName":"Denmark","countryCode":"DK","address":"Copenhagen","rawText":"Department of Small Animal Clinical Sciences, University of Copenhagen, Copenhagen, Denmark"},
+        {"organization":"Department of Basic Animal and Veterinary Sciences, University of Copenhagen","countryName":"Denmark","countryCode":"DK","address":"Copenhagen","rawText":"Department of Basic Animal and Veterinary Sciences, University of Copenhagen, Copenhagen, Denmark"},
+        {"organization":"College of Veterinary Medicine, Kansas State University","countryName":"United States of America","countryCode":"US","address":"Manhattan, Kansas","rawText":"College of Veterinary Medicine, Kansas State University, Manhattan, Kansas, United States of America"},
+        {"organization":"Department of Animal Breeding and Genetics, Swedish University of Agricultural Sciences","countryName":"Sweden","countryCode":"SE","address":"Uppsala","rawText":"Department of Animal Breeding and Genetics, Swedish University of Agricultural Sciences, Uppsala, Sweden"},
+        {"organization":"Referral Animal Neurology Hospital Aisti","countryName":"Finland","countryCode":"FI","address":"Vantaa","rawText":"Referral Animal Neurology Hospital Aisti, Vantaa, Finland"},
+        {"organization":"Department of Animal Science, University of California Davis","countryName":"United States of America","countryCode":"US","address":"Davis, California","rawText":"Department of Animal Science, University of California Davis, Davis, California, United States of America"},
+        {"organization":"National Cancer Institute","countryName":"United States of America","countryCode":"US","address":null,"rawText":"National Cancer Institute, United States of America"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::82a076828147dd75c98dc1f33d44c8ba",
+    "affiliations": [
+        {"organization":"Institute of Nuclear Physics","countryName":"Greece","countryCode":"GR","address":"NCSR “Demokritos”, GR-15310 Athens","rawText":"Institute of Nuclear Physics, NCSR “Demokritos”, GR-15310 Athens, Greece"},
+        {"organization":"Joint Institute for Nuclear Astrophysics (JINA), National Superconducting Cyclotron Laboratory (NSCL), Michigan State University","countryName":"USA","countryCode":"US","address":"East Lansing, MI 48824","rawText":"Joint Institute for Nuclear Astrophysics (JINA), National Superconducting Cyclotron Laboratory (NSCL), Michigan State University, East Lansing, MI 48824, USA"},
+        {"organization":"Theoretical Physics and Cosmology Group, Department of Physics, King's College London","countryName":"UK","countryCode":"UK","address":"London WC2R 2LS","rawText":"Theoretical Physics and Cosmology Group, Department of Physics, King's College London, London WC2R 2LS, UK"},
+        {"organization":"TH Division, Physics Department, CERN","countryName":"Switzerland","countryCode":"CH","address":"CH-1211 Geneva 23","rawText":"TH Division, Physics Department, CERN, CH-1211 Geneva 23, Switzerland"},
+        {"organization":"Departments of Astronomy and of Physics, University of Illinois","countryName":"USA","countryCode":"US","address":"Urbana, IL 61801","rawText":"Departments of Astronomy and of Physics, University of Illinois, Urbana, IL 61801, USA"},
+        {"organization":"School of Physics and Astronomy, University of Minnesota","countryName":"USA","countryCode":"US","address":"Minneapolis, MN 55455","rawText":"School of Physics and Astronomy, University of Minnesota, Minneapolis, MN 55455, USA"},
+        {"organization":"William I. Fine Theoretical Physics Institute, School of Physics and Astronomy, University of Minnesota","countryName":"USA","countryCode":"US","address":"Minneapolis, MN 55455","rawText":"William I. Fine Theoretical Physics Institute, School of Physics and Astronomy, University of Minnesota, Minneapolis, MN 55455, USA"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::1b29db1073b55257522279d269406d0a",
+    "affiliations": [
+        {"organization":"Dipartimento di Fisica, Sapienza Università di Roma","countryName":"Italy","countryCode":"IT","address":"piazzale Aldo Moro 5, 00185 Roma","rawText":"Dipartimento di Fisica, Sapienza Università di Roma, piazzale Aldo Moro 5, 00185 Roma, Italy"},
+        {"organization":"Dipartimento di Fisica, Università di Napoli Federico II, Compl. Univ. di Monte S. Angelo","countryName":"Italy","countryCode":"IT","address":"80126 Napoli","rawText":"Dipartimento di Fisica, Università di Napoli Federico II, Compl. Univ. di Monte S. Angelo, 80126 Napoli, Italy"},
+        {"organization":"Centre for Quantum Technologies, National University of Singapore","countryName":"Singapore","countryCode":"SG","address":"Singapore 117543","rawText":"Centre for Quantum Technologies, National University of Singapore, Singapore 117543, Singapore"},
+        {"organization":"Institute of Advanced Studies (IAS), Nanyang Technological University","countryName":"Singapore","countryCode":"SG","address":"Singapore 639673","rawText":"Institute of Advanced Studies (IAS), Nanyang Technological University, Singapore 639673, Singapore"},
+        {"organization":"National Institute of Education, Nanyang Technological University","countryName":"Singapore","countryCode":"SG","address":"Singapore 637616","rawText":"National Institute of Education, Nanyang Technological University, Singapore 637616, Singapore"},
+        {"organization":"CNR-SPIN, Complesso Universitario di Monte S. Angelo","countryName":"Italy","countryCode":"IT","address":"80126 Napoli","rawText":"CNR-SPIN, Complesso Universitario di Monte S. Angelo, 80126 Napoli, Italy"},
+        {"organization":"Instituto de Física, Universidade Federal do Rio de Janeiro","countryName":"Brazil","countryCode":"BR","address":"Rio de Janeiro, RJ 21941-972","rawText":"Instituto de Física, Universidade Federal do Rio de Janeiro, Rio de Janeiro, RJ 21941-972, Brazil"},
+        {"organization":"ICFO-Institut de Ciències Fotòniques, Parc Mediterrani de la Tecnologia","countryName":"Spain","countryCode":"ES","address":"08860 Castelldefels (Barcelona)","rawText":"ICFO-Institut de Ciències Fotòniques, Parc Mediterrani de la Tecnologia, 08860 Castelldefels (Barcelona), Spain"},
+        {"organization":"Dahlem Center for Complex Quantum Systems, Freie Universität Berlin","countryName":"Germany","countryCode":"DE","address":"Berlin","rawText":"Dahlem Center for Complex Quantum Systems, Freie Universität Berlin, Berlin, Germany"},
+        {"organization":"Istituto Nazionale di Ottica (INO-CNR)","countryName":"Italy","countryCode":"IT","address":"Largo E. Fermi 6, I-50125 Firenze","rawText":"Istituto Nazionale di Ottica (INO-CNR), Largo E. Fermi 6, I-50125 Firenze, Italy"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::4233b79a6d56ca256240a08dc66aace7",
+    "affiliations": [
+        {"organization":"Center for Integrative Genomics, University of Lausanne","countryName":"Switzerland","countryCode":"CH","address":"1015 Lausanne","rawText":"Center for Integrative Genomics, University of Lausanne, 1015 Lausanne, Switzerland"},
+        {"organization":"Swiss Institute of Bioinformatics","countryName":"Switzerland","countryCode":"CH","address":"1015 Lausanne","rawText":"Swiss Institute of Bioinformatics, 1015 Lausanne, Switzerland"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::0ae0f744e5f0bf9ff7c586ae637126f7",
+    "affiliations": [
+        {"organization":"IST Austria, Institute of Science and Technology","countryName":"Austria","countryCode":"AT","address":null,"rawText":"IST Austria, Institute of Science and Technology Austria"},
+        {"organization":"MPI-SWS","countryName":"Germany","countryCode":"DE","address":null,"rawText":"MPI-SWS, Germany"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::7cd2509a358d89720aee09d53a37b58d",
+    "affiliations": [
+        {"organization":"Amsterdam University","countryName":"Netherlands","countryCode":"NL","address":"Spui 21, Amsterdam 1012WX","rawText":"Amsterdam University, Spui 21, Amsterdam 1012WX, Netherlands"},
+        {"organization":"Lithuanian University of Health Sciences (LUHS)","countryName":"Lithuania","countryCode":"LT","address":"Eiveniu str. 2, Kaunas","rawText":"Lithuanian University of Health Sciences (LUHS), Eiveniu str. 2, Kaunas, Lithuania"},
+        {"organization":"International Centre for Reproductive Health (ICRH), Ghent University","countryName":"Belgium","countryCode":"BE","address":"De Pintelaan 185 UZP 114, Gent 9000","rawText":"International Centre for Reproductive Health (ICRH), Ghent University, De Pintelaan 185 UZP 114, Gent 9000, Belgium"},
+        {"organization":"SOURCE (OR PART OF THE FOLLOWING SOURCE): Type article Title Community embedded reproductive health interventions for adolescents in Latin America: development and evaluation of a complex multi-centre intervention Author(s) P. Decat, et al. Faculty FMG: Amsterdam Institute for Social Science Research (AISSR) Year 2013","countryName":null,"countryCode":null,"address":"E. Nelson, S. de Meyer, L. Jaruseviciene, M. Orozco, Z. Segura, A. Gorter, B. Vega, K. Cordova, L. Maes, M. Temmerman, E. Leye","rawText":"SOURCE (OR PART OF THE FOLLOWING SOURCE): Type article Title Community embedded reproductive health interventions for adolescents in Latin America: development and evaluation of a complex multi-centre intervention Author(s) P. Decat, E. Nelson, S. de Meyer, L. Jaruseviciene, M. Orozco, Z. Segura, A. Gorter, B. Vega, K. Cordova, L. Maes, M. Temmerman, E. Leye, et al. Faculty FMG: Amsterdam Institute for Social Science Research (AISSR) Year 2013"},
+        {"organization":"Centro de Investigación y Estudios de la Salud (CIES)","countryName":"Nicaragua","countryCode":"NI","address":"postal 3507, Managua","rawText":"Centro de Investigación y Estudios de la Salud (CIES), postal 3507, Managua, Nicaragua"},
+        {"organization":"Instituto CentroAmericano de Salud (ICAS)","countryName":"Nicaragua","countryCode":"NI","address":"postal 2234, Managua","rawText":"Instituto CentroAmericano de Salud (ICAS), postal 2234, Managua, Nicaragua"},
+        {"organization":"University of Cuenca (UC), 12 of April","countryName":"Ecuador","countryCode":"EC","address":"Cuenca","rawText":"University of Cuenca (UC), 12 of April, Cuenca, Ecuador"},
+        {"organization":"South Group (SG)","countryName":"Bolivia","countryCode":"BO","address":"Calle Ecuador O-138, Cochabamba","rawText":"South Group (SG), Calle Ecuador O-138, Cochabamba, Bolivia"},
+        {"organization":"Department of Public Health, Ghent University","countryName":"Belgium","countryCode":"BE","address":"Watersportlaan 2, Gent 9000","rawText":"Department of Public Health, Ghent University, Watersportlaan 2, Gent 9000, Belgium"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::a84719744235d8ec52f6d9dbd1ef90bc",
+    "affiliations": [
+        {"organization":"Medical Research Council Epidemiology Unit, Addenbrooke's Hospital, Institute of Metabolic Science","countryName":"U.K.","countryCode":"UK","address":"Cambridge","rawText":"Medical Research Council Epidemiology Unit, Addenbrooke's Hospital, Institute of Metabolic Science, Cambridge, U.K."},
+        {"organization":"MRC Centre for Causal Analyses in Translational Epidemiology (MRC CAiTE), University of Bristol","countryName":"U.K.","countryCode":"UK","address":"Bristol","rawText":"MRC Centre for Causal Analyses in Translational Epidemiology (MRC CAiTE), University of Bristol, Bristol, U.K."},
+        {"organization":"School of Social and Community Medicine, University of Bristol","countryName":"U.K.","countryCode":"UK","address":"Bristol","rawText":"School of Social and Community Medicine, University of Bristol, Bristol, U.K."},
+        {"organization":"CNRS UMR 8199, Institut Pasteur de Lille","countryName":"France","countryCode":"FR","address":"Lille","rawText":"CNRS UMR 8199, Institut Pasteur de Lille, Lille, France"},
+        {"organization":"Lille Nord de France University","countryName":"France","countryCode":"FR","address":"Lille","rawText":"Lille Nord de France University, Lille, France"},
+        {"organization":"School of Women's and Infants' Health, The University of Western Australia","countryName":"Australia","countryCode":"AU","address":"Perth, Western","rawText":"School of Women's and Infants' Health, The University of Western Australia, Perth, Western Australia"},
+        {"organization":"Department of Nutrition-Dietetics, Harokopio University","countryName":"Greece","countryCode":"GR","address":"Athens","rawText":"Department of Nutrition-Dietetics, Harokopio University, Athens, Greece"},
+        {"organization":"Wellcome Trust Sanger Institute, Wellcome Trust Genome Campus","countryName":"U.K.","countryCode":"UK","address":"Hinxton","rawText":"Wellcome Trust Sanger Institute, Wellcome Trust Genome Campus, Hinxton, U.K."},
+        {"organization":"School of Medicine and Pharmacology, The University of Western Australia","countryName":"Australia","countryCode":"AU","address":"Perth, Western","rawText":"School of Medicine and Pharmacology, The University of Western Australia, Perth, Western Australia"},
+        {"organization":"University of Southern Denmark","countryName":"Denmark","countryCode":"DK","address":"Odense","rawText":"University of Southern Denmark, Odense, Denmark"},
+        {"organization":"Oxford Centre for Diabetes, Endocrinology and Metabolism, University of Oxford","countryName":"U.K.","countryCode":"UK","address":"Oxford","rawText":"Oxford Centre for Diabetes, Endocrinology and Metabolism, University of Oxford, Oxford, U.K."},
+        {"organization":"Samuel Lunenfeld Research Institute, Mount Sinai Hospital, University of Toronto","countryName":"Canada","countryCode":"CA","address":"Toronto","rawText":"Samuel Lunenfeld Research Institute, Mount Sinai Hospital, University of Toronto, Toronto, Canada"},
+        {"organization":"Wellcome Trust Centre for Human Genetics, University of Oxford","countryName":"U.K.","countryCode":"UK","address":"Oxford","rawText":"Wellcome Trust Centre for Human Genetics, University of Oxford, Oxford, U.K."},
+        {"organization":"Cardiovascular Genetics” Research Unit, Université Henri Poincaré","countryName":"France","countryCode":"FR","address":"Nancy","rawText":"Cardiovascular Genetics” Research Unit, Université Henri Poincaré, Nancy, France"},
+        {"organization":"The Avon Longitudinal Study of Parents and Children, University of Bristol","countryName":"U.K.","countryCode":"UK","address":"Bristol","rawText":"The Avon Longitudinal Study of Parents and Children, University of Bristol, Bristol, U.K."},
+        {"organization":"British Heart Foundation Glasgow Cardiovascular Research Centre, University of Glasgow","countryName":"U.K.","countryCode":"UK","address":"Glasgow","rawText":"British Heart Foundation Glasgow Cardiovascular Research Centre, University of Glasgow, Glasgow, U.K."},
+        {"organization":"Ontario Institute for Cancer Research, University of Toronto","countryName":"Canada","countryCode":"CA","address":"Toronto","rawText":"Ontario Institute for Cancer Research, University of Toronto, Toronto, Canada"},
+        {"organization":"Department of Genomics of Common Disease, School of Public Health, Imperial College London, Hammersmith Hospital","countryName":"U.K.","countryCode":"UK","address":"London","rawText":"Department of Genomics of Common Disease, School of Public Health, Imperial College London, Hammersmith Hospital, London, U.K."},
+        {"organization":"School of Health and Medical Sciences, Örebro University","countryName":"Sweden","countryCode":"SE","address":"Örebro","rawText":"School of Health and Medical Sciences, Örebro University, Örebro, Sweden"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::09600eb1c2052949c06682288a3231ca",
+    "affiliations": [
+        {"organization":"Tagawa","countryName":null,"countryCode":null,"address":"Roghair, Prakash, van Sint Annaland, Kuipers, Sun, and Lohse","rawText":"Tagawa, Roghair, Prakash, van Sint Annaland, Kuipers, Sun, and Lohse"},
+        {"organization":"Physics of Fluids Group, Faculty of Science and Technology, J.M. Burgers Center for Fluid Dynamics, University of Twente","countryName":"The Netherlands","countryCode":"NL","address":"PO Box 217, 7500 AE Enschede","rawText":"Physics of Fluids Group, Faculty of Science and Technology, J.M. Burgers Center for Fluid Dynamics, University of Twente, PO Box 217, 7500 AE Enschede, The Netherlands"},
+        {"organization":"Multiphase Reactors Group, Department of Chemical Engineering and Chemistry, J.M. Burgers Center for Fluid Dynamics, 5600 MB Eindhoven University of Technology","countryName":"The Netherlands","countryCode":"NL","address":"P.O Box 513","rawText":"Multiphase Reactors Group, Department of Chemical Engineering and Chemistry, J.M. Burgers Center for Fluid Dynamics, P.O Box 513, 5600 MB Eindhoven University of Technology, Eindhoven, The Netherlands"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::4b4c7e79ff51ee6c94f6687ff10aa8fe",
+    "affiliations": [
+        {"organization":"From the ‡Department of Proteomics and Signal Transduction, Max-Planck Institute of Biochemistry","countryName":"Germany and","countryCode":null,"address":"D-82152 Martinsried","rawText":"From the ‡Department of Proteomics and Signal Transduction, Max-Planck Institute of Biochemistry, D-82152 Martinsried, Germany and"},
+        {"organization":"the §Kinaxo Biotechnologies GmbH, Member of the Evotec Group","countryName":"Germany","countryCode":"DE","address":"D-82152 Martinsried","rawText":"the §Kinaxo Biotechnologies GmbH, Member of the Evotec Group, D-82152 Martinsried, Germany"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::e2e82454f1150ca81bb3ca753fdde736",
+    "affiliations": [
+        {"organization":"Division of Cardiology, Department of Medical Specialties, Geneva University Hospitals and University of Geneva","countryName":"Switzerland","countryCode":"CH","address":"Avenue de la Roseraie 64, 1211 Geneva","rawText":"Division of Cardiology, Department of Medical Specialties, Geneva University Hospitals and University of Geneva, Avenue de la Roseraie 64, 1211 Geneva, Switzerland"},
+        {"organization":"First Medical Clinic, Laboratory of Phagocyte Physiopathology and Inflammation, Department of Internal Medicine, University of Genoa","countryName":"Italy","countryCode":"IT","address":"Viale Benedetto XV 6, 16100 Genoa","rawText":"First Medical Clinic, Laboratory of Phagocyte Physiopathology and Inflammation, Department of Internal Medicine, University of Genoa, Viale Benedetto XV 6, 16100 Genoa, Italy"},
+        {"organization":"Laboratory of Hypertension, Department of Physiology and Biophysics, Federal University of Minas Gerais","countryName":"Brazil","countryCode":"BR","address":"Belo Horizonte 31270-901","rawText":"Laboratory of Hypertension, Department of Physiology and Biophysics, Federal University of Minas Gerais, Belo Horizonte 31270-901, Brazil"},
+        {"organization":"Division of Laboratory Medicine, Department of Genetics and Laboratory Medicine, Geneva University Hospitals","countryName":"Switzerland","countryCode":"CH","address":"Rue Gabrielle-Perret-Gentil, 1211 Genera","rawText":"Division of Laboratory Medicine, Department of Genetics and Laboratory Medicine, Geneva University Hospitals, Rue Gabrielle-Perret-Gentil, 1211 Genera, Switzerland"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::c57f2490dfaaa34bec97a1d31aa43553",
+    "affiliations": [
+        {"organization":"Cambridge Systems Biology Centre and Department of Biochemistry, University of Cambridge","countryName":"UK","countryCode":"UK","address":"Sanger Building, 80 Tennis Court Road, Cambridge CB2 1GA","rawText":"Cambridge Systems Biology Centre and Department of Biochemistry, University of Cambridge, Sanger Building, 80 Tennis Court Road, Cambridge CB2 1GA, UK"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::6a60d99dfe164c9cfd65bfd6b48fb10a",
+    "affiliations": [
+        {"organization":"Jeremiah Horrocks Institute, University of Central Lancashire","countryName":null,"countryCode":null,"address":"PR1 2HE Preston, UK Draft version July 25, 2013","rawText":"Jeremiah Horrocks Institute, University of Central Lancashire, PR1 2HE Preston, UK Draft version July 25, 2013"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::71c5a3dc4185d8abcb449436ac6d929d",
+    "affiliations": [
+        {"organization":"Deniz Gu ̈ ndu ̈ z and Bertrand Devillers Centre Tecnolo` gic de Telecomunicacions de Catalunya (CTTC) 08860 - Castelldefels","countryName":"Spain","countryCode":"ES","address":"Barcelona","rawText":"Deniz Gu ̈ ndu ̈ z and Bertrand Devillers Centre Tecnolo` gic de Telecomunicacions de Catalunya (CTTC) 08860 - Castelldefels, Barcelona, Spain"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::ac47e27264fa5963700364b5195fbcba",
+    "affiliations": [
+        {"organization":"Ecological Genetics Research Unit, Department of Biosciences, University of Helsinki           Helsinki","countryName":"Finland","countryCode":"FI","address":null,"rawText":"Ecological Genetics Research Unit, Department of Biosciences, University of Helsinki           Helsinki, Finland"},
+        {"organization":"Fisheries and Oceans Canada           Dartmouth","countryName":"Canada","countryCode":"CA","address":"NS","rawText":"Fisheries and Oceans Canada           Dartmouth, NS, Canada"},
+        {"organization":"Department of Biology, Dalhousie University           Halifax","countryName":"Canada","countryCode":"CA","address":"NS","rawText":"Department of Biology, Dalhousie University           Halifax, NS, Canada"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::2a4f61809daef37ddacf226ab8734f09",
+    "affiliations": [
+        {"organization":"Max-Planck Institute for Solar System Research","countryName":"Germany","countryCode":"DE","address":"Max-Planck Strae 1, 37412 Katlenburg-Lindau","rawText":"Max-Planck Institute for Solar System Research, Max-Planck Strae 1, 37412 Katlenburg-Lindau, Germany"},
+        {"organization":"Department of Physics and Astronomy, Uppsala University","countryName":"Sweden","countryCode":"SE","address":"Box 516, SE-75120 Uppsala","rawText":"Department of Physics and Astronomy, Uppsala University, Box 516, SE-75120 Uppsala, Sweden"},
+        {"organization":"Institute of Theoretical Astrophysics, University of Oslo","countryName":"Norway","countryCode":"NO","address":"P.O. Box 1029 Blindern, N-0315 Oslo","rawText":"Institute of Theoretical Astrophysics, University of Oslo, P.O. Box 1029 Blindern, N-0315 Oslo, Norway"},
+        {"organization":"Instituto de Astrof ́ısica de Canarias","countryName":"Spain","countryCode":"ES","address":"Avda V ́ıa La ́ctea S/N, La Laguna 38205, Tenerife","rawText":"Instituto de Astrof ́ısica de Canarias, Avda V ́ıa La ́ctea S/N, La Laguna 38205, Tenerife, Spain"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::71df543fb287f8c1e3b5d0375d099417",
+    "affiliations": [
+        {"organization":"CNR-IMIP","countryName":"Italy","countryCode":"IT","address":"Monterotondo, 00016 Roma","rawText":"CNR-IMIP, Monterotondo, 00016 Roma, Italy"},
+        {"organization":"CNR-IOM, Laboratorio TASC","countryName":"Italy","countryCode":"IT","address":"34149 Trieste","rawText":"CNR-IOM, Laboratorio TASC, 34149 Trieste, Italy"},
+        {"organization":"Instituto de Fusi ́on Nuclear, Universidad Polit ́ecnica de Madrid","countryName":"Spain","countryCode":"ES","address":"Jos ́e Guti ́errez Abascal 2, 28006 Madrid","rawText":"Instituto de Fusi ́on Nuclear, Universidad Polit ́ecnica de Madrid, Jos ́e Guti ́errez Abascal 2, 28006 Madrid, Spain"},
+        {"organization":"Department of Physics of Electronic Phenomena, Gdan ́sk University of Technology","countryName":"Poland","countryCode":"PL","address":"Naturowicza 11/12, 80-233 Gdan ́sk","rawText":"Department of Physics of Electronic Phenomena, Gdan ́sk University of Technology, Naturowicza 11/12, 80-233 Gdan ́sk, Poland"},
+        {"organization":"Sincrotrone Trieste, Area Science Park","countryName":"Italy","countryCode":"IT","address":"34149 Trieste","rawText":"Sincrotrone Trieste, Area Science Park, 34149 Trieste, Italy"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::a6eac76cd5e9ca3c83d85e3e380f6f54",
+    "affiliations": [
+        {"organization":"Center for Systems Biology, University of Iceland","countryName":"Iceland","countryCode":"IS","address":"Reykjavik","rawText":"Center for Systems Biology, University of Iceland, Reykjavik, Iceland"},
+        {"organization":"Faculty of Industrial Engineering, Mechanical Engineering & Computer Science University of Iceland","countryName":"Iceland","countryCode":"IS","address":"Reykjavik","rawText":"Faculty of Industrial Engineering, Mechanical Engineering & Computer Science University of Iceland, Reykjavik, Iceland"},
+        {"organization":"Department of Bioengineering, University of California","countryName":"USA","countryCode":"US","address":"San Diego, La Jolla, CA","rawText":"Department of Bioengineering, University of California, San Diego, La Jolla, CA, USA"},
+        {"organization":"Infection Biology, University of Basel","countryName":"Switzerland","countryCode":"CH","address":"Biozentrum","rawText":"Infection Biology, Biozentrum, University of Basel, Basel, Switzerland"},
+        {"organization":"USDA-ARS, Plant Genetics Research Unit, Donald Danforth Plant Science Center","countryName":"USA","countryCode":"US","address":"St Louis, MO","rawText":"USDA-ARS, Plant Genetics Research Unit, Donald Danforth Plant Science Center, St Louis, MO, USA"},
+        {"organization":"Technical University Braunschweig, Institute for Bioinformatics & Biochemistry","countryName":"Germany","countryCode":"DE","address":"Braunschweig","rawText":"Technical University Braunschweig, Institute for Bioinformatics & Biochemistry, Braunschweig, Germany"},
+        {"organization":"Division of Biostatistics and Bioinformatics, Institute of Population Health Sciences, National Health Research Institutes","countryName":"Taiwan","countryCode":"TW","address":"Zhunan","rawText":"Division of Biostatistics and Bioinformatics, Institute of Population Health Sciences, National Health Research Institutes, Zhunan, Taiwan"},
+        {"organization":"Science Institute, University of Iceland","countryName":"Iceland","countryCode":"IS","address":"Reykjavik","rawText":"Science Institute, University of Iceland, Reykjavik, Iceland"},
+        {"organization":"Centre of Microbial and Plant Genetics, Department of Microbial & Molecular Systems, Katholieke Universiteit Leuven","countryName":"Belgium","countryCode":"BE","address":"Leuven","rawText":"Centre of Microbial and Plant Genetics, Department of Microbial & Molecular Systems, Katholieke Universiteit Leuven, Leuven, Belgium"},
+        {"organization":"Laboratory of Computational Systems Biotechnology, Ecole Polytechnique Fédérale de Lausanne, Swiss Institute of Bioinformatics","countryName":"Switzerland","countryCode":"CH","address":"Lausanne","rawText":"Laboratory of Computational Systems Biotechnology, Ecole Polytechnique Fédérale de Lausanne, Swiss Institute of Bioinformatics, Lausanne, Switzerland"},
+        {"organization":"Department of Infectious Diseases, Mount Sinai School of Medicine","countryName":"USA","countryCode":"US","address":"New York City, NY","rawText":"Department of Infectious Diseases, Mount Sinai School of Medicine, New York City, NY, USA"},
+        {"organization":"Department of Chemical & Biological Engineering, University of Wisconsin-Madison","countryName":"USA","countryCode":"US","address":"Madison, WI","rawText":"Department of Chemical & Biological Engineering, University of Wisconsin-Madison, Madison, WI, USA"},
+        {"organization":"Faculty of Life & Environmental Sciences, University of Iceland","countryName":"Iceland","countryCode":"IS","address":"Reykjavik","rawText":"Faculty of Life & Environmental Sciences, University of Iceland, Reykjavik, Iceland"},
+        {"organization":"Department of Biochemical and Chemical Engineering, Technische Universität Dortmund","countryName":"Germany","countryCode":"DE","address":"Dortmund","rawText":"Department of Biochemical and Chemical Engineering, Technische Universität Dortmund, Dortmund, Germany"},
+        {"organization":"School of Computer Science, The University of Manchester","countryName":"UK","countryCode":"UK","address":"Manchester","rawText":"School of Computer Science, The University of Manchester, Manchester, UK"},
+        {"organization":"The Manchester Centre for Integrative Systems Biology, Manchester Interdisciplinary Biocentre, The University of Manchester","countryName":"UK","countryCode":"UK","address":"Manchester","rawText":"The Manchester Centre for Integrative Systems Biology, Manchester Interdisciplinary Biocentre, The University of Manchester, Manchester, UK"},
+        {"organization":"Biological Sciences Division, Pacific Northwest National Laboratory","countryName":"USA","countryCode":"US","address":"Richland, WA","rawText":"Biological Sciences Division, Pacific Northwest National Laboratory, Richland, WA, USA"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::370f1dc282772c817879118520adc48a",
+    "affiliations": [
+        {"organization":"EPFL","countryName":"Switzerland","countryCode":"CH","address":"Lausanne","rawText":"EPFL, Lausanne, Switzerland"},
+        {"organization":"Frankfurt Institute for Advanced Studies","countryName":"Germany","countryCode":"DE","address":"Frankfurt","rawText":"Frankfurt Institute for Advanced Studies, Frankfurt, Germany"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::46b45c092994f5229990ecaf020f00a6",
+    "affiliations": [
+        {"organization":"University of Vienna","countryName":"Austria","countryCode":"AT","address":"Boltzmanngasse 5, A-1090 Vienna","rawText":"University of Vienna, Boltzmanngasse 5, A-1090 Vienna, Austria"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::220c8e71c9dbff602906240854237b38",
+    "affiliations": [
+        {"organization":"Unit for Brain and Cognition, Department of Information and Communication Technologies, Universitat Pompeu Fabra","countryName":"Spain","countryCode":"ES","address":"Barcelona","rawText":"Unit for Brain and Cognition, Department of Information and Communication Technologies, Universitat Pompeu Fabra, Barcelona, Spain"},
+        {"organization":"Laboratory of Neurobiology of Adaptive Processes (UMR 7102), Centre National de la Recherche Scientifique and University Pierre and Marie Curie","countryName":"France","countryCode":"FR","address":"Paris","rawText":"Laboratory of Neurobiology of Adaptive Processes (UMR 7102), Centre National de la Recherche Scientifique and University Pierre and Marie Curie, Paris, France"},
+        {"organization":"Institució Catalana de la Recerca i Estudis Avançats, Universitat Pompeu Fabra","countryName":"Spain","countryCode":"ES","address":"Barcelona","rawText":"Institució Catalana de la Recerca i Estudis Avançats, Universitat Pompeu Fabra, Barcelona, Spain"},
+        {"organization":"University of Antwerp","countryName":"Belgium","countryCode":"BE","address":null,"rawText":"University of Antwerp, Belgium"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::a57a9aefb481c83adba3011a6141c56f",
+    "affiliations": [
+        {"organization":"Cooperative Institute for Research in Environmental Sciences, University of Colorado at Boulder","countryName":"USA","countryCode":"US","address":"Boulder, Colorado","rawText":"Cooperative Institute for Research in Environmental Sciences, University of Colorado at Boulder, Boulder, Colorado, USA"},
+        {"organization":"Kanzelh\u007fohe Observatory-IGAM, Institute of Physics, University of Graz","countryName":"Austria","countryCode":"AT","address":"Universit\u007fatsplatz 5, A-8010 Graz","rawText":"Kanzelh\u007fohe Observatory-IGAM, Institute of Physics, University of Graz, Universit\u007fatsplatz 5, A-8010 Graz, Austria"},
+        {"organization":"Space Research Institute, Austrian Academy of Sciences","countryName":"Austria","countryCode":"AT","address":"Schmiedlstrasse 6, A-8010 Graz","rawText":"Space Research Institute, Austrian Academy of Sciences, Schmiedlstrasse 6, A-8010 Graz, Austria"},
+        {"organization":"Hvar Observatory, Faculty of Geodesy, University of Zagreb","countryName":"Croatia","countryCode":"HR","address":"Kaciceva 26, HR-10000 Zagreb","rawText":"Hvar Observatory, Faculty of Geodesy, University of Zagreb, Kaciceva 26, HR-10000 Zagreb, Croatia"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::247084d9a7abe545374ddf7c81413cbb",
+    "affiliations": [
+        {"organization":"Dip. Fisica, Universit`a La Sapienza","countryName":"Italy","countryCode":"IT","address":"Piazzale A. Moro 2, I-00185, Rome","rawText":"Dip. Fisica, Universit`a La Sapienza, Piazzale A. Moro 2, I-00185, Rome, Italy"},
+        {"organization":"IPCF-CNR, UOS Roma Kerberos, Universit`a La Sapienza","countryName":"Italy","countryCode":"IT","address":"Piazzale A. Moro 2, I-00185, Rome","rawText":"IPCF-CNR, UOS Roma Kerberos, Universit`a La Sapienza, Piazzale A. Moro 2, I-00185, Rome, Italy"},
+        {"organization":"INFN","countryName":"Italy","countryCode":"IT","address":"Piazzale A. Moro 2, 00185, Rome","rawText":"INFN, Piazzale A. Moro 2, 00185, Rome, Italy"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::711222d3ff77f290ac5d69250ff5ff1e",
+    "affiliations": [
+        {"organization":"Julius Center for Health Sciences and Primary Care, University Medical Center Utrecht","countryName":"The Netherlands","countryCode":"NL","address":"Universiteitsweg 100, CG 3584, Utrecht","rawText":"Julius Center for Health Sciences and Primary Care, University Medical Center Utrecht, Universiteitsweg 100, CG 3584, Utrecht, The Netherlands"},
+        {"organization":"Department of Clinical Microbiology, Molecular Epidemiology of Infectious Disease, University Medical Center Utrecht","countryName":"The Netherlands","countryCode":"NL","address":"Heidelberglaan 100, CX 3584, Utrecht","rawText":"Department of Clinical Microbiology, Molecular Epidemiology of Infectious Disease, University Medical Center Utrecht, Heidelberglaan 100, CX 3584, Utrecht, The Netherlands"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::db5a0a1cf25eb41c6b07ce9994de490a",
+    "affiliations": [
+        {"organization":"Florent Berthaut University of Bristol","countryName":null,"countryCode":null,"address":null,"rawText":"Florent Berthaut University of Bristol"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::0e17052087f208cfdc0eccd7d05d7485",
+    "affiliations": [
+        {"organization":"Research Department of Primary Care & Population Health, University College London","countryName":null,"countryCode":null,"address":"London, England","rawText":"Research Department of Primary Care & Population Health, University College London, London, England"},
+        {"organization":"Scientific Institute for Quality of Healthcare (IQ healthcare), Radboud University Nijmegen Medical Centre","countryName":"The Netherlands","countryCode":"NL","address":"Nijmegen","rawText":"Scientific Institute for Quality of Healthcare (IQ healthcare), Radboud University Nijmegen Medical Centre, Nijmegen, The Netherlands"},
+        {"organization":"Palliative Care Research Centre, Department of Cancer Research and Molecular Medicine, Faculty of Medicine, Norwegian University of Science and Technology","countryName":"Norway","countryCode":"NO","address":"Trondheim","rawText":"Palliative Care Research Centre, Department of Cancer Research and Molecular Medicine, Faculty of Medicine, Norwegian University of Science and Technology, Trondheim, Norway"},
+        {"organization":"Department of Psychology, University of Bologna","countryName":"Italy","countryCode":"IT","address":"Bologna","rawText":"Department of Psychology, University of Bologna, Bologna, Italy"},
+        {"organization":"Department of Palliative Medicine, University Hospital Bonn","countryName":"Germany","countryCode":"DE","address":"Bonn","rawText":"Department of Palliative Medicine, University Hospital Bonn, Bonn, Germany"},
+        {"organization":"Centre for Palliative Medicine, Malteser Hospital Bonn/Rhein-Sieg","countryName":"Germany","countryCode":"DE","address":"Bonn","rawText":"Centre for Palliative Medicine, Malteser Hospital Bonn/Rhein-Sieg, Bonn, Germany"},
+        {"organization":"Social Care Workforce Research Unit, Kings College London","countryName":null,"countryCode":null,"address":"London, England","rawText":"Social Care Workforce Research Unit, Kings College London, London, England"},
+        {"organization":"European Palliative Care Research Centre, Department of Cancer Research and Molecular Medicine, Faculty of Medicine, Norwegian University of Science and Technology","countryName":"Norway","countryCode":"NO","address":"Trondheim","rawText":"European Palliative Care Research Centre, Department of Cancer Research and Molecular Medicine, Faculty of Medicine, Norwegian University of Science and Technology, Trondheim, Norway"},
+        {"organization":"Department of anesthesiology, Pain and Palliative Medicine, Radboud University Nijmegen Medical Centre","countryName":"The Netherlands","countryCode":"NL","address":"Nijmegen","rawText":"Department of anesthesiology, Pain and Palliative Medicine, Radboud University Nijmegen Medical Centre, Nijmegen, The Netherlands"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::2697df31892f9c109be499d93edf2890",
+    "affiliations": [
+        {"organization":"Einstein Institute of Mathematics, Hebrew University of Jerusalem","countryName":null,"countryCode":null,"address":null,"rawText":"Einstein Institute of Mathematics, Hebrew University of Jerusalem"},
+        {"organization":"Institut für Mathematik, Diskrete Geometrie, Freie Universität Berlin","countryName":null,"countryCode":null,"address":null,"rawText":"Institut für Mathematik, Diskrete Geometrie, Freie Universität Berlin"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::00a9849ddb1168ffca2d599d316a7b19",
+    "affiliations": [
+        {"organization":"Anastasios Kyrillidis and Volkan Cevher Laboratory for Information and Inference Systems Ecole Polytechnique Federale de Lausanne","countryName":null,"countryCode":null,"address":null,"rawText":"Anastasios Kyrillidis and Volkan Cevher Laboratory for Information and Inference Systems Ecole Polytechnique Federale de Lausanne"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::326fcd8da6d08a2d3fb1a890fc9fa26e",
+    "affiliations": [
+        {"organization":"Department of Physics, University  of Gothenburg","countryName":"Sweden","countryCode":"SE","address":"Gothenburg","rawText":"Department of Physics, University  of Gothenburg, Gothenburg, Sweden"},
+        {"organization":"Department for Cell and Molecular  Biology, Science for Life Laboratory, Uppsala University","countryName":"Sweden","countryCode":"SE","address":"Uppsala","rawText":"Department for Cell and Molecular  Biology, Science for Life Laboratory, Uppsala University, Uppsala, Sweden"},
+        {"organization":"The Wellcome  Trust Centre for  Human Genetics, University of Oxford","countryName":"United Kingdom","countryCode":"UK","address":"Oxford","rawText":"The Wellcome  Trust Centre for  Human Genetics, University of Oxford, Oxford,  United Kingdom"},
+        {"organization":"Centre de  Recherche en Cancérologie  de Marseille, CNRS-UMR7258, Inserm-U1068, Institut Paoli-Calmettes, Université Aix-Marseille","countryName":"France","countryCode":"FR","address":null,"rawText":"Centre de  Recherche en Cancérologie  de Marseille, CNRS-UMR7258, Inserm-U1068, Institut Paoli-Calmettes, Université Aix-Marseille, France"},
+        {"organization":"Department of Chemical and Biological  Engineering, Chalmers University of Technology","countryName":"Sweden","countryCode":"SE","address":"Gothenburg","rawText":"Department of Chemical and Biological  Engineering, Chalmers University of Technology, Gothenburg, Sweden"},
+        {"organization":"Division  of Solid State Physics, Lund University","countryName":"Sweden","countryCode":"SE","address":"Lund","rawText":"Division  of Solid State Physics, Lund University, Lund, Sweden"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::280a6b67a099795fd8f0594def2cbc65",
+    "affiliations": [
+        {"organization":"Department of Hematology, Hemostasis, Oncology and Stem Cell Transplantation, Hannover Medical School","countryName":"Germany","countryCode":"DE","address":"Hannover","rawText":"Department of Hematology, Hemostasis, Oncology and Stem Cell Transplantation, Hannover Medical School, Hannover, Germany"},
+        {"organization":"Regeneration in Hematopoiesis, DFG-Center for Regenerative Therapies Dresden, Technische Universität Dresden","countryName":"Germany","countryCode":"DE","address":"Dresden","rawText":"Regeneration in Hematopoiesis, DFG-Center for Regenerative Therapies Dresden, Technische Universität Dresden, Dresden, Germany"},
+        {"organization":"Department of Vaccinology and Applied Microbiology, Helmholtz Centre for Infections Research","countryName":"Germany","countryCode":"DE","address":"Braunschweig","rawText":"Department of Vaccinology and Applied Microbiology, Helmholtz Centre for Infections Research, Braunschweig, Germany"},
+        {"organization":"Institute of Virology, Hannover Medical School","countryName":"Germany","countryCode":"DE","address":"Hannover","rawText":"Institute of Virology, Hannover Medical School, Hannover, Germany"},
+        {"organization":"Department of Translational Oncology, National Center for Tumor Diseases and German Cancer Research Center","countryName":"Germany","countryCode":"DE","address":"Heidelberg","rawText":"Department of Translational Oncology, National Center for Tumor Diseases and German Cancer Research Center, Heidelberg, Germany"},
+        {"organization":"Department of Transfusion Medicine, Hannover Medical School","countryName":"Germany","countryCode":"DE","address":"Hannover","rawText":"Department of Transfusion Medicine, Hannover Medical School, Hannover, Germany"},
+        {"organization":"Department of Obstetrics and Gynecology, Hannover Medical School","countryName":"Germany","countryCode":"DE","address":"Hannover","rawText":"Department of Obstetrics and Gynecology, Hannover Medical School, Hannover, Germany"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::c17f92ea04686de8dc48840714126014",
+    "affiliations": [
+        {"organization":"Instituto Español de Oceanografia (IEO)","countryName":"Spain","countryCode":"ES","address":"Puerto Pesquero, Apartado 2609, 11006 Cádiz","rawText":"Instituto Español de Oceanografia (IEO), Puerto Pesquero, Apartado 2609, 11006 Cádiz, Spain"},
+        {"organization":"Ifremer","countryName":"France","countryCode":"FR","address":"BP 21105, 44311 Nantes cedex 3","rawText":"Ifremer, BP 21105, 44311 Nantes cedex 3, France"},
+        {"organization":"Institute of Economic Studies, University of Iceland","countryName":"Iceland","countryCode":"IS","address":"Oddi v/Sturlugotu, IS-101 Reykjavík","rawText":"Institute of Economic Studies, University of Iceland, Oddi v/Sturlugotu, IS-101 Reykjavík, Iceland"},
+        {"organization":"Hellenic Centre for Marine Research","countryName":"Greece","countryCode":"GR","address":"Agios Kosmas, Hellinikon, 16777 Athens","rawText":"Hellenic Centre for Marine Research, Agios Kosmas, Hellinikon, 16777 Athens, Greece"},
+        {"organization":"Department of Geography, University College London","countryName":"UK","countryCode":"UK","address":"Gower Street, London WC1E 6BT","rawText":"Department of Geography, University College London, Gower Street, London WC1E 6BT, UK"},
+        {"organization":"Ipimar, Avenida de Brasilia","countryName":"Portugal","countryCode":"PT","address":"1449-006 Lisboa","rawText":"Ipimar, Avenida de Brasilia, 1449-006 Lisboa, Portugal"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::8c59636c9d61834a47c9aa3bc6bcaf2f",
+    "affiliations": [
+        {"organization":"Department of Biology, Institute of Molecular Systems Biology, ETH Zürich","countryName":"Switzerland","countryCode":"CH","address":"Zürich","rawText":"Department of Biology, Institute of Molecular Systems Biology, ETH Zürich, Zürich, Switzerland"},
+        {"organization":"Department of Statistics, Purdue University","countryName":"USA","countryCode":"US","address":"West Lafayette, IN","rawText":"Department of Statistics, Purdue University, West Lafayette, IN, USA"},
+        {"organization":"Department of Computer Science, Purdue University","countryName":"USA","countryCode":"US","address":"West Lafayette, IN","rawText":"Department of Computer Science, Purdue University, West Lafayette, IN, USA"},
+        {"organization":"Department of Science, Faculty of Science, University of Zürich","countryName":"Switzerland","countryCode":"CH","address":"Zürich","rawText":"Department of Science, Faculty of Science, University of Zürich, Zürich, Switzerland"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::1313b08b8eab2178c6e6083e0d3c1755",
+    "affiliations": [
+        {"organization":"Institut Clinique de la Souris, PHENOMIN, IGBMC/ICS-MCI, CNRS, INSERM, Université de Strasbourg","countryName":"France","countryCode":"FR","address":"UMR7104, UMR964, 1 rue Laurent Fries, 67404 Illkirch","rawText":"Institut Clinique de la Souris, PHENOMIN, IGBMC/ICS-MCI, CNRS, INSERM, Université de Strasbourg, UMR7104, UMR964, 1 rue Laurent Fries, 67404 Illkirch, France"},
+        {"organization":"The Wellcome Trust Sanger Institute, Wellcome Trust Genome Campus","countryName":"UK","countryCode":"UK","address":"Hinxton, Cambridge, CB10 1SA","rawText":"The Wellcome Trust Sanger Institute, Wellcome Trust Genome Campus, Hinxton, Cambridge, CB10 1SA UK"},
+        {"organization":"German Mouse Clinic, Institute of Experimental Genetics, Helmholtz Zentrum München, German Research Center for Environmental Health (GmbH)","countryName":"Germany","countryCode":"DE","address":"Ingolstädter Landstraße 1, 85764 Neuherberg/Munich","rawText":"German Mouse Clinic, Institute of Experimental Genetics, Helmholtz Zentrum München, German Research Center for Environmental Health (GmbH), Ingolstädter Landstraße 1, 85764 Neuherberg/Munich, Germany"},
+        {"organization":"Medical Research Council Harwell (Mammalian Genetics Unit and Mary Lyon Centre)","countryName":"UK","countryCode":"UK","address":"Harwell, Oxfordshire OX11 0RD","rawText":"Medical Research Council Harwell (Mammalian Genetics Unit and Mary Lyon Centre), Harwell, Oxfordshire OX11 0RD UK"},
+        {"organization":"Chair of Experimental Genetics, Center of Life and Food Sciences Weihenstephan, TUM","countryName":"Germany","countryCode":"DE","address":"85350 Freising-Weihenstephan","rawText":"Chair of Experimental Genetics, Center of Life and Food Sciences Weihenstephan, TUM, 85350 Freising-Weihenstephan, Germany"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::f054933d7859039f9abf6fe0d2b05de1",
+    "affiliations": [
+        {"organization":"Department of Physics, Arnold Sommerfeld Center for Theoretical Physics and Center for NanoScience, University of Munich","countryName":null,"countryCode":null,"address":"Theresienstrasse 37, 80333 Munich, Germany, Dated: July 15, 2014","rawText":"Department of Physics, Arnold Sommerfeld Center for Theoretical Physics and Center for NanoScience, University of Munich, Theresienstrasse 37, 80333 Munich, Germany, Dated: July 15, 2014"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+{"id": "50|dedup_wf_001::1d7f6bf8595e48fe864e5ed0460f18e8",
+    "affiliations": [
+        {"organization":"School of Medical Sciences, University of Aberdeen","countryName":"United Kingdom","countryCode":"UK","address":"Aberdeen","rawText":"School of Medical Sciences, University of Aberdeen, Aberdeen, United Kingdom"},
+        {"organization":"King's College London Dental Institute","countryName":"United Kingdom","countryCode":"UK","address":null,"rawText":"King's College London Dental Institute, United Kingdom"}
+    ],
+    "title":null, "abstract": null, "language": null, "keywords": null, "externalIdentifiers": null, "journal": null, "year": null, "publisher": null, "references": null, "authors": null, "volume": null, "issue": null, "pages": null, "publicationTypeName": null, "text": ""
+}
+
+
