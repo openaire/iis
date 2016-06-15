@@ -83,8 +83,7 @@ public class DocumentToProjectConfidenceLevelBasedCleaner implements eu.dnetlib.
 		try {
 			while (it.hasNext()) {
 				DocumentToProject current = it.next();
-				if (current.getConfidenceLevel()==null ||
-						current.getConfidenceLevel()>=confidenceLevelThreshold) {
+				if (current.getConfidenceLevel()>=confidenceLevelThreshold) {
 					writer.append(current);
 				} else {
 					log.warn("skipping relation, "

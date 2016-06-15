@@ -17,7 +17,6 @@ import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.export.schemas.Concept;
 import eu.dnetlib.iis.export.schemas.DocumentToConceptIds;
-import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 
 /**
  * {@link DocumentToConceptIds} holding protein data bank identifiers action builder module.
@@ -118,9 +117,7 @@ public class DocumentToPdbActionBuilderModuleFactory extends AbstractActionBuild
             qualifierBuilder.setSchemename("dnet:externalReference_typologies");
             externalRefBuilder.setQualifier(qualifierBuilder.build());
             externalRefBuilder.setRefidentifier(pdbId);
-            externalRefBuilder.setDataInfo(
-                    concept.getConfidenceLevel() != null ? buildInference(concept.getConfidenceLevel())
-                            : buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
+            externalRefBuilder.setDataInfo(buildInference(concept.getConfidenceLevel()));
             return externalRefBuilder.build();
         }
     }

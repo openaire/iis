@@ -83,8 +83,7 @@ public class DocumentToProjectActionBuilderModuleFactory extends AbstractActionB
             Oaf.Builder oafBuilder = Oaf.newBuilder();
             oafBuilder.setKind(Kind.relation);
             oafBuilder.setRel(buildOafRel(docId, projectId));
-            oafBuilder.setDataInfo(object.getConfidenceLevel() != null ? buildInference(object.getConfidenceLevel())
-                    : buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
+            oafBuilder.setDataInfo(buildInference(object.getConfidenceLevel()));
             oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
             return oafBuilder;
         }

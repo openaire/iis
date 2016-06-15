@@ -17,7 +17,6 @@ import eu.dnetlib.data.proto.ResultResultProtos.ResultResult;
 import eu.dnetlib.data.proto.ResultResultProtos.ResultResult.PublicationDataset;
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet;
-import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 
 /**
  * {@link DocumentToDataSet} based action builder module.
@@ -81,8 +80,7 @@ public class DocumentToDataSetActionBuilderModuleFactory extends AbstractActionB
             Oaf.Builder oafBuilder = Oaf.newBuilder();
             oafBuilder.setKind(Kind.relation);
             oafBuilder.setRel(buildOafRel(docId, currentRefId));
-            oafBuilder.setDataInfo(object.getConfidenceLevel() != null ? buildInference(object.getConfidenceLevel())
-                    : buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
+            oafBuilder.setDataInfo(buildInference(object.getConfidenceLevel()));
             oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
             return oafBuilder;
         }

@@ -7,7 +7,7 @@ protocol IIS{
         // repository name
         string repositoryName;
         // find more details on `confidenceLevel` constraints in eu/dnetlib/iis/README.markdown file.
-        union { null , float } confidenceLevel = null;
+        float confidenceLevel;
     }
 
     record DocumentToSoftwareUrls {
