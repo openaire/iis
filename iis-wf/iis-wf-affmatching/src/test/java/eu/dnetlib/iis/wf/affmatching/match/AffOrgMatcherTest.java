@@ -34,9 +34,6 @@ public class AffOrgMatcherTest {
     private AffOrgMatchComputer affOrgMatchComputer = new AffOrgMatchComputer();
     
     @Mock
-    private BestAffMatchResultPicker bestAffMatchResultPicker = new BestAffMatchResultPicker();
-    
-    @Mock
     private JavaRDD<AffMatchAffiliation> affiliations;
     
     @Mock
@@ -47,9 +44,6 @@ public class AffOrgMatcherTest {
     
     @Mock
     private JavaRDD<AffMatchResult> matchedAffOrgs;
-    
-    @Mock
-    private JavaRDD<AffMatchResult> bestMatchedAffOrgs;
     
     
     
@@ -113,7 +107,6 @@ public class AffOrgMatcherTest {
         
         doReturn(joinedAffOrgs).when(affOrgJoiner).join(affiliations, organizations);
         doReturn(matchedAffOrgs).when(affOrgMatchComputer).computeMatches(joinedAffOrgs);
-        doReturn(bestMatchedAffOrgs).when(bestAffMatchResultPicker).pickBestAffMatchResults(matchedAffOrgs);
         
         
         // execute
@@ -123,7 +116,7 @@ public class AffOrgMatcherTest {
         
         // assert
         
-        assertTrue(affMatchResults == bestMatchedAffOrgs);
+        assertTrue(affMatchResults == matchedAffOrgs);
         
     }
     

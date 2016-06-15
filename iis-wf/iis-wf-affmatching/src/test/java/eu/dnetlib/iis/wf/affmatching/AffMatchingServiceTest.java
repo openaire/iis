@@ -14,7 +14,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
-import org.apache.spark.api.java.function.PairFunction;
+import org.apache.spark.api.java.function.Function2;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +27,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.google.common.collect.Lists;
 
+import eu.dnetlib.iis.wf.affmatching.match.AffMatchResultChooser;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
@@ -36,7 +37,6 @@ import eu.dnetlib.iis.wf.affmatching.normalize.AffMatchOrganizationNormalizer;
 import eu.dnetlib.iis.wf.affmatching.read.AffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.OrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.AffMatchResultWriter;
-import scala.Tuple2;
 
 /**
 * @author Łukasz Dumiszewski
@@ -68,6 +68,9 @@ public class AffMatchingServiceTest {
     
     @Mock
     private AffOrgMatcher affOrgMatcher2;
+    
+    @Mock
+    private AffMatchResultChooser affMatchResultChooser;
     
     @Mock
     private AffMatchResultWriter affMatchResultWriter;
@@ -107,42 +110,35 @@ public class AffMatchingServiceTest {
     private JavaRDD<AffMatchOrganization> normalizedAndFilteredOrganizations;
 
     
-    @Mock
-    private JavaPairRDD<String, AffMatchAffiliation> idAffiliations;
     
     @Mock
-    private JavaRDD<AffMatchResult> parallelizedAffMatchResults;
+    private JavaPairRDD<String, AffMatchResult> parallelizedAffMatchResults;
     
     @Mock
     private JavaRDD<AffMatchResult> matchedAffOrgs1;
 
     @Mock
+    private JavaPairRDD<String, AffMatchResult> matchedAffOrgsWithKey1;
+    
+    @Mock
     private JavaRDD<AffMatchResult> matchedAffOrgs2;
     
     @Mock
-    private JavaRDD<AffMatchAffiliation> idAffiliationValues;
+    private JavaPairRDD<String, AffMatchResult> matchedAffOrgsWithKey2;
 
-    @Mock
-    private JavaPairRDD<String, AffMatchAffiliation> idAffiliations1;
-
-    @Mock
-    private JavaRDD<AffMatchAffiliation> idAffiliation1Values;
-
-    @Mock
-    private JavaPairRDD<String, AffMatchAffiliation> idAffiliations2;
     
     @Mock
-    private JavaRDD<AffMatchResult> allAffMatchResults1;
+    private JavaPairRDD<String, AffMatchResult> allAffMatchResults1;
     
     @Mock
-    private JavaRDD<AffMatchResult> allAffMatchResults2;
+    private JavaPairRDD<String, AffMatchResult> allAffMatchResults2;
+    
     
     @Mock
-    private JavaPairRDD<String, String> matchedAffIds1;
+    private JavaPairRDD<String, AffMatchResult> allUniqueAffMatchResults;
     
     @Mock
-    private JavaPairRDD<String, String> matchedAffIds2;
-    
+    private JavaRDD<AffMatchResult> allUniqueAffMatchResultsValues;
     
     
     //----------------------------------- FUNCTIONS -------------------------------------------
@@ -160,10 +156,13 @@ public class AffMatchingServiceTest {
     private ArgumentCaptor<Function<AffMatchOrganization, Boolean>> orgFilterFunction;
     
     @Captor
-    private ArgumentCaptor<Function<AffMatchAffiliation, String>> affKeyByFunction;
+    private ArgumentCaptor<Function<AffMatchResult, String>> matchedAffOrgs1KeyByFunction;
     
     @Captor
-    private ArgumentCaptor<PairFunction<AffMatchResult, String, String>> matchedAffIdFunction;
+    private ArgumentCaptor<Function<AffMatchResult, String>> matchedAffOrgs2KeyByFunction;
+    
+    @Captor
+    private ArgumentCaptor<Function2<AffMatchResult, AffMatchResult, AffMatchResult>> allAffMatchResultsReduceFunction;
     
     
     
@@ -297,23 +296,21 @@ public class AffMatchingServiceTest {
         
         //--- matching
         
-        doReturn(idAffiliations).when(normalizedAndFilteredAffiliations).keyBy(Mockito.any());
-        doReturn(parallelizedAffMatchResults).when(sc).parallelize(new ArrayList<>());
+        doReturn(parallelizedAffMatchResults).when(sc).parallelizePairs(new ArrayList<>());
         
         //- first matcher
-        when(idAffiliations.values()).thenReturn(idAffiliationValues);
-        when(affOrgMatcher1.match(idAffiliationValues, normalizedAndFilteredOrganizations)).thenReturn(matchedAffOrgs1);
-        when(parallelizedAffMatchResults.union(matchedAffOrgs1)).thenReturn(allAffMatchResults1);
-        doReturn(matchedAffIds1).when(matchedAffOrgs1).mapToPair(Mockito.any());
-        when(idAffiliations.subtractByKey(matchedAffIds1)).thenReturn(idAffiliations1);
+        when(affOrgMatcher1.match(normalizedAndFilteredAffiliations, normalizedAndFilteredOrganizations)).thenReturn(matchedAffOrgs1);
+        doReturn(matchedAffOrgsWithKey1).when(matchedAffOrgs1).keyBy(Mockito.any());
+        when(parallelizedAffMatchResults.union(matchedAffOrgsWithKey1)).thenReturn(allAffMatchResults1);
         
         //- second matcher
-        when(idAffiliations1.values()).thenReturn(idAffiliation1Values);
-        when(affOrgMatcher2.match(idAffiliation1Values, normalizedAndFilteredOrganizations)).thenReturn(matchedAffOrgs2);
-        when(allAffMatchResults1.union(matchedAffOrgs2)).thenReturn(allAffMatchResults2);
-        doReturn(matchedAffIds2).when(matchedAffOrgs2).mapToPair(Mockito.any());
-        when(idAffiliations1.subtractByKey(matchedAffIds2)).thenReturn(idAffiliations2);
+        when(affOrgMatcher2.match(normalizedAndFilteredAffiliations, normalizedAndFilteredOrganizations)).thenReturn(matchedAffOrgs2);
+        doReturn(matchedAffOrgsWithKey2).when(matchedAffOrgs2).keyBy(Mockito.any());
+        when(allAffMatchResults1.union(matchedAffOrgsWithKey2)).thenReturn(allAffMatchResults2);
         
+        //- pick unique matches
+        doReturn(allUniqueAffMatchResults).when(allAffMatchResults2).reduceByKey(Mockito.any());
+        when(allUniqueAffMatchResults.values()).thenReturn(allUniqueAffMatchResultsValues);
         
         
         // execute
@@ -323,7 +320,7 @@ public class AffMatchingServiceTest {
         
         // assert
         
-        verify(affMatchResultWriter).write(allAffMatchResults2, outputPath);
+        verify(affMatchResultWriter).write(allUniqueAffMatchResultsValues, outputPath);
         
         verify(affiliationReader).readAffiliations(sc, inputAffPath);
         verify(organizationReader).readOrganizations(sc, inputOrgPath);
@@ -340,11 +337,15 @@ public class AffMatchingServiceTest {
         verify(normalizedOrganizations).filter(orgFilterFunction.capture());
         assertOrgFilterFunction(orgFilterFunction.getValue());
 
-        verify(normalizedAndFilteredAffiliations).keyBy(affKeyByFunction.capture());
-        assertAffKeyByFunction(affKeyByFunction.getValue());
-        
-        verify(matchedAffOrgs1).mapToPair(matchedAffIdFunction.capture());
-        assertMatchedAffIdFunction(matchedAffIdFunction.getValue());
+        verify(matchedAffOrgs1).keyBy(matchedAffOrgs1KeyByFunction.capture());
+        assertMatchedAffOrgsKeyByFunction(matchedAffOrgs1KeyByFunction.getValue());
+
+        verify(matchedAffOrgs2).keyBy(matchedAffOrgs2KeyByFunction.capture());
+        assertMatchedAffOrgsKeyByFunction(matchedAffOrgs2KeyByFunction.getValue());
+
+        verify(allAffMatchResults2).reduceByKey(allAffMatchResultsReduceFunction.capture());
+        assertAllAffMatchResultsReduceFunction(allAffMatchResultsReduceFunction.getValue());
+
     }
     
     
@@ -419,35 +420,30 @@ public class AffMatchingServiceTest {
     }
 
     
-    private void assertAffKeyByFunction(Function<AffMatchAffiliation, String> function) throws Exception {
+    private void assertMatchedAffOrgsKeyByFunction(Function<AffMatchResult, String> function) throws Exception {
         
         // given
         
-        AffMatchAffiliation aff = mock(AffMatchAffiliation.class);
-        when(aff.getId()).thenReturn("XYZ");
+        AffMatchResult result = new AffMatchResult(new AffMatchAffiliation("DOC_ID", 3), new AffMatchOrganization("ORG_ID"), 0.4f);
         
         // execute & assert
         
-        assertEquals("XYZ", function.call(aff));
-        
+        assertEquals("DOC_ID###3###ORG_ID", function.call(result));
     }
+
     
-    
-    private void assertMatchedAffIdFunction(PairFunction<AffMatchResult, String, String> function) throws Exception {
+    private void assertAllAffMatchResultsReduceFunction(Function2<AffMatchResult, AffMatchResult, AffMatchResult> function) throws Exception {
         
         // given
         
-        AffMatchResult affMatchResult = mock(AffMatchResult.class);
-        AffMatchAffiliation aff = mock(AffMatchAffiliation.class);
+        AffMatchResult affMatchResult1 = mock(AffMatchResult.class);
+        AffMatchResult affMatchResult2 = mock(AffMatchResult.class);
         
-        when(affMatchResult.getAffiliation()).thenReturn(aff);
-        when(aff.getId()).thenReturn("XYZ");
+        when(affMatchResultChooser.chooseBetter(affMatchResult1, affMatchResult2)).thenReturn(affMatchResult2);
         
+        // assert & assert
         
-        // execute & assert
-        
-        assertEquals(new Tuple2<>("XYZ", ""), function.call(affMatchResult));
-        
+        assertTrue(affMatchResult2 == function.call(affMatchResult1, affMatchResult2));
     }
 
 }

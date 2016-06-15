@@ -28,8 +28,6 @@ public class AffOrgMatcher implements Serializable {
     
     private AffOrgMatchComputer affOrgMatchComputer;
     
-    private BestAffMatchResultPicker bestAffMatchResultPicker = new BestAffMatchResultPicker();
-    
     
     
     
@@ -40,8 +38,7 @@ public class AffOrgMatcher implements Serializable {
      * Matches the passed affiliation with the passed organizations. The matching algorithm consists of 3 steps:
      * <ul>
      * <li>joining the affiliations and organizations (in pairs) according to some rule, performed by {@link #setAffOrgJoiner(AffOrgJoiner)}</li>
-     * <li>computing a match strength of each pair, performed by {@link #setAffOrgMatchComputer(AffOrgMatchComputer)}
-     * <li>choosing the best matching affiliation-organization pair for each affiliation, done by {@link BestAffMatchResultPicker}
+     * <li>computing a match strength of each pair, performed by {@link #setAffOrgMatchComputer(AffOrgMatchComputer)}</li>
      * </ul> 
      */
     public JavaRDD<AffMatchResult> match(JavaRDD<AffMatchAffiliation> affiliations, JavaRDD<AffMatchOrganization> organizations) {
@@ -56,8 +53,6 @@ public class AffOrgMatcher implements Serializable {
         JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> joinedAffOrgs = affOrgJoiner.join(affiliations, organizations);
         
         JavaRDD<AffMatchResult> matchedAffOrgs = affOrgMatchComputer.computeMatches(joinedAffOrgs);
-           
-        matchedAffOrgs = bestAffMatchResultPicker.pickBestAffMatchResults(matchedAffOrgs);
         
         return matchedAffOrgs;
     }

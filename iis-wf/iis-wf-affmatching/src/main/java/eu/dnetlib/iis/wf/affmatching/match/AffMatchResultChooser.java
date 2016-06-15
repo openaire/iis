@@ -13,7 +13,7 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
  * @author Łukasz Dumiszewski
 */
 
-class AffMatchResultChooser implements Serializable {
+public class AffMatchResultChooser implements Serializable {
 
     
     private static final long serialVersionUID = 1L;
