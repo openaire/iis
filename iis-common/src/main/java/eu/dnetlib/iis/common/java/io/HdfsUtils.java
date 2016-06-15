@@ -13,6 +13,9 @@ import org.apache.hadoop.fs.Path;
  */
 public class HdfsUtils {
 
+    
+    //------------------------ LOGIC --------------------------
+    
     /**
      * Removes file or directory (recursively) located under the specified pathname.
      */
