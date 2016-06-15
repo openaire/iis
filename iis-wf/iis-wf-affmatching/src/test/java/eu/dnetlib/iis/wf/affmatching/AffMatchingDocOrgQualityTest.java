@@ -89,7 +89,7 @@ public class AffMatchingDocOrgQualityTest {
     
     //------------------------ TESTS --------------------------
     
-//    @Test
+    @Test
     public void affiliationMatchingJob_random_docs() throws IOException {
         
         
@@ -113,7 +113,7 @@ public class AffMatchingDocOrgQualityTest {
         readResultsAndPrintQualityRate(of("src/test/resources/experimentalData/expectedOutput/set1/matched_aff.json"));
     }
     
-//    @Test
+    @Test
     public void affiliationMatchingJob_docs_assigned_to_project() throws IOException {
         
         // given
@@ -137,7 +137,7 @@ public class AffMatchingDocOrgQualityTest {
     }
 
     
-//    @Test
+    @Test
     public void affiliationMatchingJob_docs_assigned_to_orgs_via_project() throws IOException {
         
         // given
@@ -187,7 +187,7 @@ public class AffMatchingDocOrgQualityTest {
         readResultsAndPrintQualityRate(of("src/test/resources/experimentalData/expectedOutput/set5/matched_aff.json"));
     }
     
-//    @Test
+    @Test
     public void affiliationMatchingJob_docs_assigned_to_orgs_via_project_and_name() throws IOException {
         
         // given
@@ -214,7 +214,7 @@ public class AffMatchingDocOrgQualityTest {
 
     
     
-//    @Test
+    @Test
     public void affiliationMatchingJob_combined_data() throws IOException {
         
         // given
