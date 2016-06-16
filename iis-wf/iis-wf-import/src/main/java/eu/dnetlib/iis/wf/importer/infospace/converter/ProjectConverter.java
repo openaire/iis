@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,26 +50,20 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
     public Project convert(OafEntity oafEntity) throws IOException {
         Preconditions.checkNotNull(oafEntity);
         eu.dnetlib.data.proto.ProjectProtos.Project sourceProject = oafEntity.getProject();
-        if (sourceProject != null && sourceProject.getMetadata() != null) {
-            Project.Builder builder = Project.newBuilder();
-            builder.setId(oafEntity.getId());
-            if (isAcronymValid(sourceProject.getMetadata().getAcronym())) {
-                builder.setProjectAcronym(sourceProject.getMetadata().getAcronym().getValue());
-            }
-            if (sourceProject.getMetadata().getCode() != null
-                    && !StringUtils.isEmpty(sourceProject.getMetadata().getCode().getValue())) {
-                builder.setProjectGrantId(sourceProject.getMetadata().getCode().getValue());
-            }
-            String extractedFundingClass = extractFundingClass(
-                    extractStringValues(sourceProject.getMetadata().getFundingtreeList()));
-            if (!StringUtils.isEmpty(extractedFundingClass)) {
-                builder.setFundingClass(extractedFundingClass);
-            }
-            return builder.build();
-        } else {
-            log.error("skipping: no project metadata for entity " + oafEntity.getId());
-            return null;
+        Project.Builder builder = Project.newBuilder();
+        builder.setId(oafEntity.getId());
+        if (isAcronymValid(sourceProject.getMetadata().getAcronym())) {
+            builder.setProjectAcronym(sourceProject.getMetadata().getAcronym().getValue());
         }
+        if (StringUtils.isNotBlank(sourceProject.getMetadata().getCode().getValue())) {
+            builder.setProjectGrantId(sourceProject.getMetadata().getCode().getValue());
+        }
+        String extractedFundingClass = extractFundingClass(
+                extractStringValues(sourceProject.getMetadata().getFundingtreeList()));
+        if (StringUtils.isNotBlank(extractedFundingClass)) {
+            builder.setFundingClass(extractedFundingClass);
+        }
+        return builder.build();
     }
 
     /**
@@ -76,9 +71,9 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
      * @throws IOException exception thrown when unable to parse XML document
      */
     public static String extractFundingClass(List<String> fundingTreeList) throws IOException {
-        if (!CollectionUtils.isEmpty(fundingTreeList)) {
+        if (CollectionUtils.isNotEmpty(fundingTreeList)) {
             for (String fundingTreeXML : fundingTreeList) {
-                if (!StringUtils.isEmpty(fundingTreeXML)) {
+                if (StringUtils.isNotBlank(fundingTreeXML)) {
                     DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
                     try {
                         DocumentBuilder builder = builderFactory.newDocumentBuilder();
@@ -104,7 +99,7 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
      * @return true if valid, false otherwise
      */
     public static boolean isAcronymValid(String acronym) {
-        return !StringUtils.isEmpty(acronym)
+        return StringUtils.isNotBlank(acronym)
                 && !ACRONYM_SKIP_LOWERCASED_VALUES.contains(acronym.trim().toLowerCase());
     }
     
@@ -114,14 +109,14 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
      * Extracts string values from {@link StringField} list.
      */
     private static List<String> extractStringValues(List<StringField> source) {
-        if (source != null) {
+        if (CollectionUtils.isNotEmpty(source)) {
             List<String> results = new ArrayList<String>(source.size());
             for (StringField currentField : source) {
                 results.add(currentField.getValue());
             }
             return results;
         } else {
-            return null;
+            return Collections.emptyList();
         }
     }
 
@@ -130,7 +125,7 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
      * @return true if valid, false otherwise
      */
     private static boolean isAcronymValid(StringField acronym) {
-        return acronym != null && isAcronymValid(acronym.getValue());
+        return isAcronymValid(acronym.getValue());
     }
 
 }
