@@ -13,7 +13,7 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
  * @author Łukasz Dumiszewski
 */
 
-class AffMatchResultChooser implements Serializable {
+public class AffMatchResultChooser implements Serializable {
 
     
     private static final long serialVersionUID = 1L;
@@ -27,8 +27,7 @@ class AffMatchResultChooser implements Serializable {
     
     /**
      * Returns the 'better' {@link AffMatchResult} from the passed two. 'Better' means here the one that has
-     * bigger {@link AffMatchResult#getMatchStrength()} or if the strengths are the same the one which has organization with
-     * the smaller id.
+     * bigger {@link AffMatchResult#getMatchStrength()}.
      */
     public AffMatchResult chooseBetter(AffMatchResult affMatchResult1, AffMatchResult affMatchResult2) {
         
@@ -37,13 +36,7 @@ class AffMatchResultChooser implements Serializable {
         
         // we want the results to be repetitive and independent of float rounding
         if (Math.abs(affMatchResult1.getMatchStrength() - affMatchResult2.getMatchStrength()) < EPSILON) {
-            
-            if (affMatchResult1.getOrganization().getId().compareTo(affMatchResult2.getOrganization().getId()) < 0) {
-                return affMatchResult1;
-            } 
-            
-            return affMatchResult2;
-                
+            return affMatchResult1;
         }
         
         if (affMatchResult1.getMatchStrength() > affMatchResult2.getMatchStrength()) {

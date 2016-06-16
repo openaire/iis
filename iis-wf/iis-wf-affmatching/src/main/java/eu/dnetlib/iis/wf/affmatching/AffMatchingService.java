@@ -12,6 +12,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 
 import com.google.common.base.Preconditions;
 
+import eu.dnetlib.iis.wf.affmatching.match.AffMatchResultChooser;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
@@ -36,7 +37,7 @@ public class AffMatchingService implements Serializable {
     
 
     private static final long serialVersionUID = 1L;
-
+    
     
     private OrganizationReader organizationReader;
     
@@ -49,6 +50,8 @@ public class AffMatchingService implements Serializable {
     
     
     private List<AffOrgMatcher> affOrgMatchers;
+    
+    private AffMatchResultChooser affMatchResultChooser = new AffMatchResultChooser();
     
     
     private AffMatchResultWriter affMatchResultWriter;
@@ -124,22 +127,25 @@ public class AffMatchingService implements Serializable {
 
     private JavaRDD<AffMatchResult> doMatch(JavaSparkContext sc, JavaRDD<AffMatchAffiliation> normalizedAffiliations, JavaRDD<AffMatchOrganization> normalizedOrganizations) {
         
-        JavaPairRDD<String, AffMatchAffiliation> idAffiliations = normalizedAffiliations.keyBy(aff -> aff.getId());
-        
-        JavaRDD<AffMatchResult> allMatchedAffOrgs = sc.parallelize(new ArrayList<>());
+        JavaPairRDD<Tuple2<String, String>, AffMatchResult> allMatchedAffOrgsWithKey = sc.parallelizePairs(new ArrayList<>());
         
         
         for (AffOrgMatcher affOrgMatcher : affOrgMatchers) {
             
-            JavaRDD<AffMatchResult> matchedAffOrgs = affOrgMatcher.match(idAffiliations.values(), normalizedOrganizations);
+            JavaRDD<AffMatchResult> matchedAffOrgs = affOrgMatcher.match(normalizedAffiliations, normalizedOrganizations);
             
-            allMatchedAffOrgs = allMatchedAffOrgs.union(matchedAffOrgs);
+            JavaPairRDD<Tuple2<String, String>, AffMatchResult> matchedAffOrgsWithKey = matchedAffOrgs
+                    .keyBy(x -> new Tuple2<>(x.getAffiliation().getId(), x.getOrganization().getId()));
+            
+            allMatchedAffOrgsWithKey = allMatchedAffOrgsWithKey.union(matchedAffOrgsWithKey);
             
             
-            JavaPairRDD<String, String> matchedAffIds = matchedAffOrgs.mapToPair(affMatchOrg -> new Tuple2<>(affMatchOrg.getAffiliation().getId(), ""));
-            
-            idAffiliations = idAffiliations.subtractByKey(matchedAffIds);
         }
+        
+        JavaRDD<AffMatchResult> allMatchedAffOrgs = allMatchedAffOrgsWithKey
+                .reduceByKey((r1, r2) -> affMatchResultChooser.chooseBetter(r1, r2))
+                .values();
+        
         
         return allMatchedAffOrgs;
     }
