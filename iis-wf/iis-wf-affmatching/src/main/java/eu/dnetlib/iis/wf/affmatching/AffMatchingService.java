@@ -22,6 +22,7 @@ import eu.dnetlib.iis.wf.affmatching.normalize.AffMatchOrganizationNormalizer;
 import eu.dnetlib.iis.wf.affmatching.read.AffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.OrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.AffMatchResultWriter;
+import scala.Tuple2;
 
 /**
  * Configurable affiliation matching service.<br/><br/>
@@ -36,8 +37,6 @@ public class AffMatchingService implements Serializable {
     
 
     private static final long serialVersionUID = 1L;
-
-    private static final String AFF_ORG_ID_SEPARATOR = "###";
     
     
     private OrganizationReader organizationReader;
@@ -128,15 +127,15 @@ public class AffMatchingService implements Serializable {
 
     private JavaRDD<AffMatchResult> doMatch(JavaSparkContext sc, JavaRDD<AffMatchAffiliation> normalizedAffiliations, JavaRDD<AffMatchOrganization> normalizedOrganizations) {
         
-        JavaPairRDD<String, AffMatchResult> allMatchedAffOrgsWithKey = sc.parallelizePairs(new ArrayList<>());
+        JavaPairRDD<Tuple2<String, String>, AffMatchResult> allMatchedAffOrgsWithKey = sc.parallelizePairs(new ArrayList<>());
         
         
         for (AffOrgMatcher affOrgMatcher : affOrgMatchers) {
             
             JavaRDD<AffMatchResult> matchedAffOrgs = affOrgMatcher.match(normalizedAffiliations, normalizedOrganizations);
             
-            JavaPairRDD<String, AffMatchResult> matchedAffOrgsWithKey = matchedAffOrgs
-                    .keyBy(x -> x.getAffiliation().getId() + AFF_ORG_ID_SEPARATOR + x.getOrganization().getId());
+            JavaPairRDD<Tuple2<String, String>, AffMatchResult> matchedAffOrgsWithKey = matchedAffOrgs
+                    .keyBy(x -> new Tuple2<>(x.getAffiliation().getId(), x.getOrganization().getId()));
             
             allMatchedAffOrgsWithKey = allMatchedAffOrgsWithKey.union(matchedAffOrgsWithKey);
             

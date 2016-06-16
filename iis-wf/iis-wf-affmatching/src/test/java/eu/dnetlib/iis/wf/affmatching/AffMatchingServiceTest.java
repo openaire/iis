@@ -37,6 +37,7 @@ import eu.dnetlib.iis.wf.affmatching.normalize.AffMatchOrganizationNormalizer;
 import eu.dnetlib.iis.wf.affmatching.read.AffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.OrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.AffMatchResultWriter;
+import scala.Tuple2;
 
 /**
 * @author Łukasz Dumiszewski
@@ -112,30 +113,30 @@ public class AffMatchingServiceTest {
     
     
     @Mock
-    private JavaPairRDD<String, AffMatchResult> parallelizedAffMatchResults;
+    private JavaPairRDD<Tuple2<String, String>, AffMatchResult> parallelizedAffMatchResults;
     
     @Mock
     private JavaRDD<AffMatchResult> matchedAffOrgs1;
 
     @Mock
-    private JavaPairRDD<String, AffMatchResult> matchedAffOrgsWithKey1;
+    private JavaPairRDD<Tuple2<String, String>, AffMatchResult> matchedAffOrgsWithKey1;
     
     @Mock
     private JavaRDD<AffMatchResult> matchedAffOrgs2;
     
     @Mock
-    private JavaPairRDD<String, AffMatchResult> matchedAffOrgsWithKey2;
+    private JavaPairRDD<Tuple2<String, String>, AffMatchResult> matchedAffOrgsWithKey2;
 
     
     @Mock
-    private JavaPairRDD<String, AffMatchResult> allAffMatchResults1;
+    private JavaPairRDD<Tuple2<String, String>, AffMatchResult> allAffMatchResults1;
     
     @Mock
-    private JavaPairRDD<String, AffMatchResult> allAffMatchResults2;
+    private JavaPairRDD<Tuple2<String, String>, AffMatchResult> allAffMatchResults2;
     
     
     @Mock
-    private JavaPairRDD<String, AffMatchResult> allUniqueAffMatchResults;
+    private JavaPairRDD<Tuple2<String, String>, AffMatchResult> allUniqueAffMatchResults;
     
     @Mock
     private JavaRDD<AffMatchResult> allUniqueAffMatchResultsValues;
@@ -156,10 +157,10 @@ public class AffMatchingServiceTest {
     private ArgumentCaptor<Function<AffMatchOrganization, Boolean>> orgFilterFunction;
     
     @Captor
-    private ArgumentCaptor<Function<AffMatchResult, String>> matchedAffOrgs1KeyByFunction;
+    private ArgumentCaptor<Function<AffMatchResult, Tuple2<String, String>>> matchedAffOrgs1KeyByFunction;
     
     @Captor
-    private ArgumentCaptor<Function<AffMatchResult, String>> matchedAffOrgs2KeyByFunction;
+    private ArgumentCaptor<Function<AffMatchResult, Tuple2<String, String>>> matchedAffOrgs2KeyByFunction;
     
     @Captor
     private ArgumentCaptor<Function2<AffMatchResult, AffMatchResult, AffMatchResult>> allAffMatchResultsReduceFunction;
@@ -420,15 +421,20 @@ public class AffMatchingServiceTest {
     }
 
     
-    private void assertMatchedAffOrgsKeyByFunction(Function<AffMatchResult, String> function) throws Exception {
+    private void assertMatchedAffOrgsKeyByFunction(Function<AffMatchResult, Tuple2<String, String>> function) throws Exception {
         
         // given
         
         AffMatchResult result = new AffMatchResult(new AffMatchAffiliation("DOC_ID", 3), new AffMatchOrganization("ORG_ID"), 0.4f);
         
-        // execute & assert
+        // execute
         
-        assertEquals("DOC_ID###3###ORG_ID", function.call(result));
+        Tuple2<String, String> retKey = function.call(result);
+        
+        // assert
+        
+        assertEquals("DOC_ID###3", retKey._1);
+        assertEquals("ORG_ID", retKey._2);
     }
 
     
