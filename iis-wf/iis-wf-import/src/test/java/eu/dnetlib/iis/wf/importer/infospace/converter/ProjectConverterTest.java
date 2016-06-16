@@ -42,11 +42,6 @@ public class ProjectConverterTest {
     }
 
     @Test
-    /*
-     * NOTE: If this test fails after https://github.com/openaire/iis/issues/438
-     * is fixed, that's *good*, and the test has to be updated for the expected behaviour.
-     * See also: https://github.com/openaire/iis/pull/442#discussion_r65579874
-     */
     public void convert_unset_project() throws IOException {
         // given
         OafEntity oafEntity = emptyEntityBuilder(ID).build();
@@ -55,10 +50,7 @@ public class ProjectConverterTest {
         Project project = converter.convert(oafEntity);
 
         // assert
-        assertEquals(ID, project.getId());
-        assertNull(project.getProjectAcronym());
-        assertNull(project.getProjectGrantId());
-        assertNull(project.getFundingClass());
+        assertNull(project);
     }
 
     @Test
@@ -75,8 +67,7 @@ public class ProjectConverterTest {
         Project project = converter.convert(oafEntity);
 
         // assert
-        assertEquals(ID, project.getId());
-        assertNull(project.getProjectAcronym());
+        assertNull(project);
     }
 
     @Test

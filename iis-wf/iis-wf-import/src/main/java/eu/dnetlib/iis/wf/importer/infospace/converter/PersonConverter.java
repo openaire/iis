@@ -34,7 +34,7 @@ public class PersonConverter implements OafEntityToAvroConverter<Person> {
         handleFirstName(sourcePerson.getMetadata().getFirstname() ,builder);
         handleSecondNames(sourcePerson.getMetadata().getSecondnamesList() ,builder);
         handleFullName(sourcePerson.getMetadata().getFullname() ,builder);
-        return builder.build();
+        return isDataValid(builder)?builder.build():null;
     }
     
     // ------------------------ PRIVATE --------------------------
@@ -66,4 +66,7 @@ public class PersonConverter implements OafEntityToAvroConverter<Person> {
         }
     }
     
+    private boolean isDataValid(Person.Builder builder) {
+        return builder.hasFirstname() || builder.hasSecondnames() || builder.hasFullname();
+    }
 }

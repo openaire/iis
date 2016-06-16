@@ -63,7 +63,7 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
         if (StringUtils.isNotBlank(extractedFundingClass)) {
             builder.setFundingClass(extractedFundingClass);
         }
-        return builder.build();
+        return isDataValid(builder)?builder.build():null;
     }
 
     /**
@@ -126,6 +126,10 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
      */
     private static boolean isAcronymValid(StringField acronym) {
         return isAcronymValid(acronym.getValue());
+    }
+    
+    private boolean isDataValid(Project.Builder builder) {
+        return builder.hasFundingClass() || builder.hasProjectAcronym() || builder.hasProjectGrantId();
     }
 
 }

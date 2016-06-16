@@ -42,10 +42,7 @@ public class PersonConverterTest {
         Person person = converter.convert(oafEntity);
 
         // assert
-        assertEquals(PERSON_ID, person.getId());
-        assertNull(person.getFirstname());
-        assertNull(person.getSecondnames());
-        assertNull(person.getFullname());
+        assertNull(person);
     }
 
     @Test
