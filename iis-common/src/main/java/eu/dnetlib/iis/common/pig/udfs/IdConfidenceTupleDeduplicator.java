@@ -19,7 +19,7 @@ import org.apache.pig.impl.logicalLayer.schema.Schema;
  *
  * @author mhorst
  */
-public class DeduplicateIdsWithConfidence extends EvalFunc<DataBag> {
+public class IdConfidenceTupleDeduplicator extends EvalFunc<DataBag> {
 
     /**
      * Confidence level position in tuple. First element is indexed with 0.
@@ -28,11 +28,11 @@ public class DeduplicateIdsWithConfidence extends EvalFunc<DataBag> {
     
     //------------------------ CONSTRUCTORS --------------------------
 
-    public DeduplicateIdsWithConfidence() {
+    public IdConfidenceTupleDeduplicator() {
         this(1);
     }
     
-    public DeduplicateIdsWithConfidence(int confidenceLevelPosition) {
+    public IdConfidenceTupleDeduplicator(int confidenceLevelPosition) {
         this.confidenceLevelPosition = confidenceLevelPosition;
     }
     
@@ -40,7 +40,7 @@ public class DeduplicateIdsWithConfidence extends EvalFunc<DataBag> {
      * @param confidenceLevelPosition {@link String} representation of {@link Integer} value.
      * Required by PIG.
      */
-    public DeduplicateIdsWithConfidence(String confidenceLevelPosition) {
+    public IdConfidenceTupleDeduplicator(String confidenceLevelPosition) {
         this(Integer.valueOf(confidenceLevelPosition));
     }
 

@@ -15,15 +15,15 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 /**
- * {@link DeduplicateIdsWithConfidence} UDF test class.
+ * {@link IdConfidenceTupleDeduplicator} UDF test class.
  * @author mhorst
  *
  */
-public class DeduplicateIdsWithConfidenceTest {
+public class IdConfidenceTupleDeduplicatorTest {
 	
 	@Test
 	public void testUDF() throws IOException {
-		DeduplicateIdsWithConfidence udf = new DeduplicateIdsWithConfidence();
+		IdConfidenceTupleDeduplicator udf = new IdConfidenceTupleDeduplicator();
         TupleFactory tupleFactory = TupleFactory.getInstance();
         BagFactory bagFactory = BagFactory.getInstance();
         DataBag emptyBag = bagFactory.newDefaultBag();
