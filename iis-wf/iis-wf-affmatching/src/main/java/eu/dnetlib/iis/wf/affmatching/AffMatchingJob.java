@@ -1,8 +1,8 @@
 package eu.dnetlib.iis.wf.affmatching;
 
 import static com.google.common.collect.ImmutableList.of;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createFirstWordsHashBucketMatcher;
 import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createDocOrgRelationMatcher;
+import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createFirstWordsHashBucketMatcher;
 import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createMainSectionHashBucketMatcher;
 
 import java.io.IOException;
@@ -14,6 +14,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
+import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
 import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.IisOrganizationReader;
@@ -47,11 +48,12 @@ public class AffMatchingJob {
           
             AffMatchingService affMatchingService = createAffMatchingService(sc, params);
             
-            affMatchingService.matchAffiliations(sc, params.inputAvroAffPath, params.inputAvroOrgPath, params.outputAvroPath);
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputAvroPath);
             
+            affMatchingService.matchAffiliations(sc, params.inputAvroAffPath, params.inputAvroOrgPath, params.outputAvroPath);
         }
     }
-        
+    
     
     //------------------------ PRIVATE --------------------------
     
