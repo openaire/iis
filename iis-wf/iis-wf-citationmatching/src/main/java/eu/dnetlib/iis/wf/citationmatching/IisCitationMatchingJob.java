@@ -1,5 +1,7 @@
 package eu.dnetlib.iis.wf.citationmatching;
 
+import java.io.IOException;
+
 import org.apache.hadoop.io.NullWritable;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -11,6 +13,7 @@ import com.beust.jcommander.Parameters;
 import eu.dnetlib.iis.citationmatching.schemas.Citation;
 import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
 import eu.dnetlib.iis.citationmatching.schemas.ReferenceMetadata;
+import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import pl.edu.icm.coansys.citations.ConfigurableCitationMatchingService;
 import pl.edu.icm.coansys.citations.CoreCitationMatchingService;
 import pl.edu.icm.coansys.citations.CoreCitationMatchingSimpleFactory;
@@ -29,7 +32,7 @@ public class IisCitationMatchingJob {
     
     //------------------------ LOGIC --------------------------
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         
         IisCitationMatchingJobParameters params = new IisCitationMatchingJobParameters();
         JCommander jcommander = new JCommander(params);
@@ -44,6 +47,8 @@ public class IisCitationMatchingJob {
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
             
             ConfigurableCitationMatchingService<String, ReferenceMetadata, String, DocumentMetadata, Citation, NullWritable> citationMatchingService = createConfigurableCitationMatchingService(sc, params);
+            
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputDirPath);
             
             citationMatchingService.matchCitations(sc, params.fullDocumentPath, params.fullDocumentPath, params.outputDirPath);
             
