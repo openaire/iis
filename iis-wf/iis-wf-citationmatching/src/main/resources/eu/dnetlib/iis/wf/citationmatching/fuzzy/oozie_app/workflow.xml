@@ -91,7 +91,7 @@
             <name-node>${nameNode}</name-node>
            
             <prepare>
-                <delete path="${workingDir}/main_citations" />
+                <delete path="${workingDir}/matched_citations" />
             </prepare>
             
             <master>yarn-cluster</master>
