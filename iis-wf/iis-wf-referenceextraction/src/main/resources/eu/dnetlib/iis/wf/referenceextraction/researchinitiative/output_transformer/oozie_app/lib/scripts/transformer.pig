@@ -2,7 +2,7 @@ define avro_load_document_to_research_initiative AvroStorage('$schema_input_docu
 
 define avro_store_document_to_research_initiatives AvroStorage('$schema_output_document_to_research_initiatives');
 
-define DEDUPLICATE_IDS_WITH_CONFIDENCE eu.dnetlib.iis.common.pig.udfs.DeduplicateIdsWithConfidence;
+define DEDUPLICATE_IDS_WITH_CONFIDENCE eu.dnetlib.iis.common.pig.udfs.IdConfidenceTupleDeduplicator;
 
 documentToResearchInitiative = load '$input_document_to_research_initiative' using avro_load_document_to_research_initiative;
 
