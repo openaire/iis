@@ -4,6 +4,7 @@ import static eu.dnetlib.iis.common.utils.AvroTestUtils.readLocalAvroDataStore;
 import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -40,22 +41,43 @@ public class AffMatchingResultPrinter {
         
         List<SimpleAffMatchResult> falsePositives = actualMatches.stream()
                 .filter(x -> !expectedMatches.contains(x))
+                .sorted(new SimpleAffMatchResultComparator())
                 .collect(toList());
         
         System.out.println("\n\t-------------------- false positives ---------------------");
         
         for (SimpleAffMatchResult falsePositive : falsePositives) {
             
-            Affiliation affiliation = fetchAffiliation(docsAffiliations, falsePositive.getDocumentId(), falsePositive.getAffiliationPosition());
+            String documentId = falsePositive.getDocumentId();
+            int affiliationPosition = falsePositive.getAffiliationPosition();
             
-            String expectedOrgId = fetchMatchedOrganizationId(expectedMatches, falsePositive.getDocumentId(), falsePositive.getAffiliationPosition());
-            Organization expectedOrg = expectedOrgId == null ? null : fetchOrganization(organizations, expectedOrgId);
+            Affiliation affiliation = fetchAffiliation(docsAffiliations, documentId, affiliationPosition);
+            
+            List<String> expectedOrgIds = fetchMatchedOrganizationIds(expectedMatches, documentId, affiliationPosition);
+            List<Organization> expectedOrgs = expectedOrgIds.stream().map(x -> fetchOrganization(organizations, x)).collect(toList());
+            
             Organization actualOrg = fetchOrganization(organizations, falsePositive.getOrganizationId());
             
-            System.out.println("Document id:     " + falsePositive.getDocumentId());
+            System.out.println("Document id:     " + documentId + " \tPosition: " + affiliationPosition);
             System.out.println("Affiliation:     " + affiliation);
             System.out.println("Was matched to:  " + actualOrg);
-            System.out.println("Should match to: " + expectedOrg);
+            
+            
+            if (expectedOrgs.isEmpty()) {
+                System.out.println("Should match to: null");
+            }
+            for (int i=0; i<expectedOrgs.size(); ++i) {
+                
+                SimpleAffMatchResult expectedMatch = new SimpleAffMatchResult(documentId, affiliationPosition, expectedOrgs.get(i).getId().toString());
+                boolean alreadyMatched = actualMatches.contains(expectedMatch);
+                
+                
+                String shouldMatchPrefix = (i == 0) ? "Should match to: " : "and:             ";
+                String alreadyMatchedString = alreadyMatched ? "(already matched) " : "";
+                
+                System.out.println(shouldMatchPrefix + alreadyMatchedString + expectedOrgs.get(i));
+                
+            }
             System.out.println();
         
         }
@@ -73,7 +95,8 @@ public class AffMatchingResultPrinter {
         
         
         List<SimpleAffMatchResult> notMatched = expectedMatches.stream()
-                .filter(x -> fetchMatchedOrganizationId(actualMatches, x.getDocumentId(), x.getAffiliationPosition()) == null)
+                .filter(x -> !actualMatches.contains(x))
+                .sorted(new SimpleAffMatchResultComparator())
                 .collect(toList());
         
         
@@ -83,10 +106,10 @@ public class AffMatchingResultPrinter {
             
             Affiliation affiliation = fetchAffiliation(docsAffiliations, match.getDocumentId(), match.getAffiliationPosition());
             
-            String expectedOrgId = fetchMatchedOrganizationId(expectedMatches, match.getDocumentId(), match.getAffiliationPosition());
-            Organization expectedOrg = fetchOrganization(organizations, expectedOrgId);
+            Organization expectedOrg = fetchOrganization(organizations, match.getOrganizationId());
             
-            System.out.println("Document id:     " + match.getDocumentId());
+            
+            System.out.println("Document id:     " + match.getDocumentId() + " \tPosition: " + match.getAffiliationPosition());
             System.out.println("Affiliation:     " + affiliation);
             System.out.println("Should match to: " + expectedOrg);
             System.out.println();
@@ -98,11 +121,11 @@ public class AffMatchingResultPrinter {
     
     //------------------------ PRIVATE --------------------------
     
-    private static String fetchMatchedOrganizationId(List<SimpleAffMatchResult> matches, String documentId, int pos) {
+    private static List<String> fetchMatchedOrganizationIds(List<SimpleAffMatchResult> matches, String documentId, int pos) {
         return matches.stream()
                 .filter(match -> StringUtils.equals(match.getDocumentId(), documentId) && match.getAffiliationPosition() == pos)
                 .map(match -> match.getOrganizationId())
-                .findFirst().orElse(null);
+                .collect(toList());
     }
     
     
@@ -118,4 +141,19 @@ public class AffMatchingResultPrinter {
         
     }
 
+    private static class SimpleAffMatchResultComparator implements Comparator<SimpleAffMatchResult> {
+
+        @Override
+        public int compare(SimpleAffMatchResult r1, SimpleAffMatchResult r2) {
+            
+            int docIdCompare = r1.getDocumentId().compareTo(r2.getDocumentId());
+            
+            if (docIdCompare == 0) {
+                return Integer.compare(r1.getAffiliationPosition(), r2.getAffiliationPosition());
+            }
+            
+            return docIdCompare;
+        }
+        
+    }
 }

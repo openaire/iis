@@ -30,3 +30,19 @@
      "countryCode":"US",
      "websiteUrl":""
 }
+{
+    "id":"20|WSU",
+    "name":"Washington State University",
+    "shortName":"WSU",
+    "countryName":"United States",
+    "countryCode":"US",
+    "websiteUrl":"https://wsu.edu/"
+}
+{
+    "id":"20|WSU_DUP",
+    "name":"Washington State University, WSU",
+    "shortName":"WSU",
+    "countryName":"United States",
+    "countryCode":"US",
+    "websiteUrl":"https://wsu.edu/"
+}

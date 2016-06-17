@@ -13,6 +13,7 @@ import static java.util.stream.Collectors.toList;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.spark.SparkConf;
@@ -35,15 +36,17 @@ import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.IisOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.AffMatchResultWriter;
 import eu.dnetlib.iis.wf.affmatching.write.SimpleAffMatchResultWriter;
+import scala.Tuple2;
 
 /**
  * Affiliation matching module test that measures quality of matching.<br/>
  * Tests in this class use alternative {@link AffMatchResultWriter} which does
  * not loose information about matched affiliation position in document.<br/>
  * <br/>
- * Quality of matching is described by three factors:<br/>
+ * Quality of matching is described by four factors:<br/>
  * <ul>
- * <li>Correct matches - percentage of correctly matched results among all expected matches</li>
+ * <li>All matches - percentage of all actual matches to all expected matches</li>
+ * <li>All distinct aff matches - percentage of actual matches with distinct affiliations to expected matches with distinct affiliations</li>
  * <li>True positives - percentage of returned results that was matched correctly</li>
  * <li>False positives - percentage of returned results that was matched incorrectly (sums to 100% with true positives)</li>
  * <ul><br/>
@@ -125,140 +128,6 @@ public class AffMatchingAffOrgQualityTest {
     //------------------------ TESTS --------------------------
     
     @Test
-    public void matchAffiliations_random_docs() throws IOException {
-        
-        // given
-        
-        createInputDataFromJsonFiles(
-                of(INPUT_DATA_DIR_PATH + "/all_organizations.json"),
-                of(INPUT_DATA_DIR_PATH + "/set1/docs_with_aff_real_data.json"),
-                of(), of(), of());
-        
-        
-        // execute
-        
-        affMatchingService.matchAffiliations(sparkContext, inputAffDirPath, inputOrgDirPath, outputDirPath);
-        
-        
-        // log
-        
-        System.out.println("\nRANDOM DOCUMENTS");
-        
-        readResultsAndPrintQualityRate(of("src/test/resources/experimentalData/expectedOutput/set1/matched_aff.json"));
-    }
-    
-    
-    @Test
-    public void matchAffiliations_docs_assigned_to_project() throws IOException {
-        
-        // given
-        
-        createInputDataFromJsonFiles(
-                of(INPUT_DATA_DIR_PATH + "/all_organizations.json"),
-                of(INPUT_DATA_DIR_PATH + "/set2/docs_with_aff_real_data.json"),
-                of(), of(), of());
-        
-        
-        // execute
-        
-        affMatchingService.matchAffiliations(sparkContext, inputAffDirPath, inputOrgDirPath, outputDirPath);
-        
-        
-        // log
-        
-        System.out.println("\nDOCUMENTS ASSIGNED TO PROJECT");
-        
-        readResultsAndPrintQualityRate(of("src/test/resources/experimentalData/expectedOutput/set2/matched_aff.json"));
-    }
-    
-    @Test
-    public void matchAffiliations_docs_assigned_to_orgs_via_projects() throws IOException {
-        
-        // given
-        
-        AffOrgMatcher docOrgRelationMatcher = 
-                createDocOrgRelationMatcher(sparkContext, inputDocProjDirPath, inputInferredDocProjDirPath, inputProjOrgDirPath, inputDocProjConfidenceThreshold);
-        
-        affMatchingService.setAffOrgMatchers(of(docOrgRelationMatcher));
-
-        
-        createInputDataFromJsonFiles(
-                of(INPUT_DATA_DIR_PATH + "/all_organizations.json"),
-                of(INPUT_DATA_DIR_PATH + "/set3/docs_with_aff_real_data.json"),
-                of(INPUT_DATA_DIR_PATH + "/set3/doc_project.json"), 
-                of(),
-                of(INPUT_DATA_DIR_PATH + "/set3/org_project.json"));
-        
-        
-        // execute
-        
-        affMatchingService.matchAffiliations(sparkContext, inputAffDirPath, inputOrgDirPath, outputDirPath);
-        
-        
-        // log
-        
-        System.out.println("\nDOCUMENTS ASSIGNED TO ORGANIZATIONS VIA PROJECT (docOrgRelationMatcher only)");
-        
-        readResultsAndPrintQualityRate(of("src/test/resources/experimentalData/expectedOutput/set3/matched_aff.json"));
-    }
-    
-    @Test
-    public void matchAffiliations_docs_assigned_to_orgs_via_projects_2() throws IOException {
-        
-        // given
-        
-        AffOrgMatcher docOrgRelationMatcher = 
-                createDocOrgRelationMatcher(sparkContext, inputDocProjDirPath, inputInferredDocProjDirPath, inputProjOrgDirPath, inputDocProjConfidenceThreshold);
-        
-        affMatchingService.setAffOrgMatchers(of(docOrgRelationMatcher));
-
-        
-        createInputDataFromJsonFiles(
-                of("src/test/resources/experimentalData/input/all_organizations.json"),
-                of("src/test/resources/experimentalData/input/set5/docs_with_aff_real_data.json"),
-                of("src/test/resources/experimentalData/input/set5/doc_project.json"), 
-                of(),
-                of("src/test/resources/experimentalData/input/set5/org_project.json"));
-        
-        
-        // execute
-        
-        affMatchingService.matchAffiliations(sparkContext, inputAffDirPath, inputOrgDirPath, outputDirPath);
-        
-        
-        // log
-        
-        System.out.println("\nDOCUMENTS ASSIGNED TO ORGANIZATIONS VIA PROJECT 2 (docOrgRelationMatcher only)");
-        
-        readResultsAndPrintQualityRate(of("src/test/resources/experimentalData/expectedOutput/set5/matched_aff.json"));
-    }
-    
-    @Test
-    public void matchAffiliations_docs_assigned_to_orgs_via_projects_and_names() throws IOException {
-        
-        // given
-        
-        createInputDataFromJsonFiles(
-                of(INPUT_DATA_DIR_PATH + "/all_organizations.json"),
-                of(INPUT_DATA_DIR_PATH + "/set4/docs_with_aff_real_data.json"),
-                of(INPUT_DATA_DIR_PATH + "/set4/doc_project.json"),
-                of(),
-                of(INPUT_DATA_DIR_PATH + "/set4/org_project.json"));
-        
-        
-        // execute
-        
-        affMatchingService.matchAffiliations(sparkContext, inputAffDirPath, inputOrgDirPath, outputDirPath);
-        
-        
-        // log
-        
-        System.out.println("\nDOCUMENTS ASSIGNED TO ORGANIZATIONS VIA PROJECT AND NAMES");
-        
-        readResultsAndPrintQualityRate(of("src/test/resources/experimentalData/expectedOutput/set4/matched_aff.json"));
-    }
-    
-    @Test
     public void matchAffiliations_combined_data() throws IOException {
         
         // given
@@ -268,10 +137,11 @@ public class AffMatchingAffOrgQualityTest {
                 of(
                         INPUT_DATA_DIR_PATH + "/set1/docs_with_aff_real_data.json",
                         INPUT_DATA_DIR_PATH + "/set2/docs_with_aff_real_data.json",
-                        INPUT_DATA_DIR_PATH + "/set4/docs_with_aff_real_data.json"),
-                of(INPUT_DATA_DIR_PATH + "/set4/doc_project.json"), 
+                        INPUT_DATA_DIR_PATH + "/set4/docs_with_aff_real_data.json",
+                        INPUT_DATA_DIR_PATH + "/set5/docs_with_aff_real_data.json"),
+                of(INPUT_DATA_DIR_PATH + "/set4/doc_project.json", INPUT_DATA_DIR_PATH + "/set5/doc_project.json"), 
                 of(),
-                of(INPUT_DATA_DIR_PATH + "/set4/org_project.json"));
+                of(INPUT_DATA_DIR_PATH + "/set4/org_project.json", INPUT_DATA_DIR_PATH + "/set5/org_project.json"));
         
         
         // execute
@@ -287,7 +157,8 @@ public class AffMatchingAffOrgQualityTest {
                 of(
                         "src/test/resources/experimentalData/expectedOutput/set1/matched_aff.json",
                         "src/test/resources/experimentalData/expectedOutput/set2/matched_aff.json",
-                        "src/test/resources/experimentalData/expectedOutput/set4/matched_aff.json"));
+                        "src/test/resources/experimentalData/expectedOutput/set4/matched_aff.json",
+                        "src/test/resources/experimentalData/expectedOutput/set5/matched_aff.json"));
     }
     
     
@@ -327,7 +198,16 @@ public class AffMatchingAffOrgQualityTest {
                 .filter(x -> expectedMatches.contains(x))
                 .collect(toList());
         
+        int distinctAffActualMatchesCount = actualMatches.stream()
+                .collect(Collectors.groupingBy(x -> new Tuple2<>(x.getDocumentId(), x.getAffiliationPosition())))
+                .size();
+        
+        int distinctAffExpectedMatchesCount = expectedMatches.stream()
+                .collect(Collectors.groupingBy(x -> new Tuple2<>(x.getDocumentId(), x.getAffiliationPosition())))
+                .size();
+        
         printQualityFactor("All matches", actualMatches.size(), expectedMatches.size());
+        printQualityFactor("All distinct aff matches", distinctAffActualMatchesCount, distinctAffExpectedMatchesCount);
         printQualityFactor("Correct matches", truePositives.size(), actualMatches.size());
         
     }
@@ -346,7 +226,7 @@ public class AffMatchingAffOrgQualityTest {
         
         double factorPercentage = ((double)goodCount/totalCount)*100;
         
-        String text = String.format("%-20s %5.2f%% (%d/%d)", factorName + ":", factorPercentage, goodCount, totalCount);
+        String text = String.format("%-30s %5.2f%% (%d/%d)", factorName + ":", factorPercentage, goodCount, totalCount);
         System.out.println(text);
         
         
