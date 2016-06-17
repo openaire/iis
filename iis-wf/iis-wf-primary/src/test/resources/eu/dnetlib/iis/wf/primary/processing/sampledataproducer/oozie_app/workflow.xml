@@ -322,6 +322,19 @@
 					<name>output_matched_doc_organizations</name>
 					<value>${workingDir}/exported/matched_affiliation</value>
 				</property>
+                <!-- shared executors configuration for affmatch and citmatch spark algorithms-->
+                <property>
+                    <name>sparkExecutorMemory</name>
+                    <value>1G</value>
+                </property>
+                <property>
+                    <name>sparkExecutorCores</name>
+                    <value>1</value>
+                </property>
+                <property>
+                    <name>sparkExecutorsNumber</name>
+                    <value>2</value>
+                </property>
 			</configuration>
 		</sub-workflow>
 		<ok to="consumer" />
