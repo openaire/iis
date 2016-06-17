@@ -28,16 +28,21 @@ public class PersonConverter implements OafEntityToAvroConverter<Person> {
     @Override
     public Person convert(OafEntity oafEntity) {
         Preconditions.checkNotNull(oafEntity);
-        eu.dnetlib.data.proto.PersonProtos.Person sourcePerson = oafEntity.getPerson();
-        if (sourcePerson != null && sourcePerson.getMetadata() != null) {
-            Person.Builder builder = Person.newBuilder();
-            builder.setId(oafEntity.getId());
-            handleFirstName(sourcePerson.getMetadata().getFirstname() ,builder);
-            handleSecondNames(sourcePerson.getMetadata().getSecondnamesList() ,builder);
-            handleFullName(sourcePerson.getMetadata().getFullname() ,builder);
-            return builder.build();
+        if (oafEntity.hasPerson()) {
+            eu.dnetlib.data.proto.PersonProtos.Person sourcePerson = oafEntity.getPerson();
+            if (sourcePerson.hasMetadata()) {
+                Person.Builder builder = Person.newBuilder();
+                builder.setId(oafEntity.getId());
+                handleFirstName(sourcePerson.getMetadata().getFirstname() ,builder);
+                handleSecondNames(sourcePerson.getMetadata().getSecondnamesList() ,builder);
+                handleFullName(sourcePerson.getMetadata().getFullname() ,builder);
+                return isDataValid(builder)?builder.build():null;        
+            } else {
+                log.error("skipping: no metadata specified for person: " + oafEntity.getId());
+                return null;
+            }
         } else {
-            log.error("skipping: no metadata specified for person: " + oafEntity.getId());
+            log.error("skipping: no person specified for entity: " + oafEntity.getId());
             return null;
         }
     }
@@ -45,19 +50,19 @@ public class PersonConverter implements OafEntityToAvroConverter<Person> {
     // ------------------------ PRIVATE --------------------------
     
     private void handleFirstName(StringField firstName, Person.Builder builder) {
-        if (firstName != null && !StringUtils.isEmpty(firstName.getValue())) {
+        if (StringUtils.isNotBlank(firstName.getValue())) {
             builder.setFirstname(firstName.getValue());
         }
     }
     
     private void handleSecondNames(List<StringField> secondNames, Person.Builder builder) {
-        if (!CollectionUtils.isEmpty(secondNames)) {
+        if (CollectionUtils.isNotEmpty(secondNames)) {
             if (builder.getSecondnames() == null) {
                 builder.setSecondnames(new ArrayList<CharSequence>(secondNames.size()));
             }
             List<CharSequence> resultNames = new ArrayList<CharSequence>(secondNames.size());
             for (StringField currentSecondName : secondNames) {
-                if (currentSecondName.getValue() != null) {
+                if (StringUtils.isNotBlank(currentSecondName.getValue())) {
                     resultNames.add(currentSecondName.getValue());
                 }
             }
@@ -66,9 +71,12 @@ public class PersonConverter implements OafEntityToAvroConverter<Person> {
     }
     
     private void handleFullName(StringField fullName, Person.Builder builder) {
-        if (fullName != null && !StringUtils.isEmpty(fullName.getValue())) {
+        if (StringUtils.isNotBlank(fullName.getValue())) {
             builder.setFullname(fullName.getValue());
         }
     }
     
+    private boolean isDataValid(Person.Builder builder) {
+        return builder.hasFirstname() || builder.hasSecondnames() || builder.hasFullname();
+    }
 }

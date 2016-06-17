@@ -73,7 +73,7 @@ public class OrganizationConverter implements OafEntityToAvroConverter<Organizat
 
         eu.dnetlib.data.proto.OrganizationProtos.Organization srcOrganization = oafEntity.getOrganization();
         
-        if (srcOrganization.getMetadata().getLegalname() == null || StringUtils.isBlank(srcOrganization.getMetadata().getLegalname().getValue())) {
+        if (StringUtils.isBlank(srcOrganization.getMetadata().getLegalname().getValue())) {
             
             log.error("skipping: empty organization name");
             
