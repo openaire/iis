@@ -59,7 +59,7 @@ public class AffOrgMatchVoterStrengthEstimator {
 
     private final static boolean PRINT_NOT_MATCHED = false;
     
-    private final static boolean PRINT_FALSE_POSITIVES = true;
+    private final static boolean PRINT_FALSE_POSITIVES = false;
     
     private final static boolean PRINT_NUMBER_DETAILS = true;
     
