@@ -85,6 +85,10 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
     public DocumentMetadata convert(OafEntity oafEntity, Map<String, List<QualifiedOafJsonRecord>> relations) throws IOException {
         Preconditions.checkNotNull(oafEntity);
         ResultProtos.Result sourceResult = oafEntity.getResult();
+        if (!oafEntity.hasResult()) {
+            log.error("skipping: no result object for id " + oafEntity.getId());
+            return null;
+        }
         DocumentMetadata.Builder builder = DocumentMetadata.newBuilder();
         builder.setId(oafEntity.getId());
         createBasicMetadata(sourceResult, builder);
@@ -108,6 +112,9 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
      */
     private DocumentMetadata.Builder createBasicMetadata(ResultProtos.Result sourceResult,
             DocumentMetadata.Builder metaBuilder) {
+        if (!sourceResult.hasMetadata()) {
+            return metaBuilder;
+        }
         handleTitle(sourceResult.getMetadata().getTitleList(), metaBuilder);
         handleDescription(sourceResult.getMetadata().getDescriptionList(), metaBuilder);
         handleLanguage(sourceResult.getMetadata().getLanguage(), metaBuilder);
@@ -234,7 +241,9 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
         Map<CharSequence, CharSequence> additionalIds = new HashMap<CharSequence, CharSequence>();
         if (CollectionUtils.isNotEmpty(oafEntity.getPidList())) {
             for (StructuredProperty currentPid : oafEntity.getPidList()) {
-                if (StringUtils.isNotBlank(currentPid.getValue()) && fieldApprover.approve(currentPid.getDataInfo())) {
+                if (StringUtils.isNotBlank(currentPid.getQualifier().getClassid()) 
+                        && StringUtils.isNotBlank(currentPid.getValue()) 
+                        && fieldApprover.approve(currentPid.getDataInfo())) {
                     additionalIds.put(currentPid.getQualifier().getClassid(), currentPid.getValue());
                 }
             }

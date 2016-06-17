@@ -49,21 +49,33 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
     @Override
     public Project convert(OafEntity oafEntity) throws IOException {
         Preconditions.checkNotNull(oafEntity);
-        eu.dnetlib.data.proto.ProjectProtos.Project sourceProject = oafEntity.getProject();
-        Project.Builder builder = Project.newBuilder();
-        builder.setId(oafEntity.getId());
-        if (isAcronymValid(sourceProject.getMetadata().getAcronym())) {
-            builder.setProjectAcronym(sourceProject.getMetadata().getAcronym().getValue());
+        if (oafEntity.hasProject()) {
+            eu.dnetlib.data.proto.ProjectProtos.Project sourceProject = oafEntity.getProject();
+            if (sourceProject.hasMetadata()) {
+                Project.Builder builder = Project.newBuilder();
+                builder.setId(oafEntity.getId());
+                StringField acronym = sourceProject.getMetadata().getAcronym();
+                if (isAcronymValid(acronym)) {
+                    builder.setProjectAcronym(acronym.getValue());
+                }
+                String projectGrantId = sourceProject.getMetadata().getCode().getValue();
+                if (StringUtils.isNotBlank(projectGrantId)) {
+                    builder.setProjectGrantId(projectGrantId);
+                }
+                String extractedFundingClass = extractFundingClass(
+                        extractStringValues(sourceProject.getMetadata().getFundingtreeList()));
+                if (StringUtils.isNotBlank(extractedFundingClass)) {
+                    builder.setFundingClass(extractedFundingClass);
+                }
+                return isDataValid(builder)?builder.build():null;
+            } else {
+                log.error("skipping: no metadata for project " + oafEntity.getId());
+                return null;
+            }
+        } else {
+            log.error("skipping: no project for entity " + oafEntity.getId());
+            return null;
         }
-        if (StringUtils.isNotBlank(sourceProject.getMetadata().getCode().getValue())) {
-            builder.setProjectGrantId(sourceProject.getMetadata().getCode().getValue());
-        }
-        String extractedFundingClass = extractFundingClass(
-                extractStringValues(sourceProject.getMetadata().getFundingtreeList()));
-        if (StringUtils.isNotBlank(extractedFundingClass)) {
-            builder.setFundingClass(extractedFundingClass);
-        }
-        return isDataValid(builder)?builder.build():null;
     }
 
     /**

@@ -28,13 +28,23 @@ public class PersonConverter implements OafEntityToAvroConverter<Person> {
     @Override
     public Person convert(OafEntity oafEntity) {
         Preconditions.checkNotNull(oafEntity);
-        eu.dnetlib.data.proto.PersonProtos.Person sourcePerson = oafEntity.getPerson();
-        Person.Builder builder = Person.newBuilder();
-        builder.setId(oafEntity.getId());
-        handleFirstName(sourcePerson.getMetadata().getFirstname() ,builder);
-        handleSecondNames(sourcePerson.getMetadata().getSecondnamesList() ,builder);
-        handleFullName(sourcePerson.getMetadata().getFullname() ,builder);
-        return isDataValid(builder)?builder.build():null;
+        if (oafEntity.hasPerson()) {
+            eu.dnetlib.data.proto.PersonProtos.Person sourcePerson = oafEntity.getPerson();
+            if (sourcePerson.hasMetadata()) {
+                Person.Builder builder = Person.newBuilder();
+                builder.setId(oafEntity.getId());
+                handleFirstName(sourcePerson.getMetadata().getFirstname() ,builder);
+                handleSecondNames(sourcePerson.getMetadata().getSecondnamesList() ,builder);
+                handleFullName(sourcePerson.getMetadata().getFullname() ,builder);
+                return isDataValid(builder)?builder.build():null;        
+            } else {
+                log.error("skipping: no metadata specified for person: " + oafEntity.getId());
+                return null;
+            }
+        } else {
+            log.error("skipping: no person specified for entity: " + oafEntity.getId());
+            return null;
+        }
     }
     
     // ------------------------ PRIVATE --------------------------
