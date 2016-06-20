@@ -33,6 +33,11 @@
             <value>200</value>
             <description>total number of executors</description>
         </property>
+        <property>
+            <name>numberOfPartitions</name>
+            <value>400</value>
+            <description>number of partitions used for rdds with citations and documents read from input files</description>
+        </property>
     </parameters>
 
     <global>
@@ -109,7 +114,7 @@
             <arg>-fullDocumentPath = ${workingDir}/documents_with_authors</arg>
             
             <arg>-outputDirPath = ${workingDir}/matched_citations</arg>
-            <arg>-numberOfPartitions = 1000</arg>
+            <arg>-numberOfPartitions = ${numberOfPartitions}</arg>
             
         </spark>
         <ok to="citation-matching-output-transformer"/>
