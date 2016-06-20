@@ -3,6 +3,7 @@ package eu.dnetlib.iis.wf.importer.infospace.converter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,7 +85,7 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
     public DocumentMetadata convert(OafEntity oafEntity, Map<String, List<QualifiedOafJsonRecord>> relations) throws IOException {
         Preconditions.checkNotNull(oafEntity);
         ResultProtos.Result sourceResult = oafEntity.getResult();
-        if (sourceResult == null) {
+        if (!oafEntity.hasResult()) {
             log.error("skipping: no result object for id " + oafEntity.getId());
             return null;
         }
@@ -94,7 +95,7 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
         handleAdditionalIds(oafEntity, builder);
         handleDatasourceIds(oafEntity, builder);
         List<QualifiedOafJsonRecord> personRelations = relations.get(personResultColumnFamily);
-        if (!CollectionUtils.isEmpty(personRelations)) {
+        if (CollectionUtils.isNotEmpty(personRelations)) {
             handlePersons(personRelations, builder);    
         }
         return builder.build();
@@ -111,7 +112,7 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
      */
     private DocumentMetadata.Builder createBasicMetadata(ResultProtos.Result sourceResult,
             DocumentMetadata.Builder metaBuilder) {
-        if (sourceResult.getMetadata() == null) {
+        if (!sourceResult.hasMetadata()) {
             return metaBuilder;
         }
         handleTitle(sourceResult.getMetadata().getTitleList(), metaBuilder);
@@ -126,9 +127,9 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
     }
 
     private void handleTitle(List<StructuredProperty> titleList, DocumentMetadata.Builder metaBuilder) {
-        if (!CollectionUtils.isEmpty(titleList)) {
+        if (CollectionUtils.isNotEmpty(titleList)) {
             for (StructuredProperty titleProp : titleList) {
-                if (titleProp.getQualifier() != null && HBaseConstants.SEMANTIC_CLASS_MAIN_TITLE.equals(titleProp.getQualifier().getClassid())
+                if (HBaseConstants.SEMANTIC_CLASS_MAIN_TITLE.equals(titleProp.getQualifier().getClassid())
                         && fieldApprover.approve(titleProp.getDataInfo())) {
                     metaBuilder.setTitle(titleProp.getValue());
                 }
@@ -146,9 +147,10 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
     }
     
     private void handleDescription(List<StringField> descriptionList, DocumentMetadata.Builder metaBuilder) {
-        if (!CollectionUtils.isEmpty(descriptionList)) {
+        if (CollectionUtils.isNotEmpty(descriptionList)) {
             for (StringField currentDescription : descriptionList) {
-                if (fieldApprover.approve(currentDescription.getDataInfo()) && currentDescription.getValue() != null
+                if (fieldApprover.approve(currentDescription.getDataInfo()) 
+                        && StringUtils.isNotBlank(currentDescription.getValue())
                         && !NULL_STRING_VALUE.equals(currentDescription.getValue())) {
                     metaBuilder.setAbstract$(currentDescription.getValue());
                     break;
@@ -158,29 +160,28 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
     }
     
     private void handleLanguage(Qualifier language, DocumentMetadata.Builder metaBuilder) {
-        if (language != null && !StringUtils.isEmpty(language.getClassid())
+        if (StringUtils.isNotBlank(language.getClassid())
                 && !LANG_CLASSID_UNDEFINED.equals(language.getClassid())) {
             metaBuilder.setLanguage(language.getClassid());
         }    
     }
     
     private void handlePublisher(StringField publisher, DocumentMetadata.Builder metaBuilder) {
-        if (publisher != null && !StringUtils.isEmpty(publisher.getValue())
+        if (StringUtils.isNotBlank(publisher.getValue())
                 && fieldApprover.approve(publisher.getDataInfo())) {
             metaBuilder.setPublisher(publisher.getValue());
         }    
     }
     
     private void handleJournal(Journal journal, DocumentMetadata.Builder metaBuilder) {
-        if (journal != null && !StringUtils.isEmpty(journal.getName())
+        if (StringUtils.isNotBlank(journal.getName())
                 && fieldApprover.approve(journal.getDataInfo())) {
             metaBuilder.setJournal(journal.getName());
         }    
     }
     
     private void handleYear(StringField dateOfAcceptance, DocumentMetadata.Builder metaBuilder) {
-        if (dateOfAcceptance != null && dateOfAcceptance.getValue() != null
-                && fieldApprover.approve(dateOfAcceptance.getDataInfo())) {
+        if (fieldApprover.approve(dateOfAcceptance.getDataInfo())) {
             Integer yearValue = extractYear(dateOfAcceptance.getValue());
             if (yearValue != null) {
                 metaBuilder.setYear(yearValue);
@@ -188,10 +189,10 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
         }    
     }
     private void handleKeywords(List<StructuredProperty> subjectList, DocumentMetadata.Builder metaBuilder) {
-        if (!CollectionUtils.isEmpty(subjectList)) {
+        if (CollectionUtils.isNotEmpty(subjectList)) {
             // setting only selected subjects as keywords, skipping inferred data
-            Collection<String> extractedKeywords = extractValues(subjectList);
-            if (!CollectionUtils.isEmpty(extractedKeywords)) {
+            List<String> extractedKeywords = extractValues(subjectList);
+            if (CollectionUtils.isNotEmpty(extractedKeywords)) {
                 if (metaBuilder.getKeywords() == null) {
                     metaBuilder.setKeywords(new ArrayList<CharSequence>());
                 }
@@ -202,16 +203,14 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
     
     private void handlePublicationType(List<Instance> instanceList, DocumentMetadata.Builder metaBuilder) {
         PublicationType.Builder publicationTypeBuilder = PublicationType.newBuilder();
-        if (!CollectionUtils.isEmpty(instanceList)) {
+        if (CollectionUtils.isNotEmpty(instanceList)) {
             for (Instance instance : instanceList) {
-                if (instance.getInstancetype() != null && instance.getInstancetype().getClassid() != null) {
-                    if (HBaseConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE
-                            .equals(instance.getInstancetype().getClassid())) {
-                        publicationTypeBuilder.setArticle(true);
-                    } else if (HBaseConstants.SEMANTIC_CLASS_INSTANCE_TYPE_DATASET
-                            .equals(instance.getInstancetype().getClassid())) {
-                        publicationTypeBuilder.setDataset(true);
-                    }
+                if (HBaseConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE
+                        .equals(instance.getInstancetype().getClassid())) {
+                    publicationTypeBuilder.setArticle(true);
+                } else if (HBaseConstants.SEMANTIC_CLASS_INSTANCE_TYPE_DATASET
+                        .equals(instance.getInstancetype().getClassid())) {
+                    publicationTypeBuilder.setDataset(true);
                 }
             }
             metaBuilder.setPublicationType(publicationTypeBuilder.build());    
@@ -226,7 +225,7 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
      */
     private static Integer extractYear(String date) {
         // expected date format: yyyy-MM-dd
-        if (date != null && date.length() > 0 && date.indexOf('-') == 4) {
+        if (StringUtils.isNotBlank(date) && date.indexOf('-') == 4) {
             return Integer.valueOf(date.substring(0, date.indexOf('-')));
         } else {
             return null;
@@ -242,8 +241,9 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
         Map<CharSequence, CharSequence> additionalIds = new HashMap<CharSequence, CharSequence>();
         if (CollectionUtils.isNotEmpty(oafEntity.getPidList())) {
             for (StructuredProperty currentPid : oafEntity.getPidList()) {
-                if (currentPid != null && currentPid.getQualifier() != null && currentPid.getQualifier().getClassid() != null 
-                        && currentPid.getValue() != null && fieldApprover.approve(currentPid.getDataInfo())) {
+                if (StringUtils.isNotBlank(currentPid.getQualifier().getClassid()) 
+                        && StringUtils.isNotBlank(currentPid.getValue()) 
+                        && fieldApprover.approve(currentPid.getDataInfo())) {
                     additionalIds.put(currentPid.getQualifier().getClassid(), currentPid.getValue());
                 }
             }
@@ -301,8 +301,8 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
      * element whether this piece of information should be approved.
      * 
      */
-    private Collection<String> extractValues(Collection<StructuredProperty> source) {
-        if (source != null) {
+    private List<String> extractValues(Collection<StructuredProperty> source) {
+        if (CollectionUtils.isNotEmpty(source)) {
             List<String> results = new ArrayList<String>(source.size());
             for (StructuredProperty current : source) {
                 if (fieldApprover.approve(current.getDataInfo())) {
@@ -311,7 +311,7 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
             }
             return results;
         } else {
-            return null;
+            return Collections.emptyList();
         }
     }
 
