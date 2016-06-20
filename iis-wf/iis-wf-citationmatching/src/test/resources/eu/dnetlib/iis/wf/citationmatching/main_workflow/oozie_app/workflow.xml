@@ -78,7 +78,7 @@
                     <value>1</value>
                 </property>
                 <property>
-                    <name>sparkExecutorsNumber</name>
+                    <name>sparkNumExecutors</name>
                     <value>2</value>
                 </property>
             </configuration>
