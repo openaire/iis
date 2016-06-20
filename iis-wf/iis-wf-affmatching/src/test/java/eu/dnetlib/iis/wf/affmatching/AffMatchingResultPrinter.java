@@ -24,7 +24,9 @@ import eu.dnetlib.iis.wf.affmatching.model.SimpleAffMatchResult;
 
 public class AffMatchingResultPrinter {
     
-    
+    private static final Comparator<SimpleAffMatchResult> RESULT_COMPARATOR = Comparator
+            .comparing(SimpleAffMatchResult::getDocumentId)
+            .thenComparingInt(SimpleAffMatchResult::getAffiliationPosition);
     
     
     //------------------------ LOGIC --------------------------
@@ -41,7 +43,7 @@ public class AffMatchingResultPrinter {
         
         List<SimpleAffMatchResult> falsePositives = actualMatches.stream()
                 .filter(x -> !expectedMatches.contains(x))
-                .sorted(new SimpleAffMatchResultComparator())
+                .sorted(RESULT_COMPARATOR)
                 .collect(toList());
         
         System.out.println("\n\t-------------------- false positives ---------------------");
@@ -96,7 +98,7 @@ public class AffMatchingResultPrinter {
         
         List<SimpleAffMatchResult> notMatched = expectedMatches.stream()
                 .filter(x -> !actualMatches.contains(x))
-                .sorted(new SimpleAffMatchResultComparator())
+                .sorted(RESULT_COMPARATOR)
                 .collect(toList());
         
         
@@ -141,19 +143,4 @@ public class AffMatchingResultPrinter {
         
     }
 
-    private static class SimpleAffMatchResultComparator implements Comparator<SimpleAffMatchResult> {
-
-        @Override
-        public int compare(SimpleAffMatchResult r1, SimpleAffMatchResult r2) {
-            
-            int docIdCompare = r1.getDocumentId().compareTo(r2.getDocumentId());
-            
-            if (docIdCompare == 0) {
-                return Integer.compare(r1.getAffiliationPosition(), r2.getAffiliationPosition());
-            }
-            
-            return docIdCompare;
-        }
-        
-    }
 }
