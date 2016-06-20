@@ -72,6 +72,8 @@
             <class>eu.dnetlib.iis.wf.citationmatching.input.CitationMatchingInputTransformerJob</class>
 
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}-uber.jar</jar>
+            
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --num-executors ${sparkExecutorsNumber}</spark-opts>
         
             <arg>-inputMetadata = ${input_metadata}</arg>
             <arg>-inputPerson = ${input_person}</arg>
@@ -133,6 +135,8 @@
             <class>eu.dnetlib.iis.wf.citationmatching.output.CitationMatchingOutputTransformerJob</class>
 
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}-uber.jar</jar>
+            
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --num-executors ${sparkExecutorsNumber}</spark-opts>
         
             <arg>-input = ${workingDir}/matched_citations</arg>
             <arg>-output = ${output_citations}</arg>
