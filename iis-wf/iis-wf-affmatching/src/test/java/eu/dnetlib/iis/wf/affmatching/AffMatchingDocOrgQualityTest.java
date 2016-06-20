@@ -33,9 +33,10 @@ import pl.edu.icm.sparkutils.test.SparkJobExecutor;
  * Affiliation matching module test that measures quality of matching.<br/>
  * Tests in this class completely ignores {@link MatchedOrganization#getMatchStrength()}<br/>
  * <br/>
- * Quality of matching is described by two factors:<br/>
+ * Quality of matching is described by three factors:<br/>
  * <ul>
- * <li>Correct matches - percentage of expected matches that are also present in returned results</li>
+ * <li>All matches - percentage of returned results to expected matches</li>
+ * <li>Correct matches - percentage of returned matches that are also present in expected matches</li>
  * <li>False positives - percentage of returned matches that was matched, but incorrectly (are not present in expected matches)</li>
  * <ul><br/>
  * 
@@ -91,131 +92,6 @@ public class AffMatchingDocOrgQualityTest {
     //------------------------ TESTS --------------------------
     
     @Test
-    public void affiliationMatchingJob_random_docs() throws IOException {
-        
-        
-        // given
-        
-        createInputDataFromJsonFiles(
-                of(INPUT_DATA_DIR_PATH + "/all_organizations.json"),
-                of(INPUT_DATA_DIR_PATH + "/set1/docs_with_aff_real_data.json"),
-                of(), of(), of());
-        
-        
-        // execute
-        
-        executeJob();
-        
-        
-        // log
-        
-        System.out.println("\nRANDOM DOCUMENTS");
-        
-        readResultsAndPrintQualityRate(of("src/test/resources/experimentalData/expectedOutput/set1/matched_aff.json"));
-    }
-    
-    @Test
-    public void affiliationMatchingJob_docs_assigned_to_project() throws IOException {
-        
-        // given
-        
-        createInputDataFromJsonFiles(
-                of(INPUT_DATA_DIR_PATH + "/all_organizations.json"),
-                of(INPUT_DATA_DIR_PATH + "/set2/docs_with_aff_real_data.json"),
-                of(), of(), of());
-        
-        
-        // execute
-        
-        executeJob();
-        
-        
-        // log
-        
-        System.out.println("\nDOCUMENTS ASSIGNED TO PROJECT");
-        
-        readResultsAndPrintQualityRate(of("src/test/resources/experimentalData/expectedOutput/set2/matched_aff.json"));
-    }
-
-    
-    @Test
-    public void affiliationMatchingJob_docs_assigned_to_orgs_via_project() throws IOException {
-        
-        // given
-        
-        createInputDataFromJsonFiles(
-                of(INPUT_DATA_DIR_PATH + "/set3/organizations_real_data.json"),
-                of(INPUT_DATA_DIR_PATH + "/set3/docs_with_aff_real_data.json"),
-                of(INPUT_DATA_DIR_PATH + "/set3/doc_project.json"), 
-                of(),
-                of(INPUT_DATA_DIR_PATH + "/set3/org_project.json"));
-        
-        
-        // execute
-        
-        executeJob();
-        
-        
-        // log
-        
-        System.out.println("\nDOCUMENTS ASSIGNED TO ORGANIZATIONS (VIA PROJECTS)");
-        
-        readResultsAndPrintQualityRate(of("src/test/resources/experimentalData/expectedOutput/set3/matched_aff.json"));
-    }
-    
-    @Test
-    public void affiliationMatchingJob_docs_assigned_to_orgs_via_project_2() throws IOException {
-        
-        // given
-        
-        createInputDataFromJsonFiles(
-                of("src/test/resources/experimentalData/input/set5/organizations_real_data.json"),
-                of("src/test/resources/experimentalData/input/set5/docs_with_aff_real_data.json"),
-                of("src/test/resources/experimentalData/input/set5/doc_project.json"), 
-                of(),
-                of("src/test/resources/experimentalData/input/set5/org_project.json"));
-        
-        
-        // execute
-        
-        executeJob();
-        
-        
-        // log
-        
-        System.out.println("\nDOCUMENTS ASSIGNED TO ORGANIZATIONS 2 (VIA PROJECTS)");
-        
-        readResultsAndPrintQualityRate(of("src/test/resources/experimentalData/expectedOutput/set5/matched_aff.json"));
-    }
-    
-    @Test
-    public void affiliationMatchingJob_docs_assigned_to_orgs_via_project_and_name() throws IOException {
-        
-        // given
-        
-        createInputDataFromJsonFiles(
-                of(INPUT_DATA_DIR_PATH + "/all_organizations.json"),
-                of(INPUT_DATA_DIR_PATH + "/set4/docs_with_aff_real_data.json"),
-                of(INPUT_DATA_DIR_PATH + "/set4/doc_project.json"), 
-                of(),
-                of(INPUT_DATA_DIR_PATH + "/set4/org_project.json"));
-        
-        
-        // execute
-        
-        executeJob();
-        
-        
-        // log
-        
-        System.out.println("\nDOCUMENTS ASSIGNED TO ORGANIZATIONS (VIA PROJECTS AND NAMES)");
-        
-        readResultsAndPrintQualityRate(of("src/test/resources/experimentalData/expectedOutput/set4/matched_aff.json"));
-    }
-
-    
-    
-    @Test
     public void affiliationMatchingJob_combined_data() throws IOException {
         
         // given
@@ -224,10 +100,11 @@ public class AffMatchingDocOrgQualityTest {
                 of(INPUT_DATA_DIR_PATH + "/all_organizations.json"),
                 of(INPUT_DATA_DIR_PATH + "/set1/docs_with_aff_real_data.json",
                    INPUT_DATA_DIR_PATH + "/set2/docs_with_aff_real_data.json",
-                   INPUT_DATA_DIR_PATH + "/set4/docs_with_aff_real_data.json"),
-                of(INPUT_DATA_DIR_PATH + "/set4/doc_project.json"),
+                   INPUT_DATA_DIR_PATH + "/set4/docs_with_aff_real_data.json",
+                   INPUT_DATA_DIR_PATH + "/set5/docs_with_aff_real_data.json"),
+                of(INPUT_DATA_DIR_PATH + "/set4/doc_project.json", INPUT_DATA_DIR_PATH + "/set5/doc_project.json"),
                 of(),
-                of(INPUT_DATA_DIR_PATH + "/set4/org_project.json"));
+                of(INPUT_DATA_DIR_PATH + "/set4/org_project.json", INPUT_DATA_DIR_PATH + "/set5/org_project.json"));
         
         
         // execute
@@ -242,7 +119,8 @@ public class AffMatchingDocOrgQualityTest {
         readResultsAndPrintQualityRate(of(
                 "src/test/resources/experimentalData/expectedOutput/set1/matched_aff.json",
                 "src/test/resources/experimentalData/expectedOutput/set2/matched_aff.json",
-                "src/test/resources/experimentalData/expectedOutput/set4/matched_aff.json"));
+                "src/test/resources/experimentalData/expectedOutput/set4/matched_aff.json",
+                "src/test/resources/experimentalData/expectedOutput/set5/matched_aff.json"));
     }
     
     

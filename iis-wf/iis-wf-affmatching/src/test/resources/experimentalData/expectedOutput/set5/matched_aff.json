@@ -78,7 +78,7 @@
 {"documentId":"50|dedup_wf_001::dd500c043257aff21441940c42d0ee5d", "affiliationPosition":1, "organizationId":"20|dedup_wf_001::2c0757dd8ca0bf8644d652379e5716fd"}
 {"documentId":"50|dedup_wf_001::dd500c043257aff21441940c42d0ee5d", "affiliationPosition":2, "organizationId":"20|dedup_wf_001::2c0757dd8ca0bf8644d652379e5716fd"}
 {"documentId":"50|dedup_wf_001::e1a3e611c91589b5d73520d3e718633b", "affiliationPosition":4, "organizationId":"20|dedup_wf_001::3df91b428114b886e8ea5fa8d4b902ff"}
-{"documentId":"50|dedup_wf_001::e1a3e611c91589b5d73520d3e718633b", "affiliationPosition":4, "organizationId":"20|dedup_wf_001::5178ad2b89aa2592540e20423a004209"}
+{"documentId":"50|dedup_wf_001::e1a3e611c91589b5d73520d3e718633b", "affiliationPosition":7, "organizationId":"20|dedup_wf_001::5178ad2b89aa2592540e20423a004209"}
 {"documentId":"50|dedup_wf_001::f32576882050bf996b18d6c969280100", "affiliationPosition":1, "organizationId":"20|dedup_wf_001::2418ce303fbf37c9214fb716d0533b6e"}
 {"documentId":"50|dedup_wf_001::f32576882050bf996b18d6c969280100", "affiliationPosition":3, "organizationId":"20|dedup_wf_001::7725919dd42e5c4f7cfb4354f8ed7da2"}
 {"documentId":"50|dedup_wf_001::6e4dd03449ef06ba96d26c2e2d30fc79", "affiliationPosition":3, "organizationId":"20|corda_______::adc1411aedb5250992c6f26470ab30b4"}
@@ -92,7 +92,6 @@
 {"documentId":"50|dedup_wf_001::1b29db1073b55257522279d269406d0a", "affiliationPosition":1, "organizationId":"20|dedup_wf_001::732788ddffb8276020c59ee27acb56f9"}
 {"documentId":"50|dedup_wf_001::1b29db1073b55257522279d269406d0a", "affiliationPosition":2, "organizationId":"20|dedup_wf_001::fa00e185192bf48d7626055da94b7f56"}
 {"documentId":"50|dedup_wf_001::1b29db1073b55257522279d269406d0a", "affiliationPosition":7, "organizationId":"20|dedup_wf_001::034065da5c5b2afff90118ffc4f89294"}
-{"documentId":"50|dedup_wf_001::1b29db1073b55257522279d269406d0a", "affiliationPosition":8, "organizationId":"20|dedup_wf_001::cf276e425754b8d5f602a48f6e63bc0b"}
 {"documentId":"50|dedup_wf_001::1b29db1073b55257522279d269406d0a", "affiliationPosition":8, "organizationId":"20|dedup_wf_001::cf276e425754b8d5f602a48f6e63bc0b"}
 {"documentId":"50|dedup_wf_001::4233b79a6d56ca256240a08dc66aace7", "affiliationPosition":1, "organizationId":"20|dedup_wf_001::8b783f3f66d806549cb508d1817d5ca5"}
 {"documentId":"50|dedup_wf_001::0ae0f744e5f0bf9ff7c586ae637126f7", "affiliationPosition":1, "organizationId":"20|dedup_wf_001::25f104b21264e08b316d74806b476b2a"}
@@ -110,7 +109,7 @@
 {"documentId":"50|dedup_wf_001::09600eb1c2052949c06682288a3231ca", "affiliationPosition":2, "organizationId":"20|dedup_wf_001::370718c24fbafbaf000d8b6d6087c422"}
 {"documentId":"50|dedup_wf_001::4b4c7e79ff51ee6c94f6687ff10aa8fe", "affiliationPosition":1, "organizationId":"20|dedup_wf_001::2c0757dd8ca0bf8644d652379e5716fd"}
 {"documentId":"50|dedup_wf_001::e2e82454f1150ca81bb3ca753fdde736", "affiliationPosition":1, "organizationId":"20|dedup_wf_001::286021b6d6a5b1f415a0403443c3c050"}
-{"documentId":"50|dedup_wf_001::e2e82454f1150ca81bb3ca753fdde736", "affiliationPosition":3, "organizationId":"20|dedup_wf_001::286021b6d6a5b1f415a0403443c3c050"}
+{"documentId":"50|dedup_wf_001::e2e82454f1150ca81bb3ca753fdde736", "affiliationPosition":4, "organizationId":"20|dedup_wf_001::286021b6d6a5b1f415a0403443c3c050"}
 {"documentId":"50|dedup_wf_001::c57f2490dfaaa34bec97a1d31aa43553", "affiliationPosition":1, "organizationId":"20|dedup_wf_001::4fd25cf0c21ea72c4f5b79d225f853bc"}
 {"documentId":"50|dedup_wf_001::6a60d99dfe164c9cfd65bfd6b48fb10a", "affiliationPosition":1, "organizationId":"20|dedup_wf_001::669cd0f2d519adc8b0fa3d634a5a7e9c"}
 {"documentId":"50|dedup_wf_001::71c5a3dc4185d8abcb449436ac6d929d", "affiliationPosition":1, "organizationId":"20|dedup_wf_001::2d9539f042ef1aebcb09e47d0b6a0679"}
