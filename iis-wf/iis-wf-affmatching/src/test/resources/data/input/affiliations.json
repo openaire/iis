@@ -168,3 +168,30 @@
     "publicationTypeName":null,
     "text":""
 }
+{
+    "id":"DOC_6",
+    "title":"doc 6",
+    "abstract":null,
+    "language":null,
+    "keywords":null,
+    "externalIdentifiers":null,
+    "journal":null,
+    "year":null,
+    "publisher":null,
+    "references":null,
+    "authors":null,
+    "affiliations":[
+        {
+        "organization":"College of Education, Washington State University, WSU",
+        "countryName":"United States",
+        "countryCode":"US",
+        "address":null,
+        "rawText":""
+        }
+    ],
+    "volume":null,
+    "issue":null,
+    "pages":null,
+    "publicationTypeName":null,
+    "text":""
+}

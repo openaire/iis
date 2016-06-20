@@ -100,7 +100,7 @@ public class AffOrgMatcherFactory {
     public static ImmutableList<AffOrgMatchVoter> createDocOrgRelationMatcherVoters() {
 
         FittingOrgWordsMatchVoter fitOrgWordsMatchVoter = new FittingOrgWordsMatchVoter(ImmutableList.of(','), 3, 0.8f, 0.9f);
-        fitOrgWordsMatchVoter.setMatchStrength(1f);
+        fitOrgWordsMatchVoter.setMatchStrength(0.814f);
         
         return ImmutableList.of(
                 createNameCountryStrictMatchVoter(1f),
@@ -159,11 +159,11 @@ public class AffOrgMatcherFactory {
      */
     public static ImmutableList<AffOrgMatchVoter> createMainSectionHashBucketMatcherVoters() {
         return ImmutableList.of(
-                createNameCountryStrictMatchVoter(1f),
-                createNameStrictCountryLooseMatchVoter(1f),
-                createSectionedNameStrictCountryLooseMatchVoter(0.914f),
-                createSectionedNameLevenshteinCountryLooseMatchVoter(0.845f),
-                createSectionedShortNameStrictCountryLooseMatchVoter(0.750f));
+                createNameCountryStrictMatchVoter(0.5f),
+                createNameStrictCountryLooseMatchVoter(0.455f),
+                createSectionedNameStrictCountryLooseMatchVoter(0.453f),
+                createSectionedNameLevenshteinCountryLooseMatchVoter(0.42f),
+                createSectionedShortNameStrictCountryLooseMatchVoter(0.255f));
     }
     
     
@@ -195,11 +195,11 @@ public class AffOrgMatcherFactory {
      */
     public static ImmutableList<AffOrgMatchVoter> createFirstWordsHashBucketMatcherVoters() {
         return ImmutableList.of(
-                createNameCountryStrictMatchVoter(1f),
-                createNameStrictCountryLooseMatchVoter(1f),
-                createSectionedNameStrictCountryLooseMatchVoter(1f),
-                createSectionedNameLevenshteinCountryLooseMatchVoter(0.923f),
-                createSectionedShortNameStrictCountryLooseMatchVoter(1f));
+                createNameCountryStrictMatchVoter(0.5f),
+                createNameStrictCountryLooseMatchVoter(0.455f),
+                createSectionedNameStrictCountryLooseMatchVoter(0.415f),
+                createSectionedNameLevenshteinCountryLooseMatchVoter(0.394f),
+                createSectionedShortNameStrictCountryLooseMatchVoter(0.25f));
     }
     
     

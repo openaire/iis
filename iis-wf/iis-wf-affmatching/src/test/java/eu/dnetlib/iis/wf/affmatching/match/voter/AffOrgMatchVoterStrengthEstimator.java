@@ -167,12 +167,7 @@ public class AffOrgMatchVoterStrengthEstimator {
         
         // given
         
-        createInputDataFromJsonFiles(
-                ImmutableList.of(INPUT_DATA_DIR_PATH + "/all_organizations.json"),
-                ImmutableList.of(INPUT_DATA_DIR_PATH + "/set4/docs_with_aff_real_data.json"),
-                ImmutableList.of(INPUT_DATA_DIR_PATH + "/set4/doc_project.json"), 
-                ImmutableList.of(),
-                ImmutableList.of(INPUT_DATA_DIR_PATH + "/set4/org_project.json"));
+        createInputData();
 
         
         AffOrgMatcher affOrgMatcher = createDocOrgRelationMatcher(sparkContext, inputDocProjDirPath, inputInferredDocProjDirPath, inputProjOrgDirPath, inputDocProjConfidenceThreshold);
@@ -181,8 +176,7 @@ public class AffOrgMatchVoterStrengthEstimator {
         
         // execute
         
-        estimateVoterMatchStrengths(affOrgMatcher, "Doc-Org Relation Matcher", voters,
-                                    ImmutableList.of("src/test/resources/experimentalData/expectedOutput/set4/matched_aff.json"));
+        estimateVoterMatchStrengths(affOrgMatcher, "Doc-Org Relation Matcher", voters);
 
         
     }
@@ -193,10 +187,7 @@ public class AffOrgMatchVoterStrengthEstimator {
         
         // given
         
-        createInputDataFromJsonFiles(ImmutableList.of(INPUT_DATA_DIR_PATH + "/all_organizations.json"),
-                                     ImmutableList.of(INPUT_DATA_DIR_PATH + "/set1/docs_with_aff_real_data.json",
-                                                      INPUT_DATA_DIR_PATH + "/set2/docs_with_aff_real_data.json"),
-                                     ImmutableList.of(), ImmutableList.of(), ImmutableList.of());
+        createInputData();
 
         
         AffOrgMatcher affOrgMatcher = createMainSectionHashBucketMatcher();
@@ -206,9 +197,7 @@ public class AffOrgMatchVoterStrengthEstimator {
         
         // execute
         
-        estimateVoterMatchStrengths(affOrgMatcher, "Main Section Hash Bucket Matcher", voters,
-                                    ImmutableList.of("src/test/resources/experimentalData/expectedOutput/set1/matched_aff.json",
-                                                     "src/test/resources/experimentalData/expectedOutput/set2/matched_aff.json"));
+        estimateVoterMatchStrengths(affOrgMatcher, "Main Section Hash Bucket Matcher", voters);
 
         
     }
@@ -218,10 +207,7 @@ public class AffOrgMatchVoterStrengthEstimator {
         
         // given
         
-        createInputDataFromJsonFiles(ImmutableList.of(INPUT_DATA_DIR_PATH + "/all_organizations.json"),
-                                     ImmutableList.of(INPUT_DATA_DIR_PATH + "/set1/docs_with_aff_real_data.json",
-                                                      INPUT_DATA_DIR_PATH + "/set2/docs_with_aff_real_data.json"),
-                                     ImmutableList.of(), ImmutableList.of(), ImmutableList.of());
+        createInputData();
 
         AffOrgMatcher affOrgMatcher = createFirstWordsHashBucketMatcher();
         
@@ -230,19 +216,22 @@ public class AffOrgMatchVoterStrengthEstimator {
         
         // execute
         
-        estimateVoterMatchStrengths(affOrgMatcher, "First Words Hash Bucket Matcher", voters, 
-                                    ImmutableList.of("src/test/resources/experimentalData/expectedOutput/set1/matched_aff.json",
-                                                     "src/test/resources/experimentalData/expectedOutput/set2/matched_aff.json"));
+        estimateVoterMatchStrengths(affOrgMatcher, "First Words Hash Bucket Matcher", voters);
         
         
     }
     
 
     
-    private void estimateVoterMatchStrengths(AffOrgMatcher affOrgMatcher, String affOrgMatcherName, List<AffOrgMatchVoter> voters, List<String> matchedAffPaths) throws IOException {
+    private void estimateVoterMatchStrengths(AffOrgMatcher affOrgMatcher, String affOrgMatcherName, List<AffOrgMatchVoter> voters) throws IOException {
         
         printMatcherHeader(affOrgMatcherName);
         
+        List<String> matchedAffPaths = ImmutableList.of(
+                "src/test/resources/experimentalData/expectedOutput/set1/matched_aff.json",
+                "src/test/resources/experimentalData/expectedOutput/set2/matched_aff.json",
+                "src/test/resources/experimentalData/expectedOutput/set4/matched_aff.json",
+                "src/test/resources/experimentalData/expectedOutput/set5/matched_aff.json");
         
         // given
         
@@ -310,6 +299,20 @@ public class AffOrgMatchVoterStrengthEstimator {
         out.println("==================================================================================");
     }
     
+    private void createInputData() throws IOException {
+        
+        createInputDataFromJsonFiles(
+                ImmutableList.of(INPUT_DATA_DIR_PATH + "/all_organizations.json"),
+                ImmutableList.of(
+                        INPUT_DATA_DIR_PATH + "/set1/docs_with_aff_real_data.json", 
+                        INPUT_DATA_DIR_PATH + "/set2/docs_with_aff_real_data.json", 
+                        INPUT_DATA_DIR_PATH + "/set4/docs_with_aff_real_data.json",
+                        INPUT_DATA_DIR_PATH + "/set5/docs_with_aff_real_data.json"),
+                ImmutableList.of(INPUT_DATA_DIR_PATH + "/set4/doc_project.json", INPUT_DATA_DIR_PATH + "/set5/doc_project.json"), 
+                ImmutableList.of(),
+                ImmutableList.of(INPUT_DATA_DIR_PATH + "/set4/org_project.json", INPUT_DATA_DIR_PATH + "/set5/org_project.json"));
+        
+    }
     
     private void createInputDataFromJsonFiles(List<String> jsonInputOrgPaths, List<String> jsonInputAffPaths, List<String> jsonInputDocProjPaths, List<String> jsonInputInferredDocProjPaths, List<String> jsonInputProjOrgPaths) throws IOException {
 
