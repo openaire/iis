@@ -29,7 +29,7 @@
             <description>number of cores used by single executor</description>
         </property>
         <property>
-            <name>sparkExecutorsNumber</name>
+            <name>sparkNumExecutors</name>
             <value>200</value>
             <description>total number of executors</description>
         </property>
@@ -73,7 +73,7 @@
 
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}-uber.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --num-executors ${sparkExecutorsNumber}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --num-executors ${sparkNumExecutors}</spark-opts>
         
             <arg>-inputMetadata = ${input_metadata}</arg>
             <arg>-inputPerson = ${input_person}</arg>
@@ -104,7 +104,7 @@
 
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}-uber.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --num-executors ${sparkExecutorsNumber}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --num-executors ${sparkNumExecutors}</spark-opts>
         
             <arg>-fullDocumentPath = ${workingDir}/documents_with_authors</arg>
             
@@ -136,7 +136,7 @@
 
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}-uber.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --num-executors ${sparkExecutorsNumber}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --num-executors ${sparkNumExecutors}</spark-opts>
         
             <arg>-input = ${workingDir}/matched_citations</arg>
             <arg>-output = ${output_citations}</arg>

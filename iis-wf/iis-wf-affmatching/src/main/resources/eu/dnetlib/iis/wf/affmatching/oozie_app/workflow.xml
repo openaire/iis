@@ -51,7 +51,7 @@
             <description>number of cores used by single executor</description>
         </property>
         <property>
-            <name>sparkExecutorsNumber</name>
+            <name>sparkNumExecutors</name>
             <value>64</value>
             <description>total number of executors</description>
         </property>
@@ -90,7 +90,7 @@
             <class>eu.dnetlib.iis.wf.affmatching.AffMatchingJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-affmatching-${projectVersion}-uber.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --num-executors ${sparkExecutorsNumber}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --num-executors ${sparkNumExecutors}</spark-opts>
 
             <arg>-inputAvroOrgPath=${input_organizations}</arg>
             <arg>-inputAvroAffPath=${input_document_metadata}</arg>
