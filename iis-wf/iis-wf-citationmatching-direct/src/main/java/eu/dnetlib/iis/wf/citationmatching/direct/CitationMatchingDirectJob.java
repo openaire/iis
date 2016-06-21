@@ -16,6 +16,7 @@ import com.beust.jcommander.Parameters;
 
 import eu.dnetlib.iis.citationmatching.direct.schemas.Citation;
 import eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata;
+import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import eu.dnetlib.iis.wf.citationmatching.direct.converter.DirectCitationToCitationConverter;
 import eu.dnetlib.iis.wf.citationmatching.direct.converter.DocumentToDirectCitationMetadataConverter;
@@ -54,6 +55,8 @@ public class CitationMatchingDirectJob {
         
         
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
+            
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputAvroPath);
             
             JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> documents = avroLoader.loadJavaRDD(sc, params.inputAvroPath, ExtractedDocumentMetadataMergedWithOriginal.class);
             
