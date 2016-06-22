@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
+import static com.google.common.collect.ImmutableList.of;
 import static eu.dnetlib.iis.common.utils.AvroTestUtils.createLocalAvroDataStore;
 import static eu.dnetlib.iis.common.utils.JsonAvroTestUtils.readMultipleJsonDataStores;
 import static eu.dnetlib.iis.common.utils.JsonTestUtils.readJson;
@@ -43,6 +44,8 @@ import eu.dnetlib.iis.wf.affmatching.AffMatchingService;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchComputer;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
 import eu.dnetlib.iis.wf.affmatching.model.SimpleAffMatchResult;
+import eu.dnetlib.iis.wf.affmatching.orgalternativenames.AffMatchOrganizationAltNameFiller;
+import eu.dnetlib.iis.wf.affmatching.orgalternativenames.CsvOrganizationAltNamesDictionaryFactory;
 import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.IisOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.SimpleAffMatchResultWriter;
@@ -389,7 +392,7 @@ public class AffOrgMatchVoterStrengthEstimator {
     }
     
     
-    private AffMatchingService createAffMatchingService() {
+    private AffMatchingService createAffMatchingService() throws IOException {
         
         AffMatchingService affMatchingService = new AffMatchingService();
         
@@ -405,7 +408,28 @@ public class AffOrgMatchVoterStrengthEstimator {
         affMatchingService.setAffMatchResultWriter(new SimpleAffMatchResultWriter());
         
         
+        AffMatchOrganizationAltNameFiller altNameFiller = createAffMatchOrganizationAltNameFiller();
+        affMatchingService.setAffMatchOrganizationAltNameFiller(altNameFiller);
+        
         return affMatchingService;
+    }
+    
+    private AffMatchOrganizationAltNameFiller createAffMatchOrganizationAltNameFiller() throws IOException {
+        
+        AffMatchOrganizationAltNameFiller altNameFiller = new AffMatchOrganizationAltNameFiller();
+        
+        List<String> altNamesCountryCodes = of(
+                "at", "be", "bg", "cy", "cz", "de", "dk", "ee", "es", "fi",
+                "fr", "gr", "hr", "hu", "it", "lt", "lu", "lv", "nl", "pl",
+                "pt", "ro", "se", "si", "sk"
+                );
+        List<String> alternativeNamesResources = altNamesCountryCodes.stream()
+                .map(code -> "/eu/dnetlib/iis/wf/affmatching/universities/universities_" + code + ".csv").collect(toList());
+        
+        List<List<String>> alternativeNamesDictionary = new CsvOrganizationAltNamesDictionaryFactory().createAlternativeNamesDictionary(alternativeNamesResources);
+        altNameFiller.setAlternativeNamesDictionary(alternativeNamesDictionary);
+        
+        return altNameFiller;
     }
     
     //------------------------ INNER CLASSES --------------------------
@@ -420,7 +444,7 @@ public class AffOrgMatchVoterStrengthEstimator {
         
         
         
-        //------------------------ SETTERS --------------------------
+        //------------------------ CONSTRUCTORS --------------------------
         
         public InvalidVoterStrength(String voterName, float calculatedStrength, float setStrength) {
             super();

@@ -1,10 +1,12 @@
 package eu.dnetlib.iis.wf.affmatching.model;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 /**
  * Organization data that the affiliation matching module operates on.
@@ -26,6 +28,8 @@ public class AffMatchOrganization {
     
     private String websiteUrl;
 
+    private List<String> alternativeNames = Lists.newArrayList();
+    
     
     //------------------------ CONSTRUCTORS --------------------------
     
@@ -78,6 +82,34 @@ public class AffMatchOrganization {
         return websiteUrl;
     }
 
+    /**
+     * Alternative names of the organization, e.g. name
+     * in different languages than {@link #getName()}
+     */
+    public List<String> getAlternativeNames() {
+        return alternativeNames;
+    }
+
+
+    //------------------------ LOGIC --------------------------
+    
+    /**
+     * Adds the name to the alternative names list
+     */
+    public void addAlternativeName(String alternativeName) {
+        this.alternativeNames.add(alternativeName);
+    }
+    
+    /**
+     * Returns the list with all organization names.
+     * That is main {@link #getName()} with all {@link #getAlternativeNames()} 
+     */
+    public List<String> getNames() {
+        List<String> names = Lists.newArrayList(name);
+        names.addAll(alternativeNames);
+        
+        return names;
+    }
     
     
     //------------------------ SETTERS --------------------------
@@ -106,7 +138,7 @@ public class AffMatchOrganization {
 
     
     //------------------------ HashCode & Equals --------------------------
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(id);
