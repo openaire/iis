@@ -98,13 +98,10 @@ public class AffMatchingDocOrgQualityTest {
         
         createInputDataFromJsonFiles(
                 of(INPUT_DATA_DIR_PATH + "/all_organizations.json"),
-                of(INPUT_DATA_DIR_PATH + "/set1/docs_with_aff_real_data.json",
-                   INPUT_DATA_DIR_PATH + "/set2/docs_with_aff_real_data.json",
-                   INPUT_DATA_DIR_PATH + "/set4/docs_with_aff_real_data.json",
-                   INPUT_DATA_DIR_PATH + "/set5/docs_with_aff_real_data.json"),
-                of(INPUT_DATA_DIR_PATH + "/set4/doc_project.json", INPUT_DATA_DIR_PATH + "/set5/doc_project.json"),
+                of(INPUT_DATA_DIR_PATH + "/docs_with_aff_real_data.json"),
+                of(INPUT_DATA_DIR_PATH + "/doc_project.json"),
                 of(),
-                of(INPUT_DATA_DIR_PATH + "/set4/org_project.json", INPUT_DATA_DIR_PATH + "/set5/org_project.json"));
+                of(INPUT_DATA_DIR_PATH + "/org_project.json"));
         
         
         // execute
@@ -117,10 +114,7 @@ public class AffMatchingDocOrgQualityTest {
         System.out.println("\nALL TEST DATA");
         
         readResultsAndPrintQualityRate(of(
-                "src/test/resources/experimentalData/expectedOutput/set1/matched_aff.json",
-                "src/test/resources/experimentalData/expectedOutput/set2/matched_aff.json",
-                "src/test/resources/experimentalData/expectedOutput/set4/matched_aff.json",
-                "src/test/resources/experimentalData/expectedOutput/set5/matched_aff.json"));
+                "src/test/resources/experimentalData/expectedOutput/matched_aff.json"));
     }
     
     
