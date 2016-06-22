@@ -12,6 +12,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
+import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.utils.AvroGsonFactory;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentMetadata;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses;
@@ -52,6 +53,8 @@ public class DocumentClassificationJob {
         
         
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
+            
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputAvroPath);
           
             sc.sc().addFile(params.scriptDirPath, true);
             
