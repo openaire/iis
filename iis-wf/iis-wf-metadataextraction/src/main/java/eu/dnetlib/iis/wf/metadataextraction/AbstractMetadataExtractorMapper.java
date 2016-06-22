@@ -26,6 +26,7 @@ import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.fault.FaultUtils;
 import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
+import eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters;
 import pl.edu.icm.cermine.ContentExtractor;
 import pl.edu.icm.cermine.exception.AnalysisException;
 import pl.edu.icm.cermine.exception.TransformationException;
@@ -46,10 +47,6 @@ public abstract class AbstractMetadataExtractorMapper<T>
     public static final String FAULT_SUPPLEMENTARY_DATA_PROCESSING_TIME = "processing_time";
 
     public static final String FAULT_SUPPLEMENTARY_DATA_URL = "url";
-
-    public static final String IMPORT_CONTENT_CONNECTION_TIMEOUT = "import.content.connection.timeout";
-    public static final String IMPORT_CONTENT_READ_TIMEOUT = "import.content.read.timeout";
-    public static final String IMPORT_CONTENT_MAX_FILE_SIZE_MB = "import.content.max.file.size.mb";
 
     protected final Logger log = Logger.getLogger(AbstractMetadataExtractorMapper.class);
 
@@ -130,13 +127,13 @@ public abstract class AbstractMetadataExtractorMapper<T>
         String excludedIdsCSV = context.getConfiguration().get("excluded.ids");
         if (excludedIdsCSV != null && !excludedIdsCSV.trim().isEmpty()
                 && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(excludedIdsCSV)) {
-            log.warn("got excluded ids: " + excludedIdsCSV);
+            log.info("got excluded ids: " + excludedIdsCSV);
             excludedIds = new HashSet<String>(Arrays.asList(StringUtils.split(excludedIdsCSV.trim(), ',')));
         } else {
-            log.warn("got no excluded ids");
+            log.info("got no excluded ids");
         }
         // handling maximum content size
-        String maxFileSizeMBStr = context.getConfiguration().get(IMPORT_CONTENT_MAX_FILE_SIZE_MB);
+        String maxFileSizeMBStr = context.getConfiguration().get(ImportWorkflowRuntimeParameters.IMPORT_CONTENT_MAX_FILE_SIZE_MB);
         if (maxFileSizeMBStr != null && !maxFileSizeMBStr.trim().isEmpty()
                 && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(maxFileSizeMBStr)) {
             this.maxFileSizeKB = 1024l * Integer.valueOf(maxFileSizeMBStr);
@@ -173,17 +170,17 @@ public abstract class AbstractMetadataExtractorMapper<T>
             currentProgress++;
             if (currentProgress > 0 && currentProgress % progresLogInterval == 0) {
                 // FIXME switch back to debug when setting debug level on oozie
-                log.warn("metadata extaction progress: " + currentProgress + ", time taken to process "
+                log.info("metadata extaction progress: " + currentProgress + ", time taken to process "
                         + progresLogInterval + " elements: " + ((System.currentTimeMillis() - intervalTime) / 1000)
                         + " secs");
                 intervalTime = System.currentTimeMillis();
             }
             if (excludedIds != null && excludedIds.contains(documentId)) {
-                log.warn("skipping processing for excluded id " + documentId);
+                log.info("skipping processing for excluded id " + documentId);
             } else {
                 // handling maximum content size
                 if (contentLengthKB > maxFileSizeKB) {
-                    log.warn("skipping processing for id " + documentId + " due to max file size limit=" + maxFileSizeKB
+                    log.info("skipping processing for id " + documentId + " due to max file size limit=" + maxFileSizeKB
                             + " KB exceeded: " + contentLengthKB + " KB");
                     try {
                         // writing empty metadata

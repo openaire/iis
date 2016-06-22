@@ -172,16 +172,6 @@
             <value>/cache/metadataextraction</value>
             <description>metadata extraction HDFS cache location</description>
         </property>
-        <property>
-            <name>metadataextraction_processing_mode</name>
-            <value>StreamingMetadataExtractorMapper</value>
-            <description>metadata extraction processing mode</description>
-        </property>
-        <property>
-            <name>metadataextraction_input_classname</name>
-            <value>eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl</value>
-            <description>metadata extraction input classname</description>
-        </property>
         <!-- project reference extraction related -->
         <property>
             <name>referenceextraction_project_fundingclass_blacklist_regex</name>

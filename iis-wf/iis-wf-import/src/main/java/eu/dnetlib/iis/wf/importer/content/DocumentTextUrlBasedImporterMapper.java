@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
+import eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters;
 
 /**
  * {@link DocumentContentUrl} based importer producing {@link DocumentText} output.
@@ -21,7 +22,6 @@ import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
  */
 public class DocumentTextUrlBasedImporterMapper extends Mapper<AvroKey<DocumentContentUrl>, NullWritable, AvroKey<DocumentText>, NullWritable> {
 
-	public static final String IMPORT_CONTENT_MAX_FILE_SIZE_MB = "import.content.max.file.size.mb";
 	
 	private final Logger log = Logger.getLogger(DocumentContentUrlBasedImporterMapper.class);
 	
@@ -49,9 +49,9 @@ public class DocumentTextUrlBasedImporterMapper extends Mapper<AvroKey<DocumentC
 		this.readTimeout = context.getConfiguration().getInt(
 									IMPORT_CONTENT_READ_TIMEOUT, 60000);
 		// handling maximum content size
-        String maxFileSizeMBStr = context.getConfiguration().get(IMPORT_CONTENT_MAX_FILE_SIZE_MB);
-        if (maxFileSizeMBStr != null && !maxFileSizeMBStr.trim().isEmpty()
-                && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(maxFileSizeMBStr)) {
+        String maxFileSizeMBStr = WorkflowRuntimeParameters.getParamValue(
+                ImportWorkflowRuntimeParameters.IMPORT_CONTENT_MAX_FILE_SIZE_MB, context.getConfiguration());
+        if (maxFileSizeMBStr != null) {
             this.maxFileSizeKB = 1024l * Integer.valueOf(maxFileSizeMBStr);
         }
 	}

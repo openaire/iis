@@ -55,22 +55,6 @@
 			<value>-Xmx4096m</value>
 			<description>java-opts, e.g. maximum heap size for a single JVM running MapReduce</description>
 		</property>
-		<property>
-			<name>mapred_max_split_size</name>
-			<value>50000</value>
-			<description>maximum input data split size, required by streaming version reading DocumentContentUrl to split input data into more chunks</description>
-		</property>
-		
-		<property>
-			<name>processing_mode</name>
-			<value>MetadataExtractorMapper</value>
-			<description>metadata extraction processing mode, supported values: MetadataExtractorMapper, StreamingMetadataExtractorMapper</description>
-		</property>
-		<property>
-			<name>inputport_classname</name>
-			<value>eu.dnetlib.iis.importer.schemas.DocumentContent</value>
-			<description>input classname, should be adjusted according to the processing_mode value. Supported values: eu.dnetlib.iis.importer.schemas.DocumentContent, eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl</description>
-		</property>
 	</parameters>
     
     
@@ -80,7 +64,7 @@
         <configuration>
             <property>
                 <name>mapreduce.job.queuename</name>
-                <value>${importerQueueName}</value>
+                <value>${queueName}</value>
             </property>
             <property>
                 <name>oozie.launcher.mapred.job.queue.name</name>
@@ -95,7 +79,7 @@
 	<action name="generate-schema">
 	    <java>
 	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
-	        <arg>${inputport_classname}</arg>
+	        <arg>eu.dnetlib.iis.importer.schemas.DocumentContent</arg>
 	        <arg>eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata</arg>
 	        <arg>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</arg>
 	        <arg>eu.dnetlib.iis.audit.schemas.Fault</arg>
@@ -170,14 +154,9 @@
                     <name>mapred.child.java.opts</name>
                     <value>${mapred_child_java_opts}</value>
                 </property>
-                
-                <property>
-                    <name>mapreduce.input.fileinputformat.split.maxsize</name>
-                    <value>${mapred_max_split_size}</value>
-                </property>
 			    <property>
 					<name>avro.schema.input.key</name>
-					<value>${wf:actionData('generate-schema')[wf:conf('inputport_classname')]}</value>
+					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.DocumentContent']}</value>
 				</property>
                 
                 <property>
@@ -243,7 +222,7 @@
 				</property>
                 <property>
                     <name>mapreduce.job.map.class</name>
-                    <value>eu.dnetlib.iis.wf.metadataextraction.${processing_mode}</value>
+                    <value>eu.dnetlib.iis.wf.metadataextraction.MetadataExtractorMapper</value>
                 </property>
                 <property>
                     <name>mapreduce.job.reduces</name>

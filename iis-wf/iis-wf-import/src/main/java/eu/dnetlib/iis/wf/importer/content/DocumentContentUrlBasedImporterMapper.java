@@ -1,6 +1,5 @@
 package eu.dnetlib.iis.wf.importer.content;
 
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_CONTENT_APPROVER_SIZELIMIT_MEGABYTES;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_CONTENT_CONNECTION_TIMEOUT;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_CONTENT_READ_TIMEOUT;
 
@@ -12,8 +11,10 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
 
+import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl;
 import eu.dnetlib.iis.importer.schemas.DocumentContent;
+import eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters;
 import eu.dnetlib.iis.wf.importer.content.appover.ComplexContentApprover;
 import eu.dnetlib.iis.wf.importer.content.appover.ContentApprover;
 import eu.dnetlib.iis.wf.importer.content.appover.PDFHeaderBasedContentApprover;
@@ -52,12 +53,12 @@ public class DocumentContentUrlBasedImporterMapper extends Mapper<AvroKey<Docume
 									IMPORT_CONTENT_CONNECTION_TIMEOUT, 60000);
 		this.readTimeout = context.getConfiguration().getInt(
 									IMPORT_CONTENT_READ_TIMEOUT, 60000);
-		int sizeLimitMegabytes = context.getConfiguration().getInt(
-				IMPORT_CONTENT_APPROVER_SIZELIMIT_MEGABYTES,-1);
-		if (sizeLimitMegabytes>0) {
-			this.contentApprover = new ComplexContentApprover(
-					new PDFHeaderBasedContentApprover(),
-					new SizeLimitContentApprover(sizeLimitMegabytes));
+        String maxFileSizeMBStr = WorkflowRuntimeParameters.getParamValue(
+                ImportWorkflowRuntimeParameters.IMPORT_CONTENT_MAX_FILE_SIZE_MB, context.getConfiguration());
+        if (maxFileSizeMBStr != null) {
+            this.contentApprover = new ComplexContentApprover(
+                    new PDFHeaderBasedContentApprover(),
+                    new SizeLimitContentApprover(Integer.valueOf(maxFileSizeMBStr)));
 		} else {
 			this.contentApprover = new PDFHeaderBasedContentApprover();
 		}
@@ -68,11 +69,12 @@ public class DocumentContentUrlBasedImporterMapper extends Mapper<AvroKey<Docume
 			Context context) throws IOException, InterruptedException {
 		DocumentContentUrl docUrl = key.datum();
 		long startTimeContent = System.currentTimeMillis();
+		log.info("starting content retrieval for id: " + docUrl.getId() + 
+                ", location: " + docUrl.getUrl() + " and size [kB]: " + docUrl.getContentSizeKB());
 		byte[] content = ObjectStoreContentProviderUtils.getContentFromURL(
 				docUrl.getUrl().toString(), 
 				this.connectionTimeout, this.readTimeout);
-		log.warn("content retrieval for id: " + docUrl.getId() + 
-				" and location: " + docUrl.getUrl() + " took: " +
+		log.info("content retrieval for id: " + docUrl.getId() + " took: " +
 				(System.currentTimeMillis()-startTimeContent) + " ms, got content: " +
 				(content!=null && content.length>0));
 		if (contentApprover.approve(content)) {
@@ -86,8 +88,8 @@ public class DocumentContentUrlBasedImporterMapper extends Mapper<AvroKey<Docume
 					new AvroKey<DocumentContent>(documentContentBuilder.build()), 
 					NullWritable.get());
 		} else {
-			log.warn("content " + docUrl.getId() + " not approved " +
-					"for location: " + docUrl.getUrl());
+			log.info("content " + docUrl.getId() + " not approved " +
+					"for location: " + docUrl.getUrl() + " and size [kB]: " + docUrl.getContentSizeKB());
 		}
 		
 	}

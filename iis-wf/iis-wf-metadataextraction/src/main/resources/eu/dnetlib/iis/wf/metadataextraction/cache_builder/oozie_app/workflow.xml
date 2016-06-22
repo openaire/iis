@@ -221,14 +221,6 @@
 			<propagate-configuration />
 			<configuration>
 				<property>
-					<name>processing_mode</name>
-					<value>StreamingMetadataExtractorMapper</value>
-				</property>
-				<property>
-					<name>inputport_classname</name>
-					<value>eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl</value>
-				</property>
-				<property>
 					<name>workingDir</name>
 					<value>${workingDir}/metadata_extractor/working_dir</value>
 				</property>
@@ -362,14 +354,6 @@
 			<app-path>${wf:appPath()}/metadata_extractor</app-path>
 			<propagate-configuration />
 			<configuration>
-				<property>
-					<name>processing_mode</name>
-					<value>StreamingMetadataExtractorMapper</value>
-				</property>
-				<property>
-					<name>inputport_classname</name>
-					<value>eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl</value>
-				</property>
 				<property>
 					<name>workingDir</name>
 					<value>${workingDir}/metadata_extractor/working_dir</value>

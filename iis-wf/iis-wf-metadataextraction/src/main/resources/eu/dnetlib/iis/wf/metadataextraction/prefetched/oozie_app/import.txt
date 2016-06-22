@@ -1,0 +1,3 @@
+## This is a classpath-based import file (this header is required)
+importer_content classpath eu/dnetlib/iis/wf/importer/content/oozie_app
+metadata_extractor classpath eu/dnetlib/iis/wf/metadataextraction/core/oozie_app
