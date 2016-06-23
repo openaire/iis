@@ -40,11 +40,6 @@
 			<description>default cache location stored in HDFS</description>
 		</property>
 		<property>
-			<name>mapred_max_split_size</name>
-			<value>50000</value>
-			<description>maximum input data split size, required by streaming version reading DocumentContentUrl to split input data into more chunks</description>
-		</property>
-		<property>
 			<name>output_name_meta</name>
 			<value>meta</value>
 			<description>metadata output subdirectory name</description>
