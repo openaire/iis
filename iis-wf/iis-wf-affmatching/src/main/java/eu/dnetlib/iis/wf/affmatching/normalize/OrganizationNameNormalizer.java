@@ -41,6 +41,10 @@ public class OrganizationNameNormalizer implements StringNormalizer, Serializabl
     @Override
     public String normalize(String organizationName) {
         
+        if (StringUtils.isBlank(organizationName)) {
+            return "";
+        }
+        
         // remove brackets
         String filteredOrganizationName = StringUtils.removePattern(organizationName, "\\(.*?\\)");
         

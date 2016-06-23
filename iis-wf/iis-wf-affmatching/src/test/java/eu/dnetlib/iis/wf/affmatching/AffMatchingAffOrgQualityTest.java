@@ -32,6 +32,8 @@ import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
 import eu.dnetlib.iis.wf.affmatching.model.SimpleAffMatchResult;
+import eu.dnetlib.iis.wf.affmatching.orgalternativenames.AffMatchOrganizationAltNameFiller;
+import eu.dnetlib.iis.wf.affmatching.orgalternativenames.CsvOrganizationAltNamesDictionaryFactory;
 import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.IisOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.AffMatchResultWriter;
@@ -96,7 +98,7 @@ public class AffMatchingAffOrgQualityTest {
     }
     
     @Before
-    public void setup() {
+    public void setup() throws IOException {
         
         workingDir = Files.createTempDir();
         
@@ -224,7 +226,7 @@ public class AffMatchingAffOrgQualityTest {
         
     }
     
-   private AffMatchingService createAffMatchingService() {
+   private AffMatchingService createAffMatchingService() throws IOException {
         
         AffMatchingService affMatchingService = new AffMatchingService();
         
@@ -253,6 +255,29 @@ public class AffMatchingAffOrgQualityTest {
         
         affMatchingService.setAffOrgMatchers(of(docOrgRelationMatcher, mainSectionHashBucketMatcher, firstWordsHashBucketMatcher));
         
+        
+        AffMatchOrganizationAltNameFiller altNameFiller = createAffMatchOrganizationAltNameFiller();
+        affMatchingService.setAffMatchOrganizationAltNameFiller(altNameFiller);
+        
         return affMatchingService;
     }
+   
+   
+   private AffMatchOrganizationAltNameFiller createAffMatchOrganizationAltNameFiller() throws IOException {
+       
+       AffMatchOrganizationAltNameFiller altNameFiller = new AffMatchOrganizationAltNameFiller();
+       
+       List<String> altNamesCountryCodes = of(
+               "at", "be", "bg", "cy", "cz", "de", "dk", "ee", "es", "fi",
+               "fr", "gr", "hr", "hu", "it", "lt", "lu", "lv", "nl", "pl",
+               "pt", "ro", "se", "si", "sk"
+               );
+       List<String> alternativeNamesResources = altNamesCountryCodes.stream()
+               .map(code -> "/eu/dnetlib/iis/wf/affmatching/universities/universities_" + code + ".csv").collect(toList());
+       
+       List<List<String>> alternativeNamesDictionary = new CsvOrganizationAltNamesDictionaryFactory().createAlternativeNamesDictionary(alternativeNamesResources);
+       altNameFiller.setAlternativeNamesDictionary(alternativeNamesDictionary);
+       
+       return altNameFiller;
+   }
 }

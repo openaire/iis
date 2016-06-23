@@ -19,6 +19,7 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
 import eu.dnetlib.iis.wf.affmatching.normalize.AffMatchAffiliationNormalizer;
 import eu.dnetlib.iis.wf.affmatching.normalize.AffMatchOrganizationNormalizer;
+import eu.dnetlib.iis.wf.affmatching.orgalternativenames.AffMatchOrganizationAltNameFiller;
 import eu.dnetlib.iis.wf.affmatching.read.AffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.OrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.AffMatchResultWriter;
@@ -47,6 +48,8 @@ public class AffMatchingService implements Serializable {
     private AffMatchAffiliationNormalizer affMatchAffiliationNormalizer = new AffMatchAffiliationNormalizer();
     
     private AffMatchOrganizationNormalizer affMatchOrganizationNormalizer = new AffMatchOrganizationNormalizer();
+    
+    private AffMatchOrganizationAltNameFiller affMatchOrganizationAltNameFiller = new AffMatchOrganizationAltNameFiller();
     
     
     private List<AffOrgMatcher> affOrgMatchers;
@@ -83,8 +86,11 @@ public class AffMatchingService implements Serializable {
         
         JavaRDD<AffMatchOrganization> normalizedOrganizations = organizations.map(org -> affMatchOrganizationNormalizer.normalize(org)).filter(org -> (StringUtils.isNotBlank(org.getName())));
         
-
-        JavaRDD<AffMatchResult> allMatchedAffOrgs = doMatch(sc, normalizedAffiliations, normalizedOrganizations);
+        
+        JavaRDD<AffMatchOrganization> enrichedOrganizations = normalizedOrganizations.map(x -> affMatchOrganizationAltNameFiller.fillAlternativeNames(x));
+        
+        
+        JavaRDD<AffMatchResult> allMatchedAffOrgs = doMatch(sc, normalizedAffiliations, enrichedOrganizations);
         
         
         affMatchResultWriter.write(allMatchedAffOrgs, outputPath);
@@ -105,6 +111,8 @@ public class AffMatchingService implements Serializable {
         Preconditions.checkNotNull(affiliationReader, "affiliationReader has not been set");
         
         Preconditions.checkNotNull(affMatchResultWriter, "affMatchResultWriter has not been set");
+        
+        Preconditions.checkNotNull(affMatchOrganizationAltNameFiller, "affMatchOrganizationAltNameFiller has not been set");
         
         Preconditions.checkState(CollectionUtils.isNotEmpty(affOrgMatchers), "no AffOrgMatcher has been set");
     }
@@ -160,6 +168,10 @@ public class AffMatchingService implements Serializable {
     
     public void setAffiliationReader(AffiliationReader affiliationReader) {
         this.affiliationReader = affiliationReader;
+    }
+
+    public void setAffMatchOrganizationAltNameFiller(AffMatchOrganizationAltNameFiller affMatchOrganizationAltNameFiller) {
+        this.affMatchOrganizationAltNameFiller = affMatchOrganizationAltNameFiller;
     }
 
     public void setAffOrgMatchers(List<AffOrgMatcher> affOrgMatchers) {

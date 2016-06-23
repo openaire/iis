@@ -53,6 +53,18 @@ public class OrganizationNameNormalizerTest {
     }
     
     @Test
+    public void normalize_NULL() {
+        // execute & assert
+        assertEquals("", normalizer.normalize(null));
+    }
+    
+    @Test
+    public void normalize_BLANK() {
+        // execute & assert
+        assertEquals("", normalizer.normalize("   "));
+    }
+    
+    @Test
     public void normalize_BRACKETS() {
         
         // execute
