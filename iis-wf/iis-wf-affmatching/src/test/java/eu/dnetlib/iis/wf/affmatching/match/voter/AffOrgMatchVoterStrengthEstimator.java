@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
+import static com.google.common.collect.ImmutableList.of;
 import static eu.dnetlib.iis.common.utils.AvroTestUtils.createLocalAvroDataStore;
 import static eu.dnetlib.iis.common.utils.JsonAvroTestUtils.readMultipleJsonDataStores;
 import static eu.dnetlib.iis.common.utils.JsonTestUtils.readJson;
@@ -227,11 +228,7 @@ public class AffOrgMatchVoterStrengthEstimator {
         
         printMatcherHeader(affOrgMatcherName);
         
-        List<String> matchedAffPaths = ImmutableList.of(
-                "src/test/resources/experimentalData/expectedOutput/set1/matched_aff.json",
-                "src/test/resources/experimentalData/expectedOutput/set2/matched_aff.json",
-                "src/test/resources/experimentalData/expectedOutput/set4/matched_aff.json",
-                "src/test/resources/experimentalData/expectedOutput/set5/matched_aff.json");
+        List<String> matchedAffPaths = ImmutableList.of("src/test/resources/experimentalData/expectedOutput/matched_aff.json");
         
         // given
         
@@ -302,15 +299,12 @@ public class AffOrgMatchVoterStrengthEstimator {
     private void createInputData() throws IOException {
         
         createInputDataFromJsonFiles(
-                ImmutableList.of(INPUT_DATA_DIR_PATH + "/all_organizations.json"),
-                ImmutableList.of(
-                        INPUT_DATA_DIR_PATH + "/set1/docs_with_aff_real_data.json", 
-                        INPUT_DATA_DIR_PATH + "/set2/docs_with_aff_real_data.json", 
-                        INPUT_DATA_DIR_PATH + "/set4/docs_with_aff_real_data.json",
-                        INPUT_DATA_DIR_PATH + "/set5/docs_with_aff_real_data.json"),
-                ImmutableList.of(INPUT_DATA_DIR_PATH + "/set4/doc_project.json", INPUT_DATA_DIR_PATH + "/set5/doc_project.json"), 
-                ImmutableList.of(),
-                ImmutableList.of(INPUT_DATA_DIR_PATH + "/set4/org_project.json", INPUT_DATA_DIR_PATH + "/set5/org_project.json"));
+                of(INPUT_DATA_DIR_PATH + "/all_organizations.json"),
+                of(INPUT_DATA_DIR_PATH + "/docs_with_aff_real_data.json"),
+                of(INPUT_DATA_DIR_PATH + "/doc_project.json"),
+                of(),
+                of(INPUT_DATA_DIR_PATH + "/org_project.json"));
+        
         
     }
     
