@@ -56,7 +56,7 @@ import eu.dnetlib.iis.wf.affmatching.write.SimpleAffMatchResultWriter;
  * The match strength depends on real data prepared by hand and is just a ratio of true positives (correct matches)
  * to all the matches guessed by the given matcher and voter.
  */
-public class AffOrgMatchVoterStrengthEstimator {
+public class AffOrgMatchVoterStrengthEstimatorAndTest {
 
     private final static boolean PRINT_NOT_MATCHED = false;
     
@@ -99,7 +99,7 @@ public class AffOrgMatchVoterStrengthEstimator {
         SparkConf conf = new SparkConf();
     
         conf.setMaster("local");
-        conf.setAppName(AffOrgMatchVoterStrengthEstimator.class.getName());
+        conf.setAppName(AffOrgMatchVoterStrengthEstimatorAndTest.class.getName());
         
         conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
         conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
