@@ -102,10 +102,10 @@ public class AffOrgMatcherFactory {
      */
     public static ImmutableList<AffOrgMatchVoter> createDocOrgRelationMatcherVoters() {
 
-        FittingOrgWordsMatchVoter fitOrgWordsMatchVoter = new FittingOrgWordsMatchVoter(ImmutableList.of(','), 2, 0.7f, 0.9f);
+        FittingOrgWordsMatchVoter fitOrgWordsMatchVoter = new FittingOrgWordsMatchVoter(ImmutableList.of(',', ';'), 2, 0.7f, 0.9f);
         fitOrgWordsMatchVoter.setMatchStrength(0.979f);
         
-        FittingAffOrgSectionWordsMatchVoter fitAffOrgSectionWordsMatchVoter = new FittingAffOrgSectionWordsMatchVoter(ImmutableList.of(','), 1, 0.8f, 0.85f);
+        FittingAffOrgSectionWordsMatchVoter fitAffOrgSectionWordsMatchVoter = new FittingAffOrgSectionWordsMatchVoter(ImmutableList.of(',', ';'), 1, 0.8f, 0.85f);
         fitAffOrgSectionWordsMatchVoter.setMatchStrength(1f);
         
         
@@ -205,9 +205,9 @@ public class AffOrgMatcherFactory {
      */
     public static ImmutableList<AffOrgMatchVoter> createFirstWordsHashBucketMatcherVoters() {
         
-        FittingOrgWordsMatchVoter fitOrgWordsMatchVoter = new FittingOrgWordsMatchVoter(ImmutableList.of(','), 2, 0.7f, 0.9f);
+        FittingOrgWordsMatchVoter fitOrgWordsMatchVoter = new FittingOrgWordsMatchVoter(ImmutableList.of(',', ';'), 2, 0.7f, 0.9f);
         
-        FittingAffOrgWordsMatchVoter fitAffOrgWordsMatchVoter = new FittingAffOrgWordsMatchVoter(ImmutableList.of(','), 2, 0.8f, 0.9f);
+        FittingAffOrgWordsMatchVoter fitAffOrgWordsMatchVoter = new FittingAffOrgWordsMatchVoter(ImmutableList.of(',', ';'), 2, 0.8f, 0.9f);
         
         
         CompositeMatchVoter fitOrgAffOrgWordsVoter = new CompositeMatchVoter(ImmutableList.of(fitOrgWordsMatchVoter, fitAffOrgWordsMatchVoter));
