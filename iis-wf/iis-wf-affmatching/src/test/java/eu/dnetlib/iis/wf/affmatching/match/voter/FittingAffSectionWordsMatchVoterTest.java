@@ -23,10 +23,10 @@ import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSectionsSplitter;
  * @author madryk
  */
 @RunWith(MockitoJUnitRunner.class)
-public class FittingAffWordsMatchVoterTest {
+public class FittingAffSectionWordsMatchVoterTest {
 
     @InjectMocks
-    private FittingAffWordsMatchVoter voter = new FittingAffWordsMatchVoter(of(','), 2, 0.8, 0.8);
+    private FittingAffSectionWordsMatchVoter voter = new FittingAffSectionWordsMatchVoter(of(','), 2, 0.8, 0.8);
     
     @Mock
     private OrganizationSectionsSplitter sectionsSplitter;
@@ -59,37 +59,37 @@ public class FittingAffWordsMatchVoterTest {
     @Test(expected = NullPointerException.class)
     public void constructor_NULL_CHARS_TO_FILTER() {
         // execute
-        new FittingAffWordsMatchVoter(null, 2, 0.8, 0.8);
+        new FittingAffSectionWordsMatchVoter(null, 2, 0.8, 0.8);
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void constructor_NEGATIVE_MIN_WORD_LENGTH() {
         // execute
-        new FittingAffWordsMatchVoter(of(), -1, 0.8, 0.8);
+        new FittingAffSectionWordsMatchVoter(of(), -1, 0.8, 0.8);
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void constructor_TOO_HIGH_MIN_FITTING_ORG_WORDS_PERCENTAGE() {
         // execute
-        new FittingAffWordsMatchVoter(of(), 2, 1.1, 0.8);
+        new FittingAffSectionWordsMatchVoter(of(), 2, 1.1, 0.8);
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void constructor_TOO_LOW_MIN_FITTING_ORG_WORDS_PERCENTAGE() {
         // execute
-        new FittingAffWordsMatchVoter(of(), 2, 0, 0.8);
+        new FittingAffSectionWordsMatchVoter(of(), 2, 0, 0.8);
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void constructor_TOO_HIGH_MIN_FITTING_WORD_SIMILARITY() {
         // execute
-        new FittingAffWordsMatchVoter(of(), 2, 0.8, 1.1);
+        new FittingAffSectionWordsMatchVoter(of(), 2, 0.8, 1.1);
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void constructor_TOO_LOW_MIN_FITTING_WORD_SIMILARITY() {
         // execute
-        new FittingAffWordsMatchVoter(of(), 2, 0.8, 0);
+        new FittingAffSectionWordsMatchVoter(of(), 2, 0.8, 0);
     }
     
     
