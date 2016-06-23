@@ -28,8 +28,8 @@ import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisInferredDocumentP
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisProjectOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.match.voter.CompositeMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.FittingAffSectionWordsMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.FittingAffWordsMatchVoter;
+import eu.dnetlib.iis.wf.affmatching.match.voter.FittingAffOrgSectionWordsMatchVoter;
+import eu.dnetlib.iis.wf.affmatching.match.voter.FittingAffOrgWordsMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.match.voter.FittingOrgWordsMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
@@ -105,8 +105,8 @@ public class AffOrgMatcherFactory {
         FittingOrgWordsMatchVoter fitOrgWordsMatchVoter = new FittingOrgWordsMatchVoter(ImmutableList.of(','), 2, 0.7f, 0.9f);
         fitOrgWordsMatchVoter.setMatchStrength(0.979f);
         
-        FittingAffSectionWordsMatchVoter fitAffSectionWordsMatchVoter = new FittingAffSectionWordsMatchVoter(ImmutableList.of(','), 1, 0.8f, 0.85f);
-        fitAffSectionWordsMatchVoter.setMatchStrength(1f);
+        FittingAffOrgSectionWordsMatchVoter fitAffOrgSectionWordsMatchVoter = new FittingAffOrgSectionWordsMatchVoter(ImmutableList.of(','), 1, 0.8f, 0.85f);
+        fitAffOrgSectionWordsMatchVoter.setMatchStrength(1f);
         
         
         return ImmutableList.of(
@@ -116,7 +116,7 @@ public class AffOrgMatcherFactory {
                 createSectionedNameLevenshteinCountryLooseMatchVoter(1f),
                 createSectionedShortNameStrictCountryLooseMatchVoter(1f),
                 fitOrgWordsMatchVoter,
-                fitAffSectionWordsMatchVoter);
+                fitAffOrgSectionWordsMatchVoter);
     }
     
     
@@ -207,12 +207,12 @@ public class AffOrgMatcherFactory {
         
         FittingOrgWordsMatchVoter fitOrgWordsMatchVoter = new FittingOrgWordsMatchVoter(ImmutableList.of(','), 2, 0.7f, 0.9f);
         
-        FittingAffWordsMatchVoter fitAffWordsMatchVoter = new FittingAffWordsMatchVoter(ImmutableList.of(','), 2, 0.8f, 0.9f);
+        FittingAffOrgWordsMatchVoter fitAffOrgWordsMatchVoter = new FittingAffOrgWordsMatchVoter(ImmutableList.of(','), 2, 0.8f, 0.9f);
         
         
-        CompositeMatchVoter fitAffOrgWordsVoter = new CompositeMatchVoter(ImmutableList.of(fitOrgWordsMatchVoter, fitAffWordsMatchVoter));
+        CompositeMatchVoter fitOrgAffOrgWordsVoter = new CompositeMatchVoter(ImmutableList.of(fitOrgWordsMatchVoter, fitAffOrgWordsMatchVoter));
                 
-        fitAffOrgWordsVoter.setMatchStrength(0.921f);
+        fitOrgAffOrgWordsVoter.setMatchStrength(0.921f);
         
         return ImmutableList.of(
                 createNameCountryStrictMatchVoter(0.957f),
@@ -220,7 +220,7 @@ public class AffOrgMatcherFactory {
                 createSectionedNameStrictCountryLooseMatchVoter(0.929f),
                 createSectionedNameLevenshteinCountryLooseMatchVoter(0.935f),
                 createSectionedShortNameStrictCountryLooseMatchVoter(1f),
-                fitAffOrgWordsVoter);
+                fitOrgAffOrgWordsVoter);
     }
     
     
