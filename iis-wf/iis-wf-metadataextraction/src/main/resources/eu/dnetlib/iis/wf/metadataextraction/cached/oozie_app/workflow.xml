@@ -22,27 +22,22 @@
 		<property>
 			<name>content_connection_timeout</name>
 			<value>60000</value>
-			<description>streaming content connection timeout</description>
+			<description>streaming content connection timeout (expressed in milliseconds)</description>
 		</property>
 		<property>
 			<name>content_read_timeout</name>
 			<value>60000</value>
-			<description>streaming content read timeout</description>
+			<description>streaming content read timeout (expressed in milliseconds)</description>
 		</property>
 		<property>
 			<name>zk_session_timeout</name>
 			<value>60000</value>
-			<description>zookeeper session timeout when handling locks</description>
+			<description>zookeeper session timeout when handling locks (expressed in milliseconds)</description>
 		</property>
 		<property>
 			<name>default_cache_location</name>
 			<value>/cache/metadataextraction</value>
 			<description>default cache location stored in HDFS</description>
-		</property>
-		<property>
-			<name>mapred_max_split_size</name>
-			<value>50000</value>
-			<description>maximum input data split size, required by streaming version reading DocumentContentUrl to split input data into more chunks</description>
 		</property>
 		<property>
 			<name>output_name_meta</name>
@@ -172,14 +167,6 @@
 			<app-path>${wf:appPath()}/metadata_extractor</app-path>
 			<propagate-configuration />
 			<configuration>
-				<property>
-					<name>processing_mode</name>
-					<value>StreamingMetadataExtractorMapper</value>
-				</property>
-				<property>
-					<name>inputport_classname</name>
-					<value>eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl</value>
-				</property>
 				<property>
 					<name>workingDir</name>
 					<value>${workingDir}/metadata_extractor/working_dir</value>
@@ -358,14 +345,6 @@
 			<app-path>${wf:appPath()}/metadata_extractor</app-path>
 			<propagate-configuration />
 			<configuration>
-				<property>
-					<name>processing_mode</name>
-					<value>StreamingMetadataExtractorMapper</value>
-				</property>
-				<property>
-					<name>inputport_classname</name>
-					<value>eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl</value>
-				</property>
 				<property>
 					<name>workingDir</name>
 					<value>${workingDir}/metadata_extractor/working_dir</value>

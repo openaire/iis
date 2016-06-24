@@ -4,7 +4,7 @@
 		<property>
 			<name>zk_session_timeout</name>
 			<value>60000</value>
-			<description>zookeeper session timeout when handling locks</description>
+			<description>zookeeper session timeout when handling locks (expressed in milliseconds)</description>
 		</property>
 		<property>
 			<name>default_cache_location</name>
