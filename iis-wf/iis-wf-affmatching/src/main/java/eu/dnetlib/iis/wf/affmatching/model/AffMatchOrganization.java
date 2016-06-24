@@ -105,7 +105,8 @@ public class AffMatchOrganization {
      * That is main {@link #getName()} with all {@link #getAlternativeNames()} 
      */
     public List<String> getNames() {
-        List<String> names = Lists.newArrayList(name);
+        List<String> names = Lists.newArrayListWithCapacity(alternativeNames.size() +1);
+        names.add(name);
         names.addAll(alternativeNames);
         
         return names;

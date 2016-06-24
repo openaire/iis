@@ -4,11 +4,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
@@ -20,7 +21,7 @@ public class AffMatchOrganizationAltNameFillerTest {
 
     private AffMatchOrganizationAltNameFiller altNameFiller = new AffMatchOrganizationAltNameFiller();
     
-    private List<List<String>> altNamesDictionary = Lists.newArrayList();
+    private List<Set<String>> altNamesDictionary = Lists.newArrayList();
     
     
     private AffMatchOrganization organization = new AffMatchOrganization("ORG_ID");
@@ -29,8 +30,8 @@ public class AffMatchOrganizationAltNameFillerTest {
     @Before
     public void setup() {
         
-        altNamesDictionary.add(ImmutableList.of("Uniwersytet im. Adama Mickiewicza w Poznaniu", "Adam Mickiewicz University in Poznań", "Adam Mickiewicz University"));
-        altNamesDictionary.add(ImmutableList.of("Univerzita Karlova v Praze", "Charles University in Prague"));
+        altNamesDictionary.add(ImmutableSet.of("Uniwersytet im. Adama Mickiewicza w Poznaniu", "Adam Mickiewicz University in Poznań", "Adam Mickiewicz University"));
+        altNamesDictionary.add(ImmutableSet.of("Univerzita Karlova v Praze", "Charles University in Prague"));
         
         
         altNameFiller.setAlternativeNamesDictionary(altNamesDictionary);

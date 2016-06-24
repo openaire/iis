@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 
@@ -20,7 +21,7 @@ public class AffMatchOrganizationAltNameFiller implements Serializable {
     private static final long serialVersionUID = 1L;
     
     
-    private List<List<String>> alternativeNamesDictionary = Lists.newArrayList();
+    private List<Set<String>> alternativeNamesDictionary = Lists.newArrayList();
     
 
     //------------------------ LOGIC --------------------------
@@ -50,7 +51,7 @@ public class AffMatchOrganizationAltNameFiller implements Serializable {
     
     private List<String> fetchAlternativeNames(List<String> originalNames) {
         
-        for (List<String> alternativeNames : alternativeNamesDictionary) {
+        for (Set<String> alternativeNames : alternativeNamesDictionary) {
             
             if (containsSameOrganizationName(originalNames, alternativeNames)) {
                 return filterAlreadyPresentAlternativeNames(alternativeNames, originalNames);
@@ -60,13 +61,13 @@ public class AffMatchOrganizationAltNameFiller implements Serializable {
         return Lists.newArrayList();
     }
     
-    private boolean containsSameOrganizationName(List<String> originalNames, List<String> alternativeNames) {
+    private boolean containsSameOrganizationName(List<String> originalNames, Set<String> alternativeNames) {
         
         return originalNames.stream().anyMatch(orgName -> alternativeNames.contains(orgName));
         
     }
     
-    private List<String> filterAlreadyPresentAlternativeNames(List<String> alternativeNames, List<String> originalNames) {
+    private List<String> filterAlreadyPresentAlternativeNames(Set<String> alternativeNames, List<String> originalNames) {
         
         return alternativeNames.stream().filter(altName -> !originalNames.contains(altName)).collect(toList());
     }
@@ -77,7 +78,7 @@ public class AffMatchOrganizationAltNameFiller implements Serializable {
     /**
      * Dictionary of alternative organization names
      */
-    public void setAlternativeNamesDictionary(List<List<String>> alternativeNamesDictionary) {
+    public void setAlternativeNamesDictionary(List<Set<String>> alternativeNamesDictionary) {
         this.alternativeNamesDictionary = alternativeNamesDictionary;
     }
     

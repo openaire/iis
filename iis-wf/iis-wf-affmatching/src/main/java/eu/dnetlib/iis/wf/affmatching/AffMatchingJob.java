@@ -1,6 +1,5 @@
 package eu.dnetlib.iis.wf.affmatching;
 
-import static java.util.stream.Collectors.*;
 import static com.google.common.collect.ImmutableList.of;
 import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createDocOrgRelationMatcher;
 import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createFirstWordsHashBucketMatcher;
@@ -8,6 +7,7 @@ import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createMai
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -20,6 +20,7 @@ import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
 import eu.dnetlib.iis.wf.affmatching.orgalternativenames.AffMatchOrganizationAltNameFiller;
 import eu.dnetlib.iis.wf.affmatching.orgalternativenames.CsvOrganizationAltNamesDictionaryFactory;
+import eu.dnetlib.iis.wf.affmatching.orgalternativenames.OrganizationAltNameConst;
 import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.IisOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.IisAffMatchResultWriter;
@@ -131,15 +132,7 @@ public class AffMatchingJob {
         
         AffMatchOrganizationAltNameFiller altNameFiller = new AffMatchOrganizationAltNameFiller();
         
-        List<String> altNamesCountryCodes = of(
-                "at", "be", "bg", "cy", "cz", "de", "dk", "ee", "es", "fi",
-                "fr", "gr", "hr", "hu", "it", "lt", "lu", "lv", "nl", "pl",
-                "pt", "ro", "se", "si", "sk"
-                );
-        List<String> alternativeNamesResources = altNamesCountryCodes.stream()
-                .map(code -> "/eu/dnetlib/iis/wf/affmatching/universities/universities_" + code + ".csv").collect(toList());
-        
-        List<List<String>> alternativeNamesDictionary = alternativeNamesFactory.createAlternativeNamesDictionary(alternativeNamesResources);
+        List<Set<String>> alternativeNamesDictionary = alternativeNamesFactory.createAlternativeNamesDictionary(OrganizationAltNameConst.CLASSPATH_ALTERNATIVE_NAMES_CSV_FILES);
         altNameFiller.setAlternativeNamesDictionary(alternativeNamesDictionary);
         
         return altNameFiller;

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -30,7 +31,7 @@ public class CsvOrganizationAltNamesDictionaryFactoryTest {
                 "/eu/dnetlib/iis/wf/affmatching/orgalternativenames/alternative_org_names_2.csv");
         
         // execute
-        List<List<String>> dictionary = factory.createAlternativeNamesDictionary(csvFiles);
+        List<Set<String>> dictionary = factory.createAlternativeNamesDictionary(csvFiles);
         
         // assert
         assertEquals(3, dictionary.size());

@@ -3,8 +3,10 @@ package eu.dnetlib.iis.wf.affmatching.orgalternativenames;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -23,13 +25,13 @@ public class CsvOrganizationAltNamesDictionaryFactory {
      * Creates dictionary of alternative organization names using csv files located 
      * under provided classpaths.
      */
-    public List<List<String>> createAlternativeNamesDictionary(List<String> classpathCsvResources) throws IOException {
+    public List<Set<String>> createAlternativeNamesDictionary(List<String> classpathCsvResources) throws IOException {
         
-        List<List<String>> dictionary = Lists.newArrayList();
+        List<Set<String>> dictionary = Lists.newArrayList();
         
         for (String resource : classpathCsvResources) {
             
-            List<List<String>> dictionaryFromCsv = createAltNamesDictionaryFromCsv(resource);
+            List<Set<String>> dictionaryFromCsv = createAltNamesDictionaryFromCsv(resource);
             dictionary.addAll(dictionaryFromCsv);
             
         }
@@ -40,15 +42,15 @@ public class CsvOrganizationAltNamesDictionaryFactory {
     
     //------------------------ PRIVATE --------------------------
     
-    private List<List<String>> createAltNamesDictionaryFromCsv(String csvClasspath) throws IOException {
+    private List<Set<String>> createAltNamesDictionaryFromCsv(String csvClasspath) throws IOException {
         
-        List<List<String>> dictionary = Lists.newArrayList();
+        List<Set<String>> dictionary = Lists.newArrayList();
         
         try (CSVReader reader = new CSVReader(new InputStreamReader(this.getClass().getResourceAsStream(csvClasspath), "UTF-8"))) {
             
             String[] next = reader.readNext();
             while (next != null) {
-                dictionary.add(Lists.newArrayList(next));
+                dictionary.add(Sets.newHashSet(next));
                 next = reader.readNext();
             }
             
