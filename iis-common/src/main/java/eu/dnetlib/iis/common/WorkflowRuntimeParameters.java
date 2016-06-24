@@ -34,12 +34,8 @@ public abstract class WorkflowRuntimeParameters {
      * @throws {@link NumberFormatException} if parameter value does not contain a parsable integer
      */
     public static Integer getIntegerParamValue(String paramName, Configuration configuration) throws NumberFormatException {
-        String paramValue = configuration.get(paramName);
-        if (StringUtils.isNotBlank(paramValue) && !UNDEFINED_NONEMPTY_VALUE.equals(paramValue)) {
-            return Integer.parseInt(paramValue);
-        } else {
-            return null;
-        }
+        String paramValue = getParamValue(paramName, configuration);
+        return paramValue!=null?Integer.valueOf(paramValue):null;
     }
     
     /**
