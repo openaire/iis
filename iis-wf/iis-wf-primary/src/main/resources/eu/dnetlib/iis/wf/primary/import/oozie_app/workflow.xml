@@ -100,17 +100,17 @@
 		<property>
 			<name>resultset_client_read_timeout</name>
 			<value>60000</value>
-			<description>resultset client read timeout</description>
+			<description>resultset client read timeout (expressed in milliseconds)</description>
 		</property>
 		<property>
 			<name>content_connection_timeout</name>
 			<value>60000</value>
-			<description>import content connection timeout</description>
+			<description>import content connection timeout (expressed in milliseconds)</description>
 		</property>
 		<property>
 			<name>content_read_timeout</name>
 			<value>60000</value>
-			<description>import content read timeout</description>
+			<description>import content read timeout (expressed in milliseconds)</description>
 		</property>
 		<property>
 			<name>text_xml_max_file_size_mb</name>

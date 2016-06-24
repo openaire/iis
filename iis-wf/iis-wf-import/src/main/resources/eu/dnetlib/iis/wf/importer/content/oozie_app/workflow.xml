@@ -18,12 +18,12 @@
         <property>
             <name>content_connection_timeout</name>
             <value>60000</value>
-            <description>streaming content connection timeout</description>
+            <description>streaming content connection timeout (expressed in milliseconds)</description>
         </property>
         <property>
             <name>content_read_timeout</name>
             <value>60000</value>
-            <description>streaming content read timeout</description>
+            <description>streaming content read timeout (expressed in milliseconds)</description>
         </property>
 		<property>
 			<name>output</name>

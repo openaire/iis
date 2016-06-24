@@ -26,7 +26,6 @@ import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.fault.FaultUtils;
 import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
-import eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters;
 import pl.edu.icm.cermine.ContentExtractor;
 import pl.edu.icm.cermine.exception.AnalysisException;
 import pl.edu.icm.cermine.exception.TransformationException;
@@ -91,11 +90,6 @@ public abstract class AbstractMetadataExtractorMapper<T>
     private long intervalTime = 0;
 
     /**
-     * Maximum content size in MegaBytes.
-     */
-    protected long maxFileSizeKB = Long.MAX_VALUE;
-
-    /**
      * Processing time threshold. When exceeded apropriate object will be
      * written to error datastore.
      */
@@ -132,19 +126,11 @@ public abstract class AbstractMetadataExtractorMapper<T>
         } else {
             log.info("got no excluded ids");
         }
-        // handling maximum content size
-        String maxFileSizeMBStr = context.getConfiguration().get(ImportWorkflowRuntimeParameters.IMPORT_CONTENT_MAX_FILE_SIZE_MB);
-        if (maxFileSizeMBStr != null && !maxFileSizeMBStr.trim().isEmpty()
-                && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(maxFileSizeMBStr)) {
-            this.maxFileSizeKB = 1024l * Integer.valueOf(maxFileSizeMBStr);
-        }
-
         // handling processing time threshold
-        String processingTimeThresholdSecsStr = context.getConfiguration()
-                .get(LOG_FAULT_PROCESSING_TIME_THRESHOLD_SECS);
-        if (processingTimeThresholdSecsStr != null && !processingTimeThresholdSecsStr.trim().isEmpty()
-                && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(processingTimeThresholdSecsStr)) {
-            this.processingTimeThreshold = 1000l * Integer.valueOf(processingTimeThresholdSecsStr);
+        Integer processingTimeThresholdSecs = WorkflowRuntimeParameters.getIntegerParamValue(
+                LOG_FAULT_PROCESSING_TIME_THRESHOLD_SECS, context.getConfiguration());
+        if (processingTimeThresholdSecs != null) {
+            this.processingTimeThreshold = 1000l * processingTimeThresholdSecs;
         }
 
         mos = new MultipleOutputs(context);
@@ -157,19 +143,13 @@ public abstract class AbstractMetadataExtractorMapper<T>
      * 
      * @param documentId
      * @param contentStream
-     * @param contentLengthKB
-     *            content length in KB
-     * @param auditSupplementaryData
-     *            additional data reqiured for auditing purposes
      * @throws IOException
      * @throws InterruptedException
      */
-    protected void processStream(CharSequence documentId, InputStream contentStream, long contentLengthKB,
-            Map<CharSequence, CharSequence> auditSupplementaryData) throws IOException, InterruptedException {
+    protected void processStream(CharSequence documentId, InputStream contentStream) throws IOException, InterruptedException {
         try {
             currentProgress++;
             if (currentProgress > 0 && currentProgress % progresLogInterval == 0) {
-                // FIXME switch back to debug when setting debug level on oozie
                 log.info("metadata extaction progress: " + currentProgress + ", time taken to process "
                         + progresLogInterval + " elements: " + ((System.currentTimeMillis() - intervalTime) / 1000)
                         + " secs");
@@ -178,29 +158,6 @@ public abstract class AbstractMetadataExtractorMapper<T>
             if (excludedIds != null && excludedIds.contains(documentId)) {
                 log.info("skipping processing for excluded id " + documentId);
             } else {
-                // handling maximum content size
-                if (contentLengthKB > maxFileSizeKB) {
-                    log.info("skipping processing for id " + documentId + " due to max file size limit=" + maxFileSizeKB
-                            + " KB exceeded: " + contentLengthKB + " KB");
-                    try {
-                        // writing empty metadata
-                        mos.write(namedOutputMeta,
-                                new AvroKey<ExtractedDocumentMetadata>(NlmToDocumentWithBasicMetadataConverter
-                                        .convertFull(documentId.toString(), null, null)));
-                        return;
-                    } catch (TransformationException e2) {
-                        mos.close();
-                        throw new RuntimeException(e2);
-                    } catch (JDOMException e2) {
-                        mos.close();
-                        throw new RuntimeException(e2);
-                    } finally {
-                        if (contentStream != null) {
-                            contentStream.close();
-                        }
-                    }
-                }
-
                 log.info("starting processing for id: " + documentId);
                 long startTime = System.currentTimeMillis();
                 ContentExtractor extractor = new ContentExtractor();
@@ -242,7 +199,7 @@ public abstract class AbstractMetadataExtractorMapper<T>
                                                 .convertFull(documentId.toString(), null, null)));
                                 // writing fault result
                                 mos.write(namedOutputFault, new AvroKey<Fault>(
-                                        FaultUtils.exceptionToFault(documentId, e, auditSupplementaryData)));
+                                        FaultUtils.exceptionToFault(documentId, e, null)));
                             } catch (TransformationException e2) {
                                 mos.close();
                                 throw new RuntimeException(e2);
@@ -264,7 +221,7 @@ public abstract class AbstractMetadataExtractorMapper<T>
                                                 .convertFull(documentId.toString(), null, null)));
                                 // writing fault result
                                 mos.write(namedOutputFault, new AvroKey<Fault>(
-                                        FaultUtils.exceptionToFault(documentId, e, auditSupplementaryData)));
+                                        FaultUtils.exceptionToFault(documentId, e, null)));
                             } catch (TransformationException e2) {
                                 mos.close();
                                 throw new RuntimeException(e2);
@@ -282,9 +239,6 @@ public abstract class AbstractMetadataExtractorMapper<T>
                 long processingTime = System.currentTimeMillis() - startTime;
                 if (processingTime > processingTimeThreshold) {
                     Map<CharSequence, CharSequence> supplementaryData = new HashMap<CharSequence, CharSequence>();
-                    if (auditSupplementaryData != null) {
-                        supplementaryData.putAll(auditSupplementaryData);
-                    }
                     supplementaryData.put(FAULT_SUPPLEMENTARY_DATA_PROCESSING_TIME, String.valueOf(processingTime));
                     // writing fault result
                     mos.write(namedOutputFault,

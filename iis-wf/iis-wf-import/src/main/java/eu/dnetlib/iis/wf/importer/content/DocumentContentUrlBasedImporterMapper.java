@@ -53,11 +53,11 @@ public class DocumentContentUrlBasedImporterMapper
         // connection and approver related parameters
         this.connectionTimeout = context.getConfiguration().getInt(IMPORT_CONTENT_CONNECTION_TIMEOUT, 60000);
         this.readTimeout = context.getConfiguration().getInt(IMPORT_CONTENT_READ_TIMEOUT, 60000);
-        String maxFileSizeMBStr = WorkflowRuntimeParameters.getParamValue(
+        Integer maxFileSizeMB = WorkflowRuntimeParameters.getIntegerParamValue(
                 ImportWorkflowRuntimeParameters.IMPORT_CONTENT_MAX_FILE_SIZE_MB, context.getConfiguration());
-        if (maxFileSizeMBStr != null) {
+        if (maxFileSizeMB != null) {
             this.contentApprover = new ComplexContentApprover(new PDFHeaderBasedContentApprover(),
-                    new SizeLimitContentApprover(Integer.valueOf(maxFileSizeMBStr)));
+                    new SizeLimitContentApprover(maxFileSizeMB));
         } else {
             this.contentApprover = new PDFHeaderBasedContentApprover();
         }

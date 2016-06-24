@@ -49,10 +49,10 @@ public class DocumentTextUrlBasedImporterMapper extends Mapper<AvroKey<DocumentC
 		this.readTimeout = context.getConfiguration().getInt(
 									IMPORT_CONTENT_READ_TIMEOUT, 60000);
 		// handling maximum content size
-        String maxFileSizeMBStr = WorkflowRuntimeParameters.getParamValue(
+        Integer maxFileSizeMB = WorkflowRuntimeParameters.getIntegerParamValue(
                 ImportWorkflowRuntimeParameters.IMPORT_CONTENT_MAX_FILE_SIZE_MB, context.getConfiguration());
-        if (maxFileSizeMBStr != null) {
-            this.maxFileSizeKB = 1024l * Integer.valueOf(maxFileSizeMBStr);
+        if (maxFileSizeMB != null) {
+            this.maxFileSizeKB = 1024l * maxFileSizeMB;
         }
 	}
 	

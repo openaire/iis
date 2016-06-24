@@ -30,25 +30,10 @@
 			<description>excluded identifiers list</description>
 		</property>
 		<property>
-			<name>max_file_size_mb</name>
-			<value>$UNDEFINED$</value>
-			<description>maximum allowed file size in Megabytes</description>
-		</property>
-		<property>
 			<name>log_fault_processing_time_threshold_secs</name>
 			<value>300</value>
 			<description>processing time threshold expressed in seconds. 
 			When exceeded apropriate object will be written to fault datastore</description>
-		</property>
-		<property>
-			<name>content_connection_timeout</name>
-			<value>60000</value>
-			<description>streaming content connection timeout</description>
-		</property>
-		<property>
-			<name>content_read_timeout</name>
-			<value>60000</value>
-			<description>streaming content read timeout</description>
 		</property>
 		<property>
 			<name>mapred_child_java_opts</name>
@@ -205,20 +190,8 @@
 				   <value>${excluded_ids}</value>
 				</property>
 				<property>
-				    <name>import.content.max.file.size.mb</name>
-				   <value>${max_file_size_mb}</value>
-				</property>
-				<property>
 				    <name>log.fault.processing.time.threshold.secs</name>
 				   <value>${log_fault_processing_time_threshold_secs}</value>
-				</property>
-				<property>
-				    <name>import.content.connection.timeout</name>
-				   <value>${content_connection_timeout}</value>
-				</property>
-				<property>
-				    <name>import.content.read.timeout</name>
-				   <value>${content_read_timeout}</value>
 				</property>
                 <property>
                     <name>mapreduce.job.map.class</name>
