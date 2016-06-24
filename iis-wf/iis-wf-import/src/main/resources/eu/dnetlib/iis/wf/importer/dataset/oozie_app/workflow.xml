@@ -33,7 +33,7 @@
 		<property>
 			<name>resultset_client_read_timeout</name>
 			<value>60000</value>
-			<description>result set client reading timeout</description>
+			<description>result set client reading timeout (expressed in milliseconds)</description>
 		</property>
 	</parameters>
 

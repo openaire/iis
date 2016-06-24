@@ -16,17 +16,17 @@
 		<property>
 			<name>resultset_client_read_timeout</name>
 			<value>60000</value>
-			<description>resultset client read timeout</description>
+			<description>resultset client read timeout (expressed in milliseconds)</description>
 		</property>
 		<property>
 			<name>content_connection_timeout</name>
 			<value>60000</value>
-			<description>import content connection timeout</description>
+			<description>import content connection timeout (expressed in milliseconds)</description>
 		</property>
 		<property>
 			<name>content_read_timeout</name>
 			<value>60000</value>
-			<description>import content read timeout</description>
+			<description>import content read timeout (expressed in milliseconds)</description>
 		</property>
 		<property>
 			<name>metadataextraction_excluded_checksums</name>
@@ -41,18 +41,13 @@
 		<property>
 			<name>zk_session_timeout</name>
 			<value>60000</value>
-			<description>zookeeper session timeout when handling locks</description>
+			<description>zookeeper session timeout when handling locks (expressed in milliseconds)</description>
 		</property>
 		<property>
 			<name>cache_location</name>
 			<description>metadata extraction HDFS cache location.
 				Directory with appropriate permisions has to be created in advance.
 			</description>
-		</property>
-		<property>
-			<name>mapred_max_split_size</name>
-			<value>50000</value>
-			<description>maximum input data split size, required by streaming version reading DocumentContentUrl to split input data into more chunks</description>
 		</property>
 		<property>
 			<name>remove_sideproducts</name>
@@ -221,14 +216,6 @@
 			<propagate-configuration />
 			<configuration>
 				<property>
-					<name>processing_mode</name>
-					<value>StreamingMetadataExtractorMapper</value>
-				</property>
-				<property>
-					<name>inputport_classname</name>
-					<value>eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl</value>
-				</property>
-				<property>
 					<name>workingDir</name>
 					<value>${workingDir}/metadata_extractor/working_dir</value>
 				</property>
@@ -362,14 +349,6 @@
 			<app-path>${wf:appPath()}/metadata_extractor</app-path>
 			<propagate-configuration />
 			<configuration>
-				<property>
-					<name>processing_mode</name>
-					<value>StreamingMetadataExtractorMapper</value>
-				</property>
-				<property>
-					<name>inputport_classname</name>
-					<value>eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl</value>
-				</property>
 				<property>
 					<name>workingDir</name>
 					<value>${workingDir}/metadata_extractor/working_dir</value>
