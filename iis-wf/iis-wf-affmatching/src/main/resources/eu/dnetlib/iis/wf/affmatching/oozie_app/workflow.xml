@@ -55,6 +55,11 @@
             <value>64</value>
             <description>total number of executors</description>
         </property>
+        <property>
+            <name>sparkDriverOverhead</name>
+            <value>513</value>
+            <description>The amount of off heap memory (in megabytes) to be allocated for the driver</description>
+        </property>
     </parameters>
 
     <global>
@@ -90,7 +95,7 @@
             <class>eu.dnetlib.iis.wf.affmatching.AffMatchingJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-affmatching-${projectVersion}-uber.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --num-executors ${sparkNumExecutors}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --num-executors ${sparkNumExecutors} --conf spark.yarn.driver.memoryOverhead=${sparkDriverOverhead}</spark-opts>
 
             <arg>-inputAvroOrgPath=${input_organizations}</arg>
             <arg>-inputAvroAffPath=${input_document_metadata}</arg>
