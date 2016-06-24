@@ -20,6 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -44,6 +45,9 @@ import eu.dnetlib.iis.wf.affmatching.AffMatchingService;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchComputer;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
 import eu.dnetlib.iis.wf.affmatching.model.SimpleAffMatchResult;
+import eu.dnetlib.iis.wf.affmatching.orgalternativenames.AffMatchOrganizationAltNameFiller;
+import eu.dnetlib.iis.wf.affmatching.orgalternativenames.CsvOrganizationAltNamesDictionaryFactory;
+import eu.dnetlib.iis.wf.affmatching.orgalternativenames.OrganizationAltNameConst;
 import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.IisOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.SimpleAffMatchResultWriter;
@@ -383,7 +387,7 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
     }
     
     
-    private AffMatchingService createAffMatchingService() {
+    private AffMatchingService createAffMatchingService() throws IOException {
         
         AffMatchingService affMatchingService = new AffMatchingService();
         
@@ -399,7 +403,21 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
         affMatchingService.setAffMatchResultWriter(new SimpleAffMatchResultWriter());
         
         
+        AffMatchOrganizationAltNameFiller altNameFiller = createAffMatchOrganizationAltNameFiller();
+        affMatchingService.setAffMatchOrganizationAltNameFiller(altNameFiller);
+        
         return affMatchingService;
+    }
+    
+    private AffMatchOrganizationAltNameFiller createAffMatchOrganizationAltNameFiller() throws IOException {
+        
+        AffMatchOrganizationAltNameFiller altNameFiller = new AffMatchOrganizationAltNameFiller();
+        
+        List<Set<String>> alternativeNamesDictionary = new CsvOrganizationAltNamesDictionaryFactory()
+                .createAlternativeNamesDictionary(OrganizationAltNameConst.CLASSPATH_ALTERNATIVE_NAMES_CSV_FILES);
+        altNameFiller.setAlternativeNamesDictionary(alternativeNamesDictionary);
+        
+        return altNameFiller;
     }
     
     //------------------------ INNER CLASSES --------------------------
@@ -414,7 +432,7 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
         
         
         
-        //------------------------ SETTERS --------------------------
+        //------------------------ CONSTRUCTORS --------------------------
         
         public InvalidVoterStrength(String voterName, float calculatedStrength, float setStrength) {
             super();

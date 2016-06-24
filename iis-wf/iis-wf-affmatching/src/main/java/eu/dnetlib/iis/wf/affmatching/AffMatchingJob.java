@@ -6,6 +6,8 @@ import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createFir
 import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createMainSectionHashBucketMatcher;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -16,6 +18,9 @@ import com.beust.jcommander.Parameters;
 
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
+import eu.dnetlib.iis.wf.affmatching.orgalternativenames.AffMatchOrganizationAltNameFiller;
+import eu.dnetlib.iis.wf.affmatching.orgalternativenames.CsvOrganizationAltNamesDictionaryFactory;
+import eu.dnetlib.iis.wf.affmatching.orgalternativenames.OrganizationAltNameConst;
 import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.IisOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.IisAffMatchResultWriter;
@@ -29,6 +34,8 @@ import eu.dnetlib.iis.wf.affmatching.write.IisAffMatchResultWriter;
  */
 
 public class AffMatchingJob {
+    
+    private static CsvOrganizationAltNamesDictionaryFactory alternativeNamesFactory = new CsvOrganizationAltNamesDictionaryFactory();
     
     
     //------------------------ LOGIC --------------------------
@@ -86,7 +93,7 @@ public class AffMatchingJob {
     
     
     
-    private static AffMatchingService createAffMatchingService(JavaSparkContext sparkContext, AffMatchingJobParameters params) {
+    private static AffMatchingService createAffMatchingService(JavaSparkContext sparkContext, AffMatchingJobParameters params) throws IOException {
         
         AffMatchingService affMatchingService = new AffMatchingService();
         
@@ -112,12 +119,23 @@ public class AffMatchingJob {
         AffOrgMatcher firstWordsHashBucketMatcher = createFirstWordsHashBucketMatcher();
         
         
-        
-        
         affMatchingService.setAffOrgMatchers(of(docOrgRelationMatcher, mainSectionHashBucketMatcher, firstWordsHashBucketMatcher));
+        
+        
+        AffMatchOrganizationAltNameFiller altNameFiller = createAffMatchOrganizationAltNameFiller();
+        affMatchingService.setAffMatchOrganizationAltNameFiller(altNameFiller);
         
         return affMatchingService;
     }
     
+    private static AffMatchOrganizationAltNameFiller createAffMatchOrganizationAltNameFiller() throws IOException {
+        
+        AffMatchOrganizationAltNameFiller altNameFiller = new AffMatchOrganizationAltNameFiller();
+        
+        List<Set<String>> alternativeNamesDictionary = alternativeNamesFactory.createAlternativeNamesDictionary(OrganizationAltNameConst.CLASSPATH_ALTERNATIVE_NAMES_CSV_FILES);
+        altNameFiller.setAlternativeNamesDictionary(alternativeNamesDictionary);
+        
+        return altNameFiller;
+    }
     
 }
