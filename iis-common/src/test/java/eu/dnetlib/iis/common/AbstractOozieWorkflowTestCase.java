@@ -220,6 +220,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 		}
 		
 		printOozieJobLog(jobId);
+                killOozieJob(jobId);
 		Assert.fail("Execution of job " + jobId + " exceeded waiting time limit");
 
 		return null;
@@ -237,5 +238,9 @@ public abstract class AbstractOozieWorkflowTestCase {
 	private void printOozieJobLog(String jobId) {
 		log.info(sshOozieClient.getJobLog(jobId));
 	}
-	
+
+    private void killOozieJob(String jobId) {
+        String out = sshOozieClient.killJob(jobId);
+        log.info("Killing job {}. {}", jobId, out);
+    }
 }

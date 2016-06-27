@@ -44,14 +44,7 @@ public class SshOozieClient {
 	 * Returns job status with provided id
 	 */
 	public Status getJobStatus(String jobId) {
-		
-		SshSimpleConnection sshConnection = sshConnectionManager.getConnection();
-		
-		Command execResults = sshConnection.execute(buildOozieJobCommand(jobId, "info"));
-		
-		String jobInfoString = SshExecUtils.readCommandOutput(execResults);
-		
-		
+                String jobInfoString = executeOozieJobCommand("info", jobId);
 		return oozieCmdLineParser.readStatusFromJobInfo(jobInfoString);
 	}
 	
@@ -59,37 +52,38 @@ public class SshOozieClient {
 	 * Returns log of job with provided id
 	 */
 	public String getJobLog(String jobId) {
-		
-		SshSimpleConnection sshConnection = sshConnectionManager.getConnection();
-		
-		Command execResults = sshConnection.execute(buildOozieJobCommand(jobId, "log"));
-		
-		String jobLog = SshExecUtils.readCommandOutput(execResults);
-		
-		
-		return jobLog;
+	    return executeOozieJobCommand("log", jobId);
 	}
 	
 	/**
 	 * Returns properties of job with provided id
 	 */
 	public Properties getJobProperties(String jobId) {
-		
-		SshSimpleConnection sshConnection = sshConnectionManager.getConnection();
-		
-		Command execResults = sshConnection.execute(buildOozieJobCommand(jobId, "configcontent"));
-		
-		String jobPropertiesString = SshExecUtils.readCommandOutput(execResults);
-		
-		
+                String jobPropertiesString = executeOozieJobCommand("configcontent", jobId);
 		return oozieCmdLineParser.parseJobProperties(jobPropertiesString); 
 	}
-	
-	
+
+    /**
+     * Tries to kill an Oozie job.
+     *
+     * @param jobId identifier of the job to kill
+     * @return output of the 'kill' command: empty unless there is an error
+     */
+    public String killJob(String jobId) {
+        return executeOozieJobCommand("kill", jobId);
+    }
+
 	//------------------------ PRIVATE --------------------------
 	
 	private String buildOozieJobCommand(String jobId, String commandName) {
 		return "oozie job -oozie " + oozieUrl + " -" + commandName + " " + jobId;
 	}
 	
+    private String executeOozieJobCommand(String commandName, String jobId) {
+        SshSimpleConnection sshConnection = sshConnectionManager.getConnection();
+
+        Command execResults = sshConnection.execute(buildOozieJobCommand(jobId, commandName));
+
+        return SshExecUtils.readCommandOutput(execResults);
+    }
 }
