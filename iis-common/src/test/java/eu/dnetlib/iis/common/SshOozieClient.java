@@ -62,8 +62,17 @@ public class SshOozieClient {
                 String jobPropertiesString = executeOozieJobCommand("configcontent", jobId);
 		return oozieCmdLineParser.parseJobProperties(jobPropertiesString); 
 	}
-	
-	
+
+    /**
+     * Tries to kill an Oozie job.
+     *
+     * @param jobId identifier of the job to kill
+     * @return output of the 'kill' command: empty unless there is an error
+     */
+    public String killJob(String jobId) {
+        return executeOozieJobCommand("kill", jobId);
+    }
+
 	//------------------------ PRIVATE --------------------------
 	
 	private String buildOozieJobCommand(String jobId, String commandName) {
