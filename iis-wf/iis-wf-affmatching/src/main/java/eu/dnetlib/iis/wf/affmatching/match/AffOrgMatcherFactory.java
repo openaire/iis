@@ -103,10 +103,10 @@ public class AffOrgMatcherFactory {
     public static ImmutableList<AffOrgMatchVoter> createDocOrgRelationMatcherVoters() {
 
         FittingOrgWordsMatchVoter fitOrgWordsMatchVoter = new FittingOrgWordsMatchVoter(ImmutableList.of(',', ';'), 2, 0.7f, 0.9f);
-        fitOrgWordsMatchVoter.setMatchStrength(0.979f);
+        fitOrgWordsMatchVoter.setMatchStrength(0.914f);
         
         FittingAffOrgSectionWordsMatchVoter fitAffOrgSectionWordsMatchVoter = new FittingAffOrgSectionWordsMatchVoter(ImmutableList.of(',', ';'), 1, 0.8f, 0.85f);
-        fitAffOrgSectionWordsMatchVoter.setMatchStrength(1f);
+        fitAffOrgSectionWordsMatchVoter.setMatchStrength(0.966f);
         
         
         return ImmutableList.of(
@@ -168,11 +168,11 @@ public class AffOrgMatcherFactory {
     public static ImmutableList<AffOrgMatchVoter> createMainSectionHashBucketMatcherVoters() {
         
         return ImmutableList.of(
-                createNameCountryStrictMatchVoter(0.957f),
-                createNameStrictCountryLooseMatchVoter(0.960f),
-                createSectionedNameStrictCountryLooseMatchVoter(0.982f),
-                createSectionedNameLevenshteinCountryLooseMatchVoter(0.984f),
-                createSectionedShortNameStrictCountryLooseMatchVoter(0.971f)
+                createNameCountryStrictMatchVoter(0.981f),
+                createNameStrictCountryLooseMatchVoter(0.966f),
+                createSectionedNameStrictCountryLooseMatchVoter(0.988f),
+                createSectionedNameLevenshteinCountryLooseMatchVoter(0.983f),
+                createSectionedShortNameStrictCountryLooseMatchVoter(0.937f)
                 );
     }
     
@@ -212,14 +212,14 @@ public class AffOrgMatcherFactory {
         
         CompositeMatchVoter fitOrgAffOrgWordsVoter = new CompositeMatchVoter(ImmutableList.of(fitOrgWordsMatchVoter, fitAffOrgWordsMatchVoter));
                 
-        fitOrgAffOrgWordsVoter.setMatchStrength(0.921f);
+        fitOrgAffOrgWordsVoter.setMatchStrength(0.818f);
         
         return ImmutableList.of(
-                createNameCountryStrictMatchVoter(0.957f),
-                createNameStrictCountryLooseMatchVoter(0.960f),
-                createSectionedNameStrictCountryLooseMatchVoter(0.929f),
-                createSectionedNameLevenshteinCountryLooseMatchVoter(0.935f),
-                createSectionedShortNameStrictCountryLooseMatchVoter(1f),
+                createNameCountryStrictMatchVoter(0.981f),
+                createNameStrictCountryLooseMatchVoter(0.966f),
+                createSectionedNameStrictCountryLooseMatchVoter(0.943f),
+                createSectionedNameLevenshteinCountryLooseMatchVoter(0.934f),
+                createSectionedShortNameStrictCountryLooseMatchVoter(0.882f),
                 fitOrgAffOrgWordsVoter);
     }
     
