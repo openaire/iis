@@ -1,4 +1,0 @@
-Documents selected from those that are assigned to projects. 
-Affiliations matched only to organizations that are assigned to the same project as the given document.
-
-Affiliations matched with organizations by looking at names, countries (text data).
