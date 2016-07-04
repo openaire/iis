@@ -10,7 +10,7 @@ import com.google.common.base.Preconditions;
  * @author Łukasz Dumiszewski
 */
 
-class StringPartFirstLettersHasher implements BucketHasher<String> {
+public class StringPartFirstLettersHasher implements BucketHasher<String> {
 
     
     private static final long serialVersionUID = 1L;
