@@ -1,0 +1,10 @@
+@namespace("eu.dnetlib.iis.common.schemas")
+protocol IIS{
+
+    record ReportParam {
+    
+        string key;
+        string value;
+    
+    }
+}
