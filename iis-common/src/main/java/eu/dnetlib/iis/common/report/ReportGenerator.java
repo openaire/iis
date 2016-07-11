@@ -86,6 +86,9 @@ public class ReportGenerator implements Process {
         
     }
     
+    
+    //------------------------ PRIVATE --------------------------
+    
     private Map<String, String> collectReportParameters(Map<String, String> parameters) {
         
         return parameters.entrySet().stream()
