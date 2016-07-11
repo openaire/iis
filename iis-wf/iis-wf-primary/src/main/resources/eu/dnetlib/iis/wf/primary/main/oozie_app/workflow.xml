@@ -490,6 +490,10 @@
                     <name>output_faults</name>
                     <value>${workingDir}/primary_import/faults</value>
                 </property>
+                <property>
+                    <name>output_report</name>
+                    <value>${workingDir}/report</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="primary_processing" />
