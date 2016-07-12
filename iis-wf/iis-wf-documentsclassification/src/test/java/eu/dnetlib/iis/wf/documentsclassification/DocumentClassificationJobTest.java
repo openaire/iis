@@ -15,17 +15,17 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
-import pl.edu.icm.sparkutils.test.SparkJob;
-import pl.edu.icm.sparkutils.test.SparkJobBuilder;
-import pl.edu.icm.sparkutils.test.SparkJobExecutor;
-
 import com.google.common.io.Files;
 
+import eu.dnetlib.iis.common.schemas.ReportParam;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
+import pl.edu.icm.sparkutils.test.SparkJob;
+import pl.edu.icm.sparkutils.test.SparkJobBuilder;
+import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
 /**
  * @author Łukasz Dumiszewski
@@ -46,6 +46,8 @@ public class DocumentClassificationJobTest {
     
     private static String scriptDirPath;
     
+    private String reportDirPath;
+    
     
     @BeforeClass
     public static void beforeClass() throws IOException {
@@ -62,6 +64,7 @@ public class DocumentClassificationJobTest {
         
         inputDirPath = workingDir + "/document_classification/input";
         outputDirPath = workingDir + "/document_classification/output";
+        reportDirPath = workingDir + "/document_classification/report";
         
         
     }
@@ -85,6 +88,7 @@ public class DocumentClassificationJobTest {
         
         String jsonInputFile = "src/test/resources/eu/dnetlib/iis/wf/documentsclassification/data/input/few_documents.json";
         String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/wf/documentsclassification/data/expected_output/few_document_to_document_classes.json";
+        String jsonReportFile = "src/test/resources/eu/dnetlib/iis/wf/documentsclassification/data/expected_output/few_document_report.json";
         
         
         AvroTestUtils.createLocalAvroDataStore(
@@ -92,9 +96,15 @@ public class DocumentClassificationJobTest {
                 inputDirPath);
         
         
-        // execute & assert
+        // execute
         
-        executeJobAndAssert(jsonOutputFile);
+        executeJob();
+        
+        
+        // assert
+        
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputFile, DocumentToDocumentClasses.class);
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportParam.class);
     }
         
     
@@ -106,6 +116,7 @@ public class DocumentClassificationJobTest {
         
         String jsonInputFile = "src/test/resources/eu/dnetlib/iis/wf/documentsclassification/data/input/documents_with_empty_abstract.json";
         String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/wf/documentsclassification/data/expected_output/empty.json";
+        String jsonReportFile = "src/test/resources/eu/dnetlib/iis/wf/documentsclassification/data/expected_output/empty_report.json";
         
         
         AvroTestUtils.createLocalAvroDataStore(
@@ -113,9 +124,15 @@ public class DocumentClassificationJobTest {
                 inputDirPath);
         
         
-        // execute & assert
+        // execute
         
-        executeJobAndAssert(jsonOutputFile);
+        executeJob();
+        
+        
+        // assert
+        
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputFile, DocumentToDocumentClasses.class);
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportParam.class);
     }
     
     @Test
@@ -125,14 +142,21 @@ public class DocumentClassificationJobTest {
         
         String avroInputFile = "src/test/resources/eu/dnetlib/iis/wf/documentsclassification/data/input/empty.avro";
         String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/wf/documentsclassification/data/expected_output/empty.json";
+        String jsonReportFile = "src/test/resources/eu/dnetlib/iis/wf/documentsclassification/data/expected_output/empty_report.json";
         
         
         FileUtils.copyFileToDirectory(new File(avroInputFile), new File(inputDirPath));
         
 
-        // execute & assert
+        // execute
         
-        executeJobAndAssert(jsonOutputFile);
+        executeJob();
+        
+        
+        // assert
+        
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputFile, DocumentToDocumentClasses.class);
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportParam.class);
     }
     
 
@@ -140,7 +164,7 @@ public class DocumentClassificationJobTest {
     //------------------------ PRIVATE --------------------------
     
     
-    private void executeJobAndAssert(String jsonOutputFile) throws IOException {
+    private void executeJob() {
 
         SparkJob sparkJob = SparkJobBuilder
                                            .create()
@@ -151,18 +175,13 @@ public class DocumentClassificationJobTest {
                                            .addArg("-inputAvroPath", inputDirPath)
                                            .addArg("-outputAvroPath", outputDirPath)
                                            .addArg("-scriptDirPath", scriptDirPath)
+                                           .addArg("-outputReportPath", reportDirPath)
                                            .build();
         
         
-        // execute
         
         executor.execute(sparkJob);
         
-        
-        
-        // assert
-        
-        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputFile, DocumentToDocumentClasses.class);
     }
 
 
