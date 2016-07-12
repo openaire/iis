@@ -55,7 +55,7 @@ public class DocumentClassificationJob {
     
     //------------------------ LOGIC --------------------------
     
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
         
         DocumentClassificationJobParameters params = new DocumentClassificationJobParameters();
         JCommander jcommander = new JCommander(params);

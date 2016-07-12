@@ -7,6 +7,9 @@ import static org.hamcrest.Matchers.is;
 
 import org.junit.Test;
 
+/**
+ * @author madryk
+ */
 public class NamedCountersTest {
 
     private String counterName1 = "COUNTER_1";
