@@ -25,6 +25,8 @@ import eu.dnetlib.enabling.is.lookup.rmi.ISLookUpDocumentNotFoundException;
 import eu.dnetlib.enabling.is.lookup.rmi.ISLookUpService;
 import eu.dnetlib.enabling.resultset.client.ResultSetClientFactory;
 import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
+import eu.dnetlib.iis.common.counter.NamedCounters;
+import eu.dnetlib.iis.common.counter.NamedCountersFileWriter;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
 import eu.dnetlib.iis.common.java.io.DataStore;
@@ -45,9 +47,14 @@ public class ISLookupServiceBasedConceptImporter implements Process {
 	
 	public static final String PARAM_IMPORT_RESULTSET_PAGESIZE = "import.resultset.pagesize";
 	
+	private static final String CONCEPT_COUNTER_NAME = "CONCEPT_COUNTER";
+	
 	private final Logger log = Logger.getLogger(this.getClass());
 	
 	private final int defaultPagesize = 100;
+	
+	private final NamedCountersFileWriter countersWriter = new NamedCountersFileWriter();
+	
 	
 	private static final String PORT_OUT_CONCEPTS = "concepts";
 	
@@ -130,9 +137,9 @@ public class ISLookupServiceBasedConceptImporter implements Process {
 							Integer.valueOf(parameters.get(PARAM_IMPORT_RESULTSET_PAGESIZE)):
 								defaultPagesize);
 //			supporting multiple profiles
-			int count = 0;
+			NamedCounters counters = new NamedCounters(new String[] { CONCEPT_COUNTER_NAME });
 			for (String contextXML : rsFactory.getClient(results)) {
-				count++;
+				counters.increment(CONCEPT_COUNTER_NAME);
 				if (!StringUtils.isEmpty(contextXML)) {
 					SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 					SAXParser saxParser = parserFactory.newSAXParser();
@@ -145,10 +152,11 @@ public class ISLookupServiceBasedConceptImporter implements Process {
 							contextIdsCSV + ", service location: " + isLookupServiceLocation);
 				}
 			}
-			if (count==0) {
+			if (counters.currentValue(CONCEPT_COUNTER_NAME)==0) {
 				log.warn("got 0 profiles when looking for context ids: " + 
 						contextIdsCSV + ", service location: " + isLookupServiceLocation);
 			}
+			countersWriter.writeCounters(counters, System.getProperty("oozie.action.output.properties"));
 		} catch (ISLookUpDocumentNotFoundException e) {
 			log.error("unable to find profile for context ids: " + 
 					contextIdsCSV + ", service location: " + isLookupServiceLocation, e);
