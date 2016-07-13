@@ -140,7 +140,7 @@ public class ISLookupServiceBasedConceptImporter implements Process {
 			NamedCounters counters = new NamedCounters(new String[] { CONCEPT_COUNTER_NAME });
 			int count = 0;
 			for (String contextXML : rsFactory.getClient(results)) {
-				counters.increment(CONCEPT_COUNTER_NAME);
+				count++;
 				if (!StringUtils.isEmpty(contextXML)) {
 					DataFileRecordReceiverWithCounter<Concept> conceptReciever = new DataFileRecordReceiverWithCounter<Concept>(conceptWriter);
 					
@@ -156,7 +156,7 @@ public class ISLookupServiceBasedConceptImporter implements Process {
 							contextIdsCSV + ", service location: " + isLookupServiceLocation);
 				}
 			}
-			if (counters.currentValue(CONCEPT_COUNTER_NAME)==0) {
+			if (count==0) {
 				log.warn("got 0 profiles when looking for context ids: " + 
 						contextIdsCSV + ", service location: " + isLookupServiceLocation);
 			}
