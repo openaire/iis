@@ -17,7 +17,7 @@ enum DocumentClassificationCounters {
     WOS_CLASSES,
     DDC_CLASSES,
     MESH_EURO_PMC_CLASSES,
-    AMC_CLASSES;
+    ACM_CLASSES;
     
     
     //------------------------ LOGIC --------------------------
@@ -33,7 +33,7 @@ enum DocumentClassificationCounters {
         mapping.put(WOS_CLASSES.name(), "export.documentClassification.classes.wos");
         mapping.put(DDC_CLASSES.name(), "export.documentClassification.classes.ddc");
         mapping.put(MESH_EURO_PMC_CLASSES.name(), "export.documentClassification.classes.meshEuroPmc");
-        mapping.put(AMC_CLASSES.name(), "export.documentClassification.classes.amc");
+        mapping.put(ACM_CLASSES.name(), "export.documentClassification.classes.acm");
         
         return mapping;
     }

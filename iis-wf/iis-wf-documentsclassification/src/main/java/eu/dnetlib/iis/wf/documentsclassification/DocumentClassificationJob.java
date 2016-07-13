@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.documentsclassification;
 
-import static eu.dnetlib.iis.wf.documentsclassification.DocumentClassificationCounters.AMC_CLASSES;
+import static eu.dnetlib.iis.wf.documentsclassification.DocumentClassificationCounters.ACM_CLASSES;
 import static eu.dnetlib.iis.wf.documentsclassification.DocumentClassificationCounters.ARXIV_CLASSES;
 import static eu.dnetlib.iis.wf.documentsclassification.DocumentClassificationCounters.CLASSIFIED_DOCUMENTS;
 import static eu.dnetlib.iis.wf.documentsclassification.DocumentClassificationCounters.DDC_CLASSES;
@@ -116,7 +116,7 @@ public class DocumentClassificationJob {
         docClassificationJobAccumulator.add(new Tuple2<>(WOS_CLASSES.name(), listSize(docClasses.getWoSClasses())));
         docClassificationJobAccumulator.add(new Tuple2<>(DDC_CLASSES.name(), listSize(docClasses.getDDCClasses())));
         docClassificationJobAccumulator.add(new Tuple2<>(MESH_EURO_PMC_CLASSES.name(), listSize(docClasses.getMeshEuroPMCClasses())));
-        docClassificationJobAccumulator.add(new Tuple2<>(AMC_CLASSES.name(), listSize(docClasses.getACMClasses())));
+        docClassificationJobAccumulator.add(new Tuple2<>(ACM_CLASSES.name(), listSize(docClasses.getACMClasses())));
         
     }
     
