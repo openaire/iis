@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 /**
@@ -35,6 +36,8 @@ public class NamedCounters implements Serializable {
      * @param initialCounterNames - names of initial counters
      */
     public NamedCounters(String[] initialCounterNames) {
+        Preconditions.checkNotNull(initialCounterNames);
+        
         this.counters = Maps.newHashMap();
         
         for (String initialCounterName : initialCounterNames) {
@@ -49,6 +52,8 @@ public class NamedCounters implements Serializable {
      * @param initialCounterNamesEnumClass - enum class providing names of initial counters
      */
     public <E extends Enum<E>> NamedCounters(Class<E> initialCounterNamesEnumClass) {
+        Preconditions.checkNotNull(initialCounterNamesEnumClass);
+        
         this.counters = Maps.newHashMap();
         Enum<?>[] enumConstants = initialCounterNamesEnumClass.getEnumConstants();
         

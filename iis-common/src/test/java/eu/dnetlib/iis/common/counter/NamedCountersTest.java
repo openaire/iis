@@ -46,6 +46,18 @@ public class NamedCountersTest {
         assertThat(namedCounters.currentValue(counterName2), is(0L));
     }
     
+    @Test(expected = NullPointerException.class)
+    public void constructor_INITIAL_COUNTERS_NULL() {
+        
+        // given
+        
+        String[] initialNames = null;
+        
+        // execute
+        
+        new NamedCounters(initialNames);
+    }
+    
     @Test
     public void constructor_INITIAL_COUNTERS_ENUM_NAMES() {
         
@@ -58,6 +70,18 @@ public class NamedCountersTest {
         assertThat(namedCounters.counterNames(), containsInAnyOrder(CountersGroup.ENUM_COUNTER_1.name(), CountersGroup.ENUM_COUNTER_2.name()));
         assertThat(namedCounters.currentValue(CountersGroup.ENUM_COUNTER_1.name()), is(0L));
         assertThat(namedCounters.currentValue(CountersGroup.ENUM_COUNTER_2.name()), is(0L));
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void constructor_INITIAL_COUNTERS_ENUM_NAMES_NULL() {
+        
+        // given
+        
+        Class<CountersGroup> initialNamesEnum = null;
+        
+        // execute
+        
+        new NamedCounters(initialNamesEnum);
     }
     
     @Test(expected = IllegalArgumentException.class)
