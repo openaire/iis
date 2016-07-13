@@ -53,6 +53,7 @@
 			<arg>-Pimport.islookup.service.location=${islookup_service_location}</arg>
 			<arg>-Pimport.context.ids.csv=${context_ids_csv}</arg>
 			<arg>-Oconcepts=${output}</arg>
+			<capture-output />
 		</java>
 		<ok to="report" />
 		<error to="fail" />
@@ -65,7 +66,6 @@
             <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
             <arg>-Preport.import.concept=${wf:actionData('concept-importer')['CONCEPT_COUNTER']}</arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
-            <capture-output />
         </java>
         <ok to="end" />
         <error to="fail" />

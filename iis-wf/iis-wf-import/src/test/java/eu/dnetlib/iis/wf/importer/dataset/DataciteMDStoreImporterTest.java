@@ -34,9 +34,9 @@ import eu.dnetlib.enabling.resultset.client.ResultSetClientFactory;
 import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
 import eu.dnetlib.iis.importer.schemas.DataSetReference;
 import eu.dnetlib.iis.importer.schemas.Project;
+import eu.dnetlib.iis.wf.importer.RecordReceiver;
 import eu.dnetlib.iis.wf.importer.content.ObjectStoreContentProviderUtils;
 import eu.dnetlib.iis.wf.importer.database.project.DatabaseProjectXmlHandler;
-import eu.dnetlib.iis.wf.importer.dataset.RecordReceiver;
 
 /**
  * Datacite MDStore importer test.

@@ -32,6 +32,7 @@ import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.importer.schemas.DataSetReference;
 import eu.dnetlib.iis.importer.schemas.DocumentToMDStore;
+import eu.dnetlib.iis.wf.importer.DataFileRecordReceiver;
 /**
  * Process module importing dataset identifiers from datacite xml dump
  * and writing output to avro datastore.

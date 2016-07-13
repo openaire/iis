@@ -34,7 +34,7 @@ import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.importer.schemas.Concept;
-import eu.dnetlib.iis.wf.importer.dataset.DataFileRecordReceiver;
+import eu.dnetlib.iis.wf.importer.DataFileRecordReceiverWithCounter;
 
 /**
  * {@link ISLookUpService} based concept importer.
@@ -138,21 +138,25 @@ public class ISLookupServiceBasedConceptImporter implements Process {
 								defaultPagesize);
 //			supporting multiple profiles
 			NamedCounters counters = new NamedCounters(new String[] { CONCEPT_COUNTER_NAME });
+			int count = 0;
 			for (String contextXML : rsFactory.getClient(results)) {
-				counters.increment(CONCEPT_COUNTER_NAME);
+				count++;
 				if (!StringUtils.isEmpty(contextXML)) {
+					DataFileRecordReceiverWithCounter<Concept> conceptReciever = new DataFileRecordReceiverWithCounter<Concept>(conceptWriter);
+					
 					SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 					SAXParser saxParser = parserFactory.newSAXParser();
 					saxParser.parse(
 							new InputSource(new StringReader(contextXML)), 
-							new ConceptXmlHandler(
-									new DataFileRecordReceiver<Concept>(conceptWriter)));
+							new ConceptXmlHandler(conceptReciever));
+					
+					counters.increment(CONCEPT_COUNTER_NAME, conceptReciever.getReceivedCount());
 				} else {
 					log.error("got empty context when looking for for context ids: " + 
 							contextIdsCSV + ", service location: " + isLookupServiceLocation);
 				}
 			}
-			if (counters.currentValue(CONCEPT_COUNTER_NAME)==0) {
+			if (count==0) {
 				log.warn("got 0 profiles when looking for context ids: " + 
 						contextIdsCSV + ", service location: " + isLookupServiceLocation);
 			}

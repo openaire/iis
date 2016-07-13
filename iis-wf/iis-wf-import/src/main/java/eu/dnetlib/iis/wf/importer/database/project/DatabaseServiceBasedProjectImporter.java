@@ -33,7 +33,7 @@ import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.importer.schemas.Project;
-import eu.dnetlib.iis.wf.importer.dataset.DataFileRecordReceiver;
+import eu.dnetlib.iis.wf.importer.DataFileRecordReceiver;
 
 /**
  * {@link DatabaseService} based {@link Project} importer.

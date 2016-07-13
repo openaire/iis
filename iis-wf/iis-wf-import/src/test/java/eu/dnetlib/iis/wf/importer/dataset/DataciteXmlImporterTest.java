@@ -15,8 +15,8 @@ import org.junit.Test;
 
 import eu.dnetlib.iis.importer.schemas.DataSetReference;
 import eu.dnetlib.iis.importer.schemas.DocumentToMDStore;
+import eu.dnetlib.iis.wf.importer.RecordReceiver;
 import eu.dnetlib.iis.wf.importer.dataset.DataciteDumpXmlHandler;
-import eu.dnetlib.iis.wf.importer.dataset.RecordReceiver;
 
 /**
  * {@link DataciteXmlImporter} test class.

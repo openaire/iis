@@ -10,7 +10,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import eu.dnetlib.iis.importer.schemas.Concept;
-import eu.dnetlib.iis.wf.importer.dataset.RecordReceiver;
+import eu.dnetlib.iis.wf.importer.RecordReceiver;
 
 /**
  * Context profile SAX handler.

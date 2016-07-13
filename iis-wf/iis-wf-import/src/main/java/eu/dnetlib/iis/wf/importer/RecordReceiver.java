@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.importer.dataset;
+package eu.dnetlib.iis.wf.importer;
 
 import java.io.IOException;
 
