@@ -215,6 +215,10 @@
                     <name>output</name>
                     <value>${workingDir}/transformer_metadataextraction_documenttext/out</value>
                 </property>
+                <property>
+                    <name>combine_splits</name>
+                    <value>335544320</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="transformers_common_union_document_text" />
@@ -817,6 +821,10 @@
                 <property>
                     <name>output_merged_metadata</name>
                     <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
+                </property>
+                <property>
+                    <name>combine_splits</name>
+                    <value>335544320</value>
                 </property>
             </configuration>
         </sub-workflow>
