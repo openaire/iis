@@ -250,6 +250,10 @@
                     <name>schema</name>
                     <value>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</value>
                 </property>
+                <property>
+                    <name>combine_splits</name>
+                    <value>335544320</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="forking" />
