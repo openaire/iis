@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.metadataextraction;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import org.apache.avro.mapred.AvroKey;
@@ -26,7 +27,10 @@ public class MetadataExtractorMapper extends AbstractMetadataExtractorMapper<Doc
 		DocumentContent content = key.datum();
 		if (content.getPdf()!=null) {
 			ByteBuffer byteBuffer = content.getPdf();
-			processStream(content.getId(), new ByteBufferInputStream(byteBuffer));	
+			try (InputStream inputStream = new ByteBufferInputStream(byteBuffer)) {
+			    processStream(content.getId().toString(), inputStream);
+			}
+				
 		} else {
 			log.warn("no byte data found for id: " + content.getId());
 		}
