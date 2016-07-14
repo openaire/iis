@@ -15,7 +15,7 @@ import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.data.transform.xml.AbstractDNetXsltFunctions;
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.importer.schemas.Project;
-import eu.dnetlib.iis.wf.importer.dataset.RecordReceiver;
+import eu.dnetlib.iis.wf.importer.RecordReceiver;
 import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectConverter;
 
 /**

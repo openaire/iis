@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.importer.dataset;
+package eu.dnetlib.iis.wf.importer;
 
 import java.io.IOException;
 
@@ -11,7 +11,7 @@ import org.apache.avro.file.DataFileWriter;
  */
 public class DataFileRecordReceiver<T> implements RecordReceiver<T> {
 
-	final DataFileWriter<T> writer;
+	private final DataFileWriter<T> writer;
 	
 	/**
 	 * Default constructor.
