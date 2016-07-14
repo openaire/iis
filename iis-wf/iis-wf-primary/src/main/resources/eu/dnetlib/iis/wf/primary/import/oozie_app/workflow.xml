@@ -206,7 +206,6 @@
             <name>output_report_root_path</name>
             <description>base directory for storing reports</description>
         </property>
-        
 		<property>
 			<name>remove_sideproducts</name>
 			<value>true</value>
