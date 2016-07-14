@@ -213,6 +213,13 @@
 			<description>flag indicating whole workingDir will be erased.
 				Notice: do not provide any output directory locationpointing to workingDir subdirectory!</description>
 		</property>
+        
+        <property>
+            <name>content_split_size</name>
+            <value>536870912</value>
+            <description>plaintext and extracted metadata large records split size. 
+            Introduced for files compaction limiting excessive files number.</description>
+        </property>
 	</parameters>
 
 	<global>
@@ -826,7 +833,7 @@
 				</property>
                 <property>
                     <name>combine_splits</name>
-                    <value>335544320</value>
+                    <value>${content_split_size}</value>
                 </property>
 			</configuration>
 		</sub-workflow>
