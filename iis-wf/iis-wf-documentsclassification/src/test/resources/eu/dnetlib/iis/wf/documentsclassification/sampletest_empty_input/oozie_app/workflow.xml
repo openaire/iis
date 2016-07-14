@@ -58,6 +58,10 @@
                     <name>output_document_to_document_classes</name>
                     <value>${workingDir}/documentsclassification/document_to_document_classes</value>
                 </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="consumer"/>
@@ -76,6 +80,9 @@
 				eu/dnetlib/iis/wf/documentsclassification/data/expected_output/empty.json}</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Idocument_to_document_classes=${workingDir}/documentsclassification/document_to_document_classes</arg>
+			
+            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportParam,eu/dnetlib/iis/wf/documentsclassification/data/expected_output/empty_report.json}</arg>
+            <arg>-Ireport=${workingDir}/report/document_classification</arg>
 		</java>
 		<ok to="end" />
 		<error to="fail" />
