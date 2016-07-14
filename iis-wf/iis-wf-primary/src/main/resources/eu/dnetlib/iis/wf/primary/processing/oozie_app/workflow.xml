@@ -330,6 +330,10 @@
                     <!-- referenceextraction_project directory is created at subworkflow prepare phase -->
                     <value>${output_document_to_project}</value>
                 </property>
+                <property>
+                    <name>split_minsize</name>
+                    <value>${content_split_size}</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="transformers_project_toconcept" />
@@ -452,6 +456,10 @@
                     <!-- referenceextraction_dataset directory is created at subworkflow prepare phase -->
                     <value>${output_document_to_dataset}</value>
                 </property>
+                <property>
+                    <name>split_minsize</name>
+                    <value>${content_split_size}</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="joining" />
@@ -505,6 +513,10 @@
                 <property>
                     <name>output</name>
                     <value>${workingDir}/referenceextraction_pdb/output</value>
+                </property>
+                <property>
+                    <name>split_minsize</name>
+                    <value>${content_split_size}</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -583,6 +595,10 @@
                 <property>
                     <name>output</name>
                     <value>${workingDir}/referenceextraction_software_url/output</value>
+                </property>
+                <property>
+                    <name>split_minsize</name>
+                    <value>${content_split_size}</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -665,6 +681,10 @@
                     <name>output_document_to_research_initiative</name>
                     <value>${workingDir}/referenceextraction_researchinitiative/output</value>
                 </property>
+                <property>
+                    <name>split_minsize</name>
+                    <value>${content_split_size}</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="referenceextraction_researchinitiative_wos" />
@@ -687,6 +707,10 @@
                 <property>
                     <name>output_document_to_research_initiative</name>
                     <value>${workingDir}/referenceextraction_researchinitiative_wos/output</value>
+                </property>
+                <property>
+                    <name>split_minsize</name>
+                    <value>${content_split_size}</value>
                 </property>
             </configuration>
         </sub-workflow>

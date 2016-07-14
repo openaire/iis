@@ -402,6 +402,10 @@
 					<name>output_document_to_dataset</name>
 					<value>${workingDir}/referenceextraction_dataset/document_datasets</value>
 				</property>
+                <property>
+                    <name>split_minsize</name>
+                    <value>${content_split_size}</value>
+                </property>
 			</configuration>
 		</sub-workflow>
 		<ok to="referenceextraction_joining" />
@@ -479,6 +483,10 @@
 					<name>output_document_to_project</name>
 					<value>${workingDir}/referenceextraction_project/document_projects</value>
 				</property>
+                <property>
+                    <name>split_minsize</name>
+                    <value>${content_split_size}</value>
+                </property>
 			</configuration>
 		</sub-workflow>
 		<ok to="transformers_project_toconcept" />
