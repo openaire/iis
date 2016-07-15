@@ -164,7 +164,7 @@ public class JatsXmlHandlerTest {
 				meta.getAffiliations().get(0).getOrganization());
 		assertEquals("US", meta.getAffiliations().get(1).getCountryCode());
 		assertEquals("Consolidated Safety Services", meta.getAffiliations().get(1).getOrganization());
-		assertEquals(null, meta.getAffiliations().get(2).getCountryCode());
+		assertEquals("US", meta.getAffiliations().get(2).getCountryCode());
 		assertEquals(
 				"National Center for Biotechnology Information, National Library of Medicine, National Institutes of Health",
 				meta.getAffiliations().get(2).getOrganization());
