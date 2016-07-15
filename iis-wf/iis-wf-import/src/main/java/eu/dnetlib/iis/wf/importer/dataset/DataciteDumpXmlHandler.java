@@ -13,6 +13,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.importer.schemas.DataSetReference;
 import eu.dnetlib.iis.importer.schemas.DocumentToMDStore;
+import eu.dnetlib.iis.wf.importer.RecordReceiver;
 
 /**
  * Datacite XML dump SAX handler.

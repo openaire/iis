@@ -25,6 +25,8 @@ import eu.dnetlib.enabling.is.lookup.rmi.ISLookUpDocumentNotFoundException;
 import eu.dnetlib.enabling.is.lookup.rmi.ISLookUpService;
 import eu.dnetlib.enabling.resultset.client.ResultSetClientFactory;
 import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
+import eu.dnetlib.iis.common.counter.NamedCounters;
+import eu.dnetlib.iis.common.counter.NamedCountersFileWriter;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
 import eu.dnetlib.iis.common.java.io.DataStore;
@@ -32,7 +34,7 @@ import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.importer.schemas.Concept;
-import eu.dnetlib.iis.wf.importer.dataset.DataFileRecordReceiver;
+import eu.dnetlib.iis.wf.importer.DataFileRecordReceiverWithCounter;
 
 /**
  * {@link ISLookUpService} based concept importer.
@@ -45,9 +47,14 @@ public class ISLookupServiceBasedConceptImporter implements Process {
 	
 	public static final String PARAM_IMPORT_RESULTSET_PAGESIZE = "import.resultset.pagesize";
 	
+	private static final String CONCEPT_COUNTER_NAME = "CONCEPT_COUNTER";
+	
 	private final Logger log = Logger.getLogger(this.getClass());
 	
 	private final int defaultPagesize = 100;
+	
+	private final NamedCountersFileWriter countersWriter = new NamedCountersFileWriter();
+	
 	
 	private static final String PORT_OUT_CONCEPTS = "concepts";
 	
@@ -130,16 +137,20 @@ public class ISLookupServiceBasedConceptImporter implements Process {
 							Integer.valueOf(parameters.get(PARAM_IMPORT_RESULTSET_PAGESIZE)):
 								defaultPagesize);
 //			supporting multiple profiles
+			NamedCounters counters = new NamedCounters(new String[] { CONCEPT_COUNTER_NAME });
 			int count = 0;
 			for (String contextXML : rsFactory.getClient(results)) {
 				count++;
 				if (!StringUtils.isEmpty(contextXML)) {
+					DataFileRecordReceiverWithCounter<Concept> conceptReciever = new DataFileRecordReceiverWithCounter<Concept>(conceptWriter);
+					
 					SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 					SAXParser saxParser = parserFactory.newSAXParser();
 					saxParser.parse(
 							new InputSource(new StringReader(contextXML)), 
-							new ConceptXmlHandler(
-									new DataFileRecordReceiver<Concept>(conceptWriter)));
+							new ConceptXmlHandler(conceptReciever));
+					
+					counters.increment(CONCEPT_COUNTER_NAME, conceptReciever.getReceivedCount());
 				} else {
 					log.error("got empty context when looking for for context ids: " + 
 							contextIdsCSV + ", service location: " + isLookupServiceLocation);
@@ -149,6 +160,7 @@ public class ISLookupServiceBasedConceptImporter implements Process {
 				log.warn("got 0 profiles when looking for context ids: " + 
 						contextIdsCSV + ", service location: " + isLookupServiceLocation);
 			}
+			countersWriter.writeCounters(counters, System.getProperty("oozie.action.output.properties"));
 		} catch (ISLookUpDocumentNotFoundException e) {
 			log.error("unable to find profile for context ids: " + 
 					contextIdsCSV + ", service location: " + isLookupServiceLocation, e);

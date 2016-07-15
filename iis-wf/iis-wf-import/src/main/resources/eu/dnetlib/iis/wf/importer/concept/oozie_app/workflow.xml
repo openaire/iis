@@ -13,6 +13,15 @@
 			<name>context_ids_csv</name>
 			<description>comma separated context identifiers</description>
 		</property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
+            <name>output_report_relative_path</name>
+            <value>import_concept</value>
+            <description>directory for storing report (relative to output_report_root_path)</description>
+        </property>
 	</parameters>
 
     <global>
@@ -44,11 +53,24 @@
 			<arg>-Pimport.islookup.service.location=${islookup_service_location}</arg>
 			<arg>-Pimport.context.ids.csv=${context_ids_csv}</arg>
 			<arg>-Oconcepts=${output}</arg>
+			<capture-output />
 		</java>
-		<ok to="end" />
+		<ok to="report" />
 		<error to="fail" />
 	</action>
-	
+    
+    
+    <action name="report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
+            <arg>-Preport.import.concept=${wf:actionData('concept-importer')['CONCEPT_COUNTER']}</arg>
+            <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:
 			[${wf:errorMessage(wf:lastErrorNode())}]</message>
