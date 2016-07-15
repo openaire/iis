@@ -343,10 +343,9 @@ public final class NlmToDocumentWithBasicMetadataConverter {
 	 * @param id
 	 * @param source
 	 * @return {@link DocumentWithBasicMetadata}
-	 * @throws JDOMException 
 	 * @throws TransformationException 
 	 */
-	public static ExtractedDocumentMetadata convertFull(String id, Document source, String text) throws JDOMException, TransformationException {
+	public static ExtractedDocumentMetadata convertFull(String id, Document source, String text) throws TransformationException {
 		if (id==null) {
 			throw new RuntimeException("unable to set null id");
 		}

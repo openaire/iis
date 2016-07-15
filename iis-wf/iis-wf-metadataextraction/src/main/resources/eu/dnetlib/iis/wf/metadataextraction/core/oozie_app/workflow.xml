@@ -33,8 +33,16 @@
 			<name>log_fault_processing_time_threshold_secs</name>
 			<value>300</value>
 			<description>processing time threshold expressed in seconds. 
-			When exceeded apropriate object will be written to fault datastore</description>
+			When exceeded apropriate object will be written to fault datastore informing processing time threshold was exceeded.</description>
 		</property>
+        <property>
+            <name>interrupt_processing_time_threshold_secs</name>
+            <value>600</value>
+            <description>processing time threshold expressed in seconds. 
+            When exceeded processing will be interrupted for given record causing two records to be written: 
+            1) empty metadata record
+            2) fault record with TimeoutException</description>
+        </property>
 		<property>
 			<name>mapred_child_java_opts</name>
 			<value>-Xmx4096m</value>
@@ -189,6 +197,10 @@
 				    <name>excluded.ids</name>
 				   <value>${excluded_ids}</value>
 				</property>
+                <property>
+                    <name>interrupt.processing.time.threshold.secs</name>
+                   <value>${interrupt_processing_time_threshold_secs}</value>
+                </property>
 				<property>
 				    <name>log.fault.processing.time.threshold.secs</name>
 				   <value>${log_fault_processing_time_threshold_secs}</value>
