@@ -202,14 +202,11 @@
 			<name>output_faults</name>
 			<description>processing faults output directory</description>
 		</property>
-		<property>
-		
         <property>
-            <name>output_report</name>
-            <description>main directory for storing partial reports</description>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
         </property>
         
-		</property>
 		<property>
 			<name>remove_sideproducts</name>
 			<value>true</value>
