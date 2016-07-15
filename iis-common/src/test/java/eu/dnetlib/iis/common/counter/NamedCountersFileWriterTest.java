@@ -42,7 +42,7 @@ public class NamedCountersFileWriterTest {
         
         // execute
         
-        countersFileWriter.writeCounters(new NamedCounters(), tempFolder.getRoot().getPath() + "/counters.properties");
+        countersFileWriter.writeCounters(namedCounters, tempFolder.getRoot().getPath() + "/counters.properties");
         
         // assert
         
