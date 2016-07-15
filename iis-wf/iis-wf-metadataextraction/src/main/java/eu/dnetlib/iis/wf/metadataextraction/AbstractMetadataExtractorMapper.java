@@ -147,7 +147,7 @@ public abstract class AbstractMetadataExtractorMapper<T>
      */
     protected void processStream(String documentId, InputStream contentStream) throws IOException, InterruptedException {
         currentProgress++;
-        if (currentProgress > 0 && currentProgress % progresLogInterval == 0) {
+        if (currentProgress % progresLogInterval == 0) {
             log.info("metadata extaction progress: " + currentProgress + ", time taken to process "
                     + progresLogInterval + " elements: " + ((System.currentTimeMillis() - intervalTime) / 1000)
                     + " secs");
