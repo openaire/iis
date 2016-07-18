@@ -24,6 +24,8 @@ import eu.dnetlib.data.mdstore.MDStoreService;
 import eu.dnetlib.enabling.resultset.client.ResultSetClientFactory;
 import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
+import eu.dnetlib.iis.common.counter.NamedCounters;
+import eu.dnetlib.iis.common.counter.NamedCountersFileWriter;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
 import eu.dnetlib.iis.common.java.io.DataStore;
@@ -32,7 +34,7 @@ import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.importer.schemas.DataSetReference;
 import eu.dnetlib.iis.importer.schemas.DocumentToMDStore;
-import eu.dnetlib.iis.wf.importer.DataFileRecordReceiver;
+import eu.dnetlib.iis.wf.importer.DataFileRecordReceiverWithCounter;
 /**
  * Process module importing dataset identifiers from datacite xml dump
  * and writing output to avro datastore.
@@ -44,11 +46,16 @@ public class DataciteMDStoreImporter implements Process {
 	private static final String PORT_OUT_DATASET = "dataset";
 	private static final String PORT_OUT_DATASET_TO_MDSTORE = "dataset_to_mdstore";
 	
+	private static final String DATASET_COUNTER_NAME = "DATASET_COUNTER";
+	private static final String DATASET_TO_MDSTORE_COUNTER_NAME = "DATASET_TO_MDSTORE_COUNTER";
+	
 	private final Logger log = Logger.getLogger(this.getClass());
 	
 	private final int defaultPagesize = 100;
 	
 	private final int progressLogInterval = 100000;
+	
+	private final NamedCountersFileWriter countersWriter = new NamedCountersFileWriter();
 	
 	private static final Map<String, PortType> outputPorts = new HashMap<String, PortType>();
 	
@@ -100,6 +107,8 @@ public class DataciteMDStoreImporter implements Process {
 					new FileSystemPath(fs, portBindings.getOutput().get(PORT_OUT_DATASET_TO_MDSTORE)), 
 					DocumentToMDStore.SCHEMA$);
 			
+			NamedCounters counters = new NamedCounters(new String[] { DATASET_COUNTER_NAME, DATASET_TO_MDSTORE_COUNTER_NAME });
+			
 //			initializing MDStore reader
 			W3CEndpointReferenceBuilder eprBuilder = new W3CEndpointReferenceBuilder();
 			eprBuilder.address(parameters.get(IMPORT_DATACITE_MDSTORE_SERVICE_LOCATION));
@@ -130,11 +139,15 @@ public class DataciteMDStoreImporter implements Process {
 					int currentCount = 0;
 					long startTime = System.currentTimeMillis();
 					for (String record : rsFactory.getClient(eprResult)) {
-						DataciteDumpXmlHandler handler = new DataciteDumpXmlHandler(
-								new DataFileRecordReceiver<DataSetReference>(datasetRefWriter), 
-								new DataFileRecordReceiver<DocumentToMDStore>(datasetToMDStoreWriter), 
-								currentMdStoreId);
+						DataFileRecordReceiverWithCounter<DataSetReference> datasetReceiver = new DataFileRecordReceiverWithCounter<>(datasetRefWriter);
+						DataFileRecordReceiverWithCounter<DocumentToMDStore> datasetToMDStoreReceiver = new DataFileRecordReceiverWithCounter<>(datasetToMDStoreWriter);
+						
+						DataciteDumpXmlHandler handler = new DataciteDumpXmlHandler(datasetReceiver, datasetToMDStoreReceiver, currentMdStoreId);
 						saxParser.parse(new InputSource(new StringReader(record)), handler);
+						
+						counters.increment(DATASET_COUNTER_NAME, datasetReceiver.getReceivedCount());
+						counters.increment(DATASET_TO_MDSTORE_COUNTER_NAME, datasetToMDStoreReceiver.getReceivedCount());
+						
 						currentCount++;
 						if (currentCount%progressLogInterval==0) {
 							log.warn("current progress: " + currentCount + 
@@ -149,6 +162,8 @@ public class DataciteMDStoreImporter implements Process {
 			} else {
 				log.warn("got undefined mdstores list for datacite import, skipping!");
 			}
+			
+			countersWriter.writeCounters(counters, System.getProperty("oozie.action.output.properties"));
 		} finally {
 			if (datasetRefWriter!=null) {
 				datasetRefWriter.close();	
