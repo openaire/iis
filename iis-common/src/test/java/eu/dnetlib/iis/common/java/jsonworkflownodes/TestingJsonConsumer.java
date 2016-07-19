@@ -17,7 +17,6 @@ import com.google.gson.JsonParser;
 
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
-import eu.dnetlib.iis.common.java.ProcessWrapper;
 import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.java.jsonworkflownodes.StringPortSpecificationExtractor.PortSpecification;
 import eu.dnetlib.iis.common.java.porttype.AnyPortType;
@@ -36,6 +35,18 @@ public class TestingJsonConsumer implements Process {
     
     //------------------------ CONSTRUCTORS --------------------------
     
+    /**
+     * 
+     * @param inputSpecifications specifications of input. Each element
+     * of array corresponds to single specification. Single specification
+     * must be in the following template:<br/>
+     * <code>{PORT_NAME, PATH_TO_JSON}</code><br/>
+     * where:<br/>
+     * <code>PORT_NAME</code> - name of the port (user of this class must define also input port with the same name)<br/>
+     * <code>PATH_TO_JSON</code> - path to json file in resources. Process will check if input json under
+     *      port with name <code>PORT_NAME</code> is equal to this json file.<br/>
+     *   
+     */
     public TestingJsonConsumer(String[] inputSpecifications) {
         StringPortSpecificationExtractor specificationExtractor = new StringPortSpecificationExtractor(new String[]{"[\\w\\.\\/_]+"});
         

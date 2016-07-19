@@ -136,6 +136,10 @@
 			<name>output_faults</name>
 			<description>processing faults output directory</description>
 		</property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
 	</parameters>
 
     <global>

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collections;
 import java.util.List;
@@ -82,20 +83,7 @@ public class ReportMergerTest {
         
         JsonObject actualReportJson = readJson(outputReportPath);
         
-        String expectedReportJsonString = "{"
-                + "  param1: {"
-                + "    paramA: {"
-                + "      I: 3,"
-                + "      II: 2,"
-                + "      III: 6"
-                + "    },"
-                + "    paramB: 4"
-                + "  },"
-                + "  param2: 12"
-                + "}";
-        
-        
-        JsonObject expectedJsonReport = jsonParser.parse(expectedReportJsonString).getAsJsonObject();
+        JsonObject expectedJsonReport = readJsonFromClasspath("/eu/dnetlib/iis/common/report/report_merged.json");
         
         
         assertEquals(expectedJsonReport, actualReportJson);
@@ -107,6 +95,15 @@ public class ReportMergerTest {
     private JsonObject readJson(String jsonPath) throws FileNotFoundException, IOException {
         
         try (Reader reader = new FileReader(jsonPath)) {
+            JsonElement jsonElement = jsonParser.parse(reader);
+            
+            return jsonElement.getAsJsonObject();
+        }
+    }
+    
+    private JsonObject readJsonFromClasspath(String jsonClasspath) throws IOException {
+        
+        try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(jsonClasspath))) {
             JsonElement jsonElement = jsonParser.parse(reader);
             
             return jsonElement.getAsJsonObject();

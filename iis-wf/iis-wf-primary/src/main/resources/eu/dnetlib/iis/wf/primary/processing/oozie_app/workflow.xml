@@ -179,6 +179,10 @@
             <name>output_matched_doc_organizations</name>
             <description>output matched document organizations directory</description>
         </property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
     </parameters>
 
     <global>

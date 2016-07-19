@@ -364,6 +364,10 @@
 					<name>output_faults</name>
 					<value>${workingDir}/preprocessing_import/faults</value>
 				</property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
 			</configuration>
 		</sub-workflow>
 		<ok to="referenceextraction_forking" />
@@ -646,9 +650,28 @@
 				</property>
 			</configuration>
 		</sub-workflow>
-		<ok to="end" />
+		<ok to="build-report" />
 		<error to="fail" />
 	</action>
+
+    <action name="build-report">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/preprocessing_report</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>input_partial_reports</name>
+                    <value>${workingDir}/report</value>
+                </property>
+                <property>
+                    <name>output_report</name>
+                    <value>${workingDir}/report/report.json</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
 
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:

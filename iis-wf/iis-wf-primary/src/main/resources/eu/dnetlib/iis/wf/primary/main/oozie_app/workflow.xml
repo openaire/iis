@@ -595,6 +595,10 @@
 					<name>output_matched_doc_organizations</name>
 					<value>${workingDir}/exported/matched_affiliation</value>
 				</property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
 			</configuration>
 		</sub-workflow>
 		<ok to="decision-export-to-hbase" />

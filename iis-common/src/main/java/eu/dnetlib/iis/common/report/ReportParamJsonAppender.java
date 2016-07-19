@@ -55,30 +55,42 @@ public class ReportParamJsonAppender {
         return new JsonPrimitive(value);
     }
     
-    
-    private void insertValue(JsonObject element, List<String> fieldHierarchy, JsonElement value) {
+    /**
+     * Inserts json value into the passed json object under location defined by fieldHierarchy list.<br/>
+     * For example:<br/>
+     * If <code>jsonObject = {"aaa": {"ccc":1}}</code>, <code>fieldHierarchy = ["aaa", "bbb"]</code> and <code>value = {"a": 5}</code>,
+     * then jsonObject will be modified to: <code>{"aaa": {"ccc":1, "bbb": {"a": 5}}}</code>
+     */
+    private void insertValue(JsonObject jsonObject, List<String> fieldHierarchy, JsonElement value) {
         
         String headField = fieldHierarchy.get(0);
         List<String> tailFieldHierarchy = fieldHierarchy.subList(1, fieldHierarchy.size());
         
-        if (element.has(headField)) {
-            JsonElement nextElement = element.get(headField);
+        if (jsonObject.has(headField)) {
+            JsonElement nextElement = jsonObject.get(headField);
             
             if (fieldHierarchy.size() == 1) {
-                element.add(headField, value);
+                jsonObject.add(headField, value);
             } else if (!nextElement.isJsonObject()) {
                 JsonElement elementWithValue = generateNode(tailFieldHierarchy, value);
-                element.add(headField, elementWithValue);
+                jsonObject.add(headField, elementWithValue);
             } else {
-                insertValue(element.getAsJsonObject(headField), tailFieldHierarchy, value);
+                insertValue(jsonObject.getAsJsonObject(headField), tailFieldHierarchy, value);
             }
         } else {
             JsonElement elementWithValue = generateNode(tailFieldHierarchy, value);
-            element.add(headField, elementWithValue);
+            jsonObject.add(headField, elementWithValue);
         }
         
     }
     
+    /**
+     * Generates json element with inserted passed value under location 
+     * defined by fieldHierarchy list.<br/>
+     * For example:<br/>
+     * If <code>fieldHierarchy = ["aaa", "bbb"]</code> and <code>value = {"a": 5}</code>, then
+     * result of this method will be: <code>{"aaa": {"bbb": {"a": 5}}}</code>.
+     */
     private JsonElement generateNode(List<String> fieldHierarchy, JsonElement value) {
         JsonElement last = value;
         
