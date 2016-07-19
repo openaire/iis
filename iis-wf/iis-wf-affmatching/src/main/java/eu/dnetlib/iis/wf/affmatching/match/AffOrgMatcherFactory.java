@@ -28,6 +28,7 @@ import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisInferredDocumentP
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisProjectOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.match.voter.CompositeMatchVoter;
+import eu.dnetlib.iis.wf.affmatching.match.voter.CountryCodeLooseMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.match.voter.FittingAffOrgSectionWordsMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.match.voter.FittingAffOrgWordsMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.match.voter.FittingOrgWordsMatchVoter;
@@ -210,9 +211,9 @@ public class AffOrgMatcherFactory {
         FittingAffOrgWordsMatchVoter fitAffOrgWordsMatchVoter = new FittingAffOrgWordsMatchVoter(ImmutableList.of(',', ';'), 2, 0.8f, 0.9f);
         
         
-        CompositeMatchVoter fitOrgAffOrgWordsVoter = new CompositeMatchVoter(ImmutableList.of(fitOrgWordsMatchVoter, fitAffOrgWordsMatchVoter));
+        CompositeMatchVoter fitOrgAffOrgWordsVoter = new CompositeMatchVoter(ImmutableList.of(new CountryCodeLooseMatchVoter(), fitOrgWordsMatchVoter, fitAffOrgWordsMatchVoter));
                 
-        fitOrgAffOrgWordsVoter.setMatchStrength(0.818f);
+        fitOrgAffOrgWordsVoter.setMatchStrength(0.878f);
         
         return ImmutableList.of(
                 createNameCountryStrictMatchVoter(0.981f),
