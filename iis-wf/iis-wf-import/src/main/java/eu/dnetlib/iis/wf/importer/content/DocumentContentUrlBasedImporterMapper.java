@@ -1,22 +1,27 @@
 package eu.dnetlib.iis.wf.importer.content;
 
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_CONTENT_CONNECTION_TIMEOUT;
+import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_CONTENT_MAX_FILE_SIZE_MB;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_CONTENT_READ_TIMEOUT;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.List;
 
 import org.apache.avro.mapred.AvroKey;
 import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
+
+import com.google.common.collect.Lists;
 
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl;
 import eu.dnetlib.iis.importer.schemas.DocumentContent;
-import eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters;
 import eu.dnetlib.iis.wf.importer.content.appover.ComplexContentApprover;
 import eu.dnetlib.iis.wf.importer.content.appover.ContentApprover;
+import eu.dnetlib.iis.wf.importer.content.appover.InvalidCountableContentApproverWrapper;
 import eu.dnetlib.iis.wf.importer.content.appover.PDFHeaderBasedContentApprover;
 import eu.dnetlib.iis.wf.importer.content.appover.SizeLimitContentApprover;
 
@@ -46,6 +51,14 @@ public class DocumentContentUrlBasedImporterMapper
      */
     private int readTimeout;
     
+    /**
+     * Hadoop counters enum of invalid records 
+     */
+    public static enum InvalidRecordCounters {
+        INVALID_PDF_HEADER,
+        SIZE_EXCEEDED
+    }
+    
     //------------------------ LOGIC --------------------------
 
     @Override
@@ -54,13 +67,20 @@ public class DocumentContentUrlBasedImporterMapper
         this.connectionTimeout = context.getConfiguration().getInt(IMPORT_CONTENT_CONNECTION_TIMEOUT, 60000);
         this.readTimeout = context.getConfiguration().getInt(IMPORT_CONTENT_READ_TIMEOUT, 60000);
         Integer maxFileSizeMB = WorkflowRuntimeParameters.getIntegerParamValue(
-                ImportWorkflowRuntimeParameters.IMPORT_CONTENT_MAX_FILE_SIZE_MB, context.getConfiguration());
+                IMPORT_CONTENT_MAX_FILE_SIZE_MB, context.getConfiguration());
+        
+        Counter invalidPdfCounter = context.getCounter(InvalidRecordCounters.INVALID_PDF_HEADER);
+        Counter sizeExceededCounter = context.getCounter(InvalidRecordCounters.SIZE_EXCEEDED);
+        invalidPdfCounter.setValue(0);
+        sizeExceededCounter.setValue(0);
+        
+        List<ContentApprover> contentApprovers = Lists.newArrayList();
+        contentApprovers.add(new InvalidCountableContentApproverWrapper(new PDFHeaderBasedContentApprover(), invalidPdfCounter));
+        
         if (maxFileSizeMB != null) {
-            this.contentApprover = new ComplexContentApprover(new PDFHeaderBasedContentApprover(),
-                    new SizeLimitContentApprover(maxFileSizeMB));
-        } else {
-            this.contentApprover = new PDFHeaderBasedContentApprover();
+            contentApprovers.add(new InvalidCountableContentApproverWrapper(new SizeLimitContentApprover(maxFileSizeMB), sizeExceededCounter));
         }
+        this.contentApprover = new ComplexContentApprover(contentApprovers);
     }
 
     @Override
