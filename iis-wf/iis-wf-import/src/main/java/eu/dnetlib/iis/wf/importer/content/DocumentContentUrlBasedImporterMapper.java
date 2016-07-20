@@ -19,11 +19,11 @@ import com.google.common.collect.Lists;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl;
 import eu.dnetlib.iis.importer.schemas.DocumentContent;
-import eu.dnetlib.iis.wf.importer.content.appover.ComplexContentApprover;
-import eu.dnetlib.iis.wf.importer.content.appover.ContentApprover;
-import eu.dnetlib.iis.wf.importer.content.appover.InvalidCountableContentApproverWrapper;
-import eu.dnetlib.iis.wf.importer.content.appover.PDFHeaderBasedContentApprover;
-import eu.dnetlib.iis.wf.importer.content.appover.SizeLimitContentApprover;
+import eu.dnetlib.iis.wf.importer.content.approver.ComplexContentApprover;
+import eu.dnetlib.iis.wf.importer.content.approver.ContentApprover;
+import eu.dnetlib.iis.wf.importer.content.approver.InvalidCountableContentApproverWrapper;
+import eu.dnetlib.iis.wf.importer.content.approver.PDFHeaderBasedContentApprover;
+import eu.dnetlib.iis.wf.importer.content.approver.SizeLimitContentApprover;
 
 /**
  * {@link DocumentContentUrl} based importer producing {@link DocumentContent} output.

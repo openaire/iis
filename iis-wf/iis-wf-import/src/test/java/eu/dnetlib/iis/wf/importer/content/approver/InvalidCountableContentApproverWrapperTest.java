@@ -9,8 +9,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import eu.dnetlib.iis.wf.importer.content.appover.ContentApprover;
-import eu.dnetlib.iis.wf.importer.content.appover.InvalidCountableContentApproverWrapper;
+import eu.dnetlib.iis.wf.importer.content.approver.ContentApprover;
+import eu.dnetlib.iis.wf.importer.content.approver.InvalidCountableContentApproverWrapper;
 
 /**
  * @author madryk
