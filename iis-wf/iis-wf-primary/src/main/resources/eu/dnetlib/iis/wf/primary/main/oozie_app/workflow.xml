@@ -168,13 +168,6 @@
             <description>maximum allowed pdf file size in Megabytes</description>
         </property>
         <property>
-            <name>content_split_size</name>
-            <value>536870912</value>
-            <description>plaintext and extracted metadata large records split size. 
-            Introduced for files compaction limiting excessive files number.
-            Whet set to 0 default value defined for cluster will be picked.</description>
-        </property>
-        <property>
             <name>metadataextraction_default_cache_location</name>
             <value>/cache/metadataextraction</value>
             <description>metadata extraction HDFS cache location</description>
