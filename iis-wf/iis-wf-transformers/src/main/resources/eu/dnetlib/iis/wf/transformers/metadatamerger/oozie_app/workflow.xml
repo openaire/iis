@@ -13,12 +13,6 @@
 			<name>output_merged_metadata</name>
 			<description>output directory</description>
 		</property>
-        <property>
-            <name>combine_splits</name>
-            <!-- zero will use the Pig default -->
-            <value>0</value>
-            <description>Value for pig.maxCombinedSplitSize Pig property</description>
-        </property>
 	</parameters>
     
     <global>
@@ -57,12 +51,6 @@
 			<prepare>
 				<delete path="${nameNode}${output_merged_metadata}" />
 			</prepare>
-            <configuration>
-                <property>
-                    <name>pig.maxCombinedSplitSize</name>
-                    <value>${combine_splits}</value>
-                </property>
-            </configuration>
             <!-- Path to PIG script the workflow executes. -->
             <script>lib/scripts/merger/merger.pig</script>
 

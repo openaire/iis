@@ -183,13 +183,6 @@
             <name>output_report_root_path</name>
             <description>base directory for storing reports</description>
         </property>
-        <property>
-            <name>content_split_size</name>
-            <value>0</value>
-            <description>plaintext and extracted metadata large records split size. 
-            Introduced for files compaction limiting excessive files number.
-            Whet set to 0 default value defined for cluster will be picked.</description>
-        </property>
     </parameters>
 
     <global>
@@ -226,10 +219,6 @@
                     <name>output</name>
                     <value>${workingDir}/transformer_metadataextraction_documenttext/out</value>
                 </property>
-                <property>
-                    <name>combine_splits</name>
-                    <value>${content_split_size}</value>
-                </property>
             </configuration>
         </sub-workflow>
         <ok to="transformers_common_union_document_text" />
@@ -260,10 +249,6 @@
                 <property>
                     <name>schema</name>
                     <value>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</value>
-                </property>
-                <property>
-                    <name>combine_splits</name>
-                    <value>${content_split_size}</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -334,10 +319,6 @@
                     <name>output_document_to_project</name>
                     <!-- referenceextraction_project directory is created at subworkflow prepare phase -->
                     <value>${output_document_to_project}</value>
-                </property>
-                <property>
-                    <name>split_minsize</name>
-                    <value>${content_split_size}</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -461,10 +442,6 @@
                     <!-- referenceextraction_dataset directory is created at subworkflow prepare phase -->
                     <value>${output_document_to_dataset}</value>
                 </property>
-                <property>
-                    <name>split_minsize</name>
-                    <value>${content_split_size}</value>
-                </property>
             </configuration>
         </sub-workflow>
         <ok to="joining" />
@@ -518,10 +495,6 @@
                 <property>
                     <name>output</name>
                     <value>${workingDir}/referenceextraction_pdb/output</value>
-                </property>
-                <property>
-                    <name>split_minsize</name>
-                    <value>${content_split_size}</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -600,10 +573,6 @@
                 <property>
                     <name>output</name>
                     <value>${workingDir}/referenceextraction_software_url/output</value>
-                </property>
-                <property>
-                    <name>split_minsize</name>
-                    <value>${content_split_size}</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -686,10 +655,6 @@
                     <name>output_document_to_research_initiative</name>
                     <value>${workingDir}/referenceextraction_researchinitiative/output</value>
                 </property>
-                <property>
-                    <name>split_minsize</name>
-                    <value>${content_split_size}</value>
-                </property>
             </configuration>
         </sub-workflow>
         <ok to="referenceextraction_researchinitiative_wos" />
@@ -712,10 +677,6 @@
                 <property>
                     <name>output_document_to_research_initiative</name>
                     <value>${workingDir}/referenceextraction_researchinitiative_wos/output</value>
-                </property>
-                <property>
-                    <name>split_minsize</name>
-                    <value>${content_split_size}</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -860,10 +821,6 @@
                 <property>
                     <name>output_merged_metadata</name>
                     <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
-                </property>
-                <property>
-                    <name>combine_splits</name>
-                    <value>${content_split_size}</value>
                 </property>
             </configuration>
         </sub-workflow>

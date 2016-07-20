@@ -16,12 +16,6 @@
 			<name>output_document_to_project</name>
 			<description>output document to project</description>
 		</property>
-        <property>
-            <name>split_minsize</name>
-            <!-- zero means relying on default value -->
-            <value>0</value>
-            <description>minimum split size for streaming</description>
-        </property>
 	</parameters>
 
     <global>
@@ -118,11 +112,6 @@
 					<name>mapreduce.task.timeout</name>
 					<value>1800000</value>
 				</property>
-                
-                <property>
-                    <name>mapreduce.input.fileinputformat.split.minsize</name>
-                    <value>${split_minsize}</value>
-                </property>
             </configuration>
             <file>${input_project_db}#project.db</file>
             
