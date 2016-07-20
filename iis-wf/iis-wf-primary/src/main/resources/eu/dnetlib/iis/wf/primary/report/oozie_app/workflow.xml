@@ -1,0 +1,51 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="primary_report">
+
+    <parameters>
+        <property>
+            <name>input_partial_reports</name>
+            <description>Base directory with partial reports. Subdirectories of this directory should contain
+                        report datastore (avro with eu.dnetlib.iis.common.schemas.ReportParam records)</description>
+        </property>
+        <property>
+            <name>output_report</name>
+            <description>output report json file path</description>
+        </property>
+    </parameters>
+        
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
+    <start to="build-report" />
+    
+    <action name="build-report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.ReportMerger</arg>
+            <arg>-Ipartial_reports=${input_partial_reports}</arg>
+            <arg>-Oreport=${output_report}</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
+    
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+    <end name="end" />
+
+</workflow-app>

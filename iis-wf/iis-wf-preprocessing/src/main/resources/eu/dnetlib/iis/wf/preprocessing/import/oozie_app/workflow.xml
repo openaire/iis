@@ -136,7 +136,11 @@
 			<name>output_faults</name>
 			<description>processing faults output directory</description>
 		</property>
-         <property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
             <name>content_split_size</name>
             <value>0</value>
             <description>plaintext and extracted metadata large records split size. 

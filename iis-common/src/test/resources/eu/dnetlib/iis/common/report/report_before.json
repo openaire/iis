@@ -1,0 +1,9 @@
+{
+  "property1": {
+    "propertyA": 1,
+    "propertyB": {
+      "propertyI": 9
+    }
+  },
+  "property2": 3
+}

@@ -1,0 +1,11 @@
+{
+  "param1": {
+    "paramA": {
+      "I": 3,
+      "II": 2,
+      "III": 6
+    },
+    "paramB": 4
+  },
+  "param2": 12
+}

@@ -602,6 +602,10 @@
 					<name>output_matched_doc_organizations</name>
 					<value>${workingDir}/exported/matched_affiliation</value>
 				</property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
 			</configuration>
 		</sub-workflow>
 		<ok to="decision-export-to-hbase" />
@@ -826,10 +830,30 @@
                 </property>
             </configuration>
         </sub-workflow>
-        <ok to="end" />
+        <ok to="build-report" />
         <error to="fail" />
     </action>
 
+    <action name="build-report">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/primary_report</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>input_partial_reports</name>
+                    <value>${workingDir}/report</value>
+                </property>
+                <property>
+                    <name>output_report</name>
+                    <value>${workingDir}/report/report.json</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
+    
     <kill name="fail">
         <message>Unfortunately, the process failed -- error message:
             [${wf:errorMessage(wf:lastErrorNode())}]</message>

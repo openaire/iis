@@ -1,0 +1,25 @@
+{
+    "import": {
+        "infoSpace": {
+            "documentMetadata": 304,
+            "documentProject": 12,
+            "project": 20,
+            "person": 409,
+            "dedupMapping": 22,
+            "organization": 39,
+            "projectOrganization": 3
+        }
+    },
+    "export": {
+        "documentClassification": {
+            "classifiedDocuments": 20,
+            "classes": {
+                "arxiv": 10,
+                "wos": 0,
+                "ddc": 0,
+                "meshEuroPmc": 3,
+                "acm": 21
+            }
+        }
+    }
+}

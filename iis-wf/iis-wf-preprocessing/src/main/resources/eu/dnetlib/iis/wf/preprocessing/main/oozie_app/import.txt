@@ -8,3 +8,4 @@ transformers_project_toconcept classpath eu/dnetlib/iis/wf/referenceextraction/p
 transformers_export_researchinitiatives classpath eu/dnetlib/iis/wf/referenceextraction/researchinitiative/output_transformer/oozie_app
 preprocessing_export_to_json classpath eu/dnetlib/iis/wf/preprocessing/export_to_json/oozie_app
 preprocessing_export classpath eu/dnetlib/iis/wf/preprocessing/export/oozie_app
+preprocessing_report classpath eu/dnetlib/iis/wf/preprocessing/report/oozie_app
