@@ -285,9 +285,9 @@ public class AffOrgMatcherFactoryTest {
         assertCompositeVoter(voter4, CountryCodeLooseMatchVoter.class, SectionedShortNameStrictMatchVoter.class);
         
         AffOrgMatchVoter voter5 = getVoter(computer, 5);
-        assertCompositeVoter(voter5, FittingOrgWordsMatchVoter.class, FittingAffOrgWordsMatchVoter.class);
-        assertFittingOrgWordsMatchVoter(getInternalVoter(voter5, 0), ImmutableList.of(',', ';'), 0.7f, 0.9f, 2);
-        assertFittingAffOrgWordsMatchVoter(getInternalVoter(voter5, 1), ImmutableList.of(',', ';'), 0.8f, 0.9f, 2);
+        assertCompositeVoter(voter5, CountryCodeLooseMatchVoter.class, FittingOrgWordsMatchVoter.class, FittingAffOrgWordsMatchVoter.class);
+        assertFittingOrgWordsMatchVoter(getInternalVoter(voter5, 1), ImmutableList.of(',', ';'), 0.7f, 0.9f, 2);
+        assertFittingAffOrgWordsMatchVoter(getInternalVoter(voter5, 2), ImmutableList.of(',', ';'), 0.8f, 0.9f, 2);
         
     }
     
@@ -316,21 +316,22 @@ public class AffOrgMatcherFactoryTest {
         
         assertCompositeVoter(voters.get(4), CountryCodeLooseMatchVoter.class, SectionedShortNameStrictMatchVoter.class);
         
-        assertCompositeVoter(voters.get(5), FittingOrgWordsMatchVoter.class, FittingAffOrgWordsMatchVoter.class);
-        assertFittingOrgWordsMatchVoter(getInternalVoter(voters.get(5), 0), ImmutableList.of(',', ';'), 0.7f, 0.9f, 2);
-        assertFittingAffOrgWordsMatchVoter(getInternalVoter(voters.get(5), 1), ImmutableList.of(',', ';'), 0.8f, 0.9f, 2);
+        assertCompositeVoter(voters.get(5), CountryCodeLooseMatchVoter.class, FittingOrgWordsMatchVoter.class, FittingAffOrgWordsMatchVoter.class);
+        assertFittingOrgWordsMatchVoter(getInternalVoter(voters.get(5), 1), ImmutableList.of(',', ';'), 0.7f, 0.9f, 2);
+        assertFittingAffOrgWordsMatchVoter(getInternalVoter(voters.get(5), 2), ImmutableList.of(',', ';'), 0.8f, 0.9f, 2);
     }
     
     
     //------------------------ PRIVATE --------------------------
     
-    private void assertCompositeVoter(AffOrgMatchVoter voter, Class<? extends AffOrgMatchVoter> internalVoterClass1, Class<? extends AffOrgMatchVoter> internalVoterClass2) {
+    private void assertCompositeVoter(AffOrgMatchVoter voter, Class<?>... internalVoterClasses) {
         
         assertTrue(voter instanceof CompositeMatchVoter);
-        assertInternalVotersCount(voter, 2);
+        assertInternalVotersCount(voter, internalVoterClasses.length);
         
-        assertTrue(getInternalVoter(voter, 0).getClass().isAssignableFrom(internalVoterClass1));
-        assertTrue(getInternalVoter(voter, 1).getClass().isAssignableFrom(internalVoterClass2));
+        for (int i = 0; i < internalVoterClasses.length; i++) {
+            assertTrue(getInternalVoter(voter, i).getClass().isAssignableFrom(internalVoterClasses[i]));
+        }
         
     }
     
