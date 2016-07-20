@@ -29,6 +29,15 @@
 			<name>output</name>
 			<description>PDF importer output directory with content bytes</description>
 		</property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
+            <name>output_report_relative_path</name>
+            <value>import_content_pdf</value>
+            <description>directory for storing report (relative to output_report_root_path)</description>
+        </property>
 	</parameters>
 
     <global>
@@ -189,12 +198,29 @@
                     <name>mapreduce.job.reduces</name>
                     <value>0</value>
                 </property>
+                <property>
+                    <name>oozie.action.external.stats.write</name>
+                    <value>true</value>
+                </property>
             </configuration>
         </map-reduce>
-          <ok to="end"/>
+          <ok to="report"/>
         <error to="fail"/>
     </action>
-	
+
+    <action name="report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
+            <arg>-Preport.import.content.pdf.correct=${hadoop:counters('content-retriever')[RECORDS][MAP_OUT]}</arg>
+            <arg>-Preport.import.content.pdf.invalid.sizeExceeded=${hadoop:counters('content-retriever')['eu.dnetlib.iis.wf.importer.content.DocumentContentUrlBasedImporterMapper$InvalidRecordCounters']['SIZE_EXCEEDED']}</arg>
+            <arg>-Preport.import.content.pdf.invalid.invalidPdf=${hadoop:counters('content-retriever')['eu.dnetlib.iis.wf.importer.content.DocumentContentUrlBasedImporterMapper$InvalidRecordCounters']['INVALID_PDF_HEADER']}</arg>
+            <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:
 			[${wf:errorMessage(wf:lastErrorNode())}]</message>
