@@ -15,6 +15,16 @@
 			<name>output</name>
 			<description>project output directory</description>
 		</property>
+        <property>
+            <name>database_client_connection_timeout</name>
+            <value>60000</value>
+            <description>database client connection timeout (expressed in milliseconds)</description>
+        </property>
+        <property>
+            <name>database_client_read_timeout</name>
+            <value>60000</value>
+            <description>database client reading timeout (expressed in milliseconds)</description>
+        </property>
 		<property>
 			<name>resultset_client_read_timeout</name>
 			<value>60000</value>
@@ -50,7 +60,9 @@
 			<arg>eu.dnetlib.iis.wf.importer.database.project.DatabaseServiceBasedProjectImporter</arg>
 			<arg>-Pimport.database.service.location=${database_service_location}</arg>
 			<arg>-Pimport.database.service.dbname=${database_name}</arg>
-			<arg>-Pimport.resultset.client.read.timeout=${resultset_client_read_timeout}</arg>
+			<arg>-Pimport.database.client.connection.timeout=${database_client_connection_timeout}</arg>
+            <arg>-Pimport.database.client.read.timeout=${database_client_read_timeout}</arg>
+            <arg>-Pimport.resultset.client.read.timeout=${resultset_client_read_timeout}</arg>
 			<arg>-Oproject=${output}</arg>
 		</java>
 		<ok to="end" />
