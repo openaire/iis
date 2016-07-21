@@ -49,6 +49,9 @@
             <value>1</value>
             <description>Number of reducers to be used when exporting output. Affects number of output files.
                 When set to 0 reducing phase is omitted, input ordering is preserved and number of output files depends on number of mappers.
+                Used only for subset of inputs where large number of small files is provided, namely: 
+                input_document_to_project, input_document_to_dataset, input_document_to_document_classes, input_matched_doc_organizations.
+                For other inputs reducing phase is not executed.
             </description>
         </property>
         <!-- actionset id section -->
@@ -204,9 +207,10 @@
                 <name>mapreduce.reduce.speculative</name>
                 <value>false</value>
             </property>
+            <!-- not reducing by default -->
             <property>
                 <name>mapreduce.job.reduces</name>
-                <value>${reduce_tasks}</value>
+                <value>0</value>
             </property>
             <property>
                 <name>mapreduce.map.output.compress</name>
@@ -451,6 +455,11 @@
                     <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${workingDir}/document_referencedProjects/${action_set_id_document_referencedProjects}</value>
                 </property>
+                <!-- reducing input with large number of small files -->
+                <property>
+                    <name>mapreduce.job.reduces</name>
+                    <value>${reduce_tasks}</value>
+                </property>
             </configuration>
         </map-reduce>
         <ok to="joining" />
@@ -478,6 +487,11 @@
                 <property>
                     <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${output}/document_referencedDatasets/${action_set_id_document_referencedDatasets}</value>
+                </property>
+                <!-- reducing input with large number of small files -->
+                <property>
+                    <name>mapreduce.job.reduces</name>
+                    <value>${reduce_tasks}</value>
                 </property>
             </configuration>
         </map-reduce>
@@ -624,6 +638,11 @@
                     <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${output}/document_classes/${action_set_id_document_classes}</value>
                 </property>
+                <!-- reducing input with large number of small files -->
+                <property>
+                    <name>mapreduce.job.reduces</name>
+                    <value>${reduce_tasks}</value>
+                </property>
             </configuration>
         </map-reduce>
         <ok to="joining" />
@@ -711,6 +730,11 @@
                 <property>
                     <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${output}/matched_doc_organizations/${action_set_id_matched_doc_organizations}</value>
+                </property>
+                <!-- reducing input with large number of small files -->
+                <property>
+                    <name>mapreduce.job.reduces</name>
+                    <value>${reduce_tasks}</value>
                 </property>
             </configuration>
         </map-reduce>
