@@ -1,6 +1,8 @@
 SELECT  p.id                         as projectid,
         p.acronym                    as acronym,
         p.code                       as code,
+        p.optional1                  as optional1,
+        p.optional2                  as optional2,
         array_agg(fp.path)           as fundingpath
 
 FROM projects p
