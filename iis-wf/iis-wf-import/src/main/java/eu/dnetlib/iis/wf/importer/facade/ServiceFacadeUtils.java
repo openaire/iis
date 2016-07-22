@@ -39,7 +39,7 @@ public abstract class ServiceFacadeUtils {
             ServiceFacadeFactory<T> serviceFactory = (ServiceFacadeFactory<T>) constructor.newInstance();
             return serviceFactory.instantiate(parameters);    
         } catch (Exception e) {
-            throw new ServiceFacadeException("unknown service facade factory, no " + IMPORT_FACADE_FACTORY_CLASS + " parameter provided!", e);
+            throw new ServiceFacadeException("exception occurred while instantiating service by facade factory: " + IMPORT_FACADE_FACTORY_CLASS, e);
         }
         
     }

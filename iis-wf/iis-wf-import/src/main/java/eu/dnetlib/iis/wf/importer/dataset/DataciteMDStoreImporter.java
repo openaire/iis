@@ -1,7 +1,6 @@
 package eu.dnetlib.iis.wf.importer.dataset;
 
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_DATACITE_MDSTORE_IDS_CSV;
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_DATACITE_MDSTORE_SERVICE_LOCATION;
 
 import java.io.StringReader;
 import java.security.InvalidParameterException;
@@ -76,26 +75,18 @@ public class DataciteMDStoreImporter implements Process {
 	public void run(PortBindings portBindings, Configuration conf,
 			Map<String, String> parameters) throws Exception {
 		FileSystem fs = FileSystem.get(conf);
-		if (!parameters.containsKey(IMPORT_DATACITE_MDSTORE_SERVICE_LOCATION)) {
-			throw new InvalidParameterException("unknown MDStore service location, "
-					+ "required parameter '" + IMPORT_DATACITE_MDSTORE_SERVICE_LOCATION + "' is missing!");
-		}
+
 		if (!parameters.containsKey(IMPORT_DATACITE_MDSTORE_IDS_CSV)) {
 			throw new InvalidParameterException("unknown MDStore identifier, "
 					+ "required parameter '" + IMPORT_DATACITE_MDSTORE_IDS_CSV + "' is missing!");
 		}
 		
-		DataFileWriter<DataSetReference> datasetRefWriter = null;
-		DataFileWriter<DocumentToMDStore> datasetToMDStoreWriter = null;
-		try {
-//			initializing avro datastore writers
-			datasetRefWriter = DataStore.create(
-					new FileSystemPath(fs, portBindings.getOutput().get(PORT_OUT_DATASET)), 
-					DataSetReference.SCHEMA$);
-			datasetToMDStoreWriter = DataStore.create(
-					new FileSystemPath(fs, portBindings.getOutput().get(PORT_OUT_DATASET_TO_MDSTORE)), 
-					DocumentToMDStore.SCHEMA$);
-			
+        try (DataFileWriter<DataSetReference> datasetRefWriter = DataStore.create(
+                new FileSystemPath(fs, portBindings.getOutput().get(PORT_OUT_DATASET)), DataSetReference.SCHEMA$);
+                DataFileWriter<DocumentToMDStore> datasetToMDStoreWriter = DataStore.create(
+                        new FileSystemPath(fs, portBindings.getOutput().get(PORT_OUT_DATASET_TO_MDSTORE)),
+                        DocumentToMDStore.SCHEMA$)) {
+
 			NamedCounters counters = new NamedCounters(new String[] { DATASET_COUNTER_NAME, DATASET_TO_MDSTORE_COUNTER_NAME });
 			
 //			initializing MDStore reader
@@ -122,26 +113,19 @@ public class DataciteMDStoreImporter implements Process {
 						
 						currentCount++;
 						if (currentCount%progressLogInterval==0) {
-							log.warn("current progress: " + currentCount + ", last package of " + progressLogInterval + 
+							log.debug("current progress: " + currentCount + ", last package of " + progressLogInterval + 
 									" processed in " + ((System.currentTimeMillis()-startTime)/1000) + " secs");
 							startTime = System.currentTimeMillis();
 						}
 					}
-					log.warn("total number of processed records for mdstore " + currentMdStoreId + ": "	+ currentCount);
+					log.debug("total number of processed records for mdstore " + currentMdStoreId + ": "	+ currentCount);
 				}
 			} else {
 				log.warn("got undefined mdstores list for datacite import, skipping!");
 			}
 			
 			countersWriter.writeCounters(counters, System.getProperty("oozie.action.output.properties"));
-		} finally {
-			if (datasetRefWriter!=null) {
-				datasetRefWriter.close();	
-			}	
-			if (datasetToMDStoreWriter!=null) {
-				datasetToMDStoreWriter.close();	
-			}
-		}	
+		}
 	}
 	
 }

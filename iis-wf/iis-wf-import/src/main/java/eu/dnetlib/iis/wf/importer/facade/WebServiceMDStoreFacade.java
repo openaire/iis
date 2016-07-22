@@ -11,6 +11,7 @@ import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
 
 /**
  * WebService based MDStore facade.
+ * 
  * @author mhorst
  *
  */
@@ -42,7 +43,7 @@ public class WebServiceMDStoreFacade extends AbstractWebServiceFacade<MDStoreSer
         try {
             W3CEndpointReference eprResult = service.deliverMDRecords(mdStoreId, null, null, null);
             log.debug("processing mdstore: " + mdStoreId + " and obtained ResultSet EPR: " + eprResult.toString());
-//          obtaining resultSet
+            // obtaining resultSet
             ResultSetClientFactory rsFactory = new ResultSetClientFactory();
             rsFactory.setTimeout(resultSetReadTimeout);  
             rsFactory.setServiceResolver(new JaxwsServiceResolverImpl());
