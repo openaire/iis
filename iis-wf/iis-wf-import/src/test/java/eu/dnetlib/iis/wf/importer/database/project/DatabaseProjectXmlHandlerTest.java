@@ -45,7 +45,8 @@ public class DatabaseProjectXmlHandlerTest {
     @Before
     public void initialize() throws ParserConfigurationException, SAXException {
         saxParser = SAXParserFactory.newInstance().newSAXParser();
-        handler = new DatabaseProjectXmlHandler(projectsReceiver = new ProjectsReceiver());
+        projectsReceiver = new ProjectsReceiver();
+        handler = new DatabaseProjectXmlHandler(projectsReceiver);
     }
     
     @After
@@ -65,7 +66,7 @@ public class DatabaseProjectXmlHandlerTest {
         
         // assert
         assertEquals(1, projectsReceiver.getProjects().size());
-        Project project = projectsReceiver.getProjects().iterator().next();
+        Project project = projectsReceiver.getProjects().get(0);
         assertEquals(projectId, project.getId());
         assertEquals(projectGrantId, project.getProjectGrantId());
         assertEquals(projectAcronym, project.getProjectAcronym());
@@ -84,7 +85,7 @@ public class DatabaseProjectXmlHandlerTest {
         
         // assert
         assertEquals(1, projectsReceiver.getProjects().size());
-        Project project = projectsReceiver.getProjects().iterator().next();
+        Project project = projectsReceiver.getProjects().get(0);
         assertEquals(projectId, project.getId());
         assertEquals(projectGrantId, project.getProjectGrantId());
         assertNull(project.getProjectAcronym());
@@ -103,7 +104,7 @@ public class DatabaseProjectXmlHandlerTest {
         
         // assert
         assertEquals(1, projectsReceiver.getProjects().size());
-        Project project = projectsReceiver.getProjects().iterator().next();
+        Project project = projectsReceiver.getProjects().get(0);
         assertEquals(projectId, project.getId());
         assertEquals(projectGrantId, project.getProjectGrantId());
         assertNull(project.getProjectAcronym());
@@ -114,7 +115,7 @@ public class DatabaseProjectXmlHandlerTest {
     
     //------------------------ INNER CLASS --------------------------
     
-    class ProjectsReceiver implements RecordReceiver<Project> {
+    private static class ProjectsReceiver implements RecordReceiver<Project> {
         
         private final List<Project> projects = new ArrayList<Project>();
 
