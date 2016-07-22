@@ -51,6 +51,8 @@ public class DatabaseServiceBasedProjectImporter implements Process {
 		outputPorts.put(PORT_OUT_PROJECT, new AvroPortType(Project.SCHEMA$));
 	}
 	
+	//------------------------ LOGIC --------------------------
+	
 	@Override
 	public Map<String, PortType> getInputPorts() {
 		return Collections.emptyMap();
@@ -87,8 +89,7 @@ public class DatabaseServiceBasedProjectImporter implements Process {
 			long startTime = System.currentTimeMillis();
 			
 			for (String record : databaseFacade.searchSQL(parameters.get(IMPORT_DATABASE_SERVICE_DBNAME), writer.toString())) {
-				saxParser.parse(new InputSource(new StringReader(record)),
-						new DatabaseProjectXmlHandler(new DataFileRecordReceiver<Project>(projectWriter)));
+				saxParser.parse(new InputSource(new StringReader(record)), new DatabaseProjectXmlHandler(new DataFileRecordReceiver<Project>(projectWriter)));
 				currentCount++;
 				if (currentCount%progressLogInterval==0) {
 					log.debug("current progress: " + currentCount + ", last package of " + progressLogInterval + 

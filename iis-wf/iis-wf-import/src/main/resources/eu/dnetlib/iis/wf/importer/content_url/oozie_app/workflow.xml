@@ -17,16 +17,6 @@
 			<description>CSV of blacklisted object stores</description>
 		</property>
 		<property>
-			<name>approved_datasources_csv</name>
-			<value>$UNDEFINED$</value>
-			<description>CSV of approved datasources, used interchangeably with approved_objectstores_csv</description>
-		</property>
-		<property>
-			<name>lookup_service_location</name>
-			<value>$UNDEFINED$</value>
-			<description>ISLookup service location, required when processing approved_datasources_csv in order to find datasource and objectstore relation</description>
-		</property>
-		<property>
 			<name>mimetypes_pdf</name>
 			<description>pdf mime types</description>
 		</property>
@@ -134,8 +124,6 @@
 			<arg>-Pimport.content.object.store.location=${objectstore_service_location}</arg>
 			<arg>-Pimport.content.approved.objectstores.csv=${approved_objectstores_csv}</arg>
 			<arg>-Pimport.content.blacklisted.objectstores.csv=${blacklisted_objectstores_csv}</arg>
-			<arg>-Pimport.approved.datasources.csv=${approved_datasources_csv}</arg>
-			<arg>-Pimport.content.lookup.service.location=${lookup_service_location}</arg>
 			<arg>-Pimport.resultset.client.read.timeout=${resultset_client_read_timeout}</arg>
 			<arg>-Ocontent_url=${workingDir}/imported-urls</arg>
 		</java>

@@ -22,7 +22,6 @@ public abstract class ImportWorkflowRuntimeParameters {
 	public static final String IMPORT_HBASE_TABLE_NAME = "import.hbase.table.name";
 		
 	public static final String IMPORT_CONTENT_OBJECT_STORE_LOC = "import.content.object.store.location";
-	public static final String IMPORT_CONTENT_LOOKUP_SERVICE_LOC = "import.content.lookup.service.location";
 	public static final String IMPORT_CONTENT_OBJECT_STORE_IDS_CSV = "import.content.object.store.ids.csv";
 	public static final String IMPORT_CONTENT_MAX_FILE_SIZE_MB = "import.content.max.file.size.mb";
 	public static final String IMPORT_CONTENT_CONNECTION_TIMEOUT = "import.content.connection.timeout";

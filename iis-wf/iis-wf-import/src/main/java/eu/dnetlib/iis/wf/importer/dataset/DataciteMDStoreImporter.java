@@ -61,6 +61,8 @@ public class DataciteMDStoreImporter implements Process {
 				new AvroPortType(DocumentToMDStore.SCHEMA$));
 	}
 	
+	//------------------------ LOGIC --------------------------
+	
 	@Override
 	public Map<String, PortType> getInputPorts() {
 		return Collections.emptyMap();
@@ -96,9 +98,11 @@ public class DataciteMDStoreImporter implements Process {
 			if (StringUtils.isNotBlank(mdStoresCSV) && 
 					!WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(mdStoresCSV)) {
 				String[] mdStoreIds = StringUtils.split(mdStoresCSV, WorkflowRuntimeParameters.DEFAULT_CSV_DELIMITER);
-                SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+                
+				SAXParserFactory parserFactory = SAXParserFactory.newInstance();
                 SAXParser saxParser = parserFactory.newSAXParser();
-				for (String currentMdStoreId : mdStoreIds) {
+				
+                for (String currentMdStoreId : mdStoreIds) {
 					int currentCount = 0;
 					long startTime = System.currentTimeMillis();
 					for (String record : mdStoreFacade.deliverMDRecords(currentMdStoreId)) {

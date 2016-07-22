@@ -2,10 +2,8 @@ package eu.dnetlib.iis.wf.importer.content;
 
 import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.DEFAULT_CSV_DELIMITER;
 import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE;
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_APPROVED_DATASOURCES_CSV;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_CONTENT_APPROVED_OBJECSTORES_CSV;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_CONTENT_BLACKLISTED_OBJECSTORES_CSV;
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_CONTENT_LOOKUP_SERVICE_LOC;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_CONTENT_OBJECSTORE_PAGESIZE;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_CONTENT_OBJECT_STORE_LOC;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_RESULT_SET_CLIENT_READ_TIMEOUT;
@@ -34,7 +32,6 @@ import org.apache.log4j.Logger;
 
 import eu.dnetlib.data.objectstore.rmi.ObjectStoreFile;
 import eu.dnetlib.data.objectstore.rmi.ObjectStoreService;
-import eu.dnetlib.enabling.is.lookup.rmi.ISLookUpService;
 import eu.dnetlib.enabling.resultset.client.ResultSetClientFactory;
 import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
 import eu.dnetlib.iis.common.java.PortBindings;
@@ -131,50 +128,13 @@ public class ObjectStoreDocumentContentUrlImporterProcess implements Process {
 						parameters.get(IMPORT_CONTENT_APPROVED_OBJECSTORES_CSV):
 							conf.get(
 									IMPORT_CONTENT_APPROVED_OBJECSTORES_CSV);
-		if (objectStoresCSV!=null && !objectStoresCSV.isEmpty() && 
+		if (StringUtils.isNotBlank(objectStoresCSV) && 
 				!UNDEFINED_NONEMPTY_VALUE.equals(objectStoresCSV)) {
 			objectStoreIds = StringUtils.split(objectStoresCSV, 
 					DEFAULT_CSV_DELIMITER);
 		} else {
-//			looking for data sources
-			String datasourcesCSV = parameters.containsKey(
-					IMPORT_APPROVED_DATASOURCES_CSV)?
-							parameters.get(IMPORT_APPROVED_DATASOURCES_CSV):
-								conf.get(
-										IMPORT_APPROVED_DATASOURCES_CSV);
-			if (datasourcesCSV==null || datasourcesCSV.isEmpty() || 
-					UNDEFINED_NONEMPTY_VALUE.equals(datasourcesCSV)) {
-				log.warn("unable to locate object stores containing contents: neither '" + 
-						IMPORT_CONTENT_APPROVED_OBJECSTORES_CSV + "' nor '" + 
-						IMPORT_APPROVED_DATASOURCES_CSV + "' parameter provided! "
-								+ "Empty content and text datastores will be created!");
-				objectStoreIds = new String[0];
-			} else {
-//				finding objectstores based on datasources utilizing ISLookup service
-				String lookupServiceLocation = parameters.containsKey(
-						IMPORT_CONTENT_LOOKUP_SERVICE_LOC)?
-								parameters.get(IMPORT_CONTENT_LOOKUP_SERVICE_LOC):
-									conf.get(
-											IMPORT_CONTENT_LOOKUP_SERVICE_LOC);
-				if (lookupServiceLocation == null || lookupServiceLocation.isEmpty()) {
-					throw new RuntimeException("unable to get objectstore id based on datasource id, "
-							+ "unknown IS Lookup service location: no parameter provided: '" + 
-							IMPORT_CONTENT_LOOKUP_SERVICE_LOC + "'");
-				}
-				W3CEndpointReferenceBuilder eprBuilder = new W3CEndpointReferenceBuilder();
-				eprBuilder = new W3CEndpointReferenceBuilder();
-				eprBuilder.address(lookupServiceLocation);
-				eprBuilder.build();
-				ISLookUpService lookupService = new JaxwsServiceResolverImpl().getService(
-						ISLookUpService.class, eprBuilder.build());
-				String[] datasourceIds = StringUtils.split(datasourcesCSV, 
-						DEFAULT_CSV_DELIMITER);
-				objectStoreIds = new String[datasourceIds.length];
-				for (int i=0; i<datasourceIds.length; i++) {
-					objectStoreIds[i] = ObjectStoreContentProviderUtils.objectStoreIdLookup(
-							lookupService, datasourceIds[i]);
-				}
-			}
+		    log.warn("no object stores provided, empty results will be returned");
+		    objectStoreIds = new String[0];
 		}
 //		instantiating object store service
 		W3CEndpointReferenceBuilder eprBuilder = new W3CEndpointReferenceBuilder();
@@ -198,19 +158,19 @@ public class ObjectStoreDocumentContentUrlImporterProcess implements Process {
 		long intervalTime = startTime;
 		
 		int sourceIdx=0;
-		log.warn("starting url retrieval...");
+		log.debug("starting url retrieval...");
 		for (String currentObjectStoreId : objectStoreIds) {
 			if (blacklistedObjectStoreIds.contains(currentObjectStoreId)) {
-				log.warn("skipping blacklisted objectstore: " + currentObjectStoreId);
+				log.debug("skipping blacklisted objectstore: " + currentObjectStoreId);
 				continue;
 			}
 			
-			log.warn("starting importing process from object store: " + currentObjectStoreId);
+			log.debug("starting importing process from object store: " + currentObjectStoreId);
 			W3CEndpointReference objStoreResults = objectStore.deliverObjects(
 					currentObjectStoreId, 
 					0l,
 	                System.currentTimeMillis());
-			log.warn("obtained ObjectStore ResultSet EPR: " + objStoreResults.toString());
+			log.debug("obtained ObjectStore ResultSet EPR: " + objStoreResults.toString());
 
 //			obtaining resultSet
 			ResultSetClientFactory rsFactory = new ResultSetClientFactory();
@@ -247,21 +207,21 @@ public class ObjectStoreDocumentContentUrlImporterProcess implements Process {
 				}
 				
 				if (sourceIdx>0 && sourceIdx%progresLogInterval==0) {
-					log.warn("content retrieval progress: " + sourceIdx + ", time taken to process " +
+					log.debug("content retrieval progress: " + sourceIdx + ", time taken to process " +
 							progresLogInterval + " elements: " +
 						((System.currentTimeMillis() - intervalTime)/1000) + " secs");
 					intervalTime = System.currentTimeMillis();
 				}
 				sourceIdx++;
 			}
-			log.warn("URL importing process from object store: " + currentObjectStoreId + " has finished");
+			log.debug("URL importing process from object store: " + currentObjectStoreId + " has finished");
 		}
 		
 		contentsQueue.add(new Poison());
-		log.warn("waiting for writer thread finishing writing content");
+		log.debug("waiting for writer thread finishing writing content");
 		contentExecutorFuture.get();
 		writerExecutor.shutdown();
-		log.warn("content retrieval for "+sourceIdx+" documents finished in " + 
+		log.debug("content retrieval for "+sourceIdx+" documents finished in " + 
 				((System.currentTimeMillis()-startTime)/1000) + " secs");
 	}
 	
