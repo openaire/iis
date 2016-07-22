@@ -17,6 +17,15 @@
 			<name>output_document_meta</name>
 			<description>document extracted metadata ouput: all metadata records which were already processed, found in input_document_meta</description>
 		</property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
+            <name>output_report_relative_path</name>
+            <value>import_metadataextraction_cache</value>
+            <description>directory for storing report (relative to output_report_root_path)</description>
+        </property>
 		<property>
 			<name>mapred_map_child_java_opts</name>
 			<value>-Xmx4g</value>
@@ -74,6 +83,10 @@
                     <name>mapreduce.reduce.java.opts</name>
                     <value>${mapred_reduce_child_java_opts}</value>
                 </property>
+                <property>
+                    <name>oozie.action.external.stats.write</name>
+                    <value>true</value>
+                </property>
             </configuration>
             <!-- Path to PIG script the workflow executes. -->
             <script>lib/scripts/transformer.pig</script>
@@ -88,9 +101,22 @@
             <param>output_document_meta=${output_document_meta}</param>
             
         </pig>
-        <ok to="end"/>
+        <ok to="report"/>
         <error to="fail"/>
     </action>
+    
+    <action name="report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.PigCountersReportGenerator</arg>
+            <arg>-PpigCounters=${hadoop:counters('transformer')}</arg>
+            <arg>-Preport.import.metadataExtraction.fromCache={documentMetaFiltered.REDUCE_OUTPUT_RECORDS}</arg>
+            <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
     <kill name="fail">
 		<message>Unfortunately, the workflow failed -- error message:
 			[${wf:errorMessage(wf:lastErrorNode())}]</message>

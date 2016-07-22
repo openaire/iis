@@ -1,0 +1,613 @@
+{
+  "NUMBER_JOBS": "4",
+  "SMM_SPILL_COUNT": "0",
+  "ERROR_MESSAGE": null,
+  "RETURN_CODE": "0",
+  "JOB_GRAPH": "job_1467867518322_6688,job_1467867518322_6687,job_1467867518322_6689,job_1467867518322_6690",
+  "job_1467867518322_6690": {
+    "REDUCE_INPUT_RECORDS": "6",
+    "JOB_ID": "job_1467867518322_6690",
+    "AVG_REDUCE_TIME": "3134",
+    "NUMBER_MAPS": "2",
+    "MAP_INPUT_RECORDS": "6",
+    "ERROR_MESSAGE": null,
+    "PROACTIVE_SPILL_COUNT_RECS": "0",
+    "MIN_REDUCE_TIME": "3134",
+    "MAX_REDUCE_TIME": "3134",
+    "RECORD_WRITTEN": "2",
+    "MULTI_STORE_COUNTERS": {
+      
+    },
+    "REDUCE_OUTPUT_RECORDS": "2",
+    "MAX_MAP_TIME": "2992",
+    "BYTES_WRITTEN": "3445",
+    "NUMBER_REDUCES": "1",
+    "SMMS_SPILL_COUNT": "0",
+    "MAP_OUTPUT_RECORDS": "6",
+    "Alias": "documentMetaFiltered,joinedDocumentMeta",
+    "PROACTIVE_SPILL_COUNT_OBJECTS": "0",
+    "FEATURE": "HASH_JOIN",
+    "AVG_MAP_TIME": "2991",
+    "HADOOP_COUNTERS": {
+      "org.apache.hadoop.mapreduce.FileSystemCounter": {
+        "FILE_LARGE_READ_OPS": "0",
+        "FILE_WRITE_OPS": "0",
+        "HDFS_READ_OPS": "7",
+        "HDFS_BYTES_READ": "1554",
+        "HDFS_LARGE_READ_OPS": "0",
+        "FILE_READ_OPS": "0",
+        "FILE_BYTES_WRITTEN": "1004906",
+        "FILE_BYTES_READ": "753",
+        "HDFS_WRITE_OPS": "2",
+        "HDFS_BYTES_WRITTEN": "3445"
+      },
+      "org.apache.hadoop.mapred.Task$Counter": {
+        "MAP_OUTPUT_MATERIALIZED_BYTES": "759",
+        "REDUCE_INPUT_RECORDS": "6",
+        "SPILLED_RECORDS": "12",
+        "MERGED_MAP_OUTPUTS": "2",
+        "VIRTUAL_MEMORY_BYTES": "5809750016",
+        "MAP_INPUT_RECORDS": "6",
+        "SPLIT_RAW_BYTES": "817",
+        "FAILED_SHUFFLE": "0",
+        "MAP_OUTPUT_BYTES": "731",
+        "REDUCE_SHUFFLE_BYTES": "759",
+        "PHYSICAL_MEMORY_BYTES": "786178048",
+        "GC_TIME_MILLIS": "143",
+        "REDUCE_INPUT_GROUPS": "4",
+        "COMBINE_OUTPUT_RECORDS": "0",
+        "SHUFFLED_MAPS": "2",
+        "REDUCE_OUTPUT_RECORDS": "2",
+        "MAP_OUTPUT_RECORDS": "6",
+        "COMBINE_INPUT_RECORDS": "0",
+        "CPU_MILLISECONDS": "3040",
+        "COMMITTED_HEAP_BYTES": "534773760"
+      },
+      "org.apache.hadoop.mapreduce.lib.output.FileOutputFormatCounter": {
+        "BYTES_WRITTEN": "0"
+      },
+      "org.apache.hadoop.mapreduce.lib.input.FileInputFormatCounter": {
+        "BYTES_READ": "0"
+      },
+      "org.apache.pig.PigCounters": {
+        "SPILLABLE_MEMORY_MANAGER_SPILL_COUNT": "0",
+        "PROACTIVE_SPILL_COUNT_BAGS": "0",
+        "PROACTIVE_SPILL_COUNT_RECS": "0"
+      },
+      "org.apache.hadoop.mapreduce.JobCounter": {
+        "TOTAL_LAUNCHED_MAPS": "2",
+        "VCORES_MILLIS_REDUCES": "3134",
+        "MB_MILLIS_MAPS": "9188352",
+        "TOTAL_LAUNCHED_REDUCES": "1",
+        "SLOTS_MILLIS_REDUCES": "3134",
+        "VCORES_MILLIS_MAPS": "5982",
+        "MB_MILLIS_REDUCES": "783500",
+        "SLOTS_MILLIS_MAPS": "17946",
+        "MILLIS_REDUCES": "3134",
+        "MILLIS_MAPS": "5982",
+        "DATA_LOCAL_MAPS": "2"
+      },
+      "MultiInputCounters": {
+        "Input records from _1_tmp-574932249": "3",
+        "Input records from _0_tmp-1084563255": "3"
+      },
+      "MultiStoreCounters": {
+        
+      },
+      "FileSystemCounters": {
+        "FILE_LARGE_READ_OPS": "0",
+        "FILE_WRITE_OPS": "0",
+        "HDFS_READ_OPS": "7",
+        "HDFS_BYTES_READ": "1554",
+        "HDFS_LARGE_READ_OPS": "0",
+        "FILE_READ_OPS": "0",
+        "FILE_BYTES_WRITTEN": "1004906",
+        "FILE_BYTES_READ": "753",
+        "HDFS_WRITE_OPS": "2",
+        "HDFS_BYTES_WRITTEN": "3445"
+      },
+      "org.apache.hadoop.mapred.JobInProgress$Counter": {
+        "TOTAL_LAUNCHED_MAPS": "2",
+        "VCORES_MILLIS_REDUCES": "3134",
+        "MB_MILLIS_MAPS": "9188352",
+        "TOTAL_LAUNCHED_REDUCES": "1",
+        "SLOTS_MILLIS_REDUCES": "3134",
+        "VCORES_MILLIS_MAPS": "5982",
+        "MB_MILLIS_REDUCES": "783500",
+        "SLOTS_MILLIS_MAPS": "17946",
+        "MILLIS_REDUCES": "3134",
+        "MILLIS_MAPS": "5982",
+        "DATA_LOCAL_MAPS": "2"
+      },
+      "org.apache.hadoop.mapreduce.TaskCounter": {
+        "MAP_OUTPUT_MATERIALIZED_BYTES": "759",
+        "REDUCE_INPUT_RECORDS": "6",
+        "SPILLED_RECORDS": "12",
+        "MERGED_MAP_OUTPUTS": "2",
+        "VIRTUAL_MEMORY_BYTES": "5809750016",
+        "MAP_INPUT_RECORDS": "6",
+        "SPLIT_RAW_BYTES": "817",
+        "FAILED_SHUFFLE": "0",
+        "MAP_OUTPUT_BYTES": "731",
+        "REDUCE_SHUFFLE_BYTES": "759",
+        "PHYSICAL_MEMORY_BYTES": "786178048",
+        "GC_TIME_MILLIS": "143",
+        "REDUCE_INPUT_GROUPS": "4",
+        "COMBINE_OUTPUT_RECORDS": "0",
+        "SHUFFLED_MAPS": "2",
+        "REDUCE_OUTPUT_RECORDS": "2",
+        "MAP_OUTPUT_RECORDS": "6",
+        "COMBINE_INPUT_RECORDS": "0",
+        "CPU_MILLISECONDS": "3040",
+        "COMMITTED_HEAP_BYTES": "534773760"
+      },
+      "Shuffle Errors": {
+        "CONNECTION": "0",
+        "WRONG_LENGTH": "0",
+        "BAD_ID": "0",
+        "WRONG_MAP": "0",
+        "WRONG_REDUCE": "0",
+        "IO_ERROR": "0"
+      }
+    },
+    "MIN_MAP_TIME": "2990",
+    "HDFS_BYTES_WRITTEN": "3445"
+  },
+  "RECORD_WRITTEN": "3",
+  "ERROR_CODE": "-1",
+  "FEATURES": "HASH_JOIN,DISTINCT,FILTER",
+  "org.apache.hadoop.mapred.Task$Counter": null,
+  "SCRIPT_ID": "1bbda10f-3149-49de-9798-77ec97b5e3e1",
+  "PIG_VERSION": "0.12.0-cdh5.5.2",
+  "BYTES_WRITTEN": "3870",
+  "job_1467867518322_6688": {
+    "REDUCE_INPUT_RECORDS": "3",
+    "JOB_ID": "job_1467867518322_6688",
+    "AVG_REDUCE_TIME": "2839",
+    "NUMBER_MAPS": "1",
+    "MAP_INPUT_RECORDS": "3",
+    "ERROR_MESSAGE": null,
+    "PROACTIVE_SPILL_COUNT_RECS": "0",
+    "MIN_REDUCE_TIME": "2839",
+    "MAX_REDUCE_TIME": "2839",
+    "RECORD_WRITTEN": "0",
+    "MULTI_STORE_COUNTERS": {
+      
+    },
+    "REDUCE_OUTPUT_RECORDS": "0",
+    "MAX_MAP_TIME": "3131",
+    "BYTES_WRITTEN": "0",
+    "NUMBER_REDUCES": "1",
+    "SMMS_SPILL_COUNT": "0",
+    "MAP_OUTPUT_RECORDS": "3",
+    "Alias": "documentContent,documentContentId",
+    "PROACTIVE_SPILL_COUNT_OBJECTS": "0",
+    "FEATURE": "DISTINCT,MULTI_QUERY",
+    "AVG_MAP_TIME": "3131",
+    "HADOOP_COUNTERS": {
+      "org.apache.hadoop.mapreduce.FileSystemCounter": {
+        "FILE_LARGE_READ_OPS": "0",
+        "FILE_WRITE_OPS": "0",
+        "HDFS_READ_OPS": "11",
+        "HDFS_BYTES_READ": "2397",
+        "HDFS_LARGE_READ_OPS": "0",
+        "FILE_READ_OPS": "0",
+        "FILE_BYTES_WRITTEN": "660265",
+        "FILE_BYTES_READ": "51",
+        "HDFS_WRITE_OPS": "4",
+        "HDFS_BYTES_WRITTEN": "170"
+      },
+      "org.apache.hadoop.mapred.Task$Counter": {
+        "MAP_OUTPUT_MATERIALIZED_BYTES": "51",
+        "REDUCE_INPUT_RECORDS": "3",
+        "SPILLED_RECORDS": "6",
+        "MERGED_MAP_OUTPUTS": "1",
+        "VIRTUAL_MEMORY_BYTES": "3871928320",
+        "MAP_INPUT_RECORDS": "3",
+        "SPLIT_RAW_BYTES": "508",
+        "FAILED_SHUFFLE": "0",
+        "MAP_OUTPUT_BYTES": "39",
+        "REDUCE_SHUFFLE_BYTES": "51",
+        "PHYSICAL_MEMORY_BYTES": "487956480",
+        "GC_TIME_MILLIS": "91",
+        "REDUCE_INPUT_GROUPS": "3",
+        "COMBINE_OUTPUT_RECORDS": "3",
+        "SHUFFLED_MAPS": "1",
+        "REDUCE_OUTPUT_RECORDS": "0",
+        "MAP_OUTPUT_RECORDS": "3",
+        "COMBINE_INPUT_RECORDS": "3",
+        "CPU_MILLISECONDS": "3180",
+        "COMMITTED_HEAP_BYTES": "334495744"
+      },
+      "org.apache.hadoop.mapreduce.lib.output.FileOutputFormatCounter": {
+        "BYTES_WRITTEN": "0"
+      },
+      "org.apache.hadoop.mapreduce.lib.input.FileInputFormatCounter": {
+        "BYTES_READ": "0"
+      },
+      "org.apache.pig.PigCounters": {
+        "SPILLABLE_MEMORY_MANAGER_SPILL_COUNT": "0",
+        "PROACTIVE_SPILL_COUNT_BAGS": "0",
+        "PROACTIVE_SPILL_COUNT_RECS": "0"
+      },
+      "org.apache.hadoop.mapreduce.JobCounter": {
+        "TOTAL_LAUNCHED_MAPS": "1",
+        "VCORES_MILLIS_REDUCES": "2839",
+        "MB_MILLIS_MAPS": "4809216",
+        "TOTAL_LAUNCHED_REDUCES": "1",
+        "SLOTS_MILLIS_REDUCES": "2839",
+        "VCORES_MILLIS_MAPS": "3131",
+        "MB_MILLIS_REDUCES": "709750",
+        "SLOTS_MILLIS_MAPS": "9393",
+        "MILLIS_REDUCES": "2839",
+        "MILLIS_MAPS": "3131",
+        "DATA_LOCAL_MAPS": "1"
+      },
+      "MultiInputCounters": {
+        
+      },
+      "MultiStoreCounters": {
+        
+      },
+      "FileSystemCounters": {
+        "FILE_LARGE_READ_OPS": "0",
+        "FILE_WRITE_OPS": "0",
+        "HDFS_READ_OPS": "11",
+        "HDFS_BYTES_READ": "2397",
+        "HDFS_LARGE_READ_OPS": "0",
+        "FILE_READ_OPS": "0",
+        "FILE_BYTES_WRITTEN": "660265",
+        "FILE_BYTES_READ": "51",
+        "HDFS_WRITE_OPS": "4",
+        "HDFS_BYTES_WRITTEN": "170"
+      },
+      "org.apache.hadoop.mapred.JobInProgress$Counter": {
+        "TOTAL_LAUNCHED_MAPS": "1",
+        "VCORES_MILLIS_REDUCES": "2839",
+        "MB_MILLIS_MAPS": "4809216",
+        "TOTAL_LAUNCHED_REDUCES": "1",
+        "SLOTS_MILLIS_REDUCES": "2839",
+        "VCORES_MILLIS_MAPS": "3131",
+        "MB_MILLIS_REDUCES": "709750",
+        "SLOTS_MILLIS_MAPS": "9393",
+        "MILLIS_REDUCES": "2839",
+        "MILLIS_MAPS": "3131",
+        "DATA_LOCAL_MAPS": "1"
+      },
+      "org.apache.hadoop.mapreduce.TaskCounter": {
+        "MAP_OUTPUT_MATERIALIZED_BYTES": "51",
+        "REDUCE_INPUT_RECORDS": "3",
+        "SPILLED_RECORDS": "6",
+        "MERGED_MAP_OUTPUTS": "1",
+        "VIRTUAL_MEMORY_BYTES": "3871928320",
+        "MAP_INPUT_RECORDS": "3",
+        "SPLIT_RAW_BYTES": "508",
+        "FAILED_SHUFFLE": "0",
+        "MAP_OUTPUT_BYTES": "39",
+        "REDUCE_SHUFFLE_BYTES": "51",
+        "PHYSICAL_MEMORY_BYTES": "487956480",
+        "GC_TIME_MILLIS": "91",
+        "REDUCE_INPUT_GROUPS": "3",
+        "COMBINE_OUTPUT_RECORDS": "3",
+        "SHUFFLED_MAPS": "1",
+        "REDUCE_OUTPUT_RECORDS": "0",
+        "MAP_OUTPUT_RECORDS": "3",
+        "COMBINE_INPUT_RECORDS": "3",
+        "CPU_MILLISECONDS": "3180",
+        "COMMITTED_HEAP_BYTES": "334495744"
+      },
+      "Shuffle Errors": {
+        "CONNECTION": "0",
+        "WRONG_LENGTH": "0",
+        "BAD_ID": "0",
+        "WRONG_MAP": "0",
+        "WRONG_REDUCE": "0",
+        "IO_ERROR": "0"
+      }
+    },
+    "MIN_MAP_TIME": "3131",
+    "HDFS_BYTES_WRITTEN": "170"
+  },
+  "PROACTIVE_SPILL_COUNT_RECORDS": "0",
+  "job_1467867518322_6687": {
+    "REDUCE_INPUT_RECORDS": "3",
+    "JOB_ID": "job_1467867518322_6687",
+    "AVG_REDUCE_TIME": "2806",
+    "NUMBER_MAPS": "1",
+    "MAP_INPUT_RECORDS": "3",
+    "ERROR_MESSAGE": null,
+    "PROACTIVE_SPILL_COUNT_RECS": "0",
+    "MIN_REDUCE_TIME": "2806",
+    "MAX_REDUCE_TIME": "2806",
+    "RECORD_WRITTEN": "0",
+    "MULTI_STORE_COUNTERS": {
+      
+    },
+    "REDUCE_OUTPUT_RECORDS": "0",
+    "MAX_MAP_TIME": "3149",
+    "BYTES_WRITTEN": "0",
+    "NUMBER_REDUCES": "1",
+    "SMMS_SPILL_COUNT": "0",
+    "MAP_OUTPUT_RECORDS": "3",
+    "Alias": "cachedDocumentId,documentMeta",
+    "PROACTIVE_SPILL_COUNT_OBJECTS": "0",
+    "FEATURE": "DISTINCT,MULTI_QUERY",
+    "AVG_MAP_TIME": "3149",
+    "HADOOP_COUNTERS": {
+      "org.apache.hadoop.mapreduce.FileSystemCounter": {
+        "FILE_LARGE_READ_OPS": "0",
+        "FILE_WRITE_OPS": "0",
+        "HDFS_READ_OPS": "11",
+        "HDFS_BYTES_READ": "14351",
+        "HDFS_LARGE_READ_OPS": "0",
+        "FILE_READ_OPS": "0",
+        "FILE_BYTES_WRITTEN": "660913",
+        "FILE_BYTES_READ": "51",
+        "HDFS_WRITE_OPS": "4",
+        "HDFS_BYTES_WRITTEN": "737"
+      },
+      "org.apache.hadoop.mapred.Task$Counter": {
+        "MAP_OUTPUT_MATERIALIZED_BYTES": "51",
+        "REDUCE_INPUT_RECORDS": "3",
+        "SPILLED_RECORDS": "6",
+        "MERGED_MAP_OUTPUTS": "1",
+        "VIRTUAL_MEMORY_BYTES": "3882262528",
+        "MAP_INPUT_RECORDS": "3",
+        "SPLIT_RAW_BYTES": "515",
+        "FAILED_SHUFFLE": "0",
+        "MAP_OUTPUT_BYTES": "39",
+        "REDUCE_SHUFFLE_BYTES": "51",
+        "PHYSICAL_MEMORY_BYTES": "486498304",
+        "GC_TIME_MILLIS": "91",
+        "REDUCE_INPUT_GROUPS": "3",
+        "COMBINE_OUTPUT_RECORDS": "3",
+        "SHUFFLED_MAPS": "1",
+        "REDUCE_OUTPUT_RECORDS": "0",
+        "MAP_OUTPUT_RECORDS": "3",
+        "COMBINE_INPUT_RECORDS": "3",
+        "CPU_MILLISECONDS": "3230",
+        "COMMITTED_HEAP_BYTES": "335020032"
+      },
+      "org.apache.hadoop.mapreduce.lib.output.FileOutputFormatCounter": {
+        "BYTES_WRITTEN": "0"
+      },
+      "org.apache.hadoop.mapreduce.lib.input.FileInputFormatCounter": {
+        "BYTES_READ": "0"
+      },
+      "org.apache.pig.PigCounters": {
+        "SPILLABLE_MEMORY_MANAGER_SPILL_COUNT": "0",
+        "PROACTIVE_SPILL_COUNT_BAGS": "0",
+        "PROACTIVE_SPILL_COUNT_RECS": "0"
+      },
+      "org.apache.hadoop.mapreduce.JobCounter": {
+        "TOTAL_LAUNCHED_MAPS": "1",
+        "VCORES_MILLIS_REDUCES": "2806",
+        "MB_MILLIS_MAPS": "4836864",
+        "TOTAL_LAUNCHED_REDUCES": "1",
+        "SLOTS_MILLIS_REDUCES": "2806",
+        "VCORES_MILLIS_MAPS": "3149",
+        "MB_MILLIS_REDUCES": "701500",
+        "SLOTS_MILLIS_MAPS": "9447",
+        "MILLIS_REDUCES": "2806",
+        "MILLIS_MAPS": "3149",
+        "DATA_LOCAL_MAPS": "1"
+      },
+      "MultiInputCounters": {
+        
+      },
+      "MultiStoreCounters": {
+        
+      },
+      "FileSystemCounters": {
+        "FILE_LARGE_READ_OPS": "0",
+        "FILE_WRITE_OPS": "0",
+        "HDFS_READ_OPS": "11",
+        "HDFS_BYTES_READ": "14351",
+        "HDFS_LARGE_READ_OPS": "0",
+        "FILE_READ_OPS": "0",
+        "FILE_BYTES_WRITTEN": "660913",
+        "FILE_BYTES_READ": "51",
+        "HDFS_WRITE_OPS": "4",
+        "HDFS_BYTES_WRITTEN": "737"
+      },
+      "org.apache.hadoop.mapred.JobInProgress$Counter": {
+        "TOTAL_LAUNCHED_MAPS": "1",
+        "VCORES_MILLIS_REDUCES": "2806",
+        "MB_MILLIS_MAPS": "4836864",
+        "TOTAL_LAUNCHED_REDUCES": "1",
+        "SLOTS_MILLIS_REDUCES": "2806",
+        "VCORES_MILLIS_MAPS": "3149",
+        "MB_MILLIS_REDUCES": "701500",
+        "SLOTS_MILLIS_MAPS": "9447",
+        "MILLIS_REDUCES": "2806",
+        "MILLIS_MAPS": "3149",
+        "DATA_LOCAL_MAPS": "1"
+      },
+      "org.apache.hadoop.mapreduce.TaskCounter": {
+        "MAP_OUTPUT_MATERIALIZED_BYTES": "51",
+        "REDUCE_INPUT_RECORDS": "3",
+        "SPILLED_RECORDS": "6",
+        "MERGED_MAP_OUTPUTS": "1",
+        "VIRTUAL_MEMORY_BYTES": "3882262528",
+        "MAP_INPUT_RECORDS": "3",
+        "SPLIT_RAW_BYTES": "515",
+        "FAILED_SHUFFLE": "0",
+        "MAP_OUTPUT_BYTES": "39",
+        "REDUCE_SHUFFLE_BYTES": "51",
+        "PHYSICAL_MEMORY_BYTES": "486498304",
+        "GC_TIME_MILLIS": "91",
+        "REDUCE_INPUT_GROUPS": "3",
+        "COMBINE_OUTPUT_RECORDS": "3",
+        "SHUFFLED_MAPS": "1",
+        "REDUCE_OUTPUT_RECORDS": "0",
+        "MAP_OUTPUT_RECORDS": "3",
+        "COMBINE_INPUT_RECORDS": "3",
+        "CPU_MILLISECONDS": "3230",
+        "COMMITTED_HEAP_BYTES": "335020032"
+      },
+      "Shuffle Errors": {
+        "CONNECTION": "0",
+        "WRONG_LENGTH": "0",
+        "BAD_ID": "0",
+        "WRONG_MAP": "0",
+        "WRONG_REDUCE": "0",
+        "IO_ERROR": "0"
+      }
+    },
+    "MIN_MAP_TIME": "3149",
+    "HDFS_BYTES_WRITTEN": "737"
+  },
+  "PROACTIVE_SPILL_COUNT_OBJECTS": "0",
+  "job_1467867518322_6689": {
+    "REDUCE_INPUT_RECORDS": "6",
+    "JOB_ID": "job_1467867518322_6689",
+    "AVG_REDUCE_TIME": "3144",
+    "NUMBER_MAPS": "2",
+    "MAP_INPUT_RECORDS": "6",
+    "ERROR_MESSAGE": null,
+    "PROACTIVE_SPILL_COUNT_RECS": "0",
+    "MIN_REDUCE_TIME": "3144",
+    "MAX_REDUCE_TIME": "3144",
+    "RECORD_WRITTEN": "1",
+    "MULTI_STORE_COUNTERS": {
+      
+    },
+    "REDUCE_OUTPUT_RECORDS": "1",
+    "MAX_MAP_TIME": "3211",
+    "BYTES_WRITTEN": "425",
+    "NUMBER_REDUCES": "1",
+    "SMMS_SPILL_COUNT": "0",
+    "MAP_OUTPUT_RECORDS": "6",
+    "Alias": "documentContentFiltered,joinedDocumentContent,joinedFilteredDocumentContent",
+    "PROACTIVE_SPILL_COUNT_OBJECTS": "0",
+    "FEATURE": "HASH_JOIN",
+    "AVG_MAP_TIME": "3092",
+    "HADOOP_COUNTERS": {
+      "org.apache.hadoop.mapreduce.FileSystemCounter": {
+        "FILE_LARGE_READ_OPS": "0",
+        "FILE_WRITE_OPS": "0",
+        "HDFS_READ_OPS": "7",
+        "HDFS_BYTES_READ": "986",
+        "HDFS_LARGE_READ_OPS": "0",
+        "FILE_READ_OPS": "0",
+        "FILE_BYTES_WRITTEN": "994506",
+        "FILE_BYTES_READ": "182",
+        "HDFS_WRITE_OPS": "2",
+        "HDFS_BYTES_WRITTEN": "425"
+      },
+      "org.apache.hadoop.mapred.Task$Counter": {
+        "MAP_OUTPUT_MATERIALIZED_BYTES": "188",
+        "REDUCE_INPUT_RECORDS": "6",
+        "SPILLED_RECORDS": "12",
+        "MERGED_MAP_OUTPUTS": "2",
+        "VIRTUAL_MEMORY_BYTES": "5800415232",
+        "MAP_INPUT_RECORDS": "6",
+        "SPLIT_RAW_BYTES": "816",
+        "FAILED_SHUFFLE": "0",
+        "MAP_OUTPUT_BYTES": "164",
+        "REDUCE_SHUFFLE_BYTES": "188",
+        "PHYSICAL_MEMORY_BYTES": "770134016",
+        "GC_TIME_MILLIS": "143",
+        "REDUCE_INPUT_GROUPS": "4",
+        "COMBINE_OUTPUT_RECORDS": "0",
+        "SHUFFLED_MAPS": "2",
+        "REDUCE_OUTPUT_RECORDS": "1",
+        "MAP_OUTPUT_RECORDS": "6",
+        "COMBINE_INPUT_RECORDS": "0",
+        "CPU_MILLISECONDS": "2770",
+        "COMMITTED_HEAP_BYTES": "535298048"
+      },
+      "org.apache.hadoop.mapreduce.lib.output.FileOutputFormatCounter": {
+        "BYTES_WRITTEN": "0"
+      },
+      "org.apache.hadoop.mapreduce.lib.input.FileInputFormatCounter": {
+        "BYTES_READ": "0"
+      },
+      "org.apache.pig.PigCounters": {
+        "SPILLABLE_MEMORY_MANAGER_SPILL_COUNT": "0",
+        "PROACTIVE_SPILL_COUNT_BAGS": "0",
+        "PROACTIVE_SPILL_COUNT_RECS": "0"
+      },
+      "org.apache.hadoop.mapreduce.JobCounter": {
+        "TOTAL_LAUNCHED_MAPS": "2",
+        "VCORES_MILLIS_REDUCES": "3144",
+        "MB_MILLIS_MAPS": "9498624",
+        "TOTAL_LAUNCHED_REDUCES": "1",
+        "SLOTS_MILLIS_REDUCES": "3144",
+        "VCORES_MILLIS_MAPS": "6184",
+        "MB_MILLIS_REDUCES": "786000",
+        "SLOTS_MILLIS_MAPS": "18552",
+        "MILLIS_REDUCES": "3144",
+        "MILLIS_MAPS": "6184",
+        "DATA_LOCAL_MAPS": "2"
+      },
+      "MultiInputCounters": {
+        "Input records from _0_tmp1119502579": "3",
+        "Input records from _1_tmp1557464577": "3"
+      },
+      "MultiStoreCounters": {
+        
+      },
+      "FileSystemCounters": {
+        "FILE_LARGE_READ_OPS": "0",
+        "FILE_WRITE_OPS": "0",
+        "HDFS_READ_OPS": "7",
+        "HDFS_BYTES_READ": "986",
+        "HDFS_LARGE_READ_OPS": "0",
+        "FILE_READ_OPS": "0",
+        "FILE_BYTES_WRITTEN": "994506",
+        "FILE_BYTES_READ": "182",
+        "HDFS_WRITE_OPS": "2",
+        "HDFS_BYTES_WRITTEN": "425"
+      },
+      "org.apache.hadoop.mapred.JobInProgress$Counter": {
+        "TOTAL_LAUNCHED_MAPS": "2",
+        "VCORES_MILLIS_REDUCES": "3144",
+        "MB_MILLIS_MAPS": "9498624",
+        "TOTAL_LAUNCHED_REDUCES": "1",
+        "SLOTS_MILLIS_REDUCES": "3144",
+        "VCORES_MILLIS_MAPS": "6184",
+        "MB_MILLIS_REDUCES": "786000",
+        "SLOTS_MILLIS_MAPS": "18552",
+        "MILLIS_REDUCES": "3144",
+        "MILLIS_MAPS": "6184",
+        "DATA_LOCAL_MAPS": "2"
+      },
+      "org.apache.hadoop.mapreduce.TaskCounter": {
+        "MAP_OUTPUT_MATERIALIZED_BYTES": "188",
+        "REDUCE_INPUT_RECORDS": "6",
+        "SPILLED_RECORDS": "12",
+        "MERGED_MAP_OUTPUTS": "2",
+        "VIRTUAL_MEMORY_BYTES": "5800415232",
+        "MAP_INPUT_RECORDS": "6",
+        "SPLIT_RAW_BYTES": "816",
+        "FAILED_SHUFFLE": "0",
+        "MAP_OUTPUT_BYTES": "164",
+        "REDUCE_SHUFFLE_BYTES": "188",
+        "PHYSICAL_MEMORY_BYTES": "770134016",
+        "GC_TIME_MILLIS": "143",
+        "REDUCE_INPUT_GROUPS": "4",
+        "COMBINE_OUTPUT_RECORDS": "0",
+        "SHUFFLED_MAPS": "2",
+        "REDUCE_OUTPUT_RECORDS": "1",
+        "MAP_OUTPUT_RECORDS": "6",
+        "COMBINE_INPUT_RECORDS": "0",
+        "CPU_MILLISECONDS": "2770",
+        "COMMITTED_HEAP_BYTES": "535298048"
+      },
+      "Shuffle Errors": {
+        "CONNECTION": "0",
+        "WRONG_LENGTH": "0",
+        "BAD_ID": "0",
+        "WRONG_MAP": "0",
+        "WRONG_REDUCE": "0",
+        "IO_ERROR": "0"
+      }
+    },
+    "MIN_MAP_TIME": "2973",
+    "HDFS_BYTES_WRITTEN": "425"
+  },
+  "HADOOP_VERSION": "2.6.0-cdh5.5.2",
+  "DURATION": "92829",
+  "ACTION_TYPE": "PIG"
+}

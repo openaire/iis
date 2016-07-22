@@ -22,6 +22,15 @@
 				'text' - pmc xml record causing fault
 			</description>
 		</property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
+            <name>output_report_relative_path</name>
+            <value>import_ingest_pmc</value>
+            <description>directory for storing report (relative to output_report_root_path)</description>
+        </property>
 		<property>
 			<name>ingest_metadata</name>
 			<value>true</value>
@@ -172,11 +181,31 @@
 					<name>ingest.metadata</name>
 					<value>${ingest_metadata}</value>
 				</property>
+                <property>
+                    <name>oozie.action.external.stats.write</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>avro.mapreduce.multipleoutputs.counters</name>
+                    <value>true</value>
+                </property>
 			</configuration>
 		</map-reduce>
-		<ok to="end" />
+		<ok to="report" />
 		<error to="fail" />
 	</action>
+
+    <action name="report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
+            <arg>-Preport.import.ingest.pmc.correct=${hadoop:counters('ingest')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_meta,'/part')]}</arg>
+            <arg>-Preport.import.ingest.pmc.fault=${hadoop:counters('ingest')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_fault,'/part')]}</arg>
+            <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
 
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:
