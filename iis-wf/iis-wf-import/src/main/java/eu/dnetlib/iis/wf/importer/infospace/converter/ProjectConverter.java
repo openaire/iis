@@ -55,13 +55,26 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
                 Project.Builder builder = Project.newBuilder();
                 builder.setId(oafEntity.getId());
                 StringField acronym = sourceProject.getMetadata().getAcronym();
+                
                 if (isAcronymValid(acronym)) {
                     builder.setProjectAcronym(acronym.getValue());
                 }
+                
                 String projectGrantId = sourceProject.getMetadata().getCode().getValue();
                 if (StringUtils.isNotBlank(projectGrantId)) {
                     builder.setProjectGrantId(projectGrantId);
                 }
+                
+                String optional1 = sourceProject.getMetadata().getOptional1().getValue();
+                if (StringUtils.isNotBlank(optional1)) {
+                    builder.setOptional1(optional1);
+                }
+                
+                String optional2 = sourceProject.getMetadata().getOptional2().getValue();
+                if (StringUtils.isNotBlank(optional2)) {
+                    builder.setOptional2(optional2);
+                }
+                
                 String extractedFundingClass = extractFundingClass(
                         extractStringValues(sourceProject.getMetadata().getFundingtreeList()));
                 if (StringUtils.isNotBlank(extractedFundingClass)) {

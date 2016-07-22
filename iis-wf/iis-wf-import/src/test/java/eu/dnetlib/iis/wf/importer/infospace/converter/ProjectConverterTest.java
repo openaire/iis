@@ -29,6 +29,8 @@ public class ProjectConverterTest {
     private static final String INVALID_ACRONYM = "UNDEFINED";
     private static final String GRANT_ID = "another identifier";
     private static final String FUNDING_CLASS = "WT::WT";
+    private static final String OPTIONAL1 = "opt1";
+    private static final String OPTIONAL2 = "opt2";
 
 
     private ProjectConverter converter = new ProjectConverter();
@@ -69,6 +71,30 @@ public class ProjectConverterTest {
         // assert
         assertNull(project);
     }
+    
+    @Test
+    public void convert_no_optional() throws IOException {
+        // given
+        OafEntity.Builder builder = emptyEntityBuilder(ID);
+
+        Metadata.Builder mdBuilder = builder.getProjectBuilder().getMetadataBuilder();
+        mdBuilder.getCodeBuilder().setValue(GRANT_ID);
+        mdBuilder.addFundingtreeBuilder().setValue(readFundingTree());
+
+        OafEntity oafEntity = builder.build();
+
+        // execute
+        Project project = converter.convert(oafEntity);
+
+        // assert
+        assertEquals(ID, project.getId());
+        assertEquals(GRANT_ID, project.getProjectGrantId());
+        assertEquals(FUNDING_CLASS, project.getFundingClass());
+        assertNull(project.getProjectAcronym());
+        assertNull(project.getOptional1());
+        assertNull(project.getOptional2());
+        
+    }
 
     @Test
     public void convert() throws IOException {
@@ -78,6 +104,8 @@ public class ProjectConverterTest {
         Metadata.Builder mdBuilder = builder.getProjectBuilder().getMetadataBuilder();
         mdBuilder.getAcronymBuilder().setValue(ACRONYM);
         mdBuilder.getCodeBuilder().setValue(GRANT_ID);
+        mdBuilder.getOptional1Builder().setValue(OPTIONAL1);
+        mdBuilder.getOptional2Builder().setValue(OPTIONAL2);
         mdBuilder.addFundingtreeBuilder().setValue(readFundingTree());
 
         OafEntity oafEntity = builder.build();
@@ -90,6 +118,9 @@ public class ProjectConverterTest {
         assertEquals(ACRONYM, project.getProjectAcronym());
         assertEquals(GRANT_ID, project.getProjectGrantId());
         assertEquals(FUNDING_CLASS, project.getFundingClass());
+        assertEquals(OPTIONAL1, project.getOptional1());
+        assertEquals(OPTIONAL2, project.getOptional2());
+        
     }
 
 	@Test

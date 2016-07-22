@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ROW>
+    <FIELD name="acronym" isNull="true"/>
+    <FIELD name="projectid">arc_________::ANZCCART</FIELD>
+    <FIELD name="code">ANZCCART</FIELD>
+</ROW>
