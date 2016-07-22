@@ -42,4 +42,6 @@ public abstract class ImportWorkflowRuntimeParameters {
 	public static final String IMPORT_RESULT_SET_CLIENT_READ_TIMEOUT = "import.resultset.client.read.timeout";
 	
 	public static final String HBASE_ENCODING = "hbase.table.encoding";
+	
+	public static final String IMPORT_FACADE_FACTORY_CLASS = "import.facade.factory.classname";
 }
