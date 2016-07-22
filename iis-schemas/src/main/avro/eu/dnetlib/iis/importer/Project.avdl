@@ -10,5 +10,9 @@ protocol IIS{
         union { null , string } projectAcronym = null;
 //      project funding class e.g. FP7 or WT
         union { null , string } fundingClass = null;
+//      1st optional field conveying auxiliary data. Semantics may vary for different projects.
+        union { null , string } optional1 = null;
+//      2nd optional field conveying auxiliary data. Semantics may vary for different projects.
+        union { null , string } optional2 = null;
     }
 }

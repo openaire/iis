@@ -35,6 +35,10 @@ public class DatabaseProjectXmlHandler extends DefaultHandler {
 	private static final String ATTRIBUTE_NAME_VALUE_ACRONYM = "acronym";
 	private static final String ATTRIBUTE_NAME_VALUE_PROJECTID = "projectid";
 	private static final String ATTRIBUTE_NAME_VALUE_CODE = "code";
+	private static final String ATTRIBUTE_NAME_VALUE_OPTIONAL1 = "optional1";
+	private static final String ATTRIBUTE_NAME_VALUE_OPTIONAL2 = "optional2";
+	private static final String ATTRIBUTE_NAME_VALUE_FUNDINGPATH = "fundingpath";
+	
 	
 	private final Logger log = Logger.getLogger(this.getClass());
 	
@@ -46,6 +50,8 @@ public class DatabaseProjectXmlHandler extends DefaultHandler {
 	private String projectId = null;
 	private String acronym = null;
 	private String code = null;
+	private String optional1 = null;
+    private String optional2 = null;
 	private List<String> fundingTreeList = null;
 	
 	private int counter = 0;
@@ -76,7 +82,6 @@ public class DatabaseProjectXmlHandler extends DefaultHandler {
 			this.currentName = attributes.getValue(ATTRIBUTE_NAME);
 		} else if (isWithinElement(qName, ELEM_ITEM, ELEM_FIELD)) {
 			this.currentValue = new StringBuilder();
-			this.currentName = null;
 		}
 		this.parents.push(qName);
 	}
@@ -93,8 +98,13 @@ public class DatabaseProjectXmlHandler extends DefaultHandler {
 				this.acronym = this.currentValue.toString().trim();
 			} else if (ATTRIBUTE_NAME_VALUE_CODE.equals(this.currentName)) {
 				this.code = this.currentValue.toString().trim();
-			}
-		} else if (isWithinElement(qName, ELEM_ITEM, ELEM_FIELD)) {
+			} else if (ATTRIBUTE_NAME_VALUE_OPTIONAL1.equals(this.currentName)) {
+                this.optional1 = this.currentValue.toString().trim();
+            } else if (ATTRIBUTE_NAME_VALUE_OPTIONAL2.equals(this.currentName)) {
+                this.optional2 = this.currentValue.toString().trim();
+            }
+		} else if (isWithinElement(qName, ELEM_ITEM, ELEM_FIELD) &&
+		        ATTRIBUTE_NAME_VALUE_FUNDINGPATH.equals(this.currentName)) {
 			if (fundingTreeList==null) {
 				fundingTreeList = new ArrayList<String>();
 			}
@@ -112,6 +122,8 @@ public class DatabaseProjectXmlHandler extends DefaultHandler {
 		this.projectId = null;
 		this.acronym = null;
 		this.code = null;
+		this.optional1 = null;
+		this.optional2 = null;
 		this.fundingTreeList = null;
 	}
 	
@@ -139,9 +151,16 @@ public class DatabaseProjectXmlHandler extends DefaultHandler {
 		if (ProjectConverter.isAcronymValid(this.acronym)) {
 			projectBuilder.setProjectAcronym(this.acronym);	
 		}
-		if (this.code!=null && !this.code.isEmpty()) {
+		if (StringUtils.isNotBlank(this.code)) {
 			projectBuilder.setProjectGrantId(this.code);	
 		}
+		if (StringUtils.isNotBlank(this.optional1)) {
+            projectBuilder.setOptional1(this.optional1);    
+        }
+		if (StringUtils.isNotBlank(this.optional2)) {
+            projectBuilder.setOptional2(this.optional2);    
+        }
+		
 		if (this.fundingTreeList!=null && this.fundingTreeList.size()>0) {
 			try {
 				projectBuilder.setFundingClass(

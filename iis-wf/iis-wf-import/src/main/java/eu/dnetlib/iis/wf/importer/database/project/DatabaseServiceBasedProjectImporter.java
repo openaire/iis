@@ -13,6 +13,7 @@ import java.util.Map;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 import javax.xml.ws.wsaddressing.W3CEndpointReferenceBuilder;
 
@@ -41,6 +42,10 @@ import eu.dnetlib.iis.wf.importer.DataFileRecordReceiver;
  *
  */
 public class DatabaseServiceBasedProjectImporter implements Process {
+    
+    private static final String IMPORT_DATABASE_CLIENT_CONNECTION_TIMEOUT = "import.database.client.connection.timeout";
+    
+    private static final String IMPORT_DATABASE_CLIENT_READ_TIMEOUT = "import.database.client.read.timeout";
 
 	private static final String PORT_OUT_PROJECT = "project";
 	
@@ -80,13 +85,6 @@ public class DatabaseServiceBasedProjectImporter implements Process {
 					+ "required parameter '" + IMPORT_DATABASE_SERVICE_DBNAME + "' is missing!");
 		}
 		
-//		setting result set client read timeout
-		Long rsClientReadTimeout = null;
-		if (parameters.containsKey(IMPORT_RESULT_SET_CLIENT_READ_TIMEOUT)) {
-			rsClientReadTimeout = Long.valueOf(
-					parameters.get(IMPORT_RESULT_SET_CLIENT_READ_TIMEOUT));
-		}
-		
 		DataFileWriter<Project> projectWriter = null;
 		try {
 //			initializing avro datastore writer
@@ -99,6 +97,9 @@ public class DatabaseServiceBasedProjectImporter implements Process {
 			eprBuilder.build();
 			DatabaseService databaseService = new JaxwsServiceResolverImpl().getService(
 					DatabaseService.class, eprBuilder.build());
+			Map<String, Object> requestContext = ((BindingProvider) databaseService).getRequestContext();
+			requestContext.put("javax.xml.ws.client.connectionTimeout", parameters.get(IMPORT_DATABASE_CLIENT_CONNECTION_TIMEOUT));
+			requestContext.put("javax.xml.ws.client.receiveTimeout", parameters.get(IMPORT_DATABASE_CLIENT_READ_TIMEOUT));
 			
 //			reading sql query content
 			StringWriter writer = new StringWriter();
@@ -113,9 +114,7 @@ public class DatabaseServiceBasedProjectImporter implements Process {
 			
 //			obtaining resultSet
 			ResultSetClientFactory rsFactory = new ResultSetClientFactory();
-			if (rsClientReadTimeout!=null) {
-				rsFactory.setTimeout(rsClientReadTimeout);	
-			}
+			rsFactory.setTimeout(Long.valueOf(parameters.get(IMPORT_RESULT_SET_CLIENT_READ_TIMEOUT)));	
 			rsFactory.setServiceResolver(new JaxwsServiceResolverImpl());
 			rsFactory.setPageSize(defaultPagesize);
 			SAXParserFactory parserFactory = SAXParserFactory.newInstance();
