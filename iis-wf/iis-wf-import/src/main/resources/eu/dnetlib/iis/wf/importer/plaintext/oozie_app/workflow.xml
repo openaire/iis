@@ -19,6 +19,20 @@
 			<name>output</name>
 			<description>text importer output directory</description>
 		</property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
+            <name>output_report_relative_path</name>
+            <value>import_content_plaintext</value>
+            <description>directory for storing report (relative to output_report_root_path)</description>
+        </property>
+        <property>
+            <name>report_properties_prefix</name>
+            <value>import.content.plaintext</value>
+            <description>prefix for reported properties</description>
+        </property>
 	</parameters>
 
     <global>
@@ -177,11 +191,27 @@
 					<name>mapreduce.job.reduces</name>
 					<value>0</value>
 				</property>
+                <property>
+                    <name>oozie.action.external.stats.write</name>
+                    <value>true</value>
+                </property>
 			</configuration>
 		</map-reduce>
-		<ok to="end" />
+		<ok to="report" />
 		<error to="fail" />
 	</action>
+
+    <action name="report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
+            <arg>-Preport.${report_properties_prefix}.correct=${hadoop:counters('content-retriever')[RECORDS][MAP_OUT]}</arg>
+            <arg>-Preport.${report_properties_prefix}.invalid.sizeExceeded=${hadoop:counters('content-retriever')['eu.dnetlib.iis.wf.importer.content.DocumentTextUrlBasedImporterMapper$InvalidRecordCounters']['SIZE_EXCEEDED']}</arg>
+            <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
 
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:

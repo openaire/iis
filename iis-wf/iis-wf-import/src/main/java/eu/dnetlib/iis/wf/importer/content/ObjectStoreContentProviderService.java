@@ -12,10 +12,10 @@ import eu.dnetlib.data.objectstore.rmi.ObjectStoreService;
 import eu.dnetlib.data.objectstore.rmi.ObjectStoreServiceException;
 import eu.dnetlib.enabling.is.lookup.rmi.ISLookUpService;
 import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
-import eu.dnetlib.iis.wf.importer.content.appover.ComplexContentApprover;
-import eu.dnetlib.iis.wf.importer.content.appover.ContentApprover;
-import eu.dnetlib.iis.wf.importer.content.appover.PDFHeaderBasedContentApprover;
-import eu.dnetlib.iis.wf.importer.content.appover.SizeLimitContentApprover;
+import eu.dnetlib.iis.wf.importer.content.approver.ComplexContentApprover;
+import eu.dnetlib.iis.wf.importer.content.approver.ContentApprover;
+import eu.dnetlib.iis.wf.importer.content.approver.PDFHeaderBasedContentApprover;
+import eu.dnetlib.iis.wf.importer.content.approver.SizeLimitContentApprover;
 
 /**
  * {@link ObjectStoreService} based content provider.

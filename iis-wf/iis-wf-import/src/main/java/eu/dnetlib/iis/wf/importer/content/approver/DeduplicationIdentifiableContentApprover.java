@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.importer.content.appover;
+package eu.dnetlib.iis.wf.importer.content.approver;
 
 import java.util.HashSet;
 import java.util.Set;
