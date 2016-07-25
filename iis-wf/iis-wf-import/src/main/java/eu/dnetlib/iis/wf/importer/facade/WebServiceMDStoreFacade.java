@@ -15,13 +15,10 @@ import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
  * @author mhorst
  *
  */
-public class WebServiceMDStoreFacade extends AbstractWebServiceFacade<MDStoreService> implements MDStoreFacade {
+public class WebServiceMDStoreFacade extends AbstractResultSetAwareWebServiceFacade<MDStoreService> implements MDStoreFacade {
 
     private final Logger log = Logger.getLogger(this.getClass());
-    
-    private final long resultSetReadTimeout;
-    
-    private final int resultSetPageSize;
+
     
     //------------------------ CONSTRUCTORS -------------------
     
@@ -31,9 +28,7 @@ public class WebServiceMDStoreFacade extends AbstractWebServiceFacade<MDStoreSer
      * @param resultSetPageSize resultset page size
      */
     public WebServiceMDStoreFacade(String serviceLocation, long resultSetReadTimeout, int resultSetPageSize) {
-        super(MDStoreService.class, serviceLocation);
-        this.resultSetReadTimeout = resultSetReadTimeout;
-        this.resultSetPageSize = resultSetPageSize;
+        super(MDStoreService.class, serviceLocation, resultSetReadTimeout, resultSetPageSize);
     }
     
     //------------------------ LOGIC --------------------------

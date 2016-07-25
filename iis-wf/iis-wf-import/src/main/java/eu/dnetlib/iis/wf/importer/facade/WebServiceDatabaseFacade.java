@@ -15,11 +15,9 @@ import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
  * @author mhorst
  *
  */
-public class WebServiceDatabaseFacade extends AbstractWebServiceFacade<DatabaseService> implements DatabaseFacade {
+public class WebServiceDatabaseFacade extends AbstractResultSetAwareWebServiceFacade<DatabaseService> implements DatabaseFacade {
 
-    private final long resultSetReadTimeout;
     
-    private final int defaultPagesize = 100;
     
     //------------------------ CONSTRUCTORS -------------------
     
@@ -27,12 +25,13 @@ public class WebServiceDatabaseFacade extends AbstractWebServiceFacade<DatabaseS
      * @param serviceLocation database service location
      * @param databaseConnectionTimeout database connection timeout
      * @param databaseConnectionReadTimeout database read timeout
-     * @param resultSetReadTimeout result set providing database results read timeout
+     * @param resultSetReadTimeout resultset providing database results read timeout
+     * @param resultSetPageSize resultset single data chunk size
      */
     public WebServiceDatabaseFacade(String serviceLocation, 
-            String databaseConnectionTimeout, String databaseConnectionReadTimeout, long resultSetReadTimeout) {
-        super(DatabaseService.class, serviceLocation);
-        this.resultSetReadTimeout = resultSetReadTimeout;
+            String databaseConnectionTimeout, String databaseConnectionReadTimeout, 
+            long resultSetReadTimeout, int resultSetPageSize) {
+        super(DatabaseService.class, serviceLocation, resultSetReadTimeout, resultSetPageSize);
         Map<String, Object> requestContext = ((BindingProvider) service).getRequestContext();
         requestContext.put("javax.xml.ws.client.connectionTimeout", databaseConnectionTimeout);
         requestContext.put("javax.xml.ws.client.receiveTimeout", databaseConnectionReadTimeout);
@@ -47,7 +46,7 @@ public class WebServiceDatabaseFacade extends AbstractWebServiceFacade<DatabaseS
         ResultSetClientFactory rsFactory = new ResultSetClientFactory();
         rsFactory.setTimeout(resultSetReadTimeout);  
         rsFactory.setServiceResolver(new JaxwsServiceResolverImpl());
-        rsFactory.setPageSize(defaultPagesize);
+        rsFactory.setPageSize(resultSetPageSize);
         return rsFactory.getClient(eprResult);
     }
 

@@ -1,11 +1,14 @@
 package eu.dnetlib.iis.wf.importer.facade;
 
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_DATACITE_MDSTORE_PAGESIZE;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_DATACITE_MDSTORE_SERVICE_LOCATION;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_RESULT_SET_CLIENT_READ_TIMEOUT;
+import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_RESULT_SET_PAGESIZE;
+import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.RESULTSET_PAGESIZE_DEFAULT_VALUE;
+import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.RESULTSET_READ_TIMEOUT_DEFAULT_VALUE;
 
-import java.security.InvalidParameterException;
 import java.util.Map;
+
+import com.google.common.base.Preconditions;
 
 /**
  * WebService MDStore service facade factory.
@@ -15,17 +18,17 @@ import java.util.Map;
  */
 public class WebServiceMDStoreFacadeFactory implements ServiceFacadeFactory<MDStoreFacade> {
 
+
     //------------------------ LOGIC --------------------------
     
     @Override
     public WebServiceMDStoreFacade instantiate(Map<String, String> parameters) {
-        if (!parameters.containsKey(IMPORT_DATACITE_MDSTORE_SERVICE_LOCATION)) {
-            throw new InvalidParameterException("unknown MDStore service location, "
-                    + "required parameter '" + IMPORT_DATACITE_MDSTORE_SERVICE_LOCATION + "' is missing!");
-        }
+        Preconditions.checkArgument(parameters.containsKey(IMPORT_DATACITE_MDSTORE_SERVICE_LOCATION), 
+                "unknown MDStore service location: no parameter provided:  '%s'", IMPORT_DATACITE_MDSTORE_SERVICE_LOCATION);
+
         return new WebServiceMDStoreFacade(parameters.get(IMPORT_DATACITE_MDSTORE_SERVICE_LOCATION),
-                Long.parseLong(parameters.get(IMPORT_RESULT_SET_CLIENT_READ_TIMEOUT)),
-                Integer.parseInt(parameters.get(IMPORT_DATACITE_MDSTORE_PAGESIZE)));
+                Long.parseLong(ServiceFacadeUtils.getValue(parameters, IMPORT_RESULT_SET_CLIENT_READ_TIMEOUT, RESULTSET_READ_TIMEOUT_DEFAULT_VALUE)),
+                Integer.parseInt(ServiceFacadeUtils.getValue(parameters, IMPORT_RESULT_SET_PAGESIZE, RESULTSET_PAGESIZE_DEFAULT_VALUE)));
     }
 
 }

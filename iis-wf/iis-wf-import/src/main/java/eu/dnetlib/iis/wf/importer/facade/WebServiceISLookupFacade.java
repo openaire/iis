@@ -18,23 +18,20 @@ import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
  * @author mhorst
  *
  */
-public class WebServiceISLookupFacade extends AbstractWebServiceFacade<ISLookUpService> implements ISLookupFacade {
+public class WebServiceISLookupFacade extends AbstractResultSetAwareWebServiceFacade<ISLookUpService> implements ISLookupFacade {
 
     private final Logger log = Logger.getLogger(this.getClass());
-    
-    private final long resultSetReadTimeout;
-    
-    private final int defaultPagesize = 100;
+
     
     //------------------------ CONSTRUCTORS -------------------
     
     /**
      * @param serviceLocation database service location
      * @param resultSetReadTimeout result set providing database results read timeout
+     * @param resultSetPageSize result set data chunk size
      */
-    public WebServiceISLookupFacade(String serviceLocation, long resultSetReadTimeout) {
-        super(ISLookUpService.class, serviceLocation);
-        this.resultSetReadTimeout = resultSetReadTimeout;
+    public WebServiceISLookupFacade(String serviceLocation, long resultSetReadTimeout, int resultSetPageSize) {
+        super(ISLookUpService.class, serviceLocation, resultSetReadTimeout, resultSetPageSize);
     }
 
     //------------------------ LOGIC --------------------------
@@ -47,7 +44,7 @@ public class WebServiceISLookupFacade extends AbstractWebServiceFacade<ISLookUpS
             ResultSetClientFactory rsFactory = new ResultSetClientFactory();
             rsFactory.setTimeout(resultSetReadTimeout);
             rsFactory.setServiceResolver(new JaxwsServiceResolverImpl());
-            rsFactory.setPageSize(defaultPagesize);
+            rsFactory.setPageSize(resultSetPageSize);
             return rsFactory.getClient(eprResult);    
         }  catch (ISLookUpDocumentNotFoundException e) {
             log.error("unable to find profile for query: " + xPathQuery, e);

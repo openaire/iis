@@ -15,13 +15,10 @@ import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
  * @author mhorst
  *
  */
-public class WebServiceObjectStoreFacade extends AbstractWebServiceFacade<ObjectStoreService> implements ObjectStoreFacade {
+public class WebServiceObjectStoreFacade extends AbstractResultSetAwareWebServiceFacade<ObjectStoreService> implements ObjectStoreFacade {
 
     private final Logger log = Logger.getLogger(this.getClass());
-    
-    private final long resultSetReadTimeout;
-    
-    private final int resultSetPageSize;
+
     
     //------------------------ CONSTRUCTORS -------------------
     
@@ -31,9 +28,7 @@ public class WebServiceObjectStoreFacade extends AbstractWebServiceFacade<Object
      * @param resultSetPageSize resultset page size
      */
     public WebServiceObjectStoreFacade(String serviceLocation, long resultSetReadTimeout, int resultSetPageSize) {
-        super(ObjectStoreService.class, serviceLocation);
-        this.resultSetReadTimeout = resultSetReadTimeout;
-        this.resultSetPageSize = resultSetPageSize;
+        super(ObjectStoreService.class, serviceLocation, resultSetReadTimeout, resultSetPageSize);
     }
     
     //------------------------ LOGIC --------------------------

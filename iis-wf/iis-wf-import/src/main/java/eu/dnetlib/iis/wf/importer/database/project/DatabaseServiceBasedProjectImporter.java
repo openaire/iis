@@ -4,7 +4,6 @@ import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.security.InvalidParameterException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +17,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.log4j.Logger;
 import org.xml.sax.InputSource;
+
+import com.google.common.base.Preconditions;
 
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
@@ -66,12 +67,11 @@ public class DatabaseServiceBasedProjectImporter implements Process {
 	@Override
 	public void run(PortBindings portBindings, Configuration conf,
 			Map<String, String> parameters) throws Exception {
+	    
+		Preconditions.checkArgument(parameters.containsKey(IMPORT_DATABASE_SERVICE_DBNAME), 
+                "unknown database holding projects name, required parameter '%s' is missing!", IMPORT_DATABASE_SERVICE_DBNAME);
+		
 		FileSystem fs = FileSystem.get(conf);
-
-		if (!parameters.containsKey(IMPORT_DATABASE_SERVICE_DBNAME)) {
-			throw new InvalidParameterException("unknown database holding projects name, "
-					+ "required parameter '" + IMPORT_DATABASE_SERVICE_DBNAME + "' is missing!");
-		}
 		
 		try (DataFileWriter<Project> projectWriter = DataStore.create(
 		        new FileSystemPath(fs, portBindings.getOutput().get(PORT_OUT_PROJECT)), Project.SCHEMA$)) {

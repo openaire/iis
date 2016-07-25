@@ -3,7 +3,6 @@ package eu.dnetlib.iis.wf.importer.dataset;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_DATACITE_MDSTORE_IDS_CSV;
 
 import java.io.StringReader;
-import java.security.InvalidParameterException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +16,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.log4j.Logger;
 import org.xml.sax.InputSource;
+
+import com.google.common.base.Preconditions;
 
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.counter.NamedCounters;
@@ -74,12 +75,11 @@ public class DataciteMDStoreImporter implements Process {
 	@Override
 	public void run(PortBindings portBindings, Configuration conf,
 			Map<String, String> parameters) throws Exception {
+		
+		Preconditions.checkArgument(parameters.containsKey(IMPORT_DATACITE_MDSTORE_IDS_CSV), 
+                "unspecified MDStore identifiers, required parameter '%s' is missing!", IMPORT_DATACITE_MDSTORE_IDS_CSV);
+		
 		FileSystem fs = FileSystem.get(conf);
-
-		if (!parameters.containsKey(IMPORT_DATACITE_MDSTORE_IDS_CSV)) {
-			throw new InvalidParameterException("unknown MDStore identifier, "
-					+ "required parameter '" + IMPORT_DATACITE_MDSTORE_IDS_CSV + "' is missing!");
-		}
 		
         try (DataFileWriter<DataSetReference> datasetRefWriter = DataStore.create(
                 new FileSystemPath(fs, portBindings.getOutput().get(PORT_OUT_DATASET)), DataSetReference.SCHEMA$);

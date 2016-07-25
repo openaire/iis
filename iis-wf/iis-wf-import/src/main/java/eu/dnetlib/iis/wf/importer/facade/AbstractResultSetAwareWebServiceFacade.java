@@ -9,12 +9,22 @@ import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
  * @author mhorst
  * 
  */
-public abstract class AbstractWebServiceFacade<T> {
+public abstract class AbstractResultSetAwareWebServiceFacade<T> {
 
     /**
      * Web service.
      */
-    protected T service;
+    protected final T service;
+    
+    /**
+     * ResultSet read timeout.
+     */
+    protected final long resultSetReadTimeout;
+    
+    /**
+     * ResultSet page size.
+     */
+    protected final int resultSetPageSize;
     
     //------------------------ CONSTRUCTORS -------------------
     
@@ -22,12 +32,17 @@ public abstract class AbstractWebServiceFacade<T> {
      * Instantiates underlying service.
      * @param clazz webservice class
      * @param serviceLocation webservice location
+     * @param resultSetReadTimeout resultset read timeout
+     * @param resultSetPageSize resultset page size
      */
-    protected AbstractWebServiceFacade(Class<T> clazz, String serviceLocation) {
+    protected AbstractResultSetAwareWebServiceFacade(Class<T> clazz, String serviceLocation, 
+            long resultSetReadTimeout, int resultSetPageSize) {
         W3CEndpointReferenceBuilder eprBuilder = new W3CEndpointReferenceBuilder();
         eprBuilder.address(serviceLocation);
         eprBuilder.build();
         this.service = new JaxwsServiceResolverImpl().getService(clazz, eprBuilder.build());
+        this.resultSetReadTimeout = resultSetReadTimeout;
+        this.resultSetPageSize = resultSetPageSize;
     }
     
 }

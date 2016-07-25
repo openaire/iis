@@ -1,7 +1,6 @@
 package eu.dnetlib.iis.wf.importer.concept;
 
 import java.io.StringReader;
-import java.security.InvalidParameterException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +14,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.log4j.Logger;
 import org.xml.sax.InputSource;
+
+import com.google.common.base.Preconditions;
 
 import eu.dnetlib.iis.common.counter.NamedCounters;
 import eu.dnetlib.iis.common.counter.NamedCountersFileWriter;
@@ -68,18 +69,16 @@ public class ISLookupServiceBasedConceptImporter implements Process {
 	@Override
 	public void run(PortBindings portBindings, Configuration conf,
 			Map<String, String> parameters) throws Exception {
-		FileSystem fs = FileSystem.get(conf);
 		
-		String contextIdsCSV;
-		if (parameters.containsKey(PARAM_IMPORT_CONTEXT_IDS_CSV)) {
-			contextIdsCSV = parameters.get(PARAM_IMPORT_CONTEXT_IDS_CSV);
-		} else {
-			throw new InvalidParameterException("unknown context identifier");
-		}
+		Preconditions.checkArgument(parameters.containsKey(PARAM_IMPORT_CONTEXT_IDS_CSV), 
+                "unknown context identifier, required parameter '%s' is missing!", PARAM_IMPORT_CONTEXT_IDS_CSV);
+		String contextIdsCSV = parameters.get(PARAM_IMPORT_CONTEXT_IDS_CSV);
 		
 //		initializing ISLookup
 		ISLookupFacade isLookupFacade = ServiceFacadeUtils.instantiate(parameters);
 
+		FileSystem fs = FileSystem.get(conf);
+		
 		try (DataFileWriter<Concept> conceptWriter = DataStore.create(
                 new FileSystemPath(fs, portBindings.getOutput().get(PORT_OUT_CONCEPTS)), Concept.SCHEMA$)) {
             

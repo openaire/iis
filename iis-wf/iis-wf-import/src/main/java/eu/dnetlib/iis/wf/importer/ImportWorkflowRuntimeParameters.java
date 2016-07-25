@@ -9,6 +9,8 @@ public abstract class ImportWorkflowRuntimeParameters {
 
 	private ImportWorkflowRuntimeParameters() {}
 	
+	// parameter names
+	
 	public static final String IMPORT_INFERENCE_PROVENANCE_BLACKLIST = "import.inference.provenance.blacklist";
 	public static final String IMPORT_SKIP_DELETED_BY_INFERENCE = "import.skip.deleted.by.inference";
 	public static final String IMPORT_TRUST_LEVEL_THRESHOLD = "import.trust.level.threshold";
@@ -17,7 +19,6 @@ public abstract class ImportWorkflowRuntimeParameters {
 	public static final String IMPORT_MERGE_BODY_WITH_UPDATES = "import.merge.body.with.updates";
 	public static final String IMPORT_CONTENT_APPROVED_OBJECSTORES_CSV = "import.content.approved.objectstores.csv";
 	public static final String IMPORT_CONTENT_BLACKLISTED_OBJECSTORES_CSV = "import.content.blacklisted.objectstores.csv";
-	public static final String IMPORT_CONTENT_OBJECSTORE_PAGESIZE = "import.content.objectstore.resultset.pagesize";
 	
 	public static final String IMPORT_HBASE_TABLE_NAME = "import.hbase.table.name";
 		
@@ -28,7 +29,6 @@ public abstract class ImportWorkflowRuntimeParameters {
 	public static final String IMPORT_CONTENT_READ_TIMEOUT = "import.content.read.timeout";
 
 	public static final String IMPORT_DATACITE_MDSTORE_IDS_CSV = "import.datacite.mdstore.ids.csv";
-	public static final String IMPORT_DATACITE_MDSTORE_PAGESIZE = "import.datacite.mdstore.resultset.pagesize";
 	public static final String IMPORT_DATACITE_MDSTORE_SERVICE_LOCATION = "import.datacite.mdstore.service.location";
 	
 	public static final String IMPORT_DATABASE_SERVICE_LOCATION = "import.database.service.location";
@@ -39,8 +39,16 @@ public abstract class ImportWorkflowRuntimeParameters {
 	public static final String IMPORT_VOCABULARY_OUTPUT_FILENAME = "import.vocabulary.output.filename";
 	
 	public static final String IMPORT_RESULT_SET_CLIENT_READ_TIMEOUT = "import.resultset.client.read.timeout";
+	public static final String IMPORT_RESULT_SET_PAGESIZE = "import.resultset.pagesize";
+	
 	
 	public static final String HBASE_ENCODING = "hbase.table.encoding";
 	
 	public static final String IMPORT_FACADE_FACTORY_CLASS = "import.facade.factory.classname";
+	
+	// default values
+	
+	public static final String RESULTSET_READ_TIMEOUT_DEFAULT_VALUE = "60000";
+	public static final String RESULTSET_PAGESIZE_DEFAULT_VALUE = "100";
+	
 }

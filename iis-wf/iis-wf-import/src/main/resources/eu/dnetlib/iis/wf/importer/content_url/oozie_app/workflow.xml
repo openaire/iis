@@ -135,7 +135,7 @@
 			<arg>-Pimport.content.approved.objectstores.csv=${approved_objectstores_csv}</arg>
 			<arg>-Pimport.content.blacklisted.objectstores.csv=${blacklisted_objectstores_csv}</arg>
 			<arg>-Pimport.resultset.client.read.timeout=${resultset_client_read_timeout}</arg>
-            <arg>-Pimport.content.objectstore.resultset.pagesize=${input_objectstore_resultset_pagesize}</arg>
+            <arg>-Pimport.resultset.pagesize=${input_objectstore_resultset_pagesize}</arg>
             <arg>-Pimport.facade.factory.classname=${objectstore_facade_factory_classname}</arg>
 			<arg>-Ocontent_url=${workingDir}/imported-urls</arg>
 		</java>
