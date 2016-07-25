@@ -2,6 +2,8 @@ package eu.dnetlib.iis.wf.affmatching.match.voter;
 
 import java.util.List;
 
+import com.google.common.base.Preconditions;
+
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSectionsSplitter;
@@ -19,50 +21,72 @@ public abstract class AbstractSectionedMatchVoter extends AbstractAffOrgMatchVot
     
     private OrganizationSectionsSplitter sectionsSplitter = new OrganizationSectionsSplitter();
     
+    
+    
+   
     //------------------------ LOGIC --------------------------
     
     /**
-     * Returns true if all of the organization sections in {@link AffMatchOrganization} 
-     * matches to affiliation sections in {@link AffMatchAffiliation}.
+     * Returns true if all of the organization sections in at least one of the {@link #getOrganizationNames(AffMatchOrganization)} 
+     * match with affiliation sections in {@link AffMatchAffiliation}.
      */
     @Override
     public final boolean voteMatch(AffMatchAffiliation affiliation, AffMatchOrganization organization) {
         
-        List<String> affSections = sectionsSplitter.splitToSections(getAffiliationName(affiliation));
-        List<String> orgSections = sectionsSplitter.splitToSections(getOrganizationName(organization));
+        Preconditions.checkNotNull(affiliation);
+        Preconditions.checkNotNull(organization);
         
-        if (affSections.isEmpty() || orgSections.isEmpty()) {
+        List<String> affSections = sectionsSplitter.splitToSections(affiliation.getOrganizationName());
+        
+        if (affSections.isEmpty()) {
             return false;
         }
         
-        
-        for (String orgSection : orgSections) {
+        for (String orgName : getOrganizationNames(organization)) {
             
-            if (!containsOrgSection(affSections, orgSection)) {
-                return false;
+            List<String> orgSections = sectionsSplitter.splitToSections(orgName);
+        
+            if (orgSections.isEmpty()) {
+                continue;
             }
             
+            if (areAllOrgSectionsInAffSections(affSections, orgSections)) {
+                return true;
+            }
         }
         
-        return true;
+        return false;
     }
-    
-    /**
-     * Returns affiliation name from {@link AffMatchAffiliation} object.
-     */
-    protected abstract String getAffiliationName(AffMatchAffiliation affiliation);
-    
-    /**
-     * Returns organization name from {@link AffMatchOrganization} object.
-     */
-    protected abstract String getOrganizationName(AffMatchOrganization organization);
-    
+
+       
     /**
      * Returns true if affOrgNameSections contains orgNameSection.<br/>
      * Implementations of this method can check if affOrgNameSections contains
      * orgNameSection based on equality or similarity of strings.
      */
     protected abstract boolean containsOrgSection(List<String> affOrgNameSections, String orgNameSection);
+    
+    /**
+     * Returns the names of the passed organizations that will be used by a given implementation of this voter
+     */
+    protected abstract List<String> getOrganizationNames(AffMatchOrganization organization);
+    
+    
+    //------------------------ PRIVATE --------------------------
+    
+    private boolean areAllOrgSectionsInAffSections(List<String> affSections, List<String> orgSections) {
+        
+        for (String orgSection : orgSections) {
+        
+            if (!containsOrgSection(affSections, orgSection)) {
+                return false;
+            }
+        
+        } 
+        return true;
+    }
+
+   
     
     
 }

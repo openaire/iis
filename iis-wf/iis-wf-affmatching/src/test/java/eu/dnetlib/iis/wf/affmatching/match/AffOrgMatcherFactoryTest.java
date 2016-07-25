@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.powermock.reflect.Whitebox.getInternalState;
 
 import java.util.List;
+import java.util.function.Function;
 
 import org.apache.spark.api.java.JavaSparkContext;
 import org.junit.Test;
@@ -37,10 +38,11 @@ import eu.dnetlib.iis.wf.affmatching.match.voter.CountryCodeStrictMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.match.voter.FittingAffOrgSectionWordsMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.match.voter.FittingAffOrgWordsMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.match.voter.FittingOrgWordsMatchVoter;
+import eu.dnetlib.iis.wf.affmatching.match.voter.GetOrgNameFunction;
+import eu.dnetlib.iis.wf.affmatching.match.voter.GetOrgShortNameFunction;
 import eu.dnetlib.iis.wf.affmatching.match.voter.NameStrictWithCharFilteringMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.match.voter.SectionedNameLevenshteinMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.match.voter.SectionedNameStrictMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.SectionedShortNameStrictMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSection.OrgSectionType;
@@ -106,27 +108,29 @@ public class AffOrgMatcherFactoryTest {
         
         AffOrgMatchVoter voter0 = getVoter(computer, 0);
         assertCompositeVoter(voter0, CountryCodeStrictMatchVoter.class, NameStrictWithCharFilteringMatchVoter.class);
-        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voter0, 1), ImmutableList.of(',', ';'));
+        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voter0, 1), ImmutableList.of(',', ';'), GetOrgNameFunction.class);
         
         AffOrgMatchVoter voter1 = getVoter(computer, 1);
         assertCompositeVoter(voter1, CountryCodeLooseMatchVoter.class, NameStrictWithCharFilteringMatchVoter.class);
-        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voter1, 1), ImmutableList.of(',', ';'));
+        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voter1, 1), ImmutableList.of(',', ';'), GetOrgNameFunction.class);
         
         AffOrgMatchVoter voter2 = getVoter(computer, 2);
         assertCompositeVoter(voter2, CountryCodeLooseMatchVoter.class, SectionedNameStrictMatchVoter.class);
+        assertVoterGetOrgNamesFunction(getInternalVoter(voter2, 1), GetOrgNameFunction.class);
         
         AffOrgMatchVoter voter3 = getVoter(computer, 3);
         assertCompositeVoter(voter3, CountryCodeLooseMatchVoter.class, SectionedNameLevenshteinMatchVoter.class);
-        assertSectionedNameLevenshteinMatchVoter(getInternalVoter(voter3, 1), 0.9f);
+        assertSectionedNameLevenshteinMatchVoter(getInternalVoter(voter3, 1), 0.9f, GetOrgNameFunction.class);
         
         AffOrgMatchVoter voter4 = getVoter(computer, 4);
-        assertCompositeVoter(voter4, CountryCodeLooseMatchVoter.class, SectionedShortNameStrictMatchVoter.class);
+        assertCompositeVoter(voter4, CountryCodeLooseMatchVoter.class, SectionedNameStrictMatchVoter.class);
+        assertSectionedNameStrictMatchVoter(getInternalVoter(voter4, 1), GetOrgShortNameFunction.class);
         
         AffOrgMatchVoter voter5 = getVoter(computer, 5);
-        assertFittingOrgWordsMatchVoter(voter5, ImmutableList.of(',', ';'), 0.7f, 0.9f, 2);
+        assertFittingOrgWordsMatchVoter(voter5, ImmutableList.of(',', ';'), 0.7f, 0.9f, 2, GetOrgNameFunction.class);
         
         AffOrgMatchVoter voter6 = getVoter(computer, 6);
-        assertFittingAffOrgSectionWordsMatchVoter(voter6, ImmutableList.of(',', ';'), 0.8f, 0.85f, 1);
+        assertFittingAffOrgSectionWordsMatchVoter(voter6, ImmutableList.of(',', ';'), 0.8f, 0.85f, 1, GetOrgNameFunction.class);
     }
     
     @Test
@@ -141,21 +145,23 @@ public class AffOrgMatcherFactoryTest {
         assertEquals(7, voters.size());
         
         assertCompositeVoter(voters.get(0), CountryCodeStrictMatchVoter.class, NameStrictWithCharFilteringMatchVoter.class);
-        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voters.get(0), 1), ImmutableList.of(',', ';'));
+        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voters.get(0), 1), ImmutableList.of(',', ';'), GetOrgNameFunction.class);
         
         assertCompositeVoter(voters.get(1), CountryCodeLooseMatchVoter.class, NameStrictWithCharFilteringMatchVoter.class);
-        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voters.get(1), 1), ImmutableList.of(',', ';'));
+        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voters.get(1), 1), ImmutableList.of(',', ';'), GetOrgNameFunction.class);
         
         assertCompositeVoter(voters.get(2), CountryCodeLooseMatchVoter.class, SectionedNameStrictMatchVoter.class);
+        assertSectionedNameStrictMatchVoter(getInternalVoter(voters.get(2), 1), GetOrgNameFunction.class);
         
         assertCompositeVoter(voters.get(3), CountryCodeLooseMatchVoter.class, SectionedNameLevenshteinMatchVoter.class);
-        assertSectionedNameLevenshteinMatchVoter(getInternalVoter(voters.get(3), 1), 0.9f);
+        assertSectionedNameLevenshteinMatchVoter(getInternalVoter(voters.get(3), 1), 0.9f, GetOrgNameFunction.class);
         
-        assertCompositeVoter(voters.get(4), CountryCodeLooseMatchVoter.class, SectionedShortNameStrictMatchVoter.class);
+        assertCompositeVoter(voters.get(4), CountryCodeLooseMatchVoter.class, SectionedNameStrictMatchVoter.class);
+        assertVoterGetOrgNamesFunction(getInternalVoter(voters.get(4), 1), GetOrgShortNameFunction.class);
         
-        assertFittingOrgWordsMatchVoter(voters.get(5), ImmutableList.of(',', ';'), 0.7f, 0.9f, 2);
+        assertFittingOrgWordsMatchVoter(voters.get(5), ImmutableList.of(',', ';'), 0.7f, 0.9f, 2, GetOrgNameFunction.class);
         
-        assertFittingAffOrgSectionWordsMatchVoter(voters.get(6), ImmutableList.of(',', ';'), 0.8f, 0.85f, 1);
+        assertFittingAffOrgSectionWordsMatchVoter(voters.get(6), ImmutableList.of(',', ';'), 0.8f, 0.85f, 1, GetOrgNameFunction.class);
     }
     
     @Test
@@ -191,21 +197,23 @@ public class AffOrgMatcherFactoryTest {
         
         AffOrgMatchVoter voter0 = getVoter(computer, 0);
         assertCompositeVoter(voter0, CountryCodeStrictMatchVoter.class, NameStrictWithCharFilteringMatchVoter.class);
-        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voter0, 1), ImmutableList.of(',', ';'));
+        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voter0, 1), ImmutableList.of(',', ';'), GetOrgNameFunction.class);
         
         AffOrgMatchVoter voter1 = getVoter(computer, 1);
         assertCompositeVoter(voter1, CountryCodeLooseMatchVoter.class, NameStrictWithCharFilteringMatchVoter.class);
-        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voter1, 1), ImmutableList.of(',', ';'));
+        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voter1, 1), ImmutableList.of(',', ';'), GetOrgNameFunction.class);
         
         AffOrgMatchVoter voter2 = getVoter(computer, 2);
         assertCompositeVoter(voter2, CountryCodeLooseMatchVoter.class, SectionedNameStrictMatchVoter.class);
+        assertSectionedNameStrictMatchVoter(getInternalVoter(voter2, 1), GetOrgNameFunction.class);
         
         AffOrgMatchVoter voter3 = getVoter(computer, 3);
         assertCompositeVoter(voter3, CountryCodeLooseMatchVoter.class, SectionedNameLevenshteinMatchVoter.class);
-        assertSectionedNameLevenshteinMatchVoter(getInternalVoter(voter3, 1), 0.9f);
-        
+        assertSectionedNameLevenshteinMatchVoter(getInternalVoter(voter3, 1), 0.9f, GetOrgNameFunction.class);
+               
         AffOrgMatchVoter voter4 = getVoter(computer, 4);
-        assertCompositeVoter(voter4, CountryCodeLooseMatchVoter.class, SectionedShortNameStrictMatchVoter.class);
+        assertCompositeVoter(voter4, CountryCodeLooseMatchVoter.class, SectionedNameStrictMatchVoter.class);
+        assertSectionedNameStrictMatchVoter(getInternalVoter(voter4, 1), GetOrgShortNameFunction.class);
         
     }
     
@@ -221,17 +229,20 @@ public class AffOrgMatcherFactoryTest {
         assertEquals(5, voters.size());
         
         assertCompositeVoter(voters.get(0), CountryCodeStrictMatchVoter.class, NameStrictWithCharFilteringMatchVoter.class);
-        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voters.get(0), 1), ImmutableList.of(',', ';'));
+        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voters.get(0), 1), ImmutableList.of(',', ';'), GetOrgNameFunction.class);
         
         assertCompositeVoter(voters.get(1), CountryCodeLooseMatchVoter.class, NameStrictWithCharFilteringMatchVoter.class);
-        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voters.get(1), 1), ImmutableList.of(',', ';'));
+        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voters.get(1), 1), ImmutableList.of(',', ';'), GetOrgNameFunction.class);
         
         assertCompositeVoter(voters.get(2), CountryCodeLooseMatchVoter.class, SectionedNameStrictMatchVoter.class);
+        assertSectionedNameStrictMatchVoter(getInternalVoter(voters.get(2), 1), GetOrgNameFunction.class);
         
         assertCompositeVoter(voters.get(3), CountryCodeLooseMatchVoter.class, SectionedNameLevenshteinMatchVoter.class);
-        assertSectionedNameLevenshteinMatchVoter(getInternalVoter(voters.get(3), 1), 0.9f);
+        assertSectionedNameLevenshteinMatchVoter(getInternalVoter(voters.get(3), 1), 0.9f, GetOrgNameFunction.class);
         
-        assertCompositeVoter(voters.get(4), CountryCodeLooseMatchVoter.class, SectionedShortNameStrictMatchVoter.class);
+        assertCompositeVoter(voters.get(4), CountryCodeLooseMatchVoter.class, SectionedNameStrictMatchVoter.class);
+        assertSectionedNameStrictMatchVoter(getInternalVoter(voters.get(4), 1), GetOrgShortNameFunction.class);
+        
         
     }
     
@@ -268,26 +279,29 @@ public class AffOrgMatcherFactoryTest {
         
         AffOrgMatchVoter voter0 = getVoter(computer, 0);
         assertCompositeVoter(voter0, CountryCodeStrictMatchVoter.class, NameStrictWithCharFilteringMatchVoter.class);
-        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voter0, 1), ImmutableList.of(',', ';'));
+        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voter0, 1), ImmutableList.of(',', ';'), GetOrgNameFunction.class);
         
         AffOrgMatchVoter voter1 = getVoter(computer, 1);
         assertCompositeVoter(voter1, CountryCodeLooseMatchVoter.class, NameStrictWithCharFilteringMatchVoter.class);
-        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voter1, 1), ImmutableList.of(',', ';'));
+        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voter1, 1), ImmutableList.of(',', ';'), GetOrgNameFunction.class);
         
         AffOrgMatchVoter voter2 = getVoter(computer, 2);
         assertCompositeVoter(voter2, CountryCodeLooseMatchVoter.class, SectionedNameStrictMatchVoter.class);
-        
+        assertSectionedNameStrictMatchVoter(getInternalVoter(voter2, 1), GetOrgNameFunction.class);
+                
         AffOrgMatchVoter voter3 = getVoter(computer, 3);
         assertCompositeVoter(voter3, CountryCodeLooseMatchVoter.class, SectionedNameLevenshteinMatchVoter.class);
-        assertSectionedNameLevenshteinMatchVoter(getInternalVoter(voter3, 1), 0.9f);
-        
+        assertSectionedNameLevenshteinMatchVoter(getInternalVoter(voter3, 1), 0.9f, GetOrgNameFunction.class);
+                
         AffOrgMatchVoter voter4 = getVoter(computer, 4);
-        assertCompositeVoter(voter4, CountryCodeLooseMatchVoter.class, SectionedShortNameStrictMatchVoter.class);
+        assertCompositeVoter(voter4, CountryCodeLooseMatchVoter.class, SectionedNameStrictMatchVoter.class);
+        assertSectionedNameStrictMatchVoter(getInternalVoter(voter4, 1), GetOrgShortNameFunction.class);
+        
         
         AffOrgMatchVoter voter5 = getVoter(computer, 5);
         assertCompositeVoter(voter5, CountryCodeLooseMatchVoter.class, FittingOrgWordsMatchVoter.class, FittingAffOrgWordsMatchVoter.class);
-        assertFittingOrgWordsMatchVoter(getInternalVoter(voter5, 1), ImmutableList.of(',', ';'), 0.7f, 0.9f, 2);
-        assertFittingAffOrgWordsMatchVoter(getInternalVoter(voter5, 2), ImmutableList.of(',', ';'), 0.8f, 0.9f, 2);
+        assertFittingOrgWordsMatchVoter(getInternalVoter(voter5, 1), ImmutableList.of(',', ';'), 0.7f, 0.9f, 2, GetOrgNameFunction.class);
+        assertFittingAffOrgWordsMatchVoter(getInternalVoter(voter5, 2), ImmutableList.of(',', ';'), 0.8f, 0.9f, 2, GetOrgNameFunction.class);
         
     }
     
@@ -304,21 +318,22 @@ public class AffOrgMatcherFactoryTest {
         assertEquals(6, voters.size());
         
         assertCompositeVoter(voters.get(0), CountryCodeStrictMatchVoter.class, NameStrictWithCharFilteringMatchVoter.class);
-        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voters.get(0), 1), ImmutableList.of(',', ';'));
+        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voters.get(0), 1), ImmutableList.of(',', ';'), GetOrgNameFunction.class);
         
         assertCompositeVoter(voters.get(1), CountryCodeLooseMatchVoter.class, NameStrictWithCharFilteringMatchVoter.class);
-        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voters.get(1), 1), ImmutableList.of(',', ';'));
+        assertNameStrictWithCharFilteringMatchVoter(getInternalVoter(voters.get(1), 1), ImmutableList.of(',', ';'), GetOrgNameFunction.class);
         
         assertCompositeVoter(voters.get(2), CountryCodeLooseMatchVoter.class, SectionedNameStrictMatchVoter.class);
         
         assertCompositeVoter(voters.get(3), CountryCodeLooseMatchVoter.class, SectionedNameLevenshteinMatchVoter.class);
-        assertSectionedNameLevenshteinMatchVoter(getInternalVoter(voters.get(3), 1), 0.9f);
+        assertSectionedNameLevenshteinMatchVoter(getInternalVoter(voters.get(3), 1), 0.9f, GetOrgNameFunction.class);
         
-        assertCompositeVoter(voters.get(4), CountryCodeLooseMatchVoter.class, SectionedShortNameStrictMatchVoter.class);
+        assertCompositeVoter(voters.get(4), CountryCodeLooseMatchVoter.class, SectionedNameStrictMatchVoter.class);
+        assertSectionedNameStrictMatchVoter(getInternalVoter(voters.get(4), 1), GetOrgShortNameFunction.class);
         
         assertCompositeVoter(voters.get(5), CountryCodeLooseMatchVoter.class, FittingOrgWordsMatchVoter.class, FittingAffOrgWordsMatchVoter.class);
-        assertFittingOrgWordsMatchVoter(getInternalVoter(voters.get(5), 1), ImmutableList.of(',', ';'), 0.7f, 0.9f, 2);
-        assertFittingAffOrgWordsMatchVoter(getInternalVoter(voters.get(5), 2), ImmutableList.of(',', ';'), 0.8f, 0.9f, 2);
+        assertFittingOrgWordsMatchVoter(getInternalVoter(voters.get(5), 1), ImmutableList.of(',', ';'), 0.7f, 0.9f, 2, GetOrgNameFunction.class);
+        assertFittingAffOrgWordsMatchVoter(getInternalVoter(voters.get(5), 2), ImmutableList.of(',', ';'), 0.8f, 0.9f, 2, GetOrgNameFunction.class);
     }
     
     
@@ -335,22 +350,43 @@ public class AffOrgMatcherFactoryTest {
         
     }
     
-    private void assertNameStrictWithCharFilteringMatchVoter(AffOrgMatchVoter voter, List<Character> expectedCharsToFilter) {
+    private void assertNameStrictWithCharFilteringMatchVoter(AffOrgMatchVoter voter, List<Character> expectedCharsToFilter, Class<? extends Function<AffMatchOrganization, List<String>>> getOrgNamesFunctionClass) {
         
         assertTrue(voter instanceof NameStrictWithCharFilteringMatchVoter);
         
         assertEquals(expectedCharsToFilter, getInternalState(voter, "charsToFilter"));
+        
+        assertVoterGetOrgNamesFunction(voter, getOrgNamesFunctionClass);
     }
     
-    private void assertSectionedNameLevenshteinMatchVoter(AffOrgMatchVoter voter, float expectedMinSimilarity) {
+    private void assertSectionedNameLevenshteinMatchVoter(AffOrgMatchVoter voter, float expectedMinSimilarity, Class<? extends Function<AffMatchOrganization, List<String>>> getOrgNamesFunctionClass) {
         
         assertTrue(voter instanceof SectionedNameLevenshteinMatchVoter);
         
         assertEquals(expectedMinSimilarity, getInternalState(voter, "minSimilarity"), PRECISION);
+        
+        assertVoterGetOrgNamesFunction(voter, getOrgNamesFunctionClass);
+    }
+
+    
+    private void assertSectionedNameStrictMatchVoter(AffOrgMatchVoter voter, Class<? extends Function<AffMatchOrganization, List<String>>> getOrgNamesFunctionClass) {
+        
+        assertTrue(voter instanceof SectionedNameStrictMatchVoter);
+        
+        assertVoterGetOrgNamesFunction(voter, getOrgNamesFunctionClass);
+    }
+
+    
+    private void assertVoterGetOrgNamesFunction(AffOrgMatchVoter voter, Class<? extends Function<AffMatchOrganization, List<String>>> expectedGetOrgNamesFunctionClass) {
+        
+        Function<AffMatchOrganization, List<String>> voterGetOrgNamesFunction = getInternalState(voter, "getOrgNamesFunction");
+        
+        assertEquals(voterGetOrgNamesFunction.getClass(), expectedGetOrgNamesFunctionClass);
     }
     
+    
     private void assertFittingOrgWordsMatchVoter(AffOrgMatchVoter voter, List<Character> expectedCharsToFilter, double expectedMinFittingOrgWordsRatio,
-            double expectedMinFittingWordsSimilarity, int expectedWordToRemoveMaxLength) {
+            double expectedMinFittingWordsSimilarity, int expectedWordToRemoveMaxLength, Class<? extends Function<AffMatchOrganization, List<String>>> getOrgNamesFunctionClass) {
         
         assertTrue(voter instanceof FittingOrgWordsMatchVoter);
         
@@ -365,10 +401,12 @@ public class AffOrgMatcherFactoryTest {
         
         int wordToRemoveMaxLength = getInternalState(voter, "wordToRemoveMaxLength");
         assertEquals(expectedWordToRemoveMaxLength, wordToRemoveMaxLength);
+        
+        assertVoterGetOrgNamesFunction(voter, getOrgNamesFunctionClass);
     }
     
     private void assertFittingAffOrgSectionWordsMatchVoter(AffOrgMatchVoter voter, List<Character> expectedCharsToFilter, double expectedMinFittingOrgWordsRatio,
-            double expectedMinFittingWordsSimilarity, int expectedWordToRemoveMaxLength) {
+            double expectedMinFittingWordsSimilarity, int expectedWordToRemoveMaxLength, Class<? extends Function<AffMatchOrganization, List<String>>> getOrgNamesFunctionClass) {
         
         assertTrue(voter instanceof FittingAffOrgSectionWordsMatchVoter);
         
@@ -384,10 +422,12 @@ public class AffOrgMatcherFactoryTest {
         int wordToRemoveMaxLength = getInternalState(voter, "wordToRemoveMaxLength");
         assertEquals(expectedWordToRemoveMaxLength, wordToRemoveMaxLength);
         
+        assertVoterGetOrgNamesFunction(voter, getOrgNamesFunctionClass);
+        
     }
     
     private void assertFittingAffOrgWordsMatchVoter(AffOrgMatchVoter voter, List<Character> expectedCharsToFilter, double expectedMinFittingOrgWordsRatio,
-            double expectedMinFittingWordsSimilarity, int expectedWordToRemoveMaxLength) {
+            double expectedMinFittingWordsSimilarity, int expectedWordToRemoveMaxLength, Class<? extends Function<AffMatchOrganization, List<String>>> getOrgNamesFunctionClass) {
         
         assertTrue(voter instanceof FittingAffOrgWordsMatchVoter);
         
@@ -402,6 +442,9 @@ public class AffOrgMatcherFactoryTest {
         
         int wordToRemoveMaxLength = getInternalState(voter, "wordToRemoveMaxLength");
         assertEquals(expectedWordToRemoveMaxLength, wordToRemoveMaxLength);
+        
+        assertVoterGetOrgNamesFunction(voter, getOrgNamesFunctionClass);
+        
     }
     
     private void assertVotersCount(AffOrgMatchComputer computer, int expectedCount) {

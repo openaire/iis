@@ -53,9 +53,12 @@ public class AffOrgMatchVotersFactory {
     
     public static AffOrgMatchVoter createSectionedShortNameStrictCountryLooseMatchVoter(float matchStrength) {
         
+        SectionedNameStrictMatchVoter sectionedShortNameStrictMatchVoter = new SectionedNameStrictMatchVoter();
+        sectionedShortNameStrictMatchVoter.setGetOrgNamesFunction(new GetOrgShortNameFunction());
+        
         CompositeMatchVoter voter = new CompositeMatchVoter(ImmutableList.of(
                 new CountryCodeLooseMatchVoter(), 
-                new SectionedShortNameStrictMatchVoter()));
+                sectionedShortNameStrictMatchVoter));
         
         voter.setMatchStrength(matchStrength);
         
