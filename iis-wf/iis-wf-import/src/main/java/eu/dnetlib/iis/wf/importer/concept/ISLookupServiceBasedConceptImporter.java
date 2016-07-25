@@ -16,7 +16,6 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.log4j.Logger;
 import org.xml.sax.InputSource;
 
-import eu.dnetlib.enabling.is.lookup.rmi.ISLookUpService;
 import eu.dnetlib.iis.common.counter.NamedCounters;
 import eu.dnetlib.iis.common.counter.NamedCountersFileWriter;
 import eu.dnetlib.iis.common.java.PortBindings;
@@ -31,7 +30,7 @@ import eu.dnetlib.iis.wf.importer.facade.ISLookupFacade;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeUtils;
 
 /**
- * {@link ISLookUpService} based concept importer.
+ * {@link ISLookupFacade} based concept importer.
  * @author mhorst
  *
  */

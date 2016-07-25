@@ -22,7 +22,7 @@ public abstract class ServiceFacadeUtils {
      * Instantiates service based on provided parameters.
      * 
      * Service factory class name is mandatory and has to be provided as {@value ImportWorkflowRuntimeParameters#IMPORT_FACADE_FACTORY_CLASS} parameter.
-     * Other parameters will be used by factory itself.
+     * Other parameters will be used by factory itself. Factory must be instantiable with no-argument construtor.
      * 
      * @param parameters set of parameters required for service instantiation
      * 

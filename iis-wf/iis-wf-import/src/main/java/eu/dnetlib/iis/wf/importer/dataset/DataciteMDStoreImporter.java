@@ -33,8 +33,8 @@ import eu.dnetlib.iis.wf.importer.DataFileRecordReceiverWithCounter;
 import eu.dnetlib.iis.wf.importer.facade.MDStoreFacade;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeUtils;
 /**
- * Process module importing dataset identifiers from datacite xml dump
- * and writing output to avro datastore.
+ * Process module importing dataset identifiers from datacite xml dump and writing output to avro datastore.
+ * 
  * @author mhorst
  *
  */
@@ -55,10 +55,8 @@ public class DataciteMDStoreImporter implements Process {
 	private static final Map<String, PortType> outputPorts = new HashMap<String, PortType>();
 	
 	{
-		outputPorts.put(PORT_OUT_DATASET, 
-				new AvroPortType(DataSetReference.SCHEMA$));
-		outputPorts.put(PORT_OUT_DATASET_TO_MDSTORE, 
-				new AvroPortType(DocumentToMDStore.SCHEMA$));
+		outputPorts.put(PORT_OUT_DATASET, new AvroPortType(DataSetReference.SCHEMA$));
+		outputPorts.put(PORT_OUT_DATASET_TO_MDSTORE, new AvroPortType(DocumentToMDStore.SCHEMA$));
 	}
 	
 	//------------------------ LOGIC --------------------------

@@ -2,6 +2,11 @@
 
 	<parameters>
 		<!-- input -->
+        <property>
+            <name>objectstore_facade_factory_classname</name>
+            <value>eu.dnetlib.iis.wf.importer.facade.WebServiceObjectStoreFacadeFactory</value>
+            <description>ServiceFacadeFactory implementation class name producing eu.dnetlib.iis.wf.importer.facade.ObjectStoreFacade</description>
+        </property>
 		<property>
 			<name>objectstore_service_location</name>
 			<description>object store service location to retrieve PDF/text contents from</description>
@@ -52,6 +57,11 @@
 			<value>$UNDEFINED$</value>
 			<description>input containing list of identifiers used by existence filter module in order to omit contents which do not have metadata representatives</description>
 		</property>
+        <property>
+            <name>input_objectstore_resultset_pagesize</name>
+            <value>100</value>
+            <description>ResultSet single page size</description>
+        </property>
 		<!-- output -->
 		<property>
 			<name>output_root</name>
@@ -125,6 +135,8 @@
 			<arg>-Pimport.content.approved.objectstores.csv=${approved_objectstores_csv}</arg>
 			<arg>-Pimport.content.blacklisted.objectstores.csv=${blacklisted_objectstores_csv}</arg>
 			<arg>-Pimport.resultset.client.read.timeout=${resultset_client_read_timeout}</arg>
+            <arg>-Pimport.content.objectstore.resultset.pagesize=${input_objectstore_resultset_pagesize}</arg>
+            <arg>-Pimport.facade.factory.classname=${objectstore_facade_factory_classname}</arg>
 			<arg>-Ocontent_url=${workingDir}/imported-urls</arg>
 		</java>
 		<ok to="input_id_mapping-path-setter" />
