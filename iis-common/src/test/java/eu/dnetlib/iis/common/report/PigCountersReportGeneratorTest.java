@@ -40,7 +40,10 @@ public class PigCountersReportGeneratorTest {
     private PigCountersParser pigCountersParser;
     
     @Mock
-    private PigCounterValueResolver pigCounterValueResolver;
+    private ReportPigCounterMappingParser reportPigCounterMappingParser;
+    
+    @Mock
+    private ReportPigCountersResolver reportPigCountersResolver;
     
     
     @Rule
@@ -60,14 +63,23 @@ public class PigCountersReportGeneratorTest {
         
         Map<String, String> parameters = ImmutableMap.of(
                 "pigCounters", "counters",
-                "report.group.param1", "paramValue1",
-                "report.group.param2", "paramValue2");
+                "report.group.param1", "pigCounterName1",
+                "report.group.param2", "pigCounterName2");
         
         PigCounters pigCounters = Mockito.mock(PigCounters.class);
-        
         when(pigCountersParser.parse("counters")).thenReturn(pigCounters);
-        when(pigCounterValueResolver.resolveValue("paramValue1", pigCounters)).thenReturn("2");
-        when(pigCounterValueResolver.resolveValue("paramValue2", pigCounters)).thenReturn("8");
+        
+        ReportPigCounterMapping counterMapping1 = new ReportPigCounterMapping("group.param1", "jobAlias1", "counterName1");
+        ReportPigCounterMapping counterMapping2 = new ReportPigCounterMapping("group.param2", "jobAlias2", "counterName2");
+        
+        when(reportPigCounterMappingParser.parse("group.param1", "pigCounterName1")).thenReturn(counterMapping1);
+        when(reportPigCounterMappingParser.parse("group.param2", "pigCounterName2")).thenReturn(counterMapping2);
+        
+        ReportParam reportCounter1 = new ReportParam("group.param1", "2");
+        ReportParam reportCounter2 = new ReportParam("group.param2" ,"8");
+        
+        when(reportPigCountersResolver.resolveReportCounters(Lists.newArrayList(counterMapping1, counterMapping2), pigCounters))
+                .thenReturn(Lists.newArrayList(reportCounter1, reportCounter2));
         
         // execute
         
@@ -75,11 +87,9 @@ public class PigCountersReportGeneratorTest {
         
         // assert
         
-        List<ReportParam> actualReportParams = AvroTestUtils.readLocalAvroDataStore(tempFolder.getRoot().getPath());
+        List<ReportParam> actualReportCounters = AvroTestUtils.readLocalAvroDataStore(tempFolder.getRoot().getPath());
         
-        assertThat(actualReportParams, containsInAnyOrder(
-                new ReportParam("group.param1", "2"),
-                new ReportParam("group.param2", "8")));
+        assertThat(actualReportCounters, containsInAnyOrder(reportCounter1, reportCounter2));
     }
     
 }

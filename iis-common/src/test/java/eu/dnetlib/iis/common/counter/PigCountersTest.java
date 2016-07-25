@@ -3,6 +3,7 @@ package eu.dnetlib.iis.common.counter;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
@@ -56,11 +57,23 @@ public class PigCountersTest {
     }
     
     @Test
+    public void getJobCounters_JOB_ID_NOT_FOUND() {
+        // execute & assert
+        assertNull(pigCounters.getJobCounters("INVALID_JOB_ID"));
+    }
+    
+    @Test
     public void getJobIdByAlias() {
         // execute
         String jobId = pigCounters.getJobIdByAlias("JOB_1_ALIAS_2");
         // assert
         assertEquals(jobCounters1.getJobId(), jobId);
+    }
+    
+    @Test
+    public void getJobIdByAlias_JOB_ALIAS_NOT_FOUND() {
+        // execute & assert
+        assertNull(pigCounters.getJobIdByAlias("INVALID_ALIAS"));
     }
     
 }

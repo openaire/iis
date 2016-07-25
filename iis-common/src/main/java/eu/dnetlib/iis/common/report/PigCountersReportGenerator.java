@@ -10,8 +10,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-import com.google.common.collect.Lists;
-
 import eu.dnetlib.iis.common.counter.PigCounters;
 import eu.dnetlib.iis.common.counter.PigCountersParser;
 import eu.dnetlib.iis.common.java.PortBindings;
@@ -49,7 +47,9 @@ public class PigCountersReportGenerator implements Process {
     
     private PigCountersParser pigCountersParser = new PigCountersParser();
     
-    private PigCounterValueResolver pigCounterValueResolver = new PigCounterValueResolver();
+    private ReportPigCounterMappingParser reportPigCounterMappingParser = new ReportPigCounterMappingParser();
+    
+    private ReportPigCountersResolver reportPigCountersResolver = new ReportPigCountersResolver();
     
     
     //------------------------ LOGIC --------------------------
@@ -72,45 +72,30 @@ public class PigCountersReportGenerator implements Process {
         PigCounters pigCounters = pigCountersParser.parse(pigCountersJson);
         
         
-        Map<String, String> reportParams = collectReportParameters(parameters);
+        List<ReportPigCounterMapping> reportCountersMapping = collectReportCountersMapping(parameters);
         
-        List<ReportParam> avroReportParams = convertToAvroReportParams(reportParams, pigCounters);
+        List<ReportParam> reportCounters = reportPigCountersResolver.resolveReportCounters(reportCountersMapping, pigCounters);
         
         
         FileSystem fs = FileSystem.get(conf);
         
         Path reportPath = portBindings.getOutput().get(REPORT_PORT_OUT_NAME);
         
-        DataStore.create(avroReportParams, new FileSystemPath(fs, reportPath));
+        DataStore.create(reportCounters, new FileSystemPath(fs, reportPath));
         
     }
     
     
     //------------------------ PRIVATE --------------------------
     
-    private Map<String, String> collectReportParameters(Map<String, String> parameters) {
+    private List<ReportPigCounterMapping> collectReportCountersMapping(Map<String, String> parameters) {
         
         return parameters.entrySet().stream()
                 .filter(property -> property.getKey().startsWith(REPORT_PROPERTY_PREFIX))
                 .map(x -> Pair.of(x.getKey().substring(REPORT_PROPERTY_PREFIX.length()), x.getValue()))
-                .collect(Collectors.toMap(e -> e.getLeft(), e -> e.getRight()));
+                .map(x -> reportPigCounterMappingParser.parse(x.getKey(), x.getValue()))
+                .collect(Collectors.toList());
         
-    }
-    
-    private List<ReportParam> convertToAvroReportParams(Map<String, String> reportParameters, PigCounters pigCounters) {
-        
-        List<ReportParam> avroReportParams = Lists.newArrayList();
-        
-        for (Map.Entry<String, String> paramToReport : reportParameters.entrySet()) {
-            String key = paramToReport.getKey();
-            String value = paramToReport.getValue();
-            
-            String resolvedValue = pigCounterValueResolver.resolveValue(value, pigCounters);
-            
-            avroReportParams.add(new ReportParam(key, resolvedValue));
-        }
-        
-        return avroReportParams;
     }
     
 }
