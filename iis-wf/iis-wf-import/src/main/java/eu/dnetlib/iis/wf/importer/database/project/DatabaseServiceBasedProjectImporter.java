@@ -2,6 +2,7 @@ package eu.dnetlib.iis.wf.importer.database.project;
 
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_DATABASE_SERVICE_DBNAME;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Collections;
@@ -79,16 +80,12 @@ public class DatabaseServiceBasedProjectImporter implements Process {
 //			initializing database reader
 			DatabaseFacade databaseFacade = ServiceFacadeUtils.instantiate(parameters);
 
-//			reading sql query content
-			StringWriter writer = new StringWriter();
-			IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream(queryLocation), writer, "utf-8");
-			
 			SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 			SAXParser saxParser = parserFactory.newSAXParser();
 			int currentCount = 0;
 			long startTime = System.currentTimeMillis();
 			
-			for (String record : databaseFacade.searchSQL(parameters.get(IMPORT_DATABASE_SERVICE_DBNAME), writer.toString())) {
+			for (String record : databaseFacade.searchSQL(parameters.get(IMPORT_DATABASE_SERVICE_DBNAME), loadQuery())) {
 				saxParser.parse(new InputSource(new StringReader(record)), new DatabaseProjectXmlHandler(new DataFileRecordReceiver<Project>(projectWriter)));
 				currentCount++;
 				if (currentCount%progressLogInterval==0) {
@@ -98,6 +95,18 @@ public class DatabaseServiceBasedProjectImporter implements Process {
 				}
 			}
 		}
+	}
+	
+    //------------------------ LOGIC --------------------------
+
+	/**
+	 * Reads query from classpath resource.
+	 */
+	private String loadQuery() throws IOException {
+	    try (StringWriter writer = new StringWriter()) {
+	        IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream(queryLocation), writer, "utf-8");
+	        return writer.toString();    
+	    }
 	}
 
 }

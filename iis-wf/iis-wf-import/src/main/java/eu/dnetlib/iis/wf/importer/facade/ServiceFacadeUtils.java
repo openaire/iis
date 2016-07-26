@@ -43,15 +43,4 @@ public abstract class ServiceFacadeUtils {
         }
         
     }
-    
-    /**
-     * Provides parameter value. Returns default value when entry not found among parameters.
-     * @param parameters map of parameters
-     * @param paramName parameter name
-     * @param defaultValue parameter default value to be returned when entry not found among parameters
-     */
-    public static String getValue(Map<String, String> parameters, String paramName, String defaultValue) {
-        return parameters.containsKey(paramName)?parameters.get(paramName):defaultValue;
-    }
-    
 }

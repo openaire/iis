@@ -10,6 +10,8 @@ import java.util.Map;
 
 import com.google.common.base.Preconditions;
 
+import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
+
 /**
  * WebService MDStore service facade factory.
  * 
@@ -27,8 +29,8 @@ public class WebServiceMDStoreFacadeFactory implements ServiceFacadeFactory<MDSt
                 "unknown MDStore service location: no parameter provided:  '%s'", IMPORT_DATACITE_MDSTORE_SERVICE_LOCATION);
 
         return new WebServiceMDStoreFacade(parameters.get(IMPORT_DATACITE_MDSTORE_SERVICE_LOCATION),
-                Long.parseLong(ServiceFacadeUtils.getValue(parameters, IMPORT_RESULT_SET_CLIENT_READ_TIMEOUT, RESULTSET_READ_TIMEOUT_DEFAULT_VALUE)),
-                Integer.parseInt(ServiceFacadeUtils.getValue(parameters, IMPORT_RESULT_SET_PAGESIZE, RESULTSET_PAGESIZE_DEFAULT_VALUE)));
+                Long.parseLong(WorkflowRuntimeParameters.getParamValue(IMPORT_RESULT_SET_CLIENT_READ_TIMEOUT, RESULTSET_READ_TIMEOUT_DEFAULT_VALUE, parameters)),
+                Integer.parseInt(WorkflowRuntimeParameters.getParamValue(IMPORT_RESULT_SET_PAGESIZE, RESULTSET_PAGESIZE_DEFAULT_VALUE, parameters)));
     }
 
 }

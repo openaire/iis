@@ -33,6 +33,7 @@ import eu.dnetlib.iis.importer.schemas.DocumentToMDStore;
 import eu.dnetlib.iis.wf.importer.DataFileRecordReceiverWithCounter;
 import eu.dnetlib.iis.wf.importer.facade.MDStoreFacade;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeUtils;
+
 /**
  * Process module importing dataset identifiers from datacite xml dump and writing output to avro datastore.
  * 
@@ -40,94 +41,97 @@ import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeUtils;
  *
  */
 public class DataciteMDStoreImporter implements Process {
-	
-	private static final String PORT_OUT_DATASET = "dataset";
-	private static final String PORT_OUT_DATASET_TO_MDSTORE = "dataset_to_mdstore";
-	
-	private static final String DATASET_COUNTER_NAME = "DATASET_COUNTER";
-	private static final String DATASET_TO_MDSTORE_COUNTER_NAME = "DATASET_TO_MDSTORE_COUNTER";
-	
-	private final Logger log = Logger.getLogger(this.getClass());
-	
-	private final int progressLogInterval = 100000;
-	
-	private final NamedCountersFileWriter countersWriter = new NamedCountersFileWriter();
-	
-	private static final Map<String, PortType> outputPorts = new HashMap<String, PortType>();
-	
-	{
-		outputPorts.put(PORT_OUT_DATASET, new AvroPortType(DataSetReference.SCHEMA$));
-		outputPorts.put(PORT_OUT_DATASET_TO_MDSTORE, new AvroPortType(DocumentToMDStore.SCHEMA$));
-	}
-	
-	//------------------------ LOGIC --------------------------
-	
-	@Override
-	public Map<String, PortType> getInputPorts() {
-		return Collections.emptyMap();
-	}
 
-	@Override
-	public Map<String, PortType> getOutputPorts() {
-		return outputPorts;
-	}
+    private static final String PORT_OUT_DATASET = "dataset";
+    private static final String PORT_OUT_DATASET_TO_MDSTORE = "dataset_to_mdstore";
 
-	@Override
-	public void run(PortBindings portBindings, Configuration conf,
-			Map<String, String> parameters) throws Exception {
-		
-		Preconditions.checkArgument(parameters.containsKey(IMPORT_DATACITE_MDSTORE_IDS_CSV), 
-                "unspecified MDStore identifiers, required parameter '%s' is missing!", IMPORT_DATACITE_MDSTORE_IDS_CSV);
-		
-		FileSystem fs = FileSystem.get(conf);
-		
-        try (DataFileWriter<DataSetReference> datasetRefWriter = DataStore.create(
-                new FileSystemPath(fs, portBindings.getOutput().get(PORT_OUT_DATASET)), DataSetReference.SCHEMA$);
-                DataFileWriter<DocumentToMDStore> datasetToMDStoreWriter = DataStore.create(
-                        new FileSystemPath(fs, portBindings.getOutput().get(PORT_OUT_DATASET_TO_MDSTORE)),
-                        DocumentToMDStore.SCHEMA$)) {
+    private static final String DATASET_COUNTER_NAME = "DATASET_COUNTER";
+    private static final String DATASET_TO_MDSTORE_COUNTER_NAME = "DATASET_TO_MDSTORE_COUNTER";
 
-			NamedCounters counters = new NamedCounters(new String[] { DATASET_COUNTER_NAME, DATASET_TO_MDSTORE_COUNTER_NAME });
-			
-//			initializing MDStore reader
+    private final Logger log = Logger.getLogger(this.getClass());
+
+    private final int progressLogInterval = 100000;
+
+    private final NamedCountersFileWriter countersWriter = new NamedCountersFileWriter();
+
+    private static final Map<String, PortType> outputPorts = new HashMap<String, PortType>();
+
+    {
+        outputPorts.put(PORT_OUT_DATASET, new AvroPortType(DataSetReference.SCHEMA$));
+        outputPorts.put(PORT_OUT_DATASET_TO_MDSTORE, new AvroPortType(DocumentToMDStore.SCHEMA$));
+    }
+
+    // ------------------------ LOGIC --------------------------
+
+    @Override
+    public Map<String, PortType> getInputPorts() {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public Map<String, PortType> getOutputPorts() {
+        return outputPorts;
+    }
+
+    @Override
+    public void run(PortBindings portBindings, Configuration conf, Map<String, String> parameters) throws Exception {
+
+        Preconditions.checkArgument(parameters.containsKey(IMPORT_DATACITE_MDSTORE_IDS_CSV),
+                "unspecified MDStore identifiers, required parameter '%s' is missing!",
+                IMPORT_DATACITE_MDSTORE_IDS_CSV);
+
+        FileSystem fs = FileSystem.get(conf);
+        FileSystemPath datasetOutput = new FileSystemPath(fs, portBindings.getOutput().get(PORT_OUT_DATASET));
+        FileSystemPath datasetToMDStoreOutput = new FileSystemPath(fs, portBindings.getOutput().get(PORT_OUT_DATASET_TO_MDSTORE));
+
+        try (DataFileWriter<DataSetReference> datasetRefWriter = DataStore.create(datasetOutput, DataSetReference.SCHEMA$);
+                DataFileWriter<DocumentToMDStore> datasetToMDStoreWriter = DataStore.create(datasetToMDStoreOutput, DocumentToMDStore.SCHEMA$)) {
+
+            NamedCounters counters = new NamedCounters(new String[] { DATASET_COUNTER_NAME, DATASET_TO_MDSTORE_COUNTER_NAME });
+
+            // initializing MDStore reader
             MDStoreFacade mdStoreFacade = ServiceFacadeUtils.instantiate(parameters);
-			
-			String mdStoresCSV = parameters.get(IMPORT_DATACITE_MDSTORE_IDS_CSV);
-			if (StringUtils.isNotBlank(mdStoresCSV) && 
-					!WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(mdStoresCSV)) {
-				String[] mdStoreIds = StringUtils.split(mdStoresCSV, WorkflowRuntimeParameters.DEFAULT_CSV_DELIMITER);
-                
-				SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+
+            String mdStoresCSV = parameters.get(IMPORT_DATACITE_MDSTORE_IDS_CSV);
+            if (StringUtils.isNotBlank(mdStoresCSV) && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(mdStoresCSV)) {
+                String[] mdStoreIds = StringUtils.split(mdStoresCSV, WorkflowRuntimeParameters.DEFAULT_CSV_DELIMITER);
+
+                SAXParserFactory parserFactory = SAXParserFactory.newInstance();
                 SAXParser saxParser = parserFactory.newSAXParser();
-				
+
                 for (String currentMdStoreId : mdStoreIds) {
-					int currentCount = 0;
-					long startTime = System.currentTimeMillis();
-					for (String record : mdStoreFacade.deliverMDRecords(currentMdStoreId)) {
-						DataFileRecordReceiverWithCounter<DataSetReference> datasetReceiver = new DataFileRecordReceiverWithCounter<>(datasetRefWriter);
-						DataFileRecordReceiverWithCounter<DocumentToMDStore> datasetToMDStoreReceiver = new DataFileRecordReceiverWithCounter<>(datasetToMDStoreWriter);
-						
-						DataciteDumpXmlHandler handler = new DataciteDumpXmlHandler(datasetReceiver, datasetToMDStoreReceiver, currentMdStoreId);
-						saxParser.parse(new InputSource(new StringReader(record)), handler);
-						
-						counters.increment(DATASET_COUNTER_NAME, datasetReceiver.getReceivedCount());
-						counters.increment(DATASET_TO_MDSTORE_COUNTER_NAME, datasetToMDStoreReceiver.getReceivedCount());
-						
-						currentCount++;
-						if (currentCount%progressLogInterval==0) {
-							log.debug("current progress: " + currentCount + ", last package of " + progressLogInterval + 
-									" processed in " + ((System.currentTimeMillis()-startTime)/1000) + " secs");
-							startTime = System.currentTimeMillis();
-						}
-					}
-					log.debug("total number of processed records for mdstore " + currentMdStoreId + ": "	+ currentCount);
-				}
-			} else {
-				log.warn("got undefined mdstores list for datacite import, skipping!");
-			}
-			
-			countersWriter.writeCounters(counters, System.getProperty("oozie.action.output.properties"));
-		}
-	}
-	
+                    int currentCount = 0;
+                    long startTime = System.currentTimeMillis();
+                    for (String record : mdStoreFacade.deliverMDRecords(currentMdStoreId)) {
+                        DataFileRecordReceiverWithCounter<DataSetReference> datasetReceiver = new DataFileRecordReceiverWithCounter<>(
+                                datasetRefWriter);
+                        DataFileRecordReceiverWithCounter<DocumentToMDStore> datasetToMDStoreReceiver = new DataFileRecordReceiverWithCounter<>(
+                                datasetToMDStoreWriter);
+
+                        DataciteDumpXmlHandler handler = new DataciteDumpXmlHandler(datasetReceiver,
+                                datasetToMDStoreReceiver, currentMdStoreId);
+                        saxParser.parse(new InputSource(new StringReader(record)), handler);
+
+                        counters.increment(DATASET_COUNTER_NAME, datasetReceiver.getReceivedCount());
+                        counters.increment(DATASET_TO_MDSTORE_COUNTER_NAME,
+                                datasetToMDStoreReceiver.getReceivedCount());
+
+                        currentCount++;
+                        if (currentCount % progressLogInterval == 0) {
+                            log.debug("current progress: " + currentCount + ", last package of " + progressLogInterval
+                                    + " processed in " + ((System.currentTimeMillis() - startTime) / 1000) + " secs");
+                            startTime = System.currentTimeMillis();
+                        }
+                    }
+                    log.debug(
+                            "total number of processed records for mdstore " + currentMdStoreId + ": " + currentCount);
+                }
+            } else {
+                log.warn("got undefined mdstores list for datacite import, skipping!");
+            }
+
+            countersWriter.writeCounters(counters, System.getProperty("oozie.action.output.properties"));
+        }
+    }
+
 }

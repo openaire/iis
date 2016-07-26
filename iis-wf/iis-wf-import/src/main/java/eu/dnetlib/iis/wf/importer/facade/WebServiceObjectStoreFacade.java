@@ -10,7 +10,7 @@ import eu.dnetlib.enabling.resultset.client.ResultSetClientFactory;
 import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
 
 /**
- * WebService based MDStore facade.
+ * WebService based ObjectStore facade.
  * 
  * @author mhorst
  *

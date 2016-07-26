@@ -10,6 +10,8 @@ import java.util.Map;
 
 import com.google.common.base.Preconditions;
 
+import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
+
 /**
  * WebService Database service facade factory.
  * 
@@ -27,8 +29,8 @@ public class WebServiceISLookupFacadeFactory implements ServiceFacadeFactory<ISL
                 "unknown ISLookup service location: no parameter provided:  '%s'", IMPORT_ISLOOKUP_SERVICE_LOCATION);
         
         return new WebServiceISLookupFacade(parameters.get(IMPORT_ISLOOKUP_SERVICE_LOCATION), 
-                Long.parseLong(ServiceFacadeUtils.getValue(parameters, IMPORT_RESULT_SET_CLIENT_READ_TIMEOUT, RESULTSET_READ_TIMEOUT_DEFAULT_VALUE)),
-                Integer.parseInt(ServiceFacadeUtils.getValue(parameters, IMPORT_RESULT_SET_PAGESIZE, RESULTSET_PAGESIZE_DEFAULT_VALUE)));
+                Long.parseLong(WorkflowRuntimeParameters.getParamValue(IMPORT_RESULT_SET_CLIENT_READ_TIMEOUT, RESULTSET_READ_TIMEOUT_DEFAULT_VALUE, parameters)),
+                Integer.parseInt(WorkflowRuntimeParameters.getParamValue(IMPORT_RESULT_SET_PAGESIZE, RESULTSET_PAGESIZE_DEFAULT_VALUE, parameters)));
     }
 
 }

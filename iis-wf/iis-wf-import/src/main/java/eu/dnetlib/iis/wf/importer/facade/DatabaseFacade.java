@@ -9,7 +9,8 @@ package eu.dnetlib.iis.wf.importer.facade;
 public interface DatabaseFacade {
 
     /**
-     * Delivers all records for given MDStore identifier
+     * Delivers all records from given database matching SQL query criteria.
+     * 
      * @param databaseName database name the query should be executed on
      * @param query SQL query
      */

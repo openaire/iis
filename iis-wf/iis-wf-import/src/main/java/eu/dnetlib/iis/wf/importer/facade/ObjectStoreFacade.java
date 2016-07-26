@@ -9,7 +9,7 @@ package eu.dnetlib.iis.wf.importer.facade;
 public interface ObjectStoreFacade {
 
     /**
-     * Provides all metadata records from given objectstore. 
+     * Returns metadata records from given objectstore created in specified time range. 
      * @param objectStoreId object store identifier
      * @param from from time in millis
      * @param until until time in millis

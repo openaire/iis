@@ -10,6 +10,8 @@ import java.util.Map;
 
 import com.google.common.base.Preconditions;
 
+import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
+
 /**
  * WebService ObjectStore facade factory.
  * 
@@ -26,8 +28,8 @@ public class WebServiceObjectStoreFacadeFactory implements ServiceFacadeFactory<
                 "unknown object store service location: no parameter provided:  '%s'", IMPORT_CONTENT_OBJECT_STORE_LOC);
 
         return new WebServiceObjectStoreFacade(parameters.get(IMPORT_CONTENT_OBJECT_STORE_LOC),
-                Long.parseLong(ServiceFacadeUtils.getValue(parameters, IMPORT_RESULT_SET_CLIENT_READ_TIMEOUT, RESULTSET_READ_TIMEOUT_DEFAULT_VALUE)),
-                Integer.parseInt(ServiceFacadeUtils.getValue(parameters, IMPORT_RESULT_SET_PAGESIZE, RESULTSET_PAGESIZE_DEFAULT_VALUE)));
+                Long.parseLong(WorkflowRuntimeParameters.getParamValue(IMPORT_RESULT_SET_CLIENT_READ_TIMEOUT, RESULTSET_READ_TIMEOUT_DEFAULT_VALUE, parameters)),
+                Integer.parseInt(WorkflowRuntimeParameters.getParamValue(IMPORT_RESULT_SET_PAGESIZE, RESULTSET_PAGESIZE_DEFAULT_VALUE, parameters)));
     }
 
 }

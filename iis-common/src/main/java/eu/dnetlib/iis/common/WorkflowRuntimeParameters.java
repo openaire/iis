@@ -1,5 +1,7 @@
 package eu.dnetlib.iis.common;
 
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 
@@ -45,6 +47,17 @@ public abstract class WorkflowRuntimeParameters {
     public static String getParamValue(String paramName, String fallbackParamName, Configuration configuration) {
         String resultCandidate = getParamValue(paramName, configuration);
         return resultCandidate!=null?resultCandidate:getParamValue(fallbackParamName, configuration);
+    }
+    
+    /**
+     * Provides parameter value. Returns default value when entry not found among parameters.
+     * 
+     * @param paramName parameter name
+     * @param defaultValue parameter default value to be returned when entry not found among parameters
+     * @param parameters map of parameters
+     */
+    public static String getParamValue(String paramName, String defaultValue, Map<String, String> parameters) {
+        return parameters.containsKey(paramName)?parameters.get(paramName):defaultValue;
     }
     
 }
