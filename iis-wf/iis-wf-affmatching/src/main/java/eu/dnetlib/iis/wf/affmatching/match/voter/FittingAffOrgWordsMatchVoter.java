@@ -73,7 +73,7 @@ public class FittingAffOrgWordsMatchVoter extends AbstractAffOrgMatchVoter {
     //------------------------ LOGIC --------------------------
     
     /**
-     * Returns true if minFittingOrgWordsPercentage of the words in at least one of the organization names
+     * Returns true if minFittingOrgWordsRatio of the words in at least one of the organization names
      * are found in any section of {@link AffMatchAffiliation#getOrganizationName()}.
      * 
      * @see #FittingAffWordsMatchVoter(List, int, double, double)
