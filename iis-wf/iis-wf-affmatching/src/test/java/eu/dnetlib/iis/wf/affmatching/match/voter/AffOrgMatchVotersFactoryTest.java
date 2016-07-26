@@ -4,11 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.function.Function;
 
 import org.junit.Test;
 import org.powermock.reflect.Whitebox;
 
 import com.google.common.collect.ImmutableList;
+
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 
 /**
  * @author madryk
@@ -37,13 +40,13 @@ public class AffOrgMatchVotersFactoryTest {
         assertInternalVotersCount(voter, 2);
         
         assertTrue(getInternalVoter(voter, 0) instanceof CountryCodeStrictMatchVoter);
-        assertTrue(getInternalVoter(voter, 1) instanceof NameStrictWithCharFilteringMatchVoter);
-        
+        assertOrgNameVoter(getInternalVoter(voter, 1), NameStrictWithCharFilteringMatchVoter.class, GetOrgNameFunction.class);
+
         
         List<Character> charsToFilter = Whitebox.getInternalState(getInternalVoter(voter, 1), "charsToFilter");
         assertEquals(ImmutableList.of(',', ';'), charsToFilter);
     }
-    
+
     @Test
     public void createNameStrictCountryLooseMatchVoter() {
         
@@ -58,8 +61,8 @@ public class AffOrgMatchVotersFactoryTest {
         assertInternalVotersCount(voter, 2);
         
         assertTrue(getInternalVoter(voter, 0) instanceof CountryCodeLooseMatchVoter);
-        assertTrue(getInternalVoter(voter, 1) instanceof NameStrictWithCharFilteringMatchVoter);
-        
+        assertOrgNameVoter(getInternalVoter(voter, 1), NameStrictWithCharFilteringMatchVoter.class, GetOrgNameFunction.class);
+
         
         List<Character> charsToFilter = Whitebox.getInternalState(getInternalVoter(voter, 1), "charsToFilter");
         assertEquals(ImmutableList.of(',', ';'), charsToFilter);
@@ -79,7 +82,9 @@ public class AffOrgMatchVotersFactoryTest {
         assertInternalVotersCount(voter, 2);
         
         assertTrue(getInternalVoter(voter, 0) instanceof CountryCodeLooseMatchVoter);
-        assertTrue(getInternalVoter(voter, 1) instanceof SectionedNameStrictMatchVoter);
+        assertOrgNameVoter(getInternalVoter(voter, 1), SectionedNameStrictMatchVoter.class, GetOrgNameFunction.class);
+
+
     }
     
     @Test
@@ -96,7 +101,8 @@ public class AffOrgMatchVotersFactoryTest {
         assertInternalVotersCount(voter, 2);
         
         assertTrue(getInternalVoter(voter, 0) instanceof CountryCodeLooseMatchVoter);
-        assertTrue(getInternalVoter(voter, 1) instanceof SectionedShortNameStrictMatchVoter);
+        assertOrgNameVoter(getInternalVoter(voter, 1), SectionedNameStrictMatchVoter.class, GetOrgShortNameFunction.class);
+
     }
     
     @Test
@@ -113,8 +119,8 @@ public class AffOrgMatchVotersFactoryTest {
         assertInternalVotersCount(voter, 2);
         
         assertTrue(getInternalVoter(voter, 0) instanceof CountryCodeLooseMatchVoter);
-        assertTrue(getInternalVoter(voter, 1) instanceof SectionedNameLevenshteinMatchVoter);
-        
+        assertOrgNameVoter(getInternalVoter(voter, 1), SectionedNameLevenshteinMatchVoter.class, GetOrgNameFunction.class);
+
         assertEquals(0.9, Whitebox.getInternalState(getInternalVoter(voter, 1), "minSimilarity"), PRECISION);
     }
     
@@ -128,10 +134,19 @@ public class AffOrgMatchVotersFactoryTest {
         assertEquals(expectedCount, internalVoters.size());
     }
     
+    
     private AffOrgMatchVoter getInternalVoter(AffOrgMatchVoter voter, int position) {
         
         List<AffOrgMatchVoter> internalVoters = Whitebox.getInternalState(voter, "voters");
         
         return internalVoters.get(position);
+    }
+    
+   
+    private void assertOrgNameVoter(AffOrgMatchVoter voter1, Class<? extends AffOrgMatchVoter> expectedVoterClass, Class<? extends Function<AffMatchOrganization, List<String>>> expectedGetOrgNamesFunctionClass) {
+        
+        assertTrue(voter1.getClass().equals(expectedVoterClass));
+        
+        assertTrue(Whitebox.getInternalState(voter1, "getOrgNamesFunction").getClass().equals(expectedGetOrgNamesFunctionClass));
     }
 }
