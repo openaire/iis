@@ -16,6 +16,15 @@
 			<name>output_document_to_dataset</name>
 			<description>output document to dataset</description>
 		</property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
+            <name>output_report_relative_path</name>
+            <value>document_to_dataset</value>
+            <description>directory for storing report (relative to output_report_root_path)</description>
+        </property>
 	</parameters>
 
     <global>
@@ -108,16 +117,28 @@
 					<name>mapreduce.task.timeout</name>
 					<value>1800000</value>
 				</property>
-				<property>
-					<name>mapreduce.task.timeout</name>
-					<value>1800000</value>
-				</property>
+				
+                <property>
+                    <name>oozie.action.external.stats.write</name>
+                    <value>true</value>
+                </property>
             </configuration>
             <file>${input_dataset_db}#dataset.db</file>
             
         </map-reduce>
-        <ok to="end"/>
+        <ok to="report"/>
         <error to="fail"/>
+    </action>
+
+    <action name="report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
+            <arg>-Preport.export.referenceExtraction.dataset=${hadoop:counters('main_sqlite')[RECORDS][MAP_OUT]}</arg>
+            <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
     </action>
 
     <kill name="fail">
