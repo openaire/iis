@@ -61,6 +61,10 @@
 					<name>output_root</name>
 					<value>${workingDir}/metadata_extractor</value>
 				</property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
             </configuration>
         </sub-workflow>
 		<ok to="consumer"/>
@@ -76,8 +80,11 @@
 			<arg>-C{extracted_metadata,
 				eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
 				eu/dnetlib/iis/wf/metadataextraction/sampledataproducer/data/extr_meta.json}</arg>
+            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportParam,
+                eu/dnetlib/iis/wf/metadataextraction/sampledataproducer/data/report.json}</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Iextracted_metadata=${workingDir}/metadata_extractor/meta</arg>
+			<arg>-Ireport=${workingDir}/report/import_metadataextraction</arg>
 		</java>
 		<ok to="end" />
 		<error to="fail" />
