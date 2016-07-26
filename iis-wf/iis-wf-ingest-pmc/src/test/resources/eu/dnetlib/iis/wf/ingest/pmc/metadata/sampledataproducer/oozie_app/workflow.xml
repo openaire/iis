@@ -70,6 +70,10 @@
                     <name>output_root</name>
                     <value>${workingDir}/ingest_pmc_metadata/out</value>
                 </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
             </configuration>
         </sub-workflow>
 		<ok to="consumer"/>
@@ -89,9 +93,12 @@
             <arg>-C{fault,
                 eu.dnetlib.iis.audit.schemas.Fault,
                 eu/dnetlib/iis/wf/ingest/pmc/metadata/sampledataproducer/data/fault.json}</arg>
+            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportParam,
+                eu/dnetlib/iis/wf/ingest/pmc/metadata/sampledataproducer/data/report.json}</arg>
     		<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Imetadata=${workingDir}/ingest_pmc_metadata/out/meta</arg>
 			<arg>-Ifault=${workingDir}/ingest_pmc_metadata/out/fault</arg>
+			<arg>-Ireport=${workingDir}/report/import_ingest_pmc</arg>
 		</java>
 		<ok to="end" />
 		<error to="fail" />

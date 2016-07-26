@@ -518,9 +518,10 @@ public class AvroMultipleOutputs{
         throw new IOException(e);
       }
  
-      // if counters are enabled, wrap the writer with context 
-      // to increment counters 
+      // if counters are enabled, initialize starting counter value and
+      // wrap the writer with context to increment counters 
       if (countersEnabled) {
+        context.getCounter(COUNTERS_GROUP, baseFileName).setValue(0);
         writer = new RecordWriterWithCounter(writer, baseFileName, context);
       }
       

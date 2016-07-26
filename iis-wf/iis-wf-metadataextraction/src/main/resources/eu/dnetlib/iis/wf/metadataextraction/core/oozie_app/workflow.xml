@@ -24,6 +24,15 @@
 				generated only when log_fault_processing_time_threshold_secs is exceeded
 			</description>
 		</property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
+            <name>output_report_relative_path</name>
+            <value>import_metadataextraction</value>
+            <description>directory for storing report (relative to output_report_root_path)</description>
+        </property>
 		<property>
 			<name>excluded_ids</name>
 			<value>$UNDEFINED$</value>
@@ -213,12 +222,32 @@
                     <name>mapreduce.job.reduces</name>
                     <value>0</value>
                 </property>
+                <property>
+                    <name>oozie.action.external.stats.write</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>avro.mapreduce.multipleoutputs.counters</name>
+                    <value>true</value>
+                </property>
             </configuration>
         </map-reduce>
-          <ok to="end"/>
+          <ok to="report"/>
         <error to="fail"/>
     </action>
-    
+
+    <action name="report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
+            <arg>-Preport.import.metadataExtraction.correct=${hadoop:counters('metadata_extractor')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_meta,'/part')]}</arg>
+            <arg>-Preport.import.metadataExtraction.fault=${hadoop:counters('metadata_extractor')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_fault,'/part')]}</arg>
+            <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+
     <kill name="fail">
         <message>Unfortunately, the process failed -- error message: [${wf:errorMessage(wf:lastErrorNode())}]</message>
     </kill>
