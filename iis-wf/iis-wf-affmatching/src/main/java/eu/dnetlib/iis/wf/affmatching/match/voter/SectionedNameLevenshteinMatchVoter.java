@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
 import java.util.List;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,6 +27,8 @@ public class SectionedNameLevenshteinMatchVoter extends AbstractSectionedMatchVo
     
     private double minSimilarity;
     
+    private Function<AffMatchOrganization, List<String>> getOrgNamesFunction = new GetOrgNameFunction();
+    
     
     //------------------------ CONSTRUCTORS --------------------------
     
@@ -45,24 +48,10 @@ public class SectionedNameLevenshteinMatchVoter extends AbstractSectionedMatchVo
     
     //------------------------ LOGIC --------------------------
     
-    /**
-     * Returns {@link AffMatchAffiliation#getOrganizationName()} of the passed affiliation.
-     */
-    @Override
-    protected String getAffiliationName(AffMatchAffiliation affiliation) {
-        return affiliation.getOrganizationName();
-    }
+    
     
     /**
-     * Returns {@link AffMatchOrganization#getName()} of the passed organization.
-     */
-    @Override
-    protected String getOrganizationName(AffMatchOrganization organization) {
-        return organization.getName();
-    }
-    
-    /**
-     * Returns true if one of the affiliation name section is similar to 
+     * Returns true if any of the affiliation name sections is similar to 
      * the organization name section.<br/>
      * Similarity is measured based on Levenshtein distance according to
      * the following formula:<br/>
@@ -86,12 +75,29 @@ public class SectionedNameLevenshteinMatchVoter extends AbstractSectionedMatchVo
         
         return false;
     }
+    
+    @Override
+    protected List<String> getOrganizationNames(AffMatchOrganization organization) {
+        return getOrgNamesFunction.apply(organization);
+    }
 
+    //------------------------ SETTERS --------------------------
+    
+    /**
+     * Sets the function that will be used to get the organization names 
+     */
+    public void setGetOrgNamesFunction(Function<AffMatchOrganization, List<String>> getOrgNamesFunction) {
+        this.getOrgNamesFunction = getOrgNamesFunction;
+    }
+    
     //------------------------ toString --------------------------
     
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("matchStrength", getMatchStrength()).add("minSimilarity", minSimilarity).toString();
+        return Objects.toStringHelper(this)
+                .add("minSimilarity", minSimilarity)
+                .add("getOrgNamesFunction", getOrgNamesFunction.getClass().getSimpleName())
+                .toString();
     }
     
 }

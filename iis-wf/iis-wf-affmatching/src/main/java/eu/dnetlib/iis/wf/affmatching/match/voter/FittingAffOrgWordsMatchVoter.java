@@ -2,6 +2,7 @@ package eu.dnetlib.iis.wf.affmatching.match.voter;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -34,6 +35,7 @@ public class FittingAffOrgWordsMatchVoter extends AbstractAffOrgMatchVoter {
     
     private int wordToRemoveMaxLength;
     
+    private Function<AffMatchOrganization, List<String>> getOrgNamesFunction = new GetOrgNameFunction();
     
     //------------------------ CONSTRUCTORS --------------------------
     
@@ -71,24 +73,47 @@ public class FittingAffOrgWordsMatchVoter extends AbstractAffOrgMatchVoter {
     //------------------------ LOGIC --------------------------
     
     /**
-     * Returns true if minFittingOrgWordsPercentage of {@link AffMatchOrganization#getName()} words
+     * Returns true if minFittingOrgWordsRatio of the words in at least one of the organization names
      * are found in any section of {@link AffMatchAffiliation#getOrganizationName()}.
      * 
      * @see #FittingAffWordsMatchVoter(List, int, double, double)
+     * @see #setGetOrgNamesFunction(Function)
      */
     @Override
     public boolean voteMatch(AffMatchAffiliation affiliation, AffMatchOrganization organization) {
         
         String filteredAffName = stringFilter.filterCharsAndShortWords(affiliation.getOrganizationName(), charsToFilter, wordToRemoveMaxLength);
-        String filteredOrgName = stringFilter.filterCharsAndShortWords(organization.getName(), charsToFilter, wordToRemoveMaxLength);
         
-        if (StringUtils.isEmpty(filteredAffName) || StringUtils.isEmpty(filteredOrgName)) {
+        if (StringUtils.isEmpty(filteredAffName)) {
             return false;
         }
         
         Set<String> affWords = Sets.newHashSet(StringUtils.split(filteredAffName));
-        Set<String> orgWords = Sets.newHashSet(StringUtils.split(filteredOrgName));
         
+        
+        for (String orgName : getOrgNamesFunction.apply(organization)) {
+            
+            String filteredOrgName = stringFilter.filterCharsAndShortWords(orgName, charsToFilter, wordToRemoveMaxLength);
+            
+            if (StringUtils.isEmpty(filteredOrgName)) {
+                continue;
+            }
+            
+            Set<String> orgWords = Sets.newHashSet(StringUtils.split(filteredOrgName));
+            
+            if (affWordsContainOrgWords(affWords, orgWords)) {
+                return true;
+            }
+            
+        }
+        
+        return false;
+    }
+
+    
+    //------------------------ PRIVATE --------------------------
+
+    private boolean affWordsContainOrgWords(Set<String> affWords, Set<String> orgWords) {
         int fittingWordsCount = 0;
         
         for (String orgWord : orgWords) {
@@ -103,7 +128,16 @@ public class FittingAffOrgWordsMatchVoter extends AbstractAffOrgMatchVoter {
     }
     
     
+    //------------------------ SETTERS --------------------------
     
+    /**
+     * Sets the function that will be used to get the organization names 
+     */
+    public void setGetOrgNamesFunction(Function<AffMatchOrganization, List<String>> getOrgNamesFunction) {
+        this.getOrgNamesFunction = getOrgNamesFunction;
+    }
+   
+
     //------------------------ toString --------------------------
     
     @Override
