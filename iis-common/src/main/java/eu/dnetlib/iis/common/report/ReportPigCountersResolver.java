@@ -22,7 +22,7 @@ public class ReportPigCountersResolver {
      * Resolve {@link ReportParam}s from {@link PigCounters} using {@link ReportPigCounterMapping}s.
      * Only counters that are present in {@link ReportPigCounterMapping}s will be resolved.
      */
-    public List<ReportParam> resolveReportCounters(List<ReportPigCounterMapping> reportPigCountersMapping, PigCounters pigCounters) {
+    public List<ReportParam> resolveReportCounters(PigCounters pigCounters, List<ReportPigCounterMapping> reportPigCountersMapping) {
         
         List<ReportParam> reportCounters = Lists.newArrayList();
         

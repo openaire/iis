@@ -74,7 +74,7 @@ public class PigCountersReportGenerator implements Process {
         
         List<ReportPigCounterMapping> reportCountersMapping = collectReportCountersMapping(parameters);
         
-        List<ReportParam> reportCounters = reportPigCountersResolver.resolveReportCounters(reportCountersMapping, pigCounters);
+        List<ReportParam> reportCounters = reportPigCountersResolver.resolveReportCounters(pigCounters, reportCountersMapping);
         
         
         FileSystem fs = FileSystem.get(conf);

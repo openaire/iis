@@ -78,7 +78,7 @@ public class PigCountersReportGeneratorTest {
         ReportParam reportCounter1 = new ReportParam("group.param1", "2");
         ReportParam reportCounter2 = new ReportParam("group.param2" ,"8");
         
-        when(reportPigCountersResolver.resolveReportCounters(Lists.newArrayList(counterMapping1, counterMapping2), pigCounters))
+        when(reportPigCountersResolver.resolveReportCounters(pigCounters, Lists.newArrayList(counterMapping1, counterMapping2)))
                 .thenReturn(Lists.newArrayList(reportCounter1, reportCounter2));
         
         // execute

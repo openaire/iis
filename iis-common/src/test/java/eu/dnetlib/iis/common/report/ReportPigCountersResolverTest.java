@@ -56,7 +56,7 @@ public class ReportPigCountersResolverTest {
         
         // execute
         
-        reportPigCountersResolver.resolveReportCounters(Lists.newArrayList(counterMapping), pigCounters);
+        reportPigCountersResolver.resolveReportCounters(pigCounters, Lists.newArrayList(counterMapping));
     }
     
     @Test(expected = IllegalArgumentException.class)
@@ -68,7 +68,7 @@ public class ReportPigCountersResolverTest {
         
         // execute
         
-        reportPigCountersResolver.resolveReportCounters(Lists.newArrayList(counterMapping), pigCounters);
+        reportPigCountersResolver.resolveReportCounters(pigCounters, Lists.newArrayList(counterMapping));
     }
     
     @Test
@@ -82,7 +82,7 @@ public class ReportPigCountersResolverTest {
         
         // execute
         
-        List<ReportParam> reportCounters = reportPigCountersResolver.resolveReportCounters(Lists.newArrayList(counterMapping1, counterMapping2, counterMapping3), pigCounters);
+        List<ReportParam> reportCounters = reportPigCountersResolver.resolveReportCounters(pigCounters, Lists.newArrayList(counterMapping1, counterMapping2, counterMapping3));
         
         // assert
         
