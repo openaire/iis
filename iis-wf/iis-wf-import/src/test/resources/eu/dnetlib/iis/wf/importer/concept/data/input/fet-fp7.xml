@@ -1,0 +1,21 @@
+<context type="community" id="fet-fp7" label="FET">
+    <category id="fet-fp7::open" label="FET Open" claim="false">
+        <param name="CD_DIVNAME">7.A.SP1.03.08</param>
+        <param name="CD_ABBR">ICT-2007.8.0</param>
+        <param name="CD_PARENT_DIVNAME">7.A.SP1.03</param>
+        <concept id="fet-fp7::open::301" label="Challenging current thinking" claim="false">
+            <param name="CD_DIVNAME">7.A.SP1.03.19.01</param>
+            <param name="CD_ABBR">ICT-2011.9.1</param>
+            <param name="CD_PARENT_DIVNAME">7.A.SP1.03.19</param>
+            <concept id="fet-fp7::open::301::284566" label="Quantum Propagating Microwaves in Strongly Coupled Environments" claim="true">
+                <param name="CD_PROJECT_NUMBER">284566</param>
+                <param name="CD_ACRONYM">PROMISCE</param>
+                <param name="CD_FRAMEWORK">FP7</param>
+            </concept>
+            <concept id="fet-fp7::open::301::284584" label="Quantum Interferometry with Bose-Einstein Condensates" claim="true">
+                <param name="CD_PROJECT_NUMBER">284584</param>
+                <param name="CD_FRAMEWORK">FP7</param>
+            </concept>
+        </concept>
+    </category>
+</context>
