@@ -26,7 +26,7 @@ public class ConceptXmlHandler extends DefaultHandler {
     private static final String ATTRIBUTE_LABEL = "label";
     private static final String ATTRIBUTE_NAME = "name";
 
-    private Stack<String> parents;
+    private Stack<String> parentElementNames;
     
     private Stack<Concept.Builder> parentConcepts;
 
@@ -52,7 +52,7 @@ public class ConceptXmlHandler extends DefaultHandler {
     
     @Override
     public void startDocument() throws SAXException {
-        parents = new Stack<>();
+        parentElementNames = new Stack<>();
         parentConcepts = new Stack<>();
     }
 
@@ -70,12 +70,12 @@ public class ConceptXmlHandler extends DefaultHandler {
             currentValue = new StringBuilder();
             currentParamName = attributes.getValue(ATTRIBUTE_NAME);
         }
-        parents.push(qName);
+        parentElementNames.push(qName);
     }
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-        this.parents.pop();
+        this.parentElementNames.pop();
         if (isWithinElement(qName, ELEM_CONCEPT, null)) {
             try {
                 if (currentConceptBuilder==null) {
@@ -99,8 +99,8 @@ public class ConceptXmlHandler extends DefaultHandler {
 
     @Override
     public void endDocument() throws SAXException {
-        parents.clear();
-        parents = null;
+        parentElementNames.clear();
+        parentElementNames = null;
         parentConcepts.clear();
         parentConcepts = null;
     }
@@ -122,7 +122,7 @@ public class ConceptXmlHandler extends DefaultHandler {
      */
     private boolean isWithinElement(String qName, String expectedElement, String expectedParent) {
         return qName.equalsIgnoreCase(expectedElement) && (expectedParent == null
-                || (!parents.isEmpty() && expectedParent.equalsIgnoreCase(parents.peek())));
+                || (!parentElementNames.isEmpty() && expectedParent.equalsIgnoreCase(parentElementNames.peek())));
     }
     
 }

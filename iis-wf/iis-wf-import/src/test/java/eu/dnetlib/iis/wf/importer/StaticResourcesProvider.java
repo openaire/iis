@@ -6,7 +6,8 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 
-import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.Lists;
+
 
 /**
  * Encapsulates list of resources created from classpath locations.
@@ -28,7 +29,7 @@ public class StaticResourcesProvider {
      * @param resourcesLocations resources to be read classpath locations
      */
     public StaticResourcesProvider(String ...resourcesLocations) {
-        resources = Lists.newArrayList(resourcesLocations.length);
+        resources = Lists.newArrayList();
         for (String resourceLocation : resourcesLocations) {
             try (InputStream input = getClass().getResourceAsStream(resourceLocation)) {
                 resources.add(IOUtils.toString(input));
