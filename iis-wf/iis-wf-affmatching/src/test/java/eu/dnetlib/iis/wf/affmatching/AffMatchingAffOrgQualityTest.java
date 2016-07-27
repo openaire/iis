@@ -5,9 +5,11 @@ import static eu.dnetlib.iis.common.utils.AvroTestUtils.createLocalAvroDataStore
 import static eu.dnetlib.iis.common.utils.JsonAvroTestUtils.readMultipleJsonDataStores;
 import static eu.dnetlib.iis.common.utils.JsonTestUtils.readJson;
 import static eu.dnetlib.iis.common.utils.JsonTestUtils.readMultipleJsons;
+import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createAlternativeNameMainSectionHashBucketMatcher;
 import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createDocOrgRelationMatcher;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createFirstWordsHashBucketMatcher;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createMainSectionHashBucketMatcher;
+import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createNameFirstWordsHashBucketMatcher;
+import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createNameMainSectionHashBucketMatcher;
+import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createShortNameMainSectionHashBucketMatcher;
 import static java.util.stream.Collectors.toList;
 
 import java.io.File;
@@ -249,13 +251,16 @@ public class AffMatchingAffOrgQualityTest {
         AffOrgMatcher docOrgRelationMatcher = 
                 createDocOrgRelationMatcher(sparkContext, inputDocProjDirPath, inputInferredDocProjDirPath, inputProjOrgDirPath, inputDocProjConfidenceThreshold);
         
-        AffOrgMatcher mainSectionHashBucketMatcher = createMainSectionHashBucketMatcher();
+        AffOrgMatcher nameMainSectionHashBucketMatcher = createNameMainSectionHashBucketMatcher();
         
-        AffOrgMatcher firstWordsHashBucketMatcher = createFirstWordsHashBucketMatcher();
+        AffOrgMatcher shortNameMainSectionHashBucketMatcher = createShortNameMainSectionHashBucketMatcher();
+        
+        AffOrgMatcher alternativeNameMainSectionHashBucketMatcher = createAlternativeNameMainSectionHashBucketMatcher();
+        
+        AffOrgMatcher firstWordsNameHashBucketMatcher = createNameFirstWordsHashBucketMatcher();
         
         
-        
-        affMatchingService.setAffOrgMatchers(of(docOrgRelationMatcher, mainSectionHashBucketMatcher, firstWordsHashBucketMatcher));
+        affMatchingService.setAffOrgMatchers(of(docOrgRelationMatcher, nameMainSectionHashBucketMatcher, shortNameMainSectionHashBucketMatcher, alternativeNameMainSectionHashBucketMatcher, firstWordsNameHashBucketMatcher));
         
         
         AffMatchOrganizationAltNameFiller altNameFiller = createAffMatchOrganizationAltNameFiller();

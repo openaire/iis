@@ -89,7 +89,6 @@ public class AffMatchingService implements Serializable {
         
         JavaRDD<AffMatchOrganization> enrichedOrganizations = normalizedOrganizations.map(x -> affMatchOrganizationAltNameFiller.fillAlternativeNames(x));
         
-        
         JavaRDD<AffMatchResult> allMatchedAffOrgs = doMatch(sc, normalizedAffiliations, enrichedOrganizations);
         
         

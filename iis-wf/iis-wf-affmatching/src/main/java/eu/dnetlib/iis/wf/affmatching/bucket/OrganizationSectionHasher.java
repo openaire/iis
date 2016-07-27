@@ -56,9 +56,11 @@ public class OrganizationSectionHasher implements Serializable {
         String wordBefore = (typeSignificantWordPos <= 0) ? "" : words[typeSignificantWordPos - 1];
         String wordAfter = (typeSignificantWordPos >= words.length-1) ? "" : words[typeSignificantWordPos + 1];
         
-        return generateWordHash(section.getType().name(), OrganizationSection.SECTION_NUMBER_OF_LETTERS) 
-                + generateWordHash(wordBefore) + generateWordHash(wordAfter);
+        String wordBeforeAfterHash = generateSortedHash(wordBefore, wordAfter);
+        
+        return generateWordHash(section.getType().name(), OrganizationSection.SECTION_NUMBER_OF_LETTERS) + wordBeforeAfterHash;
     }
+    
     
     private String hashUsingFirstWords(OrganizationSection section) {
         
@@ -67,8 +69,21 @@ public class OrganizationSectionHasher implements Serializable {
         String firstWord = words.length == 0 ? "" : words[0];
         String secondWord = words.length <= 1 ? "" : words[1];
         
-        return generateWordHash(section.getType().name(), OrganizationSection.SECTION_NUMBER_OF_LETTERS) 
-                + generateWordHash(firstWord) + generateWordHash(secondWord);
+        String wordFirstSecondHash = generateSortedHash(firstWord, secondWord);
+        
+        return generateWordHash(section.getType().name(), OrganizationSection.SECTION_NUMBER_OF_LETTERS) + wordFirstSecondHash;
+    }
+
+    
+    private String generateSortedHash(String firstWord, String secondWord) {
+        String wordBeforeHash = generateWordHash(firstWord);
+        String wordAfterHash = generateWordHash(secondWord);
+        
+        String wordBeforeAfterHash = wordBeforeHash + wordAfterHash;
+        if (wordBeforeHash.compareTo(wordAfterHash) > 0) {
+            wordBeforeAfterHash = wordAfterHash + wordBeforeHash;
+        }
+        return wordBeforeAfterHash;
     }
     
     private String generateWordHash(String word) {

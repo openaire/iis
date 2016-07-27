@@ -165,7 +165,7 @@ public class AffMatchOrganization {
 
     @Override
     public String toString() {
-        return "AffMatchOrganization [id=" + id + ", name=" + name + ", shortName=" + shortName
+        return "AffMatchOrganization [id=" + id + ", name=" + name + ", alternativeNames=" + alternativeNames + ", shortName=" + shortName
                 + ", countryName=" + countryName + ", countryCode=" + countryCode + ", websiteUrl="
                 + websiteUrl + "]";
     }

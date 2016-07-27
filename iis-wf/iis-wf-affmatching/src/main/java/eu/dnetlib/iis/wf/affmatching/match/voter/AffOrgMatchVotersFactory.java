@@ -1,6 +1,11 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
+import java.util.List;
+import java.util.function.Function;
+
 import com.google.common.collect.ImmutableList;
+
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 
 /**
  * @author madryk
@@ -15,11 +20,26 @@ public class AffOrgMatchVotersFactory {
     
     //------------------------ LOGIC --------------------------
     
-    public static AffOrgMatchVoter createNameCountryStrictMatchVoter(float matchStrength) {
+    public static AffOrgMatchVoter createNameCountryStrictMatchVoter(float matchStrength, Function<AffMatchOrganization, List<String>> getOrgNamesFunction) {
+       
+        NameStrictWithCharFilteringMatchVoter orgNameVoter = new NameStrictWithCharFilteringMatchVoter(ImmutableList.of(',', ';'));
+        orgNameVoter.setGetOrgNamesFunction(getOrgNamesFunction);
+       
+        CompositeMatchVoter voter = new CompositeMatchVoter(ImmutableList.of(new CountryCodeStrictMatchVoter(), orgNameVoter));
         
-        CompositeMatchVoter voter = new CompositeMatchVoter(ImmutableList.of(
-                new CountryCodeStrictMatchVoter(), 
-                new NameStrictWithCharFilteringMatchVoter(ImmutableList.of(',', ';'))));
+        voter.setMatchStrength(matchStrength);
+        
+        return voter;
+        
+    }
+  
+    
+    public static AffOrgMatchVoter createNameStrictCountryLooseMatchVoter(float matchStrength, Function<AffMatchOrganization, List<String>> getOrgNamesFunction) {
+        
+        NameStrictWithCharFilteringMatchVoter orgNameVoter = new NameStrictWithCharFilteringMatchVoter(ImmutableList.of(',', ';'));
+        orgNameVoter.setGetOrgNamesFunction(getOrgNamesFunction);
+        
+        CompositeMatchVoter voter = new CompositeMatchVoter(ImmutableList.of(new CountryCodeLooseMatchVoter(), orgNameVoter));
         
         voter.setMatchStrength(matchStrength);
         
@@ -27,23 +47,12 @@ public class AffOrgMatchVotersFactory {
         
     }
     
-    public static AffOrgMatchVoter createNameStrictCountryLooseMatchVoter(float matchStrength) {
+    public static AffOrgMatchVoter createSectionedNameStrictCountryLooseMatchVoter(float matchStrength, Function<AffMatchOrganization, List<String>> getOrgNamesFunction) {
         
-        CompositeMatchVoter voter = new CompositeMatchVoter(ImmutableList.of(
-                new CountryCodeLooseMatchVoter(), 
-                new NameStrictWithCharFilteringMatchVoter(ImmutableList.of(',', ';'))));
+        SectionedNameStrictMatchVoter orgNameVoter = new SectionedNameStrictMatchVoter();
+        orgNameVoter.setGetOrgNamesFunction(getOrgNamesFunction);
         
-        voter.setMatchStrength(matchStrength);
-        
-        return voter;
-        
-    }
-    
-    public static AffOrgMatchVoter createSectionedNameStrictCountryLooseMatchVoter(float matchStrength) {
-        
-        CompositeMatchVoter voter = new CompositeMatchVoter(ImmutableList.of(
-                new CountryCodeLooseMatchVoter(), 
-                new SectionedNameStrictMatchVoter()));
+        CompositeMatchVoter voter = new CompositeMatchVoter(ImmutableList.of(new CountryCodeLooseMatchVoter(), orgNameVoter));
         
         voter.setMatchStrength(matchStrength);
         
@@ -51,25 +60,12 @@ public class AffOrgMatchVotersFactory {
         
     }
     
-    public static AffOrgMatchVoter createSectionedShortNameStrictCountryLooseMatchVoter(float matchStrength) {
+    public static AffOrgMatchVoter createSectionedNameLevenshteinCountryLooseMatchVoter(float matchStrength, Function<AffMatchOrganization, List<String>> getOrgNamesFunction) {
         
-        SectionedNameStrictMatchVoter sectionedShortNameStrictMatchVoter = new SectionedNameStrictMatchVoter();
-        sectionedShortNameStrictMatchVoter.setGetOrgNamesFunction(new GetOrgShortNameFunction());
+        SectionedNameLevenshteinMatchVoter orgNameVoter = new SectionedNameLevenshteinMatchVoter(0.9);
+        orgNameVoter.setGetOrgNamesFunction(getOrgNamesFunction);
         
-        CompositeMatchVoter voter = new CompositeMatchVoter(ImmutableList.of(
-                new CountryCodeLooseMatchVoter(), 
-                sectionedShortNameStrictMatchVoter));
-        
-        voter.setMatchStrength(matchStrength);
-        
-        return voter;
-    }
-    
-    public static AffOrgMatchVoter createSectionedNameLevenshteinCountryLooseMatchVoter(float matchStrength) {
-        
-        CompositeMatchVoter voter = new CompositeMatchVoter(ImmutableList.of(
-                new CountryCodeLooseMatchVoter(), 
-                new SectionedNameLevenshteinMatchVoter(0.9)));
+        CompositeMatchVoter voter = new CompositeMatchVoter(ImmutableList.of(new CountryCodeLooseMatchVoter(), orgNameVoter));
         
         voter.setMatchStrength(matchStrength);
         

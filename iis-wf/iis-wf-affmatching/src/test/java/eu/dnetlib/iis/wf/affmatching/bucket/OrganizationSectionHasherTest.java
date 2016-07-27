@@ -36,7 +36,7 @@ public class OrganizationSectionHasherTest {
         OrganizationSection section = new OrganizationSection(OrgSectionType.UNIVERSITY, new String[] {"md", "university", "in"}, 1);
         
         // execute & assert
-        assertEquals("UNImd_in_", orgSectionHasher.hash(section));
+        assertEquals("UNIin_md_", orgSectionHasher.hash(section));
         
     }
     
@@ -58,7 +58,7 @@ public class OrganizationSectionHasherTest {
         OrganizationSection section = new OrganizationSection(OrgSectionType.UNIVERSITY, new String[] {"washington", "university"}, 1);
         
         // execute & assert
-        assertEquals("UNIwas___", orgSectionHasher.hash(section));
+        assertEquals("UNI___was", orgSectionHasher.hash(section));
         
     }
 
@@ -69,7 +69,7 @@ public class OrganizationSectionHasherTest {
         OrganizationSection section = new OrganizationSection(OrgSectionType.UNKNOWN, new String[] {"medical", "college", "school"}, -1);
         
         // execute & assert
-        assertEquals("UNKmedcol", orgSectionHasher.hash(section));
+        assertEquals("UNKcolmed", orgSectionHasher.hash(section));
         
     }
     
@@ -91,7 +91,7 @@ public class OrganizationSectionHasherTest {
         OrganizationSection section = new OrganizationSection(OrgSectionType.UNKNOWN, new String[] {"institution"}, -1);
         
         // execute & assert
-        assertEquals("UNKins___", orgSectionHasher.hash(section));
+        assertEquals("UNK___ins", orgSectionHasher.hash(section));
         
     }
     
