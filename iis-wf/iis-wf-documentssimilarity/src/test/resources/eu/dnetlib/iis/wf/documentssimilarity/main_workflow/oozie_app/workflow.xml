@@ -65,13 +65,17 @@
                     <name>similarityTopnDocumentPerDocument</name>
                     <value>3</value>
                 </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
 			</configuration>
         </sub-workflow>
-    	<ok to="consumer" />
+    	<ok to="consumer-document-similarity" />
         <error to="fail" />
     </action>
     
-    <action name="consumer">
+    <action name="consumer-document-similarity">
 		<java>
 			<!-- This is simple wrapper for the Java code -->
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
@@ -81,9 +85,20 @@
 			<arg>-C{docsim,eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity,1,750}</arg>
 			<arg>-Idocsim=${workingDir}/documents_similarity</arg>
 		</java>
-		<ok to="end" />
+		<ok to="consumer-report" />
 		<error to="fail" />
 	</action>
+    
+    <action name="consumer-report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.wf.documentssimilarity.DocumentSimilarityReportConsumer</arg>
+            <arg>-Ireport=${workingDir}/report/document_similarity</arg>
+            <arg>-Pdocsim=${workingDir}/documents_similarity</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
     
     <kill name="fail">
         <message>Unfortunately, the process failed -- error message:

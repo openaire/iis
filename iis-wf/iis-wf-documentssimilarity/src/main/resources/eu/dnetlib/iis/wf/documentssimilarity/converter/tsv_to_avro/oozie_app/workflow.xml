@@ -10,6 +10,15 @@
 			<name>output</name>
 			<description>converter output directory</description>
 		</property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
+            <name>output_report_relative_path</name>
+            <value>document_similarity</value>
+            <description>directory for storing report (relative to output_report_root_path)</description>
+        </property>
 	</parameters>
     
     
@@ -144,8 +153,24 @@
                     <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${output}</value>
                 </property>
+                
+                <property>
+                    <name>oozie.action.external.stats.write</name>
+                    <value>true</value>
+                </property>
             </configuration>
         </map-reduce>
+        <ok to="report" />
+        <error to="fail" />
+    </action>
+
+    <action name="report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
+            <arg>-Preport.export.documentSimilarity=${hadoop:counters('converter')[RECORDS][MAP_OUT]}</arg>
+            <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
+        </java>
         <ok to="end" />
         <error to="fail" />
     </action>
