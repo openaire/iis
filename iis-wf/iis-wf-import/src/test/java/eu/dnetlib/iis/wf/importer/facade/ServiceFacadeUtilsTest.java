@@ -78,7 +78,8 @@ public class ServiceFacadeUtilsTest {
     
     // ------------------------ INNER CLASSES --------------------------
     
-    public static class FactoryWithoutNoArgConstructor implements ServiceFacadeFactory<String> {
+    @SuppressWarnings("unused")
+    private static class FactoryWithoutNoArgConstructor implements ServiceFacadeFactory<String> {
 
         public FactoryWithoutNoArgConstructor(String param) {
             // does nothing
@@ -91,8 +92,13 @@ public class ServiceFacadeUtilsTest {
         
     }
     
-    public static class StringFactory implements ServiceFacadeFactory<String> {
+    private static class StringFactory implements ServiceFacadeFactory<String> {
 
+        @SuppressWarnings("unused")
+        public StringFactory() {
+            //does nothing
+        }
+        
         @Override
         public String instantiate(Map<String, String> parameters) {
             return this.getClass().getName();

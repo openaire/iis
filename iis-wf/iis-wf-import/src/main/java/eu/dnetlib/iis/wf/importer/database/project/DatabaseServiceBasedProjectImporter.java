@@ -97,7 +97,7 @@ public class DatabaseServiceBasedProjectImporter implements Process {
 		}
 	}
 	
-    //------------------------ LOGIC --------------------------
+    //------------------------ PRIVATE --------------------------
 
 	/**
 	 * Reads query from classpath resource.
