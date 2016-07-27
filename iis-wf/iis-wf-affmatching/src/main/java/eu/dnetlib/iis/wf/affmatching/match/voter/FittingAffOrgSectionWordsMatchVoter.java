@@ -169,6 +169,7 @@ public class FittingAffOrgSectionWordsMatchVoter extends AbstractAffOrgMatchVote
                                            .add("minFittingOrgWordsRatio", minFittingOrgWordsRatio)
                                            .add("minFittingOrgWordSimilarity", minFittingWordSimilarity)
                                            .add("wordToRemoveMaxLength", wordToRemoveMaxLength)
+                                           .add("getOrgNamesFunction", getOrgNamesFunction.getClass().getSimpleName())
                                            .toString();
     }
 

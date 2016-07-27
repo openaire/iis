@@ -7,12 +7,16 @@ import static eu.dnetlib.iis.common.utils.JsonTestUtils.readJson;
 import static eu.dnetlib.iis.common.utils.JsonTestUtils.readMultipleJsons;
 import static eu.dnetlib.iis.wf.affmatching.AffMatchingResultPrinter.printFalsePositives;
 import static eu.dnetlib.iis.wf.affmatching.AffMatchingResultPrinter.printNotMatched;
+import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createAlternativeNameMainSectionHashBucketMatcher;
+import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createAlternativeNameMainSectionHashBucketMatcherVoters;
 import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createDocOrgRelationMatcher;
 import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createDocOrgRelationMatcherVoters;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createFirstWordsHashBucketMatcher;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createFirstWordsHashBucketMatcherVoters;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createMainSectionHashBucketMatcher;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createMainSectionHashBucketMatcherVoters;
+import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createNameFirstWordsHashBucketMatcher;
+import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createNameFirstWordsHashBucketMatcherVoters;
+import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createNameMainSectionHashBucketMatcher;
+import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createNameMainSectionHashBucketMatcherVoters;
+import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createShortNameMainSectionHashBucketMatcher;
+import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createShortNameMainSectionHashBucketMatcherVoters;
 import static java.lang.System.out;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -148,7 +152,9 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
         // execute
         
         estimateDocOrgRelationMatcherVoterStrengths();
-        estimateMainSectionHashBucketMatcherVoterStrengths();
+        estimateNameMainSectionHashBucketMatcherVoterStrengths();
+        estimateAlternativeNameMainSectionHashBucketMatcherVoterStrengths();
+        estimateShortNameMainSectionHashBucketMatcherVoterStrengths();
         estimateFirstWordsHashBucketMatcherVoterStrengths();
         
         // assert
@@ -188,21 +194,61 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
     
     
     
-    private void estimateMainSectionHashBucketMatcherVoterStrengths() throws IOException {
+    private void estimateNameMainSectionHashBucketMatcherVoterStrengths() throws IOException {
         
         // given
         
         createInputData();
 
         
-        AffOrgMatcher affOrgMatcher = createMainSectionHashBucketMatcher();
+        AffOrgMatcher affOrgMatcher = createNameMainSectionHashBucketMatcher();
         
-        List<AffOrgMatchVoter> voters = createMainSectionHashBucketMatcherVoters();
+        List<AffOrgMatchVoter> voters = createNameMainSectionHashBucketMatcherVoters();
         
         
         // execute
         
-        estimateVoterMatchStrengths(affOrgMatcher, "Main Section Hash Bucket Matcher", voters);
+        estimateVoterMatchStrengths(affOrgMatcher, "Name Main Section Hash Bucket Matcher", voters);
+
+        
+    }
+    
+    
+    private void estimateAlternativeNameMainSectionHashBucketMatcherVoterStrengths() throws IOException {
+        
+        // given
+        
+        createInputData();
+
+        
+        AffOrgMatcher affOrgMatcher = createAlternativeNameMainSectionHashBucketMatcher();
+        
+        List<AffOrgMatchVoter> voters = createAlternativeNameMainSectionHashBucketMatcherVoters();
+        
+        
+        // execute
+        
+        estimateVoterMatchStrengths(affOrgMatcher, "Alternative Name Main Section Hash Bucket Matcher", voters);
+
+        
+    }
+    
+    
+    private void estimateShortNameMainSectionHashBucketMatcherVoterStrengths() throws IOException {
+        
+        // given
+        
+        createInputData();
+
+        
+        AffOrgMatcher affOrgMatcher = createShortNameMainSectionHashBucketMatcher();
+        
+        List<AffOrgMatchVoter> voters = createShortNameMainSectionHashBucketMatcherVoters();
+        
+        
+        // execute
+        
+        estimateVoterMatchStrengths(affOrgMatcher, "Short Name Main Section Hash Bucket Matcher", voters);
 
         
     }
@@ -214,9 +260,9 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
         
         createInputData();
 
-        AffOrgMatcher affOrgMatcher = createFirstWordsHashBucketMatcher();
+        AffOrgMatcher affOrgMatcher = createNameFirstWordsHashBucketMatcher();
         
-        List<AffOrgMatchVoter> voters = createFirstWordsHashBucketMatcherVoters();
+        List<AffOrgMatchVoter> voters = createNameFirstWordsHashBucketMatcherVoters();
         
         
         // execute

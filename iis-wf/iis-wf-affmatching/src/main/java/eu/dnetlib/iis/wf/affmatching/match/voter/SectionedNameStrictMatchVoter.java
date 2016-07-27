@@ -8,7 +8,7 @@ import com.google.common.base.Objects;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 
 /**
- * Match voter that splits each of the organization names and {@link AffMatchOrganization#getName()} into sections.<br/>
+ * Match voter that splits each of the organization names into sections.<br/>
  * The affiliation and organization matches if all of the organization sections (of at lease one of the organization names)
  * have equal sections in affiliation organization name.<br/>
  * 
