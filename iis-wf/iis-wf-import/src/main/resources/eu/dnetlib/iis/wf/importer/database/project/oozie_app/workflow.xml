@@ -1,6 +1,11 @@
 <workflow-app xmlns="uri:oozie:workflow:0.4" name="importer_database_project">
 	
 	<parameters>
+        <property>
+            <name>database_facade_factory_classname</name>
+            <value>eu.dnetlib.iis.wf.importer.facade.WebServiceDatabaseFacadeFactory</value>
+            <description>ServiceFacadeFactory implementation class name producing eu.dnetlib.iis.wf.importer.facade.DatabaseFacade</description>
+        </property>
 		<property>
 			<name>database_service_location</name>
 			<value>$UNDEFINED$</value>
@@ -63,6 +68,7 @@
 			<arg>-Pimport.database.client.connection.timeout=${database_client_connection_timeout}</arg>
             <arg>-Pimport.database.client.read.timeout=${database_client_read_timeout}</arg>
             <arg>-Pimport.resultset.client.read.timeout=${resultset_client_read_timeout}</arg>
+            <arg>-Pimport.facade.factory.classname=${database_facade_factory_classname}</arg>
 			<arg>-Oproject=${output}</arg>
 		</java>
 		<ok to="end" />

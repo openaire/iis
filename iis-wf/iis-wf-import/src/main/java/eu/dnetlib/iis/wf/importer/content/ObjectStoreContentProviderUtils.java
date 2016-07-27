@@ -10,9 +10,6 @@ import java.security.NoSuchAlgorithmException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
 
-import eu.dnetlib.enabling.is.lookup.rmi.ISLookUpDocumentNotFoundException;
-import eu.dnetlib.enabling.is.lookup.rmi.ISLookUpException;
-import eu.dnetlib.enabling.is.lookup.rmi.ISLookUpService;
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
 
 /**
@@ -25,29 +22,6 @@ public class ObjectStoreContentProviderUtils {
 	public static final String defaultEncoding = HBaseConstants.STATIC_FIELDS_ENCODING_UTF8;
 	
 	private static final String objectIdSeparator = "::";
-	
-	/**
-	 * Retrieves object store identifier from remote ISLookup for given repository identifier
-	 * @param lookupService
-	 * @param repositoryId
-	 * @return retrieved object store identifier or null when not found
-	 */
-	public static String objectStoreIdLookup(ISLookUpService lookupService, String repositoryId) {
-		String query = "for $x in //RESOURCE_PROFILE[.//RESOURCE_TYPE/@value = 'LinkedDataDSResourceType' "
-				+ "and .//REPOSITORY_SERVICE_IDENTIFIER = '" + repositoryId + "']"
-				+ "let $objectStore := $x//DATA_SINK/text()"
-				+ "return $objectStore";
-		try {
-			return lookupService.getResourceProfileByQuery(query).trim();
-		} catch (ISLookUpDocumentNotFoundException e) {
-			throw new RuntimeException("object store details not found "
-					+ "for repository id: " + repositoryId, e);
-		} catch (ISLookUpException e) {
-			throw new RuntimeException(
-					"got exception when looking for object store for "
-					+ "repository: " + repositoryId, e);
-		}
-	}
 	
 	/**
 	 * Returns byte content read from given location.

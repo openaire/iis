@@ -2,6 +2,11 @@
 	
 	<parameters>
 		<property>
+            <name>mdstore_facade_factory_classname</name>
+            <value>eu.dnetlib.iis.wf.importer.facade.WebServiceMDStoreFacadeFactory</value>
+            <description>ServiceFacadeFactory implementation class name producing eu.dnetlib.iis.wf.importer.facade.MDStoreFacade</description>
+        </property>
+        <property>
 			<name>mdstore_service_location</name>
 			<value>$UNDEFINED$</value>
 			<description>MDStore service (not WSDL) location URL</description>
@@ -76,8 +81,9 @@
 			<arg>-Pimport.datacite.mdstore.service.location=${mdstore_service_location}</arg>
 			<arg>-Pimport.datacite.mdstore.ids.csv=${mdstore_ids_csv}</arg>
 			<arg>-Pimport.datacite.mdstore.format=${input_mdstore_format}</arg>
-			<arg>-Pimport.datacite.mdstore.resultset.pagesize=${input_mdstore_resultset_pagesize}</arg>
+			<arg>-Pimport.resultset.pagesize=${input_mdstore_resultset_pagesize}</arg>
 			<arg>-Pimport.resultset.client.read.timeout=${resultset_client_read_timeout}</arg>
+            <arg>-Pimport.facade.factory.classname=${mdstore_facade_factory_classname}</arg>
 			<arg>-Odataset=${output_dataset}</arg>
 			<arg>-Odataset_to_mdstore=${output_dataset_to_mdstore}</arg>
 			<capture-output />

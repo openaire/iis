@@ -1,6 +1,11 @@
 <workflow-app xmlns="uri:oozie:workflow:0.4" name="importer_concept">
 	
 	<parameters>
+        <property>
+            <name>islookup_facade_factory_classname</name>
+            <value>eu.dnetlib.iis.wf.importer.facade.WebServiceISLookupFacadeFactory</value>
+            <description>ServiceFacadeFactory implementation class name producing eu.dnetlib.iis.wf.importer.facade.ISLookupFacade</description>
+        </property>
 		<property>
 			<name>islookup_service_location</name>
 			<description>islookup service location</description>
@@ -21,6 +26,11 @@
             <name>output_report_relative_path</name>
             <value>import_concept</value>
             <description>directory for storing report (relative to output_report_root_path)</description>
+        </property>
+        <property>
+            <name>resultset_client_read_timeout</name>
+            <value>60000</value>
+            <description>result set client reading timeout (expressed in milliseconds)</description>
         </property>
 	</parameters>
 
@@ -52,6 +62,8 @@
 			<arg>eu.dnetlib.iis.wf.importer.concept.ISLookupServiceBasedConceptImporter</arg>
 			<arg>-Pimport.islookup.service.location=${islookup_service_location}</arg>
 			<arg>-Pimport.context.ids.csv=${context_ids_csv}</arg>
+            <arg>-Pimport.resultset.client.read.timeout=${resultset_client_read_timeout}</arg>
+            <arg>-Pimport.facade.factory.classname=${islookup_facade_factory_classname}</arg>
 			<arg>-Oconcepts=${output}</arg>
 			<capture-output />
 		</java>
