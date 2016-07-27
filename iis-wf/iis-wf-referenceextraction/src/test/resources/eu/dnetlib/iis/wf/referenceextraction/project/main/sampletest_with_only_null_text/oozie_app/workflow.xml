@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- Note that documentation placed in comments in this file uses the
 "markdown" syntax (along with its way of dividing text into sections). -->
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-referenceextraction_project_main_sampletest">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-referenceextraction_project_main_sampletest_with_only_null_text">
 
     <global>
         <job-tracker>${jobTracker}</job-tracker>
@@ -84,6 +84,10 @@
                     <name>output_document_to_project</name>
                     <value>${workingDir}/referenceextraction_project/document_to_project</value>
                 </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="consumer"/>
@@ -100,8 +104,11 @@
 			<arg>-C{document_to_project,
 				eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject,
 				eu/dnetlib/iis/wf/referenceextraction/project/data/empty.json}</arg>
+            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportParam,
+                eu/dnetlib/iis/wf/referenceextraction/project/data/report_empty.json}</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Idocument_to_project=${workingDir}/referenceextraction_project/document_to_project</arg>
+            <arg>-Ireport=${workingDir}/report/document_to_project</arg>
 		</java>
 		<ok to="end" />
 		<error to="fail" />

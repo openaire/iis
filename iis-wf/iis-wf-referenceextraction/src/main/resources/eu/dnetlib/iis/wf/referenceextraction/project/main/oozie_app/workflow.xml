@@ -23,23 +23,8 @@
     <action name="sqlite_builder">
         <sub-workflow>
             <app-path>${wf:appPath()}/sqlite_builder</app-path>
+            <propagate-configuration />
             <configuration>
-                <property>
-                    <name>jobTracker</name>
-                    <value>${jobTracker}</value>
-                </property>
-                <property>
-                    <name>nameNode</name>
-                    <value>${nameNode}</value>
-                </property>
-                <property>
-                    <name>queueName</name>
-                    <value>${queueName}</value>
-                </property>
-                <property>
-                    <name>oozieLauncherQueueName</name>
-                    <value>${oozieLauncherQueueName}</value>
-                </property>
                 <!-- Working directory of the subworkflow -->
                 <property>
                     <name>workingDir</name>
@@ -62,23 +47,8 @@
     <action name="main_sqlite">
         <sub-workflow>
             <app-path>${wf:appPath()}/main_sqlite</app-path>
+            <propagate-configuration />
             <configuration>
-                <property>
-                    <name>jobTracker</name>
-                    <value>${jobTracker}</value>
-                </property>
-                <property>
-                    <name>nameNode</name>
-                    <value>${nameNode}</value>
-                </property>
-                <property>
-                    <name>queueName</name>
-                    <value>${queueName}</value>
-                </property>
-                <property>
-                    <name>oozieLauncherQueueName</name>
-                    <value>${oozieLauncherQueueName}</value>
-                </property>
                 <!-- Working directory of the subworkflow -->
                 <property>
                     <name>workingDir</name>
