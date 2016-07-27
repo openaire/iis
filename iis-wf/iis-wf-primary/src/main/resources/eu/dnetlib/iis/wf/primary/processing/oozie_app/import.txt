@@ -16,6 +16,7 @@ affiliation_matching classpath eu/dnetlib/iis/wf/affmatching/oozie_app
 collapsers_basic_collapser classpath eu/dnetlib/iis/wf/collapsers/basic_collapser/oozie_app
 transformers_citations_from_referencemetadata classpath eu/dnetlib/iis/wf/transformers/common/citations/from/referencemetadata/oozie_app
 transformers_common_union classpath eu/dnetlib/iis/wf/transformers/common/union/oozie_app
+transformers_common_union_with_report classpath eu/dnetlib/iis/wf/transformers/common/union_with_report/oozie_app
 transformers_common_union3 classpath eu/dnetlib/iis/wf/transformers/common/union3/oozie_app
 transformers_export_citations classpath eu/dnetlib/iis/wf/transformers/export/citations/oozie_app
 transformers_project_toconcept classpath eu/dnetlib/iis/wf/referenceextraction/project/output_transformer/oozie_app

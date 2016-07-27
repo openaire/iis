@@ -227,7 +227,7 @@
 
     <action name="transformers_common_union_document_text">
         <sub-workflow>
-            <app-path>${wf:appPath()}/transformers_common_union</app-path>
+            <app-path>${wf:appPath()}/transformers_common_union_with_report</app-path>
             <propagate-configuration />
             <configuration>
                 <property>
@@ -249,6 +249,14 @@
                 <property>
                     <name>schema</name>
                     <value>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</value>
+                </property>
+                <property>
+                    <name>output_report</name>
+                    <value>${output_report_root_path}/document_text_union</value>
+                </property>
+                <property>
+                    <name>union_count_report_key</name>
+                    <value>processing.documentText.merged</value>
                 </property>
             </configuration>
         </sub-workflow>
