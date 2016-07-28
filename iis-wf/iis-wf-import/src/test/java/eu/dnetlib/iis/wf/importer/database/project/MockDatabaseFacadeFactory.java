@@ -25,7 +25,7 @@ public class MockDatabaseFacadeFactory implements ServiceFacadeFactory<DatabaseF
     //--------------- INNER CLASS -------------------
 
     /**
-     * ISLookup mock providing static concept profiles.
+     * Database mock providing static records.
      *
      */
     private static class MockDatabaseFacade implements DatabaseFacade {
