@@ -27,7 +27,7 @@ public class DataciteXmlImporterTest {
 
 	@Test
 	public void testDataciteImport() throws Exception {
-		String filePath = "/eu/dnetlib/iis/wf/importer/dataset/datacite_test_dump.xml";
+		String filePath = "/eu/dnetlib/iis/wf/importer/dataset/data/input/datacite_test_dump.xml";
 		String mdStoreId = "some-mdstore-id";
 		InputStream inputStream = null;
 		SAXParser saxParser = null;
