@@ -110,6 +110,11 @@
           <groupId>com.linkedin.datafu</groupId>
           <artifactId>datafu</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+        </dependency>
 
 	</dependencies>
 
