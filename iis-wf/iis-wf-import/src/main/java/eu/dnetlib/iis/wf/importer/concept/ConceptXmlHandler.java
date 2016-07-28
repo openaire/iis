@@ -2,7 +2,6 @@ package eu.dnetlib.iis.wf.importer.concept;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Stack;
 
 import org.xml.sax.Attributes;
@@ -13,100 +12,117 @@ import eu.dnetlib.iis.importer.schemas.Concept;
 import eu.dnetlib.iis.wf.importer.RecordReceiver;
 
 /**
- * Context profile SAX handler.
- * Notice: writer is not being closed by handler.
- * Created outside, let it be closed outside as well.
+ * Context profile SAX handler. Builds {@link Concept} objects based on XML profile with concepts hierarchy.
+ * 
  * @author mhorst
  *
  */
 public class ConceptXmlHandler extends DefaultHandler {
 
-	private static final String ELEM_CONCEPT = "concept";
-	private static final String ELEM_PARAM = "param";
-	
-	private static final String ATTRIBUTE_ID = "id";
-	private static final String ATTRIBUTE_LABEL = "label";
-	private static final String ATTRIBUTE_NAME = "name";
-	
-	private Stack<String> parents;
-	
-	private final RecordReceiver<Concept> receiver;
-	
-	private StringBuilder currentValue = new StringBuilder();
-	
-	private Map<CharSequence,CharSequence> paramMap = null;
-	
-	private String currentConceptId;
-	private String currentConceptLabel;
-	private String currentParamName;
-	
-	/**
-	 * Default constructor.
-	 * @param receiver
-	 */
-	public ConceptXmlHandler(RecordReceiver<Concept> receiver) {
-		super();
-		this.receiver = receiver;
-	}
-	
-	@Override
-	public void startDocument() throws SAXException {
-		parents = new Stack<String>();
-	}
+    private static final String ELEM_CONCEPT = "concept";
+    private static final String ELEM_PARAM = "param";
 
-	@Override
-	public void startElement(String uri, String localName, String qName,
-			Attributes attributes) throws SAXException {
-		if (isWithinElement(qName, ELEM_CONCEPT, null)) {
-			this.paramMap = new HashMap<CharSequence, CharSequence>();
-			this.currentConceptId = attributes.getValue(ATTRIBUTE_ID);
-			this.currentConceptLabel = attributes.getValue(ATTRIBUTE_LABEL);
-		} else if (isWithinElement(qName, ELEM_PARAM, ELEM_CONCEPT)) {
-			this.currentValue = new StringBuilder();
-			this.currentParamName = attributes.getValue(ATTRIBUTE_NAME);
-		} 
-		this.parents.push(qName);
-	}
+    private static final String ATTRIBUTE_ID = "id";
+    private static final String ATTRIBUTE_LABEL = "label";
+    private static final String ATTRIBUTE_NAME = "name";
 
-	@Override
-	public void endElement(String uri, String localName, String qName)
-			throws SAXException {
-		this.parents.pop();
-		if (isWithinElement(qName, ELEM_CONCEPT, null)) {
-			try {
-				Concept.Builder conceptBuilder = Concept.newBuilder();
-				conceptBuilder.setId(this.currentConceptId);
-				conceptBuilder.setLabel(this.currentConceptLabel);
-				conceptBuilder.setParams(this.paramMap);
-				this.receiver.receive(conceptBuilder.build());	
-			} catch (IOException e) {
-				throw new SAXException(
-						"Exception occurred when building concept object", e);
-			}
-		} else if (isWithinElement(qName, ELEM_PARAM, ELEM_CONCEPT)) {
-			this.paramMap.put(currentParamName, currentValue.toString().trim());
-		} 
-	}
+    private Stack<String> parentElementNames;
+    
+    private Stack<Concept.Builder> parentConcepts;
 
-	boolean isWithinElement(String qName,
-			String expectedElement, String expectedParent) {
-		return qName.equalsIgnoreCase(expectedElement) && 
-				(expectedParent==null || 
-				(!this.parents.isEmpty() && expectedParent.equalsIgnoreCase(this.parents.peek())));
-	}
-	
-	@Override
-	public void endDocument() throws SAXException {
-		parents.clear();
-		parents = null;
-	}
+    private final RecordReceiver<Concept> receiver;
 
-	@Override
-	public void characters(char[] ch, int start, int length)
-			throws SAXException {
-		if (this.currentValue!=null) {
-			this.currentValue.append(ch, start, length);
-		}
-	}
-	
+    private StringBuilder currentValue = new StringBuilder();
+
+    private String currentParamName;
+    
+    private Concept.Builder currentConceptBuilder;
+
+    //-------------------- CONSTRUCTORS -------------------------
+    
+    /**
+     * @param receiver record receiver
+     */
+    public ConceptXmlHandler(RecordReceiver<Concept> receiver) {
+        super();
+        this.receiver = receiver;
+    }
+
+    //-------------------- LOGIC --------------------------------
+    
+    @Override
+    public void startDocument() throws SAXException {
+        parentElementNames = new Stack<>();
+        parentConcepts = new Stack<>();
+    }
+
+    @Override
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        if (isWithinElement(qName, ELEM_CONCEPT, null)) {
+            if (currentConceptBuilder!=null) {
+                parentConcepts.push(currentConceptBuilder);
+            }
+            currentConceptBuilder = Concept.newBuilder();
+            currentConceptBuilder.setId(attributes.getValue(ATTRIBUTE_ID));
+            currentConceptBuilder.setLabel(attributes.getValue(ATTRIBUTE_LABEL));
+
+        } else if (isWithinElement(qName, ELEM_PARAM, ELEM_CONCEPT)) {
+            currentValue = new StringBuilder();
+            currentParamName = attributes.getValue(ATTRIBUTE_NAME);
+        }
+        parentElementNames.push(qName);
+    }
+
+    @Override
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+        this.parentElementNames.pop();
+        if (isWithinElement(qName, ELEM_CONCEPT, null)) {
+            try {
+                if (currentConceptBuilder==null) {
+                    currentConceptBuilder = parentConcepts.pop();
+                }
+                receiver.receive(currentConceptBuilder.build());
+                currentConceptBuilder = null;
+            } catch (IOException e) {
+                throw new SAXException("Exception occurred when building concept object", e);
+            }
+        } else if (isWithinElement(qName, ELEM_PARAM, ELEM_CONCEPT)) {
+            if (currentConceptBuilder==null) {
+                currentConceptBuilder = parentConcepts.pop();
+            }
+            if (!currentConceptBuilder.hasParams()) {
+                currentConceptBuilder.setParams(new HashMap<>());
+            }
+            currentConceptBuilder.getParams().put(currentParamName, currentValue.toString().trim());
+        }
+    }
+
+    @Override
+    public void endDocument() throws SAXException {
+        parentElementNames.clear();
+        parentElementNames = null;
+        parentConcepts.clear();
+        parentConcepts = null;
+    }
+
+    @Override
+    public void characters(char[] ch, int start, int length) throws SAXException {
+        if (currentValue != null) {
+            currentValue.append(ch, start, length);
+        }
+    }
+
+    //-------------------- PRIVATE --------------------------------
+    
+    /**
+     * Verifies position in XML tree by checking current element and optionally its parrent.
+     * @param qName current element name
+     * @param expectedElement expected element name
+     * @param expectedParent expected parent element name
+     */
+    private boolean isWithinElement(String qName, String expectedElement, String expectedParent) {
+        return qName.equalsIgnoreCase(expectedElement) && (expectedParent == null
+                || (!parentElementNames.isEmpty() && expectedParent.equalsIgnoreCase(parentElementNames.peek())));
+    }
+    
 }
