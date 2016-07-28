@@ -30,13 +30,13 @@ public class MockISLookupFacadeFactory implements ServiceFacadeFactory<ISLookupF
      */
     private static class MockISLookupFacade implements ISLookupFacade {
         
-        private StaticResourcesProvider resourcesProvider = new StaticResourcesProvider("/eu/dnetlib/iis/wf/importer/concept/data/input/fet-fp7.xml");
+        private static final String profileLocation = "/eu/dnetlib/iis/wf/importer/concept/data/input/fet-fp7.xml";
 
         //------------------------ LOGIC --------------------------
         
         @Override
         public Iterable<String> searchProfile(String xPathQuery) throws ServiceFacadeException {
-            return resourcesProvider.getResources();
+            return StaticResourcesProvider.getResources(profileLocation);
         }
 
     }

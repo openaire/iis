@@ -10,41 +10,30 @@ import com.google.common.collect.Lists;
 
 
 /**
- * Encapsulates list of resources created from classpath locations.
+ * Utility class providing static resources.
  * 
  * @author mhorst
  *
  */
 public class StaticResourcesProvider {
 
-    /**
-     * List of resources to be provided.
-     */
-    private final List<String> resources;
-    
-    //------------------------ CONSTRUCTORS --------------------------
-    
+
+    //------------------------ LOGIC --------------------------    
 
     /**
-     * @param resourcesLocations resources to be read classpath locations
+     * Provides all resources for given classpath locations.
+     * 
+     * @param resourcesLocations resources classpath locations
      */
-    public StaticResourcesProvider(String ...resourcesLocations) {
-        resources = Lists.newArrayList();
+    public static List<String> getResources(String ...resourcesLocations) {
+        List<String> resources = Lists.newArrayList();
         for (String resourceLocation : resourcesLocations) {
-            try (InputStream input = getClass().getResourceAsStream(resourceLocation)) {
+            try (InputStream input = StaticResourcesProvider.class.getResourceAsStream(resourceLocation)) {
                 resources.add(IOUtils.toString(input));
             } catch (IOException e) {
                 throw new RuntimeException("Unable to read resource: " + resourceLocation, e);
             }
         }
-    }
-    
-    //------------------------ GETTERS --------------------------    
-
-    /**
-     * Provides all resources.
-     */
-    public List<String> getResources() {
         return resources;
     }
 
