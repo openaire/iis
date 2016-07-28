@@ -16,22 +16,27 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
  * Match voter that checks if {@link AffMatchOrganization#getName()} words
  * are present in {@link AffMatchAffiliation#getOrganizationName()} words.
  * 
- * @author madryk
+ * @author madryk, lukdumi
  */
-public class FittingOrgWordsMatchVoter extends AbstractAffOrgMatchVoter {
+public class CommonWordsVoter extends AbstractAffOrgMatchVoter {
 
     private static final long serialVersionUID = 1L;
     
+    /** How the ratio of common words will be calculated */
+    public enum RatioRelation {/** the ratio of common words will be calculated with regard to the number of words in {@link AffMatchAffiliation#getOrganizationName()}*/ 
+                               WITH_REGARD_TO_AFF_WORDS,
+                               /** the ratio of common words will be calculated with regard to the number of words in organization name in an organization object */
+                               WITH_REGARD_TO_ORG_WORDS}
     
     private StringFilter stringFilter = new StringFilter();
     
-    private StringSimilarityChecker similarityChecker = new StringSimilarityChecker();
+    private CommonSimilarWordCalculator commonSimilarWordCalculator; 
+    
+    private RatioRelation ratioRelation = RatioRelation.WITH_REGARD_TO_AFF_WORDS;
     
     private List<Character> charsToFilter;
     
     private double minFittingOrgWordsRatio;
-    
-    private double minFittingWordSimilarity;
     
     private int wordToRemoveMaxLength;
     
@@ -50,23 +55,20 @@ public class FittingOrgWordsMatchVoter extends AbstractAffOrgMatchVoter {
      *      words that have to be found in {@link AffMatchAffiliation#getOrganizationName()}
      *      to all {@link AffMatchOrganization#getName()} words.
      *      Value must be between (0,1].
-     * @param minFittingWordSimilarity - minimum similarity for two words to be found the same.
-     *      Value must be between (0,1] (value equal to one means that two words must be identical).
-     *      Similarity is measured by Jaro-Winkler distance algorithm.
+     * 
      * @see StringSimilarityChecker#containSimilarString(java.util.Collection, String, double)
      */
-    public FittingOrgWordsMatchVoter(List<Character> charsToFilter, int wordToRemoveMaxLength, 
-            double minFittingOrgWordsRatio, double minFittingWordSimilarity) {
+    public CommonWordsVoter(List<Character> charsToFilter, int wordToRemoveMaxLength, double minFittingOrgWordsRatio, RatioRelation ratioRelation) {
         Preconditions.checkNotNull(charsToFilter);
         Preconditions.checkArgument(wordToRemoveMaxLength >= 0);
         Preconditions.checkArgument(minFittingOrgWordsRatio > 0 && minFittingOrgWordsRatio <= 1);
-        Preconditions.checkArgument(minFittingWordSimilarity > 0 && minFittingWordSimilarity <= 1);
-        
+        Preconditions.checkNotNull(ratioRelation);
         
         this.charsToFilter = charsToFilter;
         this.wordToRemoveMaxLength = wordToRemoveMaxLength;
         this.minFittingOrgWordsRatio = minFittingOrgWordsRatio;
-        this.minFittingWordSimilarity = minFittingWordSimilarity;
+        this.ratioRelation = ratioRelation;
+        
     }
     
     //------------------------ LOGIC --------------------------
@@ -99,7 +101,7 @@ public class FittingOrgWordsMatchVoter extends AbstractAffOrgMatchVoter {
             
             List<String> orgWords = ImmutableList.copyOf(StringUtils.split(filteredOrgName));
                 
-            if (orgWordsContainAffWords(affWords, orgWords)) {
+            if (isProperNumberOfSimilarWords(affWords, orgWords)) {
                 return true;
             }
         }
@@ -110,19 +112,21 @@ public class FittingOrgWordsMatchVoter extends AbstractAffOrgMatchVoter {
     
     //------------------------ PRIVATE --------------------------
 
-    private boolean orgWordsContainAffWords(List<String> affWords, List<String> orgWords) {
+    private boolean isProperNumberOfSimilarWords(List<String> affWords, List<String> orgWords) {
         
-        int fittingWordsCount = 0;
+        double similarWordRatio = 0;
         
-        for (String orgWord : orgWords) {
-            if (similarityChecker.containSimilarString(affWords, orgWord, minFittingWordSimilarity)) {
-                ++fittingWordsCount;
-            }
+        if (ratioRelation == RatioRelation.WITH_REGARD_TO_AFF_WORDS) {
+            
+            similarWordRatio = commonSimilarWordCalculator.calcSimilarWordRatio(affWords, orgWords);
+            
+        } else {
+
+            similarWordRatio = commonSimilarWordCalculator.calcSimilarWordRatio(orgWords, affWords);
+
         }
         
-        double fittingWordsRatio = (double)fittingWordsCount/orgWords.size();
-        
-        return fittingWordsRatio >= minFittingOrgWordsRatio;
+        return similarWordRatio >= minFittingOrgWordsRatio;
     }
 
     
@@ -134,18 +138,30 @@ public class FittingOrgWordsMatchVoter extends AbstractAffOrgMatchVoter {
     public void setGetOrgNamesFunction(Function<AffMatchOrganization, List<String>> getOrgNamesFunction) {
         this.getOrgNamesFunction = getOrgNamesFunction;
     }
-   
 
+    public void setCommonSimilarWordCalculator(CommonSimilarWordCalculator commonSimilarWordCalculator) {
+        this.commonSimilarWordCalculator = commonSimilarWordCalculator;
+    }
+
+    public void setRatioRelation(RatioRelation ratioRelation) {
+        Preconditions.checkNotNull(ratioRelation);
+        this.ratioRelation = ratioRelation;
+    }
+    
+    
     //------------------------ toString --------------------------
     @Override
     public String toString() {
         return Objects.toStringHelper(this).add("matchStength", getMatchStrength())
+                                           .add("ratioRelation", ratioRelation)
                                            .add("charsToFilter", charsToFilter)
                                            .add("minFittingOrgWordsRatio", minFittingOrgWordsRatio)
-                                           .add("minFittingOrgWordSimilarity", minFittingWordSimilarity)
                                            .add("wordToRemoveMaxLength", wordToRemoveMaxLength)
                                            .add("getOrgNamesFunction", getOrgNamesFunction.getClass().getSimpleName())
+                                           .add("commonSimilarWordCalculator", commonSimilarWordCalculator)
                                            .toString();
     }
+
+  
 
 }

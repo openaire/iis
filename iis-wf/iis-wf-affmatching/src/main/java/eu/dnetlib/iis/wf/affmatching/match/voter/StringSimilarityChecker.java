@@ -3,8 +3,6 @@ package eu.dnetlib.iis.wf.affmatching.match.voter;
 import java.io.Serializable;
 import java.util.Collection;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * Class containing helper methods checking strings similarity.
  * 
@@ -20,16 +18,19 @@ class StringSimilarityChecker implements Serializable {
     /**
      * Returns true if provided string values contain at least one
      * value similar to searchValue string.<br/>
-     * Similarity is measured based on Jaro-Winkler distance.<br/>
+     * The similarity is measured based on Jaro-Winkler distance.<br/>
      * Strings must have similarity greater or equal to minSimilarity
      * to be found similar.
      * 
-     * @see StringUtils#getJaroWinklerDistance(CharSequence, CharSequence)
+     * @see JaroWinklerDistanceCalculator#getDistance(String, String)
      */
     public boolean containSimilarString(Collection<String> values, String searchValue, double minSimilarity) {
         
         for (String value : values) {
-            double similarity = StringUtils.getJaroWinklerDistance(value, searchValue);
+            double similarity = JaroWinklerDistanceCalculator.getDistance(value, searchValue); 
+                                    // change it to {@link StringUtils#getJaroWinklerDistance(String, String)
+                                    // after the common-lang3 3.5 is released
+                                    // version 3.4 is not correct, see: https://issues.apache.org/jira/browse/LANG-1199
             
             if (similarity >= minSimilarity) {
                 return true;

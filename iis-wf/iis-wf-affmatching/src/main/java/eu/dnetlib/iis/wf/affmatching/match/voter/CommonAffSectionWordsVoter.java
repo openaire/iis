@@ -18,9 +18,9 @@ import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSectionsSplitter;
  * are present in {@link AffMatchOrganization#getName()} words.
  * 
  * 
- * @author madryk
+ * @author madryk, Łukasz Dumiszewski
  */
-public class FittingAffOrgSectionWordsMatchVoter extends AbstractAffOrgMatchVoter {
+public class CommonAffSectionWordsVoter extends AbstractAffOrgMatchVoter {
 
     private static final long serialVersionUID = 1L;
     
@@ -29,13 +29,12 @@ public class FittingAffOrgSectionWordsMatchVoter extends AbstractAffOrgMatchVote
     
     private StringFilter stringFilter = new StringFilter();
     
-    private StringSimilarityChecker similarityChecker = new StringSimilarityChecker();
+    private CommonSimilarWordCalculator commonSimilarWordCalculator; 
+    
     
     private List<Character> charsToFilter;
     
     private double minFittingOrgWordsRatio;
-    
-    private double minFittingWordSimilarity;
     
     private int wordToRemoveMaxLength;
     
@@ -60,18 +59,15 @@ public class FittingAffOrgSectionWordsMatchVoter extends AbstractAffOrgMatchVote
      *      Similarity is measured by Jaro-Winkler distance algorithm.
      * @see StringUtils#getJaroWinklerDistance(CharSequence, CharSequence)
      */
-    public FittingAffOrgSectionWordsMatchVoter(List<Character> charsToFilter, int wordToRemoveMaxLength, 
-            double minFittingOrgWordsRatio, double minFittingWordSimilarity) {
+    public CommonAffSectionWordsVoter(List<Character> charsToFilter, int wordToRemoveMaxLength, double minFittingOrgWordsRatio) {
         Preconditions.checkNotNull(charsToFilter);
         Preconditions.checkArgument(wordToRemoveMaxLength >= 0);
         Preconditions.checkArgument(minFittingOrgWordsRatio > 0 && minFittingOrgWordsRatio <= 1);
-        Preconditions.checkArgument(minFittingWordSimilarity > 0 && minFittingWordSimilarity <= 1);
-        
         
         this.charsToFilter = charsToFilter;
         this.wordToRemoveMaxLength = wordToRemoveMaxLength;
         this.minFittingOrgWordsRatio = minFittingOrgWordsRatio;
-        this.minFittingWordSimilarity = minFittingWordSimilarity;
+        
     }
     
     
@@ -145,32 +141,36 @@ public class FittingAffOrgSectionWordsMatchVoter extends AbstractAffOrgMatchVote
     //------------------------ PRIVATE --------------------------
     
     private boolean voteSectionMatch(List<String> affSectionWords, List<String> orgWords) {
-        int affWordsCount = affSectionWords.size();
-        int fittingWordsCount = 0;
         
-        for (String affSectionWord : affSectionWords) {
-            if (similarityChecker.containSimilarString(orgWords, affSectionWord, minFittingWordSimilarity)) {
-                ++fittingWordsCount;
-            }
-        }
+        double commonWordsRatio = commonSimilarWordCalculator.calcSimilarWordRatio(affSectionWords, orgWords); 
         
-        double fittingWordsRatio = (double)fittingWordsCount/affWordsCount;
         
-        return fittingWordsRatio >= minFittingOrgWordsRatio;
+        return commonWordsRatio >= minFittingOrgWordsRatio;
     }
 
 
+    
+    //------------------------ SETTERS --------------------------
+
+    public void setCommonSimilarWordCalculator(CommonSimilarWordCalculator commonSimilarWordCalculator) {
+        this.commonSimilarWordCalculator = commonSimilarWordCalculator;
+    }
+
+    
+    
     //------------------------ toString --------------------------
     
     @Override
     public String toString() {
         return Objects.toStringHelper(this).add("matchStength", getMatchStrength())
                                            .add("charsToFilter", charsToFilter)
-                                           .add("minFittingOrgWordsRatio", minFittingOrgWordsRatio)
-                                           .add("minFittingOrgWordSimilarity", minFittingWordSimilarity)
                                            .add("wordToRemoveMaxLength", wordToRemoveMaxLength)
+                                           .add("minFittingOrgWordsRatio", minFittingOrgWordsRatio)
+                                           .add("commonSimilarWordCalculator", commonSimilarWordCalculator)
                                            .add("getOrgNamesFunction", getOrgNamesFunction.getClass().getSimpleName())
                                            .toString();
     }
+
+
 
 }

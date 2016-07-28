@@ -4,6 +4,8 @@ import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory
 import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory.createNameStrictCountryLooseMatchVoter;
 import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory.createSectionedNameLevenshteinCountryLooseMatchVoter;
 import static eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVotersFactory.createSectionedNameStrictCountryLooseMatchVoter;
+import static eu.dnetlib.iis.wf.affmatching.match.voter.CommonWordsVoter.RatioRelation.WITH_REGARD_TO_AFF_WORDS;
+import static eu.dnetlib.iis.wf.affmatching.match.voter.CommonWordsVoter.RatioRelation.WITH_REGARD_TO_ORG_WORDS;
 
 import java.util.List;
 import java.util.function.Function;
@@ -29,11 +31,11 @@ import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisDocumentProjectRe
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisInferredDocumentProjectReader;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisProjectOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVoter;
+import eu.dnetlib.iis.wf.affmatching.match.voter.CommonAffSectionWordsVoter;
+import eu.dnetlib.iis.wf.affmatching.match.voter.CommonSimilarWordCalculator;
+import eu.dnetlib.iis.wf.affmatching.match.voter.CommonWordsVoter;
 import eu.dnetlib.iis.wf.affmatching.match.voter.CompositeMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.match.voter.CountryCodeLooseMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.FittingAffOrgSectionWordsMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.FittingAffOrgWordsMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.FittingOrgWordsMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.match.voter.GetOrgAlternativeNamesFunction;
 import eu.dnetlib.iis.wf.affmatching.match.voter.GetOrgNameFunction;
 import eu.dnetlib.iis.wf.affmatching.match.voter.GetOrgShortNameFunction;
@@ -113,21 +115,24 @@ public class AffOrgMatcherFactory {
      */
     public static ImmutableList<AffOrgMatchVoter> createDocOrgRelationMatcherVoters() {
 
-        FittingOrgWordsMatchVoter fitOrgNameWordsMatchVoter = new FittingOrgWordsMatchVoter(ImmutableList.of(',', ';'), 2, 0.7f, 0.9f);
-        fitOrgNameWordsMatchVoter.setMatchStrength(0.914f);
+        CommonWordsVoter commonOrgNameWordsVoter = new CommonWordsVoter(ImmutableList.of(',', ';'), 2, 0.7, WITH_REGARD_TO_ORG_WORDS);
+        commonOrgNameWordsVoter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.9));
+        commonOrgNameWordsVoter.setMatchStrength(0.914f);
         
-        FittingAffOrgSectionWordsMatchVoter fitAffOrgNameSectionWordsMatchVoter = new FittingAffOrgSectionWordsMatchVoter(ImmutableList.of(',', ';'), 1, 0.8f, 0.85f);
-        fitAffOrgNameSectionWordsMatchVoter.setMatchStrength(0.966f);
+        CommonWordsVoter commonOrgAlternativeNameWordsVoter = new CommonWordsVoter(ImmutableList.of(',', ';'), 2, 0.7, WITH_REGARD_TO_ORG_WORDS);
+        commonOrgAlternativeNameWordsVoter.setGetOrgNamesFunction(new GetOrgAlternativeNamesFunction());
+        commonOrgAlternativeNameWordsVoter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.9));
+        commonOrgAlternativeNameWordsVoter.setMatchStrength(0.914f);
         
         
-        FittingOrgWordsMatchVoter fitOrgAlternativeNamesWordsMatchVoter = new FittingOrgWordsMatchVoter(ImmutableList.of(',', ';'), 2, 0.7f, 0.9f);
-        fitOrgAlternativeNamesWordsMatchVoter.setMatchStrength(0.976f);
-        fitOrgAlternativeNamesWordsMatchVoter.setGetOrgNamesFunction(new GetOrgAlternativeNamesFunction());
+        CommonAffSectionWordsVoter commonAffNameSectionWordsVoter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 1, 0.8);
+        commonAffNameSectionWordsVoter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.85));
+        commonAffNameSectionWordsVoter.setMatchStrength(0.966f);
         
-        FittingAffOrgSectionWordsMatchVoter fitAffOrgAlternativeNamesSectionWordsMatchVoter = new FittingAffOrgSectionWordsMatchVoter(ImmutableList.of(',', ';'), 1, 0.8f, 0.85f);
-        fitAffOrgAlternativeNamesSectionWordsMatchVoter.setMatchStrength(1f);
-        fitAffOrgAlternativeNamesSectionWordsMatchVoter.setGetOrgNamesFunction(new GetOrgAlternativeNamesFunction());
-        
+        CommonAffSectionWordsVoter commonAffAlternativeNameSectionWordsVoter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 1, 0.8);
+        commonAffAlternativeNameSectionWordsVoter.setGetOrgNamesFunction(new GetOrgAlternativeNamesFunction());
+        commonAffAlternativeNameSectionWordsVoter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.85));
+        commonAffAlternativeNameSectionWordsVoter.setMatchStrength(1);
         
         
         return ImmutableList.of(
@@ -146,10 +151,11 @@ public class AffOrgMatcherFactory {
                 createSectionedNameLevenshteinCountryLooseMatchVoter(1f, new GetOrgNameFunction()),
                 createSectionedNameLevenshteinCountryLooseMatchVoter(1f, new GetOrgAlternativeNamesFunction()),
                 
-                fitOrgNameWordsMatchVoter,
-                fitOrgAlternativeNamesWordsMatchVoter,
-                fitAffOrgNameSectionWordsMatchVoter,
-                fitAffOrgAlternativeNamesSectionWordsMatchVoter
+                commonOrgNameWordsVoter,
+                commonOrgAlternativeNameWordsVoter,
+                
+                commonAffNameSectionWordsVoter,
+                commonAffAlternativeNameSectionWordsVoter
                 );
     }
     
@@ -309,14 +315,15 @@ public class AffOrgMatcherFactory {
      */
     public static ImmutableList<AffOrgMatchVoter> createNameFirstWordsHashBucketMatcherVoters() {
         
-        FittingOrgWordsMatchVoter fitOrgWordsMatchVoter = new FittingOrgWordsMatchVoter(ImmutableList.of(',', ';'), 2, 0.7f, 0.9f);
+        CommonWordsVoter commonOrgNameWordsVoter = new CommonWordsVoter(ImmutableList.of(',', ';'), 2, 0.7, WITH_REGARD_TO_ORG_WORDS);
+        commonOrgNameWordsVoter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.9));
         
-        FittingAffOrgWordsMatchVoter fitAffOrgWordsMatchVoter = new FittingAffOrgWordsMatchVoter(ImmutableList.of(',', ';'), 2, 0.8f, 0.9f);
+        CommonWordsVoter commonAffNameWordsVoter = new CommonWordsVoter(ImmutableList.of(',', ';'), 2, 0.8, WITH_REGARD_TO_AFF_WORDS);
+        commonAffNameWordsVoter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.9));
         
         
-        CompositeMatchVoter fitOrgAffOrgWordsVoter = new CompositeMatchVoter(ImmutableList.of(new CountryCodeLooseMatchVoter(), fitOrgWordsMatchVoter, fitAffOrgWordsMatchVoter));
-                
-        fitOrgAffOrgWordsVoter.setMatchStrength(0.878f);
+        CompositeMatchVoter commonAffOrgNameWordsVoter = new CompositeMatchVoter(ImmutableList.of(new CountryCodeLooseMatchVoter(), commonOrgNameWordsVoter, commonAffNameWordsVoter));
+        commonAffOrgNameWordsVoter.setMatchStrength(0.878f);
         
         return ImmutableList.of(
                 createNameCountryStrictMatchVoter(0.981f, new GetOrgNameFunction()),
@@ -324,7 +331,7 @@ public class AffOrgMatcherFactory {
                 createSectionedNameStrictCountryLooseMatchVoter(0.943f, new GetOrgNameFunction()),
                 createSectionedNameLevenshteinCountryLooseMatchVoter(0.934f, new GetOrgNameFunction()),
                 createSectionedNameStrictCountryLooseMatchVoter(0.882f, new GetOrgShortNameFunction()),
-                fitOrgAffOrgWordsVoter);
+                commonAffOrgNameWordsVoter);
     }
     
     
