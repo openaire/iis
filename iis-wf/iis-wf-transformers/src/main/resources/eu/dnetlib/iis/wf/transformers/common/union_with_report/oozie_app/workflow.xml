@@ -1,4 +1,4 @@
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="transformers_common_union">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="transformers_common_union_with_report">
     
     <parameters>
         <property>
@@ -21,12 +21,10 @@
         </property>
         <property>
             <name>output_report</name>
-            <value>$UNDEFINED$</value>
             <description>directory for storing report</description>
         </property>
         <property>
             <name>union_count_report_key</name>
-            <value>$UNDEFINED$</value>
             <description>key of report param (eu.dnetlib.iis.common.schemas.ReportParam) under witch count of unioned datastore will be saved</description>
         </property>
     </parameters>
@@ -83,17 +81,9 @@
             <param>output=${output}</param>
             <param>schema=${wf:actionData('generate-schema')[wf:conf('schema')]}</param>
         </pig>
-        <ok to="decision-report"/>
+        <ok to="report"/>
         <error to="fail"/>
     </action>
-    
-    
-    <decision name="decision-report">
-        <switch>
-            <case to="report">${output_report ne "$UNDEFINED$" and union_count_report_key ne "$UNDEFINED$"}</case>
-            <default to="end" />
-        </switch>
-    </decision>
     
     <action name="report">
         <java>
