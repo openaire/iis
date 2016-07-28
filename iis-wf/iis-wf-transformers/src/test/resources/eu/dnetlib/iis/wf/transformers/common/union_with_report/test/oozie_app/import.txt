@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-union_with_report classpath eu/dnetlib/iis/wf/transformers/common/union_with_report/oozie_app

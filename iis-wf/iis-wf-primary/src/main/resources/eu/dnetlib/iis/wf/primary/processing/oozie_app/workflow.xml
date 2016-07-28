@@ -227,7 +227,7 @@
 
     <action name="transformers_common_union_document_text">
         <sub-workflow>
-            <app-path>${wf:appPath()}/transformers_common_union_with_report</app-path>
+            <app-path>${wf:appPath()}/transformers_common_union</app-path>
             <propagate-configuration />
             <configuration>
                 <property>

@@ -1,4 +1,4 @@
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-union_with_report">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-union">
 
     <global>
         <job-tracker>${jobTracker}</job-tracker>
@@ -28,11 +28,11 @@
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
             
             <arg>-C{data_a,eu.dnetlib.iis.common.schemas.IdentifierMapping,
-                eu/dnetlib/iis/wf/transformers/common/union_with_report/test/input/datastore_a.json}</arg>
+                eu/dnetlib/iis/wf/transformers/common/union/input/datastore_a.json}</arg>
             <arg>-Odata_a=${workingDir}/producer/datastore_a</arg>
             
             <arg>-C{data_b,eu.dnetlib.iis.common.schemas.IdentifierMapping,
-                eu/dnetlib/iis/wf/transformers/common/union_with_report/test/input/datastore_b.json}</arg>
+                eu/dnetlib/iis/wf/transformers/common/union/input/datastore_b.json}</arg>
             <arg>-Odata_b=${workingDir}/producer/datastore_b</arg>
         </java>
         <ok to="union"/>
@@ -60,14 +60,6 @@
                     <name>schema</name>
                     <value>eu.dnetlib.iis.common.schemas.IdentifierMapping</value>
                 </property>
-                <property>
-                    <name>output_report</name>
-                    <value>${workingDir}/report</value>
-                </property>
-                <property>
-                    <name>union_count_report_key</name>
-                    <value>union.report.key</value>
-                </property>
             </configuration>
         </sub-workflow>
         <ok to="consumer"/>
@@ -80,12 +72,8 @@
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
             
             <arg>-C{union,eu.dnetlib.iis.common.schemas.IdentifierMapping,
-                eu/dnetlib/iis/wf/transformers/common/union_with_report/test/expected_output/union_datastore.json}</arg>
+                eu/dnetlib/iis/wf/transformers/common/union/expected_output/union_datastore.json}</arg>
             <arg>-Iunion=${workingDir}/union</arg>
-            
-            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportParam,
-                eu/dnetlib/iis/wf/transformers/common/union_with_report/test/expected_output/report.json}</arg>
-            <arg>-Ireport=${workingDir}/report</arg>
         </java>
         <ok to="end" />
         <error to="fail" />
