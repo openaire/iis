@@ -15,6 +15,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.log4j.Logger;
 
 import eu.dnetlib.actionmanager.actions.AtomicAction;
+import eu.dnetlib.iis.common.OrderedProperties;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
 import eu.dnetlib.iis.common.java.io.FileSystemPath;

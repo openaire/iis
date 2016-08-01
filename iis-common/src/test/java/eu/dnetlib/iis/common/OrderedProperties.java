@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.export.actionmanager.sequencefile;
+package eu.dnetlib.iis.common;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
