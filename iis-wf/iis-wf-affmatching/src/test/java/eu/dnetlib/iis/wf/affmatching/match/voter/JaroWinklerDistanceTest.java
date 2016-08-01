@@ -17,7 +17,7 @@ public class JaroWinklerDistanceTest {
     @Test
     public void getDistance() {
         
-        // assert
+        // execute & assert
         assertEquals(0.855, JaroWinklerDistanceCalculator.getDistance("university", "uniwersytet"), EPSILON);
         assertEquals(0.957, JaroWinklerDistanceCalculator.getDistance("university", "universidad"), EPSILON);
         assertEquals(0.949, JaroWinklerDistanceCalculator.getDistance("warszawa", "warsaw"), EPSILON);
