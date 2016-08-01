@@ -1,0 +1,140 @@
+<?xml version="1.0"?>
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-importer_content_url_sampletest">
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+	<start to="producer"/>
+    
+    <action name="producer">
+        <java>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/producer" />
+                <mkdir path="${nameNode}${workingDir}/producer" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <!-- list of publication identifiers to be approved,
+            coming from InfoSpace useful for filtering out contents which are not matchable with InfoSpace -->
+            <arg>-C{id,
+                eu.dnetlib.iis.common.schemas.DocumentId,
+                eu/dnetlib/iis/wf/importer/content_url/data/input/id.json}</arg>
+            <!-- mappings between original and deduplicated identifiers, 
+            required to make object store ids matchable with InfoSpace deduplicated ids -->
+            <arg>-C{id_mapping,
+                eu.dnetlib.iis.common.schemas.IdentifierMapping,
+                eu/dnetlib/iis/wf/importer/content_url/data/input/id_mapping.json}</arg>
+            <arg>-Oid=${workingDir}/producer/id</arg>
+            <arg>-Oid_mapping=${workingDir}/producer/id_mapping</arg>
+        </java>
+        <ok to="import_content_url"/>
+        <error to="fail"/>
+    </action>
+    
+    <action name="import_content_url">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/import_content_url</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>objectstore_facade_factory_classname</name>
+                    <value>eu.dnetlib.iis.wf.importer.content.MockObjectStoreFacadeFactory</value>
+                </property>
+                <property>
+                    <name>objectstore_service_location</name>
+                    <value>$UNDEFINED$</value>
+                </property>
+                <property>
+                    <name>approved_objectstores_csv</name>
+                    <value>objectstore-id1</value>
+                </property>
+                <property>
+                    <name>mimetypes_pdf</name>
+                    <value>application/pdf</value>
+                </property>
+                <property>
+                    <name>mimetypes_text</name>
+                    <value>text</value>
+                </property>
+                <property>
+                    <name>mimetypes_html</name>
+                    <value>text/html</value>
+                </property>
+                <property>
+                    <name>mimetypes_xml_pmc</name>
+                    <value>xml</value>
+                </property>
+                <property>
+                    <name>mimetypes_wos</name>
+                    <value>file::WoS</value>
+                </property>
+                <property>
+                    <name>input_id</name>
+                    <value>${workingDir}/producer/id</value>
+                </property>
+                <property>
+                    <name>input_id_mapping</name>
+                    <value>${workingDir}/producer/id_mapping</value>
+                </property>
+                <property>
+                    <name>output_root</name>
+                    <value>${workingDir}/out</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="consumer" />
+        <error to="fail" />
+    </action>
+
+	<action name="consumer">
+        <java>
+            <!-- This is simple wrapper for the Java code -->
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <!-- The business Java code that gets to be executed -->
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            <!-- All input and output ports have to be bound to paths in HDFS -->
+            <arg>-C{content_url_html,
+                eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl,
+                eu/dnetlib/iis/wf/importer/content_url/data/output/document_content_url_html.json}</arg>
+            <arg>-C{content_url_pdf,
+                eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl,
+                eu/dnetlib/iis/wf/importer/content_url/data/output/document_content_url_pdf.json}</arg>
+            <arg>-C{content_url_text,
+                eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl,
+                eu/dnetlib/iis/wf/importer/content_url/data/output/document_content_url_text.json}</arg>
+            <arg>-C{content_url_wos,
+                eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl,
+                eu/dnetlib/iis/wf/importer/content_url/data/output/document_content_url_wos.json}</arg>
+            <arg>-C{content_url_xml,
+                eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl,
+                eu/dnetlib/iis/wf/importer/content_url/data/output/document_content_url_xml.json}</arg>
+            <!-- All input and output ports have to be bound to paths in HDFS -->
+            
+            <arg>-Icontent_url_html=${workingDir}/out/html</arg>
+            <arg>-Icontent_url_pdf=${workingDir}/out/pdf</arg>
+            <arg>-Icontent_url_text=${workingDir}/out/text</arg>
+            <arg>-Icontent_url_wos=${workingDir}/out/wos</arg>
+            <arg>-Icontent_url_xml=${workingDir}/out/xmlpmc</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message: [${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>
