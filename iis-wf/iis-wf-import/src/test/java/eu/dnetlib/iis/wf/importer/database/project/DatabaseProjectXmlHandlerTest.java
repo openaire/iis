@@ -29,7 +29,7 @@ public class DatabaseProjectXmlHandlerTest {
     private String optional1 = "option1";
     private String optional2 = "option2";
     
-    private String rootTestResourcesPath = "/eu/dnetlib/iis/wf/importer/database/project/";
+    private String rootTestResourcesPath = "/eu/dnetlib/iis/wf/importer/database/project/data/input/";
     
     private InputStream inputStream;
     
