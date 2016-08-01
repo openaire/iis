@@ -21,7 +21,7 @@ public class StringSimilarityCheckerTest {
     public void containsSimilarString() {
         
         // execute & assert
-        assertTrue(similarityChecker.containSimilarString(ImmutableSet.of("danmarks", "tekniske", "universitet"), "university", 0.8));
+        assertTrue(similarityChecker.containsSimilarString(ImmutableSet.of("danmarks", "tekniske", "universitet"), "university", 0.8));
         
         // Jaro-Winkler similarity: [university] [universitet] 0.94
     }
@@ -30,7 +30,7 @@ public class StringSimilarityCheckerTest {
     public void containsSimilarString_SIMILAR_NOT_FOUND() {
         
         // execute & assert
-        assertFalse(similarityChecker.containSimilarString(ImmutableSet.of("danmarks", "tekniske", "universitet"), "technical", 0.8));
+        assertFalse(similarityChecker.containsSimilarString(ImmutableSet.of("danmarks", "tekniske", "universitet"), "technical", 0.8));
         
         // Jaro-Winkler similarity: [technical] [danmarks] 0.49
         // Jaro-Winkler similarity: [technical] [tekniske] 0.72

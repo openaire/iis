@@ -1,5 +1,7 @@
 package eu.dnetlib.iis.wf.affmatching.match;
 
+import static eu.dnetlib.iis.wf.affmatching.match.voter.CommonWordsVoter.RatioRelation.WITH_REGARD_TO_AFF_WORDS;
+import static eu.dnetlib.iis.wf.affmatching.match.voter.CommonWordsVoter.RatioRelation.WITH_REGARD_TO_ORG_WORDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -32,12 +34,12 @@ import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisInferredDocumentP
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisProjectOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.ProjectOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVoter;
+import eu.dnetlib.iis.wf.affmatching.match.voter.CommonAffSectionWordsVoter;
+import eu.dnetlib.iis.wf.affmatching.match.voter.CommonWordsVoter;
+import eu.dnetlib.iis.wf.affmatching.match.voter.CommonWordsVoter.RatioRelation;
 import eu.dnetlib.iis.wf.affmatching.match.voter.CompositeMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.match.voter.CountryCodeLooseMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.match.voter.CountryCodeStrictMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.FittingAffOrgSectionWordsMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.FittingAffOrgWordsMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.FittingOrgWordsMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.match.voter.GetOrgAlternativeNamesFunction;
 import eu.dnetlib.iis.wf.affmatching.match.voter.GetOrgNameFunction;
 import eu.dnetlib.iis.wf.affmatching.match.voter.GetOrgShortNameFunction;
@@ -334,19 +336,23 @@ public class AffOrgMatcherFactoryTest {
     }
     
     
-    private void assertFittingOrgWordsMatchVoter(AffOrgMatchVoter voter, List<Character> expectedCharsToFilter, double expectedMinFittingOrgWordsRatio,
-            double expectedMinFittingWordsSimilarity, int expectedWordToRemoveMaxLength, Class<? extends Function<AffMatchOrganization, List<String>>> getOrgNamesFunctionClass) {
+    private void assertCommonWordsVoter(AffOrgMatchVoter voter, List<Character> expectedCharsToFilter, double expectedMinCommonWordsRatio, RatioRelation expectedRatioRelation,
+            double expectedMinWordSimilarity, int expectedWordToRemoveMaxLength, Class<? extends Function<AffMatchOrganization, List<String>>> getOrgNamesFunctionClass) {
         
-        assertTrue(voter instanceof FittingOrgWordsMatchVoter);
+        assertTrue(voter instanceof CommonWordsVoter);
         
         List<Character> charsToFilter = getInternalState(voter, "charsToFilter");
         assertEquals(expectedCharsToFilter, charsToFilter);
         
-        double minFittingOrgWordsRatio = getInternalState(voter, "minFittingOrgWordsRatio");
-        assertEquals(expectedMinFittingOrgWordsRatio, minFittingOrgWordsRatio, PRECISION);
+        double minCommonWordsRatio = getInternalState(voter, "minCommonWordsRatio");
+        assertEquals(expectedMinCommonWordsRatio, minCommonWordsRatio, PRECISION);
         
-        double minFittingWordSimilarity = getInternalState(voter, "minFittingWordSimilarity");
-        assertEquals(expectedMinFittingWordsSimilarity, minFittingWordSimilarity, PRECISION);
+        RatioRelation ratioRelation = getInternalState(voter, "ratioRelation");
+        assertEquals(expectedRatioRelation, ratioRelation);
+        
+        
+        double minWordSimilarity = getInternalState(getInternalState(voter, "commonSimilarWordCalculator"), "minWordSimilarity");
+        assertEquals(expectedMinWordSimilarity, minWordSimilarity, PRECISION);
         
         int wordToRemoveMaxLength = getInternalState(voter, "wordToRemoveMaxLength");
         assertEquals(expectedWordToRemoveMaxLength, wordToRemoveMaxLength);
@@ -354,19 +360,19 @@ public class AffOrgMatcherFactoryTest {
         assertVoterGetOrgNamesFunction(voter, getOrgNamesFunctionClass);
     }
     
-    private void assertFittingAffOrgSectionWordsMatchVoter(AffOrgMatchVoter voter, List<Character> expectedCharsToFilter, double expectedMinFittingOrgWordsRatio,
-            double expectedMinFittingWordsSimilarity, int expectedWordToRemoveMaxLength, Class<? extends Function<AffMatchOrganization, List<String>>> getOrgNamesFunctionClass) {
+    private void assertCommonAffOrgSectionWordsVoter(AffOrgMatchVoter voter, List<Character> expectedCharsToFilter, double expectedMinCommonWordsRatio,
+            double expectedMinWordSimilarity, int expectedWordToRemoveMaxLength, Class<? extends Function<AffMatchOrganization, List<String>>> getOrgNamesFunctionClass) {
         
-        assertTrue(voter instanceof FittingAffOrgSectionWordsMatchVoter);
+        assertTrue(voter instanceof CommonAffSectionWordsVoter);
         
         List<Character> charsToFilter = getInternalState(voter, "charsToFilter");
         assertEquals(expectedCharsToFilter, charsToFilter);
         
-        double minFittingOrgWordsRatio = getInternalState(voter, "minFittingOrgWordsRatio");
-        assertEquals(expectedMinFittingOrgWordsRatio, minFittingOrgWordsRatio, PRECISION);
+        double minCommonWordsRatio = getInternalState(voter, "minCommonWordsRatio");
+        assertEquals(expectedMinCommonWordsRatio, minCommonWordsRatio, PRECISION);
         
-        double minFittingWordSimilarity = getInternalState(voter, "minFittingWordSimilarity");
-        assertEquals(expectedMinFittingWordsSimilarity, minFittingWordSimilarity, PRECISION);
+        double minWordSimilarity = getInternalState(getInternalState(voter, "commonSimilarWordCalculator"), "minWordSimilarity");
+        assertEquals(expectedMinWordSimilarity, minWordSimilarity, PRECISION);
         
         int wordToRemoveMaxLength = getInternalState(voter, "wordToRemoveMaxLength");
         assertEquals(expectedWordToRemoveMaxLength, wordToRemoveMaxLength);
@@ -375,26 +381,6 @@ public class AffOrgMatcherFactoryTest {
         
     }
     
-    private void assertFittingAffOrgWordsMatchVoter(AffOrgMatchVoter voter, List<Character> expectedCharsToFilter, double expectedMinFittingOrgWordsRatio,
-            double expectedMinFittingWordsSimilarity, int expectedWordToRemoveMaxLength, Class<? extends Function<AffMatchOrganization, List<String>>> getOrgNamesFunctionClass) {
-        
-        assertTrue(voter instanceof FittingAffOrgWordsMatchVoter);
-        
-        List<Character> charsToFilter = getInternalState(voter, "charsToFilter");
-        assertEquals(expectedCharsToFilter, charsToFilter);
-        
-        double minFittingOrgWordsRatio = getInternalState(voter, "minFittingOrgWordsRatio");
-        assertEquals(expectedMinFittingOrgWordsRatio, minFittingOrgWordsRatio, PRECISION);
-        
-        double minFittingWordSimilarity = getInternalState(voter, "minFittingWordSimilarity");
-        assertEquals(expectedMinFittingWordsSimilarity, minFittingWordSimilarity, PRECISION);
-        
-        int wordToRemoveMaxLength = getInternalState(voter, "wordToRemoveMaxLength");
-        assertEquals(expectedWordToRemoveMaxLength, wordToRemoveMaxLength);
-        
-        assertVoterGetOrgNamesFunction(voter, getOrgNamesFunctionClass);
-        
-    }
     
     private void assertInternalMainSectionBucketHasher(BucketHasher<?> hasher, OrgSectionType mainSectionType, FallbackSectionPickStrategy fallbackSectionStrategy) {
         BucketHasher<String> stringHasher = getInternalState(hasher, "stringHasher");
@@ -494,14 +480,14 @@ public class AffOrgMatcherFactoryTest {
         assertSectionedNameLevenshteinMatchVoter(getInternalVoter(voters.get(10) ,1), 0.9f, GetOrgAlternativeNamesFunction.class);
         
         
-        assertFittingOrgWordsMatchVoter(voters.get(11), ImmutableList.of(',', ';'), 0.7f, 0.9f, 2, GetOrgNameFunction.class);
+        assertCommonWordsVoter(voters.get(11), ImmutableList.of(',', ';'), 0.7f, WITH_REGARD_TO_ORG_WORDS, 0.9f, 2, GetOrgNameFunction.class);
         
-        assertFittingOrgWordsMatchVoter(voters.get(12), ImmutableList.of(',', ';'), 0.7f, 0.9f, 2, GetOrgAlternativeNamesFunction.class);
+        assertCommonWordsVoter(voters.get(12), ImmutableList.of(',', ';'), 0.7f, WITH_REGARD_TO_ORG_WORDS, 0.9f, 2, GetOrgAlternativeNamesFunction.class);
         
         
-        assertFittingAffOrgSectionWordsMatchVoter(voters.get(13), ImmutableList.of(',', ';'), 0.8f, 0.85f, 1, GetOrgNameFunction.class);
+        assertCommonAffOrgSectionWordsVoter(voters.get(13), ImmutableList.of(',', ';'), 0.8f, 0.85f, 1, GetOrgNameFunction.class);
         
-        assertFittingAffOrgSectionWordsMatchVoter(voters.get(14), ImmutableList.of(',', ';'), 0.8f, 0.85f, 1, GetOrgAlternativeNamesFunction.class);
+        assertCommonAffOrgSectionWordsVoter(voters.get(14), ImmutableList.of(',', ';'), 0.8f, 0.85f, 1, GetOrgAlternativeNamesFunction.class);
     }
    
    
@@ -574,9 +560,9 @@ public class AffOrgMatcherFactoryTest {
        assertCompositeVoter(voters.get(4), CountryCodeLooseMatchVoter.class, SectionedNameStrictMatchVoter.class);
        assertSectionedNameStrictMatchVoter(getInternalVoter(voters.get(4), 1), GetOrgShortNameFunction.class);
        
-       assertCompositeVoter(voters.get(5), CountryCodeLooseMatchVoter.class, FittingOrgWordsMatchVoter.class, FittingAffOrgWordsMatchVoter.class);
-       assertFittingOrgWordsMatchVoter(getInternalVoter(voters.get(5), 1), ImmutableList.of(',', ';'), 0.7f, 0.9f, 2, GetOrgNameFunction.class);
-       assertFittingAffOrgWordsMatchVoter(getInternalVoter(voters.get(5), 2), ImmutableList.of(',', ';'), 0.8f, 0.9f, 2, GetOrgNameFunction.class);
+       assertCompositeVoter(voters.get(5), CountryCodeLooseMatchVoter.class, CommonWordsVoter.class, CommonWordsVoter.class);
+       assertCommonWordsVoter(getInternalVoter(voters.get(5), 1), ImmutableList.of(',', ';'), 0.7f, WITH_REGARD_TO_ORG_WORDS, 0.9f, 2, GetOrgNameFunction.class);
+       assertCommonWordsVoter(getInternalVoter(voters.get(5), 2), ImmutableList.of(',', ';'), 0.8f, WITH_REGARD_TO_AFF_WORDS, 0.9f, 2, GetOrgNameFunction.class);
    }
    
 }
