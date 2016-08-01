@@ -102,8 +102,8 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-
-    </repositories>
+        
+   </repositories>
 
     <dependencies>
 
