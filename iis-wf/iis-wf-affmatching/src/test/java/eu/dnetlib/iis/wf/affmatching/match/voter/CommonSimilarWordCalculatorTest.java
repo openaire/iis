@@ -22,7 +22,7 @@ public class CommonSimilarWordCalculatorTest {
     private double MIN_WORD_SIMILARITY = 0.83;
     
     @InjectMocks
-    private CommonSimilarWordCalculator calculator = new CommonSimilarWordCalculator(0.83);
+    private CommonSimilarWordCalculator calculator = new CommonSimilarWordCalculator(MIN_WORD_SIMILARITY);
     
     @Mock
     private StringSimilarityChecker similarityChecker;

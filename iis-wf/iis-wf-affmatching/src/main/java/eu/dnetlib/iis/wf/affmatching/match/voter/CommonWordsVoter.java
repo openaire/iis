@@ -34,7 +34,7 @@ public class CommonWordsVoter extends AbstractAffOrgMatchVoter {
     
     private CommonSimilarWordCalculator commonSimilarWordCalculator; 
     
-    private RatioRelation ratioRelation = null;//RatioRelation.WITH_REGARD_TO_ORG_WORDS;
+    private RatioRelation ratioRelation = null;
     
     private List<Character> charsToFilter;
     

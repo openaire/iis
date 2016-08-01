@@ -100,7 +100,7 @@ public class CommonWordsVoterTest {
     
     
     @Test(expected = IllegalArgumentException.class)
-    public void constructor_TOO_LOW_MIN_COMMON_WORDS_PERCENTAGE() {
+    public void constructor_TOO_LOW_MIN_COMMON_WORDS_RATIO() {
         
         // execute
         
