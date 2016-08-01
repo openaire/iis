@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -15,7 +14,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.log4j.Logger;
 
 import com.google.common.base.Preconditions;
 
@@ -41,13 +39,11 @@ import eu.dnetlib.iis.common.java.porttype.PortType;
  */
 public class SelectiveTestingConsumer implements Process {
 
-    private static final String PROPERTIES_CSV = "expectation_properties_csv";
+    private static final String EXPECTATIONS_CSV = "expectations_csv";
 
     private static final String PORT_INPUT = "datastore";
 
     private static final String NULL_VALUE_INDICATOR = "$NULL$";
-
-    private final static Logger log = Logger.getLogger(SelectiveTestingConsumer.class);
 
     private static final Map<String, PortType> inputPorts = new HashMap<String, PortType>();
     
@@ -72,37 +68,37 @@ public class SelectiveTestingConsumer implements Process {
             throws Exception {
 
         Path inputRecordsPath = portBindings.getInput().get(PORT_INPUT);
-        String propertiesPathsCSV = parameters.get(PROPERTIES_CSV);
-        Preconditions.checkArgument(StringUtils.isNotBlank(propertiesPathsCSV), 
-                "no '%s' property value provided, field requirements were not specified!", PROPERTIES_CSV);
+        String expectationsPathsCSV = parameters.get(EXPECTATIONS_CSV);
+        Preconditions.checkArgument(StringUtils.isNotBlank(expectationsPathsCSV), 
+                "no '%s' property value provided, field requirements were not specified!", EXPECTATIONS_CSV);
 
-        String[] recordsExpectationPropertiesLocations = StringUtils.split(propertiesPathsCSV, ',');
+        String[] recordExpectationsLocations = StringUtils.split(expectationsPathsCSV, ',');
         FileSystem fs = FileSystem.get(configuration);
 
         if (!fs.exists(inputRecordsPath)) {
             throw new RuntimeException(inputRecordsPath + " hdfs location does not exist!");
         }
         
-        try (CloseableIterator<SpecificRecord> recordsIterator = DataStore.getReader(new FileSystemPath(fs, inputRecordsPath))) {
+        try (CloseableIterator<SpecificRecord> recordIterator = DataStore.getReader(new FileSystemPath(fs, inputRecordsPath))) {
             
-            int recordsCount = 0;
+            int recordCount = 0;
             
-            while (recordsIterator.hasNext()) {
+            while (recordIterator.hasNext()) {
                 
-                SpecificRecord record = recordsIterator.next();
-                recordsCount++;
+                SpecificRecord record = recordIterator.next();
+                recordCount++;
 
-                if (recordsCount > recordsExpectationPropertiesLocations.length) {
-                    throw new RuntimeException("got more records than expected: " + "unable to verify record no " + recordsCount
+                if (recordCount > recordExpectationsLocations.length) {
+                    throw new RuntimeException("got more records than expected: " + "unable to verify record no " + recordCount
                             + ", no field specification provided! Record contents: " + JsonUtils.toPrettyJSON(record.toString()));
                 } else {
-                    validateRecord(record, readProperties(recordsExpectationPropertiesLocations[recordsCount - 1]));    
+                    validateRecord(record, readExpectedValues(recordExpectationsLocations[recordCount - 1]));    
                 }
             }
             
-            if (recordsCount < recordsExpectationPropertiesLocations.length) {
+            if (recordCount < recordExpectationsLocations.length) {
                 throw new RuntimeException(
-                        "records count mismatch: " + "got: " + recordsCount + " expected: " + recordsExpectationPropertiesLocations.length);
+                        "records count mismatch: " + "got: " + recordCount + " expected: " + recordExpectationsLocations.length);
             }
         }
     }
@@ -110,10 +106,9 @@ public class SelectiveTestingConsumer implements Process {
     //------------------------ PRIVATE ---------------------------------
     
     /**
-     * Reads properties from given location.
+     * Reads expected values from given location.
      */
-    private static Properties readProperties(String location) throws IOException {
-        log.info("fields expectations location: " + location);
+    private static Properties readExpectedValues(String location) throws IOException {
         Properties properties = new OrderedProperties();
         properties.load(TestingConsumer.class.getResourceAsStream(location.trim()));
         return properties;
@@ -126,9 +121,7 @@ public class SelectiveTestingConsumer implements Process {
      * @param recordFieldExpectations set of field expectations defined as properties where key is field location and value is expected value
      */
     private static void validateRecord(SpecificRecord record, Properties recordFieldExpectations) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        Iterator<Entry<Object,Object>> expectationPropertiesIterator = recordFieldExpectations.entrySet().iterator();
-        while (expectationPropertiesIterator.hasNext()) {
-            Entry<Object,Object> fieldExpectation = expectationPropertiesIterator.next();
+        for (Entry<Object, Object> fieldExpectation : recordFieldExpectations.entrySet()) {
             
             Object currentValue = PropertyUtils.getNestedProperty(record, (String)fieldExpectation.getKey());
             
