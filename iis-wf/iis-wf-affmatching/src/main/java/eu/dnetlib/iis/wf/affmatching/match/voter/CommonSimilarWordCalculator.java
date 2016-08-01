@@ -8,7 +8,9 @@ import com.google.common.base.Preconditions;
 import datafu.com.google.common.base.Objects;
 
 /**
-* @author Łukasz Dumiszewski
+ * Service that calculates the similarity between two collections of words
+ * 
+ * @author Łukasz Dumiszewski
 */
 
 public class CommonSimilarWordCalculator implements Serializable {
@@ -38,13 +40,19 @@ public class CommonSimilarWordCalculator implements Serializable {
     
     //------------------------ LOGIC --------------------------
     
-    
+    /**
+     * Returns the number of similar words in the given two lists. Uses {@link #setSimilarityChecker(StringSimilarityChecker)}
+     * to decide if two given words are similar.
+     */
     public int calcSimilarWordNumber(List<String> findWords, List<String> inWords) {
+        
+        Preconditions.checkNotNull(findWords);
+        Preconditions.checkNotNull(inWords);
         
         int similarWordCount = 0;
         
         for (String word : findWords) {
-            if (similarityChecker.containSimilarString(inWords, word, minWordSimilarity)) {
+            if (similarityChecker.containsSimilarString(inWords, word, minWordSimilarity)) {
                 ++similarWordCount;
             }
         }
@@ -52,7 +60,10 @@ public class CommonSimilarWordCalculator implements Serializable {
         return similarWordCount;
     }
     
-    
+    /**
+     * Returns the number of the similar words in the given lists WITH REGARD TO the number of
+     * the words in the inWords list.
+     */
     public double calcSimilarWordRatio(List<String> findWords, List<String> inWords) {
         
         return (double)calcSimilarWordNumber(findWords, inWords) / findWords.size();
@@ -71,12 +82,22 @@ public class CommonSimilarWordCalculator implements Serializable {
         this.minWordSimilarity = minWordSimilarity;
     }
     
+    /**
+     * Service that will be used to check the similarity of two words
+     */
+    public void setSimilarityChecker(StringSimilarityChecker similarityChecker) {
+        this.similarityChecker = similarityChecker;
+    }
+
+    
     //------------------------ toString --------------------------
     @Override
     public String toString() {
         return Objects.toStringHelper(this).add("minWordSimilarity", minWordSimilarity)
                                            .toString();
     }
+
+
 
     
 }

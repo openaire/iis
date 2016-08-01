@@ -24,7 +24,7 @@ class StringSimilarityChecker implements Serializable {
      * 
      * @see JaroWinklerDistanceCalculator#getDistance(String, String)
      */
-    public boolean containSimilarString(Collection<String> values, String searchValue, double minSimilarity) {
+    public boolean containsSimilarString(Collection<String> values, String searchValue, double minSimilarity) {
         
         for (String value : values) {
             double similarity = JaroWinklerDistanceCalculator.getDistance(value, searchValue); 

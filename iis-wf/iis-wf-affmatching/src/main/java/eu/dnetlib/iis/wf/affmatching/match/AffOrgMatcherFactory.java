@@ -115,21 +115,21 @@ public class AffOrgMatcherFactory {
      */
     public static ImmutableList<AffOrgMatchVoter> createDocOrgRelationMatcherVoters() {
 
-        CommonWordsVoter commonOrgNameWordsVoter = new CommonWordsVoter(ImmutableList.of(',', ';'), 2, 0.7, WITH_REGARD_TO_ORG_WORDS);
+        CommonWordsVoter commonOrgNameWordsVoter = new CommonWordsVoter(ImmutableList.of(',', ';'), 2, 0.71, WITH_REGARD_TO_ORG_WORDS);
         commonOrgNameWordsVoter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.9));
-        commonOrgNameWordsVoter.setMatchStrength(0.914f);
+        commonOrgNameWordsVoter.setMatchStrength(0.916f);
         
-        CommonWordsVoter commonOrgAlternativeNameWordsVoter = new CommonWordsVoter(ImmutableList.of(',', ';'), 2, 0.7, WITH_REGARD_TO_ORG_WORDS);
+        CommonWordsVoter commonOrgAlternativeNameWordsVoter = new CommonWordsVoter(ImmutableList.of(',', ';'), 2, 0.71, WITH_REGARD_TO_ORG_WORDS);
         commonOrgAlternativeNameWordsVoter.setGetOrgNamesFunction(new GetOrgAlternativeNamesFunction());
         commonOrgAlternativeNameWordsVoter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.9));
-        commonOrgAlternativeNameWordsVoter.setMatchStrength(0.914f);
+        commonOrgAlternativeNameWordsVoter.setMatchStrength(0.976f);
         
         
-        CommonAffSectionWordsVoter commonAffNameSectionWordsVoter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 1, 0.8);
+        CommonAffSectionWordsVoter commonAffNameSectionWordsVoter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 1, 0.81);
         commonAffNameSectionWordsVoter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.85));
         commonAffNameSectionWordsVoter.setMatchStrength(0.966f);
         
-        CommonAffSectionWordsVoter commonAffAlternativeNameSectionWordsVoter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 1, 0.8);
+        CommonAffSectionWordsVoter commonAffAlternativeNameSectionWordsVoter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 1, 0.81);
         commonAffAlternativeNameSectionWordsVoter.setGetOrgNamesFunction(new GetOrgAlternativeNamesFunction());
         commonAffAlternativeNameSectionWordsVoter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.85));
         commonAffAlternativeNameSectionWordsVoter.setMatchStrength(1);
@@ -315,15 +315,15 @@ public class AffOrgMatcherFactory {
      */
     public static ImmutableList<AffOrgMatchVoter> createNameFirstWordsHashBucketMatcherVoters() {
         
-        CommonWordsVoter commonOrgNameWordsVoter = new CommonWordsVoter(ImmutableList.of(',', ';'), 2, 0.7, WITH_REGARD_TO_ORG_WORDS);
+        CommonWordsVoter commonOrgNameWordsVoter = new CommonWordsVoter(ImmutableList.of(',', ';'), 2, 0.71, WITH_REGARD_TO_ORG_WORDS);
         commonOrgNameWordsVoter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.9));
         
-        CommonWordsVoter commonAffNameWordsVoter = new CommonWordsVoter(ImmutableList.of(',', ';'), 2, 0.8, WITH_REGARD_TO_AFF_WORDS);
+        CommonWordsVoter commonAffNameWordsVoter = new CommonWordsVoter(ImmutableList.of(',', ';'), 2, 0.81, WITH_REGARD_TO_AFF_WORDS);
         commonAffNameWordsVoter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.9));
         
         
         CompositeMatchVoter commonAffOrgNameWordsVoter = new CompositeMatchVoter(ImmutableList.of(new CountryCodeLooseMatchVoter(), commonOrgNameWordsVoter, commonAffNameWordsVoter));
-        commonAffOrgNameWordsVoter.setMatchStrength(0.878f);
+        commonAffOrgNameWordsVoter.setMatchStrength(0.859f);
         
         return ImmutableList.of(
                 createNameCountryStrictMatchVoter(0.981f, new GetOrgNameFunction()),

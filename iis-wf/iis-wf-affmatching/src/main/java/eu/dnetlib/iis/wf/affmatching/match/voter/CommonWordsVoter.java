@@ -13,8 +13,10 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 
 /**
- * Match voter that checks if {@link AffMatchOrganization#getName()} words
- * are present in {@link AffMatchAffiliation#getOrganizationName()} words.
+ * Match voter that checks if <br/>
+ * the ratio of the common (same/ similar) words in organization names specified in {@link AffMatchAffiliation} and
+ * {@link AffMatchOrganization} WITH REGARD TO all the words in the organization name in the given organization or affiliation<br/>
+ * IS GREATER than some expected value. 
  * 
  * @author madryk, lukdumi
  */
@@ -32,11 +34,11 @@ public class CommonWordsVoter extends AbstractAffOrgMatchVoter {
     
     private CommonSimilarWordCalculator commonSimilarWordCalculator; 
     
-    private RatioRelation ratioRelation = RatioRelation.WITH_REGARD_TO_AFF_WORDS;
+    private RatioRelation ratioRelation = null;//RatioRelation.WITH_REGARD_TO_ORG_WORDS;
     
     private List<Character> charsToFilter;
     
-    private double minFittingOrgWordsRatio;
+    private double minCommonWordsRatio;
     
     private int wordToRemoveMaxLength;
     
@@ -47,26 +49,32 @@ public class CommonWordsVoter extends AbstractAffOrgMatchVoter {
     /**
      * Default constructor
      * 
-     * @param charsToFilter - list of characters that will be filtered out before comparing words
-     * @param wordToRemoveMaxLength - words with length equal or less than 
-     *      this value will be filtered out before comparing words.
-     *      Setting it to zero disables this feature.
-     * @param minFittingOrgWordsRatio - minimum ratio of {@link AffMatchOrganization#getName()}
-     *      words that have to be found in {@link AffMatchAffiliation#getOrganizationName()}
-     *      to all {@link AffMatchOrganization#getName()} words.
-     *      Value must be between (0,1].
+     * @param charsToFilter list of characters that will be filtered out before comparing words
+     * @param wordToRemoveMaxLength words with length equal or less than this value will be filtered out before comparing words.
+     *        Setting it to zero disables this feature.
+     * @param minCommonWordsRatio minimum ratio of common words of the organization name in an affiliation and organization with regard to all the
+     *        words in the affiliation or organization. The value must be between (0,1].
+     * @param ratioRelation decides how the ratio of the common words will be calculated (with respect to the words in an affiliation or organization).
      * 
-     * @see StringSimilarityChecker#containSimilarString(java.util.Collection, String, double)
+     * @see StringSimilarityChecker#containsSimilarString(java.util.Collection, String, double)
      */
-    public CommonWordsVoter(List<Character> charsToFilter, int wordToRemoveMaxLength, double minFittingOrgWordsRatio, RatioRelation ratioRelation) {
+    public CommonWordsVoter(List<Character> charsToFilter, int wordToRemoveMaxLength, double minCommonWordsRatio, RatioRelation ratioRelation) {
+        
         Preconditions.checkNotNull(charsToFilter);
+        
         Preconditions.checkArgument(wordToRemoveMaxLength >= 0);
-        Preconditions.checkArgument(minFittingOrgWordsRatio > 0 && minFittingOrgWordsRatio <= 1);
+        
+        Preconditions.checkArgument(minCommonWordsRatio > 0 && minCommonWordsRatio <= 1);
+        
         Preconditions.checkNotNull(ratioRelation);
         
+        
         this.charsToFilter = charsToFilter;
+        
         this.wordToRemoveMaxLength = wordToRemoveMaxLength;
-        this.minFittingOrgWordsRatio = minFittingOrgWordsRatio;
+        
+        this.minCommonWordsRatio = minCommonWordsRatio;
+        
         this.ratioRelation = ratioRelation;
         
     }
@@ -74,10 +82,11 @@ public class CommonWordsVoter extends AbstractAffOrgMatchVoter {
     //------------------------ LOGIC --------------------------
     
     /**
-     * Returns true if minFittingOrgWordsRatio of the words in at least one of the organization names
-     * are found in {@link AffMatchAffiliation#getOrganizationName()}.
+     * Returns true if the ratio of the common (same/ similar) words in organization names specified in {@link AffMatchAffiliation} and
+     * {@link AffMatchOrganization} WITH REGARD TO all the words in the organization name in the given organization or affiliation<br/>
+     * IS GREATER minCommonWordsRatio
      * 
-     * @see #FittingOrgWordsMatchVoter(List, int, double, double)
+     * @see #CommonWordsVoter(List, int, double, RatioRelation)
      * @see #setGetOrgNamesFunction(Function)
      */
     @Override
@@ -126,7 +135,7 @@ public class CommonWordsVoter extends AbstractAffOrgMatchVoter {
 
         }
         
-        return similarWordRatio >= minFittingOrgWordsRatio;
+        return similarWordRatio >= minCommonWordsRatio;
     }
 
     
@@ -155,7 +164,7 @@ public class CommonWordsVoter extends AbstractAffOrgMatchVoter {
         return Objects.toStringHelper(this).add("matchStength", getMatchStrength())
                                            .add("ratioRelation", ratioRelation)
                                            .add("charsToFilter", charsToFilter)
-                                           .add("minFittingOrgWordsRatio", minFittingOrgWordsRatio)
+                                           .add("minFittingOrgWordsRatio", minCommonWordsRatio)
                                            .add("wordToRemoveMaxLength", wordToRemoveMaxLength)
                                            .add("getOrgNamesFunction", getOrgNamesFunction.getClass().getSimpleName())
                                            .add("commonSimilarWordCalculator", commonSimilarWordCalculator)
