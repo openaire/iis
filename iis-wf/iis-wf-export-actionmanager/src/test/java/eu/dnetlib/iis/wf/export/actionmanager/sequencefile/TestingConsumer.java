@@ -15,6 +15,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.log4j.Logger;
 
 import eu.dnetlib.actionmanager.actions.AtomicAction;
+import eu.dnetlib.iis.common.OrderedProperties;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
 import eu.dnetlib.iis.common.java.io.FileSystemPath;
@@ -34,7 +35,7 @@ import eu.dnetlib.iis.common.java.porttype.PortType;
  */
 public class TestingConsumer implements Process {
 
-	public static final String PROPERTIES_CSV = "expectation_properties_csv";
+	public static final String EXPECTATION_FILE_PATHS = "expectation_file_paths";
 
 	public static final String PORT_INPUT = "seqfile";
 
@@ -73,9 +74,9 @@ public class TestingConsumer implements Process {
 	public void run(PortBindings portBindings, Configuration configuration, Map<String, String> parameters)
 			throws Exception {
 		Path inputPath = portBindings.getInput().get(PORT_INPUT);
-		String propertiesPathsCSV = parameters.get(PROPERTIES_CSV);
+		String propertiesPathsCSV = parameters.get(EXPECTATION_FILE_PATHS);
 		if (StringUtils.isEmpty(propertiesPathsCSV)) {
-			throw new Exception("no " + PROPERTIES_CSV + " property value provided, "
+			throw new Exception("no " + EXPECTATION_FILE_PATHS + " property value provided, "
 					+ "output requirements were not specified!");
 		}
 		String[] recordsSpecs = StringUtils.split(propertiesPathsCSV, ',');

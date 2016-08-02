@@ -208,7 +208,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/document_referencedDocuments/actionset-id</arg>
-            <arg>-Pexpectation_properties_csv=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/citations.properties</arg>
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/citations.properties</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />
@@ -219,7 +219,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/document_classes/actionset-id</arg>
-            <arg>-Pexpectation_properties_csv=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_classes.properties</arg>
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_classes.properties</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />
@@ -230,7 +230,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/document_pdb/actionset-id</arg>
-            <arg>-Pexpectation_properties_csv=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_pdb.properties</arg>
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_pdb.properties</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />
@@ -241,7 +241,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/document_software_url/actionset-id</arg>
-            <arg>-Pexpectation_properties_csv=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_software_urls.properties</arg>
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_software_urls.properties</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />
@@ -252,7 +252,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/document_similarities_standard/actionset-id</arg>
-            <arg>-Pexpectation_properties_csv=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_similarity_1.properties,/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_similarity_2.properties
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_similarity_1.properties,/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_similarity_2.properties
             </arg>
         </java>
         <ok to="joining" />
@@ -264,7 +264,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/document_referencedDatasets/actionset-id</arg>
-            <arg>-Pexpectation_properties_csv=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_dataset_1.properties,/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_dataset_2.properties
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_dataset_1.properties,/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_dataset_2.properties
             </arg>
         </java>
         <ok to="joining" />
@@ -276,7 +276,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/document_referencedProjects/actionset-id</arg>
-            <arg>-Pexpectation_properties_csv=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_project_1.properties,/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_project_2.properties,/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_project_concepts.properties
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_project_1.properties,/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_project_2.properties,/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_project_concepts.properties
             </arg>
         </java>
         <ok to="joining" />
@@ -288,7 +288,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/document_research_initiative/actionset-id</arg>
-            <arg>-Pexpectation_properties_csv=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_research_initiatives.properties</arg>
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_research_initiatives.properties</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />
@@ -299,7 +299,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/matched_doc_organizations/actionset-id</arg>
-            <arg>-Pexpectation_properties_csv=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/matched_doc_organizations.properties</arg>
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/matched_doc_organizations.properties</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />

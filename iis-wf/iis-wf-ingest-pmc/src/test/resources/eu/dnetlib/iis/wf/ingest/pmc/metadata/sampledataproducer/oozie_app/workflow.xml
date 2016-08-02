@@ -90,19 +90,28 @@
 			<arg>-C{metadata,
                 eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata,
                 eu/dnetlib/iis/wf/ingest/pmc/metadata/sampledataproducer/data/metadata.json}</arg>
-            <arg>-C{fault,
-                eu.dnetlib.iis.audit.schemas.Fault,
-                eu/dnetlib/iis/wf/ingest/pmc/metadata/sampledataproducer/data/fault.json}</arg>
             <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportParam,
                 eu/dnetlib/iis/wf/ingest/pmc/metadata/sampledataproducer/data/report.json}</arg>
     		<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Imetadata=${workingDir}/ingest_pmc_metadata/out/meta</arg>
-			<arg>-Ifault=${workingDir}/ingest_pmc_metadata/out/fault</arg>
 			<arg>-Ireport=${workingDir}/report/import_ingest_pmc</arg>
 		</java>
-		<ok to="end" />
+		<ok to="fault_consumer" />
 		<error to="fail" />
 	</action>
+    
+    <action name="fault_consumer">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.SelectiveTestingConsumer</arg>
+            <arg>-Idatastore=${workingDir}/ingest_pmc_metadata/out/fault</arg>
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/ingest/pmc/metadata/sampledataproducer/data/fault.expectations</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
+    
     <kill name="fail">
 		<message>Unfortunately, the workflow failed -- error message:
 			[${wf:errorMessage(wf:lastErrorNode())}]</message>
