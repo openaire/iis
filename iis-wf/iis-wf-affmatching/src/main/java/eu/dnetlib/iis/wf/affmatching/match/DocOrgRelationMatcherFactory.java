@@ -29,7 +29,9 @@ import eu.dnetlib.iis.wf.affmatching.match.voter.GetOrgNameFunction;
 import eu.dnetlib.iis.wf.affmatching.match.voter.GetOrgShortNameFunction;
 
 /**
-* @author Łukasz Dumiszewski
+ * A factory of {@link AffOrgMatcher}s that take into account the relation between a document, project and organization. 
+ * 
+ * @author Łukasz Dumiszewski
 */
 
 public class DocOrgRelationMatcherFactory {

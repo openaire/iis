@@ -23,7 +23,10 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 
 /**
-* @author Łukasz Dumiszewski
+ * A factory of {@link AffOrgMatcher}s that join organizations and affiliations into buckets based on hashes produced from
+ * the main sections of organization names. 
+ * 
+ * @author Łukasz Dumiszewski
 */
 
 public class MainSectionHashBucketMatcherFactory {
