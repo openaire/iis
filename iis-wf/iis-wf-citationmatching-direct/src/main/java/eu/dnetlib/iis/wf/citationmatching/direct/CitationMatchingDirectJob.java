@@ -21,6 +21,7 @@ import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetad
 import eu.dnetlib.iis.wf.citationmatching.direct.converter.DirectCitationToCitationConverter;
 import eu.dnetlib.iis.wf.citationmatching.direct.converter.DocumentToDirectCitationMetadataConverter;
 import eu.dnetlib.iis.wf.citationmatching.direct.model.IdWithPosition;
+import eu.dnetlib.iis.wf.citationmatching.direct.service.CitationMatchingDirectReporter;
 import eu.dnetlib.iis.wf.citationmatching.direct.service.ExternalIdCitationMatcher;
 import eu.dnetlib.iis.wf.citationmatching.direct.service.PickFirstDocumentFunction;
 import eu.dnetlib.iis.wf.citationmatching.direct.service.PickResearchArticleDocumentFunction;
@@ -36,6 +37,8 @@ public class CitationMatchingDirectJob {
     private static ExternalIdCitationMatcher externalIdCitationMatcher = new ExternalIdCitationMatcher();
     
     private static DirectCitationToCitationConverter directCitationToCitationConverter = new DirectCitationToCitationConverter();
+    
+    private static CitationMatchingDirectReporter citationMatchingDirectReporter = new CitationMatchingDirectReporter();
     
     
     
@@ -76,6 +79,8 @@ public class CitationMatchingDirectJob {
             JavaRDD<eu.dnetlib.iis.common.citations.schemas.Citation> citations = 
                     directCitations.map(directCitation -> directCitationToCitationConverter.convert(directCitation));
             
+            citations.cache();
+            citationMatchingDirectReporter.report(sc, citations, params.outputReportPath);
             
             avroSaver.saveJavaRDD(citations, eu.dnetlib.iis.common.citations.schemas.Citation.SCHEMA$, params.outputAvroPath);
         }
@@ -114,6 +119,7 @@ public class CitationMatchingDirectJob {
         @Parameter(names = "-outputAvroPath", required = true)
         private String outputAvroPath;
         
-        
+        @Parameter(names = "-outputReportPath", required = true)
+        private String outputReportPath;
     }
 }

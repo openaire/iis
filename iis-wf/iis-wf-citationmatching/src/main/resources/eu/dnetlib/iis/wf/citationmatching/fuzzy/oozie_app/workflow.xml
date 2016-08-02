@@ -18,7 +18,17 @@
             <name>output_citations</name>
             <description>output directory holding eu.dnetlib.iis.common.citations.schemas.Citation avro datastore</description>
         </property>
-         <property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
+            <name>output_report_relative_path</name>
+            <value>citationmatching_fuzzy</value>
+            <description>directory for storing report (relative to output_report_root_path)</description>
+        </property>
+        
+        <property>
             <name>sparkExecutorMemory</name>
             <value>7G</value>
             <description>memory for individual executor</description>
@@ -114,6 +124,8 @@
             <arg>-fullDocumentPath = ${workingDir}/documents_with_authors</arg>
             
             <arg>-outputDirPath = ${workingDir}/matched_citations</arg>
+            <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
+            
             <arg>-numberOfPartitions = ${numberOfPartitions}</arg>
             
         </spark>
