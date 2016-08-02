@@ -105,7 +105,7 @@
                 eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/citations.json}</arg>
             <arg>-Icitation=${workingDir}/output/citation</arg>
             
-            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportParam,eu/dnetlib/iis/wf/citationmatching/main_workflow/data/report.json}</arg>
+            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportParam,eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/report.json}</arg>
             <arg>-Ireport=${workingDir}/report/citationmatching_direct</arg>
         </java>
         <ok to="end" />

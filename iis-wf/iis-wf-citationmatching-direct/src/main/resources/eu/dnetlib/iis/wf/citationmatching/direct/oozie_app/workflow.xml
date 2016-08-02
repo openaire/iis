@@ -15,7 +15,7 @@
         </property>
         <property>
             <name>output_report_relative_path</name>
-            <value>citationmatching_fuzzy</value>
+            <value>citationmatching_direct</value>
             <description>directory for storing report (relative to output_report_root_path)</description>
         </property>
         
