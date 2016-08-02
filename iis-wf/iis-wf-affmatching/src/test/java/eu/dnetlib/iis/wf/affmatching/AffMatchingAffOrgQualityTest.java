@@ -5,11 +5,11 @@ import static eu.dnetlib.iis.common.utils.AvroTestUtils.createLocalAvroDataStore
 import static eu.dnetlib.iis.common.utils.JsonAvroTestUtils.readMultipleJsonDataStores;
 import static eu.dnetlib.iis.common.utils.JsonTestUtils.readJson;
 import static eu.dnetlib.iis.common.utils.JsonTestUtils.readMultipleJsons;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createAlternativeNameMainSectionHashBucketMatcher;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createDocOrgRelationMatcher;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createNameFirstWordsHashBucketMatcher;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createNameMainSectionHashBucketMatcher;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcherFactory.createShortNameMainSectionHashBucketMatcher;
+import static eu.dnetlib.iis.wf.affmatching.match.DocOrgRelationMatcherFactory.createDocOrgRelationMatcher;
+import static eu.dnetlib.iis.wf.affmatching.match.FirstWordsHashBucketMatcherFactory.createNameFirstWordsHashBucketMatcher;
+import static eu.dnetlib.iis.wf.affmatching.match.MainSectionHashBucketMatcherFactory.createAlternativeNameMainSectionHashBucketMatcher;
+import static eu.dnetlib.iis.wf.affmatching.match.MainSectionHashBucketMatcherFactory.createNameMainSectionHashBucketMatcher;
+import static eu.dnetlib.iis.wf.affmatching.match.MainSectionHashBucketMatcherFactory.createShortNameMainSectionHashBucketMatcher;
 import static java.util.stream.Collectors.toList;
 
 import java.io.File;

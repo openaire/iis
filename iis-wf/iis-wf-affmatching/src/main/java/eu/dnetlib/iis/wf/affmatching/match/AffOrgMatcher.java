@@ -22,6 +22,7 @@ import scala.Tuple2;
 public class AffOrgMatcher implements Serializable {
 
     
+    
     private static final long serialVersionUID = 1L;
 
     private AffOrgJoiner affOrgJoiner;
@@ -29,7 +30,15 @@ public class AffOrgMatcher implements Serializable {
     private AffOrgMatchComputer affOrgMatchComputer;
     
     
+    //------------------------ PRIVATE --------------------------
     
+    public AffOrgMatcher() {}
+
+    public AffOrgMatcher(AffOrgJoiner affOrgJoiner, AffOrgMatchComputer affOrgMatchComputer) {
+        this.affOrgJoiner = affOrgJoiner;
+        this.affOrgMatchComputer = affOrgMatchComputer;
+    }
+
     
     
     //------------------------ LOGIC --------------------------
