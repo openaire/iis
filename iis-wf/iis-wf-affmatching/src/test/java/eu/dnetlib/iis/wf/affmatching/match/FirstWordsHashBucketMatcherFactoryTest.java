@@ -44,7 +44,7 @@ public class FirstWordsHashBucketMatcherFactoryTest {
     
     
     
-    //------------------------ LOGIC --------------------------
+    //------------------------ TESTS --------------------------
     
     @Test
     public void createNameFirstWordsHashBucketMatcher() {
@@ -69,7 +69,7 @@ public class FirstWordsHashBucketMatcherFactoryTest {
         BucketHasher<AffMatchOrganization> orgHasher = getInternalState(joiner, "organizationBucketHasher");
         assertTrue(orgHasher instanceof OrganizationNameBucketHasher);
         
-        assertInternalStringPartFirstLettersHasher(affHasher, 2, 2);
+        assertInternalStringPartFirstLettersHasher(orgHasher, 2, 2);
         
         
         

@@ -47,6 +47,7 @@ import eu.dnetlib.iis.wf.affmatching.match.voter.SectionedNameStrictMatchVoter;
 
 public class DocOrgRelationMatcherFactoryTest {
 
+    
     private static final double PRECISION = 1e10-6;
     
     
