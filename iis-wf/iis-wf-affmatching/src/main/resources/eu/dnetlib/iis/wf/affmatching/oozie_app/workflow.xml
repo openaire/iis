@@ -91,7 +91,7 @@
     
             <master>yarn-cluster</master>
             <mode>cluster</mode>
-            <name>Affiliations Matching</name>
+            <name>Affiliation Matching</name>
             <class>eu.dnetlib.iis.wf.affmatching.AffMatchingJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-affmatching-${projectVersion}-uber.jar</jar>
             
