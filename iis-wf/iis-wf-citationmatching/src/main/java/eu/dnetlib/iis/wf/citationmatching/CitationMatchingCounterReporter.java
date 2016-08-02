@@ -17,7 +17,7 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
  * 
  * @author madryk
  */
-public class CitationMatchingReporter {
+public class CitationMatchingCounterReporter {
 
     private static final String MATCHED_CITATIONS_COUNTER = "export.matchedCitations.fuzzy.total";
     
@@ -34,8 +34,8 @@ public class CitationMatchingReporter {
     //------------------------ LOGIC --------------------------
     
     /**
-     * Calculates and saves citation matching counters using matchedCitations rdd
-     * under {@link #setReportPath(String)}
+     * Calculates citation matching counters using matchedCitations rdd
+     * and saves them under {@link #setReportPath(String)}
      */
     public void report(JavaRDD<Citation> matchedCitations) {
         

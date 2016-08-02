@@ -28,10 +28,10 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
  * @author madryk
  */
 @RunWith(MockitoJUnitRunner.class)
-public class CitationMatchingReporterTest {
+public class CitationMatchingCounterReporterTest {
 
     @InjectMocks
-    private CitationMatchingReporter citationMatchingReporter = new CitationMatchingReporter();
+    private CitationMatchingCounterReporter counterReporter = new CitationMatchingCounterReporter();
     
     @Mock
     private SparkAvroSaver avroSaver;
@@ -64,7 +64,7 @@ public class CitationMatchingReporterTest {
     
     @Before
     public void setup() {
-        citationMatchingReporter.setReportPath(reportPath);
+        counterReporter.setReportPath(reportPath);
     }
     
     
@@ -73,19 +73,19 @@ public class CitationMatchingReporterTest {
     @Test(expected = NullPointerException.class)
     public void report_NULL_SPARK_CONTEXT() {
         // given
-        citationMatchingReporter.setSparkContext(null);
+        counterReporter.setSparkContext(null);
         
         // execute
-        citationMatchingReporter.report(matchedCitations);
+        counterReporter.report(matchedCitations);
     }
     
     @Test(expected = NullPointerException.class)
     public void report_NULL_REPORT_PATH() {
         // given
-        citationMatchingReporter.setReportPath(null);
+        counterReporter.setReportPath(null);
         
         // execute
-        citationMatchingReporter.report(matchedCitations);
+        counterReporter.report(matchedCitations);
     }
     
     @Test
@@ -104,7 +104,7 @@ public class CitationMatchingReporterTest {
         
         // execute
         
-        citationMatchingReporter.report(matchedCitations);
+        counterReporter.report(matchedCitations);
         
         
         // assert

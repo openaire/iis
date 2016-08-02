@@ -28,7 +28,7 @@ public class CitationOutputWriterTest {
     private SparkAvroSaver avroSaver;
     
     @Mock
-    private CitationMatchingReporter citationMatchingReporter;
+    private CitationMatchingCounterReporter citationMatchingReporter;
     
     @Mock
     private JavaPairRDD<Citation, NullWritable> matchedCitations;

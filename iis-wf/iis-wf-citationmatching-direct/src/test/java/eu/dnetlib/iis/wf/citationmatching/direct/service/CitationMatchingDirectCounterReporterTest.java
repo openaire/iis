@@ -31,10 +31,10 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
  * @author madryk
  */
 @RunWith(MockitoJUnitRunner.class)
-public class CitationMatchingDirectReporterTest {
+public class CitationMatchingDirectCounterReporterTest {
 
     @InjectMocks
-    private CitationMatchingDirectReporter citationMatchingDirectReporter = new CitationMatchingDirectReporter();
+    private CitationMatchingDirectCounterReporter counterReporter = new CitationMatchingDirectCounterReporter();
     
     @Mock
     private SparkAvroSaver avroSaver;
@@ -82,7 +82,7 @@ public class CitationMatchingDirectReporterTest {
         
         // execute
         
-        citationMatchingDirectReporter.report(sparkContext, matchedCitations, reportPath);
+        counterReporter.report(sparkContext, matchedCitations, reportPath);
         
         
         // assert

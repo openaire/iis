@@ -84,7 +84,7 @@ public class IisCitationMatchingJob {
         configurableCitationMatchingService.setInputDocumentConverter(documentMetadataInputConverter);
         
         
-        CitationMatchingReporter citationMatchingReporter = new CitationMatchingReporter();
+        CitationMatchingCounterReporter citationMatchingReporter = new CitationMatchingCounterReporter();
         citationMatchingReporter.setSparkContext(sc);
         citationMatchingReporter.setReportPath(params.outputReportPath);
         

@@ -23,7 +23,7 @@ public class CitationOutputWriter implements OutputWriter<Citation, NullWritable
 
     private SparkAvroSaver avroSaver = new SparkAvroSaver();
 
-    private CitationMatchingReporter citationMatchingReporter;
+    private CitationMatchingCounterReporter citationMatchingReporter;
 
 
     //------------------------ LOGIC --------------------------
@@ -45,7 +45,7 @@ public class CitationOutputWriter implements OutputWriter<Citation, NullWritable
     
     //------------------------ SETTERS --------------------------
     
-    public void setCitationMatchingReporter(CitationMatchingReporter citationMatchingReporter) {
+    public void setCitationMatchingReporter(CitationMatchingCounterReporter citationMatchingReporter) {
         this.citationMatchingReporter = citationMatchingReporter;
     }
 

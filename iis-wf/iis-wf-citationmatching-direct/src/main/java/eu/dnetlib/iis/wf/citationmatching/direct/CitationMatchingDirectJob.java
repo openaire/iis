@@ -21,7 +21,7 @@ import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetad
 import eu.dnetlib.iis.wf.citationmatching.direct.converter.DirectCitationToCitationConverter;
 import eu.dnetlib.iis.wf.citationmatching.direct.converter.DocumentToDirectCitationMetadataConverter;
 import eu.dnetlib.iis.wf.citationmatching.direct.model.IdWithPosition;
-import eu.dnetlib.iis.wf.citationmatching.direct.service.CitationMatchingDirectReporter;
+import eu.dnetlib.iis.wf.citationmatching.direct.service.CitationMatchingDirectCounterReporter;
 import eu.dnetlib.iis.wf.citationmatching.direct.service.ExternalIdCitationMatcher;
 import eu.dnetlib.iis.wf.citationmatching.direct.service.PickFirstDocumentFunction;
 import eu.dnetlib.iis.wf.citationmatching.direct.service.PickResearchArticleDocumentFunction;
@@ -38,7 +38,7 @@ public class CitationMatchingDirectJob {
     
     private static DirectCitationToCitationConverter directCitationToCitationConverter = new DirectCitationToCitationConverter();
     
-    private static CitationMatchingDirectReporter citationMatchingDirectReporter = new CitationMatchingDirectReporter();
+    private static CitationMatchingDirectCounterReporter citationMatchingDirectReporter = new CitationMatchingDirectCounterReporter();
     
     
     
