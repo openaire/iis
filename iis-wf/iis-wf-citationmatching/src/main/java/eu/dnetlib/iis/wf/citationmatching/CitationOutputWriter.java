@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.apache.hadoop.io.NullWritable;
 import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
 
 import eu.dnetlib.iis.citationmatching.schemas.Citation;
 import pl.edu.icm.coansys.citations.OutputWriter;
@@ -22,6 +23,8 @@ public class CitationOutputWriter implements OutputWriter<Citation, NullWritable
 
     private SparkAvroSaver avroSaver = new SparkAvroSaver();
 
+    private CitationMatchingCounterReporter citationMatchingReporter;
+
 
     //------------------------ LOGIC --------------------------
 
@@ -31,8 +34,19 @@ public class CitationOutputWriter implements OutputWriter<Citation, NullWritable
     @Override
     public void writeMatchedCitations(JavaPairRDD<Citation, NullWritable> matchedCitations, String path) {
 
-        avroSaver.saveJavaRDD(matchedCitations.keys(), Citation.SCHEMA$, path);
+        JavaRDD<Citation> matchedCitationsKeys = matchedCitations.keys();
+        matchedCitationsKeys.cache();
+        
+        avroSaver.saveJavaRDD(matchedCitationsKeys, Citation.SCHEMA$, path);
 
+        citationMatchingReporter.report(matchedCitationsKeys);
+    }
+
+    
+    //------------------------ SETTERS --------------------------
+    
+    public void setCitationMatchingReporter(CitationMatchingCounterReporter citationMatchingReporter) {
+        this.citationMatchingReporter = citationMatchingReporter;
     }
 
 }

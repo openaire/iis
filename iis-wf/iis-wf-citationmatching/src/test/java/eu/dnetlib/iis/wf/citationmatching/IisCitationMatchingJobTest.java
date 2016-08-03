@@ -11,6 +11,7 @@ import org.junit.Test;
 import com.google.common.io.Files;
 
 import eu.dnetlib.iis.citationmatching.schemas.Citation;
+import eu.dnetlib.iis.common.schemas.ReportParam;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.wf.citationmatching.converter.DocumentAvroDatastoreProducer;
@@ -31,6 +32,8 @@ public class IisCitationMatchingJobTest {
     
     private String outputDirPath;
     
+    private String reportDirPath;
+    
     
     @Before
     public void before() {
@@ -38,6 +41,7 @@ public class IisCitationMatchingJobTest {
         workingDir = Files.createTempDir();
         inputDirPath = workingDir + "/spark_citation_matching/input";
         outputDirPath = workingDir + "/spark_citation_matching/output";
+        reportDirPath = workingDir + "/spark_citation_matching_direct/report";
     }
     
     
@@ -58,6 +62,7 @@ public class IisCitationMatchingJobTest {
         // given
         
         String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/main_workflow/data/citation.json";
+        String jsonReportFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/main_workflow/data/report.json";
         
         AvroTestUtils.createLocalAvroDataStore(
                 DocumentAvroDatastoreProducer.getDocumentMetadataList(),
@@ -67,20 +72,21 @@ public class IisCitationMatchingJobTest {
         
         // execute
         
-        executor.execute(buildCitationMatchingJob(inputDirPath, outputDirPath));
+        executor.execute(buildCitationMatchingJob(inputDirPath, outputDirPath, reportDirPath));
         
         
         
         // assert
         
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputFile, Citation.class);
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportParam.class);
         
     }
     
     
     //------------------------ PRIVATE --------------------------
     
-    private SparkJob buildCitationMatchingJob(String inputDirPath, String outputDirPath) {
+    private SparkJob buildCitationMatchingJob(String inputDirPath, String outputDirPath, String reportDirPath) {
         SparkJob sparkJob = SparkJobBuilder
                 .create()
                 
@@ -89,6 +95,7 @@ public class IisCitationMatchingJobTest {
                 .setMainClass(IisCitationMatchingJob.class)
                 .addArg("-fullDocumentPath", inputDirPath)
                 .addArg("-outputDirPath", outputDirPath)
+                .addArg("-outputReportPath", reportDirPath)
                 
                 .build();
         
