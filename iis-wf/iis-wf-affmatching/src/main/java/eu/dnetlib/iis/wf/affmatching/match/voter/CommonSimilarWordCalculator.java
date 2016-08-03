@@ -3,9 +3,8 @@ package eu.dnetlib.iis.wf.affmatching.match.voter;
 import java.io.Serializable;
 import java.util.List;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-
-import datafu.com.google.common.base.Objects;
 
 /**
  * Service that calculates the similarity between two collections of words
