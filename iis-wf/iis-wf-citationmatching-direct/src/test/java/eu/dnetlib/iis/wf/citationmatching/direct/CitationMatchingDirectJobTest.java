@@ -27,6 +27,7 @@ import com.google.common.io.Files;
 
 import eu.dnetlib.iis.common.citations.schemas.Citation;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
+import eu.dnetlib.iis.common.schemas.ReportParam;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
@@ -47,6 +48,7 @@ public class CitationMatchingDirectJobTest {
     
     private String outputDirPath;
     
+    private String reportDirPath;
     
     
     @Before
@@ -55,6 +57,7 @@ public class CitationMatchingDirectJobTest {
         workingDir = Files.createTempDir();
         inputDirPath = workingDir + "/spark_citation_matching_direct/input";
         outputDirPath = workingDir + "/spark_citation_matching_direct/output";
+        reportDirPath = workingDir + "/spark_citation_matching_direct/report";
     }
     
     
@@ -76,6 +79,7 @@ public class CitationMatchingDirectJobTest {
         
         String jsonInputFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/input/documents.json";
         String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/citations.json";
+        String jsonReportFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/report.json";
         
         
         AvroTestUtils.createLocalAvroDataStore(
@@ -86,13 +90,14 @@ public class CitationMatchingDirectJobTest {
         
         // execute
         
-        executor.execute(buildCitationMatchingDirectJob(inputDirPath, outputDirPath));
+        executor.execute(buildCitationMatchingDirectJob(inputDirPath, outputDirPath, reportDirPath));
         
         
         
         // assert
         
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputFile, Citation.class);
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportParam.class);
         
     }
     
@@ -103,6 +108,7 @@ public class CitationMatchingDirectJobTest {
         // given
         
         String jsonInputFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/input/documents_multiple_same_doi.json";
+        String jsonReportFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/report_one_matched.json";
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(jsonInputFile, ExtractedDocumentMetadataMergedWithOriginal.class),
                 inputDirPath);
@@ -111,7 +117,7 @@ public class CitationMatchingDirectJobTest {
         
         // execute
         
-        executor.execute(buildCitationMatchingDirectJob(inputDirPath, outputDirPath));
+        executor.execute(buildCitationMatchingDirectJob(inputDirPath, outputDirPath, reportDirPath));
         
         
         
@@ -123,6 +129,7 @@ public class CitationMatchingDirectJobTest {
         
         assertCitation(citations.get(0), is(new Utf8("id-1")), 8, isOneOf(new Utf8("id-2"), new Utf8("id-3"), new Utf8("id-4")));
         
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportParam.class);
     }
     
     
@@ -132,6 +139,7 @@ public class CitationMatchingDirectJobTest {
         // given
         
         String jsonInputFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/input/documents_multiple_same_pmid.json";
+        String jsonReportFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/report_one_matched.json";
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(jsonInputFile, ExtractedDocumentMetadataMergedWithOriginal.class),
                 inputDirPath);
@@ -140,7 +148,7 @@ public class CitationMatchingDirectJobTest {
         
         // execute
         
-        executor.execute(buildCitationMatchingDirectJob(inputDirPath, outputDirPath));
+        executor.execute(buildCitationMatchingDirectJob(inputDirPath, outputDirPath, reportDirPath));
         
         
         
@@ -152,6 +160,7 @@ public class CitationMatchingDirectJobTest {
         
         assertCitation(citations.get(0), is(new Utf8("id-1")), 8, isOneOf(new Utf8("id-2"), new Utf8("id-3"), new Utf8("id-4")));
         
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportParam.class);
     }
     
     
@@ -161,6 +170,7 @@ public class CitationMatchingDirectJobTest {
         // given
         
         String jsonInputFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/input/documents_multiple_same_pmid_with_type.json";
+        String jsonReportFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/report_one_matched.json";
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(jsonInputFile, ExtractedDocumentMetadataMergedWithOriginal.class),
                 inputDirPath);
@@ -169,7 +179,7 @@ public class CitationMatchingDirectJobTest {
         
         // execute
         
-        executor.execute(buildCitationMatchingDirectJob(inputDirPath, outputDirPath));
+        executor.execute(buildCitationMatchingDirectJob(inputDirPath, outputDirPath, reportDirPath));
         
         
         
@@ -181,6 +191,7 @@ public class CitationMatchingDirectJobTest {
         
         assertCitation(citations.get(0), is(new Utf8("id-1")), 8, is(new Utf8("id-3")));
         
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportParam.class);
     }
     
     
@@ -200,7 +211,7 @@ public class CitationMatchingDirectJobTest {
     }
     
     
-    private SparkJob buildCitationMatchingDirectJob(String inputDirPath, String outputDirPath) {
+    private SparkJob buildCitationMatchingDirectJob(String inputDirPath, String outputDirPath, String reportDirPath) {
         SparkJob sparkJob = SparkJobBuilder
                 .create()
                 
@@ -209,6 +220,7 @@ public class CitationMatchingDirectJobTest {
                 .setMainClass(CitationMatchingDirectJob.class)
                 .addArg("-inputAvroPath", inputDirPath)
                 .addArg("-outputAvroPath", outputDirPath)
+                .addArg("-outputReportPath", reportDirPath)
                 
                 .build();
         

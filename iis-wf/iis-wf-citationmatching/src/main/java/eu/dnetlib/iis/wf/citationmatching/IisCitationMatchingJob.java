@@ -84,8 +84,14 @@ public class IisCitationMatchingJob {
         configurableCitationMatchingService.setInputDocumentConverter(documentMetadataInputConverter);
         
         
+        CitationMatchingCounterReporter citationMatchingReporter = new CitationMatchingCounterReporter();
+        citationMatchingReporter.setSparkContext(sc);
+        citationMatchingReporter.setReportPath(params.outputReportPath);
+        
         CitationOutputConverter citationOutputConverter = new CitationOutputConverter();
         CitationOutputWriter citationOutputWriter = new CitationOutputWriter();
+        citationOutputWriter.setCitationMatchingReporter(citationMatchingReporter);
+        
         configurableCitationMatchingService.setOutputConverter(citationOutputConverter);
         configurableCitationMatchingService.setOutputWriter(citationOutputWriter);
         
@@ -102,6 +108,9 @@ public class IisCitationMatchingJob {
         
         @Parameter(names = "-outputDirPath", required = true, description = "path to directory with results")
         private String outputDirPath;
+        
+        @Parameter(names = "-outputReportPath", required = true, description = "path to directory with report")
+        private String outputReportPath;
         
         @Parameter(names="-maxHashBucketSize", required = false, description = "max number of the citation-documents pairs for a given hash")
         private long maxHashBucketSize = 10000;
