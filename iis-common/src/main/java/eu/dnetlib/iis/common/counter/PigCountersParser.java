@@ -48,8 +48,9 @@ public class PigCountersParser {
                 .map(jobId -> extractJobCounters(pigCountersJsonObject, jobId))
                 .collect(toList());
         
+        Map<String, String> rootLevelCounters = extractRootLevelCounters(pigCountersJsonObject);
         
-        return new PigCounters(jobCountersList);
+        return new PigCounters(rootLevelCounters, jobCountersList);
     }
     
     
@@ -83,6 +84,15 @@ public class PigCountersParser {
     }
     
     /**
+     * Extracts root level counters from pig counter json
+     */
+    private Map<String, String> extractRootLevelCounters(JsonObject pigCountersJsonObject) {
+        
+        return buildCountersFromJson(pigCountersJsonObject);
+
+    }
+    
+    /**
      * Builds job counters map from json.<br/>
      * Method supports only primitive string values. Any counters
      * defined in json that doesn't follow this rule will
@@ -91,16 +101,16 @@ public class PigCountersParser {
      * <code>buildCountersFromJson({"COUNTER_1": "aaa", "COUNTER_2": null, "COMPLEX_COUNTER": {"A": 1, "B": "bbb"})</code><br/>
      * will result in map with single element: <code>{"COUNTER_1": "aaa"}</code>
      */
-    private Map<String, String> buildCountersFromJson(JsonObject jsonJobCounters) {
+    private Map<String, String> buildCountersFromJson(JsonObject jsonCounters) {
         
         Map<String, String> counters = Maps.newHashMap();
         
-        for (Map.Entry<String, JsonElement> jobCounter : jsonJobCounters.entrySet()) {
-            JsonElement jobCounterValue = jobCounter.getValue();
+        for (Map.Entry<String, JsonElement> jsonCounter : jsonCounters.entrySet()) {
+            JsonElement counterValue = jsonCounter.getValue();
             
-            if (jobCounterValue.isJsonPrimitive() && jobCounterValue.getAsJsonPrimitive().isString()) {
+            if (counterValue.isJsonPrimitive() && counterValue.getAsJsonPrimitive().isString()) {
                 
-                    counters.put(jobCounter.getKey(), jobCounterValue.getAsString());
+                    counters.put(jsonCounter.getKey(), counterValue.getAsString());
             }
         }
         

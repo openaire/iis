@@ -14,34 +14,42 @@ import com.google.common.collect.Maps;
  */
 public class PigCounters {
 
-    private Map<String, JobCounters> jobCountersMap;
+    private Map<String, JobCounters> jobLevelCounters = Maps.newHashMap();
+    
+    private Map<String, String> rootLevelCounters = Maps.newHashMap();
+    
     
     
     //------------------------ CONSTRUCTORS --------------------------
     
     /**
-     * Default constructor
      * 
-     * @param jobCountersList - counters of map-reduce jobs run inside pig job
+     * @param rootLevelCounters - general pig counters not assigned to a specific job, may not be null 
+     * @param jobLevelCounters - pig counters assigned to specific jobs, may not be null
+     * 
+     * @throws NullPointerException if rootLevelCounters or jobLevelCounters equals to null
      */
-    public PigCounters(List<JobCounters> jobCountersList) {
-        Preconditions.checkNotNull(jobCountersList);
-        Preconditions.checkArgument(jobCountersList.size() > 0);
+    public PigCounters(Map<String, String> rootLevelCounters, List<JobCounters> jobLevelCounters) {
         
-        this.jobCountersMap = Maps.newHashMap();
+        Preconditions.checkNotNull(jobLevelCounters);
+        Preconditions.checkNotNull(rootLevelCounters);
         
-        for(JobCounters jobCounters : jobCountersList) {
-            this.jobCountersMap.put(jobCounters.getJobId(), jobCounters);
+        this.rootLevelCounters = rootLevelCounters;
+        
+        for(JobCounters jobCounters : jobLevelCounters) {
+            this.jobLevelCounters.put(jobCounters.getJobId(), jobCounters);
         }
+        
     }
     
+   
     //------------------------ LOGIC --------------------------
     
     /**
      * Returns list of job ids
      */
     public List<String> getJobIds() {
-        return Lists.newArrayList(jobCountersMap.keySet());
+        return Lists.newArrayList(jobLevelCounters.keySet());
     }
     
     /**
@@ -49,7 +57,7 @@ public class PigCounters {
      * or <code>null</code> if job does not exists.
      */
     public JobCounters getJobCounters(String jobId) {
-        return jobCountersMap.get(jobId);
+        return jobLevelCounters.get(jobId);
     }
     
     /**
@@ -57,13 +65,22 @@ public class PigCounters {
      * or <code>null</code> if job does not exists.
      */
     public String getJobIdByAlias(String jobAlias) {
-        for (Map.Entry<String, JobCounters> jobCountersEntry : jobCountersMap.entrySet()) {
+        for (Map.Entry<String, JobCounters> jobCountersEntry : jobLevelCounters.entrySet()) {
             
             if (jobCountersEntry.getValue().getAliases().contains(jobAlias)) {
                 return jobCountersEntry.getValue().getJobId();
             }
         }
         return null;
+    }
+    
+    //------------------------ GETTERS --------------------------
+    
+    /**
+     * Returns root level pig counters i.e. general counters not related to any specific job
+     */
+    public Map<String, String> getRootLevelCounters() {
+        return this.rootLevelCounters;
     }
     
     

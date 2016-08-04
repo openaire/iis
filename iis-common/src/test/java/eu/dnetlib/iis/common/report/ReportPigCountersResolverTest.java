@@ -4,11 +4,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import eu.dnetlib.iis.common.counter.PigCounters;
 import eu.dnetlib.iis.common.counter.PigCounters.JobCounters;
@@ -40,19 +42,23 @@ public class ReportPigCountersResolverTest {
         jobCounters2.addAlias("jobAlias2");
 
         jobCounters2.addCounter("MAP_INPUT_RECORDS", "3");
+        
+        Map<String, String> rootLevelCounters = Maps.newHashMap();
+        rootLevelCounters.put("RECORD_WRITTEN", "3");
+        rootLevelCounters.put("SOME_STRANGE_COUNTER", "AND ITS EVEN STRANGER VALUE");
 
-        pigCounters = new PigCounters(Lists.newArrayList(jobCounters1, jobCounters2));
+        pigCounters = new PigCounters(rootLevelCounters, Lists.newArrayList(jobCounters1, jobCounters2));
 
     }
     
     //------------------------ TESTS --------------------------
     
     @Test(expected = IllegalArgumentException.class)
-    public void resolveReportCounters_INVALID_ALIAS() {
+    public void resolveReportCounters_jobLevelCounter_NON_EXISTENT_JOB_ALIAS() {
         
         // given
         
-        ReportPigCounterMapping counterMapping = new ReportPigCounterMapping("destination.report.param1", "invalidJobAlias", "MAP_INPUT_RECORDS");
+        ReportPigCounterMapping counterMapping = new ReportPigCounterMapping("MAP_INPUT_RECORDS", "nonexistentJobAlias", "destination.report.param1");
         
         // execute
         
@@ -60,35 +66,57 @@ public class ReportPigCountersResolverTest {
     }
     
     @Test(expected = IllegalArgumentException.class)
-    public void resolveReportCounters_INVALID_COUNTER_NAME() {
+    public void resolveReportCounters_jobLevelCounter_NON_EXISTENT_COUNTER_NAME() {
         
         // given
         
-        ReportPigCounterMapping counterMapping = new ReportPigCounterMapping("destination.report.param1", "jobAlias1", "INVALID_COUNTER_NAME");
+        ReportPigCounterMapping counterMapping = new ReportPigCounterMapping("NON_EXISTENT_COUNTER_NAME", "jobAlias1", "destination.report.param1");
         
         // execute
         
         reportPigCountersResolver.resolveReportCounters(pigCounters, Lists.newArrayList(counterMapping));
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void resolveReportCounters_rootLevelCounter_NON_EXISTENT_COUNTER_NAME() {
+        
+        // given
+        
+        ReportPigCounterMapping counterMapping = new ReportPigCounterMapping("NON_EXISTENT_COUNTER_NAME", null, "destination.report.param1");
+        
+        // execute
+        
+        reportPigCountersResolver.resolveReportCounters(pigCounters, Lists.newArrayList(counterMapping));
+    }
+
     
     @Test
     public void resolveReportCounters() {
         
         // given
         
-        ReportPigCounterMapping counterMapping1 = new ReportPigCounterMapping("destination.report.param1", "jobAlias1_2", "MAP_INPUT_RECORDS");
-        ReportPigCounterMapping counterMapping2 = new ReportPigCounterMapping("destination.report.param2", "jobAlias1", "REDUCE_OUTPUT_RECORDS");
-        ReportPigCounterMapping counterMapping3 = new ReportPigCounterMapping("destination.report.param3", "jobAlias2", "MAP_INPUT_RECORDS");
+        ReportPigCounterMapping counterMapping1 = new ReportPigCounterMapping("MAP_INPUT_RECORDS", "jobAlias1_2", "destination.report.param1");
+        ReportPigCounterMapping counterMapping2 = new ReportPigCounterMapping("REDUCE_OUTPUT_RECORDS", "jobAlias1", "destination.report.param2");
+        ReportPigCounterMapping counterMapping3 = new ReportPigCounterMapping("MAP_INPUT_RECORDS", "jobAlias2", "destination.report.param3");
+        ReportPigCounterMapping counterMapping4 = new ReportPigCounterMapping("RECORD_WRITTEN", null, "destination.report.record_written");
+        ReportPigCounterMapping counterMapping5 = new ReportPigCounterMapping("SOME_STRANGE_COUNTER", null, "destination.report.some_strange");
+        
         
         // execute
         
-        List<ReportParam> reportCounters = reportPigCountersResolver.resolveReportCounters(pigCounters, Lists.newArrayList(counterMapping1, counterMapping2, counterMapping3));
+        List<ReportParam> reportCounters = reportPigCountersResolver.resolveReportCounters(pigCounters, 
+                    Lists.newArrayList(counterMapping1, counterMapping2, counterMapping3, counterMapping4, counterMapping5));
+        
         
         // assert
         
         assertThat(reportCounters, containsInAnyOrder(
                 new ReportParam("destination.report.param1", "10"),
                 new ReportParam("destination.report.param2", "2"),
-                new ReportParam("destination.report.param3", "3")));
+                new ReportParam("destination.report.param3", "3"),
+                new ReportParam("destination.report.record_written", "3"),
+                new ReportParam("destination.report.some_strange", "AND ITS EVEN STRANGER VALUE")));
     }
+    
+    
 }
