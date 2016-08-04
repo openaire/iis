@@ -56,6 +56,12 @@
 			<prepare>
 				<delete path="${nameNode}${output}" />
 			</prepare>
+			<configuration>
+                <property>
+                    <name>oozie.action.external.stats.write</name>
+                    <value>true</value>
+                </property>
+            </configuration>
             <!-- Path to PIG script the workflow executes. -->
             <script>lib/scripts/transformer.pig</script>
             
@@ -73,6 +79,7 @@
             <param>output=${output}</param>
             <param>schema_output=${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId']}</param>
         </pig>
+        
         <ok to="end"/>
         <error to="fail"/>
     </action>

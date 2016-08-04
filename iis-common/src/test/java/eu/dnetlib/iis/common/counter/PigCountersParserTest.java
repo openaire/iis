@@ -3,15 +3,15 @@ package eu.dnetlib.iis.common.counter;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
-import eu.dnetlib.iis.common.counter.PigCounters;
-import eu.dnetlib.iis.common.counter.PigCountersParser;
 import eu.dnetlib.iis.common.counter.PigCounters.JobCounters;
 
 /**
@@ -36,6 +36,29 @@ public class PigCountersParserTest {
         PigCounters pigCounters = pigCountersParser.parse(pigCountersJson);
         
         // assert
+        
+        Map<String, String> rootLevelCounters = pigCounters.getRootLevelCounters();
+        
+        assertEquals(15, rootLevelCounters.size());
+        
+        assertEquals("4", rootLevelCounters.get("NUMBER_JOBS"));
+        assertEquals("0", rootLevelCounters.get("SMM_SPILL_COUNT"));
+        assertEquals("0", rootLevelCounters.get("RETURN_CODE"));
+        assertEquals("job_1467867518322_6688,job_1467867518322_6687,job_1467867518322_6689,job_1467867518322_6690", rootLevelCounters.get("JOB_GRAPH"));
+        assertEquals("3", rootLevelCounters.get("RECORD_WRITTEN"));
+        assertEquals("-1", rootLevelCounters.get("ERROR_CODE"));
+        
+        assertEquals("HASH_JOIN,DISTINCT,FILTER", rootLevelCounters.get("FEATURES"));
+        assertEquals("1bbda10f-3149-49de-9798-77ec97b5e3e1", rootLevelCounters.get("SCRIPT_ID"));
+        assertEquals("0.12.0-cdh5.5.2", rootLevelCounters.get("PIG_VERSION"));
+        assertEquals("3870", rootLevelCounters.get("BYTES_WRITTEN"));
+        assertEquals("0", rootLevelCounters.get("PROACTIVE_SPILL_COUNT_RECORDS"));
+        assertEquals("0", rootLevelCounters.get("PROACTIVE_SPILL_COUNT_OBJECTS"));
+        assertEquals("2.6.0-cdh5.5.2", rootLevelCounters.get("HADOOP_VERSION"));
+        assertEquals("92829", rootLevelCounters.get("DURATION"));
+        assertEquals("PIG", rootLevelCounters.get("ACTION_TYPE"));
+        
+        
         
         assertThat(pigCounters.getJobIds(), containsInAnyOrder(
                 "job_1467867518322_6687", "job_1467867518322_6688",

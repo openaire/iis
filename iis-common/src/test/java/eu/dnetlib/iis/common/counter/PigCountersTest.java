@@ -6,17 +6,23 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import eu.dnetlib.iis.common.counter.PigCounters;
 import eu.dnetlib.iis.common.counter.PigCounters.JobCounters;
 
 /**
  * @author madryk
  */
+@RunWith(MockitoJUnitRunner.class)
 public class PigCountersTest {
 
     private PigCounters pigCounters;
@@ -26,9 +32,13 @@ public class PigCountersTest {
     
     private JobCounters jobCounters2;
     
+    @Mock
+    private Map<String, String> rootLevelCounters;
+    
     
     @Before
     public void setup() {
+        
         jobCounters1 = new JobCounters("JOB_ID_1");
         jobCounters1.addAlias("JOB_1_ALIAS");
         jobCounters1.addAlias("JOB_1_ALIAS_2");
@@ -39,7 +49,10 @@ public class PigCountersTest {
         jobCounters2.addCounter("COUNTER_1", "13");
         jobCounters2.addCounter("COUNTER_2", "vv");
         
-        pigCounters = new PigCounters(Lists.newArrayList(jobCounters1, jobCounters2));
+        
+        
+        pigCounters = new PigCounters(rootLevelCounters, Lists.newArrayList(jobCounters1, jobCounters2));
+        
     }
     
     @Test
@@ -75,5 +88,25 @@ public class PigCountersTest {
         // execute & assert
         assertNull(pigCounters.getJobIdByAlias("INVALID_ALIAS"));
     }
+
+    @Test
+    public void getRootLevelCounters() {
+        
+        // execute & assert
+        assertTrue(rootLevelCounters == pigCounters.getRootLevelCounters());
+    }
     
+    @Test(expected = NullPointerException.class)
+    public void constuctor_rootLevelCounters_NULL() {
+        
+        // execute
+        new PigCounters(null, ImmutableList.of());
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void constuctor_jobLevelCounters_NULL() {
+        
+        // execute
+        new PigCounters(rootLevelCounters, null);
+    }
 }

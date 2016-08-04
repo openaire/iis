@@ -22,27 +22,55 @@ public class ReportPigCountersResolver {
      * Resolve {@link ReportParam}s from {@link PigCounters} using {@link ReportPigCounterMapping}s.
      * Only counters that are present in {@link ReportPigCounterMapping}s will be resolved.
      */
-    public List<ReportParam> resolveReportCounters(PigCounters pigCounters, List<ReportPigCounterMapping> reportPigCountersMapping) {
+    public List<ReportParam> resolveReportCounters(PigCounters pigCounters, List<ReportPigCounterMapping> reportPigCountersMappings) {
         
         List<ReportParam> reportCounters = Lists.newArrayList();
         
-        for (ReportPigCounterMapping counterMapping : reportPigCountersMapping) {
+        for (ReportPigCounterMapping counterMapping : reportPigCountersMappings) {
+        
+            String counterValue = extractCounterValue(pigCounters, counterMapping);
+            
+            ReportParam reportParam = new ReportParam(counterMapping.getDestReportCounterName(), counterValue);
+            
+            reportCounters.add(reportParam);
+        }
+        
+        return reportCounters;
+    }
+    
+    
+    
+    //------------------------ PRIVATE --------------------------
+
+    private String extractCounterValue(PigCounters pigCounters, ReportPigCounterMapping counterMapping) {
+        
+        String counterValue;
+        
+        if (counterMapping.isRootLevelCounterMapping()) {
+            
+            counterValue = pigCounters.getRootLevelCounters().get(counterMapping.getSourcePigCounterName());
+            
+            if (StringUtils.isBlank(counterValue)) {
+                throw new IllegalArgumentException("Couldn't find a root level counter with name: " + counterMapping.getSourcePigCounterName());
+            }
+            
+            
+        } else {
             
             String jobId = pigCounters.getJobIdByAlias(counterMapping.getSourcePigJobAlias());
             
             if (jobId == null) {
-                throw new IllegalArgumentException("Invalid job alias: " + counterMapping.getSourcePigJobAlias());
+                throw new IllegalArgumentException("Non existent job alias: " + counterMapping.getSourcePigJobAlias());
             }
             
-            String counterValue = pigCounters.getJobCounters(jobId).getCounter(counterMapping.getSourcePigJobCounterName());
+            counterValue = pigCounters.getJobCounters(jobId).getCounter(counterMapping.getSourcePigCounterName());
             
             if (StringUtils.isBlank(counterValue)) {
-                throw new IllegalArgumentException("Couldn't find a counter with name: " + counterMapping.getSourcePigJobCounterName() + " inside job counters, id: " + jobId);
+                throw new IllegalArgumentException("Couldn't find a job counter with name: " + counterMapping.getSourcePigCounterName() + ", job id: " + jobId);
             }
             
-            reportCounters.add(new ReportParam(counterMapping.getDestReportCounterName(), counterValue));
         }
         
-        return reportCounters;
+        return counterValue;
     }
 }

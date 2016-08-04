@@ -27,7 +27,7 @@
         <property>
             <name>union_count_report_key</name>
             <value>$UNDEFINED$</value>
-            <description>key of report param (eu.dnetlib.iis.common.schemas.ReportParam) under witch count of unioned datastore will be saved</description>
+            <description>key of report param (eu.dnetlib.iis.common.schemas.ReportParam) under which count of unioned datastore will be saved</description>
         </property>
     </parameters>
     

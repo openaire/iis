@@ -69,8 +69,8 @@ public class PigCountersReportGeneratorTest {
         PigCounters pigCounters = Mockito.mock(PigCounters.class);
         when(pigCountersParser.parse("counters")).thenReturn(pigCounters);
         
-        ReportPigCounterMapping counterMapping1 = new ReportPigCounterMapping("group.param1", "jobAlias1", "counterName1");
-        ReportPigCounterMapping counterMapping2 = new ReportPigCounterMapping("group.param2", "jobAlias2", "counterName2");
+        ReportPigCounterMapping counterMapping1 = new ReportPigCounterMapping("counterName1", "jobAlias1", "group.param1");
+        ReportPigCounterMapping counterMapping2 = new ReportPigCounterMapping("counterName2", "jobAlias2", "group.param2");
         
         when(reportPigCounterMappingParser.parse("group.param1", "pigCounterName1")).thenReturn(counterMapping1);
         when(reportPigCounterMappingParser.parse("group.param2", "pigCounterName2")).thenReturn(counterMapping2);
