@@ -16,11 +16,6 @@
         </property>
         <!-- processing modes -->
         <property>
-            <name>active_metadataextraction_export</name>
-            <value>false</value>
-            <description>flag indicating metadata extraction export should be enabled</description>
-        </property>
-        <property>
             <name>active_referenceextraction_project</name>
             <value>false</value>
             <description>flag indicating project reference extraction should be enabled</description>
@@ -356,11 +351,6 @@
                 <property>
                     <name>active_import_concept</name>
                     <value>${active_referenceextraction_project}</value>
-                </property>
-                <property>
-                    <name>active_ingest_pmc</name>
-                    <!-- enabling when either citation matching is enabled or metadata export which may include pmc affiliations -->
-                    <value>${active_citationmatching eq "true" or active_metadataextraction_export eq "true"}</value>
                 </property>
                 <!-- import metadata related -->
                 <property>
