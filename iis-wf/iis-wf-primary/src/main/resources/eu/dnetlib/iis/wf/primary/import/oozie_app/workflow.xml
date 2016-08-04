@@ -7,11 +7,6 @@
 			<description>flag indicating dataset import should be enabled</description>
 		</property>
 		<property>
-			<name>active_ingest_pmc</name>
-			<value>false</value>
-			<description>flag indicating pmc metadata and citations ingestions should be performed</description>
-		</property>
-		<property>
 			<name>active_import_concept</name>
 			<value>false</value>
 			<description>flag indicating concept import should be executed</description>
@@ -660,7 +655,7 @@
 				</property>
 				<property>
 					<name>ingest_metadata</name>
-					<value>${active_ingest_pmc eq "true"}</value>
+					<value>true</value>
 				</property>
 			</configuration>
 		</sub-workflow>
