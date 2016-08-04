@@ -21,7 +21,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.dnetlib.iis.citationmatching.schemas.Citation;
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 /**
@@ -52,14 +52,14 @@ public class CitationMatchingCounterReporterTest {
     private JavaRDD<String> matchedCitationsDistinctDocumentIds;
     
     @Mock
-    private JavaRDD<ReportParam> reportCounters;
+    private JavaRDD<ReportEntry> reportCounters;
     
     
     @Captor
     private ArgumentCaptor<Function<Citation,String>> extractDocIdFunction;
     
     @Captor
-    private ArgumentCaptor<List<ReportParam>> reportParamsCaptor;
+    private ArgumentCaptor<List<ReportEntry>> reportEntriesCaptor;
     
     
     @Before
@@ -112,10 +112,10 @@ public class CitationMatchingCounterReporterTest {
         verify(matchedCitations).map(extractDocIdFunction.capture());
         assertExtractDocIdFunction(extractDocIdFunction.getValue());
         
-        verify(sparkContext).parallelize(reportParamsCaptor.capture());
-        assertReportParams(reportParamsCaptor.getValue());
+        verify(sparkContext).parallelize(reportEntriesCaptor.capture());
+        assertReportEntries(reportEntriesCaptor.getValue());
         
-        verify(avroSaver).saveJavaRDD(reportCounters, ReportParam.SCHEMA$, reportPath);
+        verify(avroSaver).saveJavaRDD(reportCounters, ReportEntry.SCHEMA$, reportPath);
         
     }
     
@@ -131,15 +131,15 @@ public class CitationMatchingCounterReporterTest {
         assertEquals("SOURCE_ID", docId);
     }
     
-    private void assertReportParams(List<ReportParam> reportParams) {
+    private void assertReportEntries(List<ReportEntry> reportEntries) {
         
-        assertEquals(2, reportParams.size());
+        assertEquals(2, reportEntries.size());
         
-        assertEquals("export.matchedCitations.fuzzy.total", reportParams.get(0).getKey());
-        assertEquals("14", reportParams.get(0).getValue());
+        assertEquals("export.matchedCitations.fuzzy.total", reportEntries.get(0).getKey());
+        assertEquals("14", reportEntries.get(0).getValue());
         
-        assertEquals("export.matchedCitations.fuzzy.docsWithAtLeastOneMatch", reportParams.get(1).getKey());
-        assertEquals("3", reportParams.get(1).getValue());
+        assertEquals("export.matchedCitations.fuzzy.docsWithAtLeastOneMatch", reportEntries.get(1).getKey());
+        assertEquals("3", reportEntries.get(1).getValue());
     }
     
 }

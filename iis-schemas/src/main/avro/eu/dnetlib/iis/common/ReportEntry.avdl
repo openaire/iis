@@ -1,0 +1,16 @@
+@namespace("eu.dnetlib.iis.common.schemas")
+protocol IIS{
+
+    enum ReportEntryType {
+        COUNTER, DURATION
+    }
+    
+    
+    record ReportEntry {
+    
+        string key;
+        ReportEntryType type;
+        string value;
+    
+    }
+}

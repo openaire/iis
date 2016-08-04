@@ -24,8 +24,8 @@ import com.beust.jcommander.Parameters;
 import eu.dnetlib.iis.common.counter.NamedCounters;
 import eu.dnetlib.iis.common.counter.NamedCountersAccumulableParam;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
-import eu.dnetlib.iis.common.report.CountersToReportParamsConverter;
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.report.CountersToReportEntriesConverter;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroGsonFactory;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentClasses;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentMetadata;
@@ -50,7 +50,7 @@ public class DocumentClassificationJob {
 
     private static DocumentToDocClassificationMetadataConverter converter = new DocumentToDocClassificationMetadataConverter();
     
-    private static CountersToReportParamsConverter countersConverter = new CountersToReportParamsConverter(DocumentClassificationCounters.getCounterNameToParamKeyMapping());
+    private static CountersToReportEntriesConverter countersConverter = new CountersToReportEntriesConverter(DocumentClassificationCounters.getCounterNameToParamKeyMapping());
     
     
     //------------------------ LOGIC --------------------------
@@ -98,8 +98,8 @@ public class DocumentClassificationJob {
             avroSaver.saveJavaRDD(documentClasses, DocumentToDocumentClasses.SCHEMA$, params.outputAvroPath);
             
             
-            JavaRDD<ReportParam> reportParamsRDD = sc.parallelize(countersConverter.convertToReportParams(docClassificationJobAccumulator.value()));
-            avroSaver.saveJavaRDD(reportParamsRDD, ReportParam.SCHEMA$, params.outputReportPath);
+            JavaRDD<ReportEntry> reportRDD = sc.parallelize(countersConverter.convertToReportEntries(docClassificationJobAccumulator.value()));
+            avroSaver.saveJavaRDD(reportRDD, ReportEntry.SCHEMA$, params.outputReportPath);
         }
         
     }

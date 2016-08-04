@@ -23,11 +23,11 @@ import eu.dnetlib.iis.common.java.io.DataStore;
 import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.java.porttype.AnyPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 
 /**
  * Java workflow node responsible for merging partial reports into single json file.<br />
- * It reads input partial report datastores ({@link ReportParam}s) located under
+ * It reads input partial report datastores ({@link ReportEntry}s) located under
  * single parent location. Process assumes that partial report datastores are
  * located in subdirectories of the provided input path.<br />
  * As a result process writes merged report into json file. 
@@ -41,7 +41,7 @@ public class ReportMerger implements Process {
     private static final String REPORT_PORT_OUT_NAME = "report";
     
     
-    private ReportParamJsonAppender reportParamAppender = new ReportParamJsonAppender();
+    private ReportEntryJsonAppender reportEntryAppender = new ReportEntryJsonAppender();
     
     
     //------------------------ LOGIC --------------------------
@@ -62,9 +62,9 @@ public class ReportMerger implements Process {
         FileSystem fs = FileSystem.get(conf);
         
         
-        List<ReportParam> allReportParams = readAllPartialReports(fs, portBindings.getInput().get(PARTIAL_REPORTS_PORT_IN_NAME));
+        List<ReportEntry> allReportEntries = readAllPartialReports(fs, portBindings.getInput().get(PARTIAL_REPORTS_PORT_IN_NAME));
         
-        JsonObject jsonReport = buildJsonReport(allReportParams);
+        JsonObject jsonReport = buildJsonReport(allReportEntries);
         
         writeJsonReport(jsonReport, fs, portBindings.getOutput().get(REPORT_PORT_OUT_NAME));
         
@@ -84,18 +84,18 @@ public class ReportMerger implements Process {
         }
         
     }
-    private JsonObject buildJsonReport(List<ReportParam> reportParams) {
+    private JsonObject buildJsonReport(List<ReportEntry> reportEntries) {
         
         JsonObject jsonReport = new JsonObject();
         
-        for (ReportParam reportParam : reportParams) {
-            reportParamAppender.appendReportParam(jsonReport, reportParam);
+        for (ReportEntry reportEntry : reportEntries) {
+            reportEntryAppender.appendReportEntry(jsonReport, reportEntry);
         }
         
         return jsonReport;
     }
     
-    private List<ReportParam> readAllPartialReports(FileSystem fs, Path partialReportsBasePath) throws FileNotFoundException, IOException {
+    private List<ReportEntry> readAllPartialReports(FileSystem fs, Path partialReportsBasePath) throws FileNotFoundException, IOException {
         
         FileStatus[] reportsBaseDirContent = fs.listStatus(partialReportsBasePath);
         
@@ -109,13 +109,13 @@ public class ReportMerger implements Process {
         }
         
         
-        List<ReportParam> allReportParams = Lists.newArrayList();
+        List<ReportEntry> allReportEntries = Lists.newArrayList();
         
         for (FileSystemPath datastorePath : reportDatastorePaths) {
-            allReportParams.addAll(DataStore.read(datastorePath, ReportParam.SCHEMA$));
+            allReportEntries.addAll(DataStore.read(datastorePath, ReportEntry.SCHEMA$));
         }
         
-        return allReportParams;
+        return allReportEntries;
     }
     
 

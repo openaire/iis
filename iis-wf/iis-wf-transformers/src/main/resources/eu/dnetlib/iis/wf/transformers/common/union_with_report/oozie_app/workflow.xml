@@ -25,7 +25,7 @@
         </property>
         <property>
             <name>union_count_report_key</name>
-            <description>key of report param (eu.dnetlib.iis.common.schemas.ReportParam) under witch count of unioned datastore will be saved</description>
+            <description>key of report param (eu.dnetlib.iis.common.schemas.ReportEntry) under witch count of unioned datastore will be saved</description>
         </property>
     </parameters>
     

@@ -1,6 +1,6 @@
-{"key":"export.documentClassification.classifiedDocuments", "value": "0"}
-{"key":"export.documentClassification.classes.arxiv", "value": "0"}
-{"key":"export.documentClassification.classes.wos", "value": "0"}
-{"key":"export.documentClassification.classes.ddc", "value": "0"}
-{"key":"export.documentClassification.classes.meshEuroPmc", "value": "0"}
-{"key":"export.documentClassification.classes.acm", "value": "0"}
+{"key":"export.documentClassification.classifiedDocuments", "type":"COUNTER", "value": "0"}
+{"key":"export.documentClassification.classes.arxiv", "type":"COUNTER", "value": "0"}
+{"key":"export.documentClassification.classes.wos", "type":"COUNTER", "value": "0"}
+{"key":"export.documentClassification.classes.ddc", "type":"COUNTER", "value": "0"}
+{"key":"export.documentClassification.classes.meshEuroPmc", "type":"COUNTER", "value": "0"}
+{"key":"export.documentClassification.classes.acm", "type":"COUNTER", "value": "0"}

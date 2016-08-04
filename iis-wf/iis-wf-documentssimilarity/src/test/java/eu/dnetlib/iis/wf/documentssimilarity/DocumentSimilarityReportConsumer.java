@@ -16,7 +16,8 @@ import eu.dnetlib.iis.common.java.io.DataStore;
 import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.common.schemas.ReportEntryType;
 import eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity;
 
 /**
@@ -38,7 +39,7 @@ public class DocumentSimilarityReportConsumer implements Process {
     
     public Map<String, PortType> getInputPorts() {
         HashMap<String, PortType> ports = new HashMap<String, PortType>();
-        ports.put(REPORT_PORT_INPUT_NAME, new AvroPortType(ReportParam.SCHEMA$));
+        ports.put(REPORT_PORT_INPUT_NAME, new AvroPortType(ReportEntry.SCHEMA$));
         return ports;
     }
     
@@ -60,10 +61,11 @@ public class DocumentSimilarityReportConsumer implements Process {
         
         Path reportPath = portBindings.getInput().get(REPORT_PORT_INPUT_NAME);
         
-        List<ReportParam> report = DataStore.read(new FileSystemPath(fs, reportPath), ReportParam.SCHEMA$);
+        List<ReportEntry> report = DataStore.read(new FileSystemPath(fs, reportPath), ReportEntry.SCHEMA$);
         
         assertEquals(1, report.size());
         assertEquals(REPORT_DOCUMENT_SIMILARITY_COUNT_KEY, report.get(0).getKey().toString());
+        assertEquals(ReportEntryType.COUNTER, report.get(0).getType());
         assertEquals(String.valueOf(docSimilarityCount), report.get(0).getValue().toString());
         
     }

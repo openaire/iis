@@ -18,12 +18,12 @@ import eu.dnetlib.iis.common.java.io.DataStore;
 import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 
 /**
  * Java workflow node process for building report from pig counters.<br/>
  * <br/>
- * It writes report properties into avro datastore of {@link ReportParam}s
+ * It writes report properties into avro datastore of {@link ReportEntry}s
  * with location specified in output port.<br/>
  * Report property key must start with <code>report.</code> to
  * be included in output datastore.<br/>
@@ -61,7 +61,7 @@ public class PigCountersReportGenerator implements Process {
 
     @Override
     public Map<String, PortType> getOutputPorts() {
-        return Collections.singletonMap(REPORT_PORT_OUT_NAME, new AvroPortType(ReportParam.SCHEMA$));
+        return Collections.singletonMap(REPORT_PORT_OUT_NAME, new AvroPortType(ReportEntry.SCHEMA$));
     }
     
     @Override
@@ -74,7 +74,7 @@ public class PigCountersReportGenerator implements Process {
         
         List<ReportPigCounterMapping> reportCountersMapping = collectReportCountersMapping(parameters);
         
-        List<ReportParam> reportCounters = reportPigCountersResolver.resolveReportCounters(pigCounters, reportCountersMapping);
+        List<ReportEntry> reportCounters = reportPigCountersResolver.resolveReportCounters(pigCounters, reportCountersMapping);
         
         
         FileSystem fs = FileSystem.get(conf);

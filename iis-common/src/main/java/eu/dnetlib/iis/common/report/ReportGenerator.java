@@ -18,11 +18,11 @@ import eu.dnetlib.iis.common.java.io.DataStore;
 import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 
 /**
  * Java workflow node process for building report.<br/>
- * It writes report properties into avro datastore of {@link ReportParam}s
+ * It writes report properties into avro datastore of {@link ReportEntry}s
  * with location specified in output port.<br/>
  * Report property name must start with <code>report.</code> to
  * be included in output datastore.
@@ -42,13 +42,13 @@ import eu.dnetlib.iis.common.schemas.ReportParam;
  * }
  * </pre>
  * Above example will produce avro datastore in <code>/report/path</code>
- * with single {@link ReportParam}.
- * Where the {@link ReportParam#getKey()} will be equal to <code>someProperty</code> and 
- * the {@link ReportParam#getValue()} will be equal to <code>someValue</code>
- * (notice the stripped <code>report.</code> prefix from the param key).
+ * with single {@link ReportEntry}.
+ * Where the {@link ReportEntry#getKey()} will be equal to <code>someProperty</code> and 
+ * the {@link ReportEntry#getValue()} will be equal to <code>someValue</code>
+ * (notice the stripped <code>report.</code> prefix from the entry key).
  * 
  * 
- * @author krzysztof
+ * @author madryk
  *
  */
 public class ReportGenerator implements Process {
@@ -67,29 +67,29 @@ public class ReportGenerator implements Process {
 
     @Override
     public Map<String, PortType> getOutputPorts() {
-        return Collections.singletonMap(REPORT_PORT_OUT_NAME, new AvroPortType(ReportParam.SCHEMA$));
+        return Collections.singletonMap(REPORT_PORT_OUT_NAME, new AvroPortType(ReportEntry.SCHEMA$));
     }
     
     @Override
     public void run(PortBindings portBindings, Configuration conf, Map<String, String> parameters) throws Exception {
         
-        Map<String, String> reportParams = collectReportParameters(parameters);
+        Map<String, String> entriesToReport = collectEntriesToReport(parameters);
         
-        List<ReportParam> avroReportParams = convertToAvroReportParams(reportParams);
+        List<ReportEntry> avroReport = convertToAvroReport(entriesToReport);
         
         
         FileSystem fs = FileSystem.get(conf);
         
         Path reportPath = portBindings.getOutput().get(REPORT_PORT_OUT_NAME);
         
-        DataStore.create(avroReportParams, new FileSystemPath(fs, reportPath));
+        DataStore.create(avroReport, new FileSystemPath(fs, reportPath));
         
     }
     
     
     //------------------------ PRIVATE --------------------------
     
-    private Map<String, String> collectReportParameters(Map<String, String> parameters) {
+    private Map<String, String> collectEntriesToReport(Map<String, String> parameters) {
         
         return parameters.entrySet().stream()
                 .filter(property -> property.getKey().startsWith(REPORT_PROPERTY_PREFIX))
@@ -98,12 +98,12 @@ public class ReportGenerator implements Process {
         
     }
 
-    private List<ReportParam> convertToAvroReportParams(Map<String, String> reportParameters) {
+    private List<ReportEntry> convertToAvroReport(Map<String, String> entriesToReport) {
         
-        List<ReportParam> avroReportParams = Lists.newArrayList();
-        reportParameters.forEach((key, value) -> avroReportParams.add(new ReportParam(key, value)));
+        List<ReportEntry> avroReport = Lists.newArrayList();
+        entriesToReport.forEach((key, value) -> avroReport.add(ReportEntryFactory.createCounterReportEntry(key, Long.valueOf(value))));
         
-        return avroReportParams;
+        return avroReport;
     }
     
 

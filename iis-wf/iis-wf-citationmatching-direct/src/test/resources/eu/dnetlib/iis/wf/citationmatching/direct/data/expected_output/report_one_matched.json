@@ -1,2 +1,2 @@
-{"key": "export.matchedCitations.direct.total", "value": "1"}
-{"key": "export.matchedCitations.direct.docsWithAtLeastOneMatch", "value": "1"}
+{"key": "export.matchedCitations.direct.total", "type":"COUNTER", "value": "1"}
+{"key": "export.matchedCitations.direct.docsWithAtLeastOneMatch", "type":"COUNTER", "value": "1"}

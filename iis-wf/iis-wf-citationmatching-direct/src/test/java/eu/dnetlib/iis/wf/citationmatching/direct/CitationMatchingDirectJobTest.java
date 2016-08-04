@@ -27,7 +27,7 @@ import com.google.common.io.Files;
 
 import eu.dnetlib.iis.common.citations.schemas.Citation;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
@@ -97,7 +97,7 @@ public class CitationMatchingDirectJobTest {
         // assert
         
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputFile, Citation.class);
-        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportParam.class);
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportEntry.class);
         
     }
     
@@ -129,7 +129,7 @@ public class CitationMatchingDirectJobTest {
         
         assertCitation(citations.get(0), is(new Utf8("id-1")), 8, isOneOf(new Utf8("id-2"), new Utf8("id-3"), new Utf8("id-4")));
         
-        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportParam.class);
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportEntry.class);
     }
     
     
@@ -160,7 +160,7 @@ public class CitationMatchingDirectJobTest {
         
         assertCitation(citations.get(0), is(new Utf8("id-1")), 8, isOneOf(new Utf8("id-2"), new Utf8("id-3"), new Utf8("id-4")));
         
-        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportParam.class);
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportEntry.class);
     }
     
     
@@ -191,7 +191,7 @@ public class CitationMatchingDirectJobTest {
         
         assertCitation(citations.get(0), is(new Utf8("id-1")), 8, is(new Utf8("id-3")));
         
-        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportParam.class);
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportEntry.class);
     }
     
     

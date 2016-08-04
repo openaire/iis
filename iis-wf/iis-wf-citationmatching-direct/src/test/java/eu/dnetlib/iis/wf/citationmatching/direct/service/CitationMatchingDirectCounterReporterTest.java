@@ -24,7 +24,7 @@ import com.google.common.collect.Maps;
 
 import eu.dnetlib.iis.common.citations.schemas.Citation;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 /**
@@ -51,14 +51,14 @@ public class CitationMatchingDirectCounterReporterTest {
     private JavaRDD<String> matchedCitationsDistinctDocumentIds;
     
     @Mock
-    private JavaRDD<ReportParam> reportCounters;
+    private JavaRDD<ReportEntry> reportCounters;
     
     
     @Captor
     private ArgumentCaptor<Function<Citation,String>> extractDocIdFunction;
     
     @Captor
-    private ArgumentCaptor<List<ReportParam>> reportParamsCaptor;
+    private ArgumentCaptor<List<ReportEntry>> reportEntriesCaptor;
     
     
     //------------------------ TESTS --------------------------
@@ -90,10 +90,10 @@ public class CitationMatchingDirectCounterReporterTest {
         verify(matchedCitations).map(extractDocIdFunction.capture());
         assertExtractDocIdFunction(extractDocIdFunction.getValue());
         
-        verify(sparkContext).parallelize(reportParamsCaptor.capture());
-        assertReportParams(reportParamsCaptor.getValue());
+        verify(sparkContext).parallelize(reportEntriesCaptor.capture());
+        assertReportEntries(reportEntriesCaptor.getValue());
         
-        verify(avroSaver).saveJavaRDD(reportCounters, ReportParam.SCHEMA$, reportPath);
+        verify(avroSaver).saveJavaRDD(reportCounters, ReportEntry.SCHEMA$, reportPath);
         
     }
     
@@ -119,14 +119,14 @@ public class CitationMatchingDirectCounterReporterTest {
         assertEquals("SOURCE_ID", docId);
     }
     
-    private void assertReportParams(List<ReportParam> reportParams) {
+    private void assertReportEntries(List<ReportEntry> reportEntries) {
         
-        assertEquals(2, reportParams.size());
+        assertEquals(2, reportEntries.size());
         
-        assertEquals("export.matchedCitations.direct.total", reportParams.get(0).getKey());
-        assertEquals("14", reportParams.get(0).getValue());
+        assertEquals("export.matchedCitations.direct.total", reportEntries.get(0).getKey());
+        assertEquals("14", reportEntries.get(0).getValue());
         
-        assertEquals("export.matchedCitations.direct.docsWithAtLeastOneMatch", reportParams.get(1).getKey());
-        assertEquals("3", reportParams.get(1).getValue());
+        assertEquals("export.matchedCitations.direct.docsWithAtLeastOneMatch", reportEntries.get(1).getKey());
+        assertEquals("3", reportEntries.get(1).getValue());
     }
 }

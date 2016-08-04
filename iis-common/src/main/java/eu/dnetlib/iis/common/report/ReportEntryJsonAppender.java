@@ -7,53 +7,46 @@ import org.apache.hadoop.util.StringUtils;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 
 /**
- * Appender of {@link ReportParam} into json report.
+ * Appender of {@link ReportEntry} into json report.
  * 
  * @author madryk
  */
-public class ReportParamJsonAppender {
+public class ReportEntryJsonAppender {
 
+    private ReportValueJsonConverterManager reportValueJsonConverterManager = new ReportValueJsonConverterManager();
 
     //------------------------ LOGIC --------------------------
     
     /**
-     * Appends {@link ReportParam} into the passed json report.<br/>
+     * Appends {@link ReportEntry} into the passed json report.<br/>
      * 
-     * The key of the report param ({@link ReportParam#getKey()}) defines
-     * where the value ({@link ReportParam#getValue()}) should be inserted
+     * The key of the report param ({@link ReportEntry#getKey()}) defines
+     * where the value ({@link ReportEntry#getValue()}) should be inserted
      * in report json structure.<br/>
      * The key is splitted by dots. Resulting values defines subsequent
      * fields in json.<br/>
      * For example:<br/>
-     * <code>new ReportParam("param1.paramA", "34")</code><br/>
+     * <code>new ReportEntry("param1.paramA", ReportEntryType.COUNTER, "34")</code><br/>
      * will result in following json:<br/>
      * <code>{"param1": {"paramA": 34}}</code><br/>
-     * If report param key collides with passed json, then any
-     * conflicting node will be replaced with new report param
+     * If report entry key collides with passed json, then any
+     * conflicting node will be replaced with new report entry
      * value.
      */
-    public void appendReportParam(JsonObject jsonReport, ReportParam reportParam) {
+    public void appendReportEntry(JsonObject jsonReport, ReportEntry reportEntry) {
         
-        String[] jsonFieldHierarchy = StringUtils.split(reportParam.getKey().toString(), '.');
+        String[] jsonFieldHierarchy = StringUtils.split(reportEntry.getKey().toString(), '.');
         
-        insertValue(jsonReport, Lists.newArrayList(jsonFieldHierarchy), convertParamValueToJson(reportParam));
+        insertValue(jsonReport, Lists.newArrayList(jsonFieldHierarchy), reportValueJsonConverterManager.convertValue(reportEntry));
         
     }
     
     
     //------------------------ PRIVATE --------------------------
-    
-    private JsonElement convertParamValueToJson(ReportParam reportParam) {
-        
-        long value = Long.valueOf(reportParam.getValue().toString());
-        
-        return new JsonPrimitive(value);
-    }
     
     /**
      * Inserts json value into the passed json object under location defined by fieldHierarchy list.<br/>

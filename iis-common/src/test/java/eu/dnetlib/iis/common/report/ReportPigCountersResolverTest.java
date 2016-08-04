@@ -12,7 +12,8 @@ import com.google.common.collect.Lists;
 
 import eu.dnetlib.iis.common.counter.PigCounters;
 import eu.dnetlib.iis.common.counter.PigCounters.JobCounters;
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.common.schemas.ReportEntryType;
 
 /**
  * @author madryk
@@ -82,13 +83,13 @@ public class ReportPigCountersResolverTest {
         
         // execute
         
-        List<ReportParam> reportCounters = reportPigCountersResolver.resolveReportCounters(pigCounters, Lists.newArrayList(counterMapping1, counterMapping2, counterMapping3));
+        List<ReportEntry> reportCounters = reportPigCountersResolver.resolveReportCounters(pigCounters, Lists.newArrayList(counterMapping1, counterMapping2, counterMapping3));
         
         // assert
         
         assertThat(reportCounters, containsInAnyOrder(
-                new ReportParam("destination.report.param1", "10"),
-                new ReportParam("destination.report.param2", "2"),
-                new ReportParam("destination.report.param3", "3")));
+                new ReportEntry("destination.report.param1", ReportEntryType.COUNTER, "10"),
+                new ReportEntry("destination.report.param2", ReportEntryType.COUNTER, "2"),
+                new ReportEntry("destination.report.param3", ReportEntryType.COUNTER, "3")));
     }
 }

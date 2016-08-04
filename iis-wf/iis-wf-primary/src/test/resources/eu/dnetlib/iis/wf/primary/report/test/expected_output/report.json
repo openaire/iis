@@ -19,6 +19,28 @@
                 "ddc": 0,
                 "meshEuroPmc": 3,
                 "acm": 21
+            },
+            "duration": {
+                "miliseconds": 1482231,
+                "humanReadable": "0h 24m 42s"
+            }
+        },
+        "citationMatching": {
+            "duration": {
+                "miliseconds": 22336000,
+                "humanReadable": "6h 12m 16s"
+            }
+        },
+        "documentSimilarity": {
+            "duration": {
+                "miliseconds": 399030,
+                "humanReadable": "0h 06m 39s"
+            }
+        },
+        "affiliationMatching": {
+            "duration": {
+                "miliseconds": 100332824,
+                "humanReadable": "27h 52m 12s"
             }
         }
     }

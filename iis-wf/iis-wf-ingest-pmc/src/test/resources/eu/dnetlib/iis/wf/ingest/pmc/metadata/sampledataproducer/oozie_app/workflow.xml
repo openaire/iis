@@ -90,7 +90,7 @@
 			<arg>-C{metadata,
                 eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata,
                 eu/dnetlib/iis/wf/ingest/pmc/metadata/sampledataproducer/data/metadata.json}</arg>
-            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportParam,
+            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,
                 eu/dnetlib/iis/wf/ingest/pmc/metadata/sampledataproducer/data/report.json}</arg>
     		<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Imetadata=${workingDir}/ingest_pmc_metadata/out/meta</arg>

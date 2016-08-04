@@ -1,0 +1,4 @@
+{"key":"export.citationMatching.duration", "type":"DURATION", "value": "22336000"}
+{"key":"export.documentSimilarity.duration", "type":"DURATION", "value": "399030"}
+{"key":"export.affiliationMatching.duration", "type":"DURATION", "value": "100332824"}
+{"key":"export.documentClassification.duration", "type":"DURATION", "value": "1482231"}

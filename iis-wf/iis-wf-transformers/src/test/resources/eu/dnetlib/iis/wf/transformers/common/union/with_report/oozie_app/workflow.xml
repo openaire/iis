@@ -83,7 +83,7 @@
                 eu/dnetlib/iis/wf/transformers/common/union/expected_output/union_datastore.json}</arg>
             <arg>-Iunion=${workingDir}/union</arg>
             
-            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportParam,
+            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,
                 eu/dnetlib/iis/wf/transformers/common/union/expected_output/report.json}</arg>
             <arg>-Ireport=${workingDir}/report</arg>
         </java>
