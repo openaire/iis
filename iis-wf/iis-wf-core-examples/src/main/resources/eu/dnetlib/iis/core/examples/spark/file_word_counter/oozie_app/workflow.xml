@@ -30,7 +30,7 @@
             <mode>cluster</mode>
             <name>fileWordCounter</name>
             <class>eu.dnetlib.iis.core.examples.spark.FileWordCounter</class>
-            <jar>${wf:conf('oozie.wf.application.path')}/lib/iis-wf-core-examples-${projectVersion}-uber.jar</jar>
+            <jar>${wf:conf('oozie.wf.application.path')}/lib/${projectUberJarName}</jar>
             <arg>${wf:conf('oozie.wf.application.path')}/input/data.txt</arg>
             <arg>${nameNode}${workingDir}/output</arg>
         </spark>

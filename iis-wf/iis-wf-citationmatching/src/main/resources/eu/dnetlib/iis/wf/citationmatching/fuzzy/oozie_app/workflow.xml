@@ -86,7 +86,7 @@
 
             <class>eu.dnetlib.iis.wf.citationmatching.input.CitationMatchingInputTransformerJob</class>
 
-            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}-uber.jar</jar>
+            <jar>${oozieTopWfApplicationPath}/lib/${projectUberJarName}</jar>
             
             <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --num-executors ${sparkNumExecutors}</spark-opts>
         
@@ -117,7 +117,7 @@
 
             <class>eu.dnetlib.iis.wf.citationmatching.IisCitationMatchingJob</class>
 
-            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}-uber.jar</jar>
+            <jar>${oozieTopWfApplicationPath}/lib/${projectUberJarName}</jar>
             
             <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --num-executors ${sparkNumExecutors}</spark-opts>
         
@@ -151,7 +151,7 @@
 
             <class>eu.dnetlib.iis.wf.citationmatching.output.CitationMatchingOutputTransformerJob</class>
 
-            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}-uber.jar</jar>
+            <jar>${oozieTopWfApplicationPath}/lib/${projectUberJarName}</jar>
             
             <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --num-executors ${sparkNumExecutors}</spark-opts>
         
