@@ -47,7 +47,7 @@
             <mode>cluster</mode>
             <name>id_extractor</name>
             <class>eu.dnetlib.iis.core.examples.spark.PersonIdExtractor</class>
-            <jar>${wf:conf('oozie.wf.application.path')}/lib/iis-wf-core-examples-${projectVersion}-uber.jar</jar>
+            <jar>${wf:conf('oozie.wf.application.path')}/lib/${projectUberJarName}</jar>
             <arg>${workingDir}/producer/person.csv</arg>
             <arg>${workingDir}/output/person_id</arg>
         </spark>

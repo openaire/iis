@@ -41,7 +41,6 @@
             <groupId>eu.dnetlib.iis</groupId>
             <artifactId>iis-wf-transformers</artifactId>
             <version>${project.version}</version>
-            <classifier>uber</classifier>
         </dependency>
 
         <dependency>

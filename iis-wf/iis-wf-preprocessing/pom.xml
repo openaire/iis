@@ -29,7 +29,6 @@
 			<groupId>eu.dnetlib.iis</groupId>
 			<artifactId>iis-wf-import</artifactId>
 			<version>${project.version}</version>
-			<classifier>uber</classifier>
 			<exclusions>
 				<!-- conflicts with ingest-pmc dependency and causes failures -->
 				<exclusion>
@@ -42,7 +41,6 @@
 			<groupId>eu.dnetlib.iis</groupId>
 			<artifactId>iis-wf-ingest-pmc</artifactId>
 			<version>${project.version}</version>
-			<classifier>uber</classifier>
 			<exclusions>
 				<exclusion>
 					<groupId>org.mortbay.jetty</groupId>
@@ -54,13 +52,11 @@
 			<groupId>eu.dnetlib.iis</groupId>
 			<artifactId>iis-wf-ingest</artifactId>
 			<version>${project.version}</version>
-			<classifier>uber</classifier>
 		</dependency>
 		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
 			<artifactId>iis-wf-export-actionmanager</artifactId>
 			<version>${project.version}</version>
-			<classifier>uber</classifier>
 			<exclusions>
 				<exclusion>
 					<groupId>apache</groupId>
@@ -72,7 +68,6 @@
 			<groupId>eu.dnetlib.iis</groupId>
 			<artifactId>iis-wf-metadataextraction</artifactId>
 			<version>${project.version}</version>
-			<classifier>uber</classifier>
 			<exclusions>
 				<exclusion>
 					<groupId>org.mortbay.jetty</groupId>
@@ -89,7 +84,6 @@
 			<groupId>eu.dnetlib.iis</groupId>
 			<artifactId>iis-wf-transformers</artifactId>
 			<version>${project.version}</version>
-			<classifier>uber</classifier>
 			<exclusions>
 				<exclusion>
 					<groupId>org.mortbay.jetty</groupId>
@@ -110,7 +104,6 @@
 			<groupId>eu.dnetlib.iis</groupId>
 			<artifactId>iis-wf-collapsers</artifactId>
 			<version>${project.version}</version>
-			<classifier>uber</classifier>
 		</dependency>
 		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
