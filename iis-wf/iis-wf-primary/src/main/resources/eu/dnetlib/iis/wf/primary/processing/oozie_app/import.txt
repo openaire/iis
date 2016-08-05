@@ -14,6 +14,7 @@ transformers_documentssimilarity classpath eu/dnetlib/iis/wf/documentssimilarity
 documentssimilarity_chain classpath eu/dnetlib/iis/wf/documentssimilarity/chain/oozie_app
 affiliation_matching classpath eu/dnetlib/iis/wf/affmatching/oozie_app
 collapsers_basic_collapser classpath eu/dnetlib/iis/wf/collapsers/basic_collapser/oozie_app
+collapsers_citation_collapser classpath eu/dnetlib/iis/wf/collapsers/citation/oozie_app
 transformers_citations_from_referencemetadata classpath eu/dnetlib/iis/wf/transformers/common/citations/from/referencemetadata/oozie_app
 transformers_common_union classpath eu/dnetlib/iis/wf/transformers/common/union/oozie_app
 transformers_common_union3 classpath eu/dnetlib/iis/wf/transformers/common/union3/oozie_app

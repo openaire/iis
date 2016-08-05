@@ -1,0 +1,46 @@
+{
+  "sourceDocumentId": "id-1",
+  "entry": {
+    "position": 1,
+    "rawText": "First reference text of the first document",
+    "destinationDocumentId": "id-2",
+    "confidenceLevel": 1.0,
+    "externalDestinationDocumentIds": {
+      "pmid": "pmid1",
+      "extId": "extId1",
+      "doi": "doi1"
+    }
+  }
+}
+{
+  "sourceDocumentId": "id-1",
+  "entry": {
+    "position": 2,
+    "rawText": "Second reference text of the first document",
+    "destinationDocumentId": null,
+    "confidenceLevel": null,
+    "externalDestinationDocumentIds": {}
+  }
+}
+{
+  "sourceDocumentId": "id-2",
+  "entry": {
+    "position": 1,
+    "rawText": "First reference text of the second document",
+    "destinationDocumentId": "id-3",
+    "confidenceLevel": 1.0,
+    "externalDestinationDocumentIds": {
+      "pmid": "pmid3"
+    }
+  }
+}
+{
+    "sourceDocumentId": "id-3", 
+    "entry": {
+        "position": 1, 
+        "destinationDocumentId": "id-4", 
+        "confidenceLevel": 0.8, 
+        "rawText": "", 
+        "externalDestinationDocumentIds": {} 
+    }
+}

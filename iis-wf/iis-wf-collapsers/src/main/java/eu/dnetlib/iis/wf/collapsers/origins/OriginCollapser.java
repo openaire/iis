@@ -1,13 +1,17 @@
 package eu.dnetlib.iis.wf.collapsers.origins;
 
-import eu.dnetlib.iis.wf.collapsers.CollapserUtils;
-import eu.dnetlib.iis.wf.collapsers.RecordCollapser;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.IndexedRecord;
-import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapreduce.TaskAttemptContext;
+
+import eu.dnetlib.iis.wf.collapsers.CollapserUtils;
+import eu.dnetlib.iis.wf.collapsers.RecordCollapser;
 
 /**
  * Abstract class for collapsing objects from various origins.
@@ -27,11 +31,11 @@ public abstract class OriginCollapser<S extends IndexedRecord, T extends Indexed
      * Subclasses may override this method in order to read more parameters
      * from job configuration.
      * 
-     * @param configuration job configuration
+     * @param context task attempt context
      */
     @Override
-    public void setup(Configuration configuration) {
-        origins = Arrays.asList(configuration.get("origins").split(","));
+    public void setup(TaskAttemptContext context) {
+        origins = Arrays.asList(context.getConfiguration().get("origins").split(","));
     }
 
     /**

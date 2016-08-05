@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.hadoop.mapreduce.Counter;
+import org.apache.hadoop.mapreduce.TaskAttemptContext;
+
 import eu.dnetlib.iis.common.citations.schemas.Citation;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
 
@@ -18,6 +22,34 @@ import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
  */
 public class GenericCitationCollapser extends SimpleCollapser<Citation> {
 
+    /**
+     * Total extracted citations counter. 
+     */
+    private Counter totalCounter;
+    
+    /**
+     * Documents with at least one extracted citation counter.
+     */
+    private Counter docsWithAtLeastOneCitationCounter;
+    
+    /**
+     * Hadoop counters enum of citation records. 
+     */
+    public static enum CitationTextCounters {
+        TOTAL,
+        DOCS_WITH_AT_LEAST_ONE_CITATION
+    }
+    
+    // --------------------- LOGIC -------------------------------
+
+    @Override
+    public void setup(TaskAttemptContext context) {
+        totalCounter = context.getCounter(CitationTextCounters.TOTAL);
+        totalCounter.setValue(0);
+        docsWithAtLeastOneCitationCounter = context.getCounter(CitationTextCounters.DOCS_WITH_AT_LEAST_ONE_CITATION);
+        docsWithAtLeastOneCitationCounter.setValue(0);
+    }
+    
     @Override
     protected List<Citation> collapseNonEmpty(List<Citation> objects) {
 		Map<Integer, List<Citation>> citationsByPositionMap = new HashMap<Integer, List<Citation>>();
@@ -30,10 +62,28 @@ public class GenericCitationCollapser extends SimpleCollapser<Citation> {
 			list.add(citation);
 		}
 		List<Citation> results = new ArrayList<Citation>(citationsByPositionMap.size());
+		int citationsWithTextCount = 0;
 		for (List<Citation> citationsByPosition : citationsByPositionMap.values()) {
-			results.add(collapseForPosition(citationsByPosition));
+		    Citation collapsedCitation = collapseForPosition(citationsByPosition);
+		    if (hasTextDefined(collapsedCitation)) {
+		        citationsWithTextCount ++;
+		    }
+			results.add(collapsedCitation);
+		}
+		if (citationsWithTextCount > 0) {
+		    totalCounter.increment(citationsWithTextCount);
+		    docsWithAtLeastOneCitationCounter.increment(1);
 		}
 		return results;
+    }
+
+    // --------------------- PRIVATE -------------------------------
+    
+    /**
+     * Checks whether text was defined for given citation.
+     */
+    private boolean hasTextDefined(Citation citation) {
+        return StringUtils.isNotBlank(citation.getEntry().getRawText());
     }
 
     /**
@@ -41,7 +91,7 @@ public class GenericCitationCollapser extends SimpleCollapser<Citation> {
      * @param objects
      * @return collapsed citation or null when nothing to collapse
      */
-    Citation collapseForPosition(List<Citation> objects) {
+    private Citation collapseForPosition(List<Citation> objects) {
     	if (objects==null || objects.size()==0) {
     		return null;
     	} else if (objects.size()==1) {
@@ -61,7 +111,7 @@ public class GenericCitationCollapser extends SimpleCollapser<Citation> {
      * @param newCitationEntry
      * @return existing citation supplemented with new citation entry details
      */
-    Citation merge(Citation existingCitation, CitationEntry newCitationEntry) {
+    private Citation merge(Citation existingCitation, CitationEntry newCitationEntry) {
     	if (newCitationEntry != null) {
     		if (newCitationEntry.getDestinationDocumentId()!=null && newCitationEntry.getConfidenceLevel()!=null) {
 //    			setting only when not set or when confidence level higher than already stored

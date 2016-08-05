@@ -1,0 +1,60 @@
+{
+    "sourceDocumentId": "id-1", 
+    "entry": {
+        "position": 1, 
+        "destinationDocumentId": "id-2", 
+        "confidenceLevel": 1, 
+        "rawText": null, 
+        "externalDestinationDocumentIds": {"pmid":"pmid1", "doi":"doi1"}
+    }
+}
+{
+    "sourceDocumentId": "id-1", 
+    "entry": {
+        "position": 1, 
+        "destinationDocumentId": null, 
+        "confidenceLevel": null, 
+        "rawText": "First reference text of the first document", 
+        "externalDestinationDocumentIds": {"pmid":"pmid2", "extId":"extId1"}
+    }
+}
+{
+    "sourceDocumentId": "id-1", 
+    "entry": {
+        "position": 2, 
+        "destinationDocumentId": null, 
+        "confidenceLevel": null, 
+        "rawText": "Second reference text of the first document", 
+        "externalDestinationDocumentIds": {} 
+    }
+}
+{
+    "sourceDocumentId": "id-2", 
+    "entry": {
+        "position": 1, 
+        "destinationDocumentId": "id-3", 
+        "confidenceLevel": 1, 
+        "rawText": "First reference text of the second document", 
+        "externalDestinationDocumentIds": {"pmid":"pmid3"} 
+    }
+}
+{
+    "sourceDocumentId": "id-2", 
+    "entry": {
+        "position": 1, 
+        "destinationDocumentId": "id-4", 
+        "confidenceLevel": 0.8, 
+        "rawText": "First reference text of the second document, slightly altered", 
+        "externalDestinationDocumentIds": {} 
+    }
+}
+{
+    "sourceDocumentId": "id-3", 
+    "entry": {
+        "position": 1, 
+        "destinationDocumentId": "id-4", 
+        "confidenceLevel": 0.8, 
+        "rawText": "", 
+        "externalDestinationDocumentIds": {} 
+    }
+}
