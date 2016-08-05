@@ -2,8 +2,9 @@ package eu.dnetlib.iis.wf.collapsers.basic;
 
 import java.util.Arrays;
 import java.util.List;
+
 import org.apache.avro.generic.IndexedRecord;
-import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapreduce.TaskAttemptContext;
 
 /**
  * Abstract class for collapsing objects based on the presence 
@@ -24,12 +25,12 @@ public abstract class SignificantFieldsCollapser<T extends IndexedRecord> extend
      * Subclasses may override this method in order to read more parameters
      * from job configuration.
      * 
-     * @param configuration job configuration
+     * @param context task attempt context
      */
     @Override
-    public void setup(Configuration configuration) {
-        if (!ALL_SIGNIFICANT_FIELDS_VALUE.equals(configuration.get("significant_fields"))) {
-            fields = Arrays.asList(configuration.get("significant_fields").split(","));
+    public void setup(TaskAttemptContext context) {
+        if (!ALL_SIGNIFICANT_FIELDS_VALUE.equals(context.getConfiguration().get("significant_fields"))) {
+            fields = Arrays.asList(context.getConfiguration().get("significant_fields").split(","));
         }
     }
     

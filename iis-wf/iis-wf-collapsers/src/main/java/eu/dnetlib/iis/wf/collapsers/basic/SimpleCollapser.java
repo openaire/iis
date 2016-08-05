@@ -1,11 +1,11 @@
 package eu.dnetlib.iis.wf.collapsers.basic;
 
-import eu.dnetlib.iis.wf.collapsers.RecordCollapser;
-
 import java.util.List;
 
 import org.apache.avro.generic.IndexedRecord;
-import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapreduce.TaskAttemptContext;
+
+import eu.dnetlib.iis.wf.collapsers.RecordCollapser;
 
 /**
  * Abstract class for collapsing objects.
@@ -16,7 +16,7 @@ import org.apache.hadoop.conf.Configuration;
 public abstract class SimpleCollapser<T extends IndexedRecord> implements RecordCollapser<T,T> {
 
     @Override
-    public void setup(Configuration configuration) {
+    public void setup(TaskAttemptContext context) {
     }
 
     /**

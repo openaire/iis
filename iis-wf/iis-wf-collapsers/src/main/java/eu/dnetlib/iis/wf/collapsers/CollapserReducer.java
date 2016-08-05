@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.avro.mapred.AvroKey;
@@ -29,7 +30,7 @@ public class CollapserReducer extends Reducer<AvroKey<String>, AvroValue<Indexed
         try {
             recordCollapser = 
                     (RecordCollapser) getCollapserInstance(context, "record_collapser");
-            recordCollapser.setup(context.getConfiguration());
+            recordCollapser.setup(context);
             
             String inputSchemaPath = context.getConfiguration().get("collapser.reducer.schema.class");
             inputSchema = AvroUtils.toSchema(inputSchemaPath);
@@ -54,7 +55,7 @@ public class CollapserReducer extends Reducer<AvroKey<String>, AvroValue<Indexed
         
         while (iterator.hasNext()) {            
             AvroValue<IndexedRecord> value = iterator.next();
-            objects.add(AvroUtils.getCopy(value.datum(), inputSchema, inputSchemaClass));
+            objects.add((IndexedRecord) AvroUtils.getCopy(value.datum(), inputSchema, inputSchemaClass));
         }
         
         List<IndexedRecord> collapsedList = recordCollapser.collapse(objects);

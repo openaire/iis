@@ -48,3 +48,13 @@
         "externalDestinationDocumentIds": {} 
     }
 }
+{
+    "sourceDocumentId": "id-3", 
+    "entry": {
+        "position": 1, 
+        "destinationDocumentId": "id-4", 
+        "confidenceLevel": 0.8, 
+        "rawText": "", 
+        "externalDestinationDocumentIds": {} 
+    }
+}
