@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 
@@ -83,7 +83,7 @@ public class GenericCitationCollapser extends SimpleCollapser<Citation> {
      * Checks whether text was defined for given citation.
      */
     private boolean hasTextDefined(Citation citation) {
-        return citation.getEntry().getRawText()!=null && StringUtils.isNotBlank(citation.getEntry().getRawText().toString());
+        return StringUtils.isNotBlank(citation.getEntry().getRawText());
     }
 
     /**
