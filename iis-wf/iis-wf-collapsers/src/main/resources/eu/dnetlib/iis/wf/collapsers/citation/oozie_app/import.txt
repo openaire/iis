@@ -1,0 +1,2 @@
+## This is a classpath-based import file (this header is required)
+basic_collapser classpath eu/dnetlib/iis/wf/collapsers/basic_collapser/oozie_app

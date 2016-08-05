@@ -1010,7 +1010,7 @@
 
     <action name="citations_collapser">
         <sub-workflow>
-            <app-path>${wf:appPath()}/collapsers_basic_collapser</app-path>
+            <app-path>${wf:appPath()}/collapsers_citation_collapser</app-path>
             <propagate-configuration />
             <configuration>
                 <property>
@@ -1018,23 +1018,9 @@
                     <value>${workingDir}/citations_collapser/working_dir</value>
                 </property>
                 <property>
-                    <name>blocking_field</name>
-                    <value>sourceDocumentId</value>
-                </property>
-                <property>
-                    <name>record_collapser</name>
-                    <value>eu.dnetlib.iis.wf.collapsers.basic.GenericCitationCollapser</value>
-                </property>
-                <property>
-                    <name>schema</name>
-                    <value>eu.dnetlib.iis.common.citations.schemas.Citation</value>
-                </property>
-                <!-- Input ports. -->
-                <property>
                     <name>input</name>
                     <value>${workingDir}/citations_union/output</value>
                 </property>
-                <!-- Output port bound to given path -->
                 <property>
                     <name>output</name>
                     <value>${workingDir}/citations_collapser/output</value>
