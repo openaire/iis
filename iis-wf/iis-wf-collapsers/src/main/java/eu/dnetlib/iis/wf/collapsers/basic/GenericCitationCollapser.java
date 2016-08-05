@@ -83,7 +83,7 @@ public class GenericCitationCollapser extends SimpleCollapser<Citation> {
      * Checks whether text was defined for given citation.
      */
     private boolean hasTextDefined(Citation citation) {
-        return StringUtils.isNotBlank(citation.getEntry().getRawText().toString());
+        return citation.getEntry().getRawText()!=null && StringUtils.isNotBlank(citation.getEntry().getRawText().toString());
     }
 
     /**
