@@ -531,6 +531,14 @@
 					<name>output_document_to_research_initiatives</name>
 					<value>${workingDir}/transformers_concept_to_researchinitiatives/out</value>
 				</property>
+				<property>
+                    <name>output_report_relative_path</name>
+                    <value>docs_with_at_least_one_concept</value>
+                </property>
+                <property>
+                    <name>output_report_record_written_counter_name</name>
+                    <value>export.referenceExtraction.docsWithAtLeastOneConcept</value>
+                </property>
 			</configuration>
 		</sub-workflow>
 		<ok to="referenceextraction_joining" />

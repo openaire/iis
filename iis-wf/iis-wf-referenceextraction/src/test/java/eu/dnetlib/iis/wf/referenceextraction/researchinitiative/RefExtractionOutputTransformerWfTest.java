@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.referenceextraction.output;
+package eu.dnetlib.iis.wf.referenceextraction.researchinitiative;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
