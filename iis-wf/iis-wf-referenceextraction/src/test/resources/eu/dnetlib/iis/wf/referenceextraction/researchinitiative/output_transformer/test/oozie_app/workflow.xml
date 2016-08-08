@@ -74,11 +74,11 @@
                 </property>
                 <property>
                     <name>output_report_relative_path</name>
-                    <value>documentWithAtLeastOneConcept</value>
+                    <value>docs_with_at_least_one_concept</value>
                 </property>
                 <property>
                     <name>output_report_record_written_counter_name</name>
-                    <value>export.referenceExtraction.documentWithAtLeastOneConcept</value>
+                    <value>export.referenceExtraction.docsWithAtLeastOneConcept</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -98,7 +98,7 @@
                  eu/dnetlib/iis/wf/referenceextraction/researchinitiative/output_transformer/test/data/report.json}
             </arg>  
 			<arg>-Ioutput=${workingDir}/transformer_export_researchinitiatives/output</arg>
-		    <arg>-Ireport=${workingDir}/report/documentWithAtLeastOneConcept</arg>
+		    <arg>-Ireport=${workingDir}/report/docs_with_at_least_one_concept</arg>
         </java>
 		<ok to="end" />
 		<error to="fail" />
