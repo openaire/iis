@@ -29,8 +29,8 @@ public class DurationReportValueJsonConverter implements ReportValueJsonConverte
 
     /**
      * Converts {@link ReportEntry#getValue()} to json.
-     * Resulting json will contain properties with duration saved in miliseconds and
-     * duration ssaved in human readable format
+     * Resulting json will contain the duration saved in both: milliseconds and
+     * human readable format
      */
     @Override
     public JsonElement convertValue(ReportEntry reportEntry) {
@@ -39,7 +39,7 @@ public class DurationReportValueJsonConverter implements ReportValueJsonConverte
         
         JsonObject durationJson = new JsonObject();
         
-        durationJson.addProperty("miliseconds", duration);
+        durationJson.addProperty("milliseconds", duration);
         durationJson.addProperty("humanReadable", DurationFormatUtils.formatDuration(duration, "Hh mm'm' ss's'"));
         
         return durationJson;

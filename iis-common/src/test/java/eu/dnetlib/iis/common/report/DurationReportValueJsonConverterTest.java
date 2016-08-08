@@ -46,7 +46,7 @@ public class DurationReportValueJsonConverterTest {
         
         // assert
         
-        JsonElement expectedJson = new JsonParser().parse("{miliseconds: 3842000, humanReadable: \"1h 04m 02s\"}");
+        JsonElement expectedJson = new JsonParser().parse("{milliseconds: 3842000, humanReadable: \"1h 04m 02s\"}");
         
         assertEquals(expectedJson, json);
         

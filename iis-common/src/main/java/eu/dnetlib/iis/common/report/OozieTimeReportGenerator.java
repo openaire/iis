@@ -28,13 +28,13 @@ import eu.dnetlib.iis.common.oozie.OozieClientFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 
 /**
- * Java workflow node process for building times report.<br/>
+ * Java workflow node process that builds execution time report.<br/>
  * It can report duration of oozie actions that were executed in
  * specified workflow job.<br/>
- * Process needs <code>oozieServiceLoc</code> and <code>jobId</code>
+ * The process needs <code>oozieServiceLoc</code> and <code>jobId</code>
  * properties to successfully connect to oozie and fetch workflow job actions.<br/>
- * Process writes builded report into avro datastore of {@link ReportEntry}s
- * with location specified as output port.<br/>
+ * The process writes the built report into an avro datastore of {@link ReportEntry}s
+ * at the location specified by the output port.<br/>
  * 
  * @author madryk
  */
@@ -69,12 +69,12 @@ public class OozieTimeReportGenerator implements Process {
         
         List<WorkflowAction> actions = fetchWorkflowActions(parameters.get(OOZIE_SERVICE_LOC_PARAM), parameters.get(WORKFLOW_JOB_ID_PARAM));
         
-        Map<String, List<String>> reportKeyToActionNamesMappings = collectReportKeyToActionNamesMappings(parameters);
+        Map<String, List<String>> reportKeysToActionNames = mapReportKeysToActionNames(parameters);
         
         
         List<ReportEntry> avroReport = Lists.newArrayList();
         
-        for (Map.Entry<String, List<String>> reportKeyToActionNamesEntry : reportKeyToActionNamesMappings.entrySet()) {
+        for (Map.Entry<String, List<String>> reportKeyToActionNamesEntry : reportKeysToActionNames.entrySet()) {
             
             long totalDuration = 0L;
             
@@ -124,7 +124,7 @@ public class OozieTimeReportGenerator implements Process {
         return 0;
     }
     
-    private Map<String, List<String>> collectReportKeyToActionNamesMappings(Map<String, String> parameters) {
+    private Map<String, List<String>> mapReportKeysToActionNames(Map<String, String> parameters) {
         
         return parameters.entrySet().stream()
                 .filter(property -> property.getKey().startsWith(REPORT_PROPERTY_PREFIX))
