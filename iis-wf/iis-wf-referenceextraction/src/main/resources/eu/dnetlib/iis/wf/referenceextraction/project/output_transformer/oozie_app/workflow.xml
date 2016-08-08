@@ -17,6 +17,10 @@
 		<property>
 			<name>output</name>
 		</property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
 	</parameters>
     
     <global>
@@ -80,9 +84,22 @@
             <param>schema_output=${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId']}</param>
         </pig>
         
-        <ok to="end"/>
+        <ok to="report"/>
         <error to="fail"/>
     </action>
+    
+    <action name="report">
+         <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.PigCountersReportGenerator</arg>
+            <arg>-PpigCounters=${hadoop:counters('transformer')}</arg>
+            <arg>-Preport.export.referenceExtraction.documentConceptReference={RECORD_WRITTEN}</arg>
+            <arg>-Oreport=${output_report_root_path}/documentConceptReference</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
     <kill name="fail">
 		<message>Unfortunately, the workflow failed -- error message:
 			[${wf:errorMessage(wf:lastErrorNode())}]</message>

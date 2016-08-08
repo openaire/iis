@@ -382,6 +382,14 @@
                     <name>output_document_to_research_initiatives</name>
                     <value>${output_document_to_project_concepts}</value>
                 </property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>documentWithAtLeastOneConcept</value>
+                </property>
+                <property>
+                    <name>output_report_record_written_counter_name</name>
+                    <value>export.referenceExtraction.documentWithAtLeastOneConcept</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="joining" />
@@ -526,6 +534,14 @@
                 <property>
                     <name>output_document_to_research_initiatives</name>
                     <value>${output_document_to_pdb}</value>
+                </property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>documentWithAtLeastOnePdb</value>
+                </property>
+                <property>
+                    <name>output_report_record_written_counter_name</name>
+                    <value>export.referenceExtraction.documentWithAtLeastOnePdb</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -739,6 +755,14 @@
                 <property>
                     <name>output_document_to_research_initiatives</name>
                     <value>${output_document_to_research_initiatives}</value>
+                </property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>documentWithAtLeastOneRInitiative</value>
+                </property>
+                <property>
+                    <name>output_report_record_written_counter_name</name>
+                    <value>export.referenceExtraction.documentWithAtLeastOneResearchInitiative</value>
                 </property>
             </configuration>
         </sub-workflow>
