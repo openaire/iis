@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.export.actionmanager.api;
 
+import java.io.Closeable;
 import java.util.Collection;
 
 import eu.dnetlib.actionmanager.actions.AtomicAction;
@@ -7,11 +8,12 @@ import eu.dnetlib.actionmanager.common.Provenance;
 import eu.dnetlib.actionmanager.rmi.ActionManagerException;
 
 /**
- * Direct action manager service facade.
+ * Action manager service facade.
+ * 
  * @author mhorst
  *
  */
-public interface ActionManagerServiceFacade {
+public interface ActionManagerServiceFacade extends Closeable {
 
 	
 	/**
@@ -20,19 +22,8 @@ public interface ActionManagerServiceFacade {
 	 * @param provenance
 	 * @param trust
 	 * @param nsprefix
-	 * @return number ofactions successfully stored
 	 * @throws ActionManagerException
 	 */
-	void storeAction(
-			Collection<AtomicAction> actions,
-			Provenance provenance,
-			String trust,
-			String nsprefix) throws ActionManagerException;
-	
-	/**
-	 * Performs finalization operations over action manager.
-	 * @throws ActionManagerException
-	 */
-	void close() throws ActionManagerException;
+	void storeAction(Collection<AtomicAction> actions, Provenance provenance, String trust, String nsprefix) throws ActionManagerException;
 	
 }

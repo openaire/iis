@@ -241,9 +241,9 @@
     <action name="exporter-dataset-entities">
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-            <arg>eu.dnetlib.iis.wf.export.actionmanager.entity.dataset.DatasetExporterProcess</arg>
+            <arg>eu.dnetlib.iis.wf.export.actionmanager.entity.DatasetExporterProcess</arg>
             <arg>-Iinput=${workingDir}/identifier/datasets</arg>
-
+            <arg>-Pmdstore.facade.factory.classname=eu.dnetlib.iis.wf.export.actionmanager.entity.facade.WebServiceMDStoreFacadeFactory</arg>
             <arg>-Pexport.entity.mdstore.service.location=${mdstore_service_location}</arg>
             <arg>-Pexport.action.setid=${action_set_id_entity_dataset}</arg>
             <arg>-Pexport.seq.file.output.dir.root=${workingDir}/output/entities_dataset</arg>

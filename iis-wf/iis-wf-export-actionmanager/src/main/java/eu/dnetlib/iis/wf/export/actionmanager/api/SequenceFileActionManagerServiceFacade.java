@@ -7,9 +7,9 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
 import org.apache.hadoop.io.SequenceFile;
-import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.SequenceFile.CompressionType;
 import org.apache.hadoop.io.SequenceFile.Writer;
+import org.apache.hadoop.io.Text;
 
 import eu.dnetlib.actionmanager.actions.AtomicAction;
 import eu.dnetlib.actionmanager.common.Provenance;
@@ -62,7 +62,7 @@ public class SequenceFileActionManagerServiceFacade implements ActionManagerServ
 	}
 
 	@Override
-	public void close() throws ActionManagerException {
+	public void close() {
 		IOUtils.closeStream(writer);
 	}
 
