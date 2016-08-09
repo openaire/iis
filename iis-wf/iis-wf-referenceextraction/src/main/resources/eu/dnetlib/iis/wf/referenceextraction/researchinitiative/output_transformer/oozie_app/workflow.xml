@@ -7,6 +7,19 @@
 		<property>
 			<name>output_document_to_research_initiatives</name>
 		</property>
+		<property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
+            <name>output_report_relative_path</name>
+            <description>subdirectory for the given report</description>
+        </property>
+        <property>
+            <name>output_report_record_written_counter_name</name>
+            <description>name of the counter with the number of output records</description>
+        </property>
+		
 	</parameters>
     
     <global>
@@ -43,6 +56,12 @@
 			<prepare>
 				<delete path="${nameNode}${output_document_to_research_initiatives}" />
 			</prepare>
+			<configuration>
+			    <property>
+                    <name>oozie.action.external.stats.write</name>
+                    <value>true</value>
+                </property>
+			</configuration>
             <!-- Path to PIG script the workflow executes. -->
             <script>lib/scripts/transformer.pig</script>
             
@@ -52,9 +71,22 @@
             <param>output_document_to_research_initiatives=${output_document_to_research_initiatives}</param>
             <param>schema_output_document_to_research_initiatives=${wf:actionData('generate-schema')['eu.dnetlib.iis.export.schemas.DocumentToConceptIds']}</param>
         </pig>
-        <ok to="end"/>
+        <ok to="report"/>
         <error to="fail"/>
     </action>
+    
+    <action name="report">
+         <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.PigCountersReportGenerator</arg>
+            <arg>-PpigCounters=${hadoop:counters('transformer')}</arg>
+            <arg>-Preport.${output_report_record_written_counter_name}={RECORD_WRITTEN}</arg>
+            <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
     <kill name="fail">
 		<message>Unfortunately, the workflow failed -- error message:
 			[${wf:errorMessage(wf:lastErrorNode())}]</message>
