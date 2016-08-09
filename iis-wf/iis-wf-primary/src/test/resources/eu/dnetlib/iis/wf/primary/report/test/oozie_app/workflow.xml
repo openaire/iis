@@ -30,16 +30,22 @@
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
             
             <arg>-C{import_infospace_report,
-                eu.dnetlib.iis.common.schemas.ReportParam,
+                eu.dnetlib.iis.common.schemas.ReportEntry,
                 eu/dnetlib/iis/wf/primary/report/test/input/import_infospace_report.json}
             </arg>
             <arg>-Oimport_infospace_report=${workingDir}/producer/report/import_info_space</arg>
             
             <arg>-C{document_classification_report,
-                eu.dnetlib.iis.common.schemas.ReportParam,
+                eu.dnetlib.iis.common.schemas.ReportEntry,
                 eu/dnetlib/iis/wf/primary/report/test/input/document_classification_report.json}
             </arg>
             <arg>-Odocument_classification_report=${workingDir}/producer/report/document_classification</arg>
+            
+            <arg>-C{processing_times_report,
+                eu.dnetlib.iis.common.schemas.ReportEntry,
+                eu/dnetlib/iis/wf/primary/report/test/input/processing_times_report.json}
+            </arg>
+            <arg>-Oprocessing_times_report=${workingDir}/producer/report/processing_times</arg>
         </java>
         <ok to="primary_report" />
         <error to="fail" />

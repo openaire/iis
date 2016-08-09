@@ -11,7 +11,7 @@ import org.junit.Test;
 import com.google.common.io.Files;
 
 import eu.dnetlib.iis.citationmatching.schemas.Citation;
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.wf.citationmatching.converter.DocumentAvroDatastoreProducer;
@@ -79,7 +79,7 @@ public class IisCitationMatchingJobTest {
         // assert
         
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputFile, Citation.class);
-        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportParam.class);
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportEntry.class);
         
     }
     

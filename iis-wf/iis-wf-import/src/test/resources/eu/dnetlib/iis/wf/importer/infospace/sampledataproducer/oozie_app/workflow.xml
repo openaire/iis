@@ -158,7 +158,7 @@
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
-            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportParam,eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/report.json}</arg>
+            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/report.json}</arg>
             <arg>-Ireport=${workingDir}/report/import_info_space</arg>
         </java>
         <ok to="joining" />

@@ -12,14 +12,15 @@ import org.junit.Test;
 import com.google.common.collect.ImmutableMap;
 
 import eu.dnetlib.iis.common.counter.NamedCounters;
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.common.schemas.ReportEntryType;
 
 /**
  * @author madryk
  */
-public class CountersToReportParamsConverterTest {
+public class CountersToReportEntriesConverterTest {
 
-    private CountersToReportParamsConverter converter;
+    private CountersToReportEntriesConverter converter;
     
     
     private String counterName1 = "COUNTER_1";
@@ -29,21 +30,21 @@ public class CountersToReportParamsConverterTest {
     private String counterName3 = "COUNTER_3";
     
     
-    private String reportParamKey1 = "report.param.count.1";
+    private String reportEntryKey1 = "report.param.count.1";
     
-    private String reportParamKey2 = "report.param.count.2";
+    private String reportEntryKey2 = "report.param.count.2";
     
     
     
     @Before
     public void setup() {
         
-        Map<String, String> counterNameToParamKeyMapping = ImmutableMap.of(
-                counterName1, reportParamKey1,
-                counterName2, reportParamKey2);
+        Map<String, String> counterNameToEntryKeyMapping = ImmutableMap.of(
+                counterName1, reportEntryKey1,
+                counterName2, reportEntryKey2);
         
         
-        converter = new CountersToReportParamsConverter(counterNameToParamKeyMapping);
+        converter = new CountersToReportEntriesConverter(counterNameToEntryKeyMapping);
         
     }
     
@@ -62,14 +63,14 @@ public class CountersToReportParamsConverterTest {
         
         // execute
         
-        List<ReportParam> reportParams = converter.convertToReportParams(namedCounters);
+        List<ReportEntry> reportEntries = converter.convertToReportEntries(namedCounters);
         
         // assert
         
-        assertThat(reportParams, containsInAnyOrder(
-                new ReportParam(reportParamKey1, "3"),
-                new ReportParam(reportParamKey2, "4"),
-                new ReportParam(counterName3, "5")));
+        assertThat(reportEntries, containsInAnyOrder(
+                new ReportEntry(reportEntryKey1, ReportEntryType.COUNTER, "3"),
+                new ReportEntry(reportEntryKey2, ReportEntryType.COUNTER, "4"),
+                new ReportEntry(counterName3, ReportEntryType.COUNTER, "5")));
     }
     
 }

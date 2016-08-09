@@ -15,7 +15,8 @@ import org.junit.rules.TemporaryFolder;
 import com.google.common.collect.ImmutableMap;
 
 import eu.dnetlib.iis.common.java.PortBindings;
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.common.schemas.ReportEntryType;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 
 /**
@@ -41,9 +42,9 @@ public class ReportGeneratorTest {
         Configuration conf = new Configuration(false);
         
         Map<String, String> parameters = ImmutableMap.of(
-                "report.group.firstParam", "someValue",
-                "report.group.secondParam", "someDifferentValue",
-                "notReportPrefixed.group.thirdParam", "ignoredValue");
+                "report.group.firstParam", "11",
+                "report.group.secondParam", "22",
+                "notReportPrefixed.group.thirdParam", "3123");
         
         
         // execute
@@ -53,11 +54,11 @@ public class ReportGeneratorTest {
         
         // assert
         
-        List<ReportParam> actualReportParams = AvroTestUtils.readLocalAvroDataStore(tempFolder.getRoot().getPath());
+        List<ReportEntry> actualReportEntries = AvroTestUtils.readLocalAvroDataStore(tempFolder.getRoot().getPath());
         
-        assertThat(actualReportParams, containsInAnyOrder(
-                new ReportParam("group.firstParam", "someValue"),
-                new ReportParam("group.secondParam", "someDifferentValue")));
+        assertThat(actualReportEntries, containsInAnyOrder(
+                new ReportEntry("group.firstParam", ReportEntryType.COUNTER, "11"),
+                new ReportEntry("group.secondParam", ReportEntryType.COUNTER, "22")));
     }
     
 }

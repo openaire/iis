@@ -7,10 +7,10 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.Lists;
 
 import eu.dnetlib.iis.common.counter.PigCounters;
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 
 /**
- * Resolver of {@link ReportParam}s from {@link PigCounters} that uses {@link ReportPigCounterMapping}.
+ * Resolver of {@link ReportEntry}s from {@link PigCounters} that uses {@link ReportPigCounterMapping}.
  * 
  * @author madryk
  */
@@ -19,20 +19,20 @@ public class ReportPigCountersResolver {
     //------------------------ LOGIC --------------------------
     
     /**
-     * Resolve {@link ReportParam}s from {@link PigCounters} using {@link ReportPigCounterMapping}s.
+     * Resolve {@link ReportEntry}s from {@link PigCounters} using {@link ReportPigCounterMapping}s.
      * Only counters that are present in {@link ReportPigCounterMapping}s will be resolved.
      */
-    public List<ReportParam> resolveReportCounters(PigCounters pigCounters, List<ReportPigCounterMapping> reportPigCountersMappings) {
+    public List<ReportEntry> resolveReportCounters(PigCounters pigCounters, List<ReportPigCounterMapping> reportPigCountersMappings) {
         
-        List<ReportParam> reportCounters = Lists.newArrayList();
+        List<ReportEntry> reportCounters = Lists.newArrayList();
         
         for (ReportPigCounterMapping counterMapping : reportPigCountersMappings) {
         
             String counterValue = extractCounterValue(pigCounters, counterMapping);
             
-            ReportParam reportParam = new ReportParam(counterMapping.getDestReportCounterName(), counterValue);
+            ReportEntry reportEntry = ReportEntryFactory.createCounterReportEntry(counterMapping.getDestReportCounterName(), Long.valueOf(counterValue));
             
-            reportCounters.add(reportParam);
+            reportCounters.add(reportEntry);
         }
         
         return reportCounters;

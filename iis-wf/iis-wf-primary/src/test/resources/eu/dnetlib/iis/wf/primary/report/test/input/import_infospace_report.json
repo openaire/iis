@@ -1,7 +1,7 @@
-{"key":"import.infoSpace.documentMetadata", "value": "304"}
-{"key":"import.infoSpace.documentProject", "value": "12"}
-{"key":"import.infoSpace.project", "value": "20"}
-{"key":"import.infoSpace.person", "value": "409"}
-{"key":"import.infoSpace.dedupMapping", "value": "22"}
-{"key":"import.infoSpace.organization", "value": "39"}
-{"key":"import.infoSpace.projectOrganization", "value": "3"}
+{"key":"import.infoSpace.documentMetadata", "type":"COUNTER", "value": "304"}
+{"key":"import.infoSpace.documentProject", "type":"COUNTER", "value": "12"}
+{"key":"import.infoSpace.project", "type":"COUNTER", "value": "20"}
+{"key":"import.infoSpace.person", "type":"COUNTER", "value": "409"}
+{"key":"import.infoSpace.dedupMapping", "type":"COUNTER", "value": "22"}
+{"key":"import.infoSpace.organization", "type":"COUNTER", "value": "39"}
+{"key":"import.infoSpace.projectOrganization", "type":"COUNTER", "value": "3"}

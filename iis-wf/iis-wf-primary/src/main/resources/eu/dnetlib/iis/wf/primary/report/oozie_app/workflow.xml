@@ -4,7 +4,7 @@
         <property>
             <name>input_partial_reports</name>
             <description>Base directory with partial reports. Subdirectories of this directory should contain
-                        report datastore (avro with eu.dnetlib.iis.common.schemas.ReportParam records)</description>
+                        report datastore (avro with eu.dnetlib.iis.common.schemas.ReportEntry records)</description>
         </property>
         <property>
             <name>output_report</name>

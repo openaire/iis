@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.documentsclassification;
 
+import static eu.dnetlib.iis.common.report.ReportEntryFactory.createCounterReportEntry;
 import static eu.dnetlib.iis.wf.documentsclassification.DocClassificationReportCounterKeys.ACM_CLASSES;
 import static eu.dnetlib.iis.wf.documentsclassification.DocClassificationReportCounterKeys.ARXIV_CLASSES;
 import static eu.dnetlib.iis.wf.documentsclassification.DocClassificationReportCounterKeys.CLASSIFIED_DOCUMENTS;
@@ -28,7 +29,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import datafu.com.google.common.collect.Lists;
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentClass;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentClasses;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses;
@@ -86,7 +87,7 @@ public class DocClassificationReportGeneratorTest {
         
         // execute
         
-        List<ReportParam> reportEntries = reportGenerator.generateReport(documentClasses);
+        List<ReportEntry> reportEntries = reportGenerator.generateReport(documentClasses);
         
         // assert
         
@@ -110,7 +111,7 @@ public class DocClassificationReportGeneratorTest {
         
         // execute
         
-        List<ReportParam> reportEntries = reportGenerator.generateReport(documentClasses);
+        List<ReportEntry> reportEntries = reportGenerator.generateReport(documentClasses);
         
         // assert
         
@@ -132,14 +133,14 @@ public class DocClassificationReportGeneratorTest {
     
     //------------------------ PRIVATE --------------------------
     
-    private void assertReportEntries(List<ReportParam> reportEntries, long classifiedDocumentCount, long arxivClassCount, long wosClassCount, long ddcClassCount, long meshEuroPmcClassCount, long acmClassCount) {
+    private void assertReportEntries(List<ReportEntry> reportEntries, long classifiedDocumentCount, long arxivClassCount, long wosClassCount, long ddcClassCount, long meshEuroPmcClassCount, long acmClassCount) {
         
-        assertThat(reportEntries, Matchers.contains(new ReportParam(CLASSIFIED_DOCUMENTS, ""+classifiedDocumentCount),
-                                                    new ReportParam(ARXIV_CLASSES, ""+arxivClassCount),
-                                                    new ReportParam(WOS_CLASSES, ""+wosClassCount),
-                                                    new ReportParam(DDC_CLASSES, ""+ddcClassCount),
-                                                    new ReportParam(MESH_EURO_PMC_CLASSES, ""+meshEuroPmcClassCount),
-                                                    new ReportParam(ACM_CLASSES, ""+acmClassCount)));
+        assertThat(reportEntries, Matchers.contains(createCounterReportEntry(CLASSIFIED_DOCUMENTS, classifiedDocumentCount),
+                                                    createCounterReportEntry(ARXIV_CLASSES, arxivClassCount),
+                                                    createCounterReportEntry(WOS_CLASSES, wosClassCount),
+                                                    createCounterReportEntry(DDC_CLASSES, ddcClassCount),
+                                                    createCounterReportEntry(MESH_EURO_PMC_CLASSES, meshEuroPmcClassCount),
+                                                    createCounterReportEntry(ACM_CLASSES, acmClassCount)));
     }
     
     private void assertArxivMapFunction(Function<DocumentToDocumentClasses, Long> function) throws Exception {

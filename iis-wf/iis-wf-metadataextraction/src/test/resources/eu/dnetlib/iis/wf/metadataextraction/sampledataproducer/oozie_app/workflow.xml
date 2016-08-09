@@ -80,7 +80,7 @@
 			<arg>-C{extracted_metadata,
 				eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
 				eu/dnetlib/iis/wf/metadataextraction/sampledataproducer/data/extr_meta.json}</arg>
-            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportParam,
+            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,
                 eu/dnetlib/iis/wf/metadataextraction/sampledataproducer/data/report.json}</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Iextracted_metadata=${workingDir}/metadata_extractor/meta</arg>

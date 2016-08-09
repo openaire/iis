@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.common.report;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,19 +9,29 @@ import java.io.Reader;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.common.schemas.ReportEntryType;
 
 /**
  * @author madryk
  */
-public class ReportParamJsonAppenderTest {
+@RunWith(MockitoJUnitRunner.class)
+public class ReportEntryJsonAppenderTest {
 
-    private ReportParamJsonAppender jsonAppender = new ReportParamJsonAppender();
+    private ReportEntryJsonAppender jsonAppender = new ReportEntryJsonAppender();
+    
+    @Mock
+    private ReportValueJsonConverterManager reportValueConverterManager;
+    
     
     private JsonParser jsonParser = new JsonParser();
     
@@ -38,15 +49,17 @@ public class ReportParamJsonAppenderTest {
     //------------------------ TESTS --------------------------
     
     @Test
-    public void appendReportParam() throws IOException {
+    public void appendReportEntry() throws IOException {
         
         // given
         
-        ReportParam reportParam = new ReportParam("property1.propertyB.propertyII", "21");
+        ReportEntry reportEntry = new ReportEntry("property1.propertyB.propertyII", ReportEntryType.COUNTER, "21");
+        
+        when(reportValueConverterManager.convertValue(reportEntry)).thenReturn(new JsonPrimitive(21));
         
         // execute
         
-        jsonAppender.appendReportParam(jsonReport, reportParam);
+        jsonAppender.appendReportEntry(jsonReport, reportEntry);
         
         // assert
         
@@ -57,15 +70,17 @@ public class ReportParamJsonAppenderTest {
     }
     
     @Test
-    public void appendReportParam_REPLACE_ALREADY_EXISTING_NODE() throws IOException {
+    public void appendReportEntry_REPLACE_ALREADY_EXISTING_NODE() throws IOException {
         
         // given
         
-        ReportParam reportParam = new ReportParam("property1.propertyB", "21");
+        ReportEntry reportEntry = new ReportEntry("property1.propertyB", ReportEntryType.COUNTER, "21");
+        
+        when(reportValueConverterManager.convertValue(reportEntry)).thenReturn(new JsonPrimitive(21));
         
         // execute
         
-        jsonAppender.appendReportParam(jsonReport, reportParam);
+        jsonAppender.appendReportEntry(jsonReport, reportEntry);
         
         // assert
         
@@ -76,15 +91,17 @@ public class ReportParamJsonAppenderTest {
     }
     
     @Test
-    public void appendReportParam_REPLACE_ALREADY_EXISTING_LEAF() throws IOException {
+    public void appendReportEntry_REPLACE_ALREADY_EXISTING_LEAF() throws IOException {
 
         // given
         
-        ReportParam reportParam = new ReportParam("property1.propertyA", "21");
+        ReportEntry reportEntry = new ReportEntry("property1.propertyA", ReportEntryType.COUNTER, "21");
+        
+        when(reportValueConverterManager.convertValue(reportEntry)).thenReturn(new JsonPrimitive(21));
         
         // execute
         
-        jsonAppender.appendReportParam(jsonReport, reportParam);
+        jsonAppender.appendReportEntry(jsonReport, reportEntry);
         
         // assert
         

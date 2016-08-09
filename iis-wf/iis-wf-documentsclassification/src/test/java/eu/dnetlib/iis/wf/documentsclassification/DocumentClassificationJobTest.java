@@ -17,7 +17,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 
 import com.google.common.io.Files;
 
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
@@ -104,7 +104,7 @@ public class DocumentClassificationJobTest {
         // assert
         
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputFile, DocumentToDocumentClasses.class);
-        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportParam.class);
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportEntry.class);
     }
         
     
@@ -132,7 +132,7 @@ public class DocumentClassificationJobTest {
         // assert
         
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputFile, DocumentToDocumentClasses.class);
-        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportParam.class);
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportEntry.class);
     }
     
     @Test
@@ -156,7 +156,7 @@ public class DocumentClassificationJobTest {
         // assert
         
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputFile, DocumentToDocumentClasses.class);
-        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportParam.class);
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportEntry.class);
     }
     
 

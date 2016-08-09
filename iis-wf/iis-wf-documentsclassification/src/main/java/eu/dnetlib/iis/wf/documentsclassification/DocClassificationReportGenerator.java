@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.documentsclassification;
 
+import static eu.dnetlib.iis.common.report.ReportEntryFactory.createCounterReportEntry;
 import static eu.dnetlib.iis.wf.documentsclassification.DocClassificationReportCounterKeys.ACM_CLASSES;
 import static eu.dnetlib.iis.wf.documentsclassification.DocClassificationReportCounterKeys.ARXIV_CLASSES;
 import static eu.dnetlib.iis.wf.documentsclassification.DocClassificationReportCounterKeys.CLASSIFIED_DOCUMENTS;
@@ -15,7 +16,7 @@ import org.apache.spark.api.java.JavaRDD;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses;
 
 /**
@@ -34,7 +35,7 @@ class DocClassificationReportGenerator {
      * 
      * @param documentClasses result rdd of the doc classification job execution
      */
-    List<ReportParam> generateReport(JavaRDD<DocumentToDocumentClasses> documentClasses) {
+    List<ReportEntry> generateReport(JavaRDD<DocumentToDocumentClasses> documentClasses) {
         
         Preconditions.checkNotNull(documentClasses);
         
@@ -64,15 +65,15 @@ class DocClassificationReportGenerator {
 
     //------------------------ PRIVATE --------------------------
     
-    private ImmutableList<ReportParam> createReportEntries(long classifiedDocumentCount, long arxivClassCount, long wosClassCount, 
+    private ImmutableList<ReportEntry> createReportEntries(long classifiedDocumentCount, long arxivClassCount, long wosClassCount, 
                                                            long ddcClassCount, long meshEuroPmcClassCount, long acmClassCount) {
         
-        return ImmutableList.of(new ReportParam(CLASSIFIED_DOCUMENTS, ""+classifiedDocumentCount),
-                                new ReportParam(ARXIV_CLASSES, ""+arxivClassCount),
-                                new ReportParam(WOS_CLASSES, ""+wosClassCount),
-                                new ReportParam(DDC_CLASSES, ""+ddcClassCount),
-                                new ReportParam(MESH_EURO_PMC_CLASSES, ""+meshEuroPmcClassCount),
-                                new ReportParam(ACM_CLASSES, ""+acmClassCount));
+        return ImmutableList.of(createCounterReportEntry(CLASSIFIED_DOCUMENTS, classifiedDocumentCount),
+                                createCounterReportEntry(ARXIV_CLASSES, arxivClassCount),
+                                createCounterReportEntry(WOS_CLASSES, wosClassCount),
+                                createCounterReportEntry(DDC_CLASSES, ddcClassCount),
+                                createCounterReportEntry(MESH_EURO_PMC_CLASSES, meshEuroPmcClassCount),
+                                createCounterReportEntry(ACM_CLASSES, acmClassCount));
     }
     
     private static long size(Collection<?> collection) { // static - spark will not have to serialize the DocClassificationReportGenerator object

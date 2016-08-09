@@ -104,7 +104,7 @@
 			<arg>-C{document_to_project,
 				eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject,
 				eu/dnetlib/iis/wf/referenceextraction/project/data/empty.json}</arg>
-            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportParam,
+            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,
                 eu/dnetlib/iis/wf/referenceextraction/project/data/report_empty.json}</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Idocument_to_project=${workingDir}/referenceextraction_project/document_to_project</arg>

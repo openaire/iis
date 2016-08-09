@@ -14,7 +14,8 @@ import com.google.common.collect.Maps;
 
 import eu.dnetlib.iis.common.counter.PigCounters;
 import eu.dnetlib.iis.common.counter.PigCounters.JobCounters;
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.common.schemas.ReportEntryType;
 
 /**
  * @author madryk
@@ -45,7 +46,7 @@ public class ReportPigCountersResolverTest {
         
         Map<String, String> rootLevelCounters = Maps.newHashMap();
         rootLevelCounters.put("RECORD_WRITTEN", "3");
-        rootLevelCounters.put("SOME_STRANGE_COUNTER", "AND ITS EVEN STRANGER VALUE");
+        rootLevelCounters.put("SOME_STRANGE_COUNTER", "500");
 
         pigCounters = new PigCounters(rootLevelCounters, Lists.newArrayList(jobCounters1, jobCounters2));
 
@@ -104,18 +105,17 @@ public class ReportPigCountersResolverTest {
         
         // execute
         
-        List<ReportParam> reportCounters = reportPigCountersResolver.resolveReportCounters(pigCounters, 
-                    Lists.newArrayList(counterMapping1, counterMapping2, counterMapping3, counterMapping4, counterMapping5));
-        
+        List<ReportEntry> reportCounters = reportPigCountersResolver.resolveReportCounters(pigCounters, Lists.newArrayList(counterMapping1, counterMapping2, counterMapping3, counterMapping4, counterMapping5));
         
         // assert
         
         assertThat(reportCounters, containsInAnyOrder(
-                new ReportParam("destination.report.param1", "10"),
-                new ReportParam("destination.report.param2", "2"),
-                new ReportParam("destination.report.param3", "3"),
-                new ReportParam("destination.report.record_written", "3"),
-                new ReportParam("destination.report.some_strange", "AND ITS EVEN STRANGER VALUE")));
+                new ReportEntry("destination.report.param1", ReportEntryType.COUNTER, "10"),
+                new ReportEntry("destination.report.param2", ReportEntryType.COUNTER, "2"),
+                new ReportEntry("destination.report.param3", ReportEntryType.COUNTER, "3"),
+                new ReportEntry("destination.report.record_written", ReportEntryType.COUNTER, "3"),
+                new ReportEntry("destination.report.some_strange", ReportEntryType.COUNTER, "500")));
+
     }
     
     

@@ -24,7 +24,8 @@ import com.google.common.collect.Lists;
 import eu.dnetlib.iis.common.counter.PigCounters;
 import eu.dnetlib.iis.common.counter.PigCountersParser;
 import eu.dnetlib.iis.common.java.PortBindings;
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.common.schemas.ReportEntryType;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 
 /**
@@ -75,8 +76,8 @@ public class PigCountersReportGeneratorTest {
         when(reportPigCounterMappingParser.parse("group.param1", "pigCounterName1")).thenReturn(counterMapping1);
         when(reportPigCounterMappingParser.parse("group.param2", "pigCounterName2")).thenReturn(counterMapping2);
         
-        ReportParam reportCounter1 = new ReportParam("group.param1", "2");
-        ReportParam reportCounter2 = new ReportParam("group.param2" ,"8");
+        ReportEntry reportCounter1 = new ReportEntry("group.param1", ReportEntryType.COUNTER, "2");
+        ReportEntry reportCounter2 = new ReportEntry("group.param2", ReportEntryType.COUNTER, "8");
         
         when(reportPigCountersResolver.resolveReportCounters(pigCounters, Lists.newArrayList(counterMapping1, counterMapping2)))
                 .thenReturn(Lists.newArrayList(reportCounter1, reportCounter2));
@@ -87,7 +88,7 @@ public class PigCountersReportGeneratorTest {
         
         // assert
         
-        List<ReportParam> actualReportCounters = AvroTestUtils.readLocalAvroDataStore(tempFolder.getRoot().getPath());
+        List<ReportEntry> actualReportCounters = AvroTestUtils.readLocalAvroDataStore(tempFolder.getRoot().getPath());
         
         assertThat(actualReportCounters, containsInAnyOrder(reportCounter1, reportCounter2));
     }

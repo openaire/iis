@@ -15,7 +15,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroGsonFactory;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentMetadata;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses;
@@ -81,10 +81,11 @@ public class DocumentClassificationJob {
             avroSaver.saveJavaRDD(documentClasses, DocumentToDocumentClasses.SCHEMA$, params.outputAvroPath);
             
             
-            List<ReportParam> reportEntries = reportGenerator.generateReport(documentClasses);
+            List<ReportEntry> reportEntries = reportGenerator.generateReport(documentClasses);
             
-            avroSaver.saveJavaRDD(sc.parallelize(reportEntries), ReportParam.SCHEMA$, params.outputReportPath);
+            avroSaver.saveJavaRDD(sc.parallelize(reportEntries), ReportEntry.SCHEMA$, params.outputReportPath);
             
+
         }
         
     }

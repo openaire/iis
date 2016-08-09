@@ -1,2 +1,2 @@
-{"key":"import.ingest.pmc.correct", "value":"2"}
-{"key":"import.ingest.pmc.fault", "value":"1"}
+{"key":"import.ingest.pmc.correct", "type":"COUNTER", "value":"2"}
+{"key":"import.ingest.pmc.fault", "type":"COUNTER", "value":"1"}

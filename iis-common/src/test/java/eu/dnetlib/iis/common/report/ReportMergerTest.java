@@ -24,7 +24,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import eu.dnetlib.iis.common.java.PortBindings;
-import eu.dnetlib.iis.common.schemas.ReportParam;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.common.schemas.ReportEntryType;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 
 /**
@@ -58,13 +59,13 @@ public class ReportMergerTest {
         
         // given
         
-        List<ReportParam> partialReport1 = Lists.newArrayList(
-                new ReportParam("param1.paramA.I", "3"), 
-                new ReportParam("param1.paramA.III", "6"), 
-                new ReportParam("param1.paramB", "4"));
-        List<ReportParam> partialReport2 = Lists.newArrayList(
-                new ReportParam("param2", "12"), 
-                new ReportParam("param1.paramA.II", "2"));
+        List<ReportEntry> partialReport1 = Lists.newArrayList(
+                new ReportEntry("param1.paramA.I", ReportEntryType.COUNTER, "3"), 
+                new ReportEntry("param1.paramA.III", ReportEntryType.COUNTER, "6"), 
+                new ReportEntry("param1.paramB", ReportEntryType.COUNTER, "4"));
+        List<ReportEntry> partialReport2 = Lists.newArrayList(
+                new ReportEntry("param2", ReportEntryType.COUNTER, "12"), 
+                new ReportEntry("param1.paramA.II", ReportEntryType.COUNTER, "2"));
         
         AvroTestUtils.createLocalAvroDataStore(partialReport1, inputPartialReportsBasePath + "/report1");
         AvroTestUtils.createLocalAvroDataStore(partialReport2, inputPartialReportsBasePath + "/report2");

@@ -62,7 +62,7 @@
                 <arg>-C{dataset_to_mdstore,
                 eu.dnetlib.iis.importer.schemas.DocumentToMDStore,
                 eu/dnetlib/iis/wf/importer/dataset/data/output/dataset_to_mdstore.json}</arg>
-            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportParam,
+            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,
                 eu/dnetlib/iis/wf/importer/dataset/data/output/report.json}</arg>
             <!-- All input and output ports have to be bound to paths in HDFS -->
             <arg>-Idataset=${workingDir}/dataset</arg>
