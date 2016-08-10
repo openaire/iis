@@ -1,1 +1,2 @@
-{"key":"export.referenceExtraction.docsWithAtLeastOneConcept", "value":"3"}
+{"key": "export.referenceExtraction.docConceptReferences", "type": "COUNTER", "value": "7"}
+{"key": "export.referenceExtraction.docsWithAtLeastOneConcept", "type":"COUNTER", "value":"3"}
