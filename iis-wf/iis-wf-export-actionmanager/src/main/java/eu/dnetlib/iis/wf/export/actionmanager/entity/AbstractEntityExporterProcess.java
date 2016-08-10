@@ -116,7 +116,6 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
                 } catch (DocumentNotFoundException e) {
                     log.error("mdrecord: " + mdRecordId + " wasn't found in mdstore: "
                             + mdStoreComplexId.getMdStoreId(), e);
-                    // TODO write missing document identifiers in output datastore
                 } catch (Exception e) {
                     log.error("got exception when trying to retrieve " + "MDStore record for mdstore id "
                             + mdStoreComplexId.getMdStoreId() + ", and document id: " + mdRecordId, e);

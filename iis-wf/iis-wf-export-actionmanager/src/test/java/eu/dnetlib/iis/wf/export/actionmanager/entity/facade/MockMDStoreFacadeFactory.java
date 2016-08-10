@@ -14,8 +14,8 @@ import eu.dnetlib.data.mdstore.MDStoreServiceException;
 /**
  * {@link MDStoreFacadeFactory} mock implementation.
  * 
- * MDStore resource classpath locations should specified as input parameters 
- * where keys are defined as: mock.mdstore.static.resource.${mdStoreId}.{recordId} 
+ * MDStore resource classpath locations should be specified as input parameters 
+ * where keys are defined as: mdstore.facade.mock.static.resource.${mdStoreId}.{recordId} 
  * and classpath locations are defined as parameter values.
  * 
  * @author mhorst
@@ -54,8 +54,8 @@ public class MockMDStoreFacadeFactory implements MDStoreFacadeFactory {
             if (runtimeParameters.containsKey(parameterKey)) {
                 return obtainResource(runtimeParameters.get(parameterKey));
             } else {
-                throw new DocumentNotFoundException("unable to find static resource for mdStoreId" + 
-                        mdStoreId + " and recordId " + recordId + ", no '" + parameterKey + " parameter defined!");
+                throw new DocumentNotFoundException("unable to find static resource for mdStoreId: " + 
+                        mdStoreId + " and recordId: " + recordId + ", no '" + parameterKey + " parameter defined!");
             }
         }
         
