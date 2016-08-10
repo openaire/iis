@@ -536,6 +536,10 @@
                     <value>docs_with_at_least_one_concept</value>
                 </property>
                 <property>
+                    <name>output_report_record_read_counter_name</name>
+                    <value>export.referenceExtraction.docConceptReferences</value>
+                </property>
+                <property>
                     <name>output_report_record_written_counter_name</name>
                     <value>export.referenceExtraction.docsWithAtLeastOneConcept</value>
                 </property>
