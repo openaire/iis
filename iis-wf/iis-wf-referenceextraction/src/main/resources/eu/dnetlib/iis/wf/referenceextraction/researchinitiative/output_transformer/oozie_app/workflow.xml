@@ -16,6 +16,10 @@
             <description>subdirectory for the given report</description>
         </property>
         <property>
+            <name>output_report_record_read_counter_name</name>
+            <description>name of the counter with the number of input records</description>
+        </property>
+        <property>
             <name>output_report_record_written_counter_name</name>
             <description>name of the counter with the number of output records</description>
         </property>
@@ -80,6 +84,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.PigCountersReportGenerator</arg>
             <arg>-PpigCounters=${hadoop:counters('transformer')}</arg>
+            <arg>-Preport.${output_report_record_read_counter_name}={documentToResearchInitiative.MAP_INPUT_RECORDS}</arg>
             <arg>-Preport.${output_report_record_written_counter_name}={RECORD_WRITTEN}</arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>
