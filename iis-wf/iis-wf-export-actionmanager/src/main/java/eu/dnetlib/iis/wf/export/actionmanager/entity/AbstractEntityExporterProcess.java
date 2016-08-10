@@ -224,14 +224,10 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
      * @return MDStore compliant entity identifier
      */
     private final String convertToMDStoreEntityId(String id) {
-        if (id != null) {
-            if (id.startsWith(HBaseConstants.ROW_PREFIX_RESULT)) {
-                return id.substring(HBaseConstants.ROW_PREFIX_RESULT.length());
-            } else {
-                return id;
-            }
+        if (id != null && id.startsWith(HBaseConstants.ROW_PREFIX_RESULT)) {
+            return id.substring(HBaseConstants.ROW_PREFIX_RESULT.length());
         } else {
-            return null;
+            return id;
         }
     }
 
@@ -242,11 +238,15 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
         private final String mdStoreId;
         private final String entityId;
 
+        // ------------------------ CONSTRUCTORS ----------------------------------
+        
         public MDStoreIdWithEntityId(String mdStoreId, String entityId) {
             this.mdStoreId = mdStoreId;
             this.entityId = entityId;
         }
 
+        // ------------------------ GETTERS ----------------------------------        
+        
         public String getMdStoreId() {
             return mdStoreId;
         }
