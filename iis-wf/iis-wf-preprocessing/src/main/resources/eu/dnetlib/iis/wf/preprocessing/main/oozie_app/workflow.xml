@@ -533,7 +533,7 @@
 				</property>
 				<property>
                     <name>output_report_relative_path</name>
-                    <value>docs_with_at_least_one_concept</value>
+                    <value>doc_project_concept</value>
                 </property>
                 <property>
                     <name>output_report_record_read_counter_name</name>
