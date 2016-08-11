@@ -5,7 +5,9 @@ import static eu.dnetlib.iis.wf.affmatching.write.AffMatchReportCounters.DOCS_WI
 import static eu.dnetlib.iis.wf.affmatching.write.AffMatchReportCounters.DOC_ORG_REFERENCES;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -23,6 +25,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
+
 
 /**
 * @author Łukasz Dumiszewski
@@ -56,7 +59,7 @@ public class AffMatchReportGeneratorTest {
     }
     
     @Test
-    public void generateReport() {
+    public void generateReport() throws Exception {
         
         
         // given
@@ -86,9 +89,19 @@ public class AffMatchReportGeneratorTest {
     
     //------------------------ PRIVATE --------------------------
     
-    private void assertMapToDocIdFunction(Function<MatchedOrganization, CharSequence> function) {
+    private void assertMapToDocIdFunction(Function<MatchedOrganization, CharSequence> function) throws Exception {
         
+        // given
         
+        MatchedOrganization mOrg = mock(MatchedOrganization.class);
+        when(mOrg.getDocumentId()).thenReturn("XYZ");
+        
+        // execute
+        
+        CharSequence docId = function.call(mOrg);
+        
+        // assert
+        assertEquals("XYZ", docId.toString());
         
     }
     

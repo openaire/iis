@@ -1,7 +1,9 @@
 package eu.dnetlib.iis.wf.affmatching.write;
 
 /**
-* @author Łukasz Dumiszewski
+ * Affiliation matching execution report counter names. 
+ * 
+ * @author Łukasz Dumiszewski
 */
 
 public final class AffMatchReportCounters {
