@@ -1,0 +1,32 @@
+targetColumn=50|webcrawl____::000038b2e009d799643ba2b05a155877
+targetColumnFamily=personResult_authorship_isAuthorOf
+targetRowKey=30|webcrawl____::082107c647ee7788de54058492e6a259
+rawSet=document-entity-id
+actionType=aac
+agent.id=iis
+agent.name=information inference service
+agent.type=service
+
+#{"kind": "relation","rel": {"relType": "personResult","source": "30|webcrawl____::082107c647ee7788de54058492e6a259","target": "50|webcrawl____::000038b2e009d799643ba2b05a155877","child": false,"personResult": {"authorship": {"relMetadata": {"semantics": {"classid": "isAuthorOf","classname": "isAuthorOf","schemeid": "dnet:person_result_relations","schemename": "dnet:person_result_relations"}},"ranking": "2"}},"subRelType": "authorship","relClass": "isAuthorOf"},"dataInfo": {"inferred": false,"deletedbyinference": false,"trust": "0.9","inferenceprovenance": "","provenanceaction": {"classid": "sysimport:crosswalk:repository","classname": "sysimport:crosswalk:repository","schemeid": "dnet:provenanceActions","schemename": "dnet:provenanceActions"}}}
+
+$targetValue.kind=relation
+$targetValue.rel.relType=personResult
+$targetValue.rel.source=30|webcrawl____::082107c647ee7788de54058492e6a259
+$targetValue.rel.target=50|webcrawl____::000038b2e009d799643ba2b05a155877
+$targetValue.rel.child=false
+$targetValue.rel.subRelType=authorship
+$targetValue.rel.relClass=isAuthorOf
+
+$targetValue.rel.personResult.authorship.relMetadata.semantics.classid=isAuthorOf
+$targetValue.rel.personResult.authorship.relMetadata.semantics.classname=isAuthorOf
+$targetValue.rel.personResult.authorship.relMetadata.semantics.schemeid=dnet:person_result_relations
+$targetValue.rel.personResult.authorship.relMetadata.semantics.schemename=dnet:person_result_relations
+$targetValue.rel.personResult.authorship.ranking=2
+
+$targetValue.dataInfo.inferred=false
+$targetValue.dataInfo.deletedbyinference=false
+$targetValue.dataInfo.trust=0.9
+$targetValue.dataInfo.provenanceaction.classid=sysimport:crosswalk:repository
+$targetValue.dataInfo.provenanceaction.classname=sysimport:crosswalk:repository
+$targetValue.dataInfo.provenanceaction.schemeid=dnet:provenanceActions
+$targetValue.dataInfo.provenanceaction.schemename=dnet:provenanceActions
