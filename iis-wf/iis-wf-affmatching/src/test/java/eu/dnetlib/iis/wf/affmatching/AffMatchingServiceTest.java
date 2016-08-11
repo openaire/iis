@@ -93,6 +93,8 @@ public class AffMatchingServiceTest {
     
     private String outputPath = "/output";
     
+    private String outputReportPath = "/outputReport";
+    
     
     @Mock
     private JavaRDD<AffMatchAffiliation> affiliations;
@@ -194,7 +196,7 @@ public class AffMatchingServiceTest {
         
         // execute
         
-        affMatchingService.matchAffiliations(null, inputAffPath, inputOrgPath, outputPath);
+        affMatchingService.matchAffiliations(null, inputAffPath, inputOrgPath, outputPath, outputReportPath);
         
     }
     
@@ -204,7 +206,7 @@ public class AffMatchingServiceTest {
         
         // execute
         
-        affMatchingService.matchAffiliations(sc, "  ", inputOrgPath, outputPath);
+        affMatchingService.matchAffiliations(sc, "  ", inputOrgPath, outputPath, outputReportPath);
         
     }
 
@@ -214,7 +216,7 @@ public class AffMatchingServiceTest {
         
         // execute
         
-        affMatchingService.matchAffiliations(sc, inputAffPath, " ", outputPath);
+        affMatchingService.matchAffiliations(sc, inputAffPath, " ", outputPath, outputReportPath);
         
     }
 
@@ -224,7 +226,7 @@ public class AffMatchingServiceTest {
         
         // execute
         
-        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, "   ");
+        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, "   ", outputReportPath);
         
     }
 
@@ -239,7 +241,7 @@ public class AffMatchingServiceTest {
         
         // execute
         
-        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath);
+        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath, outputReportPath);
         
     }
 
@@ -254,7 +256,7 @@ public class AffMatchingServiceTest {
         
         // execute
         
-        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath);
+        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath, outputReportPath);
         
     }
     
@@ -269,7 +271,7 @@ public class AffMatchingServiceTest {
         
         // execute
         
-        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath);
+        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath, outputReportPath);
         
     }
 
@@ -284,7 +286,7 @@ public class AffMatchingServiceTest {
         
         // execute
         
-        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath);
+        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath, outputReportPath);
         
     }
 
@@ -327,12 +329,12 @@ public class AffMatchingServiceTest {
         
         // execute
         
-        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath);
+        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath, outputReportPath);
         
         
         // assert
         
-        verify(affMatchResultWriter).write(allUniqueAffMatchResultsValues, outputPath);
+        verify(affMatchResultWriter).write(sc, allUniqueAffMatchResultsValues, outputPath, outputReportPath);
         
         verify(affiliationReader).readAffiliations(sc, inputAffPath);
         verify(organizationReader).readOrganizations(sc, inputOrgPath);

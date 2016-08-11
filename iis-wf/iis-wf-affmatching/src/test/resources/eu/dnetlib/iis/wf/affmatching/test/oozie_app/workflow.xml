@@ -85,6 +85,10 @@
                     <value>${workingDir}/matched</value>
                 </property>
                 <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
+                <property>
                     <name>workingDir</name>
                     <value>${workingDir}/affmatching</value>
                 </property>
@@ -122,6 +126,9 @@
                 data/expectedOutput/matchedOrganizations.json}</arg>
             
             <arg>-Imatched=${workingDir}/matched</arg>
+            
+            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,data/expectedOutput/report.json}</arg>
+            <arg>-Ireport=${workingDir}/report/aff-matching</arg>
         </java>
         <ok to="end" />
         <error to="fail" />

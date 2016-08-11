@@ -64,6 +64,9 @@ public class AffMatchingDocOrgQualityTest {
     
     private String outputDirPath;
     
+    private String outputReportPath;
+    
+    
     
     @Before
     public void before() {
@@ -76,7 +79,7 @@ public class AffMatchingDocOrgQualityTest {
         inputInferredDocProjDirPath = workingDir + "/affiliation_matching/input/doc_proj_inferred";
         inputProjOrgDirPath = workingDir + "/affiliation_matching/input/proj_org";
         outputDirPath = workingDir + "/affiliation_matching/output";
-        
+        outputReportPath = workingDir + "/affiliation_matching/report";
         
     }
     
@@ -136,6 +139,7 @@ public class AffMatchingDocOrgQualityTest {
                 .addArg("-inputDocProjConfidenceThreshold", String.valueOf(inputDocProjConfidenceThreshold))
                 .addArg("-inputAvroProjOrgPath", inputProjOrgDirPath)
                 .addArg("-outputAvroPath", outputDirPath)
+                .addArg("-outputAvroReportPath", outputReportPath)
                 .build();
         
         executor.execute(sparkJob);

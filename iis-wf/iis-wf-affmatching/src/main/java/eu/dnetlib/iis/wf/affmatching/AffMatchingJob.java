@@ -59,7 +59,7 @@ public class AffMatchingJob {
             
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputAvroPath);
             
-            affMatchingService.matchAffiliations(sc, params.inputAvroAffPath, params.inputAvroOrgPath, params.outputAvroPath);
+            affMatchingService.matchAffiliations(sc, params.inputAvroAffPath, params.inputAvroOrgPath, params.outputAvroPath, params.outputAvroReportPath);
         }
     }
     
@@ -90,6 +90,9 @@ public class AffMatchingJob {
         
         @Parameter(names = "-outputAvroPath", required = true)
         private String outputAvroPath;
+        
+        @Parameter(names = "-outputAvroReportPath", required = true, description="path to a directory with the execution result report")
+        private String outputAvroReportPath;
         
     }
     

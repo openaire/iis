@@ -9,8 +9,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
+
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.junit.Test;
@@ -21,6 +24,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
 import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
@@ -49,6 +53,9 @@ public class IisAffMatchResultWriterTest {
     @Mock
     private SparkAvroSaver sparkAvroSaver;
     
+    @Mock
+    private AffMatchReportGenerator reportGenerator;
+    
     
     // DATA
     
@@ -67,6 +74,15 @@ public class IisAffMatchResultWriterTest {
     @Mock
     private JavaRDD<MatchedOrganization> distinctMatchedOrganizationsValues;
     
+    @Mock
+    private List<ReportEntry> reportEntries;
+    
+    @Mock
+    private JavaRDD<ReportEntry> rddReportEntries;
+    
+    @Mock
+    private JavaSparkContext sc;
+    
     
     // FUNCTIONS CAPTORS
     
@@ -84,12 +100,22 @@ public class IisAffMatchResultWriterTest {
     
     //------------------------ TESTS --------------------------
     
+    
+    @Test(expected = NullPointerException.class)
+    public void write_sc_null() {
+        
+        // execute
+        
+        writer.write(null, affMatchResults, "/output", "/report");
+        
+    }
+    
     @Test(expected = NullPointerException.class)
     public void write_matchedAffOrgs_null() {
         
         // execute
         
-        writer.write(null, "/aaa");
+        writer.write(sc, null, "/output", "/report");
         
     }
     
@@ -99,7 +125,16 @@ public class IisAffMatchResultWriterTest {
         
         // execute
         
-        writer.write(affMatchResults, "  ");
+        writer.write(sc, affMatchResults, "  ", "/report");
+        
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void write_outputReportPath_blank() {
+        
+        // execute
+        
+        writer.write(sc, affMatchResults, "/output", " ");
         
     }
     
@@ -108,23 +143,26 @@ public class IisAffMatchResultWriterTest {
         
         // given
         
-        String outputPath = "/data/matchedAffiliations";
+        String outputPath = "/data/matchedAffiliations/output";
+        String outputReportPath = "/data/matchedAffiliations/report";
         
         doReturn(matchedOrganizations).when(affMatchResults).map(any());
         doReturn(matchedOrganizationsDocOrgIdKey).when(matchedOrganizations).keyBy(any());
-        doReturn(distinctMatchedOrganizations).when(matchedOrganizationsDocOrgIdKey).reduceByKey(any());
-        doReturn(distinctMatchedOrganizationsValues).when(distinctMatchedOrganizations).values();
+        when(matchedOrganizationsDocOrgIdKey.reduceByKey(any())).thenReturn(distinctMatchedOrganizations);
+        when(distinctMatchedOrganizations.values()).thenReturn(distinctMatchedOrganizationsValues);
+        when(reportGenerator.generateReport(distinctMatchedOrganizationsValues)).thenReturn(reportEntries);
+        when(sc.parallelize(reportEntries)).thenReturn(rddReportEntries);
         
         
         // execute
         
-        writer.write(affMatchResults, outputPath);
+        writer.write(sc, affMatchResults, outputPath, outputReportPath);
         
         
         // assert
         
         verify(sparkAvroSaver).saveJavaRDD(distinctMatchedOrganizationsValues, MatchedOrganization.SCHEMA$, outputPath);
-        
+        verify(sparkAvroSaver).saveJavaRDD(rddReportEntries, ReportEntry.SCHEMA$, outputReportPath);
         
         verify(affMatchResults).map(convertFunction.capture());
         assertConvertFunction(convertFunction.getValue());
