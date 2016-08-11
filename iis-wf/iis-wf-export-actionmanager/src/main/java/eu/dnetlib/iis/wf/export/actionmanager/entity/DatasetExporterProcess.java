@@ -22,7 +22,7 @@ public class DatasetExporterProcess extends AbstractEntityExporterProcess<Docume
     // ------------------------ LOGIC -----------------------------
 
     @Override
-    protected MDStoreIdWithEntityId deliverMDStoreWithEntityId(DocumentToMDStore element) {
+    protected MDStoreIdWithEntityId convertIdentifier(DocumentToMDStore element) {
         return new MDStoreIdWithEntityId(element.getMdStoreId().toString(), element.getDocumentId().toString());
     }
 

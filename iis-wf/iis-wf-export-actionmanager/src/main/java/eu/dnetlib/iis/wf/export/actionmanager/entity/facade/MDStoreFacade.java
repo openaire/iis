@@ -4,7 +4,9 @@ import eu.dnetlib.data.mdstore.DocumentNotFoundException;
 import eu.dnetlib.data.mdstore.MDStoreServiceException;
 
 /**
- * MDStore service facade.
+ * MDStore service facade responsible for metadata records delivery.
+ * 
+ * Each implementation could provide different way of accessing those records e.g. via remote web service, local persistence layer etc.
  * 
  * @author mhorst
  *
@@ -12,12 +14,12 @@ import eu.dnetlib.data.mdstore.MDStoreServiceException;
 public interface MDStoreFacade {
 
     /**
-     * Delivers single record for given MDStore and record identifiers.
+     * Returns XML metadata record for given MDStore and record identifiers.
      * @param mdStoreId MDStore identifier
      * @param recordId record identifier
      * @throws MDStoreServiceException when general error occurs 
      * @throws DocumentNotFoundException when record not found 
      */
-    public String deliverRecord(String mdStoreId, String recordId) throws MDStoreServiceException;
+    public String fetchRecord(String mdStoreId, String recordId) throws MDStoreServiceException;
     
 }

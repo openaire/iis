@@ -20,7 +20,7 @@ public class WebServiceMDStoreFacadeFactory implements MDStoreFacadeFactory {
     // -------------------- LOGIC -------------------------
     
     @Override
-    public MDStoreFacade instantiate(Map<String, String> parameters) {
+    public MDStoreFacade create(Map<String, String> parameters) {
         String mdStoreLocation = ProcessUtils.getParameterValue(EXPORT_ENTITY_MDSTORE_SERVICE_LOCATION, null, parameters);
         if (StringUtils.isBlank(mdStoreLocation) || WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(mdStoreLocation)) {
             throw new InvalidParameterException("unable to export document entities to action manager, " + 

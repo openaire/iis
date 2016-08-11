@@ -46,7 +46,8 @@ import eu.dnetlib.iis.wf.export.actionmanager.entity.facade.MDStoreFacade;
 import eu.dnetlib.iis.wf.export.actionmanager.entity.facade.MDStoreFacadeFactory;
 
 /**
- * Abstract entity exporter process.
+ * Common codebase responsible for exporting generic entities. 
+ * To be extended by classes responsible for exporting specific entity types. 
  * 
  * @author mhorst
  *
@@ -91,6 +92,11 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
 
     // ------------------------ LOGIC -----------------------------
 
+    /**
+     * @param portBindings input port name bound to HDFS location
+     * @param conf hadoop configuration
+     * @param parameters process parameters configuring action manager and mdstore facade
+     */
     @Override
     public void run(PortBindings portBindings, Configuration conf, Map<String, String> parameters) throws Exception {
         String actionSetId = ProcessUtils.getParameterValue(EXPORT_ACTION_SETID, conf, parameters);
@@ -107,10 +113,10 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
 
             int counter = 0;
             while (it.hasNext()) {
-                MDStoreIdWithEntityId mdStoreComplexId = deliverMDStoreWithEntityId(it.next());
+                MDStoreIdWithEntityId mdStoreComplexId = convertIdentifier(it.next());
                 String mdRecordId = convertToMDStoreEntityId(mdStoreComplexId.getEntityId());
                 try {
-                    String mdRecord = mdStore.deliverRecord(mdStoreComplexId.getMdStoreId(), mdRecordId);
+                    String mdRecord = mdStore.fetchRecord(mdStoreComplexId.getMdStoreId(), mdRecordId);
                     handleRecord(mdRecord, actionSetId, actionManager);
                     counter++;
                 } catch (DocumentNotFoundException e) {
@@ -140,11 +146,11 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
     }
 
     /**
-     * Provides mdstore and entity identifiers for given input record.
+     * Converts specific identifier object into generic representation with mdStore and entity identifiers explicitly set.
      * 
      * @return mdstore and entity identifiers pair
      */
-    abstract protected MDStoreIdWithEntityId deliverMDStoreWithEntityId(T element);
+    abstract protected MDStoreIdWithEntityId convertIdentifier(T element);
 
     
     // ------------------------ PRIVATE -----------------------------
@@ -165,8 +171,7 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
         
         List<AtomicAction> atomicActions = xsltAction.asAtomicActions();
         
-        actionManager.storeAction(atomicActions, PROVENANCE_DEFAULT,
-                StaticConfigurationProvider.ACTION_TRUST_0_9, entityNamespacePrefix);
+        actionManager.storeActions(atomicActions);
     }
 
     /**
@@ -198,7 +203,7 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
             Class<?> clazz = Class.forName(serviceFactoryClassName);
             Constructor<?> constructor = clazz.getConstructor();
             MDStoreFacadeFactory serviceFactory = (MDStoreFacadeFactory) constructor.newInstance();
-            return serviceFactory.instantiate(parameters);
+            return serviceFactory.create(parameters);
         } catch (Exception e) {
             throw new RuntimeException("exception occurred while instantiating service by facade factory: " + 
                     MDSTORE_FACADE_FACTORY_CLASS, e);

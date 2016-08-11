@@ -13,5 +13,5 @@ public interface MDStoreFacadeFactory {
     /**
      * Instantiates {@link MDStoreFacade} for given parameters.
      */
-    MDStoreFacade instantiate(Map<String, String> parameters);
+    MDStoreFacade create(Map<String, String> parameters);
 }

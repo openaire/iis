@@ -62,13 +62,13 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/documents</arg>
-            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/output/document.properties,
-                /eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/output/person0.properties,
-                /eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/output/person0_isAuthorOf_document.properties,
-                /eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/output/document_hasAuthor_person0.properties,
-                /eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/output/person1.properties,
-                /eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/output/person1_isAuthorOf_document.properties,
-                /eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/output/document_hasAuthor_person1.properties
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/output/document.expectations,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/output/person0.expectations,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/output/person0_isAuthorOf_document.expectations,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/output/document_hasAuthor_person0.expectations,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/output/person1.expectations,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/output/person1_isAuthorOf_document.expectations,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/output/document_hasAuthor_person1.expectations
             </arg>
         </java>
         <ok to="end" />

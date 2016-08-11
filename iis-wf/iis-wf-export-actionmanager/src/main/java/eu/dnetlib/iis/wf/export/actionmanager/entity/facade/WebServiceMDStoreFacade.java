@@ -32,7 +32,7 @@ public class WebServiceMDStoreFacade implements MDStoreFacade {
     // -------------------- PUBLIC -------------------------------
     
     @Override
-    public String deliverRecord(String mdStoreId, String recordId) throws MDStoreServiceException {
+    public String fetchRecord(String mdStoreId, String recordId) throws MDStoreServiceException {
         return service.deliverRecord(mdStoreId, recordId);
     }
     

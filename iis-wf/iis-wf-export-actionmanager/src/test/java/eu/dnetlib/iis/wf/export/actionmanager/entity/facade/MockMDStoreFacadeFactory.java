@@ -28,7 +28,7 @@ public class MockMDStoreFacadeFactory implements MDStoreFacadeFactory {
     // -------------------- LOGIC -------------------------
     
     @Override
-    public MDStoreFacade instantiate(Map<String, String> parameters) {
+    public MDStoreFacade create(Map<String, String> parameters) {
         return new MockMDStoreFacade(parameters);
     }
     
@@ -49,10 +49,10 @@ public class MockMDStoreFacadeFactory implements MDStoreFacadeFactory {
         // -------------------- LOGIC -------------------------
         
         @Override
-        public String deliverRecord(String mdStoreId, String recordId) throws MDStoreServiceException {
+        public String fetchRecord(String mdStoreId, String recordId) throws MDStoreServiceException {
             String parameterKey = STATIC_RESOURCE_PREFIX + mdStoreId + '.' + recordId;
             if (runtimeParameters.containsKey(parameterKey)) {
-                return obtainResource(runtimeParameters.get(parameterKey));
+                return readRecord(runtimeParameters.get(parameterKey));
             } else {
                 throw new DocumentNotFoundException("unable to find static resource for mdStoreId: " + 
                         mdStoreId + " and recordId: " + recordId + ", no '" + parameterKey + " parameter defined!");
@@ -61,7 +61,7 @@ public class MockMDStoreFacadeFactory implements MDStoreFacadeFactory {
         
         // -------------------- PRIVATE -------------------------
         
-        private String obtainResource(String resourceLocation) {
+        private String readRecord(String resourceLocation) {
             try (InputStream input = MockMDStoreFacadeFactory.class.getResourceAsStream(resourceLocation)) {
                 return IOUtils.toString(input);
             } catch (IOException e) {

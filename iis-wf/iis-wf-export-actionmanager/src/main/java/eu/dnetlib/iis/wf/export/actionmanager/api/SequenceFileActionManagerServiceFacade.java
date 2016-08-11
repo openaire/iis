@@ -12,7 +12,6 @@ import org.apache.hadoop.io.SequenceFile.Writer;
 import org.apache.hadoop.io.Text;
 
 import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.actionmanager.common.Provenance;
 import eu.dnetlib.actionmanager.rmi.ActionManagerException;
 
 /**
@@ -43,8 +42,7 @@ public class SequenceFileActionManagerServiceFacade implements ActionManagerServ
 	}
 
 	@Override
-	public void storeAction(Collection<AtomicAction> actions, Provenance provenance, String trust, String nsprefix)
-			throws ActionManagerException {
+	public void storeActions(Collection<AtomicAction> actions) throws ActionManagerException {
 		if (actions != null) {
 			for (AtomicAction action : actions) {
 				try {

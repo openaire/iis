@@ -45,7 +45,7 @@ public class DocumentExporterProcess extends AbstractEntityExporterProcess<Ident
     }
 
     @Override
-    protected MDStoreIdWithEntityId deliverMDStoreWithEntityId(Identifier element) {
+    protected MDStoreIdWithEntityId convertIdentifier(Identifier element) {
         return new MDStoreIdWithEntityId(this.mdStoreId, element.getId().toString());
     }
 }
