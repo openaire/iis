@@ -30,6 +30,8 @@ import eu.dnetlib.actionmanager.common.Operation;
 import eu.dnetlib.actionmanager.common.Provenance;
 import eu.dnetlib.data.mdstore.DocumentNotFoundException;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
+import eu.dnetlib.iis.common.counter.NamedCounters;
+import eu.dnetlib.iis.common.counter.NamedCountersFileWriter;
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
@@ -55,6 +57,10 @@ import eu.dnetlib.iis.wf.export.actionmanager.entity.facade.MDStoreFacadeFactory
 public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase> implements Process {
 
     private static final String MDSTORE_FACADE_FACTORY_CLASS = "mdstore.facade.factory.classname";
+    
+    private static final String TOTAL_ENTITIES_COUNTER_NAME = "TOTAL_ENTITIES_COUNTER";
+    
+    private static final String MISSING_ENTITIES_COUNTER_NAME = "MISSING_ENTITIES_COUNTER";
 
     private static final Provenance PROVENANCE_DEFAULT = Provenance.sysimport_mining_repository;
 
@@ -71,6 +77,8 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
     private final String entityNamespacePrefix;
     
     private final ActionFactory actionFactory;
+    
+    private final NamedCountersFileWriter countersWriter = new NamedCountersFileWriter();
 
     // ------------------------ CONSTRUCTORS -----------------------------
 
@@ -109,9 +117,11 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
         try (ActionManagerServiceFacade actionManager = buildActionManager(conf, parameters);
                 CloseableIterator<T> it = DataStore.<T> getReader(inputPath)) {
             
+            NamedCounters counters = new NamedCounters(new String[] { TOTAL_ENTITIES_COUNTER_NAME, MISSING_ENTITIES_COUNTER_NAME });
+            
             MDStoreFacade mdStore = buildMDStoreFacade(parameters);
 
-            int counter = 0;
+            long counter = 0;
             while (it.hasNext()) {
                 MDStoreIdWithEntityId mdStoreComplexId = convertIdentifier(it.next());
                 String mdRecordId = convertToMDStoreEntityId(mdStoreComplexId.getEntityId());
@@ -122,6 +132,7 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
                 } catch (DocumentNotFoundException e) {
                     log.error("mdrecord: " + mdRecordId + " wasn't found in mdstore: "
                             + mdStoreComplexId.getMdStoreId(), e);
+                    counters.increment(MISSING_ENTITIES_COUNTER_NAME, 1l);
                 } catch (Exception e) {
                     log.error("got exception when trying to retrieve " + "MDStore record for mdstore id "
                             + mdStoreComplexId.getMdStoreId() + ", and document id: " + mdRecordId, e);
@@ -129,7 +140,8 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
                 }
 
             }
-            log.warn("exported " + counter + " entities in total");
+            counters.increment(TOTAL_ENTITIES_COUNTER_NAME, counter);
+            countersWriter.writeCounters(counters, System.getProperty("oozie.action.output.properties"));
         }
     }
 

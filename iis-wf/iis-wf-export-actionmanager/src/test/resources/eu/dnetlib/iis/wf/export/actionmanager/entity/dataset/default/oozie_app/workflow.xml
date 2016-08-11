@@ -51,12 +51,25 @@
             <arg>-Pexport.action.setid=dataset-entity-id</arg>
             <arg>-Pexport.seq.file.output.dir.root=${workingDir}/output/</arg>
             <arg>-Pexport.seq.file.output.dir.name=datasets</arg>
+            <capture-output />
         </java>
-        <ok to="consumer" />
+        <ok to="report" />
+        <error to="fail" />
+    </action>
+    
+    <action name="report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
+            <arg>-Preport.export.entity.dataset.total=${wf:actionData('exporter-dataset-entities')['TOTAL_ENTITIES_COUNTER']}</arg>
+            <arg>-Preport.export.entity.dataset.missing=${wf:actionData('exporter-dataset-entities')['MISSING_ENTITIES_COUNTER']}</arg>
+            <arg>-Oreport=${workingDir}/report</arg>
+        </java>
+        <ok to="dataset-consumer" />
         <error to="fail" />
     </action>
 
-    <action name="consumer">
+    <action name="dataset-consumer">
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
@@ -67,10 +80,22 @@
                 /eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/output/document_hasAuthor_person.expectations
             </arg>
         </java>
-        <ok to="end" />
+        <ok to="report-consumer" />
         <error to="fail" />
     </action>
 
+    <action name="report-consumer">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            <arg>-C{report,
+                eu.dnetlib.iis.common.schemas.ReportEntry,
+                eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/output/report.json}</arg>
+            <arg>-Ireport=${workingDir}/report</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
 
     <kill name="fail">
         <message>Unfortunately, the process failed -- error message:

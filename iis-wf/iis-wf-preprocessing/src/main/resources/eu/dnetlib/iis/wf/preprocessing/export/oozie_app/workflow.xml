@@ -146,20 +146,25 @@
 		<error to="fail" />
 	</action>
 
-	<action name="exporter-dataset-entities">
-		<java>
-			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.wf.export.actionmanager.entity.DatasetExporterProcess</arg>
-			<arg>-Iinput=${workingDir}/identifier/datasets</arg>
-            <arg>-Pmdstore.facade.factory.classname=eu.dnetlib.iis.wf.export.actionmanager.entity.facade.WebServiceMDStoreFacadeFactory</arg>
-			<arg>-Pexport.entity.mdstore.service.location=${mdstore_service_location}</arg>
-			<arg>-Pexport.action.setid=${action_set_id_entity_dataset}</arg>
-			<arg>-Pexport.seq.file.output.dir.root=${workingDir}/output/entities_dataset</arg>
-			<arg>-Pexport.seq.file.output.dir.name=${action_set_id_entity_dataset}</arg>
-		</java>
-		<ok to="export_entities_joining" />
-		<error to="fail" />
-	</action>
+    <action name="exporter-dataset-entities">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/export_actionmanager_entity_dataset</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>input</name>
+                    <value>${workingDir}/identifier/datasets</value>
+                </property>
+                <property>
+                    <name>output_root</name>
+                    <value>${workingDir}/output/entities_dataset</value>
+                </property>
+                <!-- all the other required properties are automatically propagated -->
+            </configuration>
+        </sub-workflow>
+        <ok to="export_entities_joining" />
+        <error to="fail" />
+    </action>
 	<!-- end of dataset entities export section -->
 
 	<!-- publication entities export section -->
