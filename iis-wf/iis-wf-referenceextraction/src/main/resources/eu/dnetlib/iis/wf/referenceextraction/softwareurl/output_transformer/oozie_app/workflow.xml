@@ -7,6 +7,10 @@
         <property>
             <name>output</name>
         </property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
     </parameters>
 
     <global>
@@ -43,6 +47,13 @@
             <prepare>
                 <delete path="${nameNode}${output}" />
             </prepare>
+            <configuration>
+                <property>
+                    <name>oozie.action.external.stats.write</name>
+                    <value>true</value>
+                </property>
+            </configuration>
+
             <!-- Path to PIG script the workflow executes. -->
             <script>lib/scripts/transformer.pig</script>
 
@@ -52,9 +63,24 @@
             <param>output=${output}</param>
             <param>schema_output=${wf:actionData('generate-schema')['eu.dnetlib.iis.export.schemas.DocumentToSoftwareUrls']}</param>
         </pig>
+        <ok to="report" />
+        <error to="fail" />
+    </action>
+    
+    <action name="report">
+         <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.PigCountersReportGenerator</arg>
+            <arg>-PpigCounters=${hadoop:counters('transformer')}</arg>
+            <arg>-Preport.export.referenceExtraction.docSoftwareUrlReferences={documentToSoftwareUrl.MAP_INPUT_RECORDS}</arg>
+            <arg>-Preport.export.referenceExtraction.docsWithAtLeastOneSoftwareUrl={RECORD_WRITTEN}</arg>
+            <arg>-Oreport=${output_report_root_path}/doc-software-url</arg>
+        </java>
         <ok to="end" />
         <error to="fail" />
     </action>
+    
+    
     <kill name="fail">
         <message>Unfortunately, the workflow failed -- error message:
             [${wf:errorMessage(wf:lastErrorNode())}]

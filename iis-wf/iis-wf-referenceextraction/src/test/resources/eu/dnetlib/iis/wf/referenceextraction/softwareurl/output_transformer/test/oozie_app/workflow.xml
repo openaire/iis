@@ -69,6 +69,11 @@
                     <name>output</name>
                     <value>${workingDir}/transformer_export_softwareurls/output</value>
                 </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
+                
             </configuration>
         </sub-workflow>
         <ok to="consumer" />
@@ -83,7 +88,12 @@
                 eu.dnetlib.iis.export.schemas.DocumentToSoftwareUrls,
                 eu/dnetlib/iis/wf/referenceextraction/softwareurl/output_transformer/test/data/document_to_software_urls.json}
             </arg>
+            <arg>-C{report,
+                 eu.dnetlib.iis.common.schemas.ReportEntry,
+                 eu/dnetlib/iis/wf/referenceextraction/softwareurl/output_transformer/test/data/report.json}
+            </arg>  
             <arg>-Ioutput=${workingDir}/transformer_export_softwareurls/output</arg>
+            <arg>-Ireport=${workingDir}/report/doc-software-url</arg>
         </java>
         <ok to="end" />
         <error to="fail" />
