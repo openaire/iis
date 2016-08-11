@@ -1,2 +1,2 @@
-{"key":"export.citationText.total", "value":"3"}
-{"key":"export.citationText.docsWithAtLeastOneCitation", "value":"2"}
+{"key":"export.citationText.total", "type":"COUNTER", "value":"3"}
+{"key":"export.citationText.docsWithAtLeastOneCitation", "type":"COUNTER", "value":"2"}
