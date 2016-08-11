@@ -70,7 +70,7 @@ public class AffMatchingService implements Serializable {
      * Matches the affiliations from <code>inputAffPath</code> with organizations from <code>inputOrgPath</code>.
      * Saves the result in <code>outputPath</code>.
      */
-    public void matchAffiliations(JavaSparkContext sc, String inputAffPath, String inputOrgPath, String outputPath) {
+    public void matchAffiliations(JavaSparkContext sc, String inputAffPath, String inputOrgPath, String outputPath, String outputReportPath) {
 
         checkArguments(sc, inputAffPath, inputOrgPath, outputPath);
         
@@ -92,7 +92,7 @@ public class AffMatchingService implements Serializable {
         JavaRDD<AffMatchResult> allMatchedAffOrgs = doMatch(sc, normalizedAffiliations, enrichedOrganizations);
         
         
-        affMatchResultWriter.write(allMatchedAffOrgs, outputPath);
+        affMatchResultWriter.write(sc, allMatchedAffOrgs, outputPath, outputReportPath);
         
     }
 

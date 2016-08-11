@@ -33,7 +33,11 @@
             <name>output</name>
             <description>output path for matched affiliations (eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization)</description>
         </property>
-        
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+                
         <property>
             <name>document_project_confidence_threshold</name>
             <value>0.5</value>
@@ -104,6 +108,7 @@
             <arg>-inputAvroProjOrgPath=${input_project_to_organization}</arg>
             
             <arg>-outputAvroPath=${output}</arg>
+            <arg>-outputAvroReportPath=${output_report_root_path}/aff-matching</arg>
             
             <arg>-inputDocProjConfidenceThreshold=${document_project_confidence_threshold}</arg>
             

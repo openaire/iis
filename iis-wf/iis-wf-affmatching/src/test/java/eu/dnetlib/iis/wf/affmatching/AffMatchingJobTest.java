@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import com.google.common.io.Files;
 
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
@@ -47,6 +48,8 @@ public class AffMatchingJobTest {
     
     private String outputDirPath;
     
+    private String outputReportPath;
+    
     
     @Before
     public void before() {
@@ -59,7 +62,7 @@ public class AffMatchingJobTest {
         inputDocProjDirPath = workingDir + "/affiliation_matching/input/doc_proj";
         inputProjOrgDirPath = workingDir + "/affiliation_matching/input/proj_org";
         outputDirPath = workingDir + "/affiliation_matching/output";
-        
+        outputReportPath = workingDir + "/affiliation_matching/report";
         
     }
     
@@ -87,6 +90,7 @@ public class AffMatchingJobTest {
         String jsonInputProjOrgPath = "src/test/resources/data/input/projOrg.json";
         
         String jsonOutputPath = "src/test/resources/data/expectedOutput/matchedOrganizations.json";
+        String jsonOutputReportPath = "src/test/resources/data/expectedOutput/report.json";
         
         
         AvroTestUtils.createLocalAvroDataStore(
@@ -106,7 +110,7 @@ public class AffMatchingJobTest {
         
         // execute & assert
         
-        executeJobAndAssert(jsonOutputPath);
+        executeJobAndAssert(jsonOutputPath, jsonOutputReportPath);
     }
     
     
@@ -115,7 +119,7 @@ public class AffMatchingJobTest {
     //------------------------ PRIVATE --------------------------
     
     
-    private void executeJobAndAssert(String jsonOutputPath) throws IOException {
+    private void executeJobAndAssert(String jsonOutputPath, String jsonOutputReportPath) throws IOException {
 
         SparkJob sparkJob = SparkJobBuilder
                                            .create()
@@ -130,6 +134,7 @@ public class AffMatchingJobTest {
                                            .addArg("-inputDocProjConfidenceThreshold", String.valueOf(inputDocProjConfidenceThreshold))
                                            .addArg("-inputAvroProjOrgPath", inputProjOrgDirPath)
                                            .addArg("-outputAvroPath", outputDirPath)
+                                           .addArg("-outputAvroReportPath", outputReportPath)
                                            .build();
         
         
@@ -141,6 +146,7 @@ public class AffMatchingJobTest {
         
         // assert
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputPath, MatchedOrganization.class);
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportPath, jsonOutputReportPath, ReportEntry.class);
 
     }
 
