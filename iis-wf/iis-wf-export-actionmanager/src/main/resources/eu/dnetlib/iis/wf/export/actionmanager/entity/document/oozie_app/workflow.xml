@@ -1,0 +1,90 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="export_actionmanager_entity_document">
+    
+    <parameters>
+        <property>
+            <name>input</name>
+            <description>Input containing eu.dnetlib.iis.export.auxiliary.schemas.Identifier avro records listing document identifiers</description>
+        </property>
+        <property>
+            <name>mdstore_service_location</name>
+            <description>MDStore service holding XML metadata records to be exported as actions</description>
+        </property>
+        <property>
+            <name>mdstore_id</name>
+            <description>MDStore holding publications to be exported</description>
+        </property>
+        <property>
+            <name>action_set_id_entity_document</name>
+            <description>Identifier of action set holding document entities.
+            It also defines ${output_root} subdirectory name where all document related actions are exported.</description>
+        </property>
+        <property>
+            <name>output_root</name>
+            <description>root directory for storing ${action_set_id_entity_document} subdirectory with exported documents</description>
+        </property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
+            <name>output_report_relative_path</name>
+            <value>export_document_entities</value>
+            <description>directory for storing report (relative to output_report_root_path)</description>
+        </property>
+    </parameters>
+    
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+    <start to="exporter-document-entities" />
+
+    <action name="exporter-document-entities">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.wf.export.actionmanager.entity.DocumentExporterProcess</arg>
+            <arg>-Iinput=${input}</arg>
+            <arg>-Pmdstore.facade.factory.classname=eu.dnetlib.iis.wf.export.actionmanager.entity.facade.WebServiceMDStoreFacadeFactory</arg>
+            <arg>-Pexport.entity.mdstore.service.location=${mdstore_service_location}</arg>
+            <arg>-Pexport.entity.mdstore.id=${mdstore_id}</arg>
+            <arg>-Pexport.action.setid=${action_set_id_entity_document}</arg>
+            <arg>-Pexport.seq.file.output.dir.root=${output_root}</arg>
+            <arg>-Pexport.seq.file.output.dir.name=${action_set_id_entity_document}</arg>
+            <capture-output />
+        </java>
+        <ok to="report" />
+        <error to="fail" />
+    </action>
+    
+    <action name="report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
+            <arg>-Preport.export.entity.document.total=${wf:actionData('exporter-document-entities')['TOTAL_ENTITIES_COUNTER']}</arg>
+            <arg>-Preport.export.entity.document.missing=${wf:actionData('exporter-document-entities')['MISSING_ENTITIES_COUNTER']}</arg>
+            <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+    
+    <end name="end" />
+    
+</workflow-app>
