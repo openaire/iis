@@ -61,7 +61,11 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/datasets</arg>
-            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/output/dataset.expectations</arg>
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/output/dataset.expectations,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/output/person.expectations,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/output/person_isAuthorOf_document.expectations,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/output/document_hasAuthor_person.expectations
+            </arg>
         </java>
         <ok to="end" />
         <error to="fail" />
