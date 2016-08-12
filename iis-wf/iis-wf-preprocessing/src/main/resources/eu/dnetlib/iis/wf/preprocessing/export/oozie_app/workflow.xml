@@ -191,21 +191,33 @@
 		<error to="fail" />
 	</action>
 
-	<action name="exporter-document-entities">
-		<java>
-			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.wf.export.actionmanager.entity.DocumentExporterProcess</arg>
-			<arg>-Iinput=${workingDir}/identifier/documents</arg>
-            <arg>-Pmdstore.facade.factory.classname=eu.dnetlib.iis.wf.export.actionmanager.entity.facade.WebServiceMDStoreFacadeFactory</arg>
-			<arg>-Pexport.entity.mdstore.service.location=${mdstore_service_location}</arg>
-			<arg>-Pexport.entity.mdstore.id=${wos_mdstore_id}</arg>
-			<arg>-Pexport.action.setid=${action_set_id_entity_wos}</arg>
-			<arg>-Pexport.seq.file.output.dir.root=${workingDir}/output/entities_document</arg>
-			<arg>-Pexport.seq.file.output.dir.name=${action_set_id_entity_wos}</arg>
-		</java>
-		<ok to="export_entities_joining" />
-		<error to="fail" />
-	</action>
+    <action name="exporter-document-entities">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/export_actionmanager_entity_document</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>input</name>
+                    <value>${workingDir}/identifier/documents</value>
+                </property>
+                <property>
+                    <name>mdstore_id</name>
+                    <value>${wos_mdstore_id}</value>
+                </property>
+                <property>
+                    <name>action_set_id_entity_document</name>
+                    <value>${action_set_id_entity_wos}</value>
+                </property>
+                <property>
+                    <name>output_root</name>
+                    <value>${workingDir}/output/entities_document</value>
+                </property>
+                <!-- all the other required properties are automatically propagated -->
+            </configuration>
+        </sub-workflow>
+        <ok to="export_entities_joining" />
+        <error to="fail" />
+    </action>
 	<!-- end of publication entities export section -->
 
 	<join name="export_entities_joining" to="distcp_output" />
