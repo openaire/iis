@@ -55,7 +55,9 @@ $targetValue.entity.collectedfromList[0].key=10|openaire____::fb98a192f6a055ba49
 $targetValue.entity.collectedfromList[0].value=Web Crawl
 $targetValue.entity.oaiprovenance.originDescription.harvestDate=2016-01-26T08:35:33.562Z
 $targetValue.entity.oaiprovenance.originDescription.altered=true
-$targetValue.entity.oaiprovenance.originDescription.baseURL=file:///var/lib/dnet/data/wos/metadata.tsv
+
+#temporarily disabled due to #2269 issue
+#$targetValue.entity.oaiprovenance.originDescription.baseURL=file:///var/lib/dnet/data/wos/metadata.tsv
 
 $targetValue.dataInfo.inferred=false
 $targetValue.dataInfo.deletedbyinference=false
