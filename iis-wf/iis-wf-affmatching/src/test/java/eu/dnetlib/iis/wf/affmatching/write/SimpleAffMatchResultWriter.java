@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.affmatching.write;
 
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
 
 import com.google.gson.Gson;
 
@@ -22,7 +23,7 @@ public class SimpleAffMatchResultWriter implements AffMatchResultWriter {
      * as json records {@link SimpleAffMatchResult}
      */
     @Override
-    public void write(JavaRDD<AffMatchResult> matchedAffOrgs, String outputPath) {
+    public void write(JavaSparkContext sc, JavaRDD<AffMatchResult> matchedAffOrgs, String outputPath, String outputReportPath) {
         
         
         JavaRDD<String> simpleMatchedAffOrgs = matchedAffOrgs

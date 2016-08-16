@@ -87,6 +87,9 @@ public class AffMatchingAffOrgQualityTest {
     
     private String outputDirPath;
     
+    private String outputReportPath;
+    
+    
     
     @BeforeClass
     public static void classSetup() {
@@ -112,6 +115,7 @@ public class AffMatchingAffOrgQualityTest {
         inputInferredDocProjDirPath = workingDir + "/affiliation_matching/input/doc_proj_inferred";
         inputProjOrgDirPath = workingDir + "/affiliation_matching/input/proj_org";
         outputDirPath = workingDir + "/affiliation_matching/output";
+        outputReportPath = workingDir + "/affiliation_matching/report";
         
         affMatchingService = createAffMatchingService();
     }
@@ -148,7 +152,7 @@ public class AffMatchingAffOrgQualityTest {
         
         // execute
         
-        affMatchingService.matchAffiliations(sparkContext, inputAffDirPath, inputOrgDirPath, outputDirPath);
+        affMatchingService.matchAffiliations(sparkContext, inputAffDirPath, inputOrgDirPath, outputDirPath, outputReportPath);
         
         
         // log
