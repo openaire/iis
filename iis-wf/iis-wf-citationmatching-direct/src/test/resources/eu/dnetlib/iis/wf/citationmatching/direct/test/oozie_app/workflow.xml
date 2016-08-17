@@ -118,8 +118,21 @@
                 eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/citations.json}</arg>
             <arg>-Icitation=${workingDir}/output/citation</arg>
             
+        </java>
+        <ok to="report_consumer" />
+        <error to="fail" />
+    </action>
+    
+    <action name="report_consumer">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.test.ReportTestingConsumer</arg>
+            
             <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/report.json}</arg>
             <arg>-Ireport=${workingDir}/report/citationmatching_direct</arg>
+            
+            <arg>-C{execTimeReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/exec_time_report.json}</arg>
+            <arg>-IexecTimeReport=${workingDir}/report/times</arg>
         </java>
         <ok to="end" />
         <error to="fail" />

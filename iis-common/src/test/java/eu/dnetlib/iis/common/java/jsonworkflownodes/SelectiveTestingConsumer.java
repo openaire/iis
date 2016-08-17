@@ -26,6 +26,7 @@ import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.java.io.JsonUtils;
 import eu.dnetlib.iis.common.java.porttype.AnyPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
+import eu.dnetlib.iis.common.report.test.ValueSpecMatcher;
 
 /**
  * Avro datastores selective fields testing consumer. 
@@ -43,13 +44,13 @@ public class SelectiveTestingConsumer implements Process {
 
     private static final String PORT_INPUT = "datastore";
 
-    private static final String NULL_VALUE_INDICATOR = "$NULL$";
-
     private static final Map<String, PortType> inputPorts = new HashMap<String, PortType>();
     
     {
         inputPorts.put(PORT_INPUT, new AnyPortType());
     }
+    
+    private ValueSpecMatcher valueMatcher = new ValueSpecMatcher();
     
     //------------------------ LOGIC ---------------------------------
     
@@ -108,7 +109,7 @@ public class SelectiveTestingConsumer implements Process {
     /**
      * Reads expected values from given location.
      */
-    private static Properties readExpectedValues(String location) throws IOException {
+    private Properties readExpectedValues(String location) throws IOException {
         Properties properties = new OrderedProperties();
         properties.load(TestingConsumer.class.getResourceAsStream(location.trim()));
         return properties;
@@ -120,13 +121,14 @@ public class SelectiveTestingConsumer implements Process {
      * @param record avro record to be validated
      * @param recordFieldExpectations set of field expectations defined as properties where key is field location and value is expected value
      */
-    private static void validateRecord(SpecificRecord record, Properties recordFieldExpectations) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    private void validateRecord(SpecificRecord record, Properties recordFieldExpectations) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         for (Entry<Object, Object> fieldExpectation : recordFieldExpectations.entrySet()) {
             
             Object currentValue = PropertyUtils.getNestedProperty(record, (String)fieldExpectation.getKey());
             
-            if ((currentValue != null && !fieldExpectation.getValue().equals(currentValue.toString())) 
-                    || (currentValue == null && !NULL_VALUE_INDICATOR.equals(fieldExpectation.getValue()))) {
+            String expectedValue = fieldExpectation.getValue().toString();
+            
+            if (!valueMatcher.matches((String)currentValue, expectedValue)) {
                 throw new RuntimeException(
                         "invalid field value for path: " + fieldExpectation.getKey() + ", expected: '" + fieldExpectation.getValue() + "', "
                                 + "got: '" + currentValue + "' Full object content: " + JsonUtils.toPrettyJSON(record.toString()));

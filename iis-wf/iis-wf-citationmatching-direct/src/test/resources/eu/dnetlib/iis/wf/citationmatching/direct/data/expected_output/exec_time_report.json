@@ -1,0 +1,1 @@
+{"key": "export.citationMatching.direct.duration", "type":"DURATION", "value": "$(LONG_RANGE:[500, 180000])"}
