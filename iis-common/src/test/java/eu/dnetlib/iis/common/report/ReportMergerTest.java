@@ -62,10 +62,14 @@ public class ReportMergerTest {
         List<ReportEntry> partialReport1 = Lists.newArrayList(
                 new ReportEntry("param1.paramA.I", ReportEntryType.COUNTER, "3"), 
                 new ReportEntry("param1.paramA.III", ReportEntryType.COUNTER, "6"), 
-                new ReportEntry("param1.paramB", ReportEntryType.COUNTER, "4"));
+                new ReportEntry("param1.paramB", ReportEntryType.COUNTER, "4"),
+                new ReportEntry("param1.paramX", ReportEntryType.COUNTER, "33"));
         List<ReportEntry> partialReport2 = Lists.newArrayList(
                 new ReportEntry("param2", ReportEntryType.COUNTER, "12"), 
-                new ReportEntry("param1.paramA.II", ReportEntryType.COUNTER, "2"));
+                new ReportEntry("param1.paramA.II", ReportEntryType.COUNTER, "2"),
+                new ReportEntry("param1.paramC.II", ReportEntryType.COUNTER, "5"),
+                new ReportEntry("param1.paramA.duration", ReportEntryType.DURATION, "1000"),
+                new ReportEntry("param1.paramX.Z", ReportEntryType.COUNTER, "1333"));
         
         AvroTestUtils.createLocalAvroDataStore(partialReport1, inputPartialReportsBasePath + "/report1");
         AvroTestUtils.createLocalAvroDataStore(partialReport2, inputPartialReportsBasePath + "/report2");

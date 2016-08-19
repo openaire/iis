@@ -15,6 +15,8 @@ import org.apache.oozie.client.OozieClient;
 import org.apache.oozie.client.OozieClientException;
 import org.apache.oozie.client.WorkflowAction;
 import org.apache.oozie.client.WorkflowJob;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -40,6 +42,8 @@ import eu.dnetlib.iis.common.schemas.ReportEntry;
  */
 public class OozieTimeReportGenerator implements Process {
 
+    private static Logger log = LoggerFactory.getLogger(OozieTimeReportGenerator.class);
+    
     private static final String REPORT_PORT_OUT_NAME = "report";
     
     private static final String WORKFLOW_JOB_ID_PARAM = "jobId";
@@ -83,7 +87,9 @@ public class OozieTimeReportGenerator implements Process {
                 totalDuration += fetchActionDuration(actions, actionName);
             }
             
-            reportEntries.add(ReportEntryFactory.createDurationReportEntry(reportKeyToActionNamesEntry.getKey(), totalDuration));
+            if (totalDuration > 0) {
+                reportEntries.add(ReportEntryFactory.createDurationReportEntry(reportKeyToActionNamesEntry.getKey(), totalDuration));
+            }
         }
         
         
@@ -121,7 +127,9 @@ public class OozieTimeReportGenerator implements Process {
             
         }
         
-        throw new IllegalArgumentException("no action with the name specified: " + actionName);
+        log.warn("no action with the name has been specified or executed: " + actionName);
+        
+        return 0;
     }
     
     private Map<String, List<String>> mapReportKeysToActionNames(Map<String, String> parameters) {

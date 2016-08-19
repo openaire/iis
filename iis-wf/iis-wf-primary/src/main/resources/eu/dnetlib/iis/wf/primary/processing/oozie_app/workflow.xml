@@ -1254,9 +1254,35 @@
 				</property>
 			</configuration>
 		</sub-workflow>
-		<ok to="end" />
+		<ok to="report-execution-times" />
 		<error to="fail" />
 	</action>
+	
+	<action name="report-execution-times">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.OozieTimeReportGenerator</arg>
+            <arg>-PjobId=${wf:id()}</arg>
+            <arg>-PoozieServiceLoc=${oozieServiceLoc}</arg>
+            <arg>-Preport.export.affMatching.duration=affiliation-matching</arg>
+            <arg>-Preport.export.documentSimilarity.duration=transformers_documentssimilarity,documentssimilarity_chain</arg>
+            <arg>-Preport.export.matchedCitations.direct.duration=citationmatching_direct</arg>
+            <arg>-Preport.export.matchedCitations.fuzzy.duration=citationmatching_fuzzy</arg>
+            <arg>-Preport.export.matchedCitations.all.duration=citationmatching_fuzzy,citationmatching_direct,transformers_citations_from_referencemetadata,citations_union,citations_collapser,transformers_export_citations</arg>
+            <arg>-Preport.export.documentClassification.duration=documentsclassification</arg>
+            <arg>-Preport.export.referenceExtraction.researchInitiative.duration=referenceextraction_researchinitiative,referenceextraction_researchinitiative_wos,transformers_union_researchinitiatives,transformers_export_researchinitiatives</arg>
+            <arg>-Preport.export.referenceExtraction.softwareUrl.duration=referenceextraction_software_url,transformers_export_software_url</arg>
+            <arg>-Preport.export.referenceExtraction.pdb.duration=referenceextraction_pdb,transformers_export_pdb</arg>
+            <arg>-Preport.export.referenceExtraction.dataset.duration=referenceextraction_dataset</arg>
+            <arg>-Preport.export.referenceExtraction.project.duration=transformers_project_filter,referenceextraction_project</arg>
+            <arg>-Preport.export.referenceExtraction.projectConcept.duration=transformers_project_toconcept,transformers_concept_to_researchinitiatives</arg>
+            
+            <arg>-Oreport=${output_report_root_path}/primary-processing-execution-times</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+	
 
     <kill name="fail">
         <message>Unfortunately, the process failed -- error message:

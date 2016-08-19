@@ -662,9 +662,27 @@
 				</property>
 			</configuration>
 		</sub-workflow>
-		<ok to="build-report" />
+		<ok to="report-execution-times" />
 		<error to="fail" />
 	</action>
+
+    <action name="report-execution-times">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.OozieTimeReportGenerator</arg>
+            <arg>-PjobId=${wf:id()}</arg>
+            <arg>-PoozieServiceLoc=${oozieServiceLoc}</arg>
+            <arg>-Preport.import.duration=import</arg>
+            <arg>-Preport.export.referenceExtraction.dataset.duration=referenceextraction_dataset</arg>
+            <arg>-Preport.export.referenceExtraction.project.duration=transformers_project_filter,referenceextraction_project</arg>
+            <arg>-Preport.export.referenceExtraction.projectConcept.duration=transformers_project_toconcept,transformers_concept_to_researchinitiatives</arg>
+            <arg>-Preport.export.duration=export-to-actionmanager,export-to-json</arg>
+            
+            <arg>-Oreport=${workingDir}/report/preprocessing-main-execution-times</arg>
+        </java>
+        <ok to="build-report" />
+        <error to="fail" />
+    </action>
 
     <action name="build-report">
         <sub-workflow>

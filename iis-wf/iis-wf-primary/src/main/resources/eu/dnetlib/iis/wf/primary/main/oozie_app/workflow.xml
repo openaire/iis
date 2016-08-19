@@ -486,11 +486,11 @@
                 </property>
             </configuration>
         </sub-workflow>
-        <ok to="primary_processing" />
+        <ok to="primary-processing" />
         <error to="fail" />
     </action>
 
-    <action name="primary_processing">
+    <action name="primary-processing">
         <sub-workflow>
             <app-path>${wf:appPath()}/primary_processing</app-path>
             <propagate-configuration />
@@ -813,6 +813,22 @@
                 </property>
             </configuration>
         </sub-workflow>
+        <ok to="report-execution-times" />
+        <error to="fail" />
+    </action>
+
+    <action name="report-execution-times">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.OozieTimeReportGenerator</arg>
+            <arg>-PjobId=${wf:id()}</arg>
+            <arg>-PoozieServiceLoc=${oozieServiceLoc}</arg>
+            <arg>-Preport.import.duration=import</arg>
+            <arg>-Preport.processing.duration=primary-processing</arg>
+            <arg>-Preport.export.duration=export-to-actionmanager,export-to-json</arg>
+            
+            <arg>-Oreport=${workingDir}/report/primary-main-execution-times</arg>
+        </java>
         <ok to="build-report" />
         <error to="fail" />
     </action>

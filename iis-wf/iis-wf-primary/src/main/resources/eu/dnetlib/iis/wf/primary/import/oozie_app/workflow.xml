@@ -892,7 +892,7 @@
 	<decision name="finalize">
 		<switch>
 			<case to="remove_sideproducts">${remove_sideproducts eq "true"}</case>
-			<default to="end" />
+			<default to="report-execution-times" />
 		</switch>
 	</decision>
 
@@ -900,9 +900,22 @@
 		<fs>
 			<delete path="${nameNode}${workingDir}" />
 		</fs>
-		<ok to="end" />
+		<ok to="report-execution-times" />
 		<error to="fail" />
 	</action>
+	
+    <action name="report-execution-times">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.OozieTimeReportGenerator</arg>
+            <arg>-PjobId=${wf:id()}</arg>
+            <arg>-PoozieServiceLoc=${oozieServiceLoc}</arg>
+            <arg>-Preport.import.metadataExtraction.duration=metadata_extractor_cached</arg>
+            <arg>-Oreport=${output_report_root_path}/primary-import-execution-times</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
 
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:

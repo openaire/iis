@@ -3,9 +3,16 @@
     "paramA": {
       "I": 3,
       "II": 2,
-      "III": 6
+      "III": 6,
+      "duration": {"milliseconds":1000,"humanReadable":"0h 00m 01s"}
     },
-    "paramB": 4
+    "paramB": 4,
+    "paramC": {
+       "II": 5
+    },
+    "paramX": {
+      "Z":1333
+     }
   },
   "param2": 12
 }

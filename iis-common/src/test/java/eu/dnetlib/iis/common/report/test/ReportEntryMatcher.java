@@ -34,8 +34,8 @@ public class ReportEntryMatcher {
         Preconditions.checkNotNull(expectedEntrySpecs);
         
         assertEquals(String.format("The number of the expected report entries (%s) is not equal to the number "+
-                "of the actual entries (%s).\n\n%s", expectedEntrySpecs.size(), actualEntries.size(), "actual: " + actualEntries + ", expected:" + expectedEntrySpecs),
-                actualEntries.size(), expectedEntrySpecs.size());
+                "of the actual entries (%s).\n\n%s", expectedEntrySpecs.size(), actualEntries.size(), "expected:" + expectedEntrySpecs + "actual: " + actualEntries),
+                expectedEntrySpecs.size(), actualEntries.size());
         
         for (ReportEntry expectedEntry : expectedEntrySpecs) {
             

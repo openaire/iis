@@ -134,7 +134,7 @@
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
-            <arg>-Preport.export.referenceExtraction.dataset=${hadoop:counters('main_sqlite')[RECORDS][MAP_OUT]}</arg>
+            <arg>-Preport.export.referenceExtraction.dataset.docDatasetReferences=${hadoop:counters('main_sqlite')[RECORDS][MAP_OUT]}</arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>
         <ok to="end" />

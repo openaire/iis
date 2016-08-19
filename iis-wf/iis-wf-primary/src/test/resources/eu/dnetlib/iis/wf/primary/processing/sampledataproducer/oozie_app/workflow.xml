@@ -396,9 +396,21 @@
 			</arg>
 			<arg>-Imatched_organization=${workingDir}/exported/matched_affiliation</arg>
 		</java>
-		<ok to="end" />
+		<ok to="report_consumer" />
 		<error to="fail" />
 	</action>
+
+    <action name="report_consumer">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.test.ReportTestingConsumer</arg>
+            
+            <arg>-C{execTimeReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/exec_time_report.json}</arg>
+            <arg>-IexecTimeReport=${workingDir}/report/primary-processing-execution-times</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
 
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:

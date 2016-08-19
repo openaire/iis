@@ -124,11 +124,11 @@ public class SelectiveTestingConsumer implements Process {
     private void validateRecord(SpecificRecord record, Properties recordFieldExpectations) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         for (Entry<Object, Object> fieldExpectation : recordFieldExpectations.entrySet()) {
             
-            Object currentValue = PropertyUtils.getNestedProperty(record, (String)fieldExpectation.getKey());
+            String currentValue = PropertyUtils.getNestedProperty(record, (String)fieldExpectation.getKey()).toString();
             
             String expectedValue = fieldExpectation.getValue().toString();
             
-            if (!valueMatcher.matches((String)currentValue, expectedValue)) {
+            if (!valueMatcher.matches(currentValue, expectedValue)) {
                 throw new RuntimeException(
                         "invalid field value for path: " + fieldExpectation.getKey() + ", expected: '" + fieldExpectation.getValue() + "', "
                                 + "got: '" + currentValue + "' Full object content: " + JsonUtils.toPrettyJSON(record.toString()));

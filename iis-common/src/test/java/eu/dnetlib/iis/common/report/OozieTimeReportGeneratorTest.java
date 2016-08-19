@@ -99,33 +99,6 @@ public class OozieTimeReportGeneratorTest {
     //------------------------ TESTS --------------------------
     
     
-    
-    @Test(expected=IllegalArgumentException.class)
-    public void run_INCORRECT_ACTION() throws Exception {
-        
-        // given
-        
-        PortBindings portBindings = createPortBindings();
-        
-        Configuration conf = new Configuration(false);
-        
-        Map<String, String> parameters = ImmutableMap.of(
-                "oozieServiceLoc", oozieUrl,
-                "jobId", jobId,
-                "report.group.first", "action_1,INCORRECT_ACTION,action_3",
-                "report.group.second", "action_2");
-        
-        
-        when(oozieClientFactory.createOozieClient(oozieUrl)).thenReturn(oozieClient);
-        
-        
-        // execute
-        
-        oozieTimeReportGenerator.run(portBindings, conf, parameters);
-        
-           }
-    
-    
     @Test
     public void run() throws Exception {
         
@@ -138,8 +111,9 @@ public class OozieTimeReportGeneratorTest {
         Map<String, String> parameters = ImmutableMap.of(
                 "oozieServiceLoc", oozieUrl,
                 "jobId", jobId,
-                "report.group.first", "action_1,action_3",
-                "report.group.second", "action_2");
+                "report.group.first", "action_1,action_3,nonexisting_action_1",
+                "report.group.second", "action_2",
+                "report.group.nonexisting", "nonexisting_action_1, nonexisting_action_2");
         
         
         when(oozieClientFactory.createOozieClient(oozieUrl)).thenReturn(oozieClient);
