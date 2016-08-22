@@ -744,6 +744,11 @@
                     <name>referenceextraction_pdb_url_root</name>
                     <value>${export_referenceextraction_pdb_url_root}</value>
                 </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
+                
             </configuration>
         </sub-workflow>
         <ok to="decision-export-to-json" />
