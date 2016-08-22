@@ -41,7 +41,7 @@
     
     <action name="union">
         <sub-workflow>
-            <app-path>${wf:appPath()}/union_with_report</app-path>
+            <app-path>${wf:appPath()}/union</app-path>
             <propagate-configuration />
             <configuration>
                 <property>
