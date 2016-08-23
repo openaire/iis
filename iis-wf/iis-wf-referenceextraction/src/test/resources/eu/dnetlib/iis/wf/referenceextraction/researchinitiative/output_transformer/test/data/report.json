@@ -1,2 +1,2 @@
-{"key": "export.referenceExtraction.concept.references", "type": "COUNTER", "value": "7"}
-{"key": "export.referenceExtraction.concept.docs", "type":"COUNTER", "value":"3"}
+{"key": "processing.referenceExtraction.concept.references", "type": "COUNTER", "value": "7"}
+{"key": "processing.referenceExtraction.concept.docs", "type":"COUNTER", "value":"3"}
