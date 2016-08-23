@@ -102,7 +102,7 @@
             <arg>eu.dnetlib.iis.common.report.OozieTimeReportGenerator</arg>
             <arg>-PjobId=${wf:id()}</arg>
             <arg>-PoozieServiceLoc=${oozieServiceLoc}</arg>
-            <arg>-Preport.export.citationMatching.direct.duration=ingest_citations</arg>
+            <arg>-Preport.processing.citationMatching.direct.duration=ingest_citations</arg>
             <arg>-Oreport=${workingDir}/report/times</arg>
         </java>
         <ok to="consumer" />
