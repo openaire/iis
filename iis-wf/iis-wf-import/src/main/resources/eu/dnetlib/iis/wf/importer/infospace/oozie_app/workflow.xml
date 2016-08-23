@@ -325,13 +325,13 @@
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
-            <arg>-Preport.import.infoSpace.documentMetadata=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_document_meta,'/part')]}</arg>
-            <arg>-Preport.import.infoSpace.documentProject=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_document_project,'/part')]}</arg>
-            <arg>-Preport.import.infoSpace.project=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_project,'/part')]}</arg>
-            <arg>-Preport.import.infoSpace.person=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_person,'/part')]}</arg>
-            <arg>-Preport.import.infoSpace.dedupMapping=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_dedup_mapping,'/part')]}</arg>
-            <arg>-Preport.import.infoSpace.organization=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_organization,'/part')]}</arg>
-            <arg>-Preport.import.infoSpace.projectOrganization=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_project_organization, '/part')]}</arg>
+            <arg>-Preport.import.infoSpace.docMetadatas=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_document_meta,'/part')]}</arg>
+            <arg>-Preport.import.infoSpace.docProjectIds=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_document_project,'/part')]}</arg>
+            <arg>-Preport.import.infoSpace.projects=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_project,'/part')]}</arg>
+            <arg>-Preport.import.infoSpace.persons=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_person,'/part')]}</arg>
+            <arg>-Preport.import.infoSpace.dedupMapIds=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_dedup_mapping,'/part')]}</arg>
+            <arg>-Preport.import.infoSpace.organizations=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_organization,'/part')]}</arg>
+            <arg>-Preport.import.infoSpace.projectOrganizationIds=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_project_organization, '/part')]}</arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>
         <ok to="end" />

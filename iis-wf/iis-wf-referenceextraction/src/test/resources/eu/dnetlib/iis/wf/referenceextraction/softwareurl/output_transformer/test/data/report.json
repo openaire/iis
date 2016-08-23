@@ -1,2 +1,2 @@
-{"key": "export.referenceExtraction.docSoftwareUrlReferences", "type": "COUNTER", "value": "7"}
-{"key": "export.referenceExtraction.docsWithAtLeastOneSoftwareUrl", "type":"COUNTER", "value":"3"}
+{"key": "export.referenceExtraction.softwareUrl.references", "type": "COUNTER", "value": "7"}
+{"key": "export.referenceExtraction.softwareUrl.docs", "type":"COUNTER", "value":"3"}

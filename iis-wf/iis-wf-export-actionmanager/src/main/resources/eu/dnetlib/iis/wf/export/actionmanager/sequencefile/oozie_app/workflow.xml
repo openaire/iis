@@ -575,7 +575,7 @@
                     <value>${input_document_to_pdb}</value>
                 </property>
                 <property>
-                    <name>export.referenceextraction.pdb.url.root</name>
+                    <name>processing.referenceextraction.pdb.url.root</name>
                     <value>${referenceextraction_pdb_url_root}</value>
                 </property>
                 <property>
