@@ -1,10 +1,10 @@
-{"key":"import.infoSpace.documentMetadata", "type":"COUNTER", "value": "3"}
-{"key":"import.infoSpace.documentProject", "type":"COUNTER", "value": "1"}
-{"key":"import.infoSpace.project", "type":"COUNTER", "value": "1"}
-{"key":"import.infoSpace.person", "type":"COUNTER", "value": "1"}
-{"key":"import.infoSpace.dedupMapping", "type":"COUNTER", "value": "1"}
-{"key":"import.infoSpace.organization", "type":"COUNTER", "value": "1"}
-{"key":"import.infoSpace.projectOrganization", "type":"COUNTER", "value": "1"}
+{"key":"import.infoSpace.docMetadatas", "type":"COUNTER", "value": "3"}
+{"key":"import.infoSpace.docProjectIds", "type":"COUNTER", "value": "1"}
+{"key":"import.infoSpace.projects", "type":"COUNTER", "value": "1"}
+{"key":"import.infoSpace.persons", "type":"COUNTER", "value": "1"}
+{"key":"import.infoSpace.dedupMapIds", "type":"COUNTER", "value": "1"}
+{"key":"import.infoSpace.organizations", "type":"COUNTER", "value": "1"}
+{"key":"import.infoSpace.projectOrganizationIds", "type":"COUNTER", "value": "1"}
 
 
 

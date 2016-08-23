@@ -19,9 +19,9 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
  */
 public class CitationMatchingDirectCounterReporter {
 
-    private static final String MATCHED_CITATIONS_COUNTER = "export.matchedCitations.direct.total";
+    private static final String MATCHED_CITATIONS_COUNTER = "processing.citationMatching.direct.citDocReferences";
     
-    private static final String DOCS_WITH_MATCHED_CITATIONS_COUNTER = "export.matchedCitations.direct.docsWithAtLeastOneMatch";
+    private static final String DOCS_WITH_MATCHED_CITATIONS_COUNTER = "processing.citationMatching.direct.docs";
     
     
     private SparkAvroSaver avroSaver = new SparkAvroSaver();

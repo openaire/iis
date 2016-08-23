@@ -1,2 +1,2 @@
-{"key": "export.affMatching.docOrgReferences", "type":"COUNTER", "value": "7"}
-{"key": "export.affMatching.docsWithAtLeastOneOrg", "type":"COUNTER", "value": "5"}
+{"key": "processing.affiliationMatching.docOrgReferences", "type":"COUNTER", "value": "7"}
+{"key": "processing.affiliationMatching.docs", "type":"COUNTER", "value": "5"}

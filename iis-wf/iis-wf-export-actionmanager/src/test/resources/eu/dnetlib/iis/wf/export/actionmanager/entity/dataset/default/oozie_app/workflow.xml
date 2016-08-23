@@ -61,8 +61,8 @@
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
-            <arg>-Preport.export.entity.dataset.total=${wf:actionData('exporter-dataset-entities')['TOTAL_ENTITIES_COUNTER']}</arg>
-            <arg>-Preport.export.entity.dataset.missing=${wf:actionData('exporter-dataset-entities')['MISSING_ENTITIES_COUNTER']}</arg>
+            <arg>-Preport.export.entity.dataset.datasets.total=${wf:actionData('exporter-dataset-entities')['TOTAL_ENTITIES_COUNTER']}</arg>
+            <arg>-Preport.export.entity.dataset.datasets.missing=${wf:actionData('exporter-dataset-entities')['MISSING_ENTITIES_COUNTER']}</arg>
             <arg>-Oreport=${workingDir}/report</arg>
         </java>
         <ok to="dataset-consumer" />

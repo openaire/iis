@@ -206,8 +206,8 @@
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
-            <arg>-Preport.export.citationText.total=${hadoop:counters('collapser')['eu.dnetlib.iis.wf.collapsers.basic.GenericCitationCollapser$CitationTextCounters']['TOTAL']}</arg>
-            <arg>-Preport.export.citationText.docsWithAtLeastOneCitation=${hadoop:counters('collapser')['eu.dnetlib.iis.wf.collapsers.basic.GenericCitationCollapser$CitationTextCounters']['DOCS_WITH_AT_LEAST_ONE_CITATION']}
+            <arg>-Preport.processing.citationTextExtraction.citations=${hadoop:counters('collapser')['eu.dnetlib.iis.wf.collapsers.basic.GenericCitationCollapser$CitationTextCounters']['TOTAL']}</arg>
+            <arg>-Preport.processing.citationTextExtraction.docs=${hadoop:counters('collapser')['eu.dnetlib.iis.wf.collapsers.basic.GenericCitationCollapser$CitationTextCounters']['DOCS_WITH_AT_LEAST_ONE_CITATION']}
             </arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>

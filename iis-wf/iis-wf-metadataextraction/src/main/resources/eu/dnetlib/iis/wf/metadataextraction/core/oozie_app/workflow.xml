@@ -240,8 +240,8 @@
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
-            <arg>-Preport.import.metadataExtraction.correct=${hadoop:counters('metadata_extractor')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_meta,'/part')]}</arg>
-            <arg>-Preport.import.metadataExtraction.fault=${hadoop:counters('metadata_extractor')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_fault,'/part')]}</arg>
+            <arg>-Preport.import.metadataExtraction.processing.docMetadatas=${hadoop:counters('metadata_extractor')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_meta,'/part')]}</arg>
+            <arg>-Preport.import.metadataExtraction.processing.faults=${hadoop:counters('metadata_extractor')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_fault,'/part')]}</arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>
         <ok to="end" />

@@ -1,2 +1,2 @@
-{"key":"import.datasetToMdStore", "type":"COUNTER", "value":"2"}
-{"key":"import.dataset", "type":"COUNTER", "value":"2"}
+{"key":"import.dataset.datasetMdStoreIds", "type":"COUNTER", "value":"2"}
+{"key":"import.dataset.datasets", "type":"COUNTER", "value":"2"}

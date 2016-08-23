@@ -72,8 +72,8 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.PigCountersReportGenerator</arg>
             <arg>-PpigCounters=${hadoop:counters('transformer')}</arg>
-            <arg>-Preport.export.referenceExtraction.docSoftwareUrlReferences={documentToSoftwareUrl.MAP_INPUT_RECORDS}</arg>
-            <arg>-Preport.export.referenceExtraction.docsWithAtLeastOneSoftwareUrl={RECORD_WRITTEN}</arg>
+            <arg>-Preport.processing.referenceExtraction.softwareUrl.references={documentToSoftwareUrl.MAP_INPUT_RECORDS}</arg>
+            <arg>-Preport.processing.referenceExtraction.softwareUrl.docs={RECORD_WRITTEN}</arg>
             <arg>-Oreport=${output_report_root_path}/doc-software-url</arg>
         </java>
         <ok to="end" />

@@ -1,2 +1,2 @@
-{"key": "export.matchedCitations.fuzzy.total", "type":"COUNTER", "value": "1"}
-{"key": "export.matchedCitations.fuzzy.docsWithAtLeastOneMatch", "type":"COUNTER", "value": "1"}
+{"key": "processing.citationMatching.fuzzy.citDocReferences", "type":"COUNTER", "value": "1"}
+{"key": "processing.citationMatching.fuzzy.docs", "type":"COUNTER", "value": "1"}
