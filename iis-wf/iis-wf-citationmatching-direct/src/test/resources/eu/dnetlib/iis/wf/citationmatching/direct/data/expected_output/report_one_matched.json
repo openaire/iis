@@ -1,2 +1,2 @@
-{"key": "export.matchedCitations.direct.total", "type":"COUNTER", "value": "1"}
-{"key": "export.matchedCitations.direct.docsWithAtLeastOneMatch", "type":"COUNTER", "value": "1"}
+{"key": "processing.citationMatching.direct.citDocReferences", "type":"COUNTER", "value": "1"}
+{"key": "processing.citationMatching.direct.docs", "type":"COUNTER", "value": "1"}

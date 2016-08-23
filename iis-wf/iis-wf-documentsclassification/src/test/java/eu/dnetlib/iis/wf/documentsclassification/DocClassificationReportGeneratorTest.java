@@ -28,7 +28,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import datafu.com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
+
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentClass;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentClasses;

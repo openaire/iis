@@ -78,11 +78,11 @@
                 </property>
                  <property>
                     <name>output_report_record_read_counter_name</name>
-                    <value>export.referenceExtraction.docConceptReferences</value>
+                    <value>processing.referenceExtraction.concept.references</value>
                 </property>
                 <property>
                     <name>output_report_record_written_counter_name</name>
-                    <value>export.referenceExtraction.docsWithAtLeastOneConcept</value>
+                    <value>processing.referenceExtraction.concept.docs</value>
                 </property>
             </configuration>
         </sub-workflow>

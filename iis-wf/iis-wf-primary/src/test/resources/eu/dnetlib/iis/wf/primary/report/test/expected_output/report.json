@@ -1,18 +1,18 @@
 {
     "import": {
         "infoSpace": {
-            "documentMetadata": 304,
-            "documentProject": 12,
-            "project": 20,
-            "person": 409,
-            "dedupMapping": 22,
-            "organization": 39,
-            "projectOrganization": 3
+            "docMetadatas": 304,
+            "docProjectIds": 12,
+            "projects": 20,
+            "persons": 409,
+            "dedupMapIds": 22,
+            "organizations": 39,
+            "projectOrganizationIds": 3
         }
     },
-    "export": {
+    "processing": {
         "documentClassification": {
-            "classifiedDocuments": 20,
+            "docs": 20,
             "classes": {
                 "arxiv": 10,
                 "wos": 0,
