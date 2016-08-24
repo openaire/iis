@@ -199,8 +199,8 @@
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
-            <arg>-Preport.import.ingestPmc.docMetadatas=${hadoop:counters('ingest')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_meta,'/part')]}</arg>
-            <arg>-Preport.import.ingestPmc.faults=${hadoop:counters('ingest')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_fault,'/part')]}</arg>
+            <arg>-Preport.import.ingestPmc.docMetadata=${hadoop:counters('ingest')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_meta,'/part')]}</arg>
+            <arg>-Preport.import.ingestPmc.fault=${hadoop:counters('ingest')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_fault,'/part')]}</arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>
         <ok to="end" />

@@ -96,8 +96,8 @@
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
-            <arg>-Preport.import.dataset.datasets=${wf:actionData('datacite-mdstore-importer')['DATASET_COUNTER']}</arg>
-            <arg>-Preport.import.dataset.datasetMdStoreIds=${wf:actionData('datacite-mdstore-importer')['DATASET_TO_MDSTORE_COUNTER']}</arg>
+            <arg>-Preport.import.dataset.dataset=${wf:actionData('datacite-mdstore-importer')['DATASET_COUNTER']}</arg>
+            <arg>-Preport.import.dataset.datasetMdStoreId=${wf:actionData('datacite-mdstore-importer')['DATASET_TO_MDSTORE_COUNTER']}</arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>
         <ok to="end" />
