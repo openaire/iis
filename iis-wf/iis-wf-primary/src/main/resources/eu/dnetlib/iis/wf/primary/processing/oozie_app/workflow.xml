@@ -256,7 +256,7 @@
                 </property>
                 <property>
                     <name>union_count_report_key</name>
-                    <value>processing.merging.documentTexts</value>
+                    <value>processing.merging.documentText</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -388,11 +388,11 @@
                 </property>
                 <property>
                     <name>output_report_record_read_counter_name</name>
-                    <value>processing.referenceExtraction.concept.references</value>
+                    <value>processing.referenceExtraction.concept.reference</value>
                 </property>
                 <property>
                     <name>output_report_record_written_counter_name</name>
-                    <value>processing.referenceExtraction.concept.docs</value>
+                    <value>processing.referenceExtraction.concept.doc</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -545,11 +545,11 @@
                 </property>
                 <property>
                     <name>output_report_record_read_counter_name</name>
-                    <value>processing.referenceExtraction.pdb.references</value>
+                    <value>processing.referenceExtraction.pdb.reference</value>
                 </property>
                 <property>
                     <name>output_report_record_written_counter_name</name>
-                    <value>processing.referenceExtraction.pdb.docs</value>
+                    <value>processing.referenceExtraction.pdb.doc</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -770,11 +770,11 @@
                 </property>
                 <property>
                     <name>output_report_record_read_counter_name</name>
-                    <value>processing.referenceExtraction.researchInitiative.references</value>
+                    <value>processing.referenceExtraction.researchInitiative.reference</value>
                 </property>
                 <property>
                     <name>output_report_record_written_counter_name</name>
-                    <value>processing.referenceExtraction.researchInitiative.docs</value>
+                    <value>processing.referenceExtraction.researchInitiative.doc</value>
                 </property>
             </configuration>
         </sub-workflow>

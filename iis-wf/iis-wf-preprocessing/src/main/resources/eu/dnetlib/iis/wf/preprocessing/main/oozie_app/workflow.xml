@@ -537,11 +537,11 @@
                 </property>
                 <property>
                     <name>output_report_record_read_counter_name</name>
-                    <value>processing.referenceExtraction.concept.references</value>
+                    <value>processing.referenceExtraction.concept.reference</value>
                 </property>
                 <property>
                     <name>output_report_record_written_counter_name</name>
-                    <value>processing.referenceExtraction.concept.docs</value>
+                    <value>processing.referenceExtraction.concept.doc</value>
                 </property>
 			</configuration>
 		</sub-workflow>

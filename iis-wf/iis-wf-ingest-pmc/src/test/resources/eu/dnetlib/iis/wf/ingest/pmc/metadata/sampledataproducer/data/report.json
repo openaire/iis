@@ -1,2 +1,2 @@
-{"key":"import.ingestPmc.docMetadatas", "type":"COUNTER", "value":"2"}
-{"key":"import.ingestPmc.faults", "type":"COUNTER", "value":"1"}
+{"key":"import.ingestPmc.docMetadata", "type":"COUNTER", "value":"2"}
+{"key":"import.ingestPmc.fault", "type":"COUNTER", "value":"1"}
