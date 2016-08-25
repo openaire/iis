@@ -29,7 +29,7 @@ import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.importer.schemas.DataSetReference;
-import eu.dnetlib.iis.importer.schemas.DocumentToMDStore;
+import eu.dnetlib.iis.importer.schemas.DatasetToMDStore;
 import eu.dnetlib.iis.wf.importer.DataFileRecordReceiverWithCounter;
 import eu.dnetlib.iis.wf.importer.facade.MDStoreFacade;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeUtils;
@@ -58,7 +58,7 @@ public class DataciteMDStoreImporter implements Process {
 
     {
         outputPorts.put(PORT_OUT_DATASET, new AvroPortType(DataSetReference.SCHEMA$));
-        outputPorts.put(PORT_OUT_DATASET_TO_MDSTORE, new AvroPortType(DocumentToMDStore.SCHEMA$));
+        outputPorts.put(PORT_OUT_DATASET_TO_MDSTORE, new AvroPortType(DatasetToMDStore.SCHEMA$));
     }
 
     // ------------------------ LOGIC --------------------------
@@ -85,7 +85,7 @@ public class DataciteMDStoreImporter implements Process {
         FileSystemPath datasetToMDStoreOutput = new FileSystemPath(fs, portBindings.getOutput().get(PORT_OUT_DATASET_TO_MDSTORE));
 
         try (DataFileWriter<DataSetReference> datasetRefWriter = DataStore.create(datasetOutput, DataSetReference.SCHEMA$);
-                DataFileWriter<DocumentToMDStore> datasetToMDStoreWriter = DataStore.create(datasetToMDStoreOutput, DocumentToMDStore.SCHEMA$)) {
+                DataFileWriter<DatasetToMDStore> datasetToMDStoreWriter = DataStore.create(datasetToMDStoreOutput, DatasetToMDStore.SCHEMA$)) {
 
             NamedCounters counters = new NamedCounters(new String[] { DATASET_COUNTER_NAME, DATASET_TO_MDSTORE_COUNTER_NAME });
 
@@ -105,7 +105,7 @@ public class DataciteMDStoreImporter implements Process {
                     for (String record : mdStoreFacade.deliverMDRecords(currentMdStoreId)) {
                         DataFileRecordReceiverWithCounter<DataSetReference> datasetReceiver = new DataFileRecordReceiverWithCounter<>(
                                 datasetRefWriter);
-                        DataFileRecordReceiverWithCounter<DocumentToMDStore> datasetToMDStoreReceiver = new DataFileRecordReceiverWithCounter<>(
+                        DataFileRecordReceiverWithCounter<DatasetToMDStore> datasetToMDStoreReceiver = new DataFileRecordReceiverWithCounter<>(
                                 datasetToMDStoreWriter);
 
                         DataciteDumpXmlHandler handler = new DataciteDumpXmlHandler(datasetReceiver,
