@@ -427,7 +427,7 @@
 				eu/dnetlib/iis/common/data/empty.json}
 			</arg>
 			<arg>-C{dataset_to_mdstore,
-				eu.dnetlib.iis.importer.schemas.DocumentToMDStore,
+				eu.dnetlib.iis.importer.schemas.DatasetToMDStore,
 				eu/dnetlib/iis/common/data/empty.json}
 			</arg>
 			<!-- notice: directory have to aligned with skipped action output -->
