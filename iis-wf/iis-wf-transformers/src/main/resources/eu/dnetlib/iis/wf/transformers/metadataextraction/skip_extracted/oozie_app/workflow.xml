@@ -110,7 +110,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.PigCountersReportGenerator</arg>
             <arg>-PpigCounters=${hadoop:counters('transformer')}</arg>
-            <arg>-Preport.import.metadataExtraction.fromCache.docMetadatas={documentMetaFiltered.REDUCE_OUTPUT_RECORDS}</arg>
+            <arg>-Preport.import.metadataExtraction.fromCache.docMetadata={documentMetaFiltered.REDUCE_OUTPUT_RECORDS}</arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>
         <ok to="end" />

@@ -168,7 +168,7 @@
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
-            <arg>-Preport.export.documentSimilarity=${hadoop:counters('converter')[RECORDS][MAP_OUT]}</arg>
+            <arg>-Preport.processing.documentSimilarity.docDocReference=${hadoop:counters('converter')[RECORDS][MAP_OUT]}</arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>
         <ok to="end" />

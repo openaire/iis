@@ -1,2 +1,2 @@
-{"key": "import.metadataExtraction.processing.docMetadatas", "type":"COUNTER", "value": "2"}
-{"key": "import.metadataExtraction.processing.faults", "type":"COUNTER", "value": "0"}
+{"key": "import.metadataExtraction.processed.docMetadata", "type":"COUNTER", "value": "2"}
+{"key": "import.metadataExtraction.processed.fault", "type":"COUNTER", "value": "0"}

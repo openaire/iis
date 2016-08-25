@@ -1,2 +1,2 @@
-{"key": "processing.affiliationMatching.docOrgReferences", "type":"COUNTER", "value": "7"}
-{"key": "processing.affiliationMatching.docs", "type":"COUNTER", "value": "5"}
+{"key": "processing.affiliationMatching.docOrgReference", "type":"COUNTER", "value": "7"}
+{"key": "processing.affiliationMatching.doc", "type":"COUNTER", "value": "5"}

@@ -1,19 +1,19 @@
 {
     "import": {
         "infoSpace": {
-            "docMetadatas": 304,
-            "docProjectIds": 12,
-            "projects": 20,
-            "persons": 409,
-            "dedupMapIds": 22,
-            "organizations": 39,
-            "projectOrganizationIds": 3
+            "docMetadata": 304,
+            "docProjectReference": 12,
+            "project": 20,
+            "person": 409,
+            "docDedupDocReference": 22,
+            "organization": 39,
+            "projectOrganizationReference": 3
         }
     },
     "processing": {
         "documentClassification": {
-            "docs": 20,
-            "classes": {
+            "doc": 20,
+            "docClassReference": {
                 "arxiv": 10,
                 "wos": 0,
                 "ddc": 0,

@@ -256,7 +256,7 @@
                 </property>
                 <property>
                     <name>union_count_report_key</name>
-                    <value>processing.merging.documentTexts</value>
+                    <value>processing.merging.documentText</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -388,11 +388,11 @@
                 </property>
                 <property>
                     <name>output_report_record_read_counter_name</name>
-                    <value>processing.referenceExtraction.concept.references</value>
+                    <value>processing.referenceExtraction.concept.reference</value>
                 </property>
                 <property>
                     <name>output_report_record_written_counter_name</name>
-                    <value>processing.referenceExtraction.concept.docs</value>
+                    <value>processing.referenceExtraction.concept.doc</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -545,11 +545,11 @@
                 </property>
                 <property>
                     <name>output_report_record_read_counter_name</name>
-                    <value>processing.referenceExtraction.pdb.references</value>
+                    <value>processing.referenceExtraction.pdb.reference</value>
                 </property>
                 <property>
                     <name>output_report_record_written_counter_name</name>
-                    <value>processing.referenceExtraction.pdb.docs</value>
+                    <value>processing.referenceExtraction.pdb.doc</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -770,11 +770,11 @@
                 </property>
                 <property>
                     <name>output_report_record_read_counter_name</name>
-                    <value>processing.referenceExtraction.researchInitiative.references</value>
+                    <value>processing.referenceExtraction.researchInitiative.reference</value>
                 </property>
                 <property>
                     <name>output_report_record_written_counter_name</name>
-                    <value>processing.referenceExtraction.researchInitiative.docs</value>
+                    <value>processing.referenceExtraction.researchInitiative.doc</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -1268,7 +1268,8 @@
             <arg>-Preport.processing.documentSimilarity.duration=transformers_documentssimilarity,documentssimilarity_chain</arg>
             <arg>-Preport.processing.citationMatching.direct.duration=citationmatching_direct</arg>
             <arg>-Preport.processing.citationMatching.fuzzy.duration=citationmatching_fuzzy</arg>
-            <arg>-Preport.processing.citationMatching.all.duration=citationmatching_fuzzy,citationmatching_direct,transformers_citations_from_referencemetadata,citations_union,citations_collapser,transformers_export_citations</arg>
+            <arg>-Preport.processing.citationMatching.duration=citationmatching_fuzzy,citationmatching_direct,transformers_citations_from_referencemetadata,citations_union</arg>
+            <arg>-Preport.processing.citationTextExtraction.duration=citations_collapser,transformers_export_citations</arg>
             <arg>-Preport.processing.documentClassification.duration=documentsclassification</arg>
             <arg>-Preport.processing.referenceExtraction.researchInitiative.duration=referenceextraction_researchinitiative,referenceextraction_researchinitiative_wos,transformers_union_researchinitiatives,transformers_export_researchinitiatives</arg>
             <arg>-Preport.processing.referenceExtraction.softwareUrl.duration=referenceextraction_software_url,transformers_export_software_url</arg>
@@ -1276,7 +1277,7 @@
             <arg>-Preport.processing.referenceExtraction.dataset.duration=referenceextraction_dataset</arg>
             <arg>-Preport.processing.referenceExtraction.project.duration=transformers_project_filter,referenceextraction_project</arg>
             <arg>-Preport.processing.referenceExtraction.concept.duration=transformers_project_toconcept,transformers_concept_to_researchinitiatives</arg>
-            
+            <arg>-Preport.processing.merging.duration=transformers_common_union_document_text</arg>
             <arg>-Oreport=${output_report_root_path}/primary-processing-execution-times</arg>
         </java>
         <ok to="end" />

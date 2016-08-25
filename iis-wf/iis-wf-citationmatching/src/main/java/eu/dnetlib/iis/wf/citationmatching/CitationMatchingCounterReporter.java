@@ -20,9 +20,9 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
  */
 public class CitationMatchingCounterReporter {
 
-    private static final String MATCHED_CITATIONS_COUNTER = "processing.citationMatching.fuzzy.citDocReferences";
+    private static final String MATCHED_CITATIONS_COUNTER = "processing.citationMatching.fuzzy.citDocReference";
     
-    private static final String DOCS_WITH_MATCHED_CITATIONS_COUNTER = "processing.citationMatching.fuzzy.docs";
+    private static final String DOCS_WITH_MATCHED_CITATIONS_COUNTER = "processing.citationMatching.fuzzy.doc";
     
     
     private SparkAvroSaver avroSaver = new SparkAvroSaver();
