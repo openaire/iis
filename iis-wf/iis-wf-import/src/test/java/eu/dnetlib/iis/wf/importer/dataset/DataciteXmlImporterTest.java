@@ -14,9 +14,8 @@ import javax.xml.parsers.SAXParserFactory;
 import org.junit.Test;
 
 import eu.dnetlib.iis.importer.schemas.DataSetReference;
-import eu.dnetlib.iis.importer.schemas.DocumentToMDStore;
+import eu.dnetlib.iis.importer.schemas.DatasetToMDStore;
 import eu.dnetlib.iis.wf.importer.RecordReceiver;
-import eu.dnetlib.iis.wf.importer.dataset.DataciteDumpXmlHandler;
 
 /**
  * {@link DataciteXmlImporter} test class.
@@ -32,7 +31,7 @@ public class DataciteXmlImporterTest {
 		InputStream inputStream = null;
 		SAXParser saxParser = null;
 		final List<DataSetReference> receivedReferences = new ArrayList<DataSetReference>();
-		final List<DocumentToMDStore> receivedMDStoreReferences = new ArrayList<DocumentToMDStore>();
+		final List<DatasetToMDStore> receivedMDStoreReferences = new ArrayList<DatasetToMDStore>();
 		try {
 			saxParser = SAXParserFactory.newInstance().newSAXParser();
 			DataciteDumpXmlHandler handler = new DataciteDumpXmlHandler(new RecordReceiver<DataSetReference>() {
@@ -40,9 +39,9 @@ public class DataciteXmlImporterTest {
 				public void receive(DataSetReference object) throws IOException {
 					receivedReferences.add(object);
 				}
-			},new RecordReceiver<DocumentToMDStore>() {
+			},new RecordReceiver<DatasetToMDStore>() {
 				@Override
-				public void receive(DocumentToMDStore object) throws IOException {
+				public void receive(DatasetToMDStore object) throws IOException {
 					receivedMDStoreReferences.add(object);
 				}
 			}, mdStoreId); 
@@ -53,9 +52,9 @@ public class DataciteXmlImporterTest {
 			assertEquals(2, receivedMDStoreReferences.size());
 			
 //			checking mdstore references
-			assertEquals("50|oai:oai.datacite.org:1805127", receivedMDStoreReferences.get(0).getDocumentId());
+			assertEquals("50|oai:oai.datacite.org:1805127", receivedMDStoreReferences.get(0).getDatasetId());
 			assertEquals(mdStoreId, receivedMDStoreReferences.get(0).getMdStoreId());
-			assertEquals("50|oai:oai.datacite.org:1805128", receivedMDStoreReferences.get(1).getDocumentId());
+			assertEquals("50|oai:oai.datacite.org:1805128", receivedMDStoreReferences.get(1).getDatasetId());
 			assertEquals(mdStoreId, receivedMDStoreReferences.get(1).getMdStoreId());
 			
 //			1st record

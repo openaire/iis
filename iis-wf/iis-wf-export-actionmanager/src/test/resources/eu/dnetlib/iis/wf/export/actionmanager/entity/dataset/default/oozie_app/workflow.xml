@@ -28,7 +28,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
             <arg>-C{document_to_mdstore,
-                eu.dnetlib.iis.importer.schemas.DocumentToMDStore,
+                eu.dnetlib.iis.importer.schemas.DatasetToMDStore,
                 eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/input/document_to_mdstore.json}
             </arg>
             <arg>-Odocument_to_mdstore=${workingDir}/producer/document_to_mdstore</arg>

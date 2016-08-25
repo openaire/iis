@@ -1,10 +1,12 @@
 @namespace("eu.dnetlib.iis.importer.schemas")
 protocol IIS{
 
-    record DocumentToMDStore {
-//      document identifier, foreign key: DocumentMetadata.id ("document metadata" data store)
-        string documentId;
-//      identifier of mdstore holding document identified with documentId
+    record DatasetToMDStore {
+        
+        // dataset identifier
+        string datasetId;
+        
+        // identifier of mdstore holding the dataset identified with datasetId
         string mdStoreId;
     }
 }

@@ -34,7 +34,7 @@
 	    <java>
 	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
 	        <arg>eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet</arg>
-	        <arg>eu.dnetlib.iis.importer.schemas.DocumentToMDStore</arg>
+	        <arg>eu.dnetlib.iis.importer.schemas.DatasetToMDStore</arg>
 	        <capture-output />
 	    </java>
 	    <ok to="transformer" />
@@ -54,10 +54,10 @@
             <param>schema_input_document_to_dataset=${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet']}</param>
             
             <param>input_document_to_mdstore=${input_document_to_mdstore}</param>
-            <param>schema_input_document_to_mdstore=${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.DocumentToMDStore']}</param>
+            <param>schema_input_document_to_mdstore=${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.DatasetToMDStore']}</param>
             
             <param>output_document_to_mdstore=${output_document_to_mdstore}</param>
-            <param>schema_output_document_to_mdstore=${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.DocumentToMDStore']}</param>
+            <param>schema_output_document_to_mdstore=${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.DatasetToMDStore']}</param>
         </pig>
         <ok to="end"/>
         <error to="fail"/>

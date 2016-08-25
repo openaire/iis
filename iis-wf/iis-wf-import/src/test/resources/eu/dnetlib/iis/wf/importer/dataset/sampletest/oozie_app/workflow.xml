@@ -60,7 +60,7 @@
                 eu.dnetlib.iis.importer.schemas.DataSetReference,
                 eu/dnetlib/iis/wf/importer/dataset/data/output/dataset.json}</arg>
                 <arg>-C{dataset_to_mdstore,
-                eu.dnetlib.iis.importer.schemas.DocumentToMDStore,
+                eu.dnetlib.iis.importer.schemas.DatasetToMDStore,
                 eu/dnetlib/iis/wf/importer/dataset/data/output/dataset_to_mdstore.json}</arg>
             <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,
                 eu/dnetlib/iis/wf/importer/dataset/data/output/report.json}</arg>

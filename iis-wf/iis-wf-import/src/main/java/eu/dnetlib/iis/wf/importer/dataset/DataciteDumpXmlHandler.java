@@ -12,7 +12,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.importer.schemas.DataSetReference;
-import eu.dnetlib.iis.importer.schemas.DocumentToMDStore;
+import eu.dnetlib.iis.importer.schemas.DatasetToMDStore;
 import eu.dnetlib.iis.wf.importer.RecordReceiver;
 
 /**
@@ -73,7 +73,7 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
 	
 	private final RecordReceiver<DataSetReference> datasetReceiver;
 	
-	private final RecordReceiver<DocumentToMDStore> datasetToMDStoreReceived;
+	private final RecordReceiver<DatasetToMDStore> datasetToMDStoreReceived;
 	
 	private final String mainIdFieldName;
 	
@@ -87,7 +87,7 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
 	 * @param mdStoreId
 	 */
 	public DataciteDumpXmlHandler(RecordReceiver<DataSetReference> datasetReceiver,
-			RecordReceiver<DocumentToMDStore> datasetToMDStoreReceived,
+			RecordReceiver<DatasetToMDStore> datasetToMDStoreReceived,
 			String mainIdFieldName, String mdStoreId) {
 		super();
 		this.datasetReceiver = datasetReceiver;
@@ -104,7 +104,7 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
 	 * @param mdStoreId
 	 */
 	public DataciteDumpXmlHandler(RecordReceiver<DataSetReference> datasetReceiver,
-			RecordReceiver<DocumentToMDStore> datasetToMDStoreReceived,
+			RecordReceiver<DatasetToMDStore> datasetToMDStoreReceived,
 			String mdStoreId) {
 		this(datasetReceiver, datasetToMDStoreReceived, ELEM_OBJ_IDENTIFIER, mdStoreId);
 	}
@@ -191,7 +191,7 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
 				try {
 					String idValueStr = this.idValue.toString().trim();
 					DataSetReference.Builder dataSetRefBuilder = DataSetReference.newBuilder();
-					DocumentToMDStore.Builder documentToMDStoreBuilder = DocumentToMDStore.newBuilder();
+					DatasetToMDStore.Builder documentToMDStoreBuilder = DatasetToMDStore.newBuilder();
 					documentToMDStoreBuilder.setMdStoreId(this.mdStoreId);
 					String datasetId;
 					if (this.headerId==null) {
@@ -200,11 +200,11 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
 					if (ELEM_OBJ_IDENTIFIER.equals(mainIdFieldName)) {
 						datasetId = HBaseConstants.ROW_PREFIX_RESULT + this.headerId; 
 						dataSetRefBuilder.setId(datasetId);	
-						documentToMDStoreBuilder.setDocumentId(datasetId);
+						documentToMDStoreBuilder.setDatasetId(datasetId);
 					} else {
 						datasetId = this.headerId;
 						dataSetRefBuilder.setId(datasetId);
-						documentToMDStoreBuilder.setDocumentId(datasetId);
+						documentToMDStoreBuilder.setDatasetId(datasetId);
 					}
 					dataSetRefBuilder.setReferenceType(this.idType);
 					dataSetRefBuilder.setIdForGivenType(idValueStr);

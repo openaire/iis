@@ -3,7 +3,7 @@
     <parameters>
         <property>
             <name>input</name>
-            <description>Input containing eu.dnetlib.iis.importer.schemas.DocumentToMDStore avro records 
+            <description>Input containing eu.dnetlib.iis.importer.schemas.DatasetToMDStore avro records 
                 listing dataset identifiers along with associated mdstore identifiers where those records are stored</description>
         </property>
         <property>

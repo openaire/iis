@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.export.actionmanager.entity;
 
-import eu.dnetlib.iis.importer.schemas.DocumentToMDStore;
+import eu.dnetlib.iis.importer.schemas.DatasetToMDStore;
 
 /**
  * Dataset entity exporter.
@@ -8,22 +8,22 @@ import eu.dnetlib.iis.importer.schemas.DocumentToMDStore;
  * @author mhorst
  *
  */
-public class DatasetExporterProcess extends AbstractEntityExporterProcess<DocumentToMDStore> {
+public class DatasetExporterProcess extends AbstractEntityExporterProcess<DatasetToMDStore> {
 
     private static final String NAMESPACE_PREFIX_DATACITE = "datacite____";
 
     // ------------------------ CONSTRUCTORS -----------------------------
 
     public DatasetExporterProcess() {
-        super(DocumentToMDStore.SCHEMA$, "datacite2actions",
+        super(DatasetToMDStore.SCHEMA$, "datacite2actions",
                 "eu/dnetlib/actionmanager/xslt/datacite2insertActions.xslt", NAMESPACE_PREFIX_DATACITE);
     }
 
     // ------------------------ LOGIC -----------------------------
 
     @Override
-    protected MDStoreIdWithEntityId convertIdentifier(DocumentToMDStore element) {
-        return new MDStoreIdWithEntityId(element.getMdStoreId().toString(), element.getDocumentId().toString());
+    protected MDStoreIdWithEntityId convertIdentifier(DatasetToMDStore element) {
+        return new MDStoreIdWithEntityId(element.getMdStoreId().toString(), element.getDatasetId().toString());
     }
 
 }
