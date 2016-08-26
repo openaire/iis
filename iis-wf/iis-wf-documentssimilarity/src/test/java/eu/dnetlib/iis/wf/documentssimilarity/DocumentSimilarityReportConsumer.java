@@ -32,7 +32,7 @@ public class DocumentSimilarityReportConsumer implements Process {
     
     private final static String DOCUMENT_SIMILARITY_PATH_PROPERTY = "docsim";
     
-    private final static String REPORT_DOCUMENT_SIMILARITY_COUNT_KEY = "export.documentSimilarity";
+    private final static String REPORT_DOCUMENT_SIMILARITY_COUNT_KEY = "processing.documentSimilarity.docDocReference";
     
     
     //------------------------ LOGIC --------------------------
