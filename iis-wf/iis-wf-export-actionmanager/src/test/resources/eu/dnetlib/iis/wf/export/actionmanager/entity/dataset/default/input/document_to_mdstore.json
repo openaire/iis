@@ -1,2 +1,2 @@
-{"documentId":"docId1","mdStoreId":"mdId1"}
-{"documentId":"notExistingDocId","mdStoreId":"mdId1"}
+{"datasetId":"docId1","mdStoreId":"mdId1"}
+{"datasetId":"notExistingDocId","mdStoreId":"mdId1"}
