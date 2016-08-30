@@ -626,7 +626,7 @@
                     <value>${workingDir}/exported/document_to_dataset</value>
                 </property>
                 <property>
-                    <name>input_document_to_mdstore</name>
+                    <name>input_dataset_to_mdstore</name>
                     <value>${workingDir}/primary_import/dataset_to_mdstore</value>
                 </property>
                 <property>
@@ -781,7 +781,7 @@
                     <value>${workingDir}/exported/document_to_dataset</value>
                 </property>
                 <property>
-                    <name>input_document_to_mdstore</name>
+                    <name>input_dataset_to_mdstore</name>
                     <value>${workingDir}/primary_import/dataset_to_mdstore</value>
                 </property>
                 <property>

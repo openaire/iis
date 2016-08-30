@@ -1,0 +1,2 @@
+## This is a classpath-based import file (this header is required)
+transformers_export_identifier_document_to_dataset classpath eu/dnetlib/iis/wf/transformers/export/identifier/documenttodataset/oozie_app

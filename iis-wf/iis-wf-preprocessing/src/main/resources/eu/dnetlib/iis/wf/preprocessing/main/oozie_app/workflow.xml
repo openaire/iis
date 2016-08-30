@@ -581,7 +581,7 @@
 					<value>${workingDir}/referenceextraction_dataset/document_datasets</value>
 				</property>
 				<property>
-					<name>input_document_to_mdstore</name>
+					<name>input_dataset_to_mdstore</name>
 					<value>${workingDir}/preprocessing_import/dataset_to_mdstore</value>
 				</property>
 				<!-- entities exporting modes -->
