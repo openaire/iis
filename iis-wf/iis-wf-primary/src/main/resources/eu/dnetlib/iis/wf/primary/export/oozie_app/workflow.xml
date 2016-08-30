@@ -15,7 +15,7 @@
             <value>$UNDEFINED$</value>
         </property>
         <property>
-            <name>input_document_to_mdstore</name>
+            <name>input_dataset_to_mdstore</name>
             <value>$UNDEFINED$</value>
         </property>
         <property>
@@ -229,11 +229,11 @@
                     <value>${input_document_to_dataset}</value>
                 </property>
                 <property>
-                    <name>input_document_to_mdstore</name>
-                    <value>${input_document_to_mdstore}</value>
+                    <name>input_dataset_to_mdstore</name>
+                    <value>${input_dataset_to_mdstore}</value>
                 </property>
                 <property>
-                    <name>output_document_to_mdstore</name>
+                    <name>output_dataset_to_mdstore</name>
                     <value>${workingDir}/identifier/datasets</value>
                 </property>
             </configuration>

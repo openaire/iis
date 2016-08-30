@@ -1,0 +1,4 @@
+{"documentId":"DOC1", "datasetId":"datasetA", "confidenceLevel":0.7}
+{"documentId":"DOC2", "datasetId":"datasetA", "confidenceLevel":0.7}
+{"documentId":"DOC3", "datasetId":"datasetB", "confidenceLevel":0.7}
+{"documentId":"DOC3", "datasetId":"datasetD", "confidenceLevel":0.7}
