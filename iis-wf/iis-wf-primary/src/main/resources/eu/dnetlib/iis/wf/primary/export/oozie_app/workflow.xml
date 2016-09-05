@@ -50,6 +50,11 @@
             <name>output_remote_location</name>
             <description>optional remote cluster output location where inference output dump should be distcped as sequence files. When not specified results will be exported straight to the ActionManager HBase.</description>
         </property>
+        <property>
+            <name>output_remote_distcp_memory_mb</name>
+            <value>6144</value>
+            <description>memory for distcp action copying output sequence files to remote cluster</description>
+        </property>
         <!-- entities exporting modes -->
         <property>
             <name>active_export_referenceddataset_datasets</name>
@@ -267,6 +272,7 @@
         <distcp xmlns="uri:oozie:distcp-action:0.1">
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
+            <arg>-Dmapreduce.map.memory.mb=${output_remote_distcp_memory_mb}</arg>
             <arg>-pb</arg>
             <arg>-overwrite</arg>
             <arg>${nameNode}${workingDir}/output</arg>
