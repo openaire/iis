@@ -227,6 +227,10 @@
                 <name>oozie.launcher.mapred.job.queue.name</name>
                 <value>${oozieLauncherQueueName}</value>
             </property>
+            <property>
+                <name>output_report_root_path</name>
+                <value>${workingDir}/report</value>
+            </property>
 		</configuration>
 	</global>
 
@@ -364,10 +368,6 @@
 					<name>output_faults</name>
 					<value>${workingDir}/preprocessing_import/faults</value>
 				</property>
-                <property>
-                    <name>output_report_root_path</name>
-                    <value>${workingDir}/report</value>
-                </property>
 			</configuration>
 		</sub-workflow>
 		<ok to="referenceextraction_forking" />
