@@ -304,10 +304,6 @@
                 <name>oozie.launcher.mapred.job.queue.name</name>
                 <value>${oozieLauncherQueueName}</value>
             </property>
-            <property>
-                <name>output_report_root_path</name>
-                <value>${workingDir}/report</value>
-            </property>
         </configuration>
     </global>
 
@@ -484,6 +480,10 @@
                     <name>output_faults</name>
                     <value>${workingDir}/primary_import/faults</value>
                 </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="primary-processing" />
@@ -581,15 +581,19 @@
                     <name>output_document_similarity</name>
                     <value>${workingDir}/exported/document_similarity</value>
                 </property>
-				<property>
-					<name>output_matched_doc_organizations</name>
-					<value>${workingDir}/exported/matched_affiliation</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="decision-export-to-hbase" />
-		<error to="fail" />
-	</action>
+                <property>
+                    <name>output_matched_doc_organizations</name>
+                    <value>${workingDir}/exported/matched_affiliation</value>
+                </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="decision-export-to-hbase" />
+        <error to="fail" />
+    </action>
 
     <decision name="decision-export-to-hbase">
         <switch>
@@ -740,6 +744,11 @@
                     <name>referenceextraction_pdb_url_root</name>
                     <value>${export_referenceextraction_pdb_url_root}</value>
                 </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
+                
             </configuration>
         </sub-workflow>
         <ok to="decision-export-to-json" />
