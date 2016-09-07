@@ -31,6 +31,10 @@
                     <name>output</name>
                     <value>${workingDir}/out</value>
                 </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="consumer" />
@@ -47,8 +51,12 @@
             <arg>-C{project,
                 eu.dnetlib.iis.importer.schemas.Project,
                 eu/dnetlib/iis/wf/importer/database/project/data/output/project.json}</arg>
+            <arg>-C{report,
+                eu.dnetlib.iis.common.schemas.ReportEntry,
+                eu/dnetlib/iis/wf/importer/database/project/data/output/report.json}</arg>
             <!-- All input and output ports have to be bound to paths in HDFS -->
             <arg>-Iproject=${workingDir}/out</arg>
+            <arg>-Ireport=${workingDir}/report/import_project</arg>
         </java>
         <ok to="end" />
         <error to="fail" />

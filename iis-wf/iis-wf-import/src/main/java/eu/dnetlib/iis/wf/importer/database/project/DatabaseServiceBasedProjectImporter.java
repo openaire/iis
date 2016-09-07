@@ -21,6 +21,8 @@ import org.xml.sax.InputSource;
 
 import com.google.common.base.Preconditions;
 
+import eu.dnetlib.iis.common.counter.NamedCounters;
+import eu.dnetlib.iis.common.counter.NamedCountersFileWriter;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
 import eu.dnetlib.iis.common.java.io.DataStore;
@@ -28,7 +30,7 @@ import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.importer.schemas.Project;
-import eu.dnetlib.iis.wf.importer.DataFileRecordReceiver;
+import eu.dnetlib.iis.wf.importer.DataFileRecordReceiverWithCounter;
 import eu.dnetlib.iis.wf.importer.facade.DatabaseFacade;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeUtils;
 
@@ -41,9 +43,13 @@ public class DatabaseServiceBasedProjectImporter implements Process {
 
 	private static final String PORT_OUT_PROJECT = "project";
 	
+	private static final String PROJECT_COUNTER_NAME = "PROJECT_COUNTER";
+	
 	private final Logger log = Logger.getLogger(this.getClass());
 	
 	private final int progressLogInterval = 10000;
+	
+	private final NamedCountersFileWriter countersWriter = new NamedCountersFileWriter();
 	
 	private static final String queryLocation = "eu/dnetlib/iis/wf/importer/database/project/sql/read_project_details_v2.sql";
 	
@@ -76,6 +82,8 @@ public class DatabaseServiceBasedProjectImporter implements Process {
 		
 		try (DataFileWriter<Project> projectWriter = DataStore.create(
 		        new FileSystemPath(fs, portBindings.getOutput().get(PORT_OUT_PROJECT)), Project.SCHEMA$)) {
+		    
+		    NamedCounters counters = new NamedCounters(new String[] { PROJECT_COUNTER_NAME });
 
 //			initializing database reader
 			DatabaseFacade databaseFacade = ServiceFacadeUtils.instantiate(parameters);
@@ -86,14 +94,18 @@ public class DatabaseServiceBasedProjectImporter implements Process {
 			long startTime = System.currentTimeMillis();
 			
 			for (String record : databaseFacade.searchSQL(parameters.get(IMPORT_DATABASE_SERVICE_DBNAME), loadQuery())) {
-				saxParser.parse(new InputSource(new StringReader(record)), new DatabaseProjectXmlHandler(new DataFileRecordReceiver<Project>(projectWriter)));
+			    DataFileRecordReceiverWithCounter<Project> projectReciever = new DataFileRecordReceiverWithCounter<Project>(projectWriter);
+				saxParser.parse(new InputSource(new StringReader(record)), new DatabaseProjectXmlHandler(projectReciever));
+				counters.increment(PROJECT_COUNTER_NAME, projectReciever.getReceivedCount());
 				currentCount++;
 				if (currentCount%progressLogInterval==0) {
-					log.debug("current progress: " + currentCount + ", last package of " + progressLogInterval + 
+					log.info("current progress: " + currentCount + ", last package of " + progressLogInterval + 
 							" processed in " + ((System.currentTimeMillis()-startTime)/1000) + " secs");
 					startTime = System.currentTimeMillis();
 				}
 			}
+			
+			countersWriter.writeCounters(counters, System.getProperty("oozie.action.output.properties"));
 		}
 	}
 	

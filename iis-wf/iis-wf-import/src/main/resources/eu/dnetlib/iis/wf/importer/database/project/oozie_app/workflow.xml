@@ -35,6 +35,15 @@
 			<value>60000</value>
 			<description>result set client reading timeout (expressed in milliseconds)</description>
 		</property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
+            <name>output_report_relative_path</name>
+            <value>import_project</value>
+            <description>directory for storing report (relative to output_report_root_path)</description>
+        </property>
 	</parameters>
 
     <global>
@@ -70,11 +79,23 @@
             <arg>-Pimport.resultset.client.read.timeout=${resultset_client_read_timeout}</arg>
             <arg>-Pimport.facade.factory.classname=${database_facade_factory_classname}</arg>
 			<arg>-Oproject=${output}</arg>
+            <capture-output />
 		</java>
-		<ok to="end" />
+		<ok to="report" />
 		<error to="fail" />
 	</action>
 	
+    <action name="report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
+            <arg>-Preport.import.project=${wf:actionData('database-project-importer')['PROJECT_COUNTER']}</arg>
+            <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:
 			[${wf:errorMessage(wf:lastErrorNode())}]</message>
