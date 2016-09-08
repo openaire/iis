@@ -22,6 +22,11 @@
 			<name>output_remote_location</name>
 			<description>remote cluster output location where inference output dump should be distcped as sequence files</description>
 		</property>
+        <property>
+            <name>output_remote_distcp_memory_mb</name>
+            <value>6144</value>
+            <description>memory for distcp action copying output sequence files to remote cluster</description>
+        </property>
 		<property>
 			<name>mdstore_service_location</name>
 			<value>$UNDEFINED$</value>
@@ -226,6 +231,7 @@
 		<distcp xmlns="uri:oozie:distcp-action:0.1">
 			<job-tracker>${jobTracker}</job-tracker>
 			<name-node>${nameNode}</name-node>
+            <arg>-Dmapreduce.map.memory.mb=${output_remote_distcp_memory_mb}</arg>
 			<arg>-pb</arg>
 			<arg>-overwrite</arg>
 			<arg>${nameNode}${workingDir}/output</arg>
