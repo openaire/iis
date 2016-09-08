@@ -188,6 +188,11 @@
             <description>document_similarities_standard action-set identifier of exported data</description>
         </property>
         <property>
+            <name>export_action_set_id_matched_doc_organizations</name>
+            <value>$UNDEFINED$</value>
+            <description>affiliation matching outcome action-set identifier</description>
+        </property>
+        <property>
             <name>export_action_set_id_document_classes</name>
             <value>$UNDEFINED$</value>
             <description>document_classes action-set identifier of exported data</description>
@@ -674,6 +679,10 @@
                 <property>
                     <name>action_set_id_document_similarities_standard</name>
                     <value>${export_action_set_id_document_similarities_standard}</value>
+                </property>
+                <property>
+                    <name>action_set_id_matched_doc_organizations</name>
+                    <value>${export_action_set_id_matched_doc_organizations}</value>
                 </property>
                 <property>
                     <name>action_set_id_document_classes</name>
