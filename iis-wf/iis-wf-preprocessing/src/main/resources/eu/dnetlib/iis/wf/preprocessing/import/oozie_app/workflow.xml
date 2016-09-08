@@ -310,6 +310,14 @@
 					<name>output</name>
 					<value>${workingDir}/import_plaintext/imported</value>
 				</property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>import_content_plaintext</value>
+                </property>
+                <property>
+                    <name>report_properties_prefix</name>
+                    <value>import.content.plaintext</value>
+                </property>
 				<!-- all the other properties are autmatically propagated -->
 			</configuration>
 		</sub-workflow>
@@ -338,6 +346,14 @@
 					<name>output</name>
 					<value>${workingDir}/import_plaintext_pmc/imported</value>
 				</property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>import_content_pmc</value>
+                </property>
+                <property>
+                    <name>report_properties_prefix</name>
+                    <value>import.content.pmc</value>
+                </property>
 				<!-- all the other properties are autmatically propagated -->
 			</configuration>
 		</sub-workflow>
@@ -425,6 +441,14 @@
 					<name>output</name>
 					<value>${workingDir}/import_html/imported</value>
 				</property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>import_content_html</value>
+                </property>
+                <property>
+                    <name>report_properties_prefix</name>
+                    <value>import.content.html</value>
+                </property>
 				<!-- all the other properties are autmatically propagated -->
 			</configuration>
 		</sub-workflow>
@@ -641,6 +665,14 @@
 					<name>output</name>
 					<value>${output_wos_text}</value>
 				</property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>import_content_wos</value>
+                </property>
+                <property>
+                    <name>report_properties_prefix</name>
+                    <value>import.content.wos</value>
+                </property>
 				<!-- all the other properties are autmatically propagated -->
 			</configuration>
 		</sub-workflow>
