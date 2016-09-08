@@ -262,6 +262,10 @@
 					<name>output_root</name>
 					<value>${workingDir}/metadata_extractor/output_root</value>
 				</property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
 				<!-- all the other properties are autmatically propagated -->
 			</configuration>
 		</sub-workflow>
@@ -396,6 +400,10 @@
 					<name>output_root</name>
 					<value>${workingDir}/metadata_extractor/output_root</value>
 				</property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
 				<!-- all the other properties are autmatically propagated -->
 			</configuration>
 		</sub-workflow>
