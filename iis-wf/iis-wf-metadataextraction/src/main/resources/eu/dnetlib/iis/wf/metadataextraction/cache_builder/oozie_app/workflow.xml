@@ -89,8 +89,28 @@
 			</property>
 		</configuration>
 	</global>
+    
+    <start to="init-workingDir" />
 
-	<start to="import_content_url" />
+    <action name="init-workingDir">
+        <fs>
+            <delete path="${nameNode}${workingDir}" />
+            <mkdir path="${nameNode}${workingDir}" />
+        </fs>
+        <ok to="copy-version" />
+        <error to="fail" />
+    </action>
+
+    <action name="copy-version">
+        <distcp xmlns="uri:oozie:distcp-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <arg>${wf:appPath()}/version.properties</arg>
+            <arg>${nameNode}${workingDir}</arg>
+        </distcp>
+        <ok to="import_content_url" />
+        <error to="fail" />
+    </action>
 
 	<action name="import_content_url">
 		<sub-workflow>
