@@ -54,6 +54,17 @@
 			<value>true</value>
 			<description>flag indicating whole working directory will be erased</description>
 		</property>
+        <!-- working directory related -->
+        <property>
+            <name>execution_environment</name>
+            <value>cache_builder</value>
+            <description>execution environment used for workingDir creation</description>
+        </property>
+        <property>
+            <name>workingDir</name>
+            <value>/user/${user.name}/iis/working_dirs/${execution_environment}</value>
+            <description>working directory</description>
+        </property>
 	</parameters>
 
 	<global>
