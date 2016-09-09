@@ -7,8 +7,12 @@
                         report datastore (avro with eu.dnetlib.iis.common.schemas.ReportEntry records)</description>
         </property>
         <property>
-            <name>output_report</name>
-            <description>output report json file path</description>
+            <name>working_dir</name>
+            <description>working directory</description>
+        </property>
+        <property>
+            <name>reports_external_path</name>
+            <description>directory for storing reports from different executions of primary workflow</description>
         </property>
     </parameters>
         
@@ -35,8 +39,32 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.ReportMerger</arg>
             <arg>-Ipartial_reports=${input_partial_reports}</arg>
-            <arg>-Oreport=${output_report}</arg>
+            <arg>-Oreport=${working_dir}/report.json</arg>
         </java>
+        <ok to="report_name_generator" />
+        <error to="fail" />
+    </action>
+    
+    <action name="report_name_generator">
+        <java>
+            <main-class>eu.dnetlib.iis.common.report.ReportFileNameGenerator</main-class>
+            <arg>primary</arg>
+            <capture-output />
+        </java>
+        <ok to="copy-report" />
+        <error to="fail" />
+    </action>
+    
+    <action name="copy-report">
+        <distcp xmlns="uri:oozie:distcp-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <mkdir path="${nameNode}${reports_external_path}" />
+            </prepare>
+            <arg>${nameNode}${working_dir}/report.json</arg>
+            <arg>${nameNode}${reports_external_path}/${wf:actionData('report_name_generator')['report_filename']}</arg>
+        </distcp>
         <ok to="end" />
         <error to="fail" />
     </action>
