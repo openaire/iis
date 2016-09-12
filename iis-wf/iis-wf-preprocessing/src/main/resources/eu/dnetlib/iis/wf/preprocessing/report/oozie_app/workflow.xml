@@ -12,7 +12,7 @@
         </property>
         <property>
             <name>reports_external_path</name>
-            <description>directory for storing reports from different executions of primary workflow</description>
+            <description>directory for storing reports from different executions of primary workflow (if $UNDEFINED$ then copying to external directory will be omitted)</description>
         </property>
     </parameters>
         
@@ -41,9 +41,16 @@
             <arg>-Ipartial_reports=${input_partial_reports}</arg>
             <arg>-Oreport=${output_report}</arg>
         </java>
-        <ok to="report_name_generator" />
+        <ok to="decision-copy-report" />
         <error to="fail" />
     </action>
+    
+    <decision name="decision-copy-report">
+        <switch>
+            <case to="report_name_generator">${reports_external_path ne "$UNDEFINED$"}</case>
+            <default to="end" />
+        </switch>
+    </decision>
     
     <action name="report_name_generator">
         <java>

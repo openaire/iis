@@ -718,10 +718,6 @@
                     <name>input_partial_reports</name>
                     <value>${workingDir}/report</value>
                 </property>
-                <property>
-                    <name>reports_external_path</name>
-                    <value>${reports_external_path}</value>
-                </property>
             </configuration>
         </sub-workflow>
         <ok to="end" />
