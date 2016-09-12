@@ -2,3 +2,4 @@
 {"id": "id-2", "url": "http://someurl2.com", "mimeType": "pdf", "contentChecksum": "12345", "contentSizeKB": 0}
 {"id": "id-3", "url": "http://someurl3.com", "mimeType": "pdf", "contentChecksum": null, "contentSizeKB": 0}
 {"id": "id-4", "url": "http://someurl4.com", "mimeType": "pdf", "contentChecksum": "67890", "contentSizeKB": 0}
+{"id": "id-5", "url": "http://someurl5.com", "mimeType": "pdf", "contentChecksum": "non-existing", "contentSizeKB": 0}

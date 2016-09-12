@@ -8,7 +8,7 @@ sourceDocumentMeta = load '$input_extracted_document_metadata' using avro_load_e
 sourceDocumentContentUrl = load '$input_document_content_url' using avro_load_document_content_url;
 
 filteredDocumentContentUrl = filter sourceDocumentContentUrl by contentChecksum is not null;
-joined = join filteredDocumentContentUrl by contentChecksum left, sourceDocumentMeta by id;
+joined = join filteredDocumentContentUrl by contentChecksum, sourceDocumentMeta by id;
 
 outputDocumentMeta = foreach joined generate 
 		filteredDocumentContentUrl::id as id,
