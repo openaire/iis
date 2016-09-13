@@ -47,20 +47,10 @@
     
     <decision name="decision-copy-report">
         <switch>
-            <case to="report_name_generator">${reports_external_path ne "$UNDEFINED$"}</case>
+            <case to="copy-report">${reports_external_path ne "$UNDEFINED$"}</case>
             <default to="end" />
         </switch>
     </decision>
-    
-    <action name="report_name_generator">
-        <java>
-            <main-class>eu.dnetlib.iis.common.report.ReportFileNameGenerator</main-class>
-            <arg>preprocessing</arg>
-            <capture-output />
-        </java>
-        <ok to="copy-report" />
-        <error to="fail" />
-    </action>
     
     <action name="copy-report">
         <distcp xmlns="uri:oozie:distcp-action:0.1">
@@ -70,7 +60,7 @@
                 <mkdir path="${nameNode}${reports_external_path}" />
             </prepare>
             <arg>${nameNode}${working_dir}/report.json</arg>
-            <arg>${nameNode}${reports_external_path}/${wf:actionData('report_name_generator')['report_filename']}</arg>
+            <arg>${nameNode}${reports_external_path}/preprocessing_report_${replaceAll(timestamp(), "(..)T(..):(..)Z$", "$1_$2-$3")}.json</arg>
         </distcp>
         <ok to="end" />
         <error to="fail" />
