@@ -295,6 +295,11 @@
             <value>/user/${user.name}/iis/working_dirs/${execution_environment}</value>
             <description>working directory</description>
         </property>
+        <property>
+            <name>reports_external_path</name>
+            <value>$UNDEFINED$</value>
+            <description>directory for storing reports from different executions of the workflow</description>
+        </property>
     </parameters>
 
     <global>
@@ -853,12 +858,12 @@
             <propagate-configuration />
             <configuration>
                 <property>
-                    <name>input_partial_reports</name>
-                    <value>${workingDir}/report</value>
+                    <name>working_dir</name>
+                    <value>${workingDir}/report/working_dir</value>
                 </property>
                 <property>
-                    <name>output_report</name>
-                    <value>${workingDir}/report/report.json</value>
+                    <name>input_partial_reports</name>
+                    <value>${workingDir}/report</value>
                 </property>
             </configuration>
         </sub-workflow>

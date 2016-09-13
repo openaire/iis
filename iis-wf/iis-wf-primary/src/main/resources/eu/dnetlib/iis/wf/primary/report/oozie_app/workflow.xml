@@ -7,8 +7,13 @@
                         report datastore (avro with eu.dnetlib.iis.common.schemas.ReportEntry records)</description>
         </property>
         <property>
-            <name>output_report</name>
-            <description>output report json file path</description>
+            <name>working_dir</name>
+            <description>working directory</description>
+        </property>
+        <property>
+            <name>reports_external_path</name>
+            <value>$UNDEFINED$</value>
+            <description>directory for storing reports from different executions of primary workflow (if $UNDEFINED$ then copying to external directory will be omitted)</description>
         </property>
     </parameters>
         
@@ -35,8 +40,29 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.ReportMerger</arg>
             <arg>-Ipartial_reports=${input_partial_reports}</arg>
-            <arg>-Oreport=${output_report}</arg>
+            <arg>-Oreport=${working_dir}/report.json</arg>
         </java>
+        <ok to="decision-copy-report" />
+        <error to="fail" />
+    </action>
+    
+    <decision name="decision-copy-report">
+        <switch>
+            <case to="copy-report">${reports_external_path ne "$UNDEFINED$"}</case>
+            <default to="end" />
+        </switch>
+    </decision>
+    
+    <action name="copy-report">
+        <distcp xmlns="uri:oozie:distcp-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <mkdir path="${nameNode}${reports_external_path}" />
+            </prepare>
+            <arg>${nameNode}${working_dir}/report.json</arg>
+            <arg>${nameNode}${reports_external_path}/primary_report_${replaceAll(timestamp(), "(..)T(..):(..)Z$", "$1_$2-$3")}.json</arg>
+        </distcp>
         <ok to="end" />
         <error to="fail" />
     </action>
