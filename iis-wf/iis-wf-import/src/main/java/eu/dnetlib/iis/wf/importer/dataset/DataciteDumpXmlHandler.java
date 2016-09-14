@@ -3,12 +3,15 @@ package eu.dnetlib.iis.wf.importer.dataset;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.google.common.collect.Maps;
 
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.importer.schemas.DataSetReference;
@@ -24,14 +27,14 @@ import eu.dnetlib.iis.wf.importer.RecordReceiver;
  */
 public class DataciteDumpXmlHandler extends DefaultHandler {
 
-	private static final String ELEM_HEADER = "oai:header";
+	private static final String ELEM_HEADER = "header";
 	private static final String ELEM_PAYLOAD = "payload";
 	private static final String ELEM_METADATA = "metadata";
 	
 	private static final String ELEM_RESOURCE = "resource";
 
 	public static final String ELEM_IDENTIFIER = "identifier";
-	public static final String ELEM_OBJ_IDENTIFIER = "dri:objIdentifier";
+	public static final String ELEM_OBJ_IDENTIFIER = "objIdentifier";
 	
 	private static final String ELEM_CREATOR = "creator";
 	private static final String ELEM_CREATOR_NAME = "creatorName";
@@ -46,8 +49,12 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
 	private static final String ELEM_FORMAT = "format";
 	private static final String ELEM_RESOURCE_TYPE = "resourceType";
 	
+	private static final String ELEM_ALTERNATE_IDENTIFIERS = "alternateIdentifiers";
+    private static final String ELEM_ALTERNATE_IDENTIFIER = "alternateIdentifier";
+	
 	private static final String ATTRIBUTE_ID_TYPE = "identifierType";
 	private static final String ATTRIBUTE_RESOURCE_TYPE_GENERAL = "resourceTypeGeneral";
+	private static final String ATTRIBUTE_ALTERNATE_IDENTIFIER_TYPE = "alternateIdentifierType";
 	
 //	lowercased identifier types
 	public static final String ID_TYPE_DOI = "doi";
@@ -65,11 +72,14 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
 	private List<CharSequence> creatorNames = null;
 	private List<CharSequence> titles = null;
 	private List<CharSequence> formats = null;
+	private Map<CharSequence, CharSequence> alternateIdentifiers = null;
 	private String publisher = null;
 	private String description = null;
 	private String publicationYear = null;
 	private String resourceTypeClass = null;
 	private String resourceTypeValue = null;
+	private String currentAlternateIdentifierType = null;
+	
 	
 	private final RecordReceiver<DataSetReference> datasetReceiver;
 	
@@ -118,74 +128,85 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
-		if (isWithinElement(qName, mainIdFieldName, ELEM_HEADER)) {
+		if (isWithinElement(localName, mainIdFieldName, ELEM_HEADER)) {
 //			identifierType attribute is mandatory
 			this.currentValue = new StringBuilder();
-		} else if (isWithinElement(qName, ELEM_IDENTIFIER, ELEM_RESOURCE)) {
+		} else if (isWithinElement(localName, ELEM_IDENTIFIER, ELEM_RESOURCE)) {
 //			identifierType attribute is mandatory
 			this.idType = attributes.getValue(ATTRIBUTE_ID_TYPE).toLowerCase();	
 			this.currentValue = new StringBuilder();
-		} else if (isWithinElement(qName, ELEM_CREATOR_NAME, ELEM_CREATOR)) {
+		} else if (isWithinElement(localName, ELEM_CREATOR_NAME, ELEM_CREATOR)) {
 			this.currentValue = new StringBuilder();
-		} else if (isWithinElement(qName, ELEM_TITLE, ELEM_TITLES)) {
+		} else if (isWithinElement(localName, ELEM_TITLE, ELEM_TITLES)) {
 			this.currentValue = new StringBuilder();
-		} else if (isWithinElement(qName, ELEM_FORMAT, ELEM_FORMATS)) {
+		} else if (isWithinElement(localName, ELEM_FORMAT, ELEM_FORMATS)) {
 			this.currentValue = new StringBuilder();
-		} else if (isWithinElement(qName, ELEM_DESCRIPTION, ELEM_RESOURCE)) {
+		} else if (isWithinElement(localName, ELEM_DESCRIPTION, ELEM_RESOURCE)) {
 			this.currentValue = new StringBuilder();
-		} else if (isWithinElement(qName, ELEM_PUBLISHER, ELEM_RESOURCE)) {
+		} else if (isWithinElement(localName, ELEM_PUBLISHER, ELEM_RESOURCE)) {
 			this.currentValue = new StringBuilder();
-		} else if (isWithinElement(qName, ELEM_PUBLICATION_YEAR, ELEM_RESOURCE)) {
+		} else if (isWithinElement(localName, ELEM_PUBLICATION_YEAR, ELEM_RESOURCE)) {
 			this.currentValue = new StringBuilder();
-		} else if (isWithinElement(qName, ELEM_RESOURCE_TYPE, ELEM_RESOURCE)) {
+		} else if (isWithinElement(localName, ELEM_RESOURCE_TYPE, ELEM_RESOURCE)) {
 			this.resourceTypeClass = attributes.getValue(ATTRIBUTE_RESOURCE_TYPE_GENERAL);
 			this.currentValue = new StringBuilder();
-		} 
-		this.parents.push(qName);
+		} else if (isWithinElement(localName, ELEM_ALTERNATE_IDENTIFIER, ELEM_ALTERNATE_IDENTIFIERS)) {
+            this.currentAlternateIdentifierType = attributes.getValue(ATTRIBUTE_ALTERNATE_IDENTIFIER_TYPE);
+            this.currentValue = new StringBuilder();
+        } 
+		this.parents.push(localName);
 	}
 
 	@Override
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 		this.parents.pop();
-		if (isWithinElement(qName, mainIdFieldName, ELEM_HEADER)) {
+		if (isWithinElement(localName, mainIdFieldName, ELEM_HEADER)) {
 			this.headerId = this.currentValue.toString().trim();
-		} else if (isWithinElement(qName, ELEM_IDENTIFIER, ELEM_RESOURCE)) {
+		} else if (isWithinElement(localName, ELEM_IDENTIFIER, ELEM_RESOURCE)) {
 			this.idValue = this.currentValue.toString().trim();
-		} else if (isWithinElement(qName, ELEM_CREATOR_NAME, ELEM_CREATOR) 
+		} else if (isWithinElement(localName, ELEM_CREATOR_NAME, ELEM_CREATOR) 
 				&& this.currentValue.length()>0) {
 			if (this.creatorNames==null) {
 				this.creatorNames = new ArrayList<CharSequence>();
 			}
 			this.creatorNames.add(this.currentValue.toString().trim());
-		} else if (isWithinElement(qName, ELEM_TITLE, ELEM_TITLES)
+		} else if (isWithinElement(localName, ELEM_TITLE, ELEM_TITLES)
 				&& this.currentValue.length()>0) {
 			if (this.titles==null) {
 				this.titles = new ArrayList<CharSequence>();
 			}
 			this.titles.add(this.currentValue.toString().trim());
-		} else if (isWithinElement(qName, ELEM_FORMAT, ELEM_FORMATS)
+		} else if (isWithinElement(localName, ELEM_FORMAT, ELEM_FORMATS)
 				&& this.currentValue.length()>0) {
 			if (this.formats==null) {
 				this.formats = new ArrayList<CharSequence>();
 			}
 			this.formats.add(this.currentValue.toString().trim());
-		} else if (isWithinElement(qName, ELEM_DESCRIPTION, ELEM_RESOURCE)
+		} else if (isWithinElement(localName, ELEM_ALTERNATE_IDENTIFIER, ELEM_ALTERNATE_IDENTIFIERS)
+                && this.currentValue.length()>0) {
+            if (this.currentAlternateIdentifierType!=null) {
+                if (this.alternateIdentifiers==null) {
+                    this.alternateIdentifiers = Maps.newHashMap();
+                }
+                this.alternateIdentifiers.put(this.currentAlternateIdentifierType, this.currentValue.toString().trim());    
+            }
+        } else if (isWithinElement(localName, ELEM_DESCRIPTION, ELEM_RESOURCE)
 				&& this.currentValue.length()>0) {
 			this.description = this.currentValue.toString().trim();
-		} else if (isWithinElement(qName, ELEM_PUBLISHER, ELEM_RESOURCE)
+		} else if (isWithinElement(localName, ELEM_PUBLISHER, ELEM_RESOURCE)
 				&& this.currentValue.length()>0) {
 			this.publisher = this.currentValue.toString().trim();
-		} else if (isWithinElement(qName, ELEM_PUBLICATION_YEAR, ELEM_RESOURCE)
+		} else if (isWithinElement(localName, ELEM_PUBLICATION_YEAR, ELEM_RESOURCE)
 				&& this.currentValue.length()>0) {
 			this.publicationYear = this.currentValue.toString().trim();
-		} else if (isWithinElement(qName, ELEM_RESOURCE_TYPE, ELEM_RESOURCE)
+		} else if (isWithinElement(localName, ELEM_RESOURCE_TYPE, ELEM_RESOURCE)
 				&& this.currentValue.length()>0) {
 			this.resourceTypeValue = this.currentValue.toString().trim();
-		} else if (isWithinElement(qName, ELEM_RESOURCE, ELEM_PAYLOAD) ||
+		} else if (isWithinElement(localName, ELEM_RESOURCE, ELEM_PAYLOAD) ||
 //				temporary hack: the case below is for the records originated from MDStore 
 //				where no 'payload' element is present, required until fixing MDStore contents
-				isWithinElement(qName, ELEM_RESOURCE, ELEM_METADATA)) {
+				isWithinElement(localName, ELEM_RESOURCE, ELEM_METADATA)) {
 //			writing whole record
 			if (this.idType!=null && this.idValue!=null) {
 				try {
@@ -232,6 +253,9 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
 					if (this.resourceTypeValue!=null) {
 						dataSetRefBuilder.setResourceTypeValue(this.resourceTypeValue);
 					}
+					if (this.alternateIdentifiers!=null) {
+                        dataSetRefBuilder.setAlternateIdentifiers(this.alternateIdentifiers);
+                    }
 					datasetReceiver.receive(dataSetRefBuilder.build());
 					datasetToMDStoreReceived.receive(documentToMDStoreBuilder.build());
 				} catch (IOException e) {
@@ -255,16 +279,18 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
 		this.creatorNames = null;
 		this.titles = null;
 		this.formats = null;
+		this.alternateIdentifiers = null;
 		this.description = null;
 		this.publisher = null;
 		this.publicationYear = null;
 		this.resourceTypeClass = null;
 		this.resourceTypeValue = null;
+		this.currentAlternateIdentifierType = null;
 	}
 	
-	boolean isWithinElement(String qName,
+	boolean isWithinElement(String localName,
 			String expectedElement, String expectedParent) {
-		return qName.equals(expectedElement) && !this.parents.isEmpty() && 
+		return localName.equals(expectedElement) && !this.parents.isEmpty() && 
 				expectedParent.equals(this.parents.peek());
 	}
 	

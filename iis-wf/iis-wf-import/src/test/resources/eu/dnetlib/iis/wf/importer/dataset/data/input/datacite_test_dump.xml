@@ -18,6 +18,10 @@
       <payload>
 <resource xmlns="http://datacite.org/schema/kernel-2.2" xsi:schemaLocation="http://datacite.org/schema/kernel-2.2     http://schema.datacite.org/meta/kernel-2.2/metadata.xsd">
   <identifier identifierType="DOI">10.6068/DP13F04CCEE7995</identifier>
+  <alternateIdentifiers>
+    <alternateIdentifier alternateIdentifierType="firstType">AAA0012345</alternateIdentifier>
+    <alternateIdentifier alternateIdentifierType="secondType">BBB0012345</alternateIdentifier>
+  </alternateIdentifiers>
   <creators>
     <creator>
       <creatorName>creator1</creatorName>

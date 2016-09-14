@@ -15,7 +15,11 @@
     "format1"
   ],
   "resourceTypeClass": "Text",
-  "resourceTypeValue": null
+  "resourceTypeValue": null,
+  "alternateIdentifiers": {
+    "firstType": "AAA0012345",
+    "secondType": "BBB0012345"
+  }
 }
 {
   "id": "50|oai:oai.datacite.org:1805128",
@@ -32,5 +36,6 @@
   "publicationYear": "2013",
   "formats": null,
   "resourceTypeClass": "Dataset",
-  "resourceTypeValue": "Dataset"
+  "resourceTypeValue": "Dataset",
+  "alternateIdentifiers": null
 }

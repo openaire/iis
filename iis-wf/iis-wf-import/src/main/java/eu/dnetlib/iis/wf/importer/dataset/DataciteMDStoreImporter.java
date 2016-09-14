@@ -97,6 +97,7 @@ public class DataciteMDStoreImporter implements Process {
                 String[] mdStoreIds = StringUtils.split(mdStoresCSV, WorkflowRuntimeParameters.DEFAULT_CSV_DELIMITER);
 
                 SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+                parserFactory.setNamespaceAware(true);
                 SAXParser saxParser = parserFactory.newSAXParser();
 
                 for (String currentMdStoreId : mdStoreIds) {

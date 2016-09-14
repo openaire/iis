@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.importer.dataset;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
@@ -33,7 +34,9 @@ public class DataciteXmlImporterTest {
 		final List<DataSetReference> receivedReferences = new ArrayList<DataSetReference>();
 		final List<DatasetToMDStore> receivedMDStoreReferences = new ArrayList<DatasetToMDStore>();
 		try {
-			saxParser = SAXParserFactory.newInstance().newSAXParser();
+		    SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+		    saxParserFactory.setNamespaceAware(true);
+			saxParser = saxParserFactory.newSAXParser();
 			DataciteDumpXmlHandler handler = new DataciteDumpXmlHandler(new RecordReceiver<DataSetReference>() {
 				@Override
 				public void receive(DataSetReference object) throws IOException {
@@ -58,31 +61,42 @@ public class DataciteXmlImporterTest {
 			assertEquals(mdStoreId, receivedMDStoreReferences.get(1).getMdStoreId());
 			
 //			1st record
-			assertEquals("50|oai:oai.datacite.org:1805127", receivedReferences.get(0).getId());
-			assertEquals("10.6068/DP13F04CCEE7995", receivedReferences.get(0).getIdForGivenType());
-			assertEquals(1, receivedReferences.get(0).getCreatorNames().size());
-			assertEquals("creator1", receivedReferences.get(0).getCreatorNames().get(0));
-			assertEquals(1, receivedReferences.get(0).getTitles().size());
-			assertEquals("title1", receivedReferences.get(0).getTitles().get(0));
-			assertEquals(1, receivedReferences.get(0).getFormats().size());
-			assertEquals("format1", receivedReferences.get(0).getFormats().get(0));
-			assertEquals("some description", receivedReferences.get(0).getDescription());
-			assertEquals("publisher1", receivedReferences.get(0).getPublisher());
-			assertEquals("2012", receivedReferences.get(0).getPublicationYear());
-			assertEquals("Text", receivedReferences.get(0).getResourceTypeClass());
-			assertNull(receivedReferences.get(0).getResourceTypeValue());
-//			2nd record
-			assertEquals("10.6068/DP13F04CD013D96", receivedReferences.get(1).getIdForGivenType());
-			assertEquals(1, receivedReferences.get(1).getCreatorNames().size());
-			assertEquals("creator2", receivedReferences.get(1).getCreatorNames().get(0));
-			assertEquals(1, receivedReferences.get(1).getTitles().size());
-			assertEquals("title2", receivedReferences.get(1).getTitles().get(0));
-			assertNull(receivedReferences.get(1).getFormats());
-			assertEquals("publisher2", receivedReferences.get(1).getPublisher());
-			assertEquals("2013", receivedReferences.get(1).getPublicationYear());
-			assertEquals("Dataset", receivedReferences.get(1).getResourceTypeClass());
-			assertEquals("Dataset", receivedReferences.get(1).getResourceTypeValue());
+			DataSetReference currentReference = receivedReferences.get(0);
+			assertNotNull(currentReference);
+			assertEquals("50|oai:oai.datacite.org:1805127", currentReference.getId());
+			assertEquals("10.6068/DP13F04CCEE7995", currentReference.getIdForGivenType());
+			assertEquals(1, currentReference.getCreatorNames().size());
+			assertEquals("creator1", currentReference.getCreatorNames().get(0));
+			assertEquals(1, currentReference.getTitles().size());
+			assertEquals("title1", currentReference.getTitles().get(0));
+			assertEquals(1, currentReference.getFormats().size());
+			assertEquals("format1", currentReference.getFormats().get(0));
+			assertEquals("some description", currentReference.getDescription());
+			assertEquals("publisher1", currentReference.getPublisher());
+			assertEquals("2012", currentReference.getPublicationYear());
+			assertEquals("Text", currentReference.getResourceTypeClass());
+			assertNull(currentReference.getResourceTypeValue());
+			assertNotNull(currentReference.getAlternateIdentifiers());
+            assertEquals(2, currentReference.getAlternateIdentifiers().size());
+            assertEquals("AAA0012345", currentReference.getAlternateIdentifiers().get("firstType"));
+            assertEquals("BBB0012345", currentReference.getAlternateIdentifiers().get("secondType"));
+
 			
+//			2nd record
+            currentReference = receivedReferences.get(1);
+            assertNotNull(currentReference);
+			assertEquals("10.6068/DP13F04CD013D96", currentReference.getIdForGivenType());
+			assertEquals(1, currentReference.getCreatorNames().size());
+			assertEquals("creator2", currentReference.getCreatorNames().get(0));
+			assertEquals(1, currentReference.getTitles().size());
+			assertEquals("title2", currentReference.getTitles().get(0));
+			assertNull(currentReference.getFormats());
+			assertEquals("publisher2", currentReference.getPublisher());
+			assertEquals("2013", currentReference.getPublicationYear());
+			assertEquals("Dataset", currentReference.getResourceTypeClass());
+			assertEquals("Dataset", currentReference.getResourceTypeValue());
+			assertNull(currentReference.getAlternateIdentifiers());
+						
 		} finally {
 			if (inputStream!=null) {
 				inputStream.close();
