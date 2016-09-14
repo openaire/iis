@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ROW>
-    <FIELD name="optional1">option1</FIELD>
-    <FIELD name="optional2">option2</FIELD>
+    <FIELD name="jsonextrainfo">jsonextrainfo</FIELD>
     <FIELD name="acronym">ANZ</FIELD>
     <FIELD name="projectid">arc_________::ANZCCART</FIELD>
     <FIELD name="code">ANZCCART</FIELD>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ROW>
-    <FIELD name="optional1" isNull="true"/>
-    <FIELD name="optional2" isNull="true"/>
+    <FIELD name="jsonextrainfo" isNull="true"/>
     <FIELD name="acronym" isNull="true"/>
     <FIELD name="projectid">arc_________::ANZCCART</FIELD>
     <FIELD name="code">ANZCCART</FIELD>

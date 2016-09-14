@@ -26,8 +26,7 @@ public class DatabaseProjectXmlHandlerTest {
     private String projectGrantId = "ANZCCART";
     private String projectAcronym = "ANZ";
     private String fundingClass = "ARC::ARC Centres of Excellences";
-    private String optional1 = "option1";
-    private String optional2 = "option2";
+    private String jsonExtraInfo = "jsonextrainfo";
     
     private String rootTestResourcesPath = "/eu/dnetlib/iis/wf/importer/database/project/data/input/";
     
@@ -71,8 +70,7 @@ public class DatabaseProjectXmlHandlerTest {
         assertEquals(projectGrantId, project.getProjectGrantId());
         assertEquals(projectAcronym, project.getProjectAcronym());
         assertEquals(fundingClass, project.getFundingClass());
-        assertEquals(optional1, project.getOptional1());
-        assertEquals(optional2, project.getOptional2());
+        assertEquals(jsonExtraInfo, project.getJsonextrainfo());
     }
     
     @Test
@@ -90,8 +88,7 @@ public class DatabaseProjectXmlHandlerTest {
         assertEquals(projectGrantId, project.getProjectGrantId());
         assertNull(project.getProjectAcronym());
         assertNull(project.getFundingClass());
-        assertNull(project.getOptional1());
-        assertNull(project.getOptional2());
+        assertNull(project.getJsonextrainfo());
     }
     
     @Test
@@ -109,8 +106,7 @@ public class DatabaseProjectXmlHandlerTest {
         assertEquals(projectGrantId, project.getProjectGrantId());
         assertNull(project.getProjectAcronym());
         assertEquals(fundingClass, project.getFundingClass());
-        assertNull(project.getOptional1());
-        assertNull(project.getOptional2());
+        assertNull(project.getJsonextrainfo());
     }
     
     //------------------------ INNER CLASS --------------------------

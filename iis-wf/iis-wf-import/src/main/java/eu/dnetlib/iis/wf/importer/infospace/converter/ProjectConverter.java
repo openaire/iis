@@ -65,14 +65,9 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
                     builder.setProjectGrantId(projectGrantId);
                 }
                 
-                String optional1 = sourceProject.getMetadata().getOptional1().getValue();
-                if (StringUtils.isNotBlank(optional1)) {
-                    builder.setOptional1(optional1);
-                }
-                
-                String optional2 = sourceProject.getMetadata().getOptional2().getValue();
-                if (StringUtils.isNotBlank(optional2)) {
-                    builder.setOptional2(optional2);
+                String jsonExtraInfo = sourceProject.getMetadata().getJsonextrainfo().getValue();
+                if (StringUtils.isNotBlank(jsonExtraInfo)) {
+                    builder.setJsonextrainfo(jsonExtraInfo);
                 }
                 
                 String extractedFundingClass = extractFundingClass(
