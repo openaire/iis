@@ -24,6 +24,11 @@
             <name>hbase_dump_location</name>
             <description>InformationSpace HBase dump location, usually points to remote cluster HDFS location.</description>
         </property>
+        <property>
+            <name>hbase_dump_distcp_memory_mb</name>
+            <value>6144</value>
+            <description>memory for distcp action copying InfoSpace dump from remote cluster</description>
+        </property>
 		<property>
 			<name>inference_provenance_blacklist</name>
 			<value>iis::.*</value>
@@ -291,6 +296,7 @@
         <distcp xmlns="uri:oozie:distcp-action:0.1">
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
+            <arg>-Dmapreduce.map.memory.mb=${hbase_dump_distcp_memory_mb}</arg>
             <arg>-pb</arg>
             <arg>${hbase_dump_location}</arg>
             <arg>${nameNode}${workingDir}/hbase_dump</arg>
