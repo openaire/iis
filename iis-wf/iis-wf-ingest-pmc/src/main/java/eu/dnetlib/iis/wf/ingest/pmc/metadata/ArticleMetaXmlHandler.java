@@ -1,7 +1,27 @@
 package eu.dnetlib.iis.wf.ingest.pmc.metadata;
 
-import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.*;
-import static eu.dnetlib.iis.wf.ingest.pmc.metadata.TagHierarchyUtils.*;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ATTR_AFFILIATION_ID;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ATTR_AFFILIATION_XREF;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ATTR_CONTRIBUTOR_TYPE;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ATTR_VALUE_AUTHOR;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ATTR_XREF_ID;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ATTR_XREF_TYPE;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_AFFILIATION;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_ARTICLE_ID;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_CONTRIBUTOR;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_CONTRIBUTOR_GROUP;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_FPAGE;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_GIVEN_NAMES;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_LABEL;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_LPAGE;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_NAME;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_SUP;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_SURNAME;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_XREF;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.PUB_ID_TYPE;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.TagHierarchyUtils.hasAmongParents;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.TagHierarchyUtils.isElement;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.TagHierarchyUtils.isWithinElement;
 
 import java.util.List;
 import java.util.Stack;
@@ -30,6 +50,12 @@ import pl.edu.icm.cermine.metadata.affiliation.CRFAffiliationParser;
  * @author madryk
  */
 public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingFinishedAwareXmlHandler {
+    
+    /**
+     * Maximum affiliation lenght required due to Mallet library limitation causing StackOverflowError
+     * https://github.com/openaire/iis/issues/663 
+     */
+    private static final int MAX_AFF_LENGTH = 3000;
     
     private Stack<String> parents;
     
@@ -191,7 +217,7 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
         
         try {
             String affStr = this.affiliationText.toString();
-            if (StringUtils.isNotBlank(affStr)) {
+            if (StringUtils.isNotBlank(affStr) && affStr.length() <= MAX_AFF_LENGTH) {
                 CRFAffiliationParser affiliationParser = new CRFAffiliationParser();
                 Element parsedAffiliation = affiliationParser.parse(affStr);
                 if (parsedAffiliation!=null) {
