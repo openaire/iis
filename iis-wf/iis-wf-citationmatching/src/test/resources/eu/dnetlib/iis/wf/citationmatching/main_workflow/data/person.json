@@ -10,3 +10,9 @@
     "firstname": "Zygmunt", 
     "secondnames": ["Nowak"]
 }
+{
+    "id": "person-id-3", 
+    "fullname": null, 
+    "firstname": null, 
+    "secondnames": null
+}

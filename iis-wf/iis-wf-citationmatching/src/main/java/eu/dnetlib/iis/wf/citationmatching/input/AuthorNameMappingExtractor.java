@@ -73,6 +73,7 @@ public class AuthorNameMappingExtractor {
     
     private JavaPairRDD<String, String> extractPersonIdToNameMapping(JavaRDD<Person> persons) {
         return persons
+                .filter(p -> p.getFullname()!=null)
                 .keyBy(x -> x.getId().toString())
                 .mapValues(p -> p.getFullname().toString());
     }
