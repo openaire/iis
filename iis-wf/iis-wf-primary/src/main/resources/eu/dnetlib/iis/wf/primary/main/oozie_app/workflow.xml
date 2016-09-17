@@ -772,7 +772,7 @@
     <decision name="decision-export-to-json">
         <switch>
             <case to="export-to-json">${active_export_to_json eq "true"}</case>
-            <default to="end" />
+            <default to="report-execution-times" />
         </switch>
     </decision>
 

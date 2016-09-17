@@ -716,7 +716,7 @@
 	<decision name="finalize">
 		<switch>
 			<case to="remove_sideproducts">${remove_sideproducts eq "true"}</case>
-			<default to="end" />
+			<default to="report-execution-times" />
 		</switch>
 	</decision>
 
