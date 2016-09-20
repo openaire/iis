@@ -9,11 +9,17 @@ hidden var 'wtnegheavy' from select jmergeregexp(jgroup(c1)) from (select * from
 hidden var 'wtneglight' from select jmergeregexp(jgroup(c1)) from (select * from wtweakfilterwords order by length(C1) desc);
 hidden var 'wtpospos' from select jmergeregexp(jgroup(c1)) from (select * from wtposposwords order by length(C1) desc);
 
+
+
+
 create temp table pubs as setschema 'c1,c2' select jsonpath(c1, '$.id', '$.text') from stdinput();
 
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8) from (
 
-select docid,id from (select docid,upper(regexpr("(\w+.*\d+)",middle)) as match,id,grantid,middle  from (setschema 'docid,prev,middle,next' select c1 as docid,textwindow2s(c2,12,1,5,"(.+\/\w+\/\d{4}\W*\Z)|(\d{6,7})|(\w{2}\d{4,})|(\w*\/[\w,\.]*\/\w*)|(?:\d{3}\-\d{7}\-\d{4})|(?:(?:\b|U)IP\-2013\-11\-\d{4}\b)") from (setschema 'c1,c2' select * from pubs where c2 is not null) ) , grants where (match = grantid and (fundingclass1 in ("FCT","ARC") or ( fundingclass1 = "NHMRC" and regexprmatches("nhmrc|medical research|national health medical",filterstopwords(normalizetext(lower(j2s(prev,middle,next)))))))) or (regexpr("(\w*\/[\w,\.]*\/\w*)",middle)=grantid and fundingclass1 = "SFI") or (regexpr("(\d{3}\-\d{7}\-\d{4})",middle) = grantid and fundingclass1="MSES" and regexprmatches("croatia|\bmses\b|\bmzos\b|ministry of science",lower(j2s(prev,middle,next))) ) or (regexpr("((?:\b|U)IP\-2013\-11\-\d{4}\b)",middle) = grantid and fundingclass1="CSF")) group by docid,id
+select docid,id from (select docid,upper(regexpr("(\w+.*\d+)",middle)) as match,id,grantid,middle  from (setschema 'docid,prev,middle,next' select c1 as docid,textwindow2s(c2,12,1,5,"(.+\/\w+\/\d{4}\W*\Z)|(\d{6,7})|(\w{2}\d{4,})|(\w*\/[\w,\.]*\/\w*)|(?:\d{3}\-\d{7}\-\d{4})|(?:(?:\b|U)IP\-2013\-11\-\d{4}\b)|(\b(?:(?:(?:\w{2,3})(?:\.|\-)(?:\w{2,3})(?:\.|\-)(?:\w{2,3}))|(?:\d+))\b)") from (setschema 'c1,c2' select * from pubs where c2 is not null) ) , grants where (match = grantid and (fundingclass1 in ("FCT","ARC") or ( fundingclass1 = "NHMRC" and regexprmatches("nhmrc|medical research|national health medical",filterstopwords(normalizetext(lower(j2s(prev,middle,next)))))))) or (regexpr("(\w*\/[\w,\.]*\/\w*)",middle)=grantid and fundingclass1 = "SFI") or (regexpr("(\d{3}\-\d{7}\-\d{4})",middle) = grantid and fundingclass1="MSES" and regexprmatches("croatia|\bmses\b|\bmzos\b|ministry of science",lower(j2s(prev,middle,next))) ) or (regexpr("((?:\b|U)IP\-2013\-11\-\d{4}\b)",middle) = grantid and fundingclass1="CSF") or (fundingclass1="NWO" and regexpr("(\b(?:(?:(?:\w{2,3})(?:\.|\-)(?:\w{2,3})(?:\.|\-)(?:\w{2,3}))|(?:\d+))\b)",middle)=opt1 and 
+regexprmatches("\bvici\b|\bvidi\b|\bveni\b|\bnwo\b|dutch|netherlands|\b"||lower(opt2)||"\b",lower(j2s(prev,middle,next)))
+
+)) group by docid,id
 
 )
 
