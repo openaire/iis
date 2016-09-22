@@ -62,6 +62,10 @@
                     <value>${workingDir}/producer/report</value>
                 </property>
                 <property>
+                    <name>working_dir</name>
+                    <value>${workingDir}/report/working_dir</value>
+                </property>
+                <property>
                     <name>output_report</name>
                     <value>${workingDir}/output/report.json</value>
                 </property>
