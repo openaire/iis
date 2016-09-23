@@ -66,7 +66,7 @@
                     <value>${workingDir}/report/working_dir</value>
                 </property>
                 <property>
-                    <name>output_report</name>
+                    <name>reports_external_path</name>
                     <value>${workingDir}/output/report.json</value>
                 </property>
             </configuration>
