@@ -65,10 +65,6 @@
                     <name>working_dir</name>
                     <value>${workingDir}/report/working_dir</value>
                 </property>
-                <property>
-                    <name>reports_external_path</name>
-                    <value>${workingDir}/output/report.json</value>
-                </property>
             </configuration>
         </sub-workflow>
         <ok to="consumer" />
@@ -81,7 +77,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingJsonConsumer</arg>
             <arg>-C{report,eu/dnetlib/iis/wf/primary/report/test/expected_output/report.json}</arg>
-            <arg>-Ireport=${workingDir}/output/report.json</arg>
+            <arg>-Ireport=${workingDir}/report/working_dir/report.json</arg>
         </java>
         <ok to="end" />
         <error to="fail" />
