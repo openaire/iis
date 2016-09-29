@@ -8,6 +8,10 @@ hidden var 'fp7middlepos' from select jmergeregexp(jgroup(c1)) from (select * fr
 hidden var 'wtnegheavy' from select jmergeregexp(jgroup(c1)) from (select * from wtstrongfilterwords order by length(C1) desc);
 hidden var 'wtneglight' from select jmergeregexp(jgroup(c1)) from (select * from wtweakfilterwords order by length(C1) desc);
 hidden var 'wtpospos' from select jmergeregexp(jgroup(c1)) from (select * from wtposposwords order by length(C1) desc);
+hidden var 'nihposshort' from select jmergeregexp(jgroup(word)) from (select * from nihposnamesshort order by length(word) desc);
+hidden var 'nihposfull' from select jmergeregexp(jgroup(word)) from (select * from nihposnamesfull order by length(word) desc);
+hidden var 'nihpositives' from select jmergeregexp(jgroup(word)) from (select * from nihpositives order by length(word) desc);
+hidden var 'nihnegatives' from select jmergeregexp(jgroup(word)) from (select * from nihnegatives order by length(word) desc);
 
 
 
@@ -22,14 +26,42 @@ select docid,id from (select docid,upper(regexpr("(\w+.*\d+)",middle)) as match,
 (regexpr("(\w*\/[\w,\.]*\/\w*)",middle)=grantid and fundingclass1 = "SFI") or 
 (regexpr("(\d{3}\-\d{7}\-\d{4})",middle) = grantid and fundingclass1="MSES" and regexprmatches("croatia|\bmses\b|\bmzos\b|ministry of science",lower(j2s(prev,middle,next))) ) or 
 (regexpr("((?:\b|U)IP\-2013\-11\-\d{4}\b)",middle) = grantid and fundingclass1="CSF") or 
-(fundingclass1="NWO" and regexpr("(\b(?:(?:(?:\w{2,3})(?:\.|\-)(?:\w{2,3})(?:\.|\-)(?:\w{2,3}))|(?:\d+))\b)",middle)=opt1 and 
-regexprmatches("\bvici\b|\bvidi\b|\bveni\b|\bnwo\b|dutch|netherlands|\b"||lower(opt2)||"\b",lower(j2s(prev,middle,next)))
+(fundingclass1="NWO" and regexpr("(\b(?:(?:(?:\w{2,3})(?:\.|\-)(?:\w{2,3})(?:\.|\-)(?:\w{2,3}))|(?:\d+))\b)",middle)=nwo_opt1 and 
+regexprmatches("\bvici\b|\bvidi\b|\bveni\b|\bnwo\b|dutch|netherlands|\b"||lower(nwo_opt2)||"\b",lower(j2s(prev,middle,next)))
 )
 
 ) group by docid,id
 
 )
 
+
+union all 
+
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min(1.49,confidence)/1.5)) from ( select docid,id,max(confidence) as confidence, small_string, string from ( select docid, id,
+    (coreprojectmatch*10
+    +(activitymatch>0)*(administmatch>0)*length(nih_serialnumber)*2.5
+    +(activitymatch>0)*length(nih_serialnumber)*0.666
+    +(administmatch>0)*length(nih_serialnumber)*1
+    +orgnamematch+nihposshortmatch*2+nihposfullmatch*5
+    +nihpositivematch-nihnegativematch)*0.0571
+    as confidence, nih_serialnumber, small_string, string
+    from (
+       unindexed select regexpcountuniquematches('(?:[\W\d])'||nih_activity||'(?=[\W\w])(?!/)', small_string) as activitymatch,
+            regexpcountuniquematches('(?:[\WA-KIR\d])'||nih_administeringic||'(?=[\W\d])(?!/)', small_string) as administmatch,
+            regexpcountwords('\b(?i)'||keywords(nih_orgname)||'\b', keywords(string)) as orgnamematch,
+            regexprmatches(nih_coreprojectnum, small_string) as coreprojectmatch,
+            regexpcountuniquematches(var('nihposshort'), string) as nihposshortmatch,
+            regexpcountuniquematches(var('nihposfull'), string) as nihposfullmatch,
+            regexpcountuniquematches(var('nihpositives'), string) as nihpositivematch,
+            regexpcountuniquematches(var('nihnegatives'), string) as nihnegativematch,
+            docid, id, nih_serialnumber, length(nih_serialnumber) as serialnumberlength, small_string, string
+            from (
+            select docid, middle, j2s(prev1, prev2, prev3, prev4, prev5, prev6, prev7, prev8, prev9, prev10, middle, next1, next2, next3, next4, next5) as string, j2s(prev9, prev10, middle) as small_string
+            from ( setschema 'docid, prev1, prev2, prev3, prev4, prev5, prev6, prev7, prev8, prev9, prev10, middle, next1, next2, next3, next4, next5'
+            select c1 as docid, textwindow(regexpr('\n',c2,''),10,5,1,'\d{4,7}\b') from pubs where c2 is not null
+            )), grants
+            WHERE regexpr('^0+(?!\.)',regexpr('(\d{3,})',middle),'') = nih_serialnumber AND (activitymatch OR administmatch)
+    ) where confidence > 0.5) group by docid,nih_serialnumber)
 
 union all 
 
@@ -54,7 +86,7 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min
             5 * regexpcountwords("china|shanghai|danish|nsfc|\bsnf\b|bulgarian|\bbnsf\b|norwegian|rustaveli|israel|\biran\b|shota|georgia|functionalization|manufacturing",j2s(prevpack,middle,nextpack))
        when fundingClass1="EC"/* fp7 confidence */ then
             case when fundingClass2 = "FP7" THEN
-		        regexprmatches(var('fp7middlepos'),middle)+
+                regexprmatches(var('fp7middlepos'),middle)+
                 regexprmatches('(?:\b|_|\d)'||normalizedacro||'(?:\b|_|\d)',j2s(middle,prevpacksmall,nextpack))*2  +
                 regexprmatches('fp7',prev15)*0.4 +
                 0.4*regexpcountwithpositions(var('fp7pospos'),prevpacksmall) +
