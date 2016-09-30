@@ -1,0 +1,2 @@
+## This is a classpath-based import file (this header is required)
+referenceextraction_dataset classpath eu/dnetlib/iis/wf/referenceextraction/dataset/datacite/main_sqlite/oozie_app

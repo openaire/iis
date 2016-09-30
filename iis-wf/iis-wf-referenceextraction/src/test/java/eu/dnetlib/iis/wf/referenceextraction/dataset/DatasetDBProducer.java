@@ -48,7 +48,7 @@ public class DatasetDBProducer implements Process {
         FileSystem fs = FileSystem.get(conf);
         
         try (
-                InputStream inStream = this.getClass().getResourceAsStream("/eu/dnetlib/iis/wf/referenceextraction/dataset/data/datasets.db");
+                InputStream inStream = this.getClass().getResourceAsStream("/eu/dnetlib/iis/wf/referenceextraction/dataset/datacite/data/datasets.db");
                 OutputStream outStream = fs.create(new FileSystemPath(fs, output.get(datasetDBPort)).getPath())) {
             
             IOUtils.copy(inStream, outStream);

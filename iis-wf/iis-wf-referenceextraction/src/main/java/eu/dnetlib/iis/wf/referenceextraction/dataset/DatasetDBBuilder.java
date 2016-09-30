@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -34,6 +35,8 @@ import eu.dnetlib.iis.importer.schemas.DataSetReference;
 public class DatasetDBBuilder implements Process {
     private final static String datasetPort = "dataset";
 	private final static String datasetDBPort = "dataset_db";
+	private final static String scriptLocationParam = "scriptLocation";
+	
 	
 	@Override
 	public Map<String, PortType> getInputPorts() {
@@ -64,13 +67,18 @@ public class DatasetDBBuilder implements Process {
 		Map<String, Path> output = portBindings.getOutput();
 		FileSystem fs = FileSystem.get(conf);
 		
+		String scriptLocation = parameters.get(scriptLocationParam);
+		if (StringUtils.isBlank(scriptLocation)) {
+		    throw new RuntimeException("sql script location not provided, '" + scriptLocationParam + "' parameter is missing!");
+		}
+		
 		String targetDbLocation = System.getProperty("java.io.tmpdir") + 
 				File.separatorChar + "datasets.db";
 		File targetDbFile = new File(targetDbLocation);
 		targetDbFile.setWritable(true);
 		
         java.lang.Process process = Runtime.getRuntime().exec(
-                "python scripts/madis/mexec.py -w " + targetDbLocation + " -f scripts/builddatacitedb.sql");
+                "python scripts/madis/mexec.py -w " + targetDbLocation + " -f "+ scriptLocation);
         BufferedOutputStream stdin = new BufferedOutputStream(process.getOutputStream());
         InputStream errorStream = process.getErrorStream();
     

@@ -35,10 +35,10 @@
 			<!-- Specification of the output ports -->
 			<arg>-C{document_text, 
 				eu.dnetlib.iis.metadataextraction.schemas.DocumentText,
-				eu/dnetlib/iis/wf/referenceextraction/dataset/data/document_text.json}</arg>
+				eu/dnetlib/iis/wf/referenceextraction/dataset/main/data/document_text.json}</arg>
 			<arg>-C{dataset, 
 				eu.dnetlib.iis.importer.schemas.DataSetReference,
-				eu/dnetlib/iis/wf/referenceextraction/dataset/data/dataset.json}</arg>
+				eu/dnetlib/iis/wf/referenceextraction/dataset/main/data/dataset.json}</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Odocument_text=${workingDir}/producer/document_text</arg>
 			<arg>-Odataset=${workingDir}/producer/dataset</arg>
@@ -103,12 +103,15 @@
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-C{document_to_dataset,
 				eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet,
-				eu/dnetlib/iis/wf/referenceextraction/dataset/data/document_to_dataset.json}</arg>
-            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,
-                eu/dnetlib/iis/wf/referenceextraction/dataset/data/report-old.json}</arg>
+				eu/dnetlib/iis/wf/referenceextraction/dataset/main/data/document_to_dataset.json}</arg>
+            <arg>-C{report_datacite,eu.dnetlib.iis.common.schemas.ReportEntry,
+                eu/dnetlib/iis/wf/referenceextraction/dataset/main/data/report_datacite.json}</arg>
+            <arg>-C{report_opentrials,eu.dnetlib.iis.common.schemas.ReportEntry,
+                eu/dnetlib/iis/wf/referenceextraction/dataset/main/data/report_opentrials.json}</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Idocument_to_dataset=${workingDir}/referenceextraction_dataset/document_to_dataset</arg>
-			<arg>-Ireport=${workingDir}/report/document_to_dataset</arg>
+			<arg>-Ireport_datacite=${workingDir}/report/document_to_dataset_datacite</arg>
+            <arg>-Ireport_opentrials=${workingDir}/report/document_to_dataset_opentrials</arg>
 		</java>
 		<ok to="end" />
 		<error to="fail" />

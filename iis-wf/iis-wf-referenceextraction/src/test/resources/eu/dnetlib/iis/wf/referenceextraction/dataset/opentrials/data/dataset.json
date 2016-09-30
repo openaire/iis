@@ -1,0 +1,58 @@
+{
+  "publisher": "gsk",
+  "publicationYear": null,
+  "description": null,
+  "idForGivenType": "http://www.gsk-clinicalstudyregister.com/study/115-120?last_updated_from=2001-01-01&last_updated_to=2016-02-08",
+  "id": "50|opentrials__::4f76540ffba3de631466cdef1c7a67a4",
+  "titles": [
+    "A Comparative Trial of a Combination of Atovaquone and Proguanil versus Chloroquine or Fansidar in the Treatment of Acute P. falciparum Malaria in Adults in Zambia"
+  ],
+  "resourceTypeValue": "clinical trial",
+  "formats": null,
+  "referenceType": "url",
+  "creatorNames": null,
+  "resourceTypeClass": "clinicalTrial",
+  "alternateIdentifiers": {
+    "gsk": "115-120"
+  }
+}
+{
+  "publisher": "ictrp",
+  "publicationYear": null,
+  "description": null,
+  "idForGivenType": "https://www.clinicaltrials.gov/ct2/show/NCT00299546?lup_e=02%2F04%2F2016&lup_s=01%2F01%2F2001&rank=180982&resultsxml=true",
+  "id": "50|opentrials__::bf43a83def68f37482ec2c9c61aeefc1",
+  "titles": [
+    "A Multicenter, Randomized, Double-blind, Placebo-controlled Trial of Golimumab, a Fully Human Anti-TNFa Monoclonal Antibody, Administered Subcutaneously in Subjects With Active Rheumatoid Arthritis and Previously Treated With Biologic Anti- TNFa Agent(s)",
+    "A Study of the Safety and Efficacy of Golimumab (CNTO 148) in Subjects With Active Rheumatoid Arthritis Previously Treated With Biologic Anti-TNFa Agent(s)"
+  ],
+  "resourceTypeValue": "clinical trial",
+  "formats": null,
+  "referenceType": "url",
+  "creatorNames": null,
+  "resourceTypeClass": "clinicalTrial",
+  "alternateIdentifiers": {
+    "ictrp": "NCT00299546"
+  }
+}
+{
+  "publisher": "[s.n.]",
+  "publicationYear": "1927",
+  "description": null,
+  "idForGivenType": "10.5169\/seals-259119",
+  "id": "oai:oai.datacite.org:1390724",
+  "titles": [
+    "Autour de la Soci\u00e9t\u00e9 des Nations"
+  ],
+  "resourceTypeValue": null,
+  "formats": [
+    "text\/html",
+    "application\/pdf"
+  ],
+  "referenceType": "doi",
+  "creatorNames": [
+    "[s.n.]"
+  ],
+  "resourceTypeClass": null,
+  "alternateIdentifiers": null
+}

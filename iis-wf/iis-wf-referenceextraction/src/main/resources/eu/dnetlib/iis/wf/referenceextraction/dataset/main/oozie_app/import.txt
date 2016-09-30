@@ -1,3 +1,6 @@
 ## This is a classpath-based import file (this header is required)
-sqlite_builder classpath eu/dnetlib/iis/wf/referenceextraction/dataset/sqlite_builder/oozie_app
-main_sqlite classpath eu/dnetlib/iis/wf/referenceextraction/dataset/main_sqlite/oozie_app
+input_filter classpath eu/dnetlib/iis/wf/referenceextraction/dataset/input_filter/oozie_app
+datacite_main classpath eu/dnetlib/iis/wf/referenceextraction/dataset/datacite/main/oozie_app
+opentrials_main classpath eu/dnetlib/iis/wf/referenceextraction/dataset/opentrials/main/oozie_app
+transformers_common_union classpath eu/dnetlib/iis/wf/transformers/common/union/oozie_app
+output_transformer classpath eu/dnetlib/iis/wf/referenceextraction/dataset/output_transformer/oozie_app

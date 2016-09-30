@@ -12,56 +12,156 @@
 			<name>input_dataset</name>
 			<description>input dataset</description>
 		</property>
+        <property>
+            <name>resource_type_class_opentrials_regex</name>
+            <value>^clinicalTrial$</value>
+        </property>
 		<property>
 			<name>output_document_to_dataset</name>
 			<description>output document to dataset</description>
 		</property>
 	</parameters>
 
-	<start to="sqlite_builder" />
+	<start to="input_filter" />
 
-    <action name="sqlite_builder">
+    <action name="input_filter">
         <sub-workflow>
-            <app-path>${wf:appPath()}/sqlite_builder</app-path>
+            <app-path>${wf:appPath()}/input_filter</app-path>
             <propagate-configuration />
             <configuration>
                 <property>
                     <name>workingDir</name>
-                    <value>${workingDir}/sqlite_builder/working_dir</value>
+                    <value>${workingDir}/input_filter/working_dir</value>
                 </property>
                 <property>
-                    <name>input_dataset</name>
+                    <name>resource_type_class_to_be_approved_regex</name>
+                    <value>${resource_type_class_opentrials_regex}</value>
+                </property>
+                <property>
+                    <name>input</name>
                     <value>${input_dataset}</value>
                 </property>
                 <property>
-                    <name>output_dataset_db</name>
-                    <value>${workingDir}/datasets.db</value>
+                    <name>output_approved</name>
+                    <value>${workingDir}/input_filter/output_approved</value>
+                </property>
+                <property>
+                    <name>output_rejected</name>
+                    <value>${workingDir}/input_filter/output_rejected</value>
                 </property>
             </configuration>
         </sub-workflow>
-        <ok to="main_sqlite"/>
+        <ok to="forking"/>
         <error to="fail"/>
     </action>
 
-    <action name="main_sqlite">
+    <fork name="forking">
+        <path start="opentrials_main" />
+        <path start="datacite_main" />
+    </fork>
+
+    <action name="opentrials_main">
         <sub-workflow>
-            <app-path>${wf:appPath()}/main_sqlite</app-path>
+            <app-path>${wf:appPath()}/opentrials_main</app-path>
             <propagate-configuration />
             <configuration>
                 <property>
                     <name>workingDir</name>
-                    <value>${workingDir}/main_sqlite/working_dir</value>
+                    <value>${workingDir}/opentrials_main/working_dir</value>
                 </property>
                 <property>
                     <name>input_document_text</name>
                     <value>${input_document_text}</value>
                 </property>
                 <property>
-                    <name>input_dataset_db</name>
-                    <value>${workingDir}/datasets.db</value>
+                    <name>input_dataset</name>
+                    <value>${workingDir}/input_filter/output_approved</value>
                 </property>
                 <property>
                     <name>output_document_to_dataset</name>
+                    <value>${workingDir}/opentrials_main/output</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="joining"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="datacite_main">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/datacite_main</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/datacite_main/working_dir</value>
+                </property>
+                <property>
+                    <name>input_document_text</name>
+                    <value>${input_document_text}</value>
+                </property>
+                <property>
+                    <name>input_dataset</name>
+                    <value>${workingDir}/input_filter/output_rejected</value>
+                </property>
+                <property>
+                    <name>output_document_to_dataset</name>
+                    <value>${workingDir}/datacite_main/output</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="joining"/>
+        <error to="fail"/>
+    </action>
+
+    <join name="joining" to="document_to_dataset_union" />
+
+    <action name="document_to_dataset_union">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_common_union</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/document_to_dataset_union/working_dir</value>
+                </property>
+                <property>
+                    <name>input_a</name>
+                    <value>${workingDir}/datacite_main/output</value>
+                </property>
+                <property>
+                    <name>input_b</name>
+                    <value>${workingDir}/opentrials_main/output</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${workingDir}/document_to_dataset_union/output</value>
+                </property>
+                <property>
+                    <name>schema</name>
+                    <value>eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="output_transformer" />
+        <error to="fail" />
+    </action>
+
+    <action name="output_transformer">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/output_transformer</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/output_transformer/working_dir</value>
+                </property>
+                <property>
+                    <name>input</name>
+                    <value>${workingDir}/document_to_dataset_union/output</value>
+                </property>
+                <property>
+                    <name>output</name>
                     <value>${output_document_to_dataset}</value>
                 </property>
             </configuration>
