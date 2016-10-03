@@ -39,7 +39,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.ReportMerger</arg>
             <arg>-Ipartial_reports=${input_partial_reports}</arg>
-            <arg>-Oreport=${output_report}</arg>
+            <arg>-Oreport=${working_dir}/report.json</arg>
         </java>
         <ok to="decision-copy-report" />
         <error to="fail" />
