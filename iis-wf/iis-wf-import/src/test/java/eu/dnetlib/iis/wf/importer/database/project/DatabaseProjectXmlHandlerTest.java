@@ -88,7 +88,7 @@ public class DatabaseProjectXmlHandlerTest {
         assertEquals(projectGrantId, project.getProjectGrantId());
         assertNull(project.getProjectAcronym());
         assertNull(project.getFundingClass());
-        assertNull(project.getJsonextrainfo());
+        assertEquals("{}", project.getJsonextrainfo());
     }
     
     @Test
@@ -106,7 +106,7 @@ public class DatabaseProjectXmlHandlerTest {
         assertEquals(projectGrantId, project.getProjectGrantId());
         assertNull(project.getProjectAcronym());
         assertEquals(fundingClass, project.getFundingClass());
-        assertNull(project.getJsonextrainfo());
+        assertEquals("{}", project.getJsonextrainfo());
     }
     
     //------------------------ INNER CLASS --------------------------

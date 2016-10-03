@@ -38,6 +38,7 @@ public class DatabaseProjectXmlHandler extends DefaultHandler {
 	private static final String ATTRIBUTE_NAME_VALUE_JSONEXTRAINFO = "jsonextrainfo";
 	private static final String ATTRIBUTE_NAME_VALUE_FUNDINGPATH = "fundingpath";
 	
+	private static final String BLANK_JSONEXTRAINFO = "{}";
 	
 	private final Logger log = Logger.getLogger(this.getClass());
 	
@@ -151,6 +152,8 @@ public class DatabaseProjectXmlHandler extends DefaultHandler {
 		}
 		if (StringUtils.isNotBlank(this.jsonExtraInfo)) {
             projectBuilder.setJsonextrainfo(this.jsonExtraInfo);    
+        } else {
+            projectBuilder.setJsonextrainfo(BLANK_JSONEXTRAINFO);
         }
 		
 		if (this.fundingTreeList!=null && this.fundingTreeList.size()>0) {

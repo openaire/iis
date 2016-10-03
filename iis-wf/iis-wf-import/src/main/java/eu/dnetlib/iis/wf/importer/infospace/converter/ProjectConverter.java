@@ -40,6 +40,8 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
     protected static final Logger log = Logger.getLogger(ProjectConverter.class);
 
     private static final String FUNDER_FUNDING_SEPARATOR = "::";
+    
+    private static final String BLANK_JSONEXTRAINFO = "{}";
 
     private static final Set<String> ACRONYM_SKIP_LOWERCASED_VALUES = new HashSet<String>(
             Arrays.asList("undefined", "unknown"));
@@ -68,6 +70,8 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
                 String jsonExtraInfo = sourceProject.getMetadata().getJsonextrainfo().getValue();
                 if (StringUtils.isNotBlank(jsonExtraInfo)) {
                     builder.setJsonextrainfo(jsonExtraInfo);
+                } else {
+                    builder.setJsonextrainfo(BLANK_JSONEXTRAINFO);
                 }
                 
                 String extractedFundingClass = extractFundingClass(

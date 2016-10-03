@@ -11,7 +11,8 @@ protocol IIS{
 //      project funding class e.g. FP7 or WT
         union { null , string } fundingClass = null;
 //      supplementary project metadata encoded ad JSON record
-//      NIH, NWO and other specific project details are conveyed using this field 
-        union { null , string } jsonextrainfo = null;
+//      NIH, NWO and other specific project details are conveyed using this field
+//      when extra info is not available Madis expects this field to be set to "{}"
+        string jsonextrainfo;
     }
 }

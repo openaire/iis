@@ -90,7 +90,7 @@ public class ProjectConverterTest {
         assertEquals(GRANT_ID, project.getProjectGrantId());
         assertEquals(FUNDING_CLASS, project.getFundingClass());
         assertNull(project.getProjectAcronym());
-        assertNull(project.getJsonextrainfo());
+        assertEquals("{}", project.getJsonextrainfo());
         
     }
 
