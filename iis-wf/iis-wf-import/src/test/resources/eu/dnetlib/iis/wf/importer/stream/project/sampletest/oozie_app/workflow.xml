@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-importer_database_project_sampletest">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-importer_stream_project_sampletest">
 
     <global>
         <job-tracker>${jobTracker}</job-tracker>
@@ -24,8 +24,12 @@
             <propagate-configuration />
             <configuration>
                 <property>
-                    <name>database_facade_factory_classname</name>
-                    <value>eu.dnetlib.iis.wf.importer.database.project.MockDatabaseFacadeFactory</value>
+                    <name>streaming_facade_factory_classname</name>
+                    <value>eu.dnetlib.iis.wf.importer.stream.project.StreamingFacadeMockFactory</value>
+                </property>
+                <property>
+                    <name>endpoint_url</name>
+                    <value>$UNDEFINED$</value>
                 </property>
                 <property>
                     <name>output</name>
@@ -50,10 +54,10 @@
             <!-- All input and output ports have to be bound to paths in HDFS -->
             <arg>-C{project,
                 eu.dnetlib.iis.importer.schemas.Project,
-                eu/dnetlib/iis/wf/importer/database/project/data/output/project.json}</arg>
+                eu/dnetlib/iis/wf/importer/stream/project/data/output/project.json}</arg>
             <arg>-C{report,
                 eu.dnetlib.iis.common.schemas.ReportEntry,
-                eu/dnetlib/iis/wf/importer/database/project/data/output/report.json}</arg>
+                eu/dnetlib/iis/wf/importer/stream/project/data/output/report.json}</arg>
             <!-- All input and output ports have to be bound to paths in HDFS -->
             <arg>-Iproject=${workingDir}/out</arg>
             <arg>-Ireport=${workingDir}/report/import_project</arg>

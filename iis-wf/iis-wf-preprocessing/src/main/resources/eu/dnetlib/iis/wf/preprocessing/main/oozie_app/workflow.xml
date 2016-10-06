@@ -19,13 +19,8 @@
 		</property>
 		<!-- import project related -->
 		<property>
-			<name>import_database_service_location</name>
-			<description>Database service (not WSDL) location URL</description>
-		</property>
-		<property>
-			<name>import_database_dbname</name>
-			<value>dnet_openaireplus_node0_t</value>
-			<description>database name</description>
+			<name>import_project_stream_endpoint_url</name>
+			<description>DNet REST controller location providing stream of projects</description>
 		</property>
 		<!-- import datacite related, export datacite & wos related -->
 		<property>
@@ -268,12 +263,8 @@
 				</property>
 				<!-- import project related -->
 				<property>
-					<name>database_service_location</name>
-					<value>${import_database_service_location}</value>
-				</property>
-				<property>
-					<name>database_dbname</name>
-					<value>${import_database_dbname}</value>
+					<name>project_stream_endpoint_url</name>
+					<value>${import_project_stream_endpoint_url}</value>
 				</property>
 				<!-- project concept related -->
 				<property>

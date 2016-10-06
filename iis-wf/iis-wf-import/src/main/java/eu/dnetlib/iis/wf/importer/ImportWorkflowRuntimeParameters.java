@@ -20,8 +20,6 @@ public abstract class ImportWorkflowRuntimeParameters {
 	public static final String IMPORT_CONTENT_APPROVED_OBJECSTORES_CSV = "import.content.approved.objectstores.csv";
 	public static final String IMPORT_CONTENT_BLACKLISTED_OBJECSTORES_CSV = "import.content.blacklisted.objectstores.csv";
 	
-	public static final String IMPORT_HBASE_TABLE_NAME = "import.hbase.table.name";
-		
 	public static final String IMPORT_CONTENT_OBJECT_STORE_LOC = "import.content.object.store.location";
 	public static final String IMPORT_CONTENT_OBJECT_STORE_IDS_CSV = "import.content.object.store.ids.csv";
 	public static final String IMPORT_CONTENT_MAX_FILE_SIZE_MB = "import.content.max.file.size.mb";
@@ -30,9 +28,6 @@ public abstract class ImportWorkflowRuntimeParameters {
 
 	public static final String IMPORT_DATACITE_MDSTORE_IDS_CSV = "import.datacite.mdstore.ids.csv";
 	public static final String IMPORT_DATACITE_MDSTORE_SERVICE_LOCATION = "import.datacite.mdstore.service.location";
-	
-	public static final String IMPORT_DATABASE_SERVICE_LOCATION = "import.database.service.location";
-	public static final String IMPORT_DATABASE_SERVICE_DBNAME = "import.database.service.dbname";
 	
 	public static final String IMPORT_ISLOOKUP_SERVICE_LOCATION = "import.islookup.service.location";
 	public static final String IMPORT_VOCABULARY_CODE = "import.vocabulary.code";

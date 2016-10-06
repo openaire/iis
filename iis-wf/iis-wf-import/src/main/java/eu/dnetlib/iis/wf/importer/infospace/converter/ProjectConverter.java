@@ -41,7 +41,7 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
 
     private static final String FUNDER_FUNDING_SEPARATOR = "::";
     
-    private static final String BLANK_JSONEXTRAINFO = "{}";
+    public static final String BLANK_JSONEXTRAINFO = "{}";
 
     private static final Set<String> ACRONYM_SKIP_LOWERCASED_VALUES = new HashSet<String>(
             Arrays.asList("undefined", "unknown"));
@@ -127,6 +127,14 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
                 && !ACRONYM_SKIP_LOWERCASED_VALUES.contains(acronym.trim().toLowerCase());
     }
     
+    /**
+     * Checks whether Project builder has all required fields set.
+     * @return true when all required fields set
+     */
+    public boolean isDataValid(Project.Builder builder) {
+        return builder.hasFundingClass() || builder.hasProjectAcronym() || builder.hasProjectGrantId();
+    }
+    
     // ------------------------ PRIVATE --------------------------
     
     /**
@@ -150,10 +158,6 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
      */
     private static boolean isAcronymValid(StringField acronym) {
         return isAcronymValid(acronym.getValue());
-    }
-    
-    private boolean isDataValid(Project.Builder builder) {
-        return builder.hasFundingClass() || builder.hasProjectAcronym() || builder.hasProjectGrantId();
     }
 
 }

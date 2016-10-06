@@ -16,14 +16,9 @@
 		</property>
 		<!-- import project related -->
 		<property>
-			<name>database_service_location</name>
+			<name>project_stream_endpoint_url</name>
 			<value>$UNDEFINED$</value>
-			<description>Database service (not WSDL) location URL</description>
-		</property>
-		<property>
-			<name>database_dbname</name>
-			<value>dnet_openaireplus_node6_t</value>
-			<description>database name</description>
+			<description>DNet REST controller location providing stream of projects</description>
 		</property>
 		<!-- import datacite related -->
 		<property>
