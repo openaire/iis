@@ -2,8 +2,6 @@ package eu.dnetlib.iis.wf.importer.facade;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
-import org.apache.log4j.Logger;
-
 import eu.dnetlib.data.mdstore.MDStoreService;
 import eu.dnetlib.data.mdstore.MDStoreServiceException;
 import eu.dnetlib.enabling.resultset.client.ResultSetClientFactory;
@@ -16,8 +14,6 @@ import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
  *
  */
 public class WebServiceMDStoreFacade extends AbstractResultSetAwareWebServiceFacade<MDStoreService> implements MDStoreFacade {
-
-    private final Logger log = Logger.getLogger(this.getClass());
 
     
     //------------------------ CONSTRUCTORS -------------------
@@ -37,8 +33,6 @@ public class WebServiceMDStoreFacade extends AbstractResultSetAwareWebServiceFac
     public Iterable<String> deliverMDRecords(String mdStoreId) throws ServiceFacadeException {
         try {
             W3CEndpointReference eprResult = service.deliverMDRecords(mdStoreId, null, null, null);
-            log.debug("processing mdstore: " + mdStoreId + " and obtained ResultSet EPR: " + eprResult.toString());
-            // obtaining resultSet
             ResultSetClientFactory rsFactory = new ResultSetClientFactory();
             rsFactory.setTimeout(resultSetReadTimeout);  
             rsFactory.setServiceResolver(new JaxwsServiceResolverImpl());

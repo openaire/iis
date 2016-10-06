@@ -2,8 +2,6 @@ package eu.dnetlib.iis.wf.importer.facade;
 
 import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
-import org.apache.log4j.Logger;
-
 import eu.dnetlib.data.objectstore.rmi.ObjectStoreService;
 import eu.dnetlib.data.objectstore.rmi.ObjectStoreServiceException;
 import eu.dnetlib.enabling.resultset.client.ResultSetClientFactory;
@@ -16,8 +14,6 @@ import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
  *
  */
 public class WebServiceObjectStoreFacade extends AbstractResultSetAwareWebServiceFacade<ObjectStoreService> implements ObjectStoreFacade {
-
-    private final Logger log = Logger.getLogger(this.getClass());
 
     
     //------------------------ CONSTRUCTORS -------------------
@@ -37,8 +33,6 @@ public class WebServiceObjectStoreFacade extends AbstractResultSetAwareWebServic
     public Iterable<String> deliverObjects(String objectStoreId, long from, long until) throws ServiceFacadeException {
         try {
             W3CEndpointReference eprResult = service.deliverObjects(objectStoreId, from, until);
-            log.debug("processing object store: " + objectStoreId + " and obtained ResultSet EPR: " + eprResult.toString());
-            // obtaining resultSet
             ResultSetClientFactory rsFactory = new ResultSetClientFactory();
             rsFactory.setTimeout(resultSetReadTimeout);  
             rsFactory.setServiceResolver(new JaxwsServiceResolverImpl());

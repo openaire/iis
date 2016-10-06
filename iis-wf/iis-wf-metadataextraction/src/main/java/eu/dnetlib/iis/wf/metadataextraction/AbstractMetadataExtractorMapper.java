@@ -194,7 +194,6 @@ public abstract class AbstractMetadataExtractorMapper<T>
         Element resultElem = extractor.getNLMContent();
         Document doc = new Document(resultElem);
         XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
-        log.debug("got NLM content: \n" + outputter.outputString(resultElem));
         String text = null;
         try {
             text = extractor.getRawFullText();

@@ -117,32 +117,32 @@ public class ObjectStoreDocumentContentUrlImporterProcess implements Process {
 		long intervalTime = startTime;
 		
 		int sourceIdx=0;
-		log.debug("starting url retrieval...");
+		log.info("starting url retrieval...");
 		for (String currentObjectStoreId : objectStoreIds) {
 			if (blacklistedObjectStoreIds.contains(currentObjectStoreId)) {
-				log.debug("skipping blacklisted objectstore: " + currentObjectStoreId);
+				log.info("skipping blacklisted objectstore: " + currentObjectStoreId);
 				continue;
 			}
-			log.debug("starting importing process from object store: " + currentObjectStoreId);
+			log.info("starting importing process from object store: " + currentObjectStoreId);
 			for (String record : objectStoreFacade.deliverObjects(currentObjectStoreId, 0l, System.currentTimeMillis())) {
 			    
 			    processRecord(record, targetContentUrlPath, contentsQueue, contentWriterRunnable);
 				
 				if (sourceIdx>0 && sourceIdx%progresLogInterval==0) {
-					log.debug("content retrieval progress: " + sourceIdx + ", time taken to process " +
+					log.info("content retrieval progress: " + sourceIdx + ", time taken to process " +
 							progresLogInterval + " elements: " + ((System.currentTimeMillis() - intervalTime)/1000) + " secs");
 					intervalTime = System.currentTimeMillis();
 				}
 				sourceIdx++;
 			}
-			log.debug("URL importing process from object store: " + currentObjectStoreId + " has finished");
+			log.info("URL importing process from object store: " + currentObjectStoreId + " has finished");
 		}
 		
 		contentsQueue.add(new Poison());
-		log.debug("waiting for writer thread finishing writing content");
+		log.info("waiting for writer thread finishing writing content");
 		contentExecutorFuture.get();
 		writerExecutor.shutdown();
-		log.debug("content retrieval for "+sourceIdx+" documents finished in " + 
+		log.info("content retrieval for "+sourceIdx+" documents finished in " + 
 				((System.currentTimeMillis()-startTime)/1000) + " secs");
 	}
 	

@@ -119,13 +119,12 @@ public class DataciteMDStoreImporter implements Process {
 
                         currentCount++;
                         if (currentCount % progressLogInterval == 0) {
-                            log.debug("current progress: " + currentCount + ", last package of " + progressLogInterval
+                            log.info("current progress: " + currentCount + ", last package of " + progressLogInterval
                                     + " processed in " + ((System.currentTimeMillis() - startTime) / 1000) + " secs");
                             startTime = System.currentTimeMillis();
                         }
                     }
-                    log.debug(
-                            "total number of processed records for mdstore " + currentMdStoreId + ": " + currentCount);
+                    log.info("total number of processed records for mdstore " + currentMdStoreId + ": " + currentCount);
                 }
             } else {
                 log.warn("got undefined mdstores list for datacite import, skipping!");

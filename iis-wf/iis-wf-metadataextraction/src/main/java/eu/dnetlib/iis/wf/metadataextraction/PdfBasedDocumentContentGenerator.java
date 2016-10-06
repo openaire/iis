@@ -82,8 +82,7 @@ public class PdfBasedDocumentContentGenerator implements eu.dnetlib.iis.common.j
 					writer.append(docContentBuilder.build());
 					idx++;	
 				} else {
-					log.debug("skipping directory:" + 
-							fileStatus.getPath().toString());
+					log.info("skipping directory:" + fileStatus.getPath().toString());
 				}
 			}	
 		} finally {
