@@ -27,6 +27,8 @@ public class ProjectDetailConverterTest {
     @Test
     public void testConversion() throws Exception {
         
+        ProjectDetailConverter converter = new ProjectDetailConverter();
+        
         List<Project> expected = JsonUtils.convertToList(
                 StreamingFacadeMockFactory.class.getResourceAsStream(outputResourceLocation), 
                 Project.SCHEMA$, Project.class);
@@ -41,13 +43,13 @@ public class ProjectDetailConverterTest {
                 assertNotNull(line);
                 ProjectDetail projectDetail = ProjectDetail.fromJson(line);
                 assertNotNull(projectDetail);
-                actual.add(ProjectDetailConverter.convert(projectDetail));
+                actual.add(converter.convert(projectDetail));
                 
                 line = getNonEmptyLine(scanner);
                 assertNotNull(line);
                 projectDetail = ProjectDetail.fromJson(line);
                 assertNotNull(projectDetail);
-                actual.add(ProjectDetailConverter.convert(projectDetail));
+                actual.add(converter.convert(projectDetail));
                 
                 line = getNonEmptyLine(scanner);
                 assertNull(line);

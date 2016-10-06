@@ -1,7 +1,6 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -9,19 +8,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import com.google.common.base.Preconditions;
 
@@ -39,12 +28,12 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
 
     protected static final Logger log = Logger.getLogger(ProjectConverter.class);
 
-    private static final String FUNDER_FUNDING_SEPARATOR = "::";
-    
     public static final String BLANK_JSONEXTRAINFO = "{}";
 
     private static final Set<String> ACRONYM_SKIP_LOWERCASED_VALUES = new HashSet<String>(
             Arrays.asList("undefined", "unknown"));
+    
+    private FundingTreeParser fundingTreeParser = new FundingTreeParser();
     
     // ------------------------ LOGIC --------------------------
     
@@ -74,7 +63,7 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
                     builder.setJsonextrainfo(BLANK_JSONEXTRAINFO);
                 }
                 
-                String extractedFundingClass = extractFundingClass(
+                String extractedFundingClass = fundingTreeParser.extractFundingClass(
                         extractStringValues(sourceProject.getMetadata().getFundingtreeList()));
                 if (StringUtils.isNotBlank(extractedFundingClass)) {
                     builder.setFundingClass(extractedFundingClass);
@@ -89,35 +78,7 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
             return null;
         }
     }
-
-    /**
-     * Extracts funding class from funding tree defined as XML.
-     * @throws IOException exception thrown when unable to parse XML document
-     */
-    public static String extractFundingClass(List<String> fundingTreeList) throws IOException {
-        if (CollectionUtils.isNotEmpty(fundingTreeList)) {
-            for (String fundingTreeXML : fundingTreeList) {
-                if (StringUtils.isNotBlank(fundingTreeXML)) {
-                    DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-                    try {
-                        DocumentBuilder builder = builderFactory.newDocumentBuilder();
-                        Document xmlDocument = builder.parse(new InputSource(new StringReader(fundingTreeXML)));
-                        XPath xPath = XPathFactory.newInstance().newXPath();
-                        StringBuilder strBuilder = new StringBuilder();
-                        strBuilder.append(xPath.compile("//funder/shortname").evaluate(xmlDocument));
-                        strBuilder.append(FUNDER_FUNDING_SEPARATOR);
-                        strBuilder.append(xPath.compile("//funding_level_0/name").evaluate(xmlDocument));
-                        return strBuilder.toString();
-                    } catch (ParserConfigurationException | SAXException | XPathExpressionException e) {
-                        throw new IOException("exception occurred when processing xml: " + fundingTreeXML, e);
-                    }
-                }
-            }
-        }
-        // fallback
-        return null;
-    }
-
+    
     /**
      * Verifies whether acronym should be considered as valid.
      * @return true if valid, false otherwise

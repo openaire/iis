@@ -74,6 +74,8 @@ public class StreamingProjectImporter implements Process {
             StreamingFacade streamingFacade = ServiceFacadeUtils.instantiate(parameters);
             try (Scanner scanner = new Scanner(new BufferedInputStream(streamingFacade.getStream()))) {
 
+                ProjectDetailConverter converter = new ProjectDetailConverter();
+                
                 int currentCount = 0;
                 long startTime = System.currentTimeMillis();
                 
@@ -81,7 +83,7 @@ public class StreamingProjectImporter implements Process {
                     String line = scanner.nextLine();
                     if (StringUtils.isNotBlank(line)) {
                         ProjectDetail project = ProjectDetail.fromJson(line);
-                        projectWriter.append(ProjectDetailConverter.convert(project));
+                        projectWriter.append(converter.convert(project));
                         counters.increment(PROJECT_COUNTER_NAME);
                         currentCount++;
                         if (currentCount%progressLogInterval==0) {

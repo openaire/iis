@@ -28,7 +28,7 @@
                     <value>eu.dnetlib.iis.wf.importer.stream.project.StreamingFacadeMockFactory</value>
                 </property>
                 <property>
-                    <name>endpoint_url</name>
+                    <name>project_stream_endpoint_url</name>
                     <value>$UNDEFINED$</value>
                 </property>
                 <property>

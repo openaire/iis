@@ -9,6 +9,7 @@ import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.data.transform.xml.AbstractDNetXsltFunctions;
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.importer.schemas.Project;
+import eu.dnetlib.iis.wf.importer.infospace.converter.FundingTreeParser;
 import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectConverter;
 import eu.dnetlib.openaire.exporter.model.ProjectDetail;
 
@@ -18,11 +19,13 @@ import eu.dnetlib.openaire.exporter.model.ProjectDetail;
  *
  */
 public class ProjectDetailConverter {
+    
+    private FundingTreeParser fundingTreeParser = new FundingTreeParser();
 
     /**
      * Converts {@link ProjectDetail} into {@link Project}.
      */
-    public static Project convert(ProjectDetail source) throws IOException {
+    public Project convert(ProjectDetail source) throws IOException {
         Project.Builder builder = Project.newBuilder();
         
         builder.setId(normalizeId(source.getProjectId()));
@@ -42,7 +45,7 @@ public class ProjectDetailConverter {
         }
         
         if (CollectionUtils.isNotEmpty(source.getFundingPath())) {
-            builder.setFundingClass(ProjectConverter.extractFundingClass(source.getFundingPath())); 
+            builder.setFundingClass(fundingTreeParser.extractFundingClass(source.getFundingPath())); 
         }
 
         return builder.build();
