@@ -60,6 +60,7 @@ public class CitationMatchingDirectJob {
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
             
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputAvroPath);
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
             
             JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> documents = avroLoader.loadJavaRDD(sc, params.inputAvroPath, ExtractedDocumentMetadataMergedWithOriginal.class);
             

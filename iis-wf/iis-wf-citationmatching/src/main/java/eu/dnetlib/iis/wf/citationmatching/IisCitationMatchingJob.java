@@ -49,6 +49,7 @@ public class IisCitationMatchingJob {
             ConfigurableCitationMatchingService<String, ReferenceMetadata, String, DocumentMetadata, Citation, NullWritable> citationMatchingService = createConfigurableCitationMatchingService(sc, params);
             
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputDirPath);
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
             
             citationMatchingService.matchCitations(sc, params.fullDocumentPath, params.fullDocumentPath, params.outputDirPath);
             

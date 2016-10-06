@@ -58,6 +58,7 @@ public class AffMatchingJob {
             AffMatchingService affMatchingService = createAffMatchingService(sc, params);
             
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputAvroPath);
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputAvroReportPath);
             
             affMatchingService.matchAffiliations(sc, params.inputAvroAffPath, params.inputAvroOrgPath, params.outputAvroPath, params.outputAvroReportPath);
         }

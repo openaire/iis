@@ -58,6 +58,7 @@ public class DocumentClassificationJob {
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
             
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputAvroPath);
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
           
             sc.sc().addFile(params.scriptDirPath, true);
             
