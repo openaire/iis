@@ -78,7 +78,7 @@ public class ReportMerger implements Process {
         Gson gson = new Gson();
         
         try (JsonWriter jsonWriter = new JsonWriter(new OutputStreamWriter(fs.create(outputReportPath)))) {
-            
+            jsonWriter.setIndent("  ");
             gson.toJson(jsonReport, jsonWriter);
             
         }
