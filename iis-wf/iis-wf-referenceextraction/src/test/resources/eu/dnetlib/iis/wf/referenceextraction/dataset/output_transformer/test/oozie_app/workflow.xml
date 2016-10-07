@@ -70,6 +70,10 @@
                     <name>output</name>
                     <value>${workingDir}/output_transformer/output</value>
                 </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="consumer"/>
@@ -83,7 +87,10 @@
                 eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet,
                 eu/dnetlib/iis/wf/referenceextraction/dataset/output_transformer/test/data/output.json}
             </arg>
+            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,
+                eu/dnetlib/iis/wf/referenceextraction/dataset/output_transformer/test/data/report.json}</arg>
             <arg>-Idocument_to_dataset=${workingDir}/output_transformer/output</arg>
+            <arg>-Ireport=${workingDir}/report/document_to_dataset_total</arg>
 		</java>
 		<ok to="end" />
 		<error to="fail" />

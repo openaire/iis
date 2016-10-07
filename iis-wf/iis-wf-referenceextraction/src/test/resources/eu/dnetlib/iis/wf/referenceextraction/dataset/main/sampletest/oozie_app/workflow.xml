@@ -108,10 +108,13 @@
                 eu/dnetlib/iis/wf/referenceextraction/dataset/main/data/report_datacite.json}</arg>
             <arg>-C{report_opentrials,eu.dnetlib.iis.common.schemas.ReportEntry,
                 eu/dnetlib/iis/wf/referenceextraction/dataset/main/data/report_opentrials.json}</arg>
+            <arg>-C{report_total,eu.dnetlib.iis.common.schemas.ReportEntry,
+                eu/dnetlib/iis/wf/referenceextraction/dataset/main/data/report_total.json}</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Idocument_to_dataset=${workingDir}/referenceextraction_dataset/document_to_dataset</arg>
 			<arg>-Ireport_datacite=${workingDir}/report/document_to_dataset_datacite</arg>
             <arg>-Ireport_opentrials=${workingDir}/report/document_to_dataset_opentrials</arg>
+            <arg>-Ireport_total=${workingDir}/report/document_to_dataset_total</arg>
 		</java>
 		<ok to="end" />
 		<error to="fail" />

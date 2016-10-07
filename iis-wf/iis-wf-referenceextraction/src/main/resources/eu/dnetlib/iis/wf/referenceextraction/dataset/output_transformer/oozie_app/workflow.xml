@@ -7,6 +7,15 @@
 		<property>
 			<name>output</name>
 		</property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
+            <name>output_report_relative_path</name>
+            <value>document_to_dataset_total</value>
+            <description>directory for storing report (relative to output_report_root_path)</description>
+        </property>
      </parameters>
     
     <global>
@@ -43,7 +52,12 @@
 			<prepare>
 				<delete path="${nameNode}${output}" />
 			</prepare>
-			
+			<configuration>
+                <property>
+                    <name>oozie.action.external.stats.write</name>
+                    <value>true</value>
+                </property>
+            </configuration>
             <!-- Path to PIG script the workflow executes. -->
             <script>lib/scripts/transformer.pig</script>
             
@@ -52,10 +66,21 @@
             <param>output=${output}</param>
         </pig>
         
-        <ok to="end"/>
+        <ok to="report"/>
         <error to="fail"/>
     </action>
     
+    <action name="report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.PigCountersReportGenerator</arg>
+            <arg>-PpigCounters=${hadoop:counters('transformer')}</arg>
+            <arg>-Preport.processing.referenceExtraction.dataset.total.reference={dedupDocumentToDataset.RECORD_WRITTEN}</arg>
+            <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
        
     <kill name="fail">
 		<message>Unfortunately, the workflow failed -- error message:
