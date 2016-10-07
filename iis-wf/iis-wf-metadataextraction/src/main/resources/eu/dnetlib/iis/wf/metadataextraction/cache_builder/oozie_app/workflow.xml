@@ -65,6 +65,11 @@
             <value>/user/${user.name}/iis/working_dirs/${execution_environment}</value>
             <description>working directory</description>
         </property>
+        <property>
+            <name>reports_external_path</name>
+            <value>$UNDEFINED$</value>
+            <description>directory for storing reports from different executions of the workflow</description>
+        </property>
 	</parameters>
 
 	<global>
@@ -190,7 +195,7 @@
 		<switch>
 			<!-- skipping metadataextraction merging process -->
 			<case to="get-existing-cache-id">${wf:actionData('check_input_isempty')['isEmpty'] eq "false"}</case>
-			<default to="finalize" />
+			<default to="build-report" />
 		</switch>
 	</decision>
 
@@ -288,7 +293,7 @@
 		<switch>
 			<!-- skipping metadataextraction merging process -->
 			<case to="obtain-lock_for_merging">${wf:actionData('check_metadataextraction_output_meta_isempty')['isEmpty'] eq "false"}</case>
-			<default to="finalize" />
+			<default to="build-report" />
 		</switch>
 	</decision>
 
@@ -498,9 +503,28 @@
 			<arg>-Pnode_id=${cache_location}</arg>
 			<arg>-Pmode=release</arg>
 		</java>
-		<ok to="finalize" />
+		<ok to="build-report" />
 		<error to="fail" />
 	</action>
+
+    <action name="build-report">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/report</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>working_dir</name>
+                    <value>${workingDir}/report/working_dir</value>
+                </property>
+                <property>
+                    <name>input_partial_reports</name>
+                    <value>${workingDir}/report</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="finalize" />
+        <error to="fail" />
+    </action>
 
 	<decision name="finalize">
 		<switch>
