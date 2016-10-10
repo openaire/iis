@@ -24,8 +24,8 @@ select docid,id from (select docid,upper(regexpr("(\w+.*\d+)",middle)) as match,
 (match = grantid and (fundingclass1 in ("FCT","ARC"))) or 
 (regexpr("(\d{5,7})",middle)=grantid and fundingclass1 = "NHMRC" and regexprmatches("nhmrc|medical research|national health medical",filterstopwords(normalizetext(lower(j2s(prev,middle,next)))))) or 
 (regexpr("(\w*\/[\w,\.]*\/\w*)",middle)=grantid and fundingclass1 = "SFI") or 
-(regexpr("(\d{3}\-\d{7}\-\d{4})",middle) = grantid and fundingclass1="MSES" and regexprmatches("croatia|\bmses\b|\bmzos\b|ministry of science",lower(j2s(prev,middle,next))) ) or 
-(regexpr("((?:\b|U)IP\-2013\-11\-\d{4}\b)",middle) = grantid and fundingclass1="CSF") or 
+(regexpr("(\d{3}\-\d{7}\-\d{4})",middle) = grantid and fundingclass1="MZOS" and regexprmatches("croatia|\bmses\b|\bmzos\b|ministry of science",lower(j2s(prev,middle,next))) ) or 
+(regexpr("((?:\b|U)IP\-2013\-11\-\d{4}\b)",middle) = grantid and fundingclass1="HRZZ") or 
 (fundingclass1="NWO" and regexpr("(\b(?:(?:(?:\w{2,3})(?:\.|\-)(?:\w{2,3})(?:\.|\-)(?:\w{2,3}))|(?:\d+))\b)",middle)=nwo_opt1 and 
 regexprmatches("\bvici\b|\bvidi\b|\bveni\b|\bnwo\b|dutch|netherlands|\b"||lower(nwo_opt2)||"\b",lower(j2s(prev,middle,next)))
 )
