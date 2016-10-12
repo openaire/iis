@@ -208,7 +208,7 @@
         </property>
 		<property>
 			<name>remove_sideproducts</name>
-			<value>true</value>
+			<value>false</value>
 			<description>flag indicating whole workingDir will be erased.
 				Notice: do not provide any output directory locationpointing to workingDir subdirectory!</description>
 		</property>

@@ -51,7 +51,7 @@
 		</property>
 		<property>
 			<name>remove_sideproducts</name>
-			<value>true</value>
+			<value>false</value>
 			<description>flag indicating whole working directory will be erased</description>
 		</property>
         <!-- working directory related -->

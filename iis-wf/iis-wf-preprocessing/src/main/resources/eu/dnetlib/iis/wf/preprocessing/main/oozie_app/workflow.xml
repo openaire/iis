@@ -2,7 +2,7 @@
 	<parameters>
 		<property>
 			<name>remove_sideproducts</name>
-			<value>true</value>
+			<value>false</value>
 			<description>flag indicating inference side products will be erased</description>
 		</property>
 		<!-- import concepts related -->

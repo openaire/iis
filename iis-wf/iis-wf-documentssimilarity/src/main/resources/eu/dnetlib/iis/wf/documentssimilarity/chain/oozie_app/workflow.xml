@@ -61,7 +61,7 @@
 		</property>
 		<property>
             <name>remove_sideproducts</name>
-            <value>true</value>
+            <value>false</value>
             <description>flag indicating all documents similarity processing sideproducts should be removed</description>
         </property>
     </parameters>
