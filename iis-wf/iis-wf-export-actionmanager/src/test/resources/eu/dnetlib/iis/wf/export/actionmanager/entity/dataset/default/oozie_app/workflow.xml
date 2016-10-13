@@ -45,7 +45,8 @@
             
             <!-- mock MDStore facade configuration -->
             <arg>-Pmdstore.facade.factory.classname=eu.dnetlib.iis.wf.export.actionmanager.entity.facade.MockMDStoreFacadeFactory</arg>
-            <arg>-Pmdstore.facade.mock.static.resource.mdId1.docId1=/eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/input/dataset.xml</arg>
+            <arg>-Pmdstore.facade.mock.static.resource.mdId1.docId1=/eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/input/datacite.xml</arg>
+            <arg>-Pmdstore.facade.mock.static.resource.mdId2.docId2=/eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/input/opentrial.xml</arg>
             <!--  -->
             
             <arg>-Pexport.action.setid=dataset-entity-id</arg>
@@ -74,10 +75,11 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/datasets</arg>
-            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/output/dataset.expectations,
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/output/datacite.expectations,
                 /eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/output/person.expectations,
                 /eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/output/person_isAuthorOf_document.expectations,
-                /eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/output/document_hasAuthor_person.expectations
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/output/document_hasAuthor_person.expectations,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/output/opentrial.expectations
             </arg>
         </java>
         <ok to="report-consumer" />
