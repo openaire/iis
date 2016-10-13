@@ -203,11 +203,8 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
         Affiliation currentAffiliation = buildAffiliation();
         if (currentAffiliation != null) {
             int currentAffiliationPosition = builder.getAffiliations().size();
-            
-            if (assignAuthorsForAffiliation(currentAffiliation, currentAffiliationPosition)) {
-                builder.getAffiliations().add(currentAffiliation);
-            }
-            
+            builder.getAffiliations().add(currentAffiliation);
+            assignAuthorsForAffiliation(currentAffiliationPosition);
         }
         
         affiliationText.setLength(0);
@@ -226,10 +223,7 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
                     return aff;
                 }
             }
-        } catch (AnalysisException e) {
-            throw new SAXException("unexpected exception while parsing "
-                    + "affiliations for document: " + builder.getId(), e);
-        } catch (TransformationException e) {
+        } catch (TransformationException | AnalysisException e) {
             throw new SAXException("unexpected exception while parsing "
                     + "affiliations for document: " + builder.getId(), e);
         }
@@ -237,30 +231,23 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
         return null;
     }
     
-    private boolean assignAuthorsForAffiliation(Affiliation currentAffiliation, int currentAffiliationPosition) throws SAXException {
-        boolean atLeastOneAuthorAssigned = false;
-        
+    private void assignAuthorsForAffiliation(int currentAffiliationPosition) throws SAXException {
         if (hasAmongParents(parents, ELEM_CONTRIBUTOR)) {
-            currentAuthor.getAffiliationPos().add(currentAffiliationPosition);
-            atLeastOneAuthorAssigned = true;
+            if (currentAuthor != null) {
+                currentAuthor.getAffiliationPos().add(currentAffiliationPosition);    
+            }
         } else if (hasAmongParents(parents, ELEM_CONTRIBUTOR_GROUP)) {
             for (JatsAuthor author : currentAuthorsGroup) {
                 author.getAffiliationPos().add(currentAffiliationPosition);
-                atLeastOneAuthorAssigned = true;
             }
         } else if (currentAffiliationId != null) {
             for (JatsAuthor author : currentAuthors) {
                 for (String affRefId : author.getAffiliationRefId()) {
                     if (StringUtils.equals(currentAffiliationId, affRefId)) {
                         author.getAffiliationPos().add(currentAffiliationPosition);
-                        atLeastOneAuthorAssigned = true;
                     }
                 }
             }
-        } else {
-            throw new SAXException("unable to connect affiliation with corresponding authors (" + currentAffiliation + ")");
         }
-        
-        return atLeastOneAuthorAssigned;
     }
 }
