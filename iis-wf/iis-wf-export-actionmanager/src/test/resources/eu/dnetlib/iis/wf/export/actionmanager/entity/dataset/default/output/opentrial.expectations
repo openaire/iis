@@ -64,7 +64,9 @@ $targetValue.entity.collectedfromList[0].value=OpenTrials
 
 $targetValue.entity.oaiprovenance.originDescription.harvestDate=2016-05-16T16:29:15.077Z
 $targetValue.entity.oaiprovenance.originDescription.altered=true
-$targetValue.entity.oaiprovenance.originDescription.baseURL=file:///var/lib/dnet/data/opentrials.csv
+
+#disabling until fixing #2269
+#$targetValue.entity.oaiprovenance.originDescription.baseURL=file:///var/lib/dnet/data/opentrials.csv
 
 $targetValue.dataInfo.inferred=false
 $targetValue.dataInfo.deletedbyinference=false
