@@ -1,17 +1,17 @@
 targetColumn=body
 targetColumnFamily=person
-targetRowKey=30|datacite____::e9edaf36f09e08a1c999b2343c3c4282
+targetRowKey=30|datacite____::9485b3722937f0265b8d0b4b2e5915fe
 rawSet=dataset-entity-id
 actionType=aac
 agent.id=iis
 agent.name=information inference service
 agent.type=service
 
-#{"kind": "entity","entity": {"type": "person","person": {"metadata": {"fullname": {"value": "[s.n.]"}}},"collectedfrom": [{"key": "","value": ""}],"dateofcollection": "","id": "30|datacite____::e9edaf36f09e08a1c999b2343c3c4282","dateoftransformation": ""},"dataInfo": {"inferred": false,"deletedbyinference": false,"trust": "0.9","provenanceaction": {"classid": "sysimport:mining:repository","classname": "sysimport:mining:repository","schemeid": "dnet:provenanceActions","schemename": "dnet:provenanceActions"}}}
+#{"kind": "entity","entity": {"type": "person","person": {"metadata": {"fullname": {"value": "[s.n.]"}}},"collectedfrom": [{"key": "","value": ""}],"dateofcollection": "","id": "30|datacite____::9485b3722937f0265b8d0b4b2e5915fe","dateoftransformation": ""},"dataInfo": {"inferred": false,"deletedbyinference": false,"trust": "0.9","provenanceaction": {"classid": "sysimport:mining:repository","classname": "sysimport:mining:repository","schemeid": "dnet:provenanceActions","schemename": "dnet:provenanceActions"}}}
 
 $targetValue.kind=entity
 $targetValue.entity.type=person
-$targetValue.entity.id=30|datacite____::e9edaf36f09e08a1c999b2343c3c4282
+$targetValue.entity.id=30|datacite____::9485b3722937f0265b8d0b4b2e5915fe
 
 $targetValue.entity.person.metadata.fullname.value=[s.n.]
 

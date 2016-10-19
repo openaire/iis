@@ -21,15 +21,12 @@ import eu.dnetlib.iis.export.auxiliary.schemas.Identifier;
  */
 public class DocumentExporterProcess extends AbstractEntityExporterProcess<Identifier> {
 
-    private static final String NAMESPACE_PREFIX_WOS = "webcrawl____";
-
     private String mdStoreId;
 
     // ------------------------ CONSTRUCTORS -----------------------------
 
     public DocumentExporterProcess() {
-        super(Identifier.SCHEMA$, "dmf2actions", "eu/dnetlib/actionmanager/xslt/dmf2insertActions.xslt",
-                NAMESPACE_PREFIX_WOS);
+        super(Identifier.SCHEMA$, "dmf2actions", "eu/dnetlib/actionmanager/xslt/dmf2insertActions.xslt");
     }
 
     // ------------------------ LOGIC -----------------------------

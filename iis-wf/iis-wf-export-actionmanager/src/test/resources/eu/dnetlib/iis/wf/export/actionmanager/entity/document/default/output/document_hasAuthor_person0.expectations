@@ -1,4 +1,4 @@
-targetColumn=30|webcrawl____::50a7085797350b0b541dbf4ea5e13577
+targetColumn=30|webcrawl____::b1fac77c94ca552c9b9c53658a6fd76f
 targetColumnFamily=personResult_authorship_hasAuthor
 targetRowKey=50|webcrawl____::000038b2e009d799643ba2b05a155877
 rawSet=document-entity-id
@@ -7,12 +7,12 @@ agent.id=iis
 agent.name=information inference service
 agent.type=service
 
-#{"kind": "relation","rel": {"relType": "personResult","source": "50|webcrawl____::000038b2e009d799643ba2b05a155877","target": "30|webcrawl____::50a7085797350b0b541dbf4ea5e13577","child": false,"personResult": {"authorship": {"relMetadata": {"semantics": {"classid": "hasAuthor","classname": "hasAuthor","schemeid": "dnet:person_result_relations","schemename": "dnet:person_result_relations"}},"ranking": "1"}},"subRelType": "authorship","relClass": "hasAuthor"},"dataInfo": {"inferred": false,"deletedbyinference": false,"trust": "0.9","inferenceprovenance": "","provenanceaction": {"classid": "sysimport:crosswalk:repository","classname": "sysimport:crosswalk:repository","schemeid": "dnet:provenanceActions","schemename": "dnet:provenanceActions"}}}
+#{"kind": "relation","rel": {"relType": "personResult","source": "50|webcrawl____::000038b2e009d799643ba2b05a155877","target": "30|webcrawl____::b1fac77c94ca552c9b9c53658a6fd76f","child": false,"personResult": {"authorship": {"relMetadata": {"semantics": {"classid": "hasAuthor","classname": "hasAuthor","schemeid": "dnet:person_result_relations","schemename": "dnet:person_result_relations"}},"ranking": "1"}},"subRelType": "authorship","relClass": "hasAuthor"},"dataInfo": {"inferred": false,"deletedbyinference": false,"trust": "0.9","inferenceprovenance": "","provenanceaction": {"classid": "sysimport:crosswalk:repository","classname": "sysimport:crosswalk:repository","schemeid": "dnet:provenanceActions","schemename": "dnet:provenanceActions"}}}
 
 $targetValue.kind=relation
 $targetValue.rel.relType=personResult
 $targetValue.rel.source=50|webcrawl____::000038b2e009d799643ba2b05a155877
-$targetValue.rel.target=30|webcrawl____::50a7085797350b0b541dbf4ea5e13577
+$targetValue.rel.target=30|webcrawl____::b1fac77c94ca552c9b9c53658a6fd76f
 $targetValue.rel.child=false
 $targetValue.rel.subRelType=authorship
 $targetValue.rel.relClass=hasAuthor

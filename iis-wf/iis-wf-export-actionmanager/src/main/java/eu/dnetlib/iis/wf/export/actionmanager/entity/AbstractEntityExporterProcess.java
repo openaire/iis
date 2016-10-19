@@ -74,8 +74,6 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
 
     private final String entityXSLTLocation;
 
-    private final String entityNamespacePrefix;
-    
     private final ActionFactory actionFactory;
     
     private final NamedCountersFileWriter countersWriter = new NamedCountersFileWriter();
@@ -86,14 +84,11 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
      * @param inputPortSchema input port avro schema
      * @param entityXSLTName entity XSL transformation name
      * @param entityXSLTLocation entity XSL transformation location
-     * @param entityNamespacePrefix namespace prefix to be used with given entity type
      */
-    public AbstractEntityExporterProcess(Schema inputPortSchema, String entityXSLTName, String entityXSLTLocation,
-            String entityNamespacePrefix) {
+    public AbstractEntityExporterProcess(Schema inputPortSchema, String entityXSLTName, String entityXSLTLocation) {
         this.inputPortSchema = inputPortSchema;
         this.entityXSLTName = entityXSLTName;
         this.entityXSLTLocation = entityXSLTLocation;
-        this.entityNamespacePrefix = entityNamespacePrefix;
         this.actionFactory = buildActionFactory();
 
     }
@@ -179,7 +174,7 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
 
         XsltInfoPackageAction xsltAction = actionFactory.generateInfoPackageAction(entityXSLTName, actionSetId,
                 StaticConfigurationProvider.AGENT_DEFAULT, Operation.INSERT, mdStoreRecord, PROVENANCE_DEFAULT,
-                entityNamespacePrefix, StaticConfigurationProvider.ACTION_TRUST_0_9);
+                StaticConfigurationProvider.ACTION_TRUST_0_9);
         
         List<AtomicAction> atomicActions = xsltAction.asAtomicActions();
         
