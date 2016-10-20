@@ -38,7 +38,7 @@
 
     <ciManagement>
         <system>jenkins</system>
-        <url>http://ci.research-infrastructures.eu/view/D-Net</url>
+        <url>http://ci.ceon.pl/view/IIS/</url>
     </ciManagement>
 
     <scm>
@@ -370,7 +370,7 @@
             <dependency>
                 <groupId>pl.edu.icm.spark-utils</groupId>
                 <artifactId>spark-utils</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
+                <version>0.0.1</version>
             </dependency>
 
 
@@ -1086,7 +1086,7 @@
         <iis.avro.version>1.7.6-${iis.cdh.version}</iis.avro.version>
         <iis.hadoop.version>2.6.0-${iis.cdh.version}</iis.hadoop.version>
         <iis.spark.version>1.5.0-${iis.cdh.version}</iis.spark.version>
-        <iis.coansys.version>1.10-rc3-SNAPSHOT</iis.coansys.version>
+        <iis.coansys.version>1.10-rc3</iis.coansys.version>
         <scala.version>2.10.6</scala.version>
     </properties>
 </project>
