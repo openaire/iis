@@ -40,6 +40,10 @@
 			<groupId>pl.edu.icm.cermine</groupId>
 			<artifactId>cermine-impl</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>

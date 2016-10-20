@@ -35,7 +35,7 @@ public class CermineMetadataExtractionTest extends TestCase {
         Element extractedContent;
         try {
             extractor.setPDF(is);
-            extractedContent = extractor.getNLMContent();
+            extractedContent = extractor.getContentAsNLM();
         } finally {
             is.close();
         }

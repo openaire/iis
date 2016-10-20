@@ -16,8 +16,6 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
 
 import com.itextpdf.text.exceptions.InvalidPdfException;
 
@@ -191,9 +189,8 @@ public abstract class AbstractMetadataExtractorMapper<T>
      * @param documentId document identifier
      */
     private void handleContent(ContentExtractor extractor, String documentId) throws TimeoutException, AnalysisException, IOException, InterruptedException, TransformationException {
-        Element resultElem = extractor.getNLMContent();
+        Element resultElem = extractor.getContentAsNLM();
         Document doc = new Document(resultElem);
-        XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
         String text = null;
         try {
             text = extractor.getRawFullText();

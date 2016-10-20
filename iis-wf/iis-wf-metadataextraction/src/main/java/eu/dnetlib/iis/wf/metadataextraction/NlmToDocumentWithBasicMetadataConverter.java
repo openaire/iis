@@ -25,7 +25,7 @@ import eu.dnetlib.iis.metadataextraction.schemas.Range;
 import eu.dnetlib.iis.metadataextraction.schemas.ReferenceBasicMetadata;
 import eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata;
 import pl.edu.icm.cermine.bibref.model.BibEntry;
-import pl.edu.icm.cermine.bibref.transformers.NLMElementToBibEntryConverter;
+import pl.edu.icm.cermine.bibref.transformers.NLMToBibEntryConverter;
 import pl.edu.icm.cermine.exception.TransformationException;
 
 /**
@@ -120,7 +120,7 @@ public final class NlmToDocumentWithBasicMetadataConverter {
 				List<ReferenceMetadata> refMetas = new ArrayList<ReferenceMetadata>();
 				if (refs!=null) {
 					int idx = 1;
-					NLMElementToBibEntryConverter bibEntryConverter = new NLMElementToBibEntryConverter();
+					NLMToBibEntryConverter bibEntryConverter = new NLMToBibEntryConverter();
 					for (Element ref : refs) {
 						if (ref.getChild("mixed-citation")!=null) {
 							BibEntry bibEntry = bibEntryConverter.convert(
