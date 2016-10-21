@@ -79,10 +79,6 @@
         </dependency>
         <dependency>
             <groupId>eu.dnetlib</groupId>
-            <artifactId>cnr-enabling-database-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>eu.dnetlib</groupId>
             <artifactId>cnr-resultset-client</artifactId>
             <exclusions>
                 <exclusion>
