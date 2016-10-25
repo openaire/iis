@@ -79,11 +79,6 @@
 					<groupId>org.mortbay.jetty</groupId>
 					<artifactId>servlet-api</artifactId>
 				</exclusion>
-				<!-- excluding duplicate -->
-				<exclusion>
-					<groupId>jdom</groupId>
-					<artifactId>jdom</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -181,6 +176,11 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>
+
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+        </dependency>
 
 		<!-- incompatible version is conveyed by iis-wf-citationmatching -->
 		<!-- unfortunatelly it adds JobACLsManager which breaks dependancy -->
