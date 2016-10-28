@@ -405,7 +405,46 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.test.ReportTestingConsumer</arg>
             
-            <arg>-C{execTimeReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/exec_time_report.json}</arg>
+            <arg>-C{affMatchingReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/aff-matching.json}</arg>
+            <arg>-IaffMatchingReport=${workingDir}/report/aff-matching</arg>
+            
+            <arg>-C{citationReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/citation.json}</arg>
+            <arg>-IcitationReport=${workingDir}/report/citation</arg>
+            
+            <arg>-C{citationmatchingDirectReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/citationmatching_direct.json}</arg>
+            <arg>-IcitationmatchingDirectReport=${workingDir}/report/citationmatching_direct</arg>
+            
+            <arg>-C{citationmatchingFuzzyReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/citationmatching_fuzzy.json}</arg>
+            <arg>-IcitationmatchingFuzzyReport=${workingDir}/report/citationmatching_fuzzy</arg>
+            
+            <arg>-C{docSoftwareUrlReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/doc-software-url.json}</arg>
+            <arg>-IdocSoftwareUrlReport=${workingDir}/report/doc-software-url</arg>
+            
+            <arg>-C{docProjectConceptReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/doc_project_concept.json}</arg>
+            <arg>-IdocProjectConceptReport=${workingDir}/report/doc_project_concept</arg>
+            
+            <arg>-C{docResearchInitiativeReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/doc_research_initiative.json}</arg>
+            <arg>-IdocResearchInitiativeReport=${workingDir}/report/doc_research_initiative</arg>
+            
+            <arg>-C{documentClassificationReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_classification.json}</arg>
+            <arg>-IdocumentClassificationReport=${workingDir}/report/document_classification</arg>
+            
+            <arg>-C{documentTextUnionReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_text_union.json}</arg>
+            <arg>-IdocumentTextUnionReport=${workingDir}/report/document_text_union</arg>
+            
+            <arg>-C{documentToDatasetDataciteReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_to_dataset_datacite.json}</arg>
+            <arg>-IdocumentToDatasetDataciteReport=${workingDir}/report/document_to_dataset_datacite</arg>
+            
+            <arg>-C{documentToDatasetOpentrialsReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_to_dataset_opentrials.json}</arg>
+            <arg>-IdocumentToDatasetOpentrialsReport=${workingDir}/report/document_to_dataset_opentrials</arg>
+            
+            <arg>-C{documentToDatasetTotalReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_to_dataset_total.json}</arg>
+            <arg>-IdocumentToDatasetTotalReport=${workingDir}/report/document_to_dataset_total</arg>
+            
+            <arg>-C{documentToProjectReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_to_project.json}</arg>
+            <arg>-IdocumentToProjectReport=${workingDir}/report/document_to_project</arg>
+            
+            <arg>-C{execTimeReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/primary-processing-execution-times.json}</arg>
             <arg>-IexecTimeReport=${workingDir}/report/primary-processing-execution-times</arg>
         </java>
         <ok to="end" />
