@@ -1,5 +1,3 @@
-SET mapred.child.java.opts $mapred_child_java_opts
-
 define avro_load_input AvroStorage('$schema_input');
 
 define avro_store_output AvroStorage('$schema_output');

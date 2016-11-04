@@ -4,10 +4,6 @@
 			<name>pdfs_resource_dir</name>
 			<value>/eu/dnetlib/iis/wf/metadataextraction/2014-A0-053.pdf,/eu/dnetlib/iis/wf/metadataextraction/pdf-example.pdf</value>
 		</property>
-		<property>
-			<name>mapred_child_java_opts</name>
-			<value>-Xmx512m</value>
-		</property>
 	</parameters>
 	
     <global>

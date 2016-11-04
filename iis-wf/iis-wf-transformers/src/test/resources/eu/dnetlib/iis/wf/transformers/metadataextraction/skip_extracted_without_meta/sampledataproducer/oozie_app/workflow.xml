@@ -78,14 +78,6 @@
                     <name>output_document_content</name>
                     <value>${workingDir}/transformer/output</value>
                 </property>
-                <property>
-					<name>mapred_map_child_java_opts</name>
-					<value>-Xmx200m</value>
-				</property>
-				<property>
-					<name>mapred_reduce_child_java_opts</name>
-					<value>-Xmx200m</value>
-				</property>
             </configuration>
         </sub-workflow>
         <ok to="consumer"/>

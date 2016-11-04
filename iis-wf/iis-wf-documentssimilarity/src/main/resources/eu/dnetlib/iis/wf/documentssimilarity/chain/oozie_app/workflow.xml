@@ -27,7 +27,10 @@
         <property>                                                                                                                                                                    
             <name>mapredChildJavaOpts</name>                                                                                                                                          
             <value>-Xmx5632m</value>
-            <description>mapred child java opts</description>
+            <description>Mapreduce's map and reduce child java opts. 
+            Notice: even though the name was preserved from the time when mapred.child.java.opts property was set (which is now deprecated) 
+            currently hadoop 2.0 properties: mapreduce.map.java.opts and mapreduce.reduce.java.opts are set to this value deep down in coansys docsim PIG scripts.
+            </description>
         </property>
         <property>
             <name>tfidfTopnTermPerDocument</name>

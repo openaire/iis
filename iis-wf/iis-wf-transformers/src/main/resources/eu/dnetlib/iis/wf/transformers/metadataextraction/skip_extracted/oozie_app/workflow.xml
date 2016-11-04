@@ -26,16 +26,6 @@
             <value>import_metadataextraction_cache</value>
             <description>directory for storing report (relative to output_report_root_path)</description>
         </property>
-		<property>
-			<name>mapred_map_child_java_opts</name>
-			<value>-Xmx4g</value>
-			<description>mapper java-opts, e.g. maximum heap size for a single JVM running MapReduce</description>
-		</property>
-		<property>
-			<name>mapred_reduce_child_java_opts</name>
-			<value>-Xmx4g</value>
-			<description>reducer java-opts, e.g. maximum heap size for a single JVM running MapReduce</description>
-		</property>
 	</parameters>
     
     <global>
@@ -75,14 +65,6 @@
 				<delete path="${nameNode}${output_document_meta}" />
 			</prepare>
             <configuration>
-                <property>
-                    <name>mapreduce.map.java.opts</name>
-                    <value>${mapred_map_child_java_opts}</value>
-                </property>
-                <property>
-                    <name>mapreduce.reduce.java.opts</name>
-                    <value>${mapred_reduce_child_java_opts}</value>
-                </property>
                 <property>
                     <name>oozie.action.external.stats.write</name>
                     <value>true</value>

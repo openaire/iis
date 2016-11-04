@@ -30,11 +30,6 @@
 				@see eu.dnetlib.iis.wf.collapsers.SignificantFieldsCollapser
 			</description>
 		</property>
-		<property>
-			<name>mapred_child_java_opts</name>
-			<value>-Xmx2048M</value>
-			<description>java-opts, e.g. maximum heap size for a single JVM running MapReduce</description>
-		</property>
 	</parameters>
 
 
@@ -75,10 +70,6 @@
 				<mkdir path="${nameNode}${workingDir}/collapser" />
 			</prepare>
 			<configuration>
-				<property>
-					<name>mapred.child.java.opts</name>
-					<value>${mapred_child_java_opts}</value>
-				</property>
 				<property>
 					<name>mapreduce.job.inputformat.class</name>
 					<value>org.apache.avro.mapreduce.AvroKeyInputFormat</value>

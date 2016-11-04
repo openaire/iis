@@ -39,11 +39,6 @@
 			<name>schema_output</name>
 			<description>output schema</description>
 		</property>
-		<property>
-			<name>mapred_child_java_opts</name>
-			<value>-Xmx2048M</value>
-			<description>java-opts, e.g. maximum heap size for a single JVM running MapReduce</description>
-		</property>
 	</parameters>
 
 	<global>
@@ -98,8 +93,6 @@
 			<param>schema_output=${wf:actionData('generate-schema')[wf:conf('schema_output')]}</param>
 
 			<param>origin_value=${origin_1}</param>
-
-			<param>mapred_child_java_opts=${mapred_child_java_opts}</param>
 		</pig>
 		<ok to="union_origin_join" />
 		<error to="fail" />
@@ -123,8 +116,6 @@
 			<param>schema_output=${wf:actionData('generate-schema')[wf:conf('schema_output')]}</param>
 
 			<param>origin_value=${origin_2}</param>
-
-			<param>mapred_child_java_opts=${mapred_child_java_opts}</param>
 		</pig>
 		<ok to="union_origin_join" />
 		<error to="fail" />
@@ -155,8 +146,6 @@
 			<param>schema_output=${wf:actionData('generate-schema')[wf:conf('schema_output')]}</param>
 
 			<param>origin_value=${origin_3}</param>
-
-			<param>mapred_child_java_opts=${mapred_child_java_opts}</param>
 		</pig>
 		<ok to="union_origin_join" />
 		<error to="fail" />
@@ -186,8 +175,6 @@
 
 			<param>output=${output}</param>
 			<param>schema_output=${wf:actionData('generate-schema')[wf:conf('schema_output')]}</param>
-
-			<param>mapred_child_java_opts=${mapred_child_java_opts}</param>
 		</pig>
 		<ok to="end" />
 		<error to="fail" />
@@ -209,8 +196,6 @@
 
 			<param>output=${output}</param>
 			<param>schema_output=${wf:actionData('generate-schema')[wf:conf('schema_output')]}</param>
-
-			<param>mapred_child_java_opts=${mapred_child_java_opts}</param>
 		</pig>
 		<ok to="end" />
 		<error to="fail" />

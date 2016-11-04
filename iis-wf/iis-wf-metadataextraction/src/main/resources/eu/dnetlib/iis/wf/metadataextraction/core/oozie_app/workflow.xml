@@ -52,11 +52,6 @@
             1) empty metadata record
             2) fault record with TimeoutException</description>
         </property>
-		<property>
-			<name>mapred_child_java_opts</name>
-			<value>-Xmx4096m</value>
-			<description>java-opts, e.g. maximum heap size for a single JVM running MapReduce</description>
-		</property>
 	</parameters>
     
     
@@ -151,11 +146,6 @@
                 </property>
             
                 <!-- Standard stuff for our framework -->
-                
-                <property>
-                    <name>mapred.child.java.opts</name>
-                    <value>${mapred_child_java_opts}</value>
-                </property>
 			    <property>
 					<name>avro.schema.input.key</name>
 					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.DocumentContent']}</value>

@@ -58,10 +58,6 @@
                     <name>oozieLauncherQueueName</name>
                     <value>${oozieLauncherQueueName}</value>
                 </property>
-                <property>
-                    <name>mapred_child_java_opts</name>
-                    <value>-Xmx1024M</value>
-                </property>
                 <!-- Working directory of the subworkflow -->                
                 <property>
                     <name>workingDir</name>
