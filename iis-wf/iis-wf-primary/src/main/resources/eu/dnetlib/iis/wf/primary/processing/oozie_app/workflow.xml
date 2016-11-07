@@ -50,6 +50,11 @@
             <value>false</value>
             <description>flag indicating citation matching should be enabled</description>
         </property>
+        <property>
+            <name>active_document_affiliation</name>
+            <value>true</value>
+            <description>flag indicating affiliation matching should be enabled</description>
+        </property>
         <!-- input ports -->
         <property>
             <name>input_document_metadata</name>
@@ -1196,7 +1201,7 @@
                 </property>
             </configuration>
         </sub-workflow>
-        <ok to="affiliation-matching" />
+        <ok to="decision-affiliation-matching" />
         <error to="fail" />
     </action>
 
@@ -1218,46 +1223,75 @@
             <!-- notice: directory have to aligned with skipped action output -->
             <arg>-Odocumentssimilarity=${output_document_similarity}</arg>
         </java>
-        <ok to="affiliation-matching" />
+        <ok to="decision-affiliation-matching" />
         <error to="fail" />
     </action>
     <!-- end of documents similarity part -->
 
-	<action name="affiliation-matching">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/affiliation_matching</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>input_document_metadata</name>
-					<value>${input_extracted_document_metadata}</value>
-				</property>
-				<property>
-					<name>input_organizations</name>
-					<value>${input_organizations}</value>
-				</property>
-				<property>
-					<name>input_document_to_project</name>
-					<value>${input_document_to_project}</value>
-				</property>
-				<property>
-					<name>input_inferred_document_to_project</name>
-					<value>${output_document_to_project}</value>
-				</property>
-				<property>
-					<name>input_project_to_organization</name>
-					<value>${input_project_to_organization}</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${output_matched_doc_organizations}</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="report-execution-times" />
-		<error to="fail" />
-	</action>
-	
+
+    <!-- start of affiliation matching part -->
+    <decision name="decision-affiliation-matching" >
+        <switch>
+            <case to="affiliation-matching">${active_document_affiliation eq "true"}</case>
+            <default to="skip-affiliation-matching" />
+        </switch>
+    </decision>
+
+    <action name="affiliation-matching">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/affiliation_matching</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>input_document_metadata</name>
+                    <value>${input_extracted_document_metadata}</value>
+                </property>
+                <property>
+                    <name>input_organizations</name>
+                    <value>${input_organizations}</value>
+                </property>
+                <property>
+                    <name>input_document_to_project</name>
+                    <value>${input_document_to_project}</value>
+                </property>
+                <property>
+                    <name>input_inferred_document_to_project</name>
+                    <value>${output_document_to_project}</value>
+                </property>
+                <property>
+                    <name>input_project_to_organization</name>
+                    <value>${input_project_to_organization}</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${output_matched_doc_organizations}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="report-execution-times" />
+        <error to="fail" />
+    </action>
+
+    <action name="skip-affiliation-matching">
+        <java>
+            <prepare>
+                <!-- notice: directory have to aligned with skipped action output -->
+                <delete path="${nameNode}${output_matched_doc_organizations}" />
+                <mkdir path="${nameNode}${output_matched_doc_organizations}" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{affmatching,
+                eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization,
+                eu/dnetlib/iis/common/data/empty.json}
+            </arg>
+            <!-- notice: directory have to aligned with skipped action output -->
+            <arg>-Oaffmatching=${output_matched_doc_organizations}</arg>
+        </java>
+        <ok to="report-execution-times" />
+        <error to="fail" />
+    </action>
+
 	<action name="report-execution-times">
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
