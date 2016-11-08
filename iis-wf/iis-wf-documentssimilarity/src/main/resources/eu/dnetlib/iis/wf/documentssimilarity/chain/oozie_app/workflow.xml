@@ -21,12 +21,10 @@
         </property>
         <property>
             <name>parallel</name>
-            <value>20</value>                                                                                                                                                         
             <description>Sets parameter parallel for Pig actions. Bizarre errors occurred when was too big.</description>                                                             
         </property>                                                                                                                                                                   
         <property>                                                                                                                                                                    
             <name>mapredChildJavaOpts</name>                                                                                                                                          
-            <value>-Xmx5632m</value>
             <description>Mapreduce's map and reduce child java opts. 
             Notice: even though the name was preserved from the time when mapred.child.java.opts property was set (which is now deprecated) 
             currently hadoop 2.0 properties: mapreduce.map.java.opts and mapreduce.reduce.java.opts are set to this value deep down in coansys docsim PIG scripts.
@@ -34,28 +32,23 @@
         </property>
         <property>
             <name>tfidfTopnTermPerDocument</name>
-            <value>20</value>
             <description>Number of most important terms taken into account.</description>
         </property>
         <property>
             <name>similarityTopnDocumentPerDocument</name>
-            <value>20</value>
             <description>Maximum number of similar documents for each publication.</description>
         </property>
         <property>
             <name>removal_rate</name>
-            <value>0.99</value>
             <description>removal rate</description>
         </property>
         <property>
             <name>removal_least_used</name>
-            <value>20</value>
             <description>removal least used</description>
         </property>
         <property>
             <name>sample</name>
-            <value>1.0</value>
-            <description>sample rate</description>
+            <description>sample rate, 1.0 means all input records should be taken into account</description>
         </property>
         <property>
 		  <name>threshold_num_of_vector_elems_length</name>

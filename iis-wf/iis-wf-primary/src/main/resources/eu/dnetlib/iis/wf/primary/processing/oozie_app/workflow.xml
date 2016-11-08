@@ -112,12 +112,12 @@
         <!-- document similarity related -->
         <property>
             <name>ds_parallel</name>
-            <value>20</value>
+            <value>80</value>
             <description>document similarity pig parallel</description>
         </property>
         <property>
             <name>ds_mapredChildJavaOpts</name>
-            <value>-Xmx5632m</value>
+            <value>-Xmx4g</value>
             <description>mapred child java opts</description>
         </property>
         <property>

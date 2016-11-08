@@ -58,12 +58,32 @@
                     <value>${workingDir}/chain</value>
                 </property>
                 <property>
+                    <name>parallel</name>
+                    <value>20</value>
+                </property>
+                <property>
                     <name>mapredChildJavaOpts</name>
                     <value>-Xmx1g</value>
                 </property>
                 <property>
+                    <name>sample</name>
+                    <value>1.0</value>
+                </property>
+                <property>
+                    <name>tfidfTopnTermPerDocument</name>
+                    <value>20</value>
+                </property>
+                <property>
                     <name>similarityTopnDocumentPerDocument</name>
                     <value>3</value>
+                </property>
+                <property>
+                    <name>removal_rate</name>
+                    <value>0.99</value>
+                </property>
+                <property>
+                    <name>removal_least_used</name>
+                    <value>20</value>
                 </property>
                 <property>
                     <name>output_report_root_path</name>
