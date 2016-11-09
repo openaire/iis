@@ -89,7 +89,10 @@ public class DocumentContentUrlBasedImporterMapper
     protected void map(AvroKey<DocumentContentUrl> key, NullWritable value, Context context)
             throws IOException, InterruptedException {
         DocumentContentUrl docUrl = key.datum();
-        if (docUrl.getContentSizeKB() <= maxFileSizeKB) {
+        if (docUrl.getContentSizeKB() <= 0) {
+            log.warn("content " + docUrl.getId() + " discarded for location: " + docUrl.getUrl()
+            + " and size [kB]: " + docUrl.getContentSizeKB() + ", size is expected to be greater than 0!");
+        } else if (docUrl.getContentSizeKB() <= maxFileSizeKB) {
             long startTimeContent = System.currentTimeMillis();
             log.info("starting content retrieval for id: " + docUrl.getId() + ", location: " + docUrl.getUrl()
                     + " and size [kB]: " + docUrl.getContentSizeKB());
