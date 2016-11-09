@@ -102,6 +102,10 @@
                     <value>1G</value>
                 </property>
                 <property>
+                    <name>sparkDriverOverhead</name>
+                    <value>513</value>
+                </property>
+                <property>
                     <name>sparkExecutorMemory</name>
                     <value>1G</value>
                 </property>

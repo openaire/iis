@@ -30,22 +30,18 @@
         
         <property>
             <name>sparkExecutorMemory</name>
-            <value>7G</value>
             <description>memory for individual executor</description>
         </property>
         <property>
             <name>sparkExecutorCores</name>
-            <value>1</value>
             <description>number of cores used by single executor</description>
         </property>
         <property>
             <name>sparkNumExecutors</name>
-            <value>200</value>
             <description>total number of executors</description>
         </property>
         <property>
             <name>numberOfPartitions</name>
-            <value>400</value>
             <description>number of partitions used for rdds with citations and documents read from input files</description>
         </property>
     </parameters>

@@ -87,6 +87,10 @@
                     <value>1G</value>
                 </property>
                 <property>
+                    <name>sparkExecutorCores</name>
+                    <value>1</value>
+                </property>
+                <property>
                     <name>sparkNumExecutors</name>
                     <value>2</value>
                 </property>

@@ -85,6 +85,10 @@
                     <name>sparkNumExecutors</name>
                     <value>2</value>
                 </property>
+                <property>
+                    <name>numberOfPartitions</name>
+                    <value>400</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="consumer"/>

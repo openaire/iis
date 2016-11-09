@@ -21,17 +21,14 @@
         
         <property>
             <name>sparkExecutorMemory</name>
-            <value>7G</value>
             <description>memory for individual executor</description>
         </property>
         <property>
             <name>sparkExecutorCores</name>
-            <value>1</value>
             <description>number of cores used by single executor</description>
         </property>
         <property>
             <name>sparkNumExecutors</name>
-            <value>200</value>
             <description>total number of executors</description>
         </property>
 	</parameters>

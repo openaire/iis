@@ -45,27 +45,22 @@
         </property>
         <property>
             <name>sparkExecutorMemory</name>
-            <value>6G</value>
             <description>memory for individual executor</description>
         </property>
         <property>
             <name>sparkExecutorCores</name>
-            <value>1</value>
             <description>number of cores used by single executor</description>
         </property>
         <property>
             <name>sparkNumExecutors</name>
-            <value>64</value>
             <description>total number of executors</description>
         </property>
         <property>
             <name>sparkDriverMemory</name>
-            <value>2G</value>
             <description>memory for driver process</description>
         </property>
         <property>
             <name>sparkDriverOverhead</name>
-            <value>513</value>
             <description>The amount of off heap memory (in megabytes) to be allocated for the driver</description>
         </property>
     </parameters>
