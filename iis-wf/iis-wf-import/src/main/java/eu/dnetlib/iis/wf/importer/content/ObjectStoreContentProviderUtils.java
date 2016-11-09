@@ -38,7 +38,11 @@ public class ObjectStoreContentProviderUtils {
 			URLConnection con = url.openConnection();
 			con.setConnectTimeout(connectionTimeout);
 			con.setReadTimeout(readTimeout);
-			return IOUtils.toByteArray(con.getInputStream());
+			if (con.getContentLengthLong() > 0) {
+			    return IOUtils.toByteArray(con.getInputStream());    
+			} else {
+			    return null;
+			}
 		} else {
 			return null;
 		}
