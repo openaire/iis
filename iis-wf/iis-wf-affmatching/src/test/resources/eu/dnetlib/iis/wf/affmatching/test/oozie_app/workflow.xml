@@ -97,7 +97,10 @@
                     <name>document_project_confidence_threshold</name>
                     <value>0.8</value>
                 </property>
-                
+                <property>
+                    <name>sparkDriverMemory</name>
+                    <value>1G</value>
+                </property>
                 <property>
                     <name>sparkExecutorMemory</name>
                     <value>1G</value>
