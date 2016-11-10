@@ -326,19 +326,50 @@
                     <name>output_report_root_path</name>
                     <value>${workingDir}/report</value>
                 </property>
-                <!-- shared executors configuration for affmatch and citmatch spark algorithms-->
+                <!-- configuration for affmatch and citmatch spark algorithms-->
                 <property>
-                    <name>sparkExecutorMemory</name>
+                    <name>affiliationmatchingSparkExecutorMemory</name>
                     <value>1G</value>
                 </property>
                 <property>
-                    <name>sparkExecutorCores</name>
+                    <name>affiliationmatchingSparkExecutorCores</name>
                     <value>1</value>
                 </property>
                 <property>
-                    <name>sparkNumExecutors</name>
+                    <name>affiliationmatchingSparkNumExecutors</name>
                     <value>2</value>
                 </property>
+                <property>
+                    <name>affiliationmatchingSparkDriverMemory</name>
+                    <value>1G</value>
+                </property>
+
+                <property>
+                    <name>citationmatchingDirectSparkExecutorMemory</name>
+                    <value>1G</value>
+                </property>
+                <property>
+                    <name>citationmatchingDirectSparkExecutorCores</name>
+                    <value>1</value>
+                </property>
+                <property>
+                    <name>citationmatchingDirectSparkNumExecutors</name>
+                    <value>2</value>
+                </property>
+
+                <property>
+                    <name>citationmatchingFuzzySparkExecutorMemory</name>
+                    <value>1G</value>
+                </property>
+                <property>
+                    <name>citationmatchingFuzzySparkExecutorCores</name>
+                    <value>1</value>
+                </property>
+                <property>
+                    <name>citationmatchingFuzzySparkNumExecutors</name>
+                    <value>2</value>
+                </property>
+                
 			</configuration>
 		</sub-workflow>
 		<ok to="consumer" />
