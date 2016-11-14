@@ -2,9 +2,31 @@ drop table if exists grants;
 
 create temp table jsoninp as select * from stdinput();
 update jsoninp set c1=regexpr('"jsonextrainfo":"{}"',c1,'"jsonextrainfo":"{\"dossiernr\":\"\",\"NWOgebied\":\"\"}"');
-create table grants as select acronym,normalizedacro,case when fundingclass1="FCT" then acronym else grantid end as grantid,fundingclass1,fundingclass2,id,c1 as nwo_opt2,c2 as nwo_opt1,case when c3='' then '_^' else c3 end as nih_orgname,c4 as nih_activity,c5 as nih_administeringic,case when c6='' then regexpr('0*(\d+)$', c7) else c6 end as nih_serialnumber,c7 as nih_coreprojectnum from (setschema 'acronym,normalizedacro,grantid,fundingclass1,fundingclass2,id,c1,c2,c3,c4,c5,c6,c7' select case when c1 is null then "UNKNOWN" else c1 end as acronym, case when c1 is not null then regexpr("[_\s]",normalizetext(lower(c1)),"[_\s]") else "unknown" end as normalizedacro, c3 as grantid,strsplit(c4,"delimiter:::") as fundingClass,c2 as id, jsonpath(c5,'$.NWOgebied', '$.dossiernr', '$.orgname', '$.activity', '$.administeringic', '$.serialnumber', '$.coreprojectnum') from (select * from (setschema 'c1,c2,c3,c4,c5' select jsonpath(c1, '$.projectAcronym', '$.id' , '$.projectGrantId','$.fundingClass','$.jsonextrainfo') from jsoninp) where regexprmatches("::",c4))) where fundingclass1!='NIH' OR (nih_coreprojectnum!='' AND nih_activity!='' AND nih_administeringic!='' AND nih_serialnumber!='0');
+create table grants as select acronym,
+     case when fundingclass1 = "HRZZ" then grantid else normalizedacro end as normalizedacro,
+     case when fundingclass1="FCT" then acronym 
+          when fundingclass1 = "HRZZ" then regexpr("(\d{4})$",grantid)
+          else grantid end as grantid,
+     fundingclass1,fundingclass2,id,c1 as nwo_opt2,c2 as nwo_opt1,
+     case when c3='' then '_^' else c3 end as nih_orgname,
+     c4 as nih_activity,c5 as nih_administeringic,
+     case when c6='' then regexpr('0*(\d+)$', c7) else c6 end as nih_serialnumber,
+     c7 as nih_coreprojectnum,c8 as alias from 
+          (setschema 'acronym,normalizedacro,grantid,fundingclass1,fundingclass2,id,c1,c2,c3,c4,c5,c6,c7,c8' 
+          select case when c1 is null then "UNKNOWN" else c1 end as acronym, 
+                 case when c1 is not null then regexpr("[_\s]",normalizetext(lower(c1)),"[_\s]") else "unknown" end as normalizedacro, 
+                 c3 as grantid,strsplit(c4,"delimiter:::") as fundingClass,c2 as id, 
+                 jsonpath(c5,'$.NWOgebied','$.dossiernr','$.orgname', '$.activity', '$.administeringic', '$.serialnumber', '$.coreprojectnum','$.alias') 
+                       from 
+                          (select * from (setschema 'c1,c2,c3,c4,c5' select jsonpath(c1, '$.projectAcronym', '$.id' , '$.projectGrantId','$.fundingClass','$.jsonextrainfo') from jsoninp) 
+                           where regexprmatches("::",c4))) where fundingclass1!='NIH' OR (nih_coreprojectnum!='' AND nih_activity!='' AND nih_administeringic!='' AND nih_serialnumber!='0');
 
-
+update grants set alias = "$a" where alias is null;
+insert into grants 
+select acronym, normalizedacro, regexpr("\s",grantid,""), fundingclass1, fundingclass2, id, nwo_opt2, nwo_opt1, nih_orgname, nih_activity, nih_administeringic, nih_serialnumber, nih_coreprojectnum, regexpr("\s",alias,"")  
+from grants where fundingclass1="FWF";
+delete from grants where length(grantid)<4 and fundingclass1="FWF";
+delete from grants where cast(grantid as int) between 1950 and 2030 and fundingclass1 = "HRZZ";
 
 
 CREATE INDEX grants_index on grants (grantid,normalizedacro,acronym,fundingClass1,fundingClass2,id,nwo_opt2);
