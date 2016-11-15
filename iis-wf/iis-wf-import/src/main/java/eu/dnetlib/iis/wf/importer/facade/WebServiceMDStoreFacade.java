@@ -21,10 +21,12 @@ public class WebServiceMDStoreFacade extends AbstractResultSetAwareWebServiceFac
     /**
      * @param serviceLocation MDStore webservice location
      * @param resultSetReadTimeout resultset read timeout
+     * @param resultSetConnectionTimeout result set connection timeout
      * @param resultSetPageSize resultset page size
      */
-    public WebServiceMDStoreFacade(String serviceLocation, long resultSetReadTimeout, int resultSetPageSize) {
-        super(MDStoreService.class, serviceLocation, resultSetReadTimeout, resultSetPageSize);
+    public WebServiceMDStoreFacade(String serviceLocation, 
+            long resultSetReadTimeout, long resultSetConnectionTimeout, int resultSetPageSize) {
+        super(MDStoreService.class, serviceLocation, resultSetReadTimeout, resultSetConnectionTimeout, resultSetPageSize);
     }
     
     //------------------------ LOGIC --------------------------
@@ -33,10 +35,9 @@ public class WebServiceMDStoreFacade extends AbstractResultSetAwareWebServiceFac
     public Iterable<String> deliverMDRecords(String mdStoreId) throws ServiceFacadeException {
         try {
             W3CEndpointReference eprResult = service.deliverMDRecords(mdStoreId, null, null, null);
-            ResultSetClientFactory rsFactory = new ResultSetClientFactory();
-            rsFactory.setTimeout(resultSetReadTimeout);  
+            ResultSetClientFactory rsFactory = new ResultSetClientFactory(
+                    resultSetPageSize, resultSetReadTimeout, resultSetConnectionTimeout);
             rsFactory.setServiceResolver(new JaxwsServiceResolverImpl());
-            rsFactory.setPageSize(resultSetPageSize);
             return rsFactory.getClient(eprResult);
         } catch (MDStoreServiceException e) {
             throw new ServiceFacadeException("delivering records for md store " + mdStoreId + " failed!", e);

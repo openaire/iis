@@ -34,6 +34,7 @@ public abstract class ImportWorkflowRuntimeParameters {
 	public static final String IMPORT_VOCABULARY_OUTPUT_FILENAME = "import.vocabulary.output.filename";
 	
 	public static final String IMPORT_RESULT_SET_CLIENT_READ_TIMEOUT = "import.resultset.client.read.timeout";
+	public static final String IMPORT_RESULT_SET_CLIENT_CONNECTION_TIMEOUT = "import.resultset.client.connection.timeout";
 	public static final String IMPORT_RESULT_SET_PAGESIZE = "import.resultset.pagesize";
 	
 	
@@ -44,6 +45,7 @@ public abstract class ImportWorkflowRuntimeParameters {
 	// default values
 	
 	public static final String RESULTSET_READ_TIMEOUT_DEFAULT_VALUE = "60000";
+	public static final String RESULTSET_CONNECTION_TIMEOUT_DEFAULT_VALUE = "60000";
 	public static final String RESULTSET_PAGESIZE_DEFAULT_VALUE = "100";
 	
 }

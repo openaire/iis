@@ -28,10 +28,12 @@ public class WebServiceISLookupFacade extends AbstractResultSetAwareWebServiceFa
     /**
      * @param serviceLocation database service location
      * @param resultSetReadTimeout result set providing database results read timeout
+     * @param resultSetConnectionTimeout result set connection timeout
      * @param resultSetPageSize result set data chunk size
      */
-    public WebServiceISLookupFacade(String serviceLocation, long resultSetReadTimeout, int resultSetPageSize) {
-        super(ISLookUpService.class, serviceLocation, resultSetReadTimeout, resultSetPageSize);
+    public WebServiceISLookupFacade(String serviceLocation, 
+            long resultSetReadTimeout, long resultSetConnectionTimeout, int resultSetPageSize) {
+        super(ISLookUpService.class, serviceLocation, resultSetReadTimeout, resultSetConnectionTimeout, resultSetPageSize);
     }
 
     //------------------------ LOGIC --------------------------
@@ -41,10 +43,9 @@ public class WebServiceISLookupFacade extends AbstractResultSetAwareWebServiceFa
         try {
             W3CEndpointReference eprResult = service.searchProfile(xPathQuery);
             // obtaining resultSet
-            ResultSetClientFactory rsFactory = new ResultSetClientFactory();
-            rsFactory.setTimeout(resultSetReadTimeout);
+            ResultSetClientFactory rsFactory = new ResultSetClientFactory(
+                    resultSetPageSize, resultSetReadTimeout, resultSetConnectionTimeout);
             rsFactory.setServiceResolver(new JaxwsServiceResolverImpl());
-            rsFactory.setPageSize(resultSetPageSize);
             return rsFactory.getClient(eprResult);    
         }  catch (ISLookUpDocumentNotFoundException e) {
             log.error("unable to find profile for query: " + xPathQuery, e);

@@ -1,8 +1,10 @@
 package eu.dnetlib.iis.wf.importer.facade;
 
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_DATACITE_MDSTORE_SERVICE_LOCATION;
+import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_RESULT_SET_CLIENT_CONNECTION_TIMEOUT;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_RESULT_SET_CLIENT_READ_TIMEOUT;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_RESULT_SET_PAGESIZE;
+import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.RESULTSET_CONNECTION_TIMEOUT_DEFAULT_VALUE;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.RESULTSET_PAGESIZE_DEFAULT_VALUE;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.RESULTSET_READ_TIMEOUT_DEFAULT_VALUE;
 
@@ -30,6 +32,7 @@ public class WebServiceMDStoreFacadeFactory implements ServiceFacadeFactory<MDSt
 
         return new WebServiceMDStoreFacade(parameters.get(IMPORT_DATACITE_MDSTORE_SERVICE_LOCATION),
                 Long.parseLong(WorkflowRuntimeParameters.getParamValue(IMPORT_RESULT_SET_CLIENT_READ_TIMEOUT, RESULTSET_READ_TIMEOUT_DEFAULT_VALUE, parameters)),
+                Long.parseLong(WorkflowRuntimeParameters.getParamValue(IMPORT_RESULT_SET_CLIENT_CONNECTION_TIMEOUT, RESULTSET_CONNECTION_TIMEOUT_DEFAULT_VALUE, parameters)),
                 Integer.parseInt(WorkflowRuntimeParameters.getParamValue(IMPORT_RESULT_SET_PAGESIZE, RESULTSET_PAGESIZE_DEFAULT_VALUE, parameters)));
     }
 

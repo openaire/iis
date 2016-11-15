@@ -22,6 +22,11 @@ public abstract class AbstractResultSetAwareWebServiceFacade<T> {
     protected final long resultSetReadTimeout;
     
     /**
+     * ResultSet connection timeout.
+     */
+    protected final long resultSetConnectionTimeout;
+    
+    /**
      * ResultSet page size.
      */
     protected final int resultSetPageSize;
@@ -33,15 +38,17 @@ public abstract class AbstractResultSetAwareWebServiceFacade<T> {
      * @param clazz webservice class
      * @param serviceLocation webservice location
      * @param resultSetReadTimeout resultset read timeout
+     * @param resultSetConnectionTimeout resultset connection timeout
      * @param resultSetPageSize resultset page size
      */
     protected AbstractResultSetAwareWebServiceFacade(Class<T> clazz, String serviceLocation, 
-            long resultSetReadTimeout, int resultSetPageSize) {
+            long resultSetReadTimeout, long resultSetConnectionTimeout, int resultSetPageSize) {
         W3CEndpointReferenceBuilder eprBuilder = new W3CEndpointReferenceBuilder();
         eprBuilder.address(serviceLocation);
         eprBuilder.build();
         this.service = new JaxwsServiceResolverImpl().getService(clazz, eprBuilder.build());
         this.resultSetReadTimeout = resultSetReadTimeout;
+        this.resultSetConnectionTimeout = resultSetConnectionTimeout;
         this.resultSetPageSize = resultSetPageSize;
     }
     

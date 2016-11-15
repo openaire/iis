@@ -21,10 +21,12 @@ public class WebServiceObjectStoreFacade extends AbstractResultSetAwareWebServic
     /**
      * @param serviceLocation ObjectStore webservice location
      * @param resultSetReadTimeout resultset read timeout
+     * @param resultSetConnectionTimeout result set connection timeout
      * @param resultSetPageSize resultset page size
      */
-    public WebServiceObjectStoreFacade(String serviceLocation, long resultSetReadTimeout, int resultSetPageSize) {
-        super(ObjectStoreService.class, serviceLocation, resultSetReadTimeout, resultSetPageSize);
+    public WebServiceObjectStoreFacade(String serviceLocation, 
+            long resultSetReadTimeout, long resultSetConnectionTimeout, int resultSetPageSize) {
+        super(ObjectStoreService.class, serviceLocation, resultSetReadTimeout, resultSetConnectionTimeout, resultSetPageSize);
     }
     
     //------------------------ LOGIC --------------------------
@@ -33,10 +35,9 @@ public class WebServiceObjectStoreFacade extends AbstractResultSetAwareWebServic
     public Iterable<String> deliverObjects(String objectStoreId, long from, long until) throws ServiceFacadeException {
         try {
             W3CEndpointReference eprResult = service.deliverObjects(objectStoreId, from, until);
-            ResultSetClientFactory rsFactory = new ResultSetClientFactory();
-            rsFactory.setTimeout(resultSetReadTimeout);  
+            ResultSetClientFactory rsFactory = new ResultSetClientFactory(
+                    resultSetPageSize, resultSetReadTimeout, resultSetConnectionTimeout);
             rsFactory.setServiceResolver(new JaxwsServiceResolverImpl());
-            rsFactory.setPageSize(resultSetPageSize);
             return rsFactory.getClient(eprResult);
         } catch (ObjectStoreServiceException e) {
             throw new ServiceFacadeException("delivering records for object store " + objectStoreId + " failed!", e);
