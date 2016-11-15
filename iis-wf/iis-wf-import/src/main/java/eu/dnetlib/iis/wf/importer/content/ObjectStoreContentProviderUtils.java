@@ -25,26 +25,22 @@ public class ObjectStoreContentProviderUtils {
 	
 	/**
 	 * Returns byte content read from given location.
-	 * @param resourceLoc
+	 * @param resourceLoc resource location, cannot be null
 	 * @param connectionTimeout
 	 * @param readTimeout
 	 * @return byte content read from given location
-	 * @throws IOException
+	 * @throws InvalidSizeException when size was less or equal 0
 	 */
 	public static byte[] getContentFromURL(String resourceLoc,
-			int connectionTimeout, int readTimeout) throws IOException {
-		if (resourceLoc!=null) {
-			URL url = new URL(resourceLoc);
-			URLConnection con = url.openConnection();
-			con.setConnectTimeout(connectionTimeout);
-			con.setReadTimeout(readTimeout);
-			if (con.getContentLengthLong() > 0) {
-			    return IOUtils.toByteArray(con.getInputStream());    
-			} else {
-			    return null;
-			}
+			int connectionTimeout, int readTimeout) throws IOException, InvalidSizeException {
+		URL url = new URL(resourceLoc);
+		URLConnection con = url.openConnection();
+		con.setConnectTimeout(connectionTimeout);
+		con.setReadTimeout(readTimeout);
+		if (con.getContentLengthLong() > 0) {
+		    return IOUtils.toByteArray(con.getInputStream());    
 		} else {
-			return null;
+		    throw new InvalidSizeException();
 		}
 	}
 	

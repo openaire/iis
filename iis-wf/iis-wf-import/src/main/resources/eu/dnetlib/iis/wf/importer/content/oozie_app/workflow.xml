@@ -214,6 +214,7 @@
             <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
             <arg>-Preport.import.content.pdf.correct=${hadoop:counters('content-retriever')[RECORDS][MAP_OUT]}</arg>
             <arg>-Preport.import.content.pdf.invalid.sizeExceeded=${hadoop:counters('content-retriever')['eu.dnetlib.iis.wf.importer.content.DocumentContentUrlBasedImporterMapper$InvalidRecordCounters']['SIZE_EXCEEDED']}</arg>
+            <arg>-Preport.import.content.pdf.invalid.sizeInvalid=${hadoop:counters('content-retriever')['eu.dnetlib.iis.wf.importer.content.DocumentContentUrlBasedImporterMapper$InvalidRecordCounters']['SIZE_INVALID']}</arg>
             <arg>-Preport.import.content.pdf.invalid.invalidPdf=${hadoop:counters('content-retriever')['eu.dnetlib.iis.wf.importer.content.DocumentContentUrlBasedImporterMapper$InvalidRecordCounters']['INVALID_PDF_HEADER']}</arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>

@@ -57,11 +57,17 @@ public class DocumentContentUrlBasedImporterMapper
     private Counter sizeExceededCounter;
     
     /**
+     * Counter for the records with invalid size: less or equal 0.
+     */
+    private Counter sizeInvalidCounter;
+    
+    /**
      * Hadoop counters enum of invalid records 
      */
     public static enum InvalidRecordCounters {
         INVALID_PDF_HEADER,
-        SIZE_EXCEEDED
+        SIZE_EXCEEDED,
+        SIZE_INVALID
     }
     
     //------------------------ LOGIC --------------------------
@@ -76,6 +82,9 @@ public class DocumentContentUrlBasedImporterMapper
         invalidPdfCounter.setValue(0);
         this.contentApprover = new InvalidCountableContentApproverWrapper(new PDFHeaderBasedContentApprover(), invalidPdfCounter);
 
+        this.sizeInvalidCounter = context.getCounter(InvalidRecordCounters.SIZE_INVALID);
+        this.sizeInvalidCounter.setValue(0);
+        
         this.sizeExceededCounter = context.getCounter(InvalidRecordCounters.SIZE_EXCEEDED);
         this.sizeExceededCounter.setValue(0);
         Integer maxFileSizeMB = WorkflowRuntimeParameters.getIntegerParamValue(
@@ -92,24 +101,28 @@ public class DocumentContentUrlBasedImporterMapper
         if (docUrl.getContentSizeKB() <= 0) {
             log.warn("content " + docUrl.getId() + " discarded for location: " + docUrl.getUrl()
             + " and size [kB]: " + docUrl.getContentSizeKB() + ", size is expected to be greater than 0!");
+            this.sizeInvalidCounter.increment(1);
         } else if (docUrl.getContentSizeKB() <= maxFileSizeKB) {
             long startTimeContent = System.currentTimeMillis();
             log.info("starting content retrieval for id: " + docUrl.getId() + ", location: " + docUrl.getUrl()
                     + " and size [kB]: " + docUrl.getContentSizeKB());
-            byte[] content = ObjectStoreContentProviderUtils.getContentFromURL(docUrl.getUrl().toString(),
-                    this.connectionTimeout, this.readTimeout);
-            log.info("content retrieval for id: " + docUrl.getId() + " took: "
-                    + (System.currentTimeMillis() - startTimeContent) + " ms, got content: "
-                    + (content != null && content.length > 0));
-            if (contentApprover.approve(content)) {
-                DocumentContent.Builder documentContentBuilder = DocumentContent.newBuilder();
-                documentContentBuilder.setId(docUrl.getId());
-                if (content != null) {
+            try {
+                byte[] content = ObjectStoreContentProviderUtils.getContentFromURL(docUrl.getUrl().toString(),
+                        this.connectionTimeout, this.readTimeout);
+                if (contentApprover.approve(content)) {
+                    DocumentContent.Builder documentContentBuilder = DocumentContent.newBuilder();
+                    documentContentBuilder.setId(docUrl.getId());
                     documentContentBuilder.setPdf(ByteBuffer.wrap(content));
+                    context.write(new AvroKey<DocumentContent>(documentContentBuilder.build()), NullWritable.get());
+                    log.info("content retrieval for id: " + docUrl.getId() + " took: "
+                            + (System.currentTimeMillis() - startTimeContent) + " ms");
+                } else {
+                    log.info("content " + docUrl.getId() + " not approved, location: " + docUrl.getUrl());
                 }
-                context.write(new AvroKey<DocumentContent>(documentContentBuilder.build()), NullWritable.get());
-            } else {
-                log.info("content " + docUrl.getId() + " not approved, location: " + docUrl.getUrl());
+            } catch (InvalidSizeException e) {
+                log.warn("content " + docUrl.getId() + " discarded for location: " + docUrl.getUrl()
+                + ", real size is expected to be greater than 0!");
+                this.sizeInvalidCounter.increment(1);
             }
         } else {
             this.sizeExceededCounter.increment(1);

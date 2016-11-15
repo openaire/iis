@@ -45,7 +45,8 @@ public class DocumentTextUrlBasedImporterMapper extends Mapper<AvroKey<DocumentC
      * Hadoop counters enum of invalid records 
      */
     public static enum InvalidRecordCounters {
-        SIZE_EXCEEDED
+        SIZE_EXCEEDED,
+        SIZE_INVALID
     }
 
 
@@ -64,39 +65,41 @@ public class DocumentTextUrlBasedImporterMapper extends Mapper<AvroKey<DocumentC
         }
         
         context.getCounter(InvalidRecordCounters.SIZE_EXCEEDED).setValue(0);
+        context.getCounter(InvalidRecordCounters.SIZE_INVALID).setValue(0);
     }
 
     @Override
     protected void map(AvroKey<DocumentContentUrl> key, NullWritable value,
             Context context) throws IOException, InterruptedException {
         DocumentContentUrl docUrl = key.datum();
-        
-        if (docUrl.getContentSizeKB() > maxFileSizeKB) {
+        if (docUrl.getContentSizeKB() <= 0) {
+            log.warn("content " + docUrl.getId() + " discarded for location: " + docUrl.getUrl()
+            + " and size [kB]: " + docUrl.getContentSizeKB() + ", size is expected to be greater than 0!");
+            context.getCounter(InvalidRecordCounters.SIZE_INVALID).increment(1);
+        } else if (docUrl.getContentSizeKB() <= maxFileSizeKB) {
+            try {
+                long startTimeContent = System.currentTimeMillis();
+                byte[] textContent = ObjectStoreContentProviderUtils.getContentFromURL(
+                        docUrl.getUrl().toString(), connectionTimeout, readTimeout);
+                log.info("text content retrieval for id: " + docUrl.getId() + 
+                        " and location: " + docUrl.getUrl() + " took: " +
+                        (System.currentTimeMillis()-startTimeContent) + " ms");
+                DocumentText.Builder documentTextBuilder = DocumentText.newBuilder();
+                documentTextBuilder.setId(docUrl.getId());
+                documentTextBuilder.setText(new String(textContent, 
+                        ObjectStoreContentProviderUtils.defaultEncoding));
+                context.write(new AvroKey<DocumentText>(documentTextBuilder.build()), NullWritable.get());            
+                
+            } catch (InvalidSizeException e) {
+                log.warn("content " + docUrl.getId() + " discarded for location: " + docUrl.getUrl()
+                + ", real size is expected to be greater than 0!");
+                context.getCounter(InvalidRecordCounters.SIZE_INVALID).increment(1);
+            }
+        } else {
             context.getCounter(InvalidRecordCounters.SIZE_EXCEEDED).increment(1);
-            
             log.warn("skipping processing for id " + docUrl.getId() 
                     + " due to max file size limit=" + maxFileSizeKB
                     + " KB exceeded: " + docUrl.getContentSizeKB() + " KB");
-            return;
         }
-
-        long startTimeContent = System.currentTimeMillis();
-        byte[] textContent = ObjectStoreContentProviderUtils.getContentFromURL(
-                docUrl.getUrl().toString(), connectionTimeout, readTimeout);
-        log.info("text content retrieval for id: " + docUrl.getId() + 
-                " and location: " + docUrl.getUrl() + " took: " +
-                (System.currentTimeMillis()-startTimeContent) + " ms, got text content: " +
-                (textContent!=null && textContent.length>0));
-        
-        DocumentText.Builder documentTextBuilder = DocumentText.newBuilder();
-        documentTextBuilder.setId(docUrl.getId());
-        if (textContent!=null) {
-            documentTextBuilder.setText(new String(textContent, 
-                    ObjectStoreContentProviderUtils.defaultEncoding));
-        }
-        context.write(
-                new AvroKey<DocumentText>(documentTextBuilder.build()), 
-                NullWritable.get());
     }
-
 }
