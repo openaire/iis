@@ -36,7 +36,6 @@
 		</property>
 		<property>
 			<name>default_cache_location</name>
-			<value>/cache/metadataextraction</value>
 			<description>default cache location stored in HDFS</description>
 		</property>
 		<property>

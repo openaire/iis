@@ -174,7 +174,6 @@
         </property>
         <property>
             <name>metadataextraction_default_cache_location</name>
-            <value>/cache/metadataextraction</value>
             <description>metadata extraction HDFS cache location</description>
         </property>
         <!-- project reference extraction related -->

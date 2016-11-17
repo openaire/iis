@@ -123,7 +123,6 @@
 		</property>
 		<property>
 			<name>metadataextraction_default_cache_location</name>
-			<value>/cache/metadataextraction</value>
 			<description>metadata extraction cache location, path pointing to
 				root cache directory holding meta.json file
 			</description>
