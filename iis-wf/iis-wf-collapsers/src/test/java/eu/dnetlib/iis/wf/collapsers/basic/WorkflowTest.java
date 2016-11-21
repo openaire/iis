@@ -18,9 +18,4 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
         testWorkflow("eu/dnetlib/iis/wf/collapsers/basic_collapser/default");
     }
 
-    @Test
-    public void testDocumentTextWorkflow() throws Exception {
-        testWorkflow("eu/dnetlib/iis/wf/collapsers/basic_collapser/documenttext");
-    }
-
 }
