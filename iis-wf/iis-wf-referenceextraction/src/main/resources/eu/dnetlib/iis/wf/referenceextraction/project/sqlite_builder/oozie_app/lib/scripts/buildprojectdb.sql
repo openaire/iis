@@ -6,6 +6,7 @@ create table grants as select acronym,
      case when fundingclass1 = "HRZZ" then grantid else normalizedacro end as normalizedacro,
      case when fundingclass1="FCT" then acronym 
           when fundingclass1 = "HRZZ" then regexpr("(\d{4})$",grantid)
+          when fundingclass1 = "SNSF" then regexpr('0{0,1}(\d{5,6})$',grantid)
           else grantid end as grantid,
      fundingclass1,fundingclass2,id,c1 as nwo_opt2,c2 as nwo_opt1,
      case when c3='' then '_^' else c3 end as nih_orgname,

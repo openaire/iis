@@ -27,6 +27,8 @@ select docid,id from (select docid,upper(regexpr("(\w+.*\d+)",middle)) as match,
 (regexpr("(\d{4})",middle) = grantid and fundingclass1="HRZZ" and (regexprmatches(normalizedacro,j2s(prev,middle,next)) or regexprmatches("croatian science foundation|\bhrzz\b",lower(j2s(prev,middle,next)) )     ) 
 or  (fundingclass1="NWO" and regexpr("(\b(?:(?:(?:\w{2,3})(?:\.|\-)(?:\w{2,3})(?:\.|\-)(?:\w{2,3}))|(?:\d+))\b)",middle)=nwo_opt1 and 
 regexprmatches("\bvici\b|\bvidi\b|\bveni\b|\bnwo\b|dutch|netherlands|\b"||lower(nwo_opt2)||"\b",lower(j2s(prev,middle,next))))
+or  (fundingclass1="SNSF" and regexpr('0{0,1}(\d{5,6})',middle)=grantid and regexprmatches('(?:\bsnsf\b)|(?:swiss national (?:science)?\s?foundation\b)',lower(j2s(prev,middle,next)))
+)
 
 ) group by docid,id
 
