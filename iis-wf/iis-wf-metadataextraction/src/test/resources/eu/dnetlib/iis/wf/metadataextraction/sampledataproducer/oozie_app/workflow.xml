@@ -61,6 +61,10 @@
                     <name>output_report_root_path</name>
                     <value>${workingDir}/report</value>
                 </property>
+                <property>
+                    <name>mapreduce_map_java_opts</name>
+                    <value>-Xmx512m</value>
+                </property>
             </configuration>
         </sub-workflow>
 		<ok to="consumer"/>

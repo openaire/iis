@@ -52,6 +52,11 @@
             1) empty metadata record
             2) fault record with TimeoutException</description>
         </property>
+        <property>
+            <name>mapreduce_map_java_opts</name>
+            <value>-Xmx4g</value>
+            <description>java-opts, e.g. maximum heap size for a single JVM running mapper</description>
+        </property>
 	</parameters>
     
     
@@ -93,6 +98,10 @@
 				<delete path="${nameNode}${output_root}" />
 			</prepare>
             <configuration>
+                <property>
+                    <name>mapreduce.map.java.opts</name>
+                    <value>${mapreduce_map_java_opts}</value>
+                </property>
             	<property>
 					<name>mapreduce.task.timeout</name>
 					<value>3600000</value>
