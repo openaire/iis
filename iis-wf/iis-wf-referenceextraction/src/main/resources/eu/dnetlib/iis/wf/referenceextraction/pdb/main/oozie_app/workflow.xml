@@ -102,11 +102,7 @@
 					by process storing plaintexts into the database -->
 				<property>
 					<name>mapreduce.task.timeout</name>
-					<value>1800000</value>
-				</property>
-				<property>
-					<name>mapreduce.task.timeout</name>
-					<value>1800000</value>
+					<value>3600000</value>
 				</property>
             </configuration>
             
