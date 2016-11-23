@@ -299,7 +299,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/matched_doc_organizations/actionset-id</arg>
-            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/matched_doc_organizations.properties</arg>
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/matched_doc_organizations_1.properties,/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/matched_doc_organizations_2.properties</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />

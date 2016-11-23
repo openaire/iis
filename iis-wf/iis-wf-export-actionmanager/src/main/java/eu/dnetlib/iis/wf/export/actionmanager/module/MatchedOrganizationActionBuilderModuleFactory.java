@@ -1,12 +1,12 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
 
 import com.google.common.base.Preconditions;
 
-import datafu.com.google.common.collect.Lists;
 import eu.dnetlib.actionmanager.actions.AtomicAction;
 import eu.dnetlib.actionmanager.common.Agent;
 import eu.dnetlib.data.mapreduce.util.OafDecoder;
@@ -91,8 +91,14 @@ public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActio
             oafBuilder.setDataInfo(buildInference(object.getMatchStrength()));
             oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
             Oaf oaf = oafBuilder.build();
-            return Lists.newArrayList(actionFactory.createAtomicAction(actionSetId, agent, docId,
-                    OafDecoder.decode(oaf).getCFQ(), orgId, oaf.toByteArray()));
+            Oaf oafInverted = invertBidirectionalRelationAndBuild(oafBuilder);
+            return Arrays.asList(new AtomicAction[] {
+                    actionFactory.createAtomicAction(actionSetId, agent, docId,
+                            OafDecoder.decode(oaf).getCFQ(), orgId, oaf.toByteArray()),
+                 // setting reverse relation in referenced object
+                    actionFactory.createAtomicAction(actionSetId, agent, orgId,
+                            OafDecoder.decode(oafInverted).getCFQ(), docId, oafInverted.toByteArray())
+                    });
         }
     }
 }
