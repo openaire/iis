@@ -11,7 +11,7 @@ create table grants as select acronym,
      fundingclass1,fundingclass2,id,c1 as nwo_opt2,c2 as nwo_opt1,
      case when c3='' then '_^' else c3 end as nih_orgname,
      c4 as nih_activity,c5 as nih_administeringic,
-     case when c6='' then regexpr('0*(\d+)$', c7) else c6 end as nih_serialnumber,
+     case when c6='' then regexpr('0*(\d+)$', c7) else regexpr('0*(\d+)', c6) end as nih_serialnumber,
      c7 as nih_coreprojectnum,c8 as alias from 
           (setschema 'acronym,normalizedacro,grantid,fundingclass1,fundingclass2,id,c1,c2,c3,c4,c5,c6,c7,c8' 
           select case when c1 is null then "UNKNOWN" else c1 end as acronym, 
@@ -20,7 +20,7 @@ create table grants as select acronym,
                  jsonpath(c5,'$.NWOgebied','$.dossiernr','$.orgname', '$.activity', '$.administeringic', '$.serialnumber', '$.coreprojectnum','$.alias') 
                        from 
                           (select * from (setschema 'c1,c2,c3,c4,c5' select jsonpath(c1, '$.projectAcronym', '$.id' , '$.projectGrantId','$.fundingClass','$.jsonextrainfo') from jsoninp) 
-                           where regexprmatches("::",c4))) where fundingclass1!='NIH' OR (nih_coreprojectnum!='' AND nih_activity!='' AND nih_administeringic!='' AND nih_serialnumber!='0');
+                           where regexprmatches("::",c4))) where fundingclass1!='NIH' OR (nih_coreprojectnum!='' AND nih_activity!='' AND nih_administeringic!='' AND nih_serialnumber is not null AND nih_serialnumber!='0' AND nih_serialnumber!='');
 
 update grants set alias = "$a" where alias is null;
 insert into grants 

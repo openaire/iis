@@ -46,7 +46,8 @@ select docid,id from (select * from (setschema 'docid,prev,middle,next' select c
 union all 
 
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min(1.49,confidence)/1.5)) from ( select docid,id,max(confidence) as confidence, small_string, string from ( select docid, id,
-    (coreprojectmatch*10
+    (fullprojectmatch*10
+    +coreprojectmatch*10
     +(activitymatch>0)*(administmatch>0)*length(nih_serialnumber)*2.5
     +(activitymatch>0)*length(nih_serialnumber)*0.666
     +(administmatch>0)*length(nih_serialnumber)*1
@@ -57,6 +58,7 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min
       unindexed select regexpcountuniquematches('(?:[\W\d])'||nih_activity||'(?=[\W\w])(?!/)', small_string) as activitymatch,
           regexpcountuniquematches('(?:[\WA-KIR\d])'||nih_administeringic||'(?=[\W\d])(?!/)', small_string) as administmatch,
           regexpcountwords('\b(?i)'||keywords(nih_orgname)||'\b', keywords(string)) as orgnamematch,
+          regexprmatches(grantid, small_string) as fullprojectmatch,
           regexprmatches(nih_coreprojectnum, small_string) as coreprojectmatch,
           regexpcountuniquematches(var('nihposshort'), string) as nihposshortmatch,
           regexpcountuniquematches(var('nihposfull'), string) as nihposfullmatch,
@@ -96,7 +98,7 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min
             regexpcountwords("serbia|mestd",j2s(prevpacksmall,middle,nextpack))
        when fundingClass1="EC"/* fp7 confidence */ then
             case when fundingClass2 = "FP7" THEN
-                regexprmatches(var('fp7middlepos'),middle)+
+            regexprmatches(var('fp7middlepos'),middle)+
                 regexprmatches('(?:\b|_|\d)'||normalizedacro||'(?:\b|_|\d)',j2s(middle,prevpacksmall,nextpack))*2  +
                 regexprmatches('fp7',prev15)*0.4 +
                 0.4*regexpcountwithpositions(var('fp7pospos'),prevpacksmall) +
