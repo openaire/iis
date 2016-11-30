@@ -1072,14 +1072,14 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring.version>[4.0.0.RELEASE]</spring.version>
 
-        <iis.cdh.version>cdh5.5.2</iis.cdh.version>
+        <iis.cdh.version>cdh5.7.5</iis.cdh.version>
 
         <iis.oozie.version>4.1.0-${iis.cdh.version}</iis.oozie.version>
         <iis.pig.version>0.12.0-${iis.cdh.version}</iis.pig.version>
         <iis.hive.version>1.1.0-${iis.cdh.version}</iis.hive.version>
         <iis.avro.version>1.7.6-${iis.cdh.version}</iis.avro.version>
         <iis.hadoop.version>2.6.0-${iis.cdh.version}</iis.hadoop.version>
-        <iis.spark.version>1.5.0-${iis.cdh.version}</iis.spark.version>
+        <iis.spark.version>1.6.0-${iis.cdh.version}</iis.spark.version>
         <iis.coansys.version>1.10-rc3</iis.coansys.version>
         <scala.version>2.10.6</scala.version>
     </properties>
