@@ -370,7 +370,7 @@
             <dependency>
                 <groupId>pl.edu.icm.spark-utils</groupId>
                 <artifactId>spark-utils</artifactId>
-                <version>0.0.1</version>
+                <version>1.0.0</version>
             </dependency>
 
 
