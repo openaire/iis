@@ -96,7 +96,8 @@ public class MatchedOrganizationActionBuilderModuleFactoryTest {
         assertEquals(docId, action.getTargetRowKey());
         assertEquals(RelType.resultOrganization.toString() + '_' + SubRelType.affiliation + '_'
                 + Affiliation.RelName.isAffiliatedWith, action.getTargetColumnFamily());
-        assertOaf(action.getTargetValue(), module.getConfidenceToTrustLevelNormalizationFactor(), docId, orgId);
+        assertOaf(action.getTargetValue(), module.getConfidenceToTrustLevelNormalizationFactor(), 
+                docId, orgId, Affiliation.RelName.isAffiliatedWith.toString());
 //      checking backward relation
         action = actions.get(1);
         assertNotNull(action);
@@ -105,8 +106,9 @@ public class MatchedOrganizationActionBuilderModuleFactoryTest {
         assertEquals(docId, action.getTargetColumn());
         assertEquals(orgId, action.getTargetRowKey());
         assertEquals(RelType.resultOrganization.toString() + '_' + SubRelType.affiliation + '_'
-                + Affiliation.RelName.isAffiliatedWith, action.getTargetColumnFamily());
-        assertOaf(action.getTargetValue(), module.getConfidenceToTrustLevelNormalizationFactor(), orgId, docId);
+                + Affiliation.RelName.affiliates, action.getTargetColumnFamily());
+        assertOaf(action.getTargetValue(), module.getConfidenceToTrustLevelNormalizationFactor(), 
+                orgId, docId, Affiliation.RelName.affiliates.toString());
     }
 
     // ----------------------- PRIVATE --------------------------
@@ -119,7 +121,8 @@ public class MatchedOrganizationActionBuilderModuleFactoryTest {
         return builder.build();
     }
 
-    private void assertOaf(byte[] oafBytes, float normalizationFactory, String source, String target) throws InvalidProtocolBufferException {
+    private void assertOaf(byte[] oafBytes, float normalizationFactory, String source, String target,
+            String affiliationRelationName) throws InvalidProtocolBufferException {
         assertNotNull(oafBytes);
         Oaf.Builder oafBuilder = Oaf.newBuilder();
         oafBuilder.mergeFrom(oafBytes);
@@ -129,7 +132,7 @@ public class MatchedOrganizationActionBuilderModuleFactoryTest {
         assertTrue(KindProtos.Kind.relation == oaf.getKind());
         assertTrue(RelType.resultOrganization == oaf.getRel().getRelType());
         assertTrue(SubRelType.affiliation == oaf.getRel().getSubRelType());
-        assertEquals(Affiliation.RelName.isAffiliatedWith.toString(), oaf.getRel().getRelClass());
+        assertEquals(affiliationRelationName, oaf.getRel().getRelClass());
         assertEquals(source, oaf.getRel().getSource());
         assertEquals(target, oaf.getRel().getTarget());
 
