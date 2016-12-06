@@ -78,12 +78,20 @@
                     <value>1G</value>
                 </property>
                 <property>
-                    <name>sparkExecutorCores</name>
-                    <value>1</value>
+                    <name>sparkExecutorOverhead</name>
+                    <value>512</value>
                 </property>
                 <property>
-                    <name>sparkNumExecutors</name>
-                    <value>2</value>
+                    <name>sparkDriverMemory</name>
+                    <value>1G</value>
+                </property>
+                <property>
+                    <name>sparkDriverOverhead</name>
+                    <value>512</value>
+                </property>
+                <property>
+                    <name>sparkExecutorCores</name>
+                    <value>1</value>
                 </property>
                 <property>
                     <name>numberOfPartitions</name>

@@ -29,21 +29,32 @@
         </property>
         
         <property>
+            <name>sparkDriverMemory</name>
+            <description>memory for driver process</description>
+        </property>
+        <property>
+            <name>sparkDriverOverhead</name>
+            <description>The amount of off heap memory (in megabytes) to be allocated for the driver</description>
+        </property>
+        
+        <property>
             <name>sparkExecutorMemory</name>
             <description>memory for individual executor</description>
+        </property>
+        <property>
+            <name>sparkExecutorOverhead</name>
+            <description>The amount of off heap memory (in megabytes) to be allocated for the executor</description>
         </property>
         <property>
             <name>sparkExecutorCores</name>
             <description>number of cores used by single executor</description>
         </property>
-        <property>
-            <name>sparkNumExecutors</name>
-            <description>total number of executors</description>
-        </property>
+        
         <property>
             <name>numberOfPartitions</name>
             <description>number of partitions used for rdds with citations and documents read from input files</description>
         </property>
+        
     </parameters>
 
     <global>
@@ -84,7 +95,7 @@
 
             <jar>${oozieTopWfApplicationPath}/lib/${projectUberJarName}</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --num-executors ${sparkNumExecutors}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores}</spark-opts>
         
             <arg>-inputMetadata = ${input_metadata}</arg>
             <arg>-inputPerson = ${input_person}</arg>
@@ -115,7 +126,7 @@
 
             <jar>${oozieTopWfApplicationPath}/lib/${projectUberJarName}</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --num-executors ${sparkNumExecutors}</spark-opts>
+            <spark-opts>--executor-cores ${sparkExecutorCores} --executor-memory ${sparkExecutorMemory} --driver-memory=${sparkDriverMemory} --conf spark.yarn.driver.memoryOverhead=${sparkDriverOverhead}  --conf spark.yarn.executor.memoryOverhead=${sparkExecutorOverhead}</spark-opts>
         
             <arg>-fullDocumentPath = ${workingDir}/documents_with_authors</arg>
             
@@ -149,7 +160,7 @@
 
             <jar>${oozieTopWfApplicationPath}/lib/${projectUberJarName}</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --num-executors ${sparkNumExecutors}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores}</spark-opts>
         
             <arg>-input = ${workingDir}/matched_citations</arg>
             <arg>-output = ${output_citations}</arg>

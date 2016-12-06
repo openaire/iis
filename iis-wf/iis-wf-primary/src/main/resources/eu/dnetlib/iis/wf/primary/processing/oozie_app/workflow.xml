@@ -146,18 +146,13 @@
         <!-- spark related: affiliation matching -->
         <property>
             <name>affiliationmatchingSparkExecutorMemory</name>
-            <value>6G</value>
+            <value>7G</value>
             <description>memory for individual executor</description>
         </property>
         <property>
             <name>affiliationmatchingSparkExecutorCores</name>
-            <value>1</value>
+            <value>4</value>
             <description>number of cores used by single executor</description>
-        </property>
-        <property>
-            <name>affiliationmatchingSparkNumExecutors</name>
-            <value>64</value>
-            <description>total number of executors</description>
         </property>
         <property>
             <name>affiliationmatchingSparkDriverMemory</name>
@@ -169,7 +164,7 @@
             <value>513</value>
             <description>The amount of off heap memory (in megabytes) to be allocated for the driver</description>
         </property>
-        <!-- spark related: fuzzy citation matching -->
+        <!-- spark related: direct citation matching -->
         <property>
             <name>citationmatchingDirectSparkExecutorMemory</name>
             <value>7G</value>
@@ -177,33 +172,38 @@
         </property>
         <property>
             <name>citationmatchingDirectSparkExecutorCores</name>
-            <value>1</value>
+            <value>4</value>
             <description>number of cores used by single executor</description>
         </property>
+        <!-- spark related: fuzzy citation matching -->
         <property>
-            <name>citationmatchingDirectSparkNumExecutors</name>
-            <value>200</value>
-            <description>total number of executors</description>
+            <name>citationmatchingFuzzySparkDriverMemory</name>
+            <value>2G</value>
+            <description>memory for driver process</description>
         </property>
-        <!-- spark related: direct citation matching -->
+        <property>
+            <name>citationmatchingFuzzySparkDriverOverhead</name>
+            <value>513</value>
+            <description>The amount of off heap memory (in megabytes) to be allocated for the driver</description>
+        </property>
         <property>
             <name>citationmatchingFuzzySparkExecutorMemory</name>
             <value>7G</value>
             <description>memory for individual executor</description>
         </property>
         <property>
+            <name>citationmatchingFuzzySparkExecutorOverhead</name>
+            <value>2048</value>
+            <description>The amount of off heap memory (in megabytes) to be allocated for the executor</description>
+        </property>        
+        <property>
             <name>citationmatchingFuzzySparkExecutorCores</name>
-            <value>1</value>
+            <value>4</value>
             <description>number of cores used by single executor</description>
         </property>
         <property>
-            <name>citationmatchingFuzzySparkNumExecutors</name>
-            <value>200</value>
-            <description>total number of executors</description>
-        </property>
-        <property>
             <name>citationmatchingFuzzyNumberOfPartitions</name>
-            <value>400</value>
+            <value>1000</value>
             <description>number of partitions used for rdds with citations and documents read from input files</description>
         </property>
         
@@ -1030,10 +1030,6 @@
                     <name>sparkExecutorCores</name>
                     <value>${citationmatchingDirectSparkExecutorCores}</value>
                 </property>
-                <property>
-                    <name>sparkNumExecutors</name>
-                    <value>${citationmatchingDirectSparkNumExecutors}</value>
-                </property>
             </configuration>
         </sub-workflow>
         <ok to="citationmatching_fuzzy" />
@@ -1062,16 +1058,24 @@
                     <value>${workingDir}/citationmatching_fuzzy/output</value>
                 </property>
                 <property>
+                    <name>sparkDriverMemory</name>
+                    <value>${citationmatchingFuzzySparkDriverMemory}</value>
+                </property>
+                <property>
+                    <name>sparkDriverOverhead</name>
+                    <value>${citationmatchingFuzzySparkDriverOverhead}</value>
+                </property>
+                <property>
                     <name>sparkExecutorMemory</name>
                     <value>${citationmatchingFuzzySparkExecutorMemory}</value>
                 </property>
                 <property>
-                    <name>sparkExecutorCores</name>
-                    <value>${citationmatchingFuzzySparkExecutorCores}</value>
+                    <name>sparkExecutorOverhead</name>
+                    <value>${citationmatchingFuzzySparkExecutorOverhead}</value>
                 </property>
                 <property>
-                    <name>sparkNumExecutors</name>
-                    <value>${citationmatchingFuzzySparkNumExecutors}</value>
+                    <name>sparkExecutorCores</name>
+                    <value>${citationmatchingFuzzySparkExecutorCores}</value>
                 </property>
                 <property>
                     <name>numberOfPartitions</name>
@@ -1365,10 +1369,6 @@
                 <property>
                     <name>sparkExecutorCores</name>
                     <value>${affiliationmatchingSparkExecutorCores}</value>
-                </property>
-                <property>
-                    <name>sparkNumExecutors</name>
-                    <value>${affiliationmatchingSparkNumExecutors}</value>
                 </property>
                 <property>
                     <name>sparkDriverMemory</name>
