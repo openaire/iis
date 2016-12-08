@@ -27,9 +27,9 @@ import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
  */
 public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActionBuilderFactory<MatchedOrganization> {
 
-    private static final String REL_CLASS_IS_AFFILIATED_WITH = Affiliation.RelName.isAffiliatedWith.toString();
+    private static final String REL_CLASS_HAS_AUTHOR_INSTITUTION_OF = Affiliation.RelName.hasAuthorInstitutionOf.toString();
     
-    private static final String REL_CLASS_AFFILIATES = Affiliation.RelName.affiliates.toString();
+    private static final String REL_CLASS_IS_AUTHOR_INSTITUTION_OF = Affiliation.RelName.isAuthorInstitutionOf.toString();
 
     private static final String SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_ORG = "dnet:result_organization_relations";
 
@@ -80,13 +80,13 @@ public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActio
             relBuilder.setChild(false);
             relBuilder.setRelType(RelType.resultOrganization);
             relBuilder.setSubRelType(SubRelType.affiliation);
-            relBuilder.setRelClass(REL_CLASS_IS_AFFILIATED_WITH);
+            relBuilder.setRelClass(REL_CLASS_HAS_AUTHOR_INSTITUTION_OF);
             relBuilder.setSource(docId);
             relBuilder.setTarget(orgId);
             ResultOrganization.Builder resOrgBuilder = ResultOrganization.newBuilder();
             Affiliation.Builder affBuilder = Affiliation.newBuilder();
             affBuilder.setRelMetadata(
-                    buildRelMetadata(SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_ORG, REL_CLASS_IS_AFFILIATED_WITH));
+                    buildRelMetadata(SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_ORG, REL_CLASS_HAS_AUTHOR_INSTITUTION_OF));
             resOrgBuilder.setAffiliation(affBuilder.build());
             relBuilder.setResultOrganization(resOrgBuilder.build());
             oafBuilder.setRel(relBuilder.build());
@@ -118,11 +118,11 @@ public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActio
                     String target = relBuilder.getTarget();
                     relBuilder.setSource(target);
                     relBuilder.setTarget(source);
-                    relBuilder.setRelClass(REL_CLASS_AFFILIATES);
+                    relBuilder.setRelClass(REL_CLASS_IS_AUTHOR_INSTITUTION_OF);
                     relBuilder.getResultOrganizationBuilder().getAffiliationBuilder().getRelMetadataBuilder()
-                            .getSemanticsBuilder().setClassid(REL_CLASS_AFFILIATES);
+                            .getSemanticsBuilder().setClassid(REL_CLASS_IS_AUTHOR_INSTITUTION_OF);
                     relBuilder.getResultOrganizationBuilder().getAffiliationBuilder().getRelMetadataBuilder()
-                            .getSemanticsBuilder().setClassname(REL_CLASS_AFFILIATES);
+                            .getSemanticsBuilder().setClassname(REL_CLASS_IS_AUTHOR_INSTITUTION_OF);
                     builder.setRel(relBuilder.build());
                     builder.setLastupdatetimestamp(System.currentTimeMillis());
                     return builder.build();

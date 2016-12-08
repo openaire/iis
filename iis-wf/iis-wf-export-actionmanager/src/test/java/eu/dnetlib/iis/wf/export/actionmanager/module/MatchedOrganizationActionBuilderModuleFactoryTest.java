@@ -95,9 +95,9 @@ public class MatchedOrganizationActionBuilderModuleFactoryTest {
         assertEquals(orgId, action.getTargetColumn());
         assertEquals(docId, action.getTargetRowKey());
         assertEquals(RelType.resultOrganization.toString() + '_' + SubRelType.affiliation + '_'
-                + Affiliation.RelName.isAffiliatedWith, action.getTargetColumnFamily());
+                + Affiliation.RelName.hasAuthorInstitutionOf, action.getTargetColumnFamily());
         assertOaf(action.getTargetValue(), module.getConfidenceToTrustLevelNormalizationFactor(), 
-                docId, orgId, Affiliation.RelName.isAffiliatedWith.toString());
+                docId, orgId, Affiliation.RelName.hasAuthorInstitutionOf.toString());
 //      checking backward relation
         action = actions.get(1);
         assertNotNull(action);
@@ -106,9 +106,9 @@ public class MatchedOrganizationActionBuilderModuleFactoryTest {
         assertEquals(docId, action.getTargetColumn());
         assertEquals(orgId, action.getTargetRowKey());
         assertEquals(RelType.resultOrganization.toString() + '_' + SubRelType.affiliation + '_'
-                + Affiliation.RelName.affiliates, action.getTargetColumnFamily());
+                + Affiliation.RelName.isAuthorInstitutionOf, action.getTargetColumnFamily());
         assertOaf(action.getTargetValue(), module.getConfidenceToTrustLevelNormalizationFactor(), 
-                orgId, docId, Affiliation.RelName.affiliates.toString());
+                orgId, docId, Affiliation.RelName.isAuthorInstitutionOf.toString());
     }
 
     // ----------------------- PRIVATE --------------------------
