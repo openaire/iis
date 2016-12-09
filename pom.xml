@@ -1072,7 +1072,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring.version>[4.0.0.RELEASE]</spring.version>
 
-        <iis.cdh.version>cdh5.7.5</iis.cdh.version>
+        <iis.cdh.version>cdh5.9.0</iis.cdh.version>
 
         <iis.oozie.version>4.1.0-${iis.cdh.version}</iis.oozie.version>
         <iis.pig.version>0.12.0-${iis.cdh.version}</iis.pig.version>
