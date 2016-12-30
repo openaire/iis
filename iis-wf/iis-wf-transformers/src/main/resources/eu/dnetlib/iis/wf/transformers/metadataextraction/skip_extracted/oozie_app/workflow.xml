@@ -26,6 +26,11 @@
             <value>import_metadataextraction_cache</value>
             <description>directory for storing report (relative to output_report_root_path)</description>
         </property>
+        <property>
+            <name>report_properties_prefix</name>
+            <value>import.metadataExtraction</value>
+            <description>prefix for reported properties</description>
+        </property>
 	</parameters>
     
     <global>
@@ -92,7 +97,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.PigCountersReportGenerator</arg>
             <arg>-PpigCounters=${hadoop:counters('transformer')}</arg>
-            <arg>-Preport.import.metadataExtraction.fromCache.docMetadata={documentMetaFiltered.REDUCE_OUTPUT_RECORDS}</arg>
+            <arg>-Preport.${report_properties_prefix}.fromCache.docMetadata={documentMetaFiltered.REDUCE_OUTPUT_RECORDS}</arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>
         <ok to="end" />

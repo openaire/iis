@@ -1,0 +1,166 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="ingest_pmc_metadata_cached_by_checksum">
+
+	<parameters>
+		<property>
+			<name>input</name>
+			<description>input document content directory</description>
+		</property>
+		<property>
+			<name>output_root</name>
+			<description>metadata extraction output directory</description>
+		</property>
+		<property>
+			<name>max_file_size_mb</name>
+			<value>2</value>
+			<description>maximum allowed file size in Megabytes</description>
+		</property>
+		<property>
+			<name>content_connection_timeout</name>
+			<value>60000</value>
+			<description>streaming content connection timeout (expressed in milliseconds)</description>
+		</property>
+		<property>
+			<name>content_read_timeout</name>
+			<value>60000</value>
+			<description>streaming content read timeout (expressed in milliseconds)</description>
+		</property>
+		<property>
+			<name>zk_session_timeout</name>
+			<value>60000</value>
+			<description>zookeeper session timeout when handling locks (expressed in milliseconds)</description>
+		</property>
+		<property>
+			<name>default_cache_location</name>
+			<description>default cache location stored in HDFS</description>
+		</property>
+		<property>
+			<name>output_name_meta</name>
+			<value>meta</value>
+			<description>metadata output subdirectory name</description>
+		</property>
+		<property>
+			<name>output_name_fault</name>
+			<value>fault</value>
+			<description>fault output subdirectory name</description>
+		</property>
+	</parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+	<start to="preprocessing" />
+
+	<action name="preprocessing">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_ingest_pmc_metadata_checksum_preprocessing</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/preprocessing/working_dir</value>
+				</property>
+				<property>
+					<name>input</name>
+					<value>${input}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${workingDir}/preprocessing/output</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="ingest_pmc_metadata_cached" />
+		<error to="fail" />
+	</action>
+
+	<action name="ingest_pmc_metadata_cached">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/ingest_pmc_metadata_cached</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/ingest_pmc_metadata_cached/working_dir</value>
+				</property>
+				<property>
+					<!-- checksum identified input -->
+					<name>input</name>
+					<value>${workingDir}/preprocessing/output</value>
+				</property>
+				<property>
+					<name>output_root</name>
+					<value>${workingDir}/ingest_pmc_metadata_cached/out</value>
+				</property>
+				<!-- all the other properties are autmatically propagated -->
+			</configuration>
+		</sub-workflow>
+		<ok to="postprocessing-forking" />
+		<error to="fail" />
+	</action>
+
+	<fork name="postprocessing-forking">
+		<path start="postprocessing-meta" />
+		<path start="postprocessing-fault" />
+	</fork>
+
+	<action name="postprocessing-meta">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_ingest_pmc_metadata_checksum_postprocessing</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/postprocessing_meta/working_dir</value>
+				</property>
+				<property>
+					<name>input_document_content_url</name>
+					<value>${input}</value>
+				</property>
+				<property>
+					<name>input_extracted_document_metadata</name>
+					<value>${workingDir}/ingest_pmc_metadata_cached/out/${output_name_meta}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${output_root}/${output_name_meta}</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="postprocessing-joining" />
+		<error to="fail" />
+	</action>
+
+	<action name="postprocessing-fault">
+		<distcp xmlns="uri:oozie:distcp-action:0.1">
+			<job-tracker>${jobTracker}</job-tracker>
+			<name-node>${nameNode}</name-node>
+			<prepare>
+				<delete path="${nameNode}${output_root}/${output_name_fault}" />
+			</prepare>
+			<arg>${nameNode}${workingDir}/ingest_pmc_metadata_cached/out/${output_name_fault}</arg>
+			<arg>${nameNode}${output_root}/${output_name_fault}</arg>
+		</distcp>
+		<ok to="postprocessing-joining" />
+		<error to="fail" />
+	</action>
+
+	<join name="postprocessing-joining" to="end" />
+
+	<kill name="fail">
+		<message>Unfortunately, the process failed -- error message:
+			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+	</kill>
+	<end name="end" />
+</workflow-app>

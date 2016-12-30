@@ -1,0 +1,145 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="ingest_pmc_prefetched">
+	
+	<parameters>
+		<property>
+			<name>input</name>
+			<description>metadata extraction input directory</description>
+		</property>
+		<property>
+			<name>output_root</name>
+			<description>metadata extraction output directory</description>
+		</property>
+		<property>
+			<name>output_name_meta</name>
+			<value>meta</value>
+			<description>metadata output subdirectory name</description>
+		</property>
+		<property>
+			<name>output_name_fault</name>
+			<value>fault</value>
+			<description>Fault output subdirectory name.
+			Fault#supplementaryData conveys data identified with the following keys:
+                'text' - pmc xml record causing fault
+			</description>
+		</property>
+		<property>
+			<name>max_file_size_mb</name>
+			<value>$UNDEFINED$</value>
+			<description>maximum allowed file size in Megabytes</description>
+		</property>
+        <property>
+            <name>content_connection_timeout</name>
+            <value>60000</value>
+            <description>streaming content connection timeout (expressed in milliseconds)</description>
+        </property>
+        <property>
+            <name>content_read_timeout</name>
+            <value>60000</value>
+            <description>streaming content read timeout (expressed in milliseconds)</description>
+        </property>
+	</parameters>
+    
+    <start to="import_plaintext" />
+    
+    <action name="import_plaintext">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/import_plaintext</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/import_plaintext_pmc/working_dir</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${workingDir}/import_plaintext_pmc/imported</value>
+                </property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>import_content_pmc</value>
+                </property>
+                <property>
+                    <name>report_properties_prefix</name>
+                    <value>import.content.pmc</value>
+                </property>
+                <!-- all the other properties are autmatically propagated -->
+            </configuration>
+        </sub-workflow>
+        <ok to="ingest_pmc_metadata" />
+        <error to="fail" />
+    </action>
+    
+    <action name="ingest_pmc_metadata">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/ingest_pmc_metadata</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/ingest_pmc_metadata/working_dir</value>
+                </property>
+                <property>
+                    <name>input</name>
+                    <value>${workingDir}/import_plaintext_pmc/imported</value>
+                </property>
+                <property>
+                    <name>output_root</name>
+                    <value>${workingDir}/ingest_pmc_metadata/out</value>
+                </property>
+                <property>
+                    <name>output_name_meta</name>
+                    <value>meta</value>
+                </property>
+                <property>
+                    <name>output_name_fault</name>
+                    <value>fault</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="transformers_ingest_pmc_metadata" />
+        <error to="fail" />
+    </action>
+    
+    
+    <action name="transformers_ingest_pmc_metadata">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_ingest_pmc_metadata</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_ingest_pmc_metadata/working_dir</value>
+                </property>
+                <property>
+                    <name>input</name>
+                    <value>${workingDir}/ingest_pmc_metadata/out/meta</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${output_root}/${output_name_meta}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="copy-fault" />
+        <error to="fail" />
+    </action>
+    
+    <action name="copy-fault">
+        <distcp xmlns="uri:oozie:distcp-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <delete path="${nameNode}${output_root}/${output_name_fault}" />
+            </prepare>
+            <arg>${nameNode}${workingDir}/ingest_pmc_metadata/out/fault</arg>
+            <arg>${nameNode}${output_root}/${output_name_fault}</arg>
+        </distcp>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message: [${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+    <end name="end"/>
+</workflow-app>

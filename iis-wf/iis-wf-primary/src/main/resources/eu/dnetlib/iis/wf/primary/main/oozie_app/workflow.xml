@@ -161,6 +161,10 @@
             <value>2</value>
             <description>maximum allowed xml or text file size in Megabytes</description>
         </property>
+        <property>
+            <name>ingest_pmc_default_cache_location</name>
+            <description>PMC ingestion HDFS cache location</description>
+        </property>
         <!-- metadata extraction related -->
         <property>
             <name>metadataextraction_excluded_checksums</name>

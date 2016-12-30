@@ -1,0 +1,4 @@
+## This is a classpath-based import file (this header is required)
+ingest_pmc_metadata_cached classpath eu/dnetlib/iis/wf/ingest/pmc/cached/oozie_app
+transformers_ingest_pmc_metadata_checksum_preprocessing classpath eu/dnetlib/iis/wf/transformers/metadataextraction/checksum/preprocessing/oozie_app
+transformers_ingest_pmc_metadata_checksum_postprocessing classpath eu/dnetlib/iis/wf/transformers/metadataextraction/checksum/postprocessing/meta/oozie_app
