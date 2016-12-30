@@ -112,9 +112,7 @@
     </action>
 
     <action name="copy-version">
-        <distcp xmlns="uri:oozie:distcp-action:0.1">
-            <job-tracker>${jobTracker}</job-tracker>
-            <name-node>${nameNode}</name-node>
+        <distcp xmlns="uri:oozie:distcp-action:0.2">
             <arg>${wf:appPath()}/version.properties</arg>
             <arg>${nameNode}${workingDir}</arg>
         </distcp>
@@ -454,9 +452,7 @@
 	</action>
 
 	<action name="initialize_meta_cache">
-		<distcp xmlns="uri:oozie:distcp-action:0.1">
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
+		<distcp xmlns="uri:oozie:distcp-action:0.2">
 			<arg>${nameNode}${workingDir}/metadata_extractor/output_root/meta</arg>
 			<arg>${nameNode}${cache_location}/${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}/meta</arg>
 		</distcp>

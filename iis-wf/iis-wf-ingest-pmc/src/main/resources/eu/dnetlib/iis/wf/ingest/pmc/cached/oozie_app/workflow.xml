@@ -194,9 +194,7 @@
 	</fork>
 
 	<action name="postprocessing-fault">
-		<distcp xmlns="uri:oozie:distcp-action:0.1">
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
+		<distcp xmlns="uri:oozie:distcp-action:0.2">
 			<prepare>
 				<delete path="${nameNode}${output_root}/${output_name_fault}" />
 			</prepare>
@@ -391,9 +389,7 @@
 	</action>
 
 	<action name="initialize_meta_cache">
-		<distcp xmlns="uri:oozie:distcp-action:0.1">
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
+		<distcp xmlns="uri:oozie:distcp-action:0.2">
 			<arg>${nameNode}${output_root}/${output_name_meta}</arg>
 			<arg>${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}/meta</arg>
 		</distcp>

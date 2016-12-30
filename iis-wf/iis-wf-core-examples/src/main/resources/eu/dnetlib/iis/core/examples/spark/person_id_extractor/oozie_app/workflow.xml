@@ -35,9 +35,8 @@
         <error to="fail"/>
     </action>
     <action name="spark_node">
-        <spark xmlns="uri:oozie:spark-action:0.1">
-            <job-tracker>${jobTracker}</job-tracker>
-            <name-node>${nameNode}</name-node>
+        <spark xmlns="uri:oozie:spark-action:0.2">
+
             <prepare>
                 <delete path="${nameNode}${workingDir}/output" />
                 <mkdir path="${nameNode}${workingDir}/output" />

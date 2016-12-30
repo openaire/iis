@@ -20,9 +20,7 @@
     
     
     <action name="fileWordCounterNode">
-        <spark xmlns="uri:oozie:spark-action:0.1">
-            <job-tracker>${jobTracker}</job-tracker>
-            <name-node>${nameNode}</name-node>
+        <spark xmlns="uri:oozie:spark-action:0.2">
             <prepare>
                <delete path="${nameNode}${workingDir}/output"/>
             </prepare>

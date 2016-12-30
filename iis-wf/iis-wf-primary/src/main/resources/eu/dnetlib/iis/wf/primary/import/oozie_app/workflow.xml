@@ -302,9 +302,7 @@
 
     <!-- importing hbase dump from remote cluster -->
     <action name="distcp_hbase_dump">
-        <distcp xmlns="uri:oozie:distcp-action:0.1">
-            <job-tracker>${jobTracker}</job-tracker>
-            <name-node>${nameNode}</name-node>
+        <distcp xmlns="uri:oozie:distcp-action:0.2">
             <arg>-Dmapreduce.map.memory.mb=${hbase_dump_distcp_memory_mb}</arg>
             <arg>-pb</arg>
             <arg>${hbase_dump_location}</arg>
@@ -830,9 +828,7 @@
 	</action>
 
 	<action name="preserve-metadataextraction-faults">
-		<distcp xmlns="uri:oozie:distcp-action:0.1">
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
+		<distcp xmlns="uri:oozie:distcp-action:0.2">
 			<arg>${nameNode}${workingDir}/metadata_extractor/out/fault</arg>
 			<arg>${nameNode}${output_faults}/metadataextraction</arg>
 		</distcp>
@@ -841,9 +837,7 @@
 	</action>
 
 	<action name="preserve-ingest_pmc_metadata-faults">
-		<distcp xmlns="uri:oozie:distcp-action:0.1">
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
+		<distcp xmlns="uri:oozie:distcp-action:0.2">
 			<arg>${nameNode}${workingDir}/ingest_pmc_metadata/out/fault</arg>
 			<arg>${nameNode}${output_faults}/ingest_pmc_metadata</arg>
 		</distcp>

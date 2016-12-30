@@ -39,6 +39,21 @@
         </property>
 	</parameters>
     
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
     <start to="import_plaintext" />
     
     <action name="import_plaintext">
@@ -125,9 +140,7 @@
     </action>
     
     <action name="copy-fault">
-        <distcp xmlns="uri:oozie:distcp-action:0.1">
-            <job-tracker>${jobTracker}</job-tracker>
-            <name-node>${nameNode}</name-node>
+        <distcp xmlns="uri:oozie:distcp-action:0.2">
             <prepare>
                 <delete path="${nameNode}${output_root}/${output_name_fault}" />
             </prepare>

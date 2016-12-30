@@ -53,9 +53,7 @@
     </decision>
     
     <action name="copy-report">
-        <distcp xmlns="uri:oozie:distcp-action:0.1">
-            <job-tracker>${jobTracker}</job-tracker>
-            <name-node>${nameNode}</name-node>
+        <distcp xmlns="uri:oozie:distcp-action:0.2">
             <prepare>
                 <mkdir path="${nameNode}${reports_external_path}" />
             </prepare>
