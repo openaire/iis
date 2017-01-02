@@ -134,10 +134,6 @@
 					<value>${workingDir}/import_content_url/imported</value>
 				</property>
 				<property>
-					<name>mimetypes_text</name>
-					<value>text,text/plain</value>
-				</property>
-				<property>
 					<name>mimetypes_html</name>
 					<value>text/html</value>
 				</property>

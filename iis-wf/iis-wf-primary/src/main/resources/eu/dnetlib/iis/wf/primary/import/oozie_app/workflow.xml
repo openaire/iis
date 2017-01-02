@@ -81,10 +81,6 @@
 			<description>pdf mime types</description>
 		</property>
 		<property>
-			<name>mimetypes_text</name>
-			<description>text mime types</description>
-		</property>
-		<property>
 			<name>mimetypes_html</name>
 			<description>html mime types</description>
 		</property>
@@ -503,10 +499,6 @@
 					<value>pdf</value>
 				</property>
 				<property>
-					<name>output_name_text</name>
-					<value>text</value>
-				</property>
-				<property>
 					<name>output_name_html</name>
 					<value>html</value>
 				</property>
@@ -526,48 +518,11 @@
 	</action>
 
 	<fork name="import_urlbased_forking">
-		<path start="import_plaintext" />
 		<path start="import_wos" />
         <path start="import_html" />
 		<path start="ingest_pmc_cached" />
 		<path start="metadata_extractor_cached" />
 	</fork>
-
-	<action name="import_plaintext">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/import_plaintext</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/import_plaintext/working_dir</value>
-				</property>
-				<property>
-					<name>input</name>
-					<value>${workingDir}/import_content_url/imported/text</value>
-				</property>
-				<property>
-					<name>max_file_size_mb</name>
-					<value>${text_xml_max_file_size_mb}</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${workingDir}/import_plaintext/imported</value>
-				</property>
-                <property>
-                    <name>output_report_relative_path</name>
-                    <value>import_content_plaintext</value>
-                </property>
-                <property>
-                    <name>report_properties_prefix</name>
-                    <value>import.content.plaintext</value>
-                </property>
-				<!-- all the other properties are autmatically propagated -->
-			</configuration>
-		</sub-workflow>
-		<ok to="import_urlbased_joining" />
-		<error to="fail" />
-	</action>
 
 	<action name="import_wos">
 		<sub-workflow>
@@ -657,7 +612,7 @@
                 </property>
                 <property>
                     <name>output</name>
-                    <value>${workingDir}/ingest_html_plaintext/imported</value>
+                    <value>${output_document_text}</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -750,39 +705,7 @@
 		<error to="fail" />
 	</action>
 
-	<join name="import_urlbased_joining" to="transformers_common_union_document_text" />
-
-	<!-- merging document text datastores: 1) retrieved directly from objectstore 3) ingested from HTML -->
-	<action name="transformers_common_union_document_text">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_common_union</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/transformers_common_union_document_text/working_dir</value>
-				</property>
-				<property>
-					<name>input_a</name>
-					<value>${workingDir}/import_plaintext/imported</value>
-				</property>
-				<property>
-					<name>input_b</name>
-					<value>${workingDir}/ingest_html_plaintext/imported</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${output_document_text}</value>
-				</property>
-				<property>
-					<name>schema</name>
-					<value>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="union_extracted_document_metadata" />
-		<error to="fail" />
-	</action>
+	<join name="import_urlbased_joining" to="union_extracted_document_metadata" />
 
 	<!-- merging extracted document metadata datastores (including new text field): 1) extracted from PDF documents 2) ingested from XML JATS documents -->
 	<action name="union_extracted_document_metadata">

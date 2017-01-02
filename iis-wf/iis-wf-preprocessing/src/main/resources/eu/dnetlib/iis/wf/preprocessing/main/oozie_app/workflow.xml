@@ -63,11 +63,6 @@
 			<description>pdf mime types</description>
 		</property>
 		<property>
-			<name>import_content_mimetypes_text</name>
-			<value>text,text/plain</value>
-			<description>text mime types</description>
-		</property>
-		<property>
 			<name>import_content_mimetypes_html</name>
 			<value>text/html</value>
 			<description>html mime types</description>
@@ -304,10 +299,6 @@
 				<property>
 					<name>mimetypes_pdf</name>
 					<value>${import_content_mimetypes_pdf}</value>
-				</property>
-				<property>
-					<name>mimetypes_text</name>
-					<value>${import_content_mimetypes_text}</value>
 				</property>
 				<property>
 					<name>mimetypes_html</name>

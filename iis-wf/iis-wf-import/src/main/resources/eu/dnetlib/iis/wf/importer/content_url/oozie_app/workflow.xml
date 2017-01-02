@@ -26,10 +26,6 @@
 			<description>pdf mime types</description>
 		</property>
 		<property>
-			<name>mimetypes_text</name>
-			<description>text mime types</description>
-		</property>
-		<property>
 			<name>mimetypes_html</name>
 			<description>html mime types</description>
 		</property>
@@ -76,11 +72,6 @@
 			<name>output_name_pdf</name>
 			<value>pdf</value>
 			<description>pdf output subdirectory name</description>
-		</property>
-		<property>
-			<name>output_name_text</name>
-			<value>text</value>
-			<description>text output subdirectory name</description>
 		</property>
 		<property>
 			<name>output_name_html</name>
@@ -306,15 +297,10 @@
 				<!-- required for multiple outputs only -->
 				<property>
 					<name>avro.mapreduce.multipleoutputs</name>
-					<value>${output_name_pdf} ${output_name_text} ${output_name_html} ${output_name_xml_pmc} ${output_name_wos}</value>
+					<value>${output_name_pdf} ${output_name_html} ${output_name_xml_pmc} ${output_name_wos}</value>
 				</property>
 				<property>
 					<name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_pdf}.format
-					</name>
-					<value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
-				</property>
-				<property>
-					<name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_text}.format
 					</name>
 					<value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
 				</property>
@@ -338,10 +324,6 @@
 					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl']}</value>
 				</property>
 				<property>
-					<name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_text}.keyschema</name>
-					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl']}</value>
-				</property>
-				<property>
 					<name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_html}.keyschema</name>
 					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl']}</value>
 				</property>
@@ -357,10 +339,6 @@
 				<property>
 					<name>mimetypes.csv.${output_name_pdf}</name>
 					<value>${mimetypes_pdf}</value>
-				</property>
-				<property>
-					<name>mimetypes.csv.${output_name_text}</name>
-					<value>${mimetypes_text}</value>
 				</property>
 				<property>
 					<name>mimetypes.csv.${output_name_html}</name>

@@ -51,10 +51,6 @@
 			<description>pdf mime types</description>
 		</property>
 		<property>
-			<name>mimetypes_text</name>
-			<description>text mime types</description>
-		</property>
-		<property>
 			<name>mimetypes_html</name>
 			<description>html mime types</description>
 		</property>
@@ -126,7 +122,7 @@
 		</property>
 		<property>
 			<name>output_document_text</name>
-			<description>text import output directory. merged from three different sources</description>
+			<description>extracted text output directory</description>
 		</property>
 		<property>
 			<name>output_wos_text</name>
@@ -264,10 +260,6 @@
 					<value>pdf</value>
 				</property>
 				<property>
-					<name>output_name_text</name>
-					<value>text</value>
-				</property>
-				<property>
 					<name>output_name_html</name>
 					<value>html</value>
 				</property>
@@ -287,47 +279,10 @@
 	</action>
 
 	<fork name="import_urlbased_forking">
-		<path start="import_plaintext" />
 		<path start="import_html" />
         <path start="ingest_pmc_cached" />
 		<path start="metadata_extractor_cached" />
 	</fork>
-
-	<action name="import_plaintext">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/import_plaintext</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/import_plaintext/working_dir</value>
-				</property>
-				<property>
-					<name>input</name>
-					<value>${workingDir}/import_content_url/imported/text</value>
-				</property>
-				<property>
-					<name>max_file_size_mb</name>
-					<value>${text_xml_max_file_size_mb}</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${workingDir}/import_plaintext/imported</value>
-				</property>
-                <property>
-                    <name>output_report_relative_path</name>
-                    <value>import_content_plaintext</value>
-                </property>
-                <property>
-                    <name>report_properties_prefix</name>
-                    <value>import.content.plaintext</value>
-                </property>
-				<!-- all the other properties are autmatically propagated -->
-			</configuration>
-		</sub-workflow>
-		<ok to="import_urlbased_joining" />
-		<error to="fail" />
-	</action>
 
     <!-- html import and plaintext ingestion section -->
     <action name="import_html">
@@ -530,10 +485,10 @@
 		<error to="fail" />
 	</action>
 
-	<!-- merging document text datastores: 1) retrieved directly from objectstore 2) extracted from extracted_document_metadata 3) ingested from HTML -->
+	<!-- merging document text datastores: 1) extracted from extracted_document_metadata 2) ingested from HTML -->
 	<action name="transformers_common_union_document_text">
 		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_common_union3</app-path>
+			<app-path>${wf:appPath()}/transformers_common_union</app-path>
 			<propagate-configuration />
 			<configuration>
 				<property>
@@ -542,14 +497,10 @@
 				</property>
 				<property>
 					<name>input_a</name>
-					<value>${workingDir}/import_plaintext/imported</value>
-				</property>
-				<property>
-					<name>input_b</name>
 					<value>${workingDir}/transformer_metadataextraction_documenttext/output</value>
 				</property>
 				<property>
-					<name>input_c</name>
+					<name>input_b</name>
 					<value>${workingDir}/ingest_html_plaintext/imported</value>
 				</property>
 				<property>
