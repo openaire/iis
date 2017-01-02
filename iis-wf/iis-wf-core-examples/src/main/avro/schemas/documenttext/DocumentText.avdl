@@ -1,8 +1,0 @@
-@namespace("eu.dnetlib.iis.core.examples.schemas.documenttext")
-protocol IIS{
-
-	record DocumentText {
-		string id;
-		union { null , string } text = null;
-	}
-}
