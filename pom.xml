@@ -354,14 +354,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.apache.spark</groupId>
-                <artifactId>spark-hive_2.10</artifactId>
-                <version>${iis.spark.version}</version>
-                <scope>provided</scope>
-            </dependency>
-
-
-            <dependency>
                 <groupId>com.databricks</groupId>
                 <artifactId>spark-avro_2.10</artifactId>
                 <version>1.0.0</version>
@@ -430,12 +422,6 @@
                 <groupId>org.apache.pig</groupId>
                 <artifactId>pigunit</artifactId>
                 <version>${iis.pig.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.hive</groupId>
-                <artifactId>hive-serde</artifactId>
-                <version>${iis.hive.version}</version>
             </dependency>
 
             <!-- Cermine dependencies -->
@@ -1049,7 +1035,6 @@
 
         <iis.oozie.version>4.1.0-${iis.cdh.version}</iis.oozie.version>
         <iis.pig.version>0.12.0-${iis.cdh.version}</iis.pig.version>
-        <iis.hive.version>1.1.0-${iis.cdh.version}</iis.hive.version>
         <iis.avro.version>1.7.6-${iis.cdh.version}</iis.avro.version>
         <iis.hadoop.version>2.6.0-${iis.cdh.version}</iis.hadoop.version>
         <iis.spark.version>1.6.0-${iis.cdh.version}</iis.spark.version>
