@@ -1,4 +1,4 @@
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="transformers_referenceextraction_project_toconcept">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="referenceextraction_project_to_concept">
 	
 	<parameters>
 		<property>

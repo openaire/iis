@@ -519,7 +519,7 @@
 
 	<action name="transformers_concept_to_researchinitiatives">
 		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_export_researchinitiatives</app-path>
+			<app-path>${wf:appPath()}/transformers_export_concepts</app-path>
 			<propagate-configuration />
 			<configuration>
 				<property>
@@ -527,11 +527,11 @@
 					<value>${workingDir}/transformers_concept_to_researchinitiatives/working_dir</value>
 				</property>
 				<property>
-					<name>input_document_to_research_initiative</name>
+					<name>input</name>
 					<value>${workingDir}/transformers_project_toconcept/out</value>
 				</property>
 				<property>
-					<name>output_document_to_research_initiatives</name>
+					<name>output</name>
 					<value>${workingDir}/transformers_concept_to_researchinitiatives/out</value>
 				</property>
 				<property>

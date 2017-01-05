@@ -13,12 +13,12 @@ import eu.dnetlib.iis.common.OozieWorkflowTestConfiguration;
  *
  */
 @Category(IntegrationTest.class)
-public class ProjectRefExtractionOutputTransformerWfTest extends AbstractOozieWorkflowTestCase {
+public class ProjectRefExtractionToConceptWfTest extends AbstractOozieWorkflowTestCase {
 
     @Test
 	public void testProjectToConceptWorkflow() throws Exception {
     	OozieWorkflowTestConfiguration wf = new OozieWorkflowTestConfiguration();
         wf.setTimeoutInSeconds(720);
-        testWorkflow("eu/dnetlib/iis/wf/referenceextraction/project/output_transformer/test", wf);
+        testWorkflow("eu/dnetlib/iis/wf/referenceextraction/project/to_concept/test", wf);
     }
 }
