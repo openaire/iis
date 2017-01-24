@@ -326,7 +326,16 @@
                     <name>output_report_root_path</name>
                     <value>${workingDir}/report</value>
                 </property>
-                <!-- configuration for affmatch and citmatch spark algorithms-->
+                <!-- configuration for spark algorithms-->
+                <property>
+                    <name>documentsclassificationSparkExecutorMemory</name>
+                    <value>1G</value>
+                </property>
+                <property>
+                    <name>documentsclassificationSparkExecutorCores</name>
+                    <value>1</value>
+                </property>
+                
                 <property>
                     <name>affiliationmatchingSparkExecutorMemory</name>
                     <value>1G</value>

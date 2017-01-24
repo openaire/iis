@@ -143,6 +143,17 @@
             <name>ds_similarityTopnDocumentPerDocument</name>
             <value>20</value>
         </property>
+        <!-- spark related: documents classification -->
+        <property>
+            <name>documentsclassificationSparkExecutorMemory</name>
+            <value>7G</value>
+            <description>memory for individual executor</description>
+        </property>
+        <property>
+            <name>documentsclassificationSparkExecutorCores</name>
+            <value>4</value>
+            <description>number of cores used by single executor</description>
+        </property>
         <!-- spark related: affiliation matching -->
         <property>
             <name>affiliationmatchingSparkExecutorMemory</name>
@@ -1021,6 +1032,14 @@
                 <property>
                     <name>output_document_to_document_classes</name>
                     <value>${output_document_to_document_classes}</value>
+                </property>
+                <property>
+                    <name>sparkExecutorMemory</name>
+                    <value>${documentsclassificationSparkExecutorMemory}</value>
+                </property>
+                <property>
+                    <name>sparkExecutorCores</name>
+                    <value>${documentsclassificationSparkExecutorCores}</value>
                 </property>
             </configuration>
         </sub-workflow>
