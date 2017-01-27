@@ -194,9 +194,17 @@
 		<switch>
 			<!-- skipping metadataextraction merging process -->
 			<case to="get-existing-cache-id">${wf:actionData('check_input_isempty')['isEmpty'] eq "false"}</case>
-			<default to="build-report" />
+			<default to="create-empty-report" />
 		</switch>
 	</decision>
+
+    <action name="create-empty-report">
+        <fs>
+            <mkdir path="${nameNode}${workingDir}/report" />
+        </fs>
+        <ok to="build-report"/>
+        <error to="fail"/>
+    </action>
 
 	<action name='get-existing-cache-id'>
 		<java>
