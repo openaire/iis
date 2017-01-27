@@ -106,85 +106,51 @@
    </repositories>
 
     <dependencies>
-
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.22</version>
         </dependency>
-
         <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <version>1.3</version>
-            <scope>test</scope>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.22</version>
         </dependency>
-
-
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>[1.2.17]</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.sun.jmx</groupId>
-                    <artifactId>jmxri</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.jdmk</groupId>
-                    <artifactId>jmxtools</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>1.2.17</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-mapreduce-client-app</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-mapreduce-client-core</artifactId>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_2.10</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_2.10</artifactId>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.10.19</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-core</artifactId>
-            <version>1.6.3</version>
-            <scope>test</scope>
-        </dependency>
-
-
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
             <scope>runtime</scope>
         </dependency>
-
-
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <version>1.3</version>
+            <scope>test</scope>
+        </dependency>
+       <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.10.19</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-core</artifactId>
+            <version>1.6.6</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -209,24 +175,12 @@
                 <artifactId>hadoop-yarn-common</artifactId>
                 <version>${iis.hadoop.version}</version>
                 <scope>provided</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>jdk.tools</artifactId>
-                        <groupId>jdk.tools</groupId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.hadoop</groupId>
                 <artifactId>hadoop-mapreduce-client-common</artifactId>
                 <version>${iis.hadoop.version}</version>
                 <scope>provided</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>jdk.tools</artifactId>
-                        <groupId>jdk.tools</groupId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <dependency>
@@ -235,12 +189,6 @@
                 <version>${iis.hadoop.version}</version>
                 <scope>test</scope>
                 <type>test-jar</type>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>jdk.tools</artifactId>
-                        <groupId>jdk.tools</groupId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <dependency>
@@ -249,12 +197,6 @@
                 <version>${iis.hadoop.version}</version>
                 <scope>test</scope>
                 <type>test-jar</type>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>jdk.tools</artifactId>
-                        <groupId>jdk.tools</groupId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <dependency>
@@ -305,17 +247,10 @@
                 <artifactId>oozie-core</artifactId>
                 <version>${iis.oozie.version}</version>
                 <exclusions>
-                    <exclusion>
-                        <artifactId>jdk.tools</artifactId>
-                        <groupId>jdk.tools</groupId>
-                    </exclusion>
+                    <!-- conflicts -->
                     <exclusion>
                         <artifactId>servlet-api</artifactId>
                         <groupId>javax.servlet</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>jetty-all</artifactId>
-                        <groupId>org.eclipse.jetty.aggregate</groupId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -325,6 +260,7 @@
                 <artifactId>oozie-client</artifactId>
                 <version>${iis.oozie.version}</version>
                 <exclusions>
+                    <!-- conflicts -->
                     <exclusion>
                         <artifactId>slf4j-simple</artifactId>
                         <groupId>org.slf4j</groupId>
@@ -337,13 +273,6 @@
                 <artifactId>spark-core_2.10</artifactId>
                 <version>${iis.spark.version}</version>
                 <scope>provided</scope>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>javax.servlet</artifactId>
-                        <groupId>org.eclipse.jetty.orbit</groupId>
-                    </exclusion>
-                </exclusions>
-
             </dependency>
 
             <dependency>
@@ -356,7 +285,7 @@
             <dependency>
                 <groupId>com.databricks</groupId>
                 <artifactId>spark-avro_2.10</artifactId>
-                <version>1.0.0</version>
+                <version>1.1.0-${iis.cdh.version}</version>
             </dependency>
 
             <dependency>
@@ -380,12 +309,16 @@
                 <version>${iis.avro.version}</version>
                 <classifier>hadoop2</classifier>
                 <exclusions>
+                    <!-- conflicts -->
                     <exclusion>
                         <artifactId>servlet-api</artifactId>
                         <groupId>org.mortbay.jetty</groupId>
                     </exclusion>
+                    <exclusion>
+                        <artifactId>netty</artifactId>
+                        <groupId>io.netty</groupId>
+                    </exclusion>
                 </exclusions>
-
             </dependency>
 
 
@@ -397,25 +330,21 @@
                 <scope>provided</scope>
                 <exclusions>
                     <exclusion>
-                        <groupId>jdk.tools</groupId>
-                        <artifactId>jdk.tools</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.hadoop</groupId>
-                        <artifactId>hadoop-core</artifactId>
-                    </exclusion>
-                    <exclusion>
                         <groupId>org.mortbay.jetty</groupId>
                         <artifactId>servlet-api-2.5</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <artifactId>servlet-api</artifactId>
+                        <groupId>javax.servlet</groupId>
+                    </exclusion>
                 </exclusions>
-
             </dependency>
 
             <dependency>
                 <groupId>org.apache.pig</groupId>
                 <artifactId>piggybank</artifactId>
                 <version>${iis.pig.version}</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
@@ -429,18 +358,6 @@
                 <groupId>pl.edu.icm.cermine</groupId>
                 <artifactId>cermine-impl</artifactId>
                 <version>1.11</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>jcl-over-slf4j</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcprov-jdk15on</artifactId>
-                <version>1.50</version>
             </dependency>
 
             <!-- Coansys dependencies -->
@@ -455,22 +372,14 @@
                 <artifactId>citation-matching-core-code</artifactId>
                 <version>${iis.coansys.version}</version>
                 <exclusions>
+                    <!-- unneded cdh5 which should be provided-->
                     <exclusion>
                         <groupId>org.apache.avro</groupId>
                         <artifactId>avro-mapred</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-simple</artifactId>
-                    </exclusion>
-                    <!-- excluding all hadoop libs which are 'provided' by environment -->
-                    <exclusion>
                         <groupId>org.apache.hadoop</groupId>
                         <artifactId>hadoop-client</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.hadoop</groupId>
-                        <artifactId>hadoop-core</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.apache.hadoop</groupId>
@@ -482,21 +391,23 @@
                     </exclusion>
                     <exclusion>
                         <groupId>org.apache.hadoop</groupId>
-                        <artifactId>hadoop-mapreduce-client-app</artifactId>
+                        <artifactId>hadoop-mapreduce-client-common</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.apache.hadoop</groupId>
-                        <artifactId>hadoop-mapreduce-client-common</artifactId>
+                        <artifactId>hadoop-mapreduce-client-app</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.apache.hadoop</groupId>
                         <artifactId>hadoop-mapreduce-client-core</artifactId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>jdk.tools</artifactId>
-                        <groupId>jdk.tools</groupId>
+                        <!-- conflicts -->
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-simple</artifactId>
                     </exclusion>
                 </exclusions>
+                 
             </dependency>
 
             <dependency>
@@ -505,34 +416,7 @@
                 <version>${iis.coansys.version}</version>
                 <type>tar.gz</type>
                 <classifier>oozie-job</classifier>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.hadoop</groupId>
-                        <artifactId>hadoop-client</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.hadoop</groupId>
-                        <artifactId>hadoop-yarn-client</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.hadoop</groupId>
-                        <artifactId>hadoop-mapreduce-client-app</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.hadoop</groupId>
-                        <artifactId>hadoop-mapreduce-client-common</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.hadoop</groupId>
-                        <artifactId>hadoop-mapreduce-client-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-simple</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
-
 
             <!-- dnet dependencies -->
             <dependency>
@@ -544,11 +428,24 @@
             <dependency>
                 <groupId>eu.dnetlib</groupId>
                 <artifactId>dnet-openaireplus-mapping-utils</artifactId>
-                <version>[5.0.0, 6.0.0)</version>
+                <version>[6.0.0, 7.0.0)</version>
                 <exclusions>
+                    <!-- unneeded dependencies -->
                     <exclusion>
                         <groupId>org.apache.hadoop</groupId>
                         <artifactId>hadoop-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-hdfs</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.zookeeper</groupId>
+                        <artifactId>zookeeper</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jgrapht</groupId>
+                        <artifactId>jgrapht</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -557,16 +454,6 @@
                 <groupId>eu.dnetlib</groupId>
                 <artifactId>dnet-objectstore-rmi</artifactId>
                 <version>[2.0.0, 3.0.0)</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>apache</groupId>
-                        <artifactId>commons-io</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>spring</groupId>
-                        <artifactId>spring-context</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <dependency>
@@ -579,12 +466,30 @@
                 <groupId>eu.dnetlib</groupId>
                 <artifactId>cnr-resultset-client</artifactId>
                 <version>[2.0.0, 3.0.0)</version>
+                <exclusions>
+                    <!-- unneeded -->
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-web</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-webmvc</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
                 <groupId>eu.dnetlib</groupId>
                 <artifactId>dnet-actionmanager-common</artifactId>
                 <version>[6.0.0, 7.0.0)</version>
+                <exclusions>
+                    <!-- duplicate with different groupId -->
+                    <exclusion>
+                        <groupId>apache</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -597,25 +502,25 @@
             <dependency>
                 <groupId>com.beust</groupId>
                 <artifactId>jcommander</artifactId>
-                <version>1.48</version>
+                <version>1.60</version>
             </dependency>
 
             <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
-                <version>2.2.2</version>
+                <version>2.8.0</version>
             </dependency>
 
             <dependency>
                 <groupId>com.googlecode.json-simple</groupId>
                 <artifactId>json-simple</artifactId>
-                <version>1.1</version>
+                <version>1.1.1</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.4</version>
+                <version>3.5</version>
             </dependency>
 
             <dependency>
@@ -625,21 +530,15 @@
             </dependency>
 
             <dependency>
-                <groupId>org.antlr</groupId>
-                <artifactId>antlr-runtime</artifactId>
-                <version>3.4</version>
-            </dependency>
-
-            <dependency>
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream</artifactId>
-                <version>1.4.7</version>
+                <version>1.4.9</version>
             </dependency>
 
             <dependency>
                 <groupId>xalan</groupId>
                 <artifactId>xalan</artifactId>
-                <version>2.7.1</version>
+                <version>2.7.2</version>
             </dependency>
 
             <dependency>
@@ -651,13 +550,13 @@
             <dependency>
                 <groupId>org.jdom</groupId>
                 <artifactId>jdom</artifactId>
-                <version>1.1</version>
+                <version>1.1.3</version>
             </dependency>
 
             <dependency>
                 <groupId>org.jsoup</groupId>
                 <artifactId>jsoup</artifactId>
-                <version>1.8.1</version>
+                <version>1.10.2</version>
             </dependency>
 
             <dependency>
@@ -678,22 +577,17 @@
                 <version>2.5.0</version>
             </dependency>
 
+            <!-- this version is required by hadoop-core 2.6.0 -->
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>12.0</version> <!-- this version is needed by hadoop-core 2.6.0 -->
-            </dependency>
-
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>2.1</version>
+                <version>12.0</version>
             </dependency>
 
             <dependency>
                 <groupId>commons-cli</groupId>
                 <artifactId>commons-cli</artifactId>
-                <version>1.2</version>
+                <version>1.3.1</version>
             </dependency>
 
             <dependency>
@@ -708,11 +602,18 @@
                 <version>0.10.0</version>
             </dependency>
 
+            <!-- this version has to be aligned with net.schmizz:sshj -->
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk15on</artifactId>
+                <version>1.50</version>
+            </dependency>
+
             <!-- Needed to run Avro-based map-reduce -->
             <dependency>
                 <groupId>com.thoughtworks.paranamer</groupId>
                 <artifactId>paranamer</artifactId>
-                <version>2.5.2</version>
+                <version>2.8</version>
             </dependency>
 
             <!-- Needed to run Pig jobs -->
@@ -722,26 +623,27 @@
                 <version>1.2.0</version>
             </dependency>
 
+            <!-- this version has to be aligned with dnet transitive dependencies -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-bundle-jaxrs</artifactId>
                 <version>[2.7.8]</version>
+                <scope>runtime</scope>
                 <exclusions>
+                    <!-- unneeded -->
                     <exclusion>
                         <groupId>org.eclipse.jetty</groupId>
                         <artifactId>jetty-server</artifactId>
                     </exclusion>
-                    <!-- excluding org.slf4j:slf4j-jdk14:jar:1.3.1 causing conflicts -->
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-jdk14</artifactId>
-                    </exclusion>
-                    <!-- excluding dependency overlapping with the one provided in cdh5.9.0 environment -->
-                    <exclusion>
-                        <groupId>javax.ws.rs</groupId>
-                        <artifactId>javax.ws.rs-api</artifactId>
-                    </exclusion>
                 </exclusions>
+            </dependency>
+
+            <!-- this version has to be aligned with cdh5.9.0 sharelib -->
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>2.2.7</version>
+                <scope>runtime</scope>
             </dependency>
 
             <dependency>
@@ -765,7 +667,7 @@
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.9.2</version>
+                <version>1.9.3</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -787,7 +689,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.3</version>
+                    <version>3.6.0</version>
                     <configuration>
                         <source>1.8</source>
                         <target>1.8</target>
@@ -798,13 +700,13 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>3.0.2</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>2.4</version>
+                    <version>3.0.1</version>
                     <executions>
                         <execution>
                             <id>attach-sources</id>
@@ -818,14 +720,8 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>2.7</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.18.1</version>
+                    <version>2.19.1</version>
                     <configuration>
                         <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     </configuration>
@@ -834,7 +730,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.18.1</version>
+                    <version>2.19.1</version>
                     <executions>
                         <execution>
                             <id>default-integration-test</id>
@@ -855,7 +751,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.10.3</version>
+                    <version>2.10.4</version>
                     <configuration>
                         <detectLinks>true</detectLinks>
                     </configuration>
@@ -864,7 +760,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.10</version>
+                    <version>3.0.0</version>
                 </plugin>
 
                 <plugin>
@@ -894,13 +790,13 @@
                 <plugin>
                     <groupId>org.apache.avro</groupId>
                     <artifactId>avro-maven-plugin</artifactId>
-                    <version>1.7.4</version>
+                    <version>1.7.7</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>1.10</version>
+                    <version>1.12</version>
                 </plugin>
 
                 <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
@@ -978,22 +874,18 @@
 
 
         <plugins>
-
-
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.2</version>
+                <version>2.5.3</version>
             </plugin>
-
         </plugins>
 
         <extensions>
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-ssh</artifactId>
-                <version>2.4</version>
+                <version>2.10</version>
             </extension>
         </extensions>
 
@@ -1018,7 +910,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9</version>
                 <configuration>
                     <detectLinks>true</detectLinks>
                 </configuration>

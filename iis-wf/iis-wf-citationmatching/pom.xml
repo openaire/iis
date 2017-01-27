@@ -40,13 +40,6 @@
             <groupId>eu.dnetlib.iis</groupId>
             <artifactId>iis-schemas</artifactId>
             <version>${project.version}</version>
-			<exclusions>
-				<!-- excluding old protobuf from schema -->
-				<exclusion>
-					<groupId>com.google.protobuf</groupId>
-					<artifactId>protobuf-java</artifactId>
-				</exclusion>
-			</exclusions>
         </dependency>
 	
 	

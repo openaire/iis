@@ -116,6 +116,11 @@
             <artifactId>commons-beanutils</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+        </dependency>
+
 	</dependencies>
 
 	<build>
