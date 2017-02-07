@@ -90,7 +90,7 @@
             <mode>cluster</mode>
             <name>Affiliation Matching</name>
             <class>eu.dnetlib.iis.wf.affmatching.AffMatchingJob</class>
-            <jar>${oozieTopWfApplicationPath}/lib/${projectUberJarName}</jar>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-affmatching-${projectVersion}.jar</jar>
             
             <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory} --conf spark.yarn.driver.memoryOverhead=${sparkDriverOverhead}</spark-opts>
 

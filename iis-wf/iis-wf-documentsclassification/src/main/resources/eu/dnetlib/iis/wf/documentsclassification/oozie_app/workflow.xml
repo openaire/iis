@@ -64,7 +64,7 @@
             <name>document_classification_job</name>
             
             <class>eu.dnetlib.iis.wf.documentsclassification.DocumentClassificationJob</class>
-            <jar>${oozieTopWfApplicationPath}/lib/${projectUberJarName}</jar>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-documentsclassification-${projectVersion}.jar</jar>
             
             <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores}</spark-opts>
             

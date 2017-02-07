@@ -64,8 +64,8 @@
                     <value>${oozieTopWfApplicationPath}</value>
                 </property>
                 <property>
-                    <name>projectUberJarName</name>
-                    <value>${projectUberJarName}</value>
+                    <name>projectVersion</name>
+                    <value>${projectVersion}</value>
                 </property>
                 <!-- Input ports. -->
                 <property>
