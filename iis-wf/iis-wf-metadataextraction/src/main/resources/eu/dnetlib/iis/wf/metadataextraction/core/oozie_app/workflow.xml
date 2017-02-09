@@ -240,7 +240,8 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
             <arg>-Preport.import.metadataExtraction.processed.docMetadata=${hadoop:counters('metadata_extractor')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_meta,'/part')]}</arg>
-            <arg>-Preport.import.metadataExtraction.processed.fault=${hadoop:counters('metadata_extractor')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_fault,'/part')]}</arg>
+            <arg>-Preport.import.metadataExtraction.processed.fault.total=${hadoop:counters('metadata_extractor')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_fault,'/part')]}</arg>
+            <arg>-Preport.import.metadataExtraction.processed.fault.invalidPdf=${hadoop:counters('metadata_extractor')['eu.dnetlib.iis.wf.metadataextraction.MetadataExtractorMapper$InvalidRecordCounters']['INVALID_PDF_HEADER']}</arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>
         <ok to="end" />
