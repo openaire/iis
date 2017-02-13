@@ -28,7 +28,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
             <arg>-C{document_identifier,
-                eu.dnetlib.iis.export.auxiliary.schemas.Identifier,
+                eu.dnetlib.iis.common.schemas.Identifier,
                 eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/input/document_identifier.json}
             </arg>
             <arg>-Odocument_identifier=${workingDir}/producer/document_identifier</arg>

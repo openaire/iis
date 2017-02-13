@@ -3,7 +3,7 @@
     <parameters>
         <property>
             <name>input</name>
-            <description>Input containing eu.dnetlib.iis.export.auxiliary.schemas.Identifier avro records listing document identifiers</description>
+            <description>Input containing eu.dnetlib.iis.common.schemas.Identifier avro records listing document identifiers</description>
         </property>
         <property>
             <name>mdstore_service_location</name>

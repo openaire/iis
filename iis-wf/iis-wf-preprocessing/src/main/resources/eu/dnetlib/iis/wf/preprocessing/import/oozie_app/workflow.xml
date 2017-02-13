@@ -112,14 +112,20 @@
 			<name>output_project</name>
 			<description>project importer output root directory</description>
 		</property>
+        
 		<property>
-			<name>output_dataset</name>
-			<description>dataset importer output directory holding dataset metadata, required when ${active_import_dataset}=true</description>
+			<name>output_dataset_root</name>
+			<description>dataset importer output root</description>
 		</property>
-		<property>
-			<name>output_dataset_to_mdstore</name>
-			<description>dataset importer output directory holding dataset to mdstore mappings, required when ${active_import_dataset}=true</description>
-		</property>
+        <property>
+            <name>output_name_dataset</name>
+            <description>dataset metadata output directory</description>
+        </property>
+        <property>
+            <name>output_name_dataset_to_mdstore</name>
+            <description>dataset to mdstore mapping output directory</description>
+        </property>
+
 		<property>
 			<name>output_document_text</name>
 			<description>extracted text output directory</description>
@@ -180,6 +186,10 @@
 					<name>mdstore_ids_csv</name>
 					<value>${dataset_mdstore_ids_csv}</value>
 				</property>
+                <property>
+                    <name>output_root</name>
+                    <value>${output_dataset_root}</value>
+                </property>
 				<!-- all the other properties are autmatically propagated -->
 			</configuration>
 		</sub-workflow>

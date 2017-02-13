@@ -473,12 +473,16 @@
                     <value>${workingDir}/primary_import/metadataimport</value>
                 </property>
                 <property>
-                    <name>output_dataset</name>
+                    <name>output_dataset_root</name>
                     <value>${workingDir}/primary_import/dataset</value>
                 </property>
                 <property>
-                    <name>output_dataset_to_mdstore</name>
-                    <value>${workingDir}/primary_import/dataset_to_mdstore</value>
+                    <name>output_name_dataset</name>
+                    <value>meta</value>
+                </property>
+                <property>
+                    <name>output_name_dataset_to_mdstore</name>
+                    <value>datasetToMDStore</value>
                 </property>
                 <property>
                     <name>output_document_text</name>
@@ -550,7 +554,7 @@
                 </property>
                 <property>
                     <name>input_dataset</name>
-                    <value>${workingDir}/primary_import/dataset</value>
+                    <value>${workingDir}/primary_import/dataset/meta</value>
                 </property>
                 <property>
                     <name>input_extracted_document_metadata</name>
@@ -643,7 +647,7 @@
                 </property>
                 <property>
                     <name>input_dataset_to_mdstore</name>
-                    <value>${workingDir}/primary_import/dataset_to_mdstore</value>
+                    <value>${workingDir}/primary_import/dataset/datasetToMDStore</value>
                 </property>
                 <property>
                     <name>input_document_to_research_initiatives</name>
@@ -802,7 +806,7 @@
                 </property>
                 <property>
                     <name>input_dataset_to_mdstore</name>
-                    <value>${workingDir}/primary_import/dataset_to_mdstore</value>
+                    <value>${workingDir}/primary_import/dataset/datasetToMDStore</value>
                 </property>
                 <property>
                     <name>input_document_to_research_initiatives</name>

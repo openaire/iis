@@ -336,13 +336,18 @@
 					<value>${workingDir}/preprocessing_import/project</value>
 				</property>
 				<property>
-					<name>output_dataset</name>
+					<name>output_dataset_root</name>
 					<value>${workingDir}/preprocessing_import/dataset</value>
 				</property>
 				<property>
-					<name>output_dataset_to_mdstore</name>
-					<value>${workingDir}/preprocessing_import/dataset_to_mdstore</value>
+					<name>output_name_dataset</name>
+					<value>meta</value>
 				</property>
+                <property>
+                    <name>output_name_dataset_to_mdstore</name>
+                    <value>datasetToMDStore</value>
+                </property>
+                
 				<property>
 					<name>output_document_text</name>
 					<value>${workingDir}/preprocessing_import/document-text</value>
@@ -389,7 +394,7 @@
 				</property>
 				<property>
 					<name>input_dataset</name>
-					<value>${workingDir}/preprocessing_import/dataset</value>
+					<value>${workingDir}/preprocessing_import/dataset/meta</value>
 				</property>
 				<property>
 					<name>output_document_to_dataset</name>
@@ -589,7 +594,7 @@
 				</property>
 				<property>
 					<name>input_dataset_to_mdstore</name>
-					<value>${workingDir}/preprocessing_import/dataset_to_mdstore</value>
+					<value>${workingDir}/preprocessing_import/dataset/datasetToMDStore</value>
 				</property>
 				<!-- entities exporting modes -->
 				<property>

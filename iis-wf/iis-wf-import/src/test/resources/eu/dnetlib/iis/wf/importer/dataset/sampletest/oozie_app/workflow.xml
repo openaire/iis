@@ -32,12 +32,16 @@
                     <value>mdstore-id1</value>
                 </property>
                 <property>
-                    <name>output_dataset</name>
-                    <value>${workingDir}/dataset</value>
+                    <name>output_root</name>
+                    <value>${workingDir}/out</value>
                 </property>
                 <property>
-                    <name>output_dataset_to_mdstore</name>
-                    <value>${workingDir}/dataset_to_mdstore</value>
+                    <name>output_name_dataset</name>
+                    <value>meta</value>
+                </property>
+                <property>
+                    <name>output_name_dataset_to_mdstore</name>
+                    <value>datasetToMDStore</value>
                 </property>
                 <property>
                     <name>output_report_root_path</name>
@@ -65,8 +69,8 @@
             <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,
                 eu/dnetlib/iis/wf/importer/dataset/data/output/report.json}</arg>
             <!-- All input and output ports have to be bound to paths in HDFS -->
-            <arg>-Idataset=${workingDir}/dataset</arg>
-            <arg>-Idataset_to_mdstore=${workingDir}/dataset_to_mdstore</arg>
+            <arg>-Idataset=${workingDir}/out/meta</arg>
+            <arg>-Idataset_to_mdstore=${workingDir}/out/datasetToMDStore</arg>
             <arg>-Ireport=${workingDir}/report/import_dataset</arg>
         </java>
         <ok to="end" />

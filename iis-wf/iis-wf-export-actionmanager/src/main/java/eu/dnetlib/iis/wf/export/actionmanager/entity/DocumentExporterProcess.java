@@ -11,7 +11,7 @@ import org.apache.hadoop.conf.Configuration;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.ProcessUtils;
-import eu.dnetlib.iis.export.auxiliary.schemas.Identifier;
+import eu.dnetlib.iis.common.schemas.Identifier;
 
 /**
  * Document entity exporter.

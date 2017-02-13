@@ -1,4 +1,4 @@
-@namespace("eu.dnetlib.iis.export.auxiliary.schemas")
+@namespace("eu.dnetlib.iis.common.schemas")
 protocol IIS{
 
     record Identifier {
