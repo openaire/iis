@@ -190,15 +190,6 @@
                 <name>mapreduce.job.output.value.class</name>
                 <value>org.apache.hadoop.io.Text</value>
             </property>
-
-            <property>
-                <name>mapreduce.reduce.speculative</name>
-                <value>false</value>
-            </property>
-            <property>
-                <name>mapreduce.map.speculative</name>
-                <value>false</value>
-            </property>
             <property>
                 <name>mapreduce.map.speculative</name>
                 <value>false</value>

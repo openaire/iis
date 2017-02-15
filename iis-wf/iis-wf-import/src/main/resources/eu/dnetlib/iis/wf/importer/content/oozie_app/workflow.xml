@@ -190,6 +190,11 @@
                     <name>import.content.max.file.size.mb</name>
                    <value>${max_file_size_mb}</value>
                 </property>
+                <!-- disabling speculative run to be less invasive to ObjectStore -->
+                <property>
+                    <name>mapreduce.map.speculative</name>
+                    <value>false</value>
+                </property>
                 <property>
                     <name>mapreduce.job.map.class</name>
                     <value>eu.dnetlib.iis.wf.importer.content.DocumentContentUrlBasedImporterMapper</value>

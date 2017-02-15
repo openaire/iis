@@ -197,11 +197,6 @@
 					<value>false</value>
 				</property>
 				<property>
-					<!-- supported since hadoop 2.3.0 -->
-					<name>mapreduce.map.speculative</name>
-					<value>false</value>
-				</property>
-				<property>
 					<name>mapreduce.job.map.class</name>
 					<value>eu.dnetlib.iis.wf.importer.content.DocumentTextUrlBasedImporterMapper</value>
 				</property>
