@@ -29,7 +29,7 @@
             <!-- list of publication identifiers to be approved,
             coming from InfoSpace useful for filtering out contents which are not matchable with InfoSpace -->
             <arg>-C{id,
-                eu.dnetlib.iis.common.schemas.DocumentId,
+                eu.dnetlib.iis.common.schemas.Identifier,
                 eu/dnetlib/iis/wf/importer/content_url/data/input/id.json}</arg>
             <!-- mappings between original and deduplicated identifiers, 
             required to make object store ids matchable with InfoSpace deduplicated ids -->
