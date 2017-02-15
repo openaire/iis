@@ -20,6 +20,13 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
     public void testImportContentUrlWorkflow() {
         OozieWorkflowTestConfiguration wfConf = new OozieWorkflowTestConfiguration();
         wfConf.setTimeoutInSeconds(720);
-        testWorkflow("eu/dnetlib/iis/wf/importer/content_url/sampletest", wfConf);
+        testWorkflow("eu/dnetlib/iis/wf/importer/content_url/chain/sampletest", wfConf);
+    }
+    
+    @Test
+    public void testImportContentUrlWorkflowWithBlacklisting() {
+        OozieWorkflowTestConfiguration wfConf = new OozieWorkflowTestConfiguration();
+        wfConf.setTimeoutInSeconds(720);
+        testWorkflow("eu/dnetlib/iis/wf/importer/content_url/core/blacklisting", wfConf);
     }
 }

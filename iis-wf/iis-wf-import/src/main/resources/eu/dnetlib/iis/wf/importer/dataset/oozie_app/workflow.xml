@@ -94,7 +94,7 @@
                 <delete path="${nameNode}${workingDir}/identifier" />
             </prepare>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-            <arg>eu.dnetlib.iis.wf.importer.dataset.DatasetMDStoreIdImporter</arg>
+            <arg>eu.dnetlib.iis.wf.importer.dataset.MDStoreIdentifierDatastoreBuilder</arg>
             <arg>-Pimport.datacite.mdstore.ids.csv=${mdstore_ids_csv}</arg>
             <arg>-Oidentifier=${workingDir}/identifier</arg>
         </java>
@@ -130,7 +130,7 @@
                     <name>import.facade.factory.classname</name>
                     <value>${mdstore_facade_factory_classname}</value>
                 </property>
-                <!-- disabling speculative run to be less invasive to ObjectStore -->
+                <!-- disabling speculative run to be less invasive to MDStore -->
                 <property>
                     <name>mapreduce.map.speculative</name>
                     <value>false</value>

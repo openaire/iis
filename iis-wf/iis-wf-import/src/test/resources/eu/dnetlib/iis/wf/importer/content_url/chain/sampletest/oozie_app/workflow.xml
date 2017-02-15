@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-importer_content_url_sampletest">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-importer_content_url_chain_sampletest">
 
     <global>
         <job-tracker>${jobTracker}</job-tracker>

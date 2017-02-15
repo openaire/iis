@@ -2,7 +2,7 @@
 import_project classpath eu/dnetlib/iis/wf/importer/stream/project/oozie_app
 import_dataset classpath eu/dnetlib/iis/wf/importer/dataset/oozie_app
 import_concept classpath eu/dnetlib/iis/wf/importer/concept/oozie_app
-import_content_url classpath eu/dnetlib/iis/wf/importer/content_url/oozie_app
+import_content_url classpath eu/dnetlib/iis/wf/importer/content_url/chain/oozie_app
 import_plaintext classpath eu/dnetlib/iis/wf/importer/plaintext/oozie_app
 ingest_html_plaintext classpath eu/dnetlib/iis/wf/ingest/html/plaintext/oozie_app
 ingest_pmc_metadata classpath eu/dnetlib/iis/wf/ingest/pmc/cached_by_checksum/oozie_app

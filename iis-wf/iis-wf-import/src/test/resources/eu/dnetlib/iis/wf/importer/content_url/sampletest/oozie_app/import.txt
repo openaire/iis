@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-import_content_url classpath eu/dnetlib/iis/wf/importer/content_url/oozie_app

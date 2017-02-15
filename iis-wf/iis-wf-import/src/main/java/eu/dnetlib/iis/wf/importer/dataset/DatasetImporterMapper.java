@@ -2,21 +2,17 @@ package eu.dnetlib.iis.wf.importer.dataset;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.avro.mapred.AvroKey;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import com.google.common.collect.ImmutableMap;
 
 import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
 import eu.dnetlib.iis.common.schemas.Identifier;
@@ -64,14 +60,15 @@ public class DatasetImporterMapper extends Mapper<AvroKey<Identifier>, NullWrita
      */
     private SAXParser saxParser;
     
-    private Map<String, String> parameters; 
+    /**
+     * MDStore service facade.
+     */
+    private MDStoreFacade mdStoreFacade;
     
     //------------------------ LOGIC --------------------------
     
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
-        parameters = buildParameters(context.getConfiguration());
-        
         namedOutputDataset = context.getConfiguration().get("output.dataset");
         if (namedOutputDataset == null || namedOutputDataset.isEmpty()) {
             throw new RuntimeException("no named output provided for dataset");
@@ -86,8 +83,11 @@ public class DatasetImporterMapper extends Mapper<AvroKey<Identifier>, NullWrita
         parserFactory.setNamespaceAware(true);
         try {
             saxParser = parserFactory.newSAXParser();
+            mdStoreFacade = ServiceFacadeUtils.instantiate(context.getConfiguration());
         } catch (ParserConfigurationException | SAXException e) {
             throw new RuntimeException(e);
+        } catch (ServiceFacadeException e) {
+            throw new RuntimeException("unable to instantiate MDStore service facade", e);
         }
     }
 
@@ -100,8 +100,6 @@ public class DatasetImporterMapper extends Mapper<AvroKey<Identifier>, NullWrita
     public void map(AvroKey<Identifier> key, NullWritable ignore, Context context)
             throws IOException, InterruptedException {
         try {
-            // initializing MDStore reader
-            MDStoreFacade mdStoreFacade = ServiceFacadeUtils.instantiate(parameters);
             String mdStoreId = key.datum().getId().toString();
             long startTime = System.currentTimeMillis();
             int currentCount = 0;
@@ -144,19 +142,6 @@ public class DatasetImporterMapper extends Mapper<AvroKey<Identifier>, NullWrita
         } catch (SAXException e) {
             throw new RuntimeException("unable to parse dataset record", e);
         }
-    }
-    
-    // ------------------------ PRIVATE --------------------------
-    
-    /**
-     * Converts configuration entries into plain map.
-     */
-    private static Map<String, String> buildParameters(Configuration config) {
-        ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
-        for (Map.Entry<String, String> entry : config) {
-          builder.put(entry);
-        }
-        return builder.build();
     }
     
 }
