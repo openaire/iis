@@ -86,9 +86,21 @@
 			<arg>-Iextracted_metadata=${workingDir}/metadata_extractor/meta</arg>
 			<arg>-Ireport=${workingDir}/report/import_metadataextraction</arg>
 		</java>
-		<ok to="end" />
+		<ok to="fault_consumer" />
 		<error to="fail" />
 	</action>
+    
+    <action name="fault_consumer">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.SelectiveTestingConsumer</arg>
+            <arg>-Idatastore=${workingDir}/metadata_extractor/fault</arg>
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/metadataextraction/sampledataproducer/data/fault.expectations</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
     <kill name="fail">
         <message>Unfortunately, the process failed -- error message: [${wf:errorMessage(wf:lastErrorNode())}]</message>
     </kill>

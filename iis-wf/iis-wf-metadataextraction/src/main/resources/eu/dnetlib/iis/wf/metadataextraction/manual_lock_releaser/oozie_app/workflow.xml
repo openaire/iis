@@ -7,7 +7,7 @@
 			<description>zookeeper session timeout when handling locks (expressed in milliseconds)</description>
 		</property>
 		<property>
-			<name>default_cache_location</name>
+			<name>cache_location</name>
 			<description>default cache location stored in HDFS</description>
 		</property>
 	</parameters>
@@ -35,7 +35,7 @@
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
             <arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
-            <arg>-Pnode_id=${default_cache_location}</arg>
+            <arg>-Pnode_id=${cache_location}</arg>
             <arg>-Pmode=release</arg>
         </java>
         <ok to="end"/>

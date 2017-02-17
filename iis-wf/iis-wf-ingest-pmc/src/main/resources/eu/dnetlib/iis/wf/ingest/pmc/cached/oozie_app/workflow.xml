@@ -312,9 +312,53 @@
 				</property>
 			</configuration>
 		</sub-workflow>
-		<ok to="write-new-cache-id_for_merging" />
+		<ok to="decision-fault_merge_or_copy" />
 		<error to="fail-merge_cache-temp_files_cleanup" />
 	</action>
+
+    <!-- this decision point is required to handle existing cache instances without fault entries -->
+    <decision name="decision-fault_merge_or_copy">
+        <switch>
+            <case to="transformers_common_union_fault_merge_cache">${fs:exists(concat(wf:conf('default_cache_location'),concat('/',concat(wf:actionData('get-existing-cache-id')['cache_id'],'/fault'))))}</case>
+            <default to="copy_fault_to_cache" />
+        </switch>
+    </decision>
+
+    <action name="transformers_common_union_fault_merge_cache">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_common_union</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>input_a</name>
+                    <value>${default_cache_location}/${wf:actionData('get-existing-cache-id')['cache_id']}/fault</value>
+                </property>
+                <property>
+                    <name>input_b</name>
+                    <value>${workingDir}/ingest_pmc_metadata/output_root/${output_name_fault}</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${default_cache_location}/${wf:actionData('get-new-cache-id_for_merging')['cache_id']}/fault</value>
+                </property>
+                <property>
+                    <name>schema</name>
+                    <value>eu.dnetlib.iis.audit.schemas.Fault</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="write-new-cache-id_for_merging" />
+        <error to="fail-merge_cache-temp_files_cleanup" />
+    </action>
+    
+    <action name="copy_fault_to_cache">
+        <distcp xmlns="uri:oozie:distcp-action:0.2">
+            <arg>${nameNode}${workingDir}/ingest_pmc_metadata/output_root/${output_name_fault}</arg>
+            <arg>${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_merging')['cache_id']}/fault</arg>
+        </distcp>
+        <ok to="write-new-cache-id_for_merging" />
+        <error to="fail-merge_cache-temp_files_cleanup" />
+    </action>
 
 	<action name="fail-merge_cache-temp_files_cleanup">
 		<fs>
@@ -393,9 +437,18 @@
 			<arg>${nameNode}${output_root}/${output_name_meta}</arg>
 			<arg>${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}/meta</arg>
 		</distcp>
-		<ok to="write-new-cache-id_for_initializing" />
+		<ok to="initialize_fault_cache" />
 		<error to="fail-initialize_cache-temp_files_cleanup" />
 	</action>
+    
+    <action name="initialize_fault_cache">
+        <distcp xmlns="uri:oozie:distcp-action:0.2">
+            <arg>${nameNode}${output_root}/${output_name_fault}</arg>
+            <arg>${nameNode}${default_cache_location}/${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}/fault</arg>
+        </distcp>
+        <ok to="write-new-cache-id_for_initializing" />
+        <error to="fail-initialize_cache-temp_files_cleanup" />
+    </action>
 
 	<action name="fail-initialize_cache-temp_files_cleanup">
 		<fs>
