@@ -64,8 +64,8 @@
                     <value>${oozieTopWfApplicationPath}</value>
                 </property>
                 <property>
-                    <name>projectUberJarName</name>
-                    <value>${projectUberJarName}</value>
+                    <name>projectVersion</name>
+                    <value>${projectVersion}</value>
                 </property>
                 <!-- Input ports. -->
                 <property>
@@ -89,10 +89,6 @@
                 <property>
                     <name>sparkExecutorCores</name>
                     <value>1</value>
-                </property>
-                <property>
-                    <name>sparkNumExecutors</name>
-                    <value>2</value>
                 </property>
             </configuration>
         </sub-workflow>

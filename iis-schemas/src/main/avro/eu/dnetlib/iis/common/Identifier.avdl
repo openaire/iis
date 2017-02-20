@@ -1,0 +1,8 @@
+@namespace("eu.dnetlib.iis.common.schemas")
+protocol IIS{
+
+    record Identifier {
+        string id;
+    }
+
+}

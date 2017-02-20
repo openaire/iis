@@ -36,7 +36,7 @@
 	    <java>
 	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
 	        <arg>eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl</arg>
-	        <arg>eu.dnetlib.iis.common.schemas.DocumentId</arg>
+	        <arg>eu.dnetlib.iis.common.schemas.Identifier</arg>
 	        <capture-output />
 	    </java>
 	    <ok to="filter" />
@@ -59,7 +59,7 @@
             <!-- Input and output Avro schemas passed to the script must be given
                  as full URIs. -->
             <param>schema_data=${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl']}</param>
-            <param>schema_input_existent_id=${wf:actionData('generate-schema')['eu.dnetlib.iis.common.schemas.DocumentId']}</param>
+            <param>schema_input_existent_id=${wf:actionData('generate-schema')['eu.dnetlib.iis.common.schemas.Identifier']}</param>
         </pig>
         <ok to="end"/>
         <error to="fail"/>

@@ -1,8 +1,0 @@
-@namespace("eu.dnetlib.iis.common.schemas")
-protocol IIS{
-
-        record DocumentId {
-//              document identifier
-                string id;
-        }
-}

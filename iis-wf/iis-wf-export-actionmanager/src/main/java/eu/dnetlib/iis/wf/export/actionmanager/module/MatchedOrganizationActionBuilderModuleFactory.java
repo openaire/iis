@@ -27,7 +27,9 @@ import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
  */
 public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActionBuilderFactory<MatchedOrganization> {
 
-    private static final String REL_CLASS_IS_AFFILIATED_WITH = Affiliation.RelName.isAffiliatedWith.toString();
+    private static final String REL_CLASS_HAS_AUTHOR_INSTITUTION_OF = Affiliation.RelName.hasAuthorInstitutionOf.toString();
+    
+    private static final String REL_CLASS_IS_AUTHOR_INSTITUTION_OF = Affiliation.RelName.isAuthorInstitutionOf.toString();
 
     private static final String SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_ORG = "dnet:result_organization_relations";
 
@@ -78,20 +80,20 @@ public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActio
             relBuilder.setChild(false);
             relBuilder.setRelType(RelType.resultOrganization);
             relBuilder.setSubRelType(SubRelType.affiliation);
-            relBuilder.setRelClass(REL_CLASS_IS_AFFILIATED_WITH);
+            relBuilder.setRelClass(REL_CLASS_HAS_AUTHOR_INSTITUTION_OF);
             relBuilder.setSource(docId);
             relBuilder.setTarget(orgId);
             ResultOrganization.Builder resOrgBuilder = ResultOrganization.newBuilder();
             Affiliation.Builder affBuilder = Affiliation.newBuilder();
             affBuilder.setRelMetadata(
-                    buildRelMetadata(SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_ORG, REL_CLASS_IS_AFFILIATED_WITH));
+                    buildRelMetadata(SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_ORG, REL_CLASS_HAS_AUTHOR_INSTITUTION_OF));
             resOrgBuilder.setAffiliation(affBuilder.build());
             relBuilder.setResultOrganization(resOrgBuilder.build());
             oafBuilder.setRel(relBuilder.build());
             oafBuilder.setDataInfo(buildInference(object.getMatchStrength()));
             oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
             Oaf oaf = oafBuilder.build();
-            Oaf oafInverted = invertBidirectionalRelationAndBuild(oafBuilder);
+            Oaf oafInverted = invertRelationAndBuild(oafBuilder);
             return Arrays.asList(new AtomicAction[] {
                     actionFactory.createAtomicAction(actionSetId, agent, docId,
                             OafDecoder.decode(oaf).getCFQ(), orgId, oaf.toByteArray()),
@@ -99,6 +101,37 @@ public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActio
                     actionFactory.createAtomicAction(actionSetId, agent, orgId,
                             OafDecoder.decode(oafInverted).getCFQ(), docId, oafInverted.toByteArray())
                     });
+        }
+
+        // ------------------------ PRIVATE ---------------------------------
+        
+        /**
+         * Clones builder provided as parameter, inverts relations and builds {@link Oaf} object.
+         */
+        private Oaf invertRelationAndBuild(Oaf.Builder existingBuilder) {
+            // works on builder clone to prevent changes in existing builder
+            if (existingBuilder.getRel() != null) {
+                if (existingBuilder.getRel().getSource() != null && existingBuilder.getRel().getTarget() != null) {
+                    Oaf.Builder builder = existingBuilder.clone();
+                    OafRel.Builder relBuilder = builder.getRelBuilder();
+                    String source = relBuilder.getSource();
+                    String target = relBuilder.getTarget();
+                    relBuilder.setSource(target);
+                    relBuilder.setTarget(source);
+                    relBuilder.setRelClass(REL_CLASS_IS_AUTHOR_INSTITUTION_OF);
+                    relBuilder.getResultOrganizationBuilder().getAffiliationBuilder().getRelMetadataBuilder()
+                            .getSemanticsBuilder().setClassid(REL_CLASS_IS_AUTHOR_INSTITUTION_OF);
+                    relBuilder.getResultOrganizationBuilder().getAffiliationBuilder().getRelMetadataBuilder()
+                            .getSemanticsBuilder().setClassname(REL_CLASS_IS_AUTHOR_INSTITUTION_OF);
+                    builder.setRel(relBuilder.build());
+                    builder.setLastupdatetimestamp(System.currentTimeMillis());
+                    return builder.build();
+                } else {
+                    throw new RuntimeException("invalid state: " + "either source or target relation was missing!");
+                }
+            } else {
+                throw new RuntimeException("invalid state: " + "no relation object found!");
+            }
         }
     }
 }

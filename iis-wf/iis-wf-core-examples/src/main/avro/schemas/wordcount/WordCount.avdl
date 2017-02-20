@@ -1,7 +1,0 @@
-@namespace("eu.dnetlib.iis.core.examples.schemas")
-protocol IIS{
-   record WordCount{
-      string word;
-      int count;
-   }
-}

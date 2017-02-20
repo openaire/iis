@@ -16,9 +16,6 @@ import org.apache.log4j.Logger;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl;
 import eu.dnetlib.iis.importer.schemas.DocumentContent;
-import eu.dnetlib.iis.wf.importer.content.approver.ContentApprover;
-import eu.dnetlib.iis.wf.importer.content.approver.InvalidCountableContentApproverWrapper;
-import eu.dnetlib.iis.wf.importer.content.approver.PDFHeaderBasedContentApprover;
 
 /**
  * {@link DocumentContentUrl} based importer producing {@link DocumentContent} output.
@@ -31,10 +28,6 @@ public class DocumentContentUrlBasedImporterMapper
 
     private final Logger log = Logger.getLogger(DocumentContentUrlBasedImporterMapper.class);
 
-    /**
-     * Content approver module.
-     */
-    private ContentApprover contentApprover;
 
     /**
      * Connection timeout.
@@ -65,7 +58,6 @@ public class DocumentContentUrlBasedImporterMapper
      * Hadoop counters enum of invalid records 
      */
     public static enum InvalidRecordCounters {
-        INVALID_PDF_HEADER,
         SIZE_EXCEEDED,
         SIZE_INVALID
     }
@@ -78,10 +70,6 @@ public class DocumentContentUrlBasedImporterMapper
         this.connectionTimeout = context.getConfiguration().getInt(IMPORT_CONTENT_CONNECTION_TIMEOUT, 60000);
         this.readTimeout = context.getConfiguration().getInt(IMPORT_CONTENT_READ_TIMEOUT, 60000);
         
-        Counter invalidPdfCounter = context.getCounter(InvalidRecordCounters.INVALID_PDF_HEADER);
-        invalidPdfCounter.setValue(0);
-        this.contentApprover = new InvalidCountableContentApproverWrapper(new PDFHeaderBasedContentApprover(), invalidPdfCounter);
-
         this.sizeInvalidCounter = context.getCounter(InvalidRecordCounters.SIZE_INVALID);
         this.sizeInvalidCounter.setValue(0);
         
@@ -109,16 +97,13 @@ public class DocumentContentUrlBasedImporterMapper
             try {
                 byte[] content = ObjectStoreContentProviderUtils.getContentFromURL(docUrl.getUrl().toString(),
                         this.connectionTimeout, this.readTimeout);
-                if (contentApprover.approve(content)) {
-                    DocumentContent.Builder documentContentBuilder = DocumentContent.newBuilder();
-                    documentContentBuilder.setId(docUrl.getId());
-                    documentContentBuilder.setPdf(ByteBuffer.wrap(content));
-                    context.write(new AvroKey<DocumentContent>(documentContentBuilder.build()), NullWritable.get());
-                    log.info("content retrieval for id: " + docUrl.getId() + " took: "
-                            + (System.currentTimeMillis() - startTimeContent) + " ms");
-                } else {
-                    log.info("content " + docUrl.getId() + " not approved, location: " + docUrl.getUrl());
-                }
+                DocumentContent.Builder documentContentBuilder = DocumentContent.newBuilder();
+                documentContentBuilder.setId(docUrl.getId());
+                documentContentBuilder.setPdf(ByteBuffer.wrap(content));
+                context.write(new AvroKey<DocumentContent>(documentContentBuilder.build()), NullWritable.get());
+                log.info("content retrieval for id: " + docUrl.getId() + " took: "
+                        + (System.currentTimeMillis() - startTimeContent) + " ms");
+            
             } catch (InvalidSizeException e) {
                 log.warn("content " + docUrl.getId() + " discarded for location: " + docUrl.getUrl()
                 + ", real size is expected to be greater than 0!");

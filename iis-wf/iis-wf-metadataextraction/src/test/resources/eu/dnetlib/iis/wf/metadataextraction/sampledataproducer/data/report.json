@@ -1,2 +1,3 @@
-{"key": "import.metadataExtraction.processed.docMetadata", "type":"COUNTER", "value": "2"}
-{"key": "import.metadataExtraction.processed.fault", "type":"COUNTER", "value": "0"}
+{"key": "import.metadataExtraction.processed.docMetadata", "type":"COUNTER", "value": "3"}
+{"key": "import.metadataExtraction.processed.fault.total", "type":"COUNTER", "value": "1"}
+{"key": "import.metadataExtraction.processed.fault.invalidPdf", "type":"COUNTER", "value": "1"}

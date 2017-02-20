@@ -31,13 +31,6 @@
             <value>import_ingest_pmc</value>
             <description>directory for storing report (relative to output_report_root_path)</description>
         </property>
-		<property>
-			<name>ingest_metadata</name>
-			<value>true</value>
-			<description>Flag indicating metadata fields should be extracted.
-				Only plaintext will be provided when flag set to false.
-			</description>
-		</property>
 	</parameters>
 
 
@@ -177,10 +170,6 @@
 					<name>mapreduce.job.reduces</name>
 					<value>0</value>
 				</property>
-				<property>
-					<name>ingest.metadata</name>
-					<value>${ingest_metadata}</value>
-				</property>
                 <property>
                     <name>oozie.action.external.stats.write</name>
                     <value>true</value>
@@ -199,8 +188,8 @@
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
-            <arg>-Preport.import.ingestPmc.docMetadata=${hadoop:counters('ingest')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_meta,'/part')]}</arg>
-            <arg>-Preport.import.ingestPmc.fault=${hadoop:counters('ingest')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_fault,'/part')]}</arg>
+            <arg>-Preport.import.ingestPmc.processed.docMetadata=${hadoop:counters('ingest')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_meta,'/part')]}</arg>
+            <arg>-Preport.import.ingestPmc.processed.fault=${hadoop:counters('ingest')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_fault,'/part')]}</arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>
         <ok to="end" />

@@ -62,6 +62,14 @@
                     <name>output_report_root_path</name>
                     <value>${workingDir}/report</value>
                 </property>
+                 <property>
+                    <name>sparkExecutorMemory</name>
+                    <value>1G</value>
+                </property>
+                <property>
+                    <name>sparkExecutorCores</name>
+                    <value>1</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="consumer"/>

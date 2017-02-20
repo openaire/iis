@@ -1,8 +1,0 @@
-@namespace("eu.dnetlib.iis.export.auxiliary.schemas")
-protocol IIS{
-
-    record Identifier {
-        string id;
-    }
-
-}

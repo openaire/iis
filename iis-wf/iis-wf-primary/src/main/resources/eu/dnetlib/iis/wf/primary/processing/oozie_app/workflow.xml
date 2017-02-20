@@ -143,21 +143,27 @@
             <name>ds_similarityTopnDocumentPerDocument</name>
             <value>20</value>
         </property>
+        <!-- spark related: documents classification -->
+        <property>
+            <name>documentsclassificationSparkExecutorMemory</name>
+            <value>7G</value>
+            <description>memory for individual executor</description>
+        </property>
+        <property>
+            <name>documentsclassificationSparkExecutorCores</name>
+            <value>4</value>
+            <description>number of cores used by single executor</description>
+        </property>
         <!-- spark related: affiliation matching -->
         <property>
             <name>affiliationmatchingSparkExecutorMemory</name>
-            <value>6G</value>
+            <value>7G</value>
             <description>memory for individual executor</description>
         </property>
         <property>
             <name>affiliationmatchingSparkExecutorCores</name>
-            <value>1</value>
+            <value>4</value>
             <description>number of cores used by single executor</description>
-        </property>
-        <property>
-            <name>affiliationmatchingSparkNumExecutors</name>
-            <value>64</value>
-            <description>total number of executors</description>
         </property>
         <property>
             <name>affiliationmatchingSparkDriverMemory</name>
@@ -169,7 +175,7 @@
             <value>513</value>
             <description>The amount of off heap memory (in megabytes) to be allocated for the driver</description>
         </property>
-        <!-- spark related: fuzzy citation matching -->
+        <!-- spark related: direct citation matching -->
         <property>
             <name>citationmatchingDirectSparkExecutorMemory</name>
             <value>7G</value>
@@ -177,33 +183,38 @@
         </property>
         <property>
             <name>citationmatchingDirectSparkExecutorCores</name>
-            <value>1</value>
+            <value>4</value>
             <description>number of cores used by single executor</description>
         </property>
+        <!-- spark related: fuzzy citation matching -->
         <property>
-            <name>citationmatchingDirectSparkNumExecutors</name>
-            <value>200</value>
-            <description>total number of executors</description>
+            <name>citationmatchingFuzzySparkDriverMemory</name>
+            <value>2G</value>
+            <description>memory for driver process</description>
         </property>
-        <!-- spark related: direct citation matching -->
+        <property>
+            <name>citationmatchingFuzzySparkDriverOverhead</name>
+            <value>513</value>
+            <description>The amount of off heap memory (in megabytes) to be allocated for the driver</description>
+        </property>
         <property>
             <name>citationmatchingFuzzySparkExecutorMemory</name>
             <value>7G</value>
             <description>memory for individual executor</description>
         </property>
         <property>
+            <name>citationmatchingFuzzySparkExecutorOverhead</name>
+            <value>2048</value>
+            <description>The amount of off heap memory (in megabytes) to be allocated for the executor</description>
+        </property>        
+        <property>
             <name>citationmatchingFuzzySparkExecutorCores</name>
-            <value>1</value>
+            <value>4</value>
             <description>number of cores used by single executor</description>
         </property>
         <property>
-            <name>citationmatchingFuzzySparkNumExecutors</name>
-            <value>200</value>
-            <description>total number of executors</description>
-        </property>
-        <property>
             <name>citationmatchingFuzzyNumberOfPartitions</name>
-            <value>400</value>
+            <value>1000</value>
             <description>number of partitions used for rdds with citations and documents read from input files</description>
         </property>
         
@@ -399,6 +410,60 @@
                 </property>
             </configuration>
         </sub-workflow>
+        <ok to="transformers_project_from_import" />
+        <error to="fail" />
+    </action>
+
+    <action name="transformers_project_from_import">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_project_from_import</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_project_from_import/working_dir</value>
+                </property>
+                <property>
+                    <name>input</name>
+                    <value>${input_document_to_project}</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${workingDir}/transformers_project_from_import/output</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="transformers_union_document_to_project" />
+        <error to="fail" />
+    </action>
+
+    <action name="transformers_union_document_to_project">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_common_union</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_union_document_to_project/working_dir</value>
+                </property>
+                <property>
+                    <name>input_a</name>
+                    <value>${workingDir}/transformers_project_from_import/output</value>
+                </property>
+                <property>
+                    <name>input_b</name>
+                    <value>${output_document_to_project}</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${workingDir}/transformers_union_document_to_project/output</value>
+                </property>
+                <property>
+                    <name>schema</name>
+                    <value>eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject</value>
+                </property>
+            </configuration>
+        </sub-workflow>
         <ok to="transformers_project_toconcept" />
         <error to="fail" />
     </action>
@@ -414,7 +479,7 @@
                 </property>
                 <property>
                     <name>input_document_to_project</name>
-                    <value>${output_document_to_project}</value>
+                    <value>${workingDir}/transformers_union_document_to_project/output</value>
                 </property>
                 <property>
                     <name>input_project</name>
@@ -430,25 +495,25 @@
                 </property>
             </configuration>
         </sub-workflow>
-        <ok to="transformers_concept_to_researchinitiatives" />
+        <ok to="transformers_export_concepts" />
         <error to="fail" />
     </action>
 
-    <action name="transformers_concept_to_researchinitiatives">
+    <action name="transformers_export_concepts">
         <sub-workflow>
-            <app-path>${wf:appPath()}/transformers_export_researchinitiatives</app-path>
+            <app-path>${wf:appPath()}/transformers_export_concepts</app-path>
             <propagate-configuration />
             <configuration>
                 <property>
                     <name>workingDir</name>
-                    <value>${workingDir}/transformers_concept_to_researchinitiatives/working_dir</value>
+                    <value>${workingDir}/transformers_export_concepts/working_dir</value>
                 </property>
                 <property>
-                    <name>input_document_to_research_initiative</name>
+                    <name>input</name>
                     <value>${workingDir}/transformers_project_toconcept/out</value>
                 </property>
                 <property>
-                    <name>output_document_to_research_initiatives</name>
+                    <name>output</name>
                     <value>${output_document_to_project_concepts}</value>
                 </property>
                 <property>
@@ -475,7 +540,7 @@
                 <!-- notice: directory have to aligned with skipped action output -->
                 <delete path="${nameNode}${workingDir}/referenceextraction_project" />
                 <delete path="${nameNode}${workingDir}/transformers_project_toconcept" />
-                <delete path="${nameNode}${workingDir}/transformers_concept_to_researchinitiatives" />
+                <delete path="${nameNode}${workingDir}/transformers_export_concepts" />
                 <delete path="${nameNode}${output_document_to_project}" />
                 <delete path="${nameNode}${output_document_to_project_concepts}" />
                 <mkdir path="${nameNode}${workingDir}/referenceextraction_project" />
@@ -593,7 +658,7 @@
 
     <action name="transformers_export_pdb">
         <sub-workflow>
-            <app-path>${wf:appPath()}/transformers_export_researchinitiatives</app-path>
+            <app-path>${wf:appPath()}/transformers_export_concepts</app-path>
             <propagate-configuration />
             <configuration>
                 <property>
@@ -601,11 +666,11 @@
                     <value>${workingDir}/transformers_export_pdb/working_dir</value>
                 </property>
                 <property>
-                    <name>input_document_to_research_initiative</name>
+                    <name>input</name>
                     <value>${workingDir}/referenceextraction_pdb/output</value>
                 </property>
                 <property>
-                    <name>output_document_to_research_initiatives</name>
+                    <name>output</name>
                     <value>${output_document_to_pdb}</value>
                 </property>
                 <property>
@@ -818,7 +883,7 @@
 
     <action name="transformers_export_researchinitiatives">
         <sub-workflow>
-            <app-path>${wf:appPath()}/transformers_export_researchinitiatives</app-path>
+            <app-path>${wf:appPath()}/transformers_export_concepts</app-path>
             <propagate-configuration />
             <configuration>
                 <property>
@@ -826,11 +891,11 @@
                     <value>${workingDir}/transformers_export_researchinitiatives/working_dir</value>
                 </property>
                 <property>
-                    <name>input_document_to_research_initiative</name>
+                    <name>input</name>
                     <value>${workingDir}/transformers_common_union_researchinitiatives/output</value>
                 </property>
                 <property>
-                    <name>output_document_to_research_initiatives</name>
+                    <name>output</name>
                     <value>${output_document_to_research_initiatives}</value>
                 </property>
                 <property>
@@ -968,6 +1033,14 @@
                     <name>output_document_to_document_classes</name>
                     <value>${output_document_to_document_classes}</value>
                 </property>
+                <property>
+                    <name>sparkExecutorMemory</name>
+                    <value>${documentsclassificationSparkExecutorMemory}</value>
+                </property>
+                <property>
+                    <name>sparkExecutorCores</name>
+                    <value>${documentsclassificationSparkExecutorCores}</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="decision-citationmatching" />
@@ -1030,10 +1103,6 @@
                     <name>sparkExecutorCores</name>
                     <value>${citationmatchingDirectSparkExecutorCores}</value>
                 </property>
-                <property>
-                    <name>sparkNumExecutors</name>
-                    <value>${citationmatchingDirectSparkNumExecutors}</value>
-                </property>
             </configuration>
         </sub-workflow>
         <ok to="citationmatching_fuzzy" />
@@ -1062,16 +1131,24 @@
                     <value>${workingDir}/citationmatching_fuzzy/output</value>
                 </property>
                 <property>
+                    <name>sparkDriverMemory</name>
+                    <value>${citationmatchingFuzzySparkDriverMemory}</value>
+                </property>
+                <property>
+                    <name>sparkDriverOverhead</name>
+                    <value>${citationmatchingFuzzySparkDriverOverhead}</value>
+                </property>
+                <property>
                     <name>sparkExecutorMemory</name>
                     <value>${citationmatchingFuzzySparkExecutorMemory}</value>
                 </property>
                 <property>
-                    <name>sparkExecutorCores</name>
-                    <value>${citationmatchingFuzzySparkExecutorCores}</value>
+                    <name>sparkExecutorOverhead</name>
+                    <value>${citationmatchingFuzzySparkExecutorOverhead}</value>
                 </property>
                 <property>
-                    <name>sparkNumExecutors</name>
-                    <value>${citationmatchingFuzzySparkNumExecutors}</value>
+                    <name>sparkExecutorCores</name>
+                    <value>${citationmatchingFuzzySparkExecutorCores}</value>
                 </property>
                 <property>
                     <name>numberOfPartitions</name>
@@ -1367,10 +1444,6 @@
                     <value>${affiliationmatchingSparkExecutorCores}</value>
                 </property>
                 <property>
-                    <name>sparkNumExecutors</name>
-                    <value>${affiliationmatchingSparkNumExecutors}</value>
-                </property>
-                <property>
                     <name>sparkDriverMemory</name>
                     <value>${affiliationmatchingSparkDriverMemory}</value>
                 </property>
@@ -1423,7 +1496,7 @@
             <arg>-Preport.processing.referenceExtraction.pdb.duration=referenceextraction_pdb,transformers_export_pdb</arg>
             <arg>-Preport.processing.referenceExtraction.dataset.duration=referenceextraction_dataset</arg>
             <arg>-Preport.processing.referenceExtraction.project.duration=transformers_project_filter,referenceextraction_project</arg>
-            <arg>-Preport.processing.referenceExtraction.concept.duration=transformers_project_toconcept,transformers_concept_to_researchinitiatives</arg>
+            <arg>-Preport.processing.referenceExtraction.concept.duration=transformers_project_toconcept,transformers_export_concepts</arg>
             <arg>-Preport.processing.merging.duration=transformers_common_union_document_text</arg>
             <arg>-Oreport=${output_report_root_path}/primary-processing-execution-times</arg>
         </java>

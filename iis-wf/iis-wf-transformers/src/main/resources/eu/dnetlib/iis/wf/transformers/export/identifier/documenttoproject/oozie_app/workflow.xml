@@ -31,7 +31,7 @@
 	    <java>
 	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
 	        <arg>eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject</arg>
-	        <arg>eu.dnetlib.iis.export.auxiliary.schemas.Identifier</arg>
+	        <arg>eu.dnetlib.iis.common.schemas.Identifier</arg>
 	        <capture-output />
 	    </java>
 	    <ok to="transformer" />
@@ -51,7 +51,7 @@
             <param>schema_input_document_to_project=${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject']}</param>
             
             <param>output_identifier=${output_identifier}</param>
-            <param>schema_output_identifier=${wf:actionData('generate-schema')['eu.dnetlib.iis.export.auxiliary.schemas.Identifier']}</param>
+            <param>schema_output_identifier=${wf:actionData('generate-schema')['eu.dnetlib.iis.common.schemas.Identifier']}</param>
         </pig>
         <ok to="end"/>
         <error to="fail"/>

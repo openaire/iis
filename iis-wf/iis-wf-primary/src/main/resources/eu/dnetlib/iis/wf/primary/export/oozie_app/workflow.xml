@@ -269,9 +269,7 @@
     <!-- end of dataset entities export section -->
 
     <action name="distcp_output">
-        <distcp xmlns="uri:oozie:distcp-action:0.1">
-            <job-tracker>${jobTracker}</job-tracker>
-            <name-node>${nameNode}</name-node>
+        <distcp xmlns="uri:oozie:distcp-action:0.2">
             <arg>-Dmapreduce.map.memory.mb=${output_remote_distcp_memory_mb}</arg>
             <arg>-pb</arg>
             <arg>-overwrite</arg>

@@ -20,10 +20,12 @@ public final class DataStore {
 	
 	private final static String singleDataStoreFileName = "content.avro";
 	
+	private static final int FILE_NO_PADDING_LENGTH = 7;
+	
 	private DataStore(){}
 
 	/**
-	 * Create a new data store directory and return writer that allows 
+	 * Create a new data store directory with single file and return writer that allows 
 	 * adding new records
 	 * @param path path to a directory to be created
 	 * @param schema schema of the records to be stored in the file
@@ -32,11 +34,26 @@ public final class DataStore {
 	 */
 	public static <T> DataFileWriter<T> create(
 			FileSystemPath path, Schema schema) throws IOException{
-		path.getFileSystem().mkdirs(path.getPath());
-		FileSystemPath outFile = new FileSystemPath(
-				path, singleDataStoreFileName);
-		return createSingleFile(outFile, schema);
+		return create(path, schema, singleDataStoreFileName);
 	}
+	
+
+	/**
+     * Create a new data store directory and return writer that allows 
+     * adding new records
+     * @param path path to a directory to be created
+     * @param schema schema of the records to be stored in the file
+     * @param dataStoreFileName datastore file name
+     * @return 
+     * @throws IOException
+     */
+    public static <T> DataFileWriter<T> create(
+            FileSystemPath path, Schema schema, String dataStoreFileName) throws IOException{
+        path.getFileSystem().mkdirs(path.getPath());
+        FileSystemPath outFile = new FileSystemPath(
+                path, dataStoreFileName);
+        return DataStore.createSingleFile(outFile, schema);
+    }
 	
 	/**
 	 * Get reader for reading records from given data store
@@ -140,4 +157,16 @@ public final class DataStore {
 		return writer;
 	}
 
+	/**
+	 * Generates filename for given file number.
+	 * @param fileNo file sequence number
+	 */
+	public static final String generateFileName(int fileNo) {
+        StringBuffer strBuff = new StringBuffer(String.valueOf(fileNo));
+        while(strBuff.length()<FILE_NO_PADDING_LENGTH) {
+            strBuff.insert(0, '0');
+        }
+        strBuff.append(".avro");
+        return strBuff.toString();
+    }
 }

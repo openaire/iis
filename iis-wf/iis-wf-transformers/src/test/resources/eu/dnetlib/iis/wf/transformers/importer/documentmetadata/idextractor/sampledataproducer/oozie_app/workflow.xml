@@ -83,7 +83,7 @@
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
 			<arg>-C{output_identifier,
-				eu.dnetlib.iis.common.schemas.DocumentId,
+				eu.dnetlib.iis.common.schemas.Identifier,
 				eu/dnetlib/iis/wf/transformers/importer/documentmetadata/idextractor/sampledataproducer/data/output_document_id.json}</arg>
 			<arg>-Ioutput_identifier=${workingDir}/transformers_idextractor/output</arg>
 		</java>

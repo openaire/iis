@@ -326,7 +326,16 @@
                     <name>output_report_root_path</name>
                     <value>${workingDir}/report</value>
                 </property>
-                <!-- configuration for affmatch and citmatch spark algorithms-->
+                <!-- configuration for spark algorithms-->
+                <property>
+                    <name>documentsclassificationSparkExecutorMemory</name>
+                    <value>1G</value>
+                </property>
+                <property>
+                    <name>documentsclassificationSparkExecutorCores</name>
+                    <value>1</value>
+                </property>
+                
                 <property>
                     <name>affiliationmatchingSparkExecutorMemory</name>
                     <value>1G</value>
@@ -334,10 +343,6 @@
                 <property>
                     <name>affiliationmatchingSparkExecutorCores</name>
                     <value>1</value>
-                </property>
-                <property>
-                    <name>affiliationmatchingSparkNumExecutors</name>
-                    <value>2</value>
                 </property>
                 <property>
                     <name>affiliationmatchingSparkDriverMemory</name>
@@ -353,21 +358,24 @@
                     <value>1</value>
                 </property>
                 <property>
-                    <name>citationmatchingDirectSparkNumExecutors</name>
-                    <value>2</value>
+                    <name>citationmatchingFuzzySparkDriverMemory</name>
+                    <value>1G</value>
                 </property>
-
+                <property>
+                    <name>citationmatchingFuzzySparkDriverOverhead</name>
+                    <value>512</value>
+                </property>
                 <property>
                     <name>citationmatchingFuzzySparkExecutorMemory</name>
                     <value>1G</value>
                 </property>
                 <property>
-                    <name>citationmatchingFuzzySparkExecutorCores</name>
-                    <value>1</value>
+                    <name>citationmatchingFuzzySparkExecutorOverhead</name>
+                    <value>512</value>
                 </property>
                 <property>
-                    <name>citationmatchingFuzzySparkNumExecutors</name>
-                    <value>2</value>
+                    <name>citationmatchingFuzzySparkExecutorCores</name>
+                    <value>1</value>
                 </property>
                 
 			</configuration>

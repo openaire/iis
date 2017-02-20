@@ -52,10 +52,6 @@
             <description>number of cores used by single executor</description>
         </property>
         <property>
-            <name>sparkNumExecutors</name>
-            <description>total number of executors</description>
-        </property>
-        <property>
             <name>sparkDriverMemory</name>
             <description>memory for driver process</description>
         </property>
@@ -84,9 +80,7 @@
     <start to="affiliation-matching" />
 
     <action name="affiliation-matching">
-        <spark xmlns="uri:oozie:spark-action:0.1">
-            <job-tracker>${jobTracker}</job-tracker>
-            <name-node>${nameNode}</name-node>
+        <spark xmlns="uri:oozie:spark-action:0.2">
             
             <prepare>
                 <delete path="${nameNode}${output}" />
@@ -96,9 +90,9 @@
             <mode>cluster</mode>
             <name>Affiliation Matching</name>
             <class>eu.dnetlib.iis.wf.affmatching.AffMatchingJob</class>
-            <jar>${oozieTopWfApplicationPath}/lib/${projectUberJarName}</jar>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-affmatching-${projectVersion}.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --num-executors ${sparkNumExecutors} --driver-memory=${sparkDriverMemory} --conf spark.yarn.driver.memoryOverhead=${sparkDriverOverhead}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory} --conf spark.yarn.driver.memoryOverhead=${sparkDriverOverhead}</spark-opts>
 
             <arg>-inputAvroOrgPath=${input_organizations}</arg>
             <arg>-inputAvroAffPath=${input_document_metadata}</arg>

@@ -6,6 +6,9 @@ import java.lang.reflect.Constructor;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.hadoop.conf.Configuration;
+
+import com.google.common.collect.ImmutableMap;
 
 import eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters;
 
@@ -43,4 +46,31 @@ public abstract class ServiceFacadeUtils {
         }
         
     }
+    
+    /**
+     * Instantiates service based on provided configuration.
+     * 
+     * Service factory class name is mandatory and has to be provided as {@value ImportWorkflowRuntimeParameters#IMPORT_FACADE_FACTORY_CLASS} configuration entry.
+     * Other parameters will be used by factory itself. Factory must be instantiable with no-argument construtor.
+     * 
+     * @param config set of configuration entries required for service instantiation
+     */
+    public static <T> T instantiate(Configuration config) throws ServiceFacadeException {
+        return instantiate(buildParameters(config));
+    }
+    
+
+    // ------------------------ PRIVATE --------------------------
+    
+    /**
+     * Converts configuration entries into plain map.
+     */
+    private static Map<String, String> buildParameters(Configuration config) {
+        ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
+        for (Map.Entry<String, String> entry : config) {
+          builder.put(entry);
+        }
+        return builder.build();
+    }
+    
 }

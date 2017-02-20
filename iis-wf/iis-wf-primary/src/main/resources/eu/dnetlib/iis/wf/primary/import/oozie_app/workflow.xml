@@ -81,10 +81,6 @@
 			<description>pdf mime types</description>
 		</property>
 		<property>
-			<name>mimetypes_text</name>
-			<description>text mime types</description>
-		</property>
-		<property>
 			<name>mimetypes_html</name>
 			<description>html mime types</description>
 		</property>
@@ -122,6 +118,10 @@
 			<value>$UNDEFINED$</value>
 			<description>maximum allowed xml or text file size in Megabytes</description>
 		</property>
+        <property>
+            <name>ingest_pmc_default_cache_location</name>
+            <description>PMC ingestion HDFS cache location</description>
+        </property>
 		<!-- metadata extraction related -->
 		<property>
 			<name>metadataextraction_excluded_checksums</name>
@@ -183,14 +183,20 @@
 			<value>$UNDEFINED$</value>
 			<description>metadata importer output root directory</description>
 		</property>
+        
 		<property>
-			<name>output_dataset</name>
-			<description>dataset importer output directory holding dataset	metadata, required when ${active_import_dataset}=true</description>
-		</property>
-		<property>
-			<name>output_dataset_to_mdstore</name>
-			<description>dataset importer output directory holding dataset to mdstore mappings, required when ${active_import_dataset}=true</description>
-		</property>
+            <name>output_dataset_root</name>
+            <description>dataset importer output root, required when ${active_import_dataset}=true</description>
+        </property>
+        <property>
+            <name>output_name_dataset</name>
+            <description>dataset metadata output directory</description>
+        </property>
+        <property>
+            <name>output_name_dataset_to_mdstore</name>
+            <description>dataset to mdstore mapping output directory</description>
+        </property>
+        
 		<property>
 			<name>output_document_text</name>
 			<description>text import output directory. merged from three different sources</description>
@@ -298,9 +304,7 @@
 
     <!-- importing hbase dump from remote cluster -->
     <action name="distcp_hbase_dump">
-        <distcp xmlns="uri:oozie:distcp-action:0.1">
-            <job-tracker>${jobTracker}</job-tracker>
-            <name-node>${nameNode}</name-node>
+        <distcp xmlns="uri:oozie:distcp-action:0.2">
             <arg>-Dmapreduce.map.memory.mb=${hbase_dump_distcp_memory_mb}</arg>
             <arg>-pb</arg>
             <arg>${hbase_dump_location}</arg>
@@ -415,6 +419,10 @@
 					<name>mdstore_ids_csv</name>
 					<value>${dataset_mdstore_ids_csv}</value>
 				</property>
+                <property>
+                    <name>output_root</name>
+                    <value>${output_dataset_root}</value>
+                </property>
 				<!-- all the other properties are autmatically propagated -->
 			</configuration>
 		</sub-workflow>
@@ -427,9 +435,9 @@
 			<prepare>
 				<!-- notice: directory have to aligned with skipped action output -->
 				<delete path="${nameNode}${workingDir}/import_dataset" />
-				<delete path="${nameNode}${output_dataset}" />
-				<delete path="${nameNode}${output_dataset_to_mdstore}" />
+				<delete path="${nameNode}${output_dataset_root}" />
 				<mkdir path="${nameNode}${workingDir}/import_dataset" />
+                <mkdir path="${nameNode}${output_dataset_root}" />
 			</prepare>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
@@ -442,8 +450,8 @@
 				eu/dnetlib/iis/common/data/empty.json}
 			</arg>
 			<!-- notice: directory have to aligned with skipped action output -->
-			<arg>-Odataset=${output_dataset}</arg>
-			<arg>-Odataset_to_mdstore=${output_dataset_to_mdstore}</arg>
+			<arg>-Odataset=${output_dataset_root}/${output_name_dataset}</arg>
+			<arg>-Odataset_to_mdstore=${output_dataset_root}/${output_name_dataset_to_mdstore}</arg>
 		</java>
 		<ok to="import_joining" />
 		<error to="fail" />
@@ -501,10 +509,6 @@
 					<value>pdf</value>
 				</property>
 				<property>
-					<name>output_name_text</name>
-					<value>text</value>
-				</property>
-				<property>
 					<name>output_name_html</name>
 					<value>html</value>
 				</property>
@@ -524,48 +528,11 @@
 	</action>
 
 	<fork name="import_urlbased_forking">
-		<path start="import_plaintext" />
 		<path start="import_wos" />
-		<path start="import_plaintext_pmc" />
-		<path start="import_html" />
+        <path start="import_html" />
+		<path start="ingest_pmc_cached" />
 		<path start="metadata_extractor_cached" />
 	</fork>
-
-	<action name="import_plaintext">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/import_plaintext</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/import_plaintext/working_dir</value>
-				</property>
-				<property>
-					<name>input</name>
-					<value>${workingDir}/import_content_url/imported/text</value>
-				</property>
-				<property>
-					<name>max_file_size_mb</name>
-					<value>${text_xml_max_file_size_mb}</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${workingDir}/import_plaintext/imported</value>
-				</property>
-                <property>
-                    <name>output_report_relative_path</name>
-                    <value>import_content_plaintext</value>
-                </property>
-                <property>
-                    <name>report_properties_prefix</name>
-                    <value>import.content.plaintext</value>
-                </property>
-				<!-- all the other properties are autmatically propagated -->
-			</configuration>
-		</sub-workflow>
-		<ok to="import_urlbased_joining" />
-		<error to="fail" />
-	</action>
 
 	<action name="import_wos">
 		<sub-workflow>
@@ -603,122 +570,28 @@
 		<error to="fail" />
 	</action>
 
-	<action name="import_plaintext_pmc">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/import_plaintext</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/import_plaintext_pmc/working_dir</value>
-				</property>
-				<property>
-					<name>input</name>
-					<value>${workingDir}/import_content_url/imported/xmlpmc</value>
-				</property>
-				<property>
-					<name>max_file_size_mb</name>
-					<value>${text_xml_max_file_size_mb}</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${workingDir}/import_plaintext_pmc/imported</value>
-				</property>
+    <!-- html import and plaintext ingestion section -->
+    <action name="import_html">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/import_plaintext</app-path>
+            <propagate-configuration />
+            <configuration>
                 <property>
-                    <name>output_report_relative_path</name>
-                    <value>import_content_pmc</value>
+                    <name>workingDir</name>
+                    <value>${workingDir}/import_html/working_dir</value>
                 </property>
                 <property>
-                    <name>report_properties_prefix</name>
-                    <value>import.content.pmc</value>
+                    <name>input</name>
+                    <value>${workingDir}/import_content_url/imported/html</value>
                 </property>
-				<!-- all the other properties are autmatically propagated -->
-			</configuration>
-		</sub-workflow>
-		<ok to="ingest_pmc_metadata_with_text" />
-		<error to="fail" />
-	</action>
-
-	<action name="ingest_pmc_metadata_with_text">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/ingest_pmc_metadata</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/ingest_pmc_metadata/working_dir</value>
-				</property>
-				<property>
-					<name>input</name>
-					<value>${workingDir}/import_plaintext_pmc/imported</value>
-				</property>
-				<property>
-					<name>output_root</name>
-					<value>${workingDir}/ingest_pmc_metadata/out</value>
-				</property>
-				<property>
-					<name>output_name_meta</name>
-					<value>meta</value>
-				</property>
-				<property>
-					<name>output_name_fault</name>
-					<value>fault</value>
-				</property>
-				<property>
-					<name>ingest_metadata</name>
-					<value>true</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="transformers_ingest_pmc_metadata" />
-		<error to="fail" />
-	</action>
-
-	<action name="transformers_ingest_pmc_metadata">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_ingest_pmc_metadata</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/transformers_ingest_pmc_metadata/working_dir</value>
-				</property>
-				<property>
-					<name>input</name>
-					<value>${workingDir}/ingest_pmc_metadata/out/meta</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${workingDir}/transformers_ingest_pmc_metadata/out</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="import_urlbased_joining" />
-		<error to="fail" />
-	</action>
-
-	<!-- html import and plaintext ingestion section -->
-	<action name="import_html">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/import_plaintext</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/import_html/working_dir</value>
-				</property>
-				<property>
-					<name>input</name>
-					<value>${workingDir}/import_content_url/imported/html</value>
-				</property>
-				<property>
-					<name>max_file_size_mb</name>
-					<value>${text_xml_max_file_size_mb}</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${workingDir}/import_html/imported</value>
-				</property>
+                <property>
+                    <name>max_file_size_mb</name>
+                    <value>${text_xml_max_file_size_mb}</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${workingDir}/import_html/imported</value>
+                </property>
                 <property>
                     <name>output_report_relative_path</name>
                     <value>import_content_html</value>
@@ -727,35 +600,76 @@
                     <name>report_properties_prefix</name>
                     <value>import.content.html</value>
                 </property>
-				<!-- all the other properties are autmatically propagated -->
-			</configuration>
-		</sub-workflow>
-		<ok to="ingest_html_plaintext" />
-		<error to="fail" />
-	</action>
+                <!-- all the other properties are autmatically propagated -->
+            </configuration>
+        </sub-workflow>
+        <ok to="ingest_html_plaintext" />
+        <error to="fail" />
+    </action>
 
-	<action name="ingest_html_plaintext">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/ingest_html_plaintext</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/ingest_html_plaintext/working_dir</value>
-				</property>
-				<property>
-					<name>input</name>
-					<value>${workingDir}/import_html/imported</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${workingDir}/ingest_html_plaintext/imported</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="import_urlbased_joining" />
-		<error to="fail" />
-	</action>
+    <action name="ingest_html_plaintext">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/ingest_html_plaintext</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/ingest_html_plaintext/working_dir</value>
+                </property>
+                <property>
+                    <name>input</name>
+                    <value>${workingDir}/import_html/imported</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${output_document_text}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="import_urlbased_joining" />
+        <error to="fail" />
+    </action>
+    <!-- end of html import and plaintext ingestion section -->
+    
+    <action name="ingest_pmc_cached">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/ingest_pmc_metadata</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/ingest_pmc_metadata/working_dir</value>
+                </property>
+                <property>
+                    <name>input</name>
+                    <value>${workingDir}/import_content_url/imported/xmlpmc</value>
+                </property>
+                <property>
+                    <name>max_file_size_mb</name>
+                    <value>${text_xml_max_file_size_mb}</value>
+                </property>
+                <property>
+                    <name>default_cache_location</name>
+                    <value>${ingest_pmc_default_cache_location}</value>
+                </property>
+                <property>
+                    <name>output_name_meta</name>
+                    <value>meta</value>
+                </property>
+                <property>
+                    <name>output_name_fault</name>
+                    <value>fault</value>
+                </property>
+                <property>
+                    <name>output_root</name>
+                    <value>${workingDir}/ingest_pmc_metadata/out</value>
+                </property>
+                <!-- all the other properties are autmatically propagated -->
+            </configuration>
+        </sub-workflow>
+        <ok to="import_urlbased_joining" />
+        <error to="fail" />
+    </action>
 
 	<action name="metadata_extractor_cached">
 		<sub-workflow>
@@ -801,39 +715,7 @@
 		<error to="fail" />
 	</action>
 
-	<join name="import_urlbased_joining" to="transformers_common_union_document_text" />
-
-	<!-- merging document text datastores: 1) retrieved directly from objectstore 3) ingested from HTML -->
-	<action name="transformers_common_union_document_text">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_common_union</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/transformers_common_union_document_text/working_dir</value>
-				</property>
-				<property>
-					<name>input_a</name>
-					<value>${workingDir}/import_plaintext/imported</value>
-				</property>
-				<property>
-					<name>input_b</name>
-					<value>${workingDir}/ingest_html_plaintext/imported</value>
-				</property>
-				<property>
-					<name>output</name>
-					<value>${output_document_text}</value>
-				</property>
-				<property>
-					<name>schema</name>
-					<value>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="union_extracted_document_metadata" />
-		<error to="fail" />
-	</action>
+	<join name="import_urlbased_joining" to="union_extracted_document_metadata" />
 
 	<!-- merging extracted document metadata datastores (including new text field): 1) extracted from PDF documents 2) ingested from XML JATS documents -->
 	<action name="union_extracted_document_metadata">
@@ -847,7 +729,7 @@
 				</property>
 				<property>
 					<name>input_a</name>
-					<value>${workingDir}/transformers_ingest_pmc_metadata/out</value>
+					<value>${workingDir}/ingest_pmc_metadata/out/meta</value>
 				</property>
 				<property>
 					<name>input_b</name>
@@ -879,9 +761,7 @@
 	</action>
 
 	<action name="preserve-metadataextraction-faults">
-		<distcp xmlns="uri:oozie:distcp-action:0.1">
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
+		<distcp xmlns="uri:oozie:distcp-action:0.2">
 			<arg>${nameNode}${workingDir}/metadata_extractor/out/fault</arg>
 			<arg>${nameNode}${output_faults}/metadataextraction</arg>
 		</distcp>
@@ -890,9 +770,7 @@
 	</action>
 
 	<action name="preserve-ingest_pmc_metadata-faults">
-		<distcp xmlns="uri:oozie:distcp-action:0.1">
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
+		<distcp xmlns="uri:oozie:distcp-action:0.2">
 			<arg>${nameNode}${workingDir}/ingest_pmc_metadata/out/fault</arg>
 			<arg>${nameNode}${output_faults}/ingest_pmc_metadata</arg>
 		</distcp>

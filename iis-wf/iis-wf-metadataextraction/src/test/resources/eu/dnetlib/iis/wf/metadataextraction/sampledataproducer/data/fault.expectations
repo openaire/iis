@@ -1,0 +1,3 @@
+inputObjectId=id2
+code=com.itextpdf.text.exceptions.InvalidPdfException
+message=content PDF header not approved!

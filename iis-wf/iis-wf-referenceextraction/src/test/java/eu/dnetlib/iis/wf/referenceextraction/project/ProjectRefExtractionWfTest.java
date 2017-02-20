@@ -18,6 +18,11 @@ public class ProjectRefExtractionWfTest extends AbstractOozieWorkflowTestCase {
 	public void testMainWorkflow() throws Exception {
     	testWorkflow("eu/dnetlib/iis/wf/referenceextraction/project/main/sampletest");
 	}
+    
+    @Test
+    public void testMainWorkflowWithoutProjects() throws Exception {
+        testWorkflow("eu/dnetlib/iis/wf/referenceextraction/project/main/sampletest_without_projects");
+    }
 
     @Test
 	public void testMainWorkflowWithoutReferences() throws Exception {

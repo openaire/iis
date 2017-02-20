@@ -190,6 +190,11 @@
                     <name>import.content.max.file.size.mb</name>
                    <value>${max_file_size_mb}</value>
                 </property>
+                <!-- disabling speculative run to be less invasive to ObjectStore -->
+                <property>
+                    <name>mapreduce.map.speculative</name>
+                    <value>false</value>
+                </property>
                 <property>
                     <name>mapreduce.job.map.class</name>
                     <value>eu.dnetlib.iis.wf.importer.content.DocumentContentUrlBasedImporterMapper</value>
@@ -215,7 +220,6 @@
             <arg>-Preport.import.content.pdf.correct=${hadoop:counters('content-retriever')[RECORDS][MAP_OUT]}</arg>
             <arg>-Preport.import.content.pdf.invalid.sizeExceeded=${hadoop:counters('content-retriever')['eu.dnetlib.iis.wf.importer.content.DocumentContentUrlBasedImporterMapper$InvalidRecordCounters']['SIZE_EXCEEDED']}</arg>
             <arg>-Preport.import.content.pdf.invalid.sizeInvalid=${hadoop:counters('content-retriever')['eu.dnetlib.iis.wf.importer.content.DocumentContentUrlBasedImporterMapper$InvalidRecordCounters']['SIZE_INVALID']}</arg>
-            <arg>-Preport.import.content.pdf.invalid.invalidPdf=${hadoop:counters('content-retriever')['eu.dnetlib.iis.wf.importer.content.DocumentContentUrlBasedImporterMapper$InvalidRecordCounters']['INVALID_PDF_HEADER']}</arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>
         <ok to="end" />

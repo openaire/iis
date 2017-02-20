@@ -148,9 +148,7 @@
 	</action>
 
 	<action name="postprocessing-fault">
-		<distcp xmlns="uri:oozie:distcp-action:0.1">
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
+		<distcp xmlns="uri:oozie:distcp-action:0.2">
 			<prepare>
 				<delete path="${nameNode}${output_root}/${output_name_fault}" />
 			</prepare>

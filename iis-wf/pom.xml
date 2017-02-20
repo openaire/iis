@@ -9,7 +9,6 @@
 	<artifactId>iis-wf</artifactId>
 	<packaging>pom</packaging>
 	<modules>
-       <module>iis-wf-core-examples</module>
        <module>iis-wf-affmatching</module>
        <module>iis-wf-documentssimilarity</module>
        <module>iis-wf-citationmatching</module>
@@ -61,7 +60,7 @@
         
         <output.dir.name>${maven.build.timestamp}</output.dir.name>        
         
-        <projectUberJarName>${project.build.finalName}-uber.jar</projectUberJarName>
+        <projectVersion>${project.version}</projectVersion>
         <oozie.use.system.libpath>true</oozie.use.system.libpath>
     </properties>
 	<dependencies>
@@ -79,11 +78,6 @@
 			<artifactId>sshj</artifactId>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jdom</artifactId>
-            <scope>test</scope>
-        </dependency>
 	</dependencies>
 	<profiles>
 		<profile>
@@ -268,7 +262,7 @@
 									<!-- notice: dots are not allowed for job.properties! -->
 									<include>nameNode,jobTracker,queueName,importerQueueName,oozieLauncherQueueName,
 									workingDir,oozieTopWfApplicationPath,oozieServiceLoc,
-									oozie.wf.application.path,projectUberJarName,oozie.use.system.libpath</include>
+									oozie.wf.application.path,projectVersion,oozie.use.system.libpath</include>
 									<includeSystemProperties>true</includeSystemProperties>
 									<includePropertyKeysFromFiles>
 										<!-- <param>${workflow.source.dir}/job.properties</param> -->
@@ -301,7 +295,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-assembly-plugin</artifactId>
-						<version>2.3</version>
+						<version>3.0.0</version>
 						<dependencies>
 							<dependency>
 								<groupId>eu.dnetlib.iis</groupId>
@@ -405,7 +399,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.3.2</version>
+						<version>1.5.0</version>
 						<executions>
 							<execution>
 								<id>create-target-dir</id>
@@ -471,7 +465,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.3.2</version>
+						<version>1.5.0</version>
 						<executions>
 							<execution>
 								<id>run-job</id>
@@ -599,45 +593,6 @@
 	</profiles>
 	
 	<build>
-        <plugins>
-            
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.1</version>
-                <configuration>
-                    <artifactSet>
-                        <includes>
-                            <include>*:*:jar:*</include>
-                        </includes>
-                        <excludes>
-                            <exclude>org.bouncycastle:*</exclude>
-                        </excludes>
-                    </artifactSet>
-                    <filters>
-                        <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>META-INF/*.SF</exclude>
-                                <exclude>META-INF/*.DSA</exclude>
-                                <exclude>META-INF/*.RSA</exclude>
-                            </excludes>
-                        </filter>
-                    </filters>
-                    <shadedArtifactAttached>true</shadedArtifactAttached>
-                    <shadedClassifierName>uber</shadedClassifierName>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-
 		<pluginManagement>
 			<plugins>
 				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->

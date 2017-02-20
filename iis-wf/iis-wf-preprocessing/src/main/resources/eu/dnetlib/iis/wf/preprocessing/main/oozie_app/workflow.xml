@@ -63,11 +63,6 @@
 			<description>pdf mime types</description>
 		</property>
 		<property>
-			<name>import_content_mimetypes_text</name>
-			<value>text,text/plain</value>
-			<description>text mime types</description>
-		</property>
-		<property>
 			<name>import_content_mimetypes_html</name>
 			<value>text/html</value>
 			<description>html mime types</description>
@@ -108,13 +103,15 @@
 			<value>2</value>
 			<description>maximum allowed xml or text file size in Megabytes</description>
 		</property>
+        <property>
+            <name>ingest_pmc_default_cache_location</name>
+            <description>PMC ingestion HDFS cache location</description>
+        </property>
 		<!-- metadata extraction related -->
 		<property>
 			<name>metadataextraction_excluded_checksums</name>
 			<value>$UNDEFINED$</value>
-			<description>list of content checksums excluded from
-				metadataextraction processing
-			</description>
+			<description>list of content checksums excluded from metadataextraction processing</description>
 		</property>
 		<property>
 			<name>pdf_max_file_size_mb</name>
@@ -246,9 +243,7 @@
 	</action>
 
 	<action name="copy-version">
-		<distcp xmlns="uri:oozie:distcp-action:0.1">
-			<job-tracker>${jobTracker}</job-tracker>
-			<name-node>${nameNode}</name-node>
+		<distcp xmlns="uri:oozie:distcp-action:0.2">
 			<arg>${wf:appPath()}/version.properties</arg>
 			<arg>${nameNode}${workingDir}</arg>
 		</distcp>
@@ -306,10 +301,6 @@
 					<value>${import_content_mimetypes_pdf}</value>
 				</property>
 				<property>
-					<name>mimetypes_text</name>
-					<value>${import_content_mimetypes_text}</value>
-				</property>
-				<property>
 					<name>mimetypes_html</name>
 					<value>${import_content_mimetypes_html}</value>
 				</property>
@@ -345,13 +336,18 @@
 					<value>${workingDir}/preprocessing_import/project</value>
 				</property>
 				<property>
-					<name>output_dataset</name>
+					<name>output_dataset_root</name>
 					<value>${workingDir}/preprocessing_import/dataset</value>
 				</property>
 				<property>
-					<name>output_dataset_to_mdstore</name>
-					<value>${workingDir}/preprocessing_import/dataset_to_mdstore</value>
+					<name>output_name_dataset</name>
+					<value>meta</value>
 				</property>
+                <property>
+                    <name>output_name_dataset_to_mdstore</name>
+                    <value>datasetToMDStore</value>
+                </property>
+                
 				<property>
 					<name>output_document_text</name>
 					<value>${workingDir}/preprocessing_import/document-text</value>
@@ -398,7 +394,7 @@
 				</property>
 				<property>
 					<name>input_dataset</name>
-					<value>${workingDir}/preprocessing_import/dataset</value>
+					<value>${workingDir}/preprocessing_import/dataset/meta</value>
 				</property>
 				<property>
 					<name>output_document_to_dataset</name>
@@ -528,7 +524,7 @@
 
 	<action name="transformers_concept_to_researchinitiatives">
 		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_export_researchinitiatives</app-path>
+			<app-path>${wf:appPath()}/transformers_export_concepts</app-path>
 			<propagate-configuration />
 			<configuration>
 				<property>
@@ -536,11 +532,11 @@
 					<value>${workingDir}/transformers_concept_to_researchinitiatives/working_dir</value>
 				</property>
 				<property>
-					<name>input_document_to_research_initiative</name>
+					<name>input</name>
 					<value>${workingDir}/transformers_project_toconcept/out</value>
 				</property>
 				<property>
-					<name>output_document_to_research_initiatives</name>
+					<name>output</name>
 					<value>${workingDir}/transformers_concept_to_researchinitiatives/out</value>
 				</property>
 				<property>
@@ -598,7 +594,7 @@
 				</property>
 				<property>
 					<name>input_dataset_to_mdstore</name>
-					<value>${workingDir}/preprocessing_import/dataset_to_mdstore</value>
+					<value>${workingDir}/preprocessing_import/dataset/datasetToMDStore</value>
 				</property>
 				<!-- entities exporting modes -->
 				<property>

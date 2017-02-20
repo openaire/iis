@@ -22,6 +22,8 @@ import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
  *
  */
 public class JatsXmlHandler extends DefaultHandler {
+    
+    public static final String ENTITY_TYPE_UNKNOWN = "unknown"; 
 
     private boolean rootElement = true;
 
@@ -70,7 +72,7 @@ public class JatsXmlHandler extends DefaultHandler {
             if (articleType!=null) {
                 builder.setEntityType(articleType);	
             } else {
-                builder.setEntityType("unknown");
+                builder.setEntityType(ENTITY_TYPE_UNKNOWN);
             }
         }
         

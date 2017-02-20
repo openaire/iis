@@ -44,8 +44,6 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
 
 	public static final String PARAM_INGEST_METADATA_OAI_NAMESPACE = "ingest.metadata.oai.element.namespace";
 
-	boolean ingestMetadata = true;
-
 	Namespace oaiNamespace = null;
 
 	/**
@@ -76,11 +74,6 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
 		}
 		mos = new MultipleOutputs(context);
 
-		String ingestMeta = context.getConfiguration().get(PARAM_INGEST_METADATA);
-		if (ingestMeta != null) {
-			ingestMetadata = Boolean.valueOf(ingestMeta);
-		}
-
 		oaiNamespace = Namespace.getNamespace(context.getConfiguration().get(PARAM_INGEST_METADATA_OAI_NAMESPACE,
 				"http://www.openarchives.org/OAI/2.0/"));
 	}
@@ -95,15 +88,10 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
 			try {
 				String pmcXml = nlm.getText().toString();
 				output.setText(extractText(pmcXml, oaiNamespace));
-				if (ingestMetadata) {
-					extractMetadata(pmcXml, output);
-				} else {
-					// setting required field
-					output.setEntityType("");
-				}
+				extractMetadata(pmcXml, output);
 				mos.write(namedOutputMeta, new AvroKey<ExtractedDocumentMetadata>(output.build()));
 			} catch (Exception e) {
-				handleException(nlm, e);
+				handleException(nlm, e, output);
 			}
 		}
 	}
@@ -156,12 +144,24 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
 	/**
 	 * Handles exception by writing it as fault.
 	 * 
-	 * @param documentText
-	 * @param e
+	 * @param documentText source xml content
+	 * @param e thrown exception
+	 * @param builder {@link ExtractedDocumentMetadata} builder
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	protected void handleException(DocumentText documentText, Exception e) throws IOException, InterruptedException {
+	protected void handleException(DocumentText documentText, Exception e, 
+	        ExtractedDocumentMetadata.Builder builder) throws IOException, InterruptedException {
+	    // writing empty result, setting required fields first
+	    if (!builder.hasText()) {
+	        builder.setText("");
+	    }
+	    if (!builder.hasEntityType()) {
+            builder.setEntityType(JatsXmlHandler.ENTITY_TYPE_UNKNOWN);
+        }
+        mos.write(namedOutputMeta,
+                new AvroKey<ExtractedDocumentMetadata>(builder.build()));
+        // writing fault result
 		Map<CharSequence, CharSequence> auditSupplementaryData = new HashMap<CharSequence, CharSequence>();
 		auditSupplementaryData.put(FAULT_TEXT, documentText.getText());
 		mos.write(namedOutputFault,
