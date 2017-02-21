@@ -1,0 +1,195 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="metadataextraction_cache_create">
+
+	<parameters>
+        <property>
+            <name>metadata_extractor_app_path</name>
+            <description>metadata_extractor application path location</description>
+        </property>
+        
+		<property>
+			<name>input</name>
+			<description>input document content directory</description>
+		</property>
+		<property>
+			<name>output_root</name>
+			<description>metadata extraction output directory</description>
+		</property>
+		<property>
+			<name>excluded_ids</name>
+			<value>$UNDEFINED$</value>
+			<description>list of content identifiers excluded from metadataextraction processing</description>
+		</property>
+		<property>
+			<name>max_file_size_mb</name>
+			<value>$UNDEFINED$</value>
+			<description>maximum allowed file size in Megabytes</description>
+		</property>
+		<property>
+			<name>content_connection_timeout</name>
+			<value>60000</value>
+			<description>streaming content connection timeout (expressed in milliseconds)</description>
+		</property>
+		<property>
+			<name>content_read_timeout</name>
+			<value>60000</value>
+			<description>streaming content read timeout (expressed in milliseconds)</description>
+		</property>
+		<property>
+			<name>zk_session_timeout</name>
+			<value>60000</value>
+			<description>zookeeper session timeout when handling locks (expressed in milliseconds)</description>
+		</property>
+		<property>
+			<name>cache_location</name>
+			<description>cache location stored in HDFS</description>
+		</property>
+		<property>
+			<name>output_name_meta</name>
+			<value>meta</value>
+			<description>metadata output subdirectory name</description>
+		</property>
+		<property>
+			<name>output_name_fault</name>
+			<value>fault</value>
+			<description>fault output subdirectory name</description>
+		</property>
+	</parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+	<start to="metadata_extractor_on_full_input" />
+
+	<action name="metadata_extractor_on_full_input">
+		<sub-workflow>
+			<app-path>${metadata_extractor_app_path}</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/metadata_extractor/working_dir</value>
+				</property>
+				<!-- all the other properties are autmatically propagated -->
+			</configuration>
+		</sub-workflow>
+		<ok to="obtain-lock_for_initializing" />
+		<error to="fail" />
+	</action>
+
+	<action name="obtain-lock_for_initializing">
+		<java>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
+			<arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
+			<arg>-Pnode_id=${cache_location}</arg>
+			<arg>-Pmode=obtain</arg>
+		</java>
+		<ok to="get-new-cache-id_for_initializing" />
+		<error to="release-lock-and-fail" />
+	</action>
+
+	<action name='get-new-cache-id_for_initializing'>
+		<java>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess</arg>
+			<arg>-Pcache_location=${cache_location}</arg>
+			<arg>-Pmode=generate_new_id</arg>
+			<capture-output />
+		</java>
+		<ok to="prepare_cache_for_initializing" />
+		<error to="release-lock-and-fail" />
+	</action>
+
+	<action name="prepare_cache_for_initializing">
+		<fs>
+			<mkdir path="${nameNode}${cache_location}/${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}" />
+		</fs>
+		<ok to="initialize_meta_cache" />
+		<error to="release-lock-and-fail" />
+	</action>
+
+	<action name="initialize_meta_cache">
+		<distcp xmlns="uri:oozie:distcp-action:0.2">
+			<arg>${nameNode}${output_root}/${output_name_meta}</arg>
+			<arg>${nameNode}${cache_location}/${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}/meta</arg>
+		</distcp>
+		<ok to="initialize_fault_cache" />
+		<error to="fail-initialize_cache-temp_files_cleanup" />
+	</action>
+
+    <action name="initialize_fault_cache">
+        <distcp xmlns="uri:oozie:distcp-action:0.2">
+            <arg>${nameNode}${output_root}/${output_name_fault}</arg>
+            <arg>${nameNode}${cache_location}/${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}/fault</arg>
+        </distcp>
+        <ok to="write-new-cache-id_for_initializing" />
+        <error to="fail-initialize_cache-temp_files_cleanup" />
+    </action>
+
+	<action name="fail-initialize_cache-temp_files_cleanup">
+		<fs>
+			<delete path="${nameNode}${cache_location}/${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}" />
+		</fs>
+		<ok to="release-lock-and-fail" />
+		<error to="release-lock-and-fail" />
+	</action>
+
+	<action name='write-new-cache-id_for_initializing'>
+		<java>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess</arg>
+			<arg>-Pcache_location=${cache_location}</arg>
+			<arg>-Pmode=write_id</arg>
+			<arg>-Pid=${wf:actionData('get-new-cache-id_for_initializing')['cache_id']}</arg>
+			<capture-output />
+		</java>
+		<ok to="release-lock-and-end" />
+		<error to="fail-initialize_cache-temp_files_cleanup" />
+	</action>
+
+	<!-- end of full input processing block, no cache was provided as an input -->
+
+	<!-- lock releasing actions -->
+	<action name="release-lock-and-fail">
+		<java>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
+			<arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
+			<arg>-Pnode_id=${cache_location}</arg>
+			<arg>-Pmode=release</arg>
+		</java>
+		<ok to="fail" />
+		<error to="fail" />
+	</action>
+
+	<action name="release-lock-and-end">
+		<java>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
+			<arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
+			<arg>-Pnode_id=${cache_location}</arg>
+			<arg>-Pmode=release</arg>
+		</java>
+		<ok to="end" />
+		<error to="fail" />
+	</action>
+	<!-- end of lock releasing actions -->
+
+	<kill name="fail">
+		<message>Unfortunately, the process failed -- error message:
+			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+	</kill>
+	<end name="end" />
+</workflow-app>

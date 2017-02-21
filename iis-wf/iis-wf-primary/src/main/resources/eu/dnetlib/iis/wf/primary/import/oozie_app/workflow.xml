@@ -119,7 +119,7 @@
 			<description>maximum allowed xml or text file size in Megabytes</description>
 		</property>
         <property>
-            <name>ingest_pmc_default_cache_location</name>
+            <name>ingest_pmc_cache_location</name>
             <description>PMC ingestion HDFS cache location</description>
         </property>
 		<!-- metadata extraction related -->
@@ -134,7 +134,7 @@
 			<description>maximum allowed pdf file size in Megabytes</description>
 		</property>
 		<property>
-			<name>metadataextraction_default_cache_location</name>
+			<name>metadataextraction_cache_location</name>
 			<description>metadata extraction HDFS cache location</description>
 		</property>
 		<!-- metadata import output subdirectory names -->
@@ -633,9 +633,21 @@
     
     <action name="ingest_pmc_cached">
         <sub-workflow>
-            <app-path>${wf:appPath()}/ingest_pmc_metadata</app-path>
+            <app-path>${wf:appPath()}/metadataextraction_cache</app-path>
             <propagate-configuration />
             <configuration>
+                <property>
+                    <name>metadata_extractor_app_name</name>
+                    <value>ingest_pmc_metadata</value>
+                </property>
+                <property>
+                    <name>cache_report_relative_path</name>
+                    <value>import_ingestpmc_cache</value>
+                </property>
+                <property>
+                    <name>cache_report_properties_prefix</name>
+                    <value>import.ingestPmc</value>
+                </property>
                 <property>
                     <name>workingDir</name>
                     <value>${workingDir}/ingest_pmc_metadata/working_dir</value>
@@ -649,8 +661,8 @@
                     <value>${text_xml_max_file_size_mb}</value>
                 </property>
                 <property>
-                    <name>default_cache_location</name>
-                    <value>${ingest_pmc_default_cache_location}</value>
+                    <name>cache_location</name>
+                    <value>${ingest_pmc_cache_location}</value>
                 </property>
                 <property>
                     <name>output_name_meta</name>
@@ -673,7 +685,7 @@
 
 	<action name="metadata_extractor_cached">
 		<sub-workflow>
-			<app-path>${wf:appPath()}/metadataextraction_cached</app-path>
+			<app-path>${wf:appPath()}/metadataextraction_cache</app-path>
 			<propagate-configuration />
 			<configuration>
 				<property>
@@ -693,8 +705,8 @@
 					<value>${pdf_max_file_size_mb}</value>
 				</property>
 				<property>
-					<name>default_cache_location</name>
-					<value>${metadataextraction_default_cache_location}</value>
+					<name>cache_location</name>
+					<value>${metadataextraction_cache_location}</value>
 				</property>
 				<property>
 					<name>output_name_meta</name>

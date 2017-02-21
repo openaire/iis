@@ -2,8 +2,12 @@ package eu.dnetlib.iis.wf.ingest.pmc.metadata;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -24,6 +28,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import eu.dnetlib.iis.audit.schemas.Fault;
+import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.fault.FaultUtils;
 import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
@@ -60,6 +65,11 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
 	 * Fault named output.
 	 */
 	protected String namedOutputFault;
+	
+	/**
+     * Set of object identifiers objects excluded from processing.
+     */
+    private Set<String> excludedIds = Collections.emptySet();
 
 	@Override
 	protected void setup(Mapper<AvroKey<DocumentText>, NullWritable, NullWritable, NullWritable>.Context context)
@@ -76,12 +86,27 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
 
 		oaiNamespace = Namespace.getNamespace(context.getConfiguration().get(PARAM_INGEST_METADATA_OAI_NAMESPACE,
 				"http://www.openarchives.org/OAI/2.0/"));
+		String excludedIdsCSV = context.getConfiguration().get("excluded.ids");
+        if (excludedIdsCSV != null && !excludedIdsCSV.trim().isEmpty()
+                && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(excludedIdsCSV)) {
+            log.info("got excluded ids: " + excludedIdsCSV);
+            excludedIds = new HashSet<String>(Arrays.asList(StringUtils.split(excludedIdsCSV.trim(), ',')));
+        } else {
+            log.info("got no excluded ids");
+        }
 	}
 
 	@Override
 	protected void map(AvroKey<DocumentText> key, NullWritable value, Context context)
 			throws IOException, InterruptedException {
 		DocumentText nlm = key.datum();
+		String documentId = nlm.getId().toString();
+        
+        if (excludedIds.contains(documentId)) {
+            log.info("skipping processing for excluded id " + documentId);
+            return;
+        }
+		
 		if (!StringUtils.isBlank(nlm.getText())) {
 			final ExtractedDocumentMetadata.Builder output = ExtractedDocumentMetadata.newBuilder();
 			output.setId(nlm.getId());

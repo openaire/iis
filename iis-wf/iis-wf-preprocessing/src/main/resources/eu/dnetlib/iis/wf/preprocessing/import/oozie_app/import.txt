@@ -5,7 +5,6 @@ import_concept classpath eu/dnetlib/iis/wf/importer/concept/oozie_app
 import_content_url classpath eu/dnetlib/iis/wf/importer/content_url/chain/oozie_app
 import_plaintext classpath eu/dnetlib/iis/wf/importer/plaintext/oozie_app
 ingest_html_plaintext classpath eu/dnetlib/iis/wf/ingest/html/plaintext/oozie_app
-ingest_pmc_metadata classpath eu/dnetlib/iis/wf/ingest/pmc/cached_by_checksum/oozie_app
-metadataextraction_cached classpath eu/dnetlib/iis/wf/metadataextraction/cached_by_checksum/oozie_app
+metadataextraction_cache classpath eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/oozie_app
 transformers_common_union classpath eu/dnetlib/iis/wf/transformers/common/union/oozie_app
 transformer_metadataextraction_documenttext classpath eu/dnetlib/iis/wf/transformers/metadataextraction/documenttext/oozie_app

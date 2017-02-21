@@ -1,6 +1,22 @@
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="metadataextraction_cached_by_checksum">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="metadataextraction_cache_identify_by_checksum">
 
 	<parameters>
+        <property>
+            <name>metadata_extractor_app_name</name>
+            <value>metadata_extractor</value>
+            <description>underlying metadata extractor application name</description>
+        </property>
+        <property>
+            <name>cache_report_relative_path</name>
+            <value>import_metadataextraction_cache</value>
+            <description>cache report relative path, to be set dynamically according to internal app_path</description>
+        </property>
+        <property>
+            <name>cache_report_properties_prefix</name>
+            <value>import.metadataExtraction</value>
+            <description>cache report properties prefix, to be set dynamically according to internal app_path</description>
+        </property>
+    
 		<property>
 			<name>input</name>
 			<description>input document content directory</description>
@@ -16,7 +32,7 @@
 		</property>
 		<property>
 			<name>max_file_size_mb</name>
-			<value>100</value>
+			<value>$UNDEFINED$</value>
 			<description>maximum allowed file size in Megabytes</description>
 		</property>
 		<property>
@@ -35,8 +51,8 @@
 			<description>zookeeper session timeout when handling locks (expressed in milliseconds)</description>
 		</property>
 		<property>
-			<name>default_cache_location</name>
-			<description>default cache location stored in HDFS</description>
+			<name>cache_location</name>
+			<description>cache location stored in HDFS</description>
 		</property>
 		<property>
 			<name>output_name_meta</name>

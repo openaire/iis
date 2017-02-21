@@ -1,0 +1,396 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="metadataextraction_cache_builder">
+	<parameters>
+        <property>
+            <name>import_mode</name>
+            <value>pdf</value>
+            <description>import mode, one of: pdf, xmlpmc</description>
+        </property>
+        <property>
+            <name>metadata_extractor_app_name</name>
+            <value>metadata_extractor</value>
+            <description>underlying metadata extractor application name</description>
+        </property>
+        <property>
+            <name>cache_report_relative_path</name>
+            <value>import_metadataextraction_cache</value>
+            <description>cache report relative path, to be set dynamically according to internal app_path</description>
+        </property>
+        <property>
+            <name>cache_report_properties_prefix</name>
+            <value>import.metadataExtraction</value>
+            <description>cache report properties prefix, to be set dynamically according to internal app_path</description>
+        </property>
+        
+		<property>
+			<name>objectstore_service_location</name>
+			<description>object store service location required for content retrieval</description>
+		</property>
+		<property>
+			<name>approved_objectstores_csv</name>
+			<description>CSV list of object stores identifiers to be processed</description>
+		</property>
+		<property>
+			<name>mimetypes_pdf</name>
+			<value>pdf,application/pdf</value>
+			<description>pdf mime types</description>
+		</property>
+        <property>
+            <name>mimetypes_xml_pmc</name>
+            <value>xml</value>
+            <description>pdf mime types</description>
+        </property>
+		<property>
+			<name>resultset_client_read_timeout</name>
+			<value>60000</value>
+			<description>resultset client read timeout (expressed in milliseconds)</description>
+		</property>
+        <property>
+            <name>resultset_client_connection_timeout</name>
+            <value>60000</value>
+            <description>resultset client connection timeout (expressed in milliseconds)</description>
+        </property>
+		<property>
+			<name>content_connection_timeout</name>
+			<value>60000</value>
+			<description>import content connection timeout (expressed in milliseconds)</description>
+		</property>
+		<property>
+			<name>content_read_timeout</name>
+			<value>60000</value>
+			<description>import content read timeout (expressed in milliseconds)</description>
+		</property>
+		<property>
+			<name>metadataextraction_excluded_checksums</name>
+			<value>$UNDEFINED$</value>
+			<description>list of content checksums excluded from metadataextraction processing</description>
+		</property>
+		<property>
+			<name>max_file_size_mb</name>
+			<value>100</value>
+			<description>maximum allowed pdf file size in Megabytes</description>
+		</property>
+		<property>
+			<name>zk_session_timeout</name>
+			<value>60000</value>
+			<description>zookeeper session timeout when handling locks (expressed in milliseconds)</description>
+		</property>
+		<property>
+			<name>cache_location</name>
+			<description>metadata extraction HDFS cache location.
+				Directory with appropriate permisions has to be created in advance.
+			</description>
+		</property>
+		<property>
+			<name>remove_sideproducts</name>
+			<value>false</value>
+			<description>flag indicating whole working directory will be erased</description>
+		</property>
+        <!-- working directory related -->
+        <property>
+            <name>execution_environment</name>
+            <value>cache_builder</value>
+            <description>execution environment used for workingDir creation</description>
+        </property>
+        <property>
+            <name>workingDir</name>
+            <value>/user/${user.name}/iis/working_dirs/${execution_environment}</value>
+            <description>working directory</description>
+        </property>
+        <property>
+            <name>reports_external_path</name>
+            <value>$UNDEFINED$</value>
+            <description>directory for storing reports from different executions of the workflow</description>
+        </property>
+	</parameters>
+
+	<global>
+		<job-tracker>${jobTracker}</job-tracker>
+		<name-node>${nameNode}</name-node>
+		<configuration>
+			<property>
+				<name>mapreduce.job.queuename</name>
+				<value>${queueName}</value>
+			</property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+			<property>
+				<name>output_name_meta</name>
+				<value>meta</value>
+			</property>
+			<property>
+				<name>output_name_fault</name>
+				<value>fault</value>
+			</property>
+		</configuration>
+	</global>
+    
+    <start to="init-workingDir" />
+
+    <action name="init-workingDir">
+        <fs>
+            <delete path="${nameNode}${workingDir}" />
+            <mkdir path="${nameNode}${workingDir}" />
+        </fs>
+        <ok to="copy-version" />
+        <error to="fail" />
+    </action>
+
+    <action name="copy-version">
+        <distcp xmlns="uri:oozie:distcp-action:0.2">
+            <arg>${wf:appPath()}/version.properties</arg>
+            <arg>${nameNode}${workingDir}</arg>
+        </distcp>
+        <ok to="import_content_url" />
+        <error to="fail" />
+    </action>
+
+	<action name="import_content_url">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/import_content_url</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/import_content_url/working_dir</value>
+				</property>
+				<property>
+					<name>output_root</name>
+					<value>${workingDir}/import_content_url/imported</value>
+				</property>
+				<property>
+					<name>mimetypes_html</name>
+					<value>text/html</value>
+				</property>
+				<property>
+					<name>mimetypes_xml_pmc</name>
+					<value>xml</value>
+				</property>
+				<property>
+					<name>mimetypes_wos</name>
+					<value>file::WoS</value>
+				</property>
+				<property>
+					<name>output_name_pdf</name>
+					<value>pdf</value>
+				</property>
+                <property>
+                    <name>output_name_xml_pmc</name>
+                    <value>xmlpmc</value>
+                </property>
+				<!-- all the other properties are autmatically propagated -->
+			</configuration>
+		</sub-workflow>
+		<ok to="preprocessing" />
+		<error to="fail" />
+	</action>
+
+	<action name="preprocessing">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_metadataextraction_checksum_preprocessing</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/preprocessing/working_dir</value>
+				</property>
+				<property>
+					<name>input</name>
+					<value>${workingDir}/import_content_url/imported/${import_mode}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${workingDir}/preprocessing/output</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="check_input_isempty" />
+		<error to="fail" />
+	</action>
+
+	<action name="check_input_isempty">
+		<java>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.utils.EmptyDatastoreVerifierProcess</arg>
+			<arg>-Iinput=${workingDir}/preprocessing/output</arg>
+			<capture-output />
+		</java>
+		<ok to="decision_is_intput_empty" />
+		<error to="fail" />
+	</action>
+
+	<decision name="decision_is_intput_empty">
+		<switch>
+			<!-- skipping metadataextraction merging process -->
+			<case to="get-existing-cache-id">${wf:actionData('check_input_isempty')['isEmpty'] eq "false"}</case>
+			<default to="create-empty-report" />
+		</switch>
+	</decision>
+
+    <action name="create-empty-report">
+        <fs>
+            <mkdir path="${nameNode}${workingDir}/report" />
+        </fs>
+        <ok to="build-report"/>
+        <error to="fail"/>
+    </action>
+
+	<action name='get-existing-cache-id'>
+		<java>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess</arg>
+			<arg>-Pcache_location=${cache_location}</arg>
+			<arg>-Pmode=read_current_id</arg>
+			<capture-output />
+		</java>
+		<ok to="decision-is-cache-empty" />
+		<error to="fail" />
+	</action>
+
+	<decision name="decision-is-cache-empty">
+		<switch>
+			<case to="cache_create">${wf:actionData('get-existing-cache-id')['cache_id'] eq "$UNDEFINED$"}</case>
+			<default to="transformer_metadataextraction_skip_extracted" />
+		</switch>
+	</decision>
+
+	<!-- start of cache based processing block, cache was provided as an input -->
+	<action name="transformer_metadataextraction_skip_extracted">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_metadataextraction_skip_extracted</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/transformers_metadataextraction_skip_extracted/working_dir</value>
+				</property>
+				<property>
+					<name>input_document_content</name>
+					<value>${workingDir}/preprocessing/output</value>
+				</property>
+				<property>
+					<name>input_document_meta</name>
+					<value>${cache_location}/${wf:actionData('get-existing-cache-id')['cache_id']}/meta</value>
+				</property>
+				<property>
+					<name>output_document_content</name>
+					<value>${workingDir}/transformers_metadataextraction_skip_extracted/tobeprocessed_content</value>
+				</property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>${cache_report_relative_path}</value>
+                </property>
+                <property>
+                    <name>report_properties_prefix</name>
+                    <value>${cache_report_properties_prefix}</value>
+                </property>
+			</configuration>
+		</sub-workflow>
+		<ok to="cache_update" />
+		<error to="fail" />
+	</action>
+
+	<action name="cache_update">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/cache_update</app-path>
+			<propagate-configuration />
+			<configuration>
+                <property>
+                    <name>metadata_extractor_app_path</name>
+                    <value>${wf:appPath()}/${metadata_extractor_app_name}</value>
+                </property>
+				<property>
+					<name>input</name>
+					<value>${workingDir}/transformers_metadataextraction_skip_extracted/tobeprocessed_content</value>
+				</property>
+                <property>
+                    <name>existing_cache_id</name>
+                    <value>${wf:actionData('get-existing-cache-id')['cache_id']}</value>
+                </property>
+                <property>
+                    <name>output_root</name>
+                    <value>${workingDir}/metadata_extractor/output_root</value>
+                </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
+				<!-- all the other properties are autmatically propagated -->
+			</configuration>
+		</sub-workflow>
+		<ok to="build-report" />
+		<error to="fail" />
+	</action>
+	<!-- end of cache based processing block, cache was provided as an input -->
+
+	<!-- start of full input processing block, no cache was provided as an input -->
+	<action name="cache_create">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/cache_create</app-path>
+			<propagate-configuration />
+            <configuration>
+                <property>
+                    <name>metadata_extractor_app_path</name>
+                    <value>${wf:appPath()}/${metadata_extractor_app_name}</value>
+                </property>
+                <property>
+                    <name>input</name>
+                    <value>${workingDir}/preprocessing/output</value>
+                </property>
+                <property>
+                    <name>output_root</name>
+                    <value>${workingDir}/metadata_extractor/output_root</value>
+                </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
+            </configuration>
+		</sub-workflow>
+		<ok to="build-report" />
+		<error to="fail" />
+	</action>
+    <!-- end of full input processing block, no cache was provided as an input -->
+
+    <action name="build-report">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/report</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>working_dir</name>
+                    <value>${workingDir}/report/working_dir</value>
+                </property>
+                <property>
+                    <name>input_partial_reports</name>
+                    <value>${workingDir}/report</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="finalize" />
+        <error to="fail" />
+    </action>
+
+	<decision name="finalize">
+		<switch>
+			<case to="remove_sideproducts">${remove_sideproducts eq "true"}</case>
+			<default to="end" />
+		</switch>
+	</decision>
+
+	<action name="remove_sideproducts">
+		<fs>
+			<delete path="${nameNode}${workingDir}" />
+		</fs>
+		<ok to="end" />
+		<error to="fail" />
+	</action>
+
+	<kill name="fail">
+		<message>Unfortunately, the process failed -- error message:
+			[${wf:errorMessage(wf:lastErrorNode())}]
+		</message>
+	</kill>
+	<end name="end" />
+</workflow-app>

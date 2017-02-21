@@ -168,11 +168,18 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
     public void map(AvroKey<DocumentContent> key, NullWritable ignore, Context context)
             throws IOException, InterruptedException {
         DocumentContent content = key.datum();
+        String documentId = content.getId().toString();
+        
+        if (excludedIds.contains(documentId)) {
+            log.info("skipping processing for excluded id " + documentId);
+            return;
+        }
+        
         if (content.getPdf()!=null) {
             ByteBuffer byteBuffer = content.getPdf();
             if (byteBuffer.hasArray() && contentApprover.approve(byteBuffer.array())) {
                 try (InputStream inputStream = new ByteBufferInputStream(byteBuffer)) {
-                    processStream(content.getId().toString(), inputStream);
+                    processStream(documentId, inputStream);
                 }    
             } else {
                 log.info(invalidPdfHeaderMsg);
@@ -196,11 +203,6 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
                     + progresLogInterval + " elements: " + ((System.currentTimeMillis() - intervalTime) / 1000)
                     + " secs");
             intervalTime = System.currentTimeMillis();
-        }
-        
-        if (excludedIds.contains(documentId)) {
-            log.info("skipping processing for excluded id " + documentId);
-            return;
         }
         
         log.info("starting processing for id: " + documentId);

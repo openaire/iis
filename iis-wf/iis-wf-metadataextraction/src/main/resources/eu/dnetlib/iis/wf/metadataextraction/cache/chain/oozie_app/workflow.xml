@@ -1,0 +1,284 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="metadataextraction_cache_chain">
+
+	<parameters>
+        <property>
+            <name>metadata_extractor_app_name</name>
+            <description>metadata_extractor application name</description>
+        </property>
+        <property>
+            <name>cache_report_relative_path</name>
+            <description>cache report relative path, to be set dynamically according to internal app_path</description>
+        </property>
+        <property>
+            <name>cache_report_properties_prefix</name>
+            <description>cache report properties prefix, to be set dynamically according to internal app_path</description>
+        </property>
+        
+		<property>
+			<name>input</name>
+			<description>input document content directory</description>
+		</property>
+		<property>
+			<name>output_root</name>
+			<description>metadata extraction output directory</description>
+		</property>
+		<property>
+			<name>excluded_ids</name>
+			<value>$UNDEFINED$</value>
+			<description>list of content identifiers excluded from metadataextraction processing</description>
+		</property>
+		<property>
+			<name>max_file_size_mb</name>
+			<value>$UNDEFINED$</value>
+			<description>maximum allowed file size in Megabytes</description>
+		</property>
+		<property>
+			<name>content_connection_timeout</name>
+			<value>60000</value>
+			<description>streaming content connection timeout (expressed in milliseconds)</description>
+		</property>
+		<property>
+			<name>content_read_timeout</name>
+			<value>60000</value>
+			<description>streaming content read timeout (expressed in milliseconds)</description>
+		</property>
+		<property>
+			<name>zk_session_timeout</name>
+			<value>60000</value>
+			<description>zookeeper session timeout when handling locks (expressed in milliseconds)</description>
+		</property>
+		<property>
+			<name>cache_location</name>
+			<description>cache location stored in HDFS</description>
+		</property>
+		<property>
+			<name>output_name_meta</name>
+			<value>meta</value>
+			<description>metadata output subdirectory name</description>
+		</property>
+		<property>
+			<name>output_name_fault</name>
+			<value>fault</value>
+			<description>fault output subdirectory name</description>
+		</property>
+	</parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+	<start to="check_input_isempty" />
+
+	<action name='check_input_isempty'>
+		<java>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.utils.EmptyDatastoreVerifierProcess</arg>
+			<arg>-Iinput=${input}</arg>
+			<capture-output />
+		</java>
+		<ok to="decision_is_intput_empty" />
+		<error to="fail" />
+	</action>
+
+	<decision name="decision_is_intput_empty">
+		<switch>
+			<!-- skipping metadataextraction merging process -->
+			<case to="get-existing-cache-id">${wf:actionData('check_input_isempty')['isEmpty'] eq "false"}</case>
+			<default to="generate-empty-output" />
+		</switch>
+	</decision>
+
+	<action name="generate-empty-output">
+		<java>
+			<prepare>
+				<!-- notice: directory have to aligned with skipped action output -->
+				<delete path="${nameNode}${output_root}" />
+				<mkdir path="${nameNode}${output_root}" />
+			</prepare>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+			<arg>-C{meta,
+				eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
+				eu/dnetlib/iis/common/data/empty.json}
+			</arg>
+			<arg>-C{fault,
+				eu.dnetlib.iis.audit.schemas.Fault,
+				eu/dnetlib/iis/common/data/empty.json}
+			</arg>
+			<arg>-Ometa=${output_root}/${output_name_meta}</arg>
+			<arg>-Ofault=${output_root}/${output_name_fault}</arg>
+		</java>
+		<ok to="end" />
+		<error to="fail" />
+	</action>
+
+	<action name='get-existing-cache-id'>
+		<java>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess</arg>
+			<arg>-Pcache_location=${cache_location}</arg>
+			<arg>-Pmode=read_current_id</arg>
+			<capture-output />
+		</java>
+		<ok to="decision-is-cache-empty" />
+		<error to="fail" />
+	</action>
+
+	<decision name="decision-is-cache-empty">
+		<switch>
+			<case to="cache_create">${wf:actionData('get-existing-cache-id')['cache_id'] eq "$UNDEFINED$"}</case>
+			<default to="transformer_metadataextraction_skip_extracted" />
+		</switch>
+	</decision>
+
+	<!-- start of cache based processing block, cache was provided as an input -->
+	<action name="transformer_metadataextraction_skip_extracted">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_metadataextraction_skip_extracted</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/transformers_metadataextraction_skip_extracted/working_dir</value>
+				</property>
+				<property>
+					<name>input_document_content</name>
+					<value>${input}</value>
+				</property>
+				<property>
+					<name>input_document_meta</name>
+					<value>${cache_location}/${wf:actionData('get-existing-cache-id')['cache_id']}/meta</value>
+				</property>
+				<property>
+					<name>output_document_content</name>
+					<value>${workingDir}/transformers_metadataextraction_skip_extracted/tobeprocessed_content</value>
+				</property>
+				<property>
+					<name>output_document_meta</name>
+					<value>${workingDir}/transformers_metadataextraction_skip_extracted/tobereturned_meta</value>
+				</property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>${cache_report_relative_path}</value>
+                </property>
+                <property>
+                    <name>report_properties_prefix</name>
+                    <value>${cache_report_properties_prefix}</value>
+                </property>
+			</configuration>
+		</sub-workflow>
+		<ok to="cache_update" />
+		<error to="fail" />
+	</action>
+
+	<action name="cache_update">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/cache_update</app-path>
+			<propagate-configuration />
+			<configuration>
+                <property>
+                    <name>metadata_extractor_app_path</name>
+                    <value>${wf:appPath()}/${metadata_extractor_app_name}</value>
+                </property>
+				<property>
+					<name>input</name>
+					<value>${workingDir}/transformers_metadataextraction_skip_extracted/tobeprocessed_content</value>
+				</property>
+                <property>
+                    <name>existing_cache_id</name>
+                    <value>${wf:actionData('get-existing-cache-id')['cache_id']}</value>
+                </property>
+				<property>
+					<name>output_root</name>
+					<value>${workingDir}/metadata_extractor/output_root</value>
+				</property>
+				<!-- all the other properties are autmatically propagated -->
+			</configuration>
+		</sub-workflow>
+		<ok to="merge_outputs" />
+		<error to="fail" />
+	</action>
+
+	<fork name="merge_outputs">
+		<path start="postprocessing-fault" />
+		<path start="transformers_common_union_meta_merge_outputs" />
+	</fork>
+
+	<action name="postprocessing-fault">
+		<distcp xmlns="uri:oozie:distcp-action:0.2">
+			<prepare>
+				<delete path="${nameNode}${output_root}/${output_name_fault}" />
+			</prepare>
+			<arg>${nameNode}${workingDir}/metadata_extractor/output_root/${output_name_fault}</arg>
+			<arg>${nameNode}${output_root}/${output_name_fault}</arg>
+		</distcp>
+		<ok to="merge_joining" />
+		<error to="fail" />
+	</action>
+
+	<action name="transformers_common_union_meta_merge_outputs">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/transformers_common_union</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>input_a</name>
+					<value>${workingDir}/transformers_metadataextraction_skip_extracted/tobereturned_meta</value>
+				</property>
+				<property>
+					<name>input_b</name>
+					<value>${workingDir}/metadata_extractor/output_root/${output_name_meta}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${output_root}/${output_name_meta}</value>
+				</property>
+				<property>
+					<name>schema</name>
+					<value>eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="merge_joining" />
+		<error to="fail" />
+	</action>
+
+	<join name="merge_joining" to="end" />
+	<!-- end of cache based processing block, cache was provided as an input -->
+
+	<!-- start of full input processing block, no cache was provided as an input -->
+	<action name="cache_create">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/cache_create</app-path>
+			<propagate-configuration />
+            <configuration>
+                <property>
+                    <name>metadata_extractor_app_path</name>
+                    <value>${wf:appPath()}/${metadata_extractor_app_name}</value>
+                </property>
+            </configuration>
+		</sub-workflow>
+		<ok to="end" />
+		<error to="fail" />
+	</action>
+    <!-- end of full input processing block, no cache was provided as an input -->
+
+	<kill name="fail">
+		<message>Unfortunately, the process failed -- error message:
+			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+	</kill>
+    
+	<end name="end" />
+    
+</workflow-app>

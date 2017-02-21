@@ -33,7 +33,7 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
 
 	public static final String OUTPUT_PROPERTY_CACHE_ID = "cache_id";
 	
-	public static final String PARAM_CACHE_DIR = "default_cache_location";
+	public static final String PARAM_CACHE_DIR = "cache_location";
 	
 	public static final String PARAM_MODE = "mode";
 	

@@ -31,6 +31,11 @@
             <value>import_ingest_pmc</value>
             <description>directory for storing report (relative to output_report_root_path)</description>
         </property>
+        <property>
+            <name>excluded_ids</name>
+            <value>$UNDEFINED$</value>
+            <description>excluded identifiers list</description>
+        </property>
 	</parameters>
 
 
@@ -162,6 +167,10 @@
 					<name>output.fault</name>
 					<value>${output_name_fault}</value>
 				</property>
+                <property>
+                    <name>excluded.ids</name>
+                   <value>${excluded_ids}</value>
+                </property>
 				<property>
 					<name>mapreduce.job.map.class</name>
 					<value>eu.dnetlib.iis.wf.ingest.pmc.metadata.MetadataImporter</value>

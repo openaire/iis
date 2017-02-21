@@ -157,7 +157,7 @@
             <description>maximum allowed xml or text file size in Megabytes</description>
         </property>
         <property>
-            <name>ingest_pmc_default_cache_location</name>
+            <name>ingest_pmc_cache_location</name>
             <description>PMC ingestion HDFS cache location</description>
         </property>
         <!-- metadata extraction related -->
@@ -172,7 +172,7 @@
             <description>maximum allowed pdf file size in Megabytes</description>
         </property>
         <property>
-            <name>metadataextraction_default_cache_location</name>
+            <name>metadataextraction_cache_location</name>
             <description>metadata extraction HDFS cache location</description>
         </property>
         <!-- project reference extraction related -->

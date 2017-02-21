@@ -1,4 +1,7 @@
 ## This is a classpath-based import file (this header is required)
 metadata_extractor classpath eu/dnetlib/iis/wf/metadataextraction/prefetched/oozie_app
+ingest_pmc_metadata classpath eu/dnetlib/iis/wf/ingest/pmc/prefetched/oozie_app
+cache_update classpath eu/dnetlib/iis/wf/metadataextraction/cache/update/oozie_app
+cache_create classpath eu/dnetlib/iis/wf/metadataextraction/cache/create/oozie_app
 transformers_metadataextraction_skip_extracted classpath eu/dnetlib/iis/wf/transformers/metadataextraction/skip_extracted/oozie_app
 transformers_common_union classpath eu/dnetlib/iis/wf/transformers/common/union/oozie_app
