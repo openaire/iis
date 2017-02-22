@@ -1,0 +1,3 @@
+## This is a classpath-based import file (this header is required)
+cache_chain classpath eu/dnetlib/iis/wf/metadataextraction/cache/chain/oozie_app
+metadata_extractor_mock classpath eu/dnetlib/iis/wf/metadataextraction/mock/oozie_app

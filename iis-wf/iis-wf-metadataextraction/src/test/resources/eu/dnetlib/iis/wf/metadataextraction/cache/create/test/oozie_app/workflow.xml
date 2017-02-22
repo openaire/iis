@@ -1,0 +1,108 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-metadataextraction_cache_create">
+	
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+
+    <start to="cache_create"/>
+       
+    <action name="cache_create">
+		<sub-workflow>
+            <app-path>${wf:appPath()}/cache_create</app-path>
+            <propagate-configuration/>
+            <configuration>
+            	<property>
+                    <name>metadata_extractor_app_path</name>
+                    <value>${wf:appPath()}/metadata_extractor_mock</value>
+                </property>
+                <!-- metadataextraction_mock related parameters -->
+                <property>
+                    <name>input_fault_json_location</name>
+                    <value>eu/dnetlib/iis/wf/metadataextraction/cache/data/mock/fault_1.json</value>
+                </property>
+                <property>
+                    <name>input_meta_json_location</name>
+                    <value>eu/dnetlib/iis/wf/metadataextraction/cache/data/mock/meta_1.json</value>
+                </property>
+                <property>
+                    <name>lock_managing_process</name>
+                    <value>eu.dnetlib.iis.wf.metadataextraction.LockManagingProcessMock</value>
+                </property>
+                <!-- irrelevant input, omitted by metadataextraction mock -->
+                <property>
+                    <name>input</name>
+                    <value>$UNDEFINED$</value>
+                </property>
+				<property>
+					<name>output_root</name>
+					<value>${workingDir}/cache_create</value>
+				</property>
+                <property>
+                    <name>output_name_meta</name>
+                    <value>meta</value>
+                </property>
+                <property>
+                    <name>output_name_fault</name>
+                    <value>fault</value>
+                </property>
+                
+                <property>
+                    <name>cache_location</name>
+                    <value>${workingDir}/cache</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+		<ok to="get-cache-id"/>
+		<error to="fail" />
+	</action>
+    
+    <action name="get-cache-id">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess</arg>
+            <arg>-Pcache_location=${workingDir}/cache</arg>
+            <arg>-Pmode=read_current_id</arg>
+            <capture-output />
+        </java>
+        <ok to="consumer" />
+        <error to="fail" />
+    </action>
+    
+    <action name="consumer">
+		<java>
+			<!-- This is simple wrapper for the Java code -->
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<!-- The business Java code that gets to be executed -->
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+			<!-- Specification of the input ports -->
+			<arg>-C{meta,
+				eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
+				eu/dnetlib/iis/wf/metadataextraction/cache/data/mock/meta_1.json}</arg>
+            <arg>-C{fault,
+            eu.dnetlib.iis.audit.schemas.Fault,
+                eu/dnetlib/iis/wf/metadataextraction/cache/data/mock/fault_1.json}</arg>
+			<!-- All input and output ports have to be bound to paths in HDFS -->
+			<arg>-Imeta=${workingDir}/cache/${wf:actionData('get-cache-id')['cache_id']}/meta</arg>
+            <arg>-Ifault=${workingDir}/cache/${wf:actionData('get-cache-id')['cache_id']}/fault</arg>
+		</java>
+		<ok to="end" />
+		<error to="fail" />
+	</action>
+    
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message: [${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+    <end name="end"/>
+</workflow-app>

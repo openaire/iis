@@ -1,0 +1,65 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="metadataextraction_mock">
+	
+	<parameters>
+		<property>
+			<name>input_meta_json_location</name>
+            <value>eu/dnetlib/iis/common/data/empty.json</value>
+			<description>input metadata json file location</description>
+		</property>
+        <property>
+            <name>input_fault_json_location</name>
+            <value>eu/dnetlib/iis/common/data/empty.json</value>
+            <description>input fault json file location</description>
+        </property>
+		<property>
+			<name>output_root</name>
+			<description>metadata extraction output directory</description>
+		</property>
+		<property>
+			<name>output_name_meta</name>
+			<value>meta</value>
+			<description>metadata output subdirectory name</description>
+		</property>
+		<property>
+			<name>output_name_fault</name>
+			<value>fault</value>
+			<description>Fault output subdirectory name.
+			Fault#supplementaryData conveys data identified with the following keys:
+			'url' - PDF document URL causing failure
+			'processing_time' - time taken by cermine to process PDF document, expressed in milliseconds, 
+				generated only when log_fault_processing_time_threshold_secs is exceeded
+			</description>
+		</property>
+	</parameters>
+    
+    <start to="generate-output" />
+
+	<action name="generate-output">
+        <java>
+            <prepare>
+                <!-- notice: directory have to aligned with skipped action output -->
+                <delete path="${nameNode}${output_root}" />
+                <mkdir path="${nameNode}${output_root}" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{meta,
+                eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
+                ${input_meta_json_location}}
+            </arg>
+            <arg>-C{fault,
+                eu.dnetlib.iis.audit.schemas.Fault,
+                ${input_fault_json_location}}
+            </arg>
+            <arg>-Ometa=${output_root}/${output_name_meta}</arg>
+            <arg>-Ofault=${output_root}/${output_name_fault}</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message: [${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+    <end name="end"/>
+</workflow-app>

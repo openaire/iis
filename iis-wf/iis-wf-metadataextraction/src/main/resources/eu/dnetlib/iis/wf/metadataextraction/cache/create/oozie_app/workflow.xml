@@ -5,7 +5,11 @@
             <name>metadata_extractor_app_path</name>
             <description>metadata_extractor application path location</description>
         </property>
-        
+        <property>
+            <name>lock_managing_process</name>
+            <value>eu.dnetlib.iis.common.lock.LockManagingProcess</value>
+            <description>Lock managing process, to be overriden in integration tests</description>
+        </property>
 		<property>
 			<name>input</name>
 			<description>input document content directory</description>
@@ -91,7 +95,7 @@
 	<action name="obtain-lock_for_initializing">
 		<java>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
+			<arg>${lock_managing_process}</arg>
 			<arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
 			<arg>-Pnode_id=${cache_location}</arg>
 			<arg>-Pmode=obtain</arg>
@@ -165,7 +169,7 @@
 	<action name="release-lock-and-fail">
 		<java>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
+			<arg>${lock_managing_process}</arg>
 			<arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
 			<arg>-Pnode_id=${cache_location}</arg>
 			<arg>-Pmode=release</arg>
@@ -177,7 +181,7 @@
 	<action name="release-lock-and-end">
 		<java>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.common.lock.LockManagingProcess</arg>
+			<arg>${lock_managing_process}</arg>
 			<arg>-Pzk_session_timeout=${zk_session_timeout}</arg>
 			<arg>-Pnode_id=${cache_location}</arg>
 			<arg>-Pmode=release</arg>

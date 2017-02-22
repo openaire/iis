@@ -1,0 +1,9 @@
+{
+  "inputObjectId": "id1",
+  "timestamp": 0,
+  "code": "com.itextpdf.text.exceptions.InvalidPdfException",
+  "message": "content PDF header not approved!",
+  "stackTrace": null,
+  "causes": null,
+  "supplementaryData": null
+}
