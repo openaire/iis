@@ -1,0 +1,5 @@
+{"id": "id-1", "url": "http://someurl1.com", "mimeType": "pdf", "contentChecksum": "checksum-1", "contentSizeKB": 0}
+{"id": "id-2", "url": "http://someurl2.com", "mimeType": "pdf", "contentChecksum": "checksum-2", "contentSizeKB": 0}
+{"id": "id-3", "url": "http://someurl3.com", "mimeType": "pdf", "contentChecksum": null, "contentSizeKB": 0}
+{"id": "id-4", "url": "http://someurl5.com", "mimeType": "pdf", "contentChecksum": "non-existing", "contentSizeKB": 0}
+{"id": "id-5", "url": "http://someurl1.com", "mimeType": "pdf", "contentChecksum": "checksum-2", "contentSizeKB": 0}

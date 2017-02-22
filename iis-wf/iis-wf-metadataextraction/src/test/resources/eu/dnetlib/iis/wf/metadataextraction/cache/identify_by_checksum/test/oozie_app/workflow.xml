@@ -201,10 +201,9 @@
             <arg>-C{meta_out_1st,
                 eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
                 eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/data/output/meta_1.json}</arg>
-            <!-- fault indentifier is currently not translated -->
             <arg>-C{fault_out_1st,
             eu.dnetlib.iis.audit.schemas.Fault,
-                eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/data/cache/fault_1.json}</arg>
+                eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/data/output/fault_1.json}</arg>
             <!-- no reports for 1st run since cache was initialized and metadataextractor module was mocked -->
 
             <arg>-C{meta_out_2nd,

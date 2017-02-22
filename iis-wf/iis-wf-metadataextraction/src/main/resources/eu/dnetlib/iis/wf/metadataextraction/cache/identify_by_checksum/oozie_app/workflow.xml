@@ -164,13 +164,28 @@
 	</action>
 
 	<action name="postprocessing-fault">
-		<distcp xmlns="uri:oozie:distcp-action:0.2">
-			<prepare>
-				<delete path="${nameNode}${output_root}/${output_name_fault}" />
-			</prepare>
-			<arg>${nameNode}${workingDir}/metadataextraction_cached/out/${output_name_fault}</arg>
-			<arg>${nameNode}${output_root}/${output_name_fault}</arg>
-		</distcp>
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_metadataextraction_checksum_postprocessing_fault</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/postprocessing_fault/working_dir</value>
+                </property>
+                <property>
+                    <name>input_document_content_url</name>
+                    <value>${input}</value>
+                </property>
+                <property>
+                    <name>input_fault</name>
+                    <value>${workingDir}/metadataextraction_cached/out/${output_name_fault}</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${output_root}/${output_name_fault}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
 		<ok to="postprocessing-joining" />
 		<error to="fail" />
 	</action>

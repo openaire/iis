@@ -1,0 +1,27 @@
+{
+  "inputObjectId": "checksum-1",
+  "timestamp": 123,
+  "code": "file_invalid",
+  "message": "content PDF header not approved!",
+  "stackTrace": "some stacktrace",
+  "causes": [{"code": "cause-code-1", "message": "caused by PDF file validator"}],
+  "supplementaryData": {"key-1": "val-1", "key-2": "val-2"}
+}
+{
+  "inputObjectId": "checksum-2",
+  "timestamp": 456,
+  "code": "file_empty",
+  "message": "got empty file content!",
+  "stackTrace": null,
+  "causes": null,
+  "supplementaryData": null
+}
+{
+  "inputObjectId": "checksum-unmatched",
+  "timestamp": 0,
+  "code": "error_code_1",
+  "message": "invalid file!",
+  "stackTrace": null,
+  "causes": null,
+  "supplementaryData": null
+}
