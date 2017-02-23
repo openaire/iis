@@ -95,9 +95,9 @@ public class MatchedOrganizationActionBuilderModuleFactoryTest {
         assertEquals(orgId, action.getTargetColumn());
         assertEquals(docId, action.getTargetRowKey());
         assertEquals(RelType.resultOrganization.toString() + '_' + SubRelType.affiliation + '_'
-                + Affiliation.RelName.hasAuthorInstitutionOf, action.getTargetColumnFamily());
+                + Affiliation.RelName.hasAuthorInstitution, action.getTargetColumnFamily());
         assertOaf(action.getTargetValue(), module.getConfidenceToTrustLevelNormalizationFactor(), 
-                docId, orgId, Affiliation.RelName.hasAuthorInstitutionOf.toString());
+                docId, orgId, Affiliation.RelName.hasAuthorInstitution.toString());
 //      checking backward relation
         action = actions.get(1);
         assertNotNull(action);

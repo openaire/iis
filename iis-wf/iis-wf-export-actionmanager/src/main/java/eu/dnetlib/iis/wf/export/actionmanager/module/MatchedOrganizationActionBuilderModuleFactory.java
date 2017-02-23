@@ -27,7 +27,7 @@ import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
  */
 public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActionBuilderFactory<MatchedOrganization> {
 
-    private static final String REL_CLASS_HAS_AUTHOR_INSTITUTION_OF = Affiliation.RelName.hasAuthorInstitutionOf.toString();
+    private static final String REL_CLASS_HAS_AUTHOR_INSTITUTION_OF = Affiliation.RelName.hasAuthorInstitution.toString();
     
     private static final String REL_CLASS_IS_AUTHOR_INSTITUTION_OF = Affiliation.RelName.isAuthorInstitutionOf.toString();
 
