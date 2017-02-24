@@ -20,13 +20,18 @@ public class WebServiceMDStoreFacade extends AbstractResultSetAwareWebServiceFac
     
     /**
      * @param serviceLocation MDStore webservice location
+     * @param serviceReadTimeout service read timeout
+     * @param serviceConnectionTimeout service connection timeout
      * @param resultSetReadTimeout resultset read timeout
      * @param resultSetConnectionTimeout result set connection timeout
      * @param resultSetPageSize resultset page size
      */
     public WebServiceMDStoreFacade(String serviceLocation, 
+            long serviceReadTimeout, long serviceConnectionTimeout,
             long resultSetReadTimeout, long resultSetConnectionTimeout, int resultSetPageSize) {
-        super(MDStoreService.class, serviceLocation, resultSetReadTimeout, resultSetConnectionTimeout, resultSetPageSize);
+        super(MDStoreService.class, serviceLocation, 
+                serviceReadTimeout, serviceConnectionTimeout, 
+                resultSetReadTimeout, resultSetConnectionTimeout, resultSetPageSize);
     }
     
     //------------------------ LOGIC --------------------------

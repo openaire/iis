@@ -27,13 +27,18 @@ public class WebServiceISLookupFacade extends AbstractResultSetAwareWebServiceFa
     
     /**
      * @param serviceLocation database service location
+     * @param serviceReadTimeout service read timeout
+     * @param serviceConnectionTimeout service connection timeout
      * @param resultSetReadTimeout result set providing database results read timeout
      * @param resultSetConnectionTimeout result set connection timeout
      * @param resultSetPageSize result set data chunk size
      */
     public WebServiceISLookupFacade(String serviceLocation, 
+            long serviceReadTimeout, long serviceConnectionTimeout,
             long resultSetReadTimeout, long resultSetConnectionTimeout, int resultSetPageSize) {
-        super(ISLookUpService.class, serviceLocation, resultSetReadTimeout, resultSetConnectionTimeout, resultSetPageSize);
+        super(ISLookUpService.class, serviceLocation, 
+                serviceReadTimeout, serviceConnectionTimeout, 
+                resultSetReadTimeout, resultSetConnectionTimeout, resultSetPageSize);
     }
 
     //------------------------ LOGIC --------------------------

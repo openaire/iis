@@ -20,13 +20,18 @@ public class WebServiceObjectStoreFacade extends AbstractResultSetAwareWebServic
     
     /**
      * @param serviceLocation ObjectStore webservice location
+     * @param serviceReadTimeout service read timeout
+     * @param serviceConnectionTimeout service connection timeout
      * @param resultSetReadTimeout resultset read timeout
      * @param resultSetConnectionTimeout result set connection timeout
      * @param resultSetPageSize resultset page size
      */
     public WebServiceObjectStoreFacade(String serviceLocation, 
+            long serviceReadTimeout, long serviceConnectionTimeout,
             long resultSetReadTimeout, long resultSetConnectionTimeout, int resultSetPageSize) {
-        super(ObjectStoreService.class, serviceLocation, resultSetReadTimeout, resultSetConnectionTimeout, resultSetPageSize);
+        super(ObjectStoreService.class, serviceLocation, 
+                serviceReadTimeout, serviceConnectionTimeout, 
+                resultSetReadTimeout, resultSetConnectionTimeout, resultSetPageSize);
     }
     
     //------------------------ LOGIC --------------------------

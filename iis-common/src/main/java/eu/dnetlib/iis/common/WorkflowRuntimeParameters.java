@@ -18,6 +18,14 @@ public abstract class WorkflowRuntimeParameters {
 	
 	public static final String UNDEFINED_NONEMPTY_VALUE = "$UNDEFINED$";
 	
+    // default values
+    public static final String DNET_SERVICE_READ_TIMEOUT_DEFAULT_VALUE = "60000";
+    public static final String DNET_SERVICE_CONNECTION_TIMEOUT_DEFAULT_VALUE = "60000";
+    // parameter names
+    public static final String DNET_SERVICE_CLIENT_READ_TIMEOUT = "dnet.service.client.read.timeout";
+    public static final String DNET_SERVICE_CLIENT_CONNECTION_TIMEOUT = "dnet.service.client.connection.timeout";
+
+    
 	/**
      * Retrieves parameter from hadoop context configuration when set to value different than {@link WorkflowRuntimeParameters#UNDEFINED_NONEMPTY_VALUE}.
      */

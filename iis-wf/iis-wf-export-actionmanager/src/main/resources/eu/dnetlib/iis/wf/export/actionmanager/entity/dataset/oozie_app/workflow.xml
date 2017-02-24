@@ -11,6 +11,16 @@
             <description>MDStore service holding XML metadata records to be exported as actions</description>
         </property>
         <property>
+            <name>dnet_service_client_read_timeout</name>
+            <value>60000</value>
+            <description>DNet service client reading timeout (expressed in milliseconds)</description>
+        </property>
+        <property>
+            <name>dnet_service_client_connection_timeout</name>
+            <value>60000</value>
+            <description>DNet service client connection timeout (expressed in milliseconds)</description>
+        </property>
+        <property>
             <name>action_set_id_entity_dataset</name>
             <description>Identifier of action set holding dataset entities.
             It also defines ${output_root} subdirectory name where all dataset related actions are exported.</description>
@@ -53,6 +63,8 @@
             <arg>eu.dnetlib.iis.wf.export.actionmanager.entity.DatasetExporterProcess</arg>
             <arg>-Iinput=${input}</arg>
             <arg>-Pmdstore.facade.factory.classname=eu.dnetlib.iis.wf.export.actionmanager.entity.facade.WebServiceMDStoreFacadeFactory</arg>
+            <arg>-Pdnet.service.client.read.timeout=${dnet_service_client_read_timeout}</arg>
+            <arg>-Pdnet.service.client.connection.timeout=${dnet_service_client_connection_timeout}</arg>
             <arg>-Pexport.entity.mdstore.service.location=${mdstore_service_location}</arg>
             <arg>-Pexport.action.setid=${action_set_id_entity_dataset}</arg>
             <arg>-Pexport.seq.file.output.dir.root=${output_root}</arg>

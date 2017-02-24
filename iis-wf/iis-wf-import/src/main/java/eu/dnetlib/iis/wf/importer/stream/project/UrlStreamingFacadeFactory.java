@@ -1,10 +1,16 @@
 package eu.dnetlib.iis.wf.importer.stream.project;
 
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.DNET_SERVICE_CLIENT_CONNECTION_TIMEOUT;
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.DNET_SERVICE_CLIENT_READ_TIMEOUT;
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.DNET_SERVICE_CONNECTION_TIMEOUT_DEFAULT_VALUE;
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.DNET_SERVICE_READ_TIMEOUT_DEFAULT_VALUE;
+
 import java.net.MalformedURLException;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
 
+import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeFactory;
 
 /**
@@ -32,7 +38,9 @@ public class UrlStreamingFacadeFactory implements ServiceFacadeFactory<Streaming
                 compress = Boolean.parseBoolean(parameters.get(IMPORT_PROJECT_STREAM_COMPRESS));
             }
             
-            return new UrlStreamingFacade(parameters.get(IMPORT_PROJECT_STREAM_ENDPOINT_URL), compress);
+            return new UrlStreamingFacade(parameters.get(IMPORT_PROJECT_STREAM_ENDPOINT_URL), compress,
+                    Integer.parseInt(WorkflowRuntimeParameters.getParamValue(DNET_SERVICE_CLIENT_READ_TIMEOUT, DNET_SERVICE_READ_TIMEOUT_DEFAULT_VALUE, parameters)),
+                    Integer.parseInt(WorkflowRuntimeParameters.getParamValue(DNET_SERVICE_CLIENT_CONNECTION_TIMEOUT, DNET_SERVICE_CONNECTION_TIMEOUT_DEFAULT_VALUE, parameters)));
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

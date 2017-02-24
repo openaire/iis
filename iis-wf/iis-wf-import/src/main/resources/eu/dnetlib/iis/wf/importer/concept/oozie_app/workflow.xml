@@ -28,6 +28,16 @@
             <description>directory for storing report (relative to output_report_root_path)</description>
         </property>
         <property>
+            <name>dnet_service_client_read_timeout</name>
+            <value>60000</value>
+            <description>DNet service client reading timeout (expressed in milliseconds)</description>
+        </property>
+        <property>
+            <name>dnet_service_client_connection_timeout</name>
+            <value>60000</value>
+            <description>DNet service client connection timeout (expressed in milliseconds)</description>
+        </property>
+        <property>
             <name>resultset_client_read_timeout</name>
             <value>60000</value>
             <description>result set client reading timeout (expressed in milliseconds)</description>
@@ -70,6 +80,8 @@
 			<arg>-Pimport.context.ids.csv=${context_ids_csv}</arg>
             <arg>-Pimport.resultset.client.read.timeout=${resultset_client_read_timeout}</arg>
             <arg>-Pimport.resultset.client.connection.timeout=${resultset_client_connection_timeout}</arg>
+            <arg>-Pdnet.service.client.read.timeout=${dnet_service_client_read_timeout}</arg>
+            <arg>-Pdnet.service.client.connection.timeout=${dnet_service_client_connection_timeout}</arg>
             <arg>-Pimport.facade.factory.classname=${islookup_facade_factory_classname}</arg>
 			<arg>-Oconcepts=${output}</arg>
 			<capture-output />
