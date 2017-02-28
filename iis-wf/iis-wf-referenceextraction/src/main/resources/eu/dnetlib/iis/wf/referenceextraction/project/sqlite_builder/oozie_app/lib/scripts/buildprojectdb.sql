@@ -22,7 +22,7 @@ create table grants as select acronym,
           when fundingclass2="NC3Rs" then "NC3Rs"
           when fundingclass2="NERC" then "NERC|Natural Environment Research Council"
           when fundingclass2="STFC" then "STFC|Science and Technology Facilities Council"
-          else null end as rcuk_subfunder
+          else '' end as rcuk_subfunder
      from 
           (setschema 'acronym,normalizedacro,grantid,fundingclass1,fundingclass2,id,c1,c2,c3,c4,c5,c6,c7,c8' 
           select case when c1 is null then "UNKNOWN" else c1 end as acronym, 
