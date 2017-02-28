@@ -12,7 +12,18 @@ create table grants as select acronym,
      case when c3='' then '_^' else c3 end as nih_orgname,
      c4 as nih_activity,c5 as nih_administeringic,
      case when c6='' then regexpr('0*(\d+)$', c7) else regexpr('0*(\d+)', c6) end as nih_serialnumber,
-     c7 as nih_coreprojectnum,c8 as alias from 
+     c7 as nih_coreprojectnum,c8 as alias,
+     case when fundingclass2="AHRC" then "AHRC|Arts and Humanities Research Council"
+          when fundingclass2="BBSRC" then "BBSRC|Biotechnology and Biological Sciences Research Council"
+          when fundingclass2="EPSRC" then "EPSRC|Engineering and Physical Sciences Research Council"
+          when fundingclass2="ESRC" then "ESRC|Economic and Social Research Council"
+          when fundingclass2="Innovate UK" then "Innovate UK"
+          when fundingclass2="MRC" then "MRC|Methodology Research Programme"
+          when fundingclass2="NC3Rs" then "NC3Rs"
+          when fundingclass2="NERC" then "NERC|Natural Environment Research Council"
+          when fundingclass2="STFC" then "STFC|Science and Technology Facilities Council"
+          else '' end as rcuk_subfunder
+     from 
           (setschema 'acronym,normalizedacro,grantid,fundingclass1,fundingclass2,id,c1,c2,c3,c4,c5,c6,c7,c8' 
           select case when c1 is null then "UNKNOWN" else c1 end as acronym, 
                  case when c1 is not null then regexpr("[_\s]",normalizetext(lower(c1)),"[_\s]") else "unknown" end as normalizedacro, 
@@ -24,13 +35,13 @@ create table grants as select acronym,
 
 update grants set alias = "$a" where alias is null;
 insert into grants 
-select acronym, normalizedacro, regexpr("\s",grantid,""), fundingclass1, fundingclass2, id, nwo_opt2, nwo_opt1, nih_orgname, nih_activity, nih_administeringic, nih_serialnumber, nih_coreprojectnum, regexpr("\s",alias,"")  
+select acronym, normalizedacro, regexpr("\s",grantid,""), fundingclass1, fundingclass2, id, nwo_opt2, nwo_opt1, nih_orgname, nih_activity, nih_administeringic, nih_serialnumber, nih_coreprojectnum, regexpr("\s",alias,""), rcuk_subfunder  
 from grants where fundingclass1="FWF";
 delete from grants where length(grantid)<4 and fundingclass1="FWF";
 delete from grants where cast(grantid as int) between 1950 and 2030 and fundingclass1 = "HRZZ";
 
 
-CREATE INDEX grants_index on grants (grantid,normalizedacro,acronym,fundingClass1,fundingClass2,id,nwo_opt2);
+create index grants_index on grants (grantid,normalizedacro,acronym,fundingClass1,fundingClass2,id,nwo_opt2);
 create index grants2_index on grants(nwo_opt1,acronym,fundingClass1,fundingClass2,id,nwo_opt2);
 create index grants3_index on grants(nih_serialnumber,acronym,fundingClass1,id,nih_activity,nih_administeringic,nih_coreprojectnum,nih_orgname);
 
