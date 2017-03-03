@@ -22,20 +22,21 @@ create table grants as select acronym,
           when fundingclass2="NC3Rs" then "NC3Rs"
           when fundingclass2="NERC" then "NERC|Natural Environment Research Council"
           when fundingclass2="STFC" then "STFC|Science and Technology Facilities Council"
-          else '' end as rcuk_subfunder
+          else '' end as rcuk_subfunder,
+     jsplitv(c9) as tarakeywords
      from 
-          (setschema 'acronym,normalizedacro,grantid,fundingclass1,fundingclass2,id,c1,c2,c3,c4,c5,c6,c7,c8' 
+          (setschema 'acronym,normalizedacro,grantid,fundingclass1,fundingclass2,id,c1,c2,c3,c4,c5,c6,c7,c8,c9' 
           select case when c1 is null then "UNKNOWN" else c1 end as acronym, 
                  case when c1 is not null then regexpr("[_\s]",normalizetext(lower(c1)),"[_\s]") else "unknown" end as normalizedacro, 
                  c3 as grantid,strsplit(c4,"delimiter:::") as fundingClass,c2 as id, 
-                 jsonpath(c5,'$.NWOgebied','$.dossiernr','$.orgname', '$.activity', '$.administeringic', '$.serialnumber', '$.coreprojectnum','$.alias') 
+                 jsonpath(c5,'$.NWOgebied','$.dossiernr','$.orgname', '$.activity', '$.administeringic', '$.serialnumber', '$.coreprojectnum','$.alias','$.keywords') 
                        from 
                           (select * from (setschema 'c1,c2,c3,c4,c5' select jsonpath(c1, '$.projectAcronym', '$.id' , '$.projectGrantId','$.fundingClass','$.jsonextrainfo') from jsoninp) 
                            where regexprmatches("::",c4))) where fundingclass1!='NIH' OR (nih_coreprojectnum!='' AND nih_activity!='' AND nih_administeringic!='' AND nih_serialnumber is not null AND nih_serialnumber!='0' AND nih_serialnumber!='');
 
 update grants set alias = "$a" where alias is null;
 insert into grants 
-select acronym, normalizedacro, regexpr("\s",grantid,""), fundingclass1, fundingclass2, id, nwo_opt2, nwo_opt1, nih_orgname, nih_activity, nih_administeringic, nih_serialnumber, nih_coreprojectnum, regexpr("\s",alias,""), rcuk_subfunder  
+select acronym, normalizedacro, regexpr("\s",grantid,""), fundingclass1, fundingclass2, id, nwo_opt2, nwo_opt1, nih_orgname, nih_activity, nih_administeringic, nih_serialnumber, nih_coreprojectnum, regexpr("\s",alias,""), rcuk_subfunder, tarakeywords
 from grants where fundingclass1="FWF";
 delete from grants where length(grantid)<4 and fundingclass1="FWF";
 delete from grants where cast(grantid as int) between 1950 and 2030 and fundingclass1 = "HRZZ";
