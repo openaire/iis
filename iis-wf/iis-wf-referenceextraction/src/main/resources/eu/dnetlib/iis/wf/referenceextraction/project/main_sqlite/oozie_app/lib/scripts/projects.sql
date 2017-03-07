@@ -13,7 +13,6 @@ hidden var 'nihposfull' from select jmergeregexp(jgroup(word)) from (select * fr
 hidden var 'nihpositives' from select jmergeregexp(jgroup(word)) from (select * from nihpositives order by length(word) desc);
 hidden var 'nihnegatives' from select jmergeregexp(jgroup(word)) from (select * from nihnegatives order by length(word) desc);
 hidden var 'wt_unidentified' from select 1 where (select count(*) from (select id from grants where id="40|wt__________::1e5e62235d094afd01cd56e65112fc63" limit 1)) > 0;
-hidden var 'tara_unidentified' from select 1 where (select count(*) from (select id from grants where id="40|taraexp_____::6413b29c08e6d71a9cf6c4d50d7dc6f6" limit 1)) > 0;
 
 
 create temp table pubs as setschema 'c1,c2' select jsonpath(c1, '$.id', '$.text') from stdinput();
@@ -36,7 +35,7 @@ select docid, stripchars(middle,'.)(,[]') as middle, prev, next, lower(j2s(prev,
 from (
   setschema 'docid,prev,middle,next' select c1, textwindow2s(textacknowledgmentstara(C2),20,1,3, '(\b[Tt]ara\b)') from pubs where c2 is not null
 )), grants
-where fundingclass1='TARA' and var('tara_unidentified')=1
+where fundingclass1='TARA'
 ))
 group by docid)
 
