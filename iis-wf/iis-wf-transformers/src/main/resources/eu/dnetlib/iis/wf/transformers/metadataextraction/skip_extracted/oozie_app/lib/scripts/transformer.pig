@@ -19,25 +19,26 @@ documentContentFiltered = foreach joinedFilteredDocumentContent generate documen
 documentContentId = foreach documentContent generate id;
 documentContentIdDistinct = distinct documentContentId;
 
-joinedDocumentMeta = join documentMeta by id, documentContentIdDistinct by id;
-documentMetaFiltered = foreach joinedDocumentMeta generate 
-	documentMeta::id as id, 
-	documentMeta::title as title,
-	documentMeta::abstract as abstract,
-	documentMeta::language as language,
-	documentMeta::keywords as keywords,
-	documentMeta::externalIdentifiers as externalIdentifiers,
-	documentMeta::journal as journal,
-	documentMeta::year as year,
-	documentMeta::publisher as publisher,
-	documentMeta::references as references,
-	documentMeta::authors as authorsMeta,
-	documentMeta::affiliations as affiliations,
-	documentMeta::volume as volume,
-	documentMeta::issue as issue,
-	documentMeta::pages as pages,
-	documentMeta::publicationTypeName as publicationTypeName,
-	documentMeta::text as text;
+documentMetaFiltered = filter documentMeta by publicationTypeName is null OR publicationTypeName != '\$EMPTY$';
+joinedDocumentMeta = join documentMetaFiltered by id, documentContentIdDistinct by id;
+documentMetaOutput = foreach joinedDocumentMeta generate 
+	documentMetaFiltered::id as id, 
+	documentMetaFiltered::title as title,
+	documentMetaFiltered::abstract as abstract,
+	documentMetaFiltered::language as language,
+	documentMetaFiltered::keywords as keywords,
+	documentMetaFiltered::externalIdentifiers as externalIdentifiers,
+	documentMetaFiltered::journal as journal,
+	documentMetaFiltered::year as year,
+	documentMetaFiltered::publisher as publisher,
+	documentMetaFiltered::references as references,
+	documentMetaFiltered::authors as authorsMeta,
+	documentMetaFiltered::affiliations as affiliations,
+	documentMetaFiltered::volume as volume,
+	documentMetaFiltered::issue as issue,
+	documentMetaFiltered::pages as pages,
+	documentMetaFiltered::publicationTypeName as publicationTypeName,
+	documentMetaFiltered::text as text;
 
 store documentContentFiltered into '$output_document_content' using avro_store_document_content;
-store documentMetaFiltered into '$output_document_meta' using avro_store_document_meta;
+store documentMetaOutput into '$output_document_meta' using avro_store_document_meta;

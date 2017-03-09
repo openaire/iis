@@ -257,18 +257,12 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
      * @param documentId document identifier
      */
     private void handleException(Exception e, String documentId) throws IOException, InterruptedException {
-        try {
-            // writing empty result
-            mos.write(namedOutputMeta,
-                    new AvroKey<ExtractedDocumentMetadata>(NlmToDocumentWithBasicMetadataConverter
-                            .convertFull(documentId.toString(), null, null)));
-            // writing fault result
-            mos.write(namedOutputFault, new AvroKey<Fault>(
-                    FaultUtils.exceptionToFault(documentId, e, null)));
-        } catch (TransformationException e2) {
-            mos.close();
-            throw new RuntimeException(e2);
-        }
+        // writing empty result
+        mos.write(namedOutputMeta,
+                new AvroKey<ExtractedDocumentMetadata>(NlmToDocumentWithBasicMetadataConverter.createEmpty(documentId.toString())));
+        // writing fault result
+        mos.write(namedOutputFault, 
+                new AvroKey<Fault>(FaultUtils.exceptionToFault(documentId, e, null)));
     }
     
     /**

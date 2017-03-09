@@ -218,7 +218,7 @@
             
             <arg>-C{meta_out_3rd,
                 eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
-                eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/data/output/meta_1_2.json}</arg>
+                eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/data/output/meta_2.json}</arg>
             <!-- notice: fault was persisted in previous run therefore it is not expected to be returned -->
             <arg>-C{fault_out_3rd,
             eu.dnetlib.iis.audit.schemas.Fault,
