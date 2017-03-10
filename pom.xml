@@ -929,7 +929,7 @@
         <iis.avro.version>1.7.6-${iis.cdh.version}</iis.avro.version>
         <iis.hadoop.version>2.6.0-${iis.cdh.version}</iis.hadoop.version>
         <iis.spark.version>1.6.0-${iis.cdh.version}</iis.spark.version>
-        <iis.coansys.version>1.10-rc3</iis.coansys.version>
+        <iis.coansys.version>1.10</iis.coansys.version>
         <scala.version>2.10.6</scala.version>
     </properties>
 </project>
