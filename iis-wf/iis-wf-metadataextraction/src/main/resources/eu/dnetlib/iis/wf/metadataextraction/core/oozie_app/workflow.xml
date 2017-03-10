@@ -83,7 +83,6 @@
 	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
 	        <arg>eu.dnetlib.iis.importer.schemas.DocumentContent</arg>
 	        <arg>eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata</arg>
-	        <arg>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</arg>
 	        <arg>eu.dnetlib.iis.audit.schemas.Fault</arg>
 	        <capture-output />
 	    </java>

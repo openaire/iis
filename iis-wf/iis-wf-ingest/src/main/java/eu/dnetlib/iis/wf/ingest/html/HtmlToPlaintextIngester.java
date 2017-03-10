@@ -43,8 +43,6 @@ public class HtmlToPlaintextIngester extends Mapper<AvroKey<DocumentText>, NullW
     }
     
     private static String cleanNoMarkup(String input) {
-        String output = Jsoup.clean(input, "", Whitelist.none(), outputSettings);
-        return output!=null?output.replace("&nbsp;", ""):null;
-
+        return Jsoup.clean(input, "", Whitelist.none(), outputSettings).replace("&nbsp;", "");
     }
 }

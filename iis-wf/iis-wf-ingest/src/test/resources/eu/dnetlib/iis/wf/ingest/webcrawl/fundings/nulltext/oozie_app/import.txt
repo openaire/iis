@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-ingest_webcrawl_fundings classpath eu/dnetlib/iis/wf/ingest/webcrawl/fundings/oozie_app

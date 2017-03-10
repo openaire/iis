@@ -25,11 +25,6 @@ public class SoftwareUrlRefExtractionWfTest extends AbstractOozieWorkflowTestCas
     }
 
     @Test
-    public void testMainWorkflowWithOnlyNullText() throws Exception {
-        testWorkflow("eu/dnetlib/iis/wf/referenceextraction/softwareurl/main/sampletest_with_only_null_text");
-    }
-
-    @Test
     public void testMainWorkflowEmptyInput() throws Exception {
         testWorkflow("eu/dnetlib/iis/wf/referenceextraction/softwareurl/main/sampletest_empty_input");
     }

@@ -22,9 +22,5 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	public void testIngestWebcrawlFundingsFromBrokenXml() throws Exception {
     	testWorkflow("eu/dnetlib/iis/wf/ingest/webcrawl/fundings/brokenxml");
 	}
-	
-	@Test
-	public void testIngestWebcrawlFundingsFromNullText() throws Exception {
-    	testWorkflow("eu/dnetlib/iis/wf/ingest/webcrawl/fundings/nulltext");
-	}
+
 }

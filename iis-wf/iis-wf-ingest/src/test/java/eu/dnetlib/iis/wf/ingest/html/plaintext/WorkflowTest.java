@@ -22,9 +22,4 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	public void testIngestHtmlPlaintextFromBrokenHTML() throws Exception {
     	testWorkflow("eu/dnetlib/iis/wf/ingest/html/plaintext/brokenxml");
 	}
-	
-	@Test
-	public void testIngestHtmlPlaintextFromNullText() throws Exception {
-    	testWorkflow("eu/dnetlib/iis/wf/ingest/html/plaintext/nulltext");
-	}
 }

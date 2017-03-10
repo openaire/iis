@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- Note that documentation placed in comments in this file uses the
 "markdown" syntax (along with its way of dividing text into sections). -->
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-referenceextraction_pdb_main_sampletest">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-referenceextraction_pdb_main_sampletest_without_references">
 
     <global>
         <job-tracker>${jobTracker}</job-tracker>

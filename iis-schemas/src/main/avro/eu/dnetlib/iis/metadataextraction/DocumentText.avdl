@@ -6,6 +6,6 @@ protocol IIS{
 //      foreign key: DocumentMetadata.id ("raw document metadata" data store)
         string id;
 //      document fulltext
-        union { null , string } text = null;
+        string text;
     }
 }
