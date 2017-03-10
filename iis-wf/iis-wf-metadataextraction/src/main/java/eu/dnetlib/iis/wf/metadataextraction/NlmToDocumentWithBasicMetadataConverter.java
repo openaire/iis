@@ -2,6 +2,7 @@ package eu.dnetlib.iis.wf.metadataextraction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -54,7 +55,7 @@ public final class NlmToDocumentWithBasicMetadataConverter {
             if (nodeList == null || nodeList.isEmpty()) {
                 return null;
             }
-            Map<String, Affiliation> affiliations = new HashMap<String, Affiliation>();
+            Map<String, Affiliation> affiliations = new LinkedHashMap<String, Affiliation>();
             for (Element node : nodeList) {
                 CermineAffiliation cAff = cermineAffiliationBuilder.build(node);
                 affiliations.put(

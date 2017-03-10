@@ -76,14 +76,37 @@ public class CermineAffiliationBuilderTest {
     
     }
     
+    @Test
+    public void build_with_label() {
+        // given
+        
+        Element affNode = createAffNode("123");
+        
+        // execute
+        
+        CermineAffiliation cAff = builder.build(affNode);
+        
+        // assert
+        assertEquals("PolandInterdyscyplinarne Centrum ModelowaniaUniwersytet Warszawski Prosta 69, Warszawa", cAff.getRawText());
+    }
     
     //------------------------ PRIVATE --------------------------
 
     
     private Element createAffNode() {
+        return createAffNode(null);
+    }
+
+    private Element createAffNode(String labelText) {
         Element affNode = new Element("aff");
         affNode.setAttribute("id", "someId");
-        
+
+        if (labelText != null) {
+            Element label = new Element("label");
+            label.setText(labelText);
+            affNode.addContent(label);
+        }
+
         Element country = new Element("country");
         country.setText("Poland");
         country.setAttribute("country", "PL");
@@ -101,6 +124,5 @@ public class CermineAffiliationBuilderTest {
         affNode.addContent(address);
         return affNode;
     }
-    
     
 }

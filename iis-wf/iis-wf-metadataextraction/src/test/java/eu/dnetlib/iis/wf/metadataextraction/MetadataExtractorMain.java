@@ -108,7 +108,6 @@ public class MetadataExtractorMain {
         ExtractedDocumentMetadata extractedMetadata = null;
         try {
             ContentExtractor extractor = new ContentExtractor(timeout);
-            extractor.getConf().setTimeDebug(true);
             extractor.setPDF(inputStream);
             Element resultElem = extractor.getContentAsNLM();
             String rawText = extractor.getRawFullText();

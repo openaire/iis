@@ -413,55 +413,41 @@
     {
       "authorFullName": "Mateusz Kobos",
       "affiliationPositions": [
-        0
+        2
       ]
     },
     {
       "authorFullName": "Łukasz Bolikowski",
       "affiliationPositions": [
-        0
+        2
       ]
     },
     {
       "authorFullName": "Marek Horst",
       "affiliationPositions": [
-        0
+        2
       ]
     },
     {
       "authorFullName": "Paolo Manghi",
       "affiliationPositions": [
-        1
+        3
       ]
     },
     {
       "authorFullName": "Natalia Manola",
       "affiliationPositions": [
-        2
+        0
       ]
     },
     {
       "authorFullName": "Jochen Schirrwagen",
       "affiliationPositions": [
-        3
+        1
       ]
     }
   ],
   "affiliations": [
-    {
-      "organization": "Interdisciplinary Centre for Mathematical and Computational Modelling, University of Warsaw",
-      "countryName": "Poland",
-      "countryCode": "PL",
-      "address": "Pawinskiego 5a, 02-106 Warsaw",
-      "rawText": "Interdisciplinary Centre for Mathematical and Computational Modelling, University of Warsaw, Pawinskiego 5a, 02-106 Warsaw, Poland"
-    },
-    {
-      "organization": "Istituto di Scienza e Tecnologie dell\u0027Informazione “A. Faedo”, Consiglio Nazionale delle Ricerche",
-      "countryName": "Italy",
-      "countryCode": "IT",
-      "address": "via G. Moruzzi 1, 56124 Pisa",
-      "rawText": "Istituto di Scienza e Tecnologie dell\u0027Informazione “A. Faedo”, Consiglio Nazionale delle Ricerche, via G. Moruzzi 1, 56124 Pisa, Italy"
-    },
     {
       "organization": "Department of Informatics and Telecommunications, University of Athens",
       "countryName": "Greece",
@@ -475,6 +461,20 @@
       "countryCode": "DE",
       "address": "Universitätsstr. 25, 33615 Bielefeld",
       "rawText": "Department of Library Technology and Knowledge Management, Bielefeld University, Universitätsstr. 25, 33615 Bielefeld, Germany"
+    },
+    {
+      "organization": "Interdisciplinary Centre for Mathematical and Computational Modelling, University of Warsaw",
+      "countryName": "Poland",
+      "countryCode": "PL",
+      "address": "Pawinskiego 5a, 02-106 Warsaw",
+      "rawText": "Interdisciplinary Centre for Mathematical and Computational Modelling, University of Warsaw, Pawinskiego 5a, 02-106 Warsaw, Poland"
+    },
+    {
+      "organization": "Istituto di Scienza e Tecnologie dell\u0027Informazione “A. Faedo”, Consiglio Nazionale delle Ricerche",
+      "countryName": "Italy",
+      "countryCode": "IT",
+      "address": "via G. Moruzzi 1, 56124 Pisa",
+      "rawText": "Istituto di Scienza e Tecnologie dell\u0027Informazione “A. Faedo”, Consiglio Nazionale delle Ricerche, via G. Moruzzi 1, 56124 Pisa, Italy"
     }
   ],
   "volume": "38",

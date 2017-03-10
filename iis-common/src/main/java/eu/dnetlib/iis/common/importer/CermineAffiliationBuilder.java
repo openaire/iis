@@ -19,7 +19,6 @@ import com.google.common.base.Preconditions;
 public class CermineAffiliationBuilder {
 
 	
-	
 	//------------------------ LOGIC --------------------------
 	
 
@@ -71,12 +70,14 @@ public class CermineAffiliationBuilder {
     }
 
     
+    /**
+     * Extracts raw text from affiliation node by removing leading position label 
+     * from node string representation.
+     */
     private static void extractRawText(Element affNode, CermineAffiliation aff) {
-        String affId = affNode.getAttributeValue("id");
-        aff.setRawText(affNode.getValue().replaceFirst(affId, "").trim());
+        Element clonedAffNode = (Element) affNode.clone();
+        clonedAffNode.removeChild("label");
+        aff.setRawText(clonedAffNode.getValue().trim());
     }
-
-
-
 
 }
