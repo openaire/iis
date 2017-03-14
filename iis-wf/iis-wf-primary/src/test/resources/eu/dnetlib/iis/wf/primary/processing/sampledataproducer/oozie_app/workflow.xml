@@ -328,6 +328,15 @@
                 </property>
                 <!-- configuration for spark algorithms-->
                 <property>
+                    <name>funderReportSparkExecutorMemory</name>
+                    <value>1G</value>
+                </property>
+                <property>
+                    <name>funderReportSparkExecutorCores</name>
+                    <value>1</value>
+                </property>
+                
+                <property>
                     <name>documentsclassificationSparkExecutorMemory</name>
                     <value>1G</value>
                 </property>
@@ -482,6 +491,9 @@
             
             <arg>-C{documentToProjectReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_to_project.json}</arg>
             <arg>-IdocumentToProjectReport=${workingDir}/report/document_to_project</arg>
+            
+            <arg>-C{documentToProjectFunderReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_to_project_by_funder.json}</arg>
+            <arg>-IdocumentToProjectFunderReport=${workingDir}/report/document_to_project_by_funder</arg>
             
             <arg>-C{execTimeReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/primary-processing-execution-times.json}</arg>
             <arg>-IexecTimeReport=${workingDir}/report/primary-processing-execution-times</arg>

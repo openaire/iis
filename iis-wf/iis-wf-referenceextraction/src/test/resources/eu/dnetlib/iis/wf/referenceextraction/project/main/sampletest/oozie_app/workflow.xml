@@ -15,6 +15,14 @@
                 <name>oozie.launcher.mapred.job.queue.name</name>
                 <value>${oozieLauncherQueueName}</value>
             </property>
+            <property>
+                <name>funderReportSparkExecutorMemory</name>
+                <value>1g</value>
+            </property>
+            <property>
+                <name>funderReportSparkExecutorCores</name>
+                <value>1</value>
+            </property>
         </configuration>
     </global>
     
@@ -50,23 +58,8 @@
     <action name="referenceextraction_project">
         <sub-workflow>
             <app-path>${wf:appPath()}/referenceextraction_project</app-path>
+            <propagate-configuration />
             <configuration>
-                <property>
-                    <name>jobTracker</name>
-                    <value>${jobTracker}</value>
-                </property>
-                <property>
-                    <name>nameNode</name>
-                    <value>${nameNode}</value>
-                </property>
-                <property>
-                    <name>queueName</name>
-                    <value>${queueName}</value>
-                </property>
-                <property>
-                    <name>oozieLauncherQueueName</name>
-                    <value>${oozieLauncherQueueName}</value>
-                </property>
                 <!-- Working directory of the subworkflow -->
                 <property>
                     <name>workingDir</name>
@@ -106,9 +99,12 @@
 				eu/dnetlib/iis/wf/referenceextraction/project/data/document_to_project.json}</arg>
             <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,
                 eu/dnetlib/iis/wf/referenceextraction/project/data/report.json}</arg>
+            <arg>-C{report_funder,eu.dnetlib.iis.common.schemas.ReportEntry,
+                eu/dnetlib/iis/wf/referenceextraction/project/data/report_funder.json}</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Idocument_to_project=${workingDir}/referenceextraction_project/document_to_project</arg>
             <arg>-Ireport=${workingDir}/report/document_to_project</arg>
+            <arg>-Ireport_funder=${workingDir}/report/document_to_project_by_funder</arg>
 		</java>
 		<ok to="end" />
 		<error to="fail" />

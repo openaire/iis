@@ -1,0 +1,5 @@
+{"id":"projId-1" ,"fundingClass":"funder-1::level0", "projectGrantId":null, "projectAcronym":null, "jsonextrainfo":"{}"}
+{"id":"projId-2" ,"fundingClass":"funder-2::", "projectGrantId":null, "projectAcronym":null, "jsonextrainfo":"{}"}
+{"id":"projId-3" ,"fundingClass":"invalid_funder", "projectGrantId":null, "projectAcronym":null, "jsonextrainfo":"{}"}
+{"id":"projId-4" ,"fundingClass":null, "projectGrantId":null, "projectAcronym":null, "jsonextrainfo":"{}"}
+{"id":"projId-5" ,"fundingClass":"::level0", "projectGrantId":null, "projectAcronym":null, "jsonextrainfo":"{}"}
