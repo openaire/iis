@@ -1,4 +1,19 @@
 {
+  "documentId": "PMC3386204",
+  "projectId": "40|taraexp_____::c81e728d9d4c2f636f067f89cc14862c",
+  "confidenceLevel": 0.7745967
+}
+{
+  "documentId": "PMC3625178",
+  "projectId": "40|taraexp_____::6413b29c08e6d71a9cf6c4d50d7dc6f6",
+  "confidenceLevel": 0.7745967
+}
+{
+  "documentId": "50|od________18::6e336f58fbfcea76362597f026d6a68c",
+  "projectId": "40|rcuk________::aed720e690d630ef7ebfcd578a915a41",
+  "confidenceLevel": 0.99666107
+}
+{
   "documentId": "50|narcis______::0b552824e655d0cd2251691e1722aa20",
   "projectId": "40|nwo_________::333b8b4b6912395bdd07f7a431c44e99",
   "confidenceLevel": 0.8
@@ -22,11 +37,6 @@
   "documentId": "50|od_______908::9196de8e0cdb0e9973c3ee27f99f0243",
   "projectId": "40|mestd_______::29707834c561a798a44837112ffa0c25",
   "confidenceLevel": 0.8164966
-}
-{
-  "documentId": "50|od________18::6e336f58fbfcea76362597f026d6a68c",
-  "projectId": "40|rcuk________::aed720e690d630ef7ebfcd578a915a41",
-  "confidenceLevel": 0.99666107
 }
 {
   "documentId": "WOS:000298601300043",
