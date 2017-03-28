@@ -10,7 +10,7 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 /**
  * @author madryk
  */
-public class AffOrgMatchVotersFactory {
+public final class AffOrgMatchVotersFactory {
     
     
     //------------------------ CONSTRUCTORS --------------------------

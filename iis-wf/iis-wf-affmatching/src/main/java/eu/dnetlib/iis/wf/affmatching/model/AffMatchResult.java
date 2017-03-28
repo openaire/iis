@@ -11,11 +11,11 @@ import com.google.common.base.Preconditions;
 public class AffMatchResult {
     
     
-    private AffMatchAffiliation affiliation;
+    private final AffMatchAffiliation affiliation;
     
-    private AffMatchOrganization organization;
+    private final AffMatchOrganization organization;
     
-    private float matchStrength;
+    private final float matchStrength;
     
     
     //------------------------ CONSTRUCTORS --------------------------

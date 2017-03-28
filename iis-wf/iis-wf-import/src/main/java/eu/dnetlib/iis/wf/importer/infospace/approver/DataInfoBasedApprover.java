@@ -63,18 +63,16 @@ public class DataInfoBasedApprover implements ResultApprover, FieldApprover {
     @Override
     public boolean approve(DataInfo dataInfo) {
         if (dataInfo != null) {
-            if (inferenceProvenanceBlacklistPattern != null && dataInfo.getInferred()) {
-                if (Pattern.matches(inferenceProvenanceBlacklistPattern, dataInfo.getInferenceprovenance())) {
-                    return false;
-                }
+            if (inferenceProvenanceBlacklistPattern != null && dataInfo.getInferred() &&
+                    Pattern.matches(inferenceProvenanceBlacklistPattern, dataInfo.getInferenceprovenance())) {
+                return false;
             }
             if (skipDeletedByInference && dataInfo.getDeletedbyinference()) {
                 return false;
             }
-            if (trustLevelThreshold != null && dataInfo.getTrust() != null && !dataInfo.getTrust().isEmpty()) {
-                if (Float.valueOf(dataInfo.getTrust()) < trustLevelThreshold) {
-                    return false;
-                }
+            if (trustLevelThreshold != null && dataInfo.getTrust() != null && !dataInfo.getTrust().isEmpty()
+                    && Float.valueOf(dataInfo.getTrust()) < trustLevelThreshold) {
+                return false;
             }
         }
         return true;

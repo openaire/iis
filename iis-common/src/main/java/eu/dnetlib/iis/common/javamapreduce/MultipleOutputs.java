@@ -19,7 +19,7 @@ import eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs;
  * 
  */
 public class MultipleOutputs implements Closeable {
-	private AvroMultipleOutputs mos;
+	private final AvroMultipleOutputs mos;
 
 	public MultipleOutputs(TaskInputOutputContext<?, ?, ?, ?> context) {
 		this.mos = new AvroMultipleOutputs(context);

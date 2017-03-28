@@ -24,7 +24,7 @@ import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 public class WebcrawlFundingsIngester
 		extends Mapper<AvroKey<DocumentText>, NullWritable, AvroKey<DocumentText>, NullWritable> {
 
-	private final Logger log = Logger.getLogger(this.getClass());
+	private static final Logger log = Logger.getLogger(WebcrawlFundingsIngester.class);
 
 	@Override
 	protected void map(AvroKey<DocumentText> key, NullWritable value, Context context)

@@ -18,14 +18,16 @@ public class CompositeMatchVoter extends AbstractAffOrgMatchVoter {
 
     private static final long serialVersionUID = 1L;
     
-    private List<AffOrgMatchVoter> voters;
+    private final List<AffOrgMatchVoter> voters;
     
     
     //------------------------ CONSTRUCTORS --------------------------
     
     public CompositeMatchVoter(List<AffOrgMatchVoter> voters) {
+        super();
+        
         Preconditions.checkNotNull(voters);
-        Preconditions.checkArgument(voters.size() > 0);
+        Preconditions.checkArgument(!voters.isEmpty());
         
         this.voters = voters;
     }

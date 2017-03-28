@@ -30,7 +30,7 @@ public class PigCountersParser {
     private static final char VALUES_SEPARATOR = ',';
     
     
-    private JsonParser jsonParser = new JsonParser();
+    private final JsonParser jsonParser = new JsonParser();
     
     
     //------------------------ LOGIC --------------------------

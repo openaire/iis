@@ -32,12 +32,10 @@ public class DatasetDBProducer implements Process {
 		return createOutputPorts();
 	}
 
-	private static HashMap<String, PortType> createOutputPorts(){
-		HashMap<String, PortType> outputPorts = 
-				new HashMap<String, PortType>();
-		outputPorts.put(datasetDBPort, 
-				new AnyPortType());
-		return outputPorts;	
+	private static Map<String, PortType> createOutputPorts(){
+		Map<String, PortType> outputPorts = new HashMap<String, PortType>();
+		outputPorts.put(datasetDBPort, new AnyPortType());
+		return outputPorts;
 	}
 	
     @Override

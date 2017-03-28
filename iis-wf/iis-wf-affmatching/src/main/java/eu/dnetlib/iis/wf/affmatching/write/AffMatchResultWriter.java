@@ -23,6 +23,6 @@ public interface AffMatchResultWriter extends Serializable {
      * Depending on the implementation, the outputReportPath can be used to write some
      * execution reports.
      */
-    public void write(JavaSparkContext sc, JavaRDD<AffMatchResult> matchedAffOrgs, String outputPath, String outputReportPath);
+    void write(JavaSparkContext sc, JavaRDD<AffMatchResult> matchedAffOrgs, String outputPath, String outputReportPath);
     
 }

@@ -64,7 +64,6 @@ public class CmdLineParserForProcessRunParameters {
 						CmdLineParser.specialParametersPrefix, otherParameter));
 			}
 		}
-		return;
 	}
 	
 	private static void assumePortNamesMatch(String cmdLineParamPrefix,

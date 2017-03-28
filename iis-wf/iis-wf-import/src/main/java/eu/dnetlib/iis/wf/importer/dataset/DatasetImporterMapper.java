@@ -33,17 +33,17 @@ import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeUtils;
 public class DatasetImporterMapper extends Mapper<AvroKey<Identifier>, NullWritable, NullWritable, NullWritable> {
 
     
-    private final Logger log = Logger.getLogger(this.getClass());
+    private static final Logger log = Logger.getLogger(DatasetImporterMapper.class);
     
     /**
      * Logging interval.
      */
-    private final int progressLogInterval = 100000;
+    private final static int progressLogInterval = 100000;
     
     /**
      * Multiple outputs.
      */
-    private MultipleOutputs mos = null;
+    private MultipleOutputs mos;
 
     /**
      * Dataset output.

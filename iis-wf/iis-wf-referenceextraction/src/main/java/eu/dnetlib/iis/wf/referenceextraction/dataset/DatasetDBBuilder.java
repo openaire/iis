@@ -16,7 +16,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
 
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
@@ -48,14 +47,14 @@ public class DatasetDBBuilder implements Process {
 		return createOutputPorts();
 	}
 
-	private static HashMap<String, PortType> createInputPorts(){
-		HashMap<String, PortType> inputPorts = new HashMap<String, PortType>();
+	private static Map<String, PortType> createInputPorts(){
+		Map<String, PortType> inputPorts = new HashMap<String, PortType>();
 		inputPorts.put(datasetPort, new AvroPortType(DataSetReference.SCHEMA$));
 		return inputPorts;
 	}
 
-	private static HashMap<String, PortType> createOutputPorts(){
-		HashMap<String, PortType> outputPorts = new HashMap<String, PortType>();
+	private static Map<String, PortType> createOutputPorts(){
+		Map<String, PortType> outputPorts = new HashMap<String, PortType>();
 		outputPorts.put(datasetDBPort, new AnyPortType());
 		return outputPorts;	
 	}
@@ -63,11 +62,8 @@ public class DatasetDBBuilder implements Process {
 	@Override
 	public void run(PortBindings portBindings, Configuration conf,
 			Map<String, String> parameters) throws IOException, InterruptedException {
-		Map<String, Path> input = portBindings.getInput();
-		Map<String, Path> output = portBindings.getOutput();
-		FileSystem fs = FileSystem.get(conf);
-		
-		String scriptLocation = parameters.get(scriptLocationParam);
+
+	    String scriptLocation = parameters.get(scriptLocationParam);
 		if (StringUtils.isBlank(scriptLocation)) {
 		    throw new RuntimeException("sql script location not provided, '" + scriptLocationParam + "' parameter is missing!");
 		}
@@ -82,7 +78,8 @@ public class DatasetDBBuilder implements Process {
         BufferedOutputStream stdin = new BufferedOutputStream(process.getOutputStream());
         InputStream errorStream = process.getErrorStream();
     
-        Iterator<DataSetReference> datasets = DataStore.getReader(new FileSystemPath(fs, input.get(datasetPort)));
+        FileSystem fs = FileSystem.get(conf);
+        Iterator<DataSetReference> datasets = DataStore.getReader(new FileSystemPath(fs, portBindings.getInput().get(datasetPort)));
 
         JsonStreamWriter<DataSetReference> writer = 
                 new JsonStreamWriter<DataSetReference>(DataSetReference.SCHEMA$, stdin);
@@ -123,7 +120,7 @@ public class DatasetDBBuilder implements Process {
         OutputStream outStream = null;
         try {
             inStream = new FileInputStream(targetDbFile);
-            outStream = fs.create(new FileSystemPath(fs, output.get(datasetDBPort)).getPath());
+            outStream = fs.create(new FileSystemPath(fs, portBindings.getOutput().get(datasetDBPort)).getPath());
             IOUtils.copy(inStream, outStream);  
         } finally {
             if (inStream != null) {

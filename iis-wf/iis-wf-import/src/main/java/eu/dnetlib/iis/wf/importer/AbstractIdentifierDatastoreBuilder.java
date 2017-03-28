@@ -40,11 +40,8 @@ public abstract class AbstractIdentifierDatastoreBuilder implements Process {
 
     private final Logger log = Logger.getLogger(this.getClass());
 
-    private static final Map<String, PortType> outputPorts = new HashMap<String, PortType>();
+    private final Map<String, PortType> outputPorts = new HashMap<String, PortType>();
 
-    {
-        outputPorts.put(PORT_OUT_IDENTIFIER, new AvroPortType(Identifier.SCHEMA$));
-    }
 
     /**
      * Parameter name holding CSV of identifiers to be written.
@@ -67,6 +64,7 @@ public abstract class AbstractIdentifierDatastoreBuilder implements Process {
     public AbstractIdentifierDatastoreBuilder(String identifiersParamName, String blacklistedIdentifiersParamName) {
         this.identifiersParamName = identifiersParamName;
         this.blacklistedIdentifiersParamName = blacklistedIdentifiersParamName;
+        this.outputPorts.put(PORT_OUT_IDENTIFIER, new AvroPortType(Identifier.SCHEMA$));
     }
     
     // ------------------------ LOGIC --------------------------

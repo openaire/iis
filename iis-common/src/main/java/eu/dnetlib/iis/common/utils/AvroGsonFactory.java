@@ -16,6 +16,11 @@ import com.google.gson.JsonParseException;
  *
  */
 public class AvroGsonFactory {
+    
+    //------------------------ CONSTRUCTORS -------------------
+    
+    
+    private AvroGsonFactory() {}
 
 	
 	//------------------------ LOGIC --------------------------

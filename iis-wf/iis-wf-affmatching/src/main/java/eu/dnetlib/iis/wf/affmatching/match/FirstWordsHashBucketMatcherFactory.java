@@ -32,6 +32,11 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 
 public class FirstWordsHashBucketMatcherFactory {
 
+    // ---------------------- CONSTRUCTORS ----------------------
+    
+    private FirstWordsHashBucketMatcherFactory() {}
+    
+    // ---------------------- LOGIC -----------------------------
     
     /**
      * Returns {@link AffOrgMatcher} that uses hashing of affiliations and organizations to create buckets.<br/>

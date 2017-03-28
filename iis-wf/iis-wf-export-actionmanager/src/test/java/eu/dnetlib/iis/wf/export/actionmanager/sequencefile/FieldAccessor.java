@@ -25,7 +25,7 @@ public class FieldAccessor {
 
 	private static final char DECODER_PREFIX = '$';
 
-	private Map<String, FieldDecoder> decoders = new HashMap<String, FieldDecoder>();
+	private final Map<String, FieldDecoder> decoders = new HashMap<String, FieldDecoder>();
 	
 	//------------------------ LOGIC ---------------------------------
 	

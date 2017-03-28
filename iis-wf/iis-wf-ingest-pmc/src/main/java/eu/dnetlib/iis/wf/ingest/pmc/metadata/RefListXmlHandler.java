@@ -27,25 +27,26 @@ import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ReferenceMetadata;
  */
 public class RefListXmlHandler extends DefaultHandler implements ProcessingFinishedAwareXmlHandler {
     
-    private Stack<String> parents;
+    private final Stack<String> parents;
     
     private final ExtractedDocumentMetadata.Builder builder;
-    private StringBuilder currentValue = new StringBuilder();
+    private final StringBuilder currentValue = new StringBuilder();
     
     private ReferenceMetadata.Builder currentRefMetaBuilder;
     
-    private String currentSurname = null;
-    private String currentGivenNames = null;
+    private String currentSurname;
+    private String currentGivenNames;
     
     private List<CharSequence> currentRefAuthorList;
-    private StringBuilder currentReferenceText = new StringBuilder();
+    private final StringBuilder currentReferenceText = new StringBuilder();
     private boolean currentReferenceTextExplicitlySet = false;
-    private String currentReferenceIdType = null;
+    private String currentReferenceIdType;
     
     
     //------------------------ CONSTRUCTORS --------------------------
     
     public RefListXmlHandler(ExtractedDocumentMetadata.Builder builder) {
+        super();
         this.builder = builder;
         this.parents = new Stack<String>();
     }
@@ -254,14 +255,14 @@ public class RefListXmlHandler extends DefaultHandler implements ProcessingFinis
         if (StringUtils.isNotBlank(issue)) {
             builder.append(" (");
             builder.append(issue);
-            builder.append(")");
+            builder.append(')');
         }
         if (StringUtils.isNotBlank(fpage)) {
             builder.append(": ");
             builder.append(fpage);
         }
         if (StringUtils.isNotBlank(lpage)) {
-            builder.append("-");
+            builder.append('-');
             builder.append(lpage);
         }
         return builder.toString();

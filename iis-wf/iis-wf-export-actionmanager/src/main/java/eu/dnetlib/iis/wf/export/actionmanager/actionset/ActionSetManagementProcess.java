@@ -28,7 +28,7 @@ import eu.dnetlib.iis.common.java.porttype.PortType;
  */
 public class ActionSetManagementProcess implements Process {
 	
-	private final Logger log = Logger.getLogger(this.getClass());
+	private static final Logger log = Logger.getLogger(ActionSetManagementProcess.class);
 
 	public static final String PARAM_ACTION_MANAGER_SERVICE_LOCATION = "export.actionmanager.service.location";
 	

@@ -116,10 +116,4 @@ public class DocumentAvroDatastoreProducer implements Process {
                 new FileSystemPath(fs, output.get(documentPort)));
     }
     
-    public static void main(String[] args) {
-    	Random rand = new Random();
-    	LoremIpsum loremIpsum = new LoremIpsum();
-    	System.out.println(loremIpsum.getWords(100));
-    	
-	}
 }

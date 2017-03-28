@@ -25,8 +25,7 @@ public class EmptyMap extends EvalFunc<Map<String, String>> {
     @Override
     public Schema outputSchema(Schema input) {
         try {
-            Schema schema = Utils.getSchemaFromString("m:map[chararray]");
-            return schema;
+            return Utils.getSchemaFromString("m:map[chararray]");
         } catch (ParserException e) {
             return null;
         }

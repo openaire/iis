@@ -19,6 +19,6 @@ public interface ProjectOrganizationReader extends Serializable {
      * Reads project to organization relations that are in <code>inputPath</code>. The relations that are in <code>inputPath</code>
      * can be in any format. The implementation of the reader, however, must return them as rdd of {@link AffMatchProjectOrganization}.
      */
-    public JavaRDD<AffMatchProjectOrganization> readProjectOrganizations(JavaSparkContext sc, String inputPath);
+    JavaRDD<AffMatchProjectOrganization> readProjectOrganizations(JavaSparkContext sc, String inputPath);
 
 }

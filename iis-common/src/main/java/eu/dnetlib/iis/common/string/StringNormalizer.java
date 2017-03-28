@@ -11,6 +11,6 @@ public interface StringNormalizer {
     /**
      * Normalizes the given string value.
      */
-    public String normalize(String value);
+    String normalize(String value);
     
 }

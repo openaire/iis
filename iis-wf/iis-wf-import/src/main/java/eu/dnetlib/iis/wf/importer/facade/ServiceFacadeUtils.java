@@ -17,8 +17,12 @@ import eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters;
  * @author mhorst
  *
  */
-public abstract class ServiceFacadeUtils {
+public final class ServiceFacadeUtils {
 
+    //------------------------ CONSTRUCTORS -------------------
+    
+    private ServiceFacadeUtils() {}
+    
     //------------------------ LOGIC --------------------------
     
     /**

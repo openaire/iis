@@ -13,6 +13,7 @@ import eu.dnetlib.iis.common.model.extrainfo.citations.BlobCitationEntry;
 public class CitationsExtraInfoConverter extends AbstractExtraInfoConverter<SortedSet<BlobCitationEntry>> {
 
 	public CitationsExtraInfoConverter() {
+	    super();
 		xstream.processAnnotations(BlobCitationEntry.class);
 		xstream.alias("citations", SortedSet.class);
 	}

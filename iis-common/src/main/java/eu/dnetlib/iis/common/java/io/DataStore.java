@@ -117,7 +117,7 @@ public final class DataStore {
 	 */
 	public static <T extends GenericContainer> void create(
 			List<T> elements, FileSystemPath path) throws IOException{
-		if(elements.size() == 0){
+		if(elements.isEmpty()){
 			throw new IllegalArgumentException(
 					"The list of elements has to be non-empty");
 		}
@@ -161,7 +161,7 @@ public final class DataStore {
 	 * Generates filename for given file number.
 	 * @param fileNo file sequence number
 	 */
-	public static final String generateFileName(int fileNo) {
+	public static String generateFileName(int fileNo) {
         StringBuffer strBuff = new StringBuffer(String.valueOf(fileNo));
         while(strBuff.length()<FILE_NO_PADDING_LENGTH) {
             strBuff.insert(0, '0');

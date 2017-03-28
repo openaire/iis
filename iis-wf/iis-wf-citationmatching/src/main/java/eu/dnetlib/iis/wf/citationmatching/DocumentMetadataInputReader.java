@@ -22,7 +22,7 @@ public class DocumentMetadataInputReader implements InputDocumentReader<String, 
     private static final long serialVersionUID = 1L;
 
 
-    private SparkAvroLoader avroLoader = new SparkAvroLoader();
+    private final SparkAvroLoader avroLoader = new SparkAvroLoader();
 
     //------------------------ LOGIC --------------------------
 

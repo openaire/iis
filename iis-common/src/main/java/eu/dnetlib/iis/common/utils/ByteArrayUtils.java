@@ -6,7 +6,13 @@ package eu.dnetlib.iis.common.utils;
  *
  */
 public class ByteArrayUtils {
+    
+    //------------------------ CONSTRUCTORS -------------------
 
+    private ByteArrayUtils() {}
+    
+    //------------------------ LOGIC --------------------------
+    
 	/**
 	 * Does this byte array begin with match array content?
 	 * @param source Byte array to examine

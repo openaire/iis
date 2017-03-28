@@ -1,11 +1,11 @@
 package eu.dnetlib.iis.wf.collapsers.basic;
 
-import eu.dnetlib.iis.wf.collapsers.CollapserUtils;
-
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.avro.generic.IndexedRecord;
-import com.google.common.collect.Lists;
+
+import eu.dnetlib.iis.wf.collapsers.CollapserUtils;
 
 /**
  * Collapses objects by choosing one representative 
@@ -15,7 +15,7 @@ import com.google.common.collect.Lists;
  * 
  * @author Dominika Tkaczyk
  */
-public class BestFilledCollapser<T extends IndexedRecord> extends SignificantFieldsCollapser<T> {
+public class BestFilledCollapser<T extends IndexedRecord> extends AbstractSignificantFieldsCollapser<T> {
 
     @Override
     protected List<T> collapseNonEmpty(List<T> objects) {
@@ -27,7 +27,7 @@ public class BestFilledCollapser<T extends IndexedRecord> extends SignificantFie
             }
         }
         
-        return Lists.newArrayList(best);
+        return Collections.singletonList(best);
     }
 
 }

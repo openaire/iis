@@ -64,7 +64,6 @@ public class CitationsActionBuilderModuleFactoryTest {
 		
 		CitationsExtraInfoConverter converter = new CitationsExtraInfoConverter();
 		String citationsXML = converter.serialize(sortedCitations);
-		System.out.println(citationsXML);
 		
 //		checking deserialization
 		SortedSet<BlobCitationEntry> deserializedCitations = (SortedSet<BlobCitationEntry>) converter.deserialize(citationsXML);

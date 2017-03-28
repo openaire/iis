@@ -113,7 +113,7 @@ public class AvroSaverTest {
 
             SQLContext sqlContext = new SQLContext(sc);
             
-            DataFrame countries = sqlContext.jsonFile("src/test/resources/eu/dnetlib/iis/common/avro/countries.json");
+            DataFrame countries = sqlContext.read().json("src/test/resources/eu/dnetlib/iis/common/avro/countries.json");
             
             // without these 2 lines below there is no guarantee as to the field order and then 
             // they can be saved not in accordance with avro schema

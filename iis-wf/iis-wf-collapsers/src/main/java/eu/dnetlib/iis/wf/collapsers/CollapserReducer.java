@@ -22,19 +22,20 @@ public class CollapserReducer extends Reducer<AvroKey<String>, AvroValue<Indexed
     
     private RecordCollapser<IndexedRecord, IndexedRecord> recordCollapser;
     
-    private Class inputSchemaClass;
+    private Class<IndexedRecord> inputSchemaClass;
     private Schema inputSchema;
     
-	@Override
+    @SuppressWarnings("unchecked")
+    @Override
 	protected void setup(Context context) throws IOException, InterruptedException {
         try {
             recordCollapser = 
-                    (RecordCollapser) getCollapserInstance(context, "record_collapser");
+                    (RecordCollapser<IndexedRecord, IndexedRecord>) getCollapserInstance(context, "record_collapser");
             recordCollapser.setup(context);
             
             String inputSchemaPath = context.getConfiguration().get("collapser.reducer.schema.class");
             inputSchema = AvroUtils.toSchema(inputSchemaPath);
-            inputSchemaClass = Class.forName(inputSchemaPath);
+            inputSchemaClass = (Class<IndexedRecord>) Class.forName(inputSchemaPath);
        
         } catch (Exception ex) {
             throw new IOException("Cannot set up collapser reducer!", ex);
@@ -47,7 +48,7 @@ public class CollapserReducer extends Reducer<AvroKey<String>, AvroValue<Indexed
         return collapserConstructor.newInstance();
     }
     
-	@Override
+    @Override
 	public void reduce(AvroKey<String> key, Iterable<AvroValue<IndexedRecord>> values, Context context) 
             throws IOException, InterruptedException {
         Iterator<AvroValue<IndexedRecord>> iterator = values.iterator();

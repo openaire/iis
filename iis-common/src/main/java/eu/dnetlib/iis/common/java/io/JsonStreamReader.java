@@ -57,7 +57,7 @@ public class JsonStreamReader<T> implements CloseableIterator<T>{
 		try {
 			readNext();
 		} catch (IOException e) {
-			new RuntimeException(e);
+			throw new RuntimeException(e);
 		}
 		return current;
 	}

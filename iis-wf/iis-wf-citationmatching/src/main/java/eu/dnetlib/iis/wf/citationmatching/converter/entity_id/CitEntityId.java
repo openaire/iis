@@ -45,7 +45,7 @@ public class CitEntityId {
         try {
             position = Integer.parseInt(citIdWithoutPrefix.substring(idx + 1));
         } catch (Exception e) {
-            throw new InvalidParameterException(getErrorMessage(citId));
+            throw new IllegalArgumentException(getErrorMessage(citId), e);
         }
 
         return new CitEntityId(documentId, position);

@@ -16,7 +16,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
 
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
@@ -46,14 +45,14 @@ public class ProjectDBBuilder implements Process {
 		return createOutputPorts();
 	}
 
-	private static HashMap<String, PortType> createInputPorts(){
-		HashMap<String, PortType> inputPorts = new HashMap<String, PortType>();
+	private static Map<String, PortType> createInputPorts(){
+		Map<String, PortType> inputPorts = new HashMap<String, PortType>();
 		inputPorts.put(projectPort, new AvroPortType(Project.SCHEMA$));
 		return inputPorts;
 	}
 
-	private static HashMap<String, PortType> createOutputPorts(){
-		HashMap<String, PortType> outputPorts = new HashMap<String, PortType>();
+	private static Map<String, PortType> createOutputPorts(){
+		Map<String, PortType> outputPorts = new HashMap<String, PortType>();
 		outputPorts.put(projectDBPort, new AnyPortType());
 		return outputPorts;	
 	}
@@ -61,8 +60,7 @@ public class ProjectDBBuilder implements Process {
 	@Override
 	public void run(PortBindings portBindings, Configuration conf,
 			Map<String, String> parameters) throws IOException, InterruptedException {
-		Map<String, Path> input = portBindings.getInput();
-		Map<String, Path> output = portBindings.getOutput();
+
 		FileSystem fs = FileSystem.get(conf);
 		
 		String targetDbLocation = System.getProperty("java.io.tmpdir") + 
@@ -76,7 +74,7 @@ public class ProjectDBBuilder implements Process {
         BufferedOutputStream stdin = new BufferedOutputStream(process.getOutputStream());
         InputStream errorStream = process.getErrorStream();
     
-        Iterator<Project> projects = DataStore.getReader(new FileSystemPath(fs, input.get(projectPort)));
+        Iterator<Project> projects = DataStore.getReader(new FileSystemPath(fs, portBindings.getInput().get(projectPort)));
 
         JsonStreamWriter<Project> writer = 
                 new JsonStreamWriter<Project>(Project.SCHEMA$, stdin);
@@ -115,7 +113,7 @@ public class ProjectDBBuilder implements Process {
         OutputStream outStream = null;
         try {
             inStream = new FileInputStream(targetDbFile);
-            outStream = fs.create(new FileSystemPath(fs, output.get(projectDBPort)).getPath());
+            outStream = fs.create(new FileSystemPath(fs, portBindings.getOutput().get(projectDBPort)).getPath());
             IOUtils.copy(inStream, outStream);  
         } finally {
             if (inStream != null) {

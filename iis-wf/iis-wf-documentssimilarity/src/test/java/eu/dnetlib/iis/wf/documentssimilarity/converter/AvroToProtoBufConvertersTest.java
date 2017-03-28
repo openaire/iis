@@ -1,15 +1,13 @@
 package eu.dnetlib.iis.wf.documentssimilarity.converter;
 
-import eu.dnetlib.iis.documentssimilarity.schemas.DocumentMetadata;
-import eu.dnetlib.iis.wf.documentssimilarity.converter.DocumentMetadataAvroToProtoBufConverter;
-import eu.dnetlib.iis.wf.documentssimilarity.producer.DocumentAvroDatastoreProducer;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+import eu.dnetlib.iis.documentssimilarity.schemas.DocumentMetadata;
+import eu.dnetlib.iis.wf.documentssimilarity.producer.DocumentAvroDatastoreProducer;
 import pl.edu.icm.coansys.models.DocumentProtos;
-
-import java.util.List;
 
 /**
  * @author Mateusz Fedoryszak (m.fedoryszak@icm.edu.pl)

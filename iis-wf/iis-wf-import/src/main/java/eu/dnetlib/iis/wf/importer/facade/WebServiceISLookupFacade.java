@@ -20,7 +20,7 @@ import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
  */
 public class WebServiceISLookupFacade extends AbstractResultSetAwareWebServiceFacade<ISLookUpService> implements ISLookupFacade {
 
-    private final Logger log = Logger.getLogger(this.getClass());
+    private static final Logger log = Logger.getLogger(WebServiceISLookupFacade.class);
 
     
     //------------------------ CONSTRUCTORS -------------------

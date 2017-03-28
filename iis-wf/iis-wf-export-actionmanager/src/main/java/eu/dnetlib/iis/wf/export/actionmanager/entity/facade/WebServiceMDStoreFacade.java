@@ -19,7 +19,7 @@ import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
  */
 public class WebServiceMDStoreFacade implements MDStoreFacade {
 
-    private final Logger log = Logger.getLogger(this.getClass());
+    private static final Logger log = Logger.getLogger(WebServiceMDStoreFacade.class);
     
     /**
      * Web service.

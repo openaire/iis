@@ -18,6 +18,6 @@ public interface AffiliationReader {
      * Reads organizations that are in <code>inputPath</code>. The organizations that are in <code>inputPath</code>
      * can be in any format. The implementation of the reader, however, must return them as rdd of {@link AffMatchOrganization}.  
      */
-    public JavaRDD<AffMatchAffiliation> readAffiliations(JavaSparkContext sc, String inputPath);
+    JavaRDD<AffMatchAffiliation> readAffiliations(JavaSparkContext sc, String inputPath);
 
 }

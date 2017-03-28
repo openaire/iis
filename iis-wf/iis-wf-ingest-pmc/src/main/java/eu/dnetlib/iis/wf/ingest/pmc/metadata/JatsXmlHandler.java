@@ -29,7 +29,7 @@ public class JatsXmlHandler extends DefaultHandler {
 
     private final ExtractedDocumentMetadata.Builder builder;
     
-    private XmlSwitcherHandler xmlSwitcherHandler;
+    private final XmlSwitcherHandler xmlSwitcherHandler;
 
     
     //------------------------ CONSTRUCTORS --------------------------
@@ -49,7 +49,7 @@ public class JatsXmlHandler extends DefaultHandler {
         handlers.put(ELEM_JOURNAL_META, new JournalMetaXmlHandler(builder));
         handlers.put(ELEM_ARTICLE_META, new ArticleMetaXmlHandler(builder));
         handlers.put(ELEM_REF_LIST, new RefListXmlHandler(builder));
-        xmlSwitcherHandler = new XmlSwitcherHandler(builder, handlers);
+        xmlSwitcherHandler = new XmlSwitcherHandler(handlers);
     }
 
     

@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
@@ -54,7 +54,9 @@ public class WritePredefinedProjectProperties extends AbstractMojo {
 	private static final String LF = "\n";
 	private static final String TAB = "\t";
 	private static final String[] ANT_ESCAPE_CHARS = { CR, LF, TAB, ":", "#",	"=" };
-
+    private static final String PROPERTY_PREFIX_ENV = "env.";
+	
+	
 	/**
 	 * @parameter expression="${properties.includePropertyKeysFromFiles}"
 	 */
@@ -171,13 +173,9 @@ public class WritePredefinedProjectProperties extends AbstractMojo {
      * @return environment variables
      */
     protected static Properties getEnvironmentVariables() {
-        String prefix = "env";
-        Map<String, String> map = System.getenv();
         Properties props = new Properties();
-        for (String key : map.keySet()) {
-            String newKey = prefix + "." + key;
-            String value = map.get(key);
-            props.setProperty(newKey, value);
+        for (Entry<String, String> entry : System.getenv().entrySet()) {
+            props.setProperty(PROPERTY_PREFIX_ENV + entry.getKey(), entry.getValue());
         }
         return props;
     }

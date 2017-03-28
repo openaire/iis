@@ -23,7 +23,7 @@ import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 public class DocumentTextUrlBasedImporterMapper extends Mapper<AvroKey<DocumentContentUrl>, NullWritable, AvroKey<DocumentText>, NullWritable> {
 
 
-    private final Logger log = Logger.getLogger(DocumentContentUrlBasedImporterMapper.class);
+    private static final Logger log = Logger.getLogger(DocumentContentUrlBasedImporterMapper.class);
 
     /**
      * Maximum content size in kilobytes.

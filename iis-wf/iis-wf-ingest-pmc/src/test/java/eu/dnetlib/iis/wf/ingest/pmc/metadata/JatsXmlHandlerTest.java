@@ -203,7 +203,7 @@ public class JatsXmlHandlerTest {
 		assertEquals(
 				"2 Jemal A, Bray F, Center MM, Ferlay J, Ward E, et al (2011) Global cancer statistics. CA Cancer J Clin 61: 69-90 21296855",
 				refMeta.getText());
-		assertEquals(new Integer(1), refMeta.getPosition());
+		assertEquals(Integer.valueOf(1), refMeta.getPosition());
 		assertEquals(Lists.newArrayList("Jemal, A", "Bray, F", "Center, MM", "Ferlay, J", "Ward, E"),
 				refMeta.getBasicMetadata().getAuthors());
 		assertEquals("Global cancer statistics", refMeta.getBasicMetadata().getTitle());
@@ -230,7 +230,7 @@ public class JatsXmlHandlerTest {
 		assertEquals(
 				"13 Shearer KD, Silverstein J, Plisetskaya EM (1997) Role of adiposity in food intake control of juvenile chinook salmon (Oncorhynchus tshawytscha). Comp Biochem Physiol A 118: 1209–1215",
 				refMeta.getText());
-		assertEquals(new Integer(13), refMeta.getPosition());
+		assertEquals(Integer.valueOf(13), refMeta.getPosition());
 		assertEquals(Lists.newArrayList("Shearer, KD", "Silverstein, J", "Plisetskaya, EM"),
 				refMeta.getBasicMetadata().getAuthors());
 		assertEquals("Role of adiposity in food intake control of juvenile chinook salmon (Oncorhynchus tshawytscha)",
@@ -256,7 +256,7 @@ public class JatsXmlHandlerTest {
 
 		ReferenceMetadata refMeta = meta.getReferences().get(0);
 		assertEquals("Guzman, MG, Kouri, G. Dengue: an update.. Lancet Infect Dis. 2002; 2: 33-42", refMeta.getText());
-		assertEquals(new Integer(1), refMeta.getPosition());
+		assertEquals(Integer.valueOf(1), refMeta.getPosition());
 		assertEquals(Lists.newArrayList("Guzman, MG", "Kouri, G"), refMeta.getBasicMetadata().getAuthors());
 		assertEquals("Dengue: an update.", refMeta.getBasicMetadata().getTitle());
 		assertEquals("Lancet Infect Dis", refMeta.getBasicMetadata().getSource());

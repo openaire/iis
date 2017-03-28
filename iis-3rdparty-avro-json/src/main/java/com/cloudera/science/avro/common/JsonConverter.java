@@ -87,11 +87,13 @@ public class JsonConverter {
     return schema;
   }
   
-  public GenericRecord convert(String json) throws IOException {
+  @SuppressWarnings("unchecked")
+public GenericRecord convert(String json) throws IOException {
     return convert(mapper.readValue(json, Map.class), baseSchema);
   }
   
-  private GenericRecord convert(Map<String, Object> raw, Schema schema)
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+private GenericRecord convert(Map<String, Object> raw, Schema schema)
       throws IOException {
     GenericRecord result = new GenericData.Record(schema);
     Set<String> usedFields = Sets.newHashSet();
@@ -178,7 +180,8 @@ public class JsonConverter {
     return result;
   }
   
-  private Object typeConvert(Object value, String name, Schema schema) throws IOException {
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+private Object typeConvert(Object value, String name, Schema schema) throws IOException {
     if (isNullableSchema(schema)) {
       if (value == null) {
         return null;
@@ -265,7 +268,8 @@ public class JsonConverter {
     return types.get(0).getType().equals(Schema.Type.NULL) ? types.get(1) : types.get(0);
   }
   
-  private static class JsonConversionException extends RuntimeException {
+  @SuppressWarnings("serial")
+private static class JsonConversionException extends RuntimeException {
 
     private Object value;
     private String fieldName;

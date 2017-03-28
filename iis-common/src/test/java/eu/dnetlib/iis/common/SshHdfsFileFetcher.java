@@ -14,9 +14,9 @@ public class SshHdfsFileFetcher {
 	public final static String FILE_PATH_SEPARATOR = "/";
 	
 	
-	private SshConnectionManager sshConnectionManager;
+	private final SshConnectionManager sshConnectionManager;
 	
-	private String remoteUserDir;
+	private final String remoteUserDir;
 	
 	
 	//------------------------ CONSTRUCTORS --------------------------

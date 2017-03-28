@@ -6,8 +6,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
-
 /**
  * Sax xml handler which can switch between different implementations of
  * {@link ProcessingFinishedAwareXmlHandler} content handlers.
@@ -21,7 +19,7 @@ public class XmlSwitcherHandler extends DefaultHandler {
 
     private ProcessingFinishedAwareXmlHandler currentHandler;
     
-    private Map<String, ProcessingFinishedAwareXmlHandler> handlers;
+    private final Map<String, ProcessingFinishedAwareXmlHandler> handlers;
     
     
     //------------------------ CONSTRUCTORS --------------------------
@@ -29,12 +27,12 @@ public class XmlSwitcherHandler extends DefaultHandler {
     /**
      * Default constructor
      * 
-     * @param builder - object to be build by this handler
      * @param handlers - map of handlers responsible for parsing parts of xml.
      *      In key there should be a name of xml tag that is handled by handler specified
      *      as value.
      */
-    public XmlSwitcherHandler(ExtractedDocumentMetadata.Builder builder, Map<String, ProcessingFinishedAwareXmlHandler> handlers) {
+    public XmlSwitcherHandler(Map<String, ProcessingFinishedAwareXmlHandler> handlers) {
+        super();
         this.currentHandler = null;
         this.handlers = handlers;
     }

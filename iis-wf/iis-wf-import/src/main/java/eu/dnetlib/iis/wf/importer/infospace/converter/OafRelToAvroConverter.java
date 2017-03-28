@@ -21,5 +21,5 @@ public interface OafRelToAvroConverter<T extends SpecificRecord> {
      * @param oafRelation {@link OafRel} relation entity
      * @return avro object
      */
-    public T convert(OafRel oafRelation) throws IOException;
+    T convert(OafRel oafRelation) throws IOException;
 }

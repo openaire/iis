@@ -15,6 +15,10 @@ import org.apache.commons.io.FileUtils;
  */
 class OozieLogFileParser {
 
+    //------------------------ CONSTRUCTORS -------------------
+    
+    private OozieLogFileParser() {}
+    
 	//------------------------ LOGIC --------------------------
 	
 	/**

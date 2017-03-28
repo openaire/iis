@@ -22,7 +22,7 @@ public class OafBodyWithOrderedUpdates {
     
     private String body;
 
-    private Collection<String> orderedUpdates;
+    private final Collection<String> orderedUpdates;
 
     // ------------------------ GETTERS --------------------------
     

@@ -531,6 +531,7 @@ private JsonParser in;
     }
   }
   
+  @SuppressWarnings("incomplete-switch")
   private static List<JsonElement> getVaueAsTree(JsonParser in) throws IOException {
     int level = 0;
     List<JsonElement> result = new ArrayList<JsonElement>();
@@ -588,6 +589,7 @@ private JsonParser in;
         return elements.get(pos).token;
       }
 
+      @SuppressWarnings("incomplete-switch")
       @Override
       public JsonParser skipChildren() throws IOException {
         int level = 0;

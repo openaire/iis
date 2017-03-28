@@ -33,7 +33,7 @@ public class ReportTestingConsumer implements Process {
     
     private final PortSpecifications inputSpecs;
     
-    private ReportEntryMatcher matcher = new ReportEntryMatcher();
+    private final ReportEntryMatcher matcher = new ReportEntryMatcher();
     
     /**
      * @param inputSpecifications specifications of input. Each element of

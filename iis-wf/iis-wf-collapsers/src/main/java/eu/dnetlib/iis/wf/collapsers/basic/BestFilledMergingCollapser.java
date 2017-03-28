@@ -1,11 +1,11 @@
 package eu.dnetlib.iis.wf.collapsers.basic;
 
-import eu.dnetlib.iis.wf.collapsers.CollapserUtils;
-
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.avro.generic.IndexedRecord;
-import com.google.common.collect.Lists;
+
+import eu.dnetlib.iis.wf.collapsers.CollapserUtils;
 
 /**
  * Collapses objects by merging them into a single object. 
@@ -14,7 +14,7 @@ import com.google.common.collect.Lists;
  * 
  * @author Dominika Tkaczyk
  */
-public class BestFilledMergingCollapser<T extends IndexedRecord> extends SignificantFieldsCollapser<T> {
+public class BestFilledMergingCollapser<T extends IndexedRecord> extends AbstractSignificantFieldsCollapser<T> {
 
     @Override
     protected List<T> collapseNonEmpty(List<T> objects) {
@@ -29,7 +29,7 @@ public class BestFilledMergingCollapser<T extends IndexedRecord> extends Signifi
             }
         }
         
-        return Lists.newArrayList(merged);
+        return Collections.singletonList(merged);
     }
       
 }

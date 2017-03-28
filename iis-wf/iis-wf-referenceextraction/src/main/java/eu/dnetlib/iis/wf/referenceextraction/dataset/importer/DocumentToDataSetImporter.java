@@ -34,7 +34,7 @@ import eu.dnetlib.iis.wf.referenceextraction.shared.importer.SharedImporterUtils
  */
 public class DocumentToDataSetImporter implements Process {
 	
-	private final Logger log = Logger.getLogger(this.getClass());
+	private static final Logger log = Logger.getLogger(DocumentToDataSetImporter.class);
 	
 	public static final String PARAM_CSV_PATH = "import.dataset.csv.path";
 

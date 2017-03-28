@@ -17,7 +17,6 @@ import eu.dnetlib.data.proto.ResultProjectProtos.ResultProject;
 import eu.dnetlib.data.proto.ResultProjectProtos.ResultProject.Outcome;
 import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
-import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 
 /**
  * {@link DocumentToProject} based action builder module.

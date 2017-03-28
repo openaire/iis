@@ -36,16 +36,18 @@ public class StreamingProjectImporter implements Process {
     
     private static final String PROJECT_COUNTER_NAME = "PROJECT_COUNTER";
     
-    private final Logger log = Logger.getLogger(this.getClass());
+    private static final Logger log = Logger.getLogger(StreamingProjectImporter.class);
     
-    private final int progressLogInterval = 100000;
+    private static final int progressLogInterval = 100000;
     
     private final NamedCountersFileWriter countersWriter = new NamedCountersFileWriter();
     
-    private static final Map<String, PortType> outputPorts = new HashMap<String, PortType>();
+    private final Map<String, PortType> outputPorts = new HashMap<String, PortType>();
+
     
+    //------------------------ CONSTRUCTORS -------------------
     
-    {
+    public StreamingProjectImporter() {
         outputPorts.put(PORT_OUT_PROJECT, new AvroPortType(Project.SCHEMA$));
     }
     

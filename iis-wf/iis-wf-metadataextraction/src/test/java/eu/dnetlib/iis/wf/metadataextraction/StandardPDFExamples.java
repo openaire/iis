@@ -11,6 +11,15 @@ import org.apache.commons.lang.StringUtils;
  */
 public class StandardPDFExamples {
     
+    
+ // ------------------------- CONSTRUCTORS --------------------------------
+ 
+    
+    private StandardPDFExamples() {}
+    
+ // ------------------------- LOGIC ---------------------------------------
+    
+    
     public static List<InputStream> getFilesFromResources(String resPaths) {
         String[] paths = StringUtils.split(resPaths, ',');
         List<InputStream> streams = new ArrayList<InputStream>(paths.length);

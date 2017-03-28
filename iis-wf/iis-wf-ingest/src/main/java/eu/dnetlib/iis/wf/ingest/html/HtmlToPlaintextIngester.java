@@ -19,9 +19,9 @@ import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
  */
 public class HtmlToPlaintextIngester extends Mapper<AvroKey<DocumentText>, NullWritable, AvroKey<DocumentText>, NullWritable> {
 
-	private final Logger log = Logger.getLogger(this.getClass());
+	private static final Logger log = Logger.getLogger(HtmlToPlaintextIngester.class);
 	
-    private final static Document.OutputSettings outputSettings = new Document.OutputSettings().prettyPrint(false);
+    private static final Document.OutputSettings outputSettings = new Document.OutputSettings().prettyPrint(false);
 	
     @Override
     protected void map(AvroKey<DocumentText> key, NullWritable value, Context context)

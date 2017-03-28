@@ -33,8 +33,8 @@ public class ValueSpecMatcher {
     
     public static final String EXPRESSION_TYPE_LONG_RANGE = "LONG_RANGE";
 
-    private String NULL_VALUE_PATTERN = "$(NULL)";
-    private Pattern VALUE_EXPRESSION_PATTERN = Pattern.compile("^\\$\\((\\w+):\\s*\\[(\\d*)\\,\\s*(\\d*)\\]\\)$");
+    private static final String NULL_VALUE_PATTERN = "$(NULL)";
+    private static final Pattern VALUE_EXPRESSION_PATTERN = Pattern.compile("^\\$\\((\\w+):\\s*\\[(\\d*)\\,\\s*(\\d*)\\]\\)$");
     
     
     //------------------------ LOGIC --------------------------
@@ -100,7 +100,7 @@ public class ValueSpecMatcher {
         long lowerBound = actualLong - 1;
         if (StringUtils.isNotBlank(expressionMatcher.group(2))) {
             lowerBound = Long.parseLong(expressionMatcher.group(2));
-        };
+        }
         long upperBound =actualLong + 1;
         if (StringUtils.isNotBlank(expressionMatcher.group(3))) {
             upperBound = Long.parseLong(expressionMatcher.group(3));

@@ -20,7 +20,7 @@ public interface AffOrgMatchVoter extends Serializable {
     /**
      * Returns true if the affiliation and organization match. 
      */
-    public boolean voteMatch(AffMatchAffiliation affiliation, AffMatchOrganization organization);
+    boolean voteMatch(AffMatchAffiliation affiliation, AffMatchOrganization organization);
     
     
     //------------------------ GETTERS --------------------------
@@ -31,7 +31,7 @@ public interface AffOrgMatchVoter extends Serializable {
      * is 100% reliable, whereas the match strength equal to 0 says that the match is always incorrect. Accordingly, the match strength equal to 0.5 means
      * that the number of correct matches of this voter equals 50%.
      */
-    public float getMatchStrength();
+    float getMatchStrength();
     
     
     

@@ -59,12 +59,12 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
     /**
      * Result approver to be used when validating person result relations.
      */
-    protected final ResultApprover resultApprover;
+    protected ResultApprover resultApprover;
     
     /**
      * Field approver to be used when validating inferred fields.
      */
-    protected final FieldApprover fieldApprover;
+    protected FieldApprover fieldApprover;
 
     // ------------------------ CONSTRUCTORS --------------------------
     
@@ -84,13 +84,15 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
     @Override
     public DocumentMetadata convert(OafEntity oafEntity, Map<String, List<QualifiedOafJsonRecord>> relations) throws IOException {
         Preconditions.checkNotNull(oafEntity);
-        ResultProtos.Result sourceResult = oafEntity.getResult();
+        
         if (!oafEntity.hasResult()) {
             log.error("skipping: no result object for id " + oafEntity.getId());
             return null;
         }
         DocumentMetadata.Builder builder = DocumentMetadata.newBuilder();
         builder.setId(oafEntity.getId());
+        
+        ResultProtos.Result sourceResult = oafEntity.getResult();
         createBasicMetadata(sourceResult, builder);
         handleAdditionalIds(oafEntity, builder);
         handleDatasourceIds(oafEntity, builder);

@@ -29,6 +29,10 @@ public class AffMatchingResultPrinter {
             .thenComparingInt(SimpleAffMatchResult::getAffiliationPosition);
     
     
+    //------------------------ CONSTRUCTORS -------------------
+    
+    private AffMatchingResultPrinter() {}
+    
     //------------------------ LOGIC --------------------------
     
     /**
@@ -139,7 +143,7 @@ public class AffMatchingResultPrinter {
     
     
     private static Organization fetchOrganization(List<Organization> organizations, String organizationId) {
-        return organizations.stream().filter(x -> StringUtils.equals(x.getId().toString(), organizationId.toString())).findFirst().get();
+        return organizations.stream().filter(x -> StringUtils.equals(x.getId().toString(), organizationId)).findFirst().get();
         
     }
 

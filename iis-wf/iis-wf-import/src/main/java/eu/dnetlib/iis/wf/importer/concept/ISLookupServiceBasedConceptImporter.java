@@ -41,17 +41,20 @@ public class ISLookupServiceBasedConceptImporter implements Process {
 	
 	private static final String CONCEPT_COUNTER_NAME = "CONCEPT_COUNTER";
 	
-	private final Logger log = Logger.getLogger(this.getClass());
+	private static final Logger log = Logger.getLogger(ISLookupServiceBasedConceptImporter.class);
 	
 	private final NamedCountersFileWriter countersWriter = new NamedCountersFileWriter();
 	
 	
 	private static final String PORT_OUT_CONCEPTS = "concepts";
 	
-	private static final Map<String, PortType> outputPorts = new HashMap<String, PortType>();
+	private final Map<String, PortType> outputPorts = new HashMap<String, PortType>();
+
 	
-	{
-		outputPorts.put(PORT_OUT_CONCEPTS, new AvroPortType(Concept.SCHEMA$));
+	//------------------------ CONSTRUCTORS -------------------
+	
+	public ISLookupServiceBasedConceptImporter() {
+	    outputPorts.put(PORT_OUT_CONCEPTS, new AvroPortType(Concept.SCHEMA$));
 	}
 	
     //------------------------ LOGIC --------------------------

@@ -17,7 +17,7 @@ import java.io.IOException;
 public class AvroToProtoBufOneToOneMapper<IN extends IndexedRecord, OUT extends Message>
         extends Mapper<AvroKey<IN>, NullWritable, Text, BytesWritable> {
     private static final String CONVERTER_CLASS_PROPERTY = "converter_class";
-    private final Logger log = Logger.getLogger(AvroToProtoBufOneToOneMapper.class);
+    private static final Logger log = Logger.getLogger(AvroToProtoBufOneToOneMapper.class);
 
     private final Text keyWritable = new Text();
     private final BytesWritable valueWritable = new BytesWritable();
@@ -36,7 +36,7 @@ public class AvroToProtoBufOneToOneMapper<IN extends IndexedRecord, OUT extends 
             converter = (AvroToProtoBufConverter<IN, OUT>) converterClass.newInstance();
         } catch (ClassCastException e) {
             throw new IOException(
-                    "Class specified in " + CONVERTER_CLASS_PROPERTY + " doesn't implement AvroToProtoBufConverter");
+                    "Class specified in " + CONVERTER_CLASS_PROPERTY + " doesn't implement AvroToProtoBufConverter", e);
         } catch (Exception e) {
             throw new IOException(
                     "Could not instantiate specified AvroToProtoBufConverter class, " + converterClass, e);

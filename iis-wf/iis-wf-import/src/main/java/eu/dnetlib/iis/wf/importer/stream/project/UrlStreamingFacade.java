@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
  */
 public class UrlStreamingFacade implements StreamingFacade {
 
-    private final Logger log = Logger.getLogger(this.getClass());
+    private static final Logger log = Logger.getLogger(UrlStreamingFacade.class);
     
     private final URL url;
     

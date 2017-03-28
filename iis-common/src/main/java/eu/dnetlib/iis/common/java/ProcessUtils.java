@@ -11,6 +11,12 @@ import org.apache.hadoop.conf.Configuration;
  */
 public class ProcessUtils {
 
+    // ------------- CONSTRUCTORS ----------------
+    
+    private ProcessUtils() {}
+    
+    // ------------- LOGIC -----------------------
+    
 	/**
 	 * Returns parameter value retrived from parameters or context.
 	 * @param paramName

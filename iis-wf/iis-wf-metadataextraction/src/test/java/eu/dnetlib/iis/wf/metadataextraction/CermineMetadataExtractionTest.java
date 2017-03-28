@@ -26,7 +26,8 @@ public class CermineMetadataExtractionTest extends TestCase {
 
     private static final String PDF_FILE = "/eu/dnetlib/iis/wf/metadataextraction/example-1.pdf";
 
-	@Test
+	@SuppressWarnings("unchecked")
+    @Test
 	public void testMetadataExtraction() throws AnalysisException, IOException, JDOMException {
         
         ContentExtractor extractor = new ContentExtractor();
@@ -49,7 +50,7 @@ public class CermineMetadataExtractionTest extends TestCase {
                 Sets.newHashSet("Asiya Khan", "Lingfen Sun", "Emmanuel Ifeachor", "Jose-Oscar Fajardo", "Fidel Liberal", "Harilaos Koumaras");
         
         XPath xPath = XPath.newInstance("/article/front//contrib-group/contrib[@contrib-type='author']/string-name");
-        @SuppressWarnings("unchecked")
+
 		List<Element> nodeList = xPath.selectNodes(extractedContent);
         Set<String> authors = new HashSet<String>();
         for (Element element : nodeList) {

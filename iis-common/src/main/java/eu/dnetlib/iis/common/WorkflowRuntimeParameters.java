@@ -10,10 +10,8 @@ import org.apache.hadoop.conf.Configuration;
  * @author mhorst
  *
  */
-public abstract class WorkflowRuntimeParameters {
+public final class WorkflowRuntimeParameters {
 
-	private WorkflowRuntimeParameters() {}
-	
 	public static final char DEFAULT_CSV_DELIMITER = ',';
 	
 	public static final String UNDEFINED_NONEMPTY_VALUE = "$UNDEFINED$";
@@ -25,6 +23,9 @@ public abstract class WorkflowRuntimeParameters {
     public static final String DNET_SERVICE_CLIENT_READ_TIMEOUT = "dnet.service.client.read.timeout";
     public static final String DNET_SERVICE_CLIENT_CONNECTION_TIMEOUT = "dnet.service.client.connection.timeout";
 
+    // ----------------- CONSTRUCTORS -----------------------------
+    
+    private WorkflowRuntimeParameters() {}
     
 	/**
      * Retrieves parameter from hadoop context configuration when set to value different than {@link WorkflowRuntimeParameters#UNDEFINED_NONEMPTY_VALUE}.

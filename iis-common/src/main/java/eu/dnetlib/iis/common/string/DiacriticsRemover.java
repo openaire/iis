@@ -46,9 +46,6 @@ import java.util.Map;
  */
 public final class DiacriticsRemover {
 
-    private DiacriticsRemover() {}
-    
-    
     private static final Character[] from = {
         'Æ', 'Ð', 'Ø', 'Þ', 'ß', 'æ', 'ð', 'ø', 'þ', 'Đ', 'đ', 'Ħ',
         'ħ', 'ı', 'ĸ', 'Ł', 'ł', 'Ŋ', 'ŋ', 'Œ', 'œ', 'Ŧ', 'ŧ'};
@@ -58,6 +55,11 @@ public final class DiacriticsRemover {
     
     private static Map<Character, String> lookup = buildLookup();
     
+    
+    //------------------------ CONSTRUCTORS -------------------
+    
+    
+    private DiacriticsRemover() {}
     
 
     //------------------------ LOGIC --------------------------

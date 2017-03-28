@@ -17,7 +17,7 @@ import com.google.gson.Gson;
  * 
  * @author madryk
  */
-public class JsonTestUtils {
+public final class JsonTestUtils {
 
 
     //------------------------ CONSTRUCTORS --------------------------

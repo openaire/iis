@@ -17,7 +17,7 @@ import eu.dnetlib.iis.common.java.io.JsonStreamReader;
  * @author madryk
  *
  */
-public class JsonAvroTestUtils {
+public final class JsonAvroTestUtils {
 
 
     //------------------------ CONSTRUCTORS --------------------------

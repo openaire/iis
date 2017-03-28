@@ -1,7 +1,6 @@
 package eu.dnetlib.iis.common;
 
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.oozie.client.WorkflowJob;
 
@@ -23,11 +22,8 @@ public class OozieWorkflowTestConfiguration {
 	private int timeoutInSeconds = defaultTimeoutInSeconds;
 	private WorkflowJob.Status expectedFinishStatus = defaultExpectedFinishStatus;
 	
-	private List<String> expectedOutputFiles = Lists.newArrayList();
-	private List<String> expectedOutputAvroDataStores = Lists.newArrayList();
-	
-	public OozieWorkflowTestConfiguration(){
-	}
+	private final List<String> expectedOutputFiles = Lists.newArrayList();
+	private final List<String> expectedOutputAvroDataStores = Lists.newArrayList();
 	
 	
 	/**

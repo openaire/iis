@@ -30,12 +30,16 @@ public class ExamplePdfBasedDocumentContentGenerator implements Process {
 	private static final String PORT_OUT_DOC_CONTENT = "doc_content";
 	private static final String PARAM_PDF_SOURCE_DIR = "pdfs_resource_dir";
 	
-	private static final Map<String, PortType> outputPorts = new HashMap<String, PortType>(); 
+	private final Map<String, PortType> outputPorts = new HashMap<String, PortType>(); 
 	
-	{
-		outputPorts.put(PORT_OUT_DOC_CONTENT, 
-				new AvroPortType(DocumentContent.SCHEMA$));
+	
+	// ------------------------- CONSTRUCTORS --------------------------------
+	
+	public ExamplePdfBasedDocumentContentGenerator() {
+		outputPorts.put(PORT_OUT_DOC_CONTENT, new AvroPortType(DocumentContent.SCHEMA$));
 	}
+
+	// ------------------------- LOGIC ---------------------------------------
 	
 	@Override
 	public Map<String, PortType> getInputPorts() {

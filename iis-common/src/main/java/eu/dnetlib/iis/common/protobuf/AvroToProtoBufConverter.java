@@ -7,6 +7,6 @@ import org.apache.avro.generic.IndexedRecord;
  * @author Mateusz Fedoryszak (m.fedoryszak@icm.edu.pl)
  */
 public interface AvroToProtoBufConverter<IN extends IndexedRecord, OUT extends Message> {
-    public String convertIntoKey(IN datum);
-    public OUT convertIntoValue(IN datum);
+    String convertIntoKey(IN datum);
+    OUT convertIntoValue(IN datum);
 }

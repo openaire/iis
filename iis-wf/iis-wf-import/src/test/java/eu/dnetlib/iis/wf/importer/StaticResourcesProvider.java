@@ -18,6 +18,10 @@ import com.google.common.collect.Lists;
 public class StaticResourcesProvider {
 
 
+    //------------------------ CONSTRUCTORS -------------------
+    
+    private StaticResourcesProvider() {}
+    
     //------------------------ LOGIC --------------------------    
 
     /**

@@ -59,17 +59,19 @@ public class IdReplacerUDF extends EvalFunc<Tuple> {
     private static void checkInputSize(Tuple input) throws IllegalArgumentException {
         final int minimalInputSize = FIELDS_TO_REMOVE + 1;
         final int actualSize = input.size();
-        if (actualSize < minimalInputSize)
+        if (actualSize < minimalInputSize) {
             throw new IllegalArgumentException(
                     "Not enough arguments passed to " + IdReplacerUDF.class.getName() +
                             ". Expected at least " + minimalInputSize +
                             ", but got " + actualSize + " arguments.");
+        }
     }
 
     private static void checkNotNull(Tuple input) throws IllegalArgumentException {
-        if (input == null)
+        if (input == null) {
             throw new IllegalArgumentException(
                     IdReplacerUDF.class.getName() + ": Input tuple cannot be null");
+        }
     }
 
     /**
@@ -130,9 +132,7 @@ public class IdReplacerUDF extends EvalFunc<Tuple> {
     @Override
     public Schema outputSchema(Schema input) {
         try {
-        	return new Schema(new Schema.FieldSchema(getSchemaName(
-            		getClass().getName().toLowerCase().replace('.', '_'), 
-            		input),
+        	return new Schema(new Schema.FieldSchema(getSchemaName(getClass().getName().toLowerCase().replace('.', '_'), input),
             		getRecordSchema(input), DataType.TUPLE));
         } catch (FrontendException ex) {
             return null;

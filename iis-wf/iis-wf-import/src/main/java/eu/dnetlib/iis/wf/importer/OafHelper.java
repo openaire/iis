@@ -16,6 +16,12 @@ import eu.dnetlib.data.proto.OafProtos.Oaf;
  */
 public class OafHelper {
 
+    // --------------------- CONSTRUCTORS --------------------------
+    
+    private OafHelper() {}
+
+    // --------------------- LOGIC ---------------------------------
+    
     /**
      * Builds {@link Oaf} object from byte array.
      * 

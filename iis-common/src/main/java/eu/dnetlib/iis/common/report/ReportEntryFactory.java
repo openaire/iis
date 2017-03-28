@@ -10,6 +10,12 @@ import eu.dnetlib.iis.common.schemas.ReportEntryType;
  */
 public class ReportEntryFactory {
 
+    // ----------------------- CONSTRUCTORS -----------------------------
+    
+    private ReportEntryFactory() {}
+
+    // ----------------------- LOGIC ------------------------------------
+    
     /**
      * Creates {@link ReportEntry} with {@link ReportEntryType#COUNTER} type
      */

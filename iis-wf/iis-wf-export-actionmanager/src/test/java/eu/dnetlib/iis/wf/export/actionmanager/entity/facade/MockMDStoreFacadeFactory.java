@@ -23,7 +23,7 @@ import eu.dnetlib.data.mdstore.MDStoreServiceException;
  */
 public class MockMDStoreFacadeFactory implements MDStoreFacadeFactory {
     
-    private static String STATIC_RESOURCE_PREFIX = "mdstore.facade.mock.static.resource.";
+    private static final String STATIC_RESOURCE_PREFIX = "mdstore.facade.mock.static.resource.";
 
     // -------------------- LOGIC -------------------------
     

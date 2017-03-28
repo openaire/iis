@@ -15,7 +15,7 @@ import eu.dnetlib.iis.wf.importer.infospace.QualifiedOafJsonRecord;
  * @author mhorst
  *
  */
-public class InfoSpaceRecordUtils {
+public final class InfoSpaceRecordUtils {
 
     private InfoSpaceRecordUtils(){}
     

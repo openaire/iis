@@ -55,12 +55,12 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
 
     public static final String FAULT_SUPPLEMENTARY_DATA_URL = "url";
 
-    protected final Logger log = Logger.getLogger(MetadataExtractorMapper.class);
+    protected static final Logger log = Logger.getLogger(MetadataExtractorMapper.class);
 
     /**
      * Multiple outputs.
      */
-    private MultipleOutputs mos = null;
+    private MultipleOutputs mos;
 
     /**
      * Document metadata named output.
@@ -258,11 +258,9 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
      */
     private void handleException(Exception e, String documentId) throws IOException, InterruptedException {
         // writing empty result
-        mos.write(namedOutputMeta,
-                new AvroKey<ExtractedDocumentMetadata>(NlmToDocumentWithBasicMetadataConverter.createEmpty(documentId.toString())));
+        mos.write(namedOutputMeta, new AvroKey<ExtractedDocumentMetadata>(NlmToDocumentWithBasicMetadataConverter.createEmpty(documentId)));
         // writing fault result
-        mos.write(namedOutputFault, 
-                new AvroKey<Fault>(FaultUtils.exceptionToFault(documentId, e, null)));
+        mos.write(namedOutputFault, new AvroKey<Fault>(FaultUtils.exceptionToFault(documentId, e, null)));
     }
     
     /**

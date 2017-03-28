@@ -1,10 +1,8 @@
 package eu.dnetlib.iis.common.utils;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-
-import eu.dnetlib.iis.common.utils.AvroUtils;
 
 public class AvroToolsTests {
 

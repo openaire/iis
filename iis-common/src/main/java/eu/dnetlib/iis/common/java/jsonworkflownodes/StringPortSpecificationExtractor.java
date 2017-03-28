@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
  * @author Mateusz Kobos
  */
 public class StringPortSpecificationExtractor {
-	private final String portNameRegexp;
 	private final String[] propertiesRegexp;
 	private final String portSpecificationRegexp;
 	private final Pattern pattern;
@@ -30,9 +29,8 @@ public class StringPortSpecificationExtractor {
 	 * specification: {@code "[\\w\\.]+"}.
 	 */
 	public StringPortSpecificationExtractor(String[] propertiesRegexp){
-		this.portNameRegexp = "[\\w\\._]+";
 		this.propertiesRegexp = propertiesRegexp;
-		this.portSpecificationRegexp = createRegexpString(portNameRegexp, propertiesRegexp);
+		this.portSpecificationRegexp = createRegexpString("[\\w\\._]+", propertiesRegexp);
 		this.pattern = Pattern.compile(this.portSpecificationRegexp);
 	}
 
@@ -53,17 +51,19 @@ public class StringPortSpecificationExtractor {
 	
 	public PortSpecification getSpecification(String text){
 		Matcher m = pattern.matcher(text);
-		final int expectedGroupsCount = getPropertiesCount()+1;
 		if(!m.matches()){
 			throw new RuntimeException(String.format("Specification of " +
 					"the port (\"%s\") does not match regexp \"%s\"", 
 					text, portSpecificationRegexp));
 		}
+        final int expectedGroupsCount = getPropertiesCount()+1;
 		if(m.groupCount() != expectedGroupsCount){
 			StringBuilder groups = new StringBuilder();
 			for(int i = 0; i < m.groupCount(); i++){
 				groups.append("\""+m.group(i)+"\"");
-				if(i != m.groupCount()-1) groups.append(", ");
+				if(i != m.groupCount()-1) {
+				    groups.append(", ");
+				}
 			}
 			throw new RuntimeException(String.format(
 				"Invalid output port specification \"%s\": got %d groups "+

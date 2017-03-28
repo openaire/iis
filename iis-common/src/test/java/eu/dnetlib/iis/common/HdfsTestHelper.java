@@ -24,7 +24,7 @@ import eu.dnetlib.iis.common.java.io.FileSystemPath;
  */
 class HdfsTestHelper {
 	
-	private SshHdfsFileFetcher hdfsFileFetcher;
+	private final SshHdfsFileFetcher hdfsFileFetcher;
 	
 	
 	//------------------------ CONSTRUCTORS --------------------------

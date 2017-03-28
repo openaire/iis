@@ -10,9 +10,9 @@ import org.apache.hadoop.mapreduce.Counter;
  */
 public class InvalidCountableContentApproverWrapper implements ContentApprover {
 
-    private ContentApprover contentApprover;
+    private final ContentApprover contentApprover;
     
-    private Counter invalidContentCounter;
+    private final Counter invalidContentCounter;
     
     
     //------------------------ CONSTRUCTORS --------------------------

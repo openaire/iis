@@ -17,7 +17,7 @@ import eu.dnetlib.iis.common.schemas.ReportEntry;
  */
 public class ReportEntryJsonAppender {
 
-    private ReportValueJsonConverterManager reportValueJsonConverterManager = new ReportValueJsonConverterManager();
+    private final ReportValueJsonConverterManager reportValueJsonConverterManager = new ReportValueJsonConverterManager();
 
     //------------------------ LOGIC --------------------------
     

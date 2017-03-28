@@ -18,6 +18,11 @@ import eu.dnetlib.iis.common.java.io.FileSystemPath;
 
 public class AvroTestUtils {
 
+    //------------------------ CONSTRUCTORS -------------------
+    
+    
+    private AvroTestUtils() {}
+    
     
     //------------------------ LOGIC --------------------------
     
@@ -29,8 +34,7 @@ public class AvroTestUtils {
         
         FileSystem fs = createLocalFileSystem();
         
-        List<T> records = DataStore.read(new FileSystemPath(fs, outputPath));
-        return records;
+        return DataStore.read(new FileSystemPath(fs, outputPath));
     }
 
 
@@ -75,7 +79,6 @@ public class AvroTestUtils {
     private static FileSystem createLocalFileSystem() throws IOException {
         Configuration conf = new Configuration();
         conf.set(FileSystem.FS_DEFAULT_NAME_KEY, FileSystem.DEFAULT_FS);
-        FileSystem fs = FileSystem.get(conf);
-        return fs;
+        return FileSystem.get(conf);
     }
 }

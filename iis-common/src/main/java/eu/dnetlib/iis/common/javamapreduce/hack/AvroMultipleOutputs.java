@@ -282,8 +282,8 @@ public class AvroMultipleOutputs{
    * @param outputFormatClass OutputFormat class.
    * @param keySchema          Schema for the Key
    */
-  @SuppressWarnings("unchecked")
-  public static void addNamedOutput(Job job, String namedOutput,
+  @SuppressWarnings("rawtypes")
+public static void addNamedOutput(Job job, String namedOutput,
       Class<? extends OutputFormat> outputFormatClass,
       Schema keySchema) {
       addNamedOutput(job,namedOutput,outputFormatClass,keySchema,null);
@@ -301,8 +301,8 @@ public class AvroMultipleOutputs{
    * @param keySchema          Schema for the Key
    * @param valueSchema        Schema for the Value (used in case of AvroKeyValueOutputFormat or null)
    */
-  @SuppressWarnings("unchecked")
-  public static void addNamedOutput(Job job, String namedOutput,
+  @SuppressWarnings("rawtypes")
+public static void addNamedOutput(Job job, String namedOutput,
       Class<? extends OutputFormat> outputFormatClass,
       Schema keySchema, Schema valueSchema) {
     checkNamedOutputName(job, namedOutput, true);
@@ -346,8 +346,9 @@ public class AvroMultipleOutputs{
   /**
    * Wraps RecordWriter to increment counters. 
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   private static class RecordWriterWithCounter extends RecordWriter {
+
     private RecordWriter writer;
     private String counterName;
     private TaskInputOutputContext context;
@@ -359,7 +360,6 @@ public class AvroMultipleOutputs{
       this.context = context;
     }
 
-    @SuppressWarnings({"unchecked"})
     public void write(Object key, Object value) 
         throws IOException, InterruptedException {
       context.getCounter(COUNTERS_GROUP, counterName).increment(1);
@@ -408,7 +408,6 @@ public class AvroMultipleOutputs{
    * @param namedOutput the named output name
    * @param key         the key , value is NullWritable
    */
-  @SuppressWarnings("unchecked")
   public void write(String namedOutput, Object key)
       throws IOException, InterruptedException {
     write(namedOutput, key, NullWritable.get(), namedOutput);
@@ -426,7 +425,6 @@ public class AvroMultipleOutputs{
    * @param key         the key
    * @param value       the value
    */
-  @SuppressWarnings("unchecked")
   public void write(String namedOutput, Object key, Object value)
       throws IOException, InterruptedException {
     write(namedOutput, key, value, namedOutput);
@@ -483,7 +481,7 @@ public class AvroMultipleOutputs{
    * @param baseOutputPath base-output path to write the record to. Note: Framework will
    *          generate unique filename for the baseOutputPath
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "deprecation" })
   public void write(Object key, Object value, Schema keySchema,
       Schema valSchema, String baseOutputPath) throws IOException,
       InterruptedException {
@@ -497,8 +495,8 @@ public class AvroMultipleOutputs{
   /** Hacked: make public from private */
   // by being synchronized MultipleOutputTask can be use with a
   // MultithreadedMapper.
-  @SuppressWarnings("unchecked")
-  public synchronized RecordWriter getRecordWriter(
+  @SuppressWarnings("rawtypes")
+public synchronized RecordWriter getRecordWriter(
       TaskAttemptContext taskContext, String baseFileName) 
       throws IOException, InterruptedException {
     
@@ -619,9 +617,8 @@ public class AvroMultipleOutputs{
    * end of their <code>close()</code>
    * 
    */
-  @SuppressWarnings("unchecked")
   public void close() throws IOException, InterruptedException {
-    for (RecordWriter writer : recordWriters.values()) {
+    for (@SuppressWarnings("rawtypes") RecordWriter writer : recordWriters.values()) {
       writer.close(context);
     }
   }

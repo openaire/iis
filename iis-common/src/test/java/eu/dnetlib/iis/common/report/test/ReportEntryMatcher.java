@@ -17,7 +17,7 @@ import eu.dnetlib.iis.common.schemas.ReportEntry;
 
 public class ReportEntryMatcher {
 
-    private ValueSpecMatcher valueSpecMatcher = new ValueSpecMatcher();
+    private final ValueSpecMatcher valueSpecMatcher = new ValueSpecMatcher();
     
     
     //------------------------ LOGIC --------------------------

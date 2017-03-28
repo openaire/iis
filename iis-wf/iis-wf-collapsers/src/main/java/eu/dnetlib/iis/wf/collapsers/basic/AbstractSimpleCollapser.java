@@ -3,7 +3,6 @@ package eu.dnetlib.iis.wf.collapsers.basic;
 import java.util.List;
 
 import org.apache.avro.generic.IndexedRecord;
-import org.apache.hadoop.mapreduce.TaskAttemptContext;
 
 import eu.dnetlib.iis.wf.collapsers.RecordCollapser;
 
@@ -13,11 +12,7 @@ import eu.dnetlib.iis.wf.collapsers.RecordCollapser;
  * @author Dominika Tkaczyk
  * @param <T> the type of input and output objects
  */
-public abstract class SimpleCollapser<T extends IndexedRecord> implements RecordCollapser<T,T> {
-
-    @Override
-    public void setup(TaskAttemptContext context) {
-    }
+public abstract class AbstractSimpleCollapser<T extends IndexedRecord> implements RecordCollapser<T,T> {
 
     /**
      * Collapses a list of objects.

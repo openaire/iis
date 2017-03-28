@@ -13,8 +13,18 @@ import eu.dnetlib.iis.common.java.io.JsonUtils;
  *
  */
 public class AvroUtils {
-	public final static String primitiveTypePrefix = 
-			"org.apache.avro.Schema.Type.";
+    
+	public final static String primitiveTypePrefix = "org.apache.avro.Schema.Type.";
+	
+	
+	//------------------------ CONSTRUCTORS -------------------
+	
+	
+	private AvroUtils() {}
+	
+	
+	//------------------------ LOGIC --------------------------
+	
 	
 	/**
 	 * For a given name of a class generated from Avro schema return 
@@ -45,19 +55,17 @@ public class AvroUtils {
 	
 	private static Schema getPrimitiveTypeSchema(String shortName){
 		Schema.Type type = Schema.Type.valueOf(shortName);
-		Schema schema = Schema.create(type);
-		return schema;
+		return Schema.create(type);
 	}
 	
 	private static Schema getAvroClassSchema(String className){
 		try {
 			Class<?> avroClass = Class.forName(className);
 			Field f = avroClass.getDeclaredField("SCHEMA$");
-			Schema schema = (Schema) f.get(null);
-			return schema;
+			return (Schema) f.get(null);
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(
-					"Class \""+className+"\" does not exist");
+					"Class \""+className+"\" does not exist", e);
 		} catch (SecurityException e) {
 			throw new RuntimeException(e);
 		} catch (NoSuchFieldException e) {

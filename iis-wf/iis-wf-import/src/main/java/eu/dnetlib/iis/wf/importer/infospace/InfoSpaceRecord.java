@@ -14,11 +14,11 @@ import org.apache.hadoop.io.Writable;
  */
 public class InfoSpaceRecord implements Writable {
 
-    private Text columnFamily;
+    private final Text columnFamily;
 
-    private Text qualifier;
+    private final Text qualifier;
     
-    private Text oafJson;
+    private final Text oafJson;
     
     // ------------------------ CONSTRUCTORS --------------------------
     

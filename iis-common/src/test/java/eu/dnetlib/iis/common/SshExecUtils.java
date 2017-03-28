@@ -11,7 +11,7 @@ import net.schmizz.sshj.connection.channel.direct.Session.Command;
  * @author madryk
  *
  */
-public class SshExecUtils {
+public final class SshExecUtils {
 	
 	
 	//------------------------ CONSTRUCTORS --------------------------

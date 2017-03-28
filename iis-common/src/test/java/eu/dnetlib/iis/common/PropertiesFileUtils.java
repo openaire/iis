@@ -16,6 +16,12 @@ import org.apache.commons.io.IOUtils;
  */
 public class PropertiesFileUtils {
 
+    // ------------------ CONSTRUCTORS ---------------------
+    
+    private PropertiesFileUtils() {}
+    
+    // ------------------ LOGIC ----------------------------
+    
 	/**
 	 * Writes properties to file
 	 */

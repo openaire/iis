@@ -27,7 +27,7 @@
 			<name>significant_fields</name>
 			<value>$ALL$</value>
 			<description>comma-separated list of significant field names used in within origin collapser;
-				@see eu.dnetlib.iis.wf.collapsers.SignificantFieldsCollapser
+				@see eu.dnetlib.iis.wf.collapsers.AbstractSignificantFieldsCollapser
 			</description>
 		</property>
 	</parameters>

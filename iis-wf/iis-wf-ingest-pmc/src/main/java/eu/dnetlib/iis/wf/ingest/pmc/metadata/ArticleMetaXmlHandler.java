@@ -63,23 +63,24 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
     
     private String currentValue;
     
-    private CermineAffiliationBuilder cermineAffiliationBuilder = new CermineAffiliationBuilder();
-    private CermineToIngestAffConverter cermineToIngestAffConverter = new CermineToIngestAffConverter();
+    private final CermineAffiliationBuilder cermineAffiliationBuilder = new CermineAffiliationBuilder();
+    private final CermineToIngestAffConverter cermineToIngestAffConverter = new CermineToIngestAffConverter();
     
-    private String currentArticleIdType = null;
+    private String currentArticleIdType;
     
-    private StringBuilder affiliationText = new StringBuilder();
-    private String currentAffiliationId = null;
+    private final StringBuilder affiliationText = new StringBuilder();
+    private String currentAffiliationId;
     
-    private StringBuilder authorText = new StringBuilder();
+    private final StringBuilder authorText = new StringBuilder();
     private JatsAuthor currentAuthor;
-    private List<JatsAuthor> currentAuthorsGroup = Lists.newArrayList();
-    private List<JatsAuthor> currentAuthors = Lists.newArrayList();
+    private final List<JatsAuthor> currentAuthorsGroup = Lists.newArrayList();
+    private final List<JatsAuthor> currentAuthors = Lists.newArrayList();
     
     
     //------------------------ CONSTRUCTOS --------------------------
     
     public ArticleMetaXmlHandler(ExtractedDocumentMetadata.Builder builder) {
+        super();
         this.builder = builder;
         this.parents = new Stack<String>();
     }
@@ -219,8 +220,7 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
                 Element parsedAffiliation = affiliationParser.parse(affStr);
                 if (parsedAffiliation!=null) {
                     CermineAffiliation cAff = cermineAffiliationBuilder.build(parsedAffiliation);
-                    Affiliation aff = cermineToIngestAffConverter.convert(cAff);
-                    return aff;
+                    return cermineToIngestAffConverter.convert(cAff);
                 }
             }
         } catch (TransformationException | AnalysisException e) {

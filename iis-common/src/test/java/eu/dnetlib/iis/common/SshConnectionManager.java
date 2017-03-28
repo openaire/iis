@@ -8,11 +8,11 @@ package eu.dnetlib.iis.common;
  */
 public class SshConnectionManager {
 
-	private String remoteHost;
+	private final String remoteHost;
 	
-	private int sshPort;
+	private final int sshPort;
 	
-	private String remoteUser;
+	private final String remoteUser;
 	
 	
 	private SshSimpleConnection sshSimpleConnection;

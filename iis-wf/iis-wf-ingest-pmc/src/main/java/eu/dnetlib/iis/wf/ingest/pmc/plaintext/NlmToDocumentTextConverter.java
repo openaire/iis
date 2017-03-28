@@ -81,16 +81,16 @@ public final class NlmToDocumentTextConverter {
 				String childAsText = getText((Element) child, insertNewlineBefore).trim();
 				if (!childAsText.isEmpty()) {
 					if (insertNewlineBefore.contains(((Element) child).getName())) {
-						sb.append("\n");
+						sb.append('\n');
 					} else {
-						sb.append(" ");
+						sb.append(' ');
 					}
 					sb.append(childAsText);
 				}
 			} else if (child instanceof Text) {
 				String cont = ((Text) child).getText().trim();
 				if (!cont.isEmpty()) {
-					sb.append(" ");
+					sb.append(' ');
 					sb.append(cont);
 				}
 			}

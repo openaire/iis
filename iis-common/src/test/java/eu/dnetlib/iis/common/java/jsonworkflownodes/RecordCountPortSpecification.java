@@ -9,10 +9,10 @@ import org.apache.avro.Schema;
  */
 public class RecordCountPortSpecification {
 
-	private String name;
-	private Schema schema;
-	private int minimumRecordCount;
-	private int maximumRecordCount;
+	private final String name;
+	private final Schema schema;
+	private final int minimumRecordCount;
+	private final int maximumRecordCount;
 	
 	
 	//------------------------ CONSTRUCTORS --------------------------

@@ -26,11 +26,11 @@ public class OrganizationSection implements Serializable {
         UNKNOWN
     }
     
-    private OrgSectionType type;
+    private final OrgSectionType type;
     
-    private String[] sectionWords;
+    private final String[] sectionWords;
     
-    private int typeSignificantWordPos;
+    private final int typeSignificantWordPos;
     
     
     //------------------------ CONSTRUCTORS --------------------------

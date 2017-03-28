@@ -16,7 +16,6 @@ package com.cloudera.science.avro.common;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.avro.Schema;

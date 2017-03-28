@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +28,9 @@ public class MavenTestWorkflowRunner {
     private final static String MAVEN_TEST_WORKFLOW_PROFILE = "attach-test-resources,oozie-package,deploy,run";
     
     
-    private String mavenExecutable;
+    private final String mavenExecutable;
     
-    private String outputDirName;
+    private final String outputDirName;
     
     
     //------------------------ CONSTRUCTORS --------------------------

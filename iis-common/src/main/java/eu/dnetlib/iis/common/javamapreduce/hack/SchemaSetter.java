@@ -32,6 +32,12 @@ public class SchemaSetter {
 	public final static String avroMultipleOutputsPattern = 
 			"avro.mapreduce.multipleoutputs.namedOutput.%s.keyschema";
 	
+	//------------------------ CONSTRUCTORS --------------------------
+	
+	private SchemaSetter() {}
+	
+	//------------------------ LOGIC ---------------------------------
+	
 	public static void set(Configuration conf){
 		if (conf == null) {
 			return;

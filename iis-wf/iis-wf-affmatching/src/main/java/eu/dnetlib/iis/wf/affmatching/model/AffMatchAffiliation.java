@@ -15,9 +15,9 @@ import com.google.common.base.Preconditions;
 public class AffMatchAffiliation {
   
     
-    private String documentId;
+    private final String documentId;
     
-    private int position;
+    private final int position;
     
     private String organizationName;
     

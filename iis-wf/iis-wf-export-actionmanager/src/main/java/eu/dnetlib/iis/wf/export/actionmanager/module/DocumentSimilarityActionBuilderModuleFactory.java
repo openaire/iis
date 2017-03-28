@@ -33,7 +33,7 @@ import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
  */
 public class DocumentSimilarityActionBuilderModuleFactory extends AbstractActionBuilderFactory<DocumentSimilarity> {
 
-    private final Logger log = Logger.getLogger(this.getClass());
+    private static final Logger log = Logger.getLogger(DocumentSimilarityActionBuilderModuleFactory.class);
 
     // ------------------------ CONSTRUCTORS --------------------------
 

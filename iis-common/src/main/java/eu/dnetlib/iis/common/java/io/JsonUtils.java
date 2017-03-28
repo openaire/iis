@@ -21,6 +21,13 @@ import com.google.gson.JsonParser;
  * 
  */
 public class JsonUtils {
+    
+    //------------------------ CONSTRUCTORS -------------------
+    
+    private JsonUtils() {}
+    
+    //------------------------ LOGIC --------------------------
+    
 	/**
 	 * Read JSON file divided into lines, where each one corresponds to a
 	 * record. Next, save the extracted records in a data store.
@@ -76,13 +83,13 @@ public class JsonUtils {
 	public static <T> List<T> convertToList(InputStream inputStream,
 			Schema schema, Class<T> type) {
 		try {
-			JsonStreamReader<T> reader = new JsonStreamReader<T>(schema,
-					inputStream, type);
-			ArrayList<T> list = new ArrayList<T>();
-			while (reader.hasNext()) {
-				list.add(reader.next());
-			}
-			return list;
+		    try (JsonStreamReader<T> reader = new JsonStreamReader<T>(schema, inputStream, type)) {
+		        ArrayList<T> list = new ArrayList<T>();
+	            while (reader.hasNext()) {
+	                list.add(reader.next());
+	            }
+	            return list;    
+		    }
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

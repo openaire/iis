@@ -30,6 +30,7 @@ public class JournalMetaXmlHandler extends DefaultHandler implements ProcessingF
     //------------------------ CONSTRUCTORS --------------------------
     
     public JournalMetaXmlHandler(ExtractedDocumentMetadata.Builder builder) {
+        super();
         this.builder = builder;
         this.parents = new Stack<String>();
     }
@@ -53,11 +54,9 @@ public class JournalMetaXmlHandler extends DefaultHandler implements ProcessingF
     public void endElement(String uri, String localName, String qName) throws SAXException {
         this.parents.pop();
         
-        if (isElement(qName, ELEM_JOURNAL_TITLE)) {
-            if (!builder.hasJournal()) {
-                // taking only first journal title into account when more than one specified
-                builder.setJournal(this.currentValue.toString().trim());
-            }
+        if (isElement(qName, ELEM_JOURNAL_TITLE) && !builder.hasJournal()) {
+            // taking only first journal title into account when more than one specified
+            builder.setJournal(this.currentValue.trim());
         }
         
     }

@@ -42,7 +42,7 @@ import eu.dnetlib.iis.common.schemas.ReportEntry;
  */
 public class OozieTimeReportGenerator implements Process {
 
-    private static Logger log = LoggerFactory.getLogger(OozieTimeReportGenerator.class);
+    private static final Logger log = LoggerFactory.getLogger(OozieTimeReportGenerator.class);
     
     private static final String REPORT_PORT_OUT_NAME = "report";
     

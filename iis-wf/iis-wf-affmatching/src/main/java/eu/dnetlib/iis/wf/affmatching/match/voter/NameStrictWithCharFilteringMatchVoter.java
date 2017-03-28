@@ -19,9 +19,9 @@ public class NameStrictWithCharFilteringMatchVoter extends AbstractAffOrgMatchVo
     
     private static final long serialVersionUID = 1L;
 
-    private StringFilter stringFilter = new StringFilter();
+    private final StringFilter stringFilter = new StringFilter();
     
-    private List<Character> charsToFilter;
+    private final List<Character> charsToFilter;
     
     private Function<AffMatchOrganization, List<String>> getOrgNamesFunction = new GetOrgNameFunction();
     
@@ -33,7 +33,7 @@ public class NameStrictWithCharFilteringMatchVoter extends AbstractAffOrgMatchVo
      *      into account when comparing organization names
      */
     public NameStrictWithCharFilteringMatchVoter(List<Character> charsToFilter) {
-        
+        super();
         this.charsToFilter = charsToFilter;
     }
     

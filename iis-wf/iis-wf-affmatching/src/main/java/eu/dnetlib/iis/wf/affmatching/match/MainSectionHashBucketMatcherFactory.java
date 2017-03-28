@@ -31,7 +31,9 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 
 public class MainSectionHashBucketMatcherFactory {
     
+    // ---------------------- CONSTRUCTORS ----------------------
     
+    private MainSectionHashBucketMatcherFactory() {}
     
     //------------------------ LOGIC --------------------------
     

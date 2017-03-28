@@ -2,8 +2,6 @@ package eu.dnetlib.iis.wf.affmatching.model;
 
 import com.google.common.base.Objects;
 
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
-
 /**
  * Simplified version of {@link AffMatchResult} used for quality testing purposes.
  * 
@@ -11,11 +9,11 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
  */
 public class SimpleAffMatchResult {
 
-    private String documentId;
+    private final String documentId;
     
-    private int affiliationPosition;
+    private final int affiliationPosition;
     
-    private String organizationId;
+    private final String organizationId;
 
     
     //------------------------ CONSTRUCTORS --------------------------

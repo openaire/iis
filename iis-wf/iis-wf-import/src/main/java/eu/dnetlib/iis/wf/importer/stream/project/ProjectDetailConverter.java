@@ -20,7 +20,7 @@ import eu.dnetlib.openaire.exporter.model.ProjectDetail;
  */
 public class ProjectDetailConverter {
     
-    private FundingTreeParser fundingTreeParser = new FundingTreeParser();
+    private final FundingTreeParser fundingTreeParser = new FundingTreeParser();
 
     /**
      * Converts {@link ProjectDetail} into {@link Project}.

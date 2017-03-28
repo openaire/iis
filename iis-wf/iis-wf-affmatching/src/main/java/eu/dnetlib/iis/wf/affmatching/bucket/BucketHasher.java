@@ -16,6 +16,6 @@ public interface BucketHasher<T> extends Serializable {
     /**
      * Returns a hash of the given object. 
      */
-    public String hash(T object);
+    String hash(T object);
     
 }

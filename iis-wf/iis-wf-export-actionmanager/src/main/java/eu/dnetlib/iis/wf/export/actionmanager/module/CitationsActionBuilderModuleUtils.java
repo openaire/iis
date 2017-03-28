@@ -15,7 +15,14 @@ import eu.dnetlib.iis.export.schemas.Citations;
  *
  */
 public class CitationsActionBuilderModuleUtils {
+    
+    // ------------------------- CONSTRUCTORS ----------------------------
+    
+    private CitationsActionBuilderModuleUtils() {}
 
+    // ------------------------- LOGIC -----------------------------------
+    
+    
     /**
      * Creates {@link BlobCitationEntry} from {@link CitationEntry}.
      * Translates confirence level into trust level applying confidenceToTrustLevelFactor.

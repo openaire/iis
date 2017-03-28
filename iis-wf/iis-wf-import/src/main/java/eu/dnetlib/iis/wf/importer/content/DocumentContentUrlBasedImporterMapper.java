@@ -26,7 +26,7 @@ import eu.dnetlib.iis.importer.schemas.DocumentContent;
 public class DocumentContentUrlBasedImporterMapper
         extends Mapper<AvroKey<DocumentContentUrl>, NullWritable, AvroKey<DocumentContent>, NullWritable> {
 
-    private final Logger log = Logger.getLogger(DocumentContentUrlBasedImporterMapper.class);
+    private static final Logger log = Logger.getLogger(DocumentContentUrlBasedImporterMapper.class);
 
 
     /**

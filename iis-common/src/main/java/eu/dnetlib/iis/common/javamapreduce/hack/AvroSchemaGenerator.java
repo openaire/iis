@@ -19,6 +19,12 @@ import eu.dnetlib.iis.common.utils.AvroUtils;
  */
 public class AvroSchemaGenerator {
 
+    //------------------------ CONSTRUCTORS --------------------------
+    
+    private AvroSchemaGenerator() {}
+    
+    //------------------------ LOGIC ---------------------------------
+    
     public static void main(String[] args) throws FileNotFoundException, IOException, ParseException {
         if (args.length==0) {
         	throw new RuntimeException("no classes provided for schema generation");

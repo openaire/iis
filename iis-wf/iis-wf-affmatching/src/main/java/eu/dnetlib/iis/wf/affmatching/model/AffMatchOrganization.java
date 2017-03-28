@@ -16,7 +16,7 @@ import com.google.common.collect.Lists;
 public class AffMatchOrganization {
     
     
-    private String id;
+    private final String id;
     
     private String name;
     
@@ -28,7 +28,7 @@ public class AffMatchOrganization {
     
     private String websiteUrl;
 
-    private List<String> alternativeNames = Lists.newArrayList();
+    private final List<String> alternativeNames = Lists.newArrayList();
     
     
     //------------------------ CONSTRUCTORS --------------------------

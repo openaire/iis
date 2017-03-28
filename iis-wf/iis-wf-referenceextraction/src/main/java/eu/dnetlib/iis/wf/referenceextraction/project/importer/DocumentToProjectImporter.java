@@ -33,7 +33,7 @@ import eu.dnetlib.iis.wf.referenceextraction.shared.importer.SharedImporterUtils
  */
 public class DocumentToProjectImporter implements eu.dnetlib.iis.common.java.Process {
 
-	private final Logger log = Logger.getLogger(this.getClass());
+	private static final Logger log = Logger.getLogger(DocumentToProjectImporter.class);
 	
 	public static final String PARAM_CSV_PATH = "import.project.csv.path";
 

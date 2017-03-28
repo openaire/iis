@@ -31,7 +31,7 @@ public class SshSimpleConnection {
 	private final static int SSH_RETRY_COOLDOWN_IN_SEC = 10;
 	
 	
-	private SSHClient sshClient = new SSHClient();
+	private final SSHClient sshClient = new SSHClient();
 	
 	
 	//------------------------ LOGIC --------------------------

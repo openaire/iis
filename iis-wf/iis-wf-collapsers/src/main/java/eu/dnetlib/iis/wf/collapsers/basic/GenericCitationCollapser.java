@@ -20,7 +20,7 @@ import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
  * 
  * @author mhorst
  */
-public class GenericCitationCollapser extends SimpleCollapser<Citation> {
+public class GenericCitationCollapser extends AbstractSimpleCollapser<Citation> {
 
     /**
      * Total extracted citations counter. 
@@ -92,7 +92,7 @@ public class GenericCitationCollapser extends SimpleCollapser<Citation> {
      * @return collapsed citation or null when nothing to collapse
      */
     private Citation collapseForPosition(List<Citation> objects) {
-    	if (objects==null || objects.size()==0) {
+    	if (objects==null || objects.isEmpty()) {
     		return null;
     	} else if (objects.size()==1) {
     		return objects.get(0);

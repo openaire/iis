@@ -23,9 +23,9 @@ public class ExternalIdCitationMatcher implements Serializable {
     private static final long serialVersionUID = 1L;
 
 
-    private IdentifierMappingExtractor idMappingExtractor = new IdentifierMappingExtractor();
+    private final IdentifierMappingExtractor idMappingExtractor = new IdentifierMappingExtractor();
     
-    private ExternalIdReferenceExtractor referencePicker = new ExternalIdReferenceExtractor();
+    private final ExternalIdReferenceExtractor referencePicker = new ExternalIdReferenceExtractor();
     
     
     //------------------------ LOGIC --------------------------

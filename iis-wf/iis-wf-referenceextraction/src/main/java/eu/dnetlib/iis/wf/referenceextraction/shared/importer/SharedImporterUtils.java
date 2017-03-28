@@ -8,6 +8,14 @@ package eu.dnetlib.iis.wf.referenceextraction.shared.importer;
  */
 public class SharedImporterUtils {
 	
+    
+    // ----------------------------- CONSTRUCTORS ------------------------------------
+    
+    private SharedImporterUtils() {}
+    
+    
+    // ----------------------------- LOGIC -------------------------------------------
+    
 	/**
 	 * Method checking whether given line should be skipped.
 	 * @param line
@@ -18,7 +26,7 @@ public class SharedImporterUtils {
 		if (line.isEmpty()) {
 			return true;
 		} else {
-			if (skipPrefixes!=null && skipPrefixes.length>0) {
+			if (skipPrefixes != null && skipPrefixes.length > 0) {
 				for (String skipPrefix : skipPrefixes) {
 					if (line.startsWith(skipPrefix)) {
 						return true;

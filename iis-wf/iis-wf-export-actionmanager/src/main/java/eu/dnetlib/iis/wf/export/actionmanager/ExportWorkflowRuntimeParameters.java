@@ -1,9 +1,7 @@
 package eu.dnetlib.iis.wf.export.actionmanager;
 
-public abstract class ExportWorkflowRuntimeParameters {
+public final class ExportWorkflowRuntimeParameters {
 
-	private ExportWorkflowRuntimeParameters() {}
-	
 	public static final String EXPORT_TRUST_LEVEL_THRESHOLD = "export.trust.level.threshold";
 	
 	public static final String EXPORT_ACTION_SETID = "export.action.setid";
@@ -22,4 +20,6 @@ public abstract class ExportWorkflowRuntimeParameters {
 	public static final String EXPORT_ENTITY_MDSTORE_SERVICE_LOCATION = "export.entity.mdstore.service.location";
 	
 	public static final String EXPORT_ENTITY_MDSTORE_ID = "export.entity.mdstore.id";
+	
+	private ExportWorkflowRuntimeParameters() {}
 }

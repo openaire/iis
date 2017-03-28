@@ -18,7 +18,7 @@ public class AffMatchResultChooser implements Serializable {
     
     private static final long serialVersionUID = 1L;
     
-    private static float EPSILON = 0.0000001f;
+    private static final float EPSILON = 0.0000001f;
 
     
     

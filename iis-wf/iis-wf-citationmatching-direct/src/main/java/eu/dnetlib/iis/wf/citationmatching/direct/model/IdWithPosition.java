@@ -8,9 +8,9 @@ package eu.dnetlib.iis.wf.citationmatching.direct.model;
  */
 public class IdWithPosition {
     
-    private String documentId;
+    private final String documentId;
     
-    private int referencePosition;
+    private final int referencePosition;
     
     
     //------------------------ CONSTRUCTORS --------------------------

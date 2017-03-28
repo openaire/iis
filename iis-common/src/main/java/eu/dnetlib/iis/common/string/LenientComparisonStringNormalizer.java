@@ -118,7 +118,7 @@ public final class LenientComparisonStringNormalizer implements StringNormalizer
             if (Character.isLetterOrDigit(c) || whitelistCharacters.contains(c)) {
                 sb.append(c);
             } else {
-                sb.append(" ");
+                sb.append(' ');
             }
         }
         

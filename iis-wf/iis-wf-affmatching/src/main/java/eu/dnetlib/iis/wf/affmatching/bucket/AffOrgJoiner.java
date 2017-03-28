@@ -25,6 +25,6 @@ public interface AffOrgJoiner extends Serializable {
      * Joins the given affiliations with organizations according to a certain rule. Returns joined pairs of {@link AffMatchAffiliation}
      * and {@link AffMatchAffiliation}.
      */
-    public JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> join(JavaRDD<AffMatchAffiliation> affiliations, JavaRDD<AffMatchOrganization> organizations);
+    JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> join(JavaRDD<AffMatchAffiliation> affiliations, JavaRDD<AffMatchOrganization> organizations);
     
 }

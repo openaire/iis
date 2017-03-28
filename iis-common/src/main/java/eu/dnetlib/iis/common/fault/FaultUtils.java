@@ -16,6 +16,12 @@ import eu.dnetlib.iis.audit.schemas.Fault;
  */
 public class FaultUtils {
 
+    // ---------------------- CONSTRUCTORS -------------------
+    
+    private FaultUtils() {}
+    
+    // ---------------------- LOGIC --------------------------
+    
 	/**
 	 * Generates {@link Fault} instance based on {@link Throwable}.
 	 * @param entityId entity identifier

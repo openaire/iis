@@ -41,7 +41,7 @@ import eu.dnetlib.iis.wf.ingest.pmc.plaintext.NlmToDocumentTextConverter;
  */
 public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable, NullWritable, NullWritable> {
 
-	protected final Logger log = Logger.getLogger(this.getClass());
+	protected static final Logger log = Logger.getLogger(MetadataImporter.class);
 
 	public static final String FAULT_TEXT = "text";
 
@@ -49,12 +49,12 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
 
 	public static final String PARAM_INGEST_METADATA_OAI_NAMESPACE = "ingest.metadata.oai.element.namespace";
 
-	Namespace oaiNamespace = null;
+	Namespace oaiNamespace;
 
 	/**
 	 * Multiple outputs.
 	 */
-	protected MultipleOutputs mos = null;
+	protected MultipleOutputs mos;
 
 	/**
 	 * Document metadata named output.

@@ -14,7 +14,7 @@ import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
  * 
  * @author madryk
  */
-class AssertExtractedDocumentMetadata {
+final class AssertExtractedDocumentMetadata {
 
     
     //------------------------ CONSTRUCTORS --------------------------

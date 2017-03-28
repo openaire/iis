@@ -20,7 +20,7 @@ public class OrderedProperties extends Properties {
 
 	private static final long serialVersionUID = 1L;
 
-	private Map<Object, Object> linkMap = new LinkedHashMap<Object, Object>();
+	private final Map<Object, Object> linkMap = new LinkedHashMap<Object, Object>();
 
 	public void clear() {
 		linkMap.clear();
@@ -56,8 +56,6 @@ public class OrderedProperties extends Properties {
 
 	public String getProperty(String key) {
 		Object oval = get(key);
-		if (oval == null)
-			return null;
 		return (oval instanceof String) ? (String) oval : null;
 	}
 

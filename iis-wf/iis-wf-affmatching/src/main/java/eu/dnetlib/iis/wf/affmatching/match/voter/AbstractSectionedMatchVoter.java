@@ -19,7 +19,7 @@ public abstract class AbstractSectionedMatchVoter extends AbstractAffOrgMatchVot
     
     private static final long serialVersionUID = 1L;
     
-    private OrganizationSectionsSplitter sectionsSplitter = new OrganizationSectionsSplitter();
+    private final OrganizationSectionsSplitter sectionsSplitter = new OrganizationSectionsSplitter();
     
     
     

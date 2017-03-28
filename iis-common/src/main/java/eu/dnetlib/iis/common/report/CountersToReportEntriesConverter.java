@@ -15,7 +15,7 @@ import eu.dnetlib.iis.common.schemas.ReportEntry;
  */
 public class CountersToReportEntriesConverter {
     
-    private Map<String, String> counterNameToParamKeyMapping;
+    private final Map<String, String> counterNameToParamKeyMapping;
 
     
     //------------------------ CONSTRUCTORS --------------------------

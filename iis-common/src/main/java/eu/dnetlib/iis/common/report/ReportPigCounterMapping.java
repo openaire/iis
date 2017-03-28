@@ -9,11 +9,11 @@ import com.google.common.base.Preconditions;
  */
 public class ReportPigCounterMapping {
 
-    private String sourcePigCounterName;
+    private final String sourcePigCounterName;
     
-    private String sourcePigJobAlias;
+    private final String sourcePigJobAlias;
     
-    private String destReportCounterName;
+    private final String destReportCounterName;
     
     
     //------------------------ CONSTRUCTORS --------------------------

@@ -36,7 +36,9 @@ import eu.dnetlib.iis.wf.affmatching.match.voter.GetOrgShortNameFunction;
 
 public class DocOrgRelationMatcherFactory {
     
+    //------------------------ CONSTRUCTORS -------------------
     
+    private DocOrgRelationMatcherFactory() {}
     
     //------------------------ LOGIC --------------------------
     

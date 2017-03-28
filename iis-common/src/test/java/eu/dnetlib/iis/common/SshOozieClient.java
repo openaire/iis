@@ -16,12 +16,11 @@ import net.schmizz.sshj.connection.channel.direct.Session.Command;
 public class SshOozieClient {
 	
 	
-	private SshConnectionManager sshConnectionManager;
+	private final SshConnectionManager sshConnectionManager;
 	
-	private OozieCmdLineAnswerParser oozieCmdLineParser = new OozieCmdLineAnswerParser();
+	private final OozieCmdLineAnswerParser oozieCmdLineParser = new OozieCmdLineAnswerParser();
 	
-	
-	private String oozieUrl;
+	private final String oozieUrl;
 	
 	
 	//------------------------ CONSTRUCTORS --------------------------

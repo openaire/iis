@@ -10,5 +10,5 @@ import java.io.IOException;
  */
 public interface RecordReceiver<T> {
 
-	public void receive(T object) throws IOException; 
+	void receive(T object) throws IOException; 
 }

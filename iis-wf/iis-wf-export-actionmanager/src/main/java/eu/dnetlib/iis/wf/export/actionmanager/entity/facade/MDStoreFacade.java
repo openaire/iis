@@ -20,6 +20,6 @@ public interface MDStoreFacade {
      * @throws MDStoreServiceException when general error occurs 
      * @throws DocumentNotFoundException when record not found 
      */
-    public String fetchRecord(String mdStoreId, String recordId) throws MDStoreServiceException;
+    String fetchRecord(String mdStoreId, String recordId) throws MDStoreServiceException;
     
 }

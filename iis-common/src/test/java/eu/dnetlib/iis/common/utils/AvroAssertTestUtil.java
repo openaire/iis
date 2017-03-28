@@ -10,9 +10,6 @@ import java.util.stream.Collectors;
 
 import org.apache.avro.generic.GenericRecord;
 
-import eu.dnetlib.iis.common.utils.AvroTestUtils;
-import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
-
 
 /**
  * Util class for asserting equality of avro and json datastores
@@ -20,7 +17,7 @@ import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
  * @author madryk
  *
  */
-public class AvroAssertTestUtil {
+public final class AvroAssertTestUtil {
 
 
     //------------------------ CONSTRUCTORS --------------------------

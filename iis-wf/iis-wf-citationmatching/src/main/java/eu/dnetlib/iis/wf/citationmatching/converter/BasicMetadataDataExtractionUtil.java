@@ -9,7 +9,7 @@ import eu.dnetlib.iis.citationmatching.schemas.BasicMetadata;
  * 
  * @author madryk
  */
-class BasicMetadataDataExtractionUtil {
+final class BasicMetadataDataExtractionUtil {
 
 
     //------------------------ CONSTRUCTORS --------------------------

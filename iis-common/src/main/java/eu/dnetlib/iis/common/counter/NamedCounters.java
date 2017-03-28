@@ -17,7 +17,7 @@ public class NamedCounters implements Serializable {
     private static final long serialVersionUID = 1L;
     
     
-    private Map<String, Long> counters;
+    private final Map<String, Long> counters;
     
     
     //------------------------ CONSTRUCTORS --------------------------

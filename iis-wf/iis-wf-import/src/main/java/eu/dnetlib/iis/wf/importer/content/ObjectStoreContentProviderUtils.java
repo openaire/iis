@@ -23,6 +23,13 @@ public class ObjectStoreContentProviderUtils {
 	
 	private static final String objectIdSeparator = "::";
 	
+	
+	//-------------------- CONSTRUCTORS -------------------------
+	
+	private ObjectStoreContentProviderUtils() {}
+	
+	//-------------------- LOGIC --------------------------------
+	
 	/**
 	 * Returns byte content read from given location.
 	 * @param resourceLoc resource location, cannot be null

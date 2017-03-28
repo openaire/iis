@@ -51,7 +51,8 @@ public class WorkflowTestResult {
 	/**
 	 * Returns avro datastore located under path parameter
 	 */
-	public <T extends SpecificRecord> List<T> getAvroDataStore(String path) {
+	@SuppressWarnings("unchecked")
+    public <T extends SpecificRecord> List<T> getAvroDataStore(String path) {
 		List<T> avroDataStore = (List<T>) workflowOutputAvroDataStores.get(path);
 		
 		return avroDataStore;

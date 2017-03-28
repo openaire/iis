@@ -15,7 +15,18 @@ import org.apache.avro.util.Utf8;
  * @author Dominika Tkaczyk
  */
 public class CollapserUtils {
+    
+    private static final String FIELD_ORIGIN = "origin";
+    
+    private static final String FIELD_DATA = "data";
+    
+    
+    // ---------------------- CONSTRUCTORS -------------------------
+    
+    private CollapserUtils() {}
 
+    // ---------------------- LOGIC --------------------------------
+    
     /**
      * Checks, if all objects in the list have the same schema.
      */
@@ -40,7 +51,7 @@ public class CollapserUtils {
         if (fields.size() != 2) {
             return false;
         }
-        if (schema.getField("origin") == null || schema.getField("data") == null) {
+        if (schema.getField(FIELD_ORIGIN) == null || schema.getField(FIELD_DATA) == null) {
             return false;
         }
         return true;
@@ -51,11 +62,11 @@ public class CollapserUtils {
      */
     public static String getOriginValue(IndexedRecord record) {
         Schema schema = record.getSchema();
-        Object origin = record.get(schema.getField("origin").pos());
+        Object origin = record.get(schema.getField(FIELD_ORIGIN).pos());
         if (origin instanceof Utf8) {
-            return ((Utf8) record.get(schema.getField("origin").pos())).toString();
+            return ((Utf8) record.get(schema.getField(FIELD_ORIGIN).pos())).toString();
         }
-        return (String) record.get(schema.getField("origin").pos());
+        return (String) record.get(schema.getField(FIELD_ORIGIN).pos());
     }
     
     /**
@@ -63,10 +74,10 @@ public class CollapserUtils {
      */
     public static IndexedRecord getDataRecord(IndexedRecord record) {
         Schema schema = record.getSchema();
-        if (schema.getField("data") == null) {
+        if (schema.getField(FIELD_DATA) == null) {
             return null;
         }
-        return (IndexedRecord) record.get(schema.getField("data").pos());
+        return (IndexedRecord) record.get(schema.getField(FIELD_DATA).pos());
     }
     
     /**
@@ -76,6 +87,7 @@ public class CollapserUtils {
      * @param fieldName a path of field names separated by a dot
      * @return 
      */
+    @SuppressWarnings("unchecked")
     public static <T> T getNestedFieldValue(IndexedRecord record, String fieldName) {
         if (record == null || fieldName == null) {
             return null;
@@ -120,7 +132,7 @@ public class CollapserUtils {
     
     static class NumberOfFilledDataFieldsComparator implements Comparator<IndexedRecord> {
 
-        private List<String> fields;
+        private final List<String> fields;
 
         public NumberOfFilledDataFieldsComparator(List<String> fields) {
             this.fields = fields;

@@ -12,7 +12,7 @@ import org.apache.hadoop.mapreduce.TaskAttemptContext;
  *
  * @author Dominika Tkaczyk
  */
-public abstract class SignificantFieldsCollapser<T extends IndexedRecord> extends SimpleCollapser<T> {
+public abstract class AbstractSignificantFieldsCollapser<T extends IndexedRecord> extends AbstractSimpleCollapser<T> {
     
     public static final String ALL_SIGNIFICANT_FIELDS_VALUE = "$ALL$";
     

@@ -11,8 +11,8 @@ import org.apache.hadoop.fs.Path;
  *
  */
 public class PortBindings {
-	private Map<String, Path> input;
-	private Map<String, Path> output;
+	private final Map<String, Path> input;
+	private final Map<String, Path> output;
 
 	public PortBindings(Map<String, Path> input, Map<String, Path> output) {
 		this.input = input;

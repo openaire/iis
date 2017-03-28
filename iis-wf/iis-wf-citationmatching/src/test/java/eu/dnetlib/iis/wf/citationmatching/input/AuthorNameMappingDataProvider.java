@@ -11,7 +11,7 @@ import scala.Tuple2;
 /**
  * @author madryk
  */
-class AuthorNameMappingDataProvider {
+final class AuthorNameMappingDataProvider {
 
     //------------------------ CONSTRUCTORS --------------------------
     

@@ -29,6 +29,8 @@ public class TestsIOUtils {
 	private final static int filesCompareBufferSize = 1024;
 	private final static int dumpRecordsCountlimit = 100;
 	
+	private TestsIOUtils() {}
+	
 	/**
 	 * {@code expected} and {@code actual} are equal if they have the same
 	 * elements, possibly in different order.

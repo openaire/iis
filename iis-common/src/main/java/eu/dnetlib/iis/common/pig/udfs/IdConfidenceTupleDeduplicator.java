@@ -33,6 +33,7 @@ public class IdConfidenceTupleDeduplicator extends EvalFunc<DataBag> {
     }
     
     public IdConfidenceTupleDeduplicator(int confidenceLevelPosition) {
+        super();
         this.confidenceLevelPosition = confidenceLevelPosition;
     }
     

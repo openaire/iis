@@ -9,7 +9,7 @@ import java.util.Stack;
  * @author madryk
  *
  */
-public class TagHierarchyUtils {
+public final class TagHierarchyUtils {
 
     //------------------------ CONSTRUCTOS --------------------------
     

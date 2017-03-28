@@ -7,9 +7,9 @@ package eu.dnetlib.iis.common.java.jsonworkflownodes;
  */
 public class JsonPortSpecification {
 
-    private String name;
+    private final String name;
     
-    private String jsonFilePath;
+    private final String jsonFilePath;
     
     
     //------------------------ CONSTRUCTOR --------------------------

@@ -41,7 +41,8 @@ public class FsShellPermissions {
 	}
 
 	// TODO: move this into Spring Core (but add JDK 1.5 compatibility first)
-	static <T> T[] concatAll(T[] first, T[]... rest) {
+	@SafeVarargs
+    static <T> T[] concatAll(T[] first, T[]... rest) {
 		// can add some sanity checks
 		int totalLength = first.length;
 		for (T[] array : rest) {

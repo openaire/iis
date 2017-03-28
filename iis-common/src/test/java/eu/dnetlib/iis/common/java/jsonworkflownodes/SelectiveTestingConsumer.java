@@ -44,13 +44,15 @@ public class SelectiveTestingConsumer implements Process {
 
     private static final String PORT_INPUT = "datastore";
 
-    private static final Map<String, PortType> inputPorts = new HashMap<String, PortType>();
+    private final Map<String, PortType> inputPorts = new HashMap<String, PortType>();
     
-    {
+    private final ValueSpecMatcher valueMatcher = new ValueSpecMatcher();
+    
+    //------------------------ CONSTRUCTORS --------------------------
+    
+    public SelectiveTestingConsumer() {
         inputPorts.put(PORT_INPUT, new AnyPortType());
     }
-    
-    private ValueSpecMatcher valueMatcher = new ValueSpecMatcher();
     
     //------------------------ LOGIC ---------------------------------
     
@@ -73,7 +75,6 @@ public class SelectiveTestingConsumer implements Process {
         Preconditions.checkArgument(StringUtils.isNotBlank(expectationsPathsCSV), 
                 "no '%s' property value provided, field requirements were not specified!", EXPECTATION_FILE_PATHS);
 
-        String[] recordExpectationsLocations = StringUtils.split(expectationsPathsCSV, ',');
         FileSystem fs = FileSystem.get(configuration);
 
         if (!fs.exists(inputRecordsPath)) {
@@ -81,6 +82,8 @@ public class SelectiveTestingConsumer implements Process {
         }
         
         try (CloseableIterator<SpecificRecord> recordIterator = DataStore.getReader(new FileSystemPath(fs, inputRecordsPath))) {
+            
+            String[] recordExpectationsLocations = StringUtils.split(expectationsPathsCSV, ',');
             
             int recordCount = 0;
             

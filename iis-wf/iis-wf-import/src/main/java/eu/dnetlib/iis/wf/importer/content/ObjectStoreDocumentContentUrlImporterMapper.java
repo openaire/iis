@@ -22,7 +22,7 @@ import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeUtils;
  */
 public class ObjectStoreDocumentContentUrlImporterMapper extends Mapper<AvroKey<Identifier>, NullWritable, AvroKey<DocumentContentUrl>, NullWritable> {
 
-    private final Logger log = Logger.getLogger(ObjectStoreDocumentContentUrlImporterMapper.class);
+    private static final Logger log = Logger.getLogger(ObjectStoreDocumentContentUrlImporterMapper.class);
 
     /**
      * Progress log interval.

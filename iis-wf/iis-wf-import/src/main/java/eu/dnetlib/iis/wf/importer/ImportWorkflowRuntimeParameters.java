@@ -5,9 +5,7 @@ package eu.dnetlib.iis.wf.importer;
  * @author mhorst
  *
  */
-public abstract class ImportWorkflowRuntimeParameters {
-
-	private ImportWorkflowRuntimeParameters() {}
+public final class ImportWorkflowRuntimeParameters {
 	
 	// parameter names
 	
@@ -47,5 +45,7 @@ public abstract class ImportWorkflowRuntimeParameters {
 	public static final String RESULTSET_READ_TIMEOUT_DEFAULT_VALUE = "60000";
 	public static final String RESULTSET_CONNECTION_TIMEOUT_DEFAULT_VALUE = "60000";
 	public static final String RESULTSET_PAGESIZE_DEFAULT_VALUE = "100";
+	
+	private ImportWorkflowRuntimeParameters() {}
 	
 }

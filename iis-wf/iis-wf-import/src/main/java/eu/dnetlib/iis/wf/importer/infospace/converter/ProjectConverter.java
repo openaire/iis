@@ -33,7 +33,7 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
     private static final Set<String> ACRONYM_SKIP_LOWERCASED_VALUES = new HashSet<String>(
             Arrays.asList("undefined", "unknown"));
     
-    private FundingTreeParser fundingTreeParser = new FundingTreeParser();
+    private final FundingTreeParser fundingTreeParser = new FundingTreeParser();
     
     // ------------------------ LOGIC --------------------------
     

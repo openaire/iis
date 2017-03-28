@@ -327,13 +327,13 @@ public class ImportInformationSpaceReducer
      *
      * @param <T>
      */
-    class RelationConversionDTO <T extends SpecificRecord> {
+    private static class RelationConversionDTO <T extends SpecificRecord> {
         
-        private List<QualifiedOafJsonRecord> oafJsonParts;
+        private final List<QualifiedOafJsonRecord> oafJsonParts;
         
-        private OafRelToAvroConverter<T> converter;
+        private final OafRelToAvroConverter<T> converter;
 
-        private String outputName;
+        private final String outputName;
         
         // ------------------------ CONSTRUCTORS --------------------------
         

@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author Mateusz Kobos
  *
  */
+@SuppressWarnings("deprecation")
 public class CmdLineParser {
 	/** HACK: make the names of various types of parameters of the program 
 	* more readable, e.g. "--Input_person=..." instead of "-Iperson=...",
@@ -26,11 +27,16 @@ public class CmdLineParser {
 	public static String specialParametersPrefix = "S";
 	/** HACK: This field should be removed since this list of special 
 	 * parameters is empty, thus not used anywhere.*/
-	public static String[] mandatorySpecialParameters = 
-			new String[]{};
+	public static String[] mandatorySpecialParameters = new String[]{};
 	public static String processParametersPrefix = "P";
 	
-	public static CommandLine parse(String[] args) {
+	// ------------------------- CONSTRUCTORS ------------------------------
+	
+	private CmdLineParser() {}
+	
+	// ------------------------- LOGIC -------------------------------------
+	
+    public static CommandLine parse(String[] args) {
 		Options options = new Options();
 		@SuppressWarnings("static-access")
 		Option constructorParams = OptionBuilder.withArgName("STRING")
@@ -85,8 +91,7 @@ public class CmdLineParser {
 			}
 			return cmdLine;
 		} catch (ParseException e) {
-			throw new CmdLineParserException(
-					"Parsing command line arguments failed", e);
+			throw new CmdLineParserException("Parsing command line arguments failed", e);
 		}
 		
 	}

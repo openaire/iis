@@ -28,5 +28,5 @@ public interface OafEntityWithRelsToAvroConverter<T extends SpecificRecord> {
      * @return avro object
      * @throws IOException
      */
-    public T convert(OafEntity oafEntity, Map<String, List<QualifiedOafJsonRecord>> relations) throws IOException;
+    T convert(OafEntity oafEntity, Map<String, List<QualifiedOafJsonRecord>> relations) throws IOException;
 }

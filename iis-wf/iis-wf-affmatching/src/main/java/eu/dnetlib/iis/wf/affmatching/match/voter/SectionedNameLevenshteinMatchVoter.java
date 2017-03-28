@@ -25,7 +25,7 @@ public class SectionedNameLevenshteinMatchVoter extends AbstractSectionedMatchVo
     private static final long serialVersionUID = 1L;
     
     
-    private double minSimilarity;
+    private final double minSimilarity;
     
     private Function<AffMatchOrganization, List<String>> getOrgNamesFunction = new GetOrgNameFunction();
     
@@ -41,6 +41,7 @@ public class SectionedNameLevenshteinMatchVoter extends AbstractSectionedMatchVo
      * @see #containsOrgSection(List, String)
      */
     public SectionedNameLevenshteinMatchVoter(double minSimilarity) {
+        super();
         Preconditions.checkArgument(minSimilarity > 0 && minSimilarity <= 1);
         this.minSimilarity = minSimilarity;
     }

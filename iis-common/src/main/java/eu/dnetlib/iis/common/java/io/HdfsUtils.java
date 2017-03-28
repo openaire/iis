@@ -13,6 +13,9 @@ import org.apache.hadoop.fs.Path;
  */
 public class HdfsUtils {
 
+    //------------------------ CONSTRUCTORS -------------------
+    
+    private HdfsUtils() {}
     
     //------------------------ LOGIC --------------------------
     

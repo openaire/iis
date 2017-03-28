@@ -100,48 +100,51 @@ public class BlobCitationEntry implements Comparable<BlobCitationEntry> {
 		return true;
 	}
 
-	@Override
-	public int compareTo(BlobCitationEntry c2) {
-		if (c2!=null) {
-			if (this.position>c2.position) {
-				return 1;
-			} else if (this.position<c2.position) {
-				return -1;
-			} else {
-				   if (this.getRawText()!=null) {
-						if (c2.getRawText()!=null) {
-							int textCompareResult = compareText(this.getRawText(), c2.getRawText());
-							if (textCompareResult==0) {
-								return compareIdentifiers(this.getIdentifiers(), c2.getIdentifiers());
-							} else {
-								return textCompareResult;	
-							}
-						} else {
-							return -1;
-						}
-					} else {
-						if (c2.getRawText()!=null) {
-							return 1;
-						} else {
-							return compareIdentifiers(this.getIdentifiers(), c2.getIdentifiers());
-						}
-					}   
-				
-			}
-		} else {
-			if (this.getRawText()!=null) {
-				return -1;	
-			} else {
-				if (this.getIdentifiers()!=null) {
-					return -1;
-				} else {
-//					should we check position in any way?
-					return 0;
-				}
-			}
-		}
-	}
+    @Override
+    public int compareTo(BlobCitationEntry c2) {
+        if (c2 != null) {
+            if (this.position > c2.position) {
+                return 1;
+            } else if (this.position < c2.position) {
+                return -1;
+            } else {
+                return compareProperties(c2);
+            }
+        } else {
+            if (this.getRawText() != null) {
+                return -1;
+            } else {
+                if (this.getIdentifiers() != null) {
+                    return -1;
+                } else {
+                    // should we check position in any way?
+                    return 0;
+                }
+            }
+        }
+    }
 
+    private int compareProperties(BlobCitationEntry c2) {
+        if (this.getRawText() != null) {
+            if (c2.getRawText() != null) {
+                int textCompareResult = compareText(this.getRawText(), c2.getRawText());
+                if (textCompareResult == 0) {
+                    return compareIdentifiers(this.getIdentifiers(), c2.getIdentifiers());
+                } else {
+                    return textCompareResult;
+                }
+            } else {
+                return -1;
+            }
+        } else {
+            if (c2.getRawText() != null) {
+                return 1;
+            } else {
+                return compareIdentifiers(this.getIdentifiers(), c2.getIdentifiers());
+            }
+        }
+    }
+    
 	private int compareIdentifiers(List<TypedId> ids1, List<TypedId> ids2) {
 		   if (ids2!=null) {
 			   if (ids1!=null) {

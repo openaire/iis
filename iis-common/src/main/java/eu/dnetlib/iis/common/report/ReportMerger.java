@@ -41,7 +41,7 @@ public class ReportMerger implements Process {
     private static final String REPORT_PORT_OUT_NAME = "report";
     
     
-    private ReportEntryJsonAppender reportEntryAppender = new ReportEntryJsonAppender();
+    private final ReportEntryJsonAppender reportEntryAppender = new ReportEntryJsonAppender();
     
     
     //------------------------ LOGIC --------------------------
