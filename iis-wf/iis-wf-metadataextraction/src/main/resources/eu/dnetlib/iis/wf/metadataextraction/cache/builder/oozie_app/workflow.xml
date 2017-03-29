@@ -305,6 +305,10 @@
 					<value>${workingDir}/transformers_metadataextraction_skip_extracted/tobeprocessed_content</value>
 				</property>
                 <property>
+                    <name>excluded_ids</name>
+                    <value>${metadataextraction_excluded_checksums}</value>
+                </property>
+                <property>
                     <name>existing_cache_id</name>
                     <value>${wf:actionData('get-existing-cache-id')['cache_id']}</value>
                 </property>
@@ -337,6 +341,10 @@
                 <property>
                     <name>input</name>
                     <value>${workingDir}/preprocessing/output</value>
+                </property>
+                <property>
+                    <name>excluded_ids</name>
+                    <value>${metadataextraction_excluded_checksums}</value>
                 </property>
                 <property>
                     <name>output_root</name>
