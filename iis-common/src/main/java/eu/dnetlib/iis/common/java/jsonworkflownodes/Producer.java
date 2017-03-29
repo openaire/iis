@@ -66,7 +66,7 @@ public class Producer implements Process {
 	private static void write(FileSystemPath destination,
 			SpecificationValues specs) throws IOException{
 		InputStream in = Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream(specs.jsonFilePath);
-		JsonUtils.convertToDataStore(specs.schema, in, destination);
+				.getResourceAsStream(specs.getJsonFilePath());
+		JsonUtils.convertToDataStore(specs.getSchema(), in, destination);
 	}
 }

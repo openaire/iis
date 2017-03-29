@@ -12,7 +12,7 @@ import eu.dnetlib.iis.common.java.io.JsonUtils;
  * @author Mateusz Kobos
  *
  */
-public class AvroUtils {
+public final class AvroUtils {
     
 	public final static String primitiveTypePrefix = "org.apache.avro.Schema.Type.";
 	

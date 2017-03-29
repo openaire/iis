@@ -14,7 +14,7 @@ import org.apache.avro.util.Utf8;
  *
  * @author Dominika Tkaczyk
  */
-public class CollapserUtils {
+public final class CollapserUtils {
     
     private static final String FIELD_ORIGIN = "origin";
     

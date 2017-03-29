@@ -87,7 +87,7 @@ public class ProjectDBBuilder implements Process {
 	        process.waitFor();
         } catch (Exception e) {
 //        	providing error details from Madis error stream
-        	BufferedReader stderr = new BufferedReader(new InputStreamReader(errorStream));
+        	BufferedReader stderr = new BufferedReader(new InputStreamReader(errorStream, "utf8"));
             StringBuilder errorBuilder = new StringBuilder();
             String line;
             while ((line = stderr.readLine()) != null) {
@@ -99,7 +99,7 @@ public class ProjectDBBuilder implements Process {
         }
         
         if (process.exitValue() != 0) {
-        	BufferedReader stderr = new BufferedReader(new InputStreamReader(errorStream));
+        	BufferedReader stderr = new BufferedReader(new InputStreamReader(errorStream, "utf8"));
             StringBuilder errorBuilder = new StringBuilder();
             String line;
             while ((line = stderr.readLine()) != null) {

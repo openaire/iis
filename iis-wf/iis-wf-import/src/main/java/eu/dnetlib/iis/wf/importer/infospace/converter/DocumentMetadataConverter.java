@@ -59,12 +59,12 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
     /**
      * Result approver to be used when validating person result relations.
      */
-    protected ResultApprover resultApprover;
+    private ResultApprover resultApprover;
     
     /**
      * Field approver to be used when validating inferred fields.
      */
-    protected FieldApprover fieldApprover;
+    private FieldApprover fieldApprover;
 
     // ------------------------ CONSTRUCTORS --------------------------
     

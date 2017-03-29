@@ -38,11 +38,6 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactory extends AbstractAct
     public ActionBuilderModule<DocumentToSoftwareUrls> instantiate(Configuration config, Agent agent, String actionSetId) {
         return new DocumentToSoftwareUrlActionBuilderModule(provideTrustLevelThreshold(config), agent, actionSetId);
     }
-
-    @Override
-    public AlgorithmName getAlgorithName() {
-        return algorithmName;
-    }
     
     // ---------------------- INNER CLASSES ----------------------------
 
@@ -67,8 +62,8 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactory extends AbstractAct
             
             Oaf oaf = buildOafWithSoftwareUrl(object);
             if (oaf != null) {
-                return actionFactory.createUpdateActions(actionSetId, agent, object.getDocumentId().toString(),
-                        Type.result, oaf.toByteArray());
+                return getActionFactory().createUpdateActions(getActionSetId(), getAgent(), 
+                        object.getDocumentId().toString(), Type.result, oaf.toByteArray());
             } else {
                 return Collections.emptyList();
             }

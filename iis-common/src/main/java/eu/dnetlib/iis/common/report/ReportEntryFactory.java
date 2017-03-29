@@ -8,7 +8,7 @@ import eu.dnetlib.iis.common.schemas.ReportEntryType;
  * 
  * @author madryk
  */
-public class ReportEntryFactory {
+public final class ReportEntryFactory {
 
     // ----------------------- CONSTRUCTORS -----------------------------
     

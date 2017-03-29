@@ -16,7 +16,7 @@ public abstract class AbstractSignificantFieldsCollapser<T extends IndexedRecord
     
     public static final String ALL_SIGNIFICANT_FIELDS_VALUE = "$ALL$";
     
-    protected List<String> fields;
+    private List<String> fields;
 
     /**
      * Sets the list of significant object fields (used later during collapsing 

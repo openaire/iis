@@ -333,11 +333,11 @@ public final class NlmToDocumentWithBasicMetadataConverter {
 		}
 		Element articleMetaElement = frontElement.getChild("article-meta");
 		if (articleMetaElement!=null) {
-		    docMetaBuilder = convertArticleMeta(id, articleMetaElement, docMetaBuilder);
+		    convertArticleMeta(id, articleMetaElement, docMetaBuilder);
 		}
 		Element journalMeta = frontElement.getChild("journal-meta");
 		if (journalMeta!=null) {
-		    docMetaBuilder = convertJournalMeta(id, journalMeta, docMetaBuilder);
+		    convertJournalMeta(id, journalMeta, docMetaBuilder);
 		}
 		return docMetaBuilder;
 	}

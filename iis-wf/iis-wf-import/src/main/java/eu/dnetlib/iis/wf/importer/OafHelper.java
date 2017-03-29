@@ -14,7 +14,7 @@ import eu.dnetlib.data.proto.OafProtos.Oaf;
  * @author mhorst
  *
  */
-public class OafHelper {
+public final class OafHelper {
 
     // --------------------- CONSTRUCTORS --------------------------
     

@@ -13,6 +13,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Read oozie job identifier from log file.
  * @author mhorst
@@ -39,6 +41,7 @@ public class ReadJobId extends AbstractMojo {
 	private MavenProject project;
 	
     @Override
+    @SuppressFBWarnings({"NP_UNWRITTEN_FIELD","UWF_UNWRITTEN_FIELD"})
     public void execute() throws MojoExecutionException, MojoFailureException {
 		String extractedOozieJobId = extractOozieJobId(logFileLocation);
 		if (extractedOozieJobId!=null) {
@@ -60,7 +63,7 @@ public class ReadJobId extends AbstractMojo {
     private String extractOozieJobId(String logFileLocation) throws MojoExecutionException {
     	try {
     		BufferedReader reader = new BufferedReader(new InputStreamReader(
-        			new FileInputStream(new File(logFileLocation))));
+        			new FileInputStream(new File(logFileLocation)), "utf8"));
     		String line;
     		try {
     			while ((line = reader.readLine())!=null) {

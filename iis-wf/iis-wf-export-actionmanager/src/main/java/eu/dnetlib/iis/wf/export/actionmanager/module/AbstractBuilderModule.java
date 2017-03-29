@@ -38,22 +38,22 @@ public abstract class AbstractBuilderModule<T> implements ActionBuilderModule<T>
     /**
      * Inference provenance.
      */
-    protected final String inferenceProvenance;
+    private final String inferenceProvenance;
 
     /**
      * Action manager agent.
      */
-    protected final Agent agent;
+    private final Agent agent;
     
     /**
      * Action set identifier.
      */
-    protected final String actionSetId;
+    private final String actionSetId;
     
     /**
      * Action factory to be used for building actions.
      */
-    protected final ActionFactory actionFactory = new ActionFactory();
+    private final ActionFactory actionFactory = new ActionFactory();
 
     /**
      * Trust level format.
@@ -81,6 +81,23 @@ public abstract class AbstractBuilderModule<T> implements ActionBuilderModule<T>
         return confidenceToTrustLevelNormalizationFactor;
     }
 
+    public String getInferenceProvenance() {
+        return inferenceProvenance;
+    }
+    
+    public Agent getAgent() {
+        return agent;
+    }
+    
+    public String getActionSetId() {
+        return actionSetId;
+    }
+
+    public ActionFactory getActionFactory() {
+        return actionFactory;
+    }
+    
+    
     // ------------------------ LOGIC ---------------------------------
 
     /**

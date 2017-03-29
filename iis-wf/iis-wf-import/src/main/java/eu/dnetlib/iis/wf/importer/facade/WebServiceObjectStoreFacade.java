@@ -39,9 +39,9 @@ public class WebServiceObjectStoreFacade extends AbstractResultSetAwareWebServic
     @Override
     public Iterable<String> deliverObjects(String objectStoreId, long from, long until) throws ServiceFacadeException {
         try {
-            W3CEndpointReference eprResult = service.deliverObjects(objectStoreId, from, until);
+            W3CEndpointReference eprResult = getService().deliverObjects(objectStoreId, from, until);
             ResultSetClientFactory rsFactory = new ResultSetClientFactory(
-                    resultSetPageSize, resultSetReadTimeout, resultSetConnectionTimeout);
+                    getResultSetPageSize(), getResultSetReadTimeout(), getResultSetConnectionTimeout());
             rsFactory.setServiceResolver(new JaxwsServiceResolverImpl());
             return rsFactory.getClient(eprResult);
         } catch (ObjectStoreServiceException e) {

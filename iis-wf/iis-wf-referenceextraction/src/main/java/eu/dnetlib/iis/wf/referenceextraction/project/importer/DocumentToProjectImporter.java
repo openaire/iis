@@ -91,8 +91,8 @@ public class DocumentToProjectImporter implements eu.dnetlib.iis.common.java.Pro
 			InputStream inputStream = null;
 			BufferedReader reader = null;
 			try {
-				reader = new BufferedReader(new InputStreamReader(
-						inputStream = fs.open(currentPath)));
+			    inputStream = fs.open(currentPath);
+				reader = new BufferedReader(new InputStreamReader(inputStream, "utf8"));
 				String line = null;
 				while ((line = reader.readLine()) != null) {
 					if (SharedImporterUtils.skipLine(line)) {

@@ -95,10 +95,10 @@ public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActio
             Oaf oaf = oafBuilder.build();
             Oaf oafInverted = invertRelationAndBuild(oafBuilder);
             return Arrays.asList(new AtomicAction[] {
-                    actionFactory.createAtomicAction(actionSetId, agent, docId,
+                    getActionFactory().createAtomicAction(getActionSetId(), getAgent(), docId,
                             OafDecoder.decode(oaf).getCFQ(), orgId, oaf.toByteArray()),
                  // setting reverse relation in referenced object
-                    actionFactory.createAtomicAction(actionSetId, agent, orgId,
+                    getActionFactory().createAtomicAction(getActionSetId(), getAgent(), orgId,
                             OafDecoder.decode(oafInverted).getCFQ(), docId, oafInverted.toByteArray())
                     });
         }

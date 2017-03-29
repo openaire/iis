@@ -15,7 +15,7 @@ import com.google.gson.JsonParseException;
  * @author madryk
  *
  */
-public class AvroGsonFactory {
+public final class AvroGsonFactory {
     
     //------------------------ CONSTRUCTORS -------------------
     

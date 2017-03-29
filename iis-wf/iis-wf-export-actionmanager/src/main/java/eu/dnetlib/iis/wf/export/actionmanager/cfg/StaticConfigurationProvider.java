@@ -8,11 +8,12 @@ import eu.dnetlib.actionmanager.common.Agent.AGENT_TYPE;
  * @author mhorst
  *
  */
-public class StaticConfigurationProvider {
+public final class StaticConfigurationProvider {
 	
 	public static final String ACTION_TRUST_0_9 = "0.9";
 	
 	public static final Agent AGENT_DEFAULT = new Agent("iis", "information inference service", AGENT_TYPE.service);
 
+	private StaticConfigurationProvider() {}
 	
 }

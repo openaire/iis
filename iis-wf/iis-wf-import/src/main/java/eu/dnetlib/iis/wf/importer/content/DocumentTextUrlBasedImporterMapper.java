@@ -28,7 +28,7 @@ public class DocumentTextUrlBasedImporterMapper extends Mapper<AvroKey<DocumentC
     /**
      * Maximum content size in kilobytes.
      */
-    protected long maxFileSizeKB = Long.MAX_VALUE;
+    private long maxFileSizeKB = Long.MAX_VALUE;
 
     /**
      * Connection timeout.

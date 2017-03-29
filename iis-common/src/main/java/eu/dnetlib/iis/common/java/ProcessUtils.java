@@ -9,7 +9,7 @@ import org.apache.hadoop.conf.Configuration;
  * @author mhorst
  *
  */
-public class ProcessUtils {
+public final class ProcessUtils {
 
     // ------------- CONSTRUCTORS ----------------
     

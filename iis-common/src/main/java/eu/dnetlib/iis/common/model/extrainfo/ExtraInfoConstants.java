@@ -5,7 +5,7 @@ package eu.dnetlib.iis.common.model.extrainfo;
  * @author mhorst
  *
  */
-public class ExtraInfoConstants {
+public final class ExtraInfoConstants {
 
 	public static final String NAME_PROJECT_STATISTICS = "project statistics";
 	public static final String NAME_RESULT_STATISTICS = "result statistics";
@@ -17,4 +17,6 @@ public class ExtraInfoConstants {
 	public static final String TYPOLOGY_STATISTICS = "statistics";
 	
 	public static final String CITATION_TYPE_OPENAIRE = "openaire";
+	
+	private ExtraInfoConstants() {}
 }

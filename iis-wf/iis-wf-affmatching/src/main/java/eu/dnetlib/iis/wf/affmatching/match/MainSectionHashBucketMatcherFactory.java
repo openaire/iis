@@ -29,7 +29,7 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
  * @author Łukasz Dumiszewski
 */
 
-public class MainSectionHashBucketMatcherFactory {
+public final class MainSectionHashBucketMatcherFactory {
     
     // ---------------------- CONSTRUCTORS ----------------------
     

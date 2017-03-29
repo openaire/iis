@@ -65,10 +65,12 @@ public class DocumentToDataSetActionBuilderModuleFactory extends AbstractActionB
             Oaf oaf = oafBuilder.build();
             Oaf oafInverted = invertBidirectionalRelationAndBuild(oafBuilder);
             return Arrays.asList(new AtomicAction[] {
-                    actionFactory.createAtomicAction(actionSetId, agent, object.getDocumentId().toString(), OafDecoder.decode(oaf).getCFQ(),
+                    getActionFactory().createAtomicAction(getActionSetId(), getAgent(), 
+                            object.getDocumentId().toString(), OafDecoder.decode(oaf).getCFQ(),
                             object.getDatasetId().toString(), oaf.toByteArray()),
                     // setting reverse relation in referenced object
-                    actionFactory.createAtomicAction(actionSetId, agent, object.getDatasetId().toString(),
+                    getActionFactory().createAtomicAction(getActionSetId(), getAgent(), 
+                            object.getDatasetId().toString(),
                             OafDecoder.decode(oafInverted).getCFQ(), object.getDocumentId().toString(), oafInverted.toByteArray()) });
         }
 

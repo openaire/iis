@@ -20,7 +20,7 @@ public abstract class AbstractActionBuilderFactory<T> implements ActionBuilderFa
     /**
      * Algorithm name associated with builder.
      */
-    protected final AlgorithmName algorithmName;
+    private final AlgorithmName algorithmName;
 
     // ------------------ CONSTRUCTORS -----------------------
 

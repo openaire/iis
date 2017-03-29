@@ -78,7 +78,7 @@ public class ReportTestingConsumer implements Process {
     
     private void check(FileSystemPath actualPath, SpecificationValues specs) throws IOException{
     
-        List<ReportEntry> expectedEntrySpecs = JsonUtils.convertToList(specs.jsonFilePath, ReportEntry.SCHEMA$, ReportEntry.class);
+        List<ReportEntry> expectedEntrySpecs = JsonUtils.convertToList(specs.getJsonFilePath(), ReportEntry.SCHEMA$, ReportEntry.class);
         
         List<ReportEntry> actualEntries = DataStore.read(actualPath, ReportEntry.SCHEMA$);
         

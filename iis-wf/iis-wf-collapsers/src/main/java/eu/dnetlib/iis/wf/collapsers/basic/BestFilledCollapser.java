@@ -21,8 +21,8 @@ public class BestFilledCollapser<T extends IndexedRecord> extends AbstractSignif
     protected List<T> collapseNonEmpty(List<T> objects) {
         T best = objects.get(0);
         for (T object : objects) {
-            if (CollapserUtils.getNumberOfFilledFields(best, fields) 
-                    < CollapserUtils.getNumberOfFilledFields(object, fields)) {
+            if (CollapserUtils.getNumberOfFilledFields(best, getFields()) 
+                    < CollapserUtils.getNumberOfFilledFields(object, getFields())) {
                 best = object;
             }
         }

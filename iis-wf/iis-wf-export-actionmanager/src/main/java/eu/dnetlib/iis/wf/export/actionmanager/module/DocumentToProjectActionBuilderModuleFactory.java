@@ -67,10 +67,12 @@ public class DocumentToProjectActionBuilderModuleFactory extends AbstractActionB
             Oaf oaf = oafBuilder.build();
             Oaf oafInv = invertRelationAndBuild(oafBuilder);
             return Arrays.asList(new AtomicAction[] {
-                    actionFactory.createAtomicAction(actionSetId, agent, object.getDocumentId().toString(), OafDecoder.decode(oaf).getCFQ(),
+                    getActionFactory().createAtomicAction(getActionSetId(), getAgent(), 
+                            object.getDocumentId().toString(), OafDecoder.decode(oaf).getCFQ(),
                             object.getProjectId().toString(), oaf.toByteArray()),
                     // setting reverse relation in project object
-                    actionFactory.createAtomicAction(actionSetId, agent, object.getProjectId().toString(),
+                    getActionFactory().createAtomicAction(getActionSetId(), getAgent(), 
+                            object.getProjectId().toString(),
                             OafDecoder.decode(oafInv).getCFQ(), object.getDocumentId().toString(), oafInv.toByteArray())});
         }
 

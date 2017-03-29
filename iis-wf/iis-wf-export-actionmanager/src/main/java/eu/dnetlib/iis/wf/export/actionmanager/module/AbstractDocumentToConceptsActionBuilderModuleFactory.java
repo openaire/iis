@@ -63,8 +63,8 @@ public abstract class AbstractDocumentToConceptsActionBuilderModuleFactory
         public List<AtomicAction> build(DocumentToConceptIds object) {
             Oaf oaf = buildOAFResearchInitiativeConcepts(object);
             if (oaf != null) {
-                return actionFactory.createUpdateActions(actionSetId, agent, object.getDocumentId().toString(),
-                        Type.result, oaf.toByteArray());
+                return getActionFactory().createUpdateActions(getActionSetId(), getAgent(), 
+                        object.getDocumentId().toString(), Type.result, oaf.toByteArray());
             } else {
                 return Collections.emptyList();
             }

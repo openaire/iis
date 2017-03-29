@@ -5,7 +5,7 @@ package eu.dnetlib.iis.common.utils;
  * @author mhorst
  *
  */
-public class ByteArrayUtils {
+public final class ByteArrayUtils {
     
     //------------------------ CONSTRUCTORS -------------------
 

@@ -23,18 +23,18 @@ public class BlobCitationEntry implements Comparable<BlobCitationEntry> {
 	 * Citation position.
 	 */
 	@XStreamAsAttribute
-	protected int position;
+	private int position;
 	
 	/**
 	 * Raw citation text.
 	 */
-	protected String rawText;
+	private String rawText;
 	
 	/**
 	 * Matched publications identifiers.
 	 */
 	@XStreamImplicit
-	protected List<TypedId> identifiers;
+	private List<TypedId> identifiers;
 	
 	@XStreamOmitField
 	private final static Pattern alphaNumChunkPattern = Pattern.compile("(\\d+\\" + 

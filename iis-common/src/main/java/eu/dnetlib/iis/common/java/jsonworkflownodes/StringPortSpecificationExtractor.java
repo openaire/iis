@@ -13,14 +13,24 @@ public class StringPortSpecificationExtractor {
 	private final String portSpecificationRegexp;
 	private final Pattern pattern;
 
-	public static class PortSpecification{
-		public String name;
-		public String[] properties;
+	public static class PortSpecification {
+		
+	    private final String name;
+	    
+		private final String[] properties;
 		
 		public PortSpecification(String name, String[] properties) {
 			this.name = name;
 			this.properties = properties;
 		}
+
+        public String getName() {
+            return name;
+        }
+
+        public String[] getProperties() {
+            return properties;
+        }
 	}
 	
 	/**

@@ -8,8 +8,10 @@ package helloworld;
  * @author Mateusz Kobos
  *
  */
-public class HelloWorld {
+public final class HelloWorld {
 
+    private HelloWorld() {}
+    
 	public static void main(String[] args){
 		System.out.println("Hello world!");
 	}

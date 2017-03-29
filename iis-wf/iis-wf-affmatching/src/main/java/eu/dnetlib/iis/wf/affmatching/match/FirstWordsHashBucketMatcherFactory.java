@@ -30,7 +30,7 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
  * @author Łukasz Dumiszewski
 */
 
-public class FirstWordsHashBucketMatcherFactory {
+public final class FirstWordsHashBucketMatcherFactory {
 
     // ---------------------- CONSTRUCTORS ----------------------
     

@@ -14,13 +14,13 @@ public class CitationsExtraInfoConverter extends AbstractExtraInfoConverter<Sort
 
 	public CitationsExtraInfoConverter() {
 	    super();
-		xstream.processAnnotations(BlobCitationEntry.class);
-		xstream.alias("citations", SortedSet.class);
+		getXstream().processAnnotations(BlobCitationEntry.class);
+		getXstream().alias("citations", SortedSet.class);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public SortedSet<BlobCitationEntry> deserialize(String source) throws UnsupportedOperationException {
-		return (SortedSet<BlobCitationEntry>) xstream.fromXML(source);
+		return (SortedSet<BlobCitationEntry>) getXstream().fromXML(source);
 	}
 }

@@ -56,8 +56,8 @@ public class GenericCitationCollapser extends AbstractSimpleCollapser<Citation> 
 		for (Citation citation : objects) {
 			List<Citation> list = citationsByPositionMap.get(citation.getEntry().getPosition());
 			if (list==null) {
-				citationsByPositionMap.put(citation.getEntry().getPosition(), 
-						list = new ArrayList<Citation>());
+			    list = new ArrayList<Citation>();
+				citationsByPositionMap.put(citation.getEntry().getPosition(), list);
 			}
 			list.add(citation);
 		}

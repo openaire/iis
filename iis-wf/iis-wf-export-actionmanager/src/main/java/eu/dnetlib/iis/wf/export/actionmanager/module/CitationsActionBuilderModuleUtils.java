@@ -14,7 +14,7 @@ import eu.dnetlib.iis.export.schemas.Citations;
  * @author mhorst
  *
  */
-public class CitationsActionBuilderModuleUtils {
+public final class CitationsActionBuilderModuleUtils {
     
     // ------------------------- CONSTRUCTORS ----------------------------
     

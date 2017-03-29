@@ -51,7 +51,7 @@ public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFa
     
     class CitationActionBuilderModule extends AbstractBuilderModule<Citations> {
 
-        CitationsExtraInfoConverter converter = new CitationsExtraInfoConverter();
+        private CitationsExtraInfoConverter converter = new CitationsExtraInfoConverter();
 
         // ------------------------ CONSTRUCTORS --------------------------
         
@@ -70,8 +70,8 @@ public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFa
         public List<AtomicAction> build(Citations object) {
             Oaf oaf = buildOAFCitations(object);
             if (oaf != null) {
-                return actionFactory.createUpdateActions(actionSetId, agent, object.getDocumentId().toString(),
-                        Type.result, oaf.toByteArray());
+                return getActionFactory().createUpdateActions(getActionSetId(), getAgent(), 
+                        object.getDocumentId().toString(), Type.result, oaf.toByteArray());
             } else {
                 return Collections.emptyList();
             }
@@ -92,7 +92,7 @@ public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFa
                 extraInfoBuilder.setValue(converter.serialize(normalize(source.getCitations())));
                 extraInfoBuilder.setName(EXTRA_INFO_NAME);
                 extraInfoBuilder.setTypology(EXTRA_INFO_TYPOLOGY);
-                extraInfoBuilder.setProvenance(this.inferenceProvenance);
+                extraInfoBuilder.setProvenance(this.getInferenceProvenance());
                 extraInfoBuilder.setTrust(StaticConfigurationProvider.ACTION_TRUST_0_9);
                 entityBuilder.addExtraInfo(extraInfoBuilder.build());
                 entityBuilder.setType(Type.result);

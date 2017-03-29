@@ -52,9 +52,9 @@ public class TestingJsonConsumer implements Process {
         
         for (String inputSpecification : inputSpecifications) {
             PortSpecification portSpec = specificationExtractor.getSpecification(inputSpecification);
-            String jsonFilePath = portSpec.properties[0];
+            String jsonFilePath = portSpec.getProperties()[0];
             
-            inputPortsSpecification.put(portSpec.name, new JsonPortSpecification(portSpec.name, jsonFilePath));
+            inputPortsSpecification.put(portSpec.getName(), new JsonPortSpecification(portSpec.getName(), jsonFilePath));
         }
     }
     

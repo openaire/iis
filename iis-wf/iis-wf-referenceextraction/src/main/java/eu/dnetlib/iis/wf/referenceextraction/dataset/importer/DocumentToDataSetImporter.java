@@ -94,8 +94,8 @@ public class DocumentToDataSetImporter implements Process {
 			InputStream inputStream = null;
 			BufferedReader reader = null;
 			try {
-				reader = new BufferedReader(new InputStreamReader(
-						inputStream = fs.open(currentPath)));
+			    inputStream = fs.open(currentPath);
+				reader = new BufferedReader(new InputStreamReader(inputStream, "utf8"));
 				String line = null;
 				while ((line = reader.readLine()) != null) {
 					if (SharedImporterUtils.skipLine(line, skipLinePrefix)) {
@@ -108,8 +108,6 @@ public class DocumentToDataSetImporter implements Process {
 							DocumentToDataSet.Builder builder = DocumentToDataSet.newBuilder();
 							builder.setDocumentId(generateDocumentId(split[0].trim()));
 							builder.setDatasetId(generateDatasetId(split[1].trim()));
-//							TODO currently there is no confidence level available in CSV
-//							builder.setConfidenceLevel(value);
 							writer.append(builder.build());
 						} else {
 							log.warn("invalid line, unable to process: " + line);

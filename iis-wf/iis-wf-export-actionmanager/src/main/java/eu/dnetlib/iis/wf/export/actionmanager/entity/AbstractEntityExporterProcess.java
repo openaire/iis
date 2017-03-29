@@ -224,9 +224,9 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
     private ActionFactory buildActionFactory() {
         Map<String, Resource> xslts = new HashMap<String, Resource>();
         xslts.put(entityXSLTName, new ClassPathResource(entityXSLTLocation));
-        ActionFactory actionFactory = new ActionFactory();
-        actionFactory.setXslts(xslts);
-        return actionFactory;
+        ActionFactory localActionFactory = new ActionFactory();
+        localActionFactory.setXslts(xslts);
+        return localActionFactory;
     }
 
     /**

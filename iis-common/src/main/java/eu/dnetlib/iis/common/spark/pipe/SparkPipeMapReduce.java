@@ -38,7 +38,12 @@ import eu.dnetlib.iis.common.utils.AvroUtils;
  * @author madryk
  *
  */
-public class SparkPipeMapReduce {
+public final class SparkPipeMapReduce {
+    
+    
+    //------------------------ CONSTRUCTORS -------------------
+    
+    private SparkPipeMapReduce() {}
     
     
     //------------------------ LOGIC --------------------------

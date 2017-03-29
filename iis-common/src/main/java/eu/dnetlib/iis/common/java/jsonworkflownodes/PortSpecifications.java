@@ -18,15 +18,26 @@ public class PortSpecifications {
 			new String[]{"[\\w\\.]+", "[\\w\\./_\\-]+"};
 	private final Map<String, SpecificationValues> specs;
 	
-	public static class SpecificationValues{
-		public Schema schema;
-		public String jsonFilePath;
-		
-		public SpecificationValues(Schema schema, String jsonFilePath) {
-			this.schema = schema;
-			this.jsonFilePath = jsonFilePath;
-		}
-	}
+    public static class SpecificationValues {
+
+        private final Schema schema;
+
+        private final String jsonFilePath;
+
+        public SpecificationValues(Schema schema, String jsonFilePath) {
+            this.schema = schema;
+            this.jsonFilePath = jsonFilePath;
+        }
+
+        public Schema getSchema() {
+            return schema;
+        }
+
+        public String getJsonFilePath() {
+            return jsonFilePath;
+        }
+
+    }
 	
 	public PortSpecifications(String[] portSpecifications){
 		StringPortSpecificationExtractor portSpecExtractor = 
@@ -34,9 +45,9 @@ public class PortSpecifications {
 		specs = new HashMap<String, SpecificationValues>();
 		for(int i = 0; i < portSpecifications.length; i++){
 			PortSpecification portSpec = portSpecExtractor.getSpecification(portSpecifications[i]);
-			Schema schema = AvroUtils.toSchema(portSpec.properties[0]);
-			String jsonPath = portSpec.properties[1];
-			specs.put(portSpec.name, new SpecificationValues(schema, jsonPath));
+			Schema schema = AvroUtils.toSchema(portSpec.getProperties()[0]);
+			String jsonPath = portSpec.getProperties()[1];
+			specs.put(portSpec.getName(), new SpecificationValues(schema, jsonPath));
 		}
 	}
 	

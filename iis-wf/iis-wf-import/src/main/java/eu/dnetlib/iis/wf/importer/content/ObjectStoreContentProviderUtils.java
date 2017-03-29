@@ -17,7 +17,7 @@ import eu.dnetlib.iis.common.hbase.HBaseConstants;
  * @author mhorst
  *
  */
-public class ObjectStoreContentProviderUtils {
+public final class ObjectStoreContentProviderUtils {
 
 	public static final String defaultEncoding = HBaseConstants.STATIC_FIELDS_ENCODING_UTF8;
 	

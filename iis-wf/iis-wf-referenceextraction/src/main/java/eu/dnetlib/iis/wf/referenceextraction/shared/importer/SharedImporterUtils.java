@@ -6,7 +6,7 @@ package eu.dnetlib.iis.wf.referenceextraction.shared.importer;
  * @author mhorst
  *
  */
-public class SharedImporterUtils {
+public final class SharedImporterUtils {
 	
     
     // ----------------------------- CONSTRUCTORS ------------------------------------

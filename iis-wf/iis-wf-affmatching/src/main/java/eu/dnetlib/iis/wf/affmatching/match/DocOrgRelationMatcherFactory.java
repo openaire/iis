@@ -34,7 +34,7 @@ import eu.dnetlib.iis.wf.affmatching.match.voter.GetOrgShortNameFunction;
  * @author Łukasz Dumiszewski
 */
 
-public class DocOrgRelationMatcherFactory {
+public final class DocOrgRelationMatcherFactory {
     
     //------------------------ CONSTRUCTORS -------------------
     

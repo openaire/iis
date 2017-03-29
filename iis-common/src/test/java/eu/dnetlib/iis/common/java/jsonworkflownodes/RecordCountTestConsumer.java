@@ -50,11 +50,11 @@ public class RecordCountTestConsumer implements Process {
 		
 		for (String inputSpecification : inputSpecifications) {
 			PortSpecification portSpec = specificationExtractor.getSpecification(inputSpecification);
-			Schema schema = AvroUtils.toSchema(portSpec.properties[0]);
-			int minRecords = Integer.valueOf(portSpec.properties[1]);
-			int maxRecords = Integer.valueOf(portSpec.properties[2]);
+			Schema schema = AvroUtils.toSchema(portSpec.getProperties()[0]);
+			int minRecords = Integer.valueOf(portSpec.getProperties()[1]);
+			int maxRecords = Integer.valueOf(portSpec.getProperties()[2]);
 			
-			inputPortsSpecification.put(portSpec.name, new RecordCountPortSpecification(portSpec.name, schema, minRecords, maxRecords));
+			inputPortsSpecification.put(portSpec.getName(), new RecordCountPortSpecification(portSpec.getName(), schema, minRecords, maxRecords));
 		}
 		
 		

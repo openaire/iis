@@ -14,7 +14,7 @@ import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
  */
 public abstract class AbstractExtraInfoConverter<T> implements ExtraInfoConverter<T> {
 
-	protected final XStream xstream;
+	private final XStream xstream;
 	
 	public AbstractExtraInfoConverter() {
 		xstream = new XStream(new DomDriver());
@@ -42,5 +42,9 @@ public abstract class AbstractExtraInfoConverter<T> implements ExtraInfoConverte
 	public T deserialize(String source) throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("deserialization is unsupported");
 	}
+
+    public XStream getXstream() {
+        return xstream;
+    }
 
 }

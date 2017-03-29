@@ -40,6 +40,8 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Writes project properties for the keys listed in specified properties files.
  * Based on: 
@@ -138,6 +140,7 @@ public class WritePredefinedProjectProperties extends AbstractMojo {
      * @see org.apache.maven.plugin.AbstractMojo#execute()
      */
     @Override
+    @SuppressFBWarnings({"NP_UNWRITTEN_FIELD","UWF_UNWRITTEN_FIELD"})
     public void execute() throws MojoExecutionException, MojoFailureException {
         Properties properties = new Properties();
         // Add project properties

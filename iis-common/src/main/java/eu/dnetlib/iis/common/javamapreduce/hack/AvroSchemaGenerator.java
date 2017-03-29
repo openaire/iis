@@ -17,7 +17,7 @@ import eu.dnetlib.iis.common.utils.AvroUtils;
  * @author mhorst
  *
  */
-public class AvroSchemaGenerator {
+public final class AvroSchemaGenerator {
 
     //------------------------ CONSTRUCTORS --------------------------
     

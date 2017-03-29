@@ -16,19 +16,19 @@ import org.apache.commons.lang3.StringUtils;
  *
  */
 @SuppressWarnings("deprecation")
-public class CmdLineParser {
+public final class CmdLineParser {
 	/** HACK: make the names of various types of parameters of the program 
 	* more readable, e.g. "--Input_person=..." instead of "-Iperson=...",
 	* "--Output_merged=..." instead of "-Omerged=...". I wasn't able to
 	* get such notation so far using the Apache CLI. */
-	public static String constructorPrefix = "C";
-	public static String inputPrefix = "I";
-	public static String outputPrefix = "O";
-	public static String specialParametersPrefix = "S";
+	public static final String constructorPrefix = "C";
+	public static final String inputPrefix = "I";
+	public static final String outputPrefix = "O";
+	public static final String specialParametersPrefix = "S";
 	/** HACK: This field should be removed since this list of special 
 	 * parameters is empty, thus not used anywhere.*/
-	public static String[] mandatorySpecialParameters = new String[]{};
-	public static String processParametersPrefix = "P";
+	public static final String[] mandatorySpecialParameters = new String[]{};
+	public static final String processParametersPrefix = "P";
 	
 	// ------------------------- CONSTRUCTORS ------------------------------
 	

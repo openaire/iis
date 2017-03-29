@@ -11,7 +11,7 @@ import org.apache.hadoop.fs.Path;
  * 
  * @author madryk
  */
-public class HdfsUtils {
+public final class HdfsUtils {
 
     //------------------------ CONSTRUCTORS -------------------
     

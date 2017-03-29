@@ -39,9 +39,9 @@ public class WebServiceMDStoreFacade extends AbstractResultSetAwareWebServiceFac
     @Override
     public Iterable<String> deliverMDRecords(String mdStoreId) throws ServiceFacadeException {
         try {
-            W3CEndpointReference eprResult = service.deliverMDRecords(mdStoreId, null, null, null);
+            W3CEndpointReference eprResult = getService().deliverMDRecords(mdStoreId, null, null, null);
             ResultSetClientFactory rsFactory = new ResultSetClientFactory(
-                    resultSetPageSize, resultSetReadTimeout, resultSetConnectionTimeout);
+                    getResultSetPageSize(), getResultSetReadTimeout(), getResultSetConnectionTimeout());
             rsFactory.setServiceResolver(new JaxwsServiceResolverImpl());
             return rsFactory.getClient(eprResult);
         } catch (MDStoreServiceException e) {

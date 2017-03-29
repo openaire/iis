@@ -20,7 +20,7 @@ import com.google.gson.JsonParser;
  * @author Mateusz Kobos
  * 
  */
-public class JsonUtils {
+public final class JsonUtils {
     
     //------------------------ CONSTRUCTORS -------------------
     

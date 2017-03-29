@@ -21,22 +21,23 @@ public abstract class AbstractResultSetAwareWebServiceFacade<T> {
     /**
      * Web service.
      */
-    protected final T service;
+    private final T service;
     
     /**
      * ResultSet read timeout.
      */
-    protected final long resultSetReadTimeout;
+    private final long resultSetReadTimeout;
     
     /**
      * ResultSet connection timeout.
      */
-    protected final long resultSetConnectionTimeout;
+    private final long resultSetConnectionTimeout;
     
     /**
      * ResultSet page size.
      */
-    protected final int resultSetPageSize;
+    private final int resultSetPageSize;
+    
     
     //------------------------ CONSTRUCTORS -------------------
     
@@ -76,6 +77,28 @@ public abstract class AbstractResultSetAwareWebServiceFacade<T> {
         this.resultSetReadTimeout = resultSetReadTimeout;
         this.resultSetConnectionTimeout = resultSetConnectionTimeout;
         this.resultSetPageSize = resultSetPageSize;
+    }
+
+    
+    //------------------------ GETTERS -------------------------
+
+    public T getService() {
+        return service;
+    }
+
+
+    public long getResultSetReadTimeout() {
+        return resultSetReadTimeout;
+    }
+
+
+    public long getResultSetConnectionTimeout() {
+        return resultSetConnectionTimeout;
+    }
+
+
+    public int getResultSetPageSize() {
+        return resultSetPageSize;
     }
     
 }

@@ -74,7 +74,7 @@ public class StreamingProjectImporter implements Process {
             NamedCounters counters = new NamedCounters(new String[] { PROJECT_COUNTER_NAME });
             
             StreamingFacade streamingFacade = ServiceFacadeUtils.instantiate(parameters);
-            try (Scanner scanner = new Scanner(new BufferedInputStream(streamingFacade.getStream()))) {
+            try (Scanner scanner = new Scanner(new BufferedInputStream(streamingFacade.getStream()), "utf8")) {
 
                 ProjectDetailConverter converter = new ProjectDetailConverter();
                 

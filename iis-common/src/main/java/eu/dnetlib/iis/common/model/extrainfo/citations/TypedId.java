@@ -12,11 +12,11 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 public class TypedId {
 	
 	@XStreamAsAttribute
-	String value;
+	private String value;
 	@XStreamAsAttribute
-	String type;
+	private String type;
 	@XStreamAsAttribute
-	float confidenceLevel;
+	private float confidenceLevel;
 	
 	public TypedId(String value, String type,
 			float confidenceLevel) {

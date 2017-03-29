@@ -115,7 +115,7 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
 			this.currentValue = new StringBuilder();
 		} else if (isWithinElement(localName, ELEM_IDENTIFIER, ELEM_RESOURCE)) {
 //			identifierType attribute is mandatory
-		    datasetMeta.idType = attributes.getValue(ATTRIBUTE_ID_TYPE).toLowerCase();	
+		    datasetMeta.setIdType(attributes.getValue(ATTRIBUTE_ID_TYPE).toLowerCase());	
 			this.currentValue = new StringBuilder();
 		} else if (isWithinElement(localName, ELEM_CREATOR_NAME, ELEM_CREATOR)) {
 			this.currentValue = new StringBuilder();
@@ -130,10 +130,10 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
 		} else if (isWithinElement(localName, ELEM_PUBLICATION_YEAR, ELEM_RESOURCE)) {
 			this.currentValue = new StringBuilder();
 		} else if (isWithinElement(localName, ELEM_RESOURCE_TYPE, ELEM_RESOURCE)) {
-		    datasetMeta.resourceTypeClass = attributes.getValue(ATTRIBUTE_RESOURCE_TYPE_GENERAL);
+		    datasetMeta.setResourceTypeClass(attributes.getValue(ATTRIBUTE_RESOURCE_TYPE_GENERAL));
 			this.currentValue = new StringBuilder();
 		} else if (isWithinElement(localName, ELEM_ALTERNATE_IDENTIFIER, ELEM_ALTERNATE_IDENTIFIERS)) {
-		    datasetMeta.currentAlternateIdentifierType = attributes.getValue(ATTRIBUTE_ALTERNATE_IDENTIFIER_TYPE);
+		    datasetMeta.setCurrentAlternateIdentifierType(attributes.getValue(ATTRIBUTE_ALTERNATE_IDENTIFIER_TYPE));
             this.currentValue = new StringBuilder();
         } 
 		this.parents.push(localName);
@@ -144,56 +144,56 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
 			throws SAXException {
 		this.parents.pop();
 		if (isWithinElement(localName, mainIdFieldName, ELEM_HEADER)) {
-		    datasetMeta.headerId = this.currentValue.toString().trim();
+		    datasetMeta.setHeaderId(this.currentValue.toString().trim());
 		} else if (isWithinElement(localName, ELEM_IDENTIFIER, ELEM_RESOURCE)) {
-		    datasetMeta.idValue = this.currentValue.toString().trim();
+		    datasetMeta.setIdValue(this.currentValue.toString().trim());
 		} else if (isWithinElement(localName, ELEM_CREATOR_NAME, ELEM_CREATOR) 
 				&& this.currentValue.length()>0) {
-			if (datasetMeta.creatorNames==null) {
-			    datasetMeta.creatorNames = new ArrayList<CharSequence>();
+			if (datasetMeta.getCreatorNames()==null) {
+			    datasetMeta.setCreatorNames(new ArrayList<CharSequence>());
 			}
-			datasetMeta.creatorNames.add(this.currentValue.toString().trim());
+			datasetMeta.getCreatorNames().add(this.currentValue.toString().trim());
 		} else if (isWithinElement(localName, ELEM_TITLE, ELEM_TITLES)
 				&& this.currentValue.length()>0) {
-			if (datasetMeta.titles==null) {
-			    datasetMeta.titles = new ArrayList<CharSequence>();
+			if (datasetMeta.getTitles()==null) {
+			    datasetMeta.setTitles(new ArrayList<CharSequence>());
 			}
-			datasetMeta.titles.add(this.currentValue.toString().trim());
+			datasetMeta.getTitles().add(this.currentValue.toString().trim());
 		} else if (isWithinElement(localName, ELEM_FORMAT, ELEM_FORMATS)
 				&& this.currentValue.length()>0) {
-			if (datasetMeta.formats==null) {
-			    datasetMeta.formats = new ArrayList<CharSequence>();
+			if (datasetMeta.getFormats()==null) {
+			    datasetMeta.setFormats(new ArrayList<CharSequence>());
 			}
-			datasetMeta.formats.add(this.currentValue.toString().trim());
+			datasetMeta.getFormats().add(this.currentValue.toString().trim());
 		} else if (isWithinElement(localName, ELEM_ALTERNATE_IDENTIFIER, ELEM_ALTERNATE_IDENTIFIERS)
                 && this.currentValue.length()>0) {
-            if (datasetMeta.currentAlternateIdentifierType!=null) {
-                if (datasetMeta.alternateIdentifiers==null) {
-                    datasetMeta.alternateIdentifiers = Maps.newHashMap();
+            if (datasetMeta.getCurrentAlternateIdentifierType()!=null) {
+                if (datasetMeta.getAlternateIdentifiers()==null) {
+                    datasetMeta.setAlternateIdentifiers(Maps.newHashMap());
                 }
-                datasetMeta.alternateIdentifiers.put(datasetMeta.currentAlternateIdentifierType, this.currentValue.toString().trim());    
+                datasetMeta.getAlternateIdentifiers().put(datasetMeta.getCurrentAlternateIdentifierType(), this.currentValue.toString().trim());    
             }
         } else if (isWithinElement(localName, ELEM_DESCRIPTION, ELEM_RESOURCE)
 				&& this.currentValue.length()>0) {
-            datasetMeta.description = this.currentValue.toString().trim();
+            datasetMeta.setDescription(this.currentValue.toString().trim());
 		} else if (isWithinElement(localName, ELEM_PUBLISHER, ELEM_RESOURCE)
 				&& this.currentValue.length()>0) {
-		    datasetMeta.publisher = this.currentValue.toString().trim();
+		    datasetMeta.setPublisher(this.currentValue.toString().trim());
 		} else if (isWithinElement(localName, ELEM_PUBLICATION_YEAR, ELEM_RESOURCE)
 				&& this.currentValue.length()>0) {
-		    datasetMeta.publicationYear = this.currentValue.toString().trim();
+		    datasetMeta.setPublicationYear(this.currentValue.toString().trim());
 		} else if (isWithinElement(localName, ELEM_RESOURCE_TYPE, ELEM_RESOURCE)
 				&& this.currentValue.length()>0) {
-		    datasetMeta.resourceTypeValue = this.currentValue.toString().trim();
+		    datasetMeta.setResourceTypeValue(this.currentValue.toString().trim());
 		} else if (isWithinElement(localName, ELEM_RESOURCE, ELEM_PAYLOAD) ||
 //				temporary hack: the case below is for the records originated from MDStore 
 //				where no 'payload' element is present, required until fixing MDStore contents
 				isWithinElement(localName, ELEM_RESOURCE, ELEM_METADATA)) {
-			if (datasetMeta.idType!=null && datasetMeta.idValue!=null) {
+			if (datasetMeta.getIdType()!=null && datasetMeta.getIdValue()!=null) {
 			    storeRecords();
 			} else {
-				log.warn("either reference type " + datasetMeta.idType + " or id value: " + datasetMeta.idValue + 
-						" was null for record id: " + datasetMeta.headerId);
+				log.warn("either reference type " + datasetMeta.getIdType() + " or id value: " + datasetMeta.getIdValue() + 
+						" was null for record id: " + datasetMeta.getHeaderId());
 			}
 			this.datasetMeta = new DatasetMetadata();
 		}
@@ -219,13 +219,13 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
 	
     private void storeRecords() throws SAXException {
         try {
-            if (datasetMeta.headerId==null) {
+            if (datasetMeta.getHeaderId()==null) {
                 throw new SAXException("header identifier was not found!");
             }
 
-            String idValueStr = datasetMeta.idValue.trim();
+            String idValueStr = datasetMeta.getIdValue().trim();
             String datasetId = ELEM_OBJ_IDENTIFIER.equals(mainIdFieldName)?
-                    HBaseConstants.ROW_PREFIX_RESULT + datasetMeta.headerId : datasetMeta.headerId;
+                    HBaseConstants.ROW_PREFIX_RESULT + datasetMeta.getHeaderId() : datasetMeta.getHeaderId();
 
             DatasetToMDStore.Builder documentToMDStoreBuilder = DatasetToMDStore.newBuilder();
             documentToMDStoreBuilder.setMdStoreId(this.mdStoreId);
@@ -233,35 +233,35 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
 
             DataSetReference.Builder dataSetRefBuilder = DataSetReference.newBuilder();
             dataSetRefBuilder.setId(datasetId);
-            dataSetRefBuilder.setReferenceType(datasetMeta.idType);
+            dataSetRefBuilder.setReferenceType(datasetMeta.getIdType());
             dataSetRefBuilder.setIdForGivenType(idValueStr);
 
-            if (datasetMeta.creatorNames!=null) {
-                dataSetRefBuilder.setCreatorNames(datasetMeta.creatorNames);
+            if (datasetMeta.getCreatorNames()!=null) {
+                dataSetRefBuilder.setCreatorNames(datasetMeta.getCreatorNames());
             }
-            if (datasetMeta.titles!=null) {
-                dataSetRefBuilder.setTitles(datasetMeta.titles);
+            if (datasetMeta.getTitles()!=null) {
+                dataSetRefBuilder.setTitles(datasetMeta.getTitles());
             }
-            if (datasetMeta.formats!=null) {
-                dataSetRefBuilder.setFormats(datasetMeta.formats);
+            if (datasetMeta.getFormats()!=null) {
+                dataSetRefBuilder.setFormats(datasetMeta.getFormats());
             }
-            if (datasetMeta.description!=null) {
-                dataSetRefBuilder.setDescription(datasetMeta.description);
+            if (datasetMeta.getDescription()!=null) {
+                dataSetRefBuilder.setDescription(datasetMeta.getDescription());
             }
-            if (datasetMeta.publisher!=null) {
-                dataSetRefBuilder.setPublisher(datasetMeta.publisher);
+            if (datasetMeta.getPublisher()!=null) {
+                dataSetRefBuilder.setPublisher(datasetMeta.getPublisher());
             }
-            if (datasetMeta.publicationYear!=null) {
-                dataSetRefBuilder.setPublicationYear(datasetMeta.publicationYear);
+            if (datasetMeta.getPublicationYear()!=null) {
+                dataSetRefBuilder.setPublicationYear(datasetMeta.getPublicationYear());
             }
-            if (datasetMeta.resourceTypeClass!=null) {
-                dataSetRefBuilder.setResourceTypeClass(datasetMeta.resourceTypeClass);
+            if (datasetMeta.getResourceTypeClass()!=null) {
+                dataSetRefBuilder.setResourceTypeClass(datasetMeta.getResourceTypeClass());
             }
-            if (datasetMeta.resourceTypeValue!=null) {
-                dataSetRefBuilder.setResourceTypeValue(datasetMeta.resourceTypeValue);
+            if (datasetMeta.getResourceTypeValue()!=null) {
+                dataSetRefBuilder.setResourceTypeValue(datasetMeta.getResourceTypeValue());
             }
-            if (datasetMeta.alternateIdentifiers!=null) {
-                dataSetRefBuilder.setAlternateIdentifiers(datasetMeta.alternateIdentifiers);
+            if (datasetMeta.getAlternateIdentifiers()!=null) {
+                dataSetRefBuilder.setAlternateIdentifiers(datasetMeta.getAlternateIdentifiers());
             }
             
             datasetReceiver.receive(dataSetRefBuilder.build());

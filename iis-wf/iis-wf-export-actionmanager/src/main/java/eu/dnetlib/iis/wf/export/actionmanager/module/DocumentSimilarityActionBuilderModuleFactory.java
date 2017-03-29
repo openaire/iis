@@ -88,8 +88,8 @@ public class DocumentSimilarityActionBuilderModuleFactory extends AbstractAction
                 return Collections.emptyList();
             }
             // setting relations in both source and target objects
-            List<AtomicAction> simActions = createActions(object, actionSetId, agent, false);
-            List<AtomicAction> reverseSimActions = createActions(object, actionSetId, agent, true);
+            List<AtomicAction> simActions = createActions(object, getActionSetId(), getAgent(), false);
+            List<AtomicAction> reverseSimActions = createActions(object, getActionSetId(), getAgent(), true);
             List<AtomicAction> results = new ArrayList<AtomicAction>();
             if (simActions != null && !simActions.isEmpty()) {
                 results.addAll(simActions);
@@ -116,7 +116,7 @@ public class DocumentSimilarityActionBuilderModuleFactory extends AbstractAction
             Oaf oafObjectRel = buildOaf(object.getDocumentId().toString(), object.getOtherDocumentId().toString(),
                     object.getSimilarity(), backwardMode);
             List<AtomicAction> actionList = new ArrayList<AtomicAction>();
-            AtomicAction currentAction = actionFactory.createAtomicAction(actionSet, agent,
+            AtomicAction currentAction = getActionFactory().createAtomicAction(actionSet, agent,
                     backwardMode ? object.getOtherDocumentId().toString() : object.getDocumentId().toString(),
                     OafDecoder.decode(oafObjectRel).getCFQ(),
                     backwardMode ? object.getDocumentId().toString() : object.getOtherDocumentId().toString(),

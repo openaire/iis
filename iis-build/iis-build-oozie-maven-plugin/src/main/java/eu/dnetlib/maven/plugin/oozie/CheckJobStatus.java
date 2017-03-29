@@ -7,6 +7,8 @@ import org.apache.oozie.client.OozieClient;
 import org.apache.oozie.client.OozieClientException;
 import org.apache.oozie.client.WorkflowJob.Status;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 
 
 /**
@@ -41,6 +43,7 @@ public class CheckJobStatus extends AbstractMojo {
 	private Integer checkIntervalSecs = 60;
 	
     @Override
+    @SuppressFBWarnings({"NP_UNWRITTEN_FIELD","UWF_UNWRITTEN_FIELD"})
     public void execute() throws MojoExecutionException, MojoFailureException {
     	OozieClient oozieClient = new OozieClient(oozieLocation);
 //    	OozieClient oozieClient = new AuthOozieClient(oozieLocation);

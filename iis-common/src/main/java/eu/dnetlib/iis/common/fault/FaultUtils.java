@@ -14,7 +14,7 @@ import eu.dnetlib.iis.audit.schemas.Fault;
  * @author mhorst
  *
  */
-public class FaultUtils {
+public final class FaultUtils {
 
     // ---------------------- CONSTRUCTORS -------------------
     

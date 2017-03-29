@@ -49,22 +49,22 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
 
 	public static final String PARAM_INGEST_METADATA_OAI_NAMESPACE = "ingest.metadata.oai.element.namespace";
 
-	Namespace oaiNamespace;
+	private Namespace oaiNamespace;
 
 	/**
 	 * Multiple outputs.
 	 */
-	protected MultipleOutputs mos;
+	private MultipleOutputs mos;
 
 	/**
 	 * Document metadata named output.
 	 */
-	protected String namedOutputMeta;
+	private String namedOutputMeta;
 
 	/**
 	 * Fault named output.
 	 */
-	protected String namedOutputFault;
+	private String namedOutputFault;
 	
 	/**
      * Set of object identifiers objects excluded from processing.

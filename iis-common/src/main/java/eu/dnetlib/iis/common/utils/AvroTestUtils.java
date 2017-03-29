@@ -16,7 +16,7 @@ import eu.dnetlib.iis.common.java.io.FileSystemPath;
  * @author Łukasz Dumiszewski
  */
 
-public class AvroTestUtils {
+public final class AvroTestUtils {
 
     //------------------------ CONSTRUCTORS -------------------
     

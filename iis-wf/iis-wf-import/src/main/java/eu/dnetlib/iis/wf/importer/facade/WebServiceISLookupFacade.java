@@ -46,10 +46,10 @@ public class WebServiceISLookupFacade extends AbstractResultSetAwareWebServiceFa
     @Override
     public Iterable<String> searchProfile(String xPathQuery) throws ServiceFacadeException {
         try {
-            W3CEndpointReference eprResult = service.searchProfile(xPathQuery);
+            W3CEndpointReference eprResult = getService().searchProfile(xPathQuery);
             // obtaining resultSet
             ResultSetClientFactory rsFactory = new ResultSetClientFactory(
-                    resultSetPageSize, resultSetReadTimeout, resultSetConnectionTimeout);
+                    getResultSetPageSize(), getResultSetReadTimeout(), getResultSetConnectionTimeout());
             rsFactory.setServiceResolver(new JaxwsServiceResolverImpl());
             return rsFactory.getClient(eprResult);    
         }  catch (ISLookUpDocumentNotFoundException e) {

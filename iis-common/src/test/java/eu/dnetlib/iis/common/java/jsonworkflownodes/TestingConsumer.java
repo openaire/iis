@@ -65,8 +65,8 @@ public class TestingConsumer implements Process {
 	
 	private static void check(FileSystemPath actualPath, SpecificationValues specs) throws IOException{
 		List<SpecificRecord> expected = JsonUtils.convertToList(
-				specs.jsonFilePath, specs.schema, SpecificRecord.class);
-		List<SpecificRecord> actual = DataStore.read(actualPath, specs.schema);
+				specs.getJsonFilePath(), specs.getSchema(), SpecificRecord.class);
+		List<SpecificRecord> actual = DataStore.read(actualPath, specs.getSchema());
 		TestsIOUtils.assertEqualSets(expected, actual, true);
 	}
 }

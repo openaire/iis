@@ -7,7 +7,7 @@ import eu.dnetlib.iis.common.utils.AvroUtils;
 /**
  * @author Mateusz Kobos
  */
-public class SchemaSetter {
+public final class SchemaSetter {
 	public final static String inputClassName = 
 			"eu.dnetlib.iis.avro.input.class";
 	public final static String mapOutputKeyClassName = 

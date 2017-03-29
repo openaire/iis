@@ -69,8 +69,8 @@ public class DocumentToPdbActionBuilderModuleFactory extends AbstractActionBuild
         public List<AtomicAction> build(DocumentToConceptIds object) throws TrustLevelThresholdExceededException {
             Oaf oaf = buildOAFWithPdb(object);
             if (oaf != null) {
-                return actionFactory.createUpdateActions(actionSetId, agent, object.getDocumentId().toString(),
-                        Type.result, oaf.toByteArray());
+                return getActionFactory().createUpdateActions(getActionSetId(), getAgent(), 
+                        object.getDocumentId().toString(), Type.result, oaf.toByteArray());
             } else {
                 return Collections.emptyList();
             }

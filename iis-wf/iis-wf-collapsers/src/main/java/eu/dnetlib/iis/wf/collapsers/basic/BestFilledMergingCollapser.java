@@ -18,7 +18,7 @@ public class BestFilledMergingCollapser<T extends IndexedRecord> extends Abstrac
 
     @Override
     protected List<T> collapseNonEmpty(List<T> objects) {
-        CollapserUtils.sortByFilledDataFields(objects, fields);
+        CollapserUtils.sortByFilledDataFields(objects, getFields());
         T merged = objects.get(0);
 
         for (T object : objects) {

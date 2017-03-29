@@ -24,7 +24,7 @@ public class WebServiceMDStoreFacade implements MDStoreFacade {
     /**
      * Web service.
      */
-    protected final MDStoreService service;
+    private final MDStoreService service;
     
     // -------------------- CONSTRUCTORS -------------------------
     
