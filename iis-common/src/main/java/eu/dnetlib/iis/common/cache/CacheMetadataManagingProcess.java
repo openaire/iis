@@ -3,6 +3,7 @@ package eu.dnetlib.iis.common.cache;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -12,8 +13,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
@@ -71,6 +70,30 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
 		}
 	}
 	
+	/**
+	 * Underlying file system facade factory.
+	 */
+	private final FileSystemFacadeFactory fsFacadeFactory;
+
+    // ---------------------------- CONSTRUCTORS --------------------------
+	
+	
+	/**
+	 * Default constructor instantiating process with hadoop file system.
+	 */
+	public CacheMetadataManagingProcess() {
+        this((conf) -> {
+            return new HadoopFileSystemFacade(FileSystem.get(conf));
+        });
+	}
+	
+	/**
+	 * Constructor instantiating process with custom file system facade.
+	 */
+	public CacheMetadataManagingProcess(FileSystemFacadeFactory fsFacadeFactory) {
+	    this.fsFacadeFactory = fsFacadeFactory;
+	}
+	
 	// ---------------------------- LOGIC ---------------------------------
 	
 	@Override
@@ -89,11 +112,9 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
         String mode = parameters.get(PARAM_MODE);
         Properties props = new Properties();
         if (MODE_READ_CURRENT_ID.equals(mode)) {
-            props.setProperty(OUTPUT_PROPERTY_CACHE_ID, 
-                    getExistingCacheId(conf, parameters));
+            props.setProperty(OUTPUT_PROPERTY_CACHE_ID, getExistingCacheId(conf, parameters));
         } else if (MODE_GENERATE_NEW_ID.equals(mode)) {
-            props.setProperty(OUTPUT_PROPERTY_CACHE_ID, 
-                    generateNewCacheId(conf, parameters));
+            props.setProperty(OUTPUT_PROPERTY_CACHE_ID, generateNewCacheId(conf, parameters));
         } else if (MODE_WRITE_ID.equals(mode)) {
             writeCacheId(conf, parameters);
         } else {
@@ -112,23 +133,11 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
     
 	private String getExistingCacheId(Configuration conf, Map<String, String> parameters) throws IOException {
 		if (parameters.containsKey(PARAM_CACHE_DIR)) {
-			FileSystem fs = FileSystem.get(conf);
-			Path cacheFilePath = new Path(parameters.get(PARAM_CACHE_DIR), 
-					DEFAULT_METAFILE_NAME);
-			if (fs.exists(cacheFilePath)) {
-				FSDataInputStream inputStream = fs.open(cacheFilePath);
-				InputStreamReader reader = new InputStreamReader(
-						inputStream, DEFAULT_ENCODING);
-				try {
-					Gson gson = new Gson();
-					CacheMeta cacheMeta = gson.fromJson(reader, CacheMeta.class);
-					return cacheMeta.getCurrentCacheId();
-				} finally {
-					reader.close();
-					inputStream.close();
-				}
+			CacheMeta cacheMeta = readCacheMeta(fsFacadeFactory.create(conf), 
+			        new Path(parameters.get(PARAM_CACHE_DIR), DEFAULT_METAFILE_NAME));
+			if (cacheMeta != null) {
+			    return cacheMeta.getCurrentCacheId();
 			} else {
-//				cache does not exist yet
 				return NON_EXISTING_CACHE_ID;
 			}
 		} else {
@@ -139,23 +148,9 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
 	
 	private String generateNewCacheId(Configuration conf, Map<String, String> parameters) throws IOException {
 		if (parameters.containsKey(PARAM_CACHE_DIR)) {
-			FileSystem fs = FileSystem.get(conf);
-			Path cacheFilePath = new Path(parameters.get(PARAM_CACHE_DIR), 
-					DEFAULT_METAFILE_NAME);
-			CacheMeta cachedMeta = null;
-			if (fs.exists(cacheFilePath)) {
-				FSDataInputStream inputStream = fs.open(cacheFilePath);
-				InputStreamReader reader = new InputStreamReader(
-						inputStream, DEFAULT_ENCODING);
-				try {
-					Gson gson = new Gson();
-					cachedMeta = gson.fromJson(reader, CacheMeta.class);
-				} finally {
-					reader.close();
-					inputStream.close();
-				}
-			}
-			if (cachedMeta!=null) {
+		    CacheMeta cachedMeta = readCacheMeta(fsFacadeFactory.create(conf), 
+			        new Path(parameters.get(PARAM_CACHE_DIR), DEFAULT_METAFILE_NAME));
+			if (cachedMeta != null) {
 				int currentIndex = convertCacheIdToInt(cachedMeta.getCurrentCacheId());
 				return convertIntToCacheId(currentIndex+1);
 			} else {
@@ -172,13 +167,14 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
 		if (parameters.containsKey(PARAM_CACHE_DIR)) {
 			if (parameters.containsKey(PARAM_ID)) {
 
-				FileSystem fs = FileSystem.get(conf);
+				FileSystemFacade fs = fsFacadeFactory.create(conf);
+				
 				Path cacheFilePath = new Path(parameters.get(PARAM_CACHE_DIR), DEFAULT_METAFILE_NAME);
 				
 				CacheMeta cachedMeta = getCacheMeta(parameters.get(PARAM_ID), fs, cacheFilePath);
 				
 				Gson gson = new Gson();
-				FSDataOutputStream outputStream = fs.create(cacheFilePath, true);
+				OutputStream outputStream = fs.create(cacheFilePath, true);
 				JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, DEFAULT_ENCODING));
 				try {
 					gson.toJson(cachedMeta, CacheMeta.class, writer);
@@ -186,7 +182,7 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
 					writer.close();
 					outputStream.close();
 //					changing file permission to +rw to allow writing for different users
-					FsShellPermissions.changePermissions(fs, conf, FsShellPermissions.Op.CHMOD, 
+					fs.changePermissions(conf, FsShellPermissions.Op.CHMOD, 
 							false, "0666", cacheFilePath.toString());
 				}
 			} else {
@@ -202,21 +198,9 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
 	/**
 	 * Reads or creates new cache metadata record.
 	 */
-    private CacheMeta getCacheMeta(String cacheId, FileSystem fs, Path cacheFilePath)
+    private CacheMeta getCacheMeta(String cacheId, FileSystemFacade fs, Path cacheFilePath)
             throws JsonSyntaxException, JsonIOException, UnsupportedEncodingException, IOException {
-	    CacheMeta cachedMeta = null;
-        if (fs.exists(cacheFilePath)) {
-            FSDataInputStream inputStream = fs.open(cacheFilePath);
-            InputStreamReader reader = new InputStreamReader(
-                    inputStream, DEFAULT_ENCODING);
-            try {
-                Gson gson = new Gson();
-                cachedMeta = gson.fromJson(reader, CacheMeta.class);
-            } finally {
-                reader.close();
-                inputStream.close();
-            }
-        }
+        CacheMeta cachedMeta = readCacheMeta(fs, cacheFilePath);
 //      writing new id
         if (cachedMeta==null) {
             cachedMeta = new CacheMeta();
@@ -225,6 +209,23 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
         return cachedMeta;
 	}
 	
+    private CacheMeta readCacheMeta(FileSystemFacade fs, Path cacheFilePath) throws JsonSyntaxException, JsonIOException, UnsupportedEncodingException, IOException {
+        if (fs.exists(cacheFilePath)) {
+            InputStream inputStream = fs.open(cacheFilePath);
+            InputStreamReader reader = new InputStreamReader(
+                    inputStream, DEFAULT_ENCODING);
+            try {
+                Gson gson = new Gson();
+                return gson.fromJson(reader, CacheMeta.class);
+            } finally {
+                reader.close();
+                inputStream.close();
+            }
+        } else {
+            return null;
+        }
+    }
+    
 	private static int convertCacheIdToInt(String cacheId) {
 		StringBuffer strBuff = new StringBuffer(cacheId);
 		while (true) {

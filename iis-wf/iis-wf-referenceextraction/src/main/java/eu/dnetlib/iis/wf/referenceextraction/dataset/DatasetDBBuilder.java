@@ -1,134 +1,46 @@
 package eu.dnetlib.iis.wf.referenceextraction.dataset;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
 
-import eu.dnetlib.iis.common.java.PortBindings;
-import eu.dnetlib.iis.common.java.Process;
-import eu.dnetlib.iis.common.java.io.DataStore;
-import eu.dnetlib.iis.common.java.io.FileSystemPath;
-import eu.dnetlib.iis.common.java.io.JsonStreamWriter;
-import eu.dnetlib.iis.common.java.porttype.AnyPortType;
-import eu.dnetlib.iis.common.java.porttype.AvroPortType;
-import eu.dnetlib.iis.common.java.porttype.PortType;
+import com.google.common.base.Preconditions;
+
 import eu.dnetlib.iis.importer.schemas.DataSetReference;
+import eu.dnetlib.iis.wf.referenceextraction.AbstractDBBuilder;
 
 /**
+ * Process building datasets database reading {@link DataSetReference} input avro records.
  *
- * @author Dominika Tkaczyk
+ * @author mhorst
  */
-public class DatasetDBBuilder implements Process {
-    private final static String datasetPort = "dataset";
-	private final static String datasetDBPort = "dataset_db";
-	private final static String scriptLocationParam = "scriptLocation";
-	
-	
-	@Override
-	public Map<String, PortType> getInputPorts() {
-		return createInputPorts();
-	}
-	
-	@Override
-	public Map<String, PortType> getOutputPorts() {
-		return createOutputPorts();
-	}
+public class DatasetDBBuilder extends AbstractDBBuilder<DataSetReference> {
 
-	private static Map<String, PortType> createInputPorts(){
-		Map<String, PortType> inputPorts = new HashMap<String, PortType>();
-		inputPorts.put(datasetPort, new AvroPortType(DataSetReference.SCHEMA$));
-		return inputPorts;
-	}
+    private final static String PARAM_SCRIPT_LOCATION = "scriptLocation";
 
-	private static Map<String, PortType> createOutputPorts(){
-		Map<String, PortType> outputPorts = new HashMap<String, PortType>();
-		outputPorts.put(datasetDBPort, new AnyPortType());
-		return outputPorts;	
-	}
-	
-	@Override
-	public void run(PortBindings portBindings, Configuration conf,
-			Map<String, String> parameters) throws IOException, InterruptedException {
+    // -------------------------- CONSTRUCTORS ------------------------------
 
-	    String scriptLocation = parameters.get(scriptLocationParam);
-		if (StringUtils.isBlank(scriptLocation)) {
-		    throw new RuntimeException("sql script location not provided, '" + scriptLocationParam + "' parameter is missing!");
-		}
-		
-		String targetDbLocation = System.getProperty("java.io.tmpdir") + 
-				File.separatorChar + "datasets.db";
-		File targetDbFile = new File(targetDbLocation);
-		targetDbFile.setWritable(true);
-		
-        java.lang.Process process = Runtime.getRuntime().exec(
-                "python scripts/madis/mexec.py -w " + targetDbLocation + " -f "+ scriptLocation);
-        BufferedOutputStream stdin = new BufferedOutputStream(process.getOutputStream());
-        InputStream errorStream = process.getErrorStream();
-    
-        FileSystem fs = FileSystem.get(conf);
-        Iterator<DataSetReference> datasets = DataStore.getReader(new FileSystemPath(fs, portBindings.getInput().get(datasetPort)));
+    public DatasetDBBuilder() {
+        super(DataSetReference.SCHEMA$, "dataset", "dataset_db");
+    }
 
-        JsonStreamWriter<DataSetReference> writer = 
-                new JsonStreamWriter<DataSetReference>(DataSetReference.SCHEMA$, stdin);
-        try {
-        	
-    		while (datasets.hasNext()) {
-                writer.write(datasets.next());
-            }
-        	
-       		writer.close();	
+    // -------------------------- LOGIC -------------------------------------
 
-        	process.waitFor();
-        } catch (Exception e) {
-//        	providing error details from Madis error stream
-        	BufferedReader stderr = new BufferedReader(new InputStreamReader(errorStream, "utf8"));
-            StringBuilder errorBuilder = new StringBuilder();
-            String line;
-            while ((line = stderr.readLine()) != null) {
-                errorBuilder.append(line);
-            }
-            stderr.close();
-            throw new IOException("got error while writing to Madis stream: " + 
-            		errorBuilder.toString(), e);
-        }
-        
-        if (process.exitValue() != 0) {
-        	BufferedReader stderr = new BufferedReader(new InputStreamReader(errorStream, "utf8"));
-            StringBuilder errorBuilder = new StringBuilder();
-            String line;
-            while ((line = stderr.readLine()) != null) {
-                errorBuilder.append(line);
-            }
-            stderr.close();
-            throw new RuntimeException("MadIS execution failed with error: " + errorBuilder.toString());
-        }
-        
-        InputStream inStream = null;
-        OutputStream outStream = null;
-        try {
-            inStream = new FileInputStream(targetDbFile);
-            outStream = fs.create(new FileSystemPath(fs, portBindings.getOutput().get(datasetDBPort)).getPath());
-            IOUtils.copy(inStream, outStream);  
-        } finally {
-            if (inStream != null) {
-                inStream.close();
-            }
-            if (outStream != null) {
-                outStream.close();
-            }
-        }
-	}
+    @Override
+    public ProcessExecutionContext initializeProcess(Map<String, String> parameters) throws IOException {
+        String scriptLocation = parameters.get(PARAM_SCRIPT_LOCATION);
+        Preconditions.checkArgument(StringUtils.isNotBlank(scriptLocation),
+                "sql script location not provided, '%s' parameter is missing!", PARAM_SCRIPT_LOCATION);
+
+        String targetDbLocation = System.getProperty("java.io.tmpdir") + File.separatorChar + "datasets.db";
+        File targetDbFile = new File(targetDbLocation);
+        targetDbFile.setWritable(true);
+
+        return new ProcessExecutionContext(
+                Runtime.getRuntime().exec("python scripts/madis/mexec.py -w " + targetDbLocation + " -f " + scriptLocation),
+                targetDbFile);
+    }
+
 }
