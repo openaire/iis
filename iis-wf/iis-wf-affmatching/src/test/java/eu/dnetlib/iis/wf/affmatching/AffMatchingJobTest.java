@@ -135,6 +135,7 @@ public class AffMatchingJobTest {
                                            .addArg("-inputAvroProjOrgPath", inputProjOrgDirPath)
                                            .addArg("-outputAvroPath", outputDirPath)
                                            .addArg("-outputAvroReportPath", outputReportPath)
+                                           .addJobProperty("spark.driver.host", "localhost")
                                            .build();
         
         

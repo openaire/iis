@@ -100,6 +100,7 @@ public class AffMatchingAffOrgQualityTest {
         
         conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
         conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
+        conf.set("spark.driver.host", "localhost");
         
         sparkContext = new JavaSparkContext(conf);
     }

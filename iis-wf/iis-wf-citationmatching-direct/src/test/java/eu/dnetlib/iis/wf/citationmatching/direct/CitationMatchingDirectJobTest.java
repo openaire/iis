@@ -221,6 +221,7 @@ public class CitationMatchingDirectJobTest {
                 .addArg("-inputAvroPath", inputDirPath)
                 .addArg("-outputAvroPath", outputDirPath)
                 .addArg("-outputReportPath", reportDirPath)
+                .addJobProperty("spark.driver.host", "localhost")
                 
                 .build();
         
