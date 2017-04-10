@@ -100,6 +100,7 @@ public class CitationMatchingInputTransformerJobTest {
                 .addArg("-inputMetadata", inputMetadataDirPath)
                 .addArg("-inputPerson", inputPersonDirPath)
                 .addArg("-output", outputDirPath)
+                .addJobProperty("spark.driver.host", "localhost")
                 
                 .build();
         

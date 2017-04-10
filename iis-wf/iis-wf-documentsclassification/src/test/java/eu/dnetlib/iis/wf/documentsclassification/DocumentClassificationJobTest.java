@@ -176,6 +176,7 @@ public class DocumentClassificationJobTest {
                                            .addArg("-outputAvroPath", outputDirPath)
                                            .addArg("-scriptDirPath", scriptDirPath)
                                            .addArg("-outputReportPath", reportDirPath)
+                                           .addJobProperty("spark.driver.host", "localhost")
                                            .build();
         
         

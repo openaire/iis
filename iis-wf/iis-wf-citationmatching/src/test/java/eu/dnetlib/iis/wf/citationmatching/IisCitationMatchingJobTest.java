@@ -96,6 +96,7 @@ public class IisCitationMatchingJobTest {
                 .addArg("-fullDocumentPath", inputDirPath)
                 .addArg("-outputDirPath", outputDirPath)
                 .addArg("-outputReportPath", reportDirPath)
+                .addJobProperty("spark.driver.host", "localhost")
                 
                 .build();
         
