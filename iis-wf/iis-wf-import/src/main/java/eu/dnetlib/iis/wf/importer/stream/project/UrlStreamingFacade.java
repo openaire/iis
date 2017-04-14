@@ -26,6 +26,7 @@ public class UrlStreamingFacade implements StreamingFacade {
     
     private final int connectionTimeout;
     
+    
     //------------------------ CONSTRUCTOR --------------------------
     
     /**
@@ -37,7 +38,20 @@ public class UrlStreamingFacade implements StreamingFacade {
      */
     public UrlStreamingFacade(String endpointLocation, boolean compress,
             int readTimeout, int connectionTimeout) throws MalformedURLException {
-        this.url = new URL(buildUrl(endpointLocation, compress));
+        this(new URL(buildUrl(endpointLocation, compress)), 
+                compress, readTimeout, connectionTimeout);
+    }
+    
+    /**
+     * @param url resource url
+     * @param compress flag indicating stream should be compressed
+     * @param readTimeout url read timeout
+     * @param connectionTimeout url connection timeout
+     * @throws MalformedURLException
+     */
+    public UrlStreamingFacade(URL url, boolean compress,
+            int readTimeout, int connectionTimeout) throws MalformedURLException {
+        this.url = url;
         this.compress = compress;
         this.readTimeout = readTimeout;
         this.connectionTimeout = connectionTimeout;

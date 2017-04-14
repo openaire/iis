@@ -24,7 +24,7 @@ import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
  */
 public class ImportInformationSpaceMapper extends Mapper<Text, Text, Text, InfoSpaceRecord> {
 
-    private static final char KEY_SEPARATOR = '@';
+    protected static final char KEY_SEPARATOR = '@';
 
     private Text id;
 

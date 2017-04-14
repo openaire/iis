@@ -59,13 +59,19 @@ public abstract class OafRelToAvroConverterTestBase<T extends SpecificRecord> {
         assertEquals(TARGET_ID, getTargetId.apply(rel));
     }
 
+    /**
+     * Creates {@link OafRel} instance with source and target identifiers set.
+     */
+    public static OafRel createOafRelObject(String sourceId, String targetId) {
+        return OafRel.newBuilder().setSource(sourceId).setTarget(targetId)
+                // the following values do not matter for the converters but the fields are required
+                .setRelType(RelType.resultResult).setSubRelType(SubRelType.provision)
+                .setRelClass("irrelevantRelClass").setChild(false).build();
+    }
+    
     //------------------------ PRIVATE --------------------------
 
     private static OafRel createOafRelObject() {
-        return OafRel.newBuilder().setSource(SOURCE_ID).setTarget(TARGET_ID)
-                // the following values do not matter for the converters but the fields are required
-                .setRelType(RelType.resultResult).setSubRelType(SubRelType.provision)
-                .setRelClass("irrelevantRelClass").setChild(false)
-                .build();
+        return createOafRelObject(SOURCE_ID, TARGET_ID);
     }
 }

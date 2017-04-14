@@ -20,9 +20,9 @@ import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeFactory;
  */
 public class UrlStreamingFacadeFactory implements ServiceFacadeFactory<StreamingFacade> {
 
-    private static final String IMPORT_PROJECT_STREAM_ENDPOINT_URL = "import.project.stream.endpoint.url";
+    protected static final String IMPORT_PROJECT_STREAM_ENDPOINT_URL = "import.project.stream.endpoint.url";
     
-    private static final String IMPORT_PROJECT_STREAM_COMPRESS = "import.project.stream.compress";
+    protected static final String IMPORT_PROJECT_STREAM_COMPRESS = "import.project.stream.compress";
     
 
     //------------------------ LOGIC --------------------------

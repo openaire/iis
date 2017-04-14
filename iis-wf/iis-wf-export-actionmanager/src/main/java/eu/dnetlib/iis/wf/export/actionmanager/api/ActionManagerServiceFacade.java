@@ -1,7 +1,7 @@
 package eu.dnetlib.iis.wf.export.actionmanager.api;
 
 import java.io.Closeable;
-import java.util.Collection;
+import java.util.List;
 
 import eu.dnetlib.actionmanager.actions.AtomicAction;
 import eu.dnetlib.actionmanager.rmi.ActionManagerException;
@@ -21,6 +21,6 @@ public interface ActionManagerServiceFacade extends Closeable {
 	 * 
 	 * @param actions collection of actions conveying either entity or relation
 	 */
-	void storeActions(Collection<AtomicAction> actions) throws ActionManagerException;
+	void storeActions(List<AtomicAction> actions) throws ActionManagerException;
 	
 }

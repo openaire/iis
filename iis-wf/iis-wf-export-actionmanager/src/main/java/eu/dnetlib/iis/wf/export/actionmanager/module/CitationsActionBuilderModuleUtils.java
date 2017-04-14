@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Map.Entry;
 
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
+import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.common.model.extrainfo.ExtraInfoConstants;
 import eu.dnetlib.iis.common.model.extrainfo.citations.BlobCitationEntry;
 import eu.dnetlib.iis.common.model.extrainfo.citations.TypedId;
@@ -27,7 +28,7 @@ public final class CitationsActionBuilderModuleUtils {
      * Creates {@link BlobCitationEntry} from {@link CitationEntry}.
      * Translates confirence level into trust level applying confidenceToTrustLevelFactor.
      */
-    public static BlobCitationEntry build(CitationEntry entry, float confidenceToTrustLevelFactor) {
+    public static BlobCitationEntry build(CitationEntry entry) {
         BlobCitationEntry result = new BlobCitationEntry(
                 entry.getRawText() != null ? entry.getRawText().toString() : null);
         result.setPosition(entry.getPosition());
@@ -37,8 +38,8 @@ public final class CitationsActionBuilderModuleUtils {
                     .add(new TypedId(entry.getDestinationDocumentId().toString(),
                             ExtraInfoConstants.CITATION_TYPE_OPENAIRE,
                             entry.getConfidenceLevel() != null
-                                    ? (entry.getConfidenceLevel() * confidenceToTrustLevelFactor)
-                                    : 1f * confidenceToTrustLevelFactor));
+                                    ? (entry.getConfidenceLevel() * HBaseConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR)
+                                    : 1f * HBaseConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR));
         }
         if (entry.getExternalDestinationDocumentIds() != null && !entry.getExternalDestinationDocumentIds().isEmpty()) {
             if (result.getIdentifiers() == null) {
@@ -46,7 +47,7 @@ public final class CitationsActionBuilderModuleUtils {
             }
             for (Entry<CharSequence, CharSequence> extId : entry.getExternalDestinationDocumentIds().entrySet()) {
                 result.getIdentifiers().add(new TypedId(extId.getValue().toString(), extId.getKey().toString(),
-                        1f * confidenceToTrustLevelFactor));
+                        1f * HBaseConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR));
             }
         }
         return result;

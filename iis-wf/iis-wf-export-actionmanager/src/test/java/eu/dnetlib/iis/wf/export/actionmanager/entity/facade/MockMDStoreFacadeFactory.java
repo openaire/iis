@@ -24,12 +24,26 @@ import eu.dnetlib.data.mdstore.MDStoreServiceException;
 public class MockMDStoreFacadeFactory implements MDStoreFacadeFactory {
     
     private static final String STATIC_RESOURCE_PREFIX = "mdstore.facade.mock.static.resource.";
+    
+    private static final char SEPARATOR_IDS = '.';
 
     // -------------------- LOGIC -------------------------
     
     @Override
     public MDStoreFacade create(Map<String, String> parameters) {
         return new MockMDStoreFacade(parameters);
+    }
+    
+    /**
+     * Builds parameter key indicating record to be returned by mocked implementation.
+     */
+    public static String buildParameterKey(String mdStoreId, String entityId) {
+        StringBuilder strBuilder = new StringBuilder();
+        strBuilder.append(MockMDStoreFacadeFactory.STATIC_RESOURCE_PREFIX);
+        strBuilder.append(mdStoreId);
+        strBuilder.append(MockMDStoreFacadeFactory.SEPARATOR_IDS);
+        strBuilder.append(entityId);
+        return strBuilder.toString();
     }
     
     // -------------------- INNER CLASS -------------------------
@@ -50,7 +64,7 @@ public class MockMDStoreFacadeFactory implements MDStoreFacadeFactory {
         
         @Override
         public String fetchRecord(String mdStoreId, String recordId) throws MDStoreServiceException {
-            String parameterKey = STATIC_RESOURCE_PREFIX + mdStoreId + '.' + recordId;
+            String parameterKey = STATIC_RESOURCE_PREFIX + mdStoreId + SEPARATOR_IDS + recordId;
             if (runtimeParameters.containsKey(parameterKey)) {
                 return readRecord(runtimeParameters.get(parameterKey));
             } else {

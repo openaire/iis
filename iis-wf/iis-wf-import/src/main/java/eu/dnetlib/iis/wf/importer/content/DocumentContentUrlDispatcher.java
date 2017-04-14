@@ -10,6 +10,8 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
 
+import com.google.common.base.Preconditions;
+
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
 import eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl;
@@ -23,9 +25,9 @@ public class DocumentContentUrlDispatcher extends Mapper<AvroKey<DocumentContent
 
 	private final static Logger log = Logger.getLogger(DocumentContentUrlDispatcher.class);
 	
-	private static final String PROPERTY_PREFIX_MIMETYPES_CSV = "mimetypes.csv.";
+	protected static final String PROPERTY_PREFIX_MIMETYPES_CSV = "mimetypes.csv.";
 	
-	private static final String PROPERTY_MULTIPLEOUTPUTS = "avro.mapreduce.multipleoutputs";
+	protected static final String PROPERTY_MULTIPLEOUTPUTS = "avro.mapreduce.multipleoutputs";
 	
 	/**
 	 * Mime type to port name mappings.
@@ -36,22 +38,25 @@ public class DocumentContentUrlDispatcher extends Mapper<AvroKey<DocumentContent
 	
 	@Override
 	protected void setup(Context context) throws IOException, InterruptedException {
-		this.mos = new MultipleOutputs(context);
+	    
+	    String multipleOutputStr = context.getConfiguration().get(PROPERTY_MULTIPLEOUTPUTS);
+	    Preconditions.checkArgument(StringUtils.isNotBlank(multipleOutputStr), 
+                "required parameter '%s' is missing!", PROPERTY_MULTIPLEOUTPUTS);
+	    
+		this.mos = instantiateMultipleOutputs(context);
 		this.mimeTypeToPortNameMap = new HashMap<CharSequence, String>();
+		
 //		iterating through output port names and looking for mimetypes properties defined for each output port
-		String[] portNames = StringUtils.split(
-				context.getConfiguration().get(PROPERTY_MULTIPLEOUTPUTS));
+		String[] portNames = StringUtils.split(context.getConfiguration().get(PROPERTY_MULTIPLEOUTPUTS));
 		for (String portName : portNames) {
 			String currentMimeTypePropName = PROPERTY_PREFIX_MIMETYPES_CSV + portName; 
-			if (context.getConfiguration().get(
-					currentMimeTypePropName)!=null) {
+			if (context.getConfiguration().get(currentMimeTypePropName) != null) {
 				String[] currentPortMimeTypes = StringUtils.split(
 						context.getConfiguration().get(currentMimeTypePropName),
 						WorkflowRuntimeParameters.DEFAULT_CSV_DELIMITER);	
 				for (String currentPortMimeType : currentPortMimeTypes) {
 					if (!currentPortMimeType.isEmpty() && 
-							!WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(
-							currentPortMimeType)) {
+							!WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(currentPortMimeType)) {
 						this.mimeTypeToPortNameMap.put(currentPortMimeType.toLowerCase(), portName);	
 					}
 				}
@@ -62,6 +67,13 @@ public class DocumentContentUrlDispatcher extends Mapper<AvroKey<DocumentContent
 		}
 	}
 
+	/**
+	 * Instantiates multiple outputs.
+	 */
+	protected MultipleOutputs instantiateMultipleOutputs(Context context) {
+	    return new MultipleOutputs(context);
+	}
+	
 	@Override
 	public void cleanup(Context context) 
 			throws IOException, InterruptedException {
@@ -72,20 +84,18 @@ public class DocumentContentUrlDispatcher extends Mapper<AvroKey<DocumentContent
 	public void map(AvroKey<DocumentContentUrl> key, NullWritable ignore, Context context)
 			throws IOException, InterruptedException {
 		DocumentContentUrl currentRecord = key.datum();
-		if (currentRecord.getUrl()!=null) {
-			if (currentRecord.getMimeType()!=null) {
-				String lowercasedMimeType = currentRecord.getMimeType().toString().toLowerCase();
-				if (this.mimeTypeToPortNameMap.containsKey(lowercasedMimeType)) {
-					mos.write(this.mimeTypeToPortNameMap.get(lowercasedMimeType), 
-							new AvroKey<DocumentContentUrl>(key.datum()));
-				} else {
-					log.warn("skipping, got unhandled mime type: " + 
-							lowercasedMimeType + " for object: " + currentRecord.getId());
-				}	
+		if (currentRecord.getMimeType()!=null) {
+			String lowercasedMimeType = currentRecord.getMimeType().toString().toLowerCase();
+			if (this.mimeTypeToPortNameMap.containsKey(lowercasedMimeType)) {
+				mos.write(this.mimeTypeToPortNameMap.get(lowercasedMimeType), 
+						new AvroKey<DocumentContentUrl>(currentRecord));
 			} else {
-				log.warn("got null mime type for object: " + currentRecord.getId());
-			}		
-		}
+				log.warn("skipping, got unhandled mime type: " + 
+						lowercasedMimeType + " for object: " + currentRecord.getId());
+			}	
+		} else {
+			log.warn("got null mime type for object: " + currentRecord.getId());
+		}		
 	}
 
 }

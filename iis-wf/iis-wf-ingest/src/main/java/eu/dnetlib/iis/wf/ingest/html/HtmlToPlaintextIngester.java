@@ -12,36 +12,35 @@ import org.jsoup.safety.Whitelist;
 
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 
-
 /**
  * Module ingesting plain text from HTML document.
+ * 
  * @author mhorst
  */
 public class HtmlToPlaintextIngester extends Mapper<AvroKey<DocumentText>, NullWritable, AvroKey<DocumentText>, NullWritable> {
 
-	private static final Logger log = Logger.getLogger(HtmlToPlaintextIngester.class);
-	
+    private static final Logger log = Logger.getLogger(HtmlToPlaintextIngester.class);
+
     private static final Document.OutputSettings outputSettings = new Document.OutputSettings().prettyPrint(false);
-	
+
     @Override
     protected void map(AvroKey<DocumentText> key, NullWritable value, Context context)
             throws IOException, InterruptedException {
+        
         DocumentText htmlText = key.datum();
-        if (htmlText.getText()!=null) {
-            final DocumentText.Builder output = DocumentText.newBuilder();
-            output.setId(htmlText.getId());
-            try {
-//            	preserving newlines
-            	output.setText(cleanNoMarkup(htmlText.getText().toString()));
-                context.write(new AvroKey<DocumentText>(output.build()), 
-                		NullWritable.get());	
-            } catch (Exception e) {
-            	log.error("exception thrown when trying to extract text representation "
-            			+ "from html document identified with: " + htmlText.getId(), e);
-            }
+
+        final DocumentText.Builder output = DocumentText.newBuilder();
+        output.setId(htmlText.getId());
+        try {
+            // preserving newlines
+            output.setText(cleanNoMarkup(htmlText.getText().toString()));
+            context.write(new AvroKey<DocumentText>(output.build()), NullWritable.get());
+        } catch (Exception e) {
+            log.error("exception thrown when trying to extract text representation "
+                    + "from html document identified with: " + htmlText.getId(), e);
         }
     }
-    
+
     private static String cleanNoMarkup(String input) {
         return Jsoup.clean(input, "", Whitelist.none(), outputSettings).replace("&nbsp;", "");
     }

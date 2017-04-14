@@ -27,6 +27,13 @@ import eu.dnetlib.iis.export.schemas.DocumentToConceptIds;
 public class DocumentToPdbActionBuilderModuleFactory extends AbstractActionBuilderFactory<DocumentToConceptIds> {
 
     public static final String EXPORT_PDB_URL_ROOT = "export.referenceextraction.pdb.url.root";
+    
+    public static final String SITENAME = "Protein Data Bank";
+    
+    public static final String CLASS = "accessionNumber";
+    
+    public static final String SCHEME = "dnet:externalReference_typologies";
+    
 
     // ------------------------ CONSTRUCTORS --------------------------
     
@@ -103,7 +110,7 @@ public class DocumentToPdbActionBuilderModuleFactory extends AbstractActionBuild
          */
         private ExternalReference buildExternalReference(Concept concept) throws TrustLevelThresholdExceededException {
             ExternalReference.Builder externalRefBuilder = ExternalReference.newBuilder();
-            externalRefBuilder.setSitename("Protein Data Bank");
+            externalRefBuilder.setSitename(SITENAME);
             String pdbId = concept.getId().toString();
             if (pdbUrlRoot != null && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(pdbUrlRoot)) {
                 externalRefBuilder.setUrl(pdbUrlRoot + pdbId);
@@ -111,10 +118,10 @@ public class DocumentToPdbActionBuilderModuleFactory extends AbstractActionBuild
                 throw new RuntimeException(EXPORT_PDB_URL_ROOT + " parameter is undefined!");
             }
             Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
-            qualifierBuilder.setClassid("accessionNumber");
-            qualifierBuilder.setClassname("accessionNumber");
-            qualifierBuilder.setSchemeid("dnet:externalReference_typologies");
-            qualifierBuilder.setSchemename("dnet:externalReference_typologies");
+            qualifierBuilder.setClassid(CLASS);
+            qualifierBuilder.setClassname(CLASS);
+            qualifierBuilder.setSchemeid(SCHEME);
+            qualifierBuilder.setSchemename(SCHEME);
             externalRefBuilder.setQualifier(qualifierBuilder.build());
             externalRefBuilder.setRefidentifier(pdbId);
             externalRefBuilder.setDataInfo(buildInference(concept.getConfidenceLevel()));

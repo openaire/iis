@@ -10,6 +10,8 @@ import java.util.TreeSet;
 
 import org.junit.Test;
 
+import eu.dnetlib.iis.common.model.extrainfo.ExtraInfoConstants;
+
 public class AlphaNumericCitationComparatorTest {
 
 	@Test
@@ -21,7 +23,7 @@ public class AlphaNumericCitationComparatorTest {
 		BlobCitationEntry c3 = new BlobCitationEntry("[2] test");
 		BlobCitationEntry c4 = new BlobCitationEntry("[1] test");
 		c4.setIdentifiers(new ArrayList<TypedId>());
-		c4.getIdentifiers().add(new TypedId("1", "openaire", 0.9f));
+		c4.getIdentifiers().add(new TypedId("1", ExtraInfoConstants.CITATION_TYPE_OPENAIRE, 0.9f));
 		citations.add(c4);
 		citations.add(c3);
 		citations.add(c2);
@@ -56,11 +58,11 @@ public class AlphaNumericCitationComparatorTest {
 		BlobCitationEntry c4 = new BlobCitationEntry("[2] test");
 		BlobCitationEntry c5 = new BlobCitationEntry("[2] test");
 		c3.setIdentifiers(new ArrayList<TypedId>());
-		c3.getIdentifiers().add(new TypedId("1", "openaire", 0.9f));
+		c3.getIdentifiers().add(new TypedId("1", ExtraInfoConstants.CITATION_TYPE_OPENAIRE, 0.9f));
 		c4.setIdentifiers(new ArrayList<TypedId>());
-		c4.getIdentifiers().add(new TypedId("1", "openaire", 0.9f));
+		c4.getIdentifiers().add(new TypedId("1", ExtraInfoConstants.CITATION_TYPE_OPENAIRE, 0.9f));
 		c5.setIdentifiers(new ArrayList<TypedId>());
-		c5.getIdentifiers().add(new TypedId("2", "openaire", 0.9f));
+		c5.getIdentifiers().add(new TypedId("2", ExtraInfoConstants.CITATION_TYPE_OPENAIRE, 0.9f));
 		citations.add(c5);
 		citations.add(c4);
 		citations.add(c3);

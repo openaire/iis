@@ -114,17 +114,19 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
      */
     private DocumentMetadata.Builder createBasicMetadata(ResultProtos.Result sourceResult,
             DocumentMetadata.Builder metaBuilder) {
-        if (!sourceResult.hasMetadata()) {
-            return metaBuilder;
-        }
-        handleTitle(sourceResult.getMetadata().getTitleList(), metaBuilder);
-        handleDescription(sourceResult.getMetadata().getDescriptionList(), metaBuilder);
-        handleLanguage(sourceResult.getMetadata().getLanguage(), metaBuilder);
-        handlePublisher(sourceResult.getMetadata().getPublisher(), metaBuilder);
-        handleJournal(sourceResult.getMetadata().getJournal(), metaBuilder);
-        handleYear(sourceResult.getMetadata().getDateofacceptance(), metaBuilder);
-        handleKeywords(sourceResult.getMetadata().getSubjectList(), metaBuilder);
+        
         handlePublicationType(sourceResult.getInstanceList(), metaBuilder);
+        
+        if (sourceResult.hasMetadata()) {
+            handleTitle(sourceResult.getMetadata().getTitleList(), metaBuilder);
+            handleDescription(sourceResult.getMetadata().getDescriptionList(), metaBuilder);
+            handleLanguage(sourceResult.getMetadata().getLanguage(), metaBuilder);
+            handlePublisher(sourceResult.getMetadata().getPublisher(), metaBuilder);
+            handleJournal(sourceResult.getMetadata().getJournal(), metaBuilder);
+            handleYear(sourceResult.getMetadata().getDateofacceptance(), metaBuilder);
+            handleKeywords(sourceResult.getMetadata().getSubjectList(), metaBuilder);    
+        }
+        
         return metaBuilder;
     }
 
@@ -215,8 +217,8 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
                     publicationTypeBuilder.setDataset(true);
                 }
             }
-            metaBuilder.setPublicationType(publicationTypeBuilder.build());    
         }
+        metaBuilder.setPublicationType(publicationTypeBuilder.build());
     }
     
     /**

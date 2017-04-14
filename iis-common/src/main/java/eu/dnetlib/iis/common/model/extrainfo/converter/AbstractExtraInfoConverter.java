@@ -33,7 +33,6 @@ public abstract class AbstractExtraInfoConverter<T> implements ExtraInfoConverte
 	@Override
 	public String serialize(T object) {
 		StringWriter sw = new StringWriter();
-//		xstream.marshal(object, new CompactWriter(sw));
 		xstream.marshal(object, new PrettyPrintWriter(sw));
 		return sw.toString();
 	}

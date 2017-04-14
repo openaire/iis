@@ -82,6 +82,14 @@ public class DocumentContentUrlBasedImporterMapper
         }
     }
 
+    /**
+     * Provides contents for given url.
+     */
+    protected byte[] getContent(String url) throws IOException, InvalidSizeException {
+        return ObjectStoreContentProviderUtils.getContentFromURL(
+                url, this.connectionTimeout, this.readTimeout);
+    }
+    
     @Override
     protected void map(AvroKey<DocumentContentUrl> key, NullWritable value, Context context)
             throws IOException, InterruptedException {
@@ -95,8 +103,7 @@ public class DocumentContentUrlBasedImporterMapper
             log.info("starting content retrieval for id: " + docUrl.getId() + ", location: " + docUrl.getUrl()
                     + " and size [kB]: " + docUrl.getContentSizeKB());
             try {
-                byte[] content = ObjectStoreContentProviderUtils.getContentFromURL(docUrl.getUrl().toString(),
-                        this.connectionTimeout, this.readTimeout);
+                byte[] content = getContent(docUrl.getUrl().toString());
                 DocumentContent.Builder documentContentBuilder = DocumentContent.newBuilder();
                 documentContentBuilder.setId(docUrl.getId());
                 documentContentBuilder.setPdf(ByteBuffer.wrap(content));

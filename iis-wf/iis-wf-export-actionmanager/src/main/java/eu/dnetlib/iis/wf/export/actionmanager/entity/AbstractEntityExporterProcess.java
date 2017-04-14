@@ -16,6 +16,7 @@ import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -56,17 +57,19 @@ import eu.dnetlib.iis.wf.export.actionmanager.entity.facade.MDStoreFacadeFactory
  */
 public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase> implements Process {
 
-    private static final String MDSTORE_FACADE_FACTORY_CLASS = "mdstore.facade.factory.classname";
+    public static final String PORT_INPUT = "input";
     
-    private static final String TOTAL_ENTITIES_COUNTER_NAME = "TOTAL_ENTITIES_COUNTER";
+    public static final String MDSTORE_FACADE_FACTORY_CLASS = "mdstore.facade.factory.classname";
     
-    private static final String MISSING_ENTITIES_COUNTER_NAME = "MISSING_ENTITIES_COUNTER";
+    public static final String OOZIE_ACTION_OUTPUT_FILENAME = "oozie.action.output.properties";
+    
+    public static final String TOTAL_ENTITIES_COUNTER_NAME = "TOTAL_ENTITIES_COUNTER";
+    
+    public static final String MISSING_ENTITIES_COUNTER_NAME = "MISSING_ENTITIES_COUNTER";
 
     private static final Provenance PROVENANCE_DEFAULT = Provenance.sysimport_mining_repository;
 
     private final Logger log = Logger.getLogger(this.getClass());
-
-    private final static String inputPort = "input";
 
     private final Schema inputPortSchema;
 
@@ -107,10 +110,8 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
                 "unable to export document entities to action manager due to missing action set identifier, "
                         + "no '%s' required parameter provided!", EXPORT_ACTION_SETID);
 
-        FileSystemPath inputPath = new FileSystemPath(FileSystem.get(conf), portBindings.getInput().get(inputPort));
-
         try (ActionManagerServiceFacade actionManager = buildActionManager(conf, parameters);
-                CloseableIterator<T> it = DataStore.<T> getReader(inputPath)) {
+                CloseableIterator<T> it = getIterator(portBindings.getInput().get(PORT_INPUT), conf)) {
             
             NamedCounters counters = new NamedCounters(new String[] { TOTAL_ENTITIES_COUNTER_NAME, MISSING_ENTITIES_COUNTER_NAME });
             
@@ -136,14 +137,14 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
 
             }
             counters.increment(TOTAL_ENTITIES_COUNTER_NAME, counter);
-            countersWriter.writeCounters(counters, System.getProperty("oozie.action.output.properties"));
+            countersWriter.writeCounters(counters, System.getProperty(OOZIE_ACTION_OUTPUT_FILENAME));
         }
     }
 
     @Override
     public Map<String, PortType> getInputPorts() {
         HashMap<String, PortType> inputPorts = Maps.newHashMap();
-        inputPorts.put(inputPort, new AvroPortType(inputPortSchema));
+        inputPorts.put(PORT_INPUT, new AvroPortType(inputPortSchema));
         return inputPorts;
     }
 
@@ -189,13 +190,22 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
      * @return action manager instance
      * @throws IOException
      */
-    private ActionManagerServiceFacade buildActionManager(Configuration conf, Map<String, String> parameters)
+    protected ActionManagerServiceFacade buildActionManager(Configuration conf, Map<String, String> parameters)
             throws IOException {
         return new SequenceFileActionManagerServiceFacade(conf,
                 ProcessUtils.getParameterValue(EXPORT_SEQ_FILE_OUTPUT_DIR_ROOT, conf, parameters),
                 ProcessUtils.getParameterValue(EXPORT_SEQ_FILE_OUTPUT_DIR_NAME, conf, parameters));
     }
 
+    /**
+     * @param inputPath input path containing avro records
+     * @param conf hadoop configuration required to initialize {@link FileSystem}
+     * @return closeable iterator over avro input records
+     */
+    protected CloseableIterator<T> getIterator(Path inputPath, Configuration conf) throws IOException {
+        return DataStore.<T> getReader(new FileSystemPath(FileSystem.get(conf), inputPath));
+    }
+    
     /**
      * Builds MDStore service facade.
      * 

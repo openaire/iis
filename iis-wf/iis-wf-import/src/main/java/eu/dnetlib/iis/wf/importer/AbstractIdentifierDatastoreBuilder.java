@@ -2,11 +2,13 @@ package eu.dnetlib.iis.wf.importer;
 
 import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.DEFAULT_CSV_DELIMITER;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.avro.Schema;
 import org.apache.avro.file.DataFileWriter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -36,7 +38,7 @@ import eu.dnetlib.iis.common.schemas.Identifier;
  */
 public abstract class AbstractIdentifierDatastoreBuilder implements Process {
 
-    private static final String PORT_OUT_IDENTIFIER = "identifier";
+    protected static final String PORT_OUT_IDENTIFIER = "identifier";
 
     private final Logger log = Logger.getLogger(this.getClass());
 
@@ -93,8 +95,8 @@ public abstract class AbstractIdentifierDatastoreBuilder implements Process {
             }     
         }
 
-        FileSystem fs = FileSystem.get(conf);
-        FileSystemPath identifierOutput = new FileSystemPath(fs, portBindings.getOutput().get(PORT_OUT_IDENTIFIER));
+        FileSystemPath identifierOutput = new FileSystemPath(FileSystem.get(conf), 
+                portBindings.getOutput().get(PORT_OUT_IDENTIFIER));
         
         int counter = 0;
         
@@ -104,7 +106,7 @@ public abstract class AbstractIdentifierDatastoreBuilder implements Process {
             
             for (String currentId : identifiers) {
                 if (!blacklistedIdentifiers.contains(currentId)) {
-                    try (DataFileWriter<Identifier> mdStoreIdentifierWriter = DataStore.create(
+                    try (DataFileWriter<Identifier> mdStoreIdentifierWriter = createWriter(
                             identifierOutput, Identifier.SCHEMA$, DataStore.generateFileName(counter++))) {            
                         Identifier.Builder identifierBuilder = Identifier.newBuilder();
                         identifierBuilder.setId(currentId);
@@ -118,8 +120,26 @@ public abstract class AbstractIdentifierDatastoreBuilder implements Process {
         
         if (counter==0) {
 //          writing empty datastore required for further processing
-            DataStore.create(identifierOutput, Identifier.SCHEMA$);
+            createEmptyDataStore(identifierOutput, Identifier.SCHEMA$);
         }
     }
+    
+    /**
+     * Provides avro writer.
+     * @throws IOException 
+     */
+    protected DataFileWriter<Identifier> createWriter(FileSystemPath path, 
+            Schema schema, String dataStoreFileName) throws IOException {
+        return DataStore.create(path, schema, dataStoreFileName);
+    }
 
+    /**
+     * Creates empty datastore.
+     * @throws IOException 
+     */
+    protected DataFileWriter<Identifier> createEmptyDataStore(
+            FileSystemPath path, Schema schema) throws IOException {
+        return DataStore.create(path, schema);
+    }
+    
 }

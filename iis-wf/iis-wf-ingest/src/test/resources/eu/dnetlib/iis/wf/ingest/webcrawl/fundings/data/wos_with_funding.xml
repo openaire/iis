@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oai:record xmlns:dri="http://www.driver-repository.eu/namespace/dri" xmlns="http://namespace.openaire.eu/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dr="http://www.driver-repository.eu/namespace/dr" xmlns:oaf="http://namespace.openaire.eu/oaf" xmlns:prov="http://www.openarchives.org/OAI/2.0/provenance">
+  <oai:header>
+    <dri:objIdentifier>webcrawl____::000015093c397516c0b1b000f38982de</dri:objIdentifier>
+    <dri:recordIdentifier>some_id</dri:recordIdentifier>
+    <dri:dateOfCollection>2016-01-26T08:36:52.269Z</dri:dateOfCollection>
+    <dri:repositoryId>repoId</dri:repositoryId>
+    <oaf:datasourceprefix>webcrawl____</oaf:datasourceprefix>
+  </oai:header>
+  <oai:metadata>
+    <csvRecord xmlns="">
+      <column name="FX">This work was funded by EU</column>
+      <column name="CR"/>
+      <column isID="true" name="UT">WOS:000319032000005</column>
+    </csvRecord>
+  </oai:metadata>
+</oai:record>

@@ -2,7 +2,9 @@ package eu.dnetlib.iis.common.utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.security.InvalidParameterException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +12,7 @@ import java.util.Properties;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Ports;
@@ -34,58 +37,54 @@ public class EmptyDatastoreVerifierProcess implements Process {
 	public static final String DEFAULT_ENCODING = "UTF-8";
 	
 	public static final String OUTPUT_PROPERTY_IS_EMPTY = "isEmpty";
+
+    /**
+     * Ports handled by this module.
+     */
+    private final Ports ports;
+
 	
-	/**
-	 * Ports handled by this module.
-	 */
-	private static final Ports ports;
+	// ------------------------ CONSTRUCTORS --------------------------
 	
-	static {
-//		preparing ports
-		Map<String, PortType> input = new HashMap<String, PortType>();
-		input.put(INPUT_PORT_NAME, new AnyPortType());
-		Map<String, PortType> output = Collections.emptyMap();
-		ports = new Ports(input, output);
-	}
-	
-	/**
-	 * Returns ports in a static way.
-	 * @return
-	 */
-	static protected Ports getStaticPorts() {
-		return ports;
+	public EmptyDatastoreVerifierProcess() {
+//      preparing ports
+        Map<String, PortType> input = new HashMap<String, PortType>();
+        input.put(INPUT_PORT_NAME, new AnyPortType());
+        Map<String, PortType> output = Collections.emptyMap();
+        ports = new Ports(input, output); 
 	}
 	
 	@Override
 	public Map<String, PortType> getInputPorts() {
-		return getStaticPorts().getInput();
+		return ports.getInput();
 	}
 
 	@Override
 	public Map<String, PortType> getOutputPorts() {
-		return getStaticPorts().getOutput();
+		return ports.getOutput();
 	}
 
 	@Override
-	public void run(PortBindings portBindings, Configuration conf,
-			Map<String, String> parameters) throws Exception {
-		CloseableIterator<?> closeableIt = DataStore.getReader(
-				new FileSystemPath(FileSystem.get(conf), 
-						portBindings.getInput().get(INPUT_PORT_NAME)));
-		try {
+	public void run(PortBindings portBindings, Configuration conf, Map<String, String> parameters) throws Exception {
+	    if (!portBindings.getInput().containsKey(INPUT_PORT_NAME)) {
+	        throw new InvalidParameterException("missing input port!");
+	    }
+	    
+		try (CloseableIterator<?> closeableIt = getIterator(conf, portBindings.getInput().get(INPUT_PORT_NAME))) {
 			File file = new File(System.getProperty(OOZIE_ACTION_OUTPUT_FILENAME));
 	        Properties props = new Properties();
-			props.setProperty(OUTPUT_PROPERTY_IS_EMPTY, 
-	        		Boolean.toString(!closeableIt.hasNext()));	
-			OutputStream os = new FileOutputStream(file);
-	        try {
+			props.setProperty(OUTPUT_PROPERTY_IS_EMPTY, Boolean.toString(!closeableIt.hasNext()));	
+	        try (OutputStream os = new FileOutputStream(file)) {
 		        	props.store(os, "");	
-	        } finally {
-	        	os.close();	
-	        }	
-		} finally {
-			closeableIt.close();
+	        }
 		}
+	}
+	
+	/**
+	 * Returns iterator over datastore.
+	 */
+	protected CloseableIterator<?> getIterator(Configuration conf, Path path) throws IOException {
+	    return DataStore.getReader(new FileSystemPath(FileSystem.get(conf), path));
 	}
 
 }

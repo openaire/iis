@@ -4,103 +4,92 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.actionmanager.common.Agent;
 import eu.dnetlib.data.proto.KindProtos;
 import eu.dnetlib.data.proto.OafProtos.Oaf;
 import eu.dnetlib.data.proto.ResultProtos.Result.ExternalReference;
 import eu.dnetlib.data.proto.TypeProtos.Type;
+import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.export.schemas.DocumentToSoftwareUrls;
 import eu.dnetlib.iis.export.schemas.SoftwareUrl;
-import eu.dnetlib.iis.wf.export.actionmanager.module.DocumentToSoftwareUrlActionBuilderModuleFactory.DocumentToSoftwareUrlActionBuilderModule;
 
 /**
  * @author mhorst
  *
  */
-public class DocumentToSoftwareUrlActionBuilderModuleFactoryTest {
+public class DocumentToSoftwareUrlActionBuilderModuleFactoryTest extends AbstractActionBuilderModuleFactoryTest<DocumentToSoftwareUrls> {
 
-    private DocumentToSoftwareUrlActionBuilderModuleFactory factory;
+    private final String docId = "documentId";
 
-    private Float trustLevelThreshold = 0.5f;
-
-    private String actionSetId = "someActionSetId";
-
-    private Agent agent = new Agent("agentId", "agent name", Agent.AGENT_TYPE.service);
-
-    private String docId = "documentId";
-
-    private String softwareUrl = "https://github.com/openaire/iis";
+    private final String softwareUrl = "https://github.com/openaire/iis";
     
-    private String repositoryName = "GitHub";
+    private final String repositoryName = "GitHub";
 
-    private float matchStrength = 0.9f;
+    private final float matchStrength = 0.9f;
 
-    private DocumentToSoftwareUrls documentToSoftwareUrl = buildDocumentToSoftwareUrl(docId, softwareUrl, repositoryName, matchStrength);
-
-    @Before
-    public void initModule() {
-        factory = new DocumentToSoftwareUrlActionBuilderModuleFactory();
-    }
-
-    // ----------------------- TESTS --------------------------
-
-    @Test(expected = NullPointerException.class)
-    public void test_constructor_null_agent() throws Exception {
-        // execute
-        factory.new DocumentToSoftwareUrlActionBuilderModule(trustLevelThreshold, null, actionSetId);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void test_constructor_null_actionsetid() throws Exception {
-        // execute
-        factory.new DocumentToSoftwareUrlActionBuilderModule(trustLevelThreshold, agent, null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void test_build_null_object() throws Exception {
-        // given
-        DocumentToSoftwareUrlActionBuilderModule module = factory.new DocumentToSoftwareUrlActionBuilderModule(trustLevelThreshold, agent, actionSetId);
-        // execute
-        module.build(null);
-    }
     
+    // ----------------------- CONSTRUCTORS --------------------------    
+    
+    public DocumentToSoftwareUrlActionBuilderModuleFactoryTest()  throws Exception {
+        super(DocumentToSoftwareUrlActionBuilderModuleFactory.class, AlgorithmName.document_software_url);
+    }
+
+
+    // ----------------------- TESTS ---------------------------------
+
     @Test(expected = TrustLevelThresholdExceededException.class)
-    public void test_build_below_threshold() throws Exception {
+    public void testBuildBelowThreshold() throws Exception {
         // given
         DocumentToSoftwareUrls documentToSoftwareBelowThreshold = buildDocumentToSoftwareUrl(
                 docId, softwareUrl, repositoryName, 0.4f);
-        DocumentToSoftwareUrlActionBuilderModule module = factory.new DocumentToSoftwareUrlActionBuilderModule(trustLevelThreshold, agent, actionSetId);
+        ActionBuilderModule<DocumentToSoftwareUrls> module = factory.instantiate(config, agent, actionSetId);
+        
         // execute
         module.build(documentToSoftwareBelowThreshold);
     }
 
     @Test
-    public void test_build() throws Exception {
-        // given
-        DocumentToSoftwareUrlActionBuilderModule module = factory.new DocumentToSoftwareUrlActionBuilderModule(trustLevelThreshold, agent, actionSetId);
+    public void testBuildEmptyReferences() throws Exception {
+     // given
+        String docId = "documentId";
+        ActionBuilderModule<DocumentToSoftwareUrls> module = factory.instantiate(config, agent, actionSetId);
         
         // execute
-        List<AtomicAction> actions = module.build(documentToSoftwareUrl);
+        List<AtomicAction> actions = module.build(
+                DocumentToSoftwareUrls.newBuilder().setSoftwareUrls(Collections.emptyList()).setDocumentId(docId).build());
+
+        // assert
+        assertNotNull(actions);
+        assertEquals(0, actions.size());
+    }
+    
+    @Test
+    public void testBuild() throws Exception {
+        // given
+        ActionBuilderModule<DocumentToSoftwareUrls> module = factory.instantiate(config, agent, actionSetId);
+        
+        // execute
+        List<AtomicAction> actions = module.build(buildDocumentToSoftwareUrl(docId, softwareUrl, repositoryName, matchStrength));
 
         // assert
         assertNotNull(actions);
         assertEquals(1, actions.size());
         AtomicAction action = actions.get(0);
         assertNotNull(action);
+        assertEquals(agent, action.getAgent());
         assertNotNull(action.getRowKey());
         assertEquals(actionSetId, action.getRawSet());
         assertEquals(docId, action.getTargetRowKey());
         assertEquals(Type.result.toString(), action.getTargetColumnFamily());
-        assertOaf(action.getTargetValue(), module.getConfidenceToTrustLevelNormalizationFactor());
+        assertOaf(action.getTargetValue());
     }
 
     // ----------------------- PRIVATE --------------------------
@@ -117,7 +106,7 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactoryTest {
         return builder.build();
     }
 
-    private void assertOaf(byte[] oafBytes, float normalizationFactory) throws InvalidProtocolBufferException {
+    private void assertOaf(byte[] oafBytes) throws InvalidProtocolBufferException {
         assertNotNull(oafBytes);
         Oaf.Builder oafBuilder = Oaf.newBuilder();
         oafBuilder.mergeFrom(oafBytes);
@@ -137,7 +126,7 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactoryTest {
         assertNotNull(externalReference.getQualifier());
         assertNotNull(externalReference.getDataInfo());
 
-        float normalizedTrust = matchStrength * normalizationFactory;
+        float normalizedTrust = matchStrength * HBaseConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
         assertEquals(normalizedTrust, Float.parseFloat(externalReference.getDataInfo().getTrust()), 0.0001);
     }
 }

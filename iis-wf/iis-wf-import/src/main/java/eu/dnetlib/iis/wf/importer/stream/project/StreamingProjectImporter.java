@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.importer.stream.project;
 
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,9 +33,9 @@ import eu.dnetlib.openaire.exporter.model.ProjectDetail;
  */
 public class StreamingProjectImporter implements Process {
     
-    private static final String PORT_OUT_PROJECT = "project";
+    protected static final String PORT_OUT_PROJECT = "project";
     
-    private static final String PROJECT_COUNTER_NAME = "PROJECT_COUNTER";
+    protected static final String PROJECT_COUNTER_NAME = "PROJECT_COUNTER";
     
     private static final Logger log = Logger.getLogger(StreamingProjectImporter.class);
     
@@ -68,8 +69,7 @@ public class StreamingProjectImporter implements Process {
         
         FileSystem fs = FileSystem.get(conf);
         
-        try (DataFileWriter<Project> projectWriter = DataStore.create(
-                new FileSystemPath(fs, portBindings.getOutput().get(PORT_OUT_PROJECT)), Project.SCHEMA$)) {
+        try (DataFileWriter<Project> projectWriter = getWriter(fs, portBindings)) {
             
             NamedCounters counters = new NamedCounters(new String[] { PROJECT_COUNTER_NAME });
             
@@ -96,12 +96,17 @@ public class StreamingProjectImporter implements Process {
                     }    
                 }
             }
-            
+
             countersWriter.writeCounters(counters, System.getProperty("oozie.action.output.properties"));
         }
     }
-
-
     
+    /**
+     * Provides {@link Project} writer consuming records.
+     */
+    protected DataFileWriter<Project> getWriter(FileSystem fs, PortBindings portBindings) throws IOException {
+        return DataStore.create(
+                new FileSystemPath(fs, portBindings.getOutput().get(PORT_OUT_PROJECT)), Project.SCHEMA$);
+    }
     
 }

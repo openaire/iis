@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.importer.stream.project;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -14,6 +15,7 @@ import org.junit.Test;
 import eu.dnetlib.iis.common.TestsIOUtils;
 import eu.dnetlib.iis.common.java.io.JsonUtils;
 import eu.dnetlib.iis.importer.schemas.Project;
+import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectConverter;
 import eu.dnetlib.openaire.exporter.model.ProjectDetail;
 
 /**
@@ -24,10 +26,39 @@ public class ProjectDetailConverterTest {
 
     private static String outputResourceLocation = "/eu/dnetlib/iis/wf/importer/stream/project/data/output/project.json";
     
+    private final ProjectDetailConverter converter = new ProjectDetailConverter();
+    
+    // --------------------------------------- TEST -----------------------------------------
+    
+    @Test(expected=RuntimeException.class)
+    public void testConversionOnInvalidProjectId() throws Exception {
+        // given
+        ProjectDetail source = new ProjectDetail();
+        source.setProjectId("invalidId");
+                
+        // execute
+        converter.convert(source);
+    }
+    
     @Test
-    public void testConversion() throws Exception {
+    public void testConversionOnObject() throws Exception {
+        // given
+        ProjectDetail source = new ProjectDetail();
+        source.setProjectId("xyz_________::1234");
+        source.setAcronym("acronym");
         
-        ProjectDetailConverter converter = new ProjectDetailConverter();
+        // execute
+        Project result = converter.convert(source);
+        
+        // assert
+        assertNotNull(result);
+        assertEquals("40|xyz_________::81dc9bdb52d04dc20036dbd8313ed055", result.getId());
+        assertEquals(source.getAcronym(), result.getProjectAcronym());
+        assertEquals(ProjectConverter.BLANK_JSONEXTRAINFO, result.getJsonextrainfo());
+    }
+    
+    @Test
+    public void testConversionOnResource() throws Exception {
         
         List<Project> expected = JsonUtils.convertToList(
                 StreamingFacadeMockFactory.class.getResourceAsStream(outputResourceLocation), 
@@ -58,6 +89,8 @@ public class ProjectDetailConverterTest {
         TestsIOUtils.assertEqualSets(expected, actual, true);
         
     }
+    
+    // --------------------------------- PRIVATE -----------------------------------------
     
     private String getNonEmptyLine(Scanner scanner) {
         while (scanner.hasNext()) {

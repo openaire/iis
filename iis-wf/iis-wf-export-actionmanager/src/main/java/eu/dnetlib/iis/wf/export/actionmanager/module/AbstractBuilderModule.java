@@ -31,11 +31,6 @@ public abstract class AbstractBuilderModule<T> implements ActionBuilderModule<T>
     private final Float trustLevelThreshold;
 
     /**
-     * Confidence to trust level normalization factor.
-     */
-    private float confidenceToTrustLevelNormalizationFactor = HBaseConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
-
-    /**
      * Inference provenance.
      */
     private final String inferenceProvenance;
@@ -74,12 +69,6 @@ public abstract class AbstractBuilderModule<T> implements ActionBuilderModule<T>
 
     // ------------------------ GETTERS -------------------------------
 
-    /**
-     * @return confidence to trust level normalization factor
-     */
-    public float getConfidenceToTrustLevelNormalizationFactor() {
-        return confidenceToTrustLevelNormalizationFactor;
-    }
 
     public String getInferenceProvenance() {
         return inferenceProvenance;
@@ -130,7 +119,7 @@ public abstract class AbstractBuilderModule<T> implements ActionBuilderModule<T>
      * @throws TrustLevelThresholdExceededException thrown when trust level threshold was exceeded
      */
     protected DataInfo buildInference(float confidenceLevel) throws TrustLevelThresholdExceededException {
-        float currentTrustLevel = confidenceLevel * this.confidenceToTrustLevelNormalizationFactor;
+        float currentTrustLevel = confidenceLevel * HBaseConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
         if (trustLevelThreshold == null || currentTrustLevel >= trustLevelThreshold) {
             return buildInferenceForTrustLevel(this.decimalFormat.format(currentTrustLevel));
         } else {
@@ -197,17 +186,6 @@ public abstract class AbstractBuilderModule<T> implements ActionBuilderModule<T>
         } else {
             throw new RuntimeException("invalid state: " + "no relation object found!");
         }
-    }
-
-    // ------------------------ SETTERS --------------------------
-
-    /**
-     * Sets normalization factor to be applied on confidence level in order to get normalized trust level.
-     * 
-     * @param confidenceToTrustLevelNormalizationFactor
-     */
-    public void setConfidenceToTrustLevelNormalizationFactor(float confidenceToTrustLevelNormalizationFactor) {
-        this.confidenceToTrustLevelNormalizationFactor = confidenceToTrustLevelNormalizationFactor;
     }
 
 }

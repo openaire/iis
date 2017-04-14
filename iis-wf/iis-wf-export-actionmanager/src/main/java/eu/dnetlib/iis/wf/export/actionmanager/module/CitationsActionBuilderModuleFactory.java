@@ -121,8 +121,7 @@ public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFa
                                 StringUtils.split(currentEntry.getDestinationDocumentId().toString(),
                                         HBaseConstants.ROW_PREFIX_SEPARATOR)[1]);
                     }
-                    results.add(CitationsActionBuilderModuleUtils.build(currentEntry,
-                            getConfidenceToTrustLevelNormalizationFactor()));
+                    results.add(CitationsActionBuilderModuleUtils.build(currentEntry));
                 }
                 return results;
             } else {

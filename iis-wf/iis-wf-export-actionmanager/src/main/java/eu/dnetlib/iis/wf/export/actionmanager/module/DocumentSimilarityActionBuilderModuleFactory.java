@@ -79,9 +79,6 @@ public class DocumentSimilarityActionBuilderModuleFactory extends AbstractAction
 
         @Override
         public List<AtomicAction> build(DocumentSimilarity object) {
-            if (object == null) {
-                return Collections.emptyList();
-            }
             // checking similarity threshold if set
             if (similarityThreshold != null && object.getSimilarity() != null
                     && object.getSimilarity() < similarityThreshold) {

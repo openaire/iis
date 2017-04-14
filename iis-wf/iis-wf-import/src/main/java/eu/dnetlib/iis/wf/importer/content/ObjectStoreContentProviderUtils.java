@@ -21,7 +21,7 @@ public final class ObjectStoreContentProviderUtils {
 
 	public static final String defaultEncoding = HBaseConstants.STATIC_FIELDS_ENCODING_UTF8;
 	
-	private static final String objectIdSeparator = "::";
+	protected static final String objectIdSeparator = "::";
 	
 	
 	//-------------------- CONSTRUCTORS -------------------------
@@ -40,16 +40,28 @@ public final class ObjectStoreContentProviderUtils {
 	 */
 	public static byte[] getContentFromURL(String resourceLoc,
 			int connectionTimeout, int readTimeout) throws IOException, InvalidSizeException {
-		URL url = new URL(resourceLoc);
-		URLConnection con = url.openConnection();
-		con.setConnectTimeout(connectionTimeout);
-		con.setReadTimeout(readTimeout);
-		if (con.getContentLengthLong() > 0) {
-		    return IOUtils.toByteArray(con.getInputStream());    
-		} else {
-		    throw new InvalidSizeException();
-		}
+		return getContentFromURL(new URL(resourceLoc), connectionTimeout, readTimeout);
 	}
+	
+	/**
+     * Returns byte content read from given location.
+     * @param url url pointing to resource
+     * @param connectionTimeout
+     * @param readTimeout
+     * @return byte content read from given location
+     * @throws InvalidSizeException when size was less or equal 0
+     */
+    public static byte[] getContentFromURL(URL url,
+            int connectionTimeout, int readTimeout) throws IOException, InvalidSizeException {
+        URLConnection con = url.openConnection();
+        con.setConnectTimeout(connectionTimeout);
+        con.setReadTimeout(readTimeout);
+        if (con.getContentLengthLong() > 0) {
+            return IOUtils.toByteArray(con.getInputStream());    
+        } else {
+            throw new InvalidSizeException();
+        }
+    }
 	
 	/**
 	 * Generates object identifier based on result identifier.

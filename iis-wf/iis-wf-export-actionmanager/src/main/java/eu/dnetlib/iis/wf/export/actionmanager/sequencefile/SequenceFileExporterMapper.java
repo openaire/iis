@@ -6,6 +6,7 @@ import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParame
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.security.InvalidParameterException;
 import java.util.Collections;
 import java.util.List;
 
@@ -56,7 +57,7 @@ public class SequenceFileExporterMapper extends Mapper<AvroKey<? extends Specifi
                         "unexpected exception ocurred when instantiating " + "builder module: " + moduleClassName, e);
             }
         } else {
-            throw new RuntimeException("unknown action builder module instance, " + "no "
+            throw new InvalidParameterException("unknown action builder module instance, " + "no "
                     + EXPORT_ACTION_BUILDER_FACTORY_CLASSNAME + " parameter provided!");
         }
     }

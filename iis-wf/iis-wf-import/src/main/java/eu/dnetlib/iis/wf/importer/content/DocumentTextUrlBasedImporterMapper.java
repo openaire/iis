@@ -67,7 +67,15 @@ public class DocumentTextUrlBasedImporterMapper extends Mapper<AvroKey<DocumentC
         context.getCounter(InvalidRecordCounters.SIZE_EXCEEDED).setValue(0);
         context.getCounter(InvalidRecordCounters.SIZE_INVALID).setValue(0);
     }
-
+    
+    /**
+     * Provides contents for given url.
+     */
+    protected byte[] getContent(String url) throws IOException, InvalidSizeException {
+        return ObjectStoreContentProviderUtils.getContentFromURL(
+                url, this.connectionTimeout, this.readTimeout);
+    }
+    
     @Override
     protected void map(AvroKey<DocumentContentUrl> key, NullWritable value,
             Context context) throws IOException, InterruptedException {
@@ -79,8 +87,7 @@ public class DocumentTextUrlBasedImporterMapper extends Mapper<AvroKey<DocumentC
         } else if (docUrl.getContentSizeKB() <= maxFileSizeKB) {
             try {
                 long startTimeContent = System.currentTimeMillis();
-                byte[] textContent = ObjectStoreContentProviderUtils.getContentFromURL(
-                        docUrl.getUrl().toString(), connectionTimeout, readTimeout);
+                byte[] textContent = getContent(docUrl.getUrl().toString());
                 log.info("text content retrieval for id: " + docUrl.getId() + 
                         " and location: " + docUrl.getUrl() + " took: " +
                         (System.currentTimeMillis()-startTimeContent) + " ms");

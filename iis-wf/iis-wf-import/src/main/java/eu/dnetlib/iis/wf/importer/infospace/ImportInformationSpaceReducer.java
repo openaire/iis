@@ -62,31 +62,31 @@ public class ImportInformationSpaceReducer
 
     // context property names
     
-    private static final Logger log = Logger.getLogger(ImportInformationSpaceReducer.class);
+    protected static final Logger log = Logger.getLogger(ImportInformationSpaceReducer.class);
     
-    private static final String OUTPUT_NAME_DOCUMENT_META = "output.name.document_meta";
+    protected static final String OUTPUT_NAME_DOCUMENT_META = "output.name.document_meta";
 
-    private static final String OUTPUT_NAME_DOCUMENT_PROJECT = "output.name.document_project";
+    protected static final String OUTPUT_NAME_DOCUMENT_PROJECT = "output.name.document_project";
 
-    private static final String OUTPUT_NAME_PROJECT = "output.name.project";
+    protected static final String OUTPUT_NAME_PROJECT = "output.name.project";
 
-    private static final String OUTPUT_NAME_PERSON = "output.name.person";
+    protected static final String OUTPUT_NAME_PERSON = "output.name.person";
 
-    private static final String OUTPUT_NAME_DEDUP_MAPPING = "output.name.dedup_mapping";
+    protected static final String OUTPUT_NAME_DEDUP_MAPPING = "output.name.dedup_mapping";
 
-    private static final String OUTPUT_NAME_ORGANIZATION = "output.name.organization";
+    protected static final String OUTPUT_NAME_ORGANIZATION = "output.name.organization";
 
-    private static final String OUTPUT_NAME_PROJECT_ORGANIZATION = "output.name.project_organization";
+    protected static final String OUTPUT_NAME_PROJECT_ORGANIZATION = "output.name.project_organization";
 
     // column family names
     
-    private final String projOrgColumnFamily = OafRelDecoder.getCFQ(RelType.projectOrganization,
+    protected final String projOrgColumnFamily = OafRelDecoder.getCFQ(RelType.projectOrganization,
             SubRelType.participation, ProjectOrganization.Participation.RelName.hasParticipant.toString());
     
-    private final String resProjColumnFamily = OafRelDecoder.getCFQ(RelType.resultProject, 
+    protected final String resProjColumnFamily = OafRelDecoder.getCFQ(RelType.resultProject, 
             SubRelType.outcome, Outcome.RelName.isProducedBy.toString());
     
-    private final String dedupMappingColumnFamily = OafRelDecoder.getCFQ(RelType.resultResult, 
+    protected final String dedupMappingColumnFamily = OafRelDecoder.getCFQ(RelType.resultResult, 
             SubRelType.dedup, Dedup.RelName.merges.toString());
 
     // output names
@@ -183,6 +183,13 @@ public class ImportInformationSpaceReducer
         }
     }
     
+    /**
+     * Instantiates multiple outputs.
+     */
+    protected MultipleOutputs instantiateMultipleOutputs(Context context) {
+        return new MultipleOutputs(context);
+    }
+    
     // ------------------------ PRIVATE --------------------------
     
     /**
@@ -204,7 +211,7 @@ public class ImportInformationSpaceReducer
                 "organization output name not provided!");
         outputNameProjectOrganization = Preconditions.checkNotNull(context.getConfiguration().get(OUTPUT_NAME_PROJECT_ORGANIZATION),
                 "project to organization output name not provided!");
-        outputs = new MultipleOutputs(context);
+        outputs = instantiateMultipleOutputs(context);
     }
     
     /**

@@ -26,7 +26,12 @@ public class WebServiceMDStoreFacade implements MDStoreFacade {
      */
     private final MDStoreService service;
     
+    
     // -------------------- CONSTRUCTORS -------------------------
+    
+    public WebServiceMDStoreFacade(MDStoreService service) {
+        this.service = service;
+    }
     
     public WebServiceMDStoreFacade(String serviceLocation,
             long serviceReadTimeout, long serviceConnectionTimeout) {

@@ -18,7 +18,7 @@ import eu.dnetlib.data.proto.OafProtos.Oaf;
  */
 public class OafBodyWithOrderedUpdates {
 
-    private static final String BODY_QUALIFIER_NAME = "body";
+    public static final String BODY_QUALIFIER_NAME = "body";
     
     private String body;
 

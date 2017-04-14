@@ -1,5 +1,8 @@
 package eu.dnetlib.iis.wf.importer.concept;
 
+import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
+
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,16 +40,18 @@ import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeUtils;
  */
 public class ISLookupServiceBasedConceptImporter implements Process {
 
+    
+    
 	public static final String PARAM_IMPORT_CONTEXT_IDS_CSV = "import.context.ids.csv";
 	
-	private static final String CONCEPT_COUNTER_NAME = "CONCEPT_COUNTER";
+	protected static final String CONCEPT_COUNTER_NAME = "CONCEPT_COUNTER";
 	
 	private static final Logger log = Logger.getLogger(ISLookupServiceBasedConceptImporter.class);
 	
 	private final NamedCountersFileWriter countersWriter = new NamedCountersFileWriter();
 	
 	
-	private static final String PORT_OUT_CONCEPTS = "concepts";
+	protected static final String PORT_OUT_CONCEPTS = "concepts";
 	
 	private final Map<String, PortType> outputPorts = new HashMap<String, PortType>();
 
@@ -80,10 +85,7 @@ public class ISLookupServiceBasedConceptImporter implements Process {
 //		initializing ISLookup
 		ISLookupFacade isLookupFacade = ServiceFacadeUtils.instantiate(parameters);
 
-		FileSystem fs = FileSystem.get(conf);
-		
-		try (DataFileWriter<Concept> conceptWriter = DataStore.create(
-                new FileSystemPath(fs, portBindings.getOutput().get(PORT_OUT_CONCEPTS)), Concept.SCHEMA$)) {
+		try (DataFileWriter<Concept> conceptWriter = getWriter(FileSystem.get(conf), portBindings)) {
             
             SAXParserFactory parserFactory = SAXParserFactory.newInstance();
             SAXParser saxParser = parserFactory.newSAXParser();
@@ -105,8 +107,16 @@ public class ISLookupServiceBasedConceptImporter implements Process {
 			if (count==0) {
 				log.warn("got 0 profiles when looking for context ids: " + contextIdsCSV);
 			}
-			countersWriter.writeCounters(counters, System.getProperty("oozie.action.output.properties"));
+			countersWriter.writeCounters(counters, System.getProperty(OOZIE_ACTION_OUTPUT_FILENAME));
 		}
+	}
+	
+	/**
+	 * Provides {@link Concept} writer consuming records.
+	 */
+	protected DataFileWriter<Concept> getWriter(FileSystem fs, PortBindings portBindings) throws IOException {
+	    return DataStore.create(
+                new FileSystemPath(fs, portBindings.getOutput().get(PORT_OUT_CONCEPTS)), Concept.SCHEMA$);
 	}
 	
 	//------------------------ PRIVATE --------------------------

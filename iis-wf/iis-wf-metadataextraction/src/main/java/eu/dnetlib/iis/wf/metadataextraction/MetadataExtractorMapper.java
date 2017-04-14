@@ -45,6 +45,12 @@ import pl.edu.icm.cermine.tools.timeout.TimeoutException;
  */
 public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, NullWritable, NullWritable, NullWritable> {
 
+    public static final String NAMED_OUTPUT_META = "output.meta";
+    
+    public static final String NAMED_OUTPUT_FAULT = "output.fault";
+    
+    public static final String EXCLUDED_IDS = "excluded.ids";
+    
     public static final String LOG_FAULT_PROCESSING_TIME_THRESHOLD_SECS = "log.fault.processing.time.threshold.secs";
     
     public static final String INTERRUPT_PROCESSING_TIME_THRESHOLD_SECS = "interrupt.processing.time.threshold.secs";
@@ -53,10 +59,15 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
 
     public static final String FAULT_SUPPLEMENTARY_DATA_PROCESSING_TIME = "processing_time";
 
-    public static final String FAULT_SUPPLEMENTARY_DATA_URL = "url";
-
     protected static final Logger log = Logger.getLogger(MetadataExtractorMapper.class);
 
+    /**
+     * Progress log interval.
+     */
+    private static final int PROGRESS_LOG_INTERVAL = 100;
+    
+    private static final long SECS_TO_MILLIS = 1000l;
+    
     /**
      * Multiple outputs.
      */
@@ -73,11 +84,6 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
     private String namedOutputFault;
 
     /**
-     * Progress log interval.
-     */
-    private int progresLogInterval = 100;
-
-    /**
      * Current progress.
      */
     private int currentProgress = 0;
@@ -90,7 +96,7 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
     /**
      * Processing timeout threshold, metadata extraction for given record will be interrupted when threshold exceeded.
      */
-    private long interruptionTimeoutSecs;
+    private Integer interruptionTimeoutSecs;
     
     /**
      * Processing time threshold. When exceeded apropriate object will be
@@ -121,16 +127,16 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
     
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
-        namedOutputMeta = context.getConfiguration().get("output.meta");
+        namedOutputMeta = context.getConfiguration().get(NAMED_OUTPUT_META);
         if (namedOutputMeta == null || namedOutputMeta.isEmpty()) {
             throw new RuntimeException("no named output provided for metadata");
         }
-        namedOutputFault = context.getConfiguration().get("output.fault");
+        namedOutputFault = context.getConfiguration().get(NAMED_OUTPUT_FAULT);
         if (namedOutputFault == null || namedOutputFault.isEmpty()) {
             throw new RuntimeException("no named output provided for fault");
         }
 
-        String excludedIdsCSV = context.getConfiguration().get("excluded.ids");
+        String excludedIdsCSV = context.getConfiguration().get(EXCLUDED_IDS);
         if (excludedIdsCSV != null && !excludedIdsCSV.trim().isEmpty()
                 && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(excludedIdsCSV)) {
             log.info("got excluded ids: " + excludedIdsCSV);
@@ -144,14 +150,14 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
         Integer processingTimeThresholdSecs = WorkflowRuntimeParameters.getIntegerParamValue(
                 LOG_FAULT_PROCESSING_TIME_THRESHOLD_SECS, context.getConfiguration());
         if (processingTimeThresholdSecs != null) {
-            this.processingTimeThreshold = 1000l * processingTimeThresholdSecs;
+            this.processingTimeThreshold = SECS_TO_MILLIS * processingTimeThresholdSecs;
         }
 
         Counter invalidPdfCounter = context.getCounter(InvalidRecordCounters.INVALID_PDF_HEADER);
         invalidPdfCounter.setValue(0);
         this.contentApprover = new InvalidCountableContentApproverWrapper(new PDFHeaderBasedContentApprover(), invalidPdfCounter);
         
-        mos = new MultipleOutputs(context);
+        mos = instantiateMultipleOutputs(context);
         currentProgress = 0;
         intervalTime = System.currentTimeMillis();
     }
@@ -191,6 +197,13 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
     }
     
     /**
+     * Instantiates {@link MultipleOutputs} instance.
+     */
+    protected MultipleOutputs instantiateMultipleOutputs(Context context) {
+        return new MultipleOutputs(context);
+    }
+    
+    /**
      * Processes content input stream. Does not close contentStream.
      * 
      * @param documentId document identifier
@@ -198,9 +211,9 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
      */
     protected void processStream(String documentId, InputStream contentStream) throws IOException, InterruptedException {
         currentProgress++;
-        if (currentProgress % progresLogInterval == 0) {
+        if (currentProgress % PROGRESS_LOG_INTERVAL == 0) {
             log.info("metadata extaction progress: " + currentProgress + ", time taken to process "
-                    + progresLogInterval + " elements: " + ((System.currentTimeMillis() - intervalTime) / 1000)
+                    + PROGRESS_LOG_INTERVAL + " elements: " + ((System.currentTimeMillis() - intervalTime) / 1000)
                     + " secs");
             intervalTime = System.currentTimeMillis();
         }
@@ -209,22 +222,18 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
         long startTime = System.currentTimeMillis();
         
         try {
-            ContentExtractor extractor = new ContentExtractor(interruptionTimeoutSecs);
+            ContentExtractor extractor = interruptionTimeoutSecs != null ? new ContentExtractor(interruptionTimeoutSecs)
+                    : new ContentExtractor();
             extractor.setPDF(contentStream);
-            try {
-                handleContent(extractor, documentId);
-            } catch (Exception e) {
-                log.error((e.getCause() instanceof InvalidPdfException) ? "Invalid PDF file" 
-                        : "got unexpected exception, just logging", e);
-                handleException(e, documentId);
-                return;
-            }
-            handleProcessingTime(System.currentTimeMillis() - startTime, documentId);
-        
-        } catch (AnalysisException e) {
-            mos.close();
-            throw new RuntimeException(e);
+            handleContent(extractor, documentId);
+        } catch (Exception e) {
+            log.error((e.getCause() instanceof InvalidPdfException) ? "Invalid PDF file" 
+                    : "got unexpected exception, just logging", e);
+            handleException(e, documentId);
+            return;
         }
+        
+        handleProcessingTime(System.currentTimeMillis() - startTime, documentId);
     }
 
     
@@ -282,10 +291,4 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
         log.info("finished processing for id " + documentId + " in " + (processingTime / 1000) + " secs");
     }
     
-    //------------------------ SETTERS --------------------------
-
-    public void setProgresLogInterval(int progresLogInterval) {
-        this.progresLogInterval = progresLogInterval;
-    }
-
 }

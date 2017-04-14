@@ -43,9 +43,13 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
 
 	protected static final Logger log = Logger.getLogger(MetadataImporter.class);
 
+	public static final String NAMED_OUTPUT_META = "output.meta";
+    
+    public static final String NAMED_OUTPUT_FAULT = "output.fault";
+    
+    public static final String EXCLUDED_IDS = "excluded.ids";
+	
 	public static final String FAULT_TEXT = "text";
-
-	public static final String PARAM_INGEST_METADATA = "ingest.metadata";
 
 	public static final String PARAM_INGEST_METADATA_OAI_NAMESPACE = "ingest.metadata.oai.element.namespace";
 
@@ -71,22 +75,24 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
      */
     private Set<String> excludedIds = Collections.emptySet();
 
+    // ----------------------------- LOGIC ----------------------------------------
+    
 	@Override
 	protected void setup(Mapper<AvroKey<DocumentText>, NullWritable, NullWritable, NullWritable>.Context context)
 			throws IOException, InterruptedException {
-		namedOutputMeta = context.getConfiguration().get("output.meta");
+		namedOutputMeta = context.getConfiguration().get(NAMED_OUTPUT_META);
 		if (namedOutputMeta == null || namedOutputMeta.isEmpty()) {
 			throw new RuntimeException("no named output provided for metadata");
 		}
-		namedOutputFault = context.getConfiguration().get("output.fault");
+		namedOutputFault = context.getConfiguration().get(NAMED_OUTPUT_FAULT);
 		if (namedOutputFault == null || namedOutputFault.isEmpty()) {
 			throw new RuntimeException("no named output provided for fault");
 		}
-		mos = new MultipleOutputs(context);
+		mos = instantiateMultipleOutputs(context);
 
 		oaiNamespace = Namespace.getNamespace(context.getConfiguration().get(PARAM_INGEST_METADATA_OAI_NAMESPACE,
 				"http://www.openarchives.org/OAI/2.0/"));
-		String excludedIdsCSV = context.getConfiguration().get("excluded.ids");
+		String excludedIdsCSV = context.getConfiguration().get(EXCLUDED_IDS);
         if (excludedIdsCSV != null && !excludedIdsCSV.trim().isEmpty()
                 && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(excludedIdsCSV)) {
             log.info("got excluded ids: " + excludedIdsCSV);
@@ -96,6 +102,13 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
         }
 	}
 
+	/**
+     * Instantiates {@link MultipleOutputs} instance.
+     */
+    protected MultipleOutputs instantiateMultipleOutputs(Context context) {
+        return new MultipleOutputs(context);
+    }
+	
 	@Override
 	protected void map(AvroKey<DocumentText> key, NullWritable value, Context context)
 			throws IOException, InterruptedException {
