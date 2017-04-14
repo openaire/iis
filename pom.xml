@@ -906,8 +906,8 @@
                 <configuration>
                     <excludes>
                         <exclude>**/schemas/*</exclude>
-                        <exclude>com/cloudera/**/*</exclude>
-                        <exclude>org/apache/avro/io/**/*</exclude>
+                        <exclude>**/com/cloudera/**/*</exclude>
+                        <exclude>**/org/apache/avro/io/**/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
