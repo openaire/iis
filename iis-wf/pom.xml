@@ -506,42 +506,6 @@
 			</build>
 		</profile>
 		<profile>
-			<id>monitor</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>eu.dnetlib.iis</groupId>
-						<artifactId>iis-build-oozie-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>read-job-id</id>
-								<phase>package</phase>
-								<goals>
-									<goal>read-job-id</goal>
-								</goals>
-								<configuration>
-									<logFileLocation>${oozie.execution.log.file.location}</logFileLocation>
-								</configuration>
-							</execution>
-							<execution>
-								<id>check-job-status</id>
-								<phase>package</phase>
-								<goals>
-									<goal>check-job-status</goal>
-								</goals>
-								<configuration>
-									<jobId>${oozieJobId}</jobId>
-									<oozieLocation>${oozieServiceLoc}</oozieLocation>
-									<maxExecutionTimeMins>180</maxExecutionTimeMins>
-									<checkIntervalSecs>60</checkIntervalSecs>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
 			<!-- this profile is handling unit and integration test definitions of all child modules -->
 			<id>child-tests</id>
 			<build>
