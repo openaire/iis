@@ -19,6 +19,7 @@
        <module>iis-wf-import</module>
        <module>iis-wf-ingest</module>
        <module>iis-wf-ingest-pmc</module>
+       <module>iis-wf-report</module>
        <module>iis-wf-metadataextraction</module>
        <module>iis-wf-referenceextraction</module>
        <module>iis-wf-preprocessing</module>

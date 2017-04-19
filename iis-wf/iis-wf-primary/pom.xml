@@ -105,6 +105,12 @@
             <artifactId>iis-wf-affmatching</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-wf-report</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
 	</dependencies>
 	<build>

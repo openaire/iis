@@ -41,6 +41,11 @@
 			<artifactId>iis-wf-import</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-wf-report</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>pl.edu.icm.cermine</groupId>
 			<artifactId>cermine-impl</artifactId>

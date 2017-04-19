@@ -4,7 +4,7 @@ metadata_extractor classpath eu/dnetlib/iis/wf/metadataextraction/prefetched/ooz
 ingest_pmc_metadata classpath eu/dnetlib/iis/wf/ingest/pmc/prefetched/oozie_app
 cache_update classpath eu/dnetlib/iis/wf/metadataextraction/cache/update/oozie_app
 cache_create classpath eu/dnetlib/iis/wf/metadataextraction/cache/create/oozie_app
-report classpath eu/dnetlib/iis/wf/metadataextraction/report/oozie_app
+report classpath eu/dnetlib/iis/wf/report/builder/oozie_app
 transformers_metadataextraction_checksum_preprocessing classpath eu/dnetlib/iis/wf/transformers/metadataextraction/checksum/preprocessing/oozie_app
 transformers_metadataextraction_skip_extracted classpath eu/dnetlib/iis/wf/transformers/metadataextraction/skip_extracted_without_meta/oozie_app
 

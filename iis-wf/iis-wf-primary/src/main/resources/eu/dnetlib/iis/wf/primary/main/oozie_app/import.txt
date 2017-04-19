@@ -4,4 +4,4 @@ primary_processing classpath eu/dnetlib/iis/wf/primary/processing/oozie_app
 transformers_idextractor classpath eu/dnetlib/iis/wf/transformers/importer/documentmetadata/idextractor/oozie_app
 primary_export classpath eu/dnetlib/iis/wf/primary/export/oozie_app
 primary_export_to_json classpath eu/dnetlib/iis/wf/primary/export_to_json/oozie_app
-primary_report classpath eu/dnetlib/iis/wf/primary/report/oozie_app
+primary_report classpath eu/dnetlib/iis/wf/report/builder/oozie_app

@@ -1,0 +1,2 @@
+## This is a classpath-based import file (this header is required)
+report_builder classpath eu/dnetlib/iis/wf/report/builder/oozie_app
