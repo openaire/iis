@@ -12,21 +12,21 @@ hidden var 'nihposshort' from select jmergeregexp(jgroup(word)) from (select * f
 hidden var 'nihposfull' from select jmergeregexp(jgroup(word)) from (select * from nihposnamesfull order by length(word) desc);
 hidden var 'nihpositives' from select jmergeregexp(jgroup(word)) from (select * from nihpositives order by length(word) desc);
 hidden var 'nihnegatives' from select jmergeregexp(jgroup(word)) from (select * from nihnegatives order by length(word) desc);
-hidden var 'wt_unidentified' from select 1 where (select count(*) from (select id from grants where id="40|wt__________::1e5e62235d094afd01cd56e65112fc63" limit 1)) > 0;
-hidden var 'tara_unidentified' from select 1 where (select count(*) from (select id from grants where id="40|taraexp_____::6413b29c08e6d71a9cf6c4d50d7dc6f6" limit 1)) > 0;
+hidden var 'wt_unidentified' from select id from grants where fundingclass1="WT" and grantid="unidentified" limit 1;
+hidden var 'tara_unidentified' from select id from grants where fundingclass1="TARA" and grantid="unidentified" limit 1;
 
 
 create temp table pubs as setschema 'c1,c2' select jsonpath(c1, '$.id', '$.text') from stdinput();
 
-create temp table matched_undefined_wt_only as select distinct docid, "40|wt__________::1e5e62235d094afd01cd56e65112fc63" as id from (setschema 'docid,prev,middle,next'
-select c1 as docid, textwindow2s(c2,20,2,3, '(\bWel?lcome Trust\b|\bWT\b)') from (setschema 'c1,c2' select * from pubs where c2 is not null)) where var('wt_unidentified')=1 and (regexprmatches('\bWel?lcome Trust\b', middle) or 
+create temp table matched_undefined_wt_only as select distinct docid, var('wt_unidentified') as id from (setschema 'docid,prev,middle,next'
+select c1 as docid, textwindow2s(c2,20,2,3, '(\bWel?lcome Trust\b|\bWT\b)') from (setschema 'c1,c2' select * from pubs where c2 is not null)) where var('wt_unidentified') and (regexprmatches('\bWel?lcome Trust\b', middle) or 
 regexpcountwords('(?:\bwell?come trust\b)|(?:(?:\bthis work was|financial(?:ly)?|partial(?:ly)?|partly|(?:gratefully\s)?acknowledges?)?\s?\b(?:support|fund|suppli?)(?:ed|ing)?\s(?:by|from|in part\s(?:by|from)|through)?\s?(?:a)?\s?(?:grant)?)|(?:(?:programme|project) grant)|(?:(?:under|through)?\s?(?:the)?\s(?:grants?|contract(?:\snumber)?)\b)|(?:\bprograms? of\b)|(?:\bgrants? of\b)|(?:\bin part by\b)|(?:\bthis work could not have been completed without\b)|(?:\bcontract\b)|(?:\backnowledgments?\b)', lower(prev||' '||middle||' '||next)) > 3);
 
 create temp table output_table as 
 
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min(1.49,confidence)/1.5)) as C1, docid, id, fundingclass1 from ( select docid,id,max(confidence) as confidence, docid, id,  fundingclass1 from ( select 
 case when keywordmatch then 0.9 else 0.8 end as confidence, docid, 
-case when keywordmatch then id else "40|taraexp_____::6413b29c08e6d71a9cf6c4d50d7dc6f6" end as id, fundingclass1
+case when keywordmatch then id else var('tara_unidentified') end as id, fundingclass1
 from (
 unindexed select 
 regexprmatches('\b'||tarakeywords||'\b', context) as keywordmatch,
@@ -36,7 +36,7 @@ select docid, stripchars(middle,'.)(,[]') as middle, prev, next, lower(j2s(prev,
 from (
   setschema 'docid,prev,middle,next' select c1, textwindow2s(textacknowledgmentstara(C2),20,1,3, '(\b[Tt]ara\b)') from pubs where c2 is not null
 )), grants
-where fundingclass1='TARA' and var('tara_unidentified')=1
+where fundingclass1='TARA' and var('tara_unidentified')
 ))
 group by docid)
 

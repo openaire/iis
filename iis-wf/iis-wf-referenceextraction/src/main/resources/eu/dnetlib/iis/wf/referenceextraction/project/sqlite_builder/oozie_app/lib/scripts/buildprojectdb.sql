@@ -24,7 +24,7 @@ create table grants as select acronym,
           when fundingclass2="STFC" then "STFC|Science and Technology Facilities Council"
           else '' end as rcuk_subfunder,
      case when fundingclass1="TARA" then
-               case when id="40|taraexp_____::6413b29c08e6d71a9cf6c4d50d7dc6f6" then "" else jsplitv(c9) end
+               case when grantid="unidentified" then "" else jsplitv(c9) end
                else "" end as tarakeywords
      from 
           (setschema 'acronym,normalizedacro,grantid,fundingclass1,fundingclass2,id,c1,c2,c3,c4,c5,c6,c7,c8,c9' 
