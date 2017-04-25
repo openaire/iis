@@ -178,6 +178,8 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min
 
 delete from matched_undefined_wt_only where docid in (select docid from output_table where fundingClass1="WT");
 
+delete from output_table where j2s(docid,id) in (select j2s(T.docid, T.id) from output_table S, output_table T where  S.docid = T.docid and S.id in (select id from grants where grantid in (select * from gold)) and T.id in (select id from grants where grantid in ("246686", "283595","643410")));
+
 select C1 from output_table
 union all
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8) from matched_undefined_wt_only;
