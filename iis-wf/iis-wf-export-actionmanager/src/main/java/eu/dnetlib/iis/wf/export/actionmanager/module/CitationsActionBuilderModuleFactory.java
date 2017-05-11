@@ -15,8 +15,8 @@ import eu.dnetlib.data.proto.FieldTypeProtos.ExtraInfo;
 import eu.dnetlib.data.proto.OafProtos.Oaf;
 import eu.dnetlib.data.proto.OafProtos.OafEntity;
 import eu.dnetlib.data.proto.TypeProtos.Type;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.common.model.extrainfo.ExtraInfoConstants;
 import eu.dnetlib.iis.common.model.extrainfo.citations.BlobCitationEntry;
 import eu.dnetlib.iis.common.model.extrainfo.converter.CitationsExtraInfoConverter;
@@ -119,7 +119,7 @@ public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFa
                     if (currentEntry.getDestinationDocumentId() != null) {
                         currentEntry.setDestinationDocumentId(
                                 StringUtils.split(currentEntry.getDestinationDocumentId().toString(),
-                                        HBaseConstants.ROW_PREFIX_SEPARATOR)[1]);
+                                        InfoSpaceConstants.ROW_PREFIX_SEPARATOR)[1]);
                     }
                     results.add(CitationsActionBuilderModuleUtils.build(currentEntry));
                 }

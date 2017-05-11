@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.data.transform.xml.AbstractDNetXsltFunctions;
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.importer.schemas.Project;
 import eu.dnetlib.iis.wf.importer.infospace.converter.FundingTreeParser;
 import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectConverter;
@@ -59,10 +59,10 @@ public class ProjectDetailConverter {
      */
     private static String normalizeId(String sourceId) {
         String[] tokenizedProjectId = StringUtils.splitByWholeSeparator(
-                sourceId, HBaseConstants.ID_NAMESPACE_SEPARATOR);
+                sourceId, InfoSpaceConstants.ID_NAMESPACE_SEPARATOR);
         if (tokenizedProjectId==null || tokenizedProjectId.length!=2) {
             throw new RuntimeException("unexpected projectId format: " + sourceId + 
-                    ", unable to split into two by " + HBaseConstants.ID_NAMESPACE_SEPARATOR);
+                    ", unable to split into two by " + InfoSpaceConstants.ID_NAMESPACE_SEPARATOR);
         }
         return AbstractDNetXsltFunctions.oafId(Type.project.name(), 
                 tokenizedProjectId[0], tokenizedProjectId[1]); 

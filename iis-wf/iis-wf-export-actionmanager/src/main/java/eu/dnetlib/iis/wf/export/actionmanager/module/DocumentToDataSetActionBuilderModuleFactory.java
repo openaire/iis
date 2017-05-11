@@ -15,7 +15,7 @@ import eu.dnetlib.data.proto.RelTypeProtos.RelType;
 import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
 import eu.dnetlib.data.proto.ResultResultProtos.ResultResult;
 import eu.dnetlib.data.proto.ResultResultProtos.ResultResult.PublicationDataset;
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet;
 
 /**
@@ -98,7 +98,7 @@ public class DocumentToDataSetActionBuilderModuleFactory extends AbstractActionB
             ResultResult.Builder resResultBuilder = ResultResult.newBuilder();
             PublicationDataset.Builder pubDatasetBuilder = PublicationDataset.newBuilder();
             pubDatasetBuilder.setRelMetadata(buildRelMetadata(
-                    HBaseConstants.SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_RESULT, REL_CLASS_ISRELATEDTO));
+                    InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_RESULT, REL_CLASS_ISRELATEDTO));
             resResultBuilder.setPublicationDataset(pubDatasetBuilder.build());
             relBuilder.setResultResult(resResultBuilder.build());
             return relBuilder.build();

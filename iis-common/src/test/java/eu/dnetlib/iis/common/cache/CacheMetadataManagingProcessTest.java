@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.common.cache;
 
-
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
@@ -76,7 +76,7 @@ public class CacheMetadataManagingProcessTest {
     
     @Before
     public void initEnv() {
-        System.setProperty(CacheMetadataManagingProcess.OOZIE_ACTION_OUTPUT_FILENAME, 
+        System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME, 
                 testFolder.getRoot().getAbsolutePath() + File.separatorChar + "test.properties");
     }
     
@@ -238,7 +238,7 @@ public class CacheMetadataManagingProcessTest {
     
     private Properties getStoredProperties() throws FileNotFoundException, IOException {
         Properties properties = new Properties();
-        properties.load(new FileInputStream(System.getProperty(CacheMetadataManagingProcess.OOZIE_ACTION_OUTPUT_FILENAME)));
+        properties.load(new FileInputStream(System.getProperty(OOZIE_ACTION_OUTPUT_FILENAME)));
         return properties;
     }
     

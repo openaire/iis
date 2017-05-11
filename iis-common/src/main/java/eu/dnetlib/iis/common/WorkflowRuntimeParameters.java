@@ -12,6 +12,8 @@ import org.apache.hadoop.conf.Configuration;
  */
 public final class WorkflowRuntimeParameters {
 
+    public static final String OOZIE_ACTION_OUTPUT_FILENAME = "oozie.action.output.properties";
+    
 	public static final char DEFAULT_CSV_DELIMITER = ',';
 	
 	public static final String UNDEFINED_NONEMPTY_VALUE = "$UNDEFINED$";

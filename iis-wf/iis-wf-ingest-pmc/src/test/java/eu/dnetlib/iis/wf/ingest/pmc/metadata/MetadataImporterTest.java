@@ -225,7 +225,7 @@ public class MetadataImporterTest {
     // --------------------------------------- PRIVATE ----------------------------------------
     
     private String getContent(String location) throws IOException {
-        return IOUtils.toString(MetadataImporter.class.getResourceAsStream(location));
+        return IOUtils.toString(MetadataImporter.class.getResourceAsStream(location), "utf8");
     }
     
     

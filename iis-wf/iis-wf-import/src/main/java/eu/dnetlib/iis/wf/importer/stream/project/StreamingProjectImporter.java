@@ -1,5 +1,7 @@
 package eu.dnetlib.iis.wf.importer.stream.project;
 
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.Collections;
@@ -97,7 +99,7 @@ public class StreamingProjectImporter implements Process {
                 }
             }
 
-            countersWriter.writeCounters(counters, System.getProperty("oozie.action.output.properties"));
+            countersWriter.writeCounters(counters, System.getProperty(OOZIE_ACTION_OUTPUT_FILENAME));
         }
     }
     

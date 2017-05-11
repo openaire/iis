@@ -43,7 +43,7 @@ public class UrlStreamingFacadeTest {
         try (InputStream stream = facade.getStream()) {
             // assert
             assertNotNull(stream);
-            assertEquals(expectedResult, IOUtils.toString(stream));
+            assertEquals(expectedResult, IOUtils.toString(stream, "utf8"));
         }
     }
     
@@ -62,7 +62,7 @@ public class UrlStreamingFacadeTest {
         try (InputStream stream = facade.getStream()) {
             // assert
             assertNotNull(stream);
-            assertEquals(expectedResult, IOUtils.toString(stream));
+            assertEquals(expectedResult, IOUtils.toString(stream, "utf8"));
         }
     }
 

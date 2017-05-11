@@ -15,7 +15,7 @@ import eu.dnetlib.data.proto.RelTypeProtos.RelType;
 import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
 import eu.dnetlib.data.proto.ResultProjectProtos.ResultProject;
 import eu.dnetlib.data.proto.ResultProjectProtos.ResultProject.Outcome;
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 
 /**
@@ -99,7 +99,7 @@ public class DocumentToProjectActionBuilderModuleFactory extends AbstractActionB
             relBuilder.setTarget(projectId);
             ResultProject.Builder resProjBuilder = ResultProject.newBuilder();
             Outcome.Builder outcomeBuilder = Outcome.newBuilder();
-            outcomeBuilder.setRelMetadata(buildRelMetadata(HBaseConstants.SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_PROJECT,
+            outcomeBuilder.setRelMetadata(buildRelMetadata(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_PROJECT,
                     REL_CLASS_ISPRODUCEDBY));
             resProjBuilder.setOutcome(outcomeBuilder.build());
             relBuilder.setResultProject(resProjBuilder.build());

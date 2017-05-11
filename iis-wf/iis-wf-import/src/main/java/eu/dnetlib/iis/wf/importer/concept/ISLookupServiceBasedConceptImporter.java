@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.importer.concept;
 
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
 
 import java.io.IOException;
 import java.io.StringReader;

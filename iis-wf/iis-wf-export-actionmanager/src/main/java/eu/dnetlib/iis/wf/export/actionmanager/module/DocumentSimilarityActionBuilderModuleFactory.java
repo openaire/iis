@@ -20,8 +20,8 @@ import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
 import eu.dnetlib.data.proto.ResultResultProtos.ResultResult;
 import eu.dnetlib.data.proto.ResultResultProtos.ResultResult.Similarity;
 import eu.dnetlib.data.proto.ResultResultProtos.ResultResult.Similarity.Type;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 
@@ -150,7 +150,7 @@ public class DocumentSimilarityActionBuilderModuleFactory extends AbstractAction
             ResultResult.Builder resultResultBuilder = ResultResult.newBuilder();
             Similarity.Builder similarityBuilder = Similarity.newBuilder();
             similarityBuilder.setRelMetadata(
-                    buildRelMetadata(HBaseConstants.SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_RESULT, relClass));
+                    buildRelMetadata(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_RESULT, relClass));
             similarityBuilder.setSimilarity(score);
             similarityBuilder.setType(Type.STANDARD);
             resultResultBuilder.setSimilarity(similarityBuilder.build());

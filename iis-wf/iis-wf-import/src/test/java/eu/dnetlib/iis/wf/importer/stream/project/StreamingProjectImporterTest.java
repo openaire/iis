@@ -1,7 +1,7 @@
 package eu.dnetlib.iis.wf.importer.stream.project;
 
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_FACADE_FACTORY_CLASS;
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
 import static eu.dnetlib.iis.wf.importer.VerificationUtils.verifyReport;
 import static eu.dnetlib.iis.wf.importer.stream.project.StreamingProjectImporter.PORT_OUT_PROJECT;
 import static eu.dnetlib.iis.wf.importer.stream.project.StreamingProjectImporter.PROJECT_COUNTER_NAME;

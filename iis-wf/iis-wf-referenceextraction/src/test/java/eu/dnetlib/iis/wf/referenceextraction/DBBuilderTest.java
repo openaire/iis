@@ -2,6 +2,7 @@ package eu.dnetlib.iis.wf.referenceextraction;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
@@ -34,6 +35,9 @@ import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.io.CloseableIterator;
 import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.java.io.JsonStreamReader;
+import eu.dnetlib.iis.common.java.porttype.AnyPortType;
+import eu.dnetlib.iis.common.java.porttype.AvroPortType;
+import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.importer.schemas.Project;
 
 /**
@@ -209,6 +213,28 @@ public class DBBuilderTest {
         }
     }
 
+    @Test
+    public void testGetInputPorts() throws Exception {
+        // execute
+        Map<String, PortType> result = dbBuilder.getInputPorts();
+        
+        // assert
+        assertNotNull(result);
+        assertNotNull(result.get(PORT_NAME_INPUT));
+        assertTrue(result.get(PORT_NAME_INPUT) instanceof AvroPortType);
+        assertTrue(SCHEMA_PROJECT == ((AvroPortType)result.get(PORT_NAME_INPUT)).getSchema());
+    }
+    
+    @Test
+    public void testGetOutputPorts() throws Exception {
+        // execute
+        Map<String, PortType> result = dbBuilder.getOutputPorts();
+        
+        // assert
+        assertNotNull(result);
+        assertNotNull(result.get(PORT_NAME_OUTPUT));
+        assertTrue(result.get(PORT_NAME_OUTPUT) instanceof AnyPortType);
+    }
     
     // --------------------------------- PRIVATE -----------------------------------------
     

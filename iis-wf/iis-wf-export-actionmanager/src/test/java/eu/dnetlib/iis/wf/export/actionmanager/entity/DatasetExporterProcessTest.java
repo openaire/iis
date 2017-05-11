@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.export.actionmanager.entity;
 
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
 import static eu.dnetlib.iis.wf.export.actionmanager.entity.VerificationUtils.verifyAction;
 import static eu.dnetlib.iis.wf.export.actionmanager.entity.VerificationUtils.verifyReport;
 import static org.junit.Assert.assertEquals;
@@ -30,7 +31,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.io.CloseableIterator;
 import eu.dnetlib.iis.common.java.porttype.AvroPortType;
@@ -73,7 +74,7 @@ public class DatasetExporterProcessTest {
     
     @Before
     public void init() throws Exception {
-        System.setProperty(AbstractEntityExporterProcess.OOZIE_ACTION_OUTPUT_FILENAME, 
+        System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME, 
                 testFolder.getRoot().getAbsolutePath() + File.separatorChar + "test.properties");
         
         Map<String, Path> input = new HashMap<>();
@@ -192,9 +193,9 @@ public class DatasetExporterProcessTest {
         
         // in-depth action verification is not a subject for this test case
         verifyAction(capturedActions.get(0), actionSetId, 
-                new String(HBaseConstants.QUALIFIER_BODY, HBaseConstants.STATIC_FIELDS_ENCODING_UTF8), "result");
+                new String(InfoSpaceConstants.QUALIFIER_BODY, InfoSpaceConstants.ENCODING_UTF8), "result");
         verifyAction(capturedActions.get(1), actionSetId, 
-                new String(HBaseConstants.QUALIFIER_BODY, HBaseConstants.STATIC_FIELDS_ENCODING_UTF8), "person");
+                new String(InfoSpaceConstants.QUALIFIER_BODY, InfoSpaceConstants.ENCODING_UTF8), "person");
         verifyAction(capturedActions.get(2), actionSetId, 
                 capturedActions.get(0).getTargetRowKey(), "personResult_authorship_isAuthorOf");
         verifyAction(capturedActions.get(3), actionSetId, 

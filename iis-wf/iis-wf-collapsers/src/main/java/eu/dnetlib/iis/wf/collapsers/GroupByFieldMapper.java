@@ -12,12 +12,14 @@ import org.apache.hadoop.mapreduce.Mapper;
  */
 public class GroupByFieldMapper extends Mapper<AvroKey<IndexedRecord>, NullWritable, AvroKey<String>, AvroValue<IndexedRecord>> {
     
+    public static final String BLOCKING_FIELD = "blocking_field";
+    
     private String blockingField;
     
 	@Override
 	protected void setup(Context context) throws IOException,
 			InterruptedException {      
-        blockingField = context.getConfiguration().get("blocking_field");
+        blockingField = context.getConfiguration().get(BLOCKING_FIELD);
     }
 
 	@Override

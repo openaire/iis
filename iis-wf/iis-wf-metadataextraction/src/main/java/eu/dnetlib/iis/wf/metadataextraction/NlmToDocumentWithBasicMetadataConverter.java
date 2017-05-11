@@ -17,7 +17,7 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.xpath.XPath;
 
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.importer.CermineAffiliation;
 import eu.dnetlib.iis.common.importer.CermineAffiliationBuilder;
 import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
@@ -378,7 +378,7 @@ public final class NlmToDocumentWithBasicMetadataConverter {
         Map<CharSequence, CharSequence> extIds = new HashMap<CharSequence, CharSequence>();
         for (Element articleIdElem : articleIds) {
             String idType = articleIdElem.getAttributeValue("pub-id-type");
-            extIds.put(new Utf8(idType!=null?idType:HBaseConstants.EXTERNAL_ID_TYPE_UNKNOWN), 
+            extIds.put(new Utf8(idType!=null?idType:InfoSpaceConstants.EXTERNAL_ID_TYPE_UNKNOWN), 
                     new Utf8(articleIdElem.getTextNormalize()));
         }
         if (!extIds.isEmpty()) {

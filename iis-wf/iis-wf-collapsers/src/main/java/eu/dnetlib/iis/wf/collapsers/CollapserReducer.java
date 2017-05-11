@@ -20,6 +20,10 @@ import eu.dnetlib.iis.common.utils.AvroUtils;
  */
 public class CollapserReducer extends Reducer<AvroKey<String>, AvroValue<IndexedRecord>, AvroKey<IndexedRecord>, NullWritable> {
     
+    public static final String RECORD_COLLAPSER = "record_collapser";
+    
+    public static final String INPUT_SCHEMA = "collapser.reducer.schema.class";
+    
     private RecordCollapser<IndexedRecord, IndexedRecord> recordCollapser;
     
     private Class<IndexedRecord> inputSchemaClass;
@@ -30,10 +34,10 @@ public class CollapserReducer extends Reducer<AvroKey<String>, AvroValue<Indexed
 	protected void setup(Context context) throws IOException, InterruptedException {
         try {
             recordCollapser = 
-                    (RecordCollapser<IndexedRecord, IndexedRecord>) getCollapserInstance(context, "record_collapser");
+                    (RecordCollapser<IndexedRecord, IndexedRecord>) getCollapserInstance(context, RECORD_COLLAPSER);
             recordCollapser.setup(context);
             
-            String inputSchemaPath = context.getConfiguration().get("collapser.reducer.schema.class");
+            String inputSchemaPath = context.getConfiguration().get(INPUT_SCHEMA);
             inputSchema = AvroUtils.toSchema(inputSchemaPath);
             inputSchemaClass = (Class<IndexedRecord>) Class.forName(inputSchemaPath);
        

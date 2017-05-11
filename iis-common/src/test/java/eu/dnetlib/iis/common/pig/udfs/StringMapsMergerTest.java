@@ -1,15 +1,18 @@
 package eu.dnetlib.iis.common.pig.udfs;
 
-import com.google.common.collect.Lists;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
+import org.apache.pig.data.DataType;
 import org.apache.pig.data.TupleFactory;
+import org.apache.pig.impl.logicalLayer.schema.Schema;
+import org.apache.pig.impl.logicalLayer.schema.Schema.FieldSchema;
 import org.junit.Test;
+
+import com.google.common.collect.Lists;
+
+import junit.framework.TestCase;
 
 /**
  *
@@ -45,6 +48,20 @@ public class StringMapsMergerTest extends TestCase {
         assertNull(udf.exec(tupleFactory.newTuple(emptyMap)));
         assertEquals(map1, udf.exec(tupleFactory.newTuple(map1)));
         assertEquals(map4, udf.exec(tupleFactory.newTuple(Lists.newArrayList(map1, emptyMap, map2, null, map3))));
+    }
+    
+    @Test
+    public void testOutputSchema() throws Exception {
+        // given
+        StringMapsMerger udf = new StringMapsMerger();
+        Schema inputSchema = new Schema();
+        inputSchema.add(new FieldSchema(null, DataType.CHARARRAY));
+        
+        // execute
+        Schema resultSchema = udf.outputSchema(inputSchema);
+        
+        // assert
+        assertTrue(inputSchema.getField(0).schema == resultSchema);
     }
     
 }

@@ -1,5 +1,7 @@
 package eu.dnetlib.iis.common.cache;
 
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -53,8 +55,6 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
 	
 	public static final String NON_EXISTING_CACHE_ID = "$UNDEFINED$"; 
 
-	public static final String OOZIE_ACTION_OUTPUT_FILENAME = "oozie.action.output.properties";
-	
 	public static final String DEFAULT_ENCODING = "UTF-8";
 	
 	public class CacheMeta {

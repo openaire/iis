@@ -47,7 +47,7 @@ import eu.dnetlib.data.proto.OafProtos.OafEntity;
 import eu.dnetlib.data.proto.PersonProtos.Person.Metadata;
 import eu.dnetlib.data.proto.ResultProtos.Result;
 import eu.dnetlib.data.proto.TypeProtos.Type;
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
 import eu.dnetlib.iis.common.schemas.IdentifierMapping;
 import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
@@ -155,7 +155,7 @@ public class ImportInformationSpaceReducerTest {
         reducer.setup(context);
         
         String resultId = "resultId";
-        String id = HBaseConstants.ROW_PREFIX_RESULT + resultId;
+        String id = InfoSpaceConstants.ROW_PREFIX_RESULT + resultId;
         Text key = new Text(id);
         InfoSpaceRecord bodyRecord = new InfoSpaceRecord(
                 new Text(Type.result.name()),
@@ -220,7 +220,7 @@ public class ImportInformationSpaceReducerTest {
         reducer.setup(context);
         
         String resultId = "resultId";
-        String id = HBaseConstants.ROW_PREFIX_RESULT + resultId;
+        String id = InfoSpaceConstants.ROW_PREFIX_RESULT + resultId;
         Text key = new Text(id);
         InfoSpaceRecord bodyRecord = new InfoSpaceRecord(
                 new Text(Type.result.name()),
@@ -259,7 +259,7 @@ public class ImportInformationSpaceReducerTest {
         reducer.setup(context);
         
         String resultId = "resultId";
-        String id = HBaseConstants.ROW_PREFIX_RESULT + resultId;
+        String id = InfoSpaceConstants.ROW_PREFIX_RESULT + resultId;
         Text key = new Text(id);
         List<InfoSpaceRecord> values = Collections.emptyList();
         
@@ -280,7 +280,7 @@ public class ImportInformationSpaceReducerTest {
         reducer.setup(context);
         
         String personId = "personId";
-        String id = HBaseConstants.ROW_PREFIX_PERSON + personId;
+        String id = InfoSpaceConstants.ROW_PREFIX_PERSON + personId;
         Text key = new Text(id);
         List<InfoSpaceRecord> values = Lists.newArrayList(new InfoSpaceRecord(
                 new Text(Type.person.name()),
@@ -309,7 +309,7 @@ public class ImportInformationSpaceReducerTest {
         reducer.setup(context);
         
         String projectId = "projectId";
-        String id = HBaseConstants.ROW_PREFIX_PROJECT + projectId;
+        String id = InfoSpaceConstants.ROW_PREFIX_PROJECT + projectId;
         Text key = new Text(id);
         List<InfoSpaceRecord> values = Lists.newArrayList(new InfoSpaceRecord(
                 new Text(Type.project.name()),
@@ -338,7 +338,7 @@ public class ImportInformationSpaceReducerTest {
         reducer.setup(context);
         
         String orgId = "organizationId";
-        String id = HBaseConstants.ROW_PREFIX_ORGANIZATION + orgId;
+        String id = InfoSpaceConstants.ROW_PREFIX_ORGANIZATION + orgId;
         Text key = new Text(id);
         List<InfoSpaceRecord> values = Lists.newArrayList(new InfoSpaceRecord(
                 new Text(Type.organization.name()),
@@ -367,7 +367,7 @@ public class ImportInformationSpaceReducerTest {
         reducer.setup(context);
         
         String orgId = "organizationId";
-        String id = HBaseConstants.ROW_PREFIX_ORGANIZATION + orgId;
+        String id = InfoSpaceConstants.ROW_PREFIX_ORGANIZATION + orgId;
         Text key = new Text(id);
         List<InfoSpaceRecord> values = Collections.emptyList();
         
@@ -388,7 +388,7 @@ public class ImportInformationSpaceReducerTest {
         reducer.setup(context);
         
         String projectId = "projectId";
-        String id = HBaseConstants.ROW_PREFIX_PROJECT + projectId;
+        String id = InfoSpaceConstants.ROW_PREFIX_PROJECT + projectId;
         Text key = new Text(id);
         
         InfoSpaceRecord bodyRecord = new InfoSpaceRecord(
@@ -433,7 +433,7 @@ public class ImportInformationSpaceReducerTest {
         reducer.setup(context);
         
         String resultId = "resultId";
-        String id = HBaseConstants.ROW_PREFIX_RESULT + resultId;
+        String id = InfoSpaceConstants.ROW_PREFIX_RESULT + resultId;
         Text key = new Text(id);
         InfoSpaceRecord bodyRecord = new InfoSpaceRecord(
                 new Text(Type.result.name()),
@@ -460,7 +460,7 @@ public class ImportInformationSpaceReducerTest {
         reducer.setup(context);
         
         String resultId = "resultId";
-        String id = HBaseConstants.ROW_PREFIX_RESULT + resultId;
+        String id = InfoSpaceConstants.ROW_PREFIX_RESULT + resultId;
         Text key = new Text(id);
         InfoSpaceRecord bodyRecord = new InfoSpaceRecord(
                 new Text(Type.result.name()),
@@ -487,7 +487,7 @@ public class ImportInformationSpaceReducerTest {
         reducer.setup(context);
         
         String resultId = "resultId";
-        String id = HBaseConstants.ROW_PREFIX_RESULT + resultId;
+        String id = InfoSpaceConstants.ROW_PREFIX_RESULT + resultId;
         Text key = new Text(id);
         InfoSpaceRecord bodyRecord = new InfoSpaceRecord(
                 new Text(Type.result.name()),
@@ -514,7 +514,7 @@ public class ImportInformationSpaceReducerTest {
         reducer.setup(context);
         
         String resultId = "resultId";
-        String id = HBaseConstants.ROW_PREFIX_RESULT + resultId;
+        String id = InfoSpaceConstants.ROW_PREFIX_RESULT + resultId;
         Text key = new Text(id);
         InfoSpaceRecord bodyRecord = new InfoSpaceRecord(
                 new Text(Type.result.name()),

@@ -77,7 +77,7 @@ public class MockMDStoreFacadeFactory implements MDStoreFacadeFactory {
         
         private String readRecord(String resourceLocation) {
             try (InputStream input = MockMDStoreFacadeFactory.class.getResourceAsStream(resourceLocation)) {
-                return IOUtils.toString(input);
+                return IOUtils.toString(input, "utf8");
             } catch (IOException e) {
                 throw new RuntimeException("Unable to read resource: " + resourceLocation, e);
             }

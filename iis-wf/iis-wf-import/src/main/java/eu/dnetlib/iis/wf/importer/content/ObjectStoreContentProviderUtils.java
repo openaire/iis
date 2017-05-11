@@ -10,7 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
 
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 
 /**
  * ObjectStore content provider common utilities.
@@ -19,7 +19,7 @@ import eu.dnetlib.iis.common.hbase.HBaseConstants;
  */
 public final class ObjectStoreContentProviderUtils {
 
-	public static final String defaultEncoding = HBaseConstants.STATIC_FIELDS_ENCODING_UTF8;
+	public static final String defaultEncoding = InfoSpaceConstants.ENCODING_UTF8;
 	
 	protected static final String objectIdSeparator = "::";
 	
@@ -95,7 +95,7 @@ public final class ObjectStoreContentProviderUtils {
 	public static String extractResultIdFromObjectId(String objectId) {
 		if (objectId!=null && objectId.indexOf(objectIdSeparator)>0) {
 			StringBuffer strBuff = new StringBuffer();
-			strBuff.append(HBaseConstants.ROW_PREFIX_RESULT);
+			strBuff.append(InfoSpaceConstants.ROW_PREFIX_RESULT);
 			String[] split = objectId.split(objectIdSeparator);
 			if (split.length>=2) {
 				strBuff.append(split[0]);

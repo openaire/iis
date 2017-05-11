@@ -1,5 +1,7 @@
 package eu.dnetlib.iis.common.oozie.property;
 
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -36,8 +38,6 @@ public class ConditionalPropertySetter implements Process {
 	public static final String PARAM_ELSECASE = "elseCase";
 	
 	public static final String OUTPUT_PROPERTY_RESULT = "result";
-	
-	public static final String OOZIE_ACTION_OUTPUT_FILENAME = "oozie.action.output.properties";
 	
 	@Override
 	public Map<String, PortType> getInputPorts() {

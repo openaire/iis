@@ -18,8 +18,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,12 +53,11 @@ public class WritePredefinedProjectProperties extends AbstractMojo {
 	private static final String CR = "\r";
 	private static final String LF = "\n";
 	private static final String TAB = "\t";
-	private static final String[] ANT_ESCAPE_CHARS = { CR, LF, TAB, ":", "#",	"=" };
-    private static final String PROPERTY_PREFIX_ENV = "env.";
-	
+    protected static final String PROPERTY_PREFIX_ENV = "env.";
+    private static final String ENCODING_UTF8 = "utf8";
 	
 	/**
-	 * @parameter expression="${properties.includePropertyKeysFromFiles}"
+	 * @parameter property="properties.includePropertyKeysFromFiles"
 	 */
 	private String[] includePropertyKeysFromFiles;
 	
@@ -69,21 +66,21 @@ public class WritePredefinedProjectProperties extends AbstractMojo {
      * @required
      * @readonly
      */
-    private MavenProject project;
+    protected MavenProject project;
 
     /**
      * The file that properties will be written to
      * 
-     * @parameter expression="${properties.outputFile}"
+     * @parameter property="properties.outputFile"
      *            default-value="${project.build.directory}/properties/project.properties";
      * @required
      */
-    private File outputFile;
+    protected File outputFile;
 	
 	/**
      * If true, the plugin will silently ignore any non-existent properties files, and the build will continue
      *
-     * @parameter expression="${properties.quiet}" default-value="true"
+     * @parameter property="properties.quiet" default-value="true"
      */
     private boolean quiet;
 	
@@ -91,25 +88,15 @@ public class WritePredefinedProjectProperties extends AbstractMojo {
      * Comma separated list of characters to escape when writing property values. cr=carriage return, lf=linefeed,
      * tab=tab. Any other values are taken literally.
      * 
-     * @parameter default-value="cr,lf,tab" expression="${properties.escapeChars}"
+     * @parameter default-value="cr,lf,tab" property="properties.escapeChars"
      */
     private String escapeChars;
-
-    /**
-     * If true, the plugin will create the properties file formatted the same way Ant formats properties files using the
-     * <code>echoproperties</code> task. This mode adds 3 custom properties at the top of the file, DSTAMP, TODAY, and
-     * TSTAMP. In this mode <code>escapeChars</code> is ignored and the 6 characters Ant escapes are used instead
-     * <code>CR</code>,<code>LF</code>,<code>TAB</code>,<code>:</code>,<code>#</code>,<code>=</code>
-     * 
-     * @parameter default-value="false" expression="${properties.antEchoPropertiesMode}"
-     */
-    private boolean antEchoPropertiesMode;
 
     /**
      * If true, the plugin will include system properties when writing the properties file. System properties override
      * both environment variables and project properties.
      * 
-     * @parameter default-value="false" expression="${properties.includeSystemProperties}"
+     * @parameter default-value="false" property="properties.includeSystemProperties"
      */
     private boolean includeSystemProperties;
 
@@ -117,14 +104,14 @@ public class WritePredefinedProjectProperties extends AbstractMojo {
      * If true, the plugin will include environment variables when writing the properties file. Environment variables
      * are prefixed with "env". Environment variables override project properties.
      * 
-     * @parameter default-value="false" expression="${properties.includeEnvironmentVariables}"
+     * @parameter default-value="false" property="properties.includeEnvironmentVariables"
      */
     private boolean includeEnvironmentVariables;
 
     /**
      * Comma separated set of properties to exclude when writing the properties file
      * 
-     * @parameter expression="${properties.exclude}"
+     * @parameter property="properties.exclude"
      */
     private String exclude;
 
@@ -132,7 +119,7 @@ public class WritePredefinedProjectProperties extends AbstractMojo {
      * Comma separated set of properties to write to the properties file. If provided, only the properties matching
      * those supplied here will be written to the properties file.
      * 
-     * @parameter expression="${properties.include}"
+     * @parameter property="properties.include"
      */
     private String include;
 
@@ -152,23 +139,16 @@ public class WritePredefinedProjectProperties extends AbstractMojo {
         if (includeSystemProperties) {
             // Add system properties, overriding any existing properties with the same key
             properties.putAll(System.getProperties());
-	        }
+        }
 
-	        // Remove properties as appropriate
-	        trim(properties, exclude, include);
+        // Remove properties as appropriate
+        trim(properties, exclude, include);
 
-	        String comment = "# " + new Date() + "\n";
-	        List<String> escapeTokens = getEscapeChars(escapeChars);
-	        if (antEchoPropertiesMode) {
-	            escapeTokens = Arrays.asList(ANT_ESCAPE_CHARS);
-	            comment = getAntHeader();
-	            properties.remove("DSTAMP");
-	            properties.remove("TODAY");
-	            properties.remove("TSTAMP");
-	        }
+        String comment = "# " + new Date() + "\n";
+        List<String> escapeTokens = getEscapeChars(escapeChars);
 
-	        getLog().info("Creating " + outputFile);
-	        writeProperties(outputFile, comment, properties, escapeTokens);
+        getLog().info("Creating " + outputFile);
+        writeProperties(outputFile, comment, properties, escapeTokens);
 	    }
 
     /**
@@ -219,14 +199,6 @@ public class WritePredefinedProjectProperties extends AbstractMojo {
         }
     }
 
-    protected String toEmpty(String s) {
-        if (StringUtils.isBlank(s)) {
-            return "";
-        } else {
-            return s;
-        }
-    }
-
     /**
      * Checks whether file exists.
      * @param location
@@ -257,7 +229,7 @@ public class WritePredefinedProjectProperties extends AbstractMojo {
             return true;
         }
         if (quiet) {
-            getLog().info("Ignoring non-existent properties file '" + toEmpty(location) + "'");
+            getLog().info("Ignoring non-existent properties file '" + location + "'");
             return false;
         } else {
             throw new MojoExecutionException("Non-existent properties file '" + location + "'");
@@ -302,24 +274,6 @@ public class WritePredefinedProjectProperties extends AbstractMojo {
         } finally {
             IOUtils.closeQuietly(in);
         }
-    }
-    
-    /**
-     * Provides ant header.
-     * @return ant header
-     */
-    protected String getAntHeader() {
-        SimpleDateFormat dstamp = new SimpleDateFormat("yyyyMMdd");
-        SimpleDateFormat today = new SimpleDateFormat("MMMM d yyyy");
-        SimpleDateFormat tstamp = new SimpleDateFormat("HHmm");
-        Date now = new Date();
-        StringBuilder sb = new StringBuilder();
-        sb.append("# Ant properties\n");
-        sb.append("# " + now + "\n");
-        sb.append("DSTAMP=" + dstamp.format(now) + "\n");
-        sb.append("TODAY=" + today.format(now) + "\n");
-        sb.append("TSTAMP=" + tstamp.format(now) + "\n");
-        return sb.toString();
     }
 
     /**
@@ -388,27 +342,9 @@ public class WritePredefinedProjectProperties extends AbstractMojo {
             throws MojoExecutionException {
         try {
             String content = getContent(comment, properties, escapeTokens);
-            FileUtils.writeStringToFile(file, content);
+            FileUtils.writeStringToFile(file, content, ENCODING_UTF8);
         } catch (IOException e) {
             throw new MojoExecutionException("Error creating properties file", e);
-        }
-    }
-
-    /**
-     * Writes properties.
-     * @param properties
-     * @param file
-     * @throws MojoExecutionException
-     */
-    protected void writeProperties(Properties properties, File file) throws MojoExecutionException {
-        OutputStream out = null;
-        try {
-            out = FileUtils.openOutputStream(outputFile);
-            properties.store(out, "Properties");
-        } catch (IOException e) {
-            throw new MojoExecutionException("Error creating properties file", e);
-        } finally {
-            IOUtils.closeQuietly(out);
         }
     }
 	 
@@ -459,57 +395,25 @@ public class WritePredefinedProjectProperties extends AbstractMojo {
 		}
 		return list;
 	}
-    
-    public boolean isAntEchoPropertiesMode() {
-        return antEchoPropertiesMode;
-    }
-
-    public void setAntEchoPropertiesMode(boolean antEchoPropertiesMode) {
-        this.antEchoPropertiesMode = antEchoPropertiesMode;
-    }
-
-    public boolean isIncludeSystemProperties() {
-        return includeSystemProperties;
-    }
 
     public void setIncludeSystemProperties(boolean includeSystemProperties) {
         this.includeSystemProperties = includeSystemProperties;
-    }
-
-    public String getEscapeChars() {
-        return escapeChars;
     }
 
     public void setEscapeChars(String escapeChars) {
         this.escapeChars = escapeChars;
     }
 
-    public boolean isIncludeEnvironmentVariables() {
-        return includeEnvironmentVariables;
-    }
-
     public void setIncludeEnvironmentVariables(boolean includeEnvironmentVariables) {
         this.includeEnvironmentVariables = includeEnvironmentVariables;
-    }
-
-    public String getExclude() {
-        return exclude;
     }
 
     public void setExclude(String exclude) {
         this.exclude = exclude;
     }
 
-    public String getInclude() {
-        return include;
-    }
-
     public void setInclude(String include) {
         this.include = include;
-    }
-   	
-	public boolean isQuiet() {
-        return quiet;
     }
 
     public void setQuiet(boolean quiet) {
@@ -528,4 +432,5 @@ public class WritePredefinedProjectProperties extends AbstractMojo {
 					includePropertyKeysFromFiles.length);	
 		}
 	}
+	
 }

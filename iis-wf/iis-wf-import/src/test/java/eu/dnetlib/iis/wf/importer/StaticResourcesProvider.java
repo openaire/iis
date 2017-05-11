@@ -33,7 +33,7 @@ public class StaticResourcesProvider {
         List<String> resources = Lists.newArrayList();
         for (String resourceLocation : resourcesLocations) {
             try (InputStream input = StaticResourcesProvider.class.getResourceAsStream(resourceLocation)) {
-                resources.add(IOUtils.toString(input));
+                resources.add(IOUtils.toString(input, "utf8"));
             } catch (IOException e) {
                 throw new RuntimeException("Unable to read resource: " + resourceLocation, e);
             }

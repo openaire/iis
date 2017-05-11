@@ -40,8 +40,6 @@ public final class ImportWorkflowRuntimeParameters {
 	
 	public static final String IMPORT_FACADE_FACTORY_CLASS = "import.facade.factory.classname";
 	
-	public static final String OOZIE_ACTION_OUTPUT_FILENAME = "oozie.action.output.properties";
-	
 	// default values
 	
 	public static final String RESULTSET_READ_TIMEOUT_DEFAULT_VALUE = "60000";

@@ -92,9 +92,7 @@ public class GenericCitationCollapser extends AbstractSimpleCollapser<Citation> 
      * @return collapsed citation or null when nothing to collapse
      */
     private Citation collapseForPosition(List<Citation> objects) {
-    	if (objects==null || objects.isEmpty()) {
-    		return null;
-    	} else if (objects.size()==1) {
+    	if (objects.size()==1) {
     		return objects.get(0);
     	} else {
     		Citation resultCandidate = objects.get(0);

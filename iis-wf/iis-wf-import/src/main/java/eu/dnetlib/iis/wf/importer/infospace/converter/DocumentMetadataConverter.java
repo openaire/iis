@@ -29,7 +29,7 @@ import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
 import eu.dnetlib.data.proto.ResultProtos;
 import eu.dnetlib.data.proto.ResultProtos.Result.Instance;
 import eu.dnetlib.data.proto.ResultProtos.Result.Journal;
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
 import eu.dnetlib.iis.importer.schemas.PublicationType;
 import eu.dnetlib.iis.wf.importer.OafHelper;
@@ -133,7 +133,7 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
     private void handleTitle(List<StructuredProperty> titleList, DocumentMetadata.Builder metaBuilder) {
         if (CollectionUtils.isNotEmpty(titleList)) {
             for (StructuredProperty titleProp : titleList) {
-                if (HBaseConstants.SEMANTIC_CLASS_MAIN_TITLE.equals(titleProp.getQualifier().getClassid())
+                if (InfoSpaceConstants.SEMANTIC_CLASS_MAIN_TITLE.equals(titleProp.getQualifier().getClassid())
                         && fieldApprover.approve(titleProp.getDataInfo())) {
                     metaBuilder.setTitle(titleProp.getValue());
                 }
@@ -209,10 +209,10 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
         PublicationType.Builder publicationTypeBuilder = PublicationType.newBuilder();
         if (CollectionUtils.isNotEmpty(instanceList)) {
             for (Instance instance : instanceList) {
-                if (HBaseConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE
+                if (InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE
                         .equals(instance.getInstancetype().getClassid())) {
                     publicationTypeBuilder.setArticle(true);
-                } else if (HBaseConstants.SEMANTIC_CLASS_INSTANCE_TYPE_DATASET
+                } else if (InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_DATASET
                         .equals(instance.getInstancetype().getClassid())) {
                     publicationTypeBuilder.setDataset(true);
                 }

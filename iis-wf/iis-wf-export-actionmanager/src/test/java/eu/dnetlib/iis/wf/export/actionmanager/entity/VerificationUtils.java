@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.export.actionmanager.entity;
 
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -34,7 +35,7 @@ public final class VerificationUtils {
      */
     public static Properties getStoredProperties() throws FileNotFoundException, IOException {
         Properties properties = new Properties();
-        properties.load(new FileInputStream(System.getProperty(AbstractEntityExporterProcess.OOZIE_ACTION_OUTPUT_FILENAME)));
+        properties.load(new FileInputStream(System.getProperty(OOZIE_ACTION_OUTPUT_FILENAME)));
         return properties;
     }
     

@@ -3,6 +3,7 @@ package eu.dnetlib.iis.wf.export.actionmanager.entity;
 import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_ACTION_SETID;
 import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_SEQ_FILE_OUTPUT_DIR_NAME;
 import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_SEQ_FILE_OUTPUT_DIR_ROOT;
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -30,10 +31,10 @@ import eu.dnetlib.actionmanager.actions.XsltInfoPackageAction;
 import eu.dnetlib.actionmanager.common.Operation;
 import eu.dnetlib.actionmanager.common.Provenance;
 import eu.dnetlib.data.mdstore.DocumentNotFoundException;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.counter.NamedCounters;
 import eu.dnetlib.iis.common.counter.NamedCountersFileWriter;
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
 import eu.dnetlib.iis.common.java.ProcessUtils;
@@ -60,8 +61,6 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
     public static final String PORT_INPUT = "input";
     
     public static final String MDSTORE_FACADE_FACTORY_CLASS = "mdstore.facade.factory.classname";
-    
-    public static final String OOZIE_ACTION_OUTPUT_FILENAME = "oozie.action.output.properties";
     
     public static final String TOTAL_ENTITIES_COUNTER_NAME = "TOTAL_ENTITIES_COUNTER";
     
@@ -246,8 +245,8 @@ public abstract class AbstractEntityExporterProcess<T extends SpecificRecordBase
      * @return MDStore compliant entity identifier
      */
     private final String convertToMDStoreEntityId(String id) {
-        if (id != null && id.startsWith(HBaseConstants.ROW_PREFIX_RESULT)) {
-            return id.substring(HBaseConstants.ROW_PREFIX_RESULT.length());
+        if (id != null && id.startsWith(InfoSpaceConstants.ROW_PREFIX_RESULT)) {
+            return id.substring(InfoSpaceConstants.ROW_PREFIX_RESULT.length());
         } else {
             return id;
         }

@@ -1,7 +1,7 @@
 package eu.dnetlib.iis.wf.importer.concept;
 
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_FACADE_FACTORY_CLASS;
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
 import static eu.dnetlib.iis.wf.importer.VerificationUtils.verifyReport;
 import static eu.dnetlib.iis.wf.importer.concept.ISLookupServiceBasedConceptImporter.CONCEPT_COUNTER_NAME;
 import static eu.dnetlib.iis.wf.importer.concept.ISLookupServiceBasedConceptImporter.PARAM_IMPORT_CONTEXT_IDS_CSV;

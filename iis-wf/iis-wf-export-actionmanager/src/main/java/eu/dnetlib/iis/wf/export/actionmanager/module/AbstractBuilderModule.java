@@ -15,7 +15,7 @@ import eu.dnetlib.data.proto.OafProtos.Oaf;
 import eu.dnetlib.data.proto.OafProtos.OafEntity;
 import eu.dnetlib.data.proto.OafProtos.OafRel;
 import eu.dnetlib.data.proto.RelMetadataProtos.RelMetadata;
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 
 /**
  * Abstract builder module.
@@ -119,7 +119,7 @@ public abstract class AbstractBuilderModule<T> implements ActionBuilderModule<T>
      * @throws TrustLevelThresholdExceededException thrown when trust level threshold was exceeded
      */
     protected DataInfo buildInference(float confidenceLevel) throws TrustLevelThresholdExceededException {
-        float currentTrustLevel = confidenceLevel * HBaseConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
+        float currentTrustLevel = confidenceLevel * InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
         if (trustLevelThreshold == null || currentTrustLevel >= trustLevelThreshold) {
             return buildInferenceForTrustLevel(this.decimalFormat.format(currentTrustLevel));
         } else {
@@ -136,10 +136,10 @@ public abstract class AbstractBuilderModule<T> implements ActionBuilderModule<T>
         builder.setInferred(true);
         builder.setTrust(trustLevel);
         Qualifier.Builder provenanceBuilder = Qualifier.newBuilder();
-        provenanceBuilder.setClassid(HBaseConstants.SEMANTIC_CLASS_IIS);
-        provenanceBuilder.setClassname(HBaseConstants.SEMANTIC_CLASS_IIS);
-        provenanceBuilder.setSchemeid(HBaseConstants.SEMANTIC_SCHEME_DNET_PROVENANCE_ACTIONS);
-        provenanceBuilder.setSchemename(HBaseConstants.SEMANTIC_SCHEME_DNET_PROVENANCE_ACTIONS);
+        provenanceBuilder.setClassid(InfoSpaceConstants.SEMANTIC_CLASS_IIS);
+        provenanceBuilder.setClassname(InfoSpaceConstants.SEMANTIC_CLASS_IIS);
+        provenanceBuilder.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PROVENANCE_ACTIONS);
+        provenanceBuilder.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PROVENANCE_ACTIONS);
         builder.setProvenanceaction(provenanceBuilder.build());
         builder.setInferenceprovenance(inferenceProvenance);
         return builder.build();

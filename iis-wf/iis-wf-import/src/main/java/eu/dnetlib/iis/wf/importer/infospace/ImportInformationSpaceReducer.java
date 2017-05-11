@@ -30,8 +30,8 @@ import eu.dnetlib.data.proto.RelTypeProtos.RelType;
 import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
 import eu.dnetlib.data.proto.ResultProjectProtos.ResultProject.Outcome;
 import eu.dnetlib.data.proto.TypeProtos.Type;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
 import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
 import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
@@ -170,15 +170,15 @@ public class ImportInformationSpaceReducer
         String id = key.toString();
         Map<String, List<QualifiedOafJsonRecord>> mappedRecords = InfoSpaceRecordUtils.mapByColumnFamily(values);
         
-        if (id.startsWith(HBaseConstants.ROW_PREFIX_RESULT)) {
+        if (id.startsWith(InfoSpaceConstants.ROW_PREFIX_RESULT)) {
             handleResult(id, mappedRecords);
-        } else if (id.startsWith(HBaseConstants.ROW_PREFIX_PERSON)) {
+        } else if (id.startsWith(InfoSpaceConstants.ROW_PREFIX_PERSON)) {
             handleEntity(id, mappedRecords.get(Type.person.name()), personConverter, outputNamePerson);
-        } else if (id.startsWith(HBaseConstants.ROW_PREFIX_PROJECT)) {
+        } else if (id.startsWith(InfoSpaceConstants.ROW_PREFIX_PROJECT)) {
             handleEntity(id, mappedRecords.get(Type.project.name()), projectConverter, outputNameProject,
                     new RelationConversionDTO<ProjectToOrganization>(mappedRecords.get(projOrgColumnFamily),
                             projectOrganizationConverter, outputNameProjectOrganization));
-        } else if (id.startsWith(HBaseConstants.ROW_PREFIX_ORGANIZATION)) {
+        } else if (id.startsWith(InfoSpaceConstants.ROW_PREFIX_ORGANIZATION)) {
             handleEntity(id, mappedRecords.get(Type.organization.name()), organizationConverter, outputNameOrganization);
         }
     }

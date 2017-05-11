@@ -28,7 +28,7 @@ class OozieLogFileParser {
 		
 		String jobId;
 		try {
-			jobId = FileUtils.readFileToString(runOozieJobLogFile);
+			jobId = FileUtils.readFileToString(runOozieJobLogFile, InfoSpaceConstants.ENCODING_UTF8);
 		} catch (IOException e) {
 			throw new RuntimeException("Unable to read run oozie job log file", e);
 		}

@@ -62,11 +62,7 @@ public class GenerateOoziePropertiesMojo extends AbstractMojo {
     			}
     			sandboxNameParts.add(0, token);
     		}
-    		if (sandboxNameParts.size()>0) {
-    			return StringUtils.join(sandboxNameParts.toArray());	
-    		} else {
-    			return null;
-    		}
+			return StringUtils.join(sandboxNameParts.toArray());	
     	} else {
     		return null;
     	}

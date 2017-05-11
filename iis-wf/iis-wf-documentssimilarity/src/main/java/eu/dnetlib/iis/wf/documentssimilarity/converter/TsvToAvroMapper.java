@@ -15,7 +15,7 @@ import java.io.IOException;
  */
 public class TsvToAvroMapper extends Mapper<Writable, Text, AvroKey<DocumentSimilarity>, NullWritable> {
     
-    private static final Logger log = Logger.getLogger(TsvToAvroMapper.class);
+    private static Logger log = Logger.getLogger(TsvToAvroMapper.class);
 
     @Override
     protected void map(Writable ignore, Text data, Context context) throws IOException, InterruptedException {

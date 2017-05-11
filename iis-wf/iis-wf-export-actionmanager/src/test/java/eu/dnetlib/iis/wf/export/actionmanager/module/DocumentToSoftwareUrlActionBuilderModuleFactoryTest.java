@@ -17,7 +17,7 @@ import eu.dnetlib.data.proto.KindProtos;
 import eu.dnetlib.data.proto.OafProtos.Oaf;
 import eu.dnetlib.data.proto.ResultProtos.Result.ExternalReference;
 import eu.dnetlib.data.proto.TypeProtos.Type;
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.export.schemas.DocumentToSoftwareUrls;
 import eu.dnetlib.iis.export.schemas.SoftwareUrl;
 
@@ -126,7 +126,7 @@ public class DocumentToSoftwareUrlActionBuilderModuleFactoryTest extends Abstrac
         assertNotNull(externalReference.getQualifier());
         assertNotNull(externalReference.getDataInfo());
 
-        float normalizedTrust = matchStrength * HBaseConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
+        float normalizedTrust = matchStrength * InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
         assertEquals(normalizedTrust, Float.parseFloat(externalReference.getDataInfo().getTrust()), 0.0001);
     }
 }

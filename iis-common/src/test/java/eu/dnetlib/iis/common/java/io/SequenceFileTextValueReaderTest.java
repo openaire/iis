@@ -12,12 +12,13 @@ import java.util.ArrayList;
 import org.apache.hadoop.fs.Path;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
-import eu.dnetlib.iis.common.IntegrationTest;
 
-@Category(IntegrationTest.class)
+/**
+ * @author mhorst
+ *
+ */
 public class SequenceFileTextValueReaderTest {
 
     private static final String SEQUENCE_FILES = "sequence_files";

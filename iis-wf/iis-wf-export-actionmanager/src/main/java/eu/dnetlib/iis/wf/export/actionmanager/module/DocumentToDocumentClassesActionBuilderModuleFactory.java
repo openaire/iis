@@ -17,7 +17,7 @@ import eu.dnetlib.data.proto.OafProtos.OafEntity;
 import eu.dnetlib.data.proto.ResultProtos.Result;
 import eu.dnetlib.data.proto.ResultProtos.Result.Metadata;
 import eu.dnetlib.data.proto.TypeProtos.Type;
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentClass;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentClasses;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses;
@@ -102,23 +102,23 @@ public class DocumentToDocumentClassesActionBuilderModuleFactory extends Abstrac
             List<StructuredProperty> list = new ArrayList<StructuredProperty>();
             if (CollectionUtils.isNotEmpty(source.getArXivClasses())) {
                 list.addAll(convertAvroToProtoBuff(source.getArXivClasses(),
-                        HBaseConstants.SEMANTIC_CLASS_TAXONOMIES_ARXIV));
+                        InfoSpaceConstants.SEMANTIC_CLASS_TAXONOMIES_ARXIV));
             }
             if (CollectionUtils.isNotEmpty(source.getDDCClasses())) {
                 list.addAll(convertAvroToProtoBuff(source.getDDCClasses(),
-                        HBaseConstants.SEMANTIC_CLASS_TAXONOMIES_DDC));
+                        InfoSpaceConstants.SEMANTIC_CLASS_TAXONOMIES_DDC));
             }
             if (CollectionUtils.isNotEmpty(source.getWoSClasses())) {
                 list.addAll(convertAvroToProtoBuff(source.getWoSClasses(),
-                        HBaseConstants.SEMANTIC_CLASS_TAXONOMIES_WOS));
+                        InfoSpaceConstants.SEMANTIC_CLASS_TAXONOMIES_WOS));
             }
             if (CollectionUtils.isNotEmpty(source.getMeshEuroPMCClasses())) {
                 list.addAll(convertAvroToProtoBuff(source.getMeshEuroPMCClasses(),
-                        HBaseConstants.SEMANTIC_CLASS_TAXONOMIES_MESHEUROPMC));
+                        InfoSpaceConstants.SEMANTIC_CLASS_TAXONOMIES_MESHEUROPMC));
             }
             if (CollectionUtils.isNotEmpty(source.getACMClasses())) {
                 list.addAll(convertAvroToProtoBuff(source.getACMClasses(),
-                        HBaseConstants.SEMANTIC_CLASS_TAXONOMIES_ACM));
+                        InfoSpaceConstants.SEMANTIC_CLASS_TAXONOMIES_ACM));
             }
             return list;
         }
@@ -143,13 +143,13 @@ public class DocumentToDocumentClassesActionBuilderModuleFactory extends Abstrac
             if (source != null && CollectionUtils.isNotEmpty(source.getClassLabels())) {
                 StructuredProperty.Builder builder = StructuredProperty.newBuilder();
                 Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
-                qualifierBuilder.setSchemeid(HBaseConstants.SEMANTIC_SCHEME_DNET_CLASSIFICATION_TAXONOMIES);
-                qualifierBuilder.setSchemename(HBaseConstants.SEMANTIC_SCHEME_DNET_CLASSIFICATION_TAXONOMIES);
+                qualifierBuilder.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_CLASSIFICATION_TAXONOMIES);
+                qualifierBuilder.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_CLASSIFICATION_TAXONOMIES);
                 qualifierBuilder.setClassid(taxonomyName);
                 qualifierBuilder.setClassname(taxonomyName);
                 builder.setQualifier(qualifierBuilder.build());
                 builder.setValue(
-                        StringUtils.join(source.getClassLabels(), HBaseConstants.CLASSIFICATION_HIERARCHY_SEPARATOR));
+                        StringUtils.join(source.getClassLabels(), InfoSpaceConstants.CLASSIFICATION_HIERARCHY_SEPARATOR));
                 float confidenceLevel = source.getConfidenceLevel();
                 builder.setDataInfo(buildInference(confidenceLevel < 1 ? confidenceLevel : 1));
                 return builder.build();

@@ -171,21 +171,20 @@ import org.apache.avro.mapreduce.AvroJob;
  */
 
 
-public class AvroMultipleOutputs{
+public class AvroMultipleOutputs {
 
-  private static final String MULTIPLE_OUTPUTS = "avro.mapreduce.multipleoutputs";
+  protected static final String MULTIPLE_OUTPUTS = "avro.mapreduce.multipleoutputs";
 
-  private static final String MO_PREFIX = 
-    "avro.mapreduce.multipleoutputs.namedOutput.";
+  protected static final String MO_PREFIX = "avro.mapreduce.multipleoutputs.namedOutput.";
 
-  private static final String FORMAT = ".format";
-  private static final String COUNTERS_ENABLED = 
-    "avro.mapreduce.multipleoutputs.counters";
+  protected static final String FORMAT = ".format";
+  
+  protected static final String COUNTERS_ENABLED = "avro.mapreduce.multipleoutputs.counters";
 
   /**
    * Counters group used by the counters of MultipleOutputs.
    */
-  private static final String COUNTERS_GROUP = AvroMultipleOutputs.class.getName();
+  protected static final String COUNTERS_GROUP = AvroMultipleOutputs.class.getName();
   
   /**
    * Cache for the taskContexts

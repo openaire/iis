@@ -1,8 +1,8 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
-import static eu.dnetlib.iis.common.hbase.HBaseConstants.CLASSIFICATION_HIERARCHY_SEPARATOR;
-import static eu.dnetlib.iis.common.hbase.HBaseConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
-import static eu.dnetlib.iis.common.hbase.HBaseConstants.SEMANTIC_SCHEME_DNET_CLASSIFICATION_TAXONOMIES;
+import static eu.dnetlib.iis.common.InfoSpaceConstants.CLASSIFICATION_HIERARCHY_SEPARATOR;
+import static eu.dnetlib.iis.common.InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
+import static eu.dnetlib.iis.common.InfoSpaceConstants.SEMANTIC_SCHEME_DNET_CLASSIFICATION_TAXONOMIES;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -19,7 +19,7 @@ import eu.dnetlib.data.proto.FieldTypeProtos.StructuredProperty;
 import eu.dnetlib.data.proto.KindProtos;
 import eu.dnetlib.data.proto.OafProtos.Oaf;
 import eu.dnetlib.data.proto.TypeProtos.Type;
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentClass;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentClasses;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses;
@@ -128,23 +128,23 @@ public class DocumentToDocumentClassesActionBuilderModuleFactoryTest extends Abs
         assertEquals(5, oaf.getEntity().getResult().getMetadata().getSubjectCount());
 
         assertSubject("arxiv1" + CLASSIFICATION_HIERARCHY_SEPARATOR + "arxiv2", 
-                HBaseConstants.SEMANTIC_CLASS_TAXONOMIES_ARXIV, 
+                InfoSpaceConstants.SEMANTIC_CLASS_TAXONOMIES_ARXIV, 
                 confidenceLevel, oaf.getEntity().getResult().getMetadata().getSubject(0));
         
         assertSubject("ddc1" + CLASSIFICATION_HIERARCHY_SEPARATOR + "ddc2", 
-                HBaseConstants.SEMANTIC_CLASS_TAXONOMIES_DDC, 
+                InfoSpaceConstants.SEMANTIC_CLASS_TAXONOMIES_DDC, 
                 confidenceLevel, oaf.getEntity().getResult().getMetadata().getSubject(1));
         
         assertSubject("wos1" + CLASSIFICATION_HIERARCHY_SEPARATOR + "wos2", 
-                HBaseConstants.SEMANTIC_CLASS_TAXONOMIES_WOS, 
+                InfoSpaceConstants.SEMANTIC_CLASS_TAXONOMIES_WOS, 
                 confidenceLevel, oaf.getEntity().getResult().getMetadata().getSubject(2));
         
         assertSubject("mesh1" + CLASSIFICATION_HIERARCHY_SEPARATOR + "mesh2", 
-                HBaseConstants.SEMANTIC_CLASS_TAXONOMIES_MESHEUROPMC, 
+                InfoSpaceConstants.SEMANTIC_CLASS_TAXONOMIES_MESHEUROPMC, 
                 confidenceLevel, oaf.getEntity().getResult().getMetadata().getSubject(3));
         
         assertSubject("acm1" + CLASSIFICATION_HIERARCHY_SEPARATOR + "acm2", 
-                HBaseConstants.SEMANTIC_CLASS_TAXONOMIES_ACM, 
+                InfoSpaceConstants.SEMANTIC_CLASS_TAXONOMIES_ACM, 
                 confidenceLevel, oaf.getEntity().getResult().getMetadata().getSubject(4));
     }
     

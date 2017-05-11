@@ -12,6 +12,7 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.counter.PigCounters.JobCounters;
 
 /**
@@ -118,7 +119,7 @@ public class PigCountersParserTest {
     private String readFileFromClasspath(String classpath) throws IOException {
         
         try (InputStream input = getClass().getResourceAsStream(classpath)) {
-            return IOUtils.toString(input);
+            return IOUtils.toString(input, InfoSpaceConstants.ENCODING_UTF8);
         }
         
     }

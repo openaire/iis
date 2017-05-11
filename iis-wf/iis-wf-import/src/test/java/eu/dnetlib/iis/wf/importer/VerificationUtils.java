@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.importer;
 
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
 import static org.junit.Assert.assertEquals;
 
 import java.io.FileInputStream;

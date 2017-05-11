@@ -1,20 +1,20 @@
-package eu.dnetlib.iis.common.hbase;
+package eu.dnetlib.iis.common;
 
 import java.io.UnsupportedEncodingException;
 
 import eu.dnetlib.data.proto.TypeProtos.Type;
 
 /**
- * HBase constants
+ * InfoSpaceConstants constants.
  * 
  * @author mhorst
  *
  */
-public final class HBaseConstants {
+public final class InfoSpaceConstants {
 
     public static final float CONFIDENCE_TO_TRUST_LEVEL_FACTOR = 0.9f;
 
-    public static final String STATIC_FIELDS_ENCODING_UTF8 = "utf-8";
+    public static final String ENCODING_UTF8 = "utf-8";
 
     public static final char ROW_PREFIX_SEPARATOR = '|';
 
@@ -63,7 +63,7 @@ public final class HBaseConstants {
 
     static {
         try {
-            QUALIFIER_BODY = "body".getBytes(STATIC_FIELDS_ENCODING_UTF8);
+            QUALIFIER_BODY = "body".getBytes(ENCODING_UTF8);
 
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
@@ -78,12 +78,12 @@ public final class HBaseConstants {
      */
     public static byte[] getColumnFamily(Type entityType) {
         try {
-            return entityType.name().getBytes(STATIC_FIELDS_ENCODING_UTF8);
+            return entityType.name().getBytes(ENCODING_UTF8);
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private HBaseConstants() {
+    private InfoSpaceConstants() {
     }
 }

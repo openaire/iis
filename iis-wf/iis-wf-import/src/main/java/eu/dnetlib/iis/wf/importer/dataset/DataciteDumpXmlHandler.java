@@ -11,7 +11,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.collect.Maps;
 
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.importer.schemas.DataSetReference;
 import eu.dnetlib.iis.importer.schemas.DatasetToMDStore;
 import eu.dnetlib.iis.wf.importer.RecordReceiver;
@@ -225,7 +225,7 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
 
             String idValueStr = datasetMeta.getIdValue().trim();
             String datasetId = ELEM_OBJ_IDENTIFIER.equals(mainIdFieldName)?
-                    HBaseConstants.ROW_PREFIX_RESULT + datasetMeta.getHeaderId() : datasetMeta.getHeaderId();
+                    InfoSpaceConstants.ROW_PREFIX_RESULT + datasetMeta.getHeaderId() : datasetMeta.getHeaderId();
 
             DatasetToMDStore.Builder documentToMDStoreBuilder = DatasetToMDStore.newBuilder();
             documentToMDStoreBuilder.setMdStoreId(this.mdStoreId);

@@ -1,5 +1,7 @@
 package eu.dnetlib.iis.common.javamapreduce.hack;
 
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -29,7 +31,7 @@ public final class AvroSchemaGenerator {
         if (args.length==0) {
         	throw new RuntimeException("no classes provided for schema generation");
         }
-        File file = new File(System.getProperty("oozie.action.output.properties"));
+        File file = new File(System.getProperty(OOZIE_ACTION_OUTPUT_FILENAME));
         Properties props = new Properties();
         OutputStream os = new FileOutputStream(file);
         for (int i=0; i<args.length; i++) {

@@ -5,8 +5,8 @@ import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParame
 
 import org.apache.hadoop.conf.Configuration;
 
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
 
 /**
  * Abstract action builder factory.
@@ -55,7 +55,7 @@ public abstract class AbstractActionBuilderFactory<T> implements ActionBuilderFa
      * Builds inference provenance string based on algorithm name.
      */
     protected String buildInferenceProvenance() {
-        return HBaseConstants.SEMANTIC_CLASS_IIS + HBaseConstants.INFERENCE_PROVENANCE_SEPARATOR
+        return InfoSpaceConstants.SEMANTIC_CLASS_IIS + InfoSpaceConstants.INFERENCE_PROVENANCE_SEPARATOR
                 + algorithmName.toString();
     }
     

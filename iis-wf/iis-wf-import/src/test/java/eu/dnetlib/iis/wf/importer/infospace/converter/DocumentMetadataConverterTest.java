@@ -27,7 +27,7 @@ import eu.dnetlib.data.proto.OafProtos.OafEntity;
 import eu.dnetlib.data.proto.ResultProtos.Result;
 import eu.dnetlib.data.proto.ResultProtos.Result.Metadata;
 import eu.dnetlib.data.proto.TypeProtos.Type;
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
 import eu.dnetlib.iis.wf.importer.infospace.QualifiedOafJsonRecord;
 import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
@@ -80,10 +80,10 @@ public class DocumentMetadataConverterTest {
     @Test
     public void convert_using_main_title() throws IOException {
         // given
-        OafEntity.Builder builder = minimalEntityBuilder(ID, HBaseConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE);
+        OafEntity.Builder builder = minimalEntityBuilder(ID, InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE);
 
         addTitle(builder, OTHER_TITLE);
-        addTitle(builder, TITLE).getQualifierBuilder().setClassid(HBaseConstants.SEMANTIC_CLASS_MAIN_TITLE);
+        addTitle(builder, TITLE).getQualifierBuilder().setClassid(InfoSpaceConstants.SEMANTIC_CLASS_MAIN_TITLE);
 
         OafEntity oafEntity = builder.build();
 
@@ -97,7 +97,7 @@ public class DocumentMetadataConverterTest {
     @Test
     public void convert_using_first_title() throws IOException {
         // given
-        OafEntity.Builder builder = minimalEntityBuilder(ID, HBaseConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE);
+        OafEntity.Builder builder = minimalEntityBuilder(ID, InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE);
 
         addTitle(builder, OTHER_TITLE);
         addTitle(builder, TITLE);
@@ -114,7 +114,7 @@ public class DocumentMetadataConverterTest {
     @Test
     public void convert_skip_null_abstract() throws IOException {
         // given
-        OafEntity.Builder builder = minimalEntityBuilder(ID, HBaseConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE);
+        OafEntity.Builder builder = minimalEntityBuilder(ID, InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE);
 
         addDescription(builder, "null");
         addDescription(builder, ABSTRACT);
@@ -131,7 +131,7 @@ public class DocumentMetadataConverterTest {
     @Test
     public void convert_with_undefined_language() throws IOException {
         // given
-        OafEntity.Builder builder = minimalEntityBuilder(ID, HBaseConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE);
+        OafEntity.Builder builder = minimalEntityBuilder(ID, InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE);
 
         setLanguage(builder, "und");
 
@@ -213,8 +213,8 @@ public class DocumentMetadataConverterTest {
 
     private static OafEntity documentEntity() {
         OafEntity.Builder oafBuilder = minimalEntityBuilder(ID,
-                HBaseConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE,
-                HBaseConstants.SEMANTIC_CLASS_INSTANCE_TYPE_DATASET);
+                InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE,
+                InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_DATASET);
 
         Metadata.Builder mdBuilder = oafBuilder.getResultBuilder().getMetadataBuilder();
 

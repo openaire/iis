@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.common.utils;
 
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -61,7 +62,7 @@ public class EmptyDatastoreVerifierProcessTest {
     public void init() {
         parameters = new HashMap<>();
         
-        System.setProperty(EmptyDatastoreVerifierProcess.OOZIE_ACTION_OUTPUT_FILENAME, 
+        System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME, 
                 testFolder.getRoot().getAbsolutePath() + File.separatorChar + "test.properties");
     }
 
@@ -130,7 +131,7 @@ public class EmptyDatastoreVerifierProcessTest {
     
     private Properties getStoredProperties() throws FileNotFoundException, IOException {
         Properties properties = new Properties();
-        properties.load(new FileInputStream(System.getProperty(EmptyDatastoreVerifierProcess.OOZIE_ACTION_OUTPUT_FILENAME)));
+        properties.load(new FileInputStream(System.getProperty(OOZIE_ACTION_OUTPUT_FILENAME)));
         return properties;
     }
     

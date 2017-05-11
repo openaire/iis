@@ -11,7 +11,7 @@ import eu.dnetlib.data.proto.KindProtos.Kind;
 import eu.dnetlib.data.proto.OafProtos.Oaf;
 import eu.dnetlib.data.proto.RelTypeProtos.RelType;
 import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
-import eu.dnetlib.iis.common.hbase.HBaseConstants;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
 
 /**
  * Utility methods useful for assertion validation.
@@ -48,7 +48,7 @@ public final class VerificationUtils {
         assertEquals(expectations.getTarget(), oaf.getRel().getTarget());    
         assertNotNull(oaf.getDataInfo());
 
-        float normalizedTrust = expectations.getConfidenceLevel() * HBaseConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
+        float normalizedTrust = expectations.getConfidenceLevel() * InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
         assertEquals(normalizedTrust, Float.parseFloat(oaf.getDataInfo().getTrust()), 0.0001);
     }
     
