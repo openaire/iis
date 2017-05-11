@@ -35,12 +35,14 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
+import eu.dnetlib.iis.common.IntegrationTest;
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
@@ -64,6 +66,7 @@ import eu.dnetlib.iis.wf.affmatching.write.SimpleAffMatchResultWriter;
  * The match strength depends on real data prepared by hand and is just a ratio of true positives (correct matches)
  * to all the matches guessed by the given matcher and voter.
  */
+@Category(IntegrationTest.class)
 public class AffOrgMatchVoterStrengthEstimatorAndTest {
 
     private final static boolean PRINT_NOT_MATCHED = false;

@@ -26,9 +26,11 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import com.google.common.io.Files;
 
+import eu.dnetlib.iis.common.IntegrationTest;
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
@@ -59,6 +61,7 @@ import scala.Tuple2;
  * 
  * @author madryk
  */
+@Category(IntegrationTest.class)
 public class AffMatchingAffOrgQualityTest {
 
     private final static boolean PRINT_NOT_MATCHED = true;

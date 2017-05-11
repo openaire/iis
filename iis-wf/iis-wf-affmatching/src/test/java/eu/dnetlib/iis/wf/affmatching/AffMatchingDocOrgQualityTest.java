@@ -16,9 +16,11 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import com.google.common.io.Files;
 
+import eu.dnetlib.iis.common.IntegrationTest;
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
@@ -42,6 +44,7 @@ import pl.edu.icm.sparkutils.test.SparkJobExecutor;
  * 
  * @author madryk
  */
+@Category(IntegrationTest.class)
 public class AffMatchingDocOrgQualityTest {
     
     private final static String INPUT_DATA_DIR_PATH = "src/test/resources/experimentalData/input";

@@ -11,9 +11,11 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.xpath.XPath;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import com.google.common.collect.Sets;
 
+import eu.dnetlib.iis.common.IntegrationTest;
 import junit.framework.TestCase;
 import pl.edu.icm.cermine.ContentExtractor;
 import pl.edu.icm.cermine.exception.AnalysisException;
@@ -22,6 +24,7 @@ import pl.edu.icm.cermine.exception.AnalysisException;
  * 
  * @author Dominika Tkaczyk
  */
+@Category(IntegrationTest.class)
 public class CermineMetadataExtractionTest extends TestCase {
 
     private static final String PDF_FILE = "/eu/dnetlib/iis/wf/metadataextraction/example-1.pdf";
