@@ -378,7 +378,7 @@
             <dependency>
                 <groupId>pl.edu.icm.cermine</groupId>
                 <artifactId>cermine-impl</artifactId>
-                <version>1.12</version>
+                <version>1.13</version>
             </dependency>
 
             <!-- Coansys dependencies -->

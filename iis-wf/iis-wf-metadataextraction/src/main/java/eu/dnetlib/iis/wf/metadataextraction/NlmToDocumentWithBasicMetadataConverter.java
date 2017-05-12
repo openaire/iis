@@ -27,6 +27,7 @@ import eu.dnetlib.iis.metadataextraction.schemas.Range;
 import eu.dnetlib.iis.metadataextraction.schemas.ReferenceBasicMetadata;
 import eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata;
 import pl.edu.icm.cermine.bibref.model.BibEntry;
+import pl.edu.icm.cermine.bibref.model.BibEntryFieldType;
 import pl.edu.icm.cermine.bibref.transformers.NLMToBibEntryConverter;
 import pl.edu.icm.cermine.exception.TransformationException;
 
@@ -250,7 +251,7 @@ public final class NlmToDocumentWithBasicMetadataConverter {
 	private static ReferenceBasicMetadata convertBibEntry(BibEntry entry) {
 		if (entry!=null) {
 			ReferenceBasicMetadata.Builder builder = ReferenceBasicMetadata.newBuilder();
-			List<String> resultValues = entry.getAllFieldValues(BibEntry.FIELD_AUTHOR);
+			List<String> resultValues = entry.getAllFieldValues(BibEntryFieldType.AUTHOR);
 			if (resultValues != null && !resultValues.isEmpty()) {
 				List<CharSequence> authors = new ArrayList<CharSequence>(resultValues.size());
 				for (CharSequence seq : resultValues) {
@@ -258,7 +259,7 @@ public final class NlmToDocumentWithBasicMetadataConverter {
 				}
 				builder.setAuthors(authors);	
 			}
-			String resultValue = entry.getFirstFieldValue(BibEntry.FIELD_PAGES);
+			String resultValue = entry.getFirstFieldValue(BibEntryFieldType.PAGES);
 			if (resultValue!=null) {
                 Pattern pagesPattern = Pattern.compile("^([0-9]+)--([0-9]+)$");
                 Matcher m = pagesPattern.matcher(resultValue);
@@ -272,43 +273,43 @@ public final class NlmToDocumentWithBasicMetadataConverter {
                     }
                 }
 			}
-			resultValue = entry.getFirstFieldValue(BibEntry.FIELD_JOURNAL);
+			resultValue = entry.getFirstFieldValue(BibEntryFieldType.JOURNAL);
 			if (resultValue!=null) {
 				builder.setSource(resultValue);	
 			} 
-			resultValue = entry.getFirstFieldValue(BibEntry.FIELD_TITLE);
+			resultValue = entry.getFirstFieldValue(BibEntryFieldType.TITLE);
 			if (resultValue!=null) {
 				builder.setTitle(resultValue);	
 			}
-			resultValue = entry.getFirstFieldValue(BibEntry.FIELD_VOLUME);
+			resultValue = entry.getFirstFieldValue(BibEntryFieldType.VOLUME);
 			if (resultValue!=null) {
 				builder.setVolume(resultValue);	
 			}
-			resultValue = entry.getFirstFieldValue(BibEntry.FIELD_YEAR);
+			resultValue = entry.getFirstFieldValue(BibEntryFieldType.YEAR);
 			if (resultValue!=null) {
 				builder.setYear(resultValue);	
 			}
-			resultValue = entry.getFirstFieldValue(BibEntry.FIELD_EDITION);
+			resultValue = entry.getFirstFieldValue(BibEntryFieldType.EDITION);
 			if (resultValue!=null) {
 				builder.setEdition(resultValue);	
 			}
-			resultValue = entry.getFirstFieldValue(BibEntry.FIELD_PUBLISHER);
+			resultValue = entry.getFirstFieldValue(BibEntryFieldType.PUBLISHER);
 			if (resultValue!=null) {
 				builder.setPublisher(resultValue);	
 			}
-			resultValue = entry.getFirstFieldValue(BibEntry.FIELD_LOCATION);
+			resultValue = entry.getFirstFieldValue(BibEntryFieldType.LOCATION);
 			if (resultValue!=null) {
 				builder.setLocation(resultValue);	
 			}
-			resultValue = entry.getFirstFieldValue(BibEntry.FIELD_SERIES);
+			resultValue = entry.getFirstFieldValue(BibEntryFieldType.SERIES);
 			if (resultValue!=null) {
 				builder.setSeries(resultValue);	
 			}
-			resultValue = entry.getFirstFieldValue(BibEntry.FIELD_NUMBER);
+			resultValue = entry.getFirstFieldValue(BibEntryFieldType.NUMBER);
 			if (resultValue!=null) {
 				builder.setIssue(resultValue);	
 			}
-			resultValue = entry.getFirstFieldValue(BibEntry.FIELD_URL);
+			resultValue = entry.getFirstFieldValue(BibEntryFieldType.URL);
 			if (resultValue!=null) {
 				builder.setUrl(resultValue);	
 			}
