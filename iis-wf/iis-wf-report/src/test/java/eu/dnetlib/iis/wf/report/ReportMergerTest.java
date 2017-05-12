@@ -1,11 +1,14 @@
 package eu.dnetlib.iis.wf.report;
 
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
 import static eu.dnetlib.iis.wf.report.ReportMerger.PARTIAL_REPORTS_PORT_IN_NAME;
 import static eu.dnetlib.iis.wf.report.ReportMerger.REPORT_PORT_OUT_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,6 +17,7 @@ import java.io.Reader;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -56,6 +60,8 @@ public class ReportMergerTest {
     public void setup() throws IOException {
         inputPartialReportsBasePath = tempFolder.newFolder("partial_reports").getPath();
         outputReportPath = tempFolder.getRoot().getPath() + "/report.json";
+        System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME, 
+                tempFolder.getRoot().getAbsolutePath() + File.separatorChar + "test.properties");
         
     }
     
@@ -97,8 +103,19 @@ public class ReportMergerTest {
         
         JsonObject expectedJsonReport = readJsonFromClasspath("/eu/dnetlib/iis/common/report/report_merged.json");
         
-        
         assertEquals(expectedJsonReport, actualReportJson);
+        
+        Properties actionData = getStoredProperties();
+        assertNotNull(actionData);
+        assertEquals(8, actionData.size());
+        assertEquals("3", actionData.getProperty("param1.paramA.I"));
+        assertEquals("6", actionData.getProperty("param1.paramA.III"));
+        assertEquals("4", actionData.getProperty("param1.paramB"));
+        assertEquals("33", actionData.getProperty("param1.paramX"));
+        assertEquals("12", actionData.getProperty("param2"));
+        assertEquals("2", actionData.getProperty("param1.paramA.II"));
+        assertEquals("5", actionData.getProperty("param1.paramC.II"));
+        assertEquals("1333", actionData.getProperty("param1.paramX.Z"));
     }
     
     @Test
@@ -141,6 +158,12 @@ public class ReportMergerTest {
             
             return jsonElement.getAsJsonObject();
         }
+    }
+    
+    private Properties getStoredProperties() throws FileNotFoundException, IOException {
+        Properties properties = new Properties();
+        properties.load(new FileInputStream(System.getProperty(OOZIE_ACTION_OUTPUT_FILENAME)));
+        return properties;
     }
     
 }
