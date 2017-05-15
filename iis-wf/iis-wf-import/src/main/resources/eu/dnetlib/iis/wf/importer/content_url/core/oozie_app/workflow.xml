@@ -111,6 +111,10 @@
                     <value>false</value>
                 </property>
                 <property>
+                    <name>mapreduce.task.timeout</name>
+                    <value>7200000</value>
+                </property>
+                <property>
                     <name>mapreduce.job.inputformat.class</name>
                     <value>org.apache.avro.mapreduce.AvroKeyInputFormat</value>
                 </property>
