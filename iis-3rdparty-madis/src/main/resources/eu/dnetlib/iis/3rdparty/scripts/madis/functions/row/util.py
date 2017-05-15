@@ -102,7 +102,7 @@ def urlrequest(*args):
         req = urllib2.Request(''.join((x for x in args if x != None)), None, domainExtraHeaders)
         hreq = urllib2.urlopen(req, timeout=3)
 
-        if [1 for x,y in hreq.headers.items() if x.lower() in ('content-encoding', 'content-type') and y.lower().f$
+        if [1 for x,y in hreq.headers.items() if x.lower() in ('content-encoding', 'content-type') and y.lower().find('gzip')!=-1]:
             hreq = gzip.GzipFile(fileobj=hreq)
 
         return unicode(hreq.read(), 'utf-8', errors = 'replace')
