@@ -25,20 +25,21 @@ regexpcountwords('(?:\bwell?come trust\b)|(?:(?:\bthis work was|financial(?:ly)?
 create temp table output_table as 
 
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min(1.49,confidence)/1.5)) as C1, docid, id, fundingclass1 from ( select docid,id,max(confidence) as confidence, docid, id,  fundingclass1 from ( select 
-case when keywordmatch then 0.9 else 0.8 end as confidence, docid, 
+case when keywordmatch then 0.9 else generalmatch*0.25 end as confidence, docid, 
 case when keywordmatch then id else var('tara_unidentified') end as id, fundingclass1
 from (
 unindexed select 
-regexprmatches('\b'||tarakeywords||'\b', context) as keywordmatch,
+case when tarakeywords="" then 0 else regexprmatches('\b'||tarakeywords||'\b', context) end as keywordmatch,
+regexpcountwords('(?:(?:\bfou?ndation)? tara expeditions?\b)|(?:\btara[ -]{1,2}(?:arctic|oceans?|pacific|med|girus|funding)\b)|(?:\btara transpolar drift\b)', context) as generalmatch,
 docid, id, fundingclass1
 from (
-select docid, stripchars(middle,'.)(,[]') as middle, prev, next, lower(j2s(prev,middle,next)) as context
+select docid, stripchars(middle,'.)(,[]') as middle, lower(prev||" "||middle||" "||next) as context
 from (
-  setschema 'docid,prev,middle,next' select c1, textwindow2s(textacknowledgmentstara(C2),20,1,3, '(\b[Tt]ara\b)') from pubs where c2 is not null
+  setschema 'docid,prev,middle,next' select c1, textwindow2s(keywords(textacknowledgmentstara(C2)),4,1,4, '(\b(?:Tara|TARA)\b)') from pubs where c2 is not null
 )), grants
 where fundingclass1='TARA' and var('tara_unidentified')
 ))
-group by docid)
+group by docid having confidence>0)
 
 
 union all
