@@ -117,7 +117,7 @@
         </property>
         <property>
             <name>ds_mapredChildJavaOpts</name>
-            <value>-Xmx4g</value>
+            <value>-Xmx5632m</value>
             <description>mapred child java opts</description>
         </property>
         <property>
