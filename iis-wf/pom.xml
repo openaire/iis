@@ -24,6 +24,7 @@
        <module>iis-wf-referenceextraction</module>
        <module>iis-wf-preprocessing</module>
        <module>iis-wf-primary</module>
+       <module>iis-wf-probabilistic-topic-modeling</module>
        <module>iis-wf-transformers</module>
     </modules>
     <pluginRepositories>

@@ -1,0 +1,38 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="ptm_invoke">
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    <start to="invoke" />
+
+    <action name="invoke">
+        <shell xmlns="uri:oozie:shell-action:0.3">
+            <exec>invoke.sh</exec>
+            <argument>two</argument>
+            <argument>different</argument>
+            <argument>arguments</argument>
+            <file>lib/scripts/invoke.sh</file>
+        </shell>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
+    <kill name="fail">
+        <message>Unfortunately, the workflow failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+    <end name="end" />
+</workflow-app>
