@@ -2,7 +2,7 @@ PRAGMA temp_store_directory = '.';
 
 create temp table pubs as setschema 'c1,c2' select jsonpath(c1, '$.id', '$.text') from stdinput();
 
-select jdict('documentId', id, 'softwareURL', match,'repositoryName',repo,'softwareTitle',title,'softwareDescription',description,'softwarePageURL',url,'confidenceLevel',0.8) from (select id, match, repo,
+select jdict('documentId', id, 'softwareURL', match,'repositoryName',comprspaces(regexpr("\n",repo," ")),'softwareTitle',comprspaces(regexpr("\n",title," ")),'softwareDescription',comprspaces(regexpr("\n",description," ")),'softwarePageURL',url,'confidenceLevel',0.8) from (select id, match, repo,
 case
 	when repo='GitHub' then regexpr('itemprop="name">.+>(.+)</a>', data)
 	when repo='Bitbucket' then regexpr('bitbucket.org/[\w-]+/([\w-]+)/?', match)
