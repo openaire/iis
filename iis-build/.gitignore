@@ -1,5 +1,7 @@
-tignore
+.*
+!.gitignore
 !.gitkeep
+
 **/job.properties
 /*/target
 /target
