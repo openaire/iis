@@ -155,7 +155,7 @@
                 </property>
                 <property>
                     <name>mapreduce.task.timeout</name>
-                    <value>7200000</value>
+                    <value>14400000</value>
                 </property>
                 <property>
                     <name>mapreduce.job.inputformat.class</name>
