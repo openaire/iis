@@ -1,0 +1,119 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="ptm_avro2rdb">
+
+    <parameters>
+        <property>
+            <name>input_meta</name>
+            <description>input eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal records</description>
+        </property>
+        <property>
+            <name>input_text</name>
+            <description>input eu.dnetlib.iis.metadataextraction.schemas.DocumentText records</description>
+        </property>
+        <property>
+            <name>input_project</name>
+            <description>input eu.dnetlib.iis.importer.schemas.Project records</description>
+        </property>
+        <property>
+            <name>input_document_to_project</name>
+            <description>input eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject records</description>
+        </property>
+
+        <property>
+            <name>confidenceLevelThreshold</name>
+            <value>0.9</value>
+            <description>confidence level threshold related to inferred DocumentToProject relations</description>
+        </property>
+
+        <property>
+            <name>output_publication</name>
+            <description>transformed publication records</description>
+        </property>
+        <property>
+            <name>output_pub_grant</name>
+            <description>transformed publication to grant relations</description>
+        </property>
+        <property>
+            <name>output_citation</name>
+            <description>transformed citation records</description>
+        </property>
+        <property>
+            <name>output_pub_citation</name>
+            <description>transformed publication to citation relations</description>
+        </property>
+        
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
+            <name>output_report_relative_path</name>
+            <value>ptm_avro2rdb</value>
+            <description>directory for storing report (relative to output_report_root_path)</description>
+        </property>
+        
+        <property>
+            <name>sparkExecutorMemory</name>
+            <description>memory for individual executor</description>
+        </property>
+        <property>
+            <name>sparkExecutorCores</name>
+            <description>number of cores used by single executor</description>
+        </property>
+        
+    </parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
+    <start to="avro2rdb" />
+
+    <action name="avro2rdb">
+        <spark xmlns="uri:oozie:spark-action:0.2">
+
+            <master>yarn-cluster</master>
+            <mode>cluster</mode>
+            <name>ptm_avro2avro</name>
+            <class>eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerJob</class>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-probabilistic-topic-modeling-${projectVersion}.jar</jar>
+            
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores}</spark-opts>
+
+            <arg>-inputMetadataAvroPath=${input_meta}</arg>
+            <arg>-inputTextAvroPath=${input_text}</arg>
+            <arg>-inputProjectAvroPath=${input_project}</arg>
+            <arg>-inputDocumentToProjectAvroPath=${input_document_to_project}</arg>
+            
+            <arg>-outputPublicationAvroPath=${output_publication}</arg>
+            <arg>-outputPubGrantAvroPath=${output_pub_grant}</arg>
+            <arg>-outputCitationAvroPath=${output_citation}</arg>
+            <arg>-outputPubCitationAvroPath=${output_pub_citation}</arg>
+            
+            <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
+
+            <arg>-confidenceLevelThreshold=${confidenceLevelThreshold}</arg>
+
+        </spark>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
+    <kill name="fail">
+        <message>Unfortunately, the workflow failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+    <end name="end" />
+</workflow-app>
