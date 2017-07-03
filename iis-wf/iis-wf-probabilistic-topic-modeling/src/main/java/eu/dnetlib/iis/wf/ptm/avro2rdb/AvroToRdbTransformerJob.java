@@ -1,5 +1,7 @@
 package eu.dnetlib.iis.wf.ptm.avro2rdb;
 
+import static org.apache.spark.sql.functions.explode;
+
 import java.io.IOException;
 import java.util.Properties;
 
@@ -36,6 +38,7 @@ public class AvroToRdbTransformerJob {
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
             
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputPublicationAvroPath);
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputPubKeywordAvroPath);
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputPubGrantAvroPath);
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputCitationAvroPath);
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputPubCitationAvroPath);
@@ -53,21 +56,38 @@ public class AvroToRdbTransformerJob {
             
             DataFrame documentToProject = sqlContext.read().format("com.databricks.spark.avro").load(params.inputDocumentToProjectAvroPath);
             
+            // ==============================================================================
+            // Publication
+            // ==============================================================================
+            // in final solution join text with meta as the last step of processing, after all transformations
+            // TODO remove duplicated column and flattenize by creating publication dataframe ready to be written to rdb
+            // TODO filter by either text or abstract not empty
+            /*
+            metadata.printSchema();
             
-            // filtering
             DataFrame metadataSubset = metadata.select(
                     metadata.col("id").as("pubId"),
                     metadata.col("title"), 
                     metadata.col("abstract"), 
-                    metadata.col("year").as("pubyear"),
-                    metadata.col("keywords")    // TODO make single string out of array
+                    metadata.col("year"),
+                    metadata.col("keywords")
                     );
-            // in final solution join text with meta as the last step of processing, after all transformations
-            // TODO remove duplicated column and flattenize by creating publication dataframe ready to be written to rdb
-            // TODO filter by either text or abstract not empty
+            DataFrame metadataJoinedWithText = metadataSubset.join(text, metadataSubset.col("pubId").equalTo(text.col("id")));
+            DataFrame normalizedPublication = metadataJoinedWithText.select(
+                    metadataJoinedWithText.col("pubId"),
+                    metadataJoinedWithText.col("title"), 
+                    metadataJoinedWithText.col("abstract"), 
+                    metadataJoinedWithText.col("year").as("pubyear"),
+                    metadataJoinedWithText.col("keywords"),
+                    metadataJoinedWithText.col("text").as("fulltext")
+                    );
+            writeToJson(normalizedPublication, params.outputPublicationAvroPath);
+            */
+            // this fails with "running beyond memory limits" on 7g, 4 cores
             
-//            DataFrame metadataJoinedWithText = metadataSubset.join(text, metadataSubset.col("pubId").equalTo(text.col("id")));
-            // this fails with "running beyond memory limits"!
+            // ==============================================================================
+            // Pub Grant
+            // ==============================================================================
             
             DataFrame documentJoinedWithProjectDetails = documentToProject.join(project, 
                     documentToProject.col("projectId").equalTo(project.col("id")));
@@ -79,18 +99,43 @@ public class AvroToRdbTransformerJob {
                             documentJoinedWithProjectDetails.col("projectGrantId"),
                             documentJoinedWithProjectDetails.col("fundingClass")
                     );
-            // WHOA! IT WORKED!
+            writeToJson(normalizedPubGrant, params.outputPubGrantAvroPath);
+            
+            // ==============================================================================
+            // PubKeyword
+            // ==============================================================================
+            metadata.printSchema();
+            DataFrame metadataKeywordsExploded = metadata.select(
+                    metadata.col("id").as("pubId"),
+                    explode(metadata.col("keywords")).as("keyword"));
+            metadataKeywordsExploded.printSchema(); 
+            writeToJson(metadataKeywordsExploded, params.outputPubKeywordAvroPath);
+            
+            // ==============================================================================
+            // Citation
+            // ==============================================================================
+            metadata.printSchema();
+            DataFrame metadataReferencesExploded = metadata.select(
+                    metadata.col("id").as("pubId"),
+                    explode(metadata.col("references.text")).as("reference"));
+            metadataReferencesExploded.printSchema(); 
+            writeToJson(metadataReferencesExploded, params.outputCitationAvroPath);
+            // accessing nested text elements: references.text works properly but the column name is "col"
+
+            // https://stackoverflow.com/questions/30501300/is-spark-dataframe-nested-structure-limited-for-selection
+            // there is a problem with arrays and lists from java beans
+            // https://stackoverflow.com/questions/35986157/creating-a-dataframe-out-of-nested-user-defined-objects
+            
+            // ==============================================================================
+            // Pub Citation
+            // ==============================================================================
+
+            
+            // ==============================================================================
+            
+            
             
             // TODO perform repartition to minimize number of partitions what potentially could kill postgress db
-            
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.start();
-
-            // writing dataframes to avro first!
-//            writeToAvro(metadataJoinedWithText, params.outputPublicationAvroPath);
-            writeToAvro(normalizedPubGrant, params.outputPubGrantAvroPath);
-             
-            log.warn("time taken to write all the data: " + stopWatch.elapsedMillis());
             
         }
     }
@@ -133,6 +178,11 @@ public class AvroToRdbTransformerJob {
         // TODO how to set avro schema explicitly, we could surely use AvroSaver
     }
     
+    private static void writeToJson(DataFrame dataFrame, String outputPath) {
+        // Saves the subset of the Avro records read in
+           dataFrame.write().json(outputPath);
+           // TODO how to set avro schema explicitly, we could surely use AvroSaver
+       }
     
     @Parameters(separators = "=")
     private static class AvroToRdbTransformerJobParameters {
@@ -156,6 +206,9 @@ public class AvroToRdbTransformerJob {
         
         @Parameter(names = "-outputPublicationAvroPath", required = true)
         private String outputPublicationAvroPath;
+        
+        @Parameter(names = "-outputPubKeywordAvroPath", required = true)
+        private String outputPubKeywordAvroPath;
         
         @Parameter(names = "-outputPubGrantAvroPath", required = true)
         private String outputPubGrantAvroPath;
