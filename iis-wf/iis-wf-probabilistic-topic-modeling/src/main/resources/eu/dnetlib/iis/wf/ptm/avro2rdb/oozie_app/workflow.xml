@@ -60,11 +60,19 @@
             <name>sparkExecutorMemory</name>
             <description>memory for individual executor</description>
         </property>
+        
+        <property>
+            <name>sparkNumExecutors</name>
+            <description>total number of executors</description>
+        </property>
         <property>
             <name>sparkExecutorCores</name>
             <description>number of cores used by single executor</description>
         </property>
-        
+        <property>
+            <name>sparkDriverMemory</name>
+            <description>memory for driver process</description>
+        </property>
     </parameters>
 
     <global>
@@ -90,11 +98,11 @@
 
             <master>yarn-cluster</master>
             <mode>cluster</mode>
-            <name>ptm_avro2avro</name>
+            <name>ptm_avro2rdb</name>
             <class>eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-probabilistic-topic-modeling-${projectVersion}.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --num-executors ${sparkNumExecutors} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
 
             <arg>-inputMetadataAvroPath=${input_meta}</arg>
             <arg>-inputTextAvroPath=${input_text}</arg>

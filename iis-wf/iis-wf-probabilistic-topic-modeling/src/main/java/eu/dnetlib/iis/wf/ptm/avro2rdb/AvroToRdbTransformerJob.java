@@ -10,6 +10,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.DataFrame;
 import org.apache.spark.sql.SQLContext;
+import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils;
 
 import com.beust.jcommander.JCommander;
@@ -24,6 +25,15 @@ public class AvroToRdbTransformerJob {
     
     private static final Logger log = Logger.getLogger(AvroToRdbTransformerJob.class);
     
+    private static final String RDB_URL = "jdbc:postgresql://10.19.65.16/ptm";
+    
+    private static final SaveMode SAVE_MODE = SaveMode.Append;
+    
+    private static final String TABLE_PUBLICATION = "Publication";
+    private static final String TABLE_PUB_GRANT = "PubGrant";
+    private static final String TABLE_PUB_KEYWORD = "PubKeyword";
+    private static final String TABLE_CITATION = "Citation";
+    private static final String TABLE_PUB_CITATION = "PubCitation";
     
     //------------------------ LOGIC --------------------------
     
@@ -59,69 +69,69 @@ public class AvroToRdbTransformerJob {
             // ==============================================================================
             // Publication
             // ==============================================================================
-            // in final solution join text with meta as the last step of processing, after all transformations
-            // TODO remove duplicated column and flattenize by creating publication dataframe ready to be written to rdb
-            // TODO filter by either text or abstract not empty
-            /*
-            metadata.printSchema();
             
             DataFrame metadataSubset = metadata.select(
                     metadata.col("id").as("pubId"),
                     metadata.col("title"), 
                     metadata.col("abstract"), 
-                    metadata.col("year"),
-                    metadata.col("keywords")
+                    metadata.col("year")
+            );
+            
+            DataFrame textDeduped = text.dropDuplicates(new String[] {"id"});
+            DataFrame metadataJoinedWithText = metadataSubset.join(
+                    textDeduped, metadataSubset.col("pubId").equalTo(textDeduped.col("id")), "left_outer");
+            
+            DataFrame metadataFiltered = metadataJoinedWithText.filter("abstract is not null or text is not null");
+            
+            DataFrame normalizedPublication = metadataFiltered.select(
+                    metadataFiltered.col("pubId"),
+                    metadataFiltered.col("title"), 
+                    metadataFiltered.col("abstract"), 
+                    metadataFiltered.col("year").as("pubyear"),
+                    metadataFiltered.col("text").as("fulltext")
                     );
-            DataFrame metadataJoinedWithText = metadataSubset.join(text, metadataSubset.col("pubId").equalTo(text.col("id")));
-            DataFrame normalizedPublication = metadataJoinedWithText.select(
-                    metadataJoinedWithText.col("pubId"),
-                    metadataJoinedWithText.col("title"), 
-                    metadataJoinedWithText.col("abstract"), 
-                    metadataJoinedWithText.col("year").as("pubyear"),
-                    metadataJoinedWithText.col("keywords"),
-                    metadataJoinedWithText.col("text").as("fulltext")
-                    );
-            writeToJson(normalizedPublication, params.outputPublicationAvroPath);
-            */
-            // this fails with "running beyond memory limits" on 7g, 4 cores
+            
+            // writeToRdb(normalizedPublication, TABLE_PUBLICATION);
             
             // ==============================================================================
             // Pub Grant
             // ==============================================================================
             
-            DataFrame documentJoinedWithProjectDetails = documentToProject.join(project, 
-                    documentToProject.col("projectId").equalTo(project.col("id")));
+            // FIXME make sure proper join type is used, inner join should be fine here
+            // joinType One of: `inner`, `outer`, `left_outer`, `right_outer`, `leftsemi`
+            DataFrame documentJoinedWithProjectDetails = documentToProject.join(
+                    project, documentToProject.col("projectId").equalTo(project.col("id")));
             
             DataFrame normalizedPubGrant = documentJoinedWithProjectDetails
                     .filter("confidenceLevel > " + params.confidenceLevelThreshold)
                     .select(
                             documentJoinedWithProjectDetails.col("documentId").as("pubId"),
-                            documentJoinedWithProjectDetails.col("projectGrantId"),
-                            documentJoinedWithProjectDetails.col("fundingClass")
+                            documentJoinedWithProjectDetails.col("projectGrantId").as("project_code"),
+                            documentJoinedWithProjectDetails.col("fundingClass").as("funder")
                     );
-            writeToJson(normalizedPubGrant, params.outputPubGrantAvroPath);
+            // writeToRdb(normalizedPubGrant, TABLE_PUB_GRANT);
             
             // ==============================================================================
             // PubKeyword
             // ==============================================================================
-            metadata.printSchema();
+
             DataFrame metadataKeywordsExploded = metadata.select(
                     metadata.col("id").as("pubId"),
                     explode(metadata.col("keywords")).as("keyword"));
-            metadataKeywordsExploded.printSchema(); 
-            writeToJson(metadataKeywordsExploded, params.outputPubKeywordAvroPath);
+            // writeToRdb(metadataKeywordsExploded, TABLE_PUB_KEYWORD);
             
             // ==============================================================================
             // Citation
             // ==============================================================================
-            metadata.printSchema();
+            // TODO in fact we are interested only in matched citations, so we should rely on citationmatching outcome rather than references
+            
             DataFrame metadataReferencesExploded = metadata.select(
                     metadata.col("id").as("pubId"),
                     explode(metadata.col("references.text")).as("reference"));
-            metadataReferencesExploded.printSchema(); 
-            writeToJson(metadataReferencesExploded, params.outputCitationAvroPath);
-            // accessing nested text elements: references.text works properly but the column name is "col"
-
+            metadataReferencesExploded.printSchema();
+            // notice: currently we cannot write to this table due PK restriction, we do have duplicates
+            // writeToRdb(metadataReferencesExploded, TABLE_CITATION);
+            
             // https://stackoverflow.com/questions/30501300/is-spark-dataframe-nested-structure-limited-for-selection
             // there is a problem with arrays and lists from java beans
             // https://stackoverflow.com/questions/35986157/creating-a-dataframe-out-of-nested-user-defined-objects
@@ -133,37 +143,31 @@ public class AvroToRdbTransformerJob {
             
             // ==============================================================================
             
-            
-            
-            // TODO perform repartition to minimize number of partitions what potentially could kill postgress db
-            
         }
     }
     
     
     //------------------------ PRIVATE --------------------------
     
-    private Properties prepareConnectionProperties() {
+    private static Properties prepareConnectionProperties() {
         Properties props = new Properties();
         props.setProperty("user", "openaire");
-        props.setProperty("password", "xxx");
-        // TODO should we provide driver class?
+        props.setProperty("password", "MeiNaeshaik8");
+        props.setProperty("driver", "org.postgresql.Driver");
         return props;
     }
     
-    private static void writeToRdbV1(DataFrame dataFrame,
-            String url, String table, Properties connectionProperties) {
+    private static void writeToRdb(DataFrame dataFrame, String table) {
         // based on:
         // http://www.sparkexpert.com/2015/04/17/save-apache-spark-dataframe-to-database/
-        dataFrame.write().jdbc(url, table, connectionProperties);
+        dataFrame.write().mode(SAVE_MODE).jdbc(RDB_URL, table, prepareConnectionProperties());
     }
     
-    private static void writeToRdbV2(DataFrame dataFrame,
-            String url, String table, Properties connectionProperties) {
+    private static void writeToRdbV2(DataFrame dataFrame, String table) {
         // based on:
         // https://stackoverflow.com/questions/34849293/recommended-ways-to-load-large-csv-to-rdb-like-mysql
         // all written in single transaction
-        JdbcUtils.saveTable(dataFrame, url, table, connectionProperties);
+        JdbcUtils.saveTable(dataFrame, RDB_URL, table, prepareConnectionProperties());
 
     }
     
