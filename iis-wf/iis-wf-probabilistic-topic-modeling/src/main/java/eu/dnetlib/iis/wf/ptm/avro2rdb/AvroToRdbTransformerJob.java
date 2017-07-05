@@ -91,7 +91,7 @@ public class AvroToRdbTransformerJob {
                     metadataFiltered.col("text").as("fulltext")
                     );
             
-            // writeToRdb(normalizedPublication, TABLE_PUBLICATION);
+            // writeToRdb(normalizedPublication, TABLE_PUBLICATION, params.postgresPassword);
             
             // ==============================================================================
             // Pub Grant
@@ -109,7 +109,8 @@ public class AvroToRdbTransformerJob {
                             documentJoinedWithProjectDetails.col("projectGrantId").as("project_code"),
                             documentJoinedWithProjectDetails.col("fundingClass").as("funder")
                     );
-            // writeToRdb(normalizedPubGrant, TABLE_PUB_GRANT);
+            
+            // writeToRdb(normalizedPubGrant, TABLE_PUB_GRANT, params.postgresPassword);
             
             // ==============================================================================
             // PubKeyword
@@ -118,7 +119,8 @@ public class AvroToRdbTransformerJob {
             DataFrame metadataKeywordsExploded = metadata.select(
                     metadata.col("id").as("pubId"),
                     explode(metadata.col("keywords")).as("keyword"));
-            // writeToRdb(metadataKeywordsExploded, TABLE_PUB_KEYWORD);
+            
+            // writeToRdb(metadataKeywordsExploded, TABLE_PUB_KEYWORD, params.postgresPassword);
             
             // ==============================================================================
             // Citation
@@ -128,7 +130,7 @@ public class AvroToRdbTransformerJob {
             DataFrame metadataReferencesExploded = metadata.select(
                     metadata.col("id").as("pubId"),
                     explode(metadata.col("references.text")).as("reference"));
-            metadataReferencesExploded.printSchema();
+            // metadataReferencesExploded.printSchema();
             // notice: currently we cannot write to this table due PK restriction, we do have duplicates
             // writeToRdb(metadataReferencesExploded, TABLE_CITATION);
             
@@ -149,43 +151,31 @@ public class AvroToRdbTransformerJob {
     
     //------------------------ PRIVATE --------------------------
     
-    private static Properties prepareConnectionProperties() {
+    private static Properties prepareConnectionProperties(String postgresPassword) {
         Properties props = new Properties();
         props.setProperty("user", "openaire");
-        props.setProperty("password", "MeiNaeshaik8");
+        props.setProperty("password", postgresPassword);
         props.setProperty("driver", "org.postgresql.Driver");
         return props;
     }
     
-    private static void writeToRdb(DataFrame dataFrame, String table) {
+    private static void writeToRdb(DataFrame dataFrame, String table, String postgresPassword) {
         // based on:
         // http://www.sparkexpert.com/2015/04/17/save-apache-spark-dataframe-to-database/
-        dataFrame.write().mode(SAVE_MODE).jdbc(RDB_URL, table, prepareConnectionProperties());
+        dataFrame.write().mode(SAVE_MODE).jdbc(RDB_URL, table, prepareConnectionProperties(postgresPassword));
     }
     
-    private static void writeToRdbV2(DataFrame dataFrame, String table) {
+    private static void writeToRdbV2(DataFrame dataFrame, String table, String postgresPassword) {
         // based on:
         // https://stackoverflow.com/questions/34849293/recommended-ways-to-load-large-csv-to-rdb-like-mysql
         // all written in single transaction
-        JdbcUtils.saveTable(dataFrame, RDB_URL, table, prepareConnectionProperties());
+        JdbcUtils.saveTable(dataFrame, RDB_URL, table, prepareConnectionProperties(postgresPassword));
 
-    }
-    
-    private static void writeToAvro(DataFrame dataFrame, String outputPath) {
-     // Saves the subset of the Avro records read in
-        dataFrame.write().format("com.databricks.spark.avro")
-                // causes failure when set for both read and write
-                // does nothing, output file looks exactly the same
-//              .option("avroSchema", DocumentToProject.SCHEMA$.toString())
-                .save(outputPath);
-
-        // TODO how to set avro schema explicitly, we could surely use AvroSaver
     }
     
     private static void writeToJson(DataFrame dataFrame, String outputPath) {
         // Saves the subset of the Avro records read in
            dataFrame.write().json(outputPath);
-           // TODO how to set avro schema explicitly, we could surely use AvroSaver
        }
     
     @Parameters(separators = "=")
@@ -207,7 +197,7 @@ public class AvroToRdbTransformerJob {
         @Parameter(names = "-confidenceLevelThreshold", required = true)
         private Float confidenceLevelThreshold;
         
-        
+       
         @Parameter(names = "-outputPublicationAvroPath", required = true)
         private String outputPublicationAvroPath;
         
@@ -226,5 +216,8 @@ public class AvroToRdbTransformerJob {
         
         @Parameter(names = "-outputReportPath", required = true)
         private String outputReportPath;
+        
+        @Parameter(names = "-postgresPassword", required = true)
+        private String postgresPassword;
     }
 }

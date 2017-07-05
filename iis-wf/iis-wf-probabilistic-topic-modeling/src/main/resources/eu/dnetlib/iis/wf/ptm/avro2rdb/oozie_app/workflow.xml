@@ -73,6 +73,11 @@
             <name>sparkDriverMemory</name>
             <description>memory for driver process</description>
         </property>
+        
+        <property>
+            <name>postgres_password</name>
+            <description>password required to access postgres database</description>
+        </property>
     </parameters>
 
     <global>
@@ -118,6 +123,8 @@
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
 
             <arg>-confidenceLevelThreshold=${confidenceLevelThreshold}</arg>
+            
+            <arg>-postgresPassword=${postgres_password}</arg>
 
         </spark>
         <ok to="end" />
