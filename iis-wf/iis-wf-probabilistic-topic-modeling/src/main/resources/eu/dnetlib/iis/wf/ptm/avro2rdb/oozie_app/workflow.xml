@@ -17,33 +17,15 @@
             <name>input_document_to_project</name>
             <description>input eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject records</description>
         </property>
+        <property>
+            <name>input_citation</name>
+            <description>input eu.dnetlib.iis.common.citations.schemas.Citation records</description>
+        </property>
 
         <property>
             <name>confidenceLevelThreshold</name>
             <value>0.9</value>
             <description>confidence level threshold related to inferred DocumentToProject relations</description>
-        </property>
-
-        <property>
-            <name>output_publication</name>
-            <description>transformed publication records</description>
-        </property>
-        
-        <property>
-            <name>output_pub_keyword</name>
-            <description>set of keywords</description>
-        </property>
-        <property>
-            <name>output_pub_grant</name>
-            <description>transformed publication to grant relations</description>
-        </property>
-        <property>
-            <name>output_citation</name>
-            <description>transformed citation records</description>
-        </property>
-        <property>
-            <name>output_pub_citation</name>
-            <description>transformed publication to citation relations</description>
         </property>
         
         <property>
@@ -113,12 +95,7 @@
             <arg>-inputTextAvroPath=${input_text}</arg>
             <arg>-inputProjectAvroPath=${input_project}</arg>
             <arg>-inputDocumentToProjectAvroPath=${input_document_to_project}</arg>
-            
-            <arg>-outputPublicationAvroPath=${output_publication}</arg>
-            <arg>-outputPubKeywordAvroPath=${output_pub_keyword}</arg>
-            <arg>-outputPubGrantAvroPath=${output_pub_grant}</arg>
-            <arg>-outputCitationAvroPath=${output_citation}</arg>
-            <arg>-outputPubCitationAvroPath=${output_pub_citation}</arg>
+            <arg>-inputCitationAvroPath=${input_citation}</arg>
             
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
 
