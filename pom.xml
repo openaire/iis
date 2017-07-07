@@ -57,18 +57,10 @@
             <id>ceon</id>
             <url>https://maven.ceon.pl/artifactory/repo/</url>
         </repository>
-
         <repository>
-            <id>dnet-deps</id>
-            <name>dnet-dependencies</name>
-            <url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet-deps</url>
-            <layout>default</layout>
-        </repository>
-
-        <repository>
-            <id>dnet4-releases</id>
-            <name>D-Net 4 Releases</name>
-            <url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-releases</url>
+            <id>dnet45-releases</id>
+            <name>D-Net 45 releases</name>
+            <url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet45-releases</url>
             <layout>default</layout>
             <snapshots>
                 <enabled>false</enabled>
@@ -77,18 +69,17 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
-        
         <repository>
-            <id>dnet4-bootstrap-release</id>
-            <name>dnet4 bootstrap release</name>
-            <url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-bootstrap-release</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
+            <id>dnet45-bootstrap-release</id>
+            <name>dnet45 bootstrap release</name>
+            <url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet45-bootstrap-release</url>
+            <layout>default</layout>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
         </repository>
 
         <repository>
@@ -233,6 +224,15 @@
                     <exclusion>
                         <artifactId>servlet-api</artifactId>
                         <groupId>javax.servlet</groupId>
+                    </exclusion>
+                    <!-- added temporarily due to unresolvable transitive dependencies: more in #2810#note-3 -->
+                    <exclusion>
+                        <groupId>org.apache.calcite</groupId>
+                        <artifactId>calcite-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.calcite</groupId>
+                        <artifactId>calcite-avatica</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -650,21 +650,12 @@
                 <version>1.2.0</version>
             </dependency>
 
-            <!-- this version has to be aligned with dnet transitive dependencies -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-bundle-jaxrs</artifactId>
-                <version>[2.7.8]</version>
-                <scope>runtime</scope>
-                <exclusions>
-                    <!-- unneeded -->
-                    <exclusion>
-                        <groupId>org.eclipse.jetty</groupId>
-                        <artifactId>jetty-server</artifactId>
-                    </exclusion>
-                </exclusions>
+                <artifactId>cxf-rt-frontend-jaxws</artifactId>
+                <version>${cxf.version}</version>
             </dependency>
-
+             
             <!-- this version has to be aligned with cdh5.9.0 sharelib -->
             <dependency>
                 <groupId>com.sun.xml.bind</groupId>
@@ -982,7 +973,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring.version>[4.0.0.RELEASE]</spring.version>
+        <spring.version>[4.2.5.RELEASE]</spring.version>
+        <cxf.version>[3.1.5]</cxf.version>
 
         <iis.cdh.version>cdh5.9.0</iis.cdh.version>
 

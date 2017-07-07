@@ -65,12 +65,4 @@
     </plugins>
 	</build>
 
-    <distributionManagement>
-        <repository>
-        <id>dnet4-bootstrap-release</id>
-        <url>
-        http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-bootstrap-release
-        </url>
-        </repository>
-    </distributionManagement>
 </project>

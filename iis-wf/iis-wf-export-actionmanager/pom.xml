@@ -79,11 +79,11 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 		</dependency>
-		<dependency>
-	        <groupId>org.apache.cxf</groupId>
-	        <artifactId>cxf-bundle-jaxrs</artifactId>
-		</dependency>
-		
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+        </dependency>
+         
 		<!-- required by hadoop, not sure why, need to ivestigate this -->
 		<dependency>
 			<groupId>xml-apis</groupId>

@@ -27,13 +27,7 @@
        <module>iis-wf-transformers</module>
     </modules>
     <pluginRepositories>
-      <pluginRepository>
-	<id>dnet4-bootstrap-release-plugin</id>
-	<name>dnet4 bootstrap release plugin</name>
-	<url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet4-bootstrap-release</url>
-	<layout>default</layout>
-      </pluginRepository>
-     <pluginRepository>
+        <pluginRepository>
             <id>iis-releases</id>
             <name>iis releases plugin repository</name>
             <url>http://maven.ceon.pl/artifactory/iis-releases</url>

@@ -2,15 +2,11 @@ package eu.dnetlib.iis.wf.importer.facade;
 
 import java.util.Collections;
 
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
-
 import org.apache.log4j.Logger;
 
 import eu.dnetlib.enabling.is.lookup.rmi.ISLookUpDocumentNotFoundException;
 import eu.dnetlib.enabling.is.lookup.rmi.ISLookUpException;
 import eu.dnetlib.enabling.is.lookup.rmi.ISLookUpService;
-import eu.dnetlib.enabling.resultset.client.ResultSetClientFactory;
-import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
 
 /**
  * WebService based database facade.
@@ -46,12 +42,7 @@ public class WebServiceISLookupFacade extends AbstractResultSetAwareWebServiceFa
     @Override
     public Iterable<String> searchProfile(String xPathQuery) throws ServiceFacadeException {
         try {
-            W3CEndpointReference eprResult = getService().searchProfile(xPathQuery);
-            // obtaining resultSet
-            ResultSetClientFactory rsFactory = new ResultSetClientFactory(
-                    getResultSetPageSize(), getResultSetReadTimeout(), getResultSetConnectionTimeout());
-            rsFactory.setServiceResolver(new JaxwsServiceResolverImpl());
-            return rsFactory.getClient(eprResult);    
+            return getService().quickSearchProfile(xPathQuery);
         }  catch (ISLookUpDocumentNotFoundException e) {
             log.error("unable to find profile for query: " + xPathQuery, e);
             return Collections.emptyList();
