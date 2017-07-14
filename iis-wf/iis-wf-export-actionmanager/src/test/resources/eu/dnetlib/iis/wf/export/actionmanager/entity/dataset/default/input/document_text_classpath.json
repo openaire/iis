@@ -1,0 +1,3 @@
+{"id": "id-datacite", "classpathLocation": "eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/input/datacite.xml"}
+{"id": "id-opentrial", "classpathLocation": "eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/input/opentrial.xml"}
+{"id": "id-unmatched", "classpathLocation": "eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/input/unmatched.xml"}

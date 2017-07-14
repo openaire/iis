@@ -15,7 +15,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.junit.Test;
 
 import eu.dnetlib.iis.importer.schemas.DataSetReference;
-import eu.dnetlib.iis.importer.schemas.DatasetToMDStore;
+import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.wf.importer.RecordReceiver;
 
 /**
@@ -28,11 +28,11 @@ public class DataciteXmlImporterTest {
 	@Test
 	public void testDataciteImport() throws Exception {
 		String filePath = "/eu/dnetlib/iis/wf/importer/dataset/data/input/datacite_test_dump.xml";
-		String mdStoreId = "some-mdstore-id";
+		String plaintext = "some-plaintext";
 		InputStream inputStream = null;
 		SAXParser saxParser = null;
 		final List<DataSetReference> receivedReferences = new ArrayList<DataSetReference>();
-		final List<DatasetToMDStore> receivedMDStoreReferences = new ArrayList<DatasetToMDStore>();
+		final List<DocumentText> receivedTexts = new ArrayList<DocumentText>();
 		try {
 		    SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
 		    saxParserFactory.setNamespaceAware(true);
@@ -42,23 +42,23 @@ public class DataciteXmlImporterTest {
 				public void receive(DataSetReference object) throws IOException {
 					receivedReferences.add(object);
 				}
-			},new RecordReceiver<DatasetToMDStore>() {
+			},new RecordReceiver<DocumentText>() {
 				@Override
-				public void receive(DatasetToMDStore object) throws IOException {
-					receivedMDStoreReferences.add(object);
+				public void receive(DocumentText object) throws IOException {
+					receivedTexts.add(object);
 				}
-			}, mdStoreId); 
+			}, plaintext); 
 			saxParser.parse(inputStream = DataciteXmlImporterTest.class.getResourceAsStream(filePath),
 					handler , DataciteDumpXmlHandler.ELEM_OBJ_IDENTIFIER);
 			
 			assertEquals(2, receivedReferences.size());
-			assertEquals(2, receivedMDStoreReferences.size());
+			assertEquals(2, receivedTexts.size());
 			
 //			checking mdstore references
-			assertEquals("50|oai:oai.datacite.org:1805127", receivedMDStoreReferences.get(0).getDatasetId());
-			assertEquals(mdStoreId, receivedMDStoreReferences.get(0).getMdStoreId());
-			assertEquals("50|oai:oai.datacite.org:1805128", receivedMDStoreReferences.get(1).getDatasetId());
-			assertEquals(mdStoreId, receivedMDStoreReferences.get(1).getMdStoreId());
+			assertEquals("50|oai:oai.datacite.org:1805127", receivedTexts.get(0).getId());
+			assertEquals(plaintext, receivedTexts.get(0).getText());
+			assertEquals("50|oai:oai.datacite.org:1805128", receivedTexts.get(1).getId());
+			assertEquals(plaintext, receivedTexts.get(1).getText());
 			
 //			1st record
 			DataSetReference currentReference = receivedReferences.get(0);

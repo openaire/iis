@@ -40,8 +40,8 @@
                     <value>meta</value>
                 </property>
                 <property>
-                    <name>output_name_dataset_to_mdstore</name>
-                    <value>datasetToMDStore</value>
+                    <name>output_name_dataset_text</name>
+                    <value>text</value>
                 </property>
                 <property>
                     <name>output_report_root_path</name>
@@ -64,13 +64,13 @@
                 eu.dnetlib.iis.importer.schemas.DataSetReference,
                 eu/dnetlib/iis/wf/importer/dataset/data/output/dataset.json}</arg>
                 <arg>-C{dataset_to_mdstore,
-                eu.dnetlib.iis.importer.schemas.DatasetToMDStore,
-                eu/dnetlib/iis/wf/importer/dataset/data/output/dataset_to_mdstore.json}</arg>
+                eu.dnetlib.iis.metadataextraction.schemas.DocumentText,
+                eu/dnetlib/iis/wf/importer/dataset/data/output/dataset_text.json}</arg>
             <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,
                 eu/dnetlib/iis/wf/importer/dataset/data/output/report.json}</arg>
             <!-- All input and output ports have to be bound to paths in HDFS -->
             <arg>-Idataset=${workingDir}/out/meta</arg>
-            <arg>-Idataset_to_mdstore=${workingDir}/out/datasetToMDStore</arg>
+            <arg>-Idataset_to_mdstore=${workingDir}/out/text</arg>
             <arg>-Ireport=${workingDir}/report/import_dataset</arg>
         </java>
         <ok to="end" />

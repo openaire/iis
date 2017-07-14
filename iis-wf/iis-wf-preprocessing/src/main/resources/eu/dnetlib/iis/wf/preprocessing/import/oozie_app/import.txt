@@ -1,6 +1,7 @@
 ## This is a classpath-based import file (this header is required)
 import_project classpath eu/dnetlib/iis/wf/importer/stream/project/oozie_app
 import_dataset classpath eu/dnetlib/iis/wf/importer/dataset/oozie_app
+import_mdrecord classpath eu/dnetlib/iis/wf/importer/mdrecord/oozie_app
 import_concept classpath eu/dnetlib/iis/wf/importer/concept/oozie_app
 import_content_url classpath eu/dnetlib/iis/wf/importer/content_url/chain/oozie_app
 import_plaintext classpath eu/dnetlib/iis/wf/importer/plaintext/oozie_app

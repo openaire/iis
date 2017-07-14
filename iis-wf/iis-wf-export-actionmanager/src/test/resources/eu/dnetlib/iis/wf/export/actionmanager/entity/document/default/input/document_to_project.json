@@ -1,0 +1,3 @@
+{"documentId": "id-document", "projectId": "proj-id1", "confidenceLevel": 0.1}
+{"documentId": "id-non-existing", "projectId": "proj-id2", "confidenceLevel": 0.9}
+{"documentId": "id-document", "projectId": "proj-id3", "confidenceLevel": 0.1}

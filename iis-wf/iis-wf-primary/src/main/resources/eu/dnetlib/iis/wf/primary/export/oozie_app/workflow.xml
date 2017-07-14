@@ -15,7 +15,7 @@
             <value>$UNDEFINED$</value>
         </property>
         <property>
-            <name>input_dataset_to_mdstore</name>
+            <name>input_dataset_text</name>
             <value>$UNDEFINED$</value>
         </property>
         <property>
@@ -59,11 +59,6 @@
         <property>
             <name>active_export_referenceddataset_datasets</name>
             <description>flag indicating dataset entities should be exported</description>
-        </property>
-        <property>
-            <name>mdstore_service_location</name>
-            <value>$UNDEFINED$</value>
-            <description>mdstore service location required for reading dataset entities which will be exported to action manager</description>
         </property>
         <!-- action set id properties -->
         <property>
@@ -173,6 +168,17 @@
             <name>output_report_root_path</name>
             <description>base directory for storing reports</description>
         </property>
+        
+        <property>
+            <name>entityExportSparkExecutorMemory</name>
+            <value>7G</value>
+            <description>memory for individual executor</description>
+        </property>
+        <property>
+            <name>entityExportSparkExecutorCores</name>
+            <value>4</value>
+            <description>number of cores used by single executor</description>
+        </property>
     </parameters>
 
     <global>
@@ -215,37 +221,10 @@
     <decision name="decision-exporter-dataset-entities">
         <switch>
             <!-- exporting dataset entities only when export flag is set AND input path was defined -->
-            <case to="transformers_export_identifier_document_to_dataset">${active_export_referenceddataset_datasets eq "true" and input_document_to_dataset ne "$UNDEFINED$"}</case>
+            <case to="exporter-dataset-entities">${active_export_referenceddataset_datasets eq "true" and input_document_to_dataset ne "$UNDEFINED$"}</case>
             <default to="distcp_output" />
         </switch>
     </decision>
-
-    <action name="transformers_export_identifier_document_to_dataset">
-        <sub-workflow>
-            <app-path>${wf:appPath()}/transformers_export_identifier_document_to_dataset</app-path>
-            <propagate-configuration />
-            <configuration>
-                <property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/export_identifier_document_to_dataset/working_dir</value>
-                </property>
-                <property>
-                    <name>input_document_to_dataset</name>
-                    <value>${input_document_to_dataset}</value>
-                </property>
-                <property>
-                    <name>input_dataset_to_mdstore</name>
-                    <value>${input_dataset_to_mdstore}</value>
-                </property>
-                <property>
-                    <name>output_dataset_to_mdstore</name>
-                    <value>${workingDir}/identifier/datasets</value>
-                </property>
-            </configuration>
-        </sub-workflow>
-        <ok to="exporter-dataset-entities" />
-        <error to="fail" />
-    </action>
 
     <action name="exporter-dataset-entities">
         <sub-workflow>
@@ -253,12 +232,16 @@
             <propagate-configuration />
             <configuration>
                 <property>
-                    <name>input</name>
-                    <value>${workingDir}/identifier/datasets</value>
-                </property>
-                <property>
                     <name>output_root</name>
                     <value>${workingDir}/output/entities_dataset</value>
+                </property>
+                <property>
+                    <name>sparkExecutorMemory</name>
+                    <value>${entityExportSparkExecutorMemory}</value>
+                </property>
+                <property>
+                    <name>sparkExecutorCores</name>
+                    <value>${entityExportSparkExecutorCores}</value>
                 </property>
                 <!-- all the other required properties are automatically propagated -->
             </configuration>

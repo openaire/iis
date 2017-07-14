@@ -15,7 +15,19 @@
         </configuration>
     </global>
 
-    <start to="producer" />
+    <start to="generate-schema" />
+
+    <action name="generate-schema">
+        <java>
+            <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
+            <arg>eu.dnetlib.iis.common.schemas.DocumentContentClasspath</arg>
+            <arg>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</arg>
+            <arg>org.apache.avro.Schema.Type.NULL</arg>
+            <capture-output />
+        </java>
+        <ok to="producer" />
+        <error to="fail" />
+    </action>
 
     <action name="producer">
         <java>
@@ -27,54 +39,175 @@
             <!-- This is simple wrapper for the Java code -->
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
-            <arg>-C{document_identifier,
-                eu.dnetlib.iis.common.schemas.Identifier,
-                eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/input/document_identifier.json}
+            <arg>-C{document_to_project,
+                eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject,
+                eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/input/document_to_project.json}
             </arg>
-            <arg>-Odocument_identifier=${workingDir}/producer/document_identifier</arg>
+            <arg>-C{document_text_classpath,
+                eu.dnetlib.iis.common.schemas.DocumentContentClasspath,
+                eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/input/document_text_classpath.json}
+            </arg>
+            <arg>-Odocument_to_project=${workingDir}/producer/document_to_project</arg>
+            <arg>-Odocument_text_classpath=${workingDir}/producer/document_text_classpath</arg>
+            
         </java>
+        <ok to="document-text-producer" />
+        <error to="fail" />
+    </action>
+
+    <action name="document-text-producer">
+        <map-reduce>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/text-producer" />
+                <mkdir path="${nameNode}${workingDir}/text-producer" />
+            </prepare>
+            <configuration>
+                <property>
+                    <name>mapreduce.job.inputformat.class</name>
+                    <value>org.apache.avro.mapreduce.AvroKeyInputFormat</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.outputformat.class</name>
+                    <value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
+                </property>
+                <property>
+                    <name>mapreduce.map.output.key.class</name>
+                    <value>org.apache.avro.mapred.AvroKey</value>
+                </property>
+                <property>
+                    <name>mapreduce.map.output.value.class</name>
+                    <value>org.apache.hadoop.io.NullWritable</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.reduces</name>
+                    <value>0</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.output.key.class</name>
+                    <value>org.apache.avro.mapred.AvroKey</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.output.value.class</name>
+                    <value>org.apache.avro.mapred.AvroValue</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.output.key.comparator.class</name>
+                    <value>org.apache.avro.hadoop.io.AvroKeyComparator</value>
+                </property>
+                <property>
+                    <name>io.serializations</name>
+                    <value>org.apache.hadoop.io.serializer.WritableSerialization,org.apache.hadoop.io.serializer.avro.AvroSpecificSerialization,org.apache.hadoop.io.serializer.avro.AvroReflectSerialization,org.apache.avro.hadoop.io.AvroSerialization
+                    </value>
+                </property>
+                <property>
+                    <name>mapreduce.job.output.group.comparator.class</name>
+                    <value>org.apache.avro.hadoop.io.AvroKeyComparator</value>
+                </property>
+                <property>
+                    <name>rpc.engine.org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolPB
+                    </name>
+                    <value>org.apache.hadoop.ipc.ProtobufRpcEngine</value>
+                </property>
+                <property>
+                    <name>mapred.mapper.new-api</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>mapred.reducer.new-api</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.map.class</name>
+                    <value>eu.dnetlib.iis.common.utils.DocumentClasspathToTextConverter</value>
+                </property>
+
+                <property>
+                    <name>avro.schema.input.key</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.common.schemas.DocumentContentClasspath']}</value>
+                </property>
+                <property>
+                    <name>avro.serialization.key.reader.schema</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.DocumentText']}</value>
+                </property>
+                <property>
+                    <name>avro.serialization.key.writer.schema</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.DocumentText']}</value>
+                </property>
+                <property>
+                    <name>avro.serialization.value.reader.schema</name>
+                    <value>${wf:actionData('generate-schema')['org.apache.avro.Schema.Type.NULL']}</value>
+                </property>
+                <property>
+                    <name>avro.serialization.value.writer.schema</name>
+                    <value>${wf:actionData('generate-schema')['org.apache.avro.Schema.Type.NULL']}</value>
+                </property>
+                <property>
+                    <name>avro.schema.output.key</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.DocumentText']}</value>
+                </property>
+
+                <property>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
+                    <value>${workingDir}/producer/document_text_classpath</value>
+                </property>
+                <property>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
+                    <value>${workingDir}/text-producer/document_text</value>
+                </property>
+            </configuration>
+        </map-reduce>
         <ok to="exporter-document-entities" />
         <error to="fail" />
     </action>
-
+    
     <action name="exporter-document-entities">
-        <java>
-            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-            <arg>eu.dnetlib.iis.wf.export.actionmanager.entity.DocumentExporterProcess</arg>
-            <arg>-Iinput=${workingDir}/producer/document_identifier</arg>
-            
-            <!-- mock MDStore facade configuration -->
-            <arg>-Pmdstore.facade.factory.classname=eu.dnetlib.iis.wf.export.actionmanager.entity.facade.MockMDStoreFacadeFactory</arg>
-            <arg>-Pmdstore.facade.mock.static.resource.mdId1.docId1=/eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/input/document.xml</arg>
-            <!--  -->
-            
-            <arg>-Pexport.entity.mdstore.id=mdId1</arg>
-            <arg>-Pexport.action.setid=document-entity-id</arg>
-            <arg>-Pexport.seq.file.output.dir.root=${workingDir}/output/</arg>
-            <arg>-Pexport.seq.file.output.dir.name=documents</arg>
-            <capture-output />
-        </java>
-        <ok to="report" />
-        <error to="fail" />
+        <sub-workflow>
+            <app-path>${wf:appPath()}/export_entity_document</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>input_document_to_project</name>
+                    <value>${workingDir}/producer/document_to_project</value>
+                </property>
+                <property>
+                    <name>input_document_text</name>
+                    <value>${workingDir}/text-producer/document_text</value>
+                </property>
+                <property>
+                    <name>action_set_id_entity_document</name>
+                    <value>document-entity-id</value>
+                </property>
+                <property>
+                    <name>output_root</name>
+                    <value>${workingDir}/output</value>
+                </property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>export_document_entities</value>
+                </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
+                <property>
+                    <name>sparkExecutorMemory</name>
+                    <value>1G</value>
+                </property>
+                <property>
+                    <name>sparkExecutorCores</name>
+                    <value>1</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="document-consumer"/>
+        <error to="fail"/>
     </action>
-
-    <action name="report">
-        <java>
-            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-            <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
-            <arg>-Preport.export.entity.document.total=${wf:actionData('exporter-document-entities')['TOTAL_ENTITIES_COUNTER']}</arg>
-            <arg>-Preport.export.entity.document.missing=${wf:actionData('exporter-document-entities')['MISSING_ENTITIES_COUNTER']}</arg>
-            <arg>-Oreport=${workingDir}/report</arg>
-        </java>
-        <ok to="document-consumer" />
-        <error to="fail" />
-    </action>
-
+     
     <action name="document-consumer">
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
-            <arg>-Iseqfile=${workingDir}/output/documents</arg>
+            <arg>-Iseqfile=${workingDir}/output/document-entity-id</arg>
             <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/output/document.expectations,
                 /eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/output/person0.expectations,
                 /eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/output/person0_isAuthorOf_document.expectations,
@@ -95,7 +228,7 @@
             <arg>-C{report,
                 eu.dnetlib.iis.common.schemas.ReportEntry,
                 eu/dnetlib/iis/wf/export/actionmanager/entity/document/default/output/report.json}</arg>
-            <arg>-Ireport=${workingDir}/report</arg>
+            <arg>-Ireport=${workingDir}/report/export_document_entities</arg>
         </java>
         <ok to="end" />
         <error to="fail" />

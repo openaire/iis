@@ -16,7 +16,7 @@
 	<action name="generate-schema">
 		<java>
 			<main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
-			<arg>eu.dnetlib.iis.wf.primary.schemas.DocumentContentClasspath</arg>
+			<arg>eu.dnetlib.iis.common.schemas.DocumentContentClasspath</arg>
 			<arg>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</arg>
 			<arg>org.apache.avro.Schema.Type.NULL</arg>
 			<capture-output />
@@ -76,7 +76,7 @@
 				eu/dnetlib/iis/common/data/empty.json}
 			</arg>
 			<arg>-C{document_text_classpath,
-				eu.dnetlib.iis.wf.primary.schemas.DocumentContentClasspath,
+				eu.dnetlib.iis.common.schemas.DocumentContentClasspath,
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/input/metadataextraction/document_text_classpath.json}
 			</arg>
 			<arg>-Odocument_metadata=${workingDir}/producer/document_metadata</arg>
@@ -158,12 +158,12 @@
 				</property>
 				<property>
 					<name>mapreduce.job.map.class</name>
-					<value>eu.dnetlib.iis.wf.primary.converters.DocumentClasspathToTextConverter</value>
+					<value>eu.dnetlib.iis.common.utils.DocumentClasspathToTextConverter</value>
 				</property>
 
 				<property>
 					<name>avro.schema.input.key</name>
-					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.wf.primary.schemas.DocumentContentClasspath']}</value>
+					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.common.schemas.DocumentContentClasspath']}</value>
 				</property>
 				<property>
 					<name>avro.serialization.key.reader.schema</name>

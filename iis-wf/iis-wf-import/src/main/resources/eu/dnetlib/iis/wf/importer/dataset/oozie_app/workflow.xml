@@ -17,6 +17,11 @@
             <description>MDStores identifiers</description>
         </property>
         <property>
+            <name>mdstore_record_maxlength</name>
+            <value>500000</value>
+            <description>maximum allowed length of mdstore record</description>
+        </property>
+        <property>
             <name>input_mdstore_resultset_pagesize</name>
             <value>100</value>
             <description>ResultSet single page size</description>
@@ -32,8 +37,8 @@
             <description>dataset metadata output directory</description>
         </property>
         <property>
-            <name>output_name_dataset_to_mdstore</name>
-            <value>datasetToMDStore</value>
+            <name>output_name_dataset_text</name>
+            <value>text</value>
             <description>dataset to mdstore mapping output directory</description>
         </property>
         <property>
@@ -90,7 +95,7 @@
             <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
             <arg>eu.dnetlib.iis.common.schemas.Identifier</arg>
             <arg>eu.dnetlib.iis.importer.schemas.DataSetReference</arg>
-            <arg>eu.dnetlib.iis.importer.schemas.DatasetToMDStore</arg>
+            <arg>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</arg>
             <capture-output />
         </java>
         <ok to="mdstoreid-importer" />
@@ -105,7 +110,7 @@
             </prepare>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.importer.dataset.MDStoreIdentifierDatastoreBuilder</arg>
-            <arg>-Pimport.datacite.mdstore.ids.csv=${mdstore_ids_csv}</arg>
+            <arg>-Pimport.mdstore.ids.csv=${mdstore_ids_csv}</arg>
             <arg>-Oidentifier=${workingDir}/identifier</arg>
         </java>
         <ok to="dataset-importer" />
@@ -121,8 +126,12 @@
             </prepare>
             <configuration>
                 <property>
-                    <name>import.datacite.mdstore.service.location</name>
+                    <name>import.mdstore.service.location</name>
                     <value>${mdstore_service_location}</value>
+                </property>
+                <property>
+                    <name>import.mdstore.record.maxlength</name>
+                    <value>${mdstore_record_maxlength}</value>
                 </property>
                 <property>
                     <name>import.resultset.pagesize</name>
@@ -212,7 +221,7 @@
 
                 <property>
                     <name>avro.mapreduce.multipleoutputs</name>
-                    <value>${output_name_dataset} ${output_name_dataset_to_mdstore}</value>
+                    <value>${output_name_dataset} ${output_name_dataset_text}</value>
                 </property>
                 <!-- ## Output classes for all output ports -->
                 <property>
@@ -220,7 +229,7 @@
                     <value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
                 </property>
                 <property>
-                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_dataset_to_mdstore}.format</name>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_dataset_text}.format</name>
                     <value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
                 </property>
                 <!-- ### Schema of multiple output ports. -->
@@ -229,8 +238,8 @@
                     <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.DataSetReference']}</value>
                 </property>
                 <property>
-                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_dataset_to_mdstore}.keyschema</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.DatasetToMDStore']}</value>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_dataset_text}.keyschema</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.DocumentText']}</value>
                 </property>
 
                 <property>
@@ -246,8 +255,8 @@
                     <value>${output_name_dataset}</value>
                 </property>
                 <property>
-                    <name>output.dataset_to_mdstore</name>
-                    <value>${output_name_dataset_to_mdstore}</value>
+                    <name>output.dataset_text</name>
+                    <value>${output_name_dataset_text}</value>
                 </property>
                 <property>
                     <name>mapreduce.job.map.class</name>
@@ -276,7 +285,8 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
             <arg>-Preport.import.dataset.dataset=${hadoop:counters('dataset-importer')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_dataset,'/part')]}</arg>
-            <arg>-Preport.import.dataset.datasetMdStoreId=${hadoop:counters('dataset-importer')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_dataset_to_mdstore,'/part')]}</arg>
+            <arg>-Preport.import.dataset.mdrecord=${hadoop:counters('dataset-importer')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_dataset_text,'/part')]}</arg>
+            <arg>-Preport.import.dataset.invalid.sizeExceeded=${hadoop:counters('dataset-importer')['eu.dnetlib.iis.wf.importer.dataset.DatasetImporterMapper$InvalidRecordCounters']['SIZE_EXCEEDED']}</arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>
         <ok to="end" />

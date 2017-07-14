@@ -15,9 +15,13 @@
 			<value>$UNDEFINED$</value>
 		</property>
 		<property>
-			<name>input_dataset_to_mdstore</name>
+			<name>input_dataset_text</name>
 			<value>$UNDEFINED$</value>
 		</property>
+        <property>
+            <name>input_wos_mdrecord</name>
+            <value>$UNDEFINED$</value>
+        </property>
 		<property>
 			<name>output_remote_location</name>
 			<description>remote cluster output location where inference output dump should be distcped as sequence files</description>
@@ -27,16 +31,6 @@
             <value>6144</value>
             <description>memory for distcp action copying output sequence files to remote cluster</description>
         </property>
-		<property>
-			<name>mdstore_service_location</name>
-			<value>$UNDEFINED$</value>
-			<description>mdstore service location required for reading dataset and publication entities which will be exported to action manager</description>
-		</property>
-		<property>
-			<name>wos_mdstore_id</name>
-			<value>$UNDEFINED$</value>
-			<description>mdstore holding WoS publication entities to be exported</description>
-		</property>
 		<!-- action set id properties -->
 		<property>
 			<name>action_set_id</name>
@@ -79,6 +73,18 @@
 			<value>$UNDEFINED$</value>
 			<description>document_referencedDatasets trust level threshold</description>
 		</property>
+        
+        <!-- entity exporter related -->
+        <property>
+            <name>entityExportSparkExecutorMemory</name>
+            <value>7G</value>
+            <description>memory for individual executor</description>
+        </property>
+        <property>
+            <name>entityExportSparkExecutorCores</name>
+            <value>4</value>
+            <description>number of cores used by single executor</description>
+        </property>
 	</parameters>
 
     <global>
@@ -114,39 +120,6 @@
 				</property>
 			</configuration>
 		</sub-workflow>
-		<ok to="export_entities_forking" />
-		<error to="fail" />
-	</action>
-
-	<fork name="export_entities_forking">
-		<path start="transformers_export_identifier_document_to_dataset" />
-		<path start="transformers_export_identifier_document_to_project" />
-	</fork>
-
-	<!-- dataset entities export section -->
-	<action name="transformers_export_identifier_document_to_dataset">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_export_identifier_document_to_dataset</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/export_identifier_document_to_dataset/working_dir</value>
-				</property>
-				<property>
-					<name>input_document_to_dataset</name>
-					<value>${input_document_to_dataset}</value>
-				</property>
-				<property>
-					<name>input_dataset_to_mdstore</name>
-					<value>${input_dataset_to_mdstore}</value>
-				</property>
-				<property>
-					<name>output_dataset_to_mdstore</name>
-					<value>${workingDir}/identifier/datasets</value>
-				</property>
-			</configuration>
-		</sub-workflow>
 		<ok to="exporter-dataset-entities" />
 		<error to="fail" />
 	</action>
@@ -157,44 +130,23 @@
             <propagate-configuration />
             <configuration>
                 <property>
-                    <name>input</name>
-                    <value>${workingDir}/identifier/datasets</value>
-                </property>
-                <property>
                     <name>output_root</name>
                     <value>${workingDir}/output/entities_dataset</value>
+                </property>
+                <property>
+                    <name>sparkExecutorMemory</name>
+                    <value>${entityExportSparkExecutorMemory}</value>
+                </property>
+                <property>
+                    <name>sparkExecutorCores</name>
+                    <value>${entityExportSparkExecutorCores}</value>
                 </property>
                 <!-- all the other required properties are automatically propagated -->
             </configuration>
         </sub-workflow>
-        <ok to="export_entities_joining" />
+        <ok to="exporter-document-entities" />
         <error to="fail" />
     </action>
-	<!-- end of dataset entities export section -->
-
-	<!-- publication entities export section -->
-	<action name="transformers_export_identifier_document_to_project">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/transformers_export_identifier_document_to_project</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/export_identifier_documents/working_dir</value>
-				</property>
-				<property>
-					<name>input_document_to_project</name>
-					<value>${input_document_to_project}</value>
-				</property>
-				<property>
-					<name>output_identifier</name>
-					<value>${workingDir}/identifier/documents</value>
-				</property>
-			</configuration>
-		</sub-workflow>
-		<ok to="exporter-document-entities" />
-		<error to="fail" />
-	</action>
 
     <action name="exporter-document-entities">
         <sub-workflow>
@@ -202,12 +154,8 @@
             <propagate-configuration />
             <configuration>
                 <property>
-                    <name>input</name>
-                    <value>${workingDir}/identifier/documents</value>
-                </property>
-                <property>
-                    <name>mdstore_id</name>
-                    <value>${wos_mdstore_id}</value>
+                    <name>input_document_text</name>
+                    <value>${input_wos_mdrecord}</value>
                 </property>
                 <property>
                     <name>action_set_id_entity_document</name>
@@ -217,15 +165,20 @@
                     <name>output_root</name>
                     <value>${workingDir}/output/entities_document</value>
                 </property>
+                <property>
+                    <name>sparkExecutorMemory</name>
+                    <value>${entityExportSparkExecutorMemory}</value>
+                </property>
+                <property>
+                    <name>sparkExecutorCores</name>
+                    <value>${entityExportSparkExecutorCores}</value>
+                </property>
                 <!-- all the other required properties are automatically propagated -->
             </configuration>
         </sub-workflow>
-        <ok to="export_entities_joining" />
+        <ok to="distcp_output" />
         <error to="fail" />
     </action>
-	<!-- end of publication entities export section -->
-
-	<join name="export_entities_joining" to="distcp_output" />
 
 	<action name="distcp_output">
 		<distcp xmlns="uri:oozie:distcp-action:0.2">

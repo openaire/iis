@@ -31,6 +31,12 @@
 			<value>$UNDEFINED$</value>
 			<description>Dataset MDStore identifier</description>
 		</property>
+        <property>
+            <name>import_wos_mdstore_id</name>
+            <value>$UNDEFINED$</value>
+            <description>WOS MDStore identifier</description>
+        </property>
+        
 		<!-- import content related -->
 		<property>
 			<name>objectstore_service_location</name>
@@ -122,8 +128,8 @@
             <description>dataset metadata output directory</description>
         </property>
         <property>
-            <name>output_name_dataset_to_mdstore</name>
-            <description>dataset to mdstore mapping output directory</description>
+            <name>output_name_dataset_text</name>
+            <description>dataset plain text output directory</description>
         </property>
 
 		<property>
@@ -134,6 +140,10 @@
 			<name>output_wos_text</name>
 			<description>WoS text import output directory</description>
 		</property>
+        <property>
+            <name>output_wos_mdrecord</name>
+            <description>WoS medata record import output directory</description>
+        </property>
 		<property>
 			<name>output_project_concept</name>
 			<description>project concepts output directory</description>
@@ -167,9 +177,11 @@
 
 	<fork name="import_forking">
 		<path start="import_dataset" />
+        <path start="import_wos_mdrecord" />
 		<path start="import_concept" />
 		<path start="import_project" />
 		<path start="wos_url_import" />
+        <path start="import_content_url" />
 	</fork>
 
 	<!-- start of common import part -->
@@ -196,6 +208,34 @@
 		<ok to="import_joining" />
 		<error to="fail" />
 	</action>
+
+    <action name="import_wos_mdrecord">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/import_mdrecord</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/import_mdrecord/working_dir</value>
+                </property>
+                <property>
+                    <name>mdstore_ids_csv</name>
+                    <value>${import_wos_mdstore_id}</value>
+                </property>
+                <property>
+                    <name>report_properties_prefix</name>
+                    <value>import.wos.mdrecord</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${output_wos_mdrecord}</value>
+                </property>
+                <!-- all the other properties are autmatically propagated -->
+            </configuration>
+        </sub-workflow>
+        <ok to="import_joining" />
+        <error to="fail" />
+    </action>
 
 	<action name="import_concept">
 		<sub-workflow>
@@ -240,7 +280,7 @@
 				<!-- all the other properties are autmatically propagated -->
 			</configuration>
 		</sub-workflow>
-		<ok to="import_content_url" />
+		<ok to="import_joining" />
 		<error to="fail" />
 	</action>
 

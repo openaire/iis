@@ -1,5 +1,7 @@
 package eu.dnetlib.iis.wf.importer.dataset;
 
+import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_MDSTORE_RECORD_MAXLENGTH;
+
 import java.io.IOException;
 import java.io.StringReader;
 
@@ -17,7 +19,7 @@ import org.xml.sax.SAXException;
 import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
 import eu.dnetlib.iis.common.schemas.Identifier;
 import eu.dnetlib.iis.importer.schemas.DataSetReference;
-import eu.dnetlib.iis.importer.schemas.DatasetToMDStore;
+import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.wf.importer.RecordReceiver;
 import eu.dnetlib.iis.wf.importer.facade.MDStoreFacade;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeException;
@@ -32,6 +34,14 @@ import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeUtils;
  */
 public class DatasetImporterMapper extends Mapper<AvroKey<Identifier>, NullWritable, NullWritable, NullWritable> {
 
+    
+    /**
+     * Hadoop counters enum of invalid records 
+     */
+    public static enum InvalidRecordCounters {
+        SIZE_EXCEEDED
+    }
+    
     
     private static final Logger log = Logger.getLogger(DatasetImporterMapper.class);
     
@@ -53,7 +63,7 @@ public class DatasetImporterMapper extends Mapper<AvroKey<Identifier>, NullWrita
     /**
      * Dataset to MDStore relation output.
      */
-    private String namedOutputDatasetToMDStore;
+    private String namedOutputDatasetText;
     
     /**
      * Sax parser to be used for datset metadata extraction.
@@ -65,17 +75,27 @@ public class DatasetImporterMapper extends Mapper<AvroKey<Identifier>, NullWrita
      */
     private MDStoreFacade mdStoreFacade;
     
+    /**
+     * Maximum allowed record length.
+     */
+    private int recordMaxLength;
+
+    
     //------------------------ LOGIC --------------------------
     
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
+        
+        recordMaxLength = context.getConfiguration().getInt(IMPORT_MDSTORE_RECORD_MAXLENGTH, Integer.MAX_VALUE);
+        context.getCounter(InvalidRecordCounters.SIZE_EXCEEDED).setValue(0);
+        
         namedOutputDataset = context.getConfiguration().get("output.dataset");
         if (namedOutputDataset == null || namedOutputDataset.isEmpty()) {
             throw new RuntimeException("no named output provided for dataset");
         }
-        namedOutputDatasetToMDStore = context.getConfiguration().get("output.dataset_to_mdstore");
-        if (namedOutputDatasetToMDStore == null || namedOutputDatasetToMDStore.isEmpty()) {
-            throw new RuntimeException("no named output provided for dataset to mdstore relations");
+        namedOutputDatasetText = context.getConfiguration().get("output.dataset_text");
+        if (namedOutputDatasetText == null || namedOutputDatasetText.isEmpty()) {
+            throw new RuntimeException("no named output provided for dataset plaintext");
         }
         mos = new MultipleOutputs(context);
         
@@ -105,29 +125,38 @@ public class DatasetImporterMapper extends Mapper<AvroKey<Identifier>, NullWrita
             int currentCount = 0;
             
             for (String record : mdStoreFacade.deliverMDRecords(mdStoreId)) {
-                DataciteDumpXmlHandler handler = new DataciteDumpXmlHandler(
-                        new RecordReceiver<DataSetReference>() {
-                            @Override
-                            public void receive(DataSetReference object) throws IOException {
-                                try {
-                                    mos.write(namedOutputDataset, new AvroKey<DataSetReference>(object));
-                                } catch (InterruptedException e) {
-                                    throw new RuntimeException(e);
+                
+                if (record.length() <= recordMaxLength) {
+                    DataciteDumpXmlHandler handler = new DataciteDumpXmlHandler(
+                            new RecordReceiver<DataSetReference>() {
+                                @Override
+                                public void receive(DataSetReference object) throws IOException {
+                                    try {
+                                        mos.write(namedOutputDataset, new AvroKey<DataSetReference>(object));
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
                                 }
-                            }
-                        },
-                        new RecordReceiver<DatasetToMDStore>() {
-                            @Override
-                            public void receive(DatasetToMDStore object) throws IOException {
-                                try {
-                                    mos.write(namedOutputDatasetToMDStore, new AvroKey<DatasetToMDStore>(object));
-                                } catch (InterruptedException e) {
-                                    throw new RuntimeException(e);
+                            },
+                            new RecordReceiver<DocumentText>() {
+                                @Override
+                                public void receive(DocumentText object) throws IOException {
+                                    try {
+                                        mos.write(namedOutputDatasetText, new AvroKey<DocumentText>(object));
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
                                 }
-                            }
-                        }, mdStoreId);
+                            }, record);
 
-                saxParser.parse(new InputSource(new StringReader(record)), handler);
+                    saxParser.parse(new InputSource(new StringReader(record)), handler);
+                    
+                } else {
+                    context.getCounter(InvalidRecordCounters.SIZE_EXCEEDED).increment(1);
+                    log.error("mdstore record maximum length (" + recordMaxLength + "): was exceeded: "
+                            + record.length() + ", record content:\n" + record);
+                }
+                
                 currentCount++;
                 if (currentCount % progressLogInterval == 0) {
                     log.info("current progress: " + currentCount + ", last package of " + progressLogInterval

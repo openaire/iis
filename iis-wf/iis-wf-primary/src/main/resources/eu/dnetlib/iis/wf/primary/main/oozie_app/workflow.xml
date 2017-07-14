@@ -481,8 +481,8 @@
                     <value>meta</value>
                 </property>
                 <property>
-                    <name>output_name_dataset_to_mdstore</name>
-                    <value>datasetToMDStore</value>
+                    <name>output_name_dataset_text</name>
+                    <value>text</value>
                 </property>
                 <property>
                     <name>output_document_text</name>
@@ -646,8 +646,8 @@
                     <value>${workingDir}/exported/document_to_dataset</value>
                 </property>
                 <property>
-                    <name>input_dataset_to_mdstore</name>
-                    <value>${workingDir}/primary_import/dataset/datasetToMDStore</value>
+                    <name>input_dataset_text</name>
+                    <value>${workingDir}/primary_import/dataset/text</value>
                 </property>
                 <property>
                     <name>input_document_to_research_initiatives</name>
@@ -681,10 +681,6 @@
                 <property>
                     <name>active_export_referenceddataset_datasets</name>
                     <value>${active_referenceextraction_dataset}</value>
-                </property>
-                <property>
-                    <name>mdstore_service_location</name>
-                    <value>${import_mdstore_service_location}</value>
                 </property>
                 <!-- action set id properties -->
                 <property>
@@ -803,10 +799,6 @@
                 <property>
                     <name>input_document_to_dataset</name>
                     <value>${workingDir}/exported/document_to_dataset</value>
-                </property>
-                <property>
-                    <name>input_dataset_to_mdstore</name>
-                    <value>${workingDir}/primary_import/dataset/datasetToMDStore</value>
                 </property>
                 <property>
                     <name>input_document_to_research_initiatives</name>

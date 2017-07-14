@@ -13,7 +13,7 @@ import com.google.common.collect.Maps;
 
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.importer.schemas.DataSetReference;
-import eu.dnetlib.iis.importer.schemas.DatasetToMDStore;
+import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.wf.importer.RecordReceiver;
 
 /**
@@ -66,39 +66,39 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
 	
 	private final RecordReceiver<DataSetReference> datasetReceiver;
 	
-	private final RecordReceiver<DatasetToMDStore> datasetToMDStoreReceived;
+	private final RecordReceiver<DocumentText> datasetTextReceiver;
 	
 	private final String mainIdFieldName;
 	
-	private final String mdStoreId;
+	private final String datasetText;
 	
 	// ------------------------ LOGIC --------------------------
 	
 	/**
 	 * @param datasetReceiver dataset object receiver
-	 * @param datasetToMDStoreReceived dataset to mdstore relation receiver
+	 * @param datasetTextReceived dataset plain text receiver
 	 * @param mainIdFieldName field name to be used as main identifier. Introduced because of differences between MDStore records and XML dump records.
-	 * @param mdStoreId mdStore identifier
+	 * @param datasetText dataset plain text
 	 */
 	public DataciteDumpXmlHandler(RecordReceiver<DataSetReference> datasetReceiver,
-			RecordReceiver<DatasetToMDStore> datasetToMDStoreReceived,
-			String mainIdFieldName, String mdStoreId) {
+			RecordReceiver<DocumentText> datasetTextReceiver,
+			String mainIdFieldName, String datasetText) {
 		super();
 		this.datasetReceiver = datasetReceiver;
-		this.datasetToMDStoreReceived = datasetToMDStoreReceived;
+		this.datasetTextReceiver = datasetTextReceiver;
 		this.mainIdFieldName = mainIdFieldName;
-		this.mdStoreId = mdStoreId;
+		this.datasetText = datasetText;
 	}
 	
 	/**
 	 * @param datasetReceiver dataset object receiver
-	 * @param datasetToMDStoreReceived dataset to mdstore relation receiver
+	 * @param datasetTextReceiver dataset plaintext receiver
 	 * @param mainIdFieldName field name to be used as main identifier. Introduced because of differences between MDStore records and XML dump records.
-	 * @param mdStoreId mdStore identifier
+	 * @param datasetText dataset plain text
 	 */
 	public DataciteDumpXmlHandler(RecordReceiver<DataSetReference> datasetReceiver,
-			RecordReceiver<DatasetToMDStore> datasetToMDStoreReceived, String mdStoreId) {
-		this(datasetReceiver, datasetToMDStoreReceived, ELEM_OBJ_IDENTIFIER, mdStoreId);
+			RecordReceiver<DocumentText> datasetTextReceiver, String datasetText) {
+		this(datasetReceiver, datasetTextReceiver, ELEM_OBJ_IDENTIFIER, datasetText);
 	}
 	
 	@Override
@@ -227,9 +227,9 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
             String datasetId = ELEM_OBJ_IDENTIFIER.equals(mainIdFieldName)?
                     InfoSpaceConstants.ROW_PREFIX_RESULT + datasetMeta.getHeaderId() : datasetMeta.getHeaderId();
 
-            DatasetToMDStore.Builder documentToMDStoreBuilder = DatasetToMDStore.newBuilder();
-            documentToMDStoreBuilder.setMdStoreId(this.mdStoreId);
-            documentToMDStoreBuilder.setDatasetId(datasetId);
+            DocumentText.Builder documentTextBuilder = DocumentText.newBuilder();
+            documentTextBuilder.setId(datasetId);
+            documentTextBuilder.setText(this.datasetText);
 
             DataSetReference.Builder dataSetRefBuilder = DataSetReference.newBuilder();
             dataSetRefBuilder.setId(datasetId);
@@ -265,7 +265,7 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
             }
             
             datasetReceiver.receive(dataSetRefBuilder.build());
-            datasetToMDStoreReceived.receive(documentToMDStoreBuilder.build());
+            datasetTextReceiver.receive(documentTextBuilder.build());
             
         } catch (IOException e) {
             throw new SAXException(e);

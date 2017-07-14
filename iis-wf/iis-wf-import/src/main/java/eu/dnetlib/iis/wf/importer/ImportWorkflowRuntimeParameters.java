@@ -24,8 +24,9 @@ public final class ImportWorkflowRuntimeParameters {
 	public static final String IMPORT_CONTENT_CONNECTION_TIMEOUT = "import.content.connection.timeout";
 	public static final String IMPORT_CONTENT_READ_TIMEOUT = "import.content.read.timeout";
 
-	public static final String IMPORT_DATACITE_MDSTORE_IDS_CSV = "import.datacite.mdstore.ids.csv";
-	public static final String IMPORT_DATACITE_MDSTORE_SERVICE_LOCATION = "import.datacite.mdstore.service.location";
+	public static final String IMPORT_MDSTORE_IDS_CSV = "import.mdstore.ids.csv";
+	public static final String IMPORT_MDSTORE_SERVICE_LOCATION = "import.mdstore.service.location";
+	public static final String IMPORT_MDSTORE_RECORD_MAXLENGTH = "import.mdstore.record.maxlength";
 	
 	public static final String IMPORT_ISLOOKUP_SERVICE_LOCATION = "import.islookup.service.location";
 	public static final String IMPORT_VOCABULARY_CODE = "import.vocabulary.code";

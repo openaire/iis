@@ -1,0 +1,4 @@
+{"documentId":"id-1","datasetId":"id-datacite","confidenceLevel":0.9}
+{"documentId":"id-2","datasetId":"id-opentrial","confidenceLevel":0.1}
+{"documentId":"id-2","datasetId":"id-non-existing","confidenceLevel":0.1}
+{"documentId":"id-3","datasetId":"id-datacite","confidenceLevel":0.1}

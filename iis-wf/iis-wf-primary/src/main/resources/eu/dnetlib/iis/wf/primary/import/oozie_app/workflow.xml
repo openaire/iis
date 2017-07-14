@@ -193,8 +193,8 @@
             <description>dataset metadata output directory</description>
         </property>
         <property>
-            <name>output_name_dataset_to_mdstore</name>
-            <description>dataset to mdstore mapping output directory</description>
+            <name>output_name_dataset_text</name>
+            <description>dataset plain text output directory</description>
         </property>
         
 		<property>
@@ -445,13 +445,13 @@
 				eu.dnetlib.iis.importer.schemas.DataSetReference,
 				eu/dnetlib/iis/common/data/empty.json}
 			</arg>
-			<arg>-C{dataset_to_mdstore,
-				eu.dnetlib.iis.importer.schemas.DatasetToMDStore,
+			<arg>-C{dataset_text,
+				eu.dnetlib.iis.metadataextraction.schemas.DocumentText,
 				eu/dnetlib/iis/common/data/empty.json}
 			</arg>
 			<!-- notice: directory have to aligned with skipped action output -->
 			<arg>-Odataset=${output_dataset_root}/${output_name_dataset}</arg>
-			<arg>-Odataset_to_mdstore=${output_dataset_root}/${output_name_dataset_to_mdstore}</arg>
+			<arg>-Odataset_text=${output_dataset_root}/${output_name_dataset_text}</arg>
 		</java>
 		<ok to="import_joining" />
 		<error to="fail" />

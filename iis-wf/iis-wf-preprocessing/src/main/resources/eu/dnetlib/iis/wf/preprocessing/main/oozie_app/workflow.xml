@@ -355,8 +355,8 @@
 					<value>meta</value>
 				</property>
                 <property>
-                    <name>output_name_dataset_to_mdstore</name>
-                    <value>datasetToMDStore</value>
+                    <name>output_name_dataset_text</name>
+                    <value>text</value>
                 </property>
                 
 				<property>
@@ -367,6 +367,10 @@
 					<name>output_wos_text</name>
 					<value>${workingDir}/preprocessing_import/wos-text</value>
 				</property>
+                <property>
+                    <name>output_wos_mdrecord</name>
+                    <value>${workingDir}/preprocessing_import/wos-mdrecord</value>
+                </property>
 				<property>
 					<name>output_project_concept</name>
 					<value>${workingDir}/preprocessing_import/project-concept</value>
@@ -604,18 +608,13 @@
 					<value>${workingDir}/referenceextraction_dataset/document_datasets</value>
 				</property>
 				<property>
-					<name>input_dataset_to_mdstore</name>
-					<value>${workingDir}/preprocessing_import/dataset/datasetToMDStore</value>
+					<name>input_dataset_text</name>
+					<value>${workingDir}/preprocessing_import/dataset/text</value>
 				</property>
-				<!-- entities exporting modes -->
-				<property>
-					<name>mdstore_service_location</name>
-					<value>${import_mdstore_service_location}</value>
-				</property>
-				<property>
-					<name>wos_mdstore_id</name>
-					<value>${import_wos_mdstore_id}</value>
-				</property>
+                <property>
+                    <name>input_wos_mdrecord</name>
+                    <value>${workingDir}/preprocessing_import/wos-mdrecord</value>
+                </property>
 				<!-- action set id properties -->
 				<property>
 					<name>action_set_id</name>

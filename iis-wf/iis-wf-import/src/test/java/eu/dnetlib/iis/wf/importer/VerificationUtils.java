@@ -40,7 +40,6 @@ public final class VerificationUtils {
      */
     public static void verifyReport(int expectedTotal, String counterName) throws FileNotFoundException, IOException {
         Properties reportProperties = getStoredProperties();
-        assertEquals(1, reportProperties.size());
         assertEquals(expectedTotal, Integer.parseInt(reportProperties.getProperty(counterName)));
     }
 
