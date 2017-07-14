@@ -5,13 +5,11 @@ import static org.apache.spark.sql.functions.explode;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.DataFrame;
 import org.apache.spark.sql.SQLContext;
 import org.apache.spark.sql.SaveMode;
-import org.apache.spark.sql.execution.datasources.jdbc.JdbcUtils;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -20,10 +18,6 @@ import com.beust.jcommander.Parameters;
 
 public class AvroToRdbTransformerJob {
     
-    private static final Logger log = Logger.getLogger(AvroToRdbTransformerJob.class);
-    
-    private static final String RDB_URL = "jdbc:postgresql://10.19.65.16/ptm";
-    
     private static final SaveMode SAVE_MODE = SaveMode.Append;
     
     private static final String TABLE_PUBLICATION = "Publication";
@@ -31,6 +25,29 @@ public class AvroToRdbTransformerJob {
     private static final String TABLE_PUB_KEYWORD = "PubKeyword";
     private static final String TABLE_CITATION = "Citation";
     private static final String TABLE_PUB_CITATION = "PubCitation";
+    private static final String TABLE_PUB_PDBCODE = "PubPDBCode";
+    
+    private static final String JOIN_TYPE_INNER = "inner";
+    private static final String JOIN_TYPE_LEFT_OUTER = "left_outer";
+    private static final String JOIN_TYPE_LEFTSEMI = "leftsemi";
+    
+    private static final String FIELD_PUBID = "pubId";
+    
+    private static final String FIELD_GRANTID = "grantId";
+    private static final String FIELD_FUNDER = "funder";
+    
+    private static final String FIELD_TITLE = "title";
+    private static final String FIELD_ABSTRCT = "abstract";
+    private static final String FIELD_FULLTEXT = "fulltext";
+    private static final String FIELD_PUBYEAR = "pubyear";
+    
+    private static final String FIELD_KEYWORD = "keyword";
+    
+    private static final String FIELD_CITATIONID = "citationId";
+    private static final String FIELD_REFERENCE = "reference";
+    
+    private static final String FIELD_PMCID = "pmcId";
+    private static final String FIELD_PDBCODE = "pdbcode";
     
     //------------------------ LOGIC --------------------------
     
@@ -39,6 +56,8 @@ public class AvroToRdbTransformerJob {
         AvroToRdbTransformerJobParameters params = new AvroToRdbTransformerJobParameters();
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
+        
+        DatabaseContext dbCtx = new DatabaseContext(params.databaseUrl, params.databaseUserName, params.databasePassword);
         
         SparkConf conf = new SparkConf();
         
@@ -56,120 +75,161 @@ public class AvroToRdbTransformerJob {
             
             DataFrame documentToProject = sqlContext.read().format("com.databricks.spark.avro").load(params.inputDocumentToProjectAvroPath);
             
+            DataFrame documentToPdb = sqlContext.read().format("com.databricks.spark.avro").load(params.inputDocumentToPdbAvroPath);
+            
             DataFrame citation = sqlContext.read().format("com.databricks.spark.avro").load(params.inputCitationAvroPath);
+            
+
+            // ==============================================================================
+            // Pub Grant
+            // ==============================================================================
+            
+            DataFrame documentJoinedWithProjectDetails = documentToProject.join(project, 
+                    documentToProject.col("projectId").equalTo(project.col("id")), JOIN_TYPE_INNER);
+            
+            DataFrame normalizedPubGrant = documentJoinedWithProjectDetails
+                    .filter(documentJoinedWithProjectDetails.col("confidenceLevel").$greater$eq(
+                            params.confidenceLevelDocumentToProjectThreshold).and(
+                                    documentJoinedWithProjectDetails.col("fundingClass").rlike(params.fundingClassWhitelist)))
+                    .select(
+                            documentJoinedWithProjectDetails.col("documentId").as(FIELD_PUBID),
+                            documentJoinedWithProjectDetails.col("projectGrantId").as(FIELD_GRANTID),
+                            documentJoinedWithProjectDetails.col("fundingClass").as(FIELD_FUNDER)
+                    );
+            // PubGrant will be written later, after filtering by filteredMetadata
             
             // ==============================================================================
             // Publication
             // ==============================================================================
             
             DataFrame metadataSubset = metadata.select(
-                    metadata.col("id").as("pubId"),
-                    metadata.col("title"), 
-                    metadata.col("abstract"), 
-                    metadata.col("year")
+                    metadata.col("id").as(FIELD_PUBID),
+                    metadata.col(FIELD_TITLE), 
+                    metadata.col(FIELD_ABSTRCT), 
+                    metadata.col("year"),
+                    metadata.col("keywords")
             );
             
             DataFrame textDeduped = text.dropDuplicates(new String[] {"id"});
-            DataFrame metadataJoinedWithText = metadataSubset.join(
-                    textDeduped, metadataSubset.col("pubId").equalTo(textDeduped.col("id")), "left_outer");
+            DataFrame metadataJoinedWithText = metadataSubset.join(textDeduped, 
+                    metadataSubset.col(FIELD_PUBID).equalTo(textDeduped.col("id")), JOIN_TYPE_LEFT_OUTER);
             
-            DataFrame metadataFiltered = metadataJoinedWithText.filter("abstract is not null or text is not null");
+            DataFrame metadataFilteredByText = metadataJoinedWithText.filter(
+                    metadataJoinedWithText.col(FIELD_ABSTRCT).isNotNull().or(metadataJoinedWithText.col("text").isNotNull()));
+            
+            DataFrame metadataFiltered = metadataFilteredByText.join(normalizedPubGrant, 
+                    metadataFilteredByText.col(FIELD_PUBID).equalTo(normalizedPubGrant.col(FIELD_PUBID)), JOIN_TYPE_LEFTSEMI);
             
             DataFrame normalizedPublication = metadataFiltered.select(
-                    metadataFiltered.col("pubId"),
-                    metadataFiltered.col("title"), 
-                    metadataFiltered.col("abstract"), 
-                    metadataFiltered.col("year").as("pubyear"),
-                    metadataFiltered.col("text").as("fulltext")
+                    metadataFiltered.col(FIELD_PUBID),
+                    metadataFiltered.col(FIELD_TITLE), 
+                    metadataFiltered.col(FIELD_ABSTRCT), 
+                    metadataFiltered.col("year").as(FIELD_PUBYEAR),
+                    metadataFiltered.col("text").as(FIELD_FULLTEXT)
                     );
             
-            writeToRdb(normalizedPublication, TABLE_PUBLICATION, params.postgresPassword);
+            writeToRdb(normalizedPublication, TABLE_PUBLICATION, dbCtx);
             
-            // ==============================================================================
-            // Pub Grant
-            // ==============================================================================
-            
-            // make sure proper join type is used, inner join should be fine here
-            // joinType One of: `inner`, `outer`, `left_outer`, `right_outer`, `leftsemi`
-            DataFrame documentJoinedWithProjectDetails = documentToProject.join(
-                    project, documentToProject.col("projectId").equalTo(project.col("id")));
-            
-            DataFrame normalizedPubGrant = documentJoinedWithProjectDetails
-                    .filter("confidenceLevel > " + params.confidenceLevelThreshold)
-                    .select(
-                            documentJoinedWithProjectDetails.col("documentId").as("pubId"),
-                            documentJoinedWithProjectDetails.col("projectGrantId").as("project_code"),
-                            documentJoinedWithProjectDetails.col("fundingClass").as("funder")
-                    );
-            
-            writeToRdb(normalizedPubGrant, TABLE_PUB_GRANT, params.postgresPassword);
-            
+            // filtering pubgrant relations by metadataFiltered (limiting only to the exported publications)
+            DataFrame normalizedFilteredPubGrant = normalizedPubGrant.join(normalizedPublication, 
+                    normalizedPubGrant.col(FIELD_PUBID).equalTo(normalizedPublication.col(FIELD_PUBID)), JOIN_TYPE_LEFTSEMI);
+            writeToRdb(normalizedFilteredPubGrant, TABLE_PUB_GRANT, dbCtx);
             // ==============================================================================
             // PubKeyword
             // ==============================================================================
 
-            DataFrame metadataKeywordsExploded = metadata.select(
-                    metadata.col("id").as("pubId"),
-                    explode(metadata.col("keywords")).as("keyword"));
+            DataFrame metadataKeywordsExploded = metadataFiltered.select(
+                    metadataFiltered.col("id").as(FIELD_PUBID),
+                    explode(metadataFiltered.col("keywords")).as(FIELD_KEYWORD));
             
-            writeToRdb(metadataKeywordsExploded, TABLE_PUB_KEYWORD, params.postgresPassword);
+            writeToRdb(metadataKeywordsExploded, TABLE_PUB_KEYWORD, dbCtx);
             
             // ==============================================================================
             // Citation
             // ==============================================================================
             // TODO we should handle externally matched citations as well
-            DataFrame citationInternal = citation.filter("entry.destinationDocumentId is not null").select(
-                    citation.col("sourceDocumentId").as("pubId"),
-                    citation.col("entry.destinationDocumentId").as("citationId"),
-                    citation.col("entry.rawText").as("reference"));
+            DataFrame citationInternal = citation
+                    .filter(citation.col("entry.destinationDocumentId").isNotNull().and(
+                            citation.col("entry.confidenceLevel").$greater$eq(params.confidenceLevelCitationThreshold)))
+                    .select(
+                        citation.col("sourceDocumentId").as(FIELD_PUBID),
+                        citation.col("entry.destinationDocumentId").as(FIELD_CITATIONID),
+                        citation.col("entry.rawText").as(FIELD_REFERENCE));
             
-            DataFrame citationInternalDedupedByCitationIdWithReferences = citationInternal.select(
-                    citationInternal.col("citationId"),
-                    citationInternal.col("reference")).dropDuplicates(new String[] {"citationId"});
+            DataFrame citationFiltered = citationInternal.join(normalizedPublication, 
+                    citationInternal.col(FIELD_PUBID).equalTo(normalizedPublication.col(FIELD_PUBID)), JOIN_TYPE_LEFTSEMI);
+            
+            DataFrame citationInternalDedupedByCitationIdWithReferences = citationFiltered.select(
+                    citationFiltered.col(FIELD_CITATIONID),
+                    citationFiltered.col(FIELD_REFERENCE)).dropDuplicates(new String[] {FIELD_CITATIONID});
             // dropping duplicates by citationId is required due to PK restriction
-            writeToRdb(citationInternalDedupedByCitationIdWithReferences, TABLE_CITATION, params.postgresPassword);
+            writeToRdb(citationInternalDedupedByCitationIdWithReferences, TABLE_CITATION, dbCtx);
             
             // ==============================================================================
             // Pub Citation
             // ==============================================================================
-            DataFrame citationInternalDedupedWithoutReference = citationInternal.select(
-                    citationInternal.col("pubId"),
-                    citationInternal.col("citationId")).dropDuplicates();
-            writeToRdb(citationInternalDedupedWithoutReference, TABLE_PUB_CITATION, params.postgresPassword);
+            DataFrame citationInternalDedupedWithoutReference = citationFiltered.select(
+                    citationFiltered.col(FIELD_PUBID),
+                    citationFiltered.col(FIELD_CITATIONID)).dropDuplicates();
+            writeToRdb(citationInternalDedupedWithoutReference, TABLE_PUB_CITATION, dbCtx);
+
             // ==============================================================================
+            // Pub PDBcodes
+            // ==============================================================================
+            DataFrame documentToPdbFiltered = documentToPdb.join(normalizedPublication, 
+                    documentToPdb.col("documentId").equalTo(normalizedPublication.col(FIELD_PUBID)), JOIN_TYPE_LEFTSEMI);
             
+            DataFrame normalizedPubPDB = documentToPdbFiltered
+                    .filter(documentToPdbFiltered.col("confidenceLevel").$greater$eq(params.confidenceLevelDocumentToPdbThreshold))
+                    .select(
+                            documentToPdbFiltered.col("documentId").as(FIELD_PMCID),
+                            documentToPdbFiltered.col("conceptId").as(FIELD_PDBCODE)
+                    ).distinct();
+            writeToRdb(normalizedPubPDB, TABLE_PUB_PDBCODE, dbCtx);
+            
+            // ==============================================================================
         }
     }
     
     
     //------------------------ PRIVATE --------------------------
     
-    private static Properties prepareConnectionProperties(String postgresPassword) {
+    /**
+     * Prepares connection properties based on {@link DatabaseContext}.
+     */
+    private static Properties prepareConnectionProperties(DatabaseContext dbCtx) {
         Properties props = new Properties();
-        props.setProperty("user", "openaire");
-        props.setProperty("password", postgresPassword);
+        props.setProperty("user", dbCtx.userName);
+        props.setProperty("password", dbCtx.password);
         props.setProperty("driver", "org.postgresql.Driver");
         return props;
     }
     
-    private static void writeToRdb(DataFrame dataFrame, String table, String postgresPassword) {
-        // based on:
-        // http://www.sparkexpert.com/2015/04/17/save-apache-spark-dataframe-to-database/
-        dataFrame.write().mode(SAVE_MODE).jdbc(RDB_URL, table, prepareConnectionProperties(postgresPassword));
+    /**
+     * Writes {@link DataFrame} to given table using database context.
+     * 
+     * @param dataFrame source data frame to be written
+     * @param table destination relational database table
+     * @param dbCtx database connection details
+     */
+    private static void writeToRdb(DataFrame dataFrame, String table, DatabaseContext dbCtx) {
+        dataFrame.write().mode(SAVE_MODE).jdbc(dbCtx.url, table, prepareConnectionProperties(dbCtx));
     }
     
-    private static void writeToRdbV2(DataFrame dataFrame, String table, String postgresPassword) {
-        // based on:
-        // https://stackoverflow.com/questions/34849293/recommended-ways-to-load-large-csv-to-rdb-like-mysql
-        // all written in single transaction
-        JdbcUtils.saveTable(dataFrame, RDB_URL, table, prepareConnectionProperties(postgresPassword));
-
-    }
+    //----------------------- INNER CLASSES ---------------------
     
-    private static void writeToJson(DataFrame dataFrame, String outputPath) {
-        // Saves the subset of the Avro records read in
-           dataFrame.write().json(outputPath);
-       }
+    private static class DatabaseContext {
+        
+        private final String url;
+        private final String userName;
+        private final String password;
+        
+        public DatabaseContext(String url, String userName, String password) {
+            this.url = url;
+            this.userName = userName;
+            this.password = password;
+        }
+    }
     
     @Parameters(separators = "=")
     private static class AvroToRdbTransformerJobParameters {
@@ -185,17 +245,36 @@ public class AvroToRdbTransformerJob {
         
         @Parameter(names = "-inputDocumentToProjectAvroPath", required = true)
         private String inputDocumentToProjectAvroPath;
+        
+        @Parameter(names = "-inputDocumentToPdbAvroPath", required = true)
+        private String inputDocumentToPdbAvroPath;
 
         @Parameter(names = "-inputCitationAvroPath", required = true)
         private String inputCitationAvroPath;
         
-        @Parameter(names = "-confidenceLevelThreshold", required = true)
-        private Float confidenceLevelThreshold;
+        @Parameter(names = "-confidenceLevelCitationThreshold", required = true)
+        private Float confidenceLevelCitationThreshold;
+        
+        @Parameter(names = "-confidenceLevelDocumentToProjectThreshold", required = true)
+        private Float confidenceLevelDocumentToProjectThreshold;
+        
+        @Parameter(names = "-confidenceLevelDocumentToPdbThreshold", required = true)
+        private Float confidenceLevelDocumentToPdbThreshold;
+        
+        @Parameter(names = "-fundingClassWhitelist", required = true)
+        private String fundingClassWhitelist;
         
         @Parameter(names = "-outputReportPath", required = true)
         private String outputReportPath;
         
-        @Parameter(names = "-postgresPassword", required = true)
-        private String postgresPassword;
+        @Parameter(names = "-databaseUrl", required = true)
+        private String databaseUrl;
+        
+        @Parameter(names = "-databaseUserName", required = true)
+        private String databaseUserName;
+        
+        @Parameter(names = "-databasePassword", required = true)
+        private String databasePassword;
     }
+
 }

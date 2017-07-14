@@ -18,14 +18,42 @@
             <description>input eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject records</description>
         </property>
         <property>
+            <name>input_document_to_pdb</name>
+            <description>input eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId records with references to protein databank codes</description>
+        </property>
+        <property>
             <name>input_citation</name>
             <description>input eu.dnetlib.iis.common.citations.schemas.Citation records</description>
         </property>
 
         <property>
-            <name>confidenceLevelThreshold</name>
-            <value>0.9</value>
-            <description>confidence level threshold related to inferred DocumentToProject relations</description>
+            <name>confidenceLevelCitationThreshold</name>
+            <description>confidence level threshold related to inferred matched internal citations</description>
+        </property>
+        <property>
+            <name>confidenceLevelDocumentToProjectThreshold</name>
+            <description>confidence level threshold related to inferred project relations</description>
+        </property>
+        <property>
+            <name>confidenceLevelDocumentToPdbThreshold</name>
+            <description>confidence level threshold related to inferred protein databank codes</description>
+        </property>
+        <property>
+            <name>fundingClassWhitelist</name>
+            <description>white list regex accepting fundingClass field values from project datastore</description>
+        </property>
+
+        <property>
+            <name>output_database_url</name>
+            <description>relation database url, where data should be exported</description>
+        </property>
+        <property>
+            <name>output_database_username</name>
+            <description>database user name</description>
+        </property>
+        <property>
+            <name>output_database_password</name>
+            <description>password required to access database</description>
         </property>
         
         <property>
@@ -55,11 +83,6 @@
             <name>sparkDriverMemory</name>
             <description>memory for driver process</description>
         </property>
-        
-        <property>
-            <name>postgres_password</name>
-            <description>password required to access postgres database</description>
-        </property>
     </parameters>
 
     <global>
@@ -76,7 +99,6 @@
             </property>
         </configuration>
     </global>
-    
     
     <start to="avro2rdb" />
 
@@ -95,13 +117,19 @@
             <arg>-inputTextAvroPath=${input_text}</arg>
             <arg>-inputProjectAvroPath=${input_project}</arg>
             <arg>-inputDocumentToProjectAvroPath=${input_document_to_project}</arg>
+            <arg>-inputDocumentToPdbAvroPath=${input_document_to_pdb}</arg>
             <arg>-inputCitationAvroPath=${input_citation}</arg>
             
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
 
-            <arg>-confidenceLevelThreshold=${confidenceLevelThreshold}</arg>
+            <arg>-confidenceLevelCitationThreshold=${confidenceLevelCitationThreshold}</arg>
+            <arg>-confidenceLevelDocumentToProjectThreshold=${confidenceLevelDocumentToProjectThreshold}</arg>
+            <arg>-confidenceLevelDocumentToPdbThreshold=${confidenceLevelDocumentToPdbThreshold}</arg>
+            <arg>-fundingClassWhitelist=${fundingClassWhitelist}</arg>
             
-            <arg>-postgresPassword=${postgres_password}</arg>
+            <arg>-databaseUrl=${output_database_url}</arg>
+            <arg>-databaseUserName=${output_database_username}</arg>
+            <arg>-databasePassword=${output_database_password}</arg>
 
         </spark>
         <ok to="end" />
