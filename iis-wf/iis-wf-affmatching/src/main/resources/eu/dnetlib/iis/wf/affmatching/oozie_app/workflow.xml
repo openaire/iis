@@ -59,6 +59,16 @@
             <name>sparkDriverOverhead</name>
             <description>The amount of off heap memory (in megabytes) to be allocated for the driver</description>
         </property>
+        <property>
+            <name>sparkNetworkTimeout</name>
+            <value>5m</value>
+            <description>default timeout for all network interactions</description>
+        </property>
+        <property>
+            <name>sparkExecutorHeartbeatInterval</name>
+            <value>1m</value>
+            <description>interval between each executor's heartbeats to the driver</description>
+        </property>
     </parameters>
 
     <global>
@@ -92,7 +102,7 @@
             <class>eu.dnetlib.iis.wf.affmatching.AffMatchingJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-affmatching-${projectVersion}.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory} --conf spark.yarn.driver.memoryOverhead=${sparkDriverOverhead}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory} --conf spark.yarn.driver.memoryOverhead=${sparkDriverOverhead} --conf spark.network.timeout=${sparkNetworkTimeout} --conf spark.executor.heartbeatInterval=${sparkExecutorHeartbeatInterval}</spark-opts>
 
             <arg>-inputAvroOrgPath=${input_organizations}</arg>
             <arg>-inputAvroAffPath=${input_document_metadata}</arg>
