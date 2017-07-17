@@ -23,6 +23,7 @@ public class AvroToRdbTransformerJob {
     private static final String TABLE_PUBLICATION = "Publication";
     private static final String TABLE_PUB_GRANT = "PubGrant";
     private static final String TABLE_PUB_KEYWORD = "PubKeyword";
+    private static final String TABLE_PUB_FULLTEXT = "PubFulltext";
     private static final String TABLE_CITATION = "Citation";
     private static final String TABLE_PUB_CITATION = "PubCitation";
     private static final String TABLE_PUB_PDBCODE = "PubPDBCode";
@@ -37,7 +38,7 @@ public class AvroToRdbTransformerJob {
     private static final String FIELD_FUNDER = "funder";
     
     private static final String FIELD_TITLE = "title";
-    private static final String FIELD_ABSTRCT = "abstract";
+    private static final String FIELD_ABSTRACT = "abstract";
     private static final String FIELD_FULLTEXT = "fulltext";
     private static final String FIELD_PUBYEAR = "pubyear";
     
@@ -105,7 +106,7 @@ public class AvroToRdbTransformerJob {
             DataFrame metadataSubset = metadata.select(
                     metadata.col("id").as(FIELD_PUBID),
                     metadata.col(FIELD_TITLE), 
-                    metadata.col(FIELD_ABSTRCT), 
+                    metadata.col(FIELD_ABSTRACT), 
                     metadata.col("year"),
                     metadata.col("keywords")
             );
@@ -115,17 +116,16 @@ public class AvroToRdbTransformerJob {
                     metadataSubset.col(FIELD_PUBID).equalTo(textDeduped.col("id")), JOIN_TYPE_LEFT_OUTER);
             
             DataFrame metadataFilteredByText = metadataJoinedWithText.filter(
-                    metadataJoinedWithText.col(FIELD_ABSTRCT).isNotNull().or(metadataJoinedWithText.col("text").isNotNull()));
+                    metadataJoinedWithText.col(FIELD_ABSTRACT).isNotNull().or(metadataJoinedWithText.col("text").isNotNull()));
             
-            DataFrame metadataFiltered = metadataFilteredByText.join(normalizedPubGrant, 
+            DataFrame metadataFilteredByTextAndGrant = metadataFilteredByText.join(normalizedPubGrant, 
                     metadataFilteredByText.col(FIELD_PUBID).equalTo(normalizedPubGrant.col(FIELD_PUBID)), JOIN_TYPE_LEFTSEMI);
             
-            DataFrame normalizedPublication = metadataFiltered.select(
-                    metadataFiltered.col(FIELD_PUBID),
-                    metadataFiltered.col(FIELD_TITLE), 
-                    metadataFiltered.col(FIELD_ABSTRCT), 
-                    metadataFiltered.col("year").as(FIELD_PUBYEAR),
-                    metadataFiltered.col("text").as(FIELD_FULLTEXT)
+            DataFrame normalizedPublication = metadataFilteredByTextAndGrant.select(
+                    metadataFilteredByTextAndGrant.col(FIELD_PUBID),
+                    metadataFilteredByTextAndGrant.col(FIELD_TITLE), 
+                    metadataFilteredByTextAndGrant.col(FIELD_ABSTRACT), 
+                    metadataFilteredByTextAndGrant.col("year").as(FIELD_PUBYEAR)
                     );
             
             writeToRdb(normalizedPublication, TABLE_PUBLICATION, dbCtx);
@@ -134,15 +134,28 @@ public class AvroToRdbTransformerJob {
             DataFrame normalizedFilteredPubGrant = normalizedPubGrant.join(normalizedPublication, 
                     normalizedPubGrant.col(FIELD_PUBID).equalTo(normalizedPublication.col(FIELD_PUBID)), JOIN_TYPE_LEFTSEMI);
             writeToRdb(normalizedFilteredPubGrant, TABLE_PUB_GRANT, dbCtx);
+            
             // ==============================================================================
             // PubKeyword
             // ==============================================================================
-
-            DataFrame metadataKeywordsExploded = metadataFiltered.select(
-                    metadataFiltered.col("id").as(FIELD_PUBID),
-                    explode(metadataFiltered.col("keywords")).as(FIELD_KEYWORD));
+            // no need to filter keywords by null, explode does the job
+            DataFrame metadataKeywordsExploded = metadataFilteredByTextAndGrant
+                    .select(
+                            metadataFilteredByTextAndGrant.col(FIELD_PUBID),
+                            explode(metadataFilteredByTextAndGrant.col("keywords")).as(FIELD_KEYWORD));
             
             writeToRdb(metadataKeywordsExploded, TABLE_PUB_KEYWORD, dbCtx);
+            
+            // ==============================================================================
+            // PubFulltext
+            // ==============================================================================
+            DataFrame publicationFulltext = metadataFilteredByTextAndGrant
+                    .filter(metadataFilteredByTextAndGrant.col("text").isNotNull())
+                    .select(
+                            metadataFilteredByTextAndGrant.col(FIELD_PUBID),
+                            metadataFilteredByTextAndGrant.col("text").as(FIELD_FULLTEXT));
+            
+            writeToRdb(publicationFulltext, TABLE_PUB_FULLTEXT, dbCtx);
             
             // ==============================================================================
             // Citation
