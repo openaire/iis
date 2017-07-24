@@ -41,6 +41,7 @@ public class AvroToRdbTransformerJob {
     private static final String FIELD_ABSTRACT = "abstract";
     private static final String FIELD_FULLTEXT = "fulltext";
     private static final String FIELD_PUBYEAR = "pubyear";
+    private static final String FIELD_DOI = "doi";
     
     private static final String FIELD_KEYWORD = "keyword";
     
@@ -106,7 +107,9 @@ public class AvroToRdbTransformerJob {
             DataFrame metadataSubset = metadata.select(
                     metadata.col("id").as(FIELD_PUBID),
                     metadata.col(FIELD_TITLE), 
-                    metadata.col(FIELD_ABSTRACT), 
+                    metadata.col(FIELD_ABSTRACT),
+                    metadata.col("language"),
+                    metadata.col("externalIdentifiers").getField("doi").as(FIELD_DOI),
                     metadata.col("year"),
                     metadata.col("keywords")
             );
@@ -115,8 +118,12 @@ public class AvroToRdbTransformerJob {
             DataFrame metadataJoinedWithText = metadataSubset.join(textDeduped, 
                     metadataSubset.col(FIELD_PUBID).equalTo(textDeduped.col("id")), JOIN_TYPE_LEFT_OUTER);
             
+            // filtering by abstract OR text being not null and English language (or unspecified)
+            // TODO introduce language recognition for unspecified lang
             DataFrame metadataFilteredByText = metadataJoinedWithText.filter(
-                    metadataJoinedWithText.col(FIELD_ABSTRACT).isNotNull().or(metadataJoinedWithText.col("text").isNotNull()));
+                    metadataJoinedWithText.col(FIELD_ABSTRACT).isNotNull().or(metadataJoinedWithText.col("text").isNotNull()).and(
+                            metadataJoinedWithText.col("language").isNull().or(metadataJoinedWithText.col("language").equalTo("eng")))
+                    );
             
             DataFrame metadataFilteredByTextAndGrant = metadataFilteredByText.join(normalizedPubGrant, 
                     metadataFilteredByText.col(FIELD_PUBID).equalTo(normalizedPubGrant.col(FIELD_PUBID)), JOIN_TYPE_LEFTSEMI);
@@ -124,7 +131,8 @@ public class AvroToRdbTransformerJob {
             DataFrame normalizedPublication = metadataFilteredByTextAndGrant.select(
                     metadataFilteredByTextAndGrant.col(FIELD_PUBID),
                     metadataFilteredByTextAndGrant.col(FIELD_TITLE), 
-                    metadataFilteredByTextAndGrant.col(FIELD_ABSTRACT), 
+                    metadataFilteredByTextAndGrant.col(FIELD_ABSTRACT),
+                    metadataFilteredByTextAndGrant.col(FIELD_DOI),
                     metadataFilteredByTextAndGrant.col("year").as(FIELD_PUBYEAR)
                     );
             
