@@ -80,6 +80,10 @@
             <description>number of cores used by single executor</description>
         </property>
         <property>
+            <name>sparkExecutorOverhead</name>
+            <description>The amount of off heap memory (in megabytes) to be allocated for the executor</description>
+        </property>
+        <property>
             <name>sparkDriverMemory</name>
             <description>memory for driver process</description>
         </property>
@@ -111,7 +115,7 @@
             <class>eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-probabilistic-topic-modeling-${projectVersion}.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --num-executors ${sparkNumExecutors} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --num-executors ${sparkNumExecutors} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory} --conf spark.yarn.executor.memoryOverhead=${sparkExecutorOverhead}</spark-opts>
 
             <arg>-inputMetadataAvroPath=${input_meta}</arg>
             <arg>-inputTextAvroPath=${input_text}</arg>
