@@ -1,7 +1,14 @@
 package eu.dnetlib.iis.wf.ptm.avro2rdb;
 
-import static org.apache.spark.sql.functions.explode;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.buildPubCitation;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.buildPubFulltext;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.buildPubGrant;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.buildPubKeyword;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.buildPubPDBCodes;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.filterCitation;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.filterMetadata;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
@@ -29,37 +36,38 @@ public class AvroToRdbTransformerJob {
     
     private static final SaveMode SAVE_MODE = SaveMode.Append;
     
-    private static final String TABLE_PUBLICATION = "Publication";
-    private static final String TABLE_PUB_GRANT = "PubGrant";
-    private static final String TABLE_PUB_KEYWORD = "PubKeyword";
-    private static final String TABLE_PUB_FULLTEXT = "PubFulltext";
-    private static final String TABLE_CITATION = "Citation";
-    private static final String TABLE_PUB_CITATION = "PubCitation";
-    private static final String TABLE_PUB_PDBCODE = "PubPDBCode";
+    private static final String URL_PREFIX_JDBC = "jdbc:";
     
-    private static final String JOIN_TYPE_INNER = "inner";
-    private static final String JOIN_TYPE_LEFT_OUTER = "left_outer";
-    private static final String JOIN_TYPE_LEFTSEMI = "leftsemi";
+    protected static final String TABLE_PUBLICATION = "Publication";
+    protected static final String TABLE_PUB_GRANT = "PubGrant";
+    protected static final String TABLE_PUB_KEYWORD = "PubKeyword";
+    protected static final String TABLE_PUB_FULLTEXT = "PubFulltext";
+    protected static final String TABLE_CITATION = "Citation";
+    protected static final String TABLE_PUB_CITATION = "PubCitation";
+    protected static final String TABLE_PUB_PDBCODE = "PubPDBCode";
     
-    private static final String FIELD_PUBID = "pubId";
+    protected static final String JOIN_TYPE_INNER = "inner";
+    protected static final String JOIN_TYPE_LEFT_OUTER = "left_outer";
+    protected static final String JOIN_TYPE_LEFTSEMI = "leftsemi";
     
-    private static final String FIELD_GRANTID = "grantId";
-    private static final String FIELD_FUNDER = "funder";
+    protected static final String FIELD_PUBID = "pubId";
     
-    private static final String FIELD_TITLE = "title";
-    private static final String FIELD_ABSTRACT = "abstract";
-    private static final String FIELD_FULLTEXT = "fulltext";
-    private static final String FIELD_PUBYEAR = "pubyear";
-    private static final String FIELD_DOI = "doi";
+    protected static final String FIELD_GRANTID = "grantId";
+    protected static final String FIELD_FUNDER = "funder";
     
-    private static final String FIELD_KEYWORD = "keyword";
+    protected static final String FIELD_TITLE = "title";
+    protected static final String FIELD_ABSTRACT = "abstract";
+    protected static final String FIELD_FULLTEXT = "fulltext";
+    protected static final String FIELD_PUBYEAR = "pubyear";
+    protected static final String FIELD_DOI = "doi";
     
-    private static final String FIELD_CITATIONID = "citationId";
-    private static final String FIELD_REFERENCE = "reference";
+    protected static final String FIELD_KEYWORD = "keyword";
     
-    private static final String FIELD_PMCID = "pmcId";
-    private static final String FIELD_PDBCODE = "pdbcode";
+    protected static final String FIELD_CITATIONID = "citationId";
+    protected static final String FIELD_REFERENCE = "reference";
     
+    protected static final String FIELD_PMCID = "pmcId";
+    protected static final String FIELD_PDBCODE = "pdbcode";
     
     private static AvroToRdbCounterReporter counterReporter = new AvroToRdbCounterReporter();
     
@@ -75,6 +83,8 @@ public class AvroToRdbTransformerJob {
         DatabaseContext dbCtx = new DatabaseContext(params.databaseUrl, params.databaseUserName, params.databasePassword);
         
         SparkConf conf = new SparkConf();
+        conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
+        conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
         
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
             
@@ -116,7 +126,7 @@ public class AvroToRdbTransformerJob {
             DataFrame publicationId = metadataFilteredByTextAndGrant.select(metadataFilteredByTextAndGrant.col(FIELD_PUBID));
             publicationId.cache();
             
-            writeToRdb(metadataFilteredByTextAndGrant.select(
+            write(metadataFilteredByTextAndGrant.select(
                     metadataFilteredByTextAndGrant.col(FIELD_PUBID),
                     metadataFilteredByTextAndGrant.col(FIELD_TITLE), 
                     metadataFilteredByTextAndGrant.col(FIELD_ABSTRACT),
@@ -126,19 +136,19 @@ public class AvroToRdbTransformerJob {
             // filtering pubgrant relations by metadataFiltered (limiting only to the exported publications)
             DataFrame normalizedFilteredPubGrant = normalizedPubGrant.join(publicationId, 
                     normalizedPubGrant.col(FIELD_PUBID).equalTo(publicationId.col(FIELD_PUBID)), JOIN_TYPE_LEFTSEMI);
-            writeToRdb(normalizedFilteredPubGrant, TABLE_PUB_GRANT, dbCtx, reportEntries);
+            write(normalizedFilteredPubGrant, TABLE_PUB_GRANT, dbCtx, reportEntries);
             
             // ==============================================================================
             // PubKeyword
             // ==============================================================================
 
-            writeToRdb(buildPubKeyword(metadataFilteredByTextAndGrant), TABLE_PUB_KEYWORD, dbCtx, reportEntries);
+            write(buildPubKeyword(metadataFilteredByTextAndGrant), TABLE_PUB_KEYWORD, dbCtx, reportEntries);
             
             // ==============================================================================
             // PubFulltext
             // ==============================================================================
 
-            writeToRdb(buildPubFulltext(metadataFilteredByTextAndGrant), TABLE_PUB_FULLTEXT, dbCtx, reportEntries);
+            write(buildPubFulltext(metadataFilteredByTextAndGrant), TABLE_PUB_FULLTEXT, dbCtx, reportEntries);
             
             // ==============================================================================
             // Citation
@@ -149,7 +159,7 @@ public class AvroToRdbTransformerJob {
             citationFiltered.cache();
             
             // dropping duplicates by citationId is required due to PK restriction
-            writeToRdb(citationFiltered
+            write(citationFiltered
                     .select(citationFiltered.col(FIELD_CITATIONID), citationFiltered.col(FIELD_REFERENCE))
                     .dropDuplicates(new String[] { FIELD_CITATIONID }), TABLE_CITATION, dbCtx, reportEntries);
             
@@ -157,13 +167,13 @@ public class AvroToRdbTransformerJob {
             // Pub Citation
             // ==============================================================================
 
-            writeToRdb(buildPubCitation(citationFiltered), TABLE_PUB_CITATION, dbCtx, reportEntries);
+            write(buildPubCitation(citationFiltered), TABLE_PUB_CITATION, dbCtx, reportEntries);
 
             // ==============================================================================
             // Pub PDBcodes
             // ==============================================================================
 
-            writeToRdb(buildPubPDBCodes(inputDocumentToPdb, publicationId, params.confidenceLevelDocumentToPdbThreshold),
+            write(buildPubPDBCodes(inputDocumentToPdb, publicationId, params.confidenceLevelDocumentToPdbThreshold),
                     TABLE_PUB_PDBCODE, dbCtx, reportEntries);
             
             // ==============================================================================
@@ -172,112 +182,6 @@ public class AvroToRdbTransformerJob {
             counterReporter.report(sc, reportEntries, params.outputReportPath);
             
         }
-    }
-    
-    protected static DataFrame filterMetadata(DataFrame metadata, DataFrame text, DataFrame pubGrant) {
-        DataFrame metadataSubset = metadata.select(
-                metadata.col("id").as(FIELD_PUBID),
-                metadata.col(FIELD_TITLE), 
-                metadata.col(FIELD_ABSTRACT),
-                metadata.col("language"),
-                metadata.col("externalIdentifiers").getField("doi").as(FIELD_DOI),
-                metadata.col("year"),
-                metadata.col("keywords")
-        );
-        
-        DataFrame textDeduped = text.dropDuplicates(new String[] {"id"});
-        DataFrame metadataJoinedWithText = metadataSubset.join(textDeduped, 
-                metadataSubset.col(FIELD_PUBID).equalTo(textDeduped.col("id")), JOIN_TYPE_LEFT_OUTER);
-        
-        // filtering by abstract OR text being not null and English language (or unspecified)
-        // TODO introduce language recognition for unspecified lang
-        DataFrame metadataFilteredByText = metadataJoinedWithText.filter(
-                metadataJoinedWithText.col(FIELD_ABSTRACT).isNotNull().or(metadataJoinedWithText.col("text").isNotNull()).and(
-                        metadataJoinedWithText.col("language").isNull().or(metadataJoinedWithText.col("language").equalTo("eng"))));
-        
-        return metadataFilteredByText.join(pubGrant, 
-                metadataFilteredByText.col(FIELD_PUBID).equalTo(pubGrant.col(FIELD_PUBID)), JOIN_TYPE_LEFTSEMI);
-    }
-    
-    /**
-     * @param metadata dataframe with {@link #FIELD_PUBID} and keywords columns
-     */
-    protected static DataFrame buildPubKeyword(DataFrame metadata) {
-     // no need to filter keywords by null, explode does the job
-        return metadata.select(metadata.col(FIELD_PUBID), explode(metadata.col("keywords")).as(FIELD_KEYWORD));
-    }
-    
-    /**
-     * @param metadata dataframe with {@link #FIELD_PUBID} and text columns
-     */
-    protected static DataFrame buildPubFulltext(DataFrame metadata) {
-        return metadata.filter(metadata.col("text").isNotNull()).select(metadata.col(FIELD_PUBID),
-                metadata.col("text").as(FIELD_FULLTEXT));
-    }
-    
-    /**
-     * @param citation dataframe with citations read from input avro datastore
-     * @param publicationId dataframe with {@link #FIELD_PUBID} column, required for filtering citation datastore
-     * @param confidenceLevelThreshold matched citation confidence level threshold
-     */
-    protected static DataFrame filterCitation(DataFrame citation, DataFrame publicationId,
-            float confidenceLevelThreshold) {
-        // TODO we should handle externally matched citations as well
-        DataFrame citationInternal = citation
-                .filter(citation.col("entry.destinationDocumentId").isNotNull().and(
-                        citation.col("entry.confidenceLevel").$greater$eq(confidenceLevelThreshold)))
-                .select(
-                    citation.col("sourceDocumentId").as(FIELD_PUBID),
-                    citation.col("entry.destinationDocumentId").as(FIELD_CITATIONID),
-                    citation.col("entry.rawText").as(FIELD_REFERENCE));
-        
-        // filtering by publications subset
-        return citationInternal.join(publicationId, 
-                citationInternal.col(FIELD_PUBID).equalTo(publicationId.col(FIELD_PUBID)), JOIN_TYPE_LEFTSEMI);
-    }
-    
-    /**
-     * @param citation dataframe with {@link #FIELD_PUBID} and {@link #FIELD_CITATIONID} columns
-     */
-    protected static DataFrame buildPubCitation(DataFrame citation) {
-        return citation.select(citation.col(FIELD_PUBID), citation.col(FIELD_CITATIONID)).dropDuplicates();
-    }
-    
-    /**
-     * @param documentToProject dataframe with document to project relations read from input avro datastore 
-     * @param project dataframe with projects read from input avro datastore
-     * @param confidenceLevelThreshold document to project relations confidence level threshold
-     * @param fundingClassWhitelist project funding class whitelist regex
-     */
-    protected static DataFrame buildPubGrant(DataFrame documentToProject, DataFrame project, 
-            float confidenceLevelThreshold, String fundingClassWhitelist) {
-        DataFrame documentJoinedWithProjectDetails = documentToProject.join(project,
-                documentToProject.col("projectId").equalTo(project.col("id")), JOIN_TYPE_INNER);
-        return documentJoinedWithProjectDetails
-                .filter(documentJoinedWithProjectDetails.col("confidenceLevel").$greater$eq(confidenceLevelThreshold)
-                        .and(documentJoinedWithProjectDetails.col("fundingClass").rlike(fundingClassWhitelist)))
-                .select(documentJoinedWithProjectDetails.col("documentId").as(FIELD_PUBID),
-                        documentJoinedWithProjectDetails.col("projectGrantId").as(FIELD_GRANTID),
-                        documentJoinedWithProjectDetails.col("fundingClass").as(FIELD_FUNDER));
-    }
-    
-    
-    /**
-     * @param documentToPdb dataframe with document to pdb relations read from input avro datastore
-     * @param publicationId dataframe with {@link #FIELD_PUBID} column, required for filtering documentToPdb datastore 
-     * @param confidenceLevelThreshold document to pdb relations confidence level threshold
-     */
-    protected static DataFrame buildPubPDBCodes(DataFrame documentToPdb, DataFrame publicationId, 
-            float confidenceLevelThreshold) {
-        // filtering by publications subset
-        DataFrame documentToPdbFiltered = documentToPdb.join(publicationId, 
-                documentToPdb.col("documentId").equalTo(publicationId.col(FIELD_PUBID)), JOIN_TYPE_LEFTSEMI);
-        
-        return documentToPdbFiltered
-                .filter(documentToPdbFiltered.col("confidenceLevel").$greater$eq(confidenceLevelThreshold))
-                .select(documentToPdbFiltered.col("documentId").as(FIELD_PMCID),
-                        documentToPdbFiltered.col("conceptId").as(FIELD_PDBCODE)
-                ).distinct();
     }
     
     //------------------------ PRIVATE --------------------------
@@ -301,9 +205,13 @@ public class AvroToRdbTransformerJob {
      * @param dbCtx database connection details
      * @param reportEntries list of report entries to be supplemented
      */
-    private static void writeToRdb(DataFrame dataFrame, String tableName, DatabaseContext dbCtx, List<ReportEntry> reportEntries) {
+    private static void write(DataFrame dataFrame, String tableName, DatabaseContext dbCtx, List<ReportEntry> reportEntries) {
         dataFrame.cache();
-        dataFrame.write().mode(SAVE_MODE).jdbc(dbCtx.url, tableName, prepareConnectionProperties(dbCtx));
+        if (dbCtx.url.startsWith(URL_PREFIX_JDBC)) {
+            dataFrame.write().mode(SAVE_MODE).jdbc(dbCtx.url, tableName, prepareConnectionProperties(dbCtx));
+        } else {
+            dataFrame.write().json(dbCtx.url + File.separatorChar +  tableName);
+        }
         reportEntries.add(counterReporter.generateCountReportEntry(dataFrame, tableName));
     }
     

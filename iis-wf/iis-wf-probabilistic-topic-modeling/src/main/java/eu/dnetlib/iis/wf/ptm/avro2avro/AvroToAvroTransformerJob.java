@@ -12,7 +12,6 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
-import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 
 
 public class AvroToAvroTransformerJob {
