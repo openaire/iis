@@ -321,6 +321,15 @@
 					<name>output_name_wos</name>
 					<value>wos</value>
 				</property>
+                <!-- disabling report entry for WoS which is not expected here-->
+                <property>
+                    <name>report_entry_wos</name>
+                    <value>$UNDEFINED$</value>
+                </property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>import_content_url</value>
+                </property>
 				<!-- all the other properties are autmatically propagated -->
 			</configuration>
 		</sub-workflow>
@@ -600,6 +609,23 @@
 					<name>output_name_wos</name>
 					<value>wos</value>
 				</property>
+                <!-- disabling all report entries (but WoS) which are not expected here-->
+                <property>
+                    <name>report_entry_pdf</name>
+                    <value>$UNDEFINED$</value>
+                </property>
+                <property>
+                    <name>report_entry_html</name>
+                    <value>$UNDEFINED$</value>
+                </property>
+                <property>
+                    <name>report_entry_xml_pmc</name>
+                    <value>$UNDEFINED$</value>
+                </property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>import_content_url_wos</value>
+                </property>
 				<!-- all the other properties autmatically propagated -->
 			</configuration>
 		</sub-workflow>
@@ -697,7 +723,7 @@
             <arg>-Preport.import.project.duration=import_project</arg>
             <arg>-Preport.import.dataset.duration=import_dataset</arg>
             <arg>-Preport.import.wos.mdrecord.duration=import_wos_mdrecord</arg>
-            <arg>-Preport.import.content.url.duration=import_content_url</arg>
+            <arg>-Preport.import.content.url.duration=import_content_url,wos_url_import</arg>
             <arg>-Preport.import.content.html.duration=import_html</arg>
             <arg>-Preport.import.content.wos.duration=wos_import_plaintext</arg>
             <arg>-Preport.import.ingestPmc.duration=ingest_pmc_cached</arg>

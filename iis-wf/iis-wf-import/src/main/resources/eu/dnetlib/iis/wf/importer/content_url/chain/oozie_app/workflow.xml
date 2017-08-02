@@ -88,6 +88,37 @@
 			<value>wos</value>
 			<description>WoS output subdirectory name</description>
 		</property>
+        <!-- report related -->
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
+            <name>output_report_relative_path</name>
+            <value>import_content_url</value>
+            <description>directory for storing report (relative to output_report_root_path)</description>
+        </property>
+        <!-- set of report entries, will be disabled when not starting with "report." prefix -->
+        <property>
+            <name>report_entry_pdf</name>
+            <value>report.import.content.url.bytype.pdf</value>
+            <description>report entry holding counter for PDF output URLs</description>
+        </property>
+        <property>
+            <name>report_entry_html</name>
+            <value>report.import.content.url.bytype.html</value>
+            <description>report entry holding counter for HTML output URLs</description>
+        </property>
+        <property>
+            <name>report_entry_xml_pmc</name>
+            <value>report.import.content.url.bytype.xmlpmc</value>
+            <description>report entry holding counter for XML PMC output URLs</description>
+        </property>
+        <property>
+            <name>report_entry_wos</name>
+            <value>report.import.content.url.bytype.wos</value>
+            <description>report entry holding counter for WoS output URLs</description>
+        </property>
 	</parameters>
 
 	<global>
@@ -370,12 +401,34 @@
                     <name>mapreduce.job.reduces</name>
                     <value>0</value>
                 </property>
+                <property>
+                    <name>oozie.action.external.stats.write</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>avro.mapreduce.multipleoutputs.counters</name>
+                    <value>true</value>
+                </property>
 			</configuration>
 		</map-reduce>
-		<ok to="end" />
+		<ok to="report" />
 		<error to="fail" />
 	</action>
 	
+    <action name="report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
+            <arg>-P${report_entry_pdf}=${hadoop:counters('content-url-dispatcher')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_pdf,'/part')]}</arg>
+            <arg>-P${report_entry_html}=${hadoop:counters('content-url-dispatcher')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_html,'/part')]}</arg>
+            <arg>-P${report_entry_xml_pmc}=${hadoop:counters('content-url-dispatcher')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_xml_pmc,'/part')]}</arg>
+            <arg>-P${report_entry_wos}=${hadoop:counters('content-url-dispatcher')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_wos,'/part')]}</arg>
+            <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:
 			[${wf:errorMessage(wf:lastErrorNode())}]</message>

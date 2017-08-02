@@ -88,6 +88,14 @@
                     <name>output_root</name>
                     <value>${workingDir}/out</value>
                 </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>import_content_url</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="consumer" />
@@ -119,6 +127,17 @@
             <arg>-Icontent_url_pdf=${workingDir}/out/pdf</arg>
             <arg>-Icontent_url_wos=${workingDir}/out/wos</arg>
             <arg>-Icontent_url_xml=${workingDir}/out/xmlpmc</arg>
+        </java>
+        <ok to="consumer-report" />
+        <error to="fail" />
+    </action>
+
+    <action name="consumer-report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/importer/content_url/data/output/report.json}</arg>
+            <arg>-Ireport=${workingDir}/report/import_content_url</arg>
         </java>
         <ok to="end" />
         <error to="fail" />
