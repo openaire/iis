@@ -811,6 +811,13 @@
             <arg>eu.dnetlib.iis.common.report.OozieTimeReportGenerator</arg>
             <arg>-PjobId=${wf:id()}</arg>
             <arg>-PoozieServiceLoc=${oozieServiceLoc}</arg>
+            <arg>-Preport.import.concept.duration=import_concept</arg>
+            <arg>-Preport.import.infoSpace.duration=import_infospace</arg>
+            <arg>-Preport.import.dataset.duration=import_dataset</arg>
+            <arg>-Preport.import.content.url.duration=import_content_url</arg>
+            <arg>-Preport.import.content.html.duration=import_html</arg>
+            <arg>-Preport.import.content.wos.duration=import_wos</arg>
+            <arg>-Preport.import.ingestPmc.duration=ingest_pmc_cached</arg>
             <arg>-Preport.import.metadataExtraction.duration=metadata_extractor_cached</arg>
             <arg>-Oreport=${output_report_root_path}/primary-import-execution-times</arg>
         </java>
