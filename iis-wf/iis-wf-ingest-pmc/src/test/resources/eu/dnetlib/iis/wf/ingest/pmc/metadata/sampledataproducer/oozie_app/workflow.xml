@@ -41,23 +41,8 @@
     <action name="ingest_pmc_metadata">
         <sub-workflow>
             <app-path>${wf:appPath()}/ingest_pmc_metadata</app-path>
+            <propagate-configuration/>
             <configuration>
-            	<property>
-                    <name>jobTracker</name>
-                    <value>${jobTracker}</value>
-                </property>
-                <property>
-                    <name>nameNode</name>
-                    <value>${nameNode}</value>
-                </property>
-                <property>
-                    <name>queueName</name>
-                    <value>${queueName}</value>
-                </property>
-                <property>
-                    <name>oozieLauncherQueueName</name>
-                    <value>${oozieLauncherQueueName}</value>
-                </property>
                 <property>
                     <name>workingDir</name>
                     <value>${workingDir}/ingest_pmc_metadata/working_dir</value>

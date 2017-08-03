@@ -201,10 +201,23 @@
             <arg>-Preport.import.ingestPmc.processed.fault=${hadoop:counters('ingest')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_fault,'/part')]}</arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>
-        <ok to="end" />
+        <ok to="report-execution-times" />
         <error to="fail" />
     </action>
 
+    <action name="report-execution-times">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.OozieTimeReportGenerator</arg>
+            <arg>-PjobId=${wf:id()}</arg>
+            <arg>-PoozieServiceLoc=${oozieServiceLoc}</arg>
+            <arg>-Preport.import.ingestPmc.processed.duration=ingest</arg>
+            <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}-execution-times</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:
 			[${wf:errorMessage(wf:lastErrorNode())}]
