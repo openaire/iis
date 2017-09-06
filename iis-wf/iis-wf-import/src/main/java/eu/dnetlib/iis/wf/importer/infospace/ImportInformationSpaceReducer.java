@@ -45,7 +45,6 @@ import eu.dnetlib.iis.wf.importer.infospace.converter.InfoSpaceRecordUtils;
 import eu.dnetlib.iis.wf.importer.infospace.converter.OafEntityToAvroConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.OafRelToAvroConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.OrganizationConverter;
-import eu.dnetlib.iis.wf.importer.infospace.converter.PersonConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectToOrganizationRelationConverter;
 
@@ -69,8 +68,6 @@ public class ImportInformationSpaceReducer
     protected static final String OUTPUT_NAME_DOCUMENT_PROJECT = "output.name.document_project";
 
     protected static final String OUTPUT_NAME_PROJECT = "output.name.project";
-
-    protected static final String OUTPUT_NAME_PERSON = "output.name.person";
 
     protected static final String OUTPUT_NAME_DEDUP_MAPPING = "output.name.dedup_mapping";
 
@@ -97,8 +94,6 @@ public class ImportInformationSpaceReducer
 
     private String outputNameProject;
 
-    private String outputNamePerson;
-
     private String outputNameDedupMapping;
 
     private String outputNameOrganization;
@@ -112,8 +107,6 @@ public class ImportInformationSpaceReducer
     private DocumentToProjectRelationConverter docProjectConverter;
 
     private DeduplicationMappingConverter deduplicationMappingConverter;
-
-    private PersonConverter personConverter;
 
     private ProjectConverter projectConverter;
 
@@ -145,10 +138,9 @@ public class ImportInformationSpaceReducer
         this.resultApprover = dataInfoBasedApprover;
 
         // initializing converters
-        docMetaConverter = new DocumentMetadataConverter(this.resultApprover, dataInfoBasedApprover);
+        docMetaConverter = new DocumentMetadataConverter(dataInfoBasedApprover);
         deduplicationMappingConverter = new DeduplicationMappingConverter();
         docProjectConverter = new DocumentToProjectRelationConverter();
-        personConverter = new PersonConverter();
         projectConverter = new ProjectConverter();
         organizationConverter = new OrganizationConverter();
         projectOrganizationConverter = new ProjectToOrganizationRelationConverter();
@@ -172,8 +164,6 @@ public class ImportInformationSpaceReducer
         
         if (id.startsWith(InfoSpaceConstants.ROW_PREFIX_RESULT)) {
             handleResult(id, mappedRecords);
-        } else if (id.startsWith(InfoSpaceConstants.ROW_PREFIX_PERSON)) {
-            handleEntity(id, mappedRecords.get(Type.person.name()), personConverter, outputNamePerson);
         } else if (id.startsWith(InfoSpaceConstants.ROW_PREFIX_PROJECT)) {
             handleEntity(id, mappedRecords.get(Type.project.name()), projectConverter, outputNameProject,
                     new RelationConversionDTO<ProjectToOrganization>(mappedRecords.get(projOrgColumnFamily),
@@ -203,8 +193,6 @@ public class ImportInformationSpaceReducer
                 "document project relation output name not provided!");
         outputNameProject = Preconditions.checkNotNull(context.getConfiguration().get(OUTPUT_NAME_PROJECT),
                 "project output name not provided!");
-        outputNamePerson = Preconditions.checkNotNull(context.getConfiguration().get(OUTPUT_NAME_PERSON),
-                "person output name not provided!");
         outputNameDedupMapping = Preconditions.checkNotNull(context.getConfiguration().get(OUTPUT_NAME_DEDUP_MAPPING),
                 "deduplication mapping output name not provided!");
         outputNameOrganization = Preconditions.checkNotNull(context.getConfiguration().get(OUTPUT_NAME_ORGANIZATION),
@@ -246,7 +234,7 @@ public class ImportInformationSpaceReducer
             return;
         }
         if (resultApprover.approve(oafObj)) {
-            DocumentMetadata docMeta = docMetaConverter.convert(oafObj.getEntity(), mappedRecords);
+            DocumentMetadata docMeta = docMetaConverter.convert(oafObj.getEntity());
             if (docMeta!=null) {
                 outputs.write(outputNameDocumentMeta, new AvroKey<DocumentMetadata>(docMeta));    
             }

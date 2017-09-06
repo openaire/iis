@@ -81,10 +81,6 @@
             <description>input project directory</description>
         </property>
         <property>
-            <name>input_person</name>
-            <description>input person directory</description>
-        </property>
-        <property>
             <name>input_organizations</name>
             <description>input organization directory</description>
         </property>
@@ -1134,10 +1130,6 @@
                     <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
                 </property>
                 <property>
-                    <name>input_person</name>
-                    <value>${input_person}</value>
-                </property>
-                <property>
                     <name>output_citations</name>
                     <value>${workingDir}/citationmatching_fuzzy/output</value>
                 </property>
@@ -1315,10 +1307,6 @@
                 <property>
                     <name>workingDir</name>
                     <value>${workingDir}/transformers_documentssimilarity/working_dir</value>
-                </property>
-                <property>
-                    <name>input_person</name>
-                    <value>${input_person}</value>
                 </property>
                 <property>
                     <name>input_metadata</name>

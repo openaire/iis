@@ -3,6 +3,8 @@ protocol IIS{
 
     import idl "../../metadataextraction/ReferenceMetadata.avdl";
     
+    import idl "../../importer/DocumentMetadata.avdl";
+    
     record PublicationType {
         boolean article = false;
         boolean dataset = false;
@@ -37,8 +39,10 @@ protocol IIS{
         union { null , array<eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata> } references = null;
 //      author names extracted from pdf document
         union { null , array<string> } extractedAuthorFullNames = null;
-//      author ids retrieved from "document" datastore
-        union { null , array<string> } authorIds = null;
+//      authors retrieved from "document" datastore
+//      notice: we had to avoid "authors" name to avoid clash with nested references#basicMetadata#authors field name, reported in:
+//      https://github.com/databricks/spark-avro/issues/54
+        union { null , array<eu.dnetlib.iis.importer.schemas.Person> } importedAuthors = null;
 
 //      additional fields extracted from PDF document
 //      journal volume in which the article is published

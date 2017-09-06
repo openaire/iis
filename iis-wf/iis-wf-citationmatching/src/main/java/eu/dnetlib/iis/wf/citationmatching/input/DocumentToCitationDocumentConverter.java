@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.citationmatching.input;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -8,6 +9,7 @@ import com.google.common.collect.Lists;
 import eu.dnetlib.iis.citationmatching.schemas.BasicMetadata;
 import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
 import eu.dnetlib.iis.citationmatching.schemas.ReferenceMetadata;
+import eu.dnetlib.iis.importer.schemas.Person;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 
 /**
@@ -44,12 +46,18 @@ public class DocumentToCitationDocumentConverter {
     
     private BasicMetadata convertBasicMetadata(ExtractedDocumentMetadataMergedWithOriginal sourceDocument) {
         return BasicMetadata.newBuilder()
-                .setAuthors((sourceDocument.getAuthorIds() == null) ? Lists.newArrayList() : sourceDocument.getAuthorIds())
+                .setAuthors(extractAuthorsFullNames(sourceDocument.getImportedAuthors()))
                 .setJournal(sourceDocument.getJournal())
                 .setPages(convertRange(sourceDocument.getPages()))
                 .setTitle(sourceDocument.getTitle())
                 .setYear((sourceDocument.getYear() == null) ? null : sourceDocument.getYear().toString())
                 .build();
+    }
+    
+    private List<CharSequence> extractAuthorsFullNames(List<Person> authors) {
+        return authors != null
+                ? authors.stream().filter(p -> p.getFullname() != null).map(p -> p.getFullname()).collect(Collectors.toList())
+                : Lists.newArrayList();
     }
     
     private List<ReferenceMetadata> convertReferences(List<eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata> sourceReferences) {

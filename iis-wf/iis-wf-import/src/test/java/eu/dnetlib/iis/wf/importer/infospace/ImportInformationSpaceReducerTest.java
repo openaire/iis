@@ -8,7 +8,6 @@ import static eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceReducer
 import static eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceReducer.OUTPUT_NAME_DOCUMENT_META;
 import static eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceReducer.OUTPUT_NAME_DOCUMENT_PROJECT;
 import static eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceReducer.OUTPUT_NAME_ORGANIZATION;
-import static eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceReducer.OUTPUT_NAME_PERSON;
 import static eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceReducer.OUTPUT_NAME_PROJECT;
 import static eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceReducer.OUTPUT_NAME_PROJECT_ORGANIZATION;
 import static org.junit.Assert.assertEquals;
@@ -44,7 +43,6 @@ import eu.dnetlib.data.proto.FieldTypeProtos.StringField;
 import eu.dnetlib.data.proto.KindProtos.Kind;
 import eu.dnetlib.data.proto.OafProtos.Oaf;
 import eu.dnetlib.data.proto.OafProtos.OafEntity;
-import eu.dnetlib.data.proto.PersonProtos.Person.Metadata;
 import eu.dnetlib.data.proto.ResultProtos.Result;
 import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
@@ -53,7 +51,6 @@ import eu.dnetlib.iis.common.schemas.IdentifierMapping;
 import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
 import eu.dnetlib.iis.importer.schemas.DocumentToProject;
 import eu.dnetlib.iis.importer.schemas.Organization;
-import eu.dnetlib.iis.importer.schemas.Person;
 import eu.dnetlib.iis.importer.schemas.Project;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.wf.importer.infospace.converter.OafRelToAvroConverterTestBase;
@@ -269,35 +266,6 @@ public class ImportInformationSpaceReducerTest {
         // assert
         verify(context, never()).write(any(), any());
         verify(multipleOutputs, never()).write(any(), any());
-    }
-    
-    @Test
-    public void testReducePerson() throws Exception {
-        // given
-        Configuration conf = setOutputDirs(new Configuration());
-        doReturn(conf).when(context).getConfiguration();
-
-        reducer.setup(context);
-        
-        String personId = "personId";
-        String id = InfoSpaceConstants.ROW_PREFIX_PERSON + personId;
-        Text key = new Text(id);
-        List<InfoSpaceRecord> values = Lists.newArrayList(new InfoSpaceRecord(
-                new Text(Type.person.name()),
-                new Text(OafBodyWithOrderedUpdates.BODY_QUALIFIER_NAME),
-                new Text(JsonFormat.printToString(buildPersonEntity(personId)))));
-        
-        // execute
-        reducer.reduce(key, values, context);
-        
-        // assert
-        verify(context, never()).write(any(), any());
-        verify(multipleOutputs, times(1)).write(mosKeyCaptor.capture(), mosValueCaptor.capture());
-        assertEquals(conf.get(OUTPUT_NAME_PERSON), mosKeyCaptor.getValue());
-        Person person = (Person) mosValueCaptor.getValue().datum();
-        assertNotNull(person);
-        // in-depth output validation is not subject of this test case
-        assertEquals(personId, person.getId());
     }
     
     @Test
@@ -557,7 +525,6 @@ public class ImportInformationSpaceReducerTest {
         conf.set(OUTPUT_NAME_DOCUMENT_META, "docMetaOutput");
         conf.set(OUTPUT_NAME_DOCUMENT_PROJECT, "docProjectOutput");
         conf.set(OUTPUT_NAME_ORGANIZATION, "orgOutput");
-        conf.set(OUTPUT_NAME_PERSON, "personOutput");
         conf.set(OUTPUT_NAME_PROJECT, "projectOutput");
         conf.set(OUTPUT_NAME_PROJECT_ORGANIZATION, "projOrgOutput");
         return conf;
@@ -590,18 +557,6 @@ public class ImportInformationSpaceReducerTest {
     
     private Oaf buildResultEntity(String id, boolean deletedByInference) {
         return buildResultEntity(id, PUBLISHER_DEFAULT, deletedByInference);
-    }
-    
-    private Oaf buildPersonEntity(String id) {
-        OafEntity.Builder entityBuilder = OafEntity.newBuilder();
-        entityBuilder.setType(Type.result);
-        entityBuilder.setId(id);
-        eu.dnetlib.data.proto.PersonProtos.Person.Builder personBuilder = eu.dnetlib.data.proto.PersonProtos.Person
-                .newBuilder();
-        personBuilder.setMetadata(Metadata.newBuilder().setFullname(
-                StringField.newBuilder().setValue("surname").build()).build());
-        entityBuilder.setPerson(personBuilder.build());
-        return Oaf.newBuilder().setKind(Kind.entity).setEntity(entityBuilder.build()).build();
     }
     
     private Oaf buildProjectEntity(String id) {

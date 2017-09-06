@@ -1,7 +1,5 @@
 package eu.dnetlib.iis.wf.citationmatching.input;
 
-import java.util.Map;
-
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -12,7 +10,6 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
-import eu.dnetlib.iis.importer.schemas.Person;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
@@ -30,10 +27,6 @@ public class CitationMatchingInputTransformerJob {
     
     private static DocumentToCitationDocumentConverter documentToCitationDocumentConverter = new DocumentToCitationDocumentConverter();
     
-    private static AuthorNameMappingExtractor authorNameMappingExtractor = new AuthorNameMappingExtractor();
-    
-    private static AuthorNameAttacher authorNameAttacher = new AuthorNameAttacher();
-    
     
     //------------------------ LOGIC --------------------------
     
@@ -50,22 +43,11 @@ public class CitationMatchingInputTransformerJob {
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
             
             JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> inputDocuments = avroLoader.loadJavaRDD(sc, params.inputMetadata, ExtractedDocumentMetadataMergedWithOriginal.class);
-            JavaRDD<Person> inputPersons = avroLoader.loadJavaRDD(sc, params.inputPerson, Person.class);
-            
-            
             
             JavaPairRDD<String, DocumentMetadata> documents = inputDocuments.mapToPair(
                     document -> new Tuple2<>(document.getId().toString(), documentToCitationDocumentConverter.convert(document)));
             
-            
-            JavaPairRDD<String, Map<String, String>> documentAuthors = authorNameMappingExtractor.extractAuthorNameMapping(documents, inputPersons);
-            
-            
-            JavaPairRDD<String, DocumentMetadata> documentsWithAuthorNames = authorNameAttacher.attachAuthorNames(documents, documentAuthors);
-            
-            
-            
-            avroSaver.saveJavaRDD(documentsWithAuthorNames.values(), DocumentMetadata.SCHEMA$, params.output);
+            avroSaver.saveJavaRDD(documents.values(), DocumentMetadata.SCHEMA$, params.output);
             
         }
         
@@ -79,9 +61,6 @@ public class CitationMatchingInputTransformerJob {
         
         @Parameter(names = "-inputMetadata", required = true)
         private String inputMetadata;
-        
-        @Parameter(names = "-inputPerson", required = true)
-        private String inputPerson;
         
         @Parameter(names = "-output", required = true)
         private String output;

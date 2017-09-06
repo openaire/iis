@@ -47,10 +47,6 @@
 				eu.dnetlib.iis.importer.schemas.ProjectToOrganization,
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/input/meta/project_to_organization.json}
 			</arg>
-			<arg>-C{person,
-				eu.dnetlib.iis.importer.schemas.Person,
-				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/input/meta/person.json}
-			</arg>
 			<arg>-C{organization,
 				eu.dnetlib.iis.importer.schemas.Organization,
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/input/meta/organization.json}
@@ -82,7 +78,6 @@
 			<arg>-Odocument_metadata=${workingDir}/producer/document_metadata</arg>
 			<arg>-Odocument_to_project=${workingDir}/producer/document_to_project</arg>
 			<arg>-Oproject_to_organization=${workingDir}/producer/project_to_organization</arg>
-			<arg>-Operson=${workingDir}/producer/person</arg>
 			<arg>-Oorganization=${workingDir}/producer/organization</arg>
 			<arg>-Oproject=${workingDir}/producer/project</arg>
 			<arg>-Oproject_concept=${workingDir}/producer/project_concept</arg>
@@ -265,10 +260,6 @@
 				<property>
 					<name>input_project_concept</name>
 					<value>${workingDir}/producer/project_concept</value>
-				</property>
-				<property>
-					<name>input_person</name>
-					<value>${workingDir}/producer/person</value>
 				</property>
 				<property>
 					<name>input_organizations</name>

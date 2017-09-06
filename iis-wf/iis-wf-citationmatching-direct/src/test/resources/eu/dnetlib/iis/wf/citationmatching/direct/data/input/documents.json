@@ -9,7 +9,7 @@
         {"position": 102, "basicMetadata": {"externalIds": {"pmid": "pmid.MMM"}, "publisher": null, "title": null, "url": null, "series": null, "authors": null, "volume": null, "edition": null, "source": null, "year": null, "issue": null, "pages": null, "location": null}, "text": null},
         {"position": 103, "basicMetadata": {"externalIds": {"doi": "doi.Z"}, "publisher": null, "title": null, "url": null, "series": null, "authors": null, "volume": null, "edition": null, "source": null, "year": null, "issue": null, "pages": null, "location": null}, "text": null}
     ],
-    "publisher": null, "language": null, "title": null, "journal": null, "extractedAuthorFullNames": null, "pages": null, "volume": null, "authorIds": null, "year": null, "keywords": null, "issue": null, "abstract": null, "publicationType": {"article": true, "dataset": false}
+    "publisher": null, "language": null, "title": null, "journal": null, "extractedAuthorFullNames": null, "pages": null, "volume": null, "importedAuthors": null, "year": null, "keywords": null, "issue": null, "abstract": null, "publicationType": {"article": true, "dataset": false}
 }
 
 {
@@ -17,7 +17,7 @@
     "externalIdentifiers": {"pmid": "pmid.II"}, 
     "publicationTypeName": null, 
     "references": [], 
-    "publisher": null, "language": null, "title": null, "journal": null, "extractedAuthorFullNames": null, "pages": null, "volume": null, "authorIds": null, "year": null, "keywords": null, "issue": null, "abstract": null, "publicationType": {"article": true, "dataset": false}
+    "publisher": null, "language": null, "title": null, "journal": null, "extractedAuthorFullNames": null, "pages": null, "volume": null, "importedAuthors": null, "year": null, "keywords": null, "issue": null, "abstract": null, "publicationType": {"article": true, "dataset": false}
 }
 
 {
@@ -25,7 +25,7 @@
     "externalIdentifiers": {"doi": "doi.B"}, 
     "publicationTypeName": null, 
     "references": [], 
-    "publisher": null, "language": null, "title": null, "journal": null, "extractedAuthorFullNames": null, "pages": null, "volume": null, "authorIds": null, "year": null, "keywords": null, "issue": null, "abstract": null, "publicationType": {"article": true, "dataset": false}
+    "publisher": null, "language": null, "title": null, "journal": null, "extractedAuthorFullNames": null, "pages": null, "volume": null, "importedAuthors": null, "year": null, "keywords": null, "issue": null, "abstract": null, "publicationType": {"article": true, "dataset": false}
 }
 
 {
@@ -36,7 +36,7 @@
         {"position": 5, "basicMetadata": {"externalIds": {"doi": "doi.C", "pmid": "pmid.IV"}, "publisher": null, "title": null, "url": null, "series": null, "authors": null, "volume": null, "edition": null, "source": null, "year": null, "issue": null, "pages": null, "location": null}, "text": null}, 
         {"position": 6, "basicMetadata": {"externalIds": {"doi": "doi.C"}, "publisher": null, "title": null, "url": null, "series": null, "authors": null, "volume": null, "edition": null, "source": null, "year": null, "issue": null, "pages": null, "location": null}, "text": null}
     ],
-    "publisher": null, "language": null, "title": null, "journal": null, "extractedAuthorFullNames": null, "pages": null, "volume": null, "authorIds": null, "year": null, "keywords": null, "issue": null, "abstract": null, "publicationType": {"article": true, "dataset": false}
+    "publisher": null, "language": null, "title": null, "journal": null, "extractedAuthorFullNames": null, "pages": null, "volume": null, "importedAuthors": null, "year": null, "keywords": null, "issue": null, "abstract": null, "publicationType": {"article": true, "dataset": false}
 }
 
 {
@@ -44,7 +44,7 @@
     "externalIdentifiers": {"doi": "doi.C"}, 
     "publicationTypeName": null, 
     "references": [], 
-    "publisher": null, "language": null, "title": null, "journal": null, "extractedAuthorFullNames": null, "pages": null, "volume": null, "authorIds": null, "year": null, "keywords": null, "issue": null, "abstract": null, "publicationType": {"article": true, "dataset": false}
+    "publisher": null, "language": null, "title": null, "journal": null, "extractedAuthorFullNames": null, "pages": null, "volume": null, "importedAuthors": null, "year": null, "keywords": null, "issue": null, "abstract": null, "publicationType": {"article": true, "dataset": false}
 }
 
 {
@@ -52,5 +52,5 @@
     "externalIdentifiers": {"pmid": "pmid.IV"}, 
     "publicationTypeName": null, 
     "references": [], 
-    "publisher": null, "language": null, "title": null, "journal": null, "extractedAuthorFullNames": null, "pages": null, "volume": null, "authorIds": null, "year": null, "keywords": null, "issue": null, "abstract": null, "publicationType": {"article": true, "dataset": false}
+    "publisher": null, "language": null, "title": null, "journal": null, "extractedAuthorFullNames": null, "pages": null, "volume": null, "importedAuthors": null, "year": null, "keywords": null, "issue": null, "abstract": null, "publicationType": {"article": true, "dataset": false}
 }

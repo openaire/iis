@@ -14,7 +14,7 @@
     "article": false,
     "dataset": true
   },
-  "authorIds": null,
+  "authors": null,
   "datasourceIds": [
     "10|opendoar____::c9f95a0a5af052bffce5c89917335f67"
   ]
@@ -35,9 +35,12 @@
     "article": true,
     "dataset": false
   },
-  "authorIds": [
-    "30|crossref____::7c844171342140b6133fb0536dba9843",
-    "30|crossref____::f6813047fd08021c87acdee2061c20f4"
+  "authors": [
+    {
+        "firstname": "Oliveira, Paulo",
+        "secondnames": null,
+        "fullname": "Oliveira, Paulo"
+    }
   ],
   "datasourceIds": [
     "10|openaire____::081b82f96300b6a6e3d282bad31cb6e2"
@@ -59,7 +62,7 @@
     "article": true,
     "dataset": false
   },
-  "authorIds": null,
+  "authors": null,
   "datasourceIds": [
     "10|openaire____::081b82f96300b6a6e3d282bad31cb6e2"
   ]

@@ -36,8 +36,7 @@ protocol IIS{
         
 //      references extracted from pfd document
         union { null , array<ReferenceMetadata> } references = null;
-//      author names extracted from pdf document
-//        union { null , array<string> } authorFullNames = null;
+
 //		authors extracted from PDF document along with position of affiliations list
         union { null , array<Author> } authors = null;
 

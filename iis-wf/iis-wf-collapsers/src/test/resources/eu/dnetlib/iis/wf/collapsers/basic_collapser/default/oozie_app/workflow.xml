@@ -73,7 +73,7 @@
                 </property>
                 <property>
                     <name>significant_fields</name>
-                    <value>title,authorIds,journal,year</value>
+                    <value>title,authors,journal,year</value>
                 </property>
                 <!-- Input ports. -->
                 <property>

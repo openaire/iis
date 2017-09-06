@@ -7,7 +7,10 @@
     "extractedAuthorFullNames": null, 
     "pages": {"start": "123", "end": "128"}, 
     "volume": null, 
-    "authorIds": ["author-id-1", "author-id-2", "author-id-123"], 
+    "importedAuthors": [
+        {"fullname": "Orson Scott Card", "firstname": null, "secondnames": null},
+        {"fullname": "Ender", "firstname": null, "secondnames": null}
+    ], 
     "year": null, 
     "keywords": null, 
     "references": null, 
@@ -26,7 +29,10 @@
     "extractedAuthorFullNames": null, 
     "pages": null, 
     "volume": null, 
-    "authorIds": ["author-id-1", "author-id-3"], 
+    "importedAuthors": [
+        {"fullname": "Orson Scott Card", "firstname": null, "secondnames": null},
+        {"fullname": "Alvin Maker", "firstname": null, "secondnames": null}
+    ], 
     "year": 1993, 
     "keywords": null, 
     "references": [
@@ -49,7 +55,7 @@
     "extractedAuthorFullNames": null, 
     "pages": null, 
     "volume": null, 
-    "authorIds": ["author-id-345"], 
+    "importedAuthors": null, 
     "year": 2003, 
     "keywords": null, 
     "references": [
@@ -71,7 +77,7 @@
     "extractedAuthorFullNames": null, 
     "pages": null, 
     "volume": null, 
-    "authorIds": null, 
+    "importedAuthors": null, 
     "year": 2000, 
     "keywords": null, 
     "references": null, 
@@ -90,7 +96,16 @@
     "extractedAuthorFullNames": null, 
     "pages": null, 
     "volume": null, 
-    "authorIds": ["author-id-1", "author-id-3", "author-id-499", "author-id-2", "author-id-4", "author-id-299", "author-id-199", "author-id-399"], 
+    "importedAuthors": [
+        {"fullname": "Orson Scott Card", "firstname": null, "secondnames": null},
+        {"fullname": "Alvin Maker", "firstname": null, "secondnames": null},
+        {"fullname": "Terry Williams", "firstname": null, "secondnames": null},
+        {"fullname": "Ender", "firstname": null, "secondnames": null},
+        {"fullname": "Terry Pratchett", "firstname": null, "secondnames": null},
+        {"fullname": "Ender Speaker", "firstname": null, "secondnames": null},
+        {"fullname": "An Orson Scott Card", "firstname": null, "secondnames": null},
+        {"fullname": "CAlvin Maker", "firstname": null, "secondnames": null}
+    ], 
     "year": 2000, 
     "keywords": null, 
     "references": null, 

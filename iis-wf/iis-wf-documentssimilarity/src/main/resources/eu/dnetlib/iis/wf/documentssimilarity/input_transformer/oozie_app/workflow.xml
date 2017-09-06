@@ -2,10 +2,6 @@
 
 	<parameters>
 		<property>
-			<name>input_person</name>
-			<description>person input datastore</description>
-		</property>
-		<property>
 			<name>input_metadata</name>
 			<description>merged input datastore</description>
 		</property>
@@ -35,7 +31,6 @@
     <action name="generate-schema">
 	    <java>
 	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
-	        <arg>eu.dnetlib.iis.importer.schemas.Person</arg>
 	        <arg>eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal</arg>
 	        <arg>eu.dnetlib.iis.documentssimilarity.schemas.DocumentMetadata</arg>
 	        <capture-output />
@@ -53,8 +48,6 @@
             <!-- Path to PIG script the workflow executes. -->
             <script>lib/scripts/transformer.pig</script>
 
-            <param>input_person=${input_person}</param>
-            <param>schema_input_person=${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.Person']}</param>
             <param>input_metadata=${input_metadata}</param>
             <param>schema_input_metadata=${wf:actionData('generate-schema')['eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal']}</param>
 

@@ -1,3 +1,3 @@
-{"id": "doc-id-1", "title": "Document title 1", "abstract": "Document abstract 1", "keywords": ["keyword1", "keyword2"], "authors": [{"fullname": "Ender", "id": "person-id-2", "firstname": "Ender", "secondnames": null}, {"fullname": "Orson Scott Card", "id": "person-id-1", "firstname": "Orson Scott", "secondnames": ["Card"]}]}
+{"id": "doc-id-1", "title": "Document title 1", "abstract": "Document abstract 1", "keywords": ["keyword1", "keyword2"], "authors": [{"fullname": "Ender", "firstname": "Ender", "secondnames": null}, {"fullname": "Orson Scott Card", "firstname": "Orson Scott", "secondnames": ["Card"]}]}
 {"id": "doc-id-2", "title": "Document title 1", "abstract": null, "keywords": ["keyword1", "keyword2"], "authors": null}
 {"id": "doc-id-3", "title": null, "abstract": "Document abstract 1", "keywords": null, "authors": null}

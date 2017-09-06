@@ -57,11 +57,8 @@ public class DocumentMetadataAvroToProtoBufConverter implements AvroToProtoBufCo
 
     private static DocumentProtos.Author.Builder convertAuthor(Person author) {
         DocumentProtos.Author.Builder authorBuilder = DocumentProtos.Author.newBuilder();
-        if (author.getId() != null) {
-            authorBuilder.setKey(author.getId().toString());
-        } else {
-            authorBuilder.setKey("FAKE_KEY");
-        }
+
+        authorBuilder.setKey("FAKE_KEY");
 
         LinkedList<String> nameTokens = new LinkedList<String>();
 

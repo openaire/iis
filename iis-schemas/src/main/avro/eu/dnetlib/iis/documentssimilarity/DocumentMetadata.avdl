@@ -1,6 +1,7 @@
 @namespace("eu.dnetlib.iis.documentssimilarity.schemas")
 protocol IIS{
-    import idl "../importer/Person.avdl";
+
+    import idl "../importer/DocumentMetadata.avdl";
 
     record DocumentMetadata {
         string id;

@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -15,27 +14,19 @@ import org.apache.log4j.Logger;
 
 import com.google.common.base.Preconditions;
 
-import eu.dnetlib.data.mapreduce.util.OafRelDecoder;
 import eu.dnetlib.data.proto.FieldTypeProtos.KeyValue;
 import eu.dnetlib.data.proto.FieldTypeProtos.Qualifier;
 import eu.dnetlib.data.proto.FieldTypeProtos.StringField;
 import eu.dnetlib.data.proto.FieldTypeProtos.StructuredProperty;
-import eu.dnetlib.data.proto.OafProtos.Oaf;
 import eu.dnetlib.data.proto.OafProtos.OafEntity;
-import eu.dnetlib.data.proto.OafProtos.OafRel;
-import eu.dnetlib.data.proto.PersonResultProtos.PersonResult.Authorship;
-import eu.dnetlib.data.proto.RelTypeProtos.RelType;
-import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
 import eu.dnetlib.data.proto.ResultProtos;
 import eu.dnetlib.data.proto.ResultProtos.Result.Instance;
 import eu.dnetlib.data.proto.ResultProtos.Result.Journal;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
+import eu.dnetlib.iis.importer.schemas.Person;
 import eu.dnetlib.iis.importer.schemas.PublicationType;
-import eu.dnetlib.iis.wf.importer.OafHelper;
-import eu.dnetlib.iis.wf.importer.infospace.QualifiedOafJsonRecord;
 import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
-import eu.dnetlib.iis.wf.importer.infospace.approver.ResultApprover;
 
 /**
  * {@link OafEntity} containing document details to {@link DocumentMetadata} converter.
@@ -43,7 +34,7 @@ import eu.dnetlib.iis.wf.importer.infospace.approver.ResultApprover;
  * @author mhorst
  *
  */
-public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConverter<DocumentMetadata> {
+public class DocumentMetadataConverter implements OafEntityToAvroConverter<DocumentMetadata> {
 
     protected static final Logger log = Logger.getLogger(DocumentMetadataConverter.class);
 
@@ -51,16 +42,6 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
 
     private static final String LANG_CLASSID_UNDEFINED = "und";
 
-    /**
-     * Person-result relation column family.
-     */
-    private final String personResultColumnFamily;
-
-    /**
-     * Result approver to be used when validating person result relations.
-     */
-    private ResultApprover resultApprover;
-    
     /**
      * Field approver to be used when validating inferred fields.
      */
@@ -70,19 +51,16 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
     
     /**
      * 
-     * @param resultApprover approves {@link OafRel} objects 
      * @param fieldApprover approves fields
      */
-    public DocumentMetadataConverter(ResultApprover resultApprover, FieldApprover fieldApprover) {
-        this.resultApprover = Preconditions.checkNotNull(resultApprover);
+    public DocumentMetadataConverter(FieldApprover fieldApprover) {
         this.fieldApprover = Preconditions.checkNotNull(fieldApprover);
-        this.personResultColumnFamily = OafRelDecoder.getCFQ(RelType.personResult, SubRelType.authorship, Authorship.RelName.hasAuthor.toString());
     }
 
     // ------------------------ LOGIC --------------------------
     
     @Override
-    public DocumentMetadata convert(OafEntity oafEntity, Map<String, List<QualifiedOafJsonRecord>> relations) throws IOException {
+    public DocumentMetadata convert(OafEntity oafEntity) throws IOException {
         Preconditions.checkNotNull(oafEntity);
         
         if (!oafEntity.hasResult()) {
@@ -96,10 +74,7 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
         createBasicMetadata(sourceResult, builder);
         handleAdditionalIds(oafEntity, builder);
         handleDatasourceIds(oafEntity, builder);
-        List<QualifiedOafJsonRecord> personRelations = relations.get(personResultColumnFamily);
-        if (CollectionUtils.isNotEmpty(personRelations)) {
-            handlePersons(personRelations, builder);    
-        }
+        handlePersons(sourceResult, builder);    
         return builder.build();
     }
 
@@ -282,24 +257,57 @@ public class DocumentMetadataConverter implements OafEntityWithRelsToAvroConvert
      * @return builder with persons set
      * @throws IOException
      */
-    private DocumentMetadata.Builder handlePersons(List<QualifiedOafJsonRecord> relations, DocumentMetadata.Builder builder)
+    private DocumentMetadata.Builder handlePersons(ResultProtos.Result result, DocumentMetadata.Builder builder)
             throws IOException {
-        TreeMap<CharSequence, CharSequence> authorsSortedMap = new TreeMap<CharSequence, CharSequence>();
-        for (QualifiedOafJsonRecord personResultRecord : relations) {
-            Oaf persResOAF = OafHelper.buildOaf(personResultRecord.getOafJson());
-            OafRel personResRel = persResOAF.getRel();
-            if (resultApprover.approve(persResOAF)) {
-                authorsSortedMap.put(personResRel.getPersonResult().getAuthorship().getRanking(),
-                        personResRel.getTarget());
+        List<Person> authors = new ArrayList<>();
+        for (eu.dnetlib.data.proto.PersonProtos.Person sourcePerson : result.getAuthorList()) {
+            if (sourcePerson.hasMetadata()) {
+                Person.Builder personBuilder = Person.newBuilder();
+                handleFirstName(sourcePerson.getMetadata().getFirstname() ,personBuilder);
+                handleSecondNames(sourcePerson.getMetadata().getSecondnamesList() ,personBuilder);
+                handleFullName(sourcePerson.getMetadata().getFullname() ,personBuilder);
+                if (isDataValid(personBuilder)) {
+                    authors.add(personBuilder.build());
+                }
             }
         }
-        // storing authors sorted by ranking
-        if (!authorsSortedMap.isEmpty()) {
-            builder.setAuthorIds(new ArrayList<CharSequence>(authorsSortedMap.values()));
+        if (!authors.isEmpty()) {
+            builder.setAuthors(authors);
         }
         return builder;
     }
 
+    private void handleFirstName(StringField firstName, Person.Builder builder) {
+        if (StringUtils.isNotBlank(firstName.getValue())) {
+            builder.setFirstname(firstName.getValue());
+        }
+    }
+    
+    private void handleSecondNames(List<StringField> secondNames, Person.Builder builder) {
+        if (CollectionUtils.isNotEmpty(secondNames)) {
+            if (builder.getSecondnames() == null) {
+                builder.setSecondnames(new ArrayList<CharSequence>(secondNames.size()));
+            }
+            List<CharSequence> resultNames = new ArrayList<CharSequence>(secondNames.size());
+            for (StringField currentSecondName : secondNames) {
+                if (StringUtils.isNotBlank(currentSecondName.getValue())) {
+                    resultNames.add(currentSecondName.getValue());
+                }
+            }
+            builder.getSecondnames().addAll(resultNames);
+        }
+    }
+    
+    private void handleFullName(StringField fullName, Person.Builder builder) {
+        if (StringUtils.isNotBlank(fullName.getValue())) {
+            builder.setFullname(fullName.getValue());
+        }
+    }
+    
+    private boolean isDataValid(Person.Builder builder) {
+        return builder.hasFirstname() || builder.hasSecondnames() || builder.hasFullname();
+    }
+    
     /**
      * Extracts values from {@link StructuredProperty} list. Checks DataInfo
      * element whether this piece of information should be approved.

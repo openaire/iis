@@ -6,6 +6,18 @@ protocol IIS{
         boolean dataset = false;
     }
 
+    record Person {
+//      person's forenames and/or initials
+        union { null , string } firstname = null;
+//      person's surnames
+        union { null , array<string> } secondnames = null;
+//      person's full name
+//      notice: Fullname will contain concatenation of firstname and secondnames when data originates from rdb. 
+//      Firstname and secondnames will be left emtpy and fullname will contain dc:creator when record originates from MDStore.
+//      empty 
+        union { null , string } fullname = null;
+    }
+
     record DocumentMetadata {
 //      document identifier
         string id;
@@ -30,8 +42,8 @@ protocol IIS{
 //      publication type
         PublicationType publicationType;
         
-//      foreign key: Person.id ("raw person" data store)
-        union { null , array<string> } authorIds = null;
+//      authors details
+        union { null , array<Person> } authors = null;
         
 //      identifiers of datasources given document originates from
         union { null , array<string> } datasourceIds = null;

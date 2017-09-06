@@ -17,7 +17,7 @@ extr_meta = load '$input_extracted_metadata' using avro_load_extracted_metadata;
 joined = join base_meta by id full, extr_meta by id;
 
 merged = foreach joined {
-    authorNames = foreach authors generate authorFullName;
+    authorNames = foreach extr_meta::authors generate authorFullName;
     generate
          FIRST_NOT_NULL_STR(base_meta::id, extr_meta::id) as id, 
          FIRST_NOT_NULL_STR(base_meta::title, extr_meta::title) as title,
@@ -31,7 +31,7 @@ merged = foreach joined {
          base_meta::publicationType as publicationType,
          extr_meta::references as references,
          EMPTY_TO_NULL(authorNames) as extractedAuthorFullNames,
-         base_meta::authorIds as authorids,
+         base_meta::authors as importedAuthors,
          extr_meta::volume as volume,
          extr_meta::issue as issue,
          extr_meta::pages as pages,
@@ -42,12 +42,12 @@ mergedWithNullType = filter merged by publicationType is null;
 mergedWithFalseType = foreach mergedWithNullType generate
          id, title, abstract, language, keywords, externalIdentifiers, journal, year, publisher,
          false as isArticle, false as isDataset, references, extractedAuthorFullNames,
-         authorids, volume, issue, pages, publicationTypeName;
+         importedAuthors, volume, issue, pages, publicationTypeName;
 
 mergedWithFalseStructType = foreach mergedWithFalseType generate
          id, title, abstract, language, keywords, externalIdentifiers, journal, year, publisher,
          (isArticle, isDataset) as publicationType, references, extractedAuthorFullNames,
-         authorids, volume, issue, pages, publicationTypeName;
+         importedAuthors, volume, issue, pages, publicationTypeName;
 
 mergedWithNotNullType = filter merged by publicationType is not null;
 

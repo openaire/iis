@@ -2,7 +2,9 @@
     "id": "id-1", 
     "title": "A new method of something", 
     "journal": "Journal of something",
-    "authorIds": ["person-id-1"], 
+    "importedAuthors": [
+        {"fullname": "Jan Kowalski", "firstname": null, "secondnames": null}
+    ],
     "pages": {"start": "1", "end": "2"}, 
     "year": 2001,
     "references": [
@@ -61,7 +63,10 @@
     "id": "id-2", 
     "title": "How to do it?", 
     "journal": "Something Journal", 
-    "authorIds": ["person-id-1", "person-id-2"], 
+    "importedAuthors": [
+        {"fullname": "Jan Kowalski", "firstname": null, "secondnames": null},
+        {"fullname": "Zygmunt Nowak", "firstname": null, "secondnames": null}
+    ], 
     "pages": {"start": "2", "end": "3"}, 
     "year": 2002,
     "references": [

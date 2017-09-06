@@ -49,7 +49,6 @@
         <path start="consumer-dedupmapping" />
         <path start="consumer-docproject" />
         <path start="consumer-document" />
-        <path start="consumer-person" />
         <path start="consumer-project" />
         <path start="consumer-organization" />
         <path start="consumer-projectorg" />
@@ -79,20 +78,6 @@
                 eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/docproject.json}
             </arg>
             <arg>-Idocproject=${workingDir}/mr_import/docproject</arg>
-        </java>
-        <ok to="joining" />
-        <error to="fail" />
-    </action>
-
-    <action name="consumer-person">
-        <java>
-            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
-            <arg>-C{person,
-                eu.dnetlib.iis.importer.schemas.Person,
-                eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/person.json}
-            </arg>
-            <arg>-Iperson=${workingDir}/mr_import/person</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />

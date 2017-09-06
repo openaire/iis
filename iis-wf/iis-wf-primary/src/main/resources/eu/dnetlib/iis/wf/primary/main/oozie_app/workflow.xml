@@ -448,10 +448,6 @@
                     <value>project</value>
                 </property>
                 <property>
-                    <name>metadataimport_output_name_person</name>
-                    <value>person</value>
-                </property>
-                <property>
                     <name>metadataimport_output_name_dedup_mapping</name>
                     <value>dedupmapping</value>
                 </property>
@@ -541,11 +537,6 @@
                 <property>
                     <name>input_project</name>
                     <value>${workingDir}/primary_import/metadataimport/project
-                    </value>
-                </property>
-                <property>
-                    <name>input_person</name>
-                    <value>${workingDir}/primary_import/metadataimport/person
                     </value>
                 </property>
                 <property>

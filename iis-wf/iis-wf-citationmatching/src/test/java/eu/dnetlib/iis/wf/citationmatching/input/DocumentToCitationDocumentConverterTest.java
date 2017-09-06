@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import eu.dnetlib.iis.citationmatching.schemas.BasicMetadata;
 import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
 import eu.dnetlib.iis.citationmatching.schemas.ReferenceMetadata;
+import eu.dnetlib.iis.importer.schemas.Person;
 import eu.dnetlib.iis.metadataextraction.schemas.Range;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.PublicationType;
@@ -39,7 +40,7 @@ public class DocumentToCitationDocumentConverterTest {
                 .setId("document-id")
                 .setTitle("Some Title")
                 .setJournal("Journal Something")
-                .setAuthorIds(Lists.newArrayList("author-id-1", "author-id-2"))
+                .setImportedAuthors(Lists.newArrayList(generatePerson("author-1"), generatePerson("author-2")))
                 .setPages(new Range("5", "8"))
                 .setYear(1999)
                 .setReferences(Lists.newArrayList())
@@ -57,7 +58,7 @@ public class DocumentToCitationDocumentConverterTest {
         DocumentMetadata expectedDocumentMetadata = DocumentMetadata.newBuilder()
                 .setId("document-id")
                 .setBasicMetadata(BasicMetadata.newBuilder()
-                        .setAuthors(Lists.newArrayList("author-id-1", "author-id-2"))
+                        .setAuthors(Lists.newArrayList("author-1", "author-2"))
                         .setTitle("Some Title")
                         .setJournal("Journal Something")
                         .setPages("5-8")
@@ -100,7 +101,7 @@ public class DocumentToCitationDocumentConverterTest {
         
         ExtractedDocumentMetadataMergedWithOriginal inputDocument = ExtractedDocumentMetadataMergedWithOriginal.newBuilder()
                 .setId("document-id")
-                .setAuthorIds(Lists.newArrayList())
+                .setImportedAuthors(Lists.newArrayList())
                 .setReferences(Lists.newArrayList(inputReference1, inputReference2))
                 .setPublicationType(new PublicationType(true, false))
                 .build();
@@ -153,7 +154,7 @@ public class DocumentToCitationDocumentConverterTest {
         
         ExtractedDocumentMetadataMergedWithOriginal inputDocument = ExtractedDocumentMetadataMergedWithOriginal.newBuilder()
                 .setId("document-id")
-                .setAuthorIds(null)
+                .setImportedAuthors(null)
                 .setReferences(Lists.newArrayList())
                 .setPublicationType(new PublicationType(true, false))
                 .build();
@@ -184,7 +185,7 @@ public class DocumentToCitationDocumentConverterTest {
         
         ExtractedDocumentMetadataMergedWithOriginal inputDocument = ExtractedDocumentMetadataMergedWithOriginal.newBuilder()
                 .setId("document-id")
-                .setAuthorIds(Lists.newArrayList())
+                .setImportedAuthors(Lists.newArrayList())
                 .setReferences(null)
                 .setPublicationType(new PublicationType(true, false))
                 .build();
@@ -228,7 +229,7 @@ public class DocumentToCitationDocumentConverterTest {
         
         ExtractedDocumentMetadataMergedWithOriginal inputDocument = ExtractedDocumentMetadataMergedWithOriginal.newBuilder()
                 .setId("document-id")
-                .setAuthorIds(Lists.newArrayList())
+                .setImportedAuthors(Lists.newArrayList())
                 .setReferences(Lists.newArrayList(inputReference))
                 .setPublicationType(new PublicationType(true, false))
                 .build();
@@ -259,5 +260,10 @@ public class DocumentToCitationDocumentConverterTest {
         
     }
     
+    // ---------------------------------- PRIVATE --------------------------------------
+    
+    private Person generatePerson(String fullName) {
+        return Person.newBuilder().setFullname(fullName).build();
+    }
     
 }

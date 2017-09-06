@@ -1,6 +1,6 @@
 {
     "basicMetadata": {
-        "authors": ["Orson Scott Card", "Ender", "_UNDEFINED_"], 
+        "authors": ["Orson Scott Card", "Ender"], 
         "journal": "Tor Science Fiction", 
         "year": null, 
         "pages": "123-128", 
@@ -26,7 +26,7 @@
 }
 {
     "basicMetadata": {
-        "authors": ["_UNDEFINED_"], 
+        "authors": [], 
         "journal": "HarperTorch", 
         "year": "2003", 
         "pages": null, 

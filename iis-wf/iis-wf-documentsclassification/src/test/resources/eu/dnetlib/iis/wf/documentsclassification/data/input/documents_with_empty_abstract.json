@@ -14,11 +14,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -52,11 +48,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",

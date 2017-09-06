@@ -56,11 +56,6 @@
             <description>project output name</description>
         </property>
         <property>
-            <name>output_name_person</name>
-            <value>person</value>
-            <description>person output name</description>
-        </property>
-        <property>
             <name>output_name_dedup_mapping</name>
             <value>dedupmapping</value>
             <description>deduplication mapping output name</description>
@@ -119,7 +114,6 @@
             <arg>eu.dnetlib.iis.importer.schemas.DocumentToProject</arg>
             <arg>eu.dnetlib.iis.importer.schemas.ProjectToOrganization</arg>
             <arg>eu.dnetlib.iis.common.schemas.IdentifierMapping</arg>
-            <arg>eu.dnetlib.iis.importer.schemas.Person</arg>
             <arg>eu.dnetlib.iis.importer.schemas.Project</arg>
             <arg>eu.dnetlib.iis.importer.schemas.Organization</arg>
             <capture-output />
@@ -193,7 +187,7 @@
                 <!-- # Job-specific options -->
                 <property>
                     <name>import.approved.columnfamilies.csv</name>
-                    <value>person,project,organization,result,resultProject_outcome_isProducedBy,personResult_authorship_hasAuthor,resultResult_dedup_merges,projectOrganization_participation_hasParticipant</value>
+                    <value>project,organization,result,resultProject_outcome_isProducedBy,resultResult_dedup_merges,projectOrganization_participation_hasParticipant</value>
                 </property>
                 <property>
                     <name>import.inference.provenance.blacklist</name>
@@ -233,10 +227,6 @@
                     <value>${output_name_project}</value>
                 </property>
                 <property>
-                    <name>output.name.person</name>
-                    <value>${output_name_person}</value>
-                </property>
-                <property>
                     <name>output.name.dedup_mapping</name>
                     <value>${output_name_dedup_mapping}</value>
                 </property>
@@ -247,7 +237,7 @@
                 <!-- ## Names of all output ports -->
                 <property>
                     <name>avro.mapreduce.multipleoutputs</name>
-                    <value>${output_name_document_meta} ${output_name_document_project} ${output_name_dedup_mapping} ${output_name_person} ${output_name_project} ${output_name_organization} ${output_name_project_organization}</value>
+                    <value>${output_name_document_meta} ${output_name_document_project} ${output_name_dedup_mapping} ${output_name_project} ${output_name_organization} ${output_name_project_organization}</value>
                 </property>
                 <!-- ## Output classes for all output ports -->
                 <property>
@@ -264,10 +254,6 @@
                 </property>
                 <property>
                     <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_dedup_mapping}.format</name>
-                    <value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
-                </property>
-                <property>
-                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_person}.format</name>
                     <value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
                 </property>
                 <property>
@@ -294,10 +280,6 @@
                 <property>
                     <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_dedup_mapping}.keyschema</name>
                     <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.common.schemas.IdentifierMapping']}</value>
-                </property>
-                <property>
-                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_person}.keyschema</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.Person']}</value>
                 </property>
                 <property>
                     <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_project}.keyschema</name>
@@ -328,7 +310,6 @@
             <arg>-Preport.import.infoSpace.docMetadata=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_document_meta,'/part')]}</arg>
             <arg>-Preport.import.infoSpace.docProjectReference=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_document_project,'/part')]}</arg>
             <arg>-Preport.import.infoSpace.project=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_project,'/part')]}</arg>
-            <arg>-Preport.import.infoSpace.person=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_person,'/part')]}</arg>
             <arg>-Preport.import.infoSpace.docDedupDocReference=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_dedup_mapping,'/part')]}</arg>
             <arg>-Preport.import.infoSpace.organization=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_organization,'/part')]}</arg>
             <arg>-Preport.import.infoSpace.projectOrganizationReference=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_project_organization, '/part')]}</arg>

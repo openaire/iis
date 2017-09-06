@@ -14,11 +14,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -52,11 +48,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -90,11 +82,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -128,11 +116,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -166,11 +150,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -204,11 +184,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -242,11 +218,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -280,11 +252,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -318,11 +286,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -356,11 +320,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -394,11 +354,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -432,11 +388,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -470,11 +422,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -508,11 +456,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -546,11 +490,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -584,11 +524,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -622,11 +558,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -660,11 +592,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -698,11 +626,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -736,11 +660,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -774,11 +694,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -812,11 +728,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -850,11 +762,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -888,11 +796,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -926,11 +830,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -964,11 +864,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -1002,11 +898,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -1040,11 +932,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -1078,11 +966,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -1116,11 +1000,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -1154,11 +1034,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -1192,11 +1068,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -1230,11 +1102,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -1268,11 +1136,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -1306,11 +1170,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -1344,11 +1204,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -1382,11 +1238,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -1420,11 +1272,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -1458,11 +1306,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -1496,11 +1340,7 @@
         "end":"128"
     },
     "volume":null,
-    "authorIds":[
-        "id-1",
-        "id-2",
-        "id-3"
-    ],
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",
@@ -1533,7 +1373,7 @@
         "end":"503"
     },
     "volume":null,
-    "authorIds":null,
+    "importedAuthors":null,
     "year":1997,
     "keywords":[
         "kwd_1",
@@ -1561,7 +1401,7 @@
     "extractedAuthorFullNames":null,
     "pages":null,
     "volume":null,
-    "authorIds":null,
+    "importedAuthors":null,
     "year":null,
     "keywords":[
         "kwd_1",

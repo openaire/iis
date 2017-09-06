@@ -14,7 +14,6 @@ import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
-import eu.dnetlib.iis.importer.schemas.Person;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
@@ -31,8 +30,6 @@ public class CitationMatchingInputTransformerJobTest {
     
     private String inputMetadataPath;
     
-    private String inputPersonPath;
-    
     private String outputDirPath;
     
     
@@ -41,7 +38,6 @@ public class CitationMatchingInputTransformerJobTest {
         
         workingDir = Files.createTempDir();
         inputMetadataPath = workingDir + "/spark_citation_matching_input_transformer/inputMetadata";
-        inputPersonPath = workingDir + "/spark_citation_matching_input_transformer/inputPerson";
         outputDirPath = workingDir + "/spark_citation_matching_input_transformer/output";
     }
     
@@ -63,21 +59,17 @@ public class CitationMatchingInputTransformerJobTest {
         // given
         
         String jsonInputMetadataFile = DATA_DIRECTORY_PATH + "/full_document.json";
-        String jsonInputPersonFile = DATA_DIRECTORY_PATH + "/person.json";
         String jsonOutputFile = DATA_DIRECTORY_PATH + "/document.json";
         
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(jsonInputMetadataFile, ExtractedDocumentMetadataMergedWithOriginal.class),
                 inputMetadataPath);
-        AvroTestUtils.createLocalAvroDataStore(
-                JsonAvroTestUtils.readJsonDataStore(jsonInputPersonFile, Person.class),
-                inputPersonPath);
         
         
         
         // execute
         
-        executor.execute(buildCitationMatchingInputTransformerJob(inputMetadataPath, inputPersonPath, outputDirPath));
+        executor.execute(buildCitationMatchingInputTransformerJob(inputMetadataPath, outputDirPath));
         
         
         
@@ -90,7 +82,7 @@ public class CitationMatchingInputTransformerJobTest {
     
     //------------------------ PRIVATE --------------------------
     
-    private SparkJob buildCitationMatchingInputTransformerJob(String inputMetadataDirPath, String inputPersonDirPath, String outputDirPath) {
+    private SparkJob buildCitationMatchingInputTransformerJob(String inputMetadataDirPath, String outputDirPath) {
         SparkJob sparkJob = SparkJobBuilder
                 .create()
                 
@@ -98,7 +90,6 @@ public class CitationMatchingInputTransformerJobTest {
 
                 .setMainClass(CitationMatchingInputTransformerJob.class)
                 .addArg("-inputMetadata", inputMetadataDirPath)
-                .addArg("-inputPerson", inputPersonDirPath)
                 .addArg("-output", outputDirPath)
                 .addJobProperty("spark.driver.host", "localhost")
                 

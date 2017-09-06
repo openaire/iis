@@ -1,14 +1,11 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
-import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map.Entry;
 
 import org.junit.Before;
@@ -22,16 +19,16 @@ import org.mockito.junit.MockitoRule;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import eu.dnetlib.data.proto.FieldTypeProtos.StringField;
 import eu.dnetlib.data.proto.FieldTypeProtos.StructuredProperty;
 import eu.dnetlib.data.proto.OafProtos.OafEntity;
+import eu.dnetlib.data.proto.PersonProtos.Person;
 import eu.dnetlib.data.proto.ResultProtos.Result;
 import eu.dnetlib.data.proto.ResultProtos.Result.Metadata;
 import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
-import eu.dnetlib.iis.wf.importer.infospace.QualifiedOafJsonRecord;
 import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
-import eu.dnetlib.iis.wf.importer.infospace.approver.ResultApprover;
 
 /**
  * {@link DocumentMetadataConverter} test class.
@@ -48,9 +45,13 @@ public class DocumentMetadataConverterTest {
     private static final String JOURNAL = "Journal Title";
     private static final Integer YEAR = 2000;
     private static final String PUBLISHER = "Publisher Name";
-    private static final ImmutableList<String> AUTHOR_IDS = ImmutableList.of("id 1", "id #2", "third id");
     private static final ImmutableList<String> DATASOURCE_IDS = ImmutableList.of("source id 1", "id #2");
 
+    private static final String FIRST_NAME = "a first name";
+    private static final String SECOND_NAME = "a second name";
+    private static final String SECOND_SECOND_NAME = "another name";
+    private static final String FULL_NAME = "the full name";
+    
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
 
@@ -58,15 +59,11 @@ public class DocumentMetadataConverterTest {
     private DocumentMetadataConverter converter;
 
     @Mock
-    private ResultApprover resultApprover;
-
-    @Mock
     private FieldApprover fieldApprover;
 
     @Before
     public void setUp() {
         when(fieldApprover.approve(any())).thenReturn(true);
-        when(resultApprover.approve(any())).thenReturn(true);
     }
 
     // ------------------------ TESTS --------------------------
@@ -74,7 +71,7 @@ public class DocumentMetadataConverterTest {
     @Test(expected=NullPointerException.class)
     public void convert_null_oafEntity() throws IOException {
         // execute
-        converter.convert(null, null);
+        converter.convert(null);
     }
 
     @Test
@@ -88,7 +85,7 @@ public class DocumentMetadataConverterTest {
         OafEntity oafEntity = builder.build();
 
         // execute
-        DocumentMetadata metadata = converter.convert(oafEntity, emptyMap());
+        DocumentMetadata metadata = converter.convert(oafEntity);
 
         // assert
         assertEquals(TITLE, metadata.getTitle());
@@ -105,7 +102,7 @@ public class DocumentMetadataConverterTest {
         OafEntity oafEntity = builder.build();
 
         // execute
-        DocumentMetadata metadata = converter.convert(oafEntity, emptyMap());
+        DocumentMetadata metadata = converter.convert(oafEntity);
 
         // assert
         assertEquals(OTHER_TITLE, metadata.getTitle());
@@ -122,7 +119,7 @@ public class DocumentMetadataConverterTest {
         OafEntity oafEntity = builder.build();
 
         // execute
-        DocumentMetadata metadata = converter.convert(oafEntity, emptyMap());
+        DocumentMetadata metadata = converter.convert(oafEntity);
 
         // assert
         assertEquals(ABSTRACT, metadata.getAbstract$());
@@ -138,7 +135,7 @@ public class DocumentMetadataConverterTest {
         OafEntity oafEntity = builder.build();
 
         // execute
-        DocumentMetadata metadata = converter.convert(oafEntity, emptyMap());
+        DocumentMetadata metadata = converter.convert(oafEntity);
 
         // assert
         assertEquals(null, metadata.getLanguage());
@@ -149,13 +146,11 @@ public class DocumentMetadataConverterTest {
     public void convert_not_approved() throws IOException {
         // given
         OafEntity oafEntity = documentEntity();
-        ImmutableMap<String, List<QualifiedOafJsonRecord>> relations = authorRelations();
 
         when(fieldApprover.approve(any())).thenReturn(false);
-        when(resultApprover.approve(any())).thenReturn(false);
 
         // execute
-        DocumentMetadata metadata = converter.convert(oafEntity, relations);
+        DocumentMetadata metadata = converter.convert(oafEntity);
 
         // assert
         assertEquals(ID, metadata.getId());
@@ -169,18 +164,23 @@ public class DocumentMetadataConverterTest {
         assertEquals(null, metadata.getPublisher());
         assertTrue(metadata.getPublicationType().getArticle());
         assertTrue(metadata.getPublicationType().getDataset());
-        assertEquals(null, metadata.getAuthorIds());
         assertEquals(DATASOURCE_IDS, metadata.getDatasourceIds());
+        
+        assertEquals(1, metadata.getAuthors().size());
+        assertEquals(FIRST_NAME, metadata.getAuthors().get(0).getFirstname());
+        assertEquals(2, metadata.getAuthors().get(0).getSecondnames().size());
+        assertEquals(SECOND_NAME, metadata.getAuthors().get(0).getSecondnames().get(0));
+        assertEquals(SECOND_SECOND_NAME, metadata.getAuthors().get(0).getSecondnames().get(1));
+        assertEquals(FULL_NAME, metadata.getAuthors().get(0).getFullname());
     }
 
     @Test
     public void convert() throws IOException {
         // given
         OafEntity oafEntity = documentEntity();
-        ImmutableMap<String, List<QualifiedOafJsonRecord>> relations = authorRelations();
 
         // execute
-        DocumentMetadata metadata = converter.convert(oafEntity, relations);
+        DocumentMetadata metadata = converter.convert(oafEntity);
 
         // assert
         assertEquals(ID, metadata.getId());
@@ -194,7 +194,14 @@ public class DocumentMetadataConverterTest {
         assertEquals(PUBLISHER, metadata.getPublisher());
         assertTrue(metadata.getPublicationType().getArticle());
         assertTrue(metadata.getPublicationType().getDataset());
-        assertEquals(AUTHOR_IDS, metadata.getAuthorIds());
+        
+        assertEquals(1, metadata.getAuthors().size());
+        assertEquals(FIRST_NAME, metadata.getAuthors().get(0).getFirstname());
+        assertEquals(2, metadata.getAuthors().get(0).getSecondnames().size());
+        assertEquals(SECOND_NAME, metadata.getAuthors().get(0).getSecondnames().get(0));
+        assertEquals(SECOND_SECOND_NAME, metadata.getAuthors().get(0).getSecondnames().get(1));
+        assertEquals(FULL_NAME, metadata.getAuthors().get(0).getFullname());
+        
         assertEquals(DATASOURCE_IDS, metadata.getDatasourceIds());
     }
 
@@ -239,6 +246,16 @@ public class DocumentMetadataConverterTest {
             oafBuilder.addCollectedfromBuilder().setKey(id);
         }
 
+        
+        Person.Builder personBuilder = Person.newBuilder();
+        Person.Metadata.Builder personMetaBuilder = Person.Metadata.newBuilder();
+        personMetaBuilder.setFirstname(StringField.newBuilder().setValue(FIRST_NAME));
+        personMetaBuilder.addSecondnames(StringField.newBuilder().setValue(SECOND_NAME));
+        personMetaBuilder.addSecondnames(StringField.newBuilder().setValue(SECOND_SECOND_NAME));
+        personMetaBuilder.setFullname(StringField.newBuilder().setValue(FULL_NAME));
+        personBuilder.setMetadata(personMetaBuilder);
+        oafBuilder.getResultBuilder().addAuthor(personBuilder);
+        
         return oafBuilder.build();
     }
 
@@ -261,15 +278,4 @@ public class DocumentMetadataConverterTest {
         builder.getResultBuilder().getMetadataBuilder().getLanguageBuilder().setClassid(value);
     }
 
-    private static ImmutableMap<String, List<QualifiedOafJsonRecord>> authorRelations() {
-        String jsonTemplate = "{\"kind\":\"relation\",\"rel\":{\"relType\":\"personResult\",\"subRelType\":\"authorship\",\"relClass\":\"hasAuthor\",\"source\":\"srcId\",\"target\":\"%s\",\"child\":false,\"personResult\":{\"authorship\":{\"ranking\":\"%s\",\"relMetadata\":{}}}}}";
-
-        ArrayList<QualifiedOafJsonRecord> jsons = new ArrayList<>();
-
-        for (int i = 0; i < AUTHOR_IDS.size(); i++) {
-            jsons.add(new QualifiedOafJsonRecord("qualifier", String.format(jsonTemplate, AUTHOR_IDS.get(i), i)));
-        }
-
-        return ImmutableMap.of("personResult_authorship_hasAuthor", jsons);
-    }
 }
