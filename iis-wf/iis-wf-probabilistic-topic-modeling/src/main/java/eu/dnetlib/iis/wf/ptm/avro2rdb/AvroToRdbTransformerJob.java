@@ -1,8 +1,17 @@
 package eu.dnetlib.iis.wf.ptm.avro2rdb;
 
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_ABSTRACT;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_CITATIONID;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_DOI;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_PUBID;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_PROJECTID;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_PUBYEAR;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_REFERENCE;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_TITLE;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.buildPubCitation;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.buildPubFulltext;
-import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.buildPubGrant;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.filterPubProject;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.filterProject;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.buildPubKeyword;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.buildPubPDBCodes;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.filterCitation;
@@ -39,7 +48,8 @@ public class AvroToRdbTransformerJob {
     private static final String URL_PREFIX_JDBC = "jdbc:";
     
     protected static final String TABLE_PUBLICATION = "Publication";
-    protected static final String TABLE_PUB_GRANT = "PubGrant";
+    protected static final String TABLE_PROJECT = "Project";
+    protected static final String TABLE_PUB_PROJECT = "PubProject";
     protected static final String TABLE_PUB_KEYWORD = "PubKeyword";
     protected static final String TABLE_PUB_FULLTEXT = "PubFulltext";
     protected static final String TABLE_CITATION = "Citation";
@@ -49,25 +59,6 @@ public class AvroToRdbTransformerJob {
     protected static final String JOIN_TYPE_INNER = "inner";
     protected static final String JOIN_TYPE_LEFT_OUTER = "left_outer";
     protected static final String JOIN_TYPE_LEFTSEMI = "leftsemi";
-    
-    protected static final String FIELD_PUBID = "pubId";
-    
-    protected static final String FIELD_GRANTID = "grantId";
-    protected static final String FIELD_FUNDER = "funder";
-    
-    protected static final String FIELD_TITLE = "title";
-    protected static final String FIELD_ABSTRACT = "abstract";
-    protected static final String FIELD_FULLTEXT = "fulltext";
-    protected static final String FIELD_PUBYEAR = "pubyear";
-    protected static final String FIELD_DOI = "doi";
-    
-    protected static final String FIELD_KEYWORD = "keyword";
-    
-    protected static final String FIELD_CITATIONID = "citationId";
-    protected static final String FIELD_REFERENCE = "reference";
-    
-    protected static final String FIELD_PMCID = "pmcId";
-    protected static final String FIELD_PDBCODE = "pdbcode";
     
     private static AvroToRdbCounterReporter counterReporter = new AvroToRdbCounterReporter();
     
@@ -108,19 +99,27 @@ public class AvroToRdbTransformerJob {
             List<ReportEntry> reportEntries = Lists.newArrayList();
             
             // ==============================================================================
-            // Pub Grant
+            // Project
+            // ==============================================================================
+            DataFrame projectFilteredByFundingClass = filterProject(inputProject, params.fundingClassWhitelist);
+            projectFilteredByFundingClass.cache();
+            // filtered projects will be written later after filtering by filteredMetadata
+            
+            // ==============================================================================
+            // PubProject
             // ==============================================================================
             
-            DataFrame normalizedPubGrant = buildPubGrant(inputDocumentToProject, inputProject, 
-                    params.confidenceLevelDocumentToProjectThreshold, params.fundingClassWhitelist);
-            normalizedPubGrant.cache();
+            DataFrame pubProjectFilteredByConfidenceLevel = filterPubProject(
+                    inputDocumentToProject, projectFilteredByFundingClass, 
+                    params.confidenceLevelDocumentToProjectThreshold);
+            pubProjectFilteredByConfidenceLevel.cache();
             // PubGrant will be written later, after filtering by filteredMetadata
             
             // ==============================================================================
             // Publication
             // ==============================================================================
 
-            DataFrame metadataFilteredByTextAndGrant = filterMetadata(inputMetadata, inputText, normalizedPubGrant);
+            DataFrame metadataFilteredByTextAndGrant = filterMetadata(inputMetadata, inputText, pubProjectFilteredByConfidenceLevel);
             metadataFilteredByTextAndGrant.cache();
             
             DataFrame publicationId = metadataFilteredByTextAndGrant.select(metadataFilteredByTextAndGrant.col(FIELD_PUBID));
@@ -133,11 +132,15 @@ public class AvroToRdbTransformerJob {
                     metadataFilteredByTextAndGrant.col(FIELD_DOI),
                     metadataFilteredByTextAndGrant.col("year").as(FIELD_PUBYEAR)), TABLE_PUBLICATION, dbCtx, reportEntries);
             
-            // filtering pubgrant relations by metadataFiltered (limiting only to the exported publications)
-            DataFrame normalizedFilteredPubGrant = normalizedPubGrant.join(publicationId, 
-                    normalizedPubGrant.col(FIELD_PUBID).equalTo(publicationId.col(FIELD_PUBID)), JOIN_TYPE_LEFTSEMI);
-            write(normalizedFilteredPubGrant, TABLE_PUB_GRANT, dbCtx, reportEntries);
+            // filtering pubProject relations by metadataFiltered (limiting only to the exported publications)
+            DataFrame pubProjectFilteredByConfidenceAndMetadata = pubProjectFilteredByConfidenceLevel.join(publicationId, 
+                    pubProjectFilteredByConfidenceLevel.col(FIELD_PUBID).equalTo(publicationId.col(FIELD_PUBID)), JOIN_TYPE_LEFTSEMI);
+            write(pubProjectFilteredByConfidenceAndMetadata, TABLE_PUB_PROJECT, dbCtx, reportEntries);
             
+            // writing subset of projects linked to publications
+            DataFrame projectFilteredByFundingClassAndPubs = projectFilteredByFundingClass.join(pubProjectFilteredByConfidenceAndMetadata,
+                    projectFilteredByFundingClass.col(FIELD_PROJECTID).equalTo(pubProjectFilteredByConfidenceAndMetadata.col(FIELD_PROJECTID)), JOIN_TYPE_LEFTSEMI);
+            write(projectFilteredByFundingClassAndPubs, TABLE_PROJECT, dbCtx, reportEntries);
             // ==============================================================================
             // PubKeyword
             // ==============================================================================

@@ -1,0 +1,2 @@
+{"projectId":"projId-1", "funder": "EC", "fundingLevel0": "FP7", "grantId": "123456", "acronym": "project 1", "title": "Project 1 title", "callId": "callid1", "startDate": "2017-01-01", "endDate": "2017-12-31"}
+{"projectId":"projId-2", "funder": "EC", "fundingLevel0": "H2020", "fundingLevel1":"IRRELEVANT LEVEL 1", "grantId": "654321", "acronym": "project 2"}

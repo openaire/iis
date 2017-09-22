@@ -113,10 +113,47 @@ public class ProjectConverterTest {
         assertEquals(GRANT_ID, project.getProjectGrantId());
         assertEquals(FUNDING_CLASS, project.getFundingClass());
         assertEquals(JSON_EXTRA_INFO, project.getJsonextrainfo());
-        
+        assertNull(project.getTitle());
+        assertNull(project.getCallId());
+        assertNull(project.getStartDate());
+        assertNull(project.getEndDate());
     }
 
-	
+    @Test
+    public void convert_ptm_fields_set() throws IOException {
+        // given
+        OafEntity.Builder builder = emptyEntityBuilder(ID);
+        String title = "project title";
+        String callId = "12345";
+        String startDate = "2017";
+        String endDate = "2020";
+
+        Metadata.Builder mdBuilder = builder.getProjectBuilder().getMetadataBuilder();
+        mdBuilder.getAcronymBuilder().setValue(ACRONYM);
+        mdBuilder.getCodeBuilder().setValue(GRANT_ID);
+        mdBuilder.getJsonextrainfoBuilder().setValue(JSON_EXTRA_INFO);
+        mdBuilder.addFundingtreeBuilder().setValue(readFundingTree());
+        mdBuilder.getTitleBuilder().setValue(title);
+        mdBuilder.getCallidentifierBuilder().setValue(callId);
+        mdBuilder.getStartdateBuilder().setValue(startDate);
+        mdBuilder.getEnddateBuilder().setValue(endDate);
+
+        OafEntity oafEntity = builder.build();
+
+        // execute
+        Project project = converter.convert(oafEntity);
+
+        // assert
+        assertEquals(ID, project.getId());
+        assertEquals(ACRONYM, project.getProjectAcronym());
+        assertEquals(GRANT_ID, project.getProjectGrantId());
+        assertEquals(FUNDING_CLASS, project.getFundingClass());
+        assertEquals(JSON_EXTRA_INFO, project.getJsonextrainfo());
+        assertEquals(title, project.getTitle());
+        assertEquals(callId, project.getCallId());
+        assertEquals(startDate, project.getStartDate());
+        assertEquals(endDate, project.getEndDate());
+    }
 
     // ------------------------ PRIVATE --------------------------
 

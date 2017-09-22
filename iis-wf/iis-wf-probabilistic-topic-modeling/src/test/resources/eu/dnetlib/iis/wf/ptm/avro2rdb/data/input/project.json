@@ -1,4 +1,4 @@
-{"id":"projId-1","projectAcronym":"project 1","projectGrantId":"123456","fundingClass":"EC::FP7", "jsonextrainfo":"{}"}
-{"id":"projId-2","projectAcronym":"project 2","projectGrantId":"654321","fundingClass":"EC::H2020", "jsonextrainfo":"{}"}
-{"id":"projId-3","projectAcronym":"project 3","projectGrantId":"999999","fundingClass":"WT::WT", "jsonextrainfo":"{}"}
-{"id":"projId-4","projectAcronym":"project 4","projectGrantId":"111111","fundingClass":null, "jsonextrainfo":"{}"}
+{"id":"projId-1","projectAcronym":"project 1","projectGrantId":"123456","fundingClass":"EC::FP7", "jsonextrainfo":"{}", "title":"Project 1 title", "fundingLevels":["FP7"], "callId":"callid1", "startDate":"2017-01-01", "endDate":"2017-12-31"}
+{"id":"projId-2","projectAcronym":"project 2","projectGrantId":"654321","fundingClass":"EC::H2020", "jsonextrainfo":"{}", "title":null, "fundingLevels":["H2020","IRRELEVANT LEVEL 1"], "callId":null, "startDate":null, "endDate":null}
+{"id":"projId-3","projectAcronym":"project 3","projectGrantId":"999999","fundingClass":"WT::WT", "jsonextrainfo":"{}", "title":null, "fundingLevels":null, "callId":null, "startDate":null, "endDate":null}
+{"id":"projId-4","projectAcronym":"project 4","projectGrantId":"111111","fundingClass":null, "jsonextrainfo":"{}", "title":null, "fundingLevels":null, "callId":null, "startDate":null, "endDate":null}

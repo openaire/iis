@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.ptm.avro2rdb;
 
 import static org.apache.spark.sql.functions.explode;
+import static org.apache.spark.sql.functions.split;
 
 import org.apache.spark.sql.Column;
 import org.apache.spark.sql.DataFrame;
@@ -19,9 +20,17 @@ public class AvroToRdbTransformerUtils {
     protected static final String JOIN_TYPE_LEFTSEMI = "leftsemi";
     
     protected static final String FIELD_PUBID = "pubId";
+    protected static final String FIELD_PROJECTID = "projectId";
     
     protected static final String FIELD_GRANTID = "grantId";
+    protected static final String FIELD_ACRONYM = "acronym";
     protected static final String FIELD_FUNDER = "funder";
+    protected static final String FIELD_FUNDING_LEVEL_0 = "fundingLevel0";
+    protected static final String FIELD_FUNDING_LEVEL_1 = "fundingLevel1";
+    protected static final String FIELD_FUNDING_LEVEL_2 = "fundingLevel2";
+    protected static final String FIELD_CALLID = "callId";
+    protected static final String FIELD_START_DATE = "startDate";
+    protected static final String FIELD_END_DATE = "endDate";
     
     protected static final String FIELD_TITLE = "title";
     protected static final String FIELD_ABSTRACT = "abstract";
@@ -43,7 +52,7 @@ public class AvroToRdbTransformerUtils {
      * @param text dataframe holding text to be joined with metadata
      * @param pubGrant publication - grant relation to be used for metadata filtering
      */
-    protected static DataFrame filterMetadata(DataFrame metadata, DataFrame text, DataFrame pubGrant) {
+    protected static DataFrame filterMetadata(DataFrame metadata, DataFrame text, DataFrame pubProject) {
         DataFrame metadataSubset = metadata.select(
                 metadata.col("id").as(FIELD_PUBID),
                 metadata.col(FIELD_TITLE), 
@@ -65,7 +74,7 @@ public class AvroToRdbTransformerUtils {
                 metadataJoinedWithText.col(FIELD_ABSTRACT).isNotNull().or(metadataJoinedWithText.col("text").isNotNull()).and(
                         languageColumn.isNull().or(languageColumn.equalTo("eng"))));
         
-        return metadataFiltered.join(pubGrant, metadataFiltered.col(FIELD_PUBID).equalTo(pubGrant.col(FIELD_PUBID)), JOIN_TYPE_LEFTSEMI);
+        return metadataFiltered.join(pubProject, metadataFiltered.col(FIELD_PUBID).equalTo(pubProject.col(FIELD_PUBID)), JOIN_TYPE_LEFTSEMI);
     }
     
     /**
@@ -115,26 +124,45 @@ public class AvroToRdbTransformerUtils {
     }
     
     /**
+     * @param project dataframe with projects read from input avro datastore
+     * @param fundingClassWhitelist project funding class whitelist regex
+     */
+    protected static DataFrame filterProject(DataFrame project, String fundingClassWhitelist) {
+        Column fundingClass = project.col("fundingClass");
+        Column fundingClassRLike = fundingClass.rlike(fundingClassWhitelist);
+
+        DataFrame filteredProject = project.filter(fundingClassRLike);
+
+        return filteredProject.select(project.col("id").as(FIELD_PROJECTID),
+                split(project.col("fundingClass"), "::").getItem(0).as(FIELD_FUNDER),
+                project.col("fundingLevels").getItem(0).as(FIELD_FUNDING_LEVEL_0),
+                project.col("fundingLevels").getItem(1).as(FIELD_FUNDING_LEVEL_1),
+                project.col("fundingLevels").getItem(2).as(FIELD_FUNDING_LEVEL_2),
+                project.col("projectGrantId").as(FIELD_GRANTID),
+                project.col("projectAcronym").as(FIELD_ACRONYM),
+                project.col("title").as(FIELD_TITLE),
+                project.col("callId").as(FIELD_CALLID),
+                project.col("startDate").as(FIELD_START_DATE),
+                project.col("endDate").as(FIELD_END_DATE));
+    }
+    
+    /**
      * @param documentToProject dataframe with document to project relations read from input avro datastore 
      * @param project dataframe with projects read from input avro datastore
      * @param confidenceLevelThreshold document to project relations confidence level threshold
-     * @param fundingClassWhitelist project funding class whitelist regex
      */
-    protected static DataFrame buildPubGrant(DataFrame documentToProject, DataFrame project, 
-            float confidenceLevelThreshold, String fundingClassWhitelist) {
+    protected static DataFrame filterPubProject(DataFrame documentToProject, DataFrame project, 
+            float confidenceLevelThreshold) {
         DataFrame documentJoinedWithProjectDetails = documentToProject.join(project,
-                documentToProject.col("projectId").equalTo(project.col("id")), JOIN_TYPE_INNER);
+                documentToProject.col(FIELD_PROJECTID).equalTo(project.col(FIELD_PROJECTID)), JOIN_TYPE_INNER);
 
         Column confidenceLevel = documentJoinedWithProjectDetails.col("confidenceLevel");
         Column confidenceLevelGrEq = confidenceLevel.$greater$eq(confidenceLevelThreshold);
-        Column fundingClass = documentJoinedWithProjectDetails.col("fundingClass");
-        Column fundingClassRLike = fundingClass.rlike(fundingClassWhitelist);
 
-        DataFrame filtered = documentJoinedWithProjectDetails.filter(confidenceLevelGrEq.and(fundingClassRLike));
+        DataFrame filtered = documentJoinedWithProjectDetails.filter(confidenceLevelGrEq);
 
-        return filtered.select(documentJoinedWithProjectDetails.col("documentId").as(FIELD_PUBID),
-                documentJoinedWithProjectDetails.col("projectGrantId").as(FIELD_GRANTID),
-                fundingClass.as(FIELD_FUNDER));
+        return filtered.select(documentToProject.col("documentId").as(FIELD_PUBID),
+                documentToProject.col(FIELD_PROJECTID).as(FIELD_PROJECTID));
     }
     
     

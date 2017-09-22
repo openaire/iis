@@ -29,7 +29,7 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
     protected static final Logger log = Logger.getLogger(ProjectConverter.class);
 
     public static final String BLANK_JSONEXTRAINFO = "{}";
-
+    
     private static final Set<String> ACRONYM_SKIP_LOWERCASED_VALUES = new HashSet<String>(
             Arrays.asList("undefined", "unknown"));
     
@@ -45,8 +45,13 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
             if (sourceProject.hasMetadata()) {
                 Project.Builder builder = Project.newBuilder();
                 builder.setId(oafEntity.getId());
-                StringField acronym = sourceProject.getMetadata().getAcronym();
                 
+                String title = sourceProject.getMetadata().getTitle().getValue();
+                if (StringUtils.isNotBlank(title)) {
+                    builder.setTitle(title);
+                }
+                
+                StringField acronym = sourceProject.getMetadata().getAcronym();
                 if (isAcronymValid(acronym)) {
                     builder.setProjectAcronym(acronym.getValue());
                 }
@@ -56,17 +61,35 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
                     builder.setProjectGrantId(projectGrantId);
                 }
                 
+                String callId = sourceProject.getMetadata().getCallidentifier().getValue();
+                if (StringUtils.isNotBlank(callId)) {
+                    builder.setCallId(callId);
+                }
+                
+                String startDate = sourceProject.getMetadata().getStartdate().getValue();
+                if (StringUtils.isNotBlank(startDate)) {
+                    builder.setStartDate(startDate);
+                }
+                
+                String endDate = sourceProject.getMetadata().getEnddate().getValue();
+                if (StringUtils.isNotBlank(endDate)) {
+                    builder.setEndDate(endDate);
+                }
+                
                 String jsonExtraInfo = sourceProject.getMetadata().getJsonextrainfo().getValue();
                 if (StringUtils.isNotBlank(jsonExtraInfo)) {
                     builder.setJsonextrainfo(jsonExtraInfo);
                 } else {
                     builder.setJsonextrainfo(BLANK_JSONEXTRAINFO);
                 }
-                
-                String extractedFundingClass = fundingTreeParser.extractFundingClass(
+                FundingDetails fundingDetails = fundingTreeParser.extractFundingDetails(
                         extractStringValues(sourceProject.getMetadata().getFundingtreeList()));
-                if (StringUtils.isNotBlank(extractedFundingClass)) {
-                    builder.setFundingClass(extractedFundingClass);
+                if (fundingDetails != null) {
+                    builder.setFundingLevels(fundingDetails.getFundingLevelNames());
+                    String extractedFundingClass = fundingDetails.buildFundingClass();
+                    if (StringUtils.isNotBlank(extractedFundingClass)) {
+                        builder.setFundingClass(extractedFundingClass);
+                    }    
                 }
                 return isDataValid(builder)?builder.build():null;
             } else {

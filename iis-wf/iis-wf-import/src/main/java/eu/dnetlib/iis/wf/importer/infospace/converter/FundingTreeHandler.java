@@ -1,6 +1,11 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.Stack;
+import java.util.TreeMap;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -15,12 +20,11 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class FundingTreeHandler extends DefaultHandler {
 
-    private static final String FUNDER_FUNDING_SEPARATOR = "::";
-    
     private static final String ELEM_FUNDER = "funder";
-    private static final String ELEM_FUNDING_LEVEL_0 = "funding_level_0";
-    private static final String ELEM_NAME = "name";
-    private static final String ELEM_SHORTNAME = "shortname";
+    private static final String ELEM_FUNDER_SHORTNAME = "shortname";
+    private static final String ELEM_FUNDING_LEVEL_PREFIX = "funding_level_";
+    private static final String ELEM_FUNDING_NAME = "name";
+
     
     private Stack<String> parents;
     
@@ -28,7 +32,7 @@ public class FundingTreeHandler extends DefaultHandler {
     
     private String funderShortName;
     
-    private String fundingLevel0Name;
+    private TreeMap<Integer,CharSequence> fundingLevelNames;
 
     // ------------------------ LOGIC --------------------------
     
@@ -37,14 +41,14 @@ public class FundingTreeHandler extends DefaultHandler {
         this.parents = new Stack<String>();
         this.currentValue = null;
         this.funderShortName = null;
-        this.fundingLevel0Name = null;
+        this.fundingLevelNames = new TreeMap<>();
     }
 
     @Override
     public void startElement(String uri, String localName, String qName,
             Attributes attributes) throws SAXException {
-        if (isWithinElement(qName, ELEM_SHORTNAME, ELEM_FUNDER) || 
-                isWithinElement(qName, ELEM_NAME, ELEM_FUNDING_LEVEL_0)) {
+        if (isWithinElement(qName, ELEM_FUNDER_SHORTNAME, ELEM_FUNDER) || 
+                isWithinElementWithFundingLevelParent(qName, ELEM_FUNDING_NAME)) {
             this.currentValue = new StringBuilder();
         }
         this.parents.push(qName);
@@ -54,10 +58,13 @@ public class FundingTreeHandler extends DefaultHandler {
     public void endElement(String uri, String localName, String qName)
             throws SAXException {
         this.parents.pop();
-        if (isWithinElement(qName, ELEM_SHORTNAME, ELEM_FUNDER)) {
+        if (isWithinElement(qName, ELEM_FUNDER_SHORTNAME, ELEM_FUNDER)) {
             this.funderShortName = this.currentValue.toString().trim();
-        } else if (isWithinElement(qName, ELEM_NAME, ELEM_FUNDING_LEVEL_0)) {
-            this.fundingLevel0Name = this.currentValue.toString().trim();
+        } else if (isWithinElementWithFundingLevelParent(qName, ELEM_FUNDING_NAME)) {
+            int fundingLevel = getFundingLevelIndexFromParentElement();
+            if (fundingLevel >= 0) {
+                fundingLevelNames.put(fundingLevel, this.currentValue.toString().trim());
+            }
         }
         this.currentValue = null;
     }
@@ -77,29 +84,24 @@ public class FundingTreeHandler extends DefaultHandler {
     }
 
     /**
-     * @return funding class based of funder short name and level0 name, null returned when neither found.
+     * @return extracted funding tree details
      */
-    public String getFundingClass() {
-        StringBuilder strBuilder = new StringBuilder();
-        if (funderShortName!=null) {
-            strBuilder.append(funderShortName);
-            strBuilder.append(FUNDER_FUNDING_SEPARATOR);
-            if (fundingLevel0Name!=null) {
-                strBuilder.append(fundingLevel0Name);    
-            }
-            return strBuilder.toString();
-        } else {
-            if (fundingLevel0Name!=null) {
-                strBuilder.append(FUNDER_FUNDING_SEPARATOR);
-                strBuilder.append(fundingLevel0Name);
-                return strBuilder.toString();
-            } else {
-                return null;
-            }
-        }
+    public FundingDetails getFundingTreeDetails() {
+        return new FundingDetails(funderShortName, convertFundingLevelNames(fundingLevelNames));
     }
     
     // ------------------------ PRIVATE --------------------------
+    
+    private List<CharSequence> convertFundingLevelNames(TreeMap<Integer,CharSequence> source) {
+        if (source.isEmpty()) {
+            return Collections.emptyList();
+        }
+        CharSequence[] results = new CharSequence[source.lastKey() + 1];
+        for (Entry<Integer,CharSequence> entry : source.entrySet()) {
+            results[entry.getKey()] = entry.getValue();
+        }
+        return Arrays.asList(results);
+    }
     
     private boolean isWithinElement(String qName,
             String expectedElement, String expectedParent) {
@@ -107,5 +109,21 @@ public class FundingTreeHandler extends DefaultHandler {
                 (expectedParent==null || !this.parents.isEmpty() && expectedParent.equals(this.parents.peek()));
     }
 
+    private boolean isWithinElementWithFundingLevelParent(String qName, String expectedElement) {
+        return qName.equals(expectedElement) && !this.parents.isEmpty() && this.parents.peek().startsWith(ELEM_FUNDING_LEVEL_PREFIX);
+    }
+    
+    private int getFundingLevelIndexFromParentElement() {
+        String parentElementName = this.parents.peek();
+        if (parentElementName.startsWith(ELEM_FUNDING_LEVEL_PREFIX)) {
+            try {
+                return Integer.parseInt(parentElementName.substring(ELEM_FUNDING_LEVEL_PREFIX.length()));    
+            } catch (NumberFormatException e) {
+                return -1;
+            }
+        } else {
+            return -1;
+        }
+    }
 }
 

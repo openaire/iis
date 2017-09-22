@@ -1,15 +1,22 @@
 package eu.dnetlib.iis.wf.ptm.avro2rdb;
 
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_ABSTRACT;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_ACRONYM;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_CALLID;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_CITATIONID;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_DOI;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_END_DATE;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_FULLTEXT;
-import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_FUNDER;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_FUNDING_LEVEL_0;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_FUNDING_LEVEL_1;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_FUNDING_LEVEL_2;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_GRANTID;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_PDBCODE;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_PMCID;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_PROJECTID;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_PUBID;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_REFERENCE;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_START_DATE;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.FIELD_TITLE;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.JOIN_TYPE_INNER;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerUtils.JOIN_TYPE_LEFTSEMI;
@@ -28,9 +35,93 @@ public class AvroToRdbTransformerUtilsTest {
 
     //------------------------ TESTS --------------------------
     
+    @Test
+    public void testFilterProject() throws Exception {
+        
+        // given
+        DataFrame project = mock(DataFrame.class);
+        DataFrame projectFiltered = mock(DataFrame.class);
+        DataFrame toBeReturned = mock(DataFrame.class);
+        
+        Column fundingClassColumn = mock(Column.class);
+        String fundingClassWhitelist = "whitelist";
+
+        // filtering specs
+        Column fundingClassRLike = mock(Column.class);
+        
+        when(project.col("fundingClass")).thenReturn(fundingClassColumn);
+        when(fundingClassColumn.rlike(fundingClassWhitelist)).thenReturn(fundingClassRLike);
+        
+        when(project.filter(fundingClassRLike)).thenReturn(projectFiltered);
+        
+        // selecting specs
+        Column projectIdColumn = mock(Column.class);
+        Column projectIdColumnAsRdbField = mock(Column.class);        
+        when(project.col("id")).thenReturn(projectIdColumn);
+        when(projectIdColumn.as(FIELD_PUBID)).thenReturn(projectIdColumnAsRdbField);
+        
+        Column fundingLevelsColumn = mock(Column.class);
+        when(project.col("fundingLevels")).thenReturn(fundingLevelsColumn);
+        
+        Column fundingLevelsItem0Column = mock(Column.class);
+        when(fundingLevelsColumn.getItem(0)).thenReturn(fundingLevelsItem0Column);
+        Column fundingLevelsItem0ColumnAsRdbField = mock(Column.class);
+        when(fundingLevelsItem0Column.as(FIELD_FUNDING_LEVEL_0)).thenReturn(fundingLevelsItem0ColumnAsRdbField);
+        
+        Column fundingLevelsItem1Column = mock(Column.class);
+        when(fundingLevelsColumn.getItem(1)).thenReturn(fundingLevelsItem1Column);
+        Column fundingLevelsItem1ColumnAsRdbField = mock(Column.class);
+        when(fundingLevelsItem1Column.as(FIELD_FUNDING_LEVEL_1)).thenReturn(fundingLevelsItem1ColumnAsRdbField);
+        
+        Column fundingLevelsItem2Column = mock(Column.class);
+        when(fundingLevelsColumn.getItem(2)).thenReturn(fundingLevelsItem2Column);
+        Column fundingLevelsItem2ColumnAsRdbField = mock(Column.class);
+        when(fundingLevelsItem2Column.as(FIELD_FUNDING_LEVEL_2)).thenReturn(fundingLevelsItem2ColumnAsRdbField);
+        
+        Column projectGrantIdColumn = mock(Column.class);
+        Column projectGrantIdColumnAsRdbField = mock(Column.class);        
+        when(project.col("projectGrantId")).thenReturn(projectGrantIdColumn);
+        when(projectIdColumn.as(FIELD_GRANTID)).thenReturn(projectGrantIdColumnAsRdbField);
+        
+        Column projectAcronymColumn = mock(Column.class);
+        Column projectAcronymColumnAsRdbField = mock(Column.class);        
+        when(project.col("projectAcronym")).thenReturn(projectAcronymColumn);
+        when(projectIdColumn.as(FIELD_ACRONYM)).thenReturn(projectAcronymColumnAsRdbField);
+        
+        Column titleColumn = mock(Column.class);
+        Column titleColumnAsRdbField = mock(Column.class);        
+        when(project.col("title")).thenReturn(titleColumn);
+        when(projectIdColumn.as(FIELD_TITLE)).thenReturn(titleColumnAsRdbField);
+        
+        Column callIdColumn = mock(Column.class);
+        Column callIdColumnAsRdbField = mock(Column.class);        
+        when(project.col("callId")).thenReturn(callIdColumn);
+        when(projectIdColumn.as(FIELD_CALLID)).thenReturn(callIdColumnAsRdbField);
+        
+        Column startDateColumn = mock(Column.class);
+        Column startDateColumnAsRdbField = mock(Column.class);        
+        when(project.col("startDate")).thenReturn(startDateColumn);
+        when(projectIdColumn.as(FIELD_START_DATE)).thenReturn(startDateColumnAsRdbField);
+        
+        Column endDateColumn = mock(Column.class);
+        Column endDateColumnAsRdbField = mock(Column.class);        
+        when(project.col("endDate")).thenReturn(endDateColumn);
+        when(projectIdColumn.as(FIELD_END_DATE)).thenReturn(endDateColumnAsRdbField);
+        
+        //TODO drop all any() occurences and include static explode() method in test execution path
+        when(projectFiltered.select(any(Column.class), any(Column.class), 
+                any(Column.class), any(Column.class), any(Column.class), any(Column.class), any(Column.class), any(Column.class), any(Column.class), any(Column.class), any(Column.class))).thenReturn(toBeReturned);
+        
+        // execute
+        DataFrame result = AvroToRdbTransformerUtils.filterProject(project, fundingClassWhitelist);
+        
+        // assert
+        assertTrue(result == toBeReturned);
+        
+    }
     
     @Test
-    public void testBuildPubGrant() throws Exception {
+    public void testFilterPubProject() throws Exception {
         
         // given
         DataFrame project = mock(DataFrame.class);
@@ -39,18 +130,15 @@ public class AvroToRdbTransformerUtilsTest {
         DataFrame pubGrantFiltered = mock(DataFrame.class);
         DataFrame toBeReturned = mock(DataFrame.class);
         
-        Column fundingClassColumn = mock(Column.class);
-        
         float confidenceLevelThreshold = 0.9f;
-        String fundingClassWhitelist = "whitelist";
         
         // joining specs
         Column documentToProjectIdColumn = mock(Column.class);
         Column projectIdColumn = mock(Column.class);
         Column projectJoinColumn = mock(Column.class);
         
-        when(project.col("id")).thenReturn(projectIdColumn);
-        when(documentToProject.col("projectId")).thenReturn(documentToProjectIdColumn);
+        when(project.col(FIELD_PROJECTID)).thenReturn(projectIdColumn);
+        when(documentToProject.col(FIELD_PROJECTID)).thenReturn(documentToProjectIdColumn);
         when(documentToProjectIdColumn.equalTo(projectIdColumn)).thenReturn(projectJoinColumn);
         
         when(documentToProject.join(project, projectJoinColumn, JOIN_TYPE_INNER)).thenReturn(documentJoinedWithProjectDetails);
@@ -59,43 +147,29 @@ public class AvroToRdbTransformerUtilsTest {
         Column confidenceLevelColumn = mock(Column.class);
         Column confidenceLevelGreaterEq = mock(Column.class);
         
-        Column fundingClassRLike = mock(Column.class);
-        Column pubGrantFilterCondition = mock(Column.class);
-        
         when(documentJoinedWithProjectDetails.col("confidenceLevel")).thenReturn(confidenceLevelColumn);
         when(confidenceLevelColumn.$greater$eq(confidenceLevelThreshold)).thenReturn(confidenceLevelGreaterEq);
 
-        when(documentJoinedWithProjectDetails.col("fundingClass")).thenReturn(fundingClassColumn);
-        when(fundingClassColumn.rlike(fundingClassWhitelist)).thenReturn(fundingClassRLike);
-        
-        when(confidenceLevelGreaterEq.and(fundingClassRLike)).thenReturn(pubGrantFilterCondition);
-        
-        when(documentJoinedWithProjectDetails.filter(pubGrantFilterCondition)).thenReturn(pubGrantFiltered);
+        when(documentJoinedWithProjectDetails.filter(confidenceLevelGreaterEq)).thenReturn(pubGrantFiltered);
         
         // selecting specs
         Column joinedDocumentIdColumnAsRdbField = mock(Column.class);
         Column joinedProjectGrantIdColumnAsRdbField = mock(Column.class);
-        Column joinedFundingClassColumnAsRdbField = mock(Column.class);
         Column joinedDocumentIdColumn = mock(Column.class);
-        Column joinedProjectGrantIdColumn = mock(Column.class);
         
-        when(documentJoinedWithProjectDetails.col("documentId")).thenReturn(joinedDocumentIdColumn);
+        when(documentToProject.col("documentId")).thenReturn(joinedDocumentIdColumn);
         when(joinedDocumentIdColumn.as(FIELD_PUBID)).thenReturn(joinedDocumentIdColumnAsRdbField);
         
-        when(documentJoinedWithProjectDetails.col("projectGrantId")).thenReturn(joinedProjectGrantIdColumn);
-        when(joinedProjectGrantIdColumn.as(FIELD_GRANTID)).thenReturn(joinedProjectGrantIdColumnAsRdbField);
-        
-        when(fundingClassColumn.as(FIELD_FUNDER)).thenReturn(joinedFundingClassColumnAsRdbField);
+        when(documentToProjectIdColumn.as(FIELD_PROJECTID)).thenReturn(joinedProjectGrantIdColumnAsRdbField);
         
         when(pubGrantFiltered.select(
-                joinedDocumentIdColumnAsRdbField, joinedProjectGrantIdColumnAsRdbField, joinedFundingClassColumnAsRdbField)).thenReturn(toBeReturned);
+                joinedDocumentIdColumnAsRdbField, joinedProjectGrantIdColumnAsRdbField)).thenReturn(toBeReturned);
         
         // execute
-        DataFrame result = AvroToRdbTransformerUtils.buildPubGrant(documentToProject, project, confidenceLevelThreshold, fundingClassWhitelist);
+        DataFrame result = AvroToRdbTransformerUtils.filterPubProject(documentToProject, project, confidenceLevelThreshold);
         
         // assert
         assertTrue(result == toBeReturned);
-        
     }
 
     @Test

@@ -6,10 +6,20 @@ protocol IIS{
         string id;
 //      project grant identifier, 6-digit number
         union { null , string } projectGrantId = null;
-//      project acronym
+//      title
+        union { null , string } title = null;
+//      acronym
         union { null , string } projectAcronym = null;
-//      project funding class e.g. FP7 or WT
+//      funding class: funder name concatenated with funding_level_0 name (delimited with "::") e.g. "EC::FP7" or "FCT::SFRH"
         union { null , string } fundingClass = null;
+//      funding level names, array is indexed with level number
+        union { null , array<string> } fundingLevels = null;
+//      call identifier
+        union { null , string } callId = null;
+//      start date
+        union { null , string } startDate = null;
+//      end date
+        union { null , string } endDate = null;                
 //      supplementary project metadata encoded ad JSON record
 //      NIH, NWO and other specific project details are conveyed using this field
 //      when extra info is not available Madis expects this field to be set to "{}"

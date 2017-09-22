@@ -1,10 +1,11 @@
 package eu.dnetlib.iis.wf.ptm.avro2rdb;
 
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerJob.TABLE_CITATION;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerJob.TABLE_PROJECT;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerJob.TABLE_PUBLICATION;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerJob.TABLE_PUB_CITATION;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerJob.TABLE_PUB_FULLTEXT;
-import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerJob.TABLE_PUB_GRANT;
+import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerJob.TABLE_PUB_PROJECT;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerJob.TABLE_PUB_KEYWORD;
 import static eu.dnetlib.iis.wf.ptm.avro2rdb.AvroToRdbTransformerJob.TABLE_PUB_PDBCODE;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -111,7 +112,8 @@ public class AvroToRdbTransformerJobTest {
         
         // assert
         assertTrue(getOutputJsons(TABLE_PUBLICATION).isEmpty());
-        assertTrue(getOutputJsons(TABLE_PUB_GRANT).isEmpty());
+        assertTrue(getOutputJsons(TABLE_PROJECT).isEmpty());
+        assertTrue(getOutputJsons(TABLE_PUB_PROJECT).isEmpty());
         assertTrue(getOutputJsons(TABLE_PUB_KEYWORD).isEmpty());
         assertTrue(getOutputJsons(TABLE_PUB_FULLTEXT).isEmpty());
         assertTrue(getOutputJsons(TABLE_CITATION).isEmpty());
@@ -133,7 +135,8 @@ public class AvroToRdbTransformerJobTest {
         
         // assert
         assertTrue(getOutputJsons(TABLE_PUBLICATION).isEmpty());
-        assertTrue(getOutputJsons(TABLE_PUB_GRANT).isEmpty());
+        assertTrue(getOutputJsons(TABLE_PROJECT).isEmpty());
+        assertTrue(getOutputJsons(TABLE_PUB_PROJECT).isEmpty());
         assertTrue(getOutputJsons(TABLE_PUB_KEYWORD).isEmpty());
         assertTrue(getOutputJsons(TABLE_PUB_FULLTEXT).isEmpty());
         assertTrue(getOutputJsons(TABLE_CITATION).isEmpty());
@@ -155,7 +158,8 @@ public class AvroToRdbTransformerJobTest {
         
         // assert
         assertThat(getOutputJsons(TABLE_PUBLICATION), containsInAnyOrder(getExpectedJsons("publication.json")));
-        assertThat(getOutputJsons(TABLE_PUB_GRANT), containsInAnyOrder(getExpectedJsons("pubgrant.json")));
+        assertThat(getOutputJsons(TABLE_PROJECT), containsInAnyOrder(getExpectedJsons("project.json")));
+        assertThat(getOutputJsons(TABLE_PUB_PROJECT), containsInAnyOrder(getExpectedJsons("pubproject.json")));
         assertThat(getOutputJsons(TABLE_PUB_KEYWORD), containsInAnyOrder(getExpectedJsons("pubkeyword.json")));
         assertThat(getOutputJsons(TABLE_PUB_FULLTEXT), containsInAnyOrder(getExpectedJsons("pubfulltext.json")));
         assertThat(getOutputJsons(TABLE_CITATION), containsInAnyOrder(getExpectedJsons("citation.json")));

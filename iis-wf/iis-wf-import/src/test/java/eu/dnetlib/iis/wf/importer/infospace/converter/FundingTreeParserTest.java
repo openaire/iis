@@ -17,24 +17,25 @@ import org.junit.Test;
  */
 public class FundingTreeParserTest {
 
-    private static final String FUNDING_CLASS = "WT::WT";
-    
     FundingTreeParser parser = new FundingTreeParser();
     
     @Test
     public void testFundingClassExtraction() throws Exception {
         List<String> fundingTreeList = Collections.singletonList(readFundingTree());
-        String fundingClass = parser.extractFundingClass(fundingTreeList);
-        assertNotNull(fundingClass);
-        assertEquals(FUNDING_CLASS, fundingClass);
-        
+        FundingDetails fundingDetails = parser.extractFundingDetails(fundingTreeList);
+        assertNotNull(fundingDetails);
+        assertEquals("WT", fundingDetails.getFunderShortName());
+        assertNotNull(fundingDetails.getFundingLevelNames());
+        assertEquals(2, fundingDetails.getFundingLevelNames().size());
+        assertEquals("WT", fundingDetails.getFundingLevelNames().get(0));
+        assertEquals("Non-Stream Activity - GM", fundingDetails.getFundingLevelNames().get(1));
     }
     
     @Test
     public void testFundingClassExtractionEmptyInput() throws Exception {
         List<String> fundingTreeList = Collections.emptyList();
-        String fundingClass = parser.extractFundingClass(fundingTreeList);
-        assertNull(fundingClass);
+        FundingDetails fundingDetails = parser.extractFundingDetails(fundingTreeList);
+        assertNull(fundingDetails);
     }
     
     // ------------------------ PRIVATE --------------------------

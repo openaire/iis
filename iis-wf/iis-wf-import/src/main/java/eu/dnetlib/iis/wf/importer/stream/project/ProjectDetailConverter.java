@@ -9,6 +9,7 @@ import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.data.transform.xml.AbstractDNetXsltFunctions;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.importer.schemas.Project;
+import eu.dnetlib.iis.wf.importer.infospace.converter.FundingDetails;
 import eu.dnetlib.iis.wf.importer.infospace.converter.FundingTreeParser;
 import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectConverter;
 import eu.dnetlib.openaire.exporter.model.ProjectDetail;
@@ -45,7 +46,14 @@ public class ProjectDetailConverter {
         }
         
         if (CollectionUtils.isNotEmpty(source.getFundingPath())) {
-            builder.setFundingClass(fundingTreeParser.extractFundingClass(source.getFundingPath())); 
+            FundingDetails fundingDetails = fundingTreeParser.extractFundingDetails(source.getFundingPath());
+            if (fundingDetails != null) {
+                builder.setFundingLevels(fundingDetails.getFundingLevelNames());
+                String extractedFundingClass = fundingDetails.buildFundingClass();
+                if (StringUtils.isNotBlank(extractedFundingClass)) {
+                    builder.setFundingClass(extractedFundingClass);
+                }
+            }
         }
 
         return builder.build();

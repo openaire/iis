@@ -42,14 +42,14 @@ public class FundingTreeParser {
     // ------------------------ LOGIC --------------------------
     
     /**
-     * Extracts funding class out of the funding tree.
+     * Extracts funding details out of the funding tree.
      * @param fundingTreeList list of source funding tree XMLs to be parsed
      */
-    public String extractFundingClass(List<String> fundingTreeList) throws IOException {
+    public FundingDetails extractFundingDetails(List<String> fundingTreeList) throws IOException {
         if (CollectionUtils.isNotEmpty(fundingTreeList)) {
             for (String fundingTreeXML : fundingTreeList) {
                 if (StringUtils.isNotBlank(fundingTreeXML)) {
-                   String result = extractFundingClass(fundingTreeXML);
+                    FundingDetails result = extractFundingDetails(fundingTreeXML);
                    if (result!=null) {
                        return result;
                    }
@@ -61,17 +61,18 @@ public class FundingTreeParser {
     }
     
     /**
-     * Extracts funding class out of the funding tree.
+     * Extracts funding details out of the funding tree.
      * @param fundingTreeXML source funding tree XML to be parsed
      */
-    public String extractFundingClass(String fundingTreeXML) throws IOException {
+    public FundingDetails extractFundingDetails(String fundingTreeXML) throws IOException {
         try {
             FundingTreeHandler handler = new FundingTreeHandler();
             saxParser.parse(new InputSource(new StringReader(fundingTreeXML)), handler);
-            return handler.getFundingClass();
+            return handler.getFundingTreeDetails();
         } catch (SAXException e) {
             throw new IOException("exception occurred when processing xml: " + fundingTreeXML, e);
         }
     }
+    
     
 }

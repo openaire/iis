@@ -1,5 +1,6 @@
 {"key": "avro2rdb.publication.total", "type": "COUNTER", "value": "0"}
-{"key": "avro2rdb.pubgrant.total", "type": "COUNTER", "value": "0"}
+{"key": "avro2rdb.project.total", "type": "COUNTER", "value": "0"}
+{"key": "avro2rdb.pubproject.total", "type": "COUNTER", "value": "0"}
 {"key": "avro2rdb.pubkeyword.total", "type": "COUNTER", "value": "0"}
 {"key": "avro2rdb.pubfulltext.total", "type": "COUNTER", "value": "0"}
 {"key": "avro2rdb.citation.total", "type": "COUNTER", "value": "0"}
