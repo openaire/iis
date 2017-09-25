@@ -7,7 +7,7 @@
 	"externalIdentifiers": null, 
 	"journal": null, 
 	"authors": [
-	   {"fullname": "Oliveira, Paulo", "firstname": "Oliveira, Paulo", "secondnames": null}
+	   {"fullname": "Oliveira, Paulo", "name": "Oliveira, Paulo", "surname": null}
 	], 
 	"year": 2000, 
 	"keywords": null, 
@@ -23,10 +23,10 @@
 	"externalIdentifiers": null, 
 	"journal": null, 
 	"authors": [
-	   {"fullname": "Jenatton, Rodolphe", "firstname": "Rodolphe", "secondnames": ["Jenatton"]}, 
-	   {"fullname": "Bach, Francis", "firstname": "Francis", "secondnames": ["Bach"]}, 
-	   {"fullname": "Mairal, Julien", "firstname": "Julien", "secondnames": ["Mairal"]}, 
-	   {"fullname": "Obozinski, Guillaume", "firstname": "Guillaume", "secondnames": ["Obozinski"]}
+	   {"fullname": "Jenatton, Rodolphe", "name": "Rodolphe", "surname": "Jenatton"}, 
+	   {"fullname": "Bach, Francis", "name": "Francis", "surname": "Bach"}, 
+	   {"fullname": "Mairal, Julien", "name": "Julien", "surname": "Mairal"}, 
+	   {"fullname": "Obozinski, Guillaume", "name": "Guillaume", "surname": "Obozinski"}
 	], 
 	"year": 2011, 
 	"keywords": null, 
@@ -42,7 +42,7 @@
 	"externalIdentifiers": null, 
 	"journal": null, 
 	"authors": [
-	   {"fullname": "Bach, Francis", "firstname": "Francis", "secondnames": ["Bach"]}
+	   {"fullname": "Bach, Francis", "name": "Francis", "surname": "Bach"}
 	], 
 	"year": 2008, 
 	"keywords": null, 

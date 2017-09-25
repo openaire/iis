@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.citationmatching.input;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -9,7 +9,7 @@ import com.google.common.collect.Lists;
 import eu.dnetlib.iis.citationmatching.schemas.BasicMetadata;
 import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
 import eu.dnetlib.iis.citationmatching.schemas.ReferenceMetadata;
-import eu.dnetlib.iis.importer.schemas.Person;
+import eu.dnetlib.iis.importer.schemas.Author;
 import eu.dnetlib.iis.metadataextraction.schemas.Range;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.PublicationType;
@@ -40,7 +40,7 @@ public class DocumentToCitationDocumentConverterTest {
                 .setId("document-id")
                 .setTitle("Some Title")
                 .setJournal("Journal Something")
-                .setImportedAuthors(Lists.newArrayList(generatePerson("author-1"), generatePerson("author-2")))
+                .setImportedAuthors(Lists.newArrayList(generateAuthor("author-1"), generateAuthor("author-2")))
                 .setPages(new Range("5", "8"))
                 .setYear(1999)
                 .setReferences(Lists.newArrayList())
@@ -262,8 +262,8 @@ public class DocumentToCitationDocumentConverterTest {
     
     // ---------------------------------- PRIVATE --------------------------------------
     
-    private Person generatePerson(String fullName) {
-        return Person.newBuilder().setFullname(fullName).build();
+    private Author generateAuthor(String fullName) {
+        return Author.newBuilder().setFullname(fullName).build();
     }
     
 }

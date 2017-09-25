@@ -20,7 +20,7 @@ import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.documentssimilarity.schemas.DocumentMetadata;
-import eu.dnetlib.iis.importer.schemas.Person;
+import eu.dnetlib.iis.importer.schemas.Author;
 
 /**
  * Produce data stores
@@ -48,8 +48,8 @@ public class DocumentAvroDatastoreProducer implements Process {
         return outputPorts;
     }
     
-    public static Person createPerson(String name) {
-        return new Person(null, null, name);
+    public static Author createPerson(String name) {
+        return new Author(null, null, name);
     }
 
     public static List<DocumentMetadata> getDocumentMetadataList() {
@@ -59,7 +59,7 @@ public class DocumentAvroDatastoreProducer implements Process {
         doc1.setAbstract$("We present a new method of doing something. We are not sure yet what " +
                         "it is actually doing, but it definitely is a worthwhile technique.");
         doc1.setKeywords(Lists.<CharSequence>newArrayList("method", "something", "nothing", "anything"));
-        doc1.setAuthors(Lists.<Person>newArrayList(createPerson("Jan Kowalski")));
+        doc1.setAuthors(Lists.<Author>newArrayList(createPerson("Jan Kowalski")));
 
         DocumentMetadata doc2 = new DocumentMetadata();
         doc2.setId("2");
@@ -68,7 +68,7 @@ public class DocumentAvroDatastoreProducer implements Process {
                 "kinds of fundamental questions, they probably have no answers.");
         doc2.setKeywords(Lists.<CharSequence>newArrayList(
                 "doing things", "questioning", "falsificationism", "epistemology"));
-        doc2.setAuthors(Lists.<Person>newArrayList(createPerson("Jan Kowalski"), createPerson("Zygmunt Nowak")));
+        doc2.setAuthors(Lists.<Author>newArrayList(createPerson("Jan Kowalski"), createPerson("Zygmunt Nowak")));
 
         DocumentMetadata doc3 = new DocumentMetadata();
         doc3.setId("3");
@@ -78,7 +78,7 @@ public class DocumentAvroDatastoreProducer implements Process {
                 "applications are to be investigated in the future.");
         doc3.setKeywords(Lists.<CharSequence>newArrayList(
                 "Our great tool", "perpetuum mobile", "stop problem", "P==NP?"));
-        doc3.setAuthors(Lists.<Person>newArrayList(createPerson("Zygmunt Nowak")));
+        doc3.setAuthors(Lists.<Author>newArrayList(createPerson("Zygmunt Nowak")));
 
         DocumentMetadata doc4 = new DocumentMetadata();
         doc4.setId("4");
@@ -88,7 +88,7 @@ public class DocumentAvroDatastoreProducer implements Process {
                 "and greatest system so far.");
         doc4.setKeywords(Lists.<CharSequence>newArrayList(
                 "big", "enormous", "great", "grand"));
-        doc4.setAuthors(Lists.<Person>newArrayList(createPerson("Zygmunt Nowak"), createPerson("Jan Kowalski")));
+        doc4.setAuthors(Lists.<Author>newArrayList(createPerson("Zygmunt Nowak"), createPerson("Jan Kowalski")));
 
         List<DocumentMetadata> results = Lists.newArrayList(doc1, doc2, doc3, doc4);
         

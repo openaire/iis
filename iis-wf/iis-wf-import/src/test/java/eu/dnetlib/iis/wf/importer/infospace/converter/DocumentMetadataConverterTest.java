@@ -19,10 +19,9 @@ import org.mockito.junit.MockitoRule;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import eu.dnetlib.data.proto.FieldTypeProtos.StringField;
+import eu.dnetlib.data.proto.FieldTypeProtos.Author;
 import eu.dnetlib.data.proto.FieldTypeProtos.StructuredProperty;
 import eu.dnetlib.data.proto.OafProtos.OafEntity;
-import eu.dnetlib.data.proto.PersonProtos.Person;
 import eu.dnetlib.data.proto.ResultProtos.Result;
 import eu.dnetlib.data.proto.ResultProtos.Result.Metadata;
 import eu.dnetlib.data.proto.TypeProtos.Type;
@@ -167,10 +166,8 @@ public class DocumentMetadataConverterTest {
         assertEquals(DATASOURCE_IDS, metadata.getDatasourceIds());
         
         assertEquals(1, metadata.getAuthors().size());
-        assertEquals(FIRST_NAME, metadata.getAuthors().get(0).getFirstname());
-        assertEquals(2, metadata.getAuthors().get(0).getSecondnames().size());
-        assertEquals(SECOND_NAME, metadata.getAuthors().get(0).getSecondnames().get(0));
-        assertEquals(SECOND_SECOND_NAME, metadata.getAuthors().get(0).getSecondnames().get(1));
+        assertEquals(FIRST_NAME, metadata.getAuthors().get(0).getName());
+        assertEquals(SECOND_NAME + ' ' + SECOND_SECOND_NAME, metadata.getAuthors().get(0).getSurname());
         assertEquals(FULL_NAME, metadata.getAuthors().get(0).getFullname());
     }
 
@@ -196,10 +193,8 @@ public class DocumentMetadataConverterTest {
         assertTrue(metadata.getPublicationType().getDataset());
         
         assertEquals(1, metadata.getAuthors().size());
-        assertEquals(FIRST_NAME, metadata.getAuthors().get(0).getFirstname());
-        assertEquals(2, metadata.getAuthors().get(0).getSecondnames().size());
-        assertEquals(SECOND_NAME, metadata.getAuthors().get(0).getSecondnames().get(0));
-        assertEquals(SECOND_SECOND_NAME, metadata.getAuthors().get(0).getSecondnames().get(1));
+        assertEquals(FIRST_NAME, metadata.getAuthors().get(0).getName());
+        assertEquals(SECOND_NAME + ' ' + SECOND_SECOND_NAME, metadata.getAuthors().get(0).getSurname());
         assertEquals(FULL_NAME, metadata.getAuthors().get(0).getFullname());
         
         assertEquals(DATASOURCE_IDS, metadata.getDatasourceIds());
@@ -247,14 +242,12 @@ public class DocumentMetadataConverterTest {
         }
 
         
-        Person.Builder personBuilder = Person.newBuilder();
-        Person.Metadata.Builder personMetaBuilder = Person.Metadata.newBuilder();
-        personMetaBuilder.setFirstname(StringField.newBuilder().setValue(FIRST_NAME));
-        personMetaBuilder.addSecondnames(StringField.newBuilder().setValue(SECOND_NAME));
-        personMetaBuilder.addSecondnames(StringField.newBuilder().setValue(SECOND_SECOND_NAME));
-        personMetaBuilder.setFullname(StringField.newBuilder().setValue(FULL_NAME));
-        personBuilder.setMetadata(personMetaBuilder);
-        oafBuilder.getResultBuilder().addAuthor(personBuilder);
+        Author.Builder authorBuilder = Author.newBuilder();
+        authorBuilder.setName(FIRST_NAME);
+        authorBuilder.setSurname(SECOND_NAME + ' ' + SECOND_SECOND_NAME);
+        authorBuilder.setFullname(FULL_NAME);
+        authorBuilder.setRank(0);
+        oafBuilder.getResultBuilder().getMetadataBuilder().addAuthor(authorBuilder);
         
         return oafBuilder.build();
     }

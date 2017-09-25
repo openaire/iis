@@ -23,8 +23,8 @@ import eu.dnetlib.data.proto.ResultProtos;
 import eu.dnetlib.data.proto.ResultProtos.Result.Instance;
 import eu.dnetlib.data.proto.ResultProtos.Result.Journal;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
+import eu.dnetlib.iis.importer.schemas.Author;
 import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
-import eu.dnetlib.iis.importer.schemas.Person;
 import eu.dnetlib.iis.importer.schemas.PublicationType;
 import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
 
@@ -259,53 +259,46 @@ public class DocumentMetadataConverter implements OafEntityToAvroConverter<Docum
      */
     private DocumentMetadata.Builder handlePersons(ResultProtos.Result result, DocumentMetadata.Builder builder)
             throws IOException {
-        List<Person> authors = new ArrayList<>();
-        for (eu.dnetlib.data.proto.PersonProtos.Person sourcePerson : result.getAuthorList()) {
-            if (sourcePerson.hasMetadata()) {
-                Person.Builder personBuilder = Person.newBuilder();
-                handleFirstName(sourcePerson.getMetadata().getFirstname() ,personBuilder);
-                handleSecondNames(sourcePerson.getMetadata().getSecondnamesList() ,personBuilder);
-                handleFullName(sourcePerson.getMetadata().getFullname() ,personBuilder);
-                if (isDataValid(personBuilder)) {
-                    authors.add(personBuilder.build());
+        
+        if (result.getMetadata() != null) {
+            List<Author> authors = new ArrayList<>();
+            for (eu.dnetlib.data.proto.FieldTypeProtos.Author sourceAuthor : result.getMetadata().getAuthorList()) {
+                Author.Builder authorBuilder = Author.newBuilder();
+                handleName(sourceAuthor.getName(), authorBuilder);
+                handleSurname(sourceAuthor.getSurname(), authorBuilder);
+                handleFullName(sourceAuthor.getFullname(), authorBuilder);
+                if (isDataValid(authorBuilder)) {
+                    authors.add(authorBuilder.build());
                 }
             }
+            if (!authors.isEmpty()) {
+                builder.setAuthors(authors);
+            }
         }
-        if (!authors.isEmpty()) {
-            builder.setAuthors(authors);
-        }
+        
         return builder;
     }
 
-    private void handleFirstName(StringField firstName, Person.Builder builder) {
-        if (StringUtils.isNotBlank(firstName.getValue())) {
-            builder.setFirstname(firstName.getValue());
+    private void handleName(String firstName, Author.Builder builder) {
+        if (StringUtils.isNotBlank(firstName)) {
+            builder.setName(firstName);
         }
     }
     
-    private void handleSecondNames(List<StringField> secondNames, Person.Builder builder) {
-        if (CollectionUtils.isNotEmpty(secondNames)) {
-            if (builder.getSecondnames() == null) {
-                builder.setSecondnames(new ArrayList<CharSequence>(secondNames.size()));
-            }
-            List<CharSequence> resultNames = new ArrayList<CharSequence>(secondNames.size());
-            for (StringField currentSecondName : secondNames) {
-                if (StringUtils.isNotBlank(currentSecondName.getValue())) {
-                    resultNames.add(currentSecondName.getValue());
-                }
-            }
-            builder.getSecondnames().addAll(resultNames);
+    private void handleSurname(String surname, Author.Builder builder) {
+        if (StringUtils.isNotBlank(surname)) {
+            builder.setSurname(surname);
         }
     }
     
-    private void handleFullName(StringField fullName, Person.Builder builder) {
-        if (StringUtils.isNotBlank(fullName.getValue())) {
-            builder.setFullname(fullName.getValue());
+    private void handleFullName(String fullName, Author.Builder builder) {
+        if (StringUtils.isNotBlank(fullName)) {
+            builder.setFullname(fullName);
         }
     }
     
-    private boolean isDataValid(Person.Builder builder) {
-        return builder.hasFirstname() || builder.hasSecondnames() || builder.hasFullname();
+    private boolean isDataValid(Author.Builder builder) {
+        return builder.hasName() || builder.hasSurname() || builder.hasFullname();
     }
     
     /**

@@ -8,8 +8,8 @@
     "pages": {"start": "123", "end": "128"}, 
     "volume": null, 
     "importedAuthors": [
-        {"fullname": "Orson Scott Card", "firstname": null, "secondnames": null},
-        {"fullname": "Ender", "firstname": null, "secondnames": null}
+        {"fullname": "Orson Scott Card", "name": null, "surname": null},
+        {"fullname": "Ender", "name": null, "surname": null}
     ], 
     "year": null, 
     "keywords": null, 
@@ -30,8 +30,8 @@
     "pages": null, 
     "volume": null, 
     "importedAuthors": [
-        {"fullname": "Orson Scott Card", "firstname": null, "secondnames": null},
-        {"fullname": "Alvin Maker", "firstname": null, "secondnames": null}
+        {"fullname": "Orson Scott Card", "name": null, "surname": null},
+        {"fullname": "Alvin Maker", "name": null, "surname": null}
     ], 
     "year": 1993, 
     "keywords": null, 
@@ -97,14 +97,14 @@
     "pages": null, 
     "volume": null, 
     "importedAuthors": [
-        {"fullname": "Orson Scott Card", "firstname": null, "secondnames": null},
-        {"fullname": "Alvin Maker", "firstname": null, "secondnames": null},
-        {"fullname": "Terry Williams", "firstname": null, "secondnames": null},
-        {"fullname": "Ender", "firstname": null, "secondnames": null},
-        {"fullname": "Terry Pratchett", "firstname": null, "secondnames": null},
-        {"fullname": "Ender Speaker", "firstname": null, "secondnames": null},
-        {"fullname": "An Orson Scott Card", "firstname": null, "secondnames": null},
-        {"fullname": "CAlvin Maker", "firstname": null, "secondnames": null}
+        {"fullname": "Orson Scott Card", "name": null, "surname": null},
+        {"fullname": "Alvin Maker", "name": null, "surname": null},
+        {"fullname": "Terry Williams", "name": null, "surname": null},
+        {"fullname": "Ender", "name": null, "surname": null},
+        {"fullname": "Terry Pratchett", "name": null, "surname": null},
+        {"fullname": "Ender Speaker", "name": null, "surname": null},
+        {"fullname": "An Orson Scott Card", "name": null, "surname": null},
+        {"fullname": "CAlvin Maker", "name": null, "surname": null}
     ], 
     "year": 2000, 
     "keywords": null, 

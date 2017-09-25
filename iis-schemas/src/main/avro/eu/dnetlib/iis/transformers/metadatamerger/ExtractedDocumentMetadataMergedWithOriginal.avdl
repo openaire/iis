@@ -42,7 +42,7 @@ protocol IIS{
 //      authors retrieved from "document" datastore
 //      notice: we had to avoid "authors" name to avoid clash with nested references#basicMetadata#authors field name, reported in:
 //      https://github.com/databricks/spark-avro/issues/54
-        union { null , array<eu.dnetlib.iis.importer.schemas.Person> } importedAuthors = null;
+        union { null , array<eu.dnetlib.iis.importer.schemas.Author> } importedAuthors = null;
 
 //      additional fields extracted from PDF document
 //      journal volume in which the article is published

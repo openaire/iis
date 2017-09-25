@@ -8,6 +8,6 @@ protocol IIS{
         union { null , string } title = null;
         union { null , string } abstract = null;
         union { null , array<string> } keywords = null;
-        union { null , array<eu.dnetlib.iis.importer.schemas.Person> } authors = null;
+        union { null , array<eu.dnetlib.iis.importer.schemas.Author> } authors = null;
     }
 }

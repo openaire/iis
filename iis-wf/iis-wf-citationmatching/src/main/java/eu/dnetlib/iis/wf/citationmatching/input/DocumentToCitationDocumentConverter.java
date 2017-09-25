@@ -9,7 +9,7 @@ import com.google.common.collect.Lists;
 import eu.dnetlib.iis.citationmatching.schemas.BasicMetadata;
 import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
 import eu.dnetlib.iis.citationmatching.schemas.ReferenceMetadata;
-import eu.dnetlib.iis.importer.schemas.Person;
+import eu.dnetlib.iis.importer.schemas.Author;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 
 /**
@@ -54,7 +54,7 @@ public class DocumentToCitationDocumentConverter {
                 .build();
     }
     
-    private List<CharSequence> extractAuthorsFullNames(List<Person> authors) {
+    private List<CharSequence> extractAuthorsFullNames(List<Author> authors) {
         return authors != null
                 ? authors.stream().filter(p -> p.getFullname() != null).map(p -> p.getFullname()).collect(Collectors.toList())
                 : Lists.newArrayList();

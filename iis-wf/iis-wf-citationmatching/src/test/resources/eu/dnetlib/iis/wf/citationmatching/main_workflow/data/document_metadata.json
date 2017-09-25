@@ -3,7 +3,7 @@
     "title": "A new method of something", 
     "journal": "Journal of something",
     "importedAuthors": [
-        {"fullname": "Jan Kowalski", "firstname": null, "secondnames": null}
+        {"fullname": "Jan Kowalski", "name": null, "surname": null}
     ],
     "pages": {"start": "1", "end": "2"}, 
     "year": 2001,
@@ -64,8 +64,8 @@
     "title": "How to do it?", 
     "journal": "Something Journal", 
     "importedAuthors": [
-        {"fullname": "Jan Kowalski", "firstname": null, "secondnames": null},
-        {"fullname": "Zygmunt Nowak", "firstname": null, "secondnames": null}
+        {"fullname": "Jan Kowalski", "name": null, "surname": null},
+        {"fullname": "Zygmunt Nowak", "name": null, "surname": null}
     ], 
     "pages": {"start": "2", "end": "3"}, 
     "year": 2002,

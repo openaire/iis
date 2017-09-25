@@ -1,14 +1,13 @@
 package eu.dnetlib.iis.wf.documentssimilarity.converter;
 
+import java.util.Collections;
+
 import com.google.common.base.Objects;
+
 import eu.dnetlib.iis.common.protobuf.AvroToProtoBufConverter;
 import eu.dnetlib.iis.documentssimilarity.schemas.DocumentMetadata;
-import eu.dnetlib.iis.importer.schemas.Person;
-import org.apache.commons.lang3.StringUtils;
+import eu.dnetlib.iis.importer.schemas.Author;
 import pl.edu.icm.coansys.models.DocumentProtos;
-
-import java.util.Collections;
-import java.util.LinkedList;
 
 /**
  * @author Mateusz Fedoryszak (m.fedoryszak@icm.edu.pl)
@@ -37,7 +36,7 @@ public class DocumentMetadataAvroToProtoBufConverter implements AvroToProtoBufCo
             basicMetaBuilder.addTitle(createTextWithNoLanguage(datum.getTitle().toString()));
         }
 
-        for (Person author : Objects.firstNonNull(datum.getAuthors(), Collections.<Person>emptyList())) {
+        for (Author author : Objects.firstNonNull(datum.getAuthors(), Collections.<Author>emptyList())) {
             basicMetaBuilder.addAuthor(convertAuthor(author));
         }
 
@@ -55,25 +54,17 @@ public class DocumentMetadataAvroToProtoBufConverter implements AvroToProtoBufCo
         return DocumentProtos.TextWithLanguage.newBuilder().setText(s);
     }
 
-    private static DocumentProtos.Author.Builder convertAuthor(Person author) {
+    private static DocumentProtos.Author.Builder convertAuthor(Author author) {
         DocumentProtos.Author.Builder authorBuilder = DocumentProtos.Author.newBuilder();
 
         authorBuilder.setKey("FAKE_KEY");
 
-        LinkedList<String> nameTokens = new LinkedList<String>();
-
-        if (author.getFirstname() != null) {
-            nameTokens.add(author.getFirstname().toString());
+        if (author.getName() != null) {
+            authorBuilder.setForenames(author.getName().toString());
         }
-        for(CharSequence token : Objects.firstNonNull(author.getSecondnames(), Collections.<CharSequence>emptyList())) {
-            nameTokens.add(token.toString());
-        }
-        if (!nameTokens.isEmpty()) {
-            authorBuilder.setSurname(nameTokens.getLast());
-            nameTokens.removeLast();
-        }
-        if (!nameTokens.isEmpty()) {
-            authorBuilder.setForenames(StringUtils.join(nameTokens, ' '));
+        
+        if (author.getSurname() != null) {
+            authorBuilder.setSurname(author.getSurname().toString());
         }
 
         if (author.getFullname() != null) {
