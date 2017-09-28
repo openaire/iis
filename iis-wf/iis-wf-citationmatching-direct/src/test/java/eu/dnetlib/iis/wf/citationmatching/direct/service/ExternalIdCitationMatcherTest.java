@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.function.PairFunction;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,13 +46,26 @@ public class ExternalIdCitationMatcherTest {
     private JavaPairRDD<String, String> idMappingRdd;
     
     @Mock
+    private JavaPairRDD<String, String> referenceIdMappingRdd;
+    
+    @Mock
     private JavaPairRDD<String, Citation> externalIdReferencesRdd;
+    
+    @Mock
+    private JavaPairRDD<String, Tuple2<Citation, String>> externalIdReferencesJoinedWithReferenceIdMappingRdd;
+    
+    @Mock
+    private JavaPairRDD<String, Citation> externalIdReferencesJoinedWithReferenceIdMappingMappedToPairRdd;
     
     @Mock
     private JavaPairRDD<String, Tuple2<Citation, String>> joinedRdd;
     
     @Captor
     private ArgumentCaptor<Function<Tuple2<String, Tuple2<Citation, String>>, Citation>> fillCitationFunctionArg;
+    
+    @Captor
+    private ArgumentCaptor<PairFunction<Tuple2<String, Tuple2<Citation, String>>, String, Citation>> mapToPairFunctionArg;
+    
     @Mock
     private JavaRDD<Citation> citationsRdd;
     
@@ -118,7 +132,82 @@ public class ExternalIdCitationMatcherTest {
         assertFillCitationFunction(fillCitationFunctionArg.getValue());
         
     }
+
+    @Test(expected = NullPointerException.class)
+    public void matchCitationsIndirectly_NULL_DOCUMENTS_METADATA_RDD() {
+        
+        // execute
+        externalIdCitationMatcher.matchCitations(null, referenceIdMappingRdd, "entityIdType", "referenceIdType", pickOneDocumentMetadataFunction);
+    }
     
+    @Test(expected = NullPointerException.class)
+    public void matchCitationsIndirectly_NULL_REFERENCE_ID_MAPPINGS_RDD() {
+        
+        // execute
+        externalIdCitationMatcher.matchCitations(documentsMetadataRdd, null, "entityIdType", "referenceIdType", pickOneDocumentMetadataFunction);
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void matchCitationsIndirectly_NULL_ENTITY_ID_TYPE() {
+        
+     // execute
+        externalIdCitationMatcher.matchCitations(documentsMetadataRdd, referenceIdMappingRdd, null, "referenceIdType", pickOneDocumentMetadataFunction);
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void matchCitationsIndirectly_NULL_REFERENCE_ID_TYPE() {
+        
+     // execute
+        externalIdCitationMatcher.matchCitations(documentsMetadataRdd, referenceIdMappingRdd, "entityIdType", null, pickOneDocumentMetadataFunction);
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void matchCitationsIndirectly_NULL_PICK_SINGLE_FUNCTION() {
+        
+     // execute
+        externalIdCitationMatcher.matchCitations(documentsMetadataRdd, referenceIdMappingRdd, "entityIdType", "referenceIdType", null);
+    }
+    
+    @Test
+    public void matchCitationsIndirectly() throws Exception {
+        
+        // given
+        String mainEntityIdType = "pmc";
+        String referenceIdType = "pmid";
+        
+        doReturn(idMappingRdd).when(idMappingExtractor).extractIdMapping(documentsMetadataRdd, mainEntityIdType, pickOneDocumentMetadataFunction);
+        doReturn(externalIdReferencesRdd).when(referencePicker).extractExternalIdReferences(documentsMetadataRdd, referenceIdType);
+        
+        doReturn(externalIdReferencesJoinedWithReferenceIdMappingRdd).when(externalIdReferencesRdd).join(referenceIdMappingRdd);
+        
+        doReturn(externalIdReferencesJoinedWithReferenceIdMappingMappedToPairRdd).when(externalIdReferencesJoinedWithReferenceIdMappingRdd).mapToPair(any());
+        
+        doReturn(joinedRdd).when(externalIdReferencesJoinedWithReferenceIdMappingMappedToPairRdd).join(idMappingRdd);
+        doReturn(citationsRdd).when(joinedRdd).map(any());
+        
+        // execute
+        
+        JavaRDD<Citation> retCitationsRdd = externalIdCitationMatcher.matchCitations(documentsMetadataRdd, referenceIdMappingRdd,
+                mainEntityIdType, referenceIdType, pickOneDocumentMetadataFunction);
+        
+        // assert
+        
+        assertTrue(retCitationsRdd == citationsRdd);
+        
+        verify(idMappingExtractor).extractIdMapping(documentsMetadataRdd, mainEntityIdType, pickOneDocumentMetadataFunction);
+        verify(referencePicker).extractExternalIdReferences(documentsMetadataRdd, referenceIdType);
+        
+        verify(externalIdReferencesRdd).join(referenceIdMappingRdd);
+        
+        verify(externalIdReferencesJoinedWithReferenceIdMappingRdd).mapToPair(mapToPairFunctionArg.capture());
+        assertMaptoPairFunction(mapToPairFunctionArg.getValue());
+        
+        verify(externalIdReferencesJoinedWithReferenceIdMappingMappedToPairRdd).join(idMappingRdd);
+        
+        verify(joinedRdd).map(fillCitationFunctionArg.capture());
+        assertFillCitationFunction(fillCitationFunctionArg.getValue());
+
+    }
     
     //------------------------ PRIVATE --------------------------
     
@@ -135,4 +224,18 @@ public class ExternalIdCitationMatcherTest {
         
         assertEquals(new Citation("source-id", 4, "dest-id"), retCitation);
     }
+    
+    private void assertMaptoPairFunction(PairFunction<Tuple2<String, Tuple2<Citation, String>>, String, Citation> function) throws Exception {
+        
+        Citation inputCitation = new Citation("source-id", 1, null);
+        String inputExternalId = "external-id";
+        Tuple2<String, Tuple2<Citation, String>> inputTuple = new Tuple2<String, Tuple2<Citation,String>>("groupedId", 
+                new Tuple2<Citation, String>(inputCitation, inputExternalId));
+        
+        Tuple2<String, Citation> result = function.call(inputTuple);
+        
+        assertEquals(inputExternalId, result._1);
+        assertEquals(inputCitation, result._2);
+    }
+    
 }

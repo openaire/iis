@@ -308,6 +308,12 @@
                 <artifactId>spark-avro_2.10</artifactId>
                 <version>1.1.0-${iis.cdh.version}</version>
             </dependency>
+            
+            <dependency>
+                <groupId>com.databricks</groupId>
+                <artifactId>spark-csv_2.10</artifactId>
+                <version>1.5.0</version>
+            </dependency>
 
             <dependency>
                 <groupId>pl.edu.icm.spark-utils</groupId>

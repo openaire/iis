@@ -6,6 +6,11 @@
             <description>input containing document metadata records</description>
         </property>
         <property>
+            <name>inputPmcIdsMappingCSV</name>
+            <description>CSV dump HDFS location. Contains entries with mappings between different kinds of PMC identifiers for each publication.  
+            More details on: https://www.ncbi.nlm.nih.gov/pmc/pmctopmid#ftp</description>
+        </property>
+        <property>
             <name>output</name>
             <description>extracted citations</description>
         </property>
@@ -57,13 +62,14 @@
 
             <master>yarn-cluster</master>
             <mode>cluster</mode>
-            <name>citationmatching_direct_input_transformer</name>
+            <name>citationmatching_direct</name>
             <class>eu.dnetlib.iis.wf.citationmatching.direct.CitationMatchingDirectJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-direct-${projectVersion}.jar</jar>
             
             <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores}</spark-opts>
 
             <arg>-inputAvroPath=${input}</arg>
+            <arg>-inputPmcIdsMappingCSV=${inputPmcIdsMappingCSV}</arg>
             <arg>-outputAvroPath=${output}</arg>
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
 

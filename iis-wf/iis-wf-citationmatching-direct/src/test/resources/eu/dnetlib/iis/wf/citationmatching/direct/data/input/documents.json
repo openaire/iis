@@ -34,7 +34,8 @@
     "publicationTypeName": null, 
     "references": [
         {"position": 5, "basicMetadata": {"externalIds": {"doi": "doi.C", "pmid": "pmid.IV"}, "publisher": null, "title": null, "url": null, "series": null, "authors": null, "volume": null, "edition": null, "source": null, "year": null, "issue": null, "pages": null, "location": null}, "text": null}, 
-        {"position": 6, "basicMetadata": {"externalIds": {"doi": "doi.C"}, "publisher": null, "title": null, "url": null, "series": null, "authors": null, "volume": null, "edition": null, "source": null, "year": null, "issue": null, "pages": null, "location": null}, "text": null}
+        {"position": 6, "basicMetadata": {"externalIds": {"doi": "doi.C"}, "publisher": null, "title": null, "url": null, "series": null, "authors": null, "volume": null, "edition": null, "source": null, "year": null, "issue": null, "pages": null, "location": null}, "text": null},
+        {"position": 7, "basicMetadata": {"externalIds": {"pmid": "pmid.X"}, "publisher": null, "title": null, "url": null, "series": null, "authors": null, "volume": null, "edition": null, "source": null, "year": null, "issue": null, "pages": null, "location": null}, "text": null}
     ],
     "publisher": null, "language": null, "title": null, "journal": null, "extractedAuthorFullNames": null, "pages": null, "volume": null, "importedAuthors": null, "year": null, "keywords": null, "issue": null, "abstract": null, "publicationType": {"article": true, "dataset": false}
 }
@@ -49,7 +50,7 @@
 
 {
     "id": "id-6", 
-    "externalIdentifiers": {"pmid": "pmid.IV"}, 
+    "externalIdentifiers": {"pmid": "pmid.IV", "pmc": "pmcid.X"}, 
     "publicationTypeName": null, 
     "references": [], 
     "publisher": null, "language": null, "title": null, "journal": null, "extractedAuthorFullNames": null, "pages": null, "volume": null, "importedAuthors": null, "year": null, "keywords": null, "issue": null, "abstract": null, "publicationType": {"article": true, "dataset": false}

@@ -14,6 +14,9 @@ import java.util.List;
 
 import org.apache.avro.util.Utf8;
 import org.apache.commons.io.FileUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
@@ -46,6 +49,8 @@ public class CitationMatchingDirectJobTest {
     
     private String inputDirPath;
     
+    private String inputCSVFileLocation;
+    
     private String outputDirPath;
     
     private String reportDirPath;
@@ -58,6 +63,7 @@ public class CitationMatchingDirectJobTest {
         inputDirPath = workingDir + "/spark_citation_matching_direct/input";
         outputDirPath = workingDir + "/spark_citation_matching_direct/output";
         reportDirPath = workingDir + "/spark_citation_matching_direct/report";
+        inputCSVFileLocation = workingDir + "/PMC-ids.csv";
     }
     
     
@@ -88,9 +94,14 @@ public class CitationMatchingDirectJobTest {
         
         
         
+        String csvInputFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/input/PMC-ids.csv";
+
+        FileSystem fs = createLocalFileSystem();
+        fs.copyFromLocalFile(new Path(csvInputFile), new Path(inputCSVFileLocation));
+        
         // execute
         
-        executor.execute(buildCitationMatchingDirectJob(inputDirPath, outputDirPath, reportDirPath));
+        executor.execute(buildCitationMatchingDirectJob(inputDirPath, inputCSVFileLocation, outputDirPath, reportDirPath));
         
         
         
@@ -194,6 +205,37 @@ public class CitationMatchingDirectJobTest {
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportEntry.class);
     }
     
+    @Test
+    public void citationMatchingDirect_MAPPABLE_PMID_TO_PMC() throws IOException {
+        
+        // given
+        
+        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/input/documents_mappable_pmid_to_pmc.json";
+        String jsonReportFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/report_one_matched.json";
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(jsonInputFile, ExtractedDocumentMetadataMergedWithOriginal.class),
+                inputDirPath);
+        
+        String csvInputFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/input/PMC-ids.csv";
+
+        FileSystem fs = createLocalFileSystem();
+        fs.copyFromLocalFile(new Path(csvInputFile), new Path(inputCSVFileLocation));
+        
+        // execute
+        
+        executor.execute(buildCitationMatchingDirectJob(inputDirPath, inputCSVFileLocation, outputDirPath, reportDirPath));
+        
+        
+        // assert
+        
+        List<Citation> citations = AvroTestUtils.readLocalAvroDataStore(outputDirPath);
+        
+        assertEquals(1, citations.size());
+        
+        assertCitation(citations.get(0), is(new Utf8("id-1")), 8, is(new Utf8("id-2")));
+        
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(reportDirPath, jsonReportFile, ReportEntry.class);
+    }
     
     //------------------------ PRIVATE --------------------------
     
@@ -210,8 +252,11 @@ public class CitationMatchingDirectJobTest {
         assertThat(citationEntry.getExternalDestinationDocumentIds(), equalTo(Collections.EMPTY_MAP));
     }
     
-    
     private SparkJob buildCitationMatchingDirectJob(String inputDirPath, String outputDirPath, String reportDirPath) {
+        return buildCitationMatchingDirectJob(inputDirPath, "", outputDirPath, reportDirPath);
+    }
+    
+    private SparkJob buildCitationMatchingDirectJob(String inputDirPath, String inputPmcIdsMappingCSV, String outputDirPath, String reportDirPath) {
         SparkJob sparkJob = SparkJobBuilder
                 .create()
                 
@@ -219,6 +264,7 @@ public class CitationMatchingDirectJobTest {
 
                 .setMainClass(CitationMatchingDirectJob.class)
                 .addArg("-inputAvroPath", inputDirPath)
+                .addArg("-inputPmcIdsMappingCSV", inputPmcIdsMappingCSV)
                 .addArg("-outputAvroPath", outputDirPath)
                 .addArg("-outputReportPath", reportDirPath)
                 .addJobProperty("spark.driver.host", "localhost")
@@ -226,5 +272,11 @@ public class CitationMatchingDirectJobTest {
                 .build();
         
         return sparkJob;
+    }
+    
+    private static FileSystem createLocalFileSystem() throws IOException {
+        Configuration conf = new Configuration();
+        conf.set(FileSystem.FS_DEFAULT_NAME_KEY, FileSystem.DEFAULT_FS);
+        return FileSystem.get(conf);
     }
 }

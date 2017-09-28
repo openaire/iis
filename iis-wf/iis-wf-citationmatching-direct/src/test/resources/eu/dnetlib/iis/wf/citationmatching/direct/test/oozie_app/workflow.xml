@@ -35,6 +35,22 @@
             <!-- All input and output ports have to be bound to paths in HDFS -->
             <arg>-Ometadata=${workingDir}/producer/document_metadata</arg>
         </java>
+        <ok to="copy_idmapping_resource"/>
+        <error to="fail"/>
+    </action>
+    
+    
+    <action name="copy_idmapping_resource">
+        <java>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/idmapping" />
+                <mkdir path="${nameNode}${workingDir}/idmapping" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.ClassPathResourceToHdfsCopier</arg>
+            <arg>-PinputClasspathResource=eu/dnetlib/iis/wf/citationmatching/direct/data/input/PMC-ids.csv</arg>
+            <arg>-PoutputHdfsFileLocation=${workingDir}/idmapping/PMC-ids.csv</arg>
+        </java>
         <ok to="ingest_citations"/>
         <error to="fail"/>
     </action>
@@ -71,6 +87,10 @@
                 <property>
                     <name>input</name>
                     <value>${workingDir}/producer/document_metadata</value>
+                </property>
+                <property>
+                    <name>inputPmcIdsMappingCSV</name>
+                    <value>${workingDir}/idmapping/PMC-ids.csv</value>
                 </property>
                 <!-- Output port bound to given path -->
                 <property>

@@ -193,6 +193,10 @@
             <value>4</value>
             <description>number of cores used by single executor</description>
         </property>
+        <property>
+            <name>citationmatchingDirectPmcIdsMappingCSV</name>
+            <description>CSV dump HDFS location. Contains entries with mappings between different kinds of PMC identifiers for each publication.</description>
+        </property>
         <!-- spark related: fuzzy citation matching -->
         <property>
             <name>citationmatchingFuzzySparkDriverMemory</name>
@@ -1105,6 +1109,10 @@
                 <property>
                     <name>input</name>
                     <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
+                </property>
+                <property>
+                    <name>inputPmcIdsMappingCSV</name>
+                    <value>${citationmatchingDirectPmcIdsMappingCSV}</value>
                 </property>
                 <property>
                     <name>output</name>
