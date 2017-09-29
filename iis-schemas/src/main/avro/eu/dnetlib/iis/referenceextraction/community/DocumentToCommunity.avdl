@@ -1,0 +1,16 @@
+@namespace("eu.dnetlib.iis.referenceextraction.community.schemas")
+protocol IIS{
+
+    record DocumentToCommunity {
+        //document ID
+        string documentId;
+        //project acronym
+        string projectId;
+        // Find more details on `confidenceLevel` constraints in eu/dnetlib/iis/README.markdown file.
+        float confidenceLevel;
+        //matched project external id
+        string match;
+        //match context
+        string context;
+    }
+}
