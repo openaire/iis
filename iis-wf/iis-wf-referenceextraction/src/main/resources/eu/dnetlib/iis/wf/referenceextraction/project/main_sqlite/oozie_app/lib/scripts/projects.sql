@@ -67,11 +67,12 @@ WHERE fundingclass1="RCUK" and middle = grantid
 union all
 
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8) as C1, docid, id, fundingclass1 from (
-select docid,id,fundingclass1 from (select docid,upper(regexpr("(\w+.*\d+)",middle)) as match,id,grantid,middle,fundingclass1  from (setschema 'docid,prev,middle,next' select c1 as docid,textwindow2s(c2,12,1,5,"(.+\/\w+\/\d{4}\W*\Z)|(\d{4})|(\d{6,7})|(\w{2}\d{4,})|(\w*\/[\w,\.]*\/\w*)|(?:\d{3}\-\d{7}\-\d{4})|(?:(?:\b|U)IP\-2013\-11\-\d{4}\b)|(\b(?:(?:(?:\w{2,3})(?:\.|\-)(?:\w{2,3})(?:\.|\-)(?:\w{2,3}))|(?:\d+))\b)|(?:\b\d{7,8}\b)") from (setschema 'c1,c2' select * from pubs where c2 is not null) ) , grants where 
+select docid,id,fundingclass1 from (select docid,upper(regexpr("(\w+.*\d+)",middle)) as match,id,grantid,middle,fundingclass1  from (setschema 'docid,prev,middle,next' select c1 as docid,textwindow2s(c2,15,1,5,"(.+\/\w+\/\d{4}\W*\Z)|(\d{4})|(\d{6,7})|(\w{2}\d{4,})|(\w*\/[\w,\.]*\/\w*)|(?:\d{3}\-\d{7}\-\d{4})|(?:(?:\b|U)IP\-2013\-11\-\d{4}\b)|(\b(?:(?:(?:\w{2,3})(?:\.|\-)(?:\w{2,3})(?:\.|\-)(?:\w{2,3}))|(?:\d+))\b)|(?:\b\d{7,8}\b)|(?:\b\d{3}[A-Z]\d{3}\b)") from (setschema 'c1,c2' select * from pubs where c2 is not null) ) , grants where 
 (match = grantid and (fundingclass1 in ("FCT","ARC"))) or 
 (regexpr("(\d{5,7})",middle)=grantid and fundingclass1 = "NHMRC" and regexprmatches("nhmrc|medical research|national health medical",filterstopwords(normalizetext(lower(j2s(prev,middle,next)))))) or 
 (regexpr("(\w*\/[\w,\.]*\/\w*)",middle)=grantid and fundingclass1 = "SFI") or
 ( regexpr("(\d+)",middle)=grantid and fundingclass1 = "CONICYT" and regexprmatches("conicyt|fondecyt",lower(j2s(prev,middle,next)) )  ) or 
+( regexpr("(\d{3}[A-Z]\d{3})",middle)=grantid and fundingclass1 = "TUBITAK" and regexprmatches("tubitak|tubitek|tbag|turkey|turkish|\btub\b|\bbitak\b|\btÜbİtak\b|\btÜb\b|\bİtak\b|\bitak\b|tub|ubitak|tu bi tak|tubtak|tÜbtak|itak|tÜbÏtak|project|Тюбитек",lower(j2s(prev,middle,next)) )  ) or
 (regexpr("(\d{3}\-\d{7}\-\d{4})",middle) = grantid and fundingclass1="MZOS" and regexprmatches("croatia|\bmses\b|\bmzos\b|ministry of science",lower(j2s(prev,middle,next))) ) or 
 (regexpr("(\d{4})",middle) = grantid and fundingclass1="HRZZ" and (regexprmatches(normalizedacro,j2s(prev,middle,next)) or regexprmatches("croatian science foundation|\bhrzz\b",lower(j2s(prev,middle,next)) )     ) 
 or  (fundingclass1="NWO" and regexpr("(\b(?:(?:(?:\w{2,3})(?:\.|\-)(?:\w{2,3})(?:\.|\-)(?:\w{2,3}))|(?:\d+))\b)",middle)=nwo_opt1 and 
