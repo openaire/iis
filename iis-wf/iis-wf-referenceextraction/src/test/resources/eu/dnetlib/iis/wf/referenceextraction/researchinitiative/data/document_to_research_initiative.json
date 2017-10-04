@@ -39,16 +39,6 @@
   "confidenceLevel": 0.8
 }
 {
-  "documentId": "WOS:000295072500002",
-  "conceptId": "egi::virtual::2",
-  "confidenceLevel": 0.8
-}
-{
-  "documentId": "WOS:000294807200005",
-  "conceptId": "egi::virtual::1",
-  "confidenceLevel": 0.8
-}
-{
   "documentId": "WOS:000294611100006",
   "conceptId": "egi::virtual::467",
   "confidenceLevel": 0.8
@@ -56,11 +46,6 @@
 {
   "documentId": "WOS:000294328500004",
   "conceptId": "egi::virtual::4",
-  "confidenceLevel": 0.8
-}
-{
-  "documentId": "WOS:000305376900020",
-  "conceptId": "egi::virtual::2",
   "confidenceLevel": 0.8
 }
 {
@@ -94,28 +79,8 @@
   "confidenceLevel": 0.8
 }
 {
-  "documentId": "WOS:000294226100012",
-  "conceptId": "egi::virtual::2",
-  "confidenceLevel": 0.8
-}
-{
-  "documentId": "WOS:000292679500012",
-  "conceptId": "egi::virtual::2",
-  "confidenceLevel": 0.8
-}
-{
   "documentId": "WOS:000292656700008",
   "conceptId": "egi::virtual::467",
-  "confidenceLevel": 0.8
-}
-{
-  "documentId": "WOS:000292329000001",
-  "conceptId": "egi::virtual::1",
-  "confidenceLevel": 0.8
-}
-{
-  "documentId": "WOS:000291915100063",
-  "conceptId": "egi::virtual::2",
   "confidenceLevel": 0.8
 }
 {
@@ -129,28 +94,8 @@
   "confidenceLevel": 0.8
 }
 {
-  "documentId": "WOS:000292244800008",
-  "conceptId": "egi::virtual::1",
-  "confidenceLevel": 0.8
-}
-{
-  "documentId": "WOS:000291091000001",
-  "conceptId": "egi::virtual::1",
-  "confidenceLevel": 0.8
-}
-{
   "documentId": "WOS:000290895300004",
   "conceptId": "egi::virtual::4",
-  "confidenceLevel": 0.8
-}
-{
-  "documentId": "WOS:000292002400004",
-  "conceptId": "egi::virtual::1",
-  "confidenceLevel": 0.8
-}
-{
-  "documentId": "WOS:000292002100003",
-  "conceptId": "egi::virtual::1",
   "confidenceLevel": 0.8
 }
 {
@@ -161,11 +106,6 @@
 {
   "documentId": "WOS:000290729400005",
   "conceptId": "egi::virtual::4",
-  "confidenceLevel": 0.8
-}
-{
-  "documentId": "WOS:000290100300007",
-  "conceptId": "egi::virtual::1",
   "confidenceLevel": 0.8
 }
 {
@@ -186,21 +126,6 @@
 {
   "documentId": "WOS:000289131600004",
   "conceptId": "egi::virtual::4",
-  "confidenceLevel": 0.8
-}
-{
-  "documentId": "WOS:000288857900004",
-  "conceptId": "egi::virtual::1",
-  "confidenceLevel": 0.8
-}
-{
-  "documentId": "WOS:000288793900008",
-  "conceptId": "egi::virtual::1",
-  "confidenceLevel": 0.8
-}
-{
-  "documentId": "WOS:000288763100001",
-  "conceptId": "egi::virtual::2",
   "confidenceLevel": 0.8
 }
 {
