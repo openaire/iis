@@ -72,7 +72,7 @@ select docid,id,fundingclass1 from (select docid,upper(regexpr("(\w+.*\d+)",midd
 (regexpr("(\d{5,7})",middle)=grantid and fundingclass1 = "NHMRC" and regexprmatches("nhmrc|medical research|national health medical",filterstopwords(normalizetext(lower(j2s(prev,middle,next)))))) or 
 (regexpr("(\w*\/[\w,\.]*\/\w*)",middle)=grantid and fundingclass1 = "SFI") or
 ( regexpr("(\d+)",middle)=grantid and fundingclass1 = "CONICYT" and regexprmatches("conicyt|fondecyt",lower(j2s(prev,middle,next)) )  ) or 
-( regexpr("(\d{3}[A-Z]\d{3})",middle)=grantid and fundingclass1 = "TUBITAK" and regexprmatches("tubitak|tubitek|tbag|turkey|turkish|\btub\b|\bbitak\b|\bitak\b|tub|ubitak|tu bi tak|tubtak|itak|project",lower(j2s(prev,middle,next)) )  ) or
+( regexpr("(\b\d{3}[A-Z]\d{3}\b)",middle)=grantid and fundingclass1 = "TUBITAK" and regexprmatches("tubitak|tubitek|tbag|turkey|turkish|\btub\b|\bbitak\b|\bitak\b|tub|ubitak|tu bi tak|tubtak|itak|project",lower(j2s(prev,middle,next)) )  ) or
 ( stripchars(regexpr("([A-Z]{2,3}.+)",middle),"[]\().{}?;") = grantid and fundingclass1 = "SGOV") or
 (regexpr("(\d{3}\-\d{7}\-\d{4})",middle) = grantid and fundingclass1="MZOS" and regexprmatches("croatia|\bmses\b|\bmzos\b|ministry of science",lower(j2s(prev,middle,next))) ) or 
 (regexpr("(\d{4})",middle) = grantid and fundingclass1="HRZZ" and (regexprmatches(normalizedacro,j2s(prev,middle,next)) or regexprmatches("croatian science foundation|\bhrzz\b",lower(j2s(prev,middle,next)) )     ) )
