@@ -111,17 +111,11 @@ public class EntityExporterJobTest {
         assertCounterInReport(1);
         
         List<AtomicAction> capturedActions = getActions();
-        assertEquals(4, capturedActions.size());
+        assertEquals(1, capturedActions.size());
 
         // in-depth action verification is not a subject for this test case
         verifyAction(capturedActions.get(0), actionSetId, 
                 new String(InfoSpaceConstants.QUALIFIER_BODY, InfoSpaceConstants.ENCODING_UTF8), "result");
-        verifyAction(capturedActions.get(1), actionSetId, 
-                new String(InfoSpaceConstants.QUALIFIER_BODY, InfoSpaceConstants.ENCODING_UTF8), "person");
-        verifyAction(capturedActions.get(2), actionSetId, 
-                capturedActions.get(0).getTargetRowKey(), "personResult_authorship_isAuthorOf");
-        verifyAction(capturedActions.get(3), actionSetId, 
-                capturedActions.get(1).getTargetRowKey(), "personResult_authorship_hasAuthor");
     }
    
     @Test
@@ -139,23 +133,11 @@ public class EntityExporterJobTest {
         assertCounterInReport(1);
         
         List<AtomicAction> capturedActions = getActions();
-        assertEquals(7, capturedActions.size());
+        assertEquals(1, capturedActions.size());
 
      // in-depth action verification is not a subject for this test case
         verifyAction(capturedActions.get(0), actionSetId, 
                 new String(InfoSpaceConstants.QUALIFIER_BODY, InfoSpaceConstants.ENCODING_UTF8), "result");
-        verifyAction(capturedActions.get(1), actionSetId, 
-                new String(InfoSpaceConstants.QUALIFIER_BODY, InfoSpaceConstants.ENCODING_UTF8), "person");
-        verifyAction(capturedActions.get(2), actionSetId, 
-                capturedActions.get(0).getTargetRowKey(), "personResult_authorship_isAuthorOf");
-        verifyAction(capturedActions.get(3), actionSetId, 
-                capturedActions.get(1).getTargetRowKey(), "personResult_authorship_hasAuthor");
-        verifyAction(capturedActions.get(4), actionSetId, 
-                new String(InfoSpaceConstants.QUALIFIER_BODY, InfoSpaceConstants.ENCODING_UTF8), "person");
-        verifyAction(capturedActions.get(5), actionSetId, 
-                capturedActions.get(0).getTargetRowKey(), "personResult_authorship_isAuthorOf");
-        verifyAction(capturedActions.get(6), actionSetId, 
-                capturedActions.get(4).getTargetRowKey(), "personResult_authorship_hasAuthor");
     }
     
     //------------------------ PRIVATE --------------------------

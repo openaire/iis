@@ -209,10 +209,7 @@
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/dataset-entity-id</arg>
             <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/output/opentrial.expectations,
-                /eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/output/datacite.expectations,
-                /eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/output/person.expectations,
-                /eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/output/person_isAuthorOf_document.expectations,
-                /eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/output/document_hasAuthor_person.expectations
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/default/output/datacite.expectations
             </arg>
         </java>
         <ok to="report-consumer" />
