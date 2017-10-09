@@ -6,7 +6,7 @@ import unicodedata
 import hashlib
 import zlib
 import itertools
-from collections import deque
+from collections import deque, Counter
 from lib import jopts
 
 # Increase regular expression cache
