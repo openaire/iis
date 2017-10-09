@@ -132,19 +132,6 @@
 				Set to 'a^' by default to guarantee nothing will be matched.
 			</description>
 		</property>
-		<!-- export related -->
-		<property>
-			<name>active_export_to_actionmanager</name>
-			<value>true</value>
-			<description>flag indicating export to action manager should be
-				performed
-			</description>
-		</property>
-		<property>
-			<name>active_export_to_json</name>
-			<value>false</value>
-			<description>flag indicating json export should be performed</description>
-		</property>
 		<!-- action set id properties -->
 		<property>
 			<name>export_action_set_id</name>
@@ -576,14 +563,7 @@
 		<error to="fail" />
 	</action>
 
-	<join name="referenceextraction_joining" to="decision-export-to-hbase" />
-
-	<decision name="decision-export-to-hbase">
-		<switch>
-			<case to="export-to-actionmanager">${active_export_to_actionmanager eq "true"}</case>
-			<default to="decision-export-to-json" />
-		</switch>
-	</decision>
+	<join name="referenceextraction_joining" to="export-to-actionmanager" />
 
 	<action name="export-to-actionmanager">
 		<sub-workflow>
@@ -652,40 +632,6 @@
                     <name>output_report_root_path</name>
                     <value>${workingDir}/report</value>
                 </property>
-			</configuration>
-		</sub-workflow>
-		<ok to="decision-export-to-json" />
-		<error to="fail" />
-	</action>
-
-	<decision name="decision-export-to-json">
-		<switch>
-			<case to="export-to-json">${active_export_to_json eq "true"}</case>
-			<default to="report-execution-times" />
-		</switch>
-	</decision>
-
-	<action name="export-to-json">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/preprocessing_export_to_json</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>input_document_to_project</name>
-					<value>${workingDir}/referenceextraction_project/document_projects</value>
-				</property>
-				<property>
-					<name>input_document_to_project_concepts</name>
-					<value>${workingDir}/transformers_concept_to_researchinitiatives/out</value>
-				</property>
-				<property>
-					<name>input_document_to_dataset</name>
-					<value>${workingDir}/referenceextraction_dataset/document_datasets</value>
-				</property>
-				<property>
-					<name>output_root</name>
-					<value>${workingDir}/exported_as_json</value>
-				</property>
 			</configuration>
 		</sub-workflow>
 		<ok to="report-execution-times" />

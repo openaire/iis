@@ -63,16 +63,6 @@
             <value>true</value>
             <description>flag indicating affiliation matching should be enabled</description>
         </property>
-        <property>
-            <name>active_export_to_actionmanager</name>
-            <value>true</value>
-            <description>flag indicating export to action manager should be performed</description>
-        </property>
-        <property>
-            <name>active_export_to_json</name>
-            <value>false</value>
-            <description>flag indicating json export should be performed</description>
-        </property>
         <!-- import concepts related -->
         <property>
             <name>import_islookup_service_location</name>
@@ -602,16 +592,9 @@
                 </property>
             </configuration>
         </sub-workflow>
-        <ok to="decision-export-to-hbase" />
+        <ok to="export-to-actionmanager" />
         <error to="fail" />
     </action>
-
-    <decision name="decision-export-to-hbase">
-        <switch>
-            <case to="export-to-actionmanager">${active_export_to_actionmanager eq "true"}</case>
-            <default to="decision-export-to-json" />
-        </switch>
-    </decision>
 
     <action name="export-to-actionmanager">
         <sub-workflow>
@@ -760,69 +743,6 @@
                     <value>${workingDir}/report</value>
                 </property>
                 
-            </configuration>
-        </sub-workflow>
-        <ok to="decision-export-to-json" />
-        <error to="fail" />
-    </action>
-
-    <decision name="decision-export-to-json">
-        <switch>
-            <case to="export-to-json">${active_export_to_json eq "true"}</case>
-            <default to="report-execution-times" />
-        </switch>
-    </decision>
-
-    <action name="export-to-json">
-        <sub-workflow>
-            <app-path>${wf:appPath()}/primary_export_to_json</app-path>
-            <propagate-configuration />
-            <configuration>
-                <!-- input ports -->
-                <property>
-                    <name>input_document_to_project</name>
-                    <value>${workingDir}/exported/document_to_project</value>
-                </property>
-                <property>
-                    <name>input_document_to_project_concepts</name>
-                    <value>${workingDir}/exported/document_to_project_concepts</value>
-                </property>
-                <property>
-                    <name>input_document_to_dataset</name>
-                    <value>${workingDir}/exported/document_to_dataset</value>
-                </property>
-                <property>
-                    <name>input_document_to_research_initiatives</name>
-                    <value>${workingDir}/exported/document_to_research_initiatives</value>
-                </property>
-                <property>
-                    <name>input_document_to_pdb</name>
-                    <value>${workingDir}/exported/document_to_pdb</value>
-                </property>
-                <property>
-                    <name>input_document_to_software_urls</name>
-                    <value>${workingDir}/exported/document_to_software_urls</value>
-                </property>
-                <property>
-                    <name>input_document_to_document_classes</name>
-                    <value>${workingDir}/exported/document_to_document_classes</value>
-                </property>
-                <property>
-                    <name>input_citations</name>
-                    <value>${workingDir}/exported/citation</value>
-                </property>
-                <property>
-                    <name>input_document_similarity</name>
-                    <value>${workingDir}/exported/document_similarity</value>
-                </property>
-                <property>
-                    <name>input_matched_doc_organizations</name>
-                    <value>${workingDir}/exported/matched_affiliation</value>
-                </property>
-                <property>
-                    <name>output_root</name>
-                    <value>${workingDir}/exported_as_json</value>
-                </property>
             </configuration>
         </sub-workflow>
         <ok to="report-execution-times" />

@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-transformers_avro2json classpath eu/dnetlib/iis/wf/transformers/avro2json/oozie_app
