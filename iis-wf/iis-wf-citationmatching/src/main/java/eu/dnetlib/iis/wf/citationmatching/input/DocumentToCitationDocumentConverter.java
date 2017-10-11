@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.citationmatching.input;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
@@ -25,17 +26,17 @@ public class DocumentToCitationDocumentConverter {
     
     /**
      * Converts {@link ExtractedDocumentMetadataMergedWithOriginal} to {@link DocumentMetadata}.<br/>
-     * Notice that returned document metadata will contain author ids list in {@link BasicMetadata#getAuthors()}
-     * instead of author names.
+     * @param matchedReferencePositions already matched positions of references which should be removed from input, cannot be null
+     * 
      */
-    public DocumentMetadata convert(ExtractedDocumentMetadataMergedWithOriginal sourceDocument) {
+    public DocumentMetadata convert(ExtractedDocumentMetadataMergedWithOriginal sourceDocument, Set<Integer> matchedReferencePositions) {
         
         Preconditions.checkNotNull(sourceDocument);
         
         DocumentMetadata destDocument = DocumentMetadata.newBuilder()
                 .setId(sourceDocument.getId())
                 .setBasicMetadata(convertBasicMetadata(sourceDocument))
-                .setReferences(convertReferences(sourceDocument.getReferences()))
+                .setReferences(convertReferences(sourceDocument.getReferences(), matchedReferencePositions))
                 .build();
         
         return destDocument;
@@ -60,7 +61,8 @@ public class DocumentToCitationDocumentConverter {
                 : Lists.newArrayList();
     }
     
-    private List<ReferenceMetadata> convertReferences(List<eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata> sourceReferences) {
+    private List<ReferenceMetadata> convertReferences(List<eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata> sourceReferences,
+            Set<Integer> matchedReferencePositions) {
         
         List<ReferenceMetadata> destReferences = Lists.newArrayList();
         
@@ -68,7 +70,9 @@ public class DocumentToCitationDocumentConverter {
             return destReferences;
         }
         
-        sourceReferences.forEach(sourceReference -> destReferences.add(convertReference(sourceReference)));
+        sourceReferences.stream()
+                .filter(sourceReference -> !matchedReferencePositions.contains(sourceReference.getPosition()))
+                .forEach(sourceReference -> destReferences.add(convertReference(sourceReference)));
         
         return destReferences;
     }

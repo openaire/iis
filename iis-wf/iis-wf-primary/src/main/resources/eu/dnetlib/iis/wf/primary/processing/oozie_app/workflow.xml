@@ -1146,6 +1146,10 @@
                     <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
                 </property>
                 <property>
+                    <name>input_matched_citations</name>
+                    <value>${workingDir}/citationmatching_direct/output</value>
+                </property>
+                <property>
                     <name>output_citations</name>
                     <value>${workingDir}/citationmatching_fuzzy/output</value>
                 </property>

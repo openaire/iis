@@ -1,0 +1,40 @@
+{
+  "sourceDocumentId": "id-1",
+  "entry": {
+    "position": 10,
+    "destinationDocumentId": "irrelevant",
+    "confidenceLevel": 0.9,
+    "rawText": null,
+    "externalDestinationDocumentIds": { }
+  }
+}
+{
+  "sourceDocumentId": "id-2",
+  "entry": {
+    "position": 3,
+    "destinationDocumentId": "irrelevant",
+    "confidenceLevel": 0.9,
+    "rawText": null,
+    "externalDestinationDocumentIds": { }
+  }
+}
+{
+  "sourceDocumentId": "id-3",
+  "entry": {
+    "position": 1,
+    "destinationDocumentId": "irrelevant",
+    "confidenceLevel": 0.9,
+    "rawText": null,
+    "externalDestinationDocumentIds": { }
+  }
+}
+{
+  "sourceDocumentId": "nonexisting",
+  "entry": {
+    "position": 1,
+    "destinationDocumentId": "irrelevant",
+    "confidenceLevel": 0.9,
+    "rawText": null,
+    "externalDestinationDocumentIds": { }
+  }
+}

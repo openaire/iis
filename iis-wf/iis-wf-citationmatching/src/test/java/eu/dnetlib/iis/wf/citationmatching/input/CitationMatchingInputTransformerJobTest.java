@@ -11,6 +11,8 @@ import org.junit.Test;
 import com.google.common.io.Files;
 
 import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
+import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
+import eu.dnetlib.iis.common.citations.schemas.Citation;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
@@ -30,6 +32,8 @@ public class CitationMatchingInputTransformerJobTest {
     
     private String inputMetadataPath;
     
+    private String inputMatchedCitationsPath;
+    
     private String outputDirPath;
     
     
@@ -38,6 +42,7 @@ public class CitationMatchingInputTransformerJobTest {
         
         workingDir = Files.createTempDir();
         inputMetadataPath = workingDir + "/spark_citation_matching_input_transformer/inputMetadata";
+        inputMatchedCitationsPath = workingDir + "/spark_citation_matching_input_transformer/inputMatchedCitations";
         outputDirPath = workingDir + "/spark_citation_matching_input_transformer/output";
     }
     
@@ -69,7 +74,38 @@ public class CitationMatchingInputTransformerJobTest {
         
         // execute
         
-        executor.execute(buildCitationMatchingInputTransformerJob(inputMetadataPath, outputDirPath));
+        executor.execute(buildCitationMatchingInputTransformerJob(inputMetadataPath, WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE, outputDirPath));
+        
+        
+        
+        // assert
+        
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputFile, DocumentMetadata.class);
+        
+    }
+    
+    @Test
+    public void citationMatchingInputTransformerWithFiltering() throws IOException {
+        
+        
+        // given
+        
+        String jsonInputMetadataFile = DATA_DIRECTORY_PATH + "/full_document.json";
+        String jsonInputMatchedCitationsFile = DATA_DIRECTORY_PATH + "/matched_citations.json";
+        String jsonOutputFile = DATA_DIRECTORY_PATH + "/document_filtered.json";
+        
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(jsonInputMetadataFile, ExtractedDocumentMetadataMergedWithOriginal.class),
+                inputMetadataPath);
+        
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(jsonInputMatchedCitationsFile, Citation.class),
+                inputMatchedCitationsPath);
+        
+        
+        // execute
+        
+        executor.execute(buildCitationMatchingInputTransformerJob(inputMetadataPath, inputMatchedCitationsPath, outputDirPath));
         
         
         
@@ -82,7 +118,7 @@ public class CitationMatchingInputTransformerJobTest {
     
     //------------------------ PRIVATE --------------------------
     
-    private SparkJob buildCitationMatchingInputTransformerJob(String inputMetadataDirPath, String outputDirPath) {
+    private SparkJob buildCitationMatchingInputTransformerJob(String inputMetadataDirPath, String inputMatchedCitationsDir, String outputDirPath) {
         SparkJob sparkJob = SparkJobBuilder
                 .create()
                 
@@ -90,6 +126,7 @@ public class CitationMatchingInputTransformerJobTest {
 
                 .setMainClass(CitationMatchingInputTransformerJob.class)
                 .addArg("-inputMetadata", inputMetadataDirPath)
+                .addArg("-inputMatchedCitations", inputMatchedCitationsDir)
                 .addArg("-output", outputDirPath)
                 .addJobProperty("spark.driver.host", "localhost")
                 

@@ -11,6 +11,13 @@
             <description>input directory holding eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal avro datastore</description>
         </property>
         <property>
+            <name>input_matched_citations</name>
+            <value>$UNDEFINED$</value>
+            <description>input directory holding already matched citations to be excluded from processing as eu.dnetlib.iis.common.citations.schemas.Citation avro datastore.
+            Omitted when set to $UNDEFINED$ value. 
+            </description>
+        </property>
+        <property>
             <name>output_citations</name>
             <description>output directory holding eu.dnetlib.iis.common.citations.schemas.Citation avro datastore</description>
         </property>
@@ -91,6 +98,7 @@
             <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores}</spark-opts>
         
             <arg>-inputMetadata = ${input_metadata}</arg>
+            <arg>-inputMatchedCitations = ${input_matched_citations}</arg>
             <arg>-output = ${workingDir}/documents_with_authors</arg>
             
         </spark>

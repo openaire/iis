@@ -36,7 +36,11 @@
             <arg>-C{document_metadata,
                 eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal,
                 eu/dnetlib/iis/wf/citationmatching/main_workflow/data/document_metadata.json}</arg>
+            <arg>-C{matched_citation,
+                eu.dnetlib.iis.common.citations.schemas.Citation,
+                eu/dnetlib/iis/wf/citationmatching/main_workflow/data/matched_citation.json}</arg>
             <arg>-Odocument_metadata=${workingDir}/data_producer/document</arg>
+            <arg>-Omatched_citation=${workingDir}/data_producer/matched_citation</arg>
         </java>
         <ok to="citation_matching" />
         <error to="fail" />
@@ -50,6 +54,10 @@
                 <property>
                     <name>input_metadata</name>
                     <value>${workingDir}/data_producer/document</value>
+                </property>
+                <property>
+                    <name>input_matched_citations</name>
+                    <value>${workingDir}/data_producer/matched_citation</value>
                 </property>
                 <property>
                     <name>output_citations</name>

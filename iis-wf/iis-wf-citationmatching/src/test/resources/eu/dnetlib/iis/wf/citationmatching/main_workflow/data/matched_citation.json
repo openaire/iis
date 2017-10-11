@@ -1,0 +1,10 @@
+{
+  "sourceDocumentId": "id-3",
+  "entry": {
+    "position": 1,
+    "destinationDocumentId": "irrelevant",
+    "confidenceLevel": 1,
+    "rawText": null,
+    "externalDestinationDocumentIds": { }
+  }
+}

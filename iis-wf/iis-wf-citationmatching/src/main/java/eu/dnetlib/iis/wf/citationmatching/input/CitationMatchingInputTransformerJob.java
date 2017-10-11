@@ -1,5 +1,8 @@
 package eu.dnetlib.iis.wf.citationmatching.input;
 
+import java.util.Collections;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -8,8 +11,12 @@ import org.apache.spark.api.java.JavaSparkContext;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.google.common.base.Optional;
+import com.google.common.collect.Sets;
 
 import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
+import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
+import eu.dnetlib.iis.common.citations.schemas.Citation;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
@@ -44,10 +51,29 @@ public class CitationMatchingInputTransformerJob {
             
             JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> inputDocuments = avroLoader.loadJavaRDD(sc, params.inputMetadata, ExtractedDocumentMetadataMergedWithOriginal.class);
             
-            JavaPairRDD<String, DocumentMetadata> documents = inputDocuments.mapToPair(
-                    document -> new Tuple2<>(document.getId().toString(), documentToCitationDocumentConverter.convert(document)));
+            JavaRDD<DocumentMetadata> documents;
             
-            avroSaver.saveJavaRDD(documents.values(), DocumentMetadata.SCHEMA$, params.output);
+            if (StringUtils.isNotBlank(params.inputMatchedCitations) && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(params.inputMatchedCitations)) {
+                //filtering mode
+                JavaRDD<Citation> matchedCitations = avroLoader.loadJavaRDD(sc, params.inputMatchedCitations, Citation.class);
+                
+                JavaPairRDD<CharSequence, Iterable<Integer>> groupedCitations = matchedCitations
+                        .mapToPair(cit -> new Tuple2<>(cit.getSourceDocumentId(), cit.getEntry().getPosition()))
+                        .groupByKey();
+                
+                JavaPairRDD<CharSequence, ExtractedDocumentMetadataMergedWithOriginal> pairedDocuments = inputDocuments.mapToPair(doc -> new Tuple2<>(doc.getId(), doc));
+                
+                JavaPairRDD<CharSequence, Tuple2<ExtractedDocumentMetadataMergedWithOriginal, Optional<Iterable<Integer>>>> inputDocumentsJoinedWithMatchedCitations = pairedDocuments
+                        .leftOuterJoin(groupedCitations);
+                documents = inputDocumentsJoinedWithMatchedCitations
+                        .map(x -> documentToCitationDocumentConverter.convert(x._2._1,
+                                x._2._2.isPresent() ? Sets.newHashSet(x._2._2.get()) : Collections.emptySet()));
+
+            } else {
+                documents = inputDocuments.map(document -> documentToCitationDocumentConverter.convert(document, Collections.emptySet()));    
+            }
+
+            avroSaver.saveJavaRDD(documents, DocumentMetadata.SCHEMA$, params.output);
             
         }
         
@@ -61,6 +87,9 @@ public class CitationMatchingInputTransformerJob {
         
         @Parameter(names = "-inputMetadata", required = true)
         private String inputMetadata;
+        
+        @Parameter(names = "-inputMatchedCitations", required = true)
+        private String inputMatchedCitations;
         
         @Parameter(names = "-output", required = true)
         private String output;
