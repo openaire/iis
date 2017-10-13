@@ -17,6 +17,14 @@
             <name>sparkExecutorCores</name>
             <description>number of cores used by single executor</description>
         </property>
+        <property>
+            <name>sparkDriverMemory</name>
+            <description>memory for driver process</description>
+        </property>
+        <property>
+            <name>sparkDriverOverhead</name>
+            <description>The amount of off heap memory (in megabytes) to be allocated for the driver</description>
+        </property>
 	</parameters>
 	 
     <global>
@@ -54,7 +62,7 @@
             <name>avro2json_transformer_job</name>
             <class>eu.dnetlib.iis.wf.transformers.avro2json.Avro2JsonTransformer</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-transformers-${projectVersion}.jar</jar>
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory} --conf spark.yarn.driver.memoryOverhead=${sparkDriverOverhead}</spark-opts>
             <arg>-input=${input}</arg>
             <arg>-output=${output}</arg>
         </spark>
