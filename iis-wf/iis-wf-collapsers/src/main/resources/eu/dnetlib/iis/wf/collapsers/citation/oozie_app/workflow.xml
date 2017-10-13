@@ -198,8 +198,11 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
             <arg>-Preport.processing.citationTextExtraction.citation=${hadoop:counters('collapser')['eu.dnetlib.iis.wf.collapsers.basic.GenericCitationCollapser$CitationTextCounters']['TOTAL']}</arg>
-            <arg>-Preport.processing.citationTextExtraction.doc=${hadoop:counters('collapser')['eu.dnetlib.iis.wf.collapsers.basic.GenericCitationCollapser$CitationTextCounters']['DOCS_WITH_AT_LEAST_ONE_CITATION']}
-            </arg>
+            <arg>-Preport.processing.citationTextExtraction.doc=${hadoop:counters('collapser')['eu.dnetlib.iis.wf.collapsers.basic.GenericCitationCollapser$CitationTextCounters']['DOCS_WITH_AT_LEAST_ONE_CITATION']}</arg>
+
+            <arg>-Preport.processing.citationMatching.total.citDocReference=${hadoop:counters('collapser')['eu.dnetlib.iis.wf.collapsers.basic.GenericCitationCollapser$MatchedCitationCounters']['TOTAL']}</arg>
+            <arg>-Preport.processing.citationMatching.total.doc=${hadoop:counters('collapser')['eu.dnetlib.iis.wf.collapsers.basic.GenericCitationCollapser$MatchedCitationCounters']['DOCS_WITH_AT_LEAST_ONE_CITATION']}</arg>
+
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>
         <ok to="end" />

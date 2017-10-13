@@ -23,14 +23,24 @@ import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
 public class GenericCitationCollapser extends AbstractSimpleCollapser<Citation> {
 
     /**
+     * Total extracted citation texts counter. 
+     */
+    private Counter totalTextCounter;
+    
+    /**
+     * Documents with at least one extracted citation text counter.
+     */
+    private Counter docsWithAtLeastOneCitationTextCounter;
+    
+    /**
      * Total extracted citations counter. 
      */
-    private Counter totalCounter;
+    private Counter totalMatchedCounter;
     
     /**
      * Documents with at least one extracted citation counter.
      */
-    private Counter docsWithAtLeastOneCitationCounter;
+    private Counter docsWithAtLeastOneMatchedCitationCounter;
     
     /**
      * Hadoop counters enum of citation records. 
@@ -40,14 +50,26 @@ public class GenericCitationCollapser extends AbstractSimpleCollapser<Citation> 
         DOCS_WITH_AT_LEAST_ONE_CITATION
     }
     
+    /**
+     * Hadoop counters enum of matched citation records. 
+     */
+    public static enum MatchedCitationCounters {
+        TOTAL,
+        DOCS_WITH_AT_LEAST_ONE_CITATION
+    }
+    
     // --------------------- LOGIC -------------------------------
 
     @Override
     public void setup(TaskAttemptContext context) {
-        totalCounter = context.getCounter(CitationTextCounters.TOTAL);
-        totalCounter.setValue(0);
-        docsWithAtLeastOneCitationCounter = context.getCounter(CitationTextCounters.DOCS_WITH_AT_LEAST_ONE_CITATION);
-        docsWithAtLeastOneCitationCounter.setValue(0);
+        totalTextCounter = context.getCounter(CitationTextCounters.TOTAL);
+        totalTextCounter.setValue(0);
+        docsWithAtLeastOneCitationTextCounter = context.getCounter(CitationTextCounters.DOCS_WITH_AT_LEAST_ONE_CITATION);
+        docsWithAtLeastOneCitationTextCounter.setValue(0);
+        totalMatchedCounter = context.getCounter(MatchedCitationCounters.TOTAL);
+        totalMatchedCounter.setValue(0);
+        docsWithAtLeastOneMatchedCitationCounter = context.getCounter(MatchedCitationCounters.DOCS_WITH_AT_LEAST_ONE_CITATION);
+        docsWithAtLeastOneMatchedCitationCounter.setValue(0);
     }
     
     @Override
@@ -63,17 +85,25 @@ public class GenericCitationCollapser extends AbstractSimpleCollapser<Citation> 
 		}
 		List<Citation> results = new ArrayList<Citation>(citationsByPositionMap.size());
 		int citationsWithTextCount = 0;
+		int matchedCitationsCount = 0;
 		for (List<Citation> citationsByPosition : citationsByPositionMap.values()) {
 		    Citation collapsedCitation = collapseForPosition(citationsByPosition);
 		    if (hasTextDefined(collapsedCitation)) {
 		        citationsWithTextCount ++;
 		    }
+		    if (isMatched(collapsedCitation)) {
+		        matchedCitationsCount ++;
+		    }
 			results.add(collapsedCitation);
 		}
 		if (citationsWithTextCount > 0) {
-		    totalCounter.increment(citationsWithTextCount);
-		    docsWithAtLeastOneCitationCounter.increment(1);
+		    totalTextCounter.increment(citationsWithTextCount);
+		    docsWithAtLeastOneCitationTextCounter.increment(1);
 		}
+		if (matchedCitationsCount > 0) {
+		    totalMatchedCounter.increment(matchedCitationsCount);
+		    docsWithAtLeastOneMatchedCitationCounter.increment(1);
+        }
 		return results;
     }
 
@@ -86,6 +116,13 @@ public class GenericCitationCollapser extends AbstractSimpleCollapser<Citation> 
         return StringUtils.isNotBlank(citation.getEntry().getRawText());
     }
 
+    /**
+     * Checks whether text was defined for given citation.
+     */
+    private boolean isMatched(Citation citation) {
+        return StringUtils.isNotBlank(citation.getEntry().getDestinationDocumentId());
+    }
+    
     /**
      * Collapses citations for the same sourceDocumentId and position.
      * @param objects

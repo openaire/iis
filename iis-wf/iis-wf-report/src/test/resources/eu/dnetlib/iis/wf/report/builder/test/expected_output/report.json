@@ -26,9 +26,11 @@
             }
         },
         "citationMatching": {
-            "duration": {
-                "milliseconds": 22336000,
-                "humanReadable": "6h 12m 16s"
+            "total": {
+                "duration": {
+                    "milliseconds": 22336000,
+                    "humanReadable": "6h 12m 16s"
+                }
             }
         },
         "documentSimilarity": {

@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -24,6 +25,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import eu.dnetlib.iis.common.citations.schemas.Citation;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
 import eu.dnetlib.iis.wf.collapsers.basic.GenericCitationCollapser.CitationTextCounters;
+import eu.dnetlib.iis.wf.collapsers.basic.GenericCitationCollapser.MatchedCitationCounters;
 
 /**
  * @author mhorst
@@ -36,36 +38,45 @@ public class GenericCitationCollapserTest {
     private TaskAttemptContext context;
     
     @Mock
-    private Counter totalCounter;
+    private Counter totalTextCounter;
     
     @Mock
-    private Counter docsWithAtLeastOneCitationCounter;
+    private Counter docsWithAtLeastOneCitationTextCounter;
+    
+    @Mock
+    private Counter totalMatchedCounter;
+    
+    @Mock
+    private Counter docsWithAtLeastOneMatchedCitationCounter;
     
     
     private GenericCitationCollapser collapser = new GenericCitationCollapser();
+    
+    
+    @Before
+    public void prepareCounters() {
+        doReturn(totalTextCounter).when(context).getCounter(CitationTextCounters.TOTAL);
+        doReturn(docsWithAtLeastOneCitationTextCounter).when(context).getCounter(CitationTextCounters.DOCS_WITH_AT_LEAST_ONE_CITATION);
+        doReturn(totalMatchedCounter).when(context).getCounter(MatchedCitationCounters.TOTAL);
+        doReturn(docsWithAtLeastOneMatchedCitationCounter).when(context).getCounter(MatchedCitationCounters.DOCS_WITH_AT_LEAST_ONE_CITATION);
+    }
     
     
     // --------------------------------- TEST ------------------------------------
     
     @Test
     public void testSetup() throws Exception {
-        // given
-        doReturn(totalCounter).when(context).getCounter(CitationTextCounters.TOTAL);
-        doReturn(docsWithAtLeastOneCitationCounter).when(context).getCounter(CitationTextCounters.DOCS_WITH_AT_LEAST_ONE_CITATION);
-        
         // execute
         collapser.setup(context);
         
         // assert
-        verify(totalCounter).setValue(0);
-        verify(docsWithAtLeastOneCitationCounter).setValue(0);
+        verify(totalTextCounter).setValue(0);
+        verify(docsWithAtLeastOneCitationTextCounter).setValue(0);
     }
     
     @Test
     public void testCollapseNull() throws Exception {
         // given
-        doReturn(totalCounter).when(context).getCounter(CitationTextCounters.TOTAL);
-        doReturn(docsWithAtLeastOneCitationCounter).when(context).getCounter(CitationTextCounters.DOCS_WITH_AT_LEAST_ONE_CITATION);
         collapser.setup(context);
         
         // execute
@@ -78,8 +89,6 @@ public class GenericCitationCollapserTest {
     @Test
     public void testCollapseEmpty() throws Exception {
         // given
-        doReturn(totalCounter).when(context).getCounter(CitationTextCounters.TOTAL);
-        doReturn(docsWithAtLeastOneCitationCounter).when(context).getCounter(CitationTextCounters.DOCS_WITH_AT_LEAST_ONE_CITATION);
         collapser.setup(context);
         
         // execute
@@ -92,8 +101,6 @@ public class GenericCitationCollapserTest {
     @Test
     public void testCollapseEmptyTextOnly() throws Exception {
      // given
-        doReturn(totalCounter).when(context).getCounter(CitationTextCounters.TOTAL);
-        doReturn(docsWithAtLeastOneCitationCounter).when(context).getCounter(CitationTextCounters.DOCS_WITH_AT_LEAST_ONE_CITATION);
         collapser.setup(context);
         
         List<Citation> source = new ArrayList<>();
@@ -109,15 +116,15 @@ public class GenericCitationCollapserTest {
         assertEquals(1, result.get(0).getEntry().getPosition().intValue());
         assertEquals(citationText, result.get(0).getEntry().getRawText());
         
-        verify(totalCounter, never()).increment(1);
-        verify(docsWithAtLeastOneCitationCounter, never()).increment(1);
+        verify(totalTextCounter, never()).increment(1);
+        verify(docsWithAtLeastOneCitationTextCounter, never()).increment(1);
+        verify(totalMatchedCounter, never()).increment(1);
+        verify(docsWithAtLeastOneMatchedCitationCounter, never()).increment(1);
     }
     
     @Test
     public void testCollapseTextOnly() throws Exception {
      // given
-        doReturn(totalCounter).when(context).getCounter(CitationTextCounters.TOTAL);
-        doReturn(docsWithAtLeastOneCitationCounter).when(context).getCounter(CitationTextCounters.DOCS_WITH_AT_LEAST_ONE_CITATION);
         collapser.setup(context);
         
         List<Citation> source = new ArrayList<>();
@@ -140,15 +147,15 @@ public class GenericCitationCollapserTest {
         assertEquals(2, result.get(1).getEntry().getPosition().intValue());
         assertEquals(citation2Text, result.get(1).getEntry().getRawText());
         
-        verify(totalCounter, times(1)).increment(2);
-        verify(docsWithAtLeastOneCitationCounter, times(1)).increment(1);
+        verify(totalTextCounter, times(1)).increment(2);
+        verify(docsWithAtLeastOneCitationTextCounter, times(1)).increment(1);
+        verify(totalMatchedCounter, never()).increment(1);
+        verify(docsWithAtLeastOneMatchedCitationCounter, never()).increment(1);
     }
     
     @Test
     public void testCollapseMultipleFields() throws Exception {
         // given
-        doReturn(totalCounter).when(context).getCounter(CitationTextCounters.TOTAL);
-        doReturn(docsWithAtLeastOneCitationCounter).when(context).getCounter(CitationTextCounters.DOCS_WITH_AT_LEAST_ONE_CITATION);
         collapser.setup(context);
         
         String citationText = "citation text";
@@ -188,8 +195,10 @@ public class GenericCitationCollapserTest {
         
         assertEquals(0.8f, result.get(0).getEntry().getConfidenceLevel().floatValue(), 0.0001);
         
-        verify(totalCounter, times(1)).increment(1);
-        verify(docsWithAtLeastOneCitationCounter, times(1)).increment(1);
+        verify(totalTextCounter, times(1)).increment(1);
+        verify(docsWithAtLeastOneCitationTextCounter, times(1)).increment(1);
+        verify(totalMatchedCounter, times(1)).increment(1);
+        verify(docsWithAtLeastOneMatchedCitationCounter, times(1)).increment(1);
 
     }
     
