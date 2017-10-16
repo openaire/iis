@@ -19,13 +19,18 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
  */
 public class CitationMatchingDirectCounterReporter {
 
-    private static final String MATCHED_CITATIONS_COUNTER = "processing.citationMatching.direct.citDocReference";
+
+    private final String docCounterName;
     
-    private static final String DOCS_WITH_MATCHED_CITATIONS_COUNTER = "processing.citationMatching.direct.doc";
-    
+    private final String referenceCounterName;
     
     private SparkAvroSaver avroSaver = new SparkAvroSaver();
     
+    
+    public CitationMatchingDirectCounterReporter(String docCounterName, String referenceCounterName) {
+        this.docCounterName = docCounterName;
+        this.referenceCounterName = referenceCounterName;
+    }
     
     //------------------------ LOGIC --------------------------
     
@@ -50,7 +55,7 @@ public class CitationMatchingDirectCounterReporter {
         
         long citationsCount = matchedCitations.count();
         
-        return ReportEntryFactory.createCounterReportEntry(MATCHED_CITATIONS_COUNTER, citationsCount);
+        return ReportEntryFactory.createCounterReportEntry(referenceCounterName, citationsCount);
         
     }
     
@@ -60,6 +65,6 @@ public class CitationMatchingDirectCounterReporter {
                 .map(x -> x.getSourceDocumentId().toString())
                 .distinct().count();
         
-        return ReportEntryFactory.createCounterReportEntry(DOCS_WITH_MATCHED_CITATIONS_COUNTER, docsWithCitationCount);
+        return ReportEntryFactory.createCounterReportEntry(docCounterName, docsWithCitationCount);
     }
 }

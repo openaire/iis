@@ -32,9 +32,14 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CitationMatchingDirectCounterReporterTest {
+    
+    private static final String docCounterName = "processing.citationMatching.direct.doc";
+    
+    private static final String referenceCounterName = "processing.citationMatching.direct.citDocReference";
 
     @InjectMocks
-    private CitationMatchingDirectCounterReporter counterReporter = new CitationMatchingDirectCounterReporter();
+    private CitationMatchingDirectCounterReporter counterReporter = new CitationMatchingDirectCounterReporter(
+            docCounterName, referenceCounterName);
     
     @Mock
     private SparkAvroSaver avroSaver;
@@ -123,10 +128,10 @@ public class CitationMatchingDirectCounterReporterTest {
         
         assertEquals(2, reportEntries.size());
         
-        assertEquals("processing.citationMatching.direct.citDocReference", reportEntries.get(0).getKey());
+        assertEquals(referenceCounterName, reportEntries.get(0).getKey());
         assertEquals("14", reportEntries.get(0).getValue());
         
-        assertEquals("processing.citationMatching.direct.doc", reportEntries.get(1).getKey());
+        assertEquals(docCounterName, reportEntries.get(1).getKey());
         assertEquals("3", reportEntries.get(1).getValue());
     }
 }

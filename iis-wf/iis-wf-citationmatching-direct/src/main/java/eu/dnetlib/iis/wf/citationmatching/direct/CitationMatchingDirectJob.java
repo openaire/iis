@@ -50,7 +50,8 @@ public class CitationMatchingDirectJob {
     
     private static DirectCitationToCitationConverter directCitationToCitationConverter = new DirectCitationToCitationConverter();
     
-    private static CitationMatchingDirectCounterReporter citationMatchingDirectReporter = new CitationMatchingDirectCounterReporter();
+    private static CitationMatchingDirectCounterReporter citationMatchingDirectReporter = new CitationMatchingDirectCounterReporter(
+            "processing.citationMatching.direct.doc", "processing.citationMatching.direct.citDocReference");
     
     
     
