@@ -99,18 +99,15 @@ def urlrequest(*args):
     """
     try:
         req = urllib2.Request(''.join((x for x in args if x != None)), None, domainExtraHeaders)
-        hreq = urllib2.urlopen(req)
+        hreq = urllib2.urlopen(req, timeout=3)
 
         if [1 for x,y in hreq.headers.items() if x.lower() in ('content-encoding', 'content-type') and y.lower().find('gzip')!=-1]:
             hreq = gzip.GzipFile(fileobj=hreq)
 
         return unicode(hreq.read(), 'utf-8', errors = 'replace')
 
-    except urllib2.HTTPError,e:
-        if args[0] == None:
-            return None
-        else:
-            raise e
+    except :
+        return None
 
 urlrequest.registered=True
 
@@ -316,11 +313,11 @@ def execprogram(*args):
     except Exception,e:
         raise functions.OperatorError('execprogram', functions.mstr(e))
 
-    if p.returncode!=0:
-        if raise_error:
-            return None
-        else:
-            raise functions.OperatorError('execprogram', functions.mstr(errtext).strip())
+    #if p.returncode!=0:
+     #   if raise_error:
+      #      return None
+       # else:
+        #    raise functions.OperatorError('execprogram', functions.mstr(errtext).strip())
 
     try:
         outtext=unicode(outtext, 'utf-8')
