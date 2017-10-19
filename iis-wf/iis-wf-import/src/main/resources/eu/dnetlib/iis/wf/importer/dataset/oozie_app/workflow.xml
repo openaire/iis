@@ -18,7 +18,7 @@
         </property>
         <property>
             <name>mdstore_record_maxlength</name>
-            <value>500000</value>
+            <value>2000000</value>
             <description>maximum allowed length of mdstore record</description>
         </property>
         <property>
