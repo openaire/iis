@@ -33,6 +33,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.common.collect.Lists;
 
+import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 
 
@@ -78,6 +79,8 @@ public class AvroToRdbTransformerJob {
         conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
         
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
+            
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
             
             SQLContext sqlContext = new SQLContext(sc);
 
