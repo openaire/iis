@@ -50,6 +50,16 @@
         </dependency>
         
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>eu.dnetlib.ptm</groupId>
+            <artifactId>ptm-service-api</artifactId>
+        </dependency>
+        
+        <dependency>
             <groupId>eu.dnetlib.iis</groupId>
             <artifactId>iis-common</artifactId>
             <version>${project.version}</version>

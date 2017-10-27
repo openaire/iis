@@ -1,0 +1,72 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="ptm_execute_annotate">
+	
+	<parameters>
+        <property>
+            <name>ptmServiceLocation</name>
+            <description>remote RESTful PTM service location</description>
+        </property>
+        <property>
+            <name>spotlightServiceLocation</name>
+            <description>dbpedia Spotlight service location relative to PTM service location, 
+            localhost can be used when deployed on the same machine.</description>
+        </property>
+		<property>
+			<name>checkStatusIntevalSecs</name>
+            <value>60</value>
+			<description>time interval, expressed in seconds, to check status on a remote PTM service</description>
+		</property>
+        <property>
+            <name>numOfThreads</name>
+            <value>4</value>
+            <description>number of threads to be utilized by remote PTM process</description>
+        </property>
+        <property>
+            <name>sqlConnectionString</name>
+            <description>jdbc connection string pointing to rdb database</description>
+        </property>
+	</parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
+	<start to="ptm-executor" />
+	
+	<action name="ptm-executor">
+		<java>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.wf.ptm.PtmPhaseExecutor</arg>
+
+            <arg>-Pphase=annotate</arg>
+            
+            <arg>-PptmServiceLocation=${ptmServiceLocation}</arg>
+			<arg>-PcheckStatusIntevalSecs=${checkStatusIntevalSecs}</arg>
+            
+            <arg>-Pptm.NumOfThreads=${numOfThreads}</arg>
+            <arg>-Pptm.SQLConnectionString=${sqlConnectionString}</arg>
+            <arg>-Pptm.SpotlightService=${spotlightServiceLocation}</arg>
+            
+			<capture-output />
+		</java>
+		<ok to="end" />
+		<error to="fail" />
+	</action>
+    
+	<kill name="fail">
+		<message>Unfortunately, the process failed -- error message:
+			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+	</kill>
+	<end name="end" />
+</workflow-app>
