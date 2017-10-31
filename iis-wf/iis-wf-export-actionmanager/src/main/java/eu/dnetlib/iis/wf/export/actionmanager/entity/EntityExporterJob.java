@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.io.SequenceFile.CompressionType;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -26,6 +27,7 @@ import eu.dnetlib.actionmanager.actions.AtomicAction;
 import eu.dnetlib.actionmanager.actions.XsltInfoPackageAction;
 import eu.dnetlib.actionmanager.common.Operation;
 import eu.dnetlib.actionmanager.common.Provenance;
+import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 import scala.Tuple2;
@@ -64,8 +66,14 @@ public class EntityExporterJob {
             
             EntityFilter entityProvider = buildEntityProvider(params.entityFilterClassName);
             
+            Float trustLevelThreshold = null;
+            if (StringUtils.isNotBlank(params.trustLevelThreshold) && 
+                    !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(params.trustLevelThreshold)) {
+                trustLevelThreshold = Float.valueOf(params.trustLevelThreshold);
+            }
+            
             JavaRDD<CharSequence> entityText = entityProvider.provideRDD(sc, 
-                    params.inputRelationAvroPath, params.inputEntityAvroPath);
+                    params.inputRelationAvroPath, params.inputEntityAvroPath, trustLevelThreshold);
             entityText.cache();
             
             // need to get values as serializable objects before passing them to map method
@@ -151,6 +159,9 @@ public class EntityExporterJob {
         
         @Parameter(names = "-actionSetId", required = true)
         private String actionSetId;
+        
+        @Parameter(names = "-trustLevelThreshold", required = false)
+        private String trustLevelThreshold;
         
         @Parameter(names = "-counterName", required = true)
         private String counterName;

@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.export.actionmanager.entity;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -50,6 +51,9 @@ public class DatasetFilterTest  {
     private JavaRDD<DocumentToDataSet> inputRelations;
     
     @Mock
+    private JavaRDD<DocumentToDataSet> inputFilteredRelations;
+    
+    @Mock
     private JavaPairRDD<CharSequence, Object> relationIdToBlankDuplicated;
     
     @Mock
@@ -66,6 +70,9 @@ public class DatasetFilterTest  {
     
     @Captor
     private ArgumentCaptor<PairFunction<DocumentToDataSet, CharSequence, Object>> relationMapToPairCaptor;
+    
+    @Captor
+    private ArgumentCaptor<Function<DocumentToDataSet, Boolean>> relationFilterCaptor;
     
     @Captor
     private ArgumentCaptor<PairFunction<DocumentText, CharSequence, CharSequence>> entityMapToPairCaptor;
@@ -91,7 +98,7 @@ public class DatasetFilterTest  {
         doReturn(expectedOutput).when(joinedById).map(any());
         
         // execute
-        JavaRDD<CharSequence> output = entityFilter.provideRDD(sparkContext, relationsInputPath, entitiesInputPath);
+        JavaRDD<CharSequence> output = entityFilter.provideRDD(sparkContext, relationsInputPath, entitiesInputPath, null);
         
         // assert
         assertNotNull(output);
@@ -106,7 +113,56 @@ public class DatasetFilterTest  {
         verify(joinedById).map(finalMapCaptor.capture());
         assertFinalMap(finalMapCaptor.getValue());
     }
+    
+    @Test
+    public void test_execute_with_filtering() throws Exception {
+        
+        // given
+        String entitiesInputPath = "/data/entities";
+        String relationsInputPath = "/data/relations";
+        Float trustLevelThreshold = 0.9f;
+        
+        when(sparkAvroLoader.loadJavaRDD(sparkContext, entitiesInputPath, DocumentText.class)).thenReturn(inputEntities);
+        when(sparkAvroLoader.loadJavaRDD(sparkContext, relationsInputPath, DocumentToDataSet.class)).thenReturn(inputRelations);
+        doReturn(inputFilteredRelations).when(inputRelations).filter(any());
+        doReturn(relationIdToBlankDuplicated).when(inputFilteredRelations).mapToPair(any());
+        doReturn(relationIdToBlank).when(relationIdToBlankDuplicated).distinct();
+        doReturn(entityIdToText).when(inputEntities).mapToPair(any());
+        doReturn(joinedById).when(relationIdToBlank).join(entityIdToText);
+        doReturn(expectedOutput).when(joinedById).map(any());
+        
+        // execute
+        JavaRDD<CharSequence> output = entityFilter.provideRDD(sparkContext, relationsInputPath, entitiesInputPath, trustLevelThreshold);
+        
+        // assert
+        assertNotNull(output);
+        assertTrue(expectedOutput == output);
+        
+        verify(inputRelations).filter(relationFilterCaptor.capture());
+        assertRelationFilter(relationFilterCaptor.getValue());
+        
+        verify(inputFilteredRelations).mapToPair(relationMapToPairCaptor.capture());
+        assertRelationMapToPair(relationMapToPairCaptor.getValue());
+        
+        verify(inputEntities).mapToPair(entityMapToPairCaptor.capture());
+        assertEntityMapToPair(entityMapToPairCaptor.getValue());
+        
+        verify(joinedById).map(finalMapCaptor.capture());
+        assertFinalMap(finalMapCaptor.getValue());
+    }
+    
     // ------------------------ PRIVATE --------------------------
+    
+    private void assertRelationFilter(Function<DocumentToDataSet, Boolean> function) throws Exception {
+        String docId = "docId";
+        String datasetId = "datasetId";
+        
+        assertTrue(function.call(DocumentToDataSet.newBuilder().setDocumentId(docId)
+                .setDatasetId(datasetId).setConfidenceLevel(1).build()));
+        
+        assertFalse(function.call(DocumentToDataSet.newBuilder().setDocumentId(docId)
+                .setDatasetId(datasetId).setConfidenceLevel(0.5f).build()));
+    }
     
     private void assertRelationMapToPair(PairFunction<DocumentToDataSet, CharSequence, Object> function) throws Exception {
         String docId = "docId";

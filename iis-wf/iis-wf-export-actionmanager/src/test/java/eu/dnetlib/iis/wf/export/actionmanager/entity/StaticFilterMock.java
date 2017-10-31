@@ -24,7 +24,8 @@ public class StaticFilterMock implements EntityFilter {
     //------------------------ LOGIC --------------------------
 
     @Override
-    public JavaRDD<CharSequence> provideRDD(JavaSparkContext sc, String relationsPath, String entitiesPath) {
+    public JavaRDD<CharSequence> provideRDD(JavaSparkContext sc, String relationsPath, String entitiesPath,
+            Float trustLevelThreshold) {
         try {
             String resourceLocation = System.getProperty(SYSTEM_PROPERTY_RESOURCE_LOCATION);
             if (resourceLocation != null) {

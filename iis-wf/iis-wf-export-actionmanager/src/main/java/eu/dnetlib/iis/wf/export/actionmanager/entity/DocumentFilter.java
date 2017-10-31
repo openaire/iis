@@ -23,13 +23,22 @@ public class DocumentFilter implements EntityFilter {
     //------------------------ LOGIC --------------------------
 
     @Override
-    public JavaRDD<CharSequence> provideRDD(JavaSparkContext sc, String relationsPath, String entitiesPath) {
+    public JavaRDD<CharSequence> provideRDD(JavaSparkContext sc, String relationsPath, String entitiesPath,
+            Float trustLevelThreshold) {
         
         JavaRDD<DocumentToProject> documentToProject = avroLoader.loadJavaRDD(sc, relationsPath, DocumentToProject.class);
         
         JavaRDD<DocumentText> documentText = avroLoader.loadJavaRDD(sc, entitiesPath, DocumentText.class);
 
-        JavaPairRDD<CharSequence, Object> dedupedDocumentIdToBlank = documentToProject.mapToPair(x -> new Tuple2<>(x.getDocumentId(), null)).distinct();
+        JavaRDD<DocumentToProject> documentToProjectFiltered;
+
+        if (trustLevelThreshold != null) {
+            documentToProjectFiltered = documentToProject.filter(x -> x.getConfidenceLevel() >= trustLevelThreshold);    
+        } else {
+            documentToProjectFiltered = documentToProject;
+        }
+        
+        JavaPairRDD<CharSequence, Object> dedupedDocumentIdToBlank = documentToProjectFiltered.mapToPair(x -> new Tuple2<>(x.getDocumentId(), null)).distinct();
 
         JavaPairRDD<CharSequence, CharSequence> documentIdToText = documentText.mapToPair(x -> new Tuple2<>(x.getId(), x.getText()));
         

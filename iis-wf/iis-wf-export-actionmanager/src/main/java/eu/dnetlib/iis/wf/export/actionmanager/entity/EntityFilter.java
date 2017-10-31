@@ -16,7 +16,9 @@ public interface EntityFilter {
      * @param sc spark context 
      * @param relationsPath path pointing to entity relations
      * @param entitiesPath path pointing to entities to be filtered
+     * @param trustLevelThreshold relation trust level threshold
      * @return
      */
-    JavaRDD<CharSequence> provideRDD(JavaSparkContext sc, String relationsPath, String entitiesPath);
+    JavaRDD<CharSequence> provideRDD(JavaSparkContext sc, String relationsPath, String entitiesPath,
+            Float trustLevelThreshold);
 }

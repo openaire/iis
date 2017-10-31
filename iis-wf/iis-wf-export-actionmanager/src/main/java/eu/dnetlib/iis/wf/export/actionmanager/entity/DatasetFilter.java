@@ -23,13 +23,22 @@ public class DatasetFilter implements EntityFilter {
     //------------------------ LOGIC --------------------------
 
     @Override
-    public JavaRDD<CharSequence> provideRDD(JavaSparkContext sc, String relationsPath, String entitiesPath) {
+    public JavaRDD<CharSequence> provideRDD(JavaSparkContext sc, String relationsPath, String entitiesPath,
+            Float trustLevelThreshold) {
         
         JavaRDD<DocumentToDataSet> documentToDataset = avroLoader.loadJavaRDD(sc, relationsPath, DocumentToDataSet.class);
         
         JavaRDD<DocumentText> datasetText = avroLoader.loadJavaRDD(sc, entitiesPath, DocumentText.class);
 
-        JavaPairRDD<CharSequence, Object> dedupedDatasetIdToBlank = documentToDataset.mapToPair(x -> new Tuple2<>(x.getDatasetId(), null)).distinct();
+        JavaRDD<DocumentToDataSet> documentToDatasetFiltered;
+
+        if (trustLevelThreshold != null) {
+            documentToDatasetFiltered = documentToDataset.filter(x -> x.getConfidenceLevel() >= trustLevelThreshold);    
+        } else {
+            documentToDatasetFiltered = documentToDataset;
+        }
+        
+        JavaPairRDD<CharSequence, Object> dedupedDatasetIdToBlank = documentToDatasetFiltered.mapToPair(x -> new Tuple2<>(x.getDatasetId(), null)).distinct();
 
         JavaPairRDD<CharSequence, CharSequence> datasetIdToText = datasetText.mapToPair(x -> new Tuple2<>(x.getId(), x.getText()));
         

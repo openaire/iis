@@ -17,6 +17,11 @@
             It also defines ${output_root} subdirectory name where all dataset related actions are exported.</description>
         </property>
         <property>
+            <name>trust_level_threshold_document_referencedDatasets</name>
+            <value>$UNDEFINED$</value>
+            <description>document_referencedDatasets trust level threshold</description>
+        </property>
+        <property>
             <name>output_root</name>
             <description>root directory for storing ${action_set_id_entity_dataset} subdirectory with exported datasets</description>
         </property>
@@ -79,6 +84,7 @@
             <arg>-counterName=export.entity.dataset.total</arg>
 
             <arg>-actionSetId=${action_set_id_entity_dataset}</arg>
+            <arg>-trustLevelThreshold=${trust_level_threshold_document_referencedDatasets}</arg>
 
             <arg>-inputRelationAvroPath=${input_document_to_dataset}</arg>
             <arg>-inputEntityAvroPath=${input_dataset_text}</arg>

@@ -178,6 +178,10 @@
                     <value>document-entity-id</value>
                 </property>
                 <property>
+                    <name>trust_level_threshold_document_referencedProjects</name>
+                    <value>0.1</value>
+                </property>
+                <property>
                     <name>output_root</name>
                     <value>${workingDir}/output</value>
                 </property>
