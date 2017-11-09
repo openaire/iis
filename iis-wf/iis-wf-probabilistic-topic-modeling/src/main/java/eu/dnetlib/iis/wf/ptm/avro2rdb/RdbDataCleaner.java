@@ -26,13 +26,13 @@ import eu.dnetlib.iis.common.java.porttype.PortType;
 public class RdbDataCleaner implements Process {
 
 
-    private static final String PARAM_TABLE_NAMES_CSV = "tableNamesCSV";
+    protected static final String PARAM_TABLE_NAMES_CSV = "tableNamesCSV";
     
-    private static final String PARAM_RDB_URL = "rdbUrl";
+    protected static final String PARAM_RDB_URL = "rdbUrl";
     
-    private static final String PARAM_RDB_USERNAME = "rdbUsername";
+    protected static final String PARAM_RDB_USERNAME = "rdbUsername";
     
-    private static final String PARAM_RDB_PASSWORD = "rdbPassword";
+    protected static final String PARAM_RDB_PASSWORD = "rdbPassword";
     
     private static final String VALID_TABLE_NAME_REGEX = "^[a-zA-Z_][a-zA-Z0-9_]*$";
 
@@ -55,7 +55,7 @@ public class RdbDataCleaner implements Process {
         
         for (String tableName : tableNames) {
             if (!isTableNameValid(tableName)) {
-                throw new Exception("invalid table name: " + tableName);
+                throw new RuntimeException("invalid table name: " + tableName);
             }
         }
         
@@ -76,15 +76,15 @@ public class RdbDataCleaner implements Process {
     public Map<String, PortType> getOutputPorts() {
         return Collections.emptyMap();
     }
+
+    protected Connection connect(String rdbUrl, String rdbUsername, String rdbPassword) throws SQLException {
+        return DriverManager.getConnection(rdbUrl, rdbUsername, rdbPassword);
+    }
     
     // -------------------------------- PRIVATE ----------------------------------------
 
     private static boolean isTableNameValid(String tableName) throws Exception {
         return tableName.matches(VALID_TABLE_NAME_REGEX);
-    }
-    
-    private Connection connect(String rdbUrl, String rdbUsername, String rdbPassword) throws SQLException {
-        return DriverManager.getConnection(rdbUrl, rdbUsername, rdbPassword);
     }
     
 }

@@ -16,6 +16,7 @@ import eu.dnetlib.iis.common.java.Process;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.ptm.service.Command;
 import eu.dnetlib.ptm.service.JobStatus;
+import eu.dnetlib.ptm.service.PtmService;
 import eu.dnetlib.ptm.service.ExecutionReport;
 
 /**
@@ -27,17 +28,17 @@ import eu.dnetlib.ptm.service.ExecutionReport;
 public class PtmPhaseExecutor implements Process {
 
     
-    private static final String PTM_PARAM_PREFIX = "ptm.";
+    protected static final String PTM_PARAM_PREFIX = "ptm.";
     
-    private static final String CHECK_STATUS_INTERVAL_SECS_PARAM = "checkStatusIntevalSecs";
+    protected static final String CHECK_STATUS_INTERVAL_SECS_PARAM = "checkStatusIntevalSecs";
     
-    private static final String SERVICE_LOCATION_PARAM = "ptmServiceLocation";
+    protected static final String SERVICE_LOCATION_PARAM = "ptmServiceLocation";
     
-    private static final String PHASE_PARAM = "phase";
+    protected static final String PHASE_PARAM = "phase";
 
-    private static final String PHASE_NAME_ANNOTATE = "annotate";
+    protected static final String PHASE_NAME_ANNOTATE = "annotate";
     
-    private static final String PHASE_NAME_TOPIC_MODELING = "topic-modeling";
+    protected static final String PHASE_NAME_TOPIC_MODELING = "topic-modeling";
 
     private static final int DEFAULT_CHECK_STATUS_INTERVAL_SECS = 60;
     
@@ -57,7 +58,7 @@ public class PtmPhaseExecutor implements Process {
         long checkStatusInterval = parameters.containsKey(CHECK_STATUS_INTERVAL_SECS_PARAM)
                 ? Integer.parseInt(parameters.get(CHECK_STATUS_INTERVAL_SECS_PARAM)) * 1000 : DEFAULT_CHECK_STATUS_INTERVAL_SECS * 1000;
         
-        PtmServiceFacade serviceFacade = new PtmServiceFacade(serviceLocation);
+        PtmService serviceFacade = buildServiceFacade(serviceLocation);
                 
         String jobId;
                 
@@ -99,6 +100,10 @@ public class PtmPhaseExecutor implements Process {
     @Override
     public Map<String, PortType> getOutputPorts() {
         return Collections.emptyMap();
+    }
+    
+    protected PtmService buildServiceFacade(String serviceLocation) {
+        return new PtmServiceFacade(serviceLocation);
     }
     
     // ------------------------------- PRIVATE ----------------------------------

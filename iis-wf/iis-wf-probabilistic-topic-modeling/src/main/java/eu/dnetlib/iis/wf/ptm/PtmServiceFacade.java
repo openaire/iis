@@ -27,7 +27,7 @@ public class PtmServiceFacade implements PtmService {
     /**
      * Restful template to be used for communication.
      */
-    private final RestTemplate restTemplate;
+    private RestTemplate restTemplate;
     
     
     /**
@@ -92,9 +92,14 @@ public class PtmServiceFacade implements PtmService {
                 strBuilder.append("}&");
             }
             strBuilder.deleteCharAt(strBuilder.length()-1);
+            
+            return restTemplate.getForObject(strBuilder.toString(), String.class, params);
+            
+        } else {
+            return restTemplate.getForObject(strBuilder.toString(), String.class);
         }
         
-        return restTemplate.getForObject(strBuilder.toString(), String.class, params);
+        
     }
 
 
