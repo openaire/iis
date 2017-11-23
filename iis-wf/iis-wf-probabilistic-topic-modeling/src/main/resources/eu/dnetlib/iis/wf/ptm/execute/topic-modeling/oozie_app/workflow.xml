@@ -19,6 +19,10 @@
             <name>sqlConnectionString</name>
             <description>jdbc connection string pointing to rdb database</description>
         </property>
+        <property>
+            <name>experimentId</name>
+            <description>experiment identifier</description>
+        </property>
 	</parameters>
 
     <global>
@@ -51,6 +55,7 @@
             
             <arg>-Pptm.NumOfThreads=${numOfThreads}</arg>
             <arg>-Pptm.SQLConnectionString=${sqlConnectionString}</arg>
+            <arg>-Pptm.ExperimentId=${experimentId}</arg>
             
 			<capture-output />
 		</java>
