@@ -203,8 +203,10 @@ def textacknowledgmentsstem(txt,span = 10,maxlen = 3,pattern = r'(?:support)|(?:
 textacknowledgmentsstem.registered=True
 
 
+# without tara: pattern=r'(?:\bthank)|(?:\barticl)|(?:\bpmc\b)|(?:\bsupport)|(?:\bsampl)|(?:\bexpedit)|(?:\bfoundat)|(?:\bresearch)|(?:\bhelp)|(?:\binstitut)|(?:\bmarin)|(?:\bnation)|(?:\backnowledg)|(?:\bcomment)|(?:\bcontribut)|(?:\bfund)|(?:\bgrate)|(?:\bprovid)|(?:\bproject)|(?:\bpossibl)|(?:\bscienc)|(?:author)|(?:grant)|(?:fellowship)|(?:program)|(?:programm)|(?:suggest)|(?:taraexpedit)|(?:université)|(?:valuabl)|(?:without)|(?:pmc articles)|(?:oceans expedition)|(?:oceans consortium)|(?:anonymous reviewers)|(?:article contribution)|(?:environment foundation)|(?:people sponsors)|(?:projects? poseidon)|(?:wish thank)|(?:commitment following)|(?:continuous support)|(?:data analysis)|(?:exist without)|(?:tara girus)|(?:keen thank)|(?:oceans taraexpeditions)|(?:possible thanks)|(?:sponsors made)|(?:technical assistance)|(?:thank commitment)|(?:without continuous)'
+# with tara: pattern=r'(?:\bthank)|(?:\btara\b)|(?:\barticl)|(?:\bocean\b)|(?:\bpmc\b)|(?:\bsupport)|(?:\bsampl)|(?:\bexpedit)|(?:\bfoundat)|(?:\bresearch)|(?:\bhelp)|(?:\binstitut)|(?:\bmarin)|(?:\bnation)|(?:\backnowledg)|(?:\bcomment)|(?:\bcontribut)|(?:\bfund)|(?:\bgrate)|(?:\bprovid)|(?:\bproject)|(?:\bpossibl)|(?:\bscienc)|(?:author)|(?:grant)|(?:fellowship)|(?:program)|(?:programm)|(?:suggest)|(?:taraexpedit)|(?:université)|(?:valuabl)|(?:without)|(?:pmc articles)|(?:tara oceans)|(?:oceans expedition)|(?:oceans consortium)|(?:anonymous reviewers)|(?:article contribution)|(?:environment foundation)|(?:people sponsors)|(?:projects? poseidon)|(?:wish thank)|(?:commitment following)|(?:continuous support)|(?:data analysis)|(?:exist without)|(?:tara girus)|(?:tara schooner)|(?:keen thank)|(?:oceans taraexpeditions)|(?:possible thanks)|(?:sponsors made)|(?:technical assistance)|(?:thank commitment)|(?:without continuous)'
 def textacknowledgmentstara(txt, span=13, maxlen=3,
-                        pattern=r'(?:\bthank)|(?:\btara\b)|(?:\barticl)|(?:\bocean\b)|(?:\bpmc\b)|(?:\bsupport)|(?:\bsampl)|(?:\bexpedit)|(?:\bfoundat)|(?:\bresearch)|(?:\bhelp)|(?:\binstitut)|(?:\bmarin)|(?:\bnation)|(?:\backnowledg)|(?:\bcomment)|(?:\bcontribut)|(?:\bfund)|(?:\bgrate)|(?:\bprovid)|(?:\bproject)|(?:\bpossibl)|(?:\bscienc)|(?:author)|(?:grant)|(?:fellowship)|(?:program)|(?:programm)|(?:suggest)|(?:taraexpedit)|(?:université)|(?:valuabl)|(?:without)|(?:pmc articles)|(?:tara oceans)|(?:oceans expedition)|(?:oceans consortium)|(?:anonymous reviewers)|(?:article contribution)|(?:environment foundation)|(?:people sponsors)|(?:projects? poseidon)|(?:wish thank)|(?:commitment following)|(?:continuous support)|(?:data analysis)|(?:exist without)|(?:tara girus)|(?:tara schooner)|(?:keen thank)|(?:oceans taraexpeditions)|(?:possible thanks)|(?:sponsors made)|(?:technical assistance)|(?:thank commitment)|(?:without continuous)'):
+                            pattern=r'(?:\bthank)|(?:\bpmc\b)|(?:\bsupport)|(?:\bsampl)|(?:\bfoundat)|(?:\bresearch)|(?:\bhelp)|(?:\binstitut)|(?:\bnation)|(?:\backnowledg)|(?:\bcomment)|(?:\bcontribut)|(?:\bfund)|(?:\bgrate)|(?:\bprovid)|(?:\bproject)|(?:\bpossibl)|(?:\bscienc)|(?:author)|(?:grant)|(?:fellowship)|(?:program)|(?:suggest)|(?:université)|(?:valuabl)|(?:without)|(?:pmc articles)|(?:oceans consortium)|(?:anonymous reviewers)|(?:article contribution)|(?:environment foundation)|(?:people sponsors)|(?:projects? poseidon)|(?:wish thank)|(?:commitment following)|(?:continuous support)|(?:data analysis)|(?:exist without)|(?:keen thank)|(?:possible thanks)|(?:sponsors made)|(?:technical assistance)|(?:thank commitment)|(?:without continuous)'):
     """
     .. function:: textacknowledgments(text, span = 10, maxlen = 5, pattern = (\b|_)(1|2)\d{3,3}(\b|_))
 
@@ -227,11 +229,31 @@ def textacknowledgmentstara(txt, span=13, maxlen=3,
     <BLANKLINE>
     """
 
+    # clean text from \r\n
     exp = re.sub('\r\n', '\n', txt)
+    # dedublicate spaces
     exp = reduce_spaces.sub(' ', strip_remove_newlines.sub('', exp))
 
+    # if text is small, return it
     if exp.count(' ') < span * 10:
         return exp
+
+    # locate Acknowledgment statement manually
+    first = "(?i)Acknowledge?ments?"
+    last = "References"
+    start = -1
+    end = -1
+    try:
+        start = [(m.start(0), m.end(0)) for m in re.finditer(first, exp)][-1][0]
+        end = exp.rindex(last, start)
+        return exp[start:end]
+    except Exception:
+        pass
+    if start != -1:
+        if end != -1:
+            return exp[start:end]
+        else:
+            return exp[start:]
 
     acknowledgments = []
     origwords = exp.split(' ')

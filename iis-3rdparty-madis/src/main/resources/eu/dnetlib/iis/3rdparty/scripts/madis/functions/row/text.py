@@ -6,7 +6,7 @@ import unicodedata
 import hashlib
 import zlib
 import itertools
-from collections import deque
+from collections import deque, Counter
 from lib import jopts
 
 # Increase regular expression cache
@@ -445,6 +445,44 @@ def regexprfindall(*args):
     return jopts.tojstrict(re.findall(args[0], unicode(args[1]),re.UNICODE))
 
 regexprfindall.registered=True
+
+def regexprcountfindall(*args):
+    """
+    .. function:: regexprcountfindall(pattern,text)
+
+    This function returns *all* matches with their counts of *pattern* in text.
+
+    Examples:
+
+    >>> sql("select regexprcountfindall('(?:one)|(?:two)', 'one two two')")
+    regexprfindall('(?:one)|(?:two)', 'one two two')
+    ----------------------------
+    {"two": 2, "one": 1}
+
+    >>> sql("select regexprcountfindall('\w+', 'one two three')")
+    regexprcountfindall('\w+', 'one two three')
+    --------------------------------------
+    {"one": 1, "three": 1, "two": 1}
+    """
+
+    if len(args) != 2:
+        raise functions.OperatorError('regexprcountfindall', 'Two parameters should be provided')
+
+    matches = dict(Counter(re.findall(args[0], unicode(args[1]), re.UNICODE)))
+    string = "{"
+    for w in sorted(matches, key=matches.get, reverse=True):
+        string += "\"" + w + "\": " + str(matches[w]) + ", "
+
+    if string != "{":
+        return string[:-2] + "}"
+    else:
+        return None
+
+    # import json
+    # return json.dumps(dict(Counter(re.findall(args[0], unicode(args[1]), re.UNICODE))))
+
+
+regexprcountfindall.registered = True
 
 def regexprmatches(*args):
 
