@@ -26,7 +26,7 @@ create temp table output_table as
 
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min(1.49,confidence)/1.5)) as C1, docid, id, fundingclass1 from ( select docid,id,max(confidence) as confidence, docid, id,  fundingclass1 from ( select 
 case when keywordmatch then 1 else case when txt_match_cnt and txt_match_cnt>3 then 0.9 else generalmatch*0.2 end end as confidence, docid, 
-case when keywordmatch then id else case when txt_match_cnt and txt_match_cnt>3 then id else var('tara_unidentified') end end as id, fundingclass1
+case when keywordmatch then id else var('tara_unidentified') end as id, fundingclass1
 from (
 unindexed select 
 case when tarakeywords="" then 0 else regexprmatches('\b'||tarakeywords||'\b', context) end as keywordmatch,
@@ -42,7 +42,7 @@ setschema 'docid,ack,full_txt_match,full_txt_match_cnt' select docid, ack, key a
 from (
 setschema 'docid,ack,key,val' select docid, ack, case when matched is not null then jdictsplitv(matched) else jdictsplitv('{"none": "0"}') end
 from (
-setschema 'docid,matched,ack' select c1, regexprcountfindall("(?:tara arctic)|(?:tara transpolar drift)|(?:tara oceans)|(?:tara-oceans)|(?:tara med)|(?:tara pacific)|(?:tara-pacific)", lower(keywords(C2))) as matched, keywords(textacknowledgmentstara(C2)) as ack from pubs where c2 is not null
+setschema 'docid,matched,ack' select c1, regexprcountfindall('(?:\btara arctic\b)|(?:\btara transpolar drift\b)|(?:\btara oceans\b)|(?:\btara-oceans\b)|(?:\btara med\b)|(?:\btara pacific\b)|(?:\btara-pacific\b)', lower(keywords(C2))) as matched, keywords(textacknowledgmentstara(C2)) as ack from pubs where c2 is not null
 )
 ) group by docid
 )
@@ -50,7 +50,7 @@ setschema 'docid,matched,ack' select c1, regexprcountfindall("(?:tara arctic)|(?
 ), grants
 where fundingclass1='TARA' and var('tara_unidentified')
 ))
-group by docid having confidence>0.2)
+group by docid having confidence>0)
 
 
 union all
