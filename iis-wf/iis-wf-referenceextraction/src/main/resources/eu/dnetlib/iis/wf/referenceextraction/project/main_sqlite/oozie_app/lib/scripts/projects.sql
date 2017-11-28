@@ -26,7 +26,7 @@ create temp table output_table as
 
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min(1.49,confidence)/1.5)) as C1, docid, id, fundingclass1 from ( select docid,id,max(confidence) as confidence, docid, id,  fundingclass1 from ( select 
 case when keywordmatch then 1 else case when txt_match_cnt and txt_match_cnt>3 then 0.9 else generalmatch*0.2 end end as confidence, docid, 
-case when keywordmatch then id else var('tara_unidentified') end as id, fundingclass1
+case when keywordmatch then id else case when txt_match_cnt and txt_match_cnt>3 then id else var('tara_unidentified') end end as id, fundingclass1
 from (
 unindexed select 
 case when tarakeywords="" then 0 else regexprmatches('\b'||tarakeywords||'\b', context) end as keywordmatch,
