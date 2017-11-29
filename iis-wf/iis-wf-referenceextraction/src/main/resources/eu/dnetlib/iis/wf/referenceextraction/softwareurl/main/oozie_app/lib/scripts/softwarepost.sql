@@ -28,5 +28,5 @@ case
         when repo='GitHub' then regexpr('<link rel="canonical" href="(.+)"', source)
         when repo='SourceForge' then regexpr('<meta property="og:url" content="(.+)"/>', source)
 end as url
-from (setschema 'id,match,repo,source' select jsonpath(c1, '$.id', '$.match','$.repo','$.source') from stdinput())));
+from (setschema 'id,match,repo,source' select jsonpath(c1, '$.documentId', '$.softwareUrl','$.repositoryName','$.Source') from stdinput())));
 
