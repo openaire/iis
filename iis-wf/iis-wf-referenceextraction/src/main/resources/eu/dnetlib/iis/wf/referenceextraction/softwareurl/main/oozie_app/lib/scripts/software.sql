@@ -1,6 +1,12 @@
-select jdict('documentId', id, 'softwareUrl', match) from (
-select distinct id,match from (
-select id,match
+select jdict('documentId', id, 'softwareUrl', match,'repositoryName',repo,'confidenceLevel',0.8) from (
+select distinct id,match,repo from (
+select id,match,
+case
+when regexprmatches("https*\:\/\/github.com",match) then "GitHub"
+when regexprmatches("https*\:\/\/bitbucket.org\/",match) then "Bitbucket"
+when regexprmatches("https*\:\/\/code\.google\.com",match) then "Google Code"
+when regexprmatches("https*\:\/\/sourceforge\.net",match) then "SourceForge"
+end as repo
 from
 (select id, regexpr("&gt",match,"") as match from (select distinct id,regexpr("\W+$",match,"") as match
  from (select id,jfilterempty(jset(regexpr("(http.+)",middle))) as match from
