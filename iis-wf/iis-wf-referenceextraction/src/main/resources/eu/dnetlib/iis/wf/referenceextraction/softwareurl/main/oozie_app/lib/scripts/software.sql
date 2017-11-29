@@ -1,4 +1,4 @@
-select jdict('documentId', id, 'softwareUrl', match,'repositoryName',repo,'confidenceLevel',0.8) from (
+select jdict('documentId', id, 'softwareUrl', match,'repositoryName',repo) from (
 select distinct id,match,repo from (
 select id,match,
 case
