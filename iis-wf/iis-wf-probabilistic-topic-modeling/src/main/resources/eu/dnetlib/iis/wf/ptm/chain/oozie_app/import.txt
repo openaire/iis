@@ -1,0 +1,5 @@
+## This is a classpath-based import file (this header is required)
+rdbcleaner classpath eu/dnetlib/iis/wf/ptm/rdbcleaner/oozie_app
+avro2rdb classpath eu/dnetlib/iis/wf/ptm/avro2rdb/oozie_app
+annotate classpath eu/dnetlib/iis/wf/ptm/execute/annotate/oozie_app
+topic-modeling classpath eu/dnetlib/iis/wf/ptm/execute/topic-modeling/oozie_app

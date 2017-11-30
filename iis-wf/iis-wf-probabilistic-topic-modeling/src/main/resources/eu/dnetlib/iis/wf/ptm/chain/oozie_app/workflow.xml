@@ -1,0 +1,246 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="ptm_chain">
+
+    <parameters>
+        <property>
+            <name>ptmServiceLocation</name>
+            <description>remote RESTful PTM service location</description>
+        </property>
+        <property>
+            <name>spotlightServiceLocation</name>
+            <description>dbpedia Spotlight service location relative to PTM service location, 
+            localhost can be used when both are deployed on the same machine.</description>
+        </property>
+        <property>
+            <name>experimentId</name>
+            <value>iis_${wf:user()}_${wf:id()}</value>
+            <description>topic modeling phase experiment identifier</description>
+        </property>
+
+        <property>
+            <name>input_meta</name>
+            <description>input eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal records</description>
+        </property>
+        <property>
+            <name>input_text</name>
+            <description>input eu.dnetlib.iis.metadataextraction.schemas.DocumentText records</description>
+        </property>
+        <property>
+            <name>input_project</name>
+            <description>input eu.dnetlib.iis.importer.schemas.Project records</description>
+        </property>
+        <property>
+            <name>input_document_to_project</name>
+            <description>input eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject records</description>
+        </property>
+        <property>
+            <name>input_document_to_pdb</name>
+            <description>input eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId records with references to protein databank codes</description>
+        </property>
+        <property>
+            <name>input_citation</name>
+            <description>input eu.dnetlib.iis.common.citations.schemas.Citation records</description>
+        </property>
+
+        <property>
+            <name>confidenceLevelCitationThreshold</name>
+            <description>confidence level threshold related to inferred matched internal citations</description>
+        </property>
+        <property>
+            <name>confidenceLevelDocumentToProjectThreshold</name>
+            <description>confidence level threshold related to inferred project relations</description>
+        </property>
+        <property>
+            <name>confidenceLevelDocumentToPdbThreshold</name>
+            <description>confidence level threshold related to inferred protein databank codes</description>
+        </property>
+        <property>
+            <name>fundingClassWhitelist</name>
+            <description>white list regex accepting fundingClass field values from project datastore</description>
+        </property>
+
+        <property>
+            <name>output_database_url</name>
+            <description>relation database url, where data should be exported</description>
+        </property>
+        <property>
+            <name>output_database_username</name>
+            <description>database user name</description>
+        </property>
+        <property>
+            <name>output_database_password</name>
+            <description>password required to access database</description>
+        </property>
+        
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        
+        <property>
+            <name>avro2rdbSparkExecutorMemory</name>
+            <description>memory for individual executor</description>
+        </property>
+        
+        <property>
+            <name>avro2rdbSparkNumExecutors</name>
+            <description>total number of executors</description>
+        </property>
+        <property>
+            <name>avro2rdbSparkExecutorCores</name>
+            <description>number of cores used by single executor</description>
+        </property>
+        <property>
+            <name>avro2rdbSparkExecutorOverhead</name>
+            <description>The amount of off heap memory (in megabytes) to be allocated for the executor</description>
+        </property>
+        <property>
+            <name>avro2rdbSparkDriverMemory</name>
+            <description>memory for driver process</description>
+        </property>
+    </parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+            <property>
+                <name>sqlConnectionString</name>
+                <value>${output_database_url}?user=${output_database_username}&amp;password=${output_database_password}&amp;ssl=false</value>
+            </property>
+        </configuration>
+    </global>
+    
+    <start to="rdbcleaner" />
+
+    <action name="rdbcleaner">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/rdbcleaner</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>rdbUrl</name>
+                    <value>${output_database_url}</value>
+                </property>
+                <property>
+                    <name>rdbUsername</name>
+                    <value>${output_database_username}</value>
+                </property>
+                <property>
+                    <name>rdbPassword</name>
+                    <value>${output_database_password}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="avro2rdb" />
+        <error to="fail" />
+    </action>
+    
+    <action name="avro2rdb">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/avro2rdb</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>sparkExecutorMemory</name>
+                    <value>${avro2rdbSparkExecutorMemory}</value>
+                </property>
+                <property>
+                    <name>sparkNumExecutors</name>
+                    <value>${avro2rdbSparkNumExecutors}</value>
+                </property>
+                <property>
+                    <name>sparkExecutorCores</name>
+                    <value>${avro2rdbSparkExecutorCores}</value>
+                </property>
+                <property>
+                    <name>sparkExecutorOverhead</name>
+                    <value>${avro2rdbSparkExecutorOverhead}</value>
+                </property>
+                <property>
+                    <name>sparkDriverMemory</name>
+                    <value>${avro2rdbSparkDriverMemory}</value>
+                </property>
+                <!-- all the other properties are autmatically propagated -->
+            </configuration>
+        </sub-workflow>
+        <ok to="annotate" />
+        <error to="fail" />
+    </action>
+    
+    <action name="annotate">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/annotate</app-path>
+            <propagate-configuration />
+            <!-- all the properties are autmatically propagated -->
+        </sub-workflow>
+        <ok to="topic-modeling" />
+        <error to="fail" />
+    </action>
+    
+    <action name="topic-modeling">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/topic-modeling</app-path>
+            <propagate-configuration />
+            <!-- all the properties are autmatically propagated -->
+        </sub-workflow>
+        <ok to="counter-generator" />
+        <error to="fail" />
+    </action>
+    
+    <action name="counter-generator">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.wf.ptm.PtmCounterGenerator</arg>
+            <arg>-PexperimentId=${experimentId}</arg>
+            <arg>-PrdbUrl=${output_database_url}</arg>
+            <arg>-PrdbUsername=${output_database_username}</arg>
+            <arg>-PrdbPassword=${output_database_password}</arg>
+            <capture-output />
+        </java>
+        <ok to="report" />
+        <error to="fail" />
+    </action>
+    
+    <action name="report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
+            <arg>-Preport.processing.ptm.topic-modeling.topic=${wf:actionData('counter-generator')['TOPIC_COUNTER']}</arg>
+            <arg>-Preport.processing.ptm.topic-modeling.pubtopic=${wf:actionData('counter-generator')['PUBTOPIC_COUNTER']}</arg>
+            <arg>-Oreport=${output_report_root_path}/ptm</arg>
+        </java>
+        <ok to="report-execution-times" />
+        <error to="fail" />
+    </action>
+    
+    <action name="report-execution-times">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.OozieTimeReportGenerator</arg>
+            <arg>-PjobId=${wf:id()}</arg>
+            <arg>-PoozieServiceLoc=${oozieServiceLoc}</arg>
+            <arg>-Preport.processing.ptm.avro2rdb.duration=avro2rdb</arg>
+            <arg>-Preport.processing.ptm.annotate.duration=annotate</arg>
+            <arg>-Preport.processing.ptm.topic-modeling.duration=topic-modeling</arg>
+            <arg>-Oreport=${output_report_root_path}/ptm-execution-times</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
+    <kill name="fail">
+        <message>Unfortunately, the workflow failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+    
+    <end name="end" />
+</workflow-app>

@@ -8,7 +8,7 @@
         <property>
             <name>spotlightServiceLocation</name>
             <description>dbpedia Spotlight service location relative to PTM service location, 
-            localhost can be used when deployed on the same machine.</description>
+            localhost can be used when both are deployed on the same machine.</description>
         </property>
 		<property>
 			<name>checkStatusIntevalSecs</name>
@@ -17,7 +17,7 @@
 		</property>
         <property>
             <name>numOfThreads</name>
-            <value>4</value>
+            <value>16</value>
             <description>number of threads to be utilized by remote PTM process</description>
         </property>
         <property>
