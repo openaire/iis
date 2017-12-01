@@ -17,7 +17,7 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
  */
 public class AvroToRdbCounterReporter {
 
-    private static final String REPORT_ENTRY_PREFIX = "avro2rdb.";
+    private static final String REPORT_ENTRY_PREFIX = "processing.ptm.avro2rdb.";
     
     private static final String REPORT_ENTRY_TOTAL_SUFFIX = ".total";
     

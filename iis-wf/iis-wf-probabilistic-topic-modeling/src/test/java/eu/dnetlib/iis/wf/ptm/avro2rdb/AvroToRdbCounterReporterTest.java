@@ -67,7 +67,7 @@ public class AvroToRdbCounterReporterTest {
         ReportEntry generatedEntry = counterReporter.generateCountReportEntry(dataFrame, tableName);
         
         // assert
-        assertEquals("avro2rdb.sometable.total", generatedEntry.getKey());
+        assertEquals("processing.ptm.avro2rdb.sometable.total", generatedEntry.getKey());
         assertTrue(ReportEntryType.COUNTER == generatedEntry.getType());
         assertEquals(String.valueOf(expectedCount), generatedEntry.getValue());
     }
