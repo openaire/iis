@@ -184,11 +184,9 @@ delete from matched_undefined_wt_only where docid in (select docid from output_t
 
 delete from output_table where j2s(docid,id) in (select j2s(T.docid, T.id) from output_table S, output_table T where  S.docid = T.docid and S.id in (select id from grants where grantid in (select * from gold)) and T.id in (select id from grants where grantid in ("246686", "283595","643410")));
 
-
 create temp table secondary_output_table as 
-
-select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min(1.49,confidence)/1.5)) as C1, docid, id, fundingclass1, grantid from ( select docid,id,confidence, docid, id,  fundingclass1, grantid from ( select 
-0.8 as confidence, docid, id, fundingclass1, grantid
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min(1.49,confidence)/1.5)) as C1, docid, id, fundingclass1, grantid, context from ( select docid,id,confidence, docid, id,  fundingclass1, grantid, context from ( select 
+0.8 as confidence, docid, id, fundingclass1, grantid, context
 from (
 unindexed select docid, regexpr("(\d+)",middle) as middle, comprspaces(j2s(prev1,prev2,prev3,prev4,prev5,prev6,prev7,prev8,prev9,prev10,prev11,prev12,prev13,middle,next)) as context
 from (
@@ -197,15 +195,11 @@ from (
 WHERE fundingclass1="AFF" and (regexprmatches("[\b\s]academy of finland[\b\s]", context) or regexprmatches("[\b\s]finnish (?:(?:programme for )?cent(?:re|er)s? of excellence|national research council|funding agency|research program)[\b\s]", context) or regexprmatches("[\b\s]finnish academy[\b\s]", context)) and grantid=middle
 ) group by docid,id);
 
+delete from secondary_output_table where docid||grantid in (select docid||grantid from output_table where fundingclass1="EC") and (regexpcountwithpositions('[\b\s]fp7[\b\s-]', context) > regexpcountwithpositions('(?:[\b\s]academy of finland[\b\s])|(?:[\b\s]finnish (?:(?:programme for )?cent(?:re|er)s? of excellence|national research council|funding agency|research program)[\b\s])|(?:[\b\s]finnish academy[\b\s])', context));
 
-create temp table results as 
-select * from output_table
+
+select C1 from output_table
 union all
-select * from secondary_output_table
+select C1 from secondary_output_table
 union all
-select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8), null as docid, null as id, null as fundingclass1, null as grantid from matched_undefined_wt_only;
-
-delete from results where docid||grantid in (select docid||grantid from results where fundingclass1="EC") and fundingclass1="AFF";
-
-
-select c1 from results;
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8) from matched_undefined_wt_only;
