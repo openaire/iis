@@ -1,4 +1,9 @@
 {
+  "key": "processing.referenceExtraction.project.reference.byfunder.aff",
+  "type": "COUNTER",
+  "value": "1"
+}
+{
   "key": "processing.referenceExtraction.project.reference.byfunder.conicyt",
   "type": "COUNTER",
   "value": "1"
