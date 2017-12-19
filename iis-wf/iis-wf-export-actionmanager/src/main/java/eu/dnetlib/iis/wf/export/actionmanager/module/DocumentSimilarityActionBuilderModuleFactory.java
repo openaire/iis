@@ -150,7 +150,7 @@ public class DocumentSimilarityActionBuilderModuleFactory extends AbstractAction
             ResultResult.Builder resultResultBuilder = ResultResult.newBuilder();
             Similarity.Builder similarityBuilder = Similarity.newBuilder();
             similarityBuilder.setRelMetadata(
-                    buildRelMetadata(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_RESULT, relClass));
+                    BuilderModuleHelper.buildRelMetadata(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_RESULT, relClass));
             similarityBuilder.setSimilarity(score);
             similarityBuilder.setType(Type.STANDARD);
             resultResultBuilder.setSimilarity(similarityBuilder.build());

@@ -251,7 +251,7 @@
             <description>protein databank reference extraction output directory</description>
         </property>
         <property>
-            <name>output_document_to_software_urls</name>
+            <name>output_document_to_software_url</name>
             <description>software url reference extraction output directory</description>
         </property>
         <property>
@@ -757,34 +757,10 @@
                 </property>
                 <property>
                     <name>output</name>
-                    <value>${workingDir}/referenceextraction_software_url/output</value>
+                    <value>${output_document_to_software_url}</value>
                 </property>
             </configuration>
         </sub-workflow>
-        <ok to="transformers_export_software_url" />
-        <error to="fail" />
-    </action>
-
-    <action name="transformers_export_software_url">
-        <sub-workflow>
-            <app-path>${wf:appPath()}/transformers_export_software_url</app-path>
-            <propagate-configuration />
-            <configuration>
-                <property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/transformers_export_software_url/working_dir</value>
-                </property>
-                <property>
-                    <name>input</name>
-                    <value>${workingDir}/referenceextraction_software_url/output</value>
-                </property>
-                <property>
-                    <name>output</name>
-                    <value>${output_document_to_software_urls}</value>
-                </property>
-            </configuration>
-        </sub-workflow>
-
         <ok to="joining" />
         <error to="fail" />
     </action>
@@ -794,18 +770,18 @@
             <prepare>
                 <!-- notice: directory have to aligned with skipped action output -->
                 <delete path="${nameNode}${workingDir}/transformers_export_software_url" />
-                <delete path="${nameNode}${output_document_to_software_urls}" />
+                <delete path="${nameNode}${output_document_to_software_url}" />
                 <mkdir path="${nameNode}${workingDir}/transformers_export_software_url" />
-                <mkdir path="${nameNode}${output_document_to_software_urls}" />
+                <mkdir path="${nameNode}${output_document_to_software_url}" />
             </prepare>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
             <arg>-C{referenceextraction_software_url,
-                eu.dnetlib.iis.export.schemas.DocumentToSoftwareUrls,
+                eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta,
                 eu/dnetlib/iis/common/data/empty.json}
             </arg>
             <!-- notice: directory have to aligned with skipped action output -->
-            <arg>-Oreferenceextraction_software_url=${output_document_to_software_urls}</arg>
+            <arg>-Oreferenceextraction_software_url=${output_document_to_software_url}</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />

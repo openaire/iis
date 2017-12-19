@@ -1,12 +1,14 @@
 @namespace("eu.dnetlib.iis.referenceextraction.softwareurl.schemas")
 protocol IIS{
 
-    record DocumentToSoftwareUrl {
+    record DocumentToSoftwareUrlWithSource {
         //document ID
         string documentId;
         // software url
         string softwareUrl;
         // repository name
         string repositoryName;
+        // retrieved page source pointed by the URL
+        string source;
     }
 }

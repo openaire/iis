@@ -1,0 +1,19 @@
+@namespace("eu.dnetlib.iis.referenceextraction.softwareurl.schemas")
+protocol IIS{
+
+    record DocumentToSoftwareUrlWithMeta {
+        //document ID
+        string documentId;
+        // software url
+        string softwareUrl;
+        // repository name
+        string repositoryName;
+        
+        union { null , string } softwareTitle = null;
+        union { null , string } softwareDescription = null;
+        union { null , string } softwarePageURL = null;
+        
+        // Find more details on `confidenceLevel` constraints in eu/dnetlib/iis/README.markdown file.
+        float confidenceLevel;
+    }
+}

@@ -1,0 +1,18 @@
+{
+  "documentId": "id-30", 
+  "softwareUrl": "https://github.com/madgik/madis", 
+  "repositoryName": "GitHub", 
+  "softwareTitle": "madis", 
+  "softwareDescription": "madIS - Extensible relational DB based on SQLite", 
+  "softwarePageURL": "https://github.com/madgik/madis", 
+  "confidenceLevel": 0.8
+}
+{
+  "documentId": "id-30",
+  "softwareUrl": "https://github.com/openaire/iis",
+  "repositoryName": "GitHub",
+  "softwareTitle": "",
+  "softwareDescription": "",
+  "softwarePageURL": null,
+  "confidenceLevel": 0.8
+}

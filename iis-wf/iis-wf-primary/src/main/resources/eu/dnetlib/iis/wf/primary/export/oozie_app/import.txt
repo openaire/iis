@@ -1,3 +1,4 @@
 ## This is a classpath-based import file (this header is required)
 export_actionmanager_sequencefile classpath eu/dnetlib/iis/wf/export/actionmanager/sequencefile/oozie_app
+export_software classpath eu/dnetlib/iis/wf/export/actionmanager/entity/software/oozie_app
 export_actionmanager_entity_dataset classpath eu/dnetlib/iis/wf/export/actionmanager/entity/dataset/oozie_app

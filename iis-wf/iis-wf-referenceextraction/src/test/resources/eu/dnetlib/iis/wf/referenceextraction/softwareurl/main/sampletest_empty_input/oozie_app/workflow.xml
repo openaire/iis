@@ -63,6 +63,22 @@
                     <name>oozieLauncherQueueName</name>
                     <value>${oozieLauncherQueueName}</value>
                 </property>
+                <property>
+                    <name>oozieTopWfApplicationPath</name>
+                    <value>${oozieTopWfApplicationPath}</value>
+                </property>
+                <property>
+                    <name>projectVersion</name>
+                    <value>${projectVersion}</value>
+                </property>
+                <property>
+                    <name>webcrawlSparkExecutorMemory</name>
+                    <value>1g</value>
+                </property>
+                <property>
+                    <name>webcrawlContentRetrieverClassName</name>
+                    <value>eu.dnetlib.iis.wf.referenceextraction.softwareurl.ClasspathContentRetriever</value>
+                </property>
                 <!-- Working directory of the subworkflow -->
                 <property>
                     <name>workingDir</name>

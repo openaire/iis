@@ -1,0 +1,3 @@
+{"key":"export.entity.software.total", "type":"COUNTER", "value": "1"}
+{"key":"processing.referenceExtraction.softwareUrl.reference", "type":"COUNTER", "value": "1"}
+{"key":"processing.referenceExtraction.softwareUrl.doc", "type":"COUNTER", "value": "1"}

@@ -63,7 +63,7 @@ public class DocumentToDataSetActionBuilderModuleFactory extends AbstractActionB
         public List<AtomicAction> build(DocumentToDataSet object) throws TrustLevelThresholdExceededException {
             Oaf.Builder oafBuilder = instantiateOafBuilder(object);
             Oaf oaf = oafBuilder.build();
-            Oaf oafInverted = invertBidirectionalRelationAndBuild(oafBuilder);
+            Oaf oafInverted = BuilderModuleHelper.invertBidirectionalRelationAndBuild(oafBuilder);
             return Arrays.asList(new AtomicAction[] {
                     getActionFactory().createAtomicAction(getActionSetId(), getAgent(), 
                             object.getDocumentId().toString(), OafDecoder.decode(oaf).getCFQ(),
@@ -97,7 +97,7 @@ public class DocumentToDataSetActionBuilderModuleFactory extends AbstractActionB
             relBuilder.setTarget(currentRefId);
             ResultResult.Builder resResultBuilder = ResultResult.newBuilder();
             PublicationDataset.Builder pubDatasetBuilder = PublicationDataset.newBuilder();
-            pubDatasetBuilder.setRelMetadata(buildRelMetadata(
+            pubDatasetBuilder.setRelMetadata(BuilderModuleHelper.buildRelMetadata(
                     InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_RESULT, REL_CLASS_ISRELATEDTO));
             resResultBuilder.setPublicationDataset(pubDatasetBuilder.build());
             relBuilder.setResultResult(resResultBuilder.build());

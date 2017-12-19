@@ -86,7 +86,7 @@ public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActio
             ResultOrganization.Builder resOrgBuilder = ResultOrganization.newBuilder();
             Affiliation.Builder affBuilder = Affiliation.newBuilder();
             affBuilder.setRelMetadata(
-                    buildRelMetadata(SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_ORG, REL_CLASS_HAS_AUTHOR_INSTITUTION_OF));
+                    BuilderModuleHelper.buildRelMetadata(SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_ORG, REL_CLASS_HAS_AUTHOR_INSTITUTION_OF));
             resOrgBuilder.setAffiliation(affBuilder.build());
             relBuilder.setResultOrganization(resOrgBuilder.build());
             oafBuilder.setRel(relBuilder.build());

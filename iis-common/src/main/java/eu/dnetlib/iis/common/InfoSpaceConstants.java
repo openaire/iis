@@ -26,7 +26,9 @@ public final class InfoSpaceConstants {
     public static final String ROW_PREFIX_PROJECT = "40|";
     public static final String ROW_PREFIX_PERSON = "30|";
     public static final String ROW_PREFIX_ORGANIZATION = "20|";
+    public static final String ROW_PREFIX_DATASOURCE = "10|";
 
+    public static final String QUALIFIER_BODY_STRING = "body";
     public static final byte[] QUALIFIER_BODY;
 
     public static final String SEMANTIC_CLASS_MAIN_TITLE = "main title";
@@ -38,6 +40,7 @@ public final class InfoSpaceConstants {
     public static final String SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_RESULT = "dnet:result_result_relations";
     public static final String SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_PROJECT = "dnet:result_project_relations";
 
+    public static final String SEMANTIC_SCHEME_DNET_TITLE = "dnet:dataCite_title";
     public static final String SEMANTIC_SCHEME_DNET_TITLE_TYPOLOGIES = "dnet:title_typologies";
     public static final String SEMANTIC_SCHEME_DNET_RESULT_TYPOLOGIES = "dnet:result_typologies";
     public static final String SEMANTIC_SCHEME_DNET_PROVENANCE_ACTIONS = "dnet:provenanceActions";
@@ -63,7 +66,7 @@ public final class InfoSpaceConstants {
 
     static {
         try {
-            QUALIFIER_BODY = "body".getBytes(ENCODING_UTF8);
+            QUALIFIER_BODY = QUALIFIER_BODY_STRING.getBytes(ENCODING_UTF8);
 
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);

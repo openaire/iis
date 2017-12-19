@@ -1,0 +1,38 @@
+targetColumn=body
+targetColumnFamily=result
+targetRowKey=50|openaire____::4835133649d4a88133ebd460198d19a2
+rawSet=software-entity-actionset-id
+actionType=aac
+agent.id=iis
+agent.name=information inference service
+agent.type=service
+
+#{"kind": "entity","entity": {"type": "result","result": {"metadata": {"title": [{"value": "madis","qualifier": {"classid": "main title","classname": "main title","schemeid": "dnet:dataCite_title","schemename": "dnet:dataCite_title"}}],"description": [{"value": "madIS - Extensible relational DB based on SQLite"}],"codeRepositoryUrl": {"value": "https://github.com/madgik/madis"}},"instance": [{"hostedby": {"key": "10|openaire____::d3b7c913cd04ebfec0e9ec32cb6fd58c","value": "GitHub"},"url": ["https://github.com/madgik/madis"]}]},"id": "50|openaire____::4835133649d4a88133ebd460198d19a2"},"dataInfo": {"inferred": true,"trust": "0.72","inferenceprovenance": "iis::document_software_url","provenanceaction": {"classid": "iis","classname": "iis","schemeid": "dnet:provenanceActions","schemename": "dnet:provenanceActions"}},"lastupdatetimestamp": 1513272243880}
+
+$targetValue.kind=entity
+$targetValue.entity.type=result
+$targetValue.entity.id=50|openaire____::4835133649d4a88133ebd460198d19a2
+
+$targetValue.entity.result.metadata.titleList[0].value=madis
+$targetValue.entity.result.metadata.titleList[0].qualifier.classid=main title
+$targetValue.entity.result.metadata.titleList[0].qualifier.classname=main title
+$targetValue.entity.result.metadata.titleList[0].qualifier.schemeid=dnet:dataCite_title
+$targetValue.entity.result.metadata.titleList[0].qualifier.schemename=dnet:dataCite_title
+
+$targetValue.entity.result.metadata.descriptionList[0].value=madIS - Extensible relational DB based on SQLite
+
+$targetValue.entity.result.metadata.codeRepositoryUrl.value=https://github.com/madgik/madis
+
+$targetValue.entity.result.instanceList[0].hostedby.key=10|openaire____::d3b7c913cd04ebfec0e9ec32cb6fd58c
+$targetValue.entity.result.instanceList[0].hostedby.value=GitHub
+
+$targetValue.entity.result.instanceList[0].urlList[0]=https://github.com/madgik/madis
+
+$targetValue.dataInfo.inferred=true
+$targetValue.dataInfo.deletedbyinference=false
+$targetValue.dataInfo.trust=0.72
+$targetValue.dataInfo.inferenceprovenance=iis::document_software_url
+$targetValue.dataInfo.provenanceaction.classid=iis
+$targetValue.dataInfo.provenanceaction.classname=iis
+$targetValue.dataInfo.provenanceaction.schemeid=dnet:provenanceActions
+$targetValue.dataInfo.provenanceaction.schemename=dnet:provenanceActions

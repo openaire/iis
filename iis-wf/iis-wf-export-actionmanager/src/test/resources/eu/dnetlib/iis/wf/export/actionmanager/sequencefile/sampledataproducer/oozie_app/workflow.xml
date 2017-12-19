@@ -67,11 +67,6 @@
                 eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_pdb.json}
             </arg>
             <arg>-Odocument_pdb=${workingDir}/producer/document_pdb</arg>
-            <arg>-C{document_software_url,
-                eu.dnetlib.iis.export.schemas.DocumentToSoftwareUrls,
-                eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_software_urls.json}
-            </arg>
-            <arg>-Odocument_software_url=${workingDir}/producer/document_software_urls</arg>
             <arg>-C{matched_org,
                 eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization,
                 eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/matched_doc_organizations.json}
@@ -110,10 +105,6 @@
                 <property>
                     <name>input_document_to_pdb</name>
                     <value>${workingDir}/producer/document_pdb</value>
-                </property>
-                <property>
-                    <name>input_document_to_software_urls</name>
-                    <value>${workingDir}/producer/document_software_urls</value>
                 </property>
                 <property>
                     <name>input_document_to_document_classes</name>
@@ -165,10 +156,6 @@
                     <value>actionset-id</value>
                 </property>
                 <property>
-                    <name>action_set_id_document_software_url</name>
-                    <value>actionset-id</value>
-                </property>
-                <property>
                     <name>action_set_id_matched_doc_organizations</name>
                     <value>actionset-id</value>
                 </property>
@@ -195,7 +182,6 @@
         <path start="consumer-citations" />
         <path start="consumer-document_classes" />
         <path start="consumer-document_pdb" />
-        <path start="consumer-document_software_url" />
         <path start="consumer-document_similarity" />
         <path start="consumer-document_to_dataset" />
         <path start="consumer-document_to_project" />
@@ -231,17 +217,6 @@
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/document_pdb/actionset-id</arg>
             <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_pdb.properties</arg>
-        </java>
-        <ok to="joining" />
-        <error to="fail" />
-    </action>
-
-    <action name="consumer-document_software_url">
-        <java>
-            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-            <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
-            <arg>-Iseqfile=${workingDir}/output/document_software_url/actionset-id</arg>
-            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_software_urls.properties</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />

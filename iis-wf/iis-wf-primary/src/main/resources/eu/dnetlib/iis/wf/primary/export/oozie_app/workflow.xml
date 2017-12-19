@@ -27,7 +27,7 @@
             <value>$UNDEFINED$</value>
         </property>
         <property>
-            <name>input_document_to_software_urls</name>
+            <name>input_document_to_software_url</name>
             <value>$UNDEFINED$</value>
         </property>
         <property>
@@ -57,8 +57,12 @@
         </property>
         <!-- entities exporting modes -->
         <property>
-            <name>active_export_referenceddataset_datasets</name>
+            <name>active_export_datasets</name>
             <description>flag indicating dataset entities should be exported</description>
+        </property>
+        <property>
+            <name>active_export_software</name>
+            <description>flag indicating software entities should be exported</description>
         </property>
         <!-- action set id properties -->
         <property>
@@ -110,6 +114,11 @@
             <name>action_set_id_document_software_url</name>
             <value>$UNDEFINED$</value>
             <description>document to software url action-set identifier of exported data</description>
+        </property>
+        <property>
+            <name>action_set_id_entity_software</name>
+            <value>$UNDEFINED$</value>
+            <description>action-set identifier of exported data containing software entities</description>
         </property>
         <property>
             <name>action_set_id_entity_dataset</name>
@@ -213,15 +222,52 @@
                 </property>
             </configuration>
         </sub-workflow>
-        <ok to="decision-exporter-dataset-entities" />
+        <ok to="decision-software-exporter" />
         <error to="fail" />
+    </action>
+
+    <!-- software references and entities export section -->
+    <decision name="decision-software-exporter">
+        <switch>
+            <!-- exporting software relations and entities only when export flag is set AND input path was defined -->
+            <case to="software-exporter">${active_export_software eq "true" and input_document_to_software_url ne "$UNDEFINED$"}</case>
+            <default to="decision-exporter-dataset-entities" />
+        </switch>
+    </decision>
+    
+    <action name="software-exporter">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/export_software</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>output_root_entities</name>
+                    <value>${workingDir}/output/entities_software</value>
+                </property>
+                <property>
+                    <name>output_root_relations</name>
+                    <value>${workingDir}/output/document_software_url</value>
+                </property>
+                 <property>
+                    <name>sparkExecutorMemory</name>
+                    <value>${entityExportSparkExecutorMemory}</value>
+                </property>
+                <property>
+                    <name>sparkExecutorCores</name>
+                    <value>${entityExportSparkExecutorCores}</value>
+                </property>
+                <!-- all the other required properties are automatically propagated -->
+            </configuration>
+        </sub-workflow>
+        <ok to="decision-exporter-dataset-entities"/>
+        <error to="fail"/>
     </action>
 
     <!-- dataset entities export section -->
     <decision name="decision-exporter-dataset-entities">
         <switch>
             <!-- exporting dataset entities only when export flag is set AND input path was defined -->
-            <case to="exporter-dataset-entities">${active_export_referenceddataset_datasets eq "true" and input_document_to_dataset ne "$UNDEFINED$"}</case>
+            <case to="exporter-dataset-entities">${active_export_datasets eq "true" and input_document_to_dataset ne "$UNDEFINED$"}</case>
             <default to="distcp_output" />
         </switch>
     </decision>

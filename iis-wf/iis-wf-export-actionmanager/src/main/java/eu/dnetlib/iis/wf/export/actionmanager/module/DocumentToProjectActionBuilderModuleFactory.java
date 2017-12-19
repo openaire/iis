@@ -99,7 +99,7 @@ public class DocumentToProjectActionBuilderModuleFactory extends AbstractActionB
             relBuilder.setTarget(projectId);
             ResultProject.Builder resProjBuilder = ResultProject.newBuilder();
             Outcome.Builder outcomeBuilder = Outcome.newBuilder();
-            outcomeBuilder.setRelMetadata(buildRelMetadata(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_PROJECT,
+            outcomeBuilder.setRelMetadata(BuilderModuleHelper.buildRelMetadata(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_PROJECT,
                     REL_CLASS_ISPRODUCEDBY));
             resProjBuilder.setOutcome(outcomeBuilder.build());
             relBuilder.setResultProject(resProjBuilder.build());

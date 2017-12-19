@@ -290,8 +290,8 @@
 					<value>${workingDir}/exported/document_to_research_initiatives</value>
 				</property>
                 <property>
-                    <name>output_document_to_software_urls</name>
-                    <value>${workingDir}/exported/document_to_software_urls</value>
+                    <name>output_document_to_software_url</name>
+                    <value>${workingDir}/exported/document_to_software_url_with_meta</value>
                 </property>
 				<property>
 					<name>output_document_to_pdb</name>
@@ -380,7 +380,14 @@
                     <name>citationmatchingFuzzySparkExecutorCores</name>
                     <value>1</value>
                 </property>
-                
+                <property>
+                    <name>webcrawlContentRetrieverClassName</name>
+                    <value>eu.dnetlib.iis.wf.primary.processing.ClasspathContentRetriever</value>
+                </property>
+                <property>
+                    <name>webcrawlSparkExecutorMemory</name>
+                    <value>1g</value>
+                </property>
 			</configuration>
 		</sub-workflow>
 		<ok to="consumer" />
@@ -417,11 +424,11 @@
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_research_initiatives.json}
 			</arg>
 			<arg>-Idocument_to_research_initiatives=${workingDir}/exported/document_to_research_initiatives</arg>
-            <arg>-C{document_to_software_urls,
-                eu.dnetlib.iis.export.schemas.DocumentToSoftwareUrls,
-                eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_software_urls.json}
+            <arg>-C{document_to_software_url_with_meta,
+                eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta,
+                eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_software_url_with_meta.json}
             </arg>
-            <arg>-Idocument_to_software_urls=${workingDir}/exported/document_to_software_urls</arg>
+            <arg>-Idocument_to_software_url_with_meta=${workingDir}/exported/document_to_software_url_with_meta</arg>
 			<arg>-C{citation,
 				eu.dnetlib.iis.export.schemas.Citations,
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/citations.json}
@@ -458,9 +465,6 @@
             
             <arg>-C{citationmatchingFuzzyReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/citationmatching_fuzzy.json}</arg>
             <arg>-IcitationmatchingFuzzyReport=${workingDir}/report/citationmatching_fuzzy</arg>
-            
-            <arg>-C{docSoftwareUrlReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/doc-software-url.json}</arg>
-            <arg>-IdocSoftwareUrlReport=${workingDir}/report/doc-software-url</arg>
             
             <arg>-C{docProjectConceptReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/doc_project_concept.json}</arg>
             <arg>-IdocProjectConceptReport=${workingDir}/report/doc_project_concept</arg>

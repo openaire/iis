@@ -227,6 +227,11 @@
         </property>
         <!-- -->
         <property>
+            <name>export_action_set_id_entity_software</name>
+            <value>$UNDEFINED$</value>
+            <description>action-set identifier of exported data containing software entities</description>
+        </property>
+        <property>
             <name>export_action_set_id_entity_dataset</name>
             <value>$UNDEFINED$</value>
             <description>action-set identifier of exported data containing dataset entities</description>
@@ -567,8 +572,8 @@
                     <value>${workingDir}/exported/document_to_pdb</value>
                 </property>
                 <property>
-                    <name>output_document_to_software_urls</name>
-                    <value>${workingDir}/exported/document_to_software_urls</value>
+                    <name>output_document_to_software_url</name>
+                    <value>${workingDir}/exported/document_to_software_url</value>
                 </property>
                 <property>
                     <name>output_document_to_document_classes</name>
@@ -632,8 +637,8 @@
                     <value>${workingDir}/exported/document_to_pdb</value>
                 </property>
                 <property>
-                    <name>input_document_to_software_urls</name>
-                    <value>${workingDir}/exported/document_to_software_urls</value>
+                    <name>input_document_to_software_url</name>
+                    <value>${workingDir}/exported/document_to_software_url</value>
                 </property>
                 <property>
                     <name>input_document_to_document_classes</name>
@@ -653,8 +658,12 @@
                 </property>
                 <!-- entities exporting modes -->
                 <property>
-                    <name>active_export_referenceddataset_datasets</name>
+                    <name>active_export_datasets</name>
                     <value>${active_referenceextraction_dataset}</value>
+                </property>
+                <property>
+                    <name>active_export_software</name>
+                    <value>${active_referenceextraction_software_url}</value>
                 </property>
                 <!-- action set id properties -->
                 <property>
@@ -696,6 +705,10 @@
                 <property>
                     <name>action_set_id_document_software_url</name>
                     <value>${export_action_set_id_document_software_url}</value>
+                </property>
+                <property>
+                    <name>action_set_id_entity_software</name>
+                    <value>${export_action_set_id_entity_software}</value>
                 </property>
                 <property>
                     <name>action_set_id_entity_dataset</name>
