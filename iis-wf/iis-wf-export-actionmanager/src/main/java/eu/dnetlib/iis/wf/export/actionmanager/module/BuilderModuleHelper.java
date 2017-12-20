@@ -24,11 +24,7 @@ public class BuilderModuleHelper {
     /**
      * Trust level format.
      */
-    private final static DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getInstance(Locale.ENGLISH);
-    
-    {
-        decimalFormat.applyPattern("#.####");
-    }
+    private static final DecimalFormat decimalFormat = initailizeDecimalFormat();
     
     /**
      * Builds {@link Oaf} object for given entity and inference details.
@@ -130,6 +126,14 @@ public class BuilderModuleHelper {
      * Provides predefined decimal format to be used for representing float values as String. 
      */
     public static DecimalFormat getDecimalFormat() {
+        return decimalFormat;
+    }
+    
+    // ----------------------------------- PRIVATE ----------------------------------
+    
+    private static DecimalFormat initailizeDecimalFormat() {
+        DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getInstance(Locale.ENGLISH);
+        decimalFormat.applyPattern("#.####");
         return decimalFormat;
     }
     
