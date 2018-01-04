@@ -1,0 +1,18 @@
+@namespace("eu.dnetlib.iis.referenceextraction.tara.schemas")
+protocol IIS{
+
+    record DocumentMetadata {
+//      ID of the document, foreign key: Document.id ("document" data store)
+        string id;
+
+//      document title
+        union { null , string } title = null;
+
+//      abstract or description
+        union { null , string } abstract = null;
+        
+//      document plaintext
+        union { null , string } text = null;
+    }
+
+}

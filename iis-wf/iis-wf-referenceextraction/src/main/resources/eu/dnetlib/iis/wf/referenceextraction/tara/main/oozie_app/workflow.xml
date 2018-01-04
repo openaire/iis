@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="referenceextraction_tara_main">
+	
+	<parameters>
+		<property>
+			<name>input_document_text</name>
+			<description>input document text</description>
+		</property>
+        <property>
+            <name>input_document_metadata</name>
+            <description>input document metadata with eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal avro records</description>
+        </property>
+		<property>
+			<name>input_project</name>
+			<description>input project</description>
+		</property>
+		<property>
+			<name>output_document_to_project</name>
+			<description>output document to project</description>
+		</property>
+        <property>
+            <name>inputTransformerSparkExecutorMemory</name>
+            <description>memory for individual executor</description>
+        </property>
+        <property>
+            <name>inputTransformerSparkExecutorCores</name>
+            <description>number of cores used by single executor</description>
+        </property>
+        
+	</parameters>
+
+	<start to="input-transformer" />
+
+    <action name="input-transformer">
+    
+        <spark xmlns="uri:oozie:spark-action:0.2">
+
+            <prepare>
+                <delete path="${workingDir}/meta_with_text" />
+            </prepare>
+            
+            <master>yarn-cluster</master>
+            <mode>cluster</mode>
+            <name>tara-referenceextraction-input-transformer</name>
+
+            <class>eu.dnetlib.iis.wf.referenceextraction.tara.input.TaraReferenceExtractionInputTransformerJob</class>
+
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
+            
+            <spark-opts>--executor-memory ${inputTransformerSparkExecutorMemory} --executor-cores ${inputTransformerSparkExecutorCores}</spark-opts>
+        
+            <arg>-inputMetadata = ${input_document_metadata}</arg>
+            <arg>-inputText = ${input_document_text}</arg>
+            <arg>-output = ${workingDir}/meta_with_text</arg>
+            
+        </spark>
+        <ok to="sqlite_builder"/>
+        <error to="fail"/>
+    
+    </action>
+
+    <action name="sqlite_builder">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/sqlite_builder</app-path>
+            <propagate-configuration />
+            <configuration>
+                <!-- Working directory of the subworkflow -->
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/sqlite_builder/working_dir</value>
+                </property>
+                <property>
+                    <name>input_project</name>
+                    <value>${input_project}</value>
+                </property>
+                <property>
+                    <name>output_project_db</name>
+                    <value>${workingDir}/projects.db</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="main_sqlite"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="main_sqlite">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/main_sqlite</app-path>
+            <propagate-configuration />
+            <configuration>
+                <!-- Working directory of the subworkflow -->
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/main_sqlite/working_dir</value>
+                </property>
+                <property>
+                    <name>input_document_metadata</name>
+                    <value>${workingDir}/meta_with_text</value>
+                </property>
+                <property>
+                    <name>input_project_db</name>
+                    <value>${workingDir}/projects.db</value>
+                </property>
+                <property>
+                    <name>output_document_to_project</name>
+                    <value>${output_document_to_project}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+        			[${wf:errorMessage(wf:lastErrorNode())}]
+        		</message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

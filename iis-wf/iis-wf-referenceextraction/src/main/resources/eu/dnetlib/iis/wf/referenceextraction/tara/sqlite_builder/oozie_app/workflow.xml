@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="referenceextraction_tara_sqlite_builder">
+	
+	<parameters>
+		<property>
+			<name>input_project</name>
+			<description>input project datastore</description>
+		</property>
+		<property>
+			<name>output_project_db</name>
+			<description>output project SQLite DB path</description>
+		</property>
+	</parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
+	<start to="sqlite_builder" />
+
+    <action name="sqlite_builder">
+        <java>
+            <!-- This is simple wrapper for the Java code -->
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <!-- The business Java code that gets to be executed -->
+            <arg>eu.dnetlib.iis.wf.referenceextraction.tara.TaraProjectDBBuilder</arg>
+            <!-- All input and output ports have to be bound to paths in 
+            HDFS, working directory has to be specified as well -->
+            <arg>-Iproject=${input_project}</arg>
+            <arg>-Oproject_db=${output_project_db}</arg>
+            <arg>-PscriptLocation=scripts/buildtaradb.sql</arg>
+        </java>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+    
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+        			[${wf:errorMessage(wf:lastErrorNode())}]
+        		</message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>
