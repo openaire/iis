@@ -70,6 +70,9 @@ public class DataInfoBasedApprover implements ResultApprover, FieldApprover {
             if (skipDeletedByInference && dataInfo.getDeletedbyinference()) {
                 return false;
             }
+            if (dataInfo.getInvisible()) {
+                return false;
+            }
             if (trustLevelThreshold != null && dataInfo.getTrust() != null && !dataInfo.getTrust().isEmpty()
                     && Float.valueOf(dataInfo.getTrust()) < trustLevelThreshold) {
                 return false;

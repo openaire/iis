@@ -51,7 +51,13 @@ public class DataInfoBasedApproverTest {
 				.setProvenanceaction(Qualifier.newBuilder().build())
 				.setDeletedbyinference(false).setInferred(true)
 				.setInferenceprovenance("iis:test").build()));
-
+		// approved: no provenance blacklist defined
+		assertTrue(new DataInfoBasedApprover(null, false, null)
+		        .approve(DataInfo.newBuilder()
+		                .setProvenanceaction(Qualifier.newBuilder().build()).build()));
+		// not approved: invisible
+        assertFalse(new DataInfoBasedApprover(null, false, null).approve(
+                DataInfo.newBuilder().setProvenanceaction(Qualifier.newBuilder().build()).setInvisible(true).build()));
 	}
 
 }
