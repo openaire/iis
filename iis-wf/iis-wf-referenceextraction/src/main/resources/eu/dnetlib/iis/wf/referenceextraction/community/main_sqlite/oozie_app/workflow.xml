@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="referenceextraction_community_main_sqlite">
+	
+	<parameters>
+		<property>
+			<name>input_document_text</name>
+			<description>input document text</description>
+		</property>
+		<property>
+			<name>input_community_db</name>
+			<description>input community SQLite DB path</description>
+		</property>
+		<property>
+			<name>output_document_to_concept</name>
+			<description>output document to concept</description>
+		</property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
+            <name>output_report_relative_path</name>
+            <value>document_to_community</value>
+            <description>directory for storing report (relative to output_report_root_path)</description>
+        </property>
+	</parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
+	<start to="generate-schema" />
+
+	<action name="generate-schema">
+	    <java>
+	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
+	        <arg>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</arg>
+	        <arg>eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId</arg>
+	        <capture-output />
+	    </java>
+	    <ok to="main_sqlite" />
+	    <error to="fail" />
+	</action>
+
+    <action name="main_sqlite">
+        <map-reduce>
+            <prepare>
+                <delete path="${nameNode}${output_document_to_concept}"/>
+            </prepare>
+            <streaming>
+            	<!-- Here, we give the relative path to the script and pass it
+            	the parameters of the workflow node. The script is held
+            	in a directory having the same name as the workflow node.
+
+            	The parameters should be passed as **named** arguments. This
+            	convention of passing them as named arguments makes the code
+            	more readable/maintainable.
+            	 -->
+                <mapper>scripts/madis/mexec.py -d community.db -f scripts/communitiesextract.sql</mapper>
+            </streaming>
+            <configuration>
+            	<!-- # Standard settings for our framework -->
+                <property>
+                    <name>mapred.output.format.class</name>
+                    <value>com.cloudera.science.avro.streaming.AvroAsJSONOutputFormat</value>
+                </property>
+                <property>
+                    <name>mapred.input.format.class</name>
+                    <value>com.cloudera.science.avro.streaming.AvroAsJSONInputFormat</value>
+                </property>
+                <!-- # Custom settings for this workflow node -->
+                <!-- We do not use any reducers, so we set their number to 0 -->
+                <property>
+                    <name>mapreduce.job.reduces</name>
+                    <value>0</value>
+                </property>
+                
+                <!-- INPUT -->
+                <property>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
+                    <value>${input_document_text}</value>
+                </property>
+
+                <property>
+                    <name>input.schema.literal</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.DocumentText']}</value>
+                </property>
+
+				<!-- OUTPUT -->
+                <property>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
+                    <value>${output_document_to_concept}</value>
+                </property>          
+
+                <property>
+                    <name>output.schema.literal</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId']}</value>
+                </property>
+
+				<!-- this one is requred due to the large amount of time taken 
+					by process storing plaintexts into the database -->
+				<property>
+					<name>mapreduce.task.timeout</name>
+					<value>14400000</value>
+				</property>
+                <property>
+                    <name>oozie.action.external.stats.write</name>
+                    <value>true</value>
+                </property>
+            </configuration>
+            <file>${input_community_db}#community.db</file>
+            
+        </map-reduce>
+        <ok to="report"/>
+        <error to="fail"/>
+    </action>
+    
+    <action name="report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
+            <arg>-Preport.processing.referenceExtraction.community.reference.total=${hadoop:counters('main_sqlite')[RECORDS][MAP_OUT]}</arg>
+            <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+        			[${wf:errorMessage(wf:lastErrorNode())}]
+        		</message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

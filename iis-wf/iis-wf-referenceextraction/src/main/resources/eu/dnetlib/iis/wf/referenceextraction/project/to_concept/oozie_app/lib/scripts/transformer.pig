@@ -11,15 +11,16 @@ documentToProject = load '$input_document_to_project' using avro_load_document_t
 project = load '$input_project' using avro_load_project;
 concept = load '$input_concept' using avro_load_concept;
 
-conceptToGrant = foreach concept generate id as id, params#'$grant_id_param_name' as grantId;
-conceptToGrantFiltered = filter conceptToGrant by grantId is not null;
+conceptFlat = foreach concept generate id as id, flatten(params) as (name, value);
+conceptFlatFiltered = filter conceptFlat by (name == '$grant_id_param_name') and (value is not null);
+conceptToGrant = foreach conceptFlatFiltered generate id as id, value as grantId;
 
 joinedDoc2ProjWithProject = join documentToProject by projectId left, project by id;
-joinedDoc2ProjWithProjectAndConcept = join joinedDoc2ProjWithProject by project::projectGrantId, conceptToGrantFiltered by grantId;
+joinedDoc2ProjWithProjectAndConcept = join joinedDoc2ProjWithProject by project::projectGrantId, conceptToGrant by grantId;
 
 outputDocumentToConcept = foreach joinedDoc2ProjWithProjectAndConcept generate 
 	documentToProject::documentId as documentId,
-	conceptToGrantFiltered::id as conceptId, 
+	conceptToGrant::id as conceptId, 
 	documentToProject::confidenceLevel as confidenceLevel;
 
 outputDocumentToConceptDistinct = distinct outputDocumentToConcept; 

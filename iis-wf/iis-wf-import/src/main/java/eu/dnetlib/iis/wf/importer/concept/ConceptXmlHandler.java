@@ -1,7 +1,7 @@
 package eu.dnetlib.iis.wf.importer.concept;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Stack;
 
 import org.xml.sax.Attributes;
@@ -9,6 +9,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import eu.dnetlib.iis.importer.schemas.Concept;
+import eu.dnetlib.iis.importer.schemas.Param;
 import eu.dnetlib.iis.wf.importer.RecordReceiver;
 
 /**
@@ -91,9 +92,12 @@ public class ConceptXmlHandler extends DefaultHandler {
                 currentConceptBuilder = parentConcepts.pop();
             }
             if (!currentConceptBuilder.hasParams()) {
-                currentConceptBuilder.setParams(new HashMap<>());
+                currentConceptBuilder.setParams(new ArrayList<>());
             }
-            currentConceptBuilder.getParams().put(currentParamName, currentValue.toString().trim());
+            Param.Builder paramBuilder = Param.newBuilder();
+            paramBuilder.setName(currentParamName);
+            paramBuilder.setValue(currentValue.toString().trim());
+            currentConceptBuilder.getParams().add(paramBuilder.build());
         }
     }
 

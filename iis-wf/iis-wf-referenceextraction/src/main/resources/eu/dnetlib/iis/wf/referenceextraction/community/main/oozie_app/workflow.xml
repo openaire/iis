@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="referenceextraction_community_main">
+	
+	<parameters>
+		<property>
+			<name>input_document_text</name>
+			<description>input document text</description>
+		</property>
+		<property>
+			<name>input_concept</name>
+			<description>input containing eu.dnetlib.iis.importer.schemas.Concept avro records</description>
+		</property>
+		<property>
+			<name>output_document_to_concept</name>
+			<description>output document to concept</description>
+		</property>
+        <property>
+            <name>inputTransformerSparkExecutorMemory</name>
+            <description>memory for individual executor</description>
+        </property>
+        <property>
+            <name>inputTransformerSparkExecutorCores</name>
+            <description>number of cores used by single executor</description>
+        </property>
+        
+	</parameters>
+
+	<start to="input-transformer" />
+
+    <action name="input-transformer">
+    
+        <spark xmlns="uri:oozie:spark-action:0.2">
+
+            <prepare>
+                <delete path="${workingDir}/communities" />
+            </prepare>
+            
+            <master>yarn-cluster</master>
+            <mode>cluster</mode>
+            <name>community-referenceextraction-input-transformer</name>
+
+            <class>eu.dnetlib.iis.wf.referenceextraction.community.input.CommunityReferenceExtractionInputTransformerJob</class>
+
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
+            
+            <spark-opts>--executor-memory ${inputTransformerSparkExecutorMemory} --executor-cores ${inputTransformerSparkExecutorCores}</spark-opts>
+
+            <arg>-acknowledgementParamName=suggestedAcknowledgement</arg>
+        
+            <arg>-inputConcept=${input_concept}</arg>
+            <arg>-output=${workingDir}/communities</arg>
+            
+        </spark>
+        <ok to="sqlite_builder"/>
+        <error to="fail"/>
+    
+    </action>
+
+    <action name="sqlite_builder">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/sqlite_builder</app-path>
+            <propagate-configuration />
+            <configuration>
+                <!-- Working directory of the subworkflow -->
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/sqlite_builder/working_dir</value>
+                </property>
+                <property>
+                    <name>input_community</name>
+                    <value>${workingDir}/communities</value>
+                </property>
+                <property>
+                    <name>output_community_db</name>
+                    <value>${workingDir}/communities.db</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="main_sqlite"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="main_sqlite">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/main_sqlite</app-path>
+            <propagate-configuration />
+            <configuration>
+                <!-- Working directory of the subworkflow -->
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/main_sqlite/working_dir</value>
+                </property>
+                <property>
+                    <name>input_document_text</name>
+                    <value>${input_document_text}</value>
+                </property>
+                <property>
+                    <name>input_community_db</name>
+                    <value>${workingDir}/communities.db</value>
+                </property>
+                <property>
+                    <name>output_document_to_concept</name>
+                    <value>${output_document_to_concept}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+        			[${wf:errorMessage(wf:lastErrorNode())}]
+        		</message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

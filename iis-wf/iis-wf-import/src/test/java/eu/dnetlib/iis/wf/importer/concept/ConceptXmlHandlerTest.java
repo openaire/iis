@@ -1,10 +1,12 @@
 package eu.dnetlib.iis.wf.importer.concept;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -18,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.dnetlib.iis.importer.schemas.Concept;
+import eu.dnetlib.iis.importer.schemas.Param;
 import eu.dnetlib.iis.wf.importer.RecordReceiver;
 
 /**
@@ -66,25 +69,65 @@ public class ConceptXmlHandlerTest {
         assertEquals("fet-fp7::open::301::284566", concept.getId());
         assertEquals("Quantum Propagating Microwaves in Strongly Coupled Environments", concept.getLabel());
         assertEquals(3, concept.getParams().size());
-        assertEquals("284566", concept.getParams().get("CD_PROJECT_NUMBER"));
-        assertEquals("PROMISCE", concept.getParams().get("CD_ACRONYM"));
-        assertEquals("FP7", concept.getParams().get("CD_FRAMEWORK"));
+
+        List<CharSequence> paramValues = getParamValues("CD_PROJECT_NUMBER", concept.getParams());
+        assertEquals(1, paramValues.size());
+        assertEquals("284566", paramValues.get(0));
+        
+        paramValues = getParamValues("CD_ACRONYM", concept.getParams());
+        assertEquals(1, paramValues.size());
+        assertEquals("PROMISCE", paramValues.get(0));
+        
+        paramValues = getParamValues("CD_FRAMEWORK", concept.getParams());
+        assertEquals(1, paramValues.size());
+        assertEquals("FP7", paramValues.get(0));
         
         concept = conceptCaptor.getAllValues().get(1);
         assertEquals("fet-fp7::open::301::284584", concept.getId());
         assertEquals("Quantum Interferometry with Bose-Einstein Condensates", concept.getLabel());
         assertEquals(2, concept.getParams().size());
-        assertEquals("284584", concept.getParams().get("CD_PROJECT_NUMBER"));
-        assertEquals("FP7", concept.getParams().get("CD_FRAMEWORK"));
+        
+        paramValues = getParamValues("CD_PROJECT_NUMBER", concept.getParams());
+        assertEquals(1, paramValues.size());
+        assertEquals("284584", paramValues.get(0));
+        
+        paramValues = getParamValues("CD_FRAMEWORK", concept.getParams());
+        assertEquals(1, paramValues.size());
+        assertEquals("FP7", paramValues.get(0));
         
         concept = conceptCaptor.getAllValues().get(2);
         assertEquals("fet-fp7::open::301", concept.getId());
         assertEquals("Challenging current thinking", concept.getLabel());
-        assertEquals(3, concept.getParams().size());
-        assertEquals("7.A.SP1.03.19.01", concept.getParams().get("CD_DIVNAME"));
-        assertEquals("ICT-2011.9.1", concept.getParams().get("CD_ABBR"));
-        assertEquals("7.A.SP1.03.19", concept.getParams().get("CD_PARENT_DIVNAME"));
+        assertEquals(5, concept.getParams().size());
         
+        paramValues = getParamValues("CD_DIVNAME", concept.getParams());
+        assertEquals(1, paramValues.size());
+        assertEquals("7.A.SP1.03.19.01", paramValues.get(0));
+        
+        paramValues = getParamValues("CD_ABBR", concept.getParams());
+        assertEquals(1, paramValues.size());
+        assertEquals("ICT-2011.9.1", paramValues.get(0));
+        
+        paramValues = getParamValues("CD_PARENT_DIVNAME", concept.getParams());
+        assertEquals(1, paramValues.size());
+        assertEquals("7.A.SP1.03.19", paramValues.get(0));
+        
+        paramValues = getParamValues("DUPLICATED_ENTRY", concept.getParams());
+        assertEquals(2, paramValues.size());
+        assertEquals("value1", paramValues.get(0));
+        assertEquals("value2", paramValues.get(1));
+    }
+    
+    private List<CharSequence> getParamValues(String paramName, List<Param> params) {
+        List<CharSequence> values = new ArrayList<>();
+        if (params != null) {
+            for (Param param : params) {
+                if (paramName.equals(param.getName())) {
+                    values.add(param.getValue());
+                }
+            }
+        }
+        return values;
     }
     
 }

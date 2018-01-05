@@ -40,8 +40,8 @@ public class DataFileRecordReceiverWithCounterTest {
         
         // given
         
-        Concept concept1 = Concept.newBuilder().setId("ID_1").setLabel("LABEL_1").setParams(Collections.emptyMap()).build();
-        Concept concept2 = Concept.newBuilder().setId("ID_2").setLabel("LABEL_2").setParams(Collections.emptyMap()).build();
+        Concept concept1 = Concept.newBuilder().setId("ID_1").setLabel("LABEL_1").setParams(Collections.emptyList()).build();
+        Concept concept2 = Concept.newBuilder().setId("ID_2").setLabel("LABEL_2").setParams(Collections.emptyList()).build();
         
         
         // execute
