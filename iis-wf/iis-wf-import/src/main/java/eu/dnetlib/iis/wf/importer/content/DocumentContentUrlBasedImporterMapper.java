@@ -55,11 +55,17 @@ public class DocumentContentUrlBasedImporterMapper
     private Counter sizeInvalidCounter;
     
     /**
+     * Counter for the unavailable documents.
+     */
+    private Counter unavailableCounter;
+    
+    /**
      * Hadoop counters enum of invalid records 
      */
     public static enum InvalidRecordCounters {
         SIZE_EXCEEDED,
-        SIZE_INVALID
+        SIZE_INVALID,
+        UNAVAILABLE
     }
     
     //------------------------ LOGIC --------------------------
@@ -75,6 +81,10 @@ public class DocumentContentUrlBasedImporterMapper
         
         this.sizeExceededCounter = context.getCounter(InvalidRecordCounters.SIZE_EXCEEDED);
         this.sizeExceededCounter.setValue(0);
+
+        this.unavailableCounter = context.getCounter(InvalidRecordCounters.UNAVAILABLE);
+        this.unavailableCounter.setValue(0);
+        
         Integer maxFileSizeMB = WorkflowRuntimeParameters.getIntegerParamValue(
                 IMPORT_CONTENT_MAX_FILE_SIZE_MB, context.getConfiguration());
         if (maxFileSizeMB != null) {
@@ -115,6 +125,10 @@ public class DocumentContentUrlBasedImporterMapper
                 log.warn("content " + docUrl.getId() + " discarded for location: " + docUrl.getUrl()
                 + ", real size is expected to be greater than 0!");
                 this.sizeInvalidCounter.increment(1);
+            } catch (Exception e) {
+                log.error("unexpected exception occured while obtaining content " + docUrl.getId() 
+                + " for location: " + docUrl.getUrl(), e);
+                this.unavailableCounter.increment(1);
             }
         } else {
             this.sizeExceededCounter.increment(1);

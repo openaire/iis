@@ -49,6 +49,9 @@ public class DocumentContentUrlBasedImporterMapperTest {
     @Mock
     private Counter sizeInvalidCounter;
     
+    @Mock
+    private Counter unavailableCounter;
+    
     @Captor
     private ArgumentCaptor<AvroKey<DocumentContent>> keyCaptor;
     
@@ -72,6 +75,7 @@ public class DocumentContentUrlBasedImporterMapperTest {
         
         doReturn(sizeExceededCounter).when(context).getCounter(InvalidRecordCounters.SIZE_EXCEEDED);
         doReturn(sizeInvalidCounter).when(context).getCounter(InvalidRecordCounters.SIZE_INVALID);
+        doReturn(unavailableCounter).when(context).getCounter(InvalidRecordCounters.UNAVAILABLE);
     }
     
     // --------------------------------- TESTS ---------------------------------
@@ -101,6 +105,7 @@ public class DocumentContentUrlBasedImporterMapperTest {
         assertEquals(content, docContent.getPdf().array());
         verify(sizeExceededCounter, never()).increment(1);
         verify(sizeInvalidCounter, never()).increment(1);
+        verify(unavailableCounter, never()).increment(1);
     }
     
     @Test
@@ -124,6 +129,7 @@ public class DocumentContentUrlBasedImporterMapperTest {
         verify(context, never()).write(any(), any());
         verify(sizeExceededCounter, never()).increment(1);
         verify(sizeInvalidCounter, times(1)).increment(1);
+        verify(unavailableCounter, never()).increment(1);
     }
     
     @Test
@@ -156,9 +162,10 @@ public class DocumentContentUrlBasedImporterMapperTest {
         verify(context, never()).write(any(), any());
         verify(sizeExceededCounter, never()).increment(1);
         verify(sizeInvalidCounter, times(1)).increment(1);
+        verify(unavailableCounter, never()).increment(1);
     }
     
-    @Test(expected=IOException.class)
+    @Test
     public void testIOExceptionThrown() throws Exception {
         // given
         mapper = new DocumentContentUrlBasedImporterMapper() {
@@ -183,6 +190,12 @@ public class DocumentContentUrlBasedImporterMapperTest {
         
         // execute
         mapper.map(new AvroKey<DocumentContentUrl>(docContentUrl), null, context);
+        
+        // assert
+        verify(context, never()).write(any(), any());
+        verify(sizeExceededCounter, never()).increment(1);
+        verify(sizeInvalidCounter, never()).increment(1);
+        verify(unavailableCounter, times(1)).increment(1);
     }
     
     @Test
@@ -207,6 +220,7 @@ public class DocumentContentUrlBasedImporterMapperTest {
         verify(context, never()).write(any(), any());
         verify(sizeExceededCounter, times(1)).increment(1);
         verify(sizeInvalidCounter, never()).increment(1);
+        verify(unavailableCounter, never()).increment(1);
         
     }
 
