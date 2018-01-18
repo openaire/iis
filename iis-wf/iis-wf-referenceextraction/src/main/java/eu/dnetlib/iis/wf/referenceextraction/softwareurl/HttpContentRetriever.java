@@ -23,7 +23,7 @@ public class HttpContentRetriever implements ContentRetriever {
 
     
     @Override
-    public CharSequence retrieveUrlContent(CharSequence url, int connectionTimeout, int readTimeout,
+    public ContentRetrieverResponse retrieveUrlContent(CharSequence url, int connectionTimeout, int readTimeout,
             int maxPageContentLength) {
         long startTime = System.currentTimeMillis();
         String currentUrl = url.toString();
@@ -57,10 +57,10 @@ public class HttpContentRetriever implements ContentRetriever {
                         pageContent.append(inputLine);    
                     } else {
                         log.warn("page content from URL: " + currentUrl + " exceeded maximum page length limit: " + maxPageContentLength + ", returning truncated page content");
-                        return pageContent.toString();
+                        return new ContentRetrieverResponse(pageContent.toString());
                     }
                 }
-                return pageContent.toString();
+                return new ContentRetrieverResponse(pageContent.toString());
                 
             } finally {
                 log.info("finished content retrieval for url: " + currentUrl + " in " +
@@ -69,7 +69,7 @@ public class HttpContentRetriever implements ContentRetriever {
 
         } catch (IOException e) {
             log.error("content retrieval failed for url: " + currentUrl, e);
-            return "";
+            return new ContentRetrieverResponse(e);
         }
     }
 

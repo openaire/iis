@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -57,7 +58,7 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
 
 	public static final String DEFAULT_ENCODING = "UTF-8";
 	
-	public class CacheMeta {
+	public static class CacheMeta {
 
 	    private String currentCacheId;
 
@@ -112,11 +113,11 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
         String mode = parameters.get(PARAM_MODE);
         Properties props = new Properties();
         if (MODE_READ_CURRENT_ID.equals(mode)) {
-            props.setProperty(OUTPUT_PROPERTY_CACHE_ID, getExistingCacheId(conf, parameters));
+            props.setProperty(OUTPUT_PROPERTY_CACHE_ID, getExistingCacheId(conf, parameters.get(PARAM_CACHE_DIR)));
         } else if (MODE_GENERATE_NEW_ID.equals(mode)) {
-            props.setProperty(OUTPUT_PROPERTY_CACHE_ID, generateNewCacheId(conf, parameters));
+            props.setProperty(OUTPUT_PROPERTY_CACHE_ID, generateNewCacheId(conf, parameters.get(PARAM_CACHE_DIR)));
         } else if (MODE_WRITE_ID.equals(mode)) {
-            writeCacheId(conf, parameters);
+            writeCacheId(conf, parameters.get(PARAM_CACHE_DIR), parameters.get(PARAM_ID));
         } else {
             throw new RuntimeException("unsupported mode: " + mode);    
         }
@@ -129,76 +130,78 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
         }   
     }
 
-    // ---------------------------- PRIVATE ---------------------------------
+    public String getExistingCacheId(Configuration conf, String cacheDir) throws IOException {
+        if (StringUtils.isNotBlank(cacheDir)) {
+            CacheMeta cacheMeta = readCacheMeta(fsFacadeFactory.create(conf), 
+                    new Path(cacheDir, DEFAULT_METAFILE_NAME));
+            if (cacheMeta != null) {
+                return cacheMeta.getCurrentCacheId();
+            } else {
+                return NON_EXISTING_CACHE_ID;
+            }
+        } else {
+            throw new RuntimeException("cache directory location not provided! "
+                    + "'" + PARAM_CACHE_DIR + "' parameter is missing!");
+        }
+    }
     
-	private String getExistingCacheId(Configuration conf, Map<String, String> parameters) throws IOException {
-		if (parameters.containsKey(PARAM_CACHE_DIR)) {
-			CacheMeta cacheMeta = readCacheMeta(fsFacadeFactory.create(conf), 
-			        new Path(parameters.get(PARAM_CACHE_DIR), DEFAULT_METAFILE_NAME));
-			if (cacheMeta != null) {
-			    return cacheMeta.getCurrentCacheId();
-			} else {
-				return NON_EXISTING_CACHE_ID;
-			}
-		} else {
-			throw new RuntimeException("cache directory location not provided! "
-					+ "'" + PARAM_CACHE_DIR + "' parameter is missing!");
-		}
-	}
-	
-	private String generateNewCacheId(Configuration conf, Map<String, String> parameters) throws IOException {
-		if (parameters.containsKey(PARAM_CACHE_DIR)) {
-		    CacheMeta cachedMeta = readCacheMeta(fsFacadeFactory.create(conf), 
-			        new Path(parameters.get(PARAM_CACHE_DIR), DEFAULT_METAFILE_NAME));
-			if (cachedMeta != null) {
-				int currentIndex = convertCacheIdToInt(cachedMeta.getCurrentCacheId());
-				return convertIntToCacheId(currentIndex+1);
-			} else {
-//				initializing cache meta
-				return convertIntToCacheId(1);
-			}
-		} else {
-			throw new RuntimeException("cache directory location not provided! "
-					+ "'" + PARAM_CACHE_DIR + "' parameter is missing!");
-		}
-	}
-	
-	private void writeCacheId(Configuration conf, Map<String, String> parameters) throws IOException {
-		if (parameters.containsKey(PARAM_CACHE_DIR)) {
-			if (parameters.containsKey(PARAM_ID)) {
+    public String generateNewCacheId(Configuration conf, String cacheDir) throws IOException {
+        if (StringUtils.isNotBlank(cacheDir)) {
+            CacheMeta cachedMeta = readCacheMeta(fsFacadeFactory.create(conf), 
+                    new Path(cacheDir, DEFAULT_METAFILE_NAME));
+            if (cachedMeta != null) {
+                int currentIndex = convertCacheIdToInt(cachedMeta.getCurrentCacheId());
+                return convertIntToCacheId(currentIndex+1);
+            } else {
+//              initializing cache meta
+                return convertIntToCacheId(1);
+            }
+        } else {
+            throw new RuntimeException("cache directory location not provided! "
+                    + "'" + PARAM_CACHE_DIR + "' parameter is missing!");
+        }
+    }
+    
+    public void writeCacheId(Configuration conf, String cacheDir, String cacheId) throws IOException {
+        if (StringUtils.isNotBlank(cacheDir)) {
+            if (StringUtils.isNotBlank(cacheId)) {
 
-				FileSystemFacade fs = fsFacadeFactory.create(conf);
-				
-				Path cacheFilePath = new Path(parameters.get(PARAM_CACHE_DIR), DEFAULT_METAFILE_NAME);
-				
-				CacheMeta cachedMeta = getCacheMeta(parameters.get(PARAM_ID), fs, cacheFilePath);
-				
-				Gson gson = new Gson();
-				OutputStream outputStream = fs.create(cacheFilePath, true);
-				JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, DEFAULT_ENCODING));
-				try {
-					gson.toJson(cachedMeta, CacheMeta.class, writer);
-				} finally {
-					writer.close();
-					outputStream.close();
-//					changing file permission to +rw to allow writing for different users
-					fs.changePermissions(conf, FsShellPermissions.Op.CHMOD, 
-							false, "0666", cacheFilePath.toString());
-				}
-			} else {
-				throw new RuntimeException("unable to write new cache id in meta.json file, "
-						+ "no '" + PARAM_ID + "' input parameter provied!");
-			}
-		} else {
-			throw new RuntimeException("cache directory location not provided! "
-					+ "'" + PARAM_CACHE_DIR + "' parameter is missing!");
-		}
-	}
+                FileSystemFacade fs = fsFacadeFactory.create(conf);
+                
+                Path cacheFilePath = new Path(cacheDir, DEFAULT_METAFILE_NAME);
+                
+                CacheMeta cachedMeta = getCacheMeta(cacheId, fs, cacheFilePath);
+                
+                Gson gson = new Gson();
+                OutputStream outputStream = fs.create(cacheFilePath, true);
+                JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, DEFAULT_ENCODING));
+                try {
+                    gson.toJson(cachedMeta, CacheMeta.class, writer);
+                } finally {
+                    writer.close();
+                    outputStream.close();
+//                  changing file permission to +rw to allow writing for different users
+                    fs.changePermissions(conf, FsShellPermissions.Op.CHMOD, 
+                            false, "0666", cacheFilePath.toString());
+                }
+            } else {
+                throw new RuntimeException("unable to write new cache id in meta.json file, "
+                        + "no '" + PARAM_ID + "' input parameter provied!");
+            }
+        } else {
+            throw new RuntimeException("cache directory location not provided! "
+                    + "'" + PARAM_CACHE_DIR + "' parameter is missing!");
+        }
+    }
+    
+    
+    // ---------------------------- PRIVATE ---------------------------------
+	
 	
 	/**
 	 * Reads or creates new cache metadata record.
 	 */
-    private CacheMeta getCacheMeta(String cacheId, FileSystemFacade fs, Path cacheFilePath)
+    private static CacheMeta getCacheMeta(String cacheId, FileSystemFacade fs, Path cacheFilePath)
             throws JsonSyntaxException, JsonIOException, UnsupportedEncodingException, IOException {
         CacheMeta cachedMeta = readCacheMeta(fs, cacheFilePath);
 //      writing new id
@@ -209,7 +212,7 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
         return cachedMeta;
 	}
 	
-    private CacheMeta readCacheMeta(FileSystemFacade fs, Path cacheFilePath) throws JsonSyntaxException, JsonIOException, UnsupportedEncodingException, IOException {
+    private static CacheMeta readCacheMeta(FileSystemFacade fs, Path cacheFilePath) throws JsonSyntaxException, JsonIOException, UnsupportedEncodingException, IOException {
         if (fs.exists(cacheFilePath)) {
             InputStream inputStream = fs.open(cacheFilePath);
             InputStreamReader reader = new InputStreamReader(

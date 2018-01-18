@@ -29,7 +29,7 @@ public class ClasspathContentRetriever implements ContentRetriever {
     }
     
     @Override
-    public CharSequence retrieveUrlContent(CharSequence url, int connectionTimeout, int readTimeout,
+    public ContentRetrieverResponse retrieveUrlContent(CharSequence url, int connectionTimeout, int readTimeout,
             int maxPageContentLength) {
         if (url != null) {
             String classPathLocation = urlToClasspathMap.getProperty(url.toString());
@@ -44,14 +44,16 @@ public class ClasspathContentRetriever implements ContentRetriever {
                         }
                         pageContent.append(inputLine);    
                     }
-                    return pageContent.toString();
+                    return new ContentRetrieverResponse(pageContent.toString());
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    return new ContentRetrieverResponse(e);
                 }    
+            } else {
+                return new ContentRetrieverResponse(new DocumentNotFoundException());
             }
         }
         
-        return "";
+        return new ContentRetrieverResponse("");
     }
 
 }

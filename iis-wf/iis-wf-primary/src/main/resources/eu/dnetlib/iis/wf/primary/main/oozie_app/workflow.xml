@@ -165,6 +165,10 @@
             <name>metadataextraction_cache_location</name>
             <description>metadata extraction HDFS cache location</description>
         </property>
+        <property>
+            <name>software_webcrawl_cache_location</name>
+            <description>software reference extraction HDFS cache location</description>
+        </property>
         <!-- project reference extraction related -->
         <property>
             <name>referenceextraction_project_fundingclass_blacklist_regex</name>

@@ -105,6 +105,11 @@
                 Set to 'a^' by default to guarantee nothing will be matched.
             </description>
         </property>
+        <!-- software reference extraction related -->
+        <property>
+            <name>software_webcrawl_cache_location</name>
+            <description>software reference extraction HDFS cache location</description>
+        </property>
         <!-- document similarity related -->
         <property>
             <name>ds_parallel</name>
@@ -754,6 +759,10 @@
                 <property>
                     <name>input_document_text</name>
                     <value>${workingDir}/transformers_common_union_document_text/out</value>
+                </property>
+                <property>
+                    <name>cacheRootDir</name>
+                    <value>${software_webcrawl_cache_location}</value>
                 </property>
                 <property>
                     <name>output</name>

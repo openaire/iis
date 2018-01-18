@@ -10,13 +10,10 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.ha.ZKFailoverController;
 import org.apache.log4j.Logger;
 import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.Watcher.Event;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
 
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.porttype.PortType;
@@ -30,8 +27,6 @@ import eu.dnetlib.iis.common.java.porttype.PortType;
 public class LockManagingProcess implements eu.dnetlib.iis.common.java.Process {
 
 	public static final String DEFAULT_ROOT_NODE = "/cache";
-	
-	public static final String NODE_SEPARATOR = "/";
 	
 	public static final String PARAM_ZK_SESSION_TIMEOUT = "zk_session_timeout";
 	
@@ -83,67 +78,24 @@ public class LockManagingProcess implements eu.dnetlib.iis.common.java.Process {
 			log.info("root node initialized");
 		}
 
-		final String nodePath = generatePath(parameters.get(PARAM_NODE_ID), DEFAULT_ROOT_NODE);
+		final String nodePath = LockManagingProcessUtils.generatePath(parameters.get(PARAM_NODE_ID), DEFAULT_ROOT_NODE);
 		
 		final Semaphore semaphore = new Semaphore(1);
 		semaphore.acquire();
 		
 		switch(LockMode.valueOf(parameters.get(PARAM_LOCK_MODE))) {
 		    case obtain: {
-		        obtain(zooKeeper, nodePath, semaphore);
+		        LockManagingProcessUtils.obtain(zooKeeper, nodePath, semaphore);
 		        break;
 		    }
 		    case release: {
-		        release(zooKeeper, nodePath);
+		        LockManagingProcessUtils.release(zooKeeper, nodePath);
 		        break;
 		    }
 		    default: {
 		        throw new InvalidParameterException("unsupported lock mode: " + parameters.get(PARAM_LOCK_MODE));
 		    }
 		}
-	}
-	
-	// ------------------------- PRIVATE --------------------------
-	
-	private void obtain(final ZooKeeper zooKeeper, final String nodePath, final Semaphore semaphore) throws KeeperException, InterruptedException {
-        log.info("trying to obtain lock: " + nodePath);
-        if (zooKeeper.exists(nodePath, (event) -> {
-            if (Event.EventType.NodeDeleted == event.getType()) {
-                try {
-                    log.info(nodePath + " lock release detected");
-                    log.info("creating new lock instance: " + nodePath + "...");
-                    zooKeeper.create(nodePath, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-                    log.info("lock" + nodePath + " created");
-                    semaphore.release();
-                } catch (KeeperException e) {
-                    throw new RuntimeException(e);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }) == null) {
-            log.info("lock not found, creating new lock instance: " + nodePath);
-            zooKeeper.create(nodePath, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-            log.info("lock" + nodePath + " created");
-            semaphore.release();
-        } else {
-            // waiting until node is removed by other lock manager
-            log.info("waiting until lock is released");
-            Stopwatch timer = new Stopwatch().start();
-            semaphore.acquire();
-            log.info("lock released, waited for " + timer.elapsedMillis() + " ms");
-            semaphore.release();
-        }
-	}
-	
-	private void release(final ZooKeeper zooKeeper, final String nodePath) throws InterruptedException, KeeperException {
-	    log.info("removing lock" + nodePath + "...");
-        zooKeeper.delete(nodePath, -1);
-        log.info("lock" + nodePath + " removed");
-	}
-	
-	private static final String generatePath(String nodeId, String rootNode) {
-		return rootNode + NODE_SEPARATOR + nodeId.replace('/', '_');
 	}
 	
 }

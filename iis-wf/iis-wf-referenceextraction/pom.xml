@@ -37,6 +37,12 @@
         </dependency>
         
         <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
             <groupId>eu.dnetlib.iis</groupId>
             <artifactId>iis-3rdparty-madis</artifactId>
             <version>${project.version}</version>

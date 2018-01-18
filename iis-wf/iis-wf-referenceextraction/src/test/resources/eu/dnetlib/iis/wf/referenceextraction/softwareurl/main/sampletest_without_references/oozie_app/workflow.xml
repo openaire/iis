@@ -79,6 +79,10 @@
                     <name>webcrawlContentRetrieverClassName</name>
                     <value>eu.dnetlib.iis.wf.referenceextraction.softwareurl.ClasspathContentRetriever</value>
                 </property>
+                <property>
+                    <name>webcrawlLockManagerFactoryClassName</name>
+                    <value>eu.dnetlib.iis.wf.referenceextraction.softwareurl.LockManagerFactoryMock</value>
+                </property>
                 <!-- Working directory of the subworkflow -->
                 <property>
                     <name>workingDir</name>
@@ -91,6 +95,14 @@
                 <property>
                     <name>output</name>
                     <value>${workingDir}/referenceextraction_softwareurl/document_to_softwareurl</value>
+                </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/referenceextraction_softwareurl/report</value>
+                </property>
+                <property>
+                    <name>cacheRootDir</name>
+                    <value>${workingDir}/referenceextraction_softwareurl/working_dir</value>
                 </property>
             </configuration>
         </sub-workflow>

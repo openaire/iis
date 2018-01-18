@@ -17,6 +17,6 @@ public interface ContentRetriever extends Serializable {
      * @param readTimeout read timeout
      * @param maxPageContentLength maximum size of the retieved content
      */
-    CharSequence retrieveUrlContent(CharSequence url, int connectionTimeout, int readTimeout, int maxPageContentLength);
+    ContentRetrieverResponse retrieveUrlContent(CharSequence url, int connectionTimeout, int readTimeout, int maxPageContentLength);
     
 }
