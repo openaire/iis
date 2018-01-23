@@ -54,7 +54,7 @@
         </property>
         <property>
             <name>mapreduce_map_java_opts</name>
-            <value>-Xmx4g</value>
+            <value>-Xmx6g</value>
             <description>java-opts, e.g. maximum heap size for a single JVM running mapper</description>
         </property>
 	</parameters>
