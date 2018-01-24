@@ -221,6 +221,7 @@
             <arg>-Preport.${report_properties_prefix}.correct=${hadoop:counters('content-retriever')[RECORDS][MAP_OUT]}</arg>
             <arg>-Preport.${report_properties_prefix}.invalid.sizeExceeded=${hadoop:counters('content-retriever')['eu.dnetlib.iis.wf.importer.content.DocumentTextUrlBasedImporterMapper$InvalidRecordCounters']['SIZE_EXCEEDED']}</arg>
             <arg>-Preport.${report_properties_prefix}.invalid.sizeInvalid=${hadoop:counters('content-retriever')['eu.dnetlib.iis.wf.importer.content.DocumentTextUrlBasedImporterMapper$InvalidRecordCounters']['SIZE_INVALID']}</arg>
+            <arg>-Preport.${report_properties_prefix}.invalid.unavailable=${hadoop:counters('content-retriever')['eu.dnetlib.iis.wf.importer.content.DocumentTextUrlBasedImporterMapper$InvalidRecordCounters']['UNAVAILABLE']}</arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>
         <ok to="report-execution-times" />

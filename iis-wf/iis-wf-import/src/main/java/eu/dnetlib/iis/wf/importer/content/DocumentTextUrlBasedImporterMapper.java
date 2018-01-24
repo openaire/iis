@@ -46,7 +46,8 @@ public class DocumentTextUrlBasedImporterMapper extends Mapper<AvroKey<DocumentC
      */
     public static enum InvalidRecordCounters {
         SIZE_EXCEEDED,
-        SIZE_INVALID
+        SIZE_INVALID,
+        UNAVAILABLE
     }
 
 
@@ -66,6 +67,7 @@ public class DocumentTextUrlBasedImporterMapper extends Mapper<AvroKey<DocumentC
         
         context.getCounter(InvalidRecordCounters.SIZE_EXCEEDED).setValue(0);
         context.getCounter(InvalidRecordCounters.SIZE_INVALID).setValue(0);
+        context.getCounter(InvalidRecordCounters.UNAVAILABLE).setValue(0);
     }
     
     /**
@@ -101,6 +103,10 @@ public class DocumentTextUrlBasedImporterMapper extends Mapper<AvroKey<DocumentC
                 log.warn("content " + docUrl.getId() + " discarded for location: " + docUrl.getUrl()
                 + ", real size is expected to be greater than 0!");
                 context.getCounter(InvalidRecordCounters.SIZE_INVALID).increment(1);
+            } catch (Exception e) {
+                log.error("unexpected exception occured while obtaining content " + docUrl.getId() + " for location: "
+                        + docUrl.getUrl(), e);
+                context.getCounter(InvalidRecordCounters.UNAVAILABLE).increment(1);
             }
         } else {
             context.getCounter(InvalidRecordCounters.SIZE_EXCEEDED).increment(1);
