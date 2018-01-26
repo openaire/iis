@@ -11,10 +11,6 @@
 			<name>input_concept</name>
 		</property>
 		<property>
-			<name>grant_id_param_name</name>
-			<value>CD_PROJECT_NUMBER</value>
-		</property>
-		<property>
 			<name>output</name>
 		</property>
      </parameters>
@@ -68,8 +64,6 @@
 
             <param>input_concept=${input_concept}</param>
             <param>schema_input_concept=${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.Concept']}</param>
-            
-            <param>grant_id_param_name=${grant_id_param_name}</param>
             
             <param>output=${output}</param>
             <param>schema_output=${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId']}</param>

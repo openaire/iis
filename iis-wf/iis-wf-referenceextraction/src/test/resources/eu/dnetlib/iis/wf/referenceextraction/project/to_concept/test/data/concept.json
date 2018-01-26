@@ -1,3 +1,5 @@
-{"id": "concept-id1", "label": "concept id1", "params": {"CD_PROJECT_NUMBER": "123456", "CD_FRAMEWORK": "FP7"}}
-{"id": "concept-id2", "label": "concept id2", "params": {"CD_PROJECT_NUMBER": "654321", "CD_FRAMEWORK": "FP7"}}
-{"id": "concept-id3", "label": "concept id3", "params": {"CD_PROJECT_NUMBER": "999999", "CD_FRAMEWORK": "FP7"}}
+{"id": "concept-id1", "label": "concept id1", "params": {"CD_PROJECT_NUMBER": "123456", "funder": "EC"}}
+{"id": "concept-id2", "label": "concept id2", "params": {"CD_PROJECT_NUMBER": "654321", "funder": "EC"}}
+{"id": "concept-id3", "label": "concept id3", "params": {"CD_PROJECT_NUMBER": "999999", "funder": "EC"}}
+{"id": "concept-id4", "label": "concept id4", "params": {"CD_PROJECT_NUMBER": "999999", "funder": "nonEC"}}
+{"id": "concept-id5", "label": "concept id5", "params": {"CD_PROJECT_NUMBER": "123456"}}

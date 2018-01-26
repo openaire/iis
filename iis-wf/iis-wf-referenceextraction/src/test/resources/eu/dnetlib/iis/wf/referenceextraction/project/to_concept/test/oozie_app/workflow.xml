@@ -71,10 +71,6 @@
                     <name>workingDir</name>
                     <value>${workingDir}/transformer_project_toconcept/working_dir</value>
                 </property>
-                <property>
-                    <name>grant_id_param_name</name>
-                    <value>CD_PROJECT_NUMBER</value>
-                </property>
                 <!-- Input ports. -->
                 <property>
                     <name>input_document_to_project</name>

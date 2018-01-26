@@ -11,11 +11,11 @@ documentToProject = load '$input_document_to_project' using avro_load_document_t
 project = load '$input_project' using avro_load_project;
 concept = load '$input_concept' using avro_load_concept;
 
-conceptToGrant = foreach concept generate id as id, params#'$grant_id_param_name' as grantId;
-conceptToGrantFiltered = filter conceptToGrant by grantId is not null;
+conceptToGrant = foreach concept generate id as id, params#'CD_PROJECT_NUMBER' as grantId, params#'funder' as funder;
+conceptToGrantFiltered = filter conceptToGrant by grantId is not null and funder is not null;
 
 joinedDoc2ProjWithProject = join documentToProject by projectId left, project by id;
-joinedDoc2ProjWithProjectAndConcept = join joinedDoc2ProjWithProject by project::projectGrantId, conceptToGrantFiltered by grantId;
+joinedDoc2ProjWithProjectAndConcept = join joinedDoc2ProjWithProject by (project::projectGrantId, UPPER(STRSPLIT(project::fundingClass,'::',2).$0)), conceptToGrantFiltered by (grantId, UPPER(funder));
 
 outputDocumentToConcept = foreach joinedDoc2ProjWithProjectAndConcept generate 
 	documentToProject::documentId as documentId,
