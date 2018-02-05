@@ -19,6 +19,9 @@ import eu.dnetlib.iis.common.java.io.JsonUtils;
 import eu.dnetlib.iis.common.report.test.ValueSpecMatcher;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import pl.edu.icm.cermine.ContentExtractor;
+import pl.edu.icm.cermine.configuration.ExtractionConfigBuilder;
+import pl.edu.icm.cermine.configuration.ExtractionConfigProperty;
+import pl.edu.icm.cermine.configuration.ExtractionConfigRegister;
 
 /**
  * Metadata extractor main class executing extraction for all files provided as arguments.
@@ -107,6 +110,11 @@ public class MetadataExtractorMain {
         InputStream inputStream = new FileInputStream(file);
         ExtractedDocumentMetadata extractedMetadata = null;
         try {
+            // disabling images extraction
+            ExtractionConfigBuilder builder = new ExtractionConfigBuilder(); 
+            builder.setProperty(ExtractionConfigProperty.IMAGES_EXTRACTION, false);
+            ExtractionConfigRegister.set(builder.buildConfiguration());
+            
             ContentExtractor extractor = new ContentExtractor(timeout);
             extractor.setPDF(inputStream);
             Element resultElem = extractor.getContentAsNLM();

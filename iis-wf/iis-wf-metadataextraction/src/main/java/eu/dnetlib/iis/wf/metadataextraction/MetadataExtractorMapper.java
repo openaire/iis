@@ -32,6 +32,9 @@ import eu.dnetlib.iis.wf.importer.content.approver.ContentApprover;
 import eu.dnetlib.iis.wf.importer.content.approver.InvalidCountableContentApproverWrapper;
 import eu.dnetlib.iis.wf.importer.content.approver.PDFHeaderBasedContentApprover;
 import pl.edu.icm.cermine.ContentExtractor;
+import pl.edu.icm.cermine.configuration.ExtractionConfigBuilder;
+import pl.edu.icm.cermine.configuration.ExtractionConfigProperty;
+import pl.edu.icm.cermine.configuration.ExtractionConfigRegister;
 import pl.edu.icm.cermine.exception.AnalysisException;
 import pl.edu.icm.cermine.exception.TransformationException;
 import pl.edu.icm.cermine.tools.timeout.TimeoutException;
@@ -222,6 +225,11 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
         long startTime = System.currentTimeMillis();
         
         try {
+            // disabling images extraction
+            ExtractionConfigBuilder builder = new ExtractionConfigBuilder(); 
+            builder.setProperty(ExtractionConfigProperty.IMAGES_EXTRACTION, false);
+            ExtractionConfigRegister.set(builder.buildConfiguration());
+            
             ContentExtractor extractor = interruptionTimeoutSecs != null ? new ContentExtractor(interruptionTimeoutSecs)
                     : new ContentExtractor();
             extractor.setPDF(contentStream);
