@@ -51,6 +51,11 @@ public class PtmServiceFacade implements PtmService {
     public String topicModeling(Command command) {
         return executeRestJob("topic-modeling", command != null ? command.getMap() : null);
     }
+    
+    @Override
+    public String export(Command command) {
+        return executeRestJob("export", command != null ? command.getMap() : null);
+    }
 
     @Override
     public ExecutionReport getReport(String jobId) throws PtmException {

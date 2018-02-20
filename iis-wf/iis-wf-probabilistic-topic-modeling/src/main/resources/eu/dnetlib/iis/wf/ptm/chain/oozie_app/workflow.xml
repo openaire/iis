@@ -59,16 +59,30 @@
         </property>
 
         <property>
-            <name>output_database_url</name>
-            <description>relation database url, where data should be exported</description>
+            <name>output_database_url_root</name>
+            <description>local database root url (without database name) where data should be exported</description>
         </property>
         <property>
+            <name>output_database_name</name>
+            <description>local database name where data should be exported</description>
+        </property>
+
+        <property>
             <name>output_database_username</name>
-            <description>database user name</description>
+            <description>local database user name</description>
         </property>
         <property>
             <name>output_database_password</name>
-            <description>password required to access database</description>
+            <description>password required to access local database</description>
+        </property>
+        
+        <property>
+            <name>remote_host</name>
+            <description>remote host where data should be exported</description>
+        </property>
+        <property>
+            <name>remote_database_name</name>
+            <description>remote database name where data should be exported</description>
         </property>
         
         <property>
@@ -113,7 +127,7 @@
             </property>
             <property>
                 <name>sqlConnectionString</name>
-                <value>${output_database_url}?user=${output_database_username}&amp;password=${output_database_password}&amp;ssl=false</value>
+                <value>${output_database_url_root}/${output_database_name}?user=${output_database_username}&amp;password=${output_database_password}&amp;ssl=false</value>
             </property>
         </configuration>
     </global>
@@ -127,7 +141,7 @@
             <configuration>
                 <property>
                     <name>rdbUrl</name>
-                    <value>${output_database_url}</value>
+                    <value>${output_database_url_root}/${output_database_name}</value>
                 </property>
                 <property>
                     <name>rdbUsername</name>
@@ -168,6 +182,10 @@
                     <name>sparkDriverMemory</name>
                     <value>${avro2rdbSparkDriverMemory}</value>
                 </property>
+                <property>
+                    <name>output_database_url</name>
+                    <value>${output_database_url_root}/${output_database_name}</value>
+                </property>
                 <!-- all the other properties are autmatically propagated -->
             </configuration>
         </sub-workflow>
@@ -191,6 +209,22 @@
             <propagate-configuration />
             <!-- all the properties are autmatically propagated -->
         </sub-workflow>
+        <ok to="export" />
+        <error to="fail" />
+    </action>
+    
+    <action name="export">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/export</app-path>
+            <propagate-configuration />
+            <!-- all the properties are autmatically propagated -->
+            <configuration>
+                <property>
+                    <name>source_database_name</name>
+                    <value>${output_database_name}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
         <ok to="counter-generator" />
         <error to="fail" />
     </action>
@@ -200,7 +234,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.ptm.PtmCounterGenerator</arg>
             <arg>-PexperimentId=${experimentId}</arg>
-            <arg>-PrdbUrl=${output_database_url}</arg>
+            <arg>-PrdbUrl=${output_database_url_root}/${output_database_name}</arg>
             <arg>-PrdbUsername=${output_database_username}</arg>
             <arg>-PrdbPassword=${output_database_password}</arg>
             <capture-output />

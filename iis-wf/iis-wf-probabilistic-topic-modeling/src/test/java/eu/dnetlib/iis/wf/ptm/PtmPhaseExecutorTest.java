@@ -127,6 +127,31 @@ public class PtmPhaseExecutorTest {
     }
     
     @Test
+    public void testRunExportPhaseSucceeded() throws Exception {
+        // given
+        parameters.put(PtmPhaseExecutor.SERVICE_LOCATION_PARAM, "irrelevant");
+        parameters.put(PtmPhaseExecutor.PHASE_PARAM, PtmPhaseExecutor.PHASE_NAME_EXPORT);
+        
+        String ptmParamKey = "some.ptm.param.key";
+        String ptmParamValue = "some.ptm.param.value";
+        parameters.put(PtmPhaseExecutor.PTM_PARAM_PREFIX + ptmParamKey, ptmParamValue);
+        String jobId = "ptm-job-id";
+        doReturn(jobId).when(mockedPtmService).export(any());
+
+        when(mockedPtmService.getReport(jobId)).thenReturn(
+                new ExecutionReport(null, JobStatus.succeeded, null));
+        
+        // execute
+        process.run(portBindings, conf, parameters);
+        // assert
+        
+        verify(mockedPtmService).export(commandCaptor.capture());
+        Command capturedCommand = commandCaptor.getValue();
+        assertEquals(1, capturedCommand.getMap().size());
+        assertEquals(ptmParamValue, capturedCommand.getMap().get(ptmParamKey));
+    }
+    
+    @Test
     public void testRunAnnotatePhaseSucceeded() throws Exception {
         // given
         parameters.put(PtmPhaseExecutor.SERVICE_LOCATION_PARAM, "irrelevant");

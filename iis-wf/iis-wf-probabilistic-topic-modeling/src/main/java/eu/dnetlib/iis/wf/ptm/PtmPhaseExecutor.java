@@ -39,6 +39,8 @@ public class PtmPhaseExecutor implements Process {
     protected static final String PHASE_NAME_ANNOTATE = "annotate";
     
     protected static final String PHASE_NAME_TOPIC_MODELING = "topic-modeling";
+    
+    protected static final String PHASE_NAME_EXPORT = "export";
 
     private static final int DEFAULT_CHECK_STATUS_INTERVAL_SECS = 60;
     
@@ -69,6 +71,10 @@ public class PtmPhaseExecutor implements Process {
         }
         case PHASE_NAME_TOPIC_MODELING: {
             jobId = serviceFacade.topicModeling(new Command(extractPtmInternalParams(parameters)));
+            break;
+        }
+        case PHASE_NAME_EXPORT: {
+            jobId = serviceFacade.export(new Command(extractPtmInternalParams(parameters)));
             break;
         }
         default: {
