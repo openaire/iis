@@ -11,7 +11,7 @@ select c1 as documentid, id as projectid, 1 as confidence from (setschema 'c1,c4
 insert into tara_match 
 select c1 as documentid, id as projectid, 0.9 as confidence from (setschema 'c1,c3' select c1, c3 from pubs where c3 is not null and c1 not in (select distinct documentid from tara_match)), grants where tarakeywords!="" and regexprmatches('\b'||tarakeywords||'\b', lower(c3)) group by documentid;
 -- delete fulltext not containing any tara phrase
-delete from pubs where UPPER(c2) not like "%TARA%";
+delete from pubs where regexprmatches("\btara\b", lower(c2)) = 0;
 -- find in fulltexts if tara keywords exist more than 10 times
 insert into tara_match 
 select c1 as documentid, id as projectid, 0.8 as confidence from (
