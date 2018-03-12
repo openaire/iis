@@ -247,7 +247,7 @@ reduce_special_characters=re.compile(ur'(?:[\s\n,.;]+|[^\w,.\s]+)',re.UNICODE)
 reduce_underscore = re.compile(ur'(\b_+\b)',re.UNICODE)
 
 def normreplace(a):
-    if (a.group()[0] in ' \t\n.,;'):
+    if (a.group()[0] in ' \t\n-'):
         return ' '
 
     return '_';
