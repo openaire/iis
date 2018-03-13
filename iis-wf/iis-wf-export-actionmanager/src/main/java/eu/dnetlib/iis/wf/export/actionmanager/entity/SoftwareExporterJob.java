@@ -222,6 +222,13 @@ public class SoftwareExporterJob {
                     StringField.newBuilder().setValue(object.getSoftwareDescription().toString()).build());
         }
         
+        Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
+        qualifierBuilder.setClassid(InfoSpaceConstants.SEMANTIC_CLASS_SOFTWARE);
+        qualifierBuilder.setClassname(InfoSpaceConstants.SEMANTIC_CLASS_SOFTWARE);
+        qualifierBuilder.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RESULT_TYPOLOGIES);
+        qualifierBuilder.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RESULT_TYPOLOGIES);
+        metaBuilder.setResourcetype(qualifierBuilder);
+        
         resultBuilder.setMetadata(metaBuilder.build());
         
         Instance.Builder instanceBuilder = Instance.newBuilder();

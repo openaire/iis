@@ -33,6 +33,7 @@ public final class InfoSpaceConstants {
 
     public static final String SEMANTIC_CLASS_MAIN_TITLE = "main title";
     public static final String SEMANTIC_CLASS_PUBLICATION = "publication";
+    public static final String SEMANTIC_CLASS_SOFTWARE = "software";
     public static final String SEMANTIC_CLASS_UNKNOWN = "UNKNOWN";
     public static final String SEMANTIC_CLASS_IIS = "iis";
 

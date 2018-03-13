@@ -23,6 +23,11 @@ $targetValue.entity.result.metadata.descriptionList[0].value=madIS - Extensible 
 
 $targetValue.entity.result.metadata.codeRepositoryUrl.value=https://github.com/madgik/madis
 
+$targetValue.entity.result.metadata.resourcetype.classid=software
+$targetValue.entity.result.metadata.resourcetype.classname=software
+$targetValue.entity.result.metadata.resourcetype.schemeid=dnet:result_typologies
+$targetValue.entity.result.metadata.resourcetype.schemename=dnet:result_typologies
+
 $targetValue.entity.result.instanceList[0].hostedby.key=10|openaire____::d3b7c913cd04ebfec0e9ec32cb6fd58c
 $targetValue.entity.result.instanceList[0].hostedby.value=GitHub
 
