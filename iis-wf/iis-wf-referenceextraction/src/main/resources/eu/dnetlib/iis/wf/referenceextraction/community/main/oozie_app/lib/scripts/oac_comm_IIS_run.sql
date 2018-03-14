@@ -31,4 +31,23 @@ select docid, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||nex
 from (
   setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("\n", C2, " ")),20,2,10, '(?:\bSDSN\s)|(?:\bSDSN Greece\b)') from pubs where c2 is not null
 )) group by docid
-;
+
+union all
+
+-- Instruct-ERIC
+select jdict('documentId', docid, 'conceptId', conceptId, 'confidenceLevel', 0.5) as C1 from (
+select docid, conceptId, conceptLabel, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||next as context
+from (
+setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("\n", C2, " ")),20,2,10, '(?:\bInstruct-ERIC\b)|(?:\bESFRI\b)') from pubs where c2 is not null
+), grants where conceptLabel="Instruct-ERIC" and regexprmatches('(?:\b[Aa]cknowledge)|(?:\bsupport\b)|(?:\bInstruct\b)|(?:\Landmark\b) ', context)
+) group by docid
+
+union all
+
+-- ELIXIR-GR
+select jdict('documentId', docid, 'conceptId', conceptId, 'confidenceLevel', 0.5) as C1 from (
+select docid, conceptId, conceptLabel, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||next as context
+from (
+setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("\n", C2, " ")),20,1,10, '(?:\b5002780\b)|(?:\bELIXIR\b)') from pubs where c2 is not null
+), grants where conceptLabel="ELIXIR-GR" and regexprmatches('(?:\bMIS\b)|(?:\bELIXIR\b)|(?:\b[Ee]lixir\b)', context)
+) group by docid;
