@@ -25,6 +25,13 @@
             <description>key template to be used in reports, #{funder} token will be replaced by funder name</description>
         </property>
         <property>
+            <name>report_key_total</name>
+            <value>processing.referenceExtraction.project.reference.total</value>
+            <description>report key with total number of references</description>
+        </property>
+        
+        
+        <property>
             <name>sparkExecutorMemory</name>
             <value>7g</value>
             <description>memory for individual executor</description>
@@ -58,6 +65,7 @@
             <arg>-inputDocumentToProjectAvroPath=${input_document_to_project}</arg>
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
             <arg>-reportKeyTemplate=${report_key_template}</arg>
+            <arg>-reportKeyTotal=${report_key_total}</arg>
         </spark>
         <ok to="end" />
         <error to="fail" />

@@ -16,11 +16,11 @@
                 <value>${oozieLauncherQueueName}</value>
             </property>
             <property>
-                <name>funderReportSparkExecutorMemory</name>
+                <name>sparkExecutorMemory</name>
                 <value>1g</value>
             </property>
             <property>
-                <name>funderReportSparkExecutorCores</name>
+                <name>sparkExecutorCores</name>
                 <value>1</value>
             </property>
         </configuration>
@@ -47,9 +47,13 @@
 			<arg>-C{project, 
 				eu.dnetlib.iis.importer.schemas.Project,
 				eu/dnetlib/iis/wf/referenceextraction/project/data/project.json}</arg>
+            <arg>-C{document_metadata, 
+                eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal,
+                eu/dnetlib/iis/wf/referenceextraction/project/data/document_metadata.json}</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Odocument_text=${workingDir}/producer/document_text</arg>
 			<arg>-Oproject=${workingDir}/producer/project</arg>
+            <arg>-Odocument_metadata=${workingDir}/producer/document_metadata</arg>
 		</java>
 		<ok to="referenceextraction_project" />
 		<error to="fail" />
@@ -72,6 +76,10 @@
                 <property>
                     <name>input_project</name>
                     <value>${workingDir}/producer/project</value>
+                </property>
+                <property>
+                    <name>input_document_metadata</name>
+                    <value>${workingDir}/producer/document_metadata</value>
                 </property>
                 <property>
                     <name>output_document_to_project</name>
@@ -97,13 +105,10 @@
 			<arg>-C{document_to_project,
 				eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject,
 				eu/dnetlib/iis/wf/referenceextraction/project/data/document_to_project.json}</arg>
-            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,
-                eu/dnetlib/iis/wf/referenceextraction/project/data/report.json}</arg>
             <arg>-C{report_funder,eu.dnetlib.iis.common.schemas.ReportEntry,
                 eu/dnetlib/iis/wf/referenceextraction/project/data/report_funder.json}</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Idocument_to_project=${workingDir}/referenceextraction_project/document_to_project</arg>
-            <arg>-Ireport=${workingDir}/report/document_to_project</arg>
             <arg>-Ireport_funder=${workingDir}/report/document_to_project_by_funder</arg>
 		</java>
 		<ok to="end" />

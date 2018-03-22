@@ -1,12 +1,10 @@
 <?xml version="1.0"?>
-<!-- Note that documentation placed in comments in this file uses the
-"markdown" syntax (along with its way of dividing text into sections). -->
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="referenceextraction_project_main_sqlite">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="referenceextraction_tara_sqlite">
 	
 	<parameters>
 		<property>
-			<name>input_document_text</name>
-			<description>input document text</description>
+			<name>input_document_metadata</name>
+			<description>input document metadata with eu.dnetlib.iis.referenceextraction.project.schemas.DocumentMetadata avro records</description>
 		</property>
 		<property>
 			<name>input_project_db</name>
@@ -39,7 +37,7 @@
 	<action name="generate-schema">
 	    <java>
 	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
-	        <arg>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</arg>
+	        <arg>eu.dnetlib.iis.referenceextraction.project.schemas.DocumentMetadata</arg>
 	        <arg>eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject</arg>
 	        <capture-output />
 	    </java>
@@ -61,7 +59,7 @@
             	convention of passing them as named arguments makes the code
             	more readable/maintainable.
             	 -->
-                <mapper>scripts/madis/mexec.py -d project.db -f scripts/projects.sql</mapper>
+                <mapper>scripts/madis/mexec.py -d project.db -f scripts/taraextract.sql</mapper>
             </streaming>
             <configuration>
             	<!-- # Standard settings for our framework -->
@@ -83,12 +81,12 @@
                 <!-- INPUT -->
                 <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
-                    <value>${input_document_text}</value>
+                    <value>${input_document_metadata}</value>
                 </property>
 
                 <property>
                     <name>input.schema.literal</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.DocumentText']}</value>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.project.schemas.DocumentMetadata']}</value>
                 </property>
 
 				<!-- OUTPUT -->
@@ -106,7 +104,7 @@
 					by process storing plaintexts into the database -->
 				<property>
 					<name>mapreduce.task.timeout</name>
-					<value>14400000</value>
+					<value>28800000</value>
 				</property>
                 <property>
                     <name>oozie.action.external.stats.write</name>
@@ -119,7 +117,7 @@
         <ok to="end"/>
         <error to="fail"/>
     </action>
-
+    
     <kill name="fail">
         <message>Unfortunately, the process failed -- error message:
         			[${wf:errorMessage(wf:lastErrorNode())}]

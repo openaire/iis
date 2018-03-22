@@ -146,12 +146,12 @@
         </property>
         <!-- spark related: funder report generator -->
         <property>
-            <name>funderReportSparkExecutorMemory</name>
+            <name>projectReferenceExtractionSparkExecutorMemory</name>
             <value>7G</value>
             <description>memory for individual executor</description>
         </property>
         <property>
-            <name>funderReportSparkExecutorCores</name>
+            <name>projectReferenceExtractionSparkExecutorCores</name>
             <value>4</value>
             <description>number of cores used by single executor</description>
         </property>
@@ -356,6 +356,74 @@
                 </property>
             </configuration>
         </sub-workflow>
+        <ok to="extracted_document_metadata_collapser" />
+        <error to="fail" />
+    </action>
+
+
+    <!-- collapsed extracted metadata records branch -->
+
+    <action name="extracted_document_metadata_collapser">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/collapsers_basic_collapser</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/extracted_document_metadata_collapser/working_dir</value>
+                </property>
+                <property>
+                    <name>blocking_field</name>
+                    <value>id</value>
+                </property>
+                <property>
+                    <name>significant_fields</name>
+                    <value>references,publicationTypeName,abstract,externalIdentifiers,title,journal,pages,year</value>
+                </property>
+                <property>
+                    <name>schema</name>
+                    <value>eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata</value>
+                </property>
+                <!-- Input ports. -->
+                <property>
+                    <name>input</name>
+                    <value>${input_extracted_document_metadata}</value>
+                </property>
+                <!-- Output port bound to given path -->
+                <property>
+                    <name>output</name>
+                    <value>${workingDir}/extracted_document_metadata_collapser/output</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="transformers_metadatamerger" />
+        <error to="fail" />
+    </action>
+
+    <action name="transformers_metadatamerger">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_metadatamerger</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_metadatamerger/working_dir</value>
+                </property>
+                <property>
+                    <name>input_base_metadata</name>
+                    <value>${input_document_metadata}</value>
+                </property>
+                <property>
+                    <name>input_extracted_metadata</name>
+                    <value>${workingDir}/extracted_document_metadata_collapser/output</value>
+                </property>
+                <property>
+                    <name>output_merged_metadata</name>
+                    <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+
         <ok to="forking" />
         <error to="fail" />
     </action>
@@ -420,9 +488,21 @@
                     <value>${workingDir}/transformers_project_filter/output</value>
                 </property>
                 <property>
+                    <name>input_document_metadata</name>
+                    <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
+                </property>
+                <property>
                     <name>output_document_to_project</name>
                     <!-- referenceextraction_project directory is created at subworkflow prepare phase -->
                     <value>${output_document_to_project}</value>
+                </property>
+                <property>
+                    <name>sparkExecutorMemory</name>
+                    <value>${projectReferenceExtractionSparkExecutorMemory}</value>
+                </property>
+                <property>
+                    <name>sparkExecutorCores</name>
+                    <value>${projectReferenceExtractionSparkExecutorCores}</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -917,7 +997,7 @@
             </configuration>
         </sub-workflow>
 
-        <ok to="extracted_document_metadata_collapser" />
+        <ok to="decision-documentsclassification" />
         <error to="fail" />
     </action>
 
@@ -939,77 +1019,11 @@
             <!-- notice: directory have to aligned with skipped action output -->
             <arg>-Oreferenceextraction_researchinitiatives=${output_document_to_research_initiatives}</arg>
         </java>
-        <ok to="extracted_document_metadata_collapser" />
+        <ok to="decision-documentsclassification" />
         <error to="fail" />
     </action>
     <!-- end of researchinitiative reference extraction block -->
 
-    <!-- collapsed extracted metadata records branch -->
-
-    <action name="extracted_document_metadata_collapser">
-        <sub-workflow>
-            <app-path>${wf:appPath()}/collapsers_basic_collapser</app-path>
-            <propagate-configuration />
-            <configuration>
-                <property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/extracted_document_metadata_collapser/working_dir</value>
-                </property>
-                <property>
-                    <name>blocking_field</name>
-                    <value>id</value>
-                </property>
-                <property>
-                    <name>significant_fields</name>
-                    <value>references,publicationTypeName,abstract,externalIdentifiers,title,journal,pages,year</value>
-                </property>
-                <property>
-                    <name>schema</name>
-                    <value>eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata</value>
-                </property>
-                <!-- Input ports. -->
-                <property>
-                    <name>input</name>
-                    <value>${input_extracted_document_metadata}</value>
-                </property>
-                <!-- Output port bound to given path -->
-                <property>
-                    <name>output</name>
-                    <value>${workingDir}/extracted_document_metadata_collapser/output</value>
-                </property>
-            </configuration>
-        </sub-workflow>
-        <ok to="transformers_metadatamerger" />
-        <error to="fail" />
-    </action>
-
-    <action name="transformers_metadatamerger">
-        <sub-workflow>
-            <app-path>${wf:appPath()}/transformers_metadatamerger</app-path>
-            <propagate-configuration />
-            <configuration>
-                <property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/transformers_metadatamerger/working_dir</value>
-                </property>
-                <property>
-                    <name>input_base_metadata</name>
-                    <value>${input_document_metadata}</value>
-                </property>
-                <property>
-                    <name>input_extracted_metadata</name>
-                    <value>${workingDir}/extracted_document_metadata_collapser/output</value>
-                </property>
-                <property>
-                    <name>output_merged_metadata</name>
-                    <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
-                </property>
-            </configuration>
-        </sub-workflow>
-
-        <ok to="decision-documentsclassification" />
-        <error to="fail" />
-    </action>
 
     <!-- start of documents classification part -->
     <decision name="decision-documentsclassification">

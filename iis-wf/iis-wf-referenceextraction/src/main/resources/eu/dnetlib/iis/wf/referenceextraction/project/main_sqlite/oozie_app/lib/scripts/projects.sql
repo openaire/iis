@@ -13,7 +13,6 @@ hidden var 'nihposfull' from select jmergeregexp(jgroup(word)) from (select * fr
 hidden var 'nihpositives' from select jmergeregexp(jgroup(word)) from (select * from nihpositives order by length(word) desc);
 hidden var 'nihnegatives' from select jmergeregexp(jgroup(word)) from (select * from nihnegatives order by length(word) desc);
 hidden var 'wt_unidentified' from select id from grants where fundingclass1="WT" and grantid="unidentified" limit 1;
-hidden var 'tara_unidentified' from select id from grants where fundingclass1="TARA" and grantid="unidentified" limit 1;
 
 
 create temp table pubs as setschema 'c1,c2' select jsonpath(c1, '$.id', '$.text') from stdinput();
@@ -23,27 +22,6 @@ select c1 as docid, textwindow2s(c2,20,2,3, '(\bWel?lcome Trust\b|\bWT\b)') from
 regexpcountwords('(?:\bwell?come trust\b)|(?:(?:\bthis work was|financial(?:ly)?|partial(?:ly)?|partly|(?:gratefully\s)?acknowledges?)?\s?\b(?:support|fund|suppli?)(?:ed|ing)?\s(?:by|from|in part\s(?:by|from)|through)?\s?(?:a)?\s?(?:grant)?)|(?:(?:programme|project) grant)|(?:(?:under|through)?\s?(?:the)?\s(?:grants?|contract(?:\snumber)?)\b)|(?:\bprograms? of\b)|(?:\bgrants? of\b)|(?:\bin part by\b)|(?:\bthis work could not have been completed without\b)|(?:\bcontract\b)|(?:\backnowledgments?\b)', lower(prev||' '||middle||' '||next)) > 3);
 
 create temp table output_table as 
-
-select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min(1.49,confidence)/1.5)) as C1, docid, id, fundingclass1, grantid from ( select docid,id,max(confidence) as confidence, docid, id,  fundingclass1, grantid from ( select 
-case when keywordmatch then 0.9 else generalmatch*0.25 end as confidence, docid, 
-case when keywordmatch then id else var('tara_unidentified') end as id, fundingclass1, grantid
-from (
-unindexed select 
-case when tarakeywords="" then 0 else regexprmatches('\b'||tarakeywords||'\b', context) end as keywordmatch,
-regexpcountwords('(?:(?:\bfou?ndation)? tara expeditions?\b)|(?:\btara[ -]{1,2}(?:arctic|oceans?|pacific|med|girus|funding)\b)|(?:\btara transpolar drift\b)', context) as generalmatch,
-docid, id, fundingclass1, grantid
-from (
-select docid, stripchars(middle,'.)(,[]') as middle, lower(prev||" "||middle||" "||next) as context
-from (
-  setschema 'docid,prev,middle,next' select c1, textwindow2s(keywords(textacknowledgmentstara(C2)),4,1,4, '(\b(?:Tara|TARA)\b)') from pubs where c2 is not null
-)), grants
-where fundingclass1='TARA' and var('tara_unidentified')
-))
-group by docid having confidence>0)
-
-
-union all
-
 
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min(1.49,confidence)/1.5)) as C1, docid, id, fundingclass1, grantid from ( select docid,id,max(confidence) as confidence, docid, id,  fundingclass1, grantid from ( select 
 (0.3

@@ -11,6 +11,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.google.common.collect.Lists;
 
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
@@ -54,6 +55,11 @@ public class ProjectFunderReportJob {
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
             
             JavaRDD<DocumentToProject> documentToProject = avroLoader.loadJavaRDD(sc, params.inputDocumentToProjectAvroPath, DocumentToProject.class);
+            documentToProject.cache();
+            
+            ReportEntry totalReportEntry = new ReportEntry(params.reportKeyTotal, ReportEntryType.COUNTER, 
+                    String.valueOf(documentToProject.count()));
+            
             JavaRDD<Project> project = avroLoader.loadJavaRDD(sc, params.inputProjectAvroPath, Project.class);
 
             JavaPairRDD<CharSequence, Integer> projIdToOne = documentToProject.mapToPair(x -> new Tuple2<CharSequence, Integer>(x.getProjectId(), 1));
@@ -63,7 +69,9 @@ public class ProjectFunderReportJob {
             JavaPairRDD<CharSequence, Integer> funderWithOne = joinedByProjectId.mapToPair(x -> new Tuple2<CharSequence, Integer>(x._2._2, x._2._1));
             JavaPairRDD<CharSequence, Integer> reducedFunderWithCount = funderWithOne.reduceByKey((x, y) -> x+y);
 
-            avroSaver.saveJavaRDD(convertToReportEntries(reducedFunderWithCount.sortByKey(true), params.reportKeyTemplate), 
+            JavaRDD<ReportEntry> funderReport = convertToReportEntries(reducedFunderWithCount.sortByKey(true), params.reportKeyTemplate);
+            
+            avroSaver.saveJavaRDD(funderReport.union(sc.parallelize(Lists.newArrayList(totalReportEntry))), 
                     ReportEntry.SCHEMA$, params.outputReportPath);
         }
         
@@ -112,5 +120,8 @@ public class ProjectFunderReportJob {
         
         @Parameter(names = "-reportKeyTemplate", required = true)
         private String reportKeyTemplate;
+        
+        @Parameter(names = "-reportKeyTotal", required = true)
+        private String reportKeyTotal;
     }
 }

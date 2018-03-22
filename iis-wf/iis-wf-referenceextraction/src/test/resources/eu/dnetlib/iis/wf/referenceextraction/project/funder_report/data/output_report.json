@@ -1,3 +1,4 @@
 {"key": "processing.referenceExtraction.project.reference.byfunder.funder-1", "type":"COUNTER", "value": "2"}
 {"key": "processing.referenceExtraction.project.reference.byfunder.funder-2", "type":"COUNTER", "value": "1"}
 {"key": "processing.referenceExtraction.project.reference.byfunder.unknown", "type":"COUNTER", "value": "3"}
+{"key": "processing.referenceExtraction.project.reference.total", "type":"COUNTER", "value": "6"}

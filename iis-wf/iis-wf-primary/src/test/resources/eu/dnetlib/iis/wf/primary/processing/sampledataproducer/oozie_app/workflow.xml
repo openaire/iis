@@ -319,11 +319,11 @@
                 </property>
                 <!-- configuration for spark algorithms-->
                 <property>
-                    <name>funderReportSparkExecutorMemory</name>
+                    <name>projectReferenceExtractionSparkExecutorMemory</name>
                     <value>1G</value>
                 </property>
                 <property>
-                    <name>funderReportSparkExecutorCores</name>
+                    <name>projectReferenceExtractionSparkExecutorCores</name>
                     <value>1</value>
                 </property>
                 
@@ -494,9 +494,6 @@
             
             <arg>-C{documentToDatasetTotalReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_to_dataset_total.json}</arg>
             <arg>-IdocumentToDatasetTotalReport=${workingDir}/report/document_to_dataset_total</arg>
-            
-            <arg>-C{documentToProjectReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_to_project.json}</arg>
-            <arg>-IdocumentToProjectReport=${workingDir}/report/document_to_project</arg>
             
             <arg>-C{documentToProjectFunderReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_to_project_by_funder.json}</arg>
             <arg>-IdocumentToProjectFunderReport=${workingDir}/report/document_to_project_by_funder</arg>

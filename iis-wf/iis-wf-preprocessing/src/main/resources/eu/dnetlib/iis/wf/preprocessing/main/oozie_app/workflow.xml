@@ -203,12 +203,12 @@
         </property>
         <!-- spark related: funder report generator -->
         <property>
-            <name>funderReportSparkExecutorMemory</name>
+            <name>sparkExecutorMemory</name>
             <value>7G</value>
             <description>memory for individual executor</description>
         </property>
         <property>
-            <name>funderReportSparkExecutorCores</name>
+            <name>sparkExecutorCores</name>
             <value>4</value>
             <description>number of cores used by single executor</description>
         </property>
@@ -458,9 +458,26 @@
 				</property>
 			</configuration>
 		</sub-workflow>
-		<ok to="referenceextraction_project" />
+		<ok to="generate-empty-document-metadata" />
 		<error to="fail" />
 	</action>
+
+    <action name="generate-empty-document-metadata">
+        <java>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/document_metadata_empty" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{docmeta,
+                eu.dnetlib.iis.referenceextraction.project.schemas.DocumentMetadata,
+                eu/dnetlib/iis/common/data/empty.json}
+            </arg>
+            <arg>-Odocmeta=${workingDir}/document_metadata_empty</arg>
+        </java>
+        <ok to="referenceextraction_project" />
+        <error to="fail" />
+    </action>
 
 	<action name="referenceextraction_project">
 		<sub-workflow>
@@ -479,6 +496,10 @@
 					<name>input_project</name>
 					<value>${workingDir}/transformers_project_filter/output</value>
 				</property>
+                <property>
+                    <name>input_document_metadata</name>
+                    <value>${workingDir}/document_metadata_empty</value>
+                </property>
 				<property>
 					<name>output_document_to_project</name>
 					<value>${workingDir}/referenceextraction_project/document_projects</value>

@@ -63,3 +63,8 @@
   "type": "COUNTER",
   "value": "15"
 }
+{
+   "key": "processing.referenceExtraction.project.reference.total",
+   "type": "COUNTER",
+   "value": "49"
+}

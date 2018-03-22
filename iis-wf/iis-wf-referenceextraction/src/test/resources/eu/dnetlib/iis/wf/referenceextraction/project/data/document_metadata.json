@@ -1,0 +1,22 @@
+{
+    "publisher":null,
+    "language":null,
+    "title":"Some title",
+    "externalIdentifiers":null,
+    "journal":null,
+    "extractedAuthorFullNames":null,
+    "pages":null,
+    "volume":null,
+    "importedAuthors":null,
+    "year":null,
+    "keywords":null,
+    "references":null,
+    "id":"PMC3386204",
+    "issue":null,
+    "abstract":"Some abstract",
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}

@@ -203,8 +203,11 @@ def textacknowledgmentsstem(txt,span = 10,maxlen = 3,pattern = r'(?:support)|(?:
 textacknowledgmentsstem.registered=True
 
 
-def textacknowledgmentstara(txt, span=13, maxlen=3,
-                        pattern=r'(?:\bthank)|(?:\btara\b)|(?:\barticl)|(?:\bocean\b)|(?:\bpmc\b)|(?:\bsupport)|(?:\bsampl)|(?:\bexpedit)|(?:\bfoundat)|(?:\bresearch)|(?:\bhelp)|(?:\binstitut)|(?:\bmarin)|(?:\bnation)|(?:\backnowledg)|(?:\bcomment)|(?:\bcontribut)|(?:\bfund)|(?:\bgrate)|(?:\bprovid)|(?:\bproject)|(?:\bpossibl)|(?:\bscienc)|(?:author)|(?:grant)|(?:fellowship)|(?:program)|(?:programm)|(?:suggest)|(?:taraexpedit)|(?:université)|(?:valuabl)|(?:without)|(?:pmc articles)|(?:tara oceans)|(?:oceans expedition)|(?:oceans consortium)|(?:anonymous reviewers)|(?:article contribution)|(?:environment foundation)|(?:people sponsors)|(?:projects? poseidon)|(?:wish thank)|(?:commitment following)|(?:continuous support)|(?:data analysis)|(?:exist without)|(?:tara girus)|(?:tara schooner)|(?:keen thank)|(?:oceans taraexpeditions)|(?:possible thanks)|(?:sponsors made)|(?:technical assistance)|(?:thank commitment)|(?:without continuous)'):
+# without tara: pattern=r'(?:\bthank)|(?:\barticl)|(?:\bpmc\b)|(?:\bsupport)|(?:\bsampl)|(?:\bexpedit)|(?:\bfoundat)|(?:\bresearch)|(?:\bhelp)|(?:\binstitut)|(?:\bmarin)|(?:\bnation)|(?:\backnowledg)|(?:\bcomment)|(?:\bcontribut)|(?:\bfund)|(?:\bgrate)|(?:\bprovid)|(?:\bproject)|(?:\bpossibl)|(?:\bscienc)|(?:author)|(?:grant)|(?:fellowship)|(?:program)|(?:programm)|(?:suggest)|(?:taraexpedit)|(?:université)|(?:valuabl)|(?:without)|(?:pmc articles)|(?:oceans expedition)|(?:oceans consortium)|(?:anonymous reviewers)|(?:article contribution)|(?:environment foundation)|(?:people sponsors)|(?:projects? poseidon)|(?:wish thank)|(?:commitment following)|(?:continuous support)|(?:data analysis)|(?:exist without)|(?:tara girus)|(?:keen thank)|(?:oceans taraexpeditions)|(?:possible thanks)|(?:sponsors made)|(?:technical assistance)|(?:thank commitment)|(?:without continuous)'
+# with tara: pattern=r'(?:\bthank)|(?:\btara\b)|(?:\barticl)|(?:\bocean\b)|(?:\bpmc\b)|(?:\bsupport)|(?:\bsampl)|(?:\bexpedit)|(?:\bfoundat)|(?:\bresearch)|(?:\bhelp)|(?:\binstitut)|(?:\bmarin)|(?:\bnation)|(?:\backnowledg)|(?:\bcomment)|(?:\bcontribut)|(?:\bfund)|(?:\bgrate)|(?:\bprovid)|(?:\bproject)|(?:\bpossibl)|(?:\bscienc)|(?:author)|(?:grant)|(?:fellowship)|(?:program)|(?:programm)|(?:suggest)|(?:taraexpedit)|(?:université)|(?:valuabl)|(?:without)|(?:pmc articles)|(?:tara oceans)|(?:oceans expedition)|(?:oceans consortium)|(?:anonymous reviewers)|(?:article contribution)|(?:environment foundation)|(?:people sponsors)|(?:projects? poseidon)|(?:wish thank)|(?:commitment following)|(?:continuous support)|(?:data analysis)|(?:exist without)|(?:tara girus)|(?:tara schooner)|(?:keen thank)|(?:oceans taraexpeditions)|(?:possible thanks)|(?:sponsors made)|(?:technical assistance)|(?:thank commitment)|(?:without continuous)'
+# with tara v1: pattern=r'(?:\bthank)|(?:\bpmc\b)|(?:\bsupport)|(?:\bsampl)|(?:\bfoundat)|(?:\bresearch)|(?:\bhelp)|(?:\binstitut)|(?:\bnation)|(?:\backnowledg)|(?:\bcomment)|(?:\bcontribut)|(?:\bfund)|(?:\bgrate)|(?:\bprovid)|(?:\bproject)|(?:\bpossibl)|(?:\bscienc)|(?:author)|(?:grant)|(?:fellowship)|(?:program)|(?:suggest)|(?:université)|(?:valuabl)|(?:without)|(?:pmc articles)|(?:oceans consortium)|(?:anonymous reviewers)|(?:article contribution)|(?:environment foundation)|(?:people sponsors)|(?:projects? poseidon)|(?:wish thank)|(?:commitment following)|(?:continuous support)|(?:data analysis)|(?:exist without)|(?:keen thank)|(?:possible thanks)|(?:sponsors made)|(?:technical assistance)|(?:thank commitment)|(?:without continuous)'
+def textacknowledgmentstara(txt, span=20, maxlen=7,
+                            pattern=r'(?:crew)|(?:research)|(?:acknowledgements)|(?:acknowledge)|(?:acknowledg)|(?:assistance)|(?:commitment of)|(?:comments)|(?:particular(?:ly)?)|(?:fellowships?)|(?:authors?)|(?:program(?:s|mmes?)?)|(?:projects?)|(?:institutes?)|(?:sponsors)|(?:\bthanks?\b)|(?:possible)|(?:\bgrant(?:ed|s)?)|(?:\bsampl(?:e[sd]?|ing))|(?:\bsupport(?:ing)?\b)|(?:foundation)|(?:expedition)|(?:anr-)|(?:\bthis work\b)|(?:\bfunded by\b)|(?:\bthis study\b)|(?:following (?:people|individuals|institutions?|organizations?|sponsors))|(?:contribution (?:no|number))|(?:\bwish thanks?\b)|(?:\b23 institutes\b)|(?:\bgrateful(?: in| to| for|ly))|(?:supported (?:by|in))|(?:continuous support)|(?:exist without)|(?:following people)|(?:without continuous support)|(?:part of the)'):
     """
     .. function:: textacknowledgments(text, span = 10, maxlen = 5, pattern = (\b|_)(1|2)\d{3,3}(\b|_))
 
@@ -227,9 +230,12 @@ def textacknowledgmentstara(txt, span=13, maxlen=3,
     <BLANKLINE>
     """
 
+    # clean text from \r\n
     exp = re.sub('\r\n', '\n', txt)
+    # dedublicate spaces
     exp = reduce_spaces.sub(' ', strip_remove_newlines.sub('', exp))
 
+    # if text is small, return it
     if exp.count(' ') < span * 10:
         return exp
 
@@ -267,7 +273,7 @@ def textacknowledgmentstara(txt, span=13, maxlen=3,
         densities.append(sum(results[i - maxlen / 2:i - maxlen / 2 + maxlen]) * 1.0 / maxlen)
 
     # for cnt, i in enumerate(spanedorigtext):
-    #     print i, results[maxlen/2+cnt], densities[cnt]
+    #     print results[maxlen/2+cnt], densities[cnt], i
 
     threshold = 1
 
