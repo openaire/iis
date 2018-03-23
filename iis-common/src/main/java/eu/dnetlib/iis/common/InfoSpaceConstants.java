@@ -34,8 +34,11 @@ public final class InfoSpaceConstants {
     public static final String SEMANTIC_CLASS_MAIN_TITLE = "main title";
     public static final String SEMANTIC_CLASS_PUBLICATION = "publication";
     public static final String SEMANTIC_CLASS_SOFTWARE = "software";
+    public static final String SEMANTIC_CLASS_PUBLICATION_RESOURCE_SOFTWARE = "Software";
     public static final String SEMANTIC_CLASS_UNKNOWN = "UNKNOWN";
     public static final String SEMANTIC_CLASS_IIS = "iis";
+    
+    public static final String SEMANTIC_CLASS_NAME_NOT_AVAILABLE = "not available";
 
     public static final String SEMANTIC_SCHEME_DNET_PERSON_ROLES = "dnet:personroles";
     public static final String SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_RESULT = "dnet:result_result_relations";
@@ -48,6 +51,8 @@ public final class InfoSpaceConstants {
     public static final String SEMANTIC_SCHEME_DNET_LANGUAGES = "dnet:languages";
     public static final String SEMANTIC_SCHEME_DNET_PID_TYPES = "dnet:pid_types";
     public static final String SEMANTIC_SCHEME_DNET_CLASSIFICATION_TAXONOMIES = "dnet:subject_classification_typologies";
+    public static final String SEMANTIC_SCHEME_DNET_PUBLICATION_RESOURCE = "dnet:publication_resource";
+    public static final String SEMANTIC_SCHEME_DNET_ACCESS_MODES = "dnet:access_modes";
 
     // resultResult citation and similarity related
     public static final String SEMANTIC_SCHEME_DNET_DATASET_PUBLICATION_RELS = "dnet:dataset_publication_rels";
@@ -61,9 +66,10 @@ public final class InfoSpaceConstants {
     public static final String EXTERNAL_ID_TYPE_INSTANCE_URL = "dnet:instance-url";
     public static final String EXTERNAL_ID_TYPE_UNKNOWN = "unknown";
 
-    // publication types class ids
+    // publication resource types class ids
     public static final String SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE = "0001";
     public static final String SEMANTIC_CLASS_INSTANCE_TYPE_DATASET = "0021";
+    public static final String SEMANTIC_CLASS_INSTANCE_TYPE_SOFTWARE = "0029";
 
     static {
         try {

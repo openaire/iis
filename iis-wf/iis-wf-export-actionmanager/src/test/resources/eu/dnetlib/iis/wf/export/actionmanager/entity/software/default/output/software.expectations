@@ -7,8 +7,6 @@ agent.id=iis
 agent.name=information inference service
 agent.type=service
 
-#{"kind": "entity","entity": {"type": "result","result": {"metadata": {"title": [{"value": "madis","qualifier": {"classid": "main title","classname": "main title","schemeid": "dnet:dataCite_title","schemename": "dnet:dataCite_title"}}],"description": [{"value": "madIS - Extensible relational DB based on SQLite"}],"codeRepositoryUrl": {"value": "https://github.com/madgik/madis"}},"instance": [{"hostedby": {"key": "10|openaire____::d3b7c913cd04ebfec0e9ec32cb6fd58c","value": "GitHub"},"url": ["https://github.com/madgik/madis"]}]},"id": "50|openaire____::4835133649d4a88133ebd460198d19a2"},"dataInfo": {"inferred": true,"trust": "0.72","inferenceprovenance": "iis::document_software_url","provenanceaction": {"classid": "iis","classname": "iis","schemeid": "dnet:provenanceActions","schemename": "dnet:provenanceActions"}},"lastupdatetimestamp": 1513272243880}
-
 $targetValue.kind=entity
 $targetValue.entity.type=result
 $targetValue.entity.id=50|openaire____::4835133649d4a88133ebd460198d19a2
@@ -23,13 +21,27 @@ $targetValue.entity.result.metadata.descriptionList[0].value=madIS - Extensible 
 
 $targetValue.entity.result.metadata.codeRepositoryUrl.value=https://github.com/madgik/madis
 
-$targetValue.entity.result.metadata.resourcetype.classid=software
-$targetValue.entity.result.metadata.resourcetype.classname=software
-$targetValue.entity.result.metadata.resourcetype.schemeid=dnet:result_typologies
-$targetValue.entity.result.metadata.resourcetype.schemename=dnet:result_typologies
+$targetValue.entity.result.metadata.resulttype.classid=software
+$targetValue.entity.result.metadata.resulttype.classname=software
+$targetValue.entity.result.metadata.resulttype.schemeid=dnet:result_typologies
+$targetValue.entity.result.metadata.resulttype.schemename=dnet:result_typologies
+
+$targetValue.entity.result.instanceList[0].accessright.classid=UNKNOWN
+$targetValue.entity.result.instanceList[0].accessright.classname=not available
+$targetValue.entity.result.instanceList[0].accessright.schemeid=dnet:access_modes
+$targetValue.entity.result.instanceList[0].accessright.schemename=dnet:access_modes
+
+$targetValue.entity.result.instanceList[0].instancetype.classid=0029
+$targetValue.entity.result.instanceList[0].instancetype.classname=Software
+$targetValue.entity.result.instanceList[0].instancetype.schemeid=dnet:publication_resource
+$targetValue.entity.result.instanceList[0].instancetype.schemename=dnet:publication_resource
 
 $targetValue.entity.result.instanceList[0].hostedby.key=10|openaire____::d3b7c913cd04ebfec0e9ec32cb6fd58c
 $targetValue.entity.result.instanceList[0].hostedby.value=GitHub
+$targetValue.entity.result.instanceList[0].collectedfrom.key=10|openaire____::d3b7c913cd04ebfec0e9ec32cb6fd58c
+$targetValue.entity.result.instanceList[0].collectedfrom.value=GitHub
+$targetValue.entity.collectedfromList[0].key=10|openaire____::d3b7c913cd04ebfec0e9ec32cb6fd58c
+$targetValue.entity.collectedfromList[0].value=GitHub
 
 $targetValue.entity.result.instanceList[0].urlList[0]=https://github.com/madgik/madis
 

@@ -1,7 +1,11 @@
 package eu.dnetlib.iis.wf.export.actionmanager.entity;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -63,9 +67,17 @@ public class SoftwareExporterJob {
     public static final String INFERENCE_PROVENANCE = InfoSpaceConstants.SEMANTIC_CLASS_IIS
             + InfoSpaceConstants.INFERENCE_PROVENANCE_SEPARATOR + AlgorithmName.document_software_url;
     
+    private static final Qualifier RESULT_TYPE_SOFTWARE = buildResultTypeSoftware();
+    
+    private static final Qualifier INSTANCE_TYPE_SOFTWARE = buildInstanceTypeSoftware();
+    
+    private static final Qualifier ACCESS_RIGHT_UNKNOWN = buildAccessRightUnknown();
+    
     private static final String OPENAIRE_ENTITY_ID_PREFIX = "openaire____::";
     
     private static final int numberOfOutputFiles = 10;
+    
+    private static final DateFormat dateFormat = buildDateFormat();
 
     private static SparkAvroLoader avroLoader = new SparkAvroLoader();
     
@@ -208,6 +220,14 @@ public class SoftwareExporterJob {
         
         String url = pickUrl(object);
         
+        OafEntity.Builder entityBuilder = OafEntity.newBuilder();
+        entityBuilder.setId(generateSoftwareEntityId(url));
+        entityBuilder.setType(Type.result);
+        
+        String dateStr = dateFormat.format(new Date());
+        entityBuilder.setDateofcollection(dateStr);
+        entityBuilder.setDateoftransformation(dateStr);
+        
         Result.Builder resultBuilder = Result.newBuilder();
         
         Metadata.Builder metaBuilder = Metadata.newBuilder();
@@ -222,29 +242,32 @@ public class SoftwareExporterJob {
                     StringField.newBuilder().setValue(object.getSoftwareDescription().toString()).build());
         }
         
-        Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
-        qualifierBuilder.setClassid(InfoSpaceConstants.SEMANTIC_CLASS_SOFTWARE);
-        qualifierBuilder.setClassname(InfoSpaceConstants.SEMANTIC_CLASS_SOFTWARE);
-        qualifierBuilder.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RESULT_TYPOLOGIES);
-        qualifierBuilder.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RESULT_TYPOLOGIES);
-        metaBuilder.setResourcetype(qualifierBuilder);
+        metaBuilder.setResulttype(RESULT_TYPE_SOFTWARE);
         
         resultBuilder.setMetadata(metaBuilder.build());
         
         Instance.Builder instanceBuilder = Instance.newBuilder();
         instanceBuilder.addUrl(url);
+        instanceBuilder.setInstancetype(INSTANCE_TYPE_SOFTWARE);
+        instanceBuilder.setAccessright(ACCESS_RIGHT_UNKNOWN);
         
         if (StringUtils.isNotBlank(object.getRepositoryName())) {
-            instanceBuilder.setHostedby(buildHostedBy(object.getRepositoryName().toString()));
+            KeyValue collectedFrom = buildHostedBy(object.getRepositoryName().toString());
+            instanceBuilder.setHostedby(collectedFrom);
+            instanceBuilder.setCollectedfrom(collectedFrom);
+            entityBuilder.addCollectedfrom(collectedFrom);
         }
         
         resultBuilder.addInstance(instanceBuilder.build());
         
-        OafEntity.Builder entityBuilder = OafEntity.newBuilder();
-        entityBuilder.setId(generateSoftwareEntityId(url));
-        entityBuilder.setType(Type.result);
         entityBuilder.setResult(resultBuilder.build());
         return BuilderModuleHelper.buildOaf(entityBuilder.build(), object.getConfidenceLevel(), INFERENCE_PROVENANCE);
+    }
+    
+    private static DateFormat buildDateFormat() {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return df;
     }
     
     private static StructuredProperty buildTitle(String title) {
@@ -259,6 +282,33 @@ public class SoftwareExporterJob {
         titleBuilder.setQualifier(qualifierBuilder.build());
         
         return titleBuilder.build();
+    }
+    
+    private static Qualifier buildResultTypeSoftware() {
+        Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
+        qualifierBuilder.setClassid(InfoSpaceConstants.SEMANTIC_CLASS_SOFTWARE);
+        qualifierBuilder.setClassname(InfoSpaceConstants.SEMANTIC_CLASS_SOFTWARE);
+        qualifierBuilder.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RESULT_TYPOLOGIES);
+        qualifierBuilder.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RESULT_TYPOLOGIES);
+        return qualifierBuilder.build();
+    }
+    
+    private static Qualifier buildInstanceTypeSoftware() {
+        Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
+        qualifierBuilder.setClassid(InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_SOFTWARE);
+        qualifierBuilder.setClassname(InfoSpaceConstants.SEMANTIC_CLASS_PUBLICATION_RESOURCE_SOFTWARE);
+        qualifierBuilder.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PUBLICATION_RESOURCE);
+        qualifierBuilder.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PUBLICATION_RESOURCE);
+        return qualifierBuilder.build();
+    }
+    
+    private static Qualifier buildAccessRightUnknown() {
+        Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
+        qualifierBuilder.setClassid(InfoSpaceConstants.SEMANTIC_CLASS_UNKNOWN);
+        qualifierBuilder.setClassname(InfoSpaceConstants.SEMANTIC_CLASS_NAME_NOT_AVAILABLE);
+        qualifierBuilder.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_ACCESS_MODES);
+        qualifierBuilder.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_ACCESS_MODES);
+        return qualifierBuilder.build();
     }
     
     private static KeyValue buildHostedBy(String repositoryName) {
