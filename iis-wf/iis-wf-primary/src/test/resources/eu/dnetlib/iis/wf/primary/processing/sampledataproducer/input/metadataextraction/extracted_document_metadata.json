@@ -30,7 +30,9 @@
 	"year": null, 	
 	"publisher": null,
 	"references": null,  
-	"authors": null, 
+	"authors": [
+        {"authorFullName": "author1", "affiliationPositions": [0]}
+    ],
  	"affiliations": [
  		{"organization":"Wweizmann Institute of Science", "countryName":null, "countryCode":"IL", "address":null, "rawText":""}
  	],
@@ -133,7 +135,10 @@
 	"year": null,
 	"publisher": null,
 	"references": null,
-	"authors": null,
+	"authors": [
+        {"authorFullName": "author1", "affiliationPositions": [0]},
+        {"authorFullName": "author1", "affiliationPositions": [1,2]}
+    ],
 	"affiliations": [
 		{"organization":"Department of Molecular and Cell Biology, Unversity of California at Berkeley", "countryName":"United States", "countryCode":"US", "address":null, "rawText":""},
 		{"organization":"Uniwersytet Warszawski", "countryName":"Poland", "countryCode":"PL", "address":null, "rawText":""},

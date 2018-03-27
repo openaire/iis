@@ -9,7 +9,11 @@
     "year":null,
     "publisher":null,
     "references":null,
-    "authors":null,
+    "authors": [
+        {"authorFullName": "author1", "affiliationPositions": [0]},
+        {"authorFullName": "author2", "affiliationPositions": [1]},
+        {"authorFullName": "author3", "affiliationPositions": [2]}
+    ],
     "affiliations":[
         {
         "organization":"Uniwersytet   Warszawski ",
@@ -50,7 +54,9 @@
     "year":null,
     "publisher":null,
     "references":null,
-    "authors":null,
+    "authors": [
+        {"authorFullName": "author1", "affiliationPositions": [0,1]}
+    ],
     "affiliations":[
         {
         "organization":"Uniwersytet   Warszawski ",
@@ -84,7 +90,10 @@
     "year":null,
     "publisher":null,
     "references":null,
-    "authors":null,
+    "authors": [
+        {"authorFullName": "author1", "affiliationPositions": [0,1]},
+        {"authorFullName": "author2", "affiliationPositions": [2]}
+    ],
     "affiliations":[
         {
         "organization":"Department of Molecular and Cell Biology, University of California at Berkeley",
@@ -125,7 +134,9 @@
     "year":null,
     "publisher":null,
     "references":null,
-    "authors":null,
+    "authors": [
+        {"authorFullName": "author1", "affiliationPositions": [0]}
+    ],
     "affiliations":[
         {
         "organization":"Department of Molecular and Cell Biology, Unversity of California at Berkeley",
@@ -152,7 +163,9 @@
     "year":null,
     "publisher":null,
     "references":null,
-    "authors":null,
+    "authors": [
+        {"authorFullName": "author1", "affiliationPositions": [0]}
+    ],
     "affiliations":[
         {
         "organization":"Department of Molecular and Cell Biology, Unversity of California at Berkeley",
@@ -179,7 +192,9 @@
     "year":null,
     "publisher":null,
     "references":null,
-    "authors":null,
+    "authors": [
+        {"authorFullName": "author1", "affiliationPositions": [0]}
+    ],
     "affiliations":[
         {
         "organization":"College of Education, Washington State University, WSU",

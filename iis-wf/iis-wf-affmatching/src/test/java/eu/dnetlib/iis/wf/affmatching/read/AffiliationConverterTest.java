@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -13,6 +14,7 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
+import eu.dnetlib.iis.metadataextraction.schemas.Author;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 
@@ -113,6 +115,7 @@ public class AffiliationConverterTest {
         
         List<Affiliation> affiliations = Lists.newArrayList(aff1);
         document.setAffiliations(affiliations);
+        document.setAuthors(Lists.newArrayList(createAuthor("author1", 0)));
 
         
         // execute
@@ -143,7 +146,7 @@ public class AffiliationConverterTest {
         
         List<Affiliation> affiliations = Lists.newArrayList(aff1, aff2, aff3);
         document.setAffiliations(affiliations);
-
+        document.setAuthors(Lists.newArrayList(createAuthor("author1", 0), createAuthor("author2", 1)));
         
         // execute
         
@@ -153,9 +156,9 @@ public class AffiliationConverterTest {
         // assert
         
         assertNotNull(affMatchAffiliations);
+        assertEquals(2, affMatchAffiliations.size());
         assertAffiliation(affMatchAffiliations.get(0), "XYZ", 1, "ABC", "Poland", "PL");
         assertAffiliation(affMatchAffiliations.get(1), "XYZ", 2, "DEF", "Deutschland", "DE");
-        assertAffiliation(affMatchAffiliations.get(2), "XYZ", 3, "GHI", "Slovakia", "SL");
         
     }
 
@@ -171,6 +174,12 @@ public class AffiliationConverterTest {
         return aff;
     }
     
+    private Author createAuthor(String fullName, int affiliationPosition) {
+        Author author = new Author();
+        author.setAuthorFullName(fullName);
+        author.setAffiliationPositions(Arrays.asList(affiliationPosition));
+        return author;
+    }
 
     private void assertAffiliation(AffMatchAffiliation actualAffMatchAff, String expectedDocId, int expectedPosition, String expectedOrgName, String expectedCountryName, String expectedCountryCode) {
         assertEquals(expectedDocId, actualAffMatchAff.getDocumentId());

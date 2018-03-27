@@ -13,6 +13,7 @@ import com.google.common.base.Preconditions;
 
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
+import eu.dnetlib.iis.metadataextraction.schemas.Author;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
@@ -56,9 +57,9 @@ public class AffiliationConverter implements Serializable {
             
             Affiliation srcAffiliation = document.getAffiliations().get(i);
             
-            int positionInDocument = i + 1;
-            
-            affMatchAffiliations.add(convertAffiliation(document.getId(), positionInDocument, srcAffiliation));
+            if (isAuthorAffiliation(i, document.getAuthors())) {
+                affMatchAffiliations.add(convertAffiliation(document.getId(), i + 1, srcAffiliation));    
+            }
             
         }
         
@@ -70,6 +71,20 @@ public class AffiliationConverter implements Serializable {
     
     //------------------------ PRIVATE --------------------------
     
+    private static boolean isAuthorAffiliation(int position, List<Author> authors) {
+        if (CollectionUtils.isNotEmpty(authors)) {
+          for (Author author : authors) {
+              if (CollectionUtils.isNotEmpty(author.getAffiliationPositions())) {
+                  for (Integer currentPosition : author.getAffiliationPositions()) {
+                      if (position == currentPosition) {
+                          return true;
+                      }
+                  }
+              }
+          }
+        }
+        return false;
+    }
     
     private AffMatchAffiliation convertAffiliation(CharSequence documentId, int positionInDocument, Affiliation aff) {
         
