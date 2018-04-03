@@ -35,7 +35,7 @@
 }
 {
   "documentId": "WOS:000294776300003",
-  "conceptId": "egi::projects::egiinspire",
+  "conceptId": "egi::projects::35",
   "confidenceLevel": 0.8
 }
 {
@@ -50,7 +50,7 @@
 }
 {
   "documentId": "WOS:000293231000009",
-  "conceptId": "egi::projects::egiinspire",
+  "conceptId": "egi::projects::35",
   "confidenceLevel": 0.8
 }
 {
@@ -60,7 +60,7 @@
 }
 {
   "documentId": "WOS:000293179100010",
-  "conceptId": "egi::projects::egiinspire",
+  "conceptId": "egi::projects::35",
   "confidenceLevel": 0.8
 }
 {
@@ -75,7 +75,7 @@
 }
 {
   "documentId": "WOS:000292392400013",
-  "conceptId": "egi::projects::egiinspire",
+  "conceptId": "egi::projects::35",
   "confidenceLevel": 0.8
 }
 {
@@ -130,12 +130,12 @@
 }
 {
   "documentId": "WOS:000288085300021",
-  "conceptId": "egi::projects::egiinspire",
+  "conceptId": "egi::projects::35",
   "confidenceLevel": 0.8
 }
 {
   "documentId": "WOS:000289068100007",
-  "conceptId": "egi::projects::egiinspire",
+  "conceptId": "egi::projects::35",
   "confidenceLevel": 0.8
 }
 {
