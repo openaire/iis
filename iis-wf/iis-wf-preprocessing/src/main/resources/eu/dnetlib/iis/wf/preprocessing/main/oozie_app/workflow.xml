@@ -5,6 +5,17 @@
 			<value>false</value>
 			<description>flag indicating inference side products will be erased</description>
 		</property>
+        <!-- processing modes -->
+        <property>
+            <name>active_referenceextraction_project</name>
+            <value>true</value>
+            <description>flag indicating project reference extraction should be enabled</description>
+        </property>
+        <property>
+            <name>active_referenceextraction_dataset</name>
+            <value>true</value>
+            <description>flag indicating dataset reference extraction should be enabled</description>
+        </property>
 		<!-- import concepts related -->
 		<property>
 			<name>import_islookup_service_location</name>
@@ -377,10 +388,17 @@
 	</action>
 
 	<fork name="referenceextraction_forking">
-		<path start="referenceextraction_dataset" />
-		<path start="ingest_webcrawl_fundings" />
+		<path start="decision-referenceextraction_dataset" />
+		<path start="decision-referenceextraction_project" />
 	</fork>
-
+    
+    <decision name="decision-referenceextraction_dataset">
+        <switch>
+            <case to="referenceextraction_dataset">${active_referenceextraction_dataset eq "true"}</case>
+            <default to="skip-referenceextraction_dataset" />
+        </switch>
+    </decision>
+    
 	<action name="referenceextraction_dataset">
 		<sub-workflow>
 			<app-path>${wf:appPath()}/referenceextraction_dataset</app-path>
@@ -411,6 +429,32 @@
 		<ok to="referenceextraction_joining" />
 		<error to="fail" />
 	</action>
+    
+    <action name="skip-referenceextraction_dataset">
+        <java>
+            <prepare>
+                <!-- notice: directory have to aligned with skipped action output -->
+                <delete path="${nameNode}${workingDir}/referenceextraction_dataset" />
+                <mkdir path="${nameNode}${workingDir}/referenceextraction_dataset" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{referenceextraction_dataset,
+                eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet,
+                eu/dnetlib/iis/common/data/empty.json}
+            </arg>
+            <arg>-Oreferenceextraction_dataset=${workingDir}/referenceextraction_dataset/document_datasets</arg>
+        </java>
+        <ok to="referenceextraction_joining" />
+        <error to="fail" />
+    </action>
+    
+    <decision name="decision-referenceextraction_project">
+        <switch>
+            <case to="ingest_webcrawl_fundings">${active_referenceextraction_project eq "true"}</case>
+            <default to="skip-referenceextraction_project" />
+        </switch>
+    </decision>
 
 	<action name="ingest_webcrawl_fundings">
 		<sub-workflow>
@@ -583,6 +627,33 @@
 		<ok to="referenceextraction_joining" />
 		<error to="fail" />
 	</action>
+
+    <action name="skip-referenceextraction_project">
+        <java>
+            <prepare>
+                <!-- notice: directory have to aligned with skipped action output -->
+                <delete path="${nameNode}${workingDir}/referenceextraction_project" />
+                <delete path="${nameNode}${workingDir}/transformers_concept_to_researchinitiatives" />
+                <mkdir path="${nameNode}${workingDir}/referenceextraction_project" />
+                <mkdir path="${nameNode}${workingDir}/transformers_concept_to_researchinitiatives" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{referenceextraction_project,
+                eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject,
+                eu/dnetlib/iis/common/data/empty.json}
+            </arg>
+            <arg>-C{document_to_project_concepts,
+                eu.dnetlib.iis.export.schemas.DocumentToConceptIds,
+                eu/dnetlib/iis/common/data/empty.json}
+            </arg>
+            <!-- notice: directory have to aligned with skipped action output -->
+            <arg>-Oreferenceextraction_project=${workingDir}/referenceextraction_project/document_projects</arg>
+            <arg>-Odocument_to_project_concepts=${workingDir}/transformers_concept_to_researchinitiatives/out</arg>
+        </java>
+        <ok to="referenceextraction_joining" />
+        <error to="fail" />
+    </action>
 
 	<join name="referenceextraction_joining" to="export-to-actionmanager" />
 
