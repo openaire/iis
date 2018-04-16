@@ -1,7 +1,6 @@
 package eu.dnetlib.iis.wf.referenceextraction.softwareurl;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -67,7 +66,7 @@ public class HttpContentRetriever implements ContentRetriever {
                         (System.currentTimeMillis()-startTime) + " ms");
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("content retrieval failed for url: " + currentUrl, e);
             return new ContentRetrieverResponse(e);
         }
