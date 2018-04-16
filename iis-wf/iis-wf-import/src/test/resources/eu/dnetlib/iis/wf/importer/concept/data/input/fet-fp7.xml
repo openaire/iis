@@ -7,6 +7,8 @@
             <param name="CD_DIVNAME">7.A.SP1.03.19.01</param>
             <param name="CD_ABBR">ICT-2011.9.1</param>
             <param name="CD_PARENT_DIVNAME">7.A.SP1.03.19</param>
+            <param name="DUPLICATED_ENTRY">value1</param>
+            <param name="DUPLICATED_ENTRY">value2</param>
             <concept id="fet-fp7::open::301::284566" label="Quantum Propagating Microwaves in Strongly Coupled Environments" claim="true">
                 <param name="CD_PROJECT_NUMBER">284566</param>
                 <param name="CD_ACRONYM">PROMISCE</param>

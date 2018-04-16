@@ -7,11 +7,6 @@
 			<description>flag indicating dataset import should be enabled</description>
 		</property>
 		<property>
-			<name>active_import_concept</name>
-			<value>false</value>
-			<description>flag indicating concept import should be executed</description>
-		</property>
-		<property>
 			<name>match_content_with_metadata</name>
 			<value>true</value>
 			<description>flag indicating contents should be filtered and their identifiers should be deduplicated against metadata entries retrieved from InformationSpace.
@@ -47,13 +42,11 @@
 		<!-- import concepts related -->
 		<property>
 			<name>islookup_service_location</name>
-			<value>$UNDEFINED$</value>
-			<description>IS Lookup service location, required only when active_import_concept is set to true</description>
+			<description>IS Lookup service location</description>
 		</property>
 		<property>
 			<name>project_concepts_context_ids_csv</name>
-			<value>$UNDEFINED$</value>
-			<description>comma separated list of concepts context identifiers to be picked by ISLookup, required only when active_import_concept is set to true</description>
+			<description>comma separated list of concepts context identifiers to be picked by ISLookup</description>
 		</property>
 		<!-- import datacite related -->
 		<property>
@@ -206,8 +199,8 @@
 			<description>wos import output directory</description>
 		</property>
 		<property>
-			<name>output_project_concept</name>
-			<description>project concepts output directory</description>
+			<name>output_concept</name>
+			<description>concepts output directory</description>
 		</property>
 		<property>
 			<name>output_faults</name>
@@ -243,17 +236,10 @@
 	<start to="import_forking" />
 
 	<fork name="import_forking">
-		<path start="decision-import_concept" />
+		<path start="import_concept" />
 		<path start="distcp_hbase_dump" />
 		<path start="decision-import_dataset" />
 	</fork>
-
-	<decision name="decision-import_concept">
-		<switch>
-			<case to="import_concept">${active_import_concept eq "true"}</case>
-			<default to="skip-import_concept" />
-		</switch>
-	</decision>
 
 	<action name="import_concept">
 		<sub-workflow>
@@ -274,30 +260,10 @@
 				</property>
 				<property>
 					<name>output</name>
-					<value>${output_project_concept}</value>
+					<value>${output_concept}</value>
 				</property>
 			</configuration>
 		</sub-workflow>
-		<ok to="import_joining" />
-		<error to="fail" />
-	</action>
-
-	<action name="skip-import_concept">
-		<java>
-			<prepare>
-				<!-- notice: directory have to aligned with skipped action output -->
-				<delete path="${nameNode}${workingDir}/import_concept" />
-				<delete path="${nameNode}${output_project_concept}" />
-				<mkdir path="${nameNode}${workingDir}/import_concept" />
-			</prepare>
-			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
-			<arg>-C{concept,
-				eu.dnetlib.iis.importer.schemas.Concept,
-				eu/dnetlib/iis/common/data/empty.json}
-			</arg>
-			<arg>-Oconcept=${output_project_concept}</arg>
-		</java>
 		<ok to="import_joining" />
 		<error to="fail" />
 	</action>

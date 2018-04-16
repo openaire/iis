@@ -1,0 +1,21 @@
+{  
+   "id":"ni::projects::1",
+   "label":"France Life Imaging",
+   "params":[
+      {"name": "projectfullname", "value":"France Life Imaging"},
+      {"name": "url", "value":"https://www.francelifeimaging.fr"},
+      {"name": "CD_PROJECT_NUMBER", "value":"ANR-11-INBS-0006"},
+      {"name": "funder", "value":"ANR"},
+      {"name": "suggestedAcknowledgement", "value":"This work was supported by Government funding from the French Agency for Research under the \"Investments for the Future\" program for France Life Imaging / FLI, referenced ANR-11-INBS-0006"},
+      {"name": "suggestedAcknowledgement", "value":"This work was partly funded by France Life Imaging (grant ANR-11-INBS-0006 'from the French Investments d'Avenir \"program)"}
+   ]
+}
+{  
+   "id":"dh-ch::subcommunity::2",
+   "label":"CLARIN",
+   "params":[
+      {"name": "fullname", "value":"European Research Infrastructure for Language Resources and Technology"},
+      {"name": "homepageUrl", "value":"https://www.clarin.eu/"},
+      {"name": "suggestedAcknowledgement", "value":"This work crucially uses data and/or tools made available through the CLARIN infrastructure. The work was financed by CLARIAH-NL, an NWO project in the Netherlands"}
+   ]
+}

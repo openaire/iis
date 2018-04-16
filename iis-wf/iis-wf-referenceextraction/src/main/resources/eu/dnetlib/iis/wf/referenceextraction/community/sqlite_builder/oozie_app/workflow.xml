@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="referenceextraction_community_sqlite_builder">
+	
+	<parameters>
+		<property>
+			<name>input_community</name>
+			<description>input community datastore with eu.dnetlib.iis.referenceextraction.community.schemas.Community avro records</description>
+		</property>
+		<property>
+			<name>output_community_db</name>
+			<description>output community SQLite DB path</description>
+		</property>
+	</parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
+	<start to="sqlite_builder" />
+
+    <action name="sqlite_builder">
+        <java>
+            <!-- This is simple wrapper for the Java code -->
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <!-- The business Java code that gets to be executed -->
+            <arg>eu.dnetlib.iis.wf.referenceextraction.community.CommunityDBBuilder</arg>
+            <!-- All input and output ports have to be bound to paths in 
+            HDFS, working directory has to be specified as well -->
+            <arg>-Icommunity=${input_community}</arg>
+            <arg>-Ocommunity_db=${output_community_db}</arg>
+            <arg>-PscriptLocation=scripts/buildcummunitiesdb.sql</arg>
+        </java>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+    
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+        			[${wf:errorMessage(wf:lastErrorNode())}]
+        		</message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

@@ -23,6 +23,10 @@
             <value>$UNDEFINED$</value>
         </property>
         <property>
+            <name>input_document_to_community</name>
+            <value>$UNDEFINED$</value>
+        </property>
+        <property>
             <name>input_document_to_pdb</name>
             <value>$UNDEFINED$</value>
         </property>
@@ -104,6 +108,11 @@
             <name>action_set_id_document_research_initiative</name>
             <value>$UNDEFINED$</value>
             <description>document research initiative action-set identifier of exported data</description>
+        </property>
+        <property>
+            <name>action_set_id_document_community</name>
+            <value>$UNDEFINED$</value>
+            <description>document community action-set identifier of exported data</description>
         </property>
         <property>
             <name>action_set_id_document_pdb</name>

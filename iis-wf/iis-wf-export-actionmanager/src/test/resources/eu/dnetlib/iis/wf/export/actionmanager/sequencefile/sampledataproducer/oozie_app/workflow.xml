@@ -52,6 +52,11 @@
                 eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_to_research_initiatives.json}
             </arg>
             <arg>-Odocument_to_research_initiatives=${workingDir}/producer/document_to_research_initiatives</arg>
+            <arg>-C{document_to_communities,
+                eu.dnetlib.iis.export.schemas.DocumentToConceptIds,
+                eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_to_communities.json}
+            </arg>
+            <arg>-Odocument_to_communities=${workingDir}/producer/document_to_communities</arg>
             <arg>-C{citation,
                 eu.dnetlib.iis.export.schemas.Citations,
                 eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/citations.json}
@@ -103,6 +108,10 @@
                     <value>${workingDir}/producer/document_to_research_initiatives</value>
                 </property>
                 <property>
+                    <name>input_document_to_community</name>
+                    <value>${workingDir}/producer/document_to_communities</value>
+                </property>
+                <property>
                     <name>input_document_to_pdb</name>
                     <value>${workingDir}/producer/document_pdb</value>
                 </property>
@@ -152,6 +161,10 @@
                     <value>actionset-id</value>
                 </property>
                 <property>
+                    <name>action_set_id_document_community</name>
+                    <value>actionset-id</value>
+                </property>
+                <property>
                     <name>action_set_id_document_pdb</name>
                     <value>actionset-id</value>
                 </property>
@@ -186,6 +199,7 @@
         <path start="consumer-document_to_dataset" />
         <path start="consumer-document_to_project" />
         <path start="consumer-document_to_research_initiatives" />
+        <path start="consumer-document_to_communities" />
         <path start="consumer-matched_doc_organizations" />
     </fork>
 
@@ -264,6 +278,17 @@
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/document_research_initiative/actionset-id</arg>
             <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_research_initiatives.properties</arg>
+        </java>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
+    
+    <action name="consumer-document_to_communities">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
+            <arg>-Iseqfile=${workingDir}/output/document_community/actionset-id</arg>
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_communities.properties</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />

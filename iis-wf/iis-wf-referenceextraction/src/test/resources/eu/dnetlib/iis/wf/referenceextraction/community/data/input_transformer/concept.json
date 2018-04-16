@@ -1,0 +1,24 @@
+{
+  "id": "fet-fp7::open::301::284566",
+  "label": "Quantum Propagating Microwaves in Strongly Coupled Environments",
+  "params": [
+    {"name": "CD_PROJECT_NUMBER", "value":"284566"},
+    {"name": "suggestedAcknowledgement", "value":""}
+  ]
+}
+{
+  "id": "fet-fp7::open::301::284584",
+  "label": "Quantum Interferometry with Bose-Einstein Condensates",
+  "params": [
+    {"name": "suggestedAcknowledgement", "value":"acknowledgement 1"}
+    
+  ]
+}
+{
+  "id": "fet-fp7::open::301",
+  "label": "Challenging current thinking",
+  "params": [
+    {"name": "suggestedAcknowledgement", "value":"acknowledgement 2a"},
+    {"name": "suggestedAcknowledgement", "value":"acknowledgement 2b"}
+  ]
+}

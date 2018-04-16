@@ -1,14 +1,17 @@
 package eu.dnetlib.iis.wf.importer.concept;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Stack;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.google.common.collect.Lists;
+
 import eu.dnetlib.iis.importer.schemas.Concept;
+import eu.dnetlib.iis.importer.schemas.Param;
 import eu.dnetlib.iis.wf.importer.RecordReceiver;
 
 /**
@@ -19,6 +22,8 @@ import eu.dnetlib.iis.wf.importer.RecordReceiver;
  */
 public class ConceptXmlHandler extends DefaultHandler {
 
+	private static final String ELEM_CONTEXT = "context";
+	private static final String ELEM_CATEGORY = "category";
     private static final String ELEM_CONCEPT = "concept";
     private static final String ELEM_PARAM = "param";
 
@@ -58,7 +63,7 @@ public class ConceptXmlHandler extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        if (isWithinElement(qName, ELEM_CONCEPT, null)) {
+        if (isConceptElement(qName)) {
             if (currentConceptBuilder!=null) {
                 parentConcepts.push(currentConceptBuilder);
             }
@@ -66,7 +71,7 @@ public class ConceptXmlHandler extends DefaultHandler {
             currentConceptBuilder.setId(attributes.getValue(ATTRIBUTE_ID));
             currentConceptBuilder.setLabel(attributes.getValue(ATTRIBUTE_LABEL));
 
-        } else if (isWithinElement(qName, ELEM_PARAM, ELEM_CONCEPT)) {
+        } else if (isParamElement(qName)) {
             currentValue = new StringBuilder();
             currentParamName = attributes.getValue(ATTRIBUTE_NAME);
         }
@@ -76,24 +81,30 @@ public class ConceptXmlHandler extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         this.parentElementNames.pop();
-        if (isWithinElement(qName, ELEM_CONCEPT, null)) {
+        if (isConceptElement(qName)) {
             try {
                 if (currentConceptBuilder==null) {
                     currentConceptBuilder = parentConcepts.pop();
+                }
+                if (!currentConceptBuilder.hasParams()) {
+                	currentConceptBuilder.setParams(Lists.newArrayList());
                 }
                 receiver.receive(currentConceptBuilder.build());
                 currentConceptBuilder = null;
             } catch (IOException e) {
                 throw new SAXException("Exception occurred when building concept object", e);
             }
-        } else if (isWithinElement(qName, ELEM_PARAM, ELEM_CONCEPT)) {
+        } else if (isParamElement(qName)) {
             if (currentConceptBuilder==null) {
                 currentConceptBuilder = parentConcepts.pop();
             }
             if (!currentConceptBuilder.hasParams()) {
-                currentConceptBuilder.setParams(new HashMap<>());
+                currentConceptBuilder.setParams(new ArrayList<>());
             }
-            currentConceptBuilder.getParams().put(currentParamName, currentValue.toString().trim());
+            Param.Builder paramBuilder = Param.newBuilder();
+            paramBuilder.setName(currentParamName);
+            paramBuilder.setValue(currentValue.toString().trim());
+            currentConceptBuilder.getParams().add(paramBuilder.build());
         }
     }
 
@@ -114,15 +125,23 @@ public class ConceptXmlHandler extends DefaultHandler {
 
     //-------------------- PRIVATE --------------------------------
     
+    private boolean isParamElement(String qName) {
+    	return isWithinElement(qName, ELEM_PARAM);
+    }
+    
+    private boolean isConceptElement(String qName) {
+    	return isWithinElement(qName, ELEM_CONCEPT) || 
+    			isWithinElement(qName, ELEM_CONTEXT) || 
+    			isWithinElement(qName, ELEM_CATEGORY);
+    }
+    
     /**
      * Verifies position in XML tree by checking current element and optionally its parrent.
      * @param qName current element name
      * @param expectedElement expected element name
-     * @param expectedParent expected parent element name
      */
-    private boolean isWithinElement(String qName, String expectedElement, String expectedParent) {
-        return qName.equalsIgnoreCase(expectedElement) && (expectedParent == null
-                || (!parentElementNames.isEmpty() && expectedParent.equalsIgnoreCase(parentElementNames.peek())));
+    private boolean isWithinElement(String qName, String expectedElement) {
+        return qName.equalsIgnoreCase(expectedElement);
     }
     
 }

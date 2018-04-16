@@ -5,6 +5,7 @@ citationmatching_direct classpath eu/dnetlib/iis/wf/citationmatching/direct/oozi
 referenceextraction_project classpath eu/dnetlib/iis/wf/referenceextraction/project/main/oozie_app
 referenceextraction_dataset classpath eu/dnetlib/iis/wf/referenceextraction/dataset/main/oozie_app
 referenceextraction_researchinitiative classpath eu/dnetlib/iis/wf/referenceextraction/researchinitiative/main/oozie_app
+referenceextraction_community classpath eu/dnetlib/iis/wf/referenceextraction/community/main/oozie_app
 referenceextraction_pdb classpath eu/dnetlib/iis/wf/referenceextraction/pdb/main/oozie_app
 referenceextraction_software_url classpath eu/dnetlib/iis/wf/referenceextraction/softwareurl/main/oozie_app
 documentsclassification classpath eu/dnetlib/iis/wf/documentsclassification/oozie_app

@@ -25,6 +25,12 @@
         </property>
         <property>
             <!-- currently disabled by default -->
+            <name>active_referenceextraction_community</name>
+            <value>false</value>
+            <description>flag indicating community reference extraction should be enabled</description>
+        </property>
+        <property>
+            <!-- currently disabled by default -->
             <name>active_referenceextraction_pdb</name>
             <value>false</value>
             <description>flag indicating protein databank reference extraction should be enabled</description>
@@ -93,8 +99,8 @@
             <description>input extracted document metadata directory</description>
         </property>
         <property>
-            <name>input_project_concept</name>
-            <description>input project concept directory</description>
+            <name>input_concept</name>
+            <description>input concept directory</description>
         </property>
         <!-- project reference extraction related -->
         <property>
@@ -233,7 +239,16 @@
             <value>1000</value>
             <description>number of partitions used for rdds with citations and documents read from input files</description>
         </property>
-        
+        <property>
+            <name>referenceextractionCommunitySparkExecutorMemory</name>
+            <value>7G</value>
+            <description>memory for individual executor</description>
+        </property>
+        <property>
+            <name>referenceextractionCommunitySparkExecutorCores</name>
+            <value>4</value>
+            <description>number of cores used by single executor</description>
+        </property>
         <!-- output ports -->
         <property>
             <name>output_document_to_project</name>
@@ -250,6 +265,10 @@
         <property>
             <name>output_document_to_research_initiatives</name>
             <description>research initiatives reference extraction output directory</description>
+        </property>
+         <property>
+            <name>output_document_to_community</name>
+            <description>community reference extraction output directory</description>
         </property>
         <property>
             <name>output_document_to_pdb</name>
@@ -591,7 +610,7 @@
                 </property>
                 <property>
                     <name>input_concept</name>
-                    <value>${input_project_concept}</value>
+                    <value>${input_concept}</value>
                 </property>
                 <property>
                     <name>output</name>
@@ -997,7 +1016,7 @@
             </configuration>
         </sub-workflow>
 
-        <ok to="decision-documentsclassification" />
+        <ok to="decision-referenceextraction_community" />
         <error to="fail" />
     </action>
 
@@ -1019,11 +1038,112 @@
             <!-- notice: directory have to aligned with skipped action output -->
             <arg>-Oreferenceextraction_researchinitiatives=${output_document_to_research_initiatives}</arg>
         </java>
-        <ok to="decision-documentsclassification" />
+        <ok to="decision-referenceextraction_community" />
         <error to="fail" />
     </action>
     <!-- end of researchinitiative reference extraction block -->
 
+	<!-- start of community reference extraction block -->
+    <decision name="decision-referenceextraction_community">
+        <switch>
+            <case to="referenceextraction_community">${active_referenceextraction_community eq "true"}</case>
+            <default to="skip-referenceextraction_community" />
+        </switch>
+    </decision>
+
+    <action name="referenceextraction_community">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/referenceextraction_community</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/referenceextraction_community/working_dir</value>
+                </property>
+                <property>
+                    <name>input_concept</name>
+                    <value>${input_concept}</value>
+                </property>
+                <property>
+                    <name>input_document_text</name>
+                    <value>${workingDir}/transformers_common_union_document_text/out</value>
+                </property>
+                <property>
+                    <name>output_document_to_concept</name>
+                    <value>${workingDir}/referenceextraction_community/output</value>
+                </property>
+                <property>
+                    <name>inputTransformerSparkExecutorMemory</name>
+                    <value>${referenceextractionCommunitySparkExecutorMemory}</value>
+                </property>
+                <property>
+                    <name>inputTransformerSparkExecutorCores</name>
+                    <value>${referenceextractionCommunitySparkExecutorCores}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="transformers_export_communities" />
+        <error to="fail" />
+    </action>
+
+    <action name="transformers_export_communities">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_export_concepts</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_export_communities/working_dir</value>
+                </property>
+                <property>
+                    <name>input</name>
+                    <value>${workingDir}/referenceextraction_community/output</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${output_document_to_community}</value>
+                </property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>doc_community</value>
+                </property>
+                <property>
+                    <name>output_report_record_read_counter_name</name>
+                    <value>processing.referenceExtraction.community.reference</value>
+                </property>
+                <property>
+                    <name>output_report_record_written_counter_name</name>
+                    <value>processing.referenceExtraction.community.doc</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+
+        <ok to="decision-documentsclassification" />
+        <error to="fail" />
+    </action>
+
+    <action name="skip-referenceextraction_community">
+        <java>
+            <prepare>
+                <!-- notice: directory have to aligned with skipped action output -->
+                <delete path="${nameNode}${workingDir}/transformers_export_communities" />
+                <delete path="${nameNode}${output_document_to_community}" />
+                <mkdir path="${nameNode}${workingDir}/transformers_export_communities" />
+                <mkdir path="${nameNode}${output_document_to_community}" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{referenceextraction_communities,
+                eu.dnetlib.iis.export.schemas.DocumentToConceptIds,
+                eu/dnetlib/iis/common/data/empty.json}
+            </arg>
+            <!-- notice: directory have to aligned with skipped action output -->
+            <arg>-Oreferenceextraction_communities=${output_document_to_community}</arg>
+        </java>
+        <ok to="decision-documentsclassification" />
+        <error to="fail" />
+    </action>
+    <!-- end of researchinitiative reference extraction block -->
 
     <!-- start of documents classification part -->
     <decision name="decision-documentsclassification">
@@ -1510,6 +1630,7 @@
             <arg>-Preport.processing.citationTextExtraction.duration=citations_collapser,transformers_export_citations</arg>
             <arg>-Preport.processing.documentClassification.duration=documentsclassification</arg>
             <arg>-Preport.processing.referenceExtraction.researchInitiative.duration=referenceextraction_researchinitiative,referenceextraction_researchinitiative_wos,transformers_union_researchinitiatives,transformers_export_researchinitiatives</arg>
+            <arg>-Preport.processing.referenceExtraction.community.duration=referenceextraction_community,transformers_export_communities</arg>
             <arg>-Preport.processing.referenceExtraction.softwareUrl.duration=referenceextraction_software_url,transformers_export_software_url</arg>
             <arg>-Preport.processing.referenceExtraction.pdb.duration=referenceextraction_pdb,transformers_export_pdb</arg>
             <arg>-Preport.processing.referenceExtraction.dataset.duration=referenceextraction_dataset</arg>

@@ -1,9 +1,14 @@
 @namespace("eu.dnetlib.iis.importer.schemas")
 protocol IIS{
 
+    record Param {
+        string name;
+        string value;
+    }
+
     record Concept {
         string id;
         string label;
-        map<string> params;
+        array<Param> params;
     }
 }

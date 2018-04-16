@@ -18,6 +18,10 @@
             <value>$UNDEFINED$</value>
         </property>
         <property>
+            <name>input_document_to_community</name>
+            <value>$UNDEFINED$</value>
+        </property>
+        <property>
             <name>input_document_to_pdb</name>
             <value>$UNDEFINED$</value>
         </property>
@@ -85,6 +89,11 @@
             <name>action_set_id_document_research_initiative</name>
             <value>$UNDEFINED$</value>
             <description>document research initiative action-set identifier of exported data</description>
+        </property>
+        <property>
+            <name>action_set_id_document_community</name>
+            <value>$UNDEFINED$</value>
+            <description>document community action-set identifier of exported data</description>
         </property>
         <property>
             <name>action_set_id_document_pdb</name>
@@ -256,6 +265,10 @@
                 <value>${action_set_id_document_research_initiative}</value>
             </property>
             <property>
+                <name>export.action.setid.document_community</name>
+                <value>${action_set_id_document_community}</value>
+            </property>
+            <property>
                 <name>export.action.setid.document_pdb</name>
                 <value>${action_set_id_document_pdb}</value>
             </property>
@@ -322,6 +335,7 @@
         <path start="decision-exporter-document-to-project" />
         <path start="decision-exporter-document-to-project-concepts" />
         <path start="decision-exporter-document-to-researchinitiatives" />
+        <path start="decision-exporter-document-to-community" />
         <path start="decision-exporter-document-to-pdb" />
         <path start="decision-exporter-document-to-documentclasses" />
         <path start="decision-exporter-citation" />
@@ -354,6 +368,13 @@
         <switch>
             <case to="joining">${input_document_to_research_initiatives eq "$UNDEFINED$"}</case>
             <default to="exporter-document-to-researchinitiatives" />
+        </switch>
+    </decision>
+
+	<decision name="decision-exporter-document-to-community">
+        <switch>
+            <case to="joining">${input_document_to_community eq "$UNDEFINED$"}</case>
+            <default to="exporter-document-to-community" />
         </switch>
     </decision>
 
@@ -509,6 +530,34 @@
                 <property>
                     <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${output}/document_research_initiative/${action_set_id_document_research_initiative}</value>
+                </property>
+            </configuration>
+        </map-reduce>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
+
+	<action name="exporter-document-to-community">
+        <map-reduce>
+            <prepare>
+                <mkdir path="${nameNode}${output}/document_community" />
+            </prepare>
+            <configuration>
+                <property>
+                    <name>export.action.builder.factory.classname</name>
+                    <value>eu.dnetlib.iis.wf.export.actionmanager.module.DocumentToCommunityActionBuilderModuleFactory</value>
+                </property>
+                <property>
+                    <name>avro.schema.input.key</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.export.schemas.DocumentToConceptIds']}</value>
+                </property>
+                <property>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
+                    <value>${input_document_to_community}</value>
+                </property>
+                <property>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
+                    <value>${output}/document_community/${action_set_id_document_community}</value>
                 </property>
             </configuration>
         </map-reduce>

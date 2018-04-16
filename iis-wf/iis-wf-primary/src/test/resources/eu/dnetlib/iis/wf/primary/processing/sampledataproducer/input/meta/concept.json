@@ -1,1 +1,8 @@
-{"id": "concept-id1", "label": "concept id1", "params": {"CD_PROJECT_NUMBER": "226639", "funder": "EC"}}
+{  
+   "id":"concept-id1",
+   "label":"concept id1",
+   "params":[  
+      {"name": "CD_PROJECT_NUMBER", "value":"226639"},
+      {"name": "funder", "value":"EC"}
+   ]
+}

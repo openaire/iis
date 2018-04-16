@@ -33,6 +33,12 @@
         </property>
         <property>
             <!-- currently disabled by default -->
+            <name>active_referenceextraction_community</name>
+            <value>false</value>
+            <description>flag indicating community reference extraction should be enabled</description>
+        </property>
+        <property>
+            <!-- currently disabled by default -->
             <name>active_referenceextraction_pdb</name>
             <value>false</value>
             <description>flag indicating protein databank reference extraction should be enabled</description>
@@ -220,6 +226,11 @@
             <description>document research initiative action-set identifier of exported data</description>
         </property>
         <property>
+            <name>export_action_set_id_document_community</name>
+            <value>$UNDEFINED$</value>
+            <description>document community action-set identifier of exported data</description>
+        </property>
+        <property>
             <name>export_action_set_id_document_pdb</name>
             <value>$UNDEFINED$</value>
             <description>document to protein databank action-set identifier of exported data</description>
@@ -363,10 +374,6 @@
                     <name>active_import_dataset</name>
                     <value>${active_referenceextraction_dataset}</value>
                 </property>
-                <property>
-                    <name>active_import_concept</name>
-                    <value>${active_referenceextraction_project}</value>
-                </property>
                 <!-- import metadata related -->
                 <property>
                     <name>hbase_dump_location</name>
@@ -484,8 +491,8 @@
                     <value>${workingDir}/primary_import/document-text</value>
                 </property>
                 <property>
-                    <name>output_project_concept</name>
-                    <value>${workingDir}/primary_import/project-concept</value>
+                    <name>output_concept</name>
+                    <value>${workingDir}/primary_import/concept</value>
                 </property>
                 <property>
                     <name>output_wos</name>
@@ -551,8 +558,8 @@
                     <value>${workingDir}/primary_import/extracted_document_metadata</value>
                 </property>
                 <property>
-                    <name>input_project_concept</name>
-                    <value>${workingDir}/primary_import/project-concept</value>
+                    <name>input_concept</name>
+                    <value>${workingDir}/primary_import/concept</value>
                 </property>
                 <property>
                     <name>output_document_to_project</name>
@@ -570,6 +577,10 @@
                     <name>output_document_to_research_initiatives</name>
                     <value>${workingDir}/exported/document_to_research_initiatives
                     </value>
+                </property>
+                <property>
+                    <name>output_document_to_community</name>
+                    <value>${workingDir}/exported/document_to_community</value>
                 </property>
                 <property>
                     <name>output_document_to_pdb</name>
@@ -637,6 +648,10 @@
                     <value>${workingDir}/exported/document_to_research_initiatives</value>
                 </property>
                 <property>
+                    <name>input_document_to_community</name>
+                    <value>${workingDir}/exported/document_to_community</value>
+                </property>
+                <property>
                     <name>input_document_to_pdb</name>
                     <value>${workingDir}/exported/document_to_pdb</value>
                 </property>
@@ -701,6 +716,10 @@
                 <property>
                     <name>action_set_id_document_research_initiative</name>
                     <value>${export_action_set_id_document_research_initiative}</value>
+                </property>
+                <property>
+                    <name>action_set_id_document_community</name>
+                    <value>${export_action_set_id_document_community}</value>
                 </property>
                 <property>
                     <name>action_set_id_document_pdb</name>

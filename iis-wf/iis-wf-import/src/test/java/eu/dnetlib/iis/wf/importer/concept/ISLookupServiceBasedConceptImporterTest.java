@@ -152,14 +152,16 @@ public class ISLookupServiceBasedConceptImporterTest {
         importer.run(portBindings, conf, parameters);
         
         // assert
-        verify(conceptWriter, times(3)).append(conceptCaptor.capture());
+        verify(conceptWriter, times(5)).append(conceptCaptor.capture());
         List<Concept> concepts = conceptCaptor.getAllValues();
         // in depth concept validation is not the subject of this test case
-        assertEquals(3, concepts.size());
+        assertEquals(5, concepts.size());
         assertNotNull(concepts.get(0));
         assertNotNull(concepts.get(1));
         assertNotNull(concepts.get(2));
-        verifyReport(3, CONCEPT_COUNTER_NAME);
+        assertNotNull(concepts.get(3));
+        assertNotNull(concepts.get(4));
+        verifyReport(5, CONCEPT_COUNTER_NAME);
     }
     
 }

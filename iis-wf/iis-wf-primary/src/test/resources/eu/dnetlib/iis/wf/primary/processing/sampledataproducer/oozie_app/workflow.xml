@@ -258,7 +258,7 @@
 					<value>${workingDir}/producer/project</value>
 				</property>
 				<property>
-					<name>input_project_concept</name>
+					<name>input_concept</name>
 					<value>${workingDir}/producer/project_concept</value>
 				</property>
 				<property>
@@ -288,6 +288,10 @@
 				<property>
 					<name>output_document_to_research_initiatives</name>
 					<value>${workingDir}/exported/document_to_research_initiatives</value>
+				</property>
+				<property>
+					<name>output_document_to_community</name>
+					<value>${workingDir}/exported/document_to_community</value>
 				</property>
                 <property>
                     <name>output_document_to_software_url</name>
