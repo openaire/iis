@@ -26,8 +26,8 @@ $targetValue.entity.result.metadata.resulttype.classname=software
 $targetValue.entity.result.metadata.resulttype.schemeid=dnet:result_typologies
 $targetValue.entity.result.metadata.resulttype.schemename=dnet:result_typologies
 
-$targetValue.entity.result.instanceList[0].accessright.classid=UNKNOWN
-$targetValue.entity.result.instanceList[0].accessright.classname=not available
+$targetValue.entity.result.instanceList[0].accessright.classid=OPEN SOURCE
+$targetValue.entity.result.instanceList[0].accessright.classname=Open Source
 $targetValue.entity.result.instanceList[0].accessright.schemeid=dnet:access_modes
 $targetValue.entity.result.instanceList[0].accessright.schemename=dnet:access_modes
 

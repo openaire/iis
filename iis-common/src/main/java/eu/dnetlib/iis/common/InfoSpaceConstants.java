@@ -36,9 +36,11 @@ public final class InfoSpaceConstants {
     public static final String SEMANTIC_CLASS_SOFTWARE = "software";
     public static final String SEMANTIC_CLASS_PUBLICATION_RESOURCE_SOFTWARE = "Software";
     public static final String SEMANTIC_CLASS_UNKNOWN = "UNKNOWN";
+    public static final String SEMANTIC_CLASS_OPEN_SOURCE = "OPEN SOURCE";
     public static final String SEMANTIC_CLASS_IIS = "iis";
     
     public static final String SEMANTIC_CLASS_NAME_NOT_AVAILABLE = "not available";
+    public static final String SEMANTIC_CLASS_NAME_OPEN_SOURCE = "Open Source";
 
     public static final String SEMANTIC_SCHEME_DNET_PERSON_ROLES = "dnet:personroles";
     public static final String SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_RESULT = "dnet:result_result_relations";

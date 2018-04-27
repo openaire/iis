@@ -304,8 +304,8 @@ public class SoftwareExporterJob {
     
     private static Qualifier buildAccessRightUnknown() {
         Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
-        qualifierBuilder.setClassid(InfoSpaceConstants.SEMANTIC_CLASS_UNKNOWN);
-        qualifierBuilder.setClassname(InfoSpaceConstants.SEMANTIC_CLASS_NAME_NOT_AVAILABLE);
+        qualifierBuilder.setClassid(InfoSpaceConstants.SEMANTIC_CLASS_OPEN_SOURCE);
+        qualifierBuilder.setClassname(InfoSpaceConstants.SEMANTIC_CLASS_NAME_OPEN_SOURCE);
         qualifierBuilder.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_ACCESS_MODES);
         qualifierBuilder.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_ACCESS_MODES);
         return qualifierBuilder.build();
