@@ -196,7 +196,7 @@
         <!-- spark related: direct citation matching -->
         <property>
             <name>citationmatchingDirectSparkExecutorMemory</name>
-            <value>7G</value>
+            <value>10G</value>
             <description>memory for individual executor</description>
         </property>
         <property>
