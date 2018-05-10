@@ -216,6 +216,11 @@
             <description>number of cores used by single executor</description>
         </property>
         <property>
+            <name>citationmatchingDirectSparkDriverMemory</name>
+            <value>2G</value>
+            <description>memory for driver process</description>
+        </property>
+        <property>
             <name>citationmatchingDirectPmcIdsMappingCSV</name>
             <description>CSV dump HDFS location. Contains entries with mappings between different kinds of PMC identifiers for each publication.</description>
         </property>
@@ -1217,6 +1222,10 @@
                 <property>
                     <name>sparkExecutorCores</name>
                     <value>${citationmatchingDirectSparkExecutorCores}</value>
+                </property>
+                <property>
+                    <name>sparkDriverMemory</name>
+                    <value>${citationmatchingDirectSparkDriverMemory}</value>
                 </property>
             </configuration>
         </sub-workflow>

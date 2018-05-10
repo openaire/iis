@@ -25,6 +25,10 @@
         </property>
         
         <property>
+            <name>sparkDriverMemory</name>
+            <description>memory for driver process</description>
+        </property>
+        <property>
             <name>sparkExecutorMemory</name>
             <description>memory for individual executor</description>
         </property>
@@ -66,7 +70,7 @@
             <class>eu.dnetlib.iis.wf.citationmatching.direct.CitationMatchingDirectJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-direct-${projectVersion}.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
 
             <arg>-inputAvroPath=${input}</arg>
             <arg>-inputPmcIdsMappingCSV=${inputPmcIdsMappingCSV}</arg>

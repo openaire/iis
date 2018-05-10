@@ -110,6 +110,10 @@
                     <name>sparkExecutorCores</name>
                     <value>1</value>
                 </property>
+                <property>
+                    <name>sparkDriverMemory</name>
+                    <value>1G</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="report_time"/>

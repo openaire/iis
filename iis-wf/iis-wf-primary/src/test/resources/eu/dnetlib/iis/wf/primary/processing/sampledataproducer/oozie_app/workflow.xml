@@ -374,6 +374,10 @@
                     <value>1</value>
                 </property>
                 <property>
+                    <name>citationmatchingDirectSparkDriverMemory</name>
+                    <value>1G</value>
+                </property>
+                <property>
                     <name>citationmatchingFuzzySparkDriverMemory</name>
                     <value>1G</value>
                 </property>
