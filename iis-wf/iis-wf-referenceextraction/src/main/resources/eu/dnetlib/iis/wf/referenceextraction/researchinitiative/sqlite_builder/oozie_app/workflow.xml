@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!-- Note that documentation placed in comments in this file uses the
+"markdown" syntax (along with its way of dividing text into sections). -->
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="referenceextraction_researchinitative_sqlite_builder">
+	
+	<parameters>
+		<property>
+			<name>input_researchinitiative</name>
+			<description>input research initiative datastore</description>
+		</property>
+		<property>
+			<name>output_researchinitiative_db</name>
+			<description>output research initiative SQLite DB path</description>
+		</property>
+	</parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
+	<start to="sqlite_builder" />
+
+    <action name="sqlite_builder">
+        <java>
+            <!-- This is simple wrapper for the Java code -->
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <!-- The business Java code that gets to be executed -->
+            <arg>eu.dnetlib.iis.wf.referenceextraction.researchinitiative.ResearchInitiativeDBBuilder</arg>
+            <!-- All input and output ports have to be bound to paths in 
+            HDFS, working directory has to be specified as well -->
+            <arg>-Iinitiatives=${input_researchinitiative}</arg>
+            <arg>-Oinitiatives_db=${output_researchinitiative_db}</arg>
+            <arg>-PscriptLocation=scripts/egi_import.sql</arg>
+        </java>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+    
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+        			[${wf:errorMessage(wf:lastErrorNode())}]
+        		</message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

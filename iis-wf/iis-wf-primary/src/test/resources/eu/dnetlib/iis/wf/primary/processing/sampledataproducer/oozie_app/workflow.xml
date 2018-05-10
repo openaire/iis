@@ -332,6 +332,15 @@
                 </property>
                 
                 <property>
+                    <name>researchInitiativeReferenceExtractionSparkExecutorMemory</name>
+                    <value>1G</value>
+                </property>
+                <property>
+                    <name>researchInitiativeReferenceExtractionSparkExecutorCores</name>
+                    <value>1</value>
+                </property>
+                
+                <property>
                     <name>documentsclassificationSparkExecutorMemory</name>
                     <value>1G</value>
                 </property>

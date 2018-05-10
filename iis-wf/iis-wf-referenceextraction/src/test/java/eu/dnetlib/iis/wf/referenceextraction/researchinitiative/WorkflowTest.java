@@ -20,13 +20,23 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	}
 
     @Test
-	public void testMainWorkflowWithoutReferences() throws Exception {
+	public void testMainWorkflowWithoutReferencesInText() throws Exception {
         testWorkflow("eu/dnetlib/iis/wf/referenceextraction/researchinitiative/main/sampletest_without_references");
 	}
 
     @Test
-	public void testMainWorkflowEmptyInput() throws Exception {
-        testWorkflow("eu/dnetlib/iis/wf/referenceextraction/researchinitiative/main/sampletest_empty_input");
+	public void testMainWorkflowEmptyTextInput() throws Exception {
+        testWorkflow("eu/dnetlib/iis/wf/referenceextraction/researchinitiative/main/sampletest_empty_text_input");
+	}
+    
+    @Test
+	public void testMainWorkflowEmptyMetaInput() throws Exception {
+        testWorkflow("eu/dnetlib/iis/wf/referenceextraction/researchinitiative/main/sampletest_empty_meta_input");
+	}
+    
+    @Test
+	public void testMainWorkflowEmptyConceptInput() throws Exception {
+        testWorkflow("eu/dnetlib/iis/wf/referenceextraction/researchinitiative/main/sampletest_empty_concept_input");
 	}
 
 }

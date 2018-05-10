@@ -1,0 +1,10 @@
+@namespace("eu.dnetlib.iis.referenceextraction.researchinitiative.schemas")
+protocol IIS{
+
+    record ResearchInitiativeMetadata {
+
+        string id;
+
+        string label;
+    }
+}

@@ -6,3 +6,10 @@
       {"name": "funder", "value":"EC"}
    ]
 }
+{  
+   "id":"egi::virtual::4",
+   "label":"cms",
+   "params":[  
+      {"name": "miningLabel", "value":"cms"}
+   ]
+}

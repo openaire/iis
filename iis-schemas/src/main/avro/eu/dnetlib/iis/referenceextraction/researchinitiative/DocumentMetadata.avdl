@@ -1,0 +1,26 @@
+@namespace("eu.dnetlib.iis.referenceextraction.researchinitiative.schemas")
+protocol IIS{
+
+	import idl "../../importer/DocumentMetadata.avdl";
+
+    record DocumentMetadata {
+//      ID of the document, foreign key: Document.id ("document" data store)
+        string id;
+
+//      document title
+        union { null , string } title = null;
+
+//      publication's year
+        union { null , string } year = null;
+        
+//      author names extracted from pdf document
+        union { null , array<string> } extractedAuthorFullNames = null;
+
+//      authors retrieved from "document" datastore
+        union { null , array<eu.dnetlib.iis.importer.schemas.Author> } importedAuthors = null;
+        
+//      document plaintext
+        union { null , string } text = null;
+    }
+
+}

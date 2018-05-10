@@ -1,0 +1,28 @@
+{  
+   "id":"egi::virtual::2",
+   "label":"alice",
+   "params":[  
+      {"name": "miningLabel", "value":"alice"}
+   ]
+}
+{  
+   "id":"egi::virtual::4",
+   "label":"cms",
+   "params":[  
+      {"name": "miningLabel", "value":"cms"}
+   ]
+}
+{  
+   "id":"egi::virtual::467",
+   "label":"enmr.eu",
+   "params":[  
+      {"name": "miningLabel", "value":"enmr.eu"}
+   ]
+}
+{  
+   "id":"egi::projects::35",
+   "label":"EGI-InSPIRE",
+   "params":[
+      {"name": "miningLabel", "value":"EGI-InSPIRE"}
+   ]
+}

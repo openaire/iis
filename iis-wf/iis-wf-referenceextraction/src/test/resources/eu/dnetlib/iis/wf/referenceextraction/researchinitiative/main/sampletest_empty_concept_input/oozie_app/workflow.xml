@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- Note that documentation placed in comments in this file uses the
 "markdown" syntax (along with its way of dividing text into sections). -->
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-referenceextraction_researchinitiative_main_sampletest_without_references">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-referenceextraction_researchinitiative_main_sampletest_empty_concept_input">
 
     <global>
         <job-tracker>${jobTracker}</job-tracker>
@@ -43,13 +43,13 @@
 			<!-- Specification of the output ports -->
 			<arg>-C{document_text, 
 				eu.dnetlib.iis.metadataextraction.schemas.DocumentText,
-				eu/dnetlib/iis/wf/referenceextraction/researchinitiative/data/document_text_without_refs.json}</arg>
+				eu/dnetlib/iis/wf/referenceextraction/researchinitiative/data/document_text.json}</arg>
 			<arg>-C{document_metadata, 
                 eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal,
                 eu/dnetlib/iis/wf/referenceextraction/researchinitiative/data/document_metadata.json}</arg>
             <arg>-C{concept, 
 				eu.dnetlib.iis.importer.schemas.Concept,
-				eu/dnetlib/iis/wf/referenceextraction/researchinitiative/data/concept.json}</arg>
+				eu/dnetlib/iis/wf/referenceextraction/researchinitiative/data/empty.json}</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Odocument_text=${workingDir}/producer/document_text</arg>
 			<arg>-Odocument_metadata=${workingDir}/producer/document_metadata</arg>
@@ -100,7 +100,7 @@
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-C{document_to_dataset,
 				eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId,
-				eu/dnetlib/iis/wf/referenceextraction/researchinitiative/data/document_to_research_initiative.json}</arg>
+				eu/dnetlib/iis/wf/referenceextraction/researchinitiative/data/empty.json}</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Idocument_to_dataset=${workingDir}/referenceextraction_researchinitiative/document_to_research_initiative</arg>
 		</java>

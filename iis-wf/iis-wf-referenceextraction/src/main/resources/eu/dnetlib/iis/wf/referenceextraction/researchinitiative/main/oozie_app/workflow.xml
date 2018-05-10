@@ -5,108 +5,122 @@
 	
 	<parameters>
 		<property>
+			<name>input_document_metadata</name>
+			<description>input document metadata</description>
+		</property>
+		<property>
 			<name>input_document_text</name>
 			<description>input document text</description>
 		</property>
+		<property>
+			<name>input_concept</name>
+			<description>input concept</description>
+		</property>
+		<property>
+			<name>researchinitiative_identifier_whitelist_regex</name>
+			<value>^egi::virtual::.*</value>
+			<description>researchinitiative identifier whitelist regular expression</description>
+		</property>
+		<property>
+            <name>sparkExecutorMemory</name>
+            <description>memory for individual executor</description>
+        </property>
+        <property>
+            <name>sparkExecutorCores</name>
+            <description>number of cores used by single executor</description>
+        </property>
 		<property>
 			<name>output_document_to_research_initiative</name>
 			<description>output document to research initiative</description>
 		</property>
 	</parameters>
 
-    <global>
-        <job-tracker>${jobTracker}</job-tracker>
-        <name-node>${nameNode}</name-node>
-        <configuration>
-            <property>
-                <name>mapreduce.job.queuename</name>
-                <value>${queueName}</value>
-            </property>
-            <property>
-                <name>oozie.launcher.mapred.job.queue.name</name>
-                <value>${oozieLauncherQueueName}</value>
-            </property>
-        </configuration>
-    </global>
-    
-    
-	<start to="generate-schema" />
+	<start to="metadata-transformer" />
 
-	<action name="generate-schema">
-	    <java>
-	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
-	        <arg>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</arg>
-	        <arg>eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId</arg>
-	        <capture-output />
-	    </java>
-	    <ok to="main" />
-	    <error to="fail" />
-	</action>
-
-    <action name="main">
-        <map-reduce>
+	<action name="metadata-transformer">
+        <spark xmlns="uri:oozie:spark-action:0.2">
             <prepare>
-                <delete path="${nameNode}${output_document_to_research_initiative}"/>
+                <delete path="${workingDir}/document_metadata" />
             </prepare>
-            <streaming>
-            	<!-- Here, we give the relative path to the script and pass it
-            	the parameters of the workflow node. The script is held
-            	in a directory having the same name as the workflow node.
+            <master>yarn-cluster</master>
+            <mode>cluster</mode>
+            <name>researchinitiative-input-metadata-transformer</name>
+            <class>eu.dnetlib.iis.wf.referenceextraction.researchinitiative.ResearchInitiativeReferenceExtractionInputTransformerJob</class>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores}</spark-opts>
+            <arg>-inputMetadata=${input_document_metadata}</arg>
+            <arg>-inputText=${input_document_text}</arg>
+            <arg>-output=${workingDir}/document_metadata</arg>
+        </spark>
+        <ok to="concept-transformer"/>
+        <error to="fail"/>
+    </action>
 
-            	The parameters should be passed as **named** arguments. This
-            	convention of passing them as named arguments makes the code
-            	more readable/maintainable.
-            	 -->
-                <mapper>scripts/madis/mexec.py -d scripts/initiatives.db -f scripts/extract.sql</mapper>
-            </streaming>
+	<action name="concept-transformer">
+        <spark xmlns="uri:oozie:spark-action:0.2">
+            <prepare>
+                <delete path="${workingDir}/researchinitiative_metadata" />
+            </prepare>
+            <master>yarn-cluster</master>
+            <mode>cluster</mode>
+            <name>researchinitiative-concept-transformer</name>
+            <class>eu.dnetlib.iis.wf.referenceextraction.researchinitiative.ResearchInitiativeMetadataTransformerJob</class>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores}</spark-opts>
+            <arg>-input=${input_concept}</arg>
+            <arg>-whitelistIdentifierRegexp=${researchinitiative_identifier_whitelist_regex}</arg>
+            <arg>-output=${workingDir}/researchinitiative_metadata</arg>
+        </spark>
+        <ok to="sqlite_builder"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="sqlite_builder">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/sqlite_builder</app-path>
+            <propagate-configuration />
             <configuration>
-            	<!-- # Standard settings for our framework -->
                 <property>
-                    <name>mapred.output.format.class</name>
-                    <value>com.cloudera.science.avro.streaming.AvroAsJSONOutputFormat</value>
+                    <name>workingDir</name>
+                    <value>${workingDir}/sqlite_builder/working_dir</value>
                 </property>
                 <property>
-                    <name>mapred.input.format.class</name>
-                    <value>com.cloudera.science.avro.streaming.AvroAsJSONInputFormat</value>
+                    <name>input_researchinitiative</name>
+                    <value>${workingDir}/researchinitiative_metadata</value>
                 </property>
-                <!-- # Custom settings for this workflow node -->
-                <!-- We do not use any reducers, so we set their number to 0 -->
                 <property>
-                    <name>mapreduce.job.reduces</name>
-                    <value>0</value>
+                    <name>output_researchinitiative_db</name>
+                    <value>${workingDir}/researchinitiatives.db</value>
                 </property>
-                
-                <!-- INPUT -->
-                <property>
-                    <name>mapreduce.input.fileinputformat.inputdir</name>
-                    <value>${input_document_text}</value>
-                </property>
-
-                <property>
-                    <name>input.schema.literal</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.DocumentText']}</value>
-                </property>
-
-				<!-- OUTPUT -->
-                <property>
-                    <name>mapreduce.output.fileoutputformat.outputdir</name>
-                    <value>${output_document_to_research_initiative}</value>
-                </property>          
-
-                <property>
-                    <name>output.schema.literal</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId']}</value>
-                </property>
-
-				<!-- this one is requred due to the large amount of time taken 
-					by process storing plaintexts into the database -->
-				<property>
-					<name>mapreduce.task.timeout</name>
-					<value>14400000</value>
-				</property>
             </configuration>
-            
-        </map-reduce>
+        </sub-workflow>
+        <ok to="main_sqlite"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="main_sqlite">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/main_sqlite</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/main_sqlite/working_dir</value>
+                </property>
+                <property>
+                    <name>input_document_metadata</name>
+                    <value>${workingDir}/document_metadata</value>
+                </property>
+                <property>
+                    <name>input_researchinitiative_db</name>
+                    <value>${workingDir}/researchinitiatives.db</value>
+                </property>
+                <property>
+                    <name>output_document_to_research_initiative</name>
+                    <value>${output_document_to_research_initiative}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
         <ok to="end"/>
         <error to="fail"/>
     </action>
