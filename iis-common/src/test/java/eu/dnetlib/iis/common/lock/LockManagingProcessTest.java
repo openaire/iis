@@ -13,7 +13,6 @@ import java.util.concurrent.Executors;
 import org.apache.curator.test.TestingServer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.ha.ZKFailoverController;
-import org.apache.zookeeper.KeeperException.NoNodeException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -141,7 +140,6 @@ public class LockManagingProcessTest {
         Map<String, String> parameters = new HashMap<>();
         parameters.put(LockManagingProcess.PARAM_LOCK_MODE, LockMode.release.name());
         parameters.put(LockManagingProcess.PARAM_NODE_ID, "not_existing_nodeid");
-        exception.expect(NoNodeException.class);
         lockManager.run(portBindings, conf, parameters);
     }
     
