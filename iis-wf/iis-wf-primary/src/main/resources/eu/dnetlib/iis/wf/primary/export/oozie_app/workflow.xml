@@ -188,6 +188,11 @@
         </property>
         
         <property>
+            <name>entityExportSparkDriverMemory</name>
+            <value>2G</value>
+            <description>memory for driver process</description>
+        </property>
+        <property>
             <name>entityExportSparkExecutorMemory</name>
             <value>7G</value>
             <description>memory for individual executor</description>
@@ -257,7 +262,11 @@
                     <name>output_root_relations</name>
                     <value>${workingDir}/output/document_software_url</value>
                 </property>
-                 <property>
+                <property>
+                    <name>sparkDriverMemory</name>
+                    <value>${entityExportSparkDriverMemory}</value>
+                </property>
+                <property>
                     <name>sparkExecutorMemory</name>
                     <value>${entityExportSparkExecutorMemory}</value>
                 </property>
@@ -289,6 +298,10 @@
                 <property>
                     <name>output_root</name>
                     <value>${workingDir}/output/entities_dataset</value>
+                </property>
+                <property>
+                    <name>sparkDriverMemory</name>
+                    <value>${entityExportSparkDriverMemory}</value>
                 </property>
                 <property>
                     <name>sparkExecutorMemory</name>

@@ -23,6 +23,10 @@
             <description>directory for storing report (relative to output_report_root_path)</description>
         </property>
         <property>
+            <name>sparkDriverMemory</name>
+            <description>memory for driver process</description>
+        </property>
+        <property>
             <name>sparkExecutorMemory</name>
             <description>memory for individual executor</description>
         </property>
@@ -66,7 +70,7 @@
             <class>eu.dnetlib.iis.wf.documentsclassification.DocumentClassificationJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-documentsclassification-${projectVersion}.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
             
             <arg>-inputAvroPath=${input_documents}</arg>
             <arg>-outputAvroPath=${output_document_to_document_classes}</arg>

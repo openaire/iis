@@ -30,7 +30,11 @@
             <description>report key with total number of references</description>
         </property>
         
-        
+        <property>
+            <name>sparkDriverMemory</name>
+            <value>2g</value>
+            <description>memory for driver process</description>
+        </property>
         <property>
             <name>sparkExecutorMemory</name>
             <value>7g</value>
@@ -59,7 +63,7 @@
             <class>eu.dnetlib.iis.wf.referenceextraction.project.ProjectFunderReportJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
             
             <arg>-inputProjectAvroPath=${input_project}</arg>
             <arg>-inputDocumentToProjectAvroPath=${input_document_to_project}</arg>

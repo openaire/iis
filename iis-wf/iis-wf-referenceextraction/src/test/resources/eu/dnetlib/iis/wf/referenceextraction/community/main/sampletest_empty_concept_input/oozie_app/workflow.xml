@@ -93,6 +93,10 @@
                     <value>${workingDir}/referenceextraction_community/output</value>
                 </property>
                 <property>
+                    <name>inputTransformerSparkDriverMemory</name>
+                    <value>1g</value>
+                </property>
+                <property>
                     <name>inputTransformerSparkExecutorMemory</name>
                     <value>1g</value>
                 </property>

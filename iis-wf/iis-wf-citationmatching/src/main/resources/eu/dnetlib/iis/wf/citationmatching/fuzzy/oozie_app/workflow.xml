@@ -95,7 +95,7 @@
 
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
         
             <arg>-inputMetadata = ${input_metadata}</arg>
             <arg>-inputMatchedCitations = ${input_matched_citations}</arg>
@@ -154,7 +154,7 @@
 
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
         
             <arg>-input = ${workingDir}/matched_citations</arg>
             <arg>-output = ${output_citations}</arg>

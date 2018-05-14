@@ -14,6 +14,10 @@
 			<name>output_document_to_concept</name>
 			<description>output document to concept</description>
 		</property>
+		<property>
+            <name>inputTransformerSparkDriverMemory</name>
+            <description>memory for driver process</description>
+        </property>
         <property>
             <name>inputTransformerSparkExecutorMemory</name>
             <description>memory for individual executor</description>
@@ -43,7 +47,7 @@
 
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
             
-            <spark-opts>--executor-memory ${inputTransformerSparkExecutorMemory} --executor-cores ${inputTransformerSparkExecutorCores}</spark-opts>
+            <spark-opts>--executor-memory ${inputTransformerSparkExecutorMemory} --executor-cores ${inputTransformerSparkExecutorCores} --driver-memory=${inputTransformerSparkDriverMemory}</spark-opts>
 
             <arg>-acknowledgementParamName=suggestedAcknowledgement</arg>
         

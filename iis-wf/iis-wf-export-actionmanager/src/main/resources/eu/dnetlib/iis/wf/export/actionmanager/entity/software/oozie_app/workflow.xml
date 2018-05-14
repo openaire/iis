@@ -40,6 +40,10 @@
         </property>
         
         <property>
+            <name>sparkDriverMemory</name>
+            <description>memory for driver process</description>
+        </property>
+        <property>
             <name>sparkExecutorMemory</name>
             <description>memory for individual executor</description>
         </property>
@@ -82,7 +86,7 @@
             <class>eu.dnetlib.iis.wf.export.actionmanager.entity.SoftwareExporterJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-export-actionmanager-${projectVersion}.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
 
             <arg>-entityActionSetId=${action_set_id_entity_software}</arg>
             <arg>-relationActionSetId=${action_set_id_document_software_url}</arg>

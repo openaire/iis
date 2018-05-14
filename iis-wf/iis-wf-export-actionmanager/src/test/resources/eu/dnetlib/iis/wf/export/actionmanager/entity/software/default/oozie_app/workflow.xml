@@ -85,6 +85,10 @@
                     <value>${workingDir}/report</value>
                 </property>
                 <property>
+                    <name>sparkDriverMemory</name>
+                    <value>1G</value>
+                </property>
+                <property>
                     <name>sparkExecutorMemory</name>
                     <value>1G</value>
                 </property>

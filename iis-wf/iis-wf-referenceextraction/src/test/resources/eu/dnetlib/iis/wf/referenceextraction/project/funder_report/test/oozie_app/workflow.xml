@@ -71,6 +71,10 @@
                     <value>document_to_project_by_funder</value>
                 </property>
                 <property>
+                    <name>sparkDriverMemory</name>
+                    <value>1g</value>
+                </property>
+                <property>
                     <name>sparkExecutorMemory</name>
                     <value>1g</value>
                 </property>

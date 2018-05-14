@@ -152,6 +152,11 @@
         </property>
         <!-- spark related: funder report generator -->
         <property>
+            <name>projectReferenceExtractionSparkDriverMemory</name>
+            <value>2G</value>
+            <description>memory for driver process</description>
+        </property>
+        <property>
             <name>projectReferenceExtractionSparkExecutorMemory</name>
             <value>7G</value>
             <description>memory for individual executor</description>
@@ -163,6 +168,11 @@
         </property>
         <!-- spark related: research initatives input transformers -->
         <property>
+            <name>researchInitiativeReferenceExtractionSparkDriverMemory</name>
+            <value>2G</value>
+            <description>memory for driver process</description>
+        </property>
+        <property>
             <name>researchInitiativeReferenceExtractionSparkExecutorMemory</name>
             <value>7G</value>
             <description>memory for individual executor</description>
@@ -173,6 +183,11 @@
             <description>number of cores used by single executor</description>
         </property>
         <!-- spark related: documents classification -->
+        <property>
+            <name>documentsclassificationSparkDriverMemory</name>
+            <value>2G</value>
+            <description>memory for driver process</description>
+        </property>
         <property>
             <name>documentsclassificationSparkExecutorMemory</name>
             <value>7G</value>
@@ -254,6 +269,11 @@
             <name>citationmatchingFuzzyNumberOfPartitions</name>
             <value>1000</value>
             <description>number of partitions used for rdds with citations and documents read from input files</description>
+        </property>
+        <property>
+            <name>referenceextractionCommunitySparkDriverMemory</name>
+            <value>2G</value>
+            <description>memory for individual executor</description>
         </property>
         <property>
             <name>referenceextractionCommunitySparkExecutorMemory</name>
@@ -530,6 +550,10 @@
                     <name>output_document_to_project</name>
                     <!-- referenceextraction_project directory is created at subworkflow prepare phase -->
                     <value>${output_document_to_project}</value>
+                </property>
+                <property>
+                    <name>sparkDriverMemory</name>
+                    <value>${projectReferenceExtractionSparkDriverMemory}</value>
                 </property>
                 <property>
                     <name>sparkExecutorMemory</name>
@@ -945,6 +969,10 @@
                     <value>${input_concept}</value>
                 </property>
                 <property>
+                    <name>sparkDriverMemory</name>
+                    <value>${researchInitiativeReferenceExtractionSparkDriverMemory}</value>
+                </property>
+                <property>
                     <name>sparkExecutorMemory</name>
                     <value>${researchInitiativeReferenceExtractionSparkExecutorMemory}</value>
                 </property>
@@ -1050,6 +1078,11 @@
                     <name>output_document_to_concept</name>
                     <value>${workingDir}/referenceextraction_community/output</value>
                 </property>
+                
+                <property>
+                    <name>inputTransformerSparkDriverMemory</name>
+                    <value>${referenceextractionCommunitySparkDriverMemory}</value>
+                </property>
                 <property>
                     <name>inputTransformerSparkExecutorMemory</name>
                     <value>${referenceextractionCommunitySparkExecutorMemory}</value>
@@ -1148,6 +1181,10 @@
                 <property>
                     <name>output_document_to_document_classes</name>
                     <value>${output_document_to_document_classes}</value>
+                </property>
+                <property>
+                    <name>sparkDriverMemory</name>
+                    <value>${documentsclassificationSparkDriverMemory}</value>
                 </property>
                 <property>
                     <name>sparkExecutorMemory</name>

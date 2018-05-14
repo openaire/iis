@@ -21,6 +21,11 @@
 			<value>^egi::virtual::.*</value>
 			<description>researchinitiative identifier whitelist regular expression</description>
 		</property>
+		
+		<property>
+            <name>sparkDriverMemory</name>
+            <description>memory for driver process</description>
+        </property>
 		<property>
             <name>sparkExecutorMemory</name>
             <description>memory for individual executor</description>
@@ -47,7 +52,7 @@
             <name>researchinitiative-input-metadata-transformer</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.researchinitiative.ResearchInitiativeReferenceExtractionInputTransformerJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
             <arg>-inputMetadata=${input_document_metadata}</arg>
             <arg>-inputText=${input_document_text}</arg>
             <arg>-output=${workingDir}/document_metadata</arg>
@@ -66,7 +71,7 @@
             <name>researchinitiative-concept-transformer</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.researchinitiative.ResearchInitiativeMetadataTransformerJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
             <arg>-input=${input_concept}</arg>
             <arg>-whitelistIdentifierRegexp=${researchinitiative_identifier_whitelist_regex}</arg>
             <arg>-output=${workingDir}/researchinitiative_metadata</arg>

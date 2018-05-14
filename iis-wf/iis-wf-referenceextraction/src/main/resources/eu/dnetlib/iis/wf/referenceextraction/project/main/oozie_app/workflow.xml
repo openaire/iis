@@ -20,6 +20,11 @@
 			<name>output_document_to_project</name>
 			<description>output document to project</description>
 		</property>
+		
+		<property>
+            <name>sparkDriverMemory</name>
+            <description>memory for driver process</description>
+        </property>
         <property>
             <name>sparkExecutorMemory</name>
             <description>memory for individual executor</description>
@@ -99,7 +104,7 @@
             <name>tara-referenceextraction-input-transformer</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.project.input.TaraReferenceExtractionInputTransformerJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
             <arg>-inputMetadata = ${input_document_metadata}</arg>
             <arg>-inputText = ${input_document_text}</arg>
             <arg>-output = ${workingDir}/meta_with_text</arg>
