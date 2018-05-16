@@ -70,18 +70,6 @@
                     <name>output_report_relative_path</name>
                     <value>document_to_project_by_funder</value>
                 </property>
-                <property>
-                    <name>sparkDriverMemory</name>
-                    <value>1g</value>
-                </property>
-                <property>
-                    <name>sparkExecutorMemory</name>
-                    <value>1g</value>
-                </property>
-                <property>
-                    <name>sparkExecutorCores</name>
-                    <value>1</value>
-                </property>
 			</configuration>
 		</sub-workflow>
 		<ok to="consumer" />

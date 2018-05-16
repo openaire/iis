@@ -46,39 +46,8 @@
     <action name="referenceextraction_softwareurl">
         <sub-workflow>
             <app-path>${wf:appPath()}/referenceextraction_softwareurl</app-path>
+            <propagate-configuration />
             <configuration>
-                <property>
-                    <name>jobTracker</name>
-                    <value>${jobTracker}</value>
-                </property>
-                <property>
-                    <name>nameNode</name>
-                    <value>${nameNode}</value>
-                </property>
-                <property>
-                    <name>queueName</name>
-                    <value>${queueName}</value>
-                </property>
-                <property>
-                    <name>oozieLauncherQueueName</name>
-                    <value>${oozieLauncherQueueName}</value>
-                </property>
-                <property>
-                    <name>oozieTopWfApplicationPath</name>
-                    <value>${oozieTopWfApplicationPath}</value>
-                </property>
-                <property>
-                    <name>projectVersion</name>
-                    <value>${projectVersion}</value>
-                </property>
-                <property>
-                    <name>webcrawlSparkDriverMemory</name>
-                    <value>1g</value>
-                </property>
-                <property>
-                    <name>webcrawlSparkExecutorMemory</name>
-                    <value>1g</value>
-                </property>
                 <property>
                     <name>webcrawlContentRetrieverClassName</name>
                     <value>eu.dnetlib.iis.wf.referenceextraction.softwareurl.ClasspathContentRetriever</value>

@@ -73,21 +73,17 @@
 			<value>$UNDEFINED$</value>
 			<description>document_referencedDatasets trust level threshold</description>
 		</property>
-        
         <!-- entity exporter related -->
         <property>
-            <name>entityExportSparkDriverMemory</name>
-            <value>2G</value>
+            <name>sparkDriverMemory</name>
             <description>memory for driver process</description>
         </property>
         <property>
-            <name>entityExportSparkExecutorMemory</name>
-            <value>7G</value>
+            <name>sparkExecutorMemory</name>
             <description>memory for individual executor</description>
         </property>
         <property>
-            <name>entityExportSparkExecutorCores</name>
-            <value>4</value>
+            <name>sparkExecutorCores</name>
             <description>number of cores used by single executor</description>
         </property>
 	</parameters>
@@ -138,18 +134,6 @@
                     <name>output_root</name>
                     <value>${workingDir}/output/entities_dataset</value>
                 </property>
-                <property>
-                    <name>sparkDriverMemory</name>
-                    <value>${entityExportSparkDriverMemory}</value>
-                </property>
-                <property>
-                    <name>sparkExecutorMemory</name>
-                    <value>${entityExportSparkExecutorMemory}</value>
-                </property>
-                <property>
-                    <name>sparkExecutorCores</name>
-                    <value>${entityExportSparkExecutorCores}</value>
-                </property>
                 <!-- all the other required properties are automatically propagated -->
             </configuration>
         </sub-workflow>
@@ -173,18 +157,6 @@
                 <property>
                     <name>output_root</name>
                     <value>${workingDir}/output/entities_document</value>
-                </property>
-                <property>
-                    <name>sparkDriverMemory</name>
-                    <value>${entityExportSparkDriverMemory}</value>
-                </property>
-                <property>
-                    <name>sparkExecutorMemory</name>
-                    <value>${entityExportSparkExecutorMemory}</value>
-                </property>
-                <property>
-                    <name>sparkExecutorCores</name>
-                    <value>${entityExportSparkExecutorCores}</value>
                 </property>
                 <!-- all the other required properties are automatically propagated -->
             </configuration>

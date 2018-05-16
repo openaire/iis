@@ -45,19 +45,17 @@
             <description>maximum length (expressed in characters number) of page content</description>
         </property>
         <property>
-            <name>webcrawlSparkDriverMemory</name>
-            <value>2g</value>
-            <description>memory for driver process</description>
-        </property>
-        <property>
-            <name>webcrawlSparkExecutorMemory</name>
-            <value>7g</value>
-            <description>memory for individual executor</description>
-        </property>
-        <property>
             <name>webcrawlMaxExecutors</name>
             <value>4</value>
             <description>maximum number of executors conducting webcrawl operations</description>
+        </property>
+        <property>
+            <name>sparkDriverMemory</name>
+            <description>memory for driver process</description>
+        </property>
+        <property>
+            <name>sparkExecutorMemory</name>
+            <description>memory for individual executor</description>
         </property>
         <property>
             <name>cacheRootDir</name>
@@ -171,7 +169,7 @@
             <class>eu.dnetlib.iis.wf.referenceextraction.softwareurl.CachedWebCrawlerJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
             <!-- spark.dynamicAllocation.enabled=true is already set in cluster configuration -->
-            <spark-opts>--executor-memory ${webcrawlSparkExecutorMemory} --executor-cores 1 --conf spark.dynamicAllocation.maxExecutors=${webcrawlMaxExecutors} --driver-memory=${webcrawlSparkDriverMemory}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores 1 --conf spark.dynamicAllocation.maxExecutors=${webcrawlMaxExecutors} --driver-memory=${sparkDriverMemory}</spark-opts>
             
             <arg>-inputPath=${workingDir}/referenceextraction_softwareurl_mining</arg>
             <arg>-outputPath=${workingDir}/referenceextraction_softwareurl_webcrawl/out</arg>

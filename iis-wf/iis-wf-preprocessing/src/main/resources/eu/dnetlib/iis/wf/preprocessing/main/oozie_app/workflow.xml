@@ -212,20 +212,34 @@
             <value>$UNDEFINED$</value>
             <description>directory for storing reports from different executions of the workflow</description>
         </property>
-        <!-- spark related: funder report generator -->
+        <!-- generic spark configuration -->
+        <!-- sparkDriverMemory, sparkExecutorMemory, sparkExecutorCores values should be provided by environment (since git#889) -->
         <property>
             <name>sparkDriverMemory</name>
-            <value>2G</value>
             <description>memory for driver process</description>
         </property>
         <property>
             <name>sparkExecutorMemory</name>
-            <value>7G</value>
             <description>memory for individual executor</description>
         </property>
         <property>
             <name>sparkExecutorCores</name>
-            <value>4</value>
+            <description>number of cores used by single executor</description>
+        </property>
+        <!-- specific spark configuration -->
+        <property>
+            <name>entityExportSparkDriverMemory</name>
+            <value>${sparkDriverMemory}</value>
+            <description>memory for driver process</description>
+        </property>
+        <property>
+            <name>entityExportSparkExecutorMemory</name>
+            <value>${sparkExecutorMemory}</value>
+            <description>memory for individual executor</description>
+        </property>
+        <property>
+            <name>entityExportSparkExecutorCores</name>
+            <value>${sparkExecutorCores}</value>
             <description>number of cores used by single executor</description>
         </property>
 	</parameters>
@@ -728,6 +742,19 @@
                 <property>
                     <name>output_report_root_path</name>
                     <value>${workingDir}/report</value>
+                </property>
+                <!-- spark configuration related -->
+                <property>
+                    <name>sparkDriverMemory</name>
+                    <value>${entityExportSparkDriverMemory}</value>
+                </property>
+                <property>
+                    <name>sparkExecutorMemory</name>
+                    <value>${entityExportSparkExecutorMemory}</value>
+                </property>
+                <property>
+                    <name>sparkExecutorCores</name>
+                    <value>${entityExportSparkExecutorCores}</value>
                 </property>
 			</configuration>
 		</sub-workflow>

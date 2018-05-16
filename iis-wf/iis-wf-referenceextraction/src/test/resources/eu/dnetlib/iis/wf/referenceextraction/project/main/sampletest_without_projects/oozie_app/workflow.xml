@@ -15,18 +15,6 @@
                 <name>oozie.launcher.mapred.job.queue.name</name>
                 <value>${oozieLauncherQueueName}</value>
             </property>
-            <property>
-                <name>sparkDriverMemory</name>
-                <value>1g</value>
-            </property>
-            <property>
-                <name>sparkExecutorMemory</name>
-                <value>1g</value>
-            </property>
-            <property>
-                <name>sparkExecutorCores</name>
-                <value>1</value>
-            </property>
         </configuration>
     </global>
     

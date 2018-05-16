@@ -193,18 +193,7 @@
                     <name>output_report_root_path</name>
                     <value>${workingDir}/report</value>
                 </property>
-                <property>
-                    <name>sparkDriverMemory</name>
-                    <value>1G</value>
-                </property>
-                <property>
-                    <name>sparkExecutorMemory</name>
-                    <value>1G</value>
-                </property>
-                <property>
-                    <name>sparkExecutorCores</name>
-                    <value>1</value>
-                </property>
+                <!-- sparkDriverMemory, sparkExecutorMemory, sparkExecutorCores are provided by environment (since git#889) -->
             </configuration>
         </sub-workflow>
         <ok to="dataset-consumer"/>

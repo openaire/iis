@@ -50,31 +50,8 @@
     <action name="referenceextraction_community">
         <sub-workflow>
             <app-path>${wf:appPath()}/referenceextraction_community</app-path>
+            <propagate-configuration />
             <configuration>
-                <property>
-                    <name>jobTracker</name>
-                    <value>${jobTracker}</value>
-                </property>
-                <property>
-                    <name>nameNode</name>
-                    <value>${nameNode}</value>
-                </property>
-                <property>
-                    <name>queueName</name>
-                    <value>${queueName}</value>
-                </property>
-                <property>
-                    <name>oozieLauncherQueueName</name>
-                    <value>${oozieLauncherQueueName}</value>
-                </property>
-                <property>
-                    <name>oozieTopWfApplicationPath</name>
-                    <value>${oozieTopWfApplicationPath}</value>
-                </property>
-                <property>
-                    <name>projectVersion</name>
-                    <value>${projectVersion}</value>
-                </property>
                 <!-- Working directory of the subworkflow -->
                 <property>
                     <name>workingDir</name>
@@ -91,18 +68,6 @@
                 <property>
                     <name>output_document_to_concept</name>
                     <value>${workingDir}/referenceextraction_community/output</value>
-                </property>
-                <property>
-                    <name>inputTransformerSparkDriverMemory</name>
-                    <value>1g</value>
-                </property>
-                <property>
-                    <name>inputTransformerSparkExecutorMemory</name>
-                    <value>1g</value>
-                </property>
-                <property>
-                    <name>inputTransformerSparkExecutorCores</name>
-                    <value>1</value>
                 </property>
             </configuration>
         </sub-workflow>

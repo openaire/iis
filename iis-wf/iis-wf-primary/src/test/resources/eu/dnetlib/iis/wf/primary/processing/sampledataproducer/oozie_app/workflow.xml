@@ -321,81 +321,18 @@
                     <name>output_report_root_path</name>
                     <value>${workingDir}/report</value>
                 </property>
-                <!-- configuration for spark algorithms-->
-                <property>
-                    <name>projectReferenceExtractionSparkExecutorMemory</name>
-                    <value>1G</value>
-                </property>
-                <property>
-                    <name>projectReferenceExtractionSparkExecutorCores</name>
-                    <value>1</value>
-                </property>
-                
-                <property>
-                    <name>researchInitiativeReferenceExtractionSparkExecutorMemory</name>
-                    <value>1G</value>
-                </property>
-                <property>
-                    <name>researchInitiativeReferenceExtractionSparkExecutorCores</name>
-                    <value>1</value>
-                </property>
-                
-                <property>
-                    <name>documentsclassificationSparkExecutorMemory</name>
-                    <value>1G</value>
-                </property>
-                <property>
-                    <name>documentsclassificationSparkExecutorCores</name>
-                    <value>1</value>
-                </property>
-                
-                <property>
-                    <name>affiliationmatchingSparkExecutorMemory</name>
-                    <value>1G</value>
-                </property>
-                <property>
-                    <name>affiliationmatchingSparkExecutorCores</name>
-                    <value>1</value>
-                </property>
-                <property>
-                    <name>affiliationmatchingSparkDriverMemory</name>
-                    <value>1G</value>
-                </property>
+                <!-- sparkDriverMemory, sparkExecutorMemory, sparkExecutorCores are provided by environment (since git#889) -->
                 <property>
                     <name>citationmatchingDirectPmcIdsMappingCSV</name>
                     <value>$UNDEFINED$</value>
-                </property>
-                <property>
-                    <name>citationmatchingDirectSparkExecutorMemory</name>
-                    <value>1G</value>
-                </property>
-                <property>
-                    <name>citationmatchingDirectSparkExecutorCores</name>
-                    <value>1</value>
-                </property>
-                <property>
-                    <name>citationmatchingDirectSparkDriverMemory</name>
-                    <value>1G</value>
-                </property>
-                <property>
-                    <name>citationmatchingFuzzySparkDriverMemory</name>
-                    <value>1G</value>
                 </property>
                 <property>
                     <name>citationmatchingFuzzySparkDriverOverhead</name>
                     <value>512</value>
                 </property>
                 <property>
-                    <name>citationmatchingFuzzySparkExecutorMemory</name>
-                    <value>1G</value>
-                </property>
-                <property>
                     <name>citationmatchingFuzzySparkExecutorOverhead</name>
                     <value>512</value>
-                </property>
-                <property>
-                    <name>citationmatchingFuzzySparkExecutorCores</name>
-                    <value>1</value>
                 </property>
                 <property>
                     <name>webcrawlContentRetrieverClassName</name>
@@ -404,10 +341,6 @@
                 <property>
                     <name>webcrawlLockManagerFactoryClassName</name>
                     <value>eu.dnetlib.iis.wf.primary.processing.LockManagerFactoryMock</value>
-                </property>
-                <property>
-                    <name>webcrawlSparkExecutorMemory</name>
-                    <value>1g</value>
                 </property>
                 <property>
                     <name>software_webcrawl_cache_location</name>

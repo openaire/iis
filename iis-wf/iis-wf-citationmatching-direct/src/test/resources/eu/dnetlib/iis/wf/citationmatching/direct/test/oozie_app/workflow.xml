@@ -58,31 +58,8 @@
     <action name="ingest_citations">
         <sub-workflow>
             <app-path>${wf:appPath()}/citationmatching_direct</app-path>
+            <propagate-configuration/>
             <configuration>
-                <property>
-                    <name>jobTracker</name>
-                    <value>${jobTracker}</value>
-                </property>
-                <property>
-                    <name>nameNode</name>
-                    <value>${nameNode}</value>
-                </property>
-                <property>
-                    <name>queueName</name>
-                    <value>${queueName}</value>
-                </property>
-                <property>
-                    <name>oozieLauncherQueueName</name>
-                    <value>${oozieLauncherQueueName}</value>
-                </property>
-                <property>
-                    <name>oozieTopWfApplicationPath</name>
-                    <value>${oozieTopWfApplicationPath}</value>
-                </property>
-                <property>
-                    <name>projectVersion</name>
-                    <value>${projectVersion}</value>
-                </property>
                 <!-- Input ports. -->
                 <property>
                     <name>input</name>
@@ -101,19 +78,7 @@
                     <name>output_report_root_path</name>
                     <value>${workingDir}/report</value>
                 </property>
-                
-                <property>
-                    <name>sparkExecutorMemory</name>
-                    <value>1G</value>
-                </property>
-                <property>
-                    <name>sparkExecutorCores</name>
-                    <value>1</value>
-                </property>
-                <property>
-                    <name>sparkDriverMemory</name>
-                    <value>1G</value>
-                </property>
+                <!-- sparkDriverMemory, sparkExecutorMemory, sparkExecutorCores are provided by environment (since git#889) -->
             </configuration>
         </sub-workflow>
         <ok to="report_time"/>

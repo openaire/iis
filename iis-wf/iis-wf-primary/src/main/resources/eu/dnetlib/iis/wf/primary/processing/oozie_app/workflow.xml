@@ -150,68 +150,81 @@
             <name>ds_similarityTopnDocumentPerDocument</name>
             <value>20</value>
         </property>
-        <!-- spark related: funder report generator -->
+        <!-- generic spark configuration -->
+        <property>
+            <name>sparkDriverMemory</name>
+            <description>memory for driver process</description>
+        </property>
+        <property>
+            <name>sparkExecutorMemory</name>
+            <description>memory for individual executor</description>
+        </property>
+        <property>
+            <name>sparkExecutorCores</name>
+            <description>number of cores used by single executor</description>
+        </property>
+        <!-- specific spark configuration -->
         <property>
             <name>projectReferenceExtractionSparkDriverMemory</name>
-            <value>2G</value>
+            <value>${sparkDriverMemory}</value>
             <description>memory for driver process</description>
         </property>
         <property>
             <name>projectReferenceExtractionSparkExecutorMemory</name>
-            <value>7G</value>
+            <value>${sparkExecutorMemory}</value>
             <description>memory for individual executor</description>
         </property>
         <property>
             <name>projectReferenceExtractionSparkExecutorCores</name>
-            <value>4</value>
+            <value>${sparkExecutorCores}</value>
             <description>number of cores used by single executor</description>
         </property>
         <!-- spark related: research initatives input transformers -->
         <property>
             <name>researchInitiativeReferenceExtractionSparkDriverMemory</name>
-            <value>2G</value>
+            <value>${sparkDriverMemory}</value>
             <description>memory for driver process</description>
         </property>
         <property>
             <name>researchInitiativeReferenceExtractionSparkExecutorMemory</name>
-            <value>7G</value>
+            <value>${sparkExecutorMemory}</value>
             <description>memory for individual executor</description>
         </property>
         <property>
             <name>researchInitiativeReferenceExtractionSparkExecutorCores</name>
-            <value>4</value>
+            <value>${sparkExecutorCores}</value>
             <description>number of cores used by single executor</description>
         </property>
         <!-- spark related: documents classification -->
         <property>
             <name>documentsclassificationSparkDriverMemory</name>
-            <value>2G</value>
+            <value>${sparkDriverMemory}</value>
             <description>memory for driver process</description>
         </property>
         <property>
             <name>documentsclassificationSparkExecutorMemory</name>
-            <value>7G</value>
+            <value>${sparkExecutorMemory}</value>
             <description>memory for individual executor</description>
         </property>
         <property>
             <name>documentsclassificationSparkExecutorCores</name>
-            <value>4</value>
+            <value>${sparkExecutorCores}</value>
             <description>number of cores used by single executor</description>
         </property>
         <!-- spark related: affiliation matching -->
         <property>
             <name>affiliationmatchingSparkExecutorMemory</name>
-            <value>7G</value>
+            <value>${sparkExecutorMemory}</value>
             <description>memory for individual executor</description>
         </property>
         <property>
             <name>affiliationmatchingSparkExecutorCores</name>
-            <value>4</value>
+            <value>${sparkExecutorCores}</value>
             <description>number of cores used by single executor</description>
         </property>
         <property>
             <name>affiliationmatchingSparkDriverMemory</name>
-            <value>2G</value>
+            <value>${sparkDriverMemory}</value>
             <description>memory for driver process</description>
         </property>
         <property>
@@ -222,17 +235,17 @@
         <!-- spark related: direct citation matching -->
         <property>
             <name>citationmatchingDirectSparkExecutorMemory</name>
-            <value>7G</value>
+            <value>${sparkExecutorMemory}</value>
             <description>memory for individual executor</description>
         </property>
         <property>
             <name>citationmatchingDirectSparkExecutorCores</name>
-            <value>4</value>
+            <value>${sparkExecutorCores}</value>
             <description>number of cores used by single executor</description>
         </property>
         <property>
             <name>citationmatchingDirectSparkDriverMemory</name>
-            <value>2G</value>
+            <value>${sparkDriverMemory}</value>
             <description>memory for driver process</description>
         </property>
         <property>
@@ -242,7 +255,7 @@
         <!-- spark related: fuzzy citation matching -->
         <property>
             <name>citationmatchingFuzzySparkDriverMemory</name>
-            <value>2G</value>
+            <value>${sparkDriverMemory}</value>
             <description>memory for driver process</description>
         </property>
         <property>
@@ -252,7 +265,7 @@
         </property>
         <property>
             <name>citationmatchingFuzzySparkExecutorMemory</name>
-            <value>7G</value>
+            <value>${sparkExecutorMemory}</value>
             <description>memory for individual executor</description>
         </property>
         <property>
@@ -262,7 +275,7 @@
         </property>        
         <property>
             <name>citationmatchingFuzzySparkExecutorCores</name>
-            <value>4</value>
+            <value>${sparkExecutorCores}</value>
             <description>number of cores used by single executor</description>
         </property>
         <property>
@@ -272,19 +285,30 @@
         </property>
         <property>
             <name>referenceextractionCommunitySparkDriverMemory</name>
-            <value>2G</value>
+            <value>${sparkDriverMemory}</value>
             <description>memory for individual executor</description>
         </property>
         <property>
             <name>referenceextractionCommunitySparkExecutorMemory</name>
-            <value>7G</value>
+            <value>${sparkExecutorMemory}</value>
             <description>memory for individual executor</description>
         </property>
         <property>
             <name>referenceextractionCommunitySparkExecutorCores</name>
-            <value>4</value>
+            <value>${sparkExecutorCores}</value>
             <description>number of cores used by single executor</description>
         </property>
+        <property>
+            <name>referenceextractionSoftwareSparkDriverMemory</name>
+            <value>${sparkDriverMemory}</value>
+            <description>memory for individual executor</description>
+        </property>
+        <property>
+            <name>referenceextractionSoftwareSparkExecutorMemory</name>
+            <value>${sparkExecutorMemory}</value>
+            <description>memory for individual executor</description>
+        </property>
+        
         <!-- output ports -->
         <property>
             <name>output_document_to_project</name>
@@ -907,6 +931,14 @@
                     <name>output</name>
                     <value>${output_document_to_software_url}</value>
                 </property>
+                <property>
+                    <name>sparkDriverMemory</name>
+                    <value>${referenceextractionSoftwareSparkDriverMemory}</value>
+                </property>
+                <property>
+                    <name>sparkExecutorMemory</name>
+                    <value>${referenceextractionSoftwareSparkExecutorMemory}</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="joining" />
@@ -1080,15 +1112,15 @@
                 </property>
                 
                 <property>
-                    <name>inputTransformerSparkDriverMemory</name>
+                    <name>sparkDriverMemory</name>
                     <value>${referenceextractionCommunitySparkDriverMemory}</value>
                 </property>
                 <property>
-                    <name>inputTransformerSparkExecutorMemory</name>
+                    <name>sparkExecutorMemory</name>
                     <value>${referenceextractionCommunitySparkExecutorMemory}</value>
                 </property>
                 <property>
-                    <name>inputTransformerSparkExecutorCores</name>
+                    <name>sparkExecutorCores</name>
                     <value>${referenceextractionCommunitySparkExecutorCores}</value>
                 </property>
             </configuration>
