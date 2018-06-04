@@ -77,8 +77,6 @@ public class SoftwareExporterJob {
     
     private static final int numberOfOutputFiles = 10;
     
-    private static final DateFormat dateFormat = buildDateFormat();
-
     private static SparkAvroLoader avroLoader = new SparkAvroLoader();
     
     private static SoftwareExportCounterReporter counterReporter = new SoftwareExportCounterReporter();
@@ -224,6 +222,7 @@ public class SoftwareExporterJob {
         entityBuilder.setId(generateSoftwareEntityId(url));
         entityBuilder.setType(Type.result);
         
+        DateFormat dateFormat = buildDateFormat();
         String dateStr = dateFormat.format(new Date());
         entityBuilder.setDateofcollection(dateStr);
         entityBuilder.setDateoftransformation(dateStr);
