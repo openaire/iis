@@ -28,11 +28,11 @@ from (
 union all
 
 -- Instruct-ERIC
-select jdict('documentId', docid, 'projectId', 'Instruct-ERIC', 'confidenceLevel', 1, 'match', middle, 'context', context) as C1 from (
-select docid, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||next as context
+select jdict('documentId', docid, 'conceptId', conceptId, 'confidenceLevel', 0.5) as C1 from (
+select docid, conceptId, conceptLabel, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||next as context
 from (
-setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("\n", C2, " ")),10,1,10, '(?i)\bInstruct\b') from pubs where c2 is not null
-) where regexprmatches('(?i)(?:\bERIC\b)|(?:\bESFRI\b)|(?:\bEuropean Strategy Forum on Research Infrastructures\b)', context)
+setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("\n", C2, " ")),10,1,10, '\bInstruct\b') from pubs where c2 is not null
+), grants where conceptLabel="Instruct-ERIC" and regexprmatches('(?i)(?:\bERIC\b)|(?:\bESFRI\b)|(?:\bEuropean Strategy Forum on Research Infrastructures\b)', context)
 ) group by docid
 
 union all
