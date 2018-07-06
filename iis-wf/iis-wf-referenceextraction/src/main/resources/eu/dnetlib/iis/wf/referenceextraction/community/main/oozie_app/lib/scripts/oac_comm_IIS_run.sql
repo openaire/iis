@@ -50,4 +50,14 @@ select docid, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||nex
 from (
 setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("\n", C2, " ")),20,1,10, '(?:\b5002780\b)|(?:\bELIXIR\b)') from pubs where c2 is not null
 ) where regexprmatches('(?:\bMIS\b)|(?:\bELIXIR-GR\b)|(?:\b[Ee]lixir-[Gg]r\b)|(?:\b[Ee]lixir\b[Gg]reece\b)', context)
-) group by docid;
+) group by docid
+
+union all
+
+-- DARIAH-EU test
+select jdict('documentId', docid, 'projectId', 'DARIAH-EU', 'confidenceLevel', 1, 'match', middle, 'context', context) as C1 from (
+select docid, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||next as context
+from (
+  setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("\n", C2, " ")),20,1,20, '\bDARIAH\b') from pubs where c2 is not null
+)) group by docid
+;
