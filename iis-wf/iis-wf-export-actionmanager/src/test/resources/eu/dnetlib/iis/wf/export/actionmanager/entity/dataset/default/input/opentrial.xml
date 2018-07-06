@@ -28,7 +28,7 @@
         <description descriptionType="Abstract">This is a randomized trial investigating the use of the IMPELLA RECOVER LP 2.5 compared to Intra-aortic balloon pump (IABP) in patients with Acute Myocardial Infarction.</description>
       </descriptions>
       <oaf:accessrights>UNKNOWN</oaf:accessrights>
-      <dr:CobjCategory>clinical trial</dr:CobjCategory>
+      <dr:CobjCategory type="dataset">0037</dr:CobjCategory>
       <oaf:dateAccepted>2009-09-02</oaf:dateAccepted>
       <oaf:hostedBy
         id="openaire____::1256f046-bf1f-4afc-8b47-d0b147148b18" name="Unknown Repository"/>

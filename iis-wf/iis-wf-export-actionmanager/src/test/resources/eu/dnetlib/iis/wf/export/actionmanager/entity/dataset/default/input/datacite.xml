@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<oai:record xmlns:dri="http://www.driver-repository.eu/namespace/dri"
+<oai:record xmlns:dr="http://www.driver-repository.eu/namespace/dr"
+  xmlns:dri="http://www.driver-repository.eu/namespace/dri"
   xmlns:oaf="http://namespace.openaire.eu/oaf" xmlns:oai="http://www.openarchives.org/OAI/2.0/">
   <oai:header>
     <dri:objIdentifier>datacite____::00000e595b5f5fc976b39137b7dbf62e</dri:objIdentifier>
@@ -35,10 +36,11 @@
       </formats>
       <rights>[s.n.]</rights>
       <descriptions>
-        <description descriptionType="Other">Digitalisierung = Digitization = Numerisation TIFF</description>
-        <description descriptionType="Other">Franzosisch</description>
-        <description descriptionType="Other">von Trolliet</description>
+        <description descriptionType="Abstract">Digitalisierung = Digitization = Numerisation TIFF</description>
+        <description descriptionType="Abstract">Franzosisch</description>
+        <description descriptionType="Abstract">von Trolliet</description>
       </descriptions>
+      <dr:CobjCategory type="dataset">0021</dr:CobjCategory>
     </resource>
   </metadata>
 </oai:record>

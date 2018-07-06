@@ -48,8 +48,8 @@ $targetValue.entity.result.instanceList[0].accessright.classname=UNKNOWN
 $targetValue.entity.result.instanceList[0].accessright.schemeid=dnet:access_modes
 $targetValue.entity.result.instanceList[0].accessright.schemename=dnet:access_modes
 
-$targetValue.entity.result.instanceList[0].instancetype.classid=clinical trial
-$targetValue.entity.result.instanceList[0].instancetype.classname=clinical trial
+$targetValue.entity.result.instanceList[0].instancetype.classid=0037
+$targetValue.entity.result.instanceList[0].instancetype.classname=0037
 $targetValue.entity.result.instanceList[0].instancetype.schemeid=dnet:dataCite_resource
 $targetValue.entity.result.instanceList[0].instancetype.schemename=dnet:dataCite_resource
 
