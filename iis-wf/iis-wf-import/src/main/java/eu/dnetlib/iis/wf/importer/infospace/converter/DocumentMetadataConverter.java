@@ -205,7 +205,12 @@ public class DocumentMetadataConverter implements OafEntityToAvroConverter<Docum
     private static Integer extractYear(String date) {
         // expected date format: yyyy-MM-dd
         if (StringUtils.isNotBlank(date) && date.indexOf('-') == 4) {
-            return Integer.valueOf(date.substring(0, date.indexOf('-')));
+            try {
+                return Integer.valueOf(date.substring(0, date.indexOf('-')));    
+            } catch (NumberFormatException e) {
+                log.warn("unsupported, non integer, format of year value: " + date);
+                return null;
+            }
         } else {
             return null;
         }
