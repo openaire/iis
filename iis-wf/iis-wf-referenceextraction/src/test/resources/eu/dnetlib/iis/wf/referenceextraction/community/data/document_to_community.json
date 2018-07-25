@@ -1,1 +1,15 @@
-{"documentId": "50|dedup_wf_001::61f40ec6a13af6f638e2f3ed733b75ee", "conceptId": "dh-ch::subcommunity::2", "confidenceLevel": 0.5}
+{
+  "documentId": "50|od________18::1f20031fa8764ad972ce3cae566ae787",
+  "conceptId": "clarin",
+  "confidenceLevel": 0.5
+}
+{
+  "documentId": "50|od________18::3b64ffd37d81d702710fa28433ea6229",
+  "conceptId": "fli",
+  "confidenceLevel": 0.5
+}
+{
+  "documentId": "50|dedup_wf_001::ed8e5e23ebff00fd270be8e10259c252",
+  "conceptId": "eric",
+  "confidenceLevel": 0.5
+}

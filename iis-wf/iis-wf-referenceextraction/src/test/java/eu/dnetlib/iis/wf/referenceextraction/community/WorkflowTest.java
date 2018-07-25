@@ -14,7 +14,7 @@ import eu.dnetlib.iis.common.IntegrationTest;
 @Category(IntegrationTest.class)
 public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 
-    // @Test
+    @Test
 	public void testMainWorkflow() throws Exception {
     	testWorkflow("eu/dnetlib/iis/wf/referenceextraction/community/main/sampletest");
 	}
