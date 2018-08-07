@@ -82,7 +82,7 @@ public abstract class AbstractDocumentToConceptsActionBuilderModuleFactory
                 for (Concept concept : source.getConcepts()) {
                     Context.Builder contextBuilder = Context.newBuilder();
                     contextBuilder.setId(concept.getId().toString());
-                    contextBuilder.setDataInfo(buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
+                    contextBuilder.addDataInfo(buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
                     contexts.add(contextBuilder.build());
                 }
                 metaBuilder.addAllContext(contexts);

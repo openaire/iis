@@ -101,10 +101,10 @@ public abstract class AbstractDocumentToConceptsActionBuilderModuleFactoryTest e
         Context context = oaf.getEntity().getResult().getMetadata().getContextList().get(0);
         assertNotNull(context);
         assertEquals(contextId, context.getId());
-        assertNotNull(context.getDataInfo());
+        assertNotNull(context.getDataInfo(0));
 
         float normalizedTrust = confidenceLevel * InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
-        assertEquals(normalizedTrust, Float.parseFloat(context.getDataInfo().getTrust()), 0.0001);
+        assertEquals(normalizedTrust, Float.parseFloat(context.getDataInfo(0).getTrust()), 0.0001);
     }
 
 }
