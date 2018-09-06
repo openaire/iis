@@ -38,8 +38,8 @@ union all
 select jdict('documentId', docid, 'conceptId', conceptId, 'confidenceLevel', 0.5) as C1 from (
 select docid, conceptId, conceptLabel, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||next as context
 from (
-setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("\n", C2, " ")),20,2,10, '(?:\bInstruct-ERIC\b)|(?:\bESFRI\b)') from pubs where c2 is not null
-), grants where conceptLabel="Instruct-ERIC" and regexprmatches('(?:\b[Aa]cknowledge)|(?:\bsupport\b)|(?:\bInstruct\b)|(?:\Landmark\b) ', context)
+setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("\n", C2, " ")),10,1,10, '(?i)\bInstruct\b') from pubs where c2 is not null
+), grants where conceptLabel="Instruct-ERIC" and regexprmatches('(?i)(?:\bERIC\b)|(?:\bESFRI\b)|(?:\bEuropean Strategy Forum on Research Infrastructures\b)', context)
 ) group by docid
 
 union all
