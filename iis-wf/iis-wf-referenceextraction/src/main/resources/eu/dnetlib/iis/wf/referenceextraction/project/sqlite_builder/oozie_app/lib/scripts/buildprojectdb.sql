@@ -3,9 +3,9 @@ drop table if exists grants;
 create temp table jsoninp as select * from stdinput();
 update jsoninp set c1=regexpr('"jsonextrainfo":"{}"',c1,'"jsonextrainfo":"{\"dossiernr\":\"\",\"NWOgebied\":\"\"}"');
 create table grants as select acronym,
-     case when fundingclass1 = "HRZZ" then grantid else normalizedacro end as normalizedacro,
+     case when fundingclass1 = "HRZZ" and regexprmatches("\w{1,3}\-\d{2,4}\-\d{2,4}\-\d{4}",grantid) then grantid else normalizedacro end as normalizedacro,
      case when fundingclass1="FCT" then acronym 
-          when fundingclass1 = "HRZZ" then regexpr("(\d{4})$",grantid)
+          when fundingclass1 = "HRZZ" and regexprmatches("\w{1,3}\-\d{2,4}\-\d{2,4}\-\d{4}",grantid) then regexpr("(\d{4})$",grantid)
           when fundingclass1 = "SNSF" then regexpr('0{0,1}(\d{5,6})$',grantid)
           else grantid end as grantid,
      fundingclass1,fundingclass2,id,c1 as nwo_opt2,c2 as nwo_opt1,
@@ -34,7 +34,8 @@ create table grants as select acronym,
                  jsonpath(c5,'$.NWOgebied','$.dossiernr','$.orgname', '$.activity', '$.administeringic', '$.serialnumber', '$.coreprojectnum','$.alias','$.keywords') 
                        from 
                           (select * from (setschema 'c1,c2,c3,c4,c5' select jsonpath(c1, '$.projectAcronym', '$.id' , '$.projectGrantId','$.fundingClass','$.jsonextrainfo') from jsoninp) 
-                           where regexprmatches("::",c4))) where fundingclass1!='NIH' OR (nih_coreprojectnum!='' AND nih_activity!='' AND nih_administeringic!='' AND nih_serialnumber is not null AND nih_serialnumber!='0' AND nih_serialnumber!='');
+                           where regexprmatches("::",c4))) where fundingclass1!='NIH' OR (nih_coreprojectnum!='' AND nih_activity!='' AND nih_administeringic!='' AND nih_serialnumber is not null AND nih_serialnumber!='0' 
+                           AND nih_serialnumber!='');
 
 update grants set alias = "$a" where alias is null;
 insert into grants 
