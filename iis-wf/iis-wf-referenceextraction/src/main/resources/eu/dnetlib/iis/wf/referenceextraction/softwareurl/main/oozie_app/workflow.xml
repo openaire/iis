@@ -41,7 +41,7 @@
         </property>
         <property>
             <name>webcrawlMaxPageContentLength</name>
-            <value>1000000</value>
+            <value>500000</value>
             <description>maximum length (expressed in characters number) of page content</description>
         </property>
         <property>
