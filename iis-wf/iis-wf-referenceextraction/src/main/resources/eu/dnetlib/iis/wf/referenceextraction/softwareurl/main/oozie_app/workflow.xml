@@ -45,6 +45,11 @@
             <description>maximum length (expressed in characters number) of page content</description>
         </property>
         <property>
+            <name>webcrawlNumberOfEmittedFiles</name>
+            <value>1000</value>
+            <description>number of files created by webcrawler module</description>
+        </property>
+        <property>
             <name>webcrawlMaxExecutors</name>
             <value>4</value>
             <description>maximum number of executors conducting webcrawl operations</description>
@@ -181,6 +186,8 @@
             <arg>-connectionTimeout=${webcrawlConnectionTimeout}</arg>
             <arg>-readTimeout=${webcrawlReadTimeout}</arg>
             <arg>-maxPageContentLength=${webcrawlMaxPageContentLength}</arg>
+            <arg>-numberOfEmittedFiles=${webcrawlNumberOfEmittedFiles}</arg>
+            
             <arg>-cacheRootDir=${cacheRootDir}</arg>
             
         </spark>

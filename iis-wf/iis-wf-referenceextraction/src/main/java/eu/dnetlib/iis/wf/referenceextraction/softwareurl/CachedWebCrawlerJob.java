@@ -72,7 +72,7 @@ public class CachedWebCrawlerJob {
         final String cacheRootDir = normalizePath(params.cacheRootDir);
         
         ContentRetrieverContext contentRetrieverContext = new ContentRetrieverContext(params.contentRetrieverClassName, 
-                params.connectionTimeout, params.readTimeout, params.maxPageContentLength);
+                params.connectionTimeout, params.readTimeout, params.maxPageContentLength, params.numberOfEmittedFiles);
         
         CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
         
@@ -93,7 +93,8 @@ public class CachedWebCrawlerJob {
             
             if (documentToSoftwareUrl.isEmpty()) {
                 storeInOutput(sc.emptyRDD(), sc.emptyRDD(),
-                        generateReportEntries(sc, sc.emptyRDD(), sc.emptyRDD(), sc.emptyRDD()), outputPaths);
+                        generateReportEntries(sc, sc.emptyRDD(), sc.emptyRDD(), sc.emptyRDD()), 
+                        outputPaths, contentRetrieverContext.getNumberOfEmittedFiles());
                 return;
             }
             
@@ -149,7 +150,7 @@ public class CachedWebCrawlerJob {
             // storing new cache entry
             storeInCache(returnedFromWebcrawlTuple._1, 
                     returnedFromWebcrawlTuple._2, 
-                    cacheRootDir, lockManager, cacheManager, hadoopConf);
+                    cacheRootDir, lockManager, cacheManager, hadoopConf, contentRetrieverContext.getNumberOfEmittedFiles());
         }
         
         // store final results
@@ -161,7 +162,7 @@ public class CachedWebCrawlerJob {
         
         storeInOutput(entitiesToBeStored, faultsToBeStored,
                 generateReportEntries(sc, sc.emptyRDD(), entitiesToBeStored, faultsToBeStored),
-                outputPaths);
+                outputPaths, contentRetrieverContext.getNumberOfEmittedFiles());
         
     }
     
@@ -202,7 +203,7 @@ public class CachedWebCrawlerJob {
             // storing new cache entry
             storeInCache(cachedSources.union(returnedFromWebcrawlTuple._1), 
                     cachedFaults.union(returnedFromWebcrawlTuple._2), 
-                    cacheRootDir, lockManager, cacheManager, hadoopConf);
+                    cacheRootDir, lockManager, cacheManager, hadoopConf, contentRetrieverContext.getNumberOfEmittedFiles());
             
             // merging final results
             webcrawledEntities = produceEntitiesToBeStored(toBeProcessed, returnedFromWebcrawlTuple._1);
@@ -224,7 +225,7 @@ public class CachedWebCrawlerJob {
                 //notice: we do not propagate faults from cache, only new faults are written
                 faultsToBeStored, 
                 generateReportEntries(sc, entitiesReturnedFromCache, webcrawledEntities, faultsToBeStored),
-                outputPaths);
+                outputPaths, contentRetrieverContext.getNumberOfEmittedFiles());
     }
 
     private static JavaRDD<ReportEntry> generateReportEntries(JavaSparkContext sparkContext, 
@@ -282,10 +283,10 @@ public class CachedWebCrawlerJob {
     }
     
     private static void storeInOutput(JavaRDD<DocumentToSoftwareUrlWithSource> entities, 
-            JavaRDD<Fault> faults, JavaRDD<ReportEntry> reports, OutputPaths outputPaths) {
-        avroSaver.saveJavaRDD(entities, DocumentToSoftwareUrlWithSource.SCHEMA$, outputPaths.getResult());
-        avroSaver.saveJavaRDD(faults, Fault.SCHEMA$, outputPaths.getFault());
-        avroSaver.saveJavaRDD(reports, ReportEntry.SCHEMA$, outputPaths.getReport());
+            JavaRDD<Fault> faults, JavaRDD<ReportEntry> reports, OutputPaths outputPaths, int numberOfEmittedFiles) {
+        avroSaver.saveJavaRDD(entities.coalesce(numberOfEmittedFiles), DocumentToSoftwareUrlWithSource.SCHEMA$, outputPaths.getResult());
+        avroSaver.saveJavaRDD(faults.coalesce(numberOfEmittedFiles), Fault.SCHEMA$, outputPaths.getFault());
+        avroSaver.saveJavaRDD(reports.coalesce(numberOfEmittedFiles), ReportEntry.SCHEMA$, outputPaths.getReport());
     }
     
     /**
@@ -294,7 +295,8 @@ public class CachedWebCrawlerJob {
      * Utilizes lock manager to avoid storing new cache entries in the very same location by two independent web crawler executions.
      */
     private static void storeInCache(JavaRDD<DocumentText> toBeStoredEntities, JavaRDD<Fault> toBeStoredFaults, 
-            String cacheRootDir, LockManager lockManager, CacheMetadataManagingProcess cacheManager, Configuration hadoopConf) throws Exception {
+            String cacheRootDir, LockManager lockManager, CacheMetadataManagingProcess cacheManager, 
+            Configuration hadoopConf, int numberOfEmittedFiles) throws Exception {
 
         lockManager.obtain(cacheRootDir);
 
@@ -307,9 +309,9 @@ public class CachedWebCrawlerJob {
             
             try {
                 // store in cache
-                avroSaver.saveJavaRDD(toBeStoredEntities, DocumentText.SCHEMA$, 
+                avroSaver.saveJavaRDD(toBeStoredEntities.coalesce(numberOfEmittedFiles), DocumentText.SCHEMA$, 
                         getCacheLocation(cacheRootDir, newCacheId, CacheRecordType.text));
-                avroSaver.saveJavaRDD(toBeStoredFaults, Fault.SCHEMA$, 
+                avroSaver.saveJavaRDD(toBeStoredFaults.coalesce(numberOfEmittedFiles), Fault.SCHEMA$, 
                         getCacheLocation(cacheRootDir, newCacheId, CacheRecordType.fault));
                 // writing new cache id
                 cacheManager.writeCacheId(hadoopConf, cacheRootDir, newCacheId);
@@ -393,6 +395,9 @@ public class CachedWebCrawlerJob {
         
         @Parameter(names = "-maxPageContentLength", required = true)
         private int maxPageContentLength;
+        
+        @Parameter(names = "-numberOfEmittedFiles", required = true)
+        private int numberOfEmittedFiles;
         
         @Parameter(names = "-cacheRootDir", required = true)
         private String cacheRootDir;

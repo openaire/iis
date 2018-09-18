@@ -24,16 +24,20 @@ public class ContentRetrieverContext implements Serializable {
     
     private int maxPageContentLength;
     
+    private int numberOfEmittedFiles;
+
+
     public ContentRetrieverContext() {}
     
     public ContentRetrieverContext(String contentRetrieverClassName,
-            int connectionTimeout, int readTimeout, int maxPageContentLength) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
+            int connectionTimeout, int readTimeout, int maxPageContentLength, int numberOfEmittedFiles) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
         @SuppressWarnings("unchecked")
         Class<ContentRetriever> clazz = (Class<ContentRetriever>) Class.forName(contentRetrieverClassName);
         this.contentRetriever = clazz.getConstructor().newInstance();
         this.connectionTimeout = connectionTimeout;
         this.readTimeout = readTimeout;
         this.maxPageContentLength = maxPageContentLength;
+        this.numberOfEmittedFiles = numberOfEmittedFiles;
     }
 
 
@@ -56,11 +60,13 @@ public class ContentRetrieverContext implements Serializable {
         return maxPageContentLength;
     }
 
+    public int getNumberOfEmittedFiles() {
+        return numberOfEmittedFiles;
+    }
 
     public void setContentRetriever(ContentRetriever contentRetriever) {
         this.contentRetriever = contentRetriever;
     }
-
 
     public void setConnectionTimeout(int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
@@ -76,4 +82,8 @@ public class ContentRetrieverContext implements Serializable {
         this.maxPageContentLength = maxPageContentLength;
     }
 
+    public void setNumberOfEmittedFiles(int numberOfEmittedFiles) {
+        this.numberOfEmittedFiles = numberOfEmittedFiles;
+    }
+    
 }
