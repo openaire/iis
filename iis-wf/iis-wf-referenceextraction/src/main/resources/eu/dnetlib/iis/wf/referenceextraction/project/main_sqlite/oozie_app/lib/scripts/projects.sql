@@ -12,16 +12,26 @@ hidden var 'nihposshort' from select jmergeregexp(jgroup(word)) from (select * f
 hidden var 'nihposfull' from select jmergeregexp(jgroup(word)) from (select * from nihposnamesfull order by length(word) desc);
 hidden var 'nihpositives' from select jmergeregexp(jgroup(word)) from (select * from nihpositives order by length(word) desc);
 hidden var 'nihnegatives' from select jmergeregexp(jgroup(word)) from (select * from nihnegatives order by length(word) desc);
+hidden var 'miur_unidentified' from select id from grants where fundingclass1="MIUR" and grantid="unidentified" limit 1;
 hidden var 'wt_unidentified' from select id from grants where fundingclass1="WT" and grantid="unidentified" limit 1;
 
 
 create temp table pubs as setschema 'c1,c2' select jsonpath(c1, '$.id', '$.text') from stdinput();
 
+create temp table matched_undefined_miur_only as select distinct docid, var('miur_unidentified') as id from (setschema 'docid,prev,middle,next'
+select c1 as docid, textwindow2s(c2,20,1,20, '\bRBSI\d{2}\w{4}\b') from (setschema 'c1,c2' select * from pubs where c2 is not null)) where var('miur_unidentified') and (regexprmatches('\bRBSI\d{2}\w{4}\b', middle));
+
 create temp table matched_undefined_wt_only as select distinct docid, var('wt_unidentified') as id from (setschema 'docid,prev,middle,next'
 select c1 as docid, textwindow2s(c2,20,2,3, '(\bWel?lcome Trust\b|\bWT\b)') from (setschema 'c1,c2' select * from pubs where c2 is not null)) where var('wt_unidentified') and (regexprmatches('\bWel?lcome Trust\b', middle) or 
 regexpcountwords('(?:\bwell?come trust\b)|(?:(?:\bthis work was|financial(?:ly)?|partial(?:ly)?|partly|(?:gratefully\s)?acknowledges?)?\s?\b(?:support|fund|suppli?)(?:ed|ing)?\s(?:by|from|in part\s(?:by|from)|through)?\s?(?:a)?\s?(?:grant)?)|(?:(?:programme|project) grant)|(?:(?:under|through)?\s?(?:the)?\s(?:grants?|contract(?:\snumber)?)\b)|(?:\bprograms? of\b)|(?:\bgrants? of\b)|(?:\bin part by\b)|(?:\bthis work could not have been completed without\b)|(?:\bcontract\b)|(?:\backnowledgments?\b)', lower(prev||' '||middle||' '||next)) > 3);
 
-create temp table output_table as 
+create temp table output_table as
+
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8) as C1, docid, id, fundingclass1, grantid from (
+select docid,id,fundingclass1, grantid from (select * from (setschema 'docid,prev,middle,next' select c1 as docid,textwindow2s(regexpr("\n",c2," "),20,1,20, '\bRBSI\d{2}\w{4}\b') from (setschema 'c1,c2' select * from pubs where c2 is not null) ) ,grants where fundingclass1="MIUR" and regexpr("(RBSI\d{2}\w{4})",middle) = grantid)
+group by docid,id)
+
+union all
 
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min(1.49,confidence)/1.5)) as C1, docid, id, fundingclass1, grantid from ( select docid,id,max(confidence) as confidence, docid, id,  fundingclass1, grantid from ( select 
 (0.3
@@ -158,6 +168,7 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min
                         )
                       ) where confidence > 0.16) group by docid,id);
 
+delete from matched_undefined_miur_only where docid in (select docid from output_table where fundingClass1="MIUR");
 delete from matched_undefined_wt_only where docid in (select docid from output_table where fundingClass1="WT");
 
 delete from output_table where j2s(docid,id) in (select j2s(T.docid, T.id) from output_table S, output_table T where  S.docid = T.docid and S.id in (select id from grants where grantid in (select * from gold)) and T.id in (select id from grants where grantid in ("246686", "283595","643410")));
@@ -179,5 +190,7 @@ delete from secondary_output_table where docid||grantid in (select docid||granti
 select C1 from output_table
 union all
 select C1 from secondary_output_table
+union all
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8) from matched_undefined_miur_only
 union all
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8) from matched_undefined_wt_only;
