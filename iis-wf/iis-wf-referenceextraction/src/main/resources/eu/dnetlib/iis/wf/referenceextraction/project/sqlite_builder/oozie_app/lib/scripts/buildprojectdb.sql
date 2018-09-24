@@ -27,11 +27,11 @@ create table grants as select acronym,
                case when grantid="unidentified" then "" else jsplitv(c9) end
                else "" end as tarakeywords
      from 
-          (setschema 'acronym,normalizedacro,grantid,fundingclass1,fundingclass2,id,c1,c2,c3,c4,c5,c6,c7,c8,c9' 
+          (setschema 'acronym,normalizedacro,grantid,fundingclass1,fundingclass2,id,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10' 
           select case when c1 is null then "UNKNOWN" else c1 end as acronym, 
                  case when c1 is not null then regexpr("[_\s]",normalizetext(lower(c1)),"[_\s]") else "unknown" end as normalizedacro, 
                  c3 as grantid,strsplit(c4,"delimiter:::") as fundingClass,c2 as id, 
-                 jsonpath(c5,'$.NWOgebied','$.dossiernr','$.orgname', '$.activity', '$.administeringic', '$.serialnumber', '$.coreprojectnum','$.alias','$.keywords') 
+                 jsonpath(c5,'$.NWOgebied','$.dossiernr','$.orgname', '$.activity', '$.administeringic', '$.serialnumber', '$.coreprojectnum','$.alias','$.keywords','$.settore') 
                        from 
                           (select * from (setschema 'c1,c2,c3,c4,c5' select jsonpath(c1, '$.projectAcronym', '$.id' , '$.projectGrantId','$.fundingClass','$.jsonextrainfo') from jsoninp) 
                            where regexprmatches("::",c4))) where fundingclass1!='NIH' OR (nih_coreprojectnum!='' AND nih_activity!='' AND nih_administeringic!='' AND nih_serialnumber is not null AND nih_serialnumber!='0' AND nih_serialnumber!='');
