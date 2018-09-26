@@ -24,6 +24,11 @@
   "value": "1"
 }
 {
+  "key": "processing.referenceExtraction.project.reference.byfunder.miur",
+  "type": "COUNTER",
+  "value": "2"
+}
+{
   "key": "processing.referenceExtraction.project.reference.byfunder.nih",
   "type": "COUNTER",
   "value": "1"
@@ -66,5 +71,5 @@
 {
    "key": "processing.referenceExtraction.project.reference.total",
    "type": "COUNTER",
-   "value": "49"
+   "value": "51"
 }
