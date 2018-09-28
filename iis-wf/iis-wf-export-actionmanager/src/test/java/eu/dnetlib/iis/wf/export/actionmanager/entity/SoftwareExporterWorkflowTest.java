@@ -17,4 +17,8 @@ public class SoftwareExporterWorkflowTest extends AbstractOozieWorkflowTestCase 
         testWorkflow("eu/dnetlib/iis/wf/export/actionmanager/entity/software/default");
     }
 
+    @Test
+    public void testExportSoftwareHeritage() throws Exception {
+        testWorkflow("eu/dnetlib/iis/wf/export/actionmanager/entity/software/heritage");
+    }
 }

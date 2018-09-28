@@ -4,7 +4,8 @@
   "repositoryName": "GitHub", 
   "softwareTitle": "madis", 
   "softwareDescription": "madIS - Extensible relational DB based on SQLite", 
-  "softwarePageURL": "https://github.com/madgik/madis", 
+  "softwarePageURL": "https://github.com/madgik/madis",
+  "SHUrl": "",
   "confidenceLevel": 0.8
 }
 {
@@ -14,5 +15,6 @@
   "softwareTitle": "",
   "softwareDescription": "",
   "softwarePageURL": null,
+  "SHUrl": "https://archive.softwareheritage.org/browse/origin/https://github.com/openaire/iis",
   "confidenceLevel": 0.8
 }

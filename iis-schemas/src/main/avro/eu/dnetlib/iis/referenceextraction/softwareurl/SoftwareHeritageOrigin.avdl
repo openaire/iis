@@ -1,0 +1,10 @@
+@namespace("eu.dnetlib.iis.referenceextraction.softwareurl.schemas")
+protocol IIS{
+
+    record SoftwareHeritageOrigin {
+        // SH origin
+        string origin;
+        // SH url
+        string url;
+    }
+}

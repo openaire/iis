@@ -12,6 +12,7 @@ protocol IIS{
         union { null , string } softwareTitle = null;
         union { null , string } softwareDescription = null;
         union { null , string } softwarePageURL = null;
+        union { null , string } SHUrl = null;
         
         // Find more details on `confidenceLevel` constraints in eu/dnetlib/iis/README.markdown file.
         float confidenceLevel;

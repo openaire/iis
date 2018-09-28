@@ -71,9 +71,15 @@ public class SoftwareExporterJob {
     
     private static final Qualifier INSTANCE_TYPE_SOFTWARE = buildInstanceTypeSoftware();
     
-    private static final Qualifier ACCESS_RIGHT_UNKNOWN = buildAccessRightUnknown();
+    private static final Qualifier ACCESS_RIGHT_OPEN_SOURCE = buildAccessRightOpenSource();
     
     private static final String OPENAIRE_ENTITY_ID_PREFIX = "openaire____::";
+    
+    private static final String COLLECTED_FROM_SOFTWARE_HERITAGE_BASE_ID = "SoftwareHeritage";
+    
+    private static final String COLLECTED_FROM_SOFTWARE_HERITAGE_NAME = "Software Heritage";
+    
+    private static final String SOFTWARE_REPOSITORY_OTHER = "Other";
     
     private static final int numberOfOutputFiles = 10;
     
@@ -242,25 +248,48 @@ public class SoftwareExporterJob {
         }
         
         metaBuilder.setResulttype(RESULT_TYPE_SOFTWARE);
-        
+
         resultBuilder.setMetadata(metaBuilder.build());
         
-        Instance.Builder instanceBuilder = Instance.newBuilder();
-        instanceBuilder.addUrl(url);
-        instanceBuilder.setInstancetype(INSTANCE_TYPE_SOFTWARE);
-        instanceBuilder.setAccessright(ACCESS_RIGHT_UNKNOWN);
-        
-        if (StringUtils.isNotBlank(object.getRepositoryName())) {
-            KeyValue collectedFrom = buildHostedBy(object.getRepositoryName().toString());
-            instanceBuilder.setHostedby(collectedFrom);
-            instanceBuilder.setCollectedfrom(collectedFrom);
-            entityBuilder.addCollectedfrom(collectedFrom);
+        if (StringUtils.isNotBlank(object.getSHUrl())) {
+            //Software Heritage mode
+            KeyValue collectedFromSH = buildHostedBy(generateDatasourceId(COLLECTED_FROM_SOFTWARE_HERITAGE_BASE_ID),
+                    COLLECTED_FROM_SOFTWARE_HERITAGE_NAME);
+            KeyValue collectedFromOrigin = buildHostedBy(object.getRepositoryName().toString());
+            
+            //origin instance
+            Instance.Builder originInstanceBuilder = initializeOpenSourceSoftwareInstanceBuilder(url);
+            originInstanceBuilder.setHostedby(collectedFromOrigin);
+            originInstanceBuilder.setCollectedfrom(collectedFromSH);
+            resultBuilder.addInstance(originInstanceBuilder.build());
+            entityBuilder.addCollectedfrom(collectedFromOrigin);
+            
+            //SH instance
+            Instance.Builder shInstanceBuilder = initializeOpenSourceSoftwareInstanceBuilder(object.getSHUrl().toString());
+            shInstanceBuilder.setHostedby(collectedFromSH);
+            shInstanceBuilder.setCollectedfrom(collectedFromSH);
+            resultBuilder.addInstance(shInstanceBuilder.build());
+            entityBuilder.addCollectedfrom(collectedFromSH);
+
+        } else {
+            Instance.Builder instanceBuilder = initializeOpenSourceSoftwareInstanceBuilder(url);
+            KeyValue hostedBy = buildHostedBy(object.getRepositoryName().toString());
+            instanceBuilder.setHostedby(hostedBy);
+            instanceBuilder.setCollectedfrom(hostedBy);
+            resultBuilder.addInstance(instanceBuilder.build());
+            entityBuilder.addCollectedfrom(hostedBy);
         }
-        
-        resultBuilder.addInstance(instanceBuilder.build());
         
         entityBuilder.setResult(resultBuilder.build());
         return BuilderModuleHelper.buildOaf(entityBuilder.build(), object.getConfidenceLevel(), INFERENCE_PROVENANCE);
+    }
+    
+    private static Instance.Builder initializeOpenSourceSoftwareInstanceBuilder(String url) {
+        Instance.Builder instanceBuilder = Instance.newBuilder();
+        instanceBuilder.addUrl(url);
+        instanceBuilder.setInstancetype(INSTANCE_TYPE_SOFTWARE);
+        instanceBuilder.setAccessright(ACCESS_RIGHT_OPEN_SOURCE);
+        return instanceBuilder;
     }
     
     private static DateFormat buildDateFormat() {
@@ -301,7 +330,7 @@ public class SoftwareExporterJob {
         return qualifierBuilder.build();
     }
     
-    private static Qualifier buildAccessRightUnknown() {
+    private static Qualifier buildAccessRightOpenSource() {
         Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
         qualifierBuilder.setClassid(InfoSpaceConstants.SEMANTIC_CLASS_OPEN_SOURCE);
         qualifierBuilder.setClassname(InfoSpaceConstants.SEMANTIC_CLASS_NAME_OPEN_SOURCE);
@@ -311,9 +340,13 @@ public class SoftwareExporterJob {
     }
     
     private static KeyValue buildHostedBy(String repositoryName) {
+        return buildHostedBy(generateDatasourceId(repositoryName), repositoryName);
+    }
+    
+    private static KeyValue buildHostedBy(String key, String value) {
         KeyValue.Builder hostedByBuilder = KeyValue.newBuilder();
-        hostedByBuilder.setKey(generateDatasourceId(repositoryName));
-        hostedByBuilder.setValue(repositoryName);
+        hostedByBuilder.setKey(key);
+        hostedByBuilder.setValue(value);
         return hostedByBuilder.build();
     }
     
@@ -359,7 +392,12 @@ public class SoftwareExporterJob {
     
     private static boolean isValidEntity(DocumentToSoftwareUrlWithMeta source) {
         return (source != null && StringUtils.isNotBlank(source.getSoftwareTitle()) &&
+                isRepositoryAllowed(source.getRepositoryName()) &&
                 (StringUtils.isNotBlank(source.getSoftwarePageURL()) || StringUtils.isNotBlank(source.getSoftwareUrl())));
+    }
+    
+    private static boolean isRepositoryAllowed(CharSequence softwareRepository) {
+        return StringUtils.isNotBlank(softwareRepository) && !SOFTWARE_REPOSITORY_OTHER.equals(softwareRepository);
     }
     
     private static boolean isValidConfidenceLevel(DocumentToSoftwareUrlWithMeta source, Float confidenceLevelThreshold) {

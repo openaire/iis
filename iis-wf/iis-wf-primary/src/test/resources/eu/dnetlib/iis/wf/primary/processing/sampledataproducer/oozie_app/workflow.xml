@@ -75,6 +75,10 @@
 				eu.dnetlib.iis.common.schemas.DocumentContentClasspath,
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/input/metadataextraction/document_text_classpath.json}
 			</arg>
+             <arg>-C{softwareheritage_origins, 
+                eu.dnetlib.iis.referenceextraction.softwareurl.schemas.SoftwareHeritageOrigin,
+                eu/dnetlib/iis/wf/primary/processing/sampledataproducer/input/meta/sh_origins.json}
+            </arg>
 			<arg>-Odocument_metadata=${workingDir}/producer/document_metadata</arg>
 			<arg>-Odocument_to_project=${workingDir}/producer/document_to_project</arg>
 			<arg>-Oproject_to_organization=${workingDir}/producer/project_to_organization</arg>
@@ -85,10 +89,30 @@
 			<arg>-Oextracted_document_metadata=${workingDir}/producer/extracted_document_metadata</arg>
 			<arg>-Odocument_text_wos=${workingDir}/producer/document_text_wos</arg>
 			<arg>-Odocument_text_classpath=${workingDir}/producer/document_text_classpath</arg>
+            <arg>-Osoftwareheritage_origins=${workingDir}/producer/softwareheritage_origins</arg>
 		</java>
-		<ok to="document_text_producer" />
+		<ok to="softwareheritage_sqlite_builder" />
 		<error to="fail" />
 	</action>
+
+    <action name="softwareheritage_sqlite_builder">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/referenceextraction_softwareurl_sqlite_builder</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>input_softwareheritage_origins</name>
+                    <value>${workingDir}/producer/softwareheritage_origins</value>
+                </property>
+                <property>
+                    <name>output_softwareheritage_origins_db</name>
+                    <value>${workingDir}/origins.db</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="document_text_producer"/>
+        <error to="fail"/>
+    </action>
 
 	<action name="document_text_producer">
 		<map-reduce>
@@ -273,6 +297,10 @@
 					<name>input_extracted_document_metadata</name>
 					<value>${workingDir}/producer/extracted_document_metadata</value>
 				</property>
+                <property>
+                    <name>input_softwareheritage_origins_db</name>
+                    <value>${workingDir}/origins.db</value>
+                </property>
 				<property>
 					<name>output_document_to_project</name>
 					<value>${workingDir}/exported/document_to_project</value>

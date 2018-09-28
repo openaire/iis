@@ -7,6 +7,11 @@
             <description>input document text</description>
         </property>
         <property>
+            <name>input_softwareheritage_origins_db</name>
+            <value>/cache/external-resources/software-heritage/origins.db</value>
+            <description>input software heritage origins SQLite DB path</description>
+        </property>
+        <property>
             <name>output</name>
             <description>output document to software links</description>
         </property>
@@ -203,7 +208,7 @@
             <streaming>
                 <!-- Here, we give the relative path to the script and pass it the parameters of the workflow node. The script is held in a directory having the same name as the workflow node. The parameters 
                     should be passed as **named** arguments. This convention of passing them as named arguments makes the code more readable/maintainable. -->
-                <mapper>scripts/madis/mexec.py -f scripts/softwarepost.sql</mapper>
+                <mapper>scripts/madis/mexec.py -d origins.db -f scripts/softwarepost.sql</mapper>
             </streaming>
             <configuration>
                 <!-- # Standard settings for our framework -->
@@ -250,6 +255,7 @@
                     <value>7200000</value>
                 </property>
             </configuration>
+            <file>${input_softwareheritage_origins_db}#origins.db</file>
 
         </map-reduce>
         <ok to="end" />
