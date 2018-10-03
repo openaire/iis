@@ -41,7 +41,12 @@
                 eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta,
                 eu/dnetlib/iis/wf/export/actionmanager/entity/software/heritage/input/document_to_softwareurl_with_meta.json}
             </arg>
+            <arg>-C{document_metadata,
+                eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal,
+                eu/dnetlib/iis/wf/export/actionmanager/entity/software/default/input/document_metadata.json}
+            </arg>
             <arg>-Odocument_to_software=${workingDir}/producer/document_to_software_url</arg>
+            <arg>-Odocument_metadata=${workingDir}/producer/document_metadata</arg>
         </java>
         <ok to="software-exporter" />
         <error to="fail" />
@@ -55,6 +60,10 @@
                 <property>
                     <name>input_document_to_software_url</name>
                     <value>${workingDir}/producer/document_to_software_url</value>
+                </property>
+                <property>
+                    <name>input_document_metadata</name>
+                    <value>${workingDir}/producer/document_metadata</value>
                 </property>
                 <property>
                     <name>action_set_id_entity_software</name>

@@ -594,6 +594,10 @@
                     <value>${workingDir}/primary_import/concept</value>
                 </property>
                 <property>
+                    <name>output_merged_metadata</name>
+                    <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
+                </property>
+                <property>
                     <name>output_document_to_project</name>
                     <value>${workingDir}/exported/document_to_project</value>
                 </property>
@@ -659,6 +663,10 @@
                     </value>
                 </property>
                 <!-- input ports -->
+                <property>
+                    <name>input_document_metadata</name>
+                    <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
+                </property>
                 <property>
                     <name>input_document_to_project</name>
                     <value>${workingDir}/exported/document_to_project</value>

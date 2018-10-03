@@ -311,6 +311,10 @@
         
         <!-- output ports -->
         <property>
+            <name>output_merged_metadata</name>
+            <description>metadata merging output directory containing eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal avro records.</description>
+        </property>
+        <property>
             <name>output_document_to_project</name>
             <description>project reference extraction output directory</description>
         </property>
@@ -498,7 +502,7 @@
                 </property>
                 <property>
                     <name>output_merged_metadata</name>
-                    <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
+                    <value>${output_merged_metadata}</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -568,7 +572,7 @@
                 </property>
                 <property>
                     <name>input_document_metadata</name>
-                    <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
+                    <value>${output_merged_metadata}</value>
                 </property>
                 <property>
                     <name>output_document_to_project</name>
@@ -990,7 +994,7 @@
                 </property>
                 <property>
 					<name>input_document_metadata</name>
-					<value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
+					<value>${output_merged_metadata}</value>
 				</property>
                 <property>
                     <name>input_document_text</name>
@@ -1208,7 +1212,7 @@
                 </property>
                 <property>
                     <name>input_documents</name>
-                    <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
+                    <value>${output_merged_metadata}</value>
                 </property>
                 <property>
                     <name>output_document_to_document_classes</name>
@@ -1274,7 +1278,7 @@
                 </property>
                 <property>
                     <name>input</name>
-                    <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
+                    <value>${output_merged_metadata}</value>
                 </property>
                 <property>
                     <name>inputPmcIdsMappingCSV</name>
@@ -1313,7 +1317,7 @@
                 </property>
                 <property>
                     <name>input_metadata</name>
-                    <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
+                    <value>${output_merged_metadata}</value>
                 </property>
                 <property>
                     <name>input_matched_citations</name>
@@ -1364,7 +1368,7 @@
                 </property>
                 <property>
                     <name>input</name>
-                    <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
+                    <value>${output_merged_metadata}</value>
                 </property>
                 <property>
                     <name>output</name>
@@ -1500,7 +1504,7 @@
                 </property>
                 <property>
                     <name>input_metadata</name>
-                    <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
+                    <value>${output_merged_metadata}</value>
                 </property>
                 <property>
                     <name>output_document_metadata</name>

@@ -32,6 +32,8 @@ public final class InfoSpaceConstants {
     public static final byte[] QUALIFIER_BODY;
 
     public static final String SEMANTIC_CLASS_MAIN_TITLE = "main title";
+    public static final String SEMANTIC_CLASS_ALTERNATIVE_TITLE = "alternative title";
+    
     public static final String SEMANTIC_CLASS_PUBLICATION = "publication";
     public static final String SEMANTIC_CLASS_SOFTWARE = "software";
     public static final String SEMANTIC_CLASS_PUBLICATION_RESOURCE_SOFTWARE = "Software";

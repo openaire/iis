@@ -1,12 +1,16 @@
 package eu.dnetlib.iis.wf.export.actionmanager.entity;
 
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.SequenceFile.CompressionType;
@@ -22,6 +26,8 @@ import org.apache.spark.api.java.JavaSparkContext;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.google.common.base.Optional;
+import com.google.common.collect.Sets;
 
 import eu.dnetlib.actionmanager.actions.ActionFactory;
 import eu.dnetlib.actionmanager.actions.AtomicAction;
@@ -47,6 +53,7 @@ import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta;
+import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 import eu.dnetlib.iis.wf.export.actionmanager.module.AlgorithmName;
 import eu.dnetlib.iis.wf.export.actionmanager.module.BuilderModuleHelper;
@@ -81,6 +88,10 @@ public class SoftwareExporterJob {
     
     private static final String SOFTWARE_REPOSITORY_OTHER = "Other";
     
+    private static final String SOFTWARE_TITLE_MAIN_TEMPLATE = "{0} software on {1}";
+    
+    private static final String SOFTWARE_TITLE_ALTERNATIVE_TEMPLATE = "{0} software on {1} in support of ''{2}''";
+    
     private static final int numberOfOutputFiles = 10;
     
     private static SparkAvroLoader avroLoader = new SparkAvroLoader();
@@ -109,8 +120,15 @@ public class SoftwareExporterJob {
             final Float confidenceLevelThreshold = (StringUtils.isNotBlank(params.trustLevelThreshold)
                     && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(params.trustLevelThreshold))
                             ? Float.valueOf(params.trustLevelThreshold) / InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR : null; 
+
+            JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> documentMetadata = avroLoader.loadJavaRDD(sc,
+                    params.inputDocumentMetadataAvroPath, ExtractedDocumentMetadataMergedWithOriginal.class);
             
-            JavaRDD<DocumentToSoftwareUrlWithMeta> documentToSoftwareUrlWithMetaFiltered = avroLoader.loadJavaRDD(sc, params.inputAvroPath,
+            JavaPairRDD<CharSequence, CharSequence> documentIdToTitle = documentMetadata
+                    .filter(e -> StringUtils.isNotBlank(e.getTitle()))
+                    .mapToPair(e -> new Tuple2<>(e.getId(), e.getTitle()));
+
+            JavaRDD<DocumentToSoftwareUrlWithMeta> documentToSoftwareUrlWithMetaFiltered = avroLoader.loadJavaRDD(sc, params.inputDocumentToSoftwareAvroPath,
                     DocumentToSoftwareUrlWithMeta.class).filter(f -> (isValidEntity(f) && isValidConfidenceLevel(f, confidenceLevelThreshold)));
             // to be used by both entity and relation processing paths
             documentToSoftwareUrlWithMetaFiltered.cache();
@@ -119,28 +137,34 @@ public class SoftwareExporterJob {
             job.getConfiguration().set(FileOutputFormat.COMPRESS, Boolean.TRUE.toString());
             job.getConfiguration().set(FileOutputFormat.COMPRESS_TYPE, CompressionType.BLOCK.name());
 
-            JavaRDD<DocumentToSoftwareUrlWithMeta> dedupedDocumentToSoftware = handleEntities(documentToSoftwareUrlWithMetaFiltered, 
-                    params.entityActionSetId, job.getConfiguration(), params.outputEntityPath);
+            JavaRDD<?> dedupedSoftwareUrls = handleEntities(documentToSoftwareUrlWithMetaFiltered, 
+                    documentIdToTitle, params.entityActionSetId, job.getConfiguration(), params.outputEntityPath);
 
             JavaRDD<Tuple3<String, String, Float>> dedupedRelationTriples = handleRelations(documentToSoftwareUrlWithMetaFiltered, 
                     params.relationActionSetId, job.getConfiguration(), params.outputRelationPath);
             
             // reporting
-            counterReporter.report(sc, dedupedDocumentToSoftware, dedupedRelationTriples, params.outputReportPath);
+            counterReporter.report(sc, dedupedSoftwareUrls, dedupedRelationTriples, params.outputReportPath);
         }
     }
     
     
     // ----------------------------------------- PRIVATE ----------------------------------------------
     
-    private static JavaRDD<DocumentToSoftwareUrlWithMeta> handleEntities(JavaRDD<DocumentToSoftwareUrlWithMeta> documentToSoftwareUrl, String actionSetId, 
-            Configuration jobConfig, String outputAvroPath) {
+    private static JavaRDD<?> handleEntities(JavaRDD<DocumentToSoftwareUrlWithMeta> documentToSoftwareUrl, 
+            JavaPairRDD<CharSequence, CharSequence> documentIdToTitle, 
+            String actionSetId, Configuration jobConfig, String outputAvroPath) {
+        
+        // supplementing empty software titles with templates based on document->software relations
+        JavaPairRDD<CharSequence, DocumentToSoftwareUrlWithMeta> documentToSoftwareByPublicationId = documentToSoftwareUrl.mapToPair(e -> new Tuple2<>(e.getDocumentId(), e));
+        JavaPairRDD<CharSequence, Tuple2<DocumentToSoftwareUrlWithMeta, Optional<CharSequence>>> documentToSoftwareByPublicationIdJoined = documentToSoftwareByPublicationId.leftOuterJoin(documentIdToTitle);
+        JavaRDD<Tuple2<DocumentToSoftwareUrlWithMeta, Set<CharSequence>>> documentToSoftwareUrlWithPubTitles = documentToSoftwareByPublicationIdJoined.map(e -> convertTitleToSetOfTitles(e._2._1, e._2._2));
+        
+        JavaPairRDD<String, Tuple2<DocumentToSoftwareUrlWithMeta, Set<CharSequence>>> documentToSoftwareWithPubTitlesByUrl = documentToSoftwareUrlWithPubTitles.mapToPair(e -> new Tuple2<>(pickUrl(e._1), e)); 
 
-        JavaPairRDD<String, DocumentToSoftwareUrlWithMeta> documentToSoftwareByUrl = documentToSoftwareUrl.mapToPair(e -> new Tuple2<>(pickUrl(e), e)); 
+        JavaPairRDD<String, Tuple2<DocumentToSoftwareUrlWithMeta, Set<CharSequence>>> documentToSoftwareWithPubTitlesReduced = documentToSoftwareWithPubTitlesByUrl.reduceByKey((x, y) -> mergeSoftwareRecords(x,y));
         
-        JavaPairRDD<String, DocumentToSoftwareUrlWithMeta> documentToSoftwareReduced = documentToSoftwareByUrl.reduceByKey((x, y) -> pickBestFilled(x,y));
-        
-        JavaRDD<DocumentToSoftwareUrlWithMeta> documentToSoftwareReducedValues = documentToSoftwareReduced.values();
+        JavaRDD<Tuple2<DocumentToSoftwareUrlWithMeta, Set<CharSequence>>> documentToSoftwareReducedValues = documentToSoftwareWithPubTitlesReduced.values();
         // to be used by both entity exporter and reporter consumers
         documentToSoftwareReducedValues.cache();
         
@@ -149,6 +173,13 @@ public class SoftwareExporterJob {
         entityResult.coalesce(numberOfOutputFiles).saveAsNewAPIHadoopFile(outputAvroPath, Text.class, Text.class, SequenceFileOutputFormat.class, jobConfig);
         
         return documentToSoftwareReducedValues;
+    }
+    
+    private static Tuple2<DocumentToSoftwareUrlWithMeta, Set<CharSequence>> convertTitleToSetOfTitles(DocumentToSoftwareUrlWithMeta meta, Optional<CharSequence> referencedPubTitle) {
+        return new Tuple2<>(meta,
+                referencedPubTitle.isPresent() && StringUtils.isNotBlank(referencedPubTitle.get())
+                        ? Sets.<CharSequence>newHashSet(referencedPubTitle.get())
+                        : Sets.<CharSequence>newHashSet());
     }
     
     private static JavaRDD<Tuple3<String, String, Float>> handleRelations(JavaRDD<DocumentToSoftwareUrlWithMeta> documentToSoftwareUrl, String actionSetId, 
@@ -187,20 +218,24 @@ public class SoftwareExporterJob {
         return triple1._3() >= triple2._3() ? triple1 : triple2;
     }
 
-    private static DocumentToSoftwareUrlWithMeta pickBestFilled(DocumentToSoftwareUrlWithMeta meta1, DocumentToSoftwareUrlWithMeta meta2) {
-        if (StringUtils.isNotBlank(meta1.getSoftwarePageURL())) {
-            return meta1;
-        } else {
-            if (StringUtils.isNotBlank(meta2.getSoftwarePageURL())) {
-                return meta2;
+    private static Tuple2<DocumentToSoftwareUrlWithMeta, Set<CharSequence>> mergeSoftwareRecords(Tuple2<DocumentToSoftwareUrlWithMeta, Set<CharSequence>> tuple1, 
+            Tuple2<DocumentToSoftwareUrlWithMeta, Set<CharSequence>> tuple2) {
+        // assuming DocumentToSoftwareUrlWithMeta holds the same set of software related fields in both tuples (since the url was the same)
+        return new Tuple2<>(tuple1._1, mergeTitles(tuple1._2(), tuple2._2()));
+    }
+    
+    private static Set<CharSequence> mergeTitles(Set<CharSequence> sourceTitles1, Set<CharSequence> sourceTitles2) {
+        if (CollectionUtils.isNotEmpty(sourceTitles1)) {
+            if (CollectionUtils.isNotEmpty(sourceTitles2)) {
+                Set<CharSequence> distinct = new HashSet<>();
+                distinct.addAll(sourceTitles1);
+                distinct.addAll(sourceTitles2);
+                return distinct;
             } else {
-                // pageURL was missing in both, picking the one with description set
-                if (StringUtils.isNotBlank(meta1.getSoftwareDescription())) {
-                    return meta1;
-                } else {
-                    return meta2;
-                }
+                return sourceTitles1;
             }
+        } else {
+            return sourceTitles2;
         }
     }
     
@@ -212,7 +247,7 @@ public class SoftwareExporterJob {
         return InfoSpaceConstants.ROW_PREFIX_DATASOURCE + OPENAIRE_ENTITY_ID_PREFIX + AbstractDNetXsltFunctions.md5(repositoryName);
     }
     
-    private static AtomicAction buildEntityAction(DocumentToSoftwareUrlWithMeta object, String actionSetId) {
+    private static AtomicAction buildEntityAction(Tuple2<DocumentToSoftwareUrlWithMeta, Set<CharSequence>> object, String actionSetId) {
             Oaf softwareOaf = buildSoftwareOaf(object);
             OafDecoder oafDecoder = OafDecoder.decode(softwareOaf);
             return getActionFactory().createAtomicAction(actionSetId, StaticConfigurationProvider.AGENT_DEFAULT, 
@@ -220,9 +255,11 @@ public class SoftwareExporterJob {
                     InfoSpaceConstants.QUALIFIER_BODY_STRING, softwareOaf.toByteArray());
     }
     
-    private static Oaf buildSoftwareOaf(DocumentToSoftwareUrlWithMeta object) {
+    private static Oaf buildSoftwareOaf(Tuple2<DocumentToSoftwareUrlWithMeta, Set<CharSequence>> metaWithPublicationTitles) {
         
-        String url = pickUrl(object);
+        DocumentToSoftwareUrlWithMeta meta = metaWithPublicationTitles._1;
+        
+        String url = pickUrl(meta);
         
         OafEntity.Builder entityBuilder = OafEntity.newBuilder();
         entityBuilder.setId(generateSoftwareEntityId(url));
@@ -238,24 +275,27 @@ public class SoftwareExporterJob {
         Metadata.Builder metaBuilder = Metadata.newBuilder();
         metaBuilder.setCodeRepositoryUrl(StringField.newBuilder().setValue(url).build());
 
-        if (StringUtils.isNotBlank(object.getSoftwareTitle())) {
-            metaBuilder.addTitle(buildTitle(object.getSoftwareTitle().toString()));
+        metaBuilder.addTitle(buildMainTitle(meta.getSoftwareTitle().toString(), meta.getRepositoryName().toString()));
+
+        for (CharSequence currentPubTitle : metaWithPublicationTitles._2) {
+            metaBuilder.addTitle(buildContextualisedTitle(meta.getSoftwareTitle().toString(),
+                    meta.getRepositoryName().toString(), currentPubTitle.toString()));
         }
         
-        if (StringUtils.isNotBlank(object.getSoftwareDescription())) {
+        if (StringUtils.isNotBlank(meta.getSoftwareDescription())) {
             metaBuilder.addDescription(
-                    StringField.newBuilder().setValue(object.getSoftwareDescription().toString()).build());
+                    StringField.newBuilder().setValue(meta.getSoftwareDescription().toString()).build());
         }
         
         metaBuilder.setResulttype(RESULT_TYPE_SOFTWARE);
 
         resultBuilder.setMetadata(metaBuilder.build());
         
-        if (StringUtils.isNotBlank(object.getSHUrl())) {
+        if (StringUtils.isNotBlank(meta.getSHUrl())) {
             //Software Heritage mode
             KeyValue collectedFromSH = buildHostedBy(generateDatasourceId(COLLECTED_FROM_SOFTWARE_HERITAGE_BASE_ID),
                     COLLECTED_FROM_SOFTWARE_HERITAGE_NAME);
-            KeyValue collectedFromOrigin = buildHostedBy(object.getRepositoryName().toString());
+            KeyValue collectedFromOrigin = buildHostedBy(meta.getRepositoryName().toString());
             
             //origin instance
             Instance.Builder originInstanceBuilder = initializeOpenSourceSoftwareInstanceBuilder(url);
@@ -265,7 +305,7 @@ public class SoftwareExporterJob {
             entityBuilder.addCollectedfrom(collectedFromOrigin);
             
             //SH instance
-            Instance.Builder shInstanceBuilder = initializeOpenSourceSoftwareInstanceBuilder(object.getSHUrl().toString());
+            Instance.Builder shInstanceBuilder = initializeOpenSourceSoftwareInstanceBuilder(meta.getSHUrl().toString());
             shInstanceBuilder.setHostedby(collectedFromSH);
             shInstanceBuilder.setCollectedfrom(collectedFromSH);
             resultBuilder.addInstance(shInstanceBuilder.build());
@@ -273,7 +313,7 @@ public class SoftwareExporterJob {
 
         } else {
             Instance.Builder instanceBuilder = initializeOpenSourceSoftwareInstanceBuilder(url);
-            KeyValue hostedBy = buildHostedBy(object.getRepositoryName().toString());
+            KeyValue hostedBy = buildHostedBy(meta.getRepositoryName().toString());
             instanceBuilder.setHostedby(hostedBy);
             instanceBuilder.setCollectedfrom(hostedBy);
             resultBuilder.addInstance(instanceBuilder.build());
@@ -281,7 +321,7 @@ public class SoftwareExporterJob {
         }
         
         entityBuilder.setResult(resultBuilder.build());
-        return BuilderModuleHelper.buildOaf(entityBuilder.build(), object.getConfidenceLevel(), INFERENCE_PROVENANCE);
+        return BuilderModuleHelper.buildOaf(entityBuilder.build(), meta.getConfidenceLevel(), INFERENCE_PROVENANCE);
     }
     
     private static Instance.Builder initializeOpenSourceSoftwareInstanceBuilder(String url) {
@@ -298,13 +338,31 @@ public class SoftwareExporterJob {
         return df;
     }
     
-    private static StructuredProperty buildTitle(String title) {
+    private static StructuredProperty buildMainTitle(String softwareTitle, String repositoryName) {
         StructuredProperty.Builder titleBuilder = StructuredProperty.newBuilder();
-        titleBuilder.setValue(title);
+        
+        titleBuilder.setValue(MessageFormat.format(SOFTWARE_TITLE_MAIN_TEMPLATE, 
+                new Object[] {softwareTitle, repositoryName}));
         
         Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
         qualifierBuilder.setClassid(InfoSpaceConstants.SEMANTIC_CLASS_MAIN_TITLE);
         qualifierBuilder.setClassname(InfoSpaceConstants.SEMANTIC_CLASS_MAIN_TITLE);
+        qualifierBuilder.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_TITLE);
+        qualifierBuilder.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_TITLE);
+        titleBuilder.setQualifier(qualifierBuilder.build());
+        
+        return titleBuilder.build();
+    }
+    
+    private static StructuredProperty buildContextualisedTitle(String softwareTitle, String repositoryName, String publicationTitle) {
+        StructuredProperty.Builder titleBuilder = StructuredProperty.newBuilder();
+        
+        titleBuilder.setValue(MessageFormat.format(SOFTWARE_TITLE_ALTERNATIVE_TEMPLATE, 
+                new Object[] {softwareTitle, repositoryName, publicationTitle}));
+        
+        Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
+        qualifierBuilder.setClassid(InfoSpaceConstants.SEMANTIC_CLASS_ALTERNATIVE_TITLE);
+        qualifierBuilder.setClassname(InfoSpaceConstants.SEMANTIC_CLASS_ALTERNATIVE_TITLE);
         qualifierBuilder.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_TITLE);
         qualifierBuilder.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_TITLE);
         titleBuilder.setQualifier(qualifierBuilder.build());
@@ -416,8 +474,11 @@ public class SoftwareExporterJob {
     @Parameters(separators = "=")
     private static class SoftwareEntityExporterJobParameters {
         
-        @Parameter(names = "-inputAvroPath", required = true)
-        private String inputAvroPath;
+        @Parameter(names = "-inputDocumentToSoftwareAvroPath", required = true)
+        private String inputDocumentToSoftwareAvroPath;
+        
+        @Parameter(names = "-inputDocumentMetadataAvroPath", required = true)
+        private String inputDocumentMetadataAvroPath;
         
         @Parameter(names = "-outputEntityPath", required = true)
         private String outputEntityPath;

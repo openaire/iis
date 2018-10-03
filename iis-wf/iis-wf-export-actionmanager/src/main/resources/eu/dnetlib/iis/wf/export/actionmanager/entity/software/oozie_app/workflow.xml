@@ -7,6 +7,11 @@
                 listing all software entities referenced by publications.</description>
         </property>
         <property>
+            <name>input_document_metadata</name>
+            <description>Input containing eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal avro records.
+                Required for generating alternative software titles based on software -> publication relations.</description>
+        </property>
+        <property>
             <name>action_set_id_entity_software</name>
             <description>Identifier of action set holding software entities.
             It also defines ${output_root_entities} subdirectory name where all software entity actions are exported.</description>
@@ -93,7 +98,8 @@
             
             <arg>-trustLevelThreshold=${trust_level_threshold_document_software_url}</arg>
 
-            <arg>-inputAvroPath=${input_document_to_software_url}</arg>
+            <arg>-inputDocumentToSoftwareAvroPath=${input_document_to_software_url}</arg>
+            <arg>-inputDocumentMetadataAvroPath=${input_document_metadata}</arg>
             
             <arg>-outputEntityPath=${output_root_entities}/${action_set_id_entity_software}</arg>
             <arg>-outputRelationPath=${output_root_relations}/${action_set_id_document_software_url}</arg>

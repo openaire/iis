@@ -3,6 +3,12 @@
     <parameters>
         <!-- input ports -->
         <property>
+            <name>input_document_metadata</name>
+            <value>$UNDEFINED$</value>
+            <description>Input containing eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal avro records.
+                Required for generating alternative software titles based on software -> publication relations.</description>
+        </property>
+        <property>
             <name>input_document_to_project</name>
             <value>$UNDEFINED$</value>
         </property>

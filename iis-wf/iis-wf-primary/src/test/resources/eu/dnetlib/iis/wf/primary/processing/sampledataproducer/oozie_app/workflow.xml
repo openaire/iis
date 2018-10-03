@@ -301,6 +301,10 @@
                     <name>input_softwareheritage_origins_db</name>
                     <value>${workingDir}/origins.db</value>
                 </property>
+                <property>
+                    <name>output_merged_metadata</name>
+                    <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
+                </property>
 				<property>
 					<name>output_document_to_project</name>
 					<value>${workingDir}/exported/document_to_project</value>

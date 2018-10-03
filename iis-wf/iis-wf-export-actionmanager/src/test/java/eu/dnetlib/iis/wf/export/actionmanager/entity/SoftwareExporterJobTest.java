@@ -37,6 +37,7 @@ import eu.dnetlib.iis.common.schemas.ReportEntryType;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta;
+import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
@@ -54,7 +55,9 @@ public class SoftwareExporterJobTest {
     
     private File workingDir;
     
-    private String inputAvroPath;
+    private String inputDocumentToSoftwareAvroPath;
+    
+    private String inputDocumentMetadataAvroPath;
     
     private String outputEntityDirPath;
     
@@ -66,7 +69,8 @@ public class SoftwareExporterJobTest {
     @Before
     public void before() {
         workingDir = Files.createTempDir();
-        inputAvroPath = workingDir + "/software_exporter/input";
+        inputDocumentToSoftwareAvroPath = workingDir + "/software_exporter/input_software";
+        inputDocumentMetadataAvroPath = workingDir + "/software_exporter/input_metadata";
         outputEntityDirPath = workingDir + "/software_exporter/output_entity";
         outputRelationDirPath = workingDir + "/software_exporter/output_relation";
         reportDirPath = workingDir + "/software_exporter/report";
@@ -87,11 +91,16 @@ public class SoftwareExporterJobTest {
         String entityActionSetId = "entity-actionset-id";
         String relationActionSetId = "rel-actionset-id";
         
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/wf/export/actionmanager/software/data/document_to_softwareurl_with_meta.json";
+        String jsonInputSoftwareFile = "src/test/resources/eu/dnetlib/iis/wf/export/actionmanager/software/data/document_to_softwareurl_with_meta.json";
+        String jsonInputMetadataFile = "src/test/resources/eu/dnetlib/iis/wf/export/actionmanager/software/data/document_metadata.json";
         
         AvroTestUtils.createLocalAvroDataStore(
-                JsonAvroTestUtils.readJsonDataStore(jsonInputFile, DocumentToSoftwareUrlWithMeta.class), 
-                inputAvroPath);
+                JsonAvroTestUtils.readJsonDataStore(jsonInputSoftwareFile, DocumentToSoftwareUrlWithMeta.class), 
+                inputDocumentToSoftwareAvroPath);
+        
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(jsonInputMetadataFile, ExtractedDocumentMetadataMergedWithOriginal.class), 
+                inputDocumentMetadataAvroPath);
 
         // execute
         executor.execute(buildJob(entityActionSetId, relationActionSetId, "0.9"));
@@ -113,11 +122,16 @@ public class SoftwareExporterJobTest {
         String entityActionSetId = "entity-actionset-id";
         String relationActionSetId = "rel-actionset-id";
         
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/wf/export/actionmanager/software/data/document_to_softwareurl_with_meta.json";
+        String jsonInputSoftwareFile = "src/test/resources/eu/dnetlib/iis/wf/export/actionmanager/software/data/document_to_softwareurl_with_meta.json";
+        String jsonInputMetadataFile = "src/test/resources/eu/dnetlib/iis/wf/export/actionmanager/software/data/document_metadata.json";
         
         AvroTestUtils.createLocalAvroDataStore(
-                JsonAvroTestUtils.readJsonDataStore(jsonInputFile, DocumentToSoftwareUrlWithMeta.class), 
-                inputAvroPath);
+                JsonAvroTestUtils.readJsonDataStore(jsonInputSoftwareFile, DocumentToSoftwareUrlWithMeta.class), 
+                inputDocumentToSoftwareAvroPath);
+        
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(jsonInputMetadataFile, ExtractedDocumentMetadataMergedWithOriginal.class), 
+                inputDocumentMetadataAvroPath);
 
         // execute
         executor.execute(buildJob(entityActionSetId, relationActionSetId, "$UNDEFINED$"));
@@ -230,7 +244,8 @@ public class SoftwareExporterJobTest {
         return SparkJobBuilder.create()
                 .setAppName("Spark Software Exporter")
                 .setMainClass(SoftwareExporterJob.class)
-                .addArg("-inputAvroPath", inputAvroPath)
+                .addArg("-inputDocumentToSoftwareAvroPath", inputDocumentToSoftwareAvroPath)
+                .addArg("-inputDocumentMetadataAvroPath", inputDocumentMetadataAvroPath)
                 .addArg("-entityActionSetId", entityActionSetId)
                 .addArg("-relationActionSetId", relationActionSetId)
                 .addArg("-trustLevelThreshold", trustLevelThreshold)
