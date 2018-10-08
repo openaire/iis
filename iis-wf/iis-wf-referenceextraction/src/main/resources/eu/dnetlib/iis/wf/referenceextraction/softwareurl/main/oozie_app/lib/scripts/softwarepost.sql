@@ -46,6 +46,9 @@ create temp table partial2 as select id, match, repo, regexpr("(\w+)$",match2) a
 
 update partial1 set SHUrl = (select SHUrl from partial2 where partial2.id||partial2.match=partial1.id||partial1.match) where partial1.id||partial1.match in (select partial2.id||partial2.match from partial2);
 insert into partial1 select * from partial2 where partial2.id||partial2.match not in (select partial2.id||partial1.match from partial1);
+update partial1 set title = (select comprspaces(title) from partial2 where partial2.match=partial1.match and title is not null and title != "") where title="" or title="null";
+update partial1 set title="" where title is null;
+
 
 select jdict('documentId', id, 'softwareUrl', match,'repositoryName',comprspaces(regexpr("\n",repo," ")),'softwareTitle',
 comprspaces(regexpr("\n",title," ")),'softwareDescription',comprspaces(regexpr("\n",description," ")),'softwarePageURL',url,'SHUrl',SHUrl,'confidenceLevel',0.8) from partial1;
