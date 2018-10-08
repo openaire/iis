@@ -1,0 +1,25 @@
+{
+  "documentId": "docId1",
+  "conceptId": "clarin",
+  "confidenceLevel": 0.5
+}
+{
+  "documentId": "docId1",
+  "conceptId": "dh-ch::subcommunity::2",
+  "confidenceLevel": 0.5
+}
+{
+  "documentId": "docId1",
+  "conceptId": "dh-ch::subcommunity::3",
+  "confidenceLevel": 0.5
+}
+{
+  "documentId": "docId1",
+  "conceptId": "dh-ch::subcommunity::",
+  "confidenceLevel": 0.5
+}
+{
+  "documentId": "docId1",
+  "conceptId": "",
+  "confidenceLevel": 0.5
+}

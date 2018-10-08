@@ -459,6 +459,9 @@
             <arg>-C{docProjectConceptReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/doc_project_concept.json}</arg>
             <arg>-IdocProjectConceptReport=${workingDir}/report/doc_project_concept</arg>
             
+            <arg>-C{docProjectConceptByRootConceptIdReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/doc_project_concept_by_root_conceptid.json}</arg>
+            <arg>-IdocProjectConceptByRootConceptIdReport=${workingDir}/report/document_to_concept_by_root_conceptid</arg>
+            
             <arg>-C{docResearchInitiativeReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/doc_research_initiative.json}</arg>
             <arg>-IdocResearchInitiativeReport=${workingDir}/report/doc_research_initiative</arg>
             

@@ -108,8 +108,31 @@
                 </property>
             </configuration>
         </sub-workflow>
-        <ok to="end"/>
+        <ok to="report"/>
         <error to="fail"/>
+    </action>
+    
+    <action name="report">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/root_conceptid_report</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>input_document_to_concept</name>
+                    <value>${output_document_to_concept}</value>
+                </property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>document_to_community_by_root_conceptid</value>
+                </property>
+                <property>
+                    <name>report_key_template</name>
+                    <value>processing.referenceExtraction.community.reference.byrootid.#{rootConceptId}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="end" />
+        <error to="fail" />
     </action>
 
     <kill name="fail">

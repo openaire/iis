@@ -1,0 +1,3 @@
+{"key": "processing.referenceExtraction.concept.reference.byrootid.clarin", "type":"COUNTER", "value": "1"}
+{"key": "processing.referenceExtraction.concept.reference.byrootid.dh-ch", "type":"COUNTER", "value": "3"}
+{"key": "processing.referenceExtraction.concept.reference.byrootid.unknown", "type":"COUNTER", "value": "1"}
