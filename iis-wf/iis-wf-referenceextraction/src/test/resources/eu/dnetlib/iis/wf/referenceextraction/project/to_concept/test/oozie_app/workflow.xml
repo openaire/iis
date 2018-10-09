@@ -49,6 +49,7 @@
     <action name="transformer_project_toconcept">
         <sub-workflow>
             <app-path>${wf:appPath()}/transformer_project_toconcept</app-path>
+            <propagate-configuration />
             <configuration>
                 <property>
                     <name>jobTracker</name>
@@ -89,6 +90,10 @@
                     <name>output</name>
                     <value>${workingDir}/transformer_project_toconcept/output</value>
                 </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/transformer_project_toconcept/report</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="consumer"/>
@@ -101,8 +106,12 @@
 			<arg>-C{output,
 				eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId,
 				eu/dnetlib/iis/wf/referenceextraction/project/to_concept/test/data/output.json}</arg>
+            <arg>-C{report,
+                eu.dnetlib.iis.common.schemas.ReportEntry,
+                eu/dnetlib/iis/wf/referenceextraction/project/to_concept/test/data/report.json}
+            </arg>
 			<arg>-Ioutput=${workingDir}/transformer_project_toconcept/output</arg>
-			
+            <arg>-Ireport=${workingDir}/transformer_project_toconcept/report/document_to_concept_by_root_conceptid</arg>
 		</java>
 		<ok to="end" />
 		<error to="fail" />

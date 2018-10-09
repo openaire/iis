@@ -69,6 +69,10 @@
                     <name>output_document_to_concept</name>
                     <value>${workingDir}/referenceextraction_community/output</value>
                 </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/referenceextraction_community/report</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="consumer"/>
@@ -85,8 +89,12 @@
 			<arg>-C{document_to_community,
 				eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId,
 				eu/dnetlib/iis/common/data/empty.json}</arg>
+            <arg>-C{report,
+                eu.dnetlib.iis.common.schemas.ReportEntry,
+                eu/dnetlib/iis/common/data/empty.json}</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-Idocument_to_community=${workingDir}/referenceextraction_community/output</arg>
+            <arg>-Ireport=${workingDir}/referenceextraction_community/report/document_to_community_by_root_conceptid</arg>
 		</java>
 		<ok to="end" />
 		<error to="fail" />
