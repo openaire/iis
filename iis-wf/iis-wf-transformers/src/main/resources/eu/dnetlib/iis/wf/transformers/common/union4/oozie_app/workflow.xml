@@ -19,6 +19,16 @@
 		<property>
 			<name>schema</name>
 		</property>
+        <property>
+            <name>output_report</name>
+            <value>$UNDEFINED$</value>
+            <description>directory for storing report</description>
+        </property>
+        <property>
+            <name>union_count_report_key</name>
+            <value>$UNDEFINED$</value>
+            <description>key of report param (eu.dnetlib.iis.common.schemas.ReportEntry) under which count of unioned datastore will be saved</description>
+        </property>
 	</parameters>
     
     <global>
@@ -55,6 +65,12 @@
 			<prepare>
 				<delete path="${nameNode}${output}" />
 			</prepare>
+            <configuration>
+                <property>
+                    <name>oozie.action.external.stats.write</name>
+                    <value>true</value>
+                </property>
+            </configuration>
             <!-- Path to PIG script the workflow executes. -->
             <script>lib/scripts/union.pig</script>
             <param>input_a=${input_a}</param>
@@ -64,9 +80,29 @@
             <param>output=${output}</param>
             <param>schema=${wf:actionData('generate-schema')[wf:conf('schema')]}</param>
         </pig>
-        <ok to="end"/>
+        <ok to="decision-report"/>
         <error to="fail"/>
     </action>
+    
+    <decision name="decision-report">
+        <switch>
+            <case to="report">${output_report ne "$UNDEFINED$" and union_count_report_key ne "$UNDEFINED$"}</case>
+            <default to="end" />
+        </switch>
+    </decision>
+    
+    <action name="report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.PigCountersReportGenerator</arg>
+            <arg>-PpigCounters=${hadoop:counters('transformer')}</arg>
+            <arg>-Preport.${union_count_report_key}={output_final.RECORD_WRITTEN}</arg>
+            <arg>-Oreport=${output_report}</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
     <kill name="fail">
 		<message>Unfortunately, the workflow failed -- error message:
 			[${wf:errorMessage(wf:lastErrorNode())}]</message>
