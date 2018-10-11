@@ -28,6 +28,11 @@
 
         <dependency>
             <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-wf-ingest</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
             <artifactId>iis-wf-ingest-pmc</artifactId>
             <version>${project.version}</version>
         </dependency>

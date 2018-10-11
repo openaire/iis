@@ -206,7 +206,6 @@
             <arg>-maxAuthorFullnameLength=${max_author_fullname_length}</arg>
             <arg>-maxKeywordsSize=${max_keywords_size}</arg>
             <arg>-maxKeywordLength=${max_keyword_length}</arg>
-
         </spark>
         <ok to="end"/>
         <error to="fail"/>
