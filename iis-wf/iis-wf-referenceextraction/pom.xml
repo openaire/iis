@@ -81,6 +81,15 @@
 			<artifactId>hadoop-common</artifactId>
 		</dependency>
 		
-		
+        <!-- git#920 required for javascript parsing in software webcrawler module -->
+        <dependency>
+          <groupId>com.machinepublishers</groupId>
+          <artifactId>jbrowserdriver</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+
 	</dependencies>
 </project>

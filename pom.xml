@@ -700,7 +700,17 @@
                 <version>3.3.0</version>
                 <scope>test</scope>
             </dependency>
-            
+	    <!-- git#920 required for javascript parsing in software webcrawler module -->
+	    <dependency>
+		<groupId>com.machinepublishers</groupId>
+		<artifactId>jbrowserdriver</artifactId>
+		<version>1.0.0</version>
+	    </dependency>
+	    <dependency>
+		<groupId>org.apache.httpcomponents</groupId>
+		<artifactId>httpclient</artifactId>
+		<version>4.5.4</version>
+	    </dependency>
         </dependencies>
     </dependencyManagement>
 

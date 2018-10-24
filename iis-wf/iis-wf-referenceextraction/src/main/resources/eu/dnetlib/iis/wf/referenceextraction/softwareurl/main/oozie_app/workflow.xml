@@ -26,7 +26,7 @@
         </property>
         <property>
             <name>webcrawlContentRetrieverClassName</name>
-            <value>eu.dnetlib.iis.wf.referenceextraction.softwareurl.HttpContentRetriever</value>
+            <value>eu.dnetlib.iis.wf.referenceextraction.softwareurl.JavaScriptAwareContentRetriever</value>
             <description>module responsible for obtaining contents for given url</description>
         </property>
         <property>
