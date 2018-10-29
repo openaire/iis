@@ -40,7 +40,7 @@ update links3 set match1 = lower(regexpr("\.git$",match1,"")) where match1 is no
 update links3 set match1 = regexpr("(https://github.com/[^/]+/[^/]+)",match1) where match1 like "https://github.com/%/%/%";
 
 
-create temp table matches as select links3.id,repo,links3.source,"https://archive.softwareheritage.org/browse/origin/"||match1 as match2,match from links3,links where links3.match1 = links.link;
+create temp table matches as select links3.id,repo,links3.source,"https://archive.softwareheritage.org/browse/origin/"||originlink as match2,match from links3,links where links3.match1 = links.link;
 
 create temp table partial2 as select id, match, repo, regexpr("(\w+)$",match2) as title, "" as description,"" as url, match2 as SHUrl  from matches;
 
