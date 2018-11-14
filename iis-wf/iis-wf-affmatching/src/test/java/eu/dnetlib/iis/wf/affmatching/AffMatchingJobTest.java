@@ -132,6 +132,7 @@ public class AffMatchingJobTest {
                                            .addArg("-inputAvroDocProjPath", inputDocProjDirPath)
                                            .addArg("-inputAvroInferredDocProjPath", inputInferredDocProjDirPath)
                                            .addArg("-inputDocProjConfidenceThreshold", String.valueOf(inputDocProjConfidenceThreshold))
+                                           .addArg("-numberOfEmittedFiles", "1")
                                            .addArg("-inputAvroProjOrgPath", inputProjOrgDirPath)
                                            .addArg("-outputAvroPath", outputDirPath)
                                            .addArg("-outputAvroReportPath", outputReportPath)

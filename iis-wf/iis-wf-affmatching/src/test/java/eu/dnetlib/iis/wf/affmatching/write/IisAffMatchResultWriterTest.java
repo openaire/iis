@@ -75,6 +75,9 @@ public class IisAffMatchResultWriterTest {
     private JavaRDD<MatchedOrganization> distinctMatchedOrganizationsValues;
     
     @Mock
+    private JavaRDD<MatchedOrganization> distinctMatchedOrganizationsValuesCoalesce;
+ 
+    @Mock
     private List<ReportEntry> reportEntries;
     
     @Mock
@@ -106,7 +109,7 @@ public class IisAffMatchResultWriterTest {
         
         // execute
         
-        writer.write(null, affMatchResults, "/output", "/report");
+        writer.write(null, affMatchResults, "/output", "/report", 1);
         
     }
     
@@ -115,7 +118,7 @@ public class IisAffMatchResultWriterTest {
         
         // execute
         
-        writer.write(sc, null, "/output", "/report");
+        writer.write(sc, null, "/output", "/report", 1);
         
     }
     
@@ -125,7 +128,7 @@ public class IisAffMatchResultWriterTest {
         
         // execute
         
-        writer.write(sc, affMatchResults, "  ", "/report");
+        writer.write(sc, affMatchResults, "  ", "/report", 1);
         
     }
     
@@ -134,7 +137,7 @@ public class IisAffMatchResultWriterTest {
         
         // execute
         
-        writer.write(sc, affMatchResults, "/output", " ");
+        writer.write(sc, affMatchResults, "/output", " ", 1);
         
     }
     
@@ -150,18 +153,19 @@ public class IisAffMatchResultWriterTest {
         doReturn(matchedOrganizationsDocOrgIdKey).when(matchedOrganizations).keyBy(any());
         when(matchedOrganizationsDocOrgIdKey.reduceByKey(any())).thenReturn(distinctMatchedOrganizations);
         when(distinctMatchedOrganizations.values()).thenReturn(distinctMatchedOrganizationsValues);
+        when(distinctMatchedOrganizationsValues.coalesce(1)).thenReturn(distinctMatchedOrganizationsValuesCoalesce);
         when(reportGenerator.generateReport(distinctMatchedOrganizationsValues)).thenReturn(reportEntries);
         when(sc.parallelize(reportEntries)).thenReturn(rddReportEntries);
         
         
         // execute
         
-        writer.write(sc, affMatchResults, outputPath, outputReportPath);
+        writer.write(sc, affMatchResults, outputPath, outputReportPath, 1);
         
         
         // assert
         
-        verify(sparkAvroSaver).saveJavaRDD(distinctMatchedOrganizationsValues, MatchedOrganization.SCHEMA$, outputPath);
+        verify(sparkAvroSaver).saveJavaRDD(distinctMatchedOrganizationsValuesCoalesce, MatchedOrganization.SCHEMA$, outputPath);
         verify(sparkAvroSaver).saveJavaRDD(rddReportEntries, ReportEntry.SCHEMA$, outputReportPath);
         
         verify(affMatchResults).map(convertFunction.capture());

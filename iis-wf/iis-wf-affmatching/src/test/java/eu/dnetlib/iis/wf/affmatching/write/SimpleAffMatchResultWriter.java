@@ -23,7 +23,7 @@ public class SimpleAffMatchResultWriter implements AffMatchResultWriter {
      * as json records {@link SimpleAffMatchResult}
      */
     @Override
-    public void write(JavaSparkContext sc, JavaRDD<AffMatchResult> matchedAffOrgs, String outputPath, String outputReportPath) {
+    public void write(JavaSparkContext sc, JavaRDD<AffMatchResult> matchedAffOrgs, String outputPath, String outputReportPath, int numberOfEmittedFiles) {
         
         
         JavaRDD<String> simpleMatchedAffOrgs = matchedAffOrgs

@@ -40,7 +40,7 @@ public class IisAffMatchResultWriter implements AffMatchResultWriter {
      * Writes the given rdd of {@link AffMatchResult}s under the given path as avro objects - {@link MatchedOrganization}s
      */
     @Override
-    public void write(JavaSparkContext sc, JavaRDD<AffMatchResult> matchedAffOrgs, String outputPath, String outputReportPath) {
+    public void write(JavaSparkContext sc, JavaRDD<AffMatchResult> matchedAffOrgs, String outputPath, String outputReportPath, int numberOfEmittedFiles) {
         
         Preconditions.checkNotNull(sc);
         
@@ -61,7 +61,7 @@ public class IisAffMatchResultWriter implements AffMatchResultWriter {
         
         distinctMatchedOrganizations.cache();
         
-        sparkAvroSaver.saveJavaRDD(distinctMatchedOrganizations, MatchedOrganization.SCHEMA$, outputPath);
+        sparkAvroSaver.saveJavaRDD(distinctMatchedOrganizations.coalesce(numberOfEmittedFiles), MatchedOrganization.SCHEMA$, outputPath);
         
         
         

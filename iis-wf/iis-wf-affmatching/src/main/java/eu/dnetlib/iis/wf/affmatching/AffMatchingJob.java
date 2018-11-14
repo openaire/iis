@@ -89,6 +89,9 @@ public class AffMatchingJob {
         @Parameter(names = "-inputAvroProjOrgPath", required = true, description="path to directory with avro files containing project to organization relations")
         private String inputAvroProjOrgPath;
         
+        @Parameter(names = "-numberOfEmittedFiles", required = true)
+        private int numberOfEmittedFiles;
+        
         @Parameter(names = "-outputAvroPath", required = true)
         private String outputAvroPath;
         
@@ -102,7 +105,7 @@ public class AffMatchingJob {
     private static AffMatchingService createAffMatchingService(JavaSparkContext sparkContext, AffMatchingJobParameters params) throws IOException {
         
         AffMatchingService affMatchingService = new AffMatchingService();
-        
+        affMatchingService.setNumberOfEmittedFiles(params.numberOfEmittedFiles);
         
         // readers
         

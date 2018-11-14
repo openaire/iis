@@ -150,6 +150,7 @@ public class AffMatchingServiceTest {
     private JavaRDD<AffMatchResult> allUniqueAffMatchResultsValues;
     
     
+    
     //----------------------------------- FUNCTIONS -------------------------------------------
     
     @Captor
@@ -182,7 +183,7 @@ public class AffMatchingServiceTest {
     public void before() {
         
         affMatchingService.setAffOrgMatchers(Lists.newArrayList(affOrgMatcher1, affOrgMatcher2));
-        
+        affMatchingService.setNumberOfEmittedFiles(1);
         
     }
     
@@ -326,7 +327,6 @@ public class AffMatchingServiceTest {
         doReturn(allUniqueAffMatchResults).when(allAffMatchResults2).reduceByKey(Mockito.any());
         when(allUniqueAffMatchResults.values()).thenReturn(allUniqueAffMatchResultsValues);
         
-        
         // execute
         
         affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath, outputReportPath);
@@ -334,7 +334,7 @@ public class AffMatchingServiceTest {
         
         // assert
         
-        verify(affMatchResultWriter).write(sc, allUniqueAffMatchResultsValues, outputPath, outputReportPath);
+        verify(affMatchResultWriter).write(sc, allUniqueAffMatchResultsValues, outputPath, outputReportPath, 1);
         
         verify(affiliationReader).readAffiliations(sc, inputAffPath);
         verify(organizationReader).readOrganizations(sc, inputOrgPath);

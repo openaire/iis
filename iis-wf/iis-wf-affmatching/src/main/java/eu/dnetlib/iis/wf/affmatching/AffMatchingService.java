@@ -59,7 +59,7 @@ public class AffMatchingService implements Serializable {
     
     private AffMatchResultWriter affMatchResultWriter;
     
-    
+    private int numberOfEmittedFiles;
     
     
     
@@ -92,7 +92,7 @@ public class AffMatchingService implements Serializable {
         JavaRDD<AffMatchResult> allMatchedAffOrgs = doMatch(sc, normalizedAffiliations, enrichedOrganizations);
         
         
-        affMatchResultWriter.write(sc, allMatchedAffOrgs, outputPath, outputReportPath);
+        affMatchResultWriter.write(sc, allMatchedAffOrgs, outputPath, outputReportPath, numberOfEmittedFiles);
         
     }
 
@@ -181,7 +181,9 @@ public class AffMatchingService implements Serializable {
         this.affMatchResultWriter = affMatchResultWriter;
     }
 
-
+    public void setNumberOfEmittedFiles(int numberOfEmittedFiles) {
+        this.numberOfEmittedFiles = numberOfEmittedFiles;
+    }
 
 
 }

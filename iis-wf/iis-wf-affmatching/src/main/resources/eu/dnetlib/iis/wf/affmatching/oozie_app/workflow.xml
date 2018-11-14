@@ -69,6 +69,11 @@
             <value>1m</value>
             <description>interval between each executor's heartbeats to the driver</description>
         </property>
+        <property>
+            <name>number_of_emitted_files</name>
+            <value>1000</value>
+            <description>number of files created by webcrawler module</description>
+        </property>
     </parameters>
 
     <global>
@@ -114,6 +119,7 @@
             <arg>-outputAvroReportPath=${output_report_root_path}/aff-matching</arg>
             
             <arg>-inputDocProjConfidenceThreshold=${document_project_confidence_threshold}</arg>
+            <arg>-numberOfEmittedFiles=${number_of_emitted_files}</arg>
             
         </spark>
         <ok to="end" />
