@@ -1,0 +1,95 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="affmatching_dedup">
+
+    <parameters>
+        <property>
+            <name>input_a</name>
+            <description>First input to be deduplicated</description>
+        </property>
+        <property>
+            <name>input_b</name>
+            <description>Second input do be deduplicated</description>
+        </property>
+        <property>
+            <name>inference_provenance_input_a</name>
+            <description>Inference provenance to be defined for input a</description>
+        </property>
+        <property>
+            <name>inference_provenance_input_b</name>
+            <description>Inference provenance to be defined for input b</description>
+        </property>
+        <property>
+            <name>output</name>
+            <description>output path for deduplicated matched affiliations (eu.dnetlib.iis.wf.affmatching.model.MatchedOrganizationWithProvenance)</description>
+        </property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        
+        <property>
+            <name>sparkExecutorMemory</name>
+            <description>memory for individual executor</description>
+        </property>
+        <property>
+            <name>sparkExecutorCores</name>
+            <description>number of cores used by single executor</description>
+        </property>
+        <property>
+            <name>sparkDriverMemory</name>
+            <description>memory for driver process</description>
+        </property>
+    </parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
+    <start to="affmatching_dedup" />
+
+    <action name="affmatching_dedup">
+        <spark xmlns="uri:oozie:spark-action:0.2">
+            
+            <prepare>
+                <delete path="${nameNode}${output}" />
+                <delete path="${nameNode}${output_report_root_path}/affmatching-dedup" />
+            </prepare>
+    
+            <master>yarn-cluster</master>
+            <mode>cluster</mode>
+            <name>document-organization deduplication</name>
+            <class>eu.dnetlib.iis.wf.affmatching.AffMatchingDedupJob</class>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-affmatching-${projectVersion}.jar</jar>
+            
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
+
+            <arg>-inputAPath=${input_a}</arg>
+            <arg>-inputBPath=${input_b}</arg>
+            <arg>-inferenceProvenanceInputA=${inference_provenance_input_a}</arg>
+            <arg>-inferenceProvenanceInputB=${inference_provenance_input_b}</arg>
+            
+            <arg>-outputAvroPath=${output}</arg>
+            <arg>-outputAvroReportPath=${output_report_root_path}/affmatching-dedup</arg>
+        </spark>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
+    <kill name="fail">
+        <message>Unfortunately, the workflow failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+    <end name="end" />
+</workflow-app>

@@ -430,7 +430,7 @@
 			</arg>
 			<arg>-Idocument_similarity=${workingDir}/exported/document_similarity</arg>
 			<arg>-C{matched_organization,
-				eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization,
+				eu.dnetlib.iis.wf.affmatching.model.MatchedOrganizationWithProvenance,
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/matched_organization.json}
 			</arg>
 			<arg>-Imatched_organization=${workingDir}/exported/matched_affiliation</arg>

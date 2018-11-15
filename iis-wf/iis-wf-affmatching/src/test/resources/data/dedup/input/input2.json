@@ -1,0 +1,15 @@
+{
+    "documentId":"DOC_1",
+    "organizationId":"20|UW",
+    "matchStrength":0.1
+}
+{
+    "documentId":"DOC_2",
+    "organizationId":"20|UW",
+    "matchStrength":0.9999999
+}
+{
+    "documentId":"DOC_3",
+    "organizationId":"20|WSU",
+    "matchStrength":0.1
+}

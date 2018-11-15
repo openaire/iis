@@ -1,0 +1,4 @@
+{"documentId":"DOC_1", "projectId":"PROJ_1", "confidenceLevel":0.9}
+{"documentId":"DOC_1", "projectId":"PROJ_2", "confidenceLevel":0.9}
+{"documentId":"DOC_2", "projectId":"PROJ_2", "confidenceLevel":0.7}
+{"documentId":"DOC_3", "projectId":"PROJ_3", "confidenceLevel":0.7}

@@ -1,0 +1,20 @@
+{
+    "documentId":"DOC_1",
+    "organizationId":"20|CNR",
+    "matchStrength":1.0
+}
+{
+    "documentId":"DOC_2",
+    "organizationId":"20|UCB",
+    "matchStrength":1.0
+}
+{
+    "documentId":"DOC_3",
+    "organizationId":"20|UCB",
+    "matchStrength":1.0
+}
+{
+    "documentId":"DOC_1",
+    "organizationId":"20|UCB",
+    "matchStrength":0.9
+}

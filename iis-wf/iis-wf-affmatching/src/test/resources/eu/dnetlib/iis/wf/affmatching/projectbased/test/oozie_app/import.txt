@@ -1,0 +1,2 @@
+## This is a classpath-based import file (this header is required)
+project_based_matching classpath eu/dnetlib/iis/wf/affmatching/projectbased/oozie_app

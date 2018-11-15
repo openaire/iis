@@ -314,7 +314,7 @@
             <arg>eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses</arg>
             <arg>eu.dnetlib.iis.export.schemas.Citations</arg>
             <arg>eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity</arg>
-            <arg>eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization</arg>
+            <arg>eu.dnetlib.iis.wf.affmatching.model.MatchedOrganizationWithProvenance</arg>
             <capture-output />
         </java>
         <ok to="prepare" />
@@ -702,7 +702,7 @@
                 </property>
                 <property>
                     <name>avro.schema.input.key</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization']}</value>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.wf.affmatching.model.MatchedOrganizationWithProvenance']}</value>
                 </property>
                 <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>

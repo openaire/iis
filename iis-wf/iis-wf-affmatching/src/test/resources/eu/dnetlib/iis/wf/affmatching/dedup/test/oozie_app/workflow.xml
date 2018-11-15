@@ -1,0 +1,112 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-affiliation-matching-dedup">
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+
+    <start to="data_producer" />
+
+
+    <action name="data_producer">
+        <java>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/data_producer" />
+                <mkdir path="${nameNode}${workingDir}/data_producer" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            
+            <arg>-C{input_a, eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization,
+                data/dedup/input/input1.json}</arg>
+            
+            <arg>-C{input_b, eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization,
+                data/dedup/input/input2.json}</arg>
+            
+            <arg>-Oinput_a=${workingDir}/data_producer/input_a</arg>
+            <arg>-Oinput_b=${workingDir}/data_producer/input_b</arg>
+            
+        </java>
+        <ok to="affiliation_matching_dedup" />
+        <error to="fail" />
+    </action>
+
+
+    <action name="affiliation_matching_dedup">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/affiliation_matching_dedup</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>input_a</name>
+                    <value>${workingDir}/data_producer/input_a</value>
+                </property>
+                <property>
+                    <name>input_b</name>
+                    <value>${workingDir}/data_producer/input_b</value>
+                </property>
+                <property>
+                    <name>inference_provenance_input_a</name>
+                    <value>affmatch</value>
+                </property>
+                <property>
+                    <name>inference_provenance_input_b</name>
+                    <value>docmatch</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${workingDir}/deduped</value>
+                </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/affmatching-dedup</value>
+                </property>
+
+                <!-- sparkDriverMemory, sparkExecutorMemory, sparkExecutorCores are provided by environment (since git#889) -->
+            </configuration>
+        </sub-workflow>
+        <ok to="consumer"/>
+        <error to="fail"/>
+    </action>
+
+
+    <action name="consumer">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            
+            <arg>-C{deduped, eu.dnetlib.iis.wf.affmatching.model.MatchedOrganizationWithProvenance,
+                data/dedup/expectedOutput/matchedOrganizations.json}</arg>
+            
+            <arg>-Ideduped=${workingDir}/deduped</arg>
+            
+            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,data/dedup/expectedOutput/report.json}</arg>
+            <arg>-Ireport=${workingDir}/report/affmatching-dedup</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message: [${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+
+    <end name="end" />
+
+</workflow-app>

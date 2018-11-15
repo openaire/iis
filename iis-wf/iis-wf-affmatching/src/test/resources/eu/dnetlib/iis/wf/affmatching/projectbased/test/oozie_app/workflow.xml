@@ -1,0 +1,123 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-project-based-docorg-matching">
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+
+    <start to="data_producer" />
+
+
+    <action name="data_producer">
+        <java>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/data_producer" />
+                <mkdir path="${nameNode}${workingDir}/data_producer" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            
+            <arg>-C{project, eu.dnetlib.iis.importer.schemas.Project,
+                data/projectbased/input/project.json}</arg>
+            <arg>-C{document_to_project, eu.dnetlib.iis.importer.schemas.DocumentToProject,
+                data/projectbased/input/docProj.json}</arg>
+            <arg>-C{inferred_document_to_project, eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject,
+                data/projectbased/input/docProjInferred.json}</arg>
+            <arg>-C{project_to_organization, eu.dnetlib.iis.importer.schemas.ProjectToOrganization,
+                data/projectbased/input/projOrg.json}</arg>
+            
+            <arg>-Oproject=${workingDir}/data_producer/project</arg>
+            <arg>-Odocument_to_project=${workingDir}/data_producer/document_to_project</arg>
+            <arg>-Oinferred_document_to_project=${workingDir}/data_producer/document_to_project_inferred</arg>
+            <arg>-Oproject_to_organization=${workingDir}/data_producer/project_to_organization</arg>
+            
+        </java>
+        <ok to="project_based_matching" />
+        <error to="fail" />
+    </action>
+
+
+    <action name="project_based_matching">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/project_based_matching</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>input_project</name>
+                    <value>${workingDir}/data_producer/project</value>
+                </property>
+                <property>
+                    <name>input_document_to_project</name>
+                    <value>${workingDir}/data_producer/document_to_project</value>
+                </property>
+                <property>
+                    <name>input_inferred_document_to_project</name>
+                    <value>${workingDir}/data_producer/document_to_project_inferred</value>
+                </property>
+                <property>
+                    <name>input_project_to_organization</name>
+                    <value>${workingDir}/data_producer/project_to_organization</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${workingDir}/matched</value>
+                </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/projectbased-matching</value>
+                </property>
+                <property>
+                    <name>document_project_confidence_threshold</name>
+                    <value>0.8</value>
+                </property>
+                 <property>
+                    <name>project_fundingclass_whitelist_regex</name>
+                    <value>^EC.*</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="consumer"/>
+        <error to="fail"/>
+    </action>
+
+
+    <action name="consumer">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            
+            <arg>-C{matched, eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization,
+                data/projectbased/expectedOutput/matchedOrganizations.json}</arg>
+            
+            <arg>-Imatched=${workingDir}/matched</arg>
+            
+            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,data/projectbased/expectedOutput/report.json}</arg>
+            <arg>-Ireport=${workingDir}/report/project-based-docorg-matching</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message: [${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+
+    <end name="end" />
+
+</workflow-app>

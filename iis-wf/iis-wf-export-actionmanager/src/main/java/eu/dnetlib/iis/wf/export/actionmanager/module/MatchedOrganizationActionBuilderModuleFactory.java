@@ -17,15 +17,15 @@ import eu.dnetlib.data.proto.RelTypeProtos.RelType;
 import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
 import eu.dnetlib.data.proto.ResultOrganizationProtos.ResultOrganization;
 import eu.dnetlib.data.proto.ResultOrganizationProtos.ResultOrganization.Affiliation;
-import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
+import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganizationWithProvenance;
 
 /**
- * {@link MatchedOrganization} action builder factory module.
+ * {@link MatchedOrganizationWithProvenance} action builder factory module.
  * 
  * @author mhorst
  *
  */
-public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActionBuilderFactory<MatchedOrganization> {
+public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActionBuilderFactory<MatchedOrganizationWithProvenance> {
 
     private static final String REL_CLASS_HAS_AUTHOR_INSTITUTION_OF = Affiliation.RelName.hasAuthorInstitution.toString();
     
@@ -42,7 +42,7 @@ public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActio
     // ------------------------ LOGIC ---------------------------------
     
     @Override
-    public ActionBuilderModule<MatchedOrganization> instantiate(Configuration config, Agent agent, String actionSetId) {
+    public ActionBuilderModule<MatchedOrganizationWithProvenance> instantiate(Configuration config, Agent agent, String actionSetId) {
         return new MatchedOrganizationActionBuilderModule(provideTrustLevelThreshold(config), agent, actionSetId);
     }
     
@@ -52,7 +52,7 @@ public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActio
      * {@link MatchedOrganization} action builder module.
      *
      */
-    class MatchedOrganizationActionBuilderModule extends AbstractBuilderModule<MatchedOrganization> {
+    class MatchedOrganizationActionBuilderModule extends AbstractBuilderModule<MatchedOrganizationWithProvenance> {
 
         
         // ------------------------ CONSTRUCTORS --------------------------
@@ -70,7 +70,7 @@ public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActio
         // ------------------------ LOGIC ---------------------------------
         
         @Override
-        public List<AtomicAction> build(MatchedOrganization object) throws TrustLevelThresholdExceededException {
+        public List<AtomicAction> build(MatchedOrganizationWithProvenance object) throws TrustLevelThresholdExceededException {
             Preconditions.checkNotNull(object);
             String docId = object.getDocumentId().toString();
             String orgId = object.getOrganizationId().toString();

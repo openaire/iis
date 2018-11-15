@@ -1,0 +1,118 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="project-based-docorg-matching">
+
+    <parameters>
+        <property>
+            <name>input_project</name>
+            <description>input containing project entity avro records (eu.dnetlib.iis.importer.schemas.Project).
+                These entities are used to filtering project relations by allowed funders.</description>
+        </property>
+        <property>
+            <name>input_document_to_project</name>
+            <description>input containing document-project relation avro records (eu.dnetlib.iis.importer.schemas.DocumentToProject).
+                These relations (alongside with inferred document-project and project-organization relations)
+                are used to generate document-organization pairs which are used as a hint for matching affiliations</description>
+        </property>
+        <property>
+            <name>input_inferred_document_to_project</name>
+            <description>input containing inferred document-project relation avro records (eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject).
+                These relations (alongside with document-project and project-organization relations)
+                are used to generate document-organization pairs which are used as a hint for matching affiliations</description>
+        </property>
+        <property>
+            <name>input_project_to_organization</name>
+            <description>input containing project-organization avro records (eu.dnetlib.iis.importer.schemas.ProjectToOrganization).
+                These relations (alongside with infered document-project and document-project relations)
+                are used to generate document-organization pairs which are used as a hint for matching affiliations</description>
+        </property>
+        
+        <property>
+            <name>output</name>
+            <description>output path for matched affiliations (eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization)</description>
+        </property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+                
+        <property>
+            <name>document_project_confidence_threshold</name>
+            <value>0.5</value>
+            <description>confidence level threshold for loading inferred document-project relations</description>
+        </property>
+        <property>
+            <name>project_fundingclass_whitelist_regex</name>
+            <value>.*</value>
+            <description>regex accepting project references by funding class, accepting everything by default</description>
+        </property>
+        
+        <property>
+            <name>sparkExecutorMemory</name>
+            <description>memory for individual executor</description>
+        </property>
+        <property>
+            <name>sparkExecutorCores</name>
+            <description>number of cores used by single executor</description>
+        </property>
+        <property>
+            <name>sparkDriverMemory</name>
+            <description>memory for driver process</description>
+        </property>
+    </parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
+    <start to="proj-based-matching" />
+
+    <action name="proj-based-matching">
+        <spark xmlns="uri:oozie:spark-action:0.2">
+            
+            <prepare>
+                <delete path="${nameNode}${output}" />
+                <delete path="${nameNode}${output_report_root_path}/project-based-doc-org-matching" />
+            </prepare>
+    
+            <master>yarn-cluster</master>
+            <mode>cluster</mode>
+            <name>Project based Document-Organization Matching</name>
+            <class>eu.dnetlib.iis.wf.affmatching.ProjectBasedMatchingJob</class>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-affmatching-${projectVersion}.jar</jar>
+            
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
+
+            <arg>-inputAvroProjectPath=${input_project}</arg>
+            <arg>-inputAvroDocProjPath=${input_document_to_project}</arg>
+            <arg>-inputAvroInferredDocProjPath=${input_inferred_document_to_project}</arg>
+            <arg>-inputAvroProjOrgPath=${input_project_to_organization}</arg>
+            
+            <arg>-outputAvroPath=${output}</arg>
+            <arg>-outputAvroReportPath=${output_report_root_path}/project-based-docorg-matching</arg>
+            
+            <arg>-inputDocProjConfidenceThreshold=${document_project_confidence_threshold}</arg>
+            <arg>-projectFundingClassWhitelistRegex=${project_fundingclass_whitelist_regex}</arg>
+            
+        </spark>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
+    <kill name="fail">
+        <message>Unfortunately, the workflow failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+    <end name="end" />
+</workflow-app>

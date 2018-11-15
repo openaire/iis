@@ -8,8 +8,8 @@ package eu.dnetlib.iis.wf.affmatching.write;
 
 public final class AffMatchReportCounters {
 
-    public static final String DOC_ORG_REFERENCES = "processing.affiliationMatching.docOrgReference";
-    public static final String DOCS_WITH_AT_LEAST_ONE_ORG = "processing.affiliationMatching.doc";
+    public static final String DOC_ORG_REFERENCES = "processing.docOrgMatching.affiliationBased.docOrgReference";
+    public static final String DOCS_WITH_AT_LEAST_ONE_ORG = "processing.docOrgMatching.affiliationBased.doc";
     
     
     

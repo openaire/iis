@@ -1,2 +1,2 @@
-{"documentId": "doc-id1", "organizationId": "org-id1", "matchStrength": 0.5}
-{"documentId": "doc-id2", "organizationId": "org-id2", "matchStrength": 0.1}
+{"documentId": "doc-id1", "organizationId": "org-id1", "matchStrength": 0.5, "provenance": "iis::document_affiliations"}
+{"documentId": "doc-id2", "organizationId": "org-id2", "matchStrength": 0.1, "provenance": "iis::document_affiliations"}

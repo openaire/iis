@@ -1,0 +1,24 @@
+{
+    "documentId":"DOC_1",
+    "organizationId":"20|UW",
+    "matchStrength":0.9999999,
+    "provenance":"affmatch"
+}
+{
+    "documentId":"DOC_2",
+    "organizationId":"20|UW",
+    "matchStrength":0.9999999,
+    "provenance":"docmatch"
+}
+{
+    "documentId":"DOC_3",
+    "organizationId":"20|UCB",
+    "matchStrength":1.0,
+    "provenance":"affmatch"
+}
+{
+    "documentId":"DOC_3",
+    "organizationId":"20|WSU",
+    "matchStrength":0.1,
+    "provenance":"docmatch"
+}

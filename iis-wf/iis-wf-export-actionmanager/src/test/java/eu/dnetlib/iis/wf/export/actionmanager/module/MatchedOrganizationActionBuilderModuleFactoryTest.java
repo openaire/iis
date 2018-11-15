@@ -14,13 +14,14 @@ import eu.dnetlib.data.proto.RelTypeProtos.RelType;
 import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
 import eu.dnetlib.data.proto.ResultOrganizationProtos.ResultOrganization.Affiliation;
 import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
+import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganizationWithProvenance;
 import eu.dnetlib.iis.wf.export.actionmanager.module.VerificationUtils.Expectations;
 
 /**
  * @author mhorst
  *
  */
-public class MatchedOrganizationActionBuilderModuleFactoryTest extends AbstractActionBuilderModuleFactoryTest<MatchedOrganization> {
+public class MatchedOrganizationActionBuilderModuleFactoryTest extends AbstractActionBuilderModuleFactoryTest<MatchedOrganizationWithProvenance> {
 
 
     // ----------------------- CONSTRUCTORS --------------------------
@@ -34,8 +35,8 @@ public class MatchedOrganizationActionBuilderModuleFactoryTest extends AbstractA
     @Test(expected = TrustLevelThresholdExceededException.class)
     public void testBuildBelowThreshold() throws Exception {
         // given
-        MatchedOrganization matchedOrgBelowThreshold = buildMatchedOrganization("documentId", "organizationId", 0.4f);
-        ActionBuilderModule<MatchedOrganization> module = factory.instantiate(config, agent, actionSetId);
+        MatchedOrganizationWithProvenance matchedOrgBelowThreshold = buildMatchedOrganization("documentId", "organizationId", 0.4f, "affmatch");
+        ActionBuilderModule<MatchedOrganizationWithProvenance> module = factory.instantiate(config, agent, actionSetId);
         
         // execute
         module.build(matchedOrgBelowThreshold);
@@ -47,10 +48,11 @@ public class MatchedOrganizationActionBuilderModuleFactoryTest extends AbstractA
         String docId = "documentId";
         String orgId = "organizationId";
         float matchStrength = 0.9f;
-        ActionBuilderModule<MatchedOrganization> module = factory.instantiate(config, agent, actionSetId);
+        String provenance = "affmatch";
+        ActionBuilderModule<MatchedOrganizationWithProvenance> module = factory.instantiate(config, agent, actionSetId);
         
         // execute
-        List<AtomicAction> actions = module.build(buildMatchedOrganization(docId, orgId, matchStrength));
+        List<AtomicAction> actions = module.build(buildMatchedOrganization(docId, orgId, matchStrength, provenance));
         
         // assert
         assertNotNull(actions);
@@ -86,11 +88,13 @@ public class MatchedOrganizationActionBuilderModuleFactoryTest extends AbstractA
     
     // ----------------------- PRIVATE --------------------------
 
-    private static MatchedOrganization buildMatchedOrganization(String docId, String orgId, float matchStrength) {
-        MatchedOrganization.Builder builder = MatchedOrganization.newBuilder();
+    private static MatchedOrganizationWithProvenance buildMatchedOrganization(String docId, String orgId, float matchStrength,
+            String provenance) {
+        MatchedOrganizationWithProvenance.Builder builder = MatchedOrganizationWithProvenance.newBuilder();
         builder.setDocumentId(docId);
         builder.setOrganizationId(orgId);
         builder.setMatchStrength(matchStrength);
+        builder.setProvenance(provenance);
         return builder.build();
     }
 

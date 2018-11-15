@@ -1,0 +1,21 @@
+
+@namespace("eu.dnetlib.iis.wf.affmatching.model")
+
+protocol IIS {
+
+    record MatchedOrganizationWithProvenance {
+
+        // eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata#id
+        string documentId;
+        
+        // eu.dnetlib.iis.importer.schemas.Organization#id       
+        string organizationId;
+        
+        // match strength
+        float matchStrength;
+          
+        // match origin       
+        string provenance;      
+    }
+
+}

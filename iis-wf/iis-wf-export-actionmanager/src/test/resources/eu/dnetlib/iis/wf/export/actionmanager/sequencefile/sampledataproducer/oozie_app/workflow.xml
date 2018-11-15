@@ -73,7 +73,7 @@
             </arg>
             <arg>-Odocument_pdb=${workingDir}/producer/document_pdb</arg>
             <arg>-C{matched_org,
-                eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization,
+                eu.dnetlib.iis.wf.affmatching.model.MatchedOrganizationWithProvenance,
                 eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/matched_doc_organizations.json}
             </arg>
             <arg>-Omatched_org=${workingDir}/producer/matched_doc_organizations</arg>
