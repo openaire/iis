@@ -602,6 +602,10 @@
 					<name>output</name>
 					<value>${workingDir}/transformers_project_toconcept/out</value>
 				</property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
 			</configuration>
 		</sub-workflow>
 		<ok to="transformers_concept_to_researchinitiatives" />
