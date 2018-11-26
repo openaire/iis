@@ -635,7 +635,7 @@
                 </property>
                 <property>
                     <name>output_report_record_read_counter_name</name>
-                    <value>processing.referenceExtraction.concept.reference</value>
+                    <value>processing.referenceExtraction.concept.reference.total</value>
                 </property>
                 <property>
                     <name>output_report_record_written_counter_name</name>
