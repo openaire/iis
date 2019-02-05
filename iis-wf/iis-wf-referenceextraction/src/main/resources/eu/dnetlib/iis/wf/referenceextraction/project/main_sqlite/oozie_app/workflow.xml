@@ -106,7 +106,7 @@
 					by process storing plaintexts into the database -->
 				<property>
 					<name>mapreduce.task.timeout</name>
-					<value>14400000</value>
+					<value>28800000</value>
 				</property>
                 <property>
                     <name>oozie.action.external.stats.write</name>
