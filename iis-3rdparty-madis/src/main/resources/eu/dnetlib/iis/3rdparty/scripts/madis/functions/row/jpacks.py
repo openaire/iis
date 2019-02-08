@@ -1172,8 +1172,12 @@ def jsonpath(*args):
 
 
     """
-
-    j = json.loads(args[0])
+    try:
+        j = json.loads(args[0])
+    except:
+        import sys
+        sys.stderr.write(args[0])
+        raise
 
     yield tuple( ('C'+str(x)for x in xrange( 1,len(args) ) )   )
     output=[libjsonpath(j, jp, use_eval=False) for jp in args[1:]]
@@ -1190,12 +1194,16 @@ def jsonpath(*args):
 
     if l==0:
         return
-
-    if lchanges>1:
-        yield [jopts.toj(x) if type(x)!=bool else None for x in output]
-    else:
-        for i in xrange(l):
-            yield [jopts.toj(x[i]) if type(x)!=bool else None for x in output]
+    try:
+        if lchanges>1:
+            yield [jopts.toj(x) if type(x)!=bool else None for x in output]
+        else:
+            for i in xrange(l):
+                yield [jopts.toj(x[i]) if type(x)!=bool else None for x in output]
+    except:
+        import sys
+        sys.stderr.write(args[0])
+        raise
 
 jsonpath.registered=True
 
