@@ -1177,7 +1177,8 @@ def jsonpath(*args):
     except:
         import sys
         sys.stderr.write(args[0])
-        raise
+        error = 'Error in input line: '+ args[0]
+        raise Exception(error)
 
     yield tuple( ('C'+str(x)for x in xrange( 1,len(args) ) )   )
     output=[libjsonpath(j, jp, use_eval=False) for jp in args[1:]]
@@ -1203,7 +1204,8 @@ def jsonpath(*args):
     except:
         import sys
         sys.stderr.write(args[0])
-        raise
+        error = 'Error in input line: '+ args[0]
+        raise Exception(error)
 
 jsonpath.registered=True
 
