@@ -1,9 +1,5 @@
 package eu.dnetlib.iis.wf.importer.content;
 
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_CONTENT_CONNECTION_TIMEOUT;
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_CONTENT_MAX_FILE_SIZE_MB;
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_CONTENT_READ_TIMEOUT;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -13,7 +9,6 @@ import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
 
-import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl;
 import eu.dnetlib.iis.importer.schemas.DocumentContent;
 
@@ -30,19 +25,9 @@ public class DocumentContentUrlBasedImporterMapper
 
 
     /**
-     * Connection timeout.
+     * Content retrieval runtime context.
      */
-    private int connectionTimeout;
-
-    /**
-     * Read timeout.
-     */
-    private int readTimeout;
-    
-    /**
-     * Maximum allowed file size expressed in KB.
-     */
-    private long maxFileSizeKB = Long.MAX_VALUE;
+    private ContentRetrievalContext contentRetrievalContext;
     
     /**
      * Counter for the records with content size exceeded.
@@ -73,8 +58,7 @@ public class DocumentContentUrlBasedImporterMapper
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
         // connection and approver related parameters
-        this.connectionTimeout = context.getConfiguration().getInt(IMPORT_CONTENT_CONNECTION_TIMEOUT, 60000);
-        this.readTimeout = context.getConfiguration().getInt(IMPORT_CONTENT_READ_TIMEOUT, 60000);
+        this.contentRetrievalContext = new ContentRetrievalContext(context.getConfiguration());
         
         this.sizeInvalidCounter = context.getCounter(InvalidRecordCounters.SIZE_INVALID);
         this.sizeInvalidCounter.setValue(0);
@@ -84,20 +68,13 @@ public class DocumentContentUrlBasedImporterMapper
 
         this.unavailableCounter = context.getCounter(InvalidRecordCounters.UNAVAILABLE);
         this.unavailableCounter.setValue(0);
-        
-        Integer maxFileSizeMB = WorkflowRuntimeParameters.getIntegerParamValue(
-                IMPORT_CONTENT_MAX_FILE_SIZE_MB, context.getConfiguration());
-        if (maxFileSizeMB != null) {
-            this.maxFileSizeKB = 1024l * maxFileSizeMB;
-        }
     }
 
     /**
      * Provides contents for given url.
      */
-    protected byte[] getContent(String url) throws IOException, InvalidSizeException {
-        return ObjectStoreContentProviderUtils.getContentFromURL(
-                url, this.connectionTimeout, this.readTimeout);
+    protected byte[] getContent(String url) throws IOException, InvalidSizeException, S3EndpointNotFoundException {
+        return ObjectStoreContentProviderUtils.getContentFromURL(url, this.contentRetrievalContext);
     }
     
     @Override
@@ -108,7 +85,7 @@ public class DocumentContentUrlBasedImporterMapper
             log.warn("content " + docUrl.getId() + " discarded for location: " + docUrl.getUrl()
             + " and size [kB]: " + docUrl.getContentSizeKB() + ", size is expected to be greater than 0!");
             this.sizeInvalidCounter.increment(1);
-        } else if (docUrl.getContentSizeKB() <= maxFileSizeKB) {
+        } else if (docUrl.getContentSizeKB() <= this.contentRetrievalContext.getMaxFileSizeKB()) {
             long startTimeContent = System.currentTimeMillis();
             log.info("starting content retrieval for id: " + docUrl.getId() + ", location: " + docUrl.getUrl()
                     + " and size [kB]: " + docUrl.getContentSizeKB());
@@ -121,6 +98,8 @@ public class DocumentContentUrlBasedImporterMapper
                 log.info("content retrieval for id: " + docUrl.getId() + " took: "
                         + (System.currentTimeMillis() - startTimeContent) + " ms");
             
+            } catch (S3EndpointNotFoundException e) {
+                throw new IOException("Got S3 link: " + docUrl.getUrl() + " but no S3 endpoint was specified in job configuration!", e);
             } catch (InvalidSizeException e) {
                 log.warn("content " + docUrl.getId() + " discarded for location: " + docUrl.getUrl()
                 + ", real size is expected to be greater than 0!");
@@ -133,7 +112,7 @@ public class DocumentContentUrlBasedImporterMapper
         } else {
             this.sizeExceededCounter.increment(1);
             log.info("content " + docUrl.getId() + " discarded for location: " + docUrl.getUrl()
-            + " and size [kB]: " + docUrl.getContentSizeKB() + ", size limit: " + maxFileSizeKB + " exceeded!");
+            + " and size [kB]: " + docUrl.getContentSizeKB() + ", size limit: " + this.contentRetrievalContext.getMaxFileSizeKB() + " exceeded!");
         }
 
     }

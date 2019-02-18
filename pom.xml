@@ -251,6 +251,11 @@
                 <scope>test</scope>
             </dependency>
 
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-aws</artifactId>
+                <version>${iis.hadoop.version}</version>
+            </dependency>
 
 
             <!-- Oozie dependencies -->
@@ -704,7 +709,6 @@
                 <version>3.3.0</version>
                 <scope>test</scope>
             </dependency>
-            
         </dependencies>
     </dependencyManagement>
 

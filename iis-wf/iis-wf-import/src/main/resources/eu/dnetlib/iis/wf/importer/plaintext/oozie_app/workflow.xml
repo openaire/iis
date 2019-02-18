@@ -25,6 +25,18 @@
 			<value>100000</value>
 			<description>maximum input data split size, required by streaming version reading DocumentContentUrl to split input data into more chunks</description>
 		</property>
+        <!-- S3 related -->
+        <property>
+            <name>objectstore_s3_keystore_location</name>
+            <value>$UNDEFINED$</value>
+            <description>keystore holding credentials giving read access to S3 bucket with contents</description>
+        </property>
+        <property>
+            <name>objectstore_s3_endpoint</name>
+            <value>$UNDEFINED$</value>
+            <description>S3 service providing contents endpoint</description>
+        </property>
+        <!--  -->
 		<property>
 			<name>output</name>
 			<description>text importer output directory</description>
@@ -82,6 +94,16 @@
 				<delete path="${nameNode}${output}" />
 			</prepare>
 			<configuration>
+                <!-- S3 content retrieval related -->
+                <property>
+                    <name>hadoop.security.credential.provider.path</name>
+                    <value>${objectstore_s3_keystore_location}</value>
+                </property>
+                <property>
+                    <name>import.content.object.store.s3.endpoint</name>
+                    <value>${objectstore_s3_endpoint}</value>
+                </property>
+                <!--  -->
 				<property>
 					<name>mapreduce.job.inputformat.class</name>
 					<value>org.apache.avro.mapreduce.AvroKeyInputFormat</value>

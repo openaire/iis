@@ -60,6 +60,18 @@
 				plaintext import.
 			</description>
 		</property>
+        <!-- S3 related -->
+        <property>
+            <name>import_content_objectstore_s3_keystore_location</name>
+            <value>$UNDEFINED$</value>
+            <description>keystore holding credentials giving read access to S3 bucket with contents</description>
+        </property>
+        <property>
+            <name>import_content_objectstore_s3_endpoint</name>
+            <value>$UNDEFINED$</value>
+            <description>S3 service providing contents endpoint</description>
+        </property>
+        <!--  -->
 		<property>
 			<name>import_content_datacite_objectstores_csv</name>
 			<value>$UNDEFINED$</value>
@@ -316,6 +328,14 @@
 					<name>objectstore_service_location</name>
 					<value>${import_content_object_store_location}</value>
 				</property>
+                <property>
+                    <name>objectstore_s3_keystore_location</name>
+                    <value>${import_content_objectstore_s3_keystore_location}</value>
+                </property>
+                <property>
+                    <name>objectstore_s3_endpoint</name>
+                    <value>${import_content_objectstore_s3_endpoint}</value>
+                </property>
 				<property>
 					<name>approved_objectstores_csv</name>
 					<value>${import_content_datacite_objectstores_csv}</value>

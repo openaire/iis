@@ -19,6 +19,7 @@ public final class ImportWorkflowRuntimeParameters {
 	public static final String IMPORT_CONTENT_BLACKLISTED_OBJECSTORES_CSV = "import.content.blacklisted.objectstores.csv";
 	
 	public static final String IMPORT_CONTENT_OBJECT_STORE_LOC = "import.content.object.store.location";
+    public static final String IMPORT_CONTENT_OBJECT_STORE_S3_ENDPOINT = "import.content.object.store.s3.endpoint";
 	public static final String IMPORT_CONTENT_OBJECT_STORE_IDS_CSV = "import.content.object.store.ids.csv";
 	public static final String IMPORT_CONTENT_MAX_FILE_SIZE_MB = "import.content.max.file.size.mb";
 	public static final String IMPORT_CONTENT_CONNECTION_TIMEOUT = "import.content.connection.timeout";
