@@ -50,3 +50,4 @@
 {"id":"40|aka_________::b418b9f235f483c5127a88403fc34ef9","projectGrantId":"129662","projectAcronym":null,"fundingClass":"AKA::","jsonextrainfo":"{}"}
 {"id":"40|miur________::1e5e62235d094afd01cd56e65112fc63","projectGrantId":"unidentified","projectAcronym":null,"fundingClass":"MIUR::","jsonextrainfo":"{}"}
 {"id":"40|miur________::00be7a1d78985fc858435f728da32d53", "projectGrantId":"RBSI14P4IH", "projectAcronym":"SIMCODE", "fundingClass":"MIUR::SIR 2014", "jsonextrainfo":"{\"settore\":\"Cosmology\"}"}
+{"id":"40|gsrt________::574ef85ac608988be5167363bb257010", "projectGrantId": "447985", "projectAcronym": null, "fundingClass": "GSRT::", "jsonextrainfo": "{}"}
