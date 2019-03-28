@@ -466,7 +466,10 @@ def regexprmatches(*args):
     if len(args)!=2:
         raise functions.OperatorError('regexprmatches', 'Two parameters should be provided')
 
-    a=re.search(args[0], unicode(args[1]),re.UNICODE)
+    try:
+        a=re.search(args[0], unicode(args[1]),re.UNICODE)
+    except:
+        return False
     if a!=None:
         return True
     else:
