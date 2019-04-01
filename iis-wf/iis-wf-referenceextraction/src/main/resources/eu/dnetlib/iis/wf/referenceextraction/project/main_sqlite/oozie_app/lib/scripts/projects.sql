@@ -28,7 +28,7 @@ regexpcountwords('(?:\bwell?come trust\b)|(?:(?:\bthis work was|financial(?:ly)?
 create temp table output_table as
 
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8) as C1, docid, id, fundingclass1, grantid from (
-select docid,id,fundingclass1, grantid from (select * from (setschema 'docid,prev,middle,next' select c1 as docid,textwindow2s(regexpr("\n",c2," "),20,1,20, '\bRBSI\d{2}\w{4}\b') from (setschema 'c1,c2' select * from pubs where c2 is not null) ) ,grants where fundingclass1="MIUR" and regexpr("(RBSI\d{2}\w{4})",middle) = grantid)
+select docid,id,fundingclass1, grantid from (select * from (setschema 'docid,prev,middle,next' select c1 as docid,textwindow2s(regexpr("\n",c2," "),20,1,20, '\bRBSI\d{2}\w{4}\b') from (setschema 'c1,c2' select * from pubs where c2 is not null) ) ,grants where fundingclass1="MIUR" and regexpr("((?:RBSI\d{2}\w{4})|(?:2015\w{6}))",middle) = grantid)
 group by docid,id)
 
 union all
