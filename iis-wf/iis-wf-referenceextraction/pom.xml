@@ -28,6 +28,12 @@
             <version>${project.version}</version>
         </dependency>
         
+		 <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-wf-import</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
         <dependency>
             <groupId>eu.dnetlib.iis</groupId>
             <artifactId>iis-common</artifactId>

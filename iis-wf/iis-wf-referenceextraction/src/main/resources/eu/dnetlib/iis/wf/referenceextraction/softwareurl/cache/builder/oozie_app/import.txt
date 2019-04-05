@@ -1,0 +1,3 @@
+## This is a classpath-based import file (this header is required)
+sqlite_builder classpath eu/dnetlib/iis/wf/referenceextraction/softwareurl/sqlite_builder/oozie_app
+importer_software_origins classpath eu/dnetlib/iis/wf/importer/software_origins/oozie_app

@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<!-- Note that documentation placed in comments in this file uses the
+"markdown" syntax (along with its way of dividing text into sections). -->
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="referenceextraction_softwareurl_cache_builder">
+	
+	<parameters>
+        <property>
+            <name>endpointHost</name>
+            <description>endpoint host name</description>
+        </property>
+        <property>
+            <name>endpointUriRoot</name>
+            <description>endpoint root URI, excluding host name</description>
+        </property>
+        <property>
+            <name>endpointPort</name>
+            <value>443</value>
+            <description>endpoint port</description>
+        </property>
+        <property>
+            <name>endpointScheme</name>
+            <value>https</value>
+            <description>endpoint scheme</description>
+        </property>
+        <!-- cache related -->
+		<property>
+			<name>cache_location</name>
+			<description>software origins HDFS cache location.
+				Directory with appropriate permisions has to be created in advance.
+			</description>
+		</property>
+        <property>
+            <name>output_root</name>
+            <description>output directory holding software heritage origins SQLite database file and versioned subdirectory</description>
+        </property>
+        <property>
+            <name>origins_db_filename</name>
+            <description>output software heritage origins SQLite database filename</description>
+        </property>
+	</parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
+	<start to="origins_importer" />
+
+    <action name="origins_importer">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/importer_software_origins</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>output</name>
+                    <value>${workingDir}/origins_importer/out</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="create-output-dir"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="create-output-dir">
+         <fs>
+            <delete path="${nameNode}${output_root}/${origins_db_filename}"/>
+            <mkdir path="${nameNode}${output_root}"/>
+        </fs>
+        <ok to="sqlite_builder"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="sqlite_builder">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/sqlite_builder</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>input_softwareheritage_origins</name>
+                    <value>${workingDir}/origins_importer/out</value>
+                </property>
+                <property>
+                    <name>output_softwareheritage_origins_db</name>
+                    <value>${output_root}/${origins_db_filename}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="recreate-versioned-dir"/>
+        <error to="fail"/>
+    </action>
+    
+    <action name="recreate-versioned-dir">
+         <fs>
+            <delete path="${nameNode}${output_root}/${replaceAll(timestamp(), '(..)T(..):(..)Z$', '$1_$2-$3')}"/>
+            <mkdir path="${nameNode}${output_root}/${replaceAll(timestamp(), '(..)T(..):(..)Z$', '$1_$2-$3')}"/>
+        </fs>
+        <ok to="copy-versioned-db"/>
+        <error to="fail"/>
+    </action>
+    
+    <action name="copy-versioned-db">
+        <distcp xmlns="uri:oozie:distcp-action:0.2">
+            <arg>${nameNode}${output_root}/${origins_db_filename}</arg>
+            <arg>${nameNode}${output_root}/${replaceAll(timestamp(), "(..)T(..):(..)Z$", "$1_$2-$3")}/${origins_db_filename}</arg>
+        </distcp>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+    
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+        			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

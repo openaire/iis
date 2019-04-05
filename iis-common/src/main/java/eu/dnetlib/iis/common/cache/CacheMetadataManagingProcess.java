@@ -38,11 +38,15 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
 
 	public static final String OUTPUT_PROPERTY_CACHE_ID = "cache_id";
 	
+	public static final String OUTPUT_PROPERTY_NEXT_RECORD_INDEX = "next_record_index";
+	
 	public static final String PARAM_CACHE_DIR = "cache_location";
 	
 	public static final String PARAM_MODE = "mode";
 	
 	public static final String PARAM_ID = "id";
+	
+	public static final String PARAM_NEXT_RECORD_INDEX = "next_record_index";
 	
 	public static final String MODE_READ_CURRENT_ID = "read_current_id";
 	
@@ -50,25 +54,44 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
 	
 	public static final String MODE_WRITE_ID = "write_id";
 	
+	public static final String MODE_READ_META = "read_meta";
+	
+	public static final String MODE_WRITE_META = "write_meta";
+	
 	public static final String DEFAULT_METAFILE_NAME = "meta.json";
 	
 	public static final int CACHE_ID_PADDING_LENGTH = 6;
 	
-	public static final String NON_EXISTING_CACHE_ID = "$UNDEFINED$"; 
+	public static final String UNDEFINED = "$UNDEFINED$"; 
 
 	public static final String DEFAULT_ENCODING = "UTF-8";
 	
 	public static class CacheMeta {
 
 	    private String currentCacheId;
+	    
+	    /**
+	     * Optional field used only in incrementally indexed cache implementations. 
+	     */
+	    private String nextRecordIndex;
 
-		public String getCurrentCacheId() {
+	    
+        public String getCurrentCacheId() {
 			return currentCacheId;
 		}
 
 		public void setCurrentCacheId(String currentCacheId) {
 			this.currentCacheId = currentCacheId;
 		}
+		
+        public String getNextRecordIndex() {
+            return nextRecordIndex;
+        }
+
+        public void setNextRecordIndex(String nextRecordIndex) {
+            this.nextRecordIndex = nextRecordIndex;
+        }
+
 	}
 	
 	/**
@@ -112,15 +135,34 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
             Map<String, String> parameters) throws Exception {
         String mode = parameters.get(PARAM_MODE);
         Properties props = new Properties();
-        if (MODE_READ_CURRENT_ID.equals(mode)) {
-            props.setProperty(OUTPUT_PROPERTY_CACHE_ID, getExistingCacheId(conf, parameters.get(PARAM_CACHE_DIR)));
-        } else if (MODE_GENERATE_NEW_ID.equals(mode)) {
-            props.setProperty(OUTPUT_PROPERTY_CACHE_ID, generateNewCacheId(conf, parameters.get(PARAM_CACHE_DIR)));
-        } else if (MODE_WRITE_ID.equals(mode)) {
-            writeCacheId(conf, parameters.get(PARAM_CACHE_DIR), parameters.get(PARAM_ID));
-        } else {
-            throw new RuntimeException("unsupported mode: " + mode);    
+        
+        switch(mode) {
+            case MODE_READ_CURRENT_ID: {
+                props.setProperty(OUTPUT_PROPERTY_CACHE_ID, getExistingCacheId(conf, parameters.get(PARAM_CACHE_DIR)));
+                break;
+            }
+            case MODE_GENERATE_NEW_ID: {
+                props.setProperty(OUTPUT_PROPERTY_CACHE_ID, generateNewCacheId(conf, parameters.get(PARAM_CACHE_DIR)));
+                break;
+            }
+            case MODE_WRITE_ID: {
+                writeCacheId(conf, parameters.get(PARAM_CACHE_DIR), parameters.get(PARAM_ID));
+                break;
+            }
+            case MODE_READ_META: {
+                readMeta(conf, parameters.get(PARAM_CACHE_DIR), props);
+                break;
+            }
+            case MODE_WRITE_META: {
+                writeMeta(conf, parameters.get(PARAM_CACHE_DIR), parameters.get(PARAM_ID), parameters.get(PARAM_NEXT_RECORD_INDEX));
+                break;
+            }
+            default: {
+                throw new RuntimeException("unsupported mode: " + mode);
+            }
+        
         }
+        
         File file = new File(System.getProperty(OOZIE_ACTION_OUTPUT_FILENAME));
         OutputStream os = new FileOutputStream(file);
         try {
@@ -137,8 +179,26 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
             if (cacheMeta != null) {
                 return cacheMeta.getCurrentCacheId();
             } else {
-                return NON_EXISTING_CACHE_ID;
+                return UNDEFINED;
             }
+        } else {
+            throw new RuntimeException("cache directory location not provided! "
+                    + "'" + PARAM_CACHE_DIR + "' parameter is missing!");
+        }
+    }
+    
+    public Properties readMeta(Configuration conf, String cacheDir, Properties props) throws IOException {
+        if (StringUtils.isNotBlank(cacheDir)) {
+            CacheMeta cacheMeta = readCacheMeta(fsFacadeFactory.create(conf), 
+                    new Path(cacheDir, DEFAULT_METAFILE_NAME));
+            if (cacheMeta != null) {
+                props.setProperty(OUTPUT_PROPERTY_CACHE_ID, cacheMeta.getCurrentCacheId());
+                props.setProperty(OUTPUT_PROPERTY_NEXT_RECORD_INDEX, cacheMeta.getNextRecordIndex());
+            } else {
+                props.setProperty(OUTPUT_PROPERTY_CACHE_ID, UNDEFINED);
+                props.setProperty(OUTPUT_PROPERTY_NEXT_RECORD_INDEX, UNDEFINED);
+            }
+            return props;
         } else {
             throw new RuntimeException("cache directory location not provided! "
                     + "'" + PARAM_CACHE_DIR + "' parameter is missing!");
@@ -163,6 +223,10 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
     }
     
     public void writeCacheId(Configuration conf, String cacheDir, String cacheId) throws IOException {
+        writeMeta(conf, cacheDir, cacheId, null);
+    }
+    
+    public void writeMeta(Configuration conf, String cacheDir, String cacheId, String nextRecordIndex) throws IOException {
         if (StringUtils.isNotBlank(cacheDir)) {
             if (StringUtils.isNotBlank(cacheId)) {
 
@@ -170,7 +234,13 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
                 
                 Path cacheFilePath = new Path(cacheDir, DEFAULT_METAFILE_NAME);
                 
-                CacheMeta cachedMeta = getCacheMeta(cacheId, fs, cacheFilePath);
+                CacheMeta cachedMeta = getExistingCacheMetaOrCreateNewOne(cacheId, fs, cacheFilePath);
+                if (cacheId != null) {
+                    cachedMeta.setCurrentCacheId(cacheId);    
+                }
+                if (nextRecordIndex != null) {
+                    cachedMeta.setNextRecordIndex(nextRecordIndex); 
+                }
                 
                 Gson gson = new Gson();
                 OutputStream outputStream = fs.create(cacheFilePath, true);
@@ -201,14 +271,13 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
 	/**
 	 * Reads or creates new cache metadata record.
 	 */
-    private static CacheMeta getCacheMeta(String cacheId, FileSystemFacade fs, Path cacheFilePath)
+    private static CacheMeta getExistingCacheMetaOrCreateNewOne(String cacheId, FileSystemFacade fs, Path cacheFilePath)
             throws JsonSyntaxException, JsonIOException, UnsupportedEncodingException, IOException {
         CacheMeta cachedMeta = readCacheMeta(fs, cacheFilePath);
 //      writing new id
         if (cachedMeta==null) {
             cachedMeta = new CacheMeta();
         }
-        cachedMeta.setCurrentCacheId(cacheId);
         return cachedMeta;
 	}
 	

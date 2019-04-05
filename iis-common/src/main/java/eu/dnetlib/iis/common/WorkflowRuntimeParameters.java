@@ -71,4 +71,20 @@ public final class WorkflowRuntimeParameters {
         return parameters.containsKey(paramName)?parameters.get(paramName):defaultValue;
     }
     
+    /**
+     * Provides parameter value. Returns default value when entry not found among parameters.
+     * 
+     * @param paramName parameter name
+     * @param defaultValue parameter default value to be returned when entry not found among parameters
+     * @param parameters map of parameters
+     */
+    public static String getParamValueWithUndefinedCheck(String paramName, String defaultValue, Map<String, String> parameters) {
+        
+        String paramValue = parameters.get(paramName);
+        if (StringUtils.isNotBlank(paramValue) && !UNDEFINED_NONEMPTY_VALUE.equals(paramValue)) {
+            return paramValue;
+        } else {
+            return defaultValue;
+        }
+    }
 }

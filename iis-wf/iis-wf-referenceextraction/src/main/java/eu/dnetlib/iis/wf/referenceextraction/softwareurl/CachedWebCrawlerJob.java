@@ -102,7 +102,7 @@ public class CachedWebCrawlerJob {
             String existingCacheId = cacheManager.getExistingCacheId(hadoopConf, cacheRootDir);
             
             // checking whether cache is empty
-            if (CacheMetadataManagingProcess.NON_EXISTING_CACHE_ID.equals(existingCacheId)) {
+            if (CacheMetadataManagingProcess.UNDEFINED.equals(existingCacheId)) {
                 
                 createCache(documentToSoftwareUrl, cacheRootDir, 
                         contentRetrieverContext, lockManager, sc, cacheManager, outputPaths);
