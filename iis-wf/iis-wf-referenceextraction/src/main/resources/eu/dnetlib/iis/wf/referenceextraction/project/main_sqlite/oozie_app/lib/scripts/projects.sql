@@ -19,7 +19,7 @@ hidden var 'wt_unidentified' from select id from grants where fundingclass1="WT"
 create temp table pubs as setschema 'c1,c2' select jsonpath(c1, '$.id', '$.text') from stdinput();
 
 create temp table matched_undefined_miur_only as select distinct docid, var('miur_unidentified') as id from (setschema 'docid,prev,middle,next'
-select c1 as docid, textwindow2s(c2,20,1,20, '\b(?:RBSI\d{2}\w{4})\b') from (setschema 'c1,c2' select * from pubs where c2 is not null)) where var('miur_unidentified') and (regexprmatches('\b(?:RBSI\d{2}\w{4})\b', middle));
+select c1 as docid, textwindow2s(c2,10,1,10, '\b(?:RBSI\d{2}\w{4})\b') from (setschema 'c1,c2' select * from pubs where c2 is not null)) where var('miur_unidentified') and (regexprmatches('\b(?:RBSI\d{2}\w{4})\b', middle));
 
 create temp table matched_undefined_wt_only as select distinct docid, var('wt_unidentified') as id from (setschema 'docid,prev,middle,next'
 select c1 as docid, textwindow2s(c2,20,2,3, '(\bWel?lcome Trust\b|\bWT\b)') from (setschema 'c1,c2' select * from pubs where c2 is not null)) where var('wt_unidentified') and (regexprmatches('\bWel?lcome Trust\b', middle) or 
@@ -28,7 +28,7 @@ regexpcountwords('(?:\bwell?come trust\b)|(?:(?:\bthis work was|financial(?:ly)?
 create temp table output_table as
 
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8) as C1, docid, id, fundingclass1, grantid from (
-select docid,id,fundingclass1, grantid from (select * from (setschema 'docid,prev,middle,next' select c1 as docid,textwindow2s(regexpr("\n",c2," "),20,1,20, '\bRBSI\d{2}\w{4}\b') from (setschema 'c1,c2' select * from pubs where c2 is not null) ) ,grants where fundingclass1="MIUR" and regexpr("((?:RBSI\d{2}\w{4})|(?:2015\w{6}))",middle) = grantid)
+select docid,id,fundingclass1, grantid from (select * from (setschema 'docid,prev,middle,next' select c1 as docid,textwindow2s(regexpr("\n",c2," "),10,1,10, '(?:RBSI\d{2}\w{4})|(?:2015\w{6})') from (setschema 'c1,c2' select * from pubs where c2 is not null) ) ,grants where fundingclass1="MIUR" and regexpr("((?:RBSI\d{2}\w{4})|(?:2015\w{6}))",middle) = grantid)
 group by docid,id)
 
 union all
