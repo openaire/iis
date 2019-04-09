@@ -1,11 +1,11 @@
 """functions
 """
-VERSION="1.7"
+VERSION = "1.9"
 
+import setpath
 import os.path
 import os
 import apsw
-import setpath
 import sqltransform
 import traceback
 import logging
@@ -13,7 +13,6 @@ import re
 import sys
 import copy
 
-import compiler.consts
 try:
     from collections import OrderedDict
 except ImportError:
@@ -59,17 +58,18 @@ settings={
 'syspath':str(os.path.abspath(os.path.expandvars(os.path.expanduser(os.path.normcase(sys.path[0])))))
 }
 
-functions = {'row':{},'aggregate':{}, 'vtable':{}}
+functions = {'row': {}, 'aggregate': {}, 'vtable': {}}
 multiset_functions = {}
-iterheader='ITER'+chr(30)
+iterheader = 'ITER'+chr(30)
 
-variables=lambda x:x
-variables.flowname=''
-variables.execdb=None
+variables = lambda _: _
+variables.flowname = ''
+variables.execdb = None
+variables.filename = ''
 
-privatevars=lambda x:x
+privatevars=lambda _: _
 
-rowfuncs=lambda x:x
+rowfuncs=lambda _: _
 
 oldexecdb=-1
 
@@ -139,11 +139,18 @@ def echofunctionmember(func):
         return func(*args, **kw)
     return wrapper
 
-def iterwrapper(connection, func, *args):
+def iterwrapper(con, func, *args):
     global iterheader
     i=func(*args)
     si=iterheader+str(i)
-    connection.openiters[si]=i
+    con.openiters[si]=i
+    return buffer(si)
+
+def iterwrapperaggr(con, func, self):
+    global iterheader
+    i=func(self)
+    si=iterheader+str(i)
+    con.openiters[si]=i
     return buffer(si)
 
 class Cursor(object):
@@ -268,6 +275,40 @@ class Connection(apsw.Connection):
             self.openiters = {}
             
         return Cursor(apsw.Connection.cursor(self))
+
+    def queryplan(self, statements, bindings=None, parse=True, localbindings=None):
+        def authorizer(operation, paramone, paramtwo, databasename, triggerorview):
+            """Called when each operation is prepared.  We can return SQLITE_OK, SQLITE_DENY or SQLITE_IGNORE"""
+            # find the operation name
+            plan.append([apsw.mapping_authorizer_function[operation], paramone, paramtwo, databasename, triggerorview])
+            return apsw.SQLITE_OK
+
+        def buststatementcache():
+            c = self.cursor()
+            for i in xrange(110):
+                a = list(c.execute("select "+str(i)))
+
+        plan = []
+
+        buststatementcache()
+
+        cursor = self.cursor()
+
+        cursor.setexectrace(lambda v1, v2, v3: apsw.SQLITE_DENY)
+
+        self.setauthorizer(authorizer)
+
+        cursor.execute(statements)
+
+        self.setauthorizer(None)
+
+        cursor.close()
+
+        yield (('operation', 'text'), ('paramone', 'text'), ('paramtwo', 'text'), ('databasename', 'text'), ('triggerorview', 'text'))
+
+        for r in plan:
+            if r[1] not in ('sqlite_temp_master', 'sqlite_master'):
+                yield r
     
     @echofunctionmember
     def close(self):
@@ -276,20 +317,21 @@ class Connection(apsw.Connection):
 def register(connection=None):
     global firstimport, oldexecdb
 
-    if connection==None:
+    if connection == None:
         if 'SQLITE_OPEN_URI' in apsw.__dict__:
-            connection=Connection(':memory:', flags=apsw.SQLITE_OPEN_READWRITE | apsw.SQLITE_OPEN_CREATE | apsw.SQLITE_OPEN_URI)
+            connection = Connection(':memory:', flags=apsw.SQLITE_OPEN_READWRITE | apsw.SQLITE_OPEN_CREATE | apsw.SQLITE_OPEN_URI)
         else:
-            connection=Connection(':memory:')
+            connection = Connection(':memory:')
 
     connection.openiters = {}
-    connection.registered=True
+    connection.registered = True
+    connection.cursor().execute("attach database ':memory:' as mem;", parse=False)
 
-    connection.cursor().execute("attach database ':memory:' as mem;",parse=False)
+    variables.filename = connection.filename
 
     # To avoid db corruption set connection to fullfsync mode when MacOS is detected
-    if sys.platform=='darwin':
-        c=connection.cursor().execute('pragma fullfsync=1;', parse=False)
+    if sys.platform == 'darwin':
+        c = connection.cursor().execute('pragma fullfsync=1;', parse=False)
 
     functionspath=os.path.abspath(__path__[0])
 
@@ -395,10 +437,16 @@ def register_ops(module, connection):
             return False
 
 
-    def wrapfunction(connection, opfun):
-        return lambda *args: iterwrapper(connection, opfun, *args)
+    def wrapfunction(con, opfun):
+        return lambda *args: iterwrapper(con, opfun, *args)
 
-    multaggr = {}
+    def wrapaggr(con, opfun):
+        return lambda self: iterwrapperaggr(con, opfun, self)
+
+    def wrapaggregatefactory(wlambda):
+        return lambda cls: (cls(), cls.step, wlambda)
+
+
     for f in module.__dict__:
         fobject = module.__dict__[f]
         if hasattr(fobject, 'registered') and type(fobject.registered).__name__ == 'bool' and fobject.registered == True:
@@ -435,26 +483,20 @@ def register_ops(module, connection):
                 functions['aggregate'][opname] = fobject
 
                 if isgeneratorfunction(fobject.final):
-                    cfobject=copy.deepcopy(fobject)
-                    cfobject.__iterated_final__=cfobject.final
-                    cfobject.final=wrapfunction(connection, cfobject.__iterated_final__)
-                    fobject.multiset=True
-                    cfobject.multiset=True
-                    multaggr[opname] = cfobject
-
-                    setattr(cfobject,'factory',classmethod(lambda cls:(cls(), cls.step, cls.final)))
-                    connection.createaggregatefunction(opname, cfobject.factory)
+                    wlambda = wrapaggr(connection, fobject.final)
+                    fobject.multiset = True
+                    setattr(fobject, 'factory', classmethod(wrapaggregatefactory(wlambda)))
+                    connection.createaggregatefunction(opname, fobject.factory)
                 else:
-                    setattr(fobject,'factory',classmethod(lambda cls:(cls(), cls.step, cls.final)))
+                    setattr(fobject, 'factory', classmethod(lambda cls:(cls(), cls.step, cls.final)))
                     connection.createaggregatefunction(opname, fobject.factory)
 
             try:
-                if fobject.multiset == True:
-                    multiset_functions[opname]=True
+                if fobject.multiset:
+                    multiset_functions[opname] = True
             except:
                 pass
 
-    connection.multaggr = multaggr
 
 def testfunction():
     global test_connection, settings
