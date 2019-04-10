@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#!/usr/bin/env python
 
 import os
 import sys
@@ -14,9 +14,9 @@ if sys.platform == 'darwin':
 #except ImportError: pass
 #else: del lib.winunicode
 
+import functions
 import re
 import apsw
-import functions
 import traceback
 import json
 import math
@@ -127,7 +127,7 @@ def reloadfunctions():
         lib.reimport.reimport('functionslocal')
     except ValueError:
         pass
-    
+
     connection = createConnection(db)
     functions.settings=tmp_settings
     functions.variables=tmp_vars
@@ -142,7 +142,7 @@ def raw_input_no_history(*args):
             connection.close()
             exit(0)
         return input
-    
+
     try:
         input = raw_input(*args)
     except:
@@ -284,7 +284,7 @@ def update_cols_from_tables_in_text(t):
 
     if t==_update_cols_from_tables_last_text:
         return
-    
+
     _update_cols_from_tables_last_text=t
 
     stablesreg='|'.join( (x.replace('$','\$').replace('.', '\.') for x in sorted(alltablescompl, key=len, reverse=True)) )
@@ -297,7 +297,7 @@ def update_cols_from_tables_in_text(t):
 def mcomplete(textin,state):
     global number_of_kb_exceptions
     number_of_kb_exceptions = 0
-    
+
     def normalizename(col):
         if re.match(ur'\.*[\w_$\d.]+\s*$', col,re.UNICODE):
             return col
@@ -318,7 +318,7 @@ def mcomplete(textin,state):
     if text[-2:]=='\\t':
         if state==0: return text[:-2]+'\t'
         else: return
-        
+
     prefix=''
 
     localtables=[]
@@ -407,7 +407,7 @@ def mcomplete(textin,state):
     if state<len(hits):
         sqlstatem=set(sqlandmtermstatements)
         altset=set(localtables)
-        
+
         if hits[state]=='..':
             if text=='..' and lastcols!=[]:
                 return prefix+', '.join([normalizename(x) for x in lastcols])+' '
@@ -440,7 +440,7 @@ def schemaprint(cols):
 
     if pipedinput:
         return
-    
+
     if cols!=[]:
         sys.stdout.write(Style.BRIGHT+'--- '+Style.NORMAL+ Fore.RED+'['+Style.BRIGHT+'0'+Style.NORMAL+'|'+Style.RESET_ALL+Style.BRIGHT+'Column names '+'---'+Style.RESET_ALL+'\n')
         colschars=0
@@ -598,6 +598,7 @@ helpmessage=""".functions             Lists all functions
 .separator SEP         Change separator to SEP. For tabs use 'tsv' or '\\t' as SEP
                        Separator is used only when NOT using colnums
 .vacuum                Vacuum DB using a temp file in current path
+.queryplan query       Displays the queryplan of the query
 
 Use: FILE or CLIPBOARD function for importing data
      OUTPUT or CLIPOUT function for exporting data"""
@@ -618,7 +619,7 @@ if not pipedinput:
         pass
     import atexit
     atexit.register(readline.write_history_file, histfile)
-    
+
     automatic_reload=True
     readline.set_completer(mcomplete)
     readline.parse_and_bind("tab: complete")
@@ -641,7 +642,7 @@ process_args()
 
 sqlandmtermstatements=['select ', 'create ', 'where ', 'table ', 'group by ', 'drop ', 'order by ', 'index ', 'from ', 'alter ', 'limit ', 'delete ', '..',
     "attach database '", 'detach database ', 'distinct', 'exists ']
-dotcompletions=['.help ', '.colnums', '.schema ', '.functions ', '.tables', '.quote', '.explain ', '.vacuum', '.quit']
+dotcompletions=['.help ', '.colnums', '.schema ', '.functions ', '.tables', '.explain ', '.vacuum', '.queryplan ']
 allfuncs=functions.functions['vtable'].keys()+functions.functions['row'].keys()+functions.functions['aggregate'].keys()
 alltables=[]
 alltablescompl=[]
@@ -682,6 +683,7 @@ while True:
     #scan for commands
     iscommand=re.match("\s*\.(?P<command>\w+)\s*(?P<argument>([\w\.]*))(?P<rest>.*)$", statement)
     validcommand=False
+    queryplan = False
 
     if iscommand:
         validcommand=True
@@ -710,6 +712,13 @@ while True:
 
         elif command=='explain':
             statement=re.sub("^\s*\.explain\s+", "explain query plan ", origstatement)
+
+        elif command=='queryplan':
+            try:
+                statement = re.match(r"\s*\.queryplan\s+(.+)", origstatement).groups()[0]
+                queryplan = True
+            except IndexError:
+                pass
 
         elif command=='quote':
             allquote^=True
@@ -778,7 +787,7 @@ while True:
 
         elif command=='vacuum':
             statement="PRAGMA temp_store_directory = '.';VACUUM;PRAGMA temp_store_directory = '';"
-          
+
         elif command=='schema':
             if not argument:
                 statement="select sql from (select * from sqlite_master union all select * from sqlite_temp_master) where sql is not null;"
@@ -851,22 +860,24 @@ while True:
             pass
 
         before = datetime.datetime.now()
-        cursor = connection.cursor()
         try:
-            cexec=cursor.execute(statement)
+            if queryplan:
+                cexec = connection.queryplan(statement)
+                desc = cexec.next()
+            else:
+                cursor = connection.cursor()
+                cexec = cursor.execute(statement)
+                try:
+                    desc = cursor.getdescriptionsafe()
+                    lastcols[0:len(desc)] = [x for x, y in desc]
+                except apsw.ExecutionCompleteError, e:
+                    desc = []
 
-            desc = []
-            try:
-                desc = cursor.getdescriptionsafe()
-                newcols=[x for x,y in desc]
-                lastcols[0:len(newcols)]=newcols
-            except apsw.ExecutionCompleteError, e:
-                desc = []
-                newcols=[]
+            newcols=[x for x,y in desc]
 
             colorama.init()
             rownum=0
-            
+
             if not pipedinput:
                 for row in cexec:
                     printrow(row)
@@ -880,7 +891,8 @@ while True:
                 print
                 sys.stdout.flush()
 
-            cursor.close()
+            if not queryplan:
+                cursor.close()
 
             after=datetime.datetime.now()
             tmdiff=after-before
@@ -896,7 +908,7 @@ while True:
                     print "in %s min. %s sec %s msec." %((int(tmdiff.days)*24*60+(int(tmdiff.seconds)/60),(int(tmdiff.seconds)%60),(int(tmdiff.microseconds)/1000)))
             if beeping:
                 printterm('\a\a')
-                
+
             colscompl=[]
             updated_tables=set()
 

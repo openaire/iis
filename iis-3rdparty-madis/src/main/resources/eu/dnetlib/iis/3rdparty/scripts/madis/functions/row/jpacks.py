@@ -7,11 +7,31 @@ import itertools
 import re
 import functions
 import math
+import unicodedata
+
+
 try:
     from collections import OrderedDict
 except ImportError:
     # Python 2.6
     from lib.collections26 import OrderedDict
+
+characters_to_clean=re.compile(ur"""[^\w!-~]""", re.UNICODE)
+
+def utf8clean(arg):
+    def cleanchar(c):
+        c=c.group()[0]
+        if c != '\n' and unicodedata.category(c)[0] == 'C':
+            return u''
+        else:
+            return c
+
+    o=''
+    if type(arg) in (str,unicode):
+        o+=characters_to_clean.sub(cleanchar, arg)
+    else:
+        o+=unicode(arg, errors='replace')
+    return o
 
 def jngrams(*args):
 
@@ -1175,10 +1195,13 @@ def jsonpath(*args):
     try:
         j = json.loads(args[0])
     except:
-        import sys
-        sys.stderr.write(args[0])
-        error = 'Error in input line: '+ args[0]
-        raise Exception(error)
+        try:
+            j = json.loads(utf8clean(args[0]))
+        except:
+            import sys
+            sys.stderr.write(args[0])
+            error = 'Error in input line: '+ args[0]
+            raise
 
     yield tuple( ('C'+str(x)for x in xrange( 1,len(args) ) )   )
     output=[libjsonpath(j, jp, use_eval=False) for jp in args[1:]]
