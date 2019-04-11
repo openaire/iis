@@ -244,17 +244,12 @@
   "confidenceLevel": 0.73029673
 }
 {
-   "documentId": "50|od________18::af12336ed23ff5e0356212b0e0ba0cd6",
-   "projectId": "40|miur________::1e5e62235d094afd01cd56e65112fc63",
-   "confidenceLevel": 0.800000011920929
-}
-{
-   "documentId": "50|od________18::84e8b436dc8655b0a6721cf40f65a0b3",
-   "projectId": "40|miur________::00be7a1d78985fc858435f728da32d53",
-   "confidenceLevel": 0.800000011920929
-}
-{
 	"documentId": "50|dedup_wf_001::92685f7e22342478a67376985a967618",
 	"projectId": "40|gsrt________::574ef85ac608988be5167363bb257010",
 	"confidenceLevel": 0.8164966106414795
+}
+{
+	"documentId": "50|od________18::9580de872794f07653f436e1ba51007f",
+	"projectId": "40|miur________::54a1d3c536227e295a9982eaf8fd3791",
+	"confidenceLevel": 0.800000011920929
 }

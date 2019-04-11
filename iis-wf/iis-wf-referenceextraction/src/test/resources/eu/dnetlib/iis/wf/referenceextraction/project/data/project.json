@@ -48,6 +48,5 @@
 {"id":"40|tubitakf____::e924b627978040d00669a0f9c050ad42","projectGrantId":"111E036","projectAcronym":null,"fundingClass":"TUBITAK::1001 - Araştırma","jsonextrainfo":"{}"}
 {"id":"40|sgov________::fed79325b85dc27b9d75a498838e2de7","projectGrantId":"MTM2012-31073","projectAcronym":null,"fundingClass":"SGOV::Ministerio de Economía y Competitividad","jsonextrainfo":"{}"}
 {"id":"40|aka_________::b418b9f235f483c5127a88403fc34ef9","projectGrantId":"129662","projectAcronym":null,"fundingClass":"AKA::","jsonextrainfo":"{}"}
-{"id":"40|miur________::1e5e62235d094afd01cd56e65112fc63","projectGrantId":"unidentified","projectAcronym":null,"fundingClass":"MIUR::","jsonextrainfo":"{}"}
-{"id":"40|miur________::00be7a1d78985fc858435f728da32d53", "projectGrantId":"RBSI14P4IH", "projectAcronym":"SIMCODE", "fundingClass":"MIUR::SIR 2014", "jsonextrainfo":"{\"settore\":\"Cosmology\"}"}
 {"id":"40|gsrt________::574ef85ac608988be5167363bb257010", "projectGrantId": "447985", "projectAcronym": null, "fundingClass": "GSRT::", "jsonextrainfo": "{}"}
+{"id":"40|miur________::54a1d3c536227e295a9982eaf8fd3791", "projectGrantId": "2015KB9WPT", "projectAcronym": null, "fundingClass": "MIUR::PRIN 2015", "jsonextrainfo": "{}"}
