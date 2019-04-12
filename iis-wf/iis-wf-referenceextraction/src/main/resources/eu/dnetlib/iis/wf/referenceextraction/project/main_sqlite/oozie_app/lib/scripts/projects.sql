@@ -156,7 +156,8 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min
                 regexpcountwithpositions(var('fp7neglight'),nextpack)*0.03 -
                 regexpcountwithpositions(var('fp7negheavy'),nextpack,1)*0.08
                 when fundingClass2="H2020" then
-                    regexpcountwords("h2020|horizon 2020|european research council|\berc\b",j2s(prevpack,middle,nextpack))
+                    2*regexprmatches(normalizedacro,prev||" "||middle||" "||next) +
+                    regexpcountwords("h2020|horizon\s*2020|european\s*research\s*council|\berc\b|sk\wodowska|curie grant|marie\s*sklodowska\s*curie|marie\s*curie|european\s*commission|\beu\s*grant|\beu\s*project|\bec\s*grant|\bec\s*project|european\s*union",j2s(prevpack,middle,nextpack))
             end
        end as confidence
                 from
