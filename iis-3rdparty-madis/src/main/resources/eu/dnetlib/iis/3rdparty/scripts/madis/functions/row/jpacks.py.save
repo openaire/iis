@@ -27,10 +27,12 @@ def utf8clean(arg):
             return c
 
     o=''
+    print "clean "+ arg
     if type(arg) in (str,unicode):
         o+=characters_to_clean.sub(cleanchar, arg)
     else:
         o+=unicode(arg, errors='replace')
+    print "ready "
     return o
 
 def jngrams(*args):
@@ -1193,7 +1195,7 @@ def jsonpath(*args):
 
     """
     try:
-        j = json.loads(args[0])
+        j = json.loads(a)
     except:
         try:
             j = json.loads(utf8clean(args[0]))

@@ -590,6 +590,10 @@ def regexpcountwords(*args):
 
 regexpcountwords.registered=True
 
+def test(*args):
+    return unicode(args[0])
+
+test.registered=True
 
 def contains(*args):
     """
