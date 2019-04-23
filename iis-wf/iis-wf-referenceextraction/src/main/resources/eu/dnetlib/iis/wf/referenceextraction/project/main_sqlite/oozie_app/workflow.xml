@@ -61,7 +61,7 @@
             	convention of passing them as named arguments makes the code
             	more readable/maintainable.
             	 -->
-                <mapper>scripts/madis/mexec.py -d project.db -f scripts/projects.sql</mapper>
+                <mapper>pypy scripts/madis/mexec.py -d project.db -f scripts/projects.sql</mapper>
             </streaming>
             <configuration>
             	<!-- # Standard settings for our framework -->

@@ -31,7 +31,7 @@ public class ProjectDBBuilder extends AbstractDBBuilder<Project> {
         FileUtils.copyFile(new File("scripts/base_projects.db"), targetDbFile);
         targetDbFile.setWritable(true);
         return new ProcessExecutionContext(
-                Runtime.getRuntime().exec("python scripts/madis/mexec.py -d " + targetDbLocation + " -f scripts/buildprojectdb.sql"),
+                Runtime.getRuntime().exec("pypy scripts/madis/mexec.py -d " + targetDbLocation + " -f scripts/buildprojectdb.sql"),
                 targetDbFile);
     }
 }

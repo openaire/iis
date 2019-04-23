@@ -112,7 +112,7 @@
             <streaming>
                 <!-- Here, we give the relative path to the script and pass it the parameters of the workflow node. The script is held in a directory having the same name as the workflow node. The parameters 
                     should be passed as **named** arguments. This convention of passing them as named arguments makes the code more readable/maintainable. -->
-                <mapper>scripts/madis/mexec.py -f scripts/software.sql</mapper>
+                <mapper>pypy scripts/madis/mexec.py -f scripts/software.sql</mapper>
             </streaming>
             <configuration>
                 <!-- # Standard settings for our framework -->
@@ -208,7 +208,7 @@
             <streaming>
                 <!-- Here, we give the relative path to the script and pass it the parameters of the workflow node. The script is held in a directory having the same name as the workflow node. The parameters 
                     should be passed as **named** arguments. This convention of passing them as named arguments makes the code more readable/maintainable. -->
-                <mapper>scripts/madis/mexec.py -d origins.db -f scripts/softwarepost.sql</mapper>
+                <mapper>pypy scripts/madis/mexec.py -d origins.db -f scripts/softwarepost.sql</mapper>
             </streaming>
             <configuration>
                 <!-- # Standard settings for our framework -->
