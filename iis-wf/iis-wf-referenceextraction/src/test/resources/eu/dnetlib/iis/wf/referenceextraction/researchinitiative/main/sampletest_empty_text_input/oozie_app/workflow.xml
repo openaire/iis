@@ -77,6 +77,10 @@
                     <name>output_document_to_research_initiative</name>
                     <value>${workingDir}/referenceextraction_researchinitiative/document_to_research_initiative</value>
                 </property>
+                <property>
+                    <name>sparkExecutorOverhead</name>
+                    <value>512</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="consumer"/>

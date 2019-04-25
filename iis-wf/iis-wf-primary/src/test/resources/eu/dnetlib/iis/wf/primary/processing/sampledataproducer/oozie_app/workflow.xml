@@ -367,6 +367,10 @@
                     <value>512</value>
                 </property>
                 <property>
+                    <name>researchInitiativeReferenceExtractionSparkExecutorOverhead</name>
+                    <value>512</value>
+                </property>
+                <property>
                     <name>webcrawlContentRetrieverClassName</name>
                     <value>eu.dnetlib.iis.wf.primary.processing.ClasspathContentRetriever</value>
                 </property>

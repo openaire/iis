@@ -31,6 +31,10 @@
             <description>memory for individual executor</description>
         </property>
         <property>
+            <name>sparkExecutorOverhead</name>
+            <description>The amount of off heap memory (in megabytes) to be allocated for the executor</description>
+        </property>
+        <property>
             <name>sparkExecutorCores</name>
             <description>number of cores used by single executor</description>
         </property>
@@ -52,7 +56,7 @@
             <name>researchinitiative-input-metadata-transformer</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.researchinitiative.ResearchInitiativeReferenceExtractionInputTransformerJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory} --conf spark.yarn.executor.memoryOverhead=${sparkExecutorOverhead}</spark-opts>
             <arg>-inputMetadata=${input_document_metadata}</arg>
             <arg>-inputText=${input_document_text}</arg>
             <arg>-output=${workingDir}/document_metadata</arg>

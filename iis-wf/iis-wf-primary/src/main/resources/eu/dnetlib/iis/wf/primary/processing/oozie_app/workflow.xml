@@ -195,6 +195,11 @@
             <value>${sparkExecutorCores}</value>
             <description>number of cores used by single executor</description>
         </property>
+        <property>
+            <name>researchInitiativeReferenceExtractionSparkExecutorOverhead</name>
+            <value>2048</value>
+            <description>The amount of off heap memory (in megabytes) to be allocated for the executor</description>
+        </property>
         <!-- spark related: documents classification -->
         <property>
             <name>documentsclassificationSparkDriverMemory</name>
@@ -1021,6 +1026,10 @@
                 <property>
                     <name>sparkExecutorCores</name>
                     <value>${researchInitiativeReferenceExtractionSparkExecutorCores}</value>
+                </property>
+                <property>
+                    <name>sparkExecutorOverhead</name>
+                    <value>${researchInitiativeReferenceExtractionSparkExecutorOverhead}</value>
                 </property>
                 <property>
                     <name>output_document_to_research_initiative</name>
