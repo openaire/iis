@@ -40,7 +40,7 @@ public class ResearchInitiativeDBBuilder extends AbstractDBBuilder<ResearchIniti
         targetDbFile.setWritable(true);
 
         return new ProcessExecutionContext(
-                Runtime.getRuntime().exec("pypy scripts/madis/mexec.py -w " + targetDbLocation + " -f " + scriptLocation),
+                Runtime.getRuntime().exec("/usr/local/sbin/pypy scripts/madis/mexec.py -w " + targetDbLocation + " -f " + scriptLocation),
                 targetDbFile);
     }
 

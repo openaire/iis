@@ -57,7 +57,7 @@
             	convention of passing them as named arguments makes the code
             	more readable/maintainable.
             	 -->
-                <mapper>pypy scripts/madis/mexec.py -d scripts/pdb.db -f scripts/pdbquery.sql</mapper>
+                <mapper>/usr/local/sbin/pypy scripts/madis/mexec.py -d scripts/pdb.db -f scripts/pdbquery.sql</mapper>
             </streaming>
             <configuration>
             	<!-- # Standard settings for our framework -->
