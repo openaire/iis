@@ -9,7 +9,9 @@ pragma auto_vacuum=2;
 
 -- import and preparation
 create temp table datac
-as select id as dsetID, idForGivenType as doi, j2s(creatorNames) as creator, titles as title, publisher, publicationYear as year, resourceTypeValue as typegeneral from (setschema 'id, idForGivenType, creatorNames, titles, publisher, publicationYear, resourceTypeValue, referenceType' select jdictsplit(c1, 'id', 'idForGivenType', 'creatorNames', 'titles', 'publisher', 'publicationYear', 'resourceTypeValue', 'referenceType') from stdinput()) where referenceType = 'doi';
+as select * from (select id as dsetID, idForGivenType as doi, j2s(creatorNames) as creator, titles as title, publisher, publicationYear as year, resourceTypeValue as typegeneral from (setschema 'id, idForGivenType, creatorNames, titles, publisher, publicationYear, resourceTypeValue, referenceType' select jdictsplit(c1, 'id', 'idForGivenType', 'creatorNames', 'titles', 'publisher', 'publicationYear', 'resourceTypeValue', 'referenceType') from stdinput()) where referenceType = 'doi') where publisher != "" and publisher is not null and creator != "" and creator is not null;
+
+
 
 create temp table datacite 
 as select dsetID, max(doi) as doi, creator, normalizetext(lower(title)) as title, publisher, year, typegeneral from datac where title like "% % %" group by title;
