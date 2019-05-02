@@ -120,7 +120,8 @@ public class ProjectBasedMatchingJob {
     private static JavaPairRDD<String, CharSequence> getProjectToFundingClass(JavaSparkContext sc, String inputAvroProjectPath, String projectFundingClassWhitelistRegex) {
         SparkAvroLoader avroLoader = new SparkAvroLoader();
         JavaRDD<Project> projects = avroLoader.loadJavaRDD(sc, inputAvroProjectPath, Project.class);
-        return projects.mapToPair(e -> new Tuple2<>(e.getId().toString(), e.getFundingClass())).filter(e -> Pattern.matches(projectFundingClassWhitelistRegex, e._2));
+        return projects.mapToPair(e -> new Tuple2<>(e.getId().toString(), e.getFundingClass())).filter(
+                e -> (e._2 != null && Pattern.matches(projectFundingClassWhitelistRegex, e._2)));
     }
     
     private static Tuple2<CharSequence, CharSequence> buildMatchedOrgKey(MatchedOrganization element) {
