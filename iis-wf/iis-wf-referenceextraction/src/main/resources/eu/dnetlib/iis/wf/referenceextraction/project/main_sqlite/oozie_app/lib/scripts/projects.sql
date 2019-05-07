@@ -53,7 +53,14 @@ WHERE fundingclass1="RCUK" and middle = grantid
 ) where confidence>0.3 ) group by docid,id)
 
 union all
+--DFG
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8) as C1, docid, id, fundingclass1, grantid from  
+(setschema 'docid,prev,middle,next' select c1, textwindow2s(regexpr("\n",filterstopwords(keywords(c2)),"\s"),10,2,7,"\w{3}\s\d{1,4}" ) from pubs where c2 is not null), grants 
+where lower(regexpr("(\w{3}\s\d{1,4})",middle)) = grantid and 
+regexprmatches("support|project|grant|fund|thanks|agreement|research|acknowledge|centre|center|nstitution|program|priority|dfg|german|dutch|deutche",lower(j2s(prev,middle,next))) group by docid, id
+--DFG
 
+union all
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8) as C1, docid, id, fundingclass1, grantid from (
 select docid,id,fundingclass1,grantid from (select docid,upper(regexpr("(\w+.*\d+)",middle)) as match,id,grantid,middle,fundingclass1,grantid  from (setschema 'docid,prev,middle,next' select c1 as docid,textwindow2s(c2,15,1,5,"(.+\/\w+\/\d{4}\W*\Z)|(\d{4})|(\d{6,7})|(\w{2}\d{4,})|(\w+\/\w+\/\w+)|(\w*\/[\w,\.]*\/\w*)|(?:\d{3}\-\d{7}\-\d{4})|(?:(?:\b|U)IP\-2013\-11\-\d{4}\b)|(\b(?:(?:(?:\w{2,3})(?:\.|\-)(?:\w{2,3})(?:\.|\-)(?:\w{2,3}))|(?:\d+))\b)|(?:\b\d{7,8}\b)|(?:\b\d{3}[A-Z]\d{3}\b)|(?:[A-Z]{2,3}.+)") from (setschema 'c1,c2' select * from pubs where c2 is not null) ) , grants where 
 (match = grantid and (fundingclass1 in ("FCT","ARC"))) or 
