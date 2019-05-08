@@ -8,6 +8,11 @@
 			<name>input_dataset</name>
 			<description>input dataset datastore</description>
 		</property>
+        <property>
+            <name>dataset_datacite_sqlite_builder_java_opts</name>
+            <value>-Xmx10g</value>
+            <description>java-opts, e.g. maximum heap size for a single JVM running sqlite database builder</description>
+        </property>
 		<property>
 			<name>output_dataset_db</name>
 			<description>output dataset SQLite DB path</description>
@@ -36,6 +41,7 @@
         <java>
             <!-- This is simple wrapper for the Java code -->
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <java-opts>${dataset_datacite_sqlite_builder_java_opts}</java-opts>
             <!-- The business Java code that gets to be executed -->
             <arg>eu.dnetlib.iis.wf.referenceextraction.dataset.DatasetDBBuilder</arg>
             <!-- All input and output ports have to be bound to paths in 

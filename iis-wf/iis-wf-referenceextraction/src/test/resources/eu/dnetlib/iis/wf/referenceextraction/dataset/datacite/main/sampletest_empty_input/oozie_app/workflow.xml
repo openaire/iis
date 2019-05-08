@@ -67,6 +67,10 @@
                     <name>oozieLauncherQueueName</name>
                     <value>${oozieLauncherQueueName}</value>
                 </property>
+                <property>
+                    <name>dataset_datacite_sqlite_builder_java_opts</name>
+                    <value>-Xmx1g</value>
+                </property>
                 <!-- Working directory of the subworkflow -->
                 <property>
                     <name>workingDir</name>

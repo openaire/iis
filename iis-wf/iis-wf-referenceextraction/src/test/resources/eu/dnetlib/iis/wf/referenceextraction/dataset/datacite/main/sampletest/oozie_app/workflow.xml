@@ -73,6 +73,10 @@
                     <value>${workingDir}/referenceextraction_dataset/working_dir</value>
                 </property>
                 <property>
+                    <name>dataset_datacite_sqlite_builder_java_opts</name>
+                    <value>-Xmx1g</value>
+                </property>
+                <property>
                     <name>input_document_text</name>
                     <value>${workingDir}/producer/document_text</value>
                 </property>
