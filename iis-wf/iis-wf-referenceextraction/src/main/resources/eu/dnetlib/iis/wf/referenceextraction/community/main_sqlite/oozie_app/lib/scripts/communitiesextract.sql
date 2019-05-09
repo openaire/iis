@@ -39,7 +39,8 @@ select jdict('documentId', docid, 'conceptId', conceptId, 'confidenceLevel', 0.5
 select docid, conceptId, conceptLabel, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||next as context
 from (
 setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("\n", C2, " ")),10,1,10, '(?i)\bInstruct\b') from pubs where c2 is not null
-), grants where conceptLabel="Instruct-ERIC" and regexprmatches('(?i)(?:\bERIC\b)|(?:\bESFRI\b)|(?:\bEuropean Strategy Forum on Research Infrastructures\b)', context)
+), grants where conceptLabel="Instruct-ERIC" and 
+regexprmatches('(?i)(?:\bERIC\b)|(?:\bESFRI\b)|(?:\bEuropean Strategy Forum on Research Infrastructures\b)|Instruct‐HiLIFE|Instruct‐FI|UK Instruct Centre|INSTRUCT platform|FRISBI|GRAL|Grenoble', context)
 ) group by docid
 
 union all
@@ -51,3 +52,4 @@ from (
 setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("\n", C2, " ")),20,1,10, '(?:\b5002780\b)|(?:\bELIXIR\b)') from pubs where c2 is not null
 ), grants where conceptLabel="ELIXIR-GR" and regexprmatches('(?:\bMIS\b)|(?:\bELIXIR-GR\b)|(?:\b[Ee]lixir-[Gg]r\b)|(?:\b[Ee]lixir\b[Gg]reece\b)', context)
 ) group by docid;
+
