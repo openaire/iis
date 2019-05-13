@@ -258,11 +258,6 @@
             <value>$UNDEFINED$</value>
             <description>action-set identifier of exported data containing software entities</description>
         </property>
-        <property>
-            <name>export_action_set_id_entity_dataset</name>
-            <value>$UNDEFINED$</value>
-            <description>action-set identifier of exported data containing dataset entities</description>
-        </property>
         <!-- trust level threshold section -->
         <property>
             <name>export_trust_level_threshold</name>
@@ -700,10 +695,6 @@
                     <value>${workingDir}/exported/document_to_dataset</value>
                 </property>
                 <property>
-                    <name>input_dataset_text</name>
-                    <value>${workingDir}/primary_import/dataset/text</value>
-                </property>
-                <property>
                     <name>input_document_to_research_initiatives</name>
                     <value>${workingDir}/exported/document_to_research_initiatives</value>
                 </property>
@@ -736,10 +727,6 @@
                     <value>${workingDir}/exported/matched_affiliation</value>
                 </property>
                 <!-- entities exporting modes -->
-                <property>
-                    <name>active_export_datasets</name>
-                    <value>${active_referenceextraction_dataset}</value>
-                </property>
                 <property>
                     <name>active_export_software</name>
                     <value>${active_referenceextraction_software_url}</value>
@@ -792,10 +779,6 @@
                 <property>
                     <name>action_set_id_entity_software</name>
                     <value>${export_action_set_id_entity_software}</value>
-                </property>
-                <property>
-                    <name>action_set_id_entity_dataset</name>
-                    <value>${export_action_set_id_entity_dataset}</value>
                 </property>
 
                 <property>
