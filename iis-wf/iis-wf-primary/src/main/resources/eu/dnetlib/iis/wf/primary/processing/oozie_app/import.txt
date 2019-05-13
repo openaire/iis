@@ -26,3 +26,4 @@ transformers_project_from_import classpath eu/dnetlib/iis/wf/referenceextraction
 transformers_project_toconcept classpath eu/dnetlib/iis/wf/referenceextraction/project/to_concept/oozie_app
 transformers_project_filter classpath eu/dnetlib/iis/wf/referenceextraction/project/input_filter/oozie_app
 transformer_metadataextraction_documenttext classpath eu/dnetlib/iis/wf/transformers/metadataextraction/documenttext/oozie_app
+ingest_webcrawl_fundings classpath eu/dnetlib/iis/wf/ingest/webcrawl/fundings/oozie_app
