@@ -47,10 +47,48 @@ docid, id, fundingclass1, grantid
 from (
 select docid, stripchars(middle,'.)(,[]') as middle, prev, next, prev||' '||middle||' '||next as context
 from (
-  setschema 'docid,prev,middle,next' select c1, textwindow2s(c2,15,1,1,'(?:[SG]?\d{5,7}(?:\/\d)?)|(?:[A-Z]{2}\/\w{6,7}\/\d{1,2}(?:\/xx)?)|(?:[GE]\d{2,3}\/\d{1,4})|(?:(?:BBS|PPA)\/[A-Z](?:\/[A-Z])?\/(?:\w{8,9}|(?:\d{4}\/)?\d{5}(?:\/\d)?))|(?:(?:RES|PTA)-\d{3}-\d{2}-\d{4}(?:-[A-Z]|-\d{1,2})?)|(?:MC_(?:\w{8,10}|\w{2}_(?:\w{2,4}_)?(?:\d{4,5}|[UG]\d{7,9})(?:\/\d{1,2})?))|(?:MC_\w{2}_\w{2}(?:_\w{2})?\/\w{7}(?:\/\d)?)|(?:[A-Za-z]{3,9}\d{5,7}a?)|(?:ESPA-[A-Z]{3,6}-\d{4}(?:-[A-Z]{3}-\d{3}|-\d{3})?)') from pubs where c2 is not null
+  setschema 'docid,prev,middle,next' 
+select c1, 
+textwindow2s(c2,15,1,1,'(?:[SG]?\d{5,7}(?:\/\d)?)|(?:[A-Z]{2}\/\w{6,7}\/\d{1,2}(?:\/xx)?)|(?:[GE]\d{2,3}\/\d{1,4})|(?:(?:BBS|PPA)\/[A-Z](?:\/[A-Z])?\/(?:\w{8,9}|(?:\d{4}\/)?\d{5}(?:\/\d)?))|(?:(?:RES|PTA)-\d{3}-\d{2}-\d{4}(?:-[A-Z]|-\d{1,2})?)|(?:MC_(?:\w{8,10}|\w{2}_(?:\w{2,4}_)?(?:\d{4,5}|[UG]\d{7,9})(?:\/\d{1,2})?))|(?:MC_\w{2}_\w{2}(?:_\w{2})?\/\w{7}(?:\/\d)?)|(?:[A-Za-z]{3,9}\d{5,7}a?)|(?:ESPA-[A-Z]{3,6}-\d{4}(?:-[A-Z]{3}-\d{3}|-\d{3})?)') from pubs where c2 is not null
 )), grants
 WHERE fundingclass1="RCUK" and middle = grantid
 ) where confidence>0.3 ) group by docid,id)
+
+union all
+-- Canadian funders
+
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8) as C1, docid, id, fundingclass1, grantid 
+	from (
+		select docid, case when regexprmatches("(?:CIHR)|(?:canadian institutes health)", lower(prev)||" "||middle||" "||lower(next)) then (select id from grants where fundingclass1 = 'CIHR') when regexprmatches("(?:NSERC)|(?:natural sciences engineering)", lower(prev)||" "||middle||" "||lower(next)) then (select id from grants where fundingclass1 = 'NSERC')  when regexprmatches("(?:SSHRC)|(?:social sciences humanities)", lower(prev)||" "||middle||" "||lower(next)) then (select id from grants where fundingclass1 = 'SSHRC') end as id, "unidentified" as grantid, "Canadian" as fundingclass1 
+		from
+			(setschema 'docid,prev,middle,next' select c1, textwindow2s(keywords(comprspaces(filterstopwords(regexpr("\n",c2," ")))), 15,1,15, "^(?:(?:CIHR|NSERC|SSHRC)|(?:(?i)research))$") from pubs where c2 is not null) 
+		where 
+		(
+			(	/* ACRONYMS */
+				regexprmatches("^(?:CIHR|NSERC|SSHRC)$", middle)
+				and (
+	        		regexprmatches(".*\s(?:(?:fund|support|sponsor|financ|subsidize|promote).*)|(?:thank(?:s)?$)?",lower(prev))
+	        		or regexprmatches(".*\s(?:fund|support|sponsor|financ|subsidize|promote).*",lower(next))
+	        	)
+	        )
+	        or
+			(	/* Fullnames */
+				regexprmatches("^(?:(?i)research)$", middle)
+				and (
+					regexprmatches(".*(?:canadian\sinstitutes\shealth)$",lower(prev))
+					or 
+					(regexprmatches(".*(?:(?:natural|social)\ssciences\s(?:engineering|humanities))$",lower(prev))
+						and regexprmatches("(?:\scouncil(?:\scanada)?).*",lower(next))
+					)
+				)
+				and 
+		    		regexprmatches(".*\s(?:fund|support|sponsor|financ|subsidize|promote).*",lower(prev||" "||next))
+			)
+	    )
+	
+	) group by docid,id
+
+
 
 union all
 
