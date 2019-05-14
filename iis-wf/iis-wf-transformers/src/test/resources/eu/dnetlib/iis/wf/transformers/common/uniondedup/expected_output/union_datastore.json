@@ -1,5 +1,5 @@
-{"documentId": "docId1", "projectId": "projId1", "confidenceLevel": 0.9}
-{"documentId": "docId2", "projectId": "projId2", "confidenceLevel": 0.9}
-{"documentId": "docId3", "projectId": "projId2", "confidenceLevel": 0.9}
-{"documentId": "docId3", "projectId": "projId3", "confidenceLevel": 1}
-{"documentId": "docId3", "projectId": "projId4", "confidenceLevel": 1}
+{"documentId": "docId1", "projectId": "projId1", "confidenceLevel": 0.9, "textsnippet": "docId1_projId1_0.9"}
+{"documentId": "docId2", "projectId": "projId2", "confidenceLevel": 0.9, "textsnippet": "docId2_projId2_0.9"}
+{"documentId": "docId3", "projectId": "projId2", "confidenceLevel": 0.9, "textsnippet": "docId3_projId2_0.9"}
+{"documentId": "docId3", "projectId": "projId3", "confidenceLevel": 1, "textsnippet": "docId3_projId3_1"}
+{"documentId": "docId3", "projectId": "projId4", "confidenceLevel": 1, "textsnippet": "docId3_projId4_1"}

@@ -1,6 +1,6 @@
-{"documentId": "docId-1", "projectId": "projId-1", "confidenceLevel": 1}
-{"documentId": "docId-2", "projectId": "projId-1", "confidenceLevel": 1}
-{"documentId": "docId-3", "projectId": "projId-2", "confidenceLevel": 1}
-{"documentId": "docId-4", "projectId": "projId-3", "confidenceLevel": 1}
-{"documentId": "docId-5", "projectId": "projId-4", "confidenceLevel": 1}
-{"documentId": "docId-6", "projectId": "projId-5", "confidenceLevel": 1}
+{"documentId": "docId-1", "projectId": "projId-1", "confidenceLevel": 1, "textsnippet": null}
+{"documentId": "docId-2", "projectId": "projId-1", "confidenceLevel": 1, "textsnippet": null}
+{"documentId": "docId-3", "projectId": "projId-2", "confidenceLevel": 1, "textsnippet": null}
+{"documentId": "docId-4", "projectId": "projId-3", "confidenceLevel": 1, "textsnippet": null}
+{"documentId": "docId-5", "projectId": "projId-4", "confidenceLevel": 1, "textsnippet": null}
+{"documentId": "docId-6", "projectId": "projId-5", "confidenceLevel": 1, "textsnippet": null}
