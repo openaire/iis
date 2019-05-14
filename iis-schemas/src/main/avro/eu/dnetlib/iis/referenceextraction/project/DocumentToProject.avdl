@@ -9,5 +9,7 @@ protocol IIS{
         string projectId;
 //		Find more details on `confidenceLevel` constraints in eu/dnetlib/iis/README.markdown file.
         float confidenceLevel;
+//      text snippet surrounding the matched reference, required mostly for internal debugging and analytics  
+        union { null , string } textsnippet = null;
     }
 }

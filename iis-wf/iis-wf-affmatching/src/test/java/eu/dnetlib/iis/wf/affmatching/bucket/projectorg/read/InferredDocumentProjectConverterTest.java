@@ -26,43 +26,43 @@ public class InferredDocumentProjectConverterTest {
     @Test(expected = IllegalArgumentException.class)
     public void convert_blank_document_id() {
         // execute
-        converter.convert(new DocumentToProject(" ", projId, 1f));
+        converter.convert(new DocumentToProject(" ", projId, 1f, null));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void convert_blank_project_id() {
         // execute
-        converter.convert(new DocumentToProject(docId, " ", 1f));
+        converter.convert(new DocumentToProject(docId, " ", 1f, null));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void convert_out_of_right_range_confidence_level() {
         // execute
-        converter.convert(new DocumentToProject(docId, projId, 2f));
+        converter.convert(new DocumentToProject(docId, projId, 2f, null));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void convert_out_of_left_range_confidence_level() {
         // execute
-        converter.convert(new DocumentToProject(docId, projId, -1f));
+        converter.convert(new DocumentToProject(docId, projId, -1f, null));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void convert_null_document_id() {
         // execute
-        converter.convert(new DocumentToProject(null, projId, confidenceLevel));
+        converter.convert(new DocumentToProject(null, projId, confidenceLevel, null));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void convert_null_project_id() {
         // execute
-        converter.convert(new DocumentToProject(docId, null, confidenceLevel));
+        converter.convert(new DocumentToProject(docId, null, confidenceLevel, null));
     }
 
     @Test
     public void convert() {
         // execute
-        AffMatchDocumentProject result = converter.convert(new DocumentToProject(docId, projId, confidenceLevel));
+        AffMatchDocumentProject result = converter.convert(new DocumentToProject(docId, projId, confidenceLevel, null));
         // assert
         assertEquals(docId, result.getDocumentId());
         assertEquals(projId, result.getProjectId());

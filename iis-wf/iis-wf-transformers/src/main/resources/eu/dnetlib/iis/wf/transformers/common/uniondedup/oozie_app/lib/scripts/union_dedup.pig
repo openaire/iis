@@ -18,8 +18,10 @@ unioned = union input_a, input_b;
 
 grouped = GROUP unioned BY ($group_by_field_1, $group_by_field_2);
 
-output_c = FOREACH grouped GENERATE
-    FLATTEN(group) AS ($group_by_field_1, $group_by_field_2),
-    MAX(unioned.confidenceLevel) AS confidenceLevel;
+output_c = FOREACH grouped {
+	ordered = order unioned by confidenceLevel desc;
+	first = limit ordered 1;
+	GENERATE FLATTEN(first);
+}
 
 store output_c into '$output' using avro_store_output;
