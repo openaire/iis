@@ -9,6 +9,11 @@
   "value": "1"
 }
 {
+  "key": "processing.referenceExtraction.project.reference.byfunder.dfg",
+  "type": "COUNTER",
+  "value": "1"
+}
+{
   "key": "processing.referenceExtraction.project.reference.byfunder.ec",
   "type": "COUNTER",
   "value": "22"
@@ -76,5 +81,5 @@
 {
    "key": "processing.referenceExtraction.project.reference.total",
    "type": "COUNTER",
-   "value": "51"
+   "value": "52"
 }
