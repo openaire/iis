@@ -46,6 +46,11 @@
             <description>document metadata output name</description>
         </property>
         <property>
+            <name>output_name_dataset_meta</name>
+            <value>dataset</value>
+            <description>dataset metadata output name</description>
+        </property>
+        <property>
             <name>output_name_document_project</name>
             <value>docproject</value>
             <description>document-project relation output name</description>
@@ -111,6 +116,7 @@
         <java>
             <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
             <arg>eu.dnetlib.iis.importer.schemas.DocumentMetadata</arg>
+            <arg>eu.dnetlib.iis.importer.schemas.DataSetReference</arg>
             <arg>eu.dnetlib.iis.importer.schemas.DocumentToProject</arg>
             <arg>eu.dnetlib.iis.importer.schemas.ProjectToOrganization</arg>
             <arg>eu.dnetlib.iis.common.schemas.IdentifierMapping</arg>
@@ -215,6 +221,10 @@
                     <value>${output_name_document_meta}</value>
                 </property>
                 <property>
+                    <name>output.name.dataset_meta</name>
+                    <value>${output_name_dataset_meta}</value>
+                </property>
+                <property>
                     <name>output.name.document_project</name>
                     <value>${output_name_document_project}</value>
                 </property>
@@ -237,11 +247,15 @@
                 <!-- ## Names of all output ports -->
                 <property>
                     <name>avro.mapreduce.multipleoutputs</name>
-                    <value>${output_name_document_meta} ${output_name_document_project} ${output_name_dedup_mapping} ${output_name_project} ${output_name_organization} ${output_name_project_organization}</value>
+                    <value>${output_name_document_meta} ${output_name_dataset_meta} ${output_name_document_project} ${output_name_dedup_mapping} ${output_name_project} ${output_name_organization} ${output_name_project_organization}</value>
                 </property>
                 <!-- ## Output classes for all output ports -->
                 <property>
                     <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_document_meta}.format</name>
+                    <value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
+                </property>
+                <property>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_dataset_meta}.format</name>
                     <value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
                 </property>
                 <property>
@@ -268,6 +282,10 @@
                 <property>
                     <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_document_meta}.keyschema</name>
                     <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.DocumentMetadata']}</value>
+                </property>
+                 <property>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_dataset_meta}.keyschema</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.DataSetReference']}</value>
                 </property>
                 <property>
                     <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_document_project}.keyschema</name>
@@ -308,6 +326,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
             <arg>-Preport.import.infoSpace.docMetadata=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_document_meta,'/part')]}</arg>
+            <arg>-Preport.import.infoSpace.datasetMetadata=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_dataset_meta,'/part')]}</arg>
             <arg>-Preport.import.infoSpace.docProjectReference=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_document_project,'/part')]}</arg>
             <arg>-Preport.import.infoSpace.project=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_project,'/part')]}</arg>
             <arg>-Preport.import.infoSpace.docDedupDocReference=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_dedup_mapping,'/part')]}</arg>

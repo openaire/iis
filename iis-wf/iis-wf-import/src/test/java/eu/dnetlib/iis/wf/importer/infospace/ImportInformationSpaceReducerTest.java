@@ -6,6 +6,7 @@ import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_TRUST_LEVEL_THRESHOLD;
 import static eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceReducer.OUTPUT_NAME_DEDUP_MAPPING;
 import static eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceReducer.OUTPUT_NAME_DOCUMENT_META;
+import static eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceReducer.OUTPUT_NAME_DATASET_META;
 import static eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceReducer.OUTPUT_NAME_DOCUMENT_PROJECT;
 import static eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceReducer.OUTPUT_NAME_ORGANIZATION;
 import static eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceReducer.OUTPUT_NAME_PROJECT;
@@ -523,6 +524,7 @@ public class ImportInformationSpaceReducerTest {
     private Configuration setOutputDirs(Configuration conf) {
         conf.set(OUTPUT_NAME_DEDUP_MAPPING, "dedupMappingOutput");
         conf.set(OUTPUT_NAME_DOCUMENT_META, "docMetaOutput");
+        conf.set(OUTPUT_NAME_DATASET_META, "datasetMetaOutput");
         conf.set(OUTPUT_NAME_DOCUMENT_PROJECT, "docProjectOutput");
         conf.set(OUTPUT_NAME_ORGANIZATION, "orgOutput");
         conf.set(OUTPUT_NAME_PROJECT, "projectOutput");

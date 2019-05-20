@@ -33,11 +33,13 @@ import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
+import eu.dnetlib.iis.importer.schemas.DataSetReference;
 import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.wf.importer.OafHelper;
 import eu.dnetlib.iis.wf.importer.infospace.approver.DataInfoBasedApprover;
 import eu.dnetlib.iis.wf.importer.infospace.approver.ResultApprover;
+import eu.dnetlib.iis.wf.importer.infospace.converter.DatasetMetadataConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.DeduplicationMappingConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.DocumentMetadataConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.DocumentToProjectRelationConverter;
@@ -64,6 +66,8 @@ public class ImportInformationSpaceReducer
     protected static final Logger log = Logger.getLogger(ImportInformationSpaceReducer.class);
     
     protected static final String OUTPUT_NAME_DOCUMENT_META = "output.name.document_meta";
+    
+    protected static final String OUTPUT_NAME_DATASET_META = "output.name.dataset_meta";
 
     protected static final String OUTPUT_NAME_DOCUMENT_PROJECT = "output.name.document_project";
 
@@ -89,6 +93,8 @@ public class ImportInformationSpaceReducer
     // output names
     
     private String outputNameDocumentMeta;
+    
+    private String outputNameDatasetMeta;
 
     private String outputNameDocumentProject;
 
@@ -103,6 +109,8 @@ public class ImportInformationSpaceReducer
     // converters
     
     private DocumentMetadataConverter docMetaConverter;
+    
+    private DatasetMetadataConverter datasetMetaConverter;
 
     private DocumentToProjectRelationConverter docProjectConverter;
 
@@ -139,6 +147,7 @@ public class ImportInformationSpaceReducer
 
         // initializing converters
         docMetaConverter = new DocumentMetadataConverter(dataInfoBasedApprover);
+        datasetMetaConverter = new DatasetMetadataConverter(dataInfoBasedApprover);
         deduplicationMappingConverter = new DeduplicationMappingConverter();
         docProjectConverter = new DocumentToProjectRelationConverter();
         projectConverter = new ProjectConverter();
@@ -189,6 +198,8 @@ public class ImportInformationSpaceReducer
     private void setOutputDirs(Context context) {
         outputNameDocumentMeta = Preconditions.checkNotNull(context.getConfiguration().get(OUTPUT_NAME_DOCUMENT_META),
                 "document metadata output name not provided!");
+        outputNameDatasetMeta = Preconditions.checkNotNull(context.getConfiguration().get(OUTPUT_NAME_DATASET_META),
+                "dataset metadata output name not provided!");
         outputNameDocumentProject = Preconditions.checkNotNull(context.getConfiguration().get(OUTPUT_NAME_DOCUMENT_PROJECT),
                 "document project relation output name not provided!");
         outputNameProject = Preconditions.checkNotNull(context.getConfiguration().get(OUTPUT_NAME_PROJECT),
@@ -236,7 +247,14 @@ public class ImportInformationSpaceReducer
         if (resultApprover.approve(oafObj)) {
             DocumentMetadata docMeta = docMetaConverter.convert(oafObj.getEntity());
             if (docMeta!=null) {
-                outputs.write(outputNameDocumentMeta, new AvroKey<DocumentMetadata>(docMeta));    
+                outputs.write(outputNameDocumentMeta, new AvroKey<DocumentMetadata>(docMeta));
+                if (docMeta.getPublicationType().getDataset()) {
+                    // handing dataset
+                    DataSetReference datasetMeta = datasetMetaConverter.convert(oafObj.getEntity());
+                    if (datasetMeta != null) {
+                        outputs.write(outputNameDatasetMeta, new AvroKey<DataSetReference>(datasetMeta));
+                    }
+                }
             }
             // hadling project relations
             handleRelation(mappedRecords.get(resProjColumnFamily), docProjectConverter, outputNameDocumentProject);

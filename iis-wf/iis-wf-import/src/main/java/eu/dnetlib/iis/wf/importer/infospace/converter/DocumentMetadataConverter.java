@@ -2,8 +2,6 @@ package eu.dnetlib.iis.wf.importer.infospace.converter;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -161,7 +159,7 @@ public class DocumentMetadataConverter implements OafEntityToAvroConverter<Docum
     
     private void handleYear(StringField dateOfAcceptance, DocumentMetadata.Builder metaBuilder) {
         if (fieldApprover.approve(dateOfAcceptance.getDataInfo())) {
-            Integer yearValue = extractYear(dateOfAcceptance.getValue());
+            Integer yearValue = MetadataConverterUtils.extractYear(dateOfAcceptance.getValue(), log);
             if (yearValue != null) {
                 metaBuilder.setYear(yearValue);
             }
@@ -170,7 +168,7 @@ public class DocumentMetadataConverter implements OafEntityToAvroConverter<Docum
     private void handleKeywords(List<StructuredProperty> subjectList, DocumentMetadata.Builder metaBuilder) {
         if (CollectionUtils.isNotEmpty(subjectList)) {
             // setting only selected subjects as keywords, skipping inferred data
-            List<String> extractedKeywords = extractValues(subjectList);
+            List<String> extractedKeywords = MetadataConverterUtils.extractValues(subjectList, fieldApprover);
             if (CollectionUtils.isNotEmpty(extractedKeywords)) {
                 if (metaBuilder.getKeywords() == null) {
                     metaBuilder.setKeywords(new ArrayList<CharSequence>());
@@ -195,26 +193,7 @@ public class DocumentMetadataConverter implements OafEntityToAvroConverter<Docum
         }
         metaBuilder.setPublicationType(publicationTypeBuilder.build());
     }
-    
-    /**
-     * Extracts year integer value from date.
-     * 
-     * @param date
-     * @return year int value or null when provided date in invalid format
-     */
-    private static Integer extractYear(String date) {
-        // expected date format: yyyy-MM-dd
-        if (StringUtils.isNotBlank(date) && date.indexOf('-') == 4) {
-            try {
-                return Integer.valueOf(date.substring(0, date.indexOf('-')));    
-            } catch (NumberFormatException e) {
-                log.warn("unsupported, non integer, format of year value: " + date);
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
+
 
     /**
      * Handles additional identifiers.
@@ -305,24 +284,6 @@ public class DocumentMetadataConverter implements OafEntityToAvroConverter<Docum
     private boolean isDataValid(Author.Builder builder) {
         return builder.hasName() || builder.hasSurname() || builder.hasFullname();
     }
-    
-    /**
-     * Extracts values from {@link StructuredProperty} list. Checks DataInfo
-     * element whether this piece of information should be approved.
-     * 
-     */
-    private List<String> extractValues(Collection<StructuredProperty> source) {
-        if (CollectionUtils.isNotEmpty(source)) {
-            List<String> results = new ArrayList<String>(source.size());
-            for (StructuredProperty current : source) {
-                if (fieldApprover.approve(current.getDataInfo())) {
-                    results.add(current.getValue());
-                }
-            }
-            return results;
-        } else {
-            return Collections.emptyList();
-        }
-    }
+
 
 }
