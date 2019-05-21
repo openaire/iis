@@ -49,6 +49,7 @@
         <path start="consumer-dedupmapping" />
         <path start="consumer-docproject" />
         <path start="consumer-document" />
+        <path start="consumer-dataset" />
         <path start="consumer-project" />
         <path start="consumer-organization" />
         <path start="consumer-projectorg" />
@@ -106,6 +107,20 @@
                 eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/document.json}
             </arg>
             <arg>-Idocument=${workingDir}/mr_import/docmeta</arg>
+        </java>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
+    
+    <action name="consumer-dataset">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            <arg>-C{document,
+                eu.dnetlib.iis.importer.schemas.DataSetReference,
+                eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/dataset.json}
+            </arg>
+            <arg>-Idocument=${workingDir}/mr_import/dataset</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />

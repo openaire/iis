@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +34,8 @@ public class DatasetMetadataConverter implements OafEntityToAvroConverter<DataSe
     protected static final Logger log = Logger.getLogger(DatasetMetadataConverter.class);
 
     private static final String NULL_STRING_VALUE = "null";
+    
+    private static final String REFERENCE_TYPE_UNSPECIFIED = "unspecified";
 
 
     /**
@@ -68,13 +71,15 @@ public class DatasetMetadataConverter implements OafEntityToAvroConverter<DataSe
         handleAdditionalIds(oafEntity, builder);
         handlePersons(sourceResult, builder);
         
-        //checking whether required fields were set
-        if (StringUtils.isNotBlank(builder.getReferenceType()) && StringUtils.isNotBlank(builder.getIdForGivenType())) {
-            return builder.build();    
-        } else {
-            log.warn("referenceType unset due to missing DOI, skipping...");
-            return null;
+        //checking whether required fields (according to avro schema) were set
+        if (builder.getReferenceType() == null) {
+            builder.setReferenceType(REFERENCE_TYPE_UNSPECIFIED);
         }
+        if (builder.getIdForGivenType() == null) {
+            builder.setIdForGivenType("");
+        }
+        
+        return builder.build();
     }
 
     // ------------------------ PRIVATE --------------------------
@@ -191,8 +196,15 @@ public class DatasetMetadataConverter implements OafEntityToAvroConverter<DataSe
                 }
             }
         }
+        
         if (!additionalIds.isEmpty()) {
             metaBuilder.setAlternateIdentifiers(additionalIds);
+            if (metaBuilder.getReferenceType() == null) {
+                //setting other identifier pair when DOI was not present
+                Entry<CharSequence,CharSequence> firstIdsPair = additionalIds.entrySet().iterator().next();
+                metaBuilder.setReferenceType(firstIdsPair.getKey());
+                metaBuilder.setIdForGivenType(firstIdsPair.getValue());
+            }
         }
 
         return metaBuilder;
