@@ -84,17 +84,6 @@
             <name>import_hbase_dump_location</name>
             <description>InformationSpace HBase dump location, usually points to remote cluster HDFS location.</description>
         </property>
-        <!-- import datacite related -->
-        <property>
-            <name>import_mdstore_service_location</name>
-            <value>$UNDEFINED$</value>
-            <description>MDStore service (not WSDL) location URL</description>
-        </property>
-        <property>
-            <name>import_dataset_mdstore_ids_csv</name>
-            <value>$UNDEFINED$</value>
-            <description>MDStore identifier</description>
-        </property>
         <!-- import content related -->
         <property>
             <name>import_content_object_store_location</name>
@@ -409,23 +398,10 @@
                     <name>match_content_with_metadata</name>
                     <value>${match_content_with_metadata}</value>
                 </property>
-                <property>
-                    <name>active_import_dataset</name>
-                    <value>${active_referenceextraction_dataset}</value>
-                </property>
                 <!-- import metadata related -->
                 <property>
                     <name>hbase_dump_location</name>
                     <value>${import_hbase_dump_location}</value>
-                </property>
-                <!-- import datacite related -->
-                <property>
-                    <name>mdstore_service_location</name>
-                    <value>${import_mdstore_service_location}</value>
-                </property>
-                <property>
-                    <name>dataset_mdstore_ids_csv</name>
-                    <value>${import_dataset_mdstore_ids_csv}</value>
                 </property>
                 <!-- project concept related -->
                 <property>
@@ -493,6 +469,10 @@
                     <value>docmeta</value>
                 </property>
                 <property>
+                    <name>metadataimport_output_name_dataset_meta</name>
+                    <value>dataset</value>
+                </property>
+                <property>
                     <name>metadataimport_output_name_document_project</name>
                     <value>docproject</value>
                 </property>
@@ -520,18 +500,6 @@
                 <property>
                     <name>output_metadataimport_root</name>
                     <value>${workingDir}/primary_import/metadataimport</value>
-                </property>
-                <property>
-                    <name>output_dataset_root</name>
-                    <value>${workingDir}/primary_import/dataset</value>
-                </property>
-                <property>
-                    <name>output_name_dataset</name>
-                    <value>meta</value>
-                </property>
-                <property>
-                    <name>output_name_dataset_text</name>
-                    <value>text</value>
                 </property>
                 <property>
                     <name>output_document_text</name>
@@ -598,7 +566,7 @@
                 </property>
                 <property>
                     <name>input_dataset</name>
-                    <value>${workingDir}/primary_import/dataset/meta</value>
+                    <value>${workingDir}/primary_import/metadataimport/dataset</value>
                 </property>
                 <property>
                     <name>input_extracted_document_metadata</name>
