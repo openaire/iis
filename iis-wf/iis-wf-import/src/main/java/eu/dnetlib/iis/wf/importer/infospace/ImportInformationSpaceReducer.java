@@ -4,21 +4,28 @@ import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_MERGE_BODY_WITH_UPDATES;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_SKIP_DELETED_BY_INFERENCE;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_TRUST_LEVEL_THRESHOLD;
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.DEFAULT_CSV_DELIMITER;
+import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_APPROVED_DATASET_INSTANCETYPES_CSV;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.avro.mapred.AvroKey;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.log4j.Logger;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Sets;
 import com.googlecode.protobuf.format.JsonFormat;
 import com.googlecode.protobuf.format.JsonFormat.ParseException;
 
@@ -29,6 +36,7 @@ import eu.dnetlib.data.proto.ProjectOrganizationProtos.ProjectOrganization;
 import eu.dnetlib.data.proto.RelTypeProtos.RelType;
 import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
 import eu.dnetlib.data.proto.ResultProjectProtos.ResultProject.Outcome;
+import eu.dnetlib.data.proto.ResultProtos.Result.Instance;
 import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
@@ -134,6 +142,12 @@ public class ImportInformationSpaceReducer
      */
     private boolean mergeBodyWithUpdates;
     
+    /**
+     * Set of approved result types.
+     */
+    private Set<String> approvedDatasetResultTypes;
+    
+    
     // ------------------------ LOGIC --------------------------
     
     @Override
@@ -141,6 +155,14 @@ public class ImportInformationSpaceReducer
         setOutputDirs(context);
 
         mergeBodyWithUpdates = context.getConfiguration().getBoolean(IMPORT_MERGE_BODY_WITH_UPDATES, false);
+        
+        String approvedDatasetResultTypesCSV = context.getConfiguration().get(IMPORT_APPROVED_DATASET_INSTANCETYPES_CSV);
+        
+        if (StringUtils.isNotBlank(approvedDatasetResultTypesCSV)) {
+            approvedDatasetResultTypes = Sets.newHashSet(Splitter.on(DEFAULT_CSV_DELIMITER).trimResults().split(approvedDatasetResultTypesCSV));
+        } else {
+            approvedDatasetResultTypes = Collections.emptySet();
+        }
 
         DataInfoBasedApprover dataInfoBasedApprover = buildApprover(context);
         this.resultApprover = dataInfoBasedApprover;
@@ -245,22 +267,40 @@ public class ImportInformationSpaceReducer
             return;
         }
         if (resultApprover.approve(oafObj)) {
+            
             DocumentMetadata docMeta = docMetaConverter.convert(oafObj.getEntity());
             if (docMeta!=null) {
                 outputs.write(outputNameDocumentMeta, new AvroKey<DocumentMetadata>(docMeta));
-                if (docMeta.getPublicationType().getDataset()) {
-                    // handing dataset
-                    DataSetReference datasetMeta = datasetMetaConverter.convert(oafObj.getEntity());
-                    if (datasetMeta != null) {
-                        outputs.write(outputNameDatasetMeta, new AvroKey<DataSetReference>(datasetMeta));
-                    }
+            }
+            
+            if (acceptAsDataset(oafObj)) {
+                DataSetReference datasetMeta = datasetMetaConverter.convert(oafObj.getEntity());
+                if (datasetMeta != null) {
+                    outputs.write(outputNameDatasetMeta, new AvroKey<DataSetReference>(datasetMeta));
                 }
             }
+            
             // hadling project relations
             handleRelation(mappedRecords.get(resProjColumnFamily), docProjectConverter, outputNameDocumentProject);
             // handling deduplication relations, required for contents deduplication and identifiers translation
             handleRelation(mappedRecords.get(dedupMappingColumnFamily), deduplicationMappingConverter, outputNameDedupMapping);
         }
+    }
+    
+    private final boolean acceptAsDataset(Oaf oafObj) {
+        List<Instance> instanceList = (oafObj.getEntity() != null && oafObj.getEntity().getResult() != null)
+                ? oafObj.getEntity().getResult().getInstanceList()
+                : null;
+        
+        if (CollectionUtils.isNotEmpty(instanceList)) {
+            for (Instance instance : instanceList) {
+                if (approvedDatasetResultTypes.contains((instance.getInstancetype().getClassid()))) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
     
     /**

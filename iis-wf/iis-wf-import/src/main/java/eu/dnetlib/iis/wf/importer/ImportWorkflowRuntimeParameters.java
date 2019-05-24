@@ -14,6 +14,7 @@ public final class ImportWorkflowRuntimeParameters {
 	public static final String IMPORT_TRUST_LEVEL_THRESHOLD = "import.trust.level.threshold";
 	public static final String IMPORT_APPROVED_DATASOURCES_CSV = "import.approved.datasources.csv";
 	public static final String IMPORT_APPROVED_COLUMNFAMILIES_CSV = "import.approved.columnfamilies.csv";
+	public static final String IMPORT_APPROVED_DATASET_INSTANCETYPES_CSV = "import.approved.dataset.instancetypes.csv";
 	public static final String IMPORT_MERGE_BODY_WITH_UPDATES = "import.merge.body.with.updates";
 	public static final String IMPORT_CONTENT_APPROVED_OBJECSTORES_CSV = "import.content.approved.objectstores.csv";
 	public static final String IMPORT_CONTENT_BLACKLISTED_OBJECSTORES_CSV = "import.content.blacklisted.objectstores.csv";

@@ -12,6 +12,11 @@
             <description>list of blacklisted inference provenance which sould not be taken into account by importer, skipped when set to $UNDEFINED$</description>
         </property>
         <property>
+            <name>approved_dataset_instancetypes_csv</name>
+            <value>0021,0037</value>
+            <description>set of instance types approved as datasets</description>
+        </property>
+        <property>
             <name>skip_deleted_by_inference</name>
             <value>true</value>
             <description>flag indicating records deleted by inference should be skipped</description>
@@ -194,6 +199,10 @@
                 <property>
                     <name>import.approved.columnfamilies.csv</name>
                     <value>project,organization,result,resultProject_outcome_isProducedBy,resultResult_dedup_merges,projectOrganization_participation_hasParticipant</value>
+                </property>
+                <property>
+                    <name>import.approved.dataset.instancetypes.csv</name>
+                    <value>${approved_dataset_instancetypes_csv}</value>
                 </property>
                 <property>
                     <name>import.inference.provenance.blacklist</name>
