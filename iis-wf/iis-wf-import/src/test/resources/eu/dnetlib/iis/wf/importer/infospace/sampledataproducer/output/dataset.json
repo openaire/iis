@@ -10,7 +10,7 @@
   "publisher": null,
   "publicationYear": "1964",
   "formats": null,
-  "resourceTypeClass": "publication",
+  "instanceTypes": ["0021"],
   "resourceTypeValue": null,
   "alternateIdentifiers": {
     "oai": "oai:digital.csic.es:10261/86687"

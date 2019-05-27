@@ -12,7 +12,7 @@
   "formats": null,
   "referenceType": "url",
   "creatorNames": null,
-  "resourceTypeClass": "clinicalTrial",
+  "instanceTypes": ["0037"],
   "alternateIdentifiers": {
     "ictrp": "NCT00299546"
   }
@@ -35,6 +35,6 @@
   "creatorNames": [
     "[s.n.]"
   ],
-  "resourceTypeClass": null,
+  "instanceTypes": null,
   "alternateIdentifiers": null
 }

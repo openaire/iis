@@ -14,7 +14,7 @@
   "formats": [
     "format1"
   ],
-  "resourceTypeClass": "Text",
+  "instanceTypes": null,
   "resourceTypeValue": null,
   "alternateIdentifiers": {
     "firstType": "AAA0012345",
@@ -35,7 +35,7 @@
   "publisher": "publisher2",
   "publicationYear": "2013",
   "formats": null,
-  "resourceTypeClass": "Dataset",
+  "instanceTypes": null,
   "resourceTypeValue": "Dataset",
   "alternateIdentifiers": null
 }
