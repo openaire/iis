@@ -15,7 +15,7 @@ from
     )
 ,titlesandtriples where mystart = words and match) where confidence > 0.28
 union all
-select docid, dsetID, 1 as confidence from
+select docid, dsetID, 1 as confidence,"" from
     ( setschema 'docid,middle' select id as docid, textwindow(comprspaces(filterstopwords(regexpr('(/|:)(\n)',text,'\1'))),0,0,'\b10.\d{4}/') from docs ),dois
     where normalizetext(stripchars(regexpr('(\b10.\d{4}/.*)',middle),'.,')) = normaldoi
 ) group by docid, dsetID;
