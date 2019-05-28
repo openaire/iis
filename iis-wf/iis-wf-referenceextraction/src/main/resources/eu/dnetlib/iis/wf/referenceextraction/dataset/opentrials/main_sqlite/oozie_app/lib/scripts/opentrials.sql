@@ -1,4 +1,4 @@
-select distinct jdict('documentId', pid, 'datasetId', id, 'confidenceLevel', 0.8) from (
+select distinct jdict('documentId', pid, 'datasetId', id, 'confidenceLevel', 0.8,'textsnippet',prev||" "||middle||" "||next) from (
 select * from (
    select pid,id,prev,middle,next, 
 	  case when regexprmatches("^[^a-zA-Z]+$",middle) 
