@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 
 import com.google.common.base.Preconditions;
 
+import eu.dnetlib.data.proto.FieldTypeProtos.Journal;
 import eu.dnetlib.data.proto.FieldTypeProtos.KeyValue;
 import eu.dnetlib.data.proto.FieldTypeProtos.Qualifier;
 import eu.dnetlib.data.proto.FieldTypeProtos.StringField;
@@ -21,7 +22,6 @@ import eu.dnetlib.data.proto.FieldTypeProtos.StructuredProperty;
 import eu.dnetlib.data.proto.OafProtos.OafEntity;
 import eu.dnetlib.data.proto.ResultProtos;
 import eu.dnetlib.data.proto.ResultProtos.Result.Instance;
-import eu.dnetlib.data.proto.ResultProtos.Result.Journal;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.importer.schemas.Author;
 import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
