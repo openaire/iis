@@ -1,5 +1,5 @@
-{"documentId":"doc-1","datasetId":"dataset-1","confidenceLevel":0.9}
-{"documentId":"doc-1","datasetId":"dataset-2","confidenceLevel":0.5}
-{"documentId":"doc-2","datasetId":"dataset-3","confidenceLevel":0.2}
-{"documentId":"doc-2","datasetId":"dataset-3","confidenceLevel":0.3}
-{"documentId":"doc-2","datasetId":"dataset-3","confidenceLevel":0.3}
+{"documentId":"doc-1","datasetId":"dataset-1","confidenceLevel":0.9, "textsnippet": null}
+{"documentId":"doc-1","datasetId":"dataset-2","confidenceLevel":0.5, "textsnippet": null}
+{"documentId":"doc-2","datasetId":"dataset-3","confidenceLevel":0.2, "textsnippet": null}
+{"documentId":"doc-2","datasetId":"dataset-3","confidenceLevel":0.3, "textsnippet": null}
+{"documentId":"doc-2","datasetId":"dataset-3","confidenceLevel":0.3, "textsnippet": null}
