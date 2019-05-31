@@ -62,6 +62,47 @@ regexprmatches("support|project|grant|fund|thanks|agreement|research|acknowledge
 --DFG
 
 union all
+
+-- Canadian funders
+
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', textsnippet) as C1, docid, id, fundingclass1, grantid
+	from (
+		select docid, case when regexprmatches("(?:CIHR)|(?:canadian institutes health)", lower(prev)||" "||middle||" "||lower(next)) then (select id from grants where fundingclass1 = 'CIHR')
+                           when regexprmatches("(?:NSERC)|(?:natural sciences engineering)", lower(prev)||" "||middle||" "||lower(next)) then (select id from grants where fundingclass1 = 'NSERC')
+                           when regexprmatches("(?:SSHRC)|(?:social sciences humanities)", lower(prev)||" "||middle||" "||lower(next)) then (select id from grants where fundingclass1 = 'SSHRC')
+                      end as id, "unidentified" as grantid, "Canadian" as fundingclass1, (prev||" "||middle||" "||next) as textsnippet
+		from
+			(setschema 'docid,prev,middle,next' select c1, textwindow2s(keywords(comprspaces(filterstopwords(regexpr("\n",c2," ")))), 15,1,15, "^(?:(?:CIHR|NSERC|SSHRC)|(?:(?i)research))$") from pubs where c2 is not null)
+		where
+		(
+			(	/* Acronyms */
+				regexprmatches("^(?:CIHR|NSERC|SSHRC)$", middle)
+				and (
+	        		regexprmatches(".*\s(?:(?:fund|support|sponsor|financ|subsidize|promote).*)|(?:thank(?:s)?$)?",lower(prev))
+	        		or regexprmatches(".*\s(?:fund|support|sponsor|financ|subsidize|promote).*",lower(next))
+	        	)
+	        )
+	        or
+			(	/* Full-names */
+				regexprmatches("^(?:(?i)research)$", middle)
+				and (
+					regexprmatches(".*(?:canadian\sinstitutes\shealth)$",lower(prev))
+					or
+					(regexprmatches(".*(?:(?:natural|social)\ssciences\s(?:engineering|humanities))$",lower(prev))
+						and regexprmatches("(?:\scouncil(?:\scanada)?).*",lower(next))
+					)
+				)
+				and
+		    		regexprmatches(".*\s(?:fund|support|sponsor|financ|subsidize|promote).*",lower(prev||" "||next))
+			)
+	    )
+	)
+	where
+	    id is not null
+	group by docid,id
+
+
+union all
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8,'textsnippet',j2s(prev,middle,next)) as C1, docid, id, fundingclass1, grantid from (
 select docid,id,fundingclass1,grantid,prev,middle,next from (select docid,upper(regexpr("(\w+.*\d+)",middle)) as match,id,grantid,middle,fundingclass1,grantid,prev,middle,next  from (setschema 'docid,prev,middle,next' select c1 as docid,textwindow2s(c2,15,1,5,"(.+\/\w+\/\d{4}\W*\Z)|(\d{4})|(\d{6,7})|(\w{2}\d{4,})|(\w+\/\w+\/\w+)|(\w*\/[\w,\.]*\/\w*)|(?:\d{3}\-\d{7}\-\d{4})|(?:(?:\b|U)IP\-2013\-11\-\d{4}\b)|(\b(?:(?:(?:\w{2,3})(?:\.|\-)(?:\w{2,3})(?:\.|\-)(?:\w{2,3}))|(?:\d+))\b)|(?:\b\d{7,8}\b)|(?:\b\d{3}[A-Z]\d{3}\b)|(?:[A-Z]{2,3}.+)") from (setschema 'c1,c2' select * from pubs where c2 is not null) ) , grants where 
 (match = grantid and (fundingclass1 in ("FCT","ARC"))) or 
