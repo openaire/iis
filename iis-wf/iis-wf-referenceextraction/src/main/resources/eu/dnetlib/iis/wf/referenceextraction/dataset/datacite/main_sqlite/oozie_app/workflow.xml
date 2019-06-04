@@ -70,7 +70,7 @@
             	convention of passing them as named arguments makes the code
             	more readable/maintainable.
             	 -->
-                <mapper>/usr/local/sbin/pypy scripts/madis/mexec.py -d dataset.db -f scripts/finddatacite.sql</mapper>
+                <mapper>python scripts/madis/mexec.py -d dataset.db -f scripts/finddatacite.sql</mapper>
             </streaming>
             <configuration>
             	<!-- # Standard settings for our framework -->
