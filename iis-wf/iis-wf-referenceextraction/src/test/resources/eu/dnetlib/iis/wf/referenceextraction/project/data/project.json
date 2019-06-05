@@ -51,3 +51,6 @@
 {"id":"40|gsrt________::574ef85ac608988be5167363bb257010", "projectGrantId": "447985", "projectAcronym": null, "fundingClass": "GSRT::", "jsonextrainfo": "{}"}
 {"id":"40|miur________::54a1d3c536227e295a9982eaf8fd3791", "projectGrantId": "2015KB9WPT", "projectAcronym": null, "fundingClass": "MIUR::PRIN 2015", "jsonextrainfo": "{}"}
 {"id":"40|dfgf________::0646bc00566f502c1d03363e9d77b474", "projectGrantId": "255373834 / SPP 1786", "projectAcronym": null, "fundingClass": "DFG::Schwerpunktprogramme", "jsonextrainfo": "{}"}
+{"id":"40|cihr________::1e5e62235d094afd01cd56e65112fc63", "projectGrantId": "unidentified", "projectAcronym": null, "fundingClass": "CIHR::", "jsonextrainfo": "{}"}
+{"id":"40|nserc_______::1e5e62235d094afd01cd56e65112fc63", "projectGrantId": "unidentified", "projectAcronym": null, "fundingClass": "NSERC::", "jsonextrainfo": "{}"}
+{"id":"40|sshrc_______::1e5e62235d094afd01cd56e65112fc63", "projectGrantId": "unidentified", "projectAcronym": null, "fundingClass": "SSHRC::", "jsonextrainfo": "{}"}

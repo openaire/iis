@@ -5,6 +5,18 @@
   "textsnippet": " work supported grants general secretariat research technology greece _gsrt_ sinergasia _theracan_ 11syn_1_485 kripis _sthenos_ 447985   "
 }
 {
+  "documentId": "50|dedup_wf_001::966fa995ef22da40b8ee1a5c1ad3eab4",
+  "projectId": "40|sshrc_______::1e5e62235d094afd01cd56e65112fc63",
+  "confidenceLevel": 0.8,
+  "textsnippet": "grateful nancial support Social Sciences Humanities Research Council Canada SSHRC grant no 410 2009 0183"
+}
+{
+  "documentId": "50|dedup_wf_001::96932fdbc6d5a50f289da74bff297d5e",
+  "projectId": "40|nserc_______::1e5e62235d094afd01cd56e65112fc63",
+  "confidenceLevel": 0.8,
+  "textsnippet": "GT RGM acknowledge support NSERC Canada Research Chair program Ontario Trillium Foundation Perimeter Institute Theoretical Physics"
+}
+{
   "documentId": "50|narcis______::0b552824e655d0cd2251691e1722aa20",
   "projectId": "40|nwo_________::333b8b4b6912395bdd07f7a431c44e99",
   "confidenceLevel": 0.8,
@@ -81,6 +93,12 @@
   "projectId": "40|wt__________::1e5e62235d094afd01cd56e65112fc63",
   "confidenceLevel": 0.8,
   "textsnippet": ""
+}
+{
+  "documentId": "50|sharebioRxiv::ff9de1c352dcee69956d01e77149b708",
+  "projectId": "40|cihr________::1e5e62235d094afd01cd56e65112fc63",
+  "confidenceLevel": 0.8,
+  "textsnippet": "work supported Canadian Institutes Health Research FDN 154328 128090 CHA FDN 148430 201512MSH 360794 228629 DDC"
 }
 {
   "documentId": "PMC3386204",
@@ -285,6 +303,12 @@
   "projectId": "FP7::268066",
   "confidenceLevel": 0.80691457,
   "textsnippet": "     acknowledge theoretical assistance pavel motloch support eu erc advanced grant 268066 fp7_215368 semispinnet ministry"
+}
+{
+  "documentId": "WOS:000316616100009",
+  "projectId": "40|cihr________::1e5e62235d094afd01cd56e65112fc63",
+  "confidenceLevel": 0.8,
+  "textsnippet": "work authors laboratory supported operating grants group grant Canadian Institutes Health Research well Canadian Foundation Innovation P K Alberta Heritage Foundation Medical Research AIHS Scientist Snyder Chair"
 }
 {
   "documentId": "WOS:000316616100009",
