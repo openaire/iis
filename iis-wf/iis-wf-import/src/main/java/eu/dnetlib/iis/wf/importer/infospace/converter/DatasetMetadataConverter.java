@@ -3,24 +3,20 @@ package eu.dnetlib.iis.wf.importer.infospace.converter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 import eu.dnetlib.data.proto.FieldTypeProtos.StringField;
 import eu.dnetlib.data.proto.FieldTypeProtos.StructuredProperty;
 import eu.dnetlib.data.proto.OafProtos.OafEntity;
 import eu.dnetlib.data.proto.ResultProtos;
-import eu.dnetlib.data.proto.ResultProtos.Result.Instance;
 import eu.dnetlib.data.proto.ResultProtos.Result.Metadata;
 import eu.dnetlib.iis.importer.schemas.DataSetReference;
 import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
@@ -105,7 +101,6 @@ public class DatasetMetadataConverter implements OafEntityToAvroConverter<DataSe
             handleYear(sourceResult.getMetadata().getDateofacceptance(), metaBuilder);
             handleFormats(sourceResult.getMetadata().getFormatList(), metaBuilder);
             handleResourceType(sourceResult.getMetadata(), metaBuilder);
-            handleInstanceTypes(sourceResult.getInstanceList(), metaBuilder);
         }
         
         return metaBuilder;
@@ -172,18 +167,6 @@ public class DatasetMetadataConverter implements OafEntityToAvroConverter<DataSe
     private void handleResourceType(Metadata metadata, DataSetReference.Builder metaBuilder) {
         if (metadata.getResourcetype()!=null && StringUtils.isNotBlank(metadata.getResourcetype().getClassid())) {
             metaBuilder.setResourceTypeValue(metadata.getResourcetype().getClassid());
-        }
-    }
-    
-    private void handleInstanceTypes(List<Instance> instanceList, DataSetReference.Builder metaBuilder) {
-        if (instanceList != null) {
-            Set<String> instanceTypes = new HashSet<>();
-            for (Instance instance : instanceList) {
-                instanceTypes.add(instance.getInstancetype().getClassid());
-            }
-            if (!instanceTypes.isEmpty()) {
-                metaBuilder.setInstanceTypes(Lists.newArrayList(instanceTypes)); 
-            }
         }
     }
     

@@ -13,8 +13,8 @@
 			<description>input dataset</description>
 		</property>
         <property>
-            <name>instance_type_opentrials</name>
-            <value>0037</value>
+            <name>resource_type_value_opentrials</name>
+            <value>^0037$</value>
         </property>
 		<property>
 			<name>output_document_to_dataset</name>
@@ -34,8 +34,8 @@
                     <value>${workingDir}/input_filter/working_dir</value>
                 </property>
                 <property>
-                    <name>instance_type_to_be_approved</name>
-                    <value>${instance_type_opentrials}</value>
+                    <name>resource_type_value_to_be_approved_regex</name>
+                    <value>${resource_type_value_opentrials}</value>
                 </property>
                 <property>
                     <name>input</name>

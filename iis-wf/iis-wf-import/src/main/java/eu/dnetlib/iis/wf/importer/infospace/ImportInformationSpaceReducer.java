@@ -1,11 +1,11 @@
 package eu.dnetlib.iis.wf.importer.infospace;
 
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.DEFAULT_CSV_DELIMITER;
+import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_APPROVED_DATASET_RESULTTYPES_CSV;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_INFERENCE_PROVENANCE_BLACKLIST;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_MERGE_BODY_WITH_UPDATES;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_SKIP_DELETED_BY_INFERENCE;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_TRUST_LEVEL_THRESHOLD;
-import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.DEFAULT_CSV_DELIMITER;
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_APPROVED_DATASET_INSTANCETYPES_CSV;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -36,7 +36,6 @@ import eu.dnetlib.data.proto.ProjectOrganizationProtos.ProjectOrganization;
 import eu.dnetlib.data.proto.RelTypeProtos.RelType;
 import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
 import eu.dnetlib.data.proto.ResultProjectProtos.ResultProject.Outcome;
-import eu.dnetlib.data.proto.ResultProtos.Result.Instance;
 import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
@@ -156,7 +155,7 @@ public class ImportInformationSpaceReducer
 
         mergeBodyWithUpdates = context.getConfiguration().getBoolean(IMPORT_MERGE_BODY_WITH_UPDATES, false);
         
-        String approvedDatasetResultTypesCSV = context.getConfiguration().get(IMPORT_APPROVED_DATASET_INSTANCETYPES_CSV);
+        String approvedDatasetResultTypesCSV = context.getConfiguration().get(IMPORT_APPROVED_DATASET_RESULTTYPES_CSV);
         
         if (StringUtils.isNotBlank(approvedDatasetResultTypesCSV)) {
             approvedDatasetResultTypes = Sets.newHashSet(Splitter.on(DEFAULT_CSV_DELIMITER).trimResults().split(approvedDatasetResultTypesCSV));
@@ -288,18 +287,15 @@ public class ImportInformationSpaceReducer
     }
     
     private final boolean acceptAsDataset(Oaf oafObj) {
-        List<Instance> instanceList = (oafObj.getEntity() != null && oafObj.getEntity().getResult() != null)
-                ? oafObj.getEntity().getResult().getInstanceList()
-                : null;
-        
-        if (CollectionUtils.isNotEmpty(instanceList)) {
-            for (Instance instance : instanceList) {
-                if (approvedDatasetResultTypes.contains((instance.getInstancetype().getClassid()))) {
-                    return true;
-                }
+
+        if (oafObj.getEntity() != null && oafObj.getEntity().getResult() != null
+                && oafObj.getEntity().getResult().getMetadata() != null
+                && oafObj.getEntity().getResult().getMetadata().getResulttype() != null) {
+            if (approvedDatasetResultTypes.contains(oafObj.getEntity().getResult().getMetadata().getResulttype().getClassid())) {
+                return true;
             }
         }
-        
+
         return false;
     }
     

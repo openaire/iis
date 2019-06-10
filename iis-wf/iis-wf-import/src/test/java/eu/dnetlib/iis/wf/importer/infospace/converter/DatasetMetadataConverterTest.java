@@ -3,7 +3,6 @@ package eu.dnetlib.iis.wf.importer.infospace.converter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
@@ -144,10 +143,6 @@ public class DatasetMetadataConverterTest {
         assertEquals(1, metadata.getFormats().size());
         assertEquals(FORMAT, metadata.getFormats().iterator().next());
         
-        assertEquals(2, metadata.getInstanceTypes().size());
-        assertTrue(metadata.getInstanceTypes().contains(InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE));
-        assertTrue(metadata.getInstanceTypes().contains(InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_DATASET));
-        
         assertEquals(RESOURCE_TYPE_CLASSID, metadata.getResourceTypeValue());
         
         assertEquals(1, metadata.getAlternateIdentifiers().size());
@@ -182,10 +177,6 @@ public class DatasetMetadataConverterTest {
         
         assertEquals(0, metadata.getFormats().size());
         
-        assertEquals(2, metadata.getInstanceTypes().size());
-        assertTrue(metadata.getInstanceTypes().contains(InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE));
-        assertTrue(metadata.getInstanceTypes().contains(InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_DATASET));
-        
         assertEquals("resource_type", metadata.getResourceTypeValue());
         
         assertNull(metadata.getAlternateIdentifiers());
@@ -219,10 +210,6 @@ public class DatasetMetadataConverterTest {
         
         assertEquals(1, metadata.getFormats().size());
         assertEquals(FORMAT, metadata.getFormats().iterator().next());
-        
-        assertEquals(2, metadata.getInstanceTypes().size());
-        assertTrue(metadata.getInstanceTypes().contains(InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE));
-        assertTrue(metadata.getInstanceTypes().contains(InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_DATASET));
         
         assertEquals(RESOURCE_TYPE_CLASSID, metadata.getResourceTypeValue());
         

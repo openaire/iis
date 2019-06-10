@@ -12,8 +12,8 @@
             <description>list of blacklisted inference provenance which sould not be taken into account by importer, skipped when set to $UNDEFINED$</description>
         </property>
         <property>
-            <name>approved_dataset_instancetypes_csv</name>
-            <value>0021,0037</value>
+            <name>approved_dataset_resulttypes_csv</name>
+            <value>dataset</value>
             <description>set of instance types approved as datasets</description>
         </property>
         <property>
@@ -201,8 +201,8 @@
                     <value>project,organization,result,resultProject_outcome_isProducedBy,resultResult_dedup_merges,projectOrganization_participation_hasParticipant</value>
                 </property>
                 <property>
-                    <name>import.approved.dataset.instancetypes.csv</name>
-                    <value>${approved_dataset_instancetypes_csv}</value>
+                    <name>import.approved.dataset.resulttypes.csv</name>
+                    <value>${approved_dataset_resulttypes_csv}</value>
                 </property>
                 <property>
                     <name>import.inference.provenance.blacklist</name>

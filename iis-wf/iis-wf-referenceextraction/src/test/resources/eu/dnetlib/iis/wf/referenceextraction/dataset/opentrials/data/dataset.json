@@ -7,11 +7,10 @@
   "titles": [
     "A Comparative Trial of a Combination of Atovaquone and Proguanil versus Chloroquine or Fansidar in the Treatment of Acute P. falciparum Malaria in Adults in Zambia"
   ],
-  "resourceTypeValue": "clinical trial",
+  "resourceTypeValue": "0037",
   "formats": null,
   "referenceType": "url",
   "creatorNames": null,
-  "instanceTypes": ["0037"],
   "alternateIdentifiers": {
     "gsk": "115-120"
   }
@@ -26,11 +25,10 @@
     "A Multicenter, Randomized, Double-blind, Placebo-controlled Trial of Golimumab, a Fully Human Anti-TNFa Monoclonal Antibody, Administered Subcutaneously in Subjects With Active Rheumatoid Arthritis and Previously Treated With Biologic Anti- TNFa Agent(s)",
     "A Study of the Safety and Efficacy of Golimumab (CNTO 148) in Subjects With Active Rheumatoid Arthritis Previously Treated With Biologic Anti-TNFa Agent(s)"
   ],
-  "resourceTypeValue": "clinical trial",
+  "resourceTypeValue": "0037",
   "formats": null,
   "referenceType": "url",
   "creatorNames": null,
-  "instanceTypes": ["0037"],
   "alternateIdentifiers": {
     "ictrp": "NCT00299546"
   }
@@ -53,6 +51,5 @@
   "creatorNames": [
     "[s.n.]"
   ],
-  "instanceTypes": null,
   "alternateIdentifiers": null
 }

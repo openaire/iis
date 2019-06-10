@@ -5,7 +5,7 @@
 			<name>input</name>
 		</property>
 		<property>
-			<name>instance_type_to_be_approved</name>
+			<name>resource_type_value_to_be_approved_regex</name>
 		</property>
 		<property>
 			<name>output_approved</name>
@@ -57,7 +57,7 @@
 			<param>output_approved=${output_approved}</param>
             <param>output_rejected=${output_rejected}</param>
 			<param>schema=${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.DataSetReference']}</param>
-			<param>instance_type_to_be_approved=${instance_type_to_be_approved}</param>
+			<param>resource_type_value_to_be_approved_regex=${resource_type_value_to_be_approved_regex}</param>
 		</pig>
 		<ok to="end" />
 		<error to="fail" />
