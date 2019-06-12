@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<!-- Note that documentation placed in comments in this file uses the
+"markdown" syntax (along with its way of dividing text into sections). -->
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="referenceextraction_patent_main_sqlite">
+	
+	<parameters>
+		<property>
+			<name>input_document_text</name>
+			<description>input document text</description>
+		</property>
+		<property>
+			<name>input_patent_db</name>
+			<description>patents SQLite DB path</description>
+		</property>
+		<property>
+			<name>output_document_to_patent</name>
+			<description>output document to patent</description>
+		</property>
+	</parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
+	<start to="generate-schema" />
+
+	<action name="generate-schema">
+	    <java>
+	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
+	        <arg>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</arg>
+	        <arg>eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent</arg>
+	        <capture-output />
+	    </java>
+	    <ok to="main" />
+	    <error to="fail" />
+	</action>
+
+    <action name="main">
+        <map-reduce>
+            <prepare>
+                <delete path="${nameNode}${output_document_to_patent}"/>
+            </prepare>
+            <streaming>
+            	<!-- Here, we give the relative path to the script and pass it
+            	the parameters of the workflow node. The script is held
+            	in a directory having the same name as the workflow node.
+
+            	The parameters should be passed as **named** arguments. This
+            	convention of passing them as named arguments makes the code
+            	more readable/maintainable.
+            	 -->
+                <mapper>scripts/madis/mexec.py -d patent.db -f scripts/patents.sql</mapper>
+            </streaming>
+            <configuration>
+            	<!-- # Standard settings for our framework -->
+                <property>
+                    <name>mapred.output.format.class</name>
+                    <value>com.cloudera.science.avro.streaming.AvroAsJSONOutputFormat</value>
+                </property>
+                <property>
+                    <name>mapred.input.format.class</name>
+                    <value>com.cloudera.science.avro.streaming.AvroAsJSONInputFormat</value>
+                </property>
+                <!-- # Custom settings for this workflow node -->
+                <!-- We do not use any reducers, so we set their number to 0 -->
+                <property>
+                    <name>mapreduce.job.reduces</name>
+                    <value>0</value>
+                </property>
+                
+                <!-- INPUT -->
+                <property>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
+                    <value>${input_document_text}</value>
+                </property>
+
+                <property>
+                    <name>input.schema.literal</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.DocumentText']}</value>
+                </property>
+
+				<!-- OUTPUT -->
+                <property>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
+                    <value>${output_document_to_patent}</value>
+                </property>          
+
+                <property>
+                    <name>output.schema.literal</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent']}</value>
+                </property>
+
+				<!-- this one is requred due to the large amount of time taken 
+					by process storing plaintexts into the database -->
+				<property>
+					<name>mapreduce.task.timeout</name>
+					<value>14400000</value>
+				</property>
+            </configuration>
+            <file>${input_patent_db}#patent.db</file>
+        </map-reduce>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+        			[${wf:errorMessage(wf:lastErrorNode())}]
+        		</message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

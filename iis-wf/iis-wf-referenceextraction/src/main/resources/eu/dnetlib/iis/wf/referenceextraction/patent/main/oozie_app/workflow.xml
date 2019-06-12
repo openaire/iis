@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!-- Note that documentation placed in comments in this file uses the
+"markdown" syntax (along with its way of dividing text into sections). -->
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="referenceextraction_patent_main">
+	
+	<parameters>
+		<property>
+			<name>input_document_text</name>
+			<description>input document text</description>
+		</property>
+		<property>
+			<name>input_patent</name>
+			<description>input patent</description>
+		</property>
+		<property>
+			<name>output_document_to_patent</name>
+			<description>output document to patent</description>
+		</property>
+	</parameters>
+
+	<start to="sqlite_builder" />
+
+    <action name="sqlite_builder">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/sqlite_builder</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/sqlite_builder/working_dir</value>
+                </property>
+                <property>
+                    <name>output_patent_db</name>
+                    <value>${workingDir}/patents.db</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="main_sqlite"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="main_sqlite">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/main_sqlite</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/main_sqlite/working_dir</value>
+                </property>
+                <property>
+                    <name>input_patent_db</name>
+                    <value>${workingDir}/patents.db</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+        			[${wf:errorMessage(wf:lastErrorNode())}]
+        		</message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>
