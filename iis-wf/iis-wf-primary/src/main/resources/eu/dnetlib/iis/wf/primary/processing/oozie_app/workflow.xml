@@ -281,7 +281,7 @@
         </property>
         <property>
             <name>citationmatchingFuzzySparkExecutorOverhead</name>
-            <value>2048</value>
+            <value>4096</value>
             <description>The amount of off heap memory (in megabytes) to be allocated for the executor</description>
         </property>        
         <property>
