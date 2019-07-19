@@ -51,7 +51,7 @@ select docid, conceptId, conceptLabel, stripchars(middle,'.)(,[]') as middle, pr
 from (
 setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("\n", C2, " ")),20,1,10, '(?:\b5002780\b)|(?:\bELIXIR\b)') from pubs where c2 is not null
 ), grants where conceptLabel="ELIXIR-GR" and regexprmatches('(?:\bMIS\b)|(?:\bELIXIR-GR\b)|(?:\b[Ee]lixir-[Gg]r\b)|(?:\b[Ee]lixir\b[Gg]reece\b)', context)
-) group by docid;
+) group by docid
 
 union all
 
