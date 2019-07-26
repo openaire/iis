@@ -65,8 +65,11 @@ public class CommunityReferenceExtractionInputTransformerJob {
     private static List<Community> convert(Concept concept, String acknowledgementParamName) {
         List<Community> communities = new ArrayList<>();
         for (Param param : concept.getParams()) {
-            if (acknowledgementParamName.equals(param.getName()) && StringUtils.isNotBlank(param.getValue())) {
-                communities.add(buildCommunity(concept.getId(), concept.getLabel(), param.getValue()));
+            //changing the rule by accepting empty ackstmt
+            // if (acknowledgementParamName.equals(param.getName()) && StringUtils.isNotBlank(param.getValue())) {
+            if (acknowledgementParamName.equals(param.getName())) {
+                communities.add(buildCommunity(concept.getId(), concept.getLabel(),
+                        StringUtils.isNotBlank(param.getValue()) ? param.getValue() : ""));
             }
         }
         return communities;
