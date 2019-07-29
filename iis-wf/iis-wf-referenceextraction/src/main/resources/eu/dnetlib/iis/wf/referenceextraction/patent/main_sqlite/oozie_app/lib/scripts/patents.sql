@@ -9,7 +9,7 @@ where regexpr("(?:\D|\b)(\d{6,12})\b",middle) = appln_nr
 and (regexprmatches("european patent|patent application|patent office|ep patent|eu patent|patent",lower(context)) or 
     regexprmatches("\bEPO(?:\d|\b)",context) or regexprmatches ("\bEP\s*"||appln_nr,context)
     ) 
-and (not regexprmatches("holotype|paratype|specimen|dissection|\bnih\b|hepth|barcode|\bstrain|accession|\bbacter\b|patent ductus|patent foramen|arxiv|cern|biol|clin|letters|report",lower(context)))
-
+and (not regexprmatches("holotype|journal pone|journal pntd|paratype|scientometrics|specimen|dissection|\bnih\b|hepth|barcode|\bstrain|accession|\bbacter\b|patent ductus|patent foramen|arxiv|cern|biol|clin|letters|report",lower(context)))
+and (not regexprmatches("[0-9]\."||appln_nr,middle) )
 
 );
