@@ -15,4 +15,14 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
     public void testMainWorkflow() throws Exception {
         testWorkflow("eu/dnetlib/iis/wf/referenceextraction/patent/main/sampletest/");
     }
+
+    @Test
+    public void testMainWorkflowEmptyTextInput() throws Exception {
+        testWorkflow("eu/dnetlib/iis/wf/referenceextraction/patent/main/sampletest_empty_text_input/");
+    }
+
+    @Test
+    public void testMainWorkflowEmptyPatentInput() throws Exception {
+        testWorkflow("eu/dnetlib/iis/wf/referenceextraction/patent/main/sampletest_empty_patent_input/");
+    }
 }
