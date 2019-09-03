@@ -93,12 +93,8 @@
                 eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent,
                 eu/dnetlib/iis/wf/referenceextraction/patent/data/document_to_patent.json}
             </arg>
-            <!--            <arg>-C{report,-->
-            <!--                eu.dnetlib.iis.common.schemas.ReportEntry,-->
-            <!--                eu/dnetlib/iis/wf/referenceextraction/patent/data/report.json}</arg>-->
             <!-- All input and output ports have to be bound to paths in HDFS -->
             <arg>-Idocument_to_patent=${workingDir}/referenceextraction_patent/output</arg>
-            <!--            <arg>-Ireport=${workingDir}/referenceextraction_patent/report/document_to_patent_by_root_patentid</arg>-->
         </java>
         <ok to="end"/>
         <error to="fail"/>
