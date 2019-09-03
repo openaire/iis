@@ -59,6 +59,6 @@ union all
 select jdict('documentId', docid, 'conceptId', conceptId, 'confidenceLevel', 0.5) as C1 from (
 select docid, conceptId, conceptLabel, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||next as context
 from (
-setschema 'docid,prev,middle,next' select c1, textwindow2s(keywords(filterstopwords(lower(c2))),7,1,3, 'dariah') from pubs where c2 is not null
+setschema 'docid,prev,middle,next' select c1, textwindow2s(keywords(filterstopwords(lower(c2))),7,1,3, '\bdariah') from pubs where c2 is not null
 ), grants where conceptLabel="DARIAH EU" and (not regexprmatches("edariah",middle) and not regexprmatches("riyadh",context) )
 ) group by docid;
