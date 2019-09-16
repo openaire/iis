@@ -74,7 +74,6 @@
             
             <arg>-inputAvroPath=${input_documents}</arg>
             <arg>-outputAvroPath=${output_document_to_document_classes}</arg>
-            <arg>-scriptDirPath=${wf:conf('oozie.wf.application.path')}/lib/scripts</arg>
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
             
         </spark>

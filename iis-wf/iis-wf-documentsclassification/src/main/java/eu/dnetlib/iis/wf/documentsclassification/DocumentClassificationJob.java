@@ -59,9 +59,6 @@ public class DocumentClassificationJob {
             
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputAvroPath);
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
-          
-            sc.sc().addFile(params.scriptDirPath, true);
-            
             
             JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> documents = avroLoader.loadJavaRDD(sc, params.inputAvroPath, ExtractedDocumentMetadataMergedWithOriginal.class);
             
@@ -113,9 +110,6 @@ public class DocumentClassificationJob {
         
         @Parameter(names = "-outputAvroPath", required = true)
         private String outputAvroPath;
-        
-        @Parameter(names = "-scriptDirPath", required = true, description = "path to directory with scripts")
-        private String scriptDirPath;
         
         @Parameter(names = "-outputReportPath", required = true)
         private String outputReportPath;
