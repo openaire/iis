@@ -8,10 +8,10 @@ import org.apache.hadoop.security.alias.CredentialProvider;
 import org.apache.hadoop.security.alias.CredentialProviderFactory;
 import org.apache.hadoop.security.alias.CredentialProvider.CredentialEntry;
 
-import com.cloudera.com.amazonaws.auth.AWSCredentials;
-import com.cloudera.com.amazonaws.auth.AWSCredentialsProvider;
-import com.cloudera.com.amazonaws.auth.AnonymousAWSCredentials;
-import com.cloudera.com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AnonymousAWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
 
 /**
  * S3 credentials provider relying on Hadoop credentials.

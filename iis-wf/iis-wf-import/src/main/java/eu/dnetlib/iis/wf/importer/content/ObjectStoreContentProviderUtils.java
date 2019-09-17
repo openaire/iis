@@ -13,9 +13,9 @@ import java.security.NoSuchAlgorithmException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
 
-import com.cloudera.com.amazonaws.services.s3.model.GetObjectRequest;
-import com.cloudera.com.amazonaws.services.s3.model.S3Object;
-import com.cloudera.com.amazonaws.services.s3.model.S3ObjectId;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectId;
 
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 

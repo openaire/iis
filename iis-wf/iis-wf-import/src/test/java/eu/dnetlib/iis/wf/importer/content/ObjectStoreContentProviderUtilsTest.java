@@ -19,11 +19,11 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.cloudera.com.amazonaws.services.s3.AmazonS3;
-import com.cloudera.com.amazonaws.services.s3.model.GetObjectRequest;
-import com.cloudera.com.amazonaws.services.s3.model.ObjectMetadata;
-import com.cloudera.com.amazonaws.services.s3.model.S3Object;
-import com.cloudera.com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 
 /**
  * @author mhorst

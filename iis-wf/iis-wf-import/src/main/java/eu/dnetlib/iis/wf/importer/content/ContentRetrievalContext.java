@@ -7,10 +7,10 @@ import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_
 
 import org.apache.hadoop.conf.Configuration;
 
-import com.cloudera.com.amazonaws.ClientConfiguration;
-import com.cloudera.com.amazonaws.Protocol;
-import com.cloudera.com.amazonaws.services.s3.AmazonS3;
-import com.cloudera.com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.Protocol;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 
