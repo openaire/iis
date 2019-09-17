@@ -60,6 +60,10 @@ public class DocumentClassificationJob {
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputAvroPath);
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
             
+            if (StringUtils.isNotBlank(params.scriptDirPath)) {
+                sc.sc().addFile(params.scriptDirPath, true);
+            }
+            
             JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> documents = avroLoader.loadJavaRDD(sc, params.inputAvroPath, ExtractedDocumentMetadataMergedWithOriginal.class);
             
             JavaRDD<DocumentMetadata> metadataRecords = documents.map(document -> converter.convert(document)).filter(metadata->StringUtils.isNotBlank(metadata.getAbstract$()));
@@ -110,6 +114,9 @@ public class DocumentClassificationJob {
         
         @Parameter(names = "-outputAvroPath", required = true)
         private String outputAvroPath;
+        
+        @Parameter(names = "-scriptDirPath", required = false, description = "path to directory with scripts, not required since cdh 5.16")
+        private String scriptDirPath;
         
         @Parameter(names = "-outputReportPath", required = true)
         private String outputReportPath;
