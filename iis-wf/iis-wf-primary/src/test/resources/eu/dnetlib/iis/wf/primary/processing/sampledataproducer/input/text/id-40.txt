@@ -1,0 +1,3 @@
+This is a simple text containing patent reference which should be picked up by reference extraction algorithm.
+
+Competing Interests: The authors have read the journal's policy and have the following conflicts. PH and GPJMvdD have filed a patent application entitled “Vaccine against amyloid folding intermediate.” EP08159385 .7 (2008), WO2010002251 (A1) (2010). The RIVM is a Government Institute. The application was filed on behalf of “the Kingdom of The Netherlands.” It does not alter the authors' adherence to the PLoS ONE policies on sharing data and materials. Funding: The authors have no support or funding to report.

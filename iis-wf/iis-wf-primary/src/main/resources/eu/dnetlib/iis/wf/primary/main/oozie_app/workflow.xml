@@ -50,6 +50,12 @@
             <description>flag indicating software url reference extraction should be enabled</description>
         </property>
         <property>
+            <!-- currently disabled by default -->
+            <name>active_referenceextraction_patent</name>
+            <value>false</value>
+            <description>flag indicating patent reference extraction should be enabled</description>
+        </property>
+        <property>
             <name>active_documentsclassification</name>
             <value>false</value>
             <description>flag indicating documents classification should be enabled</description>
@@ -252,11 +258,21 @@
             <value>$UNDEFINED$</value>
             <description>document to software url action-set identifier of exported data</description>
         </property>
+        <property>
+            <name>export_action_set_id_document_patent</name>
+            <value>$UNDEFINED$</value>
+            <description>document to patent action-set identifier of exported data</description>
+        </property>
         <!-- -->
         <property>
             <name>export_action_set_id_entity_software</name>
             <value>$UNDEFINED$</value>
             <description>action-set identifier of exported data containing software entities</description>
+        </property>
+        <property>
+            <name>export_action_set_id_entity_patent</name>
+            <value>$UNDEFINED$</value>
+            <description>action-set identifier of exported data containing patent entities</description>
         </property>
         <!-- trust level threshold section -->
         <property>
@@ -288,6 +304,11 @@
             <name>export_trust_level_threshold_document_software_url</name>
             <value>$UNDEFINED$</value>
             <description>document to software url trust level threshold</description>
+        </property>
+        <property>
+            <name>export_trust_level_threshold_document_patent</name>
+            <value>$UNDEFINED$</value>
+            <description>document to patent trust level threshold</description>
         </property>
         <property>
             <name>export_trust_level_threshold_matched_doc_organizations</name>
@@ -609,6 +630,10 @@
                     <value>${workingDir}/primary_import/concept</value>
                 </property>
                 <property>
+                    <name>input_patent</name>
+                    <value>${workingDir}/primary_import/patent</value>
+                </property>
+                <property>
                     <name>output_merged_metadata</name>
                     <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
                 </property>
@@ -640,6 +665,10 @@
                 <property>
                     <name>output_document_to_software_url</name>
                     <value>${workingDir}/exported/document_to_software_url</value>
+                </property>
+                <property>
+                    <name>output_document_to_patent</name>
+                    <value>${workingDir}/exported/document_to_patent</value>
                 </property>
                 <property>
                     <name>output_document_to_document_classes</name>
