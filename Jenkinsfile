@@ -2,7 +2,6 @@ def MAVEN_VERSION = "Maven3"
 def JDK_VERSION = "Sun JDK 8"
 
 def TRIGGERS_CRON = "H H(20-23) * * 1-5"
-def TRIGGERS_POLLSCM = "@hourly"
 
 def BUILD_NUMBER_TO_KEEP = "5"
 def BUILD_TIMEOUT_VALUE = 60
@@ -18,7 +17,6 @@ pipeline {
 
     triggers {
         cron(TRIGGERS_CRON)
-        pollSCM(TRIGGERS_POLLSCM)
     }
 
     options {
