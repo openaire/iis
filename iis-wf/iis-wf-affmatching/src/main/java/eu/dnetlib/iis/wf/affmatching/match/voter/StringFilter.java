@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import eu.dnetlib.iis.wf.affmatching.utils.PatternUtils;
+
 /**
  * Class containing helper methods for filtering strings.
  * 
@@ -58,7 +60,7 @@ class StringFilter implements Serializable {
         
         String filteredValue = value;
         
-        filteredValue = StringUtils.removePattern(filteredValue, "\\b\\w{1," + wordToRemoveMaxLength + "}\\b");
+        filteredValue = PatternUtils.removePattern(filteredValue, "\\b\\w{1," + wordToRemoveMaxLength + "}\\b");
         filteredValue = filteredValue.trim().replaceAll(" +", " ");
         
         return filteredValue;

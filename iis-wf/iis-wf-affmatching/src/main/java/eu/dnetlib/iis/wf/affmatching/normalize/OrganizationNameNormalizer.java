@@ -10,6 +10,7 @@ import com.google.common.collect.Sets;
 
 import eu.dnetlib.iis.common.string.LenientComparisonStringNormalizer;
 import eu.dnetlib.iis.common.string.StringNormalizer;
+import eu.dnetlib.iis.wf.affmatching.utils.PatternUtils;
 
 /**
  * {@link StringNormalizer} that normalizes organization name string
@@ -46,14 +47,14 @@ public class OrganizationNameNormalizer implements StringNormalizer, Serializabl
         }
         
         // remove brackets
-        String filteredOrganizationName = StringUtils.removePattern(organizationName, "\\(.*?\\)");
+        String filteredOrganizationName = PatternUtils.removePattern(organizationName, "\\(.*?\\)");
         
         // internal normalization
         filteredOrganizationName = innerNormalizer.normalize(filteredOrganizationName);
         
         // remove stopwords
         for (String stopword : stopwords) {
-            filteredOrganizationName = StringUtils.removePattern(filteredOrganizationName, "\\b" + stopword + "\\b");
+            filteredOrganizationName = PatternUtils.removePattern(filteredOrganizationName, "\\b" + stopword + "\\b");
         }
         filteredOrganizationName = filteredOrganizationName.trim().replaceAll(" +", " ");
         
