@@ -59,25 +59,6 @@ public class PatentReaderJob {
     private static final String ARRAY_STRING_END_TAG = "]";
     private static final String ARRAY_STRING_DELIMITER = ",";
 
-    //    private static final StructType PATENTS_EPO_FILE_SCHEMA = new StructType(new StructField[]{
-//            new StructField.(FIELD_APPLN_ID, DataTypes.StringType, false, Metadata.empty()),
-//            new StructField(FIELD_APPLN_AUTH, DataTypes.StringType, false, Metadata.empty()),
-//            new StructField(FIELD_APPLN_NR, DataTypes.StringType, false, Metadata.empty()),
-//            new StructField(FIELD_APPLN_FILING_DATE, DataTypes.StringType, false, Metadata.empty()),
-//            new StructField(FIELD_APPLN_NR_EPODOC, DataTypes.StringType, false, Metadata.empty()),
-//            new StructField(FIELD_EARLIEST_PUBLN_DATE, DataTypes.StringType, false, Metadata.empty()),
-//            new StructField(FIELD_APPLN_ABSTRACT, DataTypes.StringType, true, Metadata.empty()),
-//            new StructField(FIELD_APPLN_TITLE, DataTypes.StringType, false, Metadata.empty()),
-//            new StructField(FIELD_TLS211_PUBLN_DATE_ID, DataTypes.createArrayType(DataTypes.createStructType(new StructField[]{
-//                    new StructField(FIELD_TLS211_PUBLN_DATE_ID__PUBLN_DATE, DataTypes.StringType, false, Metadata.empty()),
-//                    new StructField(FIELD_TLS211_PUBLN_DATE_ID__PAT_PUBLN_ID, DataTypes.StringType, false, Metadata.empty())
-//            })), false, Metadata.empty()),
-//            new StructField(FIELD_IPC_CLASS_SYMBOL, DataTypes.StringType, false, Metadata.empty()),
-//            new StructField(FIELD_HOLDER_COUNTRY, DataTypes.createArrayType(DataTypes.createStructType(new StructField[]{
-//                    new StructField(FIELD_HOLDER_COUNTRY__PERSON_NAME, DataTypes.StringType, false, Metadata.empty()),
-//                    new StructField(FIELD_HOLDER_COUNTRY__PERSON_CTRY_CODE, DataTypes.StringType, false, Metadata.empty())
-//            })), false, Metadata.empty())
-//    });
     private static final StructType PATENTS_EPO_FILE_SCHEMA = StructType$.MODULE$.apply(ImmutableList.<StructField>builder()
             .add(StructField$.MODULE$.apply(FIELD_APPLN_ID, DataTypes.StringType, false, Metadata.empty()))
             .add(StructField$.MODULE$.apply(FIELD_APPLN_AUTH, DataTypes.StringType, false, Metadata.empty()))
