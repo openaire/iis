@@ -15,7 +15,7 @@
         </property>
         <property>
             <name>output_report_relative_path</name>
-            <value>import_patents</value>
+            <value>import_patent</value>
             <description>directory for storing report (relative to output_report_root_path)</description>
         </property>
         <property>
@@ -57,7 +57,7 @@
             </prepare>
             <master>yarn-cluster</master>
             <mode>cluster</mode>
-            <name>import-patents</name>
+            <name>import-patent</name>
             <class>eu.dnetlib.iis.wf.importer.patent.PatentReaderJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-import-${projectVersion}.jar</jar>
             <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
