@@ -2,13 +2,13 @@
 protocol IIS{
 
     record Tls211PublnDateId {
-        string publn_date;
-        string pat_publn_id;
+        union {null, string} publn_date = null;
+        union {null, string} pat_publn_id = null;
     }
 
     record HolderCountry {
-        string person_name;
-        string person_ctry_code;
+        union {null, string} person_name = null;
+        union {null, string} person_ctry_code = null;
     }
 
     record Patent {
@@ -19,7 +19,7 @@ protocol IIS{
         string appln_nr_epodoc;
         string earliest_publn_date;
         union {null, string} appln_abstract = null;
-        string appln_title;
+        union {null, string} appln_title = null;
         array<Tls211PublnDateId> tls211_publn_date_id;
         array<string> ipc_class_symbol;
         array<HolderCountry> holder_country;

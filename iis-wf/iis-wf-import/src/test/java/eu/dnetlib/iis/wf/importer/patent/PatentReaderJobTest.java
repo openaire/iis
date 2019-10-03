@@ -17,16 +17,17 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 public class PatentReaderJobTest {
+    private ClassLoader cl = getClass().getClassLoader();
     private SparkJobExecutor executor = new SparkJobExecutor();
     private Path workingDir;
-    private Path outputPath;
-    private Path outputReportPath;
+    private Path outputDir;
+    private Path outputReportDir;
 
     @Before
     public void before() throws IOException {
         workingDir = Files.createTempDirectory("patent");
-        outputPath = workingDir.resolve("output");
-        outputReportPath = workingDir.resolve("report");
+        outputDir = workingDir.resolve("output");
+        outputReportDir = workingDir.resolve("report");
     }
 
     @After
@@ -34,38 +35,40 @@ public class PatentReaderJobTest {
         FileUtils.deleteDirectory(workingDir.toFile());
     }
 
+    //------------------------ TESTS --------------------------
+
     @Test
     public void shouldReadPatentEPOFileAndStorePatentsAsAvroDatastores() throws IOException {
         // given
         String patentsEpoPath = Objects
-                .requireNonNull(getClass().getClassLoader().getResource("eu/dnetlib/iis/wf/importer/patent/sampletest/oozie_app/input/patents_epo.json"))
+                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/importer/patent/sampletest/oozie_app/input/patents_epo.json"))
                 .getFile();
         String patentsEpoMappedPath = Objects
-                .requireNonNull(getClass().getClassLoader().getResource("eu/dnetlib/iis/wf/importer/patent/data/output/patents_epo_mapped.json"))
+                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/importer/patent/data/output/patents_epo_mapped.json"))
                 .getFile();
         String reportPath = Objects
-                .requireNonNull(getClass().getClassLoader().getResource("eu/dnetlib/iis/wf/importer/patent/data/output/report.json"))
+                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/importer/patent/data/output/report.json"))
                 .getFile();
+        SparkJob sparkJob = buildSparkJob(patentsEpoPath);
 
-        // execute & assert
-        executeJobAndAssert(patentsEpoPath, patentsEpoMappedPath, reportPath);
+        // when
+        executor.execute(sparkJob);
+
+        // then
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.toString(), patentsEpoMappedPath, Patent.class);
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportDir.toString(), reportPath, ReportEntry.class);
     }
 
-    private void executeJobAndAssert(String patentsEpoPath, String patentsEpoMappedPath, String reportPath) throws IOException {
-        SparkJob sparkJob = SparkJobBuilder.create()
+    //------------------------ PRIVATE --------------------------
+
+    private SparkJob buildSparkJob(String patentsEpoPath) {
+        return SparkJobBuilder.create()
                 .setAppName(getClass().getName())
                 .setMainClass(PatentReaderJob.class)
                 .addArg("-inputJSONLocation", patentsEpoPath)
-                .addArg("-outputPath", outputPath.toString())
-                .addArg("-outputReportPath", outputReportPath.toString())
+                .addArg("-outputPath", outputDir.toString())
+                .addArg("-outputReportPath", outputReportDir.toString())
                 .addJobProperty("spark.driver.host", "localhost")
                 .build();
-
-        // execute
-        executor.execute(sparkJob);
-
-        // assert
-        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputPath.toString(), patentsEpoMappedPath, Patent.class);
-        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportPath.toString(), reportPath, ReportEntry.class);
     }
 }

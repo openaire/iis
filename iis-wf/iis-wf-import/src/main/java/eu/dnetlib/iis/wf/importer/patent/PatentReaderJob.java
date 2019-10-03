@@ -25,6 +25,7 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -58,6 +59,7 @@ public class PatentReaderJob {
     private static final String ARRAY_STRING_START_TAG = "[";
     private static final String ARRAY_STRING_END_TAG = "]";
     private static final String ARRAY_STRING_DELIMITER = ",";
+    private static final String NULL_STRING = "NULL";
 
     private static final StructType PATENTS_EPO_FILE_SCHEMA = StructType$.MODULE$.apply(ImmutableList.<StructField>builder()
             .add(StructField$.MODULE$.apply(FIELD_APPLN_ID, DataTypes.StringType, false, Metadata.empty()))
@@ -67,18 +69,18 @@ public class PatentReaderJob {
             .add(StructField$.MODULE$.apply(FIELD_APPLN_NR_EPODOC, DataTypes.StringType, false, Metadata.empty()))
             .add(StructField$.MODULE$.apply(FIELD_EARLIEST_PUBLN_DATE, DataTypes.StringType, false, Metadata.empty()))
             .add(StructField$.MODULE$.apply(FIELD_APPLN_ABSTRACT, DataTypes.StringType, true, Metadata.empty()))
-            .add(StructField$.MODULE$.apply(FIELD_APPLN_TITLE, DataTypes.StringType, false, Metadata.empty()))
+            .add(StructField$.MODULE$.apply(FIELD_APPLN_TITLE, DataTypes.StringType, true, Metadata.empty()))
             .add(StructField$.MODULE$.apply(FIELD_TLS211_PUBLN_DATE_ID, DataTypes.createArrayType(DataTypes.createStructType(
                     ImmutableList.of(
-                            StructField$.MODULE$.apply(FIELD_TLS211_PUBLN_DATE_ID__PUBLN_DATE, DataTypes.StringType, false, Metadata.empty()),
-                            StructField$.MODULE$.apply(FIELD_TLS211_PUBLN_DATE_ID__PAT_PUBLN_ID, DataTypes.StringType, false, Metadata.empty())
-                    ))), false, Metadata.empty()))
+                            StructField$.MODULE$.apply(FIELD_TLS211_PUBLN_DATE_ID__PUBLN_DATE, DataTypes.StringType, true, Metadata.empty()),
+                            StructField$.MODULE$.apply(FIELD_TLS211_PUBLN_DATE_ID__PAT_PUBLN_ID, DataTypes.StringType, true, Metadata.empty())
+                    )), true), false, Metadata.empty()))
             .add(StructField$.MODULE$.apply(FIELD_IPC_CLASS_SYMBOL, DataTypes.StringType, false, Metadata.empty()))
             .add(StructField$.MODULE$.apply(FIELD_HOLDER_COUNTRY, DataTypes.createArrayType(DataTypes.createStructType(
                     ImmutableList.of(
-                            StructField$.MODULE$.apply(FIELD_HOLDER_COUNTRY__PERSON_NAME, DataTypes.StringType, false, Metadata.empty()),
-                            StructField$.MODULE$.apply(FIELD_HOLDER_COUNTRY__PERSON_CTRY_CODE, DataTypes.StringType, false, Metadata.empty())
-                    ))), false, Metadata.empty()))
+                            StructField$.MODULE$.apply(FIELD_HOLDER_COUNTRY__PERSON_NAME, DataTypes.StringType, true, Metadata.empty()),
+                            StructField$.MODULE$.apply(FIELD_HOLDER_COUNTRY__PERSON_CTRY_CODE, DataTypes.StringType, true, Metadata.empty())
+                    )), true), false, Metadata.empty()))
             .build());
 
     //------------------------ LOGIC --------------------------
@@ -124,9 +126,9 @@ public class PatentReaderJob {
         patentBuilder.setEarliestPublnDate(buildEarliestPublnDate(row));
         patentBuilder.setApplnAbstract(buildApplnAbstract(row));
         patentBuilder.setApplnTitle(buildApplnTitle(row));
-        patentBuilder.setTls211PublnDateId(buildTls211PublnDateId(row));
-        patentBuilder.setIpcClassSymbol(buildIpcClassSymbol(row));
-        patentBuilder.setHolderCountry(buildHolderCountry(row));
+        patentBuilder.setTls211PublnDateId(buildTls211PublnDateIdList(row));
+        patentBuilder.setIpcClassSymbol(buildIpcClassSymbolList(row));
+        patentBuilder.setHolderCountry(buildHolderCountryList(row));
         return patentBuilder.build();
     }
 
@@ -155,44 +157,66 @@ public class PatentReaderJob {
     }
 
     private static CharSequence buildApplnAbstract(Row row) {
-        if (Arrays.asList(row.schema().fieldNames()).contains(FIELD_APPLN_ABSTRACT)) {
-            return row.getAs(FIELD_APPLN_ABSTRACT);
-        }
-        return null;
+        return fieldValueOrNull(row, FIELD_APPLN_ABSTRACT);
     }
 
     private static CharSequence buildApplnTitle(Row row) {
-        return row.getAs(FIELD_APPLN_TITLE);
+        return fieldValueOrNull(row, FIELD_APPLN_TITLE);
     }
 
-    private static List<Tls211PublnDateId> buildTls211PublnDateId(Row row) {
-        return row.getList(row.fieldIndex(FIELD_TLS211_PUBLN_DATE_ID)).stream()
-                .map(elem -> {
-                    Row elemRow = (Row) elem;
-                    return Tls211PublnDateId.newBuilder()
-                            .setPublnDate(elemRow.getAs(FIELD_TLS211_PUBLN_DATE_ID__PUBLN_DATE))
-                            .setPatPublnId(elemRow.getAs(FIELD_TLS211_PUBLN_DATE_ID__PAT_PUBLN_ID))
-                            .build();
-                })
+    private static List<Tls211PublnDateId> buildTls211PublnDateIdList(Row row) {
+        return row.<Row>getList(row.fieldIndex(FIELD_TLS211_PUBLN_DATE_ID)).stream()
+                .filter(Objects::nonNull)
+                .map(PatentReaderJob::buildTls211PublnDateId)
+                .filter(PatentReaderJob::isTls211PublnDateIdValid)
                 .collect(Collectors.toList());
     }
 
-    private static List<CharSequence> buildIpcClassSymbol(Row row) {
-        String raw = row.getAs(FIELD_IPC_CLASS_SYMBOL);
-        return Arrays.asList(StringUtils
-                .strip(raw.replace("\"", ""), ARRAY_STRING_START_TAG + ARRAY_STRING_END_TAG)
-                .split(ARRAY_STRING_DELIMITER));
+    private static Tls211PublnDateId buildTls211PublnDateId(Row row) {
+        return Tls211PublnDateId.newBuilder()
+                .setPublnDate(fieldValueOrNull(row, FIELD_TLS211_PUBLN_DATE_ID__PUBLN_DATE))
+                .setPatPublnId(fieldValueOrNull(row, FIELD_TLS211_PUBLN_DATE_ID__PAT_PUBLN_ID))
+                .build();
     }
 
-    private static List<HolderCountry> buildHolderCountry(Row row) {
-        return row.getList(row.fieldIndex(FIELD_HOLDER_COUNTRY)).stream()
-                .map(elem -> {
-                    Row elemRow = (Row) elem;
-                    return HolderCountry.newBuilder()
-                            .setPersonName(elemRow.getAs(FIELD_HOLDER_COUNTRY__PERSON_NAME))
-                            .setPersonCtryCode(elemRow.getAs(FIELD_HOLDER_COUNTRY__PERSON_CTRY_CODE))
-                            .build();
-                }).collect(Collectors.toList());
+    private static Boolean isTls211PublnDateIdValid(Tls211PublnDateId x) {
+        return Objects.nonNull(x.getPublnDate()) && Objects.nonNull(x.getPatPublnId());
+    }
+
+    private static List<CharSequence> buildIpcClassSymbolList(Row row) {
+        String raw = row.getAs(FIELD_IPC_CLASS_SYMBOL);
+        return Arrays.stream(StringUtils
+                .strip(raw.replace("\"", ""), ARRAY_STRING_START_TAG + ARRAY_STRING_END_TAG)
+                .split(ARRAY_STRING_DELIMITER))
+                .filter(StringUtils::isNotBlank)
+                .filter(x -> !NULL_STRING.equalsIgnoreCase(x))
+                .collect(Collectors.toList());
+    }
+
+    private static List<HolderCountry> buildHolderCountryList(Row row) {
+        return row.<Row>getList(row.fieldIndex(FIELD_HOLDER_COUNTRY)).stream()
+                .filter(Objects::nonNull)
+                .map(PatentReaderJob::buildHolderCountry)
+                .filter(PatentReaderJob::isHolderCountryValid)
+                .collect(Collectors.toList());
+    }
+
+    private static HolderCountry buildHolderCountry(Row row) {
+        return HolderCountry.newBuilder()
+                .setPersonName(fieldValueOrNull(row, FIELD_HOLDER_COUNTRY__PERSON_NAME))
+                .setPersonCtryCode(fieldValueOrNull(row, FIELD_HOLDER_COUNTRY__PERSON_CTRY_CODE))
+                .build();
+    }
+
+    private static Boolean isHolderCountryValid(HolderCountry x) {
+        return Objects.nonNull(x.getPersonName()) && Objects.nonNull(x.getPersonCtryCode());
+    }
+
+    private static <X> X fieldValueOrNull(Row row, String fieldName) {
+        if (!row.isNullAt(row.fieldIndex(fieldName))) {
+            return row.getAs(fieldName);
+        }
+        return null;
     }
 
     private static JavaRDD<ReportEntry> generateReportEntries(JavaSparkContext sparkContext,
