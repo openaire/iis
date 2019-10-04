@@ -24,6 +24,11 @@
             <value>6144</value>
             <description>memory for distcp action copying InfoSpace dump from remote cluster</description>
         </property>
+        <property>
+            <name>hbase_dump_distcp_num_maps</name>
+            <value>1</value>
+            <description>maximum number of simultaneous copies of InfoSpace dump from remote location</description>
+        </property>
 		<property>
 			<name>inference_provenance_blacklist</name>
 			<value>iis::.*</value>
@@ -273,6 +278,7 @@
         <distcp xmlns="uri:oozie:distcp-action:0.2">
             <arg>-Dmapreduce.map.memory.mb=${hbase_dump_distcp_memory_mb}</arg>
             <arg>-pb</arg>
+            <arg>-m ${hbase_dump_distcp_num_maps}</arg>
             <arg>${hbase_dump_location}</arg>
             <arg>${nameNode}${workingDir}/hbase_dump</arg>
         </distcp>
