@@ -9,6 +9,7 @@
 {"key": "processing.referenceExtraction.researchInitiative.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 780000])"}
 {"key": "processing.referenceExtraction.softwareUrl.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 700000])"}
 {"key": "processing.referenceExtraction.patent.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 700000])"}
+{"key": "processing.referenceExtraction.patent.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 700000])"}
 {"key": "processing.docOrgMatching.affiliationBased.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 200000])"}
 {"key": "processing.docOrgMatching.projectBased.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 200000])"}
 {"key": "processing.merging.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 200000])"}

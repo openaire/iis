@@ -1,33 +1,53 @@
 <?xml version="1.0"?>
-<!-- Note that documentation placed in comments in this file uses the
-"markdown" syntax (along with its way of dividing text into sections). -->
 <workflow-app xmlns="uri:oozie:workflow:0.4" name="referenceextraction_patent_main">
-	
-	<parameters>
-		<property>
-			<name>input_document_text</name>
-			<description>input document text</description>
-		</property>
-		<property>
-			<name>input_patent</name>
-			<description>input patent</description>
-		</property>
-		<property>
-			<name>output_document_to_patent</name>
-			<description>output document to patent</description>
-		</property>
-	</parameters>
 
-	<start to="sqlite_builder" />
+    <parameters>
+        <property>
+            <name>input_document_text</name>
+            <description>input document text</description>
+        </property>
+        <property>
+            <name>input_patent</name>
+            <description>input patent</description>
+        </property>
+        <property>
+            <name>output_document_to_patent</name>
+            <description>output document to patent</description>
+        </property>
+    </parameters>
+
+    <start to="input_transformer"/>
+
+    <action name="input_transformer">
+        <spark xmlns="uri:oozie:spark-action:0.2">
+            <prepare>
+                <delete path="${workingDir}/patent"/>
+            </prepare>
+            <master>yarn-cluster</master>
+            <mode>cluster</mode>
+            <name>patent-referenceextraction-input-transformer</name>
+            <class>eu.dnetlib.iis.wf.referenceextraction.patent.input.PatentReferenceExtractionInputTransformerJob</class>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
+            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
+            <arg>-inputPath=${input_patent}</arg>
+            <arg>-outputPath=${workingDir}/patent</arg>
+        </spark>
+        <ok to="sqlite_builder"/>
+        <error to="fail"/>
+    </action>
 
     <action name="sqlite_builder">
         <sub-workflow>
             <app-path>${wf:appPath()}/sqlite_builder</app-path>
-            <propagate-configuration />
+            <propagate-configuration/>
             <configuration>
                 <property>
                     <name>workingDir</name>
                     <value>${workingDir}/sqlite_builder/working_dir</value>
+                </property>
+                <property>
+                    <name>input_patent</name>
+                    <value>${workingDir}/patent</value>
                 </property>
                 <property>
                     <name>output_patent_db</name>
@@ -42,7 +62,7 @@
     <action name="main_sqlite">
         <sub-workflow>
             <app-path>${wf:appPath()}/main_sqlite</app-path>
-            <propagate-configuration />
+            <propagate-configuration/>
             <configuration>
                 <property>
                     <name>workingDir</name>
@@ -60,8 +80,8 @@
 
     <kill name="fail">
         <message>Unfortunately, the process failed -- error message:
-        			[${wf:errorMessage(wf:lastErrorNode())}]
-        		</message>
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
     </kill>
 
     <end name="end"/>
