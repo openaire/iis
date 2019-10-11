@@ -74,6 +74,7 @@ public final class InfoSpaceConstants {
     public static final String SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE = "0001";
     public static final String SEMANTIC_CLASS_INSTANCE_TYPE_DATASET = "0021";
     public static final String SEMANTIC_CLASS_INSTANCE_TYPE_SOFTWARE = "0029";
+    public static final String SEMANTIC_CLASS_INSTANCE_TYPE_PATENT = "0019";
 
     static {
         try {
