@@ -96,14 +96,12 @@ public class PatentReaderJob {
         conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
 
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
-
             Configuration hadoopConf = sc.hadoopConfiguration();
 
             HdfsUtils.remove(hadoopConf, params.outputPath);
             HdfsUtils.remove(hadoopConf, params.outputReportPath);
 
             SQLContext sqlContext = new SQLContext(sc);
-
             JavaRDD<Patent> results = sqlContext.read()
                     .schema(PATENTS_EPO_FILE_SCHEMA)
                     .json(params.inputJSONLocation)
@@ -117,19 +115,19 @@ public class PatentReaderJob {
     //------------------------ PRIVATE --------------------------
 
     private static Patent buildEntry(Row row) {
-        Patent.Builder patentBuilder = Patent.newBuilder();
-        patentBuilder.setApplnId(buildApplnId(row));
-        patentBuilder.setApplnAuth(buildApplnAuth(row));
-        patentBuilder.setApplnNr(buildApplnNr(row));
-        patentBuilder.setApplnFilingDate(buildApplnFilingDate(row));
-        patentBuilder.setApplnNrEpodoc(buildApplnNrEpodoc(row));
-        patentBuilder.setEarliestPublnDate(buildEarliestPublnDate(row));
-        patentBuilder.setApplnAbstract(buildApplnAbstract(row));
-        patentBuilder.setApplnTitle(buildApplnTitle(row));
-        patentBuilder.setTls211PublnDateId(buildTls211PublnDateIdList(row));
-        patentBuilder.setIpcClassSymbol(buildIpcClassSymbolList(row));
-        patentBuilder.setHolderCountry(buildHolderCountryList(row));
-        return patentBuilder.build();
+        return Patent.newBuilder()
+                .setApplnId(buildApplnId(row))
+                .setApplnAuth(buildApplnAuth(row))
+                .setApplnNr(buildApplnNr(row))
+                .setApplnFilingDate(buildApplnFilingDate(row))
+                .setApplnNrEpodoc(buildApplnNrEpodoc(row))
+                .setEarliestPublnDate(buildEarliestPublnDate(row))
+                .setApplnAbstract(buildApplnAbstract(row))
+                .setApplnTitle(buildApplnTitle(row))
+                .setTls211PublnDateId(buildTls211PublnDateIdList(row))
+                .setIpcClassSymbol(buildIpcClassSymbolList(row))
+                .setHolderCountry(buildHolderCountryList(row))
+                .build();
     }
 
     private static CharSequence buildApplnId(Row row) {
@@ -168,7 +166,7 @@ public class PatentReaderJob {
         return row.<Row>getList(row.fieldIndex(FIELD_TLS211_PUBLN_DATE_ID)).stream()
                 .filter(Objects::nonNull)
                 .map(PatentReaderJob::buildTls211PublnDateId)
-                .filter(PatentReaderJob::isTls211PublnDateIdValid)
+                .filter(PatentReaderJob::isValidTls211PublnDateId)
                 .collect(Collectors.toList());
     }
 
@@ -179,7 +177,7 @@ public class PatentReaderJob {
                 .build();
     }
 
-    private static Boolean isTls211PublnDateIdValid(Tls211PublnDateId x) {
+    private static Boolean isValidTls211PublnDateId(Tls211PublnDateId x) {
         return Objects.nonNull(x.getPublnDate()) && Objects.nonNull(x.getPatPublnId());
     }
 
@@ -197,7 +195,7 @@ public class PatentReaderJob {
         return row.<Row>getList(row.fieldIndex(FIELD_HOLDER_COUNTRY)).stream()
                 .filter(Objects::nonNull)
                 .map(PatentReaderJob::buildHolderCountry)
-                .filter(PatentReaderJob::isHolderCountryValid)
+                .filter(PatentReaderJob::isValidHolderCountry)
                 .collect(Collectors.toList());
     }
 
@@ -208,7 +206,7 @@ public class PatentReaderJob {
                 .build();
     }
 
-    private static Boolean isHolderCountryValid(HolderCountry x) {
+    private static Boolean isValidHolderCountry(HolderCountry x) {
         return Objects.nonNull(x.getPersonName()) && Objects.nonNull(x.getPersonCtryCode());
     }
 
@@ -221,14 +219,10 @@ public class PatentReaderJob {
 
     private static JavaRDD<ReportEntry> generateReportEntries(JavaSparkContext sparkContext,
                                                               JavaRDD<Patent> entries) {
-
         Preconditions.checkNotNull(sparkContext, "sparkContext has not been set");
-
         ReportEntry fromCacheEntitiesCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_READ_TOTAL, entries.count());
-
         return sparkContext.parallelize(Lists.newArrayList(fromCacheEntitiesCounter));
     }
-
 
     private static void storeInOutput(JavaRDD<Patent> results, JavaRDD<ReportEntry> reports,
                                       String resultOutputPath, String reportOutputPath) {
@@ -238,7 +232,6 @@ public class PatentReaderJob {
 
     @Parameters(separators = "=")
     private static class PatentReaderJobParameters {
-
         @Parameter(names = "-inputJSONLocation", required = true)
         private String inputJSONLocation;
 
@@ -247,6 +240,5 @@ public class PatentReaderJob {
 
         @Parameter(names = "-outputReportPath", required = true)
         private String outputReportPath;
-
     }
 }
