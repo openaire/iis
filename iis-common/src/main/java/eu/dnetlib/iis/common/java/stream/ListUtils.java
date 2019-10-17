@@ -8,6 +8,9 @@ import java.util.stream.IntStream;
 
 public class ListUtils {
 
+    private ListUtils() {
+    }
+
     public static <X, Y> List<Pair<X, Y>> zip(List<X> left, List<Y> right) {
         if (left.size() != right.size()) {
             throw new IllegalArgumentException(String.format("List sizes do not match: left=%d, right=%d",

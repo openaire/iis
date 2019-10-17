@@ -11,6 +11,9 @@ import java.util.stream.StreamSupport;
 
 public class StreamUtils {
 
+    private StreamUtils() {
+    }
+
     public static <X> Stream<X> asStream(Iterator<X> iterator) {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false);
     }

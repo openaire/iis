@@ -57,7 +57,7 @@ public class StreamUtilsTest {
     }
 
     @Test
-    public void withCloseableIteratorFunctionShouldApplyGivenFunction() throws IOException {
+    public void withCloseableIteratorShouldApplyGivenFunction() throws IOException {
         //given
         List<String> elems = Arrays.asList("elem 1", "elem 2", "elem 3");
         Closeable closeable = mock(Closeable.class);
