@@ -1,34 +1,10 @@
 package eu.dnetlib.iis.wf.export.actionmanager.entity;
 
-import java.text.DateFormat;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TimeZone;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.io.SequenceFile.CompressionType;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
-import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
-
 import eu.dnetlib.actionmanager.actions.ActionFactory;
 import eu.dnetlib.actionmanager.actions.AtomicAction;
 import eu.dnetlib.data.mapreduce.util.OafDecoder;
@@ -50,16 +26,35 @@ import eu.dnetlib.data.proto.ResultResultProtos.ResultResult.Relationship;
 import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.data.transform.xml.AbstractDNetXsltFunctions;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
-import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
+import eu.dnetlib.iis.wf.export.actionmanager.common.DateTimeUtils;
+import eu.dnetlib.iis.wf.export.actionmanager.common.RDDUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.module.AlgorithmName;
 import eu.dnetlib.iis.wf.export.actionmanager.module.BuilderModuleHelper;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.SequenceFile.CompressionType;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import scala.Tuple2;
 import scala.Tuple3;
+
+import java.text.MessageFormat;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Software entity and relations exporter reading {@link DocumentToSoftwareUrlWithMeta} avro records and exporting them as entity and relation actions.
@@ -79,9 +74,7 @@ public class SoftwareExporterJob {
     private static final Qualifier INSTANCE_TYPE_SOFTWARE = buildInstanceTypeSoftware();
     
     private static final Qualifier ACCESS_RIGHT_OPEN_SOURCE = buildAccessRightOpenSource();
-    
-    private static final String OPENAIRE_ENTITY_ID_PREFIX = "openaire____::";
-    
+
     private static final String COLLECTED_FROM_SOFTWARE_HERITAGE_BASE_ID = "SoftwareHeritage";
     
     private static final String COLLECTED_FROM_SOFTWARE_HERITAGE_NAME = "Software Heritage";
@@ -116,10 +109,9 @@ public class SoftwareExporterJob {
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputEntityPath);
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputRelationPath);
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
-            
-            final Float confidenceLevelThreshold = (StringUtils.isNotBlank(params.trustLevelThreshold)
-                    && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(params.trustLevelThreshold))
-                            ? Float.valueOf(params.trustLevelThreshold) / InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR : null; 
+
+            final Float confidenceLevelThreshold = ConfidenceLevelUtils
+                    .evaluateConfidenceLevelThreshold(params.trustLevelThreshold);
 
             JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> documentMetadata = avroLoader.loadJavaRDD(sc,
                     params.inputDocumentMetadataAvroPath, ExtractedDocumentMetadataMergedWithOriginal.class);
@@ -128,8 +120,9 @@ public class SoftwareExporterJob {
                     .filter(e -> StringUtils.isNotBlank(e.getTitle()))
                     .mapToPair(e -> new Tuple2<>(e.getId(), e.getTitle()));
 
-            JavaRDD<DocumentToSoftwareUrlWithMeta> documentToSoftwareUrlWithMetaFiltered = avroLoader.loadJavaRDD(sc, params.inputDocumentToSoftwareAvroPath,
-                    DocumentToSoftwareUrlWithMeta.class).filter(f -> (isValidEntity(f) && isValidConfidenceLevel(f, confidenceLevelThreshold)));
+            JavaRDD<DocumentToSoftwareUrlWithMeta> documentToSoftwareUrlWithMetaFiltered = avroLoader
+                    .loadJavaRDD(sc, params.inputDocumentToSoftwareAvroPath, DocumentToSoftwareUrlWithMeta.class)
+                    .filter(f -> (isValidEntity(f) && ConfidenceLevelUtils.isValidConfidenceLevel(f.getConfidenceLevel(), confidenceLevelThreshold)));
             // to be used by both entity and relation processing paths
             documentToSoftwareUrlWithMetaFiltered.cache();
             
@@ -168,10 +161,12 @@ public class SoftwareExporterJob {
         // to be used by both entity exporter and reporter consumers
         documentToSoftwareReducedValues.cache();
         
-        JavaPairRDD<Text, Text> entityResult = documentToSoftwareReducedValues.map(e -> buildEntityAction(e, actionSetId)).mapToPair(
-                action -> new Tuple2<Text, Text>(new Text(action.getRowKey()), new Text(action.toString())));
-        entityResult.coalesce(numberOfOutputFiles).saveAsNewAPIHadoopFile(outputAvroPath, Text.class, Text.class, SequenceFileOutputFormat.class, jobConfig);
-        
+        JavaPairRDD<Text, Text> entityResult = documentToSoftwareReducedValues
+                .map(e -> buildEntityAction(e, actionSetId))
+                .mapToPair(action -> new Tuple2<>(new Text(action.getRowKey()), new Text(action.toString())));
+
+        RDDUtils.saveTextPairRDD(entityResult, numberOfOutputFiles, outputAvroPath, jobConfig);
+
         return documentToSoftwareReducedValues;
     }
     
@@ -187,22 +182,22 @@ public class SoftwareExporterJob {
         JavaRDD<Tuple3<String, String, Float>> distinctRelationTriples = documentToSoftwareUrl
                 .map(e -> new Tuple3<>(e.getDocumentId().toString(), generateSoftwareEntityId(pickUrl(e)), e.getConfidenceLevel()))
                 .distinct();
-        
+
         JavaPairRDD<String, Tuple3<String, String, Float>> relationTriplesByIdPair = distinctRelationTriples
                 .mapToPair(e -> new Tuple2<String, Tuple3<String, String, Float>>(
                         joinDocumentAndSoftwareIds(e._1(), e._2()), e));
-        
+
         JavaRDD<Tuple3<String, String, Float>> dedupedRelationTriples = relationTriplesByIdPair
                 .reduceByKey((x, y) -> pickBestConfidence(x, y)).values();
         // to be used by both entity exporter and reporter consumers
         dedupedRelationTriples.cache();
-        
-        JavaPairRDD<Text, Text> relationResult = dedupedRelationTriples.flatMapToPair(x -> (Iterable<Tuple2<Text, Text>>) 
-                buildRelationActions(x._1(), x._2(), x._3(), actionSetId).stream()
-                .map(action -> new Tuple2<Text, Text>(new Text(action.getRowKey()),
-                        new Text(action.toString())))::iterator);
-        relationResult.coalesce(numberOfOutputFiles).saveAsNewAPIHadoopFile(outputAvroPath, Text.class, Text.class, SequenceFileOutputFormat.class, jobConfig);
-        
+
+        JavaPairRDD<Text, Text> relationResult = dedupedRelationTriples
+                .flatMapToPair(x ->
+                        buildRelationActions(x._1(), x._2(), x._3(), actionSetId).stream().map(action -> new Tuple2<>(new Text(action.getRowKey()), new Text(action.toString())))::iterator);
+
+        RDDUtils.saveTextPairRDD(relationResult, numberOfOutputFiles, outputAvroPath, jobConfig);
+
         return dedupedRelationTriples;
     }
     
@@ -238,15 +233,17 @@ public class SoftwareExporterJob {
             return sourceTitles2;
         }
     }
-    
+
     protected static String generateSoftwareEntityId(String url) {
-        return InfoSpaceConstants.ROW_PREFIX_RESULT + OPENAIRE_ENTITY_ID_PREFIX + AbstractDNetXsltFunctions.md5(url);
+        return InfoSpaceConstants.ROW_PREFIX_RESULT + InfoSpaceConstants.OPENAIRE_ENTITY_ID_PREFIX +
+                InfoSpaceConstants.ID_NAMESPACE_SEPARATOR + AbstractDNetXsltFunctions.md5(url);
     }
-    
+
     private static String generateDatasourceId(String repositoryName) {
-        return InfoSpaceConstants.ROW_PREFIX_DATASOURCE + OPENAIRE_ENTITY_ID_PREFIX + AbstractDNetXsltFunctions.md5(repositoryName);
+        return InfoSpaceConstants.ROW_PREFIX_DATASOURCE + InfoSpaceConstants.OPENAIRE_ENTITY_ID_PREFIX +
+                InfoSpaceConstants.ID_NAMESPACE_SEPARATOR + AbstractDNetXsltFunctions.md5(repositoryName);
     }
-    
+
     private static AtomicAction buildEntityAction(Tuple2<DocumentToSoftwareUrlWithMeta, Set<CharSequence>> object, String actionSetId) {
             Oaf softwareOaf = buildSoftwareOaf(object);
             OafDecoder oafDecoder = OafDecoder.decode(softwareOaf);
@@ -264,9 +261,8 @@ public class SoftwareExporterJob {
         OafEntity.Builder entityBuilder = OafEntity.newBuilder();
         entityBuilder.setId(generateSoftwareEntityId(url));
         entityBuilder.setType(Type.result);
-        
-        DateFormat dateFormat = buildDateFormat();
-        String dateStr = dateFormat.format(new Date());
+
+        String dateStr = DateTimeUtils.format(LocalDateTime.now());
         entityBuilder.setDateofcollection(dateStr);
         entityBuilder.setDateoftransformation(dateStr);
         
@@ -331,13 +327,7 @@ public class SoftwareExporterJob {
         instanceBuilder.setAccessright(ACCESS_RIGHT_OPEN_SOURCE);
         return instanceBuilder;
     }
-    
-    private static DateFormat buildDateFormat() {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        df.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return df;
-    }
-    
+
     private static StructuredProperty buildMainTitle(String softwareTitle, String repositoryName) {
         StructuredProperty.Builder titleBuilder = StructuredProperty.newBuilder();
         
@@ -457,16 +447,12 @@ public class SoftwareExporterJob {
     private static boolean isRepositoryAllowed(CharSequence softwareRepository) {
         return StringUtils.isNotBlank(softwareRepository) && !SOFTWARE_REPOSITORY_OTHER.equals(softwareRepository);
     }
-    
-    private static boolean isValidConfidenceLevel(DocumentToSoftwareUrlWithMeta source, Float confidenceLevelThreshold) {
-        return confidenceLevelThreshold == null || source.getConfidenceLevel() >= confidenceLevelThreshold;
-    }
-    
+
     private static String pickUrl(DocumentToSoftwareUrlWithMeta source) {
         return StringUtils.isNotBlank(source.getSoftwarePageURL()) ? source.getSoftwarePageURL().toString()
                 : source.getSoftwareUrl().toString();
     }
-    
+
     private static ActionFactory getActionFactory() {
         return new ActionFactory();
     }
