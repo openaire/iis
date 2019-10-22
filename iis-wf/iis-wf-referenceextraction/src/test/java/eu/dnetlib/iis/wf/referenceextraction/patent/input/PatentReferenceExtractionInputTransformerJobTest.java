@@ -46,7 +46,7 @@ public class PatentReferenceExtractionInputTransformerJobTest {
                 .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/patent.json"))
                 .getFile();
         String outputTransformedPatentPath = Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/patent-transformed.json"))
+                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/patent_transformed.json"))
                 .getFile();
         AvroTestUtils.createLocalAvroDataStore(JsonAvroTestUtils.readJsonDataStore(inputPatentPath, Patent.class), inputDir.toString());
 
