@@ -1,0 +1,3 @@
+{"key":"processing.referenceExtraction.patent.reference", "type":"COUNTER", "value": "6"}
+{"key":"export.entity.patent.total", "type":"COUNTER", "value": "2"}
+{"key":"processing.referenceExtraction.patent.doc", "type":"COUNTER", "value": "2"}

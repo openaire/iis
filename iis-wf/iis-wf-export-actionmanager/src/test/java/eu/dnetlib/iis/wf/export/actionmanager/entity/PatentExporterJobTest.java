@@ -6,6 +6,7 @@ import eu.dnetlib.data.proto.RelTypeProtos;
 import eu.dnetlib.data.proto.ResultResultProtos;
 import eu.dnetlib.data.proto.TypeProtos;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
+import eu.dnetlib.iis.common.IntegrationTest;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.schemas.ReportEntryType;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
@@ -21,6 +22,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
@@ -37,6 +39,7 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@Category(IntegrationTest.class)
 public class PatentExporterJobTest {
     private ClassLoader cl = getClass().getClassLoader();
     private SparkJobExecutor executor = new SparkJobExecutor();
