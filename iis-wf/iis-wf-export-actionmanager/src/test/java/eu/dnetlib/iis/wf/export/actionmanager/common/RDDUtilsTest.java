@@ -24,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 
 public class RDDUtilsTest {
     private static final int NUMBER_OF_OUTPUT_FILES = 2;
-
     private static JavaSparkContext sc;
     private static Configuration configuration;
 
@@ -34,8 +33,9 @@ public class RDDUtilsTest {
     @BeforeClass
     public static void beforeClass() {
         SparkConf conf = new SparkConf();
-        conf.setMaster("local[1]");
+        conf.setMaster("local");
         conf.setAppName("RDDUtilsTest");
+        conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
         sc = new JavaSparkContext(conf);
         configuration = new Configuration();
     }
@@ -53,19 +53,17 @@ public class RDDUtilsTest {
 
     @AfterClass
     public static void afterClass() {
-        sc.close();
+        sc.stop();
     }
 
     @Test
     public void savePairRDDShouldSavePairRDDAsSeqFiles() throws IOException {
         //given
-        List<Tuple2<String, String>> tuples = Arrays.asList(
-                new Tuple2<>("1L", "1R"),
-                new Tuple2<>("2L", "2R"),
-                new Tuple2<>("3L", "3R")
-        );
-        JavaPairRDD<Text, Text> in = sc.parallelize(tuples, NUMBER_OF_OUTPUT_FILES + 1)
-                .mapToPair(x -> x.copy(new Text(x._1), new Text(x._2)));
+        JavaPairRDD<Text, Text> in = sc.parallelizePairs(Arrays.asList(
+                new Tuple2<>(new Text("1L"), new Text("1R")),
+                new Tuple2<>(new Text("2L"), new Text("2R")),
+                new Tuple2<>(new Text("3L"), new Text("3R"))),
+                NUMBER_OF_OUTPUT_FILES + 1);
 
         //when
         RDDUtils.saveTextPairRDD(in, NUMBER_OF_OUTPUT_FILES, outputDir.toString(), configuration);
@@ -78,9 +76,9 @@ public class RDDUtilsTest {
         assertEquals(NUMBER_OF_OUTPUT_FILES, fileCount);
 
         List<Text> out = RDDTestUtils.readValues(outputDir.toString(), Function.identity());
+        List<String> actualValues = out.stream().map(Text::toString).sorted().collect(Collectors.toList());
+        List<String> expectedValues = in.collect().stream().map(x -> x._2.toString()).sorted().collect(Collectors.toList());
         ListTestUtils
-                .compareLists(
-                        tuples.stream().map(x -> x._2).sorted().collect(Collectors.toList()),
-                        out.stream().map(Text::toString).sorted().collect(Collectors.toList()));
+                .compareLists(actualValues, expectedValues);
     }
 }
