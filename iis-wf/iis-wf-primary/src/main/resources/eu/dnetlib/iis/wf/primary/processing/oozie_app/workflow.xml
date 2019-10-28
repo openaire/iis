@@ -42,10 +42,6 @@
             <description>flag indicating software url reference extraction should be enabled</description>
         </property>
         <property>
-            <name>active_referenceextraction_patent</name>
-            <description>flag indicating patent reference extraction should be enabled</description>
-        </property>
-        <property>
             <name>active_documentsclassification</name>
             <value>true</value>
             <description>flag indicating documents classification should be enabled</description>
@@ -119,10 +115,6 @@
         <property>
             <name>software_webcrawl_cache_location</name>
             <description>software reference extraction HDFS cache location</description>
-        </property>
-        <property>
-            <name>input_patent</name>
-            <description>input patent</description>
         </property>
         <!-- document similarity related -->
         <property>
@@ -362,10 +354,6 @@
             <description>software url reference extraction output directory</description>
         </property>
         <property>
-            <name>output_document_to_patent</name>
-            <description>patent reference extraction output directory</description>
-        </property>
-        <property>
             <name>output_document_to_document_classes</name>
             <description>output document classification directory</description>
         </property>
@@ -384,6 +372,18 @@
         <property>
             <name>output_report_root_path</name>
             <description>base directory for storing reports</description>
+        </property>
+        <property>
+            <name>active_referenceextraction_patent</name>
+            <description>flag indicating patent reference extraction should be enabled</description>
+        </property>
+        <property>
+            <name>input_patent</name>
+            <description>input patent</description>
+        </property>
+        <property>
+            <name>output_document_to_patent</name>
+            <description>patent reference extraction output directory</description>
         </property>
     </parameters>
 
