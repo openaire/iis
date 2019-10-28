@@ -197,6 +197,33 @@
             <name>sparkExecutorCores</name>
             <description>number of cores used by single executor</description>
         </property>
+        <property>
+            <name>active_export_patent</name>
+            <description>flag indicating patent entities should be exported</description>
+        </property>
+        <property>
+            <name>input_document_to_patent</name>
+            <value>$UNDEFINED$</value>
+        </property>
+        <property>
+            <name>input_patent</name>
+            <value>$UNDEFINED$</value>
+        </property>
+        <property>
+            <name>action_set_id_document_patent</name>
+            <value>$UNDEFINED$</value>
+            <description>document patent action-set identifier of exported data</description>
+        </property>
+        <property>
+            <name>action_set_id_entity_patent</name>
+            <value>$UNDEFINED$</value>
+            <description>action-set identifier of exported data containing patent entities</description>
+        </property>
+        <property>
+            <name>trust_level_threshold_document_patent</name>
+            <value>$UNDEFINED$</value>
+            <description>document to patent trust level threshold</description>
+        </property>
     </parameters>
 
     <global>
@@ -231,20 +258,25 @@
                 </property>
             </configuration>
         </sub-workflow>
-        <ok to="decision-software-exporter" />
+        <ok to="export_fork" />
         <error to="fail" />
     </action>
 
+    <fork name="export_fork">
+        <path start="decision_software_exporter"/>
+        <path start="decision_patent_exporter"/>
+    </fork>
+
     <!-- software references and entities export section -->
-    <decision name="decision-software-exporter">
+    <decision name="decision_software_exporter">
         <switch>
             <!-- exporting software relations and entities only when export flag is set AND input path was defined -->
-            <case to="software-exporter">${active_export_software eq "true" and input_document_to_software_url ne "$UNDEFINED$"}</case>
-            <default to="distcp_output" />
+            <case to="software_exporter">${active_export_software eq "true" and input_document_to_software_url ne "$UNDEFINED$"}</case>
+            <default to="export_join" />
         </switch>
     </decision>
     
-    <action name="software-exporter">
+    <action name="software_exporter">
         <sub-workflow>
             <app-path>${wf:appPath()}/export_software</app-path>
             <propagate-configuration/>
@@ -260,9 +292,37 @@
                 <!-- all the other required properties are automatically propagated -->
             </configuration>
         </sub-workflow>
-        <ok to="distcp_output"/>
+        <ok to="export_join"/>
         <error to="fail"/>
     </action>
+
+    <decision name="decision_patent_exporter">
+        <switch>
+            <case to="patent_exporter">${active_export_patent eq "true" and input_document_to_patent ne "$UNDEFINED$"}</case>
+            <default to="export_join" />
+        </switch>
+    </decision>
+
+    <action name="patent_exporter">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/export_patent</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>output_root_relations</name>
+                    <value>${workingDir}/output/document_patent</value>
+                </property>
+                <property>
+                    <name>output_root_entities</name>
+                    <value>${workingDir}/output/entities_patent</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="export_join"/>
+        <error to="fail"/>
+    </action>
+
+    <join name="export_join" to="distcp_output"/>
 
     <action name="distcp_output">
         <distcp xmlns="uri:oozie:distcp-action:0.2">
@@ -281,5 +341,6 @@
         <message>Unfortunately, the process failed -- error message:
             [${wf:errorMessage(wf:lastErrorNode())}]</message>
     </kill>
+
     <end name="end" />
 </workflow-app>
