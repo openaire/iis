@@ -1,8 +1,8 @@
 PRAGMA temp_store_directory = '.';
 
 create temp table pubs as select c1,c2,jmergeregexp(jset(s2j(comprspaces(regexpr("\b\w{1,3}\b",keywords(c3),""))))) as c3 from 
-(setschema 'c1,c2,c3'  select jsonpath(c1,'id','text','authors') from 
-stdinput()));
+( setschema 'c1,c2,c3'  select jsonpath(c1,'id','text','authors') from 
+stdinput() );
 
 
 
