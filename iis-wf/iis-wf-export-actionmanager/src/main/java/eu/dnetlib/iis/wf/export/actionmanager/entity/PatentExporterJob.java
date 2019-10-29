@@ -420,14 +420,8 @@ public class PatentExporterJob {
     }
 
     private static List<FieldTypeProtos.Author> buildOafEntityResultMetadataAuthors(Patent patent) {
-        return filterHolderCountry(patent.getHolderCountry()).stream()
+        return patent.getHolderCountry().stream()
                 .map(PatentExporterJob::buildOafEntityResultMetadataAuthor)
-                .collect(Collectors.toList());
-    }
-
-    private static List<HolderCountry> filterHolderCountry(List<HolderCountry> holderCountries) {
-        return holderCountries.stream()
-                .skip(1)
                 .collect(Collectors.toList());
     }
 
@@ -442,6 +436,7 @@ public class PatentExporterJob {
         return patent.getHolderCountry().stream()
                 .map(z -> z.getPersonCtryCode().toString())
                 .distinct()
+                .sorted()
                 .map(PatentExporterJob::buildOafEntityResultMetadataCountry)
                 .collect(Collectors.toList());
     }
