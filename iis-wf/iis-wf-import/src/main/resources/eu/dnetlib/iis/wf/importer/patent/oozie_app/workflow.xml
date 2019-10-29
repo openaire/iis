@@ -60,7 +60,11 @@
             <name>import-patent</name>
             <class>eu.dnetlib.iis.wf.importer.patent.PatentReaderJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-import-${projectVersion}.jar</jar>
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
+            <spark-opts>
+                --executor-memory ${sparkExecutorMemory}
+                --executor-cores ${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
+            </spark-opts>
             <arg>-inputJSONLocation=${input_json}</arg>
             <arg>-outputPath=${output}</arg>
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
@@ -74,5 +78,6 @@
             [${wf:errorMessage(wf:lastErrorNode())}]
         </message>
     </kill>
+
     <end name="end"/>
 </workflow-app>

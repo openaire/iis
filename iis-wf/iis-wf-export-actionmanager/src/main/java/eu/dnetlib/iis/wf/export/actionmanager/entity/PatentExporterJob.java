@@ -38,6 +38,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * Patent entity and relations exporter reading {@link DocumentToPatent} avro records and exporting them as entity and relation actions.
+ *
+ * @author pjacewicz
+ */
 public class PatentExporterJob {
     private static final String EPO = "EPO";
     private static final String EPO_APPLN_ID = "epo_appln_id";
@@ -57,9 +62,52 @@ public class PatentExporterJob {
 
     private static final SparkAvroLoader avroLoader = new SparkAvroLoader();
     private static final int numberOfOutputFiles = 10;
-
     private static final ActionFactory actionFactory = new ActionFactory();
-    private static PatentExportCounterReporter counterReporter = new PatentExportCounterReporter();
+    private static final PatentExportCounterReporter counterReporter = new PatentExportCounterReporter();
+
+    //------------------------ LOGIC --------------------------
+
+    public static void main(String[] args) throws IOException {
+        JobParameters params = new JobParameters();
+        JCommander jcommander = new JCommander(params);
+        jcommander.parse(args);
+
+        Configuration configuration = Job.getInstance().getConfiguration();
+        configuration.set(FileOutputFormat.COMPRESS, Boolean.TRUE.toString());
+        configuration.set(FileOutputFormat.COMPRESS_TYPE, SequenceFile.CompressionType.BLOCK.name());
+
+        SparkConf sparkConf = new SparkConf();
+        sparkConf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
+        sparkConf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
+
+        try (JavaSparkContext sc = new JavaSparkContext(sparkConf)) {
+            Float trustLevelThreshold = ConfidenceLevelUtils.evaluateConfidenceLevelThreshold(params.trustLevelThreshold);
+
+            JavaRDD<DocumentToPatent> documentToPatents = avroLoader
+                    .loadJavaRDD(sc, params.inputDocumentToPatentPath, DocumentToPatent.class)
+                    .cache();
+            JavaRDD<Patent> patents = avroLoader
+                    .loadJavaRDD(sc, params.inputPatentPath, Patent.class);
+
+            JavaRDD<DocumentToPatent> documentToPatentsToExport =
+                    documentToPatentsToExport(documentToPatents, trustLevelThreshold)
+                            .cache();
+
+            JavaPairRDD<Text, Text> relationsToExport =
+                    relationsToExport(documentToPatentsToExport, params.relationActionSetId)
+                            .cache();
+            RDDUtils.saveTextPairRDD(relationsToExport, numberOfOutputFiles, params.outputRelationPath, configuration);
+
+            JavaPairRDD<Text, Text> entitiesToExport =
+                    entitiesToExport(documentToPatentsToExport, patents, params.entityActionSetId)
+                            .cache();
+            RDDUtils.saveTextPairRDD(entitiesToExport, numberOfOutputFiles, params.outputEntityPath, configuration);
+
+            counterReporter.report(sc, relationsToExport, entitiesToExport, params.outputReportPath);
+        }
+    }
+
+    //------------------------ PRIVATE --------------------------
 
     private static String buildInferenceProvenance() {
         return InfoSpaceConstants.SEMANTIC_CLASS_IIS + InfoSpaceConstants.INFERENCE_PROVENANCE_SEPARATOR + AlgorithmName.document_patent;
@@ -163,46 +211,6 @@ public class PatentExporterJob {
                 .setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_DATACITE_DATE)
                 .setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_DATACITE_DATE)
                 .build();
-    }
-
-    public static void main(String[] args) throws IOException {
-        JobParameters params = new JobParameters();
-        JCommander jcommander = new JCommander(params);
-        jcommander.parse(args);
-
-        Configuration configuration = Job.getInstance().getConfiguration();
-        configuration.set(FileOutputFormat.COMPRESS, Boolean.TRUE.toString());
-        configuration.set(FileOutputFormat.COMPRESS_TYPE, SequenceFile.CompressionType.BLOCK.name());
-
-        SparkConf sparkConf = new SparkConf();
-        sparkConf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
-        sparkConf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
-
-        try (JavaSparkContext sc = new JavaSparkContext(sparkConf)) {
-            Float trustLevelThreshold = ConfidenceLevelUtils.evaluateConfidenceLevelThreshold(params.trustLevelThreshold);
-
-            JavaRDD<DocumentToPatent> documentToPatents = avroLoader
-                    .loadJavaRDD(sc, params.inputDocumentToPatentPath, DocumentToPatent.class)
-                    .cache();
-            JavaRDD<Patent> patents = avroLoader
-                    .loadJavaRDD(sc, params.inputPatentPath, Patent.class);
-
-            JavaRDD<DocumentToPatent> documentToPatentsToExport =
-                    documentToPatentsToExport(documentToPatents, trustLevelThreshold)
-                            .cache();
-
-            JavaPairRDD<Text, Text> relationsToExport =
-                    relationsToExport(documentToPatentsToExport, params.relationActionSetId)
-                            .cache();
-            RDDUtils.saveTextPairRDD(relationsToExport, numberOfOutputFiles, params.outputRelationPath, configuration);
-
-            JavaPairRDD<Text, Text> entitiesToExport =
-                    entitiesToExport(documentToPatentsToExport, patents, params.entityActionSetId)
-                            .cache();
-            RDDUtils.saveTextPairRDD(entitiesToExport, numberOfOutputFiles, params.outputEntityPath, configuration);
-
-            counterReporter.report(sc, relationsToExport, entitiesToExport, params.outputReportPath);
-        }
     }
 
     private static JavaRDD<DocumentToPatent> documentToPatentsToExport(JavaRDD<DocumentToPatent> documentToPatents,

@@ -35,8 +35,6 @@ public class PatentReaderJobTest {
         FileUtils.deleteDirectory(workingDir.toFile());
     }
 
-    //------------------------ TESTS --------------------------
-
     @Test
     public void shouldReadPatentEPOFileAndStorePatentsAsAvroDatastores() throws IOException {
         // given
@@ -58,8 +56,6 @@ public class PatentReaderJobTest {
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.toString(), patentsEpoMappedPath, Patent.class);
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportDir.toString(), reportPath, ReportEntry.class);
     }
-
-    //------------------------ PRIVATE --------------------------
 
     private SparkJob buildSparkJob(String patentsEpoPath) {
         return SparkJobBuilder.create()

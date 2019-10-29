@@ -70,8 +70,6 @@ public class PatentExporterJobTest {
         FileUtils.deleteDirectory(workingDir.toFile());
     }
 
-    //------------------------ TESTS --------------------------
-
     @Test
     public void shouldNotExportEntitiesWhenConfidenceLevelIsBelowThreshold() throws IOException {
         //given
@@ -161,8 +159,6 @@ public class PatentExporterJobTest {
         //report
         assertCountersInReport(6, 2, 2);
     }
-
-    //------------------------ PRIVATE --------------------------
 
     private SparkJob buildSparkJob(Double trustLevelThreshold) {
         return SparkJobBuilder.create()

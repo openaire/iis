@@ -11,6 +11,12 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 import java.util.Arrays;
 
+/**
+ * Reporter of patent entity and relation exporter job counters.<br/>
+ * It calculates entities and relation related counters and saves them as {@link ReportEntry} datastore.
+ *
+ * @author mhorst
+ */
 public class PatentExportCounterReporter {
     public static final String PATENT_REFERENCES_COUNTER = "processing.referenceExtraction.patent.reference";
     public static final String EXPORTED_PATENT_ENTITIES_COUNTER = "export.entity.patent.total";
@@ -18,6 +24,16 @@ public class PatentExportCounterReporter {
 
     private SparkAvroSaver avroSaver = new SparkAvroSaver();
 
+    //------------------------ LOGIC --------------------------
+
+    /**
+     * Calculates entities and relations related counters based on RDDs and saves them under outputReportPath.
+     *
+     * @param sc                SparkContext instance.
+     * @param relationsToExport Pair RDD of exported relations.
+     * @param entitiesToExport  Pair RDD of exported entities.
+     * @param outputReportPath  Path to report saving location.
+     */
     public void report(JavaSparkContext sc,
                        JavaPairRDD<Text, Text> relationsToExport,
                        JavaPairRDD<Text, Text> entitiesToExport,

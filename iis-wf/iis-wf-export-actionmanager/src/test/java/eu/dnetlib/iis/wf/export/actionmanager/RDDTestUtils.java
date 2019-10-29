@@ -14,11 +14,23 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Common RDD related test utility class.
+ */
 public class RDDTestUtils {
 
     private RDDTestUtils() {
     }
 
+    /**
+     * Reads a sequence file of Text values, applies a given function to each element and returns a list of results.
+     *
+     * @param location Path to read from.
+     * @param mapper   Function to apply to each Text value.
+     * @param <X>      Type of elements in result list.
+     * @return List of results.
+     * @throws IOException
+     */
     public static <X> List<X> readValues(String location, Function<Text, X> mapper) throws IOException {
         return StreamUtils
                 .withCloseableIterator(

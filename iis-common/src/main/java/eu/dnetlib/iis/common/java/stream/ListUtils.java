@@ -6,11 +6,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Common list related utility class.
+ */
 public class ListUtils {
 
     private ListUtils() {
     }
 
+    /**
+     * Joins two lists of equal length into a single list of paired elements. Throws an exception when lists do not have equal size.
+     *
+     * @param left  List of elements to zip as left values.
+     * @param right List of elements to zip as right values.
+     * @param <X>   Type of elements in left list.
+     * @param <Y>   Type of elements in right list.
+     * @return List of pairs of elements.
+     */
     public static <X, Y> List<Pair<X, Y>> zip(List<X> left, List<Y> right) {
         if (left.size() != right.size()) {
             throw new IllegalArgumentException(String.format("List sizes do not match: left=%d, right=%d",

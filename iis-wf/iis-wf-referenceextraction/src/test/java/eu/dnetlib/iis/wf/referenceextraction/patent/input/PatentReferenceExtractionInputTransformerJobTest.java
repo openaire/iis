@@ -37,8 +37,6 @@ public class PatentReferenceExtractionInputTransformerJobTest {
         FileUtils.deleteDirectory(workingDir.toFile());
     }
 
-    //------------------------ TESTS --------------------------
-
     @Test
     public void shouldConvertAvroDatastoreForReferenceExtraction() throws IOException {
         // given
@@ -58,8 +56,6 @@ public class PatentReferenceExtractionInputTransformerJobTest {
         // then
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.toString(), outputTransformedPatentPath, PatentReferenceExtractionInput.class);
     }
-
-    //------------------------ PRIVATE --------------------------
 
     private SparkJob buildSparkJob() {
         return SparkJobBuilder.create()

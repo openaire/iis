@@ -12,8 +12,8 @@ import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 public class PatentReferenceExtractionInputTransformerJob {
-    private static SparkAvroLoader sparkAvroLoader = new SparkAvroLoader();
-    private static SparkAvroSaver sparkAvroSaver = new SparkAvroSaver();
+    private static final SparkAvroLoader sparkAvroLoader = new SparkAvroLoader();
+    private static final SparkAvroSaver sparkAvroSaver = new SparkAvroSaver();
 
     //------------------------ LOGIC --------------------------
 
