@@ -365,7 +365,7 @@
 										
 
 										<!-- creating tar.gz package -->
-										<tar destfile="target/${oozie.package.file.name}.tar.gz" compression="gzip">
+										<tar destfile="target/${oozie.package.file.name}.tar.gz" compression="gzip" longfile="gnu">
 											<tarfileset dir="target/${oozie.package.file.name}" />
 											<tarfileset dir="target/${oozie.package.file.name}_shell_scripts" filemode="0755">
 												<include name="**/*.sh" />
