@@ -3,7 +3,7 @@ PRAGMA temp_store_directory = '.';
 create temp table pubs as setschema 'c1,c2' select jsonpath(c1, '$.id', '$.text') from stdinput();
 
 
-select jsplitv('['||jdict('documentId', docid, 'conceptId', 'clarin', 'confidenceLevel', 0.5)||','||jdict('documentId', docid, 'conceptId', 'dh-ch::subcommunity::2', 'confidenceLevel', 0.5)||']') as C1 from (
+select jsplitv('['||jdict('documentId', docid, 'conceptId', 'clarin', 'confidenceLevel', 0.5,'textsnippet',context)||','||jdict('documentId', docid, 'conceptId', 'dh-ch::subcommunity::2', 'confidenceLevel', 0.5,'textsnippet',context)||']') as C1 from (
 select docid, conceptId, conceptLabel, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||next as context
 from (
   setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("\n", textnoreferences(C2), " ")),10,3,10, '(?i)(?:\bCLARIAH\b)|(?:\bLINDAT\b)|(?:\bDLU\b)|(?:\bDutch Language Union\b)|(?:\bCELR\b)|(?:\bCLARINO\b)|(\bCLARIN\b)|(?:\bCLaDA-BG\b)') from pubs where c2 is not null
@@ -18,7 +18,7 @@ from (
 
 union all
 
-select jdict('documentId', docid, 'conceptId', conceptId, 'confidenceLevel', 0.5) as C1 from (
+select jdict('documentId', docid, 'conceptId', conceptId, 'confidenceLevel', 0.5,'textsnippet',context) as C1 from (
 select docid, conceptId, conceptLabel, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||next as context
 from (
   setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("\n", C2, " ")),1,3,1, '(?:\bFrance Life Imaging\b)|(?:\bFLI-IAM\b)') from pubs where c2 is not null
@@ -26,7 +26,7 @@ from (
 
 union all
 
-select jdict('documentId', docid, 'conceptId', conceptId, 'confidenceLevel', 0.5) as C1 from (
+select jdict('documentId', docid, 'conceptId', conceptId, 'confidenceLevel', 0.5,'textsnippet',context) as C1 from (
 select docid, conceptId, conceptLabel, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||next as context
 from (
   setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("\n", C2, " ")),20,2,10, '(?:\bSDSN\s)|(?:\bSDSN Greece\b)') from pubs where c2 is not null
@@ -35,7 +35,7 @@ from (
 union all
 
 -- Instruct-ERIC
-select jdict('documentId', docid, 'conceptId', conceptId, 'confidenceLevel', 0.5) as C1 from (
+select jdict('documentId', docid, 'conceptId', conceptId, 'confidenceLevel', 0.5,'textsnippet',context) as C1 from (
 select docid, conceptId, conceptLabel, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||next as context
 from (
 setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("\n", C2, " ")),10,1,10, '(?i)\bInstruct\b') from pubs where c2 is not null
@@ -46,7 +46,7 @@ regexprmatches('(?i)(?:\bERIC\b)|(?:\bESFRI\b)|(?:\bEuropean Strategy Forum on R
 union all
 
 -- ELIXIR-GR
-select jdict('documentId', docid, 'conceptId', conceptId, 'confidenceLevel', 0.5) as C1 from (
+select jdict('documentId', docid, 'conceptId', conceptId, 'confidenceLevel', 0.5,'textsnippet',context) as C1 from (
 select docid, conceptId, conceptLabel, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||next as context
 from (
 setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("\n", C2, " ")),20,1,10, '(?:\b5002780\b)|(?:\bELIXIR\b)') from pubs where c2 is not null
@@ -56,7 +56,7 @@ setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("
 union all
 
 -- DARIAH
-select jdict('documentId', docid, 'conceptId', conceptId, 'confidenceLevel', 0.5) as C1 from (
+select jdict('documentId', docid, 'conceptId', conceptId, 'confidenceLevel', 0.5,'textsnippet',context) as C1 from (
 select docid, conceptId, conceptLabel, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||next as context
 from (
 setschema 'docid,prev,middle,next' select c1, textwindow2s(keywords(filterstopwords(c2)),7,1,3, '\bDARIAH') from pubs where c2 is not null
