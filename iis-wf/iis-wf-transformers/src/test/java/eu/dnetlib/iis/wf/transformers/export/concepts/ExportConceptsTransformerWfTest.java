@@ -21,5 +21,12 @@ public class ExportConceptsTransformerWfTest extends AbstractOozieWorkflowTestCa
         wf.setTimeoutInSeconds(720);
         testWorkflow("eu/dnetlib/iis/wf/transformers/export/concepts/test", wf);
     }
+    
+    @Test
+    public void testConvertFromCommunityWorkflow() throws Exception {
+        OozieWorkflowTestConfiguration wf = new OozieWorkflowTestConfiguration();
+        wf.setTimeoutInSeconds(720);
+        testWorkflow("eu/dnetlib/iis/wf/transformers/export/communities/test", wf);
+    }
 
 }

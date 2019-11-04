@@ -13,3 +13,10 @@
       {"name": "miningLabel", "value":"cms"}
    ]
 }
+{  
+   "id":"dariah",
+   "label":"DARIAH EU",
+   "params":[
+      {"name": "suggestedAcknowledgement", "value":"currently irrelevant"}
+   ]
+}
