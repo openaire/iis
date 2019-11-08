@@ -12,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.avro.mapred.AvroKey;
@@ -31,10 +32,13 @@ import com.googlecode.protobuf.format.JsonFormat.ParseException;
 
 import eu.dnetlib.data.mapreduce.util.OafRelDecoder;
 import eu.dnetlib.data.proto.DedupProtos.Dedup;
+import eu.dnetlib.data.proto.FieldTypeProtos;
+import eu.dnetlib.data.proto.OafProtos;
 import eu.dnetlib.data.proto.OafProtos.Oaf;
 import eu.dnetlib.data.proto.ProjectOrganizationProtos.ProjectOrganization;
 import eu.dnetlib.data.proto.RelTypeProtos.RelType;
 import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
+import eu.dnetlib.data.proto.ResultProtos;
 import eu.dnetlib.data.proto.ResultProjectProtos.ResultProject.Outcome;
 import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
@@ -269,13 +273,13 @@ public class ImportInformationSpaceReducer
             
             DocumentMetadata docMeta = docMetaConverter.convert(oafObj.getEntity());
             if (docMeta!=null) {
-                outputs.write(outputNameDocumentMeta, new AvroKey<DocumentMetadata>(docMeta));
+                outputs.write(outputNameDocumentMeta, new AvroKey<>(docMeta));
             }
             
             if (acceptAsDataset(oafObj)) {
                 DataSetReference datasetMeta = datasetMetaConverter.convert(oafObj.getEntity());
                 if (datasetMeta != null) {
-                    outputs.write(outputNameDatasetMeta, new AvroKey<DataSetReference>(datasetMeta));
+                    outputs.write(outputNameDatasetMeta, new AvroKey<>(datasetMeta));
                 }
             }
             
@@ -286,17 +290,11 @@ public class ImportInformationSpaceReducer
         }
     }
     
-    private final boolean acceptAsDataset(Oaf oafObj) {
-
-        if (oafObj.getEntity() != null && oafObj.getEntity().getResult() != null
-                && oafObj.getEntity().getResult().getMetadata() != null
-                && oafObj.getEntity().getResult().getMetadata().getResulttype() != null) {
-            if (approvedDatasetResultTypes.contains(oafObj.getEntity().getResult().getMetadata().getResulttype().getClassid())) {
-                return true;
-            }
-        }
-
-        return false;
+    private boolean acceptAsDataset(Oaf oafObj) {
+        return Optional.ofNullable(oafObj.getEntity()).map(OafProtos.OafEntity::getResult)
+                .map(ResultProtos.Result::getMetadata).map(ResultProtos.Result.Metadata::getResulttype)
+                .map(FieldTypeProtos.Qualifier::getClassid).map(classid -> approvedDatasetResultTypes.contains(classid))
+                .orElse(false);
     }
     
     /**

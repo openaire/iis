@@ -1,18 +1,20 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.time.Year;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.google.common.base.Preconditions;
-
+import eu.dnetlib.data.proto.FieldTypeProtos.Author;
 import eu.dnetlib.data.proto.FieldTypeProtos.StringField;
 import eu.dnetlib.data.proto.FieldTypeProtos.StructuredProperty;
 import eu.dnetlib.data.proto.OafProtos.OafEntity;
@@ -31,7 +33,7 @@ public class DatasetMetadataConverter implements OafEntityToAvroConverter<DataSe
     
     private static final String ID_TYPE_DOI_LOWERCASED = "doi";
     
-    protected static final Logger log = Logger.getLogger(DatasetMetadataConverter.class);
+    private static final Logger log = Logger.getLogger(DatasetMetadataConverter.class);
 
     private static final String NULL_STRING_VALUE = "null";
     
@@ -50,14 +52,14 @@ public class DatasetMetadataConverter implements OafEntityToAvroConverter<DataSe
      * @param fieldApprover approves fields
      */
     public DatasetMetadataConverter(FieldApprover fieldApprover) {
-        this.fieldApprover = Preconditions.checkNotNull(fieldApprover);
+        this.fieldApprover = Objects.requireNonNull(fieldApprover);
     }
 
     // ------------------------ LOGIC --------------------------
     
     @Override
     public DataSetReference convert(OafEntity oafEntity) throws IOException {
-        Preconditions.checkNotNull(oafEntity);
+        Objects.requireNonNull(oafEntity);
         
         if (!oafEntity.hasResult()) {
             log.error("skipping: no result object for id " + oafEntity.getId());
@@ -89,9 +91,8 @@ public class DatasetMetadataConverter implements OafEntityToAvroConverter<DataSe
      * 
      * @param sourceResult
      * @param metaBuilder
-     * @return basic metadata object
      */
-    private DataSetReference.Builder createBasicMetadata(ResultProtos.Result sourceResult,
+    private void createBasicMetadata(ResultProtos.Result sourceResult,
             DataSetReference.Builder metaBuilder) {
         
         if (sourceResult.hasMetadata()) {
@@ -102,34 +103,21 @@ public class DatasetMetadataConverter implements OafEntityToAvroConverter<DataSe
             handleFormats(sourceResult.getMetadata().getFormatList(), metaBuilder);
             handleResourceType(sourceResult.getMetadata(), metaBuilder);
         }
-        
-        return metaBuilder;
     }
 
     private void handleTitles(List<StructuredProperty> titleList, DataSetReference.Builder metaBuilder) {
         if (CollectionUtils.isNotEmpty(titleList)) {
-            List<CharSequence> titles = new ArrayList<CharSequence>();
-            
-            for (StructuredProperty titleProp : titleList) {
-                if (fieldApprover.approve(titleProp.getDataInfo())) {
-                    titles.add(titleProp.getValue());
-                }
-            }
-            
-            metaBuilder.setTitles(titles);
+            metaBuilder.setTitles(titleList.stream().filter(titleProp -> fieldApprover.approve(titleProp.getDataInfo()))
+                    .map(StructuredProperty::getValue).collect(Collectors.toList()));
         }
     }
     
     private void handleDescription(List<StringField> descriptionList, DataSetReference.Builder metaBuilder) {
         if (CollectionUtils.isNotEmpty(descriptionList)) {
-            for (StringField currentDescription : descriptionList) {
-                if (fieldApprover.approve(currentDescription.getDataInfo()) 
-                        && StringUtils.isNotBlank(currentDescription.getValue())
-                        && !NULL_STRING_VALUE.equals(currentDescription.getValue())) {
-                    metaBuilder.setDescription(currentDescription.getValue());
-                    break;
-                }
-            }
+            descriptionList.stream().filter(x -> fieldApprover.approve(x.getDataInfo()))
+                    .filter(x -> StringUtils.isNotBlank(x.getValue()))
+                    .filter(x -> !NULL_STRING_VALUE.equals(x.getValue())).findFirst().map(StringField::getValue)
+                    .ifPresent(metaBuilder::setDescription);
         }
     }
     
@@ -142,25 +130,18 @@ public class DatasetMetadataConverter implements OafEntityToAvroConverter<DataSe
     
     private void handleYear(StringField dateOfAcceptance, DataSetReference.Builder metaBuilder) {
         if (fieldApprover.approve(dateOfAcceptance.getDataInfo())) {
-            String yearValue = MetadataConverterUtils.extractYear(dateOfAcceptance.getValue());
-            if (yearValue != null) {
-                metaBuilder.setPublicationYear(yearValue);
+            Year year = MetadataConverterUtils.extractYearOrNull(dateOfAcceptance.getValue(), log);
+            if (year != null) {
+                metaBuilder.setPublicationYear(year.toString());
             }
         }    
     }
 
     private void handleFormats(List<StringField> sourceFormats, DataSetReference.Builder metaBuilder) {
         if (CollectionUtils.isNotEmpty(sourceFormats)) {
-            List<CharSequence> resultFormats = new ArrayList<CharSequence>();
-            
-            for (StringField sourceFormat : sourceFormats) {
-                if (fieldApprover.approve(sourceFormat.getDataInfo())
-                        && StringUtils.isNotBlank(sourceFormat.getValue())) {
-                    resultFormats.add(sourceFormat.getValue());
-                }
-            }
-            
-            metaBuilder.setFormats(resultFormats);
+            metaBuilder.setFormats(sourceFormats.stream().filter(x -> fieldApprover.approve(x.getDataInfo()))
+                    .filter(x -> StringUtils.isNotBlank(x.getValue())).map(StringField::getValue)
+                    .collect(Collectors.toList()));
         }
     }
     
@@ -174,34 +155,31 @@ public class DatasetMetadataConverter implements OafEntityToAvroConverter<DataSe
      * Handles additional identifiers.
      * 
      */
-    private DataSetReference.Builder handleAdditionalIds(OafEntity oafEntity, DataSetReference.Builder metaBuilder) {
-        // setting additional identifiers
-        Map<CharSequence, CharSequence> additionalIds = new HashMap<CharSequence, CharSequence>();
-        if (CollectionUtils.isNotEmpty(oafEntity.getPidList())) {
-            for (StructuredProperty currentPid : oafEntity.getPidList()) {
-                if (StringUtils.isNotBlank(currentPid.getQualifier().getClassid()) 
-                        && StringUtils.isNotBlank(currentPid.getValue()) 
-                        && fieldApprover.approve(currentPid.getDataInfo())) {
-                    additionalIds.put(currentPid.getQualifier().getClassid(), currentPid.getValue());
-                    if (ID_TYPE_DOI_LOWERCASED.equalsIgnoreCase(currentPid.getQualifier().getClassid())) {
-                        metaBuilder.setReferenceType(ID_TYPE_DOI_LOWERCASED);
-                        metaBuilder.setIdForGivenType(currentPid.getValue());
-                    }
-                }
-            }
-        }
-        
+    private void handleAdditionalIds(OafEntity oafEntity, DataSetReference.Builder metaBuilder) {
+        List<StructuredProperty> filtered = oafEntity.getPidList().stream()
+                .filter(x -> StringUtils.isNotBlank(x.getQualifier().getClassid()))
+                .filter(x -> StringUtils.isNotBlank(x.getValue()))
+                .filter(x -> fieldApprover.approve(x.getDataInfo()))
+                .collect(Collectors.toList());
+        Map<CharSequence, CharSequence> additionalIds = filtered.stream()
+                .collect(Collectors.toMap(k -> k.getQualifier().getClassid(), v -> v.getValue()));
+        Optional.ofNullable(
+                filtered.stream().filter(x -> ID_TYPE_DOI_LOWERCASED.equalsIgnoreCase(x.getQualifier().getClassid()))
+                        .collect(Collectors.toCollection(LinkedList::new)).peekLast())
+                .ifPresent(last -> {
+                    metaBuilder.setReferenceType(ID_TYPE_DOI_LOWERCASED);
+                    metaBuilder.setIdForGivenType(last.getValue());
+                });
+
         if (!additionalIds.isEmpty()) {
             metaBuilder.setAlternateIdentifiers(additionalIds);
             if (metaBuilder.getReferenceType() == null) {
-                //setting other identifier pair when DOI was not present
-                Entry<CharSequence,CharSequence> firstIdsPair = additionalIds.entrySet().iterator().next();
+                // setting other identifier pair when DOI was not present
+                Entry<CharSequence, CharSequence> firstIdsPair = additionalIds.entrySet().iterator().next();
                 metaBuilder.setReferenceType(firstIdsPair.getKey());
                 metaBuilder.setIdForGivenType(firstIdsPair.getValue());
             }
         }
-
-        return metaBuilder;
     }
 
     /**
@@ -209,26 +187,15 @@ public class DatasetMetadataConverter implements OafEntityToAvroConverter<DataSe
      * 
      * @param relations person result relations
      * @param builder
-     * @return builder with persons set
      * @throws IOException
      */
-    private DataSetReference.Builder handlePersons(ResultProtos.Result result, DataSetReference.Builder builder)
-            throws IOException {
-        
+    private void handlePersons(ResultProtos.Result result, DataSetReference.Builder builder) throws IOException {
         if (result.getMetadata() != null) {
-            List<CharSequence> creatorNames = new ArrayList<>();
-            for (eu.dnetlib.data.proto.FieldTypeProtos.Author sourceAuthor : result.getMetadata().getAuthorList()) {
-                if (StringUtils.isNotBlank(sourceAuthor.getFullname())) {
-                    //fullname is never empty in IS dump
-                    creatorNames.add(sourceAuthor.getFullname());
-                }
-            }
-            if (!creatorNames.isEmpty()) {
-                builder.setCreatorNames(creatorNames);
-            }
+            builder.setCreatorNames(result.getMetadata().getAuthorList().stream()
+                    .filter(x -> StringUtils.isNotBlank(x.getFullname()))
+                    .map(Author::getFullname)
+                    .collect(Collectors.toList()));
         }
-        
-        return builder;
     }
 
 }

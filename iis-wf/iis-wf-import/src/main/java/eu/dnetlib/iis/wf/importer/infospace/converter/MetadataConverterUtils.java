@@ -1,12 +1,14 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
-import java.util.ArrayList;
+import java.time.Year;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import eu.dnetlib.data.proto.FieldTypeProtos.StructuredProperty;
@@ -30,13 +32,10 @@ public abstract class MetadataConverterUtils {
      */
     public static List<String> extractValues(Collection<StructuredProperty> source, FieldApprover fieldApprover) {
         if (CollectionUtils.isNotEmpty(source)) {
-            List<String> results = new ArrayList<String>(source.size());
-            for (StructuredProperty current : source) {
-                if (fieldApprover.approve(current.getDataInfo())) {
-                    results.add(current.getValue());
-                }
-            }
-            return results;
+            return source.stream()
+                    .filter(x -> fieldApprover.approve(x.getDataInfo()))
+                    .map(StructuredProperty::getValue)
+                    .collect(Collectors.toList());
         } else {
             return Collections.emptyList();
         }
@@ -44,37 +43,13 @@ public abstract class MetadataConverterUtils {
     
     
     /**
-     * Extracts year value from date.
-     * 
-     * @param date
-     * @return year String value or null when provided date in invalid format
+     * Extracts year out of the date defined in yyyy-MM-dd format.
      */
-    public static String extractYear(String date) {
-        // expected date format: yyyy-MM-dd
-        if (StringUtils.isNotBlank(date) && date.indexOf('-') == 4) {
-            return date.substring(0, date.indexOf('-'));    
-        } else {
-            return null;
-        }
-    }
-    
-    /**
-     * Extracts year integer value from date.
-     * 
-     * @param date
-     * @param log
-     * @return year int value or null when provided date in invalid format
-     */
-    public static Integer extractYear(String date, Logger log) {
-        String year = extractYear(date);
-        if (year != null) {
-            try {
-                return Integer.valueOf(year);    
-            } catch (NumberFormatException e) {
-                log.warn("unsupported, non integer, format of year value: " + date);
-                return null;
-            }
-        } else {
+    public static Year extractYearOrNull(String date, Logger log) {
+        try {
+            return Year.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
+        } catch (DateTimeParseException e) {
+            log.warn("unsupported, non integer, format of year value: " + date);
             return null;
         }
     }

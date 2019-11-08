@@ -7,6 +7,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map.Entry;
 
 import org.junit.Before;
@@ -263,16 +264,11 @@ public class DatasetMetadataConverterTest {
     }
     
     private static Qualifier buildQualifierWithClassId(String classId) {
-        Qualifier.Builder builder = Qualifier.newBuilder();
-        builder.setClassid(classId);
-        return builder.build();
+        return Qualifier.newBuilder().setClassid(classId).build();
     }
 
     private static void addPublicationTypes(Result.Builder resBuilder, String... types) {
-        for (String type : types) {
-            resBuilder.addInstanceBuilder().getInstancetypeBuilder()
-                .setClassid(type);
-        }
+        Arrays.stream(types).forEach(type -> resBuilder.addInstanceBuilder().getInstancetypeBuilder().setClassid(type));
     }
 
     private static StructuredProperty.Builder addTitle(OafEntity.Builder builder, String value) {
