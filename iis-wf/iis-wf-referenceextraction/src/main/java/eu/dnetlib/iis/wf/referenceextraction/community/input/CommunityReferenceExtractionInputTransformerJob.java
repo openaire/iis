@@ -3,6 +3,7 @@ package eu.dnetlib.iis.wf.referenceextraction.community.input;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.SparkConf;
@@ -63,16 +64,10 @@ public class CommunityReferenceExtractionInputTransformerJob {
     //------------------------ PRIVATE --------------------------
     
     private static List<Community> convert(Concept concept, String acknowledgementParamName) {
-        List<Community> communities = new ArrayList<>();
-        for (Param param : concept.getParams()) {
-            //changing the rule by accepting empty ackstmt
-            // if (acknowledgementParamName.equals(param.getName()) && StringUtils.isNotBlank(param.getValue())) {
-            if (acknowledgementParamName.equals(param.getName())) {
-                communities.add(buildCommunity(concept.getId(), concept.getLabel(),
-                        StringUtils.isNotBlank(param.getValue()) ? param.getValue() : ""));
-            }
-        }
-        return communities;
+        return concept.getParams().stream()
+                .filter(x -> acknowledgementParamName.equals(x.getName().toString()))
+                .map(x -> buildCommunity(concept.getId(), concept.getLabel(), StringUtils.defaultIfBlank(x.getValue(), "")))
+                .collect(Collectors.toList());
     }
     
     private static Community buildCommunity(CharSequence id, CharSequence label, CharSequence acknowledgementStatement) {
