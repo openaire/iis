@@ -31,16 +31,11 @@ public abstract class MetadataConverterUtils {
      * 
      */
     public static List<String> extractValues(Collection<StructuredProperty> source, FieldApprover fieldApprover) {
-        if (CollectionUtils.isNotEmpty(source)) {
-            return source.stream()
-                    .filter(x -> fieldApprover.approve(x.getDataInfo()))
-                    .map(StructuredProperty::getValue)
-                    .collect(Collectors.toList());
-        } else {
-            return Collections.emptyList();
-        }
+        return source.stream()
+                .filter(x -> fieldApprover.approve(x.getDataInfo()))
+                .map(StructuredProperty::getValue)
+                .collect(Collectors.toList());
     }
-    
     
     /**
      * Extracts year out of the date defined in yyyy-MM-dd format.

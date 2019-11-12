@@ -1,6 +1,5 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
-import java.io.IOException;
 import java.time.Year;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,7 +57,7 @@ public class DatasetMetadataConverter implements OafEntityToAvroConverter<DataSe
     // ------------------------ LOGIC --------------------------
     
     @Override
-    public DataSetReference convert(OafEntity oafEntity) throws IOException {
+    public DataSetReference convert(OafEntity oafEntity) {
         Objects.requireNonNull(oafEntity);
         
         if (!oafEntity.hasResult()) {
@@ -187,9 +186,8 @@ public class DatasetMetadataConverter implements OafEntityToAvroConverter<DataSe
      * 
      * @param relations person result relations
      * @param builder
-     * @throws IOException
      */
-    private void handlePersons(ResultProtos.Result result, DataSetReference.Builder builder) throws IOException {
+    private void handlePersons(ResultProtos.Result result, DataSetReference.Builder builder) {
         if (result.getMetadata() != null) {
             builder.setCreatorNames(result.getMetadata().getAuthorList().stream()
                     .filter(x -> StringUtils.isNotBlank(x.getFullname()))
