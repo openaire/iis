@@ -20,7 +20,6 @@ protocol IIS{
         union { null , string } publisher = null;
         union { null , string } publicationYear = null;
         union { null , array<string> } formats = null;
-        union { null , string } resourceTypeClass = null;
         union { null , string } resourceTypeValue = null;
         union { null , map<string> } alternateIdentifiers = null;
     }

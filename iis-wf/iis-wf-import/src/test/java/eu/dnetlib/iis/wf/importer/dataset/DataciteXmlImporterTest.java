@@ -74,7 +74,6 @@ public class DataciteXmlImporterTest {
 			assertEquals("some description", currentReference.getDescription());
 			assertEquals("publisher1", currentReference.getPublisher());
 			assertEquals("2012", currentReference.getPublicationYear());
-			assertEquals("Text", currentReference.getResourceTypeClass());
 			assertNull(currentReference.getResourceTypeValue());
 			assertNotNull(currentReference.getAlternateIdentifiers());
             assertEquals(2, currentReference.getAlternateIdentifiers().size());
@@ -93,7 +92,6 @@ public class DataciteXmlImporterTest {
 			assertNull(currentReference.getFormats());
 			assertEquals("publisher2", currentReference.getPublisher());
 			assertEquals("2013", currentReference.getPublicationYear());
-			assertEquals("Dataset", currentReference.getResourceTypeClass());
 			assertEquals("Dataset", currentReference.getResourceTypeValue());
 			assertNull(currentReference.getAlternateIdentifiers());
 						

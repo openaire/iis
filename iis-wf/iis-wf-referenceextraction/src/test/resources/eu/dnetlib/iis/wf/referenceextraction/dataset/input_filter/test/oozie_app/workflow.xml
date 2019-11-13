@@ -65,8 +65,8 @@
 					<value>${workingDir}/dataset_filter/working_dir</value>
 				</property>
 				<property>
-					<name>resource_type_class_to_be_approved_regex</name>
-					<value>^clinicalTrial$</value>
+					<name>resource_type_value_to_be_approved_regex</name>
+					<value>^0037$</value>
 				</property>
 				<property>
 					<name>input</name>

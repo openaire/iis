@@ -12,6 +12,11 @@
             <description>list of blacklisted inference provenance which sould not be taken into account by importer, skipped when set to $UNDEFINED$</description>
         </property>
         <property>
+            <name>approved_dataset_resulttypes_csv</name>
+            <value>dataset</value>
+            <description>set of instance types approved as datasets</description>
+        </property>
+        <property>
             <name>skip_deleted_by_inference</name>
             <value>true</value>
             <description>flag indicating records deleted by inference should be skipped</description>
@@ -44,6 +49,11 @@
             <name>output_name_document_meta</name>
             <value>docmeta</value>
             <description>document metadata output name</description>
+        </property>
+        <property>
+            <name>output_name_dataset_meta</name>
+            <value>dataset</value>
+            <description>dataset metadata output name</description>
         </property>
         <property>
             <name>output_name_document_project</name>
@@ -111,6 +121,7 @@
         <java>
             <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
             <arg>eu.dnetlib.iis.importer.schemas.DocumentMetadata</arg>
+            <arg>eu.dnetlib.iis.importer.schemas.DataSetReference</arg>
             <arg>eu.dnetlib.iis.importer.schemas.DocumentToProject</arg>
             <arg>eu.dnetlib.iis.importer.schemas.ProjectToOrganization</arg>
             <arg>eu.dnetlib.iis.common.schemas.IdentifierMapping</arg>
@@ -190,6 +201,10 @@
                     <value>project,organization,result,resultProject_outcome_isProducedBy,resultResult_dedup_merges,projectOrganization_participation_hasParticipant</value>
                 </property>
                 <property>
+                    <name>import.approved.dataset.resulttypes.csv</name>
+                    <value>${approved_dataset_resulttypes_csv}</value>
+                </property>
+                <property>
                     <name>import.inference.provenance.blacklist</name>
                     <value>${inference_provenance_blacklist}</value>
                 </property>
@@ -215,6 +230,10 @@
                     <value>${output_name_document_meta}</value>
                 </property>
                 <property>
+                    <name>output.name.dataset_meta</name>
+                    <value>${output_name_dataset_meta}</value>
+                </property>
+                <property>
                     <name>output.name.document_project</name>
                     <value>${output_name_document_project}</value>
                 </property>
@@ -237,11 +256,15 @@
                 <!-- ## Names of all output ports -->
                 <property>
                     <name>avro.mapreduce.multipleoutputs</name>
-                    <value>${output_name_document_meta} ${output_name_document_project} ${output_name_dedup_mapping} ${output_name_project} ${output_name_organization} ${output_name_project_organization}</value>
+                    <value>${output_name_document_meta} ${output_name_dataset_meta} ${output_name_document_project} ${output_name_dedup_mapping} ${output_name_project} ${output_name_organization} ${output_name_project_organization}</value>
                 </property>
                 <!-- ## Output classes for all output ports -->
                 <property>
                     <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_document_meta}.format</name>
+                    <value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
+                </property>
+                <property>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_dataset_meta}.format</name>
                     <value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
                 </property>
                 <property>
@@ -268,6 +291,10 @@
                 <property>
                     <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_document_meta}.keyschema</name>
                     <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.DocumentMetadata']}</value>
+                </property>
+                 <property>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_dataset_meta}.keyschema</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.DataSetReference']}</value>
                 </property>
                 <property>
                     <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_document_project}.keyschema</name>
@@ -308,6 +335,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
             <arg>-Preport.import.infoSpace.docMetadata=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_document_meta,'/part')]}</arg>
+            <arg>-Preport.import.infoSpace.dataset=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_dataset_meta,'/part')]}</arg>
             <arg>-Preport.import.infoSpace.docProjectReference=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_document_project,'/part')]}</arg>
             <arg>-Preport.import.infoSpace.project=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_project,'/part')]}</arg>
             <arg>-Preport.import.infoSpace.docDedupDocReference=${hadoop:counters('import')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_dedup_mapping,'/part')]}</arg>

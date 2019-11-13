@@ -1,5 +1,7 @@
 package eu.dnetlib.iis.wf.importer.infospace;
 
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.DEFAULT_CSV_DELIMITER;
+import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_APPROVED_DATASET_RESULTTYPES_CSV;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_INFERENCE_PROVENANCE_BLACKLIST;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_MERGE_BODY_WITH_UPDATES;
 import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_SKIP_DELETED_BY_INFERENCE;
@@ -7,37 +9,48 @@ import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import org.apache.avro.mapred.AvroKey;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.log4j.Logger;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Sets;
 import com.googlecode.protobuf.format.JsonFormat;
 import com.googlecode.protobuf.format.JsonFormat.ParseException;
 
 import eu.dnetlib.data.mapreduce.util.OafRelDecoder;
 import eu.dnetlib.data.proto.DedupProtos.Dedup;
+import eu.dnetlib.data.proto.FieldTypeProtos;
+import eu.dnetlib.data.proto.OafProtos;
 import eu.dnetlib.data.proto.OafProtos.Oaf;
 import eu.dnetlib.data.proto.ProjectOrganizationProtos.ProjectOrganization;
 import eu.dnetlib.data.proto.RelTypeProtos.RelType;
 import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
+import eu.dnetlib.data.proto.ResultProtos;
 import eu.dnetlib.data.proto.ResultProjectProtos.ResultProject.Outcome;
 import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
+import eu.dnetlib.iis.importer.schemas.DataSetReference;
 import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.wf.importer.OafHelper;
 import eu.dnetlib.iis.wf.importer.infospace.approver.DataInfoBasedApprover;
 import eu.dnetlib.iis.wf.importer.infospace.approver.ResultApprover;
+import eu.dnetlib.iis.wf.importer.infospace.converter.DatasetMetadataConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.DeduplicationMappingConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.DocumentMetadataConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.DocumentToProjectRelationConverter;
@@ -64,6 +77,8 @@ public class ImportInformationSpaceReducer
     protected static final Logger log = Logger.getLogger(ImportInformationSpaceReducer.class);
     
     protected static final String OUTPUT_NAME_DOCUMENT_META = "output.name.document_meta";
+    
+    protected static final String OUTPUT_NAME_DATASET_META = "output.name.dataset_meta";
 
     protected static final String OUTPUT_NAME_DOCUMENT_PROJECT = "output.name.document_project";
 
@@ -89,6 +104,8 @@ public class ImportInformationSpaceReducer
     // output names
     
     private String outputNameDocumentMeta;
+    
+    private String outputNameDatasetMeta;
 
     private String outputNameDocumentProject;
 
@@ -103,6 +120,8 @@ public class ImportInformationSpaceReducer
     // converters
     
     private DocumentMetadataConverter docMetaConverter;
+    
+    private DatasetMetadataConverter datasetMetaConverter;
 
     private DocumentToProjectRelationConverter docProjectConverter;
 
@@ -126,6 +145,12 @@ public class ImportInformationSpaceReducer
      */
     private boolean mergeBodyWithUpdates;
     
+    /**
+     * Set of approved result types.
+     */
+    private Set<String> approvedDatasetResultTypes;
+    
+    
     // ------------------------ LOGIC --------------------------
     
     @Override
@@ -133,12 +158,21 @@ public class ImportInformationSpaceReducer
         setOutputDirs(context);
 
         mergeBodyWithUpdates = context.getConfiguration().getBoolean(IMPORT_MERGE_BODY_WITH_UPDATES, false);
+        
+        String approvedDatasetResultTypesCSV = context.getConfiguration().get(IMPORT_APPROVED_DATASET_RESULTTYPES_CSV);
+        
+        if (StringUtils.isNotBlank(approvedDatasetResultTypesCSV)) {
+            approvedDatasetResultTypes = Sets.newHashSet(Splitter.on(DEFAULT_CSV_DELIMITER).trimResults().split(approvedDatasetResultTypesCSV));
+        } else {
+            approvedDatasetResultTypes = Collections.emptySet();
+        }
 
         DataInfoBasedApprover dataInfoBasedApprover = buildApprover(context);
         this.resultApprover = dataInfoBasedApprover;
 
         // initializing converters
         docMetaConverter = new DocumentMetadataConverter(dataInfoBasedApprover);
+        datasetMetaConverter = new DatasetMetadataConverter(dataInfoBasedApprover);
         deduplicationMappingConverter = new DeduplicationMappingConverter();
         docProjectConverter = new DocumentToProjectRelationConverter();
         projectConverter = new ProjectConverter();
@@ -189,6 +223,8 @@ public class ImportInformationSpaceReducer
     private void setOutputDirs(Context context) {
         outputNameDocumentMeta = Preconditions.checkNotNull(context.getConfiguration().get(OUTPUT_NAME_DOCUMENT_META),
                 "document metadata output name not provided!");
+        outputNameDatasetMeta = Preconditions.checkNotNull(context.getConfiguration().get(OUTPUT_NAME_DATASET_META),
+                "dataset metadata output name not provided!");
         outputNameDocumentProject = Preconditions.checkNotNull(context.getConfiguration().get(OUTPUT_NAME_DOCUMENT_PROJECT),
                 "document project relation output name not provided!");
         outputNameProject = Preconditions.checkNotNull(context.getConfiguration().get(OUTPUT_NAME_PROJECT),
@@ -234,15 +270,31 @@ public class ImportInformationSpaceReducer
             return;
         }
         if (resultApprover.approve(oafObj)) {
+            
             DocumentMetadata docMeta = docMetaConverter.convert(oafObj.getEntity());
             if (docMeta!=null) {
-                outputs.write(outputNameDocumentMeta, new AvroKey<DocumentMetadata>(docMeta));    
+                outputs.write(outputNameDocumentMeta, new AvroKey<>(docMeta));
             }
+            
+            if (acceptAsDataset(oafObj)) {
+                DataSetReference datasetMeta = datasetMetaConverter.convert(oafObj.getEntity());
+                if (datasetMeta != null) {
+                    outputs.write(outputNameDatasetMeta, new AvroKey<>(datasetMeta));
+                }
+            }
+            
             // hadling project relations
             handleRelation(mappedRecords.get(resProjColumnFamily), docProjectConverter, outputNameDocumentProject);
             // handling deduplication relations, required for contents deduplication and identifiers translation
             handleRelation(mappedRecords.get(dedupMappingColumnFamily), deduplicationMappingConverter, outputNameDedupMapping);
         }
+    }
+    
+    private boolean acceptAsDataset(Oaf oafObj) {
+        return Optional.ofNullable(oafObj.getEntity()).map(OafProtos.OafEntity::getResult)
+                .map(ResultProtos.Result::getMetadata).map(ResultProtos.Result.Metadata::getResulttype)
+                .map(FieldTypeProtos.Qualifier::getClassid).map(classid -> approvedDatasetResultTypes.contains(classid))
+                .orElse(false);
     }
     
     /**

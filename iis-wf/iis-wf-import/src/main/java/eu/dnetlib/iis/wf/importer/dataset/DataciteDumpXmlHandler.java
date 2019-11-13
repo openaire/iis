@@ -254,9 +254,6 @@ public class DataciteDumpXmlHandler extends DefaultHandler {
             if (datasetMeta.getPublicationYear()!=null) {
                 dataSetRefBuilder.setPublicationYear(datasetMeta.getPublicationYear());
             }
-            if (datasetMeta.getResourceTypeClass()!=null) {
-                dataSetRefBuilder.setResourceTypeClass(datasetMeta.getResourceTypeClass());
-            }
             if (datasetMeta.getResourceTypeValue()!=null) {
                 dataSetRefBuilder.setResourceTypeValue(datasetMeta.getResourceTypeValue());
             }

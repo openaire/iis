@@ -2,11 +2,6 @@
 	<parameters>
 		<!-- importing modes -->
 		<property>
-			<name>active_import_dataset</name>
-			<value>false</value>
-			<description>flag indicating dataset import should be enabled</description>
-		</property>
-		<property>
 			<name>match_content_with_metadata</name>
 			<value>true</value>
 			<description>flag indicating contents should be filtered and their identifiers should be deduplicated against metadata entries retrieved from InformationSpace.
@@ -52,17 +47,6 @@
 		<property>
 			<name>project_concepts_context_ids_csv</name>
 			<description>comma separated list of concepts context identifiers to be picked by ISLookup</description>
-		</property>
-		<!-- import datacite related -->
-		<property>
-			<name>mdstore_service_location</name>
-			<value>$UNDEFINED$</value>
-			<description>MDStore service (not WSDL) location URL</description>
-		</property>
-		<property>
-			<name>dataset_mdstore_ids_csv</name>
-			<value>$UNDEFINED$</value>
-			<description>MDStore identifier</description>
 		</property>
 		<!-- import content related -->
 		<property>
@@ -141,6 +125,11 @@
 			<value>docmeta</value>
 			<description>metadata import docmeta output subdirectory name</description>
 		</property>
+        <property>
+            <name>metadataimport_output_name_dataset_meta</name>
+            <value>dataset</value>
+            <description>dataset metadata import output subdirectory name</description>
+        </property>
 		<property>
 			<name>metadataimport_output_name_document_project</name>
 			<value>docproject</value>
@@ -181,20 +170,6 @@
 			<value>$UNDEFINED$</value>
 			<description>metadata importer output root directory</description>
 		</property>
-        
-		<property>
-            <name>output_dataset_root</name>
-            <description>dataset importer output root, required when ${active_import_dataset}=true</description>
-        </property>
-        <property>
-            <name>output_name_dataset</name>
-            <description>dataset metadata output directory</description>
-        </property>
-        <property>
-            <name>output_name_dataset_text</name>
-            <description>dataset plain text output directory</description>
-        </property>
-        
 		<property>
 			<name>output_document_text</name>
 			<description>text import output directory. merged from three different sources</description>
@@ -243,7 +218,6 @@
 	<fork name="import_forking">
 		<path start="import_concept" />
 		<path start="distcp_hbase_dump" />
-		<path start="decision-import_dataset" />
 	</fork>
 
 	<action name="import_concept">
@@ -309,6 +283,10 @@
                     <value>${metadataimport_output_name_document_meta}</value>
                 </property>
                 <property>
+                    <name>output_name_dataset_meta</name>
+                    <value>${metadataimport_output_name_dataset_meta}</value>
+                </property>
+                <property>
                     <name>output_name_document_project</name>
                     <value>${metadataimport_output_name_document_project}</value>
                 </property>
@@ -368,64 +346,6 @@
 			</configuration>
 		</sub-workflow>
 		<ok to="input_id_mapping-path-setter" />
-		<error to="fail" />
-	</action>
-
-	<decision name="decision-import_dataset">
-		<switch>
-			<case to="import_dataset">${active_import_dataset eq "true"}</case>
-			<default to="skip-import_dataset" />
-		</switch>
-	</decision>
-
-	<action name="import_dataset">
-		<sub-workflow>
-			<app-path>${wf:appPath()}/import_dataset</app-path>
-			<propagate-configuration />
-			<configuration>
-				<property>
-					<name>workingDir</name>
-					<value>${workingDir}/import_dataset/working_dir</value>
-				</property>
-				<property>
-					<name>mdstore_ids_csv</name>
-					<value>${dataset_mdstore_ids_csv}</value>
-				</property>
-                <property>
-                    <name>output_root</name>
-                    <value>${output_dataset_root}</value>
-                </property>
-				<!-- all the other properties are autmatically propagated -->
-			</configuration>
-		</sub-workflow>
-		<ok to="import_joining" />
-		<error to="fail" />
-	</action>
-
-	<action name="skip-import_dataset">
-		<java>
-			<prepare>
-				<!-- notice: directory have to aligned with skipped action output -->
-				<delete path="${nameNode}${workingDir}/import_dataset" />
-				<delete path="${nameNode}${output_dataset_root}" />
-				<mkdir path="${nameNode}${workingDir}/import_dataset" />
-                <mkdir path="${nameNode}${output_dataset_root}" />
-			</prepare>
-			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
-			<arg>-C{dataset,
-				eu.dnetlib.iis.importer.schemas.DataSetReference,
-				eu/dnetlib/iis/common/data/empty.json}
-			</arg>
-			<arg>-C{dataset_text,
-				eu.dnetlib.iis.metadataextraction.schemas.DocumentText,
-				eu/dnetlib/iis/common/data/empty.json}
-			</arg>
-			<!-- notice: directory have to aligned with skipped action output -->
-			<arg>-Odataset=${output_dataset_root}/${output_name_dataset}</arg>
-			<arg>-Odataset_text=${output_dataset_root}/${output_name_dataset_text}</arg>
-		</java>
-		<ok to="import_joining" />
 		<error to="fail" />
 	</action>
 
@@ -785,7 +705,6 @@
             <arg>-PoozieServiceLoc=${oozieServiceLoc}</arg>
             <arg>-Preport.import.concept.duration=import_concept</arg>
             <arg>-Preport.import.infoSpace.duration=import_infospace</arg>
-            <arg>-Preport.import.dataset.duration=import_dataset</arg>
             <arg>-Preport.import.content.url.duration=import_content_url</arg>
             <arg>-Preport.import.ingestPmc.duration=ingest_pmc_cached</arg>
             <arg>-Preport.import.metadataExtraction.duration=metadata_extractor_cached</arg>
