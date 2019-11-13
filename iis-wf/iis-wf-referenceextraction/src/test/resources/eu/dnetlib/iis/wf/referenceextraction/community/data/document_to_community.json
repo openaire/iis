@@ -1,20 +1,30 @@
 {
   "documentId": "50|od________18::1f20031fa8764ad972ce3cae566ae787",
   "conceptId": "clarin",
-  "confidenceLevel": 0.5
+  "confidenceLevel": 0.5,
+  "textsnippet": "been using language resources developed, stored and distributed by the LINDAT/CLARIN project of the Ministry of Education, Youth and Sports of the Czech"
 }
 {
   "documentId": "50|od________18::1f20031fa8764ad972ce3cae566ae787",
   "conceptId": "dh-ch::subcommunity::2",
-  "confidenceLevel": 0.5
+  "confidenceLevel": 0.5,
+  "textsnippet": "been using language resources developed, stored and distributed by the LINDAT/CLARIN project of the Ministry of Education, Youth and Sports of the Czech"
 }
 {
   "documentId": "50|od________18::3b64ffd37d81d702710fa28433ea6229",
   "conceptId": "fli",
-  "confidenceLevel": 0.5
+  "confidenceLevel": 0.5,
+  "textsnippet": "ANR-11-INSB-0006 (France Life Imaging infrastructure"
 }
 {
   "documentId": "50|dedup_wf_001::ed8e5e23ebff00fd270be8e10259c252",
   "conceptId": "eric",
-  "confidenceLevel": 0.5
+  "confidenceLevel": 0.5,
+  "textsnippet": "Acknowledgments Marc Ruff team was supported by grant from Instruct, part of the European Strategy Forum on Research Infrastructure (ESFRI)"
+}
+{
+  "documentId": "50|belief______::b1d27bbd867754230abfb55238e1e627",
+  "conceptId": "dariah",
+  "confidenceLevel": 0.5,
+  "textsnippet": "Liaison DARIAH research infrastructure institutionalized"
 }

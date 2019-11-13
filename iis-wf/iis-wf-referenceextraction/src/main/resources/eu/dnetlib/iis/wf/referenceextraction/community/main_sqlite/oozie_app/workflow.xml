@@ -38,7 +38,7 @@
 	    <java>
 	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
 	        <arg>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</arg>
-	        <arg>eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId</arg>
+	        <arg>eu.dnetlib.iis.referenceextraction.community.schemas.DocumentToConceptId</arg>
 	        <capture-output />
 	    </java>
 	    <ok to="main_sqlite" />
@@ -97,7 +97,7 @@
 
                 <property>
                     <name>output.schema.literal</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId']}</value>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.community.schemas.DocumentToConceptId']}</value>
                 </property>
 
 				<!-- this one is requred due to the large amount of time taken 

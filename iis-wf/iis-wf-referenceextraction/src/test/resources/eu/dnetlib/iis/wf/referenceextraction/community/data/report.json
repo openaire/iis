@@ -1,4 +1,5 @@
 {"key":"processing.referenceExtraction.community.reference.byrootid.clarin", "type":"COUNTER", "value": "1"}
+{"key":"processing.referenceExtraction.community.reference.byrootid.dariah", "type":"COUNTER", "value": "1"}
 {"key":"processing.referenceExtraction.community.reference.byrootid.dh-ch", "type":"COUNTER", "value": "1"}
 {"key":"processing.referenceExtraction.community.reference.byrootid.eric", "type":"COUNTER", "value": "1"}
 {"key":"processing.referenceExtraction.community.reference.byrootid.fli", "type":"COUNTER", "value": "1"}

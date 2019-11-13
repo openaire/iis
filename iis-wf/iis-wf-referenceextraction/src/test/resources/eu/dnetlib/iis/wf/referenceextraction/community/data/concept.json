@@ -33,3 +33,10 @@
       {"name": "suggestedAcknowledgement", "value":"currently irrelevant"}
    ]
 }
+{  
+   "id":"dariah",
+   "label":"DARIAH EU",
+   "params":[
+      {"name": "suggestedAcknowledgement", "value":"currently irrelevant"}
+   ]
+}
