@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.export.actionmanager.entity;
+package eu.dnetlib.iis.wf.export.actionmanager.entity.patent;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -17,6 +17,7 @@ import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 import eu.dnetlib.iis.wf.export.actionmanager.common.DateTimeUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.common.RDDUtils;
+import eu.dnetlib.iis.wf.export.actionmanager.entity.ConfidenceLevelUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.module.AlgorithmName;
 import eu.dnetlib.iis.wf.export.actionmanager.module.BuilderModuleHelper;
 import org.apache.hadoop.conf.Configuration;
@@ -96,13 +97,23 @@ public class PatentExporterJob {
             JavaPairRDD<CharSequence, Patent> patentsById = patents
                     .mapToPair(x -> new Tuple2<>(x.getApplnId(), x));
 
+            JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = documentToPatentsToExport
+                    .mapToPair(x -> new Tuple2<>(x.getPatentId(), x))
+                    .join(patentsById)
+                    .map(x -> {
+                        DocumentToPatent documentToPatent = x._2()._1();
+                        Patent patent = x._2()._2();
+                        return new DocumentToPatentWithIdsToExport(x._2()._1(), documentIdToExport(documentToPatent.getDocumentId()),
+                                patentIdToExport(patent.getApplnAuth(), patent.getApplnNr()));
+                    });
+
             JavaPairRDD<Text, Text> relationsToExport =
-                    relationsToExport(documentToPatentsToExport, patentsById, params.relationActionSetId)
+                    relationsToExport(documentToPatentsToExportWithIds, params.relationActionSetId)
                             .cache();
             RDDUtils.saveTextPairRDD(relationsToExport, numberOfOutputFiles, params.outputRelationPath, configuration);
 
             JavaPairRDD<Text, Text> entitiesToExport =
-                    entitiesToExport(documentToPatentsToExport, patentsById, params.entityActionSetId)
+                    entitiesToExport(documentToPatentsToExportWithIds, patentsById, params.entityActionSetId)
                             .cache();
             RDDUtils.saveTextPairRDD(entitiesToExport, numberOfOutputFiles, params.outputEntityPath, configuration);
 
@@ -238,106 +249,115 @@ public class PatentExporterJob {
         return y;
     }
 
-    private static JavaPairRDD<Text, Text> relationsToExport(JavaRDD<DocumentToPatent> documentToPatentsToExport,
-                                                             JavaPairRDD<CharSequence, Patent> patentsById,
+    private static JavaPairRDD<Text, Text> relationsToExport(JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds,
                                                              String relationActionSetId) {
-        return documentToPatentsToExport
-                .mapToPair(documentToPatent -> new Tuple2<>(documentToPatent.getPatentId(), documentToPatent))
-                .join(patentsById)
+        return documentToPatentsToExportWithIds
                 .flatMap(x -> {
-                    DocumentToPatent documentToPatent = x._2._1;
-                    Patent patent = x._2._2;
-                    return buildRelationActions(documentToPatent, patent.getApplnAuth(), patent.getApplnNr(), relationActionSetId);
+                    DocumentToPatent documentToPatent = x.getDocumentToPatent();
+                    String documentIdToExport = x.getDocumentIdToExport();
+                    String patentIdToExport = x.getPatentIdToExport();
+                    return buildRelationActions(documentToPatent, documentIdToExport, patentIdToExport, relationActionSetId);
                 })
                 .mapToPair(PatentExporterJob::actionToTuple);
     }
 
-    private static List<AtomicAction> buildRelationActions(DocumentToPatent documentToPatent, CharSequence applnAuth,
-                                                           CharSequence applnNr, String relationActionSetId) {
-        OafProtos.Oaf.Builder builder = builderForRelationOaf(documentToPatent, applnAuth, applnNr);
+    private static List<AtomicAction> buildRelationActions(DocumentToPatent documentToPatent,
+                                                           String documentIdToExport,
+                                                           String patentIdToExport,
+                                                           String relationActionSetId) {
+        OafProtos.Oaf.Builder builder = builderForRelationOaf(documentToPatent, documentIdToExport, patentIdToExport);
 
         OafProtos.Oaf forwardOaf = builder.build();
         AtomicAction forwardAction = actionFactory.createAtomicAction(
                 relationActionSetId,
                 StaticConfigurationProvider.AGENT_DEFAULT,
-                documentId(documentToPatent.getDocumentId()),
+                documentIdToExport,
                 OafDecoder.decode(forwardOaf).getCFQ(),
-                patentId(applnAuth, applnNr),
+                patentIdToExport,
                 forwardOaf.toByteArray());
 
         OafProtos.Oaf reverseOaf = BuilderModuleHelper.invertBidirectionalRelationAndBuild(builder);
         AtomicAction reverseAction = actionFactory.createAtomicAction(
                 relationActionSetId,
                 StaticConfigurationProvider.AGENT_DEFAULT,
-                patentId(applnAuth, applnNr),
+                patentIdToExport,
                 OafDecoder.decode(reverseOaf).getCFQ(),
-                documentId(documentToPatent.getDocumentId()),
+                documentIdToExport,
                 reverseOaf.toByteArray());
 
         return Arrays.asList(forwardAction, reverseAction);
     }
 
-    private static OafProtos.Oaf.Builder builderForRelationOaf(DocumentToPatent documentToPatent, CharSequence applnAuth, CharSequence applnNr) {
+    private static OafProtos.Oaf.Builder builderForRelationOaf(DocumentToPatent documentToPatent,
+                                                               String documentIdToExport,
+                                                               String patentIdToExport) {
         return OafProtos.Oaf.newBuilder()
                 .setKind(KindProtos.Kind.relation)
-                .setRel(buildOafRel(documentToPatent, applnAuth, applnNr))
+                .setRel(buildOafRel(documentIdToExport, patentIdToExport))
                 .setDataInfo(BuilderModuleHelper.buildInferenceForConfidenceLevel(documentToPatent.getConfidenceLevel(), INFERENCE_PROVENANCE))
                 .setLastupdatetimestamp(System.currentTimeMillis());
     }
 
-    private static OafProtos.OafRel buildOafRel(DocumentToPatent documentToPatent, CharSequence applnAuth, CharSequence applnNr) {
+    private static OafProtos.OafRel buildOafRel(String documentIdToExport, String patentIdToExport) {
         return OafProtos.OafRel.newBuilder()
                 .setRelType(RelTypeProtos.RelType.resultResult)
                 .setSubRelType(RelTypeProtos.SubRelType.relationship)
                 .setRelClass(ResultResultProtos.ResultResult.Relationship.RelName.isRelatedTo.name())
-                .setSource(documentId(documentToPatent.getDocumentId()))
-                .setTarget(patentId(applnAuth, applnNr))
+                .setSource(documentIdToExport)
+                .setTarget(patentIdToExport)
                 .setChild(false)
                 .setResultResult(OAFREL_RESULTRESULT)
                 .build();
     }
 
-    private static JavaPairRDD<Text, Text> entitiesToExport(JavaRDD<DocumentToPatent> documentToPatentsToExport,
+    private static JavaPairRDD<Text, Text> entitiesToExport(JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds,
                                                             JavaPairRDD<CharSequence, Patent> patentsById,
                                                             String entityActionSetId) {
-        return documentToPatentsToExport
-                .map(DocumentToPatent::getPatentId)
-                .distinct()
-                .mapToPair(x -> new Tuple2<>(x, 1))
+        return documentToPatentsToExportWithIds
+                .mapToPair(x -> new Tuple2<>(x.getDocumentToPatent().getPatentId(), x))
                 .leftOuterJoin(patentsById)
                 .values()
-                .map(x -> x._2)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(x -> buildEntityAction(x, entityActionSetId))
+                .map(x -> {
+                    Optional<Patent> patent = x._2();
+                    String patentIdToExport = x._1().getPatentIdToExport();
+                    return new Tuple2<>(patent, patentIdToExport);
+                })
+                .distinct()
+                .filter(x -> x._1().isPresent())
+                .map(x -> new Tuple2<>(x._1().get(), x._2()))
+                .map(x -> {
+                    Patent patent = x._1();
+                    String patentIdToExport = x._2();
+                    return buildEntityAction(patent, patentIdToExport, entityActionSetId);
+                })
                 .mapToPair(PatentExporterJob::actionToTuple);
     }
 
-    private static AtomicAction buildEntityAction(Patent patent, String entityActionSetId) {
-        OafProtos.Oaf oaf = buildEntityOaf(patent);
+    private static AtomicAction buildEntityAction(Patent patent, String patentIdToExport, String entityActionSetId) {
+        OafProtos.Oaf oaf = buildEntityOaf(patent, patentIdToExport);
         return actionFactory.createAtomicAction(
                 entityActionSetId,
                 StaticConfigurationProvider.AGENT_DEFAULT,
-                patentId(patent.getApplnAuth(), patent.getApplnNr()),
+                patentIdToExport,
                 OafDecoder.decode(oaf).getCFQ(),
                 InfoSpaceConstants.QUALIFIER_BODY_STRING,
                 oaf.toByteArray()
         );
     }
 
-    private static OafProtos.Oaf buildEntityOaf(Patent patent) {
+    private static OafProtos.Oaf buildEntityOaf(Patent patent, String patentIdToExport) {
         return OafProtos.Oaf.newBuilder()
                 .setKind(KindProtos.Kind.entity)
-                .setEntity(buildOafEntity(patent))
+                .setEntity(buildOafEntity(patent, patentIdToExport))
                 .setLastupdatetimestamp(System.currentTimeMillis())
                 .build();
     }
 
-    private static OafProtos.OafEntity buildOafEntity(Patent patent) {
+    private static OafProtos.OafEntity buildOafEntity(Patent patent, String patentIdToExport) {
         String now = DateTimeUtils.format(LocalDateTime.now());
         return OafProtos.OafEntity.newBuilder()
                 .setType(TypeProtos.Type.result)
-                .setId(patentId(patent.getApplnAuth(), patent.getApplnNr()))
+                .setId(patentIdToExport)
                 .addCollectedfrom(OAF_ENTITY_COLLECTEDFROM)
                 .addPid(buildOafEntityPid(patent))
                 .setDateofcollection(now)
@@ -395,11 +415,11 @@ public class PatentExporterJob {
                 .build();
     }
 
-    private static String documentId(CharSequence documentId) {
+    private static String documentIdToExport(CharSequence documentId) {
         return documentId.toString();
     }
 
-    private static String patentId(CharSequence applnAuth, CharSequence applnNr) {
+    private static String patentIdToExport(CharSequence applnAuth, CharSequence applnNr) {
         return appendMd5(PATENT_RESULT_OPENAIRE_ID_PREFIX, applnAuth.toString() + applnNr.toString());
     }
 

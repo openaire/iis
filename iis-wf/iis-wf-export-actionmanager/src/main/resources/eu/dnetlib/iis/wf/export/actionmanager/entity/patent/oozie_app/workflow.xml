@@ -103,7 +103,7 @@
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>patent spark exporter</name>
-            <class>eu.dnetlib.iis.wf.export.actionmanager.entity.PatentExporterJob</class>
+            <class>eu.dnetlib.iis.wf.export.actionmanager.entity.patent.PatentExporterJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-export-actionmanager-${projectVersion}.jar</jar>
             <spark-opts>
                 --executor-memory ${sparkExecutorMemory}

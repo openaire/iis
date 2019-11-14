@@ -122,8 +122,8 @@
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/entities_patent/patent-entity-actionset-id</arg>
             <arg>
-                -Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent1.properties,
-                /eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent2.properties
+                -Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent2.properties,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent1.properties
             </arg>
         </java>
         <ok to="report-consumer"/>

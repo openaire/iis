@@ -1,8 +1,9 @@
-package eu.dnetlib.iis.wf.export.actionmanager.entity;
+package eu.dnetlib.iis.wf.export.actionmanager.entity.patent;
 
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.ListTestUtils;
+import eu.dnetlib.iis.wf.export.actionmanager.entity.patent.PatentExportCounterReporter;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.hadoop.io.Text;
 import org.apache.spark.SparkConf;

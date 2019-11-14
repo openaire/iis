@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.export.actionmanager.entity;
+package eu.dnetlib.iis.wf.export.actionmanager.entity.patent;
 
 import com.google.common.base.Preconditions;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;

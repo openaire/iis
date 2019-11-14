@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.export.actionmanager.entity;
+package eu.dnetlib.iis.wf.export.actionmanager.entity.patent;
 
 import eu.dnetlib.actionmanager.ActionManagerConstants;
 import eu.dnetlib.actionmanager.actions.AtomicAction;
@@ -16,6 +16,8 @@ import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
 import eu.dnetlib.iis.wf.export.actionmanager.RDDTestUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
+import eu.dnetlib.iis.wf.export.actionmanager.entity.patent.PatentExportCounterReporter;
+import eu.dnetlib.iis.wf.export.actionmanager.entity.patent.PatentExporterJob;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;

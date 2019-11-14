@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.export.actionmanager.entity;
+package eu.dnetlib.iis.wf.export.actionmanager.entity.patent;
 
 import eu.dnetlib.iis.common.AbstractOozieWorkflowTestCase;
 import eu.dnetlib.iis.common.IntegrationTest;
