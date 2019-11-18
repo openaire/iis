@@ -117,7 +117,7 @@
 			<!-- All input and output ports have to be bound to paths in HDFS -->
 			<arg>-C{document_to_dataset,
 				eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet,
-				eu/dnetlib/iis/wf/referenceextraction/dataset/datacite/data/document_to_dataset-old.json}</arg>
+				eu/dnetlib/iis/wf/referenceextraction/dataset/datacite/data/document_to_dataset.json}</arg>
 			<arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,
 			    eu/dnetlib/iis/wf/referenceextraction/dataset/datacite/data/report-old.json}</arg>
 			<!-- All input and output ports have to be bound to paths in HDFS -->
