@@ -14,6 +14,18 @@
             <name>output_document_to_patent</name>
             <description>output document to patent</description>
         </property>
+        <property>
+            <name>sparkDriverMemory</name>
+            <description>memory for driver process</description>
+        </property>
+        <property>
+            <name>sparkExecutorMemory</name>
+            <description>memory for individual executor</description>
+        </property>
+        <property>
+            <name>sparkExecutorCores</name>
+            <description>number of cores used by single executor</description>
+        </property>
     </parameters>
 
     <start to="input_transformer"/>
