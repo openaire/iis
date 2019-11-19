@@ -3,20 +3,20 @@ package eu.dnetlib.iis.wf.export.actionmanager.entity.patent;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.google.common.base.Optional;
 import eu.dnetlib.actionmanager.actions.ActionFactory;
 import eu.dnetlib.actionmanager.actions.AtomicAction;
 import eu.dnetlib.data.mapreduce.util.OafDecoder;
 import eu.dnetlib.data.proto.*;
 import eu.dnetlib.data.transform.xml.AbstractDNetXsltFunctions;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
+import eu.dnetlib.iis.common.java.stream.ListUtils;
 import eu.dnetlib.iis.common.java.stream.StreamUtils;
+import eu.dnetlib.iis.common.utils.DateTimeUtils;
+import eu.dnetlib.iis.common.utils.RDDUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.HolderCountry;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
-import eu.dnetlib.iis.wf.export.actionmanager.common.DateTimeUtils;
-import eu.dnetlib.iis.wf.export.actionmanager.common.RDDUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.entity.ConfidenceLevelUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.module.AlgorithmName;
 import eu.dnetlib.iis.wf.export.actionmanager.module.BuilderModuleHelper;
@@ -34,6 +34,7 @@ import scala.Tuple2;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -46,17 +47,18 @@ import java.util.stream.Collectors;
  */
 public class PatentExporterJob {
     private static final String EPO = "EPO";
-    private static final String EPO_APPLN_ID = "epo_appln_id";
+    private static final String CLASS_EPO_ID = "epo_id";
+    private static final String CLASS_EPO_NR_EPODOC = "epo_nr_epodoc";
     private static final String IPC = "IPC";
     private static final String INFERENCE_PROVENANCE = buildInferenceProvenance();
     private static final String PATENT_DATASOURCE_OPENAIRE_ID_PREFIX = InfoSpaceConstants.ROW_PREFIX_DATASOURCE + InfoSpaceConstants.OPENAIRE_ENTITY_ID_PREFIX + InfoSpaceConstants.ID_NAMESPACE_SEPARATOR;
     private static final String PATENT_RESULT_OPENAIRE_ID_PREFIX = InfoSpaceConstants.ROW_PREFIX_RESULT + InfoSpaceConstants.OPENAIRE_ENTITY_ID_PREFIX + InfoSpaceConstants.ID_NAMESPACE_SEPARATOR;
     private static final String PATENT_ID_PREFIX_EPO = buildRowPrefixDatasourceOpenaireEntityIdPrefixEpo();
     private static final ResultResultProtos.ResultResult OAFREL_RESULTRESULT = buildOafRelResultResult();
-    private static final FieldTypeProtos.KeyValue OAF_ENTITY_COLLECTEDFROM = buildOafEntityCollectedfrom();
+    private static final FieldTypeProtos.KeyValue OAF_ENTITY_COLLECTEDFROM = buildOafEntityPatentKeyValue();
     private static final FieldTypeProtos.Qualifier OAF_ENTITY_RESULT_METADATA_RESULTTYPE = buildOafEntityResultMetadataResulttype();
-    private static final ResultProtos.Result.Instance OAF_ENTITY_RESULT_INSTANCE = buildOafEntityResultInstance();
-    private static final FieldTypeProtos.Qualifier OAF_ENTITY_PID_QUALIFIER = buildOafEntityPidQualifier();
+    private static final FieldTypeProtos.Qualifier OAF_ENTITY_PID_QUALIFIER_CLASS_EPO_ID = buildOafEntityPidQualifierClassEpoId();
+    private static final FieldTypeProtos.Qualifier OAF_ENTITY_PID_QUALIFIER_CLASS_EPO_NR_EPODOC = buildOafEntityPidQualifierClassEpoNrEpodoc();
     private static final FieldTypeProtos.Qualifier OAF_ENTITY_RESULT_METADATA_TITLE_QUALIFIER = buildOafEntityResultMetadataTitleQualifier();
     private static final FieldTypeProtos.Qualifier OAF_ENTITY_RESULT_METADATA_SUBJECT_QUALIFIER = buildOafEntityResultMetadataSubjectQualifier();
     private static final FieldTypeProtos.Qualifier OAF_ENTITY_RESULT_METADATA_RELEVANTDATE_QUALIFIER = buildOafEntityResultMetadataRelevantdateQualifier();
@@ -65,6 +67,10 @@ public class PatentExporterJob {
     private static final int numberOfOutputFiles = 10;
     private static final ActionFactory actionFactory = new ActionFactory();
     private static final PatentExportCounterReporter counterReporter = new PatentExportCounterReporter();
+
+    private static final String PATENTS_EPO_FILE_TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm";
+    private static final String PATENTS_EPO_FILE_TIMESTAMP = DateTimeUtils
+            .format(LocalDateTime.parse("2019-06-12T09:56", DateTimeFormatter.ofPattern(PATENTS_EPO_FILE_TIMESTAMP_FORMAT)));
 
     //------------------------ LOGIC --------------------------
 
@@ -85,17 +91,16 @@ public class PatentExporterJob {
             Float trustLevelThreshold = ConfidenceLevelUtils.evaluateConfidenceLevelThreshold(params.trustLevelThreshold);
 
             JavaRDD<DocumentToPatent> documentToPatents = avroLoader
-                    .loadJavaRDD(sc, params.inputDocumentToPatentPath, DocumentToPatent.class)
-                    .cache();
+                    .loadJavaRDD(sc, params.inputDocumentToPatentPath, DocumentToPatent.class);
             JavaRDD<Patent> patents = avroLoader
                     .loadJavaRDD(sc, params.inputPatentPath, Patent.class);
 
             JavaRDD<DocumentToPatent> documentToPatentsToExport =
-                    documentToPatentsToExport(documentToPatents, trustLevelThreshold)
-                            .cache();
+                    documentToPatentsToExport(documentToPatents, trustLevelThreshold);
 
             JavaPairRDD<CharSequence, Patent> patentsById = patents
-                    .mapToPair(x -> new Tuple2<>(x.getApplnId(), x));
+                    .mapToPair(x -> new Tuple2<>(x.getApplnId(), x))
+                    .cache();
 
             JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = documentToPatentsToExport
                     .mapToPair(x -> new Tuple2<>(x.getPatentId(), x))
@@ -105,19 +110,18 @@ public class PatentExporterJob {
                         Patent patent = x._2()._2();
                         return new DocumentToPatentWithIdsToExport(x._2()._1(), documentIdToExport(documentToPatent.getDocumentId()),
                                 patentIdToExport(patent.getApplnAuth(), patent.getApplnNr()));
-                    });
+                    })
+                    .cache();
 
             JavaPairRDD<Text, Text> relationsToExport =
-                    relationsToExport(documentToPatentsToExportWithIds, params.relationActionSetId)
-                            .cache();
+                    relationsToExport(documentToPatentsToExportWithIds, params.relationActionSetId);
             RDDUtils.saveTextPairRDD(relationsToExport, numberOfOutputFiles, params.outputRelationPath, configuration);
 
             JavaPairRDD<Text, Text> entitiesToExport =
-                    entitiesToExport(documentToPatentsToExportWithIds, patentsById, params.entityActionSetId)
-                            .cache();
+                    entitiesToExport(documentToPatentsToExportWithIds, patentsById, params.epoBaseUrl, params.entityActionSetId);
             RDDUtils.saveTextPairRDD(entitiesToExport, numberOfOutputFiles, params.outputEntityPath, configuration);
 
-            counterReporter.report(sc, relationsToExport, entitiesToExport, params.outputReportPath);
+            counterReporter.report(sc, documentToPatentsToExportWithIds, params.outputReportPath);
         }
     }
 
@@ -144,13 +148,6 @@ public class PatentExporterJob {
                 .build();
     }
 
-    private static FieldTypeProtos.KeyValue buildOafEntityCollectedfrom() {
-        return FieldTypeProtos.KeyValue.newBuilder()
-                .setKey(PATENT_ID_PREFIX_EPO)
-                .setValue(EPO)
-                .build();
-    }
-
     private static FieldTypeProtos.Qualifier buildOafEntityResultMetadataResulttype() {
         return FieldTypeProtos.Qualifier.newBuilder()
                 .setClassid(InfoSpaceConstants.SEMANTIC_CLASS_PUBLICATION)
@@ -160,12 +157,17 @@ public class PatentExporterJob {
                 .build();
     }
 
-    private static ResultProtos.Result.Instance buildOafEntityResultInstance() {
+    private static ResultProtos.Result.Instance buildOafEntityResultInstance(Patent patent, String epoBaseUrl) {
         return ResultProtos.Result.Instance.newBuilder()
                 .setInstancetype(buildOafEntityResultInstanceInstancetype())
-                .setHostedby(buildOafEntityResultInstanceHostedby())
-                .setCollectedfrom(buildOafEntityResultInstanceCollectedfrom())
+                .setHostedby(buildOafEntityPatentKeyValue())
+                .setCollectedfrom(buildOafEntityPatentKeyValue())
+                .addUrl(buildOafEntityResultInstanceUrl(patent, epoBaseUrl))
                 .build();
+    }
+
+    private static String buildOafEntityResultInstanceUrl(Patent patent, String epoBaseUrl) {
+        return String.format("%s%s%s", epoBaseUrl, patent.getApplnAuth(), patent.getApplnNr());
     }
 
     private static FieldTypeProtos.Qualifier buildOafEntityResultInstanceInstancetype() {
@@ -177,24 +179,26 @@ public class PatentExporterJob {
                 .build();
     }
 
-    private static FieldTypeProtos.KeyValue buildOafEntityResultInstanceHostedby() {
+    private static FieldTypeProtos.KeyValue buildOafEntityPatentKeyValue() {
         return FieldTypeProtos.KeyValue.newBuilder()
                 .setKey(PATENT_ID_PREFIX_EPO)
                 .setValue(EPO)
                 .build();
     }
 
-    private static FieldTypeProtos.KeyValue buildOafEntityResultInstanceCollectedfrom() {
-        return FieldTypeProtos.KeyValue.newBuilder()
-                .setKey(PATENT_ID_PREFIX_EPO)
-                .setValue(EPO)
-                .build();
-    }
-
-    private static FieldTypeProtos.Qualifier buildOafEntityPidQualifier() {
+    private static FieldTypeProtos.Qualifier buildOafEntityPidQualifierClassEpoId() {
         return FieldTypeProtos.Qualifier.newBuilder()
-                .setClassid(EPO_APPLN_ID)
-                .setClassname(EPO_APPLN_ID)
+                .setClassid(CLASS_EPO_ID)
+                .setClassname(CLASS_EPO_ID)
+                .setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PID_TYPES)
+                .setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PID_TYPES)
+                .build();
+    }
+
+    private static FieldTypeProtos.Qualifier buildOafEntityPidQualifierClassEpoNrEpodoc() {
+        return FieldTypeProtos.Qualifier.newBuilder()
+                .setClassid(CLASS_EPO_NR_EPODOC)
+                .setClassname(CLASS_EPO_NR_EPODOC)
                 .setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PID_TYPES)
                 .setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PID_TYPES)
                 .build();
@@ -312,29 +316,23 @@ public class PatentExporterJob {
 
     private static JavaPairRDD<Text, Text> entitiesToExport(JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds,
                                                             JavaPairRDD<CharSequence, Patent> patentsById,
+                                                            String epoBaseUrl,
                                                             String entityActionSetId) {
         return documentToPatentsToExportWithIds
-                .mapToPair(x -> new Tuple2<>(x.getDocumentToPatent().getPatentId(), x))
-                .leftOuterJoin(patentsById)
+                .mapToPair(x -> new Tuple2<>(x.getDocumentToPatent().getPatentId(), x.getPatentIdToExport()))
+                .distinct()
+                .join(patentsById)
                 .values()
                 .map(x -> {
-                    Optional<Patent> patent = x._2();
-                    String patentIdToExport = x._1().getPatentIdToExport();
-                    return new Tuple2<>(patent, patentIdToExport);
-                })
-                .distinct()
-                .filter(x -> x._1().isPresent())
-                .map(x -> new Tuple2<>(x._1().get(), x._2()))
-                .map(x -> {
-                    Patent patent = x._1();
-                    String patentIdToExport = x._2();
-                    return buildEntityAction(patent, patentIdToExport, entityActionSetId);
+                    String patentIdToExport = x._1();
+                    Patent patent = x._2();
+                    return buildEntityAction(patent, patentIdToExport, epoBaseUrl, entityActionSetId);
                 })
                 .mapToPair(PatentExporterJob::actionToTuple);
     }
 
-    private static AtomicAction buildEntityAction(Patent patent, String patentIdToExport, String entityActionSetId) {
-        OafProtos.Oaf oaf = buildEntityOaf(patent, patentIdToExport);
+    private static AtomicAction buildEntityAction(Patent patent, String patentIdToExport, String epoBaseUrl, String entityActionSetId) {
+        OafProtos.Oaf oaf = buildEntityOaf(patent, patentIdToExport, epoBaseUrl);
         return actionFactory.createAtomicAction(
                 entityActionSetId,
                 StaticConfigurationProvider.AGENT_DEFAULT,
@@ -345,39 +343,38 @@ public class PatentExporterJob {
         );
     }
 
-    private static OafProtos.Oaf buildEntityOaf(Patent patent, String patentIdToExport) {
+    private static OafProtos.Oaf buildEntityOaf(Patent patent, String patentIdToExport, String epoBaseUrl) {
         return OafProtos.Oaf.newBuilder()
                 .setKind(KindProtos.Kind.entity)
-                .setEntity(buildOafEntity(patent, patentIdToExport))
+                .setEntity(buildOafEntity(patent, patentIdToExport, epoBaseUrl))
                 .setLastupdatetimestamp(System.currentTimeMillis())
                 .build();
     }
 
-    private static OafProtos.OafEntity buildOafEntity(Patent patent, String patentIdToExport) {
-        String now = DateTimeUtils.format(LocalDateTime.now());
+    private static OafProtos.OafEntity buildOafEntity(Patent patent, String patentIdToExport, String epoBaseUrl) {
         return OafProtos.OafEntity.newBuilder()
                 .setType(TypeProtos.Type.result)
                 .setId(patentIdToExport)
                 .addCollectedfrom(OAF_ENTITY_COLLECTEDFROM)
-                .addPid(buildOafEntityPid(patent))
-                .setDateofcollection(now)
-                .setDateoftransformation(now)
-                .setResult(buildOafEntityResult(patent))
+                .addPid(buildOafEntityPid(String.format("%s%s", patent.getApplnAuth(), patent.getApplnNr()), OAF_ENTITY_PID_QUALIFIER_CLASS_EPO_ID))
+                .addPid(buildOafEntityPid(patent.getApplnNrEpodoc().toString(), OAF_ENTITY_PID_QUALIFIER_CLASS_EPO_NR_EPODOC))
+                .setDateofcollection(PATENTS_EPO_FILE_TIMESTAMP)
+                .setDateoftransformation(PATENTS_EPO_FILE_TIMESTAMP)
+                .setResult(buildOafEntityResult(patent, epoBaseUrl))
                 .build();
     }
 
-    private static FieldTypeProtos.StructuredProperty buildOafEntityPid(Patent patent) {
+    private static FieldTypeProtos.StructuredProperty buildOafEntityPid(String value, FieldTypeProtos.Qualifier qualifier) {
         return FieldTypeProtos.StructuredProperty.newBuilder()
-                .setValue(patent.getApplnId().toString())
-                .setQualifier(OAF_ENTITY_PID_QUALIFIER)
+                .setValue(value)
+                .setQualifier(qualifier)
                 .build();
     }
 
-
-    private static ResultProtos.Result buildOafEntityResult(Patent patent) {
+    private static ResultProtos.Result buildOafEntityResult(Patent patent, String epoBaseUrl) {
         return ResultProtos.Result.newBuilder()
                 .setMetadata(buildOafEntityResultMetadata(patent))
-                .addInstance(OAF_ENTITY_RESULT_INSTANCE)
+                .addInstance(buildOafEntityResultInstance(patent, epoBaseUrl))
                 .build();
     }
 
@@ -450,12 +447,16 @@ public class PatentExporterJob {
     }
 
     private static List<FieldTypeProtos.Author> buildOafEntityResultMetadataAuthors(Patent patent) {
-        return patent.getHolderCountry().stream()
-                .map(PatentExporterJob::buildOafEntityResultMetadataAuthor)
+        return ListUtils.zipWithIndex(patent.getHolderCountry()).stream()
+                .map(pair -> {
+                    Integer rank = pair.getLeft() + 1;
+                    HolderCountry holderCountry = pair.getRight();
+                    return buildOafEntityResultMetadataAuthor(holderCountry, rank);
+                })
                 .collect(Collectors.toList());
     }
 
-    private static FieldTypeProtos.Author buildOafEntityResultMetadataAuthor(HolderCountry holderCountry) {
+    private static FieldTypeProtos.Author buildOafEntityResultMetadataAuthor(HolderCountry holderCountry, Integer rank) {
         return FieldTypeProtos.Author.newBuilder()
                 .setFullname(holderCountry.getPersonName().toString())
                 .setRank(0)
@@ -504,6 +505,9 @@ public class PatentExporterJob {
 
         @Parameter(names = "-trustLevelThreshold")
         private String trustLevelThreshold;
+
+        @Parameter(names = "-epoBaseUrl", required = true)
+        private String epoBaseUrl;
 
         @Parameter(names = "-outputRelationPath", required = true)
         private String outputRelationPath;

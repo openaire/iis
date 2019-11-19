@@ -9,7 +9,7 @@
         <property>
             <name>input_patent</name>
             <description>
-                Input containing `eu.dnetlib.iis.referenceextraction.patent.schemas.Patent` avro records listing all patent entities referenced by publications.
+                Input containing `eu.dnetlib.iis.referenceextraction.patent.schemas.Patent` avro records listing all patent entities.
             </description>
         </property>
         <property>
@@ -29,6 +29,12 @@
             <value>$UNDEFINED$</value>
             <description>
                 document_patent trust level threshold.
+            </description>
+        </property>
+        <property>
+            <name>epo_base_url</name>
+            <description>
+                Base URL for EPO web archive
             </description>
         </property>
         <property>
@@ -115,6 +121,7 @@
             <arg>-relationActionSetId=${action_set_id_document_patent}</arg>
             <arg>-entityActionSetId=${action_set_id_entity_patent}</arg>
             <arg>-trustLevelThreshold=${trust_level_threshold_document_patent}</arg>
+            <arg>-epoBaseUrl=${epo_base_url}</arg>
             <arg>-outputRelationPath=${output_root_relations}/${action_set_id_document_patent}</arg>
             <arg>-outputEntityPath=${output_root_entities}/${action_set_id_entity_patent}</arg>
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>

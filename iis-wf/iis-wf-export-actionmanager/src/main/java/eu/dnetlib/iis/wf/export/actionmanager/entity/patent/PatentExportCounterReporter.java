@@ -3,8 +3,6 @@ package eu.dnetlib.iis.wf.export.actionmanager.entity.patent;
 import com.google.common.base.Preconditions;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
-import org.apache.hadoop.io.Text;
-import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
@@ -29,28 +27,51 @@ public class PatentExportCounterReporter {
     /**
      * Calculates entities and relations related counters based on RDDs and saves them under outputReportPath.
      *
-     * @param sc                SparkContext instance.
-     * @param relationsToExport Pair RDD of exported relations.
-     * @param entitiesToExport  Pair RDD of exported entities.
-     * @param outputReportPath  Path to report saving location.
+     * @param sc                               SparkContext instance.
+     * @param documentToPatentsToExportWithIds RDD of exported document to patents with ids.
+     * @param outputReportPath                 Path to report saving location.
      */
     public void report(JavaSparkContext sc,
-                       JavaPairRDD<Text, Text> relationsToExport,
-                       JavaPairRDD<Text, Text> entitiesToExport,
+                       JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds,
                        String outputReportPath) {
         Preconditions.checkNotNull(sc, "sparkContext has not been set");
         Preconditions.checkNotNull(outputReportPath, "reportPath has not been set");
 
-        ReportEntry totalRelationsCounter = ReportEntryFactory
-                .createCounterReportEntry(PATENT_REFERENCES_COUNTER, relationsToExport.count());
-        ReportEntry totalEntitiesCounter = ReportEntryFactory
-                .createCounterReportEntry(EXPORTED_PATENT_ENTITIES_COUNTER, entitiesToExport.count());
-        ReportEntry distinctPublicationsCounter = ReportEntryFactory
-                .createCounterReportEntry(DISTINCT_PUBLICATIONS_WITH_PATENT_REFERENCES_COUNTER, entitiesToExport.map(x -> x._2.toString()).distinct().count());
+        ReportEntry totalRelationsCounter = ReportEntryFactory.createCounterReportEntry(PATENT_REFERENCES_COUNTER,
+                totalRelationsCount(documentToPatentsToExportWithIds));
+
+        ReportEntry totalEntitiesCounter = ReportEntryFactory.createCounterReportEntry(EXPORTED_PATENT_ENTITIES_COUNTER,
+                totalEntitiesCount(documentToPatentsToExportWithIds));
+
+        ReportEntry distinctPublicationsCounter = ReportEntryFactory.createCounterReportEntry(DISTINCT_PUBLICATIONS_WITH_PATENT_REFERENCES_COUNTER,
+                distinctPublicationsCount(documentToPatentsToExportWithIds));
 
         JavaRDD<ReportEntry> report = sc.parallelize(Arrays.asList(
                 totalRelationsCounter, totalEntitiesCounter, distinctPublicationsCounter), 1);
 
         avroSaver.saveJavaRDD(report, ReportEntry.SCHEMA$, outputReportPath);
+    }
+
+    //------------------------ PRIVATE --------------------------
+
+    private long totalRelationsCount(JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds) {
+        return documentToPatentsToExportWithIds
+                .map(DocumentToPatentWithIdsToExport::getDocumentToPatent)
+                .distinct()
+                .count();
+    }
+
+    private long totalEntitiesCount(JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds) {
+        return documentToPatentsToExportWithIds
+                .map(DocumentToPatentWithIdsToExport::getPatentIdToExport)
+                .distinct()
+                .count();
+    }
+
+    private long distinctPublicationsCount(JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds) {
+        return documentToPatentsToExportWithIds
+                .map(x -> x.getDocumentToPatent().getDocumentId())
+                .distinct()
+                .count();
     }
 }

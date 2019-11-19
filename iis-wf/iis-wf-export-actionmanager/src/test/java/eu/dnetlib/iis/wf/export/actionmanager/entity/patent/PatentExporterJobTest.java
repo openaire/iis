@@ -12,12 +12,10 @@ import eu.dnetlib.iis.common.schemas.ReportEntryType;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.common.utils.ListTestUtils;
+import eu.dnetlib.iis.common.utils.RDDTestUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
-import eu.dnetlib.iis.wf.export.actionmanager.RDDTestUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
-import eu.dnetlib.iis.wf.export.actionmanager.entity.patent.PatentExportCounterReporter;
-import eu.dnetlib.iis.wf.export.actionmanager.entity.patent.PatentExporterJob;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -52,10 +50,12 @@ public class PatentExporterJobTest {
     private Path outputEntityDir;
     private Path outputReportDir;
 
-    private static final String RELATION_ACTION_SET_ID = "relation-actionset-id";
-    private static final String ENTITY_ACTION_SET_ID = "entity-actionset-id";
     private static final String INPUT_DOCUMENT_TO_PATENT_PATH = "eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/input/document_to_patent.json";
     private static final String INPUT_PATENT_PATH = "eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/input/patent.json";
+
+    private static final String RELATION_ACTION_SET_ID = "relation-actionset-id";
+    private static final String ENTITY_ACTION_SET_ID = "entity-actionset-id";
+    private static final String EPO_BASE_URL = "https://register.epo.org/application?number=";
 
     @Before
     public void before() throws IOException {
@@ -159,7 +159,7 @@ public class PatentExporterJobTest {
                         expectedEntityTargetRowKeyAndTargetColumnPairs.stream().sorted().collect(Collectors.toList()));
 
         //report
-        assertCountersInReport(6, 2, 2);
+        assertCountersInReport(3, 2, 2);
     }
 
     private SparkJob buildSparkJob(Double trustLevelThreshold) {
@@ -172,6 +172,7 @@ public class PatentExporterJobTest {
                 .addArg("-entityActionSetId", ENTITY_ACTION_SET_ID)
                 .addArg("-trustLevelThreshold", String.valueOf(trustLevelThreshold))
                 .addArg("-outputRelationPath", outputRelationDir.toString())
+                .addArg("-epoBaseUrl", EPO_BASE_URL)
                 .addArg("-outputEntityPath", outputEntityDir.toString())
                 .addArg("-outputReportPath", outputReportDir.toString())
                 .addJobProperty("spark.driver.host", "localhost")
