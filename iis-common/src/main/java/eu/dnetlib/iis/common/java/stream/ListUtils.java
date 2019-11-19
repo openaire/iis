@@ -33,4 +33,16 @@ public class ListUtils {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Joins each element in given list with its index.
+     *
+     * @param list List of elements to zip with index.
+     * @param <X>  Type of elements in list.
+     * @return List of pairs of indices and matching elements.
+     */
+    public static <X> List<Pair<Integer, X>> zipWithIndex(List<X> list) {
+        return IntStream.range(0, list.size())
+                .mapToObj(i -> Pair.of(i, list.get(i)))
+                .collect(Collectors.toList());
+    }
 }
