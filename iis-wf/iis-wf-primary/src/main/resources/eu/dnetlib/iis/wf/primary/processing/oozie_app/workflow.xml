@@ -1072,12 +1072,8 @@
                     <value>${workingDir}/transformers_common_union_document_text/out</value>
                 </property>
                 <property>
-                    <name>input_patent</name>
-                    <value>${input_patent}</value>
-                </property>
-                <property>
-                    <name>output</name>
-                    <value>${output_document_to_patent}</value>
+                    <name>input_extracted_document_metadata_merged_with_original</name>
+                    <value>${output_merged_metadata}</value>
                 </property>
             </configuration>
         </sub-workflow>
