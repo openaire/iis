@@ -10,6 +10,7 @@ import eu.dnetlib.data.mapreduce.util.OafDecoder;
 import eu.dnetlib.data.proto.*;
 import eu.dnetlib.data.transform.xml.AbstractDNetXsltFunctions;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
+import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.java.stream.StreamUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.HolderCountry;
@@ -82,6 +83,10 @@ public class PatentExporterJob {
         sparkConf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
 
         try (JavaSparkContext sc = new JavaSparkContext(sparkConf)) {
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputRelationPath);
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputEntityPath);
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
+
             Float trustLevelThreshold = ConfidenceLevelUtils.evaluateConfidenceLevelThreshold(params.trustLevelThreshold);
 
             JavaRDD<DocumentToPatent> documentToPatents = avroLoader
