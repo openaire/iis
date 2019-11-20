@@ -30,11 +30,16 @@
                 eu.dnetlib.iis.metadataextraction.schemas.DocumentText,
                 eu/dnetlib/iis/wf/referenceextraction/patent/data/document_text.json}
             </arg>
+            <arg>-C{extracted_document_metadata_merged_with_original,
+                eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal,
+                eu/dnetlib/iis/wf/referenceextraction/patent/data/extracted_document_metadata_merged_with_original.json}
+            </arg>
             <arg>-C{patent,
                 eu.dnetlib.iis.referenceextraction.patent.schemas.Patent,
                 eu/dnetlib/iis/common/data/empty.json}
             </arg>
             <arg>-Odocument_text=${workingDir}/producer/document_text</arg>
+            <arg>-Oextracted_document_metadata_merged_with_original=${workingDir}/producer/extracted_document_metadata_merged_with_original</arg>
             <arg>-Opatent=${workingDir}/producer/patent</arg>
         </java>
         <ok to="referenceextraction_patent"/>
@@ -55,6 +60,10 @@
                     <value>${workingDir}/producer/document_text</value>
                 </property>
                 <property>
+                    <name>input_extracted_document_metadata_merged_with_original</name>
+                    <value>${workingDir}/producer/extracted_document_metadata_merged_with_original</value>
+                </property>
+                <property>
                     <name>input_patent</name>
                     <value>${workingDir}/producer/patent</value>
                 </property>
@@ -66,7 +75,6 @@
                     <name>output_report_root_path</name>
                     <value>${workingDir}/referenceextraction_patent/report</value>
                 </property>
-                <!-- sparkDriverMemory, sparkExecutorMemory, sparkExecutorCores are provided by environment (since git#889) -->
             </configuration>
         </sub-workflow>
         <ok to="consumer"/>
