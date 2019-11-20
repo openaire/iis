@@ -118,7 +118,7 @@ public class PatentExporterJob {
             RDDUtils.saveTextPairRDD(relationsToExport, numberOfOutputFiles, params.outputRelationPath, configuration);
 
             JavaPairRDD<Text, Text> entitiesToExport =
-                    entitiesToExport(documentToPatentsToExportWithIds, patentsById, params.epoBaseUrl, params.entityActionSetId);
+                    entitiesToExport(documentToPatentsToExportWithIds, patentsById, params.patentEpoUrlRoot, params.entityActionSetId);
             RDDUtils.saveTextPairRDD(entitiesToExport, numberOfOutputFiles, params.outputEntityPath, configuration);
 
             counterReporter.report(sc, documentToPatentsToExportWithIds, params.outputReportPath);
@@ -157,17 +157,17 @@ public class PatentExporterJob {
                 .build();
     }
 
-    private static ResultProtos.Result.Instance buildOafEntityResultInstance(Patent patent, String epoBaseUrl) {
+    private static ResultProtos.Result.Instance buildOafEntityResultInstance(Patent patent, String patentEpoUrlRoot) {
         return ResultProtos.Result.Instance.newBuilder()
                 .setInstancetype(buildOafEntityResultInstanceInstancetype())
                 .setHostedby(buildOafEntityPatentKeyValue())
                 .setCollectedfrom(buildOafEntityPatentKeyValue())
-                .addUrl(buildOafEntityResultInstanceUrl(patent, epoBaseUrl))
+                .addUrl(buildOafEntityResultInstanceUrl(patent, patentEpoUrlRoot))
                 .build();
     }
 
-    private static String buildOafEntityResultInstanceUrl(Patent patent, String epoBaseUrl) {
-        return String.format("%s%s%s", epoBaseUrl, patent.getApplnAuth(), patent.getApplnNr());
+    private static String buildOafEntityResultInstanceUrl(Patent patent, String patentEpoUrlRoot) {
+        return String.format("%s%s%s", patentEpoUrlRoot, patent.getApplnAuth(), patent.getApplnNr());
     }
 
     private static FieldTypeProtos.Qualifier buildOafEntityResultInstanceInstancetype() {
@@ -316,7 +316,7 @@ public class PatentExporterJob {
 
     private static JavaPairRDD<Text, Text> entitiesToExport(JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds,
                                                             JavaPairRDD<CharSequence, Patent> patentsById,
-                                                            String epoBaseUrl,
+                                                            String patentEpoUrlRoot,
                                                             String entityActionSetId) {
         return documentToPatentsToExportWithIds
                 .mapToPair(x -> new Tuple2<>(x.getDocumentToPatent().getPatentId(), x.getPatentIdToExport()))
@@ -326,13 +326,13 @@ public class PatentExporterJob {
                 .map(x -> {
                     String patentIdToExport = x._1();
                     Patent patent = x._2();
-                    return buildEntityAction(patent, patentIdToExport, epoBaseUrl, entityActionSetId);
+                    return buildEntityAction(patent, patentIdToExport, patentEpoUrlRoot, entityActionSetId);
                 })
                 .mapToPair(PatentExporterJob::actionToTuple);
     }
 
-    private static AtomicAction buildEntityAction(Patent patent, String patentIdToExport, String epoBaseUrl, String entityActionSetId) {
-        OafProtos.Oaf oaf = buildEntityOaf(patent, patentIdToExport, epoBaseUrl);
+    private static AtomicAction buildEntityAction(Patent patent, String patentIdToExport, String patentEpoUrlRoot, String entityActionSetId) {
+        OafProtos.Oaf oaf = buildEntityOaf(patent, patentIdToExport, patentEpoUrlRoot);
         return actionFactory.createAtomicAction(
                 entityActionSetId,
                 StaticConfigurationProvider.AGENT_DEFAULT,
@@ -343,15 +343,15 @@ public class PatentExporterJob {
         );
     }
 
-    private static OafProtos.Oaf buildEntityOaf(Patent patent, String patentIdToExport, String epoBaseUrl) {
+    private static OafProtos.Oaf buildEntityOaf(Patent patent, String patentIdToExport, String patentEpoUrlRoot) {
         return OafProtos.Oaf.newBuilder()
                 .setKind(KindProtos.Kind.entity)
-                .setEntity(buildOafEntity(patent, patentIdToExport, epoBaseUrl))
+                .setEntity(buildOafEntity(patent, patentIdToExport, patentEpoUrlRoot))
                 .setLastupdatetimestamp(System.currentTimeMillis())
                 .build();
     }
 
-    private static OafProtos.OafEntity buildOafEntity(Patent patent, String patentIdToExport, String epoBaseUrl) {
+    private static OafProtos.OafEntity buildOafEntity(Patent patent, String patentIdToExport, String patentEpoUrlRoot) {
         return OafProtos.OafEntity.newBuilder()
                 .setType(TypeProtos.Type.result)
                 .setId(patentIdToExport)
@@ -360,7 +360,7 @@ public class PatentExporterJob {
                 .addPid(buildOafEntityPid(patent.getApplnNrEpodoc().toString(), OAF_ENTITY_PID_QUALIFIER_CLASS_EPO_NR_EPODOC))
                 .setDateofcollection(PATENTS_EPO_FILE_TIMESTAMP)
                 .setDateoftransformation(PATENTS_EPO_FILE_TIMESTAMP)
-                .setResult(buildOafEntityResult(patent, epoBaseUrl))
+                .setResult(buildOafEntityResult(patent, patentEpoUrlRoot))
                 .build();
     }
 
@@ -371,10 +371,10 @@ public class PatentExporterJob {
                 .build();
     }
 
-    private static ResultProtos.Result buildOafEntityResult(Patent patent, String epoBaseUrl) {
+    private static ResultProtos.Result buildOafEntityResult(Patent patent, String patentEpoUrlRoot) {
         return ResultProtos.Result.newBuilder()
                 .setMetadata(buildOafEntityResultMetadata(patent))
-                .addInstance(buildOafEntityResultInstance(patent, epoBaseUrl))
+                .addInstance(buildOafEntityResultInstance(patent, patentEpoUrlRoot))
                 .build();
     }
 
@@ -506,8 +506,8 @@ public class PatentExporterJob {
         @Parameter(names = "-trustLevelThreshold")
         private String trustLevelThreshold;
 
-        @Parameter(names = "-epoBaseUrl", required = true)
-        private String epoBaseUrl;
+        @Parameter(names = "-patentEpoUrlRoot", required = true)
+        private String patentEpoUrlRoot;
 
         @Parameter(names = "-outputRelationPath", required = true)
         private String outputRelationPath;

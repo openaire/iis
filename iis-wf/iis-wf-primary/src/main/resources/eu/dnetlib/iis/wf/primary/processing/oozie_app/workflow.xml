@@ -61,6 +61,10 @@
             <value>true</value>
             <description>flag indicating affiliation matching should be enabled</description>
         </property>
+        <property>
+            <name>active_referenceextraction_patent</name>
+            <description>flag indicating patent reference extraction should be enabled</description>
+        </property>
         <!-- input ports -->
         <property>
             <name>input_document_metadata</name>
@@ -101,6 +105,10 @@
         <property>
             <name>input_concept</name>
             <description>input concept directory</description>
+        </property>
+        <property>
+            <name>input_patent</name>
+            <description>input patent</description>
         </property>
         <!-- project reference extraction related -->
         <property>
@@ -370,20 +378,12 @@
             <description>output matched document organizations directory</description>
         </property>
         <property>
-            <name>output_report_root_path</name>
-            <description>base directory for storing reports</description>
-        </property>
-        <property>
-            <name>active_referenceextraction_patent</name>
-            <description>flag indicating patent reference extraction should be enabled</description>
-        </property>
-        <property>
-            <name>input_patent</name>
-            <description>input patent</description>
-        </property>
-        <property>
             <name>output_document_to_patent</name>
             <description>patent reference extraction output directory</description>
+        </property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
         </property>
     </parameters>
 
@@ -1031,9 +1031,7 @@
         <java>
             <prepare>
                 <!-- notice: directory have to aligned with skipped action output -->
-                <delete path="${nameNode}${workingDir}/transformers_export_software_url" />
                 <delete path="${nameNode}${output_document_to_software_url}" />
-                <mkdir path="${nameNode}${workingDir}/transformers_export_software_url" />
                 <mkdir path="${nameNode}${output_document_to_software_url}" />
             </prepare>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
@@ -1071,14 +1069,6 @@
                     <name>input_document_text</name>
                     <value>${workingDir}/transformers_common_union_document_text/out</value>
                 </property>
-                <property>
-                    <name>input_patent</name>
-                    <value>${input_patent}</value>
-                </property>
-                <property>
-                    <name>output</name>
-                    <value>${output_document_to_patent}</value>
-                </property>
             </configuration>
         </sub-workflow>
         <ok to="joining" />
@@ -1088,9 +1078,7 @@
     <action name="skip-referenceextraction_patent">
         <java>
             <prepare>
-                <delete path="${nameNode}${workingDir}/transformers_export_patent" />
                 <delete path="${nameNode}${output_document_to_patent}" />
-                <mkdir path="${nameNode}${workingDir}/transformers_export_patent" />
                 <mkdir path="${nameNode}${output_document_to_patent}" />
             </prepare>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
@@ -1099,7 +1087,6 @@
                 eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent,
                 eu/dnetlib/iis/common/data/empty.json}
             </arg>
-            <!-- notice: directory have to aligned with skipped action output -->
             <arg>-Oreferenceextraction_patent=${output_document_to_patent}</arg>
         </java>
         <ok to="joining" />
@@ -1908,8 +1895,8 @@
             <arg>-Preport.processing.documentClassification.duration=documentsclassification</arg>
             <arg>-Preport.processing.referenceExtraction.researchInitiative.duration=referenceextraction_researchinitiative,referenceextraction_researchinitiative_wos,transformers_union_researchinitiatives,transformers_export_researchinitiatives</arg>
             <arg>-Preport.processing.referenceExtraction.community.duration=referenceextraction_community,transformers_export_communities</arg>
-            <arg>-Preport.processing.referenceExtraction.softwareUrl.duration=referenceextraction_software_url,transformers_export_software_url</arg>
-            <arg>-Preport.processing.referenceExtraction.patent.duration=referenceextraction_patent,transformers_export_patent</arg>
+            <arg>-Preport.processing.referenceExtraction.softwareUrl.duration=referenceextraction_software_url</arg>
+            <arg>-Preport.processing.referenceExtraction.patent.duration=referenceextraction_patent</arg>
             <arg>-Preport.processing.referenceExtraction.pdb.duration=referenceextraction_pdb,transformers_export_pdb</arg>
             <arg>-Preport.processing.referenceExtraction.dataset.duration=referenceextraction_dataset</arg>
             <arg>-Preport.processing.referenceExtraction.project.duration=transformers_project_filter,referenceextraction_project</arg>

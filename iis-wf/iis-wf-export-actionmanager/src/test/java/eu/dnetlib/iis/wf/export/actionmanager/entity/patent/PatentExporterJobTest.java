@@ -55,7 +55,7 @@ public class PatentExporterJobTest {
 
     private static final String RELATION_ACTION_SET_ID = "relation-actionset-id";
     private static final String ENTITY_ACTION_SET_ID = "entity-actionset-id";
-    private static final String EPO_BASE_URL = "https://register.epo.org/application?number=";
+    private static final String PATENT_EPO_URL_ROOT = "https://register.epo.org/application?number=";
 
     @Before
     public void before() throws IOException {
@@ -172,7 +172,7 @@ public class PatentExporterJobTest {
                 .addArg("-entityActionSetId", ENTITY_ACTION_SET_ID)
                 .addArg("-trustLevelThreshold", String.valueOf(trustLevelThreshold))
                 .addArg("-outputRelationPath", outputRelationDir.toString())
-                .addArg("-epoBaseUrl", EPO_BASE_URL)
+                .addArg("-patentEpoUrlRoot", PATENT_EPO_URL_ROOT)
                 .addArg("-outputEntityPath", outputEntityDir.toString())
                 .addArg("-outputReportPath", outputReportDir.toString())
                 .addJobProperty("spark.driver.host", "localhost")
