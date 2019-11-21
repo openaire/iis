@@ -16,6 +16,6 @@ protocol IIS{
         union {null, string} appln_abstract = null;
         union {null, string} appln_title = null;
         union {null, array<string>} ipc_class_symbol = null;
-        union {null, array<HolderCountry>} holder_country;
+        union {null, array<HolderCountry>} holder_country = null;
     }
 }

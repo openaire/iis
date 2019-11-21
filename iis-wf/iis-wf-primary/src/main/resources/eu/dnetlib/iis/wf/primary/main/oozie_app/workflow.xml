@@ -330,6 +330,11 @@
             <description>protein databank URL root part to be concatenated with pdb identifier when forming final URL</description>
         </property>
         <property>
+            <name>export_patent_date_of_collection</name>
+            <value>2019-06-12T09:56</value>
+            <description>date of collection of patent file formatted as yyyy-MM-dd'T'HH:mm</description>
+        </property>
+        <property>
             <name>export_patent_epo_url_root</name>
             <value>https://register.epo.org/application?number=</value>
             <description>EPO patent web archive URL root part to be concatenated with patent auth and nr when forming final URL</description>
@@ -888,6 +893,10 @@
                 <property>
                     <name>referenceextraction_pdb_url_root</name>
                     <value>${export_referenceextraction_pdb_url_root}</value>
+                </property>
+                <property>
+                    <name>patent_date_of_collection</name>
+                    <value>${export_patent_date_of_collection}</value>
                 </property>
                 <property>
                     <name>patent_epo_url_root</name>

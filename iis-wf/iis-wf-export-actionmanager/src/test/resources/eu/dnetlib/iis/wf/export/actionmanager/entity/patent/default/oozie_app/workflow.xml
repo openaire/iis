@@ -77,6 +77,10 @@
                     <value>0.5</value>
                 </property>
                 <property>
+                    <name>patent_date_of_collection</name>
+                    <value>2019-11-20T23:59</value>
+                </property>
+                <property>
                     <name>patent_epo_url_root</name>
                     <value>https://register.epo.org/application?number=</value>
                 </property>

@@ -68,9 +68,8 @@ public class PatentExporterJob {
     private static final ActionFactory actionFactory = new ActionFactory();
     private static final PatentExportCounterReporter counterReporter = new PatentExportCounterReporter();
 
-    private static final String PATENTS_EPO_FILE_TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm";
-    private static final String PATENTS_EPO_FILE_TIMESTAMP = DateTimeUtils
-            .format(LocalDateTime.parse("2019-06-12T09:56", DateTimeFormatter.ofPattern(PATENTS_EPO_FILE_TIMESTAMP_FORMAT)));
+    private static final DateTimeFormatter PATENT_DATE_OF_COLLECTION_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
     //------------------------ LOGIC --------------------------
 
@@ -117,8 +116,11 @@ public class PatentExporterJob {
                     relationsToExport(documentToPatentsToExportWithIds, params.relationActionSetId);
             RDDUtils.saveTextPairRDD(relationsToExport, numberOfOutputFiles, params.outputRelationPath, configuration);
 
+            String patentDateOfCollection = DateTimeUtils.format(
+                    LocalDateTime.parse(params.patentDateOfCollection, PATENT_DATE_OF_COLLECTION_FORMATTER));
             JavaPairRDD<Text, Text> entitiesToExport =
-                    entitiesToExport(documentToPatentsToExportWithIds, patentsById, params.patentEpoUrlRoot, params.entityActionSetId);
+                    entitiesToExport(documentToPatentsToExportWithIds, patentsById, patentDateOfCollection,
+                            params.patentEpoUrlRoot, params.entityActionSetId);
             RDDUtils.saveTextPairRDD(entitiesToExport, numberOfOutputFiles, params.outputEntityPath, configuration);
 
             counterReporter.report(sc, documentToPatentsToExportWithIds, params.outputReportPath);
@@ -316,6 +318,7 @@ public class PatentExporterJob {
 
     private static JavaPairRDD<Text, Text> entitiesToExport(JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds,
                                                             JavaPairRDD<CharSequence, Patent> patentsById,
+                                                            String patentDateOfCollection,
                                                             String patentEpoUrlRoot,
                                                             String entityActionSetId) {
         return documentToPatentsToExportWithIds
@@ -326,13 +329,15 @@ public class PatentExporterJob {
                 .map(x -> {
                     String patentIdToExport = x._1();
                     Patent patent = x._2();
-                    return buildEntityAction(patent, patentIdToExport, patentEpoUrlRoot, entityActionSetId);
+                    return buildEntityAction(patent, patentIdToExport, patentDateOfCollection, patentEpoUrlRoot,
+                            entityActionSetId);
                 })
                 .mapToPair(PatentExporterJob::actionToTuple);
     }
 
-    private static AtomicAction buildEntityAction(Patent patent, String patentIdToExport, String patentEpoUrlRoot, String entityActionSetId) {
-        OafProtos.Oaf oaf = buildEntityOaf(patent, patentIdToExport, patentEpoUrlRoot);
+    private static AtomicAction buildEntityAction(Patent patent, String patentIdToExport, String patentDateOfCollection,
+                                                  String patentEpoUrlRoot, String entityActionSetId) {
+        OafProtos.Oaf oaf = buildEntityOaf(patent, patentIdToExport, patentDateOfCollection, patentEpoUrlRoot);
         return actionFactory.createAtomicAction(
                 entityActionSetId,
                 StaticConfigurationProvider.AGENT_DEFAULT,
@@ -343,23 +348,25 @@ public class PatentExporterJob {
         );
     }
 
-    private static OafProtos.Oaf buildEntityOaf(Patent patent, String patentIdToExport, String patentEpoUrlRoot) {
+    private static OafProtos.Oaf buildEntityOaf(Patent patent, String patentIdToExport, String patentDateOfCollection,
+                                                String patentEpoUrlRoot) {
         return OafProtos.Oaf.newBuilder()
                 .setKind(KindProtos.Kind.entity)
-                .setEntity(buildOafEntity(patent, patentIdToExport, patentEpoUrlRoot))
+                .setEntity(buildOafEntity(patent, patentIdToExport, patentDateOfCollection, patentEpoUrlRoot))
                 .setLastupdatetimestamp(System.currentTimeMillis())
                 .build();
     }
 
-    private static OafProtos.OafEntity buildOafEntity(Patent patent, String patentIdToExport, String patentEpoUrlRoot) {
+    private static OafProtos.OafEntity buildOafEntity(Patent patent, String patentIdToExport, String patentDateOfCollection,
+                                                      String patentEpoUrlRoot) {
         return OafProtos.OafEntity.newBuilder()
                 .setType(TypeProtos.Type.result)
                 .setId(patentIdToExport)
                 .addCollectedfrom(OAF_ENTITY_COLLECTEDFROM)
                 .addPid(buildOafEntityPid(String.format("%s%s", patent.getApplnAuth(), patent.getApplnNr()), OAF_ENTITY_PID_QUALIFIER_CLASS_EPO_ID))
                 .addPid(buildOafEntityPid(patent.getApplnNrEpodoc().toString(), OAF_ENTITY_PID_QUALIFIER_CLASS_EPO_NR_EPODOC))
-                .setDateofcollection(PATENTS_EPO_FILE_TIMESTAMP)
-                .setDateoftransformation(PATENTS_EPO_FILE_TIMESTAMP)
+                .setDateofcollection(patentDateOfCollection)
+                .setDateoftransformation(patentDateOfCollection)
                 .setResult(buildOafEntityResult(patent, patentEpoUrlRoot))
                 .build();
     }
@@ -459,7 +466,7 @@ public class PatentExporterJob {
     private static FieldTypeProtos.Author buildOafEntityResultMetadataAuthor(HolderCountry holderCountry, Integer rank) {
         return FieldTypeProtos.Author.newBuilder()
                 .setFullname(holderCountry.getPersonName().toString())
-                .setRank(0)
+                .setRank(rank)
                 .build();
     }
 
@@ -505,6 +512,9 @@ public class PatentExporterJob {
 
         @Parameter(names = "-trustLevelThreshold")
         private String trustLevelThreshold;
+
+        @Parameter(names = "-patentDateOfCollection", required = true)
+        private String patentDateOfCollection;
 
         @Parameter(names = "-patentEpoUrlRoot", required = true)
         private String patentEpoUrlRoot;

@@ -55,6 +55,7 @@ public class PatentExporterJobTest {
 
     private static final String RELATION_ACTION_SET_ID = "relation-actionset-id";
     private static final String ENTITY_ACTION_SET_ID = "entity-actionset-id";
+    private static final String PATENT_DATE_OF_COLLECTION = "2019-11-20T23:59";
     private static final String PATENT_EPO_URL_ROOT = "https://register.epo.org/application?number=";
 
     @Before
@@ -171,8 +172,9 @@ public class PatentExporterJobTest {
                 .addArg("-relationActionSetId", RELATION_ACTION_SET_ID)
                 .addArg("-entityActionSetId", ENTITY_ACTION_SET_ID)
                 .addArg("-trustLevelThreshold", String.valueOf(trustLevelThreshold))
-                .addArg("-outputRelationPath", outputRelationDir.toString())
+                .addArg("-patentDateOfCollection", PATENT_DATE_OF_COLLECTION)
                 .addArg("-patentEpoUrlRoot", PATENT_EPO_URL_ROOT)
+                .addArg("-outputRelationPath", outputRelationDir.toString())
                 .addArg("-outputEntityPath", outputEntityDir.toString())
                 .addArg("-outputReportPath", outputReportDir.toString())
                 .addJobProperty("spark.driver.host", "localhost")
