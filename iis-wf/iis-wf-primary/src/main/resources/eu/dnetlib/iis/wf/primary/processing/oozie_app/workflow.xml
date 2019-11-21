@@ -1069,6 +1069,10 @@
                     <name>input_document_text</name>
                     <value>${workingDir}/transformers_common_union_document_text/out</value>
                 </property>
+                <property>
+                    <name>input_extracted_document_metadata_merged_with_original</name>
+                    <value>${output_merged_metadata}</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="joining" />

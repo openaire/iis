@@ -12,17 +12,22 @@ import org.junit.experimental.categories.Category;
 public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 
     @Test
-    public void testMainWorkflow() throws Exception {
+    public void testMainWorkflow() {
         testWorkflow("eu/dnetlib/iis/wf/referenceextraction/patent/main/sampletest/");
     }
 
     @Test
-    public void testMainWorkflowEmptyTextInput() throws Exception {
+    public void testMainWorkflowEmptyTextInput() {
         testWorkflow("eu/dnetlib/iis/wf/referenceextraction/patent/main/sampletest_empty_text_input/");
     }
 
     @Test
-    public void testMainWorkflowEmptyPatentInput() throws Exception {
+    public void testMainWorkflowEmptyDocumentMetadataInput() {
+        testWorkflow("eu/dnetlib/iis/wf/referenceextraction/patent/main/sampletest_empty_document_metadata_input/");
+    }
+
+    @Test
+    public void testMainWorkflowEmptyPatentInput() {
         testWorkflow("eu/dnetlib/iis/wf/referenceextraction/patent/main/sampletest_empty_patent_input/");
     }
 }
