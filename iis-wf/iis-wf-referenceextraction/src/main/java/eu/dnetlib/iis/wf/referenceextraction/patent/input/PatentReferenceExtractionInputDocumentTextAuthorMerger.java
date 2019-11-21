@@ -18,8 +18,9 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 import scala.Tuple2;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class PatentReferenceExtractionInputDocumentTextAuthorMerger {
@@ -46,9 +47,7 @@ public class PatentReferenceExtractionInputDocumentTextAuthorMerger {
                     .mapToPair(x -> new Tuple2<>(x.getId(), x));
 
             JavaPairRDD<CharSequence, List<CharSequence>> documentMetadatasById = documentMetadatas
-                    .filter(x -> Objects.nonNull(x.getImportedAuthors()))
-                    .filter(x -> x.getImportedAuthors().stream().allMatch(y -> StringUtils.isNotBlank(y.getFullname())))
-                    .mapToPair(x -> new Tuple2<>(x.getId(), x.getImportedAuthors().stream().map(Author::getFullname).collect(Collectors.toList())));
+                    .mapToPair(x -> new Tuple2<>(x.getId(), filterAuthorsOrEmptyList(x.getImportedAuthors())));
 
             JavaRDD<DocumentTextWithAuthors> merged = documentTextsById
                     .join(documentMetadatasById)
@@ -56,6 +55,15 @@ public class PatentReferenceExtractionInputDocumentTextAuthorMerger {
                     .map(PatentReferenceExtractionInputDocumentTextAuthorMerger::merge);
             sparkAvroSaver.saveJavaRDD(merged, DocumentTextWithAuthors.SCHEMA$, params.outputPath);
         }
+    }
+
+    private static List<CharSequence> filterAuthorsOrEmptyList(List<Author> authors) {
+        return Optional.ofNullable(authors)
+                .map(x -> x.stream()
+                        .map(Author::getFullname)
+                        .filter(StringUtils::isNotBlank)
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
     }
 
     private static DocumentTextWithAuthors merge(Tuple2<DocumentText, List<CharSequence>> pair) {
