@@ -1,0 +1,3 @@
+This is a simple text containing patent reference which should be picked up by reference extraction algorithm.
+
+Process for salting-drying and smoking cold meat products and a device for carrying this out. Patent No. 93430009.6, filing date: July 10. Dieuzeide, R. & Novella, M. (1951) Essai sur la technique des salaisons de poissons.

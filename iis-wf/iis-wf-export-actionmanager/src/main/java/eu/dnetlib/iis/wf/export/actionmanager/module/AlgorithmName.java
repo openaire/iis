@@ -19,6 +19,6 @@ public enum AlgorithmName {
 	document_research_initiative,
 	document_pdb,
 	document_software_url,
-	document_community
-
+	document_community,
+	document_patent
 }

@@ -79,6 +79,10 @@
                 eu.dnetlib.iis.referenceextraction.softwareurl.schemas.SoftwareHeritageOrigin,
                 eu/dnetlib/iis/wf/primary/processing/sampledataproducer/input/meta/sh_origins.json}
             </arg>
+			<arg>-C{patent,
+				eu.dnetlib.iis.referenceextraction.patent.schemas.Patent,
+				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/input/meta/patent.json}
+			</arg>
 			<arg>-Odocument_metadata=${workingDir}/producer/document_metadata</arg>
 			<arg>-Odocument_to_project=${workingDir}/producer/document_to_project</arg>
 			<arg>-Oproject_to_organization=${workingDir}/producer/project_to_organization</arg>
@@ -90,6 +94,7 @@
 			<arg>-Odocument_text_wos=${workingDir}/producer/document_text_wos</arg>
 			<arg>-Odocument_text_classpath=${workingDir}/producer/document_text_classpath</arg>
             <arg>-Osoftwareheritage_origins=${workingDir}/producer/softwareheritage_origins</arg>
+			<arg>-Opatent=${workingDir}/producer/patent</arg>
 		</java>
 		<ok to="softwareheritage_sqlite_builder" />
 		<error to="fail" />
@@ -241,6 +246,10 @@
                     <value>true</value>
                 </property>
 				<property>
+					<name>active_referenceextraction_patent</name>
+					<value>true</value>
+				</property>
+				<property>
 					<name>active_referenceextraction_pdb</name>
 					<value>false</value>
 				</property>
@@ -252,7 +261,10 @@
 					<name>active_citationmatching</name>
 					<value>true</value>
 				</property>
-				<!-- disabling not tested KDMs -->
+				<property>
+					<name>active_document_affiliation</name>
+					<value>true</value>
+				</property>
 				<property>
 					<name>active_documentssimilarity</name>
 					<value>false</value>
@@ -301,6 +313,10 @@
                     <name>input_softwareheritage_origins_db</name>
                     <value>${workingDir}/origins.db</value>
                 </property>
+				<property>
+					<name>input_patent</name>
+					<value>${workingDir}/producer/patent</value>
+				</property>
                 <property>
                     <name>output_merged_metadata</name>
                     <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
@@ -329,6 +345,10 @@
                     <name>output_document_to_software_url</name>
                     <value>${workingDir}/exported/document_to_software_url_with_meta</value>
                 </property>
+				<property>
+					<name>output_document_to_patent</name>
+					<value>${workingDir}/exported/document_to_patent</value>
+				</property>
 				<property>
 					<name>output_document_to_pdb</name>
 					<value>${workingDir}/exported/document_to_pdb</value>
@@ -427,6 +447,11 @@
                 eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_software_url_with_meta.json}
             </arg>
             <arg>-Idocument_to_software_url_with_meta=${workingDir}/exported/document_to_software_url_with_meta</arg>
+			<arg>-C{document_to_patent,
+				eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent,
+				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_patent.json}
+			</arg>
+			<arg>-Idocument_to_patent=${workingDir}/exported/document_to_patent</arg>
 			<arg>-C{citation,
 				eu.dnetlib.iis.export.schemas.Citations,
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/citations.json}

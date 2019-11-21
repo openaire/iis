@@ -1,14 +1,21 @@
 @namespace("eu.dnetlib.iis.referenceextraction.patent.schemas")
 protocol IIS{
 
+    record HolderCountry {
+        union {null, string} person_name = null;
+        union {null, string} person_ctry_code = null;
+    }
+
     record Patent {
-        // 
         string appln_id;
-        // 
         string appln_auth;
-        // 
         string appln_nr;
-        // 
+        union {null, string} appln_filing_date = null;
         string appln_nr_epodoc;
+        union {null, string} earliest_publn_date = null;
+        union {null, string} appln_abstract = null;
+        union {null, string} appln_title = null;
+        union {null, array<string>} ipc_class_symbol = null;
+        union {null, array<HolderCountry>} holder_country = null;
     }
 }

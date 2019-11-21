@@ -4,26 +4,26 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+import eu.dnetlib.iis.referenceextraction.patent.schemas.PatentReferenceExtractionInput;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Preconditions;
 
-import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
 import eu.dnetlib.iis.wf.referenceextraction.AbstractDBBuilder;
 
 /**
- * Process building patents database reading {@link Patent} input avro records.
+ * Process building patents database reading {@link PatentReferenceExtractionInput} input avro records.
  *
  * @author mhorst
  */
-public class PatentDBBuilder extends AbstractDBBuilder<Patent> {
+public class PatentDBBuilder extends AbstractDBBuilder<PatentReferenceExtractionInput> {
 
     private final static String PARAM_SCRIPT_LOCATION = "scriptLocation";
 
     // -------------------------- CONSTRUCTORS ------------------------------
 
     public PatentDBBuilder() {
-        super(Patent.SCHEMA$, "patents", "patents_db");
+        super(PatentReferenceExtractionInput.SCHEMA$, "patents", "patents_db");
     }
 
     // -------------------------- LOGIC -------------------------------------
