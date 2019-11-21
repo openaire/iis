@@ -53,6 +53,14 @@
             <value>$UNDEFINED$</value>
         </property>
         <property>
+            <name>input_document_to_patent</name>
+            <value>$UNDEFINED$</value>
+        </property>
+        <property>
+            <name>input_patent</name>
+            <value>$UNDEFINED$</value>
+        </property>
+        <property>
             <name>output_remote_location</name>
             <description>optional remote cluster output location where inference output dump should be distcped as sequence files. When not specified results will be exported straight to the ActionManager HBase.</description>
         </property>
@@ -70,6 +78,11 @@
         <property>
             <name>active_export_software</name>
             <description>flag indicating software entities should be exported</description>
+        </property>
+        <property>
+            <name>active_export_patent</name>
+            <value>false</value>
+            <description>flag indicating patent entities should be exported</description>
         </property>
         <!-- action set id properties -->
         <property>
@@ -132,6 +145,16 @@
             <value>$UNDEFINED$</value>
             <description>action-set identifier of exported data containing software entities</description>
         </property>
+        <property>
+            <name>action_set_id_document_patent</name>
+            <value>$UNDEFINED$</value>
+            <description>document patent action-set identifier of exported data</description>
+        </property>
+        <property>
+            <name>action_set_id_entity_patent</name>
+            <value>$UNDEFINED$</value>
+            <description>action-set identifier of exported data containing patent entities</description>
+        </property>
         <!-- trust level threshold section -->
         <property>
             <name>trust_level_threshold</name>
@@ -168,7 +191,12 @@
             <value>$UNDEFINED$</value>
             <description>document to organization trust level threshold</description>
         </property>
-        
+        <property>
+            <name>trust_level_threshold_document_patent</name>
+            <value>$UNDEFINED$</value>
+            <description>document to patent trust level threshold</description>
+        </property>
+
         <!-- -->
         <property>
             <name>documentssimilarity_threshold</name>
@@ -179,6 +207,16 @@
             <name>referenceextraction_pdb_url_root</name>
             <value>$UNDEFINED$</value>
             <description>protein databank URL root part to be concatenated with pdb identifier when forming final URL</description>
+        </property>
+        <property>
+            <name>patent_date_of_collection</name>
+            <value>$UNDEFINED$</value>
+            <description>date of collection of patent file formatted as yyyy-MM-dd'T'HH:mm</description>
+        </property>
+        <property>
+            <name>patent_epo_url_root</name>
+            <value>$UNDEFINED$</value>
+            <description>EPO patent web archive URL root part to be concatenated with patent auth and nr when forming final URL</description>
         </property>
         <property>
             <name>output_report_root_path</name>
@@ -196,33 +234,6 @@
         <property>
             <name>sparkExecutorCores</name>
             <description>number of cores used by single executor</description>
-        </property>
-        <property>
-            <name>active_export_patent</name>
-            <description>flag indicating patent entities should be exported</description>
-        </property>
-        <property>
-            <name>input_document_to_patent</name>
-            <value>$UNDEFINED$</value>
-        </property>
-        <property>
-            <name>input_patent</name>
-            <value>$UNDEFINED$</value>
-        </property>
-        <property>
-            <name>action_set_id_document_patent</name>
-            <value>$UNDEFINED$</value>
-            <description>document patent action-set identifier of exported data</description>
-        </property>
-        <property>
-            <name>action_set_id_entity_patent</name>
-            <value>$UNDEFINED$</value>
-            <description>action-set identifier of exported data containing patent entities</description>
-        </property>
-        <property>
-            <name>trust_level_threshold_document_patent</name>
-            <value>$UNDEFINED$</value>
-            <description>document to patent trust level threshold</description>
         </property>
     </parameters>
 

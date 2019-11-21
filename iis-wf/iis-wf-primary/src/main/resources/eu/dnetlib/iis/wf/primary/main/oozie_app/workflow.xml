@@ -69,6 +69,11 @@
             <value>true</value>
             <description>flag indicating affiliation matching should be enabled</description>
         </property>
+        <property>
+            <name>active_referenceextraction_patent</name>
+            <value>false</value>
+            <description>flag indicating if patent reference extraction should be enabled</description>
+        </property>
         <!-- import concepts related -->
         <property>
             <name>import_islookup_service_location</name>
@@ -137,6 +142,10 @@
             <name>import_content_mimetypes_wos</name>
             <value>file::WoS</value>
             <description>WoS types</description>
+        </property>
+        <property>
+            <name>import_patent_json</name>
+            <description>input JSON file location with patents metadata</description>
         </property>
         <!-- import timeouts related -->
         <property>
@@ -258,6 +267,16 @@
             <value>$UNDEFINED$</value>
             <description>action-set identifier of exported data containing software entities</description>
         </property>
+        <property>
+            <name>export_action_set_id_document_patent</name>
+            <value>$UNDEFINED$</value>
+            <description>document to patent action-set identifier of exported data</description>
+        </property>
+        <property>
+            <name>export_action_set_id_entity_patent</name>
+            <value>$UNDEFINED$</value>
+            <description>action-set identifier of exported data containing patent entities</description>
+        </property>
         <!-- trust level threshold section -->
         <property>
             <name>export_trust_level_threshold</name>
@@ -301,9 +320,24 @@
             <description>documents similarity threshold value below which similarity export is omitted</description>
         </property>
         <property>
+            <name>export_trust_level_threshold_document_patent</name>
+            <value>$UNDEFINED$</value>
+            <description>document to patent trust level threshold</description>
+        </property>
+        <property>
             <name>export_referenceextraction_pdb_url_root</name>
             <value>http://www.rcsb.org/pdb/explore/explore.do?structureId=</value>
             <description>protein databank URL root part to be concatenated with pdb identifier when forming final URL</description>
+        </property>
+        <property>
+            <name>export_patent_date_of_collection</name>
+            <value>2019-06-12T09:56</value>
+            <description>date of collection of patent file formatted as yyyy-MM-dd'T'HH:mm</description>
+        </property>
+        <property>
+            <name>export_patent_epo_url_root</name>
+            <value>https://register.epo.org/application?number=</value>
+            <description>EPO patent web archive URL root part to be concatenated with patent auth and nr when forming final URL</description>
         </property>
         <property>
             <name>output_remote_location</name>
@@ -354,29 +388,6 @@
             <name>entityExportSparkExecutorCores</name>
             <value>${sparkExecutorCores}</value>
             <description>number of cores used by single executor</description>
-        </property>
-        <property>
-            <name>active_referenceextraction_patent</name>
-            <description>flag indicating if patent reference extraction should be enabled</description>
-        </property>
-        <property>
-            <name>import_patent_json</name>
-            <description>input JSON file location with patents metadata</description>
-        </property>
-        <property>
-            <name>export_action_set_id_document_patent</name>
-            <value>$UNDEFINED$</value>
-            <description>document to patent action-set identifier of exported data</description>
-        </property>
-        <property>
-            <name>export_action_set_id_entity_patent</name>
-            <value>$UNDEFINED$</value>
-            <description>action-set identifier of exported data containing patent entities</description>
-        </property>
-        <property>
-            <name>export_trust_level_threshold_document_patent</name>
-            <value>$UNDEFINED$</value>
-            <description>document to patent trust level threshold</description>
         </property>
     </parameters>
 
@@ -434,6 +445,10 @@
                     <name>active_import_dataset</name>
                     <value>${active_referenceextraction_dataset}</value>
                 </property>
+                <property>
+                    <name>active_import_patent</name>
+                    <value>${active_referenceextraction_patent}</value>
+                </property>
                 <!-- import metadata related -->
                 <property>
                     <name>hbase_dump_location</name>
@@ -489,6 +504,11 @@
                 <property>
                     <name>mimetypes_wos</name>
                     <value>${import_content_mimetypes_wos}</value>
+                </property>
+                <!-- import patent related -->
+                <property>
+                    <name>input_patent_json</name>
+                    <value>${import_patent_json}</value>
                 </property>
                 <!-- import timeouts related -->
                 <property>
@@ -567,24 +587,16 @@
                     <value>${workingDir}/primary_import/wos</value>
                 </property>
                 <property>
+                    <name>output_patent</name>
+                    <value>${workingDir}/primary_import/patent</value>
+                </property>
+                <property>
                     <name>output_faults</name>
                     <value>${workingDir}/primary_import/faults</value>
                 </property>
                 <property>
                     <name>output_report_root_path</name>
                     <value>${workingDir}/report</value>
-                </property>
-                <property>
-                    <name>active_import_patent</name>
-                    <value>${active_referenceextraction_patent}</value>
-                </property>
-                <property>
-                    <name>input_patent_json</name>
-                    <value>${import_patent_json}</value>
-                </property>
-                <property>
-                    <name>output_patent</name>
-                    <value>${workingDir}/primary_import/patent</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -642,6 +654,10 @@
                     <value>${workingDir}/primary_import/concept</value>
                 </property>
                 <property>
+                    <name>input_patent</name>
+                    <value>${workingDir}/primary_import/patent</value>
+                </property>
+                <property>
                     <name>output_merged_metadata</name>
                     <value>${workingDir}/transformers_metadatamerger/output_merged_metadata</value>
                 </property>
@@ -691,16 +707,12 @@
                     <value>${workingDir}/exported/matched_affiliation</value>
                 </property>
                 <property>
-                    <name>output_report_root_path</name>
-                    <value>${workingDir}/report</value>
-                </property>
-                <property>
-                    <name>input_patent</name>
-                    <value>${workingDir}/primary_import/patent</value>
-                </property>
-                <property>
                     <name>output_document_to_patent</name>
                     <value>${workingDir}/exported/document_to_patent</value>
+                </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -767,10 +779,22 @@
                     <name>input_matched_doc_organizations</name>
                     <value>${workingDir}/exported/matched_affiliation</value>
                 </property>
+                <property>
+                    <name>input_document_to_patent</name>
+                    <value>${workingDir}/exported/document_to_patent</value>
+                </property>
+                <property>
+                    <name>input_patent</name>
+                    <value>${workingDir}/primary_import/patent</value>
+                </property>
                 <!-- entities exporting modes -->
                 <property>
                     <name>active_export_software</name>
                     <value>${active_referenceextraction_software_url}</value>
+                </property>
+                <property>
+                    <name>active_export_patent</name>
+                    <value>${active_referenceextraction_patent}</value>
                 </property>
                 <!-- action set id properties -->
                 <property>
@@ -821,6 +845,14 @@
                     <name>action_set_id_entity_software</name>
                     <value>${export_action_set_id_entity_software}</value>
                 </property>
+                <property>
+                    <name>action_set_id_document_patent</name>
+                    <value>${export_action_set_id_document_patent}</value>
+                </property>
+                <property>
+                    <name>action_set_id_entity_patent</name>
+                    <value>${export_action_set_id_entity_patent}</value>
+                </property>
 
                 <property>
                     <name>trust_level_threshold</name>
@@ -851,12 +883,24 @@
                     <value>${export_trust_level_threshold_matched_doc_organizations}</value>
                 </property>
                 <property>
+                    <name>trust_level_threshold_document_patent</name>
+                    <value>${export_trust_level_threshold_document_patent}</value>
+                </property>
+                <property>
                     <name>documentssimilarity_threshold</name>
                     <value>${export_documentssimilarity_threshold}</value>
                 </property>
                 <property>
                     <name>referenceextraction_pdb_url_root</name>
                     <value>${export_referenceextraction_pdb_url_root}</value>
+                </property>
+                <property>
+                    <name>patent_date_of_collection</name>
+                    <value>${export_patent_date_of_collection}</value>
+                </property>
+                <property>
+                    <name>patent_epo_url_root</name>
+                    <value>${export_patent_epo_url_root}</value>
                 </property>
                 <property>
                     <name>output_report_root_path</name>
@@ -874,30 +918,6 @@
                 <property>
                     <name>sparkExecutorCores</name>
                     <value>${entityExportSparkExecutorCores}</value>
-                </property>
-                <property>
-                    <name>active_export_patent</name>
-                    <value>${active_referenceextraction_patent}</value>
-                </property>
-                <property>
-                    <name>input_document_to_patent</name>
-                    <value>${workingDir}/exported/document_to_patent</value>
-                </property>
-                <property>
-                    <name>input_patent</name>
-                    <value>${workingDir}/primary_import/patent</value>
-                </property>
-                <property>
-                    <name>action_set_id_document_patent</name>
-                    <value>${export_action_set_id_document_patent}</value>
-                </property>
-                <property>
-                    <name>action_set_id_entity_patent</name>
-                    <value>${export_action_set_id_entity_patent}</value>
-                </property>
-                <property>
-                    <name>trust_level_threshold_document_patent</name>
-                    <value>${export_trust_level_threshold_document_patent}</value>
                 </property>
             </configuration>
         </sub-workflow>

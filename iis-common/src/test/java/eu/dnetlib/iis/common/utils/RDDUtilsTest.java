@@ -1,7 +1,5 @@
-package eu.dnetlib.iis.wf.export.actionmanager.common;
+package eu.dnetlib.iis.common.utils;
 
-import eu.dnetlib.iis.common.utils.ListTestUtils;
-import eu.dnetlib.iis.wf.export.actionmanager.RDDTestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;

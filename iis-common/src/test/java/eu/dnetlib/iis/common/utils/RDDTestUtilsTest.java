@@ -1,7 +1,5 @@
-package eu.dnetlib.iis.wf.export.actionmanager;
+package eu.dnetlib.iis.common.utils;
 
-import eu.dnetlib.iis.common.utils.ListTestUtils;
-import eu.dnetlib.iis.wf.export.actionmanager.common.RDDUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
@@ -48,7 +46,7 @@ public class RDDTestUtilsTest {
 
     @AfterClass
     public static void afterClass() {
-        sc.close();
+        sc.stop();
     }
 
     @Test

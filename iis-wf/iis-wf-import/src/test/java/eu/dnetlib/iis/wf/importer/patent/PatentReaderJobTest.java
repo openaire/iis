@@ -42,7 +42,7 @@ public class PatentReaderJobTest {
                 .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/importer/patent/sampletest/oozie_app/input/patents_epo.json"))
                 .getFile();
         String patentsEpoMappedPath = Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/importer/patent/data/output/patents_epo_mapped.json"))
+                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/importer/patent/data/output/patents_epo_input.json"))
                 .getFile();
         String reportPath = Objects
                 .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/importer/patent/data/output/report.json"))

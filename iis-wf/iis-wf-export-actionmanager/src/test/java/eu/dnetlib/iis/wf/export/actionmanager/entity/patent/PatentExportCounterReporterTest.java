@@ -3,11 +3,9 @@ package eu.dnetlib.iis.wf.export.actionmanager.entity.patent;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.ListTestUtils;
-import eu.dnetlib.iis.wf.export.actionmanager.entity.patent.PatentExportCounterReporter;
+import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import org.apache.avro.specific.SpecificRecordBase;
-import org.apache.hadoop.io.Text;
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.junit.AfterClass;
@@ -20,7 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
-import scala.Tuple2;
 
 import java.util.Arrays;
 import java.util.List;
@@ -59,48 +56,46 @@ public class PatentExportCounterReporterTest {
     @Test(expected = NullPointerException.class)
     public void reportShouldThrowExceptionWhenSparkContextIsNull() {
         //given
-        JavaPairRDD<Text, Text> relationsToExport = JavaPairRDD.fromJavaRDD(sc.emptyRDD());
-        JavaPairRDD<Text, Text> entitiesToExport = JavaPairRDD.fromJavaRDD(sc.emptyRDD());
+        JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = sc.emptyRDD();
 
         //when
-        reporter.report(null, relationsToExport, entitiesToExport, outputReportPath);
+        reporter.report(null, documentToPatentsToExportWithIds, outputReportPath);
     }
 
     @Test(expected = NullPointerException.class)
     public void reportShouldThrowExceptionWhenOutputReportPathIsNull() {
         //given
-        JavaPairRDD<Text, Text> relationsToExport = JavaPairRDD.fromJavaRDD(sc.emptyRDD());
-        JavaPairRDD<Text, Text> entitiesToExport = JavaPairRDD.fromJavaRDD(sc.emptyRDD());
+        JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = sc.emptyRDD();
 
         //when
-        reporter.report(sc, relationsToExport, entitiesToExport, null);
+        reporter.report(sc, documentToPatentsToExportWithIds, null);
     }
 
     @Test
     public void reportShouldCreateAndSaveReportAsAvroDatastoreOfReportEntries() {
         //given
-        JavaPairRDD<Text, Text> relationsToExport = sc.parallelizePairs(Arrays.asList(
-                new Tuple2<>(new Text("R K1"), new Text("R V1")),
-                new Tuple2<>(new Text("R K2"), new Text("R V2")),
-                new Tuple2<>(new Text("R K3"), new Text("R V3"))));
-        JavaPairRDD<Text, Text> entitiesToExport = sc.parallelizePairs(Arrays.asList(
-                new Tuple2<>(new Text("E K1"), new Text("E V1")),
-                new Tuple2<>(new Text("E K1"), new Text("E V1"))));
+        List<DocumentToPatent> documentToPatents = Arrays.asList(
+                DocumentToPatent.newBuilder().setDocumentId("d1").setPatentId("p1").setConfidenceLevel(0.9f).build(),
+                DocumentToPatent.newBuilder().setDocumentId("d1").setPatentId("p2").setConfidenceLevel(0.9f).build(),
+                DocumentToPatent.newBuilder().setDocumentId("d2").setPatentId("p2").setConfidenceLevel(0.9f).build()
+        );
+        JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = sc.parallelize(documentToPatents)
+                .map(x ->
+                        new DocumentToPatentWithIdsToExport(x, String.format("export_%s", x.getDocumentId()), String.format("export_%s", x.getPatentId())));
 
         //when
-        reporter.report(sc, relationsToExport, entitiesToExport, outputReportPath);
+        reporter.report(sc, documentToPatentsToExportWithIds, outputReportPath);
 
         //then
         verify(avroSaver, times(1)).saveJavaRDD(report.capture(), eq(ReportEntry.SCHEMA$), eq(outputReportPath));
         List<String> actualReportEntriesJson = report.getValue()
                 .map(SpecificRecordBase::toString).collect()
                 .stream().sorted().collect(Collectors.toList());
-
         List<ReportEntry> expectedReportEntries = Arrays
                 .asList(
                         ReportEntryFactory.createCounterReportEntry(PatentExportCounterReporter.PATENT_REFERENCES_COUNTER, 3),
                         ReportEntryFactory.createCounterReportEntry(PatentExportCounterReporter.EXPORTED_PATENT_ENTITIES_COUNTER, 2),
-                        ReportEntryFactory.createCounterReportEntry(PatentExportCounterReporter.DISTINCT_PUBLICATIONS_WITH_PATENT_REFERENCES_COUNTER, 1)
+                        ReportEntryFactory.createCounterReportEntry(PatentExportCounterReporter.DISTINCT_PUBLICATIONS_WITH_PATENT_REFERENCES_COUNTER, 2)
                 );
         List<String> expectedReportEntriesJson = expectedReportEntries.stream()
                 .map(SpecificRecordBase::toString)

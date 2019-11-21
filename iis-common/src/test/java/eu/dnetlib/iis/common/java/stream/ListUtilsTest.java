@@ -37,4 +37,20 @@ public class ListUtilsTest {
             assertEquals(right.get(i), zipped.get(i).getRight());
         }
     }
+
+    @Test
+    public void zipWithIndexShouldZipEachElementInListWithIndex() {
+        //given
+        List<String> list = Arrays.asList("first", "second", "third");
+
+        //when
+        List<Pair<Integer, String>> zipped = ListUtils.zipWithIndex(list);
+
+        //then
+        assertEquals(list.size(), zipped.size());
+        for (int i = 0; i < zipped.size(); i++) {
+            assertEquals(i, zipped.get(i).getLeft().intValue());
+            assertEquals(list.get(i), zipped.get(i).getRight());
+        }
+    }
 }

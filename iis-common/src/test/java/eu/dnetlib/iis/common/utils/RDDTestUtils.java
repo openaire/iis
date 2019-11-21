@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.export.actionmanager;
+package eu.dnetlib.iis.common.utils;
 
 import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.java.io.SequenceFileTextValueReader;

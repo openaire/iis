@@ -9,7 +9,7 @@
         <property>
             <name>input_patent</name>
             <description>
-                Input containing `eu.dnetlib.iis.referenceextraction.patent.schemas.Patent` avro records listing all patent entities referenced by publications.
+                Input containing `eu.dnetlib.iis.referenceextraction.patent.schemas.Patent` avro records listing all patent entities.
             </description>
         </property>
         <property>
@@ -29,6 +29,18 @@
             <value>$UNDEFINED$</value>
             <description>
                 document_patent trust level threshold.
+            </description>
+        </property>
+        <property>
+            <name>patent_date_of_collection</name>
+            <description>
+                date of collection of patent file formatted as yyyy-MM-dd'T'HH:mm
+            </description>
+        </property>
+        <property>
+            <name>patent_epo_url_root</name>
+            <description>
+                EPO patent web archive URL root part to be concatenated with patent auth and nr when forming final URL
             </description>
         </property>
         <property>
@@ -108,13 +120,15 @@
             <spark-opts>
                 --executor-memory ${sparkExecutorMemory}
                 --executor-cores ${sparkExecutorCores}
-                --driver-memory=${sparkDriverMemory}
+                --driver-memory ${sparkDriverMemory}
             </spark-opts>
             <arg>-inputDocumentToPatentPath=${input_document_to_patent}</arg>
             <arg>-inputPatentPath=${input_patent}</arg>
             <arg>-relationActionSetId=${action_set_id_document_patent}</arg>
             <arg>-entityActionSetId=${action_set_id_entity_patent}</arg>
             <arg>-trustLevelThreshold=${trust_level_threshold_document_patent}</arg>
+            <arg>-patentDateOfCollection=${patent_date_of_collection}</arg>
+            <arg>-patentEpoUrlRoot=${patent_epo_url_root}</arg>
             <arg>-outputRelationPath=${output_root_relations}/${action_set_id_document_patent}</arg>
             <arg>-outputEntityPath=${output_root_entities}/${action_set_id_entity_patent}</arg>
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>

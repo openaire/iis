@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.export.actionmanager.common;
+package eu.dnetlib.iis.common.utils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;

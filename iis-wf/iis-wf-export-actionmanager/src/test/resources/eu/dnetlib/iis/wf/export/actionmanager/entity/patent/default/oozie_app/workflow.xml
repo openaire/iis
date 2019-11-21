@@ -77,6 +77,14 @@
                     <value>0.5</value>
                 </property>
                 <property>
+                    <name>patent_date_of_collection</name>
+                    <value>2019-11-20T23:59</value>
+                </property>
+                <property>
+                    <name>patent_epo_url_root</name>
+                    <value>https://register.epo.org/application?number=</value>
+                </property>
+                <property>
                     <name>output_root_relations</name>
                     <value>${workingDir}/output/document_patent</value>
                 </property>
@@ -122,8 +130,8 @@
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/entities_patent/patent-entity-actionset-id</arg>
             <arg>
-                -Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent2.properties,
-                /eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent1.properties
+                -Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent1.properties,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent2.properties
             </arg>
         </java>
         <ok to="report-consumer"/>

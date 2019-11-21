@@ -11,7 +11,6 @@ import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.HolderCountry;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
-import eu.dnetlib.iis.referenceextraction.patent.schemas.Tls211PublnDateId;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.log4j.Logger;
@@ -26,6 +25,8 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -48,9 +49,6 @@ public class PatentReaderJob {
     private static final String FIELD_EARLIEST_PUBLN_DATE = "earliest_publn_date";
     private static final String FIELD_APPLN_ABSTRACT = "appln_abstract";
     private static final String FIELD_APPLN_TITLE = "appln_title";
-    private static final String FIELD_TLS211_PUBLN_DATE_ID = "tls211_publn_date_id";
-    private static final String FIELD_TLS211_PUBLN_DATE_ID__PUBLN_DATE = "publn_date";
-    private static final String FIELD_TLS211_PUBLN_DATE_ID__PAT_PUBLN_ID = "pat_publn_id";
     private static final String FIELD_IPC_CLASS_SYMBOL = "ipc_class_symbol";
     private static final String FIELD_HOLDER_COUNTRY = "holder_country";
     private static final String FIELD_HOLDER_COUNTRY__PERSON_NAME = "person_name";
@@ -61,27 +59,7 @@ public class PatentReaderJob {
     private static final String ARRAY_STRING_DELIMITER = ",";
     private static final String NULL_STRING = "NULL";
 
-    private static final StructType PATENTS_EPO_FILE_SCHEMA = StructType$.MODULE$.apply(ImmutableList.<StructField>builder()
-            .add(StructField$.MODULE$.apply(FIELD_APPLN_ID, DataTypes.StringType, false, Metadata.empty()))
-            .add(StructField$.MODULE$.apply(FIELD_APPLN_AUTH, DataTypes.StringType, false, Metadata.empty()))
-            .add(StructField$.MODULE$.apply(FIELD_APPLN_NR, DataTypes.StringType, false, Metadata.empty()))
-            .add(StructField$.MODULE$.apply(FIELD_APPLN_FILING_DATE, DataTypes.StringType, false, Metadata.empty()))
-            .add(StructField$.MODULE$.apply(FIELD_APPLN_NR_EPODOC, DataTypes.StringType, false, Metadata.empty()))
-            .add(StructField$.MODULE$.apply(FIELD_EARLIEST_PUBLN_DATE, DataTypes.StringType, false, Metadata.empty()))
-            .add(StructField$.MODULE$.apply(FIELD_APPLN_ABSTRACT, DataTypes.StringType, true, Metadata.empty()))
-            .add(StructField$.MODULE$.apply(FIELD_APPLN_TITLE, DataTypes.StringType, true, Metadata.empty()))
-            .add(StructField$.MODULE$.apply(FIELD_TLS211_PUBLN_DATE_ID, DataTypes.createArrayType(DataTypes.createStructType(
-                    ImmutableList.of(
-                            StructField$.MODULE$.apply(FIELD_TLS211_PUBLN_DATE_ID__PUBLN_DATE, DataTypes.StringType, true, Metadata.empty()),
-                            StructField$.MODULE$.apply(FIELD_TLS211_PUBLN_DATE_ID__PAT_PUBLN_ID, DataTypes.StringType, true, Metadata.empty())
-                    )), true), false, Metadata.empty()))
-            .add(StructField$.MODULE$.apply(FIELD_IPC_CLASS_SYMBOL, DataTypes.StringType, false, Metadata.empty()))
-            .add(StructField$.MODULE$.apply(FIELD_HOLDER_COUNTRY, DataTypes.createArrayType(DataTypes.createStructType(
-                    ImmutableList.of(
-                            StructField$.MODULE$.apply(FIELD_HOLDER_COUNTRY__PERSON_NAME, DataTypes.StringType, true, Metadata.empty()),
-                            StructField$.MODULE$.apply(FIELD_HOLDER_COUNTRY__PERSON_CTRY_CODE, DataTypes.StringType, true, Metadata.empty())
-                    )), true), false, Metadata.empty()))
-            .build());
+    private static final StructType PATENTS_EPO_FILE_SCHEMA = buildPatentsEpoFileSchema();
 
     //------------------------ LOGIC --------------------------
 
@@ -106,6 +84,7 @@ public class PatentReaderJob {
                     .schema(PATENTS_EPO_FILE_SCHEMA)
                     .json(params.inputJSONLocation)
                     .toJavaRDD()
+                    .filter(PatentReaderJob::isValidPatentRow)
                     .map(PatentReaderJob::buildEntry);
 
             storeInOutput(results, generateReportEntries(sc, results), params.outputPath, params.outputReportPath);
@@ -113,6 +92,79 @@ public class PatentReaderJob {
     }
 
     //------------------------ PRIVATE --------------------------
+
+    private static StructType buildPatentsEpoFileSchema() {
+        return StructType$.MODULE$.apply(ImmutableList.<StructField>builder()
+                .add(buildApplnIdSchema())
+                .add(buildApplnAuthSchema())
+                .add(buildApplnNrSchema())
+                .add(buildApplnFilingDateSchema())
+                .add(buildApplnNrEpodocSchema())
+                .add(buildEarliestPublnDateSchema())
+                .add(buildApplnAbstractSchema())
+                .add(buildApplnTitleSchema())
+                .add(buildIpcClassSymbolSchema())
+                .add(buildHolderCountrySchema())
+                .build());
+    }
+
+    private static StructField buildApplnIdSchema() {
+        return StructField$.MODULE$.apply(FIELD_APPLN_ID, DataTypes.StringType, false, Metadata.empty());
+    }
+
+    private static StructField buildApplnAuthSchema() {
+        return StructField$.MODULE$.apply(FIELD_APPLN_AUTH, DataTypes.StringType, false, Metadata.empty());
+    }
+
+    private static StructField buildApplnNrSchema() {
+        return StructField$.MODULE$.apply(FIELD_APPLN_NR, DataTypes.StringType, false, Metadata.empty());
+    }
+
+    private static StructField buildApplnFilingDateSchema() {
+        return StructField$.MODULE$.apply(FIELD_APPLN_FILING_DATE, DataTypes.StringType, true, Metadata.empty());
+    }
+
+    private static StructField buildApplnNrEpodocSchema() {
+        return StructField$.MODULE$.apply(FIELD_APPLN_NR_EPODOC, DataTypes.StringType, false, Metadata.empty());
+    }
+
+    private static StructField buildEarliestPublnDateSchema() {
+        return StructField$.MODULE$.apply(FIELD_EARLIEST_PUBLN_DATE, DataTypes.StringType, true, Metadata.empty());
+    }
+
+    private static StructField buildApplnAbstractSchema() {
+        return StructField$.MODULE$.apply(FIELD_APPLN_ABSTRACT, DataTypes.StringType, true, Metadata.empty());
+    }
+
+    private static StructField buildApplnTitleSchema() {
+        return StructField$.MODULE$.apply(FIELD_APPLN_TITLE, DataTypes.StringType, true, Metadata.empty());
+    }
+
+    private static StructField buildIpcClassSymbolSchema() {
+        return StructField$.MODULE$.apply(FIELD_IPC_CLASS_SYMBOL, DataTypes.StringType, true, Metadata.empty());
+    }
+
+    private static StructField buildHolderCountrySchema() {
+        return StructField$.MODULE$.apply(FIELD_HOLDER_COUNTRY, DataTypes.createArrayType(DataTypes.createStructType(
+                ImmutableList.of(buildHolderCountryPersonNameSchema(), buildHolderCountryPersonCtryCodeSchema()
+                )), true), true, Metadata.empty());
+    }
+
+    private static StructField buildHolderCountryPersonNameSchema() {
+        return StructField$.MODULE$.apply(FIELD_HOLDER_COUNTRY__PERSON_NAME, DataTypes.StringType, true, Metadata.empty());
+    }
+
+    private static StructField buildHolderCountryPersonCtryCodeSchema() {
+        return StructField$.MODULE$.apply(FIELD_HOLDER_COUNTRY__PERSON_CTRY_CODE, DataTypes.StringType, true, Metadata.empty());
+    }
+
+    private static Boolean isValidPatentRow(Row row) {
+        boolean isApplnIdValid = Objects.nonNull(fieldValueOrNull(row, FIELD_APPLN_ID, row::getAs));
+        boolean isApplnAuthValid = Objects.nonNull(fieldValueOrNull(row, FIELD_APPLN_AUTH, row::getAs));
+        boolean isApplnNrValid = Objects.nonNull(fieldValueOrNull(row, FIELD_APPLN_NR, row::getAs));
+        boolean isApplnNrEpodocValid = Objects.nonNull(fieldValueOrNull(row, FIELD_APPLN_NR_EPODOC, row::getAs));
+        return isApplnIdValid && isApplnAuthValid && isApplnNrValid && isApplnNrEpodocValid;
+    }
 
     private static Patent buildEntry(Row row) {
         return Patent.newBuilder()
@@ -124,7 +176,6 @@ public class PatentReaderJob {
                 .setEarliestPublnDate(buildEarliestPublnDate(row))
                 .setApplnAbstract(buildApplnAbstract(row))
                 .setApplnTitle(buildApplnTitle(row))
-                .setTls211PublnDateId(buildTls211PublnDateIdList(row))
                 .setIpcClassSymbol(buildIpcClassSymbolList(row))
                 .setHolderCountry(buildHolderCountryList(row))
                 .build();
@@ -143,7 +194,7 @@ public class PatentReaderJob {
     }
 
     private static CharSequence buildApplnFilingDate(Row row) {
-        return row.getAs(FIELD_APPLN_FILING_DATE);
+        return fieldValueOrNull(row, FIELD_APPLN_FILING_DATE, row::getAs);
     }
 
     private static CharSequence buildApplnNrEpodoc(Row row) {
@@ -151,68 +202,48 @@ public class PatentReaderJob {
     }
 
     private static CharSequence buildEarliestPublnDate(Row row) {
-        return row.getAs(FIELD_EARLIEST_PUBLN_DATE);
+        return fieldValueOrNull(row, FIELD_EARLIEST_PUBLN_DATE, row::getAs);
     }
 
     private static CharSequence buildApplnAbstract(Row row) {
-        return fieldValueOrNull(row, FIELD_APPLN_ABSTRACT);
+        return fieldValueOrNull(row, FIELD_APPLN_ABSTRACT, row::getAs);
     }
 
     private static CharSequence buildApplnTitle(Row row) {
-        return fieldValueOrNull(row, FIELD_APPLN_TITLE);
-    }
-
-    private static List<Tls211PublnDateId> buildTls211PublnDateIdList(Row row) {
-        return row.<Row>getList(row.fieldIndex(FIELD_TLS211_PUBLN_DATE_ID)).stream()
-                .filter(Objects::nonNull)
-                .map(PatentReaderJob::buildTls211PublnDateId)
-                .filter(PatentReaderJob::isValidTls211PublnDateId)
-                .collect(Collectors.toList());
-    }
-
-    private static Tls211PublnDateId buildTls211PublnDateId(Row row) {
-        return Tls211PublnDateId.newBuilder()
-                .setPublnDate(fieldValueOrNull(row, FIELD_TLS211_PUBLN_DATE_ID__PUBLN_DATE))
-                .setPatPublnId(fieldValueOrNull(row, FIELD_TLS211_PUBLN_DATE_ID__PAT_PUBLN_ID))
-                .build();
-    }
-
-    private static Boolean isValidTls211PublnDateId(Tls211PublnDateId x) {
-        return Objects.nonNull(x.getPublnDate()) && Objects.nonNull(x.getPatPublnId());
+        return fieldValueOrNull(row, FIELD_APPLN_TITLE, row::getAs);
     }
 
     private static List<CharSequence> buildIpcClassSymbolList(Row row) {
-        String raw = row.getAs(FIELD_IPC_CLASS_SYMBOL);
-        return Arrays.stream(StringUtils
-                .strip(raw.replace("\"", ""), ARRAY_STRING_START_TAG + ARRAY_STRING_END_TAG)
-                .split(ARRAY_STRING_DELIMITER))
-                .filter(StringUtils::isNotBlank)
-                .filter(x -> !NULL_STRING.equalsIgnoreCase(x))
-                .collect(Collectors.toList());
+        return Optional
+                .ofNullable((String) fieldValueOrNull(row, FIELD_IPC_CLASS_SYMBOL, row::getAs))
+                .map(raw -> Arrays.stream(StringUtils
+                        .strip(raw.replace("\"", ""), ARRAY_STRING_START_TAG + ARRAY_STRING_END_TAG)
+                        .split(ARRAY_STRING_DELIMITER))
+                        .filter(StringUtils::isNotBlank)
+                        .filter(x -> !NULL_STRING.equalsIgnoreCase(x))
+                        .map(x -> (CharSequence) x)
+                        .collect(Collectors.toList())
+                )
+                .orElse(null);
     }
 
     private static List<HolderCountry> buildHolderCountryList(Row row) {
-        return row.<Row>getList(row.fieldIndex(FIELD_HOLDER_COUNTRY)).stream()
-                .filter(Objects::nonNull)
-                .map(PatentReaderJob::buildHolderCountry)
-                .filter(PatentReaderJob::isValidHolderCountry)
-                .collect(Collectors.toList());
+        return Optional
+                .ofNullable(fieldValueOrNull(row, FIELD_HOLDER_COUNTRY, s -> row.<Row>getList(row.fieldIndex(FIELD_HOLDER_COUNTRY))))
+                .map(list -> list.stream().map(PatentReaderJob::buildHolderCountry).collect(Collectors.toList()))
+                .orElse(null);
     }
 
     private static HolderCountry buildHolderCountry(Row row) {
         return HolderCountry.newBuilder()
-                .setPersonName(fieldValueOrNull(row, FIELD_HOLDER_COUNTRY__PERSON_NAME))
-                .setPersonCtryCode(fieldValueOrNull(row, FIELD_HOLDER_COUNTRY__PERSON_CTRY_CODE))
+                .setPersonName(fieldValueOrNull(row, FIELD_HOLDER_COUNTRY__PERSON_NAME, row::getAs))
+                .setPersonCtryCode(fieldValueOrNull(row, FIELD_HOLDER_COUNTRY__PERSON_CTRY_CODE, row::getAs))
                 .build();
     }
 
-    private static Boolean isValidHolderCountry(HolderCountry x) {
-        return Objects.nonNull(x.getPersonName()) && Objects.nonNull(x.getPersonCtryCode());
-    }
-
-    private static <X> X fieldValueOrNull(Row row, String fieldName) {
+    private static <X> X fieldValueOrNull(Row row, String fieldName, Function<String, X> getter) {
         if (!row.isNullAt(row.fieldIndex(fieldName))) {
-            return row.getAs(fieldName);
+            return getter.apply(fieldName);
         }
         return null;
     }
