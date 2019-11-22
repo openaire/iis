@@ -21,6 +21,7 @@ import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 import eu.dnetlib.iis.wf.export.actionmanager.entity.ConfidenceLevelUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.module.AlgorithmName;
 import eu.dnetlib.iis.wf.export.actionmanager.module.BuilderModuleHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
@@ -393,34 +394,46 @@ public class PatentExporterJob {
     private static ResultProtos.Result.Metadata buildOafEntityResultMetadata(Patent patent) {
         ResultProtos.Result.Metadata.Builder builder = ResultProtos.Result.Metadata.newBuilder();
 
-        if (Objects.nonNull(patent.getApplnTitle())) {
-            builder.addTitle(buildOafEntityResultMetadataTitle(patent));
+        if (StringUtils.isNotBlank(patent.getApplnTitle())) {
+            builder.addTitle(buildOafEntityResultMetadataTitle(patent.getApplnTitle()));
         }
 
-        if (Objects.nonNull(patent.getApplnAbstract())) {
-            builder.addDescription(buildOafEntityResultMetadataDescription(patent));
+        if (StringUtils.isNotBlank(patent.getApplnAbstract())) {
+            builder.addDescription(buildOafEntityResultMetadataDescription(patent.getApplnAbstract()));
+        }
+
+        if (StringUtils.isNotBlank(patent.getEarliestPublnDate())) {
+            builder.setDateofacceptance(buildOafEntityResultMetadataDateofacceptance(patent.getEarliestPublnDate()));
+        }
+
+        if (StringUtils.isNotBlank(patent.getApplnFilingDate())) {
+            builder.addRelevantdate(buildOafEntityResultMetadataRelevantdate(patent.getApplnFilingDate()));
+        }
+
+        if (Objects.nonNull(patent.getIpcClassSymbol())) {
+            builder.addAllSubject(buildOafEntityResultMetadataSubjects(patent.getIpcClassSymbol()));
+        }
+
+        if (Objects.nonNull(patent.getHolderCountry())) {
+            builder.addAllAuthor(buildOafEntityResultMetadataAuthors(patent.getHolderCountry()));
+            builder.addAllCountry(buildOafEntityResultMetadataCountries(patent.getHolderCountry()));
         }
 
         return builder
-                .addAllSubject(buildOafEntityResultMetadataSubjects(patent))
-                .setDateofacceptance(buildOafEntityResultMetadataDateofacceptance(patent))
-                .addRelevantdate(buildOafEntityResultMetadataRelevantdate(patent))
-                .addAllAuthor(buildOafEntityResultMetadataAuthors(patent))
-                .addAllCountry(buildOafEntityResultMetadataCountries(patent))
                 .setResulttype(OAF_ENTITY_RESULT_METADATA_RESULTTYPE)
                 .build();
     }
 
-    private static FieldTypeProtos.StructuredProperty buildOafEntityResultMetadataTitle(Patent patent) {
+    private static FieldTypeProtos.StructuredProperty buildOafEntityResultMetadataTitle(CharSequence applnTitle) {
         return FieldTypeProtos.StructuredProperty.newBuilder()
-                .setValue(patent.getApplnTitle().toString())
+                .setValue(applnTitle.toString())
                 .setQualifier(OAF_ENTITY_RESULT_METADATA_TITLE_QUALIFIER)
                 .build();
     }
 
-    private static FieldTypeProtos.StringField buildOafEntityResultMetadataDescription(Patent patent) {
+    private static FieldTypeProtos.StringField buildOafEntityResultMetadataDescription(CharSequence applnAbstract) {
         return FieldTypeProtos.StringField.newBuilder()
-                .setValue(patent.getApplnAbstract().toString())
+                .setValue(applnAbstract.toString())
                 .build();
     }
 
@@ -432,8 +445,9 @@ public class PatentExporterJob {
         return appendMd5(PATENT_RESULT_OPENAIRE_ID_PREFIX, applnAuth.toString() + applnNr.toString());
     }
 
-    private static List<FieldTypeProtos.StructuredProperty> buildOafEntityResultMetadataSubjects(Patent patent) {
-        return patent.getIpcClassSymbol().stream()
+    private static List<FieldTypeProtos.StructuredProperty> buildOafEntityResultMetadataSubjects(List<CharSequence> ipcClassSymbols) {
+        return ipcClassSymbols.stream()
+                .filter(StringUtils::isNotBlank)
                 .map(PatentExporterJob::buildOafEntityResultMetadataSubject)
                 .collect(Collectors.toList());
     }
@@ -445,39 +459,44 @@ public class PatentExporterJob {
                 .build();
     }
 
-    private static FieldTypeProtos.StringField buildOafEntityResultMetadataDateofacceptance(Patent patent) {
+    private static FieldTypeProtos.StringField buildOafEntityResultMetadataDateofacceptance(CharSequence earliestPublnDate) {
         return FieldTypeProtos.StringField.newBuilder()
-                .setValue(patent.getEarliestPublnDate().toString())
+                .setValue(earliestPublnDate.toString())
                 .build();
     }
 
-    private static FieldTypeProtos.StructuredProperty buildOafEntityResultMetadataRelevantdate(Patent patent) {
+    private static FieldTypeProtos.StructuredProperty buildOafEntityResultMetadataRelevantdate(CharSequence applnFilingDate) {
         return FieldTypeProtos.StructuredProperty.newBuilder()
-                .setValue(patent.getApplnFilingDate().toString())
+                .setValue(applnFilingDate.toString())
                 .setQualifier(OAF_ENTITY_RESULT_METADATA_RELEVANTDATE_QUALIFIER)
                 .build();
     }
 
-    private static List<FieldTypeProtos.Author> buildOafEntityResultMetadataAuthors(Patent patent) {
-        return ListUtils.zipWithIndex(patent.getHolderCountry()).stream()
+    private static List<FieldTypeProtos.Author> buildOafEntityResultMetadataAuthors(List<HolderCountry> holderCountries) {
+        List<CharSequence> personNames = holderCountries.stream()
+                .map(HolderCountry::getPersonName)
+                .filter(StringUtils::isNotBlank)
+                .collect(Collectors.toList());
+        return ListUtils.zipWithIndex(personNames).stream()
                 .map(pair -> {
                     Integer rank = pair.getLeft() + 1;
-                    HolderCountry holderCountry = pair.getRight();
-                    return buildOafEntityResultMetadataAuthor(holderCountry, rank);
+                    CharSequence personName = pair.getRight();
+                    return buildOafEntityResultMetadataAuthor(personName, rank);
                 })
                 .collect(Collectors.toList());
     }
 
-    private static FieldTypeProtos.Author buildOafEntityResultMetadataAuthor(HolderCountry holderCountry, Integer rank) {
+    private static FieldTypeProtos.Author buildOafEntityResultMetadataAuthor(CharSequence personName, Integer rank) {
         return FieldTypeProtos.Author.newBuilder()
-                .setFullname(holderCountry.getPersonName().toString())
+                .setFullname(personName.toString())
                 .setRank(rank)
                 .build();
     }
 
-    private static List<FieldTypeProtos.Qualifier> buildOafEntityResultMetadataCountries(Patent patent) {
-        return patent.getHolderCountry().stream()
-                .map(z -> z.getPersonCtryCode().toString())
+    private static List<FieldTypeProtos.Qualifier> buildOafEntityResultMetadataCountries(List<HolderCountry> holderCountries) {
+        return holderCountries.stream()
+                .map(HolderCountry::getPersonCtryCode)
+                .filter(StringUtils::isNotBlank)
                 .distinct()
                 .sorted()
                 .map(PatentExporterJob::buildOafEntityResultMetadataCountry)
