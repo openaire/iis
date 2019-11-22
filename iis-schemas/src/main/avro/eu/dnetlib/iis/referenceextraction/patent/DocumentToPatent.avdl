@@ -11,5 +11,7 @@ protocol IIS{
         float confidenceLevel;
 //      text snippet surrounding the matched reference, required mostly for internal debugging and analytics  
         union { null , string } textsnippet = null;
+//      indicates whether at least one author is matched
+        boolean author;
     }
 }
