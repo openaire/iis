@@ -50,8 +50,15 @@ public class PatentExporterJobTest {
     private Path outputEntityDir;
     private Path outputReportDir;
 
-    private static final String INPUT_DOCUMENT_TO_PATENT_PATH = "eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/input/document_to_patent.json";
-    private static final String INPUT_PATENT_PATH = "eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/input/patent.json";
+    private static final String INPUT_DOCUMENT_TO_PATENT_PATH =
+            "eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/input/document_to_patent.json";
+    private static final String INPUT_PATENT_PATH =
+            "eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/input/patent.json";
+
+    private static final String INPUT_DOCUMENT_TO_PATENT_NULLCHECK_PATH =
+            "eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/input/nullcheck/document_to_patent.json";
+    private static final String INPUT_PATENT_NULLCHECK_PATH =
+            "eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/input/nullcheck/patent.json";
 
     private static final String RELATION_ACTION_SET_ID = "relation-actionset-id";
     private static final String ENTITY_ACTION_SET_ID = "entity-actionset-id";
@@ -161,6 +168,24 @@ public class PatentExporterJobTest {
 
         //report
         assertCountersInReport(3, 2, 2);
+    }
+
+    @Test
+    public void shouldExportEntitiesWhenConfidenceLevelIsAboveThresholdAndProperlyHandleNullableFields() throws IOException {
+        //given
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(Objects.requireNonNull(cl.getResource(INPUT_DOCUMENT_TO_PATENT_NULLCHECK_PATH)).getFile(), DocumentToPatent.class),
+                inputDocumentToPatentDir.toString());
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(Objects.requireNonNull(cl.getResource(INPUT_PATENT_NULLCHECK_PATH)).getFile(), Patent.class),
+                inputPatentDir.toString());
+        SparkJob sparkJob = buildSparkJob(0.5);
+
+        //when
+        executor.execute(sparkJob);
+
+        //then - checking only if no exception is thrown
+        assertCountersInReport(2, 2, 2);
     }
 
     private SparkJob buildSparkJob(Double trustLevelThreshold) {

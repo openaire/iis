@@ -22,6 +22,6 @@ and (not regexprmatches("[0-9]\."||appln_nr,middle) )
 );
 
 
-select jdict('documentId', docid, 'patentId', id, 'confidenceLevel', 0.8,'textsnippet',context)  from results; -- where regexprmatches(authors,context);
+select jdict('documentId', docid, 'patentId', id, 'confidenceLevel', 0.8,'textsnippet',context,'author',regexprmatches(authors,context))  from results;
 
 
