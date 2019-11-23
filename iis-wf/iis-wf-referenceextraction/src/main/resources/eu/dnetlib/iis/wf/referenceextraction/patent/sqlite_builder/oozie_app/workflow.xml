@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="referenceextraction_patent_sqlite_builder">
+
+    <parameters>
+        <property>
+            <name>input_patent</name>
+            <description>input patents datastore</description>
+        </property>
+        <property>
+            <name>output_patent_db</name>
+            <description>output patents SQLite DB path</description>
+        </property>
+    </parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+    <start to="sqlite_builder"/>
+
+    <action name="sqlite_builder">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.wf.referenceextraction.patent.PatentDBBuilder</arg>
+            <arg>-Ipatents=${input_patent}</arg>
+            <arg>-Opatents_db=${output_patent_db}</arg>
+            <arg>-PscriptLocation=scripts/buildpatentdb.sql</arg>
+        </java>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

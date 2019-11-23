@@ -7,3 +7,4 @@ ingest_html_plaintext classpath eu/dnetlib/iis/wf/ingest/html/plaintext/oozie_ap
 metadataextraction_cache classpath eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/oozie_app
 transformers_common_union classpath eu/dnetlib/iis/wf/transformers/common/union/oozie_app
 transformers_idextractor classpath eu/dnetlib/iis/wf/transformers/importer/documentmetadata/idextractor/oozie_app
+import_patent classpath eu/dnetlib/iis/wf/importer/patent/oozie_app

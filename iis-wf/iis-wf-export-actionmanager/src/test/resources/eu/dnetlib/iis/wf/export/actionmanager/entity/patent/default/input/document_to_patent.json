@@ -1,0 +1,5 @@
+{"documentId":"document1","patentId":"patent1","confidenceLevel":0.9,"textsnippet":"text snippet for relation document1 and patent1"}
+{"documentId":"document2","patentId":"patent1","confidenceLevel":0.8,"textsnippet":"text snippet for relation document2 and patent1"}
+{"documentId":"document2","patentId":"patent2","confidenceLevel":0.7,"textsnippet":"text snippet for relation document2 and patent2"}
+{"documentId":"document2","patentId":"patent2","confidenceLevel":0.6,"textsnippet":"text snippet for relation document2 and patent2"}
+{"documentId":"document3","patentId":"patent3","confidenceLevel":0.1,"textsnippet":"text snippet for relation document3 and patent3"}

@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-referenceextraction_patent_main_sampletest">
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+    <start to="producer"/>
+
+    <action name="producer">
+        <java>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/producer"/>
+                <mkdir path="${nameNode}${workingDir}/producer"/>
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{document_text,
+                eu.dnetlib.iis.metadataextraction.schemas.DocumentText,
+                eu/dnetlib/iis/wf/referenceextraction/patent/data/document_text.json}
+            </arg>
+            <arg>-C{extracted_document_metadata_merged_with_original,
+                eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal,
+                eu/dnetlib/iis/wf/referenceextraction/patent/data/extracted_document_metadata_merged_with_original.json}
+            </arg>
+            <arg>-C{patent,
+                eu.dnetlib.iis.referenceextraction.patent.schemas.Patent,
+                eu/dnetlib/iis/wf/referenceextraction/patent/data/patent.json}
+            </arg>
+            <arg>-Odocument_text=${workingDir}/producer/document_text</arg>
+            <arg>-Oextracted_document_metadata_merged_with_original=${workingDir}/producer/extracted_document_metadata_merged_with_original</arg>
+            <arg>-Opatent=${workingDir}/producer/patent</arg>
+        </java>
+        <ok to="referenceextraction_patent"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="referenceextraction_patent">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/referenceextraction_patent</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/referenceextraction_patent/working_dir</value>
+                </property>
+                <property>
+                    <name>input_document_text</name>
+                    <value>${workingDir}/producer/document_text</value>
+                </property>
+                <property>
+                    <name>input_extracted_document_metadata_merged_with_original</name>
+                    <value>${workingDir}/producer/extracted_document_metadata_merged_with_original</value>
+                </property>
+                <property>
+                    <name>input_patent</name>
+                    <value>${workingDir}/producer/patent</value>
+                </property>
+                <property>
+                    <name>output_document_to_patent</name>
+                    <value>${workingDir}/referenceextraction_patent/output</value>
+                </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/referenceextraction_patent/report</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="consumer"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="consumer">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            <arg>-C{document_to_patent,
+                eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent,
+                eu/dnetlib/iis/wf/referenceextraction/patent/data/document_to_patent.json}
+            </arg>
+            <arg>-Idocument_to_patent=${workingDir}/referenceextraction_patent/output</arg>
+        </java>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>
