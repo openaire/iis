@@ -150,3 +150,30 @@
 	"publicationTypeName": null,
 	"text": ""
 }
+{
+	"id": "id-50",
+	"title": "",
+	"abstract": null,
+	"language": "eng",
+	"keywords": null,
+	"externalIdentifiers": null,
+	"journal": "Materials",
+	"year": null,
+	"publisher": null,
+	"references": null,
+	"authors": [
+		{"authorFullName": "Cardinal, Mireille", "affiliationPositions": []},
+		{"authorFullName": "Knockaert, Camille", "affiliationPositions": []},
+		{"authorFullName": "Torrissen, Ole", "affiliationPositions": []},
+		{"authorFullName": "Sigurgisladottir, Sjofn", "affiliationPositions": []},
+		{"authorFullName": "Morkore, Turid", "affiliationPositions": []},
+		{"authorFullName": "Thomassen, Magny", "affiliationPositions": []},
+		{"authorFullName": "Vallet, Jean-luc", "affiliationPositions": []}
+	],
+	"affiliations": null,
+	"volume": null,
+	"issue": null,
+	"pages": null,
+	"publicationTypeName": null,
+	"text": ""
+}
