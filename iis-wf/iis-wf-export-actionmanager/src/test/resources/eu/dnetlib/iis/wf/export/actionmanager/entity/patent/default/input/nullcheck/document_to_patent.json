@@ -1,2 +1,2 @@
-{"documentId":"document1","patentId":"patent1","confidenceLevel":0.9,"textsnippet":"text snippet for relation document1 and patent1"}
-{"documentId":"document2","patentId":"patent2","confidenceLevel":0.9,"textsnippet":"text snippet for relation document2 and patent2"}
+{"documentId":"document1","patentId":"patent1","confidenceLevel":0.9,"textsnippet":null,"author":null}
+{"documentId":"document2","patentId":"patent2","confidenceLevel":0.9,"textsnippet":null,"author":null}
