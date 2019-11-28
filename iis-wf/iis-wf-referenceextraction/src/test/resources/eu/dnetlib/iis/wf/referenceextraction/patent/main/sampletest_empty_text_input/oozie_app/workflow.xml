@@ -66,7 +66,6 @@
                     <name>output_report_root_path</name>
                     <value>${workingDir}/referenceextraction_patent/report</value>
                 </property>
-                <!-- sparkDriverMemory, sparkExecutorMemory, sparkExecutorCores are provided by environment (since git#889) -->
             </configuration>
         </sub-workflow>
         <ok to="consumer"/>

@@ -40,7 +40,11 @@
             <name>patent-referenceextraction-input-transformer</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.patent.input.PatentReferenceExtractionInputTransformerJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
+            <spark-opts>
+                --executor-memory ${sparkExecutorMemory}
+                --executor-cores ${sparkExecutorCores}
+                --driver-memory ${sparkDriverMemory}
+            </spark-opts>
             <arg>-inputPath=${input_patent}</arg>
             <arg>-outputPath=${workingDir}/patent</arg>
         </spark>
