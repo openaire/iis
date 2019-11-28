@@ -6,7 +6,6 @@ import eu.dnetlib.data.proto.RelTypeProtos;
 import eu.dnetlib.data.proto.ResultResultProtos;
 import eu.dnetlib.data.proto.TypeProtos;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
-import eu.dnetlib.iis.common.IntegrationTest;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.schemas.ReportEntryType;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
@@ -22,7 +21,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
@@ -39,7 +37,6 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Category(IntegrationTest.class)
 public class PatentExporterJobTest {
     private ClassLoader cl = getClass().getClassLoader();
     private SparkJobExecutor executor = new SparkJobExecutor();
@@ -50,8 +47,15 @@ public class PatentExporterJobTest {
     private Path outputEntityDir;
     private Path outputReportDir;
 
-    private static final String INPUT_DOCUMENT_TO_PATENT_PATH = "eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/input/document_to_patent.json";
-    private static final String INPUT_PATENT_PATH = "eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/input/patent.json";
+    private static final String INPUT_DOCUMENT_TO_PATENT_PATH =
+            "eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/input/document_to_patent.json";
+    private static final String INPUT_PATENT_PATH =
+            "eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/input/patent.json";
+
+    private static final String INPUT_DOCUMENT_TO_PATENT_NULLCHECK_PATH =
+            "eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/input/nullcheck/document_to_patent.json";
+    private static final String INPUT_PATENT_NULLCHECK_PATH =
+            "eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/input/nullcheck/patent.json";
 
     private static final String RELATION_ACTION_SET_ID = "relation-actionset-id";
     private static final String ENTITY_ACTION_SET_ID = "entity-actionset-id";
@@ -161,6 +165,24 @@ public class PatentExporterJobTest {
 
         //report
         assertCountersInReport(3, 2, 2);
+    }
+
+    @Test
+    public void shouldExportEntitiesWhenConfidenceLevelIsAboveThresholdAndProperlyHandleNullableFields() throws IOException {
+        //given
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(Objects.requireNonNull(cl.getResource(INPUT_DOCUMENT_TO_PATENT_NULLCHECK_PATH)).getFile(), DocumentToPatent.class),
+                inputDocumentToPatentDir.toString());
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(Objects.requireNonNull(cl.getResource(INPUT_PATENT_NULLCHECK_PATH)).getFile(), Patent.class),
+                inputPatentDir.toString());
+        SparkJob sparkJob = buildSparkJob(0.5);
+
+        //when
+        executor.execute(sparkJob);
+
+        //then - checking only if no exception is thrown
+        assertCountersInReport(2, 2, 2);
     }
 
     private SparkJob buildSparkJob(Double trustLevelThreshold) {
