@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-importer_patent">
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+    <start to="import_patent"/>
+
+    <action name="import_patent">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/import_patent</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>input_json</name>
+                    <value>${wf:appPath()}/input/patents_epo.json</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${workingDir}/output</value>
+                </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>patent</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="consumer"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="consumer">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            <arg>-C{patent,
+                eu.dnetlib.iis.referenceextraction.patent.schemas.Patent,
+                eu/dnetlib/iis/wf/importer/patent/data/output/patents_epo_input.json}
+            </arg>
+            <arg>-C{report,
+                eu.dnetlib.iis.common.schemas.ReportEntry,
+                eu/dnetlib/iis/wf/importer/patent/data/output/report.json}
+            </arg>
+            <arg>-Ipatent=${workingDir}/output</arg>
+            <arg>-Ireport=${workingDir}/report/patent</arg>
+        </java>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

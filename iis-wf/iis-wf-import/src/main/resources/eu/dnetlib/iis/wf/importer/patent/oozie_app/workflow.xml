@@ -1,0 +1,83 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="importer_patent">
+
+    <parameters>
+        <property>
+            <name>input_json</name>
+            <description>input JSON file location with patents metadata</description>
+        </property>
+        <property>
+            <name>output</name>
+            <description>patents avro datastore output</description>
+        </property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
+            <name>output_report_relative_path</name>
+            <value>import_patent</value>
+            <description>directory for storing report (relative to output_report_root_path)</description>
+        </property>
+        <property>
+            <name>sparkDriverMemory</name>
+            <description>memory for driver process</description>
+        </property>
+        <property>
+            <name>sparkExecutorMemory</name>
+            <description>memory for individual executor</description>
+        </property>
+        <property>
+            <name>sparkExecutorCores</name>
+            <description>number of cores used by single executor</description>
+        </property>
+    </parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+    <start to="patent-importer"/>
+
+    <action name="patent-importer">
+        <spark xmlns="uri:oozie:spark-action:0.2">
+            <prepare>
+                <delete path="${nameNode}${output}"/>
+                <delete path="${nameNode}${output_report_root_path}/${output_report_relative_path}"/>
+            </prepare>
+            <master>yarn-cluster</master>
+            <mode>cluster</mode>
+            <name>import-patent</name>
+            <class>eu.dnetlib.iis.wf.importer.patent.PatentReaderJob</class>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-import-${projectVersion}.jar</jar>
+            <spark-opts>
+                --executor-memory ${sparkExecutorMemory}
+                --executor-cores ${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
+            </spark-opts>
+            <arg>-inputJSONLocation=${input_json}</arg>
+            <arg>-outputPath=${output}</arg>
+            <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
+        </spark>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

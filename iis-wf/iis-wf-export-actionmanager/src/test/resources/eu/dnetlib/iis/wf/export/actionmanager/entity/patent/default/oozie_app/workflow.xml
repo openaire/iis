@@ -1,0 +1,162 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-export_actionmanager_entity_patent_default">
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+    <start to="generate-schema"/>
+
+    <action name="generate-schema">
+        <java>
+            <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
+            <arg>eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent</arg>
+            <arg>eu.dnetlib.iis.referenceextraction.patent.schemas.Patent</arg>
+            <capture-output/>
+        </java>
+        <ok to="producer"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="producer">
+        <java>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/producer"/>
+                <mkdir path="${nameNode}${workingDir}/producer"/>
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{document_to_patent,
+                eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent,
+                eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/input/document_to_patent.json}
+            </arg>
+            <arg>-C{patent,
+                eu.dnetlib.iis.referenceextraction.patent.schemas.Patent,
+                eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/input/patent.json}
+            </arg>
+            <arg>-Odocument_to_patent=${workingDir}/producer/document_to_patent</arg>
+            <arg>-Opatent=${workingDir}/producer/patent</arg>
+        </java>
+        <ok to="patent-exporter"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="patent-exporter">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/export_patent</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>input_document_to_patent</name>
+                    <value>${workingDir}/producer/document_to_patent</value>
+                </property>
+                <property>
+                    <name>input_patent</name>
+                    <value>${workingDir}/producer/patent</value>
+                </property>
+                <property>
+                    <name>action_set_id_document_patent</name>
+                    <value>patent-actionset-id</value>
+                </property>
+                <property>
+                    <name>action_set_id_entity_patent</name>
+                    <value>patent-entity-actionset-id</value>
+                </property>
+                <property>
+                    <name>trust_level_threshold_document_patent</name>
+                    <value>0.5</value>
+                </property>
+                <property>
+                    <name>patent_date_of_collection</name>
+                    <value>2019-11-20T23:59</value>
+                </property>
+                <property>
+                    <name>patent_epo_url_root</name>
+                    <value>https://register.epo.org/application?number=</value>
+                </property>
+                <property>
+                    <name>output_root_relations</name>
+                    <value>${workingDir}/output/document_patent</value>
+                </property>
+                <property>
+                    <name>output_root_entities</name>
+                    <value>${workingDir}/output/entities_patent</value>
+                </property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>export_patent</value>
+                </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="patent-relations-consumer"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="patent-relations-consumer">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
+            <arg>-Iseqfile=${workingDir}/output/document_patent/patent-actionset-id</arg>
+            <arg>
+                -Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/document1_to_patent1.properties,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent1_to_document1.properties,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/document2_to_patent1.properties,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent1_to_document2.properties,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/document2_to_patent2.properties,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent2_to_document2.properties
+            </arg>
+        </java>
+        <ok to="patent-entity-consumer"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="patent-entity-consumer">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
+            <arg>-Iseqfile=${workingDir}/output/entities_patent/patent-entity-actionset-id</arg>
+            <arg>
+                -Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent1.properties,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent2.properties
+            </arg>
+        </java>
+        <ok to="report-consumer"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="report-consumer">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            <arg>-C{report,
+                eu.dnetlib.iis.common.schemas.ReportEntry,
+                eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/report.json}
+            </arg>
+            <arg>-Ireport=${workingDir}/report/export_patent</arg>
+        </java>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

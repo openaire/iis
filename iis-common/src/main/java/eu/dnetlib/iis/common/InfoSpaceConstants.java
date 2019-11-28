@@ -28,6 +28,8 @@ public final class InfoSpaceConstants {
     public static final String ROW_PREFIX_ORGANIZATION = "20|";
     public static final String ROW_PREFIX_DATASOURCE = "10|";
 
+    public static final String OPENAIRE_ENTITY_ID_PREFIX = "openaire____";
+
     public static final String QUALIFIER_BODY_STRING = "body";
     public static final byte[] QUALIFIER_BODY;
 
@@ -40,9 +42,11 @@ public final class InfoSpaceConstants {
     public static final String SEMANTIC_CLASS_UNKNOWN = "UNKNOWN";
     public static final String SEMANTIC_CLASS_OPEN_SOURCE = "OPEN SOURCE";
     public static final String SEMANTIC_CLASS_IIS = "iis";
-    
+    public static final String SEMANTIC_CLASS_PATENT = "Patent";
+
     public static final String SEMANTIC_CLASS_NAME_NOT_AVAILABLE = "not available";
     public static final String SEMANTIC_CLASS_NAME_OPEN_SOURCE = "Open Source";
+    public static final String SEMANTIC_CLASS_NAME_SUBMITTED = "submitted";
 
     public static final String SEMANTIC_SCHEME_DNET_PERSON_ROLES = "dnet:personroles";
     public static final String SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_RESULT = "dnet:result_result_relations";
@@ -57,6 +61,8 @@ public final class InfoSpaceConstants {
     public static final String SEMANTIC_SCHEME_DNET_CLASSIFICATION_TAXONOMIES = "dnet:subject_classification_typologies";
     public static final String SEMANTIC_SCHEME_DNET_PUBLICATION_RESOURCE = "dnet:publication_resource";
     public static final String SEMANTIC_SCHEME_DNET_ACCESS_MODES = "dnet:access_modes";
+    public static final String SEMANTIC_SCHEME_DNET_DATACITE_DATE = "dnet:dataCite_date";
+    public static final String SEMANTIC_SCHEME_DNET_COUNTRIES = "dnet:countries";
 
     // resultResult citation and similarity related
     public static final String SEMANTIC_SCHEME_DNET_DATASET_PUBLICATION_RELS = "dnet:dataset_publication_rels";
@@ -72,6 +78,7 @@ public final class InfoSpaceConstants {
 
     // publication resource types class ids
     public static final String SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE = "0001";
+    public static final String SEMANTIC_CLASS_INSTANCE_TYPE_PATENT = "0019";
     public static final String SEMANTIC_CLASS_INSTANCE_TYPE_DATASET = "0021";
     public static final String SEMANTIC_CLASS_INSTANCE_TYPE_SOFTWARE = "0029";
 
