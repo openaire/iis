@@ -161,7 +161,7 @@ public class DatasetMetadataConverter implements OafEntityToAvroConverter<DataSe
                 .filter(x -> fieldApprover.approve(x.getDataInfo()))
                 .collect(Collectors.toList());
         Map<CharSequence, CharSequence> additionalIds = filtered.stream()
-                .collect(Collectors.toMap(k -> k.getQualifier().getClassid(), v -> v.getValue()));
+                .collect(Collectors.toMap(k -> k.getQualifier().getClassid(), v -> v.getValue(), (val1, val2) -> val1));
         Optional.ofNullable(
                 filtered.stream().filter(x -> ID_TYPE_DOI_LOWERCASED.equalsIgnoreCase(x.getQualifier().getClassid()))
                         .collect(Collectors.toCollection(LinkedList::new)).peekLast())
