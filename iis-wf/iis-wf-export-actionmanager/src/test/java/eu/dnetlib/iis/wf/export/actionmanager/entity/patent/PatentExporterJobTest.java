@@ -127,12 +127,12 @@ public class PatentExporterJobTest {
                 RelTypeProtos.SubRelType.relationship.name(), ResultResultProtos.ResultResult.Relationship.RelName.isRelatedTo.name());
         actualRelationActions.forEach(action -> verifyAction(action, RELATION_ACTION_SET_ID, expectedRelationTargetColumnFamily));
         List<Pair<String, String>> expectedRelationsTargetRowKeyAndTargetColumnPairs = Arrays.asList(
-                Pair.of("document1", "50|openaire____::9fce164deeabdfd83f697e45b1aeea3d"),
-                Pair.of("50|openaire____::9fce164deeabdfd83f697e45b1aeea3d", "document1"),
-                Pair.of("document2", "50|openaire____::9fce164deeabdfd83f697e45b1aeea3d"),
-                Pair.of("50|openaire____::9fce164deeabdfd83f697e45b1aeea3d", "document2"),
-                Pair.of("document2", "50|openaire____::702195de7e0ff019d206b3eef73f0f21"),
-                Pair.of("50|openaire____::702195de7e0ff019d206b3eef73f0f21", "document2"));
+                Pair.of("document1", "50|epopatstat__::9fce164deeabdfd83f697e45b1aeea3d"),
+                Pair.of("50|epopatstat__::9fce164deeabdfd83f697e45b1aeea3d", "document1"),
+                Pair.of("document2", "50|epopatstat__::9fce164deeabdfd83f697e45b1aeea3d"),
+                Pair.of("50|epopatstat__::9fce164deeabdfd83f697e45b1aeea3d", "document2"),
+                Pair.of("document2", "50|epopatstat__::702195de7e0ff019d206b3eef73f0f21"),
+                Pair.of("50|epopatstat__::702195de7e0ff019d206b3eef73f0f21", "document2"));
         List<Pair<String, String>> actualRelationsTargetRowKeyAndTargetColumnPairs = actualRelationActions.stream()
                 .map(x -> Pair.of(x.getTargetRowKey(), x.getTargetColumn()))
                 .sorted()
@@ -152,8 +152,8 @@ public class PatentExporterJobTest {
 
         String expectedEntityTargetColumn = new String(InfoSpaceConstants.QUALIFIER_BODY, StandardCharsets.UTF_8);
         List<Pair<String, String>> expectedEntityTargetRowKeyAndTargetColumnPairs = Arrays.asList(
-                Pair.of("50|openaire____::9fce164deeabdfd83f697e45b1aeea3d", expectedEntityTargetColumn),
-                Pair.of("50|openaire____::702195de7e0ff019d206b3eef73f0f21", expectedEntityTargetColumn));
+                Pair.of("50|epopatstat__::9fce164deeabdfd83f697e45b1aeea3d", expectedEntityTargetColumn),
+                Pair.of("50|epopatstat__::702195de7e0ff019d206b3eef73f0f21", expectedEntityTargetColumn));
         List<Pair<String, String>> actualEntityTargetRowKeyAndTargetColumnPairs = actualEntityActions.stream()
                 .map(x -> Pair.of(x.getTargetRowKey(), x.getTargetColumn()))
                 .sorted()

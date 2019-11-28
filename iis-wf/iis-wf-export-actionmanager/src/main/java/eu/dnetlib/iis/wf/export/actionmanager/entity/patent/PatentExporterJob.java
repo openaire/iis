@@ -49,12 +49,15 @@ import java.util.stream.Collectors;
  */
 public class PatentExporterJob {
     private static final String EPO = "EPO";
+    private static final String EUROPEAN_PATENT_OFFICE__PATSTAT = "European Patent Office/PATSTAT";
     private static final String CLASS_EPO_ID = "epo_id";
     private static final String CLASS_EPO_NR_EPODOC = "epo_nr_epodoc";
     private static final String IPC = "IPC";
+    private static final String INTERNATIONAL_PATENT_CLASSIFICATION = "International Patent Classification";
+    private static final String PATENT_ENTITY_ID_PREFIX = "epopatstat__";
     private static final String INFERENCE_PROVENANCE = buildInferenceProvenance();
     private static final String PATENT_DATASOURCE_OPENAIRE_ID_PREFIX = InfoSpaceConstants.ROW_PREFIX_DATASOURCE + InfoSpaceConstants.OPENAIRE_ENTITY_ID_PREFIX + InfoSpaceConstants.ID_NAMESPACE_SEPARATOR;
-    private static final String PATENT_RESULT_OPENAIRE_ID_PREFIX = InfoSpaceConstants.ROW_PREFIX_RESULT + InfoSpaceConstants.OPENAIRE_ENTITY_ID_PREFIX + InfoSpaceConstants.ID_NAMESPACE_SEPARATOR;
+    private static final String PATENT_RESULT_OPENAIRE_ID_PREFIX = InfoSpaceConstants.ROW_PREFIX_RESULT + PATENT_ENTITY_ID_PREFIX + InfoSpaceConstants.ID_NAMESPACE_SEPARATOR;
     private static final String PATENT_ID_PREFIX_EPO = buildRowPrefixDatasourceOpenaireEntityIdPrefixEpo();
     private static final ResultResultProtos.ResultResult OAFREL_RESULTRESULT = buildOafRelResultResult();
     private static final FieldTypeProtos.KeyValue OAF_ENTITY_COLLECTEDFROM = buildOafEntityPatentKeyValue();
@@ -190,7 +193,7 @@ public class PatentExporterJob {
     private static FieldTypeProtos.KeyValue buildOafEntityPatentKeyValue() {
         return FieldTypeProtos.KeyValue.newBuilder()
                 .setKey(PATENT_ID_PREFIX_EPO)
-                .setValue(EPO)
+                .setValue(EUROPEAN_PATENT_OFFICE__PATSTAT)
                 .build();
     }
 
@@ -224,7 +227,7 @@ public class PatentExporterJob {
     private static FieldTypeProtos.Qualifier buildOafEntityResultMetadataSubjectQualifier() {
         return FieldTypeProtos.Qualifier.newBuilder()
                 .setClassid(IPC)
-                .setClassname(IPC)
+                .setClassname(INTERNATIONAL_PATENT_CLASSIFICATION)
                 .setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_CLASSIFICATION_TAXONOMIES)
                 .setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_CLASSIFICATION_TAXONOMIES)
                 .build();
