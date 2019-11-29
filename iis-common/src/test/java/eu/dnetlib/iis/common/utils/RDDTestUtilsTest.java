@@ -27,7 +27,8 @@ public class RDDTestUtilsTest {
     @BeforeClass
     public static void beforeClass() {
         SparkConf conf = new SparkConf();
-        conf.setMaster("local[1]");
+        conf.setMaster("local");
+        conf.set("spark.driver.host", "localhost");
         conf.setAppName("RDDTestUtilsTest");
         sc = new JavaSparkContext(conf);
         configuration = new Configuration();
