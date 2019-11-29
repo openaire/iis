@@ -43,8 +43,9 @@ public class PatentExportCounterReporterTest {
     public static void before() {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
-        conf.setAppName("PatentExportCounterReporterTest");
+        conf.set("spark.driver.host", "localhost");
         conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
+        conf.setAppName("PatentExportCounterReporterTest");
         sc = new JavaSparkContext(conf);
     }
 

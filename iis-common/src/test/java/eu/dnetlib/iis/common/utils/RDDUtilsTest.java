@@ -32,8 +32,9 @@ public class RDDUtilsTest {
     public static void beforeClass() {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
-        conf.setAppName("RDDUtilsTest");
+        conf.set("spark.driver.host", "localhost");
         conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
+        conf.setAppName("RDDUtilsTest");
         sc = new JavaSparkContext(conf);
         configuration = new Configuration();
     }
