@@ -54,3 +54,4 @@
 {"id":"40|cihr________::1e5e62235d094afd01cd56e65112fc63", "projectGrantId": "unidentified", "projectAcronym": null, "fundingClass": "CIHR::", "jsonextrainfo": "{}"}
 {"id":"40|nserc_______::1e5e62235d094afd01cd56e65112fc63", "projectGrantId": "unidentified", "projectAcronym": null, "fundingClass": "NSERC::", "jsonextrainfo": "{}"}
 {"id":"40|sshrc_______::1e5e62235d094afd01cd56e65112fc63", "projectGrantId": "unidentified", "projectAcronym": null, "fundingClass": "SSHRC::", "jsonextrainfo": "{}"}
+{"id":"40|rsf_________::48e2a92bd382fec38e02988bd55008b4", "projectGrantId": "14-48-00043", "projectAcronym": null, "fundingClass": "RSF::", "jsonextrainfo": "{}"}
