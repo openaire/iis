@@ -12,6 +12,7 @@ import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.java.stream.ListUtils;
 import eu.dnetlib.iis.common.java.stream.StreamUtils;
+import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.common.utils.DateTimeUtils;
 import eu.dnetlib.iis.common.utils.RDDUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
@@ -87,11 +88,7 @@ public class PatentExporterJob {
         configuration.set(FileOutputFormat.COMPRESS, Boolean.TRUE.toString());
         configuration.set(FileOutputFormat.COMPRESS_TYPE, SequenceFile.CompressionType.BLOCK.name());
 
-        SparkConf sparkConf = new SparkConf();
-        sparkConf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
-        sparkConf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
-
-        try (JavaSparkContext sc = new JavaSparkContext(sparkConf)) {
+        try (JavaSparkContext sc = JavaSparkContextFactory.withConfAndKryo(new SparkConf())) {
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputRelationPath);
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputEntityPath);
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
@@ -271,7 +268,8 @@ public class PatentExporterJob {
                     DocumentToPatent documentToPatent = x.getDocumentToPatent();
                     String documentIdToExport = x.getDocumentIdToExport();
                     String patentIdToExport = x.getPatentIdToExport();
-                    return buildRelationActions(documentToPatent, documentIdToExport, patentIdToExport, relationActionSetId);
+                    return buildRelationActions(documentToPatent, documentIdToExport, patentIdToExport, relationActionSetId)
+                            .iterator();
                 })
                 .mapToPair(PatentExporterJob::actionToTuple);
     }
