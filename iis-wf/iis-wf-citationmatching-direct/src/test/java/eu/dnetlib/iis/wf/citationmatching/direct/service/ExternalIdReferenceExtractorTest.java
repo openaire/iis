@@ -1,15 +1,11 @@
 package eu.dnetlib.iis.wf.citationmatching.direct.service;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.iterableWithSize;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-
-import java.util.Iterator;
-
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import eu.dnetlib.iis.citationmatching.direct.schemas.Citation;
+import eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata;
+import eu.dnetlib.iis.citationmatching.direct.schemas.ReferenceMetadata;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
@@ -19,14 +15,16 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
-import eu.dnetlib.iis.citationmatching.direct.schemas.Citation;
-import eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata;
-import eu.dnetlib.iis.citationmatching.direct.schemas.ReferenceMetadata;
 import scala.Tuple2;
+
+import java.util.Iterator;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.iterableWithSize;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 /**
  * 
@@ -37,8 +35,7 @@ import scala.Tuple2;
 public class ExternalIdReferenceExtractorTest {
 
     private ExternalIdReferenceExtractor externalIdReferenceExtractor = new ExternalIdReferenceExtractor();
-    
-    
+
     @Mock
     private JavaRDD<DocumentMetadata> docMetadataRdd;
     
@@ -47,8 +44,7 @@ public class ExternalIdReferenceExtractorTest {
     
     @Captor
     private ArgumentCaptor<PairFlatMapFunction<DocumentMetadata, String, Citation>> flatMapCitationsFunctionArg;
-    
-    
+
     //------------------------ TEST --------------------------
     
     @Test(expected = NullPointerException.class)
@@ -65,24 +61,18 @@ public class ExternalIdReferenceExtractorTest {
     
     @Test
     public void extractExternalIdReferences() throws Exception {
-        
         // given
         doReturn(externalIdReferencesRdd).when(docMetadataRdd).flatMapToPair(any());
-        
-        
+
         // execute
-        
         JavaPairRDD<String, Citation> retExternalIdReferencesRdd = externalIdReferenceExtractor.extractExternalIdReferences(docMetadataRdd, "someIdType");
-        
-        
+
         // assert
-        
-        assertTrue(retExternalIdReferencesRdd == externalIdReferencesRdd);
+        assertSame(retExternalIdReferencesRdd, externalIdReferencesRdd);
         verify(docMetadataRdd).flatMapToPair(flatMapCitationsFunctionArg.capture());
         
         assertFlatMapCitationsFunction(flatMapCitationsFunctionArg.getValue());
     }
-    
     
     //------------------------ PRIVATE --------------------------
     
@@ -97,25 +87,26 @@ public class ExternalIdReferenceExtractorTest {
         ReferenceMetadata referenceMetadata4 = new ReferenceMetadata(4, Maps.newHashMap());
         referenceMetadata4.getExternalIds().put("someIdType", "ref.id2");
         referenceMetadata4.getExternalIds().put("someOtherIdType", "ref.other.id2");
+
+        assertThat(toIterable(function.call(new DocumentMetadata("id-1", null, null, Lists.newArrayList()))),
+                iterableWithSize(0));
+        assertThat(toIterable(function.call(new DocumentMetadata("id-1", null, null, Lists.newArrayList(referenceMetadata1)))),
+                iterableWithSize(0));
+        assertThat(toIterable(function.call(new DocumentMetadata("id-1", null, null, Lists.newArrayList(referenceMetadata2)))),
+                iterableWithSize(0));
+
+        ImmutableList<Tuple2<String, Citation>> references = ImmutableList
+                .copyOf(function.call(new DocumentMetadata("id-1", null, null, Lists.newArrayList(referenceMetadata3, referenceMetadata4))));
+
+        assertEquals(references.size(), 2);
+        Tuple2<String, Citation> firstReference = references.get(0);
+        Tuple2<String, Citation> secondReference = references.get(1);
         
-        
-        
-        assertThat(function.call(new DocumentMetadata("id-1", null, null, Lists.newArrayList())), iterableWithSize(0));
-        assertThat(function.call(new DocumentMetadata("id-1", null, null, Lists.newArrayList(referenceMetadata1))), iterableWithSize(0));
-        assertThat(function.call(new DocumentMetadata("id-1", null, null, Lists.newArrayList(referenceMetadata2))), iterableWithSize(0));
-        
-        Iterable<Tuple2<String, Citation>> references = function.call(new DocumentMetadata("id-1", null, null, Lists.newArrayList(referenceMetadata3, referenceMetadata4)));
-        
-        assertThat(references, iterableWithSize(2));
-        Iterator<Tuple2<String, Citation>> referenceIterator = references.iterator();
-        Tuple2<String, Citation> firstReference = referenceIterator.next();
-        Tuple2<String, Citation> secondReference = referenceIterator.next();
-        
-        assertThat(firstReference, equalTo(new Tuple2<String, Citation>("ref.id1", new Citation("id-1", 3, null))));
-        assertThat(secondReference, equalTo(new Tuple2<String, Citation>("ref.id2", new Citation("id-1", 4, null))));
-        
-        
+        assertThat(firstReference, equalTo(new Tuple2<>("ref.id1", new Citation("id-1", 3, null))));
+        assertThat(secondReference, equalTo(new Tuple2<>("ref.id2", new Citation("id-1", 4, null))));
     }
-    
-    
+
+    private static <T> Iterable<T> toIterable(Iterator<T> iterator){
+        return () -> iterator;
+    }
 }

@@ -23,7 +23,6 @@
             <value>citationmatching_direct</value>
             <description>directory for storing report (relative to output_report_root_path)</description>
         </property>
-        
         <property>
             <name>sparkDriverMemory</name>
             <description>memory for driver process</description>
@@ -35,6 +34,21 @@
         <property>
             <name>sparkExecutorCores</name>
             <description>number of cores used by single executor</description>
+        </property>
+        <property>
+            <name>oozieShareLibForSpark</name>
+            <value>spark2</value>
+            <description>oozie sharelib with spark2</description>
+        </property>
+        <property>
+            <name>sparkExtraListeners</name>
+            <value>com.cloudera.spark.lineage.NavigatorAppListener</value>
+            <description>spark extra listeners classname</description>
+        </property>
+        <property>
+            <name>sparkSqlQueryExecutionListeners</name>
+            <value>com.cloudera.spark.lineage.NavigatorQueryListener</value>
+            <description>spark sql query execution listeners classname</description>
         </property>
 	</parameters>
 
@@ -50,10 +64,13 @@
                 <name>oozie.launcher.mapred.job.queue.name</name>
                 <value>${oozieLauncherQueueName}</value>
             </property>
+            <property>
+                <name>oozie.action.sharelib.for.spark</name>
+                <value>${oozieShareLibForSpark}</value>
+            </property>
         </configuration>
     </global>
-    
-    
+
     <start to="citationmatchig-direct" />
 
     <action name="citationmatchig-direct">
@@ -70,7 +87,13 @@
             <class>eu.dnetlib.iis.wf.citationmatching.direct.CitationMatchingDirectJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-direct-${projectVersion}.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
+            <spark-opts>
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
+                --conf spark.extraListeners=${sparkExtraListeners}
+                --conf spark.sql.queryExecutionListeners=${sparkSqlQueryExecutionListeners}
+            </spark-opts>
 
             <arg>-inputAvroPath=${input}</arg>
             <arg>-inputPmcIdsMappingCSV=${inputPmcIdsMappingCSV}</arg>
@@ -87,5 +110,7 @@
             [${wf:errorMessage(wf:lastErrorNode())}]
         </message>
     </kill>
+
     <end name="end" />
+
 </workflow-app>
