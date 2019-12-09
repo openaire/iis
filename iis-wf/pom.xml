@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>eu.dnetlib.iis</groupId>
 		<artifactId>iis</artifactId>
 		<version>1.2.0-SNAPSHOT</version>
 	</parent>
+
 	<artifactId>iis-wf</artifactId>
 	<packaging>pom</packaging>
+
 	<modules>
        <module>iis-wf-affmatching</module>
        <module>iis-wf-documentssimilarity</module>
@@ -26,6 +29,7 @@
        <module>iis-wf-primary</module>
        <module>iis-wf-transformers</module>
     </modules>
+
     <pluginRepositories>
         <pluginRepository>
             <id>iis-releases</id>
@@ -34,6 +38,7 @@
             <layout>default</layout>
         </pluginRepository>
     </pluginRepositories>
+
     <properties>
         <maven.build.timestamp.format>yyyy-MM-dd_HH_mm</maven.build.timestamp.format>
         <!-- default Oozie installer properties requred to be defined at pom.xml level -->
@@ -46,34 +51,34 @@
         <importerQueueName>default</importerQueueName>
         <oozieLauncherQueueName>default</oozieLauncherQueueName>
         <primed.dir>primed</primed.dir>
-        
         <oozie.package.dependencies.include.scope>runtime</oozie.package.dependencies.include.scope>
         <oozie.package.dependencies.exclude.scope></oozie.package.dependencies.exclude.scope>
         <oozie.package.skip.test.jar>true</oozie.package.skip.test.jar>
-        
         <iisConnectionProperties>${user.home}/.iis/application.properties</iisConnectionProperties>
-        
-        <output.dir.name>${maven.build.timestamp}</output.dir.name>        
-        
+        <output.dir.name>${maven.build.timestamp}</output.dir.name>
         <projectVersion>${project.version}</projectVersion>
         <oozie.use.system.libpath>true</oozie.use.system.libpath>
     </properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>eu.dnetlib.iis</groupId>
 			<artifactId>iis-build-assembly-resources</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.apache.oozie</groupId>
 			<artifactId>oozie-client</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>net.schmizz</groupId>
 			<artifactId>sshj</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
 	<profiles>
 		<profile>
 			<!-- This profile sets properties that are required for test oozie workflows To be used only with 'oozie-package' profile -->
@@ -86,6 +91,7 @@
 				<oozie.package.skip.test.jar>false</oozie.package.skip.test.jar>
 			</properties>
 		</profile>
+
 		<profile>
 			<id>oozie-package</id>
 			<build>
@@ -118,6 +124,7 @@
 							</execution>
 						</executions>
 					</plugin>
+
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-dependency-plugin</artifactId>
@@ -136,6 +143,7 @@
 							</execution>
 						</executions>
 					</plugin>
+
 					<!-- Plugin originally defined in attach-test-resources It was moved here to ensure that it will execute before priming -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -177,6 +185,7 @@
 							</execution>
 						</executions>
 					</plugin>
+
 					<!-- reading job.properties to use them in .sh scripts -->
 					<plugin>
 						<groupId>org.kuali.maven.plugins</groupId>
@@ -233,6 +242,7 @@
 							</execution>
 						</executions>
 					</plugin>
+
 					<plugin>
 						<groupId>eu.dnetlib.iis</groupId>
 						<artifactId>iis-build-properties-maven-plugin</artifactId>
@@ -270,6 +280,7 @@
 							</execution>
 						</executions>
 					</plugin>
+
 					<plugin>
 						<groupId>pl.project13.maven</groupId>
 						<artifactId>git-commit-id-plugin</artifactId>
@@ -288,6 +299,7 @@
 							<generateGitPropertiesFilename>target/${oozie.package.file.name}/${oozieAppDir}/version.properties</generateGitPropertiesFilename>
 						</configuration>
 					</plugin>
+
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-assembly-plugin</artifactId>
@@ -316,10 +328,9 @@
 							</execution>
 						</executions>
 					</plugin>
-                    
+
 					<plugin>
 						<!-- this plugin prepares oozie installer package-->
-
 						<artifactId>maven-antrun-plugin</artifactId>
 						<executions>
 							<!-- extracting shared resources phase -->
@@ -360,9 +371,7 @@
 											</fileset>
 										</copy>
 
-										
 										<fixcrlf srcdir="target/${oozie.package.file.name}/${oozieAppDir}/" encoding="UTF-8" outputencoding="UTF-8" includes="**/*.sh,**/*.json,**/*.py,**/*.sql" eol="lf"/>
-										
 
 										<!-- creating tar.gz package -->
 										<tar destfile="target/${oozie.package.file.name}.tar.gz" compression="gzip" longfile="gnu">
@@ -388,6 +397,7 @@
 				</plugins>
 			</build>
 		</profile>
+
 		<profile>
 			<id>deploy</id>
 			<build>
@@ -454,6 +464,7 @@
 				</plugins>
 			</build>
 		</profile>
+
 		<profile>
 			<id>run</id>
 			<build>
@@ -500,6 +511,7 @@
 				</plugins>
 			</build>
 		</profile>
+
 		<profile>
 			<!-- this profile is handling unit and integration test definitions of all child modules -->
 			<id>child-tests</id>
@@ -551,7 +563,7 @@
 			</activation>
 		</profile>
 	</profiles>
-	
+
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -565,22 +577,12 @@
 							<pluginExecutions>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>
-											org.kuali.maven.plugins
-										</groupId>
-										<artifactId>
-											properties-maven-plugin
-										</artifactId>
-										<versionRange>
-											[1.3.2,)
-										</versionRange>
+										<groupId>org.kuali.maven.plugins</groupId>
+										<artifactId>properties-maven-plugin</artifactId>
+										<versionRange>[1.3.2,)</versionRange>
 										<goals>
-											<goal>
-												read-project-properties
-											</goal>
-											<goal>
-												write-project-properties
-											</goal>
+											<goal>read-project-properties</goal>
+											<goal>write-project-properties</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>
@@ -608,4 +610,5 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+
 </project>
