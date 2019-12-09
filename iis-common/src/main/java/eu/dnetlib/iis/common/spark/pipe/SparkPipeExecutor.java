@@ -1,17 +1,15 @@
 package eu.dnetlib.iis.common.spark.pipe;
 
-import java.io.Serializable;
-
+import eu.dnetlib.iis.common.utils.AvroGsonFactory;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.mapred.AvroKey;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.spark.SparkFiles;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
-
-import eu.dnetlib.iis.common.utils.AvroGsonFactory;
 import scala.Tuple2;
 
+import java.io.Serializable;
 
 /**
  * Executor of mapreduce scripts using spark pipes.
@@ -23,7 +21,6 @@ import scala.Tuple2;
 public class SparkPipeExecutor implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
 
 	//------------------------ LOGIC --------------------------
 	
@@ -37,16 +34,14 @@ public class SparkPipeExecutor implements Serializable {
 	 * splitted by tab (\t) character in single line. 
 	 */
 	public JavaPairRDD<String, String> doMap(JavaPairRDD<AvroKey<GenericRecord>, NullWritable> inputRecords, String scriptName, String args) {
-
-		JavaRDD<String> mappedRecords = inputRecords.keys().pipe("python " + SparkFiles.get(scriptName) + " " + args);
-
-		JavaPairRDD<String, String> outputRecords = mappedRecords
+		JavaRDD<String> mappedRecords = inputRecords
+				.keys()
+				.pipe("python " + SparkFiles.get(scriptName) + " " + args);
+		return mappedRecords
 				.mapToPair(line -> {
 					String[] splittedPair = line.split("\t");
-					return new Tuple2<String, String>(splittedPair[0], (splittedPair.length == 1) ? null : splittedPair[1]);
+					return new Tuple2<>(splittedPair[0], (splittedPair.length == 1) ? null : splittedPair[1]);
 				});
-
-		return outputRecords;
 	}
 
 	/**
@@ -59,16 +54,13 @@ public class SparkPipeExecutor implements Serializable {
 	 * Reduced records must be json strings of class provided as argument.
 	 */
 	public JavaPairRDD<AvroKey<GenericRecord>, NullWritable> doReduce(JavaPairRDD<String, String> inputRecords, String scriptName, String args, Class<? extends GenericRecord> outputClass) {
-
-		JavaRDD<String> reducedRecords = inputRecords.sortByKey()
+		JavaRDD<String> reducedRecords = inputRecords
+				.sortByKey()
 				.map(record -> record._1 + ((record._2 == null) ? "" : ("\t" + record._2)))
 				.pipe("python " + SparkFiles.get(scriptName) + " " + args);
-
-		JavaPairRDD<AvroKey<GenericRecord>, NullWritable> outputRecords = reducedRecords
+		return reducedRecords
 				.map(recordString -> AvroGsonFactory.create().fromJson(recordString, outputClass))
-				.mapToPair(record -> new Tuple2<AvroKey<GenericRecord>, NullWritable>(new AvroKey<>(record), NullWritable.get()));
-
-		return outputRecords;
+				.mapToPair(record -> new Tuple2<>(new AvroKey<>(record), NullWritable.get()));
 	}
 
 }

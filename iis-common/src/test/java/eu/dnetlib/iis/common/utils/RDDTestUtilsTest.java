@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.common.utils;
 
+import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
@@ -29,9 +30,8 @@ public class RDDTestUtilsTest {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
         conf.set("spark.driver.host", "localhost");
-        conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
         conf.setAppName("RDDTestUtilsTest");
-        sc = new JavaSparkContext(conf);
+        sc = JavaSparkContextFactory.withConfAndKryo(conf);
         configuration = new Configuration();
     }
 
