@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -11,10 +12,7 @@
     <artifactId>iis-wf-affmatching</artifactId>
     <packaging>jar</packaging>
 
-
-
     <dependencies>
-
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>iis-schemas</artifactId>
@@ -37,12 +35,17 @@
 
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_2.10</artifactId>
+            <artifactId>spark-core_2.11</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_2.11</artifactId>
         </dependency>
 
         <dependency>
             <groupId>pl.edu.icm.spark-utils</groupId>
-            <artifactId>spark-utils</artifactId>
+            <artifactId>spark-utils_2.11</artifactId>
         </dependency>
 
         <dependency>
@@ -59,10 +62,7 @@
             <groupId>net.sf.opencsv</groupId>
             <artifactId>opencsv</artifactId>
         </dependency>
-
-
     </dependencies>
-
 
     <build>
         <plugins>
@@ -84,6 +84,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <!-- This plugin makes the Maven->Update Project Configuration not forget about the "target/generated-sources/java" source path -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -105,4 +106,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
