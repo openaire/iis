@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	
-	<modelVersion>4.0.0</modelVersion>
-    
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
-    		<groupId>eu.dnetlib.iis</groupId>
-	        <artifactId>iis</artifactId>
-            <version>1.2.0-SNAPSHOT</version>
-	</parent>
-	
-	<artifactId>iis-common</artifactId>
-	<packaging>jar</packaging>
-	
-	
-	<dependencies>
-	
-	    <dependency>
+        <groupId>eu.dnetlib.iis</groupId>
+        <artifactId>iis</artifactId>
+        <version>1.2.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>iis-common</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
             <groupId>pl.edu.icm.spark-utils</groupId>
-            <artifactId>spark-utils</artifactId>
+            <artifactId>spark-utils_2.11</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -26,75 +25,83 @@
             <artifactId>curator-test</artifactId>
             <scope>test</scope>
         </dependency>
-	
-		<dependency>
+
+        <dependency>
             <groupId>eu.dnetlib.iis</groupId>
             <artifactId>iis-schemas</artifactId>
             <version>${project.version}</version>
         </dependency>
-		
-		<dependency>
+
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>iis-3rdparty-avrojsoncoders</artifactId>
             <version>${project.version}</version>
         </dependency>
-		
-		<dependency>
-			<groupId>eu.dnetlib</groupId>
-			<artifactId>dnet-openaire-data-protos</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.oozie</groupId>
-			<artifactId>oozie-core</artifactId>
-			<scope>provided</scope>
-		</dependency>
+
+        <dependency>
+            <groupId>eu.dnetlib</groupId>
+            <artifactId>dnet-openaire-data-protos</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.oozie</groupId>
+            <artifactId>oozie-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-mapreduce-client-core</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-common</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_2.10</artifactId>
+            <artifactId>spark-core_2.11</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_2.10</artifactId>
+            <artifactId>spark-sql_2.11</artifactId>
         </dependency>
-                
+
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro-mapred</artifactId>
             <classifier>hadoop2</classifier>
         </dependency>
+
         <dependency>
-        	<!-- required by caching mechanism -->
+            <!-- required by caching mechanism -->
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
+
         <dependency>
-        	<!-- required by caching mechanism for setting chmod -->
+            <!-- required by caching mechanism for setting chmod -->
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
         </dependency>
-    	<dependency>
-			<groupId>com.thoughtworks.xstream</groupId>
-			<artifactId>xstream</artifactId>
-		</dependency>
-    	
+
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>net.schmizz</groupId>
             <artifactId>sshj</artifactId>
@@ -105,17 +112,17 @@
             <groupId>com.beust</groupId>
             <artifactId>jcommander</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.pig</groupId>
             <artifactId>pig</artifactId>
         </dependency>
-        
+
         <dependency>
-          <groupId>com.linkedin.datafu</groupId>
-          <artifactId>datafu</artifactId>
+            <groupId>com.linkedin.datafu</groupId>
+            <artifactId>datafu</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
@@ -130,22 +137,16 @@
             <groupId>org.jdom</groupId>
             <artifactId>jdom</artifactId>
         </dependency>
+    </dependencies>
 
-	</dependencies>
-
-	<build>
-	   <plugins>
-	       <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>scala-maven-plugin</artifactId>
-           </plugin>
-	       
-	        <!-- Plugin that generates Java classes from Avro schemas -->
+    <build>
+        <plugins>
+            <!-- Plugin that generates Java classes from Avro schemas -->
             <plugin>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro-maven-plugin</artifactId>
                 <executions>
-                   <execution>
+                    <execution>
                         <phase>generate-test-sources</phase>
                         <goals>
                             <goal>schema</goal>
@@ -157,7 +158,7 @@
                     </execution>
                 </executions>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -175,8 +176,8 @@
                         </configuration>
                     </execution>
                 </executions>
-             </plugin>
-             
+            </plugin>
+
             <!-- Plugin that generates jar with test classes -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -203,6 +204,6 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
         </plugins>
-	</build>
+    </build>
 	
 </project>
