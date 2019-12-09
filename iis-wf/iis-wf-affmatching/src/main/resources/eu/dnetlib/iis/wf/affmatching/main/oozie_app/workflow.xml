@@ -70,6 +70,21 @@
             <description>interval between each executor's heartbeats to the driver</description>
         </property>
         <property>
+            <name>oozieShareLibForSpark</name>
+            <value>spark2</value>
+            <description>oozie sharelib with spark2</description>
+        </property>
+        <property>
+            <name>sparkExtraListeners</name>
+            <value>com.cloudera.spark.lineage.NavigatorAppListener</value>
+            <description>spark extra listeners classname</description>
+        </property>
+        <property>
+            <name>sparkSqlQueryExecutionListeners</name>
+            <value>com.cloudera.spark.lineage.NavigatorQueryListener</value>
+            <description>spark sql query execution listeners classname</description>
+        </property>
+        <property>
             <name>number_of_emitted_files</name>
             <value>1000</value>
             <description>number of files created by webcrawler module</description>
@@ -88,10 +103,13 @@
                 <name>oozie.launcher.mapred.job.queue.name</name>
                 <value>${oozieLauncherQueueName}</value>
             </property>
+            <property>
+                <name>oozie.action.sharelib.for.spark</name>
+                <value>${oozieShareLibForSpark}</value>
+            </property>
         </configuration>
     </global>
-    
-    
+
     <start to="affiliation-matching" />
 
     <action name="affiliation-matching">
@@ -107,7 +125,16 @@
             <class>eu.dnetlib.iis.wf.affmatching.AffMatchingJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-affmatching-${projectVersion}.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory} --conf spark.yarn.driver.memoryOverhead=${sparkDriverOverhead} --conf spark.network.timeout=${sparkNetworkTimeout} --conf spark.executor.heartbeatInterval=${sparkExecutorHeartbeatInterval}</spark-opts>
+            <spark-opts>
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
+                --conf spark.yarn.driver.memoryOverhead=${sparkDriverOverhead}
+                --conf spark.network.timeout=${sparkNetworkTimeout}
+                --conf spark.executor.heartbeatInterval=${sparkExecutorHeartbeatInterval}
+                --conf spark.extraListeners=${sparkExtraListeners}
+                --conf spark.sql.queryExecutionListeners=${sparkSqlQueryExecutionListeners}
+            </spark-opts>
 
             <arg>-inputAvroOrgPath=${input_organizations}</arg>
             <arg>-inputAvroAffPath=${input_document_metadata}</arg>
@@ -131,5 +158,7 @@
             [${wf:errorMessage(wf:lastErrorNode())}]
         </message>
     </kill>
+
     <end name="end" />
+
 </workflow-app>

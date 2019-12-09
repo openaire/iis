@@ -15,9 +15,7 @@
         </configuration>
     </global>
 
-
     <start to="data_producer" />
-
 
     <action name="data_producer">
         <java>
@@ -41,7 +39,6 @@
         <ok to="affiliation_matching_dedup" />
         <error to="fail" />
     </action>
-
 
     <action name="affiliation_matching_dedup">
         <sub-workflow>
@@ -76,14 +73,11 @@
                     <name>workingDir</name>
                     <value>${workingDir}/affmatching-dedup</value>
                 </property>
-
-                <!-- sparkDriverMemory, sparkExecutorMemory, sparkExecutorCores are provided by environment (since git#889) -->
             </configuration>
         </sub-workflow>
         <ok to="consumer"/>
         <error to="fail"/>
     </action>
-
 
     <action name="consumer">
         <java>
@@ -101,7 +95,6 @@
         <ok to="end" />
         <error to="fail" />
     </action>
-
 
     <kill name="fail">
         <message>Unfortunately, the process failed -- error message: [${wf:errorMessage(wf:lastErrorNode())}]</message>
