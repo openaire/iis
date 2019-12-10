@@ -20,7 +20,6 @@
 			<name>output_document_to_project</name>
 			<description>output document to project</description>
 		</property>
-		
 		<property>
             <name>sparkDriverMemory</name>
             <description>memory for driver process</description>
@@ -33,7 +32,22 @@
             <name>sparkExecutorCores</name>
             <description>number of cores used by single executor</description>
         </property>
-	</parameters>
+        <property>
+            <name>oozieShareLibForSpark</name>
+            <value>spark2</value>
+            <description>oozie sharelib with spark2</description>
+        </property>
+        <property>
+            <name>sparkExtraListeners</name>
+            <value>com.cloudera.spark.lineage.NavigatorAppListener</value>
+            <description>spark extra listeners classname</description>
+        </property>
+        <property>
+            <name>sparkSqlQueryExecutionListeners</name>
+            <value>com.cloudera.spark.lineage.NavigatorQueryListener</value>
+            <description>spark sql query execution listeners classname</description>
+        </property>
+    </parameters>
 
 	<start to="sqlite_builder" />
 
@@ -99,12 +113,24 @@
             <prepare>
                 <delete path="${workingDir}/meta_with_text" />
             </prepare>
+            <configuration>
+                <property>
+                    <name>oozie.action.sharelib.for.spark</name>
+                    <value>${oozieShareLibForSpark}</value>
+                </property>
+            </configuration>
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>tara-referenceextraction-input-transformer</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.project.input.TaraReferenceExtractionInputTransformerJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
+            <spark-opts>
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
+                --conf spark.extraListeners=${sparkExtraListeners}
+                --conf spark.sql.queryExecutionListeners=${sparkSqlQueryExecutionListeners}
+            </spark-opts>
             <arg>-inputMetadata = ${input_document_metadata}</arg>
             <arg>-inputText = ${input_document_text}</arg>
             <arg>-output = ${workingDir}/meta_with_text</arg>
@@ -209,9 +235,10 @@
 
     <kill name="fail">
         <message>Unfortunately, the process failed -- error message:
-        			[${wf:errorMessage(wf:lastErrorNode())}]
-        		</message>
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
     </kill>
 
     <end name="end"/>
+
 </workflow-app>

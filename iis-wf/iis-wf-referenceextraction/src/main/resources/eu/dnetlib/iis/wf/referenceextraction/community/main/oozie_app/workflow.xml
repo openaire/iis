@@ -26,19 +26,39 @@
             <name>sparkExecutorCores</name>
             <description>number of cores used by single executor</description>
         </property>
-        
-	</parameters>
+        <property>
+            <name>oozieShareLibForSpark</name>
+            <value>spark2</value>
+            <description>oozie sharelib with spark2</description>
+        </property>
+        <property>
+            <name>sparkExtraListeners</name>
+            <value>com.cloudera.spark.lineage.NavigatorAppListener</value>
+            <description>spark extra listeners classname</description>
+        </property>
+        <property>
+            <name>sparkSqlQueryExecutionListeners</name>
+            <value>com.cloudera.spark.lineage.NavigatorQueryListener</value>
+            <description>spark sql query execution listeners classname</description>
+        </property>
+    </parameters>
 
 	<start to="input-transformer" />
 
     <action name="input-transformer">
-    
         <spark xmlns="uri:oozie:spark-action:0.2">
 
             <prepare>
                 <delete path="${workingDir}/communities" />
             </prepare>
-            
+
+            <configuration>
+                <property>
+                    <name>oozie.action.sharelib.for.spark</name>
+                    <value>${oozieShareLibForSpark}</value>
+                </property>
+            </configuration>
+
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>community-referenceextraction-input-transformer</name>
@@ -46,8 +66,14 @@
             <class>eu.dnetlib.iis.wf.referenceextraction.community.input.CommunityReferenceExtractionInputTransformerJob</class>
 
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
-            
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
+
+            <spark-opts>
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
+                --conf spark.extraListeners=${sparkExtraListeners}
+                --conf spark.sql.queryExecutionListeners=${sparkSqlQueryExecutionListeners}
+            </spark-opts>
 
             <arg>-acknowledgementParamName=suggestedAcknowledgement</arg>
         
@@ -57,7 +83,6 @@
         </spark>
         <ok to="sqlite_builder"/>
         <error to="fail"/>
-    
     </action>
 
     <action name="sqlite_builder">
@@ -65,7 +90,6 @@
             <app-path>${wf:appPath()}/sqlite_builder</app-path>
             <propagate-configuration />
             <configuration>
-                <!-- Working directory of the subworkflow -->
                 <property>
                     <name>workingDir</name>
                     <value>${workingDir}/sqlite_builder/working_dir</value>
@@ -89,7 +113,6 @@
             <app-path>${wf:appPath()}/main_sqlite</app-path>
             <propagate-configuration />
             <configuration>
-                <!-- Working directory of the subworkflow -->
                 <property>
                     <name>workingDir</name>
                     <value>${workingDir}/main_sqlite/working_dir</value>
@@ -137,9 +160,10 @@
 
     <kill name="fail">
         <message>Unfortunately, the process failed -- error message:
-        			[${wf:errorMessage(wf:lastErrorNode())}]
-        		</message>
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
     </kill>
 
     <end name="end"/>
+
 </workflow-app>

@@ -1,9 +1,21 @@
 package eu.dnetlib.iis.wf.referenceextraction.softwareurl;
 
-import java.io.File;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import eu.dnetlib.iis.audit.schemas.Fault;
+import eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess;
+import eu.dnetlib.iis.common.java.io.HdfsUtils;
+import eu.dnetlib.iis.common.lock.LockManager;
+import eu.dnetlib.iis.common.lock.LockManagerFactory;
+import eu.dnetlib.iis.common.report.ReportEntryFactory;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
+import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
+import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrl;
+import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithSource;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -12,28 +24,14 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-
-import eu.dnetlib.iis.audit.schemas.Fault;
-import eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess;
-import eu.dnetlib.iis.common.java.io.HdfsUtils;
-import eu.dnetlib.iis.common.lock.LockManager;
-import eu.dnetlib.iis.common.lock.LockManagerFactory;
-import eu.dnetlib.iis.common.report.ReportEntryFactory;
-import eu.dnetlib.iis.common.schemas.ReportEntry;
-import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
-import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrl;
-import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithSource;
+import org.apache.spark.api.java.Optional;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 import scala.Tuple2;
 
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Retrieves HTML pages pointed by softwareURL field from {@link DocumentToSoftwareUrl}.
@@ -55,19 +53,12 @@ public class CachedWebCrawlerJob {
     
     private static final String COUNTER_FROMCACHE_TOTAL = "processing.referenceExtraction.softwareUrl.webcrawl.fromCache.total";
     
-    
     //------------------------ LOGIC --------------------------
-    
-    
+
     public static void main(String[] args) throws Exception {
-        
         WebCrawlerJobParameters params = new WebCrawlerJobParameters();
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
-        
-        SparkConf conf = new SparkConf();
-        conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
-        conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
         
         final String cacheRootDir = normalizePath(params.cacheRootDir);
         
@@ -76,17 +67,14 @@ public class CachedWebCrawlerJob {
         
         CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
         
-        try (JavaSparkContext sc = new JavaSparkContext(conf)) {
-            
-            Configuration hadoopConf = sc.hadoopConfiguration();
-            
-            LockManager lockManager = instantiateLockManager(params.lockManagerFactoryClassName, hadoopConf);
+        try (JavaSparkContext sc = JavaSparkContextFactory.withConfAndKryo(new SparkConf())) {
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputPath);
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputFaultPath);
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
+
+            LockManager lockManager = instantiateLockManager(params.lockManagerFactoryClassName, sc.hadoopConfiguration());
             
             OutputPaths outputPaths = new OutputPaths(params);
-            
-            HdfsUtils.remove(hadoopConf, params.outputPath);
-            HdfsUtils.remove(hadoopConf, params.outputFaultPath);
-            HdfsUtils.remove(hadoopConf, params.outputReportPath);
             
             JavaRDD<DocumentToSoftwareUrl> documentToSoftwareUrl = avroLoader.loadJavaRDD(sc, params.inputPath,
                     DocumentToSoftwareUrl.class);
@@ -99,18 +87,16 @@ public class CachedWebCrawlerJob {
             }
             
             // getting existing cache id
-            String existingCacheId = cacheManager.getExistingCacheId(hadoopConf, cacheRootDir);
+            String existingCacheId = cacheManager.getExistingCacheId(sc.hadoopConfiguration(), cacheRootDir);
             
             // checking whether cache is empty
             if (CacheMetadataManagingProcess.UNDEFINED.equals(existingCacheId)) {
                 
                 createCache(documentToSoftwareUrl, cacheRootDir, 
                         contentRetrieverContext, lockManager, sc, cacheManager, outputPaths);
-
             } else {
                 updateCache(documentToSoftwareUrl, cacheRootDir, existingCacheId, 
                         contentRetrieverContext, lockManager, sc, cacheManager, outputPaths);
-                
             }
         }
     }
@@ -163,7 +149,6 @@ public class CachedWebCrawlerJob {
         storeInOutput(entitiesToBeStored, faultsToBeStored,
                 generateReportEntries(sc, sc.emptyRDD(), entitiesToBeStored, faultsToBeStored),
                 outputPaths, contentRetrieverContext.getNumberOfEmittedFiles());
-        
     }
     
     private static void updateCache(JavaRDD<DocumentToSoftwareUrl> documentToSoftwareUrl,
@@ -337,15 +322,10 @@ public class CachedWebCrawlerJob {
     }
     
     protected static String getCacheLocation(String cacheRootDir, String cacheId, CacheRecordType cacheRecordType) {
-        StringBuilder strBuilder = new StringBuilder(cacheRootDir);
-        strBuilder.append('/');
-        strBuilder.append(cacheId);
-        strBuilder.append('/');
-        strBuilder.append(cacheRecordType.name());    
-        return strBuilder.toString();
+        return cacheRootDir + '/' + cacheId + '/' + cacheRecordType.name();
     }
     
-    protected static enum CacheRecordType {
+    protected enum CacheRecordType {
         text,
         fault
     }
