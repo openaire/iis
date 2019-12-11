@@ -21,18 +21,18 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 public class DocumentProjectMergerTest {
 
     private DocumentProjectMerger documentProjectMerger = new DocumentProjectMerger();
-    
+
     private JavaSparkContext sparkContext;
 
     @Before
     public void setup() {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
-        conf.setAppName(getClass().getName());
         conf.set("spark.driver.host", "localhost");
+        conf.setAppName(DocumentProjectMergerTest.class.getSimpleName());
         sparkContext = JavaSparkContextFactory.withConfAndKryo(conf);
     }
-    
+
     @After
     public void cleanup() {
         if (sparkContext != null) {
@@ -41,7 +41,7 @@ public class DocumentProjectMergerTest {
     }
 
     //------------------------ TESTS --------------------------
-    
+
     @Test
     public void merge() {
         // given
@@ -66,7 +66,7 @@ public class DocumentProjectMergerTest {
                 new AffMatchDocumentProject("DOC1", "PROJ3", 0.4f),
                 new AffMatchDocumentProject("DOC1", "PROJ4", 0.7f),
                 new AffMatchDocumentProject("DOC2", "PROJ4", 0.8f));
-        
+
         assertThat(retDocumentProjects.collect(), containsInAnyOrder(expectedDocumentProjects.toArray()));
     }
 }

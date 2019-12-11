@@ -53,7 +53,7 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
- * An {@link AffOrgMatchVoter} match strength estimator. <br/> 
+ * An {@link AffOrgMatchVoter} match strength estimator. <br/>
  * Each test method of this class gives the match strength of every voter connected to
  * a given {@link AffOrgMatcher}. Thus, the match strength of a voter is not absolute but relative
  * (to the given matcher). <br/>
@@ -64,35 +64,35 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class AffOrgMatchVoterStrengthEstimatorAndTest {
 
     private final static boolean PRINT_NOT_MATCHED = false;
-    
+
     private final static boolean PRINT_FALSE_POSITIVES = true;
-    
+
     private final static boolean PRINT_NUMBER_DETAILS = true;
-    
+
     private final static String INPUT_DATA_DIR_PATH = "src/test/resources/experimentalData/input";
-    
+
     private final static int VOTER_MATCH_STRENGTH_SCALE = 3; // number of decimal places
-    
+
     private List<InvalidVoterStrength> invalidVoterStrengths = Lists.newArrayList();
 
     private AffMatchingService affMatchingService;
-    
+
     private static JavaSparkContext sparkContext;
-    
+
     private File workingDir;
-    
+
     private String inputOrgDirPath;
-    
+
     private String inputAffDirPath;
-    
+
     private String inputDocProjDirPath;
-    
+
     private String inputInferredDocProjDirPath;
-    
+
     private float inputDocProjConfidenceThreshold = 0.8f;
-    
+
     private String inputProjOrgDirPath;
-    
+
     private String outputDirPath;
 
     private String outputReportPath;
@@ -101,15 +101,15 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
     public static void classSetup() {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
-        conf.setAppName(AffOrgMatchVoterStrengthEstimatorAndTest.class.getName());
         conf.set("spark.driver.host", "localhost");
+        conf.setAppName(AffOrgMatchVoterStrengthEstimatorAndTest.class.getSimpleName());
         sparkContext = JavaSparkContextFactory.withConfAndKryo(conf);
     }
-    
+
     @Before
     public void setup() throws IOException {
         workingDir = Files.createTempDirectory("AffOrgMatchVoterStrengthEstimatorAndTest_").toFile();
-        
+
         inputOrgDirPath = workingDir + "/affiliation_matching/input/organizations";
         inputAffDirPath = workingDir + "/affiliation_matching/input/affiliations";
         inputDocProjDirPath = workingDir + "/affiliation_matching/input/doc_proj";
@@ -117,7 +117,7 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
         inputProjOrgDirPath = workingDir + "/affiliation_matching/input/proj_org";
         outputDirPath = workingDir + "/affiliation_matching/output";
         outputReportPath = workingDir + "/affiliation_matching/report";
-        
+
         affMatchingService = createAffMatchingService();
     }
 
@@ -127,9 +127,9 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
             sparkContext.close();
         }
     }
-    
+
     //------------------------ TESTS --------------------------
-    
+
     @Test
     public void estimateAndCheckVoterStrengths() throws IOException {
         // execute
@@ -138,13 +138,13 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
         estimateAlternativeNameMainSectionHashBucketMatcherVoterStrengths();
         estimateShortNameMainSectionHashBucketMatcherVoterStrengths();
         estimateFirstWordsHashBucketMatcherVoterStrengths();
-        
+
         // assert
         if (CollectionUtils.isNotEmpty(invalidVoterStrengths)) {
             System.out.println("Invalid Voter Strengths. Change them manually to the calculated values (in the code):\n");
             invalidVoterStrengths.forEach(System.out::println);
         }
-        
+
         assertThat(invalidVoterStrengths, Matchers.emptyIterable());
     }
 
@@ -155,7 +155,7 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
         createInputData();
         AffOrgMatcher affOrgMatcher = createDocOrgRelationMatcher(sparkContext, inputDocProjDirPath, inputInferredDocProjDirPath, inputProjOrgDirPath, inputDocProjConfidenceThreshold);
         List<AffOrgMatchVoter> voters = createDocOrgRelationMatcherVoters();
-        
+
         // execute
         estimateVoterMatchStrengths(affOrgMatcher, "Doc-Org Relation Matcher", voters);
     }
@@ -203,7 +203,7 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
     private void estimateVoterMatchStrengths(AffOrgMatcher affOrgMatcher, String affOrgMatcherName, List<AffOrgMatchVoter> voters) throws IOException {
         printMatcherHeader(affOrgMatcherName);
         List<String> matchedAffPaths = ImmutableList.of("src/test/resources/experimentalData/expectedOutput/matched_aff.json");
-        
+
         // given
         affMatchingService.setAffOrgMatchers(ImmutableList.of(affOrgMatcher));
         AffOrgMatchComputer affOrgMatchComputer = new AffOrgMatchComputer();
@@ -222,16 +222,16 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
         }
 
         out.println("\n\n");
-        
+
         FileUtils.deleteDirectory(workingDir);
     }
 
     private void checkIfVoterStrengthSetCorrectly(String affOrgMatcherName, AffOrgMatchVoter voter, float calculatedVoterStrength) {
         double voterStrengthEpsilon = 5/Math.pow(10, 1+VOTER_MATCH_STRENGTH_SCALE);
-        
-        if ((calculatedVoterStrength <= voter.getMatchStrength() - voterStrengthEpsilon) || 
+
+        if ((calculatedVoterStrength <= voter.getMatchStrength() - voterStrengthEpsilon) ||
             (calculatedVoterStrength >= voter.getMatchStrength() + voterStrengthEpsilon)) {
-        
+
                 String voterName = affOrgMatcherName + ":" + voter.toString();
                 invalidVoterStrengths.add(new InvalidVoterStrength(voterName, calculatedVoterStrength, voter.getMatchStrength()));
         }
@@ -248,7 +248,7 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
         out.println("========================= " + affOrgMatcherName + " ===========================");
         out.println("==================================================================================");
     }
-    
+
     private void createInputData() throws IOException {
         createInputDataFromJsonFiles(
                 of(INPUT_DATA_DIR_PATH + "/all_organizations.json"),
@@ -257,7 +257,7 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
                 of(),
                 of(INPUT_DATA_DIR_PATH + "/org_project.json"));
     }
-    
+
     private void createInputDataFromJsonFiles(List<String> jsonInputOrgPaths, List<String> jsonInputAffPaths, List<String> jsonInputDocProjPaths, List<String> jsonInputInferredDocProjPaths, List<String> jsonInputProjOrgPaths) throws IOException {
         createLocalAvroDataStore(readMultipleJsonDataStores(jsonInputOrgPaths, Organization.class), inputOrgDirPath, Organization.class);
         createLocalAvroDataStore(readMultipleJsonDataStores(jsonInputAffPaths, ExtractedDocumentMetadata.class), inputAffDirPath, ExtractedDocumentMetadata.class);
@@ -269,35 +269,35 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
     private float calcAndPrintResult(List<String> expectedResultsJsonPaths) throws IOException {
         List<SimpleAffMatchResult> actualMatches = readJson(outputDirPath + "/part-00000", SimpleAffMatchResult.class);
         List<SimpleAffMatchResult> expectedMatches = readMultipleJsons(expectedResultsJsonPaths, SimpleAffMatchResult.class);
-        
+
         List<SimpleAffMatchResult> correctMatches = actualMatches.stream().filter(expectedMatches::contains).collect(toList());
         List<SimpleAffMatchResult> falsePositives = actualMatches.stream().filter(x -> !expectedMatches.contains(x)).collect(toList());
-        
+
         float matchStrength = calcMatchStrength(actualMatches.size(), correctMatches.size());
-        
+
         printMatchStrength(matchStrength);
 
         if (PRINT_NUMBER_DETAILS) {
             printNumberDetails(expectedMatches.size(), actualMatches.size(), correctMatches.size(), falsePositives.size());
         }
-        
+
         out.println();
-        
+
         if (PRINT_FALSE_POSITIVES) {
             printFalsePositives(inputAffDirPath, inputOrgDirPath, expectedMatches, actualMatches);
         }
-        
+
         if (PRINT_NOT_MATCHED) {
             printNotMatched(inputAffDirPath, inputOrgDirPath, expectedMatches, actualMatches);
         }
-        
+
         return matchStrength;
     }
 
     private float calcMatchStrength(int numberOfActualMatches, int numberOfCorrectMatches) {
         return ((float)numberOfCorrectMatches)/numberOfActualMatches;
     }
-    
+
     private void printMatchStrength(float matchStrength) {
         out.printf("%s %1." + VOTER_MATCH_STRENGTH_SCALE + "f", "MATCH STRENGTH: ", matchStrength);
     }
@@ -314,9 +314,9 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
 
     private void printQualityFactor(String factorName, int goodCount, int totalCount) {
         double factorPercentage = ((double)goodCount/totalCount)*100;
-        
+
         String text = String.format("%s %3.2f%% (%d/%d)", factorName + ":", factorPercentage, goodCount, totalCount);
-        
+
         System.out.print(text);
     }
 
@@ -332,32 +332,32 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
 
         AffMatchOrganizationAltNameFiller altNameFiller = createAffMatchOrganizationAltNameFiller();
         affMatchingService.setAffMatchOrganizationAltNameFiller(altNameFiller);
-        
+
         return affMatchingService;
     }
-    
+
     private AffMatchOrganizationAltNameFiller createAffMatchOrganizationAltNameFiller() throws IOException {
         AffMatchOrganizationAltNameFiller altNameFiller = new AffMatchOrganizationAltNameFiller();
-        
+
         List<Set<String>> alternativeNamesDictionary = new CsvOrganizationAltNamesDictionaryFactory()
                 .createAlternativeNamesDictionary(OrganizationAltNameConst.CLASSPATH_ALTERNATIVE_NAMES_CSV_FILES);
         altNameFiller.setAlternativeNamesDictionary(alternativeNamesDictionary);
-        
+
         return altNameFiller;
     }
-    
+
     //------------------------ INNER CLASSES --------------------------
-    
+
     private static class InvalidVoterStrength {
-        
+
         private String voterName;
-        
+
         private float calculatedStrength;
-        
+
         private float setStrength;
 
         //------------------------ CONSTRUCTORS --------------------------
-        
+
         public InvalidVoterStrength(String voterName, float calculatedStrength, float setStrength) {
             super();
             this.voterName = voterName;
@@ -366,7 +366,7 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
         }
 
         //------------------------ toString --------------------------
-        
+
         @Override
         public String toString() {
             return Objects.toStringHelper(this).add("voterName", voterName)

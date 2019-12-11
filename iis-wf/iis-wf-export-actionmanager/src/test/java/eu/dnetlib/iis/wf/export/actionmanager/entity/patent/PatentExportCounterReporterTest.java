@@ -45,7 +45,7 @@ public class PatentExportCounterReporterTest {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
         conf.set("spark.driver.host", "localhost");
-        conf.setAppName("PatentExportCounterReporterTest");
+        conf.setAppName(PatentExportCounterReporterTest.class.getSimpleName());
         sc = JavaSparkContextFactory.withConfAndKryo(conf);
     }
 

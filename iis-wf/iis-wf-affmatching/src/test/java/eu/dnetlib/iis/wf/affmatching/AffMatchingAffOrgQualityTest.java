@@ -51,7 +51,7 @@ import static java.util.stream.Collectors.toList;
  * <li>True positives - percentage of returned results that was matched correctly</li>
  * <li>False positives - percentage of returned results that was matched incorrectly (sums to 100% with true positives)</li>
  * <ul><br/>
- * 
+ *
  * @author madryk
  */
 @Category(IntegrationTest.class)
@@ -59,40 +59,40 @@ public class AffMatchingAffOrgQualityTest {
 
     private final static boolean PRINT_NOT_MATCHED = true;
     private final static boolean PRINT_FALSE_POSITIVE_MATCHES = true;
-    
+
     private final static String INPUT_DATA_DIR_PATH = "src/test/resources/experimentalData/input";
-    
+
     private AffMatchingService affMatchingService;
-    
+
     private static JavaSparkContext sparkContext;
 
     private File workingDir;
-    
+
     private String inputOrgDirPath;
-    
+
     private String inputAffDirPath;
-    
+
     private String inputDocProjDirPath;
-    
+
     private String inputInferredDocProjDirPath;
-    
+
     private float inputDocProjConfidenceThreshold = 0.8f;
-    
+
     private String inputProjOrgDirPath;
-    
+
     private String outputDirPath;
-    
+
     private String outputReportPath;
 
     @BeforeClass
     public static void classSetup() {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
-        conf.setAppName(AffMatchingAffOrgQualityTest.class.getName());
         conf.set("spark.driver.host", "localhost");
+        conf.setAppName(AffMatchingAffOrgQualityTest.class.getSimpleName());
         sparkContext = JavaSparkContextFactory.withConfAndKryo(conf);
     }
-    
+
     @Before
     public void setup() throws IOException {
         workingDir = Files.createTempDirectory("AffMatchingAffOrgQualityTest_").toFile();
@@ -104,16 +104,16 @@ public class AffMatchingAffOrgQualityTest {
         inputProjOrgDirPath = workingDir + "/affiliation_matching/input/proj_org";
         outputDirPath = workingDir + "/affiliation_matching/output";
         outputReportPath = workingDir + "/affiliation_matching/report";
-        
+
         affMatchingService = createAffMatchingService();
     }
-    
+
     @After
     public void cleanup() throws IOException {
-        
+
         FileUtils.deleteDirectory(workingDir);
     }
-    
+
     @AfterClass
     public static void classCleanup() {
         if (sparkContext != null) {
@@ -122,7 +122,7 @@ public class AffMatchingAffOrgQualityTest {
     }
 
     //------------------------ TESTS --------------------------
-    
+
     @Test
     public void matchAffiliations_combined_data() throws IOException {
         // given
@@ -142,16 +142,16 @@ public class AffMatchingAffOrgQualityTest {
     }
 
     //------------------------ PRIVATE --------------------------
-    
+
     private void createInputDataFromJsonFiles(List<String> jsonInputOrgPaths, List<String> jsonInputAffPaths, List<String> jsonInputDocProjPaths, List<String> jsonInputInferredDocProjPaths, List<String> jsonInputProjOrgPaths) throws IOException {
         createLocalAvroDataStore(readMultipleJsonDataStores(jsonInputOrgPaths, Organization.class), inputOrgDirPath, Organization.class);
         createLocalAvroDataStore(readMultipleJsonDataStores(jsonInputAffPaths, ExtractedDocumentMetadata.class), inputAffDirPath, ExtractedDocumentMetadata.class);
-        
+
         createLocalAvroDataStore(readMultipleJsonDataStores(jsonInputDocProjPaths, eu.dnetlib.iis.importer.schemas.DocumentToProject.class), inputDocProjDirPath, eu.dnetlib.iis.importer.schemas.DocumentToProject.class);
         createLocalAvroDataStore(readMultipleJsonDataStores(jsonInputInferredDocProjPaths, DocumentToProject.class), inputInferredDocProjDirPath, DocumentToProject.class);
         createLocalAvroDataStore(readMultipleJsonDataStores(jsonInputProjOrgPaths, ProjectToOrganization.class), inputProjOrgDirPath, ProjectToOrganization.class);
     }
-    
+
     private void readResultsAndPrintQualityRate(List<String> expectedResultsJsonPaths) throws IOException {
         List<SimpleAffMatchResult> actualMatches = readJson(outputDirPath + "/part-00000", SimpleAffMatchResult.class);
         List<SimpleAffMatchResult> expectedMatches = readMultipleJsons(expectedResultsJsonPaths, SimpleAffMatchResult.class);
@@ -166,41 +166,41 @@ public class AffMatchingAffOrgQualityTest {
             AffMatchingResultPrinter.printNotMatched(inputAffDirPath, inputOrgDirPath, expectedMatches, actualMatches);
         }
     }
-    
+
     private void printTruePositivesFactor(List<SimpleAffMatchResult> expectedMatches, List<SimpleAffMatchResult> actualMatches) {
         List<SimpleAffMatchResult> truePositives = actualMatches.stream()
                 .filter(expectedMatches::contains)
                 .collect(toList());
-        
+
         int distinctAffActualMatchesCount = actualMatches.stream()
                 .collect(Collectors.groupingBy(x -> new Tuple2<>(x.getDocumentId(), x.getAffiliationPosition())))
                 .size();
-        
+
         int distinctAffExpectedMatchesCount = expectedMatches.stream()
                 .collect(Collectors.groupingBy(x -> new Tuple2<>(x.getDocumentId(), x.getAffiliationPosition())))
                 .size();
-        
+
         printQualityFactor("All matches", actualMatches.size(), expectedMatches.size());
         printQualityFactor("All distinct aff matches", distinctAffActualMatchesCount, distinctAffExpectedMatchesCount);
         printQualityFactor("Correct matches", truePositives.size(), actualMatches.size());
     }
-    
+
     private void printFalsePositivesFactor(List<SimpleAffMatchResult> expectedMatches, List<SimpleAffMatchResult> actualMatches) {
         List<SimpleAffMatchResult> falsePositives = actualMatches.stream()
                 .filter(x -> !expectedMatches.contains(x))
                 .collect(toList());
-        
+
         printQualityFactor("False positives", falsePositives.size(), actualMatches.size());
     }
-    
+
     private void printQualityFactor(String factorName, int goodCount, int totalCount) {
-        double factorPercentage = ((double)goodCount/totalCount)*100;
-        
+        double factorPercentage = ((double) goodCount / totalCount) * 100;
+
         String text = String.format("%-30s %5.2f%% (%d/%d)", factorName + ":", factorPercentage, goodCount, totalCount);
         System.out.println(text);
     }
-    
-   private AffMatchingService createAffMatchingService() throws IOException {
+
+    private AffMatchingService createAffMatchingService() throws IOException {
         AffMatchingService affMatchingService = new AffMatchingService();
 
         // readers
@@ -213,30 +213,30 @@ public class AffMatchingAffOrgQualityTest {
         // matchers
         AffOrgMatcher docOrgRelationMatcher =
                 createDocOrgRelationMatcher(sparkContext, inputDocProjDirPath, inputInferredDocProjDirPath, inputProjOrgDirPath, inputDocProjConfidenceThreshold);
-        
+
         AffOrgMatcher nameMainSectionHashBucketMatcher = createNameMainSectionHashBucketMatcher();
-        
+
         AffOrgMatcher shortNameMainSectionHashBucketMatcher = createShortNameMainSectionHashBucketMatcher();
-        
+
         AffOrgMatcher alternativeNameMainSectionHashBucketMatcher = createAlternativeNameMainSectionHashBucketMatcher();
-        
+
         AffOrgMatcher firstWordsNameHashBucketMatcher = createNameFirstWordsHashBucketMatcher();
 
         affMatchingService.setAffOrgMatchers(of(docOrgRelationMatcher, nameMainSectionHashBucketMatcher, shortNameMainSectionHashBucketMatcher, alternativeNameMainSectionHashBucketMatcher, firstWordsNameHashBucketMatcher));
 
         AffMatchOrganizationAltNameFiller altNameFiller = createAffMatchOrganizationAltNameFiller();
         affMatchingService.setAffMatchOrganizationAltNameFiller(altNameFiller);
-        
+
         return affMatchingService;
     }
 
-   private AffMatchOrganizationAltNameFiller createAffMatchOrganizationAltNameFiller() throws IOException {
-       AffMatchOrganizationAltNameFiller altNameFiller = new AffMatchOrganizationAltNameFiller();
-       
-       List<Set<String>> alternativeNamesDictionary = new CsvOrganizationAltNamesDictionaryFactory()
-               .createAlternativeNamesDictionary(OrganizationAltNameConst.CLASSPATH_ALTERNATIVE_NAMES_CSV_FILES);
-       altNameFiller.setAlternativeNamesDictionary(alternativeNamesDictionary);
-       
-       return altNameFiller;
-   }
+    private AffMatchOrganizationAltNameFiller createAffMatchOrganizationAltNameFiller() throws IOException {
+        AffMatchOrganizationAltNameFiller altNameFiller = new AffMatchOrganizationAltNameFiller();
+
+        List<Set<String>> alternativeNamesDictionary = new CsvOrganizationAltNamesDictionaryFactory()
+                .createAlternativeNamesDictionary(OrganizationAltNameConst.CLASSPATH_ALTERNATIVE_NAMES_CSV_FILES);
+        altNameFiller.setAlternativeNamesDictionary(alternativeNamesDictionary);
+
+        return altNameFiller;
+    }
 }

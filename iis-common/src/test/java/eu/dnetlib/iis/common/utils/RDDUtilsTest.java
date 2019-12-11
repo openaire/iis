@@ -34,7 +34,7 @@ public class RDDUtilsTest {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
         conf.set("spark.driver.host", "localhost");
-        conf.setAppName("RDDUtilsTest");
+        conf.setAppName(RDDUtilsTest.class.getSimpleName());
         sc = JavaSparkContextFactory.withConfAndKryo(conf);
         configuration = new Configuration();
     }

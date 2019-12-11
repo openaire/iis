@@ -42,8 +42,8 @@ public class DocOrgRelationAffOrgJoinerTest {
     public void setup() {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
-        conf.setAppName(getClass().getName());
         conf.set("spark.driver.host", "localhost");
+        conf.setAppName(DocOrgRelationAffOrgJoinerTest.class.getSimpleName());
         sparkContext = JavaSparkContextFactory.withConfAndKryo(conf);
     }
     
