@@ -13,8 +13,7 @@
         <property>
             <name>input_matched_citations</name>
             <value>$UNDEFINED$</value>
-            <description>input directory holding already matched citations to be excluded from processing as eu.dnetlib.iis.common.citations.schemas.Citation avro datastore.
-            Omitted when set to $UNDEFINED$ value. 
+            <description>input directory holding already matched citations to be excluded from processing as eu.dnetlib.iis.common.citations.schemas.Citation avro datastore. Omitted when set to $UNDEFINED$ value.
             </description>
         </property>
         <property>
@@ -30,7 +29,7 @@
             <value>citationmatching_fuzzy</value>
             <description>directory for storing report (relative to output_report_root_path)</description>
         </property>
-        
+
         <property>
             <name>sparkDriverMemory</name>
             <description>memory for driver process</description>
@@ -39,7 +38,7 @@
             <name>sparkDriverOverhead</name>
             <description>The amount of off heap memory (in megabytes) to be allocated for the driver</description>
         </property>
-        
+
         <property>
             <name>sparkExecutorMemory</name>
             <description>memory for individual executor</description>
@@ -52,12 +51,36 @@
             <name>sparkExecutorCores</name>
             <description>number of cores used by single executor</description>
         </property>
-        
+        <property>
+            <name>oozieActionShareLibForSpark1</name>
+            <value>$UNDEFINED$</value>
+            <description>oozie action sharelib for spark 1.*</description>
+        </property>
+        <property>
+            <name>spark1ExtraListeners</name>
+            <value>com.cloudera.spark.lineage.ClouderaNavigatorListener</value>
+            <description>spark 1.* extra listeners classname</description>
+        </property>
+        <property>
+            <name>spark1SqlQueryExecutionListeners</name>
+            <value>com.cloudera.spark.lineage.ClouderaNavigatorListener</value>
+            <description>spark 1.* sql query execution listeners classname</description>
+        </property>
+        <property>
+            <name>spark1YarnHistoryServerAddress</name>
+            <value>$UNDEFINED$</value>
+            <description>spark 1.* yarn history server address</description>
+        </property>
+        <property>
+            <name>spark1EventLogDir</name>
+            <value>$UNDEFINED$</value>
+            <description>spark 1.* event log dir location</description>
+        </property>
+
         <property>
             <name>numberOfPartitions</name>
             <description>number of partitions used for rdds with citations and documents read from input files</description>
         </property>
-        
     </parameters>
 
     <global>
@@ -72,21 +95,21 @@
                 <name>oozie.launcher.mapred.job.queue.name</name>
                 <value>${oozieLauncherQueueName}</value>
             </property>
+            <property>
+                <name>oozie.action.sharelib.for.spark</name>
+                <value>${oozieActionShareLibForSpark1}</value>
+            </property>
         </configuration>
     </global>
-    
-    
-    <start to="citation-matching-input-transformer" />
 
+    <start to="citation-matching-input-transformer"/>
 
     <action name="citation-matching-input-transformer">
-    
         <spark xmlns="uri:oozie:spark-action:0.2">
-
             <prepare>
-                <delete path="${workingDir}/documents_with_authors" />
+                <delete path="${workingDir}/documents_with_authors"/>
             </prepare>
-            
+
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>citation-matching-input-transformer</name>
@@ -94,27 +117,31 @@
             <class>eu.dnetlib.iis.wf.citationmatching.input.CitationMatchingInputTransformerJob</class>
 
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}.jar</jar>
-            
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
-        
+
+            <spark-opts>
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
+                --conf spark.extraListeners=${spark1ExtraListeners}
+                --conf spark.sql.queryExecutionListeners=${spark1SqlQueryExecutionListeners}
+                --conf spark.yarn.historyServer.address=${spark1YarnHistoryServerAddress}
+                --conf spark.eventLog.dir="${nameNode}${spark1EventLogDir}"
+            </spark-opts>
+
             <arg>-inputMetadata = ${input_metadata}</arg>
             <arg>-inputMatchedCitations = ${input_matched_citations}</arg>
             <arg>-output = ${workingDir}/documents_with_authors</arg>
-            
         </spark>
         <ok to="citation-matching"/>
         <error to="fail"/>
-    
     </action>
-    
+
     <action name="citation-matching">
-    
         <spark xmlns="uri:oozie:spark-action:0.2">
-           
             <prepare>
-                <delete path="${workingDir}/matched_citations" />
+                <delete path="${workingDir}/matched_citations"/>
             </prepare>
-            
+
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>citation-matching</name>
@@ -122,30 +149,36 @@
             <class>eu.dnetlib.iis.wf.citationmatching.IisCitationMatchingJob</class>
 
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}.jar</jar>
-            
-            <spark-opts>--executor-cores ${sparkExecutorCores} --executor-memory ${sparkExecutorMemory} --driver-memory=${sparkDriverMemory} --conf spark.yarn.driver.memoryOverhead=${sparkDriverOverhead}  --conf spark.yarn.executor.memoryOverhead=${sparkExecutorOverhead}</spark-opts>
-        
+
+            <spark-opts>
+                --executor-cores=${sparkExecutorCores}
+                --executor-memory=${sparkExecutorMemory}
+                --driver-memory=${sparkDriverMemory}
+                --conf spark.yarn.driver.memoryOverhead=${sparkDriverOverhead}
+                --conf spark.yarn.executor.memoryOverhead=${sparkExecutorOverhead}
+                --conf spark.extraListeners=${spark1ExtraListeners}
+                --conf spark.sql.queryExecutionListeners=${spark1SqlQueryExecutionListeners}
+                --conf spark.yarn.historyServer.address=${spark1YarnHistoryServerAddress}
+                --conf spark.eventLog.dir="${nameNode}${spark1EventLogDir}"
+            </spark-opts>
+
             <arg>-fullDocumentPath = ${workingDir}/documents_with_authors</arg>
-            
+
             <arg>-outputDirPath = ${workingDir}/matched_citations</arg>
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
-            
+
             <arg>-numberOfPartitions = ${numberOfPartitions}</arg>
-            
         </spark>
         <ok to="citation-matching-output-transformer"/>
         <error to="fail"/>
-    
     </action>
-    
-        <action name="citation-matching-output-transformer">
-    
+
+    <action name="citation-matching-output-transformer">
         <spark xmlns="uri:oozie:spark-action:0.2">
-           
             <prepare>
-                <delete path="${output_citations}" />
+                <delete path="${output_citations}"/>
             </prepare>
-            
+
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>citation-matching-output-transformer</name>
@@ -153,23 +186,30 @@
             <class>eu.dnetlib.iis.wf.citationmatching.output.CitationMatchingOutputTransformerJob</class>
 
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-citationmatching-${projectVersion}.jar</jar>
-            
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
-        
+
+            <spark-opts>
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
+                --conf spark.extraListeners=${spark1ExtraListeners}
+                --conf spark.sql.queryExecutionListeners=${spark1SqlQueryExecutionListeners}
+                --conf spark.yarn.historyServer.address=${spark1YarnHistoryServerAddress}
+                --conf spark.eventLog.dir="${nameNode}${spark1EventLogDir}"
+            </spark-opts>
+
             <arg>-input = ${workingDir}/matched_citations</arg>
             <arg>-output = ${output_citations}</arg>
-            
         </spark>
         <ok to="end"/>
         <error to="fail"/>
-    
     </action>
-    
-    
+
     <kill name="fail">
         <message>Unfortunately, the process failed -- error message:
             [${wf:errorMessage(wf:lastErrorNode())}]
         </message>
     </kill>
-    <end name="end" />
+
+    <end name="end"/>
+
 </workflow-app>
