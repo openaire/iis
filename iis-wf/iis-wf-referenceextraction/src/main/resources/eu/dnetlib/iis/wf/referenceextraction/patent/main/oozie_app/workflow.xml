@@ -36,13 +36,6 @@
                 <delete path="${workingDir}/patent"/>
             </prepare>
 
-            <configuration>
-                <property>
-                    <name>oozie.action.sharelib.for.spark</name>
-                    <value>spark2</value>
-                </property>
-            </configuration>
-
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>patent-referenceextraction-input-transformer</name>
@@ -52,8 +45,6 @@
                 --executor-memory=${sparkExecutorMemory}
                 --executor-cores=${sparkExecutorCores}
                 --driver-memory=${sparkDriverMemory}
-                --conf spark.extraListeners="com.cloudera.spark.lineage.NavigatorAppListener"
-                --conf spark.sql.queryExecutionListeners="com.cloudera.spark.lineage.NavigatorQueryListener"
             </spark-opts>
             <arg>-inputPath=${input_patent}</arg>
             <arg>-outputPath=${workingDir}/patent</arg>

@@ -1,6 +1,4 @@
 <?xml version="1.0"?>
-<!-- Note that documentation placed in comments in this file uses the
-"markdown" syntax (along with its way of dividing text into sections). -->
 <workflow-app xmlns="uri:oozie:workflow:0.4" name="referenceextraction_project_main">
 	
 	<parameters>
@@ -32,21 +30,6 @@
             <name>sparkExecutorCores</name>
             <description>number of cores used by single executor</description>
         </property>
-        <property>
-            <name>oozieShareLibForSpark</name>
-            <value>spark2</value>
-            <description>oozie sharelib with spark2</description>
-        </property>
-        <property>
-            <name>sparkExtraListeners</name>
-            <value>com.cloudera.spark.lineage.NavigatorAppListener</value>
-            <description>spark extra listeners classname</description>
-        </property>
-        <property>
-            <name>sparkSqlQueryExecutionListeners</name>
-            <value>com.cloudera.spark.lineage.NavigatorQueryListener</value>
-            <description>spark sql query execution listeners classname</description>
-        </property>
     </parameters>
 
 	<start to="sqlite_builder" />
@@ -56,7 +39,6 @@
             <app-path>${wf:appPath()}/sqlite_builder</app-path>
             <propagate-configuration />
             <configuration>
-                <!-- Working directory of the subworkflow -->
                 <property>
                     <name>workingDir</name>
                     <value>${workingDir}/sqlite_builder/working_dir</value>
@@ -85,7 +67,6 @@
             <app-path>${wf:appPath()}/main_sqlite</app-path>
             <propagate-configuration />
             <configuration>
-                <!-- Working directory of the subworkflow -->
                 <property>
                     <name>workingDir</name>
                     <value>${workingDir}/main_sqlite/working_dir</value>
@@ -113,12 +94,6 @@
             <prepare>
                 <delete path="${workingDir}/meta_with_text" />
             </prepare>
-            <configuration>
-                <property>
-                    <name>oozie.action.sharelib.for.spark</name>
-                    <value>${oozieShareLibForSpark}</value>
-                </property>
-            </configuration>
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>tara-referenceextraction-input-transformer</name>
@@ -128,8 +103,6 @@
                 --executor-memory=${sparkExecutorMemory}
                 --executor-cores=${sparkExecutorCores}
                 --driver-memory=${sparkDriverMemory}
-                --conf spark.extraListeners=${sparkExtraListeners}
-                --conf spark.sql.queryExecutionListeners=${sparkSqlQueryExecutionListeners}
             </spark-opts>
             <arg>-inputMetadata = ${input_document_metadata}</arg>
             <arg>-inputText = ${input_document_text}</arg>
@@ -144,7 +117,6 @@
             <app-path>${wf:appPath()}/tara_sqlite</app-path>
             <propagate-configuration />
             <configuration>
-                <!-- Working directory of the subworkflow -->
                 <property>
                     <name>workingDir</name>
                     <value>${workingDir}/tara_sqlite/working_dir</value>
