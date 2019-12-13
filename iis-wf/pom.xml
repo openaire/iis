@@ -265,10 +265,13 @@
 								<configuration>
 									<outputFile>target/${oozie.package.file.name}/job.properties</outputFile>
 									<!-- notice: dots are not allowed for job.properties! -->
-									<include>nameNode,jobTracker,queueName,importerQueueName,oozieLauncherQueueName,
+									<include>
+									nameNode,jobTracker,queueName,importerQueueName,oozieLauncherQueueName,
 									workingDir,oozieTopWfApplicationPath,oozieServiceLoc,
 									sparkDriverMemory,sparkExecutorMemory,sparkExecutorCores,
-									oozie.wf.application.path,projectVersion,oozie.use.system.libpath</include>
+									oozie.wf.application.path,projectVersion,oozie.use.system.libpath,
+									oozieActionShareLibForSpark1,spark1YarnHistoryServerAddress,spark1EventLogDir
+									</include>
 									<includeSystemProperties>true</includeSystemProperties>
 									<includePropertyKeysFromFiles>
 										<!-- <param>${workflow.source.dir}/job.properties</param> -->
