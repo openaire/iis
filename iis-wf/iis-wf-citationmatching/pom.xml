@@ -18,6 +18,28 @@
             <groupId>eu.dnetlib.iis</groupId>
             <artifactId>iis-common</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <!-- conflicting scala binary versions -->
+                    <groupId>org.scala-lang</groupId>
+                    <artifactId>scala-library</artifactId>
+                </exclusion>
+                <exclusion>
+                    <!-- conflicting scala binary versions -->
+                    <groupId>org.apache.spark</groupId>
+                    <artifactId>spark-core_2.11</artifactId>
+                </exclusion>
+                <exclusion>
+                    <!-- conflicting scala binary versions -->
+                    <groupId>org.apache.spark</groupId>
+                    <artifactId>spark-sql_2.11</artifactId>
+                </exclusion>
+                <exclusion>
+                    <!-- conflicting scala binary versions -->
+                    <groupId>pl.edu.icm.spark-utils</groupId>
+                    <artifactId>spark-utils_2.11</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -32,6 +54,28 @@
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <!-- conflicting scala binary versions -->
+                    <groupId>org.scala-lang</groupId>
+                    <artifactId>scala-library</artifactId>
+                </exclusion>
+                <exclusion>
+                    <!-- conflicting scala binary versions -->
+                    <groupId>org.apache.spark</groupId>
+                    <artifactId>spark-core_2.11</artifactId>
+                </exclusion>
+                <exclusion>
+                    <!-- conflicting scala binary versions -->
+                    <groupId>org.apache.spark</groupId>
+                    <artifactId>spark-sql_2.11</artifactId>
+                </exclusion>
+                <exclusion>
+                    <!-- conflicting scala binary versions -->
+                    <groupId>pl.edu.icm.spark-utils</groupId>
+                    <artifactId>spark-utils_2.11</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
