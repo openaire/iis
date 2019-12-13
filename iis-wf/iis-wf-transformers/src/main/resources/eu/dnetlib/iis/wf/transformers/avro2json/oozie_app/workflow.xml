@@ -25,21 +25,6 @@
             <name>sparkDriverOverhead</name>
             <description>The amount of off heap memory (in megabytes) to be allocated for the driver</description>
         </property>
-        <property>
-            <name>oozieShareLibForSpark</name>
-            <value>spark2</value>
-            <description>oozie sharelib with spark2</description>
-        </property>
-        <property>
-            <name>sparkExtraListeners</name>
-            <value>com.cloudera.spark.lineage.NavigatorAppListener</value>
-            <description>spark extra listeners classname</description>
-        </property>
-        <property>
-            <name>sparkSqlQueryExecutionListeners</name>
-            <value>com.cloudera.spark.lineage.NavigatorQueryListener</value>
-            <description>spark sql query execution listeners classname</description>
-        </property>
     </parameters>
 	 
     <global>
@@ -53,10 +38,6 @@
             <property>
                 <name>oozie.launcher.mapred.job.queue.name</name>
                 <value>${oozieLauncherQueueName}</value>
-            </property>
-            <property>
-                <name>oozie.action.sharelib.for.spark</name>
-                <value>${oozieShareLibForSpark}</value>
             </property>
         </configuration>
     </global>
@@ -85,8 +66,6 @@
                 --executor-cores=${sparkExecutorCores}
                 --driver-memory=${sparkDriverMemory}
                 --conf spark.yarn.driver.memoryOverhead=${sparkDriverOverhead}
-                --conf spark.extraListeners=${sparkExtraListeners}
-                --conf spark.sql.queryExecutionListeners=${sparkSqlQueryExecutionListeners}
             </spark-opts>
             <arg>-input=${input}</arg>
             <arg>-output=${output}</arg>
