@@ -245,6 +245,8 @@ public class DatasetMetadataConverterTest {
 
         for (Entry<String, String> entry : extIdentifiers.entrySet()) {
             oafBuilder.addPidBuilder().setValue(entry.getValue()).getQualifierBuilder().setClassid(entry.getKey());
+            // testing for dealing with duplicates
+            oafBuilder.addPidBuilder().setValue(entry.getValue()).getQualifierBuilder().setClassid(entry.getKey());
         }
 
         mdBuilder.getDateofacceptanceBuilder().setValue(String.format("%s-02-29", YEAR));

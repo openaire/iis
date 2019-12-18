@@ -1,10 +1,28 @@
 package eu.dnetlib.iis.wf.export.actionmanager.entity;
 
-import static eu.dnetlib.iis.wf.export.actionmanager.entity.SoftwareExportCounterReporter.DISTINCT_PUBLICATIONS_WITH_SOFTWARE_REFERENCES_COUNTER;
-import static eu.dnetlib.iis.wf.export.actionmanager.entity.SoftwareExportCounterReporter.EXPORTED_SOFTWARE_ENTITIES_COUNTER;
-import static eu.dnetlib.iis.wf.export.actionmanager.entity.SoftwareExportCounterReporter.SOFTWARE_REFERENCES_COUNTER;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.google.common.io.Files;
+import eu.dnetlib.actionmanager.actions.AtomicAction;
+import eu.dnetlib.data.proto.RelTypeProtos.RelType;
+import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
+import eu.dnetlib.iis.common.IntegrationTest;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.common.schemas.ReportEntryType;
+import eu.dnetlib.iis.common.utils.AvroTestUtils;
+import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
+import eu.dnetlib.iis.common.utils.RDDTestUtils;
+import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta;
+import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
+import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import pl.edu.icm.sparkutils.test.SparkJob;
+import pl.edu.icm.sparkutils.test.SparkJobBuilder;
+import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,36 +30,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import com.google.common.io.Files;
-
-import datafu.com.google.common.collect.Lists;
-import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.data.proto.RelTypeProtos.RelType;
-import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
-import eu.dnetlib.iis.common.InfoSpaceConstants;
-import eu.dnetlib.iis.common.IntegrationTest;
-import eu.dnetlib.iis.common.java.io.FileSystemPath;
-import eu.dnetlib.iis.common.java.io.SequenceFileTextValueReader;
-import eu.dnetlib.iis.common.schemas.ReportEntry;
-import eu.dnetlib.iis.common.schemas.ReportEntryType;
-import eu.dnetlib.iis.common.utils.AvroTestUtils;
-import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
-import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta;
-import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
-import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
-import pl.edu.icm.sparkutils.test.SparkJob;
-import pl.edu.icm.sparkutils.test.SparkJobBuilder;
-import pl.edu.icm.sparkutils.test.SparkJobExecutor;
+import static eu.dnetlib.iis.wf.export.actionmanager.entity.SoftwareExportCounterReporter.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * 
@@ -108,10 +99,12 @@ public class SoftwareExporterJobTest {
         // assert
         assertCountersInReport(0, 0, 0);
         
-        List<AtomicAction> capturedEntityActions = getActions(outputEntityDirPath);
+        List<AtomicAction> capturedEntityActions = RDDTestUtils
+                .readValues(outputEntityDirPath, text -> AtomicAction.fromJSON(text.toString()));
         assertEquals(0, capturedEntityActions.size());
         
-        List<AtomicAction> capturedRelationActions = getActions(outputRelationDirPath);
+        List<AtomicAction> capturedRelationActions = RDDTestUtils
+                .readValues(outputRelationDirPath, text -> AtomicAction.fromJSON(text.toString()));
         assertEquals(0, capturedRelationActions.size());
     }
     
@@ -146,7 +139,8 @@ public class SoftwareExporterJobTest {
         String iisEntityId = SoftwareExporterJob.generateSoftwareEntityId("https://github.com/openaire/iis");
         
         // verifying entities
-        List<AtomicAction> capturedEntityActions = getActions(outputEntityDirPath);
+        List<AtomicAction> capturedEntityActions = RDDTestUtils
+                .readValues(outputEntityDirPath, text -> AtomicAction.fromJSON(text.toString()));
         assertEquals(2, capturedEntityActions.size());
 
         List<String> expectedTargetRowKeysToBeConsumed = new ArrayList<>(Arrays.asList(
@@ -158,9 +152,10 @@ public class SoftwareExporterJobTest {
         assertTrue(expectedTargetRowKeysToBeConsumed.isEmpty());
 
         // verifying relations
-        List<AtomicAction> capturedRelationActions = getActions(outputRelationDirPath);
+        List<AtomicAction> capturedRelationActions = RDDTestUtils
+                .readValues(outputRelationDirPath, text -> AtomicAction.fromJSON(text.toString()));
         assertEquals(6, capturedRelationActions.size());
-        
+
         String expectedColFam = RelType.resultResult.toString() + '_' + SubRelType.relationship + '_'
                 + SoftwareExporterJob.REL_CLASS_ISRELATEDTO;
         
@@ -225,20 +220,7 @@ public class SoftwareExporterJobTest {
         verifyAction(action, actionSetId, targetRowKeyCandidates, targetColumnFamily);
         assertTrue(targetColumnCandidates.remove(action.getTargetColumn()));
     }
-    
-    private List<AtomicAction> getActions(String location) throws IOException {
-        List<AtomicAction> actions = Lists.newArrayList();
-        
-        try (SequenceFileTextValueReader it = new SequenceFileTextValueReader(
-                new FileSystemPath(createLocalFileSystem(), new Path(new File(location).getAbsolutePath())))) {
-            while (it.hasNext()) {
-                actions.add(AtomicAction.fromJSON(it.next().toString()));
-            }
-        }
-        
-        return actions;
-    }
-    
+
     private SparkJob buildJob(
             String entityActionSetId, String relationActionSetId, String trustLevelThreshold) {
         return SparkJobBuilder.create()
@@ -256,10 +238,4 @@ public class SoftwareExporterJobTest {
                 .build();
     }
     
-    private static FileSystem createLocalFileSystem() throws IOException {
-        Configuration conf = new Configuration();
-        conf.set(FileSystem.FS_DEFAULT_NAME_KEY, FileSystem.DEFAULT_FS);
-        return FileSystem.get(conf);
-    }
 }
-

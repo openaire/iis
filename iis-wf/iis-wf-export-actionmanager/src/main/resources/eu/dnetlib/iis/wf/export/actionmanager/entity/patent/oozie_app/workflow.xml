@@ -1,0 +1,147 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="export_actionmanager_patent">
+    <parameters>
+        <property>
+            <name>input_document_to_patent</name>
+            <description>
+                Input containing `eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent` avro records listing all patent entities referenced by publications.
+            </description>
+        </property>
+        <property>
+            <name>input_patent</name>
+            <description>
+                Input containing `eu.dnetlib.iis.referenceextraction.patent.schemas.Patent` avro records listing all patent entities.
+            </description>
+        </property>
+        <property>
+            <name>action_set_id_document_patent</name>
+            <description>
+                Document to patent action-set identifier of exported data. It also defines ${output_root_relations} subdirectory name where all patent relation actions are exported.
+            </description>
+        </property>
+        <property>
+            <name>action_set_id_entity_patent</name>
+            <description>
+                Patent action-set identifier of exported patent entities. It also defines ${output_root_entities} subdirectory name where all patent entity actions are exported.
+            </description>
+        </property>
+        <property>
+            <name>trust_level_threshold_document_patent</name>
+            <value>$UNDEFINED$</value>
+            <description>
+                document_patent trust level threshold.
+            </description>
+        </property>
+        <property>
+            <name>patent_date_of_collection</name>
+            <description>
+                date of collection of patent file formatted as yyyy-MM-dd'T'HH:mm
+            </description>
+        </property>
+        <property>
+            <name>patent_epo_url_root</name>
+            <description>
+                EPO patent web archive URL root part to be concatenated with patent auth and nr when forming final URL
+            </description>
+        </property>
+        <property>
+            <name>output_root_relations</name>
+            <description>
+                Root directory for storing ${action_set_id_document_patent} subdirectories with exported action-sets.
+            </description>
+        </property>
+        <property>
+            <name>output_root_entities</name>
+            <description>
+                Root directory for storing ${action_set_id_entity_patent} subdirectories with exported action-sets.
+            </description>
+        </property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>
+                Base directory for storing reports.
+            </description>
+        </property>
+        <property>
+            <name>output_report_relative_path</name>
+            <value>export_patent</value>
+            <description>
+                Directory for storing report relative to ${output_report_root_path}.
+            </description>
+        </property>
+        <property>
+            <name>sparkDriverMemory</name>
+            <description>
+                Memory for driver process.
+            </description>
+        </property>
+        <property>
+            <name>sparkExecutorMemory</name>
+            <description>
+                Memory for individual executor.
+            </description>
+        </property>
+        <property>
+            <name>sparkExecutorCores</name>
+            <description>
+                Number of cores used by single executor.
+            </description>
+        </property>
+    </parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+    <start to="patent-exporter"/>
+
+    <action name="patent-exporter">
+        <spark xmlns="uri:oozie:spark-action:0.2">
+            <prepare>
+                <delete path="${nameNode}${output_root_entities}/${action_set_id_entity_patent}"/>
+                <delete path="${nameNode}${output_root_relations}/${action_set_id_document_patent}"/>
+                <delete path="${nameNode}${output_report_root_path}/${output_report_relative_path}"/>
+            </prepare>
+            <master>yarn-cluster</master>
+            <mode>cluster</mode>
+            <name>patent spark exporter</name>
+            <class>eu.dnetlib.iis.wf.export.actionmanager.entity.patent.PatentExporterJob</class>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-export-actionmanager-${projectVersion}.jar</jar>
+            <spark-opts>
+                --executor-memory ${sparkExecutorMemory}
+                --executor-cores ${sparkExecutorCores}
+                --driver-memory ${sparkDriverMemory}
+            </spark-opts>
+            <arg>-inputDocumentToPatentPath=${input_document_to_patent}</arg>
+            <arg>-inputPatentPath=${input_patent}</arg>
+            <arg>-relationActionSetId=${action_set_id_document_patent}</arg>
+            <arg>-entityActionSetId=${action_set_id_entity_patent}</arg>
+            <arg>-trustLevelThreshold=${trust_level_threshold_document_patent}</arg>
+            <arg>-patentDateOfCollection=${patent_date_of_collection}</arg>
+            <arg>-patentEpoUrlRoot=${patent_epo_url_root}</arg>
+            <arg>-outputRelationPath=${output_root_relations}/${action_set_id_document_patent}</arg>
+            <arg>-outputEntityPath=${output_root_entities}/${action_set_id_entity_patent}</arg>
+            <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
+        </spark>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

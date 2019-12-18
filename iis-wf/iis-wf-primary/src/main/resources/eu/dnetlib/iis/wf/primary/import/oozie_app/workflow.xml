@@ -2,6 +2,11 @@
 	<parameters>
 		<!-- importing modes -->
 		<property>
+			<name>active_import_patent</name>
+			<value>false</value>
+			<description>flag indicating if patent import should be enabled</description>
+		</property>
+		<property>
 			<name>match_content_with_metadata</name>
 			<value>true</value>
 			<description>flag indicating contents should be filtered and their identifiers should be deduplicated against metadata entries retrieved from InformationSpace.
@@ -73,6 +78,11 @@
 		<property>
 			<name>mimetypes_wos</name>
 			<description>wos types</description>
+		</property>
+		<!-- import patents related -->
+		<property>
+			<name>input_patent_json</name>
+			<description>input JSON file location with patents metadata</description>
 		</property>
 		<!-- import timeouts related -->
 		<property>
@@ -183,6 +193,10 @@
 			<description>concepts output directory</description>
 		</property>
 		<property>
+			<name>output_patent</name>
+			<description>import patents output directory</description>
+		</property>
+		<property>
 			<name>output_faults</name>
 			<description>processing faults output directory</description>
 		</property>
@@ -218,6 +232,7 @@
 	<fork name="import_forking">
 		<path start="import_concept" />
 		<path start="distcp_hbase_dump" />
+		<path start="decision-import_patent" />
 	</fork>
 
 	<action name="import_concept">
@@ -522,7 +537,7 @@
         <error to="fail" />
     </action>
     <!-- end of html import and plaintext ingestion section -->
-    
+
     <action name="ingest_pmc_cached">
         <sub-workflow>
             <app-path>${wf:appPath()}/metadataextraction_cache</app-path>
@@ -653,6 +668,56 @@
 		<error to="fail" />
 	</action>
 
+	<decision name="decision-import_patent">
+		<switch>
+			<case to="import_patent">${active_import_patent eq "true"}</case>
+			<default to="skip-import_patent" />
+		</switch>
+	</decision>
+
+	<action name="import_patent">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/import_patent</app-path>
+			<propagate-configuration />
+			<configuration>
+				<property>
+					<name>workingDir</name>
+					<value>${workingDir}/import_patent/working_dir</value>
+				</property>
+				<property>
+					<name>input_json</name>
+					<value>${input_patent_json}</value>
+				</property>
+				<property>
+					<name>output</name>
+					<value>${output_patent}</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="import_joining" />
+		<error to="fail" />
+	</action>
+
+	<action name="skip-import_patent">
+		<java>
+			<prepare>
+				<delete path="${nameNode}${workingDir}/import_patent" />
+				<delete path="${nameNode}${output_patent}" />
+				<mkdir path="${nameNode}${workingDir}/import_patent" />
+				<mkdir path="${nameNode}${output_patent}" />
+			</prepare>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+			<arg>-C{patent,
+				eu.dnetlib.iis.referenceextraction.patent.schemas.Patent,
+				eu/dnetlib/iis/common/data/empty.json}
+			</arg>
+			<arg>-Opatent=${output_patent}</arg>
+		</java>
+		<ok to="import_joining" />
+		<error to="fail" />
+	</action>
+
 	<join name="import_joining" to="init-faults-dir" />
 
 	<action name="init-faults-dir">
@@ -696,7 +761,7 @@
 		<ok to="report-execution-times" />
 		<error to="fail" />
 	</action>
-	
+
     <action name="report-execution-times">
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
