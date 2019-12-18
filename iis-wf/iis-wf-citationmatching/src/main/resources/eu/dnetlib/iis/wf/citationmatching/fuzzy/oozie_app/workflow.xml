@@ -53,7 +53,6 @@
         </property>
         <property>
             <name>oozieActionShareLibForSpark1</name>
-            <value>$UNDEFINED$</value>
             <description>oozie action sharelib for spark 1.*</description>
         </property>
         <property>
@@ -68,12 +67,10 @@
         </property>
         <property>
             <name>spark1YarnHistoryServerAddress</name>
-            <value>$UNDEFINED$</value>
             <description>spark 1.* yarn history server address</description>
         </property>
         <property>
             <name>spark1EventLogDir</name>
-            <value>$UNDEFINED$</value>
             <description>spark 1.* event log dir location</description>
         </property>
 
