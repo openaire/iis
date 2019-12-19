@@ -162,7 +162,7 @@
     </dependencies>
 
     <properties>
-        <spark.version>1.6.0-cdh5.16.2</spark.version>
+        <spark.version>99.9.9</spark.version>
     </properties>
 
 </project>
