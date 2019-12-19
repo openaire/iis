@@ -24,7 +24,7 @@
                 These relations (alongside with infered document-project and document-project relations)
                 are used to generate document-organization pairs which are used as a hint for matching affiliations</description>
         </property>
-        
+
         <property>
             <name>output</name>
             <description>output path for matched affiliations (eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization)</description>
@@ -33,7 +33,7 @@
             <name>output_report_root_path</name>
             <description>base directory for storing reports</description>
         </property>
-                
+
         <property>
             <name>document_project_confidence_threshold</name>
             <value>0.5</value>
@@ -73,8 +73,7 @@
             </property>
         </configuration>
     </global>
-    
-    
+
     <start to="proj-based-matching" />
 
     <action name="proj-based-matching">
@@ -91,7 +90,11 @@
             <class>eu.dnetlib.iis.wf.affmatching.ProjectBasedMatchingJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-affmatching-${projectVersion}.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
+            <spark-opts>
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
+            </spark-opts>
 
             <arg>-inputAvroProjectPath=${input_project}</arg>
             <arg>-inputAvroDocProjPath=${input_document_to_project}</arg>
@@ -114,5 +117,7 @@
             [${wf:errorMessage(wf:lastErrorNode())}]
         </message>
     </kill>
+
     <end name="end" />
+
 </workflow-app>

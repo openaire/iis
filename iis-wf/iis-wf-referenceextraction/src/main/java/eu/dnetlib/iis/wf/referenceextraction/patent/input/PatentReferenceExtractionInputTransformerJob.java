@@ -4,6 +4,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
+import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.PatentReferenceExtractionInput;
 import org.apache.spark.SparkConf;
@@ -25,15 +26,13 @@ public class PatentReferenceExtractionInputTransformerJob {
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
 
-        SparkConf conf = new SparkConf();
-        conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
-        conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
-
-        try (JavaSparkContext sc = new JavaSparkContext(conf)) {
+        try (JavaSparkContext sc = JavaSparkContextFactory.withConfAndKryo(new SparkConf())) {
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputPath);
 
-            JavaRDD<PatentReferenceExtractionInput> convertedRDD = sparkAvroLoader.loadJavaRDD(sc, params.inputPath, Patent.class)
+            JavaRDD<PatentReferenceExtractionInput> convertedRDD = sparkAvroLoader
+                    .loadJavaRDD(sc, params.inputPath, Patent.class)
                     .map(PatentReferenceExtractionInputTransformerJob::convert);
+
             sparkAvroSaver.saveJavaRDD(convertedRDD, PatentReferenceExtractionInput.SCHEMA$, params.outputPath);
         }
     }

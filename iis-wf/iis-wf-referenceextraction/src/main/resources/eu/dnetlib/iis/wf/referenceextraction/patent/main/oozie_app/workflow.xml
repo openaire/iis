@@ -35,15 +35,16 @@
             <prepare>
                 <delete path="${workingDir}/patent"/>
             </prepare>
+
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>patent-referenceextraction-input-transformer</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.patent.input.PatentReferenceExtractionInputTransformerJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
             <spark-opts>
-                --executor-memory ${sparkExecutorMemory}
-                --executor-cores ${sparkExecutorCores}
-                --driver-memory ${sparkDriverMemory}
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
             </spark-opts>
             <arg>-inputPath=${input_patent}</arg>
             <arg>-outputPath=${workingDir}/patent</arg>
@@ -101,4 +102,5 @@
     </kill>
 
     <end name="end"/>
+
 </workflow-app>

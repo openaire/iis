@@ -25,7 +25,6 @@
             <name>output_report_root_path</name>
             <description>base directory for storing reports</description>
         </property>
-        
         <property>
             <name>sparkExecutorMemory</name>
             <description>memory for individual executor</description>
@@ -54,8 +53,7 @@
             </property>
         </configuration>
     </global>
-    
-    
+
     <start to="affmatching_dedup" />
 
     <action name="affmatching_dedup">
@@ -72,7 +70,11 @@
             <class>eu.dnetlib.iis.wf.affmatching.AffMatchingDedupJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-affmatching-${projectVersion}.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
+            <spark-opts>
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
+            </spark-opts>
 
             <arg>-inputAPath=${input_a}</arg>
             <arg>-inputBPath=${input_b}</arg>
@@ -91,5 +93,7 @@
             [${wf:errorMessage(wf:lastErrorNode())}]
         </message>
     </kill>
+
     <end name="end" />
+
 </workflow-app>

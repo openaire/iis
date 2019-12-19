@@ -42,7 +42,7 @@
 			<name>output_document_to_research_initiative</name>
 			<description>output document to research initiative</description>
 		</property>
-	</parameters>
+    </parameters>
 
 	<start to="metadata-transformer" />
 
@@ -56,7 +56,12 @@
             <name>researchinitiative-input-metadata-transformer</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.researchinitiative.ResearchInitiativeReferenceExtractionInputTransformerJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory} --conf spark.yarn.executor.memoryOverhead=${sparkExecutorOverhead}</spark-opts>
+            <spark-opts>
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
+                --conf spark.yarn.executor.memoryOverhead=${sparkExecutorOverhead}
+            </spark-opts>
             <arg>-inputMetadata=${input_document_metadata}</arg>
             <arg>-inputText=${input_document_text}</arg>
             <arg>-output=${workingDir}/document_metadata</arg>
@@ -75,7 +80,11 @@
             <name>researchinitiative-concept-transformer</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.researchinitiative.ResearchInitiativeMetadataTransformerJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
+            <spark-opts>
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
+            </spark-opts>
             <arg>-input=${input_concept}</arg>
             <arg>-whitelistIdentifierRegexp=${researchinitiative_identifier_whitelist_regex}</arg>
             <arg>-output=${workingDir}/researchinitiative_metadata</arg>
@@ -136,9 +145,10 @@
 
     <kill name="fail">
         <message>Unfortunately, the process failed -- error message:
-        			[${wf:errorMessage(wf:lastErrorNode())}]
-        		</message>
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
     </kill>
 
     <end name="end"/>
+
 </workflow-app>

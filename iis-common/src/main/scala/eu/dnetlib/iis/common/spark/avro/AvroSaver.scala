@@ -1,58 +1,26 @@
-/*
- * Copyright 2014 Databricks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package eu.dnetlib.iis.common.spark.avro
 
 import java.sql.Timestamp
+import java.util
 import java.util.HashMap
-import scala.collection.immutable.Map
-import org.apache.avro.Schema
-import org.apache.avro.SchemaBuilder
+
 import org.apache.avro.generic.GenericData.Record
 import org.apache.avro.generic.GenericRecord
-import org.apache.avro.mapred.AvroJob
-import org.apache.avro.mapred.AvroKey
+import org.apache.avro.mapred.{AvroJob, AvroKey, AvroOutputFormat, AvroWrapper}
+import org.apache.avro.{Schema, SchemaBuilder}
 import org.apache.hadoop.io.NullWritable
 import org.apache.hadoop.mapred.JobConf
 import org.apache.spark.rdd.RDD.rddToPairRDDFunctions
-import org.apache.spark.sql.DataFrame
-import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.ArrayType
-import org.apache.spark.sql.types.BinaryType
-import org.apache.spark.sql.types.BooleanType
-import org.apache.spark.sql.types.ByteType
-import org.apache.spark.sql.types.DataType
-import org.apache.spark.sql.types.DecimalType
-import org.apache.spark.sql.types.DoubleType
-import org.apache.spark.sql.types.FloatType
-import org.apache.spark.sql.types.IntegerType
-import org.apache.spark.sql.types.LongType
-import org.apache.spark.sql.types.MapType
-import org.apache.spark.sql.types.ShortType
-import org.apache.spark.sql.types.StringType
-import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.types.TimestampType
-import org.apache.avro.mapred.AvroOutputFormat
-import org.apache.avro.mapred.AvroWrapper
+import org.apache.spark.sql.types._
+import org.apache.spark.sql.{DataFrame, Encoder, Encoders, Row}
 
+import scala.collection.immutable.Map
 
-/** 
+/**
  * Based on com.databricks.spark.avro.AvroSaver. This version takes avroSchema as a parameter
  * to the save method - thanks to that the schema is not a generic one ([[org.apache.avro.generic.GenericRecord]])
  * generated from a data frame schema   
- *  
+ *
  * This object provides a save() method that is used to save DataFrame as avro file.
  * To do this, we first convert the schema and then convert each row of the RDD to corresponding
  * avro types. One remark worth mentioning is the structName parameter that functions have. Avro
@@ -70,26 +38,31 @@ object AvroSaver {
     val schema = dataFrame.schema
     AvroJob.setOutputSchema(jobConf, avroSchema)
 
-    dataFrame.mapPartitions(rowsToAvro(_, schema)).saveAsHadoopFile(location,
-      classOf[AvroWrapper[GenericRecord]],
-      classOf[NullWritable],
-      classOf[AvroOutputFormat[GenericRecord]],
-      jobConf)
+    implicit val encoder: Encoder[(AvroKey[GenericRecord], NullWritable)] =
+      Encoders.tuple(Encoders.kryo(classOf[AvroKey[GenericRecord]]), Encoders.kryo(classOf[NullWritable]))
+
+    dataFrame
+      .mapPartitions(rowsToAvro(_, schema))
+      .rdd
+      .saveAsHadoopFile(location,
+        classOf[AvroWrapper[GenericRecord]],
+        classOf[NullWritable],
+        classOf[AvroOutputFormat[GenericRecord]],
+        jobConf)
   }
 
-  private def rowsToAvro(
-      rows: Iterator[Row],
-      schema: StructType): Iterator[(AvroKey[GenericRecord], NullWritable)] = {
+  private def rowsToAvro(rows: Iterator[Row],
+                         schema: StructType): Iterator[(AvroKey[GenericRecord], NullWritable)] = {
     val converter = createConverter(schema, "topLevelRecord")
     rows.map(x => (new AvroKey(converter(x).asInstanceOf[GenericRecord]),
-      NullWritable.get())).toIterator
+      NullWritable.get()))
   }
 
   /**
    * This function constructs converter function for a given sparkSQL datatype. These functions
    * will be used to convert dataFrame to avro format.
    */
-  def createConverter(dataType: DataType, structName: String): (Any) => Any = {
+  def createConverter(dataType: DataType, structName: String): Any => Any = {
     dataType match {
       case ByteType | ShortType | IntegerType | LongType | FloatType | DoubleType | StringType |
            BinaryType | BooleanType =>
@@ -131,7 +104,7 @@ object AvroSaver {
           if (item == null) {
             null
           } else {
-            val javaMap = new HashMap[String, Any]()
+            val javaMap = new util.HashMap[String, Any]()
             item.asInstanceOf[Map[String, Any]].foreach { case (key, value) =>
               javaMap.put(key, valueConverter(value))
             }

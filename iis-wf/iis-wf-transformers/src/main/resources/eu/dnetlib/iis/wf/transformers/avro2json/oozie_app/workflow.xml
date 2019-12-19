@@ -25,7 +25,7 @@
             <name>sparkDriverOverhead</name>
             <description>The amount of off heap memory (in megabytes) to be allocated for the driver</description>
         </property>
-	</parameters>
+    </parameters>
 	 
     <global>
         <job-tracker>${jobTracker}</job-tracker>
@@ -41,8 +41,7 @@
             </property>
         </configuration>
     </global>
-    
-    
+
     <start to="decision-transformer"/>
     
     <decision name="decision-transformer">
@@ -62,7 +61,12 @@
             <name>avro2json_transformer_job</name>
             <class>eu.dnetlib.iis.wf.transformers.avro2json.Avro2JsonTransformer</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-transformers-${projectVersion}.jar</jar>
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory} --conf spark.yarn.driver.memoryOverhead=${sparkDriverOverhead}</spark-opts>
+            <spark-opts>
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
+                --conf spark.yarn.driver.memoryOverhead=${sparkDriverOverhead}
+            </spark-opts>
             <arg>-input=${input}</arg>
             <arg>-output=${output}</arg>
         </spark>
@@ -77,4 +81,5 @@
     </kill>
     
     <end name="end"/>
+
 </workflow-app>

@@ -2,6 +2,7 @@ package eu.dnetlib.iis.wf.export.actionmanager.entity.patent;
 
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.common.utils.ListTestUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import org.apache.avro.specific.SpecificRecordBase;
@@ -44,9 +45,8 @@ public class PatentExportCounterReporterTest {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
         conf.set("spark.driver.host", "localhost");
-        conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
-        conf.setAppName("PatentExportCounterReporterTest");
-        sc = new JavaSparkContext(conf);
+        conf.setAppName(PatentExportCounterReporterTest.class.getSimpleName());
+        sc = JavaSparkContextFactory.withConfAndKryo(conf);
     }
 
     @AfterClass

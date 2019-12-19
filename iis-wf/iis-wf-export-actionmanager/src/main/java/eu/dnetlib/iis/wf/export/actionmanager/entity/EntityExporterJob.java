@@ -1,10 +1,17 @@
 package eu.dnetlib.iis.wf.export.actionmanager.entity;
 
-import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+import eu.dnetlib.actionmanager.actions.ActionFactory;
+import eu.dnetlib.actionmanager.actions.AtomicAction;
+import eu.dnetlib.actionmanager.actions.XsltInfoPackageAction;
+import eu.dnetlib.actionmanager.common.Operation;
+import eu.dnetlib.actionmanager.common.Provenance;
+import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
+import eu.dnetlib.iis.common.java.io.HdfsUtils;
+import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
+import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.io.SequenceFile.CompressionType;
 import org.apache.hadoop.io.Text;
@@ -17,20 +24,13 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-
-import eu.dnetlib.actionmanager.actions.ActionFactory;
-import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.actionmanager.actions.XsltInfoPackageAction;
-import eu.dnetlib.actionmanager.common.Operation;
-import eu.dnetlib.actionmanager.common.Provenance;
-import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
-import eu.dnetlib.iis.common.java.io.HdfsUtils;
-import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 import scala.Tuple2;
+
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Generic entity exporter reading XML records and exporting them as actions.
@@ -45,22 +45,15 @@ public class EntityExporterJob {
     private static final String ENTITY_XSLT_NAME = "entity2actions";
     
     private static EntityExportCounterReporter counterReporter = new EntityExportCounterReporter();
-    
-    
+
     //------------------------ LOGIC --------------------------
     
     public static void main(String[] args) throws Exception {
-        
         EntityExporterJobParameters params = new EntityExporterJobParameters();
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
         
-        SparkConf conf = new SparkConf();
-        conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
-        conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
-        
-        try (JavaSparkContext sc = new JavaSparkContext(conf)) {
-            
+        try (JavaSparkContext sc = JavaSparkContextFactory.withConfAndKryo(new SparkConf())) {
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputAvroPath);
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
             
@@ -80,10 +73,11 @@ public class EntityExporterJob {
             String actionSetId = params.actionSetId;
             String entityXSLTLocation = params.entityXSLTLocation;
 
-            JavaPairRDD<Text, Text> result = entityText.flatMapToPair(x -> (Iterable<Tuple2<Text, Text>>) generateActions(x.toString(), actionSetId,
-                            buildActionFactory(ENTITY_XSLT_NAME, entityXSLTLocation), ENTITY_XSLT_NAME).stream()
-                                    .map(action -> new Tuple2<Text, Text>(new Text(action.getRowKey()),
-                                            new Text(action.toString())))::iterator);
+            JavaPairRDD<Text, Text> result = entityText
+                    .flatMapToPair(x ->
+                            generateActions(x.toString(), actionSetId, buildActionFactory(ENTITY_XSLT_NAME, entityXSLTLocation), ENTITY_XSLT_NAME).stream()
+                                    .map(action -> new Tuple2<>(new Text(action.getRowKey()), new Text(action.toString())))
+                                    .collect(Collectors.toList()).iterator());
 
             counterReporter.report(sc, entityText, params.outputReportPath, params.counterName);
             
@@ -94,8 +88,7 @@ public class EntityExporterJob {
             result.saveAsNewAPIHadoopFile(params.outputAvroPath, Text.class, Text.class, SequenceFileOutputFormat.class, job.getConfiguration());
         }
     }
-    
-    
+
     // ----------------------------------------- PRIVATE ----------------------------------------------
     
     /**

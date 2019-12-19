@@ -118,9 +118,9 @@
             <class>eu.dnetlib.iis.wf.export.actionmanager.entity.patent.PatentExporterJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-export-actionmanager-${projectVersion}.jar</jar>
             <spark-opts>
-                --executor-memory ${sparkExecutorMemory}
-                --executor-cores ${sparkExecutorCores}
-                --driver-memory ${sparkDriverMemory}
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
             </spark-opts>
             <arg>-inputDocumentToPatentPath=${input_document_to_patent}</arg>
             <arg>-inputPatentPath=${input_patent}</arg>
@@ -144,4 +144,5 @@
     </kill>
 
     <end name="end"/>
+
 </workflow-app>

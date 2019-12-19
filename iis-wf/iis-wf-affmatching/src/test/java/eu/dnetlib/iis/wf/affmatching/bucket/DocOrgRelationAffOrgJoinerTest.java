@@ -1,11 +1,11 @@
 package eu.dnetlib.iis.wf.affmatching.bucket;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.mockito.Mockito.*;
-
-import java.util.List;
-
+import com.google.common.collect.ImmutableList;
+import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentOrganization;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationFetcher;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -16,14 +16,13 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import com.google.common.collect.ImmutableList;
-
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentOrganization;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationFetcher;
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import scala.Tuple2;
+
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.mockito.Mockito.when;
 
 /**
  * @author madryk
@@ -36,43 +35,30 @@ public class DocOrgRelationAffOrgJoinerTest {
     
     @Mock
     private DocumentOrganizationFetcher documentOrganizationFetcher;
-    
-    
+
     private JavaSparkContext sparkContext;
-    
-    
+
     @Before
     public void setup() {
-        
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
-        conf.setAppName(getClass().getName());
-        
-        conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
-        conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
         conf.set("spark.driver.host", "localhost");
-        
-        sparkContext = new JavaSparkContext(conf);
-        
+        conf.setAppName(DocOrgRelationAffOrgJoinerTest.class.getSimpleName());
+        sparkContext = JavaSparkContextFactory.withConfAndKryo(conf);
     }
     
     @After
     public void cleanup() {
-        
         if (sparkContext != null) {
             sparkContext.close();
         }
-        
     }
-    
-    
+
     //------------------------ TESTS --------------------------
     
     @Test
     public void join() {
-        
         // given
-        
         JavaRDD<AffMatchAffiliation> affiliations = sparkContext.parallelize(ImmutableList.of(
                 new AffMatchAffiliation("DOC1", 1),
                 new AffMatchAffiliation("DOC1", 2),
@@ -95,17 +81,12 @@ public class DocOrgRelationAffOrgJoinerTest {
                 new AffMatchDocumentOrganization("DOC4", "ORG2"))); // document not present in affiliations rdd
         
         when(documentOrganizationFetcher.fetchDocumentOrganizations()).thenReturn(documentOrganizations);
-        
-        
+
         // execute
-        
         JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> affOrgPairsRDD = docOrgRelationAffOrgJoiner.join(affiliations, organizations);
-        
-        
+
         // assert
-        
         List<Tuple2<AffMatchAffiliation, AffMatchOrganization>> affOrgPairs = affOrgPairsRDD.collect();
-        
         List<Tuple2<AffMatchAffiliation, AffMatchOrganization>> expectedAffOrgPairs = ImmutableList.of(
                 new Tuple2<>(new AffMatchAffiliation("DOC1", 1), new AffMatchOrganization("ORG2")),
                 new Tuple2<>(new AffMatchAffiliation("DOC1", 2), new AffMatchOrganization("ORG2")),
@@ -115,7 +96,6 @@ public class DocOrgRelationAffOrgJoinerTest {
                 new Tuple2<>(new AffMatchAffiliation("DOC3", 1), new AffMatchOrganization("ORG4")),
                 new Tuple2<>(new AffMatchAffiliation("DOC3", 2), new AffMatchOrganization("ORG4")),
                 new Tuple2<>(new AffMatchAffiliation("DOC3", 3), new AffMatchOrganization("ORG4")));
-        
         assertThat(affOrgPairs, containsInAnyOrder(expectedAffOrgPairs.toArray()));
     }
     

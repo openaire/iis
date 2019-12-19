@@ -1,6 +1,4 @@
 <?xml version="1.0"?>
-<!-- Note that documentation placed in comments in this file uses the
-"markdown" syntax (along with its way of dividing text into sections). -->
 <workflow-app xmlns="uri:oozie:workflow:0.4" name="referenceextraction_project_main">
 	
 	<parameters>
@@ -20,7 +18,6 @@
 			<name>output_document_to_project</name>
 			<description>output document to project</description>
 		</property>
-		
 		<property>
             <name>sparkDriverMemory</name>
             <description>memory for driver process</description>
@@ -33,7 +30,7 @@
             <name>sparkExecutorCores</name>
             <description>number of cores used by single executor</description>
         </property>
-	</parameters>
+    </parameters>
 
 	<start to="sqlite_builder" />
 
@@ -42,7 +39,6 @@
             <app-path>${wf:appPath()}/sqlite_builder</app-path>
             <propagate-configuration />
             <configuration>
-                <!-- Working directory of the subworkflow -->
                 <property>
                     <name>workingDir</name>
                     <value>${workingDir}/sqlite_builder/working_dir</value>
@@ -71,7 +67,6 @@
             <app-path>${wf:appPath()}/main_sqlite</app-path>
             <propagate-configuration />
             <configuration>
-                <!-- Working directory of the subworkflow -->
                 <property>
                     <name>workingDir</name>
                     <value>${workingDir}/main_sqlite/working_dir</value>
@@ -104,7 +99,11 @@
             <name>tara-referenceextraction-input-transformer</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.project.input.TaraReferenceExtractionInputTransformerJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
+            <spark-opts>
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
+            </spark-opts>
             <arg>-inputMetadata = ${input_document_metadata}</arg>
             <arg>-inputText = ${input_document_text}</arg>
             <arg>-output = ${workingDir}/meta_with_text</arg>
@@ -118,7 +117,6 @@
             <app-path>${wf:appPath()}/tara_sqlite</app-path>
             <propagate-configuration />
             <configuration>
-                <!-- Working directory of the subworkflow -->
                 <property>
                     <name>workingDir</name>
                     <value>${workingDir}/tara_sqlite/working_dir</value>
@@ -209,9 +207,10 @@
 
     <kill name="fail">
         <message>Unfortunately, the process failed -- error message:
-        			[${wf:errorMessage(wf:lastErrorNode())}]
-        		</message>
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
     </kill>
 
     <end name="end"/>
+
 </workflow-app>

@@ -15,9 +15,7 @@
         </configuration>
     </global>
 
-
     <start to="data_producer" />
-
 
     <action name="data_producer">
         <java>
@@ -46,7 +44,6 @@
         <ok to="project_based_matching" />
         <error to="fail" />
     </action>
-
 
     <action name="project_based_matching">
         <sub-workflow>
@@ -95,7 +92,6 @@
         <error to="fail"/>
     </action>
 
-
     <action name="consumer">
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
@@ -112,7 +108,6 @@
         <ok to="end" />
         <error to="fail" />
     </action>
-
 
     <kill name="fail">
         <message>Unfortunately, the process failed -- error message: [${wf:errorMessage(wf:lastErrorNode())}]</message>

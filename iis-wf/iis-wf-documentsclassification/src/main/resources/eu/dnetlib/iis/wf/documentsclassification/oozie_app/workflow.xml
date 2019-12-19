@@ -1,6 +1,4 @@
 <?xml version="1.0"?>
-<!-- Note that documentation placed in comments in this file uses the
-"markdown" syntax (along with its way of dividing text into sections). -->
 <workflow-app xmlns="uri:oozie:workflow:0.4" name="documentsclassification_main">
 	
 	<parameters>
@@ -12,7 +10,6 @@
 			<name>output_document_to_document_classes</name>
 			<description>output document to document classes</description>
 		</property>
-		
         <property>
             <name>output_report_root_path</name>
             <description>base directory for storing reports</description>
@@ -34,7 +31,7 @@
             <name>sparkExecutorCores</name>
             <description>number of cores used by single executor</description>
         </property>
-	</parameters>
+    </parameters>
 
     <global>
         <job-tracker>${jobTracker}</job-tracker>
@@ -50,8 +47,7 @@
             </property>
         </configuration>
     </global>
-    
-    
+
     <start to="document_classification_job" />
 
 	<action name="document_classification_job"> 
@@ -70,10 +66,15 @@
             <class>eu.dnetlib.iis.wf.documentsclassification.DocumentClassificationJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-documentsclassification-${projectVersion}.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory}</spark-opts>
+            <spark-opts>
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
+            </spark-opts>
             
             <arg>-inputAvroPath=${input_documents}</arg>
             <arg>-outputAvroPath=${output_document_to_document_classes}</arg>
+            <arg>-scriptDirPath=${wf:conf('oozie.wf.application.path')}/lib/scripts</arg>
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
             
         </spark>
@@ -81,12 +82,12 @@
         <error to="fail"/>
     </action>
 
-
     <kill name="fail">
         <message>Unfortunately, the process failed -- error message:
-        			[${wf:errorMessage(wf:lastErrorNode())}]
-        		</message>
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
     </kill>
 
     <end name="end"/>
+
 </workflow-app>

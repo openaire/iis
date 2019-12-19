@@ -61,8 +61,8 @@
             <class>eu.dnetlib.iis.wf.importer.patent.PatentReaderJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-import-${projectVersion}.jar</jar>
             <spark-opts>
-                --executor-memory ${sparkExecutorMemory}
-                --executor-cores ${sparkExecutorCores}
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
                 --driver-memory=${sparkDriverMemory}
             </spark-opts>
             <arg>-inputJSONLocation=${input_json}</arg>
@@ -80,4 +80,5 @@
     </kill>
 
     <end name="end"/>
+
 </workflow-app>

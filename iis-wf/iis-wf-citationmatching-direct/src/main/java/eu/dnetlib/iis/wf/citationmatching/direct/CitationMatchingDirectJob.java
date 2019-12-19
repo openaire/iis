@@ -1,27 +1,13 @@
 package eu.dnetlib.iis.wf.citationmatching.direct;
 
-import java.io.IOException;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.sql.DataFrame;
-import org.apache.spark.sql.SQLContext;
-
-import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
-import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
-import scala.Tuple2;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-
 import eu.dnetlib.iis.citationmatching.direct.schemas.Citation;
 import eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
+import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import eu.dnetlib.iis.wf.citationmatching.direct.converter.DirectCitationToCitationConverter;
 import eu.dnetlib.iis.wf.citationmatching.direct.converter.DocumentToDirectCitationMetadataConverter;
@@ -30,7 +16,19 @@ import eu.dnetlib.iis.wf.citationmatching.direct.service.CitationMatchingDirectC
 import eu.dnetlib.iis.wf.citationmatching.direct.service.ExternalIdCitationMatcher;
 import eu.dnetlib.iis.wf.citationmatching.direct.service.PickFirstDocumentFunction;
 import eu.dnetlib.iis.wf.citationmatching.direct.service.PickResearchArticleDocumentFunction;
+import org.apache.commons.lang.StringUtils;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SQLContext;
+import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
+import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
+import scala.Tuple2;
 
+import java.io.IOException;
 
 public class CitationMatchingDirectJob {
     
@@ -51,32 +49,20 @@ public class CitationMatchingDirectJob {
     private static DirectCitationToCitationConverter directCitationToCitationConverter = new DirectCitationToCitationConverter();
     
     private static CitationMatchingDirectCounterReporter citationMatchingDirectReporter = new CitationMatchingDirectCounterReporter();
-    
-    
-    
+
     //------------------------ LOGIC --------------------------
     
     public static void main(String[] args) throws IOException {
-        
         CitationMatchingDirectJobParameters params = new CitationMatchingDirectJobParameters();
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
-        
-        
-        SparkConf conf = new SparkConf();
-        conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
-        conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
-        
-        
-        
-        try (JavaSparkContext sc = new JavaSparkContext(conf)) {
-            
+
+        try (JavaSparkContext sc = JavaSparkContextFactory.withConfAndKryo(new SparkConf())) {
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputAvroPath);
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
             
             JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> documents = avroLoader.loadJavaRDD(sc, params.inputAvroPath, ExtractedDocumentMetadataMergedWithOriginal.class);
-            
-            
+
             JavaRDD<DocumentMetadata> simplifiedDocuments = documents.map(document -> documentToDirectCitationMetadataConverter.convert(document));
             simplifiedDocuments = simplifiedDocuments.cache();
             
@@ -105,8 +91,7 @@ public class CitationMatchingDirectJob {
         }
         
     }
-    
-    
+
     //------------------------ PRIVATE --------------------------
     
     /**
@@ -116,31 +101,30 @@ public class CitationMatchingDirectJob {
      */
     private static JavaPairRDD<String, String> loadPmidToPmcidMappings(JavaSparkContext sc, String inputCSV) {
         SQLContext sqlContext = new SQLContext(sc);
-        DataFrame pmcDF = sqlContext.read().format("com.databricks.spark.csv").option("header", "true").load(inputCSV);
-        DataFrame pmcSelectedDF = pmcDF.select(pmcDF.col(CSV_COLUMN_PMID),pmcDF.col(CSV_COLUMN_PMCID));
-        DataFrame pmcFilteredDF = pmcSelectedDF.filter(pmcSelectedDF.col(CSV_COLUMN_PMID).isNotNull().and(pmcSelectedDF.col(CSV_COLUMN_PMCID).isNotNull()));
+        Dataset<Row> pmcDF = sqlContext.read()
+                .format("com.databricks.spark.csv")
+                .option("header", "true")
+                .load(inputCSV);
+        Dataset<Row> pmcSelectedDF = pmcDF
+                .select(pmcDF.col(CSV_COLUMN_PMID),pmcDF.col(CSV_COLUMN_PMCID));
+        Dataset<Row> pmcFilteredDF = pmcSelectedDF
+                .filter(pmcSelectedDF.col(CSV_COLUMN_PMID).isNotNull()
+                        .and(pmcSelectedDF.col(CSV_COLUMN_PMCID).isNotNull()));
         return pmcFilteredDF.toJavaRDD().mapToPair(r -> new Tuple2<>(r.getString(0), r.getString(1)));
     }
     
     private static JavaRDD<Citation> mergeCitations(JavaRDD<Citation> existingCitations, JavaRDD<Citation> newCitations) {
-        
         JavaPairRDD<IdWithPosition, Citation> existingCitationsWithKey = attachIdWithPositionKey(existingCitations);
         JavaPairRDD<IdWithPosition, Citation> newCitationsWithKey = attachIdWithPositionKey(newCitations);
-        
-        JavaRDD<Citation> mergedCitations = existingCitationsWithKey.fullOuterJoin(newCitationsWithKey)
+        return existingCitationsWithKey.fullOuterJoin(newCitationsWithKey)
                 .map(x -> x._2._1.isPresent() ? x._2._1.get() : x._2._2.get() );
-        
-        return mergedCitations;
     }
     
     private static JavaPairRDD<IdWithPosition, Citation> attachIdWithPositionKey(JavaRDD<Citation> directCitations) {
-        JavaPairRDD<IdWithPosition, Citation> directCitationsWithKey = directCitations
+        return directCitations
                 .keyBy(directCitation -> new IdWithPosition(directCitation.getSourceDocumentId().toString(), directCitation.getPosition()));
-        
-        return directCitationsWithKey;
     }
-    
-    
+
     @Parameters(separators = "=")
     private static class CitationMatchingDirectJobParameters {
         

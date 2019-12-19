@@ -3,7 +3,6 @@ package eu.dnetlib.iis.wf.export.actionmanager.entity;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 import eu.dnetlib.actionmanager.actions.ActionFactory;
 import eu.dnetlib.actionmanager.actions.AtomicAction;
@@ -27,6 +26,7 @@ import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.data.transform.xml.AbstractDNetXsltFunctions;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
+import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.common.utils.DateTimeUtils;
 import eu.dnetlib.iis.common.utils.RDDUtils;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta;
@@ -45,6 +45,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.Optional;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import scala.Tuple2;
 import scala.Tuple3;
@@ -55,6 +56,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Software entity and relations exporter reading {@link DocumentToSoftwareUrlWithMeta} avro records and exporting them as entity and relation actions.
@@ -90,8 +92,7 @@ public class SoftwareExporterJob {
     private static SparkAvroLoader avroLoader = new SparkAvroLoader();
     
     private static SoftwareExportCounterReporter counterReporter = new SoftwareExportCounterReporter();
-    
-    
+
     //------------------------ LOGIC --------------------------
     
     public static void main(String[] args) throws Exception {
@@ -104,8 +105,7 @@ public class SoftwareExporterJob {
         conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
         conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
         
-        try (JavaSparkContext sc = new JavaSparkContext(conf)) {
-            
+        try (JavaSparkContext sc = JavaSparkContextFactory.withConfAndKryo(new SparkConf())) {
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputEntityPath);
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputRelationPath);
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
@@ -140,8 +140,7 @@ public class SoftwareExporterJob {
             counterReporter.report(sc, dedupedSoftwareUrls, dedupedRelationTriples, params.outputReportPath);
         }
     }
-    
-    
+
     // ----------------------------------------- PRIVATE ----------------------------------------------
     
     private static JavaRDD<?> handleEntities(JavaRDD<DocumentToSoftwareUrlWithMeta> documentToSoftwareUrl, 
@@ -194,7 +193,9 @@ public class SoftwareExporterJob {
 
         JavaPairRDD<Text, Text> relationResult = dedupedRelationTriples
                 .flatMapToPair(x ->
-                        buildRelationActions(x._1(), x._2(), x._3(), actionSetId).stream().map(action -> new Tuple2<>(new Text(action.getRowKey()), new Text(action.toString())))::iterator);
+                        buildRelationActions(x._1(), x._2(), x._3(), actionSetId).stream()
+                                .map(action -> new Tuple2<>(new Text(action.getRowKey()), new Text(action.toString())))
+                                .collect(Collectors.toList()).iterator());
 
         RDDUtils.saveTextPairRDD(relationResult, numberOfOutputFiles, outputAvroPath, jobConfig);
 

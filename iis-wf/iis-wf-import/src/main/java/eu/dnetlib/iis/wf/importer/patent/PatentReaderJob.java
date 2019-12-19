@@ -9,10 +9,10 @@ import com.google.common.collect.Lists;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.HolderCountry;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
@@ -69,15 +69,9 @@ public class PatentReaderJob {
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
 
-        SparkConf conf = new SparkConf();
-        conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
-        conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
-
-        try (JavaSparkContext sc = new JavaSparkContext(conf)) {
-            Configuration hadoopConf = sc.hadoopConfiguration();
-
-            HdfsUtils.remove(hadoopConf, params.outputPath);
-            HdfsUtils.remove(hadoopConf, params.outputReportPath);
+        try (JavaSparkContext sc = JavaSparkContextFactory.withConfAndKryo(new SparkConf())) {
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputPath);
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
 
             SQLContext sqlContext = new SQLContext(sc);
             JavaRDD<Patent> results = sqlContext.read()

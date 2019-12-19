@@ -1,27 +1,11 @@
-/*
- * Copyright 2014 Databricks
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package eu.dnetlib.iis.common.spark.avro
 
-import scala.collection.JavaConversions._
-
-import org.apache.avro.{Schema, SchemaBuilder}
-import org.apache.avro.SchemaBuilder._
-
-import org.apache.spark.sql.types._
 import org.apache.avro.Schema.Type._
+import org.apache.avro.SchemaBuilder._
+import org.apache.avro.{Schema, SchemaBuilder}
+import org.apache.spark.sql.types._
+
+import scala.collection.JavaConversions._
 
 /**
  * This object contains method that are used to convert sparkSQL schemas to avro schemas and vice
@@ -92,9 +76,8 @@ private object SchemaConverters {
    * This function converts sparkSQL StructType into avro schema. This method uses two other
    * converter methods in order to do the conversion.
    */
-  private[avro] def convertStructToAvro[T](
-      structType: StructType,
-      schemaBuilder: RecordBuilder[T]): T = {
+  private[avro] def convertStructToAvro[T](structType: StructType,
+                                            schemaBuilder: RecordBuilder[T]): T = {
     val fieldsAssembler: FieldAssembler[T] = schemaBuilder.fields()
     structType.fields.foreach { field =>
       val newField = fieldsAssembler.name(field.name).`type`()
@@ -113,9 +96,9 @@ private object SchemaConverters {
    * be used to construct fields of avro record (convertFieldTypeToAvro is used for that).
    */
   private def convertTypeToAvro[T](
-      dataType: DataType,
-      schemaBuilder: BaseTypeBuilder[T],
-      structName: String): T = {
+                                    dataType: DataType,
+                                    schemaBuilder: BaseTypeBuilder[T],
+                                    structName: String): T = {
     dataType match {
       case ByteType => schemaBuilder.intType()
       case ShortType => schemaBuilder.intType()
@@ -152,9 +135,9 @@ private object SchemaConverters {
    * from those for everything else, we have to use a separate method.
    */
   private def convertFieldTypeToAvro[T](
-      dataType: DataType,
-      newFieldBuilder: BaseFieldTypeBuilder[T],
-      structName: String): FieldDefault[T, _] = {
+                                         dataType: DataType,
+                                         newFieldBuilder: BaseFieldTypeBuilder[T],
+                                         structName: String): FieldDefault[T, _] = {
     dataType match {
       case ByteType => newFieldBuilder.intType()
       case ShortType => newFieldBuilder.intType()

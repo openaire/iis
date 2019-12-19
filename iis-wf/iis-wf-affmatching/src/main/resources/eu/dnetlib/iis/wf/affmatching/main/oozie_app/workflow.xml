@@ -90,8 +90,7 @@
             </property>
         </configuration>
     </global>
-    
-    
+
     <start to="affiliation-matching" />
 
     <action name="affiliation-matching">
@@ -107,7 +106,14 @@
             <class>eu.dnetlib.iis.wf.affmatching.AffMatchingJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-affmatching-${projectVersion}.jar</jar>
             
-            <spark-opts>--executor-memory ${sparkExecutorMemory} --executor-cores ${sparkExecutorCores} --driver-memory=${sparkDriverMemory} --conf spark.yarn.driver.memoryOverhead=${sparkDriverOverhead} --conf spark.network.timeout=${sparkNetworkTimeout} --conf spark.executor.heartbeatInterval=${sparkExecutorHeartbeatInterval}</spark-opts>
+            <spark-opts>
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
+                --conf spark.yarn.driver.memoryOverhead=${sparkDriverOverhead}
+                --conf spark.network.timeout=${sparkNetworkTimeout}
+                --conf spark.executor.heartbeatInterval=${sparkExecutorHeartbeatInterval}
+            </spark-opts>
 
             <arg>-inputAvroOrgPath=${input_organizations}</arg>
             <arg>-inputAvroAffPath=${input_document_metadata}</arg>
@@ -131,5 +137,7 @@
             [${wf:errorMessage(wf:lastErrorNode())}]
         </message>
     </kill>
+
     <end name="end" />
+
 </workflow-app>
