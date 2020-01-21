@@ -29,7 +29,7 @@ pipeline {
                     load "${ENV_CONFIG}"
                     withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "$JDK_VERSION" }",
                      "PATH+MAVEN=${tool type: 'maven', name: "$MAVEN_VERSION"}/bin:${env.JAVA_HOME}/bin"]) {
-                        sh "mvn clean compile"
+                        sh "mvn test"
                     }
                 }
             }
