@@ -61,4 +61,15 @@ select docid, conceptId, conceptLabel, stripchars(middle,'.)(,[]') as middle, pr
 from (
 setschema 'docid,prev,middle,next' select c1, textwindow2s(keywords(filterstopwords(c2)),7,1,3, '\bDARIAH') from pubs where c2 is not null
 ), grants where conceptLabel="DARIAH EU" and (not regexprmatches("edariah",lower(middle)) and not regexprmatches("riyadh",lower(context)) )
+) group by docid
+
+union all
+
+--BEOPEN
+select jdict('documentId', docid, 'conceptId', '100', 'confidenceLevel', 0.5,'textsnippet',context) as C1 from (
+select docid,  stripchars(middle,'_-,.}{)([];\/') as middle, prev||" "||middle||" "||next as context
+from (
+setschema 'docid,prev,middle,next' select c1, textwindow2s(filterstopwords(regexpr("\n",c2," ")),10,1,3, '\b\d{5,6}\b') from pubs where c2 is not null
+)  where  regexprmatches("(?:\b507420\b)|(?:\bENV/S/000405\b)|(?:\b20006\b)|(?:\b19744\b)|(?:\bIST-2000-29542\b)|(?:\b11044\b)|(?:\bG3RT-CT-2002-05092\b)|(?:\bEVK4-CT-1999-00003\b)|(?:\bEVK4-CT-2000-00024\b)|(?:\bIST-1999-29053\b)|(?:\bIST-1999-11138\b)|(?:\bIST-1999-20856\b)|(?:\bG2RD-CT-2000-10041\b)|(?:\bIST-1999-20868\b)|(?:\bG2RD-CT-2000-10047\b)",middle) and 
+regexprmatches("\bfp5\b|\bfp6\b|(?:\bhumanist\b)|(?:\bdme vehicle\b)|(?:\bhychain mini-trans\b)|(?:\bpepper\b)|(?:\bf-man\b)|(?:\bfact\b)|(?:\blibertin\b)|(?:\bprompt\b)|(?:\bstardust\b)|(?:\bcardme-4\b)|(?:\bitswap\b)|(?:\btosca\b)|(?:\btravel-guide\b)|(?:\btop trial\b)|(?:\badvisors\b)|grant|european|project|work|support|contract|research|commission|framework|program",lower(context))
 ) group by docid;
