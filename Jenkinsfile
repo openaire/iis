@@ -1,38 +1,37 @@
-def MAVEN_VERSION = "Maven3"
-def JDK_VERSION = "Sun JDK 8"
-
-def TRIGGERS_CRON = "H H(20-23) * * 1-5"
-
-def BUILD_NUMBER_TO_KEEP = "5"
-def BUILD_TIMEOUT_VALUE = 60
-def BUILD_TIMEOUT_UNIT = "MINUTES"
-
 pipeline {
     agent any
 
-    tools {
-        maven MAVEN_VERSION
-        jdk JDK_VERSION
-    }
-
     triggers {
-        cron(TRIGGERS_CRON)
+        cron("H H(20-23) * * 1-5")
     }
 
     options {
-        buildDiscarder(logRotator(numToKeepStr: BUILD_NUMBER_TO_KEEP))
-        timeout time: BUILD_TIMEOUT_VALUE, unit: BUILD_TIMEOUT_UNIT
+        buildDiscarder(logRotator(numToKeepStr: "5"))
+        timeout time: 60, unit: "MINUTES"
     }
 
     stages {
         stage("Build") {
             steps {
-                sh "mvn clean compile"
+                configFileProvider([configFile(fileId: "83303a32-933f-4cc9-8f6d-5cf2e85ac68d", variable: 'ENV_CONFIG')]) {
+                    load "${ENV_CONFIG}"
+                    withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "$JDK_VERSION" }",
+                     "PATH+MAVEN=${tool type: 'maven', name: "$MAVEN_VERSION"}/bin:${env.JAVA_HOME}/bin"]) {
+                        sh "mvn clean compile"
+                    }
+                }
             }
         }
+
         stage("Test") {
             steps {
-                sh "mvn test"
+                configFileProvider([configFile(fileId: "83303a32-933f-4cc9-8f6d-5cf2e85ac68d", variable: 'ENV_CONFIG')]) {
+                    load "${ENV_CONFIG}"
+                    withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "$JDK_VERSION" }",
+                     "PATH+MAVEN=${tool type: 'maven', name: "$MAVEN_VERSION"}/bin:${env.JAVA_HOME}/bin"]) {
+                        sh "mvn test"
+                    }
+                }
             }
         }
     }
