@@ -270,7 +270,8 @@
 									workingDir,oozieTopWfApplicationPath,oozieServiceLoc,
 									sparkDriverMemory,sparkExecutorMemory,sparkExecutorCores,
 									oozie.wf.application.path,projectVersion,oozie.use.system.libpath,
-									oozieActionShareLibForSpark1,spark1YarnHistoryServerAddress,spark1EventLogDir
+									oozieActionShareLibForSpark1,spark1YarnHistoryServerAddress,spark1EventLogDir,
+									oozieActionShareLibForSpark2,spark2YarnHistoryServerAddress,spark2EventLogDir
 									</include>
 									<includeSystemProperties>true</includeSystemProperties>
 									<includePropertyKeysFromFiles>
