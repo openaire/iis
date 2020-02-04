@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-import_mdrecord classpath eu/dnetlib/iis/wf/importer/mdrecord/oozie_app

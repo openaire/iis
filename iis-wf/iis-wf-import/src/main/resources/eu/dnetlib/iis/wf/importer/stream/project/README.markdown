@@ -1,0 +1,2 @@
+Streamed version of project importer, after removing IIS preprocessing phase, is not used in IIS main workflow anymore.
+It should be kept as a standalone subworkflow for data curation purposes and for provisioning subset of projects for data validation and running mining experiments when integrating new funders.
