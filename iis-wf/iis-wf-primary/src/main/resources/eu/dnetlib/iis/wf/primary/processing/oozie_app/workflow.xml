@@ -332,7 +332,13 @@
             <value>${sparkExecutorMemory}</value>
             <description>memory for individual executor</description>
         </property>
-        
+        <property>
+            <name>textUnionBlockSize</name>
+            <value>32m</value>
+            <description>DocumentText datastore block size affecting number of tasks issued by each text mining module.
+            Introduced to prevent long lasting tasks from occupying cluster resources for too long.</description>
+        </property>
+
         <!-- output ports -->
         <property>
             <name>output_merged_metadata</name>
@@ -464,6 +470,10 @@
                 <property>
                     <name>union_count_report_key</name>
                     <value>processing.merging.documentText</value>
+                </property>
+                <property>
+                    <name>dfs_blocksize</name>
+                    <value>${textUnionBlockSize}</value>
                 </property>
             </configuration>
         </sub-workflow>
