@@ -3,6 +3,8 @@ package eu.dnetlib.iis.wf.documentsclassification;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+
+import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
@@ -51,10 +53,15 @@ public class DocumentClassificationJob {
 
             sc.sc().addFile(params.scriptDirPath, true);
 
-            JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> documents = avroLoader
+            JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> rawDocuments = avroLoader
                     .loadJavaRDD(sc, params.inputAvroPath, ExtractedDocumentMetadataMergedWithOriginal.class);
             
-            JavaRDD<DocumentMetadata> metadataRecords = documents
+            JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> repartDocuments = 
+                    (StringUtils.isNotBlank(params.numberOfPartitions) && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(params.numberOfPartitions))
+                    ? rawDocuments.repartition(Integer.parseInt(params.numberOfPartitions))
+                    : rawDocuments;
+            
+            JavaRDD<DocumentMetadata> metadataRecords = repartDocuments
                     .map(document -> converter.convert(document))
                     .filter(metadata->StringUtils.isNotBlank(metadata.getAbstract$()));
 
@@ -101,6 +108,9 @@ public class DocumentClassificationJob {
 
         @Parameter(names = "-scriptDirPath", required = true, description = "path to directory with scripts")
         private String scriptDirPath;
+        
+        @Parameter(names = "-numberOfPartitions", required = false, description = "number of partitions the data should be sliced into")
+        private String numberOfPartitions;
         
         @Parameter(names = "-outputReportPath", required = true)
         private String outputReportPath;
