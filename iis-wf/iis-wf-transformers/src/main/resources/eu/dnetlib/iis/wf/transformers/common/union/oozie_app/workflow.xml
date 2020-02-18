@@ -20,6 +20,11 @@
             <description>Value for pig.maxCombinedSplitSize Pig property</description>
         </property>
         <property>
+            <name>dfs_blocksize</name>
+            <value>128m</value>
+            <description>output datastore blocksize</description>
+        </property>
+        <property>
             <name>output_report</name>
             <value>$UNDEFINED$</value>
             <description>directory for storing report</description>
@@ -69,6 +74,10 @@
                 <property>
                     <name>pig.maxCombinedSplitSize</name>
                     <value>${combine_splits}</value>
+                </property>
+                <property>
+                    <name>dfs.blocksize</name>
+                    <value>${dfs_blocksize}</value>
                 </property>
                 <property>
                     <name>oozie.action.external.stats.write</name>
