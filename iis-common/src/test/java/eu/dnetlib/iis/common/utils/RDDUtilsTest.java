@@ -74,7 +74,7 @@ public class RDDUtilsTest {
                 .count();
         assertEquals(NUMBER_OF_OUTPUT_FILES, fileCount);
 
-        List<Text> out = RDDTestUtils.readValues(outputDir.toString(), Function.identity());
+        List<Text> out = ListTestUtils.readValues(outputDir.toString(), Function.identity());
         List<String> actualValues = out.stream().map(Text::toString).sorted().collect(Collectors.toList());
         List<String> expectedValues = in.collect().stream().map(x -> x._2.toString()).sorted().collect(Collectors.toList());
         ListTestUtils

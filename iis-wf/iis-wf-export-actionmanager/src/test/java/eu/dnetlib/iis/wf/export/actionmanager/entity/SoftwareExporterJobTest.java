@@ -10,7 +10,7 @@ import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.schemas.ReportEntryType;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
-import eu.dnetlib.iis.common.utils.RDDTestUtils;
+import eu.dnetlib.iis.common.utils.ListTestUtils;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
@@ -99,11 +99,11 @@ public class SoftwareExporterJobTest {
         // assert
         assertCountersInReport(0, 0, 0);
         
-        List<AtomicAction> capturedEntityActions = RDDTestUtils
+        List<AtomicAction> capturedEntityActions = ListTestUtils
                 .readValues(outputEntityDirPath, text -> AtomicAction.fromJSON(text.toString()));
         assertEquals(0, capturedEntityActions.size());
         
-        List<AtomicAction> capturedRelationActions = RDDTestUtils
+        List<AtomicAction> capturedRelationActions = ListTestUtils
                 .readValues(outputRelationDirPath, text -> AtomicAction.fromJSON(text.toString()));
         assertEquals(0, capturedRelationActions.size());
     }
@@ -139,7 +139,7 @@ public class SoftwareExporterJobTest {
         String iisEntityId = SoftwareExporterJob.generateSoftwareEntityId("https://github.com/openaire/iis");
         
         // verifying entities
-        List<AtomicAction> capturedEntityActions = RDDTestUtils
+        List<AtomicAction> capturedEntityActions = ListTestUtils
                 .readValues(outputEntityDirPath, text -> AtomicAction.fromJSON(text.toString()));
         assertEquals(2, capturedEntityActions.size());
 
@@ -152,7 +152,7 @@ public class SoftwareExporterJobTest {
         assertTrue(expectedTargetRowKeysToBeConsumed.isEmpty());
 
         // verifying relations
-        List<AtomicAction> capturedRelationActions = RDDTestUtils
+        List<AtomicAction> capturedRelationActions = ListTestUtils
                 .readValues(outputRelationDirPath, text -> AtomicAction.fromJSON(text.toString()));
         assertEquals(6, capturedRelationActions.size());
 
