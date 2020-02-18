@@ -57,7 +57,7 @@ public class DocumentClassificationJob {
                     .loadJavaRDD(sc, params.inputAvroPath, ExtractedDocumentMetadataMergedWithOriginal.class);
             
             JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> repartDocuments = 
-                    (StringUtils.isNotBlank(params.numberOfPartitions) && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(params.numberOfPartitions))
+                    shouldRepartition(params.numberOfPartitions)
                     ? rawDocuments.repartition(Integer.parseInt(params.numberOfPartitions))
                     : rawDocuments;
             
@@ -86,6 +86,14 @@ public class DocumentClassificationJob {
     }
 
     //------------------------ PRIVATE --------------------------
+    
+    
+    /**
+     * Checks whether partitioning should be perfomed based on the parameter value.
+     */
+    private static boolean shouldRepartition(String numberOfPartitions) {
+        return (StringUtils.isNotBlank(numberOfPartitions) && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(numberOfPartitions));
+    }
     
     private static String getScriptPath() {
         String path = SparkFiles.get("scripts");
