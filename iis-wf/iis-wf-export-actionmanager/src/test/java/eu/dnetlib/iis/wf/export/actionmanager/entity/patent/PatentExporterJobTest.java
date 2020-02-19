@@ -11,7 +11,6 @@ import eu.dnetlib.iis.common.schemas.ReportEntryType;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.common.utils.ListTestUtils;
-import eu.dnetlib.iis.common.utils.RDDTestUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
@@ -92,11 +91,11 @@ public class PatentExporterJobTest {
         executor.execute(sparkJob);
 
         //then
-        List<AtomicAction> actualRelationActions = RDDTestUtils
+        List<AtomicAction> actualRelationActions = ListTestUtils
                 .readValues(outputRelationDir.toString(), text -> AtomicAction.fromJSON(text.toString()));
         assertEquals(0, actualRelationActions.size());
 
-        List<AtomicAction> actualEntityActions = RDDTestUtils
+        List<AtomicAction> actualEntityActions = ListTestUtils
                 .readValues(outputEntityDir.toString(), text -> AtomicAction.fromJSON(text.toString()));
         assertEquals(0, actualEntityActions.size());
 
@@ -119,7 +118,7 @@ public class PatentExporterJobTest {
 
         //then
         //relations
-        List<AtomicAction> actualRelationActions = RDDTestUtils
+        List<AtomicAction> actualRelationActions = ListTestUtils
                 .readValues(outputRelationDir.toString(), text -> AtomicAction.fromJSON(text.toString()));
         assertEquals(6, actualRelationActions.size());
 
@@ -143,7 +142,7 @@ public class PatentExporterJobTest {
                         expectedRelationsTargetRowKeyAndTargetColumnPairs.stream().sorted().collect(Collectors.toList()));
 
         // entities
-        List<AtomicAction> actualEntityActions = RDDTestUtils
+        List<AtomicAction> actualEntityActions = ListTestUtils
                 .readValues(outputEntityDir.toString(), text -> AtomicAction.fromJSON(text.toString()));
         assertEquals(actualEntityActions.size(), 2);
 
