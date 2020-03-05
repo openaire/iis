@@ -2,8 +2,11 @@
 protocol IIS{
 
     record SoftwareHeritageOrigin {
+    	// this field should be dropped but due to the following issue:
+    	// https://issues.apache.org/jira/browse/PIG-3358
+    	// we need to keep dummy 2nd field in this record definition 
         // SH origin
-        string origin;
+        union { null , string } origin = null;
         // SH url
         string url;
     }

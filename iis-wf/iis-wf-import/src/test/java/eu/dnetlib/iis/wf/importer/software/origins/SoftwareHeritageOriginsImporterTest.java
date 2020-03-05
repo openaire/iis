@@ -173,14 +173,13 @@ public class SoftwareHeritageOriginsImporterTest {
     @Test
     public void testConvertEntry() throws Exception {
         // given
-        SoftwareHeritageOriginEntry source = buildSoftwareHeritageOriginEntry("someId", "someType", "someUrl");
+        SoftwareHeritageOriginEntry source = buildSoftwareHeritageOriginEntry("someUrl");
         
         // execute
         SoftwareHeritageOrigin result = SoftwareHeritageOriginsImporter.convertEntry(source);
         
         // assert
         assertNotNull(result);
-        assertEquals(source.getType(), result.getOrigin());
         assertEquals(source.getUrl(), result.getUrl());
     }
     
@@ -188,8 +187,8 @@ public class SoftwareHeritageOriginsImporterTest {
     public void testParsePage() throws Exception {
         // given
         Gson gson = new Gson();
-        SoftwareHeritageOriginEntry entry1 = buildSoftwareHeritageOriginEntry("id1", "type1", "someUrl1");
-        SoftwareHeritageOriginEntry entry2 = buildSoftwareHeritageOriginEntry("id2", "type2", "someUrl2");
+        SoftwareHeritageOriginEntry entry1 = buildSoftwareHeritageOriginEntry("someUrl1");
+        SoftwareHeritageOriginEntry entry2 = buildSoftwareHeritageOriginEntry("someUrl2");
 
         // execute
         SoftwareHeritageOriginEntry[] results = SoftwareHeritageOriginsImporter.parsePage(
@@ -198,13 +197,7 @@ public class SoftwareHeritageOriginsImporterTest {
         // assert
         assertNotNull(results);
         assertEquals(2, results.length);
-        assertEquals(entry1.getId(), results[0].getId());
-        assertEquals(entry1.getOriginVisitsUrl(), results[0].getOriginVisitsUrl());
-        assertEquals(entry1.getType(), results[0].getType());
         assertEquals(entry1.getUrl(), results[0].getUrl());
-        assertEquals(entry2.getId(), results[1].getId());
-        assertEquals(entry2.getOriginVisitsUrl(), results[1].getOriginVisitsUrl());
-        assertEquals(entry2.getType(), results[1].getType());
         assertEquals(entry2.getUrl(), results[1].getUrl());
     }
     
@@ -290,7 +283,7 @@ public class SoftwareHeritageOriginsImporterTest {
         HttpEntity httpEntity = mock(HttpEntity.class);
         when(httpResponse.getEntity()).thenReturn(httpEntity);
         // preparing page contents
-        SoftwareHeritageOriginEntry entry = buildSoftwareHeritageOriginEntry("id1", "type1", "someUrl1");
+        SoftwareHeritageOriginEntry entry = buildSoftwareHeritageOriginEntry("someUrl1");
         Gson gson = new Gson();
         String pageContents = gson.toJson(new SoftwareHeritageOriginEntry[] {entry});
         InputStream pageInputStream = new ByteArrayInputStream(pageContents.getBytes());
@@ -306,7 +299,6 @@ public class SoftwareHeritageOriginsImporterTest {
         assertEquals(1, origins.size());
         SoftwareHeritageOrigin origin = origins.get(0);
         assertNotNull(origin);
-        assertEquals(entry.getType(), origin.getOrigin());
         assertEquals(entry.getUrl(), origin.getUrl());
         verifyReport(1, SoftwareHeritageOriginsImporter.COUNTER_NAME_TOTAL);
     }
@@ -324,8 +316,8 @@ public class SoftwareHeritageOriginsImporterTest {
         when(statusLine.getStatusCode()).thenReturn(200);
         
         Gson gson = new Gson();
-        SoftwareHeritageOriginEntry entry1 = buildSoftwareHeritageOriginEntry("id1", "type1", "someUrl1");
-        SoftwareHeritageOriginEntry entry2 = buildSoftwareHeritageOriginEntry("id2", "type2", "someUrl2");
+        SoftwareHeritageOriginEntry entry1 = buildSoftwareHeritageOriginEntry("someUrl1");
+        SoftwareHeritageOriginEntry entry2 = buildSoftwareHeritageOriginEntry("someUrl2");
         
         //1st response
         {
@@ -365,10 +357,8 @@ public class SoftwareHeritageOriginsImporterTest {
         List<SoftwareHeritageOrigin> origins = originCaptor.getAllValues();
         assertEquals(2, origins.size());
         assertNotNull(origins.get(0));
-        assertEquals(entry1.getType(), origins.get(0).getOrigin());
         assertEquals(entry1.getUrl(), origins.get(0).getUrl());
         assertNotNull(origins.get(1));
-        assertEquals(entry2.getType(), origins.get(1).getOrigin());
         assertEquals(entry2.getUrl(), origins.get(1).getUrl());
         verifyReport(2, SoftwareHeritageOriginsImporter.COUNTER_NAME_TOTAL);
     }
@@ -384,7 +374,7 @@ public class SoftwareHeritageOriginsImporterTest {
         when(httpClient.execute(any(HttpHost.class),any(HttpGet.class))).thenReturn(httpResponse, httpResponse2);
 
         Gson gson = new Gson();
-        SoftwareHeritageOriginEntry entry = buildSoftwareHeritageOriginEntry("id1", "type1", "someUrl1");
+        SoftwareHeritageOriginEntry entry = buildSoftwareHeritageOriginEntry("someUrl1");
         
         //1st response
         {
@@ -425,7 +415,6 @@ public class SoftwareHeritageOriginsImporterTest {
         List<SoftwareHeritageOrigin> origins = originCaptor.getAllValues();
         assertEquals(1, origins.size());
         assertNotNull(origins.get(0));
-        assertEquals(entry.getType(), origins.get(0).getOrigin());
         assertEquals(entry.getUrl(), origins.get(0).getUrl());
         verifyReport(1, SoftwareHeritageOriginsImporter.COUNTER_NAME_TOTAL);
         
@@ -442,7 +431,7 @@ public class SoftwareHeritageOriginsImporterTest {
         when(httpClient.execute(any(HttpHost.class),any(HttpGet.class))).thenReturn(httpResponse, httpResponse2);
 
         Gson gson = new Gson();
-        SoftwareHeritageOriginEntry entry = buildSoftwareHeritageOriginEntry("id1", "type1", "someUrl1");
+        SoftwareHeritageOriginEntry entry = buildSoftwareHeritageOriginEntry("someUrl1");
         
         //1st response
         {
@@ -483,7 +472,6 @@ public class SoftwareHeritageOriginsImporterTest {
         List<SoftwareHeritageOrigin> origins = originCaptor.getAllValues();
         assertEquals(1, origins.size());
         assertNotNull(origins.get(0));
-        assertEquals(entry.getType(), origins.get(0).getOrigin());
         assertEquals(entry.getUrl(), origins.get(0).getUrl());
         verifyReport(1, SoftwareHeritageOriginsImporter.COUNTER_NAME_TOTAL);
     }
@@ -635,19 +623,10 @@ public class SoftwareHeritageOriginsImporterTest {
         };
     }
     
-    private SoftwareHeritageOriginEntry buildSoftwareHeritageOriginEntry(
-            String id, String originVisitsUrl, String type, String url) {
+    private SoftwareHeritageOriginEntry buildSoftwareHeritageOriginEntry(String url) {
         SoftwareHeritageOriginEntry entry = new SoftwareHeritageOriginEntry();
-        entry.setId(id);
-        entry.setOriginVisitsUrl(originVisitsUrl);
-        entry.setType(type);
         entry.setUrl(url);
         return entry;
-    }
-    
-    private SoftwareHeritageOriginEntry buildSoftwareHeritageOriginEntry(
-            String id, String type, String url) {
-        return buildSoftwareHeritageOriginEntry(id, "irrelevant", type, url);
     }
     
 }

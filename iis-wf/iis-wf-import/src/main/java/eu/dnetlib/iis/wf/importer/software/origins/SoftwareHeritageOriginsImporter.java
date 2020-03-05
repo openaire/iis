@@ -260,7 +260,6 @@ public class SoftwareHeritageOriginsImporter implements eu.dnetlib.iis.common.ja
 
     protected static SoftwareHeritageOrigin convertEntry(SoftwareHeritageOriginEntry source) {
         SoftwareHeritageOrigin.Builder resultBuilder = SoftwareHeritageOrigin.newBuilder();
-        resultBuilder.setOrigin(source.getType());
         resultBuilder.setUrl(source.getUrl());
         return resultBuilder.build();
     }
