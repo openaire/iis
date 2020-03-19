@@ -1,0 +1,15 @@
+@namespace("eu.dnetlib.iis.referenceextraction.covid19.schemas")
+protocol IIS{
+
+    record MatchedDocument {
+//      ID of the document, foreign key: Document.id ("document" data store)
+        string id;
+
+//      document title
+        union { null , string } title = null;
+
+//      document publication date
+        union { null , string } date = null;
+    }
+
+}
