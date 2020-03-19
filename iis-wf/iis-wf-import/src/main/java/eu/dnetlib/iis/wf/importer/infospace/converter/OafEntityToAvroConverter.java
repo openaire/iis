@@ -4,23 +4,22 @@ import java.io.IOException;
 
 import org.apache.avro.specific.SpecificRecord;
 
-import eu.dnetlib.data.proto.OafProtos.Oaf;
-import eu.dnetlib.data.proto.OafProtos.OafEntity;
+import eu.dnetlib.dhp.schema.oaf.OafEntity;
 
 /**
- * {@link Oaf} entity to avro object converter.
+ * {@link OafEntity} entity to avro object converter.
  * 
  * @author mhorst
  *
- * @param <T> avro record type to be produced
+ * @param <Target> avro record type to be produced
  */
-public interface OafEntityToAvroConverter<T extends SpecificRecord> {
+public interface OafEntityToAvroConverter<Source extends OafEntity, Target extends SpecificRecord> {
 
     /**
-     * Builds avro objects from {@link Oaf} entity.
+     * Builds avro objects from {@link OafEntity} entity.
      * 
-     * @param oafEntity {@link Oaf} main entity
+     * @param oafEntity {@link OafEntity} main entity
      * @return avro object
      */
-    T convert(OafEntity oafEntity) throws IOException;
+    Target convert(Source oafRecord) throws IOException;
 }

@@ -14,17 +14,16 @@ import org.apache.log4j.Logger;
 
 import com.google.common.base.Preconditions;
 
-import eu.dnetlib.data.proto.FieldTypeProtos.StringField;
-import eu.dnetlib.data.proto.OafProtos.OafEntity;
+import eu.dnetlib.dhp.schema.oaf.Field;
 import eu.dnetlib.iis.importer.schemas.Project;
 
 /**
- * {@link OafEntity} containing project details to {@link Project} converter.
+ * {@link eu.dnetlib.dhp.schema.oaf.Project} containing project details to {@link Project} converter.
  * 
  * @author mhorst
  *
  */
-public class ProjectConverter implements OafEntityToAvroConverter<Project> {
+public class ProjectConverter implements OafEntityToAvroConverter<eu.dnetlib.dhp.schema.oaf.Project, Project> {
 
     protected static final Logger log = Logger.getLogger(ProjectConverter.class);
 
@@ -38,45 +37,37 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
     // ------------------------ LOGIC --------------------------
     
     @Override
-    public Project convert(OafEntity oafEntity) throws IOException {
-        Preconditions.checkNotNull(oafEntity);
-        if (oafEntity.hasProject()) {
-            eu.dnetlib.data.proto.ProjectProtos.Project sourceProject = oafEntity.getProject();
-            if (sourceProject.hasMetadata()) {
-                Project.Builder builder = Project.newBuilder();
-                builder.setId(oafEntity.getId());
-                StringField acronym = sourceProject.getMetadata().getAcronym();
-                
-                if (isAcronymValid(acronym)) {
-                    builder.setProjectAcronym(acronym.getValue());
-                }
-                
-                String projectGrantId = sourceProject.getMetadata().getCode().getValue();
-                if (StringUtils.isNotBlank(projectGrantId)) {
-                    builder.setProjectGrantId(projectGrantId);
-                }
-                
-                String jsonExtraInfo = sourceProject.getMetadata().getJsonextrainfo().getValue();
-                if (StringUtils.isNotBlank(jsonExtraInfo)) {
-                    builder.setJsonextrainfo(jsonExtraInfo);
-                } else {
-                    builder.setJsonextrainfo(BLANK_JSONEXTRAINFO);
-                }
-                
-                String extractedFundingClass = fundingTreeParser.extractFundingClass(
-                        extractStringValues(sourceProject.getMetadata().getFundingtreeList()));
-                if (StringUtils.isNotBlank(extractedFundingClass)) {
-                    builder.setFundingClass(extractedFundingClass);
-                }
-                return isDataValid(builder)?builder.build():null;
-            } else {
-                log.error("skipping: no metadata for project " + oafEntity.getId());
-                return null;
-            }
-        } else {
-            log.error("skipping: no project for entity " + oafEntity.getId());
-            return null;
+    public Project convert(eu.dnetlib.dhp.schema.oaf.Project sourceProject) throws IOException {
+        Preconditions.checkNotNull(sourceProject);
+
+        Project.Builder builder = Project.newBuilder();
+        builder.setId(sourceProject.getId());
+        Field<String> acronym = sourceProject.getAcronym();
+        
+        if (isAcronymValid(acronym)) {
+            builder.setProjectAcronym(acronym.getValue());
         }
+        
+        String projectGrantId = sourceProject.getCode() != null ? sourceProject.getCode().getValue() : null;
+        if (StringUtils.isNotBlank(projectGrantId)) {
+            builder.setProjectGrantId(projectGrantId);
+        }
+        
+        String jsonExtraInfo = sourceProject.getJsonextrainfo() != null ? sourceProject.getJsonextrainfo().getValue() : null;
+        if (StringUtils.isNotBlank(jsonExtraInfo)) {
+            builder.setJsonextrainfo(jsonExtraInfo);
+        } else {
+            builder.setJsonextrainfo(BLANK_JSONEXTRAINFO);
+        }
+        
+        String extractedFundingClass = fundingTreeParser.extractFundingClass(
+                extractStringValues(sourceProject.getFundingtree()));
+        if (StringUtils.isNotBlank(extractedFundingClass)) {
+            builder.setFundingClass(extractedFundingClass);
+        }
+        return isDataValid(builder)?builder.build():null;
+
+
     }
     
     /**
@@ -99,12 +90,12 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
     // ------------------------ PRIVATE --------------------------
     
     /**
-     * Extracts string values from {@link StringField} list.
+     * Extracts string values from {@link Field} list.
      */
-    private static List<String> extractStringValues(List<StringField> source) {
+    private static List<String> extractStringValues(List<Field<String>> source) {
         if (CollectionUtils.isNotEmpty(source)) {
             List<String> results = new ArrayList<String>(source.size());
-            for (StringField currentField : source) {
+            for (Field<String> currentField : source) {
                 results.add(currentField.getValue());
             }
             return results;
@@ -117,8 +108,8 @@ public class ProjectConverter implements OafEntityToAvroConverter<Project> {
      * Verifies whether acronym should be considered as valid.
      * @return true if valid, false otherwise
      */
-    private static boolean isAcronymValid(StringField acronym) {
-        return isAcronymValid(acronym.getValue());
+    private static boolean isAcronymValid(Field<String> acronym) {
+        return isAcronymValid(acronym != null ? acronym.getValue() : null);
     }
 
 }

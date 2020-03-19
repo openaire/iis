@@ -2,11 +2,11 @@ package eu.dnetlib.iis.wf.importer.infospace.converter;
 
 import com.google.common.base.Preconditions;
 
-import eu.dnetlib.data.proto.OafProtos.OafRel;
+import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.common.schemas.IdentifierMapping;
 
 /**
- * Dedup {@link OafRel} relations to {@link IdentifierMapping} converter.
+ * Dedup {@link Relation} relations to {@link IdentifierMapping} converter.
  * 
  * @author mhorst
  *
@@ -14,11 +14,11 @@ import eu.dnetlib.iis.common.schemas.IdentifierMapping;
 public class DeduplicationMappingConverter implements OafRelToAvroConverter<IdentifierMapping> {
 
     @Override
-    public IdentifierMapping convert(OafRel oafRel) {
-        Preconditions.checkNotNull(oafRel);
+    public IdentifierMapping convert(Relation relation) {
+        Preconditions.checkNotNull(relation);
         IdentifierMapping.Builder builder = IdentifierMapping.newBuilder();
-        builder.setNewId(oafRel.getSource());
-        builder.setOriginalId(oafRel.getTarget());
+        builder.setNewId(relation.getSource());
+        builder.setOriginalId(relation.getTarget());
         return builder.build();
     }
 }

@@ -4,10 +4,10 @@ import java.io.IOException;
 
 import org.apache.avro.specific.SpecificRecord;
 
-import eu.dnetlib.data.proto.OafProtos.OafRel;
+import eu.dnetlib.dhp.schema.oaf.Relation;
 
 /**
- * {@link OafRel} relation model to avro object converter.
+ * {@link Relation} relation model to avro object converter.
  * 
  * @author mhorst
  *
@@ -16,10 +16,10 @@ import eu.dnetlib.data.proto.OafProtos.OafRel;
 public interface OafRelToAvroConverter<T extends SpecificRecord> {
 
     /**
-     * Builds avro objects from {@link OafRel} relation input.
+     * Builds avro objects from {@link Relation} relation input.
      * 
-     * @param oafRelation {@link OafRel} relation entity
+     * @param oafRelation {@link Relation} relation entity
      * @return avro object
      */
-    T convert(OafRel oafRelation) throws IOException;
+    T convert(Relation oafRelation) throws IOException;
 }

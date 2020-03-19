@@ -455,6 +455,11 @@
 
             <!-- dnet dependencies -->
             <dependency>
+                <groupId>eu.dnetlib.dhp</groupId>
+                <artifactId>dhp-schemas</artifactId>
+                <version>[1.0.0, 2.0.0)</version>
+            </dependency>
+            <dependency>
                 <groupId>eu.dnetlib</groupId>
                 <artifactId>dnet-openaire-data-protos</artifactId>
                 <version>[3.0.0, 4.0.0)</version>

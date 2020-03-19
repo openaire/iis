@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.importer.infospace.approver;
 
-import eu.dnetlib.data.proto.FieldTypeProtos.DataInfo;
+import eu.dnetlib.dhp.schema.oaf.DataInfo;
 
 /**
  * Verifies whether field with provided {@link DataInfo} should be approved.

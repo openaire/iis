@@ -2,8 +2,8 @@ package eu.dnetlib.iis.wf.importer.infospace.approver;
 
 import java.util.regex.Pattern;
 
-import eu.dnetlib.data.proto.FieldTypeProtos.DataInfo;
-import eu.dnetlib.data.proto.OafProtos.Oaf;
+import eu.dnetlib.dhp.schema.oaf.DataInfo;
+import eu.dnetlib.dhp.schema.oaf.Oaf;
 
 /**
  * Inference data based result approver.

@@ -5,19 +5,17 @@ import org.apache.log4j.Logger;
 
 import com.google.common.base.Preconditions;
 
-import eu.dnetlib.data.proto.OafProtos.OafEntity;
-import eu.dnetlib.data.proto.OrganizationProtos.Organization.Metadata;
 import eu.dnetlib.iis.importer.schemas.Organization;
 
 /**
- * Converter of {@link OafEntity} object containing {@link eu.dnetlib.data.proto.OrganizationProtos.Organization}
+ * Converter of {@link eu.dnetlib.dhp.schema.oaf.Organization} object containing {@link eu.dnetlib.data.proto.OrganizationProtos.Organization}
  * into {@link Organization}
  * 
  * 
  * @author Łukasz Dumiszewski
 */
 
-public class OrganizationConverter implements OafEntityToAvroConverter<Organization> {
+public class OrganizationConverter implements OafEntityToAvroConverter<eu.dnetlib.dhp.schema.oaf.Organization, Organization> {
 
     
     private static Logger log = Logger.getLogger(OrganizationConverter.class);
@@ -26,40 +24,33 @@ public class OrganizationConverter implements OafEntityToAvroConverter<Organizat
     //------------------------ LOGIC --------------------------
     
     /**
-     * Converts {@link OafEntity} object containing {@link eu.dnetlib.data.proto.OrganizationProtos.Organization}
+     * Converts {@link eu.dnetlib.dhp.schema.oaf.Organization} object containing {@link eu.dnetlib.data.proto.OrganizationProtos.Organization}
      * into {@link Organization}
      */
     @Override
-    public Organization convert(OafEntity oafEntity) {
+    public Organization convert(eu.dnetlib.dhp.schema.oaf.Organization srcOrganization) {
 
-        Preconditions.checkNotNull(oafEntity);
+        Preconditions.checkNotNull(srcOrganization);
         
-        if (!isDataCorrect(oafEntity)) {
+        if (!isDataCorrect(srcOrganization)) {
         
             return null;
         
         }
         
-        eu.dnetlib.data.proto.OrganizationProtos.Organization srcOrganization = oafEntity.getOrganization();
-        
-        
         Organization.Builder orgBuilder = Organization.newBuilder();
         
-        orgBuilder.setId(oafEntity.getId());
+        orgBuilder.setId(srcOrganization.getId());
         
-        Metadata srcOrgMetadata = srcOrganization.getMetadata();
+        orgBuilder.setName(srcOrganization.getLegalname().getValue());
         
-        orgBuilder.setName(srcOrgMetadata.getLegalname().getValue());
-        
-        orgBuilder.setShortName(srcOrgMetadata.getLegalshortname().getValue());
+        orgBuilder.setShortName(srcOrganization.getLegalshortname().getValue());
      
-        orgBuilder.setCountryName(srcOrgMetadata.getCountry().getClassname());
+        orgBuilder.setCountryName(srcOrganization.getCountry().getClassname());
         
-        orgBuilder.setCountryCode(srcOrgMetadata.getCountry().getClassid());
+        orgBuilder.setCountryCode(srcOrganization.getCountry().getClassid());
         
-        orgBuilder.setWebsiteUrl(srcOrgMetadata.getWebsiteurl().getValue());
-     
-        
+        orgBuilder.setWebsiteUrl(srcOrganization.getWebsiteurl().getValue());
         
         return orgBuilder.build();
         
@@ -68,19 +59,15 @@ public class OrganizationConverter implements OafEntityToAvroConverter<Organizat
 
     //------------------------ PRIVATE --------------------------
     
-    private boolean isDataCorrect(OafEntity oafEntity) {
+    private boolean isDataCorrect(eu.dnetlib.dhp.schema.oaf.Organization srcOrganization) {
         
-
-        eu.dnetlib.data.proto.OrganizationProtos.Organization srcOrganization = oafEntity.getOrganization();
-        
-        if (StringUtils.isBlank(srcOrganization.getMetadata().getLegalname().getValue())) {
+        if (srcOrganization.getLegalname() == null || StringUtils.isBlank(srcOrganization.getLegalname().getValue())) {
             
             log.error("skipping: empty organization name");
             
             return false;
             
         }
-
         
         return true;
     }

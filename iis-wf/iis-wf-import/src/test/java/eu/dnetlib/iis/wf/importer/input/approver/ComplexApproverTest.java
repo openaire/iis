@@ -14,8 +14,8 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import eu.dnetlib.data.proto.KindProtos.Kind;
-import eu.dnetlib.data.proto.OafProtos.Oaf;
+import eu.dnetlib.dhp.schema.oaf.Oaf;
+import eu.dnetlib.dhp.schema.oaf.Publication;
 import eu.dnetlib.iis.wf.importer.infospace.approver.ComplexApprover;
 import eu.dnetlib.iis.wf.importer.infospace.approver.ResultApprover;
 
@@ -113,7 +113,7 @@ public class ComplexApproverTest {
     // ----------------------------- PRIVATE --------------------------
 
     private Oaf buildOaf() {
-        return Oaf.newBuilder().setKind(Kind.entity).build();
+        return new Publication();
     }
     
 }

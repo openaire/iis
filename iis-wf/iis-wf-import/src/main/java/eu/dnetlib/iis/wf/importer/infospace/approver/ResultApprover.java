@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.importer.infospace.approver;
 
-import eu.dnetlib.data.proto.OafProtos.Oaf;
+import eu.dnetlib.dhp.schema.oaf.Oaf;
 
 /**
  * Verifies whether provided object should be approved.

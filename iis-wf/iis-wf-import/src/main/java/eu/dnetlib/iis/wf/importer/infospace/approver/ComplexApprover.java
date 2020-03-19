@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import eu.dnetlib.data.proto.OafProtos.Oaf;
+import eu.dnetlib.dhp.schema.oaf.Oaf;
 
 /**
  * Complex approver encapsulating multiple approvers.
