@@ -30,6 +30,8 @@ import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
  */
 public class DatasetMetadataConverter implements OafEntityToAvroConverter<Result, DataSetReference> {
     
+    private static final long serialVersionUID = 3003530002094902347L;
+
     private static final String ID_TYPE_DOI_LOWERCASED = "doi";
     
     private static final Logger log = Logger.getLogger(DatasetMetadataConverter.class);

@@ -17,6 +17,7 @@ import eu.dnetlib.iis.importer.schemas.Organization;
 
 public class OrganizationConverter implements OafEntityToAvroConverter<eu.dnetlib.dhp.schema.oaf.Organization, Organization> {
 
+    private static final long serialVersionUID = -2774070399465323718L;
     
     private static Logger log = Logger.getLogger(OrganizationConverter.class);
     

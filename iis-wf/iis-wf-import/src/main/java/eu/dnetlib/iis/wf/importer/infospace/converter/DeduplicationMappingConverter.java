@@ -13,6 +13,8 @@ import eu.dnetlib.iis.common.schemas.IdentifierMapping;
  */
 public class DeduplicationMappingConverter implements OafRelToAvroConverter<IdentifierMapping> {
 
+    private static final long serialVersionUID = 2339377912007722156L;
+
     @Override
     public IdentifierMapping convert(Relation relation) {
         Preconditions.checkNotNull(relation);

@@ -14,6 +14,8 @@ import eu.dnetlib.dhp.schema.oaf.Oaf;
  */
 public class ComplexApprover implements ResultApprover {
 
+    private static final long serialVersionUID = -2609668045944653844L;
+        
     private final List<ResultApprover> approvers;
 
     // ------------------------ CONSTRUCTORS --------------------------

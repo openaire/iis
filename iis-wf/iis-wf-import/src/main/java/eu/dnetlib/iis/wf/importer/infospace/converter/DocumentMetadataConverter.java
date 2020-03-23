@@ -37,6 +37,8 @@ import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
  */
 public class DocumentMetadataConverter implements OafEntityToAvroConverter<Result, DocumentMetadata> {
 
+    private static final long serialVersionUID = 467106069692603946L;
+
     protected static final Logger log = Logger.getLogger(DocumentMetadataConverter.class);
 
     private static final String NULL_STRING_VALUE = "null";

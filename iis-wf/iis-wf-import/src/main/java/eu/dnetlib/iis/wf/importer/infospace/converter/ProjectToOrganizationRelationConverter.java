@@ -13,6 +13,8 @@ import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
  */
 public class ProjectToOrganizationRelationConverter implements OafRelToAvroConverter<ProjectToOrganization> {
 
+    private static final long serialVersionUID = -8783122604588939123L;
+
     /**
      * Builds {@link ProjectToOrganization} object from given {@link eu.dnetlib.dhp.schema.oaf.Relation} relation.
      */

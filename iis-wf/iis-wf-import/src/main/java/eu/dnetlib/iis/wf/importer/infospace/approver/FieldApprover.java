@@ -1,5 +1,7 @@
 package eu.dnetlib.iis.wf.importer.infospace.approver;
 
+import java.io.Serializable;
+
 import eu.dnetlib.dhp.schema.oaf.DataInfo;
 
 /**
@@ -8,7 +10,7 @@ import eu.dnetlib.dhp.schema.oaf.DataInfo;
  * @author mhorst
  *
  */
-public interface FieldApprover {
+public interface FieldApprover extends Serializable {
 
 	/**
 	 * Approves given {@link DataInfo} object. returns true when approved, false otherwise.

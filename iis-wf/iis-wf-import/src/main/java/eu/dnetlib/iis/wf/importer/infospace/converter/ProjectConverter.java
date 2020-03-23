@@ -25,6 +25,8 @@ import eu.dnetlib.iis.importer.schemas.Project;
  */
 public class ProjectConverter implements OafEntityToAvroConverter<eu.dnetlib.dhp.schema.oaf.Project, Project> {
 
+    private static final long serialVersionUID = 2450084974587072616L;
+
     protected static final Logger log = Logger.getLogger(ProjectConverter.class);
 
     public static final String BLANK_JSONEXTRAINFO = "{}";

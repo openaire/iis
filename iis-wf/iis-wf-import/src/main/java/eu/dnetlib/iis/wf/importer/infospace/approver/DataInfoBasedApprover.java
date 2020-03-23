@@ -13,6 +13,9 @@ import eu.dnetlib.dhp.schema.oaf.Oaf;
  */
 public class DataInfoBasedApprover implements ResultApprover, FieldApprover {
 
+
+    private static final long serialVersionUID = -1093513836478197899L;
+
     /**
      * List of blacklisted inference provenance values.
      * 

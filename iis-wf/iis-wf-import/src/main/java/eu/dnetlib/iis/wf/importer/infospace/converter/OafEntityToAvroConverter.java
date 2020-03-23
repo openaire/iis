@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import org.apache.avro.specific.SpecificRecord;
 
@@ -13,7 +14,7 @@ import eu.dnetlib.dhp.schema.oaf.OafEntity;
  *
  * @param <Target> avro record type to be produced
  */
-public interface OafEntityToAvroConverter<Source extends OafEntity, Target extends SpecificRecord> {
+public interface OafEntityToAvroConverter<Source extends OafEntity, Target extends SpecificRecord> extends Serializable {
 
     /**
      * Builds avro objects from {@link OafEntity} entity.

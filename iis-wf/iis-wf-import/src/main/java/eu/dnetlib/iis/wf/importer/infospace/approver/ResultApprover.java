@@ -1,5 +1,7 @@
 package eu.dnetlib.iis.wf.importer.infospace.approver;
 
+import java.io.Serializable;
+
 import eu.dnetlib.dhp.schema.oaf.Oaf;
 
 /**
@@ -8,7 +10,7 @@ import eu.dnetlib.dhp.schema.oaf.Oaf;
  * @author mhorst
  *
  */
-public interface ResultApprover {
+public interface ResultApprover extends Serializable {
 
 	
 	/**
