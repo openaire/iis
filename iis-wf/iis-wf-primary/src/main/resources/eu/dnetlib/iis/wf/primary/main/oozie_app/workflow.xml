@@ -50,6 +50,11 @@
             <description>flag indicating software url reference extraction should be enabled</description>
         </property>
         <property>
+            <name>active_referenceextraction_covid19</name>
+            <value>false</value>
+            <description>flag indicating covid19 reference extraction should be enabled</description>
+        </property>
+        <property>
             <name>active_documentsclassification</name>
             <value>false</value>
             <description>flag indicating documents classification should be enabled</description>
@@ -244,6 +249,11 @@
             <name>export_action_set_id_document_pdb</name>
             <value>$UNDEFINED$</value>
             <description>document to protein databank action-set identifier of exported data</description>
+        </property>
+        <property>
+            <name>export_action_set_id_document_covid19</name>
+            <value>$UNDEFINED$</value>
+            <description>document to covid19 action-set identifier of exported data</description>
         </property>
         <property>
             <name>export_action_set_id_document_software_url</name>
@@ -655,6 +665,10 @@
                     <value>${workingDir}/exported/document_to_pdb</value>
                 </property>
                 <property>
+                    <name>output_document_to_covid19</name>
+                    <value>${workingDir}/exported/document_to_covid19</value>
+                </property>
+                <property>
                     <name>output_document_to_software_url</name>
                     <value>${workingDir}/exported/document_to_software_url</value>
                 </property>
@@ -726,6 +740,10 @@
                 <property>
                     <name>input_document_to_pdb</name>
                     <value>${workingDir}/exported/document_to_pdb</value>
+                </property>
+                <property>
+                    <name>input_document_to_covid19</name>
+                    <value>${workingDir}/exported/document_to_covid19</value>
                 </property>
                 <property>
                     <name>input_document_to_software_url</name>
@@ -804,6 +822,10 @@
                 <property>
                     <name>action_set_id_document_pdb</name>
                     <value>${export_action_set_id_document_pdb}</value>
+                </property>
+                <property>
+                    <name>action_set_id_document_covid19</name>
+                    <value>${export_action_set_id_document_covid19}</value>
                 </property>
                 <property>
                     <name>action_set_id_document_software_url</name>

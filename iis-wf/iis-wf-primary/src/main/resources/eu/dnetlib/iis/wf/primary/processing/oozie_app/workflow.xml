@@ -42,6 +42,11 @@
             <description>flag indicating software url reference extraction should be enabled</description>
         </property>
         <property>
+            <name>active_referenceextraction_covid19</name>
+            <value>false</value>
+            <description>flag indicating covid19 reference extraction should be enabled</description>
+        </property>
+        <property>
             <name>active_documentsclassification</name>
             <value>true</value>
             <description>flag indicating documents classification should be enabled</description>
@@ -369,6 +374,10 @@
             <description>protein databank reference extraction output directory</description>
         </property>
         <property>
+            <name>output_document_to_covid19</name>
+            <description>covid19 reference extraction output directory</description>
+        </property>
+        <property>
             <name>output_document_to_software_url</name>
             <description>software url reference extraction output directory</description>
         </property>
@@ -555,6 +564,7 @@
         <path start="decision-referenceextraction_pdb" />
         <path start="decision-referenceextraction_software_url" />
         <path start="decision-referenceextraction_patent" />
+        <path start="decision-referenceextraction_covid19" />
     </fork>
 
     <!-- start of project reference extraction block -->
@@ -1332,6 +1342,98 @@
     </action>
     <!-- end of researchinitiative reference extraction block -->
 
+
+    <!-- start of covid19 reference extraction block -->
+    <decision name="decision-referenceextraction_covid19">
+        <switch>
+            <case to="referenceextraction_covid19">${active_referenceextraction_covid19 eq "true"}</case>
+            <default to="skip-referenceextraction_covid19" />
+        </switch>
+    </decision>
+
+    <action name="referenceextraction_covid19">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/referenceextraction_covid19</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/referenceextraction_covid19/working_dir</value>
+                </property>
+                <property>
+                    <name>input_document_metadata</name>
+                    <value>${output_merged_metadata}</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${workingDir}/referenceextraction_covid19/output</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="transformers_export_covid19" />
+        <error to="fail" />
+    </action>
+
+    <action name="transformers_export_covid19">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_export_concepts</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_export_covid19/working_dir</value>
+                </property>
+                <property>
+                    <name>input</name>
+                    <value>${workingDir}/referenceextraction_covid19/output</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${output_document_to_covid19}</value>
+                </property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>doc_covid19</value>
+                </property>
+                <property>
+                    <name>output_report_record_read_counter_name</name>
+                    <value>processing.referenceExtraction.covid-19.reference</value>
+                </property>
+                <property>
+                    <name>output_report_record_written_counter_name</name>
+                    <value>processing.referenceExtraction.covid-19.doc</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
+
+    <action name="skip-referenceextraction_covid19">
+        <java>
+            <prepare>
+                <!-- notice: directory have to aligned with skipped action output -->
+                <delete path="${nameNode}${workingDir}/transformers_export_covid19" />
+                <delete path="${nameNode}${output_document_to_covid19}" />
+                <mkdir path="${nameNode}${workingDir}/transformers_export_covid19" />
+                <mkdir path="${nameNode}${output_document_to_covid19}" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{referenceextraction_covid19,
+                eu.dnetlib.iis.export.schemas.DocumentToConceptIds,
+                eu/dnetlib/iis/common/data/empty.json}
+            </arg>
+            <!-- notice: directory have to aligned with skipped action output -->
+            <arg>-Oreferenceextraction_covid19=${output_document_to_covid19}</arg>
+        </java>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
+    <!-- end of covid19 reference extraction block -->
+
+
     <!-- start of documents classification part -->
     <decision name="decision-documentsclassification">
         <switch>
@@ -1914,6 +2016,7 @@
             <arg>-Preport.processing.documentClassification.duration=documentsclassification</arg>
             <arg>-Preport.processing.referenceExtraction.researchInitiative.duration=referenceextraction_researchinitiative,referenceextraction_researchinitiative_wos,transformers_union_researchinitiatives,transformers_export_researchinitiatives</arg>
             <arg>-Preport.processing.referenceExtraction.community.duration=referenceextraction_community,transformers_export_communities</arg>
+            <arg>-Preport.processing.referenceExtraction.covid19.duration=referenceextraction_covid19,transformers_export_covid19</arg>
             <arg>-Preport.processing.referenceExtraction.softwareUrl.duration=referenceextraction_software_url</arg>
             <arg>-Preport.processing.referenceExtraction.patent.duration=referenceextraction_patent</arg>
             <arg>-Preport.processing.referenceExtraction.pdb.duration=referenceextraction_pdb,transformers_export_pdb</arg>

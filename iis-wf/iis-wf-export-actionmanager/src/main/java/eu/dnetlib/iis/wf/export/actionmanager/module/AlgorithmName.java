@@ -20,5 +20,6 @@ public enum AlgorithmName {
 	document_pdb,
 	document_software_url,
 	document_community,
-	document_patent
+	document_patent,
+	document_covid19
 }

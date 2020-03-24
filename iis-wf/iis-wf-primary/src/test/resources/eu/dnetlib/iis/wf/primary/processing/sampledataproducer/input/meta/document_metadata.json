@@ -65,3 +65,17 @@
 	"abstract": null, 
 	"publicationType": {"article": false, "dataset": false}
 }
+{
+	"id": "id-6", 
+	"datasourceIds": null, 
+	"publisher": null, 
+	"language": "eng", 
+	"title": "A Time Delay Dynamical Model for Outbreak of 2019-nCoV and the Parameter Identification", 
+	"externalIdentifiers": null, 
+	"journal": null, 
+	"authors": null, 
+	"year": 2020, 
+	"keywords": null, 
+	"abstract": null, 
+	"publicationType": {"article": false, "dataset": false}
+}

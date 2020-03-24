@@ -257,6 +257,10 @@
 					<name>active_referenceextraction_pdb</name>
 					<value>false</value>
 				</property>
+                <property>
+                    <name>active_referenceextraction_covid19</name>
+                    <value>true</value>
+                </property>
 				<property>
 					<name>active_documentsclassification</name>
 					<value>true</value>
@@ -357,6 +361,10 @@
 					<name>output_document_to_pdb</name>
 					<value>${workingDir}/exported/document_to_pdb</value>
 				</property>
+                <property>
+                    <name>output_document_to_covid19</name>
+                    <value>${workingDir}/exported/document_to_covid19</value>
+                </property>
 				<property>
 					<name>output_document_to_document_classes</name>
 					<value>${workingDir}/exported/document_to_document_classes</value>
@@ -451,6 +459,11 @@
                 eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_community.json}
             </arg>
             <arg>-Idocument_to_community=${workingDir}/exported/document_to_community</arg>
+            <arg>-C{document_to_covid19,
+                eu.dnetlib.iis.export.schemas.DocumentToConceptIds,
+                eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_covid19.json}
+            </arg>
+            <arg>-Idocument_to_covid19=${workingDir}/exported/document_to_covid19</arg>
             <arg>-C{document_to_software_url_with_meta,
                 eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta,
                 eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_software_url_with_meta.json}
@@ -509,6 +522,9 @@
 
             <arg>-C{docCommunityReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_to_community.json}</arg>
             <arg>-IdocCommunityReport=${workingDir}/report/document_to_community_by_root_conceptid</arg>
+            
+            <arg>-C{docCovid19Report,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_to_covid19.json}</arg>
+            <arg>-IdocCovid19Report=${workingDir}/report/doc_covid19</arg>
             
             <arg>-C{documentClassificationReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_classification.json}</arg>
             <arg>-IdocumentClassificationReport=${workingDir}/report/document_classification</arg>

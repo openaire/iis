@@ -1,0 +1,88 @@
+{
+    "id":"id-1",
+    "title":"A Time Delay Dynamical Model for Outbreak of 2019-nCoV and the Parameter Identification",
+    "abstract":"",
+    "publisher":null,
+    "language":null,
+    "externalIdentifiers":null,
+    "journal":null,
+    "extractedAuthorFullNames":null,
+    "pages":null,
+    "volume":null,
+    "importedAuthors":null,
+    "year":2020,
+    "keywords":null,
+    "references":null,
+    "issue":null,
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "id":"id-2",
+    "title":"A Time Delay Dynamical Model for Outbreak of 2019-nCoV and the Parameter Identification, year altered to 2000",
+    "abstract":"",
+    "publisher":null,
+    "language":null,
+    "externalIdentifiers":null,
+    "journal":null,
+    "extractedAuthorFullNames":null,
+    "pages":null,
+    "volume":null,
+    "importedAuthors":null,
+    "year":2000,
+    "keywords":null,
+    "references":null,
+    "issue":null,
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "id":"id-3",
+    "title":"Irrelevant title",
+    "abstract":null,
+    "publisher":null,
+    "language":null,
+    "externalIdentifiers":null,
+    "journal":null,
+    "extractedAuthorFullNames":null,
+    "pages":null,
+    "volume":null,
+    "importedAuthors":null,
+    "year":null,
+    "keywords":null,
+    "references":null,
+    "issue":null,
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}
+{
+    "id":"id-4",
+    "title":null,
+    "abstract":null,
+    "publisher":null,
+    "language":null,
+    "externalIdentifiers":null,
+    "journal":null,
+    "extractedAuthorFullNames":null,
+    "pages":null,
+    "volume":null,
+    "importedAuthors":null,
+    "year":null,
+    "keywords":null,
+    "references":null,
+    "issue":null,
+    "publicationType":{
+        "article":false,
+        "dataset":false
+    },
+    "publicationTypeName":null
+}

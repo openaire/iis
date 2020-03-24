@@ -8,8 +8,18 @@
 		</property>
 		<property>
 			<name>output</name>
-			<description>publications with covid19 references</description>
+			<description>publications with covid19 references encoded as eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId avro records</description>
 		</property>
+        <property>
+            <name>covid19ConceptId</name>
+            <value>covid-19</value>
+            <description>predefined concept id to be generated for covid19 mining outcome</description>
+        </property>
+        <property>
+            <name>covid19ConfidenceLevel</name>
+            <value>0.8</value>
+            <description>predefined confidence level to be generated for covid19 mining outcome</description>
+        </property>
         <property>
             <name>sparkDriverMemory</name>
             <description>memory for driver process</description>
@@ -154,7 +164,7 @@
 				<!-- OUTPUT -->
                 <property>
                     <name>mapreduce.output.fileoutputformat.outputdir</name>
-                    <value>${output}</value>
+                    <value>${workingDir}/matched_documents</value>
                 </property>          
 
                 <property>
@@ -174,6 +184,41 @@
                 </property>
             </configuration>
         </map-reduce>
+        <ok to="output-transformer"/>
+        <error to="fail"/>
+    </action>
+    
+    
+    <action name="output-transformer">
+        <spark xmlns="uri:oozie:spark-action:0.2">
+            <prepare>
+                <delete path="${output}" />
+            </prepare>
+            <configuration>
+                <property>
+                    <name>oozie.action.sharelib.for.spark</name>
+                    <value>${oozieActionShareLibForSpark2}</value>
+                </property>
+            </configuration>
+            <master>yarn-cluster</master>
+            <mode>cluster</mode>
+            <name>covid19-referenceextraction-output-transformer</name>
+            <class>eu.dnetlib.iis.wf.referenceextraction.covid19.output.Covid19ToConceptIdTransformerJob</class>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
+            <spark-opts>
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
+                --conf spark.extraListeners=${spark2ExtraListeners}
+                --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
+                --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
+                --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
+            </spark-opts>
+            <arg>-input = ${workingDir}/matched_documents</arg>
+            <arg>-output = ${output}</arg>
+            <arg>-predefinedConceptId = ${covid19ConceptId}</arg>
+            <arg>-predefinedConfidenceLevel = ${covid19ConfidenceLevel}</arg>
+        </spark>
         <ok to="end"/>
         <error to="fail"/>
     </action>
