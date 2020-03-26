@@ -13,6 +13,9 @@ import eu.dnetlib.iis.importer.schemas.DocumentToProject;
  */
 public class DocumentToProjectRelationConverter implements OafRelToAvroConverter<DocumentToProject> {
 
+
+    private static final long serialVersionUID = -1752333961036679463L;
+
     @Override
     public DocumentToProject convert(Relation relation) {
         Preconditions.checkNotNull(relation);

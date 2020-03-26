@@ -2,6 +2,8 @@ package eu.dnetlib.iis.wf.importer.infospace.approver;
 
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
+
 import eu.dnetlib.dhp.schema.oaf.DataInfo;
 import eu.dnetlib.dhp.schema.oaf.Oaf;
 
@@ -76,7 +78,7 @@ public class DataInfoBasedApprover implements ResultApprover, FieldApprover {
             if (dataInfo.getInvisible()) {
                 return false;
             }
-            if (trustLevelThreshold != null && dataInfo.getTrust() != null && !dataInfo.getTrust().isEmpty()
+            if (trustLevelThreshold != null && StringUtils.isNotBlank(dataInfo.getTrust())
                     && Float.valueOf(dataInfo.getTrust()) < trustLevelThreshold) {
                 return false;
             }

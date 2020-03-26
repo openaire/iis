@@ -4,13 +4,14 @@ import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.UNDEFINED_NONEMPTY
 
 import java.util.Objects;
 
+import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.MapFunction;
-import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Encoder;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
 
@@ -49,6 +50,8 @@ import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.IdentifierMapping;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.importer.schemas.DataSetReference;
+import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
 import eu.dnetlib.iis.importer.schemas.DocumentToProject;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.wf.importer.infospace.approver.DataInfoBasedApprover;
@@ -57,6 +60,8 @@ import eu.dnetlib.iis.wf.importer.infospace.converter.DatasetMetadataConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.DeduplicationMappingConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.DocumentMetadataConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.DocumentToProjectRelationConverter;
+import eu.dnetlib.iis.wf.importer.infospace.converter.OafEntityToAvroConverter;
+import eu.dnetlib.iis.wf.importer.infospace.converter.OafRelToAvroConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.OrganizationConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectToOrganizationRelationConverter;
@@ -122,109 +127,80 @@ public class ImportInformationSpaceJob {
         SparkConf conf = new SparkConf();
         conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
         conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
-        conf.registerKryoClasses(provideOafClasses());
+        conf.registerKryoClasses(OafModelUtils.provideOafClasses());
         
 //      SparkSession based
         SparkSession session = null;
         try {
-            // initializing Oaf model converters
-            DataInfoBasedApprover dataInfoBasedApprover = buildApprover(
-                    params.skipDeletedByInference, params.trustLevelThreshold, params.inferenceProvenanceBlacklist);
-            ResultApprover resultApprover = dataInfoBasedApprover;
-            
-            DocumentMetadataConverter documentConverter = new DocumentMetadataConverter(dataInfoBasedApprover);
-            DatasetMetadataConverter datasetConverter = new DatasetMetadataConverter(dataInfoBasedApprover);
-            OrganizationConverter organizationConverter = new OrganizationConverter();
-            ProjectConverter projectConverter = new ProjectConverter();
-            
-            ProjectToOrganizationRelationConverter projectOrganizationConverter = new ProjectToOrganizationRelationConverter();
-            DocumentToProjectRelationConverter docProjectConverter = new DocumentToProjectRelationConverter();
-            DeduplicationMappingConverter deduplicationMappingConverter = new DeduplicationMappingConverter();
-       
             session = SparkSession.builder().config(conf).getOrCreate();
             JavaSparkContext sc = JavaSparkContext.fromSparkContext(session.sparkContext()); 
             
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputPath);
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
             
-            Dataset<eu.dnetlib.dhp.schema.oaf.Organization> sourceOrganization = readGraphTableFromSession(session,
+            // initializing Oaf model converters
+            DataInfoBasedApprover dataInfoBasedApprover = buildApprover(
+                    params.skipDeletedByInference, params.trustLevelThreshold, params.inferenceProvenanceBlacklist);
+            ResultApprover resultApprover = dataInfoBasedApprover;
+            
+            OafEntityToAvroConverter<Result, DocumentMetadata> documentConverter = new DocumentMetadataConverter(dataInfoBasedApprover);
+            OafEntityToAvroConverter<Result, DataSetReference>  datasetConverter = new DatasetMetadataConverter(dataInfoBasedApprover);
+            OafEntityToAvroConverter<Organization, eu.dnetlib.iis.importer.schemas.Organization> organizationConverter = new OrganizationConverter();
+            OafEntityToAvroConverter<Project, eu.dnetlib.iis.importer.schemas.Project> projectConverter = new ProjectConverter();
+            
+            OafRelToAvroConverter<ProjectToOrganization> projectOrganizationConverter = new ProjectToOrganizationRelationConverter();
+            OafRelToAvroConverter<DocumentToProject> docProjectConverter = new DocumentToProjectRelationConverter();
+            OafRelToAvroConverter<IdentifierMapping> deduplicationMappingConverter = new DeduplicationMappingConverter();
+       
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.Organization> sourceOrganization = readGraphTableFromSession(session,
                     params.inputRootPath + "/organization", eu.dnetlib.dhp.schema.oaf.Organization.class);
-            Dataset<eu.dnetlib.dhp.schema.oaf.Project> sourceProject = readGraphTableFromSession(session,
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.Project> sourceProject = readGraphTableFromSession(session,
                     params.inputRootPath + "/project", eu.dnetlib.dhp.schema.oaf.Project.class);
-            Dataset<eu.dnetlib.dhp.schema.oaf.Publication> sourcePublication = readGraphTableFromSession(session,
-                    params.inputRootPath + "publication", eu.dnetlib.dhp.schema.oaf.Publication.class);
-            Dataset<eu.dnetlib.dhp.schema.oaf.Dataset> sourceDataset = readGraphTableFromSession(session,
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.Publication> sourcePublication = readGraphTableFromSession(session,
+                    params.inputRootPath + "/publication", eu.dnetlib.dhp.schema.oaf.Publication.class);
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.Dataset> sourceDataset = readGraphTableFromSession(session,
                     params.inputRootPath + "/dataset", eu.dnetlib.dhp.schema.oaf.Dataset.class);
-            Dataset<eu.dnetlib.dhp.schema.oaf.OtherResearchProduct> sourceOtherResearchProduct = readGraphTableFromSession(
-                    session, params.inputRootPath + "/otherresearchproduct",
-                    eu.dnetlib.dhp.schema.oaf.OtherResearchProduct.class);
-            Dataset<eu.dnetlib.dhp.schema.oaf.Software> sourceSoftware = readGraphTableFromSession(session,
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.OtherResearchProduct> sourceOtherResearchProduct = readGraphTableFromSession(
+                    session, params.inputRootPath + "/otherresearchproduct", eu.dnetlib.dhp.schema.oaf.OtherResearchProduct.class);
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.Software> sourceSoftware = readGraphTableFromSession(session,
                     params.inputRootPath + "/software", eu.dnetlib.dhp.schema.oaf.Software.class);
-            Dataset<eu.dnetlib.dhp.schema.oaf.Relation> sourceRelation = readGraphTableFromSession(session,
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.Relation> sourceRelation = readGraphTableFromSession(session,
                     params.inputRootPath + "/relation", eu.dnetlib.dhp.schema.oaf.Relation.class);
             sourceRelation.cache();
-
             
-            JavaRDD<eu.dnetlib.dhp.schema.oaf.Dataset> approvedDataset = sourceDataset.toJavaRDD()
-                    .filter(x -> resultApprover.approve(x));
-//          TODO should we keep filtering by resultType=dataset or can we trust the full dataset subdirectory contents
-            approvedDataset.cache();
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.Dataset> filteredDataset = sourceDataset.filter(x -> resultApprover.approve(x));
+//          TODO should we keep filtering by resultType=dataset (as it was defined in an original mapred importer) or can we trust the full dataset subdirectory contents?
+            filteredDataset.cache();
 
-            JavaRDD<eu.dnetlib.iis.importer.schemas.DataSetReference> resultDataset = approvedDataset
-                    .map(x -> datasetConverter.convert(x)).filter(x -> x != null);
-            resultDataset.cache();
+            JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> docMeta = parseToDocMeta(filteredDataset,
+                    sourcePublication, sourceSoftware, sourceOtherResearchProduct, resultApprover, documentConverter);
+            docMeta.cache();
+
+            JavaRDD<eu.dnetlib.iis.importer.schemas.DataSetReference> dataset = parseResultToAvro(filteredDataset, datasetConverter); 
+            dataset.cache();
             
-            JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> resultDocMeta = null;
-            {
-                JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> publicationDocMeta = parseToDocMeta(
-                        sourcePublication, resultApprover, documentConverter);
-                
-                JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> softwareDocMeta = parseToDocMeta(
-                        sourceSoftware, resultApprover, documentConverter);
+            JavaRDD<eu.dnetlib.iis.importer.schemas.Project> project = filterAndParseToAvro(sourceProject, resultApprover, projectConverter);
+            project.cache();
 
-                JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> orpDocMeta = parseToDocMeta(
-                        sourceOtherResearchProduct, resultApprover, documentConverter);
-
-                JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> datasetDocMeta = approvedDataset
-                        .map(x -> documentConverter.convert(x)).filter(x -> x != null);
-
-                resultDocMeta = publicationDocMeta.union(softwareDocMeta).union(orpDocMeta).union(datasetDocMeta);
-    
-            }
-            resultDocMeta.cache();
-            
-            
-            JavaRDD<eu.dnetlib.iis.importer.schemas.Project> resultProject = sourceProject.toJavaRDD()
-                    .filter(x -> resultApprover.approve(x)).map(x -> projectConverter.convert(x)).filter(x -> x != null);
-            resultProject.cache();
-
-            JavaRDD<eu.dnetlib.iis.importer.schemas.Organization> resultOrganization = sourceOrganization.toJavaRDD()
-                    .filter(x -> resultApprover.approve(x)).map(x -> organizationConverter.convert(x)).filter(x -> x != null);
-            resultOrganization.cache();
+            JavaRDD<eu.dnetlib.iis.importer.schemas.Organization> organization = filterAndParseToAvro(sourceOrganization, resultApprover, organizationConverter);
+            organization.cache();
             
             // handling relations
             // TODO possible optimization: each subsequent relation type could be run on rels.except(previouslyFilteredSet) with caching subsequent, reusable steps
             // TODO in previous importer we were applying resultApprover on entities only and retrieving relations from accepted rows (so we were running approver on body only) in this impl we run resultApprover on relations
-            JavaRDD<eu.dnetlib.dhp.schema.oaf.Relation> sourceRelationRdd = sourceRelation.toJavaRDD();
+            JavaRDD<DocumentToProject> docProjRelation = filterAndParseRelationToAvro(sourceRelation, resultApprover, docProjectConverter, 
+                    REL_TYPE_RESULT_PROJECT, SUBREL_TYPE_OUTCOME, REL_NAME_IS_PRODUCED_BY);
+            docProjRelation.cache();
 
+            JavaRDD<ProjectToOrganization> projOrgRelation = filterAndParseRelationToAvro(sourceRelation, resultApprover, projectOrganizationConverter, 
+                    REL_TYPE_PROJECT_ORGANIZATION, SUBREL_TYPE_PARTICIPATION, REL_NAME_HAS_PARTICIPANT); 
+            projOrgRelation.cache();
             
-            JavaRDD<DocumentToProject> docProjResultRelation = sourceRelationRdd
-                    .filter(x -> acceptRelation(x, REL_TYPE_RESULT_PROJECT, SUBREL_TYPE_OUTCOME, REL_NAME_IS_PRODUCED_BY))
-                    .filter(x -> resultApprover.approve(x)).map(x -> docProjectConverter.convert(x));
-            docProjResultRelation.cache();
+            JavaRDD<IdentifierMapping> dedupRelation = filterAndParseRelationToAvro(sourceRelation, resultApprover, deduplicationMappingConverter, 
+                    REL_TYPE_RESULT_RESULT, SUBREL_TYPE_DEDUP, REL_NAME_MERGES); 
+            dedupRelation.cache();
             
-            JavaRDD<ProjectToOrganization> projOrgResultRelation = sourceRelationRdd
-                    .filter(x -> acceptRelation(x, REL_TYPE_PROJECT_ORGANIZATION, SUBREL_TYPE_PARTICIPATION, REL_NAME_HAS_PARTICIPANT))
-                    .filter(x -> resultApprover.approve(x)).map(x -> projectOrganizationConverter.convert(x));
-            projOrgResultRelation.cache();
-
-            
-            JavaRDD<IdentifierMapping> dedupResultRelation = sourceRelationRdd
-                    .filter(x -> acceptRelation(x, REL_TYPE_RESULT_RESULT, SUBREL_TYPE_DEDUP, REL_NAME_MERGES))
-                    .filter(x -> resultApprover.approve(x)).map(x -> deduplicationMappingConverter.convert(x));
-            dedupResultRelation.cache();
-            
-            storeInOutput(sc, resultDocMeta, resultDataset, resultProject, resultOrganization, docProjResultRelation, projOrgResultRelation, dedupResultRelation, params);
+            storeInOutput(sc, docMeta, dataset, project, organization, docProjRelation, projOrgRelation, dedupRelation, params);
             
         } finally {
             // unless session is managed which is not our case
@@ -234,13 +210,75 @@ public class ImportInformationSpaceJob {
         }
     }
     
-    private static JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> parseToDocMeta(Dataset<? extends eu.dnetlib.dhp.schema.oaf.Result> source, 
-            ResultApprover resultApprover, DocumentMetadataConverter documentConverter) {
-        return source.toJavaRDD()
-                .filter(x -> resultApprover.approve(x)).map(x -> documentConverter.convert(x))
-                .filter(x -> x != null);
+    /**
+     * Parses given set of RDDs conveying various {@link Result} entities into a single RDD with {@link DocumentMetadata} records.
+     */
+    private static JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> parseToDocMeta(
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.Dataset> filteredDataset,
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.Publication> sourcePublication,
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.Software> sourceSoftware,
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.OtherResearchProduct> sourceOtherResearchProduct,
+            ResultApprover resultApprover, OafEntityToAvroConverter<Result, DocumentMetadata> documentConverter) {
+        JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> publicationDocMeta = filterAndParseResultToAvro(
+                sourcePublication, resultApprover, documentConverter);
+
+        JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> softwareDocMeta = filterAndParseResultToAvro(
+                sourceSoftware, resultApprover, documentConverter);
+
+        JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> orpDocMeta = filterAndParseResultToAvro(
+                sourceOtherResearchProduct, resultApprover, documentConverter);
+
+        JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> datasetDocMeta = parseResultToAvro(
+                filteredDataset, documentConverter);
+
+        return publicationDocMeta.union(softwareDocMeta).union(orpDocMeta).union(datasetDocMeta);
     }
     
+    /**
+     * Parses given RDD with {@link OafEntity} entities into {@SpecificRecord} avro RDD.
+     */
+    private static <S extends OafEntity, T extends SpecificRecord>JavaRDD<T> filterAndParseToAvro(JavaRDD<S> source, 
+            ResultApprover resultApprover, OafEntityToAvroConverter<S, T> entityConverter) {
+        return parseToAvro(source.filter(x -> resultApprover.approve(x)), entityConverter);
+    }
+    
+    /**
+     * Converts given RDD with {@link OafEntity} entities into {@link SpecificRecord} avro RDD. Eliminates null records from output.
+     */
+    private static <S extends OafEntity, T extends SpecificRecord>JavaRDD<T> parseToAvro(JavaRDD<S> source, 
+            OafEntityToAvroConverter<S, T> entityConverter) {
+        return source.map(x -> entityConverter.convert(x)).filter(x -> x != null);
+    }
+    
+    /**
+     * Parses given RDD with {@link Result} entities into {@link SpecificRecord} avro RDD.
+     */
+    private static <T extends SpecificRecord>JavaRDD<T> filterAndParseResultToAvro(JavaRDD<? extends Result> source, 
+            ResultApprover resultApprover, OafEntityToAvroConverter<Result, T> entityConverter) {
+        return parseResultToAvro(source.filter(x -> resultApprover.approve(x)), entityConverter);
+    }
+
+    /**
+     * Converts given RDD with {@link Result} entities into {@link SpecificRecord} avro RDD. Eliminates null records from output.
+     */
+    private static <T extends SpecificRecord>JavaRDD<T> parseResultToAvro(JavaRDD<? extends Result> source, 
+            OafEntityToAvroConverter<Result, T> entityConverter) {
+        return source.map(x -> entityConverter.convert(x)).filter(x -> x != null);
+    }
+    
+    /**
+     * Converts given RDD with {@link Result} entities into {@link SpecificRecord} avro RDD. Eliminates null records from output.
+     */
+    private static <T extends SpecificRecord> JavaRDD<T> filterAndParseRelationToAvro(JavaRDD<Relation> source,
+            ResultApprover resultApprover, OafRelToAvroConverter<T> relationConverter, String relType,
+            String subRelType, String relClass) {
+        return source.filter(x -> acceptRelation(x, relType, subRelType, relClass))
+                .filter(x -> resultApprover.approve(x)).map(x -> relationConverter.convert(x));
+    }
+
+    /**
+     * Verifies whether given relation should be accepted according to its characteristics.
+     */
     private static boolean acceptRelation(Relation relation, String relType, String subRelType, String relClass) {
         return relType.equals(relation.getRelType()) && subRelType.equals(relation.getSubRelType()) && relClass.equals(relation.getRelClass());    
     }
@@ -256,14 +294,21 @@ public class ImportInformationSpaceJob {
         return new DataInfoBasedApprover(inferenceProvenanceBlacklist, Boolean.valueOf(skipDeletedByInference), trustLevelThresholdFloat);
     }
     
-    private static <T extends Oaf> Dataset<T> readGraphTableFromSession(SparkSession spark, String inputGraphTablePath,
+    /**
+     * Reads graph table for given type.
+     */
+    private static <T extends Oaf> JavaRDD<T> readGraphTableFromSession(SparkSession spark, String inputGraphTablePath,
             Class<T> clazz) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Encoder<T> encoder = Encoders.bean(clazz);
+        
         return spark.read().textFile(inputGraphTablePath).map(
-                //TODO add explicit dependency in a pom.xml: jackson
-                // FIXME sync with przemek, reuse ObjectMapper and Encoder classes instead of instantiating it whenever possible
-                (MapFunction<String, T>) value -> new ObjectMapper().readValue(value, clazz), Encoders.bean(clazz));
+                (MapFunction<String, T>) value -> objectMapper.readValue(value, clazz), encoder).toJavaRDD();
     }
     
+    /**
+     * Generates report entries for given counters.
+     */
     private static JavaRDD<ReportEntry> generateReportEntries(JavaSparkContext sparkContext, long docMetaCount,
             long datasetCount, long projectCount, long organizationCount, long docProjCount, long projOrgCount,
             long dedupDocCount) {
@@ -277,6 +322,9 @@ public class ImportInformationSpaceJob {
                 ReportEntryFactory.createCounterReportEntry(COUNTER_READ_DOC_DEDUP_DOC_REFERENCE, dedupDocCount)));
     }
     
+    /**
+     * Stores given RDDs in HDFS and generates {@link ReportEntry} datastore with counters. 
+     */
     private static void storeInOutput(JavaSparkContext sparkContext,
             JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> docMeta,
             JavaRDD<eu.dnetlib.iis.importer.schemas.DataSetReference> dataset,
@@ -305,38 +353,6 @@ public class ImportInformationSpaceJob {
                 jobParams.outputPath + '/' + jobParams.outputNameDedupMapping);
 
         avroSaver.saveJavaRDD(reports, ReportEntry.SCHEMA$, jobParams.outputReportPath);
-    }
-    
-    private static final Class[] provideOafClasses() {
-        // FIXME how to make this more flexible?
-        return new Class[]{
-                Author.class,
-                Context.class,
-                Country.class,
-                DataInfo.class,
-                eu.dnetlib.dhp.schema.oaf.Dataset.class,
-                Datasource.class,
-                ExternalReference.class,
-                ExtraInfo.class,
-                Field.class,
-                GeoLocation.class,
-                Instance.class,
-                Journal.class,
-                KeyValue.class,
-                Oaf.class,
-                OafEntity.class,
-                OAIProvenance.class,
-                Organization.class,
-                OriginDescription.class,
-                OtherResearchProduct.class,
-                Project.class,
-                Publication.class,
-                Qualifier.class,
-                Relation.class,
-                Result.class,
-                Software.class,
-                StructuredProperty.class
-        };
     }
     
     @Parameters(separators = "=")

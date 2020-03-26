@@ -1,0 +1,247 @@
+{
+  "id": "50|4ScienceCRIS::6a67ed3daba1c380bf9de3c13ed9c879",
+  "title": "The Data Model of the OpenAIRE Scientific Communication e-Infrastructure",
+  "abstract": "The OpenAIREplus project aims to further develop and operate the OpenAIRE e-infrastructure, in order to provide a central entry point to Open Access and \tnon-Open Access publications and datasets funded by the European Commission and National agencies. The infrastructure provides the services to populate, curate, and enrich an Information Space by collecting metadata descriptions relative to organizations, data sources, projects, funding programmes, persons, publications, and datasets. Stakeholders in the research process and\t\t\t\tscientific communication, such as researchers, funding agencies, organizations nvolved in projects, project coordinators, can here find the information to improve their research and statistics to measure the impact of Open Access and funding schemes over research. In this paper, we introduce the functional requirements to be satisfied and describe the OpenAIREplus data model entities and relationships required to represent information capable of meeting them.",
+  "language": null,
+  "keywords": [
+    "open access",
+    "infrastructure",
+    "data model",
+    "CERIF",
+    "DataCite"
+  ],
+  "externalIdentifiers": {
+    "handle": "123456789/7",
+    "doi": "10.1007/978-3-642-35233-1_18"
+  },
+  "journal": null,
+  "year": 2012,
+  "publisher": null,
+  "publicationType": {
+    "article": false,
+    "dataset": false
+  },
+  "authors": [
+    {
+      "name": "Paolo",
+      "surname": "Manghi",
+      "fullname": "Manghi, Paolo"
+    },
+    {
+      "name": "Nikos",
+      "surname": "Houssos",
+      "fullname": "Houssos, Nikos"
+    },
+    {
+      "name": "Marko",
+      "surname": "Mikulicic",
+      "fullname": "Mikulicic, Marko"
+    },
+    {
+      "name": "Brigitte",
+      "surname": "Jörg",
+      "fullname": "Jörg, Brigitte"
+    }
+  ],
+  "datasourceIds": [
+    "10|4ScienceCRIS::f66f1bd369679b5b077dcdf006089556"
+  ]
+}
+{
+  "id": "50|CrisUnsNoviS::8b1b8c70de97b1e074b50b816becae0f",
+  "title": "Lista invazivnih vrsta na području AP Vojvodine",
+  "abstract": null,
+  "language": "sr",
+  "keywords": [
+    "invazivne vrste",
+    "Vojvodina",
+    "Panonska nizija"
+  ],
+  "externalIdentifiers": null,
+  "journal": null,
+  "year": null,
+  "publisher": null,
+  "publicationType": {
+    "article": false,
+    "dataset": true
+  },
+  "authors": [
+    {
+      "name": "Pal",
+      "surname": "Boža",
+      "fullname": "Boža, Pal"
+    },
+    {
+      "name": "Goran",
+      "surname": "Anačkov",
+      "fullname": "Anačkov, Goran"
+    },
+    {
+      "name": "Ivo",
+      "surname": "Karaman",
+      "fullname": "Karaman, Ivo"
+    },
+    {
+      "name": "Olivera",
+      "surname": "Bjelić-Čabrilo",
+      "fullname": "Bjelić-Čabrilo, Olivera"
+    },
+    {
+      "name": "Maja",
+      "surname": "Karaman",
+      "fullname": "Karaman, Maja"
+    },
+    {
+      "name": "Snežana",
+      "surname": "Radenković",
+      "fullname": "Radenković, Snežana"
+    },
+    {
+      "name": "Snežana",
+      "surname": "Radulović",
+      "fullname": "Radulović, Snežana"
+    },
+    {
+      "name": "Dragana",
+      "surname": "Vukov",
+      "fullname": "Vukov, Dragana"
+    },
+    {
+      "name": "Ružica",
+      "surname": "Igić",
+      "fullname": "Igić, Ružica"
+    },
+    {
+      "name": "Smiljka",
+      "surname": "Šimić",
+      "fullname": "Šimić, Smiljka"
+    },
+    {
+      "name": "Ante",
+      "surname": "Vujić",
+      "fullname": "Vujić, Ante"
+    },
+    {
+      "name": "Desanka",
+      "surname": "Kostić",
+      "fullname": "Kostić, Desanka"
+    },
+    {
+      "name": "Zorica",
+      "surname": "Svirčev",
+      "fullname": "Svirčev, Zorica"
+    },
+    {
+      "name": "Branko",
+      "surname": "Miljanović",
+      "fullname": "Miljanović, Branko"
+    },
+    {
+      "name": "Milica",
+      "surname": "Rat",
+      "fullname": "Rat, Milica"
+    },
+    {
+      "name": "Boris",
+      "surname": "Radak",
+      "fullname": "Radak, Boris"
+    },
+    {
+      "name": "Marko",
+      "surname": "Rućando",
+      "fullname": "Rućando, Marko"
+    },
+    {
+      "name": "Mirjana",
+      "surname": "Krstivojević",
+      "fullname": "Krstivojević, Mirjana"
+    },
+    {
+      "name": "Mladen",
+      "surname": "Horvatović",
+      "fullname": "Horvatović, Mladen"
+    },
+    {
+      "name": "Milana",
+      "surname": "Novaković",
+      "fullname": "Novaković, Milana"
+    },
+    {
+      "name": "Dušanka",
+      "surname": "Laketić",
+      "fullname": "Laketić, Dušanka"
+    },
+    {
+      "name": "Dubravka",
+      "surname": "Milić",
+      "fullname": "Milić (Polić), Dubravka"
+    }
+  ],
+  "datasourceIds": [
+    "10|CRIS_UNS____::f66f1bd369679b5b077dcdf006089556"
+  ]
+}
+{
+  "id": "50|CSC_________::bb603819076407c9a9ec41e99fd1782b",
+  "title": "Blooming (teos) : valosuunnittelu",
+  "abstract": null,
+  "language": "fi",
+  "keywords": [
+    "ta6132",
+    "kuvataide",
+    "valosuunnittelu"
+  ],
+  "externalIdentifiers": null,
+  "journal": null,
+  "year": 2018,
+  "publisher": null,
+  "publicationType": {
+    "article": false,
+    "dataset": false
+  },
+  "authors": [
+    {
+      "name": "Ville",
+      "surname": "Saarikoski",
+      "fullname": "Saarikoski, Ville"
+    }
+  ],
+  "datasourceIds": [
+    "10|CSC_________::a2b9ce8435390bcbfc05f3cae3948747"
+  ]
+}
+{
+  "id": "50|CrisUnsNoviS::07b57c6eac1999d9fa172f846b4166ad",
+  "title": "Strict ISWIM Compiler, version Nui/SECD",
+  "abstract": null,
+  "language": "en",
+  "keywords": null,
+  "externalIdentifiers": null,
+  "journal": null,
+  "year": null,
+  "publisher": null,
+  "publicationType": {
+    "article": false,
+    "dataset": false
+  },
+  "authors": [
+    {
+      "name": "Zoran",
+      "surname": "Budimac",
+      "fullname": "Budimac, Zoran"
+    },
+    {
+      "name": "Mirjana",
+      "surname": "Ivanović",
+      "fullname": "Ivanović, Mirjana"
+    },
+    {
+      "name": "S.",
+      "surname": "Živkov",
+      "fullname": "Živkov, S."
+    }
+  ],
+  "datasourceIds": [
+    "10|CRIS_UNS____::f66f1bd369679b5b077dcdf006089556"
+  ]
+}
