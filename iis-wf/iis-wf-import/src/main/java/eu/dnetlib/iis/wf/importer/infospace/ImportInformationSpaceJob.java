@@ -21,31 +21,12 @@ import com.beust.jcommander.Parameters;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 
-import eu.dnetlib.dhp.schema.oaf.Author;
-import eu.dnetlib.dhp.schema.oaf.Context;
-import eu.dnetlib.dhp.schema.oaf.Country;
-import eu.dnetlib.dhp.schema.oaf.DataInfo;
-import eu.dnetlib.dhp.schema.oaf.Datasource;
-import eu.dnetlib.dhp.schema.oaf.ExternalReference;
-import eu.dnetlib.dhp.schema.oaf.ExtraInfo;
-import eu.dnetlib.dhp.schema.oaf.Field;
-import eu.dnetlib.dhp.schema.oaf.GeoLocation;
-import eu.dnetlib.dhp.schema.oaf.Instance;
-import eu.dnetlib.dhp.schema.oaf.Journal;
-import eu.dnetlib.dhp.schema.oaf.KeyValue;
-import eu.dnetlib.dhp.schema.oaf.OAIProvenance;
 import eu.dnetlib.dhp.schema.oaf.Oaf;
 import eu.dnetlib.dhp.schema.oaf.OafEntity;
 import eu.dnetlib.dhp.schema.oaf.Organization;
-import eu.dnetlib.dhp.schema.oaf.OriginDescription;
-import eu.dnetlib.dhp.schema.oaf.OtherResearchProduct;
 import eu.dnetlib.dhp.schema.oaf.Project;
-import eu.dnetlib.dhp.schema.oaf.Publication;
-import eu.dnetlib.dhp.schema.oaf.Qualifier;
 import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.dhp.schema.oaf.Result;
-import eu.dnetlib.dhp.schema.oaf.Software;
-import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.IdentifierMapping;
@@ -168,37 +149,23 @@ public class ImportInformationSpaceJob {
                     params.inputRootPath + "/relation", eu.dnetlib.dhp.schema.oaf.Relation.class);
             sourceRelation.cache();
             
+            // handling entities
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Dataset> filteredDataset = sourceDataset.filter(x -> resultApprover.approve(x));
-//          TODO should we keep filtering by resultType=dataset (as it was defined in an original mapred importer) or can we trust the full dataset subdirectory contents?
             filteredDataset.cache();
 
-            JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> docMeta = parseToDocMeta(filteredDataset,
+            JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> docMeta = parseToDocMetaAvro(filteredDataset,
                     sourcePublication, sourceSoftware, sourceOtherResearchProduct, resultApprover, documentConverter);
-            docMeta.cache();
-
             JavaRDD<eu.dnetlib.iis.importer.schemas.DataSetReference> dataset = parseResultToAvro(filteredDataset, datasetConverter); 
-            dataset.cache();
-            
             JavaRDD<eu.dnetlib.iis.importer.schemas.Project> project = filterAndParseToAvro(sourceProject, resultApprover, projectConverter);
-            project.cache();
-
             JavaRDD<eu.dnetlib.iis.importer.schemas.Organization> organization = filterAndParseToAvro(sourceOrganization, resultApprover, organizationConverter);
-            organization.cache();
             
             // handling relations
-            // TODO possible optimization: each subsequent relation type could be run on rels.except(previouslyFilteredSet) with caching subsequent, reusable steps
-            // TODO in previous importer we were applying resultApprover on entities only and retrieving relations from accepted rows (so we were running approver on body only) in this impl we run resultApprover on relations
             JavaRDD<DocumentToProject> docProjRelation = filterAndParseRelationToAvro(sourceRelation, resultApprover, docProjectConverter, 
                     REL_TYPE_RESULT_PROJECT, SUBREL_TYPE_OUTCOME, REL_NAME_IS_PRODUCED_BY);
-            docProjRelation.cache();
-
             JavaRDD<ProjectToOrganization> projOrgRelation = filterAndParseRelationToAvro(sourceRelation, resultApprover, projectOrganizationConverter, 
                     REL_TYPE_PROJECT_ORGANIZATION, SUBREL_TYPE_PARTICIPATION, REL_NAME_HAS_PARTICIPANT); 
-            projOrgRelation.cache();
-            
             JavaRDD<IdentifierMapping> dedupRelation = filterAndParseRelationToAvro(sourceRelation, resultApprover, deduplicationMappingConverter, 
                     REL_TYPE_RESULT_RESULT, SUBREL_TYPE_DEDUP, REL_NAME_MERGES); 
-            dedupRelation.cache();
             
             storeInOutput(sc, docMeta, dataset, project, organization, docProjRelation, projOrgRelation, dedupRelation, params);
             
@@ -213,7 +180,7 @@ public class ImportInformationSpaceJob {
     /**
      * Parses given set of RDDs conveying various {@link Result} entities into a single RDD with {@link DocumentMetadata} records.
      */
-    private static JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> parseToDocMeta(
+    private static JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> parseToDocMetaAvro(
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Dataset> filteredDataset,
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Publication> sourcePublication,
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Software> sourceSoftware,
@@ -333,6 +300,15 @@ public class ImportInformationSpaceJob {
             JavaRDD<DocumentToProject> docProjResultRelation, JavaRDD<ProjectToOrganization> projOrgResultRelation,
             JavaRDD<IdentifierMapping> dedupResultRelation, ImportInformationSpaceJobParameters jobParams) {
 
+        // caching before calculating counts and writing on HDFS
+        docMeta.cache();
+        dataset.cache();
+        project.cache();
+        organization.cache();
+        docProjResultRelation.cache();
+        projOrgResultRelation.cache();
+        dedupResultRelation.cache();
+        
         JavaRDD<ReportEntry> reports = generateReportEntries(sparkContext, docMeta.count(), dataset.count(),
                 project.count(), organization.count(), docProjResultRelation.count(), projOrgResultRelation.count(),
                 dedupResultRelation.count());

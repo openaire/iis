@@ -33,8 +33,10 @@ import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
  */
 public class OafModelUtils {
 
+    /**
+     * Provides all classes from Oaf model.
+     */
     public static final Class<?>[] provideOafClasses() {
-        // FIXME how to make this more flexible?
         return new Class[]{
                 Author.class,
                 Context.class,
