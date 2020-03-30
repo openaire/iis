@@ -11,7 +11,7 @@
             <value>true</value>
             <description>flag indicating contents should be filtered and their identifiers should be deduplicated against metadata entries retrieved from InformationSpace.
                 This way only contents having metadata representation will be processed.
-                To be disabled when processing new contents which metadata is not available in hbase or when original identifiers should be preserved (contents will not be filtered as well).
+                To be disabled when processing new contents which metadata is not available in infospace or when original identifiers should be preserved (contents will not be filtered as well).
             </description>
         </property>
         <!-- processing modes -->
@@ -86,8 +86,8 @@
         </property>
         <!-- import metadata related -->
         <property>
-            <name>import_hbase_dump_location</name>
-            <description>InformationSpace HBase dump location, usually points to remote cluster HDFS location.</description>
+            <name>import_infospace_graph_location</name>
+            <description>local InformationSpace graph location</description>
         </property>
         <!-- import content related -->
         <property>
@@ -330,7 +330,7 @@
         </property>
         <property>
             <name>output_remote_location</name>
-            <description>optional remote cluster output location where inference output dump should be distcped as sequence files. When not specified results will be exported straight to the ActionManager HBase.</description>
+            <description>optional remote cluster output location where inference output dump should be distcped as sequence files. When not specified results will be exported straight to the ActionManager.</description>
         </property>
         <!-- working directory related -->
         <property>
@@ -436,8 +436,8 @@
                 </property>
                 <!-- import metadata related -->
                 <property>
-                    <name>hbase_dump_location</name>
-                    <value>${import_hbase_dump_location}</value>
+                    <name>infospace_graph_location</name>
+                    <value>${import_infospace_graph_location}</value>
                 </property>
                 <!-- project concept related -->
                 <property>

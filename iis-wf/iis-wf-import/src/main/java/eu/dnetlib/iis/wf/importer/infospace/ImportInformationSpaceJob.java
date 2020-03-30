@@ -110,8 +110,11 @@ public class ImportInformationSpaceJob {
         conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
         conf.registerKryoClasses(OafModelUtils.provideOafClasses());
         
-//      SparkSession based
         SparkSession session = null;
+        boolean isSparkSessionManagedOutside = params.sparkSessionManagedOutside != null
+                ? params.sparkSessionManagedOutside
+                : false;
+        
         try {
             session = SparkSession.builder().config(conf).getOrCreate();
             JavaSparkContext sc = JavaSparkContext.fromSparkContext(session.sparkContext()); 
@@ -132,21 +135,23 @@ public class ImportInformationSpaceJob {
             OafRelToAvroConverter<ProjectToOrganization> projectOrganizationConverter = new ProjectToOrganizationRelationConverter();
             OafRelToAvroConverter<DocumentToProject> docProjectConverter = new DocumentToProjectRelationConverter();
             OafRelToAvroConverter<IdentifierMapping> deduplicationMappingConverter = new DeduplicationMappingConverter();
+            
+            boolean isParquetInputFormat = Boolean.valueOf(params.inputFormatParquet);
        
-            JavaRDD<eu.dnetlib.dhp.schema.oaf.Organization> sourceOrganization = readGraphTableFromSession(session,
-                    params.inputRootPath + "/organization", eu.dnetlib.dhp.schema.oaf.Organization.class);
-            JavaRDD<eu.dnetlib.dhp.schema.oaf.Project> sourceProject = readGraphTableFromSession(session,
-                    params.inputRootPath + "/project", eu.dnetlib.dhp.schema.oaf.Project.class);
-            JavaRDD<eu.dnetlib.dhp.schema.oaf.Publication> sourcePublication = readGraphTableFromSession(session,
-                    params.inputRootPath + "/publication", eu.dnetlib.dhp.schema.oaf.Publication.class);
-            JavaRDD<eu.dnetlib.dhp.schema.oaf.Dataset> sourceDataset = readGraphTableFromSession(session,
-                    params.inputRootPath + "/dataset", eu.dnetlib.dhp.schema.oaf.Dataset.class);
-            JavaRDD<eu.dnetlib.dhp.schema.oaf.OtherResearchProduct> sourceOtherResearchProduct = readGraphTableFromSession(
-                    session, params.inputRootPath + "/otherresearchproduct", eu.dnetlib.dhp.schema.oaf.OtherResearchProduct.class);
-            JavaRDD<eu.dnetlib.dhp.schema.oaf.Software> sourceSoftware = readGraphTableFromSession(session,
-                    params.inputRootPath + "/software", eu.dnetlib.dhp.schema.oaf.Software.class);
-            JavaRDD<eu.dnetlib.dhp.schema.oaf.Relation> sourceRelation = readGraphTableFromSession(session,
-                    params.inputRootPath + "/relation", eu.dnetlib.dhp.schema.oaf.Relation.class);
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.Organization> sourceOrganization = readGraphTable(session,
+                    params.inputRootPath + "/organization", eu.dnetlib.dhp.schema.oaf.Organization.class, isParquetInputFormat);
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.Project> sourceProject = readGraphTable(session,
+                    params.inputRootPath + "/project", eu.dnetlib.dhp.schema.oaf.Project.class, isParquetInputFormat);
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.Publication> sourcePublication = readGraphTable(session,
+                    params.inputRootPath + "/publication", eu.dnetlib.dhp.schema.oaf.Publication.class, isParquetInputFormat);
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.Dataset> sourceDataset = readGraphTable(session,
+                    params.inputRootPath + "/dataset", eu.dnetlib.dhp.schema.oaf.Dataset.class, isParquetInputFormat);
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.OtherResearchProduct> sourceOtherResearchProduct = readGraphTable(
+                    session, params.inputRootPath + "/otherresearchproduct", eu.dnetlib.dhp.schema.oaf.OtherResearchProduct.class, isParquetInputFormat);
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.Software> sourceSoftware = readGraphTable(session,
+                    params.inputRootPath + "/software", eu.dnetlib.dhp.schema.oaf.Software.class, isParquetInputFormat);
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.Relation> sourceRelation = readGraphTable(session,
+                    params.inputRootPath + "/relation", eu.dnetlib.dhp.schema.oaf.Relation.class, isParquetInputFormat);
             sourceRelation.cache();
             
             // handling entities
@@ -170,8 +175,7 @@ public class ImportInformationSpaceJob {
             storeInOutput(sc, docMeta, dataset, project, organization, docProjRelation, projOrgRelation, dedupRelation, params);
             
         } finally {
-            // unless session is managed which is not our case
-            if (Objects.nonNull(session)) {
+            if (Objects.nonNull(session) && !isSparkSessionManagedOutside) {
                 session.stop();
             }
         }
@@ -262,15 +266,32 @@ public class ImportInformationSpaceJob {
     }
     
     /**
-     * Reads graph table for given type.
+     * Reads graph table according to the input format.
      */
-    private static <T extends Oaf> JavaRDD<T> readGraphTableFromSession(SparkSession spark, String inputGraphTablePath,
+    private static <T extends Oaf> JavaRDD<T> readGraphTable(SparkSession spark, String inputGraphTablePath,
+            Class<T> clazz, boolean isParquetInputFormat) {
+        return isParquetInputFormat ? readGraphTableFromParquet(spark, inputGraphTablePath, clazz)
+                : readGraphTableFromTextFile(spark, inputGraphTablePath, clazz);
+    }
+    
+    /**
+     * Reads graph table from text file containing JSON records.
+     */
+    private static <T extends Oaf> JavaRDD<T> readGraphTableFromTextFile(SparkSession spark, String inputGraphTablePath,
             Class<T> clazz) {
         ObjectMapper objectMapper = new ObjectMapper();
         Encoder<T> encoder = Encoders.bean(clazz);
         
         return spark.read().textFile(inputGraphTablePath).map(
                 (MapFunction<String, T>) value -> objectMapper.readValue(value, clazz), encoder).toJavaRDD();
+    }
+    
+    /**
+     * Reads graph table from parquet format.
+     */
+    private static <T extends Oaf> JavaRDD<T> readGraphTableFromParquet(SparkSession spark, String inputGraphTablePath, 
+            Class<T> clazz) {
+        return spark.read().format("parquet").load(inputGraphTablePath).as(Encoders.bean(clazz)).toJavaRDD();
     }
     
     /**
@@ -334,6 +355,9 @@ public class ImportInformationSpaceJob {
     @Parameters(separators = "=")
     private static class ImportInformationSpaceJobParameters {
 
+        @Parameter(names = "-sparkSessionManagedOutside", required = false)
+        private Boolean sparkSessionManagedOutside;
+        
         @Parameter(names = "-skipDeletedByInference", required = true)
         private String skipDeletedByInference;
         
@@ -345,6 +369,9 @@ public class ImportInformationSpaceJob {
         
         @Parameter(names = "-inputRootPath", required = true)
         private String inputRootPath;
+        
+        @Parameter(names = "-inputFormatParquet", required = true)
+        private String inputFormatParquet;
 
         @Parameter(names = "-outputPath", required = true)
         private String outputPath;

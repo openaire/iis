@@ -15,27 +15,161 @@
         </configuration>
     </global>
 
-    <start to="importer" />
+    <start to="copy_materialized_graph_json_resources_fork" />
+    
+    <fork name="copy_materialized_graph_json_resources_fork">
+        <path start="copy_materialized_graph_json_resources_publication" />
+        <path start="copy_materialized_graph_json_resources_dataset" />
+        <path start="copy_materialized_graph_json_resources_organization" />
+        <path start="copy_materialized_graph_json_resources_project" />
+        <path start="copy_materialized_graph_json_resources_otherresearchproduct" />
+        <path start="copy_materialized_graph_json_resources_software" />
+        <path start="copy_materialized_graph_json_resources_relation" />
+    </fork>
+    
+    <action name="copy_materialized_graph_json_resources_publication">
+        <java>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/input_graph/publication" />
+                <mkdir path="${nameNode}${workingDir}/input_graph/publication" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.ClassPathResourceToHdfsCopier</arg>
+            <arg>-PinputClasspathResource=eu/dnetlib/iis/wf/importer/infospace/input/graph/publication.json</arg>
+            <arg>-PoutputHdfsFileLocation=${workingDir}/input_graph/publication/data.json</arg>
+        </java>
+        <ok to="copy_materialized_graph_json_resources_join"/>
+        <error to="fail"/>
+    </action>
+    
+    <action name="copy_materialized_graph_json_resources_dataset">
+        <java>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/input_graph/dataset" />
+                <mkdir path="${nameNode}${workingDir}/input_graph/dataset" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.ClassPathResourceToHdfsCopier</arg>
+            <arg>-PinputClasspathResource=eu/dnetlib/iis/wf/importer/infospace/input/graph/dataset.json</arg>
+            <arg>-PoutputHdfsFileLocation=${workingDir}/input_graph/dataset/data.json</arg>
+        </java>
+        <ok to="copy_materialized_graph_json_resources_join"/>
+        <error to="fail"/>
+    </action>
+    
+    <action name="copy_materialized_graph_json_resources_organization">
+        <java>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/input_graph/organization" />
+                <mkdir path="${nameNode}${workingDir}/input_graph/organization" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.ClassPathResourceToHdfsCopier</arg>
+            <arg>-PinputClasspathResource=eu/dnetlib/iis/wf/importer/infospace/input/graph/organization.json</arg>
+            <arg>-PoutputHdfsFileLocation=${workingDir}/input_graph/organization/data.json</arg>
+        </java>
+        <ok to="copy_materialized_graph_json_resources_join"/>
+        <error to="fail"/>
+    </action>
+    
+    <action name="copy_materialized_graph_json_resources_project">
+        <java>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/input_graph/project" />
+                <mkdir path="${nameNode}${workingDir}/input_graph/project" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.ClassPathResourceToHdfsCopier</arg>
+            <arg>-PinputClasspathResource=eu/dnetlib/iis/wf/importer/infospace/input/graph/project.json</arg>
+            <arg>-PoutputHdfsFileLocation=${workingDir}/input_graph/project/data.json</arg>
+        </java>
+        <ok to="copy_materialized_graph_json_resources_join"/>
+        <error to="fail"/>
+    </action>
+    
+    <action name="copy_materialized_graph_json_resources_otherresearchproduct">
+        <java>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/input_graph/otherresearchproduct" />
+                <mkdir path="${nameNode}${workingDir}/input_graph/otherresearchproduct" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.ClassPathResourceToHdfsCopier</arg>
+            <arg>-PinputClasspathResource=eu/dnetlib/iis/wf/importer/infospace/input/graph/otherresearchproduct.json</arg>
+            <arg>-PoutputHdfsFileLocation=${workingDir}/input_graph/otherresearchproduct/data.json</arg>
+        </java>
+        <ok to="copy_materialized_graph_json_resources_join"/>
+        <error to="fail"/>
+    </action>
+    
+    <action name="copy_materialized_graph_json_resources_software">
+        <java>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/input_graph/software" />
+                <mkdir path="${nameNode}${workingDir}/input_graph/software" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.ClassPathResourceToHdfsCopier</arg>
+            <arg>-PinputClasspathResource=eu/dnetlib/iis/wf/importer/infospace/input/graph/software.json</arg>
+            <arg>-PoutputHdfsFileLocation=${workingDir}/input_graph/software/data.json</arg>
+        </java>
+        <ok to="copy_materialized_graph_json_resources_join"/>
+        <error to="fail"/>
+    </action>
+    
+    <action name="copy_materialized_graph_json_resources_relation">
+        <java>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/input_graph/relation" />
+                <mkdir path="${nameNode}${workingDir}/input_graph/relation" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.ClassPathResourceToHdfsCopier</arg>
+            <arg>-PinputClasspathResource=eu/dnetlib/iis/wf/importer/infospace/input/graph/relation.json</arg>
+            <arg>-PoutputHdfsFileLocation=${workingDir}/input_graph/relation/data.json</arg>
+        </java>
+        <ok to="copy_materialized_graph_json_resources_join"/>
+        <error to="fail"/>
+    </action>
+    
+    <join name="copy_materialized_graph_json_resources_join" to="importer" />
+    
     <action name="importer">
         <sub-workflow>
             <app-path>${wf:appPath()}/infospace_import</app-path>
             <propagate-configuration />
             <configuration>
                 <property>
-                    <name>mapreduce_inputformat_class</name>
-                    <value>org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat</value>
+                    <name>skip_deleted_by_inference</name>
+                    <value>true</value>
                 </property>
                 <property>
-                    <name>input</name>
-                    <value>${wf:appPath()}/input</value>
+                    <name>inference_provenance_blacklist</name>
+                    <value>iis</value>
+                </property>
+                <property>
+                    <name>trust_level_threshold</name>
+                    <value>0.7</value>
+                </property>
+                <property>
+                    <name>input_root_path</name>
+                    <value>${workingDir}/input_graph/</value>
+                </property>
+                <property>
+                    <name>input_format_parquet</name>
+                    <value>false</value>
                 </property>
                 <property>
                     <name>output</name>
-                    <value>${workingDir}/mr_import</value>
+                    <value>${workingDir}/imported</value>
                 </property>
                 <property>
                     <name>output_report_root_path</name>
                     <value>${workingDir}/report</value>
+                </property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>import_infospace</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -62,9 +196,9 @@
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
             <arg>-C{dedupmapping,
                 eu.dnetlib.iis.common.schemas.IdentifierMapping,
-                eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/dedupmapping.json}
+                eu/dnetlib/iis/wf/importer/infospace/output/dedupmapping.json}
             </arg>
-            <arg>-Idedupmapping=${workingDir}/mr_import/dedupmapping</arg>
+            <arg>-Idedupmapping=${workingDir}/imported/dedupmapping</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />
@@ -76,9 +210,9 @@
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
             <arg>-C{docproject,
                 eu.dnetlib.iis.importer.schemas.DocumentToProject,
-                eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/docproject.json}
+                eu/dnetlib/iis/wf/importer/infospace/output/docproject.json}
             </arg>
-            <arg>-Idocproject=${workingDir}/mr_import/docproject</arg>
+            <arg>-Idocproject=${workingDir}/imported/docproject</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />
@@ -90,9 +224,9 @@
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
             <arg>-C{project,
                 eu.dnetlib.iis.importer.schemas.Project,
-                eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/project.json}
+                eu/dnetlib/iis/wf/importer/infospace/output/project.json}
             </arg>
-            <arg>-Iproject=${workingDir}/mr_import/project</arg>
+            <arg>-Iproject=${workingDir}/imported/project</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />
@@ -104,9 +238,9 @@
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
             <arg>-C{document,
                 eu.dnetlib.iis.importer.schemas.DocumentMetadata,
-                eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/document.json}
+                eu/dnetlib/iis/wf/importer/infospace/output/document.json}
             </arg>
-            <arg>-Idocument=${workingDir}/mr_import/docmeta</arg>
+            <arg>-Idocument=${workingDir}/imported/docmeta</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />
@@ -118,9 +252,9 @@
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
             <arg>-C{document,
                 eu.dnetlib.iis.importer.schemas.DataSetReference,
-                eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/dataset.json}
+                eu/dnetlib/iis/wf/importer/infospace/output/dataset.json}
             </arg>
-            <arg>-Idocument=${workingDir}/mr_import/dataset</arg>
+            <arg>-Idocument=${workingDir}/imported/dataset</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />
@@ -132,9 +266,9 @@
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
             <arg>-C{organization,
                 eu.dnetlib.iis.importer.schemas.Organization,
-                eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/organization.json}
+                eu/dnetlib/iis/wf/importer/infospace/output/organization.json}
             </arg>
-            <arg>-Iorganization=${workingDir}/mr_import/organization</arg>
+            <arg>-Iorganization=${workingDir}/imported/organization</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />
@@ -146,9 +280,9 @@
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
             <arg>-C{projectorg,
                 eu.dnetlib.iis.importer.schemas.ProjectToOrganization,
-                eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/project_organization.json}
+                eu/dnetlib/iis/wf/importer/infospace/output/project_organization.json}
             </arg>
-            <arg>-Iprojectorg=${workingDir}/mr_import/projectorg</arg>
+            <arg>-Iprojectorg=${workingDir}/imported/projectorg</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />
@@ -158,8 +292,8 @@
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
-            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/importer/infospace/sampledataproducer/output/report.json}</arg>
-            <arg>-Ireport=${workingDir}/report/import_info_space</arg>
+            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/importer/infospace/output/report.json}</arg>
+            <arg>-Ireport=${workingDir}/report/import_infospace</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />

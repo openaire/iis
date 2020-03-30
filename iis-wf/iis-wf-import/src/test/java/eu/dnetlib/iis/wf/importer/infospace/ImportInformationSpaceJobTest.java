@@ -7,8 +7,6 @@ import java.nio.file.Paths;
 import java.util.Objects;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.mapreduce.Job;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Dataset;
@@ -43,9 +41,7 @@ import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 @Category(IntegrationTest.class)
 public class ImportInformationSpaceJobTest {
 
-    
     private static SparkSession spark;
-    private static Configuration configuration;
 
     private Path workingDir;
     private Path inputDir;
@@ -74,7 +70,6 @@ public class ImportInformationSpaceJobTest {
 
         spark = SparkSession.builder().config(conf).getOrCreate();
 
-        configuration = Job.getInstance().getConfiguration();
     }
 
     @Before
@@ -98,7 +93,16 @@ public class ImportInformationSpaceJobTest {
     }
     
     @Test
-    public void testImportFromGraph() throws Exception {
+    public void testImportFromTextGraph() throws Exception {
+        testImportFromGraph(false);
+    }
+    
+    @Test
+    public void testImportFromParquetGraph() throws Exception {
+        testImportFromGraph(true);
+    }
+    
+    private void testImportFromGraph(boolean isParquetFormat) throws Exception {
         
         @SuppressWarnings("unchecked")
         Class<? extends Oaf> graphClasses[] = new Class[] {
@@ -115,14 +119,16 @@ public class ImportInformationSpaceJobTest {
             String graphTableName = graphClass.getSimpleName().toLowerCase();
             String inputGraphTableJsonDumpPath = String.format("%s/%s.json",
                     "eu/dnetlib/iis/wf/importer/infospace/input/graph", graphTableName);
-            createGraphTableFor(inputGraphTableJsonDumpPath, graphTableName, graphClass);
+            createGraphTableFor(inputGraphTableJsonDumpPath, graphTableName, graphClass, isParquetFormat);
         }
         
         // when
         ImportInformationSpaceJob.main(new String[]{
+                "-sparkSessionManagedOutside",
                 "-skipDeletedByInference", Boolean.TRUE.toString(),
                 "-trustLevelThreshold", "0.7",
                 "-inferenceProvenanceBlacklist", "iis",
+                "-inputFormatParquet", String.valueOf(isParquetFormat),
                 "-inputRootPath", inputGraphDir.toString(),
                 "-outputPath", outputDir.toString(),
                 "-outputReportPath", outputReportDir.toString(),
@@ -158,28 +164,24 @@ public class ImportInformationSpaceJobTest {
     
     
     private <T extends Oaf> void createGraphTableFor(String inputGraphTableJsonDumpPath,
-            String inputGraphTableDirRelativePath, Class<T> clazz) {
+            String inputGraphTableDirRelativePath, Class<T> clazz, boolean isParquetFormat) {
         Path inputGraphTableJsonDumpFile = Paths
                 .get(Objects.requireNonNull(cl.getResource(inputGraphTableJsonDumpPath)).getFile());
+
         Dataset<T> inputGraphTableDS = readGraphTableFromJSON(inputGraphTableJsonDumpFile, clazz);
         Path inputGraphTableDir = inputGraphDir.resolve(inputGraphTableDirRelativePath);
-        inputGraphTableDS.toJSON().javaRDD()
-        // writing as sequence file
-//                .mapToPair(json -> new Tuple2<>(new Text(clazz.getCanonicalName()), new Text(json)))
-//                .saveAsNewAPIHadoopFile(inputGraphTableDir.toString(), Text.class, Text.class,
-//                        SequenceFileOutputFormat.class, configuration);
-        // writing as plaintext file
-                  .saveAsTextFile(inputGraphTableDir.toString());
+        
+        if (isParquetFormat) {
+            inputGraphTableDS.write().format("parquet").save(inputGraphTableDir.toString());
+        } else {
+            inputGraphTableDS.toJSON().javaRDD().saveAsTextFile(inputGraphTableDir.toString());
+        }
     }
     
     private static <T extends Oaf> Dataset<T> readGraphTableFromJSON(Path path, Class<T> clazz) {
         ObjectMapper objectMapper = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         return spark.read().format("json").load(path.toString()).toJSON()
                 .map((MapFunction<String, T>) json -> objectMapper.readValue(json, clazz), Encoders.bean(clazz));
-    }
-    
-    private static <T extends Oaf> Dataset<T> readGraphTableFromParquet(String outputGraphTablePath, Class<T> clazz) {
-        return spark.read().format("parquet").load(outputGraphTablePath).as(Encoders.bean(clazz));
     }
     
 }
