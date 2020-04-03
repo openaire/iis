@@ -14,7 +14,8 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.log4j.Logger;
 
-import eu.dnetlib.actionmanager.actions.AtomicAction;
+import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.Oaf;
 import eu.dnetlib.iis.common.OrderedProperties;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
@@ -22,6 +23,7 @@ import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.java.io.SequenceFileTextValueReader;
 import eu.dnetlib.iis.common.java.porttype.AnyPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
+import eu.dnetlib.iis.wf.export.actionmanager.entity.AtomicActionSerDeUtils;
 
 /**
  * Sequence file testing consumer. Expects {@link Text} values at input.
@@ -53,7 +55,6 @@ public class TestingConsumer implements Process {
 	public TestingConsumer() {
 	    inputPorts.put(PORT_INPUT, new AnyPortType());
 		accessor = new FieldAccessor();
-		accessor.registerDecoder("targetValue", new OafFieldDecoder());
 	}
 
 	//------------------------ LOGIC ---------------------------------
@@ -89,13 +90,14 @@ public class TestingConsumer implements Process {
 			String[] recordsSpecs = StringUtils.split(propertiesPathsCSV, ',');
 
 			while (it.hasNext()) {
-				AtomicAction action = AtomicAction.fromJSON(it.next().toString());
+			    String serializedAction = it.next().toString();
+				AtomicAction<? extends Oaf> action = AtomicActionSerDeUtils.deserializeAction(serializedAction);
 				actionsCount++;
 				if (actionsCount > recordsSpecs.length) {
 					throw new Exception("got more records than expected: " + "unable to verify record no " + actionsCount
-							+ ", no field specification provided! Record contents: " + action);
+							+ ", no field specification provided! Record contents: " + serializedAction);
 				} else {
-					evaluateExpectations(recordsSpecs[actionsCount - 1], action);
+					evaluateExpectations(recordsSpecs[actionsCount - 1], action, serializedAction);
 				}
 			}
 			if (actionsCount < recordsSpecs.length) {
@@ -107,7 +109,7 @@ public class TestingConsumer implements Process {
 	
     //------------------------ PRIVATE ---------------------------------
 	
-	private void evaluateExpectations(String currentSpecLocation, AtomicAction action) throws Exception {
+	private void evaluateExpectations(String currentSpecLocation, AtomicAction<? extends Oaf> action, String serializedAction) throws Exception {
         log.info("output specification location: " + currentSpecLocation);
         Properties specProps = new OrderedProperties();
         specProps.load(TestingConsumer.class.getResourceAsStream(currentSpecLocation.trim()));
@@ -119,7 +121,7 @@ public class TestingConsumer implements Process {
                     || (currentValue == null && !NULL_VALUE_INDICATOR.equals(entry.getValue()))) {
                 throw new Exception("invalid field value for path: " + entry.getKey()
                                 + ", expected: '" + entry.getValue() + "', "
-                                + "got: '" + currentValue + "' Full object content: " + action);
+                                + "got: '" + currentValue + "' Full object content: " + serializedAction);
             }
         }
 	}

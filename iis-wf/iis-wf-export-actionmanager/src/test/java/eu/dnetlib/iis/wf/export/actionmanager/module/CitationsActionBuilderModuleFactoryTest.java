@@ -19,13 +19,10 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
-import com.google.protobuf.InvalidProtocolBufferException;
 
-import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.data.proto.FieldTypeProtos.ExtraInfo;
-import eu.dnetlib.data.proto.KindProtos;
-import eu.dnetlib.data.proto.OafProtos.Oaf;
-import eu.dnetlib.data.proto.TypeProtos.Type;
+import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.ExtraInfo;
+import eu.dnetlib.dhp.schema.oaf.Result;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
 import eu.dnetlib.iis.common.model.extrainfo.ExtraInfoConstants;
 import eu.dnetlib.iis.common.model.extrainfo.citations.BlobCitationEntry;
@@ -38,7 +35,7 @@ import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
  * @author mhorst
  * 
  */
-public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuilderModuleFactoryTest<Citations> {
+public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuilderModuleFactoryTest<Citations, Result> {
 
 
     private String docId = "documentId";
@@ -56,10 +53,10 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
     @Test
     public void testBuildEmptyCitations() throws Exception {
         // given
-        ActionBuilderModule<Citations> module =  factory.instantiate(config, agent, actionSetId);
+        ActionBuilderModule<Citations, Result> module =  factory.instantiate(config);
         
         // execute
-        List<AtomicAction> actions = module.build(
+        List<AtomicAction<Result>> actions = module.build(
                 Citations.newBuilder().setCitations(Collections.emptyList()).setDocumentId(docId).build());
 
         // assert
@@ -70,26 +67,22 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
     @Test
     public void testBuild() throws Exception {
         // given
-        ActionBuilderModule<Citations> module =  factory.instantiate(config, agent, actionSetId);
+        ActionBuilderModule<Citations, Result> module =  factory.instantiate(config);
         CitationEntry citationEntry = buildCitationEntry();
         Citations.Builder builder = Citations.newBuilder();
         builder.setDocumentId(docId);
         builder.setCitations(Lists.newArrayList(citationEntry));
         
         // execute
-        List<AtomicAction> actions = module.build(builder.build());
+        List<AtomicAction<Result>> actions = module.build(builder.build());
 
         // assert
         assertNotNull(actions);
         assertEquals(1, actions.size());
-        AtomicAction action = actions.get(0);
+        AtomicAction<Result> action = actions.get(0);
         assertNotNull(action);
-        assertEquals(agent, action.getAgent());
-        assertNotNull(action.getRowKey());
-        assertEquals(actionSetId, action.getRawSet());
-        assertEquals(docId, action.getTargetRowKey());
-        assertEquals(Type.result.toString(), action.getTargetColumnFamily());
-        assertOaf(action.getTargetValue(), citationEntry);
+        assertEquals(Result.class, action.getClazz());
+        assertOaf(action.getPayload(), citationEntry);
     }
 
     @Test
@@ -155,24 +148,17 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
         return citationEntryBuilder.build();
     }
 
-    private void assertOaf(byte[] oafBytes, CitationEntry sourceEntry) throws InvalidProtocolBufferException {
-        assertNotNull(oafBytes);
-        Oaf.Builder oafBuilder = Oaf.newBuilder();
-        oafBuilder.mergeFrom(oafBytes);
-        Oaf oaf = oafBuilder.build();
-        assertNotNull(oaf);
-
-        assertTrue(KindProtos.Kind.entity == oaf.getKind());
-        assertNotNull(oaf.getEntity());
-        assertEquals(docId, oaf.getEntity().getId());
-        assertNotNull(oaf.getEntity().getResult());
-        assertEquals(1, oaf.getEntity().getExtraInfoCount());
-        ExtraInfo extraInfo = oaf.getEntity().getExtraInfo(0);
+    private void assertOaf(Result result, CitationEntry sourceEntry) {
+        assertNotNull(result);
+        assertEquals(docId, result.getId());
+        assertNotNull(result.getExtraInfo());
+        assertEquals(1, result.getExtraInfo().size());
+        ExtraInfo extraInfo = result.getExtraInfo().get(0);
         assertNotNull(extraInfo);
         assertEquals(ExtraInfoConstants.NAME_CITATIONS, extraInfo.getName());
         assertEquals(ExtraInfoConstants.TYPOLOGY_CITATIONS, extraInfo.getTypology());
         assertEquals(StaticConfigurationProvider.ACTION_TRUST_0_9, extraInfo.getTrust());
-        assertEquals(((AbstractActionBuilderFactory<Citations>) factory).buildInferenceProvenance(), extraInfo.getProvenance());
+        assertEquals(((AbstractActionBuilderFactory<Citations, Result>) factory).buildInferenceProvenance(), extraInfo.getProvenance());
 
         assertTrue(StringUtils.isNotBlank(extraInfo.getValue()));
         CitationsExtraInfoConverter converter = new CitationsExtraInfoConverter();

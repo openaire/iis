@@ -8,11 +8,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.data.proto.KindProtos;
-import eu.dnetlib.data.proto.RelTypeProtos.RelType;
-import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
-import eu.dnetlib.data.proto.ResultProjectProtos.ResultProject.Outcome;
+import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 import eu.dnetlib.iis.wf.export.actionmanager.module.VerificationUtils.Expectations;
 
@@ -20,7 +17,7 @@ import eu.dnetlib.iis.wf.export.actionmanager.module.VerificationUtils.Expectati
  * @author mhorst
  *
  */
-public class DocumentToProjectActionBuilderModuleFactoryTest extends AbstractActionBuilderModuleFactoryTest<DocumentToProject> {
+public class DocumentToProjectActionBuilderModuleFactoryTest extends AbstractActionBuilderModuleFactoryTest<DocumentToProject, Relation> {
 
     // ----------------------- CONSTRUCTORS --------------------------
 
@@ -34,7 +31,7 @@ public class DocumentToProjectActionBuilderModuleFactoryTest extends AbstractAct
     public void testBuildBelowThreshold() throws Exception {
         // given
         DocumentToProject documentToProject = buildDocumentToProject("documentId", "projectId", 0.4f);
-        ActionBuilderModule<DocumentToProject> module = factory.instantiate(config, agent, actionSetId);
+        ActionBuilderModule<DocumentToProject, Relation> module = factory.instantiate(config);
         
         // execute
         module.build(documentToProject);
@@ -46,42 +43,29 @@ public class DocumentToProjectActionBuilderModuleFactoryTest extends AbstractAct
         String docId = "documentId";
         String projectId = "projectId";
         float matchStrength = 0.9f;
-        ActionBuilderModule<DocumentToProject> module = factory.instantiate(config, agent, actionSetId);
+        ActionBuilderModule<DocumentToProject, Relation> module = factory.instantiate(config);
         
         // execute
-        List<AtomicAction> actions = module.build(buildDocumentToProject(docId, projectId, matchStrength));
+        List<AtomicAction<Relation>> actions = module.build(buildDocumentToProject(docId, projectId, matchStrength));
         
         // assert
         assertNotNull(actions);
         assertEquals(2, actions.size());
-        AtomicAction action = actions.get(0);
+        AtomicAction<Relation> action = actions.get(0);
         assertNotNull(action);
-        assertNotNull(action.getRowKey());
-        assertEquals(actionSetId, action.getRawSet());
-        assertEquals(projectId, action.getTargetColumn());
-        assertEquals(docId, action.getTargetRowKey());
-        assertEquals(RelType.resultProject.toString() + '_' + SubRelType.outcome + '_'
-                + Outcome.RelName.isProducedBy, action.getTargetColumnFamily());
-        
+        assertEquals(Relation.class, action.getClazz());
         Expectations expectations = new Expectations(docId, projectId, matchStrength, 
-                KindProtos.Kind.relation, RelType.resultProject, SubRelType.outcome, 
-                Outcome.RelName.isProducedBy.toString());
-        assertOafRel(action.getTargetValue(), expectations);
+                "resultProject", "outcome", "isProducedBy");
+        assertOafRel(action.getPayload(), expectations);
         
 //      checking backward relation
         action = actions.get(1);
         assertNotNull(action);
-        assertNotNull(action.getRowKey());
-        assertEquals(agent, action.getAgent());
-        assertEquals(actionSetId, action.getRawSet());
-        assertEquals(docId, action.getTargetColumn());
-        assertEquals(projectId, action.getTargetRowKey());
-        assertEquals(RelType.resultProject.toString() + '_' + SubRelType.outcome + '_'
-                + Outcome.RelName.produces, action.getTargetColumnFamily());
+        assertEquals(Relation.class, action.getClazz());
         expectations.setSource(projectId);
         expectations.setTarget(docId);
-        expectations.setRelationClass(Outcome.RelName.produces.toString());
-        assertOafRel(action.getTargetValue(), expectations);
+        expectations.setRelationClass("produces");
+        assertOafRel(action.getPayload(), expectations);
     }
     
     // ----------------------- PRIVATE --------------------------

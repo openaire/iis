@@ -5,7 +5,6 @@ import static eu.dnetlib.iis.common.InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL
 import static eu.dnetlib.iis.common.InfoSpaceConstants.SEMANTIC_SCHEME_DNET_CLASSIFICATION_TAXONOMIES;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -14,11 +13,9 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 import com.google.protobuf.InvalidProtocolBufferException;
 
-import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.data.proto.FieldTypeProtos.StructuredProperty;
-import eu.dnetlib.data.proto.KindProtos;
-import eu.dnetlib.data.proto.OafProtos.Oaf;
-import eu.dnetlib.data.proto.TypeProtos.Type;
+import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.Result;
+import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentClass;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentClasses;
@@ -28,7 +25,7 @@ import eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses;
  * @author mhorst
  *
  */
-public class DocumentToDocumentClassesActionBuilderModuleFactoryTest extends AbstractActionBuilderModuleFactoryTest<DocumentToDocumentClasses> {
+public class DocumentToDocumentClassesActionBuilderModuleFactoryTest extends AbstractActionBuilderModuleFactoryTest<DocumentToDocumentClasses, Result> {
 
     
     // ------------------------ CONSTRUCTORS -----------------------------
@@ -41,12 +38,12 @@ public class DocumentToDocumentClassesActionBuilderModuleFactoryTest extends Abs
     
     @Test
     public void testBuildEmptyClasses() throws Exception {
-     // given
+        // given
         String docId = "documentId";
-        ActionBuilderModule<DocumentToDocumentClasses> module =  factory.instantiate(config, agent, actionSetId);
+        ActionBuilderModule<DocumentToDocumentClasses, Result> module =  factory.instantiate(config);
         
         // execute
-        List<AtomicAction> actions = module.build(DocumentToDocumentClasses.newBuilder().setDocumentId(docId).build());
+        List<AtomicAction<Result>> actions = module.build(DocumentToDocumentClasses.newBuilder().setDocumentId(docId).build());
 
         // assert
         assertNotNull(actions);
@@ -55,13 +52,13 @@ public class DocumentToDocumentClassesActionBuilderModuleFactoryTest extends Abs
     
     @Test
     public void testBuildBelowThreshold() throws Exception {
-     // given
+        // given
         String docId = "docId";
         float confidenceLevel = 0.4f;
-        ActionBuilderModule<DocumentToDocumentClasses> module =  factory.instantiate(config, agent, actionSetId);
+        ActionBuilderModule<DocumentToDocumentClasses, Result> module =  factory.instantiate(config);
 
         // execute
-        List<AtomicAction> actions =  module.build(buildDocumentToDocumentClasses(docId, confidenceLevel));
+        List<AtomicAction<Result>> actions =  module.build(buildDocumentToDocumentClasses(docId, confidenceLevel));
         
         // assert
         assertNotNull(actions);
@@ -73,22 +70,18 @@ public class DocumentToDocumentClassesActionBuilderModuleFactoryTest extends Abs
         // given
         String docId = "docId";
         float confidenceLevel = 0.6f;
-        ActionBuilderModule<DocumentToDocumentClasses> module =  factory.instantiate(config, agent, actionSetId);
+        ActionBuilderModule<DocumentToDocumentClasses, Result> module =  factory.instantiate(config);
 
         // execute
-        List<AtomicAction> actions =  module.build(buildDocumentToDocumentClasses(docId, confidenceLevel));
+        List<AtomicAction<Result>> actions =  module.build(buildDocumentToDocumentClasses(docId, confidenceLevel));
         
         // assert
         assertNotNull(actions);
         assertEquals(1, actions.size());
-        AtomicAction action = actions.get(0);
+        AtomicAction<Result> action = actions.get(0);
         assertNotNull(action);
-        assertEquals(agent, action.getAgent());
-        assertNotNull(action.getRowKey());
-        assertEquals(actionSetId, action.getRawSet());
-        assertEquals(docId, action.getTargetRowKey());
-        assertEquals(Type.result.toString(), action.getTargetColumnFamily());
-        assertOaf(action.getTargetValue(), docId, confidenceLevel);
+        assertEquals(Result.class, action.getClazz());
+        assertOaf(action.getPayload(), docId, confidenceLevel);
     }
     
     
@@ -114,38 +107,32 @@ public class DocumentToDocumentClassesActionBuilderModuleFactoryTest extends Abs
         return builder.build();
     }
     
-    private void assertOaf(byte[] oafBytes, String docId, float confidenceLevel) throws InvalidProtocolBufferException {
-        assertNotNull(oafBytes);
-        Oaf.Builder oafBuilder = Oaf.newBuilder();
-        oafBuilder.mergeFrom(oafBytes);
-        Oaf oaf = oafBuilder.build();
-        assertNotNull(oaf);
+    private void assertOaf(Result result, String docId, float confidenceLevel) throws InvalidProtocolBufferException {
+        assertNotNull(result);
 
-        assertTrue(KindProtos.Kind.entity == oaf.getKind());
-        assertNotNull(oaf.getEntity());
-        assertEquals(docId, oaf.getEntity().getId());
-        assertNotNull(oaf.getEntity().getResult());
-        assertEquals(5, oaf.getEntity().getResult().getMetadata().getSubjectCount());
+        assertEquals(docId, result.getId());
+        assertNotNull(result.getSubject());
+        assertEquals(5, result.getSubject().size());
 
         assertSubject("arxiv1" + CLASSIFICATION_HIERARCHY_SEPARATOR + "arxiv2", 
                 InfoSpaceConstants.SEMANTIC_CLASS_TAXONOMIES_ARXIV, 
-                confidenceLevel, oaf.getEntity().getResult().getMetadata().getSubject(0));
+                confidenceLevel, result.getSubject().get(0));
         
         assertSubject("ddc1" + CLASSIFICATION_HIERARCHY_SEPARATOR + "ddc2", 
                 InfoSpaceConstants.SEMANTIC_CLASS_TAXONOMIES_DDC, 
-                confidenceLevel, oaf.getEntity().getResult().getMetadata().getSubject(1));
+                confidenceLevel, result.getSubject().get(1));
         
         assertSubject("wos1" + CLASSIFICATION_HIERARCHY_SEPARATOR + "wos2", 
                 InfoSpaceConstants.SEMANTIC_CLASS_TAXONOMIES_WOS, 
-                confidenceLevel, oaf.getEntity().getResult().getMetadata().getSubject(2));
+                confidenceLevel, result.getSubject().get(2));
         
         assertSubject("mesh1" + CLASSIFICATION_HIERARCHY_SEPARATOR + "mesh2", 
                 InfoSpaceConstants.SEMANTIC_CLASS_TAXONOMIES_MESHEUROPMC, 
-                confidenceLevel, oaf.getEntity().getResult().getMetadata().getSubject(3));
+                confidenceLevel, result.getSubject().get(3));
         
         assertSubject("acm1" + CLASSIFICATION_HIERARCHY_SEPARATOR + "acm2", 
                 InfoSpaceConstants.SEMANTIC_CLASS_TAXONOMIES_ACM, 
-                confidenceLevel, oaf.getEntity().getResult().getMetadata().getSubject(4));
+                confidenceLevel, result.getSubject().get(4));
     }
     
     private void assertSubject(String expectedValue, String expectedTaxonomy,  

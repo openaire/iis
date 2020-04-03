@@ -2,15 +2,10 @@ package eu.dnetlib.iis.wf.export.actionmanager.module;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
-import eu.dnetlib.data.proto.KindProtos;
-import eu.dnetlib.data.proto.KindProtos.Kind;
-import eu.dnetlib.data.proto.OafProtos.Oaf;
-import eu.dnetlib.data.proto.RelTypeProtos.RelType;
-import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
+import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 
 /**
@@ -32,24 +27,18 @@ public final class VerificationUtils {
     /**
      * Evaluates oafBytes against expectations.
      */
-    public static void assertOafRel(byte[] oafBytes, Expectations expectations) throws InvalidProtocolBufferException {
-        
-        assertNotNull(oafBytes);
-        Oaf.Builder oafBuilder = Oaf.newBuilder();
-        oafBuilder.mergeFrom(oafBytes);
-        Oaf oaf = oafBuilder.build();
-        assertNotNull(oaf);
+    public static void assertOafRel(Relation relation, Expectations expectations) throws InvalidProtocolBufferException {
+        assertNotNull(relation);
 
-        assertTrue(expectations.getKind() == oaf.getKind());
-        assertTrue(expectations.getRelType() == oaf.getRel().getRelType());
-        assertTrue(expectations.getSubRelType() == oaf.getRel().getSubRelType());
-        assertEquals(expectations.getRelationClass(), oaf.getRel().getRelClass());
-        assertEquals(expectations.getSource(), oaf.getRel().getSource());
-        assertEquals(expectations.getTarget(), oaf.getRel().getTarget());    
-        assertNotNull(oaf.getDataInfo());
+        assertEquals(expectations.getRelType(), relation.getRelType());
+        assertEquals(expectations.getSubRelType(), relation.getSubRelType());
+        assertEquals(expectations.getRelationClass(), relation.getRelClass());
+        assertEquals(expectations.getSource(), relation.getSource());
+        assertEquals(expectations.getTarget(), relation.getTarget());    
+        assertNotNull(relation.getDataInfo());
 
         float normalizedTrust = expectations.getConfidenceLevel() * InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
-        assertEquals(normalizedTrust, Float.parseFloat(oaf.getDataInfo().getTrust()), 0.0001);
+        assertEquals(normalizedTrust, Float.parseFloat(relation.getDataInfo().getTrust()), 0.0001);
     }
     
     // --------------------------------- INNER CLASS -----------------------------------
@@ -59,17 +48,15 @@ public final class VerificationUtils {
         private String source;
         private String target;
         private float confidenceLevel;
-        private KindProtos.Kind kind;
-        private RelType relType;
-        private SubRelType subRelType;
+        private String relType;
+        private String subRelType;
         private String relationClass;
         
-        public Expectations(String source, String target, float confidenceLevel, Kind kind, RelType relType,
-                SubRelType subRelType, String relationClass) {
+        public Expectations(String source, String target, float confidenceLevel, String relType,
+                String subRelType, String relationClass) {
             this.source = source;
             this.target = target;
             this.confidenceLevel = confidenceLevel;
-            this.kind = kind;
             this.relType = relType;
             this.subRelType = subRelType;
             this.relationClass = relationClass;
@@ -87,15 +74,11 @@ public final class VerificationUtils {
             return confidenceLevel;
         }
 
-        public KindProtos.Kind getKind() {
-            return kind;
-        }
-
-        public RelType getRelType() {
+        public String getRelType() {
             return relType;
         }
 
-        public SubRelType getSubRelType() {
+        public String getSubRelType() {
             return subRelType;
         }
 
@@ -115,15 +98,11 @@ public final class VerificationUtils {
             this.confidenceLevel = confidenceLevel;
         }
 
-        public void setKind(KindProtos.Kind kind) {
-            this.kind = kind;
-        }
-
-        public void setRelType(RelType relType) {
+        public void setRelType(String relType) {
             this.relType = relType;
         }
 
-        public void setSubRelType(SubRelType subRelType) {
+        public void setSubRelType(String subRelType) {
             this.subRelType = subRelType;
         }
 

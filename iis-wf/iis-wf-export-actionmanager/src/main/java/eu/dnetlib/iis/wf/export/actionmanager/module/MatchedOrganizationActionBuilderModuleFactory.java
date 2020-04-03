@@ -5,18 +5,9 @@ import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
 
-import com.google.common.base.Preconditions;
-
-import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.actionmanager.common.Agent;
-import eu.dnetlib.data.mapreduce.util.OafDecoder;
-import eu.dnetlib.data.proto.KindProtos.Kind;
-import eu.dnetlib.data.proto.OafProtos.Oaf;
-import eu.dnetlib.data.proto.OafProtos.OafRel;
-import eu.dnetlib.data.proto.RelTypeProtos.RelType;
-import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
-import eu.dnetlib.data.proto.ResultOrganizationProtos.ResultOrganization;
-import eu.dnetlib.data.proto.ResultOrganizationProtos.ResultOrganization.Affiliation;
+import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.Relation;
+import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganizationWithProvenance;
 
 /**
@@ -25,13 +16,16 @@ import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganizationWithProvenance;
  * @author mhorst
  *
  */
-public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActionBuilderFactory<MatchedOrganizationWithProvenance> {
+public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActionBuilderFactory<MatchedOrganizationWithProvenance, Relation> {
 
-    private static final String REL_CLASS_HAS_AUTHOR_INSTITUTION_OF = Affiliation.RelName.hasAuthorInstitution.toString();
+    private static final String REL_TYPE = "resultOrganization";
     
-    private static final String REL_CLASS_IS_AUTHOR_INSTITUTION_OF = Affiliation.RelName.isAuthorInstitutionOf.toString();
+    private static final String SUBREL_TYPE = "affiliation";
+    
+    private static final String REL_CLASS_HAS_AUTHOR_INSTITUTION_OF = "hasAuthorInstitution";
+    
+    private static final String REL_CLASS_IS_AUTHOR_INSTITUTION_OF = "isAuthorInstitutionOf";
 
-    private static final String SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_ORG = "dnet:result_organization_relations";
 
     // ------------------------ CONSTRUCTORS --------------------------
     
@@ -42,8 +36,8 @@ public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActio
     // ------------------------ LOGIC ---------------------------------
     
     @Override
-    public ActionBuilderModule<MatchedOrganizationWithProvenance> instantiate(Configuration config, Agent agent, String actionSetId) {
-        return new MatchedOrganizationActionBuilderModule(provideTrustLevelThreshold(config), agent, actionSetId);
+    public ActionBuilderModule<MatchedOrganizationWithProvenance, Relation> instantiate(Configuration config) {
+        return new MatchedOrganizationActionBuilderModule(provideTrustLevelThreshold(config));
     }
     
     // ------------------------ INNER CLASS ---------------------------------
@@ -52,86 +46,50 @@ public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActio
      * {@link MatchedOrganization} action builder module.
      *
      */
-    class MatchedOrganizationActionBuilderModule extends AbstractBuilderModule<MatchedOrganizationWithProvenance> {
+    class MatchedOrganizationActionBuilderModule extends AbstractBuilderModule<MatchedOrganizationWithProvenance, Relation> {
 
         
         // ------------------------ CONSTRUCTORS --------------------------
         
         /**
          * @param trustLevelThreshold trust level threshold or null when all records should be exported
-         * @param agent action manager agent details
-         * @param actionSetId action set identifier
          */
-        public MatchedOrganizationActionBuilderModule(Float trustLevelThreshold, Agent agent, String actionSetId) {
-            super(trustLevelThreshold, buildInferenceProvenance(), Preconditions.checkNotNull(agent),
-                    Preconditions.checkNotNull(actionSetId));
+        public MatchedOrganizationActionBuilderModule(Float trustLevelThreshold) {
+            super(trustLevelThreshold, buildInferenceProvenance());
         }
 
         // ------------------------ LOGIC ---------------------------------
         
         @Override
-        public List<AtomicAction> build(MatchedOrganizationWithProvenance object) throws TrustLevelThresholdExceededException {
-            Preconditions.checkNotNull(object);
-            String docId = object.getDocumentId().toString();
-            String orgId = object.getOrganizationId().toString();
-            Oaf.Builder oafBuilder = Oaf.newBuilder();
-            oafBuilder.setKind(Kind.relation);
-            OafRel.Builder relBuilder = OafRel.newBuilder();
-            relBuilder.setChild(false);
-            relBuilder.setRelType(RelType.resultOrganization);
-            relBuilder.setSubRelType(SubRelType.affiliation);
-            relBuilder.setRelClass(REL_CLASS_HAS_AUTHOR_INSTITUTION_OF);
-            relBuilder.setSource(docId);
-            relBuilder.setTarget(orgId);
-            ResultOrganization.Builder resOrgBuilder = ResultOrganization.newBuilder();
-            Affiliation.Builder affBuilder = Affiliation.newBuilder();
-            affBuilder.setRelMetadata(
-                    BuilderModuleHelper.buildRelMetadata(SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_ORG, REL_CLASS_HAS_AUTHOR_INSTITUTION_OF));
-            resOrgBuilder.setAffiliation(affBuilder.build());
-            relBuilder.setResultOrganization(resOrgBuilder.build());
-            oafBuilder.setRel(relBuilder.build());
-            oafBuilder.setDataInfo(buildInference(object.getMatchStrength()));
-            oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
-            Oaf oaf = oafBuilder.build();
-            Oaf oafInverted = invertRelationAndBuild(oafBuilder);
-            return Arrays.asList(new AtomicAction[] {
-                    getActionFactory().createAtomicAction(getActionSetId(), getAgent(), docId,
-                            OafDecoder.decode(oaf).getCFQ(), orgId, oaf.toByteArray()),
-                 // setting reverse relation in referenced object
-                    getActionFactory().createAtomicAction(getActionSetId(), getAgent(), orgId,
-                            OafDecoder.decode(oafInverted).getCFQ(), docId, oafInverted.toByteArray())
-                    });
+        public List<AtomicAction<Relation>> build(MatchedOrganizationWithProvenance object) throws TrustLevelThresholdExceededException {
+            return Arrays.asList(createAction(object, false), createAction(object, true));
         }
-
-        // ------------------------ PRIVATE ---------------------------------
         
         /**
-         * Clones builder provided as parameter, inverts relations and builds {@link Oaf} object.
+         * Creates similarity related actions.
+         * 
+         * @param object source object
+         * @param backwardMode flag indicating relation should be created in backward mode
+         * @throws TrustLevelThresholdExceededException 
          */
-        private Oaf invertRelationAndBuild(Oaf.Builder existingBuilder) {
-            // works on builder clone to prevent changes in existing builder
-            if (existingBuilder.getRel() != null) {
-                if (existingBuilder.getRel().getSource() != null && existingBuilder.getRel().getTarget() != null) {
-                    Oaf.Builder builder = existingBuilder.clone();
-                    OafRel.Builder relBuilder = builder.getRelBuilder();
-                    String source = relBuilder.getSource();
-                    String target = relBuilder.getTarget();
-                    relBuilder.setSource(target);
-                    relBuilder.setTarget(source);
-                    relBuilder.setRelClass(REL_CLASS_IS_AUTHOR_INSTITUTION_OF);
-                    relBuilder.getResultOrganizationBuilder().getAffiliationBuilder().getRelMetadataBuilder()
-                            .getSemanticsBuilder().setClassid(REL_CLASS_IS_AUTHOR_INSTITUTION_OF);
-                    relBuilder.getResultOrganizationBuilder().getAffiliationBuilder().getRelMetadataBuilder()
-                            .getSemanticsBuilder().setClassname(REL_CLASS_IS_AUTHOR_INSTITUTION_OF);
-                    builder.setRel(relBuilder.build());
-                    builder.setLastupdatetimestamp(System.currentTimeMillis());
-                    return builder.build();
-                } else {
-                    throw new RuntimeException("invalid state: " + "either source or target relation was missing!");
-                }
-            } else {
-                throw new RuntimeException("invalid state: " + "no relation object found!");
-            }
+        private AtomicAction<Relation> createAction(MatchedOrganizationWithProvenance object, boolean backwardMode) throws TrustLevelThresholdExceededException {
+            AtomicAction<Relation> action = new AtomicAction<>();
+            action.setClazz(Relation.class);
+            action.setPayload(buildRelation(object, backwardMode));
+            return action;
         }
+        
+        private Relation buildRelation(MatchedOrganizationWithProvenance object, boolean backwardMode) throws TrustLevelThresholdExceededException {
+            Relation relation = new Relation();
+            relation.setSource(backwardMode ? object.getOrganizationId().toString():  object.getDocumentId().toString());
+            relation.setTarget(backwardMode ? object.getDocumentId().toString(): object.getOrganizationId().toString());
+            relation.setRelType(REL_TYPE);
+            relation.setSubRelType(SUBREL_TYPE);
+            relation.setRelClass(backwardMode ? REL_CLASS_IS_AUTHOR_INSTITUTION_OF : REL_CLASS_HAS_AUTHOR_INSTITUTION_OF);
+            relation.setDataInfo(buildInference(object.getMatchStrength()));
+            relation.setLastupdatetimestamp(System.currentTimeMillis());
+            return relation;
+        }
+        
     }
 }

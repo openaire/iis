@@ -1,44 +1,17 @@
 package eu.dnetlib.iis.wf.export.actionmanager.entity;
 
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-import com.google.common.collect.Sets;
-import eu.dnetlib.actionmanager.actions.ActionFactory;
-import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.data.mapreduce.util.OafDecoder;
-import eu.dnetlib.data.proto.FieldTypeProtos.KeyValue;
-import eu.dnetlib.data.proto.FieldTypeProtos.Qualifier;
-import eu.dnetlib.data.proto.FieldTypeProtos.StringField;
-import eu.dnetlib.data.proto.FieldTypeProtos.StructuredProperty;
-import eu.dnetlib.data.proto.KindProtos.Kind;
-import eu.dnetlib.data.proto.OafProtos.Oaf;
-import eu.dnetlib.data.proto.OafProtos.OafEntity;
-import eu.dnetlib.data.proto.OafProtos.OafRel;
-import eu.dnetlib.data.proto.RelTypeProtos.RelType;
-import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
-import eu.dnetlib.data.proto.ResultProtos.Result;
-import eu.dnetlib.data.proto.ResultProtos.Result.Instance;
-import eu.dnetlib.data.proto.ResultProtos.Result.Metadata;
-import eu.dnetlib.data.proto.ResultResultProtos.ResultResult;
-import eu.dnetlib.data.proto.ResultResultProtos.ResultResult.Relationship;
-import eu.dnetlib.data.proto.TypeProtos.Type;
-import eu.dnetlib.data.transform.xml.AbstractDNetXsltFunctions;
-import eu.dnetlib.iis.common.InfoSpaceConstants;
-import eu.dnetlib.iis.common.java.io.HdfsUtils;
-import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
-import eu.dnetlib.iis.common.utils.DateTimeUtils;
-import eu.dnetlib.iis.common.utils.RDDUtils;
-import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta;
-import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
-import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
-import eu.dnetlib.iis.wf.export.actionmanager.module.AlgorithmName;
-import eu.dnetlib.iis.wf.export.actionmanager.module.BuilderModuleHelper;
+import java.text.MessageFormat;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.io.SequenceFile.CompressionType;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.SequenceFile.CompressionType;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.spark.SparkConf;
@@ -46,17 +19,35 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.Optional;
+import org.codehaus.jackson.map.ObjectMapper;
+
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
+import eu.dnetlib.data.transform.xml.AbstractDNetXsltFunctions;
+import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.Field;
+import eu.dnetlib.dhp.schema.oaf.Instance;
+import eu.dnetlib.dhp.schema.oaf.KeyValue;
+import eu.dnetlib.dhp.schema.oaf.Qualifier;
+import eu.dnetlib.dhp.schema.oaf.Relation;
+import eu.dnetlib.dhp.schema.oaf.Software;
+import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
+import eu.dnetlib.iis.common.java.io.HdfsUtils;
+import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
+import eu.dnetlib.iis.common.utils.DateTimeUtils;
+import eu.dnetlib.iis.common.utils.RDDUtils;
+import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta;
+import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
+import eu.dnetlib.iis.wf.export.actionmanager.module.AlgorithmName;
+import eu.dnetlib.iis.wf.export.actionmanager.module.BuilderModuleHelper;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import scala.Tuple2;
 import scala.Tuple3;
-
-import java.text.MessageFormat;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Software entity and relations exporter reading {@link DocumentToSoftwareUrlWithMeta} avro records and exporting them as entity and relation actions.
@@ -66,7 +57,11 @@ import java.util.stream.Collectors;
  */
 public class SoftwareExporterJob {
     
-    public static final String REL_CLASS_ISRELATEDTO = Relationship.RelName.isRelatedTo.toString();
+    private static final String REL_TYPE = "resultResult";
+
+    private static final String SUBREL_TYPE = "relationship";
+    
+    private static final String REL_CLASS_ISRELATEDTO = "isRelatedTo";
     
     public static final String INFERENCE_PROVENANCE = InfoSpaceConstants.SEMANTIC_CLASS_IIS
             + InfoSpaceConstants.INFERENCE_PROVENANCE_SEPARATOR + AlgorithmName.document_software_url;
@@ -131,10 +126,10 @@ public class SoftwareExporterJob {
             job.getConfiguration().set(FileOutputFormat.COMPRESS_TYPE, CompressionType.BLOCK.name());
 
             JavaRDD<?> dedupedSoftwareUrls = handleEntities(documentToSoftwareUrlWithMetaFiltered, 
-                    documentIdToTitle, params.entityActionSetId, job.getConfiguration(), params.outputEntityPath);
+                    documentIdToTitle, job.getConfiguration(), params.outputEntityPath);
 
             JavaRDD<Tuple3<String, String, Float>> dedupedRelationTriples = handleRelations(documentToSoftwareUrlWithMetaFiltered, 
-                    params.relationActionSetId, job.getConfiguration(), params.outputRelationPath);
+                    job.getConfiguration(), params.outputRelationPath);
             
             // reporting
             counterReporter.report(sc, dedupedSoftwareUrls, dedupedRelationTriples, params.outputReportPath);
@@ -144,8 +139,7 @@ public class SoftwareExporterJob {
     // ----------------------------------------- PRIVATE ----------------------------------------------
     
     private static JavaRDD<?> handleEntities(JavaRDD<DocumentToSoftwareUrlWithMeta> documentToSoftwareUrl, 
-            JavaPairRDD<CharSequence, CharSequence> documentIdToTitle, 
-            String actionSetId, Configuration jobConfig, String outputAvroPath) {
+            JavaPairRDD<CharSequence, CharSequence> documentIdToTitle, Configuration jobConfig, String outputAvroPath) {
         
         // supplementing empty software titles with templates based on document->software relations
         JavaPairRDD<CharSequence, DocumentToSoftwareUrlWithMeta> documentToSoftwareByPublicationId = documentToSoftwareUrl.mapToPair(e -> new Tuple2<>(e.getDocumentId(), e));
@@ -160,11 +154,14 @@ public class SoftwareExporterJob {
         // to be used by both entity exporter and reporter consumers
         documentToSoftwareReducedValues.cache();
         
-        JavaPairRDD<Text, Text> entityResult = documentToSoftwareReducedValues
-                .map(e -> buildEntityAction(e, actionSetId))
-                .mapToPair(action -> new Tuple2<>(new Text(action.getRowKey()), new Text(action.toString())));
-
-        RDDUtils.saveTextPairRDD(entityResult, numberOfOutputFiles, outputAvroPath, jobConfig);
+        JavaRDD<AtomicAction<Software>> entityResult = documentToSoftwareReducedValues
+                .map(e -> buildEntityAction(e));
+        
+        RDDUtils.saveTextPairRDD(
+                // FIXME temporarily writing as sequencefile instead of plain text files
+                // pairs, 
+                entityResult.mapToPair(action -> new Tuple2<>(new Text(""), new Text(new ObjectMapper().writeValueAsString(action)))),
+                numberOfOutputFiles, outputAvroPath, jobConfig);
 
         return documentToSoftwareReducedValues;
     }
@@ -176,7 +173,7 @@ public class SoftwareExporterJob {
                         : Sets.<CharSequence>newHashSet());
     }
     
-    private static JavaRDD<Tuple3<String, String, Float>> handleRelations(JavaRDD<DocumentToSoftwareUrlWithMeta> documentToSoftwareUrl, String actionSetId, 
+    private static JavaRDD<Tuple3<String, String, Float>> handleRelations(JavaRDD<DocumentToSoftwareUrlWithMeta> documentToSoftwareUrl, 
             Configuration jobConfig, String outputAvroPath) {
         JavaRDD<Tuple3<String, String, Float>> distinctRelationTriples = documentToSoftwareUrl
                 .map(e -> new Tuple3<>(e.getDocumentId().toString(), generateSoftwareEntityId(pickUrl(e)), e.getConfidenceLevel()))
@@ -191,14 +188,14 @@ public class SoftwareExporterJob {
         // to be used by both entity exporter and reporter consumers
         dedupedRelationTriples.cache();
 
-        JavaPairRDD<Text, Text> relationResult = dedupedRelationTriples
-                .flatMapToPair(x ->
-                        buildRelationActions(x._1(), x._2(), x._3(), actionSetId).stream()
-                                .map(action -> new Tuple2<>(new Text(action.getRowKey()), new Text(action.toString())))
-                                .collect(Collectors.toList()).iterator());
-
-        RDDUtils.saveTextPairRDD(relationResult, numberOfOutputFiles, outputAvroPath, jobConfig);
-
+        JavaRDD<AtomicAction<Relation>> relationResult = dedupedRelationTriples
+                .flatMap(x -> buildRelationActions(x._1(), x._2(), x._3()).iterator());
+        
+        RDDUtils.saveTextPairRDD(
+                // FIXME temporarily writing as sequencefile instead of plain text files
+                // pairs,
+                relationResult.mapToPair(action -> new Tuple2<>(new Text(""), new Text(new ObjectMapper().writeValueAsString(action)))),
+                numberOfOutputFiles, outputAvroPath, jobConfig);
         return dedupedRelationTriples;
     }
     
@@ -245,147 +242,149 @@ public class SoftwareExporterJob {
                 InfoSpaceConstants.ID_NAMESPACE_SEPARATOR + AbstractDNetXsltFunctions.md5(repositoryName);
     }
 
-    private static AtomicAction buildEntityAction(Tuple2<DocumentToSoftwareUrlWithMeta, Set<CharSequence>> object, String actionSetId) {
-            Oaf softwareOaf = buildSoftwareOaf(object);
-            OafDecoder oafDecoder = OafDecoder.decode(softwareOaf);
-            return getActionFactory().createAtomicAction(actionSetId, StaticConfigurationProvider.AGENT_DEFAULT, 
-                    oafDecoder.getEntityId(), oafDecoder.getCFQ(), 
-                    InfoSpaceConstants.QUALIFIER_BODY_STRING, softwareOaf.toByteArray());
+    private static AtomicAction<Software> buildEntityAction(Tuple2<DocumentToSoftwareUrlWithMeta, Set<CharSequence>> object) {
+        AtomicAction<Software> action = new AtomicAction<>();
+        action.setClazz(Software.class);
+        action.setPayload(buildSoftwareOaf(object));
+        return action;
     }
     
-    private static Oaf buildSoftwareOaf(Tuple2<DocumentToSoftwareUrlWithMeta, Set<CharSequence>> metaWithPublicationTitles) {
+    private static Software buildSoftwareOaf(Tuple2<DocumentToSoftwareUrlWithMeta, Set<CharSequence>> metaWithPublicationTitles) {
         
         DocumentToSoftwareUrlWithMeta meta = metaWithPublicationTitles._1;
         
         String url = pickUrl(meta);
         
-        OafEntity.Builder entityBuilder = OafEntity.newBuilder();
-        entityBuilder.setId(generateSoftwareEntityId(url));
-        entityBuilder.setType(Type.result);
+        Software software = new Software();
+        software.setId(generateSoftwareEntityId(url));
 
         String dateStr = DateTimeUtils.format(LocalDateTime.now());
-        entityBuilder.setDateofcollection(dateStr);
-        entityBuilder.setDateoftransformation(dateStr);
+        software.setDateofcollection(dateStr);
+        software.setDateoftransformation(dateStr);
         
-        Result.Builder resultBuilder = Result.newBuilder();
+        Field<String> urlField = new Field<>();
+        urlField.setValue(url);
+        software.setCodeRepositoryUrl(urlField);
         
-        Metadata.Builder metaBuilder = Metadata.newBuilder();
-        metaBuilder.setCodeRepositoryUrl(StringField.newBuilder().setValue(url).build());
+        List<StructuredProperty> titles = Lists.newArrayList();
 
-        metaBuilder.addTitle(buildMainTitle(meta.getSoftwareTitle().toString(), meta.getRepositoryName().toString()));
-
+        titles.add(buildMainTitle(meta.getSoftwareTitle().toString(), meta.getRepositoryName().toString()));
+        
         for (CharSequence currentPubTitle : metaWithPublicationTitles._2) {
-            metaBuilder.addTitle(buildContextualisedTitle(meta.getSoftwareTitle().toString(),
+            titles.add(buildContextualisedTitle(meta.getSoftwareTitle().toString(),
                     meta.getRepositoryName().toString(), currentPubTitle.toString()));
         }
         
+        software.setTitle(titles);
+        
         if (StringUtils.isNotBlank(meta.getSoftwareDescription())) {
-            metaBuilder.addDescription(
-                    StringField.newBuilder().setValue(meta.getSoftwareDescription().toString()).build());
+            Field<String> descrField = new Field<>();
+            descrField.setValue(meta.getSoftwareDescription().toString());
+            software.setDescription(Arrays.asList(descrField));
         }
         
-        metaBuilder.setResulttype(RESULT_TYPE_SOFTWARE);
+        software.setResulttype(RESULT_TYPE_SOFTWARE);
 
-        resultBuilder.setMetadata(metaBuilder.build());
-        
         if (StringUtils.isNotBlank(meta.getSHUrl())) {
             //Software Heritage mode
             KeyValue collectedFromSH = buildHostedBy(generateDatasourceId(COLLECTED_FROM_SOFTWARE_HERITAGE_BASE_ID),
                     COLLECTED_FROM_SOFTWARE_HERITAGE_NAME);
             KeyValue collectedFromOrigin = buildHostedBy(meta.getRepositoryName().toString());
+
+            List<Instance> instanceList = Lists.newArrayList();
+            List<KeyValue> collectedFromList = Lists.newArrayList();
             
             //origin instance
-            Instance.Builder originInstanceBuilder = initializeOpenSourceSoftwareInstanceBuilder(url);
+            Instance originInstanceBuilder = initializeOpenSourceSoftwareInstanceBuilder(url);
             originInstanceBuilder.setHostedby(collectedFromOrigin);
             originInstanceBuilder.setCollectedfrom(collectedFromSH);
-            resultBuilder.addInstance(originInstanceBuilder.build());
-            entityBuilder.addCollectedfrom(collectedFromOrigin);
+            instanceList.add(originInstanceBuilder);
+            collectedFromList.add(collectedFromOrigin);
             
             //SH instance
-            Instance.Builder shInstanceBuilder = initializeOpenSourceSoftwareInstanceBuilder(meta.getSHUrl().toString());
+            Instance shInstanceBuilder = initializeOpenSourceSoftwareInstanceBuilder(meta.getSHUrl().toString());
             shInstanceBuilder.setHostedby(collectedFromSH);
             shInstanceBuilder.setCollectedfrom(collectedFromSH);
-            resultBuilder.addInstance(shInstanceBuilder.build());
-            entityBuilder.addCollectedfrom(collectedFromSH);
+            instanceList.add(shInstanceBuilder);
+            collectedFromList.add(collectedFromSH);
+            
+            software.setInstance(instanceList);
+            software.setCollectedfrom(collectedFromList);
 
         } else {
-            Instance.Builder instanceBuilder = initializeOpenSourceSoftwareInstanceBuilder(url);
+            Instance instanceBuilder = initializeOpenSourceSoftwareInstanceBuilder(url);
             KeyValue hostedBy = buildHostedBy(meta.getRepositoryName().toString());
             instanceBuilder.setHostedby(hostedBy);
             instanceBuilder.setCollectedfrom(hostedBy);
-            resultBuilder.addInstance(instanceBuilder.build());
-            entityBuilder.addCollectedfrom(hostedBy);
+            software.setInstance(Arrays.asList(instanceBuilder));
+            software.setCollectedfrom(Arrays.asList(hostedBy));
         }
         
-        entityBuilder.setResult(resultBuilder.build());
-        return BuilderModuleHelper.buildOaf(entityBuilder.build(), meta.getConfidenceLevel(), INFERENCE_PROVENANCE);
+        // initializing datainfo
+        software.setDataInfo(BuilderModuleHelper.buildInferenceForConfidenceLevel(meta.getConfidenceLevel(), INFERENCE_PROVENANCE));
+        software.setLastupdatetimestamp(System.currentTimeMillis());
+
+        return software;
     }
     
-    private static Instance.Builder initializeOpenSourceSoftwareInstanceBuilder(String url) {
-        Instance.Builder instanceBuilder = Instance.newBuilder();
-        instanceBuilder.addUrl(url);
-        instanceBuilder.setInstancetype(INSTANCE_TYPE_SOFTWARE);
-        instanceBuilder.setAccessright(ACCESS_RIGHT_OPEN_SOURCE);
-        return instanceBuilder;
+    private static Instance initializeOpenSourceSoftwareInstanceBuilder(String url) {
+        Instance instance = new Instance();
+        instance.setInstancetype(INSTANCE_TYPE_SOFTWARE);
+        instance.setAccessright(ACCESS_RIGHT_OPEN_SOURCE);
+        instance.setUrl(Arrays.asList(url));
+        return instance;
     }
 
     private static StructuredProperty buildMainTitle(String softwareTitle, String repositoryName) {
-        StructuredProperty.Builder titleBuilder = StructuredProperty.newBuilder();
-        
-        titleBuilder.setValue(MessageFormat.format(SOFTWARE_TITLE_MAIN_TEMPLATE, 
-                new Object[] {softwareTitle, repositoryName}));
-        
-        Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
-        qualifierBuilder.setClassid(InfoSpaceConstants.SEMANTIC_CLASS_MAIN_TITLE);
-        qualifierBuilder.setClassname(InfoSpaceConstants.SEMANTIC_CLASS_MAIN_TITLE);
-        qualifierBuilder.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_TITLE);
-        qualifierBuilder.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_TITLE);
-        titleBuilder.setQualifier(qualifierBuilder.build());
-        
-        return titleBuilder.build();
+        return buildTitle(
+                MessageFormat.format(SOFTWARE_TITLE_MAIN_TEMPLATE, new Object[] { softwareTitle, repositoryName }),
+                InfoSpaceConstants.SEMANTIC_CLASS_MAIN_TITLE);
     }
     
-    private static StructuredProperty buildContextualisedTitle(String softwareTitle, String repositoryName, String publicationTitle) {
-        StructuredProperty.Builder titleBuilder = StructuredProperty.newBuilder();
-        
-        titleBuilder.setValue(MessageFormat.format(SOFTWARE_TITLE_ALTERNATIVE_TEMPLATE, 
-                new Object[] {softwareTitle, repositoryName, publicationTitle}));
-        
-        Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
-        qualifierBuilder.setClassid(InfoSpaceConstants.SEMANTIC_CLASS_ALTERNATIVE_TITLE);
-        qualifierBuilder.setClassname(InfoSpaceConstants.SEMANTIC_CLASS_ALTERNATIVE_TITLE);
-        qualifierBuilder.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_TITLE);
-        qualifierBuilder.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_TITLE);
-        titleBuilder.setQualifier(qualifierBuilder.build());
-        
-        return titleBuilder.build();
+    private static StructuredProperty buildContextualisedTitle(String softwareTitle, String repositoryName,
+            String publicationTitle) {
+        return buildTitle(
+                MessageFormat.format(SOFTWARE_TITLE_ALTERNATIVE_TEMPLATE,
+                        new Object[] { softwareTitle, repositoryName, publicationTitle }),
+                InfoSpaceConstants.SEMANTIC_CLASS_ALTERNATIVE_TITLE);
+    }
+    
+    private static StructuredProperty buildTitle(String value, String titleType) {
+        StructuredProperty titleStructuredProperty = new StructuredProperty();
+        titleStructuredProperty.setValue(value);
+        titleStructuredProperty.setQualifier(buildQualifier(titleType, titleType,
+                InfoSpaceConstants.SEMANTIC_SCHEME_DNET_TITLE, InfoSpaceConstants.SEMANTIC_SCHEME_DNET_TITLE));
+        return titleStructuredProperty;
     }
     
     private static Qualifier buildResultTypeSoftware() {
-        Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
-        qualifierBuilder.setClassid(InfoSpaceConstants.SEMANTIC_CLASS_SOFTWARE);
-        qualifierBuilder.setClassname(InfoSpaceConstants.SEMANTIC_CLASS_SOFTWARE);
-        qualifierBuilder.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RESULT_TYPOLOGIES);
-        qualifierBuilder.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RESULT_TYPOLOGIES);
-        return qualifierBuilder.build();
+        return buildQualifier(InfoSpaceConstants.SEMANTIC_CLASS_SOFTWARE,
+                InfoSpaceConstants.SEMANTIC_CLASS_SOFTWARE,
+                InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RESULT_TYPOLOGIES,
+                InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RESULT_TYPOLOGIES);
     }
     
     private static Qualifier buildInstanceTypeSoftware() {
-        Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
-        qualifierBuilder.setClassid(InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_SOFTWARE);
-        qualifierBuilder.setClassname(InfoSpaceConstants.SEMANTIC_CLASS_PUBLICATION_RESOURCE_SOFTWARE);
-        qualifierBuilder.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PUBLICATION_RESOURCE);
-        qualifierBuilder.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PUBLICATION_RESOURCE);
-        return qualifierBuilder.build();
+        return buildQualifier(InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_SOFTWARE,
+                InfoSpaceConstants.SEMANTIC_CLASS_PUBLICATION_RESOURCE_SOFTWARE,
+                InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PUBLICATION_RESOURCE,
+                InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PUBLICATION_RESOURCE);
     }
     
     private static Qualifier buildAccessRightOpenSource() {
-        Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
-        qualifierBuilder.setClassid(InfoSpaceConstants.SEMANTIC_CLASS_OPEN_SOURCE);
-        qualifierBuilder.setClassname(InfoSpaceConstants.SEMANTIC_CLASS_NAME_OPEN_SOURCE);
-        qualifierBuilder.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_ACCESS_MODES);
-        qualifierBuilder.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_ACCESS_MODES);
-        return qualifierBuilder.build();
+        return buildQualifier(InfoSpaceConstants.SEMANTIC_CLASS_OPEN_SOURCE,
+                InfoSpaceConstants.SEMANTIC_CLASS_NAME_OPEN_SOURCE,
+                InfoSpaceConstants.SEMANTIC_SCHEME_DNET_ACCESS_MODES,
+                InfoSpaceConstants.SEMANTIC_SCHEME_DNET_ACCESS_MODES);
+    }
+    
+    private static Qualifier buildQualifier(String classid, String classname, String schemeid, String schemename) {
+        Qualifier qualifier = new Qualifier();
+        qualifier.setClassid(classid);
+        qualifier.setClassname(classname);
+        qualifier.setSchemeid(schemeid);
+        qualifier.setSchemename(schemename);
+        return qualifier;
     }
     
     private static KeyValue buildHostedBy(String repositoryName) {
@@ -393,50 +392,39 @@ public class SoftwareExporterJob {
     }
     
     private static KeyValue buildHostedBy(String key, String value) {
-        KeyValue.Builder hostedByBuilder = KeyValue.newBuilder();
-        hostedByBuilder.setKey(key);
-        hostedByBuilder.setValue(value);
-        return hostedByBuilder.build();
+        KeyValue keyValue = new KeyValue();
+        keyValue.setKey(key);
+        keyValue.setValue(value);
+        return keyValue;
     }
     
-    private static List<AtomicAction> buildRelationActions(
-            String docId, String softId, Float confidenceLevel, String actionSetId) {
-        Oaf.Builder oafBuilder = instantiateOafBuilderForRelation(docId, softId, confidenceLevel);
-        Oaf oaf = oafBuilder.build();
-        Oaf oafInverted = BuilderModuleHelper.invertBidirectionalRelationAndBuild(oafBuilder);
-        return Arrays.asList(new AtomicAction[] {
-                getActionFactory().createAtomicAction(actionSetId, StaticConfigurationProvider.AGENT_DEFAULT, docId, 
-                        OafDecoder.decode(oaf).getCFQ(), softId, oaf.toByteArray()),
-                // setting reverse relation in referenced object
-                getActionFactory().createAtomicAction(actionSetId, StaticConfigurationProvider.AGENT_DEFAULT, softId, 
-                        OafDecoder.decode(oafInverted).getCFQ(), docId, oafInverted.toByteArray()) });
+    private static List<AtomicAction<Relation>> buildRelationActions(String docId, String softId,
+            Float confidenceLevel) {
+
+        AtomicAction<Relation> forwardAction = new AtomicAction<>();
+        forwardAction.setClazz(Relation.class);
+        forwardAction.setPayload(buildRelation(docId, softId, confidenceLevel, false));
+
+        AtomicAction<Relation> reverseAction = new AtomicAction<>();
+        reverseAction.setClazz(Relation.class);
+        reverseAction.setPayload(buildRelation(docId, softId, confidenceLevel, true));
+
+        return Arrays.asList(forwardAction, reverseAction);
     }
     
-    private static Oaf.Builder instantiateOafBuilderForRelation(String docId, String softId, Float confidenceLevel) {
-        Oaf.Builder oafBuilder = Oaf.newBuilder();
-        oafBuilder.setKind(Kind.relation);
-        oafBuilder.setRel(buildOafRel(docId, softId));
-        oafBuilder.setDataInfo(
-                BuilderModuleHelper.buildInferenceForConfidenceLevel(confidenceLevel, INFERENCE_PROVENANCE));
-        oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
-        return oafBuilder;
-    }
-    
-    private static OafRel buildOafRel(String docId, String softId) {
-        OafRel.Builder relBuilder = OafRel.newBuilder();
-        relBuilder.setChild(false);
-        relBuilder.setRelType(RelType.resultResult);
-        relBuilder.setSubRelType(SubRelType.relationship);
-        relBuilder.setRelClass(REL_CLASS_ISRELATEDTO);
-        relBuilder.setSource(docId);
-        relBuilder.setTarget(softId);
-        ResultResult.Builder resResultBuilder = ResultResult.newBuilder();
-        Relationship.Builder relationshipBuilder = Relationship.newBuilder();
-        relationshipBuilder.setRelMetadata(BuilderModuleHelper.buildRelMetadata(
-                InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_RESULT, REL_CLASS_ISRELATEDTO));
-        resResultBuilder.setRelationship(relationshipBuilder.build());
-        relBuilder.setResultResult(resResultBuilder.build());
-        return relBuilder.build();
+    private static Relation buildRelation(String docId, String softId, Float confidenceLevel, boolean backwardMode) {
+        Relation relation = new Relation();
+        relation.setRelType(REL_TYPE);
+        relation.setSubRelType(SUBREL_TYPE);
+        relation.setRelClass(REL_CLASS_ISRELATEDTO);
+        
+        relation.setSource(backwardMode ? softId : docId);
+        relation.setTarget(backwardMode ? docId : softId);
+        
+        relation.setDataInfo(BuilderModuleHelper.buildInferenceForConfidenceLevel(confidenceLevel, INFERENCE_PROVENANCE));
+        relation.setLastupdatetimestamp(System.currentTimeMillis());
+        
+        return relation;
     }
     
     private static boolean isValidEntity(DocumentToSoftwareUrlWithMeta source) {
@@ -452,10 +440,6 @@ public class SoftwareExporterJob {
     private static String pickUrl(DocumentToSoftwareUrlWithMeta source) {
         return StringUtils.isNotBlank(source.getSoftwarePageURL()) ? source.getSoftwarePageURL().toString()
                 : source.getSoftwareUrl().toString();
-    }
-
-    private static ActionFactory getActionFactory() {
-        return new ActionFactory();
     }
     
     @Parameters(separators = "=")
@@ -475,12 +459,6 @@ public class SoftwareExporterJob {
         
         @Parameter(names = "-outputReportPath", required = true)
         private String outputReportPath;
-        
-        @Parameter(names = "-entityActionSetId", required = true)
-        private String entityActionSetId;
-        
-        @Parameter(names = "-relationActionSetId", required = true)
-        private String relationActionSetId;
         
         @Parameter(names = "-trustLevelThreshold", required = false)
         private String trustLevelThreshold;

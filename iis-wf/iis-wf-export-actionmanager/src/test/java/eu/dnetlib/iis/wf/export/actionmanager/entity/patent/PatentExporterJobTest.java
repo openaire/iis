@@ -1,11 +1,22 @@
 package eu.dnetlib.iis.wf.export.actionmanager.entity.patent;
 
-import eu.dnetlib.actionmanager.ActionManagerConstants;
-import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.data.proto.RelTypeProtos;
-import eu.dnetlib.data.proto.ResultResultProtos;
-import eu.dnetlib.data.proto.TypeProtos;
-import eu.dnetlib.iis.common.InfoSpaceConstants;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Objects;
+
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.Publication;
+import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.schemas.ReportEntryType;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
@@ -13,28 +24,10 @@ import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.common.utils.ListTestUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
-import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import eu.dnetlib.iis.wf.export.actionmanager.entity.AtomicActionSerDeUtils;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class PatentExporterJobTest {
     private ClassLoader cl = getClass().getClassLoader();
@@ -56,8 +49,6 @@ public class PatentExporterJobTest {
     private static final String INPUT_PATENT_NULLCHECK_PATH =
             "eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/input/nullcheck/patent.json";
 
-    private static final String RELATION_ACTION_SET_ID = "relation-actionset-id";
-    private static final String ENTITY_ACTION_SET_ID = "entity-actionset-id";
     private static final String PATENT_DATE_OF_COLLECTION = "2019-11-20T23:59";
     private static final String PATENT_EPO_URL_ROOT = "https://register.epo.org/application?number=";
 
@@ -75,7 +66,7 @@ public class PatentExporterJobTest {
     public void after() throws IOException {
         FileUtils.deleteDirectory(workingDir.toFile());
     }
-
+    
     @Test
     public void shouldNotExportEntitiesWhenConfidenceLevelIsBelowThreshold() throws IOException {
         //given
@@ -91,12 +82,24 @@ public class PatentExporterJobTest {
         executor.execute(sparkJob);
 
         //then
-        List<AtomicAction> actualRelationActions = ListTestUtils
-                .readValues(outputRelationDir.toString(), text -> AtomicAction.fromJSON(text.toString()));
+        List<AtomicAction<Relation>> actualRelationActions = ListTestUtils
+                .readValues(outputRelationDir.toString(), text -> {
+                    try {
+                        return AtomicActionSerDeUtils.deserializeAction(text.toString());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
         assertEquals(0, actualRelationActions.size());
 
-        List<AtomicAction> actualEntityActions = ListTestUtils
-                .readValues(outputEntityDir.toString(), text -> AtomicAction.fromJSON(text.toString()));
+        List<AtomicAction<Publication>> actualEntityActions = ListTestUtils
+                .readValues(outputEntityDir.toString(), text -> {
+                    try {
+                        return AtomicActionSerDeUtils.deserializeAction(text.toString());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
         assertEquals(0, actualEntityActions.size());
 
         assertCountersInReport(0, 0, 0);
@@ -112,55 +115,36 @@ public class PatentExporterJobTest {
                 JsonAvroTestUtils.readJsonDataStore(Objects.requireNonNull(cl.getResource(INPUT_PATENT_PATH)).getFile(), Patent.class),
                 inputPatentDir.toString());
         SparkJob sparkJob = buildSparkJob(0.5);
-
+        
         //when
         executor.execute(sparkJob);
 
         //then
         //relations
-        List<AtomicAction> actualRelationActions = ListTestUtils
-                .readValues(outputRelationDir.toString(), text -> AtomicAction.fromJSON(text.toString()));
+        List<AtomicAction<Relation>> actualRelationActions = ListTestUtils
+                .readValues(outputRelationDir.toString(), text -> {
+                    try {
+                        return AtomicActionSerDeUtils.deserializeAction(text.toString());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
         assertEquals(6, actualRelationActions.size());
 
-        String expectedRelationTargetColumnFamily = String.format("%s_%s_%s", RelTypeProtos.RelType.resultResult.name(),
-                RelTypeProtos.SubRelType.relationship.name(), ResultResultProtos.ResultResult.Relationship.RelName.isRelatedTo.name());
-        actualRelationActions.forEach(action -> verifyAction(action, RELATION_ACTION_SET_ID, expectedRelationTargetColumnFamily));
-        List<Pair<String, String>> expectedRelationsTargetRowKeyAndTargetColumnPairs = Arrays.asList(
-                Pair.of("document1", "50|epopatstat__::9fce164deeabdfd83f697e45b1aeea3d"),
-                Pair.of("50|epopatstat__::9fce164deeabdfd83f697e45b1aeea3d", "document1"),
-                Pair.of("document2", "50|epopatstat__::9fce164deeabdfd83f697e45b1aeea3d"),
-                Pair.of("50|epopatstat__::9fce164deeabdfd83f697e45b1aeea3d", "document2"),
-                Pair.of("document2", "50|epopatstat__::702195de7e0ff019d206b3eef73f0f21"),
-                Pair.of("50|epopatstat__::702195de7e0ff019d206b3eef73f0f21", "document2"));
-        List<Pair<String, String>> actualRelationsTargetRowKeyAndTargetColumnPairs = actualRelationActions.stream()
-                .map(x -> Pair.of(x.getTargetRowKey(), x.getTargetColumn()))
-                .sorted()
-                .collect(Collectors.toList());
-        ListTestUtils
-                .compareLists(
-                        actualRelationsTargetRowKeyAndTargetColumnPairs.stream().sorted().collect(Collectors.toList()),
-                        expectedRelationsTargetRowKeyAndTargetColumnPairs.stream().sorted().collect(Collectors.toList()));
+        actualRelationActions.forEach(action -> verifyAction(action, Relation.class));
 
         // entities
-        List<AtomicAction> actualEntityActions = ListTestUtils
-                .readValues(outputEntityDir.toString(), text -> AtomicAction.fromJSON(text.toString()));
+        List<AtomicAction<Publication>> actualEntityActions = ListTestUtils
+                .readValues(outputEntityDir.toString(), text -> {
+                    try {
+                        return AtomicActionSerDeUtils.deserializeAction(text.toString());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
         assertEquals(actualEntityActions.size(), 2);
 
-        String expectedEntityTargetColumnFamily = TypeProtos.Type.result.name();
-        actualEntityActions.forEach(action -> verifyAction(action, ENTITY_ACTION_SET_ID, expectedEntityTargetColumnFamily));
-
-        String expectedEntityTargetColumn = new String(InfoSpaceConstants.QUALIFIER_BODY, StandardCharsets.UTF_8);
-        List<Pair<String, String>> expectedEntityTargetRowKeyAndTargetColumnPairs = Arrays.asList(
-                Pair.of("50|epopatstat__::9fce164deeabdfd83f697e45b1aeea3d", expectedEntityTargetColumn),
-                Pair.of("50|epopatstat__::702195de7e0ff019d206b3eef73f0f21", expectedEntityTargetColumn));
-        List<Pair<String, String>> actualEntityTargetRowKeyAndTargetColumnPairs = actualEntityActions.stream()
-                .map(x -> Pair.of(x.getTargetRowKey(), x.getTargetColumn()))
-                .sorted()
-                .collect(Collectors.toList());
-        ListTestUtils
-                .compareLists(
-                        actualEntityTargetRowKeyAndTargetColumnPairs.stream().sorted().collect(Collectors.toList()),
-                        expectedEntityTargetRowKeyAndTargetColumnPairs.stream().sorted().collect(Collectors.toList()));
+        actualEntityActions.forEach(action -> verifyAction(action, Publication.class));
 
         //report
         assertCountersInReport(3, 2, 2);
@@ -190,8 +174,6 @@ public class PatentExporterJobTest {
                 .setMainClass(PatentExporterJob.class)
                 .addArg("-inputDocumentToPatentPath", inputDocumentToPatentDir.toString())
                 .addArg("-inputPatentPath", inputPatentDir.toString())
-                .addArg("-relationActionSetId", RELATION_ACTION_SET_ID)
-                .addArg("-entityActionSetId", ENTITY_ACTION_SET_ID)
                 .addArg("-trustLevelThreshold", String.valueOf(trustLevelThreshold))
                 .addArg("-patentDateOfCollection", PATENT_DATE_OF_COLLECTION)
                 .addArg("-patentEpoUrlRoot", PATENT_EPO_URL_ROOT)
@@ -202,15 +184,11 @@ public class PatentExporterJobTest {
                 .build();
     }
 
-    private void verifyAction(AtomicAction action, String actionSetId, String expectedTargetColumnFamily) {
-        assertEquals(ActionManagerConstants.ACTION_TYPE.aac, action.getActionType());
-        assertEquals(actionSetId, action.getRawSet());
-        assertTrue(StringUtils.isNotBlank(action.getRowKey()));
-        assertEquals(StaticConfigurationProvider.AGENT_DEFAULT.getId(), action.getAgent().getId());
-        assertEquals(StaticConfigurationProvider.AGENT_DEFAULT.getName(), action.getAgent().getName());
-        assertEquals(StaticConfigurationProvider.AGENT_DEFAULT.getType(), action.getAgent().getType());
-        assertEquals(expectedTargetColumnFamily, action.getTargetColumnFamily());
-        assertTrue(action.getTargetValue().length > 0);
+    private void verifyAction(AtomicAction<?> action, Class<?> clazz) {
+        assertEquals(clazz, action.getClazz());
+        assertNotNull(action.getPayload());
+        assertEquals(clazz, action.getPayload().getClass());
+        // comparing action payload is out of the scope of this test
     }
 
     private void assertCountersInReport(Integer expectedReferencesCount,

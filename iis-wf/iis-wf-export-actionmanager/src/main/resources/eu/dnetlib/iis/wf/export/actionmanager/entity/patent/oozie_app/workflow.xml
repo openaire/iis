@@ -154,8 +154,6 @@
             </spark-opts>
             <arg>-inputDocumentToPatentPath=${input_document_to_patent}</arg>
             <arg>-inputPatentPath=${input_patent}</arg>
-            <arg>-relationActionSetId=${action_set_id_document_patent}</arg>
-            <arg>-entityActionSetId=${action_set_id_entity_patent}</arg>
             <arg>-trustLevelThreshold=${trust_level_threshold_document_patent}</arg>
             <arg>-patentDateOfCollection=${patent_date_of_collection}</arg>
             <arg>-patentEpoUrlRoot=${patent_epo_url_root}</arg>

@@ -1,19 +1,15 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.hadoop.conf.Configuration;
 
-import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.actionmanager.common.Agent;
-import eu.dnetlib.data.proto.FieldTypeProtos.Qualifier;
-import eu.dnetlib.data.proto.OafProtos.Oaf;
-import eu.dnetlib.data.proto.OafProtos.OafEntity;
-import eu.dnetlib.data.proto.ResultProtos.Result;
-import eu.dnetlib.data.proto.ResultProtos.Result.ExternalReference;
-import eu.dnetlib.data.proto.TypeProtos.Type;
+import com.google.common.collect.Lists;
+
+import eu.dnetlib.dhp.schema.oaf.ExternalReference;
+import eu.dnetlib.dhp.schema.oaf.Qualifier;
+import eu.dnetlib.dhp.schema.oaf.Result;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.export.schemas.Concept;
 import eu.dnetlib.iis.export.schemas.DocumentToConceptIds;
@@ -24,7 +20,7 @@ import eu.dnetlib.iis.export.schemas.DocumentToConceptIds;
  * @author mhorst
  *
  */
-public class DocumentToPdbActionBuilderModuleFactory extends AbstractActionBuilderFactory<DocumentToConceptIds> {
+public class DocumentToPdbActionBuilderModuleFactory extends AbstractActionBuilderFactory<DocumentToConceptIds, Result> {
 
     public static final String EXPORT_PDB_URL_ROOT = "export.referenceextraction.pdb.url.root";
     
@@ -44,15 +40,13 @@ public class DocumentToPdbActionBuilderModuleFactory extends AbstractActionBuild
     // ------------------------ LOGIC ---------------------------------
 
     @Override
-    public ActionBuilderModule<DocumentToConceptIds> instantiate(Configuration config, Agent agent,
-            String actionSetId) {
-        return new DocumentToPdbActionBuilderModule(provideTrustLevelThreshold(config), config.get(EXPORT_PDB_URL_ROOT),
-                agent, actionSetId);
+    public ActionBuilderModule<DocumentToConceptIds, Result> instantiate(Configuration config) {
+        return new DocumentToPdbActionBuilderModule(provideTrustLevelThreshold(config), config.get(EXPORT_PDB_URL_ROOT));
     }
     
     // ------------------------ INNER CLASS ---------------------------------
     
-    class DocumentToPdbActionBuilderModule extends AbstractBuilderModule<DocumentToConceptIds> {
+    class DocumentToPdbActionBuilderModule extends AbstractEntityBuilderModule<DocumentToConceptIds, Result> {
 
         private final String pdbUrlRoot;
 
@@ -61,71 +55,62 @@ public class DocumentToPdbActionBuilderModuleFactory extends AbstractActionBuild
         /**
          * @param trustLevelThreshold trust level threshold or null when all records should be exported
          * @param pdbUrlRoot protein databank root url
-         * @param agent action manager agent details
-         * @param actionSetId action set identifier
          */
-        public DocumentToPdbActionBuilderModule(Float trustLevelThreshold, String pdbUrlRoot, Agent agent,
-                String actionSetId) {
-            super(trustLevelThreshold, buildInferenceProvenance(), agent, actionSetId);
+        public DocumentToPdbActionBuilderModule(Float trustLevelThreshold, String pdbUrlRoot) {
+            super(trustLevelThreshold, buildInferenceProvenance());
             this.pdbUrlRoot = pdbUrlRoot;
         }
 
         // ------------------------ LOGIC ---------------------------------
         
-        @Override
-        public List<AtomicAction> build(DocumentToConceptIds object) throws TrustLevelThresholdExceededException {
-            Oaf oaf = buildOAFWithPdb(object);
-            if (oaf != null) {
-                return getActionFactory().createUpdateActions(getActionSetId(), getAgent(), 
-                        object.getDocumentId().toString(), Type.result, oaf.toByteArray());
-            } else {
-                return Collections.emptyList();
-            }
+        protected Class<Result> getResultClass() {
+            return Result.class;
         }
 
         /**
-         * Builds {@link Oaf} object containing pdb external references.
-         * @throws TrustLevelThresholdExceededException
+         * Builds OAF object containing research initiative concepts.
+         * @throws TrustLevelThresholdExceededException 
          */
-        private Oaf buildOAFWithPdb(DocumentToConceptIds source) throws TrustLevelThresholdExceededException {
+        @Override
+        protected Result convert(DocumentToConceptIds source) throws TrustLevelThresholdExceededException {
             if (CollectionUtils.isNotEmpty(source.getConcepts())) {
-                Result.Builder resultBuilder = Result.newBuilder();
+                Result result = new Result();
+                result.setId(source.getDocumentId().toString());
+                result.setLastupdatetimestamp(System.currentTimeMillis());
+                
+                List<ExternalReference> references = Lists.newArrayList();
                 for (Concept concept : source.getConcepts()) {
-                    resultBuilder.addExternalReference(buildExternalReference(concept));
+                    references.add(buildExternalReference(concept));
                 }
-                OafEntity.Builder entityBuilder = OafEntity.newBuilder();
-                if (source.getDocumentId() != null) {
-                    entityBuilder.setId(source.getDocumentId().toString());
-                }
-                entityBuilder.setType(Type.result);
-                entityBuilder.setResult(resultBuilder.build());
-                return buildOaf(entityBuilder.build());
+                result.setExternalReference(references);
+
+                return result;
+            } else {
+                return null;
             }
-            // fallback
-            return null;
         }
         
         /**
          * Builds {@link ExternalReference} instance representing PDB concept.
          */
         private ExternalReference buildExternalReference(Concept concept) throws TrustLevelThresholdExceededException {
-            ExternalReference.Builder externalRefBuilder = ExternalReference.newBuilder();
-            externalRefBuilder.setSitename(SITENAME);
+            ExternalReference externalRef = new ExternalReference();
+            externalRef.setSitename(SITENAME);
             String pdbId = concept.getId().toString();
             if (pdbUrlRoot != null && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(pdbUrlRoot)) {
-                externalRefBuilder.setUrl(pdbUrlRoot + pdbId);
+                externalRef.setUrl(pdbUrlRoot + pdbId);
             } else {
                 throw new RuntimeException(EXPORT_PDB_URL_ROOT + " parameter is undefined!");
             }
-            Qualifier.Builder qualifierBuilder = Qualifier.newBuilder();
-            qualifierBuilder.setClassid(CLASS);
-            qualifierBuilder.setClassname(CLASS);
-            qualifierBuilder.setSchemeid(SCHEME);
-            qualifierBuilder.setSchemename(SCHEME);
-            externalRefBuilder.setQualifier(qualifierBuilder.build());
-            externalRefBuilder.setRefidentifier(pdbId);
-            externalRefBuilder.setDataInfo(buildInference(concept.getConfidenceLevel()));
-            return externalRefBuilder.build();
+            Qualifier qualifier = new Qualifier();
+            qualifier.setClassid(CLASS);
+            qualifier.setClassname(CLASS);
+            qualifier.setSchemeid(SCHEME);
+            qualifier.setSchemename(SCHEME);
+            externalRef.setQualifier(qualifier);
+            externalRef.setRefidentifier(pdbId);
+            externalRef.setDataInfo(buildInference(concept.getConfidenceLevel()));
+            return externalRef;
         }
     }
 }

@@ -8,11 +8,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.data.proto.KindProtos;
-import eu.dnetlib.data.proto.RelTypeProtos.RelType;
-import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
-import eu.dnetlib.data.proto.ResultResultProtos.ResultResult.PublicationDataset;
+import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet;
 import eu.dnetlib.iis.wf.export.actionmanager.module.VerificationUtils.Expectations;
 
@@ -20,7 +17,7 @@ import eu.dnetlib.iis.wf.export.actionmanager.module.VerificationUtils.Expectati
  * @author mhorst
  *
  */
-public class DocumentToDatasetActionBuilderModuleFactoryTest extends AbstractActionBuilderModuleFactoryTest<DocumentToDataSet> {
+public class DocumentToDatasetActionBuilderModuleFactoryTest extends AbstractActionBuilderModuleFactoryTest<DocumentToDataSet, Relation> {
 
 
     // ----------------------- CONSTRUCTORS -------------------
@@ -36,7 +33,7 @@ public class DocumentToDatasetActionBuilderModuleFactoryTest extends AbstractAct
     public void testBuildBelowThreshold() throws Exception {
         // given
         DocumentToDataSet documentToDataset = buildDocumentToDataset("documentId", "datasetId", 0.4f);
-        ActionBuilderModule<DocumentToDataSet> module = factory.instantiate(config, agent, actionSetId);
+        ActionBuilderModule<DocumentToDataSet, Relation> module = factory.instantiate(config);
         
         // execute
         module.build(documentToDataset);
@@ -48,41 +45,29 @@ public class DocumentToDatasetActionBuilderModuleFactoryTest extends AbstractAct
         String docId = "documentId";
         String datasetId = "datasetId";
         float matchStrength = 0.9f;
-        ActionBuilderModule<DocumentToDataSet> module = factory.instantiate(config, agent, actionSetId);
+        ActionBuilderModule<DocumentToDataSet, Relation> module = factory.instantiate(config);
 
         // execute
-        List<AtomicAction> actions = module.build(buildDocumentToDataset(docId, datasetId, matchStrength));
+        List<AtomicAction<Relation>> actions = module.build(buildDocumentToDataset(docId, datasetId, matchStrength));
 
         // assert
         assertNotNull(actions);
         assertEquals(2, actions.size());
-        AtomicAction action = actions.get(0);
+
+        AtomicAction<Relation> action = actions.get(0);
         assertNotNull(action);
-        assertNotNull(action.getRowKey());
-        assertEquals(actionSetId, action.getRawSet());
-        assertEquals(datasetId, action.getTargetColumn());
-        assertEquals(docId, action.getTargetRowKey());
-        assertEquals(RelType.resultResult.toString() + '_' + SubRelType.publicationDataset + '_'
-                + PublicationDataset.RelName.isRelatedTo, action.getTargetColumnFamily());
-        
+        assertEquals(Relation.class, action.getClazz());
         Expectations expectations = new Expectations(docId, datasetId, matchStrength, 
-                KindProtos.Kind.relation, RelType.resultResult, SubRelType.publicationDataset, 
-                PublicationDataset.RelName.isRelatedTo.toString());
-        assertOafRel(action.getTargetValue(), expectations);
+                "resultResult", "publicationDataset", "isRelatedTo");
+        assertOafRel(action.getPayload(), expectations);
         
 //      checking backward relation
         action = actions.get(1);
         assertNotNull(action);
-        assertNotNull(action.getRowKey());
-        assertEquals(agent, action.getAgent());
-        assertEquals(actionSetId, action.getRawSet());
-        assertEquals(docId, action.getTargetColumn());
-        assertEquals(datasetId, action.getTargetRowKey());
-        assertEquals(RelType.resultResult.toString() + '_' + SubRelType.publicationDataset + '_'
-                + PublicationDataset.RelName.isRelatedTo, action.getTargetColumnFamily());
+        assertEquals(Relation.class, action.getClazz());
         expectations.setSource(datasetId);
         expectations.setTarget(docId);
-        assertOafRel(action.getTargetValue(), expectations);
+        assertOafRel(action.getPayload(), expectations);
     }
     
     // ----------------------- PRIVATE --------------------------

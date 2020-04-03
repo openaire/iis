@@ -4,13 +4,9 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import eu.dnetlib.data.proto.FieldTypeProtos.DataInfo;
-import eu.dnetlib.data.proto.FieldTypeProtos.Qualifier;
-import eu.dnetlib.data.proto.KindProtos.Kind;
-import eu.dnetlib.data.proto.OafProtos.Oaf;
-import eu.dnetlib.data.proto.OafProtos.OafEntity;
-import eu.dnetlib.data.proto.OafProtos.OafRel;
-import eu.dnetlib.data.proto.RelMetadataProtos.RelMetadata;
+import eu.dnetlib.dhp.schema.oaf.DataInfo;
+import eu.dnetlib.dhp.schema.oaf.Oaf;
+import eu.dnetlib.dhp.schema.oaf.Qualifier;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 
 /**
@@ -26,43 +22,6 @@ public class BuilderModuleHelper {
      */
     private static final DecimalFormat decimalFormat = initailizeDecimalFormat();
     
-    /**
-     * Builds {@link Oaf} object for given entity and inference details.
-     * 
-     */
-    public static Oaf buildOaf(OafEntity oafEntity, float confidenceLevel, String inferenceProvenance) {
-        return buildOaf(oafEntity, buildInferenceForConfidenceLevel(confidenceLevel, inferenceProvenance));
-    }
-    
-    /**
-     * Builds {@link Oaf} object for given entity and data description.
-     * 
-     */
-    public static Oaf buildOaf(OafEntity oafEntity, DataInfo dataInfo) {
-        eu.dnetlib.data.proto.OafProtos.Oaf.Builder oafBuilder = Oaf.newBuilder();
-        oafBuilder.setKind(Kind.entity);
-        oafBuilder.setEntity(oafEntity);
-        if (dataInfo != null) {
-            oafBuilder.setDataInfo(dataInfo);
-        }
-        oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
-        return oafBuilder.build();
-    }
-    
-    /**
-     * Builds relation metadata.
-     * 
-     */
-    public static RelMetadata buildRelMetadata(String schemaId, String classId) {
-        RelMetadata.Builder relBuilder = RelMetadata.newBuilder();
-        Qualifier.Builder qBuilder = Qualifier.newBuilder();
-        qBuilder.setSchemeid(schemaId);
-        qBuilder.setSchemename(schemaId);
-        qBuilder.setClassid(classId);
-        qBuilder.setClassname(classId);
-        relBuilder.setSemantics(qBuilder.build());
-        return relBuilder.build();
-    }
     
     /**
      * Returns {@link DataInfo} with inference details.
@@ -81,45 +40,17 @@ public class BuilderModuleHelper {
      */
     public static DataInfo buildInferenceForTrustLevel(
             String trustLevel, String inferenceProvenance) {
-        DataInfo.Builder builder = DataInfo.newBuilder();
-        builder.setInferred(true);
-        builder.setTrust(trustLevel);
-        Qualifier.Builder provenanceBuilder = Qualifier.newBuilder();
-        provenanceBuilder.setClassid(InfoSpaceConstants.SEMANTIC_CLASS_IIS);
-        provenanceBuilder.setClassname(InfoSpaceConstants.SEMANTIC_CLASS_IIS);
-        provenanceBuilder.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PROVENANCE_ACTIONS);
-        provenanceBuilder.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PROVENANCE_ACTIONS);
-        builder.setProvenanceaction(provenanceBuilder.build());
-        builder.setInferenceprovenance(inferenceProvenance);
-        return builder.build();
-    }
-    
-    /**
-     * Clones builder provided as parameter, inverts relations and builds new Oaf object. 
-     * Relation direction is not iverted as it is bidirectional.
-     * 
-     * @param existingBuilder {@link Oaf.Builder} to be cloned
-     * @return Oaf object containing relation with inverted source and target fields.
-     */
-    public static Oaf invertBidirectionalRelationAndBuild(Oaf.Builder existingBuilder) {
-        // works on builder clone to prevent changes in existing builder
-        if (existingBuilder.getRel() != null) {
-            if (existingBuilder.getRel().getSource() != null && existingBuilder.getRel().getTarget() != null) {
-                Oaf.Builder builder = existingBuilder.clone();
-                OafRel.Builder relBuilder = builder.getRelBuilder();
-                String source = relBuilder.getSource();
-                String target = relBuilder.getTarget();
-                relBuilder.setSource(target);
-                relBuilder.setTarget(source);
-                builder.setRel(relBuilder.build());
-                builder.setLastupdatetimestamp(System.currentTimeMillis());
-                return builder.build();
-            } else {
-                throw new RuntimeException("invalid state: " + "either source or target relation was missing!");
-            }
-        } else {
-            throw new RuntimeException("invalid state: " + "no relation object found!");
-        }
+        DataInfo dataInfo = new DataInfo();
+        dataInfo.setInferred(true);
+        dataInfo.setTrust(trustLevel);
+        Qualifier provenanceQualifier = new Qualifier();
+        provenanceQualifier.setClassid(InfoSpaceConstants.SEMANTIC_CLASS_IIS);
+        provenanceQualifier.setClassname(InfoSpaceConstants.SEMANTIC_CLASS_IIS);
+        provenanceQualifier.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PROVENANCE_ACTIONS);
+        provenanceQualifier.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PROVENANCE_ACTIONS);
+        dataInfo.setProvenanceaction(provenanceQualifier);
+        dataInfo.setInferenceprovenance(inferenceProvenance);
+        return dataInfo;
     }
 
     /**
