@@ -15,13 +15,13 @@ import eu.dnetlib.iis.common.IntegrationTest;
 public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 
     @Test
-	public void testMainWorkflow() throws Exception {
-    	testWorkflow("eu/dnetlib/iis/wf/referenceextraction/covid19/main/sampletest");
-	}
+    public void testMainWorkflow() throws Exception {
+        testWorkflow("eu/dnetlib/iis/wf/referenceextraction/covid19/main/sampletest");
+    }
 
     @Test
-	public void testMainWorkflowEmptyInput() throws Exception {
+    public void testMainWorkflowEmptyInput() throws Exception {
         testWorkflow("eu/dnetlib/iis/wf/referenceextraction/covid19/main/sampletest_empty_input");
-	}
+    }
 
 }
