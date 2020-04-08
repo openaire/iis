@@ -2016,7 +2016,7 @@
             <arg>-Preport.processing.documentClassification.duration=documentsclassification</arg>
             <arg>-Preport.processing.referenceExtraction.researchInitiative.duration=referenceextraction_researchinitiative,referenceextraction_researchinitiative_wos,transformers_union_researchinitiatives,transformers_export_researchinitiatives</arg>
             <arg>-Preport.processing.referenceExtraction.community.duration=referenceextraction_community,transformers_export_communities</arg>
-            <arg>-Preport.processing.referenceExtraction.covid19.duration=referenceextraction_covid19,transformers_export_covid19</arg>
+            <arg>-Preport.processing.referenceExtraction.covid-19.duration=referenceextraction_covid19,transformers_export_covid19</arg>
             <arg>-Preport.processing.referenceExtraction.softwareUrl.duration=referenceextraction_software_url</arg>
             <arg>-Preport.processing.referenceExtraction.patent.duration=referenceextraction_patent</arg>
             <arg>-Preport.processing.referenceExtraction.pdb.duration=referenceextraction_pdb,transformers_export_pdb</arg>
