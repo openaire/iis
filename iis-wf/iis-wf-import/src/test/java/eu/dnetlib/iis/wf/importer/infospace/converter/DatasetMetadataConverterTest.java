@@ -6,10 +6,8 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map.Entry;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -72,13 +70,13 @@ public class DatasetMetadataConverterTest {
     // ------------------------ TESTS --------------------------
 
     @Test(expected=NullPointerException.class)
-    public void convert_null_oafEntity() throws IOException {
+    public void convert_null_oafEntity() {
         // execute
         converter.convert(null);
     }
 
     @Test
-    public void convert_using_main_title() throws IOException {
+    public void convert_using_main_title() {
         // given
         Result sourceDataset = minimalEntityBuilder(ID, InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_DATASET);
 
@@ -97,7 +95,7 @@ public class DatasetMetadataConverterTest {
     }
 
     @Test
-    public void convert_skip_null_abstract() throws IOException {
+    public void convert_skip_null_abstract() {
         // given
         Result sourceDataset = minimalEntityBuilder(ID, InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_DATASET);
 
@@ -113,7 +111,7 @@ public class DatasetMetadataConverterTest {
     }
 
     @Test
-    public void convert_missing_doi() throws IOException {
+    public void convert_missing_doi() {
         // given
         ImmutableMap<String, String> extIds = ImmutableMap.of("other", "2");
         Result sourceDataset = documentEntity(extIds);
@@ -149,7 +147,7 @@ public class DatasetMetadataConverterTest {
     }
     
     @Test
-    public void convert_not_approved() throws IOException {
+    public void convert_not_approved() {
         // given
         Result sourceDataset = documentEntity(EXT_IDENTIFIERS);
 
@@ -182,7 +180,7 @@ public class DatasetMetadataConverterTest {
     }
 
     @Test
-    public void convert() throws IOException {
+    public void convert() {
         // given
         Result sourceDataset = documentEntity(EXT_IDENTIFIERS);
 
@@ -244,16 +242,18 @@ public class DatasetMetadataConverterTest {
             result.setPid(new ArrayList<>());
         }
         
-        for (Entry<String, String> entry : extIdentifiers.entrySet()) {
+        extIdentifiers.entrySet().stream().map(entry -> {
             StructuredProperty structPid = new StructuredProperty();
             structPid.setValue(entry.getValue());
             Qualifier pidQualifier = new Qualifier();
             pidQualifier.setClassid(entry.getKey());
             structPid.setQualifier(pidQualifier);
-            result.getPid().add(structPid);
+            return structPid;
+        }).forEach(pid -> {
+            result.getPid().add(pid);
             // testing for dealing with duplicates
-            result.getPid().add(structPid);
-        }
+            result.getPid().add(pid);
+        });
         
         Field<String> dateOfAcc = new Field<>();
         dateOfAcc.setValue(String.format("%s-02-29", YEAR));
@@ -294,7 +294,7 @@ public class DatasetMetadataConverterTest {
         Arrays.stream(types).forEach(type -> addPublicationType(dataset, type));
     }
 
-    private static Result addPublicationType(Result result, String publicationType) {
+    private static void addPublicationType(Result result, String publicationType) {
         if (result.getInstance()==null) {
             result.setInstance(new ArrayList<>());
         }
@@ -303,7 +303,6 @@ public class DatasetMetadataConverterTest {
         instancetype.setClassid(publicationType);
         instance.setInstancetype(instancetype);
         result.getInstance().add(instance);
-        return result;
     }
     
     private static void addTitle(Result result, String title, String titleType) {

@@ -3,6 +3,7 @@ package eu.dnetlib.iis.wf.importer.infospace;
 import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.lang.StringUtils;
@@ -31,6 +32,7 @@ import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.IdentifierMapping;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.common.spark.SparkConfHelper;
 import eu.dnetlib.iis.importer.schemas.DataSetReference;
 import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
 import eu.dnetlib.iis.importer.schemas.DocumentToProject;
@@ -60,6 +62,11 @@ public class ImportInformationSpaceJob {
     private static SparkAvroSaver avroSaver = new SparkAvroSaver();
 
     public static final Logger log = Logger.getLogger(ImportInformationSpaceJob.class);
+    
+    
+    private static final String FORMAT_PARQUET = "parquet";
+    
+    private static final String FORMAT_JSON = "json";
     
     
     private static final String REL_TYPE_PROJECT_ORGANIZATION = "projectOrganization";
@@ -105,9 +112,7 @@ public class ImportInformationSpaceJob {
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
 
-        SparkConf conf = new SparkConf();
-        conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
-        conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
+        SparkConf conf = SparkConfHelper.withKryo(new SparkConf());
         conf.registerKryoClasses(OafModelUtils.provideOafClasses());
         
         SparkSession session = null;
@@ -125,7 +130,6 @@ public class ImportInformationSpaceJob {
             // initializing Oaf model converters
             DataInfoBasedApprover dataInfoBasedApprover = buildApprover(
                     params.skipDeletedByInference, params.trustLevelThreshold, params.inferenceProvenanceBlacklist);
-            ResultApprover resultApprover = dataInfoBasedApprover;
             
             OafEntityToAvroConverter<Result, DocumentMetadata> documentConverter = new DocumentMetadataConverter(dataInfoBasedApprover);
             OafEntityToAvroConverter<Result, DataSetReference>  datasetConverter = new DatasetMetadataConverter(dataInfoBasedApprover);
@@ -136,40 +140,40 @@ public class ImportInformationSpaceJob {
             OafRelToAvroConverter<DocumentToProject> docProjectConverter = new DocumentToProjectRelationConverter();
             OafRelToAvroConverter<IdentifierMapping> deduplicationMappingConverter = new DeduplicationMappingConverter();
             
-            boolean isParquetInputFormat = Boolean.valueOf(params.inputFormatParquet);
+            String inputFormat = params.inputFormat;
        
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Organization> sourceOrganization = readGraphTable(session,
-                    params.inputRootPath + "/organization", eu.dnetlib.dhp.schema.oaf.Organization.class, isParquetInputFormat);
+                    params.inputRootPath + "/organization", eu.dnetlib.dhp.schema.oaf.Organization.class, inputFormat);
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Project> sourceProject = readGraphTable(session,
-                    params.inputRootPath + "/project", eu.dnetlib.dhp.schema.oaf.Project.class, isParquetInputFormat);
+                    params.inputRootPath + "/project", eu.dnetlib.dhp.schema.oaf.Project.class, inputFormat);
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Publication> sourcePublication = readGraphTable(session,
-                    params.inputRootPath + "/publication", eu.dnetlib.dhp.schema.oaf.Publication.class, isParquetInputFormat);
+                    params.inputRootPath + "/publication", eu.dnetlib.dhp.schema.oaf.Publication.class, inputFormat);
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Dataset> sourceDataset = readGraphTable(session,
-                    params.inputRootPath + "/dataset", eu.dnetlib.dhp.schema.oaf.Dataset.class, isParquetInputFormat);
+                    params.inputRootPath + "/dataset", eu.dnetlib.dhp.schema.oaf.Dataset.class, inputFormat);
             JavaRDD<eu.dnetlib.dhp.schema.oaf.OtherResearchProduct> sourceOtherResearchProduct = readGraphTable(
-                    session, params.inputRootPath + "/otherresearchproduct", eu.dnetlib.dhp.schema.oaf.OtherResearchProduct.class, isParquetInputFormat);
+                    session, params.inputRootPath + "/otherresearchproduct", eu.dnetlib.dhp.schema.oaf.OtherResearchProduct.class, inputFormat);
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Software> sourceSoftware = readGraphTable(session,
-                    params.inputRootPath + "/software", eu.dnetlib.dhp.schema.oaf.Software.class, isParquetInputFormat);
+                    params.inputRootPath + "/software", eu.dnetlib.dhp.schema.oaf.Software.class, inputFormat);
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Relation> sourceRelation = readGraphTable(session,
-                    params.inputRootPath + "/relation", eu.dnetlib.dhp.schema.oaf.Relation.class, isParquetInputFormat);
+                    params.inputRootPath + "/relation", eu.dnetlib.dhp.schema.oaf.Relation.class, inputFormat);
             sourceRelation.cache();
             
             // handling entities
-            JavaRDD<eu.dnetlib.dhp.schema.oaf.Dataset> filteredDataset = sourceDataset.filter(x -> resultApprover.approve(x));
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.Dataset> filteredDataset = sourceDataset.filter(dataInfoBasedApprover::approve);
             filteredDataset.cache();
 
             JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> docMeta = parseToDocMetaAvro(filteredDataset,
-                    sourcePublication, sourceSoftware, sourceOtherResearchProduct, resultApprover, documentConverter);
+                    sourcePublication, sourceSoftware, sourceOtherResearchProduct, dataInfoBasedApprover, documentConverter);
             JavaRDD<eu.dnetlib.iis.importer.schemas.DataSetReference> dataset = parseResultToAvro(filteredDataset, datasetConverter); 
-            JavaRDD<eu.dnetlib.iis.importer.schemas.Project> project = filterAndParseToAvro(sourceProject, resultApprover, projectConverter);
-            JavaRDD<eu.dnetlib.iis.importer.schemas.Organization> organization = filterAndParseToAvro(sourceOrganization, resultApprover, organizationConverter);
+            JavaRDD<eu.dnetlib.iis.importer.schemas.Project> project = filterAndParseToAvro(sourceProject, dataInfoBasedApprover, projectConverter);
+            JavaRDD<eu.dnetlib.iis.importer.schemas.Organization> organization = filterAndParseToAvro(sourceOrganization, dataInfoBasedApprover, organizationConverter);
             
             // handling relations
-            JavaRDD<DocumentToProject> docProjRelation = filterAndParseRelationToAvro(sourceRelation, resultApprover, docProjectConverter, 
+            JavaRDD<DocumentToProject> docProjRelation = filterAndParseRelationToAvro(sourceRelation, dataInfoBasedApprover, docProjectConverter, 
                     REL_TYPE_RESULT_PROJECT, SUBREL_TYPE_OUTCOME, REL_NAME_IS_PRODUCED_BY);
-            JavaRDD<ProjectToOrganization> projOrgRelation = filterAndParseRelationToAvro(sourceRelation, resultApprover, projectOrganizationConverter, 
+            JavaRDD<ProjectToOrganization> projOrgRelation = filterAndParseRelationToAvro(sourceRelation, dataInfoBasedApprover, projectOrganizationConverter, 
                     REL_TYPE_PROJECT_ORGANIZATION, SUBREL_TYPE_PARTICIPATION, REL_NAME_HAS_PARTICIPANT); 
-            JavaRDD<IdentifierMapping> dedupRelation = filterAndParseRelationToAvro(sourceRelation, resultApprover, deduplicationMappingConverter, 
+            JavaRDD<IdentifierMapping> dedupRelation = filterAndParseRelationToAvro(sourceRelation, dataInfoBasedApprover, deduplicationMappingConverter, 
                     REL_TYPE_RESULT_RESULT, SUBREL_TYPE_DEDUP, REL_NAME_MERGES); 
             
             storeInOutput(sc, docMeta, dataset, project, organization, docProjRelation, projOrgRelation, dedupRelation, params);
@@ -210,7 +214,7 @@ public class ImportInformationSpaceJob {
      */
     private static <S extends OafEntity, T extends SpecificRecord>JavaRDD<T> filterAndParseToAvro(JavaRDD<S> source, 
             ResultApprover resultApprover, OafEntityToAvroConverter<S, T> entityConverter) {
-        return parseToAvro(source.filter(x -> resultApprover.approve(x)), entityConverter);
+        return parseToAvro(source.filter(resultApprover::approve), entityConverter);
     }
     
     /**
@@ -218,7 +222,7 @@ public class ImportInformationSpaceJob {
      */
     private static <S extends OafEntity, T extends SpecificRecord>JavaRDD<T> parseToAvro(JavaRDD<S> source, 
             OafEntityToAvroConverter<S, T> entityConverter) {
-        return source.map(x -> entityConverter.convert(x)).filter(x -> x != null);
+        return source.map(entityConverter::convert).filter(Objects::nonNull);
     }
     
     /**
@@ -226,7 +230,7 @@ public class ImportInformationSpaceJob {
      */
     private static <T extends SpecificRecord>JavaRDD<T> filterAndParseResultToAvro(JavaRDD<? extends Result> source, 
             ResultApprover resultApprover, OafEntityToAvroConverter<Result, T> entityConverter) {
-        return parseResultToAvro(source.filter(x -> resultApprover.approve(x)), entityConverter);
+        return parseResultToAvro(source.filter(resultApprover::approve), entityConverter);
     }
 
     /**
@@ -234,7 +238,7 @@ public class ImportInformationSpaceJob {
      */
     private static <T extends SpecificRecord>JavaRDD<T> parseResultToAvro(JavaRDD<? extends Result> source, 
             OafEntityToAvroConverter<Result, T> entityConverter) {
-        return source.map(x -> entityConverter.convert(x)).filter(x -> x != null);
+        return source.map(entityConverter::convert).filter(Objects::nonNull);
     }
     
     /**
@@ -258,20 +262,28 @@ public class ImportInformationSpaceJob {
      * Creates data approver.
      */
     private static DataInfoBasedApprover buildApprover(String skipDeletedByInference, String trustLevelThreshold, String inferenceProvenanceBlacklist) {
-        Float trustLevelThresholdFloat = null;
-        if (StringUtils.isNotBlank(trustLevelThreshold) && !UNDEFINED_NONEMPTY_VALUE.equals(trustLevelThreshold)) {
-            trustLevelThresholdFloat = Float.valueOf(trustLevelThreshold);
-        }
-        return new DataInfoBasedApprover(inferenceProvenanceBlacklist, Boolean.valueOf(skipDeletedByInference), trustLevelThresholdFloat);
+        Float trustLevelThresholdFloat = Optional.ofNullable(trustLevelThreshold)
+                .filter(x -> StringUtils.isNotBlank(x) && !UNDEFINED_NONEMPTY_VALUE.equals(x)).map(Float::parseFloat)
+                .orElse(null);
+        return new DataInfoBasedApprover(inferenceProvenanceBlacklist, Boolean.parseBoolean(skipDeletedByInference), trustLevelThresholdFloat);
     }
     
     /**
      * Reads graph table according to the input format.
      */
     private static <T extends Oaf> JavaRDD<T> readGraphTable(SparkSession spark, String inputGraphTablePath,
-            Class<T> clazz, boolean isParquetInputFormat) {
-        return isParquetInputFormat ? readGraphTableFromParquet(spark, inputGraphTablePath, clazz)
-                : readGraphTableFromTextFile(spark, inputGraphTablePath, clazz);
+            Class<T> clazz, String format) {
+        switch (format) {
+        case FORMAT_JSON: {
+            return readGraphTableFromTextFile(spark, inputGraphTablePath, clazz);
+        }
+        case FORMAT_PARQUET: {
+            return readGraphTableFromParquet(spark, inputGraphTablePath, clazz);
+        }
+        default: {
+            throw new RuntimeException("unsupported format: " + format);
+        }
+        }
     }
     
     /**
@@ -281,7 +293,6 @@ public class ImportInformationSpaceJob {
             Class<T> clazz) {
         ObjectMapper objectMapper = new ObjectMapper();
         Encoder<T> encoder = Encoders.bean(clazz);
-        
         return spark.read().textFile(inputGraphTablePath).map(
                 (MapFunction<String, T>) value -> objectMapper.readValue(value, clazz), encoder).toJavaRDD();
     }
@@ -335,23 +346,27 @@ public class ImportInformationSpaceJob {
                 dedupResultRelation.count());
 
         avroSaver.saveJavaRDD(docMeta, eu.dnetlib.iis.importer.schemas.DocumentMetadata.SCHEMA$,
-                jobParams.outputPath + '/' + jobParams.outputNameDocumentMeta);
+                outputPathFor(jobParams.outputPath, jobParams.outputNameDocumentMeta));
         avroSaver.saveJavaRDD(dataset, eu.dnetlib.iis.importer.schemas.DataSetReference.SCHEMA$,
-                jobParams.outputPath + '/' + jobParams.outputNameDatasetMeta);
+                outputPathFor(jobParams.outputPath, jobParams.outputNameDatasetMeta));
         avroSaver.saveJavaRDD(project, eu.dnetlib.iis.importer.schemas.Project.SCHEMA$,
-                jobParams.outputPath + '/' + jobParams.outputNameProject);
+                outputPathFor(jobParams.outputPath, jobParams.outputNameProject));
         avroSaver.saveJavaRDD(organization, eu.dnetlib.iis.importer.schemas.Organization.SCHEMA$,
-                jobParams.outputPath + '/' + jobParams.outputNameOrganization);
+                outputPathFor(jobParams.outputPath, jobParams.outputNameOrganization));
         avroSaver.saveJavaRDD(docProjResultRelation, DocumentToProject.SCHEMA$,
-                jobParams.outputPath + '/' + jobParams.outputNameDocumentProject);
+                outputPathFor(jobParams.outputPath, jobParams.outputNameDocumentProject));
         avroSaver.saveJavaRDD(projOrgResultRelation, ProjectToOrganization.SCHEMA$,
-                jobParams.outputPath + '/' + jobParams.outputNameProjectOrganization);
+                outputPathFor(jobParams.outputPath, jobParams.outputNameProjectOrganization));
         avroSaver.saveJavaRDD(dedupResultRelation, IdentifierMapping.SCHEMA$,
-                jobParams.outputPath + '/' + jobParams.outputNameDedupMapping);
+                outputPathFor(jobParams.outputPath, jobParams.outputNameDedupMapping));
 
         avroSaver.saveJavaRDD(reports, ReportEntry.SCHEMA$, jobParams.outputReportPath);
     }
     
+    private static String outputPathFor(String path, String subPath) {
+        return path + '/' + subPath;
+    }
+
     @Parameters(separators = "=")
     private static class ImportInformationSpaceJobParameters {
 
@@ -370,8 +385,8 @@ public class ImportInformationSpaceJob {
         @Parameter(names = "-inputRootPath", required = true)
         private String inputRootPath;
         
-        @Parameter(names = "-inputFormatParquet", required = true)
-        private String inputFormatParquet;
+        @Parameter(names = "-inputFormat", required = true)
+        private String inputFormat;
 
         @Parameter(names = "-outputPath", required = true)
         private String outputPath;

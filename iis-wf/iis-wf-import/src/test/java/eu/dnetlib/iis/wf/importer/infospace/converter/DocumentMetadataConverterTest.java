@@ -6,7 +6,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.util.Map.Entry;
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -220,21 +220,21 @@ public class DocumentMetadataConverterTest {
         setLanguage(result, LANGUAGE);
 
         result.setSubject(Lists.newArrayList());
-        for (String keyword : KEYWORDS) {
+        KEYWORDS.stream().map(keyword -> {
             StructuredProperty subject = new StructuredProperty();
             subject.setValue(keyword);
-            result.getSubject().add(subject);
-        }
+            return subject;
+        }).forEach(result.getSubject()::add);
 
         result.setPid(Lists.newArrayList());
-        for (Entry<String, String> entry : EXT_IDENTIFIERS.entrySet()) {
+        EXT_IDENTIFIERS.entrySet().stream().map(entry -> {
             StructuredProperty pid = new StructuredProperty();
             pid.setValue(entry.getValue());
             Qualifier pidType = new Qualifier();
             pidType.setClassid(entry.getKey());
             pid.setQualifier(pidType);
-            result.getPid().add(pid);
-        }
+            return pid;
+        }).forEach(result.getPid()::add);
         
         Journal journal = new Journal();
         journal.setName(JOURNAL);
@@ -249,11 +249,11 @@ public class DocumentMetadataConverterTest {
         result.setPublisher(publisher);
 
         result.setCollectedfrom(Lists.newArrayList());
-        for (String id : DATASOURCE_IDS) {
+        DATASOURCE_IDS.stream().map(id -> {
             KeyValue collFrom = new KeyValue();
             collFrom.setKey(id);
-            result.getCollectedfrom().add(collFrom);
-        }
+            return collFrom;
+        }).forEach(result.getCollectedfrom()::add);
         
         Author author = new Author();
         author.setName(FIRST_NAME);
@@ -266,15 +266,17 @@ public class DocumentMetadataConverterTest {
     }
 
     private static void addPublicationTypes(Result result, String... types) {
-        for (String type : types) {
-            Instance instance = new Instance();
-            Qualifier instanceType = new Qualifier();
-            instanceType.setClassid(type);
-            instance.setInstancetype(instanceType);
+        if (types.length > 0) {
             if (result.getInstance() == null) {
                 result.setInstance(Lists.newArrayList());
             }
-            result.getInstance().add(instance);
+            Arrays.asList(types).stream().map(type -> {
+                Instance instance = new Instance();
+                Qualifier instanceType = new Qualifier();
+                instanceType.setClassid(type);
+                instance.setInstancetype(instanceType);
+                return instance;
+            }).forEach(result.getInstance()::add);
         }
     }
 

@@ -94,15 +94,15 @@ public class ImportInformationSpaceJobTest {
     
     @Test
     public void testImportFromTextGraph() throws Exception {
-        testImportFromGraph(false);
+        testImportFromGraph("json");
     }
     
     @Test
     public void testImportFromParquetGraph() throws Exception {
-        testImportFromGraph(true);
+        testImportFromGraph("parquet");
     }
     
-    private void testImportFromGraph(boolean isParquetFormat) throws Exception {
+    private void testImportFromGraph(String format) throws Exception {
         
         @SuppressWarnings("unchecked")
         Class<? extends Oaf> graphClasses[] = new Class[] {
@@ -119,7 +119,7 @@ public class ImportInformationSpaceJobTest {
             String graphTableName = graphClass.getSimpleName().toLowerCase();
             String inputGraphTableJsonDumpPath = String.format("%s/%s.json",
                     "eu/dnetlib/iis/wf/importer/infospace/input/graph", graphTableName);
-            createGraphTableFor(inputGraphTableJsonDumpPath, graphTableName, graphClass, isParquetFormat);
+            createGraphTableFor(inputGraphTableJsonDumpPath, graphTableName, graphClass, format);
         }
         
         // when
@@ -128,7 +128,7 @@ public class ImportInformationSpaceJobTest {
                 "-skipDeletedByInference", Boolean.TRUE.toString(),
                 "-trustLevelThreshold", "0.7",
                 "-inferenceProvenanceBlacklist", "iis",
-                "-inputFormatParquet", String.valueOf(isParquetFormat),
+                "-inputFormat", format,
                 "-inputRootPath", inputGraphDir.toString(),
                 "-outputPath", outputDir.toString(),
                 "-outputReportPath", outputReportDir.toString(),
@@ -164,18 +164,14 @@ public class ImportInformationSpaceJobTest {
     
     
     private <T extends Oaf> void createGraphTableFor(String inputGraphTableJsonDumpPath,
-            String inputGraphTableDirRelativePath, Class<T> clazz, boolean isParquetFormat) {
+            String inputGraphTableDirRelativePath, Class<T> clazz, String format) {
         Path inputGraphTableJsonDumpFile = Paths
                 .get(Objects.requireNonNull(cl.getResource(inputGraphTableJsonDumpPath)).getFile());
 
         Dataset<T> inputGraphTableDS = readGraphTableFromJSON(inputGraphTableJsonDumpFile, clazz);
         Path inputGraphTableDir = inputGraphDir.resolve(inputGraphTableDirRelativePath);
         
-        if (isParquetFormat) {
-            inputGraphTableDS.write().format("parquet").save(inputGraphTableDir.toString());
-        } else {
-            inputGraphTableDS.toJSON().javaRDD().saveAsTextFile(inputGraphTableDir.toString());
-        }
+        inputGraphTableDS.write().format(format).save(inputGraphTableDir.toString());
     }
     
     private static <T extends Oaf> Dataset<T> readGraphTableFromJSON(Path path, Class<T> clazz) {

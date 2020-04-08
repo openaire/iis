@@ -6,9 +6,9 @@
             <description>materialized InfoSpace graph HDFS root directory location</description>
         </property>
         <property>
-            <name>input_format_parquet</name>
-            <value>true</value>
-            <description>flag indicating input is encoded in parquet format</description>
+            <name>input_format</name>
+            <value>parquet</value>
+            <description>data input format</description>
         </property>
         <property>
             <name>inference_provenance_blacklist</name>
@@ -153,7 +153,7 @@
                 --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
             </spark-opts>
             <arg>-inputRootPath=${input_root_path}</arg>
-            <arg>-inputFormatParquet=${input_format_parquet}</arg>
+            <arg>-inputFormat=${input_format}</arg>
             <arg>-outputPath=${output}</arg>
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
             

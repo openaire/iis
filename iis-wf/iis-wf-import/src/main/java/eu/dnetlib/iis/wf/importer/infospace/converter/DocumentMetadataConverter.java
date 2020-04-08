@@ -2,10 +2,12 @@ package eu.dnetlib.iis.wf.importer.infospace.converter;
 
 import java.io.IOException;
 import java.time.Year;
+import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -84,9 +86,8 @@ public class DocumentMetadataConverter implements OafEntityToAvroConverter<Resul
      * 
      * @param sourceResult
      * @param metaBuilder
-     * @return basic metadata object
      */
-    private DocumentMetadata.Builder createBasicMetadata(Result sourceResult,
+    private void createBasicMetadata(Result sourceResult,
             DocumentMetadata.Builder metaBuilder) {
         
         handlePublicationType(sourceResult.getInstance(), metaBuilder);
@@ -99,44 +100,35 @@ public class DocumentMetadataConverter implements OafEntityToAvroConverter<Resul
         }
         handleYear(sourceResult.getDateofacceptance(), metaBuilder);
         handleKeywords(sourceResult.getSubject(), metaBuilder);    
-        
-        return metaBuilder;
+
     }
 
     private void handleTitle(List<StructuredProperty> titleList, DocumentMetadata.Builder metaBuilder) {
         if (CollectionUtils.isNotEmpty(titleList)) {
-            for (StructuredProperty titleProp : titleList) {
-                if (titleProp.getQualifier() != null && InfoSpaceConstants.SEMANTIC_CLASS_MAIN_TITLE.equals(titleProp.getQualifier().getClassid())
-                        && fieldApprover.approve(titleProp.getDataInfo())) {
-                    metaBuilder.setTitle(titleProp.getValue());
-                }
-            }
+
+            titleList.stream().filter(x -> Objects.nonNull(x.getQualifier()))
+                    .filter(x -> InfoSpaceConstants.SEMANTIC_CLASS_MAIN_TITLE.equals(x.getQualifier().getClassid()))
+                    .filter(x -> fieldApprover.approve(x.getDataInfo())).findFirst()
+                    .ifPresent(x -> metaBuilder.setTitle(x.getValue()));
+
             if (!metaBuilder.hasTitle()) {
                 // if no main title available, setting first applicable title from the list
-                for (StructuredProperty titleProp : titleList) {
-                    if (fieldApprover.approve(titleProp.getDataInfo())) {
-                        metaBuilder.setTitle(titleProp.getValue());
-                        break;
-                    }
-                }
+                titleList.stream().filter(x -> fieldApprover.approve(x.getDataInfo())).findFirst()
+                        .ifPresent(x -> metaBuilder.setTitle(x.getValue()));
             }
         }
     }
     
     private void handleDescription(List<Field<String>> descriptionList, DocumentMetadata.Builder metaBuilder) {
         if (CollectionUtils.isNotEmpty(descriptionList)) {
-            for (Field<String> currentDescription : descriptionList) {
-                if (fieldApprover.approve(currentDescription.getDataInfo()) 
-                        && StringUtils.isNotBlank(currentDescription.getValue())
-                        && !NULL_STRING_VALUE.equals(currentDescription.getValue())) {
-                    metaBuilder.setAbstract$(currentDescription.getValue());
-                    break;
-                }
-            }
+            descriptionList.stream().filter(x -> fieldApprover.approve(x.getDataInfo()))
+                    .filter(x -> StringUtils.isNotBlank(x.getValue()))
+                    .filter(x -> !NULL_STRING_VALUE.equals(x.getValue())).findFirst()
+                    .ifPresent(x -> metaBuilder.setAbstract$(x.getValue()));
         }
     }
     
-    private void handleLanguage(Qualifier language, DocumentMetadata.Builder metaBuilder) {
+    private static void handleLanguage(Qualifier language, DocumentMetadata.Builder metaBuilder) {
         if (language != null && StringUtils.isNotBlank(language.getClassid())
                 && !LANG_CLASSID_UNDEFINED.equals(language.getClassid())) {
             metaBuilder.setLanguage(language.getClassid());
@@ -178,7 +170,7 @@ public class DocumentMetadataConverter implements OafEntityToAvroConverter<Resul
         }    
     }
     
-    private void handlePublicationType(List<Instance> instanceList, DocumentMetadata.Builder metaBuilder) {
+    private static void handlePublicationType(List<Instance> instanceList, DocumentMetadata.Builder metaBuilder) {
         PublicationType.Builder publicationTypeBuilder = PublicationType.newBuilder();
         if (CollectionUtils.isNotEmpty(instanceList)) {
             for (Instance instance : instanceList) {
@@ -199,38 +191,34 @@ public class DocumentMetadataConverter implements OafEntityToAvroConverter<Resul
      * Handles additional identifiers.
      * 
      */
-    private DocumentMetadata.Builder handleAdditionalIds(OafEntity oafEntity, DocumentMetadata.Builder metaBuilder) {
+    private void handleAdditionalIds(OafEntity oafEntity, DocumentMetadata.Builder metaBuilder) {
         // setting additional identifiers
         if (CollectionUtils.isNotEmpty(oafEntity.getPid())) {
-            Map<CharSequence, CharSequence> additionalIds = new HashMap<CharSequence, CharSequence>();    
-            for (StructuredProperty currentPid : oafEntity.getPid()) {
-                if (StringUtils.isNotBlank(currentPid.getQualifier().getClassid()) 
-                        && StringUtils.isNotBlank(currentPid.getValue()) 
-                        && fieldApprover.approve(currentPid.getDataInfo())) {
-                    additionalIds.put(currentPid.getQualifier().getClassid(), currentPid.getValue());
-                }
-            }
+            Map<CharSequence, CharSequence> additionalIds = oafEntity.getPid().stream()
+                    .filter(x -> StringUtils.isNotBlank(x.getQualifier().getClassid()))
+                    .filter(x -> StringUtils.isNotBlank(x.getValue()))
+                    .filter(x -> fieldApprover.approve(x.getDataInfo()))
+                    .map(x -> new AbstractMap.SimpleEntry<>(x.getQualifier().getClassid(), x.getValue()))
+                    .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue, (val1, val2) -> val1));
+
             if (MapUtils.isNotEmpty(additionalIds)) {
                 metaBuilder.setExternalIdentifiers(additionalIds);
-            }    
-        }
-        return metaBuilder;
+            }  
+        }        
     }
 
     /**
      * Handles datasource identifiers.
      * 
      */
-    private DocumentMetadata.Builder handleDatasourceIds(OafEntity oafEntity, DocumentMetadata.Builder metaBuilder) {
+    private static void handleDatasourceIds(OafEntity oafEntity, DocumentMetadata.Builder metaBuilder) {
         if (CollectionUtils.isNotEmpty(oafEntity.getCollectedfrom())) {
-            List<CharSequence> datasourceIds = new ArrayList<CharSequence>(
-                    oafEntity.getCollectedfrom().size());
-            for (KeyValue currentCollectedFrom : oafEntity.getCollectedfrom()) {
-                datasourceIds.add(currentCollectedFrom.getKey());
+            List<CharSequence> datasourceIds = oafEntity.getCollectedfrom().stream().map(KeyValue::getKey)
+                    .collect(Collectors.toList());
+            if (!datasourceIds.isEmpty()) {
+                metaBuilder.setDatasourceIds(datasourceIds);
             }
-            metaBuilder.setDatasourceIds(datasourceIds);
         }
-        return metaBuilder;
     }
 
     /**
@@ -238,48 +226,44 @@ public class DocumentMetadataConverter implements OafEntityToAvroConverter<Resul
      * 
      * @param relations person result relations
      * @param builder
-     * @return builder with persons set
      * @throws IOException
      */
-    private DocumentMetadata.Builder handlePersons(Result result, DocumentMetadata.Builder builder)
+    private static void handlePersons(Result result, DocumentMetadata.Builder builder)
             throws IOException {
         if (CollectionUtils.isNotEmpty(result.getAuthor())) {
-            List<Author> authors = new ArrayList<>();
-            for (eu.dnetlib.dhp.schema.oaf.Author sourceAuthor : result.getAuthor()) {
+            List<Author> authors = result.getAuthor().stream().map(sourceAuthor -> {
                 Author.Builder authorBuilder = Author.newBuilder();
                 handleName(sourceAuthor.getName(), authorBuilder);
                 handleSurname(sourceAuthor.getSurname(), authorBuilder);
                 handleFullName(sourceAuthor.getFullname(), authorBuilder);
-                if (isDataValid(authorBuilder)) {
-                    authors.add(authorBuilder.build());
-                }
-            }
+                return authorBuilder;
+            }).filter(DocumentMetadataConverter::isDataValid).map(Author.Builder::build).collect(Collectors.toList());
+
             if (!authors.isEmpty()) {
                 builder.setAuthors(authors);
-            }    
+            }
         }
-        return builder;
     }
 
-    private void handleName(String firstName, Author.Builder builder) {
+    private static void handleName(String firstName, Author.Builder builder) {
         if (StringUtils.isNotBlank(firstName)) {
             builder.setName(firstName);
         }
     }
     
-    private void handleSurname(String surname, Author.Builder builder) {
+    private static void handleSurname(String surname, Author.Builder builder) {
         if (StringUtils.isNotBlank(surname)) {
             builder.setSurname(surname);
         }
     }
     
-    private void handleFullName(String fullName, Author.Builder builder) {
+    private static void handleFullName(String fullName, Author.Builder builder) {
         if (StringUtils.isNotBlank(fullName)) {
             builder.setFullname(fullName);
         }
     }
     
-    private boolean isDataValid(Author.Builder builder) {
+    private static boolean isDataValid(Author.Builder builder) {
         return builder.hasName() || builder.hasSurname() || builder.hasFullname();
     }
 

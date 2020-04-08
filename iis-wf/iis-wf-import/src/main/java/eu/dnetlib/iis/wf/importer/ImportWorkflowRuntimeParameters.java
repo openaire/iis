@@ -18,10 +18,6 @@ public final class ImportWorkflowRuntimeParameters {
 	public static final String IMPORT_CONTENT_MAX_FILE_SIZE_MB = "import.content.max.file.size.mb";
 	public static final String IMPORT_CONTENT_CONNECTION_TIMEOUT = "import.content.connection.timeout";
 	public static final String IMPORT_CONTENT_READ_TIMEOUT = "import.content.read.timeout";
-
-	public static final String IMPORT_MDSTORE_IDS_CSV = "import.mdstore.ids.csv";
-	public static final String IMPORT_MDSTORE_SERVICE_LOCATION = "import.mdstore.service.location";
-	public static final String IMPORT_MDSTORE_RECORD_MAXLENGTH = "import.mdstore.record.maxlength";
 	
 	public static final String IMPORT_SOFTWARE_HERITAGE_PAGE_SIZE = "import.software.heritage.page.size";
 	public static final String IMPORT_SOFTWARE_HERITAGE_START_INDEX = "import.software.heritage.start.index";

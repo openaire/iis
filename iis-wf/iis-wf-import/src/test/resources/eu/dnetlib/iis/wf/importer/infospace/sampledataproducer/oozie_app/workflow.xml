@@ -156,8 +156,8 @@
                     <value>${workingDir}/input_graph/</value>
                 </property>
                 <property>
-                    <name>input_format_parquet</name>
-                    <value>false</value>
+                    <name>input_format</name>
+                    <value>json</value>
                 </property>
                 <property>
                     <name>output</name>
