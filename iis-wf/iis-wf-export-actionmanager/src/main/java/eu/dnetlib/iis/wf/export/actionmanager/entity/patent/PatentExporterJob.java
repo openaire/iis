@@ -56,6 +56,7 @@ public class PatentExporterJob {
     private static final String IPC = "IPC";
     private static final String INTERNATIONAL_PATENT_CLASSIFICATION = "International Patent Classification";
     private static final String PATENT_ENTITY_ID_PREFIX = "epopatstat__";
+    private static final String IIS_ENTITIES_PATENT = "iis-entities-patent";
     private static final String INFERENCE_PROVENANCE = buildInferenceProvenance();
     private static final String PATENT_DATASOURCE_OPENAIRE_ID_PREFIX = InfoSpaceConstants.ROW_PREFIX_DATASOURCE + InfoSpaceConstants.OPENAIRE_ENTITY_ID_PREFIX + InfoSpaceConstants.ID_NAMESPACE_SEPARATOR;
     private static final String PATENT_RESULT_OPENAIRE_ID_PREFIX = InfoSpaceConstants.ROW_PREFIX_RESULT + PATENT_ENTITY_ID_PREFIX + InfoSpaceConstants.ID_NAMESPACE_SEPARATOR;
@@ -68,6 +69,7 @@ public class PatentExporterJob {
     private static final FieldTypeProtos.Qualifier OAF_ENTITY_RESULT_METADATA_TITLE_QUALIFIER = buildOafEntityResultMetadataTitleQualifier();
     private static final FieldTypeProtos.Qualifier OAF_ENTITY_RESULT_METADATA_SUBJECT_QUALIFIER = buildOafEntityResultMetadataSubjectQualifier();
     private static final FieldTypeProtos.Qualifier OAF_ENTITY_RESULT_METADATA_RELEVANTDATE_QUALIFIER = buildOafEntityResultMetadataRelevantdateQualifier();
+    private static final FieldTypeProtos.DataInfo OAF_ENTITY_DATAINFO = buildOafEntityDataInfo();
 
     private static final SparkAvroLoader avroLoader = new SparkAvroLoader();
     private static final int numberOfOutputFiles = 10;
@@ -239,6 +241,21 @@ public class PatentExporterJob {
                 .build();
     }
 
+    private static FieldTypeProtos.DataInfo buildOafEntityDataInfo() {
+        return FieldTypeProtos.DataInfo.newBuilder()
+                .setProvenanceaction(buildOafDataInfoQualifier())
+                .build();
+    }
+
+    private static FieldTypeProtos.Qualifier buildOafDataInfoQualifier() {
+        return FieldTypeProtos.Qualifier.newBuilder()
+                .setClassid(IIS_ENTITIES_PATENT)
+                .setClassname(IIS_ENTITIES_PATENT)
+                .setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PROVENANCE_ACTIONS)
+                .setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PROVENANCE_ACTIONS)
+                .build();
+    }
+
     private static JavaRDD<DocumentToPatent> documentToPatentsToExport(JavaRDD<DocumentToPatent> documentToPatents,
                                                                        Float trustLevelThreshold) {
         return documentToPatents
@@ -360,6 +377,7 @@ public class PatentExporterJob {
         return OafProtos.Oaf.newBuilder()
                 .setKind(KindProtos.Kind.entity)
                 .setEntity(buildOafEntity(patent, patentIdToExport, patentDateOfCollection, patentEpoUrlRoot))
+                .setDataInfo(buildOafEntityDataInfo())
                 .setLastupdatetimestamp(System.currentTimeMillis())
                 .build();
     }
