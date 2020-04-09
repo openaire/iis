@@ -1,6 +1,8 @@
 package eu.dnetlib.iis.wf.importer.infospace.approver;
 
-import eu.dnetlib.data.proto.OafProtos.Oaf;
+import java.io.Serializable;
+
+import eu.dnetlib.dhp.schema.oaf.Oaf;
 
 /**
  * Verifies whether provided object should be approved.
@@ -8,7 +10,7 @@ import eu.dnetlib.data.proto.OafProtos.Oaf;
  * @author mhorst
  *
  */
-public interface ResultApprover {
+public interface ResultApprover extends Serializable {
 
 	
 	/**

@@ -6,7 +6,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.util.Map.Entry;
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -18,13 +18,17 @@ import org.mockito.junit.MockitoRule;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
-import eu.dnetlib.data.proto.FieldTypeProtos.Author;
-import eu.dnetlib.data.proto.FieldTypeProtos.StructuredProperty;
-import eu.dnetlib.data.proto.OafProtos.OafEntity;
-import eu.dnetlib.data.proto.ResultProtos.Result;
-import eu.dnetlib.data.proto.ResultProtos.Result.Metadata;
-import eu.dnetlib.data.proto.TypeProtos.Type;
+import eu.dnetlib.dhp.schema.oaf.Author;
+import eu.dnetlib.dhp.schema.oaf.Field;
+import eu.dnetlib.dhp.schema.oaf.Instance;
+import eu.dnetlib.dhp.schema.oaf.Journal;
+import eu.dnetlib.dhp.schema.oaf.KeyValue;
+import eu.dnetlib.dhp.schema.oaf.Publication;
+import eu.dnetlib.dhp.schema.oaf.Qualifier;
+import eu.dnetlib.dhp.schema.oaf.Result;
+import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
 import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
@@ -76,15 +80,13 @@ public class DocumentMetadataConverterTest {
     @Test
     public void convert_using_main_title() throws IOException {
         // given
-        OafEntity.Builder builder = minimalEntityBuilder(ID, InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE);
+        Publication publication = minimalEntityBuilder(ID, InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE);
 
-        addTitle(builder, OTHER_TITLE);
-        addTitle(builder, TITLE).getQualifierBuilder().setClassid(InfoSpaceConstants.SEMANTIC_CLASS_MAIN_TITLE);
-
-        OafEntity oafEntity = builder.build();
+        addTitle(publication, OTHER_TITLE);
+        addTitle(publication, TITLE, InfoSpaceConstants.SEMANTIC_CLASS_MAIN_TITLE);
 
         // execute
-        DocumentMetadata metadata = converter.convert(oafEntity);
+        DocumentMetadata metadata = converter.convert(publication);
 
         // assert
         assertEquals(TITLE, metadata.getTitle());
@@ -93,15 +95,13 @@ public class DocumentMetadataConverterTest {
     @Test
     public void convert_using_first_title() throws IOException {
         // given
-        OafEntity.Builder builder = minimalEntityBuilder(ID, InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE);
+        Publication publication = minimalEntityBuilder(ID, InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE);
 
-        addTitle(builder, OTHER_TITLE);
-        addTitle(builder, TITLE);
-
-        OafEntity oafEntity = builder.build();
+        addTitle(publication, OTHER_TITLE);
+        addTitle(publication, TITLE);
 
         // execute
-        DocumentMetadata metadata = converter.convert(oafEntity);
+        DocumentMetadata metadata = converter.convert(publication);
 
         // assert
         assertEquals(OTHER_TITLE, metadata.getTitle());
@@ -110,15 +110,13 @@ public class DocumentMetadataConverterTest {
     @Test
     public void convert_skip_null_abstract() throws IOException {
         // given
-        OafEntity.Builder builder = minimalEntityBuilder(ID, InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE);
+        Publication publication = minimalEntityBuilder(ID, InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE);
 
-        addDescription(builder, "null");
-        addDescription(builder, ABSTRACT);
-
-        OafEntity oafEntity = builder.build();
+        addDescription(publication, "null");
+        addDescription(publication, ABSTRACT);
 
         // execute
-        DocumentMetadata metadata = converter.convert(oafEntity);
+        DocumentMetadata metadata = converter.convert(publication);
 
         // assert
         assertEquals(ABSTRACT, metadata.getAbstract$());
@@ -127,14 +125,12 @@ public class DocumentMetadataConverterTest {
     @Test
     public void convert_with_undefined_language() throws IOException {
         // given
-        OafEntity.Builder builder = minimalEntityBuilder(ID, InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE);
+        Publication publication = minimalEntityBuilder(ID, InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE);
 
-        setLanguage(builder, "und");
-
-        OafEntity oafEntity = builder.build();
+        setLanguage(publication, "und");
 
         // execute
-        DocumentMetadata metadata = converter.convert(oafEntity);
+        DocumentMetadata metadata = converter.convert(publication);
 
         // assert
         assertEquals(null, metadata.getLanguage());
@@ -144,7 +140,7 @@ public class DocumentMetadataConverterTest {
     @Test
     public void convert_not_approved() throws IOException {
         // given
-        OafEntity oafEntity = documentEntity();
+        Publication oafEntity = documentEntity();
 
         when(fieldApprover.approve(any())).thenReturn(false);
 
@@ -174,7 +170,7 @@ public class DocumentMetadataConverterTest {
     @Test
     public void convert() throws IOException {
         // given
-        OafEntity oafEntity = documentEntity();
+        Publication oafEntity = documentEntity();
 
         // execute
         DocumentMetadata metadata = converter.convert(oafEntity);
@@ -202,73 +198,119 @@ public class DocumentMetadataConverterTest {
 
     // ------------------------ PRIVATE --------------------------
 
-    private static OafEntity.Builder emptyEntityBuilder(String id) {
-        // note that the type does not matter for the converter
-        return OafEntity.newBuilder().setType(Type.result).setId(id);
+    private static Publication emptyEntityBuilder(String id) {
+        Publication result = new Publication();
+        result.setId(id);
+        return result;
     }
 
-    private static OafEntity.Builder minimalEntityBuilder(String id, String... types) {
-        OafEntity.Builder builder = emptyEntityBuilder(id);
-        addPublicationTypes(builder.getResultBuilder(), types);
-        return builder;
+    private static Publication minimalEntityBuilder(String id, String... types) {
+        Publication result = emptyEntityBuilder(id);
+        addPublicationTypes(result, types);
+        return result;
     }
 
-    private static OafEntity documentEntity() {
-        OafEntity.Builder oafBuilder = minimalEntityBuilder(ID,
+    private static Publication documentEntity() {
+        Publication result = minimalEntityBuilder(ID,
                 InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE,
                 InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_DATASET);
 
-        Metadata.Builder mdBuilder = oafBuilder.getResultBuilder().getMetadataBuilder();
+        addTitle(result, TITLE);
+        addDescription(result, ABSTRACT);
+        setLanguage(result, LANGUAGE);
 
-        addTitle(oafBuilder, TITLE);
-        addDescription(oafBuilder, ABSTRACT);
-        setLanguage(oafBuilder, LANGUAGE);
+        result.setSubject(Lists.newArrayList());
+        KEYWORDS.stream().map(keyword -> {
+            StructuredProperty subject = new StructuredProperty();
+            subject.setValue(keyword);
+            return subject;
+        }).forEach(result.getSubject()::add);
 
-        for (String keyword : KEYWORDS) {
-            mdBuilder.addSubjectBuilder().setValue(keyword);
-        }
-
-        for (Entry<String, String> entry : EXT_IDENTIFIERS.entrySet()) {
-            oafBuilder.addPidBuilder().setValue(entry.getValue()).getQualifierBuilder().setClassid(entry.getKey());
-        }
-
-        mdBuilder.getJournalBuilder().setName(JOURNAL);
-        mdBuilder.getDateofacceptanceBuilder().setValue(String.format("%s-02-29", YEAR));
-        mdBuilder.getPublisherBuilder().setValue(PUBLISHER);
-
-
-        for (String id : DATASOURCE_IDS) {
-            oafBuilder.addCollectedfromBuilder().setKey(id);
-        }
-
+        result.setPid(Lists.newArrayList());
+        EXT_IDENTIFIERS.entrySet().stream().map(entry -> {
+            StructuredProperty pid = new StructuredProperty();
+            pid.setValue(entry.getValue());
+            Qualifier pidType = new Qualifier();
+            pidType.setClassid(entry.getKey());
+            pid.setQualifier(pidType);
+            return pid;
+        }).forEach(result.getPid()::add);
         
-        Author.Builder authorBuilder = Author.newBuilder();
-        authorBuilder.setName(FIRST_NAME);
-        authorBuilder.setSurname(SECOND_NAME + ' ' + SECOND_SECOND_NAME);
-        authorBuilder.setFullname(FULL_NAME);
-        authorBuilder.setRank(0);
-        oafBuilder.getResultBuilder().getMetadataBuilder().addAuthor(authorBuilder);
+        Journal journal = new Journal();
+        journal.setName(JOURNAL);
+        result.setJournal(journal);
         
-        return oafBuilder.build();
+        Field<String> dateofacceptance = new Field<>();
+        dateofacceptance.setValue(String.format("%s-02-29", YEAR));
+        result.setDateofacceptance(dateofacceptance);
+
+        Field<String> publisher = new Field<>();
+        publisher.setValue(PUBLISHER);
+        result.setPublisher(publisher);
+
+        result.setCollectedfrom(Lists.newArrayList());
+        DATASOURCE_IDS.stream().map(id -> {
+            KeyValue collFrom = new KeyValue();
+            collFrom.setKey(id);
+            return collFrom;
+        }).forEach(result.getCollectedfrom()::add);
+        
+        Author author = new Author();
+        author.setName(FIRST_NAME);
+        author.setSurname(SECOND_NAME + ' ' + SECOND_SECOND_NAME);
+        author.setFullname(FULL_NAME);
+        author.setRank(0);
+        result.setAuthor(Lists.newArrayList(author));
+        
+        return result;
     }
 
-    private static void addPublicationTypes(Result.Builder resBuilder, String... types) {
-        for (String type : types) {
-            resBuilder.addInstanceBuilder().getInstancetypeBuilder()
-                .setClassid(type);
+    private static void addPublicationTypes(Result result, String... types) {
+        if (types.length > 0) {
+            if (result.getInstance() == null) {
+                result.setInstance(Lists.newArrayList());
+            }
+            Arrays.asList(types).stream().map(type -> {
+                Instance instance = new Instance();
+                Qualifier instanceType = new Qualifier();
+                instanceType.setClassid(type);
+                instance.setInstancetype(instanceType);
+                return instance;
+            }).forEach(result.getInstance()::add);
         }
     }
 
-    private static StructuredProperty.Builder addTitle(OafEntity.Builder builder, String value) {
-        return builder.getResultBuilder().getMetadataBuilder().addTitleBuilder().setValue(value);
+    private static void addTitle(Result result, String value) {
+        addTitle(result, value, null);
+    }
+    
+    private static void addTitle(Result result, String value, String type) {
+        if (result.getTitle() == null) {
+            result.setTitle(Lists.newArrayList());
+        }
+        StructuredProperty title = new StructuredProperty();
+        title.setValue(value);
+        if (type != null) {
+            Qualifier titleType = new Qualifier();
+            titleType.setClassid(type);
+            title.setQualifier(titleType);
+        }
+        result.getTitle().add(title);
     }
 
-    private static void addDescription(OafEntity.Builder builder, String value) {
-        builder.getResultBuilder().getMetadataBuilder().addDescriptionBuilder().setValue(value);
+    private static void addDescription(Result result, String value) {
+        if (result.getDescription() == null) {
+            result.setDescription(Lists.newArrayList());
+        }
+        Field<String> descr = new Field<>();
+        descr.setValue(value);
+        result.getDescription().add(descr);
     }
 
-    private static void setLanguage(OafEntity.Builder builder, String value) {
-        builder.getResultBuilder().getMetadataBuilder().getLanguageBuilder().setClassid(value);
+    private static void setLanguage(Result result, String value) {
+        Qualifier lang = new Qualifier();
+        lang.setClassid(value);
+        result.setLanguage(lang);
     }
 
 }

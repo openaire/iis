@@ -5,15 +5,8 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
-import eu.dnetlib.data.proto.FieldTypeProtos.Qualifier;
-import eu.dnetlib.data.proto.OafProtos.OafRel;
-import eu.dnetlib.data.proto.ProjectOrganizationProtos.ProjectOrganization;
-import eu.dnetlib.data.proto.ProjectOrganizationProtos.ProjectOrganization.Participation;
-import eu.dnetlib.data.proto.RelMetadataProtos.RelMetadata;
-import eu.dnetlib.data.proto.RelTypeProtos.RelType;
-import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
+import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
-import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectToOrganizationRelationConverter;
 
 /**
  * @author mhorst
@@ -50,17 +43,16 @@ public class ProjectToOrganizationRelationConverterTest {
 
     // ------------------------ PRIVATE --------------------------
 
-    private OafRel createOafRelObject(String projectId, String organizationId) {
-        String relClass = "hasParticipant";
-        Qualifier semantics = Qualifier.newBuilder().setClassid(relClass).setClassname(relClass)
-                .setSchemeid("dnet:project_organization_relations").setSchemename("dnet:project_organization_relations")
-                .build();
-        RelMetadata relMetadata = RelMetadata.newBuilder().setSemantics(semantics).build();
-        return OafRel.newBuilder().setRelType(RelType.projectOrganization).setSubRelType(SubRelType.participation)
-                .setRelClass(relClass).setChild(false).setSource(projectId).setTarget(organizationId)
-                .setProjectOrganization(ProjectOrganization.newBuilder()
-                        .setParticipation(Participation.newBuilder().setRelMetadata(relMetadata)).build())
-                .build();
+    private Relation createOafRelObject(String projectId, String organizationId) {
+
+        Relation relation = new Relation();
+        relation.setRelType("projectOrganization");
+        relation.setSubRelType("participation");
+        relation.setRelClass("hasParticipant");
+        relation.setSource(projectId);
+        relation.setTarget(organizationId);
+        
+        return relation;
     }
 
 }

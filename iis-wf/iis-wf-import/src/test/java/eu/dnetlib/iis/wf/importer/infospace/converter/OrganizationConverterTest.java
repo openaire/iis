@@ -12,13 +12,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.powermock.reflect.Whitebox;
 
-import eu.dnetlib.data.proto.FieldTypeProtos.Qualifier;
-import eu.dnetlib.data.proto.FieldTypeProtos.StringField;
-import eu.dnetlib.data.proto.OafProtos.OafEntity;
-import eu.dnetlib.data.proto.OrganizationProtos.Organization.Metadata;
-import eu.dnetlib.data.proto.TypeProtos.Type;
+import eu.dnetlib.dhp.schema.oaf.Field;
+import eu.dnetlib.dhp.schema.oaf.Qualifier;
 import eu.dnetlib.iis.importer.schemas.Organization;
-import eu.dnetlib.iis.wf.importer.infospace.converter.OrganizationConverter;
 
 /**
 * @author Łukasz Dumiszewski
@@ -57,12 +53,11 @@ public class OrganizationConverterTest {
         
         //given
         
-        Metadata orgMetadata = Metadata.newBuilder().build();
-        OafEntity oafEntity = createOafObject(orgMetadata);
+        eu.dnetlib.dhp.schema.oaf.Organization organization = createEmptyOafObject();
         
         // execute & assert
         
-        assertNull(converter.convert(oafEntity));
+        assertNull(converter.convert(organization));
         verify(log).error("skipping: empty organization name");
         
     }
@@ -71,20 +66,17 @@ public class OrganizationConverterTest {
     public void buildObject() throws Exception {
         
         //given
-        
-        Qualifier country = Qualifier.newBuilder().setClassid("PL").setClassname("Poland").build();
-        Metadata orgMetadata = Metadata.newBuilder()
-                                            .setLegalname(createStringField("Interdyscyplinary Centre"))
-                                            .setLegalshortname(createStringField("ICM"))
-                                            .setCountry(country)
-                                            .setWebsiteurl(createStringField("www.icm.edu.pl"))
-                                            .build();
-        OafEntity oafEntity = createOafObject(orgMetadata);
-        
+        Qualifier country = new Qualifier();
+        country.setClassid("PL");
+        country.setClassname("Poland");
+
+        eu.dnetlib.dhp.schema.oaf.Organization organization = createOafObject(country,
+                createStringField("Interdyscyplinary Centre"), createStringField("ICM"),
+                createStringField("www.icm.edu.pl"));
         
         // execute 
         
-        Organization org = converter.convert(oafEntity);
+        Organization org = converter.convert(organization);
         
         
         // assert
@@ -104,20 +96,32 @@ public class OrganizationConverterTest {
     
     //------------------------ PRIVATE --------------------------
     
-    private OafEntity createOafObject(Metadata orgMetadata) {
+    private eu.dnetlib.dhp.schema.oaf.Organization createEmptyOafObject() {
+
+        return createOafObject(null, null, null, null);
         
-        eu.dnetlib.data.proto.OrganizationProtos.Organization organization = eu.dnetlib.data.proto.OrganizationProtos.Organization.newBuilder()
-                                    .setMetadata(orgMetadata)
-                                    .build();
+    }
+    
+    private eu.dnetlib.dhp.schema.oaf.Organization createOafObject(Qualifier country, Field<String> legalname, Field<String> legalshortname,
+            Field<String> websiteurl) {
         
-        return OafEntity.newBuilder().setType(Type.organization).setId("SOME_ID").setOrganization(organization).build();
+        eu.dnetlib.dhp.schema.oaf.Organization organization = new eu.dnetlib.dhp.schema.oaf.Organization();
+        organization.setId("SOME_ID");
+        organization.setCountry(country);
+        organization.setLegalname(legalname);
+        organization.setLegalshortname(legalshortname);
+        organization.setWebsiteurl(websiteurl);
+        
+        return organization;
         
     }
 
 
 
-    private StringField createStringField(String value) {
-        return StringField.newBuilder().setValue(value).build();
+    private Field<String> createStringField(String value) {
+        Field<String> field = new Field<String>();
+        field.setValue(value);
+        return field;
     }
     
     

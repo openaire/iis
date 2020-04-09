@@ -2,8 +2,10 @@ package eu.dnetlib.iis.wf.importer.infospace.approver;
 
 import java.util.regex.Pattern;
 
-import eu.dnetlib.data.proto.FieldTypeProtos.DataInfo;
-import eu.dnetlib.data.proto.OafProtos.Oaf;
+import org.apache.commons.lang.StringUtils;
+
+import eu.dnetlib.dhp.schema.oaf.DataInfo;
+import eu.dnetlib.dhp.schema.oaf.Oaf;
 
 /**
  * Inference data based result approver.
@@ -12,6 +14,9 @@ import eu.dnetlib.data.proto.OafProtos.Oaf;
  *
  */
 public class DataInfoBasedApprover implements ResultApprover, FieldApprover {
+
+
+    private static final long serialVersionUID = -1093513836478197899L;
 
     /**
      * List of blacklisted inference provenance values.
@@ -73,7 +78,7 @@ public class DataInfoBasedApprover implements ResultApprover, FieldApprover {
             if (dataInfo.getInvisible()) {
                 return false;
             }
-            if (trustLevelThreshold != null && dataInfo.getTrust() != null && !dataInfo.getTrust().isEmpty()
+            if (trustLevelThreshold != null && StringUtils.isNotBlank(dataInfo.getTrust())
                     && Float.valueOf(dataInfo.getTrust()) < trustLevelThreshold) {
                 return false;
             }

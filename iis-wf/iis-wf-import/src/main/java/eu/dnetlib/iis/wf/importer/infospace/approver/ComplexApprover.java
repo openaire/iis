@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import eu.dnetlib.data.proto.OafProtos.Oaf;
+import eu.dnetlib.dhp.schema.oaf.Oaf;
 
 /**
  * Complex approver encapsulating multiple approvers.
@@ -14,6 +14,8 @@ import eu.dnetlib.data.proto.OafProtos.Oaf;
  */
 public class ComplexApprover implements ResultApprover {
 
+    private static final long serialVersionUID = -2609668045944653844L;
+        
     private final List<ResultApprover> approvers;
 
     // ------------------------ CONSTRUCTORS --------------------------
