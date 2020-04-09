@@ -9,8 +9,7 @@ import org.apache.avro.specific.SpecificRecord;
 import org.junit.Test;
 
 import eu.dnetlib.data.proto.OafProtos.OafRel;
-import eu.dnetlib.data.proto.RelTypeProtos.RelType;
-import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
+import eu.dnetlib.dhp.schema.oaf.Relation;
 
 /**
  * Base class for tests of the various {@link OafRelToAvroConverter}s
@@ -48,7 +47,7 @@ public abstract class OafRelToAvroConverterTestBase<T extends SpecificRecord> {
     @Test
     public void convert() throws Exception {
         // given
-        OafRel oafRel = createOafRelObject();
+        Relation oafRel = createOafRelObject();
 
         // execute
         T rel = converter.convert(oafRel);
@@ -62,16 +61,19 @@ public abstract class OafRelToAvroConverterTestBase<T extends SpecificRecord> {
     /**
      * Creates {@link OafRel} instance with source and target identifiers set.
      */
-    public static OafRel createOafRelObject(String sourceId, String targetId) {
-        return OafRel.newBuilder().setSource(sourceId).setTarget(targetId)
-                // the following values do not matter for the converters but the fields are required
-                .setRelType(RelType.resultResult).setSubRelType(SubRelType.provision)
-                .setRelClass("irrelevantRelClass").setChild(false).build();
+    public static Relation createOafRelObject(String sourceId, String targetId) {
+        Relation rel = new Relation();
+        rel.setSource(sourceId);
+        rel.setTarget(targetId);
+        rel.setRelType("resultResult");
+        rel.setSubRelType("provision");
+        rel.setRelClass("irrelevantRelClass");
+        return rel;
     }
     
     //------------------------ PRIVATE --------------------------
 
-    private static OafRel createOafRelObject() {
+    private static Relation createOafRelObject() {
         return createOafRelObject(SOURCE_ID, TARGET_ID);
     }
 }

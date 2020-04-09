@@ -4,14 +4,12 @@ import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 
-import eu.dnetlib.data.proto.FieldTypeProtos.StructuredProperty;
+import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
 import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
 
 /**

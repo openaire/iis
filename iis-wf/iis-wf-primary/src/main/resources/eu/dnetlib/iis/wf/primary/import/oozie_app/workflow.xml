@@ -11,23 +11,13 @@
 			<value>true</value>
 			<description>flag indicating contents should be filtered and their identifiers should be deduplicated against metadata entries retrieved from InformationSpace.
                 This way only contents having metadata representation will be processed.
-                To be disabled when processing new contents which metadata is not available in hbase or when original identifiers should be preserved (contents will not be filtered as well).
+                To be disabled when processing new contents which metadata is not available in infospace or when original identifiers should be preserved (contents will not be filtered as well).
             </description>
 		</property>
 		<!-- import metadata related -->
         <property>
-            <name>hbase_dump_location</name>
-            <description>InformationSpace HBase dump location, usually points to remote cluster HDFS location.</description>
-        </property>
-        <property>
-            <name>hbase_dump_distcp_memory_mb</name>
-            <value>6144</value>
-            <description>memory for distcp action copying InfoSpace dump from remote cluster</description>
-        </property>
-        <property>
-            <name>hbase_dump_distcp_num_maps</name>
-            <value>1</value>
-            <description>maximum number of simultaneous copies of InfoSpace dump from remote location</description>
+            <name>infospace_graph_location</name>
+            <description>local InformationSpace graph location</description>
         </property>
 		<property>
 			<name>inference_provenance_blacklist</name>
@@ -38,11 +28,6 @@
 			<name>trust_level_threshold</name>
 			<value>$UNDEFINED$</value>
 			<description>trust level threshold represented as float value, ignored when set to $UNDEFINED$ value</description>
-		</property>
-		<property>
-			<name>merge_body_with_updates</name>
-			<value>false</value>
-			<description>flag indicating Oaf objects strored in body qualifier should be merged with Oaf objects stored in update qualifier</description>
 		</property>
 		<!-- import concepts related -->
 		<property>
@@ -231,7 +216,7 @@
 
 	<fork name="import_forking">
 		<path start="import_concept" />
-		<path start="distcp_hbase_dump" />
+		<path start="import_infospace" />
 		<path start="decision-import_patent" />
 	</fork>
 
@@ -262,19 +247,6 @@
 		<error to="fail" />
 	</action>
 
-    <!-- importing hbase dump from remote cluster -->
-    <action name="distcp_hbase_dump">
-        <distcp xmlns="uri:oozie:distcp-action:0.2">
-            <arg>-Dmapreduce.map.memory.mb=${hbase_dump_distcp_memory_mb}</arg>
-            <arg>-pb</arg>
-            <arg>-m ${hbase_dump_distcp_num_maps}</arg>
-            <arg>${hbase_dump_location}</arg>
-            <arg>${nameNode}${workingDir}/hbase_dump</arg>
-        </distcp>
-        <ok to="import_infospace" />
-        <error to="fail" />
-    </action>
-
     <action name="import_infospace">
         <sub-workflow>
             <app-path>${wf:appPath()}/import_infospace</app-path>
@@ -285,8 +257,8 @@
                     <value>${workingDir}/import_infospace/working_dir</value>
                 </property>
                 <property>
-                    <name>input</name>
-                    <value>${workingDir}/hbase_dump</value>
+                    <name>input_root_path</name>
+                    <value>${infospace_graph_location}</value>
                 </property>
                 <property>
                     <name>output</name>
@@ -328,14 +300,6 @@
                 <!-- all the other properties are autmatically propagated -->
             </configuration>
         </sub-workflow>
-        <ok to="purge_hbase_dump" />
-        <error to="fail" />
-    </action>
-
-    <action name="purge_hbase_dump">
-        <fs>
-            <delete path="${nameNode}${workingDir}/hbase_dump" />
-        </fs>
         <ok to="transformers-idextractor" />
         <error to="fail" />
     </action>
