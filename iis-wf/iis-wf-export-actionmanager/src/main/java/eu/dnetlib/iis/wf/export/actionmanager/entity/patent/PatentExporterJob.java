@@ -377,7 +377,7 @@ public class PatentExporterJob {
         return OafProtos.Oaf.newBuilder()
                 .setKind(KindProtos.Kind.entity)
                 .setEntity(buildOafEntity(patent, patentIdToExport, patentDateOfCollection, patentEpoUrlRoot))
-                .setDataInfo(buildOafEntityDataInfo())
+                .setDataInfo(OAF_ENTITY_DATAINFO)
                 .setLastupdatetimestamp(System.currentTimeMillis())
                 .build();
     }
