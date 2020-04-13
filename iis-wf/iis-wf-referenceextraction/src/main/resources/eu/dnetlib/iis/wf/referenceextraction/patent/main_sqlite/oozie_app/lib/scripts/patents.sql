@@ -10,7 +10,7 @@ stdinput() );
 
 
 create temp table results as select * from (
-select  docid, authors, appln_id as id, prev||" "||middle||" "||next as context, appln_nr from 
+select  docid, authors, appln_nr as id, prev||" "||middle||" "||next as context, appln_nr from 
 (setschema 'docid,authors,prev,middle,next' select c1 as docid,c3 as authors, textwindow2s(keywords(c2),25,1,10, "(?:\D|\b)\d{6,12}\b") from (setschema 'c1,c2,c3' select * from pubs)), patents
 where regexpr("(?:\D|\b)(\d{6,12})\b",middle) = appln_nr 
 and (regexprmatches("european patent|patent application|patent office|ep patent|eu patent|patent",lower(context)) or 
