@@ -9,6 +9,13 @@ protocol IIS{
 
         // OpenAIRE identifier of the document
         string id;
+
+        // title
+        union { null , string } title = null;
+        // abstract or description
+        union { null , string } abstract = null;
+        // year of publication
+        union { null , int } year = null;
         
         // alternative identifier (e.g. pubmed identifier)
         union { null , map<string> } externalIdentifiers = null;

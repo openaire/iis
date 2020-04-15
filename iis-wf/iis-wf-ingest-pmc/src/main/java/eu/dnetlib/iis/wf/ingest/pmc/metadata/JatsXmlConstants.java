@@ -24,14 +24,17 @@ public final class JatsXmlConstants {
     protected static final String ELEM_SUP = "sup";
     protected static final String ELEM_COUNTRY = "country";
     protected static final String ELEM_INSTITUTION = "institution";
-    
+    protected static final String ELEM_ARTICLE_TITLE_GROUP = "title-group";
+    protected static final String ELEM_ARTICLE_TITLE = "article-title";
+    protected static final String ELEM_ABSTRACT = "abstract";
+    protected static final String ELEM_PUB_DATE = "pub-date";
+    protected static final String ELEM_PUB_DATE_YEAR = "year";
     
 //  back citations
     protected static final String ELEM_REF_LIST = "ref-list";
     protected static final String ELEM_REF = "ref";
     protected static final String ELEM_PUB_ID = "pub-id";
 //  back citations meta
-    protected static final String ELEM_ARTICLE_TITLE = "article-title";
     protected static final String ELEM_SOURCE = "source";
     protected static final String ELEM_YEAR = "year";
     protected static final String ELEM_VOLUME = "volume";
@@ -49,6 +52,8 @@ public final class JatsXmlConstants {
 //  attributes
     protected static final String PUB_ID_TYPE = "pub-id-type";
     protected static final String ATTR_ARTICLE_TYPE = "article-type";
+    protected static final String ATTR_DATE_TYPE = "date-type";
+    protected static final String ATTR_PUB_TYPE = "pub-type";
     
     // contributors
     protected static final String ELEM_CONTRIBUTOR_GROUP = "contrib-group";

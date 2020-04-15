@@ -6,6 +6,7 @@ import static eu.dnetlib.iis.wf.ingest.pmc.metadata.TagHierarchyUtils.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -38,7 +39,7 @@ public class JatsXmlHandler extends DefaultHandler {
      * Default constructor.
      * @param receiver
      */
-    public JatsXmlHandler(ExtractedDocumentMetadata.Builder builder) {
+    public JatsXmlHandler(ExtractedDocumentMetadata.Builder builder, Logger log) {
         super();
         this.builder = builder;
         if (!this.builder.hasExternalIdentifiers()) {
@@ -47,7 +48,7 @@ public class JatsXmlHandler extends DefaultHandler {
         
         Map<String, ProcessingFinishedAwareXmlHandler> handlers = Maps.newHashMap();
         handlers.put(ELEM_JOURNAL_META, new JournalMetaXmlHandler(builder));
-        handlers.put(ELEM_ARTICLE_META, new ArticleMetaXmlHandler(builder));
+        handlers.put(ELEM_ARTICLE_META, new ArticleMetaXmlHandler(builder, log));
         handlers.put(ELEM_REF_LIST, new RefListXmlHandler(builder));
         xmlSwitcherHandler = new XmlSwitcherHandler(handlers);
     }

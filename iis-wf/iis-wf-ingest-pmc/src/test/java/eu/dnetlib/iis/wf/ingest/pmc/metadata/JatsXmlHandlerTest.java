@@ -11,6 +11,7 @@ import java.io.Reader;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +53,7 @@ public class JatsXmlHandlerTest {
 		metaBuilder = ExtractedDocumentMetadata.newBuilder();
 		metaBuilder.setId("some-id");
 		metaBuilder.setText("");
-		jatsXmlHandler = new JatsXmlHandler(metaBuilder);
+		jatsXmlHandler = new JatsXmlHandler(metaBuilder, Logger.getLogger(this.getClass()));
 	}
 
 	@After

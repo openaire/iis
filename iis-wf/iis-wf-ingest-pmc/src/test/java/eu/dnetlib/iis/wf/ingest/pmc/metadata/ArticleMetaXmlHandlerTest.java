@@ -10,6 +10,7 @@ import java.util.List;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.XMLReader;
@@ -51,11 +52,41 @@ public class ArticleMetaXmlHandlerTest {
         metaBuilder.setExternalIdentifiers(Maps.newHashMap());
         metaBuilder.setEntityType("");
         
-        articleMetaXmlHandler = new ArticleMetaXmlHandler(metaBuilder);
+        articleMetaXmlHandler = new ArticleMetaXmlHandler(metaBuilder, Logger.getLogger(this.getClass()));
     }
     
     
     //------------------------ TESTS --------------------------
+    
+    @Test
+    public void testPubDateTitleAndAbstract() throws Exception {
+        
+        // given
+        
+        File xmlFile = new File(XML_BASE_PATH + "/article_with_pubdate_title_abstract.xml");
+        
+        
+        // execute
+        
+        saxParser.parse(xmlFile, articleMetaXmlHandler);
+        
+        ExtractedDocumentMetadata metadata = metaBuilder.build();
+        
+        
+        // assert
+
+        assertEquals(new Integer(2013), metadata.getYear());
+        
+        assertEquals("An evaluation of minimal cellular functions to sustain a bacterial cell", metadata.getTitle());
+        
+        String expectedAbstract = "Abstract\n" +
+        "        \n" +
+        "            This is some abstract with external link:\n" +
+        "            http://www.sens-it-iv.eu\n" +
+        "            and with italic text:\n" +
+        "            italic";
+        assertEquals(expectedAbstract, metadata.getAbstract$());
+    }
     
     @Test
     public void testAuthorsWithXRefAffiliation() throws Exception {

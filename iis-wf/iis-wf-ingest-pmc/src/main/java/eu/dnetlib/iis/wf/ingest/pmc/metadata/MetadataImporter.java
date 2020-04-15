@@ -175,7 +175,7 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
 		reader.setFeature("http://xml.org/sax/features/validation", false);
 		reader.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
 		reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-		JatsXmlHandler pmcXmlHandler = new JatsXmlHandler(output);
+		JatsXmlHandler pmcXmlHandler = new JatsXmlHandler(output, log);
 		saxParser.parse(new InputSource(new StringReader(xmlInput)), pmcXmlHandler);
 	}
 

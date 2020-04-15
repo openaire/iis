@@ -6,8 +6,12 @@ import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ATTR_CONTRI
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ATTR_VALUE_AUTHOR;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ATTR_XREF_ID;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ATTR_XREF_TYPE;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ATTR_DATE_TYPE;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ATTR_PUB_TYPE;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_ABSTRACT;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_AFFILIATION;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_ARTICLE_ID;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_ARTICLE_META;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_CONTRIBUTOR;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_CONTRIBUTOR_GROUP;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_FPAGE;
@@ -17,6 +21,10 @@ import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_LPAGE;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_NAME;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_SUP;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_SURNAME;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_PUB_DATE;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_PUB_DATE_YEAR;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_ARTICLE_TITLE;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_ARTICLE_TITLE_GROUP;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_XREF;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.PUB_ID_TYPE;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.TagHierarchyUtils.hasAmongParents;
@@ -24,9 +32,11 @@ import static eu.dnetlib.iis.wf.ingest.pmc.metadata.TagHierarchyUtils.isElement;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.TagHierarchyUtils.isWithinElement;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.jdom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -34,6 +44,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.collect.Lists;
 
+import datafu.com.google.common.collect.Maps;
 import eu.dnetlib.iis.common.importer.CermineAffiliation;
 import eu.dnetlib.iis.common.importer.CermineAffiliationBuilder;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.Affiliation;
@@ -51,11 +62,21 @@ import pl.edu.icm.cermine.metadata.affiliation.CRFAffiliationParser;
  */
 public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingFinishedAwareXmlHandler {
     
+    private static final String PUB_TYPE_EPUB = "epub";
+    private static final String PUB_TYPE_PPUB = "ppub";
+    private static final String PUB_TYPE_EPUB_PPUB = "epub-ppub";
+    private static final String PUB_TYPE_EPREPRINT = "epreprint";
+    
+    private static final String[] DATE_TYPE_ORDERED_BY_RELEVANCE = new String[] { PUB_TYPE_EPUB_PPUB, PUB_TYPE_EPUB,
+            PUB_TYPE_PPUB, PUB_TYPE_EPREPRINT };
+    
     /**
      * Maximum affiliation lenght required due to Mallet library limitation causing StackOverflowError
      * https://github.com/openaire/iis/issues/663 
      */
     private static final int MAX_AFF_LENGTH = 3000;
+    
+    private final Logger log;
     
     private Stack<String> parents;
     
@@ -76,11 +97,19 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
     private final List<JatsAuthor> currentAuthorsGroup = Lists.newArrayList();
     private final List<JatsAuthor> currentAuthors = Lists.newArrayList();
     
+    private String currentPublicationDateType;
+    private Map<String, String> publicationDates = Maps.newHashMap();
+    
+    private final StringBuilder title = new StringBuilder();
+    
+    private final StringBuilder strippedAbstact = new StringBuilder();
+
     
     //------------------------ CONSTRUCTOS --------------------------
     
-    public ArticleMetaXmlHandler(ExtractedDocumentMetadata.Builder builder) {
+    public ArticleMetaXmlHandler(ExtractedDocumentMetadata.Builder builder, Logger log) {
         super();
+        this.log = log;
         this.builder = builder;
         this.parents = new Stack<String>();
     }
@@ -98,8 +127,13 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         
-        
-        if (isElement(qName, ELEM_AFFILIATION)) {
+        if (isElement(qName, ELEM_PUB_DATE)) {
+            //date-type was replaced with pub-type in JATS 2.3
+            currentPublicationDateType = attributes.getValue(ATTR_DATE_TYPE);
+            if (currentPublicationDateType == null) {
+                currentPublicationDateType = attributes.getValue(ATTR_PUB_TYPE);
+            }
+        } else if (isElement(qName, ELEM_AFFILIATION)) {
             currentAffiliationId = attributes.getValue(ATTR_AFFILIATION_ID);
         } else if (isElement(qName, ELEM_ARTICLE_ID)) {
             currentArticleIdType = attributes.getValue(PUB_ID_TYPE);
@@ -125,7 +159,11 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
         
         this.currentValue = new String(ch, start, length);
         
-        if (hasAmongParents(parents, ELEM_AFFILIATION)) {
+        if (hasAmongParents(parents, ELEM_ARTICLE_TITLE, ELEM_ARTICLE_TITLE_GROUP)) {
+            this.title.append(currentValue);
+        } else if (hasAmongParents(parents, ELEM_ABSTRACT, ELEM_ARTICLE_META)) {
+            this.strippedAbstact.append(currentValue);
+        } else if (hasAmongParents(parents, ELEM_AFFILIATION)) {
             
             // skipping affiliation position element
             if (!hasAmongParents(parents, ELEM_LABEL) && !hasAmongParents(parents, ELEM_SUP)) {
@@ -141,8 +179,16 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         this.parents.pop();
-        
-        if (isElement(qName, ELEM_ARTICLE_ID) && currentArticleIdType != null) {
+        if (isWithinElement(qName, ELEM_ARTICLE_TITLE, parents, ELEM_ARTICLE_TITLE_GROUP)) {
+            builder.setTitle(title.toString());
+        } else if (isWithinElement(qName, ELEM_ABSTRACT, parents, ELEM_ARTICLE_META)) {
+            builder.setAbstract$(strippedAbstact.toString().trim());
+        } else if (isWithinElement(qName, ELEM_PUB_DATE_YEAR, parents, ELEM_PUB_DATE)) {
+            String publicationYear = this.currentValue.trim();
+            if (StringUtils.isNotBlank(currentPublicationDateType) && StringUtils.isNotBlank(publicationYear)) {
+                this.publicationDates.put(currentPublicationDateType, publicationYear);    
+            }
+        } else if (isElement(qName, ELEM_ARTICLE_ID) && currentArticleIdType != null) {
             builder.getExternalIdentifiers().put(currentArticleIdType, currentValue.trim());
         } else if (isElement(qName, ELEM_FPAGE)) {
             if (builder.getPages()==null) {
@@ -189,6 +235,7 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
                     .build();
             builder.getAuthors().add(author);
         }
+        builder.setYear(getPublicationYear());    
     }
 
     @Override
@@ -198,6 +245,35 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
     
     
     //------------------------ PRIVATE --------------------------
+    
+    private Integer getPublicationYear() {
+        //return getPublicationYearByDateType();
+        return getEarliestPublicationYear();
+    }
+    
+    private Integer getPublicationYearByDateType() {
+        for (String currentDateType : DATE_TYPE_ORDERED_BY_RELEVANCE) {
+            String publicationDate = publicationDates.get(currentDateType);
+            if (StringUtils.isNotBlank(publicationDate)) {
+                try {
+                    return Integer.parseInt(publicationDate);
+                } catch (NumberFormatException e) {
+                    log.error("Invalid publication year: " + publicationDate);
+                }
+            }
+        }
+        return null;
+    }
+    
+    private Integer getEarliestPublicationYear() {
+        try {
+            int result = publicationDates.values().stream().mapToInt(Integer::parseInt).min().orElse(-1);
+            return result > 0 ? result : null;
+        } catch (NumberFormatException e) {
+            log.error("Invalid publication year", e);
+            return null;
+        }
+    }
     
     private void handleAffiliation() throws SAXException {
         
