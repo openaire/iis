@@ -33,6 +33,10 @@
             <value>$UNDEFINED$</value>
         </property>
         <property>
+            <name>input_document_to_covid19</name>
+            <value>$UNDEFINED$</value>
+        </property>
+        <property>
             <name>input_document_to_software_url</name>
             <value>$UNDEFINED$</value>
         </property>
@@ -134,6 +138,11 @@
             <name>action_set_id_document_pdb</name>
             <value>$UNDEFINED$</value>
             <description>document protein databank action-set identifier of exported data</description>
+        </property>
+        <property>
+            <name>action_set_id_document_covid19</name>
+            <value>$UNDEFINED$</value>
+            <description>document to covid19 action-set identifier of exported data</description>
         </property>
         <property>
             <name>action_set_id_document_software_url</name>

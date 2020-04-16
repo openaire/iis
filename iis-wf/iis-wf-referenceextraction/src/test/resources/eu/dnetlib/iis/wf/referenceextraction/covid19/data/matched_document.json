@@ -1,0 +1,10 @@
+{
+    "id":"id-1",
+    "title":"some title",
+	"date":"2000"
+}
+{
+    "id":"id-2",
+    "title":"Irrelevant title",
+    "date":null
+}
