@@ -88,7 +88,7 @@
     <action name="input-transformer">
         <spark xmlns="uri:oozie:spark-action:0.2">
             <prepare>
-                <delete path="${workingDir}/meta_with_text" />
+                <delete path="${nameNode}${workingDir}/meta_with_text" />
             </prepare>
             <configuration>
                 <property>
@@ -120,7 +120,7 @@
     <action name="main_sqlite">
         <map-reduce>
             <prepare>
-                <delete path="${nameNode}${output}"/>
+                <delete path="${nameNode}${workingDir}/matched_documents"/>
             </prepare>
             <streaming>
                 <mapper>scripts/madis/mexec.py -f scripts/covid19extract.sql</mapper>
