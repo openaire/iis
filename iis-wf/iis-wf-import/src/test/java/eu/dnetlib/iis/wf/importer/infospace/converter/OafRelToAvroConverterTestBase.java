@@ -8,7 +8,6 @@ import java.util.function.Function;
 import org.apache.avro.specific.SpecificRecord;
 import org.junit.Test;
 
-import eu.dnetlib.data.proto.OafProtos.OafRel;
 import eu.dnetlib.dhp.schema.oaf.Relation;
 
 /**
@@ -59,7 +58,7 @@ public abstract class OafRelToAvroConverterTestBase<T extends SpecificRecord> {
     }
 
     /**
-     * Creates {@link OafRel} instance with source and target identifiers set.
+     * Creates {@link Relation} instance with source and target identifiers set.
      */
     public static Relation createOafRelObject(String sourceId, String targetId) {
         Relation rel = new Relation();

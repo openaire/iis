@@ -29,17 +29,9 @@ public class MockDocumentProjectActionBuilderFactory implements ActionBuilderFac
             @SuppressWarnings("unchecked")
             @Override
             public List<AtomicAction<Relation>> build(DocumentToProject object) throws TrustLevelThresholdExceededException {
-
-                AtomicAction<Relation> action = new AtomicAction<Relation>() {
-
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public String toString() {
-                        return toStringRepresentation(object);
-                    }
-                };
-
+                AtomicAction<Relation> action = new AtomicAction<Relation>();
+                action.setClazz(Relation.class);
+                action.setPayload(buildRelation(object));
                 return Lists.newArrayList(action);
             }
         };
@@ -53,14 +45,11 @@ public class MockDocumentProjectActionBuilderFactory implements ActionBuilderFac
     /**
      * Generates string representation of input object.
      */
-    public static String toStringRepresentation(DocumentToProject input) {
-        StringBuilder strBuilder = new StringBuilder();
-        strBuilder.append(input.getDocumentId());
-        strBuilder.append("|");
-        strBuilder.append(input.getProjectId());
-        strBuilder.append("|");
-        strBuilder.append(input.getConfidenceLevel());
-        return strBuilder.toString();
+    public static Relation buildRelation(DocumentToProject input) {
+        Relation rel = new Relation();
+        rel.setSource(input.getDocumentId().toString());
+        rel.setTarget(input.getProjectId().toString());
+        return rel;
     }
     
 }

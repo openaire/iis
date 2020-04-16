@@ -158,8 +158,6 @@ public class SoftwareExporterJob {
                 .map(e -> buildEntityAction(e));
         
         RDDUtils.saveTextPairRDD(
-                // FIXME temporarily writing as sequencefile instead of plain text files
-                // pairs, 
                 entityResult.mapToPair(action -> new Tuple2<>(new Text(""), new Text(new ObjectMapper().writeValueAsString(action)))),
                 numberOfOutputFiles, outputAvroPath, jobConfig);
 
@@ -192,8 +190,6 @@ public class SoftwareExporterJob {
                 .flatMap(x -> buildRelationActions(x._1(), x._2(), x._3()).iterator());
         
         RDDUtils.saveTextPairRDD(
-                // FIXME temporarily writing as sequencefile instead of plain text files
-                // pairs,
                 relationResult.mapToPair(action -> new Tuple2<>(new Text(""), new Text(new ObjectMapper().writeValueAsString(action)))),
                 numberOfOutputFiles, outputAvroPath, jobConfig);
         return dedupedRelationTriples;

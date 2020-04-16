@@ -21,6 +21,10 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 
 /**
@@ -84,8 +88,11 @@ public class SequenceFileExporterMapperTest {
         // assert
         verify(context, times(1)).write(keyCaptor.capture(), valueCaptor.capture());
         assertTrue(StringUtils.isBlank(keyCaptor.getValue().toString()));
-        assertEquals(MockDocumentProjectActionBuilderFactory.toStringRepresentation(docToProj), 
-                valueCaptor.getValue().toString());
+        
+        AtomicAction expectedAction = new AtomicAction<>();
+        expectedAction.setClazz(Relation.class);
+        expectedAction.setPayload(MockDocumentProjectActionBuilderFactory.buildRelation(docToProj));
+        assertEquals(new ObjectMapper().writeValueAsString(expectedAction), valueCaptor.getValue().toString());
     }
 
 

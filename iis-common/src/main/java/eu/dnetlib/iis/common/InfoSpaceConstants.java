@@ -1,9 +1,5 @@
 package eu.dnetlib.iis.common;
 
-import java.io.UnsupportedEncodingException;
-
-import eu.dnetlib.data.proto.TypeProtos.Type;
-
 /**
  * InfoSpaceConstants constants.
  * 
@@ -29,9 +25,6 @@ public final class InfoSpaceConstants {
     public static final String ROW_PREFIX_DATASOURCE = "10|";
 
     public static final String OPENAIRE_ENTITY_ID_PREFIX = "openaire____";
-
-    public static final String QUALIFIER_BODY_STRING = "body";
-    public static final byte[] QUALIFIER_BODY;
 
     public static final String SEMANTIC_CLASS_MAIN_TITLE = "main title";
     public static final String SEMANTIC_CLASS_ALTERNATIVE_TITLE = "alternative title";
@@ -81,29 +74,6 @@ public final class InfoSpaceConstants {
     public static final String SEMANTIC_CLASS_INSTANCE_TYPE_PATENT = "0019";
     public static final String SEMANTIC_CLASS_INSTANCE_TYPE_DATASET = "0021";
     public static final String SEMANTIC_CLASS_INSTANCE_TYPE_SOFTWARE = "0029";
-
-    static {
-        try {
-            QUALIFIER_BODY = QUALIFIER_BODY_STRING.getBytes(ENCODING_UTF8);
-
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Returns column family name for given entity type.
-     * 
-     * @param entityType
-     * @return column family name for given entity type
-     */
-    public static byte[] getColumnFamily(Type entityType) {
-        try {
-            return entityType.name().getBytes(ENCODING_UTF8);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private InfoSpaceConstants() {
     }

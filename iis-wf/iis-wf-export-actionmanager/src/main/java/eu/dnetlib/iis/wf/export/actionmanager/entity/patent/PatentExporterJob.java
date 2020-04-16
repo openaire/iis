@@ -135,8 +135,6 @@ public class PatentExporterJob {
             JavaRDD<AtomicAction<Relation>> relationsToExport = relationsToExport(documentToPatentsToExportWithIds);
 
             RDDUtils.saveTextPairRDD(
-                 // FIXME temporarily writing as sequencefile instead of plain text files
-                    // pairs, 
                     relationsToExport.mapToPair(action -> new Tuple2<>(new Text(""), new Text(new ObjectMapper().writeValueAsString(action)))),
                     numberOfOutputFiles, params.outputRelationPath, configuration);
 
@@ -147,8 +145,6 @@ public class PatentExporterJob {
                             params.patentEpoUrlRoot);
             
             RDDUtils.saveTextPairRDD(
-                    // FIXME temporarily writing as sequencefile instead of plain text files
-                    // pairs, 
                     entitiesToExport.mapToPair(action -> new Tuple2<>(new Text(""), new Text(new ObjectMapper().writeValueAsString(action)))),
                     numberOfOutputFiles, params.outputEntityPath, configuration);
 
