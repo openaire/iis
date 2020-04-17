@@ -18,7 +18,6 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -46,6 +45,7 @@ import eu.dnetlib.iis.common.utils.RDDUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.HolderCountry;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
+import eu.dnetlib.iis.wf.export.actionmanager.ActionSerializationUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.entity.ConfidenceLevelUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.module.AlgorithmName;
 import eu.dnetlib.iis.wf.export.actionmanager.module.BuilderModuleHelper;
@@ -131,22 +131,18 @@ public class PatentExporterJob {
                                 patentIdToExport(patent.getApplnAuth(), patent.getApplnNr()));
                     })
                     .cache();
+            
+            JavaPairRDD<Text, Text> relationsToExport = relationsToExport(documentToPatentsToExportWithIds);
 
-            JavaRDD<AtomicAction<Relation>> relationsToExport = relationsToExport(documentToPatentsToExportWithIds);
-
-            RDDUtils.saveTextPairRDD(
-                    relationsToExport.mapToPair(action -> new Tuple2<>(new Text(""), new Text(new ObjectMapper().writeValueAsString(action)))),
-                    numberOfOutputFiles, params.outputRelationPath, configuration);
+            RDDUtils.saveTextPairRDD(relationsToExport, numberOfOutputFiles, params.outputRelationPath, configuration);
 
             String patentDateOfCollection = DateTimeUtils.format(
                     LocalDateTime.parse(params.patentDateOfCollection, PATENT_DATE_OF_COLLECTION_FORMATTER));
-            JavaRDD<AtomicAction<Publication>> entitiesToExport =
+            JavaPairRDD<Text, Text> entitiesToExport =
                     entitiesToExport(documentToPatentsToExportWithIds, patentsById, patentDateOfCollection,
                             params.patentEpoUrlRoot);
             
-            RDDUtils.saveTextPairRDD(
-                    entitiesToExport.mapToPair(action -> new Tuple2<>(new Text(""), new Text(new ObjectMapper().writeValueAsString(action)))),
-                    numberOfOutputFiles, params.outputEntityPath, configuration);
+            RDDUtils.saveTextPairRDD(entitiesToExport, numberOfOutputFiles, params.outputEntityPath, configuration);
 
             counterReporter.report(sc, documentToPatentsToExportWithIds, params.outputReportPath);
         }
@@ -278,15 +274,21 @@ public class PatentExporterJob {
         return y;
     }
 
-    private static JavaRDD<AtomicAction<Relation>> relationsToExport(
+    private static  JavaPairRDD<Text, Text> relationsToExport(
             JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds) {
-        return documentToPatentsToExportWithIds.flatMap(x -> {
+        
+        JavaRDD<AtomicAction<Relation>> result = documentToPatentsToExportWithIds.flatMap(x -> {
             DocumentToPatent documentToPatent = x.getDocumentToPatent();
             String documentIdToExport = x.getDocumentIdToExport();
             String patentIdToExport = x.getPatentIdToExport();
             return buildRelationActions(documentToPatent, documentIdToExport, patentIdToExport).iterator();
         });
+        
+        return ActionSerializationUtils.mapActionToText(result);
+        
     }
+    
+    
 
     private static List<AtomicAction<Relation>> buildRelationActions(DocumentToPatent documentToPatent,
                                                            String documentIdToExport,
@@ -317,11 +319,11 @@ public class PatentExporterJob {
         return relation;
     }
 
-    private static JavaRDD<AtomicAction<Publication>> entitiesToExport(JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds,
+    private static JavaPairRDD<Text, Text> entitiesToExport(JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds,
                                                             JavaPairRDD<CharSequence, Patent> patentsById,
                                                             String patentDateOfCollection,
                                                             String patentEpoUrlRoot) {
-        return documentToPatentsToExportWithIds
+        JavaRDD<AtomicAction<Publication>> result = documentToPatentsToExportWithIds
                 .mapToPair(x -> new Tuple2<>(x.getDocumentToPatent().getPatentId(), x.getPatentIdToExport()))
                 .distinct()
                 .join(patentsById)
@@ -331,6 +333,8 @@ public class PatentExporterJob {
                     Patent patent = x._2();
                     return buildEntityAction(patent, patentIdToExport, patentDateOfCollection, patentEpoUrlRoot);
                 });
+
+        return ActionSerializationUtils.mapActionToText(result);
     }
 
     private static AtomicAction<Publication> buildEntityAction(Patent patent, String patentIdToExport,

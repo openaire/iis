@@ -10,6 +10,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.log4j.Logger;
 
 import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.KeyValue;
 import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity;
@@ -30,6 +31,8 @@ public class DocumentSimilarityActionBuilderModuleFactory extends AbstractAction
     private static final String REL_CLASS_IS_AMONG_TOP_N = "isAmongTopNSimilarDocuments";
     
     private static final String REL_CLASS_HAS_AMONG_TOP_N = "hasAmongTopNSimilarDocuments";
+    
+    private static final String REL_PROPERTY_SIMILARITY_LEVEL = "similarityLevel";
 
     
     private static final Logger log = Logger.getLogger(DocumentSimilarityActionBuilderModuleFactory.class);
@@ -113,12 +116,19 @@ public class DocumentSimilarityActionBuilderModuleFactory extends AbstractAction
             relation.setRelClass(invert ? REL_CLASS_IS_AMONG_TOP_N : REL_CLASS_HAS_AMONG_TOP_N);
             relation.setDataInfo(buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
             relation.setLastupdatetimestamp(System.currentTimeMillis());
-            // FIXME extend Relation model to fin similarity score in
-            if (true) throw new RuntimeException("unable to export score");
-            // relation.setSimilarity(score);
-            return relation;
+            throw new RuntimeException("awaiting Relation model extension required to export score");
+            // FIXME extend Relation model to export similarity score, replace throwing Exception with the two lines below
+            // relation.setProperties(Arrays.asList(buildSimilarityLevel(score)));
+            // return relation;
         }
 
+        private KeyValue buildSimilarityLevel(float score) {
+            KeyValue keyValue = new KeyValue();
+            keyValue.setKey(REL_PROPERTY_SIMILARITY_LEVEL);
+            keyValue.setValue(BuilderModuleHelper.getDecimalFormat().format(score));
+            return keyValue;
+        }
+        
     }
 
 }

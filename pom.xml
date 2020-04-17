@@ -520,19 +520,6 @@
 
             <dependency>
                 <groupId>eu.dnetlib</groupId>
-                <artifactId>dnet-actionmanager-common</artifactId>
-                <version>[6.0.0, 7.0.0)</version>
-                <exclusions>
-                    <!-- duplicate with different groupId -->
-                    <exclusion>
-                        <groupId>apache</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>eu.dnetlib</groupId>
                 <artifactId>cnr-service-utils</artifactId>
                 <version>[1.0.0, 2.0.0)</version>
             </dependency>

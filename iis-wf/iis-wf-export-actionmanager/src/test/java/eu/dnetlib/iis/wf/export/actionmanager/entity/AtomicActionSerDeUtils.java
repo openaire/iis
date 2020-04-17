@@ -2,7 +2,6 @@ package eu.dnetlib.iis.wf.export.actionmanager.entity;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,14 +16,6 @@ import eu.dnetlib.dhp.schema.oaf.Oaf;
  */
 public class AtomicActionSerDeUtils {
 
-    /**
-     * Serializes action given as input parameter.
-     */
-    public static String serializeAction(AtomicAction<? extends Oaf> action) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(action);
-    }
-    
     /**
      * Returns deserialized {@link AtomicAction} payload.
      */

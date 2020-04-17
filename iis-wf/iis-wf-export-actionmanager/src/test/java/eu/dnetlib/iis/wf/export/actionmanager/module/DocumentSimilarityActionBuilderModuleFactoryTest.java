@@ -14,7 +14,6 @@ import com.google.protobuf.InvalidProtocolBufferException;
 
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.Relation;
-import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity;
 
 /**
@@ -99,10 +98,13 @@ public class DocumentSimilarityActionBuilderModuleFactoryTest extends AbstractAc
 
         assertNotNull(relation.getDataInfo());
 
-        float normalizedTrust = similarity * InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
-        // FIXME we should compare not with dataInfo but with similarity score stored in a dedicated field
-        fail("we should compare not with dataInfo but with similarity score stored in a dedicated field");
-        assertEquals(normalizedTrust, Float.parseFloat(relation.getDataInfo().getTrust()), 0.0001);
+        fail("awaiting Relation model extension required to export score");
+        // FIXME replace fail() with the lines belowe
+        // assertNotNull(relation.getProperties());
+        // assertEquals(1, relation.getProperties().size());
+        // KeyValue similarityLevel = relation.getProperties().get(0);
+        // assertEquals("similarityLevel", similarityLevel.getKey());
+        // assertEquals(BuilderModuleHelper.getDecimalFormat().format(similarity), similarityLevel.getValue());
     }
 
 }

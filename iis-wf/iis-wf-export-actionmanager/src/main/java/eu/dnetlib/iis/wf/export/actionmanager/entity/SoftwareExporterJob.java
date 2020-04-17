@@ -10,7 +10,6 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.SequenceFile.CompressionType;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
@@ -19,7 +18,6 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.Optional;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -43,6 +41,7 @@ import eu.dnetlib.iis.common.utils.DateTimeUtils;
 import eu.dnetlib.iis.common.utils.RDDUtils;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
+import eu.dnetlib.iis.wf.export.actionmanager.ActionSerializationUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.module.AlgorithmName;
 import eu.dnetlib.iis.wf.export.actionmanager.module.BuilderModuleHelper;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
@@ -154,12 +153,10 @@ public class SoftwareExporterJob {
         // to be used by both entity exporter and reporter consumers
         documentToSoftwareReducedValues.cache();
         
-        JavaRDD<AtomicAction<Software>> entityResult = documentToSoftwareReducedValues
-                .map(e -> buildEntityAction(e));
-        
-        RDDUtils.saveTextPairRDD(
-                entityResult.mapToPair(action -> new Tuple2<>(new Text(""), new Text(new ObjectMapper().writeValueAsString(action)))),
-                numberOfOutputFiles, outputAvroPath, jobConfig);
+        JavaRDD<AtomicAction<Software>> entityResult = documentToSoftwareReducedValues.map(e -> buildEntityAction(e));
+
+        RDDUtils.saveTextPairRDD(ActionSerializationUtils.mapActionToText(entityResult), numberOfOutputFiles,
+                outputAvroPath, jobConfig);
 
         return documentToSoftwareReducedValues;
     }
@@ -189,9 +186,9 @@ public class SoftwareExporterJob {
         JavaRDD<AtomicAction<Relation>> relationResult = dedupedRelationTriples
                 .flatMap(x -> buildRelationActions(x._1(), x._2(), x._3()).iterator());
         
-        RDDUtils.saveTextPairRDD(
-                relationResult.mapToPair(action -> new Tuple2<>(new Text(""), new Text(new ObjectMapper().writeValueAsString(action)))),
-                numberOfOutputFiles, outputAvroPath, jobConfig);
+        RDDUtils.saveTextPairRDD(ActionSerializationUtils.mapActionToText(relationResult), numberOfOutputFiles,
+                outputAvroPath, jobConfig);
+
         return dedupedRelationTriples;
     }
     

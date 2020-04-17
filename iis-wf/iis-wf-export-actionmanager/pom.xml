@@ -41,7 +41,7 @@
 
         <dependency>
             <groupId>eu.dnetlib</groupId>
-            <artifactId>dnet-actionmanager-common</artifactId>
+            <artifactId>dnet-openaireplus-mapping-utils</artifactId>
         </dependency>
 
         <dependency>
