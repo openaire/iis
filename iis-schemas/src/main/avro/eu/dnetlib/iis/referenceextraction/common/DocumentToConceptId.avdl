@@ -1,4 +1,4 @@
-@namespace("eu.dnetlib.iis.referenceextraction.community.schemas")
+@namespace("eu.dnetlib.iis.referenceextraction.common.schemas")
 protocol IIS{
 
     record DocumentToConceptId {

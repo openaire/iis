@@ -1,3 +1,18 @@
-{"documentId": "id-1", "conceptId": "1hcr", "confidenceLevel": 0.25}
-{"documentId": "id-1", "conceptId": "1cad", "confidenceLevel": 0.25}
-{"documentId": "id-1", "conceptId": "1enh", "confidenceLevel": 0.25}
+{
+  "documentId": "id-1",
+  "conceptId": "1hcr",
+  "confidenceLevel": 0.25,
+  "textsnippet": "   sample text related proteins listed pdb-code names 1hcr 1cad 1enh proteins matched database"
+}
+{
+  "documentId": "id-1",
+  "conceptId": "1cad",
+  "confidenceLevel": 0.25,
+  "textsnippet": "   sample text related proteins listed pdb-code names 1cad 1enh proteins matched database entries"
+}
+{
+  "documentId": "id-1",
+  "conceptId": "1enh",
+  "confidenceLevel": 0.25,
+  "textsnippet": "   sample text related proteins listed pdb-code names 1enh proteins matched database entries "
+}

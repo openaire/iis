@@ -28,7 +28,7 @@
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
             <arg>-C{document_to_concept_id,
-				eu.dnetlib.iis.referenceextraction.community.schemas.DocumentToConceptId,
+				eu.dnetlib.iis.referenceextraction.common.schemas.DocumentToConceptId,
 				eu/dnetlib/iis/wf/transformers/export/communities/test/data/document_to_community_id.json}</arg>
             <arg>-Odocument_to_concept_id=${workingDir}/producer/output</arg>
         </java>
