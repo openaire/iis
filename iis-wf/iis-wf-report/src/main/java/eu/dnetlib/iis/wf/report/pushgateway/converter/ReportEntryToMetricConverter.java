@@ -8,6 +8,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Converts report entries to prometheus gauges.
+ * <p>
+ * For report entries containing durations gauge's name is created from report key by replacing dots with
+ * underscores and adding '_seconds' suffix. For report entries containing counters gauge's name is created from report
+ * key value by replacing dots with underscores additionally supporting labels given as a map from metric name to an
+ * array of label names.
+ */
 public class ReportEntryToMetricConverter {
 
     private static final String HELP_PREFIX = "location";
