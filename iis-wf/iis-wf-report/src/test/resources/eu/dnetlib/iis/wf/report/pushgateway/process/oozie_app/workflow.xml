@@ -1,0 +1,72 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-pushgateway-push">
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+    <start to="producer"/>
+
+    <action name="producer">
+        <java>
+            <prepare>
+                <delete path="${workingDir}/producer"/>
+                <mkdir path="${workingDir}/producer"/>
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{report,
+                eu.dnetlib.iis.common.schemas.ReportEntry,
+                eu/dnetlib/iis/wf/report/pushgateway/process/input/report.json}
+            </arg>
+            <arg>-Oreport=${workingDir}/producer</arg>
+        </java>
+        <ok to="push-reports"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="push-reports">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.wf.report.pushgateway.process.PushMetricsProcess</arg>
+            <arg>-PjobName=test-pushgateway-push</arg>
+            <arg>-PmetricPusherCreatorClassName=eu.dnetlib.iis.wf.report.pushgateway.pusher.FilePusherCreator</arg>
+            <arg>-PmetricPusherAddress=${workingDir}/output</arg>
+            <arg>-PlabeledMetric.processing_documentClassification_docClassReference=type</arg>
+            <arg>-PreportLocation.report=${workingDir}/producer</arg>
+        </java>
+        <ok to="consumer"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="consumer">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            <arg>-C{report,
+                eu.dnetlib.iis.common.schemas.ReportEntry,
+                eu/dnetlib/iis/wf/report/pushgateway/process/input/report.json}
+            </arg>
+            <arg>-Ireport=${workingDir}/output</arg>
+        </java>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

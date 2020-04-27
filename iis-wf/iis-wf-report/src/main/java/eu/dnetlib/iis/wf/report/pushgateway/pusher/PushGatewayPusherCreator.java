@@ -16,7 +16,7 @@ public class PushGatewayPusherCreator implements MetricPusherCreator {
             try {
                 return new PushGateway(address);
             } catch (Exception e) {
-                logger.error("PushGateway creation with address '{}' failed.", address);
+                logger.error("PushGateway creation failed, address: {}.", address);
                 e.printStackTrace();
                 return null;
             }
@@ -31,7 +31,7 @@ public class PushGatewayPusherCreator implements MetricPusherCreator {
                     try {
                         pushGateway.pushAdd(collectorRegistry, jobName);
                     } catch (IOException e) {
-                        logger.error("PushGateway push failed with exception.");
+                        logger.error("PushGateway push failed.");
                         e.printStackTrace();
                     }
                 });
