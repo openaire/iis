@@ -29,7 +29,7 @@ public class FilePusherCreator implements MetricPusherCreator {
 
             try {
                 FileSystem fs = FileSystem.get(new Configuration());
-                DataStore.create(reportEntries, new FileSystemPath(fs, new Path(address)), ReportEntry.SCHEMA$);
+                DataStore.create(reportEntries, new FileSystemPath(fs, new Path(address, jobName)), ReportEntry.SCHEMA$);
             } catch (IOException e) {
                 logger.error("File pusher push failed.");
                 e.printStackTrace();
