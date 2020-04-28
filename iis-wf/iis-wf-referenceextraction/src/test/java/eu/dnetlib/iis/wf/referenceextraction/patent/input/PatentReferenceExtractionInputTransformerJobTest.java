@@ -1,22 +1,23 @@
 package eu.dnetlib.iis.wf.referenceextraction.patent.input;
 
-import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
-import eu.dnetlib.iis.common.utils.AvroTestUtils;
-import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
-import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
-import eu.dnetlib.iis.referenceextraction.patent.schemas.PatentReferenceExtractionInput;
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import pl.edu.icm.sparkutils.test.SparkJob;
-import pl.edu.icm.sparkutils.test.SparkJobBuilder;
-import pl.edu.icm.sparkutils.test.SparkJobExecutor;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
+
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
+import eu.dnetlib.iis.common.utils.AvroTestUtils;
+import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
+import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
+import eu.dnetlib.iis.referenceextraction.patent.schemas.PatentReferenceExtractionInput;
+import pl.edu.icm.sparkutils.test.SparkJob;
+import pl.edu.icm.sparkutils.test.SparkJobBuilder;
+import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
 public class PatentReferenceExtractionInputTransformerJobTest {
     private ClassLoader cl = getClass().getClassLoader();
@@ -46,7 +47,7 @@ public class PatentReferenceExtractionInputTransformerJobTest {
         String outputTransformedPatentPath = Objects
                 .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/patent_transformed.json"))
                 .getFile();
-        AvroTestUtils.createLocalAvroDataStore(JsonAvroTestUtils.readJsonDataStore(inputPatentPath, Patent.class), inputDir.toString());
+        AvroTestUtils.createLocalAvroDataStore(JsonAvroTestUtils.readJsonDataStore(inputPatentPath, ImportedPatent.class), inputDir.toString());
 
         SparkJob sparkJob = buildSparkJob();
 

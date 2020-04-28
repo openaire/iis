@@ -1,7 +1,10 @@
 @namespace("eu.dnetlib.iis.referenceextraction.patent.schemas")
 protocol IIS{
 
-    record PatentReferenceExtractionInput {
+    record ImportedPatent {
         string appln_nr;
+        string publn_auth;
+        string publn_nr;
+        string publn_kind;
     }
 }
