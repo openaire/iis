@@ -111,6 +111,14 @@
             <artifactId>iis-wf-report</artifactId>
             <version>${project.version}</version>
         </dependency>
-    </dependencies>
+
+		<dependency>
+			<groupId>eu.dnetlib.iis</groupId>
+			<artifactId>iis-wf-report</artifactId>
+			<version>${project.version}</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 </project>
