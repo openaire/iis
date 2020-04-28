@@ -66,32 +66,31 @@ public class PushMetricsProcess implements Process {
                                         .ifPresent(fs -> {
                                             logger.info("Using FileSystem: {}", fs);
                                             reportLocationsFinder.find(parameters)
-                                                    .ifPresent(
-                                                            paths -> {
-                                                                logger.info("Using report locations of size: {}", paths.size());
-                                                                labelNamesByMetricNameProducer.create(parameters)
-                                                                        .ifPresent(labelNamesByMetricName -> {
-                                                                            logger.info("Using label map of size: {}", labelNamesByMetricName.size());
-                                                                            List<Optional<List<Gauge>>> optionals = paths.stream()
-                                                                                    .map(path -> reportEntryReader.read(fs, new Path(path))
-                                                                                            .flatMap(reportEntries -> reportEntryConverter.convert(reportEntries, path, labelNamesByMetricName)))
-                                                                                    .collect(Collectors.toList());
-                                                                            unwrapOptionals(optionals)
-                                                                                    .map(gauges -> gauges.stream().flatMap(Collection::stream).collect(Collectors.toList()))
-                                                                                    .ifPresent(gauges -> {
-                                                                                        logger.info("Using gauges of size: {}", gauges.size());
-                                                                                        gaugesRegistrar.register(gauges)
-                                                                                                .ifPresent(registry -> {
-                                                                                                    logger.info("Using registry: {}", registry);
-                                                                                                    jobNameProducer.create(parameters)
-                                                                                                            .ifPresent(jobName -> {
-                                                                                                                logger.info("Using job name: {}", jobName);
-                                                                                                                metricPusher.pushSafe(registry, jobName);
-                                                                                                            });
-                                                                                                });
-                                                                                    });
-                                                                        });
-                                                            });
+                                                    .ifPresent(paths -> {
+                                                        logger.info("Using report locations of size: {}", paths.size());
+                                                        labelNamesByMetricNameProducer.create(parameters)
+                                                                .ifPresent(labelNamesByMetricName -> {
+                                                                    logger.info("Using label map of size: {}", labelNamesByMetricName.size());
+                                                                    List<Optional<List<Gauge>>> optionals = paths.stream()
+                                                                            .map(path -> reportEntryReader.read(fs, new Path(path))
+                                                                                    .flatMap(reportEntries -> reportEntryConverter.convert(reportEntries, path, labelNamesByMetricName)))
+                                                                            .collect(Collectors.toList());
+                                                                    unwrapOptionals(optionals)
+                                                                            .map(gauges -> gauges.stream().flatMap(Collection::stream).collect(Collectors.toList()))
+                                                                            .ifPresent(gauges -> {
+                                                                                logger.info("Using gauges of size: {}", gauges.size());
+                                                                                gaugesRegistrar.register(gauges)
+                                                                                        .ifPresent(registry -> {
+                                                                                            logger.info("Using registry: {}", registry);
+                                                                                            jobNameProducer.create(parameters)
+                                                                                                    .ifPresent(jobName -> {
+                                                                                                        logger.info("Using job name: {}", jobName);
+                                                                                                        metricPusher.pushSafe(registry, jobName);
+                                                                                                    });
+                                                                                        });
+                                                                            });
+                                                                });
+                                                    });
                                         });
                             });
                 });
@@ -101,8 +100,10 @@ public class PushMetricsProcess implements Process {
         try {
             return Optional
                     .of(optionals.stream()
-                            .map(optional -> optional.orElseThrow(RuntimeException::new))
-                            .collect(Collectors.toList()));
+                            .map(optional -> optional.orElse(null))
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList()))
+                    .filter(CollectionUtils::isNotEmpty);
         } catch (Exception e) {
             logger.error("Unwrapping of optionals failed.");
             e.printStackTrace();
