@@ -83,7 +83,10 @@ public class DocumentSimilarityActionBuilderModuleFactory extends AbstractAction
                     && object.getSimilarity() < similarityThreshold) {
                 return Collections.emptyList();
             } else {
-                return Arrays.asList(createAction(object, false), createAction(object, true));    
+                String docId = object.getDocumentId().toString();
+                String otherDocId = object.getOtherDocumentId().toString();
+                return Arrays.asList(createAction(docId, otherDocId, object.getSimilarity(), REL_CLASS_HAS_AMONG_TOP_N),
+                        createAction(otherDocId, docId, object.getSimilarity(), REL_CLASS_IS_AMONG_TOP_N));
             }
         }
 
@@ -91,35 +94,24 @@ public class DocumentSimilarityActionBuilderModuleFactory extends AbstractAction
 
         /**
          * Creates similarity related actions.
-         * 
-         * @param object source object
-         * @param backwardMode flag indicating relation should be created in backward mode
-         * @return similarity related actions
          */
-        private AtomicAction<Relation> createAction(DocumentSimilarity object, boolean backwardMode) {
+        private AtomicAction<Relation> createAction(String source, String target, float score, String relClass) {
             AtomicAction<Relation> action = new AtomicAction<>();
             action.setClazz(Relation.class);
-            action.setPayload(buildRelation(object.getDocumentId().toString(), object.getOtherDocumentId().toString(),
-                    object.getSimilarity(), backwardMode));
-            return action;
-        }
-
-        /**
-         * Builds {@link Relation} object with similarity details.
-         */
-        private Relation buildRelation(String sourceId, String targetDocId, float score, boolean invert) {
+            
             Relation relation = new Relation();
-            relation.setSource(invert?targetDocId:sourceId);
-            relation.setTarget(invert?sourceId:targetDocId);
+            relation.setSource(source);
+            relation.setTarget(target);
             relation.setRelType(REL_TYPE);
             relation.setSubRelType(SUBREL_TYPE);
-            relation.setRelClass(invert ? REL_CLASS_IS_AMONG_TOP_N : REL_CLASS_HAS_AMONG_TOP_N);
+            relation.setRelClass(relClass);
             relation.setDataInfo(buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
             relation.setLastupdatetimestamp(System.currentTimeMillis());
             throw new RuntimeException("awaiting Relation model extension required to export score");
             // FIXME extend Relation model to export similarity score, replace throwing Exception with the two lines below
-            // relation.setProperties(Arrays.asList(buildSimilarityLevel(score)));
-            // return relation;
+            // relation.setProperties(Collections.singletonList(buildSimilarityLevel(score)));
+            // action.setPayload(relation);
+            // return action;
         }
 
         private KeyValue buildSimilarityLevel(float score) {

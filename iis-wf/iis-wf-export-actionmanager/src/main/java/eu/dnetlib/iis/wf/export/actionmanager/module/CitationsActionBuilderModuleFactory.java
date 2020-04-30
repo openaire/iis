@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -79,7 +79,7 @@ public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFa
                 extraInfo.setTypology(EXTRA_INFO_TYPOLOGY);
                 extraInfo.setProvenance(this.getInferenceProvenance());
                 extraInfo.setTrust(StaticConfigurationProvider.ACTION_TRUST_0_9);
-                result.setExtraInfo(Arrays.asList(extraInfo));
+                result.setExtraInfo(Collections.singletonList(extraInfo));
 
                 return result;
             } else {

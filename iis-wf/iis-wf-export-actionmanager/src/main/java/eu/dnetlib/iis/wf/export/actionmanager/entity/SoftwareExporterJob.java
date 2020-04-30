@@ -3,6 +3,7 @@ package eu.dnetlib.iis.wf.export.actionmanager.entity;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,6 +43,7 @@ import eu.dnetlib.iis.common.utils.RDDUtils;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import eu.dnetlib.iis.wf.export.actionmanager.ActionSerializationUtils;
+import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
 import eu.dnetlib.iis.wf.export.actionmanager.module.AlgorithmName;
 import eu.dnetlib.iis.wf.export.actionmanager.module.BuilderModuleHelper;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
@@ -55,12 +57,6 @@ import scala.Tuple3;
  *
  */
 public class SoftwareExporterJob {
-    
-    private static final String REL_TYPE = "resultResult";
-
-    private static final String SUBREL_TYPE = "relationship";
-    
-    private static final String REL_CLASS_ISRELATEDTO = "isRelatedTo";
     
     public static final String INFERENCE_PROVENANCE = InfoSpaceConstants.SEMANTIC_CLASS_IIS
             + InfoSpaceConstants.INFERENCE_PROVENANCE_SEPARATOR + AlgorithmName.document_software_url;
@@ -94,10 +90,6 @@ public class SoftwareExporterJob {
         SoftwareEntityExporterJobParameters params = new SoftwareEntityExporterJobParameters();
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
-        
-        SparkConf conf = new SparkConf();
-        conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
-        conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
         
         try (JavaSparkContext sc = JavaSparkContextFactory.withConfAndKryo(new SparkConf())) {
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputEntityPath);
@@ -153,7 +145,7 @@ public class SoftwareExporterJob {
         // to be used by both entity exporter and reporter consumers
         documentToSoftwareReducedValues.cache();
         
-        JavaRDD<AtomicAction<Software>> entityResult = documentToSoftwareReducedValues.map(e -> buildEntityAction(e));
+        JavaRDD<AtomicAction<Software>> entityResult = documentToSoftwareReducedValues.map(SoftwareExporterJob::buildEntityAction);
 
         RDDUtils.saveTextPairRDD(ActionSerializationUtils.mapActionToText(entityResult), numberOfOutputFiles,
                 outputAvroPath, jobConfig);
@@ -273,7 +265,7 @@ public class SoftwareExporterJob {
         if (StringUtils.isNotBlank(meta.getSoftwareDescription())) {
             Field<String> descrField = new Field<>();
             descrField.setValue(meta.getSoftwareDescription().toString());
-            software.setDescription(Arrays.asList(descrField));
+            software.setDescription(Collections.singletonList(descrField));
         }
         
         software.setResulttype(RESULT_TYPE_SOFTWARE);
@@ -309,8 +301,8 @@ public class SoftwareExporterJob {
             KeyValue hostedBy = buildHostedBy(meta.getRepositoryName().toString());
             instanceBuilder.setHostedby(hostedBy);
             instanceBuilder.setCollectedfrom(hostedBy);
-            software.setInstance(Arrays.asList(instanceBuilder));
-            software.setCollectedfrom(Arrays.asList(hostedBy));
+            software.setInstance(Collections.singletonList(instanceBuilder));
+            software.setCollectedfrom(Collections.singletonList(hostedBy));
         }
         
         // initializing datainfo
@@ -324,22 +316,19 @@ public class SoftwareExporterJob {
         Instance instance = new Instance();
         instance.setInstancetype(INSTANCE_TYPE_SOFTWARE);
         instance.setAccessright(ACCESS_RIGHT_OPEN_SOURCE);
-        instance.setUrl(Arrays.asList(url));
+        instance.setUrl(Collections.singletonList(url));
         return instance;
     }
 
     private static StructuredProperty buildMainTitle(String softwareTitle, String repositoryName) {
-        return buildTitle(
-                MessageFormat.format(SOFTWARE_TITLE_MAIN_TEMPLATE, new Object[] { softwareTitle, repositoryName }),
+        return buildTitle(MessageFormat.format(SOFTWARE_TITLE_MAIN_TEMPLATE, softwareTitle, repositoryName),
                 InfoSpaceConstants.SEMANTIC_CLASS_MAIN_TITLE);
     }
     
     private static StructuredProperty buildContextualisedTitle(String softwareTitle, String repositoryName,
             String publicationTitle) {
-        return buildTitle(
-                MessageFormat.format(SOFTWARE_TITLE_ALTERNATIVE_TEMPLATE,
-                        new Object[] { softwareTitle, repositoryName, publicationTitle }),
-                InfoSpaceConstants.SEMANTIC_CLASS_ALTERNATIVE_TITLE);
+        return buildTitle(MessageFormat.format(SOFTWARE_TITLE_ALTERNATIVE_TEMPLATE, softwareTitle, repositoryName,
+                publicationTitle), InfoSpaceConstants.SEMANTIC_CLASS_ALTERNATIVE_TITLE);
     }
     
     private static StructuredProperty buildTitle(String value, String titleType) {
@@ -396,23 +385,23 @@ public class SoftwareExporterJob {
 
         AtomicAction<Relation> forwardAction = new AtomicAction<>();
         forwardAction.setClazz(Relation.class);
-        forwardAction.setPayload(buildRelation(docId, softId, confidenceLevel, false));
+        forwardAction.setPayload(buildRelation(docId, softId, confidenceLevel));
 
         AtomicAction<Relation> reverseAction = new AtomicAction<>();
         reverseAction.setClazz(Relation.class);
-        reverseAction.setPayload(buildRelation(docId, softId, confidenceLevel, true));
+        reverseAction.setPayload(buildRelation(softId, docId, confidenceLevel));
 
         return Arrays.asList(forwardAction, reverseAction);
     }
     
-    private static Relation buildRelation(String docId, String softId, Float confidenceLevel, boolean backwardMode) {
+    private static Relation buildRelation(String source, String target, Float confidenceLevel) {
         Relation relation = new Relation();
-        relation.setRelType(REL_TYPE);
-        relation.setSubRelType(SUBREL_TYPE);
-        relation.setRelClass(REL_CLASS_ISRELATEDTO);
+        relation.setRelType(OafConstants.REL_TYPE_RESULT_RESULT);
+        relation.setSubRelType(OafConstants.SUBREL_TYPE_RELATIONSHIP);
+        relation.setRelClass(OafConstants.REL_CLASS_ISRELATEDTO);
         
-        relation.setSource(backwardMode ? softId : docId);
-        relation.setTarget(backwardMode ? docId : softId);
+        relation.setSource(source);
+        relation.setTarget(target);
         
         relation.setDataInfo(BuilderModuleHelper.buildInferenceForConfidenceLevel(confidenceLevel, INFERENCE_PROVENANCE));
         relation.setLastupdatetimestamp(System.currentTimeMillis());

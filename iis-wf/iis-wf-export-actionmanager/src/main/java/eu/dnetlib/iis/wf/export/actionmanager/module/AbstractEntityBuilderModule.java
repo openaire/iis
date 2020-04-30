@@ -1,6 +1,5 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,7 +44,7 @@ public abstract class AbstractEntityBuilderModule<S extends SpecificRecord, T ex
             AtomicAction<T> action = new AtomicAction<>();
             action.setClazz(getResultClass());
             action.setPayload(result);
-            return Arrays.asList(action);
+            return Collections.singletonList(action);
         } else {
             return Collections.emptyList();
         }

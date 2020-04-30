@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -46,6 +47,7 @@ import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.HolderCountry;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
 import eu.dnetlib.iis.wf.export.actionmanager.ActionSerializationUtils;
+import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
 import eu.dnetlib.iis.wf.export.actionmanager.entity.ConfidenceLevelUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.module.AlgorithmName;
 import eu.dnetlib.iis.wf.export.actionmanager.module.BuilderModuleHelper;
@@ -58,10 +60,6 @@ import scala.Tuple2;
  * @author pjacewicz
  */
 public class PatentExporterJob {
-    
-    private static final String REL_TYPE = "resultResult";
-    private static final String SUBREL_TYPE = "relationship";
-    private static final String REL_CLASS_ISRELATEDTO = "isRelatedTo";
     
     private static final String EPO = "EPO";
     private static final String EUROPEAN_PATENT_OFFICE__PATSTAT = "European Patent Office/PATSTAT";
@@ -172,7 +170,7 @@ public class PatentExporterJob {
         instance.setInstancetype(buildOafEntityResultInstanceInstancetype());
         instance.setHostedby(buildOafEntityPatentKeyValue());
         instance.setCollectedfrom(buildOafEntityPatentKeyValue());
-        instance.setUrl(Arrays.asList(buildOafEntityResultInstanceUrl(patent, patentEpoUrlRoot)));
+        instance.setUrl(Collections.singletonList(buildOafEntityResultInstanceUrl(patent, patentEpoUrlRoot)));
         return instance;
     }
 
@@ -296,23 +294,22 @@ public class PatentExporterJob {
 
         AtomicAction<Relation> forwardAction = new AtomicAction<>();
         forwardAction.setClazz(Relation.class);
-        forwardAction.setPayload(buildRelation(documentToPatent, documentIdToExport, patentIdToExport, false));
+        forwardAction.setPayload(buildRelation(documentToPatent, documentIdToExport, patentIdToExport));
         
         AtomicAction<Relation> reverseAction = new AtomicAction<>();
         reverseAction.setClazz(Relation.class);
-        reverseAction.setPayload(buildRelation(documentToPatent, documentIdToExport, patentIdToExport, true));
+        reverseAction.setPayload(buildRelation(documentToPatent, patentIdToExport, documentIdToExport));
 
         return Arrays.asList(forwardAction, reverseAction);
     }
 
-    private static Relation buildRelation(DocumentToPatent documentToPatent, String documentIdToExport,
-            String patentIdToExport, boolean backwardMode) {
+    private static Relation buildRelation(DocumentToPatent documentToPatent, String source, String target) {
         Relation relation = new Relation();
-        relation.setRelType(REL_TYPE);
-        relation.setSubRelType(SUBREL_TYPE);
-        relation.setRelClass(REL_CLASS_ISRELATEDTO);
-        relation.setSource(backwardMode ? patentIdToExport : documentIdToExport);
-        relation.setTarget(backwardMode ? documentIdToExport : patentIdToExport);
+        relation.setRelType(OafConstants.REL_TYPE_RESULT_RESULT);
+        relation.setSubRelType(OafConstants.SUBREL_TYPE_RELATIONSHIP);
+        relation.setRelClass(OafConstants.REL_CLASS_ISRELATEDTO);
+        relation.setSource(source);
+        relation.setTarget(target);
         relation.setDataInfo(BuilderModuleHelper.buildInferenceForConfidenceLevel(documentToPatent.getConfidenceLevel(),
                 INFERENCE_PROVENANCE));
         relation.setLastupdatetimestamp(System.currentTimeMillis());
@@ -356,7 +353,7 @@ public class PatentExporterJob {
         Publication result = new Publication();
         result.setId(patentIdToExport);
         result.setLastupdatetimestamp(System.currentTimeMillis());
-        result.setCollectedfrom(Arrays.asList(OAF_ENTITY_COLLECTEDFROM));
+        result.setCollectedfrom(Collections.singletonList(OAF_ENTITY_COLLECTEDFROM));
         result.setPid(Arrays.asList(
                 buildOafEntityPid(String.format("%s%s", patent.getApplnAuth(), patent.getApplnNr()), OAF_ENTITY_PID_QUALIFIER_CLASS_EPO_ID),
                 buildOafEntityPid(patent.getApplnNrEpodoc().toString(), OAF_ENTITY_PID_QUALIFIER_CLASS_EPO_NR_EPODOC)));
@@ -366,11 +363,11 @@ public class PatentExporterJob {
         result.setDataInfo(OAF_ENTITY_DATAINFO);
         
         if (StringUtils.isNotBlank(patent.getApplnTitle())) {
-            result.setTitle(Arrays.asList(buildOafEntityResultMetadataTitle(patent.getApplnTitle())));
+            result.setTitle(Collections.singletonList(buildOafEntityResultMetadataTitle(patent.getApplnTitle())));
         }
 
         if (StringUtils.isNotBlank(patent.getApplnAbstract())) {
-            result.setDescription(Arrays.asList(buildOafEntityResultMetadataDescription(patent.getApplnAbstract())));
+            result.setDescription(Collections.singletonList(buildOafEntityResultMetadataDescription(patent.getApplnAbstract())));
         }
 
         if (StringUtils.isNotBlank(patent.getEarliestPublnDate())) {
@@ -378,7 +375,7 @@ public class PatentExporterJob {
         }
 
         if (StringUtils.isNotBlank(patent.getApplnFilingDate())) {
-            result.setRelevantdate((Arrays.asList(buildOafEntityResultMetadataRelevantdate(patent.getApplnFilingDate()))));
+            result.setRelevantdate((Collections.singletonList(buildOafEntityResultMetadataRelevantdate(patent.getApplnFilingDate()))));
         }
 
         if (Objects.nonNull(patent.getIpcClassSymbol())) {
@@ -390,7 +387,7 @@ public class PatentExporterJob {
             result.setCountry(buildOafEntityResultMetadataCountries(patent.getHolderCountry()));
         }
         
-        result.setInstance(Arrays.asList(buildOafEntityResultInstance(patent, patentEpoUrlRoot)));
+        result.setInstance(Collections.singletonList(buildOafEntityResultInstance(patent, patentEpoUrlRoot)));
         return result;
     }
 

@@ -34,7 +34,7 @@ public class SequenceFileExporterMapper extends Mapper<AvroKey<? extends Specifi
 
     private ActionBuilderModule<SpecificRecordBase, Oaf> actionBuilder;
 
-    private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper = new ObjectMapper();
     
     // ----------------------- LOGIC --------------------------------
     
@@ -49,7 +49,6 @@ public class SequenceFileExporterMapper extends Mapper<AvroKey<? extends Specifi
                 Constructor<?> constructor = clazz.getConstructor();
                 ActionBuilderFactory<SpecificRecordBase, Oaf> actionBuilderFactory = (ActionBuilderFactory<SpecificRecordBase, Oaf>) constructor.newInstance();
                 actionBuilder = actionBuilderFactory.instantiate(context.getConfiguration());
-                objectMapper = new ObjectMapper();
             } catch (Exception e) {
                 throw new RuntimeException("unexpected exception ocurred when instantiating " + "builder module: " + moduleClassName, e);
             }

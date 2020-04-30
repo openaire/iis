@@ -9,6 +9,7 @@ import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganizationWithProvenance;
+import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
 
 /**
  * {@link MatchedOrganizationWithProvenance} action builder factory module.
@@ -17,14 +18,6 @@ import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganizationWithProvenance;
  *
  */
 public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActionBuilderFactory<MatchedOrganizationWithProvenance, Relation> {
-
-    private static final String REL_TYPE = "resultOrganization";
-    
-    private static final String SUBREL_TYPE = "affiliation";
-    
-    private static final String REL_CLASS_HAS_AUTHOR_INSTITUTION_OF = "hasAuthorInstitution";
-    
-    private static final String REL_CLASS_IS_AUTHOR_INSTITUTION_OF = "isAuthorInstitutionOf";
 
 
     // ------------------------ CONSTRUCTORS --------------------------
@@ -62,33 +55,31 @@ public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActio
         
         @Override
         public List<AtomicAction<Relation>> build(MatchedOrganizationWithProvenance object) throws TrustLevelThresholdExceededException {
-            return Arrays.asList(createAction(object, false), createAction(object, true));
+            return Arrays.asList(
+                    createAction(object.getDocumentId().toString(), object.getOrganizationId().toString(),
+                            object.getMatchStrength(), OafConstants.REL_CLASS_HAS_AUTHOR_INSTITUTION_OF),
+                    createAction(object.getOrganizationId().toString(), object.getDocumentId().toString(),
+                            object.getMatchStrength(), OafConstants.REL_CLASS_IS_AUTHOR_INSTITUTION_OF));
         }
         
         /**
          * Creates similarity related actions.
-         * 
-         * @param object source object
-         * @param backwardMode flag indicating relation should be created in backward mode
-         * @throws TrustLevelThresholdExceededException 
          */
-        private AtomicAction<Relation> createAction(MatchedOrganizationWithProvenance object, boolean backwardMode) throws TrustLevelThresholdExceededException {
+        private AtomicAction<Relation> createAction(String source, String target, float confidenceLevel, String relClass) throws TrustLevelThresholdExceededException {
             AtomicAction<Relation> action = new AtomicAction<>();
             action.setClazz(Relation.class);
-            action.setPayload(buildRelation(object, backwardMode));
-            return action;
-        }
-        
-        private Relation buildRelation(MatchedOrganizationWithProvenance object, boolean backwardMode) throws TrustLevelThresholdExceededException {
+
             Relation relation = new Relation();
-            relation.setSource(backwardMode ? object.getOrganizationId().toString():  object.getDocumentId().toString());
-            relation.setTarget(backwardMode ? object.getDocumentId().toString(): object.getOrganizationId().toString());
-            relation.setRelType(REL_TYPE);
-            relation.setSubRelType(SUBREL_TYPE);
-            relation.setRelClass(backwardMode ? REL_CLASS_IS_AUTHOR_INSTITUTION_OF : REL_CLASS_HAS_AUTHOR_INSTITUTION_OF);
-            relation.setDataInfo(buildInference(object.getMatchStrength()));
+            relation.setSource(source);
+            relation.setTarget(target);
+            relation.setRelType(OafConstants.REL_TYPE_RESULT_ORGANIZATION);
+            relation.setSubRelType(OafConstants.SUBREL_TYPE_AFFILIATION);
+            relation.setRelClass(relClass);
+            relation.setDataInfo(buildInference(confidenceLevel));
             relation.setLastupdatetimestamp(System.currentTimeMillis());
-            return relation;
+            
+            action.setPayload(relation);
+            return action;
         }
         
     }

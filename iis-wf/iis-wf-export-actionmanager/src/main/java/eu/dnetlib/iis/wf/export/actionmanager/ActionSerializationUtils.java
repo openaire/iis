@@ -19,12 +19,17 @@ import scala.Tuple2;
  */
 public class ActionSerializationUtils {
 
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    
+    private static final Text emptyText = new Text("");
+    
+    private ActionSerializationUtils() {}
+    
     /**
      * Maps action RDD into text RDD.
      */
     public static <T extends Oaf> JavaPairRDD<Text, Text> mapActionToText(JavaRDD<AtomicAction<T>> actions) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return actions.mapToPair(action -> new Tuple2<>(new Text(""), new Text(serializeAction(action, objectMapper))));
+        return actions.mapToPair(action -> new Tuple2<>(emptyText, new Text(serializeAction(action, objectMapper))));
     }
     
     /**

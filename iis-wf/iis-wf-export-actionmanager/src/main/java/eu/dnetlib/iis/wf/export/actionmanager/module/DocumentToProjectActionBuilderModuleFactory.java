@@ -8,6 +8,7 @@ import org.apache.hadoop.conf.Configuration;
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
+import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
 
 /**
  * {@link DocumentToProject} based action builder module.
@@ -17,13 +18,6 @@ import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
  */
 public class DocumentToProjectActionBuilderModuleFactory extends AbstractActionBuilderFactory<DocumentToProject, Relation> {
 
-    private static final String REL_TYPE = "resultProject";
-    
-    private static final String SUBREL_TYPE = "outcome";
-    
-    public static final String REL_CLASS_ISPRODUCEDBY = "isProducedBy";
-
-    public static final String REL_CLASS_PRODUCES = "produces";
 
     // ------------------------ CONSTRUCTORS --------------------------
     
@@ -58,35 +52,33 @@ public class DocumentToProjectActionBuilderModuleFactory extends AbstractActionB
 
         @Override
         public List<AtomicAction<Relation>> build(DocumentToProject object) throws TrustLevelThresholdExceededException {
-            return Arrays.asList(createAction(object, false), createAction(object, true));
+            return Arrays.asList(
+                    createAction(object.getDocumentId().toString(), object.getProjectId().toString(),
+                            object.getConfidenceLevel(), OafConstants.REL_CLASS_ISPRODUCEDBY),
+                    createAction(object.getProjectId().toString(), object.getDocumentId().toString(),
+                            object.getConfidenceLevel(), OafConstants.REL_CLASS_PRODUCES));
         }
 
         // ------------------------ PRIVATE ----------------------------------
         
         /**
          * Creates similarity related actions.
-         * 
-         * @param object source object
-         * @param backwardMode flag indicating relation should be created in backward mode
-         * @throws TrustLevelThresholdExceededException 
          */
-        private AtomicAction<Relation> createAction(DocumentToProject object, boolean backwardMode) throws TrustLevelThresholdExceededException {
+        private AtomicAction<Relation> createAction(String source, String target, float confidenceLevel, String relClass) throws TrustLevelThresholdExceededException {
             AtomicAction<Relation> action = new AtomicAction<>();
             action.setClazz(Relation.class);
-            action.setPayload(buildRelation(object, backwardMode));
-            return action;
-        }
-        
-        private Relation buildRelation(DocumentToProject object, boolean backwardMode) throws TrustLevelThresholdExceededException {
+            
             Relation relation = new Relation();
-            relation.setSource(backwardMode ? object.getProjectId().toString():  object.getDocumentId().toString());
-            relation.setTarget(backwardMode ? object.getDocumentId().toString(): object.getProjectId().toString());
-            relation.setRelType(REL_TYPE);
-            relation.setSubRelType(SUBREL_TYPE);
-            relation.setRelClass(backwardMode ? REL_CLASS_PRODUCES : REL_CLASS_ISPRODUCEDBY);
-            relation.setDataInfo(buildInference(object.getConfidenceLevel(), getInferenceProvenance()));
+            relation.setSource(source);
+            relation.setTarget(target);
+            relation.setRelType(OafConstants.REL_TYPE_RESULT_PROJECT);
+            relation.setSubRelType(OafConstants.SUBREL_TYPE_OUTCOME);
+            relation.setRelClass(relClass);
+            relation.setDataInfo(buildInference(confidenceLevel, getInferenceProvenance()));
             relation.setLastupdatetimestamp(System.currentTimeMillis());
-            return relation;
+            
+            action.setPayload(relation);
+            return action;
         }
         
     }

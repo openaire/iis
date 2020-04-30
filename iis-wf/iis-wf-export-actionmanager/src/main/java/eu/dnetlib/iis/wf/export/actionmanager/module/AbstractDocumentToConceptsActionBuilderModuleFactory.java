@@ -1,7 +1,7 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -67,7 +67,7 @@ public abstract class AbstractDocumentToConceptsActionBuilderModuleFactory
                 for (Concept concept : source.getConcepts()) {
                     Context context = new Context();
                     context.setId(concept.getId().toString());
-                    context.setDataInfo(Arrays.asList(buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9)));
+                    context.setDataInfo(Collections.singletonList(buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9)));
                     contexts.add(context);
                 }
                 result.setContext(contexts);

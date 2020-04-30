@@ -8,6 +8,7 @@ import org.apache.hadoop.conf.Configuration;
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet;
+import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
 
 /**
  * {@link DocumentToDataSet} based action builder module.
@@ -17,12 +18,6 @@ import eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet;
  */
 public class DocumentToDataSetActionBuilderModuleFactory extends AbstractActionBuilderFactory<DocumentToDataSet, Relation> {
 
-
-    private static final String REL_TYPE = "resultResult";
-    
-    private static final String SUBREL_TYPE = "publicationDataset";
-    
-    private static final String REL_CLASS = "isRelatedTo";
     
     // ------------------------ CONSTRUCTORS --------------------------
     
@@ -55,35 +50,34 @@ public class DocumentToDataSetActionBuilderModuleFactory extends AbstractActionB
         
         @Override
         public List<AtomicAction<Relation>> build(DocumentToDataSet object) throws TrustLevelThresholdExceededException {
-            return Arrays.asList(createAction(object, false), createAction(object, true));
+            return Arrays.asList(
+                    createAction(object.getDocumentId().toString(), object.getDatasetId().toString(),
+                            object.getConfidenceLevel()),
+                    createAction(object.getDatasetId().toString(), object.getDocumentId().toString(),
+                            object.getConfidenceLevel()));
         }
 
         // ------------------------ PRIVATE --------------------------
         
         /**
          * Creates similarity related actions.
-         * 
-         * @param object source object
-         * @param backwardMode flag indicating relation should be created in backward mode
-         * @throws TrustLevelThresholdExceededException 
          */
-        private AtomicAction<Relation> createAction(DocumentToDataSet object, boolean backwardMode) throws TrustLevelThresholdExceededException {
+        private AtomicAction<Relation> createAction(String source, String target, float confidenceLevel) throws TrustLevelThresholdExceededException {
             AtomicAction<Relation> action = new AtomicAction<>();
             action.setClazz(Relation.class);
-            action.setPayload(buildRelation(object, backwardMode));
-            return action;
-        }
-        
-        private Relation buildRelation(DocumentToDataSet object, boolean backwardMode) throws TrustLevelThresholdExceededException {
+
             Relation relation = new Relation();
-            relation.setSource(backwardMode ? object.getDatasetId().toString():  object.getDocumentId().toString());
-            relation.setTarget(backwardMode ? object.getDocumentId().toString(): object.getDatasetId().toString());
-            relation.setRelType(REL_TYPE);
-            relation.setSubRelType(SUBREL_TYPE);
-            relation.setRelClass(REL_CLASS);
-            relation.setDataInfo(buildInference(object.getConfidenceLevel()));
+            relation.setSource(source);
+            relation.setTarget(target);
+            relation.setRelType(OafConstants.REL_TYPE_RESULT_RESULT);
+            relation.setSubRelType(OafConstants.SUBREL_TYPE_PUBLICATION_DATASET);
+            relation.setRelClass(OafConstants.REL_CLASS_ISRELATEDTO);
+            relation.setDataInfo(buildInference(confidenceLevel));
             relation.setLastupdatetimestamp(System.currentTimeMillis());
-            return relation;
+            
+            action.setPayload(relation);
+            
+            return action;
         }
     }
 }
