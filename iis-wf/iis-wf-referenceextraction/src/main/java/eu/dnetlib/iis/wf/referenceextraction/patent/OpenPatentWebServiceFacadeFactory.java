@@ -3,9 +3,9 @@ package eu.dnetlib.iis.wf.referenceextraction.patent;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -15,13 +15,15 @@ import org.apache.http.params.HttpParams;
 
 import com.google.common.base.Preconditions;
 
+import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeFactory;
+
 /**
  * RESTful Open Patent WebService based facade factory.
  * 
  * @author mhorst
  *
  */
-public class OpenPatentWebServiceFacadeFactory implements PatentServiceFacadeFactory {
+public class OpenPatentWebServiceFacadeFactory implements ServiceFacadeFactory<PatentServiceFacade> {
 
     public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
@@ -44,7 +46,7 @@ public class OpenPatentWebServiceFacadeFactory implements PatentServiceFacadeFac
     public static final String PARAM_SERVICE_ENDPOINT_THROTTLE_SLEEP_TIME = "patent.service.endpoint.throttle.sleep.time";
 
     @Override
-    public PatentServiceFacade create(Configuration conf) {
+    public PatentServiceFacade instantiate(Map<String, String> conf) {
 
         Preconditions.checkArgument(StringUtils.isNotBlank(conf.get(PARAM_CONSUMER_KEY)));
         Preconditions.checkArgument(StringUtils.isNotBlank(conf.get(PARAM_CONSUMER_SECRET)));
@@ -59,9 +61,19 @@ public class OpenPatentWebServiceFacadeFactory implements PatentServiceFacadeFac
         Preconditions.checkArgument(StringUtils.isNotBlank(conf.get(PARAM_SERVICE_ENDPOINT_OPS_SCHEME)));
         Preconditions.checkArgument(StringUtils.isNotBlank(conf.get(PARAM_SERVICE_ENDPOINT_OPS_URI_ROOT)));
 
+        String connectionTimeout = conf.containsKey(PARAM_SERVICE_ENDPOINT_CONNECTION_TIMEOUT)
+                ? conf.get(PARAM_SERVICE_ENDPOINT_CONNECTION_TIMEOUT)
+                : "60000";
+        String readTimeout = conf.containsKey(PARAM_SERVICE_ENDPOINT_READ_TIMEOUT)
+                ? conf.get(PARAM_SERVICE_ENDPOINT_READ_TIMEOUT)
+                : "60000";
+        String throttleSleepTime = conf.containsKey(PARAM_SERVICE_ENDPOINT_THROTTLE_SLEEP_TIME)
+                ? conf.get(PARAM_SERVICE_ENDPOINT_THROTTLE_SLEEP_TIME)
+                : "10000";
+                
+        
         return new OpenPatentWebServiceFacade(
-                buildHttpClient(Integer.parseInt(conf.get(PARAM_SERVICE_ENDPOINT_CONNECTION_TIMEOUT, "60000")),
-                        Integer.parseInt(conf.get(PARAM_SERVICE_ENDPOINT_READ_TIMEOUT, "60000"))),
+                buildHttpClient(Integer.parseInt(connectionTimeout), Integer.parseInt(readTimeout)),
                 new HttpHost(conf.get(PARAM_SERVICE_ENDPOINT_AUTH_HOST),
                         Integer.parseInt(conf.get(PARAM_SERVICE_ENDPOINT_AUTH_PORT)),
                         conf.get(PARAM_SERVICE_ENDPOINT_AUTH_SCHEME)),
@@ -71,7 +83,7 @@ public class OpenPatentWebServiceFacadeFactory implements PatentServiceFacadeFac
                         conf.get(PARAM_SERVICE_ENDPOINT_OPS_SCHEME)),
                 conf.get(PARAM_SERVICE_ENDPOINT_OPS_URI_ROOT),
                 buildCredential(conf.get(PARAM_CONSUMER_KEY), conf.get(PARAM_CONSUMER_SECRET)),
-                Long.parseLong(conf.get(PARAM_SERVICE_ENDPOINT_READ_TIMEOUT, "10000")));
+                Long.parseLong(throttleSleepTime));
     }
 
     protected static String buildCredential(String key, String secret) {

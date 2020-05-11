@@ -8,6 +8,8 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.log4j.Logger;
 
+import eu.dnetlib.iis.wf.referenceextraction.ContentRetrieverResponse;
+
 /**
  * HTTP based content retriever.
  * @author mhorst

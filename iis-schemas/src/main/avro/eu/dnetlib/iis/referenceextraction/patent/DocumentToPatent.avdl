@@ -5,7 +5,7 @@ protocol IIS{
 //      document identifier, foreign key: DocumentWithBasicMetadata.id ("document basic metadata" data store)
         string documentId;
 //      identifier of patent referenced in this document,
-//      foreign key: Patent.appln_id
+//      foreign key: Patent.appln_nr
         string patentId;
 //		Find more details on `confidenceLevel` constraints in eu/dnetlib/iis/README.markdown file.
         float confidenceLevel;
