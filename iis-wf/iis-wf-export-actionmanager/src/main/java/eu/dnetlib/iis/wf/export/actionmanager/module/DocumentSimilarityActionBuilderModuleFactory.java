@@ -107,11 +107,9 @@ public class DocumentSimilarityActionBuilderModuleFactory extends AbstractAction
             relation.setRelClass(relClass);
             relation.setDataInfo(buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
             relation.setLastupdatetimestamp(System.currentTimeMillis());
-            throw new RuntimeException("awaiting Relation model extension required to export score");
-            // FIXME extend Relation model to export similarity score, replace throwing Exception with the two lines below
-            // relation.setProperties(Collections.singletonList(buildSimilarityLevel(score)));
-            // action.setPayload(relation);
-            // return action;
+            relation.setProperties(Collections.singletonList(buildSimilarityLevel(score)));
+            action.setPayload(relation);
+            return action;
         }
 
         private KeyValue buildSimilarityLevel(float score) {

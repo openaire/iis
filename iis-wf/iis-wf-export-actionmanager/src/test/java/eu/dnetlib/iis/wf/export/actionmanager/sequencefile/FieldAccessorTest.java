@@ -87,11 +87,11 @@ public class FieldAccessorTest {
         KeyValue keyValue = new KeyValue();
         keyValue.setKey(key);
         collectedFrom.add(keyValue);
-        relation.setCollectedFrom(collectedFrom);
+        relation.setCollectedfrom(collectedFrom);
         
         assertEquals(sourceId, accessor.getValue("payload.source", action).toString());
-        assertNotNull(accessor.getValue("payload.collectedFrom", action));
-        assertEquals(key, accessor.getValue("payload.collectedFrom[0].key", action).toString());
+        assertNotNull(accessor.getValue("payload.collectedfrom", action));
+        assertEquals(key, accessor.getValue("payload.collectedfrom[0].key", action).toString());
         assertEquals(Relation.class.getName(), accessor.getValue("clazz.name", action).toString());
         
     }

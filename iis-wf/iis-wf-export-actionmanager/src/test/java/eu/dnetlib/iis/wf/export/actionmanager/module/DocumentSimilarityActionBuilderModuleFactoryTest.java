@@ -4,7 +4,6 @@ import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParame
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -13,6 +12,7 @@ import org.junit.Test;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.KeyValue;
 import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity;
 
@@ -98,13 +98,11 @@ public class DocumentSimilarityActionBuilderModuleFactoryTest extends AbstractAc
 
         assertNotNull(relation.getDataInfo());
 
-        fail("awaiting Relation model extension required to export score");
-        // FIXME replace fail() with the lines belowe
-        // assertNotNull(relation.getProperties());
-        // assertEquals(1, relation.getProperties().size());
-        // KeyValue similarityLevel = relation.getProperties().get(0);
-        // assertEquals("similarityLevel", similarityLevel.getKey());
-        // assertEquals(BuilderModuleHelper.getDecimalFormat().format(similarity), similarityLevel.getValue());
+        assertNotNull(relation.getProperties());
+        assertEquals(1, relation.getProperties().size());
+        KeyValue similarityLevel = relation.getProperties().get(0);
+        assertEquals("similarityLevel", similarityLevel.getKey());
+        assertEquals(BuilderModuleHelper.getDecimalFormat().format(similarity), similarityLevel.getValue());
     }
 
 }
