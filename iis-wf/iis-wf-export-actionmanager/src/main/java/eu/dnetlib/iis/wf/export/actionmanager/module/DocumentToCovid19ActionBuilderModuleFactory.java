@@ -8,8 +8,7 @@ import eu.dnetlib.iis.export.schemas.DocumentToConceptIds;
  * @author mhorst
  *
  */
-public class DocumentToCovid19ActionBuilderModuleFactory extends AbstractDocumentToConceptsActionBuilderModuleFactory
-        implements ActionBuilderFactory<DocumentToConceptIds> {
+public class DocumentToCovid19ActionBuilderModuleFactory extends AbstractDocumentToConceptsActionBuilderModuleFactory {
 
     // ------------------------ CONSTRUCTORS --------------------------
 
