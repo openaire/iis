@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import eu.dnetlib.data.proto.TypeProtos.Type;
 import eu.dnetlib.data.transform.xml.AbstractDNetXsltFunctions;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.importer.schemas.Project;
@@ -64,7 +63,7 @@ public class ProjectDetailConverter {
             throw new RuntimeException("unexpected projectId format: " + sourceId + 
                     ", unable to split into two by " + InfoSpaceConstants.ID_NAMESPACE_SEPARATOR);
         }
-        return AbstractDNetXsltFunctions.oafId(Type.project.name(), 
+        return AbstractDNetXsltFunctions.oafId("project", 
                 tokenizedProjectId[0], tokenizedProjectId[1]); 
     }
     

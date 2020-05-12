@@ -60,11 +60,6 @@
         </property>
         <!-- actionset id section -->
         <property>
-            <name>action_set_id</name>
-            <value>$UNDEFINED$</value>
-            <description>default action-set identifier of exported data</description>
-        </property>
-        <property>
             <name>action_set_id_document_similarities_standard</name>
             <value>$UNDEFINED$</value>
             <description>document_similarities_standard action-set identifier of exported data</description>
@@ -239,51 +234,6 @@
             <property>
                 <name>mapreduce.job.map.class</name>
                 <value>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.SequenceFileExporterMapper</value>
-            </property>
-            <!-- actionset related -->
-            <property>
-                <name>export.action.setid</name>
-                <value>${action_set_id}</value>
-            </property>
-            <property>
-                <name>export.action.setid.document_similarities_standard</name>
-                <value>${action_set_id_document_similarities_standard}</value>
-            </property>
-            <property>
-                <name>export.action.setid.document_affiliations</name>
-                <value>${action_set_id_matched_doc_organizations}</value>
-            </property>
-            <property>
-                <name>export.action.setid.document_classes</name>
-                <value>${action_set_id_document_classes}</value>
-            </property>
-            <property>
-                <name>export.action.setid.document_referencedProjects</name>
-                <value>${action_set_id_document_referencedProjects}</value>
-            </property>
-            <property>
-                <name>export.action.setid.document_referencedDatasets</name>
-                <value>${action_set_id_document_referencedDatasets}</value>
-            </property>
-            <property>
-                <name>export.action.setid.document_referencedDocuments</name>
-                <value>${action_set_id_document_referencedDocuments}</value>
-            </property>
-            <property>
-                <name>export.action.setid.document_research_initiative</name>
-                <value>${action_set_id_document_research_initiative}</value>
-            </property>
-            <property>
-                <name>export.action.setid.document_community</name>
-                <value>${action_set_id_document_community}</value>
-            </property>
-            <property>
-                <name>export.action.setid.document_pdb</name>
-                <value>${action_set_id_document_pdb}</value>
-            </property>
-            <property>
-                <name>export.action.setid.document_covid19</name>
-                <value>${action_set_id_document_covid19}</value>
             </property>
             <!-- trust level threshold related -->
             <property>

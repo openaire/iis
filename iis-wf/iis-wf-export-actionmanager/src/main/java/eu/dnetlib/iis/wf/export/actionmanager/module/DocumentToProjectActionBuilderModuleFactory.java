@@ -5,18 +5,10 @@ import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
 
-import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.actionmanager.common.Agent;
-import eu.dnetlib.data.mapreduce.util.OafDecoder;
-import eu.dnetlib.data.proto.KindProtos.Kind;
-import eu.dnetlib.data.proto.OafProtos.Oaf;
-import eu.dnetlib.data.proto.OafProtos.OafRel;
-import eu.dnetlib.data.proto.RelTypeProtos.RelType;
-import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
-import eu.dnetlib.data.proto.ResultProjectProtos.ResultProject;
-import eu.dnetlib.data.proto.ResultProjectProtos.ResultProject.Outcome;
-import eu.dnetlib.iis.common.InfoSpaceConstants;
+import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
+import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
 
 /**
  * {@link DocumentToProject} based action builder module.
@@ -24,11 +16,8 @@ import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
  * @author mhorst
  *
  */
-public class DocumentToProjectActionBuilderModuleFactory extends AbstractActionBuilderFactory<DocumentToProject> {
+public class DocumentToProjectActionBuilderModuleFactory extends AbstractActionBuilderFactory<DocumentToProject, Relation> {
 
-    public static final String REL_CLASS_ISPRODUCEDBY = Outcome.RelName.isProducedBy.toString();
-
-    public static final String REL_CLASS_PRODUCES = Outcome.RelName.produces.toString();
 
     // ------------------------ CONSTRUCTORS --------------------------
     
@@ -39,13 +28,13 @@ public class DocumentToProjectActionBuilderModuleFactory extends AbstractActionB
     // ------------------------ LOGIC ----------------------------------
     
     @Override
-    public ActionBuilderModule<DocumentToProject> instantiate(Configuration config, Agent agent, String actionSetId) {
-        return new DocumentToProjectActionBuilderModule(provideTrustLevelThreshold(config), agent, actionSetId);
+    public ActionBuilderModule<DocumentToProject, Relation> instantiate(Configuration config) {
+        return new DocumentToProjectActionBuilderModule(provideTrustLevelThreshold(config));
     }
     
     // ------------------------ INNER CLASS ----------------------------
     
-    class DocumentToProjectActionBuilderModule extends AbstractBuilderModule<DocumentToProject> {
+    class DocumentToProjectActionBuilderModule extends AbstractBuilderModule<DocumentToProject, Relation> {
 
 
         // ------------------------ CONSTRUCTORS --------------------------
@@ -55,90 +44,42 @@ public class DocumentToProjectActionBuilderModuleFactory extends AbstractActionB
          * @param agent action manager agent details
          * @param actionSetId action set identifier
          */
-        public DocumentToProjectActionBuilderModule(Float trustLevelThreshold, Agent agent, String actionSetId) {
-            super(trustLevelThreshold, buildInferenceProvenance(), agent, actionSetId);
+        public DocumentToProjectActionBuilderModule(Float trustLevelThreshold) {
+            super(trustLevelThreshold, buildInferenceProvenance());
         }
         
         // ------------------------ LOGIC ----------------------------------
 
         @Override
-        public List<AtomicAction> build(DocumentToProject object) throws TrustLevelThresholdExceededException {
-            Oaf.Builder oafBuilder = instantiateOafBuilder(object);
-            Oaf oaf = oafBuilder.build();
-            Oaf oafInv = invertRelationAndBuild(oafBuilder);
-            return Arrays.asList(new AtomicAction[] {
-                    getActionFactory().createAtomicAction(getActionSetId(), getAgent(), 
-                            object.getDocumentId().toString(), OafDecoder.decode(oaf).getCFQ(),
-                            object.getProjectId().toString(), oaf.toByteArray()),
-                    // setting reverse relation in project object
-                    getActionFactory().createAtomicAction(getActionSetId(), getAgent(), 
-                            object.getProjectId().toString(),
-                            OafDecoder.decode(oafInv).getCFQ(), object.getDocumentId().toString(), oafInv.toByteArray())});
+        public List<AtomicAction<Relation>> build(DocumentToProject object) throws TrustLevelThresholdExceededException {
+            return Arrays.asList(
+                    createAction(object.getDocumentId().toString(), object.getProjectId().toString(),
+                            object.getConfidenceLevel(), OafConstants.REL_CLASS_ISPRODUCEDBY),
+                    createAction(object.getProjectId().toString(), object.getDocumentId().toString(),
+                            object.getConfidenceLevel(), OafConstants.REL_CLASS_PRODUCES));
         }
 
         // ------------------------ PRIVATE ----------------------------------
-
-        private Oaf.Builder instantiateOafBuilder(DocumentToProject object) throws TrustLevelThresholdExceededException {
-            String docId = object.getDocumentId().toString();
-            String projectId = object.getProjectId().toString();
-            Oaf.Builder oafBuilder = Oaf.newBuilder();
-            oafBuilder.setKind(Kind.relation);
-            oafBuilder.setRel(buildOafRel(docId, projectId));
-            oafBuilder.setDataInfo(buildInference(object.getConfidenceLevel()));
-            oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
-            return oafBuilder;
-        }
-        
-        private OafRel buildOafRel(String docId, String projectId) {
-            OafRel.Builder relBuilder = OafRel.newBuilder();
-            relBuilder.setChild(false);
-            relBuilder.setRelType(RelType.resultProject);
-            relBuilder.setSubRelType(SubRelType.outcome);
-            relBuilder.setRelClass(REL_CLASS_ISPRODUCEDBY);
-            relBuilder.setSource(docId);
-            relBuilder.setTarget(projectId);
-            ResultProject.Builder resProjBuilder = ResultProject.newBuilder();
-            Outcome.Builder outcomeBuilder = Outcome.newBuilder();
-            outcomeBuilder.setRelMetadata(BuilderModuleHelper.buildRelMetadata(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_PROJECT,
-                    REL_CLASS_ISPRODUCEDBY));
-            resProjBuilder.setOutcome(outcomeBuilder.build());
-            relBuilder.setResultProject(resProjBuilder.build());
-            return relBuilder.build();
-        }
         
         /**
-         * Clones builder provided as parameter, inverts relations and builds {@link Oaf} object.
+         * Creates similarity related actions.
          */
-        private Oaf invertRelationAndBuild(Oaf.Builder existingBuilder) {
-            // works on builder clone to prevent changes in existing builder
-            if (existingBuilder.getRel() != null) {
-                if (existingBuilder.getRel().getSource() != null && existingBuilder.getRel().getTarget() != null) {
-                    Oaf.Builder builder = existingBuilder.clone();
-                    OafRel.Builder relBuilder = builder.getRelBuilder();
-                    String source = relBuilder.getSource();
-                    String target = relBuilder.getTarget();
-                    relBuilder.setSource(target);
-                    relBuilder.setTarget(source);
-                    relBuilder.setRelClass(REL_CLASS_PRODUCES);
-                    if (relBuilder.getResultProjectBuilder() != null
-                            && relBuilder.getResultProjectBuilder().getOutcomeBuilder() != null
-                            && relBuilder.getResultProjectBuilder().getOutcomeBuilder().getRelMetadataBuilder() != null
-                            && relBuilder.getResultProjectBuilder().getOutcomeBuilder().getRelMetadataBuilder()
-                                    .getSemanticsBuilder() != null) {
-                        relBuilder.getResultProjectBuilder().getOutcomeBuilder().getRelMetadataBuilder()
-                                .getSemanticsBuilder().setClassid(REL_CLASS_PRODUCES);
-                        relBuilder.getResultProjectBuilder().getOutcomeBuilder().getRelMetadataBuilder()
-                                .getSemanticsBuilder().setClassname(REL_CLASS_PRODUCES);
-                    }
-                    builder.setRel(relBuilder.build());
-                    builder.setLastupdatetimestamp(System.currentTimeMillis());
-                    return builder.build();
-                } else {
-                    throw new RuntimeException("invalid state: " + "either source or target relation was missing!");
-                }
-            } else {
-                throw new RuntimeException("invalid state: " + "no relation object found!");
-            }
+        private AtomicAction<Relation> createAction(String source, String target, float confidenceLevel, String relClass) throws TrustLevelThresholdExceededException {
+            AtomicAction<Relation> action = new AtomicAction<>();
+            action.setClazz(Relation.class);
+            
+            Relation relation = new Relation();
+            relation.setSource(source);
+            relation.setTarget(target);
+            relation.setRelType(OafConstants.REL_TYPE_RESULT_PROJECT);
+            relation.setSubRelType(OafConstants.SUBREL_TYPE_OUTCOME);
+            relation.setRelClass(relClass);
+            relation.setDataInfo(buildInference(confidenceLevel, getInferenceProvenance()));
+            relation.setLastupdatetimestamp(System.currentTimeMillis());
+            
+            action.setPayload(relation);
+            return action;
         }
+        
     }
 }

@@ -3,7 +3,6 @@ package eu.dnetlib.iis.wf.export.actionmanager.module;
 import static eu.dnetlib.iis.wf.export.actionmanager.module.DocumentToPdbActionBuilderModuleFactory.EXPORT_PDB_URL_ROOT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,11 +13,9 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 import com.google.protobuf.InvalidProtocolBufferException;
 
-import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.data.proto.KindProtos;
-import eu.dnetlib.data.proto.OafProtos.Oaf;
-import eu.dnetlib.data.proto.ResultProtos.Result.ExternalReference;
-import eu.dnetlib.data.proto.TypeProtos.Type;
+import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.ExternalReference;
+import eu.dnetlib.dhp.schema.oaf.Result;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.export.schemas.Concept;
 import eu.dnetlib.iis.export.schemas.DocumentToConceptIds;
@@ -27,7 +24,7 @@ import eu.dnetlib.iis.export.schemas.DocumentToConceptIds;
  * @author mhorst
  *
  */
-public class DocumentToPdbActionBuilderModuleFactoryTest extends AbstractActionBuilderModuleFactoryTest<DocumentToConceptIds> {
+public class DocumentToPdbActionBuilderModuleFactoryTest extends AbstractActionBuilderModuleFactoryTest<DocumentToConceptIds, Result> {
 
     private static final String ROOT_URL = "http://some_root_url/";
     
@@ -49,10 +46,10 @@ public class DocumentToPdbActionBuilderModuleFactoryTest extends AbstractActionB
     public void testBuildEmptyConcepts() throws Exception {
      // given
         String docId = "documentId";
-        ActionBuilderModule<DocumentToConceptIds> module =  factory.instantiate(config, agent, actionSetId);
+        ActionBuilderModule<DocumentToConceptIds, Result> module =  factory.instantiate(config);
         
         // execute
-        List<AtomicAction> actions = module.build(
+        List<AtomicAction<Result>> actions = module.build(
                 DocumentToConceptIds.newBuilder().setConcepts(Collections.emptyList()).setDocumentId(docId).build());
 
         // assert
@@ -67,7 +64,7 @@ public class DocumentToPdbActionBuilderModuleFactoryTest extends AbstractActionB
         String pdbId = "pdbId";
         float confidenceLevel = 1f;
         config.unset(EXPORT_PDB_URL_ROOT);
-        ActionBuilderModule<DocumentToConceptIds> module =  factory.instantiate(config, agent, actionSetId);
+        ActionBuilderModule<DocumentToConceptIds, Result> module =  factory.instantiate(config);
         
         // execute
         module.build(buildDocumentToConceptIds(docId, pdbId, confidenceLevel));
@@ -80,22 +77,18 @@ public class DocumentToPdbActionBuilderModuleFactoryTest extends AbstractActionB
         String docId = "documentId";
         String pdbId = "pdbId";
         float confidenceLevel = 1f;
-        ActionBuilderModule<DocumentToConceptIds> module =  factory.instantiate(config, agent, actionSetId);
+        ActionBuilderModule<DocumentToConceptIds, Result> module =  factory.instantiate(config);
         
         // execute
-        List<AtomicAction> actions = module.build(buildDocumentToConceptIds(docId, pdbId, confidenceLevel));
+        List<AtomicAction<Result>> actions = module.build(buildDocumentToConceptIds(docId, pdbId, confidenceLevel));
 
         // assert
         assertNotNull(actions);
         assertEquals(1, actions.size());
-        AtomicAction action = actions.get(0);
+        AtomicAction<Result> action = actions.get(0);
         assertNotNull(action);
-        assertEquals(agent, action.getAgent());
-        assertNotNull(action.getRowKey());
-        assertEquals(actionSetId, action.getRawSet());
-        assertEquals(docId, action.getTargetRowKey());
-        assertEquals(Type.result.toString(), action.getTargetColumnFamily());
-        assertOaf(action.getTargetValue(), docId, pdbId, confidenceLevel);
+        assertEquals(Result.class, action.getClazz());
+        assertOaf(action.getPayload(), docId, pdbId, confidenceLevel);
     }
     
 
@@ -109,19 +102,13 @@ public class DocumentToPdbActionBuilderModuleFactoryTest extends AbstractActionB
         return builder.build();
     }
 
-    private void assertOaf(byte[] oafBytes, String docId, String pdbId, float confidenceLevel) throws InvalidProtocolBufferException {
-        assertNotNull(oafBytes);
-        Oaf.Builder oafBuilder = Oaf.newBuilder();
-        oafBuilder.mergeFrom(oafBytes);
-        Oaf oaf = oafBuilder.build();
-        assertNotNull(oaf);
+    private void assertOaf(Result result, String docId, String pdbId, float confidenceLevel) throws InvalidProtocolBufferException {
+        assertNotNull(result);
 
-        assertTrue(KindProtos.Kind.entity == oaf.getKind());
-        assertNotNull(oaf.getEntity());
-        assertEquals(docId, oaf.getEntity().getId());
-        assertNotNull(oaf.getEntity().getResult());
-        assertEquals(1, oaf.getEntity().getResult().getExternalReferenceCount());
-        ExternalReference externalRef = oaf.getEntity().getResult().getExternalReferenceList().get(0);
+        assertEquals(docId, result.getId());
+        assertNotNull(result.getExternalReference());
+        assertEquals(1, result.getExternalReference().size());
+        ExternalReference externalRef = result.getExternalReference().get(0);
         assertNotNull(externalRef);
         
         assertEquals(DocumentToPdbActionBuilderModuleFactory.SITENAME, externalRef.getSitename());

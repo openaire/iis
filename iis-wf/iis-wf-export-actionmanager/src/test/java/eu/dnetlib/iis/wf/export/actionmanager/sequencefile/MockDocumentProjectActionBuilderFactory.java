@@ -6,8 +6,8 @@ import org.apache.hadoop.conf.Configuration;
 
 import com.google.common.collect.Lists;
 
-import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.actionmanager.common.Agent;
+import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 import eu.dnetlib.iis.wf.export.actionmanager.module.ActionBuilderFactory;
 import eu.dnetlib.iis.wf.export.actionmanager.module.ActionBuilderModule;
@@ -19,23 +19,19 @@ import eu.dnetlib.iis.wf.export.actionmanager.module.TrustLevelThresholdExceeded
  * @author mhorst
  *
  */
-public class MockDocumentProjectActionBuilderFactory implements ActionBuilderFactory<DocumentToProject> {
+public class MockDocumentProjectActionBuilderFactory implements ActionBuilderFactory<DocumentToProject, Relation> {
 
 
     @Override
-    public ActionBuilderModule<DocumentToProject> instantiate(Configuration config, Agent agent, String actionSetId) {
-        return new ActionBuilderModule<DocumentToProject>() {
+    public ActionBuilderModule<DocumentToProject, Relation> instantiate(Configuration config) {
+        return new ActionBuilderModule<DocumentToProject, Relation>() {
+            
+            @SuppressWarnings("unchecked")
             @Override
-            public List<AtomicAction> build(DocumentToProject object) throws TrustLevelThresholdExceededException {
-                
-                AtomicAction action = new AtomicAction(actionSetId, agent) {
-                    
-                    @Override
-                    public String toString() {
-                        return toStringRepresentation(object);
-                    }
-                };
-
+            public List<AtomicAction<Relation>> build(DocumentToProject object) throws TrustLevelThresholdExceededException {
+                AtomicAction<Relation> action = new AtomicAction<Relation>();
+                action.setClazz(Relation.class);
+                action.setPayload(buildRelation(object));
                 return Lists.newArrayList(action);
             }
         };
@@ -49,14 +45,11 @@ public class MockDocumentProjectActionBuilderFactory implements ActionBuilderFac
     /**
      * Generates string representation of input object.
      */
-    public static String toStringRepresentation(DocumentToProject input) {
-        StringBuilder strBuilder = new StringBuilder();
-        strBuilder.append(input.getDocumentId());
-        strBuilder.append("|");
-        strBuilder.append(input.getProjectId());
-        strBuilder.append("|");
-        strBuilder.append(input.getConfidenceLevel());
-        return strBuilder.toString();
+    public static Relation buildRelation(DocumentToProject input) {
+        Relation rel = new Relation();
+        rel.setSource(input.getDocumentId().toString());
+        rel.setTarget(input.getProjectId().toString());
+        return rel;
     }
     
 }

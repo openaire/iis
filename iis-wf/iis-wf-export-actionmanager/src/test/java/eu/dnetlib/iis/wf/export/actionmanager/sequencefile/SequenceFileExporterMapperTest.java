@@ -1,8 +1,6 @@
 package eu.dnetlib.iis.wf.export.actionmanager.sequencefile;
 
 import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_ACTION_BUILDER_FACTORY_CLASSNAME;
-import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_ACTION_SETID;
-import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_ALGORITHM_PROPERTY_SEPARATOR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
@@ -23,8 +21,11 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
-import eu.dnetlib.iis.wf.export.actionmanager.module.AlgorithmName;
 
 /**
  * @author mhorst
@@ -69,26 +70,12 @@ public class SequenceFileExporterMapperTest {
         mapper.setup(context);
     }
     
-    @Test(expected=RuntimeException.class)
-    public void testSetupWithoutActionSetId() throws Exception {
-        // given
-        Configuration conf = new Configuration();
-        conf.set(EXPORT_ACTION_BUILDER_FACTORY_CLASSNAME, 
-                "eu.dnetlib.iis.wf.export.actionmanager.sequencefile.MockDocumentProjectActionBuilderFactory");
-        doReturn(conf).when(context).getConfiguration();
-        
-        // execute
-        mapper.setup(context);
-    }
-    
     @Test
     public void testMap() throws Exception {
         // given
-        String actionSetId = "docProjActionSetId";
         Configuration conf = new Configuration();
         conf.set(EXPORT_ACTION_BUILDER_FACTORY_CLASSNAME, 
                 "eu.dnetlib.iis.wf.export.actionmanager.sequencefile.MockDocumentProjectActionBuilderFactory");
-        conf.set(buildActionSetIdPropertyKey(AlgorithmName.document_referencedProjects), actionSetId);
         doReturn(conf).when(context).getConfiguration();
         mapper.setup(context);
 
@@ -100,15 +87,13 @@ public class SequenceFileExporterMapperTest {
         
         // assert
         verify(context, times(1)).write(keyCaptor.capture(), valueCaptor.capture());
-        assertTrue(StringUtils.isNotBlank(keyCaptor.getValue().toString()));
-        assertEquals(MockDocumentProjectActionBuilderFactory.toStringRepresentation(docToProj), 
-                valueCaptor.getValue().toString());
+        assertTrue(StringUtils.isBlank(keyCaptor.getValue().toString()));
+        
+        AtomicAction expectedAction = new AtomicAction<>();
+        expectedAction.setClazz(Relation.class);
+        expectedAction.setPayload(MockDocumentProjectActionBuilderFactory.buildRelation(docToProj));
+        assertEquals(new ObjectMapper().writeValueAsString(expectedAction), valueCaptor.getValue().toString());
     }
 
-    // ------------------------------------- PRIVATE -----------------------------------
-    
-    private static String buildActionSetIdPropertyKey(AlgorithmName algorithmName) {
-        return EXPORT_ACTION_SETID + EXPORT_ALGORITHM_PROPERTY_SEPARATOR + algorithmName;
-    }
 
 }

@@ -3,8 +3,10 @@ package eu.dnetlib.iis.wf.export.actionmanager.module;
 import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_ALGORITHM_PROPERTY_SEPARATOR;
 import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_TRUST_LEVEL_THRESHOLD;
 
+import org.apache.avro.specific.SpecificRecord;
 import org.apache.hadoop.conf.Configuration;
 
+import eu.dnetlib.dhp.schema.oaf.Oaf;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 
@@ -13,9 +15,10 @@ import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
  * 
  * @author mhorst
  *
- * @param <T> avro input type
+ * @param <S> avro input type
+ * @param <T> target {@link Oaf} model object
  */
-public abstract class AbstractActionBuilderFactory<T> implements ActionBuilderFactory<T> {
+public abstract class AbstractActionBuilderFactory<S extends SpecificRecord, T extends Oaf> implements ActionBuilderFactory<S, T> {
 
     /**
      * Algorithm name associated with builder.

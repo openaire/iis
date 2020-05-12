@@ -4,8 +4,6 @@ public final class ExportWorkflowRuntimeParameters {
 
 	public static final String EXPORT_TRUST_LEVEL_THRESHOLD = "export.trust.level.threshold";
 	
-	public static final String EXPORT_ACTION_SETID = "export.action.setid";
-	
 	public static final char EXPORT_ALGORITHM_PROPERTY_SEPARATOR = '.';	
 	
 	public static final String EXPORT_ACTION_BUILDER_FACTORY_CLASSNAME = "export.action.builder.factory.classname";

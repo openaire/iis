@@ -9,31 +9,27 @@ import org.apache.hadoop.conf.Configuration;
 import org.junit.Before;
 import org.junit.Test;
 
-import eu.dnetlib.actionmanager.common.Agent;
+import eu.dnetlib.dhp.schema.oaf.Oaf;
 
 /**
  * @author mhorst
  *
  */
-public abstract class AbstractActionBuilderModuleFactoryTest<T extends SpecificRecordBase> {
+public abstract class AbstractActionBuilderModuleFactoryTest<S extends SpecificRecordBase, T extends Oaf> {
 
 
     protected final float trustLevelThreshold = 0.5f;
     
     protected final Configuration config;
-
-    protected final String actionSetId = "someActionSetId";
-
-    protected final Agent agent = new Agent("agentId", "agent name", Agent.AGENT_TYPE.service);
     
     protected final AlgorithmName expectedAlgorithmName;
     
-    protected final ActionBuilderFactory<T> factory;
+    protected final ActionBuilderFactory<S, T> factory;
     
     
     // -------------------------------- CONSTRUCTORS ----------------------------------
     
-    public AbstractActionBuilderModuleFactoryTest(Class<? extends ActionBuilderFactory<T>> factoryClass, 
+    public AbstractActionBuilderModuleFactoryTest(Class<? extends ActionBuilderFactory<S, T>> factoryClass, 
             AlgorithmName expectedAlgorithmName) throws Exception {
         this.factory = factoryClass.getConstructor().newInstance();
         this.expectedAlgorithmName = expectedAlgorithmName;
@@ -54,22 +50,11 @@ public abstract class AbstractActionBuilderModuleFactoryTest<T extends SpecificR
         assertTrue(expectedAlgorithmName == factory.getAlgorithName());
     }
     
-    @Test(expected = NullPointerException.class)
-    public void testInstantiateNullAgent() throws Exception {
-        // execute
-        factory.instantiate(config, null, actionSetId);
-    }
-    
-    @Test(expected = NullPointerException.class)
-    public void testInstantiateNullActionSetId() throws Exception {
-        // execute
-        factory.instantiate(config, agent, null);
-    }
 
     @Test(expected = NullPointerException.class)
     public void testBuildNullObject() throws Exception {
         // given
-        ActionBuilderModule<T> module = factory.instantiate(config, agent, actionSetId);
+        ActionBuilderModule<S, T> module = factory.instantiate(config);
         // execute
         module.build(null);
     }

@@ -11,20 +11,16 @@ import org.junit.Test;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
-import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.data.proto.KindProtos;
-import eu.dnetlib.data.proto.OafProtos.Oaf;
-import eu.dnetlib.data.proto.RelTypeProtos.RelType;
-import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
-import eu.dnetlib.data.proto.ResultResultProtos.ResultResult.Similarity;
-import eu.dnetlib.iis.common.InfoSpaceConstants;
+import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.KeyValue;
+import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity;
 
 /**
  * @author mhorst
  *
  */
-public class DocumentSimilarityActionBuilderModuleFactoryTest extends AbstractActionBuilderModuleFactoryTest<DocumentSimilarity> {
+public class DocumentSimilarityActionBuilderModuleFactoryTest extends AbstractActionBuilderModuleFactoryTest<DocumentSimilarity, Relation> {
 
 
     private final float similarityThreshold = 0.5f;
@@ -43,10 +39,10 @@ public class DocumentSimilarityActionBuilderModuleFactoryTest extends AbstractAc
         DocumentSimilarity docSim = buildDocSim("docId", "otherDocId", 0.1f);
         config.set(EXPORT_DOCUMENTSSIMILARITY_THRESHOLD, String.valueOf(similarityThreshold));
         
-        ActionBuilderModule<DocumentSimilarity> module = factory.instantiate(config, agent, actionSetId);
+        ActionBuilderModule<DocumentSimilarity, Relation> module = factory.instantiate(config);
         
         // execute
-        List<AtomicAction> results =  module.build(docSim);
+        List<AtomicAction<Relation>> results =  module.build(docSim);
         
         //assert
         assertTrue(results.isEmpty());
@@ -59,36 +55,25 @@ public class DocumentSimilarityActionBuilderModuleFactoryTest extends AbstractAc
         String otherDocId = "otherDocId";
         float similarity = 1f;
         DocumentSimilarity docSim = buildDocSim(docId, otherDocId, similarity);
-        ActionBuilderModule<DocumentSimilarity> module = factory.instantiate(config, agent, actionSetId);
+        ActionBuilderModule<DocumentSimilarity, Relation> module = factory.instantiate(config);
         
         // execute
-        List<AtomicAction> actions = module.build(docSim);
+        List<AtomicAction<Relation>> actions = module.build(docSim);
         
         // assert
         assertNotNull(actions);
         assertEquals(2, actions.size());
-        AtomicAction action = actions.get(0);
+        AtomicAction<Relation> action = actions.get(0);
         assertNotNull(action);
-        assertNotNull(action.getRowKey());
-        assertEquals(actionSetId, action.getRawSet());
-        assertEquals(otherDocId, action.getTargetColumn());
-        assertEquals(docId, action.getTargetRowKey());
-        assertEquals(RelType.resultResult.toString() + '_' + SubRelType.similarity + '_'
-                + Similarity.RelName.hasAmongTopNSimilarDocuments, action.getTargetColumnFamily());
-        assertOaf(action.getTargetValue(), docId, otherDocId, similarity, 
-                Similarity.RelName.hasAmongTopNSimilarDocuments.toString());
+        assertEquals(Relation.class, action.getClazz());
+        assertOaf(action.getPayload(), docId, otherDocId, similarity, 
+                "hasAmongTopNSimilarDocuments");
 //      checking backward relation
         action = actions.get(1);
         assertNotNull(action);
-        assertNotNull(action.getRowKey());
-        assertEquals(agent, action.getAgent());
-        assertEquals(actionSetId, action.getRawSet());
-        assertEquals(docId, action.getTargetColumn());
-        assertEquals(otherDocId, action.getTargetRowKey());
-        assertEquals(RelType.resultResult.toString() + '_' + SubRelType.similarity + '_'
-                + Similarity.RelName.isAmongTopNSimilarDocuments, action.getTargetColumnFamily());
-        assertOaf(action.getTargetValue(), otherDocId, docId, similarity, 
-                Similarity.RelName.isAmongTopNSimilarDocuments.toString());
+        assertEquals(Relation.class, action.getClazz());
+        assertOaf(action.getPayload(), otherDocId, docId, similarity, 
+                "isAmongTopNSimilarDocuments");
     }
     
     // ----------------------- PRIVATE --------------------------
@@ -101,25 +86,23 @@ public class DocumentSimilarityActionBuilderModuleFactoryTest extends AbstractAc
         return builder.build();
     }
 
-    private void assertOaf(byte[] oafBytes, String source, String target, float similarity, 
+    private void assertOaf(Relation relation, String source, String target, float similarity, 
             String affiliationRelationName) throws InvalidProtocolBufferException {
-        assertNotNull(oafBytes);
-        Oaf.Builder oafBuilder = Oaf.newBuilder();
-        oafBuilder.mergeFrom(oafBytes);
-        Oaf oaf = oafBuilder.build();
-        assertNotNull(oaf);
+        assertNotNull(relation);
 
-        assertTrue(KindProtos.Kind.relation == oaf.getKind());
-        assertTrue(RelType.resultResult == oaf.getRel().getRelType());
-        assertTrue(SubRelType.similarity == oaf.getRel().getSubRelType());
-        assertEquals(affiliationRelationName, oaf.getRel().getRelClass());
-        assertEquals(source, oaf.getRel().getSource());
-        assertEquals(target, oaf.getRel().getTarget());
+        assertEquals("resultResult", relation.getRelType());
+        assertEquals("similarity", relation.getSubRelType());
+        assertEquals(affiliationRelationName, relation.getRelClass());
+        assertEquals(source, relation.getSource());
+        assertEquals(target, relation.getTarget());
 
-        assertNotNull(oaf.getDataInfo());
+        assertNotNull(relation.getDataInfo());
 
-        float normalizedTrust = similarity * InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
-        assertEquals(normalizedTrust, Float.parseFloat(oaf.getDataInfo().getTrust()), 0.0001);
+        assertNotNull(relation.getProperties());
+        assertEquals(1, relation.getProperties().size());
+        KeyValue similarityLevel = relation.getProperties().get(0);
+        assertEquals("similarityLevel", similarityLevel.getKey());
+        assertEquals(BuilderModuleHelper.getDecimalFormat().format(similarity), similarityLevel.getValue());
     }
 
 }

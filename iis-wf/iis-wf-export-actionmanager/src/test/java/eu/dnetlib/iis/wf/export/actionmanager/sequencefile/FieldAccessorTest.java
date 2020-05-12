@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.export.actionmanager.sequencefile;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
@@ -8,14 +9,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
-import com.googlecode.protobuf.format.JsonFormat;
+import datafu.com.google.common.collect.Lists;
+import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.KeyValue;
+import eu.dnetlib.dhp.schema.oaf.Relation;
 
-import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.actionmanager.common.Agent;
-import eu.dnetlib.data.proto.OafProtos;
+
 
 /**
  * Field accessor test class.
@@ -28,48 +29,89 @@ public class FieldAccessorTest {
 	
 	@Test
 	public void testAccessingValuesUsingDecoder() throws Exception {
-		FieldAccessor accessor = new FieldAccessor();
-		accessor.registerDecoder("targetValue", new OafFieldDecoder());
-
-		String rawSetId = "rawset-id";
-		String agentId = "agent-id";
-		String agentName = "agent-name";
-		AtomicAction action = new AtomicAction(rawSetId, new Agent(agentId, agentName, Agent.AGENT_TYPE.service));
-		byte[] decodedTargetValue = decodeTargetValue(new String(
-				IOUtils.toByteArray(FieldAccessorTest.class
-				.getResourceAsStream("/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/resultProject.json")),
-				"utf8"));
-		action.setTargetValue(decodedTargetValue);
-
-		assertEquals(rawSetId, accessor.getValue("rawSet", action));
-		assertEquals(agentId, accessor.getValue("agent.id", action));
-		assertEquals(agentName, accessor.getValue("agent.name", action));
-		assertEquals(Agent.AGENT_TYPE.service, accessor.getValue("agent.type", action));
-		assertEquals("relation", accessor.getValue("$targetValue.kind", action).toString());
-		assertEquals("resultProject", accessor.getValue("$targetValue.rel.relType", action).toString());
+	    String targetId = "addedTarget";
+	    FieldAccessor accessor = new FieldAccessor();
+		accessor.registerDecoder("payload", new FieldDecoder() {
+            @Override
+            public Object decode(Object source) throws FieldDecoderException {
+                Relation rel = (Relation) source;
+                rel.setTarget(targetId);
+                return source;
+            }
+            @Override
+            public boolean canHandle(Object source) {
+                return source instanceof Relation;
+            }
+        });
+		AtomicAction<Relation> action = new AtomicAction<>();
+		action.setClazz(Relation.class);
+		
+		Relation relation = new Relation();
+		action.setPayload(relation);
+		
+		String sourceId = "someSource";
+		relation.setSource(sourceId);
+		
+		assertEquals(Relation.class.getCanonicalName(), accessor.getValue("clazz.canonicalName", action).toString());
+		assertEquals(sourceId, accessor.getValue("$payload.source", action).toString());
+		assertEquals(targetId, accessor.getValue("$payload.target", action).toString());
 	}
+	
+	@Test(expected=FieldAccessorException.class)
+    public void testAccessingValuesUsingNonExistingDecoder() throws Exception {
+        FieldAccessor accessor = new FieldAccessor();
+
+        AtomicAction<Relation> action = new AtomicAction<>();
+        Relation relation = new Relation();
+        action.setPayload(relation);
+        String sourceId = "someSource";
+        relation.setSource(sourceId);
+        
+        assertEquals(sourceId, accessor.getValue("$payload.source", action).toString());
+    }
+	
+	@Test
+    public void testAccessingValuesFromActionModel() throws Exception {
+        FieldAccessor accessor = new FieldAccessor();
+
+        AtomicAction<Relation> action = new AtomicAction<>();
+        action.setClazz(Relation.class);
+        
+        Relation relation = new Relation();
+        action.setPayload(relation);
+        
+        String sourceId = "someSource";
+        relation.setSource(sourceId);
+        List<KeyValue> collectedFrom = Lists.newArrayList();
+        String key = "someKey";
+        KeyValue keyValue = new KeyValue();
+        keyValue.setKey(key);
+        collectedFrom.add(keyValue);
+        relation.setCollectedfrom(collectedFrom);
+        
+        assertEquals(sourceId, accessor.getValue("payload.source", action).toString());
+        assertNotNull(accessor.getValue("payload.collectedfrom", action));
+        assertEquals(key, accessor.getValue("payload.collectedfrom[0].key", action).toString());
+        assertEquals(Relation.class.getName(), accessor.getValue("clazz.name", action).toString());
+        
+    }
 
 	@Test(expected=FieldAccessorException.class)
 	public void testAccessingValuesForInvalidPath() throws Exception {
 		FieldAccessor accessor = new FieldAccessor();
-		accessor.registerDecoder("targetValue", new OafFieldDecoder());
 
-		String rawSetId = "rawset-id";
-		String agentId = "agent-id";
-		String agentName = "agent-name";
-		AtomicAction action = new AtomicAction(rawSetId, new Agent(agentId, agentName, 
-				Agent.AGENT_TYPE.service));
+		AtomicAction<Relation> action = new AtomicAction<>();
+		action.setClazz(Relation.class);
 
-		accessor.getValue("agent.unknown", action);
+		accessor.getValue("clazz.unknown", action);
 	}
 	
 	@Test
 	public void testAccessingNullValue() throws Exception {
 		FieldAccessor accessor = new FieldAccessor();
-		accessor.registerDecoder("targetValue", new OafFieldDecoder());
-		AtomicAction action = new AtomicAction(null, new Agent("agent-id", "agent-name", 
-				Agent.AGENT_TYPE.service));
-		assertNull(accessor.getValue("rawSet", action));
+		AtomicAction<Relation> action = new AtomicAction<>();
+        
+		assertNull(accessor.getValue("payload", action));
 	}
 	
 	@Test
@@ -145,14 +187,6 @@ public class FieldAccessorTest {
 		assertEquals("name-1", PropertyUtils.getIndexedProperty(object, "names", 0));
 	}
 
-	//------------------------ PRIVATE -------------------------------
-	
-	private byte[] decodeTargetValue(final String json) throws Exception {
-		OafProtos.Oaf.Builder oaf = OafProtos.Oaf.newBuilder();
-		JsonFormat.merge(json, oaf);
-		return oaf.build().toByteArray();
-	}
-	
 	//------------------------ INNER CLASSES  ------------------------
 	
 	public static class ArrayWrapper {

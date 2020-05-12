@@ -9,12 +9,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 
-import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.actionmanager.common.Agent;
-import eu.dnetlib.data.proto.FieldTypeProtos.ExtraInfo;
-import eu.dnetlib.data.proto.OafProtos.Oaf;
-import eu.dnetlib.data.proto.OafProtos.OafEntity;
-import eu.dnetlib.data.proto.TypeProtos.Type;
+import eu.dnetlib.dhp.schema.oaf.ExtraInfo;
+import eu.dnetlib.dhp.schema.oaf.Result;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
 import eu.dnetlib.iis.common.model.extrainfo.ExtraInfoConstants;
@@ -29,7 +25,7 @@ import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
  * @author mhorst
  *
  */
-public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFactory<Citations> {
+public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFactory<Citations, Result> {
 
     private static final String EXTRA_INFO_NAME = ExtraInfoConstants.NAME_CITATIONS;
     private static final String EXTRA_INFO_TYPOLOGY = ExtraInfoConstants.TYPOLOGY_CITATIONS;
@@ -43,13 +39,13 @@ public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFa
     // ------------------------ LOGIC ---------------------------------
     
     @Override
-    public ActionBuilderModule<Citations> instantiate(Configuration config, Agent agent, String actionSetId) {
-        return new CitationActionBuilderModule(provideTrustLevelThreshold(config), agent, actionSetId);
+    public ActionBuilderModule<Citations, Result> instantiate(Configuration config) {
+        return new CitationActionBuilderModule(provideTrustLevelThreshold(config));
     }
 
     // ------------------------ INNER CLASS  --------------------------
     
-    class CitationActionBuilderModule extends AbstractBuilderModule<Citations> {
+    class CitationActionBuilderModule extends AbstractEntityBuilderModule<Citations, Result> {
 
         private CitationsExtraInfoConverter converter = new CitationsExtraInfoConverter();
 
@@ -60,48 +56,39 @@ public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFa
          * @param agent action manager agent details
          * @param actionSetId action set identifier
          */
-        public CitationActionBuilderModule(Float trustLevelThreshold, Agent agent, String actionSetId) {
-            super(trustLevelThreshold, buildInferenceProvenance(), agent, actionSetId);
+        public CitationActionBuilderModule(Float trustLevelThreshold) {
+            super(trustLevelThreshold, buildInferenceProvenance());
         }
 
         // ------------------------ LOGIC --------------------------
         
         @Override
-        public List<AtomicAction> build(Citations object) {
-            Oaf oaf = buildOAFCitations(object);
-            if (oaf != null) {
-                return getActionFactory().createUpdateActions(getActionSetId(), getAgent(), 
-                        object.getDocumentId().toString(), Type.result, oaf.toByteArray());
+        protected Class<Result> getResultClass() {
+            return Result.class;
+        }
+        
+        @Override
+        protected Result convert(Citations source) {
+            if (CollectionUtils.isNotEmpty(source.getCitations())) {
+                Result result = new Result();
+                result.setId(source.getDocumentId().toString());
+                
+                ExtraInfo extraInfo = new ExtraInfo();
+                extraInfo.setValue(converter.serialize(normalize(source.getCitations())));
+                extraInfo.setName(EXTRA_INFO_NAME);
+                extraInfo.setTypology(EXTRA_INFO_TYPOLOGY);
+                extraInfo.setProvenance(this.getInferenceProvenance());
+                extraInfo.setTrust(StaticConfigurationProvider.ACTION_TRUST_0_9);
+                result.setExtraInfo(Collections.singletonList(extraInfo));
+
+                return result;
             } else {
-                return Collections.emptyList();
+                return null;    
             }
         }
 
         // ------------------------ PRIVATE --------------------------
         
-        /**
-         * Builds {@link Oaf} object containing document statistics.
-         */
-        private Oaf buildOAFCitations(Citations source) {
-            if (CollectionUtils.isNotEmpty(source.getCitations())) {
-                OafEntity.Builder entityBuilder = OafEntity.newBuilder();
-                if (source.getDocumentId() != null) {
-                    entityBuilder.setId(source.getDocumentId().toString());
-                }
-                ExtraInfo.Builder extraInfoBuilder = ExtraInfo.newBuilder();
-                extraInfoBuilder.setValue(converter.serialize(normalize(source.getCitations())));
-                extraInfoBuilder.setName(EXTRA_INFO_NAME);
-                extraInfoBuilder.setTypology(EXTRA_INFO_TYPOLOGY);
-                extraInfoBuilder.setProvenance(this.getInferenceProvenance());
-                extraInfoBuilder.setTrust(StaticConfigurationProvider.ACTION_TRUST_0_9);
-                entityBuilder.addExtraInfo(extraInfoBuilder.build());
-                entityBuilder.setType(Type.result);
-                return buildOaf(entityBuilder.build());
-            }
-            // fallback
-            return null;
-        }
-
         /**
          * Performs confidence level normalization. Removes empty lists. 
          * Removes 50| prefix from publication identifier.

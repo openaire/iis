@@ -73,11 +73,6 @@
             <value>6144</value>
             <description>memory for distcp action copying output sequence files to remote cluster</description>
         </property>
-        <property>
-            <name>output_remote_distcp_num_maps</name>
-            <value>1</value>
-            <description>maximum number of simultaneous copies to remote location</description>
-        </property>
         <!-- entities exporting modes -->
         <property>
             <name>active_export_software</name>
@@ -89,11 +84,6 @@
             <description>flag indicating patent entities should be exported</description>
         </property>
         <!-- action set id properties -->
-        <property>
-            <name>action_set_id</name>
-            <value>$UNDEFINED$</value>
-            <description>action-set identifier of exported data</description>
-        </property>
         <property>
             <name>action_set_id_document_similarities_standard</name>
             <value>$UNDEFINED$</value>
@@ -349,7 +339,6 @@
             <arg>-Dmapreduce.map.memory.mb=${output_remote_distcp_memory_mb}</arg>
             <arg>-pb</arg>
             <arg>-overwrite</arg>
-            <arg>-m ${output_remote_distcp_num_maps}</arg>
             <arg>${nameNode}${workingDir}/output</arg>
             <arg>${output_remote_location}</arg>
         </distcp>

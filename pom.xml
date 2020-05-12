@@ -459,11 +459,6 @@
                 <artifactId>dhp-schemas</artifactId>
                 <version>[1.0.0, 2.0.0)</version>
             </dependency>
-            <dependency>
-                <groupId>eu.dnetlib</groupId>
-                <artifactId>dnet-openaire-data-protos</artifactId>
-                <version>[3.0.0, 4.0.0)</version>
-            </dependency>
 
             <dependency>
                 <groupId>eu.dnetlib</groupId>
@@ -519,19 +514,6 @@
                     <exclusion>
                         <groupId>org.springframework</groupId>
                         <artifactId>spring-webmvc</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>eu.dnetlib</groupId>
-                <artifactId>dnet-actionmanager-common</artifactId>
-                <version>[6.0.0, 7.0.0)</version>
-                <exclusions>
-                    <!-- duplicate with different groupId -->
-                    <exclusion>
-                        <groupId>apache</groupId>
-                        <artifactId>commons-logging</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

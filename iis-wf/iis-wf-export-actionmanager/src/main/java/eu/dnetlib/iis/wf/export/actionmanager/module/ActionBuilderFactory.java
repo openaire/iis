@@ -1,17 +1,19 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
+import org.apache.avro.specific.SpecificRecord;
 import org.apache.hadoop.conf.Configuration;
 
-import eu.dnetlib.actionmanager.common.Agent;
+import eu.dnetlib.dhp.schema.oaf.Oaf;
 
 /**
  * Action builder factory providing {@link ActionBuilderModule} objects.
  * 
  * @author mhorst
  *
- * @param <T> avro input type
+ * @param <S> avro input type
+ * @param <T> target {@link Oaf} model object
  */
-public interface ActionBuilderFactory<T> {
+public interface ActionBuilderFactory<S extends SpecificRecord, T extends Oaf> {
 
     /**
      * Instantiates action builder module.
@@ -20,7 +22,7 @@ public interface ActionBuilderFactory<T> {
      * @param agent actionmanager agent details
      * @param actionSetId actionset identifier
      */
-    ActionBuilderModule<T> instantiate(Configuration config, Agent agent, String actionSetId);
+    ActionBuilderModule<S, T> instantiate(Configuration config);
 
     /**
      * Provides algorithm name.

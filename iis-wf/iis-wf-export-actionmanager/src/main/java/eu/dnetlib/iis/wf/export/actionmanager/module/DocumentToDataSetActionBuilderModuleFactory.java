@@ -5,18 +5,10 @@ import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
 
-import eu.dnetlib.actionmanager.actions.AtomicAction;
-import eu.dnetlib.actionmanager.common.Agent;
-import eu.dnetlib.data.mapreduce.util.OafDecoder;
-import eu.dnetlib.data.proto.KindProtos.Kind;
-import eu.dnetlib.data.proto.OafProtos.Oaf;
-import eu.dnetlib.data.proto.OafProtos.OafRel;
-import eu.dnetlib.data.proto.RelTypeProtos.RelType;
-import eu.dnetlib.data.proto.RelTypeProtos.SubRelType;
-import eu.dnetlib.data.proto.ResultResultProtos.ResultResult;
-import eu.dnetlib.data.proto.ResultResultProtos.ResultResult.PublicationDataset;
-import eu.dnetlib.iis.common.InfoSpaceConstants;
+import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet;
+import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
 
 /**
  * {@link DocumentToDataSet} based action builder module.
@@ -24,10 +16,9 @@ import eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet;
  * @author mhorst
  *
  */
-public class DocumentToDataSetActionBuilderModuleFactory extends AbstractActionBuilderFactory<DocumentToDataSet> {
+public class DocumentToDataSetActionBuilderModuleFactory extends AbstractActionBuilderFactory<DocumentToDataSet, Relation> {
 
-    public static final String REL_CLASS_ISRELATEDTO = PublicationDataset.RelName.isRelatedTo.toString();
-
+    
     // ------------------------ CONSTRUCTORS --------------------------
     
     public DocumentToDataSetActionBuilderModuleFactory() {
@@ -37,71 +28,56 @@ public class DocumentToDataSetActionBuilderModuleFactory extends AbstractActionB
     // ------------------------ LOGIC ---------------------------------
 
     @Override
-    public ActionBuilderModule<DocumentToDataSet> instantiate(Configuration config, Agent agent, String actionSetId) {
-        return new DocumentToDataSetActionBuilderModule(provideTrustLevelThreshold(config), agent, actionSetId);
+    public ActionBuilderModule<DocumentToDataSet, Relation> instantiate(Configuration config) {
+        return new DocumentToDataSetActionBuilderModule(provideTrustLevelThreshold(config));
     }
 
     // ------------------------ INNER CLASS --------------------------
     
-    class DocumentToDataSetActionBuilderModule extends AbstractBuilderModule<DocumentToDataSet> {
+    class DocumentToDataSetActionBuilderModule extends AbstractBuilderModule<DocumentToDataSet, Relation> {
 
         
         // ------------------------ CONSTRUCTORS --------------------------
         
         /**
          * @param trustLevelThreshold trust level threshold or null when all records should be exported
-         * @param agent action manager agent details
-         * @param actionSetId action set identifier
          */
-        public DocumentToDataSetActionBuilderModule(Float trustLevelThreshold, Agent agent, String actionSetId) {
-            super(trustLevelThreshold, buildInferenceProvenance(), agent, actionSetId);
+        public DocumentToDataSetActionBuilderModule(Float trustLevelThreshold) {
+            super(trustLevelThreshold, buildInferenceProvenance());
         }
 
         // ------------------------ LOGIC --------------------------
         
         @Override
-        public List<AtomicAction> build(DocumentToDataSet object) throws TrustLevelThresholdExceededException {
-            Oaf.Builder oafBuilder = instantiateOafBuilder(object);
-            Oaf oaf = oafBuilder.build();
-            Oaf oafInverted = BuilderModuleHelper.invertBidirectionalRelationAndBuild(oafBuilder);
-            return Arrays.asList(new AtomicAction[] {
-                    getActionFactory().createAtomicAction(getActionSetId(), getAgent(), 
-                            object.getDocumentId().toString(), OafDecoder.decode(oaf).getCFQ(),
-                            object.getDatasetId().toString(), oaf.toByteArray()),
-                    // setting reverse relation in referenced object
-                    getActionFactory().createAtomicAction(getActionSetId(), getAgent(), 
-                            object.getDatasetId().toString(),
-                            OafDecoder.decode(oafInverted).getCFQ(), object.getDocumentId().toString(), oafInverted.toByteArray()) });
+        public List<AtomicAction<Relation>> build(DocumentToDataSet object) throws TrustLevelThresholdExceededException {
+            return Arrays.asList(
+                    createAction(object.getDocumentId().toString(), object.getDatasetId().toString(),
+                            object.getConfidenceLevel()),
+                    createAction(object.getDatasetId().toString(), object.getDocumentId().toString(),
+                            object.getConfidenceLevel()));
         }
 
         // ------------------------ PRIVATE --------------------------
         
-        private Oaf.Builder instantiateOafBuilder(DocumentToDataSet object) throws TrustLevelThresholdExceededException {
-            String docId = object.getDocumentId().toString();
-            String currentRefId = object.getDatasetId().toString();
-            Oaf.Builder oafBuilder = Oaf.newBuilder();
-            oafBuilder.setKind(Kind.relation);
-            oafBuilder.setRel(buildOafRel(docId, currentRefId));
-            oafBuilder.setDataInfo(buildInference(object.getConfidenceLevel()));
-            oafBuilder.setLastupdatetimestamp(System.currentTimeMillis());
-            return oafBuilder;
-        }
-        
-        private OafRel buildOafRel(String docId, String currentRefId) {
-            OafRel.Builder relBuilder = OafRel.newBuilder();
-            relBuilder.setChild(false);
-            relBuilder.setRelType(RelType.resultResult);
-            relBuilder.setSubRelType(SubRelType.publicationDataset);
-            relBuilder.setRelClass(REL_CLASS_ISRELATEDTO);
-            relBuilder.setSource(docId);
-            relBuilder.setTarget(currentRefId);
-            ResultResult.Builder resResultBuilder = ResultResult.newBuilder();
-            PublicationDataset.Builder pubDatasetBuilder = PublicationDataset.newBuilder();
-            pubDatasetBuilder.setRelMetadata(BuilderModuleHelper.buildRelMetadata(
-                    InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RELATIONS_RESULT_RESULT, REL_CLASS_ISRELATEDTO));
-            resResultBuilder.setPublicationDataset(pubDatasetBuilder.build());
-            relBuilder.setResultResult(resResultBuilder.build());
-            return relBuilder.build();
+        /**
+         * Creates similarity related actions.
+         */
+        private AtomicAction<Relation> createAction(String source, String target, float confidenceLevel) throws TrustLevelThresholdExceededException {
+            AtomicAction<Relation> action = new AtomicAction<>();
+            action.setClazz(Relation.class);
+
+            Relation relation = new Relation();
+            relation.setSource(source);
+            relation.setTarget(target);
+            relation.setRelType(OafConstants.REL_TYPE_RESULT_RESULT);
+            relation.setSubRelType(OafConstants.SUBREL_TYPE_PUBLICATION_DATASET);
+            relation.setRelClass(OafConstants.REL_CLASS_ISRELATEDTO);
+            relation.setDataInfo(buildInference(confidenceLevel));
+            relation.setLastupdatetimestamp(System.currentTimeMillis());
+            
+            action.setPayload(relation);
+            
+            return action;
         }
     }
 }

@@ -8,8 +8,7 @@ import com.google.common.base.Preconditions;
 import eu.dnetlib.iis.importer.schemas.Organization;
 
 /**
- * Converter of {@link eu.dnetlib.dhp.schema.oaf.Organization} object containing {@link eu.dnetlib.data.proto.OrganizationProtos.Organization}
- * into {@link Organization}
+ * Converter of {@link eu.dnetlib.dhp.schema.oaf.Organization} object into {@link Organization}
  * 
  * 
  * @author Łukasz Dumiszewski
@@ -25,8 +24,7 @@ public class OrganizationConverter implements OafEntityToAvroConverter<eu.dnetli
     //------------------------ LOGIC --------------------------
     
     /**
-     * Converts {@link eu.dnetlib.dhp.schema.oaf.Organization} object containing {@link eu.dnetlib.data.proto.OrganizationProtos.Organization}
-     * into {@link Organization}
+     * Converts {@link eu.dnetlib.dhp.schema.oaf.Organization} object into {@link Organization}
      */
     @Override
     public Organization convert(eu.dnetlib.dhp.schema.oaf.Organization srcOrganization) {

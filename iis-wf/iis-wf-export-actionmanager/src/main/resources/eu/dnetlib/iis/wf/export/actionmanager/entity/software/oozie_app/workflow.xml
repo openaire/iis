@@ -125,9 +125,6 @@
                 --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
             </spark-opts>
 
-            <arg>-entityActionSetId=${action_set_id_entity_software}</arg>
-            <arg>-relationActionSetId=${action_set_id_document_software_url}</arg>
-            
             <arg>-trustLevelThreshold=${trust_level_threshold_document_software_url}</arg>
 
             <arg>-inputDocumentToSoftwareAvroPath=${input_document_to_software_url}</arg>
