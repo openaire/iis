@@ -1,4 +1,4 @@
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-pushgateway-push">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-push-reports">
     <global>
         <job-tracker>${jobTracker}</job-tracker>
         <name-node>${nameNode}</name-node>
@@ -26,24 +26,37 @@
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
             <arg>-C{report,
                 eu.dnetlib.iis.common.schemas.ReportEntry,
-                eu/dnetlib/iis/wf/report/pushgateway/process/input/report.json}
+                eu/dnetlib/iis/wf/report/pushgateway/process/test/input/report.json}
             </arg>
-            <arg>-Oreport=${workingDir}/producer</arg>
+            <arg>-Oreport=${workingDir}/producer/report</arg>
         </java>
-        <ok to="push-reports"/>
+        <ok to="push_reports"/>
         <error to="fail"/>
     </action>
 
-    <action name="push-reports">
-        <java>
-            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-            <arg>eu.dnetlib.iis.wf.report.pushgateway.process.PushMetricsProcess</arg>
-            <arg>-PjobName=test-pushgateway-push</arg>
-            <arg>-PmetricPusherCreatorClassName=eu.dnetlib.iis.wf.report.pushgateway.pusher.FilePusherCreator</arg>
-            <arg>-PmetricPusherAddress=${workingDir}/output</arg>
-            <arg>-PlabeledMetric.processing_documentClassification_docClassReference=type</arg>
-            <arg>-PreportLocation.report=${workingDir}/producer</arg>
-        </java>
+    <action name="push_reports">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/push_reports</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>metricPusherCreatorClassName</name>
+                    <value>eu.dnetlib.iis.wf.report.pushgateway.process.FilePusherCreator</value>
+                </property>
+                <property>
+                    <name>metricPusherAddress</name>
+                    <value>${workingDir}/output</value>
+                </property>
+                <property>
+                    <name>reportsDir</name>
+                    <value>${workingDir}/producer</value>
+                </property>
+                <property>
+                    <name>labeledMetricsPropertiesFile</name>
+                    <value>eu/dnetlib/iis/wf/report/pushgateway/process/test/oozie_app/labeled_metrics_by_case.properties</value>
+                </property>
+            </configuration>
+        </sub-workflow>
         <ok to="consumer"/>
         <error to="fail"/>
     </action>
@@ -54,9 +67,9 @@
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
             <arg>-C{report,
                 eu.dnetlib.iis.common.schemas.ReportEntry,
-                eu/dnetlib/iis/wf/report/pushgateway/process/input/report.json}
+                eu/dnetlib/iis/wf/report/pushgateway/process/test/output/report.json}
             </arg>
-            <arg>-Ireport=${workingDir}/output</arg>
+            <arg>-Ireport=${workingDir}/output/iis</arg>
         </java>
         <ok to="end"/>
         <error to="fail"/>
