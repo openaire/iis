@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.report.pushgateway.pusher;
+package eu.dnetlib.iis.wf.report.pushgateway.process;
 
 import io.prometheus.client.exporter.PushGateway;
 import org.slf4j.Logger;
@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+//TODO add description and logging
 public class PushGatewayPusherCreator implements MetricPusherCreator {
     private static final Logger logger = LoggerFactory.getLogger(PushGatewayPusherCreator.class);
 
@@ -16,6 +17,7 @@ public class PushGatewayPusherCreator implements MetricPusherCreator {
             try {
                 return new PushGateway(address);
             } catch (Exception e) {
+                //TODO log exception
                 logger.error("PushGateway creation failed, address: {}.", address);
                 e.printStackTrace();
                 return null;
@@ -25,12 +27,13 @@ public class PushGatewayPusherCreator implements MetricPusherCreator {
     }
 
     public MetricPusher create(Supplier<PushGateway> pushGatewaySupplier) {
-        return (collectorRegistry, jobName) -> Optional
+        return (collectorRegistry, job, groupingKey) -> Optional
                 .ofNullable(pushGatewaySupplier.get())
                 .ifPresent(pushGateway -> {
                     try {
-                        pushGateway.pushAdd(collectorRegistry, jobName);
+                        pushGateway.push(collectorRegistry, job, groupingKey);
                     } catch (IOException e) {
+                        //TODO log exception
                         logger.error("PushGateway push failed.");
                         e.printStackTrace();
                     }

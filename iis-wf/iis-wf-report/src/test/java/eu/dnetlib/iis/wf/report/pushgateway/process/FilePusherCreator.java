@@ -1,9 +1,10 @@
-package eu.dnetlib.iis.wf.report.pushgateway.pusher;
+package eu.dnetlib.iis.wf.report.pushgateway.process;
 
 import eu.dnetlib.iis.common.java.io.DataStore;
 import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.wf.report.pushgateway.converter.ReportEntryToMetricConverter;
 import io.prometheus.client.Collector;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -22,15 +24,15 @@ public class FilePusherCreator implements MetricPusherCreator {
 
     @Override
     public MetricPusher create(String address) {
-        return (collectorRegistry, jobName) -> {
+        return (collectorRegistry, job, groupingKey) -> {
             List<ReportEntry> reportEntries = Collections.list(collectorRegistry.metricFamilySamples()).stream()
                     .flatMap(metricFamilySamples -> metricFamilySamples.samples.stream().map(FilePusherCreator::sampleToReportEntry))
                     .collect(Collectors.toList());
-
             try {
                 FileSystem fs = FileSystem.get(new Configuration());
-                DataStore.create(reportEntries, new FileSystemPath(fs, new Path(address, jobName)), ReportEntry.SCHEMA$);
+                DataStore.create(reportEntries, new FileSystemPath(fs, new Path(address, job)), ReportEntry.SCHEMA$);
             } catch (IOException e) {
+                //TODO log exception
                 logger.error("File pusher push failed.");
                 e.printStackTrace();
             }
@@ -45,21 +47,25 @@ public class FilePusherCreator implements MetricPusherCreator {
     }
 
     private static boolean isSampleDuration(Collector.MetricFamilySamples.Sample sample) {
-        return sample.name.contains("seconds");
+        return sample.name.contains(ReportEntryToMetricConverter.DURATION_METRIC_NAME_SUFFIX);
     }
 
     private static String keyValueForDuration(Collector.MetricFamilySamples.Sample sample) {
-        String rawMetricName = sample.name;
-        return rawMetricName.substring(0, rawMetricName.indexOf("_seconds")).replace("_", ".");
+        String metricName = sample.name;
+        String[] metricNameParts = metricName.split(ReportEntryToMetricConverter.METRIC_NAME_SEP);
+        return Arrays.stream(metricNameParts).limit(metricNameParts.length - 1).collect(Collectors.joining(ReportEntryToMetricConverter.REPORT_ENTRY_KEY_SEP));
     }
 
     private static String keyValueForCounter(Collector.MetricFamilySamples.Sample sample) {
-        String rawMetricName = sample.name;
+        String metricName = sample.name;
+        String[] metricNameParts = metricName.split(ReportEntryToMetricConverter.METRIC_NAME_SEP);
         if (Objects.nonNull(sample.labelValues) && sample.labelValues.size() > 0) {
-            String labelValues = String.join("_", sample.labelValues);
-            return String.format("%s_%s", rawMetricName, labelValues).replace("_", ".");
+            return String.format("%s%s%s",
+                    String.join(ReportEntryToMetricConverter.REPORT_ENTRY_KEY_SEP, metricNameParts),
+                    ReportEntryToMetricConverter.REPORT_ENTRY_KEY_SEP,
+                    String.join(ReportEntryToMetricConverter.REPORT_ENTRY_KEY_SEP, sample.labelValues));
         }
-        return rawMetricName.replace("_", ".");
+        return String.join(ReportEntryToMetricConverter.REPORT_ENTRY_KEY_SEP, metricNameParts);
     }
 
 
