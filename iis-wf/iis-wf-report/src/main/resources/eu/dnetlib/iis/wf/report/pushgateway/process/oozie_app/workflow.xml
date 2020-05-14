@@ -3,20 +3,30 @@
         <property>
             <name>metricPusherCreatorClassName</name>
             <value>eu.dnetlib.iis.wf.report.pushgateway.process.PushGatewayPusherCreator</value>
-            <description>TODO</description>
+            <description>
+                canonical name of a class implementing eu.dnetlib.iis.wf.report.pushgateway.process.MetricPusherCreator
+                used to create eu.dnetlib.iis.wf.report.pushgateway.process.MetricPusher for pushing prometheus metrics
+                to pushgateway
+            </description>
         </property>
         <property>
             <name>metricPusherAddress</name>
-            <description>TODO</description>
+            <description>
+                pushgateway service location
+            </description>
         </property>
         <property>
             <name>reportsDir</name>
-            <description>TODO</description>
+            <description>
+                location of an HDFS dir with reports
+            </description>
         </property>
         <property>
             <name>labeledMetricsPropertiesFile</name>
             <value>eu/dnetlib/iis/wf/report/pushgateway/oozie_app/labeled_metrics.properties</value>
-            <description>TODO</description>
+            <description>
+                properties file with configuration of labeled metrics
+            </description>
         </property>
     </parameters>
 
