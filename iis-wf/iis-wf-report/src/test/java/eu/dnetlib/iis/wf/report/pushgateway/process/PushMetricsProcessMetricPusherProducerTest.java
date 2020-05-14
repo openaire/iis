@@ -1,8 +1,5 @@
 package eu.dnetlib.iis.wf.report.pushgateway.process;
 
-import eu.dnetlib.iis.wf.report.pushgateway.process.PushMetricsProcess;
-import eu.dnetlib.iis.wf.report.pushgateway.pusher.MetricPusher;
-import eu.dnetlib.iis.wf.report.pushgateway.pusher.MetricPusherCreator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -19,45 +16,12 @@ import static org.mockito.Mockito.when;
 public class PushMetricsProcessMetricPusherProducerTest {
 
     @Test
-    public void shouldProduceEmptyWhenError() {
+    public void shouldProduceEmptyOnError() {
         // given
         PushMetricsProcess.MetricPusherProducer metricPusherProducer = new PushMetricsProcess.MetricPusherProducer();
 
-        MetricPusherCreator metricPusherCreator = mock(MetricPusherCreator.class);
-        when(metricPusherCreator.create("the.address")).thenReturn(mock(MetricPusher.class));
-
         // when
-        Optional<MetricPusher> result = metricPusherProducer.create(metricPusherCreator, null);
-
-        // then
-        assertFalse(result.isPresent());
-    }
-
-    @Test
-    public void shouldProduceEmptyWhenMetricPusherAddressIsMissing() {
-        // given
-        PushMetricsProcess.MetricPusherProducer metricPusherProducer = new PushMetricsProcess.MetricPusherProducer();
-
-        MetricPusherCreator metricPusherCreator = mock(MetricPusherCreator.class);
-        when(metricPusherCreator.create("the.address")).thenReturn(mock(MetricPusher.class));
-
-        // when
-        Optional<MetricPusher> result = metricPusherProducer.create(metricPusherCreator, Collections.emptyMap());
-
-        // then
-        assertFalse(result.isPresent());
-    }
-
-    @Test
-    public void shouldProduceEmptyWhenMetricPusherAddressIsEmpty() {
-        // given
-        PushMetricsProcess.MetricPusherProducer metricPusherProducer = new PushMetricsProcess.MetricPusherProducer();
-
-        MetricPusherCreator metricPusherCreator = mock(MetricPusherCreator.class);
-        when(metricPusherCreator.create("the.address")).thenReturn(mock(MetricPusher.class));
-
-        // when
-        Optional<MetricPusher> result = metricPusherProducer.create(metricPusherCreator, Collections.singletonMap("metricPusherAddress", ""));
+        Optional<MetricPusher> result = metricPusherProducer.create(() -> null);
 
         // then
         assertFalse(result.isPresent());

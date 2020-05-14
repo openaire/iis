@@ -4,21 +4,28 @@ import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
 import eu.dnetlib.iis.common.java.io.DataStore;
 import eu.dnetlib.iis.common.java.io.FileSystemPath;
+import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.wf.report.pushgateway.converter.LabeledMetricConf;
 import eu.dnetlib.iis.wf.report.pushgateway.converter.ReportEntryToMetricConverter;
-import eu.dnetlib.iis.wf.report.pushgateway.pusher.MetricPusher;
-import eu.dnetlib.iis.wf.report.pushgateway.pusher.MetricPusherCreator;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Gauge;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.mapreduce.Job;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -29,20 +36,20 @@ public class PushMetricsProcess implements Process {
 
     private static final String METRIC_PUSHER_CREATOR_CLASS_NAME = "metricPusherCreatorClassName";
     private static final String METRIC_PUSHER_ADDRESS = "metricPusherAddress";
-    private static final String LABELED_METRIC = "labeledMetric";
-    private static final String METRIC_LABEL_NAMES_SEP = ",";
-    private static final String REPORT_LOCATION = "reportLocation";
-    private static final String JOB_NAME = "jobName";
+    private static final String REPORTS_DIR = "reportsDir";
+    private static final String LABELED_METRICS_PROPERTIES_FILE = "labeledMetricsPropertiesFile";
+    private static final String GROUPING_KEY = "groupingKey";
+    private static final String JOB = "iis";
 
     private MetricPusherCreatorProducer metricPusherCreatorProducer = new MetricPusherCreatorProducer();
     private MetricPusherProducer metricPusherProducer = new MetricPusherProducer();
     private FileSystemProducer fileSystemProducer = new FileSystemProducer();
     private ReportLocationsFinder reportLocationsFinder = new ReportLocationsFinder();
-    private LabelNamesByMetricNameProducer labelNamesByMetricNameProducer = new LabelNamesByMetricNameProducer();
+    private LabeledMetricConfByPatternProducer labeledMetricConfByPatternProducer = new LabeledMetricConfByPatternProducer();
     private ReportEntryReader reportEntryReader = new ReportEntryReader();
     private ReportEntryConverter reportEntryConverter = new ReportEntryConverter();
     private GaugesRegistrar gaugesRegistrar = new GaugesRegistrar();
-    private JobNameProducer jobNameProducer = new JobNameProducer();
+    private GroupingKeyProducer groupingKeyProducer = new GroupingKeyProducer();
 
     @Override
     public Map<String, PortType> getInputPorts() {
@@ -68,24 +75,27 @@ public class PushMetricsProcess implements Process {
                                             reportLocationsFinder.find(parameters)
                                                     .ifPresent(paths -> {
                                                         logger.info("Using report locations of size: {}", paths.size());
-                                                        labelNamesByMetricNameProducer.create(parameters)
-                                                                .ifPresent(labelNamesByMetricName -> {
-                                                                    logger.info("Using label map of size: {}", labelNamesByMetricName.size());
-                                                                    List<Optional<List<Gauge>>> optionals = paths.stream()
-                                                                            .map(path -> reportEntryReader.read(fs, new Path(path))
-                                                                                    .flatMap(reportEntries -> reportEntryConverter.convert(reportEntries, path, labelNamesByMetricName)))
+                                                        labeledMetricConfByPatternProducer.create(parameters)
+                                                                .ifPresent(labeledMetricConfByPattern -> {
+                                                                    logger.info("Using label map of size: {}", labeledMetricConfByPattern.size());
+                                                                    List<Optional<List<ReportEntry>>> collect = paths.stream()
+                                                                            .map(path -> reportEntryReader.read(fs, new Path(path)))
                                                                             .collect(Collectors.toList());
-                                                                    unwrapOptionals(optionals)
-                                                                            .map(gauges -> gauges.stream().flatMap(Collection::stream).collect(Collectors.toList()))
-                                                                            .ifPresent(gauges -> {
-                                                                                logger.info("Using gauges of size: {}", gauges.size());
-                                                                                gaugesRegistrar.register(gauges)
-                                                                                        .ifPresent(registry -> {
-                                                                                            logger.info("Using registry: {}", registry);
-                                                                                            jobNameProducer.create(parameters)
-                                                                                                    .ifPresent(jobName -> {
-                                                                                                        logger.info("Using job name: {}", jobName);
-                                                                                                        metricPusher.pushSafe(registry, jobName);
+                                                                    unwrapOptionals(collect)
+                                                                            .map(x -> x.stream().flatMap(Collection::stream).collect(Collectors.toList()))
+                                                                            .ifPresent(reportEntries -> {
+                                                                                logger.info("Using report entries of size: {}", reportEntries.size());
+                                                                                reportEntryConverter.convert(reportEntries, parameters.get(REPORTS_DIR), labeledMetricConfByPattern)
+                                                                                        .ifPresent(gauges -> {
+                                                                                            logger.info("Using gauges of size: {}", gauges.size());
+                                                                                            gaugesRegistrar.register(gauges)
+                                                                                                    .ifPresent(registry -> {
+                                                                                                        logger.info("Using registry: {}", registry);
+                                                                                                        groupingKeyProducer.create(parameters)
+                                                                                                                .ifPresent(groupingKey -> {
+                                                                                                                    logger.info("Using grouping key of size: {}", groupingKey.size());
+                                                                                                                    metricPusher.pushSafe(registry, JOB, groupingKey);
+                                                                                                                });
                                                                                                     });
                                                                                         });
                                                                             });
@@ -105,8 +115,7 @@ public class PushMetricsProcess implements Process {
                             .collect(Collectors.toList()))
                     .filter(CollectionUtils::isNotEmpty);
         } catch (Exception e) {
-            logger.error("Unwrapping of optionals failed.");
-            e.printStackTrace();
+            logger.error("Unwrapping of optionals failed.", e);
             return Optional.empty();
         }
     }
@@ -118,8 +127,7 @@ public class PushMetricsProcess implements Process {
                     return (MetricPusherCreator) Class.forName(parameters.get(METRIC_PUSHER_CREATOR_CLASS_NAME))
                             .getConstructor().newInstance();
                 } catch (Exception e) {
-                    logger.error("MetricPusherCreator creation failed.");
-                    e.printStackTrace();
+                    logger.error("MetricPusherCreator creation failed.", e);
                     return null;
                 }
             };
@@ -137,8 +145,7 @@ public class PushMetricsProcess implements Process {
                 try {
                     return metricPusherCreator.create(parameters.get(METRIC_PUSHER_ADDRESS));
                 } catch (Exception e) {
-                    logger.error("MetricPusher creation failed.");
-                    e.printStackTrace();
+                    logger.error("MetricPusher creation failed.", e);
                     return null;
                 }
             };
@@ -156,8 +163,7 @@ public class PushMetricsProcess implements Process {
                 try {
                     return FileSystem.get(conf);
                 } catch (Exception e) {
-                    logger.error("FileSystem creation failed.");
-                    e.printStackTrace();
+                    logger.error("FileSystem creation failed.", e);
                     return null;
                 }
             };
@@ -169,16 +175,14 @@ public class PushMetricsProcess implements Process {
         }
     }
 
+    //TODO add a method for validating non-reports
     public static class ReportLocationsFinder {
         Optional<List<String>> find(Map<String, String> parameters) {
             Supplier<List<String>> reportLocationsSupplier = () -> {
                 try {
-                    return parameters.entrySet().stream()
-                            .filter(entry -> isParameterReportLocation(entry.getKey()))
-                            .map(Map.Entry::getValue)
-                            .collect(Collectors.toList());
+                    return HdfsUtils.listFiles(Job.getInstance().getConfiguration(), parameters.get(REPORTS_DIR));
                 } catch (Exception e) {
-                    logger.error("Report locations finder failed.");
+                    logger.error("Report locations finder failed.", e);
                     e.printStackTrace();
                     return null;
                 }
@@ -189,54 +193,51 @@ public class PushMetricsProcess implements Process {
         Optional<List<String>> find(Supplier<List<String>> reportLocationsSupplier) {
             return Optional
                     .ofNullable(reportLocationsSupplier.get())
-                    .filter(paths -> paths.stream().noneMatch(StringUtils::isBlank))
-                    .filter(CollectionUtils::isNotEmpty);
-        }
-
-        private static Boolean isParameterReportLocation(String parameterName) {
-            return parameterName.startsWith(REPORT_LOCATION);
+                    .filter(CollectionUtils::isNotEmpty)
+                    .filter(paths -> paths.stream().noneMatch(StringUtils::isBlank));
         }
     }
 
-    public static class LabelNamesByMetricNameProducer {
-        Optional<Map<String, String[]>> create(Map<String, String> parameters) {
-            Supplier<Map<String, String[]>> labelNamesByMetricNameSupplier = () -> {
+    public static class LabeledMetricConfByPatternProducer {
+        private static final ObjectMapper objectMapper = new ObjectMapper();
+
+        Optional<Map<String, LabeledMetricConf>> create(Map<String, String> parameters) {
+            Supplier<Map<String, LabeledMetricConf>> labelNamesByMetricNameSupplier = () -> {
                 try {
-                    return parameters.entrySet().stream()
-                            .filter(LabelNamesByMetricNameProducer::isParameterLabeledMetric)
+                    String labeledMetricsPropertiesFile = parameters.get(LABELED_METRICS_PROPERTIES_FILE);
+                    ResourceLoader loader = new DefaultResourceLoader();
+                    Resource resource = loader.getResource(labeledMetricsPropertiesFile);
+                    Properties labeledMetricsProperties = new Properties();
+                    labeledMetricsProperties.load(resource.getInputStream());
+                    return labeledMetricsProperties.entrySet().stream()
                             .map(entry -> {
-                                String metricName = metricNameOrThrow(entry.getKey());
-                                String[] labelNames = labelNamesOrThrow(entry.getValue());
-                                return new AbstractMap.SimpleEntry<>(metricName, labelNames);
+                                String metricPattern = (String) entry.getKey();
+                                String labeledMetricConfJson = (String) entry.getValue();
+                                LabeledMetricConf labeledMetricConf = labeledMetricConfOrThrow(labeledMetricConfJson);
+                                return new AbstractMap.SimpleEntry<>(metricPattern, labeledMetricConf);
                             })
-                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                            .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
                 } catch (Exception e) {
-                    logger.error("Label names by metric name creation failed.");
-                    e.printStackTrace();
+                    logger.error("Label names by metric name creation failed.", e);
                     return null;
                 }
             };
             return create(labelNamesByMetricNameSupplier);
         }
 
-        private static Boolean isParameterLabeledMetric(Map.Entry<String, String> entry) {
-            return entry.getKey().startsWith(LABELED_METRIC);
-        }
-
-        private static String metricNameOrThrow(String parameterName) {
-            return parameterName.substring(LABELED_METRIC.length() + 1);
-        }
-
-        private static String[] labelNamesOrThrow(String parameterValue) {
-            String[] labelNames = parameterValue.split(METRIC_LABEL_NAMES_SEP);
-            if (labelNames.length == 0 || StringUtils.isAnyBlank(labelNames)) {
-                throw new RuntimeException("Label names creation failed.");
+        private static LabeledMetricConf labeledMetricConfOrThrow(String json) {
+            try {
+                return objectMapper.readValue(json, LabeledMetricConf.class);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-            return labelNames;
         }
 
-        Optional<Map<String, String[]>> create(Supplier<Map<String, String[]>> labelNamesByMetricNameSupplier) {
-            return Optional.ofNullable(labelNamesByMetricNameSupplier.get());
+        Optional<Map<String, LabeledMetricConf>> create(Supplier<Map<String, LabeledMetricConf>> labeledMetricConfByPatternSupplier) {
+            return Optional
+                    .ofNullable(labeledMetricConfByPatternSupplier.get())
+                    .filter(MapUtils::isNotEmpty)
+                    .filter(map -> map.entrySet().stream().noneMatch(entry -> entry.getKey().isEmpty() || Objects.isNull(entry.getValue())));
         }
     }
 
@@ -246,8 +247,7 @@ public class PushMetricsProcess implements Process {
                 try {
                     return DataStore.read(new FileSystemPath(fs, path), ReportEntry.SCHEMA$);
                 } catch (Exception e) {
-                    logger.error("Reading data store failed.");
-                    e.printStackTrace();
+                    logger.error("Reading data store failed.", e);
                     return null;
                 }
             };
@@ -257,18 +257,18 @@ public class PushMetricsProcess implements Process {
         Optional<List<ReportEntry>> read(Supplier<List<ReportEntry>> reportEntriesSupplier) {
             return Optional
                     .ofNullable(reportEntriesSupplier.get())
-                    .filter(CollectionUtils::isNotEmpty);
+                    .filter(CollectionUtils::isNotEmpty)
+                    .filter(entries -> entries.stream().noneMatch(Objects::isNull));
         }
     }
 
     public static class ReportEntryConverter {
-        Optional<List<Gauge>> convert(List<ReportEntry> reportEntries, String path, Map<String, String[]> labelNamesByMetricName) {
+        Optional<List<Gauge>> convert(List<ReportEntry> reportEntries, String help, Map<String, LabeledMetricConf> labeledMetricConfByPattern) {
             Supplier<List<Gauge>> gaugesSupplier = () -> {
                 try {
-                    return ReportEntryToMetricConverter.convert(reportEntries, path, labelNamesByMetricName);
+                    return ReportEntryToMetricConverter.convert(reportEntries, help, labeledMetricConfByPattern);
                 } catch (Exception e) {
-                    logger.error("Report entries conversion failed.");
-                    e.printStackTrace();
+                    logger.error("Report entries conversion failed.", e);
                     return null;
                 }
             };
@@ -278,7 +278,8 @@ public class PushMetricsProcess implements Process {
         Optional<List<Gauge>> convert(Supplier<List<Gauge>> gaugesSupplier) {
             return Optional
                     .ofNullable(gaugesSupplier.get())
-                    .filter(CollectionUtils::isNotEmpty);
+                    .filter(CollectionUtils::isNotEmpty)
+                    .filter(gauges -> gauges.stream().noneMatch(Objects::isNull));
         }
     }
 
@@ -294,8 +295,7 @@ public class PushMetricsProcess implements Process {
                     gauges.forEach(collectorRegistry::register);
                     return collectorRegistry;
                 } catch (Exception e) {
-                    logger.error("Gauges registration failed.");
-                    e.printStackTrace();
+                    logger.error("Gauges registration failed.", e);
                     return null;
                 }
             };
@@ -307,24 +307,41 @@ public class PushMetricsProcess implements Process {
         }
     }
 
-    public static class JobNameProducer {
-        Optional<String> create(Map<String, String> parameters) {
-            Supplier<String> jobNameSupplier = () -> {
+    public static class GroupingKeyProducer {
+        Optional<Map<String, String>> create(Map<String, String> parameters) {
+            Supplier<Map<String, String>> groupingKeySupplier = () -> {
                 try {
-                    return parameters.get(JOB_NAME);
+                    return parameters.entrySet().stream()
+                            .filter(GroupingKeyProducer::isParameterGroupingKey)
+                            .map(entry -> {
+                                String key = keyOrThrow(entry.getKey());
+                                String value = entry.getValue();
+                                return new AbstractMap.SimpleEntry<>(key, value);
+                            })
+                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
                 } catch (Exception e) {
-                    logger.error("Job name extraction failed.");
-                    e.printStackTrace();
+                    logger.error("Grouping ey extraction failed.", e);
                     return null;
                 }
             };
-            return create(jobNameSupplier);
+            return create(groupingKeySupplier);
         }
 
-        Optional<String> create(Supplier<String> jobNameSupplier) {
+        private static Boolean isParameterGroupingKey(Map.Entry<String, String> entry) {
+            return entry.getKey().startsWith(GROUPING_KEY);
+        }
+
+        private static String keyOrThrow(String parameterName) {
+            return parameterName.substring(GROUPING_KEY.length() + 1);
+        }
+
+        Optional<Map<String, String>> create(Supplier<Map<String, String>> groupingKeySupplier) {
             return Optional
-                    .ofNullable(jobNameSupplier.get())
-                    .filter(StringUtils::isNotBlank);
+                    .ofNullable(groupingKeySupplier.get())
+                    .filter(MapUtils::isNotEmpty)
+                    .filter(groupingKey -> groupingKey.entrySet().stream()
+                            .noneMatch(entry -> StringUtils.isBlank(entry.getKey()) || StringUtils.isBlank(entry.getValue())));
         }
     }
 

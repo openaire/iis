@@ -28,7 +28,7 @@ public class PushMetricsProcessGaugesRegistrarTest {
     }
 
     @Test
-    public void shouldRegisterToEmptyOnRegistrationFails() {
+    public void shouldRegisterToEmptyOnRegistrationFailure() {
         // given
         PushMetricsProcess.GaugesRegistrar gaugesRegistrar = new PushMetricsProcess.GaugesRegistrar();
         CollectorRegistry registry = mock(CollectorRegistry.class);

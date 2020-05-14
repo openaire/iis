@@ -1,7 +1,6 @@
 package eu.dnetlib.iis.wf.report.pushgateway.process;
 
 import eu.dnetlib.iis.common.schemas.ReportEntry;
-import eu.dnetlib.iis.wf.report.pushgateway.process.PushMetricsProcess;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -18,7 +17,7 @@ import static org.mockito.Mockito.mock;
 public class PushMetricsProcessReportEntryReaderTest {
 
     @Test
-    public void shouldReadEmptyWhenError() {
+    public void shouldReadEmptyOnError() {
         // given
         PushMetricsProcess.ReportEntryReader reportEntryReader = new PushMetricsProcess.ReportEntryReader();
 
@@ -30,12 +29,24 @@ public class PushMetricsProcessReportEntryReaderTest {
     }
 
     @Test
-    public void shouldReadEmptyWhenReportEntriesAreEmpty() {
+    public void shouldReadEmptyOnEmptyReportEntries() {
         // given
         PushMetricsProcess.ReportEntryReader reportEntryReader = new PushMetricsProcess.ReportEntryReader();
 
         // when
         Optional<List<ReportEntry>> result = reportEntryReader.read(Collections::emptyList);
+
+        // then
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    public void shouldReadEmptyOnReportEntriesWithNull() {
+        // given
+        PushMetricsProcess.ReportEntryReader reportEntryReader = new PushMetricsProcess.ReportEntryReader();
+
+        // when
+        Optional<List<ReportEntry>> result = reportEntryReader.read(() -> Collections.singletonList(null));
 
         // then
         assertFalse(result.isPresent());

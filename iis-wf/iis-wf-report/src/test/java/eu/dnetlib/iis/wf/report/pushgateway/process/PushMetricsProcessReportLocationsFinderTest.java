@@ -1,10 +1,12 @@
 package eu.dnetlib.iis.wf.report.pushgateway.process;
 
-import eu.dnetlib.iis.wf.report.pushgateway.process.PushMetricsProcess;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +30,7 @@ public class PushMetricsProcessReportLocationsFinderTest {
     }
 
     @Test
-    public void shouldFindEmptyOnEmptyParameters() {
+    public void shouldFindEmptyOnEmptyReportLocations() {
         // given
         PushMetricsProcess.ReportLocationsFinder reportLocationsFinder = new PushMetricsProcess.ReportLocationsFinder();
 
@@ -40,39 +42,41 @@ public class PushMetricsProcessReportLocationsFinderTest {
     }
 
     @Test
-    public void shouldFindEmptyOnParametersWithoutReportLocations() {
+    public void shouldFindEmptyOnListOfEmptyReportLocations() {
         // given
         PushMetricsProcess.ReportLocationsFinder reportLocationsFinder = new PushMetricsProcess.ReportLocationsFinder();
 
         // when
-        Optional<List<String>> result = reportLocationsFinder.find(Collections.singletonMap("not.reportLocation", "/path/to/location"));
+        Optional<List<String>> result = reportLocationsFinder.find(() -> Collections.singletonList(""));
 
         // then
         assertFalse(result.isPresent());
     }
 
     @Test
-    public void shouldFindEmptyOnParametersWithEmptyReportLocations() {
+    public void shouldFindEmptyOnListOfNull() {
         // given
         PushMetricsProcess.ReportLocationsFinder reportLocationsFinder = new PushMetricsProcess.ReportLocationsFinder();
 
         // when
-        Optional<List<String>> result = reportLocationsFinder.find(Collections.singletonMap("reportLocation", ""));
+        Optional<List<String>> result = reportLocationsFinder.find(() -> Collections.singletonList(null));
 
         // then
         assertFalse(result.isPresent());
     }
 
     @Test
-    public void shouldFindReportLocations() {
+    public void shouldFindNonEmpty() throws IOException {
         // given
         PushMetricsProcess.ReportLocationsFinder reportLocationsFinder = new PushMetricsProcess.ReportLocationsFinder();
+        Path reportsDir = Files.createTempDirectory(this.getClass().getSimpleName());
+        Path report = Files.createTempDirectory(reportsDir, "report");
 
         // when
-        Optional<List<String>> result = reportLocationsFinder.find(Collections.singletonMap("reportLocation", "/path/to/report"));
+        Optional<List<String>> result = reportLocationsFinder.find(Collections.singletonMap("reportsDir", reportsDir.toString()));
 
         // then
-        assertEquals(Optional.of(Collections.singletonList("/path/to/report")), result);
+        assertEquals(Optional.of(Collections.singletonList(String.format("file:%s", report.toString()))), result);
     }
 
 }

@@ -1,6 +1,5 @@
 package eu.dnetlib.iis.wf.report.pushgateway.process;
 
-import eu.dnetlib.iis.wf.report.pushgateway.process.PushMetricsProcess;
 import io.prometheus.client.Gauge;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +17,7 @@ import static org.mockito.Mockito.mock;
 public class PushMetricsProcessReportEntryConverterTest {
 
     @Test
-    public void shouldConvertToEmptyWhenError() {
+    public void shouldConvertToEmptyOnError() {
         // given
         PushMetricsProcess.ReportEntryConverter reportEntryConverter = new PushMetricsProcess.ReportEntryConverter();
 
@@ -30,12 +29,24 @@ public class PushMetricsProcessReportEntryConverterTest {
     }
 
     @Test
-    public void shouldConvertToEmptyWhenGaugesAreEmpty() {
+    public void shouldConvertToEmptyOnEmptyGauges() {
         // given
         PushMetricsProcess.ReportEntryConverter reportEntryConverter = new PushMetricsProcess.ReportEntryConverter();
 
         // when
         Optional<List<Gauge>> result = reportEntryConverter.convert(Collections::emptyList);
+
+        // then
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    public void shouldConvertToEmptyOnGaugesWithNull() {
+        // given
+        PushMetricsProcess.ReportEntryConverter reportEntryConverter = new PushMetricsProcess.ReportEntryConverter();
+
+        // when
+        Optional<List<Gauge>> result = reportEntryConverter.convert(() -> Collections.singletonList(null));
 
         // then
         assertFalse(result.isPresent());
