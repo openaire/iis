@@ -4,7 +4,6 @@ import eu.dnetlib.iis.common.schemas.ReportEntry;
 
 import java.util.Collections;
 
-//TODO add description and logging
 public class DurationReportEntryMetricExtractor {
 
     private DurationReportEntryMetricExtractor() {

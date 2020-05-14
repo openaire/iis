@@ -175,7 +175,6 @@ public class PushMetricsProcess implements Process {
         }
     }
 
-    //TODO add a method for validating non-reports
     public static class ReportLocationsFinder {
         Optional<List<String>> find(Map<String, String> parameters) {
             Supplier<List<String>> reportLocationsSupplier = () -> {
@@ -183,7 +182,6 @@ public class PushMetricsProcess implements Process {
                     return HdfsUtils.listFiles(Job.getInstance().getConfiguration(), parameters.get(REPORTS_DIR));
                 } catch (Exception e) {
                     logger.error("Report locations finder failed.", e);
-                    e.printStackTrace();
                     return null;
                 }
             };

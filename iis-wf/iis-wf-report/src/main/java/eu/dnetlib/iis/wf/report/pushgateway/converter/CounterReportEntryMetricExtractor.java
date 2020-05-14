@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-//TODO add description and logging
 public class CounterReportEntryMetricExtractor {
 
     private CounterReportEntryMetricExtractor() {

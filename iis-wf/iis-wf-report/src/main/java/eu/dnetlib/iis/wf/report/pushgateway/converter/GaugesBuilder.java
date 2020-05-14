@@ -5,7 +5,6 @@ import io.prometheus.client.Gauge;
 
 import java.util.List;
 
-//TODO add description and logging
 public class GaugesBuilder {
 
     private GaugesBuilder() {

@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-//TODO add description and logging
 public class PushGatewayPusherCreator implements MetricPusherCreator {
     private static final Logger logger = LoggerFactory.getLogger(PushGatewayPusherCreator.class);
 
@@ -17,9 +16,7 @@ public class PushGatewayPusherCreator implements MetricPusherCreator {
             try {
                 return new PushGateway(address);
             } catch (Exception e) {
-                //TODO log exception
-                logger.error("PushGateway creation failed, address: {}.", address);
-                e.printStackTrace();
+                logger.error("PushGateway creation failed.", e);
                 return null;
             }
         };
@@ -33,9 +30,7 @@ public class PushGatewayPusherCreator implements MetricPusherCreator {
                     try {
                         pushGateway.push(collectorRegistry, job, groupingKey);
                     } catch (IOException e) {
-                        //TODO log exception
-                        logger.error("PushGateway push failed.");
-                        e.printStackTrace();
+                        logger.error("PushGateway push failed.", e);
                     }
                 });
     }
