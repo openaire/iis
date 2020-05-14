@@ -4,151 +4,126 @@ import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.schemas.ReportEntryType;
 import io.prometheus.client.Gauge;
 
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+//TODO: fix description
 
 /**
  * Converts report entries to prometheus gauges.
  * <p>
  * For report entries containing durations gauge's name is created from report key by replacing dots with
- * underscores and adding '_seconds' suffix. For report entries containing counters gauge's name is created from report
+ * underscores and adding '_seconds' suffix.
+ * <p>
+ * <p>
+ * For report entries containing counters gauge's name is created from report
  * key value by replacing dots with underscores additionally supporting labels given as a map from metric name to an
  * array of label names.
  */
 public class ReportEntryToMetricConverter {
 
+    public static final String REPORT_ENTRY_KEY_SEP = ".";
+    public static final String METRIC_NAME_SEP = "_";
+    public static final String LABEL_PATTERN_VALUE_TOKEN = "$";
+    public static final String DURATION_METRIC_NAME_SUFFIX = "seconds";
+
     private static final String HELP_PREFIX = "location";
-    private static final String REPORT_ENTRY_KEY_SEP = ".";
-    private static final String METRIC_NAME_SEP = "_";
 
     public static List<Gauge> convert(List<ReportEntry> reportEntries,
                                       String path,
-                                      Map<String, String[]> labelNamesByMetricName) {
+                                      Map<String, LabeledMetricConf> labeledMetricConfByPattern) {
+        return convert(reportEntries,
+                path,
+                labeledMetricConfByPattern,
+                CounterReportEntryMetricExtractor::extractMetricFromReportEntry,
+                DurationReportEntryMetricExtractor::extractMetricFromReportEntry,
+                GaugesBuilder::buildGaugeWithoutLabels,
+                GaugesBuilder::buildGaugeWithLabels);
+    }
+
+    public static List<Gauge> convert(List<ReportEntry> reportEntries,
+                                      String path,
+                                      Map<String, LabeledMetricConf> labeledMetricConfByPattern,
+                                      CounterReportEntryMetricExtractor.Extractor counterReportEntryMetricExtractor,
+                                      DurationReportEntryMetricExtractor.Extractor durationReportEntryMetricExtractor,
+                                      GaugesBuilder.BuilderWithoutLabels gaugesBuilderWithoutLabels,
+                                      GaugesBuilder.BuilderWithLabels gaugesBuilderWithLabelsBuilder) {
         String help = help(path);
-        List<Gauge> durations = convertDurations(reportEntries.stream()
-                .filter(x -> ReportEntryType.DURATION.equals(x.getType())), help);
-        List<Gauge> counters = convertCounters(reportEntries.stream()
-                .filter(x -> ReportEntryType.COUNTER.equals(x.getType())), help, labelNamesByMetricName);
-        return Stream.concat(durations.stream(), counters.stream()).collect(Collectors.toList());
+        Stream<Gauge> counters = convertCounterReportEntries(reportEntries.stream()
+                        .filter(x -> ReportEntryType.COUNTER.equals(x.getType())), help, labeledMetricConfByPattern,
+                counterReportEntryMetricExtractor, gaugesBuilderWithoutLabels, gaugesBuilderWithLabelsBuilder);
+        Stream<Gauge> durations = convertDurationReportEntries(reportEntries.stream()
+                        .filter(x -> ReportEntryType.DURATION.equals(x.getType())), help, durationReportEntryMetricExtractor,
+                gaugesBuilderWithoutLabels);
+        return Stream.concat(counters, durations).collect(Collectors.toList());
     }
 
     private static String help(String path) {
         return String.format("%s:%s", HELP_PREFIX, path);
     }
 
-    private static List<Gauge> convertCounters(Stream<ReportEntry> reportEntries,
-                                               String help,
-                                               Map<String, String[]> labelNamesByMetricName) {
+    private static Stream<Gauge> convertCounterReportEntries(Stream<ReportEntry> reportEntries,
+                                                             String help,
+                                                             Map<String, LabeledMetricConf> labeledMetricConfByPattern,
+                                                             CounterReportEntryMetricExtractor.Extractor metricExtractor,
+                                                             GaugesBuilder.BuilderWithoutLabels gaugesBuilderWithoutLabels,
+                                                             GaugesBuilder.BuilderWithLabels gaugesBuilderWithLabels) {
         return reportEntries
-                .map(x -> metricNameAndLabelValuesAndValueForReportEntry(x, labelNamesByMetricName.keySet()))
-                .collect(Collectors.groupingBy(x -> x.metricName)).entrySet().stream()
+                .map(x -> metricExtractor.extract(x, labeledMetricConfByPattern))
+                .collect(Collectors.groupingBy(ExtractedMetric::getMetricName)).entrySet().stream()
                 .flatMap(entry -> {
                     String metricName = entry.getKey();
-                    List<MetricNameAndLabelValuesAndValue> metricNameAndLabelValuesAndValueList = entry.getValue();
+                    List<ExtractedMetric> extractedMetrics = entry.getValue();
+                    Map<String, List<String>> labelNamesByMetricName = labelNamesByMetricName(labeledMetricConfByPattern);
                     return Optional
                             .ofNullable(labelNamesByMetricName.get(metricName))
                             .map(labelNames -> Stream
-                                    .of(buildGaugeWithLabels(metricName, help, labelNames, metricNameAndLabelValuesAndValueList)))
+                                    .of(gaugesBuilderWithLabels.build(metricName,
+                                            help,
+                                            labelNames,
+                                            labelValues(extractedMetrics),
+                                            values(extractedMetrics))))
                             .orElseGet(() -> Stream
-                                    .of(buildGaugeWithoutLabels(metricName, help, metricNameAndLabelValuesAndValueList.stream().map(x -> x.value).iterator().next())));
-                })
-                .collect(Collectors.toList());
+                                    .of(gaugesBuilderWithoutLabels.build(metricName,
+                                            help,
+                                            values(extractedMetrics).stream().findFirst().orElseThrow(missingLabelValueException()))));
+                });
     }
 
-    private static class MetricNameAndLabelValuesAndValue {
-        private final String metricName;
-        private final String[] labelValues;
-        private final double value;
-
-        private MetricNameAndLabelValuesAndValue(String metricName,
-                                                 String[] labelValues,
-                                                 double value) {
-            this.metricName = metricName;
-            this.labelValues = labelValues;
-            this.value = value;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            MetricNameAndLabelValuesAndValue that = (MetricNameAndLabelValuesAndValue) o;
-            return Double.compare(that.value, value) == 0 &&
-                    Objects.equals(metricName, that.metricName) &&
-                    Arrays.equals(labelValues, that.labelValues);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = Objects.hash(metricName, value);
-            result = 31 * result + Arrays.hashCode(labelValues);
-            return result;
-        }
+    private static Map<String, List<String>> labelNamesByMetricName(Map<String, LabeledMetricConf> labeledMetricConfByPattern) {
+        return labeledMetricConfByPattern.values().stream()
+                .map(x -> new AbstractMap.SimpleEntry<>(x.getMetricName(), labelNames(x.getLabelConfs())))
+                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
     }
 
-    private static MetricNameAndLabelValuesAndValue metricNameAndLabelValuesAndValueForReportEntry(ReportEntry reportEntry,
-                                                                                                   Set<String> metricNames) {
-        String rawMetricName = reportEntry.getKey().toString().replace(REPORT_ENTRY_KEY_SEP, METRIC_NAME_SEP);
-        return metricNames.stream()
-                .filter(rawMetricName::startsWith)
-                .findAny()
-                .map(metricName -> new MetricNameAndLabelValuesAndValue(metricName,
-                        labelValuesFromRawMetricName(rawMetricName, metricName),
-                        Double.parseDouble(reportEntry.getValue().toString()))
-                )
-                .orElseGet(() -> new MetricNameAndLabelValuesAndValue(rawMetricName,
-                        new String[]{},
-                        Double.parseDouble(reportEntry.getValue().toString())));
+    private static List<String> labelNames(List<LabelConf> labelConfs) {
+        return labelConfs.stream().map(LabelConf::getLabelName).collect(Collectors.toList());
     }
 
-    private static String[] labelValuesFromRawMetricName(String rawMetricName,
-                                                         String metricName) {
-        return rawMetricName.substring(metricName.length() + 1).split(METRIC_NAME_SEP);
+    private static List<List<String>> labelValues(List<ExtractedMetric> extractedMetrics) {
+        return extractedMetrics.stream().map(ExtractedMetric::getLabelValues).collect(Collectors.toList());
     }
 
-    private static List<Gauge> convertDurations(Stream<ReportEntry> reportEntries,
-                                                String help) {
+    private static List<Double> values(List<ExtractedMetric> extractedMetrics) {
+        return extractedMetrics.stream().map(ExtractedMetric::getValue).collect(Collectors.toList());
+    }
+
+    private static Supplier<RuntimeException> missingLabelValueException() {
+        return () -> new RuntimeException("missing label value");
+    }
+
+    private static Stream<Gauge> convertDurationReportEntries(Stream<ReportEntry> reportEntries,
+                                                              String help,
+                                                              DurationReportEntryMetricExtractor.Extractor metricExtractor,
+                                                              GaugesBuilder.BuilderWithoutLabels gaugesWithoutLabelsBuilder) {
         return reportEntries
-                .map(reportEntry -> {
-                    String metricName = durationMetricName(reportEntry);
-                    double value = millisecondsToSeconds(Double.parseDouble(reportEntry.getValue().toString()));
-                    return buildGaugeWithoutLabels(metricName, help, value);
-                })
-                .collect(Collectors.toList());
-    }
-
-    private static String durationMetricName(ReportEntry reportEntry) {
-        return String.format("%s_seconds",
-                reportEntry.getKey().toString().replace(REPORT_ENTRY_KEY_SEP, METRIC_NAME_SEP));
-    }
-
-    private static Double millisecondsToSeconds(Double milliseconds) {
-        return milliseconds / 1000;
-    }
-
-    private static Gauge buildGaugeWithLabels(String metricName,
-                                              String help,
-                                              String[] labelNames,
-                                              List<MetricNameAndLabelValuesAndValue> metricNameAndLabelValuesAndValueList) {
-        Gauge gauge = Gauge.build()
-                .name(metricName)
-                .help(help)
-                .labelNames(labelNames)
-                .create();
-        metricNameAndLabelValuesAndValueList.forEach(x -> gauge.labels(x.labelValues).set(x.value));
-        return gauge;
-    }
-
-    private static Gauge buildGaugeWithoutLabels(String metricName,
-                                                 String help,
-                                                 double value) {
-        Gauge gauge = Gauge.build()
-                .name(metricName)
-                .help(help)
-                .create();
-        gauge.set(value);
-        return gauge;
+                .map(metricExtractor::extract)
+                .map(extractedMetric -> gaugesWithoutLabelsBuilder.build(extractedMetric.getMetricName(), help, extractedMetric.getValue()));
     }
 
 }

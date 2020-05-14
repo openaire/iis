@@ -1,18 +1,19 @@
 package eu.dnetlib.iis.wf.report.pushgateway.converter;
 
-import eu.dnetlib.iis.common.java.stream.ListUtils;
-import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
-import io.prometheus.client.Collector;
+import eu.dnetlib.iis.common.schemas.ReportEntryType;
 import io.prometheus.client.Gauge;
 import org.junit.Test;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ReportEntryToMetricConverterTest {
 
@@ -26,261 +27,106 @@ public class ReportEntryToMetricConverterTest {
     }
 
     @Test
-    public void convertShouldReturnNonEmptyListOfGaugesWithoutLabelsOnNonEmptyCounterReportEntriesAndEmptyLabelsMap() {
+    public void convertShouldReturnNonEmptyListOfGaugesOnNonEmptyCounterReportEntries() {
         // given
-        List<ReportEntry> reportEntries = Arrays.asList(
-                ReportEntryFactory.createCounterReportEntry("a.b.c1", 100),
-                ReportEntryFactory.createCounterReportEntry("a.b.c2", 200)
-        );
+        ReportEntry counterReportEntryWithoutLabel = mock(ReportEntry.class);
+        when(counterReportEntryWithoutLabel.getType()).thenReturn(ReportEntryType.COUNTER);
+        ReportEntry counterReportEntryWithLabel = mock(ReportEntry.class);
+        when(counterReportEntryWithLabel.getType()).thenReturn(ReportEntryType.COUNTER);
+        List<ReportEntry> reportEntries = Arrays.asList(counterReportEntryWithoutLabel, counterReportEntryWithLabel);
+        LabelConf labelConf = mock(LabelConf.class);
+        when(labelConf.getLabelName()).thenReturn("label_name");
+        LabeledMetricConf labeledMetricConf = mock(LabeledMetricConf.class);
+        when(labeledMetricConf.getMetricName()).thenReturn("metric_name_with_labels");
+        when(labeledMetricConf.getLabelConfs()).thenReturn(Collections.singletonList(labelConf));
+        Map<String, LabeledMetricConf> labeledMetricConfByPattern = Collections.singletonMap("key", labeledMetricConf);
+        ExtractedMetric extractedMetricWithoutLabel = mock(ExtractedMetric.class);
+        when(extractedMetricWithoutLabel.getMetricName()).thenReturn("metric_name_without_labels");
+        when(extractedMetricWithoutLabel.getLabelValues()).thenReturn(Collections.emptyList());
+        when(extractedMetricWithoutLabel.getValue()).thenReturn(1d);
+        ExtractedMetric extractedMetricWithLabel = mock(ExtractedMetric.class);
+        when(extractedMetricWithLabel.getMetricName()).thenReturn("metric_name_with_labels");
+        when(extractedMetricWithLabel.getLabelValues()).thenReturn(Collections.singletonList("label_value"));
+        when(extractedMetricWithLabel.getValue()).thenReturn(10d);
+        CounterReportEntryMetricExtractor.Extractor counterMetricExtractor = mock(CounterReportEntryMetricExtractor.Extractor.class);
+        when(counterMetricExtractor.extract(counterReportEntryWithoutLabel, labeledMetricConfByPattern)).thenReturn(extractedMetricWithoutLabel);
+        when(counterMetricExtractor.extract(counterReportEntryWithLabel, labeledMetricConfByPattern)).thenReturn(extractedMetricWithLabel);
+        Gauge gaugeWithoutLabels = mock(Gauge.class);
+        Gauge gaugeWithLabel = mock(Gauge.class);
+        GaugesBuilder.BuilderWithoutLabels builderWithoutLabels = mock(GaugesBuilder.BuilderWithoutLabels.class);
+        when(builderWithoutLabels.build("metric_name_without_labels", "location:path", 1d))
+                .thenReturn(gaugeWithoutLabels);
+        GaugesBuilder.BuilderWithLabels builderWithLabels = mock(GaugesBuilder.BuilderWithLabels.class);
+        when(builderWithLabels.build("metric_name_with_labels", "location:path", Collections.singletonList("label_name"),
+                Collections.singletonList(Collections.singletonList("label_value")), Collections.singletonList(10d))).thenReturn(gaugeWithLabel);
 
         // when
-        List<Gauge> gauges = ReportEntryToMetricConverter.convert(reportEntries, "path", Collections.emptyMap());
+        List<Gauge> gauges = ReportEntryToMetricConverter.convert(reportEntries,
+                "path",
+                labeledMetricConfByPattern,
+                counterMetricExtractor,
+                mock(DurationReportEntryMetricExtractor.Extractor.class),
+                builderWithoutLabels,
+                builderWithLabels
+        );
 
         // then
-        assertEquals(2, gauges.size());
-        List<Collector.MetricFamilySamples> samples = gauges.stream()
-                .flatMap(x -> x.collect().stream())
-                .collect(Collectors.toList());
-        Map<String, Collector.MetricFamilySamples> samplesByMetricName = samples.stream()
-                .map(sample -> new AbstractMap.SimpleEntry<>(sample.name, sample))
-                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
-        assertForMetric(samplesByMetricName.get("a_b_c1"),
-                "a_b_c1",
-                "location:path",
-                Collections.emptyList(),
-                Collections.singletonList(new LabelsAndValue(Collections.emptyList(), 100d)));
-        assertForMetric(samplesByMetricName.get("a_b_c2"),
-                "a_b_c2",
-                "location:path",
-                Collections.emptyList(),
-                Collections.singletonList(new LabelsAndValue(Collections.emptyList(), 200d)));
+        assertEquals(Arrays.asList(gaugeWithLabel, gaugeWithoutLabels), gauges);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void convertShouldThrowOnLabelValueExtractionError() {
+        // given
+        ReportEntry counterReportEntryWithoutLabel = mock(ReportEntry.class);
+        when(counterReportEntryWithoutLabel.getType()).thenReturn(ReportEntryType.COUNTER);
+        List<ReportEntry> reportEntries = Collections.singletonList(counterReportEntryWithoutLabel);
+        Map<String, LabeledMetricConf> labeledMetricConfByPattern = Collections.singletonMap("key", mock(LabeledMetricConf.class));
+        ExtractedMetric extractedMetricWithoutLabel = mock(ExtractedMetric.class);
+        when(extractedMetricWithoutLabel.getMetricName()).thenReturn("metric_name_without_labels");
+        when(extractedMetricWithoutLabel.getLabelValues()).thenReturn(Collections.emptyList());
+        when(extractedMetricWithoutLabel.getValue()).thenReturn(null);
+        CounterReportEntryMetricExtractor.Extractor counterMetricExtractor = mock(CounterReportEntryMetricExtractor.Extractor.class);
+        when(counterMetricExtractor.extract(counterReportEntryWithoutLabel, labeledMetricConfByPattern)).thenReturn(extractedMetricWithoutLabel);
+
+        // when
+        ReportEntryToMetricConverter.convert(reportEntries,
+                "path",
+                labeledMetricConfByPattern,
+                counterMetricExtractor,
+                mock(DurationReportEntryMetricExtractor.Extractor.class),
+                mock(GaugesBuilder.BuilderWithoutLabels.class),
+                mock(GaugesBuilder.BuilderWithLabels.class)
+        );
     }
 
     @Test
-    public void convertShouldReturnNonEmptyListOfGaugesWithoutLabelsOnNonEmptyCounterReportEntriesAndNotMatchingLabelsMap() {
+    public void convertShouldReturnNonEmptyListOfGaugesOnNonEmptyDurationReportEntries() {
         // given
-        List<ReportEntry> reportEntries = Arrays.asList(
-                ReportEntryFactory.createCounterReportEntry("a.b.c1", 100),
-                ReportEntryFactory.createCounterReportEntry("a.b.c2", 200)
-        );
-        Map<String, String[]> labelsByMetricName = Collections.singletonMap("x_y", new String[]{"label"});
+        ReportEntry durationReportEntry = mock(ReportEntry.class);
+        when(durationReportEntry.getType()).thenReturn(ReportEntryType.DURATION);
+        List<ReportEntry> reportEntries = Collections.singletonList(durationReportEntry);
+        Map<String, LabeledMetricConf> labeledMetricConfByPattern = Collections.singletonMap("key", mock(LabeledMetricConf.class));
+        ExtractedMetric extractedMetric = mock(ExtractedMetric.class);
+        when(extractedMetric.getMetricName()).thenReturn("metric_name");
+        when(extractedMetric.getValue()).thenReturn(1d);
+        DurationReportEntryMetricExtractor.Extractor durationMetricExtractor = mock(DurationReportEntryMetricExtractor.Extractor.class);
+        when(durationMetricExtractor.extract(durationReportEntry)).thenReturn(extractedMetric);
+        Gauge gauge = mock(Gauge.class);
+        GaugesBuilder.BuilderWithoutLabels builderWithoutLabels = mock(GaugesBuilder.BuilderWithoutLabels.class);
+        when(builderWithoutLabels.build("metric_name", "location:path", 1d)).thenReturn(gauge);
 
         // when
-        List<Gauge> gauges = ReportEntryToMetricConverter.convert(reportEntries, "path", labelsByMetricName);
-
-        // then
-        assertEquals(2, gauges.size());
-        List<Collector.MetricFamilySamples> samples = gauges.stream()
-                .flatMap(x -> x.collect().stream())
-                .collect(Collectors.toList());
-        Map<String, Collector.MetricFamilySamples> samplesByMetricName = samples.stream()
-                .map(sample -> new AbstractMap.SimpleEntry<>(sample.name, sample))
-                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
-        assertForMetric(samplesByMetricName.get("a_b_c1"),
-                "a_b_c1",
-                "location:path",
-                Collections.emptyList(),
-                Collections.singletonList(new LabelsAndValue(Collections.emptyList(), 100d)));
-        assertForMetric(samplesByMetricName.get("a_b_c2"),
-                "a_b_c2",
-                "location:path",
-                Collections.emptyList(),
-                Collections.singletonList(new LabelsAndValue(Collections.emptyList(), 200d)));
-    }
-
-    @Test
-    public void convertShouldReturnNonEmptyListOfGaugesWithLabelsOnNonEmptyCounterReportEntriesAndMatchingLabelsMap() {
-        // given
-        List<ReportEntry> reportEntries = Arrays.asList(
-                ReportEntryFactory.createCounterReportEntry("a.b1.c1", 100),
-                ReportEntryFactory.createCounterReportEntry("a.b1.c2", 200),
-                ReportEntryFactory.createCounterReportEntry("a.b2.c1", 100),
-                ReportEntryFactory.createCounterReportEntry("a.b2.c2", 200)
-        );
-        Map<String, String[]> labelsByMetricName = Stream.of(
-                new AbstractMap.SimpleEntry<>("a_b1", new String[]{"label1"}),
-                new AbstractMap.SimpleEntry<>("a_b2", new String[]{"label2"})
-        )
-                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
-
-        // when
-        List<Gauge> gauges = ReportEntryToMetricConverter.convert(reportEntries, "path", labelsByMetricName);
-
-        // then
-        assertEquals(2, gauges.size());
-        List<Collector.MetricFamilySamples> samples = gauges.stream()
-                .flatMap(x -> x.collect().stream())
-                .collect(Collectors.toList());
-        Map<String, Collector.MetricFamilySamples> samplesByMetricName = samples.stream()
-                .map(sample -> new AbstractMap.SimpleEntry<>(sample.name, sample))
-                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
-        assertForMetric(samplesByMetricName.get("a_b1"),
-                "a_b1",
-                "location:path",
-                Collections.singletonList("label1"),
-                Arrays.asList(new LabelsAndValue(Collections.singletonList("c1"), 100d), new LabelsAndValue(Collections.singletonList("c2"), 200d)));
-        assertForMetric(samplesByMetricName.get("a_b2"),
-                "a_b2",
-                "location:path",
-                Collections.singletonList("label2"),
-                Arrays.asList(new LabelsAndValue(Collections.singletonList("c1"), 100d), new LabelsAndValue(Collections.singletonList("c2"), 200d)));
-    }
-
-    @Test
-    public void convertShouldReturnNonEmptyListOfGaugesWithoutLabelsOnNonEmptyDurationReportEntriesAndEmptyLabelsMap() {
-        // given
-        List<ReportEntry> reportEntries = Arrays.asList(
-                ReportEntryFactory.createDurationReportEntry("a.b.c1", 100),
-                ReportEntryFactory.createDurationReportEntry("a.b.c2", 200)
+        List<Gauge> gauges = ReportEntryToMetricConverter.convert(reportEntries,
+                "path",
+                labeledMetricConfByPattern,
+                mock(CounterReportEntryMetricExtractor.Extractor.class),
+                durationMetricExtractor,
+                builderWithoutLabels,
+                mock(GaugesBuilder.BuilderWithLabels.class)
         );
 
-        // when
-        List<Gauge> gauges = ReportEntryToMetricConverter.convert(reportEntries, "path", Collections.emptyMap());
-
         // then
-        assertEquals(2, gauges.size());
-        List<Collector.MetricFamilySamples> samples = gauges.stream()
-                .flatMap(x -> x.collect().stream())
-                .collect(Collectors.toList());
-        Map<String, Collector.MetricFamilySamples> samplesByMetricName = samples.stream()
-                .map(sample -> new AbstractMap.SimpleEntry<>(sample.name, sample))
-                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
-        assertForMetric(samplesByMetricName.get("a_b_c1_seconds"),
-                "a_b_c1_seconds",
-                "location:path",
-                Collections.emptyList(),
-                Collections.singletonList(new LabelsAndValue(Collections.emptyList(), 0.100d)));
-        assertForMetric(samplesByMetricName.get("a_b_c2_seconds"),
-                "a_b_c2_seconds",
-                "location:path",
-                Collections.emptyList(),
-                Collections.singletonList(new LabelsAndValue(Collections.emptyList(), 0.200d)));
-    }
-
-    @Test
-    public void convertShouldReturnNonEmptyListOfGaugesWithoutLabelsOnNonEmptyDurationReportEntriesAndNotMatchingLabelsMap() {
-        // given
-        List<ReportEntry> reportEntries = Arrays.asList(
-                ReportEntryFactory.createDurationReportEntry("a.b.c1", 100),
-                ReportEntryFactory.createDurationReportEntry("a.b.c2", 200)
-        );
-        Map<String, String[]> labelsByMetricName = Collections.singletonMap("x_y", new String[]{"label"});
-
-        // when
-        List<Gauge> gauges = ReportEntryToMetricConverter.convert(reportEntries, "path", labelsByMetricName);
-
-        // then
-        assertEquals(2, gauges.size());
-        List<Collector.MetricFamilySamples> samples = gauges.stream()
-                .flatMap(x -> x.collect().stream())
-                .collect(Collectors.toList());
-        Map<String, Collector.MetricFamilySamples> samplesByMetricName = samples.stream()
-                .map(sample -> new AbstractMap.SimpleEntry<>(sample.name, sample))
-                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
-        assertForMetric(samplesByMetricName.get("a_b_c1_seconds"),
-                "a_b_c1_seconds",
-                "location:path",
-                Collections.emptyList(),
-                Collections.singletonList(new LabelsAndValue(Collections.emptyList(), 0.100d)));
-        assertForMetric(samplesByMetricName.get("a_b_c2_seconds"),
-                "a_b_c2_seconds",
-                "location:path",
-                Collections.emptyList(),
-                Collections.singletonList(new LabelsAndValue(Collections.emptyList(), 0.200d)));
-    }
-
-    @Test
-    public void convertShouldReturnNonEmptyListOfGaugesWithoutLabelsOnNonEmptyDurationReportEntriesAndMatchingLabelsMap() {
-        // given
-        List<ReportEntry> reportEntries = Arrays.asList(
-                ReportEntryFactory.createDurationReportEntry("a.b1.c1", 100),
-                ReportEntryFactory.createDurationReportEntry("a.b1.c2", 200),
-                ReportEntryFactory.createDurationReportEntry("a.b2.c1", 100),
-                ReportEntryFactory.createDurationReportEntry("a.b2.c2", 200)
-        );
-        Map<String, String[]> labelsByMetricName = Stream.of(
-                new AbstractMap.SimpleEntry<>("a_b1", new String[]{"label1"}),
-                new AbstractMap.SimpleEntry<>("a_b2", new String[]{"label2"})
-        )
-                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
-
-        // when
-        List<Gauge> gauges = ReportEntryToMetricConverter.convert(reportEntries, "path", labelsByMetricName);
-
-        // then
-        assertEquals(4, gauges.size());
-        List<Collector.MetricFamilySamples> samples = gauges.stream()
-                .flatMap(x -> x.collect().stream())
-                .collect(Collectors.toList());
-        Map<String, Collector.MetricFamilySamples> samplesByMetricName = samples.stream()
-                .map(sample -> new AbstractMap.SimpleEntry<>(sample.name, sample))
-                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
-        assertForMetric(samplesByMetricName.get("a_b1_c1_seconds"),
-                "a_b1_c1_seconds",
-                "location:path",
-                Collections.emptyList(),
-                Collections.singletonList(new LabelsAndValue(Collections.emptyList(), 0.100d)));
-        assertForMetric(samplesByMetricName.get("a_b1_c2_seconds"),
-                "a_b1_c2_seconds",
-                "location:path",
-                Collections.emptyList(),
-                Collections.singletonList(new LabelsAndValue(Collections.emptyList(), 0.200d)));
-        assertForMetric(samplesByMetricName.get("a_b2_c1_seconds"),
-                "a_b2_c1_seconds",
-                "location:path",
-                Collections.emptyList(),
-                Collections.singletonList(new LabelsAndValue(Collections.emptyList(), 0.100d)));
-        assertForMetric(samplesByMetricName.get("a_b2_c2_seconds"),
-                "a_b2_c2_seconds",
-                "location:path",
-                Collections.emptyList(),
-                Collections.singletonList(new LabelsAndValue(Collections.emptyList(), 0.200d)));
-    }
-
-    private static class LabelsAndValue {
-        private final List<String> labels;
-        private final double value;
-
-        private LabelsAndValue(List<String> labels, double value) {
-            this.labels = labels;
-            this.value = value;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            LabelsAndValue that = (LabelsAndValue) o;
-            return Double.compare(that.value, value) == 0 &&
-                    Objects.equals(labels, that.labels);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(labels, value);
-        }
-    }
-
-    private static void assertForMetric(Collector.MetricFamilySamples metric,
-                                        String metricName,
-                                        String help,
-                                        List<String> labelNames,
-                                        List<LabelsAndValue> labelsAndValues) {
-
-        assertEquals(metricName, metric.name);
-        assertEquals(help, metric.help);
-        assertEquals(Collector.Type.GAUGE, metric.type);
-
-        List<Collector.MetricFamilySamples.Sample> samples = metric.samples;
-        assertEquals(labelsAndValues.size(), samples.size());
-        ListUtils.zip(samples, labelsAndValues).forEach(pair -> {
-            Collector.MetricFamilySamples.Sample sample = pair.getLeft();
-            List<String> label = pair.getRight().labels;
-            double value = pair.getRight().value;
-            assertEquals(labelNames, sample.labelNames);
-            assertEquals(label, sample.labelValues);
-            assertEquals(value, sample.value, 1e-3);
-        });
+        assertEquals(Collections.singletonList(gauge), gauges);
     }
 
 }
