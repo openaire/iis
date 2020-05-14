@@ -123,7 +123,8 @@ public class DatasetMetadataConverter implements OafEntityToAvroConverter<Result
     }
     
     private void handleYear(Field<String> dateOfAcceptance, DataSetReference.Builder metaBuilder) {
-        if (dateOfAcceptance!= null && fieldApprover.approve(dateOfAcceptance.getDataInfo())) {
+        if (dateOfAcceptance != null && StringUtils.isNotBlank(dateOfAcceptance.getValue())
+                && fieldApprover.approve(dateOfAcceptance.getDataInfo())) {
             Year year = MetadataConverterUtils.extractYearOrNull(dateOfAcceptance.getValue(), log);
             if (year != null) {
                 metaBuilder.setPublicationYear(year.toString());

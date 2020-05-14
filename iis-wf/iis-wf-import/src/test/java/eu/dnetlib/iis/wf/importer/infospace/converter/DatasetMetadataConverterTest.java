@@ -147,6 +147,22 @@ public class DatasetMetadataConverterTest {
     }
     
     @Test
+    public void convert_null_date_of_acceptance() {
+     // given
+        Result sourceDataset = documentEntity(EXT_IDENTIFIERS);
+        sourceDataset.getDateofacceptance().setValue(null);
+        
+        // execute
+        DataSetReference metadata = converter.convert(sourceDataset);
+
+        // assert
+        assertNotNull(metadata);
+        assertEquals(ID, metadata.getId());
+        
+        assertNull(metadata.getPublicationYear());
+    }
+    
+    @Test
     public void convert_not_approved() {
         // given
         Result sourceDataset = documentEntity(EXT_IDENTIFIERS);

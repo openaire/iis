@@ -2,9 +2,9 @@ package eu.dnetlib.iis.wf.importer.infospace.converter;
 
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -26,12 +26,14 @@ public abstract class MetadataConverterUtils {
     /**
      * Extracts values from {@link StructuredProperty} list. Checks DataInfo
      * element whether this piece of information should be approved.
+     * Does not accept null fieldApprover or source collection. Skips null values stored in this collection.
      * 
      */
     public static List<String> extractValues(Collection<StructuredProperty> source, FieldApprover fieldApprover) {
         return source.stream()
                 .filter(x -> fieldApprover.approve(x.getDataInfo()))
                 .map(StructuredProperty::getValue)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
     
@@ -41,7 +43,7 @@ public abstract class MetadataConverterUtils {
     public static Year extractYearOrNull(String date, Logger log) {
         try {
             return Year.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
-        } catch (DateTimeParseException e) {
+        } catch (Exception e) {
             log.warn("unsupported, non integer, format of year value: " + date);
             return null;
         }
