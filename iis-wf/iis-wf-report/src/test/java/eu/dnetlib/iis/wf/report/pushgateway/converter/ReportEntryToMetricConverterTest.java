@@ -46,6 +46,7 @@ public class ReportEntryToMetricConverterTest {
         when(extractedMetricWithoutLabel.getValue()).thenReturn(1d);
         ExtractedMetric extractedMetricWithLabel = mock(ExtractedMetric.class);
         when(extractedMetricWithLabel.getMetricName()).thenReturn("metric_name_with_labels");
+        when(extractedMetricWithLabel.getLabelNames()).thenReturn(Collections.singletonList("label_name"));
         when(extractedMetricWithLabel.getLabelValues()).thenReturn(Collections.singletonList("label_value"));
         when(extractedMetricWithLabel.getValue()).thenReturn(10d);
         CounterReportEntryMetricExtractor.Extractor counterMetricExtractor = mock(CounterReportEntryMetricExtractor.Extractor.class);

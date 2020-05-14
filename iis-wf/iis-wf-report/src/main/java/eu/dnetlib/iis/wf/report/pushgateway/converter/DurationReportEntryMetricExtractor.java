@@ -22,7 +22,7 @@ public class DurationReportEntryMetricExtractor {
                                                                MetricNameCustomizer.Customizer metricNameCustomizer) {
         String metricName = metricNameCustomizer.customize(defaultMetricName(reportEntry));
         double value = millisecondsToSeconds(Double.parseDouble(reportEntry.getValue().toString()));
-        return new ExtractedMetric(metricName, Collections.emptyList(), value);
+        return new ExtractedMetric(metricName, Collections.emptyList(), Collections.emptyList(), value);
     }
 
     private static String defaultMetricName(ReportEntry reportEntry) {

@@ -5,6 +5,7 @@ import eu.dnetlib.iis.common.schemas.ReportEntry;
 import java.util.Collections;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class CounterReportEntryMetricExtractor {
 
@@ -34,10 +35,12 @@ public class CounterReportEntryMetricExtractor {
                 .map(entry -> {
                     LabeledMetricConf labeledMetricConf = entry.getValue();
                     return new ExtractedMetric(metricNameCustomizer.customize(labeledMetricConf.getMetricName()),
+                            labeledMetricConf.getLabelConfs().stream().map(LabelConf::getLabelName).collect(Collectors.toList()),
                             labelValuesExtractor.extract(reportEntry.getKey().toString(), labeledMetricConf),
                             Double.parseDouble(reportEntry.getValue().toString()));
                 })
                 .orElseGet(() -> new ExtractedMetric(metricNameCustomizer.customize(defaultMetricName(reportEntry.getKey().toString())),
+                        Collections.emptyList(),
                         Collections.emptyList(),
                         Double.parseDouble(reportEntry.getValue().toString())));
     }
