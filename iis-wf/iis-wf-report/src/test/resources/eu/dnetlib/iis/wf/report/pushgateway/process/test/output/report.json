@@ -5,3 +5,5 @@
 {"key":"a2.b2.c2.d2_e2", "type":"COUNTER", "value": "2"}
 {"key":"a3.b3.c3.e3", "type":"COUNTER", "value": "3"}
 {"key":"a4.b4.c4.e4", "type":"COUNTER", "value": "4"}
+{"key":"a5.b5.c5.x", "type":"COUNTER", "value": "5"}
+{"key":"a5.b5.c5.y", "type":"COUNTER", "value": "6"}

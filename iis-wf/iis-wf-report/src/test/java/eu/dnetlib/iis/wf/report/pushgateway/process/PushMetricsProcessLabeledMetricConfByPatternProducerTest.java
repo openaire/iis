@@ -90,7 +90,11 @@ public class PushMetricsProcessLabeledMetricConfByPatternProducerTest {
                         new LabeledMetricConf("a3_b3", Arrays.asList(
                                 new LabelConf("label_name_1", "$2"), new LabelConf("label_name_2", "$4")))),
                 new AbstractMap.SimpleImmutableEntry<>("a4\\.b4\\.c4\\.\\S+\\.\\S+",
-                        new LabeledMetricConf("a4_b4_c4", Collections.singletonList(new LabelConf("label_name_1", "$4"))))
+                        new LabeledMetricConf("a4_b4_c4", Collections.singletonList(new LabelConf("label_name_1", "$4")))),
+                new AbstractMap.SimpleImmutableEntry<>("a5\\.b5\\.c5\\.a\\.\\S+",
+                        new LabeledMetricConf("a5_b5_c5", Collections.singletonList(new LabelConf("label_name_1", "$4")))),
+                new AbstractMap.SimpleImmutableEntry<>("a5\\.b5\\.c5\\.b\\.\\S+",
+                        new LabeledMetricConf("a5_b5_c5", Collections.singletonList(new LabelConf("label_name_1", "$4"))))
                 ).collect(Collectors.toMap(AbstractMap.SimpleImmutableEntry::getKey, AbstractMap.SimpleImmutableEntry::getValue)),
                 result.get());
     }
