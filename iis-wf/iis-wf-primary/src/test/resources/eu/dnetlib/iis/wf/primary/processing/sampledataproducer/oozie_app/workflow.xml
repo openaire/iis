@@ -552,7 +552,7 @@
             <arg>-IexecTimeReport=${workingDir}/report/primary-processing-execution-times</arg>
 
 			<arg>-C{pushgateway,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/pushgateway.json}</arg>
-			<arg>-Ipushgateway=${workingDir}/report/pushgateway/primary_processing</arg>
+			<arg>-Ipushgateway=${workingDir}/report/pushgateway/iis</arg>
 		</java>
         <ok to="end" />
         <error to="fail" />
