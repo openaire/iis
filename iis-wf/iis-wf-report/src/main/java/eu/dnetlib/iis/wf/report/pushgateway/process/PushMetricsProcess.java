@@ -36,7 +36,7 @@ public class PushMetricsProcess implements Process {
 
     private static final String METRIC_PUSHER_CREATOR_CLASS_NAME = "metricPusherCreatorClassName";
     private static final String METRIC_PUSHER_ADDRESS = "metricPusherAddress";
-    private static final String REPORTS_DIR = "reportsDir";
+    private static final String REPORTS_DIR_PATH = "reportsDirPath";
     private static final String LABELED_METRICS_PROPERTIES_FILE = "labeledMetricsPropertiesFile";
     private static final String GROUPING_KEY = "groupingKey";
     private static final String JOB = "iis";
@@ -85,7 +85,7 @@ public class PushMetricsProcess implements Process {
                                                                             .map(x -> x.stream().flatMap(Collection::stream).collect(Collectors.toList()))
                                                                             .ifPresent(reportEntries -> {
                                                                                 logger.info("Using report entries of size: {}", reportEntries.size());
-                                                                                reportEntryConverter.convert(reportEntries, parameters.get(REPORTS_DIR), labeledMetricConfByPattern)
+                                                                                reportEntryConverter.convert(reportEntries, parameters.get(REPORTS_DIR_PATH), labeledMetricConfByPattern)
                                                                                         .ifPresent(gauges -> {
                                                                                             logger.info("Using gauges of size: {}", gauges.size());
                                                                                             gaugesRegistrar.register(gauges)
@@ -179,7 +179,7 @@ public class PushMetricsProcess implements Process {
         Optional<List<String>> find(Map<String, String> parameters) {
             Supplier<List<String>> reportLocationsSupplier = () -> {
                 try {
-                    return HdfsUtils.listFiles(Job.getInstance().getConfiguration(), parameters.get(REPORTS_DIR));
+                    return HdfsUtils.listFiles(Job.getInstance().getConfiguration(), parameters.get(REPORTS_DIR_PATH));
                 } catch (Exception e) {
                     logger.error("Report locations finder failed.", e);
                     return null;
@@ -227,7 +227,7 @@ public class PushMetricsProcess implements Process {
             try {
                 return objectMapper.readValue(json, LabeledMetricConf.class);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException(String.format("failed to parse label metric conf: json=%s", json), e);
             }
         }
 

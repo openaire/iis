@@ -1937,7 +1937,7 @@
             <propagate-configuration/>
             <configuration>
                 <property>
-                    <name>reportsDir</name>
+                    <name>reports_dir_path</name>
                     <value>${output_report_root_path}</value>
                 </property>
             </configuration>

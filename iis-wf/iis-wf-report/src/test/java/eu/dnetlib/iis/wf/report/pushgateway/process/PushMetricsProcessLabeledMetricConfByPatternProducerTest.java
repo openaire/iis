@@ -69,7 +69,7 @@ public class PushMetricsProcessLabeledMetricConfByPatternProducerTest {
         // given
         PushMetricsProcess.LabeledMetricConfByPatternProducer labeledMetricConfByPatternProducer = new PushMetricsProcess.LabeledMetricConfByPatternProducer();
         String labeledMetricsPropertiesPath = Objects.requireNonNull(this.getClass().getClassLoader()
-                .getResource("eu/dnetlib/iis/wf/report/pushgateway/process/test/oozie_app/labeled_metrics_by_case.properties")).getFile();
+                .getResource("eu/dnetlib/iis/wf/report/pushgateway/process/test/oozie_app/labeled_metrics.properties")).getFile();
 
         // when
         Optional<Map<String, LabeledMetricConf>> result = labeledMetricConfByPatternProducer

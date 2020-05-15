@@ -75,7 +75,7 @@ public class PushMetricsProcessTest {
         // given
         PortBindings portBindings = mock(PortBindings.class);
         Configuration conf = mock(Configuration.class);
-        Map<String, String> parameters = Collections.singletonMap("reportsDir", "/path/to/report");
+        Map<String, String> parameters = Collections.singletonMap("reportsDirPath", "/path/to/report");
 
         MetricPusherCreator metricPusherCreator = mock(MetricPusherCreator.class);
         when(metricPusherCreatorProducer.create(parameters)).thenReturn(Optional.of(metricPusherCreator));
@@ -94,7 +94,7 @@ public class PushMetricsProcessTest {
         // given
         PortBindings portBindings = new PortBindings(Collections.emptyMap(), Collections.emptyMap());
         Configuration conf = new Configuration();
-        Map<String, String> parameters = Collections.singletonMap("reportsDir", "/path/to/report");
+        Map<String, String> parameters = Collections.singletonMap("reportsDirPath", "/path/to/report");
 
         MetricPusherCreator metricPusherCreator = mock(MetricPusherCreator.class);
         when(metricPusherCreatorProducer.create(parameters)).thenReturn(Optional.of(metricPusherCreator));
@@ -117,7 +117,7 @@ public class PushMetricsProcessTest {
         // given
         PortBindings portBindings = new PortBindings(Collections.emptyMap(), Collections.emptyMap());
         Configuration conf = new Configuration();
-        Map<String, String> parameters = Collections.singletonMap("reportsDir", "/path/to/report");
+        Map<String, String> parameters = Collections.singletonMap("reportsDirPath", "/path/to/report");
 
         MetricPusherCreator metricPusherCreator = mock(MetricPusherCreator.class);
         when(metricPusherCreatorProducer.create(parameters)).thenReturn(Optional.of(metricPusherCreator));
@@ -143,7 +143,7 @@ public class PushMetricsProcessTest {
         // given
         PortBindings portBindings = new PortBindings(Collections.emptyMap(), Collections.emptyMap());
         Configuration conf = new Configuration();
-        Map<String, String> parameters = Collections.singletonMap("reportsDir", "/path/to/report");
+        Map<String, String> parameters = Collections.singletonMap("reportsDirPath", "/path/to/report");
 
         MetricPusherCreator metricPusherCreator = mock(MetricPusherCreator.class);
         when(metricPusherCreatorProducer.create(parameters)).thenReturn(Optional.of(metricPusherCreator));
@@ -171,7 +171,7 @@ public class PushMetricsProcessTest {
         // given
         PortBindings portBindings = new PortBindings(Collections.emptyMap(), Collections.emptyMap());
         Configuration conf = new Configuration();
-        Map<String, String> parameters = Collections.singletonMap("reportsDir", "/path/to/report");
+        Map<String, String> parameters = Collections.singletonMap("reportsDirPath", "/path/to/report");
 
         MetricPusherCreator metricPusherCreator = mock(MetricPusherCreator.class);
         when(metricPusherCreatorProducer.create(parameters)).thenReturn(Optional.of(metricPusherCreator));
@@ -201,7 +201,7 @@ public class PushMetricsProcessTest {
         // given
         PortBindings portBindings = new PortBindings(Collections.emptyMap(), Collections.emptyMap());
         Configuration conf = new Configuration();
-        Map<String, String> parameters = Collections.singletonMap("reportsDir", "/path/to/report");
+        Map<String, String> parameters = Collections.singletonMap("reportsDirPath", "/path/to/report");
 
         MetricPusherCreator metricPusherCreator = mock(MetricPusherCreator.class);
         when(metricPusherCreatorProducer.create(parameters)).thenReturn(Optional.of(metricPusherCreator));
@@ -235,7 +235,7 @@ public class PushMetricsProcessTest {
         // given
         PortBindings portBindings = new PortBindings(Collections.emptyMap(), Collections.emptyMap());
         Configuration conf = new Configuration();
-        Map<String, String> parameters = Collections.singletonMap("reportsDir", "/path/to/report");
+        Map<String, String> parameters = Collections.singletonMap("reportsDirPath", "/path/to/report");
 
         MetricPusherCreator metricPusherCreator = mock(MetricPusherCreator.class);
         when(metricPusherCreatorProducer.create(parameters)).thenReturn(Optional.of(metricPusherCreator));
@@ -271,7 +271,7 @@ public class PushMetricsProcessTest {
         // given
         PortBindings portBindings = new PortBindings(Collections.emptyMap(), Collections.emptyMap());
         Configuration conf = new Configuration();
-        Map<String, String> parameters = Collections.singletonMap("reportsDir", "/path/to/report");
+        Map<String, String> parameters = Collections.singletonMap("reportsDirPath", "/path/to/report");
 
         MetricPusherCreator metricPusherCreator = mock(MetricPusherCreator.class);
         when(metricPusherCreatorProducer.create(parameters)).thenReturn(Optional.of(metricPusherCreator));
@@ -310,7 +310,7 @@ public class PushMetricsProcessTest {
         // given
         PortBindings portBindings = new PortBindings(Collections.emptyMap(), Collections.emptyMap());
         Configuration conf = new Configuration();
-        Map<String, String> parameters = Collections.singletonMap("reportsDir", "/path/to/report");
+        Map<String, String> parameters = Collections.singletonMap("reportsDirPath", "/path/to/report");
 
         MetricPusherCreator metricPusherCreator = mock(MetricPusherCreator.class);
         when(metricPusherCreatorProducer.create(parameters)).thenReturn(Optional.of(metricPusherCreator));

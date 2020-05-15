@@ -73,7 +73,7 @@ public class PushMetricsProcessReportLocationsFinderTest {
         Path report = Files.createTempDirectory(reportsDir, "report");
 
         // when
-        Optional<List<String>> result = reportLocationsFinder.find(Collections.singletonMap("reportsDir", reportsDir.toString()));
+        Optional<List<String>> result = reportLocationsFinder.find(Collections.singletonMap("reportsDirPath", reportsDir.toString()));
 
         // then
         assertEquals(Optional.of(Collections.singletonList(String.format("file:%s", report.toString()))), result);

@@ -40,20 +40,20 @@
             <propagate-configuration/>
             <configuration>
                 <property>
-                    <name>metricPusherCreatorClassName</name>
+                    <name>metric_pusher_creator_class_name</name>
                     <value>eu.dnetlib.iis.wf.report.pushgateway.process.FilePusherCreator</value>
                 </property>
                 <property>
-                    <name>metricPusherAddress</name>
+                    <name>metric_pusher_address</name>
                     <value>${workingDir}/output</value>
                 </property>
                 <property>
-                    <name>reportsDir</name>
+                    <name>reports_dir_path</name>
                     <value>${workingDir}/producer</value>
                 </property>
                 <property>
-                    <name>labeledMetricsPropertiesFile</name>
-                    <value>eu/dnetlib/iis/wf/report/pushgateway/process/test/oozie_app/labeled_metrics_by_case.properties</value>
+                    <name>labeled_metrics_properties_file</name>
+                    <value>eu/dnetlib/iis/wf/report/pushgateway/process/test/oozie_app/labeled_metrics.properties</value>
                 </property>
             </configuration>
         </sub-workflow>

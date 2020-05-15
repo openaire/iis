@@ -1,7 +1,7 @@
 <workflow-app xmlns="uri:oozie:workflow:0.4" name="push_reports">
     <parameters>
         <property>
-            <name>metricPusherCreatorClassName</name>
+            <name>metric_pusher_creator_class_name</name>
             <value>eu.dnetlib.iis.wf.report.pushgateway.process.PushGatewayPusherCreator</value>
             <description>
                 canonical name of a class implementing eu.dnetlib.iis.wf.report.pushgateway.process.MetricPusherCreator
@@ -10,19 +10,19 @@
             </description>
         </property>
         <property>
-            <name>metricPusherAddress</name>
+            <name>metric_pusher_address</name>
             <description>
                 pushgateway service location
             </description>
         </property>
         <property>
-            <name>reportsDir</name>
+            <name>reports_dir_path</name>
             <description>
                 location of an HDFS dir with reports
             </description>
         </property>
         <property>
-            <name>labeledMetricsPropertiesFile</name>
+            <name>labeled_metrics_properties_file</name>
             <value>eu/dnetlib/iis/wf/report/pushgateway/process/oozie_app/labeled_metrics.properties</value>
             <description>
                 properties file with configuration of labeled metrics
@@ -51,10 +51,10 @@
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.report.pushgateway.process.PushMetricsProcess</arg>
-            <arg>-PmetricPusherCreatorClassName=${metricPusherCreatorClassName}</arg>
-            <arg>-PmetricPusherAddress=${metricPusherAddress}</arg>
-            <arg>-PreportsDir=${reportsDir}</arg>
-            <arg>-PlabeledMetricsPropertiesFile=${labeledMetricsPropertiesFile}</arg>
+            <arg>-PmetricPusherCreatorClassName=${metric_pusher_creator_class_name}</arg>
+            <arg>-PmetricPusherAddress=${metric_pusher_address}</arg>
+            <arg>-PreportsDirPath=${reports_dir_path}</arg>
+            <arg>-PlabeledMetricsPropertiesFile=${labeled_metrics_properties_file}</arg>
             <arg>-PgroupingKey.user=${wf:conf('user.name')}</arg>
         </java>
         <ok to="end"/>
