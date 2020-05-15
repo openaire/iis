@@ -236,19 +236,8 @@
             <description>number of cores used by single executor</description>
         </property>
         <property>
-            <name>metric_pusher_creator_class_name</name>
-            <value>eu.dnetlib.iis.wf.report.pushgateway.pusher.PushGatewayPusherCreator</value>
-            <description>
-                canonical name of a class implementing eu.dnetlib.iis.wf.report.pushgateway.pusher.MetricPusherCreator
-                used to create eu.dnetlib.iis.wf.report.pushgateway.pusher.MetricPusher for pushing prometheus metrics
-                to pushgateway
-            </description>
-        </property>
-        <property>
             <name>metric_pusher_address</name>
-            <description>
-                pushgateway service location
-            </description>
+            <description>pushgateway service location</description>
         </property>
     </parameters>
 
@@ -364,15 +353,16 @@
     </action>
 
     <action name="primary_export_push_reports">
-        <java>
-            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-            <arg>eu.dnetlib.iis.wf.report.pushgateway.process.PushMetricsProcess</arg>
-            <arg>-PjobName=primary_export</arg>
-            <arg>-PmetricPusherCreatorClassName=${metric_pusher_creator_class_name}</arg>
-            <arg>-PmetricPusherAddress=${metric_pusher_address}</arg>
-            <arg>-PreportLocation.export_patent=${output_report_root_path}/export_patent</arg>
-            <arg>-PreportLocation.export_software=${output_report_root_path}/export_software</arg>
-        </java>
+        <sub-workflow>
+            <app-path>${wf:appPath()}/push_reports</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>reportsDir</name>
+                    <value>${output_report_root_path}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
         <ok to="end"/>
         <error to="fail"/>
     </action>

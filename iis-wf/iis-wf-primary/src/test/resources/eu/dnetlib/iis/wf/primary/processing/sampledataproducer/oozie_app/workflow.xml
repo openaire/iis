@@ -412,7 +412,7 @@
                 </property>
 				<property>
 					<name>metric_pusher_creator_class_name</name>
-					<value>eu.dnetlib.iis.wf.report.pushgateway.pusher.FilePusherCreator</value>
+					<value>eu.dnetlib.iis.wf.report.pushgateway.process.FilePusherCreator</value>
 				</property>
 				<property>
 					<name>metric_pusher_address</name>

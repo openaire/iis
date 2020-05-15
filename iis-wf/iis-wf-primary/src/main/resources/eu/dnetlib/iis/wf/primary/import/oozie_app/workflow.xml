@@ -211,19 +211,8 @@
 				Notice: do not provide any output directory locationpointing to workingDir subdirectory!</description>
 		</property>
 		<property>
-			<name>metric_pusher_creator_class_name</name>
-			<value>eu.dnetlib.iis.wf.report.pushgateway.pusher.PushGatewayPusherCreator</value>
-			<description>
-				canonical name of a class implementing eu.dnetlib.iis.wf.report.pushgateway.pusher.MetricPusherCreator
-				used to create eu.dnetlib.iis.wf.report.pushgateway.pusher.MetricPusher for pushing prometheus metrics
-				to pushgateway
-			</description>
-		</property>
-		<property>
 			<name>metric_pusher_address</name>
-			<description>
-				pushgateway service location
-			</description>
+			<description>pushgateway service location</description>
 		</property>
 	</parameters>
 
@@ -520,7 +509,7 @@
                 </property>
                 <property>
                     <name>report_properties_prefix</name>
-                    <value>import.content.html</value>
+                    <value>import.contents.html</value>
                 </property>
                 <!-- all the other properties are autmatically propagated -->
             </configuration>
@@ -783,7 +772,7 @@
             <arg>eu.dnetlib.iis.common.report.OozieTimeReportGenerator</arg>
             <arg>-PjobId=${wf:id()}</arg>
             <arg>-PoozieServiceLoc=${oozieServiceLoc}</arg>
-            <arg>-Preport.import.concept.duration=import_concept</arg>
+            <arg>-Preport.import.concepts.duration=import_concept</arg>
             <arg>-Preport.import.infoSpace.duration=import_infospace</arg>
             <arg>-Preport.import.content.url.duration=import_content_url</arg>
             <arg>-Preport.import.ingestPmc.duration=ingest_pmc_cached</arg>
@@ -795,39 +784,16 @@
     </action>
 
 	<action name="primary_import_push_reports">
-		<java>
-			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-			<arg>eu.dnetlib.iis.wf.report.pushgateway.process.PushMetricsProcess</arg>
-			<arg>-PjobName=primary_import</arg>
-			<arg>-PmetricPusherCreatorClassName=${metric_pusher_creator_class_name}</arg>
-			<arg>-PmetricPusherAddress=${metric_pusher_address}</arg>
-			<arg>-PlabeledMetric.import_content_html_invalid=cause</arg>
-			<arg>-PlabeledMetric.import_content_pdf_invalid=cause</arg>
-			<arg>-PlabeledMetric.import_content_pmc_invalid=cause</arg>
-			<arg>-PlabeledMetric.import_content_url_bytype=type</arg>
-			<arg>-PlabeledMetric.import_content_wos_invalid=cause</arg>
-			<arg>-PlabeledMetric.import_infoSpace=type</arg>
-			<arg>-PlabeledMetric.import_metadataExtraction_processed_fault=cause</arg>
-			<arg>-PreportLocation.import_concept=${output_report_root_path}/import_concept</arg>
-			<arg>-PreportLocation.import_content_html=${output_report_root_path}/import_content_html</arg>
-			<arg>-PreportLocation.import_content_html-execution-times=${output_report_root_path}/import_content_html-execution-times</arg>
-			<arg>-PreportLocation.import_content_pdf=${output_report_root_path}/import_content_pdf</arg>
-			<arg>-PreportLocation.import_content_pdf-execution-times=${output_report_root_path}/import_content_pdf-execution-times</arg>
-			<arg>-PreportLocation.import_content_pmc=${output_report_root_path}/import_content_pmc</arg>
-			<arg>-PreportLocation.import_content_pmc-execution-times=${output_report_root_path}/import_content_pmc-execution-times</arg>
-			<arg>-PreportLocation.import_content_url=${output_report_root_path}/import_content_url</arg>
-			<arg>-PreportLocation.import_content_wos=${output_report_root_path}/import_content_wos</arg>
-			<arg>-PreportLocation.import_content_wos-execution-times=${output_report_root_path}/import_content_wos-execution-times</arg>
-			<arg>-PreportLocation.import_info_space=${output_report_root_path}/import_info_space</arg>
-			<arg>-PreportLocation.import_ingest_pmc=${output_report_root_path}/import_ingest_pmc</arg>
-			<arg>-PreportLocation.import_ingest_pmc-execution-times=${output_report_root_path}/import_ingest_pmc-execution-times</arg>
-			<arg>-PreportLocation.import_ingestpmc_cache=${output_report_root_path}/import_ingestpmc_cache</arg>
-			<arg>-PreportLocation.import_metadataextraction=${output_report_root_path}/import_metadataextraction</arg>
-			<arg>-PreportLocation.import_metadataextraction-execution-times=${output_report_root_path}/import_metadataextraction-execution-times</arg>
-			<arg>-PreportLocation.import_metadataextraction_cache=${output_report_root_path}/import_metadataextraction_cache</arg>
-			<arg>-PreportLocation.import_patent=${output_report_root_path}/import_patent</arg>
-			<arg>-PreportLocation.primary-import-execution-times=${output_report_root_path}/primary-import-execution-times</arg>
-		</java>
+		<sub-workflow>
+			<app-path>${wf:appPath()}/push_reports</app-path>
+			<propagate-configuration/>
+			<configuration>
+				<property>
+					<name>reportsDir</name>
+					<value>${output_report_root_path}</value>
+				</property>
+			</configuration>
+		</sub-workflow>
 		<ok to="end"/>
 		<error to="fail"/>
 	</action>

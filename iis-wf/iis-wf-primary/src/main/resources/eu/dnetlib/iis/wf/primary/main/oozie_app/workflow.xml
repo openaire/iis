@@ -379,19 +379,8 @@
             <description>number of cores used by single executor</description>
         </property>
         <property>
-            <name>metric_pusher_creator_class_name</name>
-            <value>eu.dnetlib.iis.wf.report.pushgateway.pusher.PushGatewayPusherCreator</value>
-            <description>
-                canonical name of a class implementing eu.dnetlib.iis.wf.report.pushgateway.pusher.MetricPusherCreator
-                used to create eu.dnetlib.iis.wf.report.pushgateway.pusher.MetricPusher for pushing prometheus metrics
-                to pushgateway
-            </description>
-        </property>
-        <property>
             <name>metric_pusher_address</name>
-            <description>
-                pushgateway service location
-            </description>
+            <description>pushgateway service location</description>
         </property>
     </parameters>
 

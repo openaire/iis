@@ -397,19 +397,8 @@
             <description>base directory for storing reports</description>
         </property>
         <property>
-            <name>metric_pusher_creator_class_name</name>
-            <value>eu.dnetlib.iis.wf.report.pushgateway.pusher.PushGatewayPusherCreator</value>
-            <description>
-                canonical name of a class implementing eu.dnetlib.iis.wf.report.pushgateway.pusher.MetricPusherCreator
-                used to create eu.dnetlib.iis.wf.report.pushgateway.pusher.MetricPusher for pushing prometheus metrics
-                to pushgateway
-            </description>
-        </property>
-        <property>
             <name>metric_pusher_address</name>
-            <description>
-                pushgateway service location
-            </description>
+            <description>pushgateway service location</description>
         </property>
     </parameters>
 
@@ -1943,51 +1932,16 @@
     </action>
 
     <action name="primary_processing_push_reports">
-        <java>
-            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
-            <arg>eu.dnetlib.iis.wf.report.pushgateway.process.PushMetricsProcess</arg>
-            <arg>-PjobName=primary_processing</arg>
-            <arg>-PmetricPusherCreatorClassName=${metric_pusher_creator_class_name}</arg>
-            <arg>-PmetricPusherAddress=${metric_pusher_address}</arg>
-            <arg>-PlabeledMetric.processing_docOrgMatching_affiliationBased=type</arg>
-            <arg>-PlabeledMetric.processing_docOrgMatching_deduped=type</arg>
-            <arg>-PlabeledMetric.processing_docOrgMatching_projectBased=type</arg>
-            <arg>-PlabeledMetric.processing_citationTextExtraction=type</arg>
-            <arg>-PlabeledMetric.processing_citationMatching_total=type</arg>
-            <arg>-PlabeledMetric.processing_citationMatching_direct=type</arg>
-            <arg>-PlabeledMetric.processing_citationMatching_fuzzy=type</arg>
-            <arg>-PlabeledMetric.processing_referenceExtraction_community_reference_byrootid=id</arg>
-            <arg>-PlabeledMetric.processing_referenceExtraction_covid-19=type</arg>
-            <arg>-PlabeledMetric.processing_referenceExtraction_pdb=type</arg>
-            <arg>-PlabeledMetric.processing_referenceExtraction_concept_reference_byrootid=id</arg>
-            <arg>-PlabeledMetric.processing_referenceExtraction_researchInitiative=type</arg>
-            <arg>-PlabeledMetric.processing_referenceExtraction_project_reference_byfunder=id</arg>
-            <arg>-PlabeledMetric.processing_referenceExtraction_patent=type</arg>
-            <arg>-PlabeledMetric.processing_referenceExtraction_softwareUrl_webcrawl_processed=type</arg>
-            <arg>-PlabeledMetric.processing_documentClassification_docClassReference=id</arg>
-            <arg>-PreportLocation.aff-matching=${output_report_root_path}/aff-matching</arg>
-            <arg>-PreportLocation.affmatching-dedup=${output_report_root_path}/affmatching-dedup</arg>
-            <arg>-PreportLocation.citation=${output_report_root_path}/citation</arg>
-            <arg>-PreportLocation.citationmatching_direct=${output_report_root_path}/citationmatching_direct</arg>
-            <arg>-PreportLocation.citationmatching_fuzzy=${output_report_root_path}/citationmatching_fuzzy</arg>
-            <arg>-PreportLocation.doc_community=${output_report_root_path}/doc_community</arg>
-            <arg>-PreportLocation.doc_covid19=${output_report_root_path}/doc_covid19</arg>
-            <arg>-PreportLocation.doc_pdb=${output_report_root_path}/doc_pdb</arg>
-            <arg>-PreportLocation.doc_project_concept=${output_report_root_path}/doc_project_concept</arg>
-            <arg>-PreportLocation.doc_research_initiative=${output_report_root_path}/doc_research_initiative</arg>
-            <arg>-PreportLocation.document_classification=${output_report_root_path}/document_classification</arg>
-            <arg>-PreportLocation.document_similarity=${output_report_root_path}/document_similarity</arg>
-            <arg>-PreportLocation.document_text_union=${output_report_root_path}/document_text_union</arg>
-            <arg>-PreportLocation.document_to_community_by_root_conceptid=${output_report_root_path}/document_to_community_by_root_conceptid</arg>
-            <arg>-PreportLocation.document_to_concept_by_root_conceptid=${output_report_root_path}/document_to_concept_by_root_conceptid</arg>
-            <arg>-PreportLocation.document_to_dataset_datacite=${output_report_root_path}/document_to_dataset_datacite</arg>
-            <arg>-PreportLocation.document_to_dataset_opentrials=${output_report_root_path}/document_to_dataset_opentrials</arg>
-            <arg>-PreportLocation.document_to_dataset_total=${output_report_root_path}/document_to_dataset_total</arg>
-            <arg>-PreportLocation.document_to_project_by_funder=${output_report_root_path}/document_to_project_by_funder</arg>
-            <arg>-PreportLocation.project-based-docorg-matching=${output_report_root_path}/project-based-docorg-matching</arg>
-            <arg>-PreportLocation.referenceextraction_software=${output_report_root_path}/referenceextraction_software</arg>
-            <arg>-PreportLocation.primary-processing-execution-times=${output_report_root_path}/primary-processing-execution-times</arg>
-        </java>
+        <sub-workflow>
+            <app-path>${wf:appPath()}/push_reports</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>reportsDir</name>
+                    <value>${output_report_root_path}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
         <ok to="end"/>
         <error to="fail"/>
     </action>
