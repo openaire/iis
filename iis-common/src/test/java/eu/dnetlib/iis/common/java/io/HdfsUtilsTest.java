@@ -15,19 +15,19 @@ import static org.junit.Assert.assertEquals;
 public class HdfsUtilsTest {
 
     @Test(expected = Exception.class)
-    public void listFilesShouldThrowOnError() throws IOException {
+    public void listDirsShouldThrowOnError() throws IOException {
         // when
-        HdfsUtils.listFiles(new Configuration(), null);
+        HdfsUtils.listDirs(new Configuration(), null);
     }
 
     @Test
-    public void shouldListFilesLocatedInPath() throws IOException {
+    public void listDirsShouldListDirsLocatedInPath() throws IOException {
         Path tempDir = Files.createTempDirectory(this.getClass().getSimpleName());
         Path subDir1 = Files.createTempDirectory(tempDir, "list_me");
         Path subDir2 = Files.createTempDirectory(tempDir, "list_me");
 
         // when
-        List<String> paths = HdfsUtils.listFiles(new Configuration(), tempDir.toString());
+        List<String> paths = HdfsUtils.listDirs(new Configuration(), tempDir.toString());
 
         // then
         assertEquals(2, paths.size());

@@ -36,13 +36,13 @@ public final class HdfsUtils {
     }
 
     /**
-     * Lists hadoop files located below pathname or alternatively lists subdirs under pathname.
+     * Lists subdirs under pathname.
      *
      * @param hadoopConf Configuration of hadoop env
-     * @param pathname   Path to be listed for hadoop files
-     * @return List with string locations of hadoop files
+     * @param pathname   Path to be listed for subdirs
+     * @return List with string locations of subdirs
      */
-    public static List<String> listFiles(Configuration hadoopConf, String pathname) throws IOException {
+    public static List<String> listDirs(Configuration hadoopConf, String pathname) throws IOException {
         return Arrays
                 .stream(FileSystem.get(hadoopConf).listStatus(new Path(pathname)))
                 .filter(FileStatus::isDirectory)
