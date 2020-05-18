@@ -509,7 +509,7 @@
                 </property>
                 <property>
                     <name>report_properties_prefix</name>
-                    <value>import.contents.html</value>
+                    <value>import.content.html</value>
                 </property>
                 <!-- all the other properties are autmatically propagated -->
             </configuration>
@@ -772,7 +772,7 @@
             <arg>eu.dnetlib.iis.common.report.OozieTimeReportGenerator</arg>
             <arg>-PjobId=${wf:id()}</arg>
             <arg>-PoozieServiceLoc=${oozieServiceLoc}</arg>
-            <arg>-Preport.import.concepts.duration=import_concept</arg>
+            <arg>-Preport.import.concept.duration=import_concept</arg>
             <arg>-Preport.import.infoSpace.duration=import_infospace</arg>
             <arg>-Preport.import.content.url.duration=import_content_url</arg>
             <arg>-Preport.import.ingestPmc.duration=ingest_pmc_cached</arg>
