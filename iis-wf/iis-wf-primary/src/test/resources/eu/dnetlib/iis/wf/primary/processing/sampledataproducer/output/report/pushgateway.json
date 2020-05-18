@@ -1,52 +1,52 @@
-{"key":"processing.docOrgMatching.affiliationBased.docOrgReference","type":"COUNTER","value":"3"}
-{"key":"processing.docOrgMatching.affiliationBased.doc","type":"COUNTER","value":"2"}
-{"key":"processing.docOrgMatching.deduped.docOrgReference","type":"COUNTER","value":"3"}
-{"key":"processing.docOrgMatching.deduped.doc","type":"COUNTER","value":"2"}
-{"key":"processing.docOrgMatching.projectBased.docOrgReference","type":"COUNTER","value":"0"}
-{"key":"processing.docOrgMatching.projectBased.doc","type":"COUNTER","value":"0"}
+{"key":"processing.citationMatching.citDocReference.direct","type":"COUNTER","value":"1"}
+{"key":"processing.citationMatching.citDocReference.fuzzy","type":"COUNTER","value":"1"}
+{"key":"processing.citationMatching.citDocReference.total","type":"COUNTER","value":"2"}
+{"key":"processing.citationMatching.direct.duration","type":"DURATION","value":"$(LONG_RANGE: [1000, 150000])"}
+{"key":"processing.citationMatching.doc.direct","type":"COUNTER","value":"1"}
+{"key":"processing.citationMatching.doc.fuzzy","type":"COUNTER","value":"1"}
+{"key":"processing.citationMatching.doc.total","type":"COUNTER","value":"1"}
+{"key":"processing.citationMatching.fuzzy.duration","type":"DURATION","value":"$(LONG_RANGE: [1000, 900000])"}
+{"key":"processing.citationMatching.total.duration","type":"DURATION","value":"$(LONG_RANGE: [1000, 1500000])"}
 {"key":"processing.citationTextExtraction.citation","type":"COUNTER","value":"3"}
 {"key":"processing.citationTextExtraction.doc","type":"COUNTER","value":"1"}
-{"key":"processing.citationMatching.total.citDocReference","type":"COUNTER","value":"2"}
-{"key":"processing.citationMatching.total.doc","type":"COUNTER","value":"1"}
-{"key":"processing.citationMatching.direct.citDocReference","type":"COUNTER","value":"1"}
-{"key":"processing.citationMatching.direct.doc","type":"COUNTER","value":"1"}
-{"key":"processing.citationMatching.fuzzy.citDocReference","type":"COUNTER","value":"1"}
-{"key":"processing.citationMatching.fuzzy.doc","type":"COUNTER","value":"1"}
-{"key":"processing.referenceExtraction.community.doc","type":"COUNTER","value":"1"}
-{"key":"processing.referenceExtraction.community.reference.total","type":"COUNTER","value":"1"}
-{"key":"processing.referenceExtraction.concept.doc","type":"COUNTER","value":"1"}
-{"key":"processing.referenceExtraction.concept.reference.total","type":"COUNTER","value":"1"}
-{"key":"processing.referenceExtraction.concept.reference.byrootid.concept-id1","type":"COUNTER","value":"1"}
-{"key":"processing.referenceExtraction.researchInitiative.reference","type":"COUNTER","value":"1"}
-{"key":"processing.referenceExtraction.researchInitiative.doc","type":"COUNTER","value":"1"}
-{"key":"processing.referenceExtraction.softwareUrl.webcrawl.fromCache.total","type":"COUNTER","value":"0"}
-{"key":"processing.referenceExtraction.softwareUrl.webcrawl.processed.total","type":"COUNTER","value":"2"}
-{"key":"processing.referenceExtraction.softwareUrl.webcrawl.processed.fault","type":"COUNTER","value":"0"}
+{"key":"processing.citationTextExtraction.duration","type":"DURATION","value":"$(LONG_RANGE: [1000, 500000])"}
+{"key":"processing.docOrgMatching.affiliationBased.duration","type":"DURATION","value":"$(LONG_RANGE: [1000, 200000])"}
+{"key":"processing.docOrgMatching.doc.affiliationBased","type":"COUNTER","value":"2"}
+{"key":"processing.docOrgMatching.doc.deduped","type":"COUNTER","value":"2"}
+{"key":"processing.docOrgMatching.doc.projectBased","type":"COUNTER","value":"0"}
+{"key":"processing.docOrgMatching.docOrgReference.affiliationBased","type":"COUNTER","value":"3"}
+{"key":"processing.docOrgMatching.docOrgReference.deduped","type":"COUNTER","value":"3"}
+{"key":"processing.docOrgMatching.docOrgReference.projectBased","type":"COUNTER","value":"0"}
+{"key":"processing.docOrgMatching.projectBased.duration","type":"DURATION","value":"$(LONG_RANGE: [1000, 200000])"}
 {"key":"processing.documentClassification.doc","type":"COUNTER","value":"1"}
+{"key":"processing.documentClassification.docClassReference.acm","type":"COUNTER","value":"1"}
 {"key":"processing.documentClassification.docClassReference.arxiv","type":"COUNTER","value":"0"}
-{"key":"processing.documentClassification.docClassReference.wos","type":"COUNTER","value":"0"}
 {"key":"processing.documentClassification.docClassReference.ddc","type":"COUNTER","value":"0"}
 {"key":"processing.documentClassification.docClassReference.meshEuroPmc","type":"COUNTER","value":"0"}
-{"key":"processing.documentClassification.docClassReference.acm","type":"COUNTER","value":"1"}
+{"key":"processing.documentClassification.docClassReference.wos","type":"COUNTER","value":"0"}
+{"key":"processing.documentClassification.duration","type":"DURATION","value":"$(LONG_RANGE: [1000, 170000])"}
 {"key":"processing.merging.documentText","type":"COUNTER","value":"10"}
-{"key":"processing.referenceExtraction.community.reference.byrootid.dariah","type":"COUNTER","value":"1"}
+{"key":"processing.merging.duration","type":"DURATION","value":"$(LONG_RANGE: [1000, 200000])"}
+{"key":"processing.referenceExtraction.community.doc","type":"COUNTER","value":"1"}
+{"key":"processing.referenceExtraction.community.duration","type":"DURATION","value":"$(LONG_RANGE: [1000, 500000])"}
+{"key":"processing.referenceExtraction.community.reference.dariah","type":"COUNTER","value":"1"}
+{"key":"processing.referenceExtraction.community.reference.total","type":"COUNTER","value":"1"}
+{"key":"processing.referenceExtraction.concept.doc","type":"COUNTER","value":"1"}
+{"key":"processing.referenceExtraction.concept.duration","type":"DURATION","value":"$(LONG_RANGE: [1000, 700000])"}
+{"key":"processing.referenceExtraction.concept.reference.concept-id1","type":"COUNTER","value":"1"}
+{"key":"processing.referenceExtraction.concept.reference.total","type":"COUNTER","value":"1"}
 {"key":"processing.referenceExtraction.dataset.datacite.reference","type":"COUNTER","value":"1"}
+{"key":"processing.referenceExtraction.dataset.duration","type":"DURATION","value":"$(LONG_RANGE: [1000, 1500000])"}
 {"key":"processing.referenceExtraction.dataset.opentrials.reference","type":"COUNTER","value":"0"}
 {"key":"processing.referenceExtraction.dataset.total.reference","type":"COUNTER","value":"1"}
-{"key":"processing.referenceExtraction.project.reference.byfunder.ec","type":"COUNTER","value":"1"}
+{"key":"processing.referenceExtraction.patent.duration","type":"DURATION","value":"$(LONG_RANGE: [1000, 700000])"}
+{"key":"processing.referenceExtraction.project.duration","type":"DURATION","value":"$(LONG_RANGE: [1000, 500000])"}
+{"key":"processing.referenceExtraction.project.reference.ec","type":"COUNTER","value":"1"}
 {"key":"processing.referenceExtraction.project.reference.total","type":"COUNTER","value":"1"}
-{"key":"processing.documentClassification.duration","type":"DURATION","value":"$(LONG_RANGE:[1000,170000])"}
-{"key":"processing.citationMatching.direct.duration","type":"DURATION","value":"$(LONG_RANGE:[1000,150000])"}
-{"key":"processing.citationMatching.fuzzy.duration","type":"DURATION","value":"$(LONG_RANGE:[1000,900000])"}
-{"key":"processing.citationMatching.total.duration","type":"DURATION","value":"$(LONG_RANGE:[1000,1500000])"}
-{"key":"processing.citationTextExtraction.duration","type":"DURATION","value":"$(LONG_RANGE:[1000,500000])"}
-{"key":"processing.referenceExtraction.dataset.duration","type":"DURATION","value":"$(LONG_RANGE:[1000,1500000])"}
-{"key":"processing.referenceExtraction.project.duration","type":"DURATION","value":"$(LONG_RANGE:[1000,500000])"}
-{"key":"processing.referenceExtraction.concept.duration","type":"DURATION","value":"$(LONG_RANGE:[1000,700000])"}
-{"key":"processing.referenceExtraction.researchInitiative.duration","type":"DURATION","value":"$(LONG_RANGE:[1000,780000])"}
-{"key":"processing.referenceExtraction.community.duration","type":"DURATION","value":"$(LONG_RANGE:[1000,500000])"}
-{"key":"processing.referenceExtraction.softwareUrl.duration","type":"DURATION","value":"$(LONG_RANGE:[1000,700000])"}
-{"key":"processing.referenceExtraction.patent.duration","type":"DURATION","value":"$(LONG_RANGE:[1000,700000])"}
-{"key":"processing.docOrgMatching.affiliationBased.duration","type":"DURATION","value":"$(LONG_RANGE:[1000,200000])"}
-{"key":"processing.docOrgMatching.projectBased.duration","type":"DURATION","value":"$(LONG_RANGE:[1000,200000])"}
-{"key":"processing.merging.duration","type":"DURATION","value":"$(LONG_RANGE:[1000,200000])"}
+{"key":"processing.referenceExtraction.researchInitiative.doc","type":"COUNTER","value":"1"}
+{"key":"processing.referenceExtraction.researchInitiative.duration","type":"DURATION","value":"$(LONG_RANGE: [1000, 780000])"}
+{"key":"processing.referenceExtraction.researchInitiative.reference","type":"COUNTER","value":"1"}
+{"key":"processing.referenceExtraction.softwareUrl.duration","type":"DURATION","value":"$(LONG_RANGE: [1000, 700000])"}
+{"key":"processing.referenceExtraction.softwareUrl.webcrawl.fromCache.total","type":"COUNTER","value":"0"}
+{"key":"processing.referenceExtraction.softwareUrl.webcrawl.processed.fault","type":"COUNTER","value":"0"}
+{"key":"processing.referenceExtraction.softwareUrl.webcrawl.processed.total","type":"COUNTER","value":"2"}
