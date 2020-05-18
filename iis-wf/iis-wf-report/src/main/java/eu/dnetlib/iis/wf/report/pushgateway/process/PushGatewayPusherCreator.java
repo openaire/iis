@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+/**
+ * Implementation of metric pusher creator pushing metrics to a running instance of pushgateway.
+ */
 public class PushGatewayPusherCreator implements MetricPusherCreator {
     private static final Logger logger = LoggerFactory.getLogger(PushGatewayPusherCreator.class);
 

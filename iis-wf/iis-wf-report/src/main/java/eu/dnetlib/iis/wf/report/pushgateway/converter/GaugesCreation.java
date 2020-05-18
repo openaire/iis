@@ -5,9 +5,12 @@ import io.prometheus.client.Gauge;
 
 import java.util.List;
 
-public class GaugesBuilder {
+/**
+ * Support for creation of gauges.
+ */
+public class GaugesCreation {
 
-    private GaugesBuilder() {
+    private GaugesCreation() {
     }
 
     @FunctionalInterface
@@ -19,6 +22,16 @@ public class GaugesBuilder {
                     List<Double> values);
     }
 
+    /**
+     * Creates a gauge with labels.
+     *
+     * @param metricName  Name to be used for resulting gauge.
+     * @param help        Gauge help string value.
+     * @param labelNames  List of label names.
+     * @param labelValues List of label values.
+     * @param values      List of gauge values corresponding to label values.
+     * @return Gauge with non-empty labels.
+     */
     public static Gauge buildGaugeWithLabels(String metricName,
                                              String help,
                                              List<String> labelNames,
@@ -42,6 +55,14 @@ public class GaugesBuilder {
                     double value);
     }
 
+    /**
+     * Creates a gauge without labels.
+     *
+     * @param metricName Name to be used for resulting gauge.
+     * @param help       Gauge help string value.
+     * @param value      Value of the gauge.
+     * @return Gauge with empty labels.
+     */
     public static Gauge buildGaugeWithoutLabels(String metricName,
                                                 String help,
                                                 double value) {

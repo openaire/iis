@@ -9,9 +9,12 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class LabelValuesExtractor {
+/**
+ * Label values extraction support.
+ */
+public class LabelValuesExtraction {
 
-    private LabelValuesExtractor() {
+    private LabelValuesExtraction() {
     }
 
     @FunctionalInterface
@@ -19,6 +22,13 @@ public class LabelValuesExtractor {
         List<String> extract(String key, LabeledMetricConf labeledMetricConf);
     }
 
+    /**
+     * Extracts label values from report key using labeled metric conf and positional pattern,
+     *
+     * @param key               Report key to extract label values from.
+     * @param labeledMetricConf Labeled metric configuration.
+     * @return List of label values extracted from key using zero-based positional pattern.
+     */
     public static List<String> extractLabelValuesByPosition(String key,
                                                             LabeledMetricConf labeledMetricConf) {
         List<String> keyParts = keyParts(key);

@@ -49,15 +49,15 @@ public class ReportEntryToMetricConverterTest {
         when(extractedMetricWithLabel.getLabelNames()).thenReturn(Collections.singletonList("label_name"));
         when(extractedMetricWithLabel.getLabelValues()).thenReturn(Collections.singletonList("label_value"));
         when(extractedMetricWithLabel.getValue()).thenReturn(10d);
-        CounterReportEntryMetricExtractor.Extractor counterMetricExtractor = mock(CounterReportEntryMetricExtractor.Extractor.class);
+        CounterReportEntryMetricExtraction.Extractor counterMetricExtractor = mock(CounterReportEntryMetricExtraction.Extractor.class);
         when(counterMetricExtractor.extract(counterReportEntryWithoutLabel, labeledMetricConfByPattern)).thenReturn(extractedMetricWithoutLabel);
         when(counterMetricExtractor.extract(counterReportEntryWithLabel, labeledMetricConfByPattern)).thenReturn(extractedMetricWithLabel);
         Gauge gaugeWithoutLabels = mock(Gauge.class);
         Gauge gaugeWithLabel = mock(Gauge.class);
-        GaugesBuilder.BuilderWithoutLabels builderWithoutLabels = mock(GaugesBuilder.BuilderWithoutLabels.class);
+        GaugesCreation.BuilderWithoutLabels builderWithoutLabels = mock(GaugesCreation.BuilderWithoutLabels.class);
         when(builderWithoutLabels.build("metric_name_without_labels", "location:path", 1d))
                 .thenReturn(gaugeWithoutLabels);
-        GaugesBuilder.BuilderWithLabels builderWithLabels = mock(GaugesBuilder.BuilderWithLabels.class);
+        GaugesCreation.BuilderWithLabels builderWithLabels = mock(GaugesCreation.BuilderWithLabels.class);
         when(builderWithLabels.build("metric_name_with_labels", "location:path", Collections.singletonList("label_name"),
                 Collections.singletonList(Collections.singletonList("label_value")), Collections.singletonList(10d))).thenReturn(gaugeWithLabel);
 
@@ -66,7 +66,7 @@ public class ReportEntryToMetricConverterTest {
                 "path",
                 labeledMetricConfByPattern,
                 counterMetricExtractor,
-                mock(DurationReportEntryMetricExtractor.Extractor.class),
+                mock(DurationReportEntryMetricExtraction.Extractor.class),
                 builderWithoutLabels,
                 builderWithLabels
         );
@@ -86,7 +86,7 @@ public class ReportEntryToMetricConverterTest {
         when(extractedMetricWithoutLabel.getMetricName()).thenReturn("metric_name_without_labels");
         when(extractedMetricWithoutLabel.getLabelValues()).thenReturn(Collections.emptyList());
         when(extractedMetricWithoutLabel.getValue()).thenReturn(null);
-        CounterReportEntryMetricExtractor.Extractor counterMetricExtractor = mock(CounterReportEntryMetricExtractor.Extractor.class);
+        CounterReportEntryMetricExtraction.Extractor counterMetricExtractor = mock(CounterReportEntryMetricExtraction.Extractor.class);
         when(counterMetricExtractor.extract(counterReportEntryWithoutLabel, labeledMetricConfByPattern)).thenReturn(extractedMetricWithoutLabel);
 
         // when
@@ -94,9 +94,9 @@ public class ReportEntryToMetricConverterTest {
                 "path",
                 labeledMetricConfByPattern,
                 counterMetricExtractor,
-                mock(DurationReportEntryMetricExtractor.Extractor.class),
-                mock(GaugesBuilder.BuilderWithoutLabels.class),
-                mock(GaugesBuilder.BuilderWithLabels.class)
+                mock(DurationReportEntryMetricExtraction.Extractor.class),
+                mock(GaugesCreation.BuilderWithoutLabels.class),
+                mock(GaugesCreation.BuilderWithLabels.class)
         );
     }
 
@@ -110,20 +110,20 @@ public class ReportEntryToMetricConverterTest {
         ExtractedMetric extractedMetric = mock(ExtractedMetric.class);
         when(extractedMetric.getMetricName()).thenReturn("metric_name");
         when(extractedMetric.getValue()).thenReturn(1d);
-        DurationReportEntryMetricExtractor.Extractor durationMetricExtractor = mock(DurationReportEntryMetricExtractor.Extractor.class);
+        DurationReportEntryMetricExtraction.Extractor durationMetricExtractor = mock(DurationReportEntryMetricExtraction.Extractor.class);
         when(durationMetricExtractor.extract(durationReportEntry)).thenReturn(extractedMetric);
         Gauge gauge = mock(Gauge.class);
-        GaugesBuilder.BuilderWithoutLabels builderWithoutLabels = mock(GaugesBuilder.BuilderWithoutLabels.class);
+        GaugesCreation.BuilderWithoutLabels builderWithoutLabels = mock(GaugesCreation.BuilderWithoutLabels.class);
         when(builderWithoutLabels.build("metric_name", "location:path", 1d)).thenReturn(gauge);
 
         // when
         List<Gauge> gauges = ReportEntryToMetricConverter.convert(reportEntries,
                 "path",
                 labeledMetricConfByPattern,
-                mock(CounterReportEntryMetricExtractor.Extractor.class),
+                mock(CounterReportEntryMetricExtraction.Extractor.class),
                 durationMetricExtractor,
                 builderWithoutLabels,
-                mock(GaugesBuilder.BuilderWithLabels.class)
+                mock(GaugesCreation.BuilderWithLabels.class)
         );
 
         // then

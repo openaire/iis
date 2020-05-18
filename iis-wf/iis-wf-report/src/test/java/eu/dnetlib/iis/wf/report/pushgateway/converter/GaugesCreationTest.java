@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class GaugesBuilderTest {
+public class GaugesCreationTest {
 
     @Test
     public void shouldBuildGaugeWithLabels() {
@@ -26,7 +26,7 @@ public class GaugesBuilderTest {
         List<Double> values = Arrays.asList(1d, 2d);
 
         // when
-        Gauge gauge = GaugesBuilder.buildGaugeWithLabels(metricName, help, labelNames, labelValues, values);
+        Gauge gauge = GaugesCreation.buildGaugeWithLabels(metricName, help, labelNames, labelValues, values);
 
         // then
         assertForGauge(gauge, metricName, help, labelNames, labelValues, values);
@@ -40,7 +40,7 @@ public class GaugesBuilderTest {
         double value = 1d;
 
         // when
-        Gauge gauge = GaugesBuilder.buildGaugeWithoutLabels(metricName, help, value);
+        Gauge gauge = GaugesCreation.buildGaugeWithoutLabels(metricName, help, value);
 
         // then
         assertForGauge(gauge, metricName, help, Collections.emptyList(), Collections.singletonList(Collections.emptyList()), Collections.singletonList(value));

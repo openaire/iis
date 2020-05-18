@@ -30,6 +30,14 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+/**
+ * Pushes metrics created from report entries to an instance of pushgateway.
+ * <p>
+ * Supports a read from a single report dir location, conversion to prometheus gauges with or without labels and a push to
+ * running instance of pushgateway. Gauges with labels are created for report entries with keys matching regex patterns in
+ * labeled metrics properties file. Any grouping keys may be supplied for the process. Any exceptions during any stage of
+ * the process will not result in a failed process.
+ */
 public class PushMetricsProcess implements Process {
 
     private static final Logger logger = LoggerFactory.getLogger(PushMetricsProcess.class);
@@ -179,7 +187,7 @@ public class PushMetricsProcess implements Process {
         Optional<List<String>> find(Map<String, String> parameters) {
             Supplier<List<String>> reportLocationsSupplier = () -> {
                 try {
-                    return HdfsUtils.listFiles(Job.getInstance().getConfiguration(), parameters.get(REPORTS_DIR_PATH));
+                    return HdfsUtils.listDirs(Job.getInstance().getConfiguration(), parameters.get(REPORTS_DIR_PATH));
                 } catch (Exception e) {
                     logger.error("Report locations finder failed.", e);
                     return null;
@@ -319,7 +327,7 @@ public class PushMetricsProcess implements Process {
                             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
                 } catch (Exception e) {
-                    logger.error("Grouping ey extraction failed.", e);
+                    logger.error("Grouping key extraction failed.", e);
                     return null;
                 }
             };
