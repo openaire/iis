@@ -9,6 +9,7 @@ import static org.mockito.Mockito.mock;
 import java.time.Year;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
@@ -30,12 +31,12 @@ public class MetadataConverterUtilsTest {
     private Logger log = mock(Logger.class);
     
     @Test
-    public void testExtractYearOrNullWithValidInput() throws Exception {
+    public void testExtractYearOrNullWithValidInput() {
         assertEquals(Year.of(2020), MetadataConverterUtils.extractYearOrNull("2020-12-31", log));
     }
     
     @Test
-    public void testExtractYearOrNullWithInvalidInput() throws Exception {
+    public void testExtractYearOrNullWithInvalidInput() {
         assertNull(MetadataConverterUtils.extractYearOrNull("invalid", log));
         assertNull(MetadataConverterUtils.extractYearOrNull("20-20-01", log));
         assertNull(MetadataConverterUtils.extractYearOrNull("2020-01", log));
@@ -45,7 +46,7 @@ public class MetadataConverterUtilsTest {
     }
     
     @Test(expected = NullPointerException.class)
-    public void testExtractValuesForNullApprover() throws Exception {
+    public void testExtractValuesForNullApprover() {
         // given
         Collection<StructuredProperty> source = Lists.newArrayList();
         String validValue = "someValue";
@@ -56,12 +57,12 @@ public class MetadataConverterUtilsTest {
     }
     
     @Test(expected = NullPointerException.class)
-    public void testExtractValuesForNullSource() throws Exception {
+    public void testExtractValuesForNullSource() {
         MetadataConverterUtils.extractValues(null, mock(FieldApprover.class));
     }
     
     @Test
-    public void testExtractValuesForEmptySource() throws Exception {
+    public void testExtractValuesForEmptySource() {
         //execute
         List<String> results = MetadataConverterUtils.extractValues(Lists.newArrayList(), mock(FieldApprover.class));
         
@@ -71,20 +72,15 @@ public class MetadataConverterUtilsTest {
     }
     
     @Test
-    public void testExtractValues() throws Exception {
+    public void testExtractValues() {
         // given
-        @SuppressWarnings("serial")
-        FieldApprover notNullDataInfoFieldApprover = new FieldApprover() {
-            @Override
-            public boolean approve(DataInfo dataInfo) {
-                return dataInfo != null;
-            }
-        };
+        FieldApprover notNullDataInfoFieldApprover = Objects::nonNull;
         DataInfo dataInfo = new DataInfo();
         Collection<StructuredProperty> source = Lists.newArrayList();
         String validValue = "someValue";
         source.add(generateStructuredProperty(validValue, dataInfo));
         source.add(generateStructuredProperty(null, dataInfo));
+        source.add(generateStructuredProperty("", dataInfo));
         source.add(generateStructuredProperty("toBeRejectedBecauseOfNullDataInfo", null));
         
         // execute
