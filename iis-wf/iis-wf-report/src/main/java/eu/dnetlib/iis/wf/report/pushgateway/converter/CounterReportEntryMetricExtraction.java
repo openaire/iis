@@ -66,11 +66,7 @@ public class CounterReportEntryMetricExtraction {
     }
 
     private static Boolean keyMatchesPattern(String key, String keyPattern) {
-        return Pattern.compile(addStartEndAnchors(keyPattern)).matcher(key).matches();
-    }
-
-    private static String addStartEndAnchors(String pattern) {
-        return String.format("^%s$", pattern);
+        return Pattern.compile(keyPattern).matcher(key).matches();
     }
 
     private static String defaultMetricName(String key) {
