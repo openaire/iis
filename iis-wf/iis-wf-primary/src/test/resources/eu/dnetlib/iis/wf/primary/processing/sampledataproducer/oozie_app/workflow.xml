@@ -418,6 +418,14 @@
                     <name>software_webcrawl_cache_location</name>
                     <value>${workingDir}</value>
                 </property>
+				<property>
+					<name>metric_pusher_creator_class_name</name>
+					<value>eu.dnetlib.iis.wf.report.pushgateway.process.FilePusherCreator</value>
+				</property>
+				<property>
+					<name>metric_pusher_address</name>
+					<value>${workingDir}/report/pushgateway</value>
+				</property>
 			</configuration>
 		</sub-workflow>
 		<ok to="consumer" />
@@ -501,8 +509,14 @@
             
             <arg>-C{affMatchingReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/aff-matching.json}</arg>
             <arg>-IaffMatchingReport=${workingDir}/report/aff-matching</arg>
-            
-            <arg>-C{citationReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/citation.json}</arg>
+
+			<arg>-C{affMatchingDedupReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/aff-matching_dedup.json}</arg>
+			<arg>-IaffMatchingDedupReport=${workingDir}/report/affmatching-dedup</arg>
+
+			<arg>-C{affMatchingProjectBasedReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/aff-matching_project_based.json}</arg>
+			<arg>-IaffMatchingProjectBasedReport=${workingDir}/report/project-based-docorg-matching</arg>
+
+			<arg>-C{citationReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/citation.json}</arg>
             <arg>-IcitationReport=${workingDir}/report/citation</arg>
             
             <arg>-C{citationmatchingDirectReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/citationmatching_direct.json}</arg>
@@ -510,8 +524,11 @@
             
             <arg>-C{citationmatchingFuzzyReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/citationmatching_fuzzy.json}</arg>
             <arg>-IcitationmatchingFuzzyReport=${workingDir}/report/citationmatching_fuzzy</arg>
-            
-            <arg>-C{docProjectConceptReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/doc_project_concept.json}</arg>
+
+			<arg>-C{docCommunityReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/doc_community.json}</arg>
+			<arg>-IdocCommunityReport=${workingDir}/report/doc_community</arg>
+
+			<arg>-C{docProjectConceptReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/doc_project_concept.json}</arg>
             <arg>-IdocProjectConceptReport=${workingDir}/report/doc_project_concept</arg>
             
             <arg>-C{docProjectConceptByRootConceptIdReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/doc_project_concept_by_root_conceptid.json}</arg>
@@ -543,10 +560,16 @@
             
             <arg>-C{documentToProjectFunderReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_to_project_by_funder.json}</arg>
             <arg>-IdocumentToProjectFunderReport=${workingDir}/report/document_to_project_by_funder</arg>
-            
+
+            <arg>-C{docSoftwareUrlWebcrawlReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/doc_softwareurl_webcrawl.json}</arg>
+            <arg>-IdocSoftwareUrlWebcrawlReport=${workingDir}/report/referenceextraction_software</arg>
+
             <arg>-C{execTimeReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/primary-processing-execution-times.json}</arg>
             <arg>-IexecTimeReport=${workingDir}/report/primary-processing-execution-times</arg>
-        </java>
+
+			<arg>-C{pushgateway,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/pushgateway.json}</arg>
+			<arg>-Ipushgateway=${workingDir}/report/pushgateway/iis</arg>
+		</java>
         <ok to="end" />
         <error to="fail" />
     </action>

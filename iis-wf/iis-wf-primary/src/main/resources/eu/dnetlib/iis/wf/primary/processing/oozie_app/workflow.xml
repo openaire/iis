@@ -405,6 +405,10 @@
             <name>output_report_root_path</name>
             <description>base directory for storing reports</description>
         </property>
+        <property>
+            <name>metric_pusher_address</name>
+            <description>pushgateway service location</description>
+        </property>
     </parameters>
 
     <global>
@@ -2026,10 +2030,24 @@
             <arg>-Preport.processing.merging.duration=transformers_common_union_document_text</arg>
             <arg>-Oreport=${output_report_root_path}/primary-processing-execution-times</arg>
         </java>
-        <ok to="end" />
+        <ok to="primary_processing_push_reports" />
         <error to="fail" />
     </action>
-	
+
+    <action name="primary_processing_push_reports">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/push_reports</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>reports_dir_path</name>
+                    <value>${output_report_root_path}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
 
     <kill name="fail">
         <message>Unfortunately, the process failed -- error message:

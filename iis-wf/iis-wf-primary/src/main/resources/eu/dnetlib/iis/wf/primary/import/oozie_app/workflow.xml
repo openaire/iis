@@ -195,6 +195,10 @@
 			<description>flag indicating whole workingDir will be erased.
 				Notice: do not provide any output directory locationpointing to workingDir subdirectory!</description>
 		</property>
+		<property>
+			<name>metric_pusher_address</name>
+			<description>pushgateway service location</description>
+		</property>
 	</parameters>
 
 	<global>
@@ -739,9 +743,24 @@
             <arg>-Preport.import.metadataExtraction.duration=metadata_extractor_cached</arg>
             <arg>-Oreport=${output_report_root_path}/primary-import-execution-times</arg>
         </java>
-        <ok to="end" />
+        <ok to="primary_import_push_reports" />
         <error to="fail" />
     </action>
+
+	<action name="primary_import_push_reports">
+		<sub-workflow>
+			<app-path>${wf:appPath()}/push_reports</app-path>
+			<propagate-configuration/>
+			<configuration>
+				<property>
+					<name>reports_dir_path</name>
+					<value>${output_report_root_path}</value>
+				</property>
+			</configuration>
+		</sub-workflow>
+		<ok to="end"/>
+		<error to="fail"/>
+	</action>
 
 	<kill name="fail">
 		<message>Unfortunately, the process failed -- error message:

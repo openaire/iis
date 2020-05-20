@@ -1,0 +1,71 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="push_reports">
+    <parameters>
+        <property>
+            <name>metric_pusher_creator_class_name</name>
+            <value>eu.dnetlib.iis.wf.report.pushgateway.process.PushGatewayPusherCreator</value>
+            <description>
+                canonical name of a class implementing eu.dnetlib.iis.wf.report.pushgateway.process.MetricPusherCreator
+                used to create eu.dnetlib.iis.wf.report.pushgateway.process.MetricPusher for pushing prometheus metrics
+                to pushgateway
+            </description>
+        </property>
+        <property>
+            <name>metric_pusher_address</name>
+            <description>
+                pushgateway service location
+            </description>
+        </property>
+        <property>
+            <name>reports_dir_path</name>
+            <description>
+                location of an HDFS dir with reports
+            </description>
+        </property>
+        <property>
+            <name>labeled_metrics_properties_file</name>
+            <value>eu/dnetlib/iis/wf/report/pushgateway/process/oozie_app/labeled_metrics.properties</value>
+            <description>
+                properties file with configuration of labeled metrics
+            </description>
+        </property>
+    </parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+    <start to="push-reports"/>
+
+    <action name="push-reports">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.wf.report.pushgateway.process.PushMetricsProcess</arg>
+            <arg>-PmetricPusherCreatorClassName=${metric_pusher_creator_class_name}</arg>
+            <arg>-PmetricPusherAddress=${metric_pusher_address}</arg>
+            <arg>-PreportsDirPath=${reports_dir_path}</arg>
+            <arg>-PlabeledMetricsPropertiesFile=${labeled_metrics_properties_file}</arg>
+            <arg>-PgroupingKey.user=${wf:conf('user.name')}</arg>
+        </java>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

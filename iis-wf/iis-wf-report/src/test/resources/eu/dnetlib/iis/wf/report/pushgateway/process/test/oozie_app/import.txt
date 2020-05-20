@@ -1,0 +1,2 @@
+## This is a classpath-based import file (this header is required)
+push_reports classpath eu/dnetlib/iis/wf/report/pushgateway/process/oozie_app

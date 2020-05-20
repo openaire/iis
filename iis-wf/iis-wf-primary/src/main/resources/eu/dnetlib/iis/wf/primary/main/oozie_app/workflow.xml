@@ -383,6 +383,10 @@
             <value>${sparkExecutorCores}</value>
             <description>number of cores used by single executor</description>
         </property>
+        <property>
+            <name>metric_pusher_address</name>
+            <description>pushgateway service location</description>
+        </property>
     </parameters>
 
     <global>

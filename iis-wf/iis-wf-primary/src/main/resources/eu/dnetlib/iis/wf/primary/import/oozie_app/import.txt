@@ -8,3 +8,4 @@ metadataextraction_cache classpath eu/dnetlib/iis/wf/metadataextraction/cache/id
 transformers_common_union classpath eu/dnetlib/iis/wf/transformers/common/union/oozie_app
 transformers_idextractor classpath eu/dnetlib/iis/wf/transformers/importer/documentmetadata/idextractor/oozie_app
 import_patent classpath eu/dnetlib/iis/wf/importer/patent/oozie_app
+push_reports classpath eu/dnetlib/iis/wf/report/pushgateway/process/oozie_app
