@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
+import java.time.Year;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -31,9 +32,9 @@ public class MetadataConverterUtilsTest {
     
     @Test
     public void testExtractYearOrNullWithValidInput() {
-        assertEquals(Integer.valueOf(2020), MetadataConverterUtils.extractYearOrNull("2020-12-31", log));
-        assertEquals(Integer.valueOf(2010), MetadataConverterUtils.extractYearOrNull("2010-1-1", log));
-        assertEquals(Integer.valueOf(1900), MetadataConverterUtils.extractYearOrNull("1900-2", log));
+        assertEquals(Year.of(2020), MetadataConverterUtils.extractYearOrNull("2020-12-31", log));
+        assertEquals(Year.of(2010), MetadataConverterUtils.extractYearOrNull("2010-1-1", log));
+        assertEquals(Year.of(1900), MetadataConverterUtils.extractYearOrNull("1900-2", log));
     }
     
     @Test

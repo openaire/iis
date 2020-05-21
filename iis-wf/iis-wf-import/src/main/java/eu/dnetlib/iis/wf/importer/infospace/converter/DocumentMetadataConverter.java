@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
 import java.io.IOException;
+import java.time.Year;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -152,9 +153,9 @@ public class DocumentMetadataConverter implements OafEntityToAvroConverter<Resul
     private void handleYear(Field<String> dateOfAcceptance, DocumentMetadata.Builder metaBuilder) {
         if (dateOfAcceptance != null && StringUtils.isNotBlank(dateOfAcceptance.getValue())
                 && fieldApprover.approve(dateOfAcceptance.getDataInfo())) {
-            Integer year = MetadataConverterUtils.extractYearOrNull(dateOfAcceptance.getValue(), log);
+            Year year = MetadataConverterUtils.extractYearOrNull(dateOfAcceptance.getValue(), log);
             if (year != null) {
-                metaBuilder.setYear(year);
+                metaBuilder.setYear(year.getValue());
             }
         }    
     }

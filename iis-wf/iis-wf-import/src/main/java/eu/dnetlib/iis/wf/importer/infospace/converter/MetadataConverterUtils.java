@@ -1,5 +1,8 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
+import java.time.Year;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,17 +41,20 @@ public abstract class MetadataConverterUtils {
     /**
      * Extracts year out of the date defined in yyyy-MM-dd with possible single digit month and day part.
      */
-    public static Integer extractYearOrNull(String date, Logger log) {
-        if (StringUtils.isNotBlank(date) && date.indexOf('-') == 4) {
-            try {
-                return Integer.valueOf(date.substring(0, date.indexOf('-')));    
-            } catch (NumberFormatException e) {
-                log.warn("unsupported, non integer, format of year value: " + date);
-                return null;
+    public static Year extractYearOrNull(String date, Logger log) {
+        if (StringUtils.isNotBlank(date)) {
+            if (date.indexOf('-') == 4) {
+                try {
+                    return Year.parse(date.substring(0, date.indexOf('-')), DateTimeFormatter.ofPattern("yyyy"));
+                } catch (DateTimeParseException e) {
+                    log.warn("unsupported, non integer, format of year value: " + date);
+                    return null;
+                }
+            } else {
+                log.warn("unsupported format of year value: " + date);
             }
-        } else {
-            return null;
         }
+        return null;
     }
     
 }
