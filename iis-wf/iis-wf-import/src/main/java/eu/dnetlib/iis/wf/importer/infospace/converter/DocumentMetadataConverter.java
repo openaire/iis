@@ -108,6 +108,7 @@ public class DocumentMetadataConverter implements OafEntityToAvroConverter<Resul
 
             titleList.stream().filter(x -> Objects.nonNull(x.getQualifier()))
                     .filter(x -> InfoSpaceConstants.SEMANTIC_CLASS_MAIN_TITLE.equals(x.getQualifier().getClassid()))
+                    .filter(x -> StringUtils.isNotBlank(x.getValue()))
                     .filter(x -> fieldApprover.approve(x.getDataInfo())).findFirst()
                     .ifPresent(x -> metaBuilder.setTitle(x.getValue()));
 
@@ -150,7 +151,8 @@ public class DocumentMetadataConverter implements OafEntityToAvroConverter<Resul
     }
     
     private void handleYear(Field<String> dateOfAcceptance, DocumentMetadata.Builder metaBuilder) {
-        if (dateOfAcceptance != null && fieldApprover.approve(dateOfAcceptance.getDataInfo())) {
+        if (dateOfAcceptance != null && StringUtils.isNotBlank(dateOfAcceptance.getValue())
+                && fieldApprover.approve(dateOfAcceptance.getDataInfo())) {
             Year year = MetadataConverterUtils.extractYearOrNull(dateOfAcceptance.getValue(), log);
             if (year != null) {
                 metaBuilder.setYear(year.getValue());

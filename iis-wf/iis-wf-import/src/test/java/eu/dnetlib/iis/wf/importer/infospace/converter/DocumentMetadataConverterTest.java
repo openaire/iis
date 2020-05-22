@@ -1,6 +1,8 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -91,6 +93,21 @@ public class DocumentMetadataConverterTest {
         // assert
         assertEquals(TITLE, metadata.getTitle());
     }
+    
+    @Test
+    public void convert_using_null_main_title_and_not_null_other_title() throws IOException {
+     // given
+        Publication publication = minimalEntityBuilder(ID, InfoSpaceConstants.SEMANTIC_CLASS_INSTANCE_TYPE_ARTICLE);
+
+        addTitle(publication, OTHER_TITLE);
+        addTitle(publication, null, InfoSpaceConstants.SEMANTIC_CLASS_MAIN_TITLE);
+
+        // execute
+        DocumentMetadata metadata = converter.convert(publication);
+
+        // assert
+        assertEquals(OTHER_TITLE, metadata.getTitle());
+    }
 
     @Test
     public void convert_using_first_title() throws IOException {
@@ -105,6 +122,22 @@ public class DocumentMetadataConverterTest {
 
         // assert
         assertEquals(OTHER_TITLE, metadata.getTitle());
+    }
+    
+    @Test
+    public void convert_null_date_of_acceptance() throws IOException {
+        // given
+        Publication oafEntity = documentEntity();
+        oafEntity.getDateofacceptance().setValue(null);
+        
+        // execute
+        DocumentMetadata metadata = converter.convert(oafEntity);
+
+        // assert
+        assertNotNull(metadata);
+        assertEquals(ID, metadata.getId());
+        
+        assertNull(metadata.getYear());
     }
 
     @Test

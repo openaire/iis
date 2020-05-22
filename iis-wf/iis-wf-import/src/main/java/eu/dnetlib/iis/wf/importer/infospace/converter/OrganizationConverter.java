@@ -43,13 +43,13 @@ public class OrganizationConverter implements OafEntityToAvroConverter<eu.dnetli
         
         orgBuilder.setName(srcOrganization.getLegalname().getValue());
         
-        orgBuilder.setShortName(srcOrganization.getLegalshortname().getValue());
+        orgBuilder.setShortName(srcOrganization.getLegalshortname() != null ? srcOrganization.getLegalshortname().getValue() : null);    
      
-        orgBuilder.setCountryName(srcOrganization.getCountry().getClassname());
-        
-        orgBuilder.setCountryCode(srcOrganization.getCountry().getClassid());
-        
-        orgBuilder.setWebsiteUrl(srcOrganization.getWebsiteurl().getValue());
+        orgBuilder.setCountryName(srcOrganization.getCountry() != null ? srcOrganization.getCountry().getClassname() : null);
+
+        orgBuilder.setCountryCode(srcOrganization.getCountry() != null ? srcOrganization.getCountry().getClassid() : null);
+     
+        orgBuilder.setWebsiteUrl(srcOrganization.getWebsiteurl() != null ? srcOrganization.getWebsiteurl().getValue(): null);    
         
         return orgBuilder.build();
         

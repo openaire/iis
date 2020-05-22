@@ -93,6 +93,37 @@ public class OrganizationConverterTest {
         
     }
 
+    @Test
+    public void buildObject_legal_short_name_null() throws Exception {
+        
+        //given
+        Qualifier country = new Qualifier();
+        country.setClassid("PL");
+        country.setClassname("Poland");
+
+        eu.dnetlib.dhp.schema.oaf.Organization organization = createOafObject(country,
+                createStringField("Interdyscyplinary Centre"), null,
+                createStringField("www.icm.edu.pl"));
+        
+        // execute 
+        
+        Organization org = converter.convert(organization);
+        
+        
+        // assert
+        
+        assertNotNull(org);
+        
+        assertEquals("Interdyscyplinary Centre", org.getName());
+        assertNull(org.getShortName());
+        assertEquals("Poland", org.getCountryName());
+        assertEquals("PL", org.getCountryCode());
+        assertEquals("www.icm.edu.pl", org.getWebsiteUrl());
+        
+        verifyZeroInteractions(log);
+        
+    }
+    
     
     //------------------------ PRIVATE --------------------------
     
