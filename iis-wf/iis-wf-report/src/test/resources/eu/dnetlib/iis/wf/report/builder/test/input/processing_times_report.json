@@ -1,4 +1,4 @@
-{"key":"processing.citationMatching.total.duration", "type":"DURATION", "value": "22336000"}
+{"key":"processing.citationMatching.deduped.duration", "type":"DURATION", "value": "22336000"}
 {"key":"processing.documentSimilarity.duration", "type":"DURATION", "value": "399030"}
 {"key":"processing.affiliationMatching.duration", "type":"DURATION", "value": "100332824"}
 {"key":"processing.documentClassification.duration", "type":"DURATION", "value": "1482231"}

@@ -21,8 +21,8 @@ import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganizationWithProvenance;
 
 public class AffMatchDedupReportGenerator implements Serializable {
     
-    public static final String DOC_ORG_REFERENCES = "processing.docOrgMatching.deduped.docOrgReference";
-    public static final String DOCS_WITH_AT_LEAST_ONE_ORG = "processing.docOrgMatching.deduped.doc";
+    public static final String DOC_ORG_REFERENCES = "processing.docOrgMatching.docOrgReferences.deduped";
+    public static final String DOCS_WITH_AT_LEAST_ONE_ORG = "processing.docOrgMatching.docs.deduped";
 
     private static final long serialVersionUID = 1L;
 

@@ -1,2 +1,2 @@
-{"key": "processing.citationMatching.direct.citDocReference", "type":"COUNTER", "value": "1"}
-{"key": "processing.citationMatching.direct.doc", "type":"COUNTER", "value": "1"}
+{"key": "processing.citationMatching.citDocReferences.direct", "type":"COUNTER", "value": "1"}
+{"key": "processing.citationMatching.docs.direct", "type":"COUNTER", "value": "1"}

@@ -1,115 +1,115 @@
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.aka",
+  "key": "processing.referenceExtraction.project.references.byfunder.aka",
   "type": "COUNTER",
   "value": "1"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.anr",
+  "key": "processing.referenceExtraction.project.references.byfunder.anr",
   "type": "COUNTER",
   "value": "1"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.cihr",
+  "key": "processing.referenceExtraction.project.references.byfunder.cihr",
   "type": "COUNTER",
   "value": "2"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.conicyt",
+  "key": "processing.referenceExtraction.project.references.byfunder.conicyt",
   "type": "COUNTER",
   "value": "1"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.dfg",
+  "key": "processing.referenceExtraction.project.references.byfunder.dfg",
   "type": "COUNTER",
   "value": "1"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.ec",
+  "key": "processing.referenceExtraction.project.references.byfunder.ec",
   "type": "COUNTER",
   "value": "22"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.fwf",
+  "key": "processing.referenceExtraction.project.references.byfunder.fwf",
   "type": "COUNTER",
   "value": "1"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.gsrt",
+  "key": "processing.referenceExtraction.project.references.byfunder.gsrt",
   "type": "COUNTER",
   "value": "1"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.innoviris",
+  "key": "processing.referenceExtraction.project.references.byfunder.innoviris",
   "type": "COUNTER",
   "value": "1"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.mestd",
+  "key": "processing.referenceExtraction.project.references.byfunder.mestd",
   "type": "COUNTER",
   "value": "1"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.miur",
+  "key": "processing.referenceExtraction.project.references.byfunder.miur",
   "type": "COUNTER",
   "value": "1"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.nih",
+  "key": "processing.referenceExtraction.project.references.byfunder.nih",
   "type": "COUNTER",
   "value": "1"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.nserc",
+  "key": "processing.referenceExtraction.project.references.byfunder.nserc",
   "type": "COUNTER",
   "value": "1"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.nwo",
+  "key": "processing.referenceExtraction.project.references.byfunder.nwo",
   "type": "COUNTER",
   "value": "1"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.rcuk",
+  "key": "processing.referenceExtraction.project.references.byfunder.rcuk",
   "type": "COUNTER",
   "value": "1"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.rsf",
+  "key": "processing.referenceExtraction.project.references.byfunder.rsf",
   "type": "COUNTER",
   "value": "1"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.sgov",
+  "key": "processing.referenceExtraction.project.references.byfunder.sgov",
   "type": "COUNTER",
   "value": "1"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.snsf",
+  "key": "processing.referenceExtraction.project.references.byfunder.snsf",
   "type": "COUNTER",
   "value": "1"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.sshrc",
+  "key": "processing.referenceExtraction.project.references.byfunder.sshrc",
   "type": "COUNTER",
   "value": "1"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.tara",
+  "key": "processing.referenceExtraction.project.references.byfunder.tara",
   "type": "COUNTER",
   "value": "2"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.tubitak",
+  "key": "processing.referenceExtraction.project.references.byfunder.tubitak",
   "type": "COUNTER",
   "value": "1"
 }
 {
-  "key": "processing.referenceExtraction.project.reference.byfunder.wt",
+  "key": "processing.referenceExtraction.project.references.byfunder.wt",
   "type": "COUNTER",
   "value": "15"
 }
 {
-   "key": "processing.referenceExtraction.project.reference.total",
+   "key": "processing.referenceExtraction.project.references.total",
    "type": "COUNTER",
    "value": "59"
 }

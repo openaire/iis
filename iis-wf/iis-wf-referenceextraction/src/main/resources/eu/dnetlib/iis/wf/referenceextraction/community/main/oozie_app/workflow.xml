@@ -159,7 +159,7 @@
                 </property>
                 <property>
                     <name>report_key_template</name>
-                    <value>processing.referenceExtraction.community.reference.byrootid.#{rootConceptId}</value>
+                    <value>processing.referenceExtraction.community.references.byrootid.#{rootConceptId}</value>
                 </property>
             </configuration>
         </sub-workflow>

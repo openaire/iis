@@ -40,7 +40,7 @@ public class PatentReaderJob {
 
     public static final Logger log = Logger.getLogger(PatentReaderJob.class);
 
-    private static final String COUNTER_READ_TOTAL = "import.patent.read.total";
+    private static final String COUNTER_READ_TOTAL = "import.patents";
     private static final String FIELD_APPLN_ID = "appln_id";
     private static final String FIELD_APPLN_AUTH = "appln_auth";
     private static final String FIELD_APPLN_NR = "appln_nr";

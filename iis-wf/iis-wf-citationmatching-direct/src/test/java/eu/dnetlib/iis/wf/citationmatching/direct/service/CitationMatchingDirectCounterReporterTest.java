@@ -123,10 +123,10 @@ public class CitationMatchingDirectCounterReporterTest {
         
         assertEquals(2, reportEntries.size());
         
-        assertEquals("processing.citationMatching.direct.citDocReference", reportEntries.get(0).getKey());
+        assertEquals("processing.citationMatching.citDocReferences.direct", reportEntries.get(0).getKey());
         assertEquals("14", reportEntries.get(0).getValue());
         
-        assertEquals("processing.citationMatching.direct.doc", reportEntries.get(1).getKey());
+        assertEquals("processing.citationMatching.docs.direct", reportEntries.get(1).getKey());
         assertEquals("3", reportEntries.get(1).getValue());
     }
 }

@@ -88,7 +88,7 @@
                 </property>
                 <property>
                     <name>report_key_template</name>
-                    <value>processing.referenceExtraction.concept.reference.byrootid.#{rootConceptId}</value>
+                    <value>processing.referenceExtraction.concept.references.byrootid.#{rootConceptId}</value>
                 </property>
             </configuration>
         </sub-workflow>

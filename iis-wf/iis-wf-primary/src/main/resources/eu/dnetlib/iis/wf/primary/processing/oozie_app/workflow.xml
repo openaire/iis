@@ -820,11 +820,11 @@
                 </property>
                 <property>
                     <name>output_report_record_read_counter_name</name>
-                    <value>processing.referenceExtraction.concept.reference.total</value>
+                    <value>processing.referenceExtraction.concept.references.total</value>
                 </property>
                 <property>
                     <name>output_report_record_written_counter_name</name>
-                    <value>processing.referenceExtraction.concept.doc</value>
+                    <value>processing.referenceExtraction.concept.docs</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -977,11 +977,11 @@
                 </property>
                 <property>
                     <name>output_report_record_read_counter_name</name>
-                    <value>processing.referenceExtraction.pdb.reference</value>
+                    <value>processing.referenceExtraction.pdb.references</value>
                 </property>
                 <property>
                     <name>output_report_record_written_counter_name</name>
-                    <value>processing.referenceExtraction.pdb.doc</value>
+                    <value>processing.referenceExtraction.pdb.docs</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -1203,11 +1203,11 @@
                 </property>
                 <property>
                     <name>output_report_record_read_counter_name</name>
-                    <value>processing.referenceExtraction.researchInitiative.reference</value>
+                    <value>processing.referenceExtraction.researchInitiative.references</value>
                 </property>
                 <property>
                     <name>output_report_record_written_counter_name</name>
-                    <value>processing.referenceExtraction.researchInitiative.doc</value>
+                    <value>processing.referenceExtraction.researchInitiative.docs</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -1310,11 +1310,11 @@
                 </property>
                 <property>
                     <name>output_report_record_read_counter_name</name>
-                    <value>processing.referenceExtraction.community.reference.total</value>
+                    <value>processing.referenceExtraction.community.references.total</value>
                 </property>
                 <property>
                     <name>output_report_record_written_counter_name</name>
-                    <value>processing.referenceExtraction.community.doc</value>
+                    <value>processing.referenceExtraction.community.docs</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -1401,11 +1401,11 @@
                 </property>
                 <property>
                     <name>output_report_record_read_counter_name</name>
-                    <value>processing.referenceExtraction.covid-19.reference</value>
+                    <value>processing.referenceExtraction.covid-19.references</value>
                 </property>
                 <property>
                     <name>output_report_record_written_counter_name</name>
-                    <value>processing.referenceExtraction.covid-19.doc</value>
+                    <value>processing.referenceExtraction.covid-19.docs</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -2015,7 +2015,7 @@
             <arg>-Preport.processing.documentSimilarity.duration=transformers_documentssimilarity,documentssimilarity_chain</arg>
             <arg>-Preport.processing.citationMatching.direct.duration=citationmatching_direct</arg>
             <arg>-Preport.processing.citationMatching.fuzzy.duration=citationmatching_fuzzy</arg>
-            <arg>-Preport.processing.citationMatching.total.duration=citationmatching_fuzzy,citationmatching_direct,transformers_citations_from_referencemetadata,citations_union</arg>
+            <arg>-Preport.processing.citationMatching.deduped.duration=citationmatching_fuzzy,citationmatching_direct,transformers_citations_from_referencemetadata,citations_union</arg>
             <arg>-Preport.processing.citationTextExtraction.duration=citations_collapser,transformers_export_citations</arg>
             <arg>-Preport.processing.documentClassification.duration=documentsclassification</arg>
             <arg>-Preport.processing.referenceExtraction.researchInitiative.duration=referenceextraction_researchinitiative,referenceextraction_researchinitiative_wos,transformers_union_researchinitiatives,transformers_export_researchinitiatives</arg>

@@ -81,7 +81,7 @@ public class RootConceptIdReportJobTest {
                 .setMainClass(RootConceptIdReportJob.class)
                 .addArg("-inputDocumentToConceptAvroPath", inputDocumentToConceptDirPath)
                 .addArg("-outputReportPath", outputReportDirPath)
-                .addArg("-reportKeyTemplate", "processing.referenceExtraction.concept.reference.byrootid.#{rootConceptId}")
+                .addArg("-reportKeyTemplate", "processing.referenceExtraction.concept.references.byrootid.#{rootConceptId}")
                 .addJobProperty("spark.driver.host", "localhost")
                 
                 .build();
