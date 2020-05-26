@@ -247,6 +247,7 @@ public class PatentExporterJob {
         provenanceQualifier.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PROVENANCE_ACTIONS);
         provenanceQualifier.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PROVENANCE_ACTIONS);
         dataInfo.setProvenanceaction(provenanceQualifier);
+        dataInfo.setInferenceprovenance(INFERENCE_PROVENANCE);
         return dataInfo;
     }
 
