@@ -2012,10 +2012,12 @@
             <arg>-PoozieServiceLoc=${oozieServiceLoc}</arg>
             <arg>-Preport.processing.docOrgMatching.affiliationBased.duration=affiliation-matching</arg>
             <arg>-Preport.processing.docOrgMatching.projectBased.duration=affiliation-matching-project-based</arg>
+            <arg>-Preport.processing.docOrgMatching.deduped.duration=affiliation-matching-dedup</arg>
+            <arg>-Preport.processing.docOrgMatching.duration=affiliation-matching,affiliation-matching-project-based,affiliation-matching-dedup</arg>
             <arg>-Preport.processing.documentSimilarity.duration=transformers_documentssimilarity,documentssimilarity_chain</arg>
             <arg>-Preport.processing.citationMatching.direct.duration=citationmatching_direct</arg>
             <arg>-Preport.processing.citationMatching.fuzzy.duration=citationmatching_fuzzy</arg>
-            <arg>-Preport.processing.citationMatching.deduped.duration=citationmatching_fuzzy,citationmatching_direct,transformers_citations_from_referencemetadata,citations_union</arg>
+            <arg>-Preport.processing.citationMatching.duration=citationmatching_fuzzy,citationmatching_direct,transformers_citations_from_referencemetadata,citations_union</arg>
             <arg>-Preport.processing.citationTextExtraction.duration=citations_collapser,transformers_export_citations</arg>
             <arg>-Preport.processing.documentClassification.duration=documentsclassification</arg>
             <arg>-Preport.processing.referenceExtraction.researchInitiative.duration=referenceextraction_researchinitiative,referenceextraction_researchinitiative_wos,transformers_union_researchinitiatives,transformers_export_researchinitiatives</arg>

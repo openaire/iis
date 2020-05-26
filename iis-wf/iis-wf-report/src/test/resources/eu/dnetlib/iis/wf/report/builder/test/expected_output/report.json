@@ -12,8 +12,8 @@
     },
     "processing": {
         "documentClassification": {
-            "doc": 20,
-            "docClassReference": {
+            "docs": 20,
+            "docClassReferences": {
                 "arxiv": 10,
                 "wos": 0,
                 "ddc": 0,
@@ -26,11 +26,9 @@
             }
         },
         "citationMatching": {
-            "total": {
-                "duration": {
-                    "milliseconds": 22336000,
-                    "humanReadable": "6h 12m 16s"
-                }
+            "duration": {
+                "milliseconds": 22336000,
+                "humanReadable": "6h 12m 16s"
             }
         },
         "documentSimilarity": {
