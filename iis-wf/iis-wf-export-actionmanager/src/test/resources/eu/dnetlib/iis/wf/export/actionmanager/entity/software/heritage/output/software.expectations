@@ -51,8 +51,8 @@ payload.collectedfrom[0].value=GitHub
 payload.collectedfrom[1].key=10|openaire____::dbfd07503aaa1ed31beed7dec942f3f4
 payload.collectedfrom[1].value=Software Heritage
 
-payload.dataInfo.inferred=true
-payload.dataInfo.trust=0.72
+payload.dataInfo.inferred=false
+payload.dataInfo.trust=0.9
 payload.dataInfo.inferenceprovenance=iis::document_software_url
 payload.dataInfo.provenanceaction.classid=iis
 payload.dataInfo.provenanceaction.classname=iis

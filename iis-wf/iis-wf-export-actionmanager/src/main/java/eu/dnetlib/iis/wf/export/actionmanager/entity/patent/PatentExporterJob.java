@@ -48,6 +48,7 @@ import eu.dnetlib.iis.referenceextraction.patent.schemas.HolderCountry;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
 import eu.dnetlib.iis.wf.export.actionmanager.ActionSerializationUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
+import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 import eu.dnetlib.iis.wf.export.actionmanager.entity.ConfidenceLevelUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.module.AlgorithmName;
 import eu.dnetlib.iis.wf.export.actionmanager.module.BuilderModuleHelper;
@@ -80,7 +81,8 @@ public class PatentExporterJob {
     private static final Qualifier OAF_ENTITY_RESULT_METADATA_TITLE_QUALIFIER = buildOafEntityResultMetadataTitleQualifier();
     private static final Qualifier OAF_ENTITY_RESULT_METADATA_SUBJECT_QUALIFIER = buildOafEntityResultMetadataSubjectQualifier();
     private static final Qualifier OAF_ENTITY_RESULT_METADATA_RELEVANTDATE_QUALIFIER = buildOafEntityResultMetadataRelevantdateQualifier();
-    private static final DataInfo OAF_ENTITY_DATAINFO = buildOafEntityDataInfo();
+    private static final DataInfo OAF_ENTITY_DATAINFO = BuilderModuleHelper.buildInferenceForTrustLevel(false,
+            StaticConfigurationProvider.ACTION_TRUST_0_9, INFERENCE_PROVENANCE, IIS_ENTITIES_PATENT);
 
     private static final SparkAvroLoader avroLoader = new SparkAvroLoader();
     private static final int numberOfOutputFiles = 10;
@@ -237,18 +239,6 @@ public class PatentExporterJob {
         qualifier.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_DATACITE_DATE);
         qualifier.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_DATACITE_DATE);
         return qualifier;
-    }
-
-    private static DataInfo buildOafEntityDataInfo() {
-        DataInfo dataInfo = new DataInfo();
-        Qualifier provenanceQualifier = new Qualifier();
-        provenanceQualifier.setClassid(IIS_ENTITIES_PATENT);
-        provenanceQualifier.setClassname(IIS_ENTITIES_PATENT);
-        provenanceQualifier.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PROVENANCE_ACTIONS);
-        provenanceQualifier.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PROVENANCE_ACTIONS);
-        dataInfo.setProvenanceaction(provenanceQualifier);
-        dataInfo.setInferenceprovenance(INFERENCE_PROVENANCE);
-        return dataInfo;
     }
 
     private static JavaRDD<DocumentToPatent> documentToPatentsToExport(JavaRDD<DocumentToPatent> documentToPatents,
