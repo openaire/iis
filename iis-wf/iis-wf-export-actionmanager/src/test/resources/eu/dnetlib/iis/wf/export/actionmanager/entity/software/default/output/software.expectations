@@ -42,8 +42,8 @@ payload.collectedfrom[0].value=GitHub
 
 payload.instance[0].url[0]=https://github.com/madgik/madis
 
-payload.dataInfo.inferred=true
-payload.dataInfo.trust=0.72
+payload.dataInfo.inferred=false
+payload.dataInfo.trust=0.9
 payload.dataInfo.inferenceprovenance=iis::document_software_url
 payload.dataInfo.provenanceaction.classid=iis
 payload.dataInfo.provenanceaction.classname=iis

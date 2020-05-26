@@ -28,6 +28,7 @@ import com.google.common.collect.Sets;
 
 import eu.dnetlib.data.transform.xml.AbstractDNetXsltFunctions;
 import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.DataInfo;
 import eu.dnetlib.dhp.schema.oaf.Field;
 import eu.dnetlib.dhp.schema.oaf.Instance;
 import eu.dnetlib.dhp.schema.oaf.KeyValue;
@@ -44,6 +45,7 @@ import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftware
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import eu.dnetlib.iis.wf.export.actionmanager.ActionSerializationUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
+import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 import eu.dnetlib.iis.wf.export.actionmanager.module.AlgorithmName;
 import eu.dnetlib.iis.wf.export.actionmanager.module.BuilderModuleHelper;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
@@ -62,6 +64,9 @@ public class SoftwareExporterJob {
             + InfoSpaceConstants.INFERENCE_PROVENANCE_SEPARATOR + AlgorithmName.document_software_url;
     
     private static final Qualifier RESULT_TYPE_SOFTWARE = buildResultTypeSoftware();
+    
+    private static final DataInfo OAF_ENTITY_DATAINFO = BuilderModuleHelper.buildInferenceForTrustLevel(false,
+            StaticConfigurationProvider.ACTION_TRUST_0_9, INFERENCE_PROVENANCE, InfoSpaceConstants.SEMANTIC_CLASS_IIS);
     
     private static final Qualifier INSTANCE_TYPE_SOFTWARE = buildInstanceTypeSoftware();
     
@@ -305,8 +310,7 @@ public class SoftwareExporterJob {
             software.setCollectedfrom(Collections.singletonList(hostedBy));
         }
         
-        // initializing datainfo
-        software.setDataInfo(BuilderModuleHelper.buildInferenceForConfidenceLevel(meta.getConfidenceLevel(), INFERENCE_PROVENANCE));
+        software.setDataInfo(OAF_ENTITY_DATAINFO);
         software.setLastupdatetimestamp(System.currentTimeMillis());
 
         return software;
