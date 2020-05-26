@@ -118,7 +118,8 @@ public class PatentExporterJob {
                     documentToPatentsToExport(documentToPatents, trustLevelThreshold);
 
             JavaPairRDD<CharSequence, Patent> patentsById = patents
-                    .mapToPair(x -> new Tuple2<>(x.getApplnId(), x))
+                    // FIXME make sure appln_nr is returned by mining script, appln_id was defined before
+                    .mapToPair(x -> new Tuple2<>(x.getApplnNr(), x))
                     .cache();
 
             JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = documentToPatentsToExport

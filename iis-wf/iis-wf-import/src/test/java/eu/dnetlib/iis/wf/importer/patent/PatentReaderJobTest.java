@@ -40,7 +40,7 @@ public class PatentReaderJobTest {
     public void shouldReadPatentEPOFileAndStorePatentsAsAvroDatastores() throws IOException {
         // given
         String patentsEpoPath = Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/importer/patent/sampletest/oozie_app/input/patents_epo.json"))
+                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/importer/patent/sampletest/oozie_app/input/patents_epo.tsv"))
                 .getFile();
         String patentsEpoMappedPath = Objects
                 .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/importer/patent/data/output/patents_epo_output.json"))

@@ -25,7 +25,7 @@
             <configuration>
                 <property>
                     <name>input_json</name>
-                    <value>${wf:appPath()}/input/patents_epo.json</value>
+                    <value>${wf:appPath()}/input/patents_epo.tsv</value>
                 </property>
                 <property>
                     <name>output</name>

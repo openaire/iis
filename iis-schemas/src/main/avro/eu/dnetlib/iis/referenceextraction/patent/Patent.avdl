@@ -7,9 +7,13 @@ protocol IIS{
     }
 
     record Patent {
-        string appln_id;
+        // from ImportedPatent
         string appln_auth;
         string appln_nr;
+        string publn_auth;
+        string publn_nr;
+        string publn_kind;
+    
         union {null, string} appln_filing_date = null;
         string appln_nr_epodoc;
         union {null, string} earliest_publn_date = null;

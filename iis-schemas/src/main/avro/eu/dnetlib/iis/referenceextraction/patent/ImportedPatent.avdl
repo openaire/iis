@@ -2,6 +2,7 @@
 protocol IIS{
 
     record ImportedPatent {
+        string appln_auth;
         string appln_nr;
         string publn_auth;
         string publn_nr;
