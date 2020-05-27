@@ -44,7 +44,6 @@ import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.common.utils.DateTimeUtils;
 import eu.dnetlib.iis.common.utils.RDDUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
-import eu.dnetlib.iis.referenceextraction.patent.schemas.HolderCountry;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
 import eu.dnetlib.iis.wf.export.actionmanager.ActionSerializationUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
@@ -374,9 +373,11 @@ public class PatentExporterJob {
             result.setSubject(buildOafEntityResultMetadataSubjects(patent.getIpcClassSymbol()));
         }
 
-        if (Objects.nonNull(patent.getHolderCountry())) {
-            result.setAuthor(buildOafEntityResultMetadataAuthors(patent.getHolderCountry()));
-            result.setCountry(buildOafEntityResultMetadataCountries(patent.getHolderCountry()));
+        if (Objects.nonNull(patent.getApplicantNames())) {
+            result.setAuthor(buildOafEntityResultMetadataAuthors(patent.getApplicantNames()));
+        }
+        if (Objects.nonNull(patent.getApplicantCountryCodes())) {
+            result.setCountry(buildOafEntityResultMetadataCountries(patent.getApplicantCountryCodes()));
         }
         
         result.setInstance(Collections.singletonList(buildOafEntityResultInstance(patent, patentEpoUrlRoot)));
@@ -433,9 +434,8 @@ public class PatentExporterJob {
         return relevantDate;
     }
 
-    private static List<Author> buildOafEntityResultMetadataAuthors(List<HolderCountry> holderCountries) {
-        List<CharSequence> personNames = holderCountries.stream()
-                .map(HolderCountry::getPersonName)
+    private static List<Author> buildOafEntityResultMetadataAuthors(List<CharSequence> applicantNames) {
+        List<CharSequence> personNames = applicantNames.stream()
                 .filter(StringUtils::isNotBlank)
                 .collect(Collectors.toList());
         return ListUtils.zipWithIndex(personNames).stream()
@@ -454,9 +454,8 @@ public class PatentExporterJob {
         return author;
     }
 
-    private static List<Country> buildOafEntityResultMetadataCountries(List<HolderCountry> holderCountries) {
-        return holderCountries.stream()
-                .map(HolderCountry::getPersonCtryCode)
+    private static List<Country> buildOafEntityResultMetadataCountries(List<CharSequence> applicantCountryCodes) {
+        return applicantCountryCodes.stream()
                 .filter(StringUtils::isNotBlank)
                 .distinct()
                 .sorted()

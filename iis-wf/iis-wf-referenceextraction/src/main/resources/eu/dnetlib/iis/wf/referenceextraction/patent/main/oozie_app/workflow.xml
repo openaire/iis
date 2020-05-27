@@ -340,7 +340,8 @@
                 --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
                 --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
             </spark-opts>
-            <arg>-inputPath=${workingDir}/metadata_retriever_output</arg>
+            <arg>-inputImportedPatentPath=${input_patent}</arg>
+            <arg>-inputDocumentTextPath=${workingDir}/metadata_retriever_output</arg>
             <arg>-outputPath=${output_patent_metadata}</arg>
         </spark>
         <ok to="end"/>
