@@ -1,2 +1,2 @@
-{"key": "processing.docOrgMatching.deduped.docOrgReference", "type":"COUNTER", "value": "4"}
-{"key": "processing.docOrgMatching.deduped.doc", "type":"COUNTER", "value": "3"}
+{"key": "processing.docOrgMatching.docOrgReferences.deduped", "type":"COUNTER", "value": "4"}
+{"key": "processing.docOrgMatching.docs.deduped", "type":"COUNTER", "value": "3"}

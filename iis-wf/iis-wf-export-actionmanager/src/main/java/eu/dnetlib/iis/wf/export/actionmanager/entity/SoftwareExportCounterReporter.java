@@ -19,11 +19,11 @@ import scala.Tuple3;
  */
 public class SoftwareExportCounterReporter {
 
-    public static final String EXPORTED_SOFTWARE_ENTITIES_COUNTER = "export.entity.software.total";
+    public static final String EXPORTED_SOFTWARE_ENTITIES_COUNTER = "export.entities.software";
 
-    public static final String SOFTWARE_REFERENCES_COUNTER = "processing.referenceExtraction.softwareUrl.reference";
+    public static final String SOFTWARE_REFERENCES_COUNTER = "processing.referenceExtraction.softwareUrl.references";
     
-    public static final String DISTINCT_PUBLICATIONS_WITH_SOFTWARE_REFERENCES_COUNTER = "processing.referenceExtraction.softwareUrl.doc";
+    public static final String DISTINCT_PUBLICATIONS_WITH_SOFTWARE_REFERENCES_COUNTER = "processing.referenceExtraction.softwareUrl.docs";
     
     private SparkAvroSaver avroSaver = new SparkAvroSaver();
     

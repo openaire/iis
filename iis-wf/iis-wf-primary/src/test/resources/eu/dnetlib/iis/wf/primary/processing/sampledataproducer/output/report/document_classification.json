@@ -1,6 +1,6 @@
-{"key":"processing.documentClassification.doc","type":"COUNTER","value":"1"}
-{"key":"processing.documentClassification.docClassReference.arxiv","type":"COUNTER","value":"0"}
-{"key":"processing.documentClassification.docClassReference.wos","type":"COUNTER","value":"0"}
-{"key":"processing.documentClassification.docClassReference.ddc","type":"COUNTER","value":"0"}
-{"key":"processing.documentClassification.docClassReference.meshEuroPmc","type":"COUNTER","value":"0"}
-{"key":"processing.documentClassification.docClassReference.acm","type":"COUNTER","value":"1"}
+{"key":"processing.documentClassification.docs","type":"COUNTER","value":"1"}
+{"key":"processing.documentClassification.docClassReferences.arxiv","type":"COUNTER","value":"0"}
+{"key":"processing.documentClassification.docClassReferences.wos","type":"COUNTER","value":"0"}
+{"key":"processing.documentClassification.docClassReferences.ddc","type":"COUNTER","value":"0"}
+{"key":"processing.documentClassification.docClassReferences.meshEuroPmc","type":"COUNTER","value":"0"}
+{"key":"processing.documentClassification.docClassReferences.acm","type":"COUNTER","value":"1"}

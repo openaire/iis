@@ -1,2 +1,2 @@
-{"key":"processing.docOrgMatching.projectBased.docOrgReference","type":"COUNTER","value":"0"}
-{"key":"processing.docOrgMatching.projectBased.doc","type":"COUNTER","value":"0"}
+{"key":"processing.docOrgMatching.docOrgReferences.projectBased","type":"COUNTER","value":"0"}
+{"key":"processing.docOrgMatching.docs.projectBased","type":"COUNTER","value":"0"}

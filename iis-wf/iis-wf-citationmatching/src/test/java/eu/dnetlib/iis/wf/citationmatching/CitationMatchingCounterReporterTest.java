@@ -135,10 +135,10 @@ public class CitationMatchingCounterReporterTest {
         
         assertEquals(2, reportEntries.size());
         
-        assertEquals("processing.citationMatching.fuzzy.citDocReference", reportEntries.get(0).getKey());
+        assertEquals("processing.citationMatching.citDocReferences.fuzzy", reportEntries.get(0).getKey());
         assertEquals("14", reportEntries.get(0).getValue());
         
-        assertEquals("processing.citationMatching.fuzzy.doc", reportEntries.get(1).getKey());
+        assertEquals("processing.citationMatching.docs.fuzzy", reportEntries.get(1).getKey());
         assertEquals("3", reportEntries.get(1).getValue());
     }
     

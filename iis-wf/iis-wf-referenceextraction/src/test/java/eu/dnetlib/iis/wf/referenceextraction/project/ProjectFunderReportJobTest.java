@@ -92,8 +92,8 @@ public class ProjectFunderReportJobTest {
                 .addArg("-inputProjectAvroPath", inputProjectDirPath)
                 .addArg("-inputDocumentToProjectAvroPath", inputDocumentToProjectDirPath)
                 .addArg("-outputReportPath", outputReportDirPath)
-                .addArg("-reportKeyTemplate", "processing.referenceExtraction.project.reference.byfunder.#{funder}")
-                .addArg("-reportKeyTotal", "processing.referenceExtraction.project.reference.total")
+                .addArg("-reportKeyTemplate", "processing.referenceExtraction.project.references.byfunder.#{funder}")
+                .addArg("-reportKeyTotal", "processing.referenceExtraction.project.references.total")
                 .addJobProperty("spark.driver.host", "localhost")
                 
                 .build();

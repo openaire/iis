@@ -75,7 +75,7 @@
                 </property>
                 <property>
                     <name>report_properties_prefix</name>
-                    <value>import.content.pmc</value>
+                    <value>import.contents.jats</value>
                 </property>
                 <!-- all the other properties are autmatically propagated -->
             </configuration>

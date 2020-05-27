@@ -75,7 +75,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.report.PigCountersReportGenerator</arg>
             <arg>-PpigCounters=${hadoop:counters('transformer')}</arg>
-            <arg>-Preport.processing.referenceExtraction.dataset.total.reference={dedupDocumentToDataset.RECORD_WRITTEN}</arg>
+            <arg>-Preport.processing.referenceExtraction.dataset.deduped.references={dedupDocumentToDataset.RECORD_WRITTEN}</arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>
         <ok to="end" />

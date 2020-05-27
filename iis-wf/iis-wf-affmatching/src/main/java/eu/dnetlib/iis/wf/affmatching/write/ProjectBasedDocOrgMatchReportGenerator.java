@@ -21,8 +21,8 @@ import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
 
 public class ProjectBasedDocOrgMatchReportGenerator implements Serializable {
     
-    public static final String DOC_ORG_REFERENCES = "processing.docOrgMatching.projectBased.docOrgReference";
-    public static final String DOCS_WITH_AT_LEAST_ONE_ORG = "processing.docOrgMatching.projectBased.doc";
+    public static final String DOC_ORG_REFERENCES = "processing.docOrgMatching.docOrgReferences.projectBased";
+    public static final String DOCS_WITH_AT_LEAST_ONE_ORG = "processing.docOrgMatching.docs.projectBased";
 
     private static final long serialVersionUID = 1L;
 

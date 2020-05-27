@@ -21,12 +21,12 @@
         </property>
         <property>
             <name>report_key_template</name>
-            <value>processing.referenceExtraction.project.reference.byfunder.#{funder}</value>
+            <value>processing.referenceExtraction.project.references.byfunder.#{funder}</value>
             <description>key template to be used in reports, #{funder} token will be replaced by funder name</description>
         </property>
         <property>
             <name>report_key_total</name>
-            <value>processing.referenceExtraction.project.reference.total</value>
+            <value>processing.referenceExtraction.project.references.total</value>
             <description>report key with total number of references</description>
         </property>
                 

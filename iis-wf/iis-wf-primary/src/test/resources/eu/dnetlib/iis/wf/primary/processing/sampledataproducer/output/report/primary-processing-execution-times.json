@@ -1,7 +1,7 @@
 {"key": "processing.documentClassification.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 170000])"}
 {"key": "processing.citationMatching.direct.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 150000])"}
 {"key": "processing.citationMatching.fuzzy.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 900000])"}
-{"key": "processing.citationMatching.total.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 1500000])"}
+{"key": "processing.citationMatching.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 1500000])"}
 {"key": "processing.citationTextExtraction.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 500000])"}
 {"key": "processing.referenceExtraction.dataset.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 1500000])"}
 {"key": "processing.referenceExtraction.project.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 500000])"}
@@ -13,5 +13,5 @@
 {"key": "processing.referenceExtraction.patent.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 700000])"}
 {"key": "processing.docOrgMatching.affiliationBased.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 200000])"}
 {"key": "processing.docOrgMatching.projectBased.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 200000])"}
+{"key": "processing.docOrgMatching.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 400000])"}
 {"key": "processing.merging.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 200000])"}
-

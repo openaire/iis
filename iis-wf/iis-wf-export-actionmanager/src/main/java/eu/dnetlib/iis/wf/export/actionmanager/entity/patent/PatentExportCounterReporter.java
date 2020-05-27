@@ -16,9 +16,9 @@ import java.util.Arrays;
  * @author mhorst
  */
 public class PatentExportCounterReporter {
-    public static final String PATENT_REFERENCES_COUNTER = "processing.referenceExtraction.patent.reference";
-    public static final String EXPORTED_PATENT_ENTITIES_COUNTER = "export.entity.patent.total";
-    public static final String DISTINCT_PUBLICATIONS_WITH_PATENT_REFERENCES_COUNTER = "processing.referenceExtraction.patent.doc";
+    public static final String PATENT_REFERENCES_COUNTER = "processing.referenceExtraction.patent.references";
+    public static final String EXPORTED_PATENT_ENTITIES_COUNTER = "export.entities.patent";
+    public static final String DISTINCT_PUBLICATIONS_WITH_PATENT_REFERENCES_COUNTER = "processing.referenceExtraction.patent.docs";
 
     private SparkAvroSaver avroSaver = new SparkAvroSaver();
 

@@ -101,22 +101,22 @@
         <!-- set of report entries, will be disabled when not starting with "report." prefix -->
         <property>
             <name>report_entry_pdf</name>
-            <value>report.import.content.url.bytype.pdf</value>
+            <value>report.import.content.urls.bytype.pdf</value>
             <description>report entry holding counter for PDF output URLs</description>
         </property>
         <property>
             <name>report_entry_html</name>
-            <value>report.import.content.url.bytype.html</value>
+            <value>report.import.content.urls.bytype.html</value>
             <description>report entry holding counter for HTML output URLs</description>
         </property>
         <property>
             <name>report_entry_xml_pmc</name>
-            <value>report.import.content.url.bytype.xmlpmc</value>
+            <value>report.import.content.urls.bytype.jats</value>
             <description>report entry holding counter for XML PMC output URLs</description>
         </property>
         <property>
             <name>report_entry_wos</name>
-            <value>report.import.content.url.bytype.wos</value>
+            <value>report.import.content.urls.bytype.wos</value>
             <description>report entry holding counter for WoS output URLs</description>
         </property>
 	</parameters>

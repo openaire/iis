@@ -1,4 +1,4 @@
-{"key":"processing.citationTextExtraction.citation","type":"COUNTER","value":"3"}
-{"key":"processing.citationTextExtraction.doc","type":"COUNTER","value":"1"}
-{"key":"processing.citationMatching.total.citDocReference", "type":"COUNTER", "value":"2"}
-{"key":"processing.citationMatching.total.doc", "type":"COUNTER", "value":"1"}
+{"key":"processing.citationTextExtraction.citations","type":"COUNTER","value":"3"}
+{"key":"processing.citationTextExtraction.docs","type":"COUNTER","value":"1"}
+{"key":"processing.citationMatching.citDocReferences.deduped", "type":"COUNTER", "value":"2"}
+{"key":"processing.citationMatching.docs.deduped", "type":"COUNTER", "value":"1"}
