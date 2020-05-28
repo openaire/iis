@@ -35,11 +35,13 @@ public class MetadataConverterUtilsTest {
         assertEquals(Year.of(2020), MetadataConverterUtils.extractYearOrNull("2020-12-31", log));
         assertEquals(Year.of(2010), MetadataConverterUtils.extractYearOrNull("2010-1-1", log));
         assertEquals(Year.of(1900), MetadataConverterUtils.extractYearOrNull("1900-2", log));
+        assertEquals(Year.of(2020), MetadataConverterUtils.extractYearOrNull("2020", log));
     }
     
     @Test
     public void testExtractYearOrNullWithInvalidInput() {
         assertNull(MetadataConverterUtils.extractYearOrNull("invalid", log));
+        assertNull(MetadataConverterUtils.extractYearOrNull("20200304", log));
         assertNull(MetadataConverterUtils.extractYearOrNull("20-20-01", log));
         assertNull(MetadataConverterUtils.extractYearOrNull("", log));
         assertNull(MetadataConverterUtils.extractYearOrNull(null, log));

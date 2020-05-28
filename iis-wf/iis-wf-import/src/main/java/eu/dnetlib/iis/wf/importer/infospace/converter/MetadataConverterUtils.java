@@ -39,22 +39,26 @@ public abstract class MetadataConverterUtils {
     }
     
     /**
-     * Extracts year out of the date defined in yyyy-MM-dd with possible single digit month and day part.
+     * Extracts year out of the date defined in 'yyyy' or 'yyyy-MM-dd' format with possible single digit month and day part.
      */
     public static Year extractYearOrNull(String date, Logger log) {
         if (StringUtils.isNotBlank(date)) {
-            if (date.indexOf('-') == 4) {
-                try {
-                    return Year.parse(date.substring(0, date.indexOf('-')), DateTimeFormatter.ofPattern("yyyy"));
-                } catch (DateTimeParseException e) {
-                    log.warn("unsupported, non integer, format of year value: " + date);
-                    return null;
-                }
-            } else {
-                log.warn("unsupported format of year value: " + date);
-            }
+            return parseYearOrGetNull(date.indexOf('-') == 4 ? date.substring(0, date.indexOf('-')) : date, log);
+        } else {
+            return null;    
         }
-        return null;
+    }
+    
+    /**
+     * Parses year privided in 'yyyy' format. Returns null whenever year defined in an invalid format.
+     */
+    private static Year parseYearOrGetNull(String year, Logger log) {
+        try {
+            return Year.parse(year, DateTimeFormatter.ofPattern("yyyy"));
+        } catch (DateTimeParseException e) {
+            log.warn("unsupported, non 'yyyy', format of year value: " + year);
+            return null;
+        }
     }
     
 }
