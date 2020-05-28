@@ -26,7 +26,7 @@ public class OpsPatentMetadataXPathBasedParserTest {
     @Test
     public void testExtractMetadataFromValidXMLfile() throws Exception {
         // given
-        String xmlContents = IOUtils.toString(OpsPatentMetadataXMLPullParser.class
+        String xmlContents = IOUtils.toString(OpsPatentMetadataXPathBasedParser.class
                 .getResourceAsStream(xmlResourcesRootClassPath + "WO.0042078.A1.xml"), StandardCharsets.UTF_8.name());
 
         // execute

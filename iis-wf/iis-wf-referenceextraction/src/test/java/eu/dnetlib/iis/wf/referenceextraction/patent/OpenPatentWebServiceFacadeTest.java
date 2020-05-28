@@ -55,8 +55,7 @@ public class OpenPatentWebServiceFacadeTest {
     @Test
     public void testGetPatentMetadaUrl() throws Exception {
         // given
-        ImportedPatent.Builder patentBuilder = ImportedPatent.newBuilder();
-        patentBuilder.setApplnNr("irrelevant");
+        ImportedPatent.Builder patentBuilder = initializeWithDummyValues();
         patentBuilder.setPublnAuth("pubAuth");
         patentBuilder.setPublnKind("pubKind");
         patentBuilder.setPublnNr("pubNr");
@@ -73,8 +72,7 @@ public class OpenPatentWebServiceFacadeTest {
     @Test
     public void testBuildPatentMetaRequest() throws Exception {
         // given
-        ImportedPatent.Builder patentBuilder = ImportedPatent.newBuilder();
-        patentBuilder.setApplnNr("irrelevant");
+        ImportedPatent.Builder patentBuilder = initializeWithDummyValues();
         patentBuilder.setPublnAuth("pubAuth");
         patentBuilder.setPublnKind("pubKind");
         patentBuilder.setPublnNr("pubNr");
@@ -198,12 +196,7 @@ public class OpenPatentWebServiceFacadeTest {
     @Test
     public void testGetPatentMetadataForHttp200() throws Exception {
         // given
-        ImportedPatent.Builder patentBuilder = ImportedPatent.newBuilder();
-        String irrelevant = "irrelevant";
-        patentBuilder.setApplnNr(irrelevant);
-        patentBuilder.setPublnAuth(irrelevant);
-        patentBuilder.setPublnKind(irrelevant);
-        patentBuilder.setPublnNr(irrelevant);
+        ImportedPatent.Builder patentBuilder = initializeWithDummyValues();
         
         String expectedResult = "this is expected result";
         
@@ -247,12 +240,7 @@ public class OpenPatentWebServiceFacadeTest {
     @Test
     public void testGetPatentMetadataForHttp400() throws Exception {
         // given
-        ImportedPatent.Builder patentBuilder = ImportedPatent.newBuilder();
-        String irrelevant = "irrelevant";
-        patentBuilder.setApplnNr(irrelevant);
-        patentBuilder.setPublnAuth(irrelevant);
-        patentBuilder.setPublnKind(irrelevant);
-        patentBuilder.setPublnNr(irrelevant);
+        ImportedPatent.Builder patentBuilder = initializeWithDummyValues();
         
         String expectedResult = "this is expected result";
         
@@ -307,12 +295,7 @@ public class OpenPatentWebServiceFacadeTest {
     @Test(expected = NoSuchElementException.class)
     public void testGetPatentMetadataForHttp404() throws Exception {
         // given
-        ImportedPatent.Builder patentBuilder = ImportedPatent.newBuilder();
-        String irrelevant = "irrelevant";
-        patentBuilder.setApplnNr(irrelevant);
-        patentBuilder.setPublnAuth(irrelevant);
-        patentBuilder.setPublnKind(irrelevant);
-        patentBuilder.setPublnNr(irrelevant);
+        ImportedPatent.Builder patentBuilder = initializeWithDummyValues();
         
         OpenPatentWebServiceFacade service = prepareValidService();
         
@@ -346,12 +329,7 @@ public class OpenPatentWebServiceFacadeTest {
     @Test
     public void testGetPatentMetadataForHttp403() throws Exception {
         // given
-        ImportedPatent.Builder patentBuilder = ImportedPatent.newBuilder();
-        String irrelevant = "irrelevant";
-        patentBuilder.setApplnNr(irrelevant);
-        patentBuilder.setPublnAuth(irrelevant);
-        patentBuilder.setPublnKind(irrelevant);
-        patentBuilder.setPublnNr(irrelevant);
+        ImportedPatent.Builder patentBuilder = initializeWithDummyValues();
         
         String expectedResult = "this is expected result";
         
@@ -401,12 +379,7 @@ public class OpenPatentWebServiceFacadeTest {
     @Test(expected = PatentServiceException.class)
     public void testGetPatentMetadataForHttp403RetryCountExceeded() throws Exception {
      // given
-        ImportedPatent.Builder patentBuilder = ImportedPatent.newBuilder();
-        String irrelevant = "irrelevant";
-        patentBuilder.setApplnNr(irrelevant);
-        patentBuilder.setPublnAuth(irrelevant);
-        patentBuilder.setPublnKind(irrelevant);
-        patentBuilder.setPublnNr(irrelevant);
+        ImportedPatent.Builder patentBuilder = initializeWithDummyValues();
         
         OpenPatentWebServiceFacade service = prepareValidService();
         
@@ -442,13 +415,7 @@ public class OpenPatentWebServiceFacadeTest {
     @Test(expected = PatentServiceException.class)
     public void testGetPatentMetadataForHttp500() throws Exception {
         // given
-        ImportedPatent.Builder patentBuilder = ImportedPatent.newBuilder();
-        String irrelevant = "irrelevant";
-        patentBuilder.setApplnNr(irrelevant);
-        patentBuilder.setPublnAuth(irrelevant);
-        patentBuilder.setPublnKind(irrelevant);
-        patentBuilder.setPublnNr(irrelevant);
-        
+        ImportedPatent.Builder patentBuilder = initializeWithDummyValues();
         OpenPatentWebServiceFacade service = prepareValidService();
         
         // authentication mock
@@ -478,6 +445,17 @@ public class OpenPatentWebServiceFacadeTest {
         
         // execute
         service.getPatentMetadata(patentBuilder.build());
+    }
+    
+    private ImportedPatent.Builder initializeWithDummyValues() {
+        ImportedPatent.Builder patentBuilder = ImportedPatent.newBuilder();
+        String irrelevant = "irrelevant";
+        patentBuilder.setApplnAuth(irrelevant);
+        patentBuilder.setApplnNr(irrelevant);
+        patentBuilder.setPublnAuth(irrelevant);
+        patentBuilder.setPublnKind(irrelevant);
+        patentBuilder.setPublnNr(irrelevant);
+        return patentBuilder;
     }
     
     private class AuthenticationResponse {

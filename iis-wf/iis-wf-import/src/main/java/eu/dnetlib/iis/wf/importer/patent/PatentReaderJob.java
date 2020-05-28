@@ -62,6 +62,8 @@ public class PatentReaderJob {
 
     private static ImportedPatent buildEntry(Row row) {
         return ImportedPatent.newBuilder()
+                // FIXME based on #1757#note-161 but make double-sure we can define it this way 
+                .setApplnAuth("EP")
                 .setApplnNr(row.getAs("appln_nr"))
                 .setPublnAuth(row.getAs("publn_auth"))
                 .setPublnNr(row.getAs("publn_nr"))
