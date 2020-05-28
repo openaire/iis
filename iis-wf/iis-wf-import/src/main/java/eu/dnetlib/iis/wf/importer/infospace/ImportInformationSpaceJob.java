@@ -15,6 +15,7 @@ import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Encoder;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.storage.StorageLevel;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -105,6 +106,7 @@ public class ImportInformationSpaceJob {
     
     private static final String COUNTER_READ_PROJ_ORG_REFERENCE = "import.infoSpace.projectOrganizationReference";
 
+    private static final StorageLevel CACHE_STORAGE_DEFAULT_LEVEL = StorageLevel.DISK_ONLY();
     
     public static void main(String[] args) throws Exception {
 
@@ -156,11 +158,11 @@ public class ImportInformationSpaceJob {
                     params.inputRootPath + "/software", eu.dnetlib.dhp.schema.oaf.Software.class, inputFormat);
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Relation> sourceRelation = readGraphTable(session,
                     params.inputRootPath + "/relation", eu.dnetlib.dhp.schema.oaf.Relation.class, inputFormat);
-            sourceRelation.cache();
+            sourceRelation.persist(CACHE_STORAGE_DEFAULT_LEVEL);
             
             // handling entities
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Dataset> filteredDataset = sourceDataset.filter(dataInfoBasedApprover::approve);
-            filteredDataset.cache();
+            filteredDataset.persist(CACHE_STORAGE_DEFAULT_LEVEL);
 
             JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> docMeta = parseToDocMetaAvro(filteredDataset,
                     sourcePublication, sourceSoftware, sourceOtherResearchProduct, dataInfoBasedApprover, documentConverter);
@@ -333,13 +335,13 @@ public class ImportInformationSpaceJob {
             JavaRDD<IdentifierMapping> dedupResultRelation, ImportInformationSpaceJobParameters jobParams) {
 
         // caching before calculating counts and writing on HDFS
-        docMeta.cache();
-        dataset.cache();
-        project.cache();
-        organization.cache();
-        docProjResultRelation.cache();
-        projOrgResultRelation.cache();
-        dedupResultRelation.cache();
+        docMeta.persist(CACHE_STORAGE_DEFAULT_LEVEL);
+        dataset.persist(CACHE_STORAGE_DEFAULT_LEVEL);
+        project.persist(CACHE_STORAGE_DEFAULT_LEVEL);
+        organization.persist(CACHE_STORAGE_DEFAULT_LEVEL);
+        docProjResultRelation.persist(CACHE_STORAGE_DEFAULT_LEVEL);
+        projOrgResultRelation.persist(CACHE_STORAGE_DEFAULT_LEVEL);
+        dedupResultRelation.persist(CACHE_STORAGE_DEFAULT_LEVEL);
         
         JavaRDD<ReportEntry> reports = generateReportEntries(sparkContext, docMeta.count(), dataset.count(),
                 project.count(), organization.count(), docProjResultRelation.count(), projOrgResultRelation.count(),
