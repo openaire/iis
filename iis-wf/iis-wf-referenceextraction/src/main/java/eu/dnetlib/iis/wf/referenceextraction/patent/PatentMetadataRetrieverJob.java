@@ -2,6 +2,7 @@ package eu.dnetlib.iis.wf.referenceextraction.patent;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -21,7 +22,7 @@ import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
-import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithSource;
+import eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeException;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeUtils;
 import eu.dnetlib.iis.wf.referenceextraction.ContentRetrieverResponse;
@@ -58,6 +59,10 @@ public class PatentMetadataRetrieverJob {
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputPath);
             
             try {
+                if (StringUtils.isNotBlank(params.metadataRetrieverFacadeFactoryClassname)) {
+                    sc.hadoopConfiguration().set(ImportWorkflowRuntimeParameters.IMPORT_FACADE_FACTORY_CLASS,
+                            params.metadataRetrieverFacadeFactoryClassname);
+                }
                 PatentServiceFacade patentServiceFacade = ServiceFacadeUtils.instantiate(sc.hadoopConfiguration());
                 
                 JavaRDD<ImportedPatent> importedPatents = avroLoader.loadJavaRDD(sc, params.inputPath,
@@ -89,7 +94,7 @@ public class PatentMetadataRetrieverJob {
     
     private static void storeInOutput(JavaRDD<DocumentText> retrievedPatentMeta, 
             JavaRDD<Fault> faults, JavaRDD<ReportEntry> reports, OutputPaths outputPaths, int numberOfEmittedFiles) {
-        avroSaver.saveJavaRDD(retrievedPatentMeta.coalesce(numberOfEmittedFiles), DocumentToSoftwareUrlWithSource.SCHEMA$, outputPaths.getResult());
+        avroSaver.saveJavaRDD(retrievedPatentMeta.coalesce(numberOfEmittedFiles), DocumentText.SCHEMA$, outputPaths.getResult());
         avroSaver.saveJavaRDD(faults.coalesce(numberOfEmittedFiles), Fault.SCHEMA$, outputPaths.getFault());
         avroSaver.saveJavaRDD(reports.coalesce(numberOfEmittedFiles), ReportEntry.SCHEMA$, outputPaths.getReport());
     }
@@ -148,13 +153,14 @@ public class PatentMetadataRetrieverJob {
         @Parameter(names = "-numberOfEmittedFiles", required = true)
         private int numberOfEmittedFiles;
         
+        @Parameter(names = "-metadataRetrieverFacadeFactoryClassname", required = false)
+        private String metadataRetrieverFacadeFactoryClassname;
         
         @Parameter(names = "-outputPath", required = true)
         private String outputPath;
         
         @Parameter(names = "-outputFaultPath", required = true)
         private String outputFaultPath;
-        
         
         @Parameter(names = "-outputReportPath", required = true)
         private String outputReportPath;

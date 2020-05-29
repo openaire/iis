@@ -41,10 +41,9 @@ import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
  */
 public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
 
-    /**
-     * 
-     */
+    
     private static final long serialVersionUID = 2157218881928411205L;
+
     
     private static final Logger log = Logger.getLogger(OpsPatentMetadataXPathBasedParser.class);
 

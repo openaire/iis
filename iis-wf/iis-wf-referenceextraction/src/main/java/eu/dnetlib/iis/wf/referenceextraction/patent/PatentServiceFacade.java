@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.referenceextraction.patent;
 
+import java.io.Serializable;
 import java.util.NoSuchElementException;
 
 import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
@@ -10,7 +11,7 @@ import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
  * @author mhorst
  *
  */
-public interface PatentServiceFacade {
+public interface PatentServiceFacade extends Serializable {
 
     /**
      * Retrieves patent metadata.

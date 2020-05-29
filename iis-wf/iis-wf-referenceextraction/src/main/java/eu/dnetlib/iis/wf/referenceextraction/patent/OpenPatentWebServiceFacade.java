@@ -26,8 +26,15 @@ import com.google.gson.JsonParser;
 
 import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
 
+/**
+ * Remote EPO endpoint based patent service facade.
+ * 
+ * @author mhorst
+ *
+ */
 public class OpenPatentWebServiceFacade implements PatentServiceFacade {
     
+    private static final long serialVersionUID = -9154710658560662015L;
 
     private static final int DEFAULT_MAX_RETRIES_COUNT = 10;
     
@@ -51,6 +58,8 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
 
     private final JsonParser jsonParser = new JsonParser();
 
+    // ------------------- CONSTRUCTOR -------------------------
+    
     public OpenPatentWebServiceFacade(HttpClient httpClient, HttpHost authHost, String authUriRoot,
             HttpHost opsHost, String opsUriRoot, String consumerCredential, long throttleSleepTime) {
         this.httpClient = httpClient;
@@ -62,11 +71,15 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
         this.throttleSleepTime = throttleSleepTime;
     }
 
+    // ------------------- LOGIC----------------------------
+    
     @Override
     public String getPatentMetadata(ImportedPatent patent) throws Exception {
         return getPatentMetadata(patent, getSecurityToken(), 0);
     }
 
+    // ------------------- PRIVATE -------------------------
+    
     private String getPatentMetadata(ImportedPatent patent, String securityToken, int retryCount) throws Exception {
         
         if (retryCount > DEFAULT_MAX_RETRIES_COUNT) {

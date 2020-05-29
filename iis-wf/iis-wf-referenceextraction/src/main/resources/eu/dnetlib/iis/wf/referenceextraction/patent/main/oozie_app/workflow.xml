@@ -235,9 +235,7 @@
             <prepare>
                 <delete path="${workingDir}/retrieved_metadata"/>
             </prepare>
-
             <configuration>
-                <!-- TODO define ALL properties related to the remote EPO endpoint connection -->
                 <property>
                     <name>import.facade.factory.classname</name>
                     <value>${patent_metadata_retriever_facade_factory_classname}</value>
