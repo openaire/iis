@@ -1,13 +1,31 @@
 package eu.dnetlib.iis.wf.referenceextraction.patent.parser;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import com.google.common.collect.Lists;
 
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
 
@@ -23,6 +41,9 @@ public class OpsPatentMetadataXPathBasedParserTest {
 
     private OpsPatentMetadataXPathBasedParser parser = new OpsPatentMetadataXPathBasedParser();
 
+
+    // -------------------------------- TESTS ----------------------------
+    
     @Test
     public void testExtractMetadataFromValidXMLfile() throws Exception {
         // given
@@ -56,6 +77,273 @@ public class OpsPatentMetadataXPathBasedParserTest {
         assertEquals("NL", patent.getApplicantCountryCodes().get(0));
         assertEquals("NL", patent.getApplicantCountryCodes().get(1));
         assertEquals("NL", patent.getApplicantCountryCodes().get(2));
+    }
+    
+    @Test
+    public void testExtractFromDocumentWithAllFieldsMissing() throws Exception {
+        // given
+        String xmlContents = buildXMLContents(null, null, null, null, null, null, null, null);
+
+        // execute
+        Patent.Builder patent = parser.parse(xmlContents, Patent.newBuilder());
+
+        // assert
+        assertNotNull(patent);
+        assertNull(patent.getApplnTitle());
+        assertNull(patent.getApplnAbstract());
+        assertNull(patent.getApplnAuth());
+        assertNull(patent.getApplnNr());
+        assertFalse(patent.hasApplnNrEpodoc());
+        assertNull(patent.getApplnFilingDate());
+        assertNull(patent.getEarliestPublnDate());
+        assertNull(patent.getIpcClassSymbol());
+    }
+    
+    @Test
+    public void testExtractFromDocumentWithAllFieldsSet() throws Exception {
+        // given
+        String title = "some title";
+        String abstractText = "some abstract";
+        String classIpcText = "some class IPC text";
+        String applnEpodocId = "1234";
+        String applnDate = "20200501";
+        String publnDate = "20000530";
+        List<String> epodocApplicantNames = Lists.newArrayList("John Smith [PL]");
+        List<String> originalApplicantNames = Lists.newArrayList("John Doe");
+        
+        String xmlContents = buildXMLContents(title, abstractText, classIpcText, applnEpodocId, applnDate, publnDate,
+                epodocApplicantNames, originalApplicantNames);
+
+        // execute
+        Patent.Builder patent = parser.parse(xmlContents, Patent.newBuilder());
+
+        // assert
+        assertNotNull(patent);
+        assertTrue(patent.hasApplnTitle());
+        assertEquals(title, patent.getApplnTitle());
+        assertNotNull(patent.getApplnAbstract());
+        assertEquals(abstractText, patent.getApplnAbstract());
+        assertNotNull(patent.getIpcClassSymbol());
+        assertEquals(1, patent.getIpcClassSymbol().size());
+        assertEquals(classIpcText, patent.getIpcClassSymbol().get(0));
+        assertEquals(applnEpodocId, patent.getApplnNrEpodoc());
+        assertEquals("2020-05-01", patent.getApplnFilingDate());
+        assertEquals("2000-05-30", patent.getEarliestPublnDate());
+
+        assertNotNull(patent.getApplicantNames());
+        assertEquals(1, patent.getApplicantNames().size());
+        assertEquals("John Doe", patent.getApplicantNames().get(0));
+
+        assertNotNull(patent.getApplicantCountryCodes());
+        assertEquals(1, patent.getApplicantCountryCodes().size());
+        assertEquals("PL", patent.getApplicantCountryCodes().get(0));
+    }
+
+    @Test
+    public void testExtractFromDocumentWithPublnDateAlreadyDefinedInTargetFormat() throws Exception {
+        // given
+        String publnDate = "2000-05-30";
+
+        // execute
+        Patent.Builder patent = parser.parse(buildXMLContentsWithPublnDate(publnDate), Patent.newBuilder());
+
+        // assert
+        assertNotNull(patent);
+        assertEquals("2000-05-30", patent.getEarliestPublnDate());
+    }
+
+    @Test
+    public void testExtractFromDocumentWithPublnDateDefinedInUnsupportedFormat() throws Exception {
+        // given
+        String publnDate = "30/05/99";
+
+        // execute
+        Patent.Builder patent = parser.parse(buildXMLContentsWithPublnDate(publnDate), Patent.newBuilder());
+
+        // assert
+        assertNotNull(patent);
+        assertEquals("30/05/99", patent.getEarliestPublnDate());
+    }
+    
+    @Test
+    public void testExtractFromDocumentWithApplicantNamesWithoutCountry() throws Exception {
+        // given
+        String title = null;
+        String abstractText = null;
+        String classIpcText = null;
+        String applnEpodocId = null;
+        String applnDate = null;
+        String publnDate = null;
+        List<String> epodocApplicantNames = Lists.newArrayList("John Smith");
+        List<String> originalApplicantNames = null;
+        
+        String xmlContents = buildXMLContents(title, abstractText, classIpcText, applnEpodocId, applnDate, publnDate,
+                epodocApplicantNames, originalApplicantNames);
+
+        // execute
+        Patent.Builder patent = parser.parse(xmlContents, Patent.newBuilder());
+
+        // assert
+        assertNotNull(patent);
+        assertNull(patent.getApplicantNames());
+        assertNotNull(patent.getApplicantCountryCodes());
+        assertEquals(1, patent.getApplicantCountryCodes().size());
+        assertEquals(null, patent.getApplicantCountryCodes().get(0));
+    }
+    
+    @Test
+    public void testExtractFromDocumentWithOriginalApplicantNamesToBeCleanedUp() throws Exception {
+        // given
+        String title = null;
+        String abstractText = null;
+        String classIpcText = null;
+        String applnEpodocId = null;
+        String applnDate = null;
+        String publnDate = null;
+        List<String> epodocApplicantNames = null;
+        List<String> originalApplicantNames = Lists.newArrayList("Smith J., ", "    Doe J.");
+        
+        String xmlContents = buildXMLContents(title, abstractText, classIpcText, applnEpodocId, applnDate, publnDate,
+                epodocApplicantNames, originalApplicantNames);
+
+        // execute
+        Patent.Builder patent = parser.parse(xmlContents, Patent.newBuilder());
+
+        // assert
+        assertNotNull(patent);
+        assertNull(patent.getApplicantCountryCodes());
+        assertNotNull(patent.getApplicantNames());
+        assertEquals(2, patent.getApplicantNames().size());
+        assertEquals("Smith J.", patent.getApplicantNames().get(0));
+        assertEquals("Doe J.", patent.getApplicantNames().get(1));
+    }
+    
+    // -------------------------------- PRIVATE ----------------------------
+
+    private String buildXMLContentsWithPublnDate(String publnDate) throws ParserConfigurationException, TransformerException {
+        return buildXMLContents(null, null, null, null, null, publnDate, null, null);
+    }
+    
+    private String buildXMLContents(String title, String abstractText, String classIpcText, String applnEpodocId,
+            String applnDate, String publnDate, List<String> epodocApplicantNames,
+            List<String> originalApplicantNames) throws ParserConfigurationException, TransformerException {
+    
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+        Document doc = docBuilder.newDocument();
+        Element rootElement = doc.createElement("world-patent-data");
+        doc.appendChild(rootElement);
+
+        Element exchangeDocs = doc.createElement("exchange-documents");
+        rootElement.appendChild(exchangeDocs);
+
+        Element exchangeDoc = doc.createElement("exchange-document");
+        exchangeDocs.appendChild(exchangeDoc);
+        
+        if (abstractText != null) {
+            Element abstractEl = doc.createElement("abstract");
+            // currently the lang is unspecified
+            abstractEl.appendChild(doc.createTextNode(abstractText));
+            exchangeDoc.appendChild(abstractEl);
+        }
+        
+        Element biblioData = doc.createElement("bibliographic-data");
+        exchangeDoc.appendChild(biblioData);
+        
+        if (title != null) {
+            Element titleEl = doc.createElement("invention-title");
+            titleEl.appendChild(doc.createTextNode(title));
+            biblioData.appendChild(titleEl);
+        }
+        
+        if (classIpcText != null) {
+            Element classIpc = doc.createElement("classification-ipc");
+            biblioData.appendChild(classIpc);    
+            
+            Element classIpcTextEl = doc.createElement("text");
+            classIpcTextEl.appendChild(doc.createTextNode(classIpcText));
+            classIpc.appendChild(classIpcTextEl);
+            
+        }
+        
+        {
+            Element applnReference = doc.createElement("application-reference");
+            biblioData.appendChild(applnReference);
+            
+            Element documentId = doc.createElement("document-id");
+            documentId.setAttribute("document-id-type", "epodoc");
+            applnReference.appendChild(documentId);
+            
+            if (applnEpodocId != null) {
+                Element docNumber = doc.createElement("doc-number");
+                docNumber.appendChild(doc.createTextNode(applnEpodocId));
+                documentId.appendChild(docNumber);
+            }
+            if (applnDate != null) {
+                Element date = doc.createElement("date");
+                date.appendChild(doc.createTextNode(applnDate));
+                documentId.appendChild(date);
+            }    
+        }
+        
+        {
+            Element publnReference = doc.createElement("publication-reference");
+            biblioData.appendChild(publnReference);
+            
+            Element documentId = doc.createElement("document-id");
+            documentId.setAttribute("document-id-type", "epodoc");
+            publnReference.appendChild(documentId);
+
+            if (publnDate != null) {
+                Element date = doc.createElement("date");
+                date.appendChild(doc.createTextNode(publnDate));
+                documentId.appendChild(date);
+            }            
+        }
+
+        Element parties = doc.createElement("parties");
+        biblioData.appendChild(parties);
+        
+        Element applicants = doc.createElement("applicants");
+        parties.appendChild(applicants);
+        
+        if (CollectionUtils.isNotEmpty(epodocApplicantNames)) {
+            for (String epodocApplicantName : epodocApplicantNames) {
+                Element applicant = doc.createElement("applicant");
+                applicant.setAttribute("data-format", "epodoc");
+                applicants.appendChild(applicant);
+                
+                Element applicantName = doc.createElement("applicant-name");
+                applicant.appendChild(applicantName);
+                
+                Element name = doc.createElement("name");
+                name.appendChild(doc.createTextNode(epodocApplicantName));
+                applicantName.appendChild(name);
+            }
+        }
+        
+        if (CollectionUtils.isNotEmpty(originalApplicantNames)) {
+            for (String originalApplicantName : originalApplicantNames) {
+                Element applicant = doc.createElement("applicant");
+                applicant.setAttribute("data-format", "original");
+                applicants.appendChild(applicant);
+                
+                Element applicantName = doc.createElement("applicant-name");
+                applicant.appendChild(applicantName);
+                
+                Element name = doc.createElement("name");
+                name.appendChild(doc.createTextNode(originalApplicantName));
+                applicantName.appendChild(name);
+            }
+        }
+        
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(doc);
+        StringWriter strWriter = new StringWriter();
+        transformer.transform(source, new StreamResult(strWriter));
+        return strWriter.toString();
     }
 
 }

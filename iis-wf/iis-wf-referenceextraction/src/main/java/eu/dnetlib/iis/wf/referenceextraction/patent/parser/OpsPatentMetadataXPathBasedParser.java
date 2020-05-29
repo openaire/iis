@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -111,8 +113,11 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
                     (NodeList) xPath.compile(XPATH_EXPR_ABSTRACT).evaluate(xmlDocument, XPathConstants.NODESET),
                     ATTRIB_VALUE_LANG_EN));
             
-            patentBuilder.setApplnNrEpodoc(extractFirstNonEmptyTrimmedTextContent(
-                    (NodeList) xPath.compile(xPathExpApplnDocIdEpodoc).evaluate(xmlDocument, XPathConstants.NODESET)));
+            CharSequence epoDoc = extractFirstNonEmptyTrimmedTextContent(
+                    (NodeList) xPath.compile(xPathExpApplnDocIdEpodoc).evaluate(xmlDocument, XPathConstants.NODESET));
+            if (StringUtils.isNotBlank(epoDoc)) {
+                patentBuilder.setApplnNrEpodoc(epoDoc);    
+            }
 
             patentBuilder.setApplnFilingDate(convertDate(extractEarliestDate(
                     (NodeList) xPath.compile(XPATH_EXPR_APLN_DATE).evaluate(xmlDocument, XPathConstants.NODESET))));
@@ -122,22 +127,19 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
             
             List<CharSequence> ipcClasses = extractNonEmptyTrimmedTextContent(
                     (NodeList) xPath.compile(XPATH_EXPR_CLASS_IPC).evaluate(xmlDocument, XPathConstants.NODESET));
-            if (!ipcClasses.isEmpty()) {
+            if (CollectionUtils.isNotEmpty(ipcClasses)) {
                 patentBuilder.setIpcClassSymbol(ipcClasses);
             }
             
-            // this is simple approach: 
-            // 1) assuming the original xml fields order reflects the sequence attribute which is not taken into account when ordering applicants
-            // 2) getting whole text content of applicant element instead of digging straight to the applicant-name/name (just in case the XML encoding is not uniform)
             List<CharSequence> applicantOriginalNames = extractNonEmptyTrimmedTextContent(
                     (NodeList) xPath.compile(xPathExpApplicantOriginalName).evaluate(xmlDocument, XPathConstants.NODESET));
-            if (!applicantOriginalNames.isEmpty()) {
+            if (CollectionUtils.isNotEmpty(applicantOriginalNames)) {
                 patentBuilder.setApplicantNames(cleanNames(applicantOriginalNames));
             }
             
             List<CharSequence> applicantEpodocNames = extractNonEmptyTrimmedTextContent(
                     (NodeList) xPath.compile(xPathExpApplicantEpodocName).evaluate(xmlDocument, XPathConstants.NODESET));
-            if (!applicantEpodocNames.isEmpty()) {
+            if (CollectionUtils.isNotEmpty(applicantEpodocNames)) {
                 patentBuilder.setApplicantCountryCodes(extractCountryCodes(applicantEpodocNames));
             }
             
@@ -159,10 +161,10 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
             if (langNode != null && preferedLang.equals(langNode.getTextContent())) {
                 return currentNode.getTextContent().trim();
             } else {
-                otherTitle = currentNode.getTextContent();
+                otherTitle = currentNode.getTextContent().trim();
             }
         }
-        return otherTitle.trim();
+        return otherTitle;
     }
     
     private static List<CharSequence> extractNonEmptyTrimmedTextContent(NodeList nodes) {
@@ -212,7 +214,12 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
     private static String convertDate(String source) {
         if (StringUtils.isNotBlank(source)) {
             try {
-                return DATE_FORMAT_TARGET.format(DATE_FORMAT_SOURCE.parse(source));
+                Date parsedSource = DATE_FORMAT_SOURCE.parse(source);
+                if (source.equals(DATE_FORMAT_SOURCE.format(parsedSource))) {
+                    return DATE_FORMAT_TARGET.format(parsedSource);
+                } else {
+                    return source;
+                }
             } catch (ParseException e) {
                 log.warn("propagating source date without conversion: source date '" + source
                         + "' is not defined in expected format: " + DATE_FORMAT_PATTERN_SOURCE);
@@ -254,7 +261,7 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
     private static CharSequence extractCountryCode(CharSequence epodocName) {
         if (StringUtils.isNotBlank(epodocName)) {
             String[] countryCodeCandidates = StringUtils.substringsBetween(epodocName.toString(), "[", "]");
-            if (countryCodeCandidates.length > 0) {
+            if (ArrayUtils.isNotEmpty(countryCodeCandidates)) {
                 return countryCodeCandidates[countryCodeCandidates.length -1]; 
             }
         }
