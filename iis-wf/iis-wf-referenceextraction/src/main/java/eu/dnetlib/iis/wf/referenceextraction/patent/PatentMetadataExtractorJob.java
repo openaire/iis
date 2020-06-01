@@ -2,6 +2,7 @@ package eu.dnetlib.iis.wf.referenceextraction.patent;
 
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -31,6 +32,8 @@ import scala.Tuple2;
  *
  */
 public class PatentMetadataExtractorJob {
+    
+    private static final Logger log = Logger.getLogger(PatentMetadataExtractorJob.class);
 
     private static final SparkAvroLoader avroLoader = new SparkAvroLoader();
     private static final SparkAvroSaver avroSaver = new SparkAvroSaver();
@@ -63,10 +66,13 @@ public class PatentMetadataExtractorJob {
     // ------------------------ PRIVATE --------------------------
 
     private static Patent parse(DocumentText patent, ImportedPatent importedPatent, PatentMetadataParser parser) {
+        Patent.Builder resultBuilder = fillDataFromImport(Patent.newBuilder(), importedPatent);
         try {
-            return parser.parse(patent.getText(), fillDataFromImport(Patent.newBuilder(), importedPatent)).build();
+            return parser.parse(patent.getText(), resultBuilder).build();
         } catch (PatentMetadataParserException e) {
-            throw new RuntimeException(e);
+            log.error("error while parsing xml contents of patent id " + patent.getId() + ", text content: "
+                    + patent.getText(), e);
+            return fillRequiredDataWithNullsAndBuild(resultBuilder);
         }
     }
 
@@ -74,6 +80,34 @@ public class PatentMetadataExtractorJob {
         patentBuilder.setApplnAuth(importedPatent.getApplnAuth());
         patentBuilder.setApplnNr(importedPatent.getApplnNr());
         return patentBuilder;
+    }
+    
+    private static Patent fillRequiredDataWithNullsAndBuild(Patent.Builder patentBuilder) {
+        if (!patentBuilder.hasApplicantNames()) {
+            patentBuilder.setApplicantNames(null);
+        }
+        if (!patentBuilder.hasApplicantCountryCodes()) {
+            patentBuilder.setApplicantCountryCodes(null);
+        }
+        if (!patentBuilder.hasApplnAbstract()) {
+            patentBuilder.setApplnAbstract(null);
+        }
+        if (!patentBuilder.hasApplnFilingDate()) {
+            patentBuilder.setApplnFilingDate(null);
+        }
+        if (!patentBuilder.hasApplnNrEpodoc()) {
+            patentBuilder.setApplnNrEpodoc(null);
+        }
+        if (!patentBuilder.hasApplnTitle()) {
+            patentBuilder.setApplnTitle(null);
+        }
+        if (!patentBuilder.hasEarliestPublnDate()) {
+            patentBuilder.setEarliestPublnDate(null);
+        }
+        if (!patentBuilder.hasIpcClassSymbol()) {
+            patentBuilder.setIpcClassSymbol(null);
+        }
+        return patentBuilder.build();
     }
 
     @Parameters(separators = "=")

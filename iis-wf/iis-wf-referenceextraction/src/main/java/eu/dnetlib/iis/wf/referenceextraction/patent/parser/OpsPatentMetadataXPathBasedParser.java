@@ -13,10 +13,8 @@ import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -27,7 +25,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import com.google.common.collect.Lists;
 
@@ -85,9 +82,9 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
     
     private String xPathExpApplicantEpodocName;
 
-    private DocumentBuilderFactory builderFactory;
+    private transient DocumentBuilderFactory builderFactory;
 
-    private XPath xPath;
+    private transient XPath xPath;
     
 
     // ------------------------------- CONSTRUCTOR -------------------------------
@@ -144,7 +141,7 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
             
             return patentBuilder;
 
-        } catch (SAXException | IOException | XPathExpressionException | ParserConfigurationException e) {
+        } catch (Exception e) {
             throw new PatentMetadataParserException("error while parsing XML contents: " + source, e);
         }
     }

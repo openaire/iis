@@ -23,6 +23,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.google.common.collect.Lists;
 
 import eu.dnetlib.data.transform.xml.AbstractDNetXsltFunctions;
 import eu.dnetlib.dhp.schema.action.AtomicAction;
@@ -345,9 +346,12 @@ public class PatentExporterJob {
         result.setId(patentIdToExport);
         result.setLastupdatetimestamp(System.currentTimeMillis());
         result.setCollectedfrom(Collections.singletonList(OAF_ENTITY_COLLECTEDFROM));
-        result.setPid(Arrays.asList(
-                buildOafEntityPid(String.format("%s%s", patent.getApplnAuth(), patent.getApplnNr()), OAF_ENTITY_PID_QUALIFIER_CLASS_EPO_ID),
-                buildOafEntityPid(patent.getApplnNrEpodoc().toString(), OAF_ENTITY_PID_QUALIFIER_CLASS_EPO_NR_EPODOC)));
+        List<StructuredProperty> pids = Lists.newArrayList();
+        pids.add(buildOafEntityPid(String.format("%s%s", patent.getApplnAuth(), patent.getApplnNr()), OAF_ENTITY_PID_QUALIFIER_CLASS_EPO_ID));
+        if (StringUtils.isNotBlank(patent.getApplnNrEpodoc())) {
+            pids.add(buildOafEntityPid(patent.getApplnNrEpodoc().toString(), OAF_ENTITY_PID_QUALIFIER_CLASS_EPO_NR_EPODOC));
+        }
+        result.setPid(pids);
         result.setDateofcollection(patentDateOfCollection);
         result.setDateoftransformation(patentDateOfCollection);
         result.setResulttype(OAF_ENTITY_RESULT_METADATA_RESULTTYPE);
