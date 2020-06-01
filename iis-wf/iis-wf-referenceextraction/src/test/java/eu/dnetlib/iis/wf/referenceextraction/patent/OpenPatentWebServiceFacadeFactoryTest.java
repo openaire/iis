@@ -20,9 +20,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
 import org.junit.Test;
 
 import com.google.common.collect.Maps;
@@ -204,23 +201,6 @@ public class OpenPatentWebServiceFacadeFactoryTest {
         assertNotNull(credential);
         assertEquals(Base64.getEncoder().encodeToString((key+':'+secret).getBytes(StandardCharsets.UTF_8)), credential);
     }
-    
-    @Test
-    public void testBuildHttpClient() throws Exception {
-     // given
-        int connectionTimeout = 1;
-        int readTimeout = 2;
-        
-        // execute
-        HttpClient client = OpenPatentWebServiceFacadeFactory.buildHttpClient(connectionTimeout, readTimeout);
-        
-        // assert
-        assertNotNull(client);
-        assertTrue(client.getParams() instanceof BasicHttpParams);
-        assertEquals(connectionTimeout, HttpConnectionParams.getConnectionTimeout(client.getParams()));
-        assertEquals(readTimeout, HttpConnectionParams.getSoTimeout(client.getParams()));
-    }
-    
     
     private Map<String, String> prepareValidConfiguration() {
         Map<String, String> conf = Maps.newHashMap();

@@ -10,7 +10,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.NoSuchElementException;
 
@@ -24,12 +27,15 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 
 import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
 
@@ -447,6 +453,45 @@ public class OpenPatentWebServiceFacadeTest {
         service.getPatentMetadata(patentBuilder.build());
     }
     
+    @Test
+    public void testBuildHttpClient() throws Exception {
+     // given
+        int connectionTimeout = 1;
+        int readTimeout = 2;
+        
+        // execute
+        HttpClient client = OpenPatentWebServiceFacade.buildHttpClient(connectionTimeout, readTimeout);
+        
+        // assert
+        assertNotNull(client);
+        assertTrue(client.getParams() instanceof BasicHttpParams);
+        assertEquals(connectionTimeout, HttpConnectionParams.getConnectionTimeout(client.getParams()));
+        assertEquals(readTimeout, HttpConnectionParams.getSoTimeout(client.getParams()));
+    }
+    
+    @Test
+    public void testSerializeAndDeserialize() throws Exception {
+        // given
+        OpenPatentWebServiceFacade service = new OpenPatentWebServiceFacade(10000, 10000,
+                "authn-host", 8080, "https", authUriRoot, 
+                "ops-host", 8090, "http", opsUriRoot, 
+                consumerCredential, 60000);
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(bos);
+        
+        // execute
+        oos.writeObject(service);
+        oos.flush();
+        oos.close();
+        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
+        OpenPatentWebServiceFacade deserService = (OpenPatentWebServiceFacade) ois.readObject();
+        ois.close();
+        
+        // assert
+        assertNotNull(deserService);
+    }
+    
     private ImportedPatent.Builder initializeWithDummyValues() {
         ImportedPatent.Builder patentBuilder = ImportedPatent.newBuilder();
         String irrelevant = "irrelevant";
@@ -471,7 +516,7 @@ public class OpenPatentWebServiceFacadeTest {
     
     private OpenPatentWebServiceFacade prepareValidService() {
         return new OpenPatentWebServiceFacade(httpClient, authHost, authUriRoot, opsHost,
-                opsUriRoot, consumerCredential, 1);
+                opsUriRoot, consumerCredential, 1, new JsonParser());
     }
     
 }

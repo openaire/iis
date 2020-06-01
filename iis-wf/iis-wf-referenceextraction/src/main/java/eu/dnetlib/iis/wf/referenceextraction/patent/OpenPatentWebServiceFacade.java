@@ -3,6 +3,9 @@ package eu.dnetlib.iis.wf.referenceextraction.patent;
 import static eu.dnetlib.iis.wf.referenceextraction.patent.OpenPatentWebServiceFacadeFactory.DEFAULT_CHARSET;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 
@@ -16,7 +19,11 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
@@ -39,29 +46,58 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
     private static final int DEFAULT_MAX_RETRIES_COUNT = 10;
     
     private static final Logger log = Logger.getLogger(OpenPatentWebServiceFacade.class);
-
+    
+    private String authUriRoot;
+    
+    private String opsUriRoot;
+    
+    // security related 
     private String currentSecurityToken;
 
-    private final String consumerCredential;
+    private String consumerCredential;
     
-    private final HttpClient httpClient;
 
-    private final HttpHost authHost;
+    private long throttleSleepTime; 
 
-    private final HttpHost opsHost;
+    // fields to be reinitialized after deserialization
+    private transient JsonParser jsonParser;
 
-    private final String authUriRoot;
+    private transient HttpClient httpClient;
 
-    private final String opsUriRoot;
+    private transient HttpHost authHost;
+
+    private transient HttpHost opsHost;
     
-    private final long throttleSleepTime; 
-
-    private final JsonParser jsonParser = new JsonParser();
-
-    // ------------------- CONSTRUCTOR -------------------------
+    /**
+     * Serialization / deserialization details.
+     */
+    private SerDe serDe;
     
-    public OpenPatentWebServiceFacade(HttpClient httpClient, HttpHost authHost, String authUriRoot,
-            HttpHost opsHost, String opsUriRoot, String consumerCredential, long throttleSleepTime) {
+    
+    // ------------------- CONSTRUCTORS ------------------------
+    
+    public OpenPatentWebServiceFacade(int connectionTimeout, int readTimeout, 
+            String authHostName, int authPort, String authScheme, String authUriRoot,
+            String opsHostName, int opsPort, String opsScheme, String opsUriRoot, 
+            String consumerCredential, long throttleSleepTime) {
+        
+        this(buildHttpClient(connectionTimeout, readTimeout),
+                new HttpHost(authHostName, authPort, authScheme), authUriRoot, 
+                new HttpHost(opsHostName, opsPort, opsScheme), opsUriRoot,
+                consumerCredential, throttleSleepTime, new JsonParser());
+        
+        // persisting for further serialization and deserialization
+        this.serDe = new SerDe(connectionTimeout, readTimeout, 
+                authHostName, authPort, authScheme, 
+                opsHostName, opsPort, opsScheme);
+    }
+    
+    /**
+     * Using this constructor simplifies object instantiation but also makes the whole object non-serializable.
+     */
+    protected OpenPatentWebServiceFacade(HttpClient httpClient, HttpHost authHost, String authUriRoot,
+            HttpHost opsHost, String opsUriRoot, String consumerCredential, long throttleSleepTime,
+            JsonParser jsonParser) {
         this.httpClient = httpClient;
         this.authHost = authHost;
         this.authUriRoot = authUriRoot;
@@ -69,6 +105,7 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
         this.opsUriRoot = opsUriRoot;
         this.consumerCredential = consumerCredential;
         this.throttleSleepTime = throttleSleepTime;
+        this.jsonParser = jsonParser;
     }
 
     // ------------------- LOGIC----------------------------
@@ -123,7 +160,37 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
         }
         }
     }
+    
+    // -------------------------- PRIVATE -------------------------
 
+    private void reinitialize(SerDe serDe, String authUriRoot, String opsUriRoot,
+            String consumerCredential, long throttleSleepTime) {
+
+        this.serDe = serDe;
+        
+        this.httpClient = buildHttpClient(serDe.connectionTimeout, serDe.readTimeout);
+        this.authHost = new HttpHost(serDe.authHostName, serDe.authPort, serDe.authScheme);
+        this.opsHost = new HttpHost(serDe.opsHostName, serDe.opsPort, serDe.opsScheme);
+        
+        this.authUriRoot = authUriRoot;
+        this.opsUriRoot = opsUriRoot;
+        
+        this.consumerCredential = consumerCredential;
+        this.throttleSleepTime = throttleSleepTime;
+        
+        this.jsonParser = new JsonParser();
+    }
+    
+    /**
+     * Builds HTTP client issuing requests to SH endpoint.
+     */
+    protected static HttpClient buildHttpClient(int connectionTimeout, int readTimeout) {
+        HttpParams httpParams = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(httpParams, connectionTimeout);
+        HttpConnectionParams.setSoTimeout(httpParams, readTimeout);
+        return new DefaultHttpClient(httpParams);
+    }
+    
     protected String getSecurityToken() throws Exception {
         if (StringUtils.isNotBlank(this.currentSecurityToken)) {
             return currentSecurityToken;
@@ -195,6 +262,66 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
         strBuilder.append(patent.getPublnKind());
         strBuilder.append("/biblio");
         return strBuilder.toString();
+    }
+    
+    // -------------------------- SerDe --------------------------------
+    
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        if (this.serDe == null) {
+            throw new IOException("unable to serialize object: "
+                    + "http connection related details are missing!");
+        }
+        oos.defaultWriteObject();
+        oos.writeObject(this.serDe);
+        oos.writeObject(this.authUriRoot);
+        oos.writeObject(this.opsUriRoot);
+        oos.writeObject(this.consumerCredential);
+        oos.writeObject(this.throttleSleepTime);
+    }
+    
+    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+        ois.defaultReadObject();
+        reinitialize((SerDe) ois.readObject(), 
+                (String) ois.readObject(), (String) ois.readObject(), 
+                (String) ois.readObject(), (Long) ois.readObject());
+    }
+    
+    // -------------------------- INNER CLASS --------------------------
+    
+    class SerDe implements Serializable {
+        
+        private static final long serialVersionUID = 1289144732356257009L;
+        
+        // http client related
+        private int connectionTimeout;
+
+        private int readTimeout;
+        
+        // EPO endpoints
+        private String authHostName;
+        
+        private int authPort;
+
+        private String authScheme;
+        
+        private String opsHostName;    
+        
+        private int opsPort;
+        
+        private String opsScheme;
+        
+        public SerDe(int connectionTimeout, int readTimeout, 
+                String authHostName, int authPort, String authScheme,
+                String opsHostName, int opsPort, String opsScheme) {
+            this.connectionTimeout = connectionTimeout;
+            this.readTimeout = readTimeout;
+            this.authHostName = authHostName;
+            this.authPort = authPort;
+            this.authScheme = authScheme;
+            this.opsHostName = opsHostName;
+            this.opsPort = opsPort;
+            this.opsScheme = opsScheme;
+        }
     }
 
 }

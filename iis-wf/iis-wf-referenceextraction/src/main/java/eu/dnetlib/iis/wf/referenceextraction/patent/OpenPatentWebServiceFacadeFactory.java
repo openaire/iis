@@ -6,12 +6,6 @@ import java.util.Base64;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpHost;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 
 import com.google.common.base.Preconditions;
 
@@ -72,16 +66,11 @@ public class OpenPatentWebServiceFacadeFactory implements ServiceFacadeFactory<P
                 : "10000";
                 
         
-        return new OpenPatentWebServiceFacade(
-                buildHttpClient(Integer.parseInt(connectionTimeout), Integer.parseInt(readTimeout)),
-                new HttpHost(conf.get(PARAM_SERVICE_ENDPOINT_AUTH_HOST),
-                        Integer.parseInt(conf.get(PARAM_SERVICE_ENDPOINT_AUTH_PORT)),
-                        conf.get(PARAM_SERVICE_ENDPOINT_AUTH_SCHEME)),
-                conf.get(PARAM_SERVICE_ENDPOINT_AUTH_URI_ROOT),
-                new HttpHost(conf.get(PARAM_SERVICE_ENDPOINT_OPS_HOST),
-                        Integer.parseInt(conf.get(PARAM_SERVICE_ENDPOINT_OPS_PORT)),
-                        conf.get(PARAM_SERVICE_ENDPOINT_OPS_SCHEME)),
-                conf.get(PARAM_SERVICE_ENDPOINT_OPS_URI_ROOT),
+        return new OpenPatentWebServiceFacade(Integer.parseInt(connectionTimeout), Integer.parseInt(readTimeout),
+                conf.get(PARAM_SERVICE_ENDPOINT_AUTH_HOST),Integer.parseInt(conf.get(PARAM_SERVICE_ENDPOINT_AUTH_PORT)),
+                conf.get(PARAM_SERVICE_ENDPOINT_AUTH_SCHEME), conf.get(PARAM_SERVICE_ENDPOINT_AUTH_URI_ROOT),
+                conf.get(PARAM_SERVICE_ENDPOINT_OPS_HOST), Integer.parseInt(conf.get(PARAM_SERVICE_ENDPOINT_OPS_PORT)),
+                conf.get(PARAM_SERVICE_ENDPOINT_OPS_SCHEME), conf.get(PARAM_SERVICE_ENDPOINT_OPS_URI_ROOT),
                 buildCredential(conf.get(PARAM_CONSUMER_KEY), conf.get(PARAM_CONSUMER_SECRET)),
                 Long.parseLong(throttleSleepTime));
     }
@@ -92,16 +81,6 @@ public class OpenPatentWebServiceFacadeFactory implements ServiceFacadeFactory<P
         strBuilder.append(':');
         strBuilder.append(secret);
         return Base64.getEncoder().encodeToString(strBuilder.toString().getBytes(DEFAULT_CHARSET));
-    }
-
-    /**
-     * Builds HTTP client issuing requests to SH endpoint.
-     */
-    protected static HttpClient buildHttpClient(int connectionTimeout, int readTimeout) {
-        HttpParams httpParams = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParams, connectionTimeout);
-        HttpConnectionParams.setSoTimeout(httpParams, readTimeout);
-        return new DefaultHttpClient(httpParams);
     }
 
 }
