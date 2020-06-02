@@ -3,6 +3,7 @@ package eu.dnetlib.iis.wf.importer.infospace.approver;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import eu.dnetlib.dhp.schema.oaf.DataInfo;
 import eu.dnetlib.dhp.schema.oaf.Oaf;
@@ -17,7 +18,10 @@ public class DataInfoBasedApprover implements ResultApprover, FieldApprover {
 
 
     private static final long serialVersionUID = -1093513836478197899L;
+    
+    private static final Logger log = Logger.getLogger(DataInfoBasedApprover.class);
 
+    
     /**
      * List of blacklisted inference provenance values.
      * 
@@ -68,19 +72,26 @@ public class DataInfoBasedApprover implements ResultApprover, FieldApprover {
     @Override
     public boolean approve(DataInfo dataInfo) {
         if (dataInfo != null) {
-            if (inferenceProvenanceBlacklistPattern != null && dataInfo.getInferred() &&
-                    Pattern.matches(inferenceProvenanceBlacklistPattern, dataInfo.getInferenceprovenance())) {
+            if (inferenceProvenanceBlacklistPattern != null && Boolean.TRUE.equals(dataInfo.getInferred())
+                    && StringUtils.isNotBlank(dataInfo.getInferenceprovenance())
+                    && Pattern.matches(inferenceProvenanceBlacklistPattern, dataInfo.getInferenceprovenance())) {
                 return false;
             }
-            if (skipDeletedByInference && dataInfo.getDeletedbyinference()) {
+            if (skipDeletedByInference && Boolean.TRUE.equals(dataInfo.getDeletedbyinference())) {
                 return false;
             }
-            if (dataInfo.getInvisible()) {
+            if (Boolean.TRUE.equals(dataInfo.getInvisible())) {
                 return false;
             }
-            if (trustLevelThreshold != null && StringUtils.isNotBlank(dataInfo.getTrust())
-                    && Float.valueOf(dataInfo.getTrust()) < trustLevelThreshold) {
-                return false;
+            if (trustLevelThreshold != null && StringUtils.isNotBlank(dataInfo.getTrust())) {
+                try {
+                    if (Float.valueOf(dataInfo.getTrust()) < trustLevelThreshold) {
+                        return false;
+                    }
+                } catch (Exception e) {
+                    log.error("skipping trust level check: unable to convert trust value to float: "
+                            + dataInfo.getTrust());
+                }
             }
         }
         return true;
