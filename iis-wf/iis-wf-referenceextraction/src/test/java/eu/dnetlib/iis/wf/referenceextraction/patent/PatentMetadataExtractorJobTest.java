@@ -9,6 +9,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -18,10 +20,13 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
+import eu.dnetlib.iis.audit.schemas.Fault;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
+import eu.dnetlib.iis.wf.referenceextraction.patent.parser.PatentMetadataParserException;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
@@ -39,6 +44,8 @@ public class PatentMetadataExtractorJobTest {
     private Path inputImportedPatentDir;
     private Path inputDocumentTextDir;
     private Path outputDir;
+    private Path outputFaultDir;
+    private Path outputReportDir;
 
     @Before
     public void before() throws IOException {
@@ -46,6 +53,8 @@ public class PatentMetadataExtractorJobTest {
         inputImportedPatentDir = workingDir.resolve("input_imported_patent");
         inputDocumentTextDir = workingDir.resolve("input_document_text");
         outputDir = workingDir.resolve("output");
+        outputFaultDir = workingDir.resolve("fault");
+        outputReportDir = workingDir.resolve("report");
     }
 
     @After
@@ -80,6 +89,12 @@ public class PatentMetadataExtractorJobTest {
         assertEquals(matchedPatentId, parsedPatent.getApplnNr().toString());
         assertEquals("XX", parsedPatent.getApplnAuth().toString());
         assertEquals("WO2000EP00003", parsedPatent.getApplnNrEpodoc().toString());
+        
+        List<Fault> generatedFaults = AvroTestUtils.readLocalAvroDataStore(outputFaultDir.toString());
+        assertNotNull(generatedFaults);
+        assertEquals(0, generatedFaults.size());
+
+        assertReports(AvroTestUtils.readLocalAvroDataStore(outputReportDir.toString()), 1, 0);
     }
     
     @Test
@@ -111,6 +126,15 @@ public class PatentMetadataExtractorJobTest {
         assertEquals(patentId, parsedPatent.getApplnNr().toString());
         assertEquals("XX", parsedPatent.getApplnAuth().toString());
         assertNull(parsedPatent.getApplnNrEpodoc());
+        
+        List<Fault> generatedFaults = AvroTestUtils.readLocalAvroDataStore(outputFaultDir.toString());
+        assertNotNull(generatedFaults);
+        assertEquals(1, generatedFaults.size());
+        Fault fault = generatedFaults.get(0);
+        assertEquals(patentId, fault.getInputObjectId().toString());
+        assertEquals(PatentMetadataParserException.class.getCanonicalName(), fault.getCode().toString());
+
+        assertReports(AvroTestUtils.readLocalAvroDataStore(outputReportDir.toString()), 1, 1);
     }
     
     @Test
@@ -133,6 +157,28 @@ public class PatentMetadataExtractorJobTest {
         List<Patent> calculatedResult = AvroTestUtils.readLocalAvroDataStore(outputDir.toString());
         assertNotNull(calculatedResult);
         assertEquals(0, calculatedResult.size());
+        
+        List<Fault> generatedFaults = AvroTestUtils.readLocalAvroDataStore(outputFaultDir.toString());
+        assertNotNull(generatedFaults);
+        assertEquals(0, generatedFaults.size());
+
+        assertReports(AvroTestUtils.readLocalAvroDataStore(outputReportDir.toString()), 0, 0);
+    }
+    
+    private void assertReports(List<ReportEntry> reports, int processedTotal, int processedFault) {
+        assertNotNull(reports);
+        assertEquals(2, reports.size());
+        
+        Map<String, String> reportMap = reports.stream()
+                .collect(Collectors.toMap(x -> x.getKey().toString(), x -> x.getValue().toString()));
+        
+        String counterValue = reportMap.get(PatentMetadataExtractorJob.COUNTER_PROCESSED_TOTAL);
+        assertNotNull(counterValue);
+        assertEquals(processedTotal, Integer.parseInt(counterValue));
+        
+        counterValue = reportMap.get(PatentMetadataExtractorJob.COUNTER_PROCESSED_FAULT);
+        assertNotNull(counterValue);
+        assertEquals(processedFault, Integer.parseInt(counterValue));
     }
     
     private ImportedPatent buildImportedPatent(String applnAuth, String applnNr) {
@@ -162,6 +208,8 @@ public class PatentMetadataExtractorJobTest {
                 .addArg("-inputImportedPatentPath", inputImportedPatentDir.toString())
                 .addArg("-inputDocumentTextPath", inputDocumentTextDir.toString())
                 .addArg("-outputPath", outputDir.toString())
+                .addArg("-outputFaultPath", outputFaultDir.toString())
+                .addArg("-outputReportPath", outputReportDir.toString())
                 .addJobProperty("spark.driver.host", "localhost")
                 .build();
     }

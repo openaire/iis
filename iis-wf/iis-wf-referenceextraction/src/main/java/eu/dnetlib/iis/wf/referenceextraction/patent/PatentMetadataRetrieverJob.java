@@ -57,6 +57,8 @@ public class PatentMetadataRetrieverJob {
         
         try (JavaSparkContext sc = JavaSparkContextFactory.withConfAndKryo(new SparkConf())) {
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputPath);
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputFaultPath);
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
             
             try {
                 if (StringUtils.isNotBlank(params.metadataRetrieverFacadeFactoryClassname)) {
