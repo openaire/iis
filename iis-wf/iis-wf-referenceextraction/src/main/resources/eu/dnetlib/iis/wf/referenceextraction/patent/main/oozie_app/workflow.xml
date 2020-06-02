@@ -4,19 +4,19 @@
     <parameters>
         <property>
             <name>input_document_text</name>
-            <description>input document text</description>
+            <description>input document text with DocumentText records</description>
         </property>
         <property>
             <name>input_patent</name>
-            <description>input patent</description>
+            <description>input patent with ImportedPatent records</description>
         </property>
         <property>
             <name>output_document_to_patent</name>
-            <description>output document to patent</description>
+            <description>output document to patent with DocumentToPatent records</description>
         </property>
         <property>
             <name>output_patent_metadata</name>
-            <description>output patent metadata</description>
+            <description>output patent metadata with Patent records</description>
         </property>
         <property>
             <name>output_report_root_path</name>
@@ -68,47 +68,53 @@
         </property>
         <property>
             <name>patent_service_authn_consumer_key</name>
-            <description>remote EPO endpoint API authentication consumer key</description>
+            <value>$UNDEFINED$</value>
+            <description>remote EPO endpoint API authentication consumer key, required by OpenPatentWebServiceFacadeFactory</description>
         </property>
         <property>
             <name>patent_service_authn_consumer_secret</name>
-            <description>remote EPO endpoint API authentication consumer secret</description>
+            <value>$UNDEFINED$</value>
+            <description>remote EPO endpoint API authentication consumer secret, required by OpenPatentWebServiceFacadeFactory</description>
         </property>
         <property>
             <name>patent_service_endpoint_auth_host</name>
-            <description>remote EPO endpoint authentication host</description>
+            <value>$UNDEFINED$</value>
+            <description>remote EPO endpoint authentication host, required by OpenPatentWebServiceFacadeFactory</description>
         </property>
         <property>
             <name>patent_service_endpoint_auth_port</name>
             <value>443</value>
-            <description>remote EPO endpoint authentication port</description>
+            <description>remote EPO endpoint authentication port, required by OpenPatentWebServiceFacadeFactory</description>
         </property>
         <property>
             <name>patent_service_endpoint_auth_scheme</name>
             <value>https</value>
-            <description>remote EPO endpoint authentication scheme</description>
+            <description>remote EPO endpoint authentication scheme, required by OpenPatentWebServiceFacadeFactory</description>
         </property>
         <property>
             <name>patent_service_endpoint_auth_uri_root</name>
-            <description>remote EPO endpoint authentication URI root</description>
+            <value>$UNDEFINED$</value>
+            <description>remote EPO endpoint authentication URI root, required by OpenPatentWebServiceFacadeFactory</description>
         </property>
         <property>
             <name>patent_service_endpoint_ops_host</name>
-            <description>remote EPO endpoint OPS host</description>
+            <value>$UNDEFINED$</value>
+            <description>remote EPO endpoint OPS host, required by OpenPatentWebServiceFacadeFactory</description>
         </property>
         <property>
             <name>patent_service_endpoint_ops_port</name>
             <value>443</value>
-            <description>remote EPO endpoint OPS port</description>
+            <description>remote EPO endpoint OPS port, required by OpenPatentWebServiceFacadeFactory</description>
         </property>
         <property>
             <name>patent_service_endpoint_ops_scheme</name>
             <value>https</value>
-            <description>remote EPO endpoint OPS scheme</description>
+            <description>remote EPO endpoint OPS scheme, required by OpenPatentWebServiceFacadeFactory</description>
         </property>
         <property>
             <name>patent_service_endpoint_ops_uri_root</name>
-            <description>remote EPO endpoint OPS URI root</description>
+            <value>$UNDEFINED$</value>
+            <description>remote EPO endpoint OPS URI root, required by OpenPatentWebServiceFacadeFactory</description>
         </property>
     </parameters>
 

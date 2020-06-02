@@ -42,10 +42,10 @@ public class PatentReferenceExtractionInputTransformerJobTest {
     public void shouldConvertAvroDatastoreForReferenceExtraction() throws IOException {
         // given
         String inputPatentPath = Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/patent.json"))
+                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/input_transformer/imported_patent.json"))
                 .getFile();
         String outputTransformedPatentPath = Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/patent_transformed.json"))
+                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/input_transformer/patent_transformed.json"))
                 .getFile();
         AvroTestUtils.createLocalAvroDataStore(JsonAvroTestUtils.readJsonDataStore(inputPatentPath, ImportedPatent.class), inputDir.toString());
 
