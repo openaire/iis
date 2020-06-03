@@ -142,7 +142,7 @@
     <action name="input_transformer">
         <spark xmlns="uri:oozie:spark-action:0.2">
             <prepare>
-                <delete path="${workingDir}/patent"/>
+                <delete path="${workingDir}/patents_for_matching"/>
             </prepare>
 
             <master>yarn-cluster</master>
@@ -160,7 +160,7 @@
                 --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
             </spark-opts>
             <arg>-inputPath=${input_patent}</arg>
-            <arg>-outputPath=${workingDir}/patent</arg>
+            <arg>-outputPath=${workingDir}/patents_for_matching</arg>
         </spark>
         <ok to="sqlite_builder"/>
         <error to="fail"/>
@@ -177,7 +177,7 @@
                 </property>
                 <property>
                     <name>input_patent</name>
-                    <value>${workingDir}/patent</value>
+                    <value>${workingDir}/patents_for_matching</value>
                 </property>
                 <property>
                     <name>output_patent_db</name>
@@ -213,7 +213,6 @@
             <prepare>
                 <delete path="${workingDir}/metadata_retriever_input"/>
             </prepare>
-
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>patent-metadata-retriever-input-transformer</name>
@@ -240,12 +239,10 @@
         <spark xmlns="uri:oozie:spark-action:0.2">
             <prepare>
                 <delete path="${workingDir}/retrieved_metadata"/>
+                <delete path="${workingDir}/metadata_retriever_faults"/>
+                <delete path="${output_report_root_path}/patent_metadata_retriever"/>
             </prepare>
             <configuration>
-                <property>
-                    <name>import.facade.factory.classname</name>
-                    <value>${patent_metadata_retriever_facade_factory_classname}</value>
-                </property>
                 <property>
                     <name>patent.service.authn.consumer.key</name>
                     <value>${patent_service_authn_consumer_key}</value>
@@ -299,7 +296,6 @@
                     <value>10000</value>
                 </property>
             </configuration>
-
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>patent-metadata-retriever</name>
@@ -316,9 +312,10 @@
             </spark-opts>
             <arg>-inputPath=${workingDir}/metadata_retriever_input</arg>
             <arg>-numberOfEmittedFiles=${number_of_emitted_files}</arg>
+            <arg>-metadataRetrieverFacadeFactoryClassname=${patent_metadata_retriever_facade_factory_classname}</arg>
             <arg>-outputPath=${workingDir}/metadata_retriever_output</arg>
             <arg>-outputFaultPath=${workingDir}/metadata_retriever_faults</arg>
-            <arg>-outputReportPath=${output_report_root_path}/patent_metadata_retriever</arg>
+            <arg>-outputReportPath=${output_report_root_path}/patent_metadata_retrieval</arg>
         </spark>
         <ok to="metadata_extractor"/>
         <error to="fail"/>
@@ -328,8 +325,9 @@
         <spark xmlns="uri:oozie:spark-action:0.2">
             <prepare>
                 <delete path="${output_patent_metadata}"/>
+                <delete path="${workingDir}/metadata_extraction_faults"/>
+                <delete path="${output_report_root_path}/patent_metadata_extraction"/>
             </prepare>
-
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>patent-metadata-extractor</name>

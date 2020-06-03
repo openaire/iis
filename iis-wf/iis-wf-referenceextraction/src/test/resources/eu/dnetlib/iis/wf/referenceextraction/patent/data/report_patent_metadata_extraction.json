@@ -1,0 +1,2 @@
+{"key":"processing.referenceExtraction.patent.metadataextraction.processed.total", "type":"COUNTER", "value": "8"}
+{"key":"processing.referenceExtraction.patent.metadataextraction.processed.fault", "type":"COUNTER", "value": "7"}
