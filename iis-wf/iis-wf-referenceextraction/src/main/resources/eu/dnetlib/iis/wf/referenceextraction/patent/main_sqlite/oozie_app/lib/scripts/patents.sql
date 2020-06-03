@@ -4,8 +4,6 @@ create temp table pubs as select * from
 ( setschema 'c1,c2'  select jsonpath(c1,'id','text') from 
 stdinput() );
 
-
-
 -- select jdict('documentId', docid, 'patentId', id, 'confidenceLevel', 0.8,'textsnippet',context) from (
 
 
@@ -23,6 +21,6 @@ and (not regexprmatches("[0-9]\."||appln_nr,middle) )
 );
 
 
-#select jdict('documentId', docid, 'appln_nr', id, 'confidenceLevel', 0.8,'textsnippet',context,'author',regexprmatches(authors,context))  from results;
+--select jdict('documentId', docid, 'appln_nr', id, 'confidenceLevel', 0.8,'textsnippet',context,'author',regexprmatches(authors,context))  from results;
 
 
