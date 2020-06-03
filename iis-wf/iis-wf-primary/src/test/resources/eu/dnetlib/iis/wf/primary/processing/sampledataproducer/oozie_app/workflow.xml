@@ -426,6 +426,10 @@
 					<name>metric_pusher_address</name>
 					<value>${workingDir}/report/pushgateway</value>
 				</property>
+                <property>
+                    <name>patent_metadata_retriever_facade_factory_classname</name>
+                    <value>eu.dnetlib.iis.wf.referenceextraction.patent.ClassPathBasedPatentServiceFacadeFactory</value>
+                </property>
 			</configuration>
 		</sub-workflow>
 		<ok to="consumer" />

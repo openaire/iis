@@ -76,13 +76,13 @@ public class PatentExportCounterReporterTest {
     public void reportShouldCreateAndSaveReportAsAvroDatastoreOfReportEntries() {
         //given
         List<DocumentToPatent> documentToPatents = Arrays.asList(
-                DocumentToPatent.newBuilder().setDocumentId("d1").setPatentId("p1").setConfidenceLevel(0.9f).build(),
-                DocumentToPatent.newBuilder().setDocumentId("d1").setPatentId("p2").setConfidenceLevel(0.9f).build(),
-                DocumentToPatent.newBuilder().setDocumentId("d2").setPatentId("p2").setConfidenceLevel(0.9f).build()
+                DocumentToPatent.newBuilder().setDocumentId("d1").setApplnNr("p1").setConfidenceLevel(0.9f).build(),
+                DocumentToPatent.newBuilder().setDocumentId("d1").setApplnNr("p2").setConfidenceLevel(0.9f).build(),
+                DocumentToPatent.newBuilder().setDocumentId("d2").setApplnNr("p2").setConfidenceLevel(0.9f).build()
         );
         JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = sc.parallelize(documentToPatents)
                 .map(x ->
-                        new DocumentToPatentWithIdsToExport(x, String.format("export_%s", x.getDocumentId()), String.format("export_%s", x.getPatentId())));
+                        new DocumentToPatentWithIdsToExport(x, String.format("export_%s", x.getDocumentId()), String.format("export_%s", x.getApplnNr())));
 
         //when
         reporter.report(sc, documentToPatentsToExportWithIds, outputReportPath);

@@ -47,7 +47,7 @@ public class PatentMetadataRetrieverInputTransformerJob {
                     .mapToPair(x -> new Tuple2<CharSequence, ImportedPatent>(x.getApplnNr(), x));
 
             JavaPairRDD<CharSequence, Boolean> matchedDedupedPatentsById = avroLoader
-                    .loadJavaRDD(sc, params.inputMatchedPatentPath, DocumentToPatent.class).map(x -> x.getPatentId())
+                    .loadJavaRDD(sc, params.inputMatchedPatentPath, DocumentToPatent.class).map(x -> x.getApplnNr())
                     .distinct().mapToPair(x -> new Tuple2<CharSequence, Boolean>(x, true));
 
             JavaRDD<ImportedPatent> filteredPatents = matchedDedupedPatentsById.join(importedPatentsById).values().map(x -> x._2);

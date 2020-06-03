@@ -6,7 +6,7 @@ protocol IIS{
         string documentId;
 //      identifier of patent referenced in this document,
 //      foreign key: Patent.appln_nr
-        string patentId;
+        string appln_nr;
 //		Find more details on `confidenceLevel` constraints in eu/dnetlib/iis/README.markdown file.
         float confidenceLevel;
 //      text snippet surrounding the matched reference, required mostly for internal debugging and analytics  

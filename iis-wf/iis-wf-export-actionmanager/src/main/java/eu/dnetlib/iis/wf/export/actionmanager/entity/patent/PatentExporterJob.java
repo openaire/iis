@@ -123,7 +123,7 @@ public class PatentExporterJob {
                     .cache();
 
             JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = documentToPatentsToExport
-                    .mapToPair(x -> new Tuple2<>(x.getPatentId(), x))
+                    .mapToPair(x -> new Tuple2<>(x.getApplnNr(), x))
                     .join(patentsById)
                     .map(x -> {
                         DocumentToPatent documentToPatent = x._2()._1();
@@ -246,7 +246,7 @@ public class PatentExporterJob {
                                                                        Float trustLevelThreshold) {
         return documentToPatents
                 .filter(x -> isValidDocumentToPatent(x, trustLevelThreshold))
-                .groupBy(x -> new Tuple2<>(x.getDocumentId(), x.getPatentId()))
+                .groupBy(x -> new Tuple2<>(x.getDocumentId(), x.getApplnNr()))
                 .mapValues(xs -> StreamUtils.asStream(xs.iterator()).reduce(PatentExporterJob::reduceByConfidenceLevel))
                 .filter(x -> x._2.isPresent())
                 .mapValues(java.util.Optional::get)
@@ -313,7 +313,7 @@ public class PatentExporterJob {
                                                             String patentDateOfCollection,
                                                             String patentEpoUrlRoot) {
         JavaRDD<AtomicAction<Publication>> result = documentToPatentsToExportWithIds
-                .mapToPair(x -> new Tuple2<>(x.getDocumentToPatent().getPatentId(), x.getPatentIdToExport()))
+                .mapToPair(x -> new Tuple2<>(x.getDocumentToPatent().getApplnNr(), x.getPatentIdToExport()))
                 .distinct()
                 .join(patentsById)
                 .values()

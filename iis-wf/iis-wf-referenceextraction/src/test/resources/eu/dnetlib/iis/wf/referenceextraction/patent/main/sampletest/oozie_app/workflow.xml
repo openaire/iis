@@ -92,18 +92,24 @@
                 eu.dnetlib.iis.referenceextraction.patent.schemas.Patent,
                 eu/dnetlib/iis/wf/referenceextraction/patent/data/extracted_patent_metadata.json}
             </arg>
+<!-- 
             <arg>-C{report_patent_metadata_retrieval,
-                report,eu.dnetlib.iis.common.schemas.ReportEntry,
+                eu.dnetlib.iis.common.schemas.ReportEntry,
                 eu/dnetlib/iis/wf/referenceextraction/patent/data/report_patent_metadata_retrieval.json}
             </arg>
             <arg>-C{report_patent_metadata_extraction,
-                report,eu.dnetlib.iis.common.schemas.ReportEntry,
+                eu.dnetlib.iis.common.schemas.ReportEntry,
                 eu/dnetlib/iis/wf/referenceextraction/patent/data/report_patent_metadata_extraction.json}
             </arg>
+ -->
             <arg>-Idocument_to_patent=${workingDir}/referenceextraction_patent/output</arg>
             <arg>-Ipatent_metadata=${workingDir}/referenceextraction_patent/output_patent_metadata</arg>
-            <arg>-Ireport_patent_metadata_retrieval={workingDir}/referenceextraction_patent/report/report_patent_metadata_retrieval</arg>
-            <arg>-Ireport_patent_metadata_extraction={workingDir}/referenceextraction_patent/report/report_patent_metadata_extraction</arg>
+<!--        PROBLEM: 
+            File /user/marek.horst/wf/referenceextraction/patent/main/sampletest/working_dir/referenceextraction_patent/report/report_patent_metadata_retrieval does not exist.
+            TODO spr filesystem po ponowieniu i gdzie są raporty
+            <arg>-Ireport_patent_metadata_retrieval=${workingDir}/referenceextraction_patent/report/report_patent_metadata_retrieval</arg>
+            <arg>-Ireport_patent_metadata_extraction=${workingDir}/referenceextraction_patent/report/report_patent_metadata_extraction</arg>
+ -->
         </java>
         <ok to="end"/>
         <error to="fail"/>

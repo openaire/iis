@@ -94,11 +94,11 @@ public class PatentMetadataRetrieverJobTest {
                 .setMainClass(PatentMetadataRetrieverJob.class)
                 .addArg("-inputPath", inputDir.toString())
                 .addArg("-numberOfEmittedFiles", String.valueOf(1))
-                .addArg("-metadataRetrieverFacadeFactoryClassname", PatentFacadeMockFactory.class.getCanonicalName())
                 .addArg("-outputPath", outputDir.toString())
                 .addArg("-outputFaultPath", outputFaultDir.toString())
                 .addArg("-outputReportPath", outputReportDir.toString())
                 .addJobProperty("spark.driver.host", "localhost")
+                .addJobProperty("spark.hadoop.import.facade.factory.classname", PatentFacadeMockFactory.class.getCanonicalName())
                 .build();
     }
 }
