@@ -1,7 +1,90 @@
-{"appln_auth":"EP","appln_nr":"08159385","appln_filing_date":null,"appln_nr_epodoc":null,"earliest_publn_date":null,"appln_abstract":null,"appln_title":null,"ipc_class_symbol":null,"applicant_names":null,"applicant_country_codes":null}
-{"appln_auth":"EP","appln_nr":"11305584","appln_filing_date":null,"appln_nr_epodoc":null,"earliest_publn_date":null,"appln_abstract":null,"appln_title":null,"ipc_class_symbol":null,"applicant_names":null,"applicant_country_codes":null}
-{"appln_auth":"EP","appln_nr":"97202904","appln_filing_date":null,"appln_nr_epodoc":null,"earliest_publn_date":null,"appln_abstract":null,"appln_title":null,"ipc_class_symbol":null,"applicant_names":null,"applicant_country_codes":null}
-{"appln_auth":"EP","appln_nr":"99480075","appln_filing_date":null,"appln_nr_epodoc":null,"earliest_publn_date":null,"appln_abstract":null,"appln_title":null,"ipc_class_symbol":null,"applicant_names":null,"applicant_country_codes":null}
-{"appln_auth":"EP","appln_nr":"9806838","appln_filing_date":null,"appln_nr_epodoc":null,"earliest_publn_date":null,"appln_abstract":null,"appln_title":null,"ipc_class_symbol":null,"applicant_names":null,"applicant_country_codes":null}
-{"appln_auth":"EP","appln_nr":"2013058681","appln_filing_date":null,"appln_nr_epodoc":null,"earliest_publn_date":null,"appln_abstract":null,"appln_title":null,"ipc_class_symbol":null,"applicant_names":null,"applicant_country_codes":null}
-{"appln_auth":"EP","appln_nr":"93430009","appln_filing_date":null,"appln_nr_epodoc":null,"earliest_publn_date":null,"appln_abstract":null,"appln_title":null,"ipc_class_symbol":null,"applicant_names":null,"applicant_country_codes":null}
+{
+  "appln_auth": "EP",
+  "appln_nr": "9806838",
+  "appln_filing_date": null,
+  "appln_nr_epodoc": null,
+  "earliest_publn_date": null,
+  "appln_abstract": null,
+  "appln_title": null,
+  "ipc_class_symbol": null,
+  "applicant_names": null,
+  "applicant_country_codes": null
+}
+{
+  "appln_auth": "EP",
+  "appln_nr": "2013058681",
+  "appln_filing_date": "2000-01-06",
+  "appln_nr_epodoc": "WO2000EP00011",
+  "earliest_publn_date": "2000-01-01",
+  "appln_abstract": "This is abstract",
+  "appln_title": "The great invention",
+  "ipc_class_symbol": [
+    "C08F2/20"
+  ],
+  "applicant_names": [
+    "Jan Nowak"
+  ],
+  "applicant_country_codes": [
+    "PL"
+  ]
+}
+{
+  "appln_auth": "EP",
+  "appln_nr": "99480075",
+  "appln_filing_date": null,
+  "appln_nr_epodoc": null,
+  "earliest_publn_date": null,
+  "appln_abstract": null,
+  "appln_title": null,
+  "ipc_class_symbol": null,
+  "applicant_names": null,
+  "applicant_country_codes": null
+}
+{
+  "appln_auth": "EP",
+  "appln_nr": "93430009",
+  "appln_filing_date": null,
+  "appln_nr_epodoc": null,
+  "earliest_publn_date": null,
+  "appln_abstract": null,
+  "appln_title": null,
+  "ipc_class_symbol": null,
+  "applicant_names": null,
+  "applicant_country_codes": null
+}
+{
+  "appln_auth": "EP",
+  "appln_nr": "11305584",
+  "appln_filing_date": null,
+  "appln_nr_epodoc": null,
+  "earliest_publn_date": null,
+  "appln_abstract": null,
+  "appln_title": null,
+  "ipc_class_symbol": null,
+  "applicant_names": null,
+  "applicant_country_codes": null
+}
+{
+  "appln_auth": "EP",
+  "appln_nr": "97202904",
+  "appln_filing_date": null,
+  "appln_nr_epodoc": null,
+  "earliest_publn_date": null,
+  "appln_abstract": null,
+  "appln_title": null,
+  "ipc_class_symbol": null,
+  "applicant_names": null,
+  "applicant_country_codes": null
+}
+{
+  "appln_auth": "EP",
+  "appln_nr": "08159385",
+  "appln_filing_date": null,
+  "appln_nr_epodoc": null,
+  "earliest_publn_date": null,
+  "appln_abstract": null,
+  "appln_title": null,
+  "ipc_class_symbol": null,
+  "applicant_names": null,
+  "applicant_country_codes": null
+}
