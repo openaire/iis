@@ -1,7 +1,6 @@
 package eu.dnetlib.iis.wf.referenceextraction.patent.parser;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -51,7 +50,7 @@ public class OpsPatentMetadataXPathBasedParserTest {
                 .getResourceAsStream(xmlResourcesRootClassPath + "WO.0042078.A1.xml"), StandardCharsets.UTF_8.name());
 
         // execute
-        Patent.Builder patent = parser.parse(xmlContents, Patent.newBuilder());
+        Patent.Builder patent = parser.parse(xmlContents, getPatentBuilderInitializedWithRequiredFields());
 
         // assert
         assertNotNull(patent);
@@ -85,15 +84,14 @@ public class OpsPatentMetadataXPathBasedParserTest {
         String xmlContents = buildXMLContents(null, null, null, null, null, null, null, null);
 
         // execute
-        Patent.Builder patent = parser.parse(xmlContents, Patent.newBuilder());
+        Patent.Builder patentBuilder = parser.parse(xmlContents, getPatentBuilderInitializedWithRequiredFields());
 
         // assert
+        Patent patent = patentBuilder.build();
         assertNotNull(patent);
         assertNull(patent.getApplnTitle());
         assertNull(patent.getApplnAbstract());
-        assertNull(patent.getApplnAuth());
-        assertNull(patent.getApplnNr());
-        assertFalse(patent.hasApplnNrEpodoc());
+        assertNull(patent.getApplnNrEpodoc());
         assertNull(patent.getApplnFilingDate());
         assertNull(patent.getEarliestPublnDate());
         assertNull(patent.getIpcClassSymbol());
@@ -115,11 +113,11 @@ public class OpsPatentMetadataXPathBasedParserTest {
                 epodocApplicantNames, originalApplicantNames);
 
         // execute
-        Patent.Builder patent = parser.parse(xmlContents, Patent.newBuilder());
+        Patent.Builder patentBuilder = parser.parse(xmlContents, getPatentBuilderInitializedWithRequiredFields());
 
         // assert
+        Patent patent = patentBuilder.build();
         assertNotNull(patent);
-        assertTrue(patent.hasApplnTitle());
         assertEquals(title, patent.getApplnTitle());
         assertNotNull(patent.getApplnAbstract());
         assertEquals(abstractText, patent.getApplnAbstract());
@@ -145,9 +143,10 @@ public class OpsPatentMetadataXPathBasedParserTest {
         String publnDate = "2000-05-30";
 
         // execute
-        Patent.Builder patent = parser.parse(buildXMLContentsWithPublnDate(publnDate), Patent.newBuilder());
+        Patent.Builder patentBuilder = parser.parse(buildXMLContentsWithPublnDate(publnDate), getPatentBuilderInitializedWithRequiredFields());
 
         // assert
+        Patent patent = patentBuilder.build();
         assertNotNull(patent);
         assertEquals("2000-05-30", patent.getEarliestPublnDate());
     }
@@ -158,9 +157,10 @@ public class OpsPatentMetadataXPathBasedParserTest {
         String publnDate = "30/05/99";
 
         // execute
-        Patent.Builder patent = parser.parse(buildXMLContentsWithPublnDate(publnDate), Patent.newBuilder());
+        Patent.Builder patentBuilder = parser.parse(buildXMLContentsWithPublnDate(publnDate), getPatentBuilderInitializedWithRequiredFields());
 
         // assert
+        Patent patent = patentBuilder.build();
         assertNotNull(patent);
         assertEquals("30/05/99", patent.getEarliestPublnDate());
     }
@@ -181,14 +181,15 @@ public class OpsPatentMetadataXPathBasedParserTest {
                 epodocApplicantNames, originalApplicantNames);
 
         // execute
-        Patent.Builder patent = parser.parse(xmlContents, Patent.newBuilder());
-
+        Patent.Builder patentBuilder = parser.parse(xmlContents, getPatentBuilderInitializedWithRequiredFields());
+        
         // assert
+        Patent patent = patentBuilder.build();
         assertNotNull(patent);
         assertNull(patent.getApplicantNames());
         assertNotNull(patent.getApplicantCountryCodes());
         assertEquals(1, patent.getApplicantCountryCodes().size());
-        assertEquals(null, patent.getApplicantCountryCodes().get(0));
+        assertEquals("", patent.getApplicantCountryCodes().get(0));
     }
     
     @Test
@@ -207,9 +208,10 @@ public class OpsPatentMetadataXPathBasedParserTest {
                 epodocApplicantNames, originalApplicantNames);
 
         // execute
-        Patent.Builder patent = parser.parse(xmlContents, Patent.newBuilder());
+        Patent.Builder patentBuilder = parser.parse(xmlContents, getPatentBuilderInitializedWithRequiredFields());
 
         // assert
+        Patent patent = patentBuilder.build();
         assertNotNull(patent);
         assertNull(patent.getApplicantCountryCodes());
         assertNotNull(patent.getApplicantNames());
@@ -219,6 +221,13 @@ public class OpsPatentMetadataXPathBasedParserTest {
     }
     
     // -------------------------------- PRIVATE ----------------------------
+    
+    private Patent.Builder getPatentBuilderInitializedWithRequiredFields() {
+        Patent.Builder patentBuilder = Patent.newBuilder();
+        patentBuilder.setApplnAuth("irrelevant");
+        patentBuilder.setApplnNr("irrelevant");
+        return patentBuilder;
+    }
 
     private String buildXMLContentsWithPublnDate(String publnDate) throws ParserConfigurationException, TransformerException {
         return buildXMLContents(null, null, null, null, null, publnDate, null, null);

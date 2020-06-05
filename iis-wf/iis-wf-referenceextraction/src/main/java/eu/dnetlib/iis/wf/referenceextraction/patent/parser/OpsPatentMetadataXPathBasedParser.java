@@ -261,7 +261,7 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
                 return countryCodeCandidates[countryCodeCandidates.length -1]; 
             }
         }
-        return null;
+        return "";
     }
     
     private void instantiateParser() {

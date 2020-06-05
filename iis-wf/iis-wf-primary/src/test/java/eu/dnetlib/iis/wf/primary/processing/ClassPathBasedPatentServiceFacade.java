@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.referenceextraction.patent;
+package eu.dnetlib.iis.wf.primary.processing;
 
 import java.io.IOException;
 import java.util.NoSuchElementException;
@@ -6,6 +6,8 @@ import java.util.NoSuchElementException;
 import org.apache.commons.io.IOUtils;
 
 import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
+import eu.dnetlib.iis.wf.referenceextraction.patent.PatentServiceException;
+import eu.dnetlib.iis.wf.referenceextraction.patent.PatentServiceFacade;
 
 /**
  * Simple mock retrieving XML concents as files from classpath. Relies on
@@ -21,11 +23,15 @@ public class ClassPathBasedPatentServiceFacade implements PatentServiceFacade {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String classPathRoot = "/eu/dnetlib/iis/wf/referenceextraction/patent/data/mock_facade_storage/";
+    private static final String classPathRoot = "/eu/dnetlib/iis/wf/primary/processing/data/patent/mock_facade_storage/";
 
     @Override
-    public String getPatentMetadata(ImportedPatent patent) throws NoSuchElementException, Exception {
-        return getContent(classPathRoot + generateFileName(patent));
+    public String getPatentMetadata(ImportedPatent patent) throws NoSuchElementException, PatentServiceException {
+        try {
+            return getContent(classPathRoot + generateFileName(patent));
+        } catch (Exception e) {
+            throw new PatentServiceException(e);
+        }
     }
 
     private static String generateFileName(ImportedPatent patent) {
@@ -44,3 +50,4 @@ public class ClassPathBasedPatentServiceFacade implements PatentServiceFacade {
     }
 
 }
+

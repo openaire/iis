@@ -108,7 +108,7 @@ public class PatentMetadataExtractorJob {
         } catch (PatentMetadataParserException e) {
             log.error("error while parsing xml contents of patent id " + patent.getId() + ", text content: "
                     + patent.getText(), e);
-            return new PatentOrFault(fillRequiredDataWithNullsAndBuild(resultBuilder), e);
+            return new PatentOrFault(resultBuilder.build(), e);
         }
     }
 
@@ -116,34 +116,6 @@ public class PatentMetadataExtractorJob {
         patentBuilder.setApplnAuth(importedPatent.getApplnAuth());
         patentBuilder.setApplnNr(importedPatent.getApplnNr());
         return patentBuilder;
-    }
-    
-    private static Patent fillRequiredDataWithNullsAndBuild(Patent.Builder patentBuilder) {
-        if (!patentBuilder.hasApplicantNames()) {
-            patentBuilder.setApplicantNames(null);
-        }
-        if (!patentBuilder.hasApplicantCountryCodes()) {
-            patentBuilder.setApplicantCountryCodes(null);
-        }
-        if (!patentBuilder.hasApplnAbstract()) {
-            patentBuilder.setApplnAbstract(null);
-        }
-        if (!patentBuilder.hasApplnFilingDate()) {
-            patentBuilder.setApplnFilingDate(null);
-        }
-        if (!patentBuilder.hasApplnNrEpodoc()) {
-            patentBuilder.setApplnNrEpodoc(null);
-        }
-        if (!patentBuilder.hasApplnTitle()) {
-            patentBuilder.setApplnTitle(null);
-        }
-        if (!patentBuilder.hasEarliestPublnDate()) {
-            patentBuilder.setEarliestPublnDate(null);
-        }
-        if (!patentBuilder.hasIpcClassSymbol()) {
-            patentBuilder.setIpcClassSymbol(null);
-        }
-        return patentBuilder.build();
     }
 
     @Parameters(separators = "=")

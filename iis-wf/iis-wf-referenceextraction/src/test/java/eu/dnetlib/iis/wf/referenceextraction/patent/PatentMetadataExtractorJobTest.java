@@ -98,6 +98,41 @@ public class PatentMetadataExtractorJobTest {
     }
     
     @Test
+    public void testExtractMetadataNoCountryCode() throws IOException {
+        // given
+        String matchedPatentId = "1234";
+        List<ImportedPatent> importedPatent = Lists.newArrayList(
+                buildImportedPatent("XX", matchedPatentId),
+                buildImportedPatent("YY", "5678"));
+        List<DocumentText> documentText = Lists.newArrayList(
+                buildDocumentText(matchedPatentId, xmlResourcesRootClassPath + "WO.0042078.A1.no_country_code.xml"));
+
+        AvroTestUtils.createLocalAvroDataStore(importedPatent, inputImportedPatentDir.toString());
+        AvroTestUtils.createLocalAvroDataStore(documentText, inputDocumentTextDir.toString());
+        
+        SparkJob sparkJob = buildSparkJob();
+
+        // when
+        executor.execute(sparkJob);
+
+        // then
+        List<Patent> calculatedResult = AvroTestUtils.readLocalAvroDataStore(outputDir.toString());
+        assertNotNull(calculatedResult);
+        assertEquals(1, calculatedResult.size());
+        Patent parsedPatent = calculatedResult.get(0);
+        assertNotNull(parsedPatent);
+        assertEquals(matchedPatentId, parsedPatent.getApplnNr().toString());
+        assertEquals("XX", parsedPatent.getApplnAuth().toString());
+        assertEquals("WO2000EP00003", parsedPatent.getApplnNrEpodoc().toString());
+        
+        List<Fault> generatedFaults = AvroTestUtils.readLocalAvroDataStore(outputFaultDir.toString());
+        assertNotNull(generatedFaults);
+        assertEquals(0, generatedFaults.size());
+
+        assertReports(AvroTestUtils.readLocalAvroDataStore(outputReportDir.toString()), 1, 0);
+    }
+    
+    @Test
     public void testExtractMetadataFromInvalidXmlFile() throws IOException {
         // given
         String patentId = "1234";

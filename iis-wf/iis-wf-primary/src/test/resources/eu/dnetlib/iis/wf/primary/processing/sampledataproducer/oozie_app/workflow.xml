@@ -357,6 +357,10 @@
 					<name>output_document_to_patent</name>
 					<value>${workingDir}/exported/document_to_patent</value>
 				</property>
+                <property>
+                    <name>output_patent_metadata</name>
+                    <value>${workingDir}/exported/patent_metadata</value>
+                </property>
 				<property>
 					<name>output_document_to_pdb</name>
 					<value>${workingDir}/exported/document_to_pdb</value>
@@ -428,7 +432,7 @@
 				</property>
                 <property>
                     <name>patent_metadata_retriever_facade_factory_classname</name>
-                    <value>eu.dnetlib.iis.wf.referenceextraction.patent.ClassPathBasedPatentServiceFacadeFactory</value>
+                    <value>eu.dnetlib.iis.wf.primary.processing.ClassPathBasedPatentServiceFacadeFactory</value>
                 </property>
 			</configuration>
 		</sub-workflow>
@@ -486,6 +490,11 @@
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_patent.json}
 			</arg>
 			<arg>-Idocument_to_patent=${workingDir}/exported/document_to_patent</arg>
+            <arg>-C{patent_metadata,
+                eu.dnetlib.iis.referenceextraction.patent.schemas.Patent,
+                eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/extracted_patent_metadata.json}
+            </arg>
+            <arg>-Ipatent_metadata=${workingDir}/exported/patent_metadata</arg>
 			<arg>-C{citation,
 				eu.dnetlib.iis.export.schemas.Citations,
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/citations.json}

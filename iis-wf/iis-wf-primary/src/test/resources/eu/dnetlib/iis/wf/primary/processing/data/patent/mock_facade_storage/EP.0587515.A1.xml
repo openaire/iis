@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="/3.2/style/exchange.xsl"?>
+<ops:world-patent-data xmlns="http://www.epo.org/exchange" xmlns:ops="http://ops.epo.org" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <exchange-documents>
+        <exchange-document system="ops.epo.org" family-id="9432078" country="EP" doc-number="0587515" kind="A1">
+            <bibliographic-data>
+                <publication-reference>
+                    <document-id document-id-type="docdb">
+                        <country>EP</country>
+                        <doc-number>0587515</doc-number>
+                        <kind>A1</kind>
+                        <date>19940316</date>
+                    </document-id>
+                    <document-id document-id-type="epodoc">
+                        <doc-number>EP0587515</doc-number>
+                        <date>19940316</date>
+                    </document-id>
+                </publication-reference>
+                <classification-ipc>
+                    <text>A23B4/056</text>
+                    <text>A23B4/044</text>
+                    <text>A23B4/052</text>
+                    <text>A23B4/28</text>
+                    <text>A23B4/30</text>
+                </classification-ipc>
+                <classifications-ipcr>
+                    <classification-ipcr sequence="1">
+                        <text>A23B   4/   044            A I                    </text>
+                    </classification-ipcr>
+                    <classification-ipcr sequence="2">
+                        <text>A23B   4/   052            A I                    </text>
+                    </classification-ipcr>
+                    <classification-ipcr sequence="3">
+                        <text>A23B   4/   056            A I                    </text>
+                    </classification-ipcr>
+                    <classification-ipcr sequence="4">
+                        <text>A23B   4/    28            A I                    </text>
+                    </classification-ipcr>
+                    <classification-ipcr sequence="5">
+                        <text>A23B   4/    30            A I                    </text>
+                    </classification-ipcr>
+                </classifications-ipcr>
+                <patent-classifications>
+                    <patent-classification sequence="1">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>A</section>
+                        <class>23</class>
+                        <subclass>B</subclass>
+                        <main-group>4</main-group>
+                        <subgroup>044</subgroup>
+                        <classification-value>I</classification-value>
+                        <generating-office>EP</generating-office>
+                    </patent-classification>
+                    <patent-classification sequence="2">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>A</section>
+                        <class>23</class>
+                        <subclass>B</subclass>
+                        <main-group>4</main-group>
+                        <subgroup>052</subgroup>
+                        <classification-value>I</classification-value>
+                        <generating-office>EP</generating-office>
+                    </patent-classification>
+                    <patent-classification sequence="3">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>A</section>
+                        <class>23</class>
+                        <subclass>B</subclass>
+                        <main-group>4</main-group>
+                        <subgroup>056</subgroup>
+                        <classification-value>I</classification-value>
+                        <generating-office>EP</generating-office>
+                    </patent-classification>
+                    <patent-classification sequence="4">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>A</section>
+                        <class>23</class>
+                        <subclass>B</subclass>
+                        <main-group>4</main-group>
+                        <subgroup>28</subgroup>
+                        <classification-value>I</classification-value>
+                        <generating-office>EP</generating-office>
+                    </patent-classification>
+                    <patent-classification sequence="5">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>A</section>
+                        <class>23</class>
+                        <subclass>B</subclass>
+                        <main-group>4</main-group>
+                        <subgroup>30</subgroup>
+                        <classification-value>I</classification-value>
+                        <generating-office>EP</generating-office>
+                    </patent-classification>
+                    <patent-classification sequence="6">
+                        <classification-scheme office="EP" scheme="CPCI"/>
+                        <section>Y</section>
+                        <class>02</class>
+                        <subclass>A</subclass>
+                        <main-group>40</main-group>
+                        <subgroup>949</subgroup>
+                        <classification-value>A</classification-value>
+                        <generating-office>EP</generating-office>
+                    </patent-classification>
+                </patent-classifications>
+                <application-reference doc-id="17012860">
+                    <document-id document-id-type="docdb">
+                        <country>EP</country>
+                        <doc-number>93430009</doc-number>
+                        <kind>A</kind>
+                    </document-id>
+                    <document-id document-id-type="epodoc">
+                        <doc-number>EP19930430009</doc-number>
+                        <date>19930701</date>
+                    </document-id>
+                    <document-id document-id-type="original">
+                        <doc-number>93 93430009</doc-number>
+                    </document-id>
+                </application-reference>
+                <priority-claims>
+                    <priority-claim sequence="1" kind="national">
+                        <document-id document-id-type="epodoc">
+                            <doc-number>FR19920008958</doc-number>
+                            <date>19920710</date>
+                        </document-id>
+                        <document-id document-id-type="original">
+                            <doc-number>92 9208958</doc-number>
+                        </document-id>
+                        <document-id document-id-type="original">
+                            <doc-number>9208958</doc-number>
+                        </document-id>
+                    </priority-claim>
+                </priority-claims>
+                <parties>
+                    <applicants>
+                        <applicant sequence="1" data-format="epodoc">
+                            <applicant-name>
+                                <name>COOPERATION INTERNATIONAL EN R [FR]</name>
+                            </applicant-name>
+                        </applicant>
+                        <applicant sequence="2" data-format="epodoc">
+                            <applicant-name>
+                                <name> IFREMER [FR]</name>
+                            </applicant-name>
+                        </applicant>
+                        <applicant sequence="3" data-format="epodoc">
+                            <applicant-name>
+                                <name> CIRAD COOP INT RECH AGRO DEV [FR]
+</name>
+                            </applicant-name>
+                        </applicant>
+                        <applicant sequence="1" data-format="original">
+                            <applicant-name>
+                                <name>CIRAD COOP INT RECH AGRO DEV, </name>
+                            </applicant-name>
+                        </applicant>
+                        <applicant sequence="2" data-format="original">
+                            <applicant-name>
+                                <name>IFREMER, </name>
+                            </applicant-name>
+                        </applicant>
+                        <applicant sequence="3" data-format="original">
+                            <applicant-name>
+                                <name>CENTRE DE COOPERATION INTERNATIONAL EN RECHERCHE AGRONOMIQUE POUR LE DEVELOPPEMENT ( CIRAD), </name>
+                            </applicant-name>
+                        </applicant>
+                        <applicant sequence="4" data-format="original">
+                            <applicant-name>
+                                <name>INSTITUT FRANCAIS DE RECHERCHE POUR L'EXPLOITATION DE LA MER (IFREMER)</name>
+                            </applicant-name>
+                        </applicant>
+                    </applicants>
+                    <inventors>
+                        <inventor sequence="1" data-format="epodoc">
+                            <inventor-name>
+                                <name>COLLIGNAN ANTOINE [FR]</name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="2" data-format="epodoc">
+                            <inventor-name>
+                                <name> KNOCKAERT CAMILLE [FR]</name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="3" data-format="epodoc">
+                            <inventor-name>
+                                <name> RAOULT-WACK ANNE [FR]</name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="4" data-format="epodoc">
+                            <inventor-name>
+                                <name> VALLET JEAN-LUC [FR]</name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="1" data-format="original">
+                            <inventor-name>
+                                <name>COLLIGNAN, ANTOINE, </name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="2" data-format="original">
+                            <inventor-name>
+                                <name>KNOCKAERT, CAMILLE, </name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="3" data-format="original">
+                            <inventor-name>
+                                <name>RAOULT-WACK, ANNE, </name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="4" data-format="original">
+                            <inventor-name>
+                                <name>VALLET, JEAN-LUC</name>
+                            </inventor-name>
+                        </inventor>
+                    </inventors>
+                </parties>
+                <invention-title lang="de">Verfahren und Vorrichtung zum Saltzen-Trocknung und Kalträuchern von Fleischprodukten.
+</invention-title>
+                <invention-title lang="fr">Procédé et dispositif de salage-séchage et de fumage à froid de produits alimentaires carnés.
+</invention-title>
+                <invention-title lang="en">Process and apparatus for salting-drying and cold smoking of meat food products.
+</invention-title>
+                <references-cited>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="1">
+                        <patcit dnum-type="publication number" num="1">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>US2688556</doc-number>
+                                <name>KOMARIK STEPHAN L, et al</name>
+                                <date>19540907</date>
+                            </document-id>
+                            <document-id document-id-type="docdb">
+                                <country>US</country>
+                                <doc-number>2688556</doc-number>
+                                <kind>A</kind>
+                                <name>KOMARIK STEPHAN L, et al</name>
+                                <date>19540907</date>
+                            </document-id>
+                        </patcit>
+                        <category>X</category>
+                        <rel-claims>1,4</rel-claims>
+                        <category>Y</category>
+                        <rel-claims>5,7</rel-claims>
+                        <rel-passage>
+                            <passage>* column  8, line  54  - line  75; figures 1-7; example 1; claim 1 *</passage>
+                            <passage>* column  9, line  72  - column  10, line  6 *</passage>
+                        </rel-passage>
+                    </citation>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="2">
+                        <patcit dnum-type="publication number" num="2">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>FR1277808</doc-number>
+                                <name>UNILEVER NV</name>
+                                <date>19611201</date>
+                            </document-id>
+                            <document-id document-id-type="docdb">
+                                <country>FR</country>
+                                <doc-number>1277808</doc-number>
+                                <kind>A</kind>
+                                <name>UNILEVER NV</name>
+                                <date>19611201</date>
+                            </document-id>
+                        </patcit>
+                        <category>Y</category>
+                        <rel-claims>5,7</rel-claims>
+                        <rel-passage>
+                            <passage>* Résumé;  page 1, col. 2, alinéa 3; page 3; page 4, col. 2, lignes 51-57 *; page  6, paragraphs  2-3; figures 1-4; example 1 *</passage>
+                        </rel-passage>
+                    </citation>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="3">
+                        <patcit dnum-type="publication number" num="3">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>US2844478</doc-number>
+                                <name>HANLEY JACK W, et al</name>
+                                <date>19580722</date>
+                            </document-id>
+                            <document-id document-id-type="docdb">
+                                <country>US</country>
+                                <doc-number>2844478</doc-number>
+                                <kind>A</kind>
+                                <name>HANLEY JACK W, et al</name>
+                                <date>19580722</date>
+                            </document-id>
+                        </patcit>
+                        <category>X</category>
+                        <rel-claims>1</rel-claims>
+                        <rel-passage>
+                            <passage>* column  4, line  18  - line  42; figures 1-6; claim 1 *</passage>
+                        </rel-passage>
+                    </citation>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="4">
+                        <patcit dnum-type="publication number" num="4">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>FR2599224</doc-number>
+                                <name>DELPIERRE SA JEAN BAPTISTE [FR]</name>
+                                <date>19871204</date>
+                            </document-id>
+                            <document-id document-id-type="docdb">
+                                <country>FR</country>
+                                <doc-number>2599224</doc-number>
+                                <kind>A1</kind>
+                                <name>DELPIERRE SA JEAN BAPTISTE [FR]</name>
+                                <date>19871204</date>
+                            </document-id>
+                        </patcit>
+                        <category>Y</category>
+                        <rel-claims>1,8,9</rel-claims>
+                        <rel-passage>
+                            <passage>* the whole document *</passage>
+                        </rel-passage>
+                    </citation>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="5">
+                        <patcit dnum-type="publication number" num="5">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>FR2656770</doc-number>
+                                <name>ATELIER ETU REALISA AUTOMATISM [FR]</name>
+                                <date>19910712</date>
+                            </document-id>
+                            <document-id document-id-type="docdb">
+                                <country>FR</country>
+                                <doc-number>2656770</doc-number>
+                                <kind>A1</kind>
+                                <name>ATELIER ETU REALISA AUTOMATISM [FR]</name>
+                                <date>19910712</date>
+                            </document-id>
+                        </patcit>
+                        <category>Y</category>
+                        <rel-claims>1,8,9</rel-claims>
+                        <rel-passage>
+                            <passage>* page  4, line  20  - page  5, line  2; figures 1-3 *</passage>
+                        </rel-passage>
+                    </citation>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="6">
+                        <patcit dnum-type="publication number" num="6">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>US2582799</doc-number>
+                                <name>SAUER ROBERT O</name>
+                                <date>19520115</date>
+                            </document-id>
+                            <document-id document-id-type="docdb">
+                                <country>US</country>
+                                <doc-number>2582799</doc-number>
+                                <kind>A</kind>
+                                <name>SAUER ROBERT O</name>
+                                <date>19520115</date>
+                            </document-id>
+                        </patcit>
+                        <category>A</category>
+                    </citation>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="7">
+                        <patcit dnum-type="publication number" num="7">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>US1483668</doc-number>
+                                <name>LITTLE LUCIUS F</name>
+                                <date>19240212</date>
+                            </document-id>
+                            <document-id document-id-type="docdb">
+                                <country>US</country>
+                                <doc-number>1483668</doc-number>
+                                <kind>A</kind>
+                                <name>LITTLE LUCIUS F</name>
+                                <date>19240212</date>
+                            </document-id>
+                        </patcit>
+                        <category>A</category>
+                    </citation>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="8">
+                        <patcit dnum-type="publication number" num="8">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>FR981660</doc-number>
+                                <name>PURIFICATION IND DES GAZ SOC D</name>
+                                <date>19510529</date>
+                            </document-id>
+                            <document-id document-id-type="docdb">
+                                <country>FR</country>
+                                <doc-number>981660</doc-number>
+                                <kind>A</kind>
+                                <name>PURIFICATION IND DES GAZ SOC D</name>
+                                <date>19510529</date>
+                            </document-id>
+                        </patcit>
+                        <category>A</category>
+                    </citation>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="9">
+                        <patcit dnum-type="publication number" num="9">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>US3203809</doc-number>
+                                <name>VISNESS RONALD D, et al</name>
+                                <date>19650831</date>
+                            </document-id>
+                            <document-id document-id-type="docdb">
+                                <country>US</country>
+                                <doc-number>3203809</doc-number>
+                                <kind>A</kind>
+                                <name>VISNESS RONALD D, et al</name>
+                                <date>19650831</date>
+                            </document-id>
+                        </patcit>
+                        <category>A</category>
+                    </citation>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="10">
+                        <patcit dnum-type="publication number" num="10">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>HU47009</doc-number>
+                            </document-id>
+                            <document-id document-id-type="docdb">
+                                <country>HU</country>
+                                <doc-number>47009</doc-number>
+                                <kind>A</kind>
+                            </document-id>
+                        </patcit>
+                        <category>X</category>
+                    </citation>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="11">
+                        <patcit dnum-type="publication number" num="11">
+                            <document-id document-id-type="epodoc">
+                                <doc-number>JPS5338656</doc-number>
+                            </document-id>
+                            <document-id document-id-type="docdb">
+                                <country>JP</country>
+                                <doc-number>S5338656</doc-number>
+                                <kind>A</kind>
+                            </document-id>
+                        </patcit>
+                        <category>XA</category>
+                    </citation>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="12">
+                        <nplcit num="1">
+                            <text>- DATABASE WPI, 1, Derwent World Patents Index, Database accession no. 89-088001, 
+&amp; HU47009 A 00000000 (T. HUSZKA ET AL.)</text>
+                        </nplcit>
+                        <category>X</category>
+                        <rel-claims>1</rel-claims>
+                        <rel-passage>
+                            <passage>* abstract *</passage>
+                        </rel-passage>
+                    </citation>
+                    <citation cited-phase="national-search-report" cited-by="examiner" sequence="13">
+                        <nplcit num="2">
+                            <text>- DATABASE WPI, 1, Derwent World Patents Index, Database accession no. 78-35974A, 
+&amp; JPS5338656 A 00000000 (NINBEN)</text>
+                        </nplcit>
+                        <category>X</category>
+                        <rel-claims>1</rel-claims>
+                        <category>A</category>
+                        <rel-claims>7</rel-claims>
+                        <rel-passage>
+                            <passage>* abstract *</passage>
+                        </rel-passage>
+                    </citation>
+                </references-cited>
+            </bibliographic-data>
+            <abstract lang="en">
+                <p>The subject of the present invention is a method and an apparatus for salting/drying and smoking meat products which have been prepared and cut into fillets beforehand, according to which method the said products are exposed to a stream of smoke in a smoking chamber (21), characterised in that the said fillets of products (1) are firstly salted and dried simultaneously by means of a drying/impregnating operation, by placing them in contact with a sodium chloride and sugar mixture in a processing tank (6), and the said fillets of products are then smoked at a low temperature, while the colloidal particles of the smoke are bound by electrostatic means (22/38/40). Applicable to smoking foodstuffs such as fish and meat. &lt;IMAGE></p>
+            </abstract>
+            <abstract lang="fr">
+                <p>La présente invention a pour objet un procédé et un dispositif de salage-séchage et fumage de produits alimentaires carnés préalablement préparés et découpés en filets, selon lequel on expose lesdits produits à un flux de fumée dans une enceinte de fumage (21), caractérisé en ce qu'on réalise d'abord et simultanément par une opération de séchage/imprégnation le salage et le séchage desdits filets de produits (1), en les mettant au contact d'un mélange de chlorure de sodium et de sucre dans un bac de traitement (6), et on réalise ensuite le fumage desdits filets de produits à basse température en fixant les particules colloïdales de la fumée par des moyens électrostatiques (22/38/40). Trouve son application pour le fumage des produits alimentaires tels que les poissons et les viandes. &lt;IMAGE> &lt;IMAGE></p>
+            </abstract>
+        </exchange-document>
+    </exchange-documents>
+</ops:world-patent-data>

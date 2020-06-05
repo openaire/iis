@@ -5,7 +5,7 @@ protocol IIS{
         string appln_auth;
         string appln_nr;
         union {null, string} appln_filing_date = null;
-        union {null, string} appln_nr_epodoc;
+        union {null, string} appln_nr_epodoc = null;
         union {null, string} earliest_publn_date = null;
         union {null, string} appln_abstract = null;
         union {null, string} appln_title = null;
