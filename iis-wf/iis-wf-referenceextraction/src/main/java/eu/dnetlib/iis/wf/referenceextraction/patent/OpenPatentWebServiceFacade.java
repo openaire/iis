@@ -51,8 +51,6 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
     
     private static final long serialVersionUID = -9154710658560662015L;
 
-    private static final int DEFAULT_MAX_RETRIES_COUNT = 10;
-    
     private static final Logger log = Logger.getLogger(OpenPatentWebServiceFacade.class);
     
     private String authUriRoot;
@@ -64,8 +62,9 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
 
     private String consumerCredential;
     
-
-    private long throttleSleepTime; 
+    private long throttleSleepTime;
+    
+    private int maxRetriesCount;
 
     // fields to be reinitialized after deserialization
     private transient JsonParser jsonParser;
@@ -87,12 +86,12 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
     public OpenPatentWebServiceFacade(int connectionTimeout, int readTimeout, 
             String authHostName, int authPort, String authScheme, String authUriRoot,
             String opsHostName, int opsPort, String opsScheme, String opsUriRoot, 
-            String consumerCredential, long throttleSleepTime) {
+            String consumerCredential, long throttleSleepTime, int maxRetriesCount) {
         
         this(buildHttpClient(connectionTimeout, readTimeout),
                 new HttpHost(authHostName, authPort, authScheme), authUriRoot, 
                 new HttpHost(opsHostName, opsPort, opsScheme), opsUriRoot,
-                consumerCredential, throttleSleepTime, new JsonParser());
+                consumerCredential, throttleSleepTime, maxRetriesCount, new JsonParser());
         
         // persisting for further serialization and deserialization
         this.serDe = new SerDe(connectionTimeout, readTimeout, 
@@ -103,8 +102,8 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
     /**
      * Using this constructor simplifies object instantiation but also makes the whole object non-serializable.
      */
-    protected OpenPatentWebServiceFacade(HttpClient httpClient, HttpHost authHost, String authUriRoot,
-            HttpHost opsHost, String opsUriRoot, String consumerCredential, long throttleSleepTime,
+    protected OpenPatentWebServiceFacade(HttpClient httpClient, HttpHost authHost, String authUriRoot, HttpHost opsHost,
+            String opsUriRoot, String consumerCredential, long throttleSleepTime, int maxRetriesCount,
             JsonParser jsonParser) {
         this.httpClient = httpClient;
         this.authHost = authHost;
@@ -113,6 +112,7 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
         this.opsUriRoot = opsUriRoot;
         this.consumerCredential = consumerCredential;
         this.throttleSleepTime = throttleSleepTime;
+        this.maxRetriesCount = maxRetriesCount;
         this.jsonParser = jsonParser;
     }
 
@@ -127,8 +127,8 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
     
     private String getPatentMetadata(ImportedPatent patent, String securityToken, int retryCount) throws Exception {
         
-        if (retryCount > DEFAULT_MAX_RETRIES_COUNT) {
-            throw new PatentServiceException("number of maximum retries exceeded: " + DEFAULT_MAX_RETRIES_COUNT);
+        if (retryCount > maxRetriesCount) {
+            throw new PatentServiceException("number of maximum retries exceeded: " + maxRetriesCount);
         }
 
         HttpRequest httpRequest = buildPatentMetaRequest(patent, securityToken, opsUriRoot);
@@ -172,7 +172,7 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
     // -------------------------- PRIVATE -------------------------
 
     private void reinitialize(SerDe serDe, String authUriRoot, String opsUriRoot,
-            String consumerCredential, long throttleSleepTime) {
+            String consumerCredential, long throttleSleepTime, int maxRetriesCount) {
 
         this.serDe = serDe;
         
@@ -185,6 +185,7 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
         
         this.consumerCredential = consumerCredential;
         this.throttleSleepTime = throttleSleepTime;
+        this.maxRetriesCount = maxRetriesCount;
         
         this.jsonParser = new JsonParser();
     }
@@ -300,13 +301,14 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
         oos.writeObject(this.opsUriRoot);
         oos.writeObject(this.consumerCredential);
         oos.writeObject(this.throttleSleepTime);
+        oos.writeObject(this.maxRetriesCount);
     }
     
     private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
         ois.defaultReadObject();
         reinitialize((SerDe) ois.readObject(), 
                 (String) ois.readObject(), (String) ois.readObject(), 
-                (String) ois.readObject(), (Long) ois.readObject());
+                (String) ois.readObject(), (Long) ois.readObject(), (Integer) ois.readObject());
     }
     
     // -------------------------- INNER CLASS --------------------------

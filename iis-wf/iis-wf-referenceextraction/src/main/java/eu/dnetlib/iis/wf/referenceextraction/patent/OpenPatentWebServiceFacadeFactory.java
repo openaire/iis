@@ -38,7 +38,8 @@ public class OpenPatentWebServiceFacadeFactory implements ServiceFacadeFactory<P
     public static final String PARAM_SERVICE_ENDPOINT_CONNECTION_TIMEOUT = "patent.service.endpoint.connection.timeout";
     
     public static final String PARAM_SERVICE_ENDPOINT_THROTTLE_SLEEP_TIME = "patent.service.endpoint.throttle.sleep.time";
-
+    public static final String PARAM_SERVICE_ENDPOINT_RETRIES_COUNT = "patent.service.endpoint.retries.count";
+    
     @Override
     public PatentServiceFacade instantiate(Map<String, String> conf) {
 
@@ -65,14 +66,17 @@ public class OpenPatentWebServiceFacadeFactory implements ServiceFacadeFactory<P
                 ? conf.get(PARAM_SERVICE_ENDPOINT_THROTTLE_SLEEP_TIME)
                 : "10000";
                 
-        
+        String retriesCount = conf.containsKey(PARAM_SERVICE_ENDPOINT_RETRIES_COUNT)
+                ? conf.get(PARAM_SERVICE_ENDPOINT_RETRIES_COUNT)
+                : "10";
+                
         return new OpenPatentWebServiceFacade(Integer.parseInt(connectionTimeout), Integer.parseInt(readTimeout),
                 conf.get(PARAM_SERVICE_ENDPOINT_AUTH_HOST),Integer.parseInt(conf.get(PARAM_SERVICE_ENDPOINT_AUTH_PORT)),
                 conf.get(PARAM_SERVICE_ENDPOINT_AUTH_SCHEME), conf.get(PARAM_SERVICE_ENDPOINT_AUTH_URI_ROOT),
                 conf.get(PARAM_SERVICE_ENDPOINT_OPS_HOST), Integer.parseInt(conf.get(PARAM_SERVICE_ENDPOINT_OPS_PORT)),
                 conf.get(PARAM_SERVICE_ENDPOINT_OPS_SCHEME), conf.get(PARAM_SERVICE_ENDPOINT_OPS_URI_ROOT),
                 buildCredential(conf.get(PARAM_CONSUMER_KEY), conf.get(PARAM_CONSUMER_SECRET)),
-                Long.parseLong(throttleSleepTime));
+                Long.parseLong(throttleSleepTime), Integer.parseInt(retriesCount));
     }
 
     protected static String buildCredential(String key, String secret) {

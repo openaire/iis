@@ -475,7 +475,7 @@ public class OpenPatentWebServiceFacadeTest {
         OpenPatentWebServiceFacade service = new OpenPatentWebServiceFacade(10000, 10000,
                 "authn-host", 8080, "https", authUriRoot, 
                 "ops-host", 8090, "http", opsUriRoot, 
-                consumerCredential, 60000);
+                consumerCredential, 60000, 10);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(bos);
@@ -516,7 +516,7 @@ public class OpenPatentWebServiceFacadeTest {
     
     private OpenPatentWebServiceFacade prepareValidService() {
         return new OpenPatentWebServiceFacade(httpClient, authHost, authUriRoot, opsHost,
-                opsUriRoot, consumerCredential, 1, new JsonParser());
+                opsUriRoot, consumerCredential, 1, 10, new JsonParser());
     }
     
 }

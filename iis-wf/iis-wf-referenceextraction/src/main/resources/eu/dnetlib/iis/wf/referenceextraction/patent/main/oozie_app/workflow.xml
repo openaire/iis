@@ -121,6 +121,16 @@
             <value>$UNDEFINED$</value>
             <description>remote EPO endpoint OPS URI root, required by OpenPatentWebServiceFacadeFactory</description>
         </property>
+        <property>
+            <name>patent_service_endpoint_throttle_sleep_time</name>
+            <value>10000</value>
+            <description>sleep time (in millis) to be applied when receiving 403 error code from EPO endpoint due to exhaustive querying</description>
+        </property>
+        <property>
+            <name>patent_service_endpoint_retries_count</name>
+            <value>20</value>
+            <description>number of retries when receiving recoverable error from EPO endpoint (mostly 403)</description>
+        </property>
     </parameters>
 
     <global>
@@ -272,9 +282,10 @@
                 --conf spark.hadoop.patent.service.endpoint.ops.port=${patent_service_endpoint_ops_port}
                 --conf spark.hadoop.patent.service.endpoint.ops.scheme=${patent_service_endpoint_ops_scheme}
                 --conf spark.hadoop.patent.service.endpoint.ops.uri.root=${patent_service_endpoint_ops_uri_root}
+                --conf spark.hadoop.patent.service.endpoint.throttle.sleep.time=${patent_service_endpoint_throttle_sleep_time}
+                --conf spark.hadoop.patent.service.endpoint.retries.count=${patent_service_endpoint_retries_count}
                 --conf spark.hadoop.patent.service.endpoint.read.timeout=60000
                 --conf spark.hadoop.patent.service.endpoint.connection.timeout=60000
-                --conf spark.hadoop.patent.service.endpoint.throttle.sleep.time=10000
             </spark-opts>
             <arg>-inputPath=${workingDir}/metadata_retriever_input</arg>
             <arg>-numberOfEmittedFiles=${number_of_emitted_files}</arg>
