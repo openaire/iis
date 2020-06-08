@@ -62,6 +62,11 @@
             <description>number of files created by patent metadata retriever module</description>
         </property>
         <property>
+            <name>patent_metadata_retriever_max_executors</name>
+            <value>1</value>
+            <description>maximum number of executors conducting metadata retrieval from remote EPO endpoint</description>
+        </property>
+        <property>
             <name>patent_metadata_retriever_facade_factory_classname</name>
             <value>eu.dnetlib.iis.wf.referenceextraction.patent.OpenPatentWebServiceFacadeFactory</value>
             <description>patent retriever factory class name</description>
@@ -249,8 +254,9 @@
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
             <spark-opts>
                 --executor-memory=${sparkExecutorMemory}
-                --executor-cores=${sparkExecutorCores}
+                --executor-cores=1
                 --driver-memory=${sparkDriverMemory}
+                --conf spark.dynamicAllocation.maxExecutors=${patent_metadata_retriever_max_executors}
                 --conf spark.extraListeners=${spark2ExtraListeners}
                 --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
                 --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
