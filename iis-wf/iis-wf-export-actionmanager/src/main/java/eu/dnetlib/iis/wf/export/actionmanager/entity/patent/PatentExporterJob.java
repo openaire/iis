@@ -117,14 +117,14 @@ public class PatentExporterJob {
             JavaRDD<DocumentToPatent> documentToPatentsToExport =
                     documentToPatentsToExport(documentToPatents, trustLevelThreshold);
 
-            JavaPairRDD<CharSequence, Patent> patentsById = patents
-                    // FIXME make sure appln_nr is returned by mining script, appln_id was defined before
+            JavaPairRDD<CharSequence, Patent> validPatentsById = patents
+                    .filter(x -> PatentExporterJob.isValidPatent(x))
                     .mapToPair(x -> new Tuple2<>(x.getApplnNr(), x))
                     .cache();
 
             JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = documentToPatentsToExport
                     .mapToPair(x -> new Tuple2<>(x.getApplnNr(), x))
-                    .join(patentsById)
+                    .join(validPatentsById)
                     .map(x -> {
                         DocumentToPatent documentToPatent = x._2()._1();
                         Patent patent = x._2()._2();
@@ -140,7 +140,7 @@ public class PatentExporterJob {
             String patentDateOfCollection = DateTimeUtils.format(
                     LocalDateTime.parse(params.patentDateOfCollection, PATENT_DATE_OF_COLLECTION_FORMATTER));
             JavaPairRDD<Text, Text> entitiesToExport =
-                    entitiesToExport(documentToPatentsToExportWithIds, patentsById, patentDateOfCollection,
+                    entitiesToExport(documentToPatentsToExportWithIds, validPatentsById, patentDateOfCollection,
                             params.patentEpoUrlRoot);
             
             RDDUtils.saveTextPairRDD(entitiesToExport, numberOfOutputFiles, params.outputEntityPath, configuration);
@@ -255,6 +255,10 @@ public class PatentExporterJob {
 
     private static Boolean isValidDocumentToPatent(DocumentToPatent documentToPatent, Float trustLevelThreshold) {
         return ConfidenceLevelUtils.isValidConfidenceLevel(documentToPatent.getConfidenceLevel(), trustLevelThreshold);
+    }
+    
+    private static boolean isValidPatent(Patent patent) {
+        return StringUtils.isNotBlank(patent.getApplnTitle());
     }
 
     private static DocumentToPatent reduceByConfidenceLevel(DocumentToPatent x, DocumentToPatent y) {

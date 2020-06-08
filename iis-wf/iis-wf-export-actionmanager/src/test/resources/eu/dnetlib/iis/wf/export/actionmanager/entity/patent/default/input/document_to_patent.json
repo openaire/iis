@@ -3,3 +3,5 @@
 {"documentId":"document2","appln_nr":"patent2","confidenceLevel":0.7,"textsnippet":null}
 {"documentId":"document2","appln_nr":"patent2","confidenceLevel":0.6,"textsnippet":null}
 {"documentId":"document3","appln_nr":"patent3","confidenceLevel":0.1,"textsnippet":null}
+{"documentId":"document1","appln_nr":"non-existing","confidenceLevel":0.9,"textsnippet":null}
+{"documentId":"document1","appln_nr":"patent1-notitle","confidenceLevel":0.9,"textsnippet":null}
