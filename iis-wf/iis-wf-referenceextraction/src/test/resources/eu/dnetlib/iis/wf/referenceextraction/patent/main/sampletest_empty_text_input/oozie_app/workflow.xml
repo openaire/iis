@@ -51,7 +51,7 @@
                     <value>${workingDir}/referenceextraction_patent/working_dir</value>
                 </property>
                 <property>
-                    <name>patent_metadata_retriever_facade_factory_classname</name>
+                    <name>patentMetadataRetrieverFacadeFactoryClassname</name>
                     <value>eu.dnetlib.iis.wf.referenceextraction.patent.ClassPathBasedPatentServiceFacadeFactory</value>
                 </property>
                 <property>

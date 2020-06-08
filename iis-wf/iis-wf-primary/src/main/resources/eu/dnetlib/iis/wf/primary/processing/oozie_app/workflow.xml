@@ -343,6 +343,31 @@
             <description>DocumentText datastore block size affecting number of tasks issued by each text mining module.
             Introduced to prevent long lasting tasks from occupying cluster resources for too long.</description>
         </property>
+        <!-- patents remote EPO endpoint related -->
+        <property>
+            <name>patentServiceAuthnConsumerKey</name>
+            <description>remote EPO endpoint API authentication consumer key, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patentServiceAuthnConsumerSecret</name>
+            <description>remote EPO endpoint API authentication consumer secret, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patentServiceEndpointAuthHost</name>
+            <description>remote EPO endpoint authentication host, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patentServiceEndpointAuthUriRoot</name>
+            <description>remote EPO endpoint authentication URI root, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patentServiceEndpointOpsHost</name>
+            <description>remote EPO endpoint OPS host, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patentServiceEndpointOpsUriRoot</name>
+            <description>remote EPO endpoint OPS URI root, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
 
         <!-- output ports -->
         <property>
@@ -401,6 +426,11 @@
             <name>output_document_to_patent</name>
             <description>patent reference extraction output directory</description>
         </property>
+        <property>
+            <name>output_patent_metadata</name>
+            <description>patent metadata retrived from EPO endpoint output directory</description>
+        </property>
+        
         <property>
             <name>output_report_root_path</name>
             <description>base directory for storing reports</description>
@@ -1108,7 +1138,9 @@
         <java>
             <prepare>
                 <delete path="${nameNode}${output_document_to_patent}" />
+                <delete path="${nameNode}${output_patent_metadata}" />
                 <mkdir path="${nameNode}${output_document_to_patent}" />
+                <mkdir path="${nameNode}${output_patent_metadata}" />
             </prepare>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
@@ -1116,7 +1148,12 @@
                 eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent,
                 eu/dnetlib/iis/common/data/empty.json}
             </arg>
+            <arg>-C{patent_metadata,
+                eu.dnetlib.iis.referenceextraction.patent.schemas.Patent,
+                eu/dnetlib/iis/common/data/empty.json}
+            </arg>
             <arg>-Oreferenceextraction_patent=${output_document_to_patent}</arg>
+            <arg>-Opatent_metadata=${output_patent_metadata}</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />

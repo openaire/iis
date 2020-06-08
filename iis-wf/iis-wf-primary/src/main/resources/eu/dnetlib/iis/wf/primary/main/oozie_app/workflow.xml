@@ -138,8 +138,8 @@
             <description>WoS types</description>
         </property>
         <property>
-            <name>import_patent_json</name>
-            <description>input JSON file location with patents metadata</description>
+            <name>import_patent_tsv</name>
+            <description>input TSV file location with patents basic metadata</description>
         </property>
         <!-- import timeouts related -->
         <property>
@@ -492,8 +492,8 @@
                 </property>
                 <!-- import patent related -->
                 <property>
-                    <name>input_patent_json</name>
-                    <value>${import_patent_json}</value>
+                    <name>input_patent_tsv</name>
+                    <value>${import_patent_tsv}</value>
                 </property>
                 <!-- import timeouts related -->
                 <property>
@@ -692,6 +692,10 @@
                     <value>${workingDir}/exported/document_to_patent</value>
                 </property>
                 <property>
+                    <name>output_patent_metadata</name>
+                    <value>${workingDir}/exported/patent_metadata</value>
+                </property>
+                <property>
                     <name>output_report_root_path</name>
                     <value>${workingDir}/report</value>
                 </property>
@@ -770,7 +774,7 @@
                 </property>
                 <property>
                     <name>input_patent</name>
-                    <value>${workingDir}/primary_import/patent</value>
+                    <value>${workingDir}/exported/patent_metadata</value>
                 </property>
                 <!-- entities exporting modes -->
                 <property>
