@@ -7,6 +7,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.storage.StorageLevel;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -101,6 +102,7 @@ public class PatentMetadataRetrieverJob {
         JavaPairRDD<CharSequence, ContentRetrieverResponse> obtainedIdToResponce = input
                 .mapToPair(x -> new Tuple2<CharSequence, ContentRetrieverResponse>(getId(x),
                         obtainMetadata(x, patentServiceFacade)));
+        obtainedIdToResponce.persist(StorageLevel.DISK_ONLY());
         return new Tuple2<>(
                 obtainedIdToResponce.map(e -> DocumentText.newBuilder().setId(e._1).setText(e._2.getContent()).build()),
                 obtainedIdToResponce.filter(e -> e._2.getException() != null).map(e -> FaultUtils.exceptionToFault(e._1, e._2.getException(), null)));
