@@ -81,10 +81,6 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
     private String xPathExpApplicantOriginalName;
     
     private String xPathExpApplicantEpodocName;
-
-    private transient DocumentBuilderFactory builderFactory;
-
-    private transient XPath xPath;
     
 
     // ------------------------------- CONSTRUCTOR -------------------------------
@@ -98,7 +94,9 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
     @Override
     public Patent.Builder parse(CharSequence source, Patent.Builder patentBuilder) throws PatentMetadataParserException {
         try {
-            DocumentBuilder builder = builderFactory.newDocumentBuilder();
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document xmlDocument = builder.parse(new InputSource(new StringReader(source.toString())));
 
             patentBuilder.setApplnTitle(extractTrimmedValueForPreferedLanguage(
@@ -268,8 +266,6 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
         this.xPathExpApplnDocIdEpodoc = MessageFormat.format(XPATH_EXPR_TEMPLATE_APLN_REFERENCE_DOC_ID, DOCUMENT_ID_TYPE_EPODOC);
         this.xPathExpApplicantOriginalName = MessageFormat.format(XPATH_EXPR_APPLICANT_NAME, DATA_FORMAT_ORIGINAL);
         this.xPathExpApplicantEpodocName = MessageFormat.format(XPATH_EXPR_APPLICANT_NAME, DATA_FORMAT_EPODOC);
-        this.builderFactory = DocumentBuilderFactory.newInstance();
-        this.xPath = XPathFactory.newInstance().newXPath();
     }
     
     /**
