@@ -325,7 +325,6 @@
         </property>
         <property>
             <name>export_patent_date_of_collection</name>
-            <value>2019-06-12T09:56</value>
             <description>date of collection of patent file formatted as yyyy-MM-dd'T'HH:mm</description>
         </property>
         <property>
