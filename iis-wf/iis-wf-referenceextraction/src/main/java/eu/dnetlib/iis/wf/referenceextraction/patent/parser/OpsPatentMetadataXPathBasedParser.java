@@ -3,11 +3,10 @@ package eu.dnetlib.iis.wf.referenceextraction.patent.parser;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.StringReader;
-import java.text.DateFormat;
 import java.text.MessageFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,11 +69,11 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
     
     private static final String DATE_FORMAT_PATTERN_SOURCE = "yyyyMMdd";
     
-    private static final DateFormat DATE_FORMAT_SOURCE = new SimpleDateFormat(DATE_FORMAT_PATTERN_SOURCE);
+    private static final DateTimeFormatter DATE_FORMAT_SOURCE = DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN_SOURCE);
     
     private static final String DATE_FORMAT_PATTERN_TARGET = "yyyy-MM-dd";
     
-    private static final DateFormat DATE_FORMAT_TARGET = new SimpleDateFormat(DATE_FORMAT_PATTERN_TARGET);
+    private static final DateTimeFormatter DATE_FORMAT_TARGET = DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN_TARGET);
     
     private String xPathExpApplnDocIdEpodoc;
     
@@ -208,13 +207,13 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
     private static String convertDate(String source) {
         if (StringUtils.isNotBlank(source)) {
             try {
-                Date parsedSource = DATE_FORMAT_SOURCE.parse(source);
+                LocalDate parsedSource = LocalDate.parse(source, DATE_FORMAT_SOURCE);
                 if (source.equals(DATE_FORMAT_SOURCE.format(parsedSource))) {
                     return DATE_FORMAT_TARGET.format(parsedSource);
                 } else {
                     return source;
                 }
-            } catch (ParseException e) {
+            } catch (DateTimeParseException e) {
                 log.warn("propagating source date without conversion: source date '" + source
                         + "' is not defined in expected format: " + DATE_FORMAT_PATTERN_SOURCE);
                 return source;
