@@ -80,7 +80,7 @@
                 eu/dnetlib/iis/wf/primary/processing/sampledataproducer/input/meta/sh_origins.json}
             </arg>
 			<arg>-C{patent,
-				eu.dnetlib.iis.referenceextraction.patent.schemas.Patent,
+				eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent,
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/input/meta/patent.json}
 			</arg>
 			<arg>-Odocument_metadata=${workingDir}/producer/document_metadata</arg>
