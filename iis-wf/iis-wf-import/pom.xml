@@ -137,6 +137,12 @@
             <groupId>pl.edu.icm.spark-utils</groupId>
             <artifactId>spark-utils_2.11</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

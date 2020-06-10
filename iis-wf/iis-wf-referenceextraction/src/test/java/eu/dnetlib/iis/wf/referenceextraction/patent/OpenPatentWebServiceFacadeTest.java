@@ -27,8 +27,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -464,9 +462,6 @@ public class OpenPatentWebServiceFacadeTest {
         
         // assert
         assertNotNull(client);
-        assertTrue(client.getParams() instanceof BasicHttpParams);
-        assertEquals(connectionTimeout, HttpConnectionParams.getConnectionTimeout(client.getParams()));
-        assertEquals(readTimeout, HttpConnectionParams.getSoTimeout(client.getParams()));
     }
     
     @Test
@@ -475,7 +470,7 @@ public class OpenPatentWebServiceFacadeTest {
         OpenPatentWebServiceFacade service = new OpenPatentWebServiceFacade(10000, 10000,
                 "authn-host", 8080, "https", authUriRoot, 
                 "ops-host", 8090, "http", opsUriRoot, 
-                consumerCredential, 60000, 10);
+                consumerCredential, 60000, 1);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(bos);
@@ -516,7 +511,7 @@ public class OpenPatentWebServiceFacadeTest {
     
     private OpenPatentWebServiceFacade prepareValidService() {
         return new OpenPatentWebServiceFacade(httpClient, authHost, authUriRoot, opsHost,
-                opsUriRoot, consumerCredential, 1, 10, new JsonParser());
+                opsUriRoot, consumerCredential, 1, 1, new JsonParser());
     }
     
 }

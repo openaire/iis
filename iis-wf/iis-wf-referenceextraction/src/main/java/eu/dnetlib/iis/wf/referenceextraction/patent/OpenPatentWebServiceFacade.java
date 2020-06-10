@@ -9,9 +9,6 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -19,19 +16,12 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.SingleClientConnManager;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
@@ -194,25 +184,10 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
      * Builds HTTP client issuing requests to SH endpoint.
      */
     protected static HttpClient buildHttpClient(int connectionTimeout, int readTimeout) {
-        HttpParams httpParams = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParams, connectionTimeout);
-        HttpConnectionParams.setSoTimeout(httpParams, readTimeout);
-        return disableHostNameVerification(new DefaultHttpClient(httpParams));
-    }
-    
-    private static HttpClient disableHostNameVerification(HttpClient httpClient) {
-        HostnameVerifier hostnameVerifier = org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
-
-        SchemeRegistry registry = new SchemeRegistry();
-        SSLSocketFactory socketFactory = SSLSocketFactory.getSocketFactory();
-        socketFactory.setHostnameVerifier((X509HostnameVerifier) hostnameVerifier);
-        registry.register(new Scheme("https", socketFactory, 443));
-        SingleClientConnManager mgr = new SingleClientConnManager(httpClient.getParams(), registry);
-        DefaultHttpClient httpClientDisabledHostNameVerification = new DefaultHttpClient(mgr, httpClient.getParams());
-
-        // Set verifier     
-        HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier);
-        return httpClientDisabledHostNameVerification;
+        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        httpClientBuilder.setDefaultRequestConfig(RequestConfig.custom().setConnectTimeout(connectionTimeout)
+                .setConnectionRequestTimeout(connectionTimeout).setSocketTimeout(readTimeout).build());
+        return httpClientBuilder.build();
     }
     
     protected String getSecurityToken() throws Exception {

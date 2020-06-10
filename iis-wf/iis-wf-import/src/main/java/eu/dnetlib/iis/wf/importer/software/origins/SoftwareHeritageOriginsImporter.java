@@ -33,11 +33,9 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
@@ -206,10 +204,10 @@ public class SoftwareHeritageOriginsImporter implements eu.dnetlib.iis.common.ja
      * Builds HTTP client issuing requests to SH endpoint.
      */
     protected HttpClient buildHttpClient(int connectionTimeout, int readTimeout) {
-        HttpParams httpParams = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParams, connectionTimeout);
-        HttpConnectionParams.setSoTimeout(httpParams, readTimeout);
-        return new DefaultHttpClient(httpParams);
+        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        httpClientBuilder.setDefaultRequestConfig(RequestConfig.custom().setConnectTimeout(connectionTimeout)
+                .setConnectionRequestTimeout(connectionTimeout).setSocketTimeout(readTimeout).build());
+        return httpClientBuilder.build();
     }
     
     protected static void storeNextElementIndex(int nextElementIndex) throws IOException {
