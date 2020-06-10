@@ -61,8 +61,6 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
     
     private static final String DATA_FORMAT_EPODOC = "epodoc";
     
-    private static final String DATA_FORMAT_ORIGINAL = "original";
-    
     private static final String ATTRIB_NAME_LANG = "lang";
 
     private static final String ATTRIB_VALUE_LANG_EN = "en";
@@ -76,8 +74,6 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
     private static final DateTimeFormatter DATE_FORMAT_TARGET = DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN_TARGET);
     
     private String xPathExpApplnDocIdEpodoc;
-    
-    private String xPathExpApplicantOriginalName;
     
     private String xPathExpApplicantEpodocName;
     
@@ -124,15 +120,10 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
                 patentBuilder.setIpcClassSymbol(ipcClasses);
             }
             
-            List<CharSequence> applicantOriginalNames = extractNonEmptyTrimmedTextContent(
-                    (NodeList) xPath.compile(xPathExpApplicantOriginalName).evaluate(xmlDocument, XPathConstants.NODESET));
-            if (CollectionUtils.isNotEmpty(applicantOriginalNames)) {
-                patentBuilder.setApplicantNames(cleanNames(applicantOriginalNames));
-            }
-            
-            List<CharSequence> applicantEpodocNames = extractNonEmptyTrimmedTextContent(
-                    (NodeList) xPath.compile(xPathExpApplicantEpodocName).evaluate(xmlDocument, XPathConstants.NODESET));
+            NodeList epodocNameNodes = (NodeList) xPath.compile(xPathExpApplicantEpodocName).evaluate(xmlDocument, XPathConstants.NODESET);
+            List<CharSequence> applicantEpodocNames = extractNonEmptyTrimmedTextContent(epodocNameNodes);
             if (CollectionUtils.isNotEmpty(applicantEpodocNames)) {
+                patentBuilder.setApplicantNames(cleanNames(applicantEpodocNames));
                 patentBuilder.setApplicantCountryCodes(extractCountryCodes(applicantEpodocNames));
             }
             
@@ -234,8 +225,12 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
     
     private static CharSequence cleanName(CharSequence name) {
         if (StringUtils.isNotBlank(name)) {
-            if (name.charAt(name.length()-1) == ',') {
-                return name.subSequence(0, name.length()-1);
+            String strName = name.toString().replaceAll("\\u2002", " ");
+            int idx = strName.indexOf('[');
+            if (idx > 0) {
+                return strName.substring(0, idx).trim();
+            } else if (strName.charAt(strName.length()-1) == ',') {
+                return strName.substring(0, name.length()-1).trim();
             }
         } 
         return name;
@@ -263,7 +258,6 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
     
     private void instantiateParser() {
         this.xPathExpApplnDocIdEpodoc = MessageFormat.format(XPATH_EXPR_TEMPLATE_APLN_REFERENCE_DOC_ID, DOCUMENT_ID_TYPE_EPODOC);
-        this.xPathExpApplicantOriginalName = MessageFormat.format(XPATH_EXPR_APPLICANT_NAME, DATA_FORMAT_ORIGINAL);
         this.xPathExpApplicantEpodocName = MessageFormat.format(XPATH_EXPR_APPLICANT_NAME, DATA_FORMAT_EPODOC);
     }
     

@@ -67,9 +67,9 @@ public class OpsPatentMetadataXPathBasedParserTest {
 
         assertNotNull(patent.getApplicantNames());
         assertEquals(3, patent.getApplicantNames().size());
-        assertEquals("AKZO NOBEL N.V", patent.getApplicantNames().get(0));
-        assertEquals("WESTMIJZE, HANS", patent.getApplicantNames().get(1));
-        assertEquals("O, BOEN, HO", patent.getApplicantNames().get(2));
+        assertEquals("AKZO NOBEL NV", patent.getApplicantNames().get(0));
+        assertEquals("WESTMIJZE HANS", patent.getApplicantNames().get(1));
+        assertEquals("BOEN HO O", patent.getApplicantNames().get(2));
 
         assertNotNull(patent.getApplicantCountryCodes());
         assertEquals(3, patent.getApplicantCountryCodes().size());
@@ -81,7 +81,7 @@ public class OpsPatentMetadataXPathBasedParserTest {
     @Test
     public void testExtractFromDocumentWithAllFieldsMissing() throws Exception {
         // given
-        String xmlContents = buildXMLContents(null, null, null, null, null, null, null, null);
+        String xmlContents = buildXMLContents(null, null, null, null, null, null, null);
 
         // execute
         Patent.Builder patentBuilder = parser.parse(xmlContents, getPatentBuilderInitializedWithRequiredFields());
@@ -107,10 +107,9 @@ public class OpsPatentMetadataXPathBasedParserTest {
         String applnDate = "20200501";
         String publnDate = "20000530";
         List<String> epodocApplicantNames = Lists.newArrayList("John Smith [PL]");
-        List<String> originalApplicantNames = Lists.newArrayList("John Doe");
         
         String xmlContents = buildXMLContents(title, abstractText, classIpcText, applnEpodocId, applnDate, publnDate,
-                epodocApplicantNames, originalApplicantNames);
+                epodocApplicantNames);
 
         // execute
         Patent.Builder patentBuilder = parser.parse(xmlContents, getPatentBuilderInitializedWithRequiredFields());
@@ -130,7 +129,7 @@ public class OpsPatentMetadataXPathBasedParserTest {
 
         assertNotNull(patent.getApplicantNames());
         assertEquals(1, patent.getApplicantNames().size());
-        assertEquals("John Doe", patent.getApplicantNames().get(0));
+        assertEquals("John Smith", patent.getApplicantNames().get(0));
 
         assertNotNull(patent.getApplicantCountryCodes());
         assertEquals(1, patent.getApplicantCountryCodes().size());
@@ -175,10 +174,9 @@ public class OpsPatentMetadataXPathBasedParserTest {
         String applnDate = null;
         String publnDate = null;
         List<String> epodocApplicantNames = Lists.newArrayList("John Smith");
-        List<String> originalApplicantNames = null;
         
         String xmlContents = buildXMLContents(title, abstractText, classIpcText, applnEpodocId, applnDate, publnDate,
-                epodocApplicantNames, originalApplicantNames);
+                epodocApplicantNames);
 
         // execute
         Patent.Builder patentBuilder = parser.parse(xmlContents, getPatentBuilderInitializedWithRequiredFields());
@@ -186,14 +184,16 @@ public class OpsPatentMetadataXPathBasedParserTest {
         // assert
         Patent patent = patentBuilder.build();
         assertNotNull(patent);
-        assertNull(patent.getApplicantNames());
+        assertNotNull(patent.getApplicantNames());
+        assertEquals("John Smith", patent.getApplicantNames().get(0));
+        
         assertNotNull(patent.getApplicantCountryCodes());
         assertEquals(1, patent.getApplicantCountryCodes().size());
         assertEquals("", patent.getApplicantCountryCodes().get(0));
     }
     
     @Test
-    public void testExtractFromDocumentWithOriginalApplicantNamesToBeCleanedUp() throws Exception {
+    public void testExtractFromDocumentWithApplicantNamesToBeCleanedUp() throws Exception {
         // given
         String title = null;
         String abstractText = null;
@@ -201,11 +201,10 @@ public class OpsPatentMetadataXPathBasedParserTest {
         String applnEpodocId = null;
         String applnDate = null;
         String publnDate = null;
-        List<String> epodocApplicantNames = null;
-        List<String> originalApplicantNames = Lists.newArrayList("Smith J., ", "    Doe J.");
+        List<String> epodocApplicantNames = Lists.newArrayList("Smith J., ", "    Doe J.");
         
         String xmlContents = buildXMLContents(title, abstractText, classIpcText, applnEpodocId, applnDate, publnDate,
-                epodocApplicantNames, originalApplicantNames);
+                epodocApplicantNames);
 
         // execute
         Patent.Builder patentBuilder = parser.parse(xmlContents, getPatentBuilderInitializedWithRequiredFields());
@@ -213,7 +212,10 @@ public class OpsPatentMetadataXPathBasedParserTest {
         // assert
         Patent patent = patentBuilder.build();
         assertNotNull(patent);
-        assertNull(patent.getApplicantCountryCodes());
+        assertNotNull(patent.getApplicantCountryCodes());
+        assertEquals("", patent.getApplicantCountryCodes().get(0));
+        assertEquals("", patent.getApplicantCountryCodes().get(1));
+        
         assertNotNull(patent.getApplicantNames());
         assertEquals(2, patent.getApplicantNames().size());
         assertEquals("Smith J.", patent.getApplicantNames().get(0));
@@ -230,12 +232,11 @@ public class OpsPatentMetadataXPathBasedParserTest {
     }
 
     private String buildXMLContentsWithPublnDate(String publnDate) throws ParserConfigurationException, TransformerException {
-        return buildXMLContents(null, null, null, null, null, publnDate, null, null);
+        return buildXMLContents(null, null, null, null, null, publnDate, null);
     }
     
     private String buildXMLContents(String title, String abstractText, String classIpcText, String applnEpodocId,
-            String applnDate, String publnDate, List<String> epodocApplicantNames,
-            List<String> originalApplicantNames) throws ParserConfigurationException, TransformerException {
+            String applnDate, String publnDate, List<String> epodocApplicantNames) throws ParserConfigurationException, TransformerException {
     
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -328,21 +329,6 @@ public class OpsPatentMetadataXPathBasedParserTest {
                 
                 Element name = doc.createElement("name");
                 name.appendChild(doc.createTextNode(epodocApplicantName));
-                applicantName.appendChild(name);
-            }
-        }
-        
-        if (CollectionUtils.isNotEmpty(originalApplicantNames)) {
-            for (String originalApplicantName : originalApplicantNames) {
-                Element applicant = doc.createElement("applicant");
-                applicant.setAttribute("data-format", "original");
-                applicants.appendChild(applicant);
-                
-                Element applicantName = doc.createElement("applicant-name");
-                applicant.appendChild(applicantName);
-                
-                Element name = doc.createElement("name");
-                name.appendChild(doc.createTextNode(originalApplicantName));
                 applicantName.appendChild(name);
             }
         }
