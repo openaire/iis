@@ -1,18 +1,27 @@
 {
   "appln_auth": "EP",
   "appln_nr": "93430009",
-  "appln_filing_date": "2000-01-06",
-  "appln_nr_epodoc": "WO2000EP00011",
-  "earliest_publn_date": "2000-01-01",
-  "appln_abstract": "This is abstract",
+  "appln_filing_date": "1993-07-01",
+  "appln_nr_epodoc": "EP19930430009",
+  "earliest_publn_date": "1994-03-16",
+  "appln_abstract": "The subject of the present invention is a method and an apparatus for salting/drying and smoking meat products which have been prepared and cut into fillets beforehand, according to which method the said products are exposed to a stream of smoke in a smoking chamber (21), characterised in that the said fillets of products (1) are firstly salted and dried simultaneously by means of a drying/impregnating operation, by placing them in contact with a sodium chloride and sugar mixture in a processing tank (6), and the said fillets of products are then smoked at a low temperature, while the colloidal particles of the smoke are bound by electrostatic means (22/38/40). Applicable to smoking foodstuffs such as fish and meat. \u003cIMAGE\u003e",
   "appln_title": "Process and apparatus for salting-drying and cold smoking of meat food products.",
   "ipc_class_symbol": [
-    "C08F2/20"
+    "A23B4/056",
+    "A23B4/044",
+    "A23B4/052",
+    "A23B4/28",
+    "A23B4/30"
   ],
   "applicant_names": [
-    "Jan Nowak"
+    "CIRAD COOP INT RECH AGRO DEV",
+    "IFREMER",
+    "CENTRE DE COOPERATION INTERNATIONAL EN RECHERCHE AGRONOMIQUE POUR LE DEVELOPPEMENT ( CIRAD)",
+    "INSTITUT FRANCAIS DE RECHERCHE POUR L\u0027EXPLOITATION DE LA MER (IFREMER)"
   ],
   "applicant_country_codes": [
-    "PL"
+    "FR",
+    "FR",
+    "FR"
   ]
 }
