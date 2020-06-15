@@ -1,11 +1,13 @@
 package eu.dnetlib.iis.wf.importer.patent;
 
+import java.util.Objects;
+
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SQLContext;
+import org.apache.spark.sql.SparkSession;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -16,7 +18,7 @@ import com.google.common.collect.Lists;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
-import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
+import eu.dnetlib.iis.common.spark.SparkSessionFactory;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
@@ -42,12 +44,14 @@ public class PatentReaderJob {
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
 
-        try (JavaSparkContext sc = JavaSparkContextFactory.withConfAndKryo(new SparkConf())) {
+        SparkSession session = SparkSessionFactory.withConfAndKryo(new SparkConf());
+        
+        try {
+            JavaSparkContext sc = JavaSparkContext.fromSparkContext(session.sparkContext()); 
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputPath);
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
 
-            SQLContext sqlContext = new SQLContext(sc);
-            JavaRDD<ImportedPatent> results = sqlContext.read()
+            JavaRDD<ImportedPatent> results = session.read()
                     .option("sep", "\t")
                     .option("header","true")
                     .csv(params.inputTsvLocation)
@@ -55,6 +59,10 @@ public class PatentReaderJob {
                     .map(PatentReaderJob::buildEntry);
 
             storeInOutput(results, generateReportEntries(sc, results), params.outputPath, params.outputReportPath);
+        } finally {
+            if (Objects.nonNull(session)) {
+                session.stop();
+            }
         }
     }
 
