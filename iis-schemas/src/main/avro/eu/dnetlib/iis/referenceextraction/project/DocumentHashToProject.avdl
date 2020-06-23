@@ -1,0 +1,18 @@
+@namespace("eu.dnetlib.iis.referenceextraction.project.schemas")
+protocol IIS{
+
+    record DocumentHashToProject {
+//      document hash value calculated as murmur3 hash of document title, abstract and text
+        int hashValue;
+
+//      identifier of project being funding source of this document,
+//      foreign key: Project.id
+        string projectId;
+
+//		Find more details on `confidenceLevel` constraints in eu/dnetlib/iis/README.markdown file.
+        float confidenceLevel;
+
+//      text snippet surrounding the matched reference, required mostly for internal debugging and analytics
+        union { null , string } textsnippet = null;
+    }
+}
