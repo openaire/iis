@@ -6,6 +6,7 @@ import eu.dnetlib.iis.common.lock.LockManager;
 import eu.dnetlib.iis.common.spark.avro.AvroDataFrameSupport;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentHash;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentHashToProject;
+import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 import org.apache.avro.Schema;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -147,7 +148,8 @@ public class TaraReferenceExtractionIOUtils {
                                                           AvroDataStoreWriter writer) {
         writer.write(documentHashToProjectToBeCachedDF.coalesce(numberOfEmittedFiles),
                 new Path(newCachePath,
-                        CachedTaraReferenceExtractionJob.CacheRecordType.documentHashToProject.name()).toString());
+                        CachedTaraReferenceExtractionJob.CacheRecordType.documentHashToProject.name()).toString(),
+                DocumentHashToProject.SCHEMA$);
     }
 
     private static void storeDocumentHashInCache(Dataset<Row> documentHashToBeCachedDF,
@@ -156,7 +158,8 @@ public class TaraReferenceExtractionIOUtils {
                                                  AvroDataStoreWriter writer) {
         writer.write(documentHashToBeCachedDF.coalesce(numberOfEmittedFiles),
                 new Path(newCachePath,
-                        CachedTaraReferenceExtractionJob.CacheRecordType.documentHash.name()).toString());
+                        CachedTaraReferenceExtractionJob.CacheRecordType.documentHash.name()).toString(),
+                DocumentHash.SCHEMA$);
     }
 
     private static void storeMetaInCache(CacheMetadataManagingProcess cacheManager,
@@ -176,7 +179,7 @@ public class TaraReferenceExtractionIOUtils {
                                      String outputDocumentToProject,
                                      AvroDataStoreWriter writer) {
         logger.info("Storing output data in path {}.", outputDocumentToProject);
-        writer.write(resultsToOutputDF, outputDocumentToProject);
+        writer.write(resultsToOutputDF, outputDocumentToProject, DocumentToProject.SCHEMA$);
     }
 
     public static class OutputCleaner {
@@ -210,8 +213,8 @@ public class TaraReferenceExtractionIOUtils {
             this.avroDataFrameSupport = new AvroDataFrameSupport(spark);
         }
 
-        public void write(Dataset<Row> df, String path) {
-            avroDataFrameSupport.write(df, path);
+        public void write(Dataset<Row> df, String path, Schema avroSchema) {
+            avroDataFrameSupport.write(df, path, avroSchema);
         }
     }
 }

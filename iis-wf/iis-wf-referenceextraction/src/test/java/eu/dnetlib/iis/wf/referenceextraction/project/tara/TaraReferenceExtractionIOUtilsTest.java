@@ -185,7 +185,8 @@ public class TaraReferenceExtractionIOUtilsTest {
 
         verify(writer, atLeastOnce()).write(dataFrameCaptor.capture(),
                 eq(String.format("path/to/cache/01/%s",
-                        CachedTaraReferenceExtractionJob.CacheRecordType.documentHashToProject.name())));
+                        CachedTaraReferenceExtractionJob.CacheRecordType.documentHashToProject.name())),
+                eq(DocumentHashToProject.SCHEMA$));
         List<Row> documentHashToProjectRows = dataFrameCaptor.getValue().collectAsList();
         assertEquals(1, documentHashToProjectRows.size());
         Row documentHashToProjectRow = documentHashToProjectRows.get(0);
@@ -196,7 +197,8 @@ public class TaraReferenceExtractionIOUtilsTest {
 
         verify(writer, atLeastOnce()).write(dataFrameCaptor.capture(),
                 eq(String.format("path/to/cache/01/%s",
-                        CachedTaraReferenceExtractionJob.CacheRecordType.documentHash.name())));
+                        CachedTaraReferenceExtractionJob.CacheRecordType.documentHash.name())),
+                eq(DocumentHash.SCHEMA$));
         List<Row> documentHashRows = dataFrameCaptor.getValue().collectAsList();
         assertEquals(1, documentHashRows.size());
         Row documentHashRow = documentHashRows.get(0);
@@ -226,7 +228,8 @@ public class TaraReferenceExtractionIOUtilsTest {
         // then
         ArgumentCaptor<Dataset<Row>> dataFrameCaptor = new ArgumentCaptor<>();
         verify(writer, atLeastOnce()).write(dataFrameCaptor.capture(),
-                eq("path/to/output"));
+                eq("path/to/output"),
+                eq(DocumentToProject.SCHEMA$));
         List<Row> documentToProjectRows = dataFrameCaptor.getValue().collectAsList();
         assertEquals(1, documentToProjectRows.size());
         Row documentToProjecRow = documentToProjectRows.get(0);
