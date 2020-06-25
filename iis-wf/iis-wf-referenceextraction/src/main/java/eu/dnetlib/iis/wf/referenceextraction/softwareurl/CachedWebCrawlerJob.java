@@ -10,6 +10,7 @@ import eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.lock.LockManager;
 import eu.dnetlib.iis.common.lock.LockManagerFactory;
+import eu.dnetlib.iis.common.lock.LockManagerUtils;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
@@ -72,7 +73,8 @@ public class CachedWebCrawlerJob {
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputFaultPath);
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
 
-            LockManager lockManager = instantiateLockManager(params.lockManagerFactoryClassName, sc.hadoopConfiguration());
+            LockManager lockManager = LockManagerUtils.instantiateLockManager(params.lockManagerFactoryClassName,
+                    sc.hadoopConfiguration());
             
             OutputPaths outputPaths = new OutputPaths(params);
             
@@ -102,15 +104,7 @@ public class CachedWebCrawlerJob {
     }
     
     //------------------------ PRIVATE --------------------------
-    
-    private static LockManager instantiateLockManager(String lockManagerFactoryClassName,
-            Configuration config) throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        Class<?> clazz = Class.forName(lockManagerFactoryClassName);
-        Constructor<?> constructor = clazz.getConstructor();
-        LockManagerFactory lockManagerFactory = (LockManagerFactory) constructor.newInstance();
-        return lockManagerFactory.instantiate(config);
-    }
-    
+
     private static String normalizePath(String cacheRootDir) {
         // omitting last separator when defined
         if (File.separatorChar == cacheRootDir.charAt(cacheRootDir.length()-1)) {
@@ -142,7 +136,6 @@ public class CachedWebCrawlerJob {
         // store final results
         JavaRDD<DocumentToSoftwareUrlWithSource> entitiesToBeStored = produceEntitiesToBeStored(documentToSoftwareUrl, returnedFromWebcrawlTuple._1);
         entitiesToBeStored.cache();
-        produceFaultToBeStored(documentToSoftwareUrl, returnedFromWebcrawlTuple._2);
         JavaRDD<Fault> faultsToBeStored = produceFaultToBeStored(documentToSoftwareUrl, returnedFromWebcrawlTuple._2);
         faultsToBeStored.cache();
         
