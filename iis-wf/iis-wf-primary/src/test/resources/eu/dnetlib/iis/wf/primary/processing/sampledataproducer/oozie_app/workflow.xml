@@ -412,7 +412,7 @@
 				</property>
 				<property>
 					<name>tara_cache_root_dir</name>
-					<value>${workingDir}</value>
+					<value>${workingDir}/cache/tara</value>
 				</property>
 				<property>
                     <name>webcrawlContentRetrieverClassName</name>
@@ -424,7 +424,7 @@
                 </property>
                 <property>
                     <name>software_webcrawl_cache_location</name>
-                    <value>${workingDir}</value>
+                    <value>${workingDir}/cache/software_webcrawl</value>
                 </property>
 				<property>
 					<name>metric_pusher_creator_class_name</name>
