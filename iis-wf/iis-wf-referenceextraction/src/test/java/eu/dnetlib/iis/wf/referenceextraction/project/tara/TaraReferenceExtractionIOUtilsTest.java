@@ -12,6 +12,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.avro.SchemaConverters;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -53,7 +54,7 @@ public class TaraReferenceExtractionIOUtilsTest {
         clearOutput("path/to/output", cleaner);
 
         // then
-        verify(cleaner).clearOutput("path/to/output");
+        verify(cleaner, atLeastOnce()).clearOutput("path/to/output");
     }
 
     @Test
@@ -62,14 +63,17 @@ public class TaraReferenceExtractionIOUtilsTest {
         AvroDataStoreReader reader = mock(AvroDataStoreReader.class);
 
         // when
-        List<Row> results = readDocumentHashToProjectFromCacheOrEmpty(spark,
+        Dataset<Row> resultDF = readDocumentHashToProjectFromCacheOrEmpty(spark,
                 "path/to/cache",
                 CacheMetadataManagingProcess.UNDEFINED,
-                reader)
-                .collectAsList();
+                reader);
 
         // then
+        assertEquals(SchemaConverters.toSqlType(DocumentHashToProject.SCHEMA$).dataType(), resultDF.schema());
+
+        List<Row> results = resultDF.collectAsList();
         assertTrue(results.isEmpty());
+
         verify(reader, never()).read(any(), any());
     }
 
@@ -77,7 +81,7 @@ public class TaraReferenceExtractionIOUtilsTest {
     public void readDocumentHashToProjectFromCacheOrEmptyShouldReadNonEmptyDataFraneIfExistingCacheIdIsDefined() {
         // given
         DocumentHashToProject documentHashToProject = DocumentHashToProject.newBuilder()
-                .setHashValue(1)
+                .setHashValue("a1")
                 .setProjectId("projectId")
                 .setConfidenceLevel(1.0f)
                 .build();
@@ -90,13 +94,15 @@ public class TaraReferenceExtractionIOUtilsTest {
                         DocumentHashToProject.SCHEMA$));
 
         // when
-        List<Row> results = readDocumentHashToProjectFromCacheOrEmpty(spark,
+        Dataset<Row> resultDF = readDocumentHashToProjectFromCacheOrEmpty(spark,
                 "path/to/cache",
                 "01",
-                reader)
-                .collectAsList();
+                reader);
 
         // then
+        assertEquals(SchemaConverters.toSqlType(DocumentHashToProject.SCHEMA$).dataType(), resultDF.schema());
+
+        List<Row> results = resultDF.collectAsList();
         assertEquals(1, results.size());
         Row row = results.get(0);
         assertEquals(documentHashToProject.getHashValue(), row.getAs("hashValue"));
@@ -111,21 +117,24 @@ public class TaraReferenceExtractionIOUtilsTest {
         AvroDataStoreReader reader = mock(AvroDataStoreReader.class);
 
         // when
-        List<Row> results = readDocumentHashFromCacheOrEmpty(spark,
+        Dataset<Row> resultDF = readDocumentHashFromCacheOrEmpty(spark,
                 "path/to/cache",
                 CacheMetadataManagingProcess.UNDEFINED,
-                reader)
-                .collectAsList();
+                reader);
 
         // then
+        assertEquals(SchemaConverters.toSqlType(DocumentHash.SCHEMA$).dataType(), resultDF.schema());
+
+        List<Row> results = resultDF.collectAsList();
         assertTrue(results.isEmpty());
+
         verify(reader, never()).read(any(), any());
     }
 
     @Test
     public void readDocumentHashFromCacheOrEmptyShouldReadNonEmptyDataFrameIfExistingCacheIdIsDefined() {
         // given
-        DocumentHash documentHash = DocumentHash.newBuilder().setHashValue(1).build();
+        DocumentHash documentHash = DocumentHash.newBuilder().setHashValue("a1").build();
         List<DocumentHash> documentHashList = Collections.singletonList(documentHash);
         AvroDataStoreReader reader = mock(AvroDataStoreReader.class);
         when(reader.read(new Path("path/to/cache/01", CachedTaraReferenceExtractionJob.CacheRecordType.documentHash.name()).toString(),
@@ -133,13 +142,15 @@ public class TaraReferenceExtractionIOUtilsTest {
                 .thenReturn(new AvroDataFrameSupport(spark).createDataFrame(documentHashList, DocumentHash.SCHEMA$));
 
         // when
-        List<Row> results = readDocumentHashFromCacheOrEmpty(spark,
+        Dataset<Row> resultDF = readDocumentHashFromCacheOrEmpty(spark,
                 "path/to/cache",
                 "01",
-                reader)
-                .collectAsList();
+                reader);
 
         // then
+        assertEquals(SchemaConverters.toSqlType(DocumentHash.SCHEMA$).dataType(), resultDF.schema());
+
+        List<Row> results = resultDF.collectAsList();
         assertEquals(1, results.size());
         Row row = results.get(0);
         assertEquals(documentHash.getHashValue(), row.getAs("hashValue"));
@@ -150,7 +161,7 @@ public class TaraReferenceExtractionIOUtilsTest {
         // given
         AvroDataFrameSupport avroDataFrameSupport = new AvroDataFrameSupport(spark);
         DocumentHashToProject documentHashToProject = DocumentHashToProject.newBuilder()
-                .setHashValue(1)
+                .setHashValue("a1")
                 .setProjectId("projId-1")
                 .setConfidenceLevel(1.0f)
                 .build();
@@ -158,7 +169,7 @@ public class TaraReferenceExtractionIOUtilsTest {
         Dataset<Row> documentHashToProjectDF = avroDataFrameSupport.createDataFrame(
                 documentHashToProjectList,
                 DocumentHashToProject.SCHEMA$);
-        DocumentHash documentHash = DocumentHash.newBuilder().setHashValue(1).build();
+        DocumentHash documentHash = DocumentHash.newBuilder().setHashValue("a1").build();
         List<DocumentHash> documentHashList = Collections.singletonList(documentHash);
         Dataset<Row> documentHashDF = avroDataFrameSupport.createDataFrame(
                 documentHashList,
@@ -187,7 +198,10 @@ public class TaraReferenceExtractionIOUtilsTest {
                 eq(String.format("path/to/cache/01/%s",
                         CachedTaraReferenceExtractionJob.CacheRecordType.documentHashToProject.name())),
                 eq(DocumentHashToProject.SCHEMA$));
-        List<Row> documentHashToProjectRows = dataFrameCaptor.getValue().collectAsList();
+
+        Dataset<Row> documentHashToProjectStoredDF = dataFrameCaptor.getValue();
+        assertEquals(SchemaConverters.toSqlType(DocumentHashToProject.SCHEMA$).dataType(), documentHashToProjectStoredDF.schema());
+        List<Row> documentHashToProjectRows = documentHashToProjectStoredDF.collectAsList();
         assertEquals(1, documentHashToProjectRows.size());
         Row documentHashToProjectRow = documentHashToProjectRows.get(0);
         assertEquals(documentHashToProject.getHashValue(), documentHashToProjectRow.getAs("hashValue"));
@@ -199,7 +213,10 @@ public class TaraReferenceExtractionIOUtilsTest {
                 eq(String.format("path/to/cache/01/%s",
                         CachedTaraReferenceExtractionJob.CacheRecordType.documentHash.name())),
                 eq(DocumentHash.SCHEMA$));
-        List<Row> documentHashRows = dataFrameCaptor.getValue().collectAsList();
+
+        Dataset<Row> documentHashStoredDF = dataFrameCaptor.getValue();
+        assertEquals(SchemaConverters.toSqlType(DocumentHash.SCHEMA$).dataType(), documentHashStoredDF.schema());
+        List<Row> documentHashRows = documentHashStoredDF.collectAsList();
         assertEquals(1, documentHashRows.size());
         Row documentHashRow = documentHashRows.get(0);
         assertEquals(documentHash.getHashValue(), documentHashRow.getAs("hashValue"));
@@ -230,7 +247,9 @@ public class TaraReferenceExtractionIOUtilsTest {
         verify(writer, atLeastOnce()).write(dataFrameCaptor.capture(),
                 eq("path/to/output"),
                 eq(DocumentToProject.SCHEMA$));
-        List<Row> documentToProjectRows = dataFrameCaptor.getValue().collectAsList();
+        Dataset<Row> documentToProjectStoredDF = dataFrameCaptor.getValue();
+        assertEquals(SchemaConverters.toSqlType(DocumentToProject.SCHEMA$).dataType(), documentToProjectStoredDF.schema());
+        List<Row> documentToProjectRows = documentToProjectStoredDF.collectAsList();
         assertEquals(1, documentToProjectRows.size());
         Row documentToProjecRow = documentToProjectRows.get(0);
         assertEquals(documentToProject.getDocumentId(), documentToProjecRow.getAs("documentId"));
