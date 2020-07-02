@@ -8,7 +8,6 @@ import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentHashToProject;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.PublicationType;
-import org.apache.avro.Schema;
 import org.apache.spark.SparkConf;
 import org.apache.spark.SparkFiles;
 import org.apache.spark.sql.Dataset;
@@ -16,7 +15,6 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.avro.SchemaConverters;
-import org.apache.spark.sql.types.StructType;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -56,7 +54,7 @@ public class TaraReferenceExtractionUtilsTest {
     }
 
     @Test
-    public void buildDocumentMetadataShouldRunProperly() {
+    public void buildDocumentMetadataByIdShouldRunProperly() {
         // given
         AvroDataFrameSupport avroDataFrameSupport = new AvroDataFrameSupport(spark);
         Dataset<Row> documentTextDF = avroDataFrameSupport.createDataFrame(
@@ -73,74 +71,81 @@ public class TaraReferenceExtractionUtilsTest {
                 ExtractedDocumentMetadataMergedWithOriginal.SCHEMA$);
 
         // when
-        List<Row> results = buildDocumentMetadata(documentTextDF, extractedDocumentMetadataMergedWithOriginalDF)
-                .collectAsList();
+        Dataset<Row> resultDF = buildDocumentMetadataById(documentTextDF, extractedDocumentMetadataMergedWithOriginalDF);
 
         // then
-        List<Row> sortedResults = results.stream()
-                .sorted(Comparator.comparing(o -> o.<String>getAs("id")))
+        assertEquals(CachedTaraReferenceExtractionJob.DOCUMENT_METADATA_BY_ID_SCHEMA, resultDF.schema());
+
+        List<Row> results = resultDF.collectAsList().stream()
+                .sorted(Comparator.comparing(o -> o.getAs("id")))
                 .collect(Collectors.toList());
-        assertEquals(2, sortedResults.size());
-        assertForDocumentMetadataRow(sortedResults.get(0), "docId-1", "text-1", null, null);
-        assertForDocumentMetadataRow(sortedResults.get(1), "docId-2", "text-2", null, null);
+        assertEquals(2, results.size());
+        assertForDocumentMetadataByIdRow(results.get(0), "docId-1", null, null, "text-1");
+        assertForDocumentMetadataByIdRow(results.get(1), "docId-2", null, null, "text-2");
     }
 
     @Test
-    public void buildDocumentMetadataWithHashShouldRunProperly() {
+    public void buildDocumentMetadataShouldRunProperly() {
         // given
-        Dataset<Row> documentMetadataDF = spark.createDataFrame(
+        Dataset<Row> documentMetadataByIdDF = spark.createDataFrame(
                 Collections.singletonList(
-                        createDocumentMetadata("id")
+                        createDocumentMetadataById("docId-1", "text-1")
                 ),
                 CachedTaraReferenceExtractionJob.DOCUMENT_METADATA_SCHEMA);
         DocumentMetadataHashColumnCreator hashColumnCreator = mock(DocumentMetadataHashColumnCreator.class);
         when(hashColumnCreator.hashCol("title", "abstract", "text"))
-                .thenReturn(lit(1));
+                .thenReturn(lit("a1"));
 
         // when
-        List<Row> results = buildDocumentMetadataWithHash(documentMetadataDF, hashColumnCreator)
-                .collectAsList();
+        Dataset<Row> resultDF = buildDocumentMetadata(documentMetadataByIdDF, hashColumnCreator);
 
         // then
+        assertEquals(CachedTaraReferenceExtractionJob.DOCUMENT_METADATA_SCHEMA, resultDF.schema());
+
+        List<Row> results = resultDF.collectAsList();
         assertEquals(1, results.size());
         Row row = results.get(0);
-        assertEquals("id", row.getAs("id"));
-        assertEquals(1, row.<Integer>getAs("hashValue").intValue());
+        assertEquals("docId-1", row.getAs("id"));
+        assertEquals("a1", row.getAs("hashValue"));
     }
 
     @Test
-    public void documentMetadataToBeProcessedShouldFilterOutPreviouslyProcessedDocuments() {
+    public void documentMetadataByHashToBeProcessedShouldFilterOutPreviouslyProcessedDocuments() {
         // given
-        Dataset<Row> documentMetadataWithHashDF = spark.createDataFrame(
+        Dataset<Row> documentMetadataDF = spark.createDataFrame(
                 Arrays.asList(
-                        createDocumentMetadataWithHash("docId-1", 1),
-                        createDocumentMetadataWithHash("docId-2", 2)
+                        createDocumentMetadata("docId-1", "text-1", "a1"),
+                        createDocumentMetadata("docId-1", "text-1", "a1"),
+                        createDocumentMetadata("docId-2", "text-2", "b2"),
+                        createDocumentMetadata("docId-2", "text-2", "b2")
                 ),
-                CachedTaraReferenceExtractionJob.DOCUMENT_METADATA_WITH_HASH_SCHEMA);
+                CachedTaraReferenceExtractionJob.DOCUMENT_METADATA_SCHEMA);
         Dataset<Row> documentHashFromCacheDF = new AvroDataFrameSupport(spark).createDataFrame(
                 Arrays.asList(
-                        createDocumentHash(2),
-                        createDocumentHash(3)
+                        createDocumentHash("b2"),
+                        createDocumentHash("c3")
                 ),
                 DocumentHash.SCHEMA$);
 
         // when
-        List<Row> results = documentMetadataToBeProcessed(documentMetadataWithHashDF, documentHashFromCacheDF)
-                .collectAsList();
+        Dataset<Row> resultDF = documentMetadataByHashToBeProcessed(documentMetadataDF, documentHashFromCacheDF);
 
         // then
+        assertEquals(CachedTaraReferenceExtractionJob.DOCUMENT_METADATA_BY_HASH_SCHEMA, resultDF.schema());
+
+        List<Row> results = resultDF.collectAsList();
         assertEquals(1, results.size());
-        assertForDocumentMetadataRow(results.get(0), "docId-1", null, null, null);
+        assertForDocumentMetadataByHashRow(results.get(0), "a1", null, null, "text-1");
     }
 
     @Test
     public void shouldRunReferenceExtraction() throws IOException {
         // given
-        Dataset<Row> documentMetadataDF = spark.createDataFrame(
+        Dataset<Row> documentMetadataByHashDF = spark.createDataFrame(
                 Collections.singletonList(
-                        createDocumentMetadata("id")
+                        createDocumentMetadataByHash("a1", "text-1")
                 ),
-                CachedTaraReferenceExtractionJob.DOCUMENT_METADATA_SCHEMA);
+                CachedTaraReferenceExtractionJob.DOCUMENT_METADATA_BY_HASH_SCHEMA);
         PipeExecutionEnvironment pipeExecutionEnvironment = () -> {
             Path scriptWithInputCheck = createTestScriptWithInputCheck();
             spark.sparkContext().addFile(scriptWithInputCheck.toString());
@@ -149,63 +154,48 @@ public class TaraReferenceExtractionUtilsTest {
         };
 
         // when
-        List<Row> results = runReferenceExtraction(spark, documentMetadataDF, pipeExecutionEnvironment)
-                .collectAsList();
+        Dataset<Row> resultDF = runReferenceExtraction(spark, documentMetadataByHashDF, pipeExecutionEnvironment);
 
         // then
+        assertEquals(SchemaConverters.toSqlType(DocumentHashToProject.SCHEMA$).dataType().asNullable(),
+                resultDF.schema().asNullable());
+
+        List<Row> results = resultDF.collectAsList();
         assertEquals(1, results.size());
         Row row = results.get(0);
-        assertEquals("docId-1", row.getAs("documentId"));
-        assertEquals("projId-1", row.getAs("projectId"));
-        assertEquals(1.0f, row.<Float>getAs("confidenceLevel"), 1e-3);
-        assertNull(row.getAs("textsnippet"));
-    }
-
-    private static Path createTestScriptWithInputCheck() throws IOException {
-        String content = String.join(System.getProperty("line.separator"),
-                "#!/bin/bash",
-                "read in",
-                "test ${in:0:1} == '{' -a ${in: -1} == '}' && echo '{\"documentId\":\"docId-1\",\"projectId\":\"projId-1\",\"confidenceLevel\":1,\"textsnippet\":null}'"
-        );
-        return Files.write(Files.createTempFile(null, "sh"), content.getBytes());
+        assertForDocumentHashToProject(row, "a1", "projId-1", 1.0f);
     }
 
     @Test
     public void documentHashToProjectToBeCachedShouldRunProperly() {
         // given
         AvroDataFrameSupport avroDataFrameSupport = new AvroDataFrameSupport(spark);
-        Dataset<Row> documentToProjectDF = avroDataFrameSupport.createDataFrame(
+        Dataset<Row> documentHashToProjectDF = avroDataFrameSupport.createDataFrame(
                 Collections.singletonList(
-                        createDocumentToProject("docId-1", "projId-1", 1f)
-                ),
-                DocumentToProject.SCHEMA$);
-        Dataset<Row> documentHashToProjectFromCacheDF = new AvroDataFrameSupport(spark).createDataFrame(
-                Collections.singletonList(
-                        createDocumentHashToProject(2, "projId-2", 2f)
+                        createDocumentHashToProject("a1", "projId-1", 1f)
                 ),
                 DocumentHashToProject.SCHEMA$);
-        Dataset<Row> documentMetadataWithHashDF = spark.createDataFrame(
-                Arrays.asList(
-                        createDocumentMetadataWithHash("docId-1", 1),
-                        createDocumentMetadataWithHash("docId-2", 2)
+        Dataset<Row> documentHashToProjectFromCacheDF = new AvroDataFrameSupport(spark).createDataFrame(
+                Collections.singletonList(
+                        createDocumentHashToProject("b2", "projId-2", 2f)
                 ),
-                CachedTaraReferenceExtractionJob.DOCUMENT_METADATA_WITH_HASH_SCHEMA);
+                DocumentHashToProject.SCHEMA$);
 
         // when
         Dataset<Row> resultDF = documentHashToProjectToBeCached(spark,
-                documentToProjectDF,
-                documentHashToProjectFromCacheDF,
-                documentMetadataWithHashDF);
+                documentHashToProjectDF,
+                documentHashToProjectFromCacheDF);
 
         // then
-        assertAvroSchemaEqualsSqlSchema(DocumentHashToProject.SCHEMA$, resultDF.schema());
-        List<Row> results = resultDF.collectAsList();
-        assertEquals(2, results.size());
-        List<Row> resultsSorted = results.stream()
-                .sorted(Comparator.comparing(o -> o.<Integer>getAs("hashValue")))
+        assertEquals(SchemaConverters.toSqlType(DocumentHashToProject.SCHEMA$).dataType(), resultDF.schema());
+
+        List<Row> results = resultDF.collectAsList().stream()
+                .sorted(Comparator.comparing(o -> o.getAs("hashValue")))
                 .collect(Collectors.toList());
-        assertForDocumentHashToProject(resultsSorted.get(0), 1, "projId-1", 1f);
-        assertForDocumentHashToProject(resultsSorted.get(1), 2, "projId-2", 2f);
+        assertEquals(2, results.size());
+
+        assertForDocumentHashToProject(results.get(0), "a1", "projId-1", 1f);
+        assertForDocumentHashToProject(results.get(1), "b2", "projId-2", 2f);
     }
 
     @Test
@@ -213,33 +203,33 @@ public class TaraReferenceExtractionUtilsTest {
         // given
         Dataset<Row> documentHashFromCacheDF = new AvroDataFrameSupport(spark).createDataFrame(
                 Arrays.asList(
-                        createDocumentHash(2),
-                        createDocumentHash(3)
+                        createDocumentHash("b2"),
+                        createDocumentHash("c3")
                 ),
                 DocumentHash.SCHEMA$);
-        Dataset<Row> documentMetadataWithHashDF = spark.createDataFrame(
+        Dataset<Row> documentMetadataDF = spark.createDataFrame(
                 Arrays.asList(
-                        createDocumentMetadataWithHash("docId-1", 1),
-                        createDocumentMetadataWithHash("docId-2", 2)
+                        createDocumentMetadata("docId-1", "text-1", "a1"),
+                        createDocumentMetadata("docId-2", "text-2", "b2")
                 ),
-                CachedTaraReferenceExtractionJob.DOCUMENT_METADATA_WITH_HASH_SCHEMA);
+                CachedTaraReferenceExtractionJob.DOCUMENT_METADATA_SCHEMA);
 
         // when
         Dataset<Row> resultDF = documentHashToBeCached(spark,
                 documentHashFromCacheDF,
-                documentMetadataWithHashDF);
+                documentMetadataDF);
 
         // then
-        assertAvroSchemaEqualsSqlSchema(DocumentHash.SCHEMA$, resultDF.schema());
-        List<Row> results = resultDF.collectAsList();
-        assertEquals(3, results.size());
-        List<Object> hashValues = results.stream()
-                .map(row -> row.<Integer>getAs("hashValue"))
-                .sorted()
+        assertEquals(SchemaConverters.toSqlType(DocumentHash.SCHEMA$).dataType(), resultDF.schema());
+
+        List<Row> results = resultDF.collectAsList().stream()
+                .sorted(Comparator.comparing(o -> o.getAs("hashValue")))
                 .collect(Collectors.toList());
-        assertEquals(1, hashValues.get(0));
-        assertEquals(2, hashValues.get(1));
-        assertEquals(3, hashValues.get(2));
+        assertEquals(3, results.size());
+
+        assertEquals("a1", results.get(0).getAs("hashValue"));
+        assertEquals("b2", results.get(1).getAs("hashValue"));
+        assertEquals("c3", results.get(2).getAs("hashValue"));
     }
 
     @Test
@@ -247,25 +237,29 @@ public class TaraReferenceExtractionUtilsTest {
         // given
         Dataset<Row> documentHashToProjectDF = new AvroDataFrameSupport(spark).createDataFrame(
                 Collections.singletonList(
-                        createDocumentHashToProject(1, "projId-1", 1f)
+                        createDocumentHashToProject("a1", "projId-1", 1f)
                 ),
                 DocumentHashToProject.SCHEMA$);
-        Dataset<Row> documentMetadataWithHashDF = spark.createDataFrame(
+        Dataset<Row> documentMetadataDF = spark.createDataFrame(
                 Arrays.asList(
-                        createDocumentMetadataWithHash("docId-1", 1),
-                        createDocumentMetadataWithHash("docId-2", 2)
+                        createDocumentMetadata("docId-1", "text-1", "a1"),
+                        createDocumentMetadata("docId-2", "text-2", "b2")
                 ),
-                CachedTaraReferenceExtractionJob.DOCUMENT_METADATA_WITH_HASH_SCHEMA);
+                CachedTaraReferenceExtractionJob.DOCUMENT_METADATA_SCHEMA);
 
         // when
         Dataset<Row> resultDF = documentToProjectToOutput(spark,
                 documentHashToProjectDF,
-                documentMetadataWithHashDF);
+                documentMetadataDF);
 
         // then
-        assertAvroSchemaEqualsSqlSchema(DocumentToProject.SCHEMA$, resultDF.schema());
-        List<Row> results = resultDF.collectAsList();
+        assertEquals(SchemaConverters.toSqlType(DocumentToProject.SCHEMA$).dataType(), resultDF.schema());
+
+        List<Row> results = resultDF.collectAsList().stream()
+                .sorted(Comparator.comparing(o -> o.getAs("documentId")))
+                .collect(Collectors.toList());
         assertEquals(1, results.size());
+
         Row row = results.get(0);
         assertEquals("docId-1", row.getAs("documentId"));
         assertEquals("projId-1", row.getAs("projectId"));
@@ -287,41 +281,27 @@ public class TaraReferenceExtractionUtilsTest {
                 .build();
     }
 
-    private static void assertForDocumentMetadataRow(Row row,
-                                                     String id,
-                                                     String text,
-                                                     String title,
-                                                     String abstract$) {
-        assertEquals(id, row.getAs("id"));
-        assertEquals(text, row.getAs("text"));
-        assertEquals(title, row.getAs("title"));
-        assertEquals(abstract$, row.getAs("abstract"));
+    private static Row createDocumentMetadataById(String id,
+                                                  String text) {
+        return RowFactory.create(id, null, null, text);
     }
 
-    private static Row createDocumentMetadata(String id) {
-        return RowFactory.create(id, null, null, null);
+    private static Row createDocumentMetadataByHash(String hashCode,
+                                                    String text) {
+        return RowFactory.create(hashCode, null, null, text);
     }
 
-    private static Row createDocumentMetadataWithHash(String id,
-                                                      Integer hashValue) {
-        return RowFactory.create(id, null, null, null, hashValue);
+    private static Row createDocumentMetadata(String id,
+                                              String text,
+                                              String hashValue) {
+        return RowFactory.create(id, null, null, text, hashValue);
     }
 
-    private static DocumentHash createDocumentHash(Integer hashValue) {
+    private static DocumentHash createDocumentHash(String hashValue) {
         return DocumentHash.newBuilder().setHashValue(hashValue).build();
     }
 
-    private static DocumentToProject createDocumentToProject(String documentId,
-                                                             String projectId,
-                                                             Float confidenceLevel) {
-        return DocumentToProject.newBuilder()
-                .setDocumentId(documentId)
-                .setProjectId(projectId)
-                .setConfidenceLevel(confidenceLevel)
-                .build();
-    }
-
-    private static DocumentHashToProject createDocumentHashToProject(Integer hashValue,
+    private static DocumentHashToProject createDocumentHashToProject(String hashValue,
                                                                      String projectId,
                                                                      Float confidenceLevel) {
         return DocumentHashToProject.newBuilder()
@@ -331,18 +311,44 @@ public class TaraReferenceExtractionUtilsTest {
                 .build();
     }
 
+    private static Path createTestScriptWithInputCheck() throws IOException {
+        String content = String.join(System.getProperty("line.separator"),
+                "#!/bin/bash",
+                "read in",
+                "test ${in:0:1} == '{' -a ${in: -1} == '}' && echo '{\"documentId\":\"a1\",\"projectId\":\"projId-1\",\"confidenceLevel\":1,\"textsnippet\":null}'"
+        );
+        return Files.write(Files.createTempFile(null, "sh"), content.getBytes());
+    }
+
+    private static void assertForDocumentMetadataByIdRow(Row row,
+                                                         String id,
+                                                         String title,
+                                                         String abstract$,
+                                                         String text) {
+        assertEquals(id, row.getAs("id"));
+        assertEquals(title, row.getAs("title"));
+        assertEquals(abstract$, row.getAs("abstract"));
+        assertEquals(text, row.getAs("text"));
+    }
+
+    private static void assertForDocumentMetadataByHashRow(Row row,
+                                                           String hashValue,
+                                                           String title,
+                                                           String abstract$,
+                                                           String text) {
+        assertEquals(hashValue, row.getAs("hashValue"));
+        assertEquals(title, row.getAs("title"));
+        assertEquals(abstract$, row.getAs("abstract"));
+        assertEquals(text, row.getAs("text"));
+    }
+
     private static void assertForDocumentHashToProject(Row row,
-                                                       Integer hashValue,
+                                                       String hashValue,
                                                        String projectId,
                                                        Float confidenceLevel) {
         assertEquals(hashValue, row.getAs("hashValue"));
         assertEquals(projectId, row.getAs("projectId"));
         assertEquals(confidenceLevel, row.<Float>getAs("confidenceLevel"), 1e-3);
         assertNull(row.getAs("textsnippet"));
-    }
-
-    private static void assertAvroSchemaEqualsSqlSchema(Schema avroSchema,
-                                                        StructType sqlSchema) {
-        assertEquals(SchemaConverters.toSqlType(avroSchema).dataType(), sqlSchema);
     }
 }

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.apache.spark.sql.functions.*;
@@ -21,47 +22,7 @@ public class TaraReferenceExtractionUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(TaraReferenceExtractionUtils.class);
 
-    public static Dataset<Row> buildDocumentMetadata(Dataset<Row> documentTextDF,
-                                                     Dataset<Row> extractedDocumentMetadataMergedWithOriginalDF) {
-        logger.info("Building document metadata for input data.");
-        Column joinExprs = documentTextDF.col("id").equalTo(
-                extractedDocumentMetadataMergedWithOriginalDF.col("id"));
-        return documentTextDF
-                .join(extractedDocumentMetadataMergedWithOriginalDF, joinExprs, "left_outer")
-                .select(
-                        documentTextDF.col("id"),
-                        documentTextDF.col("text"),
-                        extractedDocumentMetadataMergedWithOriginalDF.col("title"),
-                        extractedDocumentMetadataMergedWithOriginalDF.col("abstract")
-                );
-    }
-
-    public static Dataset<Row> buildDocumentMetadataWithHash(Dataset<Row> documentMetadataDF) {
-        return buildDocumentMetadataWithHash(documentMetadataDF, new DocumentMetadataHashColumnCreator());
-    }
-
-    public static Dataset<Row> buildDocumentMetadataWithHash(Dataset<Row> documentMetadataDF,
-                                                             DocumentMetadataHashColumnCreator hashColumnCreator) {
-        logger.info("Building document metadata with hash column.");
-        return documentMetadataDF
-                .withColumn("hashValue",
-                        hashColumnCreator.hashCol("title", "abstract", "text"));
-    }
-
-    public static Dataset<Row> documentMetadataToBeProcessed(Dataset<Row> documentMetadataWithHashDF,
-                                                             Dataset<Row> documentHashFromCacheDF) {
-        logger.info("Finding document metadata to be processed.");
-        Column joinExprs = documentMetadataWithHashDF.col("hashValue").equalTo(
-                documentHashFromCacheDF.col("hashValue"));
-        return documentMetadataWithHashDF
-                .join(documentHashFromCacheDF, joinExprs, "left_anti")
-                .select(
-                        col("id"),
-                        col("title"),
-                        col("abstract"),
-                        col("text")
-                );
-    }
+    private static final String SEP = "|";
 
     private static final StructType PIPE_RESULT_SCHEMA = StructType$.MODULE$.apply(
             Collections.singletonList(
@@ -69,42 +30,88 @@ public class TaraReferenceExtractionUtils {
             )
     );
 
+    private static final StructType REFERENCE_EXTRACTION_RESULT_SCHEMA = StructType$.MODULE$.apply(
+            Arrays.asList(
+                    StructField$.MODULE$.apply("documentId", DataTypes.StringType, true, Metadata.empty()),
+                    StructField$.MODULE$.apply("projectId", DataTypes.StringType, true, Metadata.empty()),
+                    StructField$.MODULE$.apply("confidenceLevel", DataTypes.FloatType, true, Metadata.empty()),
+                    StructField$.MODULE$.apply("textsnippet", DataTypes.StringType, true, Metadata.empty())
+            )
+    );
+
+    public static Dataset<Row> buildDocumentMetadataById(Dataset<Row> documentTextDF,
+                                                         Dataset<Row> extractedDocumentMetadataMergedWithOriginalDF) {
+        logger.info("Building document metadata by id for input data.");
+        Column joinExprs = documentTextDF.col("id").equalTo(
+                extractedDocumentMetadataMergedWithOriginalDF.col("id"));
+        return documentTextDF
+                .join(extractedDocumentMetadataMergedWithOriginalDF, joinExprs, "left_outer")
+                .select(
+                        documentTextDF.col("id"),
+                        extractedDocumentMetadataMergedWithOriginalDF.col("title"),
+                        extractedDocumentMetadataMergedWithOriginalDF.col("abstract"),
+                        documentTextDF.col("text")
+                );
+    }
+
+    public static Dataset<Row> buildDocumentMetadata(Dataset<Row> documentMetadataByIdDF) {
+        return buildDocumentMetadata(documentMetadataByIdDF, new DocumentMetadataHashColumnCreator());
+    }
+
+    public static Dataset<Row> buildDocumentMetadata(Dataset<Row> documentMetadataByIdDF,
+                                                     DocumentMetadataHashColumnCreator hashColumnCreator) {
+        logger.info("Building document metadata with hash column.");
+        return documentMetadataByIdDF
+                .withColumn("hashValue",
+                        hashColumnCreator.hashCol("title", "abstract", "text"));
+    }
+
+    public static Dataset<Row> documentMetadataByHashToBeProcessed(Dataset<Row> documentMetadataDF,
+                                                                   Dataset<Row> documentHashFromCacheDF) {
+        logger.info("Finding document metadata to be processed.");
+        Column joinExprs = documentMetadataDF.col("hashValue").equalTo(
+                documentHashFromCacheDF.col("hashValue"));
+        return documentMetadataDF
+                .join(documentHashFromCacheDF, joinExprs, "left_anti")
+                .select(
+                        col("hashValue"),
+                        col("title"),
+                        col("abstract"),
+                        col("text")
+                )
+                .distinct();
+    }
+
     public static Dataset<Row> runReferenceExtraction(SparkSession spark,
-                                                      Dataset<Row> documentMetadataDF,
+                                                      Dataset<Row> documentMetadataByHashDF,
                                                       PipeExecutionEnvironment environment) throws IOException {
         logger.info("Running reference extraction for input document metadata.");
         String pipeCommandStr = environment.pipeCommand();
-        JavaRDD<Row> piped = documentMetadataDF.toJSON().javaRDD().pipe(pipeCommandStr).map(RowFactory::create);
+        JavaRDD<Row> piped = documentMetadataByHashDF
+                .withColumnRenamed("hashValue", "id")
+                .toJSON()
+                .javaRDD()
+                .pipe(pipeCommandStr)
+                .map(RowFactory::create);
         return spark.createDataFrame(piped, PIPE_RESULT_SCHEMA)
-                .withColumn("json_struct", from_json(col("value"),
-                        (StructType) SchemaConverters.toSqlType(DocumentToProject.SCHEMA$).dataType()))
-                .select(expr("json_struct.*"));
+                .withColumn("json_struct", from_json(col("value"), REFERENCE_EXTRACTION_RESULT_SCHEMA))
+                .select(expr("json_struct.*"))
+                .withColumnRenamed("documentId", "hashValue");
     }
 
     public static Dataset<Row> documentHashToProjectToBeCached(SparkSession spark,
-                                                               Dataset<Row> documentToProjectDF,
-                                                               Dataset<Row> documentHashToProjectFromCacheDF,
-                                                               Dataset<Row> documentMetadataWithHashDF) {
+                                                               Dataset<Row> documentHashToProjectDF,
+                                                               Dataset<Row> documentHashToProjectFromCacheDF) {
         logger.info("Finding reference extraction results to be cached.");
-        Column joinExprs = documentToProjectDF.col("documentId").equalTo(
-                documentMetadataWithHashDF.col("id"));
-        Dataset<Row> documentHashToProjectDF = documentToProjectDF
-                .join(documentMetadataWithHashDF, joinExprs)
-                .select(
-                        col("hashValue"),
-                        col("projectId"),
-                        col("confidenceLevel"),
-                        col("textsnippet")
-                );
         Dataset<Row> toBeCached = documentHashToProjectFromCacheDF.union(documentHashToProjectDF);
         return dataFrameWithSchema(spark, toBeCached, DocumentHashToProject.SCHEMA$);
     }
 
     public static Dataset<Row> documentHashToBeCached(SparkSession spark,
                                                       Dataset<Row> documentHashFromCacheDF,
-                                                      Dataset<Row> documentMetadataWithHashDF) {
+                                                      Dataset<Row> documentMetadataDF) {
         logger.info("Finding processed documents to be cached.");
-        Dataset<Row> documentHashDF = documentMetadataWithHashDF
+        Dataset<Row> documentHashDF = documentMetadataDF
                 .select("hashValue");
         Dataset<Row> toBeCached = documentHashFromCacheDF.union(documentHashDF).distinct();
         return dataFrameWithSchema(spark, toBeCached, DocumentHash.SCHEMA$);
@@ -112,12 +119,12 @@ public class TaraReferenceExtractionUtils {
 
     public static Dataset<Row> documentToProjectToOutput(SparkSession spark,
                                                          Dataset<Row> documentHashToProjectDF,
-                                                         Dataset<Row> documentMetadataWithHashDF) {
+                                                         Dataset<Row> documentMetadataDF) {
         logger.info("Finding reference extraction results to be saved to output.");
         Column joinExprs = documentHashToProjectDF.col("hashValue").equalTo(
-                documentMetadataWithHashDF.col("hashValue"));
+                documentMetadataDF.col("hashValue"));
         Dataset<Row> toBeOutput = documentHashToProjectDF
-                .join(documentMetadataWithHashDF, joinExprs)
+                .join(documentMetadataDF, joinExprs, "inner")
                 .select(
                         col("id").as("documentId"),
                         col("projectId"),
@@ -135,7 +142,7 @@ public class TaraReferenceExtractionUtils {
 
     public static class DocumentMetadataHashColumnCreator {
         public Column hashCol(String titleColName, String abstractColName, String textColName) {
-            return hash(col(titleColName), col(abstractColName), col(textColName));
+            return sha1(concat_ws(SEP, col(titleColName), col(abstractColName), col(textColName)));
         }
     }
 }
