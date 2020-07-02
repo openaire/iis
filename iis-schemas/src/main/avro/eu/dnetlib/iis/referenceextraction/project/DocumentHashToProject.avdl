@@ -2,8 +2,8 @@
 protocol IIS{
 
     record DocumentHashToProject {
-//      document hash value calculated as murmur3 hash of document title, abstract and text
-        int hashValue;
+//      document hash value calculated as sha1 hash of 'title|abstract|text'
+        string hashValue;
 
 //      identifier of project being funding source of this document,
 //      foreign key: Project.id
