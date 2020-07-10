@@ -35,7 +35,7 @@
             <description>output document to project</description>
         </property>
         <property>
-            <name>taraSparkSqlShufflePartitions</name>
+            <name>sparkSqlShufflePartitions</name>
             <value>2880</value>
             <description>number of partitions after shuffle, 3 times the number of cores in the cluster</description>
         </property>
@@ -103,7 +103,7 @@
                 --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
                 --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
                 --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
-                --conf spark.sql.shuffle.partitions=${taraSparkSqlShufflePartitions}
+                --conf spark.sql.shuffle.partitions=${sparkSqlShufflePartitions}
             </spark-opts>
             <arg>-inputExtractedDocumentMetadataMergedWithOriginal=${input_document_metadata}</arg>
             <arg>-inputDocumentText=${input_document_text}</arg>
