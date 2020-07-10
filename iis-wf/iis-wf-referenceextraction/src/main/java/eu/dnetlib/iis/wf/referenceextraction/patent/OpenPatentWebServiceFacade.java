@@ -69,24 +69,23 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
      * Serialization / deserialization details.
      */
     private SerDe serDe;
-    
+
     
     // ------------------- CONSTRUCTORS ------------------------
     
-    public OpenPatentWebServiceFacade(int connectionTimeout, int readTimeout, 
-            String authHostName, int authPort, String authScheme, String authUriRoot,
-            String opsHostName, int opsPort, String opsScheme, String opsUriRoot, 
-            String consumerCredential, long throttleSleepTime, int maxRetriesCount) {
+    public OpenPatentWebServiceFacade(ConnectionDetails connDetails) {
         
-        this(buildHttpClient(connectionTimeout, readTimeout),
-                new HttpHost(authHostName, authPort, authScheme), authUriRoot, 
-                new HttpHost(opsHostName, opsPort, opsScheme), opsUriRoot,
-                consumerCredential, throttleSleepTime, maxRetriesCount, new JsonParser());
+        this(buildHttpClient(connDetails.getConnectionTimeout(), connDetails.getReadTimeout()),
+                new HttpHost(connDetails.getAuthHostName(), connDetails.getAuthPort(), connDetails.getAuthScheme()),
+                connDetails.getAuthUriRoot(),
+                new HttpHost(connDetails.getOpsHostName(), connDetails.getOpsPort(), connDetails.getOpsScheme()),
+                connDetails.getOpsUriRoot(), connDetails.getConsumerCredential(), connDetails.getThrottleSleepTime(),
+                connDetails.getMaxRetriesCount(), new JsonParser());
         
         // persisting for further serialization and deserialization
-        this.serDe = new SerDe(connectionTimeout, readTimeout, 
-                authHostName, authPort, authScheme, 
-                opsHostName, opsPort, opsScheme);
+        this.serDe = new SerDe(connDetails.getConnectionTimeout(), connDetails.getReadTimeout(),
+                connDetails.getAuthHostName(), connDetails.getAuthPort(), connDetails.getAuthScheme(),
+                connDetails.getOpsHostName(), connDetails.getOpsPort(), connDetails.getOpsScheme());
     }
     
     /**
@@ -132,16 +131,15 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
             if (entity != null) {
                 return EntityUtils.toString(entity);
             } else {
-                throw new PatentServiceException("got empty response, full status: " + httpResponse.getStatusLine()
-                        + ", server response: " + EntityUtils.toString(httpResponse.getEntity()));
+                throw new PatentServiceException(
+                        "got empty entity in response, full status: " + httpResponse.getStatusLine());
             }
         }
         case 400: {
-            // access token invalid or expired, reauthenticating, incrementing retryCount to prevent from authn loop
+            log.info("got 400 HTTP code in response, potential reason: access token invalid or expired");
             return getPatentMetadata(patent, reauthenticate(), ++retryCount);
         }
         case 403: {
-            // quota exceeded or resource blacklisted or account blacklisted
             log.warn("got 403 HTTP code in response, potential reason: endpoint rate limit reached. Delaying for "
                     + throttleSleepTime + " ms, server response: " + EntityUtils.toString(httpResponse.getEntity()));
             Thread.sleep(throttleSleepTime);
@@ -151,14 +149,13 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
             throw new NoSuchElementException("unable to find element at: " + httpRequest.getRequestLine());
         }
         default: {
-            String errMessage = "got unhandled HTTP status code when accessing endpoint: " + statusCode
-                    + ", full status: " + httpResponse.getStatusLine() + ", server response: "
-                    + EntityUtils.toString(httpResponse.getEntity());
-            throw new PatentServiceException(errMessage);
+            throw new PatentServiceException(String.format(
+                    "got unhandled HTTP status code when accessing endpoint: %d, full status: %s, server response: %s",
+                    statusCode, httpResponse.getStatusLine(), EntityUtils.toString(httpResponse.getEntity())));
         }
         }
     }
-    
+
     // -------------------------- PRIVATE -------------------------
 
     private void reinitialize(SerDe serDe, String authUriRoot, String opsUriRoot,
@@ -227,10 +224,9 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
                 return accessToken.getAsString();
             }
         } else {
-            String errMessage = "Authentication failed! HTTP status code when accessing endpoint: " + statusCode
-                    + ", full status: " + httpResponse.getStatusLine() + ", server response: "
-                    + EntityUtils.toString(httpResponse.getEntity());
-            throw new PatentServiceException(errMessage);
+            throw new PatentServiceException(String.format(
+                    "Authentication failed! HTTP status code when accessing endpoint: %d, full status: %s, server response: %s",
+                    statusCode, httpResponse.getStatusLine(), EntityUtils.toString(httpResponse.getEntity())));
         }
         
     }
@@ -288,7 +284,7 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
     
     // -------------------------- INNER CLASS --------------------------
     
-    class SerDe implements Serializable {
+    static class SerDe implements Serializable {
         
         private static final long serialVersionUID = 1289144732356257009L;
         

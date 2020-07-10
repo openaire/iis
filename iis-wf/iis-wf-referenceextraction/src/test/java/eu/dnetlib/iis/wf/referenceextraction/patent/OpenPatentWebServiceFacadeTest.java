@@ -467,10 +467,11 @@ public class OpenPatentWebServiceFacadeTest {
     @Test
     public void testSerializeAndDeserialize() throws Exception {
         // given
-        OpenPatentWebServiceFacade service = new OpenPatentWebServiceFacade(10000, 10000,
-                "authn-host", 8080, "https", authUriRoot, 
-                "ops-host", 8090, "http", opsUriRoot, 
-                consumerCredential, 60000, 1);
+        OpenPatentWebServiceFacade service = new OpenPatentWebServiceFacade(ConnectionDetailsBuilder.newBuilder()
+                .withConnectionTimeout(10000).withReadTimeout(10000).withAuthHostName("authn-host").withAuthPort(8080)
+                .withAuthScheme("https").withAuthUriRoot(authUriRoot).withOpsHostName("ops-host").withOpsPort(8090)
+                .withOpsScheme("http").withOpsUriRoot(opsUriRoot).withConsumerCredential(consumerCredential)
+                .withThrottleSleepTime(60000).withMaxRetriesCount(1).build());
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(bos);
@@ -498,7 +499,7 @@ public class OpenPatentWebServiceFacadeTest {
         return patentBuilder;
     }
     
-    private class AuthenticationResponse {
+    private static class AuthenticationResponse {
         
         @SuppressWarnings("unused")
         private String access_token;

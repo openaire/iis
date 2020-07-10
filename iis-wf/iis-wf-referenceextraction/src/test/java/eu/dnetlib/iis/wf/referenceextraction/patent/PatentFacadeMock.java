@@ -20,7 +20,7 @@ public class PatentFacadeMock implements PatentServiceFacade {
     }
 
     protected static String generateMeta(ImportedPatent patent) {
-        if ("non-existing".equals(patent.getPublnNr())) {
+        if ("non-existing".contentEquals(patent.getPublnNr())) {
             throw new NoSuchElementException("unable to find element");
         }
         StringBuilder strBuilder = new StringBuilder();

@@ -12,7 +12,6 @@ import org.apache.spark.storage.StorageLevel;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import eu.dnetlib.iis.audit.schemas.Fault;
@@ -67,10 +66,16 @@ public class PatentMetadataRetrieverJob {
                 JavaRDD<ImportedPatent> importedPatents = avroLoader.loadJavaRDD(sc, params.inputPath,
                         ImportedPatent.class);
 
-                Tuple2<JavaRDD<DocumentText>, JavaRDD<Fault>> results = obtainMetadata(importedPatents, patentServiceFacade);
+                JavaPairRDD<CharSequence, ContentRetrieverResponse> obtainedIdToResponce = importedPatents
+                        .mapToPair(x -> new Tuple2<CharSequence, ContentRetrieverResponse>(getId(x),
+                                getMetadataFromFacade(x, patentServiceFacade)));
+                obtainedIdToResponce.persist(StorageLevel.DISK_ONLY());
                 
-                storeInOutput(results._1, results._2, generateReportEntries(sc, results._1, results._2), outputPaths,
-                        params.numberOfEmittedFiles);
+                JavaRDD<DocumentText> retrievedPatentMeta = obtainedIdToResponce.map(e -> DocumentText.newBuilder().setId(e._1).setText(e._2.getContent()).build());
+                JavaRDD<Fault> faults = obtainedIdToResponce.filter(e -> e._2.getException() != null).map(e -> FaultUtils.exceptionToFault(e._1, e._2.getException(), null));
+                JavaRDD<ReportEntry> reportEntries = generateReportEntries(sc, retrievedPatentMeta, faults);
+                        
+                storeInOutput(retrievedPatentMeta, faults, reportEntries, outputPaths, params.numberOfEmittedFiles);
                 
             } catch (ServiceFacadeException e) {
                 throw new RuntimeException("unable to instantiate patent service facade!", e);
@@ -83,12 +88,10 @@ public class PatentMetadataRetrieverJob {
     private static JavaRDD<ReportEntry> generateReportEntries(JavaSparkContext sparkContext, 
             JavaRDD<DocumentText> processedEntities, JavaRDD<Fault> processedFaults) {
         
-        Preconditions.checkNotNull(sparkContext, "sparkContext has not been set");
-        
-        ReportEntry processedEnttiesCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_TOTAL, processedEntities.count());
+        ReportEntry processedEntitiesCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_TOTAL, processedEntities.count());
         ReportEntry processedFaultsCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_FAULT, processedFaults.count());
         
-        return sparkContext.parallelize(Lists.newArrayList(processedEnttiesCounter, processedFaultsCounter));
+        return sparkContext.parallelize(Lists.newArrayList(processedEntitiesCounter, processedFaultsCounter));
     }
     
     private static void storeInOutput(JavaRDD<DocumentText> retrievedPatentMeta, 
@@ -97,18 +100,8 @@ public class PatentMetadataRetrieverJob {
         avroSaver.saveJavaRDD(faults.coalesce(numberOfEmittedFiles), Fault.SCHEMA$, outputPaths.getFault());
         avroSaver.saveJavaRDD(reports.coalesce(numberOfEmittedFiles), ReportEntry.SCHEMA$, outputPaths.getReport());
     }
-    
-    private static Tuple2<JavaRDD<DocumentText>, JavaRDD<Fault>> obtainMetadata(JavaRDD<ImportedPatent> input, PatentServiceFacade patentServiceFacade) {
-        JavaPairRDD<CharSequence, ContentRetrieverResponse> obtainedIdToResponce = input
-                .mapToPair(x -> new Tuple2<CharSequence, ContentRetrieverResponse>(getId(x),
-                        obtainMetadata(x, patentServiceFacade)));
-        obtainedIdToResponce.persist(StorageLevel.DISK_ONLY());
-        return new Tuple2<>(
-                obtainedIdToResponce.map(e -> DocumentText.newBuilder().setId(e._1).setText(e._2.getContent()).build()),
-                obtainedIdToResponce.filter(e -> e._2.getException() != null).map(e -> FaultUtils.exceptionToFault(e._1, e._2.getException(), null)));
-    }
-        
-    private static ContentRetrieverResponse obtainMetadata(ImportedPatent patent, PatentServiceFacade patentServiceFacade) {
+
+    private static ContentRetrieverResponse getMetadataFromFacade(ImportedPatent patent, PatentServiceFacade patentServiceFacade) {
         try {
             return new ContentRetrieverResponse(patentServiceFacade.getPatentMetadata(patent));
         } catch (Exception e) {

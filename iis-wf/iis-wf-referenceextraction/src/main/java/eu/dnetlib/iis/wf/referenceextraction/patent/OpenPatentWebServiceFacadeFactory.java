@@ -56,35 +56,29 @@ public class OpenPatentWebServiceFacadeFactory implements ServiceFacadeFactory<P
         Preconditions.checkArgument(StringUtils.isNotBlank(conf.get(PARAM_SERVICE_ENDPOINT_OPS_SCHEME)));
         Preconditions.checkArgument(StringUtils.isNotBlank(conf.get(PARAM_SERVICE_ENDPOINT_OPS_URI_ROOT)));
 
-        String connectionTimeout = conf.containsKey(PARAM_SERVICE_ENDPOINT_CONNECTION_TIMEOUT)
-                ? conf.get(PARAM_SERVICE_ENDPOINT_CONNECTION_TIMEOUT)
-                : "60000";
-        String readTimeout = conf.containsKey(PARAM_SERVICE_ENDPOINT_READ_TIMEOUT)
-                ? conf.get(PARAM_SERVICE_ENDPOINT_READ_TIMEOUT)
-                : "60000";
-        String throttleSleepTime = conf.containsKey(PARAM_SERVICE_ENDPOINT_THROTTLE_SLEEP_TIME)
-                ? conf.get(PARAM_SERVICE_ENDPOINT_THROTTLE_SLEEP_TIME)
-                : "10000";
+        String connectionTimeout = conf.getOrDefault(PARAM_SERVICE_ENDPOINT_CONNECTION_TIMEOUT, "60000");
+        String readTimeout = conf.getOrDefault(PARAM_SERVICE_ENDPOINT_READ_TIMEOUT, "60000");
+        String throttleSleepTime = conf.getOrDefault(PARAM_SERVICE_ENDPOINT_THROTTLE_SLEEP_TIME, "10000");
+        String retriesCount = conf.getOrDefault(PARAM_SERVICE_ENDPOINT_RETRIES_COUNT, "10");
                 
-        String retriesCount = conf.containsKey(PARAM_SERVICE_ENDPOINT_RETRIES_COUNT)
-                ? conf.get(PARAM_SERVICE_ENDPOINT_RETRIES_COUNT)
-                : "10";
-                
-        return new OpenPatentWebServiceFacade(Integer.parseInt(connectionTimeout), Integer.parseInt(readTimeout),
-                conf.get(PARAM_SERVICE_ENDPOINT_AUTH_HOST),Integer.parseInt(conf.get(PARAM_SERVICE_ENDPOINT_AUTH_PORT)),
-                conf.get(PARAM_SERVICE_ENDPOINT_AUTH_SCHEME), conf.get(PARAM_SERVICE_ENDPOINT_AUTH_URI_ROOT),
-                conf.get(PARAM_SERVICE_ENDPOINT_OPS_HOST), Integer.parseInt(conf.get(PARAM_SERVICE_ENDPOINT_OPS_PORT)),
-                conf.get(PARAM_SERVICE_ENDPOINT_OPS_SCHEME), conf.get(PARAM_SERVICE_ENDPOINT_OPS_URI_ROOT),
-                buildCredential(conf.get(PARAM_CONSUMER_KEY), conf.get(PARAM_CONSUMER_SECRET)),
-                Long.parseLong(throttleSleepTime), Integer.parseInt(retriesCount));
+        return new OpenPatentWebServiceFacade(ConnectionDetailsBuilder.newBuilder()
+                .withConnectionTimeout(Integer.parseInt(connectionTimeout))
+                .withReadTimeout(Integer.parseInt(readTimeout))
+                .withAuthHostName(conf.get(PARAM_SERVICE_ENDPOINT_AUTH_HOST))
+                .withAuthPort(Integer.parseInt(conf.get(PARAM_SERVICE_ENDPOINT_AUTH_PORT)))
+                .withAuthScheme(conf.get(PARAM_SERVICE_ENDPOINT_AUTH_SCHEME))
+                .withAuthUriRoot(conf.get(PARAM_SERVICE_ENDPOINT_AUTH_URI_ROOT))
+                .withOpsHostName(conf.get(PARAM_SERVICE_ENDPOINT_OPS_HOST))
+                .withOpsPort(Integer.parseInt(conf.get(PARAM_SERVICE_ENDPOINT_OPS_PORT)))
+                .withOpsScheme(conf.get(PARAM_SERVICE_ENDPOINT_OPS_SCHEME))
+                .withOpsUriRoot(conf.get(PARAM_SERVICE_ENDPOINT_OPS_URI_ROOT))
+                .withConsumerCredential(buildCredential(conf.get(PARAM_CONSUMER_KEY), conf.get(PARAM_CONSUMER_SECRET)))
+                .withThrottleSleepTime(Long.parseLong(throttleSleepTime))
+                .withMaxRetriesCount(Integer.parseInt(retriesCount)).build());
     }
 
     protected static String buildCredential(String key, String secret) {
-        StringBuilder strBuilder = new StringBuilder();
-        strBuilder.append(key);
-        strBuilder.append(':');
-        strBuilder.append(secret);
-        return Base64.getEncoder().encodeToString(strBuilder.toString().getBytes(DEFAULT_CHARSET));
+        return Base64.getEncoder().encodeToString((key + ':' + secret).getBytes(DEFAULT_CHARSET));
     }
 
 }

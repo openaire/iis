@@ -4,19 +4,19 @@
     <parameters>
         <property>
             <name>input_document_text</name>
-            <description>input document text with DocumentText records</description>
+            <description>input document text with eu.dnetlib.iis.metadataextraction.schemas.DocumentText records</description>
         </property>
         <property>
             <name>input_patent</name>
-            <description>input patent with ImportedPatent records</description>
+            <description>input patent with eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent records</description>
         </property>
         <property>
             <name>output_document_to_patent</name>
-            <description>output document to patent with DocumentToPatent records</description>
+            <description>output document to patent with eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent records</description>
         </property>
         <property>
             <name>output_patent_metadata</name>
-            <description>output patent metadata with Patent records</description>
+            <description>output patent metadata with eu.dnetlib.iis.referenceextraction.patent.schemas.Patent records</description>
         </property>
         <property>
             <name>output_report_root_path</name>
@@ -156,10 +156,6 @@
 
     <action name="input_transformer">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            <prepare>
-                <delete path="${workingDir}/patents_for_matching"/>
-            </prepare>
-
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>patent-referenceextraction-input-transformer</name>
@@ -225,9 +221,6 @@
 
     <action name="metadata_retriever_input_transformer">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            <prepare>
-                <delete path="${workingDir}/metadata_retriever_input"/>
-            </prepare>
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>patent-metadata-retriever-input-transformer</name>
@@ -252,11 +245,6 @@
 
     <action name="metadata_retriever">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            <prepare>
-                <delete path="${workingDir}/retrieved_metadata"/>
-                <delete path="${workingDir}/metadata_retriever_faults"/>
-                <delete path="${output_report_root_path}/patent_metadata_retriever"/>
-            </prepare>
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>patent-metadata-retriever</name>
@@ -299,11 +287,6 @@
 
     <action name="metadata_extractor">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            <prepare>
-                <delete path="${output_patent_metadata}"/>
-                <delete path="${workingDir}/metadata_extraction_faults"/>
-                <delete path="${output_report_root_path}/patent_metadata_extraction"/>
-            </prepare>
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>patent-metadata-extractor</name>

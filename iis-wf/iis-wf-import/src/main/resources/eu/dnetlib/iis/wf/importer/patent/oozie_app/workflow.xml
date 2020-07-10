@@ -3,7 +3,7 @@
     <parameters>
         <property>
             <name>input_tsv</name>
-            <description>input JSON file location with patents metadata</description>
+            <description>input TSV file location with patents metadata</description>
         </property>
         <property>
             <name>output</name>

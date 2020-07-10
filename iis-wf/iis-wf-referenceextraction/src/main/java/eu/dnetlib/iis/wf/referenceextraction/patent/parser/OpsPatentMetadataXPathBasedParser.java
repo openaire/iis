@@ -94,13 +94,11 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document xmlDocument = builder.parse(new InputSource(new StringReader(source.toString())));
 
-            patentBuilder.setApplnTitle(extractTrimmedValueForPreferedLanguage(
-                    (NodeList) xPath.compile(XPATH_EXPR_INVENTION_TITLE).evaluate(xmlDocument, XPathConstants.NODESET),
-                    ATTRIB_VALUE_LANG_EN));
+            patentBuilder.setApplnTitle(extractTrimmedValueForPreferredEnglishLanguage(
+                    (NodeList) xPath.compile(XPATH_EXPR_INVENTION_TITLE).evaluate(xmlDocument, XPathConstants.NODESET)));
 
-            patentBuilder.setApplnAbstract(extractTrimmedValueForPreferedLanguage(
-                    (NodeList) xPath.compile(XPATH_EXPR_ABSTRACT).evaluate(xmlDocument, XPathConstants.NODESET),
-                    ATTRIB_VALUE_LANG_EN));
+            patentBuilder.setApplnAbstract(extractTrimmedValueForPreferredEnglishLanguage(
+                    (NodeList) xPath.compile(XPATH_EXPR_ABSTRACT).evaluate(xmlDocument, XPathConstants.NODESET)));
             
             CharSequence epoDoc = extractFirstNonEmptyTrimmedTextContent(
                     (NodeList) xPath.compile(xPathExpApplnDocIdEpodoc).evaluate(xmlDocument, XPathConstants.NODESET));
@@ -137,12 +135,12 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
     // ------------------------------- PRIVATE ------------------------------------
 
     
-    private static String extractTrimmedValueForPreferedLanguage(NodeList nodes, String preferedLang) {
+    private static String extractTrimmedValueForPreferredEnglishLanguage(NodeList nodes) {
         String otherTitle = null;
         for (int i = 0; i < nodes.getLength(); i++) {
             Node currentNode = nodes.item(i);
             Node langNode = currentNode.getAttributes().getNamedItem(ATTRIB_NAME_LANG);
-            if (langNode != null && preferedLang.equals(langNode.getTextContent())) {
+            if (langNode != null && ATTRIB_VALUE_LANG_EN.equals(langNode.getTextContent())) {
                 return currentNode.getTextContent().trim();
             } else {
                 otherTitle = currentNode.getTextContent().trim();
@@ -193,7 +191,7 @@ public class OpsPatentMetadataXPathBasedParser implements PatentMetadataParser {
     }
     
     /**
-     * Converts date whenever specified in expected format, propagates uncoverted date otherwise.
+     * Converts date whenever specified in expected format, propagates unconverted date otherwise.
      */
     private static String convertDate(String source) {
         if (StringUtils.isNotBlank(source)) {

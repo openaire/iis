@@ -1,7 +1,5 @@
 package eu.dnetlib.iis.wf.importer.patent;
 
-import java.util.Objects;
-
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
@@ -12,7 +10,6 @@ import org.apache.spark.sql.SparkSession;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
@@ -44,9 +41,7 @@ public class PatentReaderJob {
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
 
-        SparkSession session = SparkSessionFactory.withConfAndKryo(new SparkConf());
-        
-        try {
+        try (SparkSession session = SparkSessionFactory.withConfAndKryo(new SparkConf())) {
             JavaSparkContext sc = JavaSparkContext.fromSparkContext(session.sparkContext()); 
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputPath);
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
@@ -59,10 +54,6 @@ public class PatentReaderJob {
                     .map(PatentReaderJob::buildEntry);
 
             storeInOutput(results, generateReportEntries(sc, results), params.outputPath, params.outputReportPath);
-        } finally {
-            if (Objects.nonNull(session)) {
-                session.stop();
-            }
         }
     }
 
@@ -79,8 +70,7 @@ public class PatentReaderJob {
     }
 
     private static JavaRDD<ReportEntry> generateReportEntries(JavaSparkContext sparkContext,
-                                                              JavaRDD<?> entries) {
-        Preconditions.checkNotNull(sparkContext, "sparkContext has not been set");
+                                                              JavaRDD<ImportedPatent> entries) {
         ReportEntry fromCacheEntitiesCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_READ_TOTAL, entries.count());
         return sparkContext.parallelize(Lists.newArrayList(fromCacheEntitiesCounter));
     }

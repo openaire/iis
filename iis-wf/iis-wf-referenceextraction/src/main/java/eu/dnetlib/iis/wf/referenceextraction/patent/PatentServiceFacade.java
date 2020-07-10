@@ -17,5 +17,5 @@ public interface PatentServiceFacade extends Serializable {
      * Retrieves patent metadata.
      * @throws NoSuchElementException when no metadata found for given patent
      */
-    String getPatentMetadata(ImportedPatent patent) throws NoSuchElementException, Exception;
+    String getPatentMetadata(ImportedPatent patent) throws Exception;
 }

@@ -11,14 +11,7 @@ public class PatentMetadataParserException extends Exception {
      */
     private static final long serialVersionUID = 4924395679997903210L;
     
-    public PatentMetadataParserException(String message) {
-        super(message);
-    }
-
-    public PatentMetadataParserException(Throwable cause) {
-        super(cause);
-    }
-
+    
     public PatentMetadataParserException(String message, Throwable cause) {
         super(message, cause);
     }

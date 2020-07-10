@@ -20,8 +20,4 @@ public class PatentServiceException extends Exception {
         super(cause);
     }
 
-    public PatentServiceException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
 }

@@ -118,7 +118,7 @@ public class PatentExporterJob {
                     documentToPatentsToExport(documentToPatents, trustLevelThreshold);
 
             JavaPairRDD<CharSequence, Patent> validPatentsById = patents
-                    .filter(x -> PatentExporterJob.isValidPatent(x))
+                    .filter(PatentExporterJob::isValidPatent)
                     .mapToPair(x -> new Tuple2<>(x.getApplnNr(), x))
                     .cache();
 

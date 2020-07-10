@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.primary.processing;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.io.IOUtils;
@@ -46,7 +47,8 @@ public class ClassPathBasedPatentServiceFacade implements PatentServiceFacade {
     }
 
     private static String getContent(String location) throws IOException {
-        return IOUtils.toString(ClassPathBasedPatentServiceFacade.class.getResourceAsStream(location), "utf8");
+        return IOUtils.toString(ClassPathBasedPatentServiceFacade.class.getResourceAsStream(location),
+                StandardCharsets.UTF_8);
     }
 
 }

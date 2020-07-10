@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.referenceextraction.patent;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.io.IOUtils;
@@ -8,7 +9,7 @@ import org.apache.commons.io.IOUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
 
 /**
- * Simple mock retrieving XML concents as files from classpath. Relies on
+ * Simple mock retrieving XML contents as files from classpath. Relies on
  * publn_auth, publn_nr, publn_kind fields defined in {@link ImportedPatent}
  * while generating filename:
  * 
@@ -40,7 +41,8 @@ public class ClassPathBasedPatentServiceFacade implements PatentServiceFacade {
     }
 
     private static String getContent(String location) throws IOException {
-        return IOUtils.toString(ClassPathBasedPatentServiceFacade.class.getResourceAsStream(location), "utf8");
+        return IOUtils.toString(ClassPathBasedPatentServiceFacade.class.getResourceAsStream(location), 
+                StandardCharsets.UTF_8);
     }
 
 }

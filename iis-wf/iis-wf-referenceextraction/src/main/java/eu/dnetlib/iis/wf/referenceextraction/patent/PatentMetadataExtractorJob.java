@@ -11,7 +11,6 @@ import org.apache.spark.api.java.JavaSparkContext;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import eu.dnetlib.iis.audit.schemas.Fault;
@@ -67,17 +66,20 @@ public class PatentMetadataExtractorJob {
             JavaRDD<DocumentText> toBeProcessedContents = avroLoader.loadJavaRDD(sc, params.inputDocumentTextPath, DocumentText.class);
             
             JavaPairRDD<CharSequence, Tuple2<DocumentText, ImportedPatent>> pairedInput = toBeProcessedContents
-                    .mapToPair(x -> new Tuple2<CharSequence, DocumentText>(x.getId(), x))
-                    .join(importedPatent.mapToPair(x -> new Tuple2<CharSequence, ImportedPatent>(x.getApplnNr(), x)));
+                    .mapToPair(x -> new Tuple2<>(x.getId(), x))
+                    .join(importedPatent.mapToPair(x -> new Tuple2<>(x.getApplnNr(), x)));
             
-            JavaRDD<PatentOrFault> parsedPatents = pairedInput.map(x -> parse(x._2._1, x._2._2, parser));
-            parsedPatents.cache();
+            JavaRDD<Tuple2<Patent, Fault>> parsedPatentsWithFaults = pairedInput
+                    .map(x -> parse(x._2._1, x._2._2, parser));
             
-            Tuple2<JavaRDD<Patent>, JavaRDD<Fault>> splitPatentAndFault = splitPatentAndFault(parsedPatents);
+            JavaRDD<Patent> patents = parsedPatentsWithFaults.filter(e -> e._1 != null).map(e -> e._1);
+            patents.cache();
+            JavaRDD<Fault> faults = parsedPatentsWithFaults.filter(e -> e._2 != null).map(e -> e._2);
+            faults.cache();
             
-            avroSaver.saveJavaRDD(splitPatentAndFault._1, Patent.SCHEMA$, params.outputPath);
-            avroSaver.saveJavaRDD(splitPatentAndFault._2, Fault.SCHEMA$, params.outputFaultPath);
-            avroSaver.saveJavaRDD(generateReportEntries(sc, splitPatentAndFault), ReportEntry.SCHEMA$,
+            avroSaver.saveJavaRDD(patents, Patent.SCHEMA$, params.outputPath);
+            avroSaver.saveJavaRDD(faults, Fault.SCHEMA$, params.outputFaultPath);
+            avroSaver.saveJavaRDD(generateReportEntries(sc, patents, faults), ReportEntry.SCHEMA$,
                     params.outputReportPath);
         }
     }
@@ -85,30 +87,23 @@ public class PatentMetadataExtractorJob {
     // ------------------------ PRIVATE --------------------------
 
     private static JavaRDD<ReportEntry> generateReportEntries(JavaSparkContext sparkContext, 
-            Tuple2<JavaRDD<Patent>, JavaRDD<Fault>> splitPatentAndFault) {
+            JavaRDD<Patent> patents, JavaRDD<Fault> faults) {
         
-        Preconditions.checkNotNull(sparkContext, "sparkContext has not been set");
-        
-        ReportEntry processedPatentsCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_TOTAL, splitPatentAndFault._1.count());
-        ReportEntry processedFaultsCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_FAULT, splitPatentAndFault._2.count());
+        ReportEntry processedPatentsCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_TOTAL, patents.count());
+        ReportEntry processedFaultsCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_FAULT, faults.count());
         
         return sparkContext.parallelize(Lists.newArrayList(processedPatentsCounter, processedFaultsCounter));
     }
     
-    private static Tuple2<JavaRDD<Patent>, JavaRDD<Fault>> splitPatentAndFault(JavaRDD<PatentOrFault> parsedPatents) {
-        return new Tuple2<>(parsedPatents.map(e -> e.getPatent()), 
-                parsedPatents.filter(e -> e.getException() != null).map(
-                        e -> FaultUtils.exceptionToFault(e.getPatent().getApplnNr(), e.getException(), null)));
-    }
-    
-    private static PatentOrFault parse(DocumentText patent, ImportedPatent importedPatent, PatentMetadataParser parser) {
+    private static Tuple2<Patent, Fault> parse(DocumentText patent, ImportedPatent importedPatent, PatentMetadataParser parser) {
         Patent.Builder resultBuilder = fillDataFromImport(Patent.newBuilder(), importedPatent);
         try {
-            return new PatentOrFault(parser.parse(patent.getText(), resultBuilder).build());
+            return new Tuple2<>(parser.parse(patent.getText(), resultBuilder).build(), null);
         } catch (PatentMetadataParserException e) {
             log.error("error while parsing xml contents of patent id " + patent.getId() + ", text content: "
                     + patent.getText(), e);
-            return new PatentOrFault(resultBuilder.build(), e);
+            Patent resultPatent = resultBuilder.build();
+            return new Tuple2<>(resultPatent, FaultUtils.exceptionToFault(resultPatent.getApplnNr(), e, null));
         }
     }
 

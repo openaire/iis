@@ -436,27 +436,43 @@
                 </property>
                 <property>
                     <name>patentServiceAuthnConsumerKey</name>
-                    <value>irrelevant</value>
+                    <value>expectedConsumerKey</value>
                 </property>
                 <property>
                     <name>patentServiceAuthnConsumerSecret</name>
-                    <value>irrelevant</value>
+                    <value>expectedConsumerSecret</value>
                 </property>
                 <property>
                     <name>patentServiceEndpointAuthHost</name>
-                    <value>irrelevant</value>
+                    <value>expectedAuthHost</value>
+                </property>
+                <property>
+                    <name>patentServiceEndpointAuthPort</name>
+                    <value>expectedAuthPort</value>
+                </property>
+                <property>
+                    <name>patentServiceEndpointAuthScheme</name>
+                    <value>expectedAuthScheme</value>
                 </property>
                 <property>
                     <name>patentServiceEndpointAuthUriRoot</name>
-                    <value>irrelevant</value>
+                    <value>expectedAuthUriRoot</value>
                 </property>
                 <property>
                     <name>patentServiceEndpointOpsHost</name>
-                    <value>irrelevant</value>
+                    <value>expectedOpsHost</value>
+                </property>
+                <property>
+                    <name>patentServiceEndpointOpsPort</name>
+                    <value>expectedOpsPort</value>
+                </property>
+                <property>
+                    <name>patentServiceEndpointOpsScheme</name>
+                    <value>expectedOpsScheme</value>
                 </property>
                 <property>
                     <name>patentServiceEndpointOpsUriRoot</name>
-                    <value>irrelevant</value>
+                    <value>expectedOpsUriRoot</value>
                 </property>
 			</configuration>
 		</sub-workflow>

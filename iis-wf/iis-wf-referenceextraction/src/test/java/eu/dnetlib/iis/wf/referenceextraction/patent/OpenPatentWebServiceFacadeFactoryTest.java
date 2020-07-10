@@ -32,7 +32,7 @@ import com.google.common.collect.Maps;
 public class OpenPatentWebServiceFacadeFactoryTest {
 
     @Test
-    public void testCreate() throws Exception {
+    public void testCreate() {
         // given
         OpenPatentWebServiceFacadeFactory factory = new OpenPatentWebServiceFacadeFactory();
         Map<String, String> conf = prepareValidConfiguration();
@@ -46,7 +46,7 @@ public class OpenPatentWebServiceFacadeFactoryTest {
     }
     
     @Test(expected = NumberFormatException.class)
-    public void testCreateInvalidConnectionTimeout() throws Exception {
+    public void testCreateInvalidConnectionTimeout() {
         // given
         OpenPatentWebServiceFacadeFactory factory = new OpenPatentWebServiceFacadeFactory();
         Map<String, String> conf = prepareValidConfiguration();
@@ -57,7 +57,7 @@ public class OpenPatentWebServiceFacadeFactoryTest {
     }
     
     @Test(expected = NumberFormatException.class)
-    public void testCreateInvalidReadTimeout() throws Exception {
+    public void testCreateInvalidReadTimeout() {
         // given
         OpenPatentWebServiceFacadeFactory factory = new OpenPatentWebServiceFacadeFactory();
         Map<String, String> conf = prepareValidConfiguration();
@@ -68,7 +68,7 @@ public class OpenPatentWebServiceFacadeFactoryTest {
     }
     
     @Test(expected = IllegalArgumentException.class)
-    public void testCreateMissingConsumerKey() throws Exception {
+    public void testCreateMissingConsumerKey() {
         // given
         OpenPatentWebServiceFacadeFactory factory = new OpenPatentWebServiceFacadeFactory();
         Map<String, String> conf = prepareValidConfiguration();
@@ -79,7 +79,7 @@ public class OpenPatentWebServiceFacadeFactoryTest {
     }
     
     @Test(expected = IllegalArgumentException.class)
-    public void testCreateMissingAuthHost() throws Exception {
+    public void testCreateMissingAuthHost() {
         // given
         OpenPatentWebServiceFacadeFactory factory = new OpenPatentWebServiceFacadeFactory();
         Map<String, String> conf = prepareValidConfiguration();
@@ -90,7 +90,7 @@ public class OpenPatentWebServiceFacadeFactoryTest {
     }
     
     @Test(expected = IllegalArgumentException.class)
-    public void testCreateMissingAuthPort() throws Exception {
+    public void testCreateMissingAuthPort() {
         // given
         OpenPatentWebServiceFacadeFactory factory = new OpenPatentWebServiceFacadeFactory();
         Map<String, String> conf = prepareValidConfiguration();
@@ -101,7 +101,7 @@ public class OpenPatentWebServiceFacadeFactoryTest {
     }
     
     @Test(expected = NumberFormatException.class)
-    public void testCreateInvalidAuthPort() throws Exception {
+    public void testCreateInvalidAuthPort() {
         // given
         OpenPatentWebServiceFacadeFactory factory = new OpenPatentWebServiceFacadeFactory();
         Map<String, String> conf = prepareValidConfiguration();
@@ -112,7 +112,7 @@ public class OpenPatentWebServiceFacadeFactoryTest {
     }
     
     @Test(expected = IllegalArgumentException.class)
-    public void testCreateMissingAuthScheme() throws Exception {
+    public void testCreateMissingAuthScheme() {
         // given
         OpenPatentWebServiceFacadeFactory factory = new OpenPatentWebServiceFacadeFactory();
         Map<String, String> conf = prepareValidConfiguration();
@@ -123,7 +123,7 @@ public class OpenPatentWebServiceFacadeFactoryTest {
     }
     
     @Test(expected = IllegalArgumentException.class)
-    public void testCreateMissingAuthUriRoot() throws Exception {
+    public void testCreateMissingAuthUriRoot() {
         // given
         OpenPatentWebServiceFacadeFactory factory = new OpenPatentWebServiceFacadeFactory();
         Map<String, String> conf = prepareValidConfiguration();
@@ -134,7 +134,7 @@ public class OpenPatentWebServiceFacadeFactoryTest {
     }
     
     @Test(expected = IllegalArgumentException.class)
-    public void testCreateMissingOpsHost() throws Exception {
+    public void testCreateMissingOpsHost() {
         // given
         OpenPatentWebServiceFacadeFactory factory = new OpenPatentWebServiceFacadeFactory();
         Map<String, String> conf = prepareValidConfiguration();
@@ -145,7 +145,7 @@ public class OpenPatentWebServiceFacadeFactoryTest {
     }
     
     @Test(expected = IllegalArgumentException.class)
-    public void testCreateMissingOpsPort() throws Exception {
+    public void testCreateMissingOpsPort() {
         // given
         OpenPatentWebServiceFacadeFactory factory = new OpenPatentWebServiceFacadeFactory();
         Map<String, String> conf = prepareValidConfiguration();
@@ -156,7 +156,7 @@ public class OpenPatentWebServiceFacadeFactoryTest {
     }
     
     @Test(expected = NumberFormatException.class)
-    public void testCreateInvalidOpsPort() throws Exception {
+    public void testCreateInvalidOpsPort() {
         // given
         OpenPatentWebServiceFacadeFactory factory = new OpenPatentWebServiceFacadeFactory();
         Map<String, String> conf = prepareValidConfiguration();
@@ -167,7 +167,7 @@ public class OpenPatentWebServiceFacadeFactoryTest {
     }
     
     @Test(expected = IllegalArgumentException.class)
-    public void testCreateMissingOpsScheme() throws Exception {
+    public void testCreateMissingOpsScheme() {
         // given
         OpenPatentWebServiceFacadeFactory factory = new OpenPatentWebServiceFacadeFactory();
         Map<String, String> conf = prepareValidConfiguration();
@@ -178,7 +178,7 @@ public class OpenPatentWebServiceFacadeFactoryTest {
     }
     
     @Test(expected = IllegalArgumentException.class)
-    public void testCreateMissingOpsUriRoot() throws Exception {
+    public void testCreateMissingOpsUriRoot() {
         // given
         OpenPatentWebServiceFacadeFactory factory = new OpenPatentWebServiceFacadeFactory();
         Map<String, String> conf = prepareValidConfiguration();
@@ -189,7 +189,7 @@ public class OpenPatentWebServiceFacadeFactoryTest {
     }
     
     @Test
-    public void testBuildCredential() throws Exception {
+    public void testBuildCredential() {
         // given
         String key = "someKey";
         String secret = "someSecret";
