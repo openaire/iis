@@ -108,8 +108,7 @@ public class CachedTaraReferenceExtractionJob {
                     documentHashToBeCachedDF,
                     params.cacheRootDir,
                     lockManager,
-                    cacheManager,
-                    params.numberOfEmittedFiles);
+                    cacheManager);
 
             Dataset<Row> documentToProjectToOutputDF = documentToProjectToOutput(spark,
                     documentHashToProjectToBeCachedDF,
@@ -140,9 +139,6 @@ public class CachedTaraReferenceExtractionJob {
 
         @Parameter(names = "-projectDbFile", required = true)
         private String projectDbFile;
-
-        @Parameter(names = "-numberOfEmittedFiles", required = true)
-        private int numberOfEmittedFiles;
 
         @Parameter(names = "-outputDocumentToProject", required = true)
         private String outputDocumentToProject;

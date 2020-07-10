@@ -94,15 +94,13 @@ public class TaraReferenceExtractionIOUtils {
                                     Dataset<Row> documentHashToBeCachedDF,
                                     String cacheRootDir,
                                     LockManager lockManager,
-                                    CacheMetadataManagingProcess cacheManager,
-                                    int numberOfEmittedFiles) throws Exception {
+                                    CacheMetadataManagingProcess cacheManager) throws Exception {
         storeInCache(spark,
                 documentHashToProjectToBeCachedDF,
                 documentHashToBeCachedDF,
                 cacheRootDir,
                 lockManager,
                 cacheManager,
-                numberOfEmittedFiles,
                 new AvroDataStoreWriter(spark));
     }
 
@@ -112,7 +110,6 @@ public class TaraReferenceExtractionIOUtils {
                                     String cacheRootDir,
                                     LockManager lockManager,
                                     CacheMetadataManagingProcess cacheManager,
-                                    int numberOfEmittedFiles,
                                     AvroDataStoreWriter writer) throws Exception {
         lockManager.obtain(cacheRootDir);
         try {
@@ -123,11 +120,9 @@ public class TaraReferenceExtractionIOUtils {
             try {
                 storeDocumentHashToProjectInCache(documentHashToProjectToBeCachedDF,
                         newCachePath,
-                        numberOfEmittedFiles,
                         writer);
                 storeDocumentHashInCache(documentHashToBeCachedDF,
                         newCachePath,
-                        numberOfEmittedFiles,
                         writer);
                 storeMetaInCache(cacheManager,
                         cacheRootDir,
@@ -144,9 +139,8 @@ public class TaraReferenceExtractionIOUtils {
 
     private static void storeDocumentHashToProjectInCache(Dataset<Row> documentHashToProjectToBeCachedDF,
                                                           Path newCachePath,
-                                                          int numberOfEmittedFiles,
                                                           AvroDataStoreWriter writer) {
-        writer.write(documentHashToProjectToBeCachedDF.coalesce(numberOfEmittedFiles),
+        writer.write(documentHashToProjectToBeCachedDF,
                 new Path(newCachePath,
                         CachedTaraReferenceExtractionJob.CacheRecordType.documentHashToProject.name()).toString(),
                 DocumentHashToProject.SCHEMA$);
@@ -154,9 +148,8 @@ public class TaraReferenceExtractionIOUtils {
 
     private static void storeDocumentHashInCache(Dataset<Row> documentHashToBeCachedDF,
                                                  Path newCachePath,
-                                                 int numberOfEmittedFiles,
                                                  AvroDataStoreWriter writer) {
-        writer.write(documentHashToBeCachedDF.coalesce(numberOfEmittedFiles),
+        writer.write(documentHashToBeCachedDF,
                 new Path(newCachePath,
                         CachedTaraReferenceExtractionJob.CacheRecordType.documentHash.name()).toString(),
                 DocumentHash.SCHEMA$);

@@ -31,13 +31,13 @@
             <description>input project SQLite DB path</description>
         </property>
         <property>
-            <name>number_of_emitted_files</name>
-            <value>1000</value>
-            <description>number of files created by tara reference extraction module</description>
-        </property>
-        <property>
             <name>output_document_to_project</name>
             <description>output document to project</description>
+        </property>
+        <property>
+            <name>taraSparkSqlShufflePartitions</name>
+            <value>2880</value>
+            <description>number of partitions after shuffle, 3 times the number of cores in the cluster</description>
         </property>
         <property>
             <name>sparkDriverMemory</name>
@@ -103,7 +103,7 @@
                 --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
                 --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
                 --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
-                --conf spark.sql.shuffle.partitions=2880
+                --conf spark.sql.shuffle.partitions=${taraSparkSqlShufflePartitions}
             </spark-opts>
             <arg>-inputExtractedDocumentMetadataMergedWithOriginal=${input_document_metadata}</arg>
             <arg>-inputDocumentText=${input_document_text}</arg>
@@ -111,7 +111,6 @@
             <arg>-cacheRootDir=${cache_root_dir}</arg>
             <arg>-scriptsDir=${wf:conf('oozie.wf.application.path')}/lib/scripts</arg>
             <arg>-projectDbFile=${nameNode}${project_db_file}</arg>
-            <arg>-numberOfEmittedFiles=${number_of_emitted_files}</arg>
             <arg>-outputDocumentToProject=${output_document_to_project}</arg>
         </spark>
         <ok to="end"/>

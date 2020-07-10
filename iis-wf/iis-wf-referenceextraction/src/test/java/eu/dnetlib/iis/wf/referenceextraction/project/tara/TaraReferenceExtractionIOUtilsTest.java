@@ -186,7 +186,6 @@ public class TaraReferenceExtractionIOUtilsTest {
                 "path/to/cache",
                 lockManager,
                 cacheManager,
-                10,
                 writer);
 
         // then
