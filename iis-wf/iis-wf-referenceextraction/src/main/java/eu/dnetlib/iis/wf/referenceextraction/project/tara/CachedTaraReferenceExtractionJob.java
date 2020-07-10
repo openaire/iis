@@ -15,8 +15,6 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.types.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
@@ -25,28 +23,35 @@ import static eu.dnetlib.iis.wf.referenceextraction.project.tara.TaraReferenceEx
 
 public class CachedTaraReferenceExtractionJob {
 
-    private static final Logger logger = LoggerFactory.getLogger(CachedTaraReferenceExtractionJob.class);
-
     public enum CacheRecordType {
         documentHashToProject, documentHash
     }
+
+    public static final StructType DOCUMENT_METADATA_BY_ID_SCHEMA = StructType$.MODULE$.apply(
+            Arrays.asList(
+                    StructField$.MODULE$.apply("id", DataTypes.StringType, false, Metadata.empty()),
+                    StructField$.MODULE$.apply("title", DataTypes.StringType, true, Metadata.empty()),
+                    StructField$.MODULE$.apply("abstract", DataTypes.StringType, true, Metadata.empty()),
+                    StructField$.MODULE$.apply("text", DataTypes.StringType, false, Metadata.empty())
+            )
+    );
+
+    public static final StructType DOCUMENT_METADATA_BY_HASH_SCHEMA = StructType$.MODULE$.apply(
+            Arrays.asList(
+                    StructField$.MODULE$.apply("hashValue", DataTypes.StringType, false, Metadata.empty()),
+                    StructField$.MODULE$.apply("title", DataTypes.StringType, true, Metadata.empty()),
+                    StructField$.MODULE$.apply("abstract", DataTypes.StringType, true, Metadata.empty()),
+                    StructField$.MODULE$.apply("text", DataTypes.StringType, false, Metadata.empty())
+            )
+    );
 
     public static final StructType DOCUMENT_METADATA_SCHEMA = StructType$.MODULE$.apply(
             Arrays.asList(
                     StructField$.MODULE$.apply("id", DataTypes.StringType, false, Metadata.empty()),
                     StructField$.MODULE$.apply("title", DataTypes.StringType, true, Metadata.empty()),
-                    StructField$.MODULE$.apply("abstract", DataTypes.FloatType, true, Metadata.empty()),
-                    StructField$.MODULE$.apply("text", DataTypes.StringType, true, Metadata.empty())
-            )
-    );
-
-    public static final StructType DOCUMENT_METADATA_WITH_HASH_SCHEMA = StructType$.MODULE$.apply(
-            Arrays.asList(
-                    StructField$.MODULE$.apply("id", DataTypes.StringType, false, Metadata.empty()),
-                    StructField$.MODULE$.apply("title", DataTypes.StringType, true, Metadata.empty()),
-                    StructField$.MODULE$.apply("abstract", DataTypes.FloatType, true, Metadata.empty()),
-                    StructField$.MODULE$.apply("text", DataTypes.StringType, true, Metadata.empty()),
-                    StructField$.MODULE$.apply("hashValue", DataTypes.IntegerType, false, Metadata.empty())
+                    StructField$.MODULE$.apply("abstract", DataTypes.StringType, true, Metadata.empty()),
+                    StructField$.MODULE$.apply("text", DataTypes.StringType, false, Metadata.empty()),
+                    StructField$.MODULE$.apply("hashValue", DataTypes.StringType, false, Metadata.empty())
             )
     );
 
@@ -55,20 +60,9 @@ public class CachedTaraReferenceExtractionJob {
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
 
-        logger.info("inputExtractedDocumentMetadata: {}", params.inputExtractedDocumentMetadataMergedWithOriginal);
-        logger.info("inputDocumentText: {}", params.inputDocumentText);
-        logger.info("lockManagerFactoryClassName: {}", params.lockManagerFactoryClassName);
-        logger.info("cacheRootDir: {}", params.cacheRootDir);
-        logger.info("scriptsDir: {}", params.scriptsDir);
-        logger.info("projectDbFile: {}", params.projectDbFile);
-        logger.info("numberOfEmittedFiles: {}", params.numberOfEmittedFiles);
-        logger.info("outputDocumentToProject: {}", params.outputDocumentToProject);
-
-        SparkConf conf = new SparkConf();
-
         CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
 
-        try (SparkSession spark = SparkSessionFactory.withConfAndKryo(conf)) {
+        try (SparkSession spark = SparkSessionFactory.withConfAndKryo(new SparkConf())) {
             clearOutput(spark, params.outputDocumentToProject);
 
             AvroDataFrameSupport avroDataFrameSupport = new AvroDataFrameSupport(spark);
@@ -78,10 +72,9 @@ public class CachedTaraReferenceExtractionJob {
                     ExtractedDocumentMetadataMergedWithOriginal.SCHEMA$);
             Dataset<Row> inputDocumentTextDF = avroDataFrameSupport.read(params.inputDocumentText,
                     DocumentText.SCHEMA$);
-            Dataset<Row> documentMetadataDF = buildDocumentMetadata(inputDocumentTextDF,
+            Dataset<Row> documentMetadataByIdDF = buildDocumentMetadataById(inputDocumentTextDF,
                     inputExtractedDocumentMetadataMergedWithOriginalDF);
-            Dataset<Row> documentMetadataWithHashDF = buildDocumentMetadataWithHash(documentMetadataDF)
-                    .cache();
+            Dataset<Row> documentMetadataDF = buildDocumentMetadata(documentMetadataByIdDF);
 
             String existingCacheId = cacheManager.getExistingCacheId(spark.sparkContext().hadoopConfiguration(),
                     params.cacheRootDir);
@@ -90,26 +83,24 @@ public class CachedTaraReferenceExtractionJob {
                     existingCacheId);
             Dataset<Row> documentHashFromCacheDF = readDocumentHashFromCacheOrEmpty(spark,
                     params.cacheRootDir,
-                    existingCacheId)
-                    .cache();
+                    existingCacheId);
 
-            Dataset<Row> documentMetadataToBeProcessedDF = documentMetadataToBeProcessed(documentMetadataWithHashDF,
+            Dataset<Row> documentMetadataByHashToBeProcessedDF = documentMetadataByHashToBeProcessed(documentMetadataDF,
                     documentHashFromCacheDF);
 
             TaraPipeExecutionEnvironment environment = new TaraPipeExecutionEnvironment(spark.sparkContext(),
                     params.scriptsDir, params.projectDbFile);
-            Dataset<Row> documentToProjectDF = runReferenceExtraction(spark,
-                    documentMetadataToBeProcessedDF,
-                    environment);
+            Dataset<Row> documentHashToProjectDF = runReferenceExtraction(spark,
+                    documentMetadataByHashToBeProcessedDF,
+                    environment)
+                    .cache();
 
             Dataset<Row> documentHashToProjectToBeCachedDF = documentHashToProjectToBeCached(spark,
-                    documentToProjectDF,
-                    documentHashToProjectFromCacheDF,
-                    documentMetadataWithHashDF)
-                    .cache();
+                    documentHashToProjectDF,
+                    documentHashToProjectFromCacheDF);
             Dataset<Row> documentHashToBeCachedDF = documentHashToBeCached(spark,
                     documentHashFromCacheDF,
-                    documentMetadataWithHashDF);
+                    documentMetadataDF);
             LockManager lockManager = LockManagerUtils.instantiateLockManager(params.lockManagerFactoryClassName,
                     spark.sparkContext().hadoopConfiguration());
             storeInCache(spark,
@@ -122,7 +113,7 @@ public class CachedTaraReferenceExtractionJob {
 
             Dataset<Row> documentToProjectToOutputDF = documentToProjectToOutput(spark,
                     documentHashToProjectToBeCachedDF,
-                    documentMetadataWithHashDF);
+                    documentMetadataDF);
             storeInOutput(spark,
                     documentToProjectToOutputDF,
                     params.outputDocumentToProject);

@@ -32,7 +32,7 @@
         </property>
         <property>
             <name>number_of_emitted_files</name>
-            <value>100</value>
+            <value>1000</value>
             <description>number of files created by tara reference extraction module</description>
         </property>
         <property>
@@ -103,6 +103,7 @@
                 --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
                 --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
                 --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
+                --conf spark.sql.shuffle.partitions=2880
             </spark-opts>
             <arg>-inputExtractedDocumentMetadataMergedWithOriginal=${input_document_metadata}</arg>
             <arg>-inputDocumentText=${input_document_text}</arg>
