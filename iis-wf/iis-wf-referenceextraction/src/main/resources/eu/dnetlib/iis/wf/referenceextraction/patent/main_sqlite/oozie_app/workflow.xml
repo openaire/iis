@@ -93,7 +93,7 @@
                 <!-- this one is required due to the large amount of time taken by process storing plaintexts into the database -->
                 <property>
                     <name>mapreduce.task.timeout</name>
-                    <value>14400000</value>
+                    <value>43200000</value>
                 </property>
             </configuration>
             <file>${input_patent_db}#patent.db</file>
