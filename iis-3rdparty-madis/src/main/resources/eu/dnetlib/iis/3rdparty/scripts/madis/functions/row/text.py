@@ -1157,7 +1157,7 @@ def textwindow(*args):
                  patt = re.compile(pattern,re.UNICODE)
                  for i in xrange(len(g)-window+1):
                     mid = ' '.join(g[i+prev:i+pm])
-                    if patt.search(mid) and len(mid) < 150:
+                    if patt.search(mid) and len(mid) < 300:
                         yield (  g[i:i+prev] + [mid] + g[i+pm:i+window]  )
     elif prev<0:
         prev = abs(prev)
@@ -1240,7 +1240,7 @@ def textwindow2s(*args):
         for i in xrange(len(g)-middle+1):
             im = i+middle
             mid = ' '.join(g[i:im])
-            if patt.search(mid) and len(mid) < 150:
+            if patt.search(mid) and len(mid) < 300:
                     yield (' '.join(g[max(i-prev,0):i]),mid,' '.join(g[im:im+nextlen]))
     else:
         for i in xrange(len(g)-middle+1):
