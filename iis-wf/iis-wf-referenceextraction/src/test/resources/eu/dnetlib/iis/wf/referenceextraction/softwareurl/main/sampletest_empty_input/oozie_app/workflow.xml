@@ -77,7 +77,7 @@
                 </property>
                 <property>
                     <name>webcrawlLockManagerFactoryClassName</name>
-                    <value>eu.dnetlib.iis.wf.referenceextraction.softwareurl.LockManagerFactoryMock</value>
+                    <value>eu.dnetlib.iis.wf.referenceextraction.LockManagerFactoryMock</value>
                 </property>
                 <!-- Working directory of the subworkflow -->
                 <property>
