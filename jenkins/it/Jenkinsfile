@@ -1,0 +1,65 @@
+pipeline {
+    agent any
+
+    triggers {
+        cron("H H(0-3) * * 2-6")
+    }
+
+    options {
+        buildDiscarder(logRotator(numToKeepStr: "2"))
+        timeout time: 60, unit: "MINUTES"
+    }
+
+    stages {
+        stage("Build") {
+            steps {
+                configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
+                    load "${BUILD_PROPERTIES}"
+                    withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "${JDK_VERSION}" }",
+                             "PATH+MAVEN=${tool type: 'maven', name: "${MAVEN_VERSION}"}/bin:${env.JAVA_HOME}/bin"]) {
+                        sh """
+                            mvn clean compile
+                        """
+                    }
+                }
+            }
+        }
+
+        stage("Verify") {
+            steps {
+                configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
+                    load "${BUILD_PROPERTIES}"
+                    withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "${JDK_VERSION}" }",
+                             "PATH+MAVEN=${tool type: 'maven', name: "${MAVEN_VERSION}"}/bin:${env.JAVA_HOME}/bin"]) {
+                        sshagent(['iis-test-credentials']) {
+                            sh """
+                                mvn clean install \
+                                    -Dit.test=eu.dnetlib.iis.wf.affmatching.AffMatchingDedupWorkflowTest \
+                                    -Djava.net.preferIPv4Stack=true \
+                                    -DiisConnectionProperties=${WORKSPACE}/connection-properties/iis-ci-test.properties \
+                                    -Doutput.dir.name=integration-test \
+                                    -Djacoco.skip=true
+                            """
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            warnings canComputeNew: false, canResolveRelativePaths: false, categoriesPattern: '', consoleParsers: [[parserName: 'Maven'], [parserName: 'Java Compiler (javac)']], defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', messagesPattern: '', unHealthy: ''
+            cleanWs()
+        }
+
+        failure {
+            script {
+                def emails = ['p.jacewicz@icm.edu.pl'] //'m.horst@icm.edu.pl'
+                emails.each { email ->
+                    step([$class: 'Mailer', notifyEveryUnstableBuild: true, recipients: "$email", sendToIndividuals: true])
+                }
+            }
+        }
+    }
+}
