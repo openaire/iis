@@ -13,11 +13,13 @@ pipeline {
     stages {
         stage("Build") {
             steps {
-                configFileProvider([configFile(fileId: "83303a32-933f-4cc9-8f6d-5cf2e85ac68d", variable: 'ENV_CONFIG')]) {
-                    load "${ENV_CONFIG}"
+                configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
+                    load "${BUILD_PROPERTIES}"
                     withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "$JDK_VERSION" }",
-                     "PATH+MAVEN=${tool type: 'maven', name: "$MAVEN_VERSION"}/bin:${env.JAVA_HOME}/bin"]) {
-                        sh "mvn clean compile"
+                             "PATH+MAVEN=${tool type: 'maven', name: "$MAVEN_VERSION"}/bin:${env.JAVA_HOME}/bin"]) {
+                        sh """
+                            mvn clean compile
+                        """
                     }
                 }
             }
@@ -25,11 +27,13 @@ pipeline {
 
         stage("Test") {
             steps {
-                configFileProvider([configFile(fileId: "83303a32-933f-4cc9-8f6d-5cf2e85ac68d", variable: 'ENV_CONFIG')]) {
-                    load "${ENV_CONFIG}"
+                configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
+                    load "${BUILD_PROPERTIES}"
                     withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "$JDK_VERSION" }",
-                     "PATH+MAVEN=${tool type: 'maven', name: "$MAVEN_VERSION"}/bin:${env.JAVA_HOME}/bin"]) {
-                        sh "mvn test"
+                             "PATH+MAVEN=${tool type: 'maven', name: "$MAVEN_VERSION"}/bin:${env.JAVA_HOME}/bin"]) {
+                        sh """
+                            mvn test
+                        """
                     }
                 }
             }
@@ -41,11 +45,12 @@ pipeline {
             warnings canComputeNew: false, canResolveRelativePaths: false, categoriesPattern: '', consoleParsers: [[parserName: 'Maven'], [parserName: 'Java Compiler (javac)']], defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', messagesPattern: '', unHealthy: ''
             junit "**/target/surefire-reports/*.xml"
             jacoco()
+            cleanWs()
         }
 
         failure {
             script {
-                def emails = sh(returnStdout: true, script: "git --no-pager log ${GIT_PREVIOUS_SUCCESSFUL_COMMIT}..${GIT_COMMIT} -s --format=%ae|sort -u").trim().split("\\n")
+                def emails = sh(script: "git --no-pager log ${GIT_PREVIOUS_SUCCESSFUL_COMMIT}..${GIT_COMMIT} -s --format=%ae|sort -u", returnStdout: true).trim().split("\\n")
                 emails.each { email ->
                     step([$class: 'Mailer', notifyEveryUnstableBuild: true, recipients: "$email", sendToIndividuals: true])
                 }
