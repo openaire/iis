@@ -1,0 +1,44 @@
+<!-- Default values for the workflow job parameters -->
+<configuration>
+	<property>
+		<name>jobTracker</name>
+		<value>yarnRM</value>
+	</property>
+	<property>
+		<name>nameNode</name>
+		<value>hdfs://nameservice1</value>
+	</property>
+	<property>
+		<name>queueName</name>
+		<value>default</value>
+	</property>
+	<property>
+		<name>importerQueueName</name>
+		<value>dm_import</value>
+	</property>
+	<property>
+		<name>oozieLauncherQueueName</name>
+		<value>default</value>
+	</property>
+	<property>
+		<name>oozie.use.system.libpath</name>
+		<value>true</value>
+	</property>
+	<property>
+		<name>oozie.wf.validate.ForkJoin</name>
+		<value>false</value>
+	</property>
+	<property>
+		<name>oozieServiceLoc</name>
+		<value>http://iis-cdh5-test-m3:11000/oozie</value>
+	</property>
+<!-- faling back to HTTP, required due to "SSLPeerUnverifiedException: peer not authenticated" error -->
+	<property>
+		<name>endpointScheme</name>
+		<value>http</value>
+	</property>
+	<property>
+		<name>endpointPort</name>
+		<value>80</value>
+	</property>
+</configuration>

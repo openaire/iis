@@ -1,0 +1,103 @@
+<!-- Default values for the workflow job parameters -->
+<configuration>
+	<property>
+		<name>jobTracker</name>
+		<value>yarnRM</value>
+	</property>
+	<property>
+		<name>nameNode</name>
+		<value>hdfs://nameservice1</value>
+	</property>
+	<property>
+		<name>queueName</name>
+		<value>default</value>
+	</property>
+	<property>
+		<name>importerQueueName</name>
+		<value>dm_import</value>
+	</property>
+	<property>
+		<name>oozieLauncherQueueName</name>
+		<value>default</value>
+	</property>
+	<property>
+		<name>oozie.use.system.libpath</name>
+		<value>true</value>
+	</property>
+	<property>
+		<name>oozie.wf.validate.ForkJoin</name>
+		<value>false</value>
+	</property>
+	<property>
+		<name>oozieServiceLoc</name>
+		<value>http://iis-cdh5-test-m3:11000/oozie</value>
+	</property>
+	<property>
+		<name>oozieTopWfApplicationPath</name>
+		<value>hdfs://nameservice1/lib/iis/primary/snapshots/2018-07-09_patched</value>
+	</property>
+
+	<!-- obsolete, replaced by projectVersion -->
+	<property>
+		<name>projectUberJarName</name>
+		<value>iis-wf-primary-1.2.0-SNAPSHOT-uber.jar</value>
+	</property>
+	<property>
+		<name>projectVersion</name>
+		<value>1.2.0-SNAPSHOT</value>
+	</property>
+
+	<property>
+		<name>remove_sideproducts</name>
+		<value>false</value>
+	</property>
+	<property>
+		<name>metadataextraction_excluded_checksums</name>
+		<value>b0d1dcac85888095c5d912ce24cfdf35,136551da96fe8c11a13a4a275d19515b,92a56f29e66ec6bf9a47aa08b4b812c6,db20d96b3d79d87b0426c08cd99e6b85,b97413a3f73f087775901a2eded0e458,0055e6a649ef7c1235789a1bc0b7849b,efed713409fe01cc0e29e2dd707bae0d,138651fafa8bce896fe6971d9642329f,e451dfbbdce457f4d21c7385441cad80</value>
+	</property>
+	<!-- required by production -->
+<property>
+        <name>import_resultset_client_read_timeout</name>
+        <value>1800000</value>
+</property>
+<property>
+        <name>import_resultset_client_connection_timeout</name>
+        <value>1800000</value>
+</property>
+<property>
+        <name>import_content_connection_timeout</name>
+        <value>1800000</value>
+</property>
+<property>
+        <name>import_content_read_timeout</name>
+        <value>1800000</value>
+</property>
+<property>
+        <name>dnet_service_client_read_timeout</name>
+        <value>1800000</value>
+</property>
+<property>
+        <name>dnet_service_client_connection_timeout</name>
+        <value>1800000</value>
+</property>
+	<!-- #816, improving direct citation matching coverage by utilizing pmid->pmcid mappings -->
+        <property>
+            <name>citationmatchingDirectPmcIdsMappingCSV</name>
+            <value>/cache/external-resources/PMC-ids.csv</value>
+        </property>
+        
+        <!-- required since git#889 when spark configuration was removed from workflow.xml files -->
+        <property>
+            <name>sparkDriverMemory</name>
+            <value>3G</value>
+        </property>
+        <property>
+            <name>sparkExecutorMemory</name>
+            <value>7G</value>
+        </property>
+        <property>
+            <name>sparkExecutorCores</name>
+            <value>4</value>
+        </property>
+
+</configuration>

@@ -1,0 +1,96 @@
+pipeline {
+    agent any
+
+    options {
+        buildDiscarder(logRotator(numToKeepStr: "5"))
+        timeout time: 60, unit: "MINUTES"
+    }
+
+    stages {
+        stage("Build") {
+            steps {
+                configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
+                    load "${BUILD_PROPERTIES}"
+                    withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "${JDK_VERSION}" }",
+                             "PATH+MAVEN=${tool type: 'maven', name: "${MAVEN_VERSION}"}/bin:${env.JAVA_HOME}/bin"]) {
+                        sh """
+                            mvn clean compile
+                        """
+                    }
+                }
+            }
+        }
+
+//         stage("Test") {
+//             steps {
+//                 configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
+//                     load "${BUILD_PROPERTIES}"
+//                     withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "$JDK_VERSION" }",
+//                              "PATH+MAVEN=${tool type: 'maven', name: "$MAVEN_VERSION"}/bin:${env.JAVA_HOME}/bin"]) {
+//                         sh """
+//                             mvn test
+//                         """
+//                     }
+//                 }
+//             }
+//         }
+
+        stage("Install") {
+            steps {
+                configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
+                    load "${BUILD_PROPERTIES}"
+                    withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "${JDK_VERSION}" }",
+                             "PATH+MAVEN=${tool type: 'maven', name: "${MAVEN_VERSION}"}/bin:${env.JAVA_HOME}/bin"]) {
+                        sh """
+                            mvn clean install -DskipTests
+                        """
+                    }
+                }
+            }
+        }
+
+        stage("Upload") {
+            steps {
+                configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
+                    load "${BUILD_PROPERTIES}"
+                    withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "${JDK_VERSION}" }",
+                             "PATH+MAVEN=${tool type: 'maven', name: "${MAVEN_VERSION}"}/bin:${env.JAVA_HOME}/bin"]) {
+                        sshagent(['iis-deployment-credentials']) {
+                            sh """
+                                cd iis-wf/iis-wf-primary && \
+                                mvn clean package -Poozie-package,deploy \
+                                    -Dworkflow.source.dir=eu/dnetlib/iis/wf/primary/main \
+                                    -DiisConnectionProperties=${WORKSPACE}/connection-properties/iis-cdh5-test-gw.properties
+                            """
+                        }
+                    }
+                }
+            }
+        }
+
+        stage("Deploy") {
+            steps {
+                sshagent(['iis-deployment-credentials']) {
+                    sh """
+                        WORKING_DIR=/tmp/jenkins/`date +%Y-%m-%d` && \
+                        ssh -o StrictHostKeyChecking=no jenkins@iis-cdh5-test-gw.ocean.icm.edu.pl "\
+                            rm -rf \${WORKING_DIR} && \
+                            mkdir -p \${WORKING_DIR}
+                            " && \
+                        scp -r ${WORKSPACE}/jenkins/deploy/ jenkins@iis-cdh5-test-gw.ocean.icm.edu.pl:\${WORKING_DIR} && \
+                        ssh -o StrictHostKeyChecking=no jenkins@iis-cdh5-test-gw.ocean.icm.edu.pl "\
+                            cd \${WORKING_DIR}/deploy && \
+                            sh deploy_release.sh
+                            "
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}
