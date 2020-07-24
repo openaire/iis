@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.referenceextraction.softwareurl;
+package eu.dnetlib.iis.wf.referenceextraction;
 
 import org.apache.hadoop.conf.Configuration;
 

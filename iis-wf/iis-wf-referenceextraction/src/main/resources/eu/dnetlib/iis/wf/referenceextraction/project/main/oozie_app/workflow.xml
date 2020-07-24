@@ -18,6 +18,17 @@
 			<name>output_document_to_project</name>
 			<description>output document to project</description>
 		</property>
+        <property>
+            <name>tara_lock_manager_factory_class_name</name>
+            <value>eu.dnetlib.iis.common.lock.ZookeeperLockManagerFactory</value>
+            <description>
+                lock manager factory class name, to be used for synchronizing access to cache directory
+            </description>
+        </property>
+        <property>
+            <name>tara_cache_root_dir</name>
+            <description>tara reference extraction cache root directory</description>
+        </property>
 		<property>
             <name>sparkDriverMemory</name>
             <description>memory for driver process</description>
@@ -81,7 +92,7 @@
     
     <fork name="forking_sqlite">
         <path start="main_sqlite" />
-        <path start="tara_input-transformer" />
+        <path start="tara_main" />
     </fork>
     
     <action name="main_sqlite">
@@ -110,67 +121,38 @@
         <ok to="joining"/>
         <error to="fail"/>
     </action>
-    
-    <action name="tara_input-transformer">
-        <spark xmlns="uri:oozie:spark-action:0.2">
-            <prepare>
-                <delete path="${workingDir}/meta_with_text" />
-            </prepare>
-            <configuration>
-                <property>
-                    <name>oozie.action.sharelib.for.spark</name>
-                    <value>${oozieActionShareLibForSpark2}</value>
-                </property>
-            </configuration>
-            <master>yarn-cluster</master>
-            <mode>cluster</mode>
-            <name>tara-referenceextraction-input-transformer</name>
-            <class>eu.dnetlib.iis.wf.referenceextraction.project.input.TaraReferenceExtractionInputTransformerJob</class>
-            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
-            <spark-opts>
-                --executor-memory=${sparkExecutorMemory}
-                --executor-cores=${sparkExecutorCores}
-                --driver-memory=${sparkDriverMemory}
-                --conf spark.extraListeners=${spark2ExtraListeners}
-                --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
-                --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
-                --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
-            </spark-opts>
-            <arg>-inputMetadata = ${input_document_metadata}</arg>
-            <arg>-inputText = ${input_document_text}</arg>
-            <arg>-output = ${workingDir}/meta_with_text</arg>
-        </spark>
-        <ok to="tara_sqlite"/>
-        <error to="fail"/>
-    </action>
-    
-    <action name="tara_sqlite">
+
+    <action name="tara_main">
         <sub-workflow>
-            <app-path>${wf:appPath()}/tara_sqlite</app-path>
+            <app-path>${wf:appPath()}/tara_main</app-path>
             <propagate-configuration />
             <configuration>
                 <property>
                     <name>workingDir</name>
-                    <value>${workingDir}/tara_sqlite/working_dir</value>
+                    <value>${workingDir}/tara_main/working_dir</value>
                 </property>
                 <property>
-                    <name>input_document_metadata</name>
-                    <value>${workingDir}/meta_with_text</value>
+                    <name>lock_manager_factory_class_name</name>
+                    <value>${tara_lock_manager_factory_class_name}</value>
                 </property>
                 <property>
-                    <name>input_project_db</name>
+                    <name>cache_root_dir</name>
+                    <value>${tara_cache_root_dir}</value>
+                </property>
+                <property>
+                    <name>project_db_file</name>
                     <value>${workingDir}/projects.db</value>
                 </property>
                 <property>
                     <name>output_document_to_project</name>
-                    <value>${workingDir}/tara_sqlite/output</value>
+                    <value>${workingDir}/tara_main/output</value>
                 </property>
             </configuration>
         </sub-workflow>
         <ok to="joining"/>
         <error to="fail"/>
-    </action>    
-    
+    </action>
+
     <join name="joining" to="transformers_union_dedup_document_to_project" />
     
     <action name="transformers_union_dedup_document_to_project">
@@ -188,7 +170,7 @@
                 </property>
                 <property>
                     <name>input_b</name>
-                    <value>${workingDir}/tara_sqlite/output</value>
+                    <value>${workingDir}/tara_main/output</value>
                 </property>
                 <property>
                     <name>group_by_field_1</name>
