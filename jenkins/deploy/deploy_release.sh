@@ -23,7 +23,7 @@ declare -a app_dirs=(
 declare -a hdfs_target_dirs=(
   #"/lib/iis/softwareurl_cache_builder/snapshots"
   #"/lib/iis/cache_builder/snapshots"
-  "/tmp/jenkins/snapshots" #"/lib/iis/primary/snapshots"
+  "/lib/iis/primary/snapshots"
 )
 
 # gaining hdfs priviledges first in order to deploy oozie workflows to /lib/iis/ HDFS dir
@@ -50,8 +50,7 @@ done
 
 echo APPLYING MANUAL DOCSIM PATCH 2976...
 script_name='document-similarity-s1-rank_filter.pig'
-# remote_script_location='/lib/iis/primary/snapshots/'${deployment_date}'/primary_processing/documentssimilarity_chain/coansys/pl.edu.icm.coansys-document-similarity-ranked-workflow'
-remote_script_location='/tmp/jenkins/snapshots/'${deployment_date}'/primary_processing/documentssimilarity_chain/coansys/pl.edu.icm.coansys-document-similarity-ranked-workflow'
+remote_script_location='/lib/iis/primary/snapshots/'${deployment_date}'/primary_processing/documentssimilarity_chain/coansys/pl.edu.icm.coansys-document-similarity-ranked-workflow'
 
 hadoop fs -rm $remote_script_location/$script_name
 hadoop fs -put $script_name $remote_script_location

@@ -34,7 +34,6 @@ pipeline {
                         sshagent(['iis-test-credentials']) {
                             sh """
                                 mvn clean install \
-                                    -Dit.test=eu.dnetlib.iis.wf.affmatching.AffMatchingDedupWorkflowTest \
                                     -Djava.net.preferIPv4Stack=true \
                                     -DiisConnectionProperties=${WORKSPACE}/connection-properties/iis-ci-test.properties \
                                     -Doutput.dir.name=integration-test \
@@ -55,7 +54,7 @@ pipeline {
 
         failure {
             script {
-                def emails = ['p.jacewicz@icm.edu.pl'] //'m.horst@icm.edu.pl'
+                def emails = ['m.horst@icm.edu.pl', 'p.jacewicz@icm.edu.pl']
                 emails.each { email ->
                     step([$class: 'Mailer', notifyEveryUnstableBuild: true, recipients: "$email", sendToIndividuals: true])
                 }
