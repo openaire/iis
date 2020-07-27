@@ -11,7 +11,7 @@ import eu.dnetlib.iis.wf.referenceextraction.patent.PatentServiceException;
 import eu.dnetlib.iis.wf.referenceextraction.patent.PatentServiceFacade;
 
 /**
- * Simple mock retrieving XML concents as files from classpath. Relies on
+ * Simple mock retrieving XML contents as files from classpath. Relies on
  * publn_auth, publn_nr, publn_kind fields defined in {@link ImportedPatent}
  * while generating filename:
  * 

@@ -21,24 +21,24 @@ public class OpenPatentWebServiceFacadeFactory implements ServiceFacadeFactory<P
 
     public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
-    public static final String PARAM_CONSUMER_KEY = "patent.service.authn.consumer.key";
-    public static final String PARAM_CONSUMER_SECRET = "patent.service.authn.consumer.secret";
+    public static final String PARAM_CONSUMER_KEY = "authnConsumerKey";
+    public static final String PARAM_CONSUMER_SECRET = "authnConsumerSecret";
 
-    public static final String PARAM_SERVICE_ENDPOINT_AUTH_HOST = "patent.service.endpoint.auth.host";
-    public static final String PARAM_SERVICE_ENDPOINT_AUTH_PORT = "patent.service.endpoint.auth.port";
-    public static final String PARAM_SERVICE_ENDPOINT_AUTH_SCHEME = "patent.service.endpoint.auth.scheme";
-    public static final String PARAM_SERVICE_ENDPOINT_AUTH_URI_ROOT = "patent.service.endpoint.auth.uri.root";
+    public static final String PARAM_SERVICE_ENDPOINT_AUTH_HOST = "endpointAuthHost";
+    public static final String PARAM_SERVICE_ENDPOINT_AUTH_PORT = "endpointAuthPort";
+    public static final String PARAM_SERVICE_ENDPOINT_AUTH_SCHEME = "endpointAuthScheme";
+    public static final String PARAM_SERVICE_ENDPOINT_AUTH_URI_ROOT = "endpointAuthUriRoot";
 
-    public static final String PARAM_SERVICE_ENDPOINT_OPS_HOST = "patent.service.endpoint.ops.host";
-    public static final String PARAM_SERVICE_ENDPOINT_OPS_PORT = "patent.service.endpoint.ops.port";
-    public static final String PARAM_SERVICE_ENDPOINT_OPS_SCHEME = "patent.service.endpoint.ops.scheme";
-    public static final String PARAM_SERVICE_ENDPOINT_OPS_URI_ROOT = "patent.service.endpoint.ops.uri.root";
+    public static final String PARAM_SERVICE_ENDPOINT_OPS_HOST = "endpointOpsHost";
+    public static final String PARAM_SERVICE_ENDPOINT_OPS_PORT = "endpointOpsPort";
+    public static final String PARAM_SERVICE_ENDPOINT_OPS_SCHEME = "endpointOpsScheme";
+    public static final String PARAM_SERVICE_ENDPOINT_OPS_URI_ROOT = "endpointOpsUriRoot";
 
-    public static final String PARAM_SERVICE_ENDPOINT_READ_TIMEOUT = "patent.service.endpoint.read.timeout";
-    public static final String PARAM_SERVICE_ENDPOINT_CONNECTION_TIMEOUT = "patent.service.endpoint.connection.timeout";
+    public static final String PARAM_SERVICE_ENDPOINT_READ_TIMEOUT = "endpointReadTimeout";
+    public static final String PARAM_SERVICE_ENDPOINT_CONNECTION_TIMEOUT = "endpointConnectionTimeout";
     
-    public static final String PARAM_SERVICE_ENDPOINT_THROTTLE_SLEEP_TIME = "patent.service.endpoint.throttle.sleep.time";
-    public static final String PARAM_SERVICE_ENDPOINT_RETRIES_COUNT = "patent.service.endpoint.retries.count";
+    public static final String PARAM_SERVICE_ENDPOINT_THROTTLE_SLEEP_TIME = "endpointThrottleSleepTime";
+    public static final String PARAM_SERVICE_ENDPOINT_RETRIES_COUNT = "endpointRetriesCount";
     
     @Override
     public PatentServiceFacade instantiate(Map<String, String> conf) {

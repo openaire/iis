@@ -89,21 +89,21 @@ public class PatentMetadataExtractorJob {
     private static JavaRDD<ReportEntry> generateReportEntries(JavaSparkContext sparkContext, 
             JavaRDD<Patent> patents, JavaRDD<Fault> faults) {
         
-        ReportEntry processedPatentsCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_TOTAL, patents.count());
-        ReportEntry processedFaultsCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_FAULT, faults.count());
+        long faultCount = faults.count();
+        ReportEntry processedPatentsCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_TOTAL, patents.count() + faultCount);
+        ReportEntry processedFaultsCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_FAULT, faultCount);
         
         return sparkContext.parallelize(Lists.newArrayList(processedPatentsCounter, processedFaultsCounter));
     }
     
     private static Tuple2<Patent, Fault> parse(DocumentText patent, ImportedPatent importedPatent, PatentMetadataParser parser) {
-        Patent.Builder resultBuilder = fillDataFromImport(Patent.newBuilder(), importedPatent);
         try {
+            Patent.Builder resultBuilder = fillDataFromImport(Patent.newBuilder(), importedPatent);
             return new Tuple2<>(parser.parse(patent.getText(), resultBuilder).build(), null);
         } catch (PatentMetadataParserException e) {
             log.error("error while parsing xml contents of patent id " + patent.getId() + ", text content: "
                     + patent.getText(), e);
-            Patent resultPatent = resultBuilder.build();
-            return new Tuple2<>(resultPatent, FaultUtils.exceptionToFault(resultPatent.getApplnNr(), e, null));
+            return new Tuple2<>(null, FaultUtils.exceptionToFault(importedPatent.getApplnNr(), e, null));
         }
     }
 

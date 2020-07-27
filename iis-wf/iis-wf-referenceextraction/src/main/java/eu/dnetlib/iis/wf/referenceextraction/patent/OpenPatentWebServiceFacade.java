@@ -128,12 +128,11 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
         switch (statusCode) {
         case 200: {
             HttpEntity entity = httpResponse.getEntity();
-            if (entity != null) {
-                return EntityUtils.toString(entity);
-            } else {
+            if (entity == null) {
                 throw new PatentServiceException(
                         "got empty entity in response, full status: " + httpResponse.getStatusLine());
             }
+            return EntityUtils.toString(entity);
         }
         case 400: {
             log.info("got 400 HTTP code in response, potential reason: access token invalid or expired");

@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.referenceextraction.patent;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
@@ -9,10 +10,12 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.storage.StorageLevel;
 
+import com.beust.jcommander.DynamicParameter;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.fault.FaultUtils;
@@ -22,6 +25,7 @@ import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
+import eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeException;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeUtils;
 import eu.dnetlib.iis.wf.referenceextraction.ContentRetrieverResponse;
@@ -61,18 +65,18 @@ public class PatentMetadataRetrieverJob {
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
             
             try {
-                PatentServiceFacade patentServiceFacade = ServiceFacadeUtils.instantiate(sc.hadoopConfiguration());
+                PatentServiceFacade patentServiceFacade = ServiceFacadeUtils
+                        .instantiate(prepareFacadeParameters(params.patentFacadeFactoryClassname, params.facadeParams));
                 
                 JavaRDD<ImportedPatent> importedPatents = avroLoader.loadJavaRDD(sc, params.inputPath,
                         ImportedPatent.class);
 
-                JavaPairRDD<CharSequence, ContentRetrieverResponse> obtainedIdToResponce = importedPatents
-                        .mapToPair(x -> new Tuple2<CharSequence, ContentRetrieverResponse>(getId(x),
-                                getMetadataFromFacade(x, patentServiceFacade)));
-                obtainedIdToResponce.persist(StorageLevel.DISK_ONLY());
+                JavaPairRDD<CharSequence, ContentRetrieverResponse> obtainedIdToResponse = importedPatents
+                        .mapToPair(x -> new Tuple2<>(getId(x), getMetadataFromFacade(x, patentServiceFacade)));
+                obtainedIdToResponse.persist(StorageLevel.DISK_ONLY());
                 
-                JavaRDD<DocumentText> retrievedPatentMeta = obtainedIdToResponce.map(e -> DocumentText.newBuilder().setId(e._1).setText(e._2.getContent()).build());
-                JavaRDD<Fault> faults = obtainedIdToResponce.filter(e -> e._2.getException() != null).map(e -> FaultUtils.exceptionToFault(e._1, e._2.getException(), null));
+                JavaRDD<DocumentText> retrievedPatentMeta = obtainedIdToResponse.map(e -> DocumentText.newBuilder().setId(e._1).setText(e._2.getContent()).build());
+                JavaRDD<Fault> faults = obtainedIdToResponse.filter(e -> e._2.getException() != null).map(e -> FaultUtils.exceptionToFault(e._1, e._2.getException(), null));
                 JavaRDD<ReportEntry> reportEntries = generateReportEntries(sc, retrievedPatentMeta, faults);
                         
                 storeInOutput(retrievedPatentMeta, faults, reportEntries, outputPaths, params.numberOfEmittedFiles);
@@ -112,6 +116,13 @@ public class PatentMetadataRetrieverJob {
 
     private static CharSequence getId(ImportedPatent patent) {
         return patent.getApplnNr();
+    }
+    
+    private static Map<String, String> prepareFacadeParameters(String patentFacadeFactoryClassname, Map<String, String> facadeParams) {
+        Map<String, String> resultParams = Maps.newHashMap();
+        resultParams.put(ImportWorkflowRuntimeParameters.IMPORT_FACADE_FACTORY_CLASS, patentFacadeFactoryClassname);
+        resultParams.putAll(facadeParams);
+        return resultParams;
     }
     
     private static class OutputPaths {
@@ -156,5 +167,12 @@ public class PatentMetadataRetrieverJob {
         @Parameter(names = "-outputReportPath", required = true)
         private String outputReportPath;
         
+        @Parameter(names = "-patentFacadeFactoryClassname", required = true)
+        private String patentFacadeFactoryClassname;
+        
+        @DynamicParameter(names = "-D", description = "dynamic parameters related to patent facade", required = false)
+        private Map<String, String> facadeParams = Maps.newHashMap();
+        
     }
+    
 }

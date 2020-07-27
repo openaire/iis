@@ -97,8 +97,9 @@ public class PatentMetadataRetrieverJobTest {
                 .addArg("-outputPath", outputDir.toString())
                 .addArg("-outputFaultPath", outputFaultDir.toString())
                 .addArg("-outputReportPath", outputReportDir.toString())
+                .addArg("-patentFacadeFactoryClassname", PatentFacadeMockFactory.class.getCanonicalName())
+                .addArg("-DtestParam", "testValue")
                 .addJobProperty("spark.driver.host", "localhost")
-                .addJobProperty("spark.hadoop.import.facade.factory.classname", PatentFacadeMockFactory.class.getCanonicalName())
                 .build();
     }
 }

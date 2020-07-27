@@ -2,7 +2,6 @@ package eu.dnetlib.iis.wf.referenceextraction.patent;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -155,12 +154,7 @@ public class PatentMetadataExtractorJobTest {
         // then
         List<Patent> calculatedResult = AvroTestUtils.readLocalAvroDataStore(outputDir.toString());
         assertNotNull(calculatedResult);
-        assertEquals(1, calculatedResult.size());
-        Patent parsedPatent = calculatedResult.get(0);
-        assertNotNull(parsedPatent);
-        assertEquals(patentId, parsedPatent.getApplnNr().toString());
-        assertEquals("XX", parsedPatent.getApplnAuth().toString());
-        assertNull(parsedPatent.getApplnNrEpodoc());
+        assertEquals(0, calculatedResult.size());
         
         List<Fault> generatedFaults = AvroTestUtils.readLocalAvroDataStore(outputFaultDir.toString());
         assertNotNull(generatedFaults);
