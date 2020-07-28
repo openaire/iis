@@ -1,19 +1,21 @@
 package eu.dnetlib.iis.wf.referenceextraction.patent.input;
 
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-import eu.dnetlib.iis.common.java.io.HdfsUtils;
-import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
-import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
-import eu.dnetlib.iis.referenceextraction.patent.schemas.PatentReferenceExtractionInput;
+import java.io.IOException;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+
+import eu.dnetlib.iis.common.java.io.HdfsUtils;
+import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
+import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
+import eu.dnetlib.iis.referenceextraction.patent.schemas.PatentReferenceExtractionInput;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
-
-import java.io.IOException;
 
 public class PatentReferenceExtractionInputTransformerJob {
     private static final SparkAvroLoader sparkAvroLoader = new SparkAvroLoader();
@@ -30,7 +32,7 @@ public class PatentReferenceExtractionInputTransformerJob {
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputPath);
 
             JavaRDD<PatentReferenceExtractionInput> convertedRDD = sparkAvroLoader
-                    .loadJavaRDD(sc, params.inputPath, Patent.class)
+                    .loadJavaRDD(sc, params.inputPath, ImportedPatent.class)
                     .map(PatentReferenceExtractionInputTransformerJob::convert);
 
             sparkAvroSaver.saveJavaRDD(convertedRDD, PatentReferenceExtractionInput.SCHEMA$, params.outputPath);
@@ -39,12 +41,9 @@ public class PatentReferenceExtractionInputTransformerJob {
 
     //------------------------ PRIVATE --------------------------
 
-    private static PatentReferenceExtractionInput convert(Patent patent) {
+    private static PatentReferenceExtractionInput convert(ImportedPatent patent) {
         return PatentReferenceExtractionInput.newBuilder()
-                .setApplnId(patent.getApplnId())
-                .setApplnAuth(patent.getApplnAuth())
                 .setApplnNr(patent.getApplnNr())
-                .setApplnNrEpodoc(patent.getApplnNrEpodoc())
                 .build();
     }
 

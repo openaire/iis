@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="/3.2/style/exchange.xsl"?>
+<ops:world-patent-data xmlns="http://www.epo.org/exchange" xmlns:ops="http://ops.epo.org" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <exchange-documents>
+        <exchange-document system="ops.epo.org" family-id="8239797" country="WO" doc-number="0042078" kind="A1">
+            <bibliographic-data>
+                <publication-reference>
+                    <document-id document-id-type="docdb">
+                        <country>WO</country>
+                        <doc-number>0042078</doc-number>
+                        <kind>A1</kind>
+                        <date>20000721</date>
+                    </document-id>
+                    <document-id document-id-type="epodoc">
+                        <doc-number>WO0042078</doc-number>
+                        <date>20000720</date>
+                    </document-id>
+                </publication-reference>
+                <classification-ipc>
+                    <text>C08F2/20</text>
+                </classification-ipc>
+                <application-reference doc-id="15590611">
+                    <document-id document-id-type="docdb">
+                        <country>EP</country>
+                        <doc-number>0000003</doc-number>
+                        <kind>W</kind>
+                    </document-id>
+                    <document-id document-id-type="epodoc">
+                        <doc-number>WO2000EP00003</doc-number>
+                        <date>20000106</date>
+                    </document-id>
+                    <document-id document-id-type="original">
+                        <doc-number>EP0000003</doc-number>
+                    </document-id>
+                </application-reference>
+                <parties>
+                    <applicants>
+                        <applicant sequence="1" data-format="epodoc">
+                            <applicant-name>
+                                <name>AKZO NOBEL NV [NL]</name>
+                            </applicant-name>
+                        </applicant>
+                        <applicant sequence="2" data-format="epodoc">
+                            <applicant-name>
+                                <name> WESTMIJZE HANS [NL]</name>
+                            </applicant-name>
+                        </applicant>
+                        <applicant sequence="3" data-format="epodoc">
+                            <applicant-name>
+                                <name> BOEN HO O [NL]</name>
+                            </applicant-name>
+                        </applicant>
+                        <applicant sequence="1" data-format="original">
+                            <applicant-name>
+                                <name>AKZO NOBEL N.V, </name>
+                            </applicant-name>
+                        </applicant>
+                        <applicant sequence="2" data-format="original">
+                            <applicant-name>
+                                <name>WESTMIJZE, HANS, </name>
+                            </applicant-name>
+                        </applicant>
+                        <applicant sequence="3" data-format="original">
+                            <applicant-name>
+                                <name>O, BOEN, HO</name>
+                            </applicant-name>
+                        </applicant>
+                    </applicants>
+                    <inventors>
+                        <inventor sequence="1" data-format="epodoc">
+                            <inventor-name>
+                                <name>WESTMIJZE HANS [NL]</name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="2" data-format="epodoc">
+                            <inventor-name>
+                                <name> O BOEN HO [NL]</name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="1" data-format="original">
+                            <inventor-name>
+                                <name>WESTMIJZE, HANS, </name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="2" data-format="original">
+                            <inventor-name>
+                                <name>O, BOEN, HO</name>
+                            </inventor-name>
+                        </inventor>
+                    </inventors>
+                </parties>
+                <invention-title lang="fr">EMULSIONS AQUEUSES DE PEROXYDE</invention-title>
+                <invention-title lang="en">AQUEOUS PEROXIDE EMULSIONS</invention-title>
+            </bibliographic-data>
+            <abstract lang="en">
+                <p>Simple abstract in <b>English</b></p>
+            </abstract>
+            <abstract lang="fr">
+                <p>Simple abstract in French</p>
+            </abstract>
+        </exchange-document>
+    </exchange-documents>
+</ops:world-patent-data>

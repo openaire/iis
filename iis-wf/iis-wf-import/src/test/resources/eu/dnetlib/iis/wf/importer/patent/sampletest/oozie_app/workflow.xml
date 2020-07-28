@@ -24,8 +24,8 @@
             <propagate-configuration/>
             <configuration>
                 <property>
-                    <name>input_json</name>
-                    <value>${wf:appPath()}/input/patents_epo.json</value>
+                    <name>input_tsv</name>
+                    <value>${wf:appPath()}/input/patents_epo.tsv</value>
                 </property>
                 <property>
                     <name>output</name>
@@ -50,8 +50,8 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
             <arg>-C{patent,
-                eu.dnetlib.iis.referenceextraction.patent.schemas.Patent,
-                eu/dnetlib/iis/wf/importer/patent/data/output/patents_epo_input.json}
+                eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent,
+                eu/dnetlib/iis/wf/importer/patent/data/output/patents_epo_output.json}
             </arg>
             <arg>-C{report,
                 eu.dnetlib.iis.common.schemas.ReportEntry,

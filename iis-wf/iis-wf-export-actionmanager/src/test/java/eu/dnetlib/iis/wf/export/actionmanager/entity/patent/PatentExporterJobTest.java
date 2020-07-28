@@ -154,7 +154,7 @@ public class PatentExporterJobTest {
     }
 
     @Test
-    public void shouldExportEntitiesWhenConfidenceLevelIsAboveThresholdAndProperlyHandleNullableFields() throws IOException {
+    public void shouldNotExportEntitiesNorRelationsWhenEntityTitleIsNull() throws IOException {
         //given
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(Objects.requireNonNull(cl.getResource(INPUT_DOCUMENT_TO_PATENT_NULLCHECK_PATH)).getFile(), DocumentToPatent.class),
@@ -168,7 +168,7 @@ public class PatentExporterJobTest {
         executor.execute(sparkJob);
 
         //then - checking only if no exception is thrown
-        assertCountersInReport(2, 2, 2);
+        assertCountersInReport(0, 0, 0);
     }
 
     private SparkJob buildSparkJob(Double trustLevelThreshold) {

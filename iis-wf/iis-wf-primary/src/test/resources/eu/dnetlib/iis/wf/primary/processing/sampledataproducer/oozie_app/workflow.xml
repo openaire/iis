@@ -80,7 +80,7 @@
                 eu/dnetlib/iis/wf/primary/processing/sampledataproducer/input/meta/sh_origins.json}
             </arg>
 			<arg>-C{patent,
-				eu.dnetlib.iis.referenceextraction.patent.schemas.Patent,
+				eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent,
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/input/meta/patent.json}
 			</arg>
 			<arg>-Odocument_metadata=${workingDir}/producer/document_metadata</arg>
@@ -357,6 +357,10 @@
 					<name>output_document_to_patent</name>
 					<value>${workingDir}/exported/document_to_patent</value>
 				</property>
+                <property>
+                    <name>output_patent_metadata</name>
+                    <value>${workingDir}/exported/patent_metadata</value>
+                </property>
 				<property>
 					<name>output_document_to_pdb</name>
 					<value>${workingDir}/exported/document_to_pdb</value>
@@ -434,6 +438,50 @@
 					<name>metric_pusher_address</name>
 					<value>${workingDir}/report/pushgateway</value>
 				</property>
+                <property>
+                    <name>patentMetadataRetrieverFacadeFactoryClassname</name>
+                    <value>eu.dnetlib.iis.wf.primary.processing.ClassPathBasedPatentServiceFacadeFactory</value>
+                </property>
+                <property>
+                    <name>patentServiceAuthnConsumerKey</name>
+                    <value>expectedConsumerKey</value>
+                </property>
+                <property>
+                    <name>patentServiceAuthnConsumerSecret</name>
+                    <value>expectedConsumerSecret</value>
+                </property>
+                <property>
+                    <name>patentServiceEndpointAuthHost</name>
+                    <value>expectedAuthHost</value>
+                </property>
+                <property>
+                    <name>patentServiceEndpointAuthPort</name>
+                    <value>expectedAuthPort</value>
+                </property>
+                <property>
+                    <name>patentServiceEndpointAuthScheme</name>
+                    <value>expectedAuthScheme</value>
+                </property>
+                <property>
+                    <name>patentServiceEndpointAuthUriRoot</name>
+                    <value>expectedAuthUriRoot</value>
+                </property>
+                <property>
+                    <name>patentServiceEndpointOpsHost</name>
+                    <value>expectedOpsHost</value>
+                </property>
+                <property>
+                    <name>patentServiceEndpointOpsPort</name>
+                    <value>expectedOpsPort</value>
+                </property>
+                <property>
+                    <name>patentServiceEndpointOpsScheme</name>
+                    <value>expectedOpsScheme</value>
+                </property>
+                <property>
+                    <name>patentServiceEndpointOpsUriRoot</name>
+                    <value>expectedOpsUriRoot</value>
+                </property>
 			</configuration>
 		</sub-workflow>
 		<ok to="consumer" />
@@ -490,6 +538,11 @@
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_patent.json}
 			</arg>
 			<arg>-Idocument_to_patent=${workingDir}/exported/document_to_patent</arg>
+            <arg>-C{patent_metadata,
+                eu.dnetlib.iis.referenceextraction.patent.schemas.Patent,
+                eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/extracted_patent_metadata.json}
+            </arg>
+            <arg>-Ipatent_metadata=${workingDir}/exported/patent_metadata</arg>
 			<arg>-C{citation,
 				eu.dnetlib.iis.export.schemas.Citations,
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/citations.json}
