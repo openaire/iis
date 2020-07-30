@@ -7,34 +7,6 @@ pipeline {
     }
 
     stages {
-        stage("Build") {
-            steps {
-                configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
-                    load "${BUILD_PROPERTIES}"
-                    withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "${JDK_VERSION}" }",
-                             "PATH+MAVEN=${tool type: 'maven', name: "${MAVEN_VERSION}"}/bin:${env.JAVA_HOME}/bin"]) {
-                        sh """
-                            mvn clean compile
-                        """
-                    }
-                }
-            }
-        }
-
-        stage("Test") {
-            steps {
-                configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
-                    load "${BUILD_PROPERTIES}"
-                    withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "$JDK_VERSION" }",
-                             "PATH+MAVEN=${tool type: 'maven', name: "$MAVEN_VERSION"}/bin:${env.JAVA_HOME}/bin"]) {
-                        sh """
-                            mvn test
-                        """
-                    }
-                }
-            }
-        }
-
         stage("Install") {
             steps {
                 configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
@@ -42,14 +14,14 @@ pipeline {
                     withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "${JDK_VERSION}" }",
                              "PATH+MAVEN=${tool type: 'maven', name: "${MAVEN_VERSION}"}/bin:${env.JAVA_HOME}/bin"]) {
                         sh """
-                            mvn clean install -DskipTests
+                            mvn clean install -DskipITs
                         """
                     }
                 }
             }
         }
 
-        stage("Upload") {
+        stage("Deploy Primary") {
             steps {
                 configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
                     load "${BUILD_PROPERTIES}"
@@ -68,18 +40,30 @@ pipeline {
             }
         }
 
-        stage("Deploy") {
+        stage("Release Primary") {
             steps {
+                script {
+                    def propertiesContent = readFile("${WORKSPACE}/connection-properties/iis-cdh5-test-gw.properties")
+                    def properties = [:]
+                    propertiesContent.split("\\n").each { line ->
+                        if (line.contains('=')) {
+                            def nameAndValue = line.split('=')
+                            properties[nameAndValue[0]] = nameAndValue[1]
+                        }
+                    }
+                    env.USERNAME = properties['iis.hadoop.frontend.user.name']
+                    env.HOSTNAME = properties['iis.hadoop.frontend.host.name']
+                }
                 sshagent(['iis-deployment-credentials']) {
                     sh """
-                        WORKING_DIR=/tmp/jenkins/`date +%Y-%m-%d` && \
-                        ssh -o StrictHostKeyChecking=no jenkins@iis-cdh5-test-gw.ocean.icm.edu.pl "\
+                        WORKING_DIR=/tmp/${USERNAME}/`date +%Y-%m-%d`/apps/primary && \
+                        ssh ${USERNAME}@${HOSTNAME} "\
                             rm -rf \${WORKING_DIR} && \
                             mkdir -p \${WORKING_DIR}
                             " && \
-                        scp -r ${WORKSPACE}/jenkins/deploy/ jenkins@iis-cdh5-test-gw.ocean.icm.edu.pl:\${WORKING_DIR} && \
-                        ssh -o StrictHostKeyChecking=no jenkins@iis-cdh5-test-gw.ocean.icm.edu.pl "\
-                            cd \${WORKING_DIR}/deploy && \
+                        scp -r ${WORKSPACE}/jenkins/deploy/apps/primary/* ${USERNAME}@${HOSTNAME}:\${WORKING_DIR} && \
+                        ssh ${USERNAME}@${HOSTNAME} "\
+                            cd \${WORKING_DIR} && \
                             sh deploy_release.sh
                             "
                     """
