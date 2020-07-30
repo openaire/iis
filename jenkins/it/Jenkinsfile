@@ -11,20 +11,6 @@ pipeline {
     }
 
     stages {
-        stage("Build") {
-            steps {
-                configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
-                    load "${BUILD_PROPERTIES}"
-                    withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "${JDK_VERSION}" }",
-                             "PATH+MAVEN=${tool type: 'maven', name: "${MAVEN_VERSION}"}/bin:${env.JAVA_HOME}/bin"]) {
-                        sh """
-                            mvn clean compile
-                        """
-                    }
-                }
-            }
-        }
-
         stage("Verify") {
             steps {
                 configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {

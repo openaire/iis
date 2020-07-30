@@ -7,20 +7,6 @@ pipeline {
     }
 
     stages {
-        stage("Build") {
-            steps {
-                configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
-                    load "${BUILD_PROPERTIES}"
-                    withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "${JDK_VERSION}" }",
-                             "PATH+MAVEN=${tool type: 'maven', name: "${MAVEN_VERSION}"}/bin:${env.JAVA_HOME}/bin"]) {
-                        sh """
-                            mvn clean compile
-                        """
-                    }
-                }
-            }
-        }
-
         stage("Test") {
             steps {
                 configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
@@ -28,7 +14,7 @@ pipeline {
                     withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "$JDK_VERSION" }",
                              "PATH+MAVEN=${tool type: 'maven', name: "$MAVEN_VERSION"}/bin:${env.JAVA_HOME}/bin"]) {
                         sh """
-                            mvn test
+                            mvn clean test
                         """
                     }
                 }
@@ -49,7 +35,7 @@ pipeline {
             }
         }
 
-        stage("Upload") {
+        stage("Deploy") {
             steps {
                 configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
                     load "${BUILD_PROPERTIES}"
@@ -68,17 +54,18 @@ pipeline {
             }
         }
 
-        stage("Deploy") {
+        stage("Release") {
             steps {
+                load "${WORKSPACE}/connection-properties/iis-cdh5-test-gw.properties"
                 sshagent(['iis-deployment-credentials']) {
                     sh """
-                        WORKING_DIR=/tmp/jenkins/`date +%Y-%m-%d` && \
-                        ssh -o StrictHostKeyChecking=no jenkins@iis-cdh5-test-gw.ocean.icm.edu.pl "\
+                        WORKING_DIR=/tmp/${iis.hadoop.frontend.user.name}/`date +%Y-%m-%d` && \
+                        ssh -o StrictHostKeyChecking=no ${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name} "\
                             rm -rf \${WORKING_DIR} && \
                             mkdir -p \${WORKING_DIR}
                             " && \
-                        scp -r ${WORKSPACE}/jenkins/deploy/ jenkins@iis-cdh5-test-gw.ocean.icm.edu.pl:\${WORKING_DIR} && \
-                        ssh -o StrictHostKeyChecking=no jenkins@iis-cdh5-test-gw.ocean.icm.edu.pl "\
+                        scp -r ${WORKSPACE}/jenkins/deploy/ ${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name}:\${WORKING_DIR} && \
+                        ssh -o StrictHostKeyChecking=no ${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name} "\
                             cd \${WORKING_DIR}/deploy && \
                             sh deploy_release.sh
                             "
