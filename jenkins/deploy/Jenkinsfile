@@ -7,20 +7,6 @@ pipeline {
     }
 
     stages {
-        stage("Test") {
-            steps {
-                configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
-                    load "${BUILD_PROPERTIES}"
-                    withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "$JDK_VERSION" }",
-                             "PATH+MAVEN=${tool type: 'maven', name: "$MAVEN_VERSION"}/bin:${env.JAVA_HOME}/bin"]) {
-                        sh """
-                            mvn clean test
-                        """
-                    }
-                }
-            }
-        }
-
         stage("Install") {
             steps {
                 configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
@@ -28,14 +14,14 @@ pipeline {
                     withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "${JDK_VERSION}" }",
                              "PATH+MAVEN=${tool type: 'maven', name: "${MAVEN_VERSION}"}/bin:${env.JAVA_HOME}/bin"]) {
                         sh """
-                            mvn clean install -DskipTests
+                            mvn clean install -DskipITs
                         """
                     }
                 }
             }
         }
 
-        stage("Deploy") {
+        stage("Deploy Primary") {
             steps {
                 configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
                     load "${BUILD_PROPERTIES}"
@@ -54,19 +40,30 @@ pipeline {
             }
         }
 
-        stage("Release") {
+        stage("Release Primary") {
             steps {
-                load "${WORKSPACE}/connection-properties/iis-cdh5-test-gw.properties"
+                script {
+                    def propertiesContent = readFile("${WORKSPACE}/connection-properties/iis-cdh5-test-gw.properties")
+                    def properties = [:]
+                    propertiesContent.split("\\n").each { line ->
+                        if (line.contains('=')) {
+                            def nameAndValue = line.split('=')
+                            properties[nameAndValue[0]] = nameAndValue[1]
+                        }
+                    }
+                    env.USERNAME = properties['iis.hadoop.frontend.user.name']
+                    env.HOSTNAME = properties['iis.hadoop.frontend.host.name']
+                }
                 sshagent(['iis-deployment-credentials']) {
                     sh """
-                        WORKING_DIR=/tmp/${iis.hadoop.frontend.user.name}/`date +%Y-%m-%d` && \
-                        ssh -o StrictHostKeyChecking=no ${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name} "\
+                        WORKING_DIR=/tmp/${USERNAME}/`date +%Y-%m-%d`/apps/primary && \
+                        ssh ${USERNAME}@${HOSTNAME} "\
                             rm -rf \${WORKING_DIR} && \
                             mkdir -p \${WORKING_DIR}
                             " && \
-                        scp -r ${WORKSPACE}/jenkins/deploy/ ${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name}:\${WORKING_DIR} && \
-                        ssh -o StrictHostKeyChecking=no ${iis.hadoop.frontend.user.name}@${iis.hadoop.frontend.host.name} "\
-                            cd \${WORKING_DIR}/deploy && \
+                        scp -r ${WORKSPACE}/jenkins/deploy/apps/primary/* ${USERNAME}@${HOSTNAME}:\${WORKING_DIR} && \
+                        ssh ${USERNAME}@${HOSTNAME} "\
+                            cd \${WORKING_DIR} && \
                             sh deploy_release.sh
                             "
                     """

@@ -11,7 +11,7 @@ pipeline {
     }
 
     stages {
-        stage("Verify") {
+        stage("Install") {
             steps {
                 configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
                     load "${BUILD_PROPERTIES}"
