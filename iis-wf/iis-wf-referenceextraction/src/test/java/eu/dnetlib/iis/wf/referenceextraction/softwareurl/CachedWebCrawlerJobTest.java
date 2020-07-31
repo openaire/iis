@@ -21,6 +21,8 @@ import com.google.common.io.Files;
 import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.IntegrationTest;
 import eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess;
+import eu.dnetlib.iis.common.cache.CacheStorageUtils;
+import eu.dnetlib.iis.common.cache.CacheStorageUtils.CacheRecordType;
 import eu.dnetlib.iis.common.lock.ZookeeperLockManagerFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
@@ -29,7 +31,6 @@ import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrl;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithSource;
-import eu.dnetlib.iis.wf.referenceextraction.softwareurl.CachedWebCrawlerJob.CacheRecordType;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
@@ -117,13 +118,13 @@ public class CachedWebCrawlerJobTest {
         assertNotNull(cacheId);
         
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(
-                CachedWebCrawlerJob.getCacheLocation(cacheRootDir, cacheId, CacheRecordType.text), 
+                CacheStorageUtils.getCacheLocation(cacheRootDir, cacheId, CacheRecordType.text), 
                 jsonCacheFile, DocumentText.class);
         
         // evaluating faults
         assertEquals(0, AvroTestUtils.readLocalAvroDataStore(outputFaultPath).size());
         List<Fault> cachedFaults = AvroTestUtils.readLocalAvroDataStore(
-                CachedWebCrawlerJob.getCacheLocation(cacheRootDir, cacheId, CacheRecordType.fault));
+                CacheStorageUtils.getCacheLocation(cacheRootDir, cacheId, CacheRecordType.fault));
         assertEquals(0, cachedFaults.size());
      
         // evaluating report
@@ -157,7 +158,7 @@ public class CachedWebCrawlerJobTest {
         assertNotNull(cacheId);
         
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(
-                CachedWebCrawlerJob.getCacheLocation(cacheRootDir, cacheId, CacheRecordType.text), 
+                CacheStorageUtils.getCacheLocation(cacheRootDir, cacheId, CacheRecordType.text), 
                 jsonCacheFile, DocumentText.class);
         // evaluating faults
         List<Fault> resultFaults = AvroTestUtils.readLocalAvroDataStore(outputFaultPath);
@@ -168,7 +169,7 @@ public class CachedWebCrawlerJobTest {
         assertEquals("id-2", resultFaults.get(1).getInputObjectId().toString());
         
         List<Fault> cachedFaults = AvroTestUtils.readLocalAvroDataStore(
-                CachedWebCrawlerJob.getCacheLocation(cacheRootDir, cacheId, CacheRecordType.fault));
+                CacheStorageUtils.getCacheLocation(cacheRootDir, cacheId, CacheRecordType.fault));
         assertEquals(1, cachedFaults.size());
         assertEquals(DocumentNotFoundException.class.getName(), cachedFaults.get(0).getCode().toString());
         assertEquals("https://github.com/openaire/invalid", cachedFaults.get(0).getInputObjectId().toString());
@@ -211,13 +212,13 @@ public class CachedWebCrawlerJobTest {
         String cacheId = cacheManager.getExistingCacheId(conf, cacheRootDir);
         assertNotNull(cacheId);
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(
-                CachedWebCrawlerJob.getCacheLocation(cacheRootDir, cacheId, CacheRecordType.text), 
+                CacheStorageUtils.getCacheLocation(cacheRootDir, cacheId, CacheRecordType.text), 
                 jsonCache2File, DocumentText.class);
         // evaluating faults
         assertEquals(0, AvroTestUtils.readLocalAvroDataStore(outputFaultPath).size());
         assertEquals(0, AvroTestUtils.readLocalAvroDataStore(outputFault2Path).size());
         List<Fault> cachedFaults = AvroTestUtils.readLocalAvroDataStore(
-                CachedWebCrawlerJob.getCacheLocation(cacheRootDir, cacheId, CacheRecordType.fault));
+                CacheStorageUtils.getCacheLocation(cacheRootDir, cacheId, CacheRecordType.fault));
         assertEquals(0, cachedFaults.size());
         
         // evaluating report
@@ -255,13 +256,13 @@ public class CachedWebCrawlerJobTest {
         String cacheId = cacheManager.getExistingCacheId(conf, cacheRootDir);
         assertNotNull(cacheId);
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(
-                CachedWebCrawlerJob.getCacheLocation(cacheRootDir, cacheId, CacheRecordType.text), 
+                CacheStorageUtils.getCacheLocation(cacheRootDir, cacheId, CacheRecordType.text), 
                 jsonCacheFile, DocumentText.class);
         // evaluating faults
         assertEquals(0, AvroTestUtils.readLocalAvroDataStore(outputFaultPath).size());
         assertEquals(0, AvroTestUtils.readLocalAvroDataStore(outputFault2Path).size());
         List<Fault> cachedFaults = AvroTestUtils.readLocalAvroDataStore(
-                CachedWebCrawlerJob.getCacheLocation(cacheRootDir, cacheId, CacheRecordType.fault));
+                CacheStorageUtils.getCacheLocation(cacheRootDir, cacheId, CacheRecordType.fault));
         assertEquals(0, cachedFaults.size());
         
         // evaluating report

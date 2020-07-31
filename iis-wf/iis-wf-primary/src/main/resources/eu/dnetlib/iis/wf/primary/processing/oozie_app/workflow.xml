@@ -372,7 +372,10 @@
             <name>patentServiceEndpointOpsUriRoot</name>
             <description>remote EPO endpoint OPS URI root, required by OpenPatentWebServiceFacadeFactory</description>
         </property>
-
+        <property>
+            <name>patent_cache_location</name>
+            <description>patent HDFS cache location</description>
+        </property>
         <!-- output ports -->
         <property>
             <name>output_merged_metadata</name>
@@ -1131,6 +1134,10 @@
                 <property>
                     <name>input_document_text</name>
                     <value>${workingDir}/transformers_common_union_document_text/out</value>
+                </property>
+                <property>
+                    <name>cacheRootDir</name>
+                    <value>${patent_cache_location}</value>
                 </property>
             </configuration>
         </sub-workflow>
