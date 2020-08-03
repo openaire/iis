@@ -48,7 +48,7 @@
 {"key":"processing.referenceExtraction.patent.metadataextraction.processed.total","type":"COUNTER","value":"1"}
 {"key":"processing.referenceExtraction.patent.metadataextraction.processed.fault","type":"COUNTER","value":"0"}
 {"key":"processing.referenceExtraction.patent.duration","type":"DURATION","value":"$(LONG_RANGE: [1000, 700000])"}
-{"key":"processing.referenceExtraction.project.duration","type":"DURATION","value":"$(LONG_RANGE: [1000, 500000])"}
+{"key":"processing.referenceExtraction.project.duration","type":"DURATION","value":"$(LONG_RANGE: [1000, 1000000])"}
 {"key":"processing.referenceExtraction.project.references.ec","type":"COUNTER","value":"1"}
 {"key":"processing.referenceExtraction.project.references.total","type":"COUNTER","value":"1"}
 {"key":"processing.referenceExtraction.researchInitiative.docs","type":"COUNTER","value":"1"}
