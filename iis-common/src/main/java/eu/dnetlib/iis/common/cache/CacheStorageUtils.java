@@ -2,16 +2,19 @@ package eu.dnetlib.iis.common.cache;
 
 import java.io.File;
 
+import org.apache.avro.generic.GenericRecord;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
 
 import com.beust.jcommander.Parameter;
 
 import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.lock.LockManager;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
+import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 
@@ -35,6 +38,18 @@ public class CacheStorageUtils {
         } else {
             return cacheRootDir;
         }
+    }
+    
+    /**
+     * Reads RDD from cache or returns empty if cache id was set to undefined value
+     * what means cache was not created yet.
+     */
+    public static <T extends GenericRecord> JavaRDD<T> getRddOrEmpty(JavaSparkContext sc, SparkAvroLoader avroLoader,
+            String cacheRootDir,String existingCacheId, CacheRecordType cacheRecordType, Class<T> avroRecordClass) {
+        return CacheMetadataManagingProcess.UNDEFINED.equals(existingCacheId) ? sc.emptyRDD()
+                : avroLoader.loadJavaRDD(sc,
+                        CacheStorageUtils.getCacheLocation(cacheRootDir, existingCacheId, cacheRecordType),
+                        avroRecordClass);
     }
     
     /**
