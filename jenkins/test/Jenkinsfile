@@ -41,12 +41,11 @@ pipeline {
         }
 
         failure {
-            script {
-                def emails = sh(script: "git --no-pager log ${GIT_PREVIOUS_SUCCESSFUL_COMMIT}..${GIT_COMMIT} -s --format=%ae|sort -u", returnStdout: true).trim().split("\\n")
-                emails.each { email ->
-                    step([$class: 'Mailer', notifyEveryUnstableBuild: true, recipients: "$email", sendToIndividuals: true])
-                }
-            }
+            emailext (
+                subject: "Build failed in Jenkins: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: "Failed job '${env.JOB_NAME}' #${env.BUILD_NUMBER}: check console output at ${env.BUILD_URL}.",
+                recipientProviders:  [developers()]
+            )
         }
     }
 }

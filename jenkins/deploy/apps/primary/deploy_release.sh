@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # #############################################################################################################
 # prerequisites (for the most common deployment scenario: IIS primary wf deployment):
@@ -42,5 +42,3 @@ remote_script_location=${hdfs_target_root_dir}'/'${deployment_date}'/primary_pro
 
 hadoop fs -rm $remote_script_location/$script_name
 hadoop fs -put $script_name $remote_script_location
-
-export HADOOP_USER_NAME="$user_name"

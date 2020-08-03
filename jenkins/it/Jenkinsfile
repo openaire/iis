@@ -39,12 +39,11 @@ pipeline {
         }
 
         failure {
-            script {
-                def emails = ['m.horst@icm.edu.pl', 'p.jacewicz@icm.edu.pl']
-                emails.each { email ->
-                    step([$class: 'Mailer', notifyEveryUnstableBuild: true, recipients: "$email", sendToIndividuals: true])
-                }
-            }
+            emailext (
+                subject: "Build failed in Jenkins: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: "Failed job '${env.JOB_NAME}' #${env.BUILD_NUMBER}: check console output at ${env.BUILD_URL}.",
+                recipientProviders:  [developers()]
+            )
         }
     }
 }

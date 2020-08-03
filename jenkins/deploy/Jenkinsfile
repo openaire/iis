@@ -55,18 +55,18 @@ pipeline {
                     env.HOSTNAME = properties['iis.hadoop.frontend.host.name']
                 }
                 sshagent(['iis-deployment-credentials']) {
-                    sh """
-                        WORKING_DIR=/tmp/${USERNAME}/`date +%Y-%m-%d`/apps/primary && \
-                        ssh ${USERNAME}@${HOSTNAME} "\
-                            rm -rf \${WORKING_DIR} && \
-                            mkdir -p \${WORKING_DIR}
-                            " && \
-                        scp -r ${WORKSPACE}/jenkins/deploy/apps/primary/* ${USERNAME}@${HOSTNAME}:\${WORKING_DIR} && \
-                        ssh ${USERNAME}@${HOSTNAME} "\
-                            cd \${WORKING_DIR} && \
+                    sh '''
+                        WORKING_DIR=/tmp/${USERNAME}/`date +%Y-%m-%d`/apps/primary
+                        ssh ${USERNAME}@${HOSTNAME} "
+                            rm -rf ${WORKING_DIR} &&
+                            mkdir -p ${WORKING_DIR}
+                            "
+                        scp -r "${WORKSPACE}"/jenkins/deploy/apps/primary/* ${USERNAME}@${HOSTNAME}:${WORKING_DIR}
+                        ssh ${USERNAME}@${HOSTNAME} "
+                            cd ${WORKING_DIR} &&
                             sh deploy_release.sh
                             "
-                    """
+                    '''
                 }
             }
         }
