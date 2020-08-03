@@ -3,6 +3,7 @@ package eu.dnetlib.iis.common.cache;
 import java.io.File;
 
 import org.apache.avro.generic.GenericRecord;
+import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -10,6 +11,7 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
 import com.beust.jcommander.Parameter;
+import com.google.common.base.Preconditions;
 
 import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.lock.LockManager;
@@ -33,11 +35,23 @@ public class CacheStorageUtils {
      * Removes trailing file separator from the path whenever defined.
      */
     public static String normalizePath(String cacheRootDir) {
-        if (File.separatorChar == cacheRootDir.charAt(cacheRootDir.length()-1)) {
-            return cacheRootDir.substring(0, cacheRootDir.length()-1);
+        Preconditions.checkArgument(StringUtils.isNotBlank(cacheRootDir), "cache root directory cannot be blank!");
+
+        if (File.separatorChar == cacheRootDir.charAt(cacheRootDir.length() - 1)) {
+            return cacheRootDir.substring(0, cacheRootDir.length() - 1);
         } else {
             return cacheRootDir;
         }
+    }
+    
+    /**
+     * Builts cache path for given cache coordinates, none of the parameters can be null.
+     */
+    public static String getCacheLocation(String cacheRootDir, String cacheId, CacheRecordType cacheRecordType) {
+        Preconditions.checkArgument(StringUtils.isNotBlank(cacheRootDir), "cache root directory cannot be blank!");
+        Preconditions.checkArgument(StringUtils.isNotBlank(cacheId), "cache id cannot be blank!");
+        
+        return cacheRootDir + '/' + cacheId + '/' + cacheRecordType.name();
     }
     
     /**
@@ -65,9 +79,6 @@ public class CacheStorageUtils {
         try {
             // getting new id for merging
             String newCacheId = cacheManager.generateNewCacheId(hadoopConf, cacheRootDir);
-            Path newCachePath = new Path(cacheRootDir, newCacheId);
-            
-            FileSystem fileSystem = FileSystem.get(hadoopConf);
             
             try {
                 // store in cache
@@ -79,7 +90,7 @@ public class CacheStorageUtils {
                 cacheManager.writeCacheId(hadoopConf, cacheRootDir, newCacheId);
                 
             } catch(Exception e) {
-                fileSystem.delete(newCachePath, true);
+                FileSystem.get(hadoopConf).delete(new Path(cacheRootDir, newCacheId), true);
                 throw e;
             }       
             
@@ -88,11 +99,6 @@ public class CacheStorageUtils {
         }
         
     }
-    
-    public static String getCacheLocation(String cacheRootDir, String cacheId, CacheRecordType cacheRecordType) {
-        return cacheRootDir + '/' + cacheId + '/' + cacheRecordType.name();
-    }
-
     
     /**
      * Type of the records stored within cache subdirectory.
