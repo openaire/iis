@@ -29,4 +29,11 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
         wfConf.setTimeoutInSeconds(720);
         testWorkflow("eu/dnetlib/iis/wf/importer/content_url/core/blacklisting", wfConf);
     }
+    
+    @Test
+    public void testContentUrlDedup() {
+        OozieWorkflowTestConfiguration wfConf = new OozieWorkflowTestConfiguration();
+        wfConf.setTimeoutInSeconds(720);
+        testWorkflow("eu/dnetlib/iis/wf/importer/content_url/dedup/sampletest", wfConf);
+    }
 }

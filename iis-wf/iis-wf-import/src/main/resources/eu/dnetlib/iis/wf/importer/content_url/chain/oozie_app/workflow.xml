@@ -267,10 +267,30 @@
                 </property>
 			</configuration>
         </sub-workflow>
-		<ok to="content-url-dispatcher" />
+		<ok to="content-url-dedup" />
 		<error to="fail" />
 	</action>
 	
+    <action name="content-url-dedup">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/import_content_url_dedup</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>input</name>
+                    <value>${wf:actionData('input_id-path-setter')['result']}</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${workingDir}/document_content_url_deduped/output</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="content-url-dispatcher" />
+        <error to="fail" />
+    </action>
+    
+    
 	<action name="content-url-dispatcher">
 		<map-reduce>
 			<prepare>
@@ -391,7 +411,7 @@
 				</property>
 				<property>
 					<name>mapreduce.input.fileinputformat.inputdir</name>
-					<value>${wf:actionData('input_id-path-setter')['result']}</value>
+					<value>${workingDir}/document_content_url_deduped/output</value>
 				</property>
 				<property>
 					<name>mapreduce.output.fileoutputformat.outputdir</name>
