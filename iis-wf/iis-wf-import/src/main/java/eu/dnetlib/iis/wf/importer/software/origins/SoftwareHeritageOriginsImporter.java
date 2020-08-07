@@ -237,7 +237,7 @@ public class SoftwareHeritageOriginsImporter implements eu.dnetlib.iis.common.ja
 
     protected static String buildUri(String rootUri, int startElement, int pageSize) {
         StringBuilder strBuilder = new StringBuilder(rootUri);
-        strBuilder.append("?origin_from=");
+        strBuilder.append("?page_token=");
         strBuilder.append(startElement);
         strBuilder.append("&origin_count=");
         strBuilder.append(pageSize);
