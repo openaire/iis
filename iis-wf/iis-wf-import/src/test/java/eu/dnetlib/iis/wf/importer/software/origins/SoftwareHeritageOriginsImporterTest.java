@@ -235,7 +235,7 @@ public class SoftwareHeritageOriginsImporterTest {
         
         // assert
         assertNotNull(result);
-        assertEquals("rootUriPart?origin_from=1&origin_count=10", result);
+        assertEquals("rootUriPart?page_token=1&origin_count=10", result);
     }
     
     @Test
