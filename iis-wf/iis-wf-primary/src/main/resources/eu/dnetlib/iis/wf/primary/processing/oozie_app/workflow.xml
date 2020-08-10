@@ -685,8 +685,12 @@
                     <value>${input_project}</value>
                 </property>
                 <property>
-                    <name>output</name>
-                    <value>${workingDir}/transformers_project_filter/output</value>
+                    <name>output_approved</name>
+                    <value>${workingDir}/transformers_project_filter/output_approved</value>
+                </property>
+                <property>
+                    <name>output_rejected</name>
+                    <value>${workingDir}/transformers_project_filter/output_rejected</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -709,7 +713,7 @@
                 </property>
                 <property>
                     <name>input_project</name>
-                    <value>${workingDir}/transformers_project_filter/output</value>
+                    <value>${workingDir}/transformers_project_filter/output_approved</value>
                 </property>
                 <property>
                     <name>input_document_metadata</name>
