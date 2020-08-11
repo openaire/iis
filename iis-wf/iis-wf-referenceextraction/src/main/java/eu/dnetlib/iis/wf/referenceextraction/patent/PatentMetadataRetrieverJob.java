@@ -3,6 +3,7 @@ package eu.dnetlib.iis.wf.referenceextraction.patent;
 import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -19,10 +20,10 @@ import com.google.common.collect.Maps;
 
 import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess;
-import eu.dnetlib.iis.common.cache.CacheStorageUtils;
-import eu.dnetlib.iis.common.cache.CacheStorageUtils.CacheRecordType;
-import eu.dnetlib.iis.common.cache.CacheStorageUtils.CachedStorageJobParameters;
-import eu.dnetlib.iis.common.cache.CacheStorageUtils.OutputPaths;
+import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils;
+import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils.CacheRecordType;
+import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils.CachedStorageJobParameters;
+import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils.OutputPaths;
 import eu.dnetlib.iis.common.fault.FaultUtils;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.lock.LockManager;
@@ -54,7 +55,7 @@ public class PatentMetadataRetrieverJob {
     
     private static final String COUNTER_PROCESSED_FAULT = "processing.referenceExtraction.patent.retrieval.processed.fault";
     
-    private static final String COUNTER_FROMCACHE_TOTAL = "processing.referenceExtraction.patent.webcrawl.fromCache.total";
+    private static final String COUNTER_FROMCACHE_TOTAL = "processing.referenceExtraction.patent.retrieval.fromCache.total";
 
     private static final Logger log = Logger.getLogger(PatentMetadataRetrieverJob.class);
     
@@ -85,13 +86,13 @@ public class PatentMetadataRetrieverJob {
                 
                 JavaRDD<ImportedPatent> importedPatents = avroLoader.loadJavaRDD(sc, params.inputPath, ImportedPatent.class);
                 
-                final String cacheRootDir = CacheStorageUtils.normalizePath(params.getCacheRootDir());
+                final Path cacheRootDir = new Path(params.getCacheRootDir());
                 CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
                 
                 String existingCacheId = cacheManager.getExistingCacheId(hadoopConf, cacheRootDir);
                 
                 // skipping already extracted
-                JavaRDD<DocumentText> cachedSources = CacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
+                JavaRDD<DocumentText> cachedSources = DocumentTextCacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
                         existingCacheId, CacheRecordType.text, DocumentText.class);
                 // caching: will be written in new cache version and output
                 cachedSources.cache();
@@ -104,7 +105,7 @@ public class PatentMetadataRetrieverJob {
                 JavaRDD<DocumentText> entitiesReturnedFromCache = inputJoinedWithCache.filter(x -> x._2._2.isPresent()).values().map(x -> x._2.get());
                 entitiesReturnedFromCache.cache();
                 
-                JavaPairRDD<CharSequence, ContentRetrieverResponse> returnedFromEPO = retriveFromRemoteEndpoint(toBeProcessed, patentServiceFacade);
+                JavaPairRDD<CharSequence, ContentRetrieverResponse> returnedFromEPO = retrieveFromRemoteEndpoint(toBeProcessed, patentServiceFacade);
                 returnedFromEPO.cache();
                 
                 JavaRDD<DocumentText> retrievedPatentMeta = returnedFromEPO.map(e -> DocumentText.newBuilder().setId(e._1).setText(e._2.getContent()).build());
@@ -114,10 +115,10 @@ public class PatentMetadataRetrieverJob {
                 
                 if (!returnedFromEPO.isEmpty()) {
                     // storing new cache entry
-                    JavaRDD<Fault> cachedFaults = CacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
+                    JavaRDD<Fault> cachedFaults = DocumentTextCacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
                             existingCacheId, CacheRecordType.fault, Fault.class);
 
-                    CacheStorageUtils.storeInCache(avroSaver, cachedSources.union(retrievedPatentMeta),
+                    DocumentTextCacheStorageUtils.storeInCache(avroSaver, cachedSources.union(retrievedPatentMeta),
                             cachedFaults.union(faults), cacheRootDir, lockManager, cacheManager, hadoopConf,
                             params.numberOfEmittedFiles);
                     
@@ -143,11 +144,11 @@ public class PatentMetadataRetrieverJob {
 
     //------------------------ PRIVATE --------------------------
         
-    private static JavaPairRDD<CharSequence, ContentRetrieverResponse> retriveFromRemoteEndpoint(JavaRDD<ImportedPatent> importedPatent,
+    private static JavaPairRDD<CharSequence, ContentRetrieverResponse> retrieveFromRemoteEndpoint(JavaRDD<ImportedPatent> importedPatent,
             PatentServiceFacade patentServiceFacade) {
         return importedPatent
                 // limiting number of partitions to 1 in order to run EPO retrieval within a single task
-                .coalesce(1).mapToPair(x -> new Tuple2<>(getId(x), getMetadataFromFacade(x, patentServiceFacade)));
+                .repartition(1).mapToPair(x -> new Tuple2<>(getId(x), getMetadataFromFacade(x, patentServiceFacade)));
     }
 
     private static JavaRDD<ReportEntry> generateReportEntries(JavaSparkContext sparkContext, 

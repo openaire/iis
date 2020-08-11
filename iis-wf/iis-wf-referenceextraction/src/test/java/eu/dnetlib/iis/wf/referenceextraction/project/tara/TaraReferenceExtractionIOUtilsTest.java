@@ -64,7 +64,7 @@ public class TaraReferenceExtractionIOUtilsTest {
 
         // when
         Dataset<Row> resultDF = readDocumentHashToProjectFromCacheOrEmpty(spark,
-                "path/to/cache",
+                new Path("path/to/cache"),
                 CacheMetadataManagingProcess.UNDEFINED,
                 reader);
 
@@ -95,7 +95,7 @@ public class TaraReferenceExtractionIOUtilsTest {
 
         // when
         Dataset<Row> resultDF = readDocumentHashToProjectFromCacheOrEmpty(spark,
-                "path/to/cache",
+                new Path("path/to/cache"),
                 "01",
                 reader);
 
@@ -118,7 +118,7 @@ public class TaraReferenceExtractionIOUtilsTest {
 
         // when
         Dataset<Row> resultDF = readDocumentHashFromCacheOrEmpty(spark,
-                "path/to/cache",
+                new Path("path/to/cache"),
                 CacheMetadataManagingProcess.UNDEFINED,
                 reader);
 
@@ -143,7 +143,7 @@ public class TaraReferenceExtractionIOUtilsTest {
 
         // when
         Dataset<Row> resultDF = readDocumentHashFromCacheOrEmpty(spark,
-                "path/to/cache",
+                new Path("path/to/cache"),
                 "01",
                 reader);
 
@@ -176,14 +176,14 @@ public class TaraReferenceExtractionIOUtilsTest {
                 DocumentHash.SCHEMA$);
         LockManager lockManager = mock(LockManager.class);
         CacheMetadataManagingProcess cacheManager = mock(CacheMetadataManagingProcess.class);
-        when(cacheManager.generateNewCacheId(any(Configuration.class), eq("path/to/cache"))).thenReturn("01");
+        when(cacheManager.generateNewCacheId(any(Configuration.class), eq(new Path("path/to/cache")))).thenReturn("01");
         AvroDataStoreWriter writer = mock(AvroDataStoreWriter.class);
 
         // when
         storeInCache(spark,
                 documentHashToProjectDF,
                 documentHashDF,
-                "path/to/cache",
+                new Path("path/to/cache"),
                 lockManager,
                 cacheManager,
                 writer);
@@ -220,7 +220,7 @@ public class TaraReferenceExtractionIOUtilsTest {
         Row documentHashRow = documentHashRows.get(0);
         assertEquals(documentHash.getHashValue(), documentHashRow.getAs("hashValue"));
 
-        verify(cacheManager, atLeastOnce()).writeCacheId(any(Configuration.class), eq("path/to/cache"), eq("01"));
+        verify(cacheManager, atLeastOnce()).writeCacheId(any(Configuration.class), eq(new Path("path/to/cache")), eq("01"));
         verify(lockManager, atLeastOnce()).release("path/to/cache");
     }
 

@@ -1,12 +1,14 @@
 package eu.dnetlib.iis.wf.referenceextraction.softwareurl;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.Optional;
+import org.apache.spark.storage.StorageLevel;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -15,10 +17,10 @@ import com.google.common.collect.Lists;
 
 import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess;
-import eu.dnetlib.iis.common.cache.CacheStorageUtils;
-import eu.dnetlib.iis.common.cache.CacheStorageUtils.CacheRecordType;
-import eu.dnetlib.iis.common.cache.CacheStorageUtils.CachedStorageJobParameters;
-import eu.dnetlib.iis.common.cache.CacheStorageUtils.OutputPaths;
+import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils;
+import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils.CacheRecordType;
+import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils.CachedStorageJobParameters;
+import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils.OutputPaths;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.lock.LockManager;
 import eu.dnetlib.iis.common.lock.LockManagerUtils;
@@ -52,6 +54,8 @@ public class CachedWebCrawlerJob {
     
     private static final String COUNTER_FROMCACHE_TOTAL = "processing.referenceExtraction.softwareUrl.webcrawl.fromCache.total";
     
+    private static final StorageLevel CACHE_STORAGE_DEFAULT_LEVEL = StorageLevel.DISK_ONLY();
+    
     //------------------------ LOGIC --------------------------
 
     public static void main(String[] args) throws Exception {
@@ -76,15 +80,13 @@ public class CachedWebCrawlerJob {
             JavaRDD<DocumentToSoftwareUrl> documentToSoftwareUrl = avroLoader.loadJavaRDD(sc, params.inputPath,
                     DocumentToSoftwareUrl.class);
             
-            final String cacheRootDir = CacheStorageUtils.normalizePath(params.getCacheRootDir());
+            final Path cacheRootDir = new Path(params.getCacheRootDir());
             CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
             String existingCacheId = cacheManager.getExistingCacheId(hadoopConf, cacheRootDir);
             
             // skipping already extracted
-            JavaRDD<DocumentText> cachedSources = CacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
+            JavaRDD<DocumentText> cachedSources = DocumentTextCacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
                     existingCacheId, CacheRecordType.text, DocumentText.class);
-            // will be written in new cache version and output
-            cachedSources.cache();
             
             JavaPairRDD<CharSequence, CharSequence> cacheByUrl = cachedSources.mapToPair(x -> new Tuple2<>(x.getId(), x.getText()));
             JavaPairRDD<CharSequence, DocumentToSoftwareUrl> inputByUrl = documentToSoftwareUrl.mapToPair(x -> new Tuple2<>(x.getSoftwareUrl(), x));
@@ -92,7 +94,7 @@ public class CachedWebCrawlerJob {
 
             JavaRDD<DocumentToSoftwareUrl> toBeProcessed = inputJoinedWithCache.filter(x -> !x._2._2.isPresent()).values().map(x -> x._1);
             JavaRDD<DocumentToSoftwareUrlWithSource> entitiesReturnedFromCache = inputJoinedWithCache.filter(x -> x._2._2.isPresent()).values().map(x -> attachSource(x._1, x._2.get()));
-            entitiesReturnedFromCache.cache();
+            entitiesReturnedFromCache.persist(CACHE_STORAGE_DEFAULT_LEVEL);
             
             Tuple2<JavaRDD<DocumentText>, JavaRDD<Fault>>  returnedFromWebcrawlTuple = WebCrawlerUtils.obtainSources(toBeProcessed, contentRetrieverContext);
 
@@ -101,20 +103,20 @@ public class CachedWebCrawlerJob {
             
             if (!returnedFromWebcrawlTuple._1.isEmpty()) {
                 // will be written in two output datastores: cache and result
-                returnedFromWebcrawlTuple._1.cache();
-                returnedFromWebcrawlTuple._2.cache();
+                returnedFromWebcrawlTuple._1.persist(CACHE_STORAGE_DEFAULT_LEVEL);
+                returnedFromWebcrawlTuple._2.persist(CACHE_STORAGE_DEFAULT_LEVEL);
                 
-                JavaRDD<Fault> cachedFaults = CacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
+                JavaRDD<Fault> cachedFaults = DocumentTextCacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
                         existingCacheId, CacheRecordType.fault, Fault.class);
                 
                 // storing new cache entry
-                CacheStorageUtils.storeInCache(avroSaver, cachedSources.union(returnedFromWebcrawlTuple._1), 
+                DocumentTextCacheStorageUtils.storeInCache(avroSaver, cachedSources.union(returnedFromWebcrawlTuple._1), 
                         cachedFaults.union(returnedFromWebcrawlTuple._2), 
                         cacheRootDir, lockManager, cacheManager, hadoopConf, contentRetrieverContext.getNumberOfEmittedFiles());
                 
                 // merging final results
                 webcrawledEntities = produceEntitiesToBeStored(toBeProcessed, returnedFromWebcrawlTuple._1);
-                webcrawledEntities.cache();
+                webcrawledEntities.persist(CACHE_STORAGE_DEFAULT_LEVEL);
                 entitiesToBeWritten = entitiesReturnedFromCache.union(webcrawledEntities);
                 
             } else {

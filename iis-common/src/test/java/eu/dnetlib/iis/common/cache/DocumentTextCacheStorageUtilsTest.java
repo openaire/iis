@@ -8,33 +8,31 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.dnetlib.iis.audit.schemas.Fault;
-import eu.dnetlib.iis.common.cache.CacheStorageUtils.CacheRecordType;
+import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils.CacheRecordType;
 import eu.dnetlib.iis.common.lock.LockManager;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 /**
- * {@link CacheStorageUtils} test class.
+ * {@link DocumentTextCacheStorageUtils} test class.
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class CacheStorageUtilsTest {
+public class DocumentTextCacheStorageUtilsTest {
     
     @Mock
     private JavaSparkContext sparkContext;
@@ -71,82 +69,47 @@ public class CacheStorageUtilsTest {
     
     @Mock
     private JavaRDD<Fault> toBeStoredCoalescedFaults;
-    
-    @Captor
-    private ArgumentCaptor<String> obtainLockCaptor;
-    
-    @Captor
-    private ArgumentCaptor<String> releaseLockCaptor;
 
-    
-    @Test
-    public void testNormalizePathNoTrailingSeparator() {
-        // given
-        String source = "foo" + File.separatorChar + "bar";
-        
-        // execute
-        String result = CacheStorageUtils.normalizePath(source);
-        
-        // verify
-        assertEquals(source, result);
-    }
-    
-    @Test
-    public void testNormalizePathWithTrailingSeparator() {
-        // given
-        String source = "test";
-        
-        // execute
-        String result = CacheStorageUtils.normalizePath(source + File.separatorChar);
-        
-        // verify
-        assertEquals(source, result);
-    }
-    
-    @Test(expected = IllegalArgumentException.class)
-    public void testNormalizePathWithBlankPath() {
-        CacheStorageUtils.normalizePath("");
-    }
     
     @Test
     public void testGetCacheLocation() {
         // given
-        String cacheRootDir = "root";
+        Path cacheRootDir = new Path("root");
         String cacheId = "someId";
         CacheRecordType cacheRecordType = CacheRecordType.text;
         
         // execute
-        String result = CacheStorageUtils.getCacheLocation(cacheRootDir, cacheId, cacheRecordType);
+        Path result = DocumentTextCacheStorageUtils.getCacheLocation(cacheRootDir, cacheId, cacheRecordType);
         
         // verify
         assertNotNull(result);
-        assertEquals(cacheRootDir + '/' + cacheId + '/' + cacheRecordType.name(), result);
+        assertEquals(cacheRootDir.toString() + '/' + cacheId + '/' + cacheRecordType.name(), result.toString());
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void testGetCacheLocationForBlanks() {
         // given
-        String cacheRootDir = "";
+        Path cacheRootDir = new Path("");
         String cacheId = "";
         CacheRecordType cacheRecordType = CacheRecordType.text;
         
         // execute
-        CacheStorageUtils.getCacheLocation(cacheRootDir, cacheId, cacheRecordType);
+        DocumentTextCacheStorageUtils.getCacheLocation(cacheRootDir, cacheId, cacheRecordType);
     }
     
     @Test
     public void getGetRddOrEmptyForExistingCache() {
         // given
-        String cacheRootDir = "some/root/dir";
+        Path cacheRootDir = new Path("some/root/dir");
         String existingCacheId = "someCacheId";
         CacheRecordType cacheRecordType = CacheRecordType.text;
         Class<DocumentText> avroRecordClass = DocumentText.class;
         doReturn(true).when(emptyPredefinedRdd).isEmpty();
         doReturn(predefinedRdd).when(avroLoader).loadJavaRDD(sparkContext,
-                CacheStorageUtils.getCacheLocation(cacheRootDir, existingCacheId, cacheRecordType), avroRecordClass);
+                DocumentTextCacheStorageUtils.getCacheLocation(cacheRootDir, existingCacheId, cacheRecordType).toString(), avroRecordClass);
         
         // execute
-        JavaRDD<DocumentText> result = CacheStorageUtils.getRddOrEmpty(sparkContext, avroLoader, 
+        JavaRDD<DocumentText> result = DocumentTextCacheStorageUtils.getRddOrEmpty(sparkContext, avroLoader, 
                 cacheRootDir, existingCacheId, cacheRecordType, avroRecordClass);
         
         // assert
@@ -157,7 +120,7 @@ public class CacheStorageUtilsTest {
     @Test
     public void getGetRddOrEmptyForNonExistingCache() {
         // given
-        String cacheRootDir = "some/root/dir";
+        Path cacheRootDir = new Path("some/root/dir");
         String existingCacheId = CacheMetadataManagingProcess.UNDEFINED;
         CacheRecordType cacheRecordType = CacheRecordType.text;
         Class<DocumentText> avroRecordClass = DocumentText.class;
@@ -165,7 +128,7 @@ public class CacheStorageUtilsTest {
         doReturn(emptyPredefinedRdd).when(sparkContext).emptyRDD();
         
         // execute
-        JavaRDD<DocumentText> result = CacheStorageUtils.getRddOrEmpty(sparkContext, avroLoader, 
+        JavaRDD<DocumentText> result = DocumentTextCacheStorageUtils.getRddOrEmpty(sparkContext, avroLoader, 
                 cacheRootDir, existingCacheId, cacheRecordType, avroRecordClass);
         
         // assert
@@ -177,7 +140,7 @@ public class CacheStorageUtilsTest {
     @Test
     public void testStoreInCacheValidRecords() throws Exception {
         // given
-        String cacheRootDir = "some/root/dir";
+        Path cacheRootDir = new Path("some/root/dir");
         int numberOfEmittedFiles = 1;
         String predefinedCacheId = "someCacheId";
         doReturn(predefinedCacheId).when(cacheManager).generateNewCacheId(hadoopConf, cacheRootDir);
@@ -185,17 +148,17 @@ public class CacheStorageUtilsTest {
         doReturn(toBeStoredCoalescedFaults).when(toBeStoredFaults).coalesce(numberOfEmittedFiles);
         
         // execute
-        CacheStorageUtils.storeInCache(avroSaver, toBeStoredEntities, toBeStoredFaults, 
+        DocumentTextCacheStorageUtils.storeInCache(avroSaver, toBeStoredEntities, toBeStoredFaults, 
                 cacheRootDir, lockManager, cacheManager, hadoopConf, numberOfEmittedFiles);
         
         // assert
-        verify(lockManager, times(1)).obtain(cacheRootDir);
-        verify(lockManager, times(1)).release(cacheRootDir);
+        verify(lockManager, times(1)).obtain(cacheRootDir.toString());
+        verify(lockManager, times(1)).release(cacheRootDir.toString());
 
         verify(avroSaver, times(1)).saveJavaRDD(toBeStoredCoalescedEntities, DocumentText.SCHEMA$, 
-                CacheStorageUtils.getCacheLocation(cacheRootDir, predefinedCacheId, CacheRecordType.text));
+                DocumentTextCacheStorageUtils.getCacheLocation(cacheRootDir, predefinedCacheId, CacheRecordType.text).toString());
         verify(avroSaver, times(1)).saveJavaRDD(toBeStoredCoalescedFaults, Fault.SCHEMA$, 
-                CacheStorageUtils.getCacheLocation(cacheRootDir, predefinedCacheId, CacheRecordType.fault));
+                DocumentTextCacheStorageUtils.getCacheLocation(cacheRootDir, predefinedCacheId, CacheRecordType.fault).toString());
         
         verify(cacheManager, times(1)).writeCacheId(hadoopConf, cacheRootDir, predefinedCacheId);
     }
@@ -204,7 +167,7 @@ public class CacheStorageUtilsTest {
     @Test(expected = IOException.class)
     public void testStoreInCacheByCheckingProperLocksHandlingWhenWriteCacheThrowsException() throws Exception {
         // given
-        String cacheRootDir = "some/root/dir";
+        Path cacheRootDir = new Path("some/root/dir");
         int numberOfEmittedFiles = 1;
         String predefinedCacheId = "someCacheId";
         doReturn(predefinedCacheId).when(cacheManager).generateNewCacheId(hadoopConf, cacheRootDir);
@@ -215,13 +178,13 @@ public class CacheStorageUtilsTest {
         
         try {
             // execute
-            CacheStorageUtils.storeInCache(avroSaver, toBeStoredEntities, toBeStoredFaults, 
+            DocumentTextCacheStorageUtils.storeInCache(avroSaver, toBeStoredEntities, toBeStoredFaults, 
                     cacheRootDir, lockManager, cacheManager, hadoopConf, numberOfEmittedFiles);            
         } catch (Exception e) {
             // assert
             // validating proper locks handing
-            verify(lockManager, times(1)).obtain(cacheRootDir);
-            verify(lockManager, times(1)).release(cacheRootDir);
+            verify(lockManager, times(1)).obtain(cacheRootDir.toString());
+            verify(lockManager, times(1)).release(cacheRootDir.toString());
             throw e;
         }
     }

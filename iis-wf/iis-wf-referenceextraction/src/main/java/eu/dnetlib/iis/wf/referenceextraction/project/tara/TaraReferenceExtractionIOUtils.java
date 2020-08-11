@@ -39,7 +39,7 @@ public class TaraReferenceExtractionIOUtils {
     }
 
     public static Dataset<Row> readDocumentHashToProjectFromCacheOrEmpty(SparkSession spark,
-                                                                         String cacheRootDir,
+                                                                         Path cacheRootDir,
                                                                          String existingCacheId) {
         return readDocumentHashToProjectFromCacheOrEmpty(
                 spark,
@@ -49,7 +49,7 @@ public class TaraReferenceExtractionIOUtils {
     }
 
     public static Dataset<Row> readDocumentHashToProjectFromCacheOrEmpty(SparkSession spark,
-                                                                         String cacheRootDir,
+                                                                         Path cacheRootDir,
                                                                          String existingCacheId,
                                                                          AvroDataStoreReader reader) {
         if (!cacheExist(existingCacheId)) {
@@ -64,7 +64,7 @@ public class TaraReferenceExtractionIOUtils {
     }
 
     public static Dataset<Row> readDocumentHashFromCacheOrEmpty(SparkSession spark,
-                                                                String cacheRootDir,
+                                                                Path cacheRootDir,
                                                                 String existingCacheId) {
         return readDocumentHashFromCacheOrEmpty(spark,
                 cacheRootDir,
@@ -73,7 +73,7 @@ public class TaraReferenceExtractionIOUtils {
     }
 
     public static Dataset<Row> readDocumentHashFromCacheOrEmpty(SparkSession spark,
-                                                                String cacheRootDir,
+                                                                Path cacheRootDir,
                                                                 String existingCacheId,
                                                                 AvroDataStoreReader reader) {
         if (!cacheExist(existingCacheId)) {
@@ -92,7 +92,7 @@ public class TaraReferenceExtractionIOUtils {
     public static void storeInCache(SparkSession spark,
                                     Dataset<Row> documentHashToProjectToBeCachedDF,
                                     Dataset<Row> documentHashToBeCachedDF,
-                                    String cacheRootDir,
+                                    Path cacheRootDir,
                                     LockManager lockManager,
                                     CacheMetadataManagingProcess cacheManager) throws Exception {
         storeInCache(spark,
@@ -107,11 +107,11 @@ public class TaraReferenceExtractionIOUtils {
     public static void storeInCache(SparkSession spark,
                                     Dataset<Row> documentHashToProjectToBeCachedDF,
                                     Dataset<Row> documentHashToBeCachedDF,
-                                    String cacheRootDir,
+                                    Path cacheRootDir,
                                     LockManager lockManager,
                                     CacheMetadataManagingProcess cacheManager,
                                     AvroDataStoreWriter writer) throws Exception {
-        lockManager.obtain(cacheRootDir);
+        lockManager.obtain(cacheRootDir.toString());
         try {
             String newCacheId = cacheManager.generateNewCacheId(spark.sparkContext().hadoopConfiguration(), cacheRootDir);
             Path newCachePath = new Path(cacheRootDir, newCacheId);
@@ -133,7 +133,7 @@ public class TaraReferenceExtractionIOUtils {
                 throw e;
             }
         } finally {
-            lockManager.release(cacheRootDir);
+            lockManager.release(cacheRootDir.toString());
         }
     }
 
@@ -156,7 +156,7 @@ public class TaraReferenceExtractionIOUtils {
     }
 
     private static void storeMetaInCache(CacheMetadataManagingProcess cacheManager,
-                                         String cacheRootDir,
+                                         Path cacheRootDir,
                                          String newCacheId,
                                          Configuration conf) throws IOException {
         cacheManager.writeCacheId(conf, cacheRootDir, newCacheId);

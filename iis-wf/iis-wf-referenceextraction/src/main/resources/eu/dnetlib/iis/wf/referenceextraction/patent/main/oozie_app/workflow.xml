@@ -133,7 +133,7 @@
         </property>
         <property>
             <name>cacheRootDir</name>
-            <description>webcrawling cache root directory</description>
+            <description>patents retrieval cache root directory</description>
         </property>
     </parameters>
 

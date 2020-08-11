@@ -1,7 +1,5 @@
 package eu.dnetlib.iis.common.cache;
 
-import java.io.File;
-
 import org.apache.avro.generic.GenericRecord;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -21,37 +19,23 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 
 /**
- * Shared methods for managing cache storage.
+ * Shared methods for managing {@link DocumentText} cache storage.
  * @author mhorst
  *
  */
-public class CacheStorageUtils {
+public class DocumentTextCacheStorageUtils {
     
-    private CacheStorageUtils() {}
+    private DocumentTextCacheStorageUtils() {}
 
     // ---------------------------- LOGIC ---------------------------------
     
     /**
-     * Removes trailing file separator from the path whenever defined.
-     */
-    public static String normalizePath(String cacheRootDir) {
-        Preconditions.checkArgument(StringUtils.isNotBlank(cacheRootDir), "cache root directory cannot be blank!");
-
-        if (File.separatorChar == cacheRootDir.charAt(cacheRootDir.length() - 1)) {
-            return cacheRootDir.substring(0, cacheRootDir.length() - 1);
-        } else {
-            return cacheRootDir;
-        }
-    }
-    
-    /**
      * Builts cache path for given cache coordinates, none of the parameters can be null.
      */
-    public static String getCacheLocation(String cacheRootDir, String cacheId, CacheRecordType cacheRecordType) {
-        Preconditions.checkArgument(StringUtils.isNotBlank(cacheRootDir), "cache root directory cannot be blank!");
+    public static Path getCacheLocation(Path cacheRootDir, String cacheId, CacheRecordType cacheRecordType) {
+        Preconditions.checkNotNull(cacheRootDir, "cache root directory cannot be blank!");
         Preconditions.checkArgument(StringUtils.isNotBlank(cacheId), "cache id cannot be blank!");
-        
-        return cacheRootDir + '/' + cacheId + '/' + cacheRecordType.name();
+        return new Path(cacheRootDir, new Path(cacheId, cacheRecordType.name()));
     }
     
     /**
@@ -59,10 +43,10 @@ public class CacheStorageUtils {
      * what means cache was not created yet.
      */
     public static <T extends GenericRecord> JavaRDD<T> getRddOrEmpty(JavaSparkContext sc, SparkAvroLoader avroLoader,
-            String cacheRootDir,String existingCacheId, CacheRecordType cacheRecordType, Class<T> avroRecordClass) {
+            Path cacheRootDir, String existingCacheId, CacheRecordType cacheRecordType, Class<T> avroRecordClass) {
         return CacheMetadataManagingProcess.UNDEFINED.equals(existingCacheId) ? sc.emptyRDD()
                 : avroLoader.loadJavaRDD(sc,
-                        CacheStorageUtils.getCacheLocation(cacheRootDir, existingCacheId, cacheRecordType),
+                        DocumentTextCacheStorageUtils.getCacheLocation(cacheRootDir, existingCacheId, cacheRecordType).toString(),
                         avroRecordClass);
     }
     
@@ -71,10 +55,10 @@ public class CacheStorageUtils {
      * Utilizes lock manager to avoid storing new cache entries in the very same location by two independent job executions.
      */
     public static void storeInCache(SparkAvroSaver avroSaver, JavaRDD<DocumentText> toBeStoredEntities, JavaRDD<Fault> toBeStoredFaults, 
-            String cacheRootDir, LockManager lockManager, CacheMetadataManagingProcess cacheManager, 
+            Path cacheRootDir, LockManager lockManager, CacheMetadataManagingProcess cacheManager, 
             Configuration hadoopConf, int numberOfEmittedFiles) throws Exception {
 
-        lockManager.obtain(cacheRootDir);
+        lockManager.obtain(cacheRootDir.toString());
 
         try {
             // getting new id for merging
@@ -83,9 +67,9 @@ public class CacheStorageUtils {
             try {
                 // store in cache
                 avroSaver.saveJavaRDD(toBeStoredEntities.coalesce(numberOfEmittedFiles), DocumentText.SCHEMA$, 
-                        getCacheLocation(cacheRootDir, newCacheId, CacheRecordType.text));
+                        getCacheLocation(cacheRootDir, newCacheId, CacheRecordType.text).toString());
                 avroSaver.saveJavaRDD(toBeStoredFaults.coalesce(numberOfEmittedFiles), Fault.SCHEMA$, 
-                        getCacheLocation(cacheRootDir, newCacheId, CacheRecordType.fault));
+                        getCacheLocation(cacheRootDir, newCacheId, CacheRecordType.fault).toString());
                 // writing new cache id
                 cacheManager.writeCacheId(hadoopConf, cacheRootDir, newCacheId);
                 
@@ -95,7 +79,7 @@ public class CacheStorageUtils {
             }       
             
         } finally {
-            lockManager.release(cacheRootDir);
+            lockManager.release(cacheRootDir.toString());
         }
         
     }
