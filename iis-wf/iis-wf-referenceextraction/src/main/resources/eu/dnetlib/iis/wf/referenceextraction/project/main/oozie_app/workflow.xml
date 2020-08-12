@@ -18,17 +18,6 @@
 			<name>output_document_to_project</name>
 			<description>output document to project</description>
 		</property>
-        <property>
-            <name>tara_lock_manager_factory_class_name</name>
-            <value>eu.dnetlib.iis.common.lock.ZookeeperLockManagerFactory</value>
-            <description>
-                lock manager factory class name, to be used for synchronizing access to cache directory
-            </description>
-        </property>
-        <property>
-            <name>tara_cache_root_dir</name>
-            <description>tara reference extraction cache root directory</description>
-        </property>
 		<property>
             <name>sparkDriverMemory</name>
             <description>memory for driver process</description>
@@ -130,14 +119,6 @@
                 <property>
                     <name>workingDir</name>
                     <value>${workingDir}/tara_main/working_dir</value>
-                </property>
-                <property>
-                    <name>lock_manager_factory_class_name</name>
-                    <value>${tara_lock_manager_factory_class_name}</value>
-                </property>
-                <property>
-                    <name>cache_root_dir</name>
-                    <value>${tara_cache_root_dir}</value>
                 </property>
                 <property>
                     <name>project_db_file</name>
