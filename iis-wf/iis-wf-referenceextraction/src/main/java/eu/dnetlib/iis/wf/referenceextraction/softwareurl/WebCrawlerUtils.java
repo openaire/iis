@@ -25,6 +25,7 @@ public class WebCrawlerUtils {
         JavaRDD<CharSequence> uniqueSoftwareUrl = documentToSoftwareUrl.map(e -> e.getSoftwareUrl()).distinct();
         
         JavaPairRDD<CharSequence, ContentRetrieverResponse> uniqueFilteredSoftwareUrlToSource = uniqueSoftwareUrl
+                .repartition(ctx.getNumberOfPartitionsForCrawling())
                 .mapToPair(e -> new Tuple2<CharSequence, ContentRetrieverResponse>(e, ctx.getContentRetriever().retrieveUrlContent(e, 
                         ctx.getConnectionTimeout(), ctx.getReadTimeout(), ctx.getMaxPageContentLength())));
 

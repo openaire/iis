@@ -64,7 +64,8 @@ public class CachedWebCrawlerJob {
         jcommander.parse(args);
         
         ContentRetrieverContext contentRetrieverContext = new ContentRetrieverContext(params.contentRetrieverClassName, 
-                params.connectionTimeout, params.readTimeout, params.maxPageContentLength, params.numberOfEmittedFiles);
+                params.connectionTimeout, params.readTimeout, params.maxPageContentLength, params.numberOfEmittedFiles,
+                params.numberOfPartitionsForCrawling);
         
         try (JavaSparkContext sc = JavaSparkContextFactory.withConfAndKryo(new SparkConf())) {
             
@@ -228,7 +229,9 @@ public class CachedWebCrawlerJob {
         
         @Parameter(names = "-numberOfEmittedFiles", required = true)
         private int numberOfEmittedFiles;
-
         
+        @Parameter(names = "-numberOfPartitionsForCrawling", required = true)
+        private int numberOfPartitionsForCrawling;
+
     }
 }

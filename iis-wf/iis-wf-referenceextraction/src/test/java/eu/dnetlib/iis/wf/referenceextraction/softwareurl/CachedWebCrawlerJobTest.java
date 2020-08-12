@@ -286,6 +286,7 @@ public class CachedWebCrawlerJobTest {
                 .addArg("-readTimeout", "0")
                 .addArg("-maxPageContentLength", "0")
                 .addArg("-numberOfEmittedFiles", "1")
+                .addArg("-numberOfPartitionsForCrawling", "1")
                 .addArg("-cacheRootDir", cacheRootDir.toString())
                 .addArg("-outputPath", outputPath)
                 .addArg("-outputFaultPath", outputFaultPath)

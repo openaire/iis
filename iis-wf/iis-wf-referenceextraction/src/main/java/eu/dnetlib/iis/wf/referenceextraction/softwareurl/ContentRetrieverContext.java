@@ -25,12 +25,15 @@ public class ContentRetrieverContext implements Serializable {
     private int maxPageContentLength;
     
     private int numberOfEmittedFiles;
-
+    
+    private int numberOfPartitionsForCrawling;
 
     public ContentRetrieverContext() {}
     
-    public ContentRetrieverContext(String contentRetrieverClassName,
-            int connectionTimeout, int readTimeout, int maxPageContentLength, int numberOfEmittedFiles) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
+    public ContentRetrieverContext(String contentRetrieverClassName, int connectionTimeout, int readTimeout,
+            int maxPageContentLength, int numberOfEmittedFiles, int numberOfPartitionsForCrawling)
+            throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+            NoSuchMethodException, SecurityException, ClassNotFoundException {
         @SuppressWarnings("unchecked")
         Class<ContentRetriever> clazz = (Class<ContentRetriever>) Class.forName(contentRetrieverClassName);
         this.contentRetriever = clazz.getConstructor().newInstance();
@@ -38,6 +41,7 @@ public class ContentRetrieverContext implements Serializable {
         this.readTimeout = readTimeout;
         this.maxPageContentLength = maxPageContentLength;
         this.numberOfEmittedFiles = numberOfEmittedFiles;
+        this.numberOfPartitionsForCrawling = numberOfPartitionsForCrawling;
     }
 
 
@@ -45,16 +49,13 @@ public class ContentRetrieverContext implements Serializable {
         return contentRetriever;
     }
 
-
     public int getConnectionTimeout() {
         return connectionTimeout;
     }
 
-
     public int getReadTimeout() {
         return readTimeout;
     }
-
 
     public int getMaxPageContentLength() {
         return maxPageContentLength;
@@ -62,6 +63,10 @@ public class ContentRetrieverContext implements Serializable {
 
     public int getNumberOfEmittedFiles() {
         return numberOfEmittedFiles;
+    }
+    
+    public int getNumberOfPartitionsForCrawling() {
+        return numberOfPartitionsForCrawling;
     }
 
     public void setContentRetriever(ContentRetriever contentRetriever) {
@@ -72,11 +77,9 @@ public class ContentRetrieverContext implements Serializable {
         this.connectionTimeout = connectionTimeout;
     }
 
-
     public void setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
     }
-
 
     public void setMaxPageContentLength(int maxPageContentLength) {
         this.maxPageContentLength = maxPageContentLength;
@@ -84,6 +87,10 @@ public class ContentRetrieverContext implements Serializable {
 
     public void setNumberOfEmittedFiles(int numberOfEmittedFiles) {
         this.numberOfEmittedFiles = numberOfEmittedFiles;
+    }
+    
+    public void setNumberOfPartitionsForCrawling(int numberOfPartitionsForCrawling) {
+        this.numberOfPartitionsForCrawling = numberOfPartitionsForCrawling;
     }
     
 }
