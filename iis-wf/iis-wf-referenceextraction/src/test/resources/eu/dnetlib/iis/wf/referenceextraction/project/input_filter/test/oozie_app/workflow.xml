@@ -72,10 +72,14 @@
 					<name>input</name>
 					<value>${workingDir}/producer/project</value>
 				</property>
-				<property>
-					<name>output</name>
-					<value>${workingDir}/transformers_project_filter/output</value>
-				</property>
+                <property>
+                    <name>output_approved</name>
+                    <value>${workingDir}/transformers_project_filter/output_approved</value>
+                </property>
+                <property>
+                    <name>output_rejected</name>
+                    <value>${workingDir}/transformers_project_filter/output_rejected</value>
+                </property>
 			</configuration>
 		</sub-workflow>
 		<ok to="consumer" />
@@ -88,11 +92,16 @@
 			<!-- The business Java code that gets to be executed -->
 			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
 			<!-- Specification of the input ports -->
-			<arg>-C{output,
+			<arg>-C{output_approved,
 				eu.dnetlib.iis.importer.schemas.Project,
-				eu/dnetlib/iis/wf/referenceextraction/project/input_filter/test/data/output.json}
+				eu/dnetlib/iis/wf/referenceextraction/project/input_filter/test/data/output_approved.json}
 			</arg>
-			<arg>-Ioutput=${workingDir}/transformers_project_filter/output</arg>
+			<arg>-C{output_rejected,
+				eu.dnetlib.iis.importer.schemas.Project,
+				eu/dnetlib/iis/wf/referenceextraction/project/input_filter/test/data/output_rejected.json}
+			</arg>
+			<arg>-Ioutput_approved=${workingDir}/transformers_project_filter/output_approved</arg>
+			<arg>-Ioutput_rejected=${workingDir}/transformers_project_filter/output_rejected</arg>
 		</java>
 		<ok to="end" />
 		<error to="fail" />
