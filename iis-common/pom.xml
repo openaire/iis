@@ -78,7 +78,6 @@
         <dependency>
             <groupId>pl.edu.icm.spark-utils</groupId>
             <artifactId>spark-utils_2.11</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>

@@ -55,6 +55,10 @@
                     <value>eu.dnetlib.iis.wf.referenceextraction.patent.ClassPathBasedPatentServiceFacadeFactory</value>
                 </property>
                 <property>
+                    <name>patentLockManagerFactoryClassName</name>
+                    <value>eu.dnetlib.iis.wf.referenceextraction.LockManagerFactoryMock</value>
+                </property>
+                <property>
                     <name>input_document_text</name>
                     <value>${workingDir}/producer/document_text</value>
                 </property>
@@ -73,6 +77,10 @@
                 <property>
                     <name>output_report_root_path</name>
                     <value>${workingDir}/referenceextraction_patent/report</value>
+                </property>
+                <property>
+                    <name>cacheRootDir</name>
+                    <value>${workingDir}/referenceextraction_patent/working_dir</value>
                 </property>
             </configuration>
         </sub-workflow>

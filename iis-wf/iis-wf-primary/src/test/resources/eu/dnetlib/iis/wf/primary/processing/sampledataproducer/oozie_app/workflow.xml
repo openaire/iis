@@ -427,8 +427,16 @@
                     <value>eu.dnetlib.iis.wf.primary.processing.LockManagerFactoryMock</value>
                 </property>
                 <property>
+                    <name>patentLockManagerFactoryClassName</name>
+                    <value>eu.dnetlib.iis.wf.primary.processing.LockManagerFactoryMock</value>
+                </property>
+                <property>
                     <name>software_webcrawl_cache_location</name>
                     <value>${workingDir}/cache/software_webcrawl</value>
+                </property>
+                <property>
+                    <name>patent_cache_location</name>
+                    <value>${workingDir}/cache/patent</value>
                 </property>
 				<property>
 					<name>metric_pusher_creator_class_name</name>

@@ -10,6 +10,8 @@ import eu.dnetlib.iis.common.spark.SparkSessionFactory;
 import eu.dnetlib.iis.common.spark.avro.AvroDataFrameSupport;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
+
+import org.apache.hadoop.fs.Path;
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
@@ -61,6 +63,8 @@ public class CachedTaraReferenceExtractionJob {
         jcommander.parse(args);
 
         CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
+        
+        Path cacheRoot = new Path(params.cacheRootDir);
 
         try (SparkSession spark = SparkSessionFactory.withConfAndKryo(new SparkConf())) {
             clearOutput(spark, params.outputDocumentToProject);
@@ -77,13 +81,10 @@ public class CachedTaraReferenceExtractionJob {
             Dataset<Row> documentMetadataDF = buildDocumentMetadata(documentMetadataByIdDF);
 
             String existingCacheId = cacheManager.getExistingCacheId(spark.sparkContext().hadoopConfiguration(),
-                    params.cacheRootDir);
-            Dataset<Row> documentHashToProjectFromCacheDF = readDocumentHashToProjectFromCacheOrEmpty(spark,
-                    params.cacheRootDir,
+                    cacheRoot);
+            Dataset<Row> documentHashToProjectFromCacheDF = readDocumentHashToProjectFromCacheOrEmpty(spark, cacheRoot,
                     existingCacheId);
-            Dataset<Row> documentHashFromCacheDF = readDocumentHashFromCacheOrEmpty(spark,
-                    params.cacheRootDir,
-                    existingCacheId);
+            Dataset<Row> documentHashFromCacheDF = readDocumentHashFromCacheOrEmpty(spark, cacheRoot, existingCacheId);
 
             Dataset<Row> documentMetadataByHashToBeProcessedDF = documentMetadataByHashToBeProcessed(documentMetadataDF,
                     documentHashFromCacheDF);
@@ -106,7 +107,7 @@ public class CachedTaraReferenceExtractionJob {
             storeInCache(spark,
                     documentHashToProjectToBeCachedDF,
                     documentHashToBeCachedDF,
-                    params.cacheRootDir,
+                    cacheRoot,
                     lockManager,
                     cacheManager);
 
