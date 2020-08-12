@@ -31,10 +31,10 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
@@ -118,7 +118,7 @@ public class SoftwareHeritageOriginsImporter implements eu.dnetlib.iis.common.ja
 
                 Gson gson = new Gson();
 
-                HttpClient httpclient = buildHttpClient(params.getConnectionTimeout(), params.getReadTimeout());
+                CloseableHttpClient httpclient = buildHttpClient(params.getConnectionTimeout(), params.getReadTimeout());
 
                 HttpHost target = new HttpHost(params.getShEndpointHost(), params.getShEndpointPort(), params.getShEndpointScheme());
                 HttpRequest getRequest = new HttpGet(buildUri(params.getShEndpointUriRoot(), params.getStartElementIndex(), params.getPageSize()));
@@ -128,54 +128,56 @@ public class SoftwareHeritageOriginsImporter implements eu.dnetlib.iis.common.ja
                 int retryCount=0;
                 
                 while (getRequest != null) {
-                    HttpResponse httpResponse = httpclient.execute(target, getRequest);
-                    int statusCode = httpResponse.getStatusLine().getStatusCode();
-                    
-                    if (statusCode!=200) {
-                        if (statusCode==429) {
-                            //got throttled, delaying...
-                            log.warn("SH endpoint rate limit reached, delaying for " + params.getDelayMillis()
-                                    + " ms, server response: " + EntityUtils.toString(httpResponse.getEntity()));
-                            Thread.sleep(params.getDelayMillis());
-                            continue;
-                        } else {
-                            String errMessage = "got unhandled HTTP status code when accessing SH endpoint: "
-                                    + statusCode + ", full status: " + httpResponse.getStatusLine()
-                                    + ", server response: " + EntityUtils.toString(httpResponse.getEntity());
-                            if (retryCount < params.getMaxRetryCount()) {
-                                retryCount++;
-                                log.error(errMessage + ", number of retries left: " + (params.getMaxRetryCount()-retryCount));
+                    try (CloseableHttpResponse httpResponse = httpclient.execute(target, getRequest)) {
+                        
+                        int statusCode = httpResponse.getStatusLine().getStatusCode();
+                        
+                        if (statusCode!=200) {
+                            if (statusCode==429) {
+                                //got throttled, delaying...
+                                log.warn("SH endpoint rate limit reached, delaying for " + params.getDelayMillis()
+                                        + " ms, server response: " + EntityUtils.toString(httpResponse.getEntity()));
                                 Thread.sleep(params.getDelayMillis());
                                 continue;
                             } else {
-                                throw new RuntimeException(errMessage);    
+                                String errMessage = "got unhandled HTTP status code when accessing SH endpoint: "
+                                        + statusCode + ", full status: " + httpResponse.getStatusLine()
+                                        + ", server response: " + EntityUtils.toString(httpResponse.getEntity());
+                                if (retryCount < params.getMaxRetryCount()) {
+                                    retryCount++;
+                                    log.error(errMessage + ", number of retries left: " + (params.getMaxRetryCount()-retryCount));
+                                    Thread.sleep(params.getDelayMillis());
+                                    continue;
+                                } else {
+                                    throw new RuntimeException(errMessage);    
+                                }
+                            }
+                        } else {
+                            if (retryCount > 0) {
+                                retryCount=0;    
                             }
                         }
-                    } else {
-                        if (retryCount > 0) {
-                            retryCount=0;    
-                        }
-                    }
 
-                    HttpEntity entity = httpResponse.getEntity();
-                    if (entity != null) {
-                        SoftwareHeritageOriginEntry[] entries = parsePage(EntityUtils.toString(entity), gson);
-                        if (entries != null && entries.length > 0) {
-                            for (SoftwareHeritageOriginEntry entry : entries) {
-                                originsWriter.append(convertEntry(entry));
-                                counters.increment(COUNTER_NAME_TOTAL);
-                                currentCount++;
-                                if (currentCount % progressLogInterval == 0) {
-                                    log.info("current progress: " + currentCount + ", last package of "
-                                            + progressLogInterval + " processed in "
-                                            + ((System.currentTimeMillis() - startTime) / 1000) + " secs");
-                                    startTime = System.currentTimeMillis();
+                        HttpEntity entity = httpResponse.getEntity();
+                        if (entity != null) {
+                            SoftwareHeritageOriginEntry[] entries = parsePage(EntityUtils.toString(entity), gson);
+                            if (entries != null && entries.length > 0) {
+                                for (SoftwareHeritageOriginEntry entry : entries) {
+                                    originsWriter.append(convertEntry(entry));
+                                    counters.increment(COUNTER_NAME_TOTAL);
+                                    currentCount++;
+                                    if (currentCount % progressLogInterval == 0) {
+                                        log.info("current progress: " + currentCount + ", last package of "
+                                                + progressLogInterval + " processed in "
+                                                + ((System.currentTimeMillis() - startTime) / 1000) + " secs");
+                                        startTime = System.currentTimeMillis();
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    getRequest = prepareNextRequest(httpResponse);
+                        getRequest = prepareNextRequest(httpResponse);
+                    }
                 }
 
                 log.info("total number of processed records: " + currentCount);
@@ -203,7 +205,7 @@ public class SoftwareHeritageOriginsImporter implements eu.dnetlib.iis.common.ja
     /**
      * Builds HTTP client issuing requests to SH endpoint.
      */
-    protected HttpClient buildHttpClient(int connectionTimeout, int readTimeout) {
+    protected CloseableHttpClient buildHttpClient(int connectionTimeout, int readTimeout) {
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         httpClientBuilder.setDefaultRequestConfig(RequestConfig.custom().setConnectTimeout(connectionTimeout)
                 .setConnectionRequestTimeout(connectionTimeout).setSocketTimeout(readTimeout).build());
@@ -310,7 +312,7 @@ public class SoftwareHeritageOriginsImporter implements eu.dnetlib.iis.common.ja
     /**
      * Prepares next request based on a link from header. Returns null when next page is not available.
      */
-    protected static HttpRequest prepareNextRequest(HttpResponse httpResponse) {
+    protected static HttpRequest prepareNextRequest(CloseableHttpResponse httpResponse) {
         String nextUrl = getNextLinkFromHeaders(httpResponse.getAllHeaders());
         if (StringUtils.isNotBlank(nextUrl)) {
             return new HttpGet(nextUrl);

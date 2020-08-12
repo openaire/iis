@@ -14,12 +14,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -59,7 +59,7 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
     // fields to be reinitialized after deserialization
     private transient JsonParser jsonParser;
 
-    private transient HttpClient httpClient;
+    private transient CloseableHttpClient httpClient;
 
     private transient HttpHost authHost;
 
@@ -91,7 +91,7 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
     /**
      * Using this constructor simplifies object instantiation but also makes the whole object non-serializable.
      */
-    protected OpenPatentWebServiceFacade(HttpClient httpClient, HttpHost authHost, String authUriRoot, HttpHost opsHost,
+    protected OpenPatentWebServiceFacade(CloseableHttpClient httpClient, HttpHost authHost, String authUriRoot, HttpHost opsHost,
             String opsUriRoot, String consumerCredential, long throttleSleepTime, int maxRetriesCount,
             JsonParser jsonParser) {
         this.httpClient = httpClient;
@@ -121,37 +121,39 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
         }
 
         HttpRequest httpRequest = buildPatentMetaRequest(patent, securityToken, opsUriRoot);
-        HttpResponse httpResponse = httpClient.execute(opsHost, httpRequest);
 
-        int statusCode = httpResponse.getStatusLine().getStatusCode();
+        try (CloseableHttpResponse httpResponse = httpClient.execute(opsHost, httpRequest)) {
+        
+            int statusCode = httpResponse.getStatusLine().getStatusCode();
 
-        switch (statusCode) {
-        case 200: {
-            HttpEntity entity = httpResponse.getEntity();
-            if (entity == null) {
-                throw new PatentServiceException(
-                        "got empty entity in response, full status: " + httpResponse.getStatusLine());
+            switch (statusCode) {
+            case 200: {
+                HttpEntity entity = httpResponse.getEntity();
+                if (entity == null) {
+                    throw new PatentServiceException(
+                            "got empty entity in response, full status: " + httpResponse.getStatusLine());
+                }
+                return EntityUtils.toString(entity);
             }
-            return EntityUtils.toString(entity);
-        }
-        case 400: {
-            log.info("got 400 HTTP code in response, potential reason: access token invalid or expired");
-            return getPatentMetadata(patent, reauthenticate(), ++retryCount);
-        }
-        case 403: {
-            log.warn("got 403 HTTP code in response, potential reason: endpoint rate limit reached. Delaying for "
-                    + throttleSleepTime + " ms, server response: " + EntityUtils.toString(httpResponse.getEntity()));
-            Thread.sleep(throttleSleepTime);
-            return getPatentMetadata(patent, securityToken, ++retryCount);
-        }
-        case 404: {
-            throw new NoSuchElementException("unable to find element at: " + httpRequest.getRequestLine());
-        }
-        default: {
-            throw new PatentServiceException(String.format(
-                    "got unhandled HTTP status code when accessing endpoint: %d, full status: %s, server response: %s",
-                    statusCode, httpResponse.getStatusLine(), EntityUtils.toString(httpResponse.getEntity())));
-        }
+            case 400: {
+                log.info("got 400 HTTP code in response, potential reason: access token invalid or expired");
+                return getPatentMetadata(patent, reauthenticate(), ++retryCount);
+            }
+            case 403: {
+                log.warn("got 403 HTTP code in response, potential reason: endpoint rate limit reached. Delaying for "
+                        + throttleSleepTime + " ms, server response: " + EntityUtils.toString(httpResponse.getEntity()));
+                Thread.sleep(throttleSleepTime);
+                return getPatentMetadata(patent, securityToken, ++retryCount);
+            }
+            case 404: {
+                throw new NoSuchElementException("unable to find element at: " + httpRequest.getRequestLine());
+            }
+            default: {
+                throw new PatentServiceException(String.format(
+                        "got unhandled HTTP status code when accessing endpoint: %d, full status: %s, server response: %s",
+                        statusCode, httpResponse.getStatusLine(), EntityUtils.toString(httpResponse.getEntity())));
+            }
+            }
         }
     }
 
@@ -179,7 +181,7 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
     /**
      * Builds HTTP client issuing requests to SH endpoint.
      */
-    protected static HttpClient buildHttpClient(int connectionTimeout, int readTimeout) {
+    protected static CloseableHttpClient buildHttpClient(int connectionTimeout, int readTimeout) {
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         httpClientBuilder.setDefaultRequestConfig(RequestConfig.custom().setConnectTimeout(connectionTimeout)
                 .setConnectionRequestTimeout(connectionTimeout).setSocketTimeout(readTimeout).build());
@@ -207,26 +209,27 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
      */
     private String authenticate() throws Exception {
 
-        HttpResponse httpResponse = httpClient.execute(authHost, buildAuthRequest(consumerCredential, authUriRoot));
+        try (CloseableHttpResponse httpResponse = httpClient.execute(authHost, buildAuthRequest(consumerCredential, authUriRoot))) {
+            int statusCode = httpResponse.getStatusLine().getStatusCode();
 
-        int statusCode = httpResponse.getStatusLine().getStatusCode();
+            if (statusCode == 200) {
+                String jsonContent = IOUtils.toString(httpResponse.getEntity().getContent(), DEFAULT_CHARSET);
 
-        if (statusCode == 200) {
-            String jsonContent = IOUtils.toString(httpResponse.getEntity().getContent(), DEFAULT_CHARSET);
+                JsonObject jsonObject = jsonParser.parse(jsonContent).getAsJsonObject();
+                JsonElement accessToken = jsonObject.get("access_token");
 
-            JsonObject jsonObject = jsonParser.parse(jsonContent).getAsJsonObject();
-            JsonElement accessToken = jsonObject.get("access_token");
-
-            if (accessToken == null) {
-                throw new PatentServiceException("access token is missing: " + jsonContent);
+                if (accessToken == null) {
+                    throw new PatentServiceException("access token is missing: " + jsonContent);
+                } else {
+                    return accessToken.getAsString();
+                }
             } else {
-                return accessToken.getAsString();
-            }
-        } else {
-            throw new PatentServiceException(String.format(
-                    "Authentication failed! HTTP status code when accessing endpoint: %d, full status: %s, server response: %s",
-                    statusCode, httpResponse.getStatusLine(), EntityUtils.toString(httpResponse.getEntity())));
+                throw new PatentServiceException(String.format(
+                        "Authentication failed! HTTP status code when accessing endpoint: %d, full status: %s, server response: %s",
+                        statusCode, httpResponse.getStatusLine(), EntityUtils.toString(httpResponse.getEntity())));
+            } 
         }
+        
         
     }
 

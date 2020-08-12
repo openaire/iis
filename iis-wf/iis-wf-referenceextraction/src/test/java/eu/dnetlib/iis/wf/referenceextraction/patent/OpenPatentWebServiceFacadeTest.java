@@ -21,12 +21,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -54,7 +55,7 @@ public class OpenPatentWebServiceFacadeTest {
     private final String opsUriRoot = "ops_uri"; 
     
     @Mock
-    private HttpClient httpClient;
+    private CloseableHttpClient httpClient;
 
     @Test
     public void testGetPatentMetadaUrl() throws Exception {
@@ -120,7 +121,7 @@ public class OpenPatentWebServiceFacadeTest {
     public void testReauthenticate() throws Exception {
         // given
         OpenPatentWebServiceFacade service = prepareValidService();
-        HttpResponse httpResponse = mock(HttpResponse.class);
+        CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
         StatusLine statusLine = mock(StatusLine.class);
         HttpEntity httpEntity = mock(HttpEntity.class);
         String accessToken = "someAccessToken";
@@ -147,7 +148,7 @@ public class OpenPatentWebServiceFacadeTest {
     public void testReauthenticateResultingNon200() throws Exception {
         // given
         OpenPatentWebServiceFacade service = prepareValidService();
-        HttpResponse httpResponse = mock(HttpResponse.class);
+        CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
         StatusLine statusLine = mock(StatusLine.class);
         HttpEntity httpEntity = mock(HttpEntity.class);
         
@@ -165,7 +166,7 @@ public class OpenPatentWebServiceFacadeTest {
     public void testGetSecurityToken() throws Exception {
         // given
         OpenPatentWebServiceFacade service = prepareValidService();
-        HttpResponse httpResponse = mock(HttpResponse.class);
+        CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
         StatusLine statusLine = mock(StatusLine.class);
         HttpEntity httpEntity = mock(HttpEntity.class);
         String accessToken = "someAccessToken";
@@ -207,7 +208,7 @@ public class OpenPatentWebServiceFacadeTest {
         OpenPatentWebServiceFacade service = prepareValidService();
         
         // authentication mock
-        HttpResponse authnHttpResponse = mock(HttpResponse.class);
+        CloseableHttpResponse authnHttpResponse = mock(CloseableHttpResponse.class);
         StatusLine authnStatusLine = mock(StatusLine.class);
         HttpEntity authnHttpEntity = mock(HttpEntity.class);
         String accessToken = "someAccessToken";
@@ -222,7 +223,7 @@ public class OpenPatentWebServiceFacadeTest {
         when(authnHttpEntity.getContent()).thenReturn(pageInputStream);
         
         // metadata retrieval mock
-        HttpResponse getPatentHttpResponse = mock(HttpResponse.class);
+        CloseableHttpResponse getPatentHttpResponse = mock(CloseableHttpResponse.class);
         StatusLine getPatentStatusLine = mock(StatusLine.class);
         HttpEntity getPatentHttpEntity = mock(HttpEntity.class);
         when(getPatentHttpResponse.getStatusLine()).thenReturn(getPatentStatusLine);
@@ -255,7 +256,7 @@ public class OpenPatentWebServiceFacadeTest {
         Gson gson = new Gson();
         String pageContents = gson.toJson(new AuthenticationResponse(accessToken));
 
-        HttpResponse authnHttpResponse1 = mock(HttpResponse.class);
+        CloseableHttpResponse authnHttpResponse1 = mock(CloseableHttpResponse.class);
         StatusLine authnStatusLine = mock(StatusLine.class);
         HttpEntity authnHttpEntity1 = mock(HttpEntity.class);
         
@@ -264,7 +265,7 @@ public class OpenPatentWebServiceFacadeTest {
         when(authnHttpResponse1.getEntity()).thenReturn(authnHttpEntity1);
         when(authnHttpEntity1.getContent()).thenReturn(new ByteArrayInputStream(pageContents.getBytes()));
         
-        HttpResponse authnHttpResponse2 = mock(HttpResponse.class);
+        CloseableHttpResponse authnHttpResponse2 = mock(CloseableHttpResponse.class);
         HttpEntity authnHttpEntity2 = mock(HttpEntity.class);
         
         when(authnHttpResponse2.getStatusLine()).thenReturn(authnStatusLine);
@@ -272,12 +273,12 @@ public class OpenPatentWebServiceFacadeTest {
         when(authnHttpEntity2.getContent()).thenReturn(new ByteArrayInputStream(pageContents.getBytes()));
         
         // metadata retrieval mock
-        HttpResponse getPatentHttpResponse1 = mock(HttpResponse.class);
+        CloseableHttpResponse getPatentHttpResponse1 = mock(CloseableHttpResponse.class);
         StatusLine getPatentStatusLine1 = mock(StatusLine.class);
         when(getPatentHttpResponse1.getStatusLine()).thenReturn(getPatentStatusLine1);
         when(getPatentStatusLine1.getStatusCode()).thenReturn(400);
         
-        HttpResponse getPatentHttpResponse2 = mock(HttpResponse.class);
+        CloseableHttpResponse getPatentHttpResponse2 = mock(CloseableHttpResponse.class);
         StatusLine getPatentStatusLine2 = mock(StatusLine.class);
         HttpEntity getPatentHttpEntity2 = mock(HttpEntity.class);
         when(getPatentHttpResponse2.getStatusLine()).thenReturn(getPatentStatusLine2);
@@ -304,7 +305,7 @@ public class OpenPatentWebServiceFacadeTest {
         OpenPatentWebServiceFacade service = prepareValidService();
         
         // authentication mock
-        HttpResponse authnHttpResponse = mock(HttpResponse.class);
+        CloseableHttpResponse authnHttpResponse = mock(CloseableHttpResponse.class);
         StatusLine authnStatusLine = mock(StatusLine.class);
         HttpEntity authnHttpEntity = mock(HttpEntity.class);
         String accessToken = "someAccessToken";
@@ -319,7 +320,7 @@ public class OpenPatentWebServiceFacadeTest {
         when(authnHttpEntity.getContent()).thenReturn(pageInputStream);
         
         // metadata retrieval mock
-        HttpResponse getPatentHttpResponse = mock(HttpResponse.class);
+        CloseableHttpResponse getPatentHttpResponse = mock(CloseableHttpResponse.class);
         StatusLine getPatentStatusLine = mock(StatusLine.class);
         when(getPatentHttpResponse.getStatusLine()).thenReturn(getPatentStatusLine);
         when(getPatentStatusLine.getStatusCode()).thenReturn(404);
@@ -344,7 +345,7 @@ public class OpenPatentWebServiceFacadeTest {
         Gson gson = new Gson();
         String pageContents = gson.toJson(new AuthenticationResponse(accessToken));
 
-        HttpResponse authnHttpResponse = mock(HttpResponse.class);
+        CloseableHttpResponse authnHttpResponse = mock(CloseableHttpResponse.class);
         StatusLine authnStatusLine = mock(StatusLine.class);
         HttpEntity authnHttpEntity = mock(HttpEntity.class);
         
@@ -354,14 +355,14 @@ public class OpenPatentWebServiceFacadeTest {
         when(authnHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(pageContents.getBytes()));
         
         // metadata retrieval mock
-        HttpResponse getPatentHttpResponse1 = mock(HttpResponse.class);
+        CloseableHttpResponse getPatentHttpResponse1 = mock(CloseableHttpResponse.class);
         StatusLine getPatentStatusLine1 = mock(StatusLine.class);
         HttpEntity getPatentHttpEntity1 = mock(HttpEntity.class);
         when(getPatentHttpResponse1.getStatusLine()).thenReturn(getPatentStatusLine1);
         when(getPatentStatusLine1.getStatusCode()).thenReturn(403);
         when(getPatentHttpResponse1.getEntity()).thenReturn(getPatentHttpEntity1);
         
-        HttpResponse getPatentHttpResponse2 = mock(HttpResponse.class);
+        CloseableHttpResponse getPatentHttpResponse2 = mock(CloseableHttpResponse.class);
         StatusLine getPatentStatusLine2 = mock(StatusLine.class);
         HttpEntity getPatentHttpEntity2 = mock(HttpEntity.class);
         when(getPatentHttpResponse2.getStatusLine()).thenReturn(getPatentStatusLine2);
@@ -392,7 +393,7 @@ public class OpenPatentWebServiceFacadeTest {
         Gson gson = new Gson();
         String pageContents = gson.toJson(new AuthenticationResponse(accessToken));
 
-        HttpResponse authnHttpResponse = mock(HttpResponse.class);
+        CloseableHttpResponse authnHttpResponse = mock(CloseableHttpResponse.class);
         StatusLine authnStatusLine = mock(StatusLine.class);
         HttpEntity authnHttpEntity = mock(HttpEntity.class);
         
@@ -402,7 +403,7 @@ public class OpenPatentWebServiceFacadeTest {
         when(authnHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(pageContents.getBytes()));
         
         // metadata retrieval mock
-        HttpResponse getPatentHttpResponse = mock(HttpResponse.class);
+        CloseableHttpResponse getPatentHttpResponse = mock(CloseableHttpResponse.class);
         StatusLine getPatentStatusLine = mock(StatusLine.class);
         HttpEntity getPatentHttpEntity = mock(HttpEntity.class);
         when(getPatentHttpResponse.getStatusLine()).thenReturn(getPatentStatusLine);
@@ -423,7 +424,7 @@ public class OpenPatentWebServiceFacadeTest {
         OpenPatentWebServiceFacade service = prepareValidService();
         
         // authentication mock
-        HttpResponse authnHttpResponse = mock(HttpResponse.class);
+        CloseableHttpResponse authnHttpResponse = mock(CloseableHttpResponse.class);
         StatusLine authnStatusLine = mock(StatusLine.class);
         HttpEntity authnHttpEntity = mock(HttpEntity.class);
         String accessToken = "someAccessToken";
@@ -438,7 +439,7 @@ public class OpenPatentWebServiceFacadeTest {
         when(authnHttpEntity.getContent()).thenReturn(pageInputStream);
         
         // metadata retrieval mock
-        HttpResponse getPatentHttpResponse = mock(HttpResponse.class);
+        CloseableHttpResponse getPatentHttpResponse = mock(CloseableHttpResponse.class);
         StatusLine getPatentStatusLine = mock(StatusLine.class);
         HttpEntity getPatentHttpEntity = mock(HttpEntity.class);
         when(getPatentHttpResponse.getStatusLine()).thenReturn(getPatentStatusLine);
