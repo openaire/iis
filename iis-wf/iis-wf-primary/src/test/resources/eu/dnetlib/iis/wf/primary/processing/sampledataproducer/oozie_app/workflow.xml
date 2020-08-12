@@ -411,14 +411,6 @@
                     <value>-Xmx1g</value>
                 </property>
 				<property>
-					<name>tara_lock_manager_factory_class_name</name>
-					<value>eu.dnetlib.iis.wf.primary.processing.LockManagerFactoryMock</value>
-				</property>
-				<property>
-					<name>tara_cache_root_dir</name>
-					<value>${workingDir}/cache/tara</value>
-				</property>
-				<property>
                     <name>webcrawlContentRetrieverClassName</name>
                     <value>eu.dnetlib.iis.wf.primary.processing.ClasspathContentRetriever</value>
                 </property>
