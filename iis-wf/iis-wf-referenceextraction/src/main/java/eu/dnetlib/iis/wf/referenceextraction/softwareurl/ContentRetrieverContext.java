@@ -1,7 +1,6 @@
 package eu.dnetlib.iis.wf.referenceextraction.softwareurl;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Content retriveal context.
@@ -32,8 +31,7 @@ public class ContentRetrieverContext implements Serializable {
     
     public ContentRetrieverContext(String contentRetrieverClassName, int connectionTimeout, int readTimeout,
             int maxPageContentLength, int numberOfEmittedFiles, int numberOfPartitionsForCrawling)
-            throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-            NoSuchMethodException, SecurityException, ClassNotFoundException {
+            throws Exception {
         @SuppressWarnings("unchecked")
         Class<ContentRetriever> clazz = (Class<ContentRetriever>) Class.forName(contentRetrieverClassName);
         this.contentRetriever = clazz.getConstructor().newInstance();
