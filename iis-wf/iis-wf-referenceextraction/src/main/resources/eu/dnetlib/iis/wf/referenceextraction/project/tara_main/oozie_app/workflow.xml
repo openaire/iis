@@ -16,17 +16,6 @@
             </description>
         </property>
         <property>
-            <name>lock_manager_factory_class_name</name>
-            <value>eu.dnetlib.iis.common.lock.ZookeeperLockManagerFactory</value>
-            <description>
-                lock manager factory class name, to be used for synchronizing access to cache directory
-            </description>
-        </property>
-        <property>
-            <name>cache_root_dir</name>
-            <description>tara reference extraction cache root directory</description>
-        </property>
-        <property>
             <name>project_db_file</name>
             <description>input project SQLite DB path</description>
         </property>
@@ -93,7 +82,7 @@
             <master>yarn</master>
             <mode>cluster</mode>
             <name>tara-referenceextraction</name>
-            <class>eu.dnetlib.iis.wf.referenceextraction.project.tara.CachedTaraReferenceExtractionJob</class>
+            <class>eu.dnetlib.iis.wf.referenceextraction.project.tara.TaraReferenceExtractionJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
             <spark-opts>
                 --executor-memory=${sparkExecutorMemory}
@@ -107,8 +96,6 @@
             </spark-opts>
             <arg>-inputExtractedDocumentMetadataMergedWithOriginal=${input_document_metadata}</arg>
             <arg>-inputDocumentText=${input_document_text}</arg>
-            <arg>-lockManagerFactoryClassName=${lock_manager_factory_class_name}</arg>
-            <arg>-cacheRootDir=${cache_root_dir}</arg>
             <arg>-scriptsDir=${wf:conf('oozie.wf.application.path')}/lib/scripts</arg>
             <arg>-projectDbFile=${nameNode}${project_db_file}</arg>
             <arg>-outputDocumentToProject=${output_document_to_project}</arg>
