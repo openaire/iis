@@ -70,7 +70,7 @@ public class TaraReferenceExtractionUtilsTest {
         Dataset<Row> resultDF = buildDocumentMetadata(documentTextDF, extractedDocumentMetadataMergedWithOriginalDF);
 
         // then
-        assertEquals(CachedTaraReferenceExtractionJob.DOCUMENT_METADATA_SCHEMA, resultDF.schema());
+        assertEquals(TaraReferenceExtractionJob.DOCUMENT_METADATA_SCHEMA, resultDF.schema());
 
         List<Row> results = resultDF.collectAsList().stream()
                 .sorted(Comparator.comparing(o -> o.getAs("id")))
@@ -87,7 +87,7 @@ public class TaraReferenceExtractionUtilsTest {
                 Collections.singletonList(
                         createDocumentMetadata("id-1", "text-1")
                 ),
-                CachedTaraReferenceExtractionJob.DOCUMENT_METADATA_SCHEMA);
+                TaraReferenceExtractionJob.DOCUMENT_METADATA_SCHEMA);
         PipeExecutionEnvironment pipeExecutionEnvironment = () -> {
             Path scriptWithInputCheck = createTestScriptWithInputCheck();
             spark.sparkContext().addFile(scriptWithInputCheck.toString());

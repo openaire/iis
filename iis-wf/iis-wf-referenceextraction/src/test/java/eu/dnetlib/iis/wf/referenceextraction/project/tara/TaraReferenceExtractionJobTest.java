@@ -7,18 +7,18 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class CachedTaraReferenceExtractionJobTest {
+public class TaraReferenceExtractionJobTest {
 
     @Test
     public void documentMetadataShouldHaveProperSchema() {
         // then
-        assertForField(CachedTaraReferenceExtractionJob.DOCUMENT_METADATA_SCHEMA.fields()[0],
+        assertForField(TaraReferenceExtractionJob.DOCUMENT_METADATA_SCHEMA.fields()[0],
                 "id", DataTypes.StringType, false);
-        assertForField(CachedTaraReferenceExtractionJob.DOCUMENT_METADATA_SCHEMA.fields()[1],
+        assertForField(TaraReferenceExtractionJob.DOCUMENT_METADATA_SCHEMA.fields()[1],
                 "title", DataTypes.StringType, true);
-        assertForField(CachedTaraReferenceExtractionJob.DOCUMENT_METADATA_SCHEMA.fields()[2],
+        assertForField(TaraReferenceExtractionJob.DOCUMENT_METADATA_SCHEMA.fields()[2],
                 "abstract", DataTypes.StringType, true);
-        assertForField(CachedTaraReferenceExtractionJob.DOCUMENT_METADATA_SCHEMA.fields()[3],
+        assertForField(TaraReferenceExtractionJob.DOCUMENT_METADATA_SCHEMA.fields()[3],
                 "text", DataTypes.StringType, false);
     }
 

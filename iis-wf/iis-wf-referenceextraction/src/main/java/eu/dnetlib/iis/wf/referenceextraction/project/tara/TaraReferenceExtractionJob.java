@@ -20,7 +20,7 @@ import static eu.dnetlib.iis.wf.referenceextraction.project.tara.TaraReferenceEx
 import static eu.dnetlib.iis.wf.referenceextraction.project.tara.TaraReferenceExtractionUtils.buildDocumentMetadata;
 import static eu.dnetlib.iis.wf.referenceextraction.project.tara.TaraReferenceExtractionUtils.runReferenceExtraction;
 
-public class CachedTaraReferenceExtractionJob {
+public class TaraReferenceExtractionJob {
 
     public static final StructType DOCUMENT_METADATA_SCHEMA = StructType$.MODULE$.apply(
             Arrays.asList(

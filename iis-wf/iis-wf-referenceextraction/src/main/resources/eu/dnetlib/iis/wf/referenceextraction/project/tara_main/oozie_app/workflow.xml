@@ -82,7 +82,7 @@
             <master>yarn</master>
             <mode>cluster</mode>
             <name>tara-referenceextraction</name>
-            <class>eu.dnetlib.iis.wf.referenceextraction.project.tara.CachedTaraReferenceExtractionJob</class>
+            <class>eu.dnetlib.iis.wf.referenceextraction.project.tara.TaraReferenceExtractionJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
             <spark-opts>
                 --executor-memory=${sparkExecutorMemory}

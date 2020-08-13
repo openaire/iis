@@ -18,7 +18,11 @@
 			<name>output_document_to_project</name>
 			<description>output document to project</description>
 		</property>
-		<property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
             <name>sparkDriverMemory</name>
             <description>memory for driver process</description>
         </property>
@@ -54,52 +58,67 @@
         </property>
     </parameters>
 
-	<start to="sqlite_builder" />
+	<start to="project_filter" />
 
-    <action name="sqlite_builder">
+    <action name="project_filter">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_referenceextraction_project_filter</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>input</name>
+                    <value>${input_project}</value>
+                </property>
+                <property>
+                    <name>fundingclass_blacklist_regex</name>
+                    <value>^TARA::.*$</value>
+                </property>
+                <property>
+                    <name>output_approved</name>
+                    <value>${workingDir}/main_sqlite/input_project</value>
+                </property>
+                <property>
+                    <name>output_rejected</name>
+                    <value>${workingDir}/tara_main/input_project</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="forking"/>
+        <error to="fail"/>
+    </action>
+
+    <fork name="forking">
+        <path start="main_sqlite_builder"/>
+        <path start="tara_sqlite_builder"/>
+    </fork>
+
+    <action name="main_sqlite_builder">
         <sub-workflow>
             <app-path>${wf:appPath()}/sqlite_builder</app-path>
             <propagate-configuration />
             <configuration>
                 <property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/sqlite_builder/working_dir</value>
-                </property>
-                <property>
                     <name>input_project</name>
-                    <value>${input_project}</value>
+                    <value>${workingDir}/main_sqlite/input_project</value>
                 </property>
                 <property>
                     <name>output_project_db</name>
-                    <value>${workingDir}/projects.db</value>
+                    <value>${workingDir}/main_sqlite/projects.db</value>
                 </property>
             </configuration>
         </sub-workflow>
-        <ok to="forking_sqlite"/>
+        <ok to="main_sqlite"/>
         <error to="fail"/>
     </action>
-    
-    <fork name="forking_sqlite">
-        <path start="main_sqlite" />
-        <path start="tara_main" />
-    </fork>
-    
+
     <action name="main_sqlite">
         <sub-workflow>
             <app-path>${wf:appPath()}/main_sqlite</app-path>
             <propagate-configuration />
             <configuration>
                 <property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/main_sqlite/working_dir</value>
-                </property>
-                <property>
-                    <name>input_document_text</name>
-                    <value>${input_document_text}</value>
-                </property>
-                <property>
                     <name>input_project_db</name>
-                    <value>${workingDir}/projects.db</value>
+                    <value>${workingDir}/main_sqlite/projects.db</value>
                 </property>
                 <property>
                     <name>output_document_to_project</name>
@@ -111,18 +130,33 @@
         <error to="fail"/>
     </action>
 
+    <action name="tara_sqlite_builder">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/sqlite_builder</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>input_project</name>
+                    <value>${workingDir}/tara_main/input_project</value>
+                </property>
+                <property>
+                    <name>output_project_db</name>
+                    <value>${workingDir}/tara_main/projects.db</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="tara_main"/>
+        <error to="fail"/>
+    </action>
+
     <action name="tara_main">
         <sub-workflow>
             <app-path>${wf:appPath()}/tara_main</app-path>
             <propagate-configuration />
             <configuration>
                 <property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/tara_main/working_dir</value>
-                </property>
-                <property>
                     <name>project_db_file</name>
-                    <value>${workingDir}/projects.db</value>
+                    <value>${workingDir}/tara_main/projects.db</value>
                 </property>
                 <property>
                     <name>output_document_to_project</name>
@@ -141,10 +175,6 @@
             <app-path>${wf:appPath()}/transformers_common_union_dedup</app-path>
             <propagate-configuration />
             <configuration>
-                <property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/transformers_uniondedup_document_to_project/working_dir</value>
-                </property>
                 <property>
                     <name>input_a</name>
                     <value>${workingDir}/main_sqlite/output</value>
@@ -182,14 +212,6 @@
             <app-path>${wf:appPath()}/funder_report</app-path>
             <propagate-configuration />
             <configuration>
-                <property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/funder_report/working_dir</value>
-                </property>
-                <property>
-                    <name>input_project</name>
-                    <value>${input_project}</value>
-                </property>
                 <property>
                     <name>input_document_to_project</name>
                     <value>${output_document_to_project}</value>
