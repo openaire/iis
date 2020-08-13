@@ -199,10 +199,6 @@
                 Set to 'a^' by default to guarantee nothing will be matched.
             </description>
         </property>
-        <property>
-            <name>tara_cache_root_dir</name>
-            <description>tara reference extraction cache root directory</description>
-        </property>
         <!-- action set id properties -->
         <property>
             <name>export_action_set_id_document_similarities_standard</name>

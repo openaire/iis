@@ -1,6 +1,7 @@
 ## This is a classpath-based import file (this header is required)
+transformers_referenceextraction_project_filter classpath eu/dnetlib/iis/wf/referenceextraction/project/input_filter/oozie_app
 sqlite_builder classpath eu/dnetlib/iis/wf/referenceextraction/project/sqlite_builder/oozie_app
 main_sqlite classpath eu/dnetlib/iis/wf/referenceextraction/project/main_sqlite/oozie_app
-tara_main classpath eu/dnetlib/iis/wf/referenceextraction/project/tara/oozie_app
+tara_main classpath eu/dnetlib/iis/wf/referenceextraction/project/tara_main/oozie_app
 funder_report classpath eu/dnetlib/iis/wf/referenceextraction/project/funder_report/oozie_app
 transformers_common_union_dedup classpath eu/dnetlib/iis/wf/transformers/common/uniondedup/oozie_app
