@@ -625,6 +625,12 @@
             <arg>-C{docSoftwareUrlWebcrawlReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/doc_softwareurl_webcrawl.json}</arg>
             <arg>-IdocSoftwareUrlWebcrawlReport=${workingDir}/report/referenceextraction_software</arg>
 
+            <arg>-C{patentMetadataRetrieval,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/doc_patent_metadata_retrieval.json}</arg>
+            <arg>-IpatentMetadataRetrieval=${workingDir}/report/patent_metadata_retrieval</arg>
+            
+            <arg>-C{patentMetadataExtraction,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/doc_patent_metadata_extraction.json}</arg>
+            <arg>-IpatentMetadataExtraction=${workingDir}/report/patent_metadata_extraction</arg>
+
             <arg>-C{execTimeReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/primary-processing-execution-times.json}</arg>
             <arg>-IexecTimeReport=${workingDir}/report/primary-processing-execution-times</arg>
 
