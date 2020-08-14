@@ -22,7 +22,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -275,8 +274,11 @@ public class OpenPatentWebServiceFacadeTest {
         // metadata retrieval mock
         CloseableHttpResponse getPatentHttpResponse1 = mock(CloseableHttpResponse.class);
         StatusLine getPatentStatusLine1 = mock(StatusLine.class);
+        HttpEntity getPatentHttpEntity1 = mock(HttpEntity.class);
         when(getPatentHttpResponse1.getStatusLine()).thenReturn(getPatentStatusLine1);
         when(getPatentStatusLine1.getStatusCode()).thenReturn(400);
+        when(getPatentHttpResponse1.getEntity()).thenReturn(getPatentHttpEntity1);
+        when(getPatentHttpEntity1.getContent()).thenReturn(new ByteArrayInputStream("".getBytes()));
         
         CloseableHttpResponse getPatentHttpResponse2 = mock(CloseableHttpResponse.class);
         StatusLine getPatentStatusLine2 = mock(StatusLine.class);
@@ -450,19 +452,6 @@ public class OpenPatentWebServiceFacadeTest {
         
         // execute
         service.getPatentMetadata(patentBuilder.build());
-    }
-    
-    @Test
-    public void testBuildHttpClient() throws Exception {
-     // given
-        int connectionTimeout = 1;
-        int readTimeout = 2;
-        
-        // execute
-        HttpClient client = OpenPatentWebServiceFacade.buildHttpClient(connectionTimeout, readTimeout);
-        
-        // assert
-        assertNotNull(client);
     }
     
     @Test

@@ -13,13 +13,13 @@ import java.util.NoSuchElementException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
+import eu.dnetlib.iis.wf.importer.HttpClientUtils;
 import eu.dnetlib.iis.wf.referenceextraction.ContentRetrieverResponse;
 import eu.dnetlib.iis.wf.referenceextraction.RetryLimitExceededException;
 
@@ -69,7 +69,7 @@ public class HttpContentRetriever implements ContentRetriever {
 
         log.info("starting content retrieval for url: " + url);
         try {
-            return retrieveUrlContent(url.toString(), connectionTimeout, readTimeout, maxPageContentLength, 0);
+            return retrieveUrlContent(url.toString(), 0);
         } catch (Exception e) {
             log.error("content retrieval failed for url: " + url, e);
             return new ContentRetrieverResponse(e);
@@ -81,13 +81,16 @@ public class HttpContentRetriever implements ContentRetriever {
     
     // ----------------------------------------- PRIVATE ------------------------------------------------
     
-    private ContentRetrieverResponse retrieveUrlContent(String currentUrl, int connectionTimeout, int readTimeout,
-            int maxPageContentLength, int retryCount) throws MalformedURLException, IOException, InterruptedException {
-        
-        //FIXME method params to be dropped
+    /**
+     * Retrieves web page content from given url.
+     * 
+     * This method is recursive and requires response entity to be consumed in order
+     * not to hit the ConnectionPoolTimeoutException when connecting the same host
+     * more than 2 times within recursion (e.g. when reattepmting).
+     */
+    private ContentRetrieverResponse retrieveUrlContent(String currentUrl, int retryCount) throws MalformedURLException, IOException, InterruptedException {
         
         if (retryCount > maxRetriesCount) {
-            // FIXME indicate this kind of errors to prevent from storing in cache, handle it within CachedWebCrawler
             String message = String.format("number of maximum retries exceeded: '%d' for url: %s", maxRetriesCount, currentUrl);
             log.error(message);
             return new ContentRetrieverResponse(new RetryLimitExceededException(message));
@@ -109,9 +112,9 @@ public class HttpContentRetriever implements ContentRetriever {
             case HttpURLConnection.HTTP_SEE_OTHER: {
                 String redirectedUrl = getHeaderValue(httpResponse.getAllHeaders(), HEADER_LOCATION);
                 if (StringUtils.isNotBlank(redirectedUrl)) {
-                    log.info("redirecting to: " + redirectedUrl);
-                    return retrieveUrlContent(redirectedUrl, connectionTimeout, readTimeout, maxPageContentLength,
-                            ++retryCount);
+                    log.info(String.format("got %d response code, redirecting to %s, server response: %s", statusCode,
+                            redirectedUrl, EntityUtils.toString(httpResponse.getEntity())));
+                    return retrieveUrlContent(redirectedUrl, ++retryCount);
                 } else {
                     return new ContentRetrieverResponse(
                             new RuntimeException("resource was moved, missing redirect header for the url: " + currentUrl));
@@ -119,10 +122,10 @@ public class HttpContentRetriever implements ContentRetriever {
             }
             case 429: {
                 // rete-limit hit
-                log.warn(String.format("got %d response code, rate limit reached, delaying for %d ms", statusCode,
-                        throttleSleepTime));
+                log.warn(String.format("got %d response code, potential reason: rate limit reached. Delaying for %d ms, server response: %s", statusCode,
+                        throttleSleepTime, EntityUtils.toString(httpResponse.getEntity())));
                 Thread.sleep(throttleSleepTime);
-                return retrieveUrlContent(currentUrl, connectionTimeout, readTimeout, maxPageContentLength, ++retryCount);
+                return retrieveUrlContent(currentUrl, ++retryCount);
             }
             default: {
                 return new ContentRetrieverResponse(new RuntimeException(String.format(
@@ -165,14 +168,10 @@ public class HttpContentRetriever implements ContentRetriever {
     }
     
     /**
-     * Builds HTTP client issuing requests to SH endpoint.
+     * Builds HTTP client issuing requests to a remote endpoint.
      */
     protected CloseableHttpClient buildHttpClient(int connectionTimeout, int readTimeout) {
-        // FIXME there are 3 similar methods in other classes, move it to a shared place
-        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-        httpClientBuilder.setDefaultRequestConfig(RequestConfig.custom().setConnectTimeout(connectionTimeout)
-                .setConnectionRequestTimeout(connectionTimeout).setSocketTimeout(readTimeout).build());
-        return httpClientBuilder.build();
+        return HttpClientUtils.buildHttpClient(connectionTimeout, readTimeout);
     }
     
     /**

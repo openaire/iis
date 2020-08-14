@@ -14,13 +14,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
@@ -30,6 +28,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
+import eu.dnetlib.iis.wf.importer.HttpClientUtils;
 
 /**
  * Remote EPO endpoint based patent service facade.
@@ -114,6 +113,13 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
 
     // ------------------- PRIVATE -------------------------
     
+    /**
+     * Retrieves patent metadata from EPO endpoint.
+     * 
+     * This method is recursive and requires response entity to be consumed in order
+     * not to hit the ConnectionPoolTimeoutException when connecting the same host
+     * more than 2 times within recursion (e.g. when reattepmting).
+     */
     private String getPatentMetadata(ImportedPatent patent, String securityToken, int retryCount) throws Exception {
         
         if (retryCount > maxRetriesCount) {
@@ -136,7 +142,8 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
                 return EntityUtils.toString(entity);
             }
             case 400: {
-                log.info("got 400 HTTP code in response, potential reason: access token invalid or expired");
+                log.info("got 400 HTTP code in response, potential reason: access token invalid or expired, "
+                        + "server response: " + EntityUtils.toString(httpResponse.getEntity()));
                 return getPatentMetadata(patent, reauthenticate(), ++retryCount);
             }
             case 403: {
@@ -182,10 +189,7 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
      * Builds HTTP client issuing requests to SH endpoint.
      */
     protected static CloseableHttpClient buildHttpClient(int connectionTimeout, int readTimeout) {
-        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-        httpClientBuilder.setDefaultRequestConfig(RequestConfig.custom().setConnectTimeout(connectionTimeout)
-                .setConnectionRequestTimeout(connectionTimeout).setSocketTimeout(readTimeout).build());
-        return httpClientBuilder.build();
+        return HttpClientUtils.buildHttpClient(connectionTimeout, readTimeout);
     }
     
     protected String getSecurityToken() throws Exception {

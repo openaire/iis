@@ -213,6 +213,9 @@ public class HttpContentRetrieverTest {
         StatusLine getContentStatusLine = mock(StatusLine.class);
         when(getContentHttpResponse.getStatusLine()).thenReturn(getContentStatusLine);
         when(getContentStatusLine.getStatusCode()).thenReturn(429);
+        HttpEntity getContentHttpEntity = mock(HttpEntity.class);
+        when(getContentHttpResponse.getEntity()).thenReturn(getContentHttpEntity);
+        when(getContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream("".getBytes()));
         when(httpClient.execute(any(HttpGet.class))).thenReturn(getContentHttpResponse);
         
         // execute
@@ -221,7 +224,6 @@ public class HttpContentRetrieverTest {
         // assert
         assertNotNull(response);
         assertTrue(response.getException() instanceof RetryLimitExceededException);
-        //TODO check the flag of the temporary nonexistance and permanent in all the other tests
         assertEquals("", response.getContent());
     }
     
@@ -237,6 +239,9 @@ public class HttpContentRetrieverTest {
             StatusLine getContentStatusLine = mock(StatusLine.class);
             when(getRateLimitedContentHttpResponse.getStatusLine()).thenReturn(getContentStatusLine);
             when(getContentStatusLine.getStatusCode()).thenReturn(429);
+            HttpEntity getContentHttpEntity = mock(HttpEntity.class);
+            when(getRateLimitedContentHttpResponse.getEntity()).thenReturn(getContentHttpEntity);
+            when(getContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream("".getBytes()));
         }
 
         // moved response mock
@@ -263,11 +268,6 @@ public class HttpContentRetrieverTest {
     @Test
     public void testSerializeAndDeserialize() throws Exception {
         // given
-        int connectionTimeout = 10000;
-        int readTimeout = 20000;
-        int maxPageContentLength = 50000;
-        long throttleSleepTime = 10;
-        int maxRetriesCount = 2;
         HttpContentRetriever service = new HttpContentRetriever(connectionTimeout, readTimeout, maxPageContentLength,
                 throttleSleepTime, maxRetriesCount);
 
