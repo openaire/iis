@@ -68,7 +68,7 @@ public class HttpContentRetrieverTest {
         when(httpClient.execute(any(HttpGet.class))).thenReturn(getContentHttpResponse);
         
         // execute
-        ContentRetrieverResponse response = service.retrieveUrlContent("someUrl", connectionTimeout, readTimeout, maxPageContentLength);
+        ContentRetrieverResponse response = service.retrieveUrlContent("someUrl");
         
         // assert
         assertNotNull(response);
@@ -90,7 +90,7 @@ public class HttpContentRetrieverTest {
         when(httpClient.execute(any(HttpGet.class))).thenReturn(getContentHttpResponse);
         
         // execute
-        ContentRetrieverResponse response = service.retrieveUrlContent("someUrl", connectionTimeout, readTimeout, maxPageContentLength);
+        ContentRetrieverResponse response = service.retrieveUrlContent("someUrl");
         
         // assert
         assertNotNull(response);
@@ -112,7 +112,7 @@ public class HttpContentRetrieverTest {
         when(httpClient.execute(any(HttpGet.class))).thenReturn(getContentHttpResponse);
         
         // execute
-        ContentRetrieverResponse response = service.retrieveUrlContent("someUrl", connectionTimeout, readTimeout, maxPageContentLength);
+        ContentRetrieverResponse response = service.retrieveUrlContent("someUrl");
         
         // assert
         assertNotNull(response);
@@ -151,7 +151,7 @@ public class HttpContentRetrieverTest {
         when(httpClient.execute(any(HttpGet.class))).thenReturn(getContentHttpResponse, getMovedContentHttpResponse);
         
         // execute
-        ContentRetrieverResponse response = service.retrieveUrlContent("someUrl", connectionTimeout, readTimeout, maxPageContentLength);
+        ContentRetrieverResponse response = service.retrieveUrlContent("someUrl");
         
         // assert
         assertNotNull(response);
@@ -195,7 +195,7 @@ public class HttpContentRetrieverTest {
         when(httpClient.execute(any(HttpGet.class))).thenReturn(getContentHttpResponse, getMovedContentHttpResponse);
         
         // execute
-        ContentRetrieverResponse response = service.retrieveUrlContent("someUrl", connectionTimeout, readTimeout, maxPageContentLength);
+        ContentRetrieverResponse response = service.retrieveUrlContent("someUrl");
         
         // assert
         assertNotNull(response);
@@ -216,7 +216,7 @@ public class HttpContentRetrieverTest {
         when(httpClient.execute(any(HttpGet.class))).thenReturn(getContentHttpResponse);
         
         // execute
-        ContentRetrieverResponse response = service.retrieveUrlContent("someUrl", connectionTimeout, readTimeout, maxPageContentLength);
+        ContentRetrieverResponse response = service.retrieveUrlContent("someUrl");
         
         // assert
         assertNotNull(response);
@@ -252,7 +252,7 @@ public class HttpContentRetrieverTest {
         when(httpClient.execute(any(HttpGet.class))).thenReturn(getRateLimitedContentHttpResponse, getValidContentHttpResponse);
         
         // execute
-        ContentRetrieverResponse response = service.retrieveUrlContent("someUrl", connectionTimeout, readTimeout, maxPageContentLength);
+        ContentRetrieverResponse response = service.retrieveUrlContent("someUrl");
         
         // assert
         assertNotNull(response);

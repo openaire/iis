@@ -1,5 +1,7 @@
 package eu.dnetlib.iis.wf.referenceextraction.softwareurl;
 
+import java.util.Map;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.log4j.Logger;
@@ -10,10 +12,12 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.Optional;
 import org.apache.spark.storage.StorageLevel;
 
+import com.beust.jcommander.DynamicParameter;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess;
@@ -30,6 +34,8 @@ import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrl;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithSource;
+import eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters;
+import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeUtils;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 import scala.Tuple2;
@@ -63,10 +69,6 @@ public class CachedWebCrawlerJob {
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
         
-        ContentRetrieverContext contentRetrieverContext = new ContentRetrieverContext(params.contentRetrieverClassName, 
-                params.connectionTimeout, params.readTimeout, params.maxPageContentLength, params.numberOfEmittedFiles,
-                params.numberOfPartitionsForCrawling);
-        
         try (JavaSparkContext sc = JavaSparkContextFactory.withConfAndKryo(new SparkConf())) {
             
             Configuration hadoopConf = sc.hadoopConfiguration();
@@ -75,6 +77,11 @@ public class CachedWebCrawlerJob {
             HdfsUtils.remove(hadoopConf, params.getOutputFaultPath());
             HdfsUtils.remove(hadoopConf, params.getOutputReportPath());
 
+            ContentRetriever contentRetriever = ServiceFacadeUtils
+                    .instantiate(prepareFacadeParameters(params.contentRetrieverFactoryClassName, params.contentRetrieverParams));
+            int numberOfPartitionsForCrawling = params.numberOfPartitionsForCrawling;
+            int numberOfEmittedFiles = params.numberOfEmittedFiles;
+            
             LockManager lockManager = LockManagerUtils.instantiateLockManager(params.getLockManagerFactoryClassName(),
                     hadoopConf);
             
@@ -97,7 +104,8 @@ public class CachedWebCrawlerJob {
             JavaRDD<DocumentToSoftwareUrlWithSource> entitiesReturnedFromCache = inputJoinedWithCache.filter(x -> x._2._2.isPresent()).values().map(x -> attachSource(x._1, x._2.get()));
             entitiesReturnedFromCache.persist(CACHE_STORAGE_DEFAULT_LEVEL);
             
-            Tuple2<JavaRDD<DocumentText>, JavaRDD<Fault>>  returnedFromWebcrawlTuple = WebCrawlerUtils.obtainSources(toBeProcessed, contentRetrieverContext);
+            Tuple2<JavaRDD<DocumentText>, JavaRDD<Fault>> returnedFromWebcrawlTuple = WebCrawlerUtils
+                    .obtainSources(toBeProcessed, contentRetriever, numberOfPartitionsForCrawling);
 
             JavaRDD<DocumentToSoftwareUrlWithSource> webcrawledEntities;
             JavaRDD<DocumentToSoftwareUrlWithSource> entitiesToBeWritten;
@@ -113,7 +121,7 @@ public class CachedWebCrawlerJob {
                 // storing new cache entry
                 DocumentTextCacheStorageUtils.storeInCache(avroSaver, cachedSources.union(returnedFromWebcrawlTuple._1), 
                         cachedFaults.union(returnedFromWebcrawlTuple._2), 
-                        cacheRootDir, lockManager, cacheManager, hadoopConf, contentRetrieverContext.getNumberOfEmittedFiles());
+                        cacheRootDir, lockManager, cacheManager, hadoopConf, numberOfEmittedFiles);
                 
                 // merging final results
                 webcrawledEntities = produceEntitiesToBeStored(toBeProcessed, returnedFromWebcrawlTuple._1);
@@ -135,7 +143,7 @@ public class CachedWebCrawlerJob {
                     //notice: we do not propagate faults from cache, only new faults are written
                     faultsToBeStored, 
                     generateReportEntries(sc, entitiesReturnedFromCache, webcrawledEntities, faultsToBeStored),
-                    new OutputPaths(params), contentRetrieverContext.getNumberOfEmittedFiles());
+                    new OutputPaths(params), numberOfEmittedFiles);
         }
     }
     
@@ -209,23 +217,18 @@ public class CachedWebCrawlerJob {
         return builder.build();
     }
     
+    private static Map<String, String> prepareFacadeParameters(String patentFacadeFactoryClassname, Map<String, String> facadeParams) {
+        Map<String, String> resultParams = Maps.newHashMap();
+        resultParams.put(ImportWorkflowRuntimeParameters.IMPORT_FACADE_FACTORY_CLASS, patentFacadeFactoryClassname);
+        resultParams.putAll(facadeParams);
+        return resultParams;
+    }
+    
     @Parameters(separators = "=")
     private static class WebCrawlerJobParameters extends CachedStorageJobParameters {
         
         @Parameter(names = "-inputPath", required = true)
         private String inputPath;
-        
-        @Parameter(names = "-contentRetrieverClassName", required = true)
-        private String contentRetrieverClassName;
-
-        @Parameter(names = "-connectionTimeout", required = true)
-        private int connectionTimeout;
-        
-        @Parameter(names = "-readTimeout", required = true)
-        private int readTimeout;
-        
-        @Parameter(names = "-maxPageContentLength", required = true)
-        private int maxPageContentLength;
         
         @Parameter(names = "-numberOfEmittedFiles", required = true)
         private int numberOfEmittedFiles;
@@ -233,5 +236,10 @@ public class CachedWebCrawlerJob {
         @Parameter(names = "-numberOfPartitionsForCrawling", required = true)
         private int numberOfPartitionsForCrawling;
 
+        @Parameter(names = "-contentRetrieverFactoryClassName", required = true)
+        private String contentRetrieverFactoryClassName;
+
+        @DynamicParameter(names = "-D", description = "dynamic parameters related to content retriver", required = false)
+        private Map<String, String> contentRetrieverParams = Maps.newHashMap();
     }
 }

@@ -25,8 +25,8 @@
             <description>directory for storing report (relative to output_report_root_path)</description>
         </property>
         <property>
-            <name>webcrawlContentRetrieverClassName</name>
-            <value>eu.dnetlib.iis.wf.referenceextraction.softwareurl.HttpContentRetriever</value>
+            <name>webcrawlContentRetrieverFactoryClassName</name>
+            <value>eu.dnetlib.iis.wf.referenceextraction.softwareurl.HttpContentRetrieverFactory</value>
             <description>module responsible for obtaining contents for given url</description>
         </property>
         <property>
@@ -48,6 +48,16 @@
             <name>webcrawlMaxPageContentLength</name>
             <value>500000</value>
             <description>maximum length (expressed in characters number) of page content</description>
+        </property>
+        <property>
+            <name>webcrawlThrottleSleepTime</name>
+            <value>10000</value>
+            <description>sleep time between retries when crawling for web page sources</description>
+        </property>
+        <property>
+            <name>webcrawlRetriesCount</name>
+            <value>10</value>
+            <description>maximum number of retries when crawling for web page sources</description>
         </property>
         <property>
             <name>webcrawlNumberOfEmittedFiles</name>
@@ -216,12 +226,15 @@
             <arg>-outputPath=${workingDir}/referenceextraction_softwareurl_webcrawl/out</arg>
             <arg>-outputFaultPath=${workingDir}/referenceextraction_softwareurl_webcrawl/fault</arg>
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
-            <arg>-contentRetrieverClassName=${webcrawlContentRetrieverClassName}</arg>
             <arg>-lockManagerFactoryClassName=${webcrawlLockManagerFactoryClassName}</arg>
-            
-            <arg>-connectionTimeout=${webcrawlConnectionTimeout}</arg>
-            <arg>-readTimeout=${webcrawlReadTimeout}</arg>
-            <arg>-maxPageContentLength=${webcrawlMaxPageContentLength}</arg>
+
+            <arg>-contentRetrieverFactoryClassName=${webcrawlContentRetrieverFactoryClassName}</arg>
+            <arg>-DconnectionTimeout=${webcrawlConnectionTimeout}</arg>
+            <arg>-DreadTimeout=${webcrawlReadTimeout}</arg>
+            <arg>-DmaxPageContentLength=${webcrawlMaxPageContentLength}</arg>
+            <arg>-DthrottleSleepTime=${webcrawlThrottleSleepTime}</arg>
+            <arg>-DretriesCount=${webcrawlRetriesCount}</arg>
+
             <arg>-numberOfEmittedFiles=${webcrawlNumberOfEmittedFiles}</arg>
             <arg>-numberOfPartitionsForCrawling=${webcrawlNumberOfPartitionsForCrawling}</arg>
             

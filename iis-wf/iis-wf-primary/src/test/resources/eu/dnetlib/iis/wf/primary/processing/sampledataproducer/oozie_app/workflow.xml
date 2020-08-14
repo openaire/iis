@@ -411,8 +411,8 @@
                     <value>-Xmx1g</value>
                 </property>
 				<property>
-                    <name>webcrawlContentRetrieverClassName</name>
-                    <value>eu.dnetlib.iis.wf.primary.processing.ClasspathContentRetriever</value>
+                    <name>webcrawlContentRetrieverFactoryClassName</name>
+                    <value>eu.dnetlib.iis.wf.primary.processing.ClasspathContentRetrieverFactory</value>
                 </property>
                 <property>
                     <name>webcrawlLockManagerFactoryClassName</name>

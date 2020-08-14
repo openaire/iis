@@ -72,8 +72,8 @@
             <propagate-configuration />
             <configuration>
                 <property>
-                    <name>webcrawlContentRetrieverClassName</name>
-                    <value>eu.dnetlib.iis.wf.referenceextraction.softwareurl.ClasspathContentRetriever</value>
+                    <name>webcrawlContentRetrieverFactoryClassName</name>
+                    <value>eu.dnetlib.iis.wf.referenceextraction.softwareurl.ClasspathContentRetrieverFactory</value>
                 </property>
                 <property>
                     <name>webcrawlLockManagerFactoryClassName</name>

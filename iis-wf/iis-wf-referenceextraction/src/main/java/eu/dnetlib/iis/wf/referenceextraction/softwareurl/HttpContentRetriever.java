@@ -63,8 +63,7 @@ public class HttpContentRetriever implements ContentRetriever {
     // ----------------------------------------- LOGIC ----------------------------------------------
     
     @Override
-    public ContentRetrieverResponse retrieveUrlContent(CharSequence url, int connectionTimeout, int readTimeout,
-            int maxPageContentLength) {
+    public ContentRetrieverResponse retrieveUrlContent(CharSequence url) {
 
         long startTime = System.currentTimeMillis();
 

@@ -15,10 +15,7 @@ public interface ContentRetriever extends Serializable {
     /**
      * Retrieves content for given url. Should never return null. 
      * @param url location the page content should be retrieved from
-     * @param connectionTimeout connection timeout
-     * @param readTimeout read timeout
-     * @param maxPageContentLength maximum size of the retieved content
      */
-    ContentRetrieverResponse retrieveUrlContent(CharSequence url, int connectionTimeout, int readTimeout, int maxPageContentLength);
+    ContentRetrieverResponse retrieveUrlContent(CharSequence url);
     
 }
