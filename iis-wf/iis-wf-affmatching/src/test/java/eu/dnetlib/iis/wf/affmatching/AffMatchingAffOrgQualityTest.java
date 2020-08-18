@@ -20,6 +20,8 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.junit.*;
 import org.junit.experimental.categories.Category;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import scala.Tuple2;
 
 import java.io.File;
@@ -56,6 +58,8 @@ import static java.util.stream.Collectors.toList;
  */
 @Category(IntegrationTest.class)
 public class AffMatchingAffOrgQualityTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(AffMatchingAffOrgQualityTest.class);
 
     private final static boolean PRINT_NOT_MATCHED = true;
     private final static boolean PRINT_FALSE_POSITIVE_MATCHES = true;
@@ -197,7 +201,7 @@ public class AffMatchingAffOrgQualityTest {
         double factorPercentage = ((double) goodCount / totalCount) * 100;
 
         String text = String.format("%-30s %5.2f%% (%d/%d)", factorName + ":", factorPercentage, goodCount, totalCount);
-        System.out.println(text);
+        logger.debug(text);
     }
 
     private AffMatchingService createAffMatchingService() throws IOException {

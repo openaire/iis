@@ -6,6 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import eu.dnetlib.data.objectstore.rmi.ObjectStoreService;
 import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides set of all ObjectStore records available in given ObjectStore service.
@@ -14,6 +16,8 @@ import eu.dnetlib.enabling.tools.JaxwsServiceResolverImpl;
  *
  */
 public class ObjectStoresProvider {
+
+    private static final Logger logger = LoggerFactory.getLogger(ObjectStoresProvider.class);
 
     // -------------------- CONSTRUCTORS -------------------------
 
@@ -28,6 +32,6 @@ public class ObjectStoresProvider {
         eprBuilder.build();
         ObjectStoreService objectStore = new JaxwsServiceResolverImpl().getService(ObjectStoreService.class,
                 eprBuilder.build());
-        System.out.println(StringUtils.join(objectStore.getListOfObjectStores(), ','));
+        logger.debug(StringUtils.join(objectStore.getListOfObjectStores(), ','));
     }
 }
