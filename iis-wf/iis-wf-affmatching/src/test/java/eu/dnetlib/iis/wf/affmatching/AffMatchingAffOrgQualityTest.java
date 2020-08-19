@@ -201,7 +201,7 @@ public class AffMatchingAffOrgQualityTest {
         double factorPercentage = ((double) goodCount / totalCount) * 100;
 
         String text = String.format("%-30s %5.2f%% (%d/%d)", factorName + ":", factorPercentage, goodCount, totalCount);
-        logger.debug(text);
+        logger.trace(text);
     }
 
     private AffMatchingService createAffMatchingService() throws IOException {
