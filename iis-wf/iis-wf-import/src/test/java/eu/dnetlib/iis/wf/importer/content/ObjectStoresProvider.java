@@ -32,6 +32,6 @@ public class ObjectStoresProvider {
         eprBuilder.build();
         ObjectStoreService objectStore = new JaxwsServiceResolverImpl().getService(ObjectStoreService.class,
                 eprBuilder.build());
-        logger.debug(StringUtils.join(objectStore.getListOfObjectStores(), ','));
+        logger.info(StringUtils.join(objectStore.getListOfObjectStores(), ','));
     }
 }

@@ -144,7 +144,7 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
 
         // assert
         if (CollectionUtils.isNotEmpty(invalidVoterStrengths)) {
-            logger.debug("Invalid Voter Strengths. Change them manually to the calculated values (in the code):\n");
+            logger.trace("Invalid Voter Strengths. Change them manually to the calculated values (in the code):");
             invalidVoterStrengths.stream().map(InvalidVoterStrength::toString).forEach(logger::debug);
         }
 
@@ -224,8 +224,6 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
             FileUtils.deleteDirectory(new File(outputDirPath));
         }
 
-        logger.debug("\n\n");
-
         FileUtils.deleteDirectory(workingDir);
     }
 
@@ -241,15 +239,14 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
     }
 
     private void printVoterHeader(AffOrgMatchVoter voter) {
-        logger.debug("\n\n");
-        logger.debug("---------------------------------- VOTER ----------------------------------------");
-        logger.debug(voter.toString() + "\n");
+        logger.trace("---------------------------------- VOTER ----------------------------------------");
+        logger.trace(voter.toString());
     }
 
     private void printMatcherHeader(String affOrgMatcherName) {
-        logger.debug("\n\n==================================================================================");
-        logger.debug("========================= " + affOrgMatcherName + " ===========================");
-        logger.debug("==================================================================================");
+        logger.trace("==================================================================================");
+        logger.trace("========================= " + affOrgMatcherName + " ===========================");
+        logger.trace("==================================================================================");
     }
 
     private void createInputData() throws IOException {
@@ -284,8 +281,6 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
             printNumberDetails(expectedMatches.size(), actualMatches.size(), correctMatches.size(), falsePositives.size());
         }
 
-        logger.debug("\n");
-
         if (PRINT_FALSE_POSITIVES) {
             printFalsePositives(inputAffDirPath, inputOrgDirPath, expectedMatches, actualMatches);
         }
@@ -302,25 +297,20 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
     }
 
     private void printMatchStrength(float matchStrength) {
-        logger.debug(String.format("%s %1." + VOTER_MATCH_STRENGTH_SCALE + "f", "MATCH STRENGTH: ", matchStrength));
+        logger.trace(String.format("%s %1." + VOTER_MATCH_STRENGTH_SCALE + "f", "MATCH STRENGTH: ", matchStrength));
     }
 
     private void printNumberDetails(int numberOfExpectedMatches, int numberOfActualMatches, int numberOfCorrectMatches, int numberOfFalsePositives) {
-        logger.debug("  [");
-        printQualityFactor("All matches", numberOfActualMatches, numberOfExpectedMatches);
-        logger.debug(", ");
-        printQualityFactor("Correct matches", numberOfCorrectMatches, numberOfActualMatches);
-        logger.debug(", ");
-        printQualityFactor("False positives", numberOfFalsePositives, numberOfActualMatches);
-        logger.debug("]");
+        logger.trace("[{}, {}, {}]",
+                qualityFactor("All matches", numberOfActualMatches, numberOfExpectedMatches),
+                qualityFactor("Correct matches", numberOfCorrectMatches, numberOfActualMatches),
+                qualityFactor("False positives", numberOfFalsePositives, numberOfActualMatches));
     }
 
-    private void printQualityFactor(String factorName, int goodCount, int totalCount) {
+    private String qualityFactor(String factorName, int goodCount, int totalCount) {
         double factorPercentage = ((double)goodCount/totalCount)*100;
 
-        String text = String.format("%s %3.2f%% (%d/%d)", factorName + ":", factorPercentage, goodCount, totalCount);
-
-        logger.debug(text);
+        return String.format("%s %3.2f%% (%d/%d)", factorName + ":", factorPercentage, goodCount, totalCount);
     }
 
     private AffMatchingService createAffMatchingService() throws IOException {

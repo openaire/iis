@@ -121,7 +121,7 @@ public class AffMatchingDocOrgQualityTest {
         
         // log
 
-        logger.debug("\nALL TEST DATA");
+        logger.trace("ALL TEST DATA");
         
         readResultsAndPrintQualityRate(of(
                 "src/test/resources/experimentalData/expectedOutput/matched_aff.json"));
@@ -212,7 +212,7 @@ public class AffMatchingDocOrgQualityTest {
         double factorPercentage = ((double)goodCount/totalCount)*100;
         
         String text = String.format("%-20s %5.2f%% (%d/%d)", factorName + ":", factorPercentage, goodCount, totalCount);
-        logger.debug(text);
+        logger.trace(text);
         
         
     }

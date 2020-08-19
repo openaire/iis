@@ -54,7 +54,7 @@ public class AffMatchingResultPrinter {
                 .sorted(RESULT_COMPARATOR)
                 .collect(toList());
 
-        logger.debug("\n\t-------------------- false positives ---------------------");
+        logger.trace("-------------------- false positives ---------------------");
         
         for (SimpleAffMatchResult falsePositive : falsePositives) {
             
@@ -68,13 +68,13 @@ public class AffMatchingResultPrinter {
             
             Organization actualOrg = fetchOrganization(organizations, falsePositive.getOrganizationId());
 
-            logger.debug("Document id:     " + documentId + " \tPosition: " + affiliationPosition);
-            logger.debug("Affiliation:     " + affiliation);
-            logger.debug("Was matched to:  " + actualOrg);
+            logger.trace("Document id:     " + documentId + " \tPosition: " + affiliationPosition);
+            logger.trace("Affiliation:     " + affiliation);
+            logger.trace("Was matched to:  " + actualOrg);
             
             
             if (expectedOrgs.isEmpty()) {
-                logger.debug("Should match to: null");
+                logger.trace("Should match to: null");
             }
             for (int i=0; i<expectedOrgs.size(); ++i) {
                 
@@ -85,11 +85,10 @@ public class AffMatchingResultPrinter {
                 String shouldMatchPrefix = (i == 0) ? "Should match to: " : "and:             ";
                 String alreadyMatchedString = alreadyMatched ? "(already matched) " : "";
 
-                logger.debug(shouldMatchPrefix + alreadyMatchedString + expectedOrgs.get(i));
+                logger.trace(shouldMatchPrefix + alreadyMatchedString + expectedOrgs.get(i));
                 
             }
-            logger.debug("\n");
-        
+
         }
         
     }
@@ -110,7 +109,7 @@ public class AffMatchingResultPrinter {
                 .collect(toList());
 
 
-        logger.debug("\n\t--------------------- not matched --------------------");
+        logger.trace("--------------------- not matched --------------------");
         
         for (SimpleAffMatchResult match : notMatched) {
             
@@ -119,10 +118,9 @@ public class AffMatchingResultPrinter {
             Organization expectedOrg = fetchOrganization(organizations, match.getOrganizationId());
 
 
-            logger.debug("Document id:     " + match.getDocumentId() + " \tPosition: " + match.getAffiliationPosition());
-            logger.debug("Affiliation:     " + affiliation);
-            logger.debug("Should match to: " + expectedOrg);
-            logger.debug("\n");
+            logger.trace("Document id:     " + match.getDocumentId() + " \tPosition: " + match.getAffiliationPosition());
+            logger.trace("Affiliation:     " + affiliation);
+            logger.trace("Should match to: " + expectedOrg);
         }
         
     }
