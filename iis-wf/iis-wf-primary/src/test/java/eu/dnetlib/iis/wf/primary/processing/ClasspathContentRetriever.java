@@ -6,8 +6,8 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import eu.dnetlib.iis.wf.referenceextraction.ContentRetrieverResponse;
 import eu.dnetlib.iis.wf.referenceextraction.softwareurl.ContentRetriever;
-import eu.dnetlib.iis.wf.referenceextraction.softwareurl.ContentRetrieverResponse;
 
 /**
  * Classpath based content retriever.

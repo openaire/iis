@@ -7,6 +7,7 @@ import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.fault.FaultUtils;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrl;
+import eu.dnetlib.iis.wf.referenceextraction.ContentRetrieverResponse;
 import scala.Tuple2;
 
 /**
@@ -24,6 +25,7 @@ public class WebCrawlerUtils {
         JavaRDD<CharSequence> uniqueSoftwareUrl = documentToSoftwareUrl.map(e -> e.getSoftwareUrl()).distinct();
         
         JavaPairRDD<CharSequence, ContentRetrieverResponse> uniqueFilteredSoftwareUrlToSource = uniqueSoftwareUrl
+                .repartition(ctx.getNumberOfPartitionsForCrawling())
                 .mapToPair(e -> new Tuple2<CharSequence, ContentRetrieverResponse>(e, ctx.getContentRetriever().retrieveUrlContent(e, 
                         ctx.getConnectionTimeout(), ctx.getReadTimeout(), ctx.getMaxPageContentLength())));
 

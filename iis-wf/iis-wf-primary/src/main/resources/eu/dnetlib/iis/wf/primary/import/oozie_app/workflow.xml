@@ -66,8 +66,8 @@
 		</property>
 		<!-- import patents related -->
 		<property>
-			<name>input_patent_json</name>
-			<description>input JSON file location with patents metadata</description>
+			<name>input_patent_tsv</name>
+			<description>input TSV file location with patents basic metadata</description>
 		</property>
 		<!-- import timeouts related -->
 		<property>
@@ -653,8 +653,8 @@
 					<value>${workingDir}/import_patent/working_dir</value>
 				</property>
 				<property>
-					<name>input_json</name>
-					<value>${input_patent_json}</value>
+					<name>input_tsv</name>
+					<value>${input_patent_tsv}</value>
 				</property>
 				<property>
 					<name>output</name>

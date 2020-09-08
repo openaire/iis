@@ -1,8 +1,0 @@
-@namespace("eu.dnetlib.iis.referenceextraction.project.schemas")
-protocol IIS{
-
-    record DocumentHash {
-//      document hash value calculated as sha1 hash of 'title|abstract|text'
-        string hashValue;
-    }
-}

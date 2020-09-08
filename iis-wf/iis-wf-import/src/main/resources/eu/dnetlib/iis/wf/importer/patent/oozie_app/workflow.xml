@@ -2,8 +2,8 @@
 
     <parameters>
         <property>
-            <name>input_json</name>
-            <description>input JSON file location with patents metadata</description>
+            <name>input_tsv</name>
+            <description>input TSV file location with patents metadata</description>
         </property>
         <property>
             <name>output</name>
@@ -95,7 +95,7 @@
                 --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
                 --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
             </spark-opts>
-            <arg>-inputJSONLocation=${input_json}</arg>
+            <arg>-inputTsvLocation=${input_tsv}</arg>
             <arg>-outputPath=${output}</arg>
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
         </spark>

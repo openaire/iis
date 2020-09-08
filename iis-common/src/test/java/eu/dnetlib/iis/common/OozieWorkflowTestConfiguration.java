@@ -15,7 +15,7 @@ import com.google.common.collect.Lists;
  */
 public class OozieWorkflowTestConfiguration {
 	
-	public static final int defaultTimeoutInSeconds = 360;
+	public static final int defaultTimeoutInSeconds = 600;
 	public static final WorkflowJob.Status defaultExpectedFinishStatus = 
 			WorkflowJob.Status.SUCCEEDED;
 	

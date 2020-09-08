@@ -138,8 +138,8 @@
             <description>WoS types</description>
         </property>
         <property>
-            <name>import_patent_json</name>
-            <description>input JSON file location with patents metadata</description>
+            <name>import_patent_tsv</name>
+            <description>input TSV file location with patents basic metadata</description>
         </property>
         <!-- import timeouts related -->
         <property>
@@ -190,6 +190,10 @@
             <name>software_webcrawl_cache_location</name>
             <description>software reference extraction HDFS cache location</description>
         </property>
+        <property>
+            <name>patent_cache_location</name>
+            <description>patent HDFS cache location</description>
+        </property>
         <!-- project reference extraction related -->
         <property>
             <name>referenceextraction_project_fundingclass_blacklist_regex</name>
@@ -198,10 +202,6 @@
                 should be ignored by reference extraction algorithm.
                 Set to 'a^' by default to guarantee nothing will be matched.
             </description>
-        </property>
-        <property>
-            <name>tara_cache_root_dir</name>
-            <description>tara reference extraction cache root directory</description>
         </property>
         <!-- action set id properties -->
         <property>
@@ -329,7 +329,6 @@
         </property>
         <property>
             <name>export_patent_date_of_collection</name>
-            <value>2019-06-12T09:56</value>
             <description>date of collection of patent file formatted as yyyy-MM-dd'T'HH:mm</description>
         </property>
         <property>
@@ -496,8 +495,8 @@
                 </property>
                 <!-- import patent related -->
                 <property>
-                    <name>input_patent_json</name>
-                    <value>${import_patent_json}</value>
+                    <name>input_patent_tsv</name>
+                    <value>${import_patent_tsv}</value>
                 </property>
                 <!-- import timeouts related -->
                 <property>
@@ -696,6 +695,10 @@
                     <value>${workingDir}/exported/document_to_patent</value>
                 </property>
                 <property>
+                    <name>output_patent_metadata</name>
+                    <value>${workingDir}/exported/patent_metadata</value>
+                </property>
+                <property>
                     <name>output_report_root_path</name>
                     <value>${workingDir}/report</value>
                 </property>
@@ -774,7 +777,7 @@
                 </property>
                 <property>
                     <name>input_patent</name>
-                    <value>${workingDir}/primary_import/patent</value>
+                    <value>${workingDir}/exported/patent_metadata</value>
                 </property>
                 <!-- entities exporting modes -->
                 <property>

@@ -4,15 +4,23 @@
     <parameters>
         <property>
             <name>input_document_text</name>
-            <description>input document text</description>
+            <description>input document text with eu.dnetlib.iis.metadataextraction.schemas.DocumentText records</description>
         </property>
         <property>
             <name>input_patent</name>
-            <description>input patent</description>
+            <description>input patent with eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent records</description>
         </property>
         <property>
             <name>output_document_to_patent</name>
-            <description>output document to patent</description>
+            <description>output document to patent with eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent records</description>
+        </property>
+        <property>
+            <name>output_patent_metadata</name>
+            <description>output patent metadata with eu.dnetlib.iis.referenceextraction.patent.schemas.Patent records</description>
+        </property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
         </property>
         <property>
             <name>sparkDriverMemory</name>
@@ -48,23 +56,110 @@
             <name>spark2EventLogDir</name>
             <description>spark 2.* event log dir location</description>
         </property>
+        <property>
+            <name>number_of_emitted_files</name>
+            <value>1000</value>
+            <description>number of files created by patent metadata retriever module</description>
+        </property>
+        <property>
+            <name>patentMetadataRetrieverFacadeFactoryClassname</name>
+            <value>eu.dnetlib.iis.wf.referenceextraction.patent.OpenPatentWebServiceFacadeFactory</value>
+            <description>patent retriever factory class name</description>
+        </property>
+        <property>
+            <name>patentServiceAuthnConsumerKey</name>
+            <value>$UNDEFINED$</value>
+            <description>remote EPO endpoint API authentication consumer key, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patentServiceAuthnConsumerSecret</name>
+            <value>$UNDEFINED$</value>
+            <description>remote EPO endpoint API authentication consumer secret, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patentServiceEndpointAuthHost</name>
+            <value>$UNDEFINED$</value>
+            <description>remote EPO endpoint authentication host, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patentServiceEndpointAuthPort</name>
+            <value>443</value>
+            <description>remote EPO endpoint authentication port, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patentServiceEndpointAuthScheme</name>
+            <value>https</value>
+            <description>remote EPO endpoint authentication scheme, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patentServiceEndpointAuthUriRoot</name>
+            <value>$UNDEFINED$</value>
+            <description>remote EPO endpoint authentication URI root, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patentServiceEndpointOpsHost</name>
+            <value>$UNDEFINED$</value>
+            <description>remote EPO endpoint OPS host, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patentServiceEndpointOpsPort</name>
+            <value>443</value>
+            <description>remote EPO endpoint OPS port, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patentServiceEndpointOpsScheme</name>
+            <value>https</value>
+            <description>remote EPO endpoint OPS scheme, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patentServiceEndpointOpsUriRoot</name>
+            <value>$UNDEFINED$</value>
+            <description>remote EPO endpoint OPS URI root, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patentServiceEndpointThrottleSleepTime</name>
+            <value>10000</value>
+            <description>sleep time (in millis) to be applied when receiving 403 error code from EPO endpoint due to exhaustive querying</description>
+        </property>
+        <property>
+            <name>patentServiceEndpointRetriesCount</name>
+            <value>20</value>
+            <description>number of retries when receiving recoverable error from EPO endpoint (mostly 403)</description>
+        </property>
+        <property>
+            <name>patentLockManagerFactoryClassName</name>
+            <value>eu.dnetlib.iis.common.lock.ZookeeperLockManagerFactory</value>
+            <description>lock manager factory class name, to be used for synchronizing access to cache directory</description>
+        </property>
+        <property>
+            <name>cacheRootDir</name>
+            <description>patents retrieval cache root directory</description>
+        </property>
     </parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+            <property>
+                <name>oozie.action.sharelib.for.spark</name>
+                <value>${oozieActionShareLibForSpark2}</value>
+            </property>
+        </configuration>
+    </global>
 
     <start to="input_transformer"/>
 
     <action name="input_transformer">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            <prepare>
-                <delete path="${workingDir}/patent"/>
-            </prepare>
-
-            <configuration>
-                <property>
-                    <name>oozie.action.sharelib.for.spark</name>
-                    <value>${oozieActionShareLibForSpark2}</value>
-                </property>
-            </configuration>
-
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>patent-referenceextraction-input-transformer</name>
@@ -80,7 +175,7 @@
                 --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
             </spark-opts>
             <arg>-inputPath=${input_patent}</arg>
-            <arg>-outputPath=${workingDir}/patent</arg>
+            <arg>-outputPath=${workingDir}/patents_for_matching</arg>
         </spark>
         <ok to="sqlite_builder"/>
         <error to="fail"/>
@@ -97,7 +192,7 @@
                 </property>
                 <property>
                     <name>input_patent</name>
-                    <value>${workingDir}/patent</value>
+                    <value>${workingDir}/patents_for_matching</value>
                 </property>
                 <property>
                     <name>output_patent_db</name>
@@ -124,6 +219,99 @@
                 </property>
             </configuration>
         </sub-workflow>
+        <ok to="metadata_retriever_input_transformer"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="metadata_retriever_input_transformer">
+        <spark xmlns="uri:oozie:spark-action:0.2">
+            <master>yarn-cluster</master>
+            <mode>cluster</mode>
+            <name>patent-metadata-retriever-input-transformer</name>
+            <class>eu.dnetlib.iis.wf.referenceextraction.patent.input.PatentMetadataRetrieverInputTransformerJob</class>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
+            <spark-opts>
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
+                --conf spark.extraListeners=${spark2ExtraListeners}
+                --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
+                --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
+                --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
+            </spark-opts>
+            <arg>-inputImportedPatentPath=${input_patent}</arg>
+            <arg>-inputMatchedPatentPath=${output_document_to_patent}</arg>
+            <arg>-outputPath=${workingDir}/metadata_retriever_input</arg>
+        </spark>
+        <ok to="metadata_retriever"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="metadata_retriever">
+        <spark xmlns="uri:oozie:spark-action:0.2">
+            <master>yarn-cluster</master>
+            <mode>cluster</mode>
+            <name>patent-metadata-retriever</name>
+            <class>eu.dnetlib.iis.wf.referenceextraction.patent.PatentMetadataRetrieverJob</class>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
+            <spark-opts>
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=1
+                --driver-memory=${sparkDriverMemory}
+                --conf spark.extraListeners=${spark2ExtraListeners}
+                --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
+                --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
+                --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
+            </spark-opts>
+            <arg>-inputPath=${workingDir}/metadata_retriever_input</arg>
+            <arg>-numberOfEmittedFiles=${number_of_emitted_files}</arg>
+            <arg>-outputPath=${workingDir}/metadata_retriever_output</arg>
+            <arg>-outputFaultPath=${workingDir}/metadata_retriever_faults</arg>
+            <arg>-outputReportPath=${output_report_root_path}/patent_metadata_retrieval</arg>
+            <arg>-lockManagerFactoryClassName=${patentLockManagerFactoryClassName}</arg>
+            <arg>-cacheRootDir=${cacheRootDir}</arg>
+            <arg>-patentFacadeFactoryClassname=${patentMetadataRetrieverFacadeFactoryClassname}</arg>
+            <arg>-DauthnConsumerKey=${patentServiceAuthnConsumerKey}</arg>
+            <arg>-DauthnConsumerSecret=${patentServiceAuthnConsumerSecret}</arg>
+            <arg>-DendpointAuthHost=${patentServiceEndpointAuthHost}</arg>
+            <arg>-DendpointAuthPort=${patentServiceEndpointAuthPort}</arg>
+            <arg>-DendpointAuthScheme=${patentServiceEndpointAuthScheme}</arg>
+            <arg>-DendpointAuthUriRoot=${patentServiceEndpointAuthUriRoot}</arg>
+            <arg>-DendpointOpsHost=${patentServiceEndpointOpsHost}</arg>
+            <arg>-DendpointOpsPort=${patentServiceEndpointOpsPort}</arg>
+            <arg>-DendpointOpsScheme=${patentServiceEndpointOpsScheme}</arg>
+            <arg>-DendpointOpsUriRoot=${patentServiceEndpointOpsUriRoot}</arg>
+            <arg>-DendpointThrottleSleepTime=${patentServiceEndpointThrottleSleepTime}</arg>
+            <arg>-DendpointRetriesCount=${patentServiceEndpointRetriesCount}</arg>
+            <arg>-DendpointReadTimeout=60000</arg>
+            <arg>-DendpointConnectionTimeout=60000</arg>
+        </spark>
+        <ok to="metadata_extractor"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="metadata_extractor">
+        <spark xmlns="uri:oozie:spark-action:0.2">
+            <master>yarn-cluster</master>
+            <mode>cluster</mode>
+            <name>patent-metadata-extractor</name>
+            <class>eu.dnetlib.iis.wf.referenceextraction.patent.PatentMetadataExtractorJob</class>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-referenceextraction-${projectVersion}.jar</jar>
+            <spark-opts>
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
+                --conf spark.extraListeners=${spark2ExtraListeners}
+                --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
+                --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
+                --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
+            </spark-opts>
+            <arg>-inputImportedPatentPath=${input_patent}</arg>
+            <arg>-inputDocumentTextPath=${workingDir}/metadata_retriever_output</arg>
+            <arg>-outputPath=${output_patent_metadata}</arg>
+            <arg>-outputFaultPath=${workingDir}/metadata_extraction_faults</arg>
+            <arg>-outputReportPath=${output_report_root_path}/patent_metadata_extraction</arg>
+        </spark>
         <ok to="end"/>
         <error to="fail"/>
     </action>
