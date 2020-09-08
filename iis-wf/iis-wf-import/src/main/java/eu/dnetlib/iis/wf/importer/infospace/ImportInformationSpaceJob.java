@@ -5,6 +5,7 @@ import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.UNDEFINED_NONEMPTY
 import java.util.Objects;
 import java.util.Optional;
 
+import eu.dnetlib.iis.wf.importer.infospace.truncator.DocumentMetadataAvroTruncator;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -134,6 +135,7 @@ public class ImportInformationSpaceJob {
                     params.skipDeletedByInference, params.trustLevelThreshold, params.inferenceProvenanceBlacklist);
             
             OafEntityToAvroConverter<Result, DocumentMetadata> documentConverter = new DocumentMetadataConverter(dataInfoBasedApprover);
+            DocumentMetadataAvroTruncator documentMetadataAvroTruncator = new DocumentMetadataAvroTruncator();
             OafEntityToAvroConverter<Result, DataSetReference>  datasetConverter = new DatasetMetadataConverter(dataInfoBasedApprover);
             OafEntityToAvroConverter<Organization, eu.dnetlib.iis.importer.schemas.Organization> organizationConverter = new OrganizationConverter();
             OafEntityToAvroConverter<Project, eu.dnetlib.iis.importer.schemas.Project> projectConverter = new ProjectConverter();
@@ -165,8 +167,9 @@ public class ImportInformationSpaceJob {
             filteredDataset.persist(CACHE_STORAGE_DEFAULT_LEVEL);
 
             JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> docMeta = parseToDocMetaAvro(filteredDataset,
-                    sourcePublication, sourceSoftware, sourceOtherResearchProduct, dataInfoBasedApprover, documentConverter);
-            JavaRDD<eu.dnetlib.iis.importer.schemas.DataSetReference> dataset = parseResultToAvro(filteredDataset, datasetConverter); 
+                    sourcePublication, sourceSoftware, sourceOtherResearchProduct, dataInfoBasedApprover, documentConverter,
+                    documentMetadataAvroTruncator);
+            JavaRDD<eu.dnetlib.iis.importer.schemas.DataSetReference> dataset = parseResultToAvro(filteredDataset, datasetConverter);
             JavaRDD<eu.dnetlib.iis.importer.schemas.Project> project = filterAndParseToAvro(sourceProject, dataInfoBasedApprover, projectConverter);
             JavaRDD<eu.dnetlib.iis.importer.schemas.Organization> organization = filterAndParseToAvro(sourceOrganization, dataInfoBasedApprover, organizationConverter);
             
@@ -186,7 +189,8 @@ public class ImportInformationSpaceJob {
             }
         }
     }
-    
+
+    //TODO: add javadoc description of truncation
     /**
      * Parses given set of RDDs conveying various {@link Result} entities into a single RDD with {@link DocumentMetadata} records.
      */
@@ -195,7 +199,9 @@ public class ImportInformationSpaceJob {
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Publication> sourcePublication,
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Software> sourceSoftware,
             JavaRDD<eu.dnetlib.dhp.schema.oaf.OtherResearchProduct> sourceOtherResearchProduct,
-            ResultApprover resultApprover, OafEntityToAvroConverter<Result, DocumentMetadata> documentConverter) {
+            ResultApprover resultApprover,
+            OafEntityToAvroConverter<Result, DocumentMetadata> documentConverter,
+            DocumentMetadataAvroTruncator documentMetadataTruncator) {
         JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> publicationDocMeta = filterAndParseResultToAvro(
                 sourcePublication, resultApprover, documentConverter);
 
@@ -208,7 +214,12 @@ public class ImportInformationSpaceJob {
         JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> datasetDocMeta = parseResultToAvro(
                 filteredDataset, documentConverter);
 
-        return publicationDocMeta.union(softwareDocMeta).union(orpDocMeta).union(datasetDocMeta);
+        JavaRDD<DocumentMetadata> docMeta = publicationDocMeta
+                .union(softwareDocMeta)
+                .union(orpDocMeta)
+                .union(datasetDocMeta);
+
+        return truncateDocMeta(docMeta, documentMetadataTruncator);
     }
     
     /**
@@ -251,6 +262,12 @@ public class ImportInformationSpaceJob {
             String subRelType, String relClass) {
         return source.filter(x -> acceptRelation(x, relType, subRelType, relClass))
                 .filter(x -> resultApprover.approve(x)).map(x -> relationConverter.convert(x));
+    }
+
+    //TODO: add javadoc
+    private static JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> truncateDocMeta(JavaRDD<DocumentMetadata> docMeta,
+                                                                                             DocumentMetadataAvroTruncator documentMetadataTruncator){
+        return docMeta.map(documentMetadataTruncator::truncate);
     }
 
     /**
