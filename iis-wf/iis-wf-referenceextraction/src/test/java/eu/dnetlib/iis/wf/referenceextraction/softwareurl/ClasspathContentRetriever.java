@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
+import eu.dnetlib.iis.wf.referenceextraction.ContentRetrieverResponse;
+
 /**
  * Classpath based content retriever.
  * Relies on mappings between url and classpath location.

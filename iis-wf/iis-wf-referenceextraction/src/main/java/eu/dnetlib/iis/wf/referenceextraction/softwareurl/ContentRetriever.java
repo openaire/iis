@@ -2,6 +2,8 @@ package eu.dnetlib.iis.wf.referenceextraction.softwareurl;
 
 import java.io.Serializable;
 
+import eu.dnetlib.iis.wf.referenceextraction.ContentRetrieverResponse;
+
 /**
  * Content retriever module obtaining page content for given url.
  * 

@@ -38,10 +38,10 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.junit.Rule;
 import org.junit.Test;
@@ -78,7 +78,7 @@ public class SoftwareHeritageOriginsImporterTest {
     public TemporaryFolder tempFolder = new TemporaryFolder();
     
     @Mock
-    private HttpClient httpClient;
+    private CloseableHttpClient httpClient;
     
     @Mock
     private DataFileWriter<SoftwareHeritageOrigin> originWriter;
@@ -144,7 +144,7 @@ public class SoftwareHeritageOriginsImporterTest {
     @Test
     public void testPrepareNextRequestUrlNotNull() throws Exception {
         // given
-        HttpResponse httpResponse = mock(HttpResponse.class);
+        CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
         Header header = new BasicHeader("Link", "</api/next>; rel=\"next\"");
         when(httpResponse.getAllHeaders()).thenReturn(new Header[] {header});
         
@@ -160,7 +160,7 @@ public class SoftwareHeritageOriginsImporterTest {
     @Test
     public void testPrepareNextRequestUrlIsNull() throws Exception {
         // given
-        HttpResponse httpResponse = mock(HttpResponse.class);
+        CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
         when(httpResponse.getAllHeaders()).thenReturn(null);
         
         // execute
@@ -235,7 +235,7 @@ public class SoftwareHeritageOriginsImporterTest {
         
         // assert
         assertNotNull(result);
-        assertEquals("rootUriPart?origin_from=1&origin_count=10", result);
+        assertEquals("rootUriPart?page_token=1&origin_count=10", result);
     }
     
     @Test
@@ -275,7 +275,7 @@ public class SoftwareHeritageOriginsImporterTest {
     public void testRunWithoutNextHeader() throws Exception {
         // given
         SoftwareHeritageOriginsImporter importer = initializeImporterParams("api/origins", "somehost.com", "https", "8080", "1");
-        HttpResponse httpResponse = mock(HttpResponse.class);
+        CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
         when(httpClient.execute(any(HttpHost.class),any(HttpGet.class))).thenReturn(httpResponse);
         StatusLine statusLine = mock(StatusLine.class);
         when(httpResponse.getStatusLine()).thenReturn(statusLine);
@@ -308,8 +308,8 @@ public class SoftwareHeritageOriginsImporterTest {
         // given
         SoftwareHeritageOriginsImporter importer = initializeImporterParams("api/origins", "somehost.com", "https", "8080", "1");
         
-        HttpResponse httpResponse = mock(HttpResponse.class);
-        HttpResponse httpResponse2 = mock(HttpResponse.class);
+        CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
+        CloseableHttpResponse httpResponse2 = mock(CloseableHttpResponse.class);
         when(httpClient.execute(any(HttpHost.class),any(HttpGet.class))).thenReturn(httpResponse, httpResponse2);
 
         StatusLine statusLine = mock(StatusLine.class);
@@ -369,8 +369,8 @@ public class SoftwareHeritageOriginsImporterTest {
         SoftwareHeritageOriginsImporter importer = initializeImporterParams("api/origins", "somehost.com", "https", "8080", "1");
         this.parameters.put(IMPORT_SOFTWARE_HERITAGE_ENDPOINT_RATELIMIT_DELAY, "1");
         
-        HttpResponse httpResponse = mock(HttpResponse.class);
-        HttpResponse httpResponse2 = mock(HttpResponse.class);
+        CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
+        CloseableHttpResponse httpResponse2 = mock(CloseableHttpResponse.class);
         when(httpClient.execute(any(HttpHost.class),any(HttpGet.class))).thenReturn(httpResponse, httpResponse2);
 
         Gson gson = new Gson();
@@ -426,8 +426,8 @@ public class SoftwareHeritageOriginsImporterTest {
         SoftwareHeritageOriginsImporter importer = initializeImporterParams("api/origins", "somehost.com", "https", "8080", "1");
         this.parameters.put(IMPORT_SOFTWARE_HERITAGE_ENDPOINT_RATELIMIT_DELAY, "1");
         
-        HttpResponse httpResponse = mock(HttpResponse.class);
-        HttpResponse httpResponse2 = mock(HttpResponse.class);
+        CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
+        CloseableHttpResponse httpResponse2 = mock(CloseableHttpResponse.class);
         when(httpClient.execute(any(HttpHost.class),any(HttpGet.class))).thenReturn(httpResponse, httpResponse2);
 
         Gson gson = new Gson();
@@ -482,7 +482,7 @@ public class SoftwareHeritageOriginsImporterTest {
         SoftwareHeritageOriginsImporter importer = initializeImporterParams("api/origins", "somehost.com", "https", "8080", "1");
         this.parameters.put(IMPORT_SOFTWARE_HERITAGE_ENDPOINT_RETRY_COUNT, "0");
         
-        HttpResponse httpResponse = mock(HttpResponse.class);
+        CloseableHttpResponse httpResponse = mock(CloseableHttpResponse.class);
         when(httpClient.execute(any(HttpHost.class),any(HttpGet.class))).thenReturn(httpResponse);
         
         StatusLine statusLine = mock(StatusLine.class);
@@ -616,7 +616,7 @@ public class SoftwareHeritageOriginsImporterTest {
             }
             
             @Override
-            protected HttpClient buildHttpClient(int connectionTimeout, int readTimeout) {
+            protected CloseableHttpClient buildHttpClient(int connectionTimeout, int readTimeout) {
                 return httpClient;
             }
             

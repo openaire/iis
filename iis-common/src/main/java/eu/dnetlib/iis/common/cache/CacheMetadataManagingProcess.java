@@ -19,6 +19,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
@@ -136,25 +137,30 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
         String mode = parameters.get(PARAM_MODE);
         Properties props = new Properties();
         
+        String cacheDirParamValue = parameters.get(PARAM_CACHE_DIR);
+        Preconditions.checkNotNull(cacheDirParamValue, "cache directory location not provided! "
+                + "'" + PARAM_CACHE_DIR + "' parameter is missing!");
+        Path cacheDir = new Path(cacheDirParamValue);
+        
         switch(mode) {
             case MODE_READ_CURRENT_ID: {
-                props.setProperty(OUTPUT_PROPERTY_CACHE_ID, getExistingCacheId(conf, parameters.get(PARAM_CACHE_DIR)));
+                props.setProperty(OUTPUT_PROPERTY_CACHE_ID, getExistingCacheId(conf, cacheDir));
                 break;
             }
             case MODE_GENERATE_NEW_ID: {
-                props.setProperty(OUTPUT_PROPERTY_CACHE_ID, generateNewCacheId(conf, parameters.get(PARAM_CACHE_DIR)));
+                props.setProperty(OUTPUT_PROPERTY_CACHE_ID, generateNewCacheId(conf, cacheDir));
                 break;
             }
             case MODE_WRITE_ID: {
-                writeCacheId(conf, parameters.get(PARAM_CACHE_DIR), parameters.get(PARAM_ID));
+                writeCacheId(conf, cacheDir, parameters.get(PARAM_ID));
                 break;
             }
             case MODE_READ_META: {
-                readMeta(conf, parameters.get(PARAM_CACHE_DIR), props);
+                readMeta(conf, cacheDir, props);
                 break;
             }
             case MODE_WRITE_META: {
-                writeMeta(conf, parameters.get(PARAM_CACHE_DIR), parameters.get(PARAM_ID), parameters.get(PARAM_NEXT_RECORD_INDEX));
+                writeMeta(conf, cacheDir, parameters.get(PARAM_ID), parameters.get(PARAM_NEXT_RECORD_INDEX));
                 break;
             }
             default: {
@@ -171,96 +177,73 @@ public class CacheMetadataManagingProcess implements eu.dnetlib.iis.common.java.
             os.close(); 
         }   
     }
-
-    public String getExistingCacheId(Configuration conf, String cacheDir) throws IOException {
-        if (StringUtils.isNotBlank(cacheDir)) {
-            CacheMeta cacheMeta = readCacheMeta(fsFacadeFactory.create(conf), 
-                    new Path(cacheDir, DEFAULT_METAFILE_NAME));
-            if (cacheMeta != null) {
-                return cacheMeta.getCurrentCacheId();
-            } else {
-                return UNDEFINED;
-            }
+    
+    public String getExistingCacheId(Configuration conf, Path cacheDir) throws IOException {
+        CacheMeta cacheMeta = readCacheMeta(fsFacadeFactory.create(conf), 
+                new Path(cacheDir, DEFAULT_METAFILE_NAME));
+        if (cacheMeta != null) {
+            return cacheMeta.getCurrentCacheId();
         } else {
-            throw new RuntimeException("cache directory location not provided! "
-                    + "'" + PARAM_CACHE_DIR + "' parameter is missing!");
+            return UNDEFINED;
         }
     }
     
-    public Properties readMeta(Configuration conf, String cacheDir, Properties props) throws IOException {
-        if (StringUtils.isNotBlank(cacheDir)) {
-            CacheMeta cacheMeta = readCacheMeta(fsFacadeFactory.create(conf), 
-                    new Path(cacheDir, DEFAULT_METAFILE_NAME));
-            if (cacheMeta != null) {
-                props.setProperty(OUTPUT_PROPERTY_CACHE_ID, cacheMeta.getCurrentCacheId());
-                props.setProperty(OUTPUT_PROPERTY_NEXT_RECORD_INDEX, cacheMeta.getNextRecordIndex());
-            } else {
-                props.setProperty(OUTPUT_PROPERTY_CACHE_ID, UNDEFINED);
-                props.setProperty(OUTPUT_PROPERTY_NEXT_RECORD_INDEX, UNDEFINED);
-            }
-            return props;
+    public Properties readMeta(Configuration conf, Path cacheDir, Properties props) throws IOException {
+        CacheMeta cacheMeta = readCacheMeta(fsFacadeFactory.create(conf), new Path(cacheDir, DEFAULT_METAFILE_NAME));
+        if (cacheMeta != null) {
+            props.setProperty(OUTPUT_PROPERTY_CACHE_ID, cacheMeta.getCurrentCacheId());
+            props.setProperty(OUTPUT_PROPERTY_NEXT_RECORD_INDEX, cacheMeta.getNextRecordIndex());
         } else {
-            throw new RuntimeException("cache directory location not provided! "
-                    + "'" + PARAM_CACHE_DIR + "' parameter is missing!");
+            props.setProperty(OUTPUT_PROPERTY_CACHE_ID, UNDEFINED);
+            props.setProperty(OUTPUT_PROPERTY_NEXT_RECORD_INDEX, UNDEFINED);
+        }
+        return props;
+    }
+    
+    public String generateNewCacheId(Configuration conf, Path cacheDir) throws IOException {
+        CacheMeta cachedMeta = readCacheMeta(fsFacadeFactory.create(conf), new Path(cacheDir, DEFAULT_METAFILE_NAME));
+        if (cachedMeta != null) {
+            int currentIndex = convertCacheIdToInt(cachedMeta.getCurrentCacheId());
+            return convertIntToCacheId(currentIndex + 1);
+        } else {
+            // initializing cache meta
+            return convertIntToCacheId(1);
         }
     }
     
-    public String generateNewCacheId(Configuration conf, String cacheDir) throws IOException {
-        if (StringUtils.isNotBlank(cacheDir)) {
-            CacheMeta cachedMeta = readCacheMeta(fsFacadeFactory.create(conf), 
-                    new Path(cacheDir, DEFAULT_METAFILE_NAME));
-            if (cachedMeta != null) {
-                int currentIndex = convertCacheIdToInt(cachedMeta.getCurrentCacheId());
-                return convertIntToCacheId(currentIndex+1);
-            } else {
-//              initializing cache meta
-                return convertIntToCacheId(1);
-            }
-        } else {
-            throw new RuntimeException("cache directory location not provided! "
-                    + "'" + PARAM_CACHE_DIR + "' parameter is missing!");
-        }
-    }
-    
-    public void writeCacheId(Configuration conf, String cacheDir, String cacheId) throws IOException {
+    public void writeCacheId(Configuration conf, Path cacheDir, String cacheId) throws IOException {
         writeMeta(conf, cacheDir, cacheId, null);
     }
     
-    public void writeMeta(Configuration conf, String cacheDir, String cacheId, String nextRecordIndex) throws IOException {
-        if (StringUtils.isNotBlank(cacheDir)) {
-            if (StringUtils.isNotBlank(cacheId)) {
+    public void writeMeta(Configuration conf, Path cacheDir, String cacheId, String nextRecordIndex) throws IOException {
+        if (StringUtils.isNotBlank(cacheId)) {
 
-                FileSystemFacade fs = fsFacadeFactory.create(conf);
-                
-                Path cacheFilePath = new Path(cacheDir, DEFAULT_METAFILE_NAME);
-                
-                CacheMeta cachedMeta = getExistingCacheMetaOrCreateNewOne(cacheId, fs, cacheFilePath);
-                if (cacheId != null) {
-                    cachedMeta.setCurrentCacheId(cacheId);    
-                }
-                if (nextRecordIndex != null) {
-                    cachedMeta.setNextRecordIndex(nextRecordIndex); 
-                }
-                
-                Gson gson = new Gson();
-                OutputStream outputStream = fs.create(cacheFilePath, true);
-                JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, DEFAULT_ENCODING));
-                try {
-                    gson.toJson(cachedMeta, CacheMeta.class, writer);
-                } finally {
-                    writer.close();
-                    outputStream.close();
+            FileSystemFacade fs = fsFacadeFactory.create(conf);
+
+            Path cacheFilePath = new Path(cacheDir, DEFAULT_METAFILE_NAME);
+
+            CacheMeta cachedMeta = getExistingCacheMetaOrCreateNewOne(cacheId, fs, cacheFilePath);
+            if (cacheId != null) {
+                cachedMeta.setCurrentCacheId(cacheId);
+            }
+            if (nextRecordIndex != null) {
+                cachedMeta.setNextRecordIndex(nextRecordIndex);
+            }
+
+            Gson gson = new Gson();
+            OutputStream outputStream = fs.create(cacheFilePath, true);
+            JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, DEFAULT_ENCODING));
+            try {
+                gson.toJson(cachedMeta, CacheMeta.class, writer);
+            } finally {
+                writer.close();
+                outputStream.close();
 //                  changing file permission to +rw to allow writing for different users
-                    fs.changePermissions(conf, FsShellPermissions.Op.CHMOD, 
-                            false, "0666", cacheFilePath.toString());
-                }
-            } else {
-                throw new RuntimeException("unable to write new cache id in meta.json file, "
-                        + "no '" + PARAM_ID + "' input parameter provied!");
+                fs.changePermissions(conf, FsShellPermissions.Op.CHMOD, false, "0666", cacheFilePath.toString());
             }
         } else {
-            throw new RuntimeException("cache directory location not provided! "
-                    + "'" + PARAM_CACHE_DIR + "' parameter is missing!");
+            throw new RuntimeException("unable to write new cache id in meta.json file, " + "no '" + PARAM_ID
+                    + "' input parameter provied!");
         }
     }
     

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="/3.2/style/exchange.xsl"?>
+<ops:world-patent-data xmlns="http://www.epo.org/exchange" xmlns:ops="http://ops.epo.org" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <exchange-documents>
+        <exchange-document system="ops.epo.org" family-id="8239797" country="WO" doc-number="2013189646" kind="A1">
+            <bibliographic-data>
+                <publication-reference>
+                    <document-id document-id-type="docdb">
+                        <country>WO</country>
+                        <doc-number>2013189646</doc-number>
+                        <kind>A1</kind>
+                        <date>20000101</date>
+                    </document-id>
+                    <document-id document-id-type="epodoc">
+                        <doc-number>WO2013189646</doc-number>
+                        <date>20000120</date>
+                    </document-id>
+                </publication-reference>
+                <classification-ipc>
+                    <text>C08F2/20</text>
+                </classification-ipc>
+                <application-reference doc-id="15590611">
+                    <document-id document-id-type="epodoc">
+                        <doc-number>WO2000EP00011</doc-number>
+                        <date>20000106</date>
+                    </document-id>
+                </application-reference>
+                <parties>
+                    <applicants>
+                        <applicant sequence="1" data-format="epodoc">
+                            <applicant-name>
+                                <name>Jan Nowak [PL]</name>
+                            </applicant-name>
+                        </applicant>
+                        <applicant sequence="1" data-format="original">
+                            <applicant-name>
+                                <name>Jan Nowak</name>
+                            </applicant-name>
+                        </applicant>
+                    </applicants>
+                    <inventors>
+                        <inventor sequence="1" data-format="epodoc">
+                            <inventor-name>
+                                <name>Jan Nowak [PL]</name>
+                            </inventor-name>
+                        </inventor>
+                        <inventor sequence="1" data-format="original">
+                            <inventor-name>
+                                <name>Jan Nowak</name>
+                            </inventor-name>
+                        </inventor>
+                    </inventors>
+                </parties>
+                <invention-title lang="en">The great invention</invention-title>
+            </bibliographic-data>
+            <abstract lang="en">
+                <p>This is abstract</p>
+            </abstract>
+        </exchange-document>
+    </exchange-documents>
+</ops:world-patent-data>

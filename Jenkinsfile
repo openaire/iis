@@ -11,25 +11,21 @@ pipeline {
     }
 
     stages {
-        stage("Build") {
+        stage("Package") {
             steps {
-                configFileProvider([configFile(fileId: "83303a32-933f-4cc9-8f6d-5cf2e85ac68d", variable: 'ENV_CONFIG')]) {
-                    load "${ENV_CONFIG}"
+                configFileProvider([configFile(fileId: "iis-build-properties", variable: 'BUILD_PROPERTIES')]) {
+                    load "${BUILD_PROPERTIES}"
                     withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "$JDK_VERSION" }",
-                     "PATH+MAVEN=${tool type: 'maven', name: "$MAVEN_VERSION"}/bin:${env.JAVA_HOME}/bin"]) {
-                        sh "mvn clean compile"
-                    }
-                }
-            }
-        }
-
-        stage("Test") {
-            steps {
-                configFileProvider([configFile(fileId: "83303a32-933f-4cc9-8f6d-5cf2e85ac68d", variable: 'ENV_CONFIG')]) {
-                    load "${ENV_CONFIG}"
-                    withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "$JDK_VERSION" }",
-                     "PATH+MAVEN=${tool type: 'maven', name: "$MAVEN_VERSION"}/bin:${env.JAVA_HOME}/bin"]) {
-                        sh "mvn test"
+                             "PATH+MAVEN=${tool type: 'maven', name: "$MAVEN_VERSION"}/bin:${env.JAVA_HOME}/bin"]) {
+                        withSonarQubeEnv('sonar.ceon.pl') {
+                            sh '''
+                                mvn clean package \
+                                    -DskipITs \
+                                    -Djava.net.preferIPv4Stack=true \
+                                    $SONAR_MAVEN_GOAL \
+                                    -Dsonar.host.url=$SONAR_HOST_URL
+                            '''
+                        }
                     }
                 }
             }
@@ -41,15 +37,15 @@ pipeline {
             warnings canComputeNew: false, canResolveRelativePaths: false, categoriesPattern: '', consoleParsers: [[parserName: 'Maven'], [parserName: 'Java Compiler (javac)']], defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', messagesPattern: '', unHealthy: ''
             junit "**/target/surefire-reports/*.xml"
             jacoco()
+            cleanWs()
         }
 
         failure {
-            script {
-                def emails = sh(returnStdout: true, script: "git --no-pager log ${GIT_PREVIOUS_SUCCESSFUL_COMMIT}..${GIT_COMMIT} -s --format=%ae|sort -u").trim().split("\\n")
-                emails.each { email ->
-                    step([$class: 'Mailer', notifyEveryUnstableBuild: true, recipients: "$email", sendToIndividuals: true])
-                }
-            }
+            emailext (
+                subject: "Build failed in Jenkins: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: "Failed job '${env.JOB_NAME}' #${env.BUILD_NUMBER}: check console output at ${env.BUILD_URL}.",
+                recipientProviders:  [developers()]
+            )
         }
     }
 }

@@ -122,9 +122,9 @@ group by docid, id
 
 union all
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8,'textsnippet',j2s(prev,middle,next)) as C1, docid, id, fundingclass1, grantid from (
-select docid,id,fundingclass1,grantid,prev,middle,next from (select docid,upper(regexpr("(\w+.*\d+)",middle)) as match,id,grantid,middle,fundingclass1,grantid,prev,middle,next  from (
+select docid,id,fundingclass1,grantid,prev,middle,next from (select docid,id,grantid,middle,fundingclass1,grantid,prev,middle,next  from (
 setschema 'docid,prev,middle,next' select c1 as docid,textwindow2s(c2,15,1,5,"(?:\bANR-\d{2}-\w{4}-\d{4}\b)|\b(?:06|07|10|11|12|13|14|15|16|17|18|19)\-\w{4}\-\d{4}(?:\-\d{2})*\b|(.+\/\w+\/\d{4}\W*\Z)|(\d{4})|(\d{2}-\d{2}-\d{5})|(\d{6,7})|(\w{2}\d{4,})|(\w+\/\w+\/\w+)|(\w*\/[\w,\.]*\/\w*)|(?:\d{3}\-\d{7}\-\d{4})|(?:(?:\b|U)IP\-2013\-11\-\d{4}\b)|(\b(?:(?:(?:\w{2,3})(?:\.|\-)(?:\w{2,3})(?:\.|\-)(?:\w{2,3}))|(?:\d+))\b)|(?:\b\d{7,8}\b)|(?:\b\d{3}[A-Z]\d{3}\b)|(?:[A-Z]{2,3}.+)|(?:\d{4}\-\w+\-\w+(\-\d+)*)|(?:\d{4}\-\d{2,})") from (setschema 'c1,c2' select * from pubs where c2 is not null) ) , grants where 
-(match = grantid and (fundingclass1 in ("FCT","ARC"))) or 
+(regexpr("((?:[\w,\.\-]*\/)+\d+)",middle) = grantid and (fundingclass1 in ("FCT","ARC"))) or 
 (regexpr("(\d{5,7})",middle)=grantid and fundingclass1 = "NHMRC" and regexprmatches("nhmrc|medical research|national health medical",filterstopwords(normalizetext(lower(j2s(prev,middle,next)))))) or 
 (regexpr("(\w*\/[\w,\.]*\/\w*)",middle)=grantid and fundingclass1 = "SFI") or
 (regexpr("\b((?:06|07|10|11|12|13|14|15|16|17|18|19)\-\w{4}\-\d{4}(?:\-\d{2})*)\b",middle)=grantid and fundingclass1 = "ANR") or

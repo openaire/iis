@@ -124,10 +124,6 @@
                 Set to 'a^' by default to guarantee nothing will be matched.
             </description>
         </property>
-        <property>
-            <name>tara_cache_root_dir</name>
-            <description>tara reference extraction cache root directory</description>
-        </property>
         <!-- software reference extraction related -->
         <property>
             <name>software_webcrawl_cache_location</name>
@@ -347,7 +343,35 @@
             <description>DocumentText datastore block size affecting number of tasks issued by each text mining module.
             Introduced to prevent long lasting tasks from occupying cluster resources for too long.</description>
         </property>
-
+        <!-- patents remote EPO endpoint related -->
+        <property>
+            <name>patentServiceAuthnConsumerKey</name>
+            <description>remote EPO endpoint API authentication consumer key, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patentServiceAuthnConsumerSecret</name>
+            <description>remote EPO endpoint API authentication consumer secret, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patentServiceEndpointAuthHost</name>
+            <description>remote EPO endpoint authentication host, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patentServiceEndpointAuthUriRoot</name>
+            <description>remote EPO endpoint authentication URI root, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patentServiceEndpointOpsHost</name>
+            <description>remote EPO endpoint OPS host, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patentServiceEndpointOpsUriRoot</name>
+            <description>remote EPO endpoint OPS URI root, required by OpenPatentWebServiceFacadeFactory</description>
+        </property>
+        <property>
+            <name>patent_cache_location</name>
+            <description>patent HDFS cache location</description>
+        </property>
         <!-- output ports -->
         <property>
             <name>output_merged_metadata</name>
@@ -405,6 +429,11 @@
             <name>output_document_to_patent</name>
             <description>patent reference extraction output directory</description>
         </property>
+        <property>
+            <name>output_patent_metadata</name>
+            <description>patent metadata retrived from EPO endpoint output directory</description>
+        </property>
+        
         <property>
             <name>output_report_root_path</name>
             <description>base directory for storing reports</description>
@@ -655,8 +684,12 @@
                     <value>${input_project}</value>
                 </property>
                 <property>
-                    <name>output</name>
-                    <value>${workingDir}/transformers_project_filter/output</value>
+                    <name>output_approved</name>
+                    <value>${workingDir}/transformers_project_filter/output_approved</value>
+                </property>
+                <property>
+                    <name>output_rejected</name>
+                    <value>${workingDir}/transformers_project_filter/output_rejected</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -679,7 +712,7 @@
                 </property>
                 <property>
                     <name>input_project</name>
-                    <value>${workingDir}/transformers_project_filter/output</value>
+                    <value>${workingDir}/transformers_project_filter/output_approved</value>
                 </property>
                 <property>
                     <name>input_document_metadata</name>
@@ -1102,6 +1135,10 @@
                     <name>input_document_text</name>
                     <value>${workingDir}/transformers_common_union_document_text/out</value>
                 </property>
+                <property>
+                    <name>cacheRootDir</name>
+                    <value>${patent_cache_location}</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="joining" />
@@ -1112,7 +1149,9 @@
         <java>
             <prepare>
                 <delete path="${nameNode}${output_document_to_patent}" />
+                <delete path="${nameNode}${output_patent_metadata}" />
                 <mkdir path="${nameNode}${output_document_to_patent}" />
+                <mkdir path="${nameNode}${output_patent_metadata}" />
             </prepare>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
@@ -1120,7 +1159,12 @@
                 eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent,
                 eu/dnetlib/iis/common/data/empty.json}
             </arg>
+            <arg>-C{patent_metadata,
+                eu.dnetlib.iis.referenceextraction.patent.schemas.Patent,
+                eu/dnetlib/iis/common/data/empty.json}
+            </arg>
             <arg>-Oreferenceextraction_patent=${output_document_to_patent}</arg>
+            <arg>-Opatent_metadata=${output_patent_metadata}</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />

@@ -55,9 +55,9 @@
             <description>number of files created by webcrawler module</description>
         </property>
         <property>
-            <name>webcrawlMaxExecutors</name>
+            <name>webcrawlNumberOfPartitionsForCrawling</name>
             <value>4</value>
-            <description>maximum number of executors conducting webcrawl operations</description>
+            <description>number of partitions to be used by executors conducting webcrawl operations</description>
         </property>
         <property>
             <name>sparkDriverMemory</name>
@@ -206,7 +206,6 @@
                 --executor-memory=${sparkExecutorMemory}
                 --executor-cores=1
                 --driver-memory=${sparkDriverMemory}
-                --conf spark.dynamicAllocation.maxExecutors=${webcrawlMaxExecutors}
                 --conf spark.extraListeners=${spark2ExtraListeners}
                 --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
                 --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
@@ -224,6 +223,7 @@
             <arg>-readTimeout=${webcrawlReadTimeout}</arg>
             <arg>-maxPageContentLength=${webcrawlMaxPageContentLength}</arg>
             <arg>-numberOfEmittedFiles=${webcrawlNumberOfEmittedFiles}</arg>
+            <arg>-numberOfPartitionsForCrawling=${webcrawlNumberOfPartitionsForCrawling}</arg>
             
             <arg>-cacheRootDir=${cacheRootDir}</arg>
         </spark>

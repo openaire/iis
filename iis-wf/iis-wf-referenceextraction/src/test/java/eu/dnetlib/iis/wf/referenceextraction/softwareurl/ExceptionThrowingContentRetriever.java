@@ -1,5 +1,7 @@
 package eu.dnetlib.iis.wf.referenceextraction.softwareurl;
 
+import eu.dnetlib.iis.wf.referenceextraction.ContentRetrieverResponse;
+
 /**
  * Content retriever throwing {@link RuntimeException} for each call. 
  * To be used for testing caching functionality where content retrieval should not be triggered.

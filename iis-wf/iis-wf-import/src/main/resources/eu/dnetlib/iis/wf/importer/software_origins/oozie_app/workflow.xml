@@ -126,6 +126,12 @@
 				<delete path="${nameNode}${workingDir}/imported" />
                 <delete path="${nameNode}${output}" />
 			</prepare>
+			<configuration>
+				<property>
+				    <name>oozie.launcher.mapreduce.user.classpath.first</name>
+				    <value>true</value>
+				</property>
+			</configuration>
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.wf.importer.software.origins.SoftwareHeritageOriginsImporter</arg>
             <arg>-Pimport.software.heritage.endpoint.host=${endpointHost}</arg>

@@ -65,14 +65,6 @@
                     <value>${workingDir}/producer/document_metadata</value>
                 </property>
                 <property>
-                    <name>tara_lock_manager_factory_class_name</name>
-                    <value>eu.dnetlib.iis.wf.referenceextraction.LockManagerFactoryMock</value>
-                </property>
-                <property>
-                    <name>tara_cache_root_dir</name>
-                    <value>${workingDir}/cache/tara</value>
-                </property>
-                <property>
                     <name>output_document_to_project</name>
                     <value>${workingDir}/referenceextraction_project/document_to_project</value>
                 </property>
@@ -98,18 +90,8 @@
                 eu.dnetlib.iis.common.schemas.ReportEntry,
                 eu/dnetlib/iis/wf/referenceextraction/project/data/report_empty.json}
             </arg>
-            <arg>-C{tara_document_hash_to_project,
-                eu.dnetlib.iis.referenceextraction.project.schemas.DocumentHashToProject,
-                eu/dnetlib/iis/wf/referenceextraction/project/data/empty.json}
-            </arg>
-            <arg>-C{tara_document_hash,
-                eu.dnetlib.iis.referenceextraction.project.schemas.DocumentHash,
-                eu/dnetlib/iis/wf/referenceextraction/project/main/sampletest_without_references/data/tara_cache_output/document_hash.json}
-            </arg>
             <arg>-Idocument_to_project=${workingDir}/referenceextraction_project/document_to_project</arg>
             <arg>-Ireport_funder=${workingDir}/report/document_to_project_by_funder</arg>
-            <arg>-Itara_document_hash_to_project=${workingDir}/cache/tara/000001/documentHashToProject</arg>
-            <arg>-Itara_document_hash=${workingDir}/cache/tara/000001/documentHash</arg>
         </java>
 		<ok to="end" />
 		<error to="fail" />

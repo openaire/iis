@@ -30,12 +30,12 @@
                 eu.dnetlib.iis.metadataextraction.schemas.DocumentText,
                 eu/dnetlib/iis/wf/referenceextraction/patent/data/document_text.json}
             </arg>
-            <arg>-C{patent,
-                eu.dnetlib.iis.referenceextraction.patent.schemas.Patent,
-                eu/dnetlib/iis/wf/referenceextraction/patent/data/patent.json}
+            <arg>-C{imported_patent,
+                eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent,
+                eu/dnetlib/iis/wf/referenceextraction/patent/data/imported_patent.json}
             </arg>
             <arg>-Odocument_text=${workingDir}/producer/document_text</arg>
-            <arg>-Opatent=${workingDir}/producer/patent</arg>
+            <arg>-Oimported_patent=${workingDir}/producer/imported_patent</arg>
         </java>
         <ok to="referenceextraction_patent"/>
         <error to="fail"/>
@@ -51,20 +51,36 @@
                     <value>${workingDir}/referenceextraction_patent/working_dir</value>
                 </property>
                 <property>
+                    <name>patentMetadataRetrieverFacadeFactoryClassname</name>
+                    <value>eu.dnetlib.iis.wf.referenceextraction.patent.ClassPathBasedPatentServiceFacadeFactory</value>
+                </property>
+                <property>
+                    <name>patentLockManagerFactoryClassName</name>
+                    <value>eu.dnetlib.iis.wf.referenceextraction.LockManagerFactoryMock</value>
+                </property>
+                <property>
                     <name>input_document_text</name>
                     <value>${workingDir}/producer/document_text</value>
                 </property>
                 <property>
                     <name>input_patent</name>
-                    <value>${workingDir}/producer/patent</value>
+                    <value>${workingDir}/producer/imported_patent</value>
                 </property>
                 <property>
                     <name>output_document_to_patent</name>
                     <value>${workingDir}/referenceextraction_patent/output</value>
                 </property>
                 <property>
+                    <name>output_patent_metadata</name>
+                    <value>${workingDir}/referenceextraction_patent/output_patent_metadata</value>
+                </property>
+                <property>
                     <name>output_report_root_path</name>
                     <value>${workingDir}/referenceextraction_patent/report</value>
+                </property>
+                <property>
+                    <name>cacheRootDir</name>
+                    <value>${workingDir}/referenceextraction_patent/working_dir</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -80,7 +96,22 @@
                 eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent,
                 eu/dnetlib/iis/wf/referenceextraction/patent/data/document_to_patent.json}
             </arg>
+            <arg>-C{patent_metadata,
+                eu.dnetlib.iis.referenceextraction.patent.schemas.Patent,
+                eu/dnetlib/iis/wf/referenceextraction/patent/data/extracted_patent_metadata.json}
+            </arg>
+            <arg>-C{report_patent_metadata_retrieval,
+                eu.dnetlib.iis.common.schemas.ReportEntry,
+                eu/dnetlib/iis/wf/referenceextraction/patent/data/report_patent_metadata_retrieval.json}
+            </arg>
+            <arg>-C{report_patent_metadata_extraction,
+                eu.dnetlib.iis.common.schemas.ReportEntry,
+                eu/dnetlib/iis/wf/referenceextraction/patent/data/report_patent_metadata_extraction.json}
+            </arg>
             <arg>-Idocument_to_patent=${workingDir}/referenceextraction_patent/output</arg>
+            <arg>-Ipatent_metadata=${workingDir}/referenceextraction_patent/output_patent_metadata</arg>
+            <arg>-Ireport_patent_metadata_retrieval=${workingDir}/referenceextraction_patent/report/patent_metadata_retrieval</arg>
+            <arg>-Ireport_patent_metadata_extraction=${workingDir}/referenceextraction_patent/report/patent_metadata_extraction</arg>
         </java>
         <ok to="end"/>
         <error to="fail"/>

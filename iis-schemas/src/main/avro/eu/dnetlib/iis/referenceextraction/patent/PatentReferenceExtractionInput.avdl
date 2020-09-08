@@ -2,9 +2,6 @@
 protocol IIS{
 
     record PatentReferenceExtractionInput {
-        string appln_id;
-        string appln_auth;
         string appln_nr;
-        string appln_nr_epodoc;
     }
 }

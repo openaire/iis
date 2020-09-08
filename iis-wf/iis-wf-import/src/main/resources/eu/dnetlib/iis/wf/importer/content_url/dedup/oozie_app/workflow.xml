@@ -1,0 +1,62 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="content_url_dedup">
+    <parameters>
+        <property>
+            <name>input</name>
+            <description>eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl avro records to be deduplicated by id and content checksum</description>
+        </property>
+        <property>
+            <name>output</name>
+            <description>deduplicated eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl avro records</description>
+        </property>
+    </parameters>
+    
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
+    <start to="generate-schema"/>
+    
+    <action name="generate-schema">
+	    <java>
+	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
+	        <arg>eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl</arg>
+	        <capture-output />
+	    </java>
+	    <ok to="dedup" />
+	    <error to="fail" />
+	</action>
+	
+    <action name="dedup">
+        <pig>
+            <prepare>
+                <delete path="${nameNode}${output}" />
+            </prepare>
+            <script>lib/scripts/dedup.pig</script>
+            <param>input=${input}</param>
+            <param>output=${output}</param>
+            <param>schema_data=${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl']}</param>
+        </pig>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the workflow failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+
+    <end name="end"/>
+
+</workflow-app>

@@ -1,0 +1,7 @@
+{"id": "id1", "url": "url1a", "mimeType": "application/pdf", "contentChecksum": "1111", "contentSizeKB": 1}
+{"id": "id1", "url": "url1d", "mimeType": null, "contentChecksum": "1b1b", "contentSizeKB": 10}
+{"id": "id2", "url": "url2", "mimeType": "application/pdf", "contentChecksum": "2222", "contentSizeKB": 20}
+{"id": "id3", "url": "url3", "mimeType": "application/pdf", "contentChecksum": "3333", "contentSizeKB": 30}
+{"id": "id3", "url": "url3", "mimeType": "application/pdf", "contentChecksum": "3b3b", "contentSizeKB": 30}
+{"id": "id3", "url": "url3", "mimeType": null, "contentChecksum": null, "contentSizeKB": 30}
+{"id": "id4", "url": "url4", "mimeType": "application/pdf", "contentChecksum": "1111", "contentSizeKB": 30}
