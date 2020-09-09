@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import eu.dnetlib.iis.wf.importer.infospace.truncator.DocumentMetadataAvroTruncator;
+import eu.dnetlib.iis.wf.importer.infospace.truncator.factory.DocumentMetadataAvroTruncatorFactory;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -135,7 +136,6 @@ public class ImportInformationSpaceJob {
                     params.skipDeletedByInference, params.trustLevelThreshold, params.inferenceProvenanceBlacklist);
             
             OafEntityToAvroConverter<Result, DocumentMetadata> documentConverter = new DocumentMetadataConverter(dataInfoBasedApprover);
-            DocumentMetadataAvroTruncator documentMetadataAvroTruncator = new DocumentMetadataAvroTruncator();
             OafEntityToAvroConverter<Result, DataSetReference>  datasetConverter = new DatasetMetadataConverter(dataInfoBasedApprover);
             OafEntityToAvroConverter<Organization, eu.dnetlib.iis.importer.schemas.Organization> organizationConverter = new OrganizationConverter();
             OafEntityToAvroConverter<Project, eu.dnetlib.iis.importer.schemas.Project> projectConverter = new ProjectConverter();
@@ -143,7 +143,10 @@ public class ImportInformationSpaceJob {
             OafRelToAvroConverter<ProjectToOrganization> projectOrganizationConverter = new ProjectToOrganizationRelationConverter();
             OafRelToAvroConverter<DocumentToProject> docProjectConverter = new DocumentToProjectRelationConverter();
             OafRelToAvroConverter<IdentifierMapping> deduplicationMappingConverter = new DeduplicationMappingConverter();
-            
+
+            DocumentMetadataAvroTruncator documentMetadataAvroTruncator =
+                    documentMetadataAvroTruncatorFactory(params.documentMetadataAvroTruncatorFactoryClassName).create();
+
             String inputFormat = params.inputFormat;
        
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Organization> sourceOrganization = readGraphTable(session,
@@ -190,9 +193,23 @@ public class ImportInformationSpaceJob {
         }
     }
 
-    //TODO: add javadoc description of truncation
     /**
-     * Parses given set of RDDs conveying various {@link Result} entities into a single RDD with {@link DocumentMetadata} records.
+     * Creates a factory of {@link DocumentMetadataAvroTruncatorFactory} from class name.
+     *
+     * @param className Canonical name of a class implementing {@link DocumentMetadataAvroTruncatorFactory}.
+     * @return Instance of the class.
+     */
+    private static DocumentMetadataAvroTruncatorFactory documentMetadataAvroTruncatorFactory(String className) {
+        try {
+            return (DocumentMetadataAvroTruncatorFactory) Class.forName(className).getConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Parses given set of RDDs conveying various {@link Result} entities into a single RDD with {@link DocumentMetadata} records,
+     * truncating any large entries.
      */
     private static JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> parseToDocMetaAvro(
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Dataset> filteredDataset,
@@ -264,7 +281,9 @@ public class ImportInformationSpaceJob {
                 .filter(x -> resultApprover.approve(x)).map(x -> relationConverter.convert(x));
     }
 
-    //TODO: add javadoc
+    /**
+     * Truncates {@link DocumentMetadata} of input RDD.
+     */
     private static JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> truncateDocMeta(JavaRDD<DocumentMetadata> docMeta,
                                                                                              DocumentMetadataAvroTruncator documentMetadataTruncator){
         return docMeta.map(documentMetadataTruncator::truncate);
@@ -433,6 +452,9 @@ public class ImportInformationSpaceJob {
         
         @Parameter(names = "-outputNameProjectOrganization", required = true)
         private String outputNameProjectOrganization;
+
+        @Parameter(names = "-documentMetadataAvroTruncatorFactoryClassName")
+        private String documentMetadataAvroTruncatorFactoryClassName;
     }
     
 }
