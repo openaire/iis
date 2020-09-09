@@ -245,3 +245,159 @@
     "10|CRIS_UNS____::f66f1bd369679b5b077dcdf006089556"
   ]
 }
+{
+  "id": "50|doiboost____::45338d370d67e84eeb63e8e67300ce89",
+  "title": "clinical features and short term outcomes of cancer patients with",
+  "abstract": "<jats:p>The study aimed to identify predictors of overall 30-day mortality in cancer patients with pulmonary embolism including suspected pulmonary embolism (SPE) and unsuspected pulmonary embolism (UPE) events. Secondary outcomes included 30- and 90-day major bleeding and venous thromboembolism (VTE) recurrence.</jats:p><jats:p>The study cohort included 1033 consecutive patients with pulmonary embolism from the multicentre observational ambispective EPIPHANY study (March 2006–October 2014). A subgroup of 497 patients prospectively assessed for the study were subclassified into three work-up scenarios (SPE, truly asymptomatic UPE and UPE with symptoms) to assess outcomes.</jats:p><jats:p>The overall 30-day mortality rate was 14%. The following variables were associated with the overall 30-day mortality on multivariate analysis: VTE history, upper gastrointestinal cancers, metastatic disease, cancer progression, performance status, arterial hypotension &lt;100 mmHg, heart rate &gt;110 ",
+  "language": null,
+  "keywords": [
+    "Pulmonary and",
+    "Performance",
+    "Cancer",
+    "Cohort",
+    "Surgery"
+  ],
+  "externalIdentifiers": {
+    "doi": "10.1183/13993003.00282-2016"
+  },
+  "journal": "European Respiratory Journal",
+  "year": 2016,
+  "publisher": "European Respiratory Society (ERS)",
+  "publicationType": {
+    "article": true,
+    "dataset": false
+  },
+  "authors": [
+    {
+      "name": "Lourdes",
+      "surname": "Martinez-Encarnacion",
+      "fullname": "Lourdes"
+    },
+    {
+      "name": "Alberto",
+      "surname": "Carmona-Bayonas",
+      "fullname": "Alberto Carmona-Bayonas"
+    },
+    {
+      "name": "Carmen",
+      "surname": "Beato",
+      "fullname": "Carmen Beato"
+    },
+    {
+      "name": "Òscar",
+      "surname": "Reig",
+      "fullname": "Òscar Reig"
+    },
+    {
+      "name": "Antonia",
+      "surname": "Sáez",
+      "fullname": "Antonia Sáez"
+    },
+    {
+      "name": "Paula",
+      "surname": "Jiménez-Fonseca",
+      "fullname": "Paula Jiménez-Fonseca"
+    },
+    {
+      "name": "Juana M.",
+      "surname": "Plasencia",
+      "fullname": "Juana M. Plasencia"
+    },
+    {
+      "name": "David",
+      "surname": "Calvo-Temprano",
+      "fullname": "David Calvo-Temprano"
+    },
+    {
+      "name": "Marcelo",
+      "surname": "Sanchez",
+      "fullname": "Marcelo Sanchez"
+    },
+    {
+      "name": "Mariana",
+      "surname": "Benegas",
+      "fullname": "Mariana Benegas"
+    },
+    {
+      "name": "Mercedes",
+      "surname": "Biosca",
+      "fullname": "Mercedes Biosca"
+    },
+    {
+      "name": "Diego",
+      "surname": "Varona",
+      "fullname": "Diego Varona"
+    },
+    {
+      "name": "Maria Angeles",
+      "surname": "Vicente",
+      "fullname": "Maria Angeles Vicente"
+    },
+    {
+      "name": "Laura",
+      "surname": "Faez",
+      "fullname": "Laura Faez"
+    },
+    {
+      "name": "Maria del Pilar",
+      "surname": "Solís",
+      "fullname": "Maria del Pilar Solís"
+    },
+    {
+      "name": "Irma",
+      "surname": "de la Haba",
+      "fullname": "Irma de la Haba"
+    },
+    {
+      "name": "Maite",
+      "surname": "Antonio",
+      "fullname": "Maite Antonio"
+    },
+    {
+      "name": "Olga",
+      "surname": "Madridano",
+      "fullname": "Olga Madridano"
+    },
+    {
+      "name": "Eduardo",
+      "surname": "Castañon",
+      "fullname": "Eduardo Castañon"
+    },
+    {
+      "name": "María Jose",
+      "surname": "Martinez",
+      "fullname": "María Jose Martinez"
+    },
+    {
+      "name": "Pablo",
+      "surname": "Marchena",
+      "fullname": "Pablo Marchena"
+    },
+    {
+      "name": "Avinash",
+      "surname": "Ramchandani",
+      "fullname": "Avinash Ramchandani"
+    },
+    {
+      "name": "Angel",
+      "surname": "Dominguez",
+      "fullname": "Angel Dominguez"
+    },
+    {
+      "name": "Alejandro",
+      "surname": "Puerta",
+      "fullname": "Alejandro Puerta"
+    },
+    {
+      "name": "David",
+      "surname": "Martinez de la Haza",
+      "fullname": "David Martinez de la Haza"
+    }
+  ],
+  "datasourceIds": [
+    "10|openaire____::081b82f96300b6a6e3d282bad31cb6e2",
+    "10|openaire____::8ac8380272269217cb09a928c8caa993",
+    "10|openaire____::806360c771262b4d6770e7cdf04b5c5a",
+    "10|openaire____::5f532a3fc4f1ea403f37070f59a7a53a"
+  ]
+}

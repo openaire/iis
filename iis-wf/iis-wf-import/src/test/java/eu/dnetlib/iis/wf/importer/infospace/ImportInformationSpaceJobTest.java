@@ -138,7 +138,8 @@ public class ImportInformationSpaceJobTest {
                 "-outputNameProject", OUTPUT_NAME_PROJECT,
                 "-outputNameDedupMapping", OUTPUT_NAME_DEDUP,
                 "-outputNameOrganization", OUTPUT_NAME_ORGANIZATION,
-                "-outputNameProjectOrganization", OUTPUT_NAME_PROJ_ORG
+                "-outputNameProjectOrganization", OUTPUT_NAME_PROJ_ORG,
+                "-documentMetadataAvroTruncatorFactoryClassName", "eu.dnetlib.iis.wf.importer.infospace.truncator.factory.TestDocumentMetadataAvroTruncatorFactory"
         });
         
         // then

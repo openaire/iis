@@ -160,6 +160,10 @@
                     <value>json</value>
                 </property>
                 <property>
+                    <name>document_metadata_avro_truncator_factory_class_name</name>
+                    <value>eu.dnetlib.iis.wf.importer.infospace.truncator.factory.TestDocumentMetadataAvroTruncatorFactory</value>
+                </property>
+                <property>
                     <name>output</name>
                     <value>${workingDir}/imported</value>
                 </property>
