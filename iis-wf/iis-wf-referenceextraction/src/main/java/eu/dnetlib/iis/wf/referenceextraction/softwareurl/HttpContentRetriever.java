@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.util.NoSuchElementException;
 
@@ -17,7 +16,8 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import eu.dnetlib.iis.wf.importer.HttpClientUtils;
 import eu.dnetlib.iis.wf.referenceextraction.ContentRetrieverResponse;
@@ -33,9 +33,14 @@ public class HttpContentRetriever implements ContentRetriever {
 
     private static final long serialVersionUID = -6879262115292175343L;
     
-    private static final Logger log = Logger.getLogger(HttpContentRetriever.class);
+    private static final Logger log = LoggerFactory.getLogger(HttpContentRetriever.class);
     
     private static final String HEADER_LOCATION = "Location";
+    
+    /**
+     * HTTP Status-Code 429: Too many requests.
+     */
+    private static final int HTTP_TOO_MANY_REQUESTS = 429;
     
     private int connectionTimeout;
     
@@ -67,15 +72,14 @@ public class HttpContentRetriever implements ContentRetriever {
 
         long startTime = System.currentTimeMillis();
 
-        log.info("starting content retrieval for url: " + url);
+        log.info("starting content retrieval for url: {}", url);
         try {
             return retrieveUrlContent(url.toString(), 0);
         } catch (Exception e) {
             log.error("content retrieval failed for url: " + url, e);
             return new ContentRetrieverResponse(e);
         } finally {
-            log.info("finished content retrieval for url: " + url + " in " + (System.currentTimeMillis() - startTime)
-                    + " ms");
+            log.info("finished content retrieval for url: {} in {} ms", url, (System.currentTimeMillis() - startTime));
         }
     }
     
@@ -88,7 +92,7 @@ public class HttpContentRetriever implements ContentRetriever {
      * not to hit the ConnectionPoolTimeoutException when connecting the same host
      * more than 2 times within recursion (e.g. when reattepmting).
      */
-    private ContentRetrieverResponse retrieveUrlContent(String currentUrl, int retryCount) throws MalformedURLException, IOException, InterruptedException {
+    private ContentRetrieverResponse retrieveUrlContent(String currentUrl, int retryCount) throws Exception {
         
         if (retryCount > maxRetriesCount) {
             String message = String.format("number of maximum retries exceeded: '%d' for url: %s", maxRetriesCount, currentUrl);
@@ -112,18 +116,17 @@ public class HttpContentRetriever implements ContentRetriever {
             case HttpURLConnection.HTTP_SEE_OTHER: {
                 String redirectedUrl = getHeaderValue(httpResponse.getAllHeaders(), HEADER_LOCATION);
                 if (StringUtils.isNotBlank(redirectedUrl)) {
-                    log.info(String.format("got %d response code, redirecting to %s, server response: %s", statusCode,
-                            redirectedUrl, EntityUtils.toString(httpResponse.getEntity())));
+                    log.info("got {} response code, redirecting to {}, server response: {}", statusCode,
+                            redirectedUrl, EntityUtils.toString(httpResponse.getEntity()));
                     return retrieveUrlContent(redirectedUrl, ++retryCount);
                 } else {
                     return new ContentRetrieverResponse(
                             new RuntimeException("resource was moved, missing redirect header for the url: " + currentUrl));
                 }
             }
-            case 429: {
-                // rete-limit hit
-                log.warn(String.format("got %d response code, potential reason: rate limit reached. Delaying for %d ms, server response: %s", statusCode,
-                        throttleSleepTime, EntityUtils.toString(httpResponse.getEntity())));
+            case HTTP_TOO_MANY_REQUESTS: {
+                log.warn("got {} response code, potential reason: rate limit reached. Delaying for {} ms, server response: {}", statusCode,
+                        throttleSleepTime, EntityUtils.toString(httpResponse.getEntity()));
                 Thread.sleep(throttleSleepTime);
                 return retrieveUrlContent(currentUrl, ++retryCount);
             }
@@ -137,9 +140,9 @@ public class HttpContentRetriever implements ContentRetriever {
     
     private static String getHeaderValue(Header[] headers, String headerName) {
         if (headers != null) {
-            for (int i = 0; i < headers.length; i++) {
-                if (headerName.equals(headers[i].getName())) {
-                    return headers[i].getValue();
+            for (Header header : headers) {
+                if (headerName.equals(header.getName())) {
+                    return header.getValue();
                 }
             }    
         }
@@ -157,9 +160,8 @@ public class HttpContentRetriever implements ContentRetriever {
                     }
                     pageContent.append(inputLine);    
                 } else {
-                    log.warn(String.format(
-                            "page content from URL: '%s' exceeded page length limit: %d, returning truncated page content",
-                            url, maxPageContentLength));
+                    log.warn("page content from URL: '{}' exceeded page length limit: {}, returning truncated page content",
+                            url, maxPageContentLength);
                     return new ContentRetrieverResponse(pageContent.toString());
                 }
             }

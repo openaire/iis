@@ -12,7 +12,7 @@ import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeFactory;
  */
 public class HttpContentRetrieverFactory implements ServiceFacadeFactory<ContentRetriever> {
 
-    public static final String PARAM_SREAD_TIMEOUT = "readTimeout";
+    public static final String PARAM_READ_TIMEOUT = "readTimeout";
     public static final String PARAM_CONNECTION_TIMEOUT = "connectionTimeout";
 
     public static final String PARAM_MAX_PAGE_CONTENT_LENGTH = "maxPageContentLength";
@@ -25,7 +25,7 @@ public class HttpContentRetrieverFactory implements ServiceFacadeFactory<Content
     public ContentRetriever instantiate(Map<String, String> conf) {
         
         String connectionTimeout = conf.getOrDefault(PARAM_CONNECTION_TIMEOUT, "60000");
-        String readTimeout = conf.getOrDefault(PARAM_SREAD_TIMEOUT, "60000");
+        String readTimeout = conf.getOrDefault(PARAM_READ_TIMEOUT, "60000");
         
         String maxPageContentLength = conf.getOrDefault(PARAM_MAX_PAGE_CONTENT_LENGTH, "500000");
         

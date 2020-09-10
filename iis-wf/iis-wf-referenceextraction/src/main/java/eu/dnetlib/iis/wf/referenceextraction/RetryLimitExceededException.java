@@ -8,9 +8,7 @@ package eu.dnetlib.iis.wf.referenceextraction;
  */
 public class RetryLimitExceededException extends Exception {
 
-    /**
-     * 
-     */
+
     private static final long serialVersionUID = -1084913230112190824L;
 
     

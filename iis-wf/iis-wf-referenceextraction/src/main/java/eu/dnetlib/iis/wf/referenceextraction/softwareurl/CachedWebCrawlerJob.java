@@ -239,7 +239,7 @@ public class CachedWebCrawlerJob {
         @Parameter(names = "-contentRetrieverFactoryClassName", required = true)
         private String contentRetrieverFactoryClassName;
 
-        @DynamicParameter(names = "-D", description = "dynamic parameters related to content retriver", required = false)
+        @DynamicParameter(names = "-D", description = "dynamic parameters related to content retriever", required = false)
         private Map<String, String> contentRetrieverParams = Maps.newHashMap();
     }
 }

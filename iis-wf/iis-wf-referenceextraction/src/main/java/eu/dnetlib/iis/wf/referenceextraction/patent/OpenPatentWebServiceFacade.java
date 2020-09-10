@@ -21,7 +21,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -40,7 +41,7 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
     
     private static final long serialVersionUID = -9154710658560662015L;
 
-    private static final Logger log = Logger.getLogger(OpenPatentWebServiceFacade.class);
+    private static final Logger log = LoggerFactory.getLogger(OpenPatentWebServiceFacade.class);
     
     private String authUriRoot;
     
@@ -143,12 +144,12 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
             }
             case 400: {
                 log.info("got 400 HTTP code in response, potential reason: access token invalid or expired, "
-                        + "server response: " + EntityUtils.toString(httpResponse.getEntity()));
+                        + "server response: {}", EntityUtils.toString(httpResponse.getEntity()));
                 return getPatentMetadata(patent, reauthenticate(), ++retryCount);
             }
             case 403: {
-                log.warn("got 403 HTTP code in response, potential reason: endpoint rate limit reached. Delaying for "
-                        + throttleSleepTime + " ms, server response: " + EntityUtils.toString(httpResponse.getEntity()));
+                log.warn("got 403 HTTP code in response, potential reason: endpoint rate limit reached. Delaying for {} ms, "
+                        + "server response: {}", throttleSleepTime, EntityUtils.toString(httpResponse.getEntity()));
                 Thread.sleep(throttleSleepTime);
                 return getPatentMetadata(patent, securityToken, ++retryCount);
             }

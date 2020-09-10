@@ -129,25 +129,21 @@ public class HttpContentRetrieverTest {
 
         // initial response mock
         CloseableHttpResponse getContentHttpResponse = mock(CloseableHttpResponse.class);
-        {
-            StatusLine getContentStatusLine = mock(StatusLine.class);
-            HttpEntity getContentHttpEntity = mock(HttpEntity.class);
-            when(getContentHttpResponse.getStatusLine()).thenReturn(getContentStatusLine);
-            when(getContentStatusLine.getStatusCode()).thenReturn(301);
-            when(getContentHttpResponse.getEntity()).thenReturn(getContentHttpEntity);
-            when(getContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(originalResult.getBytes()));
-        }
+        StatusLine getContentStatusLine = mock(StatusLine.class);
+        HttpEntity getContentHttpEntity = mock(HttpEntity.class);
+        when(getContentHttpResponse.getStatusLine()).thenReturn(getContentStatusLine);
+        when(getContentStatusLine.getStatusCode()).thenReturn(301);
+        when(getContentHttpResponse.getEntity()).thenReturn(getContentHttpEntity);
+        when(getContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(originalResult.getBytes()));
 
         // moved response
         CloseableHttpResponse getMovedContentHttpResponse = mock(CloseableHttpResponse.class);
-        {
-            StatusLine getMovedContentStatusLine = mock(StatusLine.class);
-            HttpEntity getMovedContentHttpEntity = mock(HttpEntity.class);
-            when(getMovedContentHttpResponse.getStatusLine()).thenReturn(getMovedContentStatusLine);
-            when(getMovedContentStatusLine.getStatusCode()).thenReturn(200);
-            when(getMovedContentHttpResponse.getEntity()).thenReturn(getMovedContentHttpEntity);
-            when(getMovedContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(movedResult.getBytes()));
-        }
+        StatusLine getMovedContentStatusLine = mock(StatusLine.class);
+        HttpEntity getMovedContentHttpEntity = mock(HttpEntity.class);
+        when(getMovedContentHttpResponse.getStatusLine()).thenReturn(getMovedContentStatusLine);
+        when(getMovedContentStatusLine.getStatusCode()).thenReturn(200);
+        when(getMovedContentHttpResponse.getEntity()).thenReturn(getMovedContentHttpEntity);
+        when(getMovedContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(movedResult.getBytes()));
         when(httpClient.execute(any(HttpGet.class))).thenReturn(getContentHttpResponse, getMovedContentHttpResponse);
         
         // execute
@@ -172,26 +168,22 @@ public class HttpContentRetrieverTest {
         
         // initial response mock
         CloseableHttpResponse getContentHttpResponse = mock(CloseableHttpResponse.class);
-        {
-            StatusLine getContentStatusLine = mock(StatusLine.class);
-            HttpEntity getContentHttpEntity = mock(HttpEntity.class);
-            when(getContentHttpResponse.getStatusLine()).thenReturn(getContentStatusLine);
-            when(getContentStatusLine.getStatusCode()).thenReturn(301);
-            when(getContentHttpResponse.getAllHeaders()).thenReturn(headers);
-            when(getContentHttpResponse.getEntity()).thenReturn(getContentHttpEntity);
-            when(getContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(originalResult.getBytes()));
-        }
+        StatusLine getContentStatusLine = mock(StatusLine.class);
+        HttpEntity getContentHttpEntity = mock(HttpEntity.class);
+        when(getContentHttpResponse.getStatusLine()).thenReturn(getContentStatusLine);
+        when(getContentStatusLine.getStatusCode()).thenReturn(301);
+        when(getContentHttpResponse.getAllHeaders()).thenReturn(headers);
+        when(getContentHttpResponse.getEntity()).thenReturn(getContentHttpEntity);
+        when(getContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(originalResult.getBytes()));
 
         // moved response mock
         CloseableHttpResponse getMovedContentHttpResponse = mock(CloseableHttpResponse.class);
-        {
-            StatusLine getMovedContentStatusLine = mock(StatusLine.class);
-            HttpEntity getMovedContentHttpEntity = mock(HttpEntity.class);
-            when(getMovedContentHttpResponse.getStatusLine()).thenReturn(getMovedContentStatusLine);
-            when(getMovedContentStatusLine.getStatusCode()).thenReturn(200);
-            when(getMovedContentHttpResponse.getEntity()).thenReturn(getMovedContentHttpEntity);
-            when(getMovedContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(movedResult.getBytes()));
-        }
+        StatusLine getMovedContentStatusLine = mock(StatusLine.class);
+        HttpEntity getMovedContentHttpEntity = mock(HttpEntity.class);
+        when(getMovedContentHttpResponse.getStatusLine()).thenReturn(getMovedContentStatusLine);
+        when(getMovedContentStatusLine.getStatusCode()).thenReturn(200);
+        when(getMovedContentHttpResponse.getEntity()).thenReturn(getMovedContentHttpEntity);
+        when(getMovedContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(movedResult.getBytes()));
         when(httpClient.execute(any(HttpGet.class))).thenReturn(getContentHttpResponse, getMovedContentHttpResponse);
         
         // execute
@@ -235,25 +227,21 @@ public class HttpContentRetrieverTest {
         
         // rate-limited response mock
         CloseableHttpResponse getRateLimitedContentHttpResponse = mock(CloseableHttpResponse.class);
-        {
-            StatusLine getContentStatusLine = mock(StatusLine.class);
-            when(getRateLimitedContentHttpResponse.getStatusLine()).thenReturn(getContentStatusLine);
-            when(getContentStatusLine.getStatusCode()).thenReturn(429);
-            HttpEntity getContentHttpEntity = mock(HttpEntity.class);
-            when(getRateLimitedContentHttpResponse.getEntity()).thenReturn(getContentHttpEntity);
-            when(getContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream("".getBytes()));
-        }
+        StatusLine getContentStatusLine = mock(StatusLine.class);
+        when(getRateLimitedContentHttpResponse.getStatusLine()).thenReturn(getContentStatusLine);
+        when(getContentStatusLine.getStatusCode()).thenReturn(429);
+        HttpEntity getContentHttpEntity = mock(HttpEntity.class);
+        when(getRateLimitedContentHttpResponse.getEntity()).thenReturn(getContentHttpEntity);
+        when(getContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream("".getBytes()));
 
         // moved response mock
         CloseableHttpResponse getValidContentHttpResponse = mock(CloseableHttpResponse.class);
-        {
-            StatusLine getMovedContentStatusLine = mock(StatusLine.class);
-            HttpEntity getMovedContentHttpEntity = mock(HttpEntity.class);
-            when(getValidContentHttpResponse.getStatusLine()).thenReturn(getMovedContentStatusLine);
-            when(getMovedContentStatusLine.getStatusCode()).thenReturn(200);
-            when(getValidContentHttpResponse.getEntity()).thenReturn(getMovedContentHttpEntity);
-            when(getMovedContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(validResult.getBytes()));
-        }
+        StatusLine getMovedContentStatusLine = mock(StatusLine.class);
+        HttpEntity getMovedContentHttpEntity = mock(HttpEntity.class);
+        when(getValidContentHttpResponse.getStatusLine()).thenReturn(getMovedContentStatusLine);
+        when(getMovedContentStatusLine.getStatusCode()).thenReturn(200);
+        when(getValidContentHttpResponse.getEntity()).thenReturn(getMovedContentHttpEntity);
+        when(getMovedContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(validResult.getBytes()));
         when(httpClient.execute(any(HttpGet.class))).thenReturn(getRateLimitedContentHttpResponse, getValidContentHttpResponse);
         
         // execute
