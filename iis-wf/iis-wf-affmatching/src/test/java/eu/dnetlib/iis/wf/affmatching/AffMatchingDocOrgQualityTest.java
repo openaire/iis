@@ -27,6 +27,8 @@ import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.SimpleAffMatchResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
@@ -46,7 +48,9 @@ import pl.edu.icm.sparkutils.test.SparkJobExecutor;
  */
 @Category(IntegrationTest.class)
 public class AffMatchingDocOrgQualityTest {
-    
+
+    private static final Logger logger = LoggerFactory.getLogger(AffMatchingDocOrgQualityTest.class);
+
     private final static String INPUT_DATA_DIR_PATH = "src/test/resources/experimentalData/input";
      
     private SparkJobExecutor executor = new SparkJobExecutor();
@@ -116,8 +120,8 @@ public class AffMatchingDocOrgQualityTest {
         
         
         // log
-        
-        System.out.println("\nALL TEST DATA");
+
+        logger.trace("ALL TEST DATA");
         
         readResultsAndPrintQualityRate(of(
                 "src/test/resources/experimentalData/expectedOutput/matched_aff.json"));
@@ -208,7 +212,7 @@ public class AffMatchingDocOrgQualityTest {
         double factorPercentage = ((double)goodCount/totalCount)*100;
         
         String text = String.format("%-20s %5.2f%% (%d/%d)", factorName + ":", factorPercentage, goodCount, totalCount);
-        System.out.println(text);
+        logger.trace(text);
         
         
     }

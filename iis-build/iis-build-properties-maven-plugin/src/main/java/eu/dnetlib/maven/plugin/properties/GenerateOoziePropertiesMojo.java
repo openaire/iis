@@ -9,6 +9,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generates oozie properties which were not provided from commandline.
@@ -17,6 +19,8 @@ import org.apache.maven.plugin.MojoFailureException;
  * @goal generate-properties
  */
 public class GenerateOoziePropertiesMojo extends AbstractMojo {
+
+	private static final Logger logger = LoggerFactory.getLogger(GenerateOoziePropertiesMojo.class);
 
 	public static final String PROPERTY_NAME_WF_SOURCE_DIR = "workflow.source.dir";
 	public static final String PROPERTY_NAME_SANDBOX_NAME = "sandboxName";
@@ -33,8 +37,8 @@ public class GenerateOoziePropertiesMojo extends AbstractMojo {
     			System.getProperties().setProperty(PROPERTY_NAME_SANDBOX_NAME, 
         				generatedSandboxName);	
     		} else {
-    			System.out.println("unable to generate sandbox name from path: " + 
-    					System.getProperties().getProperty(PROPERTY_NAME_WF_SOURCE_DIR));
+    			logger.warn("unable to generate sandbox name from path: {}",
+						System.getProperties().getProperty(PROPERTY_NAME_WF_SOURCE_DIR));
     		}
     	}
     }
