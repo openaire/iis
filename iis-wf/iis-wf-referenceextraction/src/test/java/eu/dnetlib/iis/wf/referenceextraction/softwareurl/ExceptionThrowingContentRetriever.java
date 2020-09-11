@@ -17,8 +17,7 @@ public class ExceptionThrowingContentRetriever implements ContentRetriever {
     private static final long serialVersionUID = -5244888543422890414L;
 
     @Override
-    public ContentRetrieverResponse retrieveUrlContent(CharSequence url, int connectionTimeout, int readTimeout,
-            int maxPageContentLength) {
+    public ContentRetrieverResponse retrieveUrlContent(CharSequence url) {
         throw new RuntimeException("unexpected content retrieval call!");
     }
 

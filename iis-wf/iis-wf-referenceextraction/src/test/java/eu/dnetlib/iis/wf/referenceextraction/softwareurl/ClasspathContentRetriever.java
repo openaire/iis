@@ -31,8 +31,7 @@ public class ClasspathContentRetriever implements ContentRetriever {
     }
     
     @Override
-    public ContentRetrieverResponse retrieveUrlContent(CharSequence url, int connectionTimeout, int readTimeout,
-            int maxPageContentLength) {
+    public ContentRetrieverResponse retrieveUrlContent(CharSequence url) {
         if (url != null) {
             String classPathLocation = urlToClasspathMap.getProperty(url.toString());
             if (classPathLocation != null) {

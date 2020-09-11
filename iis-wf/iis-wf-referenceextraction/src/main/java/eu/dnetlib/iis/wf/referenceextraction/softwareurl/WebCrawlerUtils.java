@@ -21,13 +21,12 @@ public class WebCrawlerUtils {
      * Obtains sources using content retriever.
      */
     public static Tuple2<JavaRDD<DocumentText>, JavaRDD<Fault>> obtainSources(JavaRDD<DocumentToSoftwareUrl> documentToSoftwareUrl,
-            ContentRetrieverContext ctx) {
+            ContentRetriever contentRetriever, int numberOfPartitionsForCrawling) {
         JavaRDD<CharSequence> uniqueSoftwareUrl = documentToSoftwareUrl.map(e -> e.getSoftwareUrl()).distinct();
         
         JavaPairRDD<CharSequence, ContentRetrieverResponse> uniqueFilteredSoftwareUrlToSource = uniqueSoftwareUrl
-                .repartition(ctx.getNumberOfPartitionsForCrawling())
-                .mapToPair(e -> new Tuple2<CharSequence, ContentRetrieverResponse>(e, ctx.getContentRetriever().retrieveUrlContent(e, 
-                        ctx.getConnectionTimeout(), ctx.getReadTimeout(), ctx.getMaxPageContentLength())));
+                .repartition(numberOfPartitionsForCrawling)
+                .mapToPair(e -> new Tuple2<CharSequence, ContentRetrieverResponse>(e, contentRetriever.retrieveUrlContent(e)));
 
         return new Tuple2<>(
                 uniqueFilteredSoftwareUrlToSource.map(e -> DocumentText.newBuilder().setId(e._1).setText(e._2.getContent()).build()),

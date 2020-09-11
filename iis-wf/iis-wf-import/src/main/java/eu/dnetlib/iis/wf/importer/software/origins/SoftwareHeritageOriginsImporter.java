@@ -31,11 +31,9 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
@@ -52,6 +50,7 @@ import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.SoftwareHeritageOrigin;
+import eu.dnetlib.iis.wf.importer.HttpClientUtils;
 
 /**
  * Importer module retrieving (incrementally) origins from Software Heritage RESTful endpoint.
@@ -206,10 +205,7 @@ public class SoftwareHeritageOriginsImporter implements eu.dnetlib.iis.common.ja
      * Builds HTTP client issuing requests to SH endpoint.
      */
     protected CloseableHttpClient buildHttpClient(int connectionTimeout, int readTimeout) {
-        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-        httpClientBuilder.setDefaultRequestConfig(RequestConfig.custom().setConnectTimeout(connectionTimeout)
-                .setConnectionRequestTimeout(connectionTimeout).setSocketTimeout(readTimeout).build());
-        return httpClientBuilder.build();
+        return HttpClientUtils.buildHttpClient(connectionTimeout, readTimeout);
     }
     
     protected static void storeNextElementIndex(int nextElementIndex) throws IOException {

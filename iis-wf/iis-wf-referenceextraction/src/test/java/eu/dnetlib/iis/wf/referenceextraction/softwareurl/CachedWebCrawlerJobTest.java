@@ -246,7 +246,7 @@ public class CachedWebCrawlerJobTest {
         // execute
         executor.execute(buildWebCrawlerJob(inputPath, outputPath, outputFaultPath, outputReportPath));
         executor.execute(buildWebCrawlerJob(inputPath, output2Path, outputFault2Path, outputReport2Path, 
-                "eu.dnetlib.iis.wf.referenceextraction.softwareurl.ExceptionThrowingContentRetriever"));
+                "eu.dnetlib.iis.wf.referenceextraction.softwareurl.ExceptionThrowingContentRetrieverFactory"));
         
         // assert
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputPath, jsonOutputFile, DocumentToSoftwareUrlWithSource.class);
@@ -274,17 +274,14 @@ public class CachedWebCrawlerJobTest {
     //------------------------ PRIVATE --------------------------
     
     private SparkJob buildWebCrawlerJob(String inputPath, String outputPath, String outputFaultPath,
-            String outputReportPath, String contentRetrieverClassName) {
+            String outputReportPath, String contentRetrieverFactoryClassName) {
         SparkJob sparkJob = SparkJobBuilder
                 .create()
                 .setAppName("Spark WebCrawler")
                 .setMainClass(CachedWebCrawlerJob.class)
                 .addArg("-inputPath", inputPath)
-                .addArg("-contentRetrieverClassName", contentRetrieverClassName)
+                .addArg("-contentRetrieverFactoryClassName", contentRetrieverFactoryClassName)
                 .addArg("-lockManagerFactoryClassName", ZookeeperLockManagerFactory.class.getName())
-                .addArg("-connectionTimeout", "0")
-                .addArg("-readTimeout", "0")
-                .addArg("-maxPageContentLength", "0")
                 .addArg("-numberOfEmittedFiles", "1")
                 .addArg("-numberOfPartitionsForCrawling", "1")
                 .addArg("-cacheRootDir", cacheRootDir.toString())
@@ -301,6 +298,6 @@ public class CachedWebCrawlerJobTest {
     private SparkJob buildWebCrawlerJob(String inputPath, 
             String outputPath, String outputFaultPath, String outputReportPath) {
         return buildWebCrawlerJob(inputPath, outputPath, outputFaultPath, outputReportPath,
-                "eu.dnetlib.iis.wf.referenceextraction.softwareurl.ClasspathContentRetriever");
+                "eu.dnetlib.iis.wf.referenceextraction.softwareurl.ClasspathContentRetrieverFactory");
     }
 }

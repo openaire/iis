@@ -22,7 +22,7 @@ public class ClasspathContentRetriever implements ContentRetriever {
     
     private final Map<String,String> urlToClasspathMap;
     
-    public ClasspathContentRetriever() throws IOException {
+    public ClasspathContentRetriever() {
         urlToClasspathMap = new HashMap<>();
         urlToClasspathMap.put("https://github.com/madgik/madis", 
                 "/eu/dnetlib/iis/wf/primary/processing/sampledataproducer/input/html/madis.html");
@@ -30,8 +30,7 @@ public class ClasspathContentRetriever implements ContentRetriever {
     }
     
     @Override
-    public ContentRetrieverResponse retrieveUrlContent(CharSequence url, int connectionTimeout, int readTimeout,
-            int maxPageContentLength) {
+    public ContentRetrieverResponse retrieveUrlContent(CharSequence url) {
         if (url != null) {
             String classPathLocation = urlToClasspathMap.get(url.toString());
             if (classPathLocation != null) {
