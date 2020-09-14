@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
+import eu.dnetlib.iis.common.string.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -50,16 +51,16 @@ public class PatentMetadataRetrieverInputTransformerJobTest {
     @Test
     public void shouldConvertAvroDatastoreForMetadataRetrieval() throws IOException {
         // given
-        String inputImportedPatentPath = Objects
+        String inputImportedPatentPath = StringUtils.decodeFromUtf8(Objects
                 .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/transformer/input_imported_patent.json"))
-                .getFile();
-        String inputMatchedPatentPath = Objects
+                .getFile());
+        String inputMatchedPatentPath = StringUtils.decodeFromUtf8(Objects
                 .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/transformer/input_matched_patent.json"))
-                .getFile();
-        
-        String outputTransformedPatentPath = Objects
+                .getFile());
+
+        String outputTransformedPatentPath = StringUtils.decodeFromUtf8(Objects
                 .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/transformer/output.json"))
-                .getFile();
+                .getFile());
         
         AvroTestUtils.createLocalAvroDataStore(JsonAvroTestUtils.readJsonDataStore(inputImportedPatentPath, ImportedPatent.class), inputImportedPatentDir.toString());
         AvroTestUtils.createLocalAvroDataStore(JsonAvroTestUtils.readJsonDataStore(inputMatchedPatentPath, DocumentToPatent.class), inputMatchedPatentDir.toString());

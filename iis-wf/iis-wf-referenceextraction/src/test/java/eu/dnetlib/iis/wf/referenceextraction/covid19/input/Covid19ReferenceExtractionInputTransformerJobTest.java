@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
+import eu.dnetlib.iis.common.string.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -41,12 +42,12 @@ public class Covid19ReferenceExtractionInputTransformerJobTest {
     @Test
     public void shouldConvertAvroDatastoreForReferenceExtraction() throws IOException {
         // given
-        String inputPath = Objects
+        String inputPath = StringUtils.decodeFromUtf8(Objects
                 .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/covid19/data/document_metadata.json"))
-                .getFile();
-        String outputPath = Objects
+                .getFile());
+        String outputPath = StringUtils.decodeFromUtf8(Objects
                 .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/covid19/data/document_metadata_transformed.json"))
-                .getFile();
+                .getFile());
         AvroTestUtils.createLocalAvroDataStore(JsonAvroTestUtils.readJsonDataStore(inputPath, ExtractedDocumentMetadataMergedWithOriginal.class), inputDir.toString());
 
         SparkJob sparkJob = buildSparkJob();

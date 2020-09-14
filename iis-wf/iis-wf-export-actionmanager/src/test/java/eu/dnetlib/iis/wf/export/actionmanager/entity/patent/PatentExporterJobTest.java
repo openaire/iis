@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
+import eu.dnetlib.iis.common.string.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -69,15 +70,20 @@ public class PatentExporterJobTest {
     public void after() throws IOException {
         FileUtils.deleteDirectory(workingDir.toFile());
     }
-    
+
     @Test
     public void shouldNotExportEntitiesWhenConfidenceLevelIsBelowThreshold() throws IOException {
         //given
         AvroTestUtils.createLocalAvroDataStore(
-                JsonAvroTestUtils.readJsonDataStore(Objects.requireNonNull(cl.getResource(INPUT_DOCUMENT_TO_PATENT_PATH)).getFile(), DocumentToPatent.class),
+                JsonAvroTestUtils.readJsonDataStore(
+                        StringUtils.decodeFromUtf8(Objects.requireNonNull(cl.getResource(INPUT_DOCUMENT_TO_PATENT_PATH)).getFile()),
+                        DocumentToPatent.class
+                ),
                 inputDocumentToPatentDir.toString());
         AvroTestUtils.createLocalAvroDataStore(
-                JsonAvroTestUtils.readJsonDataStore(Objects.requireNonNull(cl.getResource(INPUT_PATENT_PATH)).getFile(), Patent.class),
+                JsonAvroTestUtils.readJsonDataStore(
+                        StringUtils.decodeFromUtf8(Objects.requireNonNull(cl.getResource(INPUT_PATENT_PATH)).getFile()),
+                        Patent.class),
                 inputPatentDir.toString());
         SparkJob sparkJob = buildSparkJob(0.99);
 
@@ -112,13 +118,17 @@ public class PatentExporterJobTest {
     public void shouldExportEntitiesWhenConfidenceLevelIsAboveThreshold() throws IOException {
         //given
         AvroTestUtils.createLocalAvroDataStore(
-                JsonAvroTestUtils.readJsonDataStore(Objects.requireNonNull(cl.getResource(INPUT_DOCUMENT_TO_PATENT_PATH)).getFile(), DocumentToPatent.class),
+                JsonAvroTestUtils.readJsonDataStore(
+                        StringUtils.decodeFromUtf8(Objects.requireNonNull(cl.getResource(INPUT_DOCUMENT_TO_PATENT_PATH)).getFile()),
+                        DocumentToPatent.class),
                 inputDocumentToPatentDir.toString());
         AvroTestUtils.createLocalAvroDataStore(
-                JsonAvroTestUtils.readJsonDataStore(Objects.requireNonNull(cl.getResource(INPUT_PATENT_PATH)).getFile(), Patent.class),
+                JsonAvroTestUtils.readJsonDataStore(
+                        StringUtils.decodeFromUtf8(Objects.requireNonNull(cl.getResource(INPUT_PATENT_PATH)).getFile()),
+                        Patent.class),
                 inputPatentDir.toString());
         SparkJob sparkJob = buildSparkJob(0.5);
-        
+
         //when
         executor.execute(sparkJob);
 
@@ -157,10 +167,14 @@ public class PatentExporterJobTest {
     public void shouldNotExportEntitiesNorRelationsWhenEntityTitleIsNull() throws IOException {
         //given
         AvroTestUtils.createLocalAvroDataStore(
-                JsonAvroTestUtils.readJsonDataStore(Objects.requireNonNull(cl.getResource(INPUT_DOCUMENT_TO_PATENT_NULLCHECK_PATH)).getFile(), DocumentToPatent.class),
+                JsonAvroTestUtils.readJsonDataStore(
+                        StringUtils.decodeFromUtf8(Objects.requireNonNull(cl.getResource(INPUT_DOCUMENT_TO_PATENT_NULLCHECK_PATH)).getFile()),
+                        DocumentToPatent.class),
                 inputDocumentToPatentDir.toString());
         AvroTestUtils.createLocalAvroDataStore(
-                JsonAvroTestUtils.readJsonDataStore(Objects.requireNonNull(cl.getResource(INPUT_PATENT_NULLCHECK_PATH)).getFile(), Patent.class),
+                JsonAvroTestUtils.readJsonDataStore(
+                        StringUtils.decodeFromUtf8(Objects.requireNonNull(cl.getResource(INPUT_PATENT_NULLCHECK_PATH)).getFile()),
+                        Patent.class),
                 inputPatentDir.toString());
         SparkJob sparkJob = buildSparkJob(0.5);
 
