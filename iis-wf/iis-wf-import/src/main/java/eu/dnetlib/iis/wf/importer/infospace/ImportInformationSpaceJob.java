@@ -2,11 +2,13 @@ package eu.dnetlib.iis.wf.importer.infospace;
 
 import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.beust.jcommander.DynamicParameter;
 import eu.dnetlib.iis.wf.importer.infospace.truncator.DocumentMetadataAvroTruncator;
-import eu.dnetlib.iis.wf.importer.infospace.truncator.factory.DocumentMetadataAvroTruncatorFactory;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -145,7 +147,7 @@ public class ImportInformationSpaceJob {
             OafRelToAvroConverter<IdentifierMapping> deduplicationMappingConverter = new DeduplicationMappingConverter();
 
             DocumentMetadataAvroTruncator documentMetadataAvroTruncator =
-                    documentMetadataAvroTruncatorFactory(params.documentMetadataAvroTruncatorFactoryClassName).create();
+                    createDocumentMetadataAvroTruncator(params.documentMetadataTruncationParams);
 
             String inputFormat = params.inputFormat;
        
@@ -194,17 +196,20 @@ public class ImportInformationSpaceJob {
     }
 
     /**
-     * Creates a factory of {@link DocumentMetadataAvroTruncatorFactory} from class name.
+     * Creates a {@link DocumentMetadataAvroTruncator} from dynamic parameters.
      *
-     * @param className Canonical name of a class implementing {@link DocumentMetadataAvroTruncatorFactory}.
+     * @param documentMetadataTruncationParams Map of truncation parameter values.
      * @return Instance of the class.
      */
-    private static DocumentMetadataAvroTruncatorFactory documentMetadataAvroTruncatorFactory(String className) {
-        try {
-            return (DocumentMetadataAvroTruncatorFactory) Class.forName(className).getConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    private static DocumentMetadataAvroTruncator createDocumentMetadataAvroTruncator(Map<String, String> documentMetadataTruncationParams) {
+        return DocumentMetadataAvroTruncator.newBuilder()
+                .setMaxAbstractLength(Integer.parseInt(documentMetadataTruncationParams.get(DocumentMetadataAvroTruncator.PARAM_MAX_ABSTRACT_LENGTH)))
+                .setMaxTitleLength(Integer.parseInt(documentMetadataTruncationParams.get(DocumentMetadataAvroTruncator.PARAM_MAX_TITLE_LENGTH)))
+                .setMaxAuthorsSize(Integer.parseInt(documentMetadataTruncationParams.get(DocumentMetadataAvroTruncator.PARAM_MAX_AUTHORS_SIZE)))
+                .setMaxAuthorFullnameLength(Integer.parseInt(documentMetadataTruncationParams.get(DocumentMetadataAvroTruncator.PARAM_MAX_AUTHOR_FULLNAME_LENGTH)))
+                .setMaxKeywordsSize(Integer.parseInt(documentMetadataTruncationParams.get(DocumentMetadataAvroTruncator.PARAM_MAX_KEYWORDS_SIZE)))
+                .setMaxKeywordLength(Integer.parseInt(documentMetadataTruncationParams.get(DocumentMetadataAvroTruncator.PARAM_MAX_KEYWORD_LENGTH)))
+                .build();
     }
 
     /**
@@ -453,8 +458,8 @@ public class ImportInformationSpaceJob {
         @Parameter(names = "-outputNameProjectOrganization", required = true)
         private String outputNameProjectOrganization;
 
-        @Parameter(names = "-documentMetadataAvroTruncatorFactoryClassName")
-        private String documentMetadataAvroTruncatorFactoryClassName;
+        @DynamicParameter(names = "-D", description = "dynamic parameters related to document metadata truncation")
+        private Map<String, String> documentMetadataTruncationParams = new HashMap<>();
     }
     
 }

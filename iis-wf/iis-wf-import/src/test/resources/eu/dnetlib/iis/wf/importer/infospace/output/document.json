@@ -247,12 +247,12 @@
 }
 {
   "id": "50|doiboost____::45338d370d67e84eeb63e8e67300ce89",
-  "title": "clinical features and short term outcomes of cancer patients with",
-  "abstract": "<jats:p>The study aimed to identify predictors of overall 30-day mortality in cancer patients with pulmonary embolism including suspected pulmonary embolism (SPE) and unsuspected pulmonary embolism (UPE) events. Secondary outcomes included 30- and 90-day major bleeding and venous thromboembolism (VTE) recurrence.</jats:p><jats:p>The study cohort included 1033 consecutive patients with pulmonary embolism from the multicentre observational ambispective EPIPHANY study (March 2006–October 2014). A subgroup of 497 patients prospectively assessed for the study were subclassified into three work-up scenarios (SPE, truly asymptomatic UPE and UPE with symptoms) to assess outcomes.</jats:p><jats:p>The overall 30-day mortality rate was 14%. The following variables were associated with the overall 30-day mortality on multivariate analysis: VTE history, upper gastrointestinal cancers, metastatic disease, cancer progression, performance status, arterial hypotension &lt;100 mmHg, heart rate &gt;110 ",
+  "title": "clinical features and short term outcomes of cancer patients with suspected",
+  "abstract": "<jats:p>The study aimed to identify predictors of overall 30-day mortality in cancer patients with pulmonary embolism including suspected pulmonary embolism (SPE) and unsuspected pulmonary embolism (UPE) events. Secondary outcomes included 30- and 90-day major bleeding and venous thromboembolism (VTE) recurrence.</jats:p><jats:p>The study cohort included 1033 consecutive patients with pulmonary embolism from the multicentre observational ambispective EPIPHANY study (March 2006–October 2014). A subgroup of 497 patients prospectively assessed for the study were subclassified into three work-up scenarios (SPE, truly asymptomatic UPE and UPE with symptoms) to assess outcomes.</jats:p><jats:p>The overall 30-day mortality rate was 14%. The following variables were associated with the overall 30-day mortality on multivariate analysis: VTE history, upper gastrointestinal cancers, metastatic disease, cancer progression, performance status, arterial hypotension &lt;100 mmHg, heart rate &gt;110 beats",
   "language": null,
   "keywords": [
-    "Pulmonary and",
-    "Performance",
+    "Pulmonary and Respiratory",
+    "Performance status",
     "Cancer",
     "Cohort",
     "Surgery"
@@ -271,7 +271,7 @@
     {
       "name": "Lourdes",
       "surname": "Martinez-Encarnacion",
-      "fullname": "Lourdes"
+      "fullname": "Lourdes Martinez-Encarnacion"
     },
     {
       "name": "Alberto",

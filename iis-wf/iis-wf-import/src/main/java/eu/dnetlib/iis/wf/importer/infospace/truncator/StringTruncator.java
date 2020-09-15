@@ -6,7 +6,7 @@ import java.text.BreakIterator;
 public class StringTruncator {
 
     /**
-     * Truncates source strings preserving word boundaries, removing words that would be broke.
+     * Truncates source strings preserving word boundaries, keeping words that would be broke.
      *
      * @param source String to be truncated.
      * @param length Length of the source string to keep.
@@ -19,6 +19,6 @@ public class StringTruncator {
 
         BreakIterator atWordInstance = BreakIterator.getWordInstance();
         atWordInstance.setText(source);
-        return source.substring(0, atWordInstance.preceding(length)).trim();
+        return source.substring(0, atWordInstance.following(length)).trim();
     }
 }

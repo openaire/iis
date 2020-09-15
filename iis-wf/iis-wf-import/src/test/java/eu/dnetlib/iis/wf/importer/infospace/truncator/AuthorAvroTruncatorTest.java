@@ -16,10 +16,10 @@ import static org.mockito.Mockito.*;
 public class AuthorAvroTruncatorTest {
 
     @Mock
-    private AuthorAvroTruncator.FullnameTruncator fullnameTruncator;
+    private Function<CharSequence, CharSequence> fullnameTruncator;
 
     @InjectMocks
-    private AuthorAvroTruncator authorAvroTruncator = new AuthorAvroTruncator();
+    private AuthorAvroTruncator authorAvroTruncator = AuthorAvroTruncator.newBuilder().build();
 
     @Test
     public void shouldNotTruncateFullnameWhenItIsNull() {
@@ -31,7 +31,7 @@ public class AuthorAvroTruncatorTest {
 
         // then
         assertEquals(source, result);
-        verify(fullnameTruncator, never()).truncate(any());
+        verify(fullnameTruncator, never()).apply(any());
     }
 
     @Test
@@ -40,26 +40,12 @@ public class AuthorAvroTruncatorTest {
         Author source = Author.newBuilder()
                 .setFullname("name1 name2")
                 .build();
-        when(fullnameTruncator.truncate("name1 name2")).thenReturn("truncated");
+        when(fullnameTruncator.apply("name1 name2")).thenReturn("truncated");
 
         // when
         Author result = authorAvroTruncator.truncate(source);
 
         // then
         assertEquals("truncated", result.getFullname());
-    }
-
-    @Test
-    public void fullnameTruncatorShouldTruncateProperly() {
-        // given
-        Function<CharSequence, CharSequence> stringTruncator = mock(Function.class);
-        AuthorAvroTruncator.FullnameTruncator fullnameTruncator = new AuthorAvroTruncator.FullnameTruncator(-1);
-        fullnameTruncator.setStringTruncator(stringTruncator);
-
-        // when
-        fullnameTruncator.truncate("fullname");
-
-        // then
-        verify(stringTruncator, times(1)).apply("fullname");
     }
 }

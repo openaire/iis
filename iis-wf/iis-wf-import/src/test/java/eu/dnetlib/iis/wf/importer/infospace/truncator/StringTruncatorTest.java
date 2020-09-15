@@ -25,11 +25,20 @@ public class StringTruncatorTest {
     }
 
     @Test
-    public void shouldTruncateStringLongerThanThreshold() {
+    public void shouldTruncateStringLongerThanThresholdAndKeepWordAtBoundary() {
         // when
         String result = StringTruncator.truncateWithoutWordSplit("abc def", 6);
 
         // then
-        assertEquals("abc", result);
+        assertEquals("abc def", result);
+    }
+
+    @Test
+    public void shouldTruncateStringLongerThanThreshold() {
+        // when
+        String result = StringTruncator.truncateWithoutWordSplit("abc def ghi", 6);
+
+        // then
+        assertEquals("abc def", result);
     }
 }

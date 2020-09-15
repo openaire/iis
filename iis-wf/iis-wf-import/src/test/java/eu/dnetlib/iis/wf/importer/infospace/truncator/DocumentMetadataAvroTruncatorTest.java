@@ -21,19 +21,19 @@ import static org.mockito.Mockito.*;
 public class DocumentMetadataAvroTruncatorTest {
 
     @Mock
-    private DocumentMetadataAvroTruncator.AbstractTruncator abstractTruncator;
+    private Function<CharSequence, CharSequence> abstractTruncator;
 
     @Mock
-    private DocumentMetadataAvroTruncator.TitleTruncator titleTruncator;
+    private Function<CharSequence, CharSequence> titleTruncator;
 
     @Mock
-    private DocumentMetadataAvroTruncator.AuthorsTruncator authorsTruncator;
+    private Function<List<Author>, List<Author>> authorsTruncator;
 
     @Mock
-    private DocumentMetadataAvroTruncator.KeywordsTruncator keywordsTruncator;
+    private Function<List<CharSequence>, List<CharSequence>> keywordsTruncator;
 
     @InjectMocks
-    private DocumentMetadataAvroTruncator documentMetadataAvroTruncator = new DocumentMetadataAvroTruncator();
+    private DocumentMetadataAvroTruncator documentMetadataAvroTruncator = DocumentMetadataAvroTruncator.newBuilder().build();
 
     @Test
     public void shouldNotTruncateAbstractWhenItIsNull() {
@@ -45,7 +45,7 @@ public class DocumentMetadataAvroTruncatorTest {
 
         // then
         assertEquals(source, result);
-        verify(abstractTruncator, never()).truncate(any());
+        verify(abstractTruncator, never()).apply(any());
     }
 
     @Test
@@ -53,28 +53,13 @@ public class DocumentMetadataAvroTruncatorTest {
         // given
         DocumentMetadata source = createDocumentMetadata();
         source.setAbstract$("abstract");
-        when(abstractTruncator.truncate("abstract")).thenReturn("truncated");
+        when(abstractTruncator.apply("abstract")).thenReturn("truncated");
 
         // when
         DocumentMetadata result = documentMetadataAvroTruncator.truncate(source);
 
         // then
         assertEquals("truncated", result.getAbstract$());
-    }
-
-    @Test
-    public void abstractTruncatorShouldTruncateProperly() {
-        // given
-        Function<CharSequence, CharSequence> stringTruncator = mock(Function.class);
-
-        DocumentMetadataAvroTruncator.AbstractTruncator abstractTruncator = new DocumentMetadataAvroTruncator.AbstractTruncator(-1);
-        abstractTruncator.setStringTruncator(stringTruncator);
-
-        // when
-        abstractTruncator.truncate("abstract");
-
-        // then
-        verify(stringTruncator, times(1)).apply("abstract");
     }
 
     @Test
@@ -87,7 +72,7 @@ public class DocumentMetadataAvroTruncatorTest {
 
         // then
         assertEquals(source, result);
-        verify(titleTruncator, never()).truncate(any());
+        verify(titleTruncator, never()).apply(any());
     }
 
     @Test
@@ -95,27 +80,13 @@ public class DocumentMetadataAvroTruncatorTest {
         // given
         DocumentMetadata source = createDocumentMetadata();
         source.setTitle("title");
-        when(titleTruncator.truncate("title")).thenReturn("truncated");
+        when(titleTruncator.apply("title")).thenReturn("truncated");
 
         // when
         DocumentMetadata result = documentMetadataAvroTruncator.truncate(source);
 
         // then
         assertEquals("truncated", result.getTitle());
-    }
-
-    @Test
-    public void titleTruncatorShouldTruncateProperly() {
-        // given
-        Function<CharSequence, CharSequence> stringTruncator = mock(Function.class);
-        DocumentMetadataAvroTruncator.TitleTruncator titleTruncator = new DocumentMetadataAvroTruncator.TitleTruncator(-1);
-        titleTruncator.setStringTruncator(stringTruncator);
-
-        // when
-        titleTruncator.truncate("title");
-
-        // then
-        verify(stringTruncator, times(1)).apply("title");
     }
 
     @Test
@@ -128,7 +99,7 @@ public class DocumentMetadataAvroTruncatorTest {
 
         // then
         assertEquals(source, result);
-        verify(authorsTruncator, never()).truncate(any());
+        verify(authorsTruncator, never()).apply(any());
     }
 
     @Test
@@ -138,31 +109,13 @@ public class DocumentMetadataAvroTruncatorTest {
         List<Author> authors = Collections.singletonList(mock(Author.class));
         source.setAuthors(authors);
         List<Author> truncated = Collections.singletonList(mock(Author.class));
-        when(authorsTruncator.truncate(authors)).thenReturn(truncated);
+        when(authorsTruncator.apply(authors)).thenReturn(truncated);
 
         // when
         DocumentMetadata result = documentMetadataAvroTruncator.truncate(source);
 
         // then
         assertEquals(truncated, result.getAuthors());
-    }
-
-    @Test
-    public void authorsTruncatorShouldTruncateProperly() {
-        // given
-        List<Author> authors = Collections.singletonList(mock(Author.class));
-        Function<List<Author>, List<Author>> listTruncator = mock(Function.class);
-        when(listTruncator.apply(authors)).thenReturn(Collections.singletonList(mock(Author.class)));
-        AuthorAvroTruncator authorAvroTruncator = mock(AuthorAvroTruncator.class);
-        DocumentMetadataAvroTruncator.AuthorsTruncator authorsTruncator = new DocumentMetadataAvroTruncator.AuthorsTruncator(-1, -1);
-        authorsTruncator.setListTruncator(listTruncator);
-        authorsTruncator.setAuthorAvroTruncator(authorAvroTruncator);
-
-        // when
-        authorsTruncator.truncate(authors);
-
-        // then
-        verify(authorAvroTruncator, times(1)).truncate(any(Author.class));
     }
 
     @Test
@@ -175,7 +128,7 @@ public class DocumentMetadataAvroTruncatorTest {
 
         // then
         assertEquals(source, result);
-        verify(keywordsTruncator, never()).truncate(any());
+        verify(keywordsTruncator, never()).apply(any());
     }
 
     @Test
@@ -185,31 +138,13 @@ public class DocumentMetadataAvroTruncatorTest {
         List<CharSequence> keywords = Collections.singletonList("keyword");
         source.setKeywords(keywords);
         List<CharSequence> truncated = Collections.singletonList("truncated");
-        when(keywordsTruncator.truncate(keywords)).thenReturn(truncated);
+        when(keywordsTruncator.apply(keywords)).thenReturn(truncated);
 
         // when
         DocumentMetadata result = documentMetadataAvroTruncator.truncate(source);
 
         // then
         assertEquals(truncated, result.getKeywords());
-    }
-
-    @Test
-    public void keywordsTruncatorShouldTruncateProperly() {
-        // given
-        List<CharSequence> keywords = Collections.singletonList("keyword");
-        Function<List<CharSequence>, List<CharSequence>> listTruncator = mock(Function.class);
-        when(listTruncator.apply(keywords)).thenReturn(Collections.singletonList("truncated"));
-        Function<CharSequence, CharSequence> stringTruncator = mock(Function.class);
-        DocumentMetadataAvroTruncator.KeywordsTruncator keywordsTruncator = new DocumentMetadataAvroTruncator.KeywordsTruncator(-1, -1);
-        keywordsTruncator.setListTruncator(listTruncator);
-        keywordsTruncator.setStringTruncator(stringTruncator);
-
-        // when
-        keywordsTruncator.truncate(keywords);
-
-        // then
-        verify(stringTruncator, times(1)).apply("truncated");
     }
 
     private static DocumentMetadata createDocumentMetadata() {

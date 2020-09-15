@@ -139,7 +139,12 @@ public class ImportInformationSpaceJobTest {
                 "-outputNameDedupMapping", OUTPUT_NAME_DEDUP,
                 "-outputNameOrganization", OUTPUT_NAME_ORGANIZATION,
                 "-outputNameProjectOrganization", OUTPUT_NAME_PROJ_ORG,
-                "-documentMetadataAvroTruncatorFactoryClassName", "eu.dnetlib.iis.wf.importer.infospace.truncator.factory.TestDocumentMetadataAvroTruncatorFactory"
+                "-DmaxAbstractLength=1000",
+                "-DmaxTitleLength=75",
+                "-DmaxAuthorsSize=25",
+                "-DmaxAuthorFullnameLength=25",
+                "-DmaxKeywordsSize=5",
+                "-DmaxKeywordLength=15"
         });
         
         // then

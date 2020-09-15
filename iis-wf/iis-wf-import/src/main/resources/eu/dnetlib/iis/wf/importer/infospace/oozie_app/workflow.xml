@@ -62,11 +62,36 @@
             <description>project-organization output name</description>
         </property>
         <property>
-            <name>document_metadata_avro_truncator_factory_class_name</name>
-            <value>eu.dnetlib.iis.wf.importer.infospace.truncator.factory.DefaultDocumentMetadataAvroTruncatorFactory</value>
-            <description>factory class name for creation document metadata truncator</description>
+            <name>max_abstract_length</name>
+            <value>100000</value>
+            <description>max length of eu.dnetlib.iis.importer.schemas.DocumentMetadata abstract field</description>
         </property>
-        <!--  -->        
+        <property>
+            <name>max_title_length</name>
+            <value>5000</value>
+            <description>max length of eu.dnetlib.iis.importer.schemas.DocumentMetadata title field</description>
+        </property>
+        <property>
+            <name>max_authors_size</name>
+            <value>1000</value>
+            <description>max size of eu.dnetlib.iis.importer.schemas.DocumentMetadata authors array field</description>
+        </property>
+        <property>
+            <name>max_author_fullname_length</name>
+            <value>500</value>
+            <description>max length of eu.dnetlib.iis.importer.schemas.Author fullname field</description>
+        </property>
+        <property>
+            <name>max_keywords_size</name>
+            <value>200</value>
+            <description>max size of eu.dnetlib.iis.importer.schemas.DocumentMetadata keywords array field</description>
+        </property>
+        <property>
+            <name>max_keyword_length</name>
+            <value>500</value>
+            <description>max length of eu.dnetlib.iis.importer.schemas.DocumentMetadata keyword</description>
+        </property>
+        <!--  -->
         <property>
             <name>output</name>
             <description>patents avro datastore output</description>
@@ -173,7 +198,12 @@
             <arg>-outputNameDedupMapping=${output_name_dedup_mapping}</arg>
             <arg>-outputNameOrganization=${output_name_organization}</arg>
             <arg>-outputNameProjectOrganization=${output_name_project_organization}</arg>
-            <arg>-documentMetadataAvroTruncatorFactoryClassName=${document_metadata_avro_truncator_factory_class_name}</arg>
+            <arg>-DmaxAbstractLength=${max_abstract_length}</arg>
+            <arg>-DmaxTitleLength=${max_title_length}</arg>
+            <arg>-DmaxAuthorsSize=${max_authors_size}</arg>
+            <arg>-DmaxAuthorFullnameLength=${max_author_fullname_length}</arg>
+            <arg>-DmaxKeywordsSize=${max_keywords_size}</arg>
+            <arg>-DmaxKeywordLength=${max_keyword_length}</arg>
 
         </spark>
         <ok to="end"/>
