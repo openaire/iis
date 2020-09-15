@@ -3,9 +3,8 @@ package eu.dnetlib.iis.wf.referenceextraction.patent.input;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 
-import eu.dnetlib.iis.common.string.StringUtils;
+import eu.dnetlib.iis.common.utils.ResourceUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -51,16 +50,13 @@ public class PatentMetadataRetrieverInputTransformerJobTest {
     @Test
     public void shouldConvertAvroDatastoreForMetadataRetrieval() throws IOException {
         // given
-        String inputImportedPatentPath = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/transformer/input_imported_patent.json"))
-                .getFile());
-        String inputMatchedPatentPath = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/transformer/input_matched_patent.json"))
-                .getFile());
+        String inputImportedPatentPath = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/transformer/input_imported_patent.json");
+        String inputMatchedPatentPath = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/transformer/input_matched_patent.json");
 
-        String outputTransformedPatentPath = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/transformer/output.json"))
-                .getFile());
+        String outputTransformedPatentPath = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/transformer/output.json");
         
         AvroTestUtils.createLocalAvroDataStore(JsonAvroTestUtils.readJsonDataStore(inputImportedPatentPath, ImportedPatent.class), inputImportedPatentDir.toString());
         AvroTestUtils.createLocalAvroDataStore(JsonAvroTestUtils.readJsonDataStore(inputMatchedPatentPath, DocumentToPatent.class), inputMatchedPatentDir.toString());

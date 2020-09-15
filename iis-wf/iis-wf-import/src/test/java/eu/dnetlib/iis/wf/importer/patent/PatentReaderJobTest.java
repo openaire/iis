@@ -3,9 +3,8 @@ package eu.dnetlib.iis.wf.importer.patent;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 
-import eu.dnetlib.iis.common.string.StringUtils;
+import eu.dnetlib.iis.common.utils.ResourceUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -40,15 +39,12 @@ public class PatentReaderJobTest {
     @Test
     public void shouldReadPatentEPOFileAndStorePatentsAsAvroDatastores() throws IOException {
         // given
-        String patentsEpoPath = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/importer/patent/sampletest/oozie_app/input/patents_epo.tsv"))
-                .getFile());
-        String patentsEpoMappedPath = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/importer/patent/data/output/patents_epo_output.json"))
-                .getFile());
-        String reportPath = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/importer/patent/data/output/report.json"))
-                .getFile());
+        String patentsEpoPath = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/importer/patent/sampletest/oozie_app/input/patents_epo.tsv");
+        String patentsEpoMappedPath = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/importer/patent/data/output/patents_epo_output.json");
+        String reportPath = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/importer/patent/data/output/report.json");
         SparkJob sparkJob = buildSparkJob(patentsEpoPath);
 
         // when

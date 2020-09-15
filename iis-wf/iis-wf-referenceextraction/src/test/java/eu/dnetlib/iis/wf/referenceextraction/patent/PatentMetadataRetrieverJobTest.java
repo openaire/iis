@@ -7,9 +7,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Objects;
 
-import eu.dnetlib.iis.common.string.StringUtils;
+import eu.dnetlib.iis.common.utils.ResourceUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.curator.test.TestingServer;
 import org.apache.hadoop.conf.Configuration;
@@ -80,18 +79,14 @@ public class PatentMetadataRetrieverJobTest {
     @Test
     public void testRetrievePatentMetaFromMockedRetrieverAndInitializeCache() throws IOException {
         // given
-        String inputPath = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/input.json"))
-                .getFile());
-        String outputPath = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/output.json"))
-                .getFile());
-        String reportPath = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/report.json"))
-                .getFile());
-        String cachePath = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/cache_text1.json"))
-                .getFile());
+        String inputPath = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/input.json");
+        String outputPath = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/output.json");
+        String reportPath = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/report.json");
+        String cachePath = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/cache_text1.json");
         
         CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
         
@@ -124,27 +119,20 @@ public class PatentMetadataRetrieverJobTest {
     @Test
     public void testRetrievePatentMetaFromMockedRetrieverAndUpdateCache() throws IOException {
         // given
-        String inputPath = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/input.json"))
-                .getFile());
-        String input2Path = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/input2.json"))
-                .getFile());
-        String outputPath = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/output.json"))
-                .getFile());
-        String output2Path = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/output2.json"))
-                .getFile());
-        String reportPath = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/report.json"))
-                .getFile());
-        String report2Path = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/report_update.json"))
-                .getFile());
-        String cachePath = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/cache_text2.json"))
-                .getFile());
+        String inputPath = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/input.json");
+        String input2Path = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/input2.json");
+        String outputPath = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/output.json");
+        String output2Path = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/output2.json");
+        String reportPath = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/report.json");
+        String report2Path = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/report_update.json");
+        String cachePath = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/cache_text2.json");
         
         CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
         
@@ -182,21 +170,16 @@ public class PatentMetadataRetrieverJobTest {
     @Test
     public void testObtainPatentMetaFromCacheWithoutCallingPatentFacade() throws IOException {
         // given
-        String inputPath = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/input.json"))
-                .getFile());
-        String outputPath = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/output.json"))
-                .getFile());
-        String reportPath = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/report.json"))
-                .getFile());
-        String report2Path = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/report_from_cache.json"))
-                .getFile());
-        String cachePath = StringUtils.decodeFromUtf8(Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/cache_text1.json"))
-                .getFile());
+        String inputPath = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/input.json");
+        String outputPath = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/output.json");
+        String reportPath = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/report.json");
+        String report2Path = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/report_from_cache.json");
+        String cachePath = ResourceUtils
+                .resourcePath(cl, "eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/cache_text1.json");
         
         CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
         
