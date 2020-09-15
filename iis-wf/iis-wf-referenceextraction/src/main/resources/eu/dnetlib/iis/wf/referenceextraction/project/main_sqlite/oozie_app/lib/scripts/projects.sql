@@ -55,10 +55,10 @@ WHERE fundingclass1="RCUK" and middle = grantid
 
 union all
 --DFG
-select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8,'textsnippet',j2s(prev,middle,next)) as C1, docid, id, fundingclass1, grantid from  
-(setschema 'docid,prev,middle,next' select c1, textwindow2s(regexpr("\n",filterstopwords(keywords(c2)),"\s"),10,2,7,"\w{3}\s\d{1,4}" ) from pubs where c2 is not null), grants 
-where lower(regexpr("\b(\w{3}\s\d{1,4})\b",middle)) = grantid and 
-regexprmatches("support|project|grant|fund|thanks|agreement|research|acknowledge|centre|center|nstitution|program|priority|dfg|german|dutch|deutche",lower(j2s(prev,middle,next))) group by docid, id
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8,'textsnippet', prev||" "||middle||" "||next) as C1, docid, id, fundingclass1, grantid from
+(setschema 'docid,prev,middle,next' select c1, textwindow2s(filterstopwords(keywords(c2)),10,2,7,"\w{3}\s\d{1,4}") from pubs where c2 is not null), grants
+where lower(regexpr("\b(\w{3}\s\d{1,4})\b",middle)) = grantid and
+regexprmatches("support|project|grant|fund|thanks|agreement|research|acknowledge|centre|center|nstitution|program|priority|dfg|german|dutch|deutche",lower(prev||" "||next)) group by docid, id
 --DFG
 
 union all
