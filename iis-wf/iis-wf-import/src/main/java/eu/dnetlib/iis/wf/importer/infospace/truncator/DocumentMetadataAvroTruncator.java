@@ -13,13 +13,6 @@ import java.util.stream.Collectors;
  * An implementation of {@link AvroTruncator} for {@link DocumentMetadata}.
  */
 public class DocumentMetadataAvroTruncator implements AvroTruncator<DocumentMetadata> {
-    public static final String PARAM_MAX_ABSTRACT_LENGTH = "maxAbstractLength";
-    public static final String PARAM_MAX_TITLE_LENGTH = "maxTitleLength";
-    public static final String PARAM_MAX_AUTHORS_SIZE = "maxAuthorsSize";
-    public static final String PARAM_MAX_AUTHOR_FULLNAME_LENGTH = "maxAuthorFullnameLength";
-    public static final String PARAM_MAX_KEYWORDS_SIZE = "maxKeywordsSize";
-    public static final String PARAM_MAX_KEYWORD_LENGTH = "maxKeywordLength";
-
     private Function<CharSequence, CharSequence> abstractTruncator;
     private Function<CharSequence, CharSequence> titleTruncator;
     private Function<List<Author>, List<Author>> authorsTruncator;

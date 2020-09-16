@@ -246,6 +246,154 @@
   ]
 }
 {
+  "id": "50|opentrials__::98053cee8d1792ba9c0889d5c4189cec",
+  "title": "A Randomized, Open-Label, Multicenter, Controlled Study to Assess Safety and",
+  "abstract": "The Lille score will be used to identify subjects with an increased risk of mortality (Lille score failures). The Lille score is a prognostic model combining six reproducible variables at Day 0 and Day 7 of steroid treatment. The Lille score used in this protocol is being used independent of steroid administration during the 7 days of evaluation. A Lille score >0.45 (Lille score failure) indicates that the subject is at substantially increased risk of 30- and 90-day mortality. Subjects with severe acute alcoholic hepatitis (sAAH) are often treated with steroids as soon as their diagnosis is confirmed. This study is to assess treatment with the ELAD System in subjects who have failed per the Lille criteria, independent of steroid administration. ELAD treatment is done continuously for up to 10 days in addition to standard of care treatment. The Control group (those randomized not to receive ELAD treatment) will also get standard of care treatment. Standard of care is defined as the usual",
+  "language": "UNKNOWN",
+  "keywords": null,
+  "externalIdentifiers": {
+    "euctr": "EUCTR2013-001884-21",
+    "nct": "NCT01829347"
+  },
+  "journal": null,
+  "year": 2013,
+  "publisher": "nct",
+  "publicationType": {
+    "article": false,
+    "dataset": false
+  },
+  "authors": [
+    {
+      "name": "Kalyan R.",
+      "surname": "Bhamidimarri",
+      "fullname": "Bhamidimarri, Kalyan R"
+    },
+    {
+      "name": "Rajiv",
+      "surname": "Jalan",
+      "fullname": "Jalan, Rajiv"
+    },
+    {
+      "name": "Valentin Cuervas-Mons",
+      "surname": "Martinez",
+      "fullname": "Martinez, Valentin Cuervas-Mons"
+    },
+    {
+      "name": "Sumita",
+      "surname": "Verma",
+      "fullname": "Verma, Sumita"
+    },
+    {
+      "name": "Joanna",
+      "surname": "Sayer",
+      "fullname": "Sayer, Joanna"
+    },
+    {
+      "name": "José Luis",
+      "surname": "Montero",
+      "fullname": "Montero, José Luis"
+    },
+    {
+      "name": "David J.",
+      "surname": "Kramer",
+      "fullname": "Kramer, David J"
+    },
+    {
+      "name": "Javier",
+      "surname": "Crespo",
+      "fullname": "Crespo, Javier"
+    },
+    {
+      "name": "Ram",
+      "surname": "Subramanian",
+      "fullname": "Subramanian, Ram"
+    },
+    {
+      "name": "Julio",
+      "surname": "Gutierrez",
+      "fullname": "Gutierrez, Julio"
+    },
+    {
+      "name": "Kirti",
+      "surname": "Shetty",
+      "fullname": "Shetty, Kirti"
+    },
+    {
+      "name": "David",
+      "surname": "Reich",
+      "fullname": "Reich, David"
+    },
+    {
+      "name": "Andrew",
+      "surname": "Delemos",
+      "fullname": "deLemos, Andrew"
+    },
+    {
+      "name": "Rohit",
+      "surname": "Satoskar",
+      "fullname": "Satoskar, Rohit"
+    },
+    {
+      "name": "Martín",
+      "surname": "Prieto",
+      "fullname": "Prieto, Martín"
+    },
+    {
+      "name": "Santiago",
+      "surname": "Tome",
+      "fullname": "Tome, Santiago"
+    },
+    {
+      "name": "Anne M.",
+      "surname": "Larson",
+      "fullname": "Larson, Anne M"
+    },
+    {
+      "name": "Manuel",
+      "surname": "Romero-Gomez",
+      "fullname": "Romero-Gomez, Manuel"
+    },
+    {
+      "name": "Juan",
+      "surname": "Caballeria",
+      "fullname": "Caballeria, Juan"
+    },
+    {
+      "name": "Simona",
+      "surname": "Rossi",
+      "fullname": "Rossi, Simona"
+    },
+    {
+      "name": "Julie",
+      "surname": "Thompson",
+      "fullname": "Thompson, Julie"
+    },
+    {
+      "name": "Talal",
+      "surname": "Adhami",
+      "fullname": "Adhami, Talal"
+    },
+    {
+      "name": "Andres",
+      "surname": "Duarte-Rojo",
+      "fullname": "Duarte-Rojo, Andres"
+    },
+    {
+      "name": "Maria Jesús",
+      "surname": "Suárez",
+      "fullname": "Suárez, Maria Jesús"
+    },
+    {
+      "name": "Raza",
+      "surname": "Malik",
+      "fullname": "Malik, Raza"
+    }
+  ],
+  "datasourceIds": [
+    "10|openaire____::b292fc2d7de505f78e3cae1b06ea8548"
+  ]
+}
+{
   "id": "50|doiboost____::45338d370d67e84eeb63e8e67300ce89",
   "title": "clinical features and short term outcomes of cancer patients with suspected",
   "abstract": "<jats:p>The study aimed to identify predictors of overall 30-day mortality in cancer patients with pulmonary embolism including suspected pulmonary embolism (SPE) and unsuspected pulmonary embolism (UPE) events. Secondary outcomes included 30- and 90-day major bleeding and venous thromboembolism (VTE) recurrence.</jats:p><jats:p>The study cohort included 1033 consecutive patients with pulmonary embolism from the multicentre observational ambispective EPIPHANY study (March 2006–October 2014). A subgroup of 497 patients prospectively assessed for the study were subclassified into three work-up scenarios (SPE, truly asymptomatic UPE and UPE with symptoms) to assess outcomes.</jats:p><jats:p>The overall 30-day mortality rate was 14%. The following variables were associated with the overall 30-day mortality on multivariate analysis: VTE history, upper gastrointestinal cancers, metastatic disease, cancer progression, performance status, arterial hypotension &lt;100 mmHg, heart rate &gt;110 beats",

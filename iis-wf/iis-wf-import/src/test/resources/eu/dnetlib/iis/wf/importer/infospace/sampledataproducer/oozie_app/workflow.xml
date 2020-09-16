@@ -160,8 +160,12 @@
                     <value>json</value>
                 </property>
                 <property>
-                    <name>max_abstract_length</name>
+                    <name>max_description_length</name>
                     <value>1000</value>
+                </property>
+                <property>
+                    <name>max_titles_size</name>
+                    <value>1</value>
                 </property>
                 <property>
                     <name>max_title_length</name>

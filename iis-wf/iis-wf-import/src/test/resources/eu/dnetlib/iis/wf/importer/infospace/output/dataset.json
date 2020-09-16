@@ -36,3 +36,47 @@
   "resourceTypeValue": "0021",
   "alternateIdentifiers": null
 }
+{
+  "id": "50|opentrials__::98053cee8d1792ba9c0889d5c4189cec",
+  "referenceType": "euctr",
+  "idForGivenType": "EUCTR2013-001884-21",
+  "creatorNames": [
+    "Bhamidimarri, Kalyan R",
+    "Jalan, Rajiv",
+    "Martinez, Valentin Cuervas-Mons",
+    "Verma, Sumita",
+    "Sayer, Joanna",
+    "Montero, José Luis",
+    "Kramer, David J",
+    "Crespo, Javier",
+    "Subramanian, Ram",
+    "Gutierrez, Julio",
+    "Shetty, Kirti",
+    "Reich, David",
+    "deLemos, Andrew",
+    "Satoskar, Rohit",
+    "Prieto, Martín",
+    "Tome, Santiago",
+    "Larson, Anne M",
+    "Romero-Gomez, Manuel",
+    "Caballeria, Juan",
+    "Rossi, Simona",
+    "Thompson, Julie",
+    "Adhami, Talal",
+    "Duarte-Rojo, Andres",
+    "Suárez, Maria Jesús",
+    "Malik, Raza"
+  ],
+  "titles": [
+    "A Randomized, Open-Label, Multicenter, Controlled Study to Assess Safety and"
+  ],
+  "description": "The Lille score will be used to identify subjects with an increased risk of mortality (Lille score failures). The Lille score is a prognostic model combining six reproducible variables at Day 0 and Day 7 of steroid treatment. The Lille score used in this protocol is being used independent of steroid administration during the 7 days of evaluation. A Lille score >0.45 (Lille score failure) indicates that the subject is at substantially increased risk of 30- and 90-day mortality. Subjects with severe acute alcoholic hepatitis (sAAH) are often treated with steroids as soon as their diagnosis is confirmed. This study is to assess treatment with the ELAD System in subjects who have failed per the Lille criteria, independent of steroid administration. ELAD treatment is done continuously for up to 10 days in addition to standard of care treatment. The Control group (those randomized not to receive ELAD treatment) will also get standard of care treatment. Standard of care is defined as the usual",
+  "publisher": "nct",
+  "publicationYear": "2013",
+  "formats": null,
+  "resourceTypeValue": "0037",
+  "alternateIdentifiers": {
+    "euctr": "EUCTR2013-001884-21",
+    "nct": "NCT01829347"
+  }
+}

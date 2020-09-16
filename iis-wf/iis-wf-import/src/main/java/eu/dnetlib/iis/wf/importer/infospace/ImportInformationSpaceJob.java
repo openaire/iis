@@ -2,12 +2,11 @@ package eu.dnetlib.iis.wf.importer.infospace;
 
 import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.beust.jcommander.DynamicParameter;
+import eu.dnetlib.iis.wf.importer.infospace.truncator.AvroTruncator;
+import eu.dnetlib.iis.wf.importer.infospace.truncator.DataSetReferenceAvroTruncator;
 import eu.dnetlib.iis.wf.importer.infospace.truncator.DocumentMetadataAvroTruncator;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.lang.StringUtils;
@@ -146,8 +145,8 @@ public class ImportInformationSpaceJob {
             OafRelToAvroConverter<DocumentToProject> docProjectConverter = new DocumentToProjectRelationConverter();
             OafRelToAvroConverter<IdentifierMapping> deduplicationMappingConverter = new DeduplicationMappingConverter();
 
-            DocumentMetadataAvroTruncator documentMetadataAvroTruncator =
-                    createDocumentMetadataAvroTruncator(params.documentMetadataTruncationParams);
+            DocumentMetadataAvroTruncator documentMetadataAvroTruncator = createDocumentMetadataAvroTruncator(params);
+            DataSetReferenceAvroTruncator dataSetReferenceAvroTruncator = createDataSetReferenceAvroTruncator(params);
 
             String inputFormat = params.inputFormat;
        
@@ -171,10 +170,11 @@ public class ImportInformationSpaceJob {
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Dataset> filteredDataset = sourceDataset.filter(dataInfoBasedApprover::approve);
             filteredDataset.persist(CACHE_STORAGE_DEFAULT_LEVEL);
 
-            JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> docMeta = parseToDocMetaAvro(filteredDataset,
-                    sourcePublication, sourceSoftware, sourceOtherResearchProduct, dataInfoBasedApprover, documentConverter,
+            JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> docMeta = truncateAvro(parseToDocMetaAvro(filteredDataset,
+                    sourcePublication, sourceSoftware, sourceOtherResearchProduct, dataInfoBasedApprover, documentConverter),
                     documentMetadataAvroTruncator);
-            JavaRDD<eu.dnetlib.iis.importer.schemas.DataSetReference> dataset = parseResultToAvro(filteredDataset, datasetConverter);
+            JavaRDD<eu.dnetlib.iis.importer.schemas.DataSetReference> dataset = truncateAvro(parseResultToAvro(filteredDataset,
+                    datasetConverter), dataSetReferenceAvroTruncator);
             JavaRDD<eu.dnetlib.iis.importer.schemas.Project> project = filterAndParseToAvro(sourceProject, dataInfoBasedApprover, projectConverter);
             JavaRDD<eu.dnetlib.iis.importer.schemas.Organization> organization = filterAndParseToAvro(sourceOrganization, dataInfoBasedApprover, organizationConverter);
             
@@ -196,19 +196,29 @@ public class ImportInformationSpaceJob {
     }
 
     /**
-     * Creates a {@link DocumentMetadataAvroTruncator} from dynamic parameters.
-     *
-     * @param documentMetadataTruncationParams Map of truncation parameter values.
-     * @return Instance of the class.
+     * Creates a {@link DocumentMetadataAvroTruncator} from job parameters.
      */
-    private static DocumentMetadataAvroTruncator createDocumentMetadataAvroTruncator(Map<String, String> documentMetadataTruncationParams) {
+    private static DocumentMetadataAvroTruncator createDocumentMetadataAvroTruncator(ImportInformationSpaceJobParameters params) {
         return DocumentMetadataAvroTruncator.newBuilder()
-                .setMaxAbstractLength(Integer.parseInt(documentMetadataTruncationParams.get(DocumentMetadataAvroTruncator.PARAM_MAX_ABSTRACT_LENGTH)))
-                .setMaxTitleLength(Integer.parseInt(documentMetadataTruncationParams.get(DocumentMetadataAvroTruncator.PARAM_MAX_TITLE_LENGTH)))
-                .setMaxAuthorsSize(Integer.parseInt(documentMetadataTruncationParams.get(DocumentMetadataAvroTruncator.PARAM_MAX_AUTHORS_SIZE)))
-                .setMaxAuthorFullnameLength(Integer.parseInt(documentMetadataTruncationParams.get(DocumentMetadataAvroTruncator.PARAM_MAX_AUTHOR_FULLNAME_LENGTH)))
-                .setMaxKeywordsSize(Integer.parseInt(documentMetadataTruncationParams.get(DocumentMetadataAvroTruncator.PARAM_MAX_KEYWORDS_SIZE)))
-                .setMaxKeywordLength(Integer.parseInt(documentMetadataTruncationParams.get(DocumentMetadataAvroTruncator.PARAM_MAX_KEYWORD_LENGTH)))
+                .setMaxAbstractLength(params.maxDescriptionLength)
+                .setMaxTitleLength(params.maxTitleLength)
+                .setMaxAuthorsSize(params.maxAuthorsSize)
+                .setMaxAuthorFullnameLength(params.maxAuthorFullnameLength)
+                .setMaxKeywordsSize(params.maxKeywordsSize)
+                .setMaxKeywordLength(params.maxKeywordLength)
+                .build();
+    }
+
+    /**
+     * Creates a {@link DataSetReferenceAvroTruncator} from job parameters.
+     */
+    private static DataSetReferenceAvroTruncator createDataSetReferenceAvroTruncator(ImportInformationSpaceJobParameters params) {
+        return DataSetReferenceAvroTruncator.newBuilder()
+                .setMaxCreatorNamesSize(params.maxAuthorsSize)
+                .setMaxCreatorNameLength(params.maxAuthorFullnameLength)
+                .setMaxTitlesSize(params.maxTitlesSize)
+                .setMaxTitleLength(params.maxTitleLength)
+                .setMaxDescriptionLength(params.maxDescriptionLength)
                 .build();
     }
 
@@ -222,8 +232,7 @@ public class ImportInformationSpaceJob {
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Software> sourceSoftware,
             JavaRDD<eu.dnetlib.dhp.schema.oaf.OtherResearchProduct> sourceOtherResearchProduct,
             ResultApprover resultApprover,
-            OafEntityToAvroConverter<Result, DocumentMetadata> documentConverter,
-            DocumentMetadataAvroTruncator documentMetadataTruncator) {
+            OafEntityToAvroConverter<Result, DocumentMetadata> documentConverter) {
         JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> publicationDocMeta = filterAndParseResultToAvro(
                 sourcePublication, resultApprover, documentConverter);
 
@@ -236,12 +245,10 @@ public class ImportInformationSpaceJob {
         JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> datasetDocMeta = parseResultToAvro(
                 filteredDataset, documentConverter);
 
-        JavaRDD<DocumentMetadata> docMeta = publicationDocMeta
+        return publicationDocMeta
                 .union(softwareDocMeta)
                 .union(orpDocMeta)
                 .union(datasetDocMeta);
-
-        return truncateDocMeta(docMeta, documentMetadataTruncator);
     }
     
     /**
@@ -287,11 +294,11 @@ public class ImportInformationSpaceJob {
     }
 
     /**
-     * Truncates {@link DocumentMetadata} of input RDD.
+     * Truncates an avro type using its avro truncator implementation.
      */
-    private static JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> truncateDocMeta(JavaRDD<DocumentMetadata> docMeta,
-                                                                                             DocumentMetadataAvroTruncator documentMetadataTruncator){
-        return docMeta.map(documentMetadataTruncator::truncate);
+    private static <T extends SpecificRecord> JavaRDD<T> truncateAvro(JavaRDD<T> rdd,
+                                                                      AvroTruncator<T> truncator) {
+        return rdd.map(truncator::truncate);
     }
 
     /**
@@ -458,8 +465,26 @@ public class ImportInformationSpaceJob {
         @Parameter(names = "-outputNameProjectOrganization", required = true)
         private String outputNameProjectOrganization;
 
-        @DynamicParameter(names = "-D", description = "dynamic parameters related to document metadata truncation")
-        private Map<String, String> documentMetadataTruncationParams = new HashMap<>();
+        @Parameter(names = "-maxDescriptionLength", required = true)
+        private Integer maxDescriptionLength;
+
+        @Parameter(names = "-maxTitlesSize", required = true)
+        private Integer maxTitlesSize;
+
+        @Parameter(names = "-maxTitleLength", required = true)
+        private Integer maxTitleLength;
+
+        @Parameter(names = "-maxAuthorsSize", required = true)
+        private Integer maxAuthorsSize;
+
+        @Parameter(names = "-maxAuthorFullnameLength", required = true)
+        private Integer maxAuthorFullnameLength;
+
+        @Parameter(names = "-maxKeywordsSize", required = true)
+        private Integer maxKeywordsSize;
+
+        @Parameter(names = "-maxKeywordLength", required = true)
+        private Integer maxKeywordLength;
     }
     
 }

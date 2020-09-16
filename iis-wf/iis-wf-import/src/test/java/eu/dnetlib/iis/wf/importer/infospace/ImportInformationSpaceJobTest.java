@@ -139,12 +139,13 @@ public class ImportInformationSpaceJobTest {
                 "-outputNameDedupMapping", OUTPUT_NAME_DEDUP,
                 "-outputNameOrganization", OUTPUT_NAME_ORGANIZATION,
                 "-outputNameProjectOrganization", OUTPUT_NAME_PROJ_ORG,
-                "-DmaxAbstractLength=1000",
-                "-DmaxTitleLength=75",
-                "-DmaxAuthorsSize=25",
-                "-DmaxAuthorFullnameLength=25",
-                "-DmaxKeywordsSize=5",
-                "-DmaxKeywordLength=15"
+                "-maxDescriptionLength", "1000",
+                "-maxTitlesSize", "1",
+                "-maxTitleLength", "75",
+                "-maxAuthorsSize", "25",
+                "-maxAuthorFullnameLength", "25",
+                "-maxKeywordsSize", "5",
+                "-maxKeywordLength", "15"
         });
         
         // then
