@@ -160,6 +160,34 @@
                     <value>json</value>
                 </property>
                 <property>
+                    <name>max_description_length</name>
+                    <value>1000</value>
+                </property>
+                <property>
+                    <name>max_titles_size</name>
+                    <value>1</value>
+                </property>
+                <property>
+                    <name>max_title_length</name>
+                    <value>75</value>
+                </property>
+                <property>
+                    <name>max_authors_size</name>
+                    <value>25</value>
+                </property>
+                <property>
+                    <name>max_author_fullname_length</name>
+                    <value>25</value>
+                </property>
+                <property>
+                    <name>max_keywords_size</name>
+                    <value>5</value>
+                </property>
+                <property>
+                    <name>max_keyword_length</name>
+                    <value>15</value>
+                </property>
+                <property>
                     <name>output</name>
                     <value>${workingDir}/imported</value>
                 </property>
