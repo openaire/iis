@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
+import eu.dnetlib.iis.common.StaticResourceProvider;
 import org.junit.Test;
 
 import eu.dnetlib.dhp.schema.oaf.Field;
@@ -133,8 +133,9 @@ public class ProjectConverterTest {
         return Collections.singletonList(result);
     }
 
-    private String readFundingTree() throws IOException {
-        return IOUtils.toString(getClass().getResourceAsStream("/eu/dnetlib/iis/wf/importer/converter/fundingclass_example.xml"), "utf8");
+    private String readFundingTree() {
+        return StaticResourceProvider
+                .getResourceContent("/eu/dnetlib/iis/wf/importer/converter/fundingclass_example.xml");
     }
     
 }

@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.report.pushgateway.process;
 
+import eu.dnetlib.iis.common.StaticResourceProvider;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
 import eu.dnetlib.iis.common.java.io.DataStore;
@@ -21,9 +22,6 @@ import org.apache.hadoop.mapreduce.Job;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 
 import java.io.IOException;
 import java.util.*;
@@ -211,10 +209,8 @@ public class PushMetricsProcess implements Process {
             Supplier<Map<String, LabeledMetricConf>> labelNamesByMetricNameSupplier = () -> {
                 try {
                     String labeledMetricsPropertiesFile = parameters.get(LABELED_METRICS_PROPERTIES_FILE);
-                    ResourceLoader loader = new DefaultResourceLoader();
-                    Resource resource = loader.getResource(labeledMetricsPropertiesFile);
                     Properties labeledMetricsProperties = new Properties();
-                    labeledMetricsProperties.load(resource.getInputStream());
+                    labeledMetricsProperties.load(StaticResourceProvider.getResourceInputStream(labeledMetricsPropertiesFile));
                     return labeledMetricsProperties.entrySet().stream()
                             .map(entry -> {
                                 String metricPattern = (String) entry.getKey();

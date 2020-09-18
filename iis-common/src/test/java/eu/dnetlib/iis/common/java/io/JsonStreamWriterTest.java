@@ -2,12 +2,9 @@ package eu.dnetlib.iis.common.java.io;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
+import eu.dnetlib.iis.common.StaticResourceProvider;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -29,14 +26,9 @@ public class JsonStreamWriterTest {
 		}
 		writer.close();
 		String actual = out.toString();
-		Reader in = new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream("eu/dnetlib/iis/common/java/io/document.json"), "UTF-8");
-		String expected = toString(in);
+		String expected = StaticResourceProvider
+				.getResourceContent("eu/dnetlib/iis/common/java/io/document.json")
+				.replace("\r", "");
 		Assert.assertEquals(expected, actual);
-	}
-	
-	private static String toString(Reader in) throws IOException{
-		StringWriter writer = new StringWriter();
-		IOUtils.copy(in, writer);
-		return writer.toString().replace("\r", "");
 	}
 }

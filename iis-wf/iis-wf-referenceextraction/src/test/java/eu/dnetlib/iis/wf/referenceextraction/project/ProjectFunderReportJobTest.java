@@ -3,6 +3,7 @@ package eu.dnetlib.iis.wf.referenceextraction.project;
 import java.io.File;
 import java.io.IOException;
 
+import eu.dnetlib.iis.common.StaticResourceProvider;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -59,9 +60,12 @@ public class ProjectFunderReportJobTest {
     public void generateReport() throws IOException {
         
         // given
-        String jsonInputProjectFile = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/project/funder_report/data/input_project.json";
-        String jsonInputDocumentToProjectFile = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/project/funder_report/data/input_document_to_project.json";
-        String jsonOutputReportFile = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/project/funder_report/data/output_report.json";
+        String jsonInputProjectFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/project/funder_report/data/input_project.json");
+        String jsonInputDocumentToProjectFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/project/funder_report/data/input_document_to_project.json");
+        String jsonOutputReportFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/project/funder_report/data/output_report.json");
         
         
         AvroTestUtils.createLocalAvroDataStore(

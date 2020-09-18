@@ -1,11 +1,9 @@
 package eu.dnetlib.iis.wf.primary.processing;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import eu.dnetlib.iis.common.StaticResourceProvider;
 import eu.dnetlib.iis.wf.referenceextraction.ContentRetrieverResponse;
 import eu.dnetlib.iis.wf.referenceextraction.softwareurl.ContentRetriever;
 
@@ -34,20 +32,11 @@ public class ClasspathContentRetriever implements ContentRetriever {
         if (url != null) {
             String classPathLocation = urlToClasspathMap.get(url.toString());
             if (classPathLocation != null) {
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                        ClasspathContentRetriever.class.getResourceAsStream(classPathLocation)))) {
-                    StringBuilder pageContent = new StringBuilder();
-                    String inputLine;
-                    while ((inputLine = reader.readLine()) != null) {
-                        if (pageContent.length() > 0) {
-                            pageContent.append('\n');    
-                        }
-                        pageContent.append(inputLine);    
-                    }
-                    return new ContentRetrieverResponse(pageContent.toString());
-                } catch (IOException e) {
+                try {
+                    return new ContentRetrieverResponse(StaticResourceProvider.getResourceContent(classPathLocation));
+                } catch (Exception e) {
                     return new ContentRetrieverResponse(e);
-                }    
+                }
             }
         }
         

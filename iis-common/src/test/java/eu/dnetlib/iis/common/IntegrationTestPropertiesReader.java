@@ -51,7 +51,7 @@ public class IntegrationTestPropertiesReader {
 		InputStream inputStream = null;
 		try {
 
-			inputStream = IntegrationTestPropertiesReader.class.getResourceAsStream(DEFAULT_PROPERTIES_CLASSPATH);
+			inputStream = StaticResourceProvider.getResourceInputStream(DEFAULT_PROPERTIES_CLASSPATH);
 			defaultProperties.load(inputStream);
 			inputStream.close();
 		} catch (IOException e) {

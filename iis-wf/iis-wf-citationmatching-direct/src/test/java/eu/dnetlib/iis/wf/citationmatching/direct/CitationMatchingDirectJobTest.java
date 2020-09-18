@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import eu.dnetlib.iis.common.StaticResourceProvider;
 import org.apache.avro.util.Utf8;
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -82,19 +83,23 @@ public class CitationMatchingDirectJobTest {
         
         
         // given
-        
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/input/documents.json";
-        String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/citations.json";
-        String jsonReportFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/report.json";
+
+        String jsonInputFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/citationmatching/direct/data/input/documents.json");
+        String jsonOutputFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/citations.json");
+        String jsonReportFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/report.json");
         
         
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(jsonInputFile, ExtractedDocumentMetadataMergedWithOriginal.class),
                 inputDirPath);
-        
-        
-        
-        String csvInputFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/input/PMC-ids.csv";
+
+
+
+        String csvInputFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/citationmatching/direct/data/input/PMC-ids.csv");
 
         FileSystem fs = createLocalFileSystem();
         fs.copyFromLocalFile(new Path(csvInputFile), new Path(inputCSVFileLocation));
@@ -117,9 +122,11 @@ public class CitationMatchingDirectJobTest {
     public void citationMatchingDirect_MULTIPLE_SAME_DOI() throws IOException {
         
         // given
-        
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/input/documents_multiple_same_doi.json";
-        String jsonReportFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/report_one_matched.json";
+
+        String jsonInputFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/citationmatching/direct/data/input/documents_multiple_same_doi.json");
+        String jsonReportFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/report_one_matched.json");
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(jsonInputFile, ExtractedDocumentMetadataMergedWithOriginal.class),
                 inputDirPath);
@@ -148,9 +155,11 @@ public class CitationMatchingDirectJobTest {
     public void citationMatchingDirect_MULTIPLE_SAME_PMID() throws IOException {
         
         // given
-        
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/input/documents_multiple_same_pmid.json";
-        String jsonReportFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/report_one_matched.json";
+
+        String jsonInputFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/citationmatching/direct/data/input/documents_multiple_same_pmid.json");
+        String jsonReportFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/report_one_matched.json");
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(jsonInputFile, ExtractedDocumentMetadataMergedWithOriginal.class),
                 inputDirPath);
@@ -179,9 +188,11 @@ public class CitationMatchingDirectJobTest {
     public void citationMatchingDirect_MULTIPLE_SAME_PMID_WITH_TYPE() throws IOException {
         
         // given
-        
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/input/documents_multiple_same_pmid_with_type.json";
-        String jsonReportFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/report_one_matched.json";
+
+        String jsonInputFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/citationmatching/direct/data/input/documents_multiple_same_pmid_with_type.json");
+        String jsonReportFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/report_one_matched.json");
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(jsonInputFile, ExtractedDocumentMetadataMergedWithOriginal.class),
                 inputDirPath);
@@ -209,14 +220,17 @@ public class CitationMatchingDirectJobTest {
     public void citationMatchingDirect_MAPPABLE_PMID_TO_PMC() throws IOException {
         
         // given
-        
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/input/documents_mappable_pmid_to_pmc.json";
-        String jsonReportFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/report_one_matched.json";
+
+        String jsonInputFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/citationmatching/direct/data/input/documents_mappable_pmid_to_pmc.json");
+        String jsonReportFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/citationmatching/direct/data/expected_output/report_one_matched.json");
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(jsonInputFile, ExtractedDocumentMetadataMergedWithOriginal.class),
                 inputDirPath);
-        
-        String csvInputFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/direct/data/input/PMC-ids.csv";
+
+        String csvInputFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/citationmatching/direct/data/input/PMC-ids.csv");
 
         FileSystem fs = createLocalFileSystem();
         fs.copyFromLocalFile(new Path(csvInputFile), new Path(inputCSVFileLocation));

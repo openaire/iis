@@ -1,10 +1,8 @@
 package eu.dnetlib.iis.wf.primary.processing;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.io.IOUtils;
+import eu.dnetlib.iis.common.StaticResourceProvider;
 
 import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
 import eu.dnetlib.iis.wf.referenceextraction.patent.PatentServiceException;
@@ -29,7 +27,7 @@ public class ClassPathBasedPatentServiceFacade implements PatentServiceFacade {
     @Override
     public String getPatentMetadata(ImportedPatent patent) throws NoSuchElementException, PatentServiceException {
         try {
-            return getContent(classPathRoot + generateFileName(patent));
+            return StaticResourceProvider.getResourceContent(classPathRoot + generateFileName(patent));
         } catch (Exception e) {
             throw new PatentServiceException(e);
         }
@@ -45,11 +43,5 @@ public class ClassPathBasedPatentServiceFacade implements PatentServiceFacade {
         strBuilder.append(".xml");
         return strBuilder.toString();
     }
-
-    private static String getContent(String location) throws IOException {
-        return IOUtils.toString(ClassPathBasedPatentServiceFacade.class.getResourceAsStream(location),
-                StandardCharsets.UTF_8);
-    }
-
 }
 

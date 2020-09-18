@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.dnetlib.iis.common.StaticResourceProvider;
 import org.apache.avro.Schema;
 import org.apache.avro.file.DataFileWriter;
 import org.apache.avro.generic.GenericRecord;
@@ -55,14 +56,11 @@ public final class JsonUtils {
 	}
 
 	/**
-	 * Read given JSON file in the same format as defined in
-	 * {@link convertJsonFileToDataStore} from resources and convert it to a
-	 * list of data structures. A utility function.
+	 * Read given JSON file from resources and convert it to a list of data structures. A utility function.
 	 */
 	public static <T> List<T> convertToList(String resourcesJsonFilePath,
 			Schema schema, Class<T> type) {
-		InputStream in = (Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream(resourcesJsonFilePath));
+		InputStream in = StaticResourceProvider.getResourceInputStream(resourcesJsonFilePath);
 		return convertToList(in, schema, type);
 	}
 

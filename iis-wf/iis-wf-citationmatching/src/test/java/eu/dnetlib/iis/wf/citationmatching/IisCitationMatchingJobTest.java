@@ -3,6 +3,7 @@ package eu.dnetlib.iis.wf.citationmatching;
 import java.io.File;
 import java.io.IOException;
 
+import eu.dnetlib.iis.common.StaticResourceProvider;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -60,9 +61,11 @@ public class IisCitationMatchingJobTest {
         
         
         // given
-        
-        String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/main_workflow/data/citation.json";
-        String jsonReportFile = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/main_workflow/data/report.json";
+
+        String jsonOutputFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/citationmatching/main_workflow/data/citation.json");
+        String jsonReportFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/citationmatching/main_workflow/data/report.json");
         
         AvroTestUtils.createLocalAvroDataStore(
                 DocumentAvroDatastoreProducer.getDocumentMetadataList(),

@@ -21,6 +21,7 @@ import static org.mockito.Mockito.verify;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import eu.dnetlib.iis.common.StaticResourceProvider;
 import org.apache.avro.mapred.AvroKey;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -329,7 +330,7 @@ public class MetadataExtractorMapperTest {
     // --------------------------------------- PRIVATE ----------------------------------------
     
     private byte[] getContent(String location) throws IOException {
-        return IOUtils.toByteArray(MetadataExtractorMapper.class.getResourceAsStream(location));
+        return IOUtils.toByteArray(StaticResourceProvider.getResourceInputStream(location));
     }
     
     

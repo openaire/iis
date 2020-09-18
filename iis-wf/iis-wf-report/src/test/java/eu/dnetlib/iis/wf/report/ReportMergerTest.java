@@ -12,13 +12,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import eu.dnetlib.iis.common.StaticResourceProvider;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.junit.Before;
@@ -152,8 +152,8 @@ public class ReportMergerTest {
     }
     
     private JsonObject readJsonFromClasspath(String jsonClasspath) throws IOException {
-        
-        try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(jsonClasspath))) {
+
+        try (Reader reader = StaticResourceProvider.getResourceInputStreamReader(jsonClasspath)) {
             JsonElement jsonElement = jsonParser.parse(reader);
             
             return jsonElement.getAsJsonObject();

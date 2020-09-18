@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import eu.dnetlib.iis.common.StaticResourceProvider;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -112,7 +113,7 @@ public class TestingConsumer implements Process {
 	private void evaluateExpectations(String currentSpecLocation, AtomicAction<? extends Oaf> action, String serializedAction) throws Exception {
         log.info("output specification location: " + currentSpecLocation);
         Properties specProps = new OrderedProperties();
-        specProps.load(TestingConsumer.class.getResourceAsStream(currentSpecLocation.trim()));
+		specProps.load(StaticResourceProvider.getResourceInputStream(currentSpecLocation.trim()));
         Iterator<Entry<Object,Object>> propsIter = specProps.entrySet().iterator();
         while (propsIter.hasNext()) {
             Entry<Object,Object> entry = propsIter.next();

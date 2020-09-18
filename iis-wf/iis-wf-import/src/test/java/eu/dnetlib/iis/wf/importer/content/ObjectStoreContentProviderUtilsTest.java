@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.net.URL;
 
+import eu.dnetlib.iis.common.StaticResourceProvider;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -110,8 +111,7 @@ public class ObjectStoreContentProviderUtilsTest {
         String encoding = "utf8";
         String contentClassPath = "/eu/dnetlib/iis/wf/importer/content/sample_data.txt";
         URL url = ObjectStoreContentProviderUtils.class.getResource(contentClassPath);
-        String expectedResult = IOUtils.toString(
-                ObjectStoreContentProviderUtils.class.getResourceAsStream(contentClassPath), encoding);
+        String expectedResult = StaticResourceProvider.getResourceContent(contentClassPath);
         
         // execute
         byte[] result = ObjectStoreContentProviderUtils.getContentFromURL(url, new ContentRetrievalContext(1, 1, null));

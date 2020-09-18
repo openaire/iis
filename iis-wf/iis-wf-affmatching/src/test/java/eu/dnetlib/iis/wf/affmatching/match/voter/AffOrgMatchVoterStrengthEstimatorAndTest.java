@@ -4,6 +4,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import eu.dnetlib.iis.common.IntegrationTest;
+import eu.dnetlib.iis.common.StaticResourceProvider;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
@@ -205,7 +206,8 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
 
     private void estimateVoterMatchStrengths(AffOrgMatcher affOrgMatcher, String affOrgMatcherName, List<AffOrgMatchVoter> voters) throws IOException {
         printMatcherHeader(affOrgMatcherName);
-        List<String> matchedAffPaths = ImmutableList.of("src/test/resources/experimentalData/expectedOutput/matched_aff.json");
+        List<String> matchedAffPaths = ImmutableList.of(
+                StaticResourceProvider.getResourcePath("experimentalData/expectedOutput/matched_aff.json"));
 
         // given
         affMatchingService.setAffOrgMatchers(ImmutableList.of(affOrgMatcher));

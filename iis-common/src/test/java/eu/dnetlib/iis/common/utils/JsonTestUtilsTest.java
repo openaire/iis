@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.Arrays;
 import java.util.List;
 
+import eu.dnetlib.iis.common.StaticResourceProvider;
 import org.junit.Test;
 
 /**
@@ -14,8 +15,10 @@ import org.junit.Test;
  */
 public class JsonTestUtilsTest {
 
-    private final String jsonInputFile = "src/test/resources/eu/dnetlib/iis/common/utils/data/input.json";
-    private final String jsonInput2File = "src/test/resources/eu/dnetlib/iis/common/utils/data/input2.json";
+    private final String jsonInputFile = StaticResourceProvider
+            .getResourcePath("eu/dnetlib/iis/common/utils/data/input.json");
+    private final String jsonInput2File = StaticResourceProvider
+            .getResourcePath("eu/dnetlib/iis/common/utils/data/input2.json");
 
     private static final class DocumentToProject {
 

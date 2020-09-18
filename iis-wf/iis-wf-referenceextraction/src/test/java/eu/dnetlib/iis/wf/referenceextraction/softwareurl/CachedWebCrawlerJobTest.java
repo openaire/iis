@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import eu.dnetlib.iis.common.StaticResourceProvider;
 import org.apache.commons.io.FileUtils;
 import org.apache.curator.test.TestingServer;
 import org.apache.hadoop.conf.Configuration;
@@ -96,10 +97,14 @@ public class CachedWebCrawlerJobTest {
     public void obtainPageSourceAndInitializeCache() throws IOException {
         
         // given
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/document_to_softwareurl.json";
-        String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/document_to_softwareurl_with_source.json";
-        String jsonCacheFile = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/cache_text1.json";
-        String jsonReportFile = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/report.json";
+        String jsonInputFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/document_to_softwareurl.json");
+        String jsonOutputFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/document_to_softwareurl_with_source.json");
+        String jsonCacheFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/cache_text1.json");
+        String jsonReportFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/report.json");
 
         CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
         
@@ -136,10 +141,14 @@ public class CachedWebCrawlerJobTest {
     public void obtainPageSourceAndInitializeCacheWithFault() throws IOException {
         
         // given
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/nosource/document_to_softwareurl.json";
-        String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/nosource/document_to_softwareurl_with_source.json";
-        String jsonCacheFile = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/nosource/cache_text.json";
-        String jsonReportFile = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/nosource/report.json";
+        String jsonInputFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/nosource/document_to_softwareurl.json");
+        String jsonOutputFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/nosource/document_to_softwareurl_with_source.json");
+        String jsonCacheFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/nosource/cache_text.json");
+        String jsonReportFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/nosource/report.json");
 
         CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
         
@@ -183,13 +192,20 @@ public class CachedWebCrawlerJobTest {
     public void obtainPageSourceAndUpdateCache() throws IOException {
         
         // given
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/document_to_softwareurl.json";
-        String jsonInput2File = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/document_to_softwareurl2.json";
-        String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/document_to_softwareurl_with_source.json";
-        String jsonOutput2File = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/document_to_softwareurl_with_source2.json";
-        String jsonCache2File = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/cache_text2.json";
-        String jsonReportFile = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/report.json";
-        String jsonReport2File = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/report_cache_update.json";
+        String jsonInputFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/document_to_softwareurl.json");
+        String jsonInput2File = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/document_to_softwareurl2.json");
+        String jsonOutputFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/document_to_softwareurl_with_source.json");
+        String jsonOutput2File = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/document_to_softwareurl_with_source2.json");
+        String jsonCache2File = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/cache_text2.json");
+        String jsonReportFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/report.json");
+        String jsonReport2File = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/report_cache_update.json");
         
         CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
         
@@ -231,11 +247,16 @@ public class CachedWebCrawlerJobTest {
     public void obtainPageSourceFromCache() throws IOException {
 
         // given
-        String jsonInputFile = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/document_to_softwareurl.json";
-        String jsonOutputFile = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/document_to_softwareurl_with_source.json";
-        String jsonCacheFile = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/cache_text1.json";
-        String jsonReportFile = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/report.json";
-        String jsonReport2File = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/report_from_cache.json";
+        String jsonInputFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/document_to_softwareurl.json");
+        String jsonOutputFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/document_to_softwareurl_with_source.json");
+        String jsonCacheFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/cache_text1.json");
+        String jsonReportFile = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/report.json");
+        String jsonReport2File = StaticResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/report_from_cache.json");
         
         CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
         

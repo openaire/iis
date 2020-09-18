@@ -2,8 +2,8 @@ package eu.dnetlib.iis.common.utils;
 
 import java.io.IOException;
 
+import eu.dnetlib.iis.common.StaticResourceProvider;
 import org.apache.avro.mapred.AvroKey;
-import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Mapper;
 
@@ -24,10 +24,7 @@ extends Mapper<AvroKey<DocumentContentClasspath>, NullWritable, AvroKey<Document
 					 throws IOException, InterruptedException{
 		DocumentText.Builder builder = DocumentText.newBuilder();
 		builder.setId(key.datum().getId());
-		builder.setText(
-				IOUtils.toString(
-						Thread.currentThread().getContextClassLoader().getResourceAsStream(
-								key.datum().getClasspathLocation().toString()), "utf8"));
+		builder.setText(StaticResourceProvider.getResourceContent(key.datum().getClasspathLocation()));
         context.write(new AvroKey<DocumentText>(builder.build()),	
         		NullWritable.get());
 	}

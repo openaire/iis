@@ -24,7 +24,7 @@ import eu.dnetlib.openaire.exporter.model.ProjectDetail;
  */
 public class ProjectDetailConverterTest {
 
-    private static String outputResourceLocation = "/eu/dnetlib/iis/wf/importer/stream/project/data/output/project.json";
+    private static String outputResourceLocation = "eu/dnetlib/iis/wf/importer/stream/project/data/output/project.json";
     
     private final ProjectDetailConverter converter = new ProjectDetailConverter();
     
@@ -59,10 +59,8 @@ public class ProjectDetailConverterTest {
     
     @Test
     public void testConversionOnResource() throws Exception {
-        
-        List<Project> expected = JsonUtils.convertToList(
-                StreamingFacadeMockFactory.class.getResourceAsStream(outputResourceLocation), 
-                Project.SCHEMA$, Project.class);
+
+        List<Project> expected = JsonUtils.convertToList(outputResourceLocation, Project.SCHEMA$, Project.class);
         
         StreamingFacade streamingFacade = new StreamingFacadeMockFactory().instantiate(null);
         

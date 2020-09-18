@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -18,8 +17,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import eu.dnetlib.iis.common.StaticResourceProvider;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -46,8 +45,8 @@ public class OpsPatentMetadataXPathBasedParserTest {
     @Test
     public void testExtractMetadataFromValidXMLfile() throws Exception {
         // given
-        String xmlContents = IOUtils.toString(OpsPatentMetadataXPathBasedParser.class
-                .getResourceAsStream(xmlResourcesRootClassPath + "WO.0042078.A1.xml"), StandardCharsets.UTF_8.name());
+        String xmlContents = StaticResourceProvider
+                .getResourceContent(xmlResourcesRootClassPath + "WO.0042078.A1.xml");
 
         // execute
         Patent.Builder patent = parser.parse(xmlContents, getPatentBuilderInitializedWithRequiredFields());

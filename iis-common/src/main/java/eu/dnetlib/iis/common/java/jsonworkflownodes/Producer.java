@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import eu.dnetlib.iis.common.StaticResourceProvider;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -65,8 +66,7 @@ public class Producer implements Process {
 	
 	private static void write(FileSystemPath destination,
 			SpecificationValues specs) throws IOException{
-		InputStream in = Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream(specs.getJsonFilePath());
+		InputStream in = StaticResourceProvider.getResourceInputStream(specs.getJsonFilePath());
 		JsonUtils.convertToDataStore(specs.getSchema(), in, destination);
 	}
 }

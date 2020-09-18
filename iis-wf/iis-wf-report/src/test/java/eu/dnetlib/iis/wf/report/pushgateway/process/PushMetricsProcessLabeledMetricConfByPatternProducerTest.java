@@ -68,12 +68,11 @@ public class PushMetricsProcessLabeledMetricConfByPatternProducerTest {
     public void shouldProduceNonEmpty() {
         // given
         PushMetricsProcess.LabeledMetricConfByPatternProducer labeledMetricConfByPatternProducer = new PushMetricsProcess.LabeledMetricConfByPatternProducer();
-        String labeledMetricsPropertiesPath = Objects.requireNonNull(this.getClass().getClassLoader()
-                .getResource("eu/dnetlib/iis/wf/report/pushgateway/process/test/oozie_app/labeled_metrics.properties")).getFile();
+        String labeledMetricsPropertiesPath = "eu/dnetlib/iis/wf/report/pushgateway/process/test/oozie_app/labeled_metrics.properties";
 
         // when
         Optional<Map<String, LabeledMetricConf>> result = labeledMetricConfByPatternProducer
-                .create(Collections.singletonMap("labeledMetricsPropertiesFile", String.format("file:%s", labeledMetricsPropertiesPath)));
+                .create(Collections.singletonMap("labeledMetricsPropertiesFile", labeledMetricsPropertiesPath));
 
         // then
         assertTrue(result.isPresent());
