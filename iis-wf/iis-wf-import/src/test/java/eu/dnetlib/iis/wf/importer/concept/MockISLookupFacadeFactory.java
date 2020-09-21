@@ -2,7 +2,7 @@ package eu.dnetlib.iis.wf.importer.concept;
 
 import java.util.Map;
 
-import eu.dnetlib.iis.wf.importer.StaticResourcesProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.wf.importer.facade.ISLookupFacade;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeException;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeFactory;
@@ -33,10 +33,10 @@ public class MockISLookupFacadeFactory implements ServiceFacadeFactory<ISLookupF
         private static final String profileLocation = "/eu/dnetlib/iis/wf/importer/concept/data/input/fet-fp7.xml";
 
         //------------------------ LOGIC --------------------------
-        
+
         @Override
         public Iterable<String> searchProfile(String xPathQuery) throws ServiceFacadeException {
-            return StaticResourcesProvider.getResources(profileLocation);
+            return ClassPathResourceProvider.getResourcesContents(profileLocation);
         }
 
     }

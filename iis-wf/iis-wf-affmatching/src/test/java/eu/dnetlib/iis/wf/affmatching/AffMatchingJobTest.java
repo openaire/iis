@@ -3,6 +3,7 @@ package eu.dnetlib.iis.wf.affmatching;
 import java.io.File;
 import java.io.IOException;
 
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -82,15 +83,22 @@ public class AffMatchingJobTest {
         
         
         // given
-        
-        String jsonInputOrgPath = "src/test/resources/data/input/organizations.json";
-        String jsonInputAffPath = "src/test/resources/data/input/affiliations.json";
-        String jsonInputInferredDocProjPath = "src/test/resources/data/input/docProjInferred.json";
-        String jsonInputDocProjPath = "src/test/resources/data/input/docProj.json";
-        String jsonInputProjOrgPath = "src/test/resources/data/input/projOrg.json";
-        
-        String jsonOutputPath = "src/test/resources/data/expectedOutput/matchedOrganizations.json";
-        String jsonOutputReportPath = "src/test/resources/data/expectedOutput/report.json";
+
+        String jsonInputOrgPath = ClassPathResourceProvider
+                .getResourcePath("data/input/organizations.json");
+        String jsonInputAffPath = ClassPathResourceProvider
+                .getResourcePath("data/input/affiliations.json");
+        String jsonInputInferredDocProjPath = ClassPathResourceProvider
+                .getResourcePath("data/input/docProjInferred.json");
+        String jsonInputDocProjPath = ClassPathResourceProvider
+                .getResourcePath("data/input/docProj.json");
+        String jsonInputProjOrgPath = ClassPathResourceProvider
+                .getResourcePath("data/input/projOrg.json");
+
+        String jsonOutputPath = ClassPathResourceProvider
+                .getResourcePath("data/expectedOutput/matchedOrganizations.json");
+        String jsonOutputReportPath = ClassPathResourceProvider
+                .getResourcePath("data/expectedOutput/report.json");
         
         
         AvroTestUtils.createLocalAvroDataStore(

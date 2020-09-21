@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -46,7 +47,8 @@ public class DatasetDBProducer implements Process {
         FileSystem fs = FileSystem.get(conf);
         
         try (
-                InputStream inStream = this.getClass().getResourceAsStream("/eu/dnetlib/iis/wf/referenceextraction/dataset/datacite/data/datasets.db");
+				InputStream inStream = ClassPathResourceProvider
+						.getResourceInputStream("/eu/dnetlib/iis/wf/referenceextraction/dataset/datacite/data/datasets.db");
                 OutputStream outStream = fs.create(new FileSystemPath(fs, output.get(datasetDBPort)).getPath())) {
             
             IOUtils.copy(inStream, outStream);

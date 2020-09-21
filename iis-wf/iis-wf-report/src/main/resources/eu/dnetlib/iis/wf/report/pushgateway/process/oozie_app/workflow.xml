@@ -25,7 +25,7 @@
             <name>labeled_metrics_properties_file</name>
             <value>eu/dnetlib/iis/wf/report/pushgateway/process/oozie_app/labeled_metrics.properties</value>
             <description>
-                properties file with configuration of labeled metrics
+                classpath location of properties file with configuration of labeled metrics
             </description>
         </property>
     </parameters>

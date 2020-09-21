@@ -2,11 +2,11 @@ package eu.dnetlib.iis.wf.metadataextraction;
 
 import static eu.dnetlib.iis.wf.metadataextraction.NlmToDocumentWithBasicMetadataConverter.EMPTY_META;
 
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
 import eu.dnetlib.iis.metadataextraction.schemas.Author;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata;
-import eu.dnetlib.iis.wf.metadataextraction.NlmToDocumentWithBasicMetadataConverter;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class NlmToDocumentWithBasicMetadataConverterTest {
     public void testConvertFull() throws Exception {
         // given
         SAXBuilder builder = new SAXBuilder();
-        Document document = (Document) builder.build(ClassLoader.class.getResourceAsStream(testXML));
+        Document document = builder.build(ClassPathResourceProvider.getResourceInputStream(testXML));
         String id = "predefinedId";
         
         // execute
@@ -82,7 +82,7 @@ public class NlmToDocumentWithBasicMetadataConverterTest {
     public void testConvertFullNoId() throws Exception {
         // given
         SAXBuilder builder = new SAXBuilder();
-        Document document = (Document) builder.build(ClassLoader.class.getResourceAsStream(testXML));
+        Document document = (Document) builder.build(ClassPathResourceProvider.getResourceInputStream(testXML));
         
         // execute
         NlmToDocumentWithBasicMetadataConverter.convertFull(null, document, "text");

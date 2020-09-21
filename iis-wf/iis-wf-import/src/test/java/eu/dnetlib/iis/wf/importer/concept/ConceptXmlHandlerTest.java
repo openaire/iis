@@ -11,6 +11,7 @@ import java.util.List;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,7 +56,7 @@ public class ConceptXmlHandlerTest {
         // given
         String filePath = "/eu/dnetlib/iis/wf/importer/concept/data/input/fet-fp7.xml";
         
-        try (InputStream inputStream = ConceptXmlHandlerTest.class.getResourceAsStream(filePath)) {
+        try (InputStream inputStream = ClassPathResourceProvider.getResourceInputStream(filePath)) {
             // execute
             saxParser.parse(inputStream, handler);
         }

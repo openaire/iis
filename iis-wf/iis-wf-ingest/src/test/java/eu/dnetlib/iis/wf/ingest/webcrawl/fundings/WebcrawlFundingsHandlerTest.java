@@ -8,6 +8,7 @@ import java.io.InputStream;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,8 +36,8 @@ public class WebcrawlFundingsHandlerTest {
     public void testParseWebcrawlWithFunding() throws Exception {
         // given
         String filePath = "/eu/dnetlib/iis/wf/ingest/webcrawl/fundings/data/wos_with_funding.xml";
-        
-        try (InputStream inputStream = WebcrawlFundingsHandlerTest.class.getResourceAsStream(filePath)) {
+
+        try (InputStream inputStream = ClassPathResourceProvider.getResourceInputStream(filePath)) {
             // execute
             saxParser.parse(inputStream, handler);
         }
@@ -51,7 +52,7 @@ public class WebcrawlFundingsHandlerTest {
         // given
         String filePath = "/eu/dnetlib/iis/wf/ingest/webcrawl/fundings/data/wos_without_funding.xml";
         
-        try (InputStream inputStream = WebcrawlFundingsHandlerTest.class.getResourceAsStream(filePath)) {
+        try (InputStream inputStream = ClassPathResourceProvider.getResourceInputStream(filePath)) {
             // execute
             saxParser.parse(inputStream, handler);
         }

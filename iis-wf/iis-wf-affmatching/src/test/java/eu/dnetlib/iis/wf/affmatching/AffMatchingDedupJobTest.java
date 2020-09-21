@@ -3,6 +3,7 @@ package eu.dnetlib.iis.wf.affmatching;
 import java.io.File;
 import java.io.IOException;
 
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -68,12 +69,16 @@ public class AffMatchingDedupJobTest {
         
         
         // given
-        
-        String jsonInputAPath = "src/test/resources/data/dedup/input/input1.json";
-        String jsonInputBPath = "src/test/resources/data/dedup/input/input2.json";
-        
-        String jsonOutputPath = "src/test/resources/data/dedup/expectedOutput/matchedOrganizations.json";
-        String jsonOutputReportPath = "src/test/resources/data/dedup/expectedOutput/report.json";
+
+        String jsonInputAPath = ClassPathResourceProvider
+                .getResourcePath("data/dedup/input/input1.json");
+        String jsonInputBPath = ClassPathResourceProvider
+                .getResourcePath("data/dedup/input/input2.json");
+
+        String jsonOutputPath = ClassPathResourceProvider
+                .getResourcePath("data/dedup/expectedOutput/matchedOrganizations.json");
+        String jsonOutputReportPath = ClassPathResourceProvider
+                .getResourcePath("data/dedup/expectedOutput/report.json");
         
         
         AvroTestUtils.createLocalAvroDataStore(

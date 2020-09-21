@@ -12,10 +12,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.io.IOException;
-
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.avro.mapred.AvroKey;
-import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.jdom.input.JDOMParseException;
@@ -108,7 +106,7 @@ public class MetadataImporterTest {
         String id = "id";
         DocumentText.Builder docTextBuilder = DocumentText.newBuilder();
         docTextBuilder.setId(id);
-        docTextBuilder.setText(getContent(XML_FILE));
+        docTextBuilder.setText(ClassPathResourceProvider.getResourceContent(XML_FILE));
         
         // execute
         mapper.map(new AvroKey<>(docTextBuilder.build()), null, context);
@@ -129,7 +127,7 @@ public class MetadataImporterTest {
         String id = "id";
         DocumentText.Builder docTextBuilder = DocumentText.newBuilder();
         docTextBuilder.setId(id);
-        docTextBuilder.setText(getContent(XML_FILE));
+        docTextBuilder.setText(ClassPathResourceProvider.getResourceContent(XML_FILE));
         
         Configuration conf = new Configuration();
         conf.set(NAMED_OUTPUT_META, "meta");
@@ -180,7 +178,7 @@ public class MetadataImporterTest {
         String id = "id";
         DocumentText.Builder docTextBuilder = DocumentText.newBuilder();
         docTextBuilder.setId(id);
-        docTextBuilder.setText(getContent(NON_XML_FILE));
+        docTextBuilder.setText(ClassPathResourceProvider.getResourceContent(NON_XML_FILE));
         
         // execute
         mapper.map(new AvroKey<>(docTextBuilder.build()), null, context);
@@ -221,12 +219,4 @@ public class MetadataImporterTest {
         // assert
         verify(multipleOutputs, times(1)).close();
     }
-    
-    // --------------------------------------- PRIVATE ----------------------------------------
-    
-    private String getContent(String location) throws IOException {
-        return IOUtils.toString(MetadataImporter.class.getResourceAsStream(location), "utf8");
-    }
-    
-    
 }

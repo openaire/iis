@@ -3,8 +3,8 @@ package eu.dnetlib.iis.wf.referenceextraction.covid19.output;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -20,7 +20,6 @@ import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
 public class Covid19ToConceptIdTransformerJobTest {
-    private ClassLoader cl = getClass().getClassLoader();
     private SparkJobExecutor executor = new SparkJobExecutor();
     private Path workingDir;
     private Path inputDir;
@@ -41,12 +40,10 @@ public class Covid19ToConceptIdTransformerJobTest {
     @Test
     public void shouldConvertMatchedDocumentAvroDatastore() throws IOException {
         // given
-        String inputPath = Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/covid19/data/matched_document.json"))
-                .getFile();
-        String outputPath = Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/covid19/data/matched_document_transformed.json"))
-                .getFile();
+        String inputPath = ClassPathResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/covid19/data/matched_document.json");
+        String outputPath = ClassPathResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/covid19/data/matched_document_transformed.json");
         AvroTestUtils.createLocalAvroDataStore(JsonAvroTestUtils.readJsonDataStore(inputPath, MatchedDocument.class), inputDir.toString());
 
         SparkJob sparkJob = buildSparkJob();

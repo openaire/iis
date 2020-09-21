@@ -4,15 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -220,12 +219,10 @@ public class PatentMetadataExtractorJobTest {
         return importedPatentBuilder.build();
     }
     
-    private DocumentText buildDocumentText(String id, String textClassPathLocation) throws IOException {
+    private DocumentText buildDocumentText(String id, String textClassPathLocation) {
         DocumentText.Builder documentTextBuilder = DocumentText.newBuilder();
         documentTextBuilder.setId(id);
-        String textContent = IOUtils.toString(
-                PatentMetadataExtractorJob.class.getResourceAsStream(textClassPathLocation),
-                StandardCharsets.UTF_8.name());
+        String textContent = ClassPathResourceProvider.getResourceContent(textClassPathLocation);
         documentTextBuilder.setText(textContent);
         return documentTextBuilder.build();
     }

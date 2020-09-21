@@ -3,6 +3,7 @@ package eu.dnetlib.iis.wf.referenceextraction.concept;
 import java.io.File;
 import java.io.IOException;
 
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -55,8 +56,10 @@ public class RootConceptIdReportJobTest {
     public void generateReport() throws IOException {
         
         // given
-        String jsonInputDocumentToConceptFile = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/concept/root_conceptid_report/data/input_document_to_concept.json";
-        String jsonOutputReportFile = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/concept/root_conceptid_report/data/output_report.json";
+        String jsonInputDocumentToConceptFile = ClassPathResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/concept/root_conceptid_report/data/input_document_to_concept.json");
+        String jsonOutputReportFile = ClassPathResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/concept/root_conceptid_report/data/output_report.json");
 
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(jsonInputDocumentToConceptFile, DocumentToConceptId.class),

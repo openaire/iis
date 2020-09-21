@@ -1,7 +1,6 @@
 package eu.dnetlib.iis.wf.affmatching.orgalternativenames;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Set;
 
@@ -9,6 +8,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import au.com.bytecode.opencsv.CSVReader;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 
 /**
  * Factory of alternative names dictionary. As source of dictionary
@@ -45,8 +45,8 @@ public class CsvOrganizationAltNamesDictionaryFactory {
     private List<Set<String>> createAltNamesDictionaryFromCsv(String csvClasspath) throws IOException {
         
         List<Set<String>> dictionary = Lists.newArrayList();
-        
-        try (CSVReader reader = new CSVReader(new InputStreamReader(this.getClass().getResourceAsStream(csvClasspath), "UTF-8"))) {
+
+        try (CSVReader reader = new CSVReader(ClassPathResourceProvider.getResourceReader(csvClasspath))) {
             
             String[] next = reader.readNext();
             while (next != null) {

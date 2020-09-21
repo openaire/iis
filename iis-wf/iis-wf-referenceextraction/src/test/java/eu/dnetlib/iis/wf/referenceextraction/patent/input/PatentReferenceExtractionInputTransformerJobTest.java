@@ -3,8 +3,8 @@ package eu.dnetlib.iis.wf.referenceextraction.patent.input;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -20,7 +20,6 @@ import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
 public class PatentReferenceExtractionInputTransformerJobTest {
-    private ClassLoader cl = getClass().getClassLoader();
     private SparkJobExecutor executor = new SparkJobExecutor();
     private Path workingDir;
     private Path inputDir;
@@ -41,12 +40,10 @@ public class PatentReferenceExtractionInputTransformerJobTest {
     @Test
     public void shouldConvertAvroDatastoreForReferenceExtraction() throws IOException {
         // given
-        String inputPatentPath = Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/input_transformer/imported_patent.json"))
-                .getFile();
-        String outputTransformedPatentPath = Objects
-                .requireNonNull(cl.getResource("eu/dnetlib/iis/wf/referenceextraction/patent/data/input_transformer/patent_transformed.json"))
-                .getFile();
+        String inputPatentPath = ClassPathResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/input_transformer/imported_patent.json");
+        String outputTransformedPatentPath = ClassPathResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/input_transformer/patent_transformed.json");
         AvroTestUtils.createLocalAvroDataStore(JsonAvroTestUtils.readJsonDataStore(inputPatentPath, ImportedPatent.class), inputDir.toString());
 
         SparkJob sparkJob = buildSparkJob();

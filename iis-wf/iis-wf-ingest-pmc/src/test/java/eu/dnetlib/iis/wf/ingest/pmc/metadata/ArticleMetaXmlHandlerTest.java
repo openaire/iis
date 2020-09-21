@@ -10,6 +10,7 @@ import java.util.List;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.XMLReader;
@@ -25,7 +26,8 @@ import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
  */
 public class ArticleMetaXmlHandlerTest {
 
-    private final static String XML_BASE_PATH = "src/test/resources/eu/dnetlib/iis/wf/ingest/pmc/metadata/data/articlemeta";
+    private final static String XML_BASE_PATH = ClassPathResourceProvider
+            .getResourcePath("eu/dnetlib/iis/wf/ingest/pmc/metadata/data/articlemeta");
     
     private ArticleMetaXmlHandler articleMetaXmlHandler;
     

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.junit.Test;
 
 import eu.dnetlib.iis.common.TestsIOUtils;
@@ -17,8 +18,8 @@ public class JsonStreamReaderTest {
 	
 	@Test
 	public void basicTest() throws IOException{
-		InputStream in = Thread.currentThread().getContextClassLoader()
-			.getResourceAsStream("eu/dnetlib/iis/common/java/io/document.json");
+		InputStream in = ClassPathResourceProvider
+				.getResourceInputStream("eu/dnetlib/iis/common/java/io/document.json");
 		CloseableIterator<Document> reader = new JsonStreamReader<Document>(
 				Document.SCHEMA$, in, Document.class);
 		List<Document> expected = DataStoreExamples.getDocument();
