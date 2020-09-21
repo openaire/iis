@@ -7,7 +7,7 @@ import static org.junit.Assert.assertNull;
 import java.util.Collections;
 import java.util.List;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.junit.Test;
 
 /**
@@ -39,7 +39,7 @@ public class FundingTreeParserTest {
     // ------------------------ PRIVATE --------------------------
 
     private String readFundingTree() {
-        return StaticResourceProvider
+        return ClassPathResourceProvider
                 .getResourceContent("/eu/dnetlib/iis/wf/importer/converter/fundingclass_example.xml");
     }
 }

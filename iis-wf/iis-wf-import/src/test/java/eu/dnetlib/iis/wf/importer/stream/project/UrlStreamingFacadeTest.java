@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import java.io.InputStream;
 import java.net.URL;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
@@ -33,7 +33,7 @@ public class UrlStreamingFacadeTest {
         boolean compress = false;
 
         URL url = UrlStreamingFacade.class.getResource(contentTxtClassPath);
-        String expectedResult = StaticResourceProvider.getResourceContent(contentTxtClassPath);
+        String expectedResult = ClassPathResourceProvider.getResourceContent(contentTxtClassPath);
         
         UrlStreamingFacade facade = new UrlStreamingFacade(url, compress, readTimeout, connectionTimeout);
         
@@ -51,7 +51,7 @@ public class UrlStreamingFacadeTest {
         boolean compress = true;
 
         URL url = UrlStreamingFacade.class.getResource(contentGzClassPath);
-        String expectedResult = StaticResourceProvider.getResourceContent(contentTxtClassPath);
+        String expectedResult = ClassPathResourceProvider.getResourceContent(contentTxtClassPath);
         
         UrlStreamingFacade facade = new UrlStreamingFacade(url, compress, readTimeout, connectionTimeout);
         

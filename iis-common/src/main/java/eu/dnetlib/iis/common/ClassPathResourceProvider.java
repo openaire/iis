@@ -11,7 +11,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class StaticResourceProvider {
+/**
+ * Class with utility methods for providing resources on the classpath.
+ */
+public class ClassPathResourceProvider {
 
     /**
      * Returns the path to resource on the classpath.
@@ -34,7 +37,7 @@ public class StaticResourceProvider {
      * @return Content of the resource.
      */
     public static String getResourceContent(String location) {
-        try (InputStream input = new ClassPathResource(location).getInputStream()) {
+        try (InputStream input = getResourceInputStream(location)) {
             return IOUtils.toString(input, StandardCharsets.UTF_8);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -49,7 +52,7 @@ public class StaticResourceProvider {
      */
     public static List<String> getResourcesContents(String... locations) {
         return Arrays.stream(locations)
-                .map(StaticResourceProvider::getResourceContent)
+                .map(ClassPathResourceProvider::getResourceContent)
                 .collect(Collectors.toList());
     }
 
@@ -68,12 +71,12 @@ public class StaticResourceProvider {
     }
 
     /**
-     * Returns the input stream reader of a resource on the classpath.
+     * Returns the input stream reader of a resource on the classpath using UTF-8 charset.
      *
      * @param location String indicating the location of resource on the classpath.
      * @return InputStreamReader of the resource.
      */
-    public static InputStreamReader getResourceInputStreamReader(String location) {
+    public static InputStreamReader getResourceReader(String location) {
         return new InputStreamReader(getResourceInputStream(location), StandardCharsets.UTF_8);
     }
 }

@@ -8,7 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.commons.io.FileUtils;
 import org.apache.curator.test.TestingServer;
 import org.apache.hadoop.conf.Configuration;
@@ -78,13 +78,13 @@ public class PatentMetadataRetrieverJobTest {
     @Test
     public void testRetrievePatentMetaFromMockedRetrieverAndInitializeCache() throws IOException {
         // given
-        String inputPath = StaticResourceProvider
+        String inputPath = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/input.json");
-        String outputPath = StaticResourceProvider
+        String outputPath = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/output.json");
-        String reportPath = StaticResourceProvider
+        String reportPath = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/report.json");
-        String cachePath = StaticResourceProvider
+        String cachePath = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/cache_text1.json");
         
         CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
@@ -118,19 +118,19 @@ public class PatentMetadataRetrieverJobTest {
     @Test
     public void testRetrievePatentMetaFromMockedRetrieverAndUpdateCache() throws IOException {
         // given
-        String inputPath = StaticResourceProvider
+        String inputPath = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/input.json");
-        String input2Path = StaticResourceProvider
+        String input2Path = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/input2.json");
-        String outputPath = StaticResourceProvider
+        String outputPath = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/output.json");
-        String output2Path = StaticResourceProvider
+        String output2Path = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/output2.json");
-        String reportPath = StaticResourceProvider
+        String reportPath = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/report.json");
-        String report2Path = StaticResourceProvider
+        String report2Path = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/report_update.json");
-        String cachePath = StaticResourceProvider
+        String cachePath = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/cache_text2.json");
         
         CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
@@ -169,15 +169,15 @@ public class PatentMetadataRetrieverJobTest {
     @Test
     public void testObtainPatentMetaFromCacheWithoutCallingPatentFacade() throws IOException {
         // given
-        String inputPath = StaticResourceProvider
+        String inputPath = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/input.json");
-        String outputPath = StaticResourceProvider
+        String outputPath = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/output.json");
-        String reportPath = StaticResourceProvider
+        String reportPath = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/report.json");
-        String report2Path = StaticResourceProvider
+        String report2Path = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/report_from_cache.json");
-        String cachePath = StaticResourceProvider
+        String cachePath = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/cache_text1.json");
         
         CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();

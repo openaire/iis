@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeFactory;
 
 /**
@@ -23,7 +23,7 @@ public class StreamingFacadeMockFactory implements ServiceFacadeFactory<Streamin
         
             @Override
             public InputStream getStream() throws IOException {
-                return StaticResourceProvider.getResourceInputStream(resourceLocation);
+                return ClassPathResourceProvider.getResourceInputStream(resourceLocation);
             }
         };
     }

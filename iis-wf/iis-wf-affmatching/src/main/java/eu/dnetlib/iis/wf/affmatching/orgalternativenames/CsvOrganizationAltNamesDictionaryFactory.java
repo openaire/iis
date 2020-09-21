@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import au.com.bytecode.opencsv.CSVReader;
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 
 /**
  * Factory of alternative names dictionary. As source of dictionary
@@ -46,7 +46,7 @@ public class CsvOrganizationAltNamesDictionaryFactory {
         
         List<Set<String>> dictionary = Lists.newArrayList();
 
-        try (CSVReader reader = new CSVReader(StaticResourceProvider.getResourceInputStreamReader(csvClasspath))) {
+        try (CSVReader reader = new CSVReader(ClassPathResourceProvider.getResourceReader(csvClasspath))) {
             
             String[] next = reader.readNext();
             while (next != null) {

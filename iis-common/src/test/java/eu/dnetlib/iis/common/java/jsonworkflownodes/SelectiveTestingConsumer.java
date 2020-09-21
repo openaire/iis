@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
@@ -115,7 +115,7 @@ public class SelectiveTestingConsumer implements Process {
      */
     private Properties readExpectedValues(String location) throws IOException {
         Properties properties = new OrderedProperties();
-        properties.load(StaticResourceProvider.getResourceInputStream(location.trim()));
+        properties.load(ClassPathResourceProvider.getResourceInputStream(location.trim()));
         return properties;
     }
     

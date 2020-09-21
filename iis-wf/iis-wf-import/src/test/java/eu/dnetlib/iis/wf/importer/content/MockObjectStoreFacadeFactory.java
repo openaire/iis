@@ -2,7 +2,7 @@ package eu.dnetlib.iis.wf.importer.content;
 
 import java.util.Map;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.wf.importer.facade.ObjectStoreFacade;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeException;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeFactory;
@@ -45,7 +45,7 @@ public class MockObjectStoreFacadeFactory implements ServiceFacadeFactory<Object
         @Override
         public Iterable<String> deliverObjects(String objectStoreId, long from, long until)
                 throws ServiceFacadeException {
-            return StaticResourceProvider.getResourcesContents(metaLocations);
+            return ClassPathResourceProvider.getResourcesContents(metaLocations);
         }
 
     }

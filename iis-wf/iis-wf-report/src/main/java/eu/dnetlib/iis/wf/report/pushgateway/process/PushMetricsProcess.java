@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.report.pushgateway.process;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
 import eu.dnetlib.iis.common.java.io.DataStore;
@@ -210,7 +210,7 @@ public class PushMetricsProcess implements Process {
                 try {
                     String labeledMetricsPropertiesFile = parameters.get(LABELED_METRICS_PROPERTIES_FILE);
                     Properties labeledMetricsProperties = new Properties();
-                    labeledMetricsProperties.load(StaticResourceProvider.getResourceInputStream(labeledMetricsPropertiesFile));
+                    labeledMetricsProperties.load(ClassPathResourceProvider.getResourceInputStream(labeledMetricsPropertiesFile));
                     return labeledMetricsProperties.entrySet().stream()
                             .map(entry -> {
                                 String metricPattern = (String) entry.getKey();

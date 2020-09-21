@@ -3,7 +3,7 @@ package eu.dnetlib.iis.wf.primary.processing;
 import java.util.HashMap;
 import java.util.Map;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.wf.referenceextraction.ContentRetrieverResponse;
 import eu.dnetlib.iis.wf.referenceextraction.softwareurl.ContentRetriever;
 
@@ -33,7 +33,7 @@ public class ClasspathContentRetriever implements ContentRetriever {
             String classPathLocation = urlToClasspathMap.get(url.toString());
             if (classPathLocation != null) {
                 try {
-                    return new ContentRetrieverResponse(StaticResourceProvider.getResourceContent(classPathLocation));
+                    return new ContentRetrieverResponse(ClassPathResourceProvider.getResourceContent(classPathLocation));
                 } catch (Exception e) {
                     return new ContentRetrieverResponse(e);
                 }

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -222,7 +222,7 @@ public class PatentMetadataExtractorJobTest {
     private DocumentText buildDocumentText(String id, String textClassPathLocation) {
         DocumentText.Builder documentTextBuilder = DocumentText.newBuilder();
         documentTextBuilder.setId(id);
-        String textContent = StaticResourceProvider.getResourceContent(textClassPathLocation);
+        String textContent = ClassPathResourceProvider.getResourceContent(textClassPathLocation);
         documentTextBuilder.setText(textContent);
         return documentTextBuilder.build();
     }

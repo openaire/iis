@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.Reader;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -116,7 +116,7 @@ public class ReportEntryJsonAppenderTest {
     
     private JsonObject readJsonFromClasspath(String jsonClasspath) throws IOException {
 
-        try (Reader reader = StaticResourceProvider.getResourceInputStreamReader(jsonClasspath)) {
+        try (Reader reader = ClassPathResourceProvider.getResourceReader(jsonClasspath)) {
             JsonElement jsonElement = jsonParser.parse(reader);
             
             return jsonElement.getAsJsonObject();

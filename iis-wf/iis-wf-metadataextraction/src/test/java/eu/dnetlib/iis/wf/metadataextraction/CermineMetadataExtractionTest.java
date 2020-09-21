@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -36,7 +36,7 @@ public class CermineMetadataExtractionTest extends TestCase {
         
         ContentExtractor extractor = new ContentExtractor();
         
-        InputStream is = StaticResourceProvider.getResourceInputStream(PDF_FILE);
+        InputStream is = ClassPathResourceProvider.getResourceInputStream(PDF_FILE);
         Element extractedContent;
         try {
             extractor.setPDF(is);

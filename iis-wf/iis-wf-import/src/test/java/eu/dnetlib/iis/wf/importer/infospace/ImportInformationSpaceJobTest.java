@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.commons.io.FileUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.function.MapFunction;
@@ -146,14 +146,14 @@ public class ImportInformationSpaceJobTest {
         });
         
         // then
-        String expectedDocumentPath = StaticResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/document.json");
-        String expectedDatasetPath = StaticResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/dataset.json");
-        String expectedProjectPath = StaticResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/project.json");
-        String expectedOrganizationPath = StaticResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/organization.json");
-        String expectedDocProjectPath = StaticResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/docproject.json");
-        String expectedProjOrgPath = StaticResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/project_organization.json");
-        String expectedDedupMappingPath = StaticResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/dedupmapping.json");
-        String expectedReportPath = StaticResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/report.json");
+        String expectedDocumentPath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/document.json");
+        String expectedDatasetPath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/dataset.json");
+        String expectedProjectPath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/project.json");
+        String expectedOrganizationPath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/organization.json");
+        String expectedDocProjectPath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/docproject.json");
+        String expectedProjOrgPath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/project_organization.json");
+        String expectedDedupMappingPath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/dedupmapping.json");
+        String expectedReportPath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/report.json");
         
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.resolve(OUTPUT_NAME_DOCMETA).toString(), expectedDocumentPath, DocumentMetadata.class);
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.resolve(OUTPUT_NAME_DATASET).toString(), expectedDatasetPath, DataSetReference.class);
@@ -170,7 +170,7 @@ public class ImportInformationSpaceJobTest {
     private <T extends Oaf> void createGraphTableFor(String inputGraphTableJsonDumpPath,
             String inputGraphTableDirRelativePath, Class<T> clazz, String format) {
         Path inputGraphTableJsonDumpFile = Paths.get(
-                StaticResourceProvider.getResourcePath(inputGraphTableJsonDumpPath));
+                ClassPathResourceProvider.getResourcePath(inputGraphTableJsonDumpPath));
 
         Dataset<T> inputGraphTableDS = readGraphTableFromJSON(inputGraphTableJsonDumpFile, clazz);
         Path inputGraphTableDir = inputGraphDir.resolve(inputGraphTableDirRelativePath);

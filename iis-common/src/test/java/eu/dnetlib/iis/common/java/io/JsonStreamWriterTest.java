@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -26,7 +26,7 @@ public class JsonStreamWriterTest {
 		}
 		writer.close();
 		String actual = out.toString();
-		String expected = StaticResourceProvider
+		String expected = ClassPathResourceProvider
 				.getResourceContent("eu/dnetlib/iis/common/java/io/document.json")
 				.replace("\r", "");
 		Assert.assertEquals(expected, actual);

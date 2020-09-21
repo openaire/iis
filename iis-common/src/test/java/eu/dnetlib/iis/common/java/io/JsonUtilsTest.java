@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.avro.Schema;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -51,7 +51,7 @@ public class JsonUtilsTest {
 	
 	private <T> void checkConvertToDataStore(List<T> expectedRecords,
 			String actualResourcePath, Schema actualSchema) throws IOException{
-		InputStream in = StaticResourceProvider.getResourceInputStream(actualResourcePath);
+		InputStream in = ClassPathResourceProvider.getResourceInputStream(actualResourcePath);
 		FileSystemPath outPath = new FileSystemPath(new File(tempDir, "record"));
 		JsonUtils.convertToDataStore(actualSchema, in, outPath);
 		TestsIOUtils.assertEqualSets(expectedRecords, 
@@ -78,6 +78,6 @@ public class JsonUtilsTest {
 	}
 	
 	private String getStringFromResourceFile(String resourcePath) {
-		return StaticResourceProvider.getResourceContent(resourcePath).replaceAll("\\r", "");
+		return ClassPathResourceProvider.getResourceContent(resourcePath).replaceAll("\\r", "");
 	}
 }

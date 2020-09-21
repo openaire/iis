@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -40,9 +40,9 @@ public class Covid19ReferenceExtractionInputTransformerJobTest {
     @Test
     public void shouldConvertAvroDatastoreForReferenceExtraction() throws IOException {
         // given
-        String inputPath = StaticResourceProvider
+        String inputPath = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/covid19/data/document_metadata.json");
-        String outputPath = StaticResourceProvider
+        String outputPath = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/covid19/data/document_metadata_transformed.json");
         AvroTestUtils.createLocalAvroDataStore(JsonAvroTestUtils.readJsonDataStore(inputPath, ExtractedDocumentMetadataMergedWithOriginal.class), inputDir.toString());
 

@@ -8,7 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -74,10 +74,10 @@ public class PatentExporterJobTest {
         //given
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(
-                        StaticResourceProvider.getResourcePath(INPUT_DOCUMENT_TO_PATENT_PATH), DocumentToPatent.class),
+                        ClassPathResourceProvider.getResourcePath(INPUT_DOCUMENT_TO_PATENT_PATH), DocumentToPatent.class),
                 inputDocumentToPatentDir.toString());
         AvroTestUtils.createLocalAvroDataStore(
-                JsonAvroTestUtils.readJsonDataStore(StaticResourceProvider.getResourcePath(INPUT_PATENT_PATH), Patent.class),
+                JsonAvroTestUtils.readJsonDataStore(ClassPathResourceProvider.getResourcePath(INPUT_PATENT_PATH), Patent.class),
                 inputPatentDir.toString());
         SparkJob sparkJob = buildSparkJob(0.99);
 
@@ -113,11 +113,11 @@ public class PatentExporterJobTest {
         //given
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(
-                        StaticResourceProvider.getResourcePath(INPUT_DOCUMENT_TO_PATENT_PATH), DocumentToPatent.class),
+                        ClassPathResourceProvider.getResourcePath(INPUT_DOCUMENT_TO_PATENT_PATH), DocumentToPatent.class),
                 inputDocumentToPatentDir.toString());
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(
-                        StaticResourceProvider.getResourcePath(INPUT_PATENT_PATH), Patent.class),
+                        ClassPathResourceProvider.getResourcePath(INPUT_PATENT_PATH), Patent.class),
                 inputPatentDir.toString());
         SparkJob sparkJob = buildSparkJob(0.5);
         
@@ -160,11 +160,11 @@ public class PatentExporterJobTest {
         //given
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(
-                        StaticResourceProvider.getResourcePath(INPUT_DOCUMENT_TO_PATENT_NULLCHECK_PATH), DocumentToPatent.class),
+                        ClassPathResourceProvider.getResourcePath(INPUT_DOCUMENT_TO_PATENT_NULLCHECK_PATH), DocumentToPatent.class),
                 inputDocumentToPatentDir.toString());
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(
-                        StaticResourceProvider.getResourcePath(INPUT_PATENT_NULLCHECK_PATH), Patent.class),
+                        ClassPathResourceProvider.getResourcePath(INPUT_PATENT_NULLCHECK_PATH), Patent.class),
                 inputPatentDir.toString());
         SparkJob sparkJob = buildSparkJob(0.5);
 

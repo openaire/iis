@@ -8,12 +8,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-import static eu.dnetlib.iis.common.StaticResourceProvider.*;
+import static eu.dnetlib.iis.common.ClassPathResourceProvider.*;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class StaticResourceProviderTest {
+public class ClassPathResourceProviderTest {
 
     @Test(expected = RuntimeException.class)
     public void givenPathToResourceThatDoesNotExist_whenGetResourcePathIsCalled_thenExceptionIsThrown() {
@@ -63,7 +63,7 @@ public class StaticResourceProviderTest {
     @Test
     public void givenPathToResource_whenGetResourceInputStreamReaderIsCalled_thenInputStreamReaderIsReturned() {
         String content = new BufferedReader(
-                getResourceInputStreamReader("eu/dnetlib/iis/common/data/@a/static-resource-file.txt"))
+                getResourceReader("eu/dnetlib/iis/common/data/@a/static-resource-file.txt"))
                 .lines()
                 .collect(Collectors.joining("\n"));
 

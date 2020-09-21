@@ -17,7 +17,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -45,7 +45,7 @@ public class OpsPatentMetadataXPathBasedParserTest {
     @Test
     public void testExtractMetadataFromValidXMLfile() throws Exception {
         // given
-        String xmlContents = StaticResourceProvider
+        String xmlContents = ClassPathResourceProvider
                 .getResourceContent(xmlResourcesRootClassPath + "WO.0042078.A1.xml");
 
         // execute

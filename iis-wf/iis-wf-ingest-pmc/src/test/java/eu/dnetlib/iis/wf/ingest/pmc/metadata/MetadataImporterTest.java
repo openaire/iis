@@ -12,7 +12,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.avro.mapred.AvroKey;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.Mapper.Context;
@@ -106,7 +106,7 @@ public class MetadataImporterTest {
         String id = "id";
         DocumentText.Builder docTextBuilder = DocumentText.newBuilder();
         docTextBuilder.setId(id);
-        docTextBuilder.setText(StaticResourceProvider.getResourceContent(XML_FILE));
+        docTextBuilder.setText(ClassPathResourceProvider.getResourceContent(XML_FILE));
         
         // execute
         mapper.map(new AvroKey<>(docTextBuilder.build()), null, context);
@@ -127,7 +127,7 @@ public class MetadataImporterTest {
         String id = "id";
         DocumentText.Builder docTextBuilder = DocumentText.newBuilder();
         docTextBuilder.setId(id);
-        docTextBuilder.setText(StaticResourceProvider.getResourceContent(XML_FILE));
+        docTextBuilder.setText(ClassPathResourceProvider.getResourceContent(XML_FILE));
         
         Configuration conf = new Configuration();
         conf.set(NAMED_OUTPUT_META, "meta");
@@ -178,7 +178,7 @@ public class MetadataImporterTest {
         String id = "id";
         DocumentText.Builder docTextBuilder = DocumentText.newBuilder();
         docTextBuilder.setId(id);
-        docTextBuilder.setText(StaticResourceProvider.getResourceContent(NON_XML_FILE));
+        docTextBuilder.setText(ClassPathResourceProvider.getResourceContent(NON_XML_FILE));
         
         // execute
         mapper.map(new AvroKey<>(docTextBuilder.build()), null, context);

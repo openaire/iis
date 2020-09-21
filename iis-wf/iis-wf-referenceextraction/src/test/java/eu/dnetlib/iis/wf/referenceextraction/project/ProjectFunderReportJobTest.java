@@ -3,7 +3,7 @@ package eu.dnetlib.iis.wf.referenceextraction.project;
 import java.io.File;
 import java.io.IOException;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -60,11 +60,11 @@ public class ProjectFunderReportJobTest {
     public void generateReport() throws IOException {
         
         // given
-        String jsonInputProjectFile = StaticResourceProvider
+        String jsonInputProjectFile = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/project/funder_report/data/input_project.json");
-        String jsonInputDocumentToProjectFile = StaticResourceProvider
+        String jsonInputDocumentToProjectFile = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/project/funder_report/data/input_document_to_project.json");
-        String jsonOutputReportFile = StaticResourceProvider
+        String jsonOutputReportFile = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/project/funder_report/data/output_report.json");
         
         

@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.documentsclassification;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
@@ -46,7 +46,7 @@ public class DocumentClassificationJobTest {
 
     @BeforeClass
     public static void beforeClass() throws IOException {
-        scriptDirPath = StaticResourceProvider
+        scriptDirPath = ClassPathResourceProvider
                 .getResourcePath("/eu/dnetlib/iis/wf/documentsclassification/oozie_app/lib/scripts");
         copyMadis(scriptDirPath + "/madis");
     }
@@ -69,11 +69,11 @@ public class DocumentClassificationJobTest {
     @Test
     public void documentClassificationJob() throws IOException {
         // given
-        String jsonInputFile = StaticResourceProvider
+        String jsonInputFile = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/documentsclassification/data/input/few_documents.json");
-        String jsonOutputFile = StaticResourceProvider
+        String jsonOutputFile = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/documentsclassification/data/expected_output/few_document_to_document_classes.json");
-        String jsonReportFile = StaticResourceProvider
+        String jsonReportFile = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/documentsclassification/data/expected_output/few_document_report.json");
 
         AvroTestUtils.createLocalAvroDataStore(
@@ -91,11 +91,11 @@ public class DocumentClassificationJobTest {
     @Test
     public void documentClassificationJob_EMPTY_ABSTRACT() throws IOException {
         // given
-        String jsonInputFile = StaticResourceProvider
+        String jsonInputFile = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/documentsclassification/data/input/documents_with_empty_abstract.json");
-        String jsonOutputFile = StaticResourceProvider
+        String jsonOutputFile = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/documentsclassification/data/expected_output/empty.json");
-        String jsonReportFile = StaticResourceProvider
+        String jsonReportFile = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/documentsclassification/data/expected_output/empty_report.json");
 
         AvroTestUtils.createLocalAvroDataStore(
@@ -113,11 +113,11 @@ public class DocumentClassificationJobTest {
     @Test
     public void documentClassificationJob_EMPTY() throws IOException {
         // given
-        String avroInputFile = StaticResourceProvider
+        String avroInputFile = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/documentsclassification/data/input/empty.avro");
-        String jsonOutputFile = StaticResourceProvider
+        String jsonOutputFile = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/documentsclassification/data/expected_output/empty.json");
-        String jsonReportFile = StaticResourceProvider
+        String jsonReportFile = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/documentsclassification/data/expected_output/empty_report.json");
 
         FileUtils.copyFileToDirectory(new File(avroInputFile), new File(inputDirPath));

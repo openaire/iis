@@ -5,7 +5,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -35,7 +35,7 @@ public class ClassPathResourceToHdfsCopier implements Process {
 
         FileSystem fs = FileSystem.get(conf);
 
-        try (InputStream in = StaticResourceProvider.getResourceInputStream(PARAM_INPUT_CLASSPATH_RESOURCE);
+        try (InputStream in = ClassPathResourceProvider.getResourceInputStream(PARAM_INPUT_CLASSPATH_RESOURCE);
              OutputStream os = fs.create(new Path(parameters.get(PARAM_OUTPUT_HDFS_FILE_LOCATION)))) {
             IOUtils.copyBytes(in, os, 4096, false);
         }

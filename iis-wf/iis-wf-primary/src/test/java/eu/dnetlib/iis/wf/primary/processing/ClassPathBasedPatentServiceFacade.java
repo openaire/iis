@@ -2,7 +2,7 @@ package eu.dnetlib.iis.wf.primary.processing;
 
 import java.util.NoSuchElementException;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 
 import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
 import eu.dnetlib.iis.wf.referenceextraction.patent.PatentServiceException;
@@ -27,7 +27,7 @@ public class ClassPathBasedPatentServiceFacade implements PatentServiceFacade {
     @Override
     public String getPatentMetadata(ImportedPatent patent) throws NoSuchElementException, PatentServiceException {
         try {
-            return StaticResourceProvider.getResourceContent(classPathRoot + generateFileName(patent));
+            return ClassPathResourceProvider.getResourceContent(classPathRoot + generateFileName(patent));
         } catch (Exception e) {
             throw new PatentServiceException(e);
         }

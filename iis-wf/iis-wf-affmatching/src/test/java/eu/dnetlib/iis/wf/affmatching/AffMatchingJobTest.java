@@ -3,7 +3,7 @@ package eu.dnetlib.iis.wf.affmatching;
 import java.io.File;
 import java.io.IOException;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -84,20 +84,20 @@ public class AffMatchingJobTest {
         
         // given
 
-        String jsonInputOrgPath = StaticResourceProvider
+        String jsonInputOrgPath = ClassPathResourceProvider
                 .getResourcePath("data/input/organizations.json");
-        String jsonInputAffPath = StaticResourceProvider
+        String jsonInputAffPath = ClassPathResourceProvider
                 .getResourcePath("data/input/affiliations.json");
-        String jsonInputInferredDocProjPath = StaticResourceProvider
+        String jsonInputInferredDocProjPath = ClassPathResourceProvider
                 .getResourcePath("data/input/docProjInferred.json");
-        String jsonInputDocProjPath = StaticResourceProvider
+        String jsonInputDocProjPath = ClassPathResourceProvider
                 .getResourcePath("data/input/docProj.json");
-        String jsonInputProjOrgPath = StaticResourceProvider
+        String jsonInputProjOrgPath = ClassPathResourceProvider
                 .getResourcePath("data/input/projOrg.json");
 
-        String jsonOutputPath = StaticResourceProvider
+        String jsonOutputPath = ClassPathResourceProvider
                 .getResourcePath("data/expectedOutput/matchedOrganizations.json");
-        String jsonOutputReportPath = StaticResourceProvider
+        String jsonOutputReportPath = ClassPathResourceProvider
                 .getResourcePath("data/expectedOutput/report.json");
         
         

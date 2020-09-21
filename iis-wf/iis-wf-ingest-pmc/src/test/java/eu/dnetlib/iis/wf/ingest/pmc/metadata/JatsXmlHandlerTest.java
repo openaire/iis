@@ -10,7 +10,7 @@ import java.io.Reader;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,8 +65,8 @@ public class JatsXmlHandlerTest {
 
 	@Test
 	public void testParsingJats10() throws Exception {
-		fileReader = StaticResourceProvider
-				.getResourceInputStreamReader(xmlResourcesRootClassPath + "document_jats10.xml");
+		fileReader = ClassPathResourceProvider
+				.getResourceReader(xmlResourcesRootClassPath + "document_jats10.xml");
 		InputSource inputSource = new InputSource(fileReader);
 		saxParser.parse(inputSource, jatsXmlHandler);
 		checkJats10Metadata(metaBuilder.build());
@@ -74,8 +74,8 @@ public class JatsXmlHandlerTest {
 
 	@Test
 	public void testParsingJats10NestedInOAI() throws Exception {
-		fileReader = StaticResourceProvider
-				.getResourceInputStreamReader(xmlResourcesRootClassPath + "document_jats10_nested_in_oai.xml");
+		fileReader = ClassPathResourceProvider
+				.getResourceReader(xmlResourcesRootClassPath + "document_jats10_nested_in_oai.xml");
 		InputSource inputSource = new InputSource(fileReader);
 		saxParser.parse(inputSource, jatsXmlHandler);
 		checkJats10Metadata(metaBuilder.build());
@@ -83,8 +83,8 @@ public class JatsXmlHandlerTest {
 
 	@Test
 	public void testParsingJats23NestedInOAI() throws Exception {
-		fileReader = StaticResourceProvider
-				.getResourceInputStreamReader(xmlResourcesRootClassPath + "document_jats23_nested_in_oai.xml");
+		fileReader = ClassPathResourceProvider
+				.getResourceReader(xmlResourcesRootClassPath + "document_jats23_nested_in_oai.xml");
 		InputSource inputSource = new InputSource(fileReader);
 		saxParser.parse(inputSource, jatsXmlHandler);
 		ExtractedDocumentMetadata meta = metaBuilder.build();
@@ -136,8 +136,8 @@ public class JatsXmlHandlerTest {
 
 	@Test
 	public void testParsingLargeFile() throws Exception {
-		fileReader = StaticResourceProvider
-				.getResourceInputStreamReader(xmlResourcesRootClassPath + "od_______908__365a50343d53774f68fa13800349d372.xml");
+		fileReader = ClassPathResourceProvider
+				.getResourceReader(xmlResourcesRootClassPath + "od_______908__365a50343d53774f68fa13800349d372.xml");
 		InputSource inputSource = new InputSource(fileReader);
 		saxParser.parse(inputSource, jatsXmlHandler);
 		ExtractedDocumentMetadata meta = metaBuilder.build();
@@ -150,8 +150,8 @@ public class JatsXmlHandlerTest {
 
 	@Test
 	public void testParsingAuthorsWithAffiliation() throws Exception {
-		fileReader = StaticResourceProvider
-				.getResourceInputStreamReader(xmlResourcesRootClassPath + "document_with_affiliations.xml");
+		fileReader = ClassPathResourceProvider
+				.getResourceReader(xmlResourcesRootClassPath + "document_with_affiliations.xml");
 		InputSource inputSource = new InputSource(fileReader);
 		saxParser.parse(inputSource, jatsXmlHandler);
 		ExtractedDocumentMetadata meta = metaBuilder.build();
@@ -192,8 +192,8 @@ public class JatsXmlHandlerTest {
 
 	@Test
 	public void testSingleRefParsing() throws Exception {
-		fileReader = StaticResourceProvider
-				.getResourceInputStreamReader(xmlResourcesRootClassPath + "single-ref-document.xml");
+		fileReader = ClassPathResourceProvider
+				.getResourceReader(xmlResourcesRootClassPath + "single-ref-document.xml");
 		InputSource inputSource = new InputSource(fileReader);
 		saxParser.parse(inputSource, jatsXmlHandler);
 		ExtractedDocumentMetadata meta = metaBuilder.build();
@@ -220,8 +220,8 @@ public class JatsXmlHandlerTest {
 	@Test
 	public void testMixedTitleParsing() throws Exception {
 		// files causing parsing problems
-		fileReader = StaticResourceProvider
-				.getResourceInputStreamReader(xmlResourcesRootClassPath + "od_______908__0451fa1ded79a63729296731e53335c0.xml");
+		fileReader = ClassPathResourceProvider
+				.getResourceReader(xmlResourcesRootClassPath + "od_______908__0451fa1ded79a63729296731e53335c0.xml");
 		InputSource inputSource = new InputSource(fileReader);
 		saxParser.parse(inputSource, jatsXmlHandler);
 		ExtractedDocumentMetadata meta = metaBuilder.build();
@@ -247,8 +247,8 @@ public class JatsXmlHandlerTest {
 	@Test
 	public void testElementCitation() throws Exception {
 		// files causing parsing problems
-		fileReader = StaticResourceProvider
-				.getResourceInputStreamReader(xmlResourcesRootClassPath + "od_______908__0452195ccf851072fd097fc49bfbb9da.xml");
+		fileReader = ClassPathResourceProvider
+				.getResourceReader(xmlResourcesRootClassPath + "od_______908__0452195ccf851072fd097fc49bfbb9da.xml");
 		InputSource inputSource = new InputSource(fileReader);
 		saxParser.parse(inputSource, jatsXmlHandler);
 		ExtractedDocumentMetadata meta = metaBuilder.build();

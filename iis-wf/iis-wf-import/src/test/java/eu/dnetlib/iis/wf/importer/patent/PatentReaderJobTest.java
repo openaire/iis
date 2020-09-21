@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -38,11 +38,11 @@ public class PatentReaderJobTest {
     @Test
     public void shouldReadPatentEPOFileAndStorePatentsAsAvroDatastores() throws IOException {
         // given
-        String patentsEpoPath = StaticResourceProvider
+        String patentsEpoPath = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/importer/patent/sampletest/oozie_app/input/patents_epo.tsv");
-        String patentsEpoMappedPath = StaticResourceProvider
+        String patentsEpoMappedPath = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/importer/patent/data/output/patents_epo_output.json");
-        String reportPath = StaticResourceProvider
+        String reportPath = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/importer/patent/data/output/report.json");
         SparkJob sparkJob = buildSparkJob(patentsEpoPath);
 

@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.referenceextraction.softwareurl;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.wf.referenceextraction.ContentRetrieverResponse;
 
 import java.io.IOException;
@@ -24,7 +24,7 @@ public class ClasspathContentRetriever implements ContentRetriever {
 
     public ClasspathContentRetriever() throws IOException {
         urlToClasspathMap = new Properties();
-        try (InputStream in = StaticResourceProvider.getResourceInputStream(mappingsLocation)) {
+        try (InputStream in = ClassPathResourceProvider.getResourceInputStream(mappingsLocation)) {
             urlToClasspathMap.load(in);
         }
     }
@@ -35,7 +35,7 @@ public class ClasspathContentRetriever implements ContentRetriever {
             String classPathLocation = urlToClasspathMap.getProperty(url.toString());
             if (classPathLocation != null) {
                 try {
-                    return new ContentRetrieverResponse(StaticResourceProvider.getResourceContent(classPathLocation));
+                    return new ContentRetrieverResponse(ClassPathResourceProvider.getResourceContent(classPathLocation));
                 } catch (Exception e) {
                     return new ContentRetrieverResponse(e);
                 }

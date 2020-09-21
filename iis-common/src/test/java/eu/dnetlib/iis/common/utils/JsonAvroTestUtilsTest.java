@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.Arrays;
 import java.util.List;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.junit.Test;
 
 import eu.dnetlib.iis.importer.schemas.DocumentToProject;
@@ -17,9 +17,9 @@ import eu.dnetlib.iis.importer.schemas.DocumentToProject;
  */
 public class JsonAvroTestUtilsTest {
 
-    private final String jsonInputFile = StaticResourceProvider
+    private final String jsonInputFile = ClassPathResourceProvider
             .getResourcePath("eu/dnetlib/iis/common/utils/data/input.json");
-    private final String jsonInput2File = StaticResourceProvider
+    private final String jsonInput2File = ClassPathResourceProvider
             .getResourcePath("eu/dnetlib/iis/common/utils/data/input2.json");
 
     // ---------------------------------- TESTS -------------------------------------

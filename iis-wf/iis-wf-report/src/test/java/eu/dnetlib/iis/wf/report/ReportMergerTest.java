@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.junit.Before;
@@ -153,7 +153,7 @@ public class ReportMergerTest {
     
     private JsonObject readJsonFromClasspath(String jsonClasspath) throws IOException {
 
-        try (Reader reader = StaticResourceProvider.getResourceInputStreamReader(jsonClasspath)) {
+        try (Reader reader = ClassPathResourceProvider.getResourceReader(jsonClasspath)) {
             JsonElement jsonElement = jsonParser.parse(reader);
             
             return jsonElement.getAsJsonObject();

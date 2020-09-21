@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -78,9 +78,9 @@ public class SoftwareExporterJobTest {
     public void exportSoftwareEntityBelowThreshold() throws IOException {
 
         // given
-        String jsonInputSoftwareFile = StaticResourceProvider
+        String jsonInputSoftwareFile = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/export/actionmanager/software/data/document_to_softwareurl_with_meta.json");
-        String jsonInputMetadataFile = StaticResourceProvider
+        String jsonInputMetadataFile = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/export/actionmanager/software/data/document_metadata.json");
 
         AvroTestUtils.createLocalAvroDataStore(
@@ -119,9 +119,9 @@ public class SoftwareExporterJobTest {
     public void exportSoftwareEntity() throws IOException {
 
         // given
-        String jsonInputSoftwareFile = StaticResourceProvider
+        String jsonInputSoftwareFile = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/export/actionmanager/software/data/document_to_softwareurl_with_meta.json");
-        String jsonInputMetadataFile = StaticResourceProvider
+        String jsonInputMetadataFile = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/export/actionmanager/software/data/document_metadata.json");
 
         AvroTestUtils.createLocalAvroDataStore(

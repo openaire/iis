@@ -2,7 +2,7 @@ package eu.dnetlib.iis.wf.ingest.pmc.plaintext;
 
 import java.io.InputStreamReader;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import junit.framework.TestCase;
 
 import org.jdom.Document;
@@ -30,13 +30,13 @@ public class NlmToDocumentTextConverterTest extends TestCase {
         builder.setFeature("http://xml.org/sax/features/validation", false);
         builder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
         builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-        InputStreamReader testIS = StaticResourceProvider.getResourceInputStreamReader(testXML);
+        InputStreamReader testIS = ClassPathResourceProvider.getResourceReader(testXML);
         Document document = builder.build(testIS);
         Element sourceDocument = document.getRootElement();
         String testText = NlmToDocumentTextConverter.getDocumentText(sourceDocument, null);
         testIS.close();
 
-		String expectedText = StaticResourceProvider.getResourceContent(testTXT).replaceAll(System.getProperty("line.separator"), "\n");
+		String expectedText = ClassPathResourceProvider.getResourceContent(testTXT).replaceAll(System.getProperty("line.separator"), "\n");
 
         assertEquals(expectedText, testText);
     }
@@ -49,14 +49,14 @@ public class NlmToDocumentTextConverterTest extends TestCase {
 		builder.setFeature("http://xml.org/sax/features/validation", false);
 		builder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
 		builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-		InputStreamReader testIS = StaticResourceProvider.getResourceInputStreamReader(testXmlNestedInOAI);
+		InputStreamReader testIS = ClassPathResourceProvider.getResourceReader(testXmlNestedInOAI);
 		Document document = builder.build(testIS);
 		Element sourceDocument = document.getRootElement();
 		String testText = NlmToDocumentTextConverter.getDocumentText(sourceDocument,
 				Namespace.getNamespace("http://www.openarchives.org/OAI/2.0/"));
 		testIS.close();
 
-		String expectedText = StaticResourceProvider.getResourceContent(testTxtNestedInOAI).replaceAll(System.getProperty("line.separator"), "\n");
+		String expectedText = ClassPathResourceProvider.getResourceContent(testTxtNestedInOAI).replaceAll(System.getProperty("line.separator"), "\n");
 
 		assertEquals(expectedText, testText);
 	}

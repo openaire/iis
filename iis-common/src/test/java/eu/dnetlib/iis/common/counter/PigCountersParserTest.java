@@ -8,7 +8,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Map;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.junit.Test;
 
 import eu.dnetlib.iis.common.counter.PigCounters.JobCounters;
@@ -28,7 +28,7 @@ public class PigCountersParserTest {
         
         // given
         
-        String pigCountersJson = StaticResourceProvider
+        String pigCountersJson = ClassPathResourceProvider
                 .getResourceContent("/eu/dnetlib/iis/common/report/pigCounters.json");
         
         // execute

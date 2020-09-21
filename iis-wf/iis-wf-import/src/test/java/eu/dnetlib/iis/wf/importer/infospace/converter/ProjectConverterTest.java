@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import eu.dnetlib.iis.common.StaticResourceProvider;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.junit.Test;
 
 import eu.dnetlib.dhp.schema.oaf.Field;
@@ -134,7 +134,7 @@ public class ProjectConverterTest {
     }
 
     private String readFundingTree() {
-        return StaticResourceProvider
+        return ClassPathResourceProvider
                 .getResourceContent("/eu/dnetlib/iis/wf/importer/converter/fundingclass_example.xml");
     }
     

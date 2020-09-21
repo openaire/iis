@@ -144,7 +144,7 @@ public class TestsIOUtils {
 	 */
 	public static void assertContentsEqual(String resourcePath, File otherFile) 
 			throws FileNotFoundException, IOException{
-		assertEqual(StaticResourceProvider.getResourceInputStream(resourcePath), new FileInputStream(otherFile));
+		assertEqual(ClassPathResourceProvider.getResourceInputStream(resourcePath), new FileInputStream(otherFile));
 	}
 	
     /**
