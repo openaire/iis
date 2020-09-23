@@ -70,9 +70,6 @@
 
 	<action name="metadata-transformer">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            <prepare>
-                <delete path="${workingDir}/document_metadata" />
-            </prepare>
             <configuration>
                 <property>
                     <name>oozie.action.sharelib.for.spark</name>
@@ -104,9 +101,6 @@
 
 	<action name="concept-transformer">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            <prepare>
-                <delete path="${workingDir}/researchinitiative_metadata" />
-            </prepare>
             <configuration>
                 <property>
                     <name>oozie.action.sharelib.for.spark</name>

@@ -86,10 +86,6 @@
 	<action name="document_classification_job"> 
         <spark xmlns="uri:oozie:spark-action:0.2">
             
-            <prepare>
-                <delete path="${nameNode}${output_document_to_document_classes}" />
-            </prepare>
-            
             <master>yarn-cluster</master>
             
             <mode>cluster</mode>

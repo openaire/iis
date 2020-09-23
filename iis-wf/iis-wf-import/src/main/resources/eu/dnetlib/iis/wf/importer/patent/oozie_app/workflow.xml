@@ -77,10 +77,6 @@
 
     <action name="patent-importer">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            <prepare>
-                <delete path="${nameNode}${output}"/>
-                <delete path="${nameNode}${output_report_root_path}/${output_report_relative_path}"/>
-            </prepare>
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>import-patent</name>

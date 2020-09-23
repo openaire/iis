@@ -121,11 +121,7 @@
 
     <action name="affiliation-matching">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            
-            <prepare>
-                <delete path="${nameNode}${output}" />
-            </prepare>
-    
+
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>Affiliation Matching</name>

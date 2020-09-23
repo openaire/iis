@@ -84,12 +84,6 @@
 
     <action name="affmatching_dedup">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            
-            <prepare>
-                <delete path="${nameNode}${output}" />
-                <delete path="${nameNode}${output_report_root_path}/affmatching-dedup" />
-            </prepare>
-    
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>document-organization deduplication</name>

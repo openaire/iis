@@ -55,10 +55,6 @@
     <action name="input-transformer">
         <spark xmlns="uri:oozie:spark-action:0.2">
 
-            <prepare>
-                <delete path="${workingDir}/communities" />
-            </prepare>
-
             <configuration>
                 <property>
                     <name>oozie.action.sharelib.for.spark</name>
