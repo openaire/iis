@@ -75,7 +75,7 @@ public class IisAffMatchResultWriterTest {
     private JavaRDD<MatchedOrganization> distinctMatchedOrganizationsValues;
     
     @Mock
-    private JavaRDD<MatchedOrganization> distinctMatchedOrganizationsValuesCoalesce;
+    private JavaRDD<MatchedOrganization> distinctMatchedOrganizationsValuesRepartition;
  
     @Mock
     private List<ReportEntry> reportEntries;
@@ -153,7 +153,7 @@ public class IisAffMatchResultWriterTest {
         doReturn(matchedOrganizationsDocOrgIdKey).when(matchedOrganizations).keyBy(any());
         when(matchedOrganizationsDocOrgIdKey.reduceByKey(any())).thenReturn(distinctMatchedOrganizations);
         when(distinctMatchedOrganizations.values()).thenReturn(distinctMatchedOrganizationsValues);
-        when(distinctMatchedOrganizationsValues.repartition(2)).thenReturn(distinctMatchedOrganizationsValuesCoalesce);
+        when(distinctMatchedOrganizationsValues.repartition(2)).thenReturn(distinctMatchedOrganizationsValuesRepartition);
         when(reportGenerator.generateReport(distinctMatchedOrganizationsValues)).thenReturn(reportEntries);
         when(sc.parallelize(reportEntries, 1)).thenReturn(rddReportEntries);
         
@@ -165,7 +165,7 @@ public class IisAffMatchResultWriterTest {
         
         // assert
         
-        verify(sparkAvroSaver).saveJavaRDD(distinctMatchedOrganizationsValuesCoalesce, MatchedOrganization.SCHEMA$, outputPath);
+        verify(sparkAvroSaver).saveJavaRDD(distinctMatchedOrganizationsValuesRepartition, MatchedOrganization.SCHEMA$, outputPath);
         verify(sparkAvroSaver).saveJavaRDD(rddReportEntries, ReportEntry.SCHEMA$, outputReportPath);
         
         verify(affMatchResults).map(convertFunction.capture());

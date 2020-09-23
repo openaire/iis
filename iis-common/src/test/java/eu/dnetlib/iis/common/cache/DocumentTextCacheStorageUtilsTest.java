@@ -65,10 +65,10 @@ public class DocumentTextCacheStorageUtilsTest {
     private JavaRDD<Fault> toBeStoredFaults;
     
     @Mock
-    private JavaRDD<DocumentText> toBeStoredCoalescedEntities;
+    private JavaRDD<DocumentText> toBeStoredRepartitionedEntities;
     
     @Mock
-    private JavaRDD<Fault> toBeStoredCoalescedFaults;
+    private JavaRDD<Fault> toBeStoredRepartitionedFaults;
 
     
     @Test
@@ -144,8 +144,8 @@ public class DocumentTextCacheStorageUtilsTest {
         int numberOfEmittedFiles = 2;
         String predefinedCacheId = "someCacheId";
         doReturn(predefinedCacheId).when(cacheManager).generateNewCacheId(hadoopConf, cacheRootDir);
-        doReturn(toBeStoredCoalescedEntities).when(toBeStoredEntities).repartition(numberOfEmittedFiles);
-        doReturn(toBeStoredCoalescedFaults).when(toBeStoredFaults).repartition(numberOfEmittedFiles);
+        doReturn(toBeStoredRepartitionedEntities).when(toBeStoredEntities).repartition(numberOfEmittedFiles);
+        doReturn(toBeStoredRepartitionedFaults).when(toBeStoredFaults).repartition(numberOfEmittedFiles);
         
         // execute
         DocumentTextCacheStorageUtils.storeInCache(avroSaver, toBeStoredEntities, toBeStoredFaults, 
@@ -155,9 +155,9 @@ public class DocumentTextCacheStorageUtilsTest {
         verify(lockManager, times(1)).obtain(cacheRootDir.toString());
         verify(lockManager, times(1)).release(cacheRootDir.toString());
 
-        verify(avroSaver, times(1)).saveJavaRDD(toBeStoredCoalescedEntities, DocumentText.SCHEMA$, 
+        verify(avroSaver, times(1)).saveJavaRDD(toBeStoredRepartitionedEntities, DocumentText.SCHEMA$,
                 DocumentTextCacheStorageUtils.getCacheLocation(cacheRootDir, predefinedCacheId, CacheRecordType.text).toString());
-        verify(avroSaver, times(1)).saveJavaRDD(toBeStoredCoalescedFaults, Fault.SCHEMA$, 
+        verify(avroSaver, times(1)).saveJavaRDD(toBeStoredRepartitionedFaults, Fault.SCHEMA$,
                 DocumentTextCacheStorageUtils.getCacheLocation(cacheRootDir, predefinedCacheId, CacheRecordType.fault).toString());
         
         verify(cacheManager, times(1)).writeCacheId(hadoopConf, cacheRootDir, predefinedCacheId);
@@ -172,8 +172,8 @@ public class DocumentTextCacheStorageUtilsTest {
         String predefinedCacheId = "someCacheId";
         doReturn(predefinedCacheId).when(cacheManager).generateNewCacheId(hadoopConf, cacheRootDir);
         doReturn(FileSystem.DEFAULT_FS).when(hadoopConf).get(FileSystem.FS_DEFAULT_NAME_KEY, FileSystem.DEFAULT_FS);
-        doReturn(toBeStoredCoalescedEntities).when(toBeStoredEntities).coalesce(numberOfEmittedFiles);
-        doReturn(toBeStoredCoalescedFaults).when(toBeStoredFaults).coalesce(numberOfEmittedFiles);
+        doReturn(toBeStoredRepartitionedEntities).when(toBeStoredEntities).repartition(numberOfEmittedFiles);
+        doReturn(toBeStoredRepartitionedFaults).when(toBeStoredFaults).repartition(numberOfEmittedFiles);
         doThrow(IOException.class).when(cacheManager).writeCacheId(hadoopConf, cacheRootDir, predefinedCacheId);
         
         try {
