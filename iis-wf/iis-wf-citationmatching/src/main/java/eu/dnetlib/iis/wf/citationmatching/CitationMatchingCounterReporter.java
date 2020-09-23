@@ -46,7 +46,8 @@ public class CitationMatchingCounterReporter {
         ReportEntry docsWithMatchedCitationsCounter = generateDocsWithCitationsCounter(matchedCitations);
         
         
-        JavaRDD<ReportEntry> report = sparkContext.parallelize(Lists.newArrayList(matchedCitationsCounter, docsWithMatchedCitationsCounter));
+        JavaRDD<ReportEntry> report = sparkContext
+                .parallelize(Lists.newArrayList(matchedCitationsCounter, docsWithMatchedCitationsCounter), 1);
         
         avroSaver.saveJavaRDD(report, ReportEntry.SCHEMA$, reportPath);
         

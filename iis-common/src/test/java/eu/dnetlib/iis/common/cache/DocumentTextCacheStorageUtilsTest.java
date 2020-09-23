@@ -141,11 +141,11 @@ public class DocumentTextCacheStorageUtilsTest {
     public void testStoreInCacheValidRecords() throws Exception {
         // given
         Path cacheRootDir = new Path("some/root/dir");
-        int numberOfEmittedFiles = 1;
+        int numberOfEmittedFiles = 2;
         String predefinedCacheId = "someCacheId";
         doReturn(predefinedCacheId).when(cacheManager).generateNewCacheId(hadoopConf, cacheRootDir);
-        doReturn(toBeStoredCoalescedEntities).when(toBeStoredEntities).coalesce(numberOfEmittedFiles);
-        doReturn(toBeStoredCoalescedFaults).when(toBeStoredFaults).coalesce(numberOfEmittedFiles);
+        doReturn(toBeStoredCoalescedEntities).when(toBeStoredEntities).repartition(numberOfEmittedFiles);
+        doReturn(toBeStoredCoalescedFaults).when(toBeStoredFaults).repartition(numberOfEmittedFiles);
         
         // execute
         DocumentTextCacheStorageUtils.storeInCache(avroSaver, toBeStoredEntities, toBeStoredFaults, 
@@ -168,7 +168,7 @@ public class DocumentTextCacheStorageUtilsTest {
     public void testStoreInCacheByCheckingProperLocksHandlingWhenWriteCacheThrowsException() throws Exception {
         // given
         Path cacheRootDir = new Path("some/root/dir");
-        int numberOfEmittedFiles = 1;
+        int numberOfEmittedFiles = 2;
         String predefinedCacheId = "someCacheId";
         doReturn(predefinedCacheId).when(cacheManager).generateNewCacheId(hadoopConf, cacheRootDir);
         doReturn(FileSystem.DEFAULT_FS).when(hadoopConf).get(FileSystem.FS_DEFAULT_NAME_KEY, FileSystem.DEFAULT_FS);

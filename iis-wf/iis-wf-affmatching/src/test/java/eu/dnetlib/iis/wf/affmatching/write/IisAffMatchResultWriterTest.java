@@ -153,14 +153,14 @@ public class IisAffMatchResultWriterTest {
         doReturn(matchedOrganizationsDocOrgIdKey).when(matchedOrganizations).keyBy(any());
         when(matchedOrganizationsDocOrgIdKey.reduceByKey(any())).thenReturn(distinctMatchedOrganizations);
         when(distinctMatchedOrganizations.values()).thenReturn(distinctMatchedOrganizationsValues);
-        when(distinctMatchedOrganizationsValues.coalesce(1)).thenReturn(distinctMatchedOrganizationsValuesCoalesce);
+        when(distinctMatchedOrganizationsValues.repartition(2)).thenReturn(distinctMatchedOrganizationsValuesCoalesce);
         when(reportGenerator.generateReport(distinctMatchedOrganizationsValues)).thenReturn(reportEntries);
-        when(sc.parallelize(reportEntries)).thenReturn(rddReportEntries);
+        when(sc.parallelize(reportEntries, 1)).thenReturn(rddReportEntries);
         
         
         // execute
         
-        writer.write(sc, affMatchResults, outputPath, outputReportPath, 1);
+        writer.write(sc, affMatchResults, outputPath, outputReportPath, 2);
         
         
         // assert

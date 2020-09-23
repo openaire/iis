@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.common.utils;
 
+import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -69,9 +70,8 @@ public class RDDUtilsTest {
 
         //then
         Pattern pattern = Pattern.compile("^part-r-.\\d+$");
-        long fileCount = Files.list(outputDir)
-                .filter(x -> pattern.matcher(x.getFileName().toString()).matches())
-                .count();
+        long fileCount = HdfsUtils.countFiles(new Configuration(), outputDir.toString(), x ->
+                pattern.matcher(x.getName()).matches());
         assertEquals(NUMBER_OF_OUTPUT_FILES, fileCount);
 
         List<Text> out = ListTestUtils.readValues(outputDir.toString(), Function.identity());

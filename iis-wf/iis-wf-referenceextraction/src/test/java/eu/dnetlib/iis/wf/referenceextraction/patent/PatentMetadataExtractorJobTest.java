@@ -11,7 +11,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.hadoop.conf.Configuration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -92,6 +94,8 @@ public class PatentMetadataExtractorJobTest {
         assertNotNull(generatedFaults);
         assertEquals(0, generatedFaults.size());
 
+        assertEquals(1,
+                HdfsUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(".avro")));
         assertReports(AvroTestUtils.readLocalAvroDataStore(outputReportDir.toString()), 1, 0);
     }
     
@@ -127,6 +131,8 @@ public class PatentMetadataExtractorJobTest {
         assertNotNull(generatedFaults);
         assertEquals(0, generatedFaults.size());
 
+        assertEquals(1,
+                HdfsUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(".avro")));
         assertReports(AvroTestUtils.readLocalAvroDataStore(outputReportDir.toString()), 1, 0);
     }
     
@@ -162,6 +168,8 @@ public class PatentMetadataExtractorJobTest {
         assertEquals(patentId, fault.getInputObjectId().toString());
         assertEquals(PatentMetadataParserException.class.getCanonicalName(), fault.getCode().toString());
 
+        assertEquals(1,
+                HdfsUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(".avro")));
         assertReports(AvroTestUtils.readLocalAvroDataStore(outputReportDir.toString()), 1, 1);
     }
     
@@ -190,6 +198,8 @@ public class PatentMetadataExtractorJobTest {
         assertNotNull(generatedFaults);
         assertEquals(0, generatedFaults.size());
 
+        assertEquals(1,
+                HdfsUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(".avro")));
         assertReports(AvroTestUtils.readLocalAvroDataStore(outputReportDir.toString()), 0, 0);
     }
     

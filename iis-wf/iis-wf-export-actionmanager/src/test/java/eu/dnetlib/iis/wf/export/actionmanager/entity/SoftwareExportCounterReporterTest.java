@@ -5,6 +5,7 @@ import static eu.dnetlib.iis.wf.export.actionmanager.entity.SoftwareExportCounte
 import static eu.dnetlib.iis.wf.export.actionmanager.entity.SoftwareExportCounterReporter.SOFTWARE_REFERENCES_COUNTER;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -89,7 +90,7 @@ public class SoftwareExportCounterReporterTest {
         doReturn(documentIds).when(uniqueRelations).map(any());
         when(documentIds.distinct()).thenReturn(distinctDocumentIds);
         when(distinctDocumentIds.count()).thenReturn(3L);
-        doReturn(reportCounters).when(sparkContext).parallelize(any());
+        doReturn(reportCounters).when(sparkContext).parallelize(any(), eq(1));
 
         // execute
         counterReporter.report(sparkContext, uniqueEntities, uniqueRelations, outputReportPath);
@@ -98,7 +99,7 @@ public class SoftwareExportCounterReporterTest {
         verify(uniqueRelations).map(extractDocIdFunction.capture());
         assertExtractDocIdFunction(extractDocIdFunction.getValue());
         
-        verify(sparkContext).parallelize(reportEntriesCaptor.capture());
+        verify(sparkContext).parallelize(reportEntriesCaptor.capture(), eq(1));
         assertReportEntries(reportEntriesCaptor.getValue());
         
         verify(avroSaver).saveJavaRDD(reportCounters, ReportEntry.SCHEMA$, outputReportPath);

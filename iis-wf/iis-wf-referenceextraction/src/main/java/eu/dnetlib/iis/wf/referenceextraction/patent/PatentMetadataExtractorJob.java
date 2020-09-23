@@ -92,8 +92,8 @@ public class PatentMetadataExtractorJob {
         long faultCount = faults.count();
         ReportEntry processedPatentsCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_TOTAL, patents.count() + faultCount);
         ReportEntry processedFaultsCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_FAULT, faultCount);
-        
-        return sparkContext.parallelize(Lists.newArrayList(processedPatentsCounter, processedFaultsCounter));
+
+        return sparkContext.parallelize(Lists.newArrayList(processedPatentsCounter, processedFaultsCounter), 1);
     }
     
     private static Tuple2<Patent, Fault> parse(DocumentText patent, ImportedPatent importedPatent, PatentMetadataParser parser) {

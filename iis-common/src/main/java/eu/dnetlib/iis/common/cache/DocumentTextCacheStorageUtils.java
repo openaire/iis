@@ -66,9 +66,9 @@ public class DocumentTextCacheStorageUtils {
             
             try {
                 // store in cache
-                avroSaver.saveJavaRDD(toBeStoredEntities.coalesce(numberOfEmittedFiles), DocumentText.SCHEMA$, 
+                avroSaver.saveJavaRDD(toBeStoredEntities.repartition(numberOfEmittedFiles), DocumentText.SCHEMA$,
                         getCacheLocation(cacheRootDir, newCacheId, CacheRecordType.text).toString());
-                avroSaver.saveJavaRDD(toBeStoredFaults.coalesce(numberOfEmittedFiles), Fault.SCHEMA$, 
+                avroSaver.saveJavaRDD(toBeStoredFaults.repartition(numberOfEmittedFiles), Fault.SCHEMA$,
                         getCacheLocation(cacheRootDir, newCacheId, CacheRecordType.fault).toString());
                 // writing new cache id
                 cacheManager.writeCacheId(hadoopConf, cacheRootDir, newCacheId);

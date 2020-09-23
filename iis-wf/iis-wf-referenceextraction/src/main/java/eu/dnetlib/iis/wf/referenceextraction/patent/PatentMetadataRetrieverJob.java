@@ -163,9 +163,9 @@ public class PatentMetadataRetrieverJob {
     
     private static void storeInOutput(JavaRDD<DocumentText> retrievedPatentMeta, 
             JavaRDD<Fault> faults, JavaRDD<ReportEntry> reports, OutputPaths outputPaths, int numberOfEmittedFiles) {
-        avroSaver.saveJavaRDD(retrievedPatentMeta.coalesce(numberOfEmittedFiles), DocumentText.SCHEMA$, outputPaths.getResult());
-        avroSaver.saveJavaRDD(faults.coalesce(numberOfEmittedFiles), Fault.SCHEMA$, outputPaths.getFault());
-        avroSaver.saveJavaRDD(reports.coalesce(numberOfEmittedFiles), ReportEntry.SCHEMA$, outputPaths.getReport());
+        avroSaver.saveJavaRDD(retrievedPatentMeta.repartition(numberOfEmittedFiles), DocumentText.SCHEMA$, outputPaths.getResult());
+        avroSaver.saveJavaRDD(faults.repartition(numberOfEmittedFiles), Fault.SCHEMA$, outputPaths.getFault());
+        avroSaver.saveJavaRDD(reports.repartition(1), ReportEntry.SCHEMA$, outputPaths.getReport());
     }
 
     private static ContentRetrieverResponse getMetadataFromFacade(ImportedPatent patent, PatentServiceFacade patentServiceFacade) {

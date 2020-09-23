@@ -2,6 +2,7 @@ package eu.dnetlib.iis.wf.citationmatching.direct.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -77,7 +78,7 @@ public class CitationMatchingDirectCounterReporterTest {
         when(matchedCitationsDocumentIds.distinct()).thenReturn(matchedCitationsDistinctDocumentIds);
         when(matchedCitationsDistinctDocumentIds.count()).thenReturn(3L);
         
-        doReturn(reportCounters).when(sparkContext).parallelize(any());
+        doReturn(reportCounters).when(sparkContext).parallelize(any(), eq(1));
         
         
         // execute
@@ -90,7 +91,7 @@ public class CitationMatchingDirectCounterReporterTest {
         verify(matchedCitations).map(extractDocIdFunction.capture());
         assertExtractDocIdFunction(extractDocIdFunction.getValue());
         
-        verify(sparkContext).parallelize(reportEntriesCaptor.capture());
+        verify(sparkContext).parallelize(reportEntriesCaptor.capture(), eq(1));
         assertReportEntries(reportEntriesCaptor.getValue());
         
         verify(avroSaver).saveJavaRDD(reportCounters, ReportEntry.SCHEMA$, reportPath);

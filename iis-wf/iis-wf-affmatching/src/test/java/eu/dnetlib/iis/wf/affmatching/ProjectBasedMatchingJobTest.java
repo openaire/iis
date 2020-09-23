@@ -2,14 +2,16 @@ package eu.dnetlib.iis.wf.affmatching;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.hadoop.conf.Configuration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.google.common.io.Files;
 
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
@@ -22,6 +24,8 @@ import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
+
+import static org.junit.Assert.assertEquals;
 
 /**
 * @author mhorst
@@ -52,9 +56,9 @@ public class ProjectBasedMatchingJobTest {
     
     
     @Before
-    public void before() {
+    public void before() throws IOException {
         
-        workingDir = Files.createTempDir();
+        workingDir = Files.createTempDirectory(ProjectBasedMatchingJobTest.class.getSimpleName()).toFile();
 
         inputInferredDocProjDirPath = workingDir + "/projectbased_matching/input/doc_proj_inferred";
         inputDocProjDirPath = workingDir + "/projectbased_matching/input/doc_proj";
@@ -148,6 +152,8 @@ public class ProjectBasedMatchingJobTest {
         
         // assert
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputPath, MatchedOrganization.class);
+        assertEquals(1,
+                HdfsUtils.countFiles(new Configuration(), outputReportPath, x -> x.getName().endsWith(".avro")));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportPath, jsonOutputReportPath, ReportEntry.class);
 
     }
