@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import org.apache.hadoop.conf.Configuration;
@@ -28,6 +29,8 @@ public class ClassPathResourceToHdfsCopier implements Process {
     
     private static final String PARAM_OUTPUT_HDFS_FILE_LOCATION = "outputHdfsFileLocation";
 
+    private Function<String, InputStream> classPathResourceProvider = ClassPathResourceProvider::getResourceInputStream;
+
     @Override
     public void run(PortBindings portBindings, Configuration conf, Map<String, String> parameters) throws Exception {
         Preconditions.checkNotNull(parameters.get(PARAM_INPUT_CLASSPATH_RESOURCE), PARAM_INPUT_CLASSPATH_RESOURCE + " parameter was not specified!");
@@ -35,7 +38,7 @@ public class ClassPathResourceToHdfsCopier implements Process {
 
         FileSystem fs = FileSystem.get(conf);
 
-        try (InputStream in = ClassPathResourceProvider.getResourceInputStream(PARAM_INPUT_CLASSPATH_RESOURCE);
+        try (InputStream in = classPathResourceProvider.apply(parameters.get(PARAM_INPUT_CLASSPATH_RESOURCE));
              OutputStream os = fs.create(new Path(parameters.get(PARAM_OUTPUT_HDFS_FILE_LOCATION)))) {
             IOUtils.copyBytes(in, os, 4096, false);
         }
@@ -43,12 +46,12 @@ public class ClassPathResourceToHdfsCopier implements Process {
 
     @Override
     public Map<String, PortType> getInputPorts() {
-        return new HashMap<String, PortType>();
+        return new HashMap<>();
     }
 
     @Override
     public Map<String, PortType> getOutputPorts() {
-        return new HashMap<String, PortType>();
+        return new HashMap<>();
     }
 
 }
