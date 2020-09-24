@@ -87,9 +87,6 @@
 
     <action name="input-transformer">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            <prepare>
-                <delete path="${nameNode}${workingDir}/meta_with_text" />
-            </prepare>
             <configuration>
                 <property>
                     <name>oozie.action.sharelib.for.spark</name>
@@ -182,9 +179,6 @@
     
     <action name="output-transformer">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            <prepare>
-                <delete path="${output}" />
-            </prepare>
             <configuration>
                 <property>
                     <name>oozie.action.sharelib.for.spark</name>

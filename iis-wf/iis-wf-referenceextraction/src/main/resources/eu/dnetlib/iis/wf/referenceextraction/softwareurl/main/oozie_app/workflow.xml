@@ -202,10 +202,6 @@
 
     <action name="cached-webcrawl">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            <prepare>
-                <delete path="${nameNode}${workingDir}/referenceextraction_softwareurl_webcrawl" />
-            </prepare>
-
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>referenceextraction_softwareurl_webcrawl</name>

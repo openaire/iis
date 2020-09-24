@@ -60,10 +60,6 @@
 
     <action name="build_report">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            <prepare>
-                <delete path="${nameNode}${output_report_root_path}/${output_report_relative_path}" />
-            </prepare>
-
             <configuration>
                 <property>
                     <name>oozie.action.sharelib.for.spark</name>

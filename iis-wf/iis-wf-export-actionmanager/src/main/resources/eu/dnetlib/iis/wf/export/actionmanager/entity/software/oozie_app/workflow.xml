@@ -103,12 +103,6 @@
     <action name="software-exporter">
         <spark xmlns="uri:oozie:spark-action:0.2">
 
-            <prepare>
-                <delete path="${nameNode}${output_root_entities}/${action_set_id_entity_software}" />
-                <delete path="${nameNode}${output_root_relations}/${action_set_id_document_software_url}" />
-                <delete path="${nameNode}${output_report_root_path}/${output_report_relative_path}" />
-            </prepare>
-
             <master>yarn-cluster</master>
             <mode>cluster</mode>
             <name>software spark exporter</name>
