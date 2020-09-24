@@ -2,7 +2,6 @@ package eu.dnetlib.iis.wf.citationmatching;
 
 import java.io.IOException;
 
-import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -39,13 +38,19 @@ public class IisCitationMatchingJob {
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
         
-        try (JavaSparkContext sc = JavaSparkContextFactory.withConfAndKryo(new SparkConf())) {
-
+        
+        SparkConf conf = new SparkConf();
+        conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
+        conf.set("spark.kryo.registrator", "pl.edu.icm.coansys.citations.MatchableEntityKryoRegistrator");
+        
+        
+        try (JavaSparkContext sc = new JavaSparkContext(conf)) {
+            
             ConfigurableCitationMatchingService<String, ReferenceMetadata, String, DocumentMetadata, Citation, NullWritable> citationMatchingService = createConfigurableCitationMatchingService(sc, params);
             
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputDirPath);
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
-
+            
             citationMatchingService.matchCitations(sc, params.fullDocumentPath, params.fullDocumentPath, params.outputDirPath);
             
            
