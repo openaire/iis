@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.java.io.DataStore;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -153,7 +154,7 @@ public class ProjectBasedMatchingJobTest {
         // assert
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputPath, MatchedOrganization.class);
         assertEquals(1,
-                HdfsUtils.countFiles(new Configuration(), outputReportPath, x -> x.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(new Configuration(), outputReportPath, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportPath, jsonOutputReportPath, ReportEntry.class);
 
     }

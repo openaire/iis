@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.java.io.DataStore;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -164,7 +165,7 @@ public class ImportInformationSpaceJobTest {
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.resolve(OUTPUT_NAME_DEDUP).toString(), expectedDedupMappingPath, IdentifierMapping.class);
 
         assertEquals(1,
-                HdfsUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportDir.toString(), expectedReportPath, ReportEntry.class);
     }
     

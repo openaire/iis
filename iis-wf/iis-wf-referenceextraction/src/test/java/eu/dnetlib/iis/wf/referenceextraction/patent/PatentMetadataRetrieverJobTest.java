@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.java.io.DataStore;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.curator.test.TestingServer;
@@ -103,16 +104,16 @@ public class PatentMetadataRetrieverJobTest {
         Configuration conf = new Configuration();
 
         assertEquals(2,
-                HdfsUtils.countFiles(conf, outputDir.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, outputDir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.toString(), outputPath, DocumentText.class);
 
         assertEquals(1,
-                HdfsUtils.countFiles(conf, outputReportDir.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, outputReportDir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportDir.toString(), reportPath, ReportEntry.class);
 
         // need to validate faults programmatically due to dynamic timestamp generation
         assertEquals(2,
-                HdfsUtils.countFiles(conf, outputFaultDir.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, outputFaultDir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         validateFaults(AvroTestUtils.readLocalAvroDataStore(outputFaultDir.toString()));
         
         // validating cache
@@ -122,13 +123,13 @@ public class PatentMetadataRetrieverJobTest {
         org.apache.hadoop.fs.Path textCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.text);
         assertEquals(2,
-                HdfsUtils.countFiles(conf, textCacheLocation.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, textCacheLocation.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(textCacheLocation.toString(), cachePath, DocumentText.class);
 
         org.apache.hadoop.fs.Path faultCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.fault);
         assertEquals(2,
-                HdfsUtils.countFiles(conf, faultCacheLocation.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, faultCacheLocation.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         validateFaults(AvroTestUtils.readLocalAvroDataStore(faultCacheLocation.toString()));
     }
     
@@ -167,28 +168,28 @@ public class PatentMetadataRetrieverJobTest {
         Configuration conf = new Configuration();
 
         assertEquals(2,
-                HdfsUtils.countFiles(conf, outputDir.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, outputDir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.toString(), outputPath, DocumentText.class);
 
         assertEquals(2,
-                HdfsUtils.countFiles(conf, output2Dir.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, output2Dir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(output2Dir.toString(), output2Path, DocumentText.class);
 
         assertEquals(1,
-                HdfsUtils.countFiles(conf, outputReportDir.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, outputReportDir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportDir.toString(), reportPath, ReportEntry.class);
 
         assertEquals(1,
-                HdfsUtils.countFiles(conf, outputReport2Dir.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, outputReport2Dir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReport2Dir.toString(), report2Path, ReportEntry.class);
 
         // need to validate faults programatically due to dynamic timestamp generation
         assertEquals(2,
-                HdfsUtils.countFiles(conf, outputFaultDir.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, outputFaultDir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         validateFaults(AvroTestUtils.readLocalAvroDataStore(outputFaultDir.toString()));
 
         assertEquals(2,
-                HdfsUtils.countFiles(conf, outputFault2Dir.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, outputFault2Dir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         assertEquals(0, AvroTestUtils.readLocalAvroDataStore(outputFault2Dir.toString()).size());
         
         // validating cache
@@ -198,13 +199,13 @@ public class PatentMetadataRetrieverJobTest {
         org.apache.hadoop.fs.Path textCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.text);
         assertEquals(2,
-                HdfsUtils.countFiles(conf, textCacheLocation.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, textCacheLocation.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(textCacheLocation.toString(), cachePath, DocumentText.class);
 
         org.apache.hadoop.fs.Path faultCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.fault);
         assertEquals(2,
-                HdfsUtils.countFiles(conf, faultCacheLocation.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, faultCacheLocation.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         validateFaults(AvroTestUtils.readLocalAvroDataStore(faultCacheLocation.toString()));
     }
 
@@ -237,28 +238,28 @@ public class PatentMetadataRetrieverJobTest {
         Configuration conf = new Configuration();
 
         assertEquals(2,
-                HdfsUtils.countFiles(conf, outputDir.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, outputDir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.toString(), outputPath, DocumentText.class);
 
         assertEquals(2,
-                HdfsUtils.countFiles(conf, output2Dir.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, output2Dir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(output2Dir.toString(), outputPath, DocumentText.class);
 
         assertEquals(1,
-                HdfsUtils.countFiles(conf, outputReportDir.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, outputReportDir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportDir.toString(), reportPath, ReportEntry.class);
 
         assertEquals(1,
-                HdfsUtils.countFiles(conf, outputReport2Dir.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, outputReport2Dir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReport2Dir.toString(), report2Path, ReportEntry.class);
 
         // need to validate faults programatically due to dynamic timestamp generation
         assertEquals(2,
-                HdfsUtils.countFiles(conf, outputFaultDir.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, outputFaultDir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         validateFaults(AvroTestUtils.readLocalAvroDataStore(outputFaultDir.toString()));
 
         assertEquals(1,
-                HdfsUtils.countFiles(conf, outputReport2Dir.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, outputReport2Dir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         assertEquals(0, AvroTestUtils.readLocalAvroDataStore(outputFault2Dir.toString()).size());
         
         // validating cache
@@ -268,13 +269,13 @@ public class PatentMetadataRetrieverJobTest {
         org.apache.hadoop.fs.Path textCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.text);
         assertEquals(2,
-                HdfsUtils.countFiles(conf, textCacheLocation.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, textCacheLocation.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(textCacheLocation.toString(), cachePath, DocumentText.class);
 
         org.apache.hadoop.fs.Path faultCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.fault);
         assertEquals(2,
-                HdfsUtils.countFiles(conf, faultCacheLocation.toString(), path -> path.getName().endsWith(".avro")));
+                HdfsUtils.countFiles(conf, faultCacheLocation.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         validateFaults(AvroTestUtils.readLocalAvroDataStore(faultCacheLocation.toString()));
     }
     
