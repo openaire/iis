@@ -17,7 +17,9 @@ import org.apache.avro.specific.SpecificDatumWriter;
  *
  */
 public final class DataStore {
-	
+
+	public static final String AVRO_FILE_EXT = "avro";
+
 	private final static String singleDataStoreFileName = "content.avro";
 	
 	private static final int FILE_NO_PADDING_LENGTH = 7;

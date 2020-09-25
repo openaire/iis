@@ -72,7 +72,7 @@ public class PatentReaderJob {
     private static JavaRDD<ReportEntry> generateReportEntries(JavaSparkContext sparkContext,
                                                               JavaRDD<ImportedPatent> entries) {
         ReportEntry fromCacheEntitiesCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_READ_TOTAL, entries.count());
-        return sparkContext.parallelize(Lists.newArrayList(fromCacheEntitiesCounter));
+        return sparkContext.parallelize(Lists.newArrayList(fromCacheEntitiesCounter), 1);
     }
 
     private static void storeInOutput(JavaRDD<ImportedPatent> results, JavaRDD<ReportEntry> reports,

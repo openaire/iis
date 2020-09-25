@@ -71,7 +71,7 @@ public class AffMatchingDedupJob {
             
             List<ReportEntry> reportEntries = reportGenerator.generateReport(results);
             
-            sparkAvroSaver.saveJavaRDD(sc.parallelize(reportEntries), ReportEntry.SCHEMA$, outputReportPath);
+            sparkAvroSaver.saveJavaRDD(sc.parallelize(reportEntries, 1), ReportEntry.SCHEMA$, outputReportPath);
         }
     }
 

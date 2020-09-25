@@ -80,7 +80,7 @@ public class DocumentClassificationJob {
 
             List<ReportEntry> reportEntries = reportGenerator.generateReport(documentClasses);
             
-            avroSaver.saveJavaRDD(sc.parallelize(reportEntries), ReportEntry.SCHEMA$, params.outputReportPath);
+            avroSaver.saveJavaRDD(sc.parallelize(reportEntries, 1), ReportEntry.SCHEMA$, params.outputReportPath);
         }
         
     }

@@ -65,8 +65,8 @@ public class ProjectFunderReportJob {
                     .reduceByKey(Integer::sum);
 
             JavaRDD<ReportEntry> funderReport = convertToReportEntries(reducedFunderWithCount.sortByKey(true), params.reportKeyTemplate);
-            
-            avroSaver.saveJavaRDD(funderReport.union(sc.parallelize(Lists.newArrayList(totalReportEntry))), 
+
+            avroSaver.saveJavaRDD(funderReport.union(sc.parallelize(Lists.newArrayList(totalReportEntry))).repartition(1),
                     ReportEntry.SCHEMA$, params.outputReportPath);
         }
         

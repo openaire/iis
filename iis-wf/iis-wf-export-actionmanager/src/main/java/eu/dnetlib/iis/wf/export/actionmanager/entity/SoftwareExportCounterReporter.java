@@ -44,7 +44,7 @@ public class SoftwareExportCounterReporter {
         ReportEntry distinctPubsCounter = generateDistinctPublicationsCounter(uniqueRelations);
         
         JavaRDD<ReportEntry> report = sparkContext.parallelize(Lists.newArrayList(
-                totalEntitiesCounter, totalRelationsCounter, distinctPubsCounter));
+                totalEntitiesCounter, totalRelationsCounter, distinctPubsCounter), 1);
         
         avroSaver.saveJavaRDD(report, ReportEntry.SCHEMA$, outputReportPath);
     }

@@ -53,7 +53,8 @@ public class RootConceptIdReportJob {
                     .reduceByKey(Integer::sum);
 
             JavaRDD<ReportEntry> conceptReport = convertToReportEntries(reducedRootConceptIdWithCount
-                    .sortByKey(true), params.reportKeyTemplate);
+                    .sortByKey(true), params.reportKeyTemplate)
+                    .repartition(1);
             
             avroSaver.saveJavaRDD(conceptReport, ReportEntry.SCHEMA$, params.outputReportPath);
         }

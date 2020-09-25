@@ -368,7 +368,7 @@ public class ImportInformationSpaceJob {
                 ReportEntryFactory.createCounterReportEntry(COUNTER_READ_ORGANIZATION, organizationCount),
                 ReportEntryFactory.createCounterReportEntry(COUNTER_READ_DOC_PROJ_REFERENCE, docProjCount),
                 ReportEntryFactory.createCounterReportEntry(COUNTER_READ_PROJ_ORG_REFERENCE, projOrgCount),
-                ReportEntryFactory.createCounterReportEntry(COUNTER_READ_DOC_DEDUP_DOC_REFERENCE, dedupDocCount)));
+                ReportEntryFactory.createCounterReportEntry(COUNTER_READ_DOC_DEDUP_DOC_REFERENCE, dedupDocCount)), 1);
     }
     
     /**

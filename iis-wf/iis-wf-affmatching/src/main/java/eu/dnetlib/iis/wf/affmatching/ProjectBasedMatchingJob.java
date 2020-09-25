@@ -106,7 +106,7 @@ public class ProjectBasedMatchingJob {
             
             List<ReportEntry> reportEntries = reportGenerator.generateReport(distinctMatchedOrganizations);
             
-            sparkAvroSaver.saveJavaRDD(sc.parallelize(reportEntries), ReportEntry.SCHEMA$, outputReportPath);
+            sparkAvroSaver.saveJavaRDD(sc.parallelize(reportEntries, 1), ReportEntry.SCHEMA$, outputReportPath);
         }
     }
 

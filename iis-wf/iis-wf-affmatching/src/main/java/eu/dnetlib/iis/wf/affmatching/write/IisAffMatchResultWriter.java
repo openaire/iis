@@ -61,13 +61,13 @@ public class IisAffMatchResultWriter implements AffMatchResultWriter {
         
         distinctMatchedOrganizations.cache();
         
-        sparkAvroSaver.saveJavaRDD(distinctMatchedOrganizations.coalesce(numberOfEmittedFiles), MatchedOrganization.SCHEMA$, outputPath);
+        sparkAvroSaver.saveJavaRDD(distinctMatchedOrganizations.repartition(numberOfEmittedFiles), MatchedOrganization.SCHEMA$, outputPath);
         
         
         
         List<ReportEntry> reportEntries = reportGenerator.generateReport(distinctMatchedOrganizations);
         
-        sparkAvroSaver.saveJavaRDD(sc.parallelize(reportEntries), ReportEntry.SCHEMA$, outputReportPath);
+        sparkAvroSaver.saveJavaRDD(sc.parallelize(reportEntries, 1), ReportEntry.SCHEMA$, outputReportPath);
         
 
         
