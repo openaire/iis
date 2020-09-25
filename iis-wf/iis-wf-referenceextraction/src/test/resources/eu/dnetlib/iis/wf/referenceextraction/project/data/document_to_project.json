@@ -1,354 +1,348 @@
 {
-  "documentId": "50|dedup_wf_001::92685f7e22342478a67376985a967618",
-  "projectId": "40|gsrt________::574ef85ac608988be5167363bb257010",
-  "confidenceLevel": 0.8164966,
-  "textsnippet": " work supported grants general secretariat research technology greece _gsrt_ sinergasia _theracan_ 11syn_1_485 kripis _sthenos_ 447985   "
+   "documentId":"50|core________::0aeb942cc2524fc3306ef087e7c328b5",
+   "projectId":"40|anr_________::96de9861ca6934ddf8b941f385b797e6",
+   "confidenceLevel":0.8,
+   "textsnippet":"This work has received support of TransferS (laboratoire d'excellence, program Investissements d'avenir ANR-10-IDEX-0001-02 PSL* and <<< ANR-10-LABX-0099). >>> "
 }
 {
-  "documentId": "50|dedup_wf_001::966fa995ef22da40b8ee1a5c1ad3eab4",
-  "projectId": "40|sshrc_______::1e5e62235d094afd01cd56e65112fc63",
-  "confidenceLevel": 0.8,
-  "textsnippet": "grateful nancial support Social Sciences Humanities Research Council Canada \u003c\u003c\u003c SSHRC \u003e\u003e\u003e grant 410 2009 0183"
+   "documentId":"50|core________::1d807329a9a18619305755f31034b3cd",
+   "projectId":"40|rsf_________::48e2a92bd382fec38e02988bd55008b4",
+   "confidenceLevel":0.8,
+   "textsnippet":"2016 by Tomsk State University Press, with support from the Russian Science Foundation (project № <<< 14-48-00043). >>> ISBN 978-5-94621-585-5"
 }
 {
-  "documentId": "50|dedup_wf_001::96932fdbc6d5a50f289da74bff297d5e",
-  "projectId": "40|nserc_______::1e5e62235d094afd01cd56e65112fc63",
-  "confidenceLevel": 0.8,
-  "textsnippet": "GT RGM acknowledge support \u003c\u003c\u003c NSERC \u003e\u003e\u003e Canada Research Chair program Ontario Trillium Foundation Perimeter Institute Theoretical Physics"
+   "documentId":"50|dedup_wf_001::92685f7e22342478a67376985a967618",
+   "projectId":"40|gsrt________::574ef85ac608988be5167363bb257010",
+   "confidenceLevel":0.8164966,
+   "textsnippet":" work supported grants general secretariat research technology greece _gsrt_ sinergasia _theracan_ 11syn_1_485 kripis _sthenos_ <<< 447985 >>>   "
 }
 {
-  "documentId": "50|narcis______::0b552824e655d0cd2251691e1722aa20",
-  "projectId": "40|nwo_________::333b8b4b6912395bdd07f7a431c44e99",
-  "confidenceLevel": 0.8,
-  "textsnippet": "authors gratefully acknowledge the financial support of the Dutch Technology Foundation (STW) under project No. 10414. "
+   "documentId":"50|dedup_wf_001::966fa995ef22da40b8ee1a5c1ad3eab4",
+   "projectId":"40|sshrc_______::1e5e62235d094afd01cd56e65112fc63",
+   "confidenceLevel":0.8,
+   "textsnippet":"grateful nancial support Social Sciences Humanities Research Council Canada <<< SSHRC >>> grant 410 2009 0183"
 }
 {
-  "documentId": "50|od_______908::06173645b3548760065d4a797ca6d23a",
-  "projectId": "40|aka_________::b418b9f235f483c5127a88403fc34ef9",
-  "confidenceLevel": 0.73029673,
-  "textsnippet": "funding information my research was supported by the academy of finland (grants #129662"
+   "documentId":"50|dedup_wf_001::96932fdbc6d5a50f289da74bff297d5e",
+   "projectId":"40|nserc_______::1e5e62235d094afd01cd56e65112fc63",
+   "confidenceLevel":0.8,
+   "textsnippet":"GT RGM acknowledge support <<< NSERC >>> Canada Research Chair program Ontario Trillium Foundation Perimeter Institute Theoretical Physics"
 }
 {
-  "documentId": "50|od_______908::08e1f7cb9848aea02be6b2ab8b4dc88d",
-  "projectId": "40|nih_________::147e9551e64eb1953df747e36b327100",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "of Health/National Heart, Lung and Blood Institute grants contracts R01-HL-60700, R01-HL-54776 and N01-HC-25195 Bethesda, MD. Conflict  "
+   "documentId":"50|dedup_wf_001::efdc343bcbdbc8b1a0e3136a9697c3a0",
+   "projectId":"40|innoviris___::ece14608b0fc1a2ae6b4e3ec6a90b5b1",
+   "confidenceLevel":0.8,
+   "textsnippet":"review article has been supported by the Innoviris grant ATTRACT Brains for Brussels 2015 (BECAP <<< 2015-BB2B-4). >>> "
 }
 {
-  "documentId": "50|od_______908::0e6fdb767c342f227e2df4aba1f6932f",
-  "projectId": "40|fwf_________::fd275dc19e12ae007d84bc8c220058e4",
-  "confidenceLevel": 0.8,
-  "textsnippet": "Meitner award from the Austrian Science Foundation (FWF M1420-B21). "
+   "documentId":"50|narcis______::0b552824e655d0cd2251691e1722aa20",
+   "projectId":"40|nwo_________::333b8b4b6912395bdd07f7a431c44e99",
+   "confidenceLevel":0.8,
+   "textsnippet":"authors gratefully acknowledge the financial support of the Dutch Technology Foundation (STW) under project No. <<< 10414. >>> "
 }
 {
-  "documentId": "50|od_______908::1c15a8bbfa79b74d1d36476ada14fc2f",
-  "projectId": "40|conicytf____::1d6cdcaea7bb43ece8f72713089bc0e3",
-  "confidenceLevel": 0.8,
-  "textsnippet": "This work was supported by FONDECYT#1120074, Santiago, Chile."
+   "documentId":"50|od_______908::08e1f7cb9848aea02be6b2ab8b4dc88d",
+   "projectId":"40|nih_________::147e9551e64eb1953df747e36b327100",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"of Health/National Heart, Lung and Blood Institute grants contracts R01-HL-60700, R01-HL-54776 and N01-HC-25195 Bethesda, MD. Conflict <<<  >>> "
 }
 {
-  "documentId": "50|od_______908::6118d84402bac3159990bd741cdd0fe2",
-  "projectId": "40|tubitakf____::e924b627978040d00669a0f9c050ad42",
-  "confidenceLevel": 0.8,
-  "textsnippet": "of Health (grant #U41HG006623 and #GM103504) and Scientific and Technological Research Council of Turkey (grant #111E036). "
+   "documentId":"50|od_______908::0e6fdb767c342f227e2df4aba1f6932f",
+   "projectId":"40|fwf_________::fd275dc19e12ae007d84bc8c220058e4",
+   "confidenceLevel":0.8,
+   "textsnippet":"Meitner award from the Austrian Science Foundation <<< (FWF M1420-B21). >>> "
 }
 {
-  "documentId": "50|od_______908::9196de8e0cdb0e9973c3ee27f99f0243",
-  "projectId": "40|mestd_______::29707834c561a798a44837112ffa0c25",
-  "confidenceLevel": 0.8164966,
-  "textsnippet": "        work supported ministry science republic serbia grants on175069 on175071 on175103 faculty"
+   "documentId":"50|od_______908::1c15a8bbfa79b74d1d36476ada14fc2f",
+   "projectId":"40|conicytf____::1d6cdcaea7bb43ece8f72713089bc0e3",
+   "confidenceLevel":0.8,
+   "textsnippet":"This work was supported by <<< FONDECYT#1120074, >>> Santiago, Chile."
 }
 {
-  "documentId": "50|od________18::52fbb77464f6ed2751a26bfc3bf307bf",
-  "projectId": "40|dfgf________::0646bc00566f502c1d03363e9d77b474",
-  "confidenceLevel": 0.8,
-  "textsnippet": "Cirici acknowledge financial support DFG SPP 1786 AGAUR Beatriu Pinós Program partial support AEI"
+   "documentId":"50|od_______908::6118d84402bac3159990bd741cdd0fe2",
+   "projectId":"40|tubitakf____::e924b627978040d00669a0f9c050ad42",
+   "confidenceLevel":0.8,
+   "textsnippet":"of Health (grant #U41HG006623 and #GM103504) and Scientific and Technological Research Council of Turkey (grant <<< #111E036). >>> "
 }
 {
-  "documentId": "50|od________18::6e336f58fbfcea76362597f026d6a68c",
-  "projectId": "40|rcuk________::aed720e690d630ef7ebfcd578a915a41",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "This work was supported by the STFC Grant ST/J000469/1 “String"
+   "documentId":"50|od_______908::9196de8e0cdb0e9973c3ee27f99f0243",
+   "projectId":"40|mestd_______::29707834c561a798a44837112ffa0c25",
+   "confidenceLevel":0.8164966,
+   "textsnippet":"        work supported ministry science republic serbia grants <<< on175069 >>> on175071 on175103 faculty"
 }
 {
-  "documentId": "50|od________18::7b73b2f9431d0f7dbcf1867532d6554b",
-  "projectId": "40|sgov________::fed79325b85dc27b9d75a498838e2de7",
-  "confidenceLevel": 0.8,
-  "textsnippet": "This work has been supported by grant MTM2012-31073 (Ministerio de Econom´ıa y Competitividad,"
+   "documentId":"50|od________18::52fbb77464f6ed2751a26bfc3bf307bf",
+   "projectId":"40|dfgf________::0646bc00566f502c1d03363e9d77b474",
+   "confidenceLevel":0.8,
+   "textsnippet":"Cirici acknowledge financial support DFG <<< SPP 1786 >>> AGAUR Beatriu Pinós Program partial support AEI"
 }
 {
-  "documentId": "50|od________18::9580de872794f07653f436e1ba51007f",
-  "projectId": "40|miur________::54a1d3c536227e295a9982eaf8fd3791",
-  "confidenceLevel": 0.8,
-  "textsnippet": "G. Verzini is partially supported by the PRIN-2015KB9WPT Grant: “Variational methods, with applications to problems in mathematical physics"
+   "documentId":"50|od________18::6e336f58fbfcea76362597f026d6a68c",
+   "projectId":"40|rcuk________::aed720e690d630ef7ebfcd578a915a41",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"This work was supported by the STFC Grant <<< ST/J000469/1 >>> “String"
 }
 {
-  "documentId": "50|od________18::9c0bd6884a356d26618ade8507fdb40a",
-  "projectId": "40|snsf________::69afff7decb9138b8236b9d8c42693f3",
-  "confidenceLevel": 0.8,
-  "textsnippet": "This work was supported by the Swiss National Foundation for Scientific Research under grant No. 620-62868.00. "
+   "documentId":"50|od________18::7b73b2f9431d0f7dbcf1867532d6554b",
+   "projectId":"40|sgov________::fed79325b85dc27b9d75a498838e2de7",
+   "confidenceLevel":0.8,
+   "textsnippet":"This work has been supported by grant <<< MTM2012-31073 >>> (Ministerio de Econom´ıa y Competitividad,"
 }
 {
-  "documentId": "50|pub_______00::with_wt_unidentified_reference",
-  "projectId": "40|wt__________::1e5e62235d094afd01cd56e65112fc63",
-  "confidenceLevel": 0.8,
-  "textsnippet": ""
+   "documentId":"50|od________18::9580de872794f07653f436e1ba51007f",
+   "projectId":"40|miur________::54a1d3c536227e295a9982eaf8fd3791",
+   "confidenceLevel":0.8,
+   "textsnippet":"G. Verzini is partially supported by the <<< PRIN-2015KB9WPT >>> Grant: “Variational methods, with applications to problems in mathematical physics"
 }
 {
-  "documentId": "50|sharebioRxiv::ff9de1c352dcee69956d01e77149b708",
-  "projectId": "40|cihr________::1e5e62235d094afd01cd56e65112fc63",
-  "confidenceLevel": 0.8,
-  "textsnippet": "work supported \u003c\u003c\u003c Canadian \u003e\u003e\u003e Institutes Health Research FDN 154328 128090 CHA FDN 148430 201512MSH 360794 228629 DDC"
+   "documentId":"50|od________18::9c0bd6884a356d26618ade8507fdb40a",
+   "projectId":"40|snsf________::69afff7decb9138b8236b9d8c42693f3",
+   "confidenceLevel":0.8,
+   "textsnippet":"This work was supported by the Swiss National Foundation for Scientific Research under grant No. <<< 620-62868.00. >>> "
 }
 {
-  "documentId": "PMC3386204",
-  "projectId": "40|taraexp_____::c81e728d9d4c2f636f067f89cc14862c",
-  "confidenceLevel": 0.68313,
-  "textsnippet": null
+   "documentId":"50|pub_______00::with_wt_unidentified_reference",
+   "projectId":"40|wt__________::1e5e62235d094afd01cd56e65112fc63",
+   "confidenceLevel":0.8,
+   "textsnippet":""
 }
 {
-  "documentId": "PMC3625178",
-  "projectId": "40|taraexp_____::6413b29c08e6d71a9cf6c4d50d7dc6f6",
-  "confidenceLevel": 0.68313,
-  "textsnippet": null
+   "documentId":"50|sharebioRxiv::ff9de1c352dcee69956d01e77149b708",
+   "projectId":"40|cihr________::1e5e62235d094afd01cd56e65112fc63",
+   "confidenceLevel":0.8,
+   "textsnippet":"work supported <<< Canadian >>> Institutes Health Research FDN 154328 128090 CHA FDN 148430 201512MSH 360794 228629 DDC"
 }
 {
-  "documentId": "WOS:000298601300043",
-  "projectId": "WT::77044",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "wellcome trust sanger institute _wtsi_ _infrastructure support_ funding open access charge_ wellcome trust _grant numbers wt077044_z_05_z_ bbsrc bioinformatics biological"
+   "documentId":"PMC3386204",
+   "projectId":"40|taraexp_____::c81e728d9d4c2f636f067f89cc14862c",
+   "confidenceLevel":0.68313,
+   "textsnippet":null
 }
 {
-  "documentId": "WOS:000300767100003",
-  "projectId": "WT::87590",
-  "confidenceLevel": 0.8946934,
-  "textsnippet": "       work funded wellcome trust senior research fellowship dva _wt087590ma_ mrc programme grant"
+   "documentId":"PMC3625178",
+   "projectId":"40|taraexp_____::6413b29c08e6d71a9cf6c4d50d7dc6f6",
+   "confidenceLevel":0.68313,
+   "textsnippet":null
 }
 {
-  "documentId": "WOS:000305695100018",
-  "projectId": "WT::82273",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "          resarch supported wellcome trust grant 082273_z_07_z _to p b"
+   "documentId":"WOS:000298601300043",
+   "projectId":"WT::77044",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"wellcome trust sanger institute _wtsi_ _infrastructure support_ funding open access charge_ wellcome trust _grant numbers <<< wt077044_z_05_z_ >>> bbsrc bioinformatics biological"
 }
 {
-  "documentId": "WOS:000305946200011",
-  "projectId": "WT::76827",
-  "confidenceLevel": 0.71514237,
-  "textsnippet": "work made possible wellcome trust msc fellowship awarded ewb _090569_z_09_z_ wellcome trust senior fellowship awarded _076827_ kemri wellcome_trust programme"
+   "documentId":"WOS:000300767100003",
+   "projectId":"WT::87590",
+   "confidenceLevel":0.8946934,
+   "textsnippet":"       work funded wellcome trust senior research fellowship dva <<< _wt087590ma_ >>> mrc programme grant"
 }
 {
-  "documentId": "WOS:000305946200011",
-  "projectId": "WT::90569",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "      work made possible wellcome trust msc fellowship awarded ewb _090569_z_09_z_ wellcome trust senior"
+   "documentId":"WOS:000305695100018",
+   "projectId":"WT::82273",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"          resarch supported wellcome trust grant <<< 082273_z_07_z >>> _to p b"
 }
 {
-  "documentId": "WOS:000305946200011",
-  "projectId": "WT::92654",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "ewb _090569_z_09_z_ wellcome trust senior fellowship awarded _076827_ kemri wellcome_trust programme supported core funding wellcome_trust _092654_z_10_a_ funders role design"
+   "documentId":"WOS:000305946200011",
+   "projectId":"WT::76827",
+   "confidenceLevel":0.71514237,
+   "textsnippet":"work made possible wellcome trust msc fellowship awarded ewb _090569_z_09_z_ wellcome trust senior fellowship awarded <<< _076827_ >>> kemri wellcome_trust programme"
 }
 {
-  "documentId": "WOS:000306461800046",
-  "projectId": "WT::84703",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "talecris biotherapeutics abbott diagnostics genotyping gabriel framework supported grants european commission 018996 wellcome trust wt 084703ma identification pathways supported"
+   "documentId":"WOS:000305946200011",
+   "projectId":"WT::90569",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"      work made possible wellcome trust msc fellowship awarded ewb <<< _090569_z_09_z_ >>> wellcome trust senior"
 }
 {
-  "documentId": "WOS:000306840400020",
-  "projectId": "FP7::201413",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "research council uk euro_blcs qlg1_ct_2000_01643 european community_s seventh framework programme _fp7_2007_2013_ engage project grant agreement health_f4_2007_201413 authors thank center"
+   "documentId":"WOS:000305946200011",
+   "projectId":"WT::92654",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"ewb _090569_z_09_z_ wellcome trust senior fellowship awarded _076827_ kemri wellcome_trust programme supported core funding wellcome_trust <<< _092654_z_10_a_ >>> funders role design"
 }
 {
-  "documentId": "WOS:000306840400020",
-  "projectId": "FP7::201865",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "ag twins uk_ study funded wellcome trust european community_s seventh framework programme _fp7_2007_2013_ grant agreement health_f2_2008_201865_gefos _fp7_2007_2013_ engage project"
+   "documentId":"WOS:000306461800046",
+   "projectId":"WT::84703",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"talecris biotherapeutics abbott diagnostics genotyping gabriel framework supported grants european commission 018996 wellcome trust wt <<< 084703ma >>> identification pathways supported"
 }
 {
-  "documentId": "WOS:000306840400020",
-  "projectId": "WT::69224",
-  "confidenceLevel": 0.5781745,
-  "textsnippet": "project grant agreement health_f4_2007_201413 medical research council uk _g0500539 g0600705 prevmetsyn_salve_ wellcome trust _project grant gr069224_ acknowledge support national"
+   "documentId":"WOS:000306840400020",
+   "projectId":"FP7::201413",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"research council uk euro_blcs qlg1_ct_2000_01643 european community_s seventh framework programme _fp7_2007_2013_ engage project grant agreement <<< health_f4_2007_201413 >>> authors thank center"
 }
 {
-  "documentId": "WOS:000306840400020",
-  "projectId": "WT::92447",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "institute aging national institutes health baltimore maryland jrb perry sir henry wellcome postdoctoral research fellow _092447_z_10_z_ cooperative health research"
+   "documentId":"WOS:000306840400020",
+   "projectId":"FP7::201865",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"ag twins uk_ study funded wellcome trust european community_s seventh framework programme _fp7_2007_2013_ grant agreement <<< health_f2_2008_201865_gefos >>> _fp7_2007_2013_ engage project"
 }
 {
-  "documentId": "WOS:000314744400005",
-  "projectId": "FP7::281824",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "centre human genetics_ european research council _erc_ european commission 7th framework programme _fp7_2007_2013_erc grant agreement 281824 medical research council"
+   "documentId":"WOS:000306840400020",
+   "projectId":"WT::69224",
+   "confidenceLevel":0.5781745,
+   "textsnippet":"project grant agreement health_f4_2007_201413 medical research council uk _g0500539 g0600705 prevmetsyn_salve_ wellcome trust _project grant <<< gr069224_ >>> acknowledge support national"
 }
 {
-  "documentId": "WOS:000314744400005",
-  "projectId": "WT::74318",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "         work laboratory k supported wellcome trust _074318 075491_z_04 core facilities"
+   "documentId":"WOS:000306840400020",
+   "projectId":"WT::92447",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"institute aging national institutes health baltimore maryland jrb perry sir henry wellcome postdoctoral research fellow <<< _092447_z_10_z_ >>> cooperative health research"
 }
 {
-  "documentId": "WOS:000314744400005",
-  "projectId": "WT::75491",
-  "confidenceLevel": 0.6502747,
-  "textsnippet": "        work laboratory k supported wellcome trust _074318 075491_z_04 core facilities wellcome"
+   "documentId":"WOS:000314744400005",
+   "projectId":"FP7::281824",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"centre human genetics_ european research council _erc_ european commission 7th framework programme _fp7_2007_2013_erc grant agreement <<< 281824 >>> medical research council"
 }
 {
-  "documentId": "WOS:000315157200118",
-  "projectId": "FP7::278433",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "medical research council _uk project grant mr_j008761_1_ european union seventh framework programme _fp7_2007_2013 grant agreement no278433_predemics_ funders role study"
+   "documentId":"WOS:000314744400005",
+   "projectId":"WT::74318",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"         work laboratory k supported wellcome trust <<< _074318 >>> 075491_z_04 core facilities"
 }
 {
-  "documentId": "WOS:000315157200118",
-  "projectId": "WT::93488",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "international center nih sr funded by_ nih fogarty center _r01 tw008246_01_ wellcome trust _university award 093488_z_10_z_ medical research council"
+   "documentId":"WOS:000314744400005",
+   "projectId":"WT::75491",
+   "confidenceLevel":0.6502747,
+   "textsnippet":"        work laboratory k supported wellcome trust _074318 <<< 075491_z_04 >>> core facilities wellcome"
 }
 {
-  "documentId": "WOS:000315524700001",
-  "projectId": "WT::83851",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "acknowledge support wellcome trust programme grant award_ pk_pd modelling optimize treatment hiv tb malaria _ref 083851_z_07_z_ p b supported"
+   "documentId":"WOS:000315157200118",
+   "projectId":"FP7::278433",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"medical research council _uk project grant mr_j008761_1_ european union seventh framework programme _fp7_2007_2013 grant agreement <<< no278433_predemics_ >>> funders role study"
 }
 {
-  "documentId": "WOS:000315637900131",
-  "projectId": "WT::85475",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "acknowledge collaboration principal funding genome_wide study provided wellcome trust wellcome trust case control consortium2 project _085475_b_08_z 085475_z_08_z_ thank contributors"
+   "documentId":"WOS:000315157200118",
+   "projectId":"WT::93488",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"international center nih sr funded by_ nih fogarty center _r01 tw008246_01_ wellcome trust _university award <<< 093488_z_10_z_ >>> medical research council"
 }
 {
-  "documentId": "WOS:000316614600026",
-  "projectId": "FP7::248095",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "      work supported epsrc _ep_c51933_01 ep_j008052_1 ep_c013956_1_ ec project q_essence _248095_ royal society afosr"
+   "documentId":"WOS:000315524700001",
+   "projectId":"WT::83851",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"acknowledge support wellcome trust programme grant award_ pk_pd modelling optimize treatment hiv tb malaria _ref <<< 083851_z_07_z_ >>> p b supported"
 }
 {
-  "documentId": "WOS:000316614600026",
-  "projectId": "FP7::275103",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "united states air force institute technology x _m k supported ec marie curie fellowships _piif_ga_2011_300820 pief_ga_2010_275103_ b supported fastquast"
+   "documentId":"WOS:000315637900131",
+   "projectId":"WT::85475",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"acknowledge collaboration principal funding genome_wide study provided wellcome trust wellcome trust case control consortium2 project <<< _085475_b_08_z >>> 085475_z_08_z_ thank contributors"
 }
 {
-  "documentId": "WOS:000316614600026",
-  "projectId": "FP7::300820",
-  "confidenceLevel": 0.706433,
-  "textsnippet": "support united states air force institute technology x _m k supported ec marie curie fellowships _piif_ga_2011_300820 pief_ga_2010_275103_ b supported"
+   "documentId":"WOS:000316614600026",
+   "projectId":"FP7::248095",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"      work supported epsrc _ep_c51933_01 ep_j008052_1 ep_c013956_1_ ec project q_essence <<< _248095_ >>> royal society afosr"
 }
 {
-  "documentId": "WOS:000316614600034",
-  "projectId": "FP7::240763",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "illes balears feder european commission projects tec2009_14101 _decodica_ grups competitius ec fp7 projects phocus _grant 240763_ novalis _grant 275840_"
+   "documentId":"WOS:000316614600026",
+   "projectId":"FP7::275103",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"united states air force institute technology x _m k supported ec marie curie fellowships _piif_ga_2011_300820 <<< pief_ga_2010_275103_ >>> b supported fastquast"
 }
 {
-  "documentId": "WOS:000316614600034",
-  "projectId": "FP7::275840",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "european commission projects tec2009_14101 _decodica_ grups competitius ec fp7 projects phocus _grant 240763_ novalis _grant 275840_   "
+   "documentId":"WOS:000316614600026",
+   "projectId":"FP7::300820",
+   "confidenceLevel":0.706433,
+   "textsnippet":"support united states air force institute technology x _m k supported ec marie curie fellowships <<< _piif_ga_2011_300820 >>> pief_ga_2010_275103_ b supported"
 }
 {
-  "documentId": "WOS:000316614600048",
-  "projectId": "FP7::214499",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "fullerton edwin fohtung oleg sphyrko work partially supported european communities fp7 programme contract namaste number 214499 contract magwire number"
+   "documentId":"WOS:000316614600034",
+   "projectId":"FP7::240763",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"illes balears feder european commission projects tec2009_14101 _decodica_ grups competitius ec fp7 projects phocus _grant <<< 240763_ >>> novalis _grant 275840_"
 }
 {
-  "documentId": "WOS:000316614600048",
-  "projectId": "FP7::257707",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "sphyrko work partially supported european communities fp7 programme contract namaste number 214499 contract magwire number 257707 anr_nsf project friends"
+   "documentId":"WOS:000316614600034",
+   "projectId":"FP7::275840",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"european commission projects tec2009_14101 _decodica_ grups competitius ec fp7 projects phocus _grant 240763_ novalis _grant <<< 275840_ >>>   "
 }
 {
-  "documentId": "WOS:000316614600053",
-  "projectId": "FP7::266039",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "grant multidisciplinary research partnership _mrp_ _biotechnology sustainable economy_ 01mra510w _bof_mrp_005_ eu_fp7 biotreat project _contract number 266039 call fp7_kbbe_2010 3"
+   "documentId":"WOS:000316614600048",
+   "projectId":"FP7::214499",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"fullerton edwin fohtung oleg sphyrko work partially supported european communities fp7 programme contract namaste number <<< 214499 >>> contract magwire number"
 }
 {
-  "documentId": "WOS:000316614600053",
-  "projectId": "FP7::266473",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "attraction pole _iuap_ _mu_manager_ funded belgian science policy _belspo p7_25_ support eu project ulixes _ga 266473_ acknowledged discussion conceptual"
+   "documentId":"WOS:000316614600048",
+   "projectId":"FP7::257707",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"sphyrko work partially supported european communities fp7 programme contract namaste number 214499 contract magwire number <<< 257707 >>> anr_nsf project friends"
 }
 {
-  "documentId": "WOS:000316614600070",
-  "projectId": "FP7::271554",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "within consortium salle blanche paris centre work supported anr contracts docfluc hyfont spinloc eu_fp7 project se2nd_271554_   "
+   "documentId":"WOS:000316614600053",
+   "projectId":"FP7::266039",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"grant multidisciplinary research partnership _mrp_ _biotechnology sustainable economy_ 01mra510w _bof_mrp_005_ eu_fp7 biotreat project _contract number <<< 266039 >>> call fp7_kbbe_2010 3"
 }
 {
-  "documentId": "WOS:000316614600082",
-  "projectId": "FP7::242276",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "_c002_2008_1 ala_127249_ awarded g f young investigator grant human frontier science program _rgy0074_2008_ supported remedi _health_f5_2009_242276_ grant research leading"
+   "documentId":"WOS:000316614600053",
+   "projectId":"FP7::266473",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"attraction pole _iuap_ _mu_manager_ funded belgian science policy _belspo p7_25_ support eu project ulixes _ga <<< 266473_ >>> acknowledged discussion conceptual"
 }
 {
-  "documentId": "WOS:000316614600082",
-  "projectId": "FP7::288263",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "_health_f5_2009_242276_ grant research leading results received funding european commission_s seventh framework programme _fp7_ict_2011_7_ grant agreement 288263 _nanovista_ recipient meervoud"
+   "documentId":"WOS:000316614600070",
+   "projectId":"FP7::271554",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"within consortium salle blanche paris centre work supported anr contracts docfluc hyfont spinloc eu_fp7 project <<< se2nd_271554_ >>>   "
 }
 {
-  "documentId": "WOS:000316614600091",
-  "projectId": "FP7::215368",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "    acknowledge theoretical assistance pavel motloch support eu erc advanced grant 268066 fp7_215368 semispinnet ministry education"
+   "documentId":"WOS:000316614600082",
+   "projectId":"FP7::242276",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"_c002_2008_1 ala_127249_ awarded g f young investigator grant human frontier science program _rgy0074_2008_ supported remedi <<< _health_f5_2009_242276_ >>> grant research leading"
 }
 {
-  "documentId": "WOS:000316614600091",
-  "projectId": "FP7::268066",
-  "confidenceLevel": 0.80691457,
-  "textsnippet": "     acknowledge theoretical assistance pavel motloch support eu erc advanced grant 268066 fp7_215368 semispinnet ministry"
+   "documentId":"WOS:000316614600082",
+   "projectId":"FP7::288263",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"_health_f5_2009_242276_ grant research leading results received funding european commission_s seventh framework programme _fp7_ict_2011_7_ grant agreement <<< 288263 >>> _nanovista_ recipient meervoud"
 }
 {
-  "documentId": "WOS:000316616100009",
-  "projectId": "40|cihr________::1e5e62235d094afd01cd56e65112fc63",
-  "confidenceLevel": 0.8,
-  "textsnippet": "work authors laboratory supported operating grants group grant \u003c\u003c\u003c Canadian \u003e\u003e\u003e Institutes Health Research well Canadian Foundation Innovation P K Alberta Heritage Foundation Medical Research AIHS"
+   "documentId":"WOS:000316614600091",
+   "projectId":"FP7::215368",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"    acknowledge theoretical assistance pavel motloch support eu erc advanced grant 268066 <<< fp7_215368 >>> semispinnet ministry education"
 }
 {
-  "documentId": "WOS:000316616100009",
-  "projectId": "FP7::273340",
-  "confidenceLevel": 0.6761234,
-  "textsnippet": "foundation medical research _aihs_ scientist snyder chair critical care medicine k supported fp7_people_2010_iof grant _no 273340_ european union "
+   "documentId":"WOS:000316614600091",
+   "projectId":"FP7::268066",
+   "confidenceLevel":0.80691457,
+   "textsnippet":"     acknowledge theoretical assistance pavel motloch support eu erc advanced grant <<< 268066 >>> fp7_215368 semispinnet ministry"
 }
 {
-  "documentId": "WOS:000316616400001",
-  "projectId": "FP7::277885",
-  "confidenceLevel": 0.99666107,
-  "textsnippet": "  work partially supported french anr p3n delight anr jcjc mind erc starting grant 277885 qd_cqed french renatech"
+   "documentId":"WOS:000316616100009",
+   "projectId":"40|cihr________::1e5e62235d094afd01cd56e65112fc63",
+   "confidenceLevel":0.8,
+   "textsnippet":"work authors laboratory supported operating grants group grant <<< Canadian >>> Institutes Health Research well Canadian Foundation Innovation P K Alberta Heritage Foundation Medical Research AIHS"
 }
 {
-  "documentId": "WOS:000316616400031",
-  "projectId": "FP7::208650",
-  "confidenceLevel": 0.73029673,
-  "textsnippet": "      work supported european research council vt via grant agreement 208650 epsrc via award"
+   "documentId":"WOS:000316616100009",
+   "projectId":"FP7::273340",
+   "confidenceLevel":0.6761234,
+   "textsnippet":"foundation medical research _aihs_ scientist snyder chair critical care medicine k supported fp7_people_2010_iof grant _no <<< 273340_ >>> european union "
 }
 {
-  "documentId": "wurpubs-381553",
-  "projectId": "40|corda_______::7948d523fdeae633b4dd15d93f4151bf",
-  "confidenceLevel": 0.5436502,
-  "textsnippet": "data provision national hydrometeorological services fp7 drought_r_spi project _fostering european drought research science_policy interfacing grant 282769_ funding ec post_grant"
+   "documentId":"WOS:000316616400001",
+   "projectId":"FP7::277885",
+   "confidenceLevel":0.99666107,
+   "textsnippet":"  work partially supported french anr p3n delight anr jcjc mind erc starting grant <<< 277885 >>> qd_cqed french renatech"
 }
 {
-  "documentId": "50|core________::1d807329a9a18619305755f31034b3cd",
-  "projectId": "40|rsf_________::48e2a92bd382fec38e02988bd55008b4",
-  "confidenceLevel": 0.8,
-  "textsnippet": "2016 by Tomsk State University Press, with support from the Russian Science Foundation (project № 14-48-00043). ISBN 978-5-94621-585-5"
+   "documentId":"WOS:000316616400031",
+   "projectId":"FP7::208650",
+   "confidenceLevel":0.73029673,
+   "textsnippet":"      work supported european research council vt via grant agreement <<< 208650 >>> epsrc via award"
 }
 {
-  "documentId": "50|core________::0aeb942cc2524fc3306ef087e7c328b5",
-  "projectId": "40|anr_________::96de9861ca6934ddf8b941f385b797e6",
-  "confidenceLevel": 0.8, 
-  "textsnippet": "This work has received support of TransferS (laboratoire d\u0027excellence, program Investissements d\u0027avenir ANR-10-IDEX-0001-02 PSL* and ANR-10-LABX-0099). "
-}
-{
-  "documentId": "50|dedup_wf_001::efdc343bcbdbc8b1a0e3136a9697c3a0",
-  "projectId": "40|innoviris___::ece14608b0fc1a2ae6b4e3ec6a90b5b1",
-  "confidenceLevel": 0.8,
-  "textsnippet": "review article has been supported by the Innoviris grant ATTRACT Brains for Brussels 2015 (BECAP 2015-BB2B-4). "
+   "documentId":"wurpubs-381553",
+   "projectId":"40|corda_______::7948d523fdeae633b4dd15d93f4151bf",
+   "confidenceLevel":0.5436502,
+   "textsnippet":"data provision national hydrometeorological services fp7 drought_r_spi project _fostering european drought research science_policy interfacing grant <<< 282769_ >>> funding ec post_grant"
 }
