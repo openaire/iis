@@ -40,11 +40,6 @@
         </dependency>
 
         <dependency>
-            <groupId>eu.dnetlib</groupId>
-            <artifactId>dnet-openaireplus-mapping-utils</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-mapreduce-client-core</artifactId>
         </dependency>
@@ -58,29 +53,6 @@
             <artifactId>protobuf-java</artifactId>
         </dependency>
 
-        <!-- required for SOAP communication with MDStore -->
-        <dependency>
-            <groupId>eu.dnetlib</groupId>
-            <artifactId>cnr-service-utils</artifactId>
-        </dependency>
-
-        <!-- required to access MDStore API -->
-        <dependency>
-            <groupId>eu.dnetlib</groupId>
-            <artifactId>cnr-rmi-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>eu.dnetlib</groupId>
-            <artifactId>cnr-resultset-client</artifactId>
-        </dependency>
-
-        <!-- proper spring context version required by cnr-resultset-client -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
@@ -90,13 +62,6 @@
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
-        </dependency>
-
-        <!-- required by dnet-actionmanager-common on CNR cluster only
-            for XSLT tansformations when exporting entities -->
-        <dependency>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
         </dependency>
 
         <dependency>

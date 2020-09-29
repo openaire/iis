@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.SequenceFile;
@@ -25,7 +26,6 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.common.collect.Lists;
 
-import eu.dnetlib.data.transform.xml.AbstractDNetXsltFunctions;
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.Author;
 import eu.dnetlib.dhp.schema.oaf.Country;
@@ -481,7 +481,7 @@ public class PatentExporterJob {
     }
 
     private static String appendMd5(String prefix, String suffix) {
-        return prefix + AbstractDNetXsltFunctions.md5(suffix);
+        return prefix + DigestUtils.md5Hex(suffix);
     }
 
     @Parameters(separators = "=")

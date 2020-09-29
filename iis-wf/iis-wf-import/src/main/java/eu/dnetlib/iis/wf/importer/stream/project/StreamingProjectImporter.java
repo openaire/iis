@@ -25,7 +25,6 @@ import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.importer.schemas.Project;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeUtils;
-import eu.dnetlib.openaire.exporter.model.ProjectDetail;
 
 /**
  * {@link Project} importer reading data from stream.
