@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -26,7 +27,6 @@ import com.beust.jcommander.Parameters;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import eu.dnetlib.data.transform.xml.AbstractDNetXsltFunctions;
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.DataInfo;
 import eu.dnetlib.dhp.schema.oaf.Field;
@@ -224,12 +224,12 @@ public class SoftwareExporterJob {
 
     protected static String generateSoftwareEntityId(String url) {
         return InfoSpaceConstants.ROW_PREFIX_RESULT + InfoSpaceConstants.OPENAIRE_ENTITY_ID_PREFIX +
-                InfoSpaceConstants.ID_NAMESPACE_SEPARATOR + AbstractDNetXsltFunctions.md5(url);
+                InfoSpaceConstants.ID_NAMESPACE_SEPARATOR + DigestUtils.md5Hex(url);
     }
 
     private static String generateDatasourceId(String repositoryName) {
         return InfoSpaceConstants.ROW_PREFIX_DATASOURCE + InfoSpaceConstants.OPENAIRE_ENTITY_ID_PREFIX +
-                InfoSpaceConstants.ID_NAMESPACE_SEPARATOR + AbstractDNetXsltFunctions.md5(repositoryName);
+                InfoSpaceConstants.ID_NAMESPACE_SEPARATOR + DigestUtils.md5Hex(repositoryName);
     }
 
     private static AtomicAction<Software> buildEntityAction(Tuple2<DocumentToSoftwareUrlWithMeta, Set<CharSequence>> object) {

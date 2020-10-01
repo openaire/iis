@@ -89,17 +89,7 @@
 
         <dependency>
             <groupId>eu.dnetlib</groupId>
-            <artifactId>cnr-rmi-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>eu.dnetlib</groupId>
             <artifactId>cnr-resultset-client</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>eu.dnetlib</groupId>
-            <artifactId>dnet-openaireplus-mapping-utils</artifactId>
         </dependency>
 
         <!-- proper spring context version required by cnr-resultset-client -->
