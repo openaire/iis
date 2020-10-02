@@ -1,12 +1,12 @@
 package eu.dnetlib.iis.wf.ingest.pmc.metadata;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertEquals;
-
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.Affiliation;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.Author;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Class containing methods for easier asserts of {@link ExtractedDocumentMetadata}

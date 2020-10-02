@@ -1,13 +1,13 @@
 package eu.dnetlib.iis.wf.ingest.pmc.metadata;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import org.junit.Test;
-
 import eu.dnetlib.iis.common.importer.CermineAffiliation;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.Affiliation;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
 * @author Łukasz Dumiszewski
@@ -24,11 +24,11 @@ public class CermineToIngestAffConverterTest {
     //------------------------ TESTS --------------------------
     
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void convert_NULL() {
         
         // execute
-        cermineToIngestAffConverter.convert(null);
+        assertThrows(NullPointerException.class, () -> cermineToIngestAffConverter.convert(null));
     }
 
     
