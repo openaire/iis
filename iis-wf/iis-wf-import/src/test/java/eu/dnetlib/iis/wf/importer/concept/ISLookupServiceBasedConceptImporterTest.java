@@ -1,52 +1,43 @@
 package eu.dnetlib.iis.wf.importer.concept;
 
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_FACADE_FACTORY_CLASS;
-import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
-import static eu.dnetlib.iis.wf.importer.VerificationUtils.verifyReport;
-import static eu.dnetlib.iis.wf.importer.concept.ISLookupServiceBasedConceptImporter.CONCEPT_COUNTER_NAME;
-import static eu.dnetlib.iis.wf.importer.concept.ISLookupServiceBasedConceptImporter.PARAM_IMPORT_CONTEXT_IDS_CSV;
-import static eu.dnetlib.iis.wf.importer.concept.ISLookupServiceBasedConceptImporter.PORT_OUT_CONCEPTS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.avro.file.DataFileWriter;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.importer.schemas.Concept;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeException;
+import org.apache.avro.file.DataFileWriter;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
+import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_FACADE_FACTORY_CLASS;
+import static eu.dnetlib.iis.wf.importer.VerificationUtils.verifyReport;
+import static eu.dnetlib.iis.wf.importer.concept.ISLookupServiceBasedConceptImporter.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 
 /**
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ISLookupServiceBasedConceptImporterTest {
 
     private PortBindings portBindings;
@@ -57,8 +48,7 @@ public class ISLookupServiceBasedConceptImporterTest {
     
     private ISLookupServiceBasedConceptImporter importer;
     
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+    public File testFolder;
     
     @Mock
     private DataFileWriter<Concept> conceptWriter;
@@ -67,11 +57,12 @@ public class ISLookupServiceBasedConceptImporterTest {
     private ArgumentCaptor<Concept> conceptCaptor;
     
     
-    @Before
+    @BeforeEach
     public void init() throws Exception {
-        
+        testFolder = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
+
         System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME, 
-                testFolder.getRoot().getAbsolutePath() + File.separatorChar + "test.properties");
+                testFolder.getAbsolutePath() + File.separatorChar + "test.properties");
         
         Map<String, Path> output = new HashMap<>();
         output.put(PORT_OUT_CONCEPTS, new Path("/irrelevant/location/as/it/will/be/mocked"));
@@ -103,7 +94,7 @@ public class ISLookupServiceBasedConceptImporterTest {
     }
     
     @Test
-    public void testGetOutputPorts() throws Exception {
+    public void testGetOutputPorts() {
         // execute
         Map<String, PortType> result = importer.getOutputPorts();
         
@@ -111,25 +102,25 @@ public class ISLookupServiceBasedConceptImporterTest {
         assertNotNull(result);
         assertNotNull(result.get(PORT_OUT_CONCEPTS));
         assertTrue(result.get(PORT_OUT_CONCEPTS) instanceof AvroPortType);
-        assertTrue(Concept.SCHEMA$ == ((AvroPortType)result.get(PORT_OUT_CONCEPTS)).getSchema());
+        assertSame(Concept.SCHEMA$, ((AvroPortType) result.get(PORT_OUT_CONCEPTS)).getSchema());
     }
     
-    @Test(expected=ServiceFacadeException.class)
-    public void testRunWithoutISLookupFacade() throws Exception {
+    @Test
+    public void testRunWithoutISLookupFacade() {
         // given
         parameters.remove(IMPORT_FACADE_FACTORY_CLASS);
         
         // execute
-        importer.run(portBindings, conf, parameters);
+        assertThrows(ServiceFacadeException.class, () -> importer.run(portBindings, conf, parameters));
     }
     
-    @Test(expected=IllegalArgumentException.class)
-    public void testRunWithoutContextIds() throws Exception {
-     // given
+    @Test
+    public void testRunWithoutContextIds() {
+        // given
         parameters.remove(PARAM_IMPORT_CONTEXT_IDS_CSV);
         
         // execute
-        importer.run(portBindings, conf, parameters);
+        assertThrows(IllegalArgumentException.class, () -> importer.run(portBindings, conf, parameters));
     }
     
     @Test

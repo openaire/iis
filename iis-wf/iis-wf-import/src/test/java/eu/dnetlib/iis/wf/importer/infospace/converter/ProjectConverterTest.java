@@ -1,17 +1,15 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import eu.dnetlib.dhp.schema.oaf.Field;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.importer.schemas.Project;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.junit.Test;
-
-import eu.dnetlib.dhp.schema.oaf.Field;
-import eu.dnetlib.iis.importer.schemas.Project;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * {@link ProjectConverter} test class.
@@ -32,10 +30,10 @@ public class ProjectConverterTest {
 
     // ------------------------ TESTS --------------------------
 
-    @Test(expected = NullPointerException.class)
-    public void convert_null_oafEntity() throws IOException {
+    @Test
+    public void convert_null_oafEntity() {
         // execute
-        converter.convert(null);
+        assertThrows(NullPointerException.class, () -> converter.convert(null));
     }
 
     @Test

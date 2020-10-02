@@ -1,13 +1,16 @@
 package eu.dnetlib.iis.wf.importer.infospace;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.dnetlib.dhp.schema.oaf.Oaf;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.IntegrationTest;
 import eu.dnetlib.iis.common.java.io.DataStore;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
+import eu.dnetlib.iis.common.schemas.IdentifierMapping;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
+import eu.dnetlib.iis.importer.schemas.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.spark.SparkConf;
@@ -15,31 +18,20 @@ import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
-import org.junit.*;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.*;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import eu.dnetlib.dhp.schema.oaf.Oaf;
-import eu.dnetlib.iis.common.IntegrationTest;
-import eu.dnetlib.iis.common.schemas.IdentifierMapping;
-import eu.dnetlib.iis.common.schemas.ReportEntry;
-import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
-import eu.dnetlib.iis.importer.schemas.DataSetReference;
-import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
-import eu.dnetlib.iis.importer.schemas.DocumentToProject;
-import eu.dnetlib.iis.importer.schemas.Organization;
-import eu.dnetlib.iis.importer.schemas.Project;
-import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
-
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author mhorst
  *
  */
-@Category(IntegrationTest.class)
+@IntegrationTest
 public class ImportInformationSpaceJobTest {
 
     private static SparkSession spark;
@@ -58,8 +50,8 @@ public class ImportInformationSpaceJobTest {
     private static final String OUTPUT_NAME_PROJ_ORG = "proj-org";
     private static final String OUTPUT_NAME_DEDUP = "dedup";
     
-    @BeforeClass
-    public static void beforeClass() throws IOException {
+    @BeforeAll
+    public static void beforeAll() {
         SparkConf conf = new SparkConf();
         conf.setAppName(ImportInformationSpaceJobTest.class.getSimpleName());
         conf.setMaster("local");
@@ -70,7 +62,7 @@ public class ImportInformationSpaceJobTest {
 
     }
 
-    @Before
+    @BeforeEach
     public void before() throws IOException {
         workingDir = Files.createTempDirectory("test_import_info_space");
         inputDir = workingDir.resolve("input");
@@ -80,12 +72,12 @@ public class ImportInformationSpaceJobTest {
         outputReportDir = workingDir.resolve("output_report");
     }
 
-    @After
+    @AfterEach
     public void after() throws IOException {
         FileUtils.deleteDirectory(workingDir.toFile());
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterAll() {
         spark.stop();
     }

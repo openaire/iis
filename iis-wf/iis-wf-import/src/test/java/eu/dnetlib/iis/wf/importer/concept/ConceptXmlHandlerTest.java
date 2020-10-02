@@ -1,34 +1,32 @@
 package eu.dnetlib.iis.wf.importer.concept;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.importer.schemas.Concept;
+import eu.dnetlib.iis.importer.schemas.Param;
+import eu.dnetlib.iis.wf.importer.RecordReceiver;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import eu.dnetlib.iis.importer.schemas.Concept;
-import eu.dnetlib.iis.importer.schemas.Param;
-import eu.dnetlib.iis.wf.importer.RecordReceiver;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ConceptXmlHandlerTest {
     
     private SAXParser saxParser;
@@ -41,7 +39,7 @@ public class ConceptXmlHandlerTest {
     @Captor
     private ArgumentCaptor<Concept> conceptCaptor;
     
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         SAXParserFactory parserFactory = SAXParserFactory.newInstance();
         saxParser = parserFactory.newSAXParser();

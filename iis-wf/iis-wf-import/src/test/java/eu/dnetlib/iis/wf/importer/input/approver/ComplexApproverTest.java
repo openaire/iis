@@ -1,29 +1,24 @@
 package eu.dnetlib.iis.wf.importer.input.approver;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import eu.dnetlib.dhp.schema.oaf.Oaf;
 import eu.dnetlib.dhp.schema.oaf.Publication;
 import eu.dnetlib.iis.wf.importer.infospace.approver.ComplexApprover;
 import eu.dnetlib.iis.wf.importer.infospace.approver.ResultApprover;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ComplexApproverTest {
 
     @Mock
@@ -52,7 +47,7 @@ public class ComplexApproverTest {
     }
 
     @Test
-    public void testApprove() throws Exception {
+    public void testApprove() {
         // given
         Oaf oaf = buildOaf();
         ComplexApprover complexApprover = new ComplexApprover(approver1, approver2);
@@ -67,14 +62,14 @@ public class ComplexApproverTest {
         assertTrue(result);
         verify(approver1).approve(approver1Captor.capture());
         verify(approver2).approve(approver2Captor.capture());
-        assertTrue(oaf == approver1Captor.getValue());
-        assertTrue(oaf == approver2Captor.getValue());
+        assertSame(oaf, approver1Captor.getValue());
+        assertSame(oaf, approver2Captor.getValue());
         
     }
     
     
     @Test
-    public void testDisapproveFirst() throws Exception {
+    public void testDisapproveFirst() {
      // given
         Oaf oaf = buildOaf();
         ComplexApprover complexApprover = new ComplexApprover(approver1, approver2);
@@ -87,11 +82,11 @@ public class ComplexApproverTest {
         assertFalse(result);
         verify(approver1, times(1)).approve(approver1Captor.capture());
         verify(approver2, never()).approve(approver2Captor.capture());
-        assertTrue(oaf == approver1Captor.getValue());
+        assertSame(oaf, approver1Captor.getValue());
     }
 
     @Test
-    public void testDisapproveLast() throws Exception {
+    public void testDisapproveLast() {
      // given
         Oaf oaf = buildOaf();
         ComplexApprover complexApprover = new ComplexApprover(approver1, approver2);
@@ -106,8 +101,8 @@ public class ComplexApproverTest {
         assertFalse(result);
         verify(approver1).approve(approver1Captor.capture());
         verify(approver2).approve(approver2Captor.capture());
-        assertTrue(oaf == approver1Captor.getValue());
-        assertTrue(oaf == approver2Captor.getValue());
+        assertSame(oaf, approver1Captor.getValue());
+        assertSame(oaf, approver2Captor.getValue());
     }
     
     // ----------------------------- PRIVATE --------------------------

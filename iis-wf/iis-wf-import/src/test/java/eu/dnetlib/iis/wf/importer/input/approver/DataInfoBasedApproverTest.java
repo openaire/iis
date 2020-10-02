@@ -1,12 +1,11 @@
 package eu.dnetlib.iis.wf.importer.input.approver;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
-
 import eu.dnetlib.dhp.schema.oaf.DataInfo;
 import eu.dnetlib.iis.wf.importer.infospace.approver.DataInfoBasedApprover;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link DataInfoBasedApprover} test class.

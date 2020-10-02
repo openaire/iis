@@ -1,38 +1,27 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+import com.google.common.collect.ImmutableMap;
+import eu.dnetlib.dhp.schema.oaf.*;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
+import eu.dnetlib.iis.importer.schemas.DataSetReference;
+import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-
-import com.google.common.collect.ImmutableMap;
-
-import eu.dnetlib.dhp.schema.oaf.Author;
-import eu.dnetlib.dhp.schema.oaf.Dataset;
-import eu.dnetlib.dhp.schema.oaf.Field;
-import eu.dnetlib.dhp.schema.oaf.Instance;
-import eu.dnetlib.dhp.schema.oaf.Qualifier;
-import eu.dnetlib.dhp.schema.oaf.Result;
-import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
-import eu.dnetlib.iis.common.InfoSpaceConstants;
-import eu.dnetlib.iis.importer.schemas.DataSetReference;
-import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * {@link DatasetMetadataConverter} test class.
  */
+@ExtendWith(MockitoExtension.class)
 public class DatasetMetadataConverterTest {
 
     private static final String ID = "dataset id";
@@ -53,26 +42,23 @@ public class DatasetMetadataConverterTest {
     
     private static final ImmutableMap<String, String> EXT_IDENTIFIERS = ImmutableMap.of(EXT_ID_TYPE_DOI_UPPERCASED, "doi-id", "other", "2");
     
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
-
     @InjectMocks
     private DatasetMetadataConverter converter;
 
     @Mock
     private FieldApprover fieldApprover;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        when(fieldApprover.approve(any())).thenReturn(true);
+        lenient().when(fieldApprover.approve(any())).thenReturn(true);
     }
 
     // ------------------------ TESTS --------------------------
 
-    @Test(expected=NullPointerException.class)
+    @Test
     public void convert_null_oafEntity() {
         // execute
-        converter.convert(null);
+        assertThrows(NullPointerException.class, () -> converter.convert(null));
     }
 
     @Test

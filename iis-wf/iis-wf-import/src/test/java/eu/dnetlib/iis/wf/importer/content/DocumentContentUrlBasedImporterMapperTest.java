@@ -1,38 +1,33 @@
 package eu.dnetlib.iis.wf.importer.content;
 
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_CONTENT_MAX_FILE_SIZE_MB;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.io.IOException;
-
+import eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl;
+import eu.dnetlib.iis.importer.schemas.DocumentContent;
+import eu.dnetlib.iis.wf.importer.content.DocumentContentUrlBasedImporterMapper.InvalidRecordCounters;
 import org.apache.avro.mapred.AvroKey;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Mapper.Context;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl;
-import eu.dnetlib.iis.importer.schemas.DocumentContent;
-import eu.dnetlib.iis.wf.importer.content.DocumentContentUrlBasedImporterMapper.InvalidRecordCounters;
+import java.io.IOException;
+
+import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_CONTENT_MAX_FILE_SIZE_MB;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.*;
 
 /**
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class DocumentContentUrlBasedImporterMapperTest {
 
@@ -59,7 +54,7 @@ public class DocumentContentUrlBasedImporterMapperTest {
     private ArgumentCaptor<NullWritable> valueCaptor;
     
     
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         
         content = "test content".getBytes("utf8");
@@ -99,7 +94,7 @@ public class DocumentContentUrlBasedImporterMapperTest {
         
         // assert
         verify(context, times(1)).write(keyCaptor.capture(), valueCaptor.capture());
-        assertTrue(NullWritable.get() == valueCaptor.getValue());
+        assertSame(NullWritable.get(), valueCaptor.getValue());
         DocumentContent docContent = keyCaptor.getValue().datum();
         assertEquals(id, docContent.getId());
         assertEquals(content, docContent.getPdf().array());

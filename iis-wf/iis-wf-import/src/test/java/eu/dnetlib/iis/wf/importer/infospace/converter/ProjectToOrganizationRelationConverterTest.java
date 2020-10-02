@@ -1,12 +1,10 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import org.junit.Test;
-
 import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author mhorst
@@ -19,10 +17,10 @@ public class ProjectToOrganizationRelationConverterTest {
 
     // ------------------------ TESTS --------------------------
 
-    @Test(expected = NullPointerException.class)
-    public void buildObject_null_oafRel() throws Exception {
+    @Test
+    public void buildObject_null_oafRel() {
         // execute
-        converter.convert(null);
+        assertThrows(NullPointerException.class, () -> converter.convert(null));
     }
 
     @Test

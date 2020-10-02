@@ -1,13 +1,13 @@
 package eu.dnetlib.iis.wf.importer.facade;
 
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_FACADE_FACTORY_CLASS;
-import static org.junit.Assert.assertEquals;
+import com.google.common.collect.Maps;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import org.junit.Test;
-
-import com.google.common.collect.Maps;
+import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_FACADE_FACTORY_CLASS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author mhorst
@@ -18,47 +18,47 @@ public class ServiceFacadeUtilsTest {
     
     // ------------------------ TESTS --------------------------
     
-    @Test(expected = ServiceFacadeException.class)
-    public void instantiate_no_factory_classname() throws Exception {
+    @Test
+    public void instantiate_no_factory_classname() {
         
         // given
         Map<String, String> parameters = Maps.newHashMap();
         
         // execute
-        ServiceFacadeUtils.instantiate(parameters);
+        assertThrows(ServiceFacadeException.class, () -> ServiceFacadeUtils.instantiate(parameters));
     }
     
-    @Test(expected = ServiceFacadeException.class)
-    public void instantiate_invalid_factory_classname() throws Exception {
+    @Test
+    public void instantiate_invalid_factory_classname() {
         
         // given
         Map<String, String> parameters = Maps.newHashMap();
         parameters.put(IMPORT_FACADE_FACTORY_CLASS, "non.existing.Factory");
         
         // execute
-        ServiceFacadeUtils.instantiate(parameters);
+        assertThrows(ServiceFacadeException.class, () -> ServiceFacadeUtils.instantiate(parameters));
     }
 
-    @Test(expected = ServiceFacadeException.class)
-    public void instantiate_invalid_factory() throws Exception {
+    @Test
+    public void instantiate_invalid_factory() {
         
         // given
         Map<String, String> parameters = Maps.newHashMap();
         parameters.put(IMPORT_FACADE_FACTORY_CLASS, "java.util.Map");
         
         // execute
-        ServiceFacadeUtils.instantiate(parameters);
+        assertThrows(ServiceFacadeException.class, () -> ServiceFacadeUtils.instantiate(parameters));
     }
     
-    @Test(expected = ServiceFacadeException.class)
-    public void instantiate_factory_without_noarg_constructor() throws Exception {
+    @Test
+    public void instantiate_factory_without_noarg_constructor() {
         
         // given
         Map<String, String> parameters = Maps.newHashMap();
         parameters.put(IMPORT_FACADE_FACTORY_CLASS, "eu.dnetlib.iis.wf.importer.facade.ServiceFacadeUtilsTest$FactoryWithoutNoArgConstructor");
         
         // execute
-        ServiceFacadeUtils.instantiate(parameters);
+        assertThrows(ServiceFacadeException.class, () -> ServiceFacadeUtils.instantiate(parameters));
     }
     
     @Test

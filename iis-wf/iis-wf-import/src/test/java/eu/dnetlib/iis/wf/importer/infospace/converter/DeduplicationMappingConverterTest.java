@@ -1,15 +1,14 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
-import org.junit.Before;
-
 import eu.dnetlib.iis.common.schemas.IdentifierMapping;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Tests for {@link DeduplicationMappingConverter}.
  */
 public class DeduplicationMappingConverterTest extends OafRelToAvroConverterTestBase<IdentifierMapping> {
 
-    @Before
+    @BeforeEach
     public void setUp() {
         converter = new DeduplicationMappingConverter();
         getSourceId = IdentifierMapping::getNewId;

@@ -1,48 +1,44 @@
 package eu.dnetlib.iis.wf.importer.stream.project;
 
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_FACADE_FACTORY_CLASS;
-import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
-import static eu.dnetlib.iis.wf.importer.VerificationUtils.verifyReport;
-import static eu.dnetlib.iis.wf.importer.stream.project.StreamingProjectImporter.PORT_OUT_PROJECT;
-import static eu.dnetlib.iis.wf.importer.stream.project.StreamingProjectImporter.PROJECT_COUNTER_NAME;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.avro.file.DataFileWriter;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.importer.schemas.Project;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeException;
+import org.apache.avro.file.DataFileWriter;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
+import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_FACADE_FACTORY_CLASS;
+import static eu.dnetlib.iis.wf.importer.VerificationUtils.verifyReport;
+import static eu.dnetlib.iis.wf.importer.stream.project.StreamingProjectImporter.PORT_OUT_PROJECT;
+import static eu.dnetlib.iis.wf.importer.stream.project.StreamingProjectImporter.PROJECT_COUNTER_NAME;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class StreamingProjectImporterTest {
 
    
@@ -54,8 +50,7 @@ public class StreamingProjectImporterTest {
     
     private StreamingProjectImporter importer = new StreamingProjectImporter();
     
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+    public File testFolder;
     
     @Mock
     private DataFileWriter<Project> projectWriter;
@@ -64,11 +59,12 @@ public class StreamingProjectImporterTest {
     private ArgumentCaptor<Project> projectCaptor;
     
     
-    @Before
+    @BeforeEach
     public void init() throws Exception {
-        
+        testFolder = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
+
         System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME, 
-                testFolder.getRoot().getAbsolutePath() + File.separatorChar + "test.properties");
+                testFolder.getAbsolutePath() + File.separatorChar + "test.properties");
         
         Map<String, Path> output = new HashMap<>();
         output.put(PORT_OUT_PROJECT, new Path("/irrelevant/location/as/it/will/be/mocked"));
@@ -100,7 +96,7 @@ public class StreamingProjectImporterTest {
     }
     
     @Test
-    public void testGetOutputPorts() throws Exception {
+    public void testGetOutputPorts() {
         // execute
         Map<String, PortType> result = importer.getOutputPorts();
         
@@ -108,16 +104,16 @@ public class StreamingProjectImporterTest {
         assertNotNull(result);
         assertNotNull(result.get(PORT_OUT_PROJECT));
         assertTrue(result.get(PORT_OUT_PROJECT) instanceof AvroPortType);
-        assertTrue(Project.SCHEMA$ == ((AvroPortType)result.get(PORT_OUT_PROJECT)).getSchema());
+        assertSame(Project.SCHEMA$, ((AvroPortType) result.get(PORT_OUT_PROJECT)).getSchema());
     }
     
-    @Test(expected=ServiceFacadeException.class)
-    public void testRunWithoutStreamingFacade() throws Exception {
+    @Test
+    public void testRunWithoutStreamingFacade() {
         // given
         parameters.remove(IMPORT_FACADE_FACTORY_CLASS);
         
         // execute
-        importer.run(portBindings, conf, parameters);
+        assertThrows(ServiceFacadeException.class, () -> importer.run(portBindings, conf, parameters));
     }
     
     @Test

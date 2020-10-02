@@ -1,45 +1,38 @@
 package eu.dnetlib.iis.wf.importer;
 
-import static eu.dnetlib.iis.wf.importer.AbstractIdentifierDatastoreBuilder.PORT_OUT_IDENTIFIER;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.avro.Schema;
-import org.apache.avro.file.DataFileWriter;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.common.schemas.Identifier;
+import org.apache.avro.Schema;
+import org.apache.avro.file.DataFileWriter;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static eu.dnetlib.iis.wf.importer.AbstractIdentifierDatastoreBuilder.PORT_OUT_IDENTIFIER;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 
 /**
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class IdentifierDatastoreBuilderTest {
 
     private static final String PARAM_NAME_IDENTIFIERS = "identifiers";
@@ -62,8 +55,8 @@ public class IdentifierDatastoreBuilderTest {
     
     private boolean createEmptyDataStoreIndicator;
     
-    @Before
-    public void init() throws Exception {
+    @BeforeEach
+    public void init() {
 
         
         Map<String, Path> output = new HashMap<>();
@@ -104,7 +97,7 @@ public class IdentifierDatastoreBuilderTest {
     }
     
     @Test
-    public void testGetOutputPorts() throws Exception {
+    public void testGetOutputPorts() {
         // execute
         Map<String, PortType> result = identifierDatastoreBuilder.getOutputPorts();
         
@@ -112,13 +105,14 @@ public class IdentifierDatastoreBuilderTest {
         assertNotNull(result);
         assertNotNull(result.get(PORT_OUT_IDENTIFIER));
         assertTrue(result.get(PORT_OUT_IDENTIFIER) instanceof AvroPortType);
-        assertTrue(Identifier.SCHEMA$ == ((AvroPortType)result.get(PORT_OUT_IDENTIFIER)).getSchema());
+        assertSame(Identifier.SCHEMA$, ((AvroPortType) result.get(PORT_OUT_IDENTIFIER)).getSchema());
     }
 
-    @Test(expected=IllegalArgumentException.class)
-    public void testRunWithoutIdentifierParam() throws Exception {
+    @Test
+    public void testRunWithoutIdentifierParam() {
         // execute
-        identifierDatastoreBuilder.run(portBindings, conf, parameters);
+        assertThrows(IllegalArgumentException.class,
+                () -> identifierDatastoreBuilder.run(portBindings, conf, parameters));
     }
     
     @Test

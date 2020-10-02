@@ -1,9 +1,9 @@
 package eu.dnetlib.iis.wf.importer;
 
-import static org.junit.Assert.assertNotNull;
-
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpClientUtilsTest {
 

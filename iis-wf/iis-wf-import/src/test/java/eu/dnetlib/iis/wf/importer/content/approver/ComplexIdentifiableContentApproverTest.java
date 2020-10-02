@@ -1,19 +1,14 @@
 package eu.dnetlib.iis.wf.importer.content.approver;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 
 
@@ -21,7 +16,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ComplexIdentifiableContentApproverTest {
 
     @Mock
@@ -59,7 +54,7 @@ public class ComplexIdentifiableContentApproverTest {
     }
 
     @Test
-    public void testApprove() throws Exception {
+    public void testApprove() {
         // given
         ComplexIdentifiableContentApprover complexApprover = new ComplexIdentifiableContentApprover(
                 approver1, approver2);
@@ -75,14 +70,14 @@ public class ComplexIdentifiableContentApproverTest {
                 approver1ContentCaptor.capture());
         verify(approver2).approve(approver2IdCaptor.capture(),
                 approver2ContentCaptor.capture());
-        assertTrue(content == approver1ContentCaptor.getValue());
-        assertTrue(content == approver2ContentCaptor.getValue());
-        assertTrue(id == approver1IdCaptor.getValue());
-        assertTrue(id == approver2IdCaptor.getValue());
+        assertSame(content, approver1ContentCaptor.getValue());
+        assertSame(content, approver2ContentCaptor.getValue());
+        assertSame(id, approver1IdCaptor.getValue());
+        assertSame(id, approver2IdCaptor.getValue());
     }
     
     @Test
-    public void testDisapproveFirst() throws Exception {
+    public void testDisapproveFirst() {
      // given
         ComplexIdentifiableContentApprover complexApprover = new ComplexIdentifiableContentApprover(
                 approver1, approver2);
@@ -96,12 +91,12 @@ public class ComplexIdentifiableContentApproverTest {
         verify(approver1, times(1)).approve(approver1IdCaptor.capture(),
                 approver1ContentCaptor.capture());
         verify(approver2, never()).approve(any(), any());
-        assertTrue(content == approver1ContentCaptor.getValue());
-        assertTrue(id == approver1IdCaptor.getValue());
+        assertSame(content, approver1ContentCaptor.getValue());
+        assertSame(id, approver1IdCaptor.getValue());
     }
 
     @Test
-    public void testDisapproveLast() throws Exception {
+    public void testDisapproveLast() {
         // given
         ComplexIdentifiableContentApprover complexApprover = new ComplexIdentifiableContentApprover(
                 approver1, approver2);
@@ -117,10 +112,10 @@ public class ComplexIdentifiableContentApproverTest {
                 approver1ContentCaptor.capture());
         verify(approver2).approve(approver2IdCaptor.capture(),
                 approver2ContentCaptor.capture());
-        assertTrue(content == approver1ContentCaptor.getValue());
-        assertTrue(content == approver2ContentCaptor.getValue());
-        assertTrue(id == approver1IdCaptor.getValue());
-        assertTrue(id == approver2IdCaptor.getValue());
+        assertSame(content, approver1ContentCaptor.getValue());
+        assertSame(content, approver2ContentCaptor.getValue());
+        assertSame(id, approver1IdCaptor.getValue());
+        assertSame(id, approver2IdCaptor.getValue());
     }
     
 }

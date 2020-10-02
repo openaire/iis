@@ -1,24 +1,23 @@
 package eu.dnetlib.iis.wf.importer;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
+import eu.dnetlib.iis.importer.schemas.Concept;
+import org.apache.avro.file.DataFileWriter;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.util.Collections;
 
-import org.apache.avro.file.DataFileWriter;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import eu.dnetlib.iis.importer.schemas.Concept;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author madryk
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DataFileRecordReceiverWithCounterTest {
 
     private DataFileRecordReceiverWithCounter<Concept> recordReceiver;
@@ -27,7 +26,7 @@ public class DataFileRecordReceiverWithCounterTest {
     private DataFileWriter<Concept> dataFileWriter;
     
     
-    @Before
+    @BeforeEach
     public void setup() {
         recordReceiver = new DataFileRecordReceiverWithCounter<>(dataFileWriter);
     }
