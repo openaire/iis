@@ -1,30 +1,27 @@
 package eu.dnetlib.iis.wf.ingest.webcrawl.fundings;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.util.List;
-
+import eu.dnetlib.iis.common.java.io.JsonUtils;
+import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import org.apache.avro.mapred.AvroKey;
 import org.apache.hadoop.mapreduce.Mapper.Context;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import eu.dnetlib.iis.common.java.io.JsonUtils;
-import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.*;
 
 /**
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class WebcrawlFundingsIngesterTest {
 
