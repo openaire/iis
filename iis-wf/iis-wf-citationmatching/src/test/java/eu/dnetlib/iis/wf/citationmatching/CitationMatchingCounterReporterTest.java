@@ -1,31 +1,30 @@
 package eu.dnetlib.iis.wf.citationmatching;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-
+import eu.dnetlib.iis.citationmatching.schemas.Citation;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.*;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import eu.dnetlib.iis.citationmatching.schemas.Citation;
-import eu.dnetlib.iis.common.schemas.ReportEntry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 /**
  * @author madryk
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CitationMatchingCounterReporterTest {
 
     @InjectMocks
@@ -60,7 +59,7 @@ public class CitationMatchingCounterReporterTest {
     private ArgumentCaptor<List<ReportEntry>> reportEntriesCaptor;
     
     
-    @Before
+    @BeforeEach
     public void setup() {
         counterReporter.setReportPath(reportPath);
     }
@@ -68,22 +67,22 @@ public class CitationMatchingCounterReporterTest {
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void report_NULL_SPARK_CONTEXT() {
         // given
         counterReporter.setSparkContext(null);
         
         // execute
-        counterReporter.report(matchedCitations);
+        assertThrows(NullPointerException.class, () -> counterReporter.report(matchedCitations));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void report_NULL_REPORT_PATH() {
         // given
         counterReporter.setReportPath(null);
         
         // execute
-        counterReporter.report(matchedCitations);
+        assertThrows(NullPointerException.class, () -> counterReporter.report(matchedCitations));
     }
     
     @Test

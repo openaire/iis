@@ -1,38 +1,33 @@
 package eu.dnetlib.iis.wf.citationmatching;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-
+import com.google.common.collect.Lists;
+import eu.dnetlib.iis.citationmatching.schemas.ReferenceMetadata;
+import eu.dnetlib.iis.wf.citationmatching.converter.ReferenceMetadataToMatchableConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import com.google.common.collect.Lists;
-
-import eu.dnetlib.iis.citationmatching.schemas.ReferenceMetadata;
-import eu.dnetlib.iis.wf.citationmatching.converter.ReferenceMetadataToMatchableConverter;
+import org.mockito.junit.jupiter.MockitoExtension;
 import pl.edu.icm.coansys.citations.data.MatchableEntity;
 import scala.Option;
 import scala.Tuple2;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
+import static org.mockito.Mockito.*;
+
 /**
  * @author madryk
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ReferenceMetadataInputConverterTest {
 
     private ReferenceMetadataInputConverter referenceMetadataInputConverter = new ReferenceMetadataInputConverter();
@@ -51,7 +46,7 @@ public class ReferenceMetadataInputConverterTest {
     private ArgumentCaptor<PairFlatMapFunction<Tuple2<String, ReferenceMetadata>, String, MatchableEntity>> convertCitationFunction;
 
 
-    @Before
+    @BeforeEach
     public void setup() {
         referenceMetadataInputConverter.setConverter(converter);
     }
@@ -73,7 +68,7 @@ public class ReferenceMetadataInputConverterTest {
 
         // assert
 
-        assertTrue(retConvertedCitations == convertedCitations);
+        assertSame(retConvertedCitations, convertedCitations);
 
         verify(inputCitations).flatMapToPair(convertCitationFunction.capture());
         assertConvertCitationFunction(convertCitationFunction.getValue());
@@ -97,7 +92,7 @@ public class ReferenceMetadataInputConverterTest {
 
         List<Tuple2<String, MatchableEntity>> retConvertedList = Lists.newArrayList(retConverted);
         assertEquals(1, retConvertedList.size());
-        assertTrue(retConvertedList.get(0)._2 == matchableEntity);
+        assertSame(retConvertedList.get(0)._2, matchableEntity);
         assertEquals("cit_id_3", retConvertedList.get(0)._1);
 
     }

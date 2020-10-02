@@ -1,16 +1,12 @@
 package eu.dnetlib.iis.wf.citationmatching.converter;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-
-import org.junit.Test;
-
 import com.google.common.collect.Lists;
-
 import eu.dnetlib.iis.citationmatching.schemas.BasicMetadata;
 import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
+import org.junit.jupiter.api.Test;
 import pl.edu.icm.coansys.citations.data.MatchableEntity;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 /**
  * @author madryk
@@ -49,7 +45,7 @@ public class DocumentMetadataToMatchableConverterTest {
         // assert
 
         MatchableEntity expectedMatchableEntity = MatchableEntity.fromParameters("doc_someId", "John Doe", "Some Journal", "Some Title", "55-64", "2002", null);
-        assertTrue(Arrays.equals(actualMatchableEntity.data().toByteArray(), expectedMatchableEntity.data().toByteArray()));
+        assertArrayEquals(actualMatchableEntity.data().toByteArray(), expectedMatchableEntity.data().toByteArray());
     }
 
 
@@ -76,7 +72,7 @@ public class DocumentMetadataToMatchableConverterTest {
         // assert
 
         MatchableEntity expectedMatchableEntity = MatchableEntity.fromParameters("doc_someId", "John Doe, Jane Doe", null, null, null, null, null);
-        assertTrue(Arrays.equals(actualMatchableEntity.data().toByteArray(), expectedMatchableEntity.data().toByteArray()));
+        assertArrayEquals(actualMatchableEntity.data().toByteArray(), expectedMatchableEntity.data().toByteArray());
     }
 
 }

@@ -1,13 +1,8 @@
 package eu.dnetlib.iis.wf.citationmatching;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-
+import com.google.common.collect.Lists;
+import eu.dnetlib.iis.citationmatching.schemas.BasicMetadata;
+import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
 import org.apache.avro.mapred.AvroKey;
 import org.apache.avro.mapreduce.AvroKeyInputFormat;
 import org.apache.hadoop.conf.Configuration;
@@ -16,23 +11,22 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFunction;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import com.google.common.collect.Lists;
-
-import eu.dnetlib.iis.citationmatching.schemas.BasicMetadata;
-import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
+import org.mockito.junit.jupiter.MockitoExtension;
 import scala.Tuple2;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.*;
 
 /**
  * @author madryk
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DocumentMetadataInputReaderTest {
 
     private DocumentMetadataInputReader documentMetadataInputReader = new DocumentMetadataInputReader();
@@ -74,7 +68,7 @@ public class DocumentMetadataInputReaderTest {
 
         // assert
 
-        assertTrue(retDocuments == documents);
+        assertSame(retDocuments, documents);
         verify(sparkContext).newAPIHadoopFile(
                 eq("/some/path"), eq(AvroKeyInputFormat.class),
                 eq(DocumentMetadata.class), eq(NullWritable.class),
@@ -101,7 +95,7 @@ public class DocumentMetadataInputReaderTest {
 
 
         assertEquals("doc_someId", retDocWithId._1);
-        assertTrue(retDocWithId._2 == docMetadata);
+        assertSame(retDocWithId._2, docMetadata);
 
     }
 }

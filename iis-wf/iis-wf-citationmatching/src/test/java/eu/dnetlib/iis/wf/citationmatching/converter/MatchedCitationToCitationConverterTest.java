@@ -1,12 +1,11 @@
 package eu.dnetlib.iis.wf.citationmatching.converter;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 import eu.dnetlib.iis.citationmatching.schemas.Citation;
+import org.junit.jupiter.api.Test;
 import pl.edu.icm.coansys.citations.data.IdWithSimilarity;
 import pl.edu.icm.coansys.citations.data.MatchableEntity;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author madryk

@@ -1,32 +1,27 @@
 package eu.dnetlib.iis.wf.citationmatching;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
+import eu.dnetlib.iis.wf.citationmatching.converter.DocumentMetadataToMatchableConverter;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.function.PairFunction;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
-import eu.dnetlib.iis.wf.citationmatching.converter.DocumentMetadataToMatchableConverter;
+import org.mockito.junit.jupiter.MockitoExtension;
 import pl.edu.icm.coansys.citations.data.MatchableEntity;
 import scala.Tuple2;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.*;
 
 /**
  * @author madryk
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DocumentMetadataInputConverterTest {
 
     private DocumentMetadataInputConverter documentMetadataInputConverter = new DocumentMetadataInputConverter();
@@ -44,7 +39,7 @@ public class DocumentMetadataInputConverterTest {
     private ArgumentCaptor<PairFunction<Tuple2<String, DocumentMetadata>, String, MatchableEntity>> convertDocumentFunction;
 
 
-    @Before
+    @BeforeEach
     public void setup() {
         documentMetadataInputConverter.setConverter(converter);
     }
@@ -67,7 +62,7 @@ public class DocumentMetadataInputConverterTest {
 
         // assert
 
-        assertTrue(retDocuments == documents);
+        assertSame(retDocuments, documents);
         verify(inputDocuments).mapToPair(convertDocumentFunction.capture());
         assertConvertDocumentFunction(convertDocumentFunction.getValue());
 
@@ -86,7 +81,7 @@ public class DocumentMetadataInputConverterTest {
         Tuple2<String, MatchableEntity> retDocument = function.call(new Tuple2<>("doc_someId", documentMetadata));
 
 
-        assertTrue(retDocument._2 == matchableEntity);
+        assertSame(retDocument._2, matchableEntity);
         assertEquals("doc_someId", retDocument._1);
     }
 }
