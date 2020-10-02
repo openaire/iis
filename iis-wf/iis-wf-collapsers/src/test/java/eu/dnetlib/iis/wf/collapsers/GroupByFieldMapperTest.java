@@ -1,25 +1,22 @@
 package eu.dnetlib.iis.wf.collapsers;
 
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
+import eu.dnetlib.iis.common.schemas.Identifier;
 import org.apache.avro.mapred.AvroKey;
 import org.apache.avro.mapred.AvroValue;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.Mapper.Context;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import eu.dnetlib.iis.common.schemas.Identifier;
+import static org.mockito.Mockito.*;
 
 /**
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class GroupByFieldMapperTest {
 

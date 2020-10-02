@@ -1,16 +1,13 @@
 package eu.dnetlib.iis.wf.collapsers;
 
+import com.google.common.collect.Lists;
+import org.apache.avro.generic.IndexedRecord;
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.avro.generic.IndexedRecord;
-
-import static org.junit.Assert.*;
-
-import org.junit.Test;
-import com.google.common.collect.Lists;
-
-import eu.dnetlib.iis.wf.collapsers.CollapserUtils;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 

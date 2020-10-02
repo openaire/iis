@@ -1,16 +1,7 @@
 package eu.dnetlib.iis.wf.collapsers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
+import eu.dnetlib.iis.common.schemas.Identifier;
+import eu.dnetlib.iis.importer.schemas.DocumentToProject;
 import org.apache.avro.AvroTypeException;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.avro.mapred.AvroKey;
@@ -18,21 +9,26 @@ import org.apache.avro.mapred.AvroValue;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Reducer.Context;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import eu.dnetlib.iis.common.schemas.Identifier;
-import eu.dnetlib.iis.importer.schemas.DocumentToProject;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class CollapserReducerTest {
 
@@ -51,29 +47,29 @@ public class CollapserReducerTest {
     // ------------------------------------- TESTS -----------------------------------
     
     
-    @Test(expected=IOException.class)
-    public void testSetupWithoutCollapserClass() throws Exception {
+    @Test
+    public void testSetupWithoutCollapserClass() {
         // given
         Configuration conf = new Configuration();
         conf.set(CollapserReducer.INPUT_SCHEMA, DocumentToProject.class.getCanonicalName());
         doReturn(conf).when(context).getConfiguration();
         
         // execute
-        reducer.setup(context);
+        assertThrows(IOException.class, () -> reducer.setup(context));
     }
     
-    @Test(expected=IOException.class)
-    public void testSetupWithoutInputSchema() throws Exception {
+    @Test
+    public void testSetupWithoutInputSchema() {
         // given
         Configuration conf = new Configuration();
         conf.set(CollapserReducer.RECORD_COLLAPSER, DummyDocumentToProjectCollapser.class.getCanonicalName());
         doReturn(conf).when(context).getConfiguration();
         
         // execute
-        reducer.setup(context);
+        assertThrows(IOException.class, () -> reducer.setup(context));
     }
 
-    @Test(expected=AvroTypeException.class)
+    @Test
     public void testReduceWithInvalidInputClass() throws Exception {
         // given
         Configuration conf = new Configuration();
@@ -83,8 +79,8 @@ public class CollapserReducerTest {
         reducer.setup(context);
 
         // execute
-        reducer.reduce(null, Collections.singletonList(
-                new AvroValue(Identifier.newBuilder().setId("id1").build())), context);
+        assertThrows(AvroTypeException.class, () -> reducer.reduce(null, Collections.singletonList(
+                new AvroValue(Identifier.newBuilder().setId("id1").build())), context));
     }
     
     @Test
@@ -118,8 +114,8 @@ public class CollapserReducerTest {
         assertTrue(keyCaptor.getAllValues().get(1).datum() instanceof Identifier);
         assertEquals(docId2, ((Identifier)keyCaptor.getAllValues().get(1).datum()).getId().toString());
         assertEquals(2, valueCaptor.getAllValues().size());
-        assertTrue(NullWritable.get() == valueCaptor.getAllValues().get(0));
-        assertTrue(NullWritable.get() == valueCaptor.getAllValues().get(1));
+        assertSame(NullWritable.get(), valueCaptor.getAllValues().get(0));
+        assertSame(NullWritable.get(), valueCaptor.getAllValues().get(1));
         
     }
 
