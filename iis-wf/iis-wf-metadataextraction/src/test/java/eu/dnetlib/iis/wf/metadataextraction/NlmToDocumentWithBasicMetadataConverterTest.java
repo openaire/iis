@@ -1,22 +1,19 @@
 package eu.dnetlib.iis.wf.metadataextraction;
 
-import static eu.dnetlib.iis.wf.metadataextraction.NlmToDocumentWithBasicMetadataConverter.EMPTY_META;
-
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
 import eu.dnetlib.iis.metadataextraction.schemas.Author;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata;
-
-import java.util.List;
-
 import org.apache.avro.util.Utf8;
 import org.jdom.Document;
 import org.jdom.input.SAXBuilder;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import java.util.List;
 
-import org.junit.Test;
+import static eu.dnetlib.iis.wf.metadataextraction.NlmToDocumentWithBasicMetadataConverter.EMPTY_META;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * {@link NlmToDocumentWithBasicMetadataConverter} test class.
@@ -78,14 +75,15 @@ public class NlmToDocumentWithBasicMetadataConverterTest {
         assertEquals("60", result.getPages().getEnd());
     }
 
-    @Test(expected=RuntimeException.class)
+    @Test
     public void testConvertFullNoId() throws Exception {
         // given
         SAXBuilder builder = new SAXBuilder();
         Document document = (Document) builder.build(ClassPathResourceProvider.getResourceInputStream(testXML));
         
         // execute
-        NlmToDocumentWithBasicMetadataConverter.convertFull(null, document, "text");
+        assertThrows(RuntimeException.class, () ->
+                NlmToDocumentWithBasicMetadataConverter.convertFull(null, document, "text"));
     }
     
     @Test
@@ -102,10 +100,10 @@ public class NlmToDocumentWithBasicMetadataConverterTest {
         assertEquals("text", result.getText());
     }
     
-    @Test(expected=RuntimeException.class)
-    public void testCreateEmptyNoId() throws Exception {
+    @Test
+    public void testCreateEmptyNoId() {
         // execute
-        NlmToDocumentWithBasicMetadataConverter.createEmpty(null);
+        assertThrows(RuntimeException.class, () -> NlmToDocumentWithBasicMetadataConverter.createEmpty(null));
     }
     
     @Test

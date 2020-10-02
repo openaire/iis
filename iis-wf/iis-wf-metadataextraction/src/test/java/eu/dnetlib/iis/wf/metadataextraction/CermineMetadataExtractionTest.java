@@ -1,32 +1,30 @@
 package eu.dnetlib.iis.wf.metadataextraction;
 
+import com.google.common.collect.Sets;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.IntegrationTest;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.xpath.XPath;
+import org.junit.jupiter.api.Test;
+import pl.edu.icm.cermine.ContentExtractor;
+import pl.edu.icm.cermine.exception.AnalysisException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.xpath.XPath;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import com.google.common.collect.Sets;
-
-import eu.dnetlib.iis.common.IntegrationTest;
-import junit.framework.TestCase;
-import pl.edu.icm.cermine.ContentExtractor;
-import pl.edu.icm.cermine.exception.AnalysisException;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 
  * @author Dominika Tkaczyk
  */
-@Category(IntegrationTest.class)
-public class CermineMetadataExtractionTest extends TestCase {
+@IntegrationTest
+public class CermineMetadataExtractionTest {
 
     private static final String PDF_FILE = "/eu/dnetlib/iis/wf/metadataextraction/example-1.pdf";
 
