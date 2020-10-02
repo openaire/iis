@@ -1,16 +1,14 @@
 package eu.dnetlib.iis.wf.documentssimilarity;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
+import eu.dnetlib.iis.common.AbstractOozieWorkflowTestCase;
 import eu.dnetlib.iis.common.IntegrationTest;
 import eu.dnetlib.iis.common.OozieWorkflowTestConfiguration;
-import eu.dnetlib.iis.common.AbstractOozieWorkflowTestCase;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author madryk
  */
-@Category(IntegrationTest.class)
+@IntegrationTest
 public class DocumentsSimilarityWorkflowTest extends AbstractOozieWorkflowTestCase {
 
 	@Test

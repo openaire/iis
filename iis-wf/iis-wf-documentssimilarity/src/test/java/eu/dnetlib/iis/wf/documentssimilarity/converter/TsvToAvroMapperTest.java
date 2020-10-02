@@ -1,35 +1,28 @@
 package eu.dnetlib.iis.wf.documentssimilarity.converter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-
+import eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity;
 import org.apache.avro.mapred.AvroKey;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.apache.log4j.Logger;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.powermock.reflect.Whitebox;
 
-import eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class TsvToAvroMapperTest {
 
@@ -49,7 +42,7 @@ public class TsvToAvroMapperTest {
     private TsvToAvroMapper mapper = new TsvToAvroMapper();
 
     
-    @Before
+    @BeforeEach
     public void before() {
         Whitebox.setInternalState(TsvToAvroMapper.class, "log", log);
     }
@@ -68,7 +61,7 @@ public class TsvToAvroMapperTest {
         
         // assert
         verify(context).write(keyCaptor.capture(), valueCaptor.capture());
-        assertTrue(NullWritable.get() == valueCaptor.getValue());
+        assertSame(NullWritable.get(), valueCaptor.getValue());
         DocumentSimilarity docSim = keyCaptor.getValue().datum();
         assertNotNull(docSim);
         assertEquals(docId, docSim.getDocumentId());
