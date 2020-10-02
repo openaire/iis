@@ -1,31 +1,28 @@
 package eu.dnetlib.iis.wf.affmatching.read;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import eu.dnetlib.iis.importer.schemas.Organization;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import eu.dnetlib.iis.importer.schemas.Organization;
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import org.mockito.junit.jupiter.MockitoExtension;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 /**
 * @author Łukasz Dumiszewski
 */
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class IisOrganizationReaderTest {
 
     
@@ -57,22 +54,21 @@ public class IisOrganizationReaderTest {
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void readOrganizations_sparkContext_null() {
         
         // execute
-        
-        reader.readOrganizations(null, "/aaa");
+        assertThrows(NullPointerException.class, () ->
+                reader.readOrganizations(null, "/aaa"));
         
     }
     
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void readOrganizations_inputPath_blank() {
         
         // execute
-        
-        reader.readOrganizations(sparkContext, "  ");
+        assertThrows(IllegalArgumentException.class, () -> reader.readOrganizations(sparkContext, "  "));
         
     }
     
@@ -95,8 +91,8 @@ public class IisOrganizationReaderTest {
         
         
         // assert
-        
-        assertTrue(affMatchOrganizations == retAffMatchOrganizations);
+
+        assertSame(affMatchOrganizations, retAffMatchOrganizations);
         
         verify(inputOrganizations).map(convertFunction.capture());
         assertConvertFunction(convertFunction.getValue());
@@ -125,8 +121,8 @@ public class IisOrganizationReaderTest {
 
         
         // assert
-        
-        assertTrue(retAffMatchOrg == affMatchOrg);
+
+        assertSame(retAffMatchOrg, affMatchOrg);
         
     }
 }

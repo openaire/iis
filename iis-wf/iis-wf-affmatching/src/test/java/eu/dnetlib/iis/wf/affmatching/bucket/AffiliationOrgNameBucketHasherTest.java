@@ -1,20 +1,20 @@
 package eu.dnetlib.iis.wf.affmatching.bucket;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
-import org.junit.Before;
-import org.junit.Test;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 /**
 * @author Łukasz Dumiszewski
 */
-
+@ExtendWith(MockitoExtension.class)
 public class AffiliationOrgNameBucketHasherTest {
 
     @InjectMocks
@@ -23,28 +23,17 @@ public class AffiliationOrgNameBucketHasherTest {
     @Mock
     private BucketHasher<String> stringHasher;
     
-    
-    
-    @Before
-    public void before() {
-        
-        MockitoAnnotations.initMocks(this);
-        
-    }
-    
-    
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void hash_null() {
         
         // execute
-        
-        hasher.hash(null);
+        assertThrows(NullPointerException.class, () -> hasher.hash(null));
     }
     
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void hash_organizationName_null() {
         
         // given
@@ -53,13 +42,12 @@ public class AffiliationOrgNameBucketHasherTest {
         
         
         // execute
-    
-        hasher.hash(aff);
+        assertThrows(IllegalArgumentException.class, () -> hasher.hash(aff));
     
     }
     
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void hash_organizationName_blank() {
         
         // given
@@ -68,8 +56,7 @@ public class AffiliationOrgNameBucketHasherTest {
         aff.setOrganizationName(" ");
         
         // execute
-        
-        hasher.hash(aff);
+        assertThrows(IllegalArgumentException.class, () -> hasher.hash(aff));
     }
     
     

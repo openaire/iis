@@ -1,16 +1,7 @@
 package eu.dnetlib.iis.wf.affmatching;
 
-import java.io.File;
-import java.io.IOException;
-
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.google.common.io.Files;
-
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
@@ -20,9 +11,16 @@ import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
 * @author Łukasz Dumiszewski
@@ -52,7 +50,7 @@ public class AffMatchingJobTest {
     private String outputReportPath;
     
     
-    @Before
+    @BeforeEach
     public void before() {
         
         workingDir = Files.createTempDir();
@@ -68,7 +66,7 @@ public class AffMatchingJobTest {
     }
     
     
-    @After
+    @AfterEach
     public void after() throws IOException {
         
         FileUtils.deleteDirectory(workingDir);

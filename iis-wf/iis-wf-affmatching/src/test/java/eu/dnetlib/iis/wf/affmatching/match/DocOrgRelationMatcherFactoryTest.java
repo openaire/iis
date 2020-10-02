@@ -1,45 +1,20 @@
 package eu.dnetlib.iis.wf.affmatching.match;
 
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchVoterAssertUtils.assertCommonAffOrgSectionWordsVoter;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchVoterAssertUtils.assertCommonWordsVoter;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchVoterAssertUtils.assertCompositeVoter;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchVoterAssertUtils.assertNameStrictWithCharFilteringMatchVoter;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchVoterAssertUtils.assertSectionedNameLevenshteinMatchVoter;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchVoterAssertUtils.assertVoterGetOrgNamesFunction;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchVoterAssertUtils.getInternalVoter;
-import static eu.dnetlib.iis.wf.affmatching.match.voter.CommonWordsVoter.RatioRelation.WITH_REGARD_TO_ORG_WORDS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.powermock.reflect.Whitebox.getInternalState;
+import com.google.common.collect.ImmutableList;
+import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgJoiner;
+import eu.dnetlib.iis.wf.affmatching.bucket.DocOrgRelationAffOrgJoiner;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.*;
+import eu.dnetlib.iis.wf.affmatching.match.voter.*;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.List;
 
-import org.apache.spark.api.java.JavaSparkContext;
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import com.google.common.collect.ImmutableList;
-
-import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgJoiner;
-import eu.dnetlib.iis.wf.affmatching.bucket.DocOrgRelationAffOrgJoiner;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationCombiner;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationFetcher;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentProjectFetcher;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentProjectMerger;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisDocumentProjectReader;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisInferredDocumentProjectReader;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisProjectOrganizationReader;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.ProjectOrganizationReader;
-import eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.CountryCodeLooseMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.CountryCodeStrictMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.GetOrgAlternativeNamesFunction;
-import eu.dnetlib.iis.wf.affmatching.match.voter.GetOrgNameFunction;
-import eu.dnetlib.iis.wf.affmatching.match.voter.GetOrgShortNameFunction;
-import eu.dnetlib.iis.wf.affmatching.match.voter.NameStrictWithCharFilteringMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.SectionedNameLevenshteinMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.SectionedNameStrictMatchVoter;
+import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchVoterAssertUtils.*;
+import static eu.dnetlib.iis.wf.affmatching.match.voter.CommonWordsVoter.RatioRelation.WITH_REGARD_TO_ORG_WORDS;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.powermock.reflect.Whitebox.getInternalState;
 
 /**
 * @author Łukasz Dumiszewski

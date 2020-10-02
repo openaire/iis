@@ -1,25 +1,22 @@
 package eu.dnetlib.iis.wf.affmatching.match;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
 * @author Łukasz Dumiszewski
 */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith({MockitoExtension.class})
 public class AffOrgMatchStrengthRecalculatorTest {
 
     
@@ -38,12 +35,12 @@ public class AffOrgMatchStrengthRecalculatorTest {
     private AffMatchOrganization organization;
     
     
-    @Before
+    @BeforeEach
     public void before() {
         
-        doReturn(20f).when(affMatchResult).getMatchStrength();
-        doReturn(affiliation).when(affMatchResult).getAffiliation();
-        doReturn(organization).when(affMatchResult).getOrganization();
+        lenient().doReturn(20f).when(affMatchResult).getMatchStrength();
+        lenient().doReturn(affiliation).when(affMatchResult).getAffiliation();
+        lenient().doReturn(organization).when(affMatchResult).getOrganization();
         
     }
     
@@ -51,23 +48,21 @@ public class AffOrgMatchStrengthRecalculatorTest {
     //------------------------ TESTS --------------------------
     
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void recalculateMatchStrength_affMatchResult_null() {
         
         // execute
-        
-        recalculator.recalculateMatchStrength(null, voter);
+        assertThrows(NullPointerException.class, () -> recalculator.recalculateMatchStrength(null, voter));
     
     }
 
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void recalculateMatchStrength_voter_null() {
         
         // execute
-        
-        recalculator.recalculateMatchStrength(affMatchResult, null);
-    
+        assertThrows(NullPointerException.class, () -> recalculator.recalculateMatchStrength(affMatchResult, null));
+
     }
 
     
@@ -75,7 +70,7 @@ public class AffOrgMatchStrengthRecalculatorTest {
     public void recalculateMatchStrength_match() {
         
         // given
-        
+
         when(voter.voteMatch(affiliation, organization)).thenReturn(true);
         when(affMatchResult.getMatchStrength()).thenReturn(0.7f);
         when(voter.getMatchStrength()).thenReturn(0.5f);
@@ -88,8 +83,8 @@ public class AffOrgMatchStrengthRecalculatorTest {
         // assert
         
         assertEquals(0.85f, recalcAffMatchResult.getMatchStrength(), 0.0001f);
-        assertTrue(affiliation == recalcAffMatchResult.getAffiliation());
-        assertTrue(organization == recalcAffMatchResult.getOrganization());
+        assertSame(affiliation, recalcAffMatchResult.getAffiliation());
+        assertSame(organization, recalcAffMatchResult.getOrganization());
         
     
     }
@@ -102,8 +97,7 @@ public class AffOrgMatchStrengthRecalculatorTest {
         
         when(voter.voteMatch(affiliation, organization)).thenReturn(false);
         when(affMatchResult.getMatchStrength()).thenReturn(0.7f);
-        when(voter.getMatchStrength()).thenReturn(0.5f);
-        
+
         
         // execute
         
@@ -113,8 +107,8 @@ public class AffOrgMatchStrengthRecalculatorTest {
         // assert
         
         assertEquals(0.7f, recalcAffMatchResult.getMatchStrength(), 0.0001);
-        assertTrue(affiliation == recalcAffMatchResult.getAffiliation());
-        assertTrue(organization == recalcAffMatchResult.getOrganization());
+        assertSame(affiliation, recalcAffMatchResult.getAffiliation());
+        assertSame(organization, recalcAffMatchResult.getOrganization());
         
     
     }

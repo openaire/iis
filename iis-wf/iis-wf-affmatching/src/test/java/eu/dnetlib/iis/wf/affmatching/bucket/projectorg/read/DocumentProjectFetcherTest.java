@@ -1,22 +1,23 @@
 package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentProject;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentProject;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author madryk
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DocumentProjectFetcherTest {
 
     @InjectMocks
@@ -51,7 +52,7 @@ public class DocumentProjectFetcherTest {
     private JavaRDD<AffMatchDocumentProject> mergedDocumentProjects;
     
     
-    @Before
+    @BeforeEach
     public void setup() {
         documentProjectFetcher.setFirstDocProjPath(firstDocProjPath);
         documentProjectFetcher.setSecondDocProjPath(secondDocProjPath);
@@ -74,8 +75,8 @@ public class DocumentProjectFetcherTest {
         JavaRDD<AffMatchDocumentProject> retDocumentProjects = documentProjectFetcher.fetchDocumentProjects();
         
         // assert
-        
-        assertTrue(retDocumentProjects == mergedDocumentProjects);
+
+        assertSame(retDocumentProjects, mergedDocumentProjects);
         
         verify(firstDocumentProjectReader).readDocumentProjects(sparkContext, firstDocProjPath);
         verify(secondDocumentProjectReader).readDocumentProjects(sparkContext, secondDocProjPath);

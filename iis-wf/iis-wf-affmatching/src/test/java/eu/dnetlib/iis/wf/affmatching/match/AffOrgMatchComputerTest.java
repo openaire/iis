@@ -1,38 +1,28 @@
 package eu.dnetlib.iis.wf.affmatching.match;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
-import java.util.List;
-
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.function.Function;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import com.google.common.collect.Lists;
-
 import eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.function.Function;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 import scala.Tuple2;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
 * @author Łukasz Dumiszewski
 */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AffOrgMatchComputerTest {
 
     
@@ -82,7 +72,7 @@ public class AffOrgMatchComputerTest {
     private ArgumentCaptor<Function<AffMatchResult, AffMatchResult>> unifyMatchStrengthFunction;
     
     
-    @Before
+    @BeforeEach
     public void before() {
         
         affOrgMatchVoters = Lists.newArrayList(affOrgMatchVoter1, affOrgMatchVoter2);
@@ -94,17 +84,16 @@ public class AffOrgMatchComputerTest {
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void computeMatches_null() {
         
         // execute
-        
-        affOrgMatchComputer.computeMatches(null);
-        
+        assertThrows(NullPointerException.class, () -> affOrgMatchComputer.computeMatches(null));
+
     }
     
     
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void computeMatches_no_voters() {
         
         // given
@@ -113,9 +102,8 @@ public class AffOrgMatchComputerTest {
         
         
         // execute
-        
-        affOrgMatchComputer.computeMatches(joinedAffOrgs);
-        
+        assertThrows(IllegalStateException.class, () -> affOrgMatchComputer.computeMatches(joinedAffOrgs));
+
     }
     
 
@@ -138,7 +126,7 @@ public class AffOrgMatchComputerTest {
         // assert
         
         assertNotNull(retAffMatchResults);
-        assertTrue(filteredAffMatchResults == retAffMatchResults);
+        assertSame(filteredAffMatchResults, retAffMatchResults);
         
         verify(joinedAffOrgs).map(mapToMatchResultFunction.capture());
         assertMapToMatchResultFunction(mapToMatchResultFunction.getValue());
@@ -173,9 +161,9 @@ public class AffOrgMatchComputerTest {
         
         
         // assert
-        
-        assertTrue(affiliation == affMatchResult.getAffiliation());
-        assertTrue(organization == affMatchResult.getOrganization());
+
+        assertSame(affiliation, affMatchResult.getAffiliation());
+        assertSame(organization, affMatchResult.getOrganization());
         
         
     }
@@ -197,8 +185,8 @@ public class AffOrgMatchComputerTest {
         
         
         // assert
-        
-        assertTrue(expectedRecalcAffMatchResult == recalcAffMatchResult);
+
+        assertSame(expectedRecalcAffMatchResult, recalcAffMatchResult);
         
     }
     

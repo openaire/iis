@@ -1,27 +1,25 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.google.common.collect.Lists;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.function.Function;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import com.google.common.collect.Lists;
-
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.lenient;
 
 /**
  * @author madryk
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SectionedNameStrictMatchVoterTest {
 
     @InjectMocks
@@ -213,7 +211,7 @@ public class SectionedNameStrictMatchVoterTest {
     //------------------------ PRIVATE --------------------------
     
     private void resetOrgNames(String... orgNames) {
-        Mockito.when(getOrgNamesFunction.apply(organization)).thenReturn(Lists.newArrayList(orgNames));
+        lenient().when(getOrgNamesFunction.apply(organization)).thenReturn(Lists.newArrayList(orgNames));
     }
 
 }

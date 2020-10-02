@@ -1,11 +1,11 @@
 package eu.dnetlib.iis.wf.affmatching.read;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class OrganizationConverterTest {
     
@@ -19,24 +19,24 @@ public class OrganizationConverterTest {
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void convert_null() {
         
         // execute
-        converter.convert(null);
-        
+        assertThrows(NullPointerException.class, () -> converter.convert(null));
+
     }
     
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void convert_blank_organization_id() {
         
         // given
         organization.setId(" ");
         
         // execute
-        converter.convert(organization);
-        
+        assertThrows(IllegalArgumentException.class, () -> converter.convert(organization));
+
     }
     
     

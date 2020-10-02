@@ -1,22 +1,22 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
+import com.google.common.collect.ImmutableList;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import com.google.common.collect.ImmutableList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 /**
 * @author Łukasz Dumiszewski
 */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CommonSimilarWordCalculatorTest {
 
     private double MIN_WORD_SIMILARITY = 0.83;
@@ -35,22 +35,20 @@ public class CommonSimilarWordCalculatorTest {
     //------------------------ TESTS --------------------------
     
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void calcSimilarWordNumber_FindWords_NULL() {
         
         // execute
-        
-        calculator.calcSimilarWordNumber(null, ImmutableList.of("A"));
+        assertThrows(NullPointerException.class, () -> calculator.calcSimilarWordNumber(null, ImmutableList.of("A")));
         
     }
 
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void calcSimilarWordNumber_InWords_NULL() {
         
         // execute
-        
-        calculator.calcSimilarWordNumber(ImmutableList.of("A"), null);
+        assertThrows(NullPointerException.class, () -> calculator.calcSimilarWordNumber(ImmutableList.of("A"), null));
         
     }
     
@@ -63,7 +61,7 @@ public class CommonSimilarWordCalculatorTest {
         List<String> findWords = ImmutableList.of("electronics", "department", "university", "warsaw");
         
         when(similarityChecker.containsSimilarString(inWords, "electronics", MIN_WORD_SIMILARITY)).thenReturn(false);
-        when(similarityChecker.containsSimilarString(inWords, "departments", MIN_WORD_SIMILARITY)).thenReturn(false);
+        when(similarityChecker.containsSimilarString(inWords, "department", MIN_WORD_SIMILARITY)).thenReturn(false);
         when(similarityChecker.containsSimilarString(inWords, "university", MIN_WORD_SIMILARITY)).thenReturn(true);
         when(similarityChecker.containsSimilarString(inWords, "warsaw", MIN_WORD_SIMILARITY)).thenReturn(true);
         
@@ -89,7 +87,7 @@ public class CommonSimilarWordCalculatorTest {
         List<String> findWords = ImmutableList.of("electronics", "department", "university", "warsaw");
         
         when(similarityChecker.containsSimilarString(inWords, "electronics", MIN_WORD_SIMILARITY)).thenReturn(false);
-        when(similarityChecker.containsSimilarString(inWords, "departments", MIN_WORD_SIMILARITY)).thenReturn(false);
+        when(similarityChecker.containsSimilarString(inWords, "department", MIN_WORD_SIMILARITY)).thenReturn(false);
         when(similarityChecker.containsSimilarString(inWords, "university", MIN_WORD_SIMILARITY)).thenReturn(true);
         when(similarityChecker.containsSimilarString(inWords, "warsaw", MIN_WORD_SIMILARITY)).thenReturn(true);
         

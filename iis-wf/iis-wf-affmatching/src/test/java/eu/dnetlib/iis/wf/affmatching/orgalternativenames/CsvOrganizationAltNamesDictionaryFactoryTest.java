@@ -1,16 +1,15 @@
 package eu.dnetlib.iis.wf.affmatching.orgalternativenames;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertEquals;
+import com.google.common.collect.ImmutableList;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Test;
-
-import com.google.common.collect.ImmutableList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author madryk

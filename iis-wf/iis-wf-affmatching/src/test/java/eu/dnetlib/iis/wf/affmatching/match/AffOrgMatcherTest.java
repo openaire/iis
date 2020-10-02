@@ -1,26 +1,26 @@
 package eu.dnetlib.iis.wf.affmatching.match;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-
-import org.apache.spark.api.java.JavaRDD;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgHashBucketJoiner;
 import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgJoiner;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
+import org.apache.spark.api.java.JavaRDD;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import scala.Tuple2;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
 
 /**
 * @author Łukasz Dumiszewski
 */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AffOrgMatcherTest {
 
     
@@ -50,27 +50,25 @@ public class AffOrgMatcherTest {
     //------------------------ TESTS --------------------------
     
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void match_affiliations_null() {
         
         // execute
-        
-        matcher.match(null, organizations);
+        assertThrows(NullPointerException.class, () -> matcher.match(null, organizations));
         
     }
 
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void match_organizations_null() {
         
         // execute
-        
-        matcher.match(affiliations, null);
-        
+        assertThrows(NullPointerException.class, () -> matcher.match(affiliations, null));
+
     }
 
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void match_affOrgMatchComputer_null() {
         
         // given
@@ -80,12 +78,12 @@ public class AffOrgMatcherTest {
         
         // execute
         
-        matcher.match(affiliations, organizations);
-        
+        assertThrows(NullPointerException.class, () -> matcher.match(affiliations, organizations));
+
     }
 
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void match_affOrgJoiner_null() {
         
         // given
@@ -95,8 +93,8 @@ public class AffOrgMatcherTest {
         
         // execute
         
-        matcher.match(affiliations, organizations);
-        
+        assertThrows(NullPointerException.class, () -> matcher.match(affiliations, organizations));
+
     }
 
     
@@ -115,8 +113,8 @@ public class AffOrgMatcherTest {
         
         
         // assert
-        
-        assertTrue(affMatchResults == matchedAffOrgs);
+
+        assertSame(affMatchResults, matchedAffOrgs);
         
     }
     

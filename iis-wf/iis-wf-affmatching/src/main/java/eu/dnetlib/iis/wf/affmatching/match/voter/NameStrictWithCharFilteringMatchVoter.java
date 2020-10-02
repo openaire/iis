@@ -19,7 +19,7 @@ public class NameStrictWithCharFilteringMatchVoter extends AbstractAffOrgMatchVo
     
     private static final long serialVersionUID = 1L;
 
-    private final StringFilter stringFilter = new StringFilter();
+    private StringFilter stringFilter = new StringFilter();
     
     private final List<Character> charsToFilter;
     

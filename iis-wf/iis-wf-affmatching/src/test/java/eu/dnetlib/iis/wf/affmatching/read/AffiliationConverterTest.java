@@ -1,22 +1,17 @@
 package eu.dnetlib.iis.wf.affmatching.read;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import com.google.common.collect.Lists;
+import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
+import eu.dnetlib.iis.metadataextraction.schemas.Author;
+import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
-
-import com.google.common.collect.Lists;
-
-import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
-import eu.dnetlib.iis.metadataextraction.schemas.Author;
-import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
 * @author Łukasz Dumiszewski
@@ -32,17 +27,16 @@ public class AffiliationConverterTest {
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void convert_null_document() {
         
         // execute
-        
-        converter.convert(null);
+        assertThrows(NullPointerException.class, () -> converter.convert(null));
         
     }
     
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void convert_blank_organization_id() {
         
         // given
@@ -52,8 +46,7 @@ public class AffiliationConverterTest {
         
         
         // execute
-        
-        converter.convert(document);
+        assertThrows(IllegalArgumentException.class, () -> converter.convert(document));
         
     }
     
@@ -76,7 +69,7 @@ public class AffiliationConverterTest {
         // assert
         
         assertNotNull(affMatchAffiliations);
-        assertTrue(affMatchAffiliations.size() == 0);
+        assertEquals(0, affMatchAffiliations.size());
     }
     
     
@@ -98,7 +91,7 @@ public class AffiliationConverterTest {
         // assert
         
         assertNotNull(affMatchAffiliations);
-        assertTrue(affMatchAffiliations.size() == 0);
+        assertEquals(0, affMatchAffiliations.size());
     }
     
     

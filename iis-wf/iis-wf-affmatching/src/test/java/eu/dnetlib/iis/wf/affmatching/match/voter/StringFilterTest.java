@@ -1,10 +1,9 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 import com.google.common.collect.ImmutableList;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author madryk

@@ -1,22 +1,20 @@
 package eu.dnetlib.iis.wf.affmatching.normalize;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
 import eu.dnetlib.iis.common.string.StringNormalizer;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 /**
 * @author Łukasz Dumiszewski
 */
-
+@ExtendWith(MockitoExtension.class)
 public class AffMatchOrganizationNormalizerTest {
     
     @InjectMocks
@@ -37,24 +35,14 @@ public class AffMatchOrganizationNormalizerTest {
     @Mock
     private StringNormalizer websiteUrlNormalizer;
     
-    
-    @Before
-    public void before() {
-        
-        MockitoAnnotations.initMocks(this);
-        
-    }
-    
-    
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void normalize_null() {
         
         // execute
-        
-        normalizer.normalize(null);
-        
+        assertThrows(NullPointerException.class, () -> normalizer.normalize(null));
+
     }
     
     
@@ -83,8 +71,8 @@ public class AffMatchOrganizationNormalizerTest {
         
         
         // assert
-        
-        assertTrue(org != normalizedOrg);
+
+        assertNotSame(org, normalizedOrg);
         assertEquals("XXX", normalizedOrg.getId());
         assertEquals("icm long", normalizedOrg.getName());
         assertEquals("icm", normalizedOrg.getShortName());

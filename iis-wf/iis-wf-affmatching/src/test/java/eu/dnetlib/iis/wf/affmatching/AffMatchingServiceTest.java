@@ -1,32 +1,6 @@
 package eu.dnetlib.iis.wf.affmatching;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-
-import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.Function;
-import org.apache.spark.api.java.function.Function2;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import com.google.common.collect.Lists;
-
 import eu.dnetlib.iis.wf.affmatching.match.AffMatchResultChooser;
 import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
@@ -38,12 +12,27 @@ import eu.dnetlib.iis.wf.affmatching.orgalternativenames.AffMatchOrganizationAlt
 import eu.dnetlib.iis.wf.affmatching.read.AffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.OrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.AffMatchResultWriter;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.function.Function2;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 import scala.Tuple2;
+
+import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
 * @author Łukasz Dumiszewski
 */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AffMatchingServiceTest {
 
     
@@ -179,7 +168,7 @@ public class AffMatchingServiceTest {
     
     
     
-    @Before
+    @BeforeEach
     public void before() {
         
         affMatchingService.setAffOrgMatchers(Lists.newArrayList(affOrgMatcher1, affOrgMatcher2));
@@ -192,47 +181,47 @@ public class AffMatchingServiceTest {
     //------------------------ TESTS --------------------------
     
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void matchAffiliations_sparkContext_null() {
         
         // execute
-        
-        affMatchingService.matchAffiliations(null, inputAffPath, inputOrgPath, outputPath, outputReportPath);
+        assertThrows(NullPointerException.class, () ->
+                affMatchingService.matchAffiliations(null, inputAffPath, inputOrgPath, outputPath, outputReportPath));
         
     }
     
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void matchAffiliations_inputAffPath_blank() {
         
         // execute
-        
-        affMatchingService.matchAffiliations(sc, "  ", inputOrgPath, outputPath, outputReportPath);
+        assertThrows(IllegalArgumentException.class, () ->
+                affMatchingService.matchAffiliations(sc, "  ", inputOrgPath, outputPath, outputReportPath));
         
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void matchAffiliations_inputOrgPath_blank() {
         
         // execute
-        
-        affMatchingService.matchAffiliations(sc, inputAffPath, " ", outputPath, outputReportPath);
+        assertThrows(IllegalArgumentException.class, () ->
+                affMatchingService.matchAffiliations(sc, inputAffPath, " ", outputPath, outputReportPath));
         
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void matchAffiliations_outputPath_blank() {
         
         // execute
-        
-        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, "   ", outputReportPath);
+        assertThrows(IllegalArgumentException.class, () ->
+                affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, "   ", outputReportPath));
         
     }
 
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void matchAffiliations_affiliationReader_null() {
         
         // given
@@ -241,13 +230,13 @@ public class AffMatchingServiceTest {
         
         
         // execute
-        
-        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath, outputReportPath);
+        assertThrows(NullPointerException.class, () ->
+                affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath, outputReportPath));
         
     }
 
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void matchAffiliations_organizationReader_null() {
         
         // given
@@ -256,13 +245,13 @@ public class AffMatchingServiceTest {
         
         
         // execute
-        
-        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath, outputReportPath);
+        assertThrows(NullPointerException.class, () ->
+                affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath, outputReportPath));
         
     }
     
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void matchAffiliations_affMatchResultWriter_null() {
         
         // given
@@ -271,13 +260,13 @@ public class AffMatchingServiceTest {
         
         
         // execute
-        
-        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath, outputReportPath);
+        assertThrows(NullPointerException.class, () ->
+                affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath, outputReportPath));
         
     }
 
     
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void matchAffiliations_affOrgMatchers_empty() {
         
         // given
@@ -286,8 +275,8 @@ public class AffMatchingServiceTest {
         
         
         // execute
-        
-        affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath, outputReportPath);
+        assertThrows(IllegalStateException.class, () ->
+                affMatchingService.matchAffiliations(sc, inputAffPath, inputOrgPath, outputPath, outputReportPath));
         
     }
 
@@ -416,8 +405,8 @@ public class AffMatchingServiceTest {
         when(affMatchAffiliationNormalizer.normalize(aff1)).thenReturn(aff2);
         
         // execute & assert
-        
-        assertTrue(aff2 == function.call(aff1));
+
+        assertSame(aff2, function.call(aff1));
         
     }
 
@@ -431,8 +420,8 @@ public class AffMatchingServiceTest {
         when(affMatchOrganizationNormalizer.normalize(org1)).thenReturn(org2);
         
         // execute & assert
-        
-        assertTrue(org2 == function.call(org1));
+
+        assertSame(org2, function.call(org1));
         
     }
 
@@ -445,8 +434,8 @@ public class AffMatchingServiceTest {
         when(affMatchOrganizationAltNameFiller.fillAlternativeNames(org1)).thenReturn(org2);
         
         // execute & assert
-        
-        assertTrue(org2 == function.call(org1));
+
+        assertSame(org2, function.call(org1));
         
     }
     
@@ -477,8 +466,8 @@ public class AffMatchingServiceTest {
         when(affMatchResultChooser.chooseBetter(affMatchResult1, affMatchResult2)).thenReturn(affMatchResult2);
         
         // assert & assert
-        
-        assertTrue(affMatchResult2 == function.call(affMatchResult1, affMatchResult2));
+
+        assertSame(affMatchResult2, function.call(affMatchResult1, affMatchResult2));
     }
 
 }

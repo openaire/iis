@@ -1,34 +1,31 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
-import static com.google.common.collect.ImmutableList.of;
-import static com.google.common.collect.Lists.newArrayList;
-import static eu.dnetlib.iis.wf.affmatching.match.voter.CommonWordsVoter.RatioRelation.WITH_REGARD_TO_AFF_WORDS;
-import static eu.dnetlib.iis.wf.affmatching.match.voter.CommonWordsVoter.RatioRelation.WITH_REGARD_TO_ORG_WORDS;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.function.Function;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import static com.google.common.collect.ImmutableList.of;
+import static com.google.common.collect.Lists.newArrayList;
+import static eu.dnetlib.iis.wf.affmatching.match.voter.CommonWordsVoter.RatioRelation.WITH_REGARD_TO_AFF_WORDS;
+import static eu.dnetlib.iis.wf.affmatching.match.voter.CommonWordsVoter.RatioRelation.WITH_REGARD_TO_ORG_WORDS;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 /**
  * @author madryk, Łukasz Dumiszewski
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CommonWordsVoterTest {
 
     
@@ -59,7 +56,7 @@ public class CommonWordsVoterTest {
     private AffMatchOrganization organization = new AffMatchOrganization("ORG_ID");
     
     
-    @Before
+    @BeforeEach
     public void setup() {
         
         affiliation.setOrganizationName(affOrgName);
@@ -69,52 +66,52 @@ public class CommonWordsVoterTest {
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void constructor_NULL_CHARS_TO_FILTER() {
         
         // execute
-        
-        new CommonWordsVoter(null, 2, 0.8, WITH_REGARD_TO_ORG_WORDS);
+        assertThrows(NullPointerException.class, () ->
+                new CommonWordsVoter(null, 2, 0.8, WITH_REGARD_TO_ORG_WORDS));
     
     }
     
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void constructor_NEGATIVE_MIN_WORD_LENGTH() {
 
         // execute
-        
-        new CommonWordsVoter(of(), -1, 0.8, WITH_REGARD_TO_ORG_WORDS);
+        assertThrows(IllegalArgumentException.class, () ->
+                new CommonWordsVoter(of(), -1, 0.8, WITH_REGARD_TO_ORG_WORDS));
         
     }
     
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void constructor_TOO_HIGH_MIN_COMMON_WORDS_RATIO() {
         
         // execute
-        
-        new CommonWordsVoter(of(), 2, 1.1, WITH_REGARD_TO_AFF_WORDS);
-        
+        assertThrows(IllegalArgumentException.class, () ->
+                new CommonWordsVoter(of(), 2, 1.1, WITH_REGARD_TO_AFF_WORDS));
+
     }
     
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void constructor_TOO_LOW_MIN_COMMON_WORDS_RATIO() {
         
         // execute
-        
-        new CommonWordsVoter(of(), 2, 0, WITH_REGARD_TO_AFF_WORDS);
-        
+        assertThrows(IllegalArgumentException.class, () ->
+                new CommonWordsVoter(of(), 2, 0, WITH_REGARD_TO_AFF_WORDS));
+
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void constructor_NULL_RATIO_RELATION() {
         
         // execute
-        
-        new CommonWordsVoter(of(), 2, 0.8, null);
-        
+        assertThrows(NullPointerException.class, () ->
+                new CommonWordsVoter(of(), 2, 0.8, null));
+
     }
     
     
@@ -145,8 +142,6 @@ public class CommonWordsVoterTest {
     public void voteMatch_ONE_ORG_NAME__FILTERED_AFF_ORG_NAME_EMPTY() {
         
         // given
-        
-        resetOrgNames("University of Toronto");
         
         whenFilterCharsThen(affOrgName, "");
         

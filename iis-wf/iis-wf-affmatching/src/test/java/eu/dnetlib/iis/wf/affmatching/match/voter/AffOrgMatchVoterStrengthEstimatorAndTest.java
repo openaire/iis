@@ -3,8 +3,8 @@ package eu.dnetlib.iis.wf.affmatching.match.voter;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import eu.dnetlib.iis.common.IntegrationTest;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.IntegrationTest;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
@@ -25,11 +25,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.hamcrest.Matchers;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +61,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * The match strength depends on real data prepared by hand and is just a ratio of true positives (correct matches)
  * to all the matches guessed by the given matcher and voter.
  */
-@Category(IntegrationTest.class)
+@IntegrationTest
 public class AffOrgMatchVoterStrengthEstimatorAndTest {
 
     private static final Logger logger = LoggerFactory.getLogger(AffOrgMatchVoterStrengthEstimatorAndTest.class);
@@ -101,7 +100,7 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
 
     private String outputReportPath;
 
-    @BeforeClass
+    @BeforeAll
     public static void classSetup() {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
@@ -110,7 +109,7 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
         sparkContext = JavaSparkContextFactory.withConfAndKryo(conf);
     }
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         workingDir = Files.createTempDirectory("AffOrgMatchVoterStrengthEstimatorAndTest_").toFile();
 
@@ -125,7 +124,7 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
         affMatchingService = createAffMatchingService();
     }
 
-    @AfterClass
+    @AfterAll
     public static void classCleanup() {
         if (sparkContext != null) {
             sparkContext.close();

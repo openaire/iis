@@ -1,34 +1,28 @@
 package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentProject;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentProject;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.InferredDocumentProjectConverter;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisInferredDocumentProjectReader;
+import org.mockito.junit.jupiter.MockitoExtension;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 /**
  * @author mhorst
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class IisInferredDocumentProjectReaderTest {
 
     @InjectMocks
@@ -54,24 +48,24 @@ public class IisInferredDocumentProjectReaderTest {
 
     private final String predefinedPath = "/path/to/document_pojects/";
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        when(avroLoader.loadJavaRDD(sparkContext, predefinedPath, DocumentToProject.class)).thenReturn(loadedDocumentProjects);
-        doReturn(documentProjects).when(loadedDocumentProjects).map(any());
+        lenient().when(avroLoader.loadJavaRDD(sparkContext, predefinedPath, DocumentToProject.class)).thenReturn(loadedDocumentProjects);
+        lenient().doReturn(documentProjects).when(loadedDocumentProjects).map(any());
     }
 
     // ------------------------ TESTS --------------------------
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void readDocumentProjects_NULL_CONTEXT() {
         // execute
-        documentProjectReader.readDocumentProjects(null, predefinedPath);
+        assertThrows(NullPointerException.class, () -> documentProjectReader.readDocumentProjects(null, predefinedPath));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void readDocumentProjects_NULL_PATH() {
         // execute
-        documentProjectReader.readDocumentProjects(sparkContext, null);
+        assertThrows(NullPointerException.class, () -> documentProjectReader.readDocumentProjects(sparkContext, null));
     }
 
     @Test
@@ -80,7 +74,7 @@ public class IisInferredDocumentProjectReaderTest {
         JavaRDD<AffMatchDocumentProject> retDocumentProject = documentProjectReader.readDocumentProjects(sparkContext,
                 predefinedPath);
         // assert
-        assertTrue(retDocumentProject == documentProjects);
+        assertSame(retDocumentProject, documentProjects);
         verify(avroLoader).loadJavaRDD(sparkContext, predefinedPath, DocumentToProject.class);
         verify(loadedDocumentProjects).map(mapDocumentProjectFunction.capture());
         assertMapDocumentProjectFunction(mapDocumentProjectFunction.getValue());
@@ -97,7 +91,7 @@ public class IisInferredDocumentProjectReaderTest {
         // execute
         AffMatchDocumentProject retDocumentProject = function.call(documentProject);
         // assert
-        assertTrue(retDocumentProject == mappedDocumentProject);
+        assertSame(retDocumentProject, mappedDocumentProject);
     }
 
 }

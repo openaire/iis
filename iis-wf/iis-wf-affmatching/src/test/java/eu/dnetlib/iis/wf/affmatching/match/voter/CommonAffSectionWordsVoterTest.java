@@ -1,33 +1,30 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
-import static com.google.common.collect.ImmutableList.of;
-import static com.google.common.collect.Lists.newArrayList;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSectionsSplitter;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.function.Function;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
-import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSectionsSplitter;
+import static com.google.common.collect.ImmutableList.of;
+import static com.google.common.collect.Lists.newArrayList;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 /**
  * @author madryk, Łukasz Dumiszewski
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CommonAffSectionWordsVoterTest {
 
     
@@ -61,7 +58,7 @@ public class CommonAffSectionWordsVoterTest {
     private AffMatchOrganization organization = new AffMatchOrganization("ORG_ID");
     
     
-    @Before
+    @BeforeEach
     public void setup() {
         
         affiliation.setOrganizationName(affOrgName);
@@ -71,42 +68,42 @@ public class CommonAffSectionWordsVoterTest {
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void constructor_NULL_CHARS_TO_FILTER() {
         
         // execute
-        
-        new CommonAffSectionWordsVoter(null, 2, 0.8);
+        assertThrows(NullPointerException.class, () ->
+                new CommonAffSectionWordsVoter(null, 2, 0.8));
     
     }
     
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void constructor_NEGATIVE_MIN_WORD_LENGTH() {
 
         // execute
-        
-        new CommonAffSectionWordsVoter(of(), -1, 0.8);
+        assertThrows(IllegalArgumentException.class, () ->
+                new CommonAffSectionWordsVoter(of(), -1, 0.8));
         
     }
     
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void constructor_TOO_HIGH_MIN_COMMON_WORDS_RATIO() {
         
         // execute
-        
-        new CommonAffSectionWordsVoter(of(), 2, 1.1);
+        assertThrows(IllegalArgumentException.class, () ->
+                new CommonAffSectionWordsVoter(of(), 2, 1.1));
         
     }
     
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void constructor_TOO_LOW_MIN_COMMON_WORDS_RATIO() {
         
         // execute
-        
-        new CommonAffSectionWordsVoter(of(), 2, 0);
+        assertThrows(IllegalArgumentException.class, () ->
+                new CommonAffSectionWordsVoter(of(), 2, 0));
         
     }
     
@@ -156,8 +153,7 @@ public class CommonAffSectionWordsVoterTest {
         
         whenFilterCharsThen("Technical University in Poznan", "Technical University Poznan");
         whenFilterCharsThen("University of Toronto", "University Toronto");
-        whenFilterCharsThen("University of Warsaw", "University Warsaw");
-        
+
         
         when(commonSimilarWordCalculator.calcSimilarWordRatio(newArrayList("Chemistry", "Department"), newArrayList("Technical", "University", "Poznan")))
                                         .thenReturn(MIN_COMMON_WORDS_RATIO - 0.01);
@@ -171,15 +167,8 @@ public class CommonAffSectionWordsVoterTest {
 
         when(commonSimilarWordCalculator.calcSimilarWordRatio(newArrayList("Universiti", "Toronto"), newArrayList("University", "Toronto")))
                                         .thenReturn(MIN_COMMON_WORDS_RATIO + 0.01);
-        
 
-        when(commonSimilarWordCalculator.calcSimilarWordRatio(newArrayList("Chemistry", "Department"), newArrayList("University", "Warsaw")))
-                                        .thenReturn(MIN_COMMON_WORDS_RATIO - 0.01);
 
-        when(commonSimilarWordCalculator.calcSimilarWordRatio(newArrayList("Universiti", "Toronto"), newArrayList("University", "Warsaw")))
-                                        .thenReturn(MIN_COMMON_WORDS_RATIO - 0.01);
-
-        
         // execute & assert
         
         assertTrue(voter.voteMatch(affiliation, organization));
@@ -200,13 +189,6 @@ public class CommonAffSectionWordsVoterTest {
         whenFilterCharsThen("Chemistry Department", "Chemistry Department");
         whenFilterCharsThen("University of Toronto", "University Toronto");
         
-        
-        when(commonSimilarWordCalculator.calcSimilarWordRatio(newArrayList("Chemistry", "Department"), newArrayList("University", "Toronto")))
-                                        .thenReturn(MIN_COMMON_WORDS_RATIO - 0.01);
-
-        when(commonSimilarWordCalculator.calcSimilarWordRatio(newArrayList("University", "Toronto"), newArrayList("University", "Warsaw")))
-                                        .thenReturn(MIN_COMMON_WORDS_RATIO - 0.01);
-
         
         // execute & assert
 

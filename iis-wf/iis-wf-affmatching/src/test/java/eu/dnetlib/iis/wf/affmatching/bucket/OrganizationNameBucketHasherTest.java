@@ -1,26 +1,23 @@
 package eu.dnetlib.iis.wf.affmatching.bucket;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.when;
+import com.google.common.collect.Lists;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.function.Function;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import com.google.common.collect.Lists;
-
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 /**
 * @author Łukasz Dumiszewski
 */
-
+@ExtendWith(MockitoExtension.class)
 public class OrganizationNameBucketHasherTest {
 
     @InjectMocks
@@ -35,23 +32,13 @@ public class OrganizationNameBucketHasherTest {
     @Mock
     private AffMatchOrganization organization;
     
-    
-    @Before
-    public void before() {
-        
-        MockitoAnnotations.initMocks(this);
-        
-    }
-    
-    
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void hash_org_null() {
         
         // execute
-        
-        hasher.hash(null);
+        assertThrows(NullPointerException.class, () -> hasher.hash(null));
     }
     
     

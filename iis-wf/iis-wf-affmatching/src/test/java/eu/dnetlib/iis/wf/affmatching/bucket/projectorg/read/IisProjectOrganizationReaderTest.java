@@ -1,34 +1,28 @@
 package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
+import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchProjectOrganization;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchProjectOrganization;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.IisProjectOrganizationReader;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.ProjectOrganizationConverter;
+import org.mockito.junit.jupiter.MockitoExtension;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 /**
  * @author mhorst
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class IisProjectOrganizationReaderTest {
 
     @InjectMocks
@@ -54,24 +48,24 @@ public class IisProjectOrganizationReaderTest {
 
     private final String predefinedPath = "/path/to/poject_organizations/";
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        when(avroLoader.loadJavaRDD(sparkContext, predefinedPath, ProjectToOrganization.class)).thenReturn(loadedProjectOrganizations);
-        doReturn(projectOrganizations).when(loadedProjectOrganizations).map(any());
+        lenient().when(avroLoader.loadJavaRDD(sparkContext, predefinedPath, ProjectToOrganization.class)).thenReturn(loadedProjectOrganizations);
+        lenient().doReturn(projectOrganizations).when(loadedProjectOrganizations).map(any());
     }
 
     // ------------------------ TESTS --------------------------
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void readProjectOrganizations_NULL_CONTEXT() {
         // execute
-        projectOrganizationReader.readProjectOrganizations(null, predefinedPath);
+        assertThrows(NullPointerException.class, () -> projectOrganizationReader.readProjectOrganizations(null, predefinedPath));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void readProjectOrganizations_NULL_PATH() {
         // execute
-        projectOrganizationReader.readProjectOrganizations(sparkContext, null);
+        assertThrows(NullPointerException.class, () -> projectOrganizationReader.readProjectOrganizations(sparkContext, null));
     }
 
     @Test
@@ -80,7 +74,7 @@ public class IisProjectOrganizationReaderTest {
         JavaRDD<AffMatchProjectOrganization> retProjectOrganization = projectOrganizationReader
                 .readProjectOrganizations(sparkContext, predefinedPath);
         // assert
-        assertTrue(retProjectOrganization == projectOrganizations);
+        assertSame(retProjectOrganization, projectOrganizations);
         verify(avroLoader).loadJavaRDD(sparkContext, predefinedPath, ProjectToOrganization.class);
         verify(loadedProjectOrganizations).map(convertProjectOrganizationMapFunction.capture());
         assertMapProjectOrganizationFunction(convertProjectOrganizationMapFunction.getValue());
@@ -97,7 +91,7 @@ public class IisProjectOrganizationReaderTest {
         // execute
         AffMatchProjectOrganization retProjectOrganization = function.call(projectOrganization);
         // assert
-        assertTrue(retProjectOrganization == mappedProjectOrganization);
+        assertSame(retProjectOrganization, mappedProjectOrganization);
     }
 
 }

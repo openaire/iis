@@ -1,12 +1,12 @@
 package eu.dnetlib.iis.wf.affmatching.match;
 
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
-
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
 * @author Łukasz Dumiszewski
@@ -26,7 +26,7 @@ public class AffMatchResultChooserTest {
     //------------------------ TESTS --------------------------
 
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void chooseBetter_affMatchResult1_null() {
         
         // given
@@ -34,14 +34,13 @@ public class AffMatchResultChooserTest {
         AffMatchResult affMatchResult2 = new AffMatchResult(affiliation, organization_B, 0.7f);
         
         // execute
-        
-        chooser.chooseBetter(null, affMatchResult2);
+        assertThrows(NullPointerException.class, () -> chooser.chooseBetter(null, affMatchResult2));
         
     }
     
     
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void chooseBetter_affMatchResult2_null() {
         
         // given
@@ -49,8 +48,7 @@ public class AffMatchResultChooserTest {
         AffMatchResult affMatchResult1 = new AffMatchResult(affiliation, organization_A, 0.7f);
         
         // execute
-        
-        chooser.chooseBetter(affMatchResult1, null);
+        assertThrows(NullPointerException.class, () -> chooser.chooseBetter(affMatchResult1, null));
         
     }
     
@@ -65,8 +63,8 @@ public class AffMatchResultChooserTest {
         AffMatchResult affMatchResult2 = new AffMatchResult(affiliation, organization_B, 0.7f);
         
         // execute & assert
-        
-        assertTrue(affMatchResult1 == chooser.chooseBetter(affMatchResult1, affMatchResult2));
+
+        assertSame(affMatchResult1, chooser.chooseBetter(affMatchResult1, affMatchResult2));
         
     }
 
@@ -82,8 +80,8 @@ public class AffMatchResultChooserTest {
         
         
         // execute & assert
-        
-        assertTrue(affMatchResult2 == chooser.chooseBetter(affMatchResult1, affMatchResult2));
+
+        assertSame(affMatchResult2, chooser.chooseBetter(affMatchResult1, affMatchResult2));
         
     }
 
@@ -100,8 +98,8 @@ public class AffMatchResultChooserTest {
         
         
         // execute & assert
-        
-        assertTrue(affMatchResult1 == chooser.chooseBetter(affMatchResult1, affMatchResult2));
+
+        assertSame(affMatchResult1, chooser.chooseBetter(affMatchResult1, affMatchResult2));
         
     }
 }

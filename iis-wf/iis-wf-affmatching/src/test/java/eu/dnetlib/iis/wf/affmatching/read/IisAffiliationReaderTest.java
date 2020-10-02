@@ -1,49 +1,42 @@
 package eu.dnetlib.iis.wf.affmatching.read;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-
+import com.google.common.collect.Lists;
+import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import com.google.common.collect.Lists;
-
-import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
+import org.mockito.junit.jupiter.MockitoExtension;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
 * @author Łukasz Dumiszewski
 */
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class IisAffiliationReaderTest {
 
-    
+
     @InjectMocks
     private IisAffiliationReader reader = new IisAffiliationReader();
-    
+
     @Mock
     private AffiliationConverter affiliationConverter;
-    
+
     @Mock
     private SparkAvroLoader sparkAvroLoader;
-    
+
     @Mock
     private JavaSparkContext sparkContext;
 
@@ -53,32 +46,30 @@ public class IisAffiliationReaderTest {
     @Mock
     private JavaRDD<AffMatchAffiliation> affMatchAffiliations;
 
-    
+
     @Captor
     private ArgumentCaptor<FlatMapFunction<ExtractedDocumentMetadata, AffMatchAffiliation>> convertFunction;
 
-    
-    
-    
+
+
+
     //------------------------ TESTS --------------------------
-    
-    @Test(expected = NullPointerException.class)
+
+    @Test
     public void readAffiliations_sparkContext_null() {
-        
+
         // execute
-        
-        reader.readAffiliations(null, "/aaa");
-        
+        assertThrows(NullPointerException.class, () -> reader.readAffiliations(null, "/aaa"));
+
     }
     
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void readAffiliations_inputPath_blank() {
         
         // execute
-        
-        reader.readAffiliations(sparkContext, "  ");
-        
+        assertThrows(IllegalArgumentException.class, () -> reader.readAffiliations(sparkContext, "  "));
+
     }
     
     
@@ -101,8 +92,8 @@ public class IisAffiliationReaderTest {
         
         
         // assert
-        
-        assertTrue(affMatchAffiliations == retAffMatchAffiliations);
+
+        assertSame(affMatchAffiliations, retAffMatchAffiliations);
         
         verify(inputDocuments).flatMap(convertFunction.capture());
         assertConvertFunction(convertFunction.getValue());

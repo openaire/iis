@@ -1,12 +1,12 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
-import static org.junit.Assert.assertEquals;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import org.junit.Test;
-
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 /**
@@ -20,11 +20,11 @@ public class GetOrgShortNameFunctionTest {
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected=NullPointerException.class)
+    @Test
     public void apply_NULL() {
         
         // execute
-        function.apply(null);
+        assertThrows(NullPointerException.class, () -> function.apply(null));
     }
     
     

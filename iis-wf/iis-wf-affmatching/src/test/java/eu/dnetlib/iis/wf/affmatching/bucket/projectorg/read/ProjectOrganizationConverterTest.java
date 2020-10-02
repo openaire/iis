@@ -1,12 +1,11 @@
 package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchProjectOrganization;
-import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.ProjectOrganizationConverter;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ProjectOrganizationConverterTest {
 
@@ -17,34 +16,34 @@ public class ProjectOrganizationConverterTest {
 
     // ------------------------ TESTS --------------------------
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void convert_null() {
         // execute
-        converter.convert(null);
+        assertThrows(NullPointerException.class, () -> converter.convert(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void convert_blank_organization_id() {
         // execute
-        converter.convert(new ProjectToOrganization(projId, " "));
+        assertThrows(IllegalArgumentException.class, () -> converter.convert(new ProjectToOrganization(projId, " ")));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void convert_blank_project_id() {
         // execute
-        converter.convert(new ProjectToOrganization(" ", orgId));
+        assertThrows(IllegalArgumentException.class, () -> converter.convert(new ProjectToOrganization(" ", orgId)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void convert_null_organization_id() {
         // execute
-        converter.convert(new ProjectToOrganization(projId, null));
+        assertThrows(IllegalArgumentException.class, () -> converter.convert(new ProjectToOrganization(projId, null)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void convert_null_project_id() {
         // execute
-        converter.convert(new ProjectToOrganization(null, orgId));
+        assertThrows(IllegalArgumentException.class, () -> converter.convert(new ProjectToOrganization(null, orgId)));
     }
 
     @Test

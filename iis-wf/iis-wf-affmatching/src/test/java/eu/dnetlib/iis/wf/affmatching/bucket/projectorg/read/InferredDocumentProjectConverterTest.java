@@ -1,11 +1,11 @@
 package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentProject;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class InferredDocumentProjectConverterTest {
 
@@ -17,46 +17,52 @@ public class InferredDocumentProjectConverterTest {
 
     // ------------------------ TESTS --------------------------
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void convert_null() {
         // execute
-        converter.convert(null);
+        assertThrows(NullPointerException.class, () -> converter.convert(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void convert_blank_document_id() {
         // execute
-        converter.convert(new DocumentToProject(" ", projId, 1f, null));
+        assertThrows(IllegalArgumentException.class, () ->
+                converter.convert(new DocumentToProject(" ", projId, 1f, null)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void convert_blank_project_id() {
         // execute
-        converter.convert(new DocumentToProject(docId, " ", 1f, null));
+        assertThrows(IllegalArgumentException.class, () ->
+                converter.convert(new DocumentToProject(docId, " ", 1f, null)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void convert_out_of_right_range_confidence_level() {
         // execute
-        converter.convert(new DocumentToProject(docId, projId, 2f, null));
+        assertThrows(IllegalArgumentException.class, () ->
+                converter.convert(new DocumentToProject(docId, projId, 2f, null)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void convert_out_of_left_range_confidence_level() {
         // execute
-        converter.convert(new DocumentToProject(docId, projId, -1f, null));
+        assertThrows(IllegalArgumentException.class, () ->
+                converter.convert(new DocumentToProject(docId, projId, -1f, null)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void convert_null_document_id() {
         // execute
-        converter.convert(new DocumentToProject(null, projId, confidenceLevel, null));
+        assertThrows(IllegalArgumentException.class, () ->
+                converter.convert(new DocumentToProject(null, projId, confidenceLevel, null)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void convert_null_project_id() {
         // execute
-        converter.convert(new DocumentToProject(docId, null, confidenceLevel, null));
+        assertThrows(IllegalArgumentException.class, () ->
+                converter.convert(new DocumentToProject(docId, null, confidenceLevel, null)));
     }
 
     @Test

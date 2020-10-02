@@ -1,11 +1,11 @@
 package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 import eu.dnetlib.iis.importer.schemas.DocumentToProject;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentProject;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author madryk
@@ -20,39 +20,39 @@ public class DocumentProjectConverterTest {
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void convert_NULL_DOC_PROJ() {
         
         // execute
-        converter.convert(null);
+        assertThrows(NullPointerException.class, () -> converter.convert(null));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void convert_NULL_DOC_ID() {
         
         // execute
-        converter.convert(new DocumentToProject(null, projectId));
+        assertThrows(IllegalArgumentException.class, () -> converter.convert(new DocumentToProject(null, projectId)));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void convert_BLANK_DOC_ID() {
         
         // execute
-        converter.convert(new DocumentToProject(" ", projectId));
+        assertThrows(IllegalArgumentException.class, () -> converter.convert(new DocumentToProject(" ", projectId)));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void convert_NULL_ORG_ID() {
         
         // execute
-        converter.convert(new DocumentToProject(documentId, null));
+        assertThrows(IllegalArgumentException.class, () -> converter.convert(new DocumentToProject(documentId, null)));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void convert_BLANK_ORG_ID() {
         
         // execute
-        converter.convert(new DocumentToProject(documentId, "  "));
+        assertThrows(IllegalArgumentException.class, () -> converter.convert(new DocumentToProject(documentId, "  ")));
     }
     
     @Test

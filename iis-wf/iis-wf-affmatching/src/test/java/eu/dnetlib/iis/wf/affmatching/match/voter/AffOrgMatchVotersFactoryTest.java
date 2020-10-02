@@ -1,25 +1,23 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.google.common.collect.ImmutableList;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.powermock.reflect.Whitebox;
 
 import java.util.List;
 import java.util.function.Function;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.powermock.reflect.Whitebox;
-
-import com.google.common.collect.ImmutableList;
-
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author madryk
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AffOrgMatchVotersFactoryTest {
 
     private static final double PRECISION = 1e10-6;
@@ -133,9 +131,9 @@ public class AffOrgMatchVotersFactoryTest {
     
    
     private void assertOrgNameVoter(AffOrgMatchVoter voter1, Class<? extends AffOrgMatchVoter> expectedVoterClass,Function<AffMatchOrganization, List<String>> expectedGetOrgNamesFunction) {
-        
-        assertTrue(voter1.getClass().equals(expectedVoterClass));
-        
-        assertTrue(Whitebox.getInternalState(voter1, "getOrgNamesFunction").equals(getOrgNamesFunction));
+
+        assertEquals(voter1.getClass(), expectedVoterClass);
+
+        assertEquals(Whitebox.getInternalState(voter1, "getOrgNamesFunction"), getOrgNamesFunction);
     }
 }
