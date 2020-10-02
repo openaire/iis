@@ -1,26 +1,24 @@
 package eu.dnetlib.iis.wf.report;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
-
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
-import eu.dnetlib.iis.wf.report.ReportValueJsonConverterManager;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author madryk
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ReportValueJsonConverterManagerTest {
 
     private ReportValueJsonConverterManager converterManager = new ReportValueJsonConverterManager();
@@ -35,7 +33,7 @@ public class ReportValueJsonConverterManagerTest {
     private ReportEntry reportEntry = ReportEntryFactory.createCounterReportEntry("report.key", 34);
     
     
-    @Before
+    @BeforeEach
     public void setup() {
         converterManager.setConverters(ImmutableList.of(converter1, converter2));
     }
@@ -43,7 +41,7 @@ public class ReportValueJsonConverterManagerTest {
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void convertValue_NO_APPLICABLE_CONVERTER() {
         
         // given
@@ -52,8 +50,7 @@ public class ReportValueJsonConverterManagerTest {
         when(converter2.isApplicable(reportEntry.getType())).thenReturn(false);
         
         // execute
-        
-        converterManager.convertValue(reportEntry);
+        assertThrows(IllegalArgumentException.class, () -> converterManager.convertValue(reportEntry));
     }
     
     @Test
@@ -62,7 +59,6 @@ public class ReportValueJsonConverterManagerTest {
         // given
         
         when(converter1.isApplicable(reportEntry.getType())).thenReturn(true);
-        when(converter2.isApplicable(reportEntry.getType())).thenReturn(false);
         
         JsonElement json = mock(JsonElement.class);
         when(converter1.convertValue(reportEntry)).thenReturn(json);
@@ -74,8 +70,8 @@ public class ReportValueJsonConverterManagerTest {
         
         
         // assert
-        
-        assertTrue(retJson == json);
+
+        assertSame(retJson, json);
     }
     
     @Test
@@ -96,7 +92,7 @@ public class ReportValueJsonConverterManagerTest {
         
         
         // assert
-        
-        assertTrue(retJson == json);
+
+        assertSame(retJson, json);
     }
 }

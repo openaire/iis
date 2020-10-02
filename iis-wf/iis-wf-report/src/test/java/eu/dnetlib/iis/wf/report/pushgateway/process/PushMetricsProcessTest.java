@@ -2,17 +2,16 @@ package eu.dnetlib.iis.wf.report.pushgateway.process;
 
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
-import eu.dnetlib.iis.wf.report.pushgateway.converter.LabeledMetricConf;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Gauge;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,7 +20,7 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class PushMetricsProcessTest {
 
     @Mock
@@ -61,7 +60,7 @@ public class PushMetricsProcessTest {
         Configuration conf = mock(Configuration.class);
         Map<String, String> parameters = Collections.singletonMap("reportsDir", "/path/to/report");
 
-        when(metricPusherCreatorProducer.create(anyMapOf(String.class, String.class))).thenReturn(Optional.empty());
+        when(metricPusherCreatorProducer.create(anyMap())).thenReturn(Optional.empty());
 
         // when
         pushMetricsProcess.run(portBindings, conf, parameters);
@@ -79,7 +78,7 @@ public class PushMetricsProcessTest {
 
         MetricPusherCreator metricPusherCreator = mock(MetricPusherCreator.class);
         when(metricPusherCreatorProducer.create(parameters)).thenReturn(Optional.of(metricPusherCreator));
-        when(metricPusherProducer.create(any(MetricPusherCreator.class), anyMapOf(String.class, String.class))).thenReturn(Optional.empty());
+        when(metricPusherProducer.create(any(MetricPusherCreator.class), anyMap())).thenReturn(Optional.empty());
 
         // when
         pushMetricsProcess.run(portBindings, conf, parameters);
@@ -125,7 +124,7 @@ public class PushMetricsProcessTest {
         when(metricPusherProducer.create(metricPusherCreator, parameters)).thenReturn(Optional.of(metricPusher));
         FileSystem fs = mock(FileSystem.class);
         when(fileSystemProducer.create(conf)).thenReturn(Optional.of(fs));
-        when(reportLocationsFinder.find(anyMapOf(String.class, String.class))).thenReturn(Optional.empty());
+        when(reportLocationsFinder.find(anyMap())).thenReturn(Optional.empty());
 
         // when
         pushMetricsProcess.run(portBindings, conf, parameters);
@@ -152,7 +151,7 @@ public class PushMetricsProcessTest {
         FileSystem fs = mock(FileSystem.class);
         when(fileSystemProducer.create(conf)).thenReturn(Optional.of(fs));
         when(reportLocationsFinder.find(parameters)).thenReturn(Optional.of(Collections.singletonList("/path/to/report")));
-        when(labeledMetricConfByPatternProducer.create(anyMapOf(String.class, String.class))).thenReturn(Optional.empty());
+        when(labeledMetricConfByPatternProducer.create(anyMap())).thenReturn(Optional.empty());
 
         // when
         pushMetricsProcess.run(portBindings, conf, parameters);
@@ -213,8 +212,7 @@ public class PushMetricsProcessTest {
         when(labeledMetricConfByPatternProducer.create(parameters)).thenReturn(Optional.of(Collections.emptyMap()));
         List<ReportEntry> reportEntries = Collections.singletonList(mock(ReportEntry.class));
         when(reportEntryReader.read(fs, new Path("/path/to/report"))).thenReturn(Optional.of(reportEntries));
-        when(reportEntryConverter.convert(anyListOf(ReportEntry.class), any(String.class), anyMapOf(String.class, LabeledMetricConf.class)))
-                .thenReturn(Optional.empty());
+        when(reportEntryConverter.convert(anyList(), any(String.class), anyMap())).thenReturn(Optional.empty());
 
         // when
         pushMetricsProcess.run(portBindings, conf, parameters);
@@ -249,7 +247,7 @@ public class PushMetricsProcessTest {
         when(reportEntryReader.read(fs, new Path("/path/to/report"))).thenReturn(Optional.of(reportEntries));
         List<Gauge> gauges = Collections.singletonList(mock(Gauge.class));
         when(reportEntryConverter.convert(reportEntries, "/path/to/report", Collections.emptyMap())).thenReturn(Optional.of(gauges));
-        when(gaugesRegistrar.register(anyListOf(Gauge.class))).thenReturn(Optional.empty());
+        when(gaugesRegistrar.register(anyList())).thenReturn(Optional.empty());
 
         // when
         pushMetricsProcess.run(portBindings, conf, parameters);
@@ -287,7 +285,7 @@ public class PushMetricsProcessTest {
         when(reportEntryConverter.convert(reportEntries, "/path/to/report", Collections.emptyMap())).thenReturn(Optional.of(gauges));
         CollectorRegistry collectorRegistry = mock(CollectorRegistry.class);
         when(gaugesRegistrar.register(gauges)).thenReturn(Optional.of(collectorRegistry));
-        when(groupingKeyProducer.create(anyMapOf(String.class, String.class))).thenReturn(Optional.empty());
+        when(groupingKeyProducer.create(anyMap())).thenReturn(Optional.empty());
 
         // when
         pushMetricsProcess.run(portBindings, conf, parameters);

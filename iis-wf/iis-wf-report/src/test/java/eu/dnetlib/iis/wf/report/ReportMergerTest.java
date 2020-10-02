@@ -1,43 +1,33 @@
 package eu.dnetlib.iis.wf.report;
 
-import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
-import static eu.dnetlib.iis.wf.report.ReportMerger.PARTIAL_REPORTS_PORT_IN_NAME;
-import static eu.dnetlib.iis.wf.report.ReportMerger.REPORT_PORT_OUT_NAME;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.porttype.AnyPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.schemas.ReportEntryType;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
+import static eu.dnetlib.iis.wf.report.ReportMerger.PARTIAL_REPORTS_PORT_IN_NAME;
+import static eu.dnetlib.iis.wf.report.ReportMerger.REPORT_PORT_OUT_NAME;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author madryk
@@ -46,8 +36,7 @@ public class ReportMergerTest {
 
     private ReportMerger reportMerger = new ReportMerger();
     
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    public File tempFolder;
     
     private JsonParser jsonParser = new JsonParser();
     
@@ -56,12 +45,14 @@ public class ReportMergerTest {
     private String outputReportPath;
     
     
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
-        inputPartialReportsBasePath = tempFolder.newFolder("partial_reports").getPath();
-        outputReportPath = tempFolder.getRoot().getPath() + "/report.json";
+        tempFolder = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
+
+        inputPartialReportsBasePath = Files.createDirectory(tempFolder.toPath().resolve("partial_reports")).toFile().getPath();
+        outputReportPath = tempFolder.getPath() + "/report.json";
         System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME, 
-                tempFolder.getRoot().getAbsolutePath() + File.separatorChar + "test.properties");
+                tempFolder.getAbsolutePath() + File.separatorChar + "test.properties");
         
     }
     

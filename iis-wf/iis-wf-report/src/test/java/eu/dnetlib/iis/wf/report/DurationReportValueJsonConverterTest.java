@@ -1,17 +1,12 @@
 package eu.dnetlib.iis.wf.report;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.schemas.ReportEntryType;
-import eu.dnetlib.iis.wf.report.DurationReportValueJsonConverter;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author madryk
