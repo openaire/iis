@@ -1,6 +1,5 @@
 package eu.dnetlib.iis.wf.report.pushgateway.process;
 
-import eu.dnetlib.iis.common.IntegrationTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -10,7 +9,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-@IntegrationTest
 public class PushMetricsProcessGroupingNameProducerTest {
 
     @Test
