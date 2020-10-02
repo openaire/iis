@@ -1,22 +1,20 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.Collections;
-import java.util.List;
-
-import org.junit.Test;
-
 import com.google.common.collect.Lists;
 import com.google.protobuf.InvalidProtocolBufferException;
-
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.Context;
 import eu.dnetlib.dhp.schema.oaf.Result;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.export.schemas.Concept;
 import eu.dnetlib.iis.export.schemas.DocumentToConceptIds;
+import org.junit.jupiter.api.Test;
+
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author mhorst

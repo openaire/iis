@@ -1,28 +1,10 @@
 package eu.dnetlib.iis.wf.export.actionmanager.entity;
 
-import static eu.dnetlib.iis.wf.export.actionmanager.entity.SoftwareExportCounterReporter.DISTINCT_PUBLICATIONS_WITH_SOFTWARE_REFERENCES_COUNTER;
-import static eu.dnetlib.iis.wf.export.actionmanager.entity.SoftwareExportCounterReporter.EXPORTED_SOFTWARE_ENTITIES_COUNTER;
-import static eu.dnetlib.iis.wf.export.actionmanager.entity.SoftwareExportCounterReporter.SOFTWARE_REFERENCES_COUNTER;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
 import com.google.common.io.Files;
-
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.dhp.schema.oaf.Software;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.IntegrationTest;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.schemas.ReportEntryType;
@@ -31,16 +13,27 @@ import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.common.utils.ListTestUtils;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import static eu.dnetlib.iis.wf.export.actionmanager.entity.SoftwareExportCounterReporter.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 
  * @author mhorst
  *
  */
-@Category(IntegrationTest.class)
+@IntegrationTest
 public class SoftwareExporterJobTest {
 
     private SparkJobExecutor executor = new SparkJobExecutor();
@@ -57,7 +50,7 @@ public class SoftwareExporterJobTest {
 
     private String reportDirPath;
 
-    @Before
+    @BeforeEach
     public void before() {
         workingDir = Files.createTempDir();
         inputDocumentToSoftwareAvroPath = workingDir + "/software_exporter/input_software";
@@ -67,7 +60,7 @@ public class SoftwareExporterJobTest {
         reportDirPath = workingDir + "/software_exporter/report";
     }
 
-    @After
+    @AfterEach
     public void after() throws IOException {
         FileUtils.deleteDirectory(workingDir);
     }
@@ -173,15 +166,15 @@ public class SoftwareExporterJobTest {
         List<ReportEntry> reportEntries = AvroTestUtils.readLocalAvroDataStore(reportDirPath);
         assertEquals(3, reportEntries.size());
 
-        assertTrue(ReportEntryType.COUNTER == reportEntries.get(0).getType());
+        assertSame(ReportEntryType.COUNTER, reportEntries.get(0).getType());
         assertEquals(EXPORTED_SOFTWARE_ENTITIES_COUNTER, reportEntries.get(0).getKey().toString());
         assertEquals(expectedEntitiesCount, Integer.valueOf(reportEntries.get(0).getValue().toString()));
 
-        assertTrue(ReportEntryType.COUNTER == reportEntries.get(1).getType());
+        assertSame(ReportEntryType.COUNTER, reportEntries.get(1).getType());
         assertEquals(SOFTWARE_REFERENCES_COUNTER, reportEntries.get(1).getKey().toString());
         assertEquals(expectedReferencesCount, Integer.valueOf(reportEntries.get(1).getValue().toString()));
 
-        assertTrue(ReportEntryType.COUNTER == reportEntries.get(2).getType());
+        assertSame(ReportEntryType.COUNTER, reportEntries.get(2).getType());
         assertEquals(DISTINCT_PUBLICATIONS_WITH_SOFTWARE_REFERENCES_COUNTER, reportEntries.get(2).getKey().toString());
         assertEquals(expectedDistictPubsRererencesCount, Integer.valueOf(reportEntries.get(2).getValue().toString()));
     }

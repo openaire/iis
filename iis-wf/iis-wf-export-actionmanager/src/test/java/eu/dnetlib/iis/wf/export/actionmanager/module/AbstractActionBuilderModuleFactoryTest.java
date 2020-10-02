@@ -1,15 +1,15 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
-import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_ALGORITHM_PROPERTY_SEPARATOR;
-import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_TRUST_LEVEL_THRESHOLD;
-import static org.junit.Assert.assertTrue;
-
+import eu.dnetlib.dhp.schema.oaf.Oaf;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.hadoop.conf.Configuration;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import eu.dnetlib.dhp.schema.oaf.Oaf;
+import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_ALGORITHM_PROPERTY_SEPARATOR;
+import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_TRUST_LEVEL_THRESHOLD;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author mhorst
@@ -38,8 +38,8 @@ public abstract class AbstractActionBuilderModuleFactoryTest<S extends SpecificR
     
     // -------------------------------- TESTS -----------------------------------------
 
-    @Before
-    public void init() throws Exception {
+    @BeforeEach
+    public void init() {
         this.config.set(EXPORT_TRUST_LEVEL_THRESHOLD + EXPORT_ALGORITHM_PROPERTY_SEPARATOR + expectedAlgorithmName.name(), 
                 String.valueOf(trustLevelThreshold));
     }
@@ -47,16 +47,16 @@ public abstract class AbstractActionBuilderModuleFactoryTest<S extends SpecificR
     @Test
     public void testGetAlgorithmName() {
         // execute & assert
-        assertTrue(expectedAlgorithmName == factory.getAlgorithName());
+        assertSame(expectedAlgorithmName, factory.getAlgorithName());
     }
     
 
-    @Test(expected = NullPointerException.class)
-    public void testBuildNullObject() throws Exception {
+    @Test
+    public void testBuildNullObject() {
         // given
         ActionBuilderModule<S, T> module = factory.instantiate(config);
         // execute
-        module.build(null);
+        assertThrows(NullPointerException.class, () -> module.build(null));
     }
 
 }

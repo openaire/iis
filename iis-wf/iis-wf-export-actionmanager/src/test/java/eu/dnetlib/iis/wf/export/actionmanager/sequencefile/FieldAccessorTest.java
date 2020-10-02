@@ -1,21 +1,16 @@
 package eu.dnetlib.iis.wf.export.actionmanager.sequencefile;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.beanutils.PropertyUtils;
-import org.junit.Test;
-
 import datafu.com.google.common.collect.Lists;
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.KeyValue;
 import eu.dnetlib.dhp.schema.oaf.Relation;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -57,8 +52,8 @@ public class FieldAccessorTest {
 		assertEquals(targetId, accessor.getValue("$payload.target", action).toString());
 	}
 	
-	@Test(expected=FieldAccessorException.class)
-    public void testAccessingValuesUsingNonExistingDecoder() throws Exception {
+	@Test
+    public void testAccessingValuesUsingNonExistingDecoder() {
         FieldAccessor accessor = new FieldAccessor();
 
         AtomicAction<Relation> action = new AtomicAction<>();
@@ -66,8 +61,8 @@ public class FieldAccessorTest {
         action.setPayload(relation);
         String sourceId = "someSource";
         relation.setSource(sourceId);
-        
-        assertEquals(sourceId, accessor.getValue("$payload.source", action).toString());
+
+        assertThrows(FieldAccessorException.class, () -> accessor.getValue("$payload.source", action));
     }
 	
 	@Test
@@ -96,14 +91,14 @@ public class FieldAccessorTest {
         
     }
 
-	@Test(expected=FieldAccessorException.class)
-	public void testAccessingValuesForInvalidPath() throws Exception {
+	@Test
+	public void testAccessingValuesForInvalidPath() {
 		FieldAccessor accessor = new FieldAccessor();
 
 		AtomicAction<Relation> action = new AtomicAction<>();
 		action.setClazz(Relation.class);
 
-		accessor.getValue("clazz.unknown", action);
+		assertThrows(FieldAccessorException.class, () -> accessor.getValue("clazz.unknown", action));
 	}
 	
 	@Test
@@ -122,11 +117,11 @@ public class FieldAccessorTest {
 		assertEquals("name-2", accessor.getValue("names[1]", object));
 	}
 	
-	@Test(expected=FieldAccessorException.class)
-	public void testAccessingNonExistingArrayElement() throws Exception {
+	@Test
+	public void testAccessingNonExistingArrayElement() {
 		FieldAccessor accessor = new FieldAccessor();
 		ArrayWrapper object = new ArrayWrapper(new String[] {"name-1","name-2"});
-		accessor.getValue("names[2]", object);
+		assertThrows(FieldAccessorException.class, () -> accessor.getValue("names[2]", object));
 	}
 	
 	@Test
@@ -163,11 +158,11 @@ public class FieldAccessorTest {
 		assertEquals("name-2", accessor.getValue("names[1]", object));
 	}
 	
-	@Test(expected=FieldAccessorException.class)
-	public void testAccessingNonExistingListElement() throws Exception {
+	@Test
+	public void testAccessingNonExistingListElement() {
 		FieldAccessor accessor = new FieldAccessor();
 		ListWrapper object = new ListWrapper(Arrays.asList(new String[] {"name-1", "name-2"}));
-		accessor.getValue("names[2]", object);
+		assertThrows(FieldAccessorException.class, () -> accessor.getValue("names[2]", object));
 	}
 	
 	@Test

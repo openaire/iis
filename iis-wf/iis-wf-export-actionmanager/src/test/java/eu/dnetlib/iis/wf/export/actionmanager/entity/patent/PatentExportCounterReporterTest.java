@@ -9,24 +9,25 @@ import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class PatentExportCounterReporterTest {
     private static final String outputReportPath = "/path/to/report";
     private static JavaSparkContext sc;
@@ -40,7 +41,7 @@ public class PatentExportCounterReporterTest {
     @InjectMocks
     private PatentExportCounterReporter reporter = new PatentExportCounterReporter();
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
@@ -49,27 +50,29 @@ public class PatentExportCounterReporterTest {
         sc = JavaSparkContextFactory.withConfAndKryo(conf);
     }
 
-    @AfterClass
+    @AfterAll
     public static void after() {
         sc.stop();
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void reportShouldThrowExceptionWhenSparkContextIsNull() {
         //given
         JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = sc.emptyRDD();
 
         //when
-        reporter.report(null, documentToPatentsToExportWithIds, outputReportPath);
+        assertThrows(NullPointerException.class, () ->
+                reporter.report(null, documentToPatentsToExportWithIds, outputReportPath));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void reportShouldThrowExceptionWhenOutputReportPathIsNull() {
         //given
         JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = sc.emptyRDD();
 
         //when
-        reporter.report(sc, documentToPatentsToExportWithIds, null);
+        assertThrows(NullPointerException.class, () ->
+                reporter.report(sc, documentToPatentsToExportWithIds, null));
     }
 
     @Test

@@ -1,12 +1,11 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import com.google.protobuf.InvalidProtocolBufferException;
-
 import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Utility methods useful for assertion validation.

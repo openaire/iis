@@ -1,17 +1,15 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
-import static eu.dnetlib.iis.wf.export.actionmanager.module.VerificationUtils.assertOafRel;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.List;
-
-import org.junit.Test;
-
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 import eu.dnetlib.iis.wf.export.actionmanager.module.VerificationUtils.Expectations;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static eu.dnetlib.iis.wf.export.actionmanager.module.VerificationUtils.assertOafRel;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author mhorst
@@ -27,14 +25,14 @@ public class DocumentToProjectActionBuilderModuleFactoryTest extends AbstractAct
 
     // ----------------------- TESTS ---------------------------------
     
-    @Test(expected = TrustLevelThresholdExceededException.class)
-    public void testBuildBelowThreshold() throws Exception {
+    @Test
+    public void testBuildBelowThreshold() {
         // given
         DocumentToProject documentToProject = buildDocumentToProject("documentId", "projectId", 0.4f);
         ActionBuilderModule<DocumentToProject, Relation> module = factory.instantiate(config);
         
         // execute
-        module.build(documentToProject);
+        assertThrows(TrustLevelThresholdExceededException.class, () -> module.build(documentToProject));
     }
 
     @Test

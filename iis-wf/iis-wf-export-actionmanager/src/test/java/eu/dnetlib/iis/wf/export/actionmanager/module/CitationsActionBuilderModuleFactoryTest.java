@@ -1,25 +1,6 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import org.apache.commons.lang3.StringUtils;
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.google.common.collect.Lists;
-
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.ExtraInfo;
 import eu.dnetlib.dhp.schema.oaf.Result;
@@ -30,6 +11,13 @@ import eu.dnetlib.iis.common.model.extrainfo.citations.TypedId;
 import eu.dnetlib.iis.common.model.extrainfo.converter.CitationsExtraInfoConverter;
 import eu.dnetlib.iis.export.schemas.Citations;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
+
+import java.util.*;
+import java.util.Map.Entry;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author mhorst
@@ -86,7 +74,7 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
     }
 
     @Test
-    public void testConversion() throws Exception {
+    public void testConversion() {
         SortedSet<BlobCitationEntry> sortedCitations = new TreeSet<BlobCitationEntry>();
         
         CitationEntry.Builder rawTextCitationEntryBuilder = CitationEntry.newBuilder();
@@ -126,11 +114,11 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
         
 //      checking deserialization
         SortedSet<BlobCitationEntry> deserializedCitations = (SortedSet<BlobCitationEntry>) converter.deserialize(citationsXML);
-        Assert.assertEquals(sortedCitations.size(), deserializedCitations.size());
+        assertEquals(sortedCitations.size(), deserializedCitations.size());
         Iterator<BlobCitationEntry> sortedIt = sortedCitations.iterator();
         Iterator<BlobCitationEntry> deserializedIt = deserializedCitations.iterator();
         for (int i=0; i<sortedCitations.size(); i++) {
-            Assert.assertEquals(sortedIt.next(), deserializedIt.next());    
+            assertEquals(sortedIt.next(), deserializedIt.next());
         }
     }
     
