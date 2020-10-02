@@ -537,7 +537,7 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
-							<excludedGroups>eu.dnetlib.iis.common.IntegrationTest</excludedGroups>
+							<excludedGroups>integration</excludedGroups>
 						</configuration>
 					</plugin>
 					<plugin>
