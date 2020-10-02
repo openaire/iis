@@ -1,22 +1,14 @@
 package eu.dnetlib.iis.common;
 
-import static org.junit.Assert.assertEquals;
+import eu.dnetlib.iis.common.java.io.JsonUtils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Assert;
-
-import eu.dnetlib.iis.common.java.io.JsonUtils;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Utility class for tests dealing with IO
@@ -70,12 +62,11 @@ public class TestsIOUtils {
 	 */
 	public static <T> void assertEqualSets(
 			List<T> expected, List<T> actual, boolean toPrettyJson) {
-		Assert.assertEquals(String.format("The number of the "+
-				"expected elements (%s) is not equal to the number "+
-				"of the actual elements (%s).\n\n%s", 
-					expected.size(), actual.size(), 
-					elementsToString(expected, actual, toPrettyJson)),
-				expected.size(), actual.size());
+		assertEquals(expected.size(), actual.size(), String.format("The number of the " +
+						"expected elements (%s) is not equal to the number " +
+						"of the actual elements (%s).\n\n%s",
+				expected.size(), actual.size(),
+				elementsToString(expected, actual, toPrettyJson)));
 		boolean[] actualMatched = new boolean[actual.size()];
 		for(int i = 0; i < expected.size(); i++) {
 			boolean iMatched = false;
@@ -100,10 +91,10 @@ public class TestsIOUtils {
 					"\n%s\n", JsonUtils.toPrettyJSON(additionalElementRawStr));
 			}
 			
-			Assert.assertTrue(String.format("The element%sthat is " +
+			assertTrue(iMatched, String.format("The element%sthat is " +
 				"present among expected elements was not found among the " +
 				"actual elements.\n\n%s", additionalElementStr,
-				elementsToString(expected, actual, toPrettyJson)), iMatched);
+				elementsToString(expected, actual, toPrettyJson)));
 		}
 	}
 	
@@ -162,7 +153,7 @@ public class TestsIOUtils {
                     assertEquals(line1, line2);
                 }
                 if (line1 != null || line2 != null) {
-                    Assert.fail();
+                    fail();
                 }
             }
         } catch (Exception e) {
@@ -178,7 +169,7 @@ public class TestsIOUtils {
 	 */
 	public static void assertEqual(InputStream in0, InputStream in1){
 		try {
-			Assert.assertTrue(equal(in0, in1));
+			assertTrue(equal(in0, in1));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

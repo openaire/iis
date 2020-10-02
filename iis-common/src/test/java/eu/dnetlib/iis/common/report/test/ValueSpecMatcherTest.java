@@ -1,10 +1,9 @@
 package eu.dnetlib.iis.common.report.test;
 
-import static eu.dnetlib.iis.common.report.test.ValueSpecMatcher.EXPRESSION_TYPE_LONG_RANGE;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static eu.dnetlib.iis.common.report.test.ValueSpecMatcher.EXPRESSION_TYPE_LONG_RANGE;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
 * @author Łukasz Dumiszewski
@@ -18,12 +17,12 @@ public class ValueSpecMatcherTest {
     //------------------------ TESTS --------------------------
     
         
-    @Test(expected = NullPointerException.class)
+    @Test
     public void matches_valueSpec_NULL() {
         
         // execute
-        matcher.matches("SOME VALUE", null);
-        
+        assertThrows(NullPointerException.class, () -> matcher.matches("SOME VALUE", null));
+
     }
     
     @Test
@@ -50,19 +49,21 @@ public class ValueSpecMatcherTest {
         
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void matches_EXPRESSION_UNKNOWN_TYPE() {
         
         // execute & assert
-        assertTrue(matcher.matches("SOME VALUE", "$(SomeUnknownType: [2, 3])"));
-        
+        assertThrows(IllegalArgumentException.class, () ->
+                matcher.matches("SOME VALUE", "$(SomeUnknownType: [2, 3])"));
+
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void matches_LONG_RANGE_NOT_DIGITS() {
         
         // execute & assert
-        matcher.matches("SOME WRONG LONG", createLongRangeExpression("2", "3"));
+        assertThrows(IllegalArgumentException.class, () ->
+                matcher.matches("SOME WRONG LONG", createLongRangeExpression("2", "3")));
         
     }
     

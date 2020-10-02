@@ -1,36 +1,26 @@
 package eu.dnetlib.iis.common.cache;
 
-import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
+import eu.dnetlib.iis.common.FsShellPermissions;
+import eu.dnetlib.iis.common.java.PortBindings;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import eu.dnetlib.iis.common.FsShellPermissions;
-import eu.dnetlib.iis.common.java.PortBindings;
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * {@link CacheMetadataManagingProcess} test class.
@@ -38,7 +28,7 @@ import eu.dnetlib.iis.common.java.PortBindings;
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CacheMetadataManagingProcessTest {
 
     private final PortBindings portBindings = null;
@@ -59,8 +49,7 @@ public class CacheMetadataManagingProcessTest {
     @Captor
     ArgumentCaptor<String> changePermissionsPath;
     
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+    public File testFolder;
     
     @Mock
     private FileSystemFacade fsFacade;
@@ -74,27 +63,29 @@ public class CacheMetadataManagingProcessTest {
     
     private CacheMetadataManagingProcess process = new CacheMetadataManagingProcess(fsFacadeFactory);
     
-    @Before
-    public void initEnv() {
+    @BeforeEach
+    public void initEnv() throws IOException {
+        testFolder = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
+
         System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME, 
-                testFolder.getRoot().getAbsolutePath() + File.separatorChar + "test.properties");
+                testFolder.getAbsolutePath() + File.separatorChar + "test.properties");
     }
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected=RuntimeException.class)
-    public void testInvalidMode() throws Exception {
-        process.run(portBindings, conf, 
-                setParams("unknown", null));
+    @Test
+    public void testInvalidMode() {
+        assertThrows(RuntimeException.class, () ->
+                process.run(portBindings, conf, setParams("unknown", null)));
     }
 
-    @Test(expected=RuntimeException.class)
-    public void testReadCurrentIdWithoutDir() throws Exception {
-        process.run(portBindings, conf, 
-                setParams(CacheMetadataManagingProcess.MODE_READ_CURRENT_ID, null));
+    @Test
+    public void testReadCurrentIdWithoutDir() {
+        assertThrows(RuntimeException.class, () ->
+                process.run(portBindings, conf, setParams(CacheMetadataManagingProcess.MODE_READ_CURRENT_ID, null)));
     }
     
-    @Test()
+    @Test
     public void testReadCurrentIdNonExistingDir() throws Exception {
         // given
         doReturn(false).when(fsFacade).exists(any());
@@ -107,7 +98,7 @@ public class CacheMetadataManagingProcessTest {
         verifyStoredCacheId("$UNDEFINED$");
     }
     
-    @Test()
+    @Test
     public void testReadCurrentId() throws Exception {
         // given
         String cacheId = "000021";
@@ -121,14 +112,14 @@ public class CacheMetadataManagingProcessTest {
         // verify
         verifyStoredCacheId(cacheId);
     }
-    
-    @Test(expected=RuntimeException.class)
-    public void testGenerateNewIdWithoutDir() throws Exception {
-        process.run(portBindings, conf, 
-                setParams(CacheMetadataManagingProcess.MODE_GENERATE_NEW_ID, null));
+
+    @Test
+    public void testGenerateNewIdWithoutDir() {
+        assertThrows(RuntimeException.class, () ->
+                process.run(portBindings, conf, setParams(CacheMetadataManagingProcess.MODE_GENERATE_NEW_ID, null)));
     }
     
-    @Test()
+    @Test
     public void testGenerateNewIdNonExistingDir() throws Exception {
         // given
         doReturn(false).when(fsFacade).exists(any());
@@ -141,7 +132,7 @@ public class CacheMetadataManagingProcessTest {
         verifyStoredCacheId("000001");
     }
     
-    @Test()
+    @Test
     public void testGenerateNewId() throws Exception {
         // given
         doReturn(true).when(fsFacade).exists(any());
@@ -156,20 +147,20 @@ public class CacheMetadataManagingProcessTest {
     }
     
     
-    @Test(expected=RuntimeException.class)
-    public void testWriteIdWithoutDir() throws Exception {
+    @Test
+    public void testWriteIdWithoutDir() {
         String cacheId = "123456";
-        process.run(portBindings, conf, 
-                setParams(CacheMetadataManagingProcess.MODE_WRITE_ID, null, cacheId));
+        assertThrows(RuntimeException.class, () ->
+                process.run(portBindings, conf, setParams(CacheMetadataManagingProcess.MODE_WRITE_ID, null, cacheId)));
     }
     
-    @Test(expected=RuntimeException.class)
-    public void testWriteIdWithoutId() throws Exception {
-        process.run(portBindings, conf, 
-                setParams(CacheMetadataManagingProcess.MODE_WRITE_ID, irrelevantCacheDir, null));
+    @Test
+    public void testWriteIdWithoutId() {
+        assertThrows(RuntimeException.class, () ->
+                process.run(portBindings, conf, setParams(CacheMetadataManagingProcess.MODE_WRITE_ID, irrelevantCacheDir, null)));
     }
     
-    @Test()
+    @Test
     public void testWriteIdNonExistingDir() throws Exception {
         // given
         String cacheId = "123456";
@@ -196,7 +187,7 @@ public class CacheMetadataManagingProcessTest {
         assertEquals(buildCacheJson(cacheId), bos.toString("utf8"));
     }
     
-    @Test()
+    @Test
     public void tesWriteId() throws Exception {
         // given
         String cacheId = "123456";

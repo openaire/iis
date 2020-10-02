@@ -1,26 +1,25 @@
 package eu.dnetlib.iis.common.java.io;
 
+import eu.dnetlib.iis.common.TestsIOUtils;
+import eu.dnetlib.iis.common.avro.Document;
+import eu.dnetlib.iis.common.avro.DocumentWithoutTitle;
+import org.apache.avro.Schema;
+import org.apache.avro.file.DataFileWriter;
+import org.apache.avro.generic.GenericContainer;
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.apache.avro.Schema;
-import org.apache.avro.file.DataFileWriter;
-import org.apache.avro.generic.GenericContainer;
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.common.io.Files;
-
-import eu.dnetlib.iis.common.TestsIOUtils;
-import eu.dnetlib.iis.common.avro.Document;
-import eu.dnetlib.iis.common.avro.DocumentWithoutTitle;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -30,12 +29,12 @@ public class DataStoreTest {
 
 	private File tempDir = null;
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws IOException{
-		tempDir = Files.createTempDir();
+		tempDir = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
 	}
 	
-	@After
+	@AfterEach
 	public void tearDown() throws IOException{
 		FileUtils.deleteDirectory(tempDir);
 	}
@@ -68,14 +67,11 @@ public class DataStoreTest {
 		DataStore.create(documents, path);
 		AvroDataStoreReader<Document> reader = 
 				new AvroDataStoreReader<Document>(path);
-		Assert.assertEquals(documents.get(0), reader.next());
-		Assert.assertEquals(documents.get(1), reader.next());
+		assertEquals(documents.get(0), reader.next());
+		assertEquals(documents.get(1), reader.next());
 		reader.close();
-		try{
-			reader.next();
-			Assert.fail("Didn't throw an exception when it supposed to");
-		} catch(NoSuchElementException ex){
-		}
+
+		assertThrows(NoSuchElementException.class, reader::next);
 	}
 	
 	@Test

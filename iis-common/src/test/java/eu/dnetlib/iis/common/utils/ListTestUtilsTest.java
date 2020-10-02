@@ -7,7 +7,8 @@ import org.apache.hadoop.io.Text;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.junit.*;
+import org.junit.jupiter.api.*;
+import org.opentest4j.AssertionFailedError;
 import scala.Tuple2;
 
 import java.io.IOException;
@@ -18,6 +19,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class ListTestUtilsTest {
     private static JavaSparkContext sc;
     private static Configuration configuration;
@@ -25,8 +28,8 @@ public class ListTestUtilsTest {
     private Path workingDir;
     private Path inputDir;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    public static void beforeAll() {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
         conf.set("spark.driver.host", "localhost");
@@ -35,30 +38,30 @@ public class ListTestUtilsTest {
         configuration = new Configuration();
     }
 
-    @Before
+    @BeforeEach
     public void before() throws IOException {
         workingDir = Files.createTempDirectory(String.format("%s_", ListTestUtilsTest.class.getSimpleName()));
         inputDir = workingDir.resolve("input");
     }
 
-    @After
+    @AfterEach
     public void after() throws IOException {
         FileUtils.deleteDirectory(workingDir.toFile());
     }
 
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    public static void afterAll() {
         sc.stop();
     }
 
-    @Test(expected = ComparisonFailure.class)
+    @Test
     public void compareShouldThrowExceptionWhenListsNotMatch() {
         //given
         List<String> left = Arrays.asList("a", "b");
         List<String> right = Arrays.asList("a", "x");
 
         //when
-        ListTestUtils.compareLists(left, right);
+        assertThrows(AssertionFailedError.class, () -> ListTestUtils.compareLists(left, right));
     }
 
     @Test

@@ -3,11 +3,11 @@ package eu.dnetlib.iis.common.java.jsonworkflownodes;
 import eu.dnetlib.iis.common.java.PortBindings;
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -17,12 +17,11 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.function.Function;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ClassPathResourceToHdfsCopierTest {
 
     @Mock
@@ -33,17 +32,19 @@ public class ClassPathResourceToHdfsCopierTest {
     @InjectMocks
     private ClassPathResourceToHdfsCopier classPathResourceToHdfsCopier = new ClassPathResourceToHdfsCopier();
 
-    @Test(expected = NullPointerException.class)
-    public void givenParametersWithoutInputClassPathResource_whenRunIsCalled_thenCheckFails() throws Exception {
-        classPathResourceToHdfsCopier.run(mock(PortBindings.class), conf, new HashMap<>());
+    @Test
+    public void givenParametersWithoutInputClassPathResource_whenRunIsCalled_thenCheckFails() {
+        assertThrows(NullPointerException.class, () ->
+                classPathResourceToHdfsCopier.run(mock(PortBindings.class), conf, new HashMap<>()));
     }
 
-    @Test(expected = NullPointerException.class)
-    public void givenParametersWithoutOutputHdfsFileLocation_whenRunIsCalled_thenCheckFails() throws Exception {
+    @Test
+    public void givenParametersWithoutOutputHdfsFileLocation_whenRunIsCalled_thenCheckFails() {
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("inputClasspathResource", "/path/to/resource");
 
-        classPathResourceToHdfsCopier.run(mock(PortBindings.class), conf, parameters);
+        assertThrows(NullPointerException.class, () ->
+                classPathResourceToHdfsCopier.run(mock(PortBindings.class), conf, parameters));
     }
 
     @Test

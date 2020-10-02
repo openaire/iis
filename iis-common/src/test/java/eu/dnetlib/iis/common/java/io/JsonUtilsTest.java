@@ -1,22 +1,21 @@
 package eu.dnetlib.iis.common.java.io;
 
+import com.google.common.io.Files;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.TestsIOUtils;
+import eu.dnetlib.iis.common.avro.Document;
+import org.apache.avro.Schema;
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.apache.avro.Schema;
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.common.io.Files;
-
-import eu.dnetlib.iis.common.TestsIOUtils;
-import eu.dnetlib.iis.common.avro.Document;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * 
@@ -26,12 +25,12 @@ import eu.dnetlib.iis.common.avro.Document;
 public class JsonUtilsTest {
 	private File tempDir = null;
 	
-	@Before
-	public void setUp() throws IOException{
+	@BeforeEach
+	public void setUp() {
 		tempDir = Files.createTempDir();
 	}
 	
-	@After
+	@AfterEach
 	public void tearDown() throws IOException{
 		FileUtils.deleteDirectory(tempDir);
 	}
@@ -68,13 +67,13 @@ public class JsonUtilsTest {
 	}
 	
 	@Test
-	public void testPrettyPrint() throws IOException{
+	public void testPrettyPrint() {
 		String uglyJson = getStringFromResourceFile(
 				"eu/dnetlib/iis/common/java/io/json_pretty_print/ugly_json.json");
 		String actual = JsonUtils.toPrettyJSON(uglyJson);
 		String expected = getStringFromResourceFile(
 				"eu/dnetlib/iis/common/java/io/json_pretty_print/expected_pretty_json.json");
-		Assert.assertEquals(expected, actual);
+		assertEquals(expected, actual);
 	}
 	
 	private String getStringFromResourceFile(String resourcePath) {

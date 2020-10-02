@@ -1,46 +1,27 @@
 package eu.dnetlib.iis.common.javamapreduce.hack;
 
-import static eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs.COUNTERS_ENABLED;
-import static eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs.COUNTERS_GROUP;
-import static eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs.FORMAT;
-import static eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs.MO_PREFIX;
-import static eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs.MULTIPLE_OUTPUTS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import eu.dnetlib.iis.common.javamapreduce.hack.MockOutputFormat.MockRecordWriter;
+import eu.dnetlib.iis.common.schemas.Identifier;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapreduce.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.mapreduce.Counter;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.JobContext;
-import org.apache.hadoop.mapreduce.JobID;
-import org.apache.hadoop.mapreduce.OutputCommitter;
-import org.apache.hadoop.mapreduce.OutputFormat;
-import org.apache.hadoop.mapreduce.RecordWriter;
-import org.apache.hadoop.mapreduce.TaskAttemptContext;
-import org.apache.hadoop.mapreduce.TaskAttemptID;
-import org.apache.hadoop.mapreduce.TaskInputOutputContext;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import eu.dnetlib.iis.common.javamapreduce.hack.MockOutputFormat.MockRecordWriter;
-import eu.dnetlib.iis.common.schemas.Identifier;
+import static eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AvroMultipleOutputsTest {
 
     
@@ -68,19 +49,18 @@ public class AvroMultipleOutputsTest {
     
     // -------------------------------------- TESTS --------------------------------------
     
-    @Test(expected=IllegalArgumentException.class)
-    public void testAddNamedOutputInvalid() throws Exception {
-     // given
+    @Test
+    public void testAddNamedOutputInvalid() {
+        // given
         String namedOutput = "invalid.name";
-        Configuration conf = new Configuration();
-        doReturn(conf).when(job).getConfiguration();
-        
+
         // execute
-        AvroMultipleOutputs.addNamedOutput(job, namedOutput, outputFormatClass, Identifier.SCHEMA$);
+        assertThrows(IllegalArgumentException.class, () ->
+                AvroMultipleOutputs.addNamedOutput(job, namedOutput, outputFormatClass, Identifier.SCHEMA$));
     }
     
     @Test
-    public void testAddNamedOutput() throws Exception {
+    public void testAddNamedOutput() {
         // given
         String namedOutput = "meta";
         Configuration conf = new Configuration();
@@ -91,13 +71,13 @@ public class AvroMultipleOutputsTest {
         
         // assert
         assertEquals(" meta", conf.get(MULTIPLE_OUTPUTS));
-        assertTrue(outputFormatClass == conf.getClass(MO_PREFIX + namedOutput + FORMAT, OutputFormat.class));
+        assertSame(outputFormatClass, conf.getClass(MO_PREFIX + namedOutput + FORMAT, OutputFormat.class));
         assertEquals(Identifier.SCHEMA$.toString(), conf.get(MO_PREFIX+namedOutput+".keyschema"));
         
     }
     
     @Test
-    public void testAddNamedOutputWithValueSchemaSet() throws Exception {
+    public void testAddNamedOutputWithValueSchemaSet() {
         // given
         String namedOutput = "metaI0";
         Configuration conf = new Configuration();
@@ -109,7 +89,7 @@ public class AvroMultipleOutputsTest {
         
         // assert
         assertEquals(' ' + namedOutput, conf.get(MULTIPLE_OUTPUTS));
-        assertTrue(outputFormatClass == conf.getClass(MO_PREFIX + namedOutput + FORMAT, OutputFormat.class));
+        assertSame(outputFormatClass, conf.getClass(MO_PREFIX + namedOutput + FORMAT, OutputFormat.class));
         assertEquals(Identifier.SCHEMA$.toString(), conf.get(MO_PREFIX+namedOutput+".keyschema"));
         assertEquals(Identifier.SCHEMA$.toString(), conf.get(MO_PREFIX+namedOutput+".valueschema"));
     }
@@ -184,7 +164,6 @@ public class AvroMultipleOutputsTest {
         String baseFileName = "baseFileName";
         Configuration conf = new Configuration();
         doReturn(conf).when(context).getConfiguration();
-        doReturn(outputFormatClass).when(context).getOutputFormatClass();
         doReturn(MockOutputFormat.class).when(context).getOutputFormatClass();
         AvroMultipleOutputs multipleOutputs = new AvroMultipleOutputs(context);
         RecordWriter<?, ?> recordWriter = multipleOutputs.getRecordWriter(context, baseFileName);
@@ -222,7 +201,7 @@ public class AvroMultipleOutputsTest {
         assertNotNull(recordWriter);
         assertTrue(recordWriter instanceof MockRecordWriter);
         assertEquals(1, ((MockRecordWriter)recordWriter).getWrittenRecords().size());
-        assertTrue(identifier == ((MockRecordWriter)recordWriter).getWrittenRecords().get(0));
+        assertSame(identifier, ((MockRecordWriter) recordWriter).getWrittenRecords().get(0));
     }
     
     @Test
@@ -264,7 +243,6 @@ public class AvroMultipleOutputsTest {
         conf.set(MO_PREFIX + namedOutputMeta + ".keyschema", Identifier.SCHEMA$.toString());
 
         conf.setClass(MO_PREFIX + namedOutputMeta + FORMAT, MockOutputFormat.class, OutputFormat.class);
-        doReturn(MockOutputFormat.class).when(context).getOutputFormatClass();
         doReturn(conf).when(context).getConfiguration();
         doReturn(taskAttemptId).when(context).getTaskAttemptID();
         doReturn(new JobID()).when(taskAttemptId).getJobID();

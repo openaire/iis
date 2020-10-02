@@ -1,25 +1,24 @@
 package eu.dnetlib.iis.common.report.test;
 
-import static eu.dnetlib.iis.common.report.ReportEntryFactory.createCounterReportEntry;
-import static eu.dnetlib.iis.common.report.ReportEntryFactory.createDurationReportEntry;
-import static org.mockito.Mockito.when;
+import com.google.common.collect.Lists;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import com.google.common.collect.Lists;
-
-import eu.dnetlib.iis.common.schemas.ReportEntry;
+import static eu.dnetlib.iis.common.report.ReportEntryFactory.createCounterReportEntry;
+import static eu.dnetlib.iis.common.report.ReportEntryFactory.createDurationReportEntry;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 /**
 * @author Łukasz Dumiszewski
 */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ReportEntryMatcherTest {
 
     @InjectMocks
@@ -31,27 +30,27 @@ public class ReportEntryMatcherTest {
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void checkMatch_actualEntries_NULL() {
         
         // given
         List<ReportEntry> expectedEntrySpecs = Lists.newArrayList(createCounterReportEntry("KEY_A", 3));
         
         // execute
-        matcher.checkMatch(null, expectedEntrySpecs);
+        assertThrows(NullPointerException.class, () -> matcher.checkMatch(null, expectedEntrySpecs));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void checkMatch_expectedEntrySpecs_NULL() {
         
         // given
         List<ReportEntry> actualEntries = Lists.newArrayList(createCounterReportEntry("KEY_A", 3));
         
         // execute
-        matcher.checkMatch(actualEntries, null);
+        assertThrows(NullPointerException.class, () -> matcher.checkMatch(actualEntries, null));
     }
     
-    @Test(expected = AssertionError.class)
+    @Test
     public void checkMatch_different_sizes() {
         
         // given
@@ -59,10 +58,10 @@ public class ReportEntryMatcherTest {
         List<ReportEntry> expectedEntrySpecs = Lists.newArrayList(createDurationReportEntry("KEY_X", 3));
         
         // execute
-        matcher.checkMatch(actualEntries, expectedEntrySpecs);
+        assertThrows(AssertionError.class, () -> matcher.checkMatch(actualEntries, expectedEntrySpecs));
     }
     
-    @Test(expected = AssertionError.class)
+    @Test
     public void checkMatch_DONT_MATCH_DIFF_TYPES() {
         
         // given
@@ -70,10 +69,10 @@ public class ReportEntryMatcherTest {
         List<ReportEntry> expectedEntrySpecs = Lists.newArrayList(createDurationReportEntry("KEY_A", 3), createCounterReportEntry("KEY_B", 4));
         
         // execute
-        matcher.checkMatch(actualEntries, expectedEntrySpecs);
+        assertThrows(AssertionError.class, () -> matcher.checkMatch(actualEntries, expectedEntrySpecs));
     }
     
-    @Test(expected = AssertionError.class)
+    @Test
     public void checkMatch_DONT_MATCH_DIFF_KEYS() {
         
         // given
@@ -81,10 +80,10 @@ public class ReportEntryMatcherTest {
         List<ReportEntry> expectedEntrySpecs = Lists.newArrayList(createDurationReportEntry("KEY_AAA", 3), createCounterReportEntry("KEY_B", 4));
         
         // execute
-        matcher.checkMatch(actualEntries, expectedEntrySpecs);
+        assertThrows(AssertionError.class, () -> matcher.checkMatch(actualEntries, expectedEntrySpecs));
     }
     
-    @Test(expected = AssertionError.class)
+    @Test
     public void checkMatch_DONT_MATCH_DIFF_VALUES() {
         
         // given
@@ -94,7 +93,7 @@ public class ReportEntryMatcherTest {
         when(valueSpecMatcher.matches("4", "41")).thenReturn(false);
         
         // execute
-        matcher.checkMatch(actualEntries, expectedEntrySpecs);
+        assertThrows(AssertionError.class, () -> matcher.checkMatch(actualEntries, expectedEntrySpecs));
     }
     
     @Test

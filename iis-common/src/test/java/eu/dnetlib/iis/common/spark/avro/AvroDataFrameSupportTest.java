@@ -12,9 +12,9 @@ import org.apache.spark.sql.RowFactory;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.avro.SchemaConverters;
 import org.apache.spark.sql.types.StructType;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,7 +22,7 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AvroDataFrameSupportTest {
 
@@ -30,8 +30,8 @@ public class AvroDataFrameSupportTest {
     private static AvroDataFrameSupport avroDataFrameSupport;
     private static Path workingDir;
 
-    @BeforeClass
-    public static void beforeClass() throws IOException {
+    @BeforeAll
+    public static void beforeAll() throws IOException {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
         conf.set("spark.driver.host", "localhost");
@@ -41,8 +41,8 @@ public class AvroDataFrameSupportTest {
         workingDir = Files.createTempDirectory(AvroDataFrameSupportTest.class.getSimpleName());
     }
 
-    @AfterClass
-    public static void afterClass() throws IOException {
+    @AfterAll
+    public static void afterAll() throws IOException {
         FileUtils.deleteDirectory(workingDir.toFile());
     }
 

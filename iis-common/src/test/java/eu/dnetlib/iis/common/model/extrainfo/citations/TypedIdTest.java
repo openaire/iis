@@ -1,8 +1,9 @@
 package eu.dnetlib.iis.common.model.extrainfo.citations;
 
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
  * @author mhorst
@@ -11,7 +12,7 @@ import org.junit.Test;
 public class TypedIdTest {
 
     @Test
-    public void testEquals() throws Exception {
+    public void testEquals() {
         // given
         String value = "someValue";
         String type = "someType";
@@ -19,12 +20,12 @@ public class TypedIdTest {
         TypedId typedId = new TypedId(value, type, confidenceLevel);
         
         // execute & assert
-        assertFalse(typedId.equals(null));
-        assertFalse(typedId.equals("string"));
-        assertFalse(typedId.equals(new TypedId("otherValue", type, confidenceLevel)));
-        assertFalse(typedId.equals(new TypedId(value, "otherType", confidenceLevel)));
-        assertFalse(typedId.equals(new TypedId(value, type, 0.8f)));
-        assertTrue(typedId.equals(new TypedId(value, type, confidenceLevel)));
+        assertNotEquals(null, typedId);
+        assertNotEquals("string", typedId);
+        assertNotEquals(typedId, new TypedId("otherValue", type, confidenceLevel));
+        assertNotEquals(typedId, new TypedId(value, "otherType", confidenceLevel));
+        assertNotEquals(typedId, new TypedId(value, type, 0.8f));
+        assertEquals(typedId, new TypedId(value, type, confidenceLevel));
     }
 
     @Test

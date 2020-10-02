@@ -1,9 +1,8 @@
 package eu.dnetlib.iis.common.report;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author madryk
@@ -15,40 +14,45 @@ public class ReportPigCounterMappingParserTest {
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void parse_destCounter_NULL() {
         
         // execute
-        reportPigCounterMappingParser.parse(null, "{jobAlias.COUNTER_NAME}");
+        assertThrows(NullPointerException.class, () ->
+                reportPigCounterMappingParser.parse(null, "{jobAlias.COUNTER_NAME}"));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void parse_sourceCounter_NULL() {
         
         // execute
-        reportPigCounterMappingParser.parse("destination.report.counter", null);
+        assertThrows(NullPointerException.class, () ->
+                reportPigCounterMappingParser.parse("destination.report.counter", null));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void parse_sourceCounter_INVALID_PLACEHOLDER() {
         
         // execute
-        reportPigCounterMappingParser.parse("destination.report.counter", "jobAlias.COUNTER_NAME");
+        assertThrows(IllegalArgumentException.class, () ->
+                reportPigCounterMappingParser.parse("destination.report.counter", "jobAlias.COUNTER_NAME"));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void parse_sourceCounter_INVALID_PLACEHOLDER_2() {
         
         // execute
-        reportPigCounterMappingParser.parse("destination.report.counter", "COUNTER_NAME");
+        assertThrows(IllegalArgumentException.class, () ->
+                reportPigCounterMappingParser.parse("destination.report.counter", "COUNTER_NAME"));
         
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void parse_sourceCounter_INVALID_PLACEHOLDER_TOO_MANY_LEVELS() {
         
         // execute
-        reportPigCounterMappingParser.parse("destination.report.counter", "{jobAlias.COUNTER_NAME.SUB_COUNTER}");
+        assertThrows(IllegalArgumentException.class, () ->
+                reportPigCounterMappingParser.parse("destination.report.counter", "{jobAlias.COUNTER_NAME.SUB_COUNTER}"));
         
     }
     

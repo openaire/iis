@@ -1,20 +1,6 @@
 package eu.dnetlib.iis.common.java.jsonworkflownodes;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.avro.Schema;
-import org.apache.avro.specific.SpecificRecord;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-
 import com.google.common.collect.Maps;
-
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
 import eu.dnetlib.iis.common.java.io.DataStore;
@@ -23,6 +9,18 @@ import eu.dnetlib.iis.common.java.jsonworkflownodes.StringPortSpecificationExtra
 import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.common.utils.AvroUtils;
+import org.apache.avro.Schema;
+import org.apache.avro.specific.SpecificRecord;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Consumer of avro data stores.
@@ -97,11 +95,11 @@ public class RecordCountTestConsumer implements Process {
 	private static void check(FileSystemPath actualPath, RecordCountPortSpecification specs) throws IOException{
 		
 		List<SpecificRecord> actual = DataStore.read(actualPath, specs.getSchema());
-		
-		assertTrue("Expected at least " + specs.getMinimumRecordCount() + " records in " + specs.getName() + " avro data store, but was " + actual.size(), 
-				actual.size() >= specs.getMinimumRecordCount());
-		
-		assertTrue("Expected at most " + specs.getMaximumRecordCount() + " records in " + specs.getName() + " avro data store, but was " + actual.size(), 
-				actual.size() <= specs.getMaximumRecordCount());
+
+		assertTrue(actual.size() >= specs.getMinimumRecordCount(),
+				"Expected at least " + specs.getMinimumRecordCount() + " records in " + specs.getName() + " avro data store, but was " + actual.size());
+
+		assertTrue(actual.size() <= specs.getMaximumRecordCount(),
+				"Expected at most " + specs.getMaximumRecordCount() + " records in " + specs.getName() + " avro data store, but was " + actual.size());
 	}
 }

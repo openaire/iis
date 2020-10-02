@@ -8,7 +8,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 import scala.Tuple2;
 
 import java.io.IOException;
@@ -20,7 +20,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RDDUtilsTest {
     private static final int NUMBER_OF_OUTPUT_FILES = 2;
@@ -30,8 +30,8 @@ public class RDDUtilsTest {
     private Path workingDir;
     private Path outputDir;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    public static void beforeAll() {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
         conf.set("spark.driver.host", "localhost");
@@ -40,19 +40,19 @@ public class RDDUtilsTest {
         configuration = new Configuration();
     }
 
-    @Before
+    @BeforeEach
     public void before() throws IOException {
         workingDir = Files.createTempDirectory("RDDUtilsTest_");
         outputDir = workingDir.resolve("output");
     }
 
-    @After
+    @AfterEach
     public void after() throws IOException {
         FileUtils.deleteDirectory(workingDir.toFile());
     }
 
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    public static void afterAll() {
         sc.stop();
     }
 

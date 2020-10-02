@@ -1,24 +1,23 @@
 package eu.dnetlib.iis.common.pig.udfs;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.google.common.collect.Lists;
 import org.apache.pig.data.DataType;
 import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.apache.pig.impl.logicalLayer.schema.Schema.FieldSchema;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Lists;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
  * @author Dominika Tkaczyk
  */
-public class StringMapsMergerTest extends TestCase {
+public class StringMapsMergerTest {
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
@@ -61,7 +60,7 @@ public class StringMapsMergerTest extends TestCase {
         Schema resultSchema = udf.outputSchema(inputSchema);
         
         // assert
-        assertTrue(inputSchema.getField(0).schema == resultSchema);
+        assertSame(inputSchema.getField(0).schema, resultSchema);
     }
     
 }

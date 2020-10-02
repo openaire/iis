@@ -1,15 +1,11 @@
 package eu.dnetlib.iis.common.model.extrainfo.citations;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import datafu.com.google.common.collect.Lists;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import org.junit.Test;
-
-import datafu.com.google.common.collect.Lists;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author mhorst
@@ -19,7 +15,7 @@ public class BlobCitationEntryTest {
 
 
     @Test
-    public void testEquals() throws Exception {
+    public void testEquals() {
         // given
         String rawText = "some raw text";
         int position = 1;
@@ -30,32 +26,32 @@ public class BlobCitationEntryTest {
         blobCitationEntry.setIdentifiers(identifiers);
         
         // execute & assert
-        assertFalse(blobCitationEntry.equals(null));
-        assertFalse(blobCitationEntry.equals("string"));
+        assertNotEquals(null, blobCitationEntry);
+        assertNotEquals("string", blobCitationEntry);
         
         BlobCitationEntry otherBlobCitationEntry = new BlobCitationEntry("other raw text");
         otherBlobCitationEntry.setPosition(position);
         otherBlobCitationEntry.setIdentifiers(identifiers);
-        assertFalse(blobCitationEntry.equals(otherBlobCitationEntry));
+        assertNotEquals(blobCitationEntry, otherBlobCitationEntry);
 
         otherBlobCitationEntry = new BlobCitationEntry(rawText);
         otherBlobCitationEntry.setPosition(2);
         otherBlobCitationEntry.setIdentifiers(identifiers);
-        assertFalse(blobCitationEntry.equals(otherBlobCitationEntry));
+        assertNotEquals(blobCitationEntry, otherBlobCitationEntry);
         
         otherBlobCitationEntry = new BlobCitationEntry(rawText);
         otherBlobCitationEntry.setPosition(position);
         otherBlobCitationEntry.setIdentifiers(Lists.newArrayList(new TypedId("someOtherValue", "someType", 0.9f)));
-        assertFalse(blobCitationEntry.equals(otherBlobCitationEntry));
+        assertNotEquals(blobCitationEntry, otherBlobCitationEntry);
         
         otherBlobCitationEntry = new BlobCitationEntry(rawText);
         otherBlobCitationEntry.setPosition(position);
         otherBlobCitationEntry.setIdentifiers(identifiers);
-        assertTrue(blobCitationEntry.equals(otherBlobCitationEntry));
+        assertEquals(blobCitationEntry, otherBlobCitationEntry);
     }
 
     @Test
-    public void testHashCode() throws Exception {
+    public void testHashCode() {
         // given
         String rawText = "some raw text";
         int position = 1;
@@ -66,23 +62,23 @@ public class BlobCitationEntryTest {
         blobCitationEntry.setIdentifiers(identifiers);
         
         // execute & assert
-        assertFalse(blobCitationEntry.equals(null));
-        assertFalse(blobCitationEntry.equals("string"));
+        assertNotEquals(null, blobCitationEntry);
+        assertNotEquals("string", blobCitationEntry);
         
         BlobCitationEntry otherBlobCitationEntry = new BlobCitationEntry("other raw text");
         otherBlobCitationEntry.setPosition(position);
         otherBlobCitationEntry.setIdentifiers(identifiers);
-        assertNotEquals(blobCitationEntry.hashCode(), otherBlobCitationEntry.hashCode());
+        assertNotSame(blobCitationEntry.hashCode(), otherBlobCitationEntry.hashCode());
 
         otherBlobCitationEntry = new BlobCitationEntry(rawText);
         otherBlobCitationEntry.setPosition(2);
         otherBlobCitationEntry.setIdentifiers(identifiers);
-        assertNotEquals(blobCitationEntry.hashCode(), otherBlobCitationEntry.hashCode());
+        assertNotSame(blobCitationEntry.hashCode(), otherBlobCitationEntry.hashCode());
         
         otherBlobCitationEntry = new BlobCitationEntry(rawText);
         otherBlobCitationEntry.setPosition(position);
         otherBlobCitationEntry.setIdentifiers(Lists.newArrayList(new TypedId("someOtherValue", "someType", 0.9f)));
-        assertNotEquals(blobCitationEntry.hashCode(), otherBlobCitationEntry.hashCode());
+        assertNotSame(blobCitationEntry.hashCode(), otherBlobCitationEntry.hashCode());
         
         otherBlobCitationEntry = new BlobCitationEntry(rawText);
         otherBlobCitationEntry.setPosition(position);

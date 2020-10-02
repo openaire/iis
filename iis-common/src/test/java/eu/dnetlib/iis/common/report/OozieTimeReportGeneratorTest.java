@@ -1,43 +1,42 @@
 package eu.dnetlib.iis.common.report;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.mockito.Mockito.when;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.oozie.OozieClientFactory;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.common.schemas.ReportEntryType;
+import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.oozie.client.OozieClient;
 import org.apache.oozie.client.OozieClientException;
 import org.apache.oozie.client.WorkflowAction;
 import org.apache.oozie.client.WorkflowJob;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
 
-import eu.dnetlib.iis.common.java.PortBindings;
-import eu.dnetlib.iis.common.oozie.OozieClientFactory;
-import eu.dnetlib.iis.common.schemas.ReportEntry;
-import eu.dnetlib.iis.common.schemas.ReportEntryType;
-import eu.dnetlib.iis.common.utils.AvroTestUtils;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.mockito.Mockito.when;
 
 /**
  * @author madryk
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class OozieTimeReportGeneratorTest {
 
     @InjectMocks
@@ -48,12 +47,9 @@ public class OozieTimeReportGeneratorTest {
     
     @Mock
     private OozieClient oozieClient;
-    
-    
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-    
-    
+
+    public File tempFolder;
+
     private String oozieUrl = "http://oozieLocation.com:11000/oozie/";
     
     private String jobId = "WORKFLOW_JOB_ID";
@@ -72,8 +68,9 @@ public class OozieTimeReportGeneratorTest {
     private WorkflowAction workflowAction3;
     
     
-    @Before
-    public void setup() throws OozieClientException, ParseException {
+    @BeforeEach
+    public void setup() throws OozieClientException, ParseException, IOException {
+        tempFolder = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
         
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         
@@ -126,7 +123,7 @@ public class OozieTimeReportGeneratorTest {
         
         // assert
         
-        List<ReportEntry> actualReport = AvroTestUtils.readLocalAvroDataStore(tempFolder.getRoot().getPath());
+        List<ReportEntry> actualReport = AvroTestUtils.readLocalAvroDataStore(tempFolder.getPath());
         
         assertThat(actualReport, containsInAnyOrder(
                 new ReportEntry("group.first", ReportEntryType.DURATION, "3826000"), // 1h 3min 46sec
@@ -137,7 +134,7 @@ public class OozieTimeReportGeneratorTest {
     //------------------------ PRIVATE --------------------------
 
     private PortBindings createPortBindings() {
-        Path outputDirPath = new Path(tempFolder.getRoot().getPath());
+        Path outputDirPath = new Path(tempFolder.getPath());
         PortBindings portBindings = new PortBindings(ImmutableMap.of(), ImmutableMap.of("report", outputDirPath));
         return portBindings;
     }

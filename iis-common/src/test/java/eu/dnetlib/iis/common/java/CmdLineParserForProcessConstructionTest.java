@@ -1,14 +1,13 @@
 package eu.dnetlib.iis.common.java;
 
-import static org.junit.Assert.assertEquals;
+import eu.dnetlib.iis.common.java.porttype.PortType;
+import org.apache.commons.cli.CommandLine;
+import org.apache.hadoop.conf.Configuration;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.hadoop.conf.Configuration;
-import org.junit.Test;
-
-import eu.dnetlib.iis.common.java.porttype.PortType;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * 

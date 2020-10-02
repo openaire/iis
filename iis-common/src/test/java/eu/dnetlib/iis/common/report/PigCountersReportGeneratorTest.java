@@ -1,37 +1,37 @@
 package eu.dnetlib.iis.common.report;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-import java.util.Map;
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-
 import eu.dnetlib.iis.common.counter.PigCounters;
 import eu.dnetlib.iis.common.counter.PigCountersParser;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.schemas.ReportEntryType;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.Map;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.mockito.Mockito.when;
 
 /**
  * @author madryk
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class PigCountersReportGeneratorTest {
 
     @InjectMocks
@@ -46,10 +46,12 @@ public class PigCountersReportGeneratorTest {
     @Mock
     private ReportPigCountersResolver reportPigCountersResolver;
     
-    
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-    
+    public File tempFolder;
+
+    @BeforeEach
+    public void beforeEach() throws IOException {
+        tempFolder = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
+    }
     
     //------------------------ TESTS --------------------------
     
@@ -58,7 +60,7 @@ public class PigCountersReportGeneratorTest {
         
         // given
         
-        Path outputDirPath = new Path(tempFolder.getRoot().getPath());
+        Path outputDirPath = new Path(tempFolder.getPath());
         PortBindings portBindings = new PortBindings(ImmutableMap.of(), ImmutableMap.of("report", outputDirPath));
         Configuration conf = new Configuration(false);
         
@@ -88,7 +90,7 @@ public class PigCountersReportGeneratorTest {
         
         // assert
         
-        List<ReportEntry> actualReportCounters = AvroTestUtils.readLocalAvroDataStore(tempFolder.getRoot().getPath());
+        List<ReportEntry> actualReportCounters = AvroTestUtils.readLocalAvroDataStore(tempFolder.getPath());
         
         assertThat(actualReportCounters, containsInAnyOrder(reportCounter1, reportCounter2));
     }

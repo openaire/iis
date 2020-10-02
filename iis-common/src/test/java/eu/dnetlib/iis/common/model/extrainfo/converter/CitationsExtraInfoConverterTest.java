@@ -1,17 +1,15 @@
 package eu.dnetlib.iis.common.model.extrainfo.converter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import eu.dnetlib.iis.common.model.extrainfo.citations.BlobCitationEntry;
+import eu.dnetlib.iis.common.model.extrainfo.citations.TypedId;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.junit.Test;
-
-import eu.dnetlib.iis.common.model.extrainfo.citations.BlobCitationEntry;
-import eu.dnetlib.iis.common.model.extrainfo.citations.TypedId;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author mhorst
@@ -27,9 +25,9 @@ public class CitationsExtraInfoConverterTest {
         assertEquals("<null/>", result);
     }
     
-    @Test(expected=NullPointerException.class)
-    public void testDeserializeNull() throws Exception {
-        converter.deserialize(null);
+    @Test
+    public void testDeserializeNull() {
+        assertThrows(NullPointerException.class, () -> converter.deserialize(null));
     }
     
     @Test

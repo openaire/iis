@@ -1,22 +1,14 @@
 package eu.dnetlib.iis.common.pig.udfs;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import com.google.common.collect.Lists;
+import org.apache.pig.data.*;
+import org.apache.pig.impl.logicalLayer.schema.Schema;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.apache.pig.data.BagFactory;
-import org.apache.pig.data.DataBag;
-import org.apache.pig.data.DataType;
-import org.apache.pig.data.Tuple;
-import org.apache.pig.data.TupleFactory;
-import org.apache.pig.impl.logicalLayer.schema.Schema;
-import org.junit.Test;
-
-import com.google.common.collect.Lists;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author mhorst
@@ -28,37 +20,37 @@ public class StringListToListWithIndexesTest {
     
     // --------------------------------- TESTS -------------------------------------
     
-    @Test(expected=IOException.class)
-    public void testExecOnNull() throws Exception {
+    @Test
+    public void testExecOnNull() {
         // execute
-        udf.exec(null);
+        assertThrows(IOException.class, () -> udf.exec(null));
     }
     
-    @Test(expected=IOException.class)
-    public void testExecOnEmpty() throws Exception {
+    @Test
+    public void testExecOnEmpty() {
         // given
         TupleFactory tupleFactory = TupleFactory.getInstance();
         
         // execute
-        udf.exec(tupleFactory.newTuple());
+        assertThrows(IOException.class, () -> udf.exec(tupleFactory.newTuple()));
     }
     
-    @Test(expected=IOException.class)
-    public void testExecTooManyArgs() throws Exception {
+    @Test
+    public void testExecTooManyArgs() {
         // given
         TupleFactory tupleFactory = TupleFactory.getInstance();
         
         // execute
-        udf.exec(tupleFactory.newTuple(Lists.newArrayList("str1", "str2")));
+        assertThrows(IOException.class, () -> udf.exec(tupleFactory.newTuple(Lists.newArrayList("str1", "str2"))));
     }
     
-    @Test(expected=ClassCastException.class)
-    public void testExecOnString() throws Exception {
+    @Test
+    public void testExecOnString() {
         // given
         TupleFactory tupleFactory = TupleFactory.getInstance();
         
         // execute
-        udf.exec(tupleFactory.newTuple(Lists.newArrayList("str1")));
+        assertThrows(ClassCastException.class, () -> udf.exec(tupleFactory.newTuple(Lists.newArrayList("str1"))));
     }
 
     @Test

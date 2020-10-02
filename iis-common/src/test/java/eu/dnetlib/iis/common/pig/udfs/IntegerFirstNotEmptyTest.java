@@ -1,19 +1,19 @@
 package eu.dnetlib.iis.common.pig.udfs;
 
 import com.google.common.collect.Lists;
+import org.apache.pig.data.TupleFactory;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
-import org.apache.pig.data.TupleFactory;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  *
  * @author Dominika Tkaczyk
  */
-public class IntegerFirstNotEmptyTest extends TestCase {
+public class IntegerFirstNotEmptyTest {
     
     @Test
 	public void testUDF() throws IOException {

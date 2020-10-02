@@ -1,10 +1,9 @@
 package eu.dnetlib.iis.common.java;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import org.apache.hadoop.conf.Configuration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author mhorst
@@ -26,35 +25,35 @@ public class ProcessWrapperTest {
         assertNotNull(cfg);
     }
 
-    @Test(expected=CmdLineParserException.class)
-    public void testRunForEmptyArgs() throws Exception {
+    @Test
+    public void testRunForEmptyArgs() {
         // given
         String[] args = new String[0];
         
         // execute
-        ProcessWrapper.main(args);
+        assertThrows(CmdLineParserException.class, () -> ProcessWrapper.main(args));
     }
     
-    @Test(expected=CmdLineParserException.class)
-    public void testRunForNonExistingProcessClass() throws Exception {
+    @Test
+    public void testRunForNonExistingProcessClass() {
         // given
         String[] args = new String[] {
                 "non.existing.class"
         };
         
         // execute
-        ProcessWrapper.main(args);
+        assertThrows(CmdLineParserException.class, () -> ProcessWrapper.main(args));
     }
     
-    @Test(expected=CmdLineParserException.class)
-    public void testRunForNonProcessClass() throws Exception {
+    @Test
+    public void testRunForNonProcessClass() {
         // given
         String[] args = new String[] {
                 ProcessWrapper.class.getCanonicalName()
         };
 
         // execute
-        ProcessWrapper.main(args);
+        assertThrows(CmdLineParserException.class, () -> ProcessWrapper.main(args));
     }
     
     @Test

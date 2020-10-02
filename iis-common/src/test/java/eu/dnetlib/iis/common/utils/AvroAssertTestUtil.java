@@ -1,14 +1,14 @@
 package eu.dnetlib.iis.common.utils;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertEquals;
+import org.apache.avro.generic.GenericRecord;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.avro.generic.GenericRecord;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**

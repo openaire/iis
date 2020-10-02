@@ -1,9 +1,8 @@
 package eu.dnetlib.iis.common.utils;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author mhorst
@@ -13,14 +12,16 @@ public class ByteArrayUtilsTest {
 
     private static final String ENCODING_UTF8 = "utf8";
 
-    @Test(expected=NullPointerException.class)
-    public void testStartsWithNullSource() throws Exception {
-        ByteArrayUtils.startsWith(null, "str".getBytes(ENCODING_UTF8));
+    @Test
+    public void testStartsWithNullSource() {
+        assertThrows(NullPointerException.class, () ->
+                ByteArrayUtils.startsWith(null, "str".getBytes(ENCODING_UTF8)));
     }
     
-    @Test(expected=NullPointerException.class)
-    public void testStartsWithNullMatch() throws Exception {
-        ByteArrayUtils.startsWith("str".getBytes(ENCODING_UTF8), null);
+    @Test
+    public void testStartsWithNullMatch() {
+        assertThrows(NullPointerException.class, () ->
+                ByteArrayUtils.startsWith("str".getBytes(ENCODING_UTF8), null));
     }
     
     @Test

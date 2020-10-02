@@ -1,11 +1,10 @@
 package eu.dnetlib.iis.common.report;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.schemas.ReportEntryType;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author madryk

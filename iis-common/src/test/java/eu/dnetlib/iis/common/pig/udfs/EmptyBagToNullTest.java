@@ -1,23 +1,22 @@
 package eu.dnetlib.iis.common.pig.udfs;
 
-import java.io.IOException;
-
+import com.google.common.collect.Lists;
 import org.apache.pig.data.BagFactory;
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataType;
 import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Lists;
+import java.io.IOException;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
  * @author Dominika Tkaczyk
  */
-public class EmptyBagToNullTest extends TestCase {
+public class EmptyBagToNullTest {
     
     @Test
 	public void testUDF() throws IOException {

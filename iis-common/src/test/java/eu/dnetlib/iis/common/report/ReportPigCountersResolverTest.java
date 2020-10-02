@@ -1,32 +1,31 @@
 package eu.dnetlib.iis.common.report;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-
-import java.util.List;
-import java.util.Map;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import eu.dnetlib.iis.common.counter.PigCounters;
 import eu.dnetlib.iis.common.counter.PigCounters.JobCounters;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.schemas.ReportEntryType;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Map;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author madryk
  */
 public class ReportPigCountersResolverTest {
-    
+
     private ReportPigCountersResolver reportPigCountersResolver = new ReportPigCountersResolver();
-    
+
     private PigCounters pigCounters;
-    
-    @Before
+
+    @BeforeEach
     public void setup() {
 
         JobCounters jobCounters1 = new JobCounters("job_ID1");
@@ -43,7 +42,7 @@ public class ReportPigCountersResolverTest {
         jobCounters2.addAlias("jobAlias2");
 
         jobCounters2.addCounter("MAP_INPUT_RECORDS", "3");
-        
+
         Map<String, String> rootLevelCounters = Maps.newHashMap();
         rootLevelCounters.put("RECORD_WRITTEN", "3");
         rootLevelCounters.put("SOME_STRANGE_COUNTER", "500");
@@ -51,22 +50,22 @@ public class ReportPigCountersResolverTest {
         pigCounters = new PigCounters(rootLevelCounters, Lists.newArrayList(jobCounters1, jobCounters2));
 
     }
-    
+
     //------------------------ TESTS --------------------------
-    
-    @Test(expected = IllegalArgumentException.class)
+
+    @Test
     public void resolveReportCounters_jobLevelCounter_NON_EXISTENT_JOB_ALIAS() {
-        
+
         // given
-        
+
         ReportPigCounterMapping counterMapping = new ReportPigCounterMapping("MAP_INPUT_RECORDS", "nonexistentJobAlias", "destination.report.param1");
-        
+
         // execute
-        
-        reportPigCountersResolver.resolveReportCounters(pigCounters, Lists.newArrayList(counterMapping));
+        assertThrows(IllegalArgumentException.class, () ->
+                reportPigCountersResolver.resolveReportCounters(pigCounters, Lists.newArrayList(counterMapping)));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void resolveReportCounters_jobLevelCounter_NON_EXISTENT_COUNTER_NAME() {
         
         // given
@@ -74,11 +73,11 @@ public class ReportPigCountersResolverTest {
         ReportPigCounterMapping counterMapping = new ReportPigCounterMapping("NON_EXISTENT_COUNTER_NAME", "jobAlias1", "destination.report.param1");
         
         // execute
-        
-        reportPigCountersResolver.resolveReportCounters(pigCounters, Lists.newArrayList(counterMapping));
+        assertThrows(IllegalArgumentException.class, () ->
+                reportPigCountersResolver.resolveReportCounters(pigCounters, Lists.newArrayList(counterMapping)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void resolveReportCounters_rootLevelCounter_NON_EXISTENT_COUNTER_NAME() {
         
         // given
@@ -86,8 +85,9 @@ public class ReportPigCountersResolverTest {
         ReportPigCounterMapping counterMapping = new ReportPigCounterMapping("NON_EXISTENT_COUNTER_NAME", null, "destination.report.param1");
         
         // execute
-        
-        reportPigCountersResolver.resolveReportCounters(pigCounters, Lists.newArrayList(counterMapping));
+
+        assertThrows(IllegalArgumentException.class, () ->
+                reportPigCountersResolver.resolveReportCounters(pigCounters, Lists.newArrayList(counterMapping)));
     }
 
     

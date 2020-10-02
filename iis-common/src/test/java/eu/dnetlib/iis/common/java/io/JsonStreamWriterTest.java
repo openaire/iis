@@ -1,14 +1,14 @@
 package eu.dnetlib.iis.common.java.io;
 
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.avro.Document;
+import org.junit.jupiter.api.Test;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.junit.Assert;
-import org.junit.Test;
-
-import eu.dnetlib.iis.common.avro.Document;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Mateusz Kobos
@@ -29,6 +29,6 @@ public class JsonStreamWriterTest {
 		String expected = ClassPathResourceProvider
 				.getResourceContent("eu/dnetlib/iis/common/java/io/document.json")
 				.replace("\r", "");
-		Assert.assertEquals(expected, actual);
+		assertEquals(expected, actual);
 	}
 }

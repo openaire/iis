@@ -1,9 +1,11 @@
 package eu.dnetlib.iis.common;
 
+import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 
-import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Łukasz Dumiszewski
@@ -44,8 +46,8 @@ public class TestsIOUtilsTest {
         
     }
     
-    @Test(expected = AssertionError.class)
-    public void assertUtf8TextContentsEqual_TEXT_DIFF() throws IOException {
+    @Test
+    public void assertUtf8TextContentsEqual_TEXT_DIFF() {
         
         // given
         String str0 = "Ala ma kot\nKot ma Alę\n";
@@ -53,14 +55,14 @@ public class TestsIOUtilsTest {
         
         
         // assert
-        TestsIOUtils.assertUtf8TextContentsEqual(
-                IOUtils.toInputStream(str0, InfoSpaceConstants.ENCODING_UTF8), 
-                IOUtils.toInputStream(str1, InfoSpaceConstants.ENCODING_UTF8));
-        
+        assertThrows(AssertionError.class, () ->
+                TestsIOUtils.assertUtf8TextContentsEqual(
+                        IOUtils.toInputStream(str0, InfoSpaceConstants.ENCODING_UTF8),
+                        IOUtils.toInputStream(str1, InfoSpaceConstants.ENCODING_UTF8)));
     }
     
-    @Test(expected = AssertionError.class)
-    public void assertUtf8TextContentsEqual_DIFF_LINE_COUNT() throws IOException {
+    @Test
+    public void assertUtf8TextContentsEqual_DIFF_LINE_COUNT() {
         
         // given
         String str0 = "Ala ma kota\nKot ma Alę\n";
@@ -68,10 +70,10 @@ public class TestsIOUtilsTest {
         
         
         // assert
-        TestsIOUtils.assertUtf8TextContentsEqual(
-                IOUtils.toInputStream(str0, InfoSpaceConstants.ENCODING_UTF8), 
-                IOUtils.toInputStream(str1, InfoSpaceConstants.ENCODING_UTF8));
-        
+        assertThrows(AssertionError.class, () ->
+                TestsIOUtils.assertUtf8TextContentsEqual(
+                        IOUtils.toInputStream(str0, InfoSpaceConstants.ENCODING_UTF8),
+                        IOUtils.toInputStream(str1, InfoSpaceConstants.ENCODING_UTF8)));
     }
     
 }

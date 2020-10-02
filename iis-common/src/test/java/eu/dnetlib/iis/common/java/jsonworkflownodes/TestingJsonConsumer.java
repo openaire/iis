@@ -1,27 +1,25 @@
 package eu.dnetlib.iis.common.java.jsonworkflownodes;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
-
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-
 import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.Process;
 import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.java.jsonworkflownodes.StringPortSpecificationExtractor.PortSpecification;
 import eu.dnetlib.iis.common.java.porttype.AnyPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Workflow java node that checks if input path contains json file
