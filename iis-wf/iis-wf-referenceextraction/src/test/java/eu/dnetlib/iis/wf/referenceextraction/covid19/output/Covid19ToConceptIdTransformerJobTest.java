@@ -1,23 +1,22 @@
 package eu.dnetlib.iis.wf.referenceextraction.covid19.output;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.referenceextraction.covid19.schemas.MatchedDocument;
 import eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId;
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class Covid19ToConceptIdTransformerJobTest {
     private SparkJobExecutor executor = new SparkJobExecutor();
@@ -25,14 +24,14 @@ public class Covid19ToConceptIdTransformerJobTest {
     private Path inputDir;
     private Path outputDir;
 
-    @Before
+    @BeforeEach
     public void before() throws IOException {
         workingDir = Files.createTempDirectory("covid19-output-transformer");
         inputDir = workingDir.resolve("input");
         outputDir = workingDir.resolve("output");
     }
 
-    @After
+    @AfterEach
     public void after() throws IOException {
         FileUtils.deleteDirectory(workingDir.toFile());
     }

@@ -1,23 +1,22 @@
 package eu.dnetlib.iis.wf.referenceextraction.patent.input;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * {@link PatentMetadataRetrieverInputTransformerJob} test class.
@@ -33,7 +32,7 @@ public class PatentMetadataRetrieverInputTransformerJobTest {
     private Path inputMatchedPatentDir;
     private Path outputDir;
 
-    @Before
+    @BeforeEach
     public void before() throws IOException {
         workingDir = Files.createTempDirectory("patent-transformer");
         inputImportedPatentDir = workingDir.resolve("input-imported");
@@ -41,7 +40,7 @@ public class PatentMetadataRetrieverInputTransformerJobTest {
         outputDir = workingDir.resolve("output");
     }
 
-    @After
+    @AfterEach
     public void after() throws IOException {
         FileUtils.deleteDirectory(workingDir.toFile());
     }

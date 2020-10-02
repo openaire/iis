@@ -1,31 +1,13 @@
 package eu.dnetlib.iis.wf.referenceextraction.softwareurl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.List;
-
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import eu.dnetlib.iis.common.java.io.DataStore;
-import eu.dnetlib.iis.common.java.io.HdfsUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.curator.test.TestingServer;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.ha.ZKFailoverController;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
 import eu.dnetlib.iis.audit.schemas.Fault;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.IntegrationTest;
 import eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess;
 import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils;
 import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils.CacheRecordType;
+import eu.dnetlib.iis.common.java.io.DataStore;
+import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.lock.ZookeeperLockManagerFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
@@ -34,16 +16,32 @@ import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrl;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithSource;
+import org.apache.commons.io.FileUtils;
+import org.apache.curator.test.TestingServer;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.ha.ZKFailoverController;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * 
  * @author mhorst
  *
  */
-@Category(IntegrationTest.class)
+@IntegrationTest
 public class CachedWebCrawlerJobTest {
 
     private SparkJobExecutor executor = new SparkJobExecutor();
@@ -70,7 +68,7 @@ public class CachedWebCrawlerJobTest {
     
     private TestingServer zookeeperServer;
     
-    @Before
+    @BeforeEach
     public void before() throws Exception {
         workingDir = Files.createTempDirectory(CachedWebCrawlerJobTest.class.getSimpleName()).toFile();
         inputPath = workingDir + "/spark_webcrawler/input";
@@ -85,7 +83,7 @@ public class CachedWebCrawlerJobTest {
         zookeeperServer = new TestingServer(true);
     }
     
-    @After
+    @AfterEach
     public void after() throws IOException {
         FileUtils.deleteDirectory(workingDir);
         zookeeperServer.stop();

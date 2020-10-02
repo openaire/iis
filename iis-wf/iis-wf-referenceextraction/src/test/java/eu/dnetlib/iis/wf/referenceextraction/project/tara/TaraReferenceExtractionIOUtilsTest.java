@@ -7,9 +7,9 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.avro.SchemaConverters;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.io.IOException;
@@ -17,16 +17,16 @@ import java.util.Collections;
 import java.util.List;
 
 import static eu.dnetlib.iis.wf.referenceextraction.project.tara.TaraReferenceExtractionIOUtils.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 public class TaraReferenceExtractionIOUtilsTest {
 
     private static SparkSession spark;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    public static void beforeAll() {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
         conf.set("spark.driver.host", "localhost");
@@ -34,8 +34,8 @@ public class TaraReferenceExtractionIOUtilsTest {
         spark = SparkSession.builder().config(conf).getOrCreate();
     }
 
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    public static void afterAll() {
         spark.stop();
     }
 
@@ -69,7 +69,7 @@ public class TaraReferenceExtractionIOUtilsTest {
         storeInOutput(documentToProjectDF, "path/to/output", writer);
 
         // then
-        ArgumentCaptor<Dataset<Row>> dataFrameCaptor = new ArgumentCaptor<>();
+        ArgumentCaptor<Dataset<Row>> dataFrameCaptor = ArgumentCaptor.forClass(Dataset.class);
         verify(writer, atLeastOnce()).write(dataFrameCaptor.capture(),
                 eq("path/to/output"),
                 eq(DocumentToProject.SCHEMA$));
