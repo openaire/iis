@@ -1,11 +1,11 @@
 package eu.dnetlib.iis.wf.documentsclassification;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentMetadata;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Łukasz Dumiszewski
@@ -21,12 +21,11 @@ public class DocumentToDocClassificationMetadataConverterTest {
     //------------------------ TESTS --------------------------
     
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void convert_Null_Document() {
         
         // execute
-        
-        converter.convert(null);
+        assertThrows(NullPointerException.class, () -> converter.convert(null));
         
     }
     
