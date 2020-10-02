@@ -1,51 +1,44 @@
 package eu.dnetlib.maven.plugin.properties;
 
-import static eu.dnetlib.maven.plugin.properties.WritePredefinedProjectProperties.PROPERTY_PREFIX_ENV;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Properties;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.util.Properties;
+
+import static eu.dnetlib.maven.plugin.properties.WritePredefinedProjectProperties.PROPERTY_PREFIX_ENV;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.lenient;
 
 
 /**
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class WritePredefinedProjectPropertiesTest {
 
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
-    
+    private File testFolder;
+
     @Mock
     private MavenProject mavenProject;
-    
+
     private WritePredefinedProjectProperties mojo;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    public void init() throws IOException {
+        testFolder = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
         mojo = new WritePredefinedProjectProperties();
         mojo.outputFile = getPropertiesFileLocation();
         mojo.project = mavenProject;
-        doReturn(new Properties()).when(mavenProject).getProperties();
+        lenient().doReturn(new Properties()).when(mavenProject).getProperties();
     }
 
     // ----------------------------------- TESTS ---------------------------------------------
@@ -80,19 +73,19 @@ public class WritePredefinedProjectPropertiesTest {
         assertTrue(storedProperties.containsKey(key));
         assertEquals(value, storedProperties.getProperty(key));
     }
-    
-    @Test(expected=MojoExecutionException.class)
-    public void testExecuteWithProjectPropertiesAndInvalidOutputFile() throws Exception {
+
+    @Test
+    public void testExecuteWithProjectPropertiesAndInvalidOutputFile() {
         // given
         String key = "projectPropertyKey";
         String value = "projectPropertyValue";
         Properties projectProperties = new Properties();
         projectProperties.setProperty(key, value);
         doReturn(projectProperties).when(mavenProject).getProperties();
-        mojo.outputFile = testFolder.getRoot();
-        
+        mojo.outputFile = testFolder;
+
         // execute
-        mojo.execute();
+        assertThrows(MojoExecutionException.class, () -> mojo.execute());
     }
     
     @Test
@@ -154,8 +147,8 @@ public class WritePredefinedProjectPropertiesTest {
         projectProperties.setProperty(key, value);
         projectProperties.setProperty(includedKey, includedValue);
         doReturn(projectProperties).when(mavenProject).getProperties();
-        
-        File includedPropertiesFile = new File(testFolder.getRoot(), "included.properties");
+
+        File includedPropertiesFile = new File(testFolder, "included.properties");
         Properties includedProperties = new Properties();
         includedProperties.setProperty(includedKey, "irrelevantValue");
         includedProperties.store(new FileWriter(includedPropertiesFile), null);
@@ -197,9 +190,9 @@ public class WritePredefinedProjectPropertiesTest {
         assertTrue(storedProperties.containsKey(includedKey));
         assertEquals(includedValue, storedProperties.getProperty(includedKey));
     }
-    
-    @Test(expected=MojoExecutionException.class)
-    public void testExecuteIncludingPropertyKeysFromBlankLocation() throws Exception {
+
+    @Test
+    public void testExecuteIncludingPropertyKeysFromBlankLocation() {
         // given
         String key = "projectPropertyKey";
         String value = "projectPropertyValue";
@@ -213,7 +206,7 @@ public class WritePredefinedProjectPropertiesTest {
         mojo.setIncludePropertyKeysFromFiles(new String[] {""});
         
         // execute
-        mojo.execute();
+        assertThrows(MojoExecutionException.class, () -> mojo.execute());
     }
     
     @Test
@@ -227,8 +220,8 @@ public class WritePredefinedProjectPropertiesTest {
         projectProperties.setProperty(key, value);
         projectProperties.setProperty(includedKey, includedValue);
         doReturn(projectProperties).when(mavenProject).getProperties();
-        
-        File includedPropertiesFile = new File(testFolder.getRoot(), "included.xml");
+
+        File includedPropertiesFile = new File(testFolder, "included.xml");
         Properties includedProperties = new Properties();
         includedProperties.setProperty(includedKey, "irrelevantValue");
         includedProperties.storeToXML(new FileOutputStream(includedPropertiesFile), null);
@@ -245,8 +238,8 @@ public class WritePredefinedProjectPropertiesTest {
         assertTrue(storedProperties.containsKey(includedKey));
         assertEquals(includedValue, storedProperties.getProperty(includedKey));
     }
-    
-    @Test(expected=MojoExecutionException.class)
+
+    @Test
     public void testExecuteIncludingPropertyKeysFromInvalidXmlFile() throws Exception {
         // given
         String key = "projectPropertyKey";
@@ -257,8 +250,8 @@ public class WritePredefinedProjectPropertiesTest {
         projectProperties.setProperty(key, value);
         projectProperties.setProperty(includedKey, includedValue);
         doReturn(projectProperties).when(mavenProject).getProperties();
-        
-        File includedPropertiesFile = new File(testFolder.getRoot(), "included.xml");
+
+        File includedPropertiesFile = new File(testFolder, "included.xml");
         Properties includedProperties = new Properties();
         includedProperties.setProperty(includedKey, "irrelevantValue");
         includedProperties.store(new FileOutputStream(includedPropertiesFile), null);
@@ -266,7 +259,7 @@ public class WritePredefinedProjectPropertiesTest {
         mojo.setIncludePropertyKeysFromFiles(new String[] {includedPropertiesFile.getAbsolutePath()});
         
         // execute
-        mojo.execute();
+        assertThrows(MojoExecutionException.class, () -> mojo.execute());
     }
     
     @Test
@@ -283,14 +276,14 @@ public class WritePredefinedProjectPropertiesTest {
         Properties storedProperties = getStoredProperties();
         assertEquals(0, storedProperties.size());
     }
-    
-    @Test(expected=MojoExecutionException.class)
-    public void testExecuteIncludingPropertyKeysFromInvalidFile() throws Exception {
+
+    @Test
+    public void testExecuteIncludingPropertyKeysFromInvalidFile() {
         // given
         mojo.setIncludePropertyKeysFromFiles(new String[] {"invalid location"});
         
         // execute
-        mojo.execute();
+        assertThrows(MojoExecutionException.class, () -> mojo.execute());
     }
     
     @Test
@@ -354,7 +347,7 @@ public class WritePredefinedProjectPropertiesTest {
     // ----------------------------------- PRIVATE -------------------------------------------
     
     private File getPropertiesFileLocation() {
-        return new File(testFolder.getRoot(), "test.properties");
+        return new File(testFolder, "test.properties");
     }
     
     private Properties getStoredProperties() throws FileNotFoundException, IOException {
