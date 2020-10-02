@@ -2,15 +2,14 @@ package eu.dnetlib.iis.wf.importer.stream.project;
 
 import java.io.IOException;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import eu.dnetlib.data.transform.xml.AbstractDNetXsltFunctions;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.importer.schemas.Project;
 import eu.dnetlib.iis.wf.importer.infospace.converter.FundingTreeParser;
 import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectConverter;
-import eu.dnetlib.openaire.exporter.model.ProjectDetail;
 
 /**
  * Utility class for converting projects into different representation. 
@@ -63,8 +62,17 @@ public class ProjectDetailConverter {
             throw new RuntimeException("unexpected projectId format: " + sourceId + 
                     ", unable to split into two by " + InfoSpaceConstants.ID_NAMESPACE_SEPARATOR);
         }
-        return AbstractDNetXsltFunctions.oafId("project", 
-                tokenizedProjectId[0], tokenizedProjectId[1]); 
+        return projectOafId(tokenizedProjectId[0], tokenizedProjectId[1]);
     }
-    
+
+    private static String projectOafId(String prefix, String id) {
+        if (id.isEmpty() || prefix.isEmpty()) {
+            return "";
+        }
+        return projectOafSimpleId(prefix + "::" + DigestUtils.md5Hex(id));
+    }
+
+    private static String projectOafSimpleId(String id) {
+        return (InfoSpaceConstants.ROW_PREFIX_PROJECT + id).replaceAll("\\s|\\n", "");
+    }
 }

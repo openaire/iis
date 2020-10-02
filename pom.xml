@@ -481,42 +481,7 @@
 
             <dependency>
                 <groupId>eu.dnetlib</groupId>
-                <artifactId>dnet-openaireplus-mapping-utils</artifactId>
-                <version>[6.0.0, 7.0.0)</version>
-                <exclusions>
-                    <!-- unneeded dependencies -->
-                    <exclusion>
-                        <groupId>org.apache.hadoop</groupId>
-                        <artifactId>hadoop-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.hadoop</groupId>
-                        <artifactId>hadoop-hdfs</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.zookeeper</groupId>
-                        <artifactId>zookeeper</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>jgrapht</groupId>
-                        <artifactId>jgrapht</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.fasterxml.jackson.core</groupId>
-                        <artifactId>jackson-databind</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>eu.dnetlib</groupId>
                 <artifactId>dnet-objectstore-rmi</artifactId>
-                <version>[2.0.0, 3.0.0)</version>
-            </dependency>
-
-            <dependency>
-                <groupId>eu.dnetlib</groupId>
-                <artifactId>cnr-rmi-api</artifactId>
                 <version>[2.0.0, 3.0.0)</version>
             </dependency>
 
@@ -535,12 +500,6 @@
                         <artifactId>spring-webmvc</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>eu.dnetlib</groupId>
-                <artifactId>cnr-service-utils</artifactId>
-                <version>[1.0.0, 2.0.0)</version>
             </dependency>
 
             <!-- command line arguments parser -->
@@ -590,12 +549,6 @@
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream</artifactId>
                 <version>1.4.9</version>
-            </dependency>
-
-            <dependency>
-                <groupId>xalan</groupId>
-                <artifactId>xalan</artifactId>
-                <version>2.7.2</version>
             </dependency>
 
             <dependency>

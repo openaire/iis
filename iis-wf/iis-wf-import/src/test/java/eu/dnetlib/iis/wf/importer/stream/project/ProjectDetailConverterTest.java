@@ -4,7 +4,6 @@ import eu.dnetlib.iis.common.TestsIOUtils;
 import eu.dnetlib.iis.common.java.io.JsonUtils;
 import eu.dnetlib.iis.importer.schemas.Project;
 import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectConverter;
-import eu.dnetlib.openaire.exporter.model.ProjectDetail;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
