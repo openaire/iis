@@ -9,56 +9,57 @@ import eu.dnetlib.iis.citationmatching.direct.schemas.ReferenceMetadata;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import scala.Tuple2;
 
 import java.util.Iterator;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.iterableWithSize;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
- * 
+ *
  * @author madryk
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ExternalIdReferenceExtractorTest {
 
     private ExternalIdReferenceExtractor externalIdReferenceExtractor = new ExternalIdReferenceExtractor();
 
     @Mock
     private JavaRDD<DocumentMetadata> docMetadataRdd;
-    
+
     @Mock
     private JavaPairRDD<String, Citation> externalIdReferencesRdd;
-    
+
     @Captor
     private ArgumentCaptor<PairFlatMapFunction<DocumentMetadata, String, Citation>> flatMapCitationsFunctionArg;
 
     //------------------------ TEST --------------------------
-    
-    @Test(expected = NullPointerException.class)
+
+    @Test
     public void extractExternalIdReferences_NULL_ID_TYPE() {
         // execute
-        externalIdReferenceExtractor.extractExternalIdReferences(docMetadataRdd, null);
+        assertThrows(NullPointerException.class, () ->
+                externalIdReferenceExtractor.extractExternalIdReferences(docMetadataRdd, null));
     }
-    
-    @Test(expected = NullPointerException.class)
+
+    @Test
     public void extractExternalIdReferences_NULL_DOC_METADATA() {
         // execute
-        externalIdReferenceExtractor.extractExternalIdReferences(null, "someIdType");
+        assertThrows(NullPointerException.class, () ->
+                externalIdReferenceExtractor.extractExternalIdReferences(null, "someIdType"));
     }
-    
+
     @Test
     public void extractExternalIdReferences() throws Exception {
         // given
@@ -70,20 +71,20 @@ public class ExternalIdReferenceExtractorTest {
         // assert
         assertSame(retExternalIdReferencesRdd, externalIdReferencesRdd);
         verify(docMetadataRdd).flatMapToPair(flatMapCitationsFunctionArg.capture());
-        
+
         assertFlatMapCitationsFunction(flatMapCitationsFunctionArg.getValue());
     }
-    
+
     //------------------------ PRIVATE --------------------------
-    
+
     private void assertFlatMapCitationsFunction(PairFlatMapFunction<DocumentMetadata, String, Citation> function) throws Exception {
         ReferenceMetadata referenceMetadata1 = new ReferenceMetadata(1, null);
         ReferenceMetadata referenceMetadata2 = new ReferenceMetadata(2, Maps.newHashMap());
-        
+
         ReferenceMetadata referenceMetadata3 = new ReferenceMetadata(3, Maps.newHashMap());
         referenceMetadata3.getExternalIds().put("someIdType", "ref.id1");
         referenceMetadata3.getExternalIds().put("someOtherIdType", "ref.other.id1");
-        
+
         ReferenceMetadata referenceMetadata4 = new ReferenceMetadata(4, Maps.newHashMap());
         referenceMetadata4.getExternalIds().put("someIdType", "ref.id2");
         referenceMetadata4.getExternalIds().put("someOtherIdType", "ref.other.id2");

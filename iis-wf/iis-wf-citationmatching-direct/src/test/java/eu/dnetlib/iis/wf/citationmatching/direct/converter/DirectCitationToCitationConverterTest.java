@@ -1,13 +1,12 @@
 package eu.dnetlib.iis.wf.citationmatching.direct.converter;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 import com.google.common.collect.Maps;
-
 import eu.dnetlib.iis.common.citations.schemas.Citation;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * 
@@ -21,10 +20,10 @@ public class DirectCitationToCitationConverterTest {
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void convert_NULL() {
         // execute
-        converter.convert(null);
+        assertThrows(NullPointerException.class, () -> converter.convert(null));
     }
     
     @Test

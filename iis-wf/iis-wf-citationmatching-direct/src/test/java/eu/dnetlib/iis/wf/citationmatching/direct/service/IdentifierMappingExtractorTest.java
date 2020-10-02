@@ -1,35 +1,29 @@
 package eu.dnetlib.iis.wf.citationmatching.direct.service;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.same;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
-import eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * 
  * @author madryk
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class IdentifierMappingExtractorTest {
 
     private IdentifierMappingExtractor idMappingExtractor = new IdentifierMappingExtractor();
@@ -69,27 +63,30 @@ public class IdentifierMappingExtractorTest {
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void extractIdMapping_NULL_DOCUMENTS_METADATA_RDD() {
         
         // execute
-        idMappingExtractor.extractIdMapping(null, "someIdType", pickOneDocumentMetadataFunction);
+        assertThrows(NullPointerException.class, () ->
+                idMappingExtractor.extractIdMapping(null, "someIdType", pickOneDocumentMetadataFunction));
     }
     
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void extractIdMapping_NULL_ID_TYPE() {
         
         // execute
-        idMappingExtractor.extractIdMapping(documentsMetadataRdd, null, pickOneDocumentMetadataFunction);
+        assertThrows(NullPointerException.class, () ->
+                idMappingExtractor.extractIdMapping(documentsMetadataRdd, null, pickOneDocumentMetadataFunction));
     }
     
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void extractIdMapping_NULL_PICK_SINGLE_FUNCTION() {
         
         // execute
-        idMappingExtractor.extractIdMapping(documentsMetadataRdd, "someIdType", null);
+        assertThrows(NullPointerException.class, () ->
+                idMappingExtractor.extractIdMapping(documentsMetadataRdd, "someIdType", null));
     }
     
     
@@ -112,8 +109,8 @@ public class IdentifierMappingExtractorTest {
         
         
         // assert
-        
-        assertTrue(retIdMappingRdd == idMappingRdd);
+
+        assertSame(retIdMappingRdd, idMappingRdd);
         
         verify(documentsMetadataRdd).filter(filterDocumentsMetadataFunctionArg.capture());
         assertFilterFunction(filterDocumentsMetadataFunctionArg.getValue());

@@ -1,20 +1,19 @@
 package eu.dnetlib.iis.wf.citationmatching.direct.converter;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Map;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata;
 import eu.dnetlib.iis.metadataextraction.schemas.ReferenceBasicMetadata;
 import eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.PublicationType;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * 
@@ -31,7 +30,7 @@ public class DocumentToDirectCitationMetadataConverterTest {
     private DocumentMetadata.Builder baseDocDirectCitationMetadataBuilder;
 
 
-    @Before
+    @BeforeEach
     public void setUp() {
         baseDocMetadataBuilder = ExtractedDocumentMetadataMergedWithOriginal.newBuilder()
                 .setId("id-1")
@@ -51,10 +50,10 @@ public class DocumentToDirectCitationMetadataConverterTest {
 
     //------------------------ TESTS --------------------------
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void convert_NULL() {
         // execute
-        converter.convert(null);
+        assertThrows(NullPointerException.class, () -> converter.convert(null));
     }
 
 

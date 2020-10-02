@@ -1,31 +1,30 @@
 package eu.dnetlib.iis.wf.citationmatching.direct.service;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
+import eu.dnetlib.iis.citationmatching.direct.schemas.Citation;
+import eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.PairFunction;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.powermock.reflect.Whitebox;
-
-import eu.dnetlib.iis.citationmatching.direct.schemas.Citation;
-import eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata;
 import scala.Tuple2;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * 
  * @author madryk
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ExternalIdCitationMatcherTest {
 
     private ExternalIdCitationMatcher externalIdCitationMatcher = new ExternalIdCitationMatcher();
@@ -70,7 +69,7 @@ public class ExternalIdCitationMatcherTest {
     private JavaRDD<Citation> citationsRdd;
     
     
-    @Before
+    @BeforeEach
     public void setUp() {
         Whitebox.setInternalState(externalIdCitationMatcher, "idMappingExtractor", idMappingExtractor);
         Whitebox.setInternalState(externalIdCitationMatcher, "referencePicker", referencePicker);
@@ -79,25 +78,28 @@ public class ExternalIdCitationMatcherTest {
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void matchCitations_NULL_DOCUMENTS_METADATA_RDD() {
         
         // execute
-        externalIdCitationMatcher.matchCitations(null, "someIdType", pickOneDocumentMetadataFunction);
+        assertThrows(NullPointerException.class, () ->
+                externalIdCitationMatcher.matchCitations(null, "someIdType", pickOneDocumentMetadataFunction));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void matchCitations_NULL_ID_TYPE() {
         
         // execute
-        externalIdCitationMatcher.matchCitations(documentsMetadataRdd, null, pickOneDocumentMetadataFunction);
+        assertThrows(NullPointerException.class, () ->
+                externalIdCitationMatcher.matchCitations(documentsMetadataRdd, null, pickOneDocumentMetadataFunction));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void matchCitations_NULL_PICK_SINGLE_FUNCTION() {
         
         // execute
-        externalIdCitationMatcher.matchCitations(documentsMetadataRdd, "someIdType", null);
+        assertThrows(NullPointerException.class, () ->
+                externalIdCitationMatcher.matchCitations(documentsMetadataRdd, "someIdType", null));
     }
     
     
@@ -121,8 +123,8 @@ public class ExternalIdCitationMatcherTest {
         
         
         // assert
-        
-        assertTrue(retCitationsRdd == citationsRdd);
+
+        assertSame(retCitationsRdd, citationsRdd);
         
         verify(idMappingExtractor).extractIdMapping(documentsMetadataRdd, "someIdType", pickOneDocumentMetadataFunction);
         verify(referencePicker).extractExternalIdReferences(documentsMetadataRdd, "someIdType");
@@ -133,39 +135,44 @@ public class ExternalIdCitationMatcherTest {
         
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void matchCitationsIndirectly_NULL_DOCUMENTS_METADATA_RDD() {
         
         // execute
-        externalIdCitationMatcher.matchCitations(null, referenceIdMappingRdd, "entityIdType", "referenceIdType", pickOneDocumentMetadataFunction);
+        assertThrows(NullPointerException.class, () ->
+                externalIdCitationMatcher.matchCitations(null, referenceIdMappingRdd, "entityIdType", "referenceIdType", pickOneDocumentMetadataFunction));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void matchCitationsIndirectly_NULL_REFERENCE_ID_MAPPINGS_RDD() {
         
         // execute
-        externalIdCitationMatcher.matchCitations(documentsMetadataRdd, null, "entityIdType", "referenceIdType", pickOneDocumentMetadataFunction);
+        assertThrows(NullPointerException.class, () ->
+                externalIdCitationMatcher.matchCitations(documentsMetadataRdd, null, "entityIdType", "referenceIdType", pickOneDocumentMetadataFunction));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void matchCitationsIndirectly_NULL_ENTITY_ID_TYPE() {
-        
-     // execute
-        externalIdCitationMatcher.matchCitations(documentsMetadataRdd, referenceIdMappingRdd, null, "referenceIdType", pickOneDocumentMetadataFunction);
+
+        // execute
+        assertThrows(NullPointerException.class, () ->
+                externalIdCitationMatcher.matchCitations(documentsMetadataRdd, referenceIdMappingRdd, null, "referenceIdType", pickOneDocumentMetadataFunction));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void matchCitationsIndirectly_NULL_REFERENCE_ID_TYPE() {
-        
-     // execute
-        externalIdCitationMatcher.matchCitations(documentsMetadataRdd, referenceIdMappingRdd, "entityIdType", null, pickOneDocumentMetadataFunction);
+
+        // execute
+        assertThrows(NullPointerException.class, () ->
+                externalIdCitationMatcher.matchCitations(documentsMetadataRdd, referenceIdMappingRdd, "entityIdType", null, pickOneDocumentMetadataFunction));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void matchCitationsIndirectly_NULL_PICK_SINGLE_FUNCTION() {
-        
-     // execute
-        externalIdCitationMatcher.matchCitations(documentsMetadataRdd, referenceIdMappingRdd, "entityIdType", "referenceIdType", null);
+
+        // execute
+        assertThrows(NullPointerException.class, () ->
+                externalIdCitationMatcher.matchCitations(documentsMetadataRdd, referenceIdMappingRdd, "entityIdType", "referenceIdType", null));
     }
     
     @Test
@@ -191,8 +198,8 @@ public class ExternalIdCitationMatcherTest {
                 mainEntityIdType, referenceIdType, pickOneDocumentMetadataFunction);
         
         // assert
-        
-        assertTrue(retCitationsRdd == citationsRdd);
+
+        assertSame(retCitationsRdd, citationsRdd);
         
         verify(idMappingExtractor).extractIdMapping(documentsMetadataRdd, mainEntityIdType, pickOneDocumentMetadataFunction);
         verify(referencePicker).extractExternalIdReferences(documentsMetadataRdd, referenceIdType);

@@ -1,34 +1,7 @@
 package eu.dnetlib.iis.wf.citationmatching.direct;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isOneOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.apache.avro.util.Utf8;
-import org.apache.commons.io.FileUtils;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.hamcrest.Matcher;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import pl.edu.icm.sparkutils.test.SparkJob;
-import pl.edu.icm.sparkutils.test.SparkJobBuilder;
-import pl.edu.icm.sparkutils.test.SparkJobExecutor;
-
 import com.google.common.io.Files;
-
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.citations.schemas.Citation;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
@@ -36,6 +9,28 @@ import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
+import org.apache.avro.util.Utf8;
+import org.apache.commons.io.FileUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.hamcrest.Matcher;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import pl.edu.icm.sparkutils.test.SparkJob;
+import pl.edu.icm.sparkutils.test.SparkJobBuilder;
+import pl.edu.icm.sparkutils.test.SparkJobExecutor;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * 
@@ -57,7 +52,7 @@ public class CitationMatchingDirectJobTest {
     private String reportDirPath;
     
     
-    @Before
+    @BeforeEach
     public void before() {
         
         workingDir = Files.createTempDir();
@@ -68,7 +63,7 @@ public class CitationMatchingDirectJobTest {
     }
     
     
-    @After
+    @AfterEach
     public void after() throws IOException {
         
         FileUtils.deleteDirectory(workingDir);

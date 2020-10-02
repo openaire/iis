@@ -1,12 +1,10 @@
 package eu.dnetlib.iis.wf.citationmatching.direct.service;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 import com.google.common.collect.Lists;
-
 import eu.dnetlib.iis.citationmatching.direct.schemas.DocumentMetadata;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * 
