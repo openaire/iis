@@ -66,6 +66,10 @@
                     <name>output_report_root_path</name>
                     <value>${workingDir}/report</value>
                 </property>
+                <property>
+                    <name>documentsclassification_main_number_of_partitions</name>
+                    <value>1</value>
+                </property>
                 <!-- sparkDriverMemory, sparkExecutorMemory, sparkExecutorCores are provided by environment (since git#889) -->
             </configuration>
         </sub-workflow>

@@ -482,6 +482,22 @@
                     <name>patentServiceEndpointOpsUriRoot</name>
                     <value>expectedOpsUriRoot</value>
                 </property>
+				<property>
+					<name>affiliation_matching_number_of_emitted_files</name>
+					<value>1</value>
+				</property>
+				<property>
+					<name>documentsclassification_main_number_of_partitions</name>
+					<value>1</value>
+				</property>
+				<property>
+					<name>referenceextraction_patent_main_number_of_emitted_files</name>
+					<value>1</value>
+				</property>
+				<property>
+					<name>webcrawlNumberOfEmittedFiles</name>
+					<value>1</value>
+				</property>
 			</configuration>
 		</sub-workflow>
 		<ok to="consumer" />

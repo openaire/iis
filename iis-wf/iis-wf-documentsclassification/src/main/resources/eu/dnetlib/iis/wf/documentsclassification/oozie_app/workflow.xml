@@ -54,7 +54,7 @@
             <description>spark 2.* event log dir location</description>
         </property>
         <property>
-            <name>numberOfPartitions</name>
+            <name>documentsclassification_main_number_of_partitions</name>
             <value>$UNDEFINED$</value>
             <description>number of partitions the input data should be sliced into. 
             Affects the number of tasks executed on the input data and each task execution time (more tasks less time each executor takes). 
@@ -108,7 +108,7 @@
             <arg>-inputAvroPath=${input_documents}</arg>
             <arg>-outputAvroPath=${output_document_to_document_classes}</arg>
             <arg>-scriptDirPath=${wf:conf('oozie.wf.application.path')}/lib/scripts</arg>
-            <arg>-numberOfPartitions=${numberOfPartitions}</arg>
+            <arg>-numberOfPartitions=${documentsclassification_main_number_of_partitions}</arg>
             
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
             
