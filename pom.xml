@@ -116,7 +116,6 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -129,8 +128,15 @@
 
         <dependency>
             <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>3.5.13</version>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -943,6 +949,7 @@
         <iis.coansys.version>1.10</iis.coansys.version>
 
         <junit.version>5.4.2</junit.version>
+        <mockito.version>3.5.13</mockito.version>
     </properties>
 
 </project>
