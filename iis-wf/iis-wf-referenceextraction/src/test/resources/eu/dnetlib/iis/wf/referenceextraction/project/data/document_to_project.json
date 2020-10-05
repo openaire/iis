@@ -41,6 +41,12 @@
    "textsnippet":"authors gratefully acknowledge the financial support of the Dutch Technology Foundation (STW) under project No. <<< 10414. >>> "
 }
 {
+   "documentId":"50|od_______908::06173645b3548760065d4a797ca6d23a",
+   "projectId":"40|aka_________::b418b9f235f483c5127a88403fc34ef9",
+   "confidenceLevel":0.73029673,
+   "textsnippet":"funding information my research was supported by the academy of finland (grants <<< #129662 >>>"
+}
+{
    "documentId":"50|od_______908::08e1f7cb9848aea02be6b2ab8b4dc88d",
    "projectId":"40|nih_________::147e9551e64eb1953df747e36b327100",
    "confidenceLevel":0.99666107,
