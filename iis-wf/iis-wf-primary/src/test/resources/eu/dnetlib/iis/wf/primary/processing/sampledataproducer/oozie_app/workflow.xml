@@ -487,10 +487,6 @@
 					<value>1</value>
 				</property>
 				<property>
-					<name>documentsclassification_main_number_of_partitions</name>
-					<value>1</value>
-				</property>
-				<property>
 					<name>referenceextraction_patent_number_of_emitted_filesa</name>
 					<value>1</value>
 				</property>
