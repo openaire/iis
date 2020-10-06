@@ -82,6 +82,10 @@
                     <name>cacheRootDir</name>
                     <value>${workingDir}/referenceextraction_patent/working_dir</value>
                 </property>
+                <property>
+                    <name>referenceextraction_patent_number_of_emitted_filesa</name>
+                    <value>1</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="consumer"/>

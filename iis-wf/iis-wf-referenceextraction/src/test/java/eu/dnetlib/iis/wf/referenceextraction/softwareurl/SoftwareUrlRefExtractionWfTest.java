@@ -1,6 +1,5 @@
 package eu.dnetlib.iis.wf.referenceextraction.softwareurl;
 
-import eu.dnetlib.iis.common.OozieWorkflowTestConfiguration;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -17,22 +16,16 @@ public class SoftwareUrlRefExtractionWfTest extends AbstractOozieWorkflowTestCas
 
     @Test
     public void testMainWorkflow() {
-        OozieWorkflowTestConfiguration configuration = new OozieWorkflowTestConfiguration();
-        configuration.setTimeoutInSeconds(1800);
-        testWorkflow("eu/dnetlib/iis/wf/referenceextraction/softwareurl/main/sampletest", configuration);
+        testWorkflow("eu/dnetlib/iis/wf/referenceextraction/softwareurl/main/sampletest");
     }
 
     @Test
     public void testMainWorkflowWithoutReferences() {
-        OozieWorkflowTestConfiguration configuration = new OozieWorkflowTestConfiguration();
-        configuration.setTimeoutInSeconds(1800);
         testWorkflow("eu/dnetlib/iis/wf/referenceextraction/softwareurl/main/sampletest_without_references");
     }
 
     @Test
     public void testMainWorkflowEmptyInput() {
-        OozieWorkflowTestConfiguration configuration = new OozieWorkflowTestConfiguration();
-        configuration.setTimeoutInSeconds(1800);
         testWorkflow("eu/dnetlib/iis/wf/referenceextraction/softwareurl/main/sampletest_empty_input");
     }
 }

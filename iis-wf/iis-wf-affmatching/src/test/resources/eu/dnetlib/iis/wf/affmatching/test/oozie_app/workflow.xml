@@ -98,6 +98,10 @@
                     <name>sparkDriverOverhead</name>
                     <value>513</value>
                 </property>
+                <property>
+                    <name>affiliation_matching_number_of_emitted_files</name>
+                    <value>1</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="consumer"/>

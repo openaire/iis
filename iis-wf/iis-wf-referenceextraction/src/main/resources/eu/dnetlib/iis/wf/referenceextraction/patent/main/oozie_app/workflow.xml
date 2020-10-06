@@ -57,7 +57,7 @@
             <description>spark 2.* event log dir location</description>
         </property>
         <property>
-            <name>number_of_emitted_files</name>
+            <name>referenceextraction_patent_number_of_emitted_filesa</name>
             <value>1000</value>
             <description>number of files created by patent metadata retriever module</description>
         </property>
@@ -264,7 +264,7 @@
                 --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
             </spark-opts>
             <arg>-inputPath=${workingDir}/metadata_retriever_input</arg>
-            <arg>-numberOfEmittedFiles=${number_of_emitted_files}</arg>
+            <arg>-numberOfEmittedFiles=${referenceextraction_patent_number_of_emitted_filesa}</arg>
             <arg>-outputPath=${workingDir}/metadata_retriever_output</arg>
             <arg>-outputFaultPath=${workingDir}/metadata_retriever_faults</arg>
             <arg>-outputReportPath=${output_report_root_path}/patent_metadata_retrieval</arg>
