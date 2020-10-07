@@ -1,15 +1,13 @@
 package eu.dnetlib.iis.wf.referenceextraction.community.input;
 
-import com.google.common.io.Files;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.importer.schemas.Concept;
 import eu.dnetlib.iis.referenceextraction.community.schemas.Community;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
@@ -27,8 +25,9 @@ public class CommunityReferenceExtractionInputTransformerJobTest {
     
     
     private SparkJobExecutor executor = new SparkJobExecutor();
-    
-    private File workingDir;
+
+    @TempDir
+    File workingDir;
     
     private String inputConceptPath;
     
@@ -37,21 +36,10 @@ public class CommunityReferenceExtractionInputTransformerJobTest {
     
     @BeforeEach
     public void before() {
-        
-        workingDir = Files.createTempDir();
         inputConceptPath = workingDir + "/referenceextraction_community_input_transformer/inputConcept";
         outputDirPath = workingDir + "/referenceextraction_community_input_transformer/output";
     }
-    
-    
-    @AfterEach
-    public void after() throws IOException {
-        
-        FileUtils.deleteDirectory(workingDir);
-        
-    }
-    
-    
+
     //------------------------ TESTS --------------------------
     
     @Test

@@ -4,13 +4,13 @@ import eu.dnetlib.iis.common.schemas.Identifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Properties;
 
 import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
@@ -22,14 +22,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @ExtendWith(MockitoExtension.class)
 public class AvroSchemaGeneratorTest {
-    
-    public File testFolder;
+
+    @TempDir
+    File testFolder;
     
     @BeforeEach
-    public void initEnv() throws IOException {
-        testFolder = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
-
-        System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME, 
+    public void initEnv() {
+        System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME,
                 testFolder.getAbsolutePath() + File.separatorChar + "test.properties");
     }
     

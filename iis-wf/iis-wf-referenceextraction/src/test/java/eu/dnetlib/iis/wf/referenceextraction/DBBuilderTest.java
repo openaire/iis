@@ -13,11 +13,11 @@ import org.apache.hadoop.conf.Configuration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -52,8 +52,9 @@ public class DBBuilderTest {
     private List<Project> projects;
 
     private AbstractDBBuilder<Project> dbBuilder;
-    
-    public File testFolder;
+
+    @TempDir
+    File testFolder;
     
     @Mock
     private FileSystemFacade fileSystemFacade;
@@ -62,9 +63,7 @@ public class DBBuilderTest {
     private Process process;
     
     @BeforeEach
-    public void initializeBuilder() throws IOException {
-        testFolder = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
-
+    public void initializeBuilder() {
         projects = Arrays.asList(new Project[] {firstProject, secondProject});
         
         outputFile = new File(testFolder,"tmpfile");

@@ -19,6 +19,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Tuple2;
@@ -69,7 +70,8 @@ public class AffMatchingAffOrgQualityTest {
 
     private static JavaSparkContext sparkContext;
 
-    private File workingDir;
+    @TempDir
+    File workingDir;
 
     private String inputOrgDirPath;
 
@@ -98,8 +100,6 @@ public class AffMatchingAffOrgQualityTest {
 
     @BeforeEach
     public void setup() throws IOException {
-        workingDir = Files.createTempDirectory("AffMatchingAffOrgQualityTest_").toFile();
-
         inputOrgDirPath = workingDir + "/affiliation_matching/input/organizations";
         inputAffDirPath = workingDir + "/affiliation_matching/input/affiliations";
         inputDocProjDirPath = workingDir + "/affiliation_matching/input/doc_proj";
@@ -112,9 +112,8 @@ public class AffMatchingAffOrgQualityTest {
     }
 
     @AfterEach
-    public void cleanup() throws IOException {
-
-        FileUtils.deleteDirectory(workingDir);
+    public void cleanup() {
+        sparkContext.stop();
     }
 
     @AfterAll

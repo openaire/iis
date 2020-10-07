@@ -29,12 +29,12 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
 
@@ -82,7 +82,8 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
 
     private static JavaSparkContext sparkContext;
 
-    private File workingDir;
+    @TempDir
+    File workingDir;
 
     private String inputOrgDirPath;
 
@@ -111,8 +112,6 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
 
     @BeforeEach
     public void setup() throws IOException {
-        workingDir = Files.createTempDirectory("AffOrgMatchVoterStrengthEstimatorAndTest_").toFile();
-
         inputOrgDirPath = workingDir + "/affiliation_matching/input/organizations";
         inputAffDirPath = workingDir + "/affiliation_matching/input/affiliations";
         inputDocProjDirPath = workingDir + "/affiliation_matching/input/doc_proj";

@@ -1,6 +1,5 @@
 package eu.dnetlib.iis.wf.citationmatching.input;
 
-import com.google.common.io.Files;
 import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.citations.schemas.Citation;
@@ -8,10 +7,9 @@ import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
@@ -25,8 +23,9 @@ public class CitationMatchingInputTransformerJobTest {
     
     
     private SparkJobExecutor executor = new SparkJobExecutor();
-    
-    private File workingDir;
+
+    @TempDir
+    File workingDir;
     
     private String inputMetadataPath;
     
@@ -38,21 +37,11 @@ public class CitationMatchingInputTransformerJobTest {
     @BeforeEach
     public void before() {
         
-        workingDir = Files.createTempDir();
         inputMetadataPath = workingDir + "/spark_citation_matching_input_transformer/inputMetadata";
         inputMatchedCitationsPath = workingDir + "/spark_citation_matching_input_transformer/inputMatchedCitations";
         outputDirPath = workingDir + "/spark_citation_matching_input_transformer/output";
     }
-    
-    
-    @AfterEach
-    public void after() throws IOException {
-        
-        FileUtils.deleteDirectory(workingDir);
-        
-    }
-    
-    
+
     //------------------------ TESTS --------------------------
     
     @Test

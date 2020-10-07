@@ -2,8 +2,7 @@ package eu.dnetlib.iis.common.model.extrainfo.citations;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author mhorst
@@ -20,7 +19,7 @@ public class TypedIdTest {
         TypedId typedId = new TypedId(value, type, confidenceLevel);
         
         // execute & assert
-        assertNotEquals(null, typedId);
+        assertNotNull(typedId);
         assertNotEquals("string", typedId);
         assertNotEquals(typedId, new TypedId("otherValue", type, confidenceLevel));
         assertNotEquals(typedId, new TypedId(value, "otherType", confidenceLevel));

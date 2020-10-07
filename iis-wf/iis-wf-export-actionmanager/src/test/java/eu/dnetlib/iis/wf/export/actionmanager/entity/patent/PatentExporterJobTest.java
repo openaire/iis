@@ -13,16 +13,14 @@ import eu.dnetlib.iis.common.utils.ListTestUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
 import eu.dnetlib.iis.wf.export.actionmanager.entity.AtomicActionSerDeUtils;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -32,7 +30,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @IntegrationTest
 public class PatentExporterJobTest {
     private SparkJobExecutor executor = new SparkJobExecutor();
-    private Path workingDir;
+
+    @TempDir
+    Path workingDir;
+
     private Path inputDocumentToPatentDir;
     private Path inputPatentDir;
     private Path outputRelationDir;
@@ -53,8 +54,7 @@ public class PatentExporterJobTest {
     private static final String PATENT_EPO_URL_ROOT = "https://register.epo.org/application?number=";
 
     @BeforeEach
-    public void before() throws IOException {
-        workingDir = Files.createTempDirectory("patent_exporter");
+    public void before() {
         inputDocumentToPatentDir = workingDir.resolve("input").resolve("document_to_patent");
         inputPatentDir = workingDir.resolve("input").resolve("patent");
         outputRelationDir = workingDir.resolve("output").resolve("relation");
@@ -62,11 +62,6 @@ public class PatentExporterJobTest {
         outputReportDir = workingDir.resolve("output").resolve("report");
     }
 
-    @AfterEach
-    public void after() throws IOException {
-        FileUtils.deleteDirectory(workingDir.toFile());
-    }
-    
     @Test
     public void shouldNotExportEntitiesWhenConfidenceLevelIsBelowThreshold() throws IOException {
         //given

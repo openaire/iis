@@ -11,17 +11,18 @@ import eu.dnetlib.iis.common.schemas.IdentifierMapping;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.importer.schemas.*;
-import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.SparkSession;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -36,7 +37,9 @@ public class ImportInformationSpaceJobTest {
 
     private static SparkSession spark;
 
-    private Path workingDir;
+    @TempDir
+    Path workingDir;
+
     private Path inputDir;
     private Path inputGraphDir;
     private Path outputDir;
@@ -63,18 +66,12 @@ public class ImportInformationSpaceJobTest {
     }
 
     @BeforeEach
-    public void before() throws IOException {
-        workingDir = Files.createTempDirectory("test_import_info_space");
+    public void before() {
         inputDir = workingDir.resolve("input");
         inputGraphDir = inputDir.resolve("graph");
 
         outputDir = workingDir.resolve("output");
         outputReportDir = workingDir.resolve("output_report");
-    }
-
-    @AfterEach
-    public void after() throws IOException {
-        FileUtils.deleteDirectory(workingDir.toFile());
     }
 
     @AfterAll

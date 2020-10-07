@@ -11,18 +11,16 @@ import eu.dnetlib.iis.importer.schemas.Project;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
-import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -34,8 +32,9 @@ public class ProjectBasedMatchingJobTest {
     
     
     private SparkJobExecutor executor = new SparkJobExecutor();
-    
-    private File workingDir;
+
+    @TempDir
+    File workingDir;
     
     private String inputInferredDocProjDirPath;
     
@@ -55,10 +54,8 @@ public class ProjectBasedMatchingJobTest {
     
     
     @BeforeEach
-    public void before() throws IOException {
+    public void before() {
         
-        workingDir = Files.createTempDirectory(ProjectBasedMatchingJobTest.class.getSimpleName()).toFile();
-
         inputInferredDocProjDirPath = workingDir + "/projectbased_matching/input/doc_proj_inferred";
         inputDocProjDirPath = workingDir + "/projectbased_matching/input/doc_proj";
         inputProjOrgDirPath = workingDir + "/projectbased_matching/input/proj_org";
@@ -67,15 +64,6 @@ public class ProjectBasedMatchingJobTest {
         outputReportPath = workingDir + "/projectbased_matching/report";
         
     }
-    
-    
-    @AfterEach
-    public void after() throws IOException {
-        
-        FileUtils.deleteDirectory(workingDir);
-        
-    }
-    
     
     //------------------------ TESTS --------------------------
     

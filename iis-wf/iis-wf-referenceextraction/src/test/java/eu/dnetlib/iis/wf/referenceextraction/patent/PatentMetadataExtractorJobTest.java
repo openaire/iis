@@ -11,17 +11,15 @@ import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
 import eu.dnetlib.iis.wf.referenceextraction.patent.parser.PatentMetadataParserException;
-import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +37,10 @@ public class PatentMetadataExtractorJobTest {
     static final String xmlResourcesRootClassPath = "/eu/dnetlib/iis/wf/referenceextraction/patent/data/";
     
     private SparkJobExecutor executor = new SparkJobExecutor();
-    private Path workingDir;
+
+    @TempDir
+    Path workingDir;
+
     private Path inputImportedPatentDir;
     private Path inputDocumentTextDir;
     private Path outputDir;
@@ -47,18 +48,12 @@ public class PatentMetadataExtractorJobTest {
     private Path outputReportDir;
 
     @BeforeEach
-    public void before() throws IOException {
-        workingDir = Files.createTempDirectory("patent_meta_extraction");
+    public void before() {
         inputImportedPatentDir = workingDir.resolve("input_imported_patent");
         inputDocumentTextDir = workingDir.resolve("input_document_text");
         outputDir = workingDir.resolve("output");
         outputFaultDir = workingDir.resolve("fault");
         outputReportDir = workingDir.resolve("report");
-    }
-
-    @AfterEach
-    public void after() throws IOException {
-        FileUtils.deleteDirectory(workingDir.toFile());
     }
 
     @Test

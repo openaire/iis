@@ -5,11 +5,11 @@ import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.Properties;
 
 import static eu.dnetlib.maven.plugin.properties.WritePredefinedProjectProperties.PROPERTY_PREFIX_ENV;
@@ -25,7 +25,8 @@ import static org.mockito.Mockito.lenient;
 @ExtendWith(MockitoExtension.class)
 public class WritePredefinedProjectPropertiesTest {
 
-    private File testFolder;
+    @TempDir
+    File testFolder;
 
     @Mock
     private MavenProject mavenProject;
@@ -33,8 +34,7 @@ public class WritePredefinedProjectPropertiesTest {
     private WritePredefinedProjectProperties mojo;
 
     @BeforeEach
-    public void init() throws IOException {
-        testFolder = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
+    public void init() {
         mojo = new WritePredefinedProjectProperties();
         mojo.outputFile = getPropertiesFileLocation();
         mojo.project = mavenProject;

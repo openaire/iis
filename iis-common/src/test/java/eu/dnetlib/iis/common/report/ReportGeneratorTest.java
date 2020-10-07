@@ -7,12 +7,10 @@ import eu.dnetlib.iis.common.schemas.ReportEntryType;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
@@ -25,14 +23,10 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 public class ReportGeneratorTest {
 
     private ReportGenerator reportGenerator = new ReportGenerator();
-    
-    public File tempFolder;
 
-    @BeforeEach
-    public void beforeEach() throws IOException {
-        tempFolder = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
-    }
-    
+    @TempDir
+    File tempFolder;
+
     //------------------------ TESTS --------------------------
     
     @Test

@@ -1,6 +1,5 @@
 package eu.dnetlib.iis.wf.affmatching;
 
-import com.google.common.io.Files;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
@@ -11,10 +10,9 @@ import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
@@ -30,8 +28,9 @@ public class AffMatchingJobTest {
     
     
     private SparkJobExecutor executor = new SparkJobExecutor();
-    
-    private File workingDir;
+
+    @TempDir
+    File workingDir;
     
     private String inputOrgDirPath;
     
@@ -53,8 +52,6 @@ public class AffMatchingJobTest {
     @BeforeEach
     public void before() {
         
-        workingDir = Files.createTempDir();
-        
         inputOrgDirPath = workingDir + "/affiliation_matching/input/organizations";
         inputAffDirPath = workingDir + "/affiliation_matching/input/affiliations";
         inputInferredDocProjDirPath = workingDir + "/affiliation_matching/input/doc_proj_inferred";
@@ -64,15 +61,6 @@ public class AffMatchingJobTest {
         outputReportPath = workingDir + "/affiliation_matching/report";
         
     }
-    
-    
-    @AfterEach
-    public void after() throws IOException {
-        
-        FileUtils.deleteDirectory(workingDir);
-        
-    }
-    
     
     //------------------------ TESTS --------------------------
     

@@ -2,15 +2,13 @@ package eu.dnetlib.iis.common;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.io.Files;
 import org.apache.avro.specific.SpecificRecord;
-import org.apache.commons.io.FileUtils;
-import org.apache.oozie.client.OozieClientException;
 import org.apache.oozie.client.WorkflowJob.Status;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,8 +62,8 @@ public abstract class AbstractOozieWorkflowTestCase {
 
 	private HdfsTestHelper hdfsTestHelper;
 
-
-	private File tempDir;
+	@TempDir
+	File tempDir;
 
 
 	@BeforeAll
@@ -89,15 +87,10 @@ public abstract class AbstractOozieWorkflowTestCase {
 
 		SshHdfsFileFetcher hdfsFileFetcher = new SshHdfsFileFetcher(sshConnectionManager, getRemoteTempDir());
 		hdfsTestHelper = new HdfsTestHelper(hdfsFileFetcher);
-
-		tempDir = Files.createTempDir();
 	}
 
 	@AfterEach
-	public void cleanup() throws IOException {
-		if (tempDir != null) {
-			FileUtils.deleteDirectory(tempDir);
-		}
+	public void cleanup() {
 		sshConnectionManager.closeConnection();
 	}
 

@@ -8,6 +8,7 @@ import org.apache.hadoop.fs.Path;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -15,7 +16,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.security.InvalidParameterException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,16 +49,15 @@ public class EmptyDatastoreVerifierProcessTest {
         }
         
     };
-    
-    public File testFolder;
+
+    @TempDir
+    File testFolder;
     
     @BeforeEach
-    public void init() throws IOException {
+    public void init() {
         parameters = new HashMap<>();
 
-        testFolder = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
-        
-        System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME, 
+        System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME,
                 testFolder.getAbsolutePath() + File.separatorChar + "test.properties");
     }
 

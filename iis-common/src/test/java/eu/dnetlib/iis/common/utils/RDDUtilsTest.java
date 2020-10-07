@@ -2,17 +2,18 @@ package eu.dnetlib.iis.common.utils;
 
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
-import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import scala.Tuple2;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -27,8 +28,8 @@ public class RDDUtilsTest {
     private static JavaSparkContext sc;
     private static Configuration configuration;
 
-    private Path workingDir;
-    private Path outputDir;
+    @TempDir
+    Path workingDir;
 
     @BeforeAll
     public static void beforeAll() {
@@ -38,17 +39,6 @@ public class RDDUtilsTest {
         conf.setAppName(RDDUtilsTest.class.getSimpleName());
         sc = JavaSparkContextFactory.withConfAndKryo(conf);
         configuration = new Configuration();
-    }
-
-    @BeforeEach
-    public void before() throws IOException {
-        workingDir = Files.createTempDirectory("RDDUtilsTest_");
-        outputDir = workingDir.resolve("output");
-    }
-
-    @AfterEach
-    public void after() throws IOException {
-        FileUtils.deleteDirectory(workingDir.toFile());
     }
 
     @AfterAll
@@ -64,6 +54,7 @@ public class RDDUtilsTest {
                 new Tuple2<>(new Text("2L"), new Text("2R")),
                 new Tuple2<>(new Text("3L"), new Text("3R"))),
                 NUMBER_OF_OUTPUT_FILES + 1);
+        Path outputDir = workingDir.resolve("output");
 
         //when
         RDDUtils.saveTextPairRDD(in, NUMBER_OF_OUTPUT_FILES, outputDir.toString(), configuration);

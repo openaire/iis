@@ -1,6 +1,5 @@
 package eu.dnetlib.iis.wf.citationmatching.direct;
 
-import com.google.common.io.Files;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.citations.schemas.Citation;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
@@ -10,14 +9,13 @@ import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import org.apache.avro.util.Utf8;
-import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.hamcrest.Matcher;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
@@ -40,8 +38,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class CitationMatchingDirectJobTest {
 
     private SparkJobExecutor executor = new SparkJobExecutor();
-    
-    private File workingDir;
+
+    @TempDir
+    File workingDir;
     
     private String inputDirPath;
     
@@ -55,21 +54,11 @@ public class CitationMatchingDirectJobTest {
     @BeforeEach
     public void before() {
         
-        workingDir = Files.createTempDir();
         inputDirPath = workingDir + "/spark_citation_matching_direct/input";
         outputDirPath = workingDir + "/spark_citation_matching_direct/output";
         reportDirPath = workingDir + "/spark_citation_matching_direct/report";
         inputCSVFileLocation = workingDir + "/PMC-ids.csv";
     }
-    
-    
-    @AfterEach
-    public void after() throws IOException {
-        
-        FileUtils.deleteDirectory(workingDir);
-        
-    }
-    
     
     //------------------------ TESTS --------------------------
     

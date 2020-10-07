@@ -10,17 +10,15 @@ import eu.dnetlib.iis.common.schemas.ReportEntryType;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
@@ -45,14 +43,10 @@ public class PigCountersReportGeneratorTest {
     
     @Mock
     private ReportPigCountersResolver reportPigCountersResolver;
-    
-    public File tempFolder;
 
-    @BeforeEach
-    public void beforeEach() throws IOException {
-        tempFolder = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
-    }
-    
+    @TempDir
+    File tempFolder;
+
     //------------------------ TESTS --------------------------
     
     @Test

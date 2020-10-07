@@ -9,18 +9,16 @@ import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.importer.schemas.Project;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
-import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -32,8 +30,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ProjectFunderReportJobTest {
 
     private SparkJobExecutor executor = new SparkJobExecutor();
-    
-    private File workingDir;
+
+    @TempDir
+    File workingDir;
     
     private String inputProjectDirPath;
     
@@ -43,19 +42,11 @@ public class ProjectFunderReportJobTest {
     
     
     @BeforeEach
-    public void before() throws IOException {
-        workingDir = Files.createTempDirectory(ProjectFunderReportJobTest.class.getSimpleName()).toFile();
+    public void before() {
         inputProjectDirPath = workingDir + "/spark_project_referenceextraction_report/input_project";
         inputDocumentToProjectDirPath = workingDir + "/spark_project_referenceextraction_report/input_document_to_project";
         outputReportDirPath = workingDir + "/spark_project_referenceextraction_report/output_report";
     }
-    
-    
-    @AfterEach
-    public void after() throws IOException {
-        FileUtils.deleteDirectory(workingDir);
-    }
-    
     
     //------------------------ TESTS --------------------------
     

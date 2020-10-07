@@ -16,7 +16,6 @@ import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrl;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithSource;
-import org.apache.commons.io.FileUtils;
 import org.apache.curator.test.TestingServer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -24,13 +23,13 @@ import org.apache.hadoop.ha.ZKFailoverController;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,8 +44,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class CachedWebCrawlerJobTest {
 
     private SparkJobExecutor executor = new SparkJobExecutor();
-    
-    private File workingDir;
+
+    @TempDir
+    File workingDir;
     
     private String inputPath;
     
@@ -70,7 +70,6 @@ public class CachedWebCrawlerJobTest {
     
     @BeforeEach
     public void before() throws Exception {
-        workingDir = Files.createTempDirectory(CachedWebCrawlerJobTest.class.getSimpleName()).toFile();
         inputPath = workingDir + "/spark_webcrawler/input";
         input2Path = workingDir + "/spark_webcrawler/input2";
         outputPath = workingDir + "/spark_webcrawler/output";
@@ -85,7 +84,6 @@ public class CachedWebCrawlerJobTest {
     
     @AfterEach
     public void after() throws IOException {
-        FileUtils.deleteDirectory(workingDir);
         zookeeperServer.stop();
     }
     

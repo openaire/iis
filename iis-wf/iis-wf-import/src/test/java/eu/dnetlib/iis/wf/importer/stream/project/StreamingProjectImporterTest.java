@@ -12,6 +12,7 @@ import org.apache.hadoop.fs.Path;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -19,7 +20,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -49,8 +49,9 @@ public class StreamingProjectImporterTest {
     private Map<String, String> parameters;
     
     private StreamingProjectImporter importer = new StreamingProjectImporter();
-    
-    public File testFolder;
+
+    @TempDir
+    File testFolder;
     
     @Mock
     private DataFileWriter<Project> projectWriter;
@@ -60,10 +61,8 @@ public class StreamingProjectImporterTest {
     
     
     @BeforeEach
-    public void init() throws Exception {
-        testFolder = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
-
-        System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME, 
+    public void init() {
+        System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME,
                 testFolder.getAbsolutePath() + File.separatorChar + "test.properties");
         
         Map<String, Path> output = new HashMap<>();

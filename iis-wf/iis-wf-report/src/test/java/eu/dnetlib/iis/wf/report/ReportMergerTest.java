@@ -16,6 +16,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -35,8 +36,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ReportMergerTest {
 
     private ReportMerger reportMerger = new ReportMerger();
-    
-    public File tempFolder;
+
+    @TempDir
+    File tempFolder;
     
     private JsonParser jsonParser = new JsonParser();
     
@@ -47,8 +49,6 @@ public class ReportMergerTest {
     
     @BeforeEach
     public void setup() throws IOException {
-        tempFolder = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
-
         inputPartialReportsBasePath = Files.createDirectory(tempFolder.toPath().resolve("partial_reports")).toFile().getPath();
         outputReportPath = tempFolder.getPath() + "/report.json";
         System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME, 

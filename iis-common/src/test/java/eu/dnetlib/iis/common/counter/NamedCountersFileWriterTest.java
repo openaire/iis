@@ -1,10 +1,9 @@
 package eu.dnetlib.iis.common.counter;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,17 +14,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class NamedCountersFileWriterTest {
 
     private NamedCountersFileWriter countersFileWriter = new NamedCountersFileWriter();
-    
-    public File tempFolder;
+
+    @TempDir
+    File tempFolder;
 
     private String counterName1 = "COUNTER_1";
     
     private String counterName2 = "COUNTER_2";
-
-    @BeforeEach
-    public void beforeEach() throws IOException {
-        tempFolder = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
-    }
 
     //------------------------ TESTS --------------------------
     

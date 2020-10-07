@@ -6,20 +6,18 @@ import eu.dnetlib.iis.common.avro.DocumentWithoutTitle;
 import org.apache.avro.Schema;
 import org.apache.avro.file.DataFileWriter;
 import org.apache.avro.generic.GenericContainer;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 /**
@@ -27,17 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class DataStoreTest {
 
-	private File tempDir = null;
-	
-	@BeforeEach
-	public void setUp() throws IOException{
-		tempDir = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
-	}
-	
-	@AfterEach
-	public void tearDown() throws IOException{
-		FileUtils.deleteDirectory(tempDir);
-	}
+	@TempDir
+	File tempDir;
 	
 	@Test
 	public void testSingleFile() throws IOException {

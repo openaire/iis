@@ -8,7 +8,11 @@ import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -21,7 +25,6 @@ import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
 
 /**
  * @author Łukasz Dumiszewski
@@ -33,8 +36,9 @@ public class DocumentClassificationJobTest {
     private static final Logger log = LoggerFactory.getLogger(DocumentClassificationJobTest.class);
 
     private SparkJobExecutor executor = new SparkJobExecutor();
-    
-    private File workingDir;
+
+    @TempDir
+    File workingDir;
     
     private String inputDirPath;
     
@@ -52,16 +56,10 @@ public class DocumentClassificationJobTest {
     }
     
     @BeforeEach
-    public void before() throws IOException {
-        workingDir = Files.createTempDirectory("DocumentClassificationJobTest_").toFile();
+    public void before() {
         inputDirPath = workingDir + "/document_classification/input";
         outputDirPath = workingDir + "/document_classification/output";
         reportDirPath = workingDir + "/document_classification/report";
-    }
-
-    @AfterEach
-    public void after() throws IOException {
-        FileUtils.deleteDirectory(workingDir);
     }
 
     //------------------------ TESTS --------------------------

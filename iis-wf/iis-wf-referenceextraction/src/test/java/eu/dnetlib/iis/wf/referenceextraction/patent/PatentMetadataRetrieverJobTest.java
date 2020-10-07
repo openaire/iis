@@ -14,19 +14,18 @@ import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
-import org.apache.commons.io.FileUtils;
 import org.apache.curator.test.TestingServer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.ha.ZKFailoverController;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -42,7 +41,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class PatentMetadataRetrieverJobTest {
     
     private SparkJobExecutor executor = new SparkJobExecutor();
-    private Path workingDir;
+
+    @TempDir
+    Path workingDir;
+
     private Path inputDir;
     private Path input2Dir;
     private Path outputDir;
@@ -57,7 +59,6 @@ public class PatentMetadataRetrieverJobTest {
 
     @BeforeEach
     public void before() throws Exception {
-        workingDir = Files.createTempDirectory("patent");
         inputDir = workingDir.resolve("input");
         input2Dir = workingDir.resolve("input2");
         outputDir = workingDir.resolve("output");
@@ -72,7 +73,6 @@ public class PatentMetadataRetrieverJobTest {
 
     @AfterEach
     public void after() throws IOException {
-        FileUtils.deleteDirectory(workingDir.toFile());
         zookeeperServer.stop();
     }
 

@@ -8,18 +8,16 @@ import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId;
-import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -31,8 +29,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RootConceptIdReportJobTest {
 
     private SparkJobExecutor executor = new SparkJobExecutor();
-    
-    private File workingDir;
+
+    @TempDir
+    File workingDir;
     
     private String inputDocumentToConceptDirPath;
     
@@ -40,18 +39,10 @@ public class RootConceptIdReportJobTest {
     
     
     @BeforeEach
-    public void before() throws IOException {
-        workingDir = Files.createTempDirectory(RootConceptIdReportJobTest.class.getSimpleName()).toFile();
+    public void before() {
         inputDocumentToConceptDirPath = workingDir + "/root_concept_report/input_document_to_concept";
         outputReportDirPath = workingDir + "/root_concept_report/output_report";
     }
-    
-    
-    @AfterEach
-    public void after() throws IOException {
-        FileUtils.deleteDirectory(workingDir);
-    }
-    
     
     //------------------------ TESTS --------------------------
     

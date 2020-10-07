@@ -16,6 +16,7 @@ import org.apache.oozie.client.WorkflowJob;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -48,7 +49,8 @@ public class OozieTimeReportGeneratorTest {
     @Mock
     private OozieClient oozieClient;
 
-    public File tempFolder;
+    @TempDir
+    File tempFolder;
 
     private String oozieUrl = "http://oozieLocation.com:11000/oozie/";
     
@@ -69,9 +71,7 @@ public class OozieTimeReportGeneratorTest {
     
     
     @BeforeEach
-    public void setup() throws OozieClientException, ParseException, IOException {
-        tempFolder = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
-        
+    public void setup() throws OozieClientException, ParseException {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         
         when(workflowAction1.getName()).thenReturn("action_1");

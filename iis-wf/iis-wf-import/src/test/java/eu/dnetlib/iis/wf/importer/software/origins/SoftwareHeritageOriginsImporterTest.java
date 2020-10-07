@@ -15,9 +15,9 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicHeader;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -46,8 +46,9 @@ public class SoftwareHeritageOriginsImporterTest {
     private Configuration conf;
     
     private Map<String, String> parameters;
-    
-    public File tempFolder;
+
+    @TempDir
+    File tempFolder;
     
     @Mock
     private CloseableHttpClient httpClient;
@@ -57,11 +58,6 @@ public class SoftwareHeritageOriginsImporterTest {
     
     @Captor
     private ArgumentCaptor<SoftwareHeritageOrigin> originCaptor;
-
-    @BeforeEach
-    public void before() throws IOException {
-        tempFolder = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
-    }
 
     @Test
     public void testGetNextLinkFromHeaderSingle() throws Exception {

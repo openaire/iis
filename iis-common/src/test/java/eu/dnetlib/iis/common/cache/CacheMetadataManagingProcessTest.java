@@ -7,13 +7,13 @@ import org.apache.hadoop.fs.Path;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -48,8 +48,9 @@ public class CacheMetadataManagingProcessTest {
     
     @Captor
     ArgumentCaptor<String> changePermissionsPath;
-    
-    public File testFolder;
+
+    @TempDir
+    File testFolder;
     
     @Mock
     private FileSystemFacade fsFacade;
@@ -64,10 +65,8 @@ public class CacheMetadataManagingProcessTest {
     private CacheMetadataManagingProcess process = new CacheMetadataManagingProcess(fsFacadeFactory);
     
     @BeforeEach
-    public void initEnv() throws IOException {
-        testFolder = Files.createTempDirectory(this.getClass().getSimpleName()).toFile();
-
-        System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME, 
+    public void initEnv() {
+        System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME,
                 testFolder.getAbsolutePath() + File.separatorChar + "test.properties");
     }
     

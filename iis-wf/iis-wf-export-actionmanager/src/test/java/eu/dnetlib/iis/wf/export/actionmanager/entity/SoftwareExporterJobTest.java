@@ -1,6 +1,5 @@
 package eu.dnetlib.iis.wf.export.actionmanager.entity;
 
-import com.google.common.io.Files;
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.dhp.schema.oaf.Software;
@@ -13,10 +12,9 @@ import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.common.utils.ListTestUtils;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
@@ -38,7 +36,8 @@ public class SoftwareExporterJobTest {
 
     private SparkJobExecutor executor = new SparkJobExecutor();
 
-    private File workingDir;
+    @TempDir
+    File workingDir;
 
     private String inputDocumentToSoftwareAvroPath;
 
@@ -52,17 +51,11 @@ public class SoftwareExporterJobTest {
 
     @BeforeEach
     public void before() {
-        workingDir = Files.createTempDir();
         inputDocumentToSoftwareAvroPath = workingDir + "/software_exporter/input_software";
         inputDocumentMetadataAvroPath = workingDir + "/software_exporter/input_metadata";
         outputEntityDirPath = workingDir + "/software_exporter/output_entity";
         outputRelationDirPath = workingDir + "/software_exporter/output_relation";
         reportDirPath = workingDir + "/software_exporter/report";
-    }
-
-    @AfterEach
-    public void after() throws IOException {
-        FileUtils.deleteDirectory(workingDir);
     }
 
     // ------------------------ TESTS --------------------------
