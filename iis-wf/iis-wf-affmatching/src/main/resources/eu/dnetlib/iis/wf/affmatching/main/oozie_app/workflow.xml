@@ -92,7 +92,7 @@
             <description>spark 2.* event log dir location</description>
         </property>
         <property>
-            <name>number_of_emitted_files</name>
+            <name>affiliation_matching_number_of_emitted_files</name>
             <value>1000</value>
             <description>number of files created by webcrawler module</description>
         </property>
@@ -151,7 +151,7 @@
             <arg>-outputAvroReportPath=${output_report_root_path}/aff-matching</arg>
             
             <arg>-inputDocProjConfidenceThreshold=${document_project_confidence_threshold}</arg>
-            <arg>-numberOfEmittedFiles=${number_of_emitted_files}</arg>
+            <arg>-numberOfEmittedFiles=${affiliation_matching_number_of_emitted_files}</arg>
             
         </spark>
         <ok to="end" />

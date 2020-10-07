@@ -104,6 +104,10 @@
                     <name>cacheRootDir</name>
                     <value>${workingDir}/referenceextraction_softwareurl/working_dir</value>
                 </property>
+                <property>
+                    <name>webcrawlNumberOfEmittedFiles</name>
+                    <value>1</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="consumer"/>
