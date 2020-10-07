@@ -25,7 +25,7 @@ public class ReportGeneratorTest {
     private ReportGenerator reportGenerator = new ReportGenerator();
 
     @TempDir
-    File tempFolder;
+    public File tempFolder;
 
     //------------------------ TESTS --------------------------
     

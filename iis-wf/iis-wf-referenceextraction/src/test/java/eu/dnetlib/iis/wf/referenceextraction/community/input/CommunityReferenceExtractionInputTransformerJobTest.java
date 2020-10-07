@@ -27,7 +27,7 @@ public class CommunityReferenceExtractionInputTransformerJobTest {
     private SparkJobExecutor executor = new SparkJobExecutor();
 
     @TempDir
-    File workingDir;
+    public File workingDir;
     
     private String inputConceptPath;
     

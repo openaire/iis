@@ -38,7 +38,7 @@ public class ReportMergerTest {
     private ReportMerger reportMerger = new ReportMerger();
 
     @TempDir
-    File tempFolder;
+    public File tempFolder;
     
     private JsonParser jsonParser = new JsonParser();
     

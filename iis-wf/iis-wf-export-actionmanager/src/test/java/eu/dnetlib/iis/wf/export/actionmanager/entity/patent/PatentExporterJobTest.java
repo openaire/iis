@@ -32,7 +32,7 @@ public class PatentExporterJobTest {
     private SparkJobExecutor executor = new SparkJobExecutor();
 
     @TempDir
-    Path workingDir;
+    public Path workingDir;
 
     private Path inputDocumentToPatentDir;
     private Path inputPatentDir;

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class JsonUtilsTest {
 	@TempDir
-	File tempDir;
+	public File tempDir;
 	
 	@Test
 	public void testConvertToDataStoreSimple() throws IOException{

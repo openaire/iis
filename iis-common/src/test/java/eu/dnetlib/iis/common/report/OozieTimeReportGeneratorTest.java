@@ -50,7 +50,7 @@ public class OozieTimeReportGeneratorTest {
     private OozieClient oozieClient;
 
     @TempDir
-    File tempFolder;
+    public File tempFolder;
 
     private String oozieUrl = "http://oozieLocation.com:11000/oozie/";
     

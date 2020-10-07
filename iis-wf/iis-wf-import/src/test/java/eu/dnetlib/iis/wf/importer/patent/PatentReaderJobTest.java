@@ -23,7 +23,7 @@ public class PatentReaderJobTest {
     private SparkJobExecutor executor = new SparkJobExecutor();
 
     @TempDir
-    Path workingDir;
+    public Path workingDir;
 
     private Path outputDir;
     private Path outputReportDir;

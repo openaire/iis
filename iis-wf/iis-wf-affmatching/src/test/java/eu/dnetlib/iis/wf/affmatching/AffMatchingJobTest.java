@@ -30,7 +30,7 @@ public class AffMatchingJobTest {
     private SparkJobExecutor executor = new SparkJobExecutor();
 
     @TempDir
-    File workingDir;
+    public File workingDir;
     
     private String inputOrgDirPath;
     

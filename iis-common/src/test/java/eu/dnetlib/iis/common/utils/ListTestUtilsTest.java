@@ -27,7 +27,7 @@ public class ListTestUtilsTest {
     private static Configuration configuration;
 
     @TempDir
-    Path workingDir;
+    public Path workingDir;
 
     @BeforeAll
     public static void beforeAll() {

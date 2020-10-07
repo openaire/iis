@@ -50,7 +50,7 @@ public class CacheMetadataManagingProcessTest {
     ArgumentCaptor<String> changePermissionsPath;
 
     @TempDir
-    File testFolder;
+    public File testFolder;
     
     @Mock
     private FileSystemFacade fsFacade;

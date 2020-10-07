@@ -27,7 +27,7 @@ public class PatentMetadataRetrieverInputTransformerJobTest {
     private SparkJobExecutor executor = new SparkJobExecutor();
 
     @TempDir
-    Path workingDir;
+    public Path workingDir;
 
     private Path inputImportedPatentDir;
     private Path inputMatchedPatentDir;

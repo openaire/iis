@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AvroSchemaGeneratorTest {
 
     @TempDir
-    File testFolder;
+    public File testFolder;
     
     @BeforeEach
     public void initEnv() {

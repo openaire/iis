@@ -20,7 +20,7 @@ public class Covid19ReferenceExtractionInputTransformerJobTest {
     private SparkJobExecutor executor = new SparkJobExecutor();
 
     @TempDir
-    Path workingDir;
+    public Path workingDir;
 
     private Path inputDir;
     private Path outputDir;

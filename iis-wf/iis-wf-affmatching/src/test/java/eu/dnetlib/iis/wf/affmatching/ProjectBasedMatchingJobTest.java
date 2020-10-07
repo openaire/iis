@@ -34,7 +34,7 @@ public class ProjectBasedMatchingJobTest {
     private SparkJobExecutor executor = new SparkJobExecutor();
 
     @TempDir
-    File workingDir;
+    public File workingDir;
     
     private String inputInferredDocProjDirPath;
     

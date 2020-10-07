@@ -38,7 +38,7 @@ public class DocumentClassificationJobTest {
     private SparkJobExecutor executor = new SparkJobExecutor();
 
     @TempDir
-    File workingDir;
+    public File workingDir;
     
     private String inputDirPath;
     

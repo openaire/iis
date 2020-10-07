@@ -51,7 +51,7 @@ public class EmptyDatastoreVerifierProcessTest {
     };
 
     @TempDir
-    File testFolder;
+    public File testFolder;
     
     @BeforeEach
     public void init() {

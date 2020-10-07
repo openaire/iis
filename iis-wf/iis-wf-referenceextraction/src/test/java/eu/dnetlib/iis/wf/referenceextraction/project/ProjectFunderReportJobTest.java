@@ -32,7 +32,7 @@ public class ProjectFunderReportJobTest {
     private SparkJobExecutor executor = new SparkJobExecutor();
 
     @TempDir
-    File workingDir;
+    public File workingDir;
     
     private String inputProjectDirPath;
     

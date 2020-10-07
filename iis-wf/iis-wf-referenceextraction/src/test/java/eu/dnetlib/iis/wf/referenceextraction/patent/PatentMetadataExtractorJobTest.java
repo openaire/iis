@@ -39,7 +39,7 @@ public class PatentMetadataExtractorJobTest {
     private SparkJobExecutor executor = new SparkJobExecutor();
 
     @TempDir
-    Path workingDir;
+    public Path workingDir;
 
     private Path inputImportedPatentDir;
     private Path inputDocumentTextDir;

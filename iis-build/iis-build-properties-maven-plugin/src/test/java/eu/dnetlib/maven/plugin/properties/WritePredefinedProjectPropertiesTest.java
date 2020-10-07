@@ -26,7 +26,7 @@ import static org.mockito.Mockito.lenient;
 public class WritePredefinedProjectPropertiesTest {
 
     @TempDir
-    File testFolder;
+    public File testFolder;
 
     @Mock
     private MavenProject mavenProject;

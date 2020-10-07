@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class DataStoreTest {
 
 	@TempDir
-	File tempDir;
+	public File tempDir;
 	
 	@Test
 	public void testSingleFile() throws IOException {

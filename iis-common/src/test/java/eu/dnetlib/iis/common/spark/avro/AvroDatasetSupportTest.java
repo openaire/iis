@@ -27,7 +27,7 @@ public class AvroDatasetSupportTest {
     private static AvroDatasetSupport avroDatasetSupport;
 
     @TempDir
-    static Path workingDir;
+    public static Path workingDir;
 
     @BeforeAll
     public static void beforeAll() {

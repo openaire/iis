@@ -45,7 +45,7 @@ public class PigCountersReportGeneratorTest {
     private ReportPigCountersResolver reportPigCountersResolver;
 
     @TempDir
-    File tempFolder;
+    public File tempFolder;
 
     //------------------------ TESTS --------------------------
     

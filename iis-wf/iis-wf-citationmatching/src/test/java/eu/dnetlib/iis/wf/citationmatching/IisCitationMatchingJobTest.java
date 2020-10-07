@@ -24,7 +24,7 @@ public class IisCitationMatchingJobTest {
     private SparkJobExecutor executor = new SparkJobExecutor();
 
     @TempDir
-    File workingDir;
+    public File workingDir;
     
     private String inputDirPath;
     

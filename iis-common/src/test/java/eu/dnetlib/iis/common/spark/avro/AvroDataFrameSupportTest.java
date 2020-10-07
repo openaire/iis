@@ -29,7 +29,7 @@ public class AvroDataFrameSupportTest {
     private static AvroDataFrameSupport avroDataFrameSupport;
 
     @TempDir
-    static Path workingDir;
+    public static Path workingDir;
 
     @BeforeAll
     public static void beforeAll() {

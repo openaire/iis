@@ -16,7 +16,7 @@ public class NamedCountersFileWriterTest {
     private NamedCountersFileWriter countersFileWriter = new NamedCountersFileWriter();
 
     @TempDir
-    File tempFolder;
+    public File tempFolder;
 
     private String counterName1 = "COUNTER_1";
     

@@ -54,7 +54,7 @@ public class DBBuilderTest {
     private AbstractDBBuilder<Project> dbBuilder;
 
     @TempDir
-    File testFolder;
+    public File testFolder;
     
     @Mock
     private FileSystemFacade fileSystemFacade;

@@ -48,7 +48,7 @@ public class SoftwareHeritageOriginsImporterTest {
     private Map<String, String> parameters;
 
     @TempDir
-    File tempFolder;
+    public File tempFolder;
     
     @Mock
     private CloseableHttpClient httpClient;

@@ -32,7 +32,7 @@ public class AffMatchingDedupJobTest {
     private SparkJobExecutor executor = new SparkJobExecutor();
 
     @TempDir
-    File workingDir;
+    public File workingDir;
     
     private String inputADirPath;
     

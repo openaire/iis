@@ -43,7 +43,7 @@ public class PatentMetadataRetrieverJobTest {
     private SparkJobExecutor executor = new SparkJobExecutor();
 
     @TempDir
-    Path workingDir;
+    public Path workingDir;
 
     private Path inputDir;
     private Path input2Dir;

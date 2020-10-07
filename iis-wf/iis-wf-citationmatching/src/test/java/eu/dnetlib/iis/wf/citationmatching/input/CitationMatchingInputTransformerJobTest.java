@@ -25,7 +25,7 @@ public class CitationMatchingInputTransformerJobTest {
     private SparkJobExecutor executor = new SparkJobExecutor();
 
     @TempDir
-    File workingDir;
+    public File workingDir;
     
     private String inputMetadataPath;
     

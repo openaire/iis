@@ -46,7 +46,7 @@ public class CachedWebCrawlerJobTest {
     private SparkJobExecutor executor = new SparkJobExecutor();
 
     @TempDir
-    File workingDir;
+    public File workingDir;
     
     private String inputPath;
     

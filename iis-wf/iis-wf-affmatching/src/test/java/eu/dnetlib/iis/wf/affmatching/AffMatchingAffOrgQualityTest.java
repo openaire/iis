@@ -71,7 +71,7 @@ public class AffMatchingAffOrgQualityTest {
     private static JavaSparkContext sparkContext;
 
     @TempDir
-    File workingDir;
+    public File workingDir;
 
     private String inputOrgDirPath;
 

@@ -51,7 +51,7 @@ public class StreamingProjectImporterTest {
     private StreamingProjectImporter importer = new StreamingProjectImporter();
 
     @TempDir
-    File testFolder;
+    public File testFolder;
     
     @Mock
     private DataFileWriter<Project> projectWriter;

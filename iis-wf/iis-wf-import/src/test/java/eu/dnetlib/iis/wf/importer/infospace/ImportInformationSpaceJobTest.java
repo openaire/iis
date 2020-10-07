@@ -38,7 +38,7 @@ public class ImportInformationSpaceJobTest {
     private static SparkSession spark;
 
     @TempDir
-    Path workingDir;
+    public Path workingDir;
 
     private Path inputDir;
     private Path inputGraphDir;

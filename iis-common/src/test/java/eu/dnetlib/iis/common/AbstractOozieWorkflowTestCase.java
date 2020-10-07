@@ -63,7 +63,7 @@ public abstract class AbstractOozieWorkflowTestCase {
 	private HdfsTestHelper hdfsTestHelper;
 
 	@TempDir
-	File tempDir;
+	public File tempDir;
 
 
 	@BeforeAll
