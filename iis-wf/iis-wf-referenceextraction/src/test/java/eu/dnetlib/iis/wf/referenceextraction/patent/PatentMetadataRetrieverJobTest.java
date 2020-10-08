@@ -1,28 +1,12 @@
 package eu.dnetlib.iis.wf.referenceextraction.patent;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import eu.dnetlib.iis.common.java.io.DataStore;
-import eu.dnetlib.iis.common.java.io.HdfsUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.curator.test.TestingServer;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.ha.ZKFailoverController;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import eu.dnetlib.iis.audit.schemas.Fault;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess;
 import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils;
 import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils.CacheRecordType;
+import eu.dnetlib.iis.common.java.io.DataStore;
+import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.lock.ZookeeperLockManagerFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
@@ -30,9 +14,23 @@ import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
+import org.apache.curator.test.TestingServer;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.ha.ZKFailoverController;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * {@link PatentMetadataRetrieverJob} test class.
@@ -43,7 +41,10 @@ import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 public class PatentMetadataRetrieverJobTest {
     
     private SparkJobExecutor executor = new SparkJobExecutor();
-    private Path workingDir;
+
+    @TempDir
+    public Path workingDir;
+
     private Path inputDir;
     private Path input2Dir;
     private Path outputDir;
@@ -56,9 +57,8 @@ public class PatentMetadataRetrieverJobTest {
     
     private TestingServer zookeeperServer;
 
-    @Before
+    @BeforeEach
     public void before() throws Exception {
-        workingDir = Files.createTempDirectory("patent");
         inputDir = workingDir.resolve("input");
         input2Dir = workingDir.resolve("input2");
         outputDir = workingDir.resolve("output");
@@ -71,9 +71,8 @@ public class PatentMetadataRetrieverJobTest {
         zookeeperServer = new TestingServer(true);
     }
 
-    @After
+    @AfterEach
     public void after() throws IOException {
-        FileUtils.deleteDirectory(workingDir.toFile());
         zookeeperServer.stop();
     }
 

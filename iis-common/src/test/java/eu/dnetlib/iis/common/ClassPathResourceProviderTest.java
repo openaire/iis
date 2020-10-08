@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.common;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -10,14 +10,15 @@ import java.util.stream.Collectors;
 
 import static eu.dnetlib.iis.common.ClassPathResourceProvider.*;
 import static org.hamcrest.CoreMatchers.endsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ClassPathResourceProviderTest {
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void givenPathToResourceThatDoesNotExist_whenGetResourcePathIsCalled_thenExceptionIsThrown() {
-        getResourcePath("path/to/resource");
+        assertThrows(RuntimeException.class, () -> getResourcePath("path/to/resource"));
     }
 
     @Test
@@ -27,9 +28,9 @@ public class ClassPathResourceProviderTest {
         assertThat(getResourcePath(location), endsWith(location));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void givenPathToResourceThatDoesNotExist_whenGetResourceContentIsCalled_thenExceptionIsThrown() {
-        getResourceContent("path/to/resource");
+        assertThrows(RuntimeException.class, () -> getResourceContent("path/to/resource"));
     }
 
     @Test
@@ -44,9 +45,9 @@ public class ClassPathResourceProviderTest {
                 getResourcesContents("eu/dnetlib/iis/common/data/@a/static-resource-file.txt"));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void givenPathToResourceThatDoesNotExist_whenGetResourceInputStreamIsCalled_thenExceptionIsThrown() {
-        getResourceInputStream("path/to/resource");
+        assertThrows(RuntimeException.class, () -> getResourceInputStream("path/to/resource"));
     }
 
     @Test

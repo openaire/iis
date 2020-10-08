@@ -1,17 +1,15 @@
 package eu.dnetlib.iis.wf.transformers.metadatamerger;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
 import eu.dnetlib.iis.common.AbstractOozieWorkflowTestCase;
 import eu.dnetlib.iis.common.IntegrationTest;
+import org.junit.jupiter.api.Test;
 
 /**
  * 
  * @author Dominika Tkaczyk
  *
  */
-@Category(IntegrationTest.class)
+@IntegrationTest
 public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 
     @Test

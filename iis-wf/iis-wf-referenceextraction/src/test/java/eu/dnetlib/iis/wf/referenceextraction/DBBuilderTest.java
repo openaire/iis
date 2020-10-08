@@ -1,36 +1,5 @@
 package eu.dnetlib.iis.wf.referenceextraction;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.avro.Schema;
-import org.apache.hadoop.conf.Configuration;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.io.CloseableIterator;
 import eu.dnetlib.iis.common.java.io.FileSystemPath;
@@ -39,13 +8,27 @@ import eu.dnetlib.iis.common.java.porttype.AnyPortType;
 import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.importer.schemas.Project;
+import org.apache.avro.Schema;
+import org.apache.hadoop.conf.Configuration;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.io.*;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * {@link AbstractDBBuilder} test class.
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DBBuilderTest {
     
     private static final Schema SCHEMA_PROJECT = Project.SCHEMA$;
@@ -69,9 +52,9 @@ public class DBBuilderTest {
     private List<Project> projects;
 
     private AbstractDBBuilder<Project> dbBuilder;
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+
+    @TempDir
+    public File testFolder;
     
     @Mock
     private FileSystemFacade fileSystemFacade;
@@ -79,12 +62,11 @@ public class DBBuilderTest {
     @Mock
     private Process process;
     
-    @Before
+    @BeforeEach
     public void initializeBuilder() {
-        
         projects = Arrays.asList(new Project[] {firstProject, secondProject});
         
-        outputFile = new File(testFolder.getRoot(),"tmpfile");
+        outputFile = new File(testFolder,"tmpfile");
         
         dbBuilder = new AbstractDBBuilder<Project>(
                 (conf) -> {
@@ -126,10 +108,8 @@ public class DBBuilderTest {
     @Test
     public void testNonZeroExitValue() throws Exception {
         // given
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         String errorMessage = "custom error message related to non zero exit value";
         
-        doReturn(outputStream).when(fileSystemFacade).create(any());
         doReturn(null).when(fileSystemFacade).getFileSystem();
         doReturn(new FileOutputStream(outputFile)).when(process).getOutputStream();
         doReturn(1).when(process).exitValue();
@@ -142,21 +122,17 @@ public class DBBuilderTest {
         } catch (RuntimeException e) {
             // assert
             assertTrue(e.getMessage().contains(errorMessage));
-            assertEquals(0, outputStream.size());
         }
     }
     
     @Test
     public void testException() throws Exception {
         // given
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         String errorMessage = "custom error message after exception";
         Throwable exception = new RuntimeException(errorMessage);
         
-        doReturn(outputStream).when(fileSystemFacade).create(any());
         doReturn(null).when(fileSystemFacade).getFileSystem();
         doReturn(new FileOutputStream(outputFile)).when(process).getOutputStream();
-        doReturn(0).when(process).exitValue();
         doThrow(exception).when(process).waitFor();
         doReturn(new ByteArrayInputStream(errorMessage.getBytes("utf8"))).when(process).getErrorStream();
         
@@ -167,8 +143,7 @@ public class DBBuilderTest {
         } catch (IOException e) {
             // assert
             assertTrue(e.getMessage().contains(errorMessage));
-            assertTrue(exception == e.getCause());
-            assertEquals(0, outputStream.size());
+            assertSame(exception, e.getCause());
         }
     }
     
@@ -222,7 +197,7 @@ public class DBBuilderTest {
         assertNotNull(result);
         assertNotNull(result.get(PORT_NAME_INPUT));
         assertTrue(result.get(PORT_NAME_INPUT) instanceof AvroPortType);
-        assertTrue(SCHEMA_PROJECT == ((AvroPortType)result.get(PORT_NAME_INPUT)).getSchema());
+        assertSame(SCHEMA_PROJECT, ((AvroPortType) result.get(PORT_NAME_INPUT)).getSchema());
     }
     
     @Test

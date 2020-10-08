@@ -1,44 +1,35 @@
 package eu.dnetlib.iis.wf.documentsclassification;
 
-import static eu.dnetlib.iis.common.report.ReportEntryFactory.createCounterReportEntry;
-import static eu.dnetlib.iis.wf.documentsclassification.DocClassificationReportCounterKeys.ACM_CLASSES;
-import static eu.dnetlib.iis.wf.documentsclassification.DocClassificationReportCounterKeys.ARXIV_CLASSES;
-import static eu.dnetlib.iis.wf.documentsclassification.DocClassificationReportCounterKeys.CLASSIFIED_DOCUMENTS;
-import static eu.dnetlib.iis.wf.documentsclassification.DocClassificationReportCounterKeys.DDC_CLASSES;
-import static eu.dnetlib.iis.wf.documentsclassification.DocClassificationReportCounterKeys.MESH_EURO_PMC_CLASSES;
-import static eu.dnetlib.iis.wf.documentsclassification.DocClassificationReportCounterKeys.WOS_CLASSES;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.function.Function;
-import org.apache.spark.api.java.function.Function2;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import com.google.common.collect.Lists;
-
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentClass;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentClasses;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.function.Function2;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+
+import static eu.dnetlib.iis.common.report.ReportEntryFactory.createCounterReportEntry;
+import static eu.dnetlib.iis.wf.documentsclassification.DocClassificationReportCounterKeys.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 /**
 * @author Łukasz Dumiszewski
 */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DocClassificationReportGeneratorTest {
 
     private DocClassificationReportGenerator reportGenerator = new DocClassificationReportGenerator();
@@ -68,12 +59,11 @@ public class DocClassificationReportGeneratorTest {
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void generateReport_NULL() {
         
         // execute
-        
-        reportGenerator.generateReport(null);
+        assertThrows(NullPointerException.class, () -> reportGenerator.generateReport(null));
         
     }
     

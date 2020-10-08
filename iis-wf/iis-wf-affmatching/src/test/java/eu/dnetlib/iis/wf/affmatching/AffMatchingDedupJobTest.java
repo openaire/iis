@@ -1,29 +1,26 @@
 package eu.dnetlib.iis.wf.affmatching;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.java.io.DataStore;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.hadoop.conf.Configuration;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganizationWithProvenance;
+import org.apache.hadoop.conf.Configuration;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
-import static org.junit.Assert.*;
+import java.io.File;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
 * @author mhorst
@@ -33,8 +30,9 @@ public class AffMatchingDedupJobTest {
     
     
     private SparkJobExecutor executor = new SparkJobExecutor();
-    
-    private File workingDir;
+
+    @TempDir
+    public File workingDir;
     
     private String inputADirPath;
     
@@ -45,10 +43,8 @@ public class AffMatchingDedupJobTest {
     private String outputReportPath;
     
     
-    @Before
-    public void before() throws IOException {
-        
-        workingDir = Files.createTempDirectory(AffMatchingDedupJobTest.class.getSimpleName()).toFile();
+    @BeforeEach
+    public void before() {
         
         inputADirPath = workingDir + "/affiliation_dedup/input/a";
         inputBDirPath = workingDir + "/affiliation_dedup/input/b";
@@ -56,15 +52,6 @@ public class AffMatchingDedupJobTest {
         outputReportPath = workingDir + "/affiliation_dedup/report";
         
     }
-    
-    
-    @After
-    public void after() throws IOException {
-        
-        FileUtils.deleteDirectory(workingDir);
-        
-    }
-    
     
     //------------------------ TESTS --------------------------
     

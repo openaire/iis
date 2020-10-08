@@ -18,8 +18,8 @@ import eu.dnetlib.iis.wf.affmatching.write.SimpleAffMatchResultWriter;
 import org.apache.commons.io.FileUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.junit.*;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Tuple2;
@@ -56,7 +56,7 @@ import static java.util.stream.Collectors.toList;
  *
  * @author madryk
  */
-@Category(IntegrationTest.class)
+@IntegrationTest
 public class AffMatchingAffOrgQualityTest {
 
     private static final Logger logger = LoggerFactory.getLogger(AffMatchingAffOrgQualityTest.class);
@@ -70,7 +70,8 @@ public class AffMatchingAffOrgQualityTest {
 
     private static JavaSparkContext sparkContext;
 
-    private File workingDir;
+    @TempDir
+    public File workingDir;
 
     private String inputOrgDirPath;
 
@@ -88,7 +89,7 @@ public class AffMatchingAffOrgQualityTest {
 
     private String outputReportPath;
 
-    @BeforeClass
+    @BeforeAll
     public static void classSetup() {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
@@ -97,10 +98,8 @@ public class AffMatchingAffOrgQualityTest {
         sparkContext = JavaSparkContextFactory.withConfAndKryo(conf);
     }
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
-        workingDir = Files.createTempDirectory("AffMatchingAffOrgQualityTest_").toFile();
-
         inputOrgDirPath = workingDir + "/affiliation_matching/input/organizations";
         inputAffDirPath = workingDir + "/affiliation_matching/input/affiliations";
         inputDocProjDirPath = workingDir + "/affiliation_matching/input/doc_proj";
@@ -112,13 +111,12 @@ public class AffMatchingAffOrgQualityTest {
         affMatchingService = createAffMatchingService();
     }
 
-    @After
-    public void cleanup() throws IOException {
-
-        FileUtils.deleteDirectory(workingDir);
+    @AfterEach
+    public void cleanup() {
+        sparkContext.stop();
     }
 
-    @AfterClass
+    @AfterAll
     public static void classCleanup() {
         if (sparkContext != null) {
             sparkContext.close();

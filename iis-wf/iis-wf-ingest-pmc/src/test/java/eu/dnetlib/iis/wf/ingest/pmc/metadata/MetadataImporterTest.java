@@ -1,41 +1,32 @@
 package eu.dnetlib.iis.wf.ingest.pmc.metadata;
 
-import static eu.dnetlib.iis.wf.ingest.pmc.metadata.MetadataImporter.EXCLUDED_IDS;
-import static eu.dnetlib.iis.wf.ingest.pmc.metadata.MetadataImporter.NAMED_OUTPUT_FAULT;
-import static eu.dnetlib.iis.wf.ingest.pmc.metadata.MetadataImporter.NAMED_OUTPUT_META;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
+import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
+import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
+import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import org.apache.avro.mapred.AvroKey;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.jdom.input.JDOMParseException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import eu.dnetlib.iis.audit.schemas.Fault;
-import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
-import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
-import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.MetadataImporter.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 
 /**
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class MetadataImporterTest {
 
@@ -59,8 +50,8 @@ public class MetadataImporterTest {
     private MetadataImporter mapper;
 
     
-    @Before
-    public void init() throws Exception {
+    @BeforeEach
+    public void init() {
         mapper = new MetadataImporter() {
             
             @Override
@@ -73,25 +64,25 @@ public class MetadataImporterTest {
     
     // ------------------------------------- TESTS -----------------------------------
     
-    @Test(expected=RuntimeException.class)
-    public void testSetupWithoutNamedOutputMeta() throws Exception {
+    @Test
+    public void testSetupWithoutNamedOutputMeta() {
         // given
         Configuration conf = new Configuration();
         doReturn(conf).when(context).getConfiguration();
         
         // execute
-        mapper.setup(context);
+        assertThrows(RuntimeException.class, () -> mapper.setup(context));
     }
     
-    @Test(expected=RuntimeException.class)
-    public void testSetupWithoutNamedOutputFault() throws Exception {
+    @Test
+    public void testSetupWithoutNamedOutputFault() {
         // given
         Configuration conf = new Configuration();
         conf.set(NAMED_OUTPUT_META, "meta");
         doReturn(conf).when(context).getConfiguration();
         
         // execute
-        mapper.setup(context);
+        assertThrows(RuntimeException.class, () -> mapper.setup(context));
     }
     
     @Test

@@ -1,17 +1,14 @@
 package eu.dnetlib.iis.common.pig.udfs;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
+import com.google.common.collect.Lists;
 import org.apache.pig.data.DataType;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.apache.pig.impl.logicalLayer.schema.Schema.FieldSchema;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Lists;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author mhorst
@@ -23,29 +20,29 @@ public class IdReplacerUDFTest {
     
     // --------------------------------- TESTS -------------------------------------
     
-    @Test(expected=IllegalArgumentException.class)
-    public void testExecOnNull() throws Exception {
+    @Test
+    public void testExecOnNull() {
         // execute
-        idReplacer.exec(null);
+        assertThrows(IllegalArgumentException.class, () -> idReplacer.exec(null));
     }
     
-    @Test(expected=IllegalArgumentException.class)
-    public void testExecOnEmpty() throws Exception {
+    @Test
+    public void testExecOnEmpty() {
         // given
         TupleFactory tupleFactory = TupleFactory.getInstance();
         
         // execute
-        idReplacer.exec(tupleFactory.newTuple());
+        assertThrows(IllegalArgumentException.class, () -> idReplacer.exec(tupleFactory.newTuple()));
     }
     
-    @Test(expected=IllegalArgumentException.class)
-    public void testExecNotEnoughArgs() throws Exception {
+    @Test
+    public void testExecNotEnoughArgs() {
         // given
         TupleFactory tupleFactory = TupleFactory.getInstance();
         
         // execute
-        idReplacer.exec(tupleFactory.newTuple(Lists.newArrayList(
-                "str1", "str2")));
+        assertThrows(IllegalArgumentException.class, () ->
+                idReplacer.exec(tupleFactory.newTuple(Lists.newArrayList("str1", "str2"))));
     }
     
     @Test
@@ -69,7 +66,6 @@ public class IdReplacerUDFTest {
         assertEquals(newId, result.get(0));
     }
     
-    @SuppressWarnings("unchecked")
     @Test
     public void testExecMultipleIdFields() throws Exception {
         // given

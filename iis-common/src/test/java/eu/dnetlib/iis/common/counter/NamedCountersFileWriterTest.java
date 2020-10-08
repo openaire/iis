@@ -1,17 +1,12 @@
 package eu.dnetlib.iis.common.counter;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.util.Properties;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author madryk
@@ -19,16 +14,14 @@ import org.junit.rules.TemporaryFolder;
 public class NamedCountersFileWriterTest {
 
     private NamedCountersFileWriter countersFileWriter = new NamedCountersFileWriter();
-    
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-    
-    
+
+    @TempDir
+    public File tempFolder;
+
     private String counterName1 = "COUNTER_1";
     
     private String counterName2 = "COUNTER_2";
-    
-    
+
     //------------------------ TESTS --------------------------
     
     @Test
@@ -42,11 +35,11 @@ public class NamedCountersFileWriterTest {
         
         // execute
         
-        countersFileWriter.writeCounters(namedCounters, tempFolder.getRoot().getPath() + "/counters.properties");
+        countersFileWriter.writeCounters(namedCounters, tempFolder.getPath() + "/counters.properties");
         
         // assert
         
-        Properties actualProperties = loadProperties(new File(tempFolder.getRoot(), "counters.properties"));
+        Properties actualProperties = loadProperties(new File(tempFolder, "counters.properties"));
         
         Properties expectedProperties = new Properties();
         expectedProperties.put(counterName1, "4");

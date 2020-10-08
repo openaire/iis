@@ -1,11 +1,10 @@
 package eu.dnetlib.iis.common.counter;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author madryk
@@ -46,7 +45,7 @@ public class NamedCountersTest {
         assertThat(namedCounters.currentValue(counterName2), is(0L));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void constructor_INITIAL_COUNTERS_NULL() {
         
         // given
@@ -54,8 +53,7 @@ public class NamedCountersTest {
         String[] initialNames = null;
         
         // execute
-        
-        new NamedCounters(initialNames);
+        assertThrows(NullPointerException.class, () -> new NamedCounters(initialNames));
     }
     
     @Test
@@ -72,7 +70,7 @@ public class NamedCountersTest {
         assertThat(namedCounters.currentValue(CountersGroup.ENUM_COUNTER_2.name()), is(0L));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void constructor_INITIAL_COUNTERS_ENUM_NAMES_NULL() {
         
         // given
@@ -80,11 +78,10 @@ public class NamedCountersTest {
         Class<CountersGroup> initialNamesEnum = null;
         
         // execute
-        
-        new NamedCounters(initialNamesEnum);
+        assertThrows(NullPointerException.class, () -> new NamedCounters(initialNamesEnum));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void currentValue_NOT_VALID_COUNTER_NAME() {
         
         // given
@@ -92,8 +89,7 @@ public class NamedCountersTest {
         NamedCounters namedCounters = new NamedCounters(new String[] {counterName1, counterName2});
         
         // execute
-        
-        namedCounters.currentValue("NOT_EXISTING_COUNTER");
+        assertThrows(IllegalArgumentException.class, () -> namedCounters.currentValue("NOT_EXISTING_COUNTER"));
     }
     
     @Test

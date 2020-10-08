@@ -1,14 +1,14 @@
 package eu.dnetlib.iis.common;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import org.apache.hadoop.conf.Configuration;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.hadoop.conf.Configuration;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * @author mhorst
@@ -18,7 +18,7 @@ public class WorkflowRuntimeParametersTest {
 
     Configuration configuration;
     
-    @Before
+    @BeforeEach
     public void init() {
         configuration = new Configuration();
     }

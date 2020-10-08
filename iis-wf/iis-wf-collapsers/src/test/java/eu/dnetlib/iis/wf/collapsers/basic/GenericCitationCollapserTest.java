@@ -1,37 +1,27 @@
 package eu.dnetlib.iis.wf.collapsers.basic;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.hadoop.mapreduce.Counter;
-import org.apache.hadoop.mapreduce.TaskAttemptContext;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import eu.dnetlib.iis.common.citations.schemas.Citation;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
 import eu.dnetlib.iis.wf.collapsers.basic.GenericCitationCollapser.CitationTextCounters;
 import eu.dnetlib.iis.wf.collapsers.basic.GenericCitationCollapser.MatchedCitationCounters;
+import org.apache.hadoop.mapreduce.Counter;
+import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class GenericCitationCollapserTest {
 
     @Mock
@@ -53,7 +43,7 @@ public class GenericCitationCollapserTest {
     private GenericCitationCollapser collapser = new GenericCitationCollapser();
     
     
-    @Before
+    @BeforeEach
     public void prepareCounters() {
         doReturn(totalTextCounter).when(context).getCounter(CitationTextCounters.TOTAL);
         doReturn(docsWithAtLeastOneCitationTextCounter).when(context).getCounter(CitationTextCounters.DOCS_WITH_AT_LEAST_ONE_CITATION);

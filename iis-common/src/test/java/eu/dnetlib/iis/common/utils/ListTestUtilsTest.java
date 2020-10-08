@@ -1,32 +1,36 @@
 package eu.dnetlib.iis.common.utils;
 
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
-import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.junit.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.opentest4j.AssertionFailedError;
 import scala.Tuple2;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class ListTestUtilsTest {
     private static JavaSparkContext sc;
     private static Configuration configuration;
 
-    private Path workingDir;
-    private Path inputDir;
+    @TempDir
+    public Path workingDir;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    public static void beforeAll() {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
         conf.set("spark.driver.host", "localhost");
@@ -35,30 +39,19 @@ public class ListTestUtilsTest {
         configuration = new Configuration();
     }
 
-    @Before
-    public void before() throws IOException {
-        workingDir = Files.createTempDirectory(String.format("%s_", ListTestUtilsTest.class.getSimpleName()));
-        inputDir = workingDir.resolve("input");
-    }
-
-    @After
-    public void after() throws IOException {
-        FileUtils.deleteDirectory(workingDir.toFile());
-    }
-
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    public static void afterAll() {
         sc.stop();
     }
 
-    @Test(expected = ComparisonFailure.class)
+    @Test
     public void compareShouldThrowExceptionWhenListsNotMatch() {
         //given
         List<String> left = Arrays.asList("a", "b");
         List<String> right = Arrays.asList("a", "x");
 
         //when
-        ListTestUtils.compareLists(left, right);
+        assertThrows(AssertionFailedError.class, () -> ListTestUtils.compareLists(left, right));
     }
 
     @Test
@@ -81,6 +74,7 @@ public class ListTestUtilsTest {
         );
         JavaPairRDD<Text, Text> pairs = sc.parallelize(tuples)
                 .mapToPair(x -> x.copy(new Text(x._1), new Text(x._2)));
+        Path inputDir = workingDir.resolve("input");
         RDDUtils.saveTextPairRDD(pairs, 2, inputDir.toString(), configuration);
 
         //when

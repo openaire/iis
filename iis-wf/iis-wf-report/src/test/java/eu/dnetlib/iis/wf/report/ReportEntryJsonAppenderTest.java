@@ -1,32 +1,32 @@
 package eu.dnetlib.iis.wf.report;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.io.Reader;
-
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
-
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.schemas.ReportEntryType;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.io.IOException;
+import java.io.Reader;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 /**
  * @author madryk
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ReportEntryJsonAppenderTest {
 
+    @InjectMocks
     private ReportEntryJsonAppender jsonAppender = new ReportEntryJsonAppender();
     
     @Mock
@@ -39,7 +39,7 @@ public class ReportEntryJsonAppenderTest {
     private JsonObject jsonReport;
     
     
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         
         jsonReport = readJsonFromClasspath("/eu/dnetlib/iis/common/report/report_before.json");

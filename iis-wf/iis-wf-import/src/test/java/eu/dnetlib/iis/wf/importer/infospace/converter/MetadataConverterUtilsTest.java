@@ -1,24 +1,19 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
+import com.google.common.collect.Lists;
+import eu.dnetlib.dhp.schema.oaf.DataInfo;
+import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
+import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
+import org.apache.log4j.Logger;
+import org.junit.jupiter.api.Test;
 
 import java.time.Year;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.log4j.Logger;
-import org.junit.Test;
-
-import com.google.common.collect.Lists;
-
-import eu.dnetlib.dhp.schema.oaf.DataInfo;
-import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
-import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 /**
  * {@link MetadataConverterUtils} test class. 
@@ -47,7 +42,7 @@ public class MetadataConverterUtilsTest {
         assertNull(MetadataConverterUtils.extractYearOrNull(null, log));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testExtractValuesForNullApprover() {
         // given
         Collection<StructuredProperty> source = Lists.newArrayList();
@@ -55,12 +50,13 @@ public class MetadataConverterUtilsTest {
         source.add(generateStructuredProperty(validValue, null));
         
         // execute
-        MetadataConverterUtils.extractValues(source, null);
+        assertThrows(NullPointerException.class, () -> MetadataConverterUtils.extractValues(source, null));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testExtractValuesForNullSource() {
-        MetadataConverterUtils.extractValues(null, mock(FieldApprover.class));
+        assertThrows(NullPointerException.class, () ->
+                MetadataConverterUtils.extractValues(null, mock(FieldApprover.class)));
     }
     
     @Test

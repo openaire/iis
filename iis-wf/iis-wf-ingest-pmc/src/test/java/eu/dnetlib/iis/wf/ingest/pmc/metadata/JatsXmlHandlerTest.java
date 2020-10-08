@@ -1,27 +1,22 @@
 package eu.dnetlib.iis.wf.ingest.pmc.metadata;
 
-import static eu.dnetlib.iis.wf.ingest.pmc.metadata.AssertExtractedDocumentMetadata.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.io.Reader;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-
 import com.google.common.collect.Lists;
-
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ReferenceBasicMetadata;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ReferenceMetadata;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.Reader;
+
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.AssertExtractedDocumentMetadata.assertAuthor;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * {@link JatsXmlHandler} test class.
@@ -38,7 +33,7 @@ public class JatsXmlHandlerTest {
 
 	static final String xmlResourcesRootClassPath = "/eu/dnetlib/iis/wf/ingest/pmc/metadata/data/";
 
-	@Before
+	@BeforeEach
 	public void init() throws Exception {
 		// initializing sax parser
 		SAXParserFactory saxFactory = SAXParserFactory.newInstance();
@@ -55,7 +50,7 @@ public class JatsXmlHandlerTest {
 		jatsXmlHandler = new JatsXmlHandler(metaBuilder);
 	}
 
-	@After
+	@AfterEach
 	public void clean() throws Exception {
 		if (fileReader != null) {
 			fileReader.close();

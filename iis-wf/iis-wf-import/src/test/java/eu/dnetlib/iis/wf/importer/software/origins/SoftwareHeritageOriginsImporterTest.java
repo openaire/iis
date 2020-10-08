@@ -1,71 +1,44 @@
 package eu.dnetlib.iis.wf.importer.software.origins;
 
-import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_SOFTWARE_HERITAGE_ENDPOINT_HOST;
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_SOFTWARE_HERITAGE_ENDPOINT_PORT;
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_SOFTWARE_HERITAGE_ENDPOINT_RATELIMIT_DELAY;
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_SOFTWARE_HERITAGE_ENDPOINT_RETRY_COUNT;
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_SOFTWARE_HERITAGE_ENDPOINT_SCHEME;
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_SOFTWARE_HERITAGE_ENDPOINT_URI_ROOT;
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_SOFTWARE_HERITAGE_START_INDEX;
-import static eu.dnetlib.iis.wf.importer.VerificationUtils.verifyReport;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.avro.file.DataFileWriter;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import com.google.gson.Gson;
-
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.SoftwareHeritageOrigin;
+import org.apache.avro.file.DataFileWriter;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.http.*;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.util.*;
+
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
+import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.*;
+import static eu.dnetlib.iis.wf.importer.VerificationUtils.verifyReport;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * {@link SoftwareHeritageOriginsImporter} test class.
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SoftwareHeritageOriginsImporterTest {
     
     private PortBindings portBindings;
@@ -73,9 +46,9 @@ public class SoftwareHeritageOriginsImporterTest {
     private Configuration conf;
     
     private Map<String, String> parameters;
-    
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+
+    @TempDir
+    public File tempFolder;
     
     @Mock
     private CloseableHttpClient httpClient;
@@ -85,7 +58,6 @@ public class SoftwareHeritageOriginsImporterTest {
     
     @Captor
     private ArgumentCaptor<SoftwareHeritageOrigin> originCaptor;
-    
 
     @Test
     public void testGetNextLinkFromHeaderSingle() throws Exception {
@@ -214,13 +186,13 @@ public class SoftwareHeritageOriginsImporterTest {
         assertEquals(0, results.length);
     }
     
-    @Test(expected=RuntimeException.class)
+    @Test
     public void testParseInvalidPage() throws Exception {
         // given
         Gson gson = new Gson();
 
         // execute
-        SoftwareHeritageOriginsImporter.parsePage("invalid", gson);
+        assertThrows(RuntimeException.class, () -> SoftwareHeritageOriginsImporter.parsePage("invalid", gson));
     }
     
     @Test
@@ -241,7 +213,7 @@ public class SoftwareHeritageOriginsImporterTest {
     @Test
     public void testStoreNextElementIndex() throws Exception {
         // given
-        File propertyFile = tempFolder.newFile();
+        File propertyFile = Files.createTempFile(tempFolder.toPath(), "testStoreNextElementIndex", "tmp").toFile();
         System.setProperty(WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME, propertyFile.getAbsolutePath());
         int nextElementIndex = 2;
         
@@ -268,7 +240,7 @@ public class SoftwareHeritageOriginsImporterTest {
         assertNotNull(result);
         assertNotNull(result.get(SoftwareHeritageOriginsImporter.PORT_OUT_ORIGINS));
         assertTrue(result.get(SoftwareHeritageOriginsImporter.PORT_OUT_ORIGINS) instanceof AvroPortType);
-        assertTrue(SoftwareHeritageOrigin.SCHEMA$ == ((AvroPortType)result.get(SoftwareHeritageOriginsImporter.PORT_OUT_ORIGINS)).getSchema());
+        assertSame(SoftwareHeritageOrigin.SCHEMA$, ((AvroPortType) result.get(SoftwareHeritageOriginsImporter.PORT_OUT_ORIGINS)).getSchema());
     }
     
     @Test
@@ -476,7 +448,7 @@ public class SoftwareHeritageOriginsImporterTest {
         verifyReport(1, SoftwareHeritageOriginsImporter.COUNTER_NAME_TOTAL);
     }
     
-    @Test(expected=RuntimeException.class)
+    @Test
     public void testRunWithoutRetryBecauseOfServerError() throws Exception {
         // given
         SoftwareHeritageOriginsImporter importer = initializeImporterParams("api/origins", "somehost.com", "https", "8080", "1");
@@ -499,16 +471,16 @@ public class SoftwareHeritageOriginsImporterTest {
         when(httpEntity.getContent()).thenReturn(pageInputStream);
 
         // execute
-        importer.run(portBindings, conf, parameters);
+        assertThrows(RuntimeException.class, () -> importer.run(portBindings, conf, parameters));
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test
     public void testRunEndpointUriMissing() throws Exception {
         // given
         SoftwareHeritageOriginsImporter importer = initializeImporterParams(null, "somehost.com", "https", "8080", "1");
         
         // execute
-        importer.run(portBindings, conf, parameters);
+        assertThrows(IllegalArgumentException.class, () -> importer.run(portBindings, conf, parameters));
     }
     
     @Test
@@ -526,58 +498,58 @@ public class SoftwareHeritageOriginsImporterTest {
         verifyReport(0, SoftwareHeritageOriginsImporter.COUNTER_NAME_TOTAL);
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test
     public void testRunEndpointHostMissing() throws Exception {
         // given
         SoftwareHeritageOriginsImporter importer = initializeImporterParams("api/origins", null, "https", "8080", "1");
         
         // execute
-        importer.run(portBindings, conf, parameters);
+        assertThrows(IllegalArgumentException.class, () -> importer.run(portBindings, conf, parameters));
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test
     public void testRunEndpointSchemeMissing() throws Exception {
         // given
         SoftwareHeritageOriginsImporter importer = initializeImporterParams("api/origins", "somehost.com", null, "8080", "1");
         
         // execute
-        importer.run(portBindings, conf, parameters);
+        assertThrows(IllegalArgumentException.class, () -> importer.run(portBindings, conf, parameters));
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test
     public void testRunEndpointPortMissing() throws Exception {
         // given
         SoftwareHeritageOriginsImporter importer = initializeImporterParams("api/origins", "somehost.com", "https", null, "1");
         
         // execute
-        importer.run(portBindings, conf, parameters);
+        assertThrows(IllegalArgumentException.class, () -> importer.run(portBindings, conf, parameters));
     }
     
-    @Test(expected=NumberFormatException.class)
+    @Test
     public void testRunEndpointPortInvalidValue() throws Exception {
         // given
         SoftwareHeritageOriginsImporter importer = initializeImporterParams("api/origins", "somehost.com", "https", "invalid", "1");
         
         // execute
-        importer.run(portBindings, conf, parameters);
+        assertThrows(IllegalArgumentException.class, () -> importer.run(portBindings, conf, parameters));
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test
     public void testRunEndpointStartIndexMissing() throws Exception {
         // given
         SoftwareHeritageOriginsImporter importer = initializeImporterParams("api/origins", "somehost.com", "https", "8080", null);
         
         // execute
-        importer.run(portBindings, conf, parameters);
+        assertThrows(IllegalArgumentException.class, () -> importer.run(portBindings, conf, parameters));
     }
     
-    @Test(expected=NumberFormatException.class)
+    @Test
     public void testRunEndpointStartIndexInvalidValue() throws Exception {
         // given
         SoftwareHeritageOriginsImporter importer = initializeImporterParams("api/origins", "somehost.com", "https", "8080", "invalid");
         
         // execute
-        importer.run(portBindings, conf, parameters);
+        assertThrows(NumberFormatException.class, () -> importer.run(portBindings, conf, parameters));
     }
     
     // ------------------------------ PRIVATE -------------------------------------
@@ -585,7 +557,7 @@ public class SoftwareHeritageOriginsImporterTest {
     private SoftwareHeritageOriginsImporter initializeImporterParams(String uriRoot, String host, String scheme, String port, 
             String startElementIndex) throws Exception {
         System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME, 
-                tempFolder.getRoot().getAbsolutePath() + File.separatorChar + "test.properties");
+                tempFolder.getAbsolutePath() + File.separatorChar + "test.properties");
         
         Map<String, Path> output = new HashMap<>();
         output.put(SoftwareHeritageOriginsImporter.PORT_OUT_ORIGINS, new Path("/irrelevant/location/as/it/will/be/mocked"));

@@ -1,12 +1,17 @@
 package eu.dnetlib.iis.wf.referenceextraction.softwareurl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import eu.dnetlib.iis.wf.referenceextraction.ContentRetrieverResponse;
+import eu.dnetlib.iis.wf.referenceextraction.RetryLimitExceededException;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,19 +19,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.NoSuchElementException;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import eu.dnetlib.iis.wf.referenceextraction.ContentRetrieverResponse;
-import eu.dnetlib.iis.wf.referenceextraction.RetryLimitExceededException;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * {@link HttpContentRetriever} test class.
@@ -34,7 +28,7 @@ import eu.dnetlib.iis.wf.referenceextraction.RetryLimitExceededException;
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class HttpContentRetrieverTest {
 
     private int connectionTimeout = 10000;
@@ -130,21 +124,9 @@ public class HttpContentRetrieverTest {
         // initial response mock
         CloseableHttpResponse getContentHttpResponse = mock(CloseableHttpResponse.class);
         StatusLine getContentStatusLine = mock(StatusLine.class);
-        HttpEntity getContentHttpEntity = mock(HttpEntity.class);
         when(getContentHttpResponse.getStatusLine()).thenReturn(getContentStatusLine);
         when(getContentStatusLine.getStatusCode()).thenReturn(301);
-        when(getContentHttpResponse.getEntity()).thenReturn(getContentHttpEntity);
-        when(getContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(originalResult.getBytes()));
-
-        // moved response
-        CloseableHttpResponse getMovedContentHttpResponse = mock(CloseableHttpResponse.class);
-        StatusLine getMovedContentStatusLine = mock(StatusLine.class);
-        HttpEntity getMovedContentHttpEntity = mock(HttpEntity.class);
-        when(getMovedContentHttpResponse.getStatusLine()).thenReturn(getMovedContentStatusLine);
-        when(getMovedContentStatusLine.getStatusCode()).thenReturn(200);
-        when(getMovedContentHttpResponse.getEntity()).thenReturn(getMovedContentHttpEntity);
-        when(getMovedContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(movedResult.getBytes()));
-        when(httpClient.execute(any(HttpGet.class))).thenReturn(getContentHttpResponse, getMovedContentHttpResponse);
+        when(httpClient.execute(any(HttpGet.class))).thenReturn(getContentHttpResponse);
         
         // execute
         ContentRetrieverResponse response = service.retrieveUrlContent("someUrl");

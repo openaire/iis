@@ -1,14 +1,13 @@
 package eu.dnetlib.iis.common.java.jsonworkflownodes;
 
-import java.util.Map;
-
-import org.junit.Assert;
-
-import org.junit.Test;
-
 import eu.dnetlib.iis.common.java.porttype.AvroPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.common.utils.AvroUtils;
+import org.junit.jupiter.api.Test;
+
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProducerAndConsumerTest{
 	@Test
@@ -18,7 +17,7 @@ public class ProducerAndConsumerTest{
 			public Map<String, PortType> getPorts(String[] specificationStrings){
 				Producer producer = 
 						new Producer(specificationStrings);
-				Assert.assertEquals(0, producer.getInputPorts().size());
+				assertEquals(0, producer.getInputPorts().size());
 				return producer.getOutputPorts();
 			}
 		});
@@ -31,7 +30,7 @@ public class ProducerAndConsumerTest{
 			public Map<String, PortType> getPorts(String[] specificationStrings){
 				TestingConsumer consumer = 
 						new TestingConsumer(specificationStrings);
-				Assert.assertEquals(0, consumer.getOutputPorts().size());
+				assertEquals(0, consumer.getOutputPorts().size());
 				return consumer.getInputPorts();
 			}
 		});
@@ -52,12 +51,12 @@ public class ProducerAndConsumerTest{
 					specs[i].schemaPath, specs[i].jsonPath);
 		}
 		Map<String, PortType> outs = creator.getPorts(specsStr);
-		Assert.assertEquals(specs.length, outs.size());
+		assertEquals(specs.length, outs.size());
 		for (int i = 0; i < specs.length; i++) {
 			AvroPortType actual = (AvroPortType) outs.get(specs[i].name);
 			AvroPortType expected = new AvroPortType(
 					AvroUtils.toSchema(specs[i].schemaPath));
-			Assert.assertEquals(expected, actual);
+			assertEquals(expected, actual);
 		}
 	}
 }

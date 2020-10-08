@@ -1,14 +1,14 @@
 package eu.dnetlib.iis.wf.importer.stream.project;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 import java.net.URL;
 
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author mhorst

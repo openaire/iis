@@ -1,22 +1,19 @@
 package eu.dnetlib.iis.common.pig.udfs;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-
+import com.google.common.collect.Lists;
 import org.apache.pig.data.BagFactory;
 import org.apache.pig.data.DataBag;
 import org.apache.pig.data.DataType;
 import org.apache.pig.data.TupleFactory;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.apache.pig.impl.logicalLayer.schema.Schema.FieldSchema;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Lists;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * {@link IdConfidenceTupleDeduplicator} UDF test class.
@@ -76,7 +73,7 @@ public class IdConfidenceTupleDeduplicatorTest {
     }
 	
 	@Test
-    public void testOutputSchema() throws Exception {
+    public void testOutputSchema() {
         // given
 	    IdConfidenceTupleDeduplicator udf = new IdConfidenceTupleDeduplicator();
 	    Schema inputSchema = new Schema();
@@ -86,6 +83,6 @@ public class IdConfidenceTupleDeduplicatorTest {
         Schema resultSchema = udf.outputSchema(inputSchema);
         
         // assert
-        assertTrue(inputSchema == resultSchema);
+		assertSame(inputSchema, resultSchema);
     }
 }

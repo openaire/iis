@@ -1,9 +1,9 @@
 package eu.dnetlib.iis.common.importer;
 
-import static org.junit.Assert.assertEquals;
-
 import org.jdom.Element;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
 * @author Łukasz Dumiszewski
@@ -18,12 +18,11 @@ public class CermineAffiliationBuilderTest {
     //------------------------ TESTS --------------------------
     
     
-    @Test(expected=NullPointerException.class)
+    @Test
     public void build_NULL() {
         
         // execute
-        
-        builder.build(null);
+        assertThrows(NullPointerException.class, () -> builder.build(null));
     }
     
     
@@ -68,8 +67,8 @@ public class CermineAffiliationBuilderTest {
         // assert
         
         assertEquals("Interdyscyplinarne Centrum ModelowaniaUniwersytet Warszawski Prosta 69, Warszawa", cAff.getRawText());
-        assertEquals(null, cAff.getCountryName());
-        assertEquals(null, cAff.getCountryCode());
+        assertNull(cAff.getCountryName());
+        assertNull(cAff.getCountryCode());
         assertEquals("Prosta 69, Warszawa", cAff.getAddress());
         assertEquals("Interdyscyplinarne Centrum Modelowania, Uniwersytet Warszawski", cAff.getInstitution());
         

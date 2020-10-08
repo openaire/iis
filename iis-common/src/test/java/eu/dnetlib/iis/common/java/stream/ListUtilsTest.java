@@ -1,23 +1,24 @@
 package eu.dnetlib.iis.common.java.stream;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ListUtilsTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void zipShouldThrowExceptionWhenListSizeNotMatch() {
         //given
         List<String> left = Arrays.asList("left 1", "left 2");
         List<String> right = Arrays.asList("right 1", "right 2", "right 3");
 
         //when
-        ListUtils.zip(left, right);
+        assertThrows(IllegalArgumentException.class, () -> ListUtils.zip(left, right));
     }
 
     @Test

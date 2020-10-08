@@ -1,10 +1,8 @@
 package eu.dnetlib.iis.wf.citationmatching.converter.entity_id;
 
-// TODO MiconCodeReview: Unused import
-import eu.dnetlib.iis.wf.citationmatching.converter.entity_id.DocEntityId;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Mateusz Fedoryszak (m.fedoryszak@icm.edu.pl)
@@ -14,6 +12,6 @@ public class DocEntityIdTest {
     public void basicTest() {
         String docId = "id12345";
         DocEntityId id = DocEntityId.parseFrom(new DocEntityId(docId).toString());
-        Assert.assertEquals(docId, id.getDocumentId());
+        assertEquals(docId, id.getDocumentId());
     }
 }

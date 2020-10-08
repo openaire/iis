@@ -1,14 +1,13 @@
 package eu.dnetlib.iis.common.counter;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import scala.Tuple2;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import scala.Tuple2;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * @author madryk
@@ -30,7 +29,7 @@ public class NamedCountersAccumulableParamTest {
     private NamedCounters namedCounters2 = new NamedCounters(new String[] {counterName2, counterName3});
     
     
-    @Before
+    @BeforeEach
     public void setup() {
         namedCounters1.increment(counterName1, 3L);
         namedCounters1.increment(counterName2, 1L);
@@ -49,8 +48,8 @@ public class NamedCountersAccumulableParamTest {
         NamedCounters retNamedCounters = countersAccumulableParam.addAccumulator(namedCounters1, new Tuple2<>(counterName2, 9L));
         
         // assert
-        
-        assertTrue(retNamedCounters == namedCounters1);
+
+        assertSame(retNamedCounters, namedCounters1);
         
         assertThat(retNamedCounters.counterNames(), containsInAnyOrder(counterName1, counterName2));
         assertThat(retNamedCounters.currentValue(counterName1), is(3L));
@@ -65,8 +64,8 @@ public class NamedCountersAccumulableParamTest {
         NamedCounters retNamedCounters = countersAccumulableParam.addInPlace(namedCounters1, namedCounters2);
         
         // assert
-        
-        assertTrue(retNamedCounters == namedCounters1);
+
+        assertSame(retNamedCounters, namedCounters1);
         
         assertThat(retNamedCounters.counterNames(), containsInAnyOrder(counterName1, counterName2, counterName3));
         assertThat(retNamedCounters.currentValue(counterName1), is(3L));
@@ -82,8 +81,8 @@ public class NamedCountersAccumulableParamTest {
         NamedCounters retNamedCounters = countersAccumulableParam.zero(namedCounters1);
         
         // assert
-        
-        assertTrue(retNamedCounters == namedCounters1);
+
+        assertSame(retNamedCounters, namedCounters1);
         
         assertThat(retNamedCounters.counterNames(), containsInAnyOrder(counterName1, counterName2));
         assertThat(retNamedCounters.currentValue(counterName1), is(3L));

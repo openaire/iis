@@ -1,11 +1,10 @@
 package eu.dnetlib.iis.wf.affmatching.bucket;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSection;
 import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSection.OrgSectionType;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author madryk

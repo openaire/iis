@@ -1,24 +1,21 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
-import static eu.dnetlib.iis.wf.export.actionmanager.module.DocumentToPdbActionBuilderModuleFactory.EXPORT_PDB_URL_ROOT;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.Collections;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.google.common.collect.Lists;
 import com.google.protobuf.InvalidProtocolBufferException;
-
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.ExternalReference;
 import eu.dnetlib.dhp.schema.oaf.Result;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.export.schemas.Concept;
 import eu.dnetlib.iis.export.schemas.DocumentToConceptIds;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.Collections;
+import java.util.List;
+
+import static eu.dnetlib.iis.wf.export.actionmanager.module.DocumentToPdbActionBuilderModuleFactory.EXPORT_PDB_URL_ROOT;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author mhorst
@@ -35,7 +32,7 @@ public class DocumentToPdbActionBuilderModuleFactoryTest extends AbstractActionB
         super(DocumentToPdbActionBuilderModuleFactory.class, AlgorithmName.document_pdb);
     }
 
-    @Before
+    @BeforeEach
     public void initUrlRootParam() {
         config.set(EXPORT_PDB_URL_ROOT, ROOT_URL);
     }
@@ -57,8 +54,8 @@ public class DocumentToPdbActionBuilderModuleFactoryTest extends AbstractActionB
         assertEquals(0, actions.size());
     }
 
-    @Test(expected=RuntimeException.class)
-    public void testBuildWithoutRootUrl() throws Exception {
+    @Test
+    public void testBuildWithoutRootUrl() {
      // given
         String docId = "documentId";
         String pdbId = "pdbId";
@@ -67,7 +64,7 @@ public class DocumentToPdbActionBuilderModuleFactoryTest extends AbstractActionB
         ActionBuilderModule<DocumentToConceptIds, Result> module =  factory.instantiate(config);
         
         // execute
-        module.build(buildDocumentToConceptIds(docId, pdbId, confidenceLevel));
+        assertThrows(RuntimeException.class, () -> module.build(buildDocumentToConceptIds(docId, pdbId, confidenceLevel)));
     }
 
     

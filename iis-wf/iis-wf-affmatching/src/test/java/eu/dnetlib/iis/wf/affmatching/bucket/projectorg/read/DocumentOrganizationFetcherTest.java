@@ -1,24 +1,25 @@
 package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentOrganization;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentProject;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchProjectOrganization;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author madryk
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DocumentOrganizationFetcherTest {
 
     @InjectMocks
@@ -52,7 +53,7 @@ public class DocumentOrganizationFetcherTest {
     private JavaRDD<AffMatchDocumentOrganization> documentOrganizations;
     
     
-    @Before
+    @BeforeEach
     public void setup() {
         documentOrganizationFetcher.setDocProjConfidenceLevelThreshold(docProjConfidenceLevelThreshold);
         documentOrganizationFetcher.setProjOrgPath(projOrgPath);
@@ -77,8 +78,8 @@ public class DocumentOrganizationFetcherTest {
         
         
         // assert
-        
-        assertTrue(retDocumentOrganizations == documentOrganizations);
+
+        assertSame(retDocumentOrganizations, documentOrganizations);
         
         verify(documentProjectFetcher).fetchDocumentProjects();
         verify(projectOrganizationReader).readProjectOrganizations(sc, projOrgPath);

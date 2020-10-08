@@ -2,10 +2,9 @@ package eu.dnetlib.iis.wf.importer.patent;
 
 import eu.dnetlib.iis.common.AbstractOozieWorkflowTestCase;
 import eu.dnetlib.iis.common.IntegrationTest;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
 
-@Category(IntegrationTest.class)
+@IntegrationTest
 public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 
     @Test

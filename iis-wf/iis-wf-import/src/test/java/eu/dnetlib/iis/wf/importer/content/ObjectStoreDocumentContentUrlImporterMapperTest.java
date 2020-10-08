@@ -1,29 +1,26 @@
 package eu.dnetlib.iis.wf.importer.content;
 
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_FACADE_FACTORY_CLASS;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import eu.dnetlib.iis.common.java.io.JsonUtils;
+import eu.dnetlib.iis.common.schemas.Identifier;
+import eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl;
+import org.apache.avro.mapred.AvroKey;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapreduce.Mapper.Context;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.avro.mapred.AvroKey;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.mapreduce.Mapper.Context;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import eu.dnetlib.iis.common.java.io.JsonUtils;
-import eu.dnetlib.iis.common.schemas.Identifier;
-import eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl;
+import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_FACADE_FACTORY_CLASS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 
 
@@ -31,7 +28,7 @@ import eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl;
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class ObjectStoreDocumentContentUrlImporterMapperTest {
 
@@ -48,17 +45,17 @@ public class ObjectStoreDocumentContentUrlImporterMapperTest {
 
     // ------------------------------------- TESTS -----------------------------------
     
-    @Test(expected=RuntimeException.class)
-    public void testSetupWithoutISLookupFacade() throws Exception {
+    @Test
+    public void testSetupWithoutISLookupFacade() {
         // given
         Configuration conf = new Configuration();
         doReturn(conf).when(context).getConfiguration();
         
         // execute
-        mapper.setup(context);
+        assertThrows(RuntimeException.class, () -> mapper.setup(context));
     }
     
-    @Test(expected=IOException.class)
+    @Test
     public void testMapThrowingException() throws Exception {
         // given
         Configuration conf = new Configuration();
@@ -70,7 +67,7 @@ public class ObjectStoreDocumentContentUrlImporterMapperTest {
         AvroKey<Identifier> key = new AvroKey<>(buildIdentifier("objectStoreId"));
         
         // execute
-        mapper.map(key, null, context);
+        assertThrows(IOException.class, () -> mapper.map(key, null, context));
     }
     
     @Test

@@ -1,18 +1,14 @@
 package eu.dnetlib.iis.wf.importer.content.approver;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 
 
@@ -20,7 +16,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ComplexContentApproverTest {
 
     @Mock
@@ -50,7 +46,7 @@ public class ComplexContentApproverTest {
     }
 
     @Test
-    public void testApprove() throws Exception {
+    public void testApprove() {
         // given
         ComplexContentApprover complexApprover = new ComplexContentApprover(approver1, approver2);
         doReturn(true).when(approver1).approve(content);
@@ -63,12 +59,12 @@ public class ComplexContentApproverTest {
         assertTrue(result);
         verify(approver1).approve(approver1Captor.capture());
         verify(approver2).approve(approver2Captor.capture());
-        assertTrue(content == approver1Captor.getValue());
-        assertTrue(content == approver2Captor.getValue());
+        assertSame(content, approver1Captor.getValue());
+        assertSame(content, approver2Captor.getValue());
     }
     
     @Test
-    public void testDisapproveFirst() throws Exception {
+    public void testDisapproveFirst() {
      // given
         ComplexContentApprover complexApprover = new ComplexContentApprover(approver1, approver2);
         doReturn(false).when(approver1).approve(content);
@@ -80,11 +76,11 @@ public class ComplexContentApproverTest {
         assertFalse(result);
         verify(approver1, times(1)).approve(approver1Captor.capture());
         verify(approver2, never()).approve(approver2Captor.capture());
-        assertTrue(content == approver1Captor.getValue());
+        assertSame(content, approver1Captor.getValue());
     }
 
     @Test
-    public void testDisapproveLast() throws Exception {
+    public void testDisapproveLast() {
         // given
         ComplexContentApprover complexApprover = new ComplexContentApprover(approver1, approver2);
         doReturn(true).when(approver1).approve(content);
@@ -97,8 +93,8 @@ public class ComplexContentApproverTest {
         assertFalse(result);
         verify(approver1).approve(approver1Captor.capture());
         verify(approver2).approve(approver2Captor.capture());
-        assertTrue(content == approver1Captor.getValue());
-        assertTrue(content == approver2Captor.getValue());
+        assertSame(content, approver1Captor.getValue());
+        assertSame(content, approver2Captor.getValue());
     }
     
 }

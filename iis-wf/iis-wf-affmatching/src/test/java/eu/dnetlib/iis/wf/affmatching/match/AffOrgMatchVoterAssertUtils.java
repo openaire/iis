@@ -1,26 +1,20 @@
 package eu.dnetlib.iis.wf.affmatching.match;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.powermock.reflect.Whitebox.getInternalState;
-
-import java.util.List;
-import java.util.function.Function;
-
 import eu.dnetlib.iis.wf.affmatching.bucket.BucketHasher;
 import eu.dnetlib.iis.wf.affmatching.bucket.MainSectionBucketHasher;
 import eu.dnetlib.iis.wf.affmatching.bucket.MainSectionBucketHasher.FallbackSectionPickStrategy;
 import eu.dnetlib.iis.wf.affmatching.bucket.StringPartFirstLettersHasher;
-import eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.CommonAffSectionWordsVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.CommonWordsVoter;
+import eu.dnetlib.iis.wf.affmatching.match.voter.*;
 import eu.dnetlib.iis.wf.affmatching.match.voter.CommonWordsVoter.RatioRelation;
-import eu.dnetlib.iis.wf.affmatching.match.voter.CompositeMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.NameStrictWithCharFilteringMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.SectionedNameLevenshteinMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.SectionedNameStrictMatchVoter;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSection.OrgSectionType;
+
+import java.util.List;
+import java.util.function.Function;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.powermock.reflect.Whitebox.getInternalState;
 
 /**
  * Utility methods to assert created {@link AffOrgMatchVoter}s 

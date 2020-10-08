@@ -1,15 +1,14 @@
 package eu.dnetlib.iis.common.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.importer.schemas.DocumentToProject;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.junit.Test;
-
-import eu.dnetlib.iis.importer.schemas.DocumentToProject;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author mhorst

@@ -1,23 +1,19 @@
 package eu.dnetlib.iis.wf.referenceextraction.community.input;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.common.io.Files;
-
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.importer.schemas.Concept;
 import eu.dnetlib.iis.referenceextraction.community.schemas.Community;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author mhorst
@@ -29,31 +25,21 @@ public class CommunityReferenceExtractionInputTransformerJobTest {
     
     
     private SparkJobExecutor executor = new SparkJobExecutor();
-    
-    private File workingDir;
+
+    @TempDir
+    public File workingDir;
     
     private String inputConceptPath;
     
     private String outputDirPath;
     
     
-    @Before
+    @BeforeEach
     public void before() {
-        
-        workingDir = Files.createTempDir();
         inputConceptPath = workingDir + "/referenceextraction_community_input_transformer/inputConcept";
         outputDirPath = workingDir + "/referenceextraction_community_input_transformer/output";
     }
-    
-    
-    @After
-    public void after() throws IOException {
-        
-        FileUtils.deleteDirectory(workingDir);
-        
-    }
-    
-    
+
     //------------------------ TESTS --------------------------
     
     @Test

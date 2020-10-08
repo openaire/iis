@@ -1,19 +1,17 @@
 package eu.dnetlib.iis.common.report;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import com.google.common.collect.ImmutableMap;
+import eu.dnetlib.iis.common.counter.NamedCounters;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.common.schemas.ReportEntryType;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.common.collect.ImmutableMap;
-
-import eu.dnetlib.iis.common.counter.NamedCounters;
-import eu.dnetlib.iis.common.schemas.ReportEntry;
-import eu.dnetlib.iis.common.schemas.ReportEntryType;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 
 /**
  * @author madryk
@@ -36,7 +34,7 @@ public class CountersToReportEntriesConverterTest {
     
     
     
-    @Before
+    @BeforeEach
     public void setup() {
         
         Map<String, String> counterNameToEntryKeyMapping = ImmutableMap.of(

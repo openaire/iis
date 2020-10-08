@@ -1,18 +1,16 @@
 package eu.dnetlib.iis.wf.affmatching.orgalternativenames;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 
 /**
  * @author madryk
@@ -27,7 +25,7 @@ public class AffMatchOrganizationAltNameFillerTest {
     private AffMatchOrganization organization = new AffMatchOrganization("ORG_ID");
     
     
-    @Before
+    @BeforeEach
     public void setup() {
         
         altNamesDictionary.add(ImmutableSet.of("Uniwersytet im. Adama Mickiewicza w Poznaniu", "Adam Mickiewicz University in Poznań", "Adam Mickiewicz University"));

@@ -1,20 +1,18 @@
 package eu.dnetlib.iis.wf.collapsers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
-import org.apache.avro.generic.GenericData;
-import org.apache.avro.generic.IndexedRecord;
-
 import com.google.common.collect.Lists;
-
 import eu.dnetlib.iis.collapsers.schemas.DocumentMetadata;
 import eu.dnetlib.iis.collapsers.schemas.DocumentMetadataEnvelope;
 import eu.dnetlib.iis.collapsers.schemas.DocumentTextEnvelope;
 import eu.dnetlib.iis.collapsers.schemas.PublicationType;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
+import org.apache.avro.generic.GenericData;
+import org.apache.avro.generic.IndexedRecord;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -202,13 +200,13 @@ public class SampleData {
                 .build();
     
     public static void assertEqualRecords(IndexedRecord expected, IndexedRecord actual) {
-        assertEquals("Records are not equal: \nExpected: " + expected + "\nActual: " + actual + "\n", 
-                0, GenericData.get().compare(expected, actual, expected.getSchema()));
+        assertEquals(0, GenericData.get().compare(expected, actual, expected.getSchema()),
+                "Records are not equal: \nExpected: " + expected + "\nActual: " + actual + "\n");
     }
     
     public static <T extends IndexedRecord> void assertEqualRecords(List<T> expected, List<T> actual) {
-        assertEquals("Records lists have different sizes: " + expected.size() + " and " + actual.size() + "\n",
-                expected.size(), actual.size());
+        assertEquals(expected.size(), actual.size(),
+                "Records lists have different sizes: " + expected.size() + " and " + actual.size() + "\n");
         List<T> actualCopy = Lists.newArrayList(actual);
         for (T exp : expected) {
             T found = null;
@@ -217,9 +215,7 @@ public class SampleData {
                     found = act;
                 }
             }
-            assertTrue(
-                    "Expected record " + exp.toString() + " was not found among the actual records\n", 
-                    found != null);
+            assertNotNull(found, "Expected record " + exp.toString() + " was not found among the actual records\n");
             actualCopy.remove(found);
         }
     }

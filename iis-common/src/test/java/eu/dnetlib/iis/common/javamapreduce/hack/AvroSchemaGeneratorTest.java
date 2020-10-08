@@ -1,9 +1,11 @@
 package eu.dnetlib.iis.common.javamapreduce.hack;
 
-import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import eu.dnetlib.iis.common.schemas.Identifier;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,37 +13,31 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import eu.dnetlib.iis.common.schemas.Identifier;
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AvroSchemaGeneratorTest {
+
+    @TempDir
+    public File testFolder;
     
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
-    
-    @Before
+    @BeforeEach
     public void initEnv() {
-        System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME, 
-                testFolder.getRoot().getAbsolutePath() + File.separatorChar + "test.properties");
+        System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME,
+                testFolder.getAbsolutePath() + File.separatorChar + "test.properties");
     }
     
     // -------------------------------------- TESTS --------------------------------------
     
-    @Test(expected=RuntimeException.class)
-    public void testMainNoArgs() throws Exception {
+    @Test
+    public void testMainNoArgs() {
         // execute
-        AvroSchemaGenerator.main(new String[0]);
+        assertThrows(RuntimeException.class, () -> AvroSchemaGenerator.main(new String[0]));
     }
     
     @Test

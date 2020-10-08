@@ -3,13 +3,13 @@ package eu.dnetlib.iis.wf.report.pushgateway.converter;
 import eu.dnetlib.iis.common.java.stream.ListUtils;
 import io.prometheus.client.Collector;
 import io.prometheus.client.Gauge;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GaugesCreationTest {
 

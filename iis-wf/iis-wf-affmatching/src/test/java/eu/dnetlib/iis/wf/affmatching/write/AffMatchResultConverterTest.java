@@ -1,14 +1,12 @@
 package eu.dnetlib.iis.wf.affmatching.write;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import org.junit.Test;
-
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
 import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
 * @author Łukasz Dumiszewski
@@ -23,12 +21,11 @@ public class AffMatchResultConverterTest {
     //------------------------ TESTS --------------------------
     
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void convert_null() {
         
         // execute
-        
-        converter.convert(null);
+        assertThrows(NullPointerException.class, () -> converter.convert(null));
         
     }
     
@@ -53,7 +50,7 @@ public class AffMatchResultConverterTest {
         assertNotNull(matchedOrg);
         assertEquals("DOC1", matchedOrg.getDocumentId());
         assertEquals("ORG1", matchedOrg.getOrganizationId());
-        assertEquals(0.85f, matchedOrg.getMatchStrength().floatValue(), 0.002);
+        assertEquals(0.85f, matchedOrg.getMatchStrength(), 0.002);
         
     }
 

@@ -2,17 +2,18 @@ package eu.dnetlib.iis.common.utils;
 
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
-import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.junit.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import scala.Tuple2;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -20,18 +21,18 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RDDUtilsTest {
     private static final int NUMBER_OF_OUTPUT_FILES = 2;
     private static JavaSparkContext sc;
     private static Configuration configuration;
 
-    private Path workingDir;
-    private Path outputDir;
+    @TempDir
+    public Path workingDir;
 
-    @BeforeClass
-    public static void beforeClass() {
+    @BeforeAll
+    public static void beforeAll() {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
         conf.set("spark.driver.host", "localhost");
@@ -40,19 +41,8 @@ public class RDDUtilsTest {
         configuration = new Configuration();
     }
 
-    @Before
-    public void before() throws IOException {
-        workingDir = Files.createTempDirectory("RDDUtilsTest_");
-        outputDir = workingDir.resolve("output");
-    }
-
-    @After
-    public void after() throws IOException {
-        FileUtils.deleteDirectory(workingDir.toFile());
-    }
-
-    @AfterClass
-    public static void afterClass() {
+    @AfterAll
+    public static void afterAll() {
         sc.stop();
     }
 
@@ -64,6 +54,7 @@ public class RDDUtilsTest {
                 new Tuple2<>(new Text("2L"), new Text("2R")),
                 new Tuple2<>(new Text("3L"), new Text("3R"))),
                 NUMBER_OF_OUTPUT_FILES + 1);
+        Path outputDir = workingDir.resolve("output");
 
         //when
         RDDUtils.saveTextPairRDD(in, NUMBER_OF_OUTPUT_FILES, outputDir.toString(), configuration);

@@ -1,13 +1,10 @@
 package eu.dnetlib.iis.common.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import org.apache.avro.Schema;
-import org.junit.Test;
-
 import eu.dnetlib.iis.common.schemas.Identifier;
+import org.apache.avro.Schema;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author mhorst
@@ -17,41 +14,42 @@ public class AvroUtilsTest {
 
     // ---------------------------------------------- TESTS ------------------------------------------------
     
-    @Test(expected=IllegalArgumentException.class)
-    public void testToSchemaForNotExistingPrimitive() throws Exception {
+    @Test
+    public void testToSchemaForNotExistingPrimitive() {
         // execute
-        AvroUtils.toSchema("org.apache.avro.Schema.Type.NON_EXISTING");
+        assertThrows(IllegalArgumentException.class, () ->
+                AvroUtils.toSchema("org.apache.avro.Schema.Type.NON_EXISTING"));
     }
     
     @Test
-    public void testToSchemaForPrimitive() throws Exception {
+    public void testToSchemaForPrimitive() {
         // execute
         Schema schema = AvroUtils.toSchema("org.apache.avro.Schema.Type.STRING");
         
         // assert
         assertNotNull(schema);
-        assertTrue(schema.equals(Schema.create(Schema.Type.STRING)));
+        assertEquals(schema, Schema.create(Schema.Type.STRING));
     }
-    
-    @Test(expected=RuntimeException.class)
-    public void testToSchemaForNonExistingAvroClass() throws Exception {
+
+    @Test
+    public void testToSchemaForNonExistingAvroClass() {
         // execute
-        AvroUtils.toSchema("non.existing.Class");
+        assertThrows(RuntimeException.class, () -> AvroUtils.toSchema("non.existing.Class"));
     }
     
     @Test
-    public void testToSchemaForAvroClass() throws Exception {
+    public void testToSchemaForAvroClass() {
         // execute
         Schema schema = AvroUtils.toSchema(Identifier.class.getCanonicalName());
         
         // assert
         assertNotNull(schema);
-        assertTrue(schema == Identifier.SCHEMA$);
+        assertSame(schema, Identifier.SCHEMA$);
     }
     
-    @Test(expected=RuntimeException.class)
-    public void testGetCopyForNonIndexedRecord() throws Exception {
-        AvroUtils.getCopy("source", Identifier.SCHEMA$, String.class);
+    @Test
+    public void testGetCopyForNonIndexedRecord() {
+        assertThrows(RuntimeException.class, () -> AvroUtils.getCopy("source", Identifier.SCHEMA$, String.class));
     }
     
     @Test

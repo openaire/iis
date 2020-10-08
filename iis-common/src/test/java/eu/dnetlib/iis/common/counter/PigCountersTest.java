@@ -1,28 +1,24 @@
 package eu.dnetlib.iis.common.counter;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import eu.dnetlib.iis.common.counter.PigCounters.JobCounters;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
-import eu.dnetlib.iis.common.counter.PigCounters.JobCounters;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author madryk
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class PigCountersTest {
 
     private PigCounters pigCounters;
@@ -36,7 +32,7 @@ public class PigCountersTest {
     private Map<String, String> rootLevelCounters;
     
     
-    @Before
+    @BeforeEach
     public void setup() {
         
         jobCounters1 = new JobCounters("JOB_ID_1");
@@ -66,7 +62,7 @@ public class PigCountersTest {
         // execute
         JobCounters jobCounters = pigCounters.getJobCounters("JOB_ID_2");
         // assert
-        assertTrue(jobCounters == jobCounters2);
+        assertSame(jobCounters, jobCounters2);
     }
     
     @Test
@@ -93,20 +89,20 @@ public class PigCountersTest {
     public void getRootLevelCounters() {
         
         // execute & assert
-        assertTrue(rootLevelCounters == pigCounters.getRootLevelCounters());
+        assertSame(rootLevelCounters, pigCounters.getRootLevelCounters());
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void constuctor_rootLevelCounters_NULL() {
         
         // execute
-        new PigCounters(null, ImmutableList.of());
+        assertThrows(NullPointerException.class, () -> new PigCounters(null, ImmutableList.of()));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void constuctor_jobLevelCounters_NULL() {
         
         // execute
-        new PigCounters(rootLevelCounters, null);
+        assertThrows(NullPointerException.class, () -> new PigCounters(rootLevelCounters, null));
     }
 }

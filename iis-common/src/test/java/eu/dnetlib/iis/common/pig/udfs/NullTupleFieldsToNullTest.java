@@ -1,26 +1,21 @@
 package eu.dnetlib.iis.common.pig.udfs;
 
+import com.google.common.collect.Lists;
+import org.apache.pig.data.*;
+import org.apache.pig.impl.logicalLayer.schema.Schema;
+import org.apache.pig.impl.logicalLayer.schema.Schema.FieldSchema;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.apache.pig.data.BagFactory;
-import org.apache.pig.data.DataBag;
-import org.apache.pig.data.DataType;
-import org.apache.pig.data.Tuple;
-import org.apache.pig.data.TupleFactory;
-import org.apache.pig.impl.logicalLayer.schema.Schema;
-import org.apache.pig.impl.logicalLayer.schema.Schema.FieldSchema;
-import org.junit.Test;
-
-import com.google.common.collect.Lists;
-
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
  * @author Dominika Tkaczyk
  */
-public class NullTupleFieldsToNullTest extends TestCase {
+public class NullTupleFieldsToNullTest {
     
     @Test
 	public void testUDF() throws IOException {
@@ -43,7 +38,7 @@ public class NullTupleFieldsToNullTest extends TestCase {
     }
     
     @Test
-    public void testOutputSchema() throws Exception {
+    public void testOutputSchema() {
         // given
         NullTupleFieldsToNull udf = new NullTupleFieldsToNull();
         Schema inputSchema = new Schema();
@@ -53,7 +48,7 @@ public class NullTupleFieldsToNullTest extends TestCase {
         Schema resultSchema = udf.outputSchema(inputSchema);
         
         // assert
-        assertTrue(inputSchema == resultSchema);
+        assertSame(inputSchema, resultSchema);
     }
     
 }

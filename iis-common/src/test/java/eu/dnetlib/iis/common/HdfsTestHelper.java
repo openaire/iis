@@ -1,20 +1,19 @@
 package eu.dnetlib.iis.common;
 
+import com.google.common.collect.Maps;
+import com.google.common.io.Files;
+import eu.dnetlib.iis.common.java.io.DataStore;
+import eu.dnetlib.iis.common.java.io.FileSystemPath;
+import org.apache.avro.specific.SpecificRecord;
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.avro.specific.SpecificRecord;
-import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
-
-import com.google.common.collect.Maps;
-import com.google.common.io.Files;
-
-import eu.dnetlib.iis.common.java.io.DataStore;
-import eu.dnetlib.iis.common.java.io.FileSystemPath;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Class containing operations on hdfs filesystem used in tests
@@ -53,7 +52,7 @@ class HdfsTestHelper {
 			try {
 				copiedFile = hdfsFileFetcher.fetchFile(basePath + "/" + filePath, targetDir);
 			} catch (FileNotFoundException e) {
-				Assert.fail("Expected file: " + filePath + " has not been found");
+				fail("Expected file: " + filePath + " has not been found");
 			}
 
 			copiedFiles.put(filePath, copiedFile);
@@ -82,7 +81,7 @@ class HdfsTestHelper {
 				dataStore = DataStore.read(new FileSystemPath(localDatastorePath));
 				
 			} catch (FileNotFoundException e) {
-				Assert.fail("Expected datastore: " + datastorePath + " has not been found");
+				fail("Expected datastore: " + datastorePath + " has not been found");
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			} finally {

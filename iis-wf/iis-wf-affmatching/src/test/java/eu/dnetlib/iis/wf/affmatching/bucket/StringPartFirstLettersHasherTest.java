@@ -1,8 +1,9 @@
 package eu.dnetlib.iis.wf.affmatching.bucket;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
 * @author Łukasz Dumiszewski
@@ -16,22 +17,20 @@ public class StringPartFirstLettersHasherTest {
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void hash_numberOfParts_less_than_1() {
         
         // execute
-        
-        hasher.setNumberOfParts(0);
+        assertThrows(IllegalArgumentException.class, () -> hasher.setNumberOfParts(0));
         
     }
 
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void hash_numberOfLettersPerPart_less_than_1() {
         
         // execute
-        
-        hasher.setNumberOfLettersPerPart(0);
+        assertThrows(IllegalArgumentException.class, () -> hasher.setNumberOfLettersPerPart(0));
         
         
     }

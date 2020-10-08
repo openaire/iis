@@ -1,40 +1,21 @@
 package eu.dnetlib.iis.wf.affmatching.match;
 
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchVoterAssertUtils.assertCompositeVoter;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchVoterAssertUtils.assertInternalMainSectionBucketHasher;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchVoterAssertUtils.assertNameStrictWithCharFilteringMatchVoter;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchVoterAssertUtils.assertSectionedNameLevenshteinMatchVoter;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchVoterAssertUtils.assertSectionedNameStrictMatchVoter;
-import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchVoterAssertUtils.getInternalVoter;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.powermock.reflect.Whitebox.getInternalState;
+import com.google.common.collect.ImmutableList;
+import eu.dnetlib.iis.wf.affmatching.bucket.*;
+import eu.dnetlib.iis.wf.affmatching.bucket.MainSectionBucketHasher.FallbackSectionPickStrategy;
+import eu.dnetlib.iis.wf.affmatching.match.voter.*;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSection.OrgSectionType;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.function.Function;
 
-import org.junit.Test;
-
-import com.google.common.collect.ImmutableList;
-
-import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgHashBucketJoiner;
-import eu.dnetlib.iis.wf.affmatching.bucket.AffOrgJoiner;
-import eu.dnetlib.iis.wf.affmatching.bucket.AffiliationOrgNameBucketHasher;
-import eu.dnetlib.iis.wf.affmatching.bucket.BucketHasher;
-import eu.dnetlib.iis.wf.affmatching.bucket.MainSectionBucketHasher.FallbackSectionPickStrategy;
-import eu.dnetlib.iis.wf.affmatching.bucket.OrganizationNameBucketHasher;
-import eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.CountryCodeLooseMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.CountryCodeStrictMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.GetOrgAlternativeNamesFunction;
-import eu.dnetlib.iis.wf.affmatching.match.voter.GetOrgNameFunction;
-import eu.dnetlib.iis.wf.affmatching.match.voter.GetOrgShortNameFunction;
-import eu.dnetlib.iis.wf.affmatching.match.voter.NameStrictWithCharFilteringMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.SectionedNameLevenshteinMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.match.voter.SectionedNameStrictMatchVoter;
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
-import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSection.OrgSectionType;
+import static eu.dnetlib.iis.wf.affmatching.match.AffOrgMatchVoterAssertUtils.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.powermock.reflect.Whitebox.getInternalState;
 
 /**
 * @author Łukasz Dumiszewski

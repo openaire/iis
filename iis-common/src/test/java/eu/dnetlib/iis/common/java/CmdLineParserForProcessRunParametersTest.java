@@ -1,22 +1,17 @@
 package eu.dnetlib.iis.common.java;
 
-import static org.junit.Assert.assertEquals;
+import eu.dnetlib.iis.common.java.porttype.AnyPortType;
+import eu.dnetlib.iis.common.java.porttype.PortType;
+import org.apache.commons.cli.CommandLine;
+import org.apache.hadoop.fs.Path;
+import org.junit.jupiter.api.Test;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.hadoop.fs.Path;
-import org.junit.Test;
-
-import eu.dnetlib.iis.common.java.CmdLineParserException;
-import eu.dnetlib.iis.common.java.CmdLineParserForProcessRunParameters;
-import eu.dnetlib.iis.common.java.PortBindings;
-import eu.dnetlib.iis.common.java.Ports;
-import eu.dnetlib.iis.common.java.ProcessParameters;
-import eu.dnetlib.iis.common.java.porttype.AnyPortType;
-import eu.dnetlib.iis.common.java.porttype.PortType;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * 
@@ -42,7 +37,7 @@ public class CmdLineParserForProcessRunParametersTest{
 		assertEquals(expected, actual);
 	}
 	
-	@Test(expected=CmdLineParserException.class)
+	@Test
 	public void testTooManyPorts() {
 		CmdLineParserForProcessRunParameters parser = 
 				new CmdLineParserForProcessRunParameters();
@@ -53,10 +48,10 @@ public class CmdLineParserForProcessRunParametersTest{
 				"-Oother=/users/joe/other_out"};
 		Ports ports = createStandardPorts();
 		CommandLine cmdLine = CmdLineParser.parse(args);
-		parser.run(cmdLine, ports);
+		assertThrows(CmdLineParserException.class, () -> parser.run(cmdLine, ports));
 	}
 	
-	@Test(expected=CmdLineParserException.class)
+	@Test
 	public void testTooFewPorts() {
 		CmdLineParserForProcessRunParameters parser = 
 				new CmdLineParserForProcessRunParameters();
@@ -65,7 +60,7 @@ public class CmdLineParserForProcessRunParametersTest{
 				"-Omerged=/users/joe/merged_out"};
 		Ports ports = createStandardPorts();
 		CommandLine cmdLine = CmdLineParser.parse(args);
-		parser.run(cmdLine, ports);
+		assertThrows(CmdLineParserException.class, () -> parser.run(cmdLine, ports));
 	}
 	
 	private static Ports createStandardPorts(){

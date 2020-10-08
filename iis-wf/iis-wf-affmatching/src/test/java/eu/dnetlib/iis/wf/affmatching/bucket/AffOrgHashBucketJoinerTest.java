@@ -1,31 +1,24 @@
 package eu.dnetlib.iis.wf.affmatching.bucket;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.PairFunction;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 import scala.Tuple2;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.*;
 
 /**
 * @author Łukasz Dumiszewski
 */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AffOrgHashBucketJoinerTest {
 
     
@@ -84,8 +77,8 @@ public class AffOrgHashBucketJoinerTest {
         
         
         // assert
-        
-        assertTrue(joinedAffOrganizations == retJoinedAffOrgs);
+
+        assertSame(joinedAffOrganizations, retJoinedAffOrgs);
        
         verify(affiliations).mapToPair(affHashFunction.capture());
         assertAffHashFunction(affHashFunction.getValue());
@@ -113,7 +106,7 @@ public class AffOrgHashBucketJoinerTest {
         // assert
         
         assertEquals("HASH", hashAff._1());
-        assertTrue(aff == hashAff._2());
+        assertSame(aff, hashAff._2());
     }
     
     
@@ -133,7 +126,7 @@ public class AffOrgHashBucketJoinerTest {
         // assert
         
         assertEquals("HASH", hashOrg._1());
-        assertTrue(org == hashOrg._2());
+        assertSame(org, hashOrg._2());
     }
     
     

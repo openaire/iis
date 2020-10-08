@@ -1,21 +1,20 @@
 package eu.dnetlib.iis.wf.importer.content.approver;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 import org.apache.hadoop.mapreduce.Counter;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import eu.dnetlib.iis.wf.importer.content.approver.ContentApprover;
-import eu.dnetlib.iis.wf.importer.content.approver.InvalidCountableContentApproverWrapper;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
 /**
  * @author madryk
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class InvalidCountableContentApproverWrapperTest {
 
     private InvalidCountableContentApproverWrapper contentApproverWrapper;
@@ -27,7 +26,7 @@ public class InvalidCountableContentApproverWrapperTest {
     private Counter invalidContentCounter;
     
     
-    @Before
+    @BeforeEach
     public void setup() {
         
         contentApproverWrapper = new InvalidCountableContentApproverWrapper(internalContentApprover, invalidContentCounter);

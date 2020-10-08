@@ -5,9 +5,9 @@ import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentPro
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class DocumentProjectMergerTest {
 
     private JavaSparkContext sparkContext;
 
-    @Before
+    @BeforeEach
     public void setup() {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
@@ -33,7 +33,7 @@ public class DocumentProjectMergerTest {
         sparkContext = JavaSparkContextFactory.withConfAndKryo(conf);
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         if (sparkContext != null) {
             sparkContext.close();

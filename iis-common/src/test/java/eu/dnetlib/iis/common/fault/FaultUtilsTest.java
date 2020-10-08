@@ -1,7 +1,8 @@
 package eu.dnetlib.iis.common.fault;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import eu.dnetlib.iis.audit.schemas.Cause;
+import eu.dnetlib.iis.audit.schemas.Fault;
+import org.junit.jupiter.api.Test;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -9,10 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-
-import eu.dnetlib.iis.audit.schemas.Cause;
-import eu.dnetlib.iis.audit.schemas.Fault;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author mhorst

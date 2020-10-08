@@ -1,20 +1,15 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-
-import org.apache.log4j.Logger;
-import org.junit.Before;
-import org.junit.Test;
-import org.powermock.reflect.Whitebox;
-
 import eu.dnetlib.dhp.schema.oaf.Field;
 import eu.dnetlib.dhp.schema.oaf.Qualifier;
 import eu.dnetlib.iis.importer.schemas.Organization;
+import org.apache.log4j.Logger;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.powermock.reflect.Whitebox;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
 * @author Łukasz Dumiszewski
@@ -27,7 +22,7 @@ public class OrganizationConverterTest {
     private Logger log = mock(Logger.class);
     
     
-    @Before
+    @BeforeEach
     public void before() {
         
         Whitebox.setInternalState(OrganizationConverter.class, "log", log);
@@ -39,12 +34,11 @@ public class OrganizationConverterTest {
     //------------------------ TESTS --------------------------
     
     
-    @Test(expected = NullPointerException.class)
-    public void buildObject_resolvedOadObject_NULL() throws Exception {
+    @Test
+    public void buildObject_resolvedOadObject_NULL() {
         
         // execute
-        
-        converter.convert(null);
+        assertThrows(NullPointerException.class, () -> converter.convert(null));
         
     }
     

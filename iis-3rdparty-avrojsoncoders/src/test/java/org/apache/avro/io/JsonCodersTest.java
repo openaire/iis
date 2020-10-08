@@ -1,28 +1,21 @@
 package org.apache.avro.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.avro.AvroTypeException;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
-import org.apache.avro.io.HackedJsonDecoder;
-import org.apache.avro.io.HackedJsonEncoder;
-import org.junit.Test;
-
 import org.apache.avro.io.schemas.Document;
 import org.apache.avro.io.schemas.PersonEntry;
 import org.apache.avro.io.schemas.PersonWithDocument;
+import org.junit.jupiter.api.Test;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author Mateusz Kobos
@@ -123,9 +116,8 @@ public class JsonCodersTest {
 			}
 		}
 		if (shouldThrowParsingException) {
-			assertTrue(
-				"This code should not have been reached because of previous "
-					+ "exception thrown", false);
+			fail("This code should not have been reached because of previous "
+					+ "exception thrown");
 		}
 	}
 

@@ -1,21 +1,18 @@
 package eu.dnetlib.iis.wf.importer.stream.project;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import eu.dnetlib.iis.common.TestsIOUtils;
+import eu.dnetlib.iis.common.java.io.JsonUtils;
+import eu.dnetlib.iis.importer.schemas.Project;
+import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectConverter;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
-
-import eu.dnetlib.iis.common.TestsIOUtils;
-import eu.dnetlib.iis.common.java.io.JsonUtils;
-import eu.dnetlib.iis.importer.schemas.Project;
-import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectConverter;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author mhorst
@@ -29,14 +26,14 @@ public class ProjectDetailConverterTest {
     
     // --------------------------------------- TEST -----------------------------------------
     
-    @Test(expected=RuntimeException.class)
-    public void testConversionOnInvalidProjectId() throws Exception {
+    @Test
+    public void testConversionOnInvalidProjectId() {
         // given
         ProjectDetail source = new ProjectDetail();
         source.setProjectId("invalidId");
                 
         // execute
-        converter.convert(source);
+        assertThrows(RuntimeException.class, () -> converter.convert(source));
     }
     
     @Test

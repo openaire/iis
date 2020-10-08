@@ -1,15 +1,7 @@
 package eu.dnetlib.iis.wf.citationmatching.input;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Collections;
-import java.util.Set;
-
-import org.junit.Test;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import eu.dnetlib.iis.citationmatching.schemas.BasicMetadata;
 import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
 import eu.dnetlib.iis.citationmatching.schemas.ReferenceMetadata;
@@ -17,6 +9,13 @@ import eu.dnetlib.iis.importer.schemas.Author;
 import eu.dnetlib.iis.metadataextraction.schemas.Range;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.PublicationType;
+import org.junit.jupiter.api.Test;
+
+import java.util.Collections;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author madryk
@@ -29,11 +28,11 @@ public class DocumentToCitationDocumentConverterTest {
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void convert_NULL_DOCUMENT() {
         
         // execute
-        converter.convert(null, emptyReferencePositions);
+        assertThrows(NullPointerException.class, () -> converter.convert(null, emptyReferencePositions));
     }
     
     @Test

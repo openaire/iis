@@ -1,36 +1,33 @@
 package eu.dnetlib.iis.wf.affmatching.write;
 
+import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.function.Function;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+
 import static eu.dnetlib.iis.common.report.ReportEntryFactory.createCounterReportEntry;
 import static eu.dnetlib.iis.wf.affmatching.write.AffMatchReportCounters.DOCS_WITH_AT_LEAST_ONE_ORG;
 import static eu.dnetlib.iis.wf.affmatching.write.AffMatchReportCounters.DOC_ORG_REFERENCES;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.function.Function;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import eu.dnetlib.iis.common.schemas.ReportEntry;
-import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 
 /**
 * @author Łukasz Dumiszewski
 */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AffMatchReportGeneratorTest {
 
     private AffMatchReportGenerator reportGenerator = new AffMatchReportGenerator();
@@ -50,12 +47,12 @@ public class AffMatchReportGeneratorTest {
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void generateReport_MatchedDocOrganizations_NULL() {
         
         // execute
-        reportGenerator.generateReport(null);
-        
+        assertThrows(NullPointerException.class, () -> reportGenerator.generateReport(null));
+
     }
     
     @Test

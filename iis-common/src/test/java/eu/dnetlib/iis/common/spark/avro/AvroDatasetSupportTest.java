@@ -3,7 +3,6 @@ package eu.dnetlib.iis.common.spark.avro;
 import eu.dnetlib.iis.common.avro.Person;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import org.apache.avro.Schema;
-import org.apache.commons.io.FileUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
@@ -11,37 +10,38 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.avro.SchemaConverters;
 import org.apache.spark.sql.types.StructType;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AvroDatasetSupportTest {
     private static SparkSession spark;
     private static AvroDatasetSupport avroDatasetSupport;
-    private static Path workingDir;
 
-    @BeforeClass
-    public static void beforeClass() throws IOException {
+    @TempDir
+    public static Path workingDir;
+
+    @BeforeAll
+    public static void beforeAll() {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
         conf.set("spark.driver.host", "localhost");
         conf.setAppName(AvroDatasetSupportTest.class.getSimpleName());
         spark = SparkSession.builder().config(conf).getOrCreate();
         avroDatasetSupport = new AvroDatasetSupport(spark);
-        workingDir = Files.createTempDirectory(AvroDatasetSupportTest.class.getSimpleName());
     }
 
-    @AfterClass
-    public static void afterClass() throws IOException {
-        FileUtils.deleteDirectory(workingDir.toFile());
+    @AfterAll
+    public static void afterAll() {
+        spark.stop();
     }
 
     @Test

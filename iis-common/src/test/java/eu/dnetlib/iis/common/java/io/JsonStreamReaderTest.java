@@ -1,15 +1,14 @@
 package eu.dnetlib.iis.common.java.io;
 
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.TestsIOUtils;
+import eu.dnetlib.iis.common.avro.Document;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.junit.Test;
-
-import eu.dnetlib.iis.common.TestsIOUtils;
-import eu.dnetlib.iis.common.avro.Document;
 
 /**
  * @author Mateusz Kobos

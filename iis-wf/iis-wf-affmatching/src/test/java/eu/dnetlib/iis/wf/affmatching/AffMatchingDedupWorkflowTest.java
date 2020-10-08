@@ -1,15 +1,13 @@
 package eu.dnetlib.iis.wf.affmatching;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
 import eu.dnetlib.iis.common.AbstractOozieWorkflowTestCase;
 import eu.dnetlib.iis.common.IntegrationTest;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author mhorst
  */
-@Category(IntegrationTest.class)
+@IntegrationTest
 public class AffMatchingDedupWorkflowTest extends AbstractOozieWorkflowTestCase {
 
     @Test

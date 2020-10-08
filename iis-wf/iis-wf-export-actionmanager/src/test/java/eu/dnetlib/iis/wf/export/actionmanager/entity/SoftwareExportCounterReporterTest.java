@@ -1,36 +1,30 @@
 package eu.dnetlib.iis.wf.export.actionmanager.entity;
 
-import static eu.dnetlib.iis.wf.export.actionmanager.entity.SoftwareExportCounterReporter.DISTINCT_PUBLICATIONS_WITH_SOFTWARE_REFERENCES_COUNTER;
-import static eu.dnetlib.iis.wf.export.actionmanager.entity.SoftwareExportCounterReporter.EXPORTED_SOFTWARE_ENTITIES_COUNTER;
-import static eu.dnetlib.iis.wf.export.actionmanager.entity.SoftwareExportCounterReporter.SOFTWARE_REFERENCES_COUNTER;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import eu.dnetlib.iis.common.schemas.ReportEntry;
+import org.mockito.junit.jupiter.MockitoExtension;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 import scala.Tuple3;
+
+import java.util.List;
+
+import static eu.dnetlib.iis.wf.export.actionmanager.entity.SoftwareExportCounterReporter.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 /**
  * @author madryk
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SoftwareExportCounterReporterTest {
 
     @InjectMocks
@@ -70,16 +64,18 @@ public class SoftwareExportCounterReporterTest {
     
     //------------------------ TESTS --------------------------
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void report_NULL_SPARK_CONTEXT() {
         // execute
-        counterReporter.report(null, uniqueEntities, uniqueRelations, outputReportPath);
+        assertThrows(NullPointerException.class, () ->
+                counterReporter.report(null, uniqueEntities, uniqueRelations, outputReportPath));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void report_NULL_REPORT_PATH() {
         // execute
-        counterReporter.report(sparkContext, uniqueEntities, uniqueRelations, null);
+        assertThrows(NullPointerException.class, () ->
+                counterReporter.report(sparkContext, uniqueEntities, uniqueRelations, null));
     }
     
     @Test

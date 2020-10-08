@@ -1,25 +1,23 @@
 package eu.dnetlib.iis.wf.affmatching.normalize;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import com.google.common.collect.Sets;
+import eu.dnetlib.iis.common.string.StringNormalizer;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import com.google.common.collect.Sets;
-
-import eu.dnetlib.iis.common.string.StringNormalizer;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 /**
  * @author madryk
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class OrganizationNameNormalizerTest {
 
     @InjectMocks
@@ -31,10 +29,10 @@ public class OrganizationNameNormalizerTest {
     private Set<String> stopwords = Sets.newHashSet("stop", "stop2");
     
     
-    @Before
+    @BeforeEach
     public void setup() {
         normalizer.setStopwords(stopwords);
-        when(innerNormalizer.normalize(any())).thenAnswer(x -> x.getArgumentAt(0, String.class));
+        lenient().when(innerNormalizer.normalize(any())).thenAnswer(invocation -> invocation.getArgument(0));
     }
     
     

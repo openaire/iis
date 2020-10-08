@@ -1,13 +1,14 @@
 package eu.dnetlib.iis.wf.importer.stream.project;
 
-import static eu.dnetlib.iis.wf.importer.stream.project.UrlStreamingFacadeFactory.IMPORT_PROJECT_STREAM_COMPRESS;
-import static eu.dnetlib.iis.wf.importer.stream.project.UrlStreamingFacadeFactory.IMPORT_PROJECT_STREAM_ENDPOINT_URL;
-import static org.junit.Assert.assertNotNull;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import static eu.dnetlib.iis.wf.importer.stream.project.UrlStreamingFacadeFactory.IMPORT_PROJECT_STREAM_COMPRESS;
+import static eu.dnetlib.iis.wf.importer.stream.project.UrlStreamingFacadeFactory.IMPORT_PROJECT_STREAM_ENDPOINT_URL;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author mhorst
@@ -21,19 +22,19 @@ public class UrlStreamingFacadeFactoryTest {
     
     // --------------------------------------- TESTS ---------------------------------------
     
-    @Test(expected=IllegalArgumentException.class)
-    public void testInstantiateWithoutEndpointParam() throws Exception {
+    @Test
+    public void testInstantiateWithoutEndpointParam() {
         // execute
-        factory.instantiate(parameters);
+        assertThrows(IllegalArgumentException.class, () -> factory.instantiate(parameters));
     }
     
-    @Test(expected=RuntimeException.class)
-    public void testInstantiateWithInvalidEndpointParam() throws Exception {
+    @Test
+    public void testInstantiateWithInvalidEndpointParam() {
         // given
         parameters.put(IMPORT_PROJECT_STREAM_ENDPOINT_URL, "invalidEndpoint");
         
         // execute
-        factory.instantiate(parameters);
+        assertThrows(RuntimeException.class, () -> factory.instantiate(parameters));
     }
     
     @Test

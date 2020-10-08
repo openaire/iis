@@ -2,18 +2,18 @@ package eu.dnetlib.iis.wf.report.pushgateway.process;
 
 import eu.dnetlib.iis.wf.report.pushgateway.converter.LabelConf;
 import eu.dnetlib.iis.wf.report.pushgateway.converter.LabeledMetricConf;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class PushMetricsProcessLabeledMetricConfByPatternProducerTest {
 
     @Test

@@ -1,43 +1,29 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import eu.dnetlib.dhp.schema.oaf.*;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
+import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
+import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-
-import eu.dnetlib.dhp.schema.oaf.Author;
-import eu.dnetlib.dhp.schema.oaf.Field;
-import eu.dnetlib.dhp.schema.oaf.Instance;
-import eu.dnetlib.dhp.schema.oaf.Journal;
-import eu.dnetlib.dhp.schema.oaf.KeyValue;
-import eu.dnetlib.dhp.schema.oaf.Publication;
-import eu.dnetlib.dhp.schema.oaf.Qualifier;
-import eu.dnetlib.dhp.schema.oaf.Result;
-import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
-import eu.dnetlib.iis.common.InfoSpaceConstants;
-import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
-import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * {@link DocumentMetadataConverter} test class.
  */
+@ExtendWith(MockitoExtension.class)
 public class DocumentMetadataConverterTest {
 
     private static final String ID = "document id";
@@ -57,26 +43,23 @@ public class DocumentMetadataConverterTest {
     private static final String SECOND_SECOND_NAME = "another name";
     private static final String FULL_NAME = "the full name";
     
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
-
     @InjectMocks
     private DocumentMetadataConverter converter;
 
     @Mock
     private FieldApprover fieldApprover;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        when(fieldApprover.approve(any())).thenReturn(true);
+        lenient().when(fieldApprover.approve(any())).thenReturn(true);
     }
 
     // ------------------------ TESTS --------------------------
 
-    @Test(expected=NullPointerException.class)
-    public void convert_null_oafEntity() throws IOException {
+    @Test
+    public void convert_null_oafEntity() {
         // execute
-        converter.convert(null);
+        assertThrows(NullPointerException.class, () -> converter.convert(null));
     }
 
     @Test
@@ -166,7 +149,7 @@ public class DocumentMetadataConverterTest {
         DocumentMetadata metadata = converter.convert(publication);
 
         // assert
-        assertEquals(null, metadata.getLanguage());
+        assertNull(metadata.getLanguage());
     }
 
 
@@ -182,14 +165,14 @@ public class DocumentMetadataConverterTest {
 
         // assert
         assertEquals(ID, metadata.getId());
-        assertEquals(null, metadata.getTitle());
-        assertEquals(null, metadata.getAbstract$());
+        assertNull(metadata.getTitle());
+        assertNull(metadata.getAbstract$());
         assertEquals(LANGUAGE, metadata.getLanguage());
-        assertEquals(null, metadata.getKeywords());
-        assertEquals(null, metadata.getExternalIdentifiers());
-        assertEquals(null, metadata.getJournal());
-        assertEquals(null, metadata.getYear());
-        assertEquals(null, metadata.getPublisher());
+        assertNull(metadata.getKeywords());
+        assertNull(metadata.getExternalIdentifiers());
+        assertNull(metadata.getJournal());
+        assertNull(metadata.getYear());
+        assertNull(metadata.getPublisher());
         assertTrue(metadata.getPublicationType().getArticle());
         assertTrue(metadata.getPublicationType().getDataset());
         assertEquals(DATASOURCE_IDS, metadata.getDatasourceIds());

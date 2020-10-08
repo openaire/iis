@@ -1,14 +1,12 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import eu.dnetlib.dhp.schema.oaf.Relation;
+import org.apache.avro.specific.SpecificRecord;
+import org.junit.jupiter.api.Test;
 
 import java.util.function.Function;
 
-import org.apache.avro.specific.SpecificRecord;
-import org.junit.Test;
-
-import eu.dnetlib.dhp.schema.oaf.Relation;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Base class for tests of the various {@link OafRelToAvroConverter}s
@@ -37,10 +35,10 @@ public abstract class OafRelToAvroConverterTestBase<T extends SpecificRecord> {
 
     // ------------------------ TESTS --------------------------
 
-    @Test(expected = NullPointerException.class)
-    public void convert_null_oafRel() throws Exception {
+    @Test
+    public void convert_null_oafRel() {
         // execute
-        converter.convert(null);
+        assertThrows(NullPointerException.class, () -> converter.convert(null));
     }
 
     @Test

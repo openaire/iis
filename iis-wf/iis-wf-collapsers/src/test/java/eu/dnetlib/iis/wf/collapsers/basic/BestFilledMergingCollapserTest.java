@@ -1,16 +1,14 @@
 package eu.dnetlib.iis.wf.collapsers.basic;
 
-import static org.junit.Assert.assertNull;
+import com.google.common.collect.Lists;
+import eu.dnetlib.iis.collapsers.schemas.DocumentMetadata;
+import eu.dnetlib.iis.wf.collapsers.SampleData;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
-
-import com.google.common.collect.Lists;
-
-import eu.dnetlib.iis.collapsers.schemas.DocumentMetadata;
-import eu.dnetlib.iis.wf.collapsers.SampleData;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * 

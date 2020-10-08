@@ -1,8 +1,8 @@
 package eu.dnetlib.iis.wf.transformers.common.union;
 
-import org.junit.Test;
-
 import eu.dnetlib.iis.common.AbstractOozieWorkflowTestCase;
+import eu.dnetlib.iis.common.IntegrationTest;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author madryk

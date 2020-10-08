@@ -1,30 +1,26 @@
 package eu.dnetlib.iis.wf.referenceextraction.project;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.java.io.DataStore;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.hadoop.conf.Configuration;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.importer.schemas.Project;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
+import org.apache.hadoop.conf.Configuration;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
-import static org.junit.Assert.assertEquals;
+import java.io.File;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * 
@@ -34,8 +30,9 @@ import static org.junit.Assert.assertEquals;
 public class ProjectFunderReportJobTest {
 
     private SparkJobExecutor executor = new SparkJobExecutor();
-    
-    private File workingDir;
+
+    @TempDir
+    public File workingDir;
     
     private String inputProjectDirPath;
     
@@ -44,20 +41,12 @@ public class ProjectFunderReportJobTest {
     private String outputReportDirPath;
     
     
-    @Before
-    public void before() throws IOException {
-        workingDir = Files.createTempDirectory(ProjectFunderReportJobTest.class.getSimpleName()).toFile();
+    @BeforeEach
+    public void before() {
         inputProjectDirPath = workingDir + "/spark_project_referenceextraction_report/input_project";
         inputDocumentToProjectDirPath = workingDir + "/spark_project_referenceextraction_report/input_document_to_project";
         outputReportDirPath = workingDir + "/spark_project_referenceextraction_report/output_report";
     }
-    
-    
-    @After
-    public void after() throws IOException {
-        FileUtils.deleteDirectory(workingDir);
-    }
-    
     
     //------------------------ TESTS --------------------------
     

@@ -1,8 +1,8 @@
 package eu.dnetlib.iis.common.utils;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AvroToolsTests {
 
@@ -13,7 +13,7 @@ public class AvroToolsTests {
 	
 	@Test
 	public void testToSchemaClassName(){
-		checkSchema("{\"type\":\"record\",\"name\":\"Person\",\"namespace\":\"eu.dnetlib.iis.common.avro\",\"fields\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"age\",\"type\":\"int\"}]}", 
+		checkSchema("{\"type\":\"record\",\"name\":\"Person\",\"namespace\":\"eu.dnetlib.iis.common.avro\",\"fields\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"age\",\"type\":\"int\"}]}",
 				"eu.dnetlib.iis.common.avro.Person");
 	}
 	

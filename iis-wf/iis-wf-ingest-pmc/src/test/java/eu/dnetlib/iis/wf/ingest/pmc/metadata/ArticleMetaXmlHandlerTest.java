@@ -1,25 +1,22 @@
 package eu.dnetlib.iis.wf.ingest.pmc.metadata;
 
-import static eu.dnetlib.iis.wf.ingest.pmc.metadata.AssertExtractedDocumentMetadata.assertAffiliation;
-import static eu.dnetlib.iis.wf.ingest.pmc.metadata.AssertExtractedDocumentMetadata.assertAuthor;
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-import java.util.List;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.junit.Before;
-import org.junit.Test;
-import org.xml.sax.XMLReader;
-
 import com.google.common.collect.Maps;
-
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.Affiliation;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.Author;
 import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.xml.sax.XMLReader;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.File;
+import java.util.List;
+
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.AssertExtractedDocumentMetadata.assertAffiliation;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.AssertExtractedDocumentMetadata.assertAuthor;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author madryk
@@ -36,7 +33,7 @@ public class ArticleMetaXmlHandlerTest {
     private ExtractedDocumentMetadata.Builder metaBuilder;
     
     
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         // initializing sax parser
         SAXParserFactory saxFactory = SAXParserFactory.newInstance();

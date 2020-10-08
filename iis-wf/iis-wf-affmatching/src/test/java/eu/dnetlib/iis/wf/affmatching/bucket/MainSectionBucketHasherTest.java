@@ -1,27 +1,25 @@
 package eu.dnetlib.iis.wf.affmatching.bucket;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import com.google.common.collect.ImmutableList;
-
 import eu.dnetlib.iis.wf.affmatching.bucket.MainSectionBucketHasher.FallbackSectionPickStrategy;
 import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSection;
 import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSection.OrgSectionType;
 import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSectionsSplitter;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author madryk
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class MainSectionBucketHasherTest {
 
     @InjectMocks
@@ -37,7 +35,7 @@ public class MainSectionBucketHasherTest {
     private String organizationName = "ORG_NAME";
     
     
-    @Before
+    @BeforeEach
     public void setup() {
         mainSectionBucketHasher.setFallbackSectionPickStrategy(FallbackSectionPickStrategy.FIRST_SECTION);
     }

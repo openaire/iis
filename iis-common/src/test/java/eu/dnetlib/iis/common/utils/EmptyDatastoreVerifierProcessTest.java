@@ -1,11 +1,16 @@
 package eu.dnetlib.iis.common.utils;
 
-import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.io.CloseableIterator;
+import eu.dnetlib.iis.common.java.porttype.AnyPortType;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,25 +22,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import eu.dnetlib.iis.common.java.PortBindings;
-import eu.dnetlib.iis.common.java.io.CloseableIterator;
-import eu.dnetlib.iis.common.java.porttype.AnyPortType;
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doReturn;
 
 /**
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class EmptyDatastoreVerifierProcessTest {
 
     
@@ -54,16 +49,16 @@ public class EmptyDatastoreVerifierProcessTest {
         }
         
     };
+
+    @TempDir
+    public File testFolder;
     
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
-    
-    @Before
+    @BeforeEach
     public void init() {
         parameters = new HashMap<>();
-        
-        System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME, 
-                testFolder.getRoot().getAbsolutePath() + File.separatorChar + "test.properties");
+
+        System.setProperty(OOZIE_ACTION_OUTPUT_FILENAME,
+                testFolder.getAbsolutePath() + File.separatorChar + "test.properties");
     }
 
     // --------------------------------- TESTS -------------------------------------
@@ -84,10 +79,11 @@ public class EmptyDatastoreVerifierProcessTest {
         assertEquals(0, process.getOutputPorts().size());
     }
     
-    @Test(expected=InvalidParameterException.class)
-    public void testVerifyEmptyDatastoreWithoutInput() throws Exception {
+    @Test
+    public void testVerifyEmptyDatastoreWithoutInput() {
         // execute
-        process.run(new PortBindings(Collections.emptyMap(), Collections.emptyMap()), conf, parameters);
+        assertThrows(InvalidParameterException.class, () ->
+                process.run(new PortBindings(Collections.emptyMap(), Collections.emptyMap()), conf, parameters));
     }
     
     @Test

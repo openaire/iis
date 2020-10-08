@@ -1,21 +1,21 @@
 package eu.dnetlib.iis.wf.ingest.pmc.plaintext;
 
-import java.io.InputStreamReader;
-
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import junit.framework.TestCase;
-
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import java.io.InputStreamReader;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Dominika Tkaczyk
  * 
  */
-public class NlmToDocumentTextConverterTest extends TestCase {
+public class NlmToDocumentTextConverterTest {
 
 	private static final String testXML = "/eu/dnetlib/iis/wf/ingest/pmc/plaintext/document.nxml";
 	private static final String testTXT = "/eu/dnetlib/iis/wf/ingest/pmc/plaintext/document.txt";

@@ -1,35 +1,28 @@
 package eu.dnetlib.iis.wf.importer.content;
 
-import static eu.dnetlib.iis.wf.importer.content.DocumentContentUrlDispatcher.PROPERTY_MULTIPLEOUTPUTS;
-import static eu.dnetlib.iis.wf.importer.content.DocumentContentUrlDispatcher.PROPERTY_PREFIX_MIMETYPES_CSV;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
+import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
+import eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl;
 import org.apache.avro.mapred.AvroKey;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.Mapper.Context;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import eu.dnetlib.iis.common.javamapreduce.MultipleOutputs;
-import eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl;
+import static eu.dnetlib.iis.wf.importer.content.DocumentContentUrlDispatcher.PROPERTY_MULTIPLEOUTPUTS;
+import static eu.dnetlib.iis.wf.importer.content.DocumentContentUrlDispatcher.PROPERTY_PREFIX_MIMETYPES_CSV;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class DocumentContentUrlDispatcherTest {
 
@@ -49,8 +42,8 @@ public class DocumentContentUrlDispatcherTest {
     private DocumentContentUrlDispatcher dispatcher;
 
     
-    @Before
-    public void init() throws Exception {
+    @BeforeEach
+    public void init() {
         dispatcher = new DocumentContentUrlDispatcher() {
             
             @Override
@@ -63,14 +56,14 @@ public class DocumentContentUrlDispatcherTest {
     
     // ------------------------------------- TESTS -----------------------------------
     
-    @Test(expected=IllegalArgumentException.class)
-    public void testSetupNoParams() throws Exception {
+    @Test
+    public void testSetupNoParams() {
         // given
         Configuration conf = new Configuration();
         doReturn(conf).when(context).getConfiguration();
         
         // execute
-        dispatcher.setup(context);
+        assertThrows(IllegalArgumentException.class, () -> dispatcher.setup(context));
     }
 
 
@@ -101,11 +94,11 @@ public class DocumentContentUrlDispatcherTest {
         assertEquals(outputNamePdf, mosKeyCaptor.getAllValues().get(0));
         DocumentContentUrl obtainedPdfUrl = (DocumentContentUrl) mosValueCaptor.getAllValues().get(0).datum();
         assertNotNull(obtainedPdfUrl);
-        assertTrue(pdfUrl == obtainedPdfUrl);
+        assertSame(pdfUrl, obtainedPdfUrl);
         assertEquals(outputNameHtml, mosKeyCaptor.getAllValues().get(1));
         DocumentContentUrl obtainedHtmlUrl = (DocumentContentUrl) mosValueCaptor.getAllValues().get(1).datum();
         assertNotNull(obtainedHtmlUrl);
-        assertTrue(htmlUrl == obtainedHtmlUrl);
+        assertSame(htmlUrl, obtainedHtmlUrl);
     }
     
     @Test

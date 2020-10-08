@@ -1,36 +1,32 @@
 package eu.dnetlib.iis.wf.referenceextraction.patent;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.google.common.collect.Lists;
+import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.java.io.DataStore;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.hadoop.conf.Configuration;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.common.collect.Lists;
-
-import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
 import eu.dnetlib.iis.wf.referenceextraction.patent.parser.PatentMetadataParserException;
+import org.apache.hadoop.conf.Configuration;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * {@link PatentMetadataExtractorJob} test class.
@@ -41,26 +37,23 @@ public class PatentMetadataExtractorJobTest {
     static final String xmlResourcesRootClassPath = "/eu/dnetlib/iis/wf/referenceextraction/patent/data/";
     
     private SparkJobExecutor executor = new SparkJobExecutor();
-    private Path workingDir;
+
+    @TempDir
+    public Path workingDir;
+
     private Path inputImportedPatentDir;
     private Path inputDocumentTextDir;
     private Path outputDir;
     private Path outputFaultDir;
     private Path outputReportDir;
 
-    @Before
-    public void before() throws IOException {
-        workingDir = Files.createTempDirectory("patent_meta_extraction");
+    @BeforeEach
+    public void before() {
         inputImportedPatentDir = workingDir.resolve("input_imported_patent");
         inputDocumentTextDir = workingDir.resolve("input_document_text");
         outputDir = workingDir.resolve("output");
         outputFaultDir = workingDir.resolve("fault");
         outputReportDir = workingDir.resolve("report");
-    }
-
-    @After
-    public void after() throws IOException {
-        FileUtils.deleteDirectory(workingDir.toFile());
     }
 
     @Test

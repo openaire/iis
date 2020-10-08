@@ -9,13 +9,13 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import scala.Tuple2;
 
 import java.util.List;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 /**
  * @author madryk
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DocOrgRelationAffOrgJoinerTest {
 
     @InjectMocks
@@ -38,7 +38,7 @@ public class DocOrgRelationAffOrgJoinerTest {
 
     private JavaSparkContext sparkContext;
 
-    @Before
+    @BeforeEach
     public void setup() {
         SparkConf conf = new SparkConf();
         conf.setMaster("local");
@@ -47,7 +47,7 @@ public class DocOrgRelationAffOrgJoinerTest {
         sparkContext = JavaSparkContextFactory.withConfAndKryo(conf);
     }
     
-    @After
+    @AfterEach
     public void cleanup() {
         if (sparkContext != null) {
             sparkContext.close();

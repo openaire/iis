@@ -1,17 +1,14 @@
 package eu.dnetlib.iis.wf.affmatching.orgsection;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.iterableWithSize;
-import static org.junit.Assert.assertEquals;
+import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSection.OrgSectionType;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import org.junit.Test;
-
-import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSection;
-import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSection.OrgSectionType;
-import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSectionsSplitter;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.iterableWithSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author madryk

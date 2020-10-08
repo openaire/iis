@@ -3,15 +3,14 @@ package eu.dnetlib.iis.wf.report.pushgateway.converter;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.schemas.ReportEntryType;
 import io.prometheus.client.Gauge;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -75,7 +74,7 @@ public class ReportEntryToMetricConverterTest {
         assertEquals(Arrays.asList(gaugeWithLabel, gaugeWithoutLabels), gauges);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void convertShouldThrowOnLabelValueExtractionError() {
         // given
         ReportEntry counterReportEntryWithoutLabel = mock(ReportEntry.class);
@@ -90,14 +89,15 @@ public class ReportEntryToMetricConverterTest {
         when(counterMetricExtractor.extract(counterReportEntryWithoutLabel, labeledMetricConfByPattern)).thenReturn(extractedMetricWithoutLabel);
 
         // when
-        ReportEntryToMetricConverter.convert(reportEntries,
-                "path",
-                labeledMetricConfByPattern,
-                counterMetricExtractor,
-                mock(DurationReportEntryMetricExtraction.Extractor.class),
-                mock(GaugesCreation.BuilderWithoutLabels.class),
-                mock(GaugesCreation.BuilderWithLabels.class)
-        );
+        assertThrows(RuntimeException.class, () ->
+                ReportEntryToMetricConverter.convert(reportEntries,
+                        "path",
+                        labeledMetricConfByPattern,
+                        counterMetricExtractor,
+                        mock(DurationReportEntryMetricExtraction.Extractor.class),
+                        mock(GaugesCreation.BuilderWithoutLabels.class),
+                        mock(GaugesCreation.BuilderWithLabels.class)
+                ));
     }
 
     @Test

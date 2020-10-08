@@ -1,13 +1,13 @@
 package eu.dnetlib.iis.common.report.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import com.google.common.base.Preconditions;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 
 import java.util.List;
 
-import com.google.common.base.Preconditions;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import eu.dnetlib.iis.common.schemas.ReportEntry;
 /**
  * Service that checks whether a given list of {@link ReportEntry} objects complies with
  * some expected values (or expressions).  
@@ -17,7 +17,7 @@ import eu.dnetlib.iis.common.schemas.ReportEntry;
 
 public class ReportEntryMatcher {
 
-    private final ValueSpecMatcher valueSpecMatcher = new ValueSpecMatcher();
+    private ValueSpecMatcher valueSpecMatcher = new ValueSpecMatcher();
     
     
     //------------------------ LOGIC --------------------------
@@ -32,10 +32,10 @@ public class ReportEntryMatcher {
     
         Preconditions.checkNotNull(actualEntries);
         Preconditions.checkNotNull(expectedEntrySpecs);
-        
-        assertEquals(String.format("The number of the expected report entries (%s) is not equal to the number "+
-                "of the actual entries (%s).\n\n%s", expectedEntrySpecs.size(), actualEntries.size(), "expected:" + expectedEntrySpecs + "actual: " + actualEntries),
-                expectedEntrySpecs.size(), actualEntries.size());
+
+        assertEquals(expectedEntrySpecs.size(), actualEntries.size(),
+                String.format("The number of the expected report entries (%s) is not equal to the number " +
+                        "of the actual entries (%s).\n\n%s", expectedEntrySpecs.size(), actualEntries.size(), "expected:" + expectedEntrySpecs + "actual: " + actualEntries));
         
         for (ReportEntry expectedEntry : expectedEntrySpecs) {
             

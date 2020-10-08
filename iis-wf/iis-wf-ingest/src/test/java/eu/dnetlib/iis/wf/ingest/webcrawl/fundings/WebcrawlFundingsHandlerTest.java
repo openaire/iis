@@ -1,16 +1,15 @@
 package eu.dnetlib.iis.wf.ingest.webcrawl.fundings;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
-import java.io.InputStream;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import java.io.InputStream;
 
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * @author mhorst
@@ -23,7 +22,7 @@ public class WebcrawlFundingsHandlerTest {
     private WebcrawlFundingsHandler handler;
     
     
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         SAXParserFactory parserFactory = SAXParserFactory.newInstance();
         saxParser = parserFactory.newSAXParser();

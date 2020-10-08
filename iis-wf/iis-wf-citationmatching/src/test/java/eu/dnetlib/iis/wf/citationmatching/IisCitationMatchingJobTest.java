@@ -1,24 +1,20 @@
 package eu.dnetlib.iis.wf.citationmatching;
 
-import java.io.File;
-import java.io.IOException;
-
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.common.io.Files;
-
 import eu.dnetlib.iis.citationmatching.schemas.Citation;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.wf.citationmatching.converter.DocumentAvroDatastoreProducer;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author madryk
@@ -26,8 +22,9 @@ import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 public class IisCitationMatchingJobTest {
 
     private SparkJobExecutor executor = new SparkJobExecutor();
-    
-    private File workingDir;
+
+    @TempDir
+    public File workingDir;
     
     private String inputDirPath;
     
@@ -36,24 +33,14 @@ public class IisCitationMatchingJobTest {
     private String reportDirPath;
     
     
-    @Before
+    @BeforeEach
     public void before() {
         
-        workingDir = Files.createTempDir();
         inputDirPath = workingDir + "/spark_citation_matching/input";
         outputDirPath = workingDir + "/spark_citation_matching/output";
         reportDirPath = workingDir + "/spark_citation_matching_direct/report";
     }
-    
-    
-    @After
-    public void after() throws IOException {
-        
-        FileUtils.deleteDirectory(workingDir);
-        
-    }
-    
-    
+
     //------------------------ TESTS --------------------------
     
     @Test

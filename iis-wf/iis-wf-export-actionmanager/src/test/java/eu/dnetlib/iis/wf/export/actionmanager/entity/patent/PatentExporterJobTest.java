@@ -1,23 +1,9 @@
 package eu.dnetlib.iis.wf.export.actionmanager.entity.patent;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.Publication;
 import eu.dnetlib.dhp.schema.oaf.Relation;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.IntegrationTest;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.schemas.ReportEntryType;
@@ -27,14 +13,27 @@ import eu.dnetlib.iis.common.utils.ListTestUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
 import eu.dnetlib.iis.wf.export.actionmanager.entity.AtomicActionSerDeUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
-@Category(IntegrationTest.class)
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@IntegrationTest
 public class PatentExporterJobTest {
     private SparkJobExecutor executor = new SparkJobExecutor();
-    private Path workingDir;
+
+    @TempDir
+    public Path workingDir;
+
     private Path inputDocumentToPatentDir;
     private Path inputPatentDir;
     private Path outputRelationDir;
@@ -54,9 +53,8 @@ public class PatentExporterJobTest {
     private static final String PATENT_DATE_OF_COLLECTION = "2019-11-20T23:59";
     private static final String PATENT_EPO_URL_ROOT = "https://register.epo.org/application?number=";
 
-    @Before
-    public void before() throws IOException {
-        workingDir = Files.createTempDirectory("patent_exporter");
+    @BeforeEach
+    public void before() {
         inputDocumentToPatentDir = workingDir.resolve("input").resolve("document_to_patent");
         inputPatentDir = workingDir.resolve("input").resolve("patent");
         outputRelationDir = workingDir.resolve("output").resolve("relation");
@@ -64,11 +62,6 @@ public class PatentExporterJobTest {
         outputReportDir = workingDir.resolve("output").resolve("report");
     }
 
-    @After
-    public void after() throws IOException {
-        FileUtils.deleteDirectory(workingDir.toFile());
-    }
-    
     @Test
     public void shouldNotExportEntitiesWhenConfidenceLevelIsBelowThreshold() throws IOException {
         //given

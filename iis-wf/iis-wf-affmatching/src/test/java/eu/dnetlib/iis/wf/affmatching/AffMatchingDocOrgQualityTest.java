@@ -1,25 +1,5 @@
 package eu.dnetlib.iis.wf.affmatching;
 
-import static com.google.common.collect.ImmutableList.of;
-import static com.google.common.collect.Lists.newArrayList;
-import static eu.dnetlib.iis.common.utils.AvroTestUtils.createLocalAvroDataStore;
-import static eu.dnetlib.iis.common.utils.AvroTestUtils.readLocalAvroDataStore;
-import static eu.dnetlib.iis.common.utils.JsonAvroTestUtils.readMultipleJsonDataStores;
-import static eu.dnetlib.iis.common.utils.JsonTestUtils.readMultipleJsons;
-import static java.util.stream.Collectors.toList;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import com.google.common.io.Files;
-
 import eu.dnetlib.iis.common.IntegrationTest;
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
@@ -27,11 +7,26 @@ import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.SimpleAffMatchResult;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import static com.google.common.collect.ImmutableList.of;
+import static com.google.common.collect.Lists.newArrayList;
+import static eu.dnetlib.iis.common.utils.AvroTestUtils.createLocalAvroDataStore;
+import static eu.dnetlib.iis.common.utils.AvroTestUtils.readLocalAvroDataStore;
+import static eu.dnetlib.iis.common.utils.JsonAvroTestUtils.readMultipleJsonDataStores;
+import static eu.dnetlib.iis.common.utils.JsonTestUtils.readMultipleJsons;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Affiliation matching module test that measures quality of matching.<br/>
@@ -46,7 +41,7 @@ import pl.edu.icm.sparkutils.test.SparkJobExecutor;
  * 
  * @author madryk
  */
-@Category(IntegrationTest.class)
+@IntegrationTest
 public class AffMatchingDocOrgQualityTest {
 
     private static final Logger logger = LoggerFactory.getLogger(AffMatchingDocOrgQualityTest.class);
@@ -54,8 +49,9 @@ public class AffMatchingDocOrgQualityTest {
     private final static String INPUT_DATA_DIR_PATH = "src/test/resources/experimentalData/input";
      
     private SparkJobExecutor executor = new SparkJobExecutor();
-    
-    private File workingDir;
+
+    @TempDir
+    public File workingDir;
     
     private String inputOrgDirPath;
     
@@ -75,10 +71,8 @@ public class AffMatchingDocOrgQualityTest {
     
     
     
-    @Before
+    @BeforeEach
     public void before() {
-        
-        workingDir = Files.createTempDir();
         
         inputOrgDirPath = workingDir + "/affiliation_matching/input/organizations";
         inputAffDirPath = workingDir + "/affiliation_matching/input/affiliations";
@@ -89,16 +83,7 @@ public class AffMatchingDocOrgQualityTest {
         outputReportPath = workingDir + "/affiliation_matching/report";
         
     }
-    
-    
-    @After
-    public void after() throws IOException {
-        
-        FileUtils.deleteDirectory(workingDir);
-        
-    }
-    
-    
+
     //------------------------ TESTS --------------------------
     
     @Test

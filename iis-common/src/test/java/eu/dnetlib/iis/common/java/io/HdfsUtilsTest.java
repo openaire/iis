@@ -2,7 +2,7 @@ package eu.dnetlib.iis.common.java.io;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.PathFilter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,15 +11,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 public class HdfsUtilsTest {
 
-    @Test(expected = Exception.class)
-    public void listDirsShouldThrowOnError() throws IOException {
+    @Test
+    public void listDirsShouldThrowOnError() {
         // when
-        HdfsUtils.listDirs(new Configuration(), null);
+        assertThrows(Exception.class, () -> HdfsUtils.listDirs(new Configuration(), null));
     }
 
     @Test
@@ -40,15 +41,17 @@ public class HdfsUtilsTest {
         assertEquals(expecteds, actuals);
     }
 
-    @Test(expected = RuntimeException.class)
-    public void givenANotExistingPath_whenCountFilesIsCalled_thenExceptionIsThrown() throws IOException {
-        HdfsUtils.countFiles(new Configuration(), "/path/to/dir", mock(PathFilter.class));
+    @Test
+    public void givenANotExistingPath_whenCountFilesIsCalled_thenExceptionIsThrown() {
+        assertThrows(RuntimeException.class, () ->
+                HdfsUtils.countFiles(new Configuration(), "/path/to/dir", mock(PathFilter.class)));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void givenAPathToFile_whenCountFilesIsCalled_thenExceptionIsThrown() throws IOException {
         Path tempFile = Files.createTempFile(this.getClass().getSimpleName(), "tmp");
-        HdfsUtils.countFiles(new Configuration(), tempFile.toString(), mock(PathFilter.class));
+        assertThrows(RuntimeException.class, () ->
+                HdfsUtils.countFiles(new Configuration(), tempFile.toString(), mock(PathFilter.class)));
     }
 
     @Test

@@ -1,29 +1,27 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.function.Function;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 /**
 * @author Łukasz Dumiszewski
 */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class NameStrictWithCharFilteringMatchVoterTest {
 
     @Mock
@@ -72,12 +70,12 @@ public class NameStrictWithCharFilteringMatchVoterTest {
         
         affiliation.setOrganizationName("mickey mouse's ice creams");
         
-        resetOrgNames("donald duck company", "mickey mouse's ice creams", "goofy's kennel");
-        
-        when(stringFilter.filterChars("mickey mouse's ice creams", ImmutableList.of(','))).thenReturn("mickey mouse's ice creams");
+        resetOrgNames("donald duck company", "goofy's kennel", "mickey mouse's ice creams");
+
         when(stringFilter.filterChars("donald duck company", ImmutableList.of(','))).thenReturn("donald duck company");
         when(stringFilter.filterChars("goofy's kennel", ImmutableList.of(','))).thenReturn("goofy's kennel");
-        
+        when(stringFilter.filterChars("mickey mouse's ice creams", ImmutableList.of(','))).thenReturn("mickey mouse's ice creams");
+
         
         // execute & assert
         

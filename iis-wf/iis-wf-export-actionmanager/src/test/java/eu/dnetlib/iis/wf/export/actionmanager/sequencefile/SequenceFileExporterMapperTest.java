@@ -1,37 +1,32 @@
 package eu.dnetlib.iis.wf.export.actionmanager.sequencefile;
 
-import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_ACTION_BUILDER_FACTORY_CLASSNAME;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.security.InvalidParameterException;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.Relation;
+import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 import org.apache.avro.mapred.AvroKey;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper.Context;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.security.InvalidParameterException;
 
-import eu.dnetlib.dhp.schema.action.AtomicAction;
-import eu.dnetlib.dhp.schema.oaf.Relation;
-import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
+import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_ACTION_BUILDER_FACTORY_CLASSNAME;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class SequenceFileExporterMapperTest {
 
@@ -49,25 +44,25 @@ public class SequenceFileExporterMapperTest {
 
     // ------------------------------------- TESTS -----------------------------------
     
-    @Test(expected=InvalidParameterException.class)
-    public void testSetupWitoutActionBuilderClassName() throws Exception {
+    @Test
+    public void testSetupWitoutActionBuilderClassName() {
         // given
         Configuration conf = new Configuration();
         doReturn(conf).when(context).getConfiguration();
         
         // execute
-        mapper.setup(context);
+        assertThrows(InvalidParameterException.class, () -> mapper.setup(context));
     }
     
-    @Test(expected=RuntimeException.class)
-    public void testSetupWithInvalidActionBuilderClassName() throws Exception {
+    @Test
+    public void testSetupWithInvalidActionBuilderClassName() {
         // given
         Configuration conf = new Configuration();
         conf.set(EXPORT_ACTION_BUILDER_FACTORY_CLASSNAME, "invalid.class.name");
         doReturn(conf).when(context).getConfiguration();
         
         // execute
-        mapper.setup(context);
+        assertThrows(RuntimeException.class, () -> mapper.setup(context));
     }
     
     @Test

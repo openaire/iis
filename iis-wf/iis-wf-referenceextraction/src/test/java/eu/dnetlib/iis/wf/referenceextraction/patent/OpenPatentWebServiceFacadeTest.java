@@ -1,22 +1,8 @@
 package eu.dnetlib.iis.wf.referenceextraction.patent;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.NoSuchElementException;
-
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
+import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -27,15 +13,17 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonParser;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.NoSuchElementException;
 
-import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * {@link OpenPatentWebServiceFacade} test class.
@@ -43,7 +31,7 @@ import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
  * @author mhorst
  *
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class OpenPatentWebServiceFacadeTest {
 
     private final String consumerCredential = "myCredential";
@@ -125,7 +113,7 @@ public class OpenPatentWebServiceFacadeTest {
         HttpEntity httpEntity = mock(HttpEntity.class);
         String accessToken = "someAccessToken";
         
-        when(httpClient.execute(any(HttpHost.class),any(HttpGet.class))).thenReturn(httpResponse);
+        when(httpClient.execute(any(HttpHost.class),any(HttpRequest.class))).thenReturn(httpResponse);
         when(httpResponse.getStatusLine()).thenReturn(statusLine);
         when(statusLine.getStatusCode()).thenReturn(200);
         when(httpResponse.getEntity()).thenReturn(httpEntity);
@@ -143,7 +131,7 @@ public class OpenPatentWebServiceFacadeTest {
         assertEquals(accessToken, token);
     }
     
-    @Test(expected = PatentServiceException.class)
+    @Test
     public void testReauthenticateResultingNon200() throws Exception {
         // given
         OpenPatentWebServiceFacade service = prepareValidService();
@@ -151,13 +139,13 @@ public class OpenPatentWebServiceFacadeTest {
         StatusLine statusLine = mock(StatusLine.class);
         HttpEntity httpEntity = mock(HttpEntity.class);
         
-        when(httpClient.execute(any(HttpHost.class),any(HttpGet.class))).thenReturn(httpResponse);
+        when(httpClient.execute(any(HttpHost.class),any(HttpRequest.class))).thenReturn(httpResponse);
         when(httpResponse.getStatusLine()).thenReturn(statusLine);
         when(statusLine.getStatusCode()).thenReturn(404);
         when(httpResponse.getEntity()).thenReturn(httpEntity);
         
         // execute
-        service.reauthenticate();
+        assertThrows(PatentServiceException.class, () -> service.reauthenticate());
     }
     
     
@@ -170,7 +158,7 @@ public class OpenPatentWebServiceFacadeTest {
         HttpEntity httpEntity = mock(HttpEntity.class);
         String accessToken = "someAccessToken";
         
-        when(httpClient.execute(any(HttpHost.class),any(HttpGet.class))).thenReturn(httpResponse);
+        when(httpClient.execute(any(HttpHost.class),any(HttpRequest.class))).thenReturn(httpResponse);
         when(httpResponse.getStatusLine()).thenReturn(statusLine);
         when(statusLine.getStatusCode()).thenReturn(200);
         when(httpResponse.getEntity()).thenReturn(httpEntity);
@@ -194,7 +182,7 @@ public class OpenPatentWebServiceFacadeTest {
         assertNotNull(token);
         assertEquals(accessToken, token);
         // 2nd call should not result in reauthentication, token should be returned straight away
-        verify(httpClient, times(1)).execute(any(HttpHost.class),any(HttpGet.class));
+        verify(httpClient, times(1)).execute(any(HttpHost.class),any(HttpRequest.class));
     }
     
     @Test
@@ -230,7 +218,7 @@ public class OpenPatentWebServiceFacadeTest {
         when(getPatentHttpResponse.getEntity()).thenReturn(getPatentHttpEntity);
         when(getPatentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(expectedResult.getBytes()));
         
-        when(httpClient.execute(any(HttpHost.class),any(HttpGet.class))).thenReturn(authnHttpResponse, getPatentHttpResponse);
+        when(httpClient.execute(any(HttpHost.class),any(HttpRequest.class))).thenReturn(authnHttpResponse, getPatentHttpResponse);
         
         // execute
         String patentContents = service.getPatentMetadata(patentBuilder.build());
@@ -288,7 +276,7 @@ public class OpenPatentWebServiceFacadeTest {
         when(getPatentHttpResponse2.getEntity()).thenReturn(getPatentHttpEntity2);
         when(getPatentHttpEntity2.getContent()).thenReturn(new ByteArrayInputStream(expectedResult.getBytes()));
         
-        when(httpClient.execute(any(HttpHost.class), any(HttpGet.class))).thenReturn(authnHttpResponse1,
+        when(httpClient.execute(any(HttpHost.class), any(HttpRequest.class))).thenReturn(authnHttpResponse1,
                 getPatentHttpResponse1, authnHttpResponse2, getPatentHttpResponse2);
         
         // execute
@@ -299,7 +287,7 @@ public class OpenPatentWebServiceFacadeTest {
         assertEquals(expectedResult, patentContents);
     }
     
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void testGetPatentMetadataForHttp404() throws Exception {
         // given
         ImportedPatent.Builder patentBuilder = initializeWithDummyValues();
@@ -327,10 +315,10 @@ public class OpenPatentWebServiceFacadeTest {
         when(getPatentHttpResponse.getStatusLine()).thenReturn(getPatentStatusLine);
         when(getPatentStatusLine.getStatusCode()).thenReturn(404);
         
-        when(httpClient.execute(any(HttpHost.class),any(HttpGet.class))).thenReturn(authnHttpResponse, getPatentHttpResponse);
+        when(httpClient.execute(any(HttpHost.class),any(HttpRequest.class))).thenReturn(authnHttpResponse, getPatentHttpResponse);
         
         // execute
-        service.getPatentMetadata(patentBuilder.build());
+        assertThrows(NoSuchElementException.class, () -> service.getPatentMetadata(patentBuilder.build()));
     }
     
     @Test
@@ -372,7 +360,7 @@ public class OpenPatentWebServiceFacadeTest {
         when(getPatentHttpResponse2.getEntity()).thenReturn(getPatentHttpEntity2);
         when(getPatentHttpEntity2.getContent()).thenReturn(new ByteArrayInputStream(expectedResult.getBytes()));
         
-        when(httpClient.execute(any(HttpHost.class), any(HttpGet.class))).thenReturn(authnHttpResponse,
+        when(httpClient.execute(any(HttpHost.class), any(HttpRequest.class))).thenReturn(authnHttpResponse,
                 getPatentHttpResponse1, getPatentHttpResponse2);
         
         // execute
@@ -383,7 +371,7 @@ public class OpenPatentWebServiceFacadeTest {
         assertEquals(expectedResult, patentContents);
     }
     
-    @Test(expected = PatentServiceException.class)
+    @Test
     public void testGetPatentMetadataForHttp403RetryCountExceeded() throws Exception {
      // given
         ImportedPatent.Builder patentBuilder = initializeWithDummyValues();
@@ -412,14 +400,14 @@ public class OpenPatentWebServiceFacadeTest {
         when(getPatentStatusLine.getStatusCode()).thenReturn(403);
         when(getPatentHttpResponse.getEntity()).thenReturn(getPatentHttpEntity);
         
-        when(httpClient.execute(any(HttpHost.class), any(HttpGet.class))).thenReturn(authnHttpResponse,
+        when(httpClient.execute(any(HttpHost.class), any(HttpRequest.class))).thenReturn(authnHttpResponse,
                 getPatentHttpResponse);
         
         // execute
-        service.getPatentMetadata(patentBuilder.build());
+        assertThrows(PatentServiceException.class, () -> service.getPatentMetadata(patentBuilder.build()));
     }
     
-    @Test(expected = PatentServiceException.class)
+    @Test
     public void testGetPatentMetadataForHttp500() throws Exception {
         // given
         ImportedPatent.Builder patentBuilder = initializeWithDummyValues();
@@ -448,10 +436,10 @@ public class OpenPatentWebServiceFacadeTest {
         when(getPatentStatusLine.getStatusCode()).thenReturn(500);
         when(getPatentHttpResponse.getEntity()).thenReturn(getPatentHttpEntity);
         
-        when(httpClient.execute(any(HttpHost.class),any(HttpGet.class))).thenReturn(authnHttpResponse, getPatentHttpResponse);
+        when(httpClient.execute(any(HttpHost.class),any(HttpRequest.class))).thenReturn(authnHttpResponse, getPatentHttpResponse);
         
         // execute
-        service.getPatentMetadata(patentBuilder.build());
+        assertThrows(PatentServiceException.class, () -> service.getPatentMetadata(patentBuilder.build()));
     }
     
     @Test
