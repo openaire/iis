@@ -278,10 +278,10 @@ def jsonpath(obj, expr, result_type='VALUE', debug=0, use_eval=True):
 
         # replace @  w/ "__obj", but \@ means a literal @
         loc = re.sub(r'(?<!\\)@', "__obj", loc).replace(r'\@', '@')
-        if not use_eval:
-            if debug: print "eval disabled"
-            raise Exception("eval disabled")
-        if debug: print "eval", loc
+        #if not use_eval:
+        #    if debug: print "eval disabled"
+        #    raise Exception("eval disabled")
+        #if debug: print "eval", loc
         try:
             # eval w/ caller globals, w/ local "__obj"!
             v = eval(loc, caller_globals, {'__obj': obj})
