@@ -402,6 +402,10 @@
                     <name>citationmatchingFuzzySparkExecutorOverhead</name>
                     <value>512</value>
                 </property>
+				<property>
+					<name>citationmatchingFuzzyNumberOfPartitions</name>
+					<value>1000</value>
+				</property>
                 <property>
                     <name>researchInitiativeReferenceExtractionSparkExecutorOverhead</name>
                     <value>512</value>

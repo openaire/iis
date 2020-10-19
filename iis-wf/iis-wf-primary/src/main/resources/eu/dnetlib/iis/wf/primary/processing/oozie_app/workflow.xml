@@ -309,7 +309,6 @@
         </property>
         <property>
             <name>citationmatchingFuzzyNumberOfPartitions</name>
-            <value>1000</value>
             <description>number of partitions used for rdds with citations and documents read from input files</description>
         </property>
         <property>
