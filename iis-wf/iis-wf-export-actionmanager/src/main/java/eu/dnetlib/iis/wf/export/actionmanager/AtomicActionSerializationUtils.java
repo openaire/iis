@@ -17,13 +17,13 @@ import scala.Tuple2;
  * @author mhorst
  *
  */
-public class ActionSerializationUtils {
+public class AtomicActionSerializationUtils {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
     
     private static final Text emptyText = new Text("");
     
-    private ActionSerializationUtils() {}
+    private AtomicActionSerializationUtils() {}
     
     /**
      * Maps action RDD into text RDD.

@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.export.actionmanager.entity;
+package eu.dnetlib.iis.wf.export.actionmanager;
 
 import java.io.IOException;
 
@@ -14,7 +14,7 @@ import eu.dnetlib.dhp.schema.oaf.Oaf;
  * @author mhorst
  *
  */
-public class AtomicActionSerDeUtils {
+public class AtomicActionDeserializationUtils {
 
     /**
      * Returns deserialized {@link AtomicAction} payload.
@@ -26,7 +26,7 @@ public class AtomicActionSerDeUtils {
         
         JsonNode rootNode = objectMapper.readTree(serializedAction);
         
-        return (T) objectMapper.readValue(objectMapper.treeAsTokens(rootNode.get("payload")), (Class<T>) Class.forName(rootNode.get("clazz").textValue()));
+        return objectMapper.readValue(objectMapper.treeAsTokens(rootNode.get("payload")), (Class<T>) Class.forName(rootNode.get("clazz").textValue()));
     }
     
     /**
@@ -40,9 +40,9 @@ public class AtomicActionSerDeUtils {
         JsonNode rootNode = objectMapper.readTree(serializedAction);
         Class<T> clazz = (Class<T>) Class.forName(rootNode.get("clazz").textValue());
 
-        AtomicAction<T> action = new AtomicAction<T>();
+        AtomicAction<T> action = new AtomicAction<>();
         action.setClazz(clazz);
-        action.setPayload((T) objectMapper.readValue(objectMapper.treeAsTokens(rootNode.get("payload")), clazz));
+        action.setPayload(objectMapper.readValue(objectMapper.treeAsTokens(rootNode.get("payload")), clazz));
         return action;
     }
     

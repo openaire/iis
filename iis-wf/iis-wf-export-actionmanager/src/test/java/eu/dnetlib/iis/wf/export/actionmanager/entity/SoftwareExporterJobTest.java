@@ -12,6 +12,7 @@ import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.common.utils.ListTestUtils;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
+import eu.dnetlib.iis.wf.export.actionmanager.AtomicActionDeserializationUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -84,7 +85,7 @@ public class SoftwareExporterJobTest {
 
         List<AtomicAction<Software>> capturedEntityActions = ListTestUtils.readValues(outputEntityDirPath, text -> {
             try {
-                return AtomicActionSerDeUtils.deserializeAction(text.toString());
+                return AtomicActionDeserializationUtils.deserializeAction(text.toString());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -93,7 +94,7 @@ public class SoftwareExporterJobTest {
 
         List<AtomicAction<Relation>> capturedRelationActions = ListTestUtils.readValues(outputRelationDirPath, text -> {
             try {
-                return AtomicActionSerDeUtils.deserializeAction(text.toString());
+                return AtomicActionDeserializationUtils.deserializeAction(text.toString());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -126,7 +127,7 @@ public class SoftwareExporterJobTest {
         // verifying entities
         List<AtomicAction<Software>> capturedEntityActions = ListTestUtils.readValues(outputEntityDirPath, text -> {
             try {
-                return AtomicActionSerDeUtils.deserializeAction(text.toString());
+                return AtomicActionDeserializationUtils.deserializeAction(text.toString());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -140,7 +141,7 @@ public class SoftwareExporterJobTest {
         // verifying relations
         List<AtomicAction<Relation>> capturedRelationActions = ListTestUtils.readValues(outputRelationDirPath, text -> {
             try {
-                return AtomicActionSerDeUtils.deserializeAction(text.toString());
+                return AtomicActionDeserializationUtils.deserializeAction(text.toString());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

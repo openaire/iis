@@ -12,7 +12,7 @@ import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.common.utils.ListTestUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
-import eu.dnetlib.iis.wf.export.actionmanager.entity.AtomicActionSerDeUtils;
+import eu.dnetlib.iis.wf.export.actionmanager.AtomicActionDeserializationUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -81,7 +81,7 @@ public class PatentExporterJobTest {
         List<AtomicAction<Relation>> actualRelationActions = ListTestUtils
                 .readValues(outputRelationDir.toString(), text -> {
                     try {
-                        return AtomicActionSerDeUtils.deserializeAction(text.toString());
+                        return AtomicActionDeserializationUtils.deserializeAction(text.toString());
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -91,7 +91,7 @@ public class PatentExporterJobTest {
         List<AtomicAction<Publication>> actualEntityActions = ListTestUtils
                 .readValues(outputEntityDir.toString(), text -> {
                     try {
-                        return AtomicActionSerDeUtils.deserializeAction(text.toString());
+                        return AtomicActionDeserializationUtils.deserializeAction(text.toString());
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -122,7 +122,7 @@ public class PatentExporterJobTest {
         List<AtomicAction<Relation>> actualRelationActions = ListTestUtils
                 .readValues(outputRelationDir.toString(), text -> {
                     try {
-                        return AtomicActionSerDeUtils.deserializeAction(text.toString());
+                        return AtomicActionDeserializationUtils.deserializeAction(text.toString());
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -135,7 +135,7 @@ public class PatentExporterJobTest {
         List<AtomicAction<Publication>> actualEntityActions = ListTestUtils
                 .readValues(outputEntityDir.toString(), text -> {
                     try {
-                        return AtomicActionSerDeUtils.deserializeAction(text.toString());
+                        return AtomicActionDeserializationUtils.deserializeAction(text.toString());
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }

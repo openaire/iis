@@ -43,7 +43,7 @@ import eu.dnetlib.iis.common.utils.DateTimeUtils;
 import eu.dnetlib.iis.common.utils.RDDUtils;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
-import eu.dnetlib.iis.wf.export.actionmanager.ActionSerializationUtils;
+import eu.dnetlib.iis.wf.export.actionmanager.AtomicActionSerializationUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 import eu.dnetlib.iis.wf.export.actionmanager.module.AlgorithmName;
@@ -152,7 +152,7 @@ public class SoftwareExporterJob {
         
         JavaRDD<AtomicAction<Software>> entityResult = documentToSoftwareReducedValues.map(SoftwareExporterJob::buildEntityAction);
 
-        RDDUtils.saveTextPairRDD(ActionSerializationUtils.mapActionToText(entityResult), numberOfOutputFiles,
+        RDDUtils.saveTextPairRDD(AtomicActionSerializationUtils.mapActionToText(entityResult), numberOfOutputFiles,
                 outputAvroPath, jobConfig);
 
         return documentToSoftwareReducedValues;
@@ -183,7 +183,7 @@ public class SoftwareExporterJob {
         JavaRDD<AtomicAction<Relation>> relationResult = dedupedRelationTriples
                 .flatMap(x -> buildRelationActions(x._1(), x._2(), x._3()).iterator());
         
-        RDDUtils.saveTextPairRDD(ActionSerializationUtils.mapActionToText(relationResult), numberOfOutputFiles,
+        RDDUtils.saveTextPairRDD(AtomicActionSerializationUtils.mapActionToText(relationResult), numberOfOutputFiles,
                 outputAvroPath, jobConfig);
 
         return dedupedRelationTriples;
