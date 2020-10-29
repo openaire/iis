@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
+import scala.Tuple2;
 
 import java.util.Collections;
 import java.util.function.BiConsumer;
@@ -54,7 +55,6 @@ class CitationRelationExporterIOUtilsTest extends TestWithSharedSparkSession {
     @DisplayName("Serialized actions are stored in output")
     public void givenMockWriteFunction_whenSerializedActionsAreStored_thenMockIsUsed() {
         BiConsumer<JavaPairRDD<Text, Text>, String> writeFn = mock(BiConsumer.class);
-
         Dataset<Text> serializedActions = spark().createDataset(Collections.singletonList(
                 new Text("content")
         ), Encoders.kryo(Text.class));
@@ -63,8 +63,8 @@ class CitationRelationExporterIOUtilsTest extends TestWithSharedSparkSession {
 
         ArgumentCaptor<JavaPairRDD<Text, Text>> javaPairRDDCaptor = ArgumentCaptor.forClass(JavaPairRDD.class);
         verify(writeFn, atLeastOnce()).accept(javaPairRDDCaptor.capture(), eq("path/to/relations"));
-        assertEquals(Collections.singletonMap(new Text(""), new Text("content")),
-                javaPairRDDCaptor.getValue().collectAsMap());
+        assertEquals(Collections.singletonList("content"),
+                javaPairRDDCaptor.getValue().map(Tuple2::_2).map(Text::toString).collect());
     }
 
     @Test

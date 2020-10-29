@@ -35,7 +35,7 @@ import static org.apache.spark.sql.functions.udf;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CitationRelationExporterUtilsTest extends TestWithSharedSparkSession {
@@ -126,7 +126,7 @@ class CitationRelationExporterUtilsTest extends TestWithSharedSparkSession {
 
             List<Relation> results = processCitations(citationsDF, isValidConfidenceLevel).collectAsList();
 
-            assertThat(results.size(), equalTo(2));
+            assertEquals(2, results.size());
             assertThat(results, hasItem(matchingRelation(
                     createRelation("DocumentId", "DestinationDocumentId", OafConstants.REL_CLASS_CITES, 0.9f))));
             assertThat(results, hasItem(matchingRelation(
@@ -143,7 +143,7 @@ class CitationRelationExporterUtilsTest extends TestWithSharedSparkSession {
 
         List<Text> results = relationsToSerializedActions(relations).collectAsList();
 
-        assertThat(results.size(), equalTo(1));
+        assertEquals(1, results.size());
         assertThat(AtomicActionDeserializationUtils.getPayload(results.get(0).toString()), is(matchingRelation(relation)));
     }
 
@@ -157,7 +157,7 @@ class CitationRelationExporterUtilsTest extends TestWithSharedSparkSession {
 
         List<ReportEntry> results = relationsToReportEntries(spark(), relations).collectAsList();
 
-        assertThat(results.size(), equalTo(2));
+        assertEquals(2, results.size());
         assertThat(results, hasItem(ReportEntryFactory.createCounterReportEntry("processing.citationMatching.relation.references", 2)));
         assertThat(results, hasItem(ReportEntryFactory.createCounterReportEntry("processing.citationMatching.relations.docs", 1)));
     }

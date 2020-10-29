@@ -24,7 +24,6 @@ import java.util.function.Function;
 public class CitationRelationExporterIOUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(CitationRelationExporterIOUtils.class);
-    private static final Text EMPTY_TEXT = new Text("");
 
     private CitationRelationExporterIOUtils() {
     }
@@ -78,7 +77,7 @@ public class CitationRelationExporterIOUtils {
 
     private static JavaPairRDD<Text, Text> datasetToPairRDD(Dataset<Text> serializedActions) {
         return serializedActions.javaRDD()
-                .mapToPair((PairFunction<Text, Text, Text>) text -> new Tuple2<>(EMPTY_TEXT, text));
+                .mapToPair((PairFunction<Text, Text, Text>) content -> new Tuple2<>(new Text(), content));
     }
 
     public static void storeReportEntries(SparkSession spark,
