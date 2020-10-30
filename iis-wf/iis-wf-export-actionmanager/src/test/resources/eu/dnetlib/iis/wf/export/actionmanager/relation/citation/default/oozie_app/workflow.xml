@@ -1,0 +1,108 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-export_actionmanager_citation_relation_default">
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+    <start to="producer"/>
+
+    <action name="producer">
+        <java>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/producer"/>
+                <mkdir path="${nameNode}${workingDir}/producer"/>
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{citations,
+                eu.dnetlib.iis.export.schemas.Citations,
+                eu/dnetlib/iis/wf/export/actionmanager/relation/citation/default/input/citations.json}
+            </arg>
+            <arg>-Ocitations=${workingDir}/producer/input_citations</arg>
+        </java>
+        <ok to="citation-relation-exporter"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="citation-relation-exporter">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/export_citation_relation</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>input_citations</name>
+                    <value>${workingDir}/producer/input_citations</value>
+                </property>
+                <property>
+                    <name>action_set_id_citation_relations</name>
+                    <value>relations-actionset-id</value>
+                </property>
+                <property>
+                    <name>output_root_relations</name>
+                    <value>${workingDir}/output/relations</value>
+                </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/report</value>
+                </property>
+                <property>
+                    <name>output_report_relative_path</name>
+                    <value>export_citation_relation</value>
+                </property>
+                <property>
+                    <name>trust_level_threshold_citation_relations</name>
+                    <value>0.5</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="consumer"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="consumer">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
+            <arg>-Iseqfile=${workingDir}/output/relations/relations-actionset-id</arg>
+            <arg>
+                -Pexpectation_file_paths=eu/dnetlib/iis/wf/export/actionmanager/relation/citation/default/output/document_to_referencedDocument.properties,
+                eu/dnetlib/iis/wf/export/actionmanager/relation/citation/default/output/referencedDocument_to_document.properties
+            </arg>
+        </java>
+        <ok to="report-consumer"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="report-consumer">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            <arg>-C{report,
+                eu.dnetlib.iis.common.schemas.ReportEntry,
+                eu/dnetlib/iis/wf/export/actionmanager/relation/citation/default/output/report.json}
+            </arg>
+            <arg>-Ireport=${workingDir}/report/export_citation_relation</arg>
+        </java>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

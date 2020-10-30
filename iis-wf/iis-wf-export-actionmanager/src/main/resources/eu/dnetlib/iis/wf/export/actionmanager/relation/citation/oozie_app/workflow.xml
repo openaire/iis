@@ -5,8 +5,8 @@
             <description>input containing eu.dnetlib.iis.export.schemas.Citations avro records</description>
         </property>
         <property>
-            <name>action_set_id_document_referencedDocuments</name>
-            <description>identifier of action set holding citations entities</description>
+            <name>action_set_id_citation_relations</name>
+            <description>identifier of action set holding citations relations</description>
         </property>
         <property>
             <name>output_root_relations</name>
@@ -22,7 +22,7 @@
             <description>directory for storing report (relative to output_report_root_path)</description>
         </property>
         <property>
-            <name>trust_level_threshold_document_referencedDocuments</name>
+            <name>trust_level_threshold_citation_relations</name>
             <description>trust level threshold of exported data</description>
         </property>
 
@@ -100,9 +100,9 @@
                 --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
             </spark-opts>
             <arg>-inputCitationsPath=${input_citations}</arg>
-            <arg>-outputRelationPath=${output_root_relations}/${action_set_id_document_referencedDocuments}</arg>
+            <arg>-outputRelationPath=${output_root_relations}/${action_set_id_citation_relations}</arg>
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
-            <arg>-trustLevelThreshold=${trust_level_threshold_document_referencedDocuments}</arg>
+            <arg>-trustLevelThreshold=${trust_level_threshold_citation_relations}</arg>
         </spark>
         <ok to="end"/>
         <error to="fail"/>
