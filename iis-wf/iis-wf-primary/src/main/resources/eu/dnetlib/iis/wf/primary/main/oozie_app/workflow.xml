@@ -280,6 +280,11 @@
             <value>$UNDEFINED$</value>
             <description>action-set identifier of exported data containing patent entities</description>
         </property>
+        <property>
+            <name>export_action_set_id_citation_relations</name>
+            <value>$UNDEFINED$</value>
+            <description>action-set identifier of exported data containing citation relations</description>
+        </property>
         <!-- trust level threshold section -->
         <property>
             <name>export_trust_level_threshold</name>
@@ -315,6 +320,11 @@
             <name>export_trust_level_threshold_matched_doc_organizations</name>
             <value>$UNDEFINED$</value>
             <description>document to organization trust level threshold</description>
+        </property>
+        <property>
+            <name>export_trust_level_threshold_citation_relations</name>
+            <value>$UNDEFINED$</value>
+            <description>citation relation trust level threshold</description>
         </property>
         <!-- -->
         <property>
@@ -850,6 +860,10 @@
                     <name>action_set_id_entity_patent</name>
                     <value>${export_action_set_id_entity_patent}</value>
                 </property>
+                <property>
+                    <name>action_set_id_citation_relations</name>
+                    <value>${export_action_set_id_citation_relations}</value>
+                </property>
 
                 <property>
                     <name>trust_level_threshold</name>
@@ -882,6 +896,10 @@
                 <property>
                     <name>trust_level_threshold_document_patent</name>
                     <value>${export_trust_level_threshold_document_patent}</value>
+                </property>
+                <property>
+                    <name>trust_level_threshold_citation_relations</name>
+                    <value>${export_trust_level_threshold_citation_relations}</value>
                 </property>
                 <property>
                     <name>documentssimilarity_threshold</name>
