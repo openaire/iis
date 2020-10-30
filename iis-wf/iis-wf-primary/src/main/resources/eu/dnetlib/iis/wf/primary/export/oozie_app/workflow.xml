@@ -369,19 +369,7 @@
         <error to="fail"/>
     </action>
 
-    <join name="export_join" to="distcp_output"/>
-
-    <action name="distcp_output">
-        <distcp xmlns="uri:oozie:distcp-action:0.2">
-            <arg>-Dmapreduce.map.memory.mb=${output_remote_distcp_memory_mb}</arg>
-            <arg>-pb</arg>
-            <arg>-overwrite</arg>
-            <arg>${nameNode}${workingDir}/output</arg>
-            <arg>${output_remote_location}</arg>
-        </distcp>
-        <ok to="primary_export_push_reports" />
-        <error to="fail" />
-    </action>
+    <join name="export_join" to="primary_export_push_reports"/>
 
     <action name="primary_export_push_reports">
         <sub-workflow>
@@ -394,8 +382,20 @@
                 </property>
             </configuration>
         </sub-workflow>
-        <ok to="end"/>
+        <ok to="distcp_output"/>
         <error to="fail"/>
+    </action>
+
+    <action name="distcp_output">
+        <distcp xmlns="uri:oozie:distcp-action:0.2">
+            <arg>-Dmapreduce.map.memory.mb=${output_remote_distcp_memory_mb}</arg>
+            <arg>-pb</arg>
+            <arg>-overwrite</arg>
+            <arg>${nameNode}${workingDir}/output</arg>
+            <arg>${output_remote_location}</arg>
+        </distcp>
+        <ok to="end" />
+        <error to="fail" />
     </action>
 
     <kill name="fail">
