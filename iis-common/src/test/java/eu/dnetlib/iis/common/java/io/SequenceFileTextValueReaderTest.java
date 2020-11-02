@@ -64,6 +64,16 @@ public class SequenceFileTextValueReaderTest {
         assertEquals(IOException.class, e.getCause().getClass());
     }
 
+    @Test
+    public void fromFile() throws IOException {
+        // execute
+        ArrayList<String> items = readAll(SequenceFileTextValueReader
+                .fromFile(getClass().getResource(ONE_FILE).getPath()));
+
+        // then
+        assertThat(items, contains("a", "bb", "ccc"));
+    }
+
     //------------------------ PRIVATE --------------------------
 
     private SequenceFileTextValueReader newReader(String resource) throws IOException, URISyntaxException {

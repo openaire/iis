@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.common.java.io;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
@@ -155,5 +156,9 @@ public class SequenceFileTextValueReader implements CloseableIterator<Text> {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static SequenceFileTextValueReader fromFile(String pathname) throws IOException {
+		return new SequenceFileTextValueReader(new FileSystemPath(new File(pathname)));
 	}
 }
