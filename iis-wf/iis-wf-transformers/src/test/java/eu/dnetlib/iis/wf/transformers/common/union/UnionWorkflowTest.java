@@ -1,11 +1,13 @@
 package eu.dnetlib.iis.wf.transformers.common.union;
 
 import eu.dnetlib.iis.common.AbstractOozieWorkflowTestCase;
+import eu.dnetlib.iis.common.IntegrationTest;
 import org.junit.jupiter.api.Test;
 
 /**
  * @author madryk
  */
+@IntegrationTest
 public class UnionWorkflowTest extends AbstractOozieWorkflowTestCase {
 
     @Test

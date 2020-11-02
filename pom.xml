@@ -774,7 +774,7 @@
                                 <goal>verify</goal>
                             </goals>
                             <configuration>
-                                <groups>integration</groups>
+                                <groups>SlowTest,IntegrationTest</groups>
                                 <includes>
                                     <include>**/*Test.java</include>
                                 </includes>

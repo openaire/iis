@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.affmatching.bucket;
 
 import com.google.common.collect.ImmutableList;
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentOrganization;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationFetcher;
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.when;
 /**
  * @author madryk
  */
+@SlowTest
 @ExtendWith(MockitoExtension.class)
 public class DocOrgRelationAffOrgJoinerTest {
 

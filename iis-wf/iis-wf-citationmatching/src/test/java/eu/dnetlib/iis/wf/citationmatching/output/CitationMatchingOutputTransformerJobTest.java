@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.citationmatching.output;
 
 import eu.dnetlib.iis.citationmatching.schemas.Citation;
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
@@ -17,6 +18,7 @@ import java.io.IOException;
 /**
  * @author madryk
  */
+@SlowTest
 public class CitationMatchingOutputTransformerJobTest {
 
     private static final String DATA_DIRECTORY_PATH = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/data/output_transformer";

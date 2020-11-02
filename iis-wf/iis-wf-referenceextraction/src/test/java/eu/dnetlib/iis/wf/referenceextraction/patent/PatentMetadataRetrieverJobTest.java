@@ -2,6 +2,7 @@ package eu.dnetlib.iis.wf.referenceextraction.patent;
 
 import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess;
 import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils;
 import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils.CacheRecordType;
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @author mhorst
  *
  */
+@SlowTest
 public class PatentMetadataRetrieverJobTest {
     
     private SparkJobExecutor executor = new SparkJobExecutor();

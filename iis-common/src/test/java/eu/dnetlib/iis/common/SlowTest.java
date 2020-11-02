@@ -8,12 +8,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Integration test markup.
+ * Slow test markup.
  * <p>
- * Integration tests are tests to be run using cluster environment.
+ * Slow tests are unit tests with long execution time.
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Tag("IntegrationTest")
-public @interface IntegrationTest {
+@Tag("SlowTest")
+public @interface SlowTest {
 }

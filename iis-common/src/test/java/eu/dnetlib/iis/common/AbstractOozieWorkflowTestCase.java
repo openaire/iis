@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @author madryk
  *
  */
-@IntegrationTest
 public abstract class AbstractOozieWorkflowTestCase {
 
 	private final static Logger log = LoggerFactory.getLogger(AbstractOozieWorkflowTestCase.class);

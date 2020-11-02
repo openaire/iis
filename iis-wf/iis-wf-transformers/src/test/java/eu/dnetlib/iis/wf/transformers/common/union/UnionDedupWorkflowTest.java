@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 /**
  * @author madryk
  */
+@IntegrationTest
 public class UnionDedupWorkflowTest extends AbstractOozieWorkflowTestCase {
 
     @Test

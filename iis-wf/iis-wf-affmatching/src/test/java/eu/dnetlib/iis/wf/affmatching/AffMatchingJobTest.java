@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.affmatching;
 
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
@@ -23,7 +24,7 @@ import java.io.IOException;
 /**
 * @author Łukasz Dumiszewski
 */
-
+@SlowTest
 public class AffMatchingJobTest {
     
     

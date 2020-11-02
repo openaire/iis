@@ -2,6 +2,7 @@ package eu.dnetlib.iis.wf.citationmatching;
 
 import eu.dnetlib.iis.citationmatching.schemas.Citation;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
@@ -19,6 +20,7 @@ import java.io.IOException;
 /**
  * @author madryk
  */
+@SlowTest
 public class IisCitationMatchingJobTest {
 
     private SparkJobExecutor executor = new SparkJobExecutor();

@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.importer.patent;
 
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.java.io.DataStore;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
@@ -19,6 +20,7 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SlowTest
 public class PatentReaderJobTest {
     private SparkJobExecutor executor = new SparkJobExecutor();
 

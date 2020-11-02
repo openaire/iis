@@ -4,7 +4,7 @@ import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.dhp.schema.oaf.Software;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import eu.dnetlib.iis.common.IntegrationTest;
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.schemas.ReportEntryType;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author mhorst
  *
  */
-@IntegrationTest
+@SlowTest
 public class SoftwareExporterJobTest {
 
     private SparkJobExecutor executor = new SparkJobExecutor();

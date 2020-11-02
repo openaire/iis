@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.referenceextraction.patent.input;
 
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
@@ -22,6 +23,7 @@ import java.nio.file.Path;
  * @author mhorst
  *
  */
+@SlowTest
 public class PatentMetadataRetrieverInputTransformerJobTest {
     
     private SparkJobExecutor executor = new SparkJobExecutor();

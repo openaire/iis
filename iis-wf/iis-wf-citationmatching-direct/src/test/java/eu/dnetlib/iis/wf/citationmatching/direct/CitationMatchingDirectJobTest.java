@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.citationmatching.direct;
 
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.citations.schemas.Citation;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
@@ -35,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * @author madryk
  *
  */
+@SlowTest
 public class CitationMatchingDirectJobTest {
 
     private SparkJobExecutor executor = new SparkJobExecutor();

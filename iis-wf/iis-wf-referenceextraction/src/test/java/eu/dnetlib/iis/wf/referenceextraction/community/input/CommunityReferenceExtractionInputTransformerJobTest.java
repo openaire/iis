@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.referenceextraction.community.input;
 
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
@@ -19,6 +20,7 @@ import java.io.IOException;
  * @author mhorst
  *
  */
+@SlowTest
 public class CommunityReferenceExtractionInputTransformerJobTest {
 
     private static final String DATA_DIRECTORY_PATH = "src/test/resources/eu/dnetlib/iis/wf/referenceextraction/community/data/input_transformer";
