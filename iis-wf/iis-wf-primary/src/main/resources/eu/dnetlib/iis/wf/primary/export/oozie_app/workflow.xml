@@ -201,9 +201,9 @@
             <description>document to patent trust level threshold</description>
         </property>
         <property>
-            <name>trust_level_threshold_citation_relations</name>
+            <name>trust_level_threshold_document_referencedDocuments</name>
             <value>$UNDEFINED$</value>
-            <description>citation relation trust level threshold</description>
+            <description>document_referencedDocuments trust level threshold</description>
         </property>
 
         <!-- -->

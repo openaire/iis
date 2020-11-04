@@ -322,9 +322,9 @@
             <description>document to organization trust level threshold</description>
         </property>
         <property>
-            <name>export_trust_level_threshold_citation_relations</name>
+            <name>export_trust_level_threshold_document_referencedDocuments</name>
             <value>$UNDEFINED$</value>
-            <description>citation relation trust level threshold</description>
+            <description>document_referencedDocuments trust level threshold</description>
         </property>
         <!-- -->
         <property>
@@ -898,8 +898,8 @@
                     <value>${export_trust_level_threshold_document_patent}</value>
                 </property>
                 <property>
-                    <name>trust_level_threshold_citation_relations</name>
-                    <value>${export_trust_level_threshold_citation_relations}</value>
+                    <name>trust_level_threshold_document_referencedDocuments</name>
+                    <value>${export_trust_level_threshold_document_referencedDocuments}</value>
                 </property>
                 <property>
                     <name>documentssimilarity_threshold</name>
