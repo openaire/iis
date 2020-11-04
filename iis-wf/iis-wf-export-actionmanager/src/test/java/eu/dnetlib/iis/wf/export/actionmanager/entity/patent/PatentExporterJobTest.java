@@ -5,11 +5,12 @@ import eu.dnetlib.dhp.schema.oaf.Publication;
 import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.IntegrationTest;
+import eu.dnetlib.iis.common.java.io.SequenceFileTextValueReader;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.schemas.ReportEntryType;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
+import eu.dnetlib.iis.common.utils.IteratorUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
-import eu.dnetlib.iis.common.utils.ListTestUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
 import eu.dnetlib.iis.wf.export.actionmanager.AtomicActionDeserializationUtils;
@@ -78,24 +79,12 @@ public class PatentExporterJobTest {
         executor.execute(sparkJob);
 
         //then
-        List<AtomicAction<Relation>> actualRelationActions = ListTestUtils
-                .readValues(outputRelationDir.toString(), text -> {
-                    try {
-                        return AtomicActionDeserializationUtils.deserializeAction(text.toString());
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+        List<AtomicAction<Relation>> actualRelationActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputRelationDir.toString()),
+                x -> AtomicActionDeserializationUtils.deserializeAction(x.toString()));
         assertEquals(0, actualRelationActions.size());
 
-        List<AtomicAction<Publication>> actualEntityActions = ListTestUtils
-                .readValues(outputEntityDir.toString(), text -> {
-                    try {
-                        return AtomicActionDeserializationUtils.deserializeAction(text.toString());
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+        List<AtomicAction<Publication>> actualEntityActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputEntityDir.toString()),
+                x -> AtomicActionDeserializationUtils.deserializeAction(x.toString()));
         assertEquals(0, actualEntityActions.size());
 
         assertCountersInReport(0, 0, 0);
@@ -113,33 +102,21 @@ public class PatentExporterJobTest {
                         ClassPathResourceProvider.getResourcePath(INPUT_PATENT_PATH), Patent.class),
                 inputPatentDir.toString());
         SparkJob sparkJob = buildSparkJob(0.5);
-        
+
         //when
         executor.execute(sparkJob);
 
         //then
         //relations
-        List<AtomicAction<Relation>> actualRelationActions = ListTestUtils
-                .readValues(outputRelationDir.toString(), text -> {
-                    try {
-                        return AtomicActionDeserializationUtils.deserializeAction(text.toString());
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+        List<AtomicAction<Relation>> actualRelationActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputRelationDir.toString()),
+                x -> AtomicActionDeserializationUtils.deserializeAction(x.toString()));
         assertEquals(6, actualRelationActions.size());
 
         actualRelationActions.forEach(action -> verifyAction(action, Relation.class));
 
         // entities
-        List<AtomicAction<Publication>> actualEntityActions = ListTestUtils
-                .readValues(outputEntityDir.toString(), text -> {
-                    try {
-                        return AtomicActionDeserializationUtils.deserializeAction(text.toString());
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+        List<AtomicAction<Publication>> actualEntityActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputEntityDir.toString()),
+                x -> AtomicActionDeserializationUtils.deserializeAction(x.toString()));
         assertEquals(actualEntityActions.size(), 2);
 
         actualEntityActions.forEach(action -> verifyAction(action, Publication.class));

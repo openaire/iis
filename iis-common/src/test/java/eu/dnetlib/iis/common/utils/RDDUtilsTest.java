@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.common.utils;
 
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
+import eu.dnetlib.iis.common.java.io.SequenceFileTextValueReader;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
@@ -18,7 +19,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -67,7 +67,7 @@ public class RDDUtilsTest {
                 pattern.matcher(x.getName()).matches());
         assertEquals(NUMBER_OF_OUTPUT_FILES, fileCount);
 
-        List<Text> out = ListTestUtils.readValues(outputDir.toString(), Function.identity());
+        List<Text> out = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputDir.toString()));
         List<String> actualValues = out.stream().map(Text::toString).sorted().collect(Collectors.toList());
         List<String> expectedValues = in.collect().stream().map(x -> x._2.toString()).sorted().collect(Collectors.toList());
         ListTestUtils

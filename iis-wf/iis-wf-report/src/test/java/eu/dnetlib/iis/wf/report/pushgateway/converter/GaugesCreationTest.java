@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.report.pushgateway.converter;
 
-import eu.dnetlib.iis.common.java.stream.ListUtils;
+import eu.dnetlib.iis.common.utils.ListUtils;
 import io.prometheus.client.Collector;
 import io.prometheus.client.Gauge;
 import org.junit.jupiter.api.Test;
