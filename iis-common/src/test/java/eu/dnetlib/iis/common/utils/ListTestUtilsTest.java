@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.common.utils;
 
+import eu.dnetlib.iis.common.java.io.SequenceFileTextValueReader;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
@@ -17,7 +18,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -78,7 +78,7 @@ public class ListTestUtilsTest {
         RDDUtils.saveTextPairRDD(pairs, 2, inputDir.toString(), configuration);
 
         //when
-        List<Text> values = ListTestUtils.readValues(inputDir.toString(), Function.identity());
+        List<Text> values = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(inputDir.toString()));
 
         //then
         ListTestUtils

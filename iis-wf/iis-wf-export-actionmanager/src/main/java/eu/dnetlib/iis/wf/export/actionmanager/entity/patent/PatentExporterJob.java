@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import eu.dnetlib.iis.common.utils.IteratorUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -39,8 +40,7 @@ import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
-import eu.dnetlib.iis.common.java.stream.ListUtils;
-import eu.dnetlib.iis.common.java.stream.StreamUtils;
+import eu.dnetlib.iis.common.utils.ListUtils;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.common.utils.DateTimeUtils;
 import eu.dnetlib.iis.common.utils.RDDUtils;
@@ -247,7 +247,7 @@ public class PatentExporterJob {
         return documentToPatents
                 .filter(x -> isValidDocumentToPatent(x, trustLevelThreshold))
                 .groupBy(x -> new Tuple2<>(x.getDocumentId(), x.getApplnNr()))
-                .mapValues(xs -> StreamUtils.asStream(xs.iterator()).reduce(PatentExporterJob::reduceByConfidenceLevel))
+                .mapValues(xs -> IteratorUtils.toStream(xs.iterator()).reduce(PatentExporterJob::reduceByConfidenceLevel))
                 .filter(x -> x._2.isPresent())
                 .mapValues(java.util.Optional::get)
                 .values();
