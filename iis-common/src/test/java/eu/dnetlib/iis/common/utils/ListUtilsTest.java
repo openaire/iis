@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.common.java.stream;
+package eu.dnetlib.iis.common.utils;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.report.pushgateway.converter;
 
-import eu.dnetlib.iis.common.java.stream.ListUtils;
+import eu.dnetlib.iis.common.utils.ListUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
