@@ -1,7 +1,6 @@
 package eu.dnetlib.iis.wf.documentsclassification;
 
 import eu.dnetlib.iis.common.AbstractOozieWorkflowTestCase;
-import eu.dnetlib.iis.common.IntegrationTest;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.Test;
  * @author Dominika Tkaczyk
  *
  */
-@IntegrationTest
 public class DocumentClassificationWorkflowTest extends AbstractOozieWorkflowTestCase {
 
     @Test

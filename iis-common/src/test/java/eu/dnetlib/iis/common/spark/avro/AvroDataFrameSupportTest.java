@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.common.spark.avro;
 
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.avro.Person;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import org.apache.avro.Schema;
@@ -23,6 +24,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SlowTest
 public class AvroDataFrameSupportTest {
 
     private static SparkSession spark;

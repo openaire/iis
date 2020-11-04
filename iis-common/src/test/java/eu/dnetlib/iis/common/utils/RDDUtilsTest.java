@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.common.utils;
 
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.java.io.SequenceFileTextValueReader;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SlowTest
 public class RDDUtilsTest {
     private static final int NUMBER_OF_OUTPUT_FILES = 2;
     private static JavaSparkContext sc;

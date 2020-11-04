@@ -229,7 +229,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <excludedGroups>SlowTest,IntegrationTest</excludedGroups>
+                    <excludedGroups>IntegrationTest,${otherExcludedGroups}</excludedGroups>
                 </configuration>
             </plugin>
 

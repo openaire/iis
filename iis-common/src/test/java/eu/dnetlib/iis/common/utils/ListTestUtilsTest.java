@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.common.utils;
 
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.java.io.SequenceFileTextValueReader;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SlowTest
 public class ListTestUtilsTest {
     private static JavaSparkContext sc;
     private static Configuration configuration;

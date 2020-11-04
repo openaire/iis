@@ -1,14 +1,12 @@
 package eu.dnetlib.iis.wf.importer.infospace;
 
 import eu.dnetlib.iis.common.AbstractOozieWorkflowTestCase;
-import eu.dnetlib.iis.common.IntegrationTest;
 import eu.dnetlib.iis.common.OozieWorkflowTestConfiguration;
 import org.junit.jupiter.api.Test;
 
 /**
  * Integration test for the infospace importer.
  */
-@IntegrationTest
 public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 
     @Test

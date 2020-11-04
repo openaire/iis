@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.common.lock;
 
 import com.google.common.base.Stopwatch;
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.lock.LockManagingProcess.LockMode;
 import org.apache.curator.test.TestingServer;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author mhorst
  *
  */
+@SlowTest
 public class LockManagingProcessTest {
 
     
