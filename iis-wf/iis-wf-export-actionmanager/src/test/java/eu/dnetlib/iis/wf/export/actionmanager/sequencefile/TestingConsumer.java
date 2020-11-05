@@ -24,7 +24,7 @@ import eu.dnetlib.iis.common.java.io.FileSystemPath;
 import eu.dnetlib.iis.common.java.io.SequenceFileTextValueReader;
 import eu.dnetlib.iis.common.java.porttype.AnyPortType;
 import eu.dnetlib.iis.common.java.porttype.PortType;
-import eu.dnetlib.iis.wf.export.actionmanager.entity.AtomicActionSerDeUtils;
+import eu.dnetlib.iis.wf.export.actionmanager.AtomicActionDeserializationUtils;
 
 /**
  * Sequence file testing consumer. Expects {@link Text} values at input.
@@ -92,7 +92,7 @@ public class TestingConsumer implements Process {
 
 			while (it.hasNext()) {
 			    String serializedAction = it.next().toString();
-				AtomicAction<? extends Oaf> action = AtomicActionSerDeUtils.deserializeAction(serializedAction);
+				AtomicAction<? extends Oaf> action = AtomicActionDeserializationUtils.deserializeAction(serializedAction);
 				actionsCount++;
 				if (actionsCount > recordsSpecs.length) {
 					throw new Exception("got more records than expected: " + "unable to verify record no " + actionsCount

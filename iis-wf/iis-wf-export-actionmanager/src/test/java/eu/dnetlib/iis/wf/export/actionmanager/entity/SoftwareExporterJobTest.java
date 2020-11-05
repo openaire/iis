@@ -13,6 +13,7 @@ import eu.dnetlib.iis.common.utils.IteratorUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
+import eu.dnetlib.iis.wf.export.actionmanager.AtomicActionDeserializationUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -84,11 +85,11 @@ public class SoftwareExporterJobTest {
         assertCountersInReport(0, 0, 0);
 
         List<AtomicAction<Software>> capturedEntityActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputEntityDirPath), text ->
-                AtomicActionSerDeUtils.deserializeAction(text.toString()));
+                AtomicActionDeserializationUtils.deserializeAction(text.toString()));
         assertEquals(0, capturedEntityActions.size());
 
         List<AtomicAction<Relation>> capturedRelationActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputRelationDirPath), text ->
-                AtomicActionSerDeUtils.deserializeAction(text.toString()));
+                AtomicActionDeserializationUtils.deserializeAction(text.toString()));
         assertEquals(0, capturedRelationActions.size());
     }
 
@@ -116,7 +117,7 @@ public class SoftwareExporterJobTest {
 
         // verifying entities
         List<AtomicAction<Software>> capturedEntityActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputEntityDirPath), text ->
-                AtomicActionSerDeUtils.deserializeAction(text.toString()));
+                AtomicActionDeserializationUtils.deserializeAction(text.toString()));
         assertEquals(2, capturedEntityActions.size());
 
         for (AtomicAction<Software> currentAction : capturedEntityActions) {
@@ -125,7 +126,7 @@ public class SoftwareExporterJobTest {
 
         // verifying relations
         List<AtomicAction<Relation>> capturedRelationActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputRelationDirPath), text ->
-                AtomicActionSerDeUtils.deserializeAction(text.toString()));
+                AtomicActionDeserializationUtils.deserializeAction(text.toString()));
         assertEquals(6, capturedRelationActions.size());
 
         for (int i = 0; i < capturedRelationActions.size(); i++) {

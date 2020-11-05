@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.Oaf;
-import eu.dnetlib.iis.wf.export.actionmanager.ActionSerializationUtils;
+import eu.dnetlib.iis.wf.export.actionmanager.AtomicActionSerializationUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.module.ActionBuilderFactory;
 import eu.dnetlib.iis.wf.export.actionmanager.module.ActionBuilderModule;
 import eu.dnetlib.iis.wf.export.actionmanager.module.TrustLevelThresholdExceededException;
@@ -67,7 +67,7 @@ public class SequenceFileExporterMapper extends Mapper<AvroKey<? extends Specifi
                 Text keyOut = new Text();
                 Text valueOut = new Text();
                 keyOut.set("");
-                valueOut.set(ActionSerializationUtils.serializeAction(action, objectMapper));
+                valueOut.set(AtomicActionSerializationUtils.serializeAction(action, objectMapper));
                 context.write(keyOut, valueOut);
             }
         }

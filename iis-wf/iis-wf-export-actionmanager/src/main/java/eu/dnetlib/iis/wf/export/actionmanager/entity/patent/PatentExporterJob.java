@@ -46,7 +46,7 @@ import eu.dnetlib.iis.common.utils.DateTimeUtils;
 import eu.dnetlib.iis.common.utils.RDDUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
-import eu.dnetlib.iis.wf.export.actionmanager.ActionSerializationUtils;
+import eu.dnetlib.iis.wf.export.actionmanager.AtomicActionSerializationUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 import eu.dnetlib.iis.wf.export.actionmanager.entity.ConfidenceLevelUtils;
@@ -278,7 +278,7 @@ public class PatentExporterJob {
             return buildRelationActions(documentToPatent, documentIdToExport, patentIdToExport).iterator();
         });
         
-        return ActionSerializationUtils.mapActionToText(result);
+        return AtomicActionSerializationUtils.mapActionToText(result);
         
     }
     
@@ -327,7 +327,7 @@ public class PatentExporterJob {
                     return buildEntityAction(patent, patentIdToExport, patentDateOfCollection, patentEpoUrlRoot);
                 });
 
-        return ActionSerializationUtils.mapActionToText(result);
+        return AtomicActionSerializationUtils.mapActionToText(result);
     }
 
     private static AtomicAction<Publication> buildEntityAction(Patent patent, String patentIdToExport,

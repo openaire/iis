@@ -11,6 +11,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import scala.Tuple2;
@@ -49,7 +50,8 @@ public class RDDUtilsTest {
     }
 
     @Test
-    public void savePairRDDShouldSavePairRDDAsSeqFiles() throws IOException {
+    @DisplayName("Pair RDD is saved with specified number of files")
+    public void savePairRDDShouldSavePairRDDAsSeqFilesWithSpecifiedNumberOfFiles() throws IOException {
         //given
         JavaPairRDD<Text, Text> in = sc.parallelizePairs(Arrays.asList(
                 new Tuple2<>(new Text("1L"), new Text("1R")),
@@ -60,6 +62,33 @@ public class RDDUtilsTest {
 
         //when
         RDDUtils.saveTextPairRDD(in, NUMBER_OF_OUTPUT_FILES, outputDir.toString(), configuration);
+
+        //then
+        Pattern pattern = Pattern.compile("^part-r-.\\d+$");
+        long fileCount = HdfsUtils.countFiles(new Configuration(), outputDir.toString(), x ->
+                pattern.matcher(x.getName()).matches());
+        assertEquals(NUMBER_OF_OUTPUT_FILES, fileCount);
+
+        List<Text> out = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputDir.toString()));
+        List<String> actualValues = out.stream().map(Text::toString).sorted().collect(Collectors.toList());
+        List<String> expectedValues = in.collect().stream().map(x -> x._2.toString()).sorted().collect(Collectors.toList());
+        ListTestUtils
+                .compareLists(actualValues, expectedValues);
+    }
+
+    @Test
+    @DisplayName("Pair RDD is saved")
+    public void savePairRDDShouldSavePairRDDAsSeqFiles() throws IOException {
+        //given
+        JavaPairRDD<Text, Text> in = sc.parallelizePairs(Arrays.asList(
+                new Tuple2<>(new Text("1L"), new Text("1R")),
+                new Tuple2<>(new Text("2L"), new Text("2R")),
+                new Tuple2<>(new Text("3L"), new Text("3R"))),
+                NUMBER_OF_OUTPUT_FILES);
+        Path outputDir = workingDir.resolve("output");
+
+        //when
+        RDDUtils.saveTextPairRDD(in, outputDir.toString(), configuration);
 
         //then
         Pattern pattern = Pattern.compile("^part-r-.\\d+$");

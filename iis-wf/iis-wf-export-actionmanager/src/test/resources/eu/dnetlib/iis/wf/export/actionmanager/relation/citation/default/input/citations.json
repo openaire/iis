@@ -1,0 +1,12 @@
+{
+  "documentId": "50|oaid-3",
+  "citations": [
+    {
+      "position": 9,
+      "rawText": "F. Bach. Exploring large feature spaces with hierarchical multiple kernel learning. In Advances in Neural Information Processing Systems (NIPS), 2008.",
+      "destinationDocumentId": "50|oaid-4",
+      "confidenceLevel": 0.7486356,
+      "externalDestinationDocumentIds": {}
+    }
+  ]
+}

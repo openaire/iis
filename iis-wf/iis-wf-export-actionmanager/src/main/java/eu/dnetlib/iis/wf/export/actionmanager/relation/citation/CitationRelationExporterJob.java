@@ -1,0 +1,72 @@
+package eu.dnetlib.iis.wf.export.actionmanager.relation.citation;
+
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+import eu.dnetlib.dhp.schema.oaf.Relation;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.wf.export.actionmanager.entity.ConfidenceLevelUtils;
+import org.apache.hadoop.io.Text;
+import org.apache.spark.SparkConf;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.api.java.UDF1;
+import org.apache.spark.sql.expressions.UserDefinedFunction;
+import org.apache.spark.sql.types.DataTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static eu.dnetlib.iis.common.spark.SparkSessionSupport.runWithSparkSession;
+import static eu.dnetlib.iis.wf.export.actionmanager.relation.citation.CitationRelationExporterIOUtils.*;
+import static eu.dnetlib.iis.wf.export.actionmanager.relation.citation.CitationRelationExporterUtils.*;
+import static org.apache.spark.sql.functions.udf;
+
+public class CitationRelationExporterJob {
+
+    private static final Logger logger = LoggerFactory.getLogger(CitationRelationExporterJob.class);
+
+    public static void main(String[] args) {
+        JobParameters params = new JobParameters();
+        JCommander jcommander = new JCommander(params);
+        jcommander.parse(args);
+
+        Float trustLevelThreshold = ConfidenceLevelUtils.evaluateConfidenceLevelThreshold(params.trustLevelThreshold);
+        logger.info("Trust level threshold to be used: {}.", trustLevelThreshold);
+
+        runWithSparkSession(new SparkConf(), params.isSparkSessionManaged, spark -> {
+            clearOutput(spark, params.outputRelationPath, params.outputReportPath);
+
+            Dataset<Row> citations = readCitations(spark, params.inputCitationsPath);
+
+            UserDefinedFunction isValidConfidenceLevel = udf((UDF1<Float, Boolean>) confidenceLevel ->
+                            ConfidenceLevelUtils.isValidConfidenceLevel(confidenceLevel, trustLevelThreshold),
+                    DataTypes.BooleanType);
+            Dataset<Relation> relations = processCitations(citations, isValidConfidenceLevel);
+            relations.cache();
+
+            Dataset<Text> serializedActions = relationsToSerializedActions(relations);
+            storeSerializedActions(spark, serializedActions, params.outputRelationPath);
+
+            Dataset<ReportEntry> reportEntries = relationsToReportEntries(spark, relations);
+            storeReportEntries(spark, reportEntries, params.outputReportPath);
+        });
+    }
+
+    @Parameters(separators = "=")
+    private static class JobParameters {
+        @Parameter(names = "-isSparkSessionManaged", arity = 1)
+        private Boolean isSparkSessionManaged = Boolean.TRUE;
+
+        @Parameter(names = "-inputCitationsPath", required = true)
+        private String inputCitationsPath;
+
+        @Parameter(names = "-outputRelationPath", required = true)
+        private String outputRelationPath;
+
+        @Parameter(names = "-outputReportPath", required = true)
+        private String outputReportPath;
+
+        @Parameter(names = "-trustLevelThreshold", required = true)
+        private String trustLevelThreshold;
+    }
+}

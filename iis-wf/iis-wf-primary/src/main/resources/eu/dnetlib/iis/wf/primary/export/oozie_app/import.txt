@@ -2,4 +2,5 @@
 export_actionmanager_sequencefile classpath eu/dnetlib/iis/wf/export/actionmanager/sequencefile/oozie_app
 export_software classpath eu/dnetlib/iis/wf/export/actionmanager/entity/software/oozie_app
 export_patent classpath eu/dnetlib/iis/wf/export/actionmanager/entity/patent/oozie_app
+export_citation_relation classpath eu/dnetlib/iis/wf/export/actionmanager/relation/citation/oozie_app
 push_reports classpath eu/dnetlib/iis/wf/report/pushgateway/process/oozie_app

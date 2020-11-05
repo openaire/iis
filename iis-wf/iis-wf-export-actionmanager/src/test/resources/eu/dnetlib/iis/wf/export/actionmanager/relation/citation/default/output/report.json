@@ -1,0 +1,3 @@
+{"key":"processing.citationMatching.relation.references", "type":"COUNTER", "value": "1"}
+{"key":"processing.citationMatching.relation.cites.docs", "type":"COUNTER", "value": "1"}
+{"key":"processing.citationMatching.relation.iscitedby.docs", "type":"COUNTER", "value": "1"}

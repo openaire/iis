@@ -13,7 +13,7 @@ import eu.dnetlib.iis.common.utils.IteratorUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
-import eu.dnetlib.iis.wf.export.actionmanager.entity.AtomicActionSerDeUtils;
+import eu.dnetlib.iis.wf.export.actionmanager.AtomicActionDeserializationUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -80,11 +80,11 @@ public class PatentExporterJobTest {
 
         //then
         List<AtomicAction<Relation>> actualRelationActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputRelationDir.toString()),
-                x -> AtomicActionSerDeUtils.deserializeAction(x.toString()));
+                x -> AtomicActionDeserializationUtils.deserializeAction(x.toString()));
         assertEquals(0, actualRelationActions.size());
 
         List<AtomicAction<Publication>> actualEntityActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputEntityDir.toString()),
-                x -> AtomicActionSerDeUtils.deserializeAction(x.toString()));
+                x -> AtomicActionDeserializationUtils.deserializeAction(x.toString()));
         assertEquals(0, actualEntityActions.size());
 
         assertCountersInReport(0, 0, 0);
@@ -109,14 +109,14 @@ public class PatentExporterJobTest {
         //then
         //relations
         List<AtomicAction<Relation>> actualRelationActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputRelationDir.toString()),
-                x -> AtomicActionSerDeUtils.deserializeAction(x.toString()));
+                x -> AtomicActionDeserializationUtils.deserializeAction(x.toString()));
         assertEquals(6, actualRelationActions.size());
 
         actualRelationActions.forEach(action -> verifyAction(action, Relation.class));
 
         // entities
         List<AtomicAction<Publication>> actualEntityActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputEntityDir.toString()),
-                x -> AtomicActionSerDeUtils.deserializeAction(x.toString()));
+                x -> AtomicActionDeserializationUtils.deserializeAction(x.toString()));
         assertEquals(actualEntityActions.size(), 2);
 
         actualEntityActions.forEach(action -> verifyAction(action, Publication.class));
