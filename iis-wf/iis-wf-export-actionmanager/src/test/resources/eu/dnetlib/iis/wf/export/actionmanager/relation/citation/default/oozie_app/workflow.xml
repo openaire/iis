@@ -45,8 +45,8 @@
                     <value>${workingDir}/producer/input_citations</value>
                 </property>
                 <property>
-                    <name>action_set_id_document_referencedDocuments</name>
-                    <value>document-referencedDocuments-actionset-id</value>
+                    <name>action_set_id_citation_relations</name>
+                    <value>relations-actionset-id</value>
                 </property>
                 <property>
                     <name>output_root_relations</name>
@@ -74,7 +74,7 @@
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
-            <arg>-Iseqfile=${workingDir}/output/relations/document-referencedDocuments-actionset-id</arg>
+            <arg>-Iseqfile=${workingDir}/output/relations/relations-actionset-id</arg>
             <arg>
                 -Pexpectation_file_paths=eu/dnetlib/iis/wf/export/actionmanager/relation/citation/default/output/document_to_referencedDocument.properties,
                 eu/dnetlib/iis/wf/export/actionmanager/relation/citation/default/output/referencedDocument_to_document.properties

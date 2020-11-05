@@ -5,8 +5,8 @@
             <description>input containing eu.dnetlib.iis.export.schemas.Citations avro records</description>
         </property>
         <property>
-            <name>action_set_id_document_referencedDocuments</name>
-            <description>document_referencedDocuments action-set identifier of exported data</description>
+            <name>action_set_id_citation_relations</name>
+            <description>citation_relations action-set identifier of exported data</description>
         </property>
         <property>
             <name>output_root_relations</name>
@@ -100,7 +100,7 @@
                 --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
             </spark-opts>
             <arg>-inputCitationsPath=${input_citations}</arg>
-            <arg>-outputRelationPath=${output_root_relations}/${action_set_id_document_referencedDocuments}</arg>
+            <arg>-outputRelationPath=${output_root_relations}/${action_set_id_citation_relations}</arg>
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
             <arg>-trustLevelThreshold=${trust_level_threshold_document_referencedDocuments}</arg>
         </spark>
