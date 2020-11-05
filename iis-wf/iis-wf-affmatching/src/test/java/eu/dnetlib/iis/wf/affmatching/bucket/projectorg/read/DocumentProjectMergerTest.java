@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read;
 
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentProject;
 import org.apache.spark.SparkConf;
@@ -18,6 +19,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 /**
  * @author madryk
  */
+@SlowTest
 public class DocumentProjectMergerTest {
 
     private DocumentProjectMerger documentProjectMerger = new DocumentProjectMerger();

@@ -1,7 +1,6 @@
 package eu.dnetlib.iis.wf.importer.stream.project;
 
 import eu.dnetlib.iis.common.AbstractOozieWorkflowTestCase;
-import eu.dnetlib.iis.common.IntegrationTest;
 import eu.dnetlib.iis.common.OozieWorkflowTestConfiguration;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.Test;
  * @author mhorst
  * 
  */
-@IntegrationTest
 public class StreamProjectWorkflowTest extends AbstractOozieWorkflowTestCase {
 
     @Test

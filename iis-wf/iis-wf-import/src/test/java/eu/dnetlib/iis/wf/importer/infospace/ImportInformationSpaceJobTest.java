@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.dnetlib.dhp.schema.oaf.Oaf;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import eu.dnetlib.iis.common.IntegrationTest;
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.java.io.DataStore;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.schemas.IdentifierMapping;
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author mhorst
  *
  */
-@IntegrationTest
+@SlowTest
 public class ImportInformationSpaceJobTest {
 
     private static SparkSession spark;

@@ -2,7 +2,7 @@ package eu.dnetlib.iis.wf.referenceextraction.softwareurl;
 
 import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import eu.dnetlib.iis.common.IntegrationTest;
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess;
 import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils;
 import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils.CacheRecordType;
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @author mhorst
  *
  */
-@IntegrationTest
+@SlowTest
 public class CachedWebCrawlerJobTest {
 
     private SparkJobExecutor executor = new SparkJobExecutor();

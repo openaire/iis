@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.affmatching;
 
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.java.io.DataStore;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
@@ -27,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
 * @author mhorst
 */
-
+@SlowTest
 public class ProjectBasedMatchingJobTest {
     
     

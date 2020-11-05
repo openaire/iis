@@ -2,7 +2,6 @@ package eu.dnetlib.iis.wf.metadataextraction;
 
 import com.google.common.collect.Sets;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import eu.dnetlib.iis.common.IntegrationTest;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -23,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * 
  * @author Dominika Tkaczyk
  */
-@IntegrationTest
 public class CermineMetadataExtractionTest {
 
     private static final String PDF_FILE = "/eu/dnetlib/iis/wf/metadataextraction/example-1.pdf";

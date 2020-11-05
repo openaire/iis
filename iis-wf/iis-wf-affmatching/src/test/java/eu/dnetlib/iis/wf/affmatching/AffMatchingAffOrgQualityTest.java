@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.affmatching;
 
-import eu.dnetlib.iis.common.IntegrationTest;
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
@@ -15,7 +15,6 @@ import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.IisOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.AffMatchResultWriter;
 import eu.dnetlib.iis.wf.affmatching.write.SimpleAffMatchResultWriter;
-import org.apache.commons.io.FileUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.junit.jupiter.api.*;
@@ -26,7 +25,6 @@ import scala.Tuple2;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -56,7 +54,7 @@ import static java.util.stream.Collectors.toList;
  *
  * @author madryk
  */
-@IntegrationTest
+@SlowTest
 public class AffMatchingAffOrgQualityTest {
 
     private static final Logger logger = LoggerFactory.getLogger(AffMatchingAffOrgQualityTest.class);

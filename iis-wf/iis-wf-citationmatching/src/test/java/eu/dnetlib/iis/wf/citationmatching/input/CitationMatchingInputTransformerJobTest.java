@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.citationmatching.input;
 
 import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.citations.schemas.Citation;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
@@ -17,6 +18,7 @@ import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 import java.io.File;
 import java.io.IOException;
 
+@SlowTest
 public class CitationMatchingInputTransformerJobTest {
 
     private static final String DATA_DIRECTORY_PATH = "src/test/resources/eu/dnetlib/iis/wf/citationmatching/data/input_transformer";

@@ -3,6 +3,7 @@ package eu.dnetlib.iis.wf.referenceextraction.patent;
 import com.google.common.collect.Lists;
 import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.java.io.DataStore;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
@@ -32,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * {@link PatentMetadataExtractorJob} test class.
  *
  */
+@SlowTest
 public class PatentMetadataExtractorJobTest {
 
     static final String xmlResourcesRootClassPath = "/eu/dnetlib/iis/wf/referenceextraction/patent/data/";

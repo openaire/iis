@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.referenceextraction.project.tara;
 
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.spark.avro.AvroDataFrameSupport;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 import org.apache.spark.SparkConf;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
+@SlowTest
 public class TaraReferenceExtractionIOUtilsTest {
 
     private static SparkSession spark;

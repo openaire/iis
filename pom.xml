@@ -774,7 +774,7 @@
                                 <goal>verify</goal>
                             </goals>
                             <configuration>
-                                <groups>integration</groups>
+                                <groups>IntegrationTest</groups>
                                 <includes>
                                     <include>**/*Test.java</include>
                                 </includes>
@@ -950,6 +950,8 @@
 
         <junit.version>5.4.2</junit.version>
         <mockito.version>3.5.13</mockito.version>
+
+        <otherExcludedGroups/>
     </properties>
 
 </project>

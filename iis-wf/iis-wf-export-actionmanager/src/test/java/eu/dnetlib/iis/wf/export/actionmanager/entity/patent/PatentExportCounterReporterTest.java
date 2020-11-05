@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.export.actionmanager.entity.patent;
 
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+@SlowTest
 @ExtendWith(MockitoExtension.class)
 public class PatentExportCounterReporterTest {
     private static final String outputReportPath = "/path/to/report";

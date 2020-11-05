@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.affmatching;
 
-import eu.dnetlib.iis.common.IntegrationTest;
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
@@ -41,7 +41,7 @@ import static java.util.stream.Collectors.toList;
  * 
  * @author madryk
  */
-@IntegrationTest
+@SlowTest
 public class AffMatchingDocOrgQualityTest {
 
     private static final Logger logger = LoggerFactory.getLogger(AffMatchingDocOrgQualityTest.class);

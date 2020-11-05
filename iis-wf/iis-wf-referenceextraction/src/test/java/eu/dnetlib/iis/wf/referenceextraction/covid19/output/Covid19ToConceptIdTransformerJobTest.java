@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.referenceextraction.covid19.output;
 
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
@@ -16,6 +17,7 @@ import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 import java.io.IOException;
 import java.nio.file.Path;
 
+@SlowTest
 public class Covid19ToConceptIdTransformerJobTest {
     private SparkJobExecutor executor = new SparkJobExecutor();
 

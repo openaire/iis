@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.referenceextraction.project.tara;
 
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.spark.avro.AvroDataFrameSupport;
 import eu.dnetlib.iis.common.spark.pipe.PipeExecutionEnvironment;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
@@ -31,6 +32,7 @@ import static eu.dnetlib.iis.wf.referenceextraction.project.tara.TaraReferenceEx
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@SlowTest
 public class TaraReferenceExtractionUtilsTest {
 
     private static SparkSession spark;

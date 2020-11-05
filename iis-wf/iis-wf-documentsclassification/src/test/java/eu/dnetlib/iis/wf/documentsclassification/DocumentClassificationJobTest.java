@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.documentsclassification;
 
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
@@ -31,6 +32,7 @@ import java.net.URL;
  */
 
 @Disabled
+@SlowTest
 public class DocumentClassificationJobTest {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentClassificationJobTest.class);

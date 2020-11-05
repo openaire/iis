@@ -4,7 +4,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import eu.dnetlib.iis.common.IntegrationTest;
+import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
@@ -61,7 +61,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * The match strength depends on real data prepared by hand and is just a ratio of true positives (correct matches)
  * to all the matches guessed by the given matcher and voter.
  */
-@IntegrationTest
+@SlowTest
 public class AffOrgMatchVoterStrengthEstimatorAndTest {
 
     private static final Logger logger = LoggerFactory.getLogger(AffOrgMatchVoterStrengthEstimatorAndTest.class);
