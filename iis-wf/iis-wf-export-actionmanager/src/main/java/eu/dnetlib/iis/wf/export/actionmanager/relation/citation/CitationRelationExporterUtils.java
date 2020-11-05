@@ -153,16 +153,16 @@ public class CitationRelationExporterUtils {
     }
 
     private static long uniqueCitesRelationCount(Dataset<Relation> relations) {
-        return relations
-                .filter((FilterFunction<Relation>) relation -> relation.getRelClass().equals(OafConstants.REL_CLASS_CITES))
-                .map((MapFunction<Relation, String>) Relation::getSource, Encoders.STRING())
-                .distinct()
-                .count();
+        return uniqueRelationCountByRelClass(relations, OafConstants.REL_CLASS_CITES);
     }
 
     private static long uniqueIsCitedByRelationCount(Dataset<Relation> relations) {
+        return uniqueRelationCountByRelClass(relations, OafConstants.REL_CLASS_ISCITEDBY);
+    }
+
+    private static long uniqueRelationCountByRelClass(Dataset<Relation> relations, String relClass) {
         return relations
-                .filter((FilterFunction<Relation>) relation -> relation.getRelClass().equals(OafConstants.REL_CLASS_ISCITEDBY))
+                .filter((FilterFunction<Relation>) relation -> relation.getRelClass().equals(relClass))
                 .map((MapFunction<Relation, String>) Relation::getSource, Encoders.STRING())
                 .distinct()
                 .count();
