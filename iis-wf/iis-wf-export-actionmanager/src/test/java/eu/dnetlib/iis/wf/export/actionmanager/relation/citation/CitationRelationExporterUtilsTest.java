@@ -18,9 +18,6 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.api.java.UDF1;
 import org.apache.spark.sql.expressions.UserDefinedFunction;
 import org.apache.spark.sql.types.DataTypes;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -31,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static eu.dnetlib.iis.wf.export.actionmanager.relation.citation.CitationRelationExporterUtils.*;
+import static eu.dnetlib.iis.wf.export.actionmanager.relation.citation.Matchers.matchingRelation;
 import static org.apache.spark.sql.functions.udf;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
@@ -151,15 +149,18 @@ class CitationRelationExporterUtilsTest extends TestWithSharedSparkSession {
     @DisplayName("Report entries are created from relations")
     public void givenRelations_whenCreatingReportEntries_thenReportEntriesAreReturned() {
         Dataset<Relation> relations = spark().createDataset(Arrays.asList(
-                createRelation("source", "target1", "relClass", 0.1f),
-                createRelation("source", "target2", "relClass", 0.1f)
+                createRelation("source", "target1", OafConstants.REL_CLASS_CITES, 0.1f),
+                createRelation("target1", "source", OafConstants.REL_CLASS_ISCITEDBY, 0.1f),
+                createRelation("source", "target2", OafConstants.REL_CLASS_CITES, 0.2f),
+                createRelation( "target2", "source", OafConstants.REL_CLASS_ISCITEDBY, 0.2f)
         ), Encoders.kryo(Relation.class));
 
         List<ReportEntry> results = relationsToReportEntries(spark(), relations).collectAsList();
 
-        assertEquals(2, results.size());
+        assertEquals(3, results.size());
         assertThat(results, hasItem(ReportEntryFactory.createCounterReportEntry("processing.citationMatching.relation.references", 2)));
-        assertThat(results, hasItem(ReportEntryFactory.createCounterReportEntry("processing.citationMatching.relations.docs", 1)));
+        assertThat(results, hasItem(ReportEntryFactory.createCounterReportEntry("processing.citationMatching.relation.cites.docs", 1)));
+        assertThat(results, hasItem(ReportEntryFactory.createCounterReportEntry("processing.citationMatching.relation.iscitedby.docs", 2)));
     }
 
     private static Citations createCitations(String documentId, List<CitationEntry> citationEntries) {
@@ -188,25 +189,5 @@ class CitationRelationExporterUtilsTest extends TestWithSharedSparkSession {
         relation.setDataInfo(BuilderModuleHelper.buildInferenceForConfidenceLevel(confidenceLevel,
                 "iis::document_referencedDocuments"));
         return relation;
-    }
-
-    private static Matcher<Relation> matchingRelation(Relation relation) {
-        return new TypeSafeMatcher<Relation>() {
-            @Override
-            protected boolean matchesSafely(Relation item) {
-                return relation.getRelType().equals(item.getRelType()) &&
-                        relation.getSubRelType().equals(item.getSubRelType()) &&
-                        relation.getRelClass().equals(item.getRelClass()) &&
-                        relation.getSource().equals(item.getSource()) &&
-                        relation.getTarget().equals(item.getTarget()) &&
-                        Float.parseFloat(relation.getDataInfo().getTrust()) == Float.parseFloat(item.getDataInfo().getTrust()) &&
-                        relation.getDataInfo().getInferenceprovenance().equals(item.getDataInfo().getInferenceprovenance());
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("matching relation " + relation);
-            }
-        };
     }
 }

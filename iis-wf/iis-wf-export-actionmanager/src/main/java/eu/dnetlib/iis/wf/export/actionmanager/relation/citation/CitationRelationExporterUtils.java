@@ -11,6 +11,7 @@ import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
 import eu.dnetlib.iis.wf.export.actionmanager.module.AlgorithmName;
 import eu.dnetlib.iis.wf.export.actionmanager.module.BuilderModuleHelper;
 import org.apache.hadoop.io.Text;
+import org.apache.spark.api.java.function.FilterFunction;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Dataset;
@@ -29,7 +30,8 @@ public class CitationRelationExporterUtils {
     private static final String INFERENCE_PROVENANCE = InfoSpaceConstants.SEMANTIC_CLASS_IIS +
             InfoSpaceConstants.INFERENCE_PROVENANCE_SEPARATOR + AlgorithmName.document_referencedDocuments;
     private static final String REPORT_ENTRY_KEY_REFERENCES = "processing.citationMatching.relation.references";
-    private static final String REPORT_ENTRY_KEY_DOCS = "processing.citationMatching.relations.docs";
+    private static final String REPORT_ENTRY_KEY_CITES_DOCS = "processing.citationMatching.relation.cites.docs";
+    private static final String REPORT_ENTRY_KEY_ISCITEDBY_DOCS = "processing.citationMatching.relation.iscitedby.docs";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private CitationRelationExporterUtils() {
@@ -134,20 +136,33 @@ public class CitationRelationExporterUtils {
 
     public static Dataset<ReportEntry> relationsToReportEntries(SparkSession spark, Dataset<Relation> relations) {
         long totalRelationCount = totalRelationCount(relations);
-        long distinctRelationCount = distinctRelationCount(relations);
+        long uniqueCitesRelationCount = uniqueCitesRelationCount(relations);
+        long uniqueIsCitedByRelationCount = uniqueIsCitedByRelationCount(relations);
 
         return spark.createDataset(Arrays.asList(
                 ReportEntryFactory.createCounterReportEntry(REPORT_ENTRY_KEY_REFERENCES, totalRelationCount),
-                ReportEntryFactory.createCounterReportEntry(REPORT_ENTRY_KEY_DOCS, distinctRelationCount)
+                ReportEntryFactory.createCounterReportEntry(REPORT_ENTRY_KEY_CITES_DOCS, uniqueCitesRelationCount),
+                ReportEntryFactory.createCounterReportEntry(REPORT_ENTRY_KEY_ISCITEDBY_DOCS, uniqueIsCitedByRelationCount)
         ), Encoders.kryo(ReportEntry.class));
     }
 
     private static long totalRelationCount(Dataset<Relation> relations) {
-        return relations.count();
+        return relations
+                .filter((FilterFunction<Relation>) relation -> relation.getRelClass().equals(OafConstants.REL_CLASS_CITES))
+                .count();
     }
 
-    private static long distinctRelationCount(Dataset<Relation> relations) {
+    private static long uniqueCitesRelationCount(Dataset<Relation> relations) {
         return relations
+                .filter((FilterFunction<Relation>) relation -> relation.getRelClass().equals(OafConstants.REL_CLASS_CITES))
+                .map((MapFunction<Relation, String>) Relation::getSource, Encoders.STRING())
+                .distinct()
+                .count();
+    }
+
+    private static long uniqueIsCitedByRelationCount(Dataset<Relation> relations) {
+        return relations
+                .filter((FilterFunction<Relation>) relation -> relation.getRelClass().equals(OafConstants.REL_CLASS_ISCITEDBY))
                 .map((MapFunction<Relation, String>) Relation::getSource, Encoders.STRING())
                 .distinct()
                 .count();

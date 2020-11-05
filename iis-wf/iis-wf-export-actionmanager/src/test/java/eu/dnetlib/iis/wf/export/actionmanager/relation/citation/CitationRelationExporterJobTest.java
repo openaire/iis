@@ -16,9 +16,6 @@ import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
 import eu.dnetlib.iis.wf.export.actionmanager.module.BuilderModuleHelper;
 import org.apache.avro.generic.GenericData;
 import org.apache.hadoop.io.Text;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -29,7 +26,7 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.equalTo;
+import static eu.dnetlib.iis.wf.export.actionmanager.relation.citation.Matchers.matchingAtomicAction;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -82,12 +79,15 @@ class CitationRelationExporterJobTest extends TestWithSharedSparkSession {
                 x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         List<ReportEntry> reportEntries = new AvroDatasetSupport(spark()).read(outputReportPath.toString(), ReportEntry.SCHEMA$, ReportEntry.class)
                 .collectAsList();
-        assertThat(reportEntries.size(), equalTo(2));
+        assertEquals(3, reportEntries.size());
         assertThat(reportEntries, hasItem(
-                ReportEntryFactory.createCounterReportEntry("processing.citationMatching.relation.references", 2)
+                ReportEntryFactory.createCounterReportEntry("processing.citationMatching.relation.references", 1)
         ));
         assertThat(reportEntries, hasItem(
-                ReportEntryFactory.createCounterReportEntry("processing.citationMatching.relations.docs", 2)
+                ReportEntryFactory.createCounterReportEntry("processing.citationMatching.relation.cites.docs", 1)
+        ));
+        assertThat(reportEntries, hasItem(
+                ReportEntryFactory.createCounterReportEntry("processing.citationMatching.relation.iscitedby.docs", 1)
         ));
     }
 
@@ -126,24 +126,4 @@ class CitationRelationExporterJobTest extends TestWithSharedSparkSession {
         return relation;
     }
 
-    private static Matcher<AtomicAction<Relation>> matchingAtomicAction(AtomicAction<Relation> atomicAction) {
-        return new TypeSafeMatcher<AtomicAction<Relation>>() {
-            @Override
-            protected boolean matchesSafely(AtomicAction<Relation> item) {
-                return item.getClazz().equals(atomicAction.getClazz()) &&
-                        atomicAction.getPayload().getRelType().equals(item.getPayload().getRelType()) &&
-                        atomicAction.getPayload().getSubRelType().equals(item.getPayload().getSubRelType()) &&
-                        atomicAction.getPayload().getRelClass().equals(item.getPayload().getRelClass()) &&
-                        atomicAction.getPayload().getSource().equals(item.getPayload().getSource()) &&
-                        atomicAction.getPayload().getTarget().equals(item.getPayload().getTarget()) &&
-                        Float.parseFloat(atomicAction.getPayload().getDataInfo().getTrust()) == Float.parseFloat(item.getPayload().getDataInfo().getTrust()) &&
-                        atomicAction.getPayload().getDataInfo().getInferenceprovenance().equals(item.getPayload().getDataInfo().getInferenceprovenance());
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("matching atomic action " + atomicAction);
-            }
-        };
-    }
 }

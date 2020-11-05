@@ -1,16 +1,16 @@
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="export_citation_relation">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="export_actionmanager_citation_relation">
     <parameters>
         <property>
             <name>input_citations</name>
             <description>input containing eu.dnetlib.iis.export.schemas.Citations avro records</description>
         </property>
         <property>
-            <name>action_set_id_citation_relations</name>
-            <description>identifier of action set holding citations relations</description>
+            <name>action_set_id_document_referencedDocuments</name>
+            <description>document_referencedDocuments action-set identifier of exported data</description>
         </property>
         <property>
             <name>output_root_relations</name>
-            <description>root directory for storing exported actionsets</description>
+            <description>root directory for storing exported action-sets</description>
         </property>
         <property>
             <name>output_report_root_path</name>
@@ -22,7 +22,7 @@
             <description>directory for storing report (relative to output_report_root_path)</description>
         </property>
         <property>
-            <name>trust_level_threshold_citation_relations</name>
+            <name>trust_level_threshold_document_referencedDocuments</name>
             <description>trust level threshold of exported data</description>
         </property>
 
@@ -100,9 +100,9 @@
                 --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
             </spark-opts>
             <arg>-inputCitationsPath=${input_citations}</arg>
-            <arg>-outputRelationPath=${output_root_relations}/${action_set_id_citation_relations}</arg>
+            <arg>-outputRelationPath=${output_root_relations}/${action_set_id_document_referencedDocuments}</arg>
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
-            <arg>-trustLevelThreshold=${trust_level_threshold_citation_relations}</arg>
+            <arg>-trustLevelThreshold=${trust_level_threshold_document_referencedDocuments}</arg>
         </spark>
         <ok to="end"/>
         <error to="fail"/>

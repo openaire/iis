@@ -18,7 +18,7 @@ public class OafConstants {
     public static final String REL_CLASS_HAS_AUTHOR_INSTITUTION_OF = "hasAuthorInstitution";
     public static final String REL_CLASS_IS_AUTHOR_INSTITUTION_OF = "isAuthorInstitutionOf";
     public static final String REL_CLASS_CITES = "cites";
-    public static final String REL_CLASS_ISCITEDBY = "IsCitedBy";
+    public static final String REL_CLASS_ISCITEDBY = "isCitedBy";
 
     private OafConstants() {}
     

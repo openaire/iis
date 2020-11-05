@@ -45,8 +45,8 @@
                     <value>${workingDir}/producer/input_citations</value>
                 </property>
                 <property>
-                    <name>action_set_id_citation_relations</name>
-                    <value>relations-actionset-id</value>
+                    <name>action_set_id_document_referencedDocuments</name>
+                    <value>document-referencedDocuments-actionset-id</value>
                 </property>
                 <property>
                     <name>output_root_relations</name>
@@ -61,7 +61,7 @@
                     <value>export_citation_relation</value>
                 </property>
                 <property>
-                    <name>trust_level_threshold_citation_relations</name>
+                    <name>trust_level_threshold_document_referencedDocuments</name>
                     <value>0.5</value>
                 </property>
             </configuration>
@@ -74,7 +74,7 @@
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
-            <arg>-Iseqfile=${workingDir}/output/relations/relations-actionset-id</arg>
+            <arg>-Iseqfile=${workingDir}/output/relations/document-referencedDocuments-actionset-id</arg>
             <arg>
                 -Pexpectation_file_paths=eu/dnetlib/iis/wf/export/actionmanager/relation/citation/default/output/document_to_referencedDocument.properties,
                 eu/dnetlib/iis/wf/export/actionmanager/relation/citation/default/output/referencedDocument_to_document.properties

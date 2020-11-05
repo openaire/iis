@@ -94,7 +94,7 @@ public class RDDUtilsTest {
                 pattern.matcher(x.getName()).matches());
         assertEquals(NUMBER_OF_OUTPUT_FILES, fileCount);
 
-        List<Text> out = ListTestUtils.readValues(outputDir.toString(), Function.identity());
+        List<Text> out = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputDir.toString()));
         List<String> actualValues = out.stream().map(Text::toString).sorted().collect(Collectors.toList());
         List<String> expectedValues = in.collect().stream().map(x -> x._2.toString()).sorted().collect(Collectors.toList());
         ListTestUtils
