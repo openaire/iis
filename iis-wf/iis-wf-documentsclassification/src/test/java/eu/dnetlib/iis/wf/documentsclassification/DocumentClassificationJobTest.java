@@ -11,7 +11,6 @@ import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetad
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
@@ -31,7 +30,6 @@ import java.net.URL;
  * @author Łukasz Dumiszewski
  */
 
-@Disabled
 @SlowTest
 public class DocumentClassificationJobTest {
 
