@@ -18,7 +18,8 @@ import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
 import org.apache.curator.test.TestingServer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.ha.ZKFailoverController;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -57,10 +58,15 @@ public class PatentMetadataRetrieverJobTest {
     private Path outputReport2Dir;
     private Path cacheRootDir;
     
-    private TestingServer zookeeperServer;
+    private static TestingServer zookeeperServer;
+
+    @BeforeAll
+    public static void beforeAll() throws Exception {
+        zookeeperServer = new TestingServer(true);
+    }
 
     @BeforeEach
-    public void before() throws Exception {
+    public void beforeEach() {
         inputDir = workingDir.resolve("input");
         input2Dir = workingDir.resolve("input2");
         outputDir = workingDir.resolve("output");
@@ -70,12 +76,11 @@ public class PatentMetadataRetrieverJobTest {
         outputReportDir = workingDir.resolve("report");
         outputReport2Dir = workingDir.resolve("report2");
         cacheRootDir = workingDir.resolve("cache");
-        zookeeperServer = new TestingServer(true);
     }
 
-    @AfterEach
-    public void after() throws IOException {
-        zookeeperServer.stop();
+    @AfterAll
+    public static void after() throws IOException {
+        zookeeperServer.close();
     }
 
     @Test

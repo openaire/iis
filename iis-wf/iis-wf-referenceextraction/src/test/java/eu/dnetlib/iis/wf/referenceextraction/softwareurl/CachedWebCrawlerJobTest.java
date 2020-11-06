@@ -20,7 +20,8 @@ import org.apache.curator.test.TestingServer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.ha.ZKFailoverController;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -66,10 +67,15 @@ public class CachedWebCrawlerJobTest {
     
     private Path cacheRootDir;
     
-    private TestingServer zookeeperServer;
-    
+    private static TestingServer zookeeperServer;
+
+    @BeforeAll
+    public static void beforeAll() throws Exception {
+        zookeeperServer = new TestingServer(true);
+    }
+
     @BeforeEach
-    public void before() throws Exception {
+    public void beforeEach() {
         inputPath = workingDir + "/spark_webcrawler/input";
         input2Path = workingDir + "/spark_webcrawler/input2";
         outputPath = workingDir + "/spark_webcrawler/output";
@@ -79,12 +85,11 @@ public class CachedWebCrawlerJobTest {
         outputReportPath = workingDir + "/spark_webcrawler/report";
         outputReport2Path = workingDir + "/spark_webcrawler/report2";
         cacheRootDir = new Path(workingDir + "/spark_webcrawler/cache");
-        zookeeperServer = new TestingServer(true);
     }
     
-    @AfterEach
-    public void after() throws IOException {
-        zookeeperServer.stop();
+    @AfterAll
+    public static void afterAll() throws IOException {
+        zookeeperServer.close();
     }
     
     
