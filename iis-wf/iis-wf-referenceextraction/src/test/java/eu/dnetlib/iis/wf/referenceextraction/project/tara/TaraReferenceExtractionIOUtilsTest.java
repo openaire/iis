@@ -1,15 +1,11 @@
 package eu.dnetlib.iis.wf.referenceextraction.project.tara;
 
-import eu.dnetlib.iis.common.SlowTest;
+import eu.dnetlib.iis.common.spark.TestWithSharedSparkSession;
 import eu.dnetlib.iis.common.spark.avro.AvroDataFrameSupport;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
-import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.avro.SchemaConverters;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -22,24 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
-@SlowTest
-public class TaraReferenceExtractionIOUtilsTest {
-
-    private static SparkSession spark;
-
-    @BeforeAll
-    public static void beforeAll() {
-        SparkConf conf = new SparkConf();
-        conf.setMaster("local");
-        conf.set("spark.driver.host", "localhost");
-        conf.setAppName(TaraReferenceExtractionIOUtilsTest.class.getSimpleName());
-        spark = SparkSession.builder().config(conf).getOrCreate();
-    }
-
-    @AfterAll
-    public static void afterAll() {
-        spark.stop();
-    }
+public class TaraReferenceExtractionIOUtilsTest extends TestWithSharedSparkSession {
 
     @Test
     public void clearOutputShouldRunProperly() throws IOException {
@@ -62,7 +41,7 @@ public class TaraReferenceExtractionIOUtilsTest {
                 .setConfidenceLevel(1.0f)
                 .build();
         List<DocumentToProject> documentToProjectList = Collections.singletonList(documentToProject);
-        Dataset<Row> documentToProjectDF = new AvroDataFrameSupport(spark).createDataFrame(
+        Dataset<Row> documentToProjectDF = new AvroDataFrameSupport(spark()).createDataFrame(
                 documentToProjectList,
                 DocumentToProject.SCHEMA$);
         AvroDataStoreWriter writer = mock(AvroDataStoreWriter.class);
