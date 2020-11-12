@@ -1,7 +1,6 @@
 package eu.dnetlib.iis.wf.affmatching;
 
-import eu.dnetlib.iis.common.SlowTest;
-import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
+import eu.dnetlib.iis.common.spark.TestWithSharedSparkContext;
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
@@ -15,9 +14,8 @@ import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.IisOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.AffMatchResultWriter;
 import eu.dnetlib.iis.wf.affmatching.write.SimpleAffMatchResultWriter;
-import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,8 +52,7 @@ import static java.util.stream.Collectors.toList;
  *
  * @author madryk
  */
-@SlowTest
-public class AffMatchingAffOrgQualityTest {
+public class AffMatchingAffOrgQualityTest extends TestWithSharedSparkContext {
 
     private static final Logger logger = LoggerFactory.getLogger(AffMatchingAffOrgQualityTest.class);
 
@@ -65,8 +62,6 @@ public class AffMatchingAffOrgQualityTest {
     private final static String INPUT_DATA_DIR_PATH = "src/test/resources/experimentalData/input";
 
     private AffMatchingService affMatchingService;
-
-    private static JavaSparkContext sparkContext;
 
     @TempDir
     public File workingDir;
@@ -87,17 +82,10 @@ public class AffMatchingAffOrgQualityTest {
 
     private String outputReportPath;
 
-    @BeforeAll
-    public static void classSetup() {
-        SparkConf conf = new SparkConf();
-        conf.setMaster("local");
-        conf.set("spark.driver.host", "localhost");
-        conf.setAppName(AffMatchingAffOrgQualityTest.class.getSimpleName());
-        sparkContext = JavaSparkContextFactory.withConfAndKryo(conf);
-    }
-
     @BeforeEach
     public void setup() throws IOException {
+        super.beforeEach();
+
         inputOrgDirPath = workingDir + "/affiliation_matching/input/organizations";
         inputAffDirPath = workingDir + "/affiliation_matching/input/affiliations";
         inputDocProjDirPath = workingDir + "/affiliation_matching/input/doc_proj";
@@ -107,18 +95,6 @@ public class AffMatchingAffOrgQualityTest {
         outputReportPath = workingDir + "/affiliation_matching/report";
 
         affMatchingService = createAffMatchingService();
-    }
-
-    @AfterEach
-    public void cleanup() {
-        sparkContext.stop();
-    }
-
-    @AfterAll
-    public static void classCleanup() {
-        if (sparkContext != null) {
-            sparkContext.close();
-        }
     }
 
     //------------------------ TESTS --------------------------
@@ -134,7 +110,7 @@ public class AffMatchingAffOrgQualityTest {
                 of(INPUT_DATA_DIR_PATH + "/org_project.json"));
 
         // execute
-        affMatchingService.matchAffiliations(sparkContext, inputAffDirPath, inputOrgDirPath, outputDirPath, outputReportPath);
+        affMatchingService.matchAffiliations(jsc(), inputAffDirPath, inputOrgDirPath, outputDirPath, outputReportPath);
 
         // log
         readResultsAndPrintQualityRate(
@@ -212,7 +188,7 @@ public class AffMatchingAffOrgQualityTest {
 
         // matchers
         AffOrgMatcher docOrgRelationMatcher =
-                createDocOrgRelationMatcher(sparkContext, inputDocProjDirPath, inputInferredDocProjDirPath, inputProjOrgDirPath, inputDocProjConfidenceThreshold);
+                createDocOrgRelationMatcher(jsc(), inputDocProjDirPath, inputInferredDocProjDirPath, inputProjOrgDirPath, inputDocProjConfidenceThreshold);
 
         AffOrgMatcher nameMainSectionHashBucketMatcher = createNameMainSectionHashBucketMatcher();
 

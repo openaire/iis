@@ -1,17 +1,12 @@
 package eu.dnetlib.iis.wf.affmatching.bucket;
 
 import com.google.common.collect.ImmutableList;
-import eu.dnetlib.iis.common.SlowTest;
-import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
+import eu.dnetlib.iis.common.spark.TestWithSharedSparkContext;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.model.AffMatchDocumentOrganization;
 import eu.dnetlib.iis.wf.affmatching.bucket.projectorg.read.DocumentOrganizationFetcher;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
-import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,9 +23,8 @@ import static org.mockito.Mockito.when;
 /**
  * @author madryk
  */
-@SlowTest
 @ExtendWith(MockitoExtension.class)
-public class DocOrgRelationAffOrgJoinerTest {
+public class DocOrgRelationAffOrgJoinerTest extends TestWithSharedSparkContext {
 
     @InjectMocks
     private DocOrgRelationAffOrgJoiner docOrgRelationAffOrgJoiner = new DocOrgRelationAffOrgJoiner();
@@ -38,30 +32,12 @@ public class DocOrgRelationAffOrgJoinerTest {
     @Mock
     private DocumentOrganizationFetcher documentOrganizationFetcher;
 
-    private JavaSparkContext sparkContext;
-
-    @BeforeEach
-    public void setup() {
-        SparkConf conf = new SparkConf();
-        conf.setMaster("local");
-        conf.set("spark.driver.host", "localhost");
-        conf.setAppName(DocOrgRelationAffOrgJoinerTest.class.getSimpleName());
-        sparkContext = JavaSparkContextFactory.withConfAndKryo(conf);
-    }
-    
-    @AfterEach
-    public void cleanup() {
-        if (sparkContext != null) {
-            sparkContext.close();
-        }
-    }
-
     //------------------------ TESTS --------------------------
     
     @Test
     public void join() {
         // given
-        JavaRDD<AffMatchAffiliation> affiliations = sparkContext.parallelize(ImmutableList.of(
+        JavaRDD<AffMatchAffiliation> affiliations = jsc().parallelize(ImmutableList.of(
                 new AffMatchAffiliation("DOC1", 1),
                 new AffMatchAffiliation("DOC1", 2),
                 new AffMatchAffiliation("DOC2", 1), // document not present in documentOrganizations rdd
@@ -69,13 +45,13 @@ public class DocOrgRelationAffOrgJoinerTest {
                 new AffMatchAffiliation("DOC3", 2),
                 new AffMatchAffiliation("DOC3", 3)));
         
-        JavaRDD<AffMatchOrganization> organizations = sparkContext.parallelize(ImmutableList.of(
+        JavaRDD<AffMatchOrganization> organizations = jsc().parallelize(ImmutableList.of(
                 new AffMatchOrganization("ORG1"), // organization not present in documentOrganizations rdd
                 new AffMatchOrganization("ORG2"), 
                 new AffMatchOrganization("ORG3"),
                 new AffMatchOrganization("ORG4")));
         
-        JavaRDD<AffMatchDocumentOrganization> documentOrganizations = sparkContext.parallelize(ImmutableList.of(
+        JavaRDD<AffMatchDocumentOrganization> documentOrganizations = jsc().parallelize(ImmutableList.of(
                 new AffMatchDocumentOrganization("DOC1", "ORG2"),
                 new AffMatchDocumentOrganization("DOC3", "ORG3"),
                 new AffMatchDocumentOrganization("DOC3", "ORG4"),

@@ -1,15 +1,9 @@
 package eu.dnetlib.iis.common.utils;
 
-import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.java.io.SequenceFileTextValueReader;
-import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
-import org.apache.hadoop.conf.Configuration;
+import eu.dnetlib.iis.common.spark.TestWithSharedSparkContext;
 import org.apache.hadoop.io.Text;
-import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.opentest4j.AssertionFailedError;
@@ -23,28 +17,10 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SlowTest
-public class ListTestUtilsTest {
-    private static JavaSparkContext sc;
-    private static Configuration configuration;
+public class ListTestUtilsTest extends TestWithSharedSparkContext {
 
     @TempDir
     public Path workingDir;
-
-    @BeforeAll
-    public static void beforeAll() {
-        SparkConf conf = new SparkConf();
-        conf.setMaster("local");
-        conf.set("spark.driver.host", "localhost");
-        conf.setAppName(ListTestUtilsTest.class.getSimpleName());
-        sc = JavaSparkContextFactory.withConfAndKryo(conf);
-        configuration = new Configuration();
-    }
-
-    @AfterAll
-    public static void afterAll() {
-        sc.stop();
-    }
 
     @Test
     public void compareShouldThrowExceptionWhenListsNotMatch() {
@@ -74,10 +50,10 @@ public class ListTestUtilsTest {
                 new Tuple2<>("2L", "2R"),
                 new Tuple2<>("3L", "3R")
         );
-        JavaPairRDD<Text, Text> pairs = sc.parallelize(tuples)
+        JavaPairRDD<Text, Text> pairs = jsc().parallelize(tuples)
                 .mapToPair(x -> x.copy(new Text(x._1), new Text(x._2)));
         Path inputDir = workingDir.resolve("input");
-        RDDUtils.saveTextPairRDD(pairs, 2, inputDir.toString(), configuration);
+        RDDUtils.saveTextPairRDD(pairs, 2, inputDir.toString(), jsc().hadoopConfiguration());
 
         //when
         List<Text> values = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(inputDir.toString()));
