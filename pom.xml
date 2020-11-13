@@ -53,6 +53,18 @@
         <repository>
             <id>dnet45-releases</id>
             <name>D-Net 45 releases</name>
+            <url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet45-releases</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>dnet45-releases-new</id>
+            <name>D-Net 45 releases new</name>
             <url>https://maven.d4science.org/nexus/content/repositories/dnet45-releases</url>
             <layout>default</layout>
             <snapshots>
@@ -65,6 +77,18 @@
         <repository>
             <id>dnet45-bootstrap-release</id>
             <name>dnet45 bootstrap release</name>
+            <url>http://maven.research-infrastructures.eu/nexus/content/repositories/dnet45-bootstrap-release</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>dnet45-bootstrap-release-new</id>
+            <name>dnet45 bootstrap release new</name>
             <url>https://maven.d4science.org/nexus/content/repositories/dnet45-bootstrap-release</url>
             <layout>default</layout>
             <snapshots>
