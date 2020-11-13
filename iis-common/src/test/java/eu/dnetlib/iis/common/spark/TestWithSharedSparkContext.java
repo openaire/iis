@@ -14,13 +14,9 @@ import java.util.Objects;
  */
 @SlowTest
 public class TestWithSharedSparkContext {
-    private static transient SparkContext _sc;
-    private static transient JavaSparkContext _jsc;
+    private static SparkContext _sc;
+    private static JavaSparkContext _jsc;
     protected boolean initialized = false;
-
-    protected SparkContext sc() {
-        return _sc;
-    }
 
     protected JavaSparkContext jsc() {
         return _jsc;
