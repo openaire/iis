@@ -4,8 +4,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import eu.dnetlib.iis.common.SlowTest;
-import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
+import eu.dnetlib.iis.common.spark.TestWithSharedSparkContext;
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
@@ -22,11 +21,7 @@ import eu.dnetlib.iis.wf.affmatching.read.IisOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.SimpleAffMatchResultWriter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -61,8 +56,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * The match strength depends on real data prepared by hand and is just a ratio of true positives (correct matches)
  * to all the matches guessed by the given matcher and voter.
  */
-@SlowTest
-public class AffOrgMatchVoterStrengthEstimatorAndTest {
+public class AffOrgMatchVoterStrengthEstimatorAndTest extends TestWithSharedSparkContext {
 
     private static final Logger logger = LoggerFactory.getLogger(AffOrgMatchVoterStrengthEstimatorAndTest.class);
 
@@ -79,8 +73,6 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
     private List<InvalidVoterStrength> invalidVoterStrengths = Lists.newArrayList();
 
     private AffMatchingService affMatchingService;
-
-    private static JavaSparkContext sparkContext;
 
     @TempDir
     public File workingDir;
@@ -101,17 +93,10 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
 
     private String outputReportPath;
 
-    @BeforeAll
-    public static void classSetup() {
-        SparkConf conf = new SparkConf();
-        conf.setMaster("local");
-        conf.set("spark.driver.host", "localhost");
-        conf.setAppName(AffOrgMatchVoterStrengthEstimatorAndTest.class.getSimpleName());
-        sparkContext = JavaSparkContextFactory.withConfAndKryo(conf);
-    }
-
     @BeforeEach
     public void setup() throws IOException {
+        super.beforeEach();
+
         inputOrgDirPath = workingDir + "/affiliation_matching/input/organizations";
         inputAffDirPath = workingDir + "/affiliation_matching/input/affiliations";
         inputDocProjDirPath = workingDir + "/affiliation_matching/input/doc_proj";
@@ -121,13 +106,6 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
         outputReportPath = workingDir + "/affiliation_matching/report";
 
         affMatchingService = createAffMatchingService();
-    }
-
-    @AfterAll
-    public static void classCleanup() {
-        if (sparkContext != null) {
-            sparkContext.close();
-        }
     }
 
     //------------------------ TESTS --------------------------
@@ -155,7 +133,7 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
     private void estimateDocOrgRelationMatcherVoterStrengths() throws IOException {
         // given
         createInputData();
-        AffOrgMatcher affOrgMatcher = createDocOrgRelationMatcher(sparkContext, inputDocProjDirPath, inputInferredDocProjDirPath, inputProjOrgDirPath, inputDocProjConfidenceThreshold);
+        AffOrgMatcher affOrgMatcher = createDocOrgRelationMatcher(jsc(), inputDocProjDirPath, inputInferredDocProjDirPath, inputProjOrgDirPath, inputDocProjConfidenceThreshold);
         List<AffOrgMatchVoter> voters = createDocOrgRelationMatcherVoters();
 
         // execute
@@ -216,7 +194,7 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest {
             affOrgMatcher.setAffOrgMatchComputer(affOrgMatchComputer);
 
             // execute
-            affMatchingService.matchAffiliations(sparkContext, inputAffDirPath, inputOrgDirPath, outputDirPath, outputReportPath);
+            affMatchingService.matchAffiliations(jsc(), inputAffDirPath, inputOrgDirPath, outputDirPath, outputReportPath);
 
             // log
             float calculatedVoterStrength = calcAndPrintResult(matchedAffPaths);

@@ -1,17 +1,12 @@
 package eu.dnetlib.iis.wf.export.actionmanager.entity.patent;
 
-import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
-import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
+import eu.dnetlib.iis.common.spark.TestWithSharedSparkContext;
 import eu.dnetlib.iis.common.utils.ListTestUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import org.apache.avro.specific.SpecificRecordBase;
-import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -28,11 +23,9 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@SlowTest
 @ExtendWith(MockitoExtension.class)
-public class PatentExportCounterReporterTest {
+public class PatentExportCounterReporterTest extends TestWithSharedSparkContext {
     private static final String outputReportPath = "/path/to/report";
-    private static JavaSparkContext sc;
 
     @Mock
     private SparkAvroSaver avroSaver;
@@ -43,24 +36,10 @@ public class PatentExportCounterReporterTest {
     @InjectMocks
     private PatentExportCounterReporter reporter = new PatentExportCounterReporter();
 
-    @BeforeAll
-    public static void before() {
-        SparkConf conf = new SparkConf();
-        conf.setMaster("local");
-        conf.set("spark.driver.host", "localhost");
-        conf.setAppName(PatentExportCounterReporterTest.class.getSimpleName());
-        sc = JavaSparkContextFactory.withConfAndKryo(conf);
-    }
-
-    @AfterAll
-    public static void after() {
-        sc.stop();
-    }
-
     @Test
     public void reportShouldThrowExceptionWhenSparkContextIsNull() {
         //given
-        JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = sc.emptyRDD();
+        JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = jsc().emptyRDD();
 
         //when
         assertThrows(NullPointerException.class, () ->
@@ -70,11 +49,11 @@ public class PatentExportCounterReporterTest {
     @Test
     public void reportShouldThrowExceptionWhenOutputReportPathIsNull() {
         //given
-        JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = sc.emptyRDD();
+        JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = jsc().emptyRDD();
 
         //when
         assertThrows(NullPointerException.class, () ->
-                reporter.report(sc, documentToPatentsToExportWithIds, null));
+                reporter.report(jsc(), documentToPatentsToExportWithIds, null));
     }
 
     @Test
@@ -85,12 +64,12 @@ public class PatentExportCounterReporterTest {
                 DocumentToPatent.newBuilder().setDocumentId("d1").setApplnNr("p2").setConfidenceLevel(0.9f).build(),
                 DocumentToPatent.newBuilder().setDocumentId("d2").setApplnNr("p2").setConfidenceLevel(0.9f).build()
         );
-        JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = sc.parallelize(documentToPatents)
+        JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = jsc().parallelize(documentToPatents)
                 .map(x ->
                         new DocumentToPatentWithIdsToExport(x, String.format("export_%s", x.getDocumentId()), String.format("export_%s", x.getApplnNr())));
 
         //when
-        reporter.report(sc, documentToPatentsToExportWithIds, outputReportPath);
+        reporter.report(jsc(), documentToPatentsToExportWithIds, outputReportPath);
 
         //then
         verify(avroSaver, times(1)).saveJavaRDD(report.capture(), eq(ReportEntry.SCHEMA$), eq(outputReportPath));
