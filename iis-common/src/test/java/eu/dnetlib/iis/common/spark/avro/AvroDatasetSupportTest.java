@@ -1,18 +1,15 @@
 package eu.dnetlib.iis.common.spark.avro;
 
-import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.avro.Person;
+import eu.dnetlib.iis.common.spark.TestWithSharedSparkSession;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import org.apache.avro.Schema;
-import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.avro.SchemaConverters;
 import org.apache.spark.sql.types.StructType;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -23,27 +20,16 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SlowTest
-public class AvroDatasetSupportTest {
-    private static SparkSession spark;
-    private static AvroDatasetSupport avroDatasetSupport;
+public class AvroDatasetSupportTest extends TestWithSharedSparkSession {
+    private AvroDatasetSupport avroDatasetSupport;
 
     @TempDir
     public static Path workingDir;
 
-    @BeforeAll
-    public static void beforeAll() {
-        SparkConf conf = new SparkConf();
-        conf.setMaster("local");
-        conf.set("spark.driver.host", "localhost");
-        conf.setAppName(AvroDatasetSupportTest.class.getSimpleName());
-        spark = SparkSession.builder().config(conf).getOrCreate();
-        avroDatasetSupport = new AvroDatasetSupport(spark);
-    }
-
-    @AfterAll
-    public static void afterAll() {
-        spark.stop();
+    @BeforeEach
+    public void beforeEach() {
+        super.beforeEach();
+        avroDatasetSupport = new AvroDatasetSupport(spark());
     }
 
     @Test
@@ -69,7 +55,7 @@ public class AvroDatasetSupportTest {
         // given
         Path outputDir = workingDir.resolve("output");
         Person person = Person.newBuilder().setId(1).setName("name").setAge(2).build();
-        Dataset<Person> ds = spark.createDataset(
+        Dataset<Person> ds = spark().createDataset(
                 Collections.singletonList(person),
                 Encoders.kryo(Person.class)
         );
@@ -88,7 +74,7 @@ public class AvroDatasetSupportTest {
     public void toDFShouldRunProperly() {
         // given
         Person person = Person.newBuilder().setId(1).setName("name").setAge(2).build();
-        Dataset<Person> ds = spark.createDataset(
+        Dataset<Person> ds = spark().createDataset(
                 Collections.singletonList(person),
                 Encoders.kryo(Person.class)
         );

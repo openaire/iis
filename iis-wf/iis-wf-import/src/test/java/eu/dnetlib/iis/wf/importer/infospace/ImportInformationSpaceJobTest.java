@@ -4,21 +4,17 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.dnetlib.dhp.schema.oaf.Oaf;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.java.io.DataStore;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.schemas.IdentifierMapping;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.common.spark.TestWithSharedSparkSession;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.importer.schemas.*;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
-import org.apache.spark.sql.SparkSession;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -32,10 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author mhorst
  *
  */
-@SlowTest
-public class ImportInformationSpaceJobTest {
-
-    private static SparkSession spark;
+public class ImportInformationSpaceJobTest extends TestWithSharedSparkSession {
 
     @TempDir
     public Path workingDir;
@@ -53,20 +46,10 @@ public class ImportInformationSpaceJobTest {
     private static final String OUTPUT_NAME_PROJ_ORG = "proj-org";
     private static final String OUTPUT_NAME_DEDUP = "dedup";
     
-    @BeforeAll
-    public static void beforeAll() {
-        SparkConf conf = new SparkConf();
-        conf.setAppName(ImportInformationSpaceJobTest.class.getSimpleName());
-        conf.setMaster("local");
-        conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
-        conf.registerKryoClasses(OafModelUtils.provideOafClasses());
-
-        spark = SparkSession.builder().config(conf).getOrCreate();
-
-    }
-
     @BeforeEach
-    public void before() {
+    public void beforeEach() {
+        super.beforeEach();
+
         inputDir = workingDir.resolve("input");
         inputGraphDir = inputDir.resolve("graph");
 
@@ -74,11 +57,6 @@ public class ImportInformationSpaceJobTest {
         outputReportDir = workingDir.resolve("output_report");
     }
 
-    @AfterAll
-    public static void afterAll() {
-        spark.stop();
-    }
-    
     @Test
     public void testImportFromTextGraph() throws Exception {
         testImportFromGraph("json");
@@ -170,9 +148,9 @@ public class ImportInformationSpaceJobTest {
         inputGraphTableDS.write().format(format).save(inputGraphTableDir.toString());
     }
     
-    private static <T extends Oaf> Dataset<T> readGraphTableFromJSON(Path path, Class<T> clazz) {
+    private <T extends Oaf> Dataset<T> readGraphTableFromJSON(Path path, Class<T> clazz) {
         ObjectMapper objectMapper = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        return spark.read().format("json").load(path.toString()).toJSON()
+        return spark().read().format("json").load(path.toString()).toJSON()
                 .map((MapFunction<String, T>) json -> objectMapper.readValue(json, clazz), Encoders.bean(clazz));
     }
     

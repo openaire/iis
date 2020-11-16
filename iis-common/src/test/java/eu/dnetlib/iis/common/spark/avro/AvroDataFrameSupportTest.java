@@ -1,19 +1,16 @@
 package eu.dnetlib.iis.common.spark.avro;
 
-import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.avro.Person;
+import eu.dnetlib.iis.common.spark.TestWithSharedSparkSession;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
-import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
-import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.avro.SchemaConverters;
 import org.apache.spark.sql.types.StructType;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -24,28 +21,17 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SlowTest
-public class AvroDataFrameSupportTest {
+public class AvroDataFrameSupportTest extends TestWithSharedSparkSession {
 
-    private static SparkSession spark;
-    private static AvroDataFrameSupport avroDataFrameSupport;
+    private AvroDataFrameSupport avroDataFrameSupport;
 
     @TempDir
     public static Path workingDir;
 
-    @BeforeAll
-    public static void beforeAll() {
-        SparkConf conf = new SparkConf();
-        conf.setMaster("local");
-        conf.set("spark.driver.host", "localhost");
-        conf.setAppName(AvroDataFrameSupportTest.class.getSimpleName());
-        spark = SparkSession.builder().config(conf).getOrCreate();
-        avroDataFrameSupport = new AvroDataFrameSupport(spark);
-    }
-
-    @AfterAll
-    public static void afterAll() {
-        spark.stop();
+    @BeforeEach
+    public void beforeEach() {
+        super.beforeEach();
+        avroDataFrameSupport = new AvroDataFrameSupport(spark());
     }
 
     @Test
@@ -115,7 +101,7 @@ public class AvroDataFrameSupportTest {
         // given
         Path outputDir = workingDir.resolve("output1");
         Row personRow = RowFactory.create(1, "name", 2);
-        Dataset<Row> df = spark.createDataFrame(
+        Dataset<Row> df = spark().createDataFrame(
                 Collections.singletonList(personRow),
                 (StructType) SchemaConverters.toSqlType(Person.SCHEMA$).dataType()
         );
@@ -137,7 +123,7 @@ public class AvroDataFrameSupportTest {
         // given
         Path outputDir = workingDir.resolve("output2");
         Row personRow = RowFactory.create(1, "name", 2);
-        Dataset<Row> df = spark.createDataFrame(
+        Dataset<Row> df = spark().createDataFrame(
                 Collections.singletonList(personRow),
                 (StructType) SchemaConverters.toSqlType(Person.SCHEMA$).dataType()
         );
@@ -159,7 +145,7 @@ public class AvroDataFrameSupportTest {
         // given
         Row personRow = RowFactory.create(1, "name", 2);
         List<Row> data = Collections.singletonList(personRow);
-        Dataset<Row> df = spark.createDataFrame(
+        Dataset<Row> df = spark().createDataFrame(
                 data, (StructType) SchemaConverters.toSqlType(Person.SCHEMA$).dataType()
         );
 
