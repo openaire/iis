@@ -1,37 +1,45 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
-import com.google.common.collect.Lists;
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.ExtraInfo;
 import eu.dnetlib.dhp.schema.oaf.Result;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
 import eu.dnetlib.iis.common.model.extrainfo.ExtraInfoConstants;
 import eu.dnetlib.iis.common.model.extrainfo.citations.BlobCitationEntry;
-import eu.dnetlib.iis.common.model.extrainfo.citations.TypedId;
 import eu.dnetlib.iis.common.model.extrainfo.converter.CitationsExtraInfoConverter;
 import eu.dnetlib.iis.export.schemas.Citations;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
-import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.*;
-import java.util.Map.Entry;
+import java.util.Collections;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author mhorst
- * 
  */
+@ExtendWith(MockitoExtension.class)
 public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuilderModuleFactoryTest<Citations, Result> {
 
 
     private String docId = "documentId";
 
-    
+
     // ----------------------- CONSTRUCTORS -------------------
-    
-    
+
+
     public CitationsActionBuilderModuleFactoryTest() throws Exception {
         super(CitationsActionBuilderModuleFactory.class, AlgorithmName.document_referencedDocuments);
     }
@@ -39,10 +47,11 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
     // ----------------------- TESTS --------------------------
 
     @Test
+    @DisplayName("Empty atomic action list is build from citations with empty citation entry list")
     public void testBuildEmptyCitations() throws Exception {
         // given
-        ActionBuilderModule<Citations, Result> module =  factory.instantiate(config);
-        
+        ActionBuilderModule<Citations, Result> module = factory.instantiate(config);
+
         // execute
         List<AtomicAction<Result>> actions = module.build(
                 Citations.newBuilder().setCitations(Collections.emptyList()).setDocumentId(docId).build());
@@ -51,18 +60,30 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
         assertNotNull(actions);
         assertEquals(0, actions.size());
     }
-    
+
     @Test
+    @DisplayName("Non-empty atomic action list is build from citations with non-empty citation entry list")
     public void testBuild() throws Exception {
         // given
-        ActionBuilderModule<Citations, Result> module =  factory.instantiate(config);
-        CitationEntry citationEntry = buildCitationEntry();
-        Citations.Builder builder = Citations.newBuilder();
-        builder.setDocumentId(docId);
-        builder.setCitations(Lists.newArrayList(citationEntry));
-        
+        CitationsActionBuilderModuleFactory.CitationActionBuilderModule module = (CitationsActionBuilderModuleFactory.CitationActionBuilderModule)
+                factory.instantiate(config);
+        CitationEntry citationEntry = buildCitationEntry(0.9f);
+        List<CitationEntry> citationEntries = Collections.singletonList(citationEntry);
+        Citations citations = Citations.newBuilder()
+                .setDocumentId(docId)
+                .setCitations(citationEntries)
+                .build();
+        TreeSet<BlobCitationEntry> blobCitationEntries = new TreeSet<>(Collections.singletonList(mock(BlobCitationEntry.class)));
+        CitationsActionBuilderModuleFactory.CitationEntriesConverter citationEntriesConverter =
+                mock(CitationsActionBuilderModuleFactory.CitationEntriesConverter.class);
+        when(citationEntriesConverter.convert(citationEntries, trustLevelThreshold)).thenReturn(blobCitationEntries);
+        module.setCitationEntriesConverter(citationEntriesConverter);
+        CitationsExtraInfoConverter citationsExtraInfoConverter = mock(CitationsExtraInfoConverter.class);
+        when(citationsExtraInfoConverter.serialize(blobCitationEntries)).thenReturn("value");
+        module.setCitationsExtraInfoConverter(citationsExtraInfoConverter);
+
         // execute
-        List<AtomicAction<Result>> actions = module.build(builder.build());
+        List<AtomicAction<Result>> actions = module.build(citations);
 
         // assert
         assertNotNull(actions);
@@ -70,73 +91,7 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
         AtomicAction<Result> action = actions.get(0);
         assertNotNull(action);
         assertEquals(Result.class, action.getClazz());
-        assertOaf(action.getPayload(), citationEntry);
-    }
-
-    @Test
-    public void testConversion() {
-        SortedSet<BlobCitationEntry> sortedCitations = new TreeSet<BlobCitationEntry>();
-        
-        CitationEntry.Builder rawTextCitationEntryBuilder = CitationEntry.newBuilder();
-        rawTextCitationEntryBuilder.setPosition(44);
-        rawTextCitationEntryBuilder.setRawText("[44] S. Mukhi and R. Nigam, “Constraints on ’rare’ dyon decays,” JHEP 12 (2008) 056, 0809.1157.");
-        rawTextCitationEntryBuilder.setExternalDestinationDocumentIds(Collections.<CharSequence,CharSequence>emptyMap());
-        
-        CitationEntry.Builder internalCitationEntryBuilder = CitationEntry.newBuilder();
-        internalCitationEntryBuilder.setRawText("Rugama, Y., Kloosterman, J. L., Winkelman, A., 2004. Prog. Nucl. Energy 44, 1-12.");
-        internalCitationEntryBuilder.setPosition(100);
-        internalCitationEntryBuilder.setDestinationDocumentId("od______2367::00247be440c2188b82d5905b5b1e22bb");
-        internalCitationEntryBuilder.setConfidenceLevel(0.8f);
-        internalCitationEntryBuilder.setExternalDestinationDocumentIds(Collections.<CharSequence,CharSequence>emptyMap());
-        
-        CitationEntry.Builder externalPmidCitationEntryBuilder = CitationEntry.newBuilder();
-        externalPmidCitationEntryBuilder.setRawText("[5] A. Sen, “Walls of Marginal Stability and Dyon Spectrum in N=4 Supersymmetric String Theories,” JHEP 05 (2007) 039, hep-th/0702141.");
-        externalPmidCitationEntryBuilder.setPosition(5);
-        Map<CharSequence, CharSequence> externalPmidDestinationDocumentIds = new HashMap<CharSequence, CharSequence>();
-        externalPmidDestinationDocumentIds.put("pmid", "20856923");
-        externalPmidCitationEntryBuilder.setExternalDestinationDocumentIds(externalPmidDestinationDocumentIds);
-        
-        CitationEntry.Builder externalDoiCitationEntryBuilder = CitationEntry.newBuilder();
-        externalDoiCitationEntryBuilder.setRawText("[17] N. Koblitz. Hyperelliptic cryptosystems. J. Cryptology, 1(3):139–150, 1989.");
-        externalDoiCitationEntryBuilder.setPosition(17);
-        Map<CharSequence, CharSequence> externalDoiDestinationDocumentIds = new HashMap<CharSequence, CharSequence>();
-        externalDoiDestinationDocumentIds.put("doi", "10.1186/1753-6561-5-S6-P38");
-        externalDoiDestinationDocumentIds.put("custom-id", "12345");
-        externalDoiCitationEntryBuilder.setExternalDestinationDocumentIds(externalDoiDestinationDocumentIds);
-        
-        sortedCitations.add(CitationsActionBuilderModuleUtils.build(internalCitationEntryBuilder.build()));
-        sortedCitations.add(CitationsActionBuilderModuleUtils.build(externalPmidCitationEntryBuilder.build()));
-        sortedCitations.add(CitationsActionBuilderModuleUtils.build(externalDoiCitationEntryBuilder.build()));
-        sortedCitations.add(CitationsActionBuilderModuleUtils.build(rawTextCitationEntryBuilder.build()));
-        
-        CitationsExtraInfoConverter converter = new CitationsExtraInfoConverter();
-        String citationsXML = converter.serialize(sortedCitations);
-        
-//      checking deserialization
-        SortedSet<BlobCitationEntry> deserializedCitations = (SortedSet<BlobCitationEntry>) converter.deserialize(citationsXML);
-        assertEquals(sortedCitations.size(), deserializedCitations.size());
-        Iterator<BlobCitationEntry> sortedIt = sortedCitations.iterator();
-        Iterator<BlobCitationEntry> deserializedIt = deserializedCitations.iterator();
-        for (int i=0; i<sortedCitations.size(); i++) {
-            assertEquals(sortedIt.next(), deserializedIt.next());
-        }
-    }
-    
-    // ----------------------- PRIVATE --------------------------
-
-    private CitationEntry buildCitationEntry() {
-        CitationEntry.Builder citationEntryBuilder = CitationEntry.newBuilder();
-        citationEntryBuilder.setPosition(1);
-        citationEntryBuilder.setRawText("citation raw text");
-        citationEntryBuilder.setDestinationDocumentId("50|dest-id");
-        Map<CharSequence, CharSequence> extIds = new HashMap<>();
-        extIds.put("extIdType", "extIdValue");
-        citationEntryBuilder.setExternalDestinationDocumentIds(extIds);
-        citationEntryBuilder.setConfidenceLevel(0.9f);
-        return citationEntryBuilder.build();
-    }
-
-    private void assertOaf(Result result, CitationEntry sourceEntry) {
+        Result result = action.getPayload();
         assertNotNull(result);
         assertEquals(docId, result.getId());
         assertNotNull(result.getExtraInfo());
@@ -147,25 +102,236 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
         assertEquals(ExtraInfoConstants.TYPOLOGY_CITATIONS, extraInfo.getTypology());
         assertEquals(StaticConfigurationProvider.ACTION_TRUST_0_9, extraInfo.getTrust());
         assertEquals(((AbstractActionBuilderFactory<Citations, Result>) factory).buildInferenceProvenance(), extraInfo.getProvenance());
-
-        assertTrue(StringUtils.isNotBlank(extraInfo.getValue()));
-        CitationsExtraInfoConverter converter = new CitationsExtraInfoConverter();
-        Set<BlobCitationEntry> citationEntries = converter.deserialize(extraInfo.getValue());
-        assertNotNull(citationEntries);
-        assertEquals(1, citationEntries.size());
-        BlobCitationEntry citationEntry = citationEntries.iterator().next();
-        assertNotNull(citationEntry);
-        assertEquals(sourceEntry.getPosition().intValue(), citationEntry.getPosition());
-        assertEquals(sourceEntry.getRawText(), citationEntry.getRawText());
-        List<TypedId> ids = citationEntry.getIdentifiers();
-        assertNotNull(ids);
-        assertEquals(2, ids.size());
-        assertEquals(ExtraInfoConstants.CITATION_TYPE_OPENAIRE, ids.get(0).getType());
-        assertEquals(sourceEntry.getDestinationDocumentId(), ids.get(0).getValue());
-        Entry<CharSequence, CharSequence> sourceExtIdEntry = sourceEntry.getExternalDestinationDocumentIds()
-                .entrySet().iterator().next();
-        assertEquals(sourceExtIdEntry.getKey(), ids.get(1).getType());
-        assertEquals(sourceExtIdEntry.getValue(), ids.get(1).getValue());
+        assertEquals("value", extraInfo.getValue());
     }
-    
+
+    @Nested
+    public class CitationEntriesConverterTest {
+
+        @Mock
+        private CitationsActionBuilderModuleFactory.CitationEntriesConverter.TrustLevelConverter trustLevelConverter;
+
+        @Mock
+        private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryMatchValidator citationEntryMatchValidator;
+
+        @Mock
+        private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer citationEntryNormalizer;
+
+        @Mock
+        private CitationsActionBuilderModuleFactory.CitationEntriesConverter.BlobCitationEntryBuilder blobCitationEntryBuilder;
+
+        @InjectMocks
+        private CitationsActionBuilderModuleFactory.CitationEntriesConverter citationEntriesConverter;
+
+        @Test
+        @DisplayName("Null citation entries are converted to null")
+        public void givenConverter_whenNullCitationEntriesAreConverted_thenNullIsReturned() {
+            assertNull(citationEntriesConverter.convert(null, trustLevelThreshold));
+        }
+
+        @Test
+        @DisplayName("Empty citation entries are converted to empty blob citation entries")
+        public void givenConverter_whenEmptyCitationEntriesAreConverted_thenEmptyCollectionIsReturned() {
+            assertTrue(citationEntriesConverter.convert(Collections.emptyList(), trustLevelThreshold).isEmpty());
+
+            verify(trustLevelConverter, atLeastOnce()).convert(trustLevelThreshold);
+        }
+
+        @Test
+        @DisplayName("Non-empty citation entries are converted to non-empty blob citation entries")
+        public void givenConverter_whenNonEmptyCitationEntriesAreConverted_thenNonEmptyCollectionIsReturned() {
+            CitationEntry citationEntry = mock(CitationEntry.class);
+            CitationEntry normalizedCitationEntry = mock(CitationEntry.class);
+            BlobCitationEntry blobCitationEntry = mock(BlobCitationEntry.class);
+            when(trustLevelConverter.convert(trustLevelThreshold)).thenReturn(0.1f);
+            when(citationEntryMatchValidator.validate(citationEntry, 0.1f)).thenReturn(true);
+            when(citationEntryNormalizer.normalize(citationEntry, true)).thenReturn(normalizedCitationEntry);
+            when(blobCitationEntryBuilder.build(normalizedCitationEntry)).thenReturn(blobCitationEntry);
+
+            SortedSet<BlobCitationEntry> result = citationEntriesConverter.convert(
+                    Collections.singletonList(citationEntry), trustLevelThreshold);
+
+            assertEquals(1, result.size());
+            assertSame(blobCitationEntry, result.first());
+        }
+
+        @Nested
+        public class TrustLevelConverterTest {
+
+            @Test
+            @DisplayName("Null trust level threshold is converted to null")
+            public void givenConverter_whenNullValueIsConverted_thenNullIsReturned() {
+                CitationsActionBuilderModuleFactory.CitationEntriesConverter.TrustLevelConverter trustLevelConverter =
+                        new CitationsActionBuilderModuleFactory.CitationEntriesConverter.TrustLevelConverter(0.9f);
+
+                Float result = trustLevelConverter.convert(null);
+
+                assertNull(result);
+            }
+
+            @Test
+            @DisplayName("Trust level threshold is converted to confidence level threshold using scaling factor")
+            public void givenConverter_whenAFloatValueIsConverted_thenProperValueIsReturned() {
+                CitationsActionBuilderModuleFactory.CitationEntriesConverter.TrustLevelConverter trustLevelConverter =
+                        new CitationsActionBuilderModuleFactory.CitationEntriesConverter.TrustLevelConverter(0.9f);
+
+                Float result = trustLevelConverter.convert(trustLevelThreshold);
+
+                assertEquals(trustLevelThreshold / 0.9f, result);
+            }
+        }
+
+        @Nested
+        public class CitationEntryMatchValidatorTest {
+
+            @Mock
+            private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryMatchValidator.ConfidenceLevelValidator confidenceLevelValidator;
+
+            @InjectMocks
+            private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryMatchValidator citationEntryMatchValidator;
+
+            @Test
+            @DisplayName("Citation entry with null confidence level is not valid")
+            public void givenValidator_whenCitationEntryWithNullConfidenceLevelIsConverted_thenFalseIsReturned() {
+                CitationEntry citationEntry = mock(CitationEntry.class);
+                when(citationEntry.getConfidenceLevel()).thenReturn(null);
+
+                Boolean result = citationEntryMatchValidator.validate(citationEntry, 0.5f);
+
+                assertFalse(result);
+            }
+
+            @Test
+            @DisplayName("Citation entry with non-null confidence level is validated against threshold")
+            public void givenValidator_whenCitationEntryWithNonNullConfidenceLevelIsConverted_thenThresholdValidatorIsUsed() {
+                CitationEntry citationEntry = mock(CitationEntry.class);
+                when(citationEntry.getConfidenceLevel()).thenReturn(0.1f);
+
+                citationEntryMatchValidator.validate(citationEntry, 0.5f);
+
+                verify(confidenceLevelValidator, atLeastOnce()).validate(0.1f, 0.5f);
+            }
+
+            @Nested
+            public class ConfidenceLevelValidatorTest {
+
+                @Mock
+                private BiFunction<Float, Float, Boolean> thresholdValidatorFn;
+
+                @InjectMocks
+                private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryMatchValidator.ConfidenceLevelValidator confidenceLevelValidator;
+
+                @Test
+                @DisplayName("Non-null confidence level is validated using validator")
+                public void givenValidator_whenNonNullConfidenceLevelIsValidated_thenValidatorIsUsed() {
+                    confidenceLevelValidator.validate(0.1f, trustLevelThreshold);
+
+                    verify(thresholdValidatorFn, atLeastOnce()).apply(0.1f, trustLevelThreshold);
+                }
+            }
+        }
+
+        @Nested
+        public class CitationEntryNormalizerTest {
+
+            @Mock
+            private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer.ValidMatchCitationEntryNormalizer validMatchCitationEntryNormalizer;
+
+            @Mock
+            private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer.InvalidMatchCitationEntryNormalizer invalidMatchCitationEntryNormalizer;
+
+            @InjectMocks
+            private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer citationEntryNormalizer;
+
+            @Test
+            @DisplayName("Valid match citation entry is normalized using normalizer")
+            public void givenNormalizer_whenValidMatchCitationEntryIsNormalized_thenProperNormalizerIsUsed() {
+                CitationEntry citationEntry = mock(CitationEntry.class);
+
+                citationEntryNormalizer.normalize(citationEntry, true);
+
+                verify(validMatchCitationEntryNormalizer, atLeastOnce()).normalize(citationEntry);
+                verify(invalidMatchCitationEntryNormalizer, never()).normalize(citationEntry);
+            }
+
+            @Test
+            @DisplayName("Invalid match citation entry is normalized using normalizer")
+            public void givenNormalizer_whenInvalidMatchCitationEntryIsNormalized_thenProperNormalizerIsUsed() {
+                CitationEntry citationEntry = mock(CitationEntry.class);
+
+                citationEntryNormalizer.normalize(citationEntry, false);
+
+                verify(validMatchCitationEntryNormalizer, never()).normalize(citationEntry);
+                verify(invalidMatchCitationEntryNormalizer, atLeastOnce()).normalize(citationEntry);
+            }
+
+            @Nested
+            public class ValidMatchCitationEntryNormalizerTest {
+
+                @Test
+                @DisplayName("Valid match citation entry is properly normalized")
+                public void givenNormalizer_whenCitationEntryIsNormalized_thenProperResultIsReturned() {
+                    CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer.ValidMatchCitationEntryNormalizer validMatchCitationEntryNormalizer =
+                            new CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer.ValidMatchCitationEntryNormalizer();
+                    CitationEntry citationEntry = mock(CitationEntry.class);
+                    when(citationEntry.getDestinationDocumentId()).thenReturn("prefix|destination document id");
+
+                    CitationEntry result = validMatchCitationEntryNormalizer.normalize(citationEntry);
+
+                    assertSame(citationEntry, result);
+                    verify(citationEntry, atLeastOnce()).setDestinationDocumentId("destination document id");
+                }
+            }
+
+            @Nested
+            public class InvalidMatchCitationEntryNormalizerTest {
+
+                @Test
+                @DisplayName("Invalid match citation entry is properly normalized")
+                public void givenNormalizer_whenCitationEntryIsNormalized_thenProperResultIsReturned() {
+                    CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer.InvalidMatchCitationEntryNormalizer invalidMatchCitationEntryNormalizer =
+                            new CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer.InvalidMatchCitationEntryNormalizer();
+                    CitationEntry citationEntry = mock(CitationEntry.class);
+
+                    CitationEntry result = invalidMatchCitationEntryNormalizer.normalize(citationEntry);
+
+                    assertSame(citationEntry, result);
+                    verify(citationEntry, atLeastOnce()).setDestinationDocumentId(null);
+                    verify(citationEntry, atLeastOnce()).setConfidenceLevel(null);
+                }
+            }
+        }
+
+        @Nested
+        public class BlobCitationEntryBuilderTest {
+
+            @Mock
+            private Function<CitationEntry, BlobCitationEntry> builderFn;
+
+            @InjectMocks
+            private CitationsActionBuilderModuleFactory.CitationEntriesConverter.BlobCitationEntryBuilder blobCitationEntryBuilder;
+
+            @Test
+            @DisplayName("Blob citation entry is build from citation entry")
+            public void givenBuilder_whenBlobCitationEntryIsBuild_thenBuilderIsUsed() {
+                CitationEntry citationEntry = mock(CitationEntry.class);
+
+                blobCitationEntryBuilder.build(citationEntry);
+
+                verify(builderFn, atLeastOnce()).apply(citationEntry);
+            }
+        }
+    }
+
+    // ----------------------- PRIVATE --------------------------
+
+    private CitationEntry buildCitationEntry(Float confidenceLevel) {
+        CitationEntry.Builder citationEntryBuilder = CitationEntry.newBuilder();
+        citationEntryBuilder.setPosition(1);
+        citationEntryBuilder.setRawText("citation raw text");
+        citationEntryBuilder.setDestinationDocumentId("50|dest-id");
+        citationEntryBuilder.setExternalDestinationDocumentIds(Collections.singletonMap("extIdType", "extIdValue"));
+        citationEntryBuilder.setConfidenceLevel(confidenceLevel);
+        return citationEntryBuilder.build();
+    }
 }
