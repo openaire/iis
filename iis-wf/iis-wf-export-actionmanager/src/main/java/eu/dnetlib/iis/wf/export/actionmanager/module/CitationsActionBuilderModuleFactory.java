@@ -95,7 +95,7 @@ public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFa
     }
 
     /**
-     * Allows citation entry list to be converted to blob citation entry list.
+     * Allows citation entry list to be converted to blob citation entry set.
      */
     public static class CitationEntriesConverter {
         private TrustLevelConverter trustLevelConverter = new TrustLevelConverter(InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR);
