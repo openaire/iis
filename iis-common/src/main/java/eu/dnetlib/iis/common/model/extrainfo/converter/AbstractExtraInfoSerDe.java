@@ -12,11 +12,11 @@ import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
  * @author mhorst
  *
  */
-public abstract class AbstractExtraInfoConverter<T> implements ExtraInfoConverter<T> {
+public abstract class AbstractExtraInfoSerDe<T> implements ExtraInfoSerDe<T> {
 
 	private final XStream xstream;
 	
-	public AbstractExtraInfoConverter() {
+	public AbstractExtraInfoSerDe() {
 		xstream = new XStream(new DomDriver());
 		xstream.setMode(XStream.NO_REFERENCES);
 		

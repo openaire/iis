@@ -6,9 +6,10 @@ import eu.dnetlib.dhp.schema.oaf.Result;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
 import eu.dnetlib.iis.common.model.extrainfo.ExtraInfoConstants;
 import eu.dnetlib.iis.common.model.extrainfo.citations.BlobCitationEntry;
-import eu.dnetlib.iis.common.model.extrainfo.converter.CitationsExtraInfoConverter;
+import eu.dnetlib.iis.common.model.extrainfo.converter.CitationsExtraInfoSerDe;
 import eu.dnetlib.iis.export.schemas.Citations;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
+import eu.dnetlib.iis.wf.export.actionmanager.module.CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryMatchChecker.CheckResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,13 +18,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -78,9 +78,9 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
                 mock(CitationsActionBuilderModuleFactory.CitationEntriesConverter.class);
         when(citationEntriesConverter.convert(citationEntries, trustLevelThreshold)).thenReturn(blobCitationEntries);
         module.setCitationEntriesConverter(citationEntriesConverter);
-        CitationsExtraInfoConverter citationsExtraInfoConverter = mock(CitationsExtraInfoConverter.class);
+        CitationsExtraInfoSerDe citationsExtraInfoConverter = mock(CitationsExtraInfoSerDe.class);
         when(citationsExtraInfoConverter.serialize(blobCitationEntries)).thenReturn("value");
-        module.setCitationsExtraInfoConverter(citationsExtraInfoConverter);
+        module.setCitationsExtraInfoSerDe(citationsExtraInfoConverter);
 
         // execute
         List<AtomicAction<Result>> actions = module.build(citations);
@@ -112,7 +112,10 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
         private CitationsActionBuilderModuleFactory.CitationEntriesConverter.TrustLevelConverter trustLevelConverter;
 
         @Mock
-        private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryMatchValidator citationEntryMatchValidator;
+        private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryMatchChecker citationEntryMatchChecker;
+
+        @Mock
+        private CitationsActionBuilderModuleFactory.CitationEntriesConverter.ConfidenceLevelValidator confidenceLevelValidator;
 
         @Mock
         private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer citationEntryNormalizer;
@@ -140,19 +143,33 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
         @Test
         @DisplayName("Non-empty citation entries are converted to non-empty blob citation entries")
         public void givenConverter_whenNonEmptyCitationEntriesAreConverted_thenNonEmptyCollectionIsReturned() {
-            CitationEntry citationEntry = mock(CitationEntry.class);
-            CitationEntry normalizedCitationEntry = mock(CitationEntry.class);
-            BlobCitationEntry blobCitationEntry = mock(BlobCitationEntry.class);
+            CitationEntry notMatchingResultCitationEntry = mock(CitationEntry.class);
+            CitationEntry matchingResultCitationEntry = mock(CitationEntry.class);
+            CitationEntry normalizedMatchingResultCitationEntry = mock(CitationEntry.class);
+            BlobCitationEntry blobCitationEntryForNotMatchingResultCitationEntry = mock(BlobCitationEntry.class);
+            BlobCitationEntry blobCitationEntryForMatchingResultCitationEntry = mock(BlobCitationEntry.class);
             when(trustLevelConverter.convert(trustLevelThreshold)).thenReturn(0.1f);
-            when(citationEntryMatchValidator.validate(citationEntry, 0.1f)).thenReturn(true);
-            when(citationEntryNormalizer.normalize(citationEntry, true)).thenReturn(normalizedCitationEntry);
-            when(blobCitationEntryBuilder.build(normalizedCitationEntry)).thenReturn(blobCitationEntry);
+            when(citationEntryMatchChecker.check(notMatchingResultCitationEntry)).thenReturn(CheckResult.NO_MATCHING_RESULT);
+            when(citationEntryMatchChecker.check(matchingResultCitationEntry)).thenReturn(CheckResult.MATCHING_RESULT);
+            when(confidenceLevelValidator.validate(CheckResult.NO_MATCHING_RESULT, notMatchingResultCitationEntry, 0.1f))
+                    .thenReturn(true);
+            when(confidenceLevelValidator.validate(CheckResult.MATCHING_RESULT, matchingResultCitationEntry, 0.1f))
+                    .thenReturn(true);
+            when(citationEntryNormalizer.normalize(CheckResult.NO_MATCHING_RESULT, notMatchingResultCitationEntry))
+                    .thenReturn(notMatchingResultCitationEntry);
+            when(citationEntryNormalizer.normalize(CheckResult.MATCHING_RESULT, matchingResultCitationEntry))
+                    .thenReturn(normalizedMatchingResultCitationEntry);
+            when(blobCitationEntryBuilder.build(notMatchingResultCitationEntry)).thenReturn(
+                    blobCitationEntryForNotMatchingResultCitationEntry);
+            when(blobCitationEntryBuilder.build(normalizedMatchingResultCitationEntry)).thenReturn(
+                    blobCitationEntryForMatchingResultCitationEntry);
 
             SortedSet<BlobCitationEntry> result = citationEntriesConverter.convert(
-                    Collections.singletonList(citationEntry), trustLevelThreshold);
+                    Arrays.asList(notMatchingResultCitationEntry, matchingResultCitationEntry), trustLevelThreshold);
 
-            assertEquals(1, result.size());
-            assertSame(blobCitationEntry, result.first());
+            assertEquals(2, result.size());
+            assertThat(result, hasItems(blobCitationEntryForNotMatchingResultCitationEntry,
+                    blobCitationEntryForMatchingResultCitationEntry));
         }
 
         @Nested
@@ -182,52 +199,74 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
         }
 
         @Nested
-        public class CitationEntryMatchValidatorTest {
-
-            @Mock
-            private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryMatchValidator.ConfidenceLevelValidator confidenceLevelValidator;
+        public class CitationEntryMatchCheckerTest {
 
             @InjectMocks
-            private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryMatchValidator citationEntryMatchValidator;
+            private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryMatchChecker citationEntryMatchChecker;
 
             @Test
-            @DisplayName("Citation entry with null confidence level is not valid")
-            public void givenValidator_whenCitationEntryWithNullConfidenceLevelIsConverted_thenFalseIsReturned() {
+            @DisplayName("Citation entry with null confidence level does not contain a result of citation matching")
+            public void givenChecker_whenCitationEntryWithNullConfidenceLevelIsChecked_thenCitationEntryDoesNotContainAMatchingResult() {
                 CitationEntry citationEntry = mock(CitationEntry.class);
                 when(citationEntry.getConfidenceLevel()).thenReturn(null);
 
-                Boolean result = citationEntryMatchValidator.validate(citationEntry, 0.5f);
+                CheckResult result = citationEntryMatchChecker.check(citationEntry);
 
-                assertFalse(result);
+                assertEquals(CheckResult.NO_MATCHING_RESULT, result);
             }
 
             @Test
-            @DisplayName("Citation entry with non-null confidence level is validated against threshold")
-            public void givenValidator_whenCitationEntryWithNonNullConfidenceLevelIsConverted_thenThresholdValidatorIsUsed() {
+            @DisplayName("Citation entry with null destination document id does not contain a result of citation matching")
+            public void givenChecker_whenCitationEntryWithNullDestinationDocumentIdIsChecked_thenCitationEntryDoesNotContainAMatchingResult() {
+                CitationEntry citationEntry = mock(CitationEntry.class);
+                when(citationEntry.getConfidenceLevel()).thenReturn(0.1f);
+                when(citationEntry.getDestinationDocumentId()).thenReturn(null);
+
+                CheckResult result = citationEntryMatchChecker.check(citationEntry);
+
+                assertEquals(CheckResult.NO_MATCHING_RESULT, result);
+            }
+
+            @Test
+            @DisplayName("Citation entry with non null confidence level and non null destination document id contains a result of citation matching")
+            public void givenChecker_whenCitationEntryWithNonNullConfidenceLevelAndDestinationDocumentIdIsChecked_thenCitationEntryContainsAMatchingResult() {
+                CitationEntry citationEntry = mock(CitationEntry.class);
+                when(citationEntry.getConfidenceLevel()).thenReturn(0.1f);
+                when(citationEntry.getDestinationDocumentId()).thenReturn("destination document id");
+
+                CheckResult result = citationEntryMatchChecker.check(citationEntry);
+
+                assertEquals(CheckResult.MATCHING_RESULT, result);
+            }
+        }
+
+        @Nested
+        public class ConfidenceLevelValidatorTest {
+
+            @Mock
+            private BiFunction<Float, Float, Boolean> thresholdValidatorFn;
+
+            @InjectMocks
+            private CitationsActionBuilderModuleFactory.CitationEntriesConverter.ConfidenceLevelValidator confidenceLevelValidator;
+
+            @Test
+            @DisplayName("Citation entry without a result of citation matching is valid against any threshold")
+            public void givenValidator_whenCitationEntryThatWithoutCitationMatchingResultIsValidated_thenTrueIsReturned() {
+                Boolean result = confidenceLevelValidator.validate(CheckResult.NO_MATCHING_RESULT, mock(CitationEntry.class), trustLevelThreshold);
+
+                assertTrue(result);
+                verify(thresholdValidatorFn, never()).apply(anyFloat(), eq(trustLevelThreshold));
+            }
+
+            @Test
+            @DisplayName("Citation entry with a result of citation matching is validated using utils")
+            public void givenValidator_whenCitationEntryWithACitationMatchingResultIsValidated_thenUtilsIsUsed() {
                 CitationEntry citationEntry = mock(CitationEntry.class);
                 when(citationEntry.getConfidenceLevel()).thenReturn(0.1f);
 
-                citationEntryMatchValidator.validate(citationEntry, 0.5f);
+                confidenceLevelValidator.validate(CheckResult.MATCHING_RESULT, citationEntry, trustLevelThreshold);
 
-                verify(confidenceLevelValidator, atLeastOnce()).validate(0.1f, 0.5f);
-            }
-
-            @Nested
-            public class ConfidenceLevelValidatorTest {
-
-                @Mock
-                private BiFunction<Float, Float, Boolean> thresholdValidatorFn;
-
-                @InjectMocks
-                private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryMatchValidator.ConfidenceLevelValidator confidenceLevelValidator;
-
-                @Test
-                @DisplayName("Non-null confidence level is validated using validator")
-                public void givenValidator_whenNonNullConfidenceLevelIsValidated_thenValidatorIsUsed() {
-                    confidenceLevelValidator.validate(0.1f, trustLevelThreshold);
-
-                    verify(thresholdValidatorFn, atLeastOnce()).apply(0.1f, trustLevelThreshold);
-                }
+                verify(thresholdValidatorFn, atLeastOnce()).apply(0.1f, trustLevelThreshold);
             }
         }
 
@@ -235,69 +274,47 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
         public class CitationEntryNormalizerTest {
 
             @Mock
-            private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer.ValidMatchCitationEntryNormalizer validMatchCitationEntryNormalizer;
-
-            @Mock
-            private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer.InvalidMatchCitationEntryNormalizer invalidMatchCitationEntryNormalizer;
+            private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer.MatchingResultCitationEntryNormalizer matchingResultCitationEntryNormalizer;
 
             @InjectMocks
             private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer citationEntryNormalizer;
 
             @Test
-            @DisplayName("Valid match citation entry is normalized using normalizer")
-            public void givenNormalizer_whenValidMatchCitationEntryIsNormalized_thenProperNormalizerIsUsed() {
+            @DisplayName("Citation entry without a result of citation matching is not normalized")
+            public void givenNormalizer_whenCitationEntryWithoutACitationMatchingResultIsNormalized_thenTheSameInstanceIsReturned() {
                 CitationEntry citationEntry = mock(CitationEntry.class);
 
-                citationEntryNormalizer.normalize(citationEntry, true);
+                CitationEntry result = citationEntryNormalizer.normalize(CheckResult.NO_MATCHING_RESULT, citationEntry);
 
-                verify(validMatchCitationEntryNormalizer, atLeastOnce()).normalize(citationEntry);
-                verify(invalidMatchCitationEntryNormalizer, never()).normalize(citationEntry);
+                assertSame(result, citationEntry);
+                verify(matchingResultCitationEntryNormalizer, never()).normalize(citationEntry);
             }
 
             @Test
-            @DisplayName("Invalid match citation entry is normalized using normalizer")
-            public void givenNormalizer_whenInvalidMatchCitationEntryIsNormalized_thenProperNormalizerIsUsed() {
+            @DisplayName("Citation entry with a result of citation matching is normalized using normalizer")
+            public void givenNormalizer_whenCitationEntryWithACitationMatchingResultIsNormalized_thenProperNormalizerIsUsed() {
                 CitationEntry citationEntry = mock(CitationEntry.class);
 
-                citationEntryNormalizer.normalize(citationEntry, false);
+                citationEntryNormalizer.normalize(CheckResult.MATCHING_RESULT, citationEntry);
 
-                verify(validMatchCitationEntryNormalizer, never()).normalize(citationEntry);
-                verify(invalidMatchCitationEntryNormalizer, atLeastOnce()).normalize(citationEntry);
+                verify(matchingResultCitationEntryNormalizer, atLeastOnce()).normalize(citationEntry);
             }
 
             @Nested
-            public class ValidMatchCitationEntryNormalizerTest {
+            public class MatchingResultCitationEntryNormalizerTest {
 
                 @Test
-                @DisplayName("Valid match citation entry is properly normalized")
+                @DisplayName("Citation entry is properly normalized")
                 public void givenNormalizer_whenCitationEntryIsNormalized_thenProperResultIsReturned() {
-                    CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer.ValidMatchCitationEntryNormalizer validMatchCitationEntryNormalizer =
-                            new CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer.ValidMatchCitationEntryNormalizer();
+                    CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer.MatchingResultCitationEntryNormalizer matchingResultCitationEntryNormalizer =
+                            new CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer.MatchingResultCitationEntryNormalizer();
                     CitationEntry citationEntry = mock(CitationEntry.class);
                     when(citationEntry.getDestinationDocumentId()).thenReturn("prefix|destination document id");
 
-                    CitationEntry result = validMatchCitationEntryNormalizer.normalize(citationEntry);
+                    CitationEntry result = matchingResultCitationEntryNormalizer.normalize(citationEntry);
 
                     assertSame(citationEntry, result);
                     verify(citationEntry, atLeastOnce()).setDestinationDocumentId("destination document id");
-                }
-            }
-
-            @Nested
-            public class InvalidMatchCitationEntryNormalizerTest {
-
-                @Test
-                @DisplayName("Invalid match citation entry is properly normalized")
-                public void givenNormalizer_whenCitationEntryIsNormalized_thenProperResultIsReturned() {
-                    CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer.InvalidMatchCitationEntryNormalizer invalidMatchCitationEntryNormalizer =
-                            new CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer.InvalidMatchCitationEntryNormalizer();
-                    CitationEntry citationEntry = mock(CitationEntry.class);
-
-                    CitationEntry result = invalidMatchCitationEntryNormalizer.normalize(citationEntry);
-
-                    assertSame(citationEntry, result);
-                    verify(citationEntry, atLeastOnce()).setDestinationDocumentId(null);
-                    verify(citationEntry, atLeastOnce()).setConfidenceLevel(null);
                 }
             }
         }
