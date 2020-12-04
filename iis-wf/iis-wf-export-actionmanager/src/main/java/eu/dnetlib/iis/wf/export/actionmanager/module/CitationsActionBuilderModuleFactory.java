@@ -1,6 +1,5 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
-import com.google.common.collect.Maps;
 import eu.dnetlib.dhp.schema.oaf.ExtraInfo;
 import eu.dnetlib.dhp.schema.oaf.Result;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
@@ -100,7 +99,6 @@ public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFa
      */
     public static class CitationEntriesConverter {
         private TrustLevelConverter trustLevelConverter = new TrustLevelConverter(InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR);
-        private CitationEntryMatchChecker citationEntryMatchChecker = new CitationEntryMatchChecker();
         private ConfidenceLevelValidator confidenceLevelValidator = new ConfidenceLevelValidator();
         private CitationEntryNormalizer citationEntryNormalizer = new CitationEntryNormalizer();
         private BlobCitationEntryBuilder blobCitationEntryBuilder = new BlobCitationEntryBuilder();
@@ -109,12 +107,8 @@ public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFa
             if (source != null) {
                 Float confidenceLevelThreshold = trustLevelConverter.convert(trustLevelThreshold);
                 return source.stream()
-                        .map(citationEntry -> Maps.immutableEntry(citationEntryMatchChecker.check(citationEntry),
-                                citationEntry))
-                        .filter(checkResultAndCitationEntry -> confidenceLevelValidator.validate(
-                                checkResultAndCitationEntry.getKey(), checkResultAndCitationEntry.getValue(), confidenceLevelThreshold))
-                        .map(checkResultAndCitationEntry -> citationEntryNormalizer.normalize(
-                                checkResultAndCitationEntry.getKey(), checkResultAndCitationEntry.getValue()))
+                        .map(citationEntry -> confidenceLevelValidator.validate(citationEntry, confidenceLevelThreshold))
+                        .map(citationEntry -> citationEntryNormalizer.normalize(citationEntry))
                         .map(citationEntry -> blobCitationEntryBuilder.build(citationEntry))
                         .collect(Collectors.toCollection(TreeSet::new));
             }
@@ -139,37 +133,19 @@ public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFa
         }
 
         /**
-         * Allows to check if citation entry contains the outcome of citation matching.
-         */
-        public static class CitationEntryMatchChecker {
-            public enum CheckResult {
-                MATCHING_RESULT,
-                NO_MATCHING_RESULT
-            }
-
-            public CheckResult check(CitationEntry citationEntry) {
-                if (Objects.nonNull(citationEntry.getConfidenceLevel()) && Objects.nonNull(citationEntry.getDestinationDocumentId())) {
-                    return CheckResult.MATCHING_RESULT;
-                }
-                return CheckResult.NO_MATCHING_RESULT;
-            }
-        }
-
-        /**
          * Allows to validate confidence level of citation entry using {@link ConfidenceLevelUtils}.
          */
         public static class ConfidenceLevelValidator {
             private BiFunction<Float, Float, Boolean> thresholdValidatorFn = ConfidenceLevelUtils::isValidConfidenceLevel;
 
-            public Boolean validate(CitationEntryMatchChecker.CheckResult checkResult, CitationEntry citationEntry, Float confidenceLevelThreshold) {
-                switch (checkResult) {
-                    case NO_MATCHING_RESULT:
-                        return true;
-                    case MATCHING_RESULT:
-                        return thresholdValidatorFn.apply(citationEntry.getConfidenceLevel(), confidenceLevelThreshold);
-                    default:
-                        throw new RuntimeException();
+            public CitationEntry validate(CitationEntry citationEntry, Float confidenceLevelThreshold) {
+                if (isMatchingResult(citationEntry) &&
+                        !thresholdValidatorFn.apply(citationEntry.getConfidenceLevel(), confidenceLevelThreshold)) {
+                    citationEntry.setConfidenceLevel(null);
+                    citationEntry.setDestinationDocumentId(null);
+                    return citationEntry;
                 }
+                return citationEntry;
             }
         }
 
@@ -179,15 +155,11 @@ public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFa
         public static class CitationEntryNormalizer {
             private MatchingResultCitationEntryNormalizer matchingResultCitationEntryNormalizer = new MatchingResultCitationEntryNormalizer();
 
-            public CitationEntry normalize(CitationEntryMatchChecker.CheckResult checkResult, CitationEntry citationEntry) {
-                switch (checkResult) {
-                    case NO_MATCHING_RESULT:
-                        return citationEntry;
-                    case MATCHING_RESULT:
-                        return matchingResultCitationEntryNormalizer.normalize(citationEntry);
-                    default:
-                        throw new RuntimeException();
+            public CitationEntry normalize(CitationEntry citationEntry) {
+                if (isMatchingResult(citationEntry)) {
+                    return matchingResultCitationEntryNormalizer.normalize(citationEntry);
                 }
+                return citationEntry;
             }
 
             /**
@@ -214,6 +186,11 @@ public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFa
             public BlobCitationEntry build(CitationEntry citationEntry) {
                 return builderFn.apply(citationEntry);
             }
+        }
+
+        private static Boolean isMatchingResult(CitationEntry citationEntry) {
+            return Objects.nonNull(citationEntry.getConfidenceLevel()) &&
+                    Objects.nonNull(citationEntry.getDestinationDocumentId());
         }
     }
 }
