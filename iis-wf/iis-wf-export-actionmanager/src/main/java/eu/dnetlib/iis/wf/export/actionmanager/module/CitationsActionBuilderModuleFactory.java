@@ -133,13 +133,25 @@ public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFa
         }
 
         /**
+         * Allows to check if a citation entry contains the outcome of citation matching.
+         */
+        public static class CitationEntryMatchChecker {
+
+            public Boolean isMatchingResult(CitationEntry citationEntry) {
+                return Objects.nonNull(citationEntry.getConfidenceLevel()) &&
+                        Objects.nonNull(citationEntry.getDestinationDocumentId());
+            }
+        }
+
+        /**
          * Allows to validate confidence level of citation entry using {@link ConfidenceLevelUtils}.
          */
         public static class ConfidenceLevelValidator {
+            private CitationEntryMatchChecker citationEntryMatchChecker = new CitationEntryMatchChecker();
             private BiFunction<Float, Float, Boolean> thresholdValidatorFn = ConfidenceLevelUtils::isValidConfidenceLevel;
 
             public CitationEntry validate(CitationEntry citationEntry, Float confidenceLevelThreshold) {
-                if (isMatchingResult(citationEntry) &&
+                if (citationEntryMatchChecker.isMatchingResult(citationEntry) &&
                         !thresholdValidatorFn.apply(citationEntry.getConfidenceLevel(), confidenceLevelThreshold)) {
                     citationEntry.setConfidenceLevel(null);
                     citationEntry.setDestinationDocumentId(null);
@@ -153,10 +165,11 @@ public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFa
          * Allows to normalize a citation entry.
          */
         public static class CitationEntryNormalizer {
+            private CitationEntryMatchChecker citationEntryMatchChecker = new CitationEntryMatchChecker();
             private MatchingResultCitationEntryNormalizer matchingResultCitationEntryNormalizer = new MatchingResultCitationEntryNormalizer();
 
             public CitationEntry normalize(CitationEntry citationEntry) {
-                if (isMatchingResult(citationEntry)) {
+                if (citationEntryMatchChecker.isMatchingResult(citationEntry)) {
                     return matchingResultCitationEntryNormalizer.normalize(citationEntry);
                 }
                 return citationEntry;
@@ -186,11 +199,6 @@ public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFa
             public BlobCitationEntry build(CitationEntry citationEntry) {
                 return builderFn.apply(citationEntry);
             }
-        }
-
-        private static Boolean isMatchingResult(CitationEntry citationEntry) {
-            return Objects.nonNull(citationEntry.getConfidenceLevel()) &&
-                    Objects.nonNull(citationEntry.getDestinationDocumentId());
         }
     }
 }
