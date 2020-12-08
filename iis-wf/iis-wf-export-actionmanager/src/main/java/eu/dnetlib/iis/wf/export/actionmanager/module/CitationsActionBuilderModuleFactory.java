@@ -165,21 +165,20 @@ public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFa
          * Allows to normalize a citation entry.
          */
         public static class CitationEntryNormalizer {
-            private CitationEntryMatchChecker citationEntryMatchChecker = new CitationEntryMatchChecker();
-            private MatchingResultCitationEntryNormalizer matchingResultCitationEntryNormalizer = new MatchingResultCitationEntryNormalizer();
+            private DestinationDocumentIdNormalizer destinationDocumentIdNormalizer = new DestinationDocumentIdNormalizer();
 
             public CitationEntry normalize(CitationEntry citationEntry) {
-                if (citationEntryMatchChecker.isMatchingResult(citationEntry)) {
-                    return matchingResultCitationEntryNormalizer.normalize(citationEntry);
+                if (Objects.nonNull(citationEntry.getDestinationDocumentId())) {
+                    return destinationDocumentIdNormalizer.normalize(citationEntry);
                 }
                 return citationEntry;
             }
 
             /**
-             * Allows to normalize a citation entry containing the outcome of citation matching
+             * Allows to normalize a destination document id of citation entry
              * * removes '50|' prefix from publication identifier
              */
-            public static class MatchingResultCitationEntryNormalizer {
+            public static class DestinationDocumentIdNormalizer {
                 private Function<CharSequence, CharSequence> destinationDocumentIdNormalizerFn = destinationDocumentId ->
                         StringUtils.split(destinationDocumentId.toString(), InfoSpaceConstants.ROW_PREFIX_SEPARATOR)[1];
 
