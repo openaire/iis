@@ -284,11 +284,8 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
         @Nested
         public class CitationEntryNormalizerTest {
 
-            @Mock
-            private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer.DestinationDocumentIdNormalizer destinationDocumentIdNormalizer;
-
-            @InjectMocks
-            private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer citationEntryNormalizer;
+            private CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer citationEntryNormalizer =
+                    new CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer();
 
             @Test
             @DisplayName("Citation entry without destination document id is not normalized")
@@ -299,38 +296,19 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
                 CitationEntry result = citationEntryNormalizer.normalize(citationEntry);
 
                 assertSame(result, citationEntry);
-                verify(destinationDocumentIdNormalizer, never()).normalize(citationEntry);
+                verify(citationEntry, never()).setDestinationDocumentId(any());
             }
 
             @Test
-            @DisplayName("Citation entry with destination document id is normalized using normalizer")
+            @DisplayName("Citation entry with destination document id is normalized using normalizer function")
             public void givenNormalizer_whenCitationEntryWithDestinationDocumentIdIsNormalized_thenProperNormalizerIsUsed() {
                 CitationEntry citationEntry = mock(CitationEntry.class);
-                when(citationEntry.getDestinationDocumentId()).thenReturn("destination document id");
-                CitationEntry normalizedCitationEntry = mock(CitationEntry.class);
-                when(destinationDocumentIdNormalizer.normalize(citationEntry)).thenReturn(normalizedCitationEntry);
+                when(citationEntry.getDestinationDocumentId()).thenReturn("prefix|destination document id");
 
                 CitationEntry result = citationEntryNormalizer.normalize(citationEntry);
 
-                assertSame(normalizedCitationEntry, result);
-            }
-
-            @Nested
-            public class DestinationDocumentIdNormalizerTest {
-
-                @Test
-                @DisplayName("Destination document id is properly normalized")
-                public void givenNormalizer_whenDestinationDocumentIdIsNormalized_thenProperResultIsReturned() {
-                    CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer.DestinationDocumentIdNormalizer destinationDocumentIdNormalizer =
-                            new CitationsActionBuilderModuleFactory.CitationEntriesConverter.CitationEntryNormalizer.DestinationDocumentIdNormalizer();
-                    CitationEntry citationEntry = mock(CitationEntry.class);
-                    when(citationEntry.getDestinationDocumentId()).thenReturn("prefix|destination document id");
-
-                    CitationEntry result = destinationDocumentIdNormalizer.normalize(citationEntry);
-
-                    assertSame(citationEntry, result);
-                    verify(citationEntry, atLeastOnce()).setDestinationDocumentId("destination document id");
-                }
+                assertSame(result, citationEntry);
+                verify(citationEntry, atLeastOnce()).setDestinationDocumentId("destination document id");
             }
         }
 
