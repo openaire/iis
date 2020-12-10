@@ -6,7 +6,7 @@ package eu.dnetlib.iis.common.model.extrainfo.converter;
  *
  * @param <T>
  */
-public interface ExtraInfoConverter<T> {
+public interface ExtraInfoSerDe<T> {
 
 	/**
 	 * Serializes object to its XML representation.

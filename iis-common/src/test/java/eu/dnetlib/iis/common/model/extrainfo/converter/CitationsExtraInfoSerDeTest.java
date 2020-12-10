@@ -15,24 +15,24 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author mhorst
  *
  */
-public class CitationsExtraInfoConverterTest {
+public class CitationsExtraInfoSerDeTest {
 
-    CitationsExtraInfoConverter converter = new CitationsExtraInfoConverter();
+    CitationsExtraInfoSerDe serDe = new CitationsExtraInfoSerDe();
     
     @Test
     public void testSerializeNull() throws Exception {
-        String result = converter.serialize(null);
+        String result = serDe.serialize(null);
         assertEquals("<null/>", result);
     }
     
     @Test
     public void testDeserializeNull() {
-        assertThrows(NullPointerException.class, () -> converter.deserialize(null));
+        assertThrows(NullPointerException.class, () -> serDe.deserialize(null));
     }
     
     @Test
     public void testGetXStream() throws Exception {
-        assertNotNull(converter.getXstream());
+        assertNotNull(serDe.getXstream());
     }
     
     @Test
@@ -57,8 +57,8 @@ public class CitationsExtraInfoConverterTest {
         entrySet.add(entry);
         
         // execute
-        String resultStr = converter.serialize(entrySet);
-        SortedSet<BlobCitationEntry> resultSet = converter.deserialize(resultStr);
+        String resultStr = serDe.serialize(entrySet);
+        SortedSet<BlobCitationEntry> resultSet = serDe.deserialize(resultStr);
         
         // assert
         assertNotNull(resultSet);

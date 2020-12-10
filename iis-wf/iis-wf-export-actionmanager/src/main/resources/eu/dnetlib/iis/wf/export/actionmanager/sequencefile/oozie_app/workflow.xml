@@ -132,6 +132,11 @@
             <description>document_referencedDatasets trust level threshold</description>
         </property>
         <property>
+            <name>trust_level_threshold_document_referencedDocuments</name>
+            <value>$UNDEFINED$</value>
+            <description>document_referencedDocuments trust level threshold</description>
+        </property>
+        <property>
             <name>trust_level_threshold_document_pdb</name>
             <value>$UNDEFINED$</value>
             <description>document to protein databank trust level threshold</description>
@@ -251,6 +256,10 @@
             <property>
                 <name>export.trust.level.threshold.document_referencedDatasets</name>
                 <value>${trust_level_threshold_document_referencedDatasets}</value>
+            </property>
+            <property>
+                <name>export.trust.level.threshold.document_referencedDocuments</name>
+                <value>${trust_level_threshold_document_referencedDocuments}</value>
             </property>
             <property>
                 <name>export.trust.level.threshold.document_pdb</name>
