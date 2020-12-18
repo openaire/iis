@@ -41,7 +41,7 @@ public class SparkSessionSupport {
      * when SparkSession is shared e.g. created in tests. Allows to reuse SparkSession created externally.
      *
      * @param conf               SparkConf instance
-     * @param sharedSparkSession When true will stop SparkSession
+     * @param sharedSparkSession When true will not stop SparkSession
      * @param job                Job using constructed SparkSession
      */
     public static void runWithSparkSession(Function<SparkConf, SparkSession> sparkSessionBuilder,

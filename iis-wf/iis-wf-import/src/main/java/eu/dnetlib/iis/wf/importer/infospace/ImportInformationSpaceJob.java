@@ -411,7 +411,7 @@ public class ImportInformationSpaceJob {
     @Parameters(separators = "=")
     private static class ImportInformationSpaceJobParameters {
 
-        @Parameter(names = "-sharedSparkSession", required = false)
+        @Parameter(names = "-sharedSparkSession")
         private Boolean sharedSparkSession = Boolean.FALSE;
         
         @Parameter(names = "-skipDeletedByInference", required = true)
