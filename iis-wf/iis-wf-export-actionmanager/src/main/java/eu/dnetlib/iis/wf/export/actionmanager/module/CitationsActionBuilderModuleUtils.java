@@ -1,7 +1,7 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
-import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
+import eu.dnetlib.iis.common.model.conversion.ConfidenceLevelConverter;
 import eu.dnetlib.iis.common.model.extrainfo.ExtraInfoConstants;
 import eu.dnetlib.iis.common.model.extrainfo.citations.BlobCitationEntry;
 import eu.dnetlib.iis.common.model.extrainfo.citations.TypedId;
@@ -109,9 +109,8 @@ public final class CitationsActionBuilderModuleUtils {
 
             public static class ConfidenceLevelBuilder {
                 public static Float build(CitationEntry citationEntry) {
-                    return citationEntry.getConfidenceLevel() != null
-                            ? (citationEntry.getConfidenceLevel() * InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR)
-                            : 1f * InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
+                    float confidenceLevel = citationEntry.getConfidenceLevel() != null ? citationEntry.getConfidenceLevel() : 1f;
+                    return new ConfidenceLevelConverter().convertToTrustLevel(confidenceLevel);
                 }
             }
         }
@@ -122,9 +121,9 @@ public final class CitationsActionBuilderModuleUtils {
             }
 
             public static List<TypedId> build(CitationEntry citationEntry) {
+                float confidenceLevel = new ConfidenceLevelConverter().convertToTrustLevel(1f);
                 return citationEntry.getExternalDestinationDocumentIds().entrySet().stream()
-                        .map(x -> new TypedId(x.getValue().toString(), x.getKey().toString(),
-                                1f * InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR))
+                        .map(x -> new TypedId(x.getValue().toString(), x.getKey().toString(), confidenceLevel))
                         .collect(Collectors.toList());
             }
         }

@@ -4,6 +4,7 @@ import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.ExtraInfo;
 import eu.dnetlib.dhp.schema.oaf.Result;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
+import eu.dnetlib.iis.common.model.conversion.TrustLevelConverter;
 import eu.dnetlib.iis.common.model.extrainfo.ExtraInfoConstants;
 import eu.dnetlib.iis.common.model.extrainfo.citations.BlobCitationEntry;
 import eu.dnetlib.iis.common.model.extrainfo.converter.CitationsExtraInfoSerDe;
@@ -108,7 +109,7 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
     public class CitationEntriesConverterTest {
 
         @Mock
-        private CitationsActionBuilderModuleFactory.CitationEntriesConverter.TrustLevelConverter trustLevelConverter;
+        private TrustLevelConverter trustLevelConverter;
 
         @Mock
         private CitationsActionBuilderModuleFactory.CitationEntriesConverter.ConfidenceLevelValidator confidenceLevelValidator;
@@ -133,7 +134,7 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
         public void givenConverter_whenEmptyCitationEntriesAreConverted_thenEmptyCollectionIsReturned() {
             assertTrue(citationEntriesConverter.convert(Collections.emptyList(), trustLevelThreshold).isEmpty());
 
-            verify(trustLevelConverter, atLeastOnce()).convert(trustLevelThreshold);
+            verify(trustLevelConverter, atLeastOnce()).convertToConfidenceLevel(trustLevelThreshold);
         }
 
         @Test
@@ -144,7 +145,7 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
             CitationEntry normalizedMatchingResultCitationEntry = mock(CitationEntry.class);
             BlobCitationEntry blobCitationEntryForNotMatchingResultCitationEntry = mock(BlobCitationEntry.class);
             BlobCitationEntry blobCitationEntryForMatchingResultCitationEntry = mock(BlobCitationEntry.class);
-            when(trustLevelConverter.convert(trustLevelThreshold)).thenReturn(0.1f);
+            when(trustLevelConverter.convertToConfidenceLevel(trustLevelThreshold)).thenReturn(0.1f);
             when(confidenceLevelValidator.validate(notMatchingResultCitationEntry, 0.1f))
                     .thenReturn(notMatchingResultCitationEntry);
             when(confidenceLevelValidator.validate(matchingResultCitationEntry, 0.1f))
@@ -164,29 +165,6 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
             assertEquals(2, result.size());
             assertThat(result, hasItems(blobCitationEntryForNotMatchingResultCitationEntry,
                     blobCitationEntryForMatchingResultCitationEntry));
-        }
-
-        @Nested
-        public class TrustLevelConverterTest {
-
-            private CitationsActionBuilderModuleFactory.CitationEntriesConverter.TrustLevelConverter trustLevelConverter =
-                    new CitationsActionBuilderModuleFactory.CitationEntriesConverter.TrustLevelConverter(0.9f);
-
-            @Test
-            @DisplayName("Null trust level threshold is converted to null")
-            public void givenConverter_whenNullValueIsConverted_thenNullIsReturned() {
-                Float result = trustLevelConverter.convert(null);
-
-                assertNull(result);
-            }
-
-            @Test
-            @DisplayName("Trust level threshold is converted to confidence level threshold using scaling factor")
-            public void givenConverter_whenAFloatValueIsConverted_thenProperValueIsReturned() {
-                Float result = trustLevelConverter.convert(trustLevelThreshold);
-
-                assertEquals(trustLevelThreshold / 0.9f, result);
-            }
         }
 
         @Nested

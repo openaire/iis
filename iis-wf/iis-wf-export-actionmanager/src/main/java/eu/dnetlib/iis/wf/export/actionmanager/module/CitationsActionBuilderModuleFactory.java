@@ -4,6 +4,7 @@ import eu.dnetlib.dhp.schema.oaf.ExtraInfo;
 import eu.dnetlib.dhp.schema.oaf.Result;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
+import eu.dnetlib.iis.common.model.conversion.TrustLevelConverter;
 import eu.dnetlib.iis.common.model.extrainfo.ExtraInfoConstants;
 import eu.dnetlib.iis.common.model.extrainfo.citations.BlobCitationEntry;
 import eu.dnetlib.iis.common.model.extrainfo.converter.CitationsExtraInfoSerDe;
@@ -98,14 +99,14 @@ public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFa
      * Allows citation entry list to be converted to blob citation entry set.
      */
     public static class CitationEntriesConverter {
-        private TrustLevelConverter trustLevelConverter = new TrustLevelConverter(InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR);
+        private TrustLevelConverter trustLevelConverter = new TrustLevelConverter();
         private ConfidenceLevelValidator confidenceLevelValidator = new ConfidenceLevelValidator();
         private CitationEntryNormalizer citationEntryNormalizer = new CitationEntryNormalizer();
         private BlobCitationEntryBuilder blobCitationEntryBuilder = new BlobCitationEntryBuilder();
 
         public SortedSet<BlobCitationEntry> convert(List<CitationEntry> source, Float trustLevelThreshold) {
             if (source != null) {
-                Float confidenceLevelThreshold = trustLevelConverter.convert(trustLevelThreshold);
+                Float confidenceLevelThreshold = trustLevelConverter.convertToConfidenceLevel(trustLevelThreshold);
                 return source.stream()
                         .map(citationEntry -> confidenceLevelValidator.validate(citationEntry, confidenceLevelThreshold))
                         .map(citationEntry -> citationEntryNormalizer.normalize(citationEntry))
@@ -113,23 +114,6 @@ public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFa
                         .collect(Collectors.toCollection(TreeSet::new));
             }
             return null;
-        }
-
-        /**
-         * Allows trust level threshold to be converted to confidence level threshold.
-         */
-        public static class TrustLevelConverter {
-            private Float conversionFactor;
-
-            public TrustLevelConverter(Float conversionFactor) {
-                this.conversionFactor = conversionFactor;
-            }
-
-            public Float convert(Float trustLevelThreshold) {
-                return Optional.ofNullable(trustLevelThreshold)
-                        .map(x -> x / conversionFactor)
-                        .orElse(null);
-            }
         }
 
         /**

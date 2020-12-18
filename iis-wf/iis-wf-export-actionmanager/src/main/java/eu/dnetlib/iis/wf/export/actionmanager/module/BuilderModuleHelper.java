@@ -8,6 +8,7 @@ import eu.dnetlib.dhp.schema.oaf.DataInfo;
 import eu.dnetlib.dhp.schema.oaf.Oaf;
 import eu.dnetlib.dhp.schema.oaf.Qualifier;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
+import eu.dnetlib.iis.common.model.conversion.ConfidenceLevelConverter;
 
 /**
  * {@link Oaf} builder helper.
@@ -30,7 +31,7 @@ public class BuilderModuleHelper {
     public static DataInfo buildInferenceForConfidenceLevel(
             float confidenceLevel, String inferenceProvenance) {
         return buildInferenceForTrustLevel(
-                decimalFormat.format(confidenceLevel * InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR),
+                decimalFormat.format(new ConfidenceLevelConverter().convertToTrustLevel(confidenceLevel)),
                 inferenceProvenance);
     }
     
