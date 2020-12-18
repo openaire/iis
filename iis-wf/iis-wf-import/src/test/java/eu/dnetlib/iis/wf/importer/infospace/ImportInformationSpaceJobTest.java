@@ -89,7 +89,7 @@ public class ImportInformationSpaceJobTest extends TestWithSharedSparkSession {
         
         // when
         ImportInformationSpaceJob.main(new String[]{
-                "-sparkSessionManagedOutside",
+                "-sharedSparkSession",
                 "-skipDeletedByInference", Boolean.TRUE.toString(),
                 "-trustLevelThreshold", "0.7",
                 "-inferenceProvenanceBlacklist", "iis",

@@ -22,14 +22,14 @@ class SparkSessionSupportTest {
 
         @Test
         @DisplayName("SparkSession is not stopped")
-        public void givenSparkSessionBuilderAndJob_whenRunWithNotManagedSparkSession_thenSparkSessionIsNotStopped() throws Exception {
+        public void givenSparkSessionBuilderAndJob_whenRunWithSharedSparkSession_thenSparkSessionIsNotStopped() throws Exception {
             SparkSession spark = mock(SparkSession.class);
             SparkConf conf = mock(SparkConf.class);
             Function<SparkConf, SparkSession> sparkSessionBuilder = mock(Function.class);
             when(sparkSessionBuilder.apply(conf)).thenReturn(spark);
             Job job = mock(Job.class);
 
-            runWithSparkSession(sparkSessionBuilder, conf, false, job);
+            runWithSparkSession(sparkSessionBuilder, conf, true, job);
 
             verify(sparkSessionBuilder).apply(conf);
             verify(job).accept(spark);
@@ -38,14 +38,14 @@ class SparkSessionSupportTest {
 
         @Test
         @DisplayName("SparkSession is stopped")
-        public void givenSparkSessionBuilderAndJob_whenRunWithManagedSparkSession_thenSparkSessionIsStopped() throws Exception {
+        public void givenSparkSessionBuilderAndJob_whenRunWithNotSharedSparkSession_thenSparkSessionIsStopped() throws Exception {
             SparkSession spark = mock(SparkSession.class);
             SparkConf conf = mock(SparkConf.class);
             Function<SparkConf, SparkSession> sparkSessionBuilder = mock(Function.class);
             when(sparkSessionBuilder.apply(conf)).thenReturn(spark);
             Job job = mock(Job.class);
 
-            runWithSparkSession(sparkSessionBuilder, conf, true, job);
+            runWithSparkSession(sparkSessionBuilder, conf, false, job);
 
             verify(sparkSessionBuilder).apply(conf);
             verify(job).accept(spark);

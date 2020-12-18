@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.importer.infospace;
 
 import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE;
+import static eu.dnetlib.iis.common.spark.SparkSessionSupport.*;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -119,28 +120,23 @@ public class ImportInformationSpaceJob {
 
         SparkConf conf = SparkConfHelper.withKryo(new SparkConf());
         conf.registerKryoClasses(OafModelUtils.provideOafClasses());
-        
-        SparkSession session = null;
-        boolean isSparkSessionManagedOutside = params.sparkSessionManagedOutside != null
-                ? params.sparkSessionManagedOutside
-                : false;
-        
-        try {
+
+        runWithSparkSession(conf, params.sharedSparkSession, session -> {
             session = SparkSession.builder().config(conf).getOrCreate();
-            JavaSparkContext sc = JavaSparkContext.fromSparkContext(session.sparkContext()); 
-            
+            JavaSparkContext sc = JavaSparkContext.fromSparkContext(session.sparkContext());
+
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputPath);
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
-            
+
             // initializing Oaf model converters
             DataInfoBasedApprover dataInfoBasedApprover = buildApprover(
                     params.skipDeletedByInference, params.trustLevelThreshold, params.inferenceProvenanceBlacklist);
-            
+
             OafEntityToAvroConverter<Result, DocumentMetadata> documentConverter = new DocumentMetadataConverter(dataInfoBasedApprover);
             OafEntityToAvroConverter<Result, DataSetReference>  datasetConverter = new DatasetMetadataConverter(dataInfoBasedApprover);
             OafEntityToAvroConverter<Organization, eu.dnetlib.iis.importer.schemas.Organization> organizationConverter = new OrganizationConverter();
             OafEntityToAvroConverter<Project, eu.dnetlib.iis.importer.schemas.Project> projectConverter = new ProjectConverter();
-            
+
             OafRelToAvroConverter<ProjectToOrganization> projectOrganizationConverter = new ProjectToOrganizationRelationConverter();
             OafRelToAvroConverter<DocumentToProject> docProjectConverter = new DocumentToProjectRelationConverter();
             OafRelToAvroConverter<IdentifierMapping> deduplicationMappingConverter = new DeduplicationMappingConverter();
@@ -149,7 +145,7 @@ public class ImportInformationSpaceJob {
             DataSetReferenceAvroTruncator dataSetReferenceAvroTruncator = createDataSetReferenceAvroTruncator(params);
 
             String inputFormat = params.inputFormat;
-       
+
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Organization> sourceOrganization = readGraphTable(session,
                     params.inputRootPath + "/organization", eu.dnetlib.dhp.schema.oaf.Organization.class, inputFormat);
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Project> sourceProject = readGraphTable(session,
@@ -165,7 +161,7 @@ public class ImportInformationSpaceJob {
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Relation> sourceRelation = readGraphTable(session,
                     params.inputRootPath + "/relation", eu.dnetlib.dhp.schema.oaf.Relation.class, inputFormat);
             sourceRelation.persist(CACHE_STORAGE_DEFAULT_LEVEL);
-            
+
             // handling entities
             JavaRDD<eu.dnetlib.dhp.schema.oaf.Dataset> filteredDataset = sourceDataset.filter(dataInfoBasedApprover::approve);
             filteredDataset.persist(CACHE_STORAGE_DEFAULT_LEVEL);
@@ -177,22 +173,17 @@ public class ImportInformationSpaceJob {
                     datasetConverter), dataSetReferenceAvroTruncator);
             JavaRDD<eu.dnetlib.iis.importer.schemas.Project> project = filterAndParseToAvro(sourceProject, dataInfoBasedApprover, projectConverter);
             JavaRDD<eu.dnetlib.iis.importer.schemas.Organization> organization = filterAndParseToAvro(sourceOrganization, dataInfoBasedApprover, organizationConverter);
-            
+
             // handling relations
-            JavaRDD<DocumentToProject> docProjRelation = filterAndParseRelationToAvro(sourceRelation, dataInfoBasedApprover, docProjectConverter, 
+            JavaRDD<DocumentToProject> docProjRelation = filterAndParseRelationToAvro(sourceRelation, dataInfoBasedApprover, docProjectConverter,
                     REL_TYPE_RESULT_PROJECT, SUBREL_TYPE_OUTCOME, REL_NAME_IS_PRODUCED_BY);
-            JavaRDD<ProjectToOrganization> projOrgRelation = filterAndParseRelationToAvro(sourceRelation, dataInfoBasedApprover, projectOrganizationConverter, 
-                    REL_TYPE_PROJECT_ORGANIZATION, SUBREL_TYPE_PARTICIPATION, REL_NAME_HAS_PARTICIPANT); 
-            JavaRDD<IdentifierMapping> dedupRelation = filterAndParseRelationToAvro(sourceRelation, dataInfoBasedApprover, deduplicationMappingConverter, 
-                    REL_TYPE_RESULT_RESULT, SUBREL_TYPE_DEDUP, REL_NAME_MERGES); 
-            
+            JavaRDD<ProjectToOrganization> projOrgRelation = filterAndParseRelationToAvro(sourceRelation, dataInfoBasedApprover, projectOrganizationConverter,
+                    REL_TYPE_PROJECT_ORGANIZATION, SUBREL_TYPE_PARTICIPATION, REL_NAME_HAS_PARTICIPANT);
+            JavaRDD<IdentifierMapping> dedupRelation = filterAndParseRelationToAvro(sourceRelation, dataInfoBasedApprover, deduplicationMappingConverter,
+                    REL_TYPE_RESULT_RESULT, SUBREL_TYPE_DEDUP, REL_NAME_MERGES);
+
             storeInOutput(sc, docMeta, dataset, project, organization, docProjRelation, projOrgRelation, dedupRelation, params);
-            
-        } finally {
-            if (Objects.nonNull(session) && !isSparkSessionManagedOutside) {
-                session.stop();
-            }
-        }
+        });
     }
 
     /**
@@ -420,8 +411,8 @@ public class ImportInformationSpaceJob {
     @Parameters(separators = "=")
     private static class ImportInformationSpaceJobParameters {
 
-        @Parameter(names = "-sparkSessionManagedOutside", required = false)
-        private Boolean sparkSessionManagedOutside;
+        @Parameter(names = "-sharedSparkSession", required = false)
+        private Boolean sharedSparkSession = Boolean.FALSE;
         
         @Parameter(names = "-skipDeletedByInference", required = true)
         private String skipDeletedByInference;
