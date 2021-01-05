@@ -4,7 +4,6 @@ import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.ExtraInfo;
 import eu.dnetlib.dhp.schema.oaf.Result;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
-import eu.dnetlib.iis.common.model.conversion.TrustLevelConverter;
 import eu.dnetlib.iis.common.model.extrainfo.ExtraInfoConstants;
 import eu.dnetlib.iis.common.model.extrainfo.citations.BlobCitationEntry;
 import eu.dnetlib.iis.common.model.extrainfo.converter.CitationsExtraInfoSerDe;
@@ -109,7 +108,7 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
     public class CitationEntriesConverterTest {
 
         @Mock
-        private TrustLevelConverter trustLevelConverter;
+        private Function<Float, Float> trustLevelConverterFn;
 
         @Mock
         private CitationsActionBuilderModuleFactory.CitationEntriesConverter.ConfidenceLevelValidator confidenceLevelValidator;
@@ -134,7 +133,7 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
         public void givenConverter_whenEmptyCitationEntriesAreConverted_thenEmptyCollectionIsReturned() {
             assertTrue(citationEntriesConverter.convert(Collections.emptyList(), trustLevelThreshold).isEmpty());
 
-            verify(trustLevelConverter, atLeastOnce()).convertToConfidenceLevel(trustLevelThreshold);
+            verify(trustLevelConverterFn, atLeastOnce()).apply(trustLevelThreshold);
         }
 
         @Test
@@ -145,7 +144,7 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
             CitationEntry normalizedMatchingResultCitationEntry = mock(CitationEntry.class);
             BlobCitationEntry blobCitationEntryForNotMatchingResultCitationEntry = mock(BlobCitationEntry.class);
             BlobCitationEntry blobCitationEntryForMatchingResultCitationEntry = mock(BlobCitationEntry.class);
-            when(trustLevelConverter.convertToConfidenceLevel(trustLevelThreshold)).thenReturn(0.1f);
+            when(trustLevelConverterFn.apply(trustLevelThreshold)).thenReturn(0.1f);
             when(confidenceLevelValidator.validate(notMatchingResultCitationEntry, 0.1f))
                     .thenReturn(notMatchingResultCitationEntry);
             when(confidenceLevelValidator.validate(matchingResultCitationEntry, 0.1f))

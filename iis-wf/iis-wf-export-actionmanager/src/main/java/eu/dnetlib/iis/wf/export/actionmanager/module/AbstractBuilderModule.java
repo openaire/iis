@@ -3,7 +3,7 @@ package eu.dnetlib.iis.wf.export.actionmanager.module;
 import com.google.common.base.Preconditions;
 import eu.dnetlib.dhp.schema.oaf.DataInfo;
 import eu.dnetlib.dhp.schema.oaf.Oaf;
-import eu.dnetlib.iis.common.model.conversion.ConfidenceLevelConverter;
+import eu.dnetlib.iis.common.model.conversion.ConfidenceAndTrustLevelConversionUtils;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.lang3.StringUtils;
 
@@ -68,7 +68,7 @@ public abstract class AbstractBuilderModule<S extends SpecificRecord, T extends 
      * @throws TrustLevelThresholdExceededException thrown when trust level threshold was exceeded
      */
     protected DataInfo buildInference(float confidenceLevel, String inferenceProvenance) throws TrustLevelThresholdExceededException {
-        float currentTrustLevel = new ConfidenceLevelConverter().convertToTrustLevel(confidenceLevel);
+        float currentTrustLevel = ConfidenceAndTrustLevelConversionUtils.confidenceLevelToTrustLevel(confidenceLevel);
         if (trustLevelThreshold == null || currentTrustLevel >= trustLevelThreshold) {
             if (StringUtils.isNotBlank(inferenceProvenance)) {
                 return buildInferenceForTrustLevel(BuilderModuleHelper.getDecimalFormat().format(currentTrustLevel), 
