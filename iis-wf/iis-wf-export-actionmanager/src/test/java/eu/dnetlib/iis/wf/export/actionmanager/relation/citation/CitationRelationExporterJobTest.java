@@ -55,7 +55,7 @@ class CitationRelationExporterJobTest extends TestWithSharedSparkSession {
         Path outputReportPath = rootOutputPath.resolve("report");
 
         CitationRelationExporterJob.main(new String[]{
-                "-isSparkSessionManaged", Boolean.FALSE.toString(),
+                "-sharedSparkSession",
                 "-inputCitationsPath", inputCitationsPath.toString(),
                 "-outputRelationPath", outputRelationPath.toString(),
                 "-outputReportPath", outputReportPath.toString(),

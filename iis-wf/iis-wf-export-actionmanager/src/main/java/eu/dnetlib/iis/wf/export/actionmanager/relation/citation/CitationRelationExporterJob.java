@@ -33,7 +33,7 @@ public class CitationRelationExporterJob {
         Float trustLevelThreshold = ConfidenceLevelUtils.evaluateConfidenceLevelThreshold(params.trustLevelThreshold);
         logger.info("Trust level threshold to be used: {}.", trustLevelThreshold);
 
-        runWithSparkSession(new SparkConf(), params.isSparkSessionManaged, spark -> {
+        runWithSparkSession(new SparkConf(), params.isSparkSessionShared, spark -> {
             clearOutput(spark, params.outputRelationPath, params.outputReportPath);
 
             Dataset<Row> citations = readCitations(spark, params.inputCitationsPath);
@@ -54,8 +54,8 @@ public class CitationRelationExporterJob {
 
     @Parameters(separators = "=")
     private static class JobParameters {
-        @Parameter(names = "-isSparkSessionManaged", arity = 1)
-        private Boolean isSparkSessionManaged = Boolean.TRUE;
+        @Parameter(names = "-sharedSparkSession")
+        private Boolean isSparkSessionShared = Boolean.FALSE;
 
         @Parameter(names = "-inputCitationsPath", required = true)
         private String inputCitationsPath;
