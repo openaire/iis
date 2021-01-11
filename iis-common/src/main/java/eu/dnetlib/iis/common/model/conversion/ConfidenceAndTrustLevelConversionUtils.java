@@ -22,7 +22,7 @@ public class ConfidenceAndTrustLevelConversionUtils {
      * @return Float with corresponding trust level value.
      */
     public static Float confidenceLevelToTrustLevel(Float confidenceLevel) {
-        return Objects.nonNull(confidenceLevel) ? confidenceLevel * confidenceToTrustConversionFactor : null;
+        return Objects.nonNull(confidenceLevel) ? confidenceLevelToTrustLevel(confidenceLevel.floatValue()) : null;
     }
 
     /**
@@ -45,7 +45,7 @@ public class ConfidenceAndTrustLevelConversionUtils {
      * @return Float corresponding to confidence level value.
      */
     public static Float trustLevelToConfidenceLevel(Float trustLevel) {
-        return Objects.nonNull(trustLevel) ? trustLevel * trustToConfidenceConversionFactor : null;
+        return Objects.nonNull(trustLevel) ? trustLevelToConfidenceLevel(trustLevel.floatValue()) : null;
     }
 
     /**
