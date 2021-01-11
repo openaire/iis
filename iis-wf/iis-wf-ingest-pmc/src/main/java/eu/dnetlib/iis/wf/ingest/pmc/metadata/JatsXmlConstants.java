@@ -46,6 +46,7 @@ public final class JatsXmlConstants {
     protected static final String ELEM_CITATION = "citation";
     protected static final String ELEM_ELEMENT_CITATION = "element-citation";
     protected static final String ELEM_MIXED_CITATION = "mixed-citation";
+    protected static final String ELEM_NLM_CITATION = "nlm-citation";
 //  attributes
     protected static final String PUB_ID_TYPE = "pub-id-type";
     protected static final String ATTR_ARTICLE_TYPE = "article-type";
