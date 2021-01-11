@@ -121,7 +121,7 @@ public class ImportInformationSpaceJob {
         SparkConf conf = SparkConfHelper.withKryo(new SparkConf());
         conf.registerKryoClasses(OafModelUtils.provideOafClasses());
 
-        runWithSparkSession(conf, params.sharedSparkSession, session -> {
+        runWithSparkSession(conf, params.isSparkSessionShared, session -> {
             session = SparkSession.builder().config(conf).getOrCreate();
             JavaSparkContext sc = JavaSparkContext.fromSparkContext(session.sparkContext());
 
@@ -412,7 +412,7 @@ public class ImportInformationSpaceJob {
     private static class ImportInformationSpaceJobParameters {
 
         @Parameter(names = "-sharedSparkSession")
-        private Boolean sharedSparkSession = Boolean.FALSE;
+        private Boolean isSparkSessionShared = Boolean.FALSE;
         
         @Parameter(names = "-skipDeletedByInference", required = true)
         private String skipDeletedByInference;
