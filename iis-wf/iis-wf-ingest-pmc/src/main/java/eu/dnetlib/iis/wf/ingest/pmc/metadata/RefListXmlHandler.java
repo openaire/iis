@@ -70,7 +70,8 @@ public class RefListXmlHandler extends DefaultHandler implements ProcessingFinis
             this.currentValue.setLength(0);
         } else if (isWithinElement(qName, ELEM_PUB_ID, parents, ELEM_CITATION) ||
                 isWithinElement(qName, ELEM_PUB_ID, parents, ELEM_ELEMENT_CITATION) ||
-                isWithinElement(qName, ELEM_PUB_ID, parents, ELEM_MIXED_CITATION)) {
+                isWithinElement(qName, ELEM_PUB_ID, parents, ELEM_MIXED_CITATION) ||
+                isWithinElement(qName, ELEM_PUB_ID, parents, ELEM_NLM_CITATION)) {
             this.currentReferenceIdType = attributes.getValue(PUB_ID_TYPE);
             this.currentValue.setLength(0);
         } else if (isElement(qName, ELEM_REF)) {
@@ -126,7 +127,8 @@ public class RefListXmlHandler extends DefaultHandler implements ProcessingFinis
             this.currentGivenNames = null;
         } else if (isWithinElement(qName, ELEM_CITATION, parents, ELEM_REF) ||
                 isWithinElement(qName, ELEM_ELEMENT_CITATION, parents, ELEM_REF) ||
-                isWithinElement(qName, ELEM_MIXED_CITATION, parents, ELEM_REF)) {
+                isWithinElement(qName, ELEM_MIXED_CITATION, parents, ELEM_REF) ||
+                isWithinElement(qName, ELEM_NLM_CITATION, parents, ELEM_REF)) {
             if (!this.currentRefMetaBuilder.hasText() && 
                     this.currentReferenceTextExplicitlySet && 
                     this.currentReferenceText.length()>0) {
@@ -172,7 +174,8 @@ public class RefListXmlHandler extends DefaultHandler implements ProcessingFinis
             if (hasAmongParents(this.parents, ELEM_REF)) {
                 if (isWithinElement(currentElement, ELEM_CITATION, parents, ELEM_REF) ||
                         isWithinElement(currentElement, ELEM_ELEMENT_CITATION, parents, ELEM_REF) ||
-                        isWithinElement(currentElement, ELEM_MIXED_CITATION, parents, ELEM_REF)) {
+                        isWithinElement(currentElement, ELEM_MIXED_CITATION, parents, ELEM_REF) ||
+                        isWithinElement(currentElement, ELEM_NLM_CITATION, parents, ELEM_REF)) {
 //                  citation element contents
                     char[] chunk = new char[length];
                     System.arraycopy(ch, start, chunk, 0, length);
