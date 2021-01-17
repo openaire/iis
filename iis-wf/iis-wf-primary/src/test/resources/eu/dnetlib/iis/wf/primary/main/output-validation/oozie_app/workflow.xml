@@ -1,0 +1,90 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-primary_main_output_validation">
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+    <start to="primary_main"/>
+
+    <action name="primary_main">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/primary_main</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>import_islookup_service_location</name>
+                    <value>$UNDEFINED$</value>
+                </property>
+                <property>
+                    <name>import_infospace_graph_location</name>
+                    <value>$UNDEFINED$</value>
+                </property>
+                <property>
+                    <name>import_patent_tsv</name>
+                    <value>$UNDEFINED$</value>
+                </property>
+                <property>
+                    <name>ingest_pmc_cache_location</name>
+                    <value>$UNDEFINED$</value>
+                </property>
+                <property>
+                    <name>metadataextraction_cache_location</name>
+                    <value>$UNDEFINED$</value>
+                </property>
+                <property>
+                    <name>software_webcrawl_cache_location</name>
+                    <value>$UNDEFINED$</value>
+                </property>
+                <property>
+                    <name>patent_cache_location</name>
+                    <value>$UNDEFINED$</value>
+                </property>
+                <property>
+                    <name>citationmatchingFuzzyNumberOfPartitions</name>
+                    <value>$UNDEFINED$</value>
+                </property>
+                <property>
+                    <name>export_patent_date_of_collection</name>
+                    <value>$UNDEFINED$</value>
+                </property>
+                <property>
+                    <name>output_remote_location</name>
+                    <value>/user/root/</value>
+                </property>
+                <property>
+                    <name>sparkDriverMemory</name>
+                    <value>$UNDEFINED$</value>
+                </property>
+                <property>
+                    <name>sparkExecutorMemory</name>
+                    <value>$UNDEFINED$</value>
+                </property>
+                <property>
+                    <name>sparkExecutorCores</name>
+                    <value>$UNDEFINED$</value>
+                </property>
+                <property>
+                    <name>metric_pusher_address</name>
+                    <value>$UNDEFINED$</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="fail"/>
+        <error to="end"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>
