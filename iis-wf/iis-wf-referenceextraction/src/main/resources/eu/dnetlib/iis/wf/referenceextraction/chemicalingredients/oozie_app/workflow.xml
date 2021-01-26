@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="referenceextraction_chemicalingredients">
+	
+	<parameters>
+		<property>
+			<name>input</name>
+			<description></description>
+		</property>
+		<property>
+			<name>output</name>
+			<description></description>
+		</property>
+        <property>
+            <name>oozieActionShareLibForSpark2</name>
+            <description>oozie action sharelib for spark 2.*</description>
+        </property>
+        <property>
+            <name>spark2ExtraListeners</name>
+            <value>com.cloudera.spark.lineage.NavigatorAppListener</value>
+            <description>spark 2.* extra listeners classname</description>
+        </property>
+        <property>
+            <name>spark2SqlQueryExecutionListeners</name>
+            <value>com.cloudera.spark.lineage.NavigatorQueryListener</value>
+            <description>spark 2.* sql query execution listeners classname</description>
+        </property>
+        <property>
+            <name>spark2YarnHistoryServerAddress</name>
+            <description>spark 2.* yarn history server address</description>
+        </property>
+        <property>
+            <name>spark2EventLogDir</name>
+            <description>spark 2.* event log dir location</description>
+        </property>
+	</parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
+	<start to="generate-schema" />
+
+	<action name="generate-schema">
+	    <java>
+	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
+	        <arg>TODO schemas to be defined</arg>
+	        <capture-output />
+	    </java>
+	    <ok to="" />
+	    <error to="fail" />
+	</action>
+
+    <action name="main_">
+        <map-reduce>
+            <prepare>
+                <delete path="${nameNode}${output}"/>
+            </prepare>
+            <streaming>
+                <mapper>scripts/dummy.py</mapper>
+            </streaming>
+            <configuration>
+                <property>
+                    <name>mapred.output.format.class</name>
+                    <value>com.cloudera.science.avro.streaming.AvroAsJSONOutputFormat</value>
+                </property>
+                <property>
+                    <name>mapred.input.format.class</name>
+                    <value>com.cloudera.science.avro.streaming.AvroAsJSONInputFormat</value>
+                </property>
+                <!-- # Custom settings for this workflow node -->
+                <!-- We do not use any reducers, so we set their number to 0 -->
+                <property>
+                    <name>mapreduce.job.reduces</name>
+                    <value>0</value>
+                </property>
+                
+                <!-- INPUT -->
+                <property>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
+                    <value>${input}</value>
+                </property>
+
+                <property>
+                    <name>input.schema.literal</name>
+                    <value>${wf:actionData('generate-schema')['TODO define input schema once explicitly created']}</value>
+                </property>
+
+				<!-- OUTPUT -->
+                <property>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
+                    <value>${output}</value>
+                </property>          
+
+                <property>
+                    <name>output.schema.literal</name>
+                    <value>${wf:actionData('generate-schema')['TODO define output schema']}</value>
+                </property>
+
+				<!-- this one is required due to the large amount of time taken 
+					by process storing plaintexts into the database -->
+				<property>
+					<name>mapreduce.task.timeout</name>
+					<value>43200000</value>
+				</property>
+                <property>
+                    <name>oozie.action.external.stats.write</name>
+                    <value>true</value>
+                </property>
+            </configuration>
+        </map-reduce>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+    
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+        			[${wf:errorMessage(wf:lastErrorNode())}]
+        		</message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>
