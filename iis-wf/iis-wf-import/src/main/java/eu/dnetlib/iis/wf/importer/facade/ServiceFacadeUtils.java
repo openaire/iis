@@ -5,6 +5,7 @@ import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_
 import java.lang.reflect.Constructor;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 
@@ -62,7 +63,19 @@ public final class ServiceFacadeUtils {
     public static <T> T instantiate(Configuration config) throws ServiceFacadeException {
         return instantiate(buildParameters(config));
     }
-    
+
+    /**
+     * Instantiates service based on provided service factory classname and parameters.
+     *
+     * @param serviceFactoryClassName  classname of service factory to be instantiated
+     * @param serviceFactoryParameters set of parameters required for service instantiation
+     */
+    public static <T> T instantiate(String serviceFactoryClassName, Map<String, String> serviceFactoryParameters) throws ServiceFacadeException {
+        Map<String, String> parameters = Maps.newHashMap();
+        parameters.put(ImportWorkflowRuntimeParameters.IMPORT_FACADE_FACTORY_CLASS, serviceFactoryClassName);
+        parameters.putAll(serviceFactoryParameters);
+        return instantiate(parameters);
+    }
 
     // ------------------------ PRIVATE --------------------------
     
