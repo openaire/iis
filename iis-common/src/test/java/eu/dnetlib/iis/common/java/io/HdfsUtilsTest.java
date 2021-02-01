@@ -2,7 +2,9 @@ package eu.dnetlib.iis.common.java.io;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.PathFilter;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -62,6 +64,18 @@ public class HdfsUtilsTest {
         Files.createTempFile(tempDir, "not_count_me", "b");
 
         int result = HdfsUtils.countFiles(new Configuration(), tempDir.toString(), x -> x.getName().endsWith("a"));
+
+        assertEquals(2, result);
+    }
+
+    @Test
+    @DisplayName("Count files properly counts files with an extension")
+    public void givenAPathToDir_whenCountFilesIsCalledWithAnExtension_thenProperFileCountIsReturned(@TempDir Path tempDir) throws IOException {
+        Files.createTempFile(tempDir, "count_me", "a");
+        Files.createTempFile(tempDir, "count_me", "a");
+        Files.createTempFile(tempDir, "not_count_me", "b");
+
+        int result = HdfsUtils.countFiles(new Configuration(), tempDir.toString(), "a");
 
         assertEquals(2, result);
     }

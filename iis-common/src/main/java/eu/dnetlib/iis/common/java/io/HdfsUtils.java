@@ -67,4 +67,16 @@ public final class HdfsUtils {
         }
         throw new RuntimeException(String.format("Path does not exist or is not a directory: %s", pathname));
     }
+
+    /**
+     * Counts files in a dir.
+     *
+     * @param hadoopConf Configuration of hadoop env
+     * @param pathname   Path to a dir with files
+     * @param extension  Extension of files to be counted
+     * @return File count of files with the extension
+     */
+    public static int countFiles(Configuration hadoopConf, String pathname, String extension) throws IOException {
+        return countFiles(hadoopConf, pathname, path -> path.getName().endsWith(extension));
+    }
 }
