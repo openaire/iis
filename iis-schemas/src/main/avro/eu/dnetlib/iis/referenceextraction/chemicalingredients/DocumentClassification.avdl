@@ -1,0 +1,16 @@
+@namespace("eu.dnetlib.iis.referenceextraction.chemicalingredients.schemas")
+protocol IIS{
+
+    record DocumentClassification {
+//      ID of the document, foreign key: Document.id ("document" data store)
+        string id;
+
+//      flag indicating the document is relevant
+        boolean relevant = false;
+
+//      Find more details on `confidenceLevel` constraints in eu/dnetlib/iis/README.markdown file.
+        float confidenceLevel;
+        
+    }
+
+}

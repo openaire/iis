@@ -4,11 +4,11 @@
 	<parameters>
 		<property>
 			<name>input</name>
-			<description></description>
+			<description>records compatible with eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal schema including id and abstract required fields</description>
 		</property>
 		<property>
 			<name>output</name>
-			<description></description>
+			<description>output records compatible with eu.dnetlib.iis.referenceextraction.chemicalingredients.schemas.DocumentClassification schema</description>
 		</property>
         <property>
             <name>oozieActionShareLibForSpark2</name>
@@ -55,20 +55,21 @@
 	<action name="generate-schema">
 	    <java>
 	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
-	        <arg>TODO schemas to be defined</arg>
+	        <arg>eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal</arg>
+            <arg>eu.dnetlib.iis.referenceextraction.chemicalingredients.schemas.DocumentClassification</arg>
 	        <capture-output />
 	    </java>
-	    <ok to="" />
+	    <ok to="classify" />
 	    <error to="fail" />
 	</action>
 
-    <action name="main_">
+    <action name="classify">
         <map-reduce>
             <prepare>
                 <delete path="${nameNode}${output}"/>
             </prepare>
             <streaming>
-                <mapper>scripts/dummy.py</mapper>
+                <mapper>scripts/NLP_utils/data_mining/classify.py</mapper>
             </streaming>
             <configuration>
                 <property>
@@ -94,7 +95,7 @@
 
                 <property>
                     <name>input.schema.literal</name>
-                    <value>${wf:actionData('generate-schema')['TODO define input schema once explicitly created']}</value>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal']}</value>
                 </property>
 
 				<!-- OUTPUT -->
@@ -105,7 +106,7 @@
 
                 <property>
                     <name>output.schema.literal</name>
-                    <value>${wf:actionData('generate-schema')['TODO define output schema']}</value>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.chemicalingredients.schemas.DocumentClassification']}</value>
                 </property>
 
 				<!-- this one is required due to the large amount of time taken 
