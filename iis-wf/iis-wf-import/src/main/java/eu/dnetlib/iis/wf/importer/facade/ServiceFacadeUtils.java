@@ -67,13 +67,13 @@ public final class ServiceFacadeUtils {
     /**
      * Instantiates service based on provided service factory classname and parameters.
      *
-     * @param serviceFactoryClassName  classname of service factory to be instantiated
-     * @param serviceFactoryParameters set of parameters required for service instantiation
+     * @param serviceFacadeFactoryClassName  classname of service facade factory to be instantiated
+     * @param serviceFacadeFactoryParameters set of parameters required for service instantiation
      */
-    public static <T> T instantiate(String serviceFactoryClassName, Map<String, String> serviceFactoryParameters) throws ServiceFacadeException {
+    public static <T> T instantiate(String serviceFacadeFactoryClassName, Map<String, String> serviceFacadeFactoryParameters) throws ServiceFacadeException {
         Map<String, String> parameters = Maps.newHashMap();
-        parameters.put(ImportWorkflowRuntimeParameters.IMPORT_FACADE_FACTORY_CLASS, serviceFactoryClassName);
-        parameters.putAll(serviceFactoryParameters);
+        parameters.put(ImportWorkflowRuntimeParameters.IMPORT_FACADE_FACTORY_CLASS, serviceFacadeFactoryClassName);
+        parameters.putAll(serviceFacadeFactoryParameters);
         return instantiate(parameters);
     }
 
