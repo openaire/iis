@@ -69,7 +69,7 @@
                 <delete path="${nameNode}${output}"/>
             </prepare>
             <streaming>
-                <mapper>scripts/NLP_utils/data_mining/classify.py</mapper>
+                <mapper>scripts/Ingredio_NLP_utils/data_mining/classify.py</mapper>
             </streaming>
             <configuration>
                 <property>
