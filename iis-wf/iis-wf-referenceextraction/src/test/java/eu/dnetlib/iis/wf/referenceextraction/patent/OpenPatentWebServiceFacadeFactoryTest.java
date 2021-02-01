@@ -12,11 +12,6 @@ import java.util.Map;
 import static eu.dnetlib.iis.wf.referenceextraction.patent.OpenPatentWebServiceFacadeFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * {@link OpenPatentWebServiceFacadeFactory} test class.
- * @author mhorst
- *
- */
 public class OpenPatentWebServiceFacadeFactoryTest {
 
     @Test

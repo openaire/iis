@@ -230,7 +230,7 @@ public class OpenPatentWebServiceFacadeTest {
 
         @Test
         @DisplayName("Open patent web service facade returns persistent failure for HTTP 200 server reply and null entity")
-        public void testGetPatentMetadataForHttp200AndNullEntity() throws Exception {
+        public void testGetPatentMetadataForHttp200WithNullEntity() throws Exception {
             // given
             ImportedPatent.Builder patentBuilder = initializeWithDummyValues();
             String expectedResult = "this is expected result";
