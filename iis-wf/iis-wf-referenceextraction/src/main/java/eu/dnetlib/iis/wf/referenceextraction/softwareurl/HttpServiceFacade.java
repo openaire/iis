@@ -7,21 +7,20 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
-import java.util.NoSuchElementException;
+import java.util.Objects;
 
+import eu.dnetlib.iis.wf.referenceextraction.FacadeContentRetriever;
+import eu.dnetlib.iis.wf.referenceextraction.FacadeContentRetrieverResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.dnetlib.iis.wf.importer.HttpClientUtils;
-import eu.dnetlib.iis.wf.referenceextraction.ContentRetrieverResponse;
-import eu.dnetlib.iis.wf.referenceextraction.RetryLimitExceededException;
 
 /**
  * HTTP based content retriever.
@@ -29,12 +28,12 @@ import eu.dnetlib.iis.wf.referenceextraction.RetryLimitExceededException;
  * @author mhorst
  *
  */
-public class HttpContentRetriever implements ContentRetriever {
+public class HttpServiceFacade extends FacadeContentRetriever<String, String> {
 
     private static final long serialVersionUID = -6879262115292175343L;
-    
-    private static final Logger log = LoggerFactory.getLogger(HttpContentRetriever.class);
-    
+
+    private static final Logger log = LoggerFactory.getLogger(HttpServiceFacade.class);
+
     private static final String HEADER_LOCATION = "Location";
     
     /**
@@ -55,36 +54,26 @@ public class HttpContentRetriever implements ContentRetriever {
     // to be reinitialized after deserialization
     private transient CloseableHttpClient httpClient;
 
-    
     // ----------------------------------------- CONSTRUCTORS ---------------------------------------
-    
-    
-    public HttpContentRetriever(int connectionTimeout, int readTimeout, int maxPageContentLength,
-            long throttleSleepTime, int maxRetriesCount) {
+
+    public HttpServiceFacade(int connectionTimeout, int readTimeout, int maxPageContentLength,
+                             long throttleSleepTime, int maxRetriesCount) {
         initialize(connectionTimeout, readTimeout, maxPageContentLength, throttleSleepTime, maxRetriesCount);
     }
 
-    
-    // ----------------------------------------- LOGIC ----------------------------------------------
-    
-    @Override
-    public ContentRetrieverResponse retrieveUrlContent(CharSequence url) {
-
-        long startTime = System.currentTimeMillis();
-
-        log.info("starting content retrieval for url: {}", url);
-        try {
-            return retrieveUrlContent(url.toString(), 0);
-        } catch (Exception e) {
-            log.error("content retrieval failed for url: " + url, e);
-            return new ContentRetrieverResponse(e);
-        } finally {
-            log.info("finished content retrieval for url: {} in {} ms", url, (System.currentTimeMillis() - startTime));
-        }
-    }
-    
     // ----------------------------------------- PRIVATE ------------------------------------------------
-    
+
+    /**
+     * Builds url to query for a http service.
+     *
+     * @param objToBuildUrl Url for querying.
+     * @return Url to query for http service.
+     */
+    @Override
+    protected String buildUrl(String objToBuildUrl) {
+        return objToBuildUrl;
+    }
+
     /**
      * Retrieves web page content from given url.
      * 
@@ -92,52 +81,58 @@ public class HttpContentRetriever implements ContentRetriever {
      * not to hit the ConnectionPoolTimeoutException when connecting the same host
      * more than 2 times within recursion (e.g. when reattepmting).
      */
-    private ContentRetrieverResponse retrieveUrlContent(String currentUrl, int retryCount) throws Exception {
-        
+    @Override
+    protected FacadeContentRetrieverResponse<String> retrieveContentOrThrow(String url, int retryCount) throws Exception {
         if (retryCount > maxRetriesCount) {
-            String message = String.format("number of maximum retries exceeded: '%d' for url: %s", maxRetriesCount, currentUrl);
-            log.error(message);
-            return new ContentRetrieverResponse(new RetryLimitExceededException(message));
+            return failureWhenOverMaxRetries(url, maxRetriesCount);
         }
-        
-        try (CloseableHttpResponse httpResponse = httpClient.execute(new HttpGet(currentUrl))) {
-            
+
+        try (CloseableHttpResponse httpResponse = httpClient.execute(new HttpGet(url))) {
             int statusCode = httpResponse.getStatusLine().getStatusCode();
             
             switch (statusCode) {
-            case HttpURLConnection.HTTP_OK: {
-                return readPageContent(httpResponse.getEntity(), maxPageContentLength, currentUrl);
-            }
-            case HttpURLConnection.HTTP_NOT_FOUND: {
-                return new ContentRetrieverResponse(new NoSuchElementException("unable to find page at: " + currentUrl));
-            }
-            case HttpURLConnection.HTTP_MOVED_TEMP:
-            case HttpURLConnection.HTTP_MOVED_PERM:
-            case HttpURLConnection.HTTP_SEE_OTHER: {
-                String redirectedUrl = getHeaderValue(httpResponse.getAllHeaders(), HEADER_LOCATION);
-                if (StringUtils.isNotBlank(redirectedUrl)) {
-                    log.info("got {} response code, redirecting to {}, server response: {}", statusCode,
-                            redirectedUrl, EntityUtils.toString(httpResponse.getEntity()));
-                    return retrieveUrlContent(redirectedUrl, ++retryCount);
-                } else {
-                    return new ContentRetrieverResponse(
-                            new RuntimeException("resource was moved, missing redirect header for the url: " + currentUrl));
+                case HttpURLConnection.HTTP_OK: {
+                    HttpEntity entity = httpResponse.getEntity();
+                    if (!isResponseEntityValid(entity)) {
+                        return FacadeContentRetrieverResponse.persistentFailure(new HttpServiceFacadeException(
+                                "got empty entity in response, server response: " + httpResponse));
+                    }
+                    return readPageContent(entity, maxPageContentLength, url);
                 }
-            }
-            case HTTP_TOO_MANY_REQUESTS: {
-                log.warn("got {} response code, potential reason: rate limit reached. Delaying for {} ms, server response: {}", statusCode,
-                        throttleSleepTime, EntityUtils.toString(httpResponse.getEntity()));
-                Thread.sleep(throttleSleepTime);
-                return retrieveUrlContent(currentUrl, ++retryCount);
-            }
-            default: {
-                return new ContentRetrieverResponse(new RuntimeException(String.format(
-                        "got unsupported HTTP response code: %d when accessing page at url: %s", statusCode, currentUrl)));
-            }
+                case HttpURLConnection.HTTP_MOVED_PERM:
+                case HttpURLConnection.HTTP_MOVED_TEMP:
+                case HttpURLConnection.HTTP_SEE_OTHER: {
+                    String redirectedUrl = getHeaderValue(httpResponse.getAllHeaders(), HEADER_LOCATION);
+                    if (StringUtils.isNotBlank(redirectedUrl)) {
+                        log.info("got {} response code, redirecting to {}, server response: {}", statusCode,
+                                redirectedUrl, httpResponse);
+                        return retrieveContentOrThrow(redirectedUrl, ++retryCount);
+                    }
+                    return FacadeContentRetrieverResponse.persistentFailure(new HttpServiceFacadeException(
+                            "resource was moved, missing redirect header for the url: " + url));
+                }
+                case HttpURLConnection.HTTP_NOT_FOUND: {
+                    return FacadeContentRetrieverResponse.persistentFailure(new HttpServiceFacadeException(
+                            "unable to find page at: " + url));
+                }
+                case HTTP_TOO_MANY_REQUESTS: {
+                    log.warn("got {} response code, potential reason: rate limit reached. Delaying for {} ms, server response: {}",
+                            statusCode, throttleSleepTime, httpResponse);
+                    Thread.sleep(throttleSleepTime);
+                    return retrieveContentOrThrow(url, ++retryCount);
+                }
+                default: {
+                    return FacadeContentRetrieverResponse.transientFailure(new HttpServiceFacadeException(String.format(
+                            "got unsupported HTTP response code: %d when accessing page at url: %s", statusCode, url)));
+                }
             }
         }
     }
-    
+
+    private static Boolean isResponseEntityValid(HttpEntity entity) {
+        return Objects.nonNull(entity);
+    }
+
     private static String getHeaderValue(Header[] headers, String headerName) {
         if (headers != null) {
             for (Header header : headers) {
@@ -148,8 +143,8 @@ public class HttpContentRetriever implements ContentRetriever {
         }
         return null;
     }
-    
-    private static ContentRetrieverResponse readPageContent(HttpEntity httpEntity, int maxPageContentLength, String url) throws IOException {
+
+    private static FacadeContentRetrieverResponse<String> readPageContent(HttpEntity httpEntity, int maxPageContentLength, String url) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(httpEntity.getContent(), StandardCharsets.UTF_8))) {
             StringBuilder pageContent = new StringBuilder();
             String inputLine;
@@ -162,10 +157,10 @@ public class HttpContentRetriever implements ContentRetriever {
                 } else {
                     log.warn("page content from URL: '{}' exceeded page length limit: {}, returning truncated page content",
                             url, maxPageContentLength);
-                    return new ContentRetrieverResponse(pageContent.toString());
+                    return FacadeContentRetrieverResponse.success(pageContent.toString());
                 }
             }
-            return new ContentRetrieverResponse(pageContent.toString());
+            return FacadeContentRetrieverResponse.success(pageContent.toString());
         }
     }
     
