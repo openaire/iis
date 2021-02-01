@@ -20,10 +20,7 @@ import org.apache.curator.test.TestingServer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.ha.ZKFailoverController;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
@@ -33,14 +30,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 
- * @author mhorst
- *
- */
 @SlowTest
 public class CachedWebCrawlerJobTest {
 
@@ -120,7 +111,7 @@ public class CachedWebCrawlerJobTest {
         // assert
         Configuration conf = new Configuration();
 
-        assertEquals(2, HdfsUtils.countFiles(conf, outputPath, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsUtils.countFiles(conf, outputPath, DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputPath, jsonOutputFile, DocumentToSoftwareUrlWithSource.class);
         
         // evaluating cache contents
@@ -129,26 +120,24 @@ public class CachedWebCrawlerJobTest {
 
         Path textCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(cacheRootDir, cacheId, CacheRecordType.text);
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, textCacheLocation.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsUtils.countFiles(conf, textCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(textCacheLocation.toString(), jsonCacheFile, DocumentText.class);
         
         // evaluating faults
         Path faultCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(cacheRootDir, cacheId, CacheRecordType.fault);
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, faultCacheLocation.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsUtils.countFiles(conf, faultCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         assertEquals(0, AvroTestUtils.readLocalAvroDataStore(outputFaultPath).size());
         List<Fault> cachedFaults = AvroTestUtils.readLocalAvroDataStore(faultCacheLocation.toString());
         assertEquals(0, cachedFaults.size());
      
         // evaluating report
-        assertEquals(1, HdfsUtils.countFiles(conf, outputReportPath, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(1, HdfsUtils.countFiles(conf, outputReportPath, DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportPath, jsonReportFile, ReportEntry.class);
     }
     
     @Test
-    public void obtainPageSourceAndInitializeCacheWithFault() throws IOException {
+    public void obtainPageSourceAndInitializeCacheWithPersistentFault() throws IOException {
         
         // given
         String jsonInputFile = ClassPathResourceProvider
@@ -167,12 +156,13 @@ public class CachedWebCrawlerJobTest {
                 inputPath);
         
         // execute
-        executor.execute(buildWebCrawlerJob(inputPath, outputPath, outputFaultPath, outputReportPath));
+        executor.execute(buildWebCrawlerJob(inputPath, outputPath, outputFaultPath, outputReportPath,
+                "eu.dnetlib.iis.wf.referenceextraction.softwareurl.TestServiceFacadeFactories$PersistentFailureReturningFacadeFactory"));
         
         // assert
         Configuration conf = new Configuration();
 
-        assertEquals(2, HdfsUtils.countFiles(conf, outputPath, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsUtils.countFiles(conf, outputPath, DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputPath, jsonOutputFile, DocumentToSoftwareUrlWithSource.class);
         
         // evaluating cache contents
@@ -181,12 +171,11 @@ public class CachedWebCrawlerJobTest {
 
         Path textCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(cacheRootDir, cacheId, CacheRecordType.text);
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, textCacheLocation.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsUtils.countFiles(conf, textCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(textCacheLocation.toString(), jsonCacheFile, DocumentText.class);
 
         // evaluating faults
-        assertEquals(2, HdfsUtils.countFiles(conf, outputFaultPath, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsUtils.countFiles(conf, outputFaultPath, DataStore.AVRO_FILE_EXT));
         List<Fault> resultFaults = AvroTestUtils.readLocalAvroDataStore(outputFaultPath);
         assertEquals(2, resultFaults.size());
         assertEquals(DocumentNotFoundException.class.getName(), resultFaults.get(0).getCode().toString());
@@ -196,19 +185,53 @@ public class CachedWebCrawlerJobTest {
 
         Path faultCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(cacheRootDir, cacheId, CacheRecordType.fault);
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, faultCacheLocation.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsUtils.countFiles(conf, faultCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         List<Fault> cachedFaults = AvroTestUtils.readLocalAvroDataStore(faultCacheLocation.toString());
         assertEquals(1, cachedFaults.size());
         assertEquals(DocumentNotFoundException.class.getName(), cachedFaults.get(0).getCode().toString());
         assertEquals("https://github.com/openaire/invalid", cachedFaults.get(0).getInputObjectId().toString());
         
         // evaluating report
-        assertEquals(1,
-                HdfsUtils.countFiles(conf, outputReportPath, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(1, HdfsUtils.countFiles(conf, outputReportPath, DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportPath, jsonReportFile, ReportEntry.class);
     }
-    
+
+    @Test
+    public void obtainPageSourceAndNotInitializeCacheWithTransientFault() throws IOException {
+        // given
+        String jsonInputFile = ClassPathResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/nosource/document_to_softwareurl.json");
+        String jsonOutputFile = ClassPathResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/nosource/document_to_softwareurl_with_source.json");
+        String jsonReportFile = ClassPathResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/webcrawler/nosource/report.json");
+
+        CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
+
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(jsonInputFile, DocumentToSoftwareUrl.class),
+                inputPath);
+
+        // execute
+        executor.execute(buildWebCrawlerJob(inputPath, outputPath, outputFaultPath, outputReportPath,
+                "eu.dnetlib.iis.wf.referenceextraction.softwareurl.TestServiceFacadeFactories$TransientFailureReturningFacadeFactory"));
+
+        // assert
+        Configuration conf = new Configuration();
+
+        assertEquals(2, HdfsUtils.countFiles(conf, outputPath, DataStore.AVRO_FILE_EXT));
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputPath, jsonOutputFile, DocumentToSoftwareUrlWithSource.class);
+
+        // evaluating cache contents
+        String cacheId = cacheManager.getExistingCacheId(conf, cacheRootDir);
+        assertEquals(CacheMetadataManagingProcess.UNDEFINED, cacheId);
+        assertThrows(IOException.class, () -> HdfsUtils.listDirs(conf, cacheRootDir.toString()));
+
+        // evaluating report
+        assertEquals(1, HdfsUtils.countFiles(conf, outputReportPath, DataStore.AVRO_FILE_EXT));
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportPath, jsonReportFile, ReportEntry.class);
+    }
+
     @Test
     public void obtainPageSourceAndUpdateCache() throws IOException {
         
@@ -244,9 +267,9 @@ public class CachedWebCrawlerJobTest {
         // assert
         Configuration conf = new Configuration();
 
-        assertEquals(2, HdfsUtils.countFiles(conf, outputPath, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsUtils.countFiles(conf, outputPath, DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputPath, jsonOutputFile, DocumentToSoftwareUrlWithSource.class);
-        assertEquals(2, HdfsUtils.countFiles(conf, output2Path, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsUtils.countFiles(conf, output2Path, DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(output2Path, jsonOutput2File, DocumentToSoftwareUrlWithSource.class);
         
         // evaluating cache contents
@@ -256,25 +279,24 @@ public class CachedWebCrawlerJobTest {
         Path textCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(cacheRootDir, cacheId, CacheRecordType.text);
         assertEquals(2,
-                HdfsUtils.countFiles(conf, textCacheLocation.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+                HdfsUtils.countFiles(conf, textCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(textCacheLocation.toString(), jsonCache2File, DocumentText.class);
 
         // evaluating faults
-        assertEquals(2, HdfsUtils.countFiles(conf, outputFaultPath, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsUtils.countFiles(conf, outputFaultPath, DataStore.AVRO_FILE_EXT));
         assertEquals(0, AvroTestUtils.readLocalAvroDataStore(outputFaultPath).size());
-        assertEquals(2, HdfsUtils.countFiles(conf, outputFault2Path, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsUtils.countFiles(conf, outputFault2Path, DataStore.AVRO_FILE_EXT));
         assertEquals(0, AvroTestUtils.readLocalAvroDataStore(outputFault2Path).size());
         Path faultCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(cacheRootDir, cacheId, CacheRecordType.fault);
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, faultCacheLocation.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsUtils.countFiles(conf, faultCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         List<Fault> cachedFaults = AvroTestUtils.readLocalAvroDataStore(faultCacheLocation.toString());
         assertEquals(0, cachedFaults.size());
         
         // evaluating report
-        assertEquals(1, HdfsUtils.countFiles(conf, outputReportPath, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(1, HdfsUtils.countFiles(conf, outputReportPath, DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportPath, jsonReportFile, ReportEntry.class);
-        assertEquals(1, HdfsUtils.countFiles(conf, outputReport2Path, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(1, HdfsUtils.countFiles(conf, outputReport2Path, DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReport2Path, jsonReport2File, ReportEntry.class);
     }
     
@@ -302,14 +324,14 @@ public class CachedWebCrawlerJobTest {
         // execute
         executor.execute(buildWebCrawlerJob(inputPath, outputPath, outputFaultPath, outputReportPath));
         executor.execute(buildWebCrawlerJob(inputPath, output2Path, outputFault2Path, outputReport2Path, 
-                "eu.dnetlib.iis.wf.referenceextraction.softwareurl.ExceptionThrowingContentRetrieverFactory"));
+                "eu.dnetlib.iis.wf.referenceextraction.softwareurl.TestServiceFacadeFactories$ExceptionThrowingFacadeFactory"));
         
         // assert
         Configuration conf = new Configuration();
 
-        assertEquals(2, HdfsUtils.countFiles(conf, outputPath, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsUtils.countFiles(conf, outputPath, DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputPath, jsonOutputFile, DocumentToSoftwareUrlWithSource.class);
-        assertEquals(2, HdfsUtils.countFiles(conf, output2Path, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsUtils.countFiles(conf, output2Path, DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(output2Path, jsonOutputFile, DocumentToSoftwareUrlWithSource.class);
         
         // evaluating cache contents
@@ -318,40 +340,38 @@ public class CachedWebCrawlerJobTest {
 
         Path textCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(cacheRootDir, cacheId, CacheRecordType.text);
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, textCacheLocation.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsUtils.countFiles(conf, textCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(textCacheLocation.toString(), jsonCacheFile, DocumentText.class);
 
         // evaluating faults
-        assertEquals(2, HdfsUtils.countFiles(conf, outputFaultPath, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsUtils.countFiles(conf, outputFaultPath, DataStore.AVRO_FILE_EXT));
         assertEquals(0, AvroTestUtils.readLocalAvroDataStore(outputFaultPath).size());
-        assertEquals(2, HdfsUtils.countFiles(conf, outputFault2Path, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsUtils.countFiles(conf, outputFault2Path, DataStore.AVRO_FILE_EXT));
         assertEquals(0, AvroTestUtils.readLocalAvroDataStore(outputFault2Path).size());
 
         Path faultCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(cacheRootDir, cacheId, CacheRecordType.fault);
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, faultCacheLocation.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsUtils.countFiles(conf, faultCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         List<Fault> cachedFaults = AvroTestUtils.readLocalAvroDataStore(faultCacheLocation.toString());
         assertEquals(0, cachedFaults.size());
         
         // evaluating report
-        assertEquals(1, HdfsUtils.countFiles(conf, outputReportPath, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(1, HdfsUtils.countFiles(conf, outputReportPath, DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportPath, jsonReportFile, ReportEntry.class);
-        assertEquals(1, HdfsUtils.countFiles(conf, outputReport2Path, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(1, HdfsUtils.countFiles(conf, outputReport2Path, DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReport2Path, jsonReport2File, ReportEntry.class);
     }
     
     //------------------------ PRIVATE --------------------------
     
     private SparkJob buildWebCrawlerJob(String inputPath, String outputPath, String outputFaultPath,
-            String outputReportPath, String contentRetrieverFactoryClassName) {
+            String outputReportPath, String httpServiceFacadeFactoryClassName) {
         SparkJob sparkJob = SparkJobBuilder
                 .create()
                 .setAppName("Spark WebCrawler")
                 .setMainClass(CachedWebCrawlerJob.class)
                 .addArg("-inputPath", inputPath)
-                .addArg("-contentRetrieverFactoryClassName", contentRetrieverFactoryClassName)
+                .addArg("-httpServiceFacadeFactoryClassName", httpServiceFacadeFactoryClassName)
                 .addArg("-lockManagerFactoryClassName", ZookeeperLockManagerFactory.class.getName())
                 .addArg("-numberOfEmittedFiles", "2")
                 .addArg("-numberOfPartitionsForCrawling", "1")
@@ -369,6 +389,6 @@ public class CachedWebCrawlerJobTest {
     private SparkJob buildWebCrawlerJob(String inputPath, 
             String outputPath, String outputFaultPath, String outputReportPath) {
         return buildWebCrawlerJob(inputPath, outputPath, outputFaultPath, outputReportPath,
-                "eu.dnetlib.iis.wf.referenceextraction.softwareurl.ClasspathContentRetrieverFactory");
+                "eu.dnetlib.iis.wf.referenceextraction.softwareurl.TestServiceFacadeFactories$FileContentReturningFacadeFactory");
     }
 }
