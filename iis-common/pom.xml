@@ -35,6 +35,7 @@
         <dependency>
             <groupId>eu.dnetlib.dhp</groupId>
             <artifactId>dhp-schemas</artifactId>
+            <classifier>dhp_oaf_model</classifier>
         </dependency>
 
         <dependency>
