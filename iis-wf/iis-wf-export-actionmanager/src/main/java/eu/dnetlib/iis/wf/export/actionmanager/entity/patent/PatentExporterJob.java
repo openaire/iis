@@ -168,12 +168,13 @@ public class PatentExporterJob {
         return qualifier;
     }
 
-    private static Instance buildOafEntityResultInstance(Patent patent, String patentEpoUrlRoot) {
+    private static Instance buildOafEntityResultInstance(Patent patent, String patentEpoUrlRoot, List<StructuredProperty> pids) {
         Instance instance = new Instance();
         instance.setInstancetype(buildOafEntityResultInstanceInstancetype());
         instance.setHostedby(buildOafEntityPatentKeyValue());
         instance.setCollectedfrom(buildOafEntityPatentKeyValue());
         instance.setUrl(Collections.singletonList(buildOafEntityResultInstanceUrl(patent, patentEpoUrlRoot)));
+        instance.setPid(pids);
         return instance;
     }
 
@@ -388,7 +389,7 @@ public class PatentExporterJob {
             result.setCountry(buildOafEntityResultMetadataCountries(patent.getApplicantCountryCodes()));
         }
         
-        result.setInstance(Collections.singletonList(buildOafEntityResultInstance(patent, patentEpoUrlRoot)));
+        result.setInstance(Collections.singletonList(buildOafEntityResultInstance(patent, patentEpoUrlRoot, pids)));
         return result;
     }
 
