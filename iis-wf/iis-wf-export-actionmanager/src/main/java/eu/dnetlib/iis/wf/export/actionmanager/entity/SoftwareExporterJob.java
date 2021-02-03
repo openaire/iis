@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import eu.dnetlib.dhp.schema.oaf.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,14 +29,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import eu.dnetlib.dhp.schema.action.AtomicAction;
-import eu.dnetlib.dhp.schema.oaf.DataInfo;
-import eu.dnetlib.dhp.schema.oaf.Field;
-import eu.dnetlib.dhp.schema.oaf.Instance;
-import eu.dnetlib.dhp.schema.oaf.KeyValue;
-import eu.dnetlib.dhp.schema.oaf.Qualifier;
-import eu.dnetlib.dhp.schema.oaf.Relation;
-import eu.dnetlib.dhp.schema.oaf.Software;
-import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
@@ -70,7 +63,7 @@ public class SoftwareExporterJob {
     
     private static final Qualifier INSTANCE_TYPE_SOFTWARE = buildInstanceTypeSoftware();
     
-    private static final Qualifier ACCESS_RIGHT_OPEN_SOURCE = buildAccessRightOpenSource();
+    private static final AccessRight ACCESS_RIGHT_OPEN_SOURCE = buildAccessRightOpenSource();
 
     private static final String COLLECTED_FROM_SOFTWARE_HERITAGE_BASE_ID = "SoftwareHeritage";
     
@@ -356,12 +349,14 @@ public class SoftwareExporterJob {
                 InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PUBLICATION_RESOURCE,
                 InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PUBLICATION_RESOURCE);
     }
-    
-    private static Qualifier buildAccessRightOpenSource() {
-        return buildQualifier(InfoSpaceConstants.SEMANTIC_CLASS_OPEN_SOURCE,
-                InfoSpaceConstants.SEMANTIC_CLASS_NAME_OPEN_SOURCE,
-                InfoSpaceConstants.SEMANTIC_SCHEME_DNET_ACCESS_MODES,
-                InfoSpaceConstants.SEMANTIC_SCHEME_DNET_ACCESS_MODES);
+
+    private static AccessRight buildAccessRightOpenSource() {
+        AccessRight accessRight = new AccessRight();
+        accessRight.setClassid(InfoSpaceConstants.SEMANTIC_CLASS_OPEN_SOURCE);
+        accessRight.setClassname(InfoSpaceConstants.SEMANTIC_CLASS_NAME_OPEN_SOURCE);
+        accessRight.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_ACCESS_MODES);
+        accessRight.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_ACCESS_MODES);
+        return accessRight;
     }
     
     private static Qualifier buildQualifier(String classid, String classname, String schemeid, String schemename) {
