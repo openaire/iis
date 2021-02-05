@@ -14,6 +14,7 @@ hidden var 'nihpositives' from select jmergeregexp(jgroup(word)) from (select * 
 hidden var 'nihnegatives' from select jmergeregexp(jgroup(word)) from (select * from nihnegatives order by length(word) desc);
 hidden var 'miur_unidentified' from select id from grants where fundingclass1="MIUR" and grantid="unidentified" limit 1;
 hidden var 'wt_unidentified' from select id from grants where fundingclass1="WT" and grantid="unidentified" limit 1;
+hidden var 'gsrt_unidentified' from select id from grants where fundingclass1="GSRT" and grantid="unidentified" limit 1;
 
 
 create temp table pubs as setschema 'c1,c2' select jsonpath(c1, '$.id', '$.text') from stdinput();
@@ -21,9 +22,19 @@ create temp table pubs as setschema 'c1,c2' select jsonpath(c1, '$.id', '$.text'
 create temp table matched_undefined_miur_only as select distinct docid, var('miur_unidentified') as id from (setschema 'docid,prev,middle,next'
 select c1 as docid, textwindow2s(c2,10,1,10, '\b(?:RBSI\d{2}\w{4})\b') from (setschema 'c1,c2' select * from pubs where c2 is not null)) where var('miur_unidentified') and (regexprmatches('\b(?:RBSI\d{2}\w{4})\b', middle));
 
+
 create temp table matched_undefined_wt_only as select distinct docid, var('wt_unidentified') as id from (setschema 'docid,prev,middle,next'
 select c1 as docid, textwindow2s(c2,20,2,3, '(\bWel?lcome Trust\b|\bWT\b)') from (setschema 'c1,c2' select * from pubs where c2 is not null)) where var('wt_unidentified') and (regexprmatches('\bWel?lcome Trust\b', middle) or 
 regexpcountwords('(?:\bwell?come trust\b)|(?:(?:\bthis work was|financial(?:ly)?|partial(?:ly)?|partly|(?:gratefully\s)?acknowledges?)?\s?\b(?:support|fund|suppli?)(?:ed|ing)?\s(?:by|from|in part\s(?:by|from)|through)?\s?(?:a)?\s?(?:grant)?)|(?:(?:programme|project) grant)|(?:(?:under|through)?\s?(?:the)?\s(?:grants?|contract(?:\snumber)?)\b)|(?:\bprograms? of\b)|(?:\bgrants? of\b)|(?:\bin part by\b)|(?:\bthis work could not have been completed without\b)|(?:\bcontract\b)|(?:\backnowledgments?\b)', lower(prev||' '||middle||' '||next)) > 3);
+
+create temp table matched_unidentified_gsrt_only as 
+select c1 as docid, var('gsrt_unidentified') as id, prev,middle,next from 
+(setschema 'c1, prev, middle, next' select c1, textwindow2s(keywords(upper(c2)), 10,6,10,'\bGSRT\b|\bΓΓΕΤ\b|ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ ΕΡΕΥΝΑΣ ΚΑΙ ΤΕΧΝΟΛΟΓΙΑΣ|GENERAL SECRETARIAT FOR RESEARCH AND TECHNOLOGY') from pubs where c2 is not null)
+group by docid;
+
+--select distinct c1 as docid, var('gsrt_unidentified') as id from 
+--    (select * from pubs where c2 is not null and (regexprmatches('\bGSRT\b|\bΓΓΕΤ\b',c2) or regexprmatches('ΓΕΝΙΚΗ ΓΡΑΜΜΑΤΕΙΑ ΕΡΕΥΝΑΣ ΚΑΙ ΤΕΧΝΟΛΟΓΙΑΣ|GENERAL SECRETARIAT FOR RESEARCH AND TECHNOLOGY',keywords(upper(c2))))  )
+
 
 create temp table output_table as
 
@@ -269,4 +280,6 @@ select C1 from secondary_output_table
 union all
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', '') from matched_undefined_miur_only
 union all
-select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', '') from matched_undefined_wt_only;
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', '') from matched_undefined_wt_only
+union all
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', prev||" <<< "||middle||" >>> "||next) from matched_unidentified_gsrt_only;
