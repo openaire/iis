@@ -43,10 +43,10 @@ public class CitationsExtraInfoSerDeTest {
         
         String idValue = "val";
         String idType = "type";
-        float confidenceLevel = 0.9f;
+        float trustLevel = 0.9f;
         
         List<TypedId> identifiers = new ArrayList<>();
-        identifiers.add(new TypedId(idValue, idType, confidenceLevel));
+        identifiers.add(new TypedId(idValue, idType, trustLevel));
         
         BlobCitationEntry entry = new BlobCitationEntry();
         entry.setPosition(position);
@@ -72,7 +72,7 @@ public class CitationsExtraInfoSerDeTest {
         TypedId resultId = resultEntry.getIdentifiers().get(0);
         assertEquals(idValue, resultId.getValue());
         assertEquals(idType, resultId.getType());
-        assertEquals(confidenceLevel, resultId.getConfidenceLevel(), 0.001f);
+        assertEquals(trustLevel, resultId.getTrustLevel(), 0.001f);
     }
 
 }

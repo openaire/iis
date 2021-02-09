@@ -16,13 +16,13 @@ public class TypedId {
 	@XStreamAsAttribute
 	private String type;
 	@XStreamAsAttribute
-	private float confidenceLevel;
+	private float trustLevel;
 	
 	public TypedId(String value, String type,
-			float confidenceLevel) {
+			float trustLevel) {
 		this.value = value;
 		this.type = type;
-		this.confidenceLevel = confidenceLevel;
+		this.trustLevel = trustLevel;
 	}
 	
 	public TypedId() {
@@ -45,19 +45,19 @@ public class TypedId {
 		this.type = type;
 	}
 
-	public float getConfidenceLevel() {
-		return confidenceLevel;
+	public float getTrustLevel() {
+		return trustLevel;
 	}
 
-	public void setConfidenceLevel(float confidenceLevel) {
-		this.confidenceLevel = confidenceLevel;
+	public void setTrustLevel(float trustLevel) {
+		this.trustLevel = trustLevel;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + Float.floatToIntBits(confidenceLevel);
+		result = prime * result + Float.floatToIntBits(trustLevel);
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
@@ -72,8 +72,8 @@ public class TypedId {
 		if (getClass() != obj.getClass())
 			return false;
 		TypedId other = (TypedId) obj;
-		if (Float.floatToIntBits(confidenceLevel) != Float
-				.floatToIntBits(other.confidenceLevel))
+		if (Float.floatToIntBits(trustLevel) != Float
+				.floatToIntBits(other.trustLevel))
 			return false;
 		if (type == null) {
 			if (other.type != null)

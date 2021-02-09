@@ -198,7 +198,7 @@ class CitationsActionBuilderModuleUtilsTest {
             }
 
             @Nested
-            public class ConfidenceLevelBuilderTest {
+            public class TrustLevelBuilderTest {
 
                 @Test
                 @DisplayName("Confidence level is build from citation entry with null confidence level")
@@ -206,7 +206,7 @@ class CitationsActionBuilderModuleUtilsTest {
                     CitationEntry citationEntry = buildCitationEntry(
                             5, null, "destination document id", null, Collections.emptyMap());
 
-                    Float result = CitationsActionBuilderModuleUtils.IdentifiersBuilder.TypedIdFromDestinationDocumentIdBuilder.ConfidenceLevelBuilder.build(
+                    Float result = CitationsActionBuilderModuleUtils.IdentifiersBuilder.TypedIdFromDestinationDocumentIdBuilder.TrustLevelBuilder.build(
                             citationEntry);
 
                     assertEquals(1f * InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR, result);
@@ -218,7 +218,7 @@ class CitationsActionBuilderModuleUtilsTest {
                     CitationEntry citationEntry = buildCitationEntry(
                             5, null, "destination document id", 0.5f, Collections.emptyMap());
 
-                    Float result = CitationsActionBuilderModuleUtils.IdentifiersBuilder.TypedIdFromDestinationDocumentIdBuilder.ConfidenceLevelBuilder.build(
+                    Float result = CitationsActionBuilderModuleUtils.IdentifiersBuilder.TypedIdFromDestinationDocumentIdBuilder.TrustLevelBuilder.build(
                             citationEntry);
 
                     assertEquals(0.5f * InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR, result);

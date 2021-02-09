@@ -98,16 +98,16 @@ public final class CitationsActionBuilderModuleUtils {
             }
 
             public static TypedId build(CitationEntry citationEntry) {
-                return build(citationEntry, ConfidenceLevelBuilder::build);
+                return build(citationEntry, TrustLevelBuilder::build);
             }
 
-            public static TypedId build(CitationEntry citationEntry, Function<CitationEntry, Float> confidenceLevelFn) {
+            public static TypedId build(CitationEntry citationEntry, Function<CitationEntry, Float> trustLevelFn) {
                 return new TypedId(citationEntry.getDestinationDocumentId().toString(),
                         ExtraInfoConstants.CITATION_TYPE_OPENAIRE,
-                        confidenceLevelFn.apply(citationEntry));
+                        trustLevelFn.apply(citationEntry));
             }
 
-            public static class ConfidenceLevelBuilder {
+            public static class TrustLevelBuilder {
                 public static Float build(CitationEntry citationEntry) {
                     float confidenceLevel = citationEntry.getConfidenceLevel() != null ? citationEntry.getConfidenceLevel() : 1f;
                     return ConfidenceAndTrustLevelConversionUtils.confidenceLevelToTrustLevel(confidenceLevel);
@@ -121,9 +121,9 @@ public final class CitationsActionBuilderModuleUtils {
             }
 
             public static List<TypedId> build(CitationEntry citationEntry) {
-                float confidenceLevel = ConfidenceAndTrustLevelConversionUtils.confidenceLevelToTrustLevel(1f);
+                float trustLevel = ConfidenceAndTrustLevelConversionUtils.confidenceLevelToTrustLevel(1f);
                 return citationEntry.getExternalDestinationDocumentIds().entrySet().stream()
-                        .map(x -> new TypedId(x.getValue().toString(), x.getKey().toString(), confidenceLevel))
+                        .map(x -> new TypedId(x.getValue().toString(), x.getKey().toString(), trustLevel))
                         .collect(Collectors.toList());
             }
         }
