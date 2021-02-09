@@ -172,7 +172,7 @@ public class OpenPatentWebServiceFacade extends FacadeContentRetriever<ImportedP
                             "unable to find element at: " + httpRequest.getRequestLine()));
                 }
                 default: {
-                    return FacadeContentRetrieverResponse.transientFailure(new PatentWebServiceFacadeException(String.format(
+                    return FacadeContentRetrieverResponse.persistentFailure(new PatentWebServiceFacadeException(String.format(
                             "got unhandled HTTP status code when accessing endpoint: %d, full status: %s, server response: %s",
                             statusCode, httpResponse.getStatusLine(), httpResponse)));
                 }

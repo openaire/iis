@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.common.utils;
 
-import eu.dnetlib.iis.common.java.io.HdfsUtils;
+import eu.dnetlib.iis.common.java.io.HdfsTestUtils;
 import eu.dnetlib.iis.common.java.io.SequenceFileTextValueReader;
 import eu.dnetlib.iis.common.spark.TestWithSharedSparkContext;
 import org.apache.hadoop.conf.Configuration;
@@ -42,7 +42,7 @@ public class RDDUtilsTest extends TestWithSharedSparkContext {
 
         //then
         Pattern pattern = Pattern.compile("^part-r-.\\d+$");
-        long fileCount = HdfsUtils.countFiles(new Configuration(), outputDir.toString(), x ->
+        long fileCount = HdfsTestUtils.countFiles(new Configuration(), outputDir.toString(), x ->
                 pattern.matcher(x.getName()).matches());
         assertEquals(NUMBER_OF_OUTPUT_FILES, fileCount);
 
@@ -69,7 +69,7 @@ public class RDDUtilsTest extends TestWithSharedSparkContext {
 
         //then
         Pattern pattern = Pattern.compile("^part-r-.\\d+$");
-        long fileCount = HdfsUtils.countFiles(new Configuration(), outputDir.toString(), x ->
+        long fileCount = HdfsTestUtils.countFiles(new Configuration(), outputDir.toString(), x ->
                 pattern.matcher(x.getName()).matches());
         assertEquals(NUMBER_OF_OUTPUT_FILES, fileCount);
 

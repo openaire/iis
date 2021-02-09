@@ -459,7 +459,7 @@ public class OpenPatentWebServiceFacadeTest {
     public class OpenPatentWebServiceFacadeWithHTTP500FamilyTest {
 
         @Test
-        @DisplayName("Open patent web service facade returns transient failure for HTTP 500 server reply")
+        @DisplayName("Open patent web service facade returns persistent failure for HTTP 500 server reply")
         public void testGetPatentMetadataForHttp500() throws Exception {
             // given
             ImportedPatent.Builder patentBuilder = initializeWithDummyValues();
@@ -493,7 +493,7 @@ public class OpenPatentWebServiceFacadeTest {
 
             // assert
             assertNotNull(response);
-            assertEquals(FacadeContentRetrieverResponse.TransientFailure.class, response.getClass());
+            assertEquals(FacadeContentRetrieverResponse.PersistentFailure.class, response.getClass());
             assertEquals(PatentWebServiceFacadeException.class, response.getException().getClass());
         }
     }

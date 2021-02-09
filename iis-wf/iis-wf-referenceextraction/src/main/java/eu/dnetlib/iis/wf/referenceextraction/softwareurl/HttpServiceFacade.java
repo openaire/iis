@@ -122,7 +122,7 @@ public class HttpServiceFacade extends FacadeContentRetriever<String, String> {
                     return retrieveContentOrThrow(url, ++retryCount);
                 }
                 default: {
-                    return FacadeContentRetrieverResponse.transientFailure(new HttpServiceFacadeException(String.format(
+                    return FacadeContentRetrieverResponse.persistentFailure(new HttpServiceFacadeException(String.format(
                             "got unsupported HTTP response code: %d when accessing page at url: %s", statusCode, url)));
                 }
             }

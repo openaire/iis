@@ -4,7 +4,7 @@ import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
 import eu.dnetlib.iis.common.java.io.DataStore;
-import eu.dnetlib.iis.common.java.io.HdfsUtils;
+import eu.dnetlib.iis.common.java.io.HdfsTestUtils;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.spark.TestWithSharedSparkSession;
@@ -75,7 +75,7 @@ class CitationRelationExporterJobTest extends TestWithSharedSparkSession {
                 createAtomicAction("DestinationDocumentId", "DocumentId", OafConstants.REL_CLASS_ISCITEDBY, 1.0f)
         )));
 
-        assertEquals(1, HdfsUtils.countFiles(spark().sparkContext().hadoopConfiguration(), outputReportPath.toString(),
+        assertEquals(1, HdfsTestUtils.countFiles(spark().sparkContext().hadoopConfiguration(), outputReportPath.toString(),
                 x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         List<ReportEntry> reportEntries = new AvroDatasetSupport(spark()).read(outputReportPath.toString(), ReportEntry.SCHEMA$, ReportEntry.class)
                 .collectAsList();

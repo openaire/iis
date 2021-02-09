@@ -5,7 +5,7 @@ import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.java.io.DataStore;
-import eu.dnetlib.iis.common.java.io.HdfsUtils;
+import eu.dnetlib.iis.common.java.io.HdfsTestUtils;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
@@ -91,7 +91,7 @@ public class PatentMetadataExtractorJobTest {
         assertEquals(0, generatedFaults.size());
 
         assertEquals(1,
-                HdfsUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+                HdfsTestUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         assertReports(AvroTestUtils.readLocalAvroDataStore(outputReportDir.toString()), 1, 0);
     }
     
@@ -128,7 +128,7 @@ public class PatentMetadataExtractorJobTest {
         assertEquals(0, generatedFaults.size());
 
         assertEquals(1,
-                HdfsUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+                HdfsTestUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         assertReports(AvroTestUtils.readLocalAvroDataStore(outputReportDir.toString()), 1, 0);
     }
     
@@ -165,7 +165,7 @@ public class PatentMetadataExtractorJobTest {
         assertEquals(PatentMetadataParserException.class.getCanonicalName(), fault.getCode().toString());
 
         assertEquals(1,
-                HdfsUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+                HdfsTestUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         assertReports(AvroTestUtils.readLocalAvroDataStore(outputReportDir.toString()), 1, 1);
     }
     
@@ -195,7 +195,7 @@ public class PatentMetadataExtractorJobTest {
         assertEquals(0, generatedFaults.size());
 
         assertEquals(1,
-                HdfsUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+                HdfsTestUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         assertReports(AvroTestUtils.readLocalAvroDataStore(outputReportDir.toString()), 0, 0);
     }
     

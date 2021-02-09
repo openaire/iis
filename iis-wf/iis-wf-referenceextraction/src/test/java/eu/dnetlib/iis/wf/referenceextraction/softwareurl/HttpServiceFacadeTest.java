@@ -283,7 +283,7 @@ public class HttpServiceFacadeTest {
     public class HttpServiceFacadeWithHTTP500FamilyTest {
 
         @Test
-        @DisplayName("Http service facade returns transient failure for HTTP 500 server reply")
+        @DisplayName("Http service facade returns persistent failure for HTTP 500 server reply")
         public void testGetContentResultsInExceptionForHttp500() throws Exception {
             // given
             HttpServiceFacade service = prepareValidService();
@@ -301,7 +301,7 @@ public class HttpServiceFacadeTest {
 
             // assert
             assertNotNull(response);
-            assertEquals(FacadeContentRetrieverResponse.TransientFailure.class, response.getClass());
+            assertEquals(FacadeContentRetrieverResponse.PersistentFailure.class, response.getClass());
             assertEquals(HttpServiceFacadeException.class, response.getException().getClass());
         }
     }

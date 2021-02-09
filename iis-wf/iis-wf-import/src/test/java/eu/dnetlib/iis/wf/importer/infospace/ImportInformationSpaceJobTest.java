@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.dnetlib.dhp.schema.oaf.Oaf;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.java.io.DataStore;
-import eu.dnetlib.iis.common.java.io.HdfsUtils;
+import eu.dnetlib.iis.common.java.io.HdfsTestUtils;
 import eu.dnetlib.iis.common.schemas.IdentifierMapping;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.spark.TestWithSharedSparkSession;
@@ -132,7 +132,7 @@ public class ImportInformationSpaceJobTest extends TestWithSharedSparkSession {
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.resolve(OUTPUT_NAME_DEDUP).toString(), expectedDedupMappingPath, IdentifierMapping.class);
 
         assertEquals(1,
-                HdfsUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+                HdfsTestUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportDir.toString(), expectedReportPath, ReportEntry.class);
     }
     
