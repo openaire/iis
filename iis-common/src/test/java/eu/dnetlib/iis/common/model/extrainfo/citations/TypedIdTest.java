@@ -1,7 +1,5 @@
 package eu.dnetlib.iis.common.model.extrainfo.citations;
 
-import com.thoughtworks.xstream.XStream;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,14 +40,5 @@ public class TypedIdTest {
         assertNotEquals(typedId.hashCode(), new TypedId(value, "otherType", trustLevel).hashCode());
         assertNotEquals(typedId.hashCode(), new TypedId(value, type, 0.8f).hashCode());
         assertEquals(typedId.hashCode(), new TypedId(value, type, trustLevel).hashCode());
-    }
-
-    @Test
-    @DisplayName("Serialization to XML works correctly")
-    public void givenTypedIdInstance_whenSerializedToXML_thenProperResultIsReturned() {
-        TypedId typedId = new TypedId("someValue", "someType", 0.5f);
-        String xml = "<eu.dnetlib.iis.common.model.extrainfo.citations.TypedId><value>someValue</value><type>someType</type><trustLevel>0.5</trustLevel></eu.dnetlib.iis.common.model.extrainfo.citations.TypedId>";
-        XStream xStream = new XStream();
-        assertEquals(xStream.fromXML(xml), typedId);
     }
 }
