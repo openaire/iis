@@ -30,15 +30,15 @@ class SentenceGetter(object):
             return None
             
 def create_dataset(csv_file):
+    #Load CSV
     data = pd.read_csv(csv_file, encoding="latin1").fillna(method="ffill")
     
     data.drop(['Unnamed: 0'], axis=1, inplace=True)
     data.dropna(how='any', inplace=True)
-
-    data = data.head(5000)
-           
+         
     getter = SentenceGetter(data)
-    
+    #Group into sentences
+
     sentences = [[word[0] for word in sentence] for sentence in getter.sentences]
     
     labels = [[s[2] for s in sentence] for sentence in getter.sentences]
@@ -47,7 +47,7 @@ def create_dataset(csv_file):
     tag_values.append("PAD")
     tag2idx = {t: i for i, t in enumerate(tag_values)}
     
-    
+    #Tokenize sentences
     def tokenize_and_preserve_labels(sentence, text_labels):
         tokenized_sentence = []
         labels = []
@@ -74,6 +74,7 @@ def create_dataset(csv_file):
     tokenized_texts = [token_label_pair[0] for token_label_pair in tokenized_texts_and_labels]
     labels = [token_label_pair[1] for token_label_pair in tokenized_texts_and_labels]
     
+    #Pad or cut sequences
     input_ids = pad_sequences([config.tokenizer.convert_tokens_to_ids(txt) for txt in tokenized_texts],
                               maxlen=config.MAX_LEN, dtype="long", value=0.0,
                               truncating="post", padding="post")
@@ -84,6 +85,7 @@ def create_dataset(csv_file):
     
     attention_masks = [[float(i != 0.0) for i in ii] for ii in input_ids]
     
+    #Train test split
     tr_inputs, val_inputs, tr_tags, val_tags = train_test_split(input_ids, tags,
                                                                 random_state=2018, test_size=0.1)
     tr_masks, val_masks, _, _ = train_test_split(attention_masks, input_ids,
@@ -91,6 +93,7 @@ def create_dataset(csv_file):
     
     tr_inputs, test_inputs, tr_tags, test_tags, tr_masks, test_masks = train_test_split(tr_inputs, tr_tags, tr_masks,
                                                                 random_state=2018, test_size=0.1)
+    #Convert to tensors                                                            
     tr_inputs = torch.tensor(tr_inputs)
     val_inputs = torch.tensor(val_inputs)
     tr_tags = torch.tensor(tr_tags)
@@ -114,4 +117,3 @@ def create_dataset(csv_file):
     test_sampler = RandomSampler(test_data)
     test_dataloader = DataLoader(train_data, sampler=train_sampler, batch_size=config.batch_size)
     return train_dataloader, valid_dataloader, test_dataloader, tag_values, tag2idx
-

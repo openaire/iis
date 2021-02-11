@@ -52,3 +52,6 @@ comps_found = find_compounds.find_compounds(description_list,model,tag_values)
 
 print(comps_found)
 
+syns_list = find_compounds.ingredio_DB('new_with_g.json')
+
+print(len(list(set(comps_found) - set(syns_list))))

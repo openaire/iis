@@ -2,8 +2,8 @@ import transformers
 from transformers import BertTokenizer, BertConfig,BertForTokenClassification, AdamW
 import torch
 
-csv_file = "compoundDF_BERTReady2.csv"
-MODEL_PATH = "entity_model_demo.bin"
+csv_file = "compoundDF_BERT.csv"
+MODEL_PATH = "entity_model.bin"
 MAX_LEN = 256
 batch_size = 8
 epochs = 3
@@ -16,6 +16,6 @@ n_gpu = torch.cuda.device_count()
 training_logs = 'training_logs_prototype'
 learning_rate = 3e-5
 eps = 1e-8
-publications_filename = 'classified_publications/publications_export7.json'
+publications_filename = 'publications_export7.json'
 ingredio_filename = 'new_with_g.json'
 FULL_FINETUNING = True

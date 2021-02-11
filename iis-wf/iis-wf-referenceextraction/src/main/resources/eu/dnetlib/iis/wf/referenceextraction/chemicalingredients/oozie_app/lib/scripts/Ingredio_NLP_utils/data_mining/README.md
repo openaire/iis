@@ -20,12 +20,10 @@ In order to classify documents to those containing useful information about chem
 `conda create -n Phase2 python=3.7.9`
 *    Activate conda environment 
 `conda activate Phase2`
-*    Clone github repo:
-`git clone https://github.com/ingredio/Phase3/data_mining`
-`cd data_mining`
+*    Enter `data_mining` folder: `cd data_mining`
 *    Install dependencies:
 `pip3 install -r requirements.txt`
-`pip3 install -U git+https://github.com/aboSamoor/polyglot.git@master`
+`conda install -c conda-forge pyicu morfessor icu -y && pip install pycld2 polyglot`
 
 ## Python requirements
 * `keras_tuner==1.0.3`
@@ -83,9 +81,3 @@ Finally, it imports the classification reports and plots them based on the preci
 `python predict.py`
 
 The predict script first loads the trained models, the vectorizer and feature selector that are fitted on the training set. Then it loads the file that contains the documents that will be classified and applies preprocessing to them. Next it uses the vectorizer and feature selector to transform the text to numerical representation and select their highest scoring features. Afterwards, it uses the four classifiers to classify the documents and a custom voting classifier that combines the four votes. It finally exports the positively classified documents as json entries following the appropriate json schema.
-
-* Step 5 - Automating the classification process
-
-`cat input.json | python classify.py`
-
-If all the previous steps are followed, the models would be stored in the root directory. In the input.json each line is json entry of the form `{"id": "some form of id", "abstract": "Some abstract"}` and the ouput to the standard output is lines of json entries of the form: `{"id": "some form of id", "label": "relevant", "confidenceLevel": 0.52}`

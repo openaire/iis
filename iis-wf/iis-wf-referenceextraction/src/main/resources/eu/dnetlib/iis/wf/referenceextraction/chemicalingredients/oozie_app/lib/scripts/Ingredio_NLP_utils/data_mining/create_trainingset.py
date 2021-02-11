@@ -2,6 +2,7 @@ import pandas as pd
 import json
 import numpy as np
 from polyglot.detect import Detector
+import os
 
 # Ingredio vars
 data = []
@@ -79,9 +80,9 @@ def create_zenodoset(filename):
                             "Abstract": l['description']}
                     zenodo.append(zendict)
                 except Exception as e:
-                    print(e)
+                    pass
         except Exception as e:
-            print(e)
+            pass
             
     zenodoDF = pd.DataFrame(zenodo)
     zenodoDF['Abstract'] = zenodoDF['Abstract'].str[0]

@@ -1,6 +1,7 @@
 import config
 import torch
 import time
+import re
 from model import BERTBaseUncased
 import functools
 import torch.nn as nn
@@ -58,7 +59,9 @@ def predict(sentence):
 
 
 if __name__ == "__main__":
-    sentence = 'substance propene is closely related to death'
+    n = len(sys.argv)
+    input_=' '.join(sys.argv[1:])
+    sentence = re.sub('[^0-9a-zA-Z\.]+',' ',input_)
     MODEL=BERTBaseUncased()
     MODEL.load_state_dict(torch.load(config.MODEL_PATH))
     MODEL.to(DEVICE)

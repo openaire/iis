@@ -1,4 +1,3 @@
-import sys
 import json
 import pandas as pd
 import os
@@ -8,7 +7,6 @@ from tensorflow import keras
 import numpy as np
 import nltk
 import pickle
-import statistics
 import multiprocess as mp
 import gzip
 from polyglot.detect import Detector
@@ -17,11 +15,9 @@ polyglot_logger.setLevel("ERROR")
 import dill
 dill.settings['recurse']=True
 
-
-
-def save_classified(publicationdf,counter):
+def save_classified(publicationdf,file):
     final = {}
-    outfile = open('classified_outputs/output_' + f'{counter:05}'+ '.json', "a")
+    outfile = open('classified_outputs/' + file + '.json', "a")
     for index, row in publicationdf.iterrows():
         final['description'] = []
         final['externalReference'] = []
@@ -67,7 +63,7 @@ def publication_DF(path):
     publication = []
     print(path)
     print(mp.current_process())
-    with gzip.open(path, 'rb') as f:
+    with gzip.open('dumps/' + path, 'rb') as f:
         for line in f:
             pubdata.append(json.loads(line))
     for l in pubdata:
@@ -129,7 +125,6 @@ def voting_classifier(publicationdf,classifier_list):
             voting_list.append(0)
     publicationdf['Voting'] = pd.Series(voting_list)
     publicationdf.drop(publicationdf[publicationdf.Voting == 0].index, inplace=True)
-    # publicationdf.drop(['LinearSVC', 'SGD', 'Keras', 'LogisticRegression','Abstr', 'Voting'], axis=1, inplace=True)
     return publicationdf
 
 def divide_chunks(l, n):
@@ -145,9 +140,8 @@ def initialize_models(model_paths):
     models_list.append(keras_model)
     return models_list
 
-def prediction(counter):
-    path = 'dumps/part-'+f'{counter:05}'+'-b3c3ef19-74cb-4c3c-b3a3-072fc69cc107-c000.json.gz.json.gz'
-    publicationdf = publication_DF(path)
+def prediction(file):
+    publicationdf = publication_DF(file)
     publication_abstract_matrix = vectorizer.transform(publicationdf['Abstr'])
     publication_abstract_matrix_selected = selector.transform(publication_abstract_matrix)
 
@@ -159,19 +153,19 @@ def prediction(counter):
             publicationdf[classifier_list[i]] = model.predict(publication_abstract_matrix_selected)
 
     publicationdf = voting_classifier(publicationdf,classifier_list)
-    save_classified(publicationdf,counter)
+    save_classified(publicationdf,file)
 
 model_paths = ['LSVC.sav','SGD.sav','LR.sav']
 classifier_list = ['LinearSVC','SGD','LogisticRegression','Keras']
 vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
 selector = pickle.load(open("selector.pkl", "rb"))
 models_list = initialize_models(model_paths)
+file_list = []
+for file in os.listdir('dumps'):
+    if file.endswith(".gz"):
+        file_list.append(file)
 
 if __name__ == "__main__":
-    counter_list = list(range(0, 856))
-    path_list = []
 
     with mp.Pool(2) as p:
-        p.map(prediction,counter_list)
-
-
+        p.map(prediction,file_list)
