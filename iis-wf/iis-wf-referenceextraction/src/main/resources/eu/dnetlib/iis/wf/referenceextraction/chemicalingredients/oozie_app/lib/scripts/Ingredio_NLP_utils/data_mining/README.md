@@ -81,5 +81,3 @@ Finally, it imports the classification reports and plots them based on the preci
 `python predict.py`
 
 The predict script first loads the trained models, the vectorizer and feature selector that are fitted on the training set. Then it loads the file that contains the documents that will be classified and applies preprocessing to them. Next it uses the vectorizer and feature selector to transform the text to numerical representation and select their highest scoring features. Afterwards, it uses the four classifiers to classify the documents and a custom voting classifier that combines the four votes. It finally exports the positively classified documents as json entries following the appropriate json schema.
-
-

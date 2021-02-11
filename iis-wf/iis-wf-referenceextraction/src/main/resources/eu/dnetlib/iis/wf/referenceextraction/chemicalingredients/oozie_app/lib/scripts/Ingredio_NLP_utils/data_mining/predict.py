@@ -15,8 +15,6 @@ polyglot_logger.setLevel("ERROR")
 import dill
 dill.settings['recurse']=True
 
-
-
 def save_classified(publicationdf,file):
     final = {}
     outfile = open('classified_outputs/' + file + '.json', "a")
@@ -171,5 +169,3 @@ if __name__ == "__main__":
 
     with mp.Pool(2) as p:
         p.map(prediction,file_list)
-
-

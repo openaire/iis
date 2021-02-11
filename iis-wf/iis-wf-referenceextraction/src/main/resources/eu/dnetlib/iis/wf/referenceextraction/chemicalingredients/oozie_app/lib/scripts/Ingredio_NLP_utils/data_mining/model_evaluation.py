@@ -25,7 +25,6 @@ w_tokenizer = nltk.tokenize.WhitespaceTokenizer()
 lemmatizer = nltk.stem.WordNetLemmatizer()
 combinedDF = pd.read_csv('datasets/trainingset.csv',index_col=False)
 combinedDF = combinedDF.sample(frac=0.002).reset_index(drop=True)
-
 #Global Vars
 models_list = ['LSVCparams.json','sgdParameters.json','LRParameters.json']
 clf_list = []
@@ -185,8 +184,8 @@ def import_classification_reports(classifier):
 class_reports_list = []
 for i,classifier in enumerate(classifier_nameList):
     class_reports_list.append(import_classification_reports(classifier))
-        
 plt.figure()
+
 for index,l in enumerate(class_reports_list):
     print(statistics.mean(l))
     plt.plot(l, label = classifier_nameList[index])
@@ -195,6 +194,3 @@ for index,l in enumerate(class_reports_list):
     plt.ylabel("Precision")
     plt.xlabel("Trials")
 plt.show()
-
-
-

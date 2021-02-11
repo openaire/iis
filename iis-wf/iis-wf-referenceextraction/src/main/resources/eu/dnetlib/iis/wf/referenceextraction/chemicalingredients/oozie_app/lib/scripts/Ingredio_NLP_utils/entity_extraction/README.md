@@ -41,7 +41,6 @@ In order for BERT to be able to extract chemical compound names from sentences a
 As a dataset for this task a CSV file is created where each line contains a word, its part of speech tag, PMID of the paper the word was found in, the index of sentence and a label that shows if each word is a compound or not. The dataset used can be downloaded from [here](https://drive.google.com/drive/folders/1hlnRv9GIaQSVUQeSBAkc-k8BJIDWwls7) and should exist in the root folder.
 A sample of the used training set can be seen below:
 
-
 PMID|Word|POS|Sentence|Tag
 -|-|-|-|-
 0|18560757|And|CC|5322|0
@@ -66,4 +65,3 @@ This script imports the training set, groups the words into sentences and applie
 `python predict_task1.py`
 
 Predict_task1.py loads the best model found during training. Then it imports a file that contains the json entries classified during the second phase. This file should exist in the root folder and its name should be defined in the config_task1.py file. The script then applies preprocessing to it where it splits the abstract into sentences, uses BERT tokenizer to tokenize the sentences and transforms them to torch tensors. It then adds a label (1 if the word is classified as a compound name and 0 if not) to each word based on the prediction. Finally it returns the words classified as compound names.
-

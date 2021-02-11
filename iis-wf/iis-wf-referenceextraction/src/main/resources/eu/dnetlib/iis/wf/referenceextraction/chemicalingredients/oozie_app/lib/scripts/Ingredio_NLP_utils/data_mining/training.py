@@ -64,8 +64,6 @@ def preprocess_text(dataframe,column_name,target,selector,lemmatizer,vectorizer,
 def lemmatize_text(text):
     return " ".join([lemmatizer.lemmatize(w) for w in w_tokenizer.tokenize(text)])
 
-
-
 def find_best_params(X,y,classifier,index):
     estim = HyperoptEstimator(classifier=classifier('classifier'),
                           preprocessing=[],
@@ -94,6 +92,7 @@ def create_testDF(X_test,y_test,z_test):
     testDF.reset_index(inplace=True)
     testDF.drop('index', axis=1, inplace=True)
     return testDF
+
 
 if __name__ == '__main__':
     vectorized_matrix_selected = preprocess_text(combinedDF,'Abstract','target',selector,lemmatizer,vectorizer,w_tokenizer,'vectorizer.pkl','selector.pkl',True)
@@ -161,12 +160,3 @@ if __name__ == '__main__':
     keras_model = tuner.hypermodel.build(best_hps)
     keras_model.fit(abstract_array,combinedDF['target'])
     keras_model.save('keras_model')
-
-
-
-
-
-
-
-
-

@@ -42,6 +42,7 @@ For this goal, the dataset must include two columns. A column named â€œSentenceâ
 Sentence|Annotated_causal
 -|-
 Whatever the mechanism , active smoking is an important modifiable factor that seems to be associated with a poor response to MTX.|1
+
 Data were collected on the incidence of POAF lasting more than 5 minutes and secondary outcomes , including the length of hospitalization , guideline adherence rate , adverse events , and timeliness of POAF treatment .|0
 
 ## Usage

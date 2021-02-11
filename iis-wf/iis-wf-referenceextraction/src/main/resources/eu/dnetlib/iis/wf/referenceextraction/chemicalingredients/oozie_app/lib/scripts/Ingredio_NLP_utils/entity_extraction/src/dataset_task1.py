@@ -35,9 +35,10 @@ def create_dataset(csv_file):
     
     data.drop(['Unnamed: 0'], axis=1, inplace=True)
     data.dropna(how='any', inplace=True)
-           
+         
     getter = SentenceGetter(data)
     #Group into sentences
+
     sentences = [[word[0] for word in sentence] for sentence in getter.sentences]
     
     labels = [[s[2] for s in sentence] for sentence in getter.sentences]
@@ -92,7 +93,6 @@ def create_dataset(csv_file):
     
     tr_inputs, test_inputs, tr_tags, test_tags, tr_masks, test_masks = train_test_split(tr_inputs, tr_tags, tr_masks,
                                                                 random_state=2018, test_size=0.1)
-
     #Convert to tensors                                                            
     tr_inputs = torch.tensor(tr_inputs)
     val_inputs = torch.tensor(val_inputs)
@@ -117,4 +117,3 @@ def create_dataset(csv_file):
     test_sampler = RandomSampler(test_data)
     test_dataloader = DataLoader(train_data, sampler=train_sampler, batch_size=config.batch_size)
     return train_dataloader, valid_dataloader, test_dataloader, tag_values, tag2idx
-
