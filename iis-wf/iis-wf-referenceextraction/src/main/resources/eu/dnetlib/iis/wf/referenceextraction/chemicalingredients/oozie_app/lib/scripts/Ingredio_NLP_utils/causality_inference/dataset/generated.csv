@@ -1,0 +1,550 @@
+Sentence,Label
+Compound is closely related to Cancer,1
+Compound is closely related to mutations,1
+Compound is closely related to developmental toxicity,1
+Compound is closely related to reproductive toxicity,1
+Compound is closely related to organ toxicity,1
+Compound is closely related to neurotoxicity,1
+Compound is closely related to ecotoxicology,1
+Compound is closely related to allergies,1
+Compound is closely related to usage restrictions,1
+Compound is closely related to irritation,1
+Compound is closely related to carcinogenicity,1
+Compound is closely related to allergy,1
+Compound is closely related to harm,1
+Compound is closely related to inflammation,1
+Compound is closely related to decease,1
+Compound is closely linked to Cancer,1
+Compound is closely linked to mutations,1
+Compound is closely linked to developmental toxicity,1
+Compound is closely linked to reproductive toxicity,1
+Compound is closely linked to organ toxicity,1
+Compound is closely linked to neurotoxicity,1
+Compound is closely linked to ecotoxicology,1
+Compound is closely linked to allergies,1
+Compound is closely linked to usage restrictions,1
+Compound is closely linked to irritation,1
+Compound is closely linked to carcinogenicity,1
+Compound is closely linked to allergy,1
+Compound is closely linked to harm,1
+Compound is closely linked to inflammation,1
+Compound is closely linked to decease,1
+Compound is related to Cancer,1
+Compound is related to mutations,1
+Compound is related to developmental toxicity,1
+Compound is related to reproductive toxicity,1
+Compound is related to organ toxicity,1
+Compound is related to neurotoxicity,1
+Compound is related to ecotoxicology,1
+Compound is related to allergies,1
+Compound is related to usage restrictions,1
+Compound is related to irritation,1
+Compound is related to carcinogenicity,1
+Compound is related to allergy,1
+Compound is related to harm,1
+Compound is related to inflammation,1
+Compound is related to decease,1
+Compound is linked to Cancer,1
+Compound is linked to mutations,1
+Compound is linked to developmental toxicity,1
+Compound is linked to reproductive toxicity,1
+Compound is linked to organ toxicity,1
+Compound is linked to neurotoxicity,1
+Compound is linked to ecotoxicology,1
+Compound is linked to allergies,1
+Compound is linked to usage restrictions,1
+Compound is linked to irritation,1
+Compound is linked to carcinogenicity,1
+Compound is linked to allergy,1
+Compound is linked to harm,1
+Compound is linked to inflammation,1
+Compound is linked to decease,1
+Compound displays causal link with Cancer,1
+Compound displays causal link with mutations,1
+Compound displays causal link with developmental toxicity,1
+Compound displays causal link with reproductive toxicity,1
+Compound displays causal link with organ toxicity,1
+Compound displays causal link with neurotoxicity,1
+Compound displays causal link with ecotoxicology,1
+Compound displays causal link with allergies,1
+Compound displays causal link with usage restrictions,1
+Compound displays causal link with irritation,1
+Compound displays causal link with carcinogenicity,1
+Compound displays causal link with allergy,1
+Compound displays causal link with harm,1
+Compound displays causal link with inflammation,1
+Compound displays causal link with decease,1
+Compound displays causal relation with Cancer,1
+Compound displays causal relation with mutations,1
+Compound displays causal relation with developmental toxicity,1
+Compound displays causal relation with reproductive toxicity,1
+Compound displays causal relation with organ toxicity,1
+Compound displays causal relation with neurotoxicity,1
+Compound displays causal relation with ecotoxicology,1
+Compound displays causal relation with allergies,1
+Compound displays causal relation with usage restrictions,1
+Compound displays causal relation with irritation,1
+Compound displays causal relation with carcinogenicity,1
+Compound displays causal relation with allergy,1
+Compound displays causal relation with harm,1
+Compound displays causal relation with inflammation,1
+Compound displays causal relation with decease,1
+Compound displays close relation with Cancer,1
+Compound displays close relation with mutations,1
+Compound displays close relation with developmental toxicity,1
+Compound displays close relation with reproductive toxicity,1
+Compound displays close relation with organ toxicity,1
+Compound displays close relation with neurotoxicity,1
+Compound displays close relation with ecotoxicology,1
+Compound displays close relation with allergies,1
+Compound displays close relation with usage restrictions,1
+Compound displays close relation with irritation,1
+Compound displays close relation with carcinogenicity,1
+Compound displays close relation with allergy,1
+Compound displays close relation with harm,1
+Compound displays close relation with inflammation,1
+Compound displays close relation with decease,1
+Compound has causal link with Cancer,1
+Compound has causal link with mutations,1
+Compound has causal link with developmental toxicity,1
+Compound has causal link with reproductive toxicity,1
+Compound has causal link with organ toxicity,1
+Compound has causal link with neurotoxicity,1
+Compound has causal link with ecotoxicology,1
+Compound has causal link with allergies,1
+Compound has causal link with usage restrictions,1
+Compound has causal link with irritation,1
+Compound has causal link with carcinogenicity,1
+Compound has causal link with allergy,1
+Compound has causal link with harm,1
+Compound has causal link with inflammation,1
+Compound has causal link with decease,1
+Compound has causal relation with Cancer,1
+Compound has causal relation with mutations,1
+Compound has causal relation with developmental toxicity,1
+Compound has causal relation with reproductive toxicity,1
+Compound has causal relation with organ toxicity,1
+Compound has causal relation with neurotoxicity,1
+Compound has causal relation with ecotoxicology,1
+Compound has causal relation with allergies,1
+Compound has causal relation with usage restrictions,1
+Compound has causal relation with irritation,1
+Compound has causal relation with carcinogenicity,1
+Compound has causal relation with allergy,1
+Compound has causal relation with harm,1
+Compound has causal relation with inflammation,1
+Compound has causal relation with decease,1
+Compound has close relation with Cancer,1
+Compound has close relation with mutations,1
+Compound has close relation with developmental toxicity,1
+Compound has close relation with reproductive toxicity,1
+Compound has close relation with organ toxicity,1
+Compound has close relation with neurotoxicity,1
+Compound has close relation with ecotoxicology,1
+Compound has close relation with allergies,1
+Compound has close relation with usage restrictions,1
+Compound has close relation with irritation,1
+Compound has close relation with carcinogenicity,1
+Compound has close relation with allergy,1
+Compound has close relation with harm,1
+Compound has close relation with inflammation,1
+Compound has close relation with decease,1
+Compound exhibits causal link with Cancer,1
+Compound exhibits causal link with mutations,1
+Compound exhibits causal link with developmental toxicity,1
+Compound exhibits causal link with reproductive toxicity,1
+Compound exhibits causal link with organ toxicity,1
+Compound exhibits causal link with neurotoxicity,1
+Compound exhibits causal link with ecotoxicology,1
+Compound exhibits causal link with allergies,1
+Compound exhibits causal link with usage restrictions,1
+Compound exhibits causal link with irritation,1
+Compound exhibits causal link with carcinogenicity,1
+Compound exhibits causal link with allergy,1
+Compound exhibits causal link with harm,1
+Compound exhibits causal link with inflammation,1
+Compound exhibits causal link with decease,1
+Compound exhibits causal relation with Cancer,1
+Compound exhibits causal relation with mutations,1
+Compound exhibits causal relation with developmental toxicity,1
+Compound exhibits causal relation with reproductive toxicity,1
+Compound exhibits causal relation with organ toxicity,1
+Compound exhibits causal relation with neurotoxicity,1
+Compound exhibits causal relation with ecotoxicology,1
+Compound exhibits causal relation with allergies,1
+Compound exhibits causal relation with usage restrictions,1
+Compound exhibits causal relation with irritation,1
+Compound exhibits causal relation with carcinogenicity,1
+Compound exhibits causal relation with allergy,1
+Compound exhibits causal relation with harm,1
+Compound exhibits causal relation with inflammation,1
+Compound exhibits causal relation with decease,1
+Compound exhibits close relation with Cancer,1
+Compound exhibits close relation with mutations,1
+Compound exhibits close relation with developmental toxicity,1
+Compound exhibits close relation with reproductive toxicity,1
+Compound exhibits close relation with organ toxicity,1
+Compound exhibits close relation with neurotoxicity,1
+Compound exhibits close relation with ecotoxicology,1
+Compound exhibits close relation with allergies,1
+Compound exhibits close relation with usage restrictions,1
+Compound exhibits close relation with irritation,1
+Compound exhibits close relation with carcinogenicity,1
+Compound exhibits close relation with allergy,1
+Compound exhibits close relation with harm,1
+Compound exhibits close relation with inflammation,1
+Compound exhibits close relation with decease,1
+Compound is broadly considered to cause Cancer,1
+Compound is broadly considered to cause mutations,1
+Compound is broadly considered to cause developmental toxicity,1
+Compound is broadly considered to cause reproductive toxicity,1
+Compound is broadly considered to cause organ toxicity,1
+Compound is broadly considered to cause neurotoxicity,1
+Compound is broadly considered to cause ecotoxicology,1
+Compound is broadly considered to cause allergies,1
+Compound is broadly considered to cause usage restrictions,1
+Compound is broadly considered to cause irritation,1
+Compound is broadly considered to cause carcinogenicity,1
+Compound is broadly considered to cause allergy,1
+Compound is broadly considered to cause harm,1
+Compound is broadly considered to cause inflammation,1
+Compound is broadly considered to cause decease,1
+Compound is generally considered to be the cause of Cancer,1
+Compound is generally considered to be the cause of mutations,1
+Compound is generally considered to be the cause of developmental toxicity,1
+Compound is generally considered to be the cause of reproductive toxicity,1
+Compound is generally considered to be the cause of organ toxicity,1
+Compound is generally considered to be the cause of neurotoxicity,1
+Compound is generally considered to be the cause of ecotoxicology,1
+Compound is generally considered to be the cause of allergies,1
+Compound is generally considered to be the cause of usage restrictions,1
+Compound is generally considered to be the cause of irritation,1
+Compound is generally considered to be the cause of carcinogenicity,1
+Compound is generally considered to be the cause of allergy,1
+Compound is generally considered to be the cause of harm,1
+Compound is generally considered to be the cause of inflammation,1
+Compound is generally considered to be the cause of decease,1
+Compound is not closely related to Cancer,0
+Compound is not closely related to mutations,0
+Compound is not closely related to developmental toxicity,0
+Compound is not closely related to reproductive toxicity,0
+Compound is not closely related to organ toxicity,0
+Compound is not closely related to neurotoxicity,0
+Compound is not closely related to ecotoxicology,0
+Compound is not closely related to allergies,0
+Compound is not closely related to usage restrictions,0
+Compound is not closely related to irritation,0
+Compound is not closely related to carcinogenicity,0
+Compound is not closely related to allergy,0
+Compound is not closely related to harm,0
+Compound is not closely related to inflammation,0
+Compound is not closely related to decease,0
+Compound is not closely linked to Cancer,0
+Compound is not closely linked to mutations,0
+Compound is not closely linked to developmental toxicity,0
+Compound is not closely linked to reproductive toxicity,0
+Compound is not closely linked to organ toxicity,0
+Compound is not closely linked to neurotoxicity,0
+Compound is not closely linked to ecotoxicology,0
+Compound is not closely linked to allergies,0
+Compound is not closely linked to usage restrictions,0
+Compound is not closely linked to irritation,0
+Compound is not closely linked to carcinogenicity,0
+Compound is not closely linked to allergy,0
+Compound is not closely linked to harm,0
+Compound is not closely linked to inflammation,0
+Compound is not closely linked to decease,0
+Compound is not related to Cancer,0
+Compound is not related to mutations,0
+Compound is not related to developmental toxicity,0
+Compound is not related to reproductive toxicity,0
+Compound is not related to organ toxicity,0
+Compound is not related to neurotoxicity,0
+Compound is not related to ecotoxicology,0
+Compound is not related to allergies,0
+Compound is not related to usage restrictions,0
+Compound is not related to irritation,0
+Compound is not related to carcinogenicity,0
+Compound is not related to allergy,0
+Compound is not related to harm,0
+Compound is not related to inflammation,0
+Compound is not related to decease,0
+Compound is linked to Cancer,0
+Compound is linked to mutations,0
+Compound is linked to developmental toxicity,0
+Compound is linked to reproductive toxicity,0
+Compound is linked to organ toxicity,0
+Compound is linked to neurotoxicity,0
+Compound is linked to ecotoxicology,0
+Compound is linked to allergies,0
+Compound is linked to usage restrictions,0
+Compound is linked to irritation,0
+Compound is linked to carcinogenicity,0
+Compound is linked to allergy,0
+Compound is linked to harm,0
+Compound is linked to inflammation,0
+Compound is linked to decease,0
+Compound displays no causal link with Cancer,0
+Compound displays no causal link with mutations,0
+Compound displays no causal link with developmental toxicity,0
+Compound displays no causal link with reproductive toxicity,0
+Compound displays no causal link with organ toxicity,0
+Compound displays no causal link with neurotoxicity,0
+Compound displays no causal link with ecotoxicology,0
+Compound displays no causal link with allergies,0
+Compound displays no causal link with usage restrictions,0
+Compound displays no causal link with irritation,0
+Compound displays no causal link with carcinogenicity,0
+Compound displays no causal link with allergy,0
+Compound displays no causal link with harm,0
+Compound displays no causal link with inflammation,0
+Compound displays no causal link with decease,0
+Compound displays no causal relation with Cancer,0
+Compound displays no causal relation with mutations,0
+Compound displays no causal relation with developmental toxicity,0
+Compound displays no causal relation with reproductive toxicity,0
+Compound displays no causal relation with organ toxicity,0
+Compound displays no causal relation with neurotoxicity,0
+Compound displays no causal relation with ecotoxicology,0
+Compound displays no causal relation with allergies,0
+Compound displays no causal relation with usage restrictions,0
+Compound displays no causal relation with irritation,0
+Compound displays no causal relation with carcinogenicity,0
+Compound displays no causal relation with allergy,0
+Compound displays no causal relation with harm,0
+Compound displays no causal relation with inflammation,0
+Compound displays no causal relation with decease,0
+Compound displays no close relation with Cancer,0
+Compound displays no close relation with mutations,0
+Compound displays no close relation with developmental toxicity,0
+Compound displays no close relation with reproductive toxicity,0
+Compound displays no close relation with organ toxicity,0
+Compound displays no close relation with neurotoxicity,0
+Compound displays no close relation with ecotoxicology,0
+Compound displays no close relation with allergies,0
+Compound displays no close relation with usage restrictions,0
+Compound displays no close relation with irritation,0
+Compound displays no close relation with carcinogenicity,0
+Compound displays no close relation with allergy,0
+Compound displays no close relation with harm,0
+Compound displays no close relation with inflammation,0
+Compound displays no close relation with decease,0
+Compound has not causal link with Cancer,0
+Compound has not causal link with mutations,0
+Compound has not causal link with developmental toxicity,0
+Compound has not causal link with reproductive toxicity,0
+Compound has not causal link with organ toxicity,0
+Compound has not causal link with neurotoxicity,0
+Compound has not causal link with ecotoxicology,0
+Compound has not causal link with allergies,0
+Compound has not causal link with usage restrictions,0
+Compound has not causal link with irritation,0
+Compound has not causal link with carcinogenicity,0
+Compound has not causal link with allergy,0
+Compound has not causal link with harm,0
+Compound has not causal link with inflammation,0
+Compound has not causal link with decease,0
+Compound has not causal relation with Cancer,0
+Compound has not causal relation with mutations,0
+Compound has not causal relation with developmental toxicity,0
+Compound has not causal relation with reproductive toxicity,0
+Compound has not causal relation with organ toxicity,0
+Compound has not causal relation with neurotoxicity,0
+Compound has not causal relation with ecotoxicology,0
+Compound has not causal relation with allergies,0
+Compound has not causal relation with usage restrictions,0
+Compound has not causal relation with irritation,0
+Compound has not causal relation with carcinogenicity,0
+Compound has not causal relation with allergy,0
+Compound has not causal relation with harm,0
+Compound has not causal relation with inflammation,0
+Compound has not causal relation with decease,0
+Compound has not close relation with Cancer,0
+Compound has not close relation with mutations,0
+Compound has not close relation with developmental toxicity,0
+Compound has not close relation with reproductive toxicity,0
+Compound has not close relation with organ toxicity,0
+Compound has not close relation with neurotoxicity,0
+Compound has not close relation with ecotoxicology,0
+Compound has not close relation with allergies,0
+Compound has not close relation with usage restrictions,0
+Compound has not close relation with irritation,0
+Compound has not close relation with carcinogenicity,0
+Compound has not close relation with allergy,0
+Compound has not close relation with harm,0
+Compound has not close relation with inflammation,0
+Compound has not close relation with decease,0
+Compound exhibits no causal link with Cancer,0
+Compound exhibits no causal link with mutations,0
+Compound exhibits no causal link with developmental toxicity,0
+Compound exhibits no causal link with reproductive toxicity,0
+Compound exhibits no causal link with organ toxicity,0
+Compound exhibits no causal link with neurotoxicity,0
+Compound exhibits no causal link with ecotoxicology,0
+Compound exhibits no causal link with allergies,0
+Compound exhibits no causal link with usage restrictions,0
+Compound exhibits no causal link with irritation,0
+Compound exhibits no causal link with carcinogenicity,0
+Compound exhibits no causal link with allergy,0
+Compound exhibits no causal link with harm,0
+Compound exhibits no causal link with inflammation,0
+Compound exhibits no causal link with decease,0
+Compound exhibits no causal relation with Cancer,0
+Compound exhibits no causal relation with mutations,0
+Compound exhibits no causal relation with developmental toxicity,0
+Compound exhibits no causal relation with reproductive toxicity,0
+Compound exhibits no causal relation with organ toxicity,0
+Compound exhibits no causal relation with neurotoxicity,0
+Compound exhibits no causal relation with ecotoxicology,0
+Compound exhibits no causal relation with allergies,0
+Compound exhibits no causal relation with usage restrictions,0
+Compound exhibits no causal relation with irritation,0
+Compound exhibits no causal relation with carcinogenicity,0
+Compound exhibits no causal relation with allergy,0
+Compound exhibits no causal relation with harm,0
+Compound exhibits no causal relation with inflammation,0
+Compound exhibits no causal relation with decease,0
+Compound exhibits no close relation with Cancer,0
+Compound exhibits no close relation with mutations,0
+Compound exhibits no close relation with developmental toxicity,0
+Compound exhibits no close relation with reproductive toxicity,0
+Compound exhibits no close relation with organ toxicity,0
+Compound exhibits no close relation with neurotoxicity,0
+Compound exhibits no close relation with ecotoxicology,0
+Compound exhibits no close relation with allergies,0
+Compound exhibits no close relation with usage restrictions,0
+Compound exhibits no close relation with irritation,0
+Compound exhibits no close relation with carcinogenicity,0
+Compound exhibits no close relation with allergy,0
+Compound exhibits no close relation with harm,0
+Compound exhibits no close relation with inflammation,0
+Compound exhibits no close relation with decease,0
+Compound is not broadly considered to cause Cancer,0
+Compound is not broadly considered to cause mutations,0
+Compound is not broadly considered to cause developmental toxicity,0
+Compound is not broadly considered to cause reproductive toxicity,0
+Compound is not broadly considered to cause organ toxicity,0
+Compound is not broadly considered to cause neurotoxicity,0
+Compound is not broadly considered to cause ecotoxicology,0
+Compound is not broadly considered to cause allergies,0
+Compound is not broadly considered to cause usage restrictions,0
+Compound is not broadly considered to cause irritation,0
+Compound is not broadly considered to cause carcinogenicity,0
+Compound is not broadly considered to cause allergy,0
+Compound is not broadly considered to cause harm,0
+Compound is not broadly considered to cause inflammation,0
+Compound is not broadly considered to cause decease,0
+Compound is not generally considered to be the cause of Cancer,0
+Compound is not generally considered to be the cause of mutations,0
+Compound is not generally considered to be the cause of developmental toxicity,0
+Compound is not generally considered to be the cause of reproductive toxicity,0
+Compound is not generally considered to be the cause of organ toxicity,0
+Compound is not generally considered to be the cause of neurotoxicity,0
+Compound is not generally considered to be the cause of ecotoxicology,0
+Compound is not generally considered to be the cause of allergies,0
+Compound is not generally considered to be the cause of usage restrictions,0
+Compound is not generally considered to be the cause of irritation,0
+Compound is not generally considered to be the cause of carcinogenicity,0
+Compound is not generally considered to be the cause of allergy,0
+Compound is not generally considered to be the cause of harm,0
+Compound is not generally considered to be the cause of inflammation,0
+Compound is not generally considered to be the cause of decease,0
+Compound exhibits carcinogenic behavior,1
+Compound is considered to be carcinogenic,1
+Compound exhibits mutagenic behavior,1
+Compound is considered to be mutagenic,1
+Compound exhibits neurotoxic behavior,1
+Compound is considered to be neurotoxic,1
+Compound exhibits ecotoxic behavior,1
+Compound is considered to be ecotoxic,1
+Compound exhibits toxic behavior,1
+Compound is considered to be toxic,1
+Compound exhibits harmful behavior,1
+Compound is considered to be harmful,1
+Compound does not exhibit carcinogenic behavior,0
+Compound is considered to be carcinogenic,0
+Compound does not exhibit mutagenic behavior,0
+Compound is considered to be mutagenic,0
+Compound does not exhibit neurotoxic behavior,0
+Compound is considered to be neurotoxic,0
+Compound does not exhibit ecotoxic behavior,0
+Compound is considered to be ecotoxic,0
+Compound does not exhibit toxic behavior,0
+Compound is considered to be toxic,0
+Compound does not exhibit harmful behavior,0
+Compound is considered to be harmful,0
+there is no evidence that links Compound with Cancer,0
+there is no evidence that links Compound with mutations,0
+there is no evidence that links Compound with developmental toxicity,0
+there is no evidence that links Compound with reproductive toxicity,0
+there is no evidence that links Compound with organ toxicity,0
+there is no evidence that links Compound with neurotoxicity,0
+there is no evidence that links Compound with ecotoxicology,0
+there is no evidence that links Compound with allergies,0
+there is no evidence that links Compound with usage restrictions,0
+there is no evidence that links Compound with irritation,0
+there is no evidence that links Compound with carcinogenicity,0
+there is no evidence that links Compound with allergy,0
+there is no evidence that links Compound with harm,0
+there is no evidence that links Compound with inflammation,0
+there is no evidence that links Compound with decease,0
+there is no evidence that relates Compound with Cancer,0
+there is no evidence that relates Compound with mutations,0
+there is no evidence that relates Compound with developmental toxicity,0
+there is no evidence that relates Compound with reproductive toxicity,0
+there is no evidence that relates Compound with organ toxicity,0
+there is no evidence that relates Compound with neurotoxicity,0
+there is no evidence that relates Compound with ecotoxicology,0
+there is no evidence that relates Compound with allergies,0
+there is no evidence that relates Compound with usage restrictions,0
+there is no evidence that relates Compound with irritation,0
+there is no evidence that relates Compound with carcinogenicity,0
+there is no evidence that relates Compound with allergy,0
+there is no evidence that relates Compound with harm,0
+there is no evidence that relates Compound with inflammation,0
+there is no evidence that relates Compound with decease,0
+there is little evidence that relates Compound with Cancer,0
+there is little evidence that relates Compound with mutations,0
+there is little evidence that relates Compound with developmental toxicity,0
+there is little evidence that relates Compound with reproductive toxicity,0
+there is little evidence that relates Compound with organ toxicity,0
+there is little evidence that relates Compound with neurotoxicity,0
+there is little evidence that relates Compound with ecotoxicology,0
+there is little evidence that relates Compound with allergies,0
+there is little evidence that relates Compound with usage restrictions,0
+there is little evidence that relates Compound with irritation,0
+there is little evidence that relates Compound with carcinogenicity,0
+there is little evidence that relates Compound with allergy,0
+there is little evidence that relates Compound with harm,0
+there is little evidence that relates Compound with inflammation,0
+there is little evidence that relates Compound with decease,0
+there is little evidence that links Compound with Cancer,0
+there is little evidence that links Compound with mutations,0
+there is little evidence that links Compound with developmental toxicity,0
+there is little evidence that links Compound with reproductive toxicity,0
+there is little evidence that links Compound with organ toxicity,0
+there is little evidence that links Compound with neurotoxicity,0
+there is little evidence that links Compound with ecotoxicology,0
+there is little evidence that links Compound with allergies,0
+there is little evidence that links Compound with usage restrictions,0
+there is little evidence that links Compound with irritation,0
+there is little evidence that links Compound with carcinogenicity,0
+there is little evidence that links Compound with allergy,0
+there is little evidence that links Compound with harm,0
+there is little evidence that links Compound with inflammation,0
+there is little evidence that links Compound with decease,0
+there is evidence that links Compound with Cancer,1
+there is evidence that links Compound with mutations,1
+there is evidence that links Compound with developmental toxicity,1
+there is evidence that links Compound with reproductive toxicity,1
+there is evidence that links Compound with organ toxicity,1
+there is evidence that links Compound with neurotoxicity,1
+there is evidence that links Compound with ecotoxicology,1
+there is evidence that links Compound with allergies,1
+there is evidence that links Compound with usage restrictions,1
+there is evidence that links Compound with irritation,1
+there is evidence that links Compound with carcinogenicity,1
+there is evidence that links Compound with allergy,1
+there is evidence that links Compound with harm,1
+there is evidence that links Compound with inflammation,1
+there is evidence that links Compound with decease,1
