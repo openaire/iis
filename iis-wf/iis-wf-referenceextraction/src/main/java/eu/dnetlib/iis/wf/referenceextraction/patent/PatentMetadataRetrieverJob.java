@@ -2,9 +2,10 @@ package eu.dnetlib.iis.wf.referenceextraction.patent;
 
 import java.util.Map;
 
+import eu.dnetlib.iis.wf.referenceextraction.FacadeContentRetriever;
+import eu.dnetlib.iis.wf.referenceextraction.FacadeContentRetrieverResponse;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -33,21 +34,14 @@ import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
-import eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters;
-import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeException;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeUtils;
-import eu.dnetlib.iis.wf.referenceextraction.ContentRetrieverResponse;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 import scala.Tuple2;
 
 /**
- * Job responsible for retrieving full patent metadata via {@link PatentServiceFacade} based on {@link ImportedPatent} input.
- * 
- * Stores results in cache for further usage.
- *  
- * @author mhorst
- *
+ * Job responsible for retrieving full patent metadata via {@link OpenPatentWebServiceFacade} based on
+ * {@link ImportedPatent} input. Stores results in cache for further usage.
  */
 public class PatentMetadataRetrieverJob {
     
@@ -57,8 +51,6 @@ public class PatentMetadataRetrieverJob {
     
     private static final String COUNTER_FROMCACHE_TOTAL = "processing.referenceExtraction.patent.retrieval.fromCache.total";
 
-    private static final Logger log = Logger.getLogger(PatentMetadataRetrieverJob.class);
-    
     private static final SparkAvroLoader avroLoader = new SparkAvroLoader();
     private static final SparkAvroSaver avroSaver = new SparkAvroSaver();
 
@@ -79,76 +71,116 @@ public class PatentMetadataRetrieverJob {
             
             LockManager lockManager = LockManagerUtils.instantiateLockManager(params.getLockManagerFactoryClassName(),
                     hadoopConf);
-            
-            try {
-                PatentServiceFacade patentServiceFacade = ServiceFacadeUtils
-                        .instantiate(prepareFacadeParameters(params.patentFacadeFactoryClassname, params.facadeParams));
-                
-                JavaRDD<ImportedPatent> importedPatents = avroLoader.loadJavaRDD(sc, params.inputPath, ImportedPatent.class);
-                
-                final Path cacheRootDir = new Path(params.getCacheRootDir());
-                CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
-                
-                String existingCacheId = cacheManager.getExistingCacheId(hadoopConf, cacheRootDir);
-                
-                // skipping already extracted
-                JavaRDD<DocumentText> cachedSources = DocumentTextCacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
-                        existingCacheId, CacheRecordType.text, DocumentText.class);
-                // caching: will be written in new cache version and output
-                cachedSources.cache();
-                
-                JavaPairRDD<CharSequence, DocumentText> cacheById = cachedSources.mapToPair(x -> new Tuple2<>(x.getId(), x));
-                JavaPairRDD<CharSequence, ImportedPatent> inputById = importedPatents.mapToPair(x -> new Tuple2<>(getId(x), x));
-                JavaPairRDD<CharSequence, Tuple2<ImportedPatent, Optional<DocumentText>>> inputJoinedWithCache = inputById.leftOuterJoin(cacheById);
 
-                JavaRDD<ImportedPatent> toBeProcessed = inputJoinedWithCache.filter(x -> !x._2._2.isPresent()).values().map(x -> x._1);
-                JavaRDD<DocumentText> entitiesReturnedFromCache = inputJoinedWithCache.filter(x -> x._2._2.isPresent()).values().map(x -> x._2.get());
-                entitiesReturnedFromCache.cache();
-                
-                JavaPairRDD<CharSequence, ContentRetrieverResponse> returnedFromEPO = retrieveFromRemoteEndpoint(toBeProcessed, patentServiceFacade);
-                returnedFromEPO.cache();
-                
-                JavaRDD<DocumentText> retrievedPatentMeta = returnedFromEPO.map(e -> DocumentText.newBuilder().setId(e._1).setText(e._2.getContent()).build());
-                JavaRDD<Fault> faults = returnedFromEPO.filter(e -> e._2.getException() != null).map(e -> FaultUtils.exceptionToFault(e._1, e._2.getException(), null));
-                
-                JavaRDD<DocumentText> entitiesToBeWritten;
-                
-                if (!returnedFromEPO.isEmpty()) {
-                    // storing new cache entry
-                    JavaRDD<Fault> cachedFaults = DocumentTextCacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
-                            existingCacheId, CacheRecordType.fault, Fault.class);
+            FacadeContentRetriever<ImportedPatent, String> contentRetriever = ServiceFacadeUtils
+                    .instantiate(params.patentServiceFacadeFactoryClassName, params.patentServiceFacadeParams);
 
-                    DocumentTextCacheStorageUtils.storeInCache(avroSaver, cachedSources.union(retrievedPatentMeta),
-                            cachedFaults.union(faults), cacheRootDir, lockManager, cacheManager, hadoopConf,
-                            params.numberOfEmittedFiles);
-                    
-                    // merging final results
-                    entitiesToBeWritten = entitiesReturnedFromCache.union(retrievedPatentMeta);
-                    
-                } else {
-                    entitiesToBeWritten = entitiesReturnedFromCache;
-                }
-                
-                // store final results
-                storeInOutput(entitiesToBeWritten, 
-                        //notice: we do not propagate faults from cache, only new faults are written
-                        faults, generateReportEntries(sc, entitiesReturnedFromCache, retrievedPatentMeta, faults), 
-                        new OutputPaths(params), params.numberOfEmittedFiles);
+            JavaRDD<ImportedPatent> importedPatents = avroLoader.loadJavaRDD(sc, params.inputPath, ImportedPatent.class);
 
+            final Path cacheRootDir = new Path(params.getCacheRootDir());
+            CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
 
-            } catch (ServiceFacadeException e) {
-                throw new RuntimeException("unable to instantiate patent service facade!", e);
+            String existingCacheId = cacheManager.getExistingCacheId(hadoopConf, cacheRootDir);
+
+            // skipping already extracted
+            JavaRDD<DocumentText> cachedSources = DocumentTextCacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
+                    existingCacheId, CacheRecordType.text, DocumentText.class);
+            // caching: will be written in new cache version and output
+            cachedSources.cache();
+
+            JavaPairRDD<CharSequence, DocumentText> cacheById = cachedSources.mapToPair(x -> new Tuple2<>(x.getId(), x));
+            JavaPairRDD<CharSequence, ImportedPatent> inputById = importedPatents.mapToPair(x -> new Tuple2<>(getId(x), x));
+            JavaPairRDD<CharSequence, Tuple2<ImportedPatent, Optional<DocumentText>>> inputJoinedWithCache = inputById.leftOuterJoin(cacheById);
+
+            JavaRDD<ImportedPatent> toBeProcessed = inputJoinedWithCache.filter(x -> !x._2._2.isPresent()).values().map(x -> x._1);
+            JavaRDD<DocumentText> entitiesReturnedFromCache = inputJoinedWithCache.filter(x -> x._2._2.isPresent()).values().map(x -> x._2.get());
+            entitiesReturnedFromCache.cache();
+
+            JavaPairRDD<CharSequence, FacadeContentRetrieverResponse<String>> returnedFromRemoteService =
+                    retrieveFromRemoteService(toBeProcessed, contentRetriever);
+            returnedFromRemoteService.cache();
+
+            JavaRDD<DocumentText> retrievedPatentMetaToBeCached = mapContentRetrieverResponsesToDocumentTextForCache(
+                    returnedFromRemoteService);
+            JavaRDD<Fault> faultsToBeCached = mapContentRetrieverResponsesToFaultForCache(
+                    returnedFromRemoteService);
+
+            if (!retrievedPatentMetaToBeCached.isEmpty()) {
+                // storing new cache entry
+                JavaRDD<Fault> cachedFaults = DocumentTextCacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
+                        existingCacheId, CacheRecordType.fault, Fault.class);
+
+                DocumentTextCacheStorageUtils.storeInCache(avroSaver, cachedSources.union(retrievedPatentMetaToBeCached),
+                        cachedFaults.union(faultsToBeCached), cacheRootDir, lockManager, cacheManager, hadoopConf,
+                        params.numberOfEmittedFiles);
             }
+
+            JavaRDD<DocumentText> retrievedPatentMeta = mapContentRetrieverResponsesToDocumentTextForOutput(
+                    returnedFromRemoteService);
+            JavaRDD<Fault> faults = mapContentRetrieverResponsesToFaultForOutput(
+                    returnedFromRemoteService);
+
+            JavaRDD<DocumentText> entitiesToBeWritten;
+            if (!retrievedPatentMeta.isEmpty()) {
+                // merging final results
+                entitiesToBeWritten = entitiesReturnedFromCache.union(retrievedPatentMeta);
+            } else {
+                entitiesToBeWritten = entitiesReturnedFromCache;
+            }
+
+            // store final results
+            storeInOutput(entitiesToBeWritten,
+                    //notice: we do not propagate faults from cache, only new faults are written
+                    faults, generateReportEntries(sc, entitiesReturnedFromCache, retrievedPatentMeta, faults),
+                    new OutputPaths(params), params.numberOfEmittedFiles);
         }
     }
 
     //------------------------ PRIVATE --------------------------
-        
-    private static JavaPairRDD<CharSequence, ContentRetrieverResponse> retrieveFromRemoteEndpoint(JavaRDD<ImportedPatent> importedPatent,
-            PatentServiceFacade patentServiceFacade) {
+
+    private static JavaPairRDD<CharSequence, FacadeContentRetrieverResponse<String>> retrieveFromRemoteService(
+            JavaRDD<ImportedPatent> importedPatent,
+            FacadeContentRetriever<ImportedPatent, String> contentRetriever) {
         return importedPatent
-                // limiting number of partitions to 1 in order to run EPO retrieval within a single task
-                .repartition(1).mapToPair(x -> new Tuple2<>(getId(x), getMetadataFromFacade(x, patentServiceFacade)));
+                .repartition(1)// limiting number of partitions to 1 in order to run EPO retrieval within a single task
+                .mapToPair(patent -> new Tuple2<>(getId(patent), contentRetriever.retrieveContent(patent)));
+    }
+
+    private static JavaRDD<DocumentText> mapContentRetrieverResponsesToDocumentTextForCache(
+            JavaPairRDD<CharSequence, FacadeContentRetrieverResponse<String>> returnedFromRemoteService) {
+        return returnedFromRemoteService
+                .filter(e -> !e._2.getClass().equals(FacadeContentRetrieverResponse.TransientFailure.class))
+                .map(e -> {
+                    if (e._2.getClass().equals(FacadeContentRetrieverResponse.Success.class)) {
+                        return DocumentText.newBuilder().setId(e._1).setText(e._2.getContent()).build();
+                    }
+                    return DocumentText.newBuilder().setId(e._1).setText("").build();
+                });
+    }
+
+    private static JavaRDD<Fault> mapContentRetrieverResponsesToFaultForCache(
+            JavaPairRDD<CharSequence, FacadeContentRetrieverResponse<String>> returnedFromRemoteService) {
+        return returnedFromRemoteService
+                .filter(e -> e._2.getClass().equals(FacadeContentRetrieverResponse.PersistentFailure.class))
+                .map(e -> FaultUtils.exceptionToFault(e._1, e._2.getException(), null));
+    }
+
+    private static JavaRDD<DocumentText> mapContentRetrieverResponsesToDocumentTextForOutput(
+            JavaPairRDD<CharSequence, FacadeContentRetrieverResponse<String>> returnedFromRemoteService) {
+        return returnedFromRemoteService
+                .map(e -> {
+                    if (e._2.getClass().equals(FacadeContentRetrieverResponse.Success.class)) {
+                        return DocumentText.newBuilder().setId(e._1).setText(e._2.getContent()).build();
+                    }
+                    return DocumentText.newBuilder().setId(e._1).setText("").build();
+                });
+    }
+
+    private static JavaRDD<Fault> mapContentRetrieverResponsesToFaultForOutput(
+            JavaPairRDD<CharSequence, FacadeContentRetrieverResponse<String>> returnedFromRemoteService) {
+        return returnedFromRemoteService
+                .filter(e -> FacadeContentRetrieverResponse.Failure.class.isAssignableFrom(e._2.getClass()))
+                .map(e -> FaultUtils.exceptionToFault(e._1, e._2.getException(), null));
     }
 
     private static JavaRDD<ReportEntry> generateReportEntries(JavaSparkContext sparkContext, 
@@ -168,26 +200,10 @@ public class PatentMetadataRetrieverJob {
         avroSaver.saveJavaRDD(reports.repartition(1), ReportEntry.SCHEMA$, outputPaths.getReport());
     }
 
-    private static ContentRetrieverResponse getMetadataFromFacade(ImportedPatent patent, PatentServiceFacade patentServiceFacade) {
-        try {
-            return new ContentRetrieverResponse(patentServiceFacade.getPatentMetadata(patent));
-        } catch (Exception e) {
-            log.error("Failed to obtain patent metadata for patent: " + patent.getApplnNr(), e);
-            return new ContentRetrieverResponse(e);
-        }
-    }
-
     private static CharSequence getId(ImportedPatent patent) {
         return patent.getApplnNr();
     }
-    
-    private static Map<String, String> prepareFacadeParameters(String patentFacadeFactoryClassname, Map<String, String> facadeParams) {
-        Map<String, String> resultParams = Maps.newHashMap();
-        resultParams.put(ImportWorkflowRuntimeParameters.IMPORT_FACADE_FACTORY_CLASS, patentFacadeFactoryClassname);
-        resultParams.putAll(facadeParams);
-        return resultParams;
-    }
-    
+
     @Parameters(separators = "=")
     private static class JobParameters extends CachedStorageJobParameters {
         @Parameter(names = "-inputPath", required = true)
@@ -195,13 +211,12 @@ public class PatentMetadataRetrieverJob {
 
         @Parameter(names = "-numberOfEmittedFiles", required = true)
         private int numberOfEmittedFiles;
-        
-        @Parameter(names = "-patentFacadeFactoryClassname", required = true)
-        private String patentFacadeFactoryClassname;
-        
-        @DynamicParameter(names = "-D", description = "dynamic parameters related to patent facade", required = false)
-        private Map<String, String> facadeParams = Maps.newHashMap();
-        
+
+        @Parameter(names = "-patentServiceFacadeFactoryClassName", required = true)
+        private String patentServiceFacadeFactoryClassName;
+
+        @DynamicParameter(names = "-D", description = "dynamic parameters related to patent service facade", required = false)
+        private Map<String, String> patentServiceFacadeParams = Maps.newHashMap();
     }
     
 }

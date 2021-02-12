@@ -1,6 +1,8 @@
 package eu.dnetlib.iis.wf.referenceextraction.patent;
 
 import com.google.common.collect.Maps;
+import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
+import eu.dnetlib.iis.wf.referenceextraction.FacadeContentRetriever;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -10,11 +12,6 @@ import java.util.Map;
 import static eu.dnetlib.iis.wf.referenceextraction.patent.OpenPatentWebServiceFacadeFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * {@link OpenPatentWebServiceFacadeFactory} test class.
- * @author mhorst
- *
- */
 public class OpenPatentWebServiceFacadeFactoryTest {
 
     @Test
@@ -24,7 +21,7 @@ public class OpenPatentWebServiceFacadeFactoryTest {
         Map<String, String> conf = prepareValidConfiguration();
         
         // execute
-        PatentServiceFacade service = factory.instantiate(conf);
+        FacadeContentRetriever<ImportedPatent, String> service = factory.instantiate(conf);
         
         // assert
         assertNotNull(service);
@@ -183,7 +180,7 @@ public class OpenPatentWebServiceFacadeFactoryTest {
         
         // execute
         String credential = OpenPatentWebServiceFacadeFactory.buildCredential(key, secret);
-        
+
         // assert
         assertNotNull(credential);
         assertEquals(Base64.getEncoder().encodeToString((key+':'+secret).getBytes(StandardCharsets.UTF_8)), credential);

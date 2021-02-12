@@ -7,7 +7,7 @@ import eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess;
 import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils;
 import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils.CacheRecordType;
 import eu.dnetlib.iis.common.java.io.DataStore;
-import eu.dnetlib.iis.common.java.io.HdfsUtils;
+import eu.dnetlib.iis.common.java.io.HdfsTestUtils;
 import eu.dnetlib.iis.common.lock.ZookeeperLockManagerFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
@@ -31,15 +31,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * {@link PatentMetadataRetrieverJob} test class.
- * 
- * @author mhorst
- *
- */
 @SlowTest
 public class PatentMetadataRetrieverJobTest {
     
@@ -84,7 +77,7 @@ public class PatentMetadataRetrieverJobTest {
     }
 
     @Test
-    public void testRetrievePatentMetaFromMockedRetrieverAndInitializeCache() throws IOException {
+    public void testRetrievePatentMetaFromStubbedRetrieverAndInitializeCacheWithPersistentFaults() throws IOException {
         // given
         String inputPath = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/input.json");
@@ -100,8 +93,8 @@ public class PatentMetadataRetrieverJobTest {
         AvroTestUtils.createLocalAvroDataStore(JsonAvroTestUtils.readJsonDataStore(inputPath, ImportedPatent.class),
                 inputDir.toString());
         
-        SparkJob sparkJob = buildSparkJob(inputDir.toString(), outputDir.toString(), outputFaultDir.toString(),
-                outputReportDir.toString(), PatentFacadeMockFactory.class.getCanonicalName());
+        SparkJob sparkJob = buildSparkJob(inputDir.toString(), outputDir.toString(), outputFaultDir.toString(), outputReportDir.toString(),
+                "eu.dnetlib.iis.wf.referenceextraction.patent.TestServiceFacadeFactories$StubServiceFacadeFactoryWithPersistentFailure");
 
         // when
         executor.execute(sparkJob);
@@ -109,17 +102,14 @@ public class PatentMetadataRetrieverJobTest {
         // then
         Configuration conf = new Configuration();
 
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, outputDir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsTestUtils.countFiles(conf, outputDir.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.toString(), outputPath, DocumentText.class);
 
-        assertEquals(1,
-                HdfsUtils.countFiles(conf, outputReportDir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(1, HdfsTestUtils.countFiles(conf, outputReportDir.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportDir.toString(), reportPath, ReportEntry.class);
 
         // need to validate faults programmatically due to dynamic timestamp generation
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, outputFaultDir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsTestUtils.countFiles(conf, outputFaultDir.toString(), DataStore.AVRO_FILE_EXT));
         validateFaults(AvroTestUtils.readLocalAvroDataStore(outputFaultDir.toString()));
         
         // validating cache
@@ -128,19 +118,68 @@ public class PatentMetadataRetrieverJobTest {
 
         org.apache.hadoop.fs.Path textCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.text);
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, textCacheLocation.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsTestUtils.countFiles(conf, textCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(textCacheLocation.toString(), cachePath, DocumentText.class);
 
         org.apache.hadoop.fs.Path faultCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.fault);
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, faultCacheLocation.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsTestUtils.countFiles(conf, faultCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         validateFaults(AvroTestUtils.readLocalAvroDataStore(faultCacheLocation.toString()));
     }
-    
+
     @Test
-    public void testRetrievePatentMetaFromMockedRetrieverAndUpdateCache() throws IOException {
+    public void testRetrievePatentMetaFromStubbedRetrieverAndNotInitializeCacheWithTransientFaults() throws IOException {
+        // given
+        String inputPath = ClassPathResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/input.json");
+        String outputPath = ClassPathResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/output.json");
+        String reportPath = ClassPathResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/report.json");
+        String cachePath = ClassPathResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/cache_text12.json");
+
+        CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
+
+        AvroTestUtils.createLocalAvroDataStore(JsonAvroTestUtils.readJsonDataStore(inputPath, ImportedPatent.class),
+                inputDir.toString());
+
+        SparkJob sparkJob = buildSparkJob(inputDir.toString(), outputDir.toString(), outputFaultDir.toString(), outputReportDir.toString(),
+                "eu.dnetlib.iis.wf.referenceextraction.patent.TestServiceFacadeFactories$StubServiceFacadeFactoryWithTransientFailure");
+
+        // when
+        executor.execute(sparkJob);
+
+        // then
+        Configuration conf = new Configuration();
+
+        assertEquals(2, HdfsTestUtils.countFiles(conf, outputDir.toString(), DataStore.AVRO_FILE_EXT));
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.toString(), outputPath, DocumentText.class);
+
+        assertEquals(1, HdfsTestUtils.countFiles(conf, outputReportDir.toString(), DataStore.AVRO_FILE_EXT));
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportDir.toString(), reportPath, ReportEntry.class);
+
+        // need to validate faults programmatically due to dynamic timestamp generation
+        assertEquals(2, HdfsTestUtils.countFiles(conf, outputFaultDir.toString(), DataStore.AVRO_FILE_EXT));
+        validateFaults(AvroTestUtils.readLocalAvroDataStore(outputFaultDir.toString()));
+
+        // validating cache
+        String cacheId = cacheManager.getExistingCacheId(conf, new org.apache.hadoop.fs.Path(cacheRootDir.toString()));
+        assertNotNull(cacheId);
+
+        org.apache.hadoop.fs.Path textCacheLocation = DocumentTextCacheStorageUtils
+                .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.text);
+        assertEquals(2, HdfsTestUtils.countFiles(conf, textCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(textCacheLocation.toString(), cachePath, DocumentText.class);
+
+        org.apache.hadoop.fs.Path faultCacheLocation = DocumentTextCacheStorageUtils
+                .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.fault);
+        assertEquals(2, HdfsTestUtils.countFiles(conf, faultCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
+        assertTrue(AvroTestUtils.readLocalAvroDataStore(faultCacheLocation.toString()).isEmpty());
+    }
+
+    @Test
+    public void testRetrievePatentMetaFromStubbedRetrieverAndUpdateCache() throws IOException {
         // given
         String inputPath = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/input.json");
@@ -165,37 +204,31 @@ public class PatentMetadataRetrieverJobTest {
                 input2Dir.toString());
         
         // when
-        executor.execute(buildSparkJob(inputDir.toString(), outputDir.toString(), outputFaultDir.toString(),
-                outputReportDir.toString(), PatentFacadeMockFactory.class.getCanonicalName()));
-        executor.execute(buildSparkJob(input2Dir.toString(), output2Dir.toString(), outputFault2Dir.toString(),
-                outputReport2Dir.toString(), PatentFacadeMockFactory.class.getCanonicalName()));
+        executor.execute(buildSparkJob(inputDir.toString(), outputDir.toString(), outputFaultDir.toString(), outputReportDir.toString(),
+                "eu.dnetlib.iis.wf.referenceextraction.patent.TestServiceFacadeFactories$StubServiceFacadeFactoryWithPersistentFailure"));
+        executor.execute(buildSparkJob(input2Dir.toString(), output2Dir.toString(), outputFault2Dir.toString(), outputReport2Dir.toString(),
+                "eu.dnetlib.iis.wf.referenceextraction.patent.TestServiceFacadeFactories$StubServiceFacadeFactoryWithPersistentFailure"));
 
         // then
         Configuration conf = new Configuration();
 
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, outputDir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsTestUtils.countFiles(conf, outputDir.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.toString(), outputPath, DocumentText.class);
 
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, output2Dir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsTestUtils.countFiles(conf, output2Dir.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(output2Dir.toString(), output2Path, DocumentText.class);
 
-        assertEquals(1,
-                HdfsUtils.countFiles(conf, outputReportDir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(1, HdfsTestUtils.countFiles(conf, outputReportDir.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportDir.toString(), reportPath, ReportEntry.class);
 
-        assertEquals(1,
-                HdfsUtils.countFiles(conf, outputReport2Dir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(1, HdfsTestUtils.countFiles(conf, outputReport2Dir.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReport2Dir.toString(), report2Path, ReportEntry.class);
 
-        // need to validate faults programatically due to dynamic timestamp generation
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, outputFaultDir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        // need to validate faults programmatically due to dynamic timestamp generation
+        assertEquals(2, HdfsTestUtils.countFiles(conf, outputFaultDir.toString(), DataStore.AVRO_FILE_EXT));
         validateFaults(AvroTestUtils.readLocalAvroDataStore(outputFaultDir.toString()));
 
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, outputFault2Dir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsTestUtils.countFiles(conf, outputFault2Dir.toString(), DataStore.AVRO_FILE_EXT));
         assertEquals(0, AvroTestUtils.readLocalAvroDataStore(outputFault2Dir.toString()).size());
         
         // validating cache
@@ -204,19 +237,17 @@ public class PatentMetadataRetrieverJobTest {
 
         org.apache.hadoop.fs.Path textCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.text);
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, textCacheLocation.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsTestUtils.countFiles(conf, textCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(textCacheLocation.toString(), cachePath, DocumentText.class);
 
         org.apache.hadoop.fs.Path faultCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.fault);
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, faultCacheLocation.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsTestUtils.countFiles(conf, faultCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         validateFaults(AvroTestUtils.readLocalAvroDataStore(faultCacheLocation.toString()));
     }
 
     @Test
-    public void testObtainPatentMetaFromCacheWithoutCallingPatentFacade() throws IOException {
+    public void testObtainPatentMetaFromCacheWithoutCallingPatentServiceFacade() throws IOException {
         // given
         String inputPath = ClassPathResourceProvider
                 .getResourcePath("eu/dnetlib/iis/wf/referenceextraction/patent/data/retriever/input.json");
@@ -235,37 +266,31 @@ public class PatentMetadataRetrieverJobTest {
                 inputDir.toString());
         
         // when
-        executor.execute(buildSparkJob(inputDir.toString(), outputDir.toString(), outputFaultDir.toString(),
-                outputReportDir.toString(), PatentFacadeMockFactory.class.getCanonicalName()));
-        executor.execute(buildSparkJob(inputDir.toString(), output2Dir.toString(), outputFault2Dir.toString(),
-                outputReport2Dir.toString(), ExceptionThrowingPatentFacadeFactory.class.getCanonicalName()));
+        executor.execute(buildSparkJob(inputDir.toString(), outputDir.toString(), outputFaultDir.toString(), outputReportDir.toString(),
+                "eu.dnetlib.iis.wf.referenceextraction.patent.TestServiceFacadeFactories$StubServiceFacadeFactoryWithPersistentFailure"));
+        executor.execute(buildSparkJob(inputDir.toString(), output2Dir.toString(), outputFault2Dir.toString(), outputReport2Dir.toString(),
+                "eu.dnetlib.iis.wf.referenceextraction.patent.TestServiceFacadeFactories$ExceptionThrowingFacadeFactory"));
 
         // then
         Configuration conf = new Configuration();
 
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, outputDir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsTestUtils.countFiles(conf, outputDir.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.toString(), outputPath, DocumentText.class);
 
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, output2Dir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsTestUtils.countFiles(conf, output2Dir.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(output2Dir.toString(), outputPath, DocumentText.class);
 
-        assertEquals(1,
-                HdfsUtils.countFiles(conf, outputReportDir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(1, HdfsTestUtils.countFiles(conf, outputReportDir.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportDir.toString(), reportPath, ReportEntry.class);
 
-        assertEquals(1,
-                HdfsUtils.countFiles(conf, outputReport2Dir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(1, HdfsTestUtils.countFiles(conf, outputReport2Dir.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReport2Dir.toString(), report2Path, ReportEntry.class);
 
-        // need to validate faults programatically due to dynamic timestamp generation
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, outputFaultDir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        // need to validate faults programmatically due to dynamic timestamp generation
+        assertEquals(2, HdfsTestUtils.countFiles(conf, outputFaultDir.toString(), DataStore.AVRO_FILE_EXT));
         validateFaults(AvroTestUtils.readLocalAvroDataStore(outputFaultDir.toString()));
 
-        assertEquals(1,
-                HdfsUtils.countFiles(conf, outputReport2Dir.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(1, HdfsTestUtils.countFiles(conf, outputReport2Dir.toString(), DataStore.AVRO_FILE_EXT));
         assertEquals(0, AvroTestUtils.readLocalAvroDataStore(outputFault2Dir.toString()).size());
         
         // validating cache
@@ -274,14 +299,12 @@ public class PatentMetadataRetrieverJobTest {
 
         org.apache.hadoop.fs.Path textCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.text);
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, textCacheLocation.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsTestUtils.countFiles(conf, textCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(textCacheLocation.toString(), cachePath, DocumentText.class);
 
         org.apache.hadoop.fs.Path faultCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.fault);
-        assertEquals(2,
-                HdfsUtils.countFiles(conf, faultCacheLocation.toString(), path -> path.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+        assertEquals(2, HdfsTestUtils.countFiles(conf, faultCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         validateFaults(AvroTestUtils.readLocalAvroDataStore(faultCacheLocation.toString()));
     }
     
@@ -290,11 +313,11 @@ public class PatentMetadataRetrieverJobTest {
         assertEquals(1, faults.size());
         assertEquals("00000002", faults.get(0).getInputObjectId().toString());
         assertEquals("unable to find element", faults.get(0).getMessage().toString());
-        assertEquals(java.util.NoSuchElementException.class.getCanonicalName(), faults.get(0).getCode().toString());
+        assertEquals(PatentWebServiceFacadeException.class.getCanonicalName(), faults.get(0).getCode().toString());
     }
     
     private SparkJob buildSparkJob(String inputPath, String outputPath, String outputFaultPath,
-            String outputReportPath, String patentFacadeFactoryClassName) {
+            String outputReportPath, String patentServiceFacadeFactoryClassName) {
         return SparkJobBuilder.create()
                 .setAppName(getClass().getName())
                 .setMainClass(PatentMetadataRetrieverJob.class)
@@ -305,7 +328,7 @@ public class PatentMetadataRetrieverJobTest {
                 .addArg("-outputPath", outputPath)
                 .addArg("-outputFaultPath", outputFaultPath)
                 .addArg("-outputReportPath", outputReportPath)
-                .addArg("-patentFacadeFactoryClassname", patentFacadeFactoryClassName)
+                .addArg("-patentServiceFacadeFactoryClassName", patentServiceFacadeFactoryClassName)
                 .addArg("-DtestParam", "testValue")
                 .addJobProperty("spark.driver.host", "localhost")
                 .addJobProperty(ZKFailoverController.ZK_QUORUM_KEY, "localhost:" + zookeeperServer.getPort())

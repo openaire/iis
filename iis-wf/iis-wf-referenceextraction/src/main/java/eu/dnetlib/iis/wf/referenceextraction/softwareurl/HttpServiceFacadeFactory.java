@@ -3,14 +3,15 @@ package eu.dnetlib.iis.wf.referenceextraction.softwareurl;
 import java.util.Map;
 
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeFactory;
+import eu.dnetlib.iis.wf.referenceextraction.FacadeContentRetriever;
 
 /**
- * Factory class instantiating {@link HttpContentRetriever}.
+ * Factory class instantiating {@link HttpServiceFacade}.
  * 
  * @author mhorst
  *
  */
-public class HttpContentRetrieverFactory implements ServiceFacadeFactory<ContentRetriever> {
+public class HttpServiceFacadeFactory implements ServiceFacadeFactory<FacadeContentRetriever<String, String>> {
 
     public static final String PARAM_READ_TIMEOUT = "readTimeout";
     public static final String PARAM_CONNECTION_TIMEOUT = "connectionTimeout";
@@ -22,7 +23,7 @@ public class HttpContentRetrieverFactory implements ServiceFacadeFactory<Content
     
 
     @Override
-    public ContentRetriever instantiate(Map<String, String> conf) {
+    public FacadeContentRetriever<String, String> instantiate(Map<String, String> conf) {
         
         String connectionTimeout = conf.getOrDefault(PARAM_CONNECTION_TIMEOUT, "60000");
         String readTimeout = conf.getOrDefault(PARAM_READ_TIMEOUT, "60000");
@@ -32,7 +33,7 @@ public class HttpContentRetrieverFactory implements ServiceFacadeFactory<Content
         String throttleSleepTime = conf.getOrDefault(PARAM_THROTTLE_SLEEP_TIME, "10000");
         String retriesCount = conf.getOrDefault(PARAM_RETRIES_COUNT, "10");
         
-        return new HttpContentRetriever(Integer.parseInt(connectionTimeout), Integer.parseInt(readTimeout),
+        return new HttpServiceFacade(Integer.parseInt(connectionTimeout), Integer.parseInt(readTimeout),
                 Integer.parseInt(maxPageContentLength), Long.parseLong(throttleSleepTime), Integer.parseInt(retriesCount));
 
     }

@@ -3,7 +3,7 @@ package eu.dnetlib.iis.wf.referenceextraction.project;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.java.io.DataStore;
-import eu.dnetlib.iis.common.java.io.HdfsUtils;
+import eu.dnetlib.iis.common.java.io.HdfsTestUtils;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
@@ -76,7 +76,7 @@ public class ProjectFunderReportJobTest {
         
         // assert
         assertEquals(1,
-                HdfsUtils.countFiles(new Configuration(), outputReportDirPath, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+                HdfsTestUtils.countFiles(new Configuration(), outputReportDirPath, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportDirPath, jsonOutputReportFile, ReportEntry.class);
     }
     

@@ -1,7 +1,6 @@
 package eu.dnetlib.iis.common.java.io;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.PathFilter;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -13,7 +12,6 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
 
 public class HdfsUtilsTest {
 
@@ -39,30 +37,5 @@ public class HdfsUtilsTest {
                 .sorted().collect(Collectors.toList());
         List<String> actuals = paths.stream().sorted().collect(Collectors.toList());
         assertEquals(expecteds, actuals);
-    }
-
-    @Test
-    public void givenANotExistingPath_whenCountFilesIsCalled_thenExceptionIsThrown() {
-        assertThrows(RuntimeException.class, () ->
-                HdfsUtils.countFiles(new Configuration(), "/path/to/dir", mock(PathFilter.class)));
-    }
-
-    @Test
-    public void givenAPathToFile_whenCountFilesIsCalled_thenExceptionIsThrown() throws IOException {
-        Path tempFile = Files.createTempFile(this.getClass().getSimpleName(), "tmp");
-        assertThrows(RuntimeException.class, () ->
-                HdfsUtils.countFiles(new Configuration(), tempFile.toString(), mock(PathFilter.class)));
-    }
-
-    @Test
-    public void givenAPathToDir_whenCountFilesIsCalledWithFilter_thenProperFileCountIsReturned() throws IOException {
-        Path tempDir = Files.createTempDirectory(this.getClass().getSimpleName());
-        Files.createTempFile(tempDir, "count_me", "a");
-        Files.createTempFile(tempDir, "count_me", "a");
-        Files.createTempFile(tempDir, "not_count_me", "b");
-
-        int result = HdfsUtils.countFiles(new Configuration(), tempDir.toString(), x -> x.getName().endsWith("a"));
-
-        assertEquals(2, result);
     }
 }

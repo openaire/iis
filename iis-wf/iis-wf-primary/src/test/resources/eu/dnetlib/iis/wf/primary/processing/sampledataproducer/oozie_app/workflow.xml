@@ -416,7 +416,7 @@
                 </property>
 				<property>
                     <name>webcrawlContentRetrieverFactoryClassName</name>
-                    <value>eu.dnetlib.iis.wf.primary.processing.ClasspathContentRetrieverFactory</value>
+                    <value>eu.dnetlib.iis.wf.primary.processing.FileContentReturningHttpServiceFacadeFactory</value>
                 </property>
                 <property>
                     <name>webcrawlLockManagerFactoryClassName</name>
@@ -444,7 +444,7 @@
 				</property>
                 <property>
                     <name>patentMetadataRetrieverFacadeFactoryClassname</name>
-                    <value>eu.dnetlib.iis.wf.primary.processing.ClassPathBasedPatentServiceFacadeFactory</value>
+                    <value>eu.dnetlib.iis.wf.primary.processing.FileContentReturningPatentServiceFacadeFactory</value>
                 </property>
                 <property>
                     <name>patentServiceAuthnConsumerKey</name>

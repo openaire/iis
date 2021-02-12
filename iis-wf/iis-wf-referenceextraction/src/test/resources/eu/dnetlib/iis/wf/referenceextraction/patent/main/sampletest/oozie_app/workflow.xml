@@ -52,7 +52,7 @@
                 </property>
                 <property>
                     <name>patentMetadataRetrieverFacadeFactoryClassname</name>
-                    <value>eu.dnetlib.iis.wf.referenceextraction.patent.ClassPathBasedPatentServiceFacadeFactory</value>
+                    <value>eu.dnetlib.iis.wf.referenceextraction.patent.TestServiceFacadeFactories$FileContentReturningFacadeFactory</value>
                 </property>
                 <property>
                     <name>patentLockManagerFactoryClassName</name>

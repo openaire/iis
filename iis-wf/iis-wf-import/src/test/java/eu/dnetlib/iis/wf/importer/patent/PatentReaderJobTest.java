@@ -3,7 +3,7 @@ package eu.dnetlib.iis.wf.importer.patent;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.java.io.DataStore;
-import eu.dnetlib.iis.common.java.io.HdfsUtils;
+import eu.dnetlib.iis.common.java.io.HdfsTestUtils;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
@@ -54,7 +54,7 @@ public class PatentReaderJobTest {
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.toString(), patentsEpoMappedPath, ImportedPatent.class);
 
         assertEquals(1,
-                HdfsUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+                HdfsTestUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportDir.toString(), reportPath, ReportEntry.class);
     }
 

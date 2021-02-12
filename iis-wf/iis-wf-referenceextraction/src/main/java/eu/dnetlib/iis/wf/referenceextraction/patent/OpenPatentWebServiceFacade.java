@@ -6,9 +6,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
 import java.util.Collections;
-import java.util.NoSuchElementException;
+import java.util.Objects;
 
+import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
+import eu.dnetlib.iis.wf.referenceextraction.FacadeContentRetriever;
+import eu.dnetlib.iis.wf.referenceextraction.FacadeContentRetrieverResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -28,7 +32,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
 import eu.dnetlib.iis.wf.importer.HttpClientUtils;
 
 /**
@@ -37,7 +40,7 @@ import eu.dnetlib.iis.wf.importer.HttpClientUtils;
  * @author mhorst
  *
  */
-public class OpenPatentWebServiceFacade implements PatentServiceFacade {
+public class OpenPatentWebServiceFacade extends FacadeContentRetriever<ImportedPatent, String> {
     
     private static final long serialVersionUID = -9154710658560662015L;
 
@@ -105,15 +108,27 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
         this.jsonParser = jsonParser;
     }
 
-    // ------------------- LOGIC----------------------------
-    
+    /**
+     * Builds url to query for a patent.
+     *
+     * @param objToBuildUrl Patent metadata for building query url.
+     * @return Url to query for specific patent.
+     */
     @Override
-    public String getPatentMetadata(ImportedPatent patent) throws Exception {
-        return getPatentMetadata(patent, getSecurityToken(), 0);
+    protected String buildUrl(ImportedPatent objToBuildUrl) {
+        StringBuilder strBuilder = new StringBuilder(opsUriRoot);
+        if (!opsUriRoot.endsWith("/")) {
+            strBuilder.append('/');
+        }
+        strBuilder.append(objToBuildUrl.getPublnAuth());
+        strBuilder.append('.');
+        strBuilder.append(objToBuildUrl.getPublnNr());
+        strBuilder.append('.');
+        strBuilder.append(objToBuildUrl.getPublnKind());
+        strBuilder.append("/biblio");
+        return strBuilder.toString();
     }
 
-    // ------------------- PRIVATE -------------------------
-    
     /**
      * Retrieves patent metadata from EPO endpoint.
      * 
@@ -121,51 +136,55 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
      * not to hit the ConnectionPoolTimeoutException when connecting the same host
      * more than 2 times within recursion (e.g. when reattepmting).
      */
-    private String getPatentMetadata(ImportedPatent patent, String securityToken, int retryCount) throws Exception {
-        
+    @Override
+    protected FacadeContentRetrieverResponse<String> retrieveContentOrThrow(String url, int retryCount) throws Exception {
         if (retryCount > maxRetriesCount) {
-            throw new PatentServiceException("number of maximum retries exceeded: " + maxRetriesCount);
+            return failureWhenOverMaxRetries(url, maxRetriesCount);
         }
 
-        HttpRequest httpRequest = buildPatentMetaRequest(patent, securityToken, opsUriRoot);
-
+        HttpRequest httpRequest = buildPatentMetaRequest(url, getSecurityToken());
         try (CloseableHttpResponse httpResponse = httpClient.execute(opsHost, httpRequest)) {
-        
             int statusCode = httpResponse.getStatusLine().getStatusCode();
 
             switch (statusCode) {
-            case 200: {
-                HttpEntity entity = httpResponse.getEntity();
-                if (entity == null) {
-                    throw new PatentServiceException(
-                            "got empty entity in response, full status: " + httpResponse.getStatusLine());
+                case HttpURLConnection.HTTP_OK: {
+                    HttpEntity entity = httpResponse.getEntity();
+                    if (!isResponseEntityValid(entity)) {
+                        return FacadeContentRetrieverResponse.persistentFailure(new PatentWebServiceFacadeException(
+                                "got empty entity in response, server response: " + httpResponse));
+                    }
+                    return FacadeContentRetrieverResponse.success(EntityUtils.toString(entity));
                 }
-                return EntityUtils.toString(entity);
-            }
-            case 400: {
-                log.info("got 400 HTTP code in response, potential reason: access token invalid or expired, "
-                        + "server response: {}", EntityUtils.toString(httpResponse.getEntity()));
-                return getPatentMetadata(patent, reauthenticate(), ++retryCount);
-            }
-            case 403: {
-                log.warn("got 403 HTTP code in response, potential reason: endpoint rate limit reached. Delaying for {} ms, "
-                        + "server response: {}", throttleSleepTime, EntityUtils.toString(httpResponse.getEntity()));
-                Thread.sleep(throttleSleepTime);
-                return getPatentMetadata(patent, securityToken, ++retryCount);
-            }
-            case 404: {
-                throw new NoSuchElementException("unable to find element at: " + httpRequest.getRequestLine());
-            }
-            default: {
-                throw new PatentServiceException(String.format(
-                        "got unhandled HTTP status code when accessing endpoint: %d, full status: %s, server response: %s",
-                        statusCode, httpResponse.getStatusLine(), EntityUtils.toString(httpResponse.getEntity())));
-            }
+                case HttpURLConnection.HTTP_BAD_REQUEST: {
+                    log.info("got 400 HTTP code in response, potential reason: access token invalid or expired, server response: {}",
+                            httpResponse);
+                    reauthenticate();
+                    return retrieveContentOrThrow(url, ++retryCount);
+                }
+                case HttpURLConnection.HTTP_FORBIDDEN: {
+                    log.warn("got 403 HTTP code in response, potential reason: endpoint rate limit reached. Delaying for {} ms, server response: {}",
+                            throttleSleepTime, httpResponse);
+                    Thread.sleep(throttleSleepTime);
+                    return retrieveContentOrThrow(url, ++retryCount);
+                }
+                case HttpURLConnection.HTTP_NOT_FOUND: {
+                    return FacadeContentRetrieverResponse.persistentFailure(new PatentWebServiceFacadeException(
+                            "unable to find element at: " + httpRequest.getRequestLine()));
+                }
+                default: {
+                    return FacadeContentRetrieverResponse.persistentFailure(new PatentWebServiceFacadeException(String.format(
+                            "got unhandled HTTP status code when accessing endpoint: %d, full status: %s, server response: %s",
+                            statusCode, httpResponse.getStatusLine(), httpResponse)));
+                }
             }
         }
     }
 
     // -------------------------- PRIVATE -------------------------
+
+    private static Boolean isResponseEntityValid(HttpEntity entity){
+        return Objects.nonNull(entity);
+    }
 
     private void reinitialize(SerDe serDe, String authUriRoot, String opsUriRoot,
             String consumerCredential, long throttleSleepTime, int maxRetriesCount) {
@@ -194,16 +213,14 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
     }
     
     protected String getSecurityToken() throws Exception {
-        if (StringUtils.isNotBlank(this.currentSecurityToken)) {
-            return currentSecurityToken;
-        } else {
-            return reauthenticate();
+        if (StringUtils.isBlank(this.currentSecurityToken)) {
+            reauthenticate();
         }
+        return currentSecurityToken;
     }
 
-    protected String reauthenticate() throws Exception {
+    protected void reauthenticate() throws Exception {
         currentSecurityToken = authenticate();
-        return currentSecurityToken;
     }
 
     /**
@@ -224,18 +241,16 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
                 JsonElement accessToken = jsonObject.get("access_token");
 
                 if (accessToken == null) {
-                    throw new PatentServiceException("access token is missing: " + jsonContent);
+                    throw new PatentWebServiceFacadeException("access token is missing: " + jsonContent);
                 } else {
                     return accessToken.getAsString();
                 }
             } else {
-                throw new PatentServiceException(String.format(
+                throw new PatentWebServiceFacadeException(String.format(
                         "Authentication failed! HTTP status code when accessing endpoint: %d, full status: %s, server response: %s",
                         statusCode, httpResponse.getStatusLine(), EntityUtils.toString(httpResponse.getEntity())));
             } 
         }
-        
-        
     }
 
     protected static HttpRequest buildAuthRequest(String consumerCredential, String uriRoot) {
@@ -246,26 +261,12 @@ public class OpenPatentWebServiceFacade implements PatentServiceFacade {
         return httpRequest;
     }
 
-    protected static HttpRequest buildPatentMetaRequest(ImportedPatent patent, String bearerToken, String urlRoot) {
-        HttpGet httpRequest = new HttpGet(getPatentMetaUrl(patent, urlRoot));
+    protected static HttpRequest buildPatentMetaRequest(String url, String bearerToken) {
+        HttpGet httpRequest = new HttpGet(url);
         httpRequest.addHeader("Authorization", "Bearer " + bearerToken);
         return httpRequest;
     }
 
-    protected static String getPatentMetaUrl(ImportedPatent patent, String urlRoot) {
-        StringBuilder strBuilder = new StringBuilder(urlRoot);
-        if (!urlRoot.endsWith("/")) {
-            strBuilder.append('/');
-        }
-        strBuilder.append(patent.getPublnAuth());
-        strBuilder.append('.');
-        strBuilder.append(patent.getPublnNr());
-        strBuilder.append('.');
-        strBuilder.append(patent.getPublnKind());
-        strBuilder.append("/biblio");
-        return strBuilder.toString();
-    }
-    
     // -------------------------- SerDe --------------------------------
     
     private void writeObject(ObjectOutputStream oos) throws IOException {

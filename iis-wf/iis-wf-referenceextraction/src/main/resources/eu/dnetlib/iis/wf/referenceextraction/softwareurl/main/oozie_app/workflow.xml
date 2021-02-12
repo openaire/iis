@@ -26,7 +26,7 @@
         </property>
         <property>
             <name>webcrawlContentRetrieverFactoryClassName</name>
-            <value>eu.dnetlib.iis.wf.referenceextraction.softwareurl.HttpContentRetrieverFactory</value>
+            <value>eu.dnetlib.iis.wf.referenceextraction.softwareurl.HttpServiceFacadeFactory</value>
             <description>factory class producing the module responsible for obtaining contents for given url</description>
         </property>
         <property>
@@ -224,7 +224,7 @@
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
             <arg>-lockManagerFactoryClassName=${webcrawlLockManagerFactoryClassName}</arg>
 
-            <arg>-contentRetrieverFactoryClassName=${webcrawlContentRetrieverFactoryClassName}</arg>
+            <arg>-httpServiceFacadeFactoryClassName=${webcrawlContentRetrieverFactoryClassName}</arg>
             <arg>-DconnectionTimeout=${webcrawlConnectionTimeout}</arg>
             <arg>-DreadTimeout=${webcrawlReadTimeout}</arg>
             <arg>-DmaxPageContentLength=${webcrawlMaxPageContentLength}</arg>

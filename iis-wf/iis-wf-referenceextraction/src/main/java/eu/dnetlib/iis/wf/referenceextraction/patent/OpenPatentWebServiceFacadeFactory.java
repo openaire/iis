@@ -5,6 +5,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
 
+import eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent;
+import eu.dnetlib.iis.wf.referenceextraction.FacadeContentRetriever;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.Preconditions;
@@ -17,7 +19,7 @@ import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeFactory;
  * @author mhorst
  *
  */
-public class OpenPatentWebServiceFacadeFactory implements ServiceFacadeFactory<PatentServiceFacade> {
+public class OpenPatentWebServiceFacadeFactory implements ServiceFacadeFactory<FacadeContentRetriever<ImportedPatent, String>> {
 
     public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
@@ -41,7 +43,7 @@ public class OpenPatentWebServiceFacadeFactory implements ServiceFacadeFactory<P
     public static final String PARAM_SERVICE_ENDPOINT_RETRIES_COUNT = "endpointRetriesCount";
     
     @Override
-    public PatentServiceFacade instantiate(Map<String, String> conf) {
+    public FacadeContentRetriever<ImportedPatent, String> instantiate(Map<String, String> conf) {
 
         Preconditions.checkArgument(StringUtils.isNotBlank(conf.get(PARAM_CONSUMER_KEY)));
         Preconditions.checkArgument(StringUtils.isNotBlank(conf.get(PARAM_CONSUMER_SECRET)));

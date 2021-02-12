@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.importer.facade;
 
 import com.google.common.collect.Maps;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -74,8 +75,19 @@ public class ServiceFacadeUtilsTest {
         // assert
         assertEquals(instantiated, StringFactory.class.getName());
     }
-    
-    
+
+    @Test
+    @DisplayName("Factory is instantiated using class name and parameters")
+    public void givenFactoryClassNameAndParameters_whenInstantiated_thenProperFactoryIsReturned() throws Exception {
+        // execute
+        String instantiated = ServiceFacadeUtils.instantiate(
+                "eu.dnetlib.iis.wf.importer.facade.ServiceFacadeUtilsTest$StringFactory",
+                Maps.newHashMap());
+
+        // assert
+        assertEquals(instantiated, StringFactory.class.getName());
+    }
+
     // ------------------------ INNER CLASSES --------------------------
     
     @SuppressWarnings("unused")

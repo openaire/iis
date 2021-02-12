@@ -270,7 +270,7 @@
             <arg>-outputReportPath=${output_report_root_path}/patent_metadata_retrieval</arg>
             <arg>-lockManagerFactoryClassName=${patentLockManagerFactoryClassName}</arg>
             <arg>-cacheRootDir=${cacheRootDir}</arg>
-            <arg>-patentFacadeFactoryClassname=${patentMetadataRetrieverFacadeFactoryClassname}</arg>
+            <arg>-patentServiceFacadeFactoryClassName=${patentMetadataRetrieverFacadeFactoryClassname}</arg>
             <arg>-DauthnConsumerKey=${patentServiceAuthnConsumerKey}</arg>
             <arg>-DauthnConsumerSecret=${patentServiceAuthnConsumerSecret}</arg>
             <arg>-DendpointAuthHost=${patentServiceEndpointAuthHost}</arg>

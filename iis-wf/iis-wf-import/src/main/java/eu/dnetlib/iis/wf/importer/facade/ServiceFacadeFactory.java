@@ -3,7 +3,7 @@ package eu.dnetlib.iis.wf.importer.facade;
 import java.util.Map;
 
 /**
- * Generic service facade factory. All implementations must be instantiable with no-argument construtor.
+ * Generic service facade factory. All implementations must be instantiable with no-argument constructor.
  * 
  * @author mhorst
  * 
