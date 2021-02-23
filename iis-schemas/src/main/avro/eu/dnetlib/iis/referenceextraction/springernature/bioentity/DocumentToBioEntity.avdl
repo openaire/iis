@@ -1,0 +1,12 @@
+@namespace("eu.dnetlib.iis.referenceextraction.springernature.bioentity.schemas")
+protocol IIS{
+
+    //todo: add descriptions
+    record DocumentToBioEntity {
+        string documentId;
+        string entity;
+        string biomedicalId;
+        float confidenceLevel;
+        union { null , string } textsnippet = null;
+    }
+}
