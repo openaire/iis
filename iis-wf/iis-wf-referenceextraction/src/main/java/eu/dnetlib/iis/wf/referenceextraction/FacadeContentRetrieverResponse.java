@@ -91,4 +91,12 @@ public abstract class FacadeContentRetrieverResponse<C> implements Serializable 
             super(exception);
         }
     }
+
+    public static boolean isSuccess(FacadeContentRetrieverResponse<?> response) {
+        return Success.class.equals(response.getClass());
+    }
+
+    public static boolean isFailure(FacadeContentRetrieverResponse<?> response) {
+        return !Success.class.equals(response.getClass());
+    }
 }
