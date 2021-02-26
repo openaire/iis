@@ -100,18 +100,19 @@ public class CachedWebCrawlerJob {
             JavaRDD<Fault> cachedFaults = DocumentTextCacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
                     existingCacheId, CacheRecordType.fault, Fault.class);
 
-            JavaPairRDD<CharSequence, Optional<CharSequence>> cacheByUrl = cachedSources
-                    .mapToPair(x -> new Tuple2<>(x.getId(), Optional.of(x.getText())))
+            JavaPairRDD<CharSequence, Optional<DocumentText>> cacheByUrl = cachedSources
+                    .mapToPair(x -> new Tuple2<>(x.getId(), Optional.of(x)))
                     .union(cachedFaults.mapToPair(x -> new Tuple2<>(x.getInputObjectId(), Optional.empty())));
             JavaPairRDD<CharSequence, DocumentToSoftwareUrl> inputByUrl = documentToSoftwareUrl
                     .mapToPair(x -> new Tuple2<>(x.getSoftwareUrl(), x));
-            JavaPairRDD<CharSequence, Tuple2<DocumentToSoftwareUrl, Optional<Optional<CharSequence>>>> inputJoinedWithCache =
+            JavaPairRDD<CharSequence, Tuple2<DocumentToSoftwareUrl, Optional<Optional<DocumentText>>>> inputJoinedWithCache =
                     inputByUrl.leftOuterJoin(cacheByUrl);
 
-            JavaRDD<DocumentToSoftwareUrl> toBeProcessed = inputJoinedWithCache.filter(x -> !x._2._2.isPresent()).values().map(x -> x._1);
+            JavaRDD<DocumentToSoftwareUrl> toBeProcessed = inputJoinedWithCache
+                    .filter(x -> !x._2._2.isPresent()).values().map(x -> x._1);
             JavaRDD<DocumentToSoftwareUrlWithSource> entitiesReturnedFromCache = inputJoinedWithCache
                     .filter(x -> x._2._2.isPresent() && x._2._2.get().isPresent())
-                    .values().map(x -> attachSource(x._1, x._2.get().get()));
+                    .values().map(x -> attachSource(x._1, x._2.get().get().getText()));
             entitiesReturnedFromCache.persist(CACHE_STORAGE_DEFAULT_LEVEL);
 
             JavaPairRDD<CharSequence, FacadeContentRetrieverResponse<String>> returnedFromRemoteService =
@@ -121,16 +122,14 @@ public class CachedWebCrawlerJob {
                     returnedFromRemoteService);
             JavaRDD<Fault> faultsToBeCached = mapContentRetrieverResponsesToFaultForCache(
                     returnedFromRemoteService);
-            Tuple2<JavaRDD<DocumentText>, JavaRDD<Fault>> returnedFromWebcrawlTupleToBeCached = new Tuple2<>(
-                    retrievedSourcesToBeCached, faultsToBeCached);
-            if (!returnedFromWebcrawlTupleToBeCached._1.isEmpty() || !returnedFromWebcrawlTupleToBeCached._2.isEmpty()) {
-                returnedFromWebcrawlTupleToBeCached._1.persist(CACHE_STORAGE_DEFAULT_LEVEL);
-                returnedFromWebcrawlTupleToBeCached._2.persist(CACHE_STORAGE_DEFAULT_LEVEL);
+            if (!retrievedSourcesToBeCached.isEmpty() || !faultsToBeCached.isEmpty()) {
+                retrievedSourcesToBeCached.persist(CACHE_STORAGE_DEFAULT_LEVEL);
+                faultsToBeCached.persist(CACHE_STORAGE_DEFAULT_LEVEL);
 
                 // storing new cache entry
-                DocumentTextCacheStorageUtils.storeInCache(avroSaver, cachedSources.union(returnedFromWebcrawlTupleToBeCached._1),
-                        cachedFaults.union(returnedFromWebcrawlTupleToBeCached._2),
-                        cacheRootDir, lockManager, cacheManager, hadoopConf, numberOfEmittedFiles);
+                DocumentTextCacheStorageUtils.storeInCache(avroSaver, cachedSources.union(retrievedSourcesToBeCached),
+                        cachedFaults.union(faultsToBeCached), cacheRootDir, lockManager, cacheManager, hadoopConf,
+                        numberOfEmittedFiles);
             }
 
             JavaRDD<DocumentText> retrievedSources  = mapContentRetrieverResponsesToDocumentTextForOutput(
