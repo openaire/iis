@@ -137,9 +137,16 @@ public class PatentMetadataRetrieverJob {
             }
 
             // store final results
+            long entitiesReturnedFromCacheCount = entitiesReturnedFromCache.count();
+            long faultsReturnedFromCacheCount = inputJoinedWithCache
+                    .filter(x -> x._2._2.isPresent() && !x._2._2.get().isPresent())
+                    .count();
+            long processedEntitiesCount = retrievedPatentMeta.count();
+            long processedFaultsCount = faults.count();
             storeInOutput(entitiesToBeWritten,
                     //notice: we do not propagate faults from cache, only new faults are written
-                    faults, generateReportEntries(sc, entitiesReturnedFromCache, retrievedPatentMeta, faults),
+                    faults, generateReportEntries(sc, entitiesReturnedFromCacheCount, faultsReturnedFromCacheCount,
+                            processedEntitiesCount, processedFaultsCount),
                     new OutputPaths(params), params.numberOfEmittedFiles);
         }
     }
@@ -182,14 +189,19 @@ public class PatentMetadataRetrieverJob {
                 .map(e -> FaultUtils.exceptionToFault(e._1, e._2.getException(), null));
     }
 
-    private static JavaRDD<ReportEntry> generateReportEntries(JavaSparkContext sparkContext, 
-            JavaRDD<DocumentText> fromCacheEntities, JavaRDD<DocumentText> processedEntities, JavaRDD<Fault> processedFaults) {
-        
-        ReportEntry fromCacheEntitiesCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_FROMCACHE_TOTAL, fromCacheEntities.count());
-        ReportEntry processedEntitiesCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_TOTAL, processedEntities.count());
-        ReportEntry processedFaultsCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_FAULT, processedFaults.count());
-        
-        return sparkContext.parallelize(Lists.newArrayList(fromCacheEntitiesCounter, processedEntitiesCounter, processedFaultsCounter));
+    private static JavaRDD<ReportEntry> generateReportEntries(JavaSparkContext sparkContext,
+                                                              long fromCacheEntitiesCount,
+                                                              long fromCacheFaultsCount,
+                                                              long processedEntitiesCount,
+                                                              long processedFaultsCount) {
+        ReportEntry fromCacheTotalCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_FROMCACHE_TOTAL,
+                fromCacheEntitiesCount + fromCacheFaultsCount);
+        ReportEntry processedTotalCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_TOTAL,
+                processedEntitiesCount + processedFaultsCount);
+        ReportEntry processedFaultsCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_FAULT,
+                processedFaultsCount);
+
+        return sparkContext.parallelize(Lists.newArrayList(fromCacheTotalCounter, processedTotalCounter, processedFaultsCounter));
     }
     
     private static void storeInOutput(JavaRDD<DocumentText> retrievedPatentMeta, 
