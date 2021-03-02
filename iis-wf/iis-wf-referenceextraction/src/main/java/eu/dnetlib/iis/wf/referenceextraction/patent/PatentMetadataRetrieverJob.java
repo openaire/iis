@@ -4,6 +4,7 @@ import java.util.Map;
 
 import eu.dnetlib.iis.wf.referenceextraction.FacadeContentRetriever;
 import eu.dnetlib.iis.wf.referenceextraction.FacadeContentRetrieverResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.spark.SparkConf;
@@ -83,17 +84,28 @@ public class PatentMetadataRetrieverJob {
             String existingCacheId = cacheManager.getExistingCacheId(hadoopConf, cacheRootDir);
 
             // skipping already extracted
+
+            //TODO: https://github.com/openaire/iis/issues/1238
             JavaRDD<DocumentText> cachedSources = DocumentTextCacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
-                    existingCacheId, CacheRecordType.text, DocumentText.class);
-            // caching: will be written in new cache version and output
+                    existingCacheId, CacheRecordType.text, DocumentText.class)
+                    .filter(x -> StringUtils.isNotBlank(x.getText()));
             cachedSources.cache();
+            JavaRDD<Fault> cachedFaults = DocumentTextCacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
+                    existingCacheId, CacheRecordType.fault, Fault.class);
 
-            JavaPairRDD<CharSequence, DocumentText> cacheById = cachedSources.mapToPair(x -> new Tuple2<>(x.getId(), x));
-            JavaPairRDD<CharSequence, ImportedPatent> inputById = importedPatents.mapToPair(x -> new Tuple2<>(getId(x), x));
-            JavaPairRDD<CharSequence, Tuple2<ImportedPatent, Optional<DocumentText>>> inputJoinedWithCache = inputById.leftOuterJoin(cacheById);
+            JavaPairRDD<CharSequence, Optional<DocumentText>> cacheById = cachedSources
+                    .mapToPair(x -> new Tuple2<>(x.getId(), Optional.of(x)))
+                    .union(cachedFaults.mapToPair(x -> new Tuple2<>(x.getInputObjectId(), Optional.empty())));
+            JavaPairRDD<CharSequence, ImportedPatent> inputById = importedPatents
+                    .mapToPair(x -> new Tuple2<>(getId(x), x));
+            JavaPairRDD<CharSequence, Tuple2<ImportedPatent, Optional<Optional<DocumentText>>>> inputJoinedWithCache =
+                    inputById.leftOuterJoin(cacheById);
 
-            JavaRDD<ImportedPatent> toBeProcessed = inputJoinedWithCache.filter(x -> !x._2._2.isPresent()).values().map(x -> x._1);
-            JavaRDD<DocumentText> entitiesReturnedFromCache = inputJoinedWithCache.filter(x -> x._2._2.isPresent()).values().map(x -> x._2.get());
+            JavaRDD<ImportedPatent> toBeProcessed = inputJoinedWithCache
+                    .filter(x -> !x._2._2.isPresent()).values().map(x -> x._1);
+            JavaRDD<DocumentText> entitiesReturnedFromCache = inputJoinedWithCache
+                    .filter(x -> x._2._2.isPresent() && x._2._2.get().isPresent())
+                    .values().map(x -> x._2.get().get());
             entitiesReturnedFromCache.cache();
 
             JavaPairRDD<CharSequence, FacadeContentRetrieverResponse<String>> returnedFromRemoteService =
@@ -104,12 +116,8 @@ public class PatentMetadataRetrieverJob {
                     returnedFromRemoteService);
             JavaRDD<Fault> faultsToBeCached = mapContentRetrieverResponsesToFaultForCache(
                     returnedFromRemoteService);
-
-            if (!retrievedPatentMetaToBeCached.isEmpty()) {
+            if (!retrievedPatentMetaToBeCached.isEmpty() || !faultsToBeCached.isEmpty()) {
                 // storing new cache entry
-                JavaRDD<Fault> cachedFaults = DocumentTextCacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
-                        existingCacheId, CacheRecordType.fault, Fault.class);
-
                 DocumentTextCacheStorageUtils.storeInCache(avroSaver, cachedSources.union(retrievedPatentMetaToBeCached),
                         cachedFaults.union(faultsToBeCached), cacheRootDir, lockManager, cacheManager, hadoopConf,
                         params.numberOfEmittedFiles);
@@ -129,9 +137,16 @@ public class PatentMetadataRetrieverJob {
             }
 
             // store final results
+            long entitiesReturnedFromCacheCount = entitiesReturnedFromCache.count();
+            long faultsReturnedFromCacheCount = inputJoinedWithCache
+                    .filter(x -> x._2._2.isPresent() && !x._2._2.get().isPresent())
+                    .count();
+            long processedEntitiesCount = retrievedPatentMeta.count();
+            long processedFaultsCount = faults.count();
             storeInOutput(entitiesToBeWritten,
                     //notice: we do not propagate faults from cache, only new faults are written
-                    faults, generateReportEntries(sc, entitiesReturnedFromCache, retrievedPatentMeta, faults),
+                    faults, generateReportEntries(sc, entitiesReturnedFromCacheCount, faultsReturnedFromCacheCount,
+                            processedEntitiesCount, processedFaultsCount),
                     new OutputPaths(params), params.numberOfEmittedFiles);
         }
     }
@@ -149,13 +164,8 @@ public class PatentMetadataRetrieverJob {
     private static JavaRDD<DocumentText> mapContentRetrieverResponsesToDocumentTextForCache(
             JavaPairRDD<CharSequence, FacadeContentRetrieverResponse<String>> returnedFromRemoteService) {
         return returnedFromRemoteService
-                .filter(e -> !e._2.getClass().equals(FacadeContentRetrieverResponse.TransientFailure.class))
-                .map(e -> {
-                    if (e._2.getClass().equals(FacadeContentRetrieverResponse.Success.class)) {
-                        return DocumentText.newBuilder().setId(e._1).setText(e._2.getContent()).build();
-                    }
-                    return DocumentText.newBuilder().setId(e._1).setText("").build();
-                });
+                .filter(e -> FacadeContentRetrieverResponse.isSuccess(e._2))
+                .map(e -> DocumentText.newBuilder().setId(e._1).setText(e._2.getContent()).build());
     }
 
     private static JavaRDD<Fault> mapContentRetrieverResponsesToFaultForCache(
@@ -168,29 +178,30 @@ public class PatentMetadataRetrieverJob {
     private static JavaRDD<DocumentText> mapContentRetrieverResponsesToDocumentTextForOutput(
             JavaPairRDD<CharSequence, FacadeContentRetrieverResponse<String>> returnedFromRemoteService) {
         return returnedFromRemoteService
-                .map(e -> {
-                    if (e._2.getClass().equals(FacadeContentRetrieverResponse.Success.class)) {
-                        return DocumentText.newBuilder().setId(e._1).setText(e._2.getContent()).build();
-                    }
-                    return DocumentText.newBuilder().setId(e._1).setText("").build();
-                });
+                .filter(e -> FacadeContentRetrieverResponse.isSuccess(e._2))
+                .map(e -> DocumentText.newBuilder().setId(e._1).setText(e._2.getContent()).build());
     }
 
     private static JavaRDD<Fault> mapContentRetrieverResponsesToFaultForOutput(
             JavaPairRDD<CharSequence, FacadeContentRetrieverResponse<String>> returnedFromRemoteService) {
         return returnedFromRemoteService
-                .filter(e -> FacadeContentRetrieverResponse.Failure.class.isAssignableFrom(e._2.getClass()))
+                .filter(e -> FacadeContentRetrieverResponse.isFailure(e._2))
                 .map(e -> FaultUtils.exceptionToFault(e._1, e._2.getException(), null));
     }
 
-    private static JavaRDD<ReportEntry> generateReportEntries(JavaSparkContext sparkContext, 
-            JavaRDD<DocumentText> fromCacheEntities, JavaRDD<DocumentText> processedEntities, JavaRDD<Fault> processedFaults) {
-        
-        ReportEntry fromCacheEntitiesCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_FROMCACHE_TOTAL, fromCacheEntities.count());
-        ReportEntry processedEntitiesCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_TOTAL, processedEntities.count());
-        ReportEntry processedFaultsCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_FAULT, processedFaults.count());
-        
-        return sparkContext.parallelize(Lists.newArrayList(fromCacheEntitiesCounter, processedEntitiesCounter, processedFaultsCounter));
+    private static JavaRDD<ReportEntry> generateReportEntries(JavaSparkContext sparkContext,
+                                                              long fromCacheEntitiesCount,
+                                                              long fromCacheFaultsCount,
+                                                              long processedEntitiesCount,
+                                                              long processedFaultsCount) {
+        ReportEntry fromCacheTotalCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_FROMCACHE_TOTAL,
+                fromCacheEntitiesCount + fromCacheFaultsCount);
+        ReportEntry processedTotalCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_TOTAL,
+                processedEntitiesCount + processedFaultsCount);
+        ReportEntry processedFaultsCounter = ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_FAULT,
+                processedFaultsCount);
+
+        return sparkContext.parallelize(Lists.newArrayList(fromCacheTotalCounter, processedTotalCounter, processedFaultsCounter));
     }
     
     private static void storeInOutput(JavaRDD<DocumentText> retrievedPatentMeta, 
