@@ -13,7 +13,6 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.Optional;
-import org.apache.spark.storage.StorageLevel;
 
 import com.beust.jcommander.DynamicParameter;
 import com.beust.jcommander.JCommander;
@@ -57,8 +56,6 @@ public class CachedWebCrawlerJob {
     private static final String COUNTER_PROCESSED_FAULT = "processing.referenceExtraction.softwareUrl.webcrawl.processed.fault";
     
     private static final String COUNTER_FROMCACHE_TOTAL = "processing.referenceExtraction.softwareUrl.webcrawl.fromCache.total";
-    
-    private static final StorageLevel CACHE_STORAGE_DEFAULT_LEVEL = StorageLevel.DISK_ONLY();
     
     //------------------------ LOGIC --------------------------
 
@@ -113,19 +110,16 @@ public class CachedWebCrawlerJob {
             JavaRDD<DocumentToSoftwareUrlWithSource> entitiesReturnedFromCache = inputJoinedWithCache
                     .filter(x -> x._2._2.isPresent() && x._2._2.get().isPresent())
                     .values().map(x -> attachSource(x._1, x._2.get().get().getText()));
-            entitiesReturnedFromCache.persist(CACHE_STORAGE_DEFAULT_LEVEL);
 
             JavaPairRDD<CharSequence, FacadeContentRetrieverResponse<String>> returnedFromRemoteService =
                     retrieveFromRemoteService(toBeProcessed, numberOfPartitionsForCrawling, contentRetriever);
+            returnedFromRemoteService.cache();
 
             JavaRDD<DocumentText> retrievedSourcesToBeCached = mapContentRetrieverResponsesToDocumentTextForCache(
                     returnedFromRemoteService);
             JavaRDD<Fault> faultsToBeCached = mapContentRetrieverResponsesToFaultForCache(
                     returnedFromRemoteService);
             if (!retrievedSourcesToBeCached.isEmpty() || !faultsToBeCached.isEmpty()) {
-                retrievedSourcesToBeCached.persist(CACHE_STORAGE_DEFAULT_LEVEL);
-                faultsToBeCached.persist(CACHE_STORAGE_DEFAULT_LEVEL);
-
                 // storing new cache entry
                 DocumentTextCacheStorageUtils.storeInCache(avroSaver, cachedSources.union(retrievedSourcesToBeCached),
                         cachedFaults.union(faultsToBeCached), cacheRootDir, lockManager, cacheManager, hadoopConf,
@@ -136,14 +130,10 @@ public class CachedWebCrawlerJob {
                     returnedFromRemoteService);
             JavaRDD<Fault> faults = mapContentRetrieverResponsesToFaultForOutput(
                     returnedFromRemoteService);
-            Tuple2<JavaRDD<DocumentText>, JavaRDD<Fault>> returnedFromWebcrawlTuple = new Tuple2<>(
-                    retrievedSources, faults);
-
             JavaRDD<DocumentToSoftwareUrlWithSource> webcrawledEntities;
             JavaRDD<DocumentToSoftwareUrlWithSource> entitiesToBeWritten;
-            if (!returnedFromWebcrawlTuple._1.isEmpty()){
-                webcrawledEntities = produceEntitiesToBeStored(toBeProcessed, returnedFromWebcrawlTuple._1);
-                webcrawledEntities.persist(CACHE_STORAGE_DEFAULT_LEVEL);
+            if (!retrievedSources.isEmpty()){
+                webcrawledEntities = produceEntitiesToBeStored(toBeProcessed, retrievedSources);
                 entitiesToBeWritten = entitiesReturnedFromCache.union(webcrawledEntities);
             } else {
                 webcrawledEntities = sc.emptyRDD();
@@ -151,9 +141,7 @@ public class CachedWebCrawlerJob {
             }
             
             // store final results
-            JavaRDD<Fault> faultsToBeStored = produceFaultToBeStored(toBeProcessed, returnedFromWebcrawlTuple._2);
-            faultsToBeStored.cache();
-
+            JavaRDD<Fault> faultsToBeStored = produceFaultToBeStored(toBeProcessed, faults);
             long entitiesReturnedFromCacheCount = entitiesReturnedFromCache.count();
             long faultsReturnedFromCacheCount = inputJoinedWithCache
                     .filter(x -> x._2._2.isPresent() && !x._2._2.get().isPresent())
