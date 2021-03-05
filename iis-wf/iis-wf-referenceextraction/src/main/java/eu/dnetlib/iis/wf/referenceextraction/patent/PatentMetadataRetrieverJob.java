@@ -89,7 +89,6 @@ public class PatentMetadataRetrieverJob {
             JavaRDD<DocumentText> cachedSources = DocumentTextCacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
                     existingCacheId, CacheRecordType.text, DocumentText.class)
                     .filter(x -> StringUtils.isNotBlank(x.getText()));
-            cachedSources.cache();
             JavaRDD<Fault> cachedFaults = DocumentTextCacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
                     existingCacheId, CacheRecordType.fault, Fault.class);
 
@@ -106,7 +105,6 @@ public class PatentMetadataRetrieverJob {
             JavaRDD<DocumentText> entitiesReturnedFromCache = inputJoinedWithCache
                     .filter(x -> x._2._2.isPresent() && x._2._2.get().isPresent())
                     .values().map(x -> x._2.get().get());
-            entitiesReturnedFromCache.cache();
 
             JavaPairRDD<CharSequence, FacadeContentRetrieverResponse<String>> returnedFromRemoteService =
                     retrieveFromRemoteService(toBeProcessed, contentRetriever);

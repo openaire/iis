@@ -8,7 +8,9 @@ import eu.dnetlib.iis.wf.referenceextraction.FacadeContentRetriever;
 import eu.dnetlib.iis.wf.referenceextraction.FacadeContentRetrieverResponse;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Patent service facade factories used for testing.
@@ -24,6 +26,8 @@ public class TestServiceFacadeFactories {
      * while generating filename:
      * <p>
      * publn_auth + '.' + publn_nr + '.' + publn_kind + ".xml"
+     * <p>
+     * Throws an exception if a content is retrieved more than once.
      *
      * @author mhorst
      */
@@ -31,9 +35,14 @@ public class TestServiceFacadeFactories {
 
         private static final String classPathRoot = "/eu/dnetlib/iis/wf/referenceextraction/patent/data/mock_facade_storage/";
 
+        public static Set<String> retrievedUrls;
+
         @Override
         public FacadeContentRetriever<ImportedPatent, String> instantiate(Map<String, String> parameters) {
+            retrievedUrls = new HashSet<>();
+
             return new FacadeContentRetriever<ImportedPatent, String>() {
+
                 @Override
                 protected String buildUrl(ImportedPatent objToBuildUrl) {
                     StringBuilder strBuilder = new StringBuilder();
@@ -48,15 +57,21 @@ public class TestServiceFacadeFactories {
 
                 @Override
                 protected FacadeContentRetrieverResponse<String> retrieveContentOrThrow(String url, int retryCount) {
-                    return FacadeContentRetrieverResponse.success(ClassPathResourceProvider.getResourceContent(
-                            classPathRoot + url));
+                    if (retrievedUrls.contains(url)) {
+                        throw new RuntimeException("requesting already processed url: " + url);
+                    }
+                    FacadeContentRetrieverResponse.Success<String> result = FacadeContentRetrieverResponse
+                            .success(ClassPathResourceProvider.getResourceContent(classPathRoot + url));
+                    retrievedUrls.add(url);
+                    return result;
                 }
             };
         }
     }
 
     /**
-     * Simple stub factory producing {@link FacadeContentRetriever} and persistent failure on error.
+     * Simple stub factory producing {@link FacadeContentRetriever} and persistent failure on error. Throws an exception
+     * if a content is retrieved more than once.
      */
     public static class StubServiceFacadeFactoryWithPersistentFailure implements ServiceFacadeFactory<FacadeContentRetriever<ImportedPatent, String>>, Serializable {
 
@@ -64,11 +79,16 @@ public class TestServiceFacadeFactories {
 
         private static final String expectedParamValue = "testValue";
 
+        public static Set<String> retrievedUrls;
+
         @Override
         public FacadeContentRetriever<ImportedPatent, String> instantiate(Map<String, String> parameters) {
             String paramValue = parameters.get(expectedParamName);
             Preconditions.checkArgument(expectedParamValue.equals(paramValue),
                     "'%s' parameter value: '%s' is different than the expected one: '%s'", expectedParamName, paramValue, expectedParamValue);
+
+            retrievedUrls = new HashSet<>();
+
             return new FacadeContentRetriever<ImportedPatent, String>() {
 
                 @Override
@@ -88,17 +108,23 @@ public class TestServiceFacadeFactories {
 
                 @Override
                 protected FacadeContentRetrieverResponse<String> retrieveContentOrThrow(String url, int retryCount) {
-                    if (url.contains("non-existing")) {
-                        return FacadeContentRetrieverResponse.persistentFailure(new PatentWebServiceFacadeException("unable to find element"));
+                    if (retrievedUrls.contains(url)) {
+                        throw new RuntimeException("requesting already processed url: " + url);
                     }
-                    return FacadeContentRetrieverResponse.success(url);
+                    FacadeContentRetrieverResponse<String> result = url.contains("non-existing") ?
+                            FacadeContentRetrieverResponse
+                                    .persistentFailure(new PatentWebServiceFacadeException("unable to find element"))
+                            : FacadeContentRetrieverResponse.success(url);
+                    retrievedUrls.add(url);
+                    return result;
                 }
             };
         }
     }
 
     /**
-     * Simple stub factory producing {@link FacadeContentRetriever} and transient failure on error.
+     * Simple stub factory producing {@link FacadeContentRetriever} and transient failure on error. Throws an exception
+     * if a content is retrieved more than once.
      */
     public static class StubServiceFacadeFactoryWithTransientFailure implements ServiceFacadeFactory<FacadeContentRetriever<ImportedPatent, String>>, Serializable {
 
@@ -106,11 +132,16 @@ public class TestServiceFacadeFactories {
 
         private static final String expectedParamValue = "testValue";
 
+        public static Set<String> retrievedUrls;
+
         @Override
         public FacadeContentRetriever<ImportedPatent, String> instantiate(Map<String, String> parameters) {
             String paramValue = parameters.get(expectedParamName);
             Preconditions.checkArgument(expectedParamValue.equals(paramValue),
                     "'%s' parameter value: '%s' is different than the expected one: '%s'", expectedParamName, paramValue, expectedParamValue);
+
+            retrievedUrls = new HashSet<>();
+
             return new FacadeContentRetriever<ImportedPatent, String>() {
 
                 @Override
@@ -130,10 +161,15 @@ public class TestServiceFacadeFactories {
 
                 @Override
                 protected FacadeContentRetrieverResponse<String> retrieveContentOrThrow(String url, int retryCount) {
-                    if (url.contains("non-existing")) {
-                        return FacadeContentRetrieverResponse.transientFailure(new PatentWebServiceFacadeException("unable to find element"));
+                    if (retrievedUrls.contains(url)) {
+                        throw new RuntimeException("requesting already processed url: " + url);
                     }
-                    return FacadeContentRetrieverResponse.success(url);
+                    FacadeContentRetrieverResponse<String> result = url.contains("non-existing") ?
+                            FacadeContentRetrieverResponse
+                                    .transientFailure(new PatentWebServiceFacadeException("unable to find element"))
+                            : FacadeContentRetrieverResponse.success(url);
+                    retrievedUrls.add(url);
+                    return result;
                 }
             };
         }
@@ -147,6 +183,7 @@ public class TestServiceFacadeFactories {
         @Override
         public FacadeContentRetriever<ImportedPatent, String> instantiate(Map<String, String> parameters) {
             return new FacadeContentRetriever<ImportedPatent, String>() {
+
                 @Override
                 protected String buildUrl(ImportedPatent objToBuildUrl) {
                     return "/url/to/patent";

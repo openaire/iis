@@ -7,8 +7,10 @@ import eu.dnetlib.iis.wf.referenceextraction.FacadeContentRetrieverResponse;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * Http service facade factories used for testing.
@@ -19,11 +21,14 @@ public class TestServiceFacadeFactories {
     }
 
     /**
-     * Factory producing content retriever returning content of classpath files. Relies on mappings between url and classpath location.
+     * Factory producing content retriever returning content of classpath files. Relies on mappings between url and
+     * classpath location. Throws an exception if a content is retrieved more than once.
      */
     public static class FileContentReturningFacadeFactory implements ServiceFacadeFactory<FacadeContentRetriever<String, String>>, Serializable {
 
         private static final String mappingsLocation = "/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/content-mappings.properties";
+
+        public static Set<String> retrievedUrls;
 
         @Override
         public FacadeContentRetriever<String, String> instantiate(Map<String, String> parameters) {
@@ -34,6 +39,8 @@ public class TestServiceFacadeFactories {
                 throw new RuntimeException(e);
             }
 
+            retrievedUrls = new HashSet<>();
+
             return new FacadeContentRetriever<String, String>() {
 
                 @Override
@@ -43,20 +50,30 @@ public class TestServiceFacadeFactories {
 
                 @Override
                 protected FacadeContentRetrieverResponse<String> retrieveContentOrThrow(String url, int retryCount) {
-                    return FacadeContentRetrieverResponse.success(ClassPathResourceProvider.getResourceContent(
-                            urlToClasspathMap.getProperty(url)));
+                    if (retrievedUrls.contains(url)) {
+                        throw new RuntimeException("requesting already processed url: " + url);
+                    }
+                    FacadeContentRetrieverResponse.Success<String> result = FacadeContentRetrieverResponse
+                            .success(ClassPathResourceProvider.getResourceContent(urlToClasspathMap.getProperty(url)));
+                    retrievedUrls.add(url);
+                    return result;
                 }
             };
         }
     }
 
     /**
-     * Factory producing content retriever returning persistent failure response.
+     * Factory producing content retriever returning persistent failure response. Throws an exception if a content is
+     * retrieved more than once.
      */
     public static class PersistentFailureReturningFacadeFactory implements ServiceFacadeFactory<FacadeContentRetriever<String, String>>, Serializable {
 
+        public static Set<String> retrievedUrls;
+
         @Override
         public FacadeContentRetriever<String, String> instantiate(Map<String, String> parameters) {
+            retrievedUrls = new HashSet<>();
+
             return new FacadeContentRetriever<String, String>() {
 
                 @Override
@@ -66,19 +83,30 @@ public class TestServiceFacadeFactories {
 
                 @Override
                 protected FacadeContentRetrieverResponse<String> retrieveContentOrThrow(String url, int retryCount) {
-                    return FacadeContentRetrieverResponse.persistentFailure(new DocumentNotFoundException());
+                    if (retrievedUrls.contains(url)) {
+                        throw new RuntimeException("requesting already processed url: " + url);
+                    }
+                    FacadeContentRetrieverResponse.Failure<String> result = FacadeContentRetrieverResponse
+                            .persistentFailure(new DocumentNotFoundException());
+                    retrievedUrls.add(url);
+                    return result;
                 }
             };
         }
     }
 
     /**
-     * Factory producing content retriever returning transient failure response.
+     * Factory producing content retriever returning transient failure response. Throws an exception if a content is
+     * retrieved more than once.
      */
     public static class TransientFailureReturningFacadeFactory implements ServiceFacadeFactory<FacadeContentRetriever<String, String>>, Serializable {
 
+        public static Set<String> retrievedUrls;
+
         @Override
         public FacadeContentRetriever<String, String> instantiate(Map<String, String> parameters) {
+            retrievedUrls = new HashSet<>();
+
             return new FacadeContentRetriever<String, String>() {
 
                 @Override
@@ -88,7 +116,13 @@ public class TestServiceFacadeFactories {
 
                 @Override
                 protected FacadeContentRetrieverResponse<String> retrieveContentOrThrow(String url, int retryCount) {
-                    return FacadeContentRetrieverResponse.transientFailure(new DocumentNotFoundException());
+                    if (retrievedUrls.contains(url)) {
+                        throw new RuntimeException("requesting already processed url: " + url);
+                    }
+                    FacadeContentRetrieverResponse.Failure<String> result = FacadeContentRetrieverResponse
+                            .transientFailure(new DocumentNotFoundException());
+                    retrievedUrls.add(url);
+                    return result;
                 }
             };
         }
@@ -102,6 +136,7 @@ public class TestServiceFacadeFactories {
         @Override
         public FacadeContentRetriever<String, String> instantiate(Map<String, String> parameters) {
             return new FacadeContentRetriever<String, String>() {
+
                 @Override
                 protected String buildUrl(String objToBuildUrl) {
                     return objToBuildUrl;
