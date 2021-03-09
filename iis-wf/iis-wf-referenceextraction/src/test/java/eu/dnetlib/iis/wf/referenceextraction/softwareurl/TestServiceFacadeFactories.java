@@ -28,37 +28,38 @@ public class TestServiceFacadeFactories {
 
         private static final String mappingsLocation = "/eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/content-mappings.properties";
 
-        public static Set<String> retrievedUrls;
+        public static class Retriever extends FacadeContentRetriever<String, String> {
+            private final Properties urlToClasspathMap = new Properties();
+            private final Set<String> retrievedUrls = new HashSet<>();
+
+            public Retriever() {
+                try {
+                    urlToClasspathMap.load(ClassPathResourceProvider.getResourceInputStream(mappingsLocation));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            protected String buildUrl(String objToBuildUrl) {
+                return objToBuildUrl;
+            }
+
+            @Override
+            protected FacadeContentRetrieverResponse<String> retrieveContentOrThrow(String url, int retryCount) throws Exception {
+                if (retrievedUrls.contains(url)) {
+                    throw new RuntimeException("requesting already processed url: " + url);
+                }
+                FacadeContentRetrieverResponse.Success<String> result = FacadeContentRetrieverResponse
+                        .success(ClassPathResourceProvider.getResourceContent(urlToClasspathMap.getProperty(url)));
+                retrievedUrls.add(url);
+                return result;
+            }
+        }
 
         @Override
         public FacadeContentRetriever<String, String> instantiate(Map<String, String> parameters) {
-            Properties urlToClasspathMap = new Properties();
-            try {
-                urlToClasspathMap.load(ClassPathResourceProvider.getResourceInputStream(mappingsLocation));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            retrievedUrls = new HashSet<>();
-
-            return new FacadeContentRetriever<String, String>() {
-
-                @Override
-                protected String buildUrl(String objToBuildUrl) {
-                    return objToBuildUrl;
-                }
-
-                @Override
-                protected FacadeContentRetrieverResponse<String> retrieveContentOrThrow(String url, int retryCount) {
-                    if (retrievedUrls.contains(url)) {
-                        throw new RuntimeException("requesting already processed url: " + url);
-                    }
-                    FacadeContentRetrieverResponse.Success<String> result = FacadeContentRetrieverResponse
-                            .success(ClassPathResourceProvider.getResourceContent(urlToClasspathMap.getProperty(url)));
-                    retrievedUrls.add(url);
-                    return result;
-                }
-            };
+            return new Retriever();
         }
     }
 
@@ -68,30 +69,29 @@ public class TestServiceFacadeFactories {
      */
     public static class PersistentFailureReturningFacadeFactory implements ServiceFacadeFactory<FacadeContentRetriever<String, String>>, Serializable {
 
-        public static Set<String> retrievedUrls;
+        public static class Retriever extends FacadeContentRetriever<String, String> {
+            public final Set<String> retrievedUrls = new HashSet<>();
+
+            @Override
+            protected String buildUrl(String objToBuildUrl) {
+                return objToBuildUrl;
+            }
+
+            @Override
+            protected FacadeContentRetrieverResponse<String> retrieveContentOrThrow(String url, int retryCount) throws Exception {
+                if (retrievedUrls.contains(url)) {
+                    throw new RuntimeException("requesting already processed url: " + url);
+                }
+                FacadeContentRetrieverResponse.Failure<String> result = FacadeContentRetrieverResponse
+                        .persistentFailure(new DocumentNotFoundException());
+                retrievedUrls.add(url);
+                return result;
+            }
+        }
 
         @Override
         public FacadeContentRetriever<String, String> instantiate(Map<String, String> parameters) {
-            retrievedUrls = new HashSet<>();
-
-            return new FacadeContentRetriever<String, String>() {
-
-                @Override
-                protected String buildUrl(String objToBuildUrl) {
-                    return objToBuildUrl;
-                }
-
-                @Override
-                protected FacadeContentRetrieverResponse<String> retrieveContentOrThrow(String url, int retryCount) {
-                    if (retrievedUrls.contains(url)) {
-                        throw new RuntimeException("requesting already processed url: " + url);
-                    }
-                    FacadeContentRetrieverResponse.Failure<String> result = FacadeContentRetrieverResponse
-                            .persistentFailure(new DocumentNotFoundException());
-                    retrievedUrls.add(url);
-                    return result;
-                }
-            };
+            return new Retriever();
         }
     }
 
@@ -101,30 +101,29 @@ public class TestServiceFacadeFactories {
      */
     public static class TransientFailureReturningFacadeFactory implements ServiceFacadeFactory<FacadeContentRetriever<String, String>>, Serializable {
 
-        public static Set<String> retrievedUrls;
+        public static class Retriever extends FacadeContentRetriever<String, String> {
+            public final Set<String> retrievedUrls = new HashSet<>();
+
+            @Override
+            protected String buildUrl(String objToBuildUrl) {
+                return objToBuildUrl;
+            }
+
+            @Override
+            protected FacadeContentRetrieverResponse<String> retrieveContentOrThrow(String url, int retryCount) throws Exception {
+                if (retrievedUrls.contains(url)) {
+                    throw new RuntimeException("requesting already processed url: " + url);
+                }
+                FacadeContentRetrieverResponse.Failure<String> result = FacadeContentRetrieverResponse
+                        .transientFailure(new DocumentNotFoundException());
+                retrievedUrls.add(url);
+                return result;
+            }
+        }
 
         @Override
         public FacadeContentRetriever<String, String> instantiate(Map<String, String> parameters) {
-            retrievedUrls = new HashSet<>();
-
-            return new FacadeContentRetriever<String, String>() {
-
-                @Override
-                protected String buildUrl(String objToBuildUrl) {
-                    return objToBuildUrl;
-                }
-
-                @Override
-                protected FacadeContentRetrieverResponse<String> retrieveContentOrThrow(String url, int retryCount) {
-                    if (retrievedUrls.contains(url)) {
-                        throw new RuntimeException("requesting already processed url: " + url);
-                    }
-                    FacadeContentRetrieverResponse.Failure<String> result = FacadeContentRetrieverResponse
-                            .transientFailure(new DocumentNotFoundException());
-                    retrievedUrls.add(url);
-                    return result;
-                }
-            };
+            return new Retriever();
         }
     }
 
@@ -133,20 +132,22 @@ public class TestServiceFacadeFactories {
      */
     public static class ExceptionThrowingFacadeFactory implements ServiceFacadeFactory<FacadeContentRetriever<String, String>>, Serializable {
 
+        public static class Retriever extends FacadeContentRetriever<String, String> {
+
+            @Override
+            protected String buildUrl(String objToBuildUrl) {
+                return objToBuildUrl;
+            }
+
+            @Override
+            protected FacadeContentRetrieverResponse<String> retrieveContentOrThrow(String url, int retryCount) throws Exception {
+                throw new RuntimeException("unexpected content retrieval call!");
+            }
+        }
+
         @Override
         public FacadeContentRetriever<String, String> instantiate(Map<String, String> parameters) {
-            return new FacadeContentRetriever<String, String>() {
-
-                @Override
-                protected String buildUrl(String objToBuildUrl) {
-                    return objToBuildUrl;
-                }
-
-                @Override
-                protected FacadeContentRetrieverResponse<String> retrieveContentOrThrow(String url, int retryCount) {
-                    throw new RuntimeException("unexpected content retrieval call!");
-                }
-            };
+            return new Retriever();
         }
     }
 }
