@@ -7,6 +7,10 @@ import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
 import eu.dnetlib.iis.wf.affmatching.model.SimpleAffMatchResult;
+import eu.dnetlib.iis.wf.affmatching.read.AffiliationConverter;
+import eu.dnetlib.iis.wf.affmatching.read.AffiliationReader;
+import eu.dnetlib.iis.wf.affmatching.read.AffiliationReaderFactory;
+import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -18,7 +22,9 @@ import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
+import java.util.function.BiFunction;
 
 import static com.google.common.collect.ImmutableList.of;
 import static com.google.common.collect.Lists.newArrayList;
@@ -85,7 +91,20 @@ public class AffMatchingDocOrgQualityTest {
     }
 
     //------------------------ TESTS --------------------------
-    
+
+    public static class AffiliationReaderFactoryForTest implements AffiliationReaderFactory {
+
+        @Override
+        public AffiliationReader create() {
+            IisAffiliationReader affiliationReader = new IisAffiliationReader();
+            AffiliationConverter affiliationConverter = new AffiliationConverter();
+            affiliationConverter.setDocumentAcceptor((BiFunction<Integer, ExtractedDocumentMetadata, Boolean> & Serializable)
+                    (integer, extractedDocumentMetadata) -> true);
+            affiliationReader.setAffiliationConverter(affiliationConverter);
+            return affiliationReader;
+        }
+    }
+
     @Test
     public void affiliationMatchingJob_combined_data() throws IOException {
         
@@ -133,6 +152,8 @@ public class AffMatchingDocOrgQualityTest {
                 .addArg("-inputAvroProjOrgPath", inputProjOrgDirPath)
                 .addArg("-outputAvroPath", outputDirPath)
                 .addArg("-outputAvroReportPath", outputReportPath)
+                .addArg("-D" + AffMatchingJob.PARAM_AFF_MATCHING_SERVICE_AFFILIATION_READER_FACTORY_CLASSNAME,
+                        "eu.dnetlib.iis.wf.affmatching.AffMatchingDocOrgQualityTest$AffiliationReaderFactoryForTest")
                 .addJobProperty("spark.driver.host", "localhost")
                 .build();
         

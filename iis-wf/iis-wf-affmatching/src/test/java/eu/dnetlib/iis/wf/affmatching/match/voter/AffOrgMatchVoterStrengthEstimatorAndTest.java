@@ -16,6 +16,7 @@ import eu.dnetlib.iis.wf.affmatching.model.SimpleAffMatchResult;
 import eu.dnetlib.iis.wf.affmatching.orgalternativenames.AffMatchOrganizationAltNameFiller;
 import eu.dnetlib.iis.wf.affmatching.orgalternativenames.CsvOrganizationAltNamesDictionaryFactory;
 import eu.dnetlib.iis.wf.affmatching.orgalternativenames.OrganizationAltNameConst;
+import eu.dnetlib.iis.wf.affmatching.read.AffiliationConverter;
 import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.IisOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.SimpleAffMatchResultWriter;
@@ -30,8 +31,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 import static com.google.common.collect.ImmutableList.of;
 import static eu.dnetlib.iis.common.utils.AvroTestUtils.createLocalAvroDataStore;
@@ -295,7 +298,12 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest extends TestWithSharedSpar
         AffMatchingService affMatchingService = new AffMatchingService();
 
         // readers
-        affMatchingService.setAffiliationReader(new IisAffiliationReader());
+        IisAffiliationReader affiliationReader = new IisAffiliationReader();
+        AffiliationConverter affiliationConverter = new AffiliationConverter();
+        affiliationConverter.setDocumentAcceptor((BiFunction<Integer, ExtractedDocumentMetadata, Boolean> & Serializable)
+                (integer, extractedDocumentMetadata) -> true);
+        affiliationReader.setAffiliationConverter(affiliationConverter);
+        affMatchingService.setAffiliationReader(affiliationReader);
         affMatchingService.setOrganizationReader(new IisOrganizationReader());
 
         // writer
