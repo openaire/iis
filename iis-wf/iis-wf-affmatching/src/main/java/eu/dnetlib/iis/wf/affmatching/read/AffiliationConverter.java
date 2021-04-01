@@ -5,6 +5,7 @@ import static eu.dnetlib.iis.common.string.CharSequenceUtils.toStringWithNullToE
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,10 +28,12 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
 
 public class AffiliationConverter implements Serializable {
 
-    
+
     private static final long serialVersionUID = 1L;
 
-    
+    private BiFunction<Integer, ExtractedDocumentMetadata, Boolean> documentAcceptor =
+            (BiFunction<Integer, ExtractedDocumentMetadata, Boolean> & Serializable)
+                    (position, document) -> isAuthorAffiliation(position, document.getAuthors());
     
     
     //------------------------ LOGIC --------------------------
@@ -57,7 +60,7 @@ public class AffiliationConverter implements Serializable {
             
             Affiliation srcAffiliation = document.getAffiliations().get(i);
             
-            if (isAuthorAffiliation(i, document.getAuthors())) {
+            if (documentAcceptor.apply(i, document)) {
                 affMatchAffiliations.add(convertAffiliation(document.getId(), i + 1, srcAffiliation));    
             }
             
@@ -104,6 +107,7 @@ public class AffiliationConverter implements Serializable {
         
     }
 
-
-    
+    public void setDocumentAcceptor(BiFunction<Integer, ExtractedDocumentMetadata, Boolean> documentAcceptor) {
+        this.documentAcceptor = documentAcceptor;
+    }
 }

@@ -39,4 +39,8 @@ public class IisAffiliationReader implements Serializable, AffiliationReader {
 
         return sourceAffiliations.flatMap(srcAff -> affiliationConverter.convert(srcAff).iterator());
     }
+
+    public void setAffiliationConverter(AffiliationConverter affiliationConverter) {
+        this.affiliationConverter = affiliationConverter;
+    }
 }
