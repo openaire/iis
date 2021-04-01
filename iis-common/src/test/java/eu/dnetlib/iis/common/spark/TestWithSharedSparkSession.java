@@ -30,6 +30,7 @@ public class TestWithSharedSparkSession {
             conf.setMaster("local");
             conf.set("spark.driver.host", "localhost");
             conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
+            conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
             _spark = SparkSession.builder().config(conf).getOrCreate();
         }
     }

@@ -32,6 +32,7 @@ public class TestWithSharedSparkContext {
             conf.setMaster("local");
             conf.set("spark.driver.host", "localhost");
             conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
+            conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
             _sc = new SparkContext(conf);
             _jsc = new JavaSparkContext(_sc);
         }
