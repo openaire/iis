@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.affmatching;
 
+import com.beust.jcommander.DynamicParameter;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
@@ -9,6 +10,8 @@ import eu.dnetlib.iis.wf.affmatching.match.AffOrgMatcher;
 import eu.dnetlib.iis.wf.affmatching.orgalternativenames.AffMatchOrganizationAltNameFiller;
 import eu.dnetlib.iis.wf.affmatching.orgalternativenames.CsvOrganizationAltNamesDictionaryFactory;
 import eu.dnetlib.iis.wf.affmatching.orgalternativenames.OrganizationAltNameConst;
+import eu.dnetlib.iis.wf.affmatching.read.AffiliationReader;
+import eu.dnetlib.iis.wf.affmatching.read.AffiliationReaderFactory;
 import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.IisOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.IisAffMatchResultWriter;
@@ -16,8 +19,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.google.common.collect.ImmutableList.of;
 import static eu.dnetlib.iis.wf.affmatching.match.DocOrgRelationMatcherFactory.createDocOrgRelationMatcher;
@@ -32,12 +34,15 @@ import static eu.dnetlib.iis.wf.affmatching.match.MainSectionHashBucketMatcherFa
  * @author Łukasz Dumiszewski
  */
 public class AffMatchingJob {
-    
+
+    public static final String PARAM_AFF_MATCHING_SERVICE_AFFILIATION_READER_FACTORY_CLASSNAME =
+            "aff_matching_service_affiliation_reader_factory_classname";
+
     private static CsvOrganizationAltNamesDictionaryFactory alternativeNamesFactory = new CsvOrganizationAltNamesDictionaryFactory();
 
     //------------------------ LOGIC --------------------------
     
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         AffMatchingJobParameters params = new AffMatchingJobParameters();
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
@@ -88,14 +93,17 @@ public class AffMatchingJob {
         
         @Parameter(names = "-outputAvroReportPath", required = true, description="path to a directory with the execution result report")
         private String outputAvroReportPath;
+
+        @DynamicParameter(names = "-D", description = "dynamic parameters related to quality tests")
+        private Map<String, String> parameters = new HashMap<>();
     }
 
-    private static AffMatchingService createAffMatchingService(JavaSparkContext sparkContext, AffMatchingJobParameters params) throws IOException {
+    private static AffMatchingService createAffMatchingService(JavaSparkContext sparkContext, AffMatchingJobParameters params) throws Exception {
         AffMatchingService affMatchingService = new AffMatchingService();
         affMatchingService.setNumberOfEmittedFiles(params.numberOfEmittedFiles);
         
         // readers
-        affMatchingService.setAffiliationReader(new IisAffiliationReader());
+        affMatchingService.setAffiliationReader(createAffiliationReader(params));
         affMatchingService.setOrganizationReader(new IisOrganizationReader());
 
         // writer
@@ -116,7 +124,15 @@ public class AffMatchingJob {
         
         return affMatchingService;
     }
-    
+
+    private static AffiliationReader createAffiliationReader(AffMatchingJobParameters params) throws Exception {
+        String className = params.parameters.get(PARAM_AFF_MATCHING_SERVICE_AFFILIATION_READER_FACTORY_CLASSNAME);
+        if (Objects.isNull(className)) {
+            return new IisAffiliationReader();
+        }
+        return ((AffiliationReaderFactory) Class.forName(className).getConstructor().newInstance()).create();
+    }
+
     private static AffMatchOrganizationAltNameFiller createAffMatchOrganizationAltNameFiller() throws IOException {
         AffMatchOrganizationAltNameFiller altNameFiller = new AffMatchOrganizationAltNameFiller();
         
@@ -125,5 +141,4 @@ public class AffMatchingJob {
         
         return altNameFiller;
     }
-    
 }

@@ -10,6 +10,7 @@ import eu.dnetlib.iis.wf.affmatching.model.SimpleAffMatchResult;
 import eu.dnetlib.iis.wf.affmatching.orgalternativenames.AffMatchOrganizationAltNameFiller;
 import eu.dnetlib.iis.wf.affmatching.orgalternativenames.CsvOrganizationAltNamesDictionaryFactory;
 import eu.dnetlib.iis.wf.affmatching.orgalternativenames.OrganizationAltNameConst;
+import eu.dnetlib.iis.wf.affmatching.read.AffiliationConverter;
 import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.IisOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.AffMatchResultWriter;
@@ -23,8 +24,10 @@ import scala.Tuple2;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.ImmutableList.of;
@@ -180,7 +183,12 @@ public class AffMatchingAffOrgQualityTest extends TestWithSharedSparkContext {
         AffMatchingService affMatchingService = new AffMatchingService();
 
         // readers
-        affMatchingService.setAffiliationReader(new IisAffiliationReader());
+        IisAffiliationReader affiliationReader = new IisAffiliationReader();
+        AffiliationConverter affiliationConverter = new AffiliationConverter();
+        affiliationConverter.setDocumentAcceptor((BiFunction<Integer, ExtractedDocumentMetadata, Boolean> & Serializable)
+                (integer, extractedDocumentMetadata) -> true);
+        affiliationReader.setAffiliationConverter(affiliationConverter);
+        affMatchingService.setAffiliationReader(affiliationReader);
         affMatchingService.setOrganizationReader(new IisOrganizationReader());
 
         // writer

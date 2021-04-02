@@ -151,7 +151,7 @@ public final class MainSectionHashBucketMatcherFactory {
         
         return ImmutableList.of(
                 createNameCountryStrictMatchVoter(1f, new GetOrgShortNameFunction()),
-                createNameStrictCountryLooseMatchVoter(0.962f, new GetOrgShortNameFunction())
+                createNameStrictCountryLooseMatchVoter(0.758f, new GetOrgShortNameFunction())
                 );
     }
   
