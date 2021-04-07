@@ -41,7 +41,7 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min
 +rcukmatch)
 as confidence, docid, id,prev,middle,next, fundingclass1, grantid
 from (
-unindexed select regexprmatches('\bRCUK\b|[Rr]esearch [Cc]ouncils UK', context) as rcukmatch,
+unindexed select regexprmatches('\bRCUK\b|\bUKRI\b|[Rr]esearch [Cc]ouncils UK', context) as rcukmatch,
 regexprmatches('\b'||rcuk_subfunder||'\b', context) as subrcukmatch,
 regexprmatches('(?:G\d{6,7})|(?:[A-Z]{2}\/\w{6,7}\/\d{1,2}(?:\/xx)?)|(?:(?:BBS|PPA)\/[A-Z](?:\/[A-Z])?\/(?:\w{8,9}|(?:\d{4}\/)?\d{5}(?:\/\d)?))|(?:(?:RES|PTA)-\d{3}-\d{2}-\d{4}(?:-[A-Z]|-\d{1,2})?)|(?:MC_(?:\w{8,10}|\w{2}_(?:\w{2,4}_)?(?:\d{4,5}|[UG]\d{7,9})(?:\/\d{1,2})?))|(?:MC_\w{2}_\w{2}(?:_\w{2})?\/\w{7}(?:\/\d)?)|(?:ESPA-[A-Z]{3,6}-\d{4}(?:-[A-Z]{3}-\d{3}|-\d{3})?)', middle) as hardmatch,
 docid, id, fundingclass1, grantid,middle,prev,next
@@ -50,7 +50,7 @@ select docid, stripchars(middle,'.)(,[]') as middle, prev, next, prev||' '||midd
 from (
   setschema 'docid,prev,middle,next' select c1, textwindow2s(c2,15,1,1,'(?:[SG]?\d{5,7}(?:\/\d)?)|(?:[A-Z]{2}\/\w{6,7}\/\d{1,2}(?:\/xx)?)|(?:[GE]\d{2,3}\/\d{1,4})|(?:(?:BBS|PPA)\/[A-Z](?:\/[A-Z])?\/(?:\w{8,9}|(?:\d{4}\/)?\d{5}(?:\/\d)?))|(?:(?:RES|PTA)-\d{3}-\d{2}-\d{4}(?:-[A-Z]|-\d{1,2})?)|(?:MC_(?:\w{8,10}|\w{2}_(?:\w{2,4}_)?(?:\d{4,5}|[UG]\d{7,9})(?:\/\d{1,2})?))|(?:MC_\w{2}_\w{2}(?:_\w{2})?\/\w{7}(?:\/\d)?)|(?:[A-Za-z]{3,9}\d{5,7}a?)|(?:ESPA-[A-Z]{3,6}-\d{4}(?:-[A-Z]{3}-\d{3}|-\d{3})?)') from pubs where c2 is not null
 )), grants
-WHERE fundingclass1="RCUK" and middle = grantid
+WHERE fundingclass1="UKRI" and middle = grantid
 ) where confidence>0.3 ) group by docid,id)
 
 union all
@@ -208,8 +208,8 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min
             5 * regexpcountwords("china|shanghai|danish|nsfc|\bsnf\b|bulgarian|\bbnsf\b|norwegian|rustaveli|israel|\biran\b|shota|georgia|functionalization|manufacturing",j2s(prevpack,middle,nextpack))
        when fundingClass1="MESTD" then
             regexpcountwords("serbia|mestd",j2s(prevpacksmall,middle,nextpack))
-       when fundingClass1="GSRT" then
-            regexpcountwords("gsrt",j2s(prevpacksmall,middle,nextpack))
+       when fundingClass1="GSRI" then
+            regexpcountwords("gsrt|\bgsri\b",j2s(prevpacksmall,middle,nextpack))
        when fundingClass1="EC"/* fp7 confidence */ then
             case when fundingClass2 = "FP7" THEN
             regexprmatches(var('fp7middlepos'),middle)+
