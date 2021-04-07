@@ -76,7 +76,7 @@ class CitationRelationExporterJobTest extends TestWithSharedSparkSession {
         )));
 
         assertEquals(1, HdfsTestUtils.countFiles(spark().sparkContext().hadoopConfiguration(), outputReportPath.toString(),
-                x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+                DataStore.AVRO_FILE_EXT));
         List<ReportEntry> reportEntries = new AvroDatasetSupport(spark()).read(outputReportPath.toString(), ReportEntry.SCHEMA$, ReportEntry.class)
                 .collectAsList();
         assertEquals(3, reportEntries.size());

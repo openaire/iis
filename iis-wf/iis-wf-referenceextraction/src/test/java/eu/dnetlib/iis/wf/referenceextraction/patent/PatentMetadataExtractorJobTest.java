@@ -91,7 +91,7 @@ public class PatentMetadataExtractorJobTest {
         assertEquals(0, generatedFaults.size());
 
         assertEquals(1,
-                HdfsTestUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+                HdfsTestUtils.countFiles(new Configuration(), outputReportDir.toString(), DataStore.AVRO_FILE_EXT));
         assertReports(AvroTestUtils.readLocalAvroDataStore(outputReportDir.toString()), 1, 0);
     }
     
@@ -128,7 +128,7 @@ public class PatentMetadataExtractorJobTest {
         assertEquals(0, generatedFaults.size());
 
         assertEquals(1,
-                HdfsTestUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+                HdfsTestUtils.countFiles(new Configuration(), outputReportDir.toString(), DataStore.AVRO_FILE_EXT));
         assertReports(AvroTestUtils.readLocalAvroDataStore(outputReportDir.toString()), 1, 0);
     }
     
@@ -165,7 +165,7 @@ public class PatentMetadataExtractorJobTest {
         assertEquals(PatentMetadataParserException.class.getCanonicalName(), fault.getCode().toString());
 
         assertEquals(1,
-                HdfsTestUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+                HdfsTestUtils.countFiles(new Configuration(), outputReportDir.toString(), DataStore.AVRO_FILE_EXT));
         assertReports(AvroTestUtils.readLocalAvroDataStore(outputReportDir.toString()), 1, 1);
     }
     
@@ -195,7 +195,7 @@ public class PatentMetadataExtractorJobTest {
         assertEquals(0, generatedFaults.size());
 
         assertEquals(1,
-                HdfsTestUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+                HdfsTestUtils.countFiles(new Configuration(), outputReportDir.toString(), DataStore.AVRO_FILE_EXT));
         assertReports(AvroTestUtils.readLocalAvroDataStore(outputReportDir.toString()), 0, 0);
     }
     
