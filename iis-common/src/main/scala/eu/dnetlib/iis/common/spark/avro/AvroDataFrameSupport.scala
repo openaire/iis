@@ -12,7 +12,7 @@ import org.apache.spark.sql.types.StructType
 import scala.collection.JavaConverters._
 
 /**
- * Spark avro datasource supporting functions for dataframes.
+ * Support for dataframes of avro types.
  *
  * @param spark SparkSession instance.
  */
@@ -44,57 +44,6 @@ class AvroDataFrameSupport(val spark: SparkSession) extends Serializable {
     val deserializer = new AvroDeserializer(avroSchema, rowSchema)
     val rows = data.map(record => encoder.fromRow(deserializer.deserialize(record).asInstanceOf[InternalRow]))
     spark.createDataFrame(spark.sparkContext.parallelize(rows), rowSchema)
-  }
-
-  /**
-   * Reads data as a dataframe from an avro data store using sql schema.
-   *
-   * @param path   Path to the data store.
-   * @param schema SQL schema of the records.
-   * @return DataFrame with data read from given path.
-   */
-  def read(path: String, schema: StructType): DataFrame = {
-    read(path, SchemaConverters.toAvroType(schema))
-  }
-
-  /**
-   * Reads data as a dataframe from an avro data store using avro schema.
-   *
-   * @param path       Path to the data store.
-   * @param avroSchema Avro schema of the records.
-   * @return DataFrame with data read from given path.
-   */
-  def read(path: String, avroSchema: Schema): DataFrame = {
-    spark.read
-      .format("avro")
-      .option("avroSchema", avroSchema.toString)
-      .load(path)
-  }
-
-  /**
-   * Writes a dataframe as an avro data store using an avro schema generated from sql schema.
-   *
-   * @param df   DataFrame to be saved as avro data store.
-   * @param path Path to the data store.
-   * @return
-   */
-  def write(df: DataFrame, path: String): Unit = {
-    write(df, path, SchemaConverters.toAvroType(df.schema))
-  }
-
-  /**
-   * Writes a dataframe as an avro data store using given avro schema.
-   *
-   * @param df         DataFrame to be saved as avro data store.
-   * @param path       Path to the data store.
-   * @param avroSchema Avro schema of the records.
-   */
-  def write(df: DataFrame, path: String, avroSchema: Schema): Unit = {
-    df
-      .write
-      .format("avro")
-      .option("avroSchema", avroSchema.toString)
-      .save(path)
   }
 
   /**
