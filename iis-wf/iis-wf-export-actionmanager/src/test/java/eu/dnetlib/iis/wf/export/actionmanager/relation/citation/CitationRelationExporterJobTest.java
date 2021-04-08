@@ -9,7 +9,8 @@ import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.spark.TestWithSharedSparkSession;
 import eu.dnetlib.iis.common.spark.avro.AvroDataFrameSupport;
-import eu.dnetlib.iis.common.spark.avro.AvroDatasetSupport;
+import eu.dnetlib.iis.common.spark.avro.AvroDataFrameWriter;
+import eu.dnetlib.iis.common.spark.avro.AvroDatasetReader;
 import eu.dnetlib.iis.export.schemas.Citations;
 import eu.dnetlib.iis.wf.export.actionmanager.AtomicActionDeserializationUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
@@ -37,7 +38,6 @@ class CitationRelationExporterJobTest extends TestWithSharedSparkSession {
     @DisplayName("Citation matching results are exported as atomic actions and report is generated")
     public void givenInputCitationsPath_whenRun_thenSerializedAtomicActionsAndReportsAreCreated(@TempDir Path rootInputPath,
                                                                                                 @TempDir Path rootOutputPath) throws IOException {
-        AvroDataFrameSupport avroDataFrameSupport = new AvroDataFrameSupport(spark());
         List<Citations> citationsList = Collections.singletonList(
                 createCitations(
                         "DocumentId",
@@ -46,8 +46,8 @@ class CitationRelationExporterJobTest extends TestWithSharedSparkSession {
                         ))
         );
         Path inputCitationsPath = rootInputPath.resolve("citations");
-        avroDataFrameSupport.write(
-                avroDataFrameSupport.createDataFrame(citationsList, Citations.SCHEMA$),
+        new AvroDataFrameWriter(
+                new AvroDataFrameSupport(spark()).createDataFrame(citationsList, Citations.SCHEMA$)).write(
                 inputCitationsPath.toString()
         );
         float trustLevelThreshold = 0.5f;
@@ -77,7 +77,7 @@ class CitationRelationExporterJobTest extends TestWithSharedSparkSession {
 
         assertEquals(1, HdfsTestUtils.countFiles(spark().sparkContext().hadoopConfiguration(), outputReportPath.toString(),
                 DataStore.AVRO_FILE_EXT));
-        List<ReportEntry> reportEntries = new AvroDatasetSupport(spark()).read(outputReportPath.toString(), ReportEntry.SCHEMA$, ReportEntry.class)
+        List<ReportEntry> reportEntries = new AvroDatasetReader(spark()).read(outputReportPath.toString(), ReportEntry.SCHEMA$, ReportEntry.class)
                 .collectAsList();
         assertEquals(3, reportEntries.size());
         assertThat(reportEntries, hasItem(
