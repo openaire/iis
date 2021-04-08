@@ -30,8 +30,9 @@ public class CitationRelationExporterJob {
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
 
-        Float trustLevelThreshold = ConfidenceLevelUtils.evaluateConfidenceLevelThreshold(params.trustLevelThreshold);
-        logger.info("Trust level threshold to be used: {}.", trustLevelThreshold);
+        Float confidenceLevelThreshold = ConfidenceLevelUtils
+                .evaluateConfidenceLevelThreshold(params.trustLevelThreshold);
+        logger.info("Confidence level threshold to be used: {}.", confidenceLevelThreshold);
 
         runWithSparkSession(new SparkConf(), params.isSparkSessionShared, spark -> {
             clearOutput(spark, params.outputRelationPath, params.outputReportPath);
@@ -39,7 +40,7 @@ public class CitationRelationExporterJob {
             Dataset<Row> citations = readCitations(spark, params.inputCitationsPath);
 
             UserDefinedFunction isValidConfidenceLevel = udf((UDF1<Float, Boolean>) confidenceLevel ->
-                            ConfidenceLevelUtils.isValidConfidenceLevel(confidenceLevel, trustLevelThreshold),
+                            ConfidenceLevelUtils.isValidConfidenceLevel(confidenceLevel, confidenceLevelThreshold),
                     DataTypes.BooleanType);
             Dataset<Relation> relations = processCitations(citations, isValidConfidenceLevel);
             relations.cache();
