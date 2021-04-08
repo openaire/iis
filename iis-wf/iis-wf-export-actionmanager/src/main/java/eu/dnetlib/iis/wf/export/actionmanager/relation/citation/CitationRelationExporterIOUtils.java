@@ -2,8 +2,8 @@ package eu.dnetlib.iis.wf.export.actionmanager.relation.citation;
 
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
-import eu.dnetlib.iis.common.spark.avro.AvroDataFrameSupport;
-import eu.dnetlib.iis.common.spark.avro.AvroDatasetSupport;
+import eu.dnetlib.iis.common.spark.avro.AvroDataFrameReader;
+import eu.dnetlib.iis.common.spark.avro.AvroDatasetWriter;
 import eu.dnetlib.iis.common.utils.RDDUtils;
 import eu.dnetlib.iis.export.schemas.Citations;
 import org.apache.hadoop.io.Text;
@@ -52,7 +52,7 @@ public class CitationRelationExporterIOUtils {
 
     public static Dataset<Row> readCitations(SparkSession spark,
                                              String inputCitationsPath) {
-        return readCitations(inputCitationsPath, path -> new AvroDataFrameSupport(spark).read(path, Citations.SCHEMA$));
+        return readCitations(inputCitationsPath, path -> new AvroDataFrameReader(spark).read(path, Citations.SCHEMA$));
     }
 
     public static Dataset<Row> readCitations(String inputCitationsPath,
@@ -84,7 +84,7 @@ public class CitationRelationExporterIOUtils {
                                           Dataset<ReportEntry> reportEntries,
                                           String outputReportPath) {
         storeReportEntries(reportEntries, outputReportPath, (ds, path) ->
-                new AvroDatasetSupport(spark).write(ds, path, ReportEntry.SCHEMA$));
+                new AvroDatasetWriter<>(ds).write(path, ReportEntry.SCHEMA$));
     }
 
     public static void storeReportEntries(Dataset<ReportEntry> reportEntries,

@@ -1,7 +1,7 @@
 package eu.dnetlib.iis.wf.referenceextraction.project.tara;
 
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
-import eu.dnetlib.iis.common.spark.avro.AvroDataFrameSupport;
+import eu.dnetlib.iis.common.spark.avro.AvroDataFrameWriter;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 import org.apache.avro.Schema;
 import org.apache.hadoop.conf.Configuration;
@@ -34,7 +34,7 @@ public class TaraReferenceExtractionIOUtils {
     public static void storeInOutput(SparkSession spark,
                                      Dataset<Row> resultsToOutputDF,
                                      String outputDocumentToProject) {
-        storeInOutput(resultsToOutputDF, outputDocumentToProject, new AvroDataStoreWriter(spark));
+        storeInOutput(resultsToOutputDF, outputDocumentToProject, new AvroDataStoreWriter());
     }
 
     public static void storeInOutput(Dataset<Row> resultsToOutputDF,
@@ -57,14 +57,8 @@ public class TaraReferenceExtractionIOUtils {
     }
 
     public static class AvroDataStoreWriter {
-        private AvroDataFrameSupport avroDataFrameSupport;
-
-        public AvroDataStoreWriter(SparkSession spark) {
-            this.avroDataFrameSupport = new AvroDataFrameSupport(spark);
-        }
-
         public void write(Dataset<Row> df, String path, Schema avroSchema) {
-            avroDataFrameSupport.write(df, path, avroSchema);
+            new AvroDataFrameWriter(df).write(path, avroSchema);
         }
     }
 }

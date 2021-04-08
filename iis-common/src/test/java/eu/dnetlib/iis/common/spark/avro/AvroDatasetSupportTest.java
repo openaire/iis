@@ -2,7 +2,6 @@ package eu.dnetlib.iis.common.spark.avro;
 
 import eu.dnetlib.iis.common.avro.Person;
 import eu.dnetlib.iis.common.spark.TestWithSharedSparkSession;
-import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import org.apache.avro.Schema;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
@@ -10,79 +9,32 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.avro.SchemaConverters;
 import org.apache.spark.sql.types.StructType;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AvroDatasetSupportTest extends TestWithSharedSparkSession {
-    private AvroDatasetSupport avroDatasetSupport;
-
-    @TempDir
-    public static Path workingDir;
 
     @BeforeEach
     public void beforeEach() {
         super.beforeEach();
-        avroDatasetSupport = new AvroDatasetSupport(spark());
     }
 
     @Test
-    public void readShouldRunProperly() throws IOException {
-        // given
-        Path inputDir = workingDir.resolve("input");
-        Person person = Person.newBuilder().setId(1).setName("name").setAge(2).build();
-        List<Person> data = Collections.singletonList(person);
-        AvroTestUtils.createLocalAvroDataStore(data, inputDir.toString(), Person.class);
-
-        // when
-        Dataset<Person> result = avroDatasetSupport.read(inputDir.toString(), Person.SCHEMA$, Person.class);
-
-        // then
-        List<Person> personList = result.collectAsList();
-        assertEquals(1, personList.size());
-        Person personRead = personList.get(0);
-        assertEquals(person, personRead);
-    }
-
-    @Test
-    public void writeShouldRunProperly() throws IOException {
-        // given
-        Path outputDir = workingDir.resolve("output");
+    @DisplayName("Avro dataset support converts dataset of avro type to dataframe of avro type")
+    public void givenDatasetOfAvroType_whenConvertedToDataFrame_thenProperDataFrameIsReturned() {
         Person person = Person.newBuilder().setId(1).setName("name").setAge(2).build();
         Dataset<Person> ds = spark().createDataset(
                 Collections.singletonList(person),
                 Encoders.kryo(Person.class)
         );
 
-        // when
-        avroDatasetSupport.write(ds, outputDir.toString(), Person.SCHEMA$);
+        Dataset<Row> result = new AvroDatasetSupport(spark()).toDF(ds, Person.SCHEMA$);
 
-        // then
-        List<Person> personList = AvroTestUtils.readLocalAvroDataStore(outputDir.toString());
-        assertEquals(1, personList.size());
-        Person personRead = personList.get(0);
-        assertEquals(person, personRead);
-    }
-
-    @Test
-    public void toDFShouldRunProperly() {
-        // given
-        Person person = Person.newBuilder().setId(1).setName("name").setAge(2).build();
-        Dataset<Person> ds = spark().createDataset(
-                Collections.singletonList(person),
-                Encoders.kryo(Person.class)
-        );
-
-        // when
-        Dataset<Row> result = avroDatasetSupport.toDF(ds, Person.SCHEMA$);
-
-        // then
         assertSchemasEqualIgnoringNullability(Person.SCHEMA$, result.schema());
         List<Row> rows = result.collectAsList();
         assertEquals(1, rows.size());
