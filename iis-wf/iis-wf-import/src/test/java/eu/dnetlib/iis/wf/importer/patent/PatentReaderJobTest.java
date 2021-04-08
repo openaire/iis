@@ -54,7 +54,7 @@ public class PatentReaderJobTest {
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.toString(), patentsEpoMappedPath, ImportedPatent.class);
 
         assertEquals(1,
-                HdfsTestUtils.countFiles(new Configuration(), outputReportDir.toString(), x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+                HdfsTestUtils.countFiles(new Configuration(), outputReportDir.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportDir.toString(), reportPath, ReportEntry.class);
     }
 

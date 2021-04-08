@@ -66,7 +66,7 @@ public class RootConceptIdReportJobTest {
         
         // assert
         assertEquals(1,
-                HdfsTestUtils.countFiles(new Configuration(), outputReportDirPath, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+                HdfsTestUtils.countFiles(new Configuration(), outputReportDirPath, DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportDirPath, jsonOutputReportFile, ReportEntry.class);
     }
     

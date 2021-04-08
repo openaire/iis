@@ -141,7 +141,7 @@ public class ProjectBasedMatchingJobTest {
         // assert
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputPath, MatchedOrganization.class);
         assertEquals(1,
-                HdfsTestUtils.countFiles(new Configuration(), outputReportPath, x -> x.getName().endsWith(DataStore.AVRO_FILE_EXT)));
+                HdfsTestUtils.countFiles(new Configuration(), outputReportPath, DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportPath, jsonOutputReportPath, ReportEntry.class);
 
     }
