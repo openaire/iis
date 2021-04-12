@@ -207,7 +207,7 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min
             regexpcountwords("\bnsf\b|national science foundation",j2s(prevpack,middle,nextpack)) - 
             5 * regexpcountwords("china|shanghai|danish|nsfc|\bsnf\b|bulgarian|\bbnsf\b|norwegian|rustaveli|israel|\biran\b|shota|georgia|functionalization|manufacturing",j2s(prevpack,middle,nextpack))
        when fundingClass1="MESTD" then
-            regexpcountwords("serbia|mestd",j2s(prevpacksmall,middle,nextpack))
+            regexpcountwords("serbia|mestd|451_03_68",j2s(prevpacksmall,middle,nextpack))
        when fundingClass1="GSRI" then
             regexpcountwords("gsrt|\bgsri\b",j2s(prevpacksmall,middle,nextpack))
        when fundingClass1="EC"/* fp7 confidence */ then
