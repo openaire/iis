@@ -39,7 +39,7 @@
 {"id":"40|fwf_________::fd275dc19e12ae007d84bc8c220058e4","projectAcronym":"","projectGrantId":"M 1420","fundingClass":"FWF::Lise Meitner Programme", "jsonextrainfo":"{}"}
 {"id":"40|snsf________::69afff7decb9138b8236b9d8c42693f3","projectGrantId":"620 -062868","projectAcronym":null,"fundingClass":"SNSF::Careers","jsonextrainfo":"{}"}
 {"id":"40|wt__________::1e5e62235d094afd01cd56e65112fc63", "projectAcronym":"", "projectGrantId":"unidentified", "fundingClass":"WT::WT", "jsonextrainfo":"{}"}
-{"id":"40|rcuk________::aed720e690d630ef7ebfcd578a915a41","projectGrantId":"ST/J000469/1","projectAcronym":null,"fundingClass":"RCUK::STFC","jsonextrainfo":"{}"}
+{"id":"40|ukri________::aed720e690d630ef7ebfcd578a915a41","projectGrantId":"ST/J000469/1","projectAcronym":null,"fundingClass":"UKRI::STFC","jsonextrainfo":"{}"}
 {"id":"40|taraexp_____::c81e728d9d4c2f636f067f89cc14862c","projectGrantId":"2","projectAcronym":null,"fundingClass":"TARA::","jsonextrainfo":"{\"keywords\":[ \"tara oceans\", \"tara-oceans\"]}"}
 {"id":"40|taraexp_____::6413b29c08e6d71a9cf6c4d50d7dc6f6","projectGrantId":"unidentified","projectAcronym":null,"fundingClass":"TARA::","jsonextrainfo":"{}"}
 {"id":"40|corda__h2020::87bf02a8401a8fb75532a443eaa19465","projectGrantId":"643410","projectAcronym":"OpenAIRE2020","fundingClass":"EC::H2020","jsonextrainfo":"{}"}
@@ -48,7 +48,7 @@
 {"id":"40|tubitakf____::e924b627978040d00669a0f9c050ad42","projectGrantId":"111E036","projectAcronym":null,"fundingClass":"TUBITAK::1001 - Araştırma","jsonextrainfo":"{}"}
 {"id":"40|sgov________::fed79325b85dc27b9d75a498838e2de7","projectGrantId":"MTM2012-31073","projectAcronym":null,"fundingClass":"SGOV::Ministerio de Economía y Competitividad","jsonextrainfo":"{}"}
 {"id":"40|aka_________::b418b9f235f483c5127a88403fc34ef9","projectGrantId":"129662","projectAcronym":null,"fundingClass":"AKA::","jsonextrainfo":"{}"}
-{"id":"40|gsrt________::574ef85ac608988be5167363bb257010", "projectGrantId": "447985", "projectAcronym": null, "fundingClass": "GSRT::", "jsonextrainfo": "{}"}
+{"id":"40|gsri________::574ef85ac608988be5167363bb257010", "projectGrantId": "447985", "projectAcronym": null, "fundingClass": "GSRI::", "jsonextrainfo": "{}"}
 {"id":"40|miur________::54a1d3c536227e295a9982eaf8fd3791", "projectGrantId": "2015KB9WPT", "projectAcronym": null, "fundingClass": "MIUR::PRIN 2015", "jsonextrainfo": "{}"}
 {"id":"40|dfgf________::0646bc00566f502c1d03363e9d77b474", "projectGrantId": "255373834 / SPP 1786", "projectAcronym": null, "fundingClass": "DFG::Schwerpunktprogramme", "jsonextrainfo": "{}"}
 {"id":"40|cihr________::1e5e62235d094afd01cd56e65112fc63", "projectGrantId": "unidentified", "projectAcronym": null, "fundingClass": "CIHR::", "jsonextrainfo": "{}"}

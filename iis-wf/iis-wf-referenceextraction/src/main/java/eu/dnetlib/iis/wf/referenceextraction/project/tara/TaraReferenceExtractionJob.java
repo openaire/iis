@@ -4,7 +4,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import eu.dnetlib.iis.common.spark.SparkSessionFactory;
-import eu.dnetlib.iis.common.spark.avro.AvroDataFrameSupport;
+import eu.dnetlib.iis.common.spark.avro.AvroDataFrameReader;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import org.apache.spark.SparkConf;
@@ -39,12 +39,12 @@ public class TaraReferenceExtractionJob {
         try (SparkSession spark = SparkSessionFactory.withConfAndKryo(new SparkConf())) {
             clearOutput(spark, params.outputDocumentToProject);
 
-            AvroDataFrameSupport avroDataFrameSupport = new AvroDataFrameSupport(spark);
+            AvroDataFrameReader avroDataFrameReader = new AvroDataFrameReader(spark);
 
-            Dataset<Row> inputExtractedDocumentMetadataMergedWithOriginalDF = avroDataFrameSupport.read(
+            Dataset<Row> inputExtractedDocumentMetadataMergedWithOriginalDF = avroDataFrameReader.read(
                     params.inputExtractedDocumentMetadataMergedWithOriginal,
                     ExtractedDocumentMetadataMergedWithOriginal.SCHEMA$);
-            Dataset<Row> inputDocumentTextDF = avroDataFrameSupport.read(params.inputDocumentText,
+            Dataset<Row> inputDocumentTextDF = avroDataFrameReader.read(params.inputDocumentText,
                     DocumentText.SCHEMA$);
             Dataset<Row> documentMetadataDF = buildDocumentMetadata(inputDocumentTextDF,
                     inputExtractedDocumentMetadataMergedWithOriginalDF);
