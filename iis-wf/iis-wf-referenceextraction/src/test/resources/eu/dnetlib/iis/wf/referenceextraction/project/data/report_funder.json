@@ -34,7 +34,7 @@
   "value": "1"
 }
 {
-  "key": "processing.referenceExtraction.project.references.byfunder.gsrt",
+  "key": "processing.referenceExtraction.project.references.byfunder.gsri",
   "type": "COUNTER",
   "value": "1"
 }
@@ -69,7 +69,7 @@
   "value": "1"
 }
 {
-  "key": "processing.referenceExtraction.project.references.byfunder.rcuk",
+  "key": "processing.referenceExtraction.project.references.byfunder.ukri",
   "type": "COUNTER",
   "value": "1"
 }
