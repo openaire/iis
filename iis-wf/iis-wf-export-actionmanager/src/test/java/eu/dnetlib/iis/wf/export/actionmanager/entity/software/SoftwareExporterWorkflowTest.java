@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.export.actionmanager.entity;
+package eu.dnetlib.iis.wf.export.actionmanager.entity.software;
 
 import eu.dnetlib.iis.common.AbstractOozieWorkflowTestCase;
 import org.junit.jupiter.api.Test;

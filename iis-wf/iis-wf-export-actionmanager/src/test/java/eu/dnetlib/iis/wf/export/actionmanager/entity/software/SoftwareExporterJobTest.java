@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.export.actionmanager.entity;
+package eu.dnetlib.iis.wf.export.actionmanager.entity.software;
 
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.Relation;
@@ -21,43 +21,37 @@ import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
-import static eu.dnetlib.iis.wf.export.actionmanager.entity.SoftwareExportCounterReporter.*;
+import static eu.dnetlib.iis.wf.export.actionmanager.entity.software.SoftwareExportCounterReporter.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * 
  * @author mhorst
- *
  */
 @SlowTest
 public class SoftwareExporterJobTest {
 
-    private SparkJobExecutor executor = new SparkJobExecutor();
+    private final SparkJobExecutor executor = new SparkJobExecutor();
 
     @TempDir
-    public File workingDir;
+    public Path workingDir;
 
-    private String inputDocumentToSoftwareAvroPath;
-
-    private String inputDocumentMetadataAvroPath;
-
-    private String outputEntityDirPath;
-
-    private String outputRelationDirPath;
-
-    private String reportDirPath;
+    private String inputDocumentToSoftwareUrlPath;
+    private String inputDocumentMetadataPath;
+    private String outputRelationPath;
+    private String outputEntityPath;
+    private String reportPath;
 
     @BeforeEach
     public void before() {
-        inputDocumentToSoftwareAvroPath = workingDir + "/software_exporter/input_software";
-        inputDocumentMetadataAvroPath = workingDir + "/software_exporter/input_metadata";
-        outputEntityDirPath = workingDir + "/software_exporter/output_entity";
-        outputRelationDirPath = workingDir + "/software_exporter/output_relation";
-        reportDirPath = workingDir + "/software_exporter/report";
+        inputDocumentToSoftwareUrlPath = workingDir.resolve("software_exporter").resolve("input_software").toString();
+        inputDocumentMetadataPath = workingDir.resolve("software_exporter").resolve("input_metadata").toString();
+        outputRelationPath = workingDir.resolve("software_exporter").resolve("output_relation").toString();
+        outputEntityPath = workingDir.resolve("software_exporter").resolve("output_entity").toString();
+        reportPath = workingDir.resolve("software_exporter").resolve("report").toString();
     }
 
     // ------------------------ TESTS --------------------------
@@ -67,16 +61,16 @@ public class SoftwareExporterJobTest {
 
         // given
         String jsonInputSoftwareFile = ClassPathResourceProvider
-                .getResourcePath("eu/dnetlib/iis/wf/export/actionmanager/software/data/document_to_softwareurl_with_meta.json");
+                .getResourcePath("eu/dnetlib/iis/wf/export/actionmanager/entity/software/default/input/document_to_softwareurl_with_meta.json");
         String jsonInputMetadataFile = ClassPathResourceProvider
-                .getResourcePath("eu/dnetlib/iis/wf/export/actionmanager/software/data/document_metadata.json");
+                .getResourcePath("eu/dnetlib/iis/wf/export/actionmanager/entity/software/default/input/document_metadata.json");
 
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(jsonInputSoftwareFile, DocumentToSoftwareUrlWithMeta.class),
-                inputDocumentToSoftwareAvroPath);
+                inputDocumentToSoftwareUrlPath);
 
         AvroTestUtils.createLocalAvroDataStore(JsonAvroTestUtils.readJsonDataStore(jsonInputMetadataFile,
-                ExtractedDocumentMetadataMergedWithOriginal.class), inputDocumentMetadataAvroPath);
+                ExtractedDocumentMetadataMergedWithOriginal.class), inputDocumentMetadataPath);
 
         // execute
         executor.execute(buildJob("0.9"));
@@ -84,11 +78,11 @@ public class SoftwareExporterJobTest {
         // assert
         assertCountersInReport(0, 0, 0);
 
-        List<AtomicAction<Software>> capturedEntityActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputEntityDirPath), text ->
+        List<AtomicAction<Software>> capturedEntityActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputEntityPath), text ->
                 AtomicActionDeserializationUtils.deserializeAction(text.toString()));
         assertEquals(0, capturedEntityActions.size());
 
-        List<AtomicAction<Relation>> capturedRelationActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputRelationDirPath), text ->
+        List<AtomicAction<Relation>> capturedRelationActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputRelationPath), text ->
                 AtomicActionDeserializationUtils.deserializeAction(text.toString()));
         assertEquals(0, capturedRelationActions.size());
     }
@@ -98,36 +92,36 @@ public class SoftwareExporterJobTest {
 
         // given
         String jsonInputSoftwareFile = ClassPathResourceProvider
-                .getResourcePath("eu/dnetlib/iis/wf/export/actionmanager/software/data/document_to_softwareurl_with_meta.json");
+                .getResourcePath("eu/dnetlib/iis/wf/export/actionmanager/entity/software/default/input/document_to_softwareurl_with_meta.json");
         String jsonInputMetadataFile = ClassPathResourceProvider
-                .getResourcePath("eu/dnetlib/iis/wf/export/actionmanager/software/data/document_metadata.json");
+                .getResourcePath("eu/dnetlib/iis/wf/export/actionmanager/entity/software/default/input/document_metadata.json");
 
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(jsonInputSoftwareFile, DocumentToSoftwareUrlWithMeta.class),
-                inputDocumentToSoftwareAvroPath);
+                inputDocumentToSoftwareUrlPath);
 
         AvroTestUtils.createLocalAvroDataStore(JsonAvroTestUtils.readJsonDataStore(jsonInputMetadataFile,
-                ExtractedDocumentMetadataMergedWithOriginal.class), inputDocumentMetadataAvroPath);
+                ExtractedDocumentMetadataMergedWithOriginal.class), inputDocumentMetadataPath);
 
         // execute
         executor.execute(buildJob("$UNDEFINED$"));
 
         // assert
-        assertCountersInReport(2, 3, 2);
+        assertCountersInReport(1, 1, 1);
 
         // verifying entities
-        List<AtomicAction<Software>> capturedEntityActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputEntityDirPath), text ->
+        List<AtomicAction<Software>> capturedEntityActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputEntityPath), text ->
                 AtomicActionDeserializationUtils.deserializeAction(text.toString()));
-        assertEquals(2, capturedEntityActions.size());
+        assertEquals(1, capturedEntityActions.size());
 
         for (AtomicAction<Software> currentAction : capturedEntityActions) {
             verifyAction(currentAction, Software.class);
         }
 
         // verifying relations
-        List<AtomicAction<Relation>> capturedRelationActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputRelationDirPath), text ->
+        List<AtomicAction<Relation>> capturedRelationActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputRelationPath), text ->
                 AtomicActionDeserializationUtils.deserializeAction(text.toString()));
-        assertEquals(6, capturedRelationActions.size());
+        assertEquals(2, capturedRelationActions.size());
 
         for (int i = 0; i < capturedRelationActions.size(); i++) {
             verifyAction(capturedRelationActions.get(i), Relation.class);
@@ -137,8 +131,8 @@ public class SoftwareExporterJobTest {
     // ------------------------ PRIVATE --------------------------
 
     private void assertCountersInReport(Integer expectedEntitiesCount, Integer expectedReferencesCount,
-            Integer expectedDistictPubsRererencesCount) throws IOException {
-        List<ReportEntry> reportEntries = AvroTestUtils.readLocalAvroDataStore(reportDirPath);
+                                        Integer expectedDistinctPubsReferencesCount) throws IOException {
+        List<ReportEntry> reportEntries = AvroTestUtils.readLocalAvroDataStore(reportPath);
         assertEquals(3, reportEntries.size());
 
         assertSame(ReportEntryType.COUNTER, reportEntries.get(0).getType());
@@ -151,7 +145,7 @@ public class SoftwareExporterJobTest {
 
         assertSame(ReportEntryType.COUNTER, reportEntries.get(2).getType());
         assertEquals(DISTINCT_PUBLICATIONS_WITH_SOFTWARE_REFERENCES_COUNTER, reportEntries.get(2).getKey().toString());
-        assertEquals(expectedDistictPubsRererencesCount, Integer.valueOf(reportEntries.get(2).getValue().toString()));
+        assertEquals(expectedDistinctPubsReferencesCount, Integer.valueOf(reportEntries.get(2).getValue().toString()));
     }
 
     private static void verifyAction(AtomicAction<?> action, Class<?> clazz) {
@@ -163,11 +157,14 @@ public class SoftwareExporterJobTest {
 
     private SparkJob buildJob(String trustLevelThreshold) {
         return SparkJobBuilder.create().setAppName("Spark Software Exporter").setMainClass(SoftwareExporterJob.class)
-                .addArg("-inputDocumentToSoftwareAvroPath", inputDocumentToSoftwareAvroPath)
-                .addArg("-inputDocumentMetadataAvroPath", inputDocumentMetadataAvroPath)
-                .addArg("-trustLevelThreshold", trustLevelThreshold).addArg("-outputEntityPath", outputEntityDirPath)
-                .addArg("-outputRelationPath", outputRelationDirPath).addArg("-outputReportPath", reportDirPath)
-                .addJobProperty("spark.driver.host", "localhost").build();
+                .addArg("-inputDocumentToSoftwareUrlPath", inputDocumentToSoftwareUrlPath)
+                .addArg("-inputDocumentMetadataPath", inputDocumentMetadataPath)
+                .addArg("-trustLevelThreshold", trustLevelThreshold)
+                .addArg("-outputEntityPath", outputEntityPath)
+                .addArg("-outputRelationPath", outputRelationPath)
+                .addArg("-outputReportPath", reportPath)
+                .addJobProperty("spark.driver.host", "localhost")
+                .build();
     }
 
 }
