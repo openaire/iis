@@ -1,54 +1,42 @@
 clazz.canonicalName=eu.dnetlib.dhp.schema.oaf.Publication
 
-payload.id=50|epopatstat__::a7c39f7f55a8b97defd39b9bb4f87e36
+payload.id=50|epopatstat__::6124072c17594dec919a7465b1697bf1
 
 payload.dateofcollection=2019-11-20T23:59:00.000Z
 payload.dateoftransformation=2019-11-20T23:59:00.000Z
 
-payload.pid[0].value=EPpatent1
-payload.pid[0].qualifier.classid=epo_id
-payload.pid[0].qualifier.classname=epo_id
-payload.pid[0].qualifier.schemeid=dnet:pid_types
-payload.pid[0].qualifier.schemename=dnet:pid_types
-
-payload.pid[1].value=EP20000103094
-payload.pid[1].qualifier.classid=epo_nr_epodoc
-payload.pid[1].qualifier.classname=epo_nr_epodoc
-payload.pid[1].qualifier.schemeid=dnet:pid_types
-payload.pid[1].qualifier.schemename=dnet:pid_types
-
-payload.title[0].value=Method and means for using additional cards in a mobile station
+payload.title[0].value=Diphosphines
 payload.title[0].qualifier.classid=main title
 payload.title[0].qualifier.classname=main title
 payload.title[0].qualifier.schemeid=dnet:dataCite_title
 payload.title[0].qualifier.schemename=dnet:dataCite_title
 
-payload.description[0].value=This is an abstract for patent 1
+payload.description[0].value=This is an abstract for patent 2
 
-payload.subject[0].value=G06K   7/00
+payload.subject[0].value=B01J  23/46
 payload.subject[0].qualifier.classid=IPC
 payload.subject[0].qualifier.classname=International Patent Classification
 payload.subject[0].qualifier.schemeid=dnet:subject_classification_typologies
 payload.subject[0].qualifier.schemename=dnet:subject_classification_typologies
 
-payload.subject[1].value=G06K  17/00
+payload.subject[1].value=B01J  31/24
 payload.subject[1].qualifier.classid=IPC
 payload.subject[1].qualifier.classname=International Patent Classification
 payload.subject[1].qualifier.schemeid=dnet:subject_classification_typologies
 payload.subject[1].qualifier.schemename=dnet:subject_classification_typologies
 
-payload.dateofacceptance.value=2000-09-20
-payload.relevantdate[0].value=2000-02-15
+payload.dateofacceptance.value=2002-03-13
+payload.relevantdate[0].value=2001-08-29
 payload.relevantdate[0].qualifier.classid=submitted
 payload.relevantdate[0].qualifier.classname=submitted
 payload.relevantdate[0].qualifier.schemeid=dnet:dataCite_date
 payload.relevantdate[0].qualifier.schemename=dnet:dataCite_date
 
-payload.author[0].fullname=Nokia Corporation
+payload.author[0].fullname=Saltigo GmbH
 payload.author[0].rank=1
-payload.author[1].fullname=Lipponen, Markku
+payload.author[1].fullname=Driessen-Hlscher, Birgit, Dr.
 payload.author[1].rank=2
-payload.author[2].fullname=Laitinen, Timo
+payload.author[2].fullname=Kralik, Joachim
 payload.author[2].rank=3
 
 payload.country[0].classid=DE
@@ -71,21 +59,21 @@ payload.instance[0].instancetype.classname=Patent
 payload.instance[0].instancetype.schemeid=dnet:publication_resource
 payload.instance[0].instancetype.schemename=dnet:publication_resource
 
-payload.instance[0].url[0]=https://register.epo.org/application?number=EPpatent1
+payload.instance[0].url[0]=https://register.epo.org/application?number=EPpatent2
 payload.instance[0].hostedby.key=10|openaire____::79e8e56d43f34eb7698bfb7535d1b37a
 payload.instance[0].hostedby.value=European Patent Office/PATSTAT
 payload.instance[0].collectedfrom.key=10|openaire____::79e8e56d43f34eb7698bfb7535d1b37a
 payload.instance[0].collectedfrom.value=European Patent Office/PATSTAT
-payload.instance[0].pid[0].value=EPpatent1
-payload.instance[0].pid[0].qualifier.classid=epo_id
-payload.instance[0].pid[0].qualifier.classname=epo_id
-payload.instance[0].pid[0].qualifier.schemeid=dnet:pid_types
-payload.instance[0].pid[0].qualifier.schemename=dnet:pid_types
-payload.instance[0].pid[1].value=EP20000103094
-payload.instance[0].pid[1].qualifier.classid=epo_nr_epodoc
-payload.instance[0].pid[1].qualifier.classname=epo_nr_epodoc
-payload.instance[0].pid[1].qualifier.schemeid=dnet:pid_types
-payload.instance[0].pid[1].qualifier.schemename=dnet:pid_types
+payload.instance[0].alternateIdentifier[0].value=EPpatent2
+payload.instance[0].alternateIdentifier[0].qualifier.classid=epo_id
+payload.instance[0].alternateIdentifier[0].qualifier.classname=epo_id
+payload.instance[0].alternateIdentifier[0].qualifier.schemeid=dnet:pid_types
+payload.instance[0].alternateIdentifier[0].qualifier.schemename=dnet:pid_types
+payload.instance[0].alternateIdentifier[1].value=EP20010119799
+payload.instance[0].alternateIdentifier[1].qualifier.classid=epo_nr_epodoc
+payload.instance[0].alternateIdentifier[1].qualifier.classname=epo_nr_epodoc
+payload.instance[0].alternateIdentifier[1].qualifier.schemeid=dnet:pid_types
+payload.instance[0].alternateIdentifier[1].qualifier.schemename=dnet:pid_types
 
 payload.collectedfrom[0].key=10|openaire____::79e8e56d43f34eb7698bfb7535d1b37a
 payload.collectedfrom[0].value=European Patent Office/PATSTAT

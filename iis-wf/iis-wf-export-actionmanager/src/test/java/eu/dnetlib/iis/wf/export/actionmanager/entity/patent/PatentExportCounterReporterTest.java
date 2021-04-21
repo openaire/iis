@@ -4,7 +4,6 @@ import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.spark.TestWithSharedSparkContext;
 import eu.dnetlib.iis.common.utils.ListTestUtils;
-import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.spark.api.java.JavaRDD;
 import org.junit.jupiter.api.Test;
@@ -19,6 +18,7 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -31,62 +31,52 @@ public class PatentExportCounterReporterTest extends TestWithSharedSparkContext 
     private SparkAvroSaver avroSaver;
 
     @Captor
-    private ArgumentCaptor<JavaRDD<ReportEntry>> report;
+    private ArgumentCaptor<JavaRDD<ReportEntry>> reportEntriesCaptor;
 
     @InjectMocks
-    private PatentExportCounterReporter reporter = new PatentExportCounterReporter();
+    private final PatentExportCounterReporter counterReporter = new PatentExportCounterReporter();
 
     @Test
     public void reportShouldThrowExceptionWhenSparkContextIsNull() {
-        //given
-        JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = jsc().emptyRDD();
-
         //when
         assertThrows(NullPointerException.class, () ->
-                reporter.report(null, documentToPatentsToExportWithIds, outputReportPath));
+                counterReporter.report(null, jsc().emptyRDD(), outputReportPath));
     }
 
     @Test
     public void reportShouldThrowExceptionWhenOutputReportPathIsNull() {
-        //given
-        JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = jsc().emptyRDD();
-
         //when
         assertThrows(NullPointerException.class, () ->
-                reporter.report(jsc(), documentToPatentsToExportWithIds, null));
+                counterReporter.report(jsc(), jsc().emptyRDD(), null));
     }
 
     @Test
     public void reportShouldCreateAndSaveReportAsAvroDatastoreOfReportEntries() {
         //given
-        List<DocumentToPatent> documentToPatents = Arrays.asList(
-                DocumentToPatent.newBuilder().setDocumentId("d1").setApplnNr("p1").setConfidenceLevel(0.9f).build(),
-                DocumentToPatent.newBuilder().setDocumentId("d1").setApplnNr("p2").setConfidenceLevel(0.9f).build(),
-                DocumentToPatent.newBuilder().setDocumentId("d2").setApplnNr("p2").setConfidenceLevel(0.9f).build()
+        JavaRDD<PatentExportMetadata> rdd = jsc().parallelize(Arrays.asList(
+                new PatentExportMetadata(null, null, "d1", "p1"),
+                new PatentExportMetadata(null, null, "d1", "p2"),
+                new PatentExportMetadata(null, null, "d2", "p2")
+                )
         );
-        JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = jsc().parallelize(documentToPatents)
-                .map(x ->
-                        new DocumentToPatentWithIdsToExport(x, String.format("export_%s", x.getDocumentId()), String.format("export_%s", x.getApplnNr())));
 
         //when
-        reporter.report(jsc(), documentToPatentsToExportWithIds, outputReportPath);
+        counterReporter.report(jsc(), rdd, outputReportPath);
 
         //then
-        verify(avroSaver, times(1)).saveJavaRDD(report.capture(), eq(ReportEntry.SCHEMA$), eq(outputReportPath));
-        List<String> actualReportEntriesJson = report.getValue()
+        verify(avroSaver, times(1))
+                .saveJavaRDD(reportEntriesCaptor.capture(), eq(ReportEntry.SCHEMA$), eq(outputReportPath));
+        List<String> actualReportEntriesAsJson = reportEntriesCaptor.getValue()
                 .map(SpecificRecordBase::toString).collect()
                 .stream().sorted().collect(Collectors.toList());
-        List<ReportEntry> expectedReportEntries = Arrays
-                .asList(
-                        ReportEntryFactory.createCounterReportEntry(PatentExportCounterReporter.PATENT_REFERENCES_COUNTER, 3),
-                        ReportEntryFactory.createCounterReportEntry(PatentExportCounterReporter.EXPORTED_PATENT_ENTITIES_COUNTER, 2),
-                        ReportEntryFactory.createCounterReportEntry(PatentExportCounterReporter.DISTINCT_PUBLICATIONS_WITH_PATENT_REFERENCES_COUNTER, 2)
-                );
-        List<String> expectedReportEntriesJson = expectedReportEntries.stream()
+        List<String> expectedReportEntriesAsJson = Stream.of(
+                ReportEntryFactory.createCounterReportEntry(PatentExportCounterReporter.EXPORTED_PATENT_ENTITIES_COUNTER, 2),
+                ReportEntryFactory.createCounterReportEntry(PatentExportCounterReporter.PATENT_REFERENCES_COUNTER, 3),
+                ReportEntryFactory.createCounterReportEntry(PatentExportCounterReporter.DISTINCT_PUBLICATIONS_WITH_PATENT_REFERENCES_COUNTER, 2)
+        )
                 .map(SpecificRecordBase::toString)
                 .sorted()
                 .collect(Collectors.toList());
-        ListTestUtils
-                .compareLists(actualReportEntriesJson, expectedReportEntriesJson);
+        ListTestUtils.compareLists(actualReportEntriesAsJson, expectedReportEntriesAsJson);
     }
 }
