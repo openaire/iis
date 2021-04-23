@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.export.actionmanager.entity.patent;
+package eu.dnetlib.iis.wf.export.actionmanager.entity.software;
 
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
@@ -23,9 +23,13 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+/**
+ * @author madryk
+ */
 @ExtendWith(MockitoExtension.class)
-public class PatentExportCounterReporterTest extends TestWithSharedSparkContext {
-    private static final String outputReportPath = "/path/to/report";
+public class SoftwareExportCounterReporterTest extends TestWithSharedSparkContext {
+
+    private static final String outputReportPath = "/report/path";
 
     @Mock
     private SparkAvroSaver avroSaver;
@@ -34,45 +38,47 @@ public class PatentExportCounterReporterTest extends TestWithSharedSparkContext 
     private ArgumentCaptor<JavaRDD<ReportEntry>> reportEntriesCaptor;
 
     @InjectMocks
-    private final PatentExportCounterReporter counterReporter = new PatentExportCounterReporter();
+    private final SoftwareExportCounterReporter counterReporter = new SoftwareExportCounterReporter();
+
+    //------------------------ TESTS --------------------------
 
     @Test
-    public void reportShouldThrowExceptionWhenSparkContextIsNull() {
-        //when
+    public void report_NULL_SPARK_CONTEXT() {
+        // execute
         assertThrows(NullPointerException.class, () ->
                 counterReporter.report(null, jsc().emptyRDD(), outputReportPath));
     }
 
     @Test
-    public void reportShouldThrowExceptionWhenOutputReportPathIsNull() {
-        //when
+    public void report_NULL_REPORT_PATH() {
+        // execute
         assertThrows(NullPointerException.class, () ->
                 counterReporter.report(jsc(), jsc().emptyRDD(), null));
     }
 
     @Test
-    public void reportShouldCreateAndSaveReportAsAvroDatastoreOfReportEntries() {
-        //given
-        JavaRDD<PatentExportMetadata> rdd = jsc().parallelize(Arrays.asList(
-                new PatentExportMetadata(null, null, "d1", "p1"),
-                new PatentExportMetadata(null, null, "d1", "p2"),
-                new PatentExportMetadata(null, null, "d2", "p2")
+    public void report() throws Exception {
+        // given
+        JavaRDD<SoftwareExportMetadata> rdd = jsc().parallelize(Arrays.asList(
+                new SoftwareExportMetadata(null, null, "d1", "s1", null),
+                new SoftwareExportMetadata(null, null, "d1", "s2", null),
+                new SoftwareExportMetadata(null, null, "d2", "s2", null)
                 )
         );
 
-        //when
+        // execute
         counterReporter.report(jsc(), rdd, outputReportPath);
 
-        //then
+        // assert
         verify(avroSaver, times(1))
                 .saveJavaRDD(reportEntriesCaptor.capture(), eq(ReportEntry.SCHEMA$), eq(outputReportPath));
         List<String> actualReportEntriesAsJson = reportEntriesCaptor.getValue()
                 .map(SpecificRecordBase::toString).collect()
                 .stream().sorted().collect(Collectors.toList());
         List<String> expectedReportEntriesAsJson = Stream.of(
-                ReportEntryFactory.createCounterReportEntry(PatentExportCounterReporter.EXPORTED_PATENT_ENTITIES_COUNTER, 2),
-                ReportEntryFactory.createCounterReportEntry(PatentExportCounterReporter.PATENT_REFERENCES_COUNTER, 3),
-                ReportEntryFactory.createCounterReportEntry(PatentExportCounterReporter.DISTINCT_PUBLICATIONS_WITH_PATENT_REFERENCES_COUNTER, 2)
+                ReportEntryFactory.createCounterReportEntry(SoftwareExportCounterReporter.EXPORTED_SOFTWARE_ENTITIES_COUNTER, 2),
+                ReportEntryFactory.createCounterReportEntry(SoftwareExportCounterReporter.SOFTWARE_REFERENCES_COUNTER, 3),
+                ReportEntryFactory.createCounterReportEntry(SoftwareExportCounterReporter.DISTINCT_PUBLICATIONS_WITH_SOFTWARE_REFERENCES_COUNTER, 2)
         )
                 .map(SpecificRecordBase::toString)
                 .sorted()
