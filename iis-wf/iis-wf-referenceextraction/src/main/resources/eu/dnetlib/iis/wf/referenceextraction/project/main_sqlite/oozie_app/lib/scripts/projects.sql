@@ -26,14 +26,13 @@ create temp table matched_undefined_wt_only as select distinct docid, var('wt_un
 select c1 as docid, textwindow2s(c2,20,2,3, '(\bWel?lcome Trust\b|\bWT\b)') from (setschema 'c1,c2' select * from pubs where c2 is not null)) where var('wt_unidentified') and (regexprmatches('\bWel?lcome Trust\b', middle) or 
 regexpcountwords('(?:\bwell?come trust\b)|(?:(?:\bthis work was|financial(?:ly)?|partial(?:ly)?|partly|(?:gratefully\s)?acknowledges?)?\s?\b(?:support|fund|suppli?)(?:ed|ing)?\s(?:by|from|in part\s(?:by|from)|through)?\s?(?:a)?\s?(?:grant)?)|(?:(?:programme|project) grant)|(?:(?:under|through)?\s?(?:the)?\s(?:grants?|contract(?:\snumber)?)\b)|(?:\bprograms? of\b)|(?:\bgrants? of\b)|(?:\bin part by\b)|(?:\bthis work could not have been completed without\b)|(?:\bcontract\b)|(?:\backnowledgments?\b)', lower(prev||' '||middle||' '||next)) > 3);
 
-create temp table match_undefined_gsri as select c1 as docid, var('gsri_unidentified') as id, prev,middle,next from  
+create temp table matched_undefined_gsri as select c1 as docid, var('gsri_unidentified') as id, prev,middle,next from  
 (setschema 'c1, prev, middle, next' select c1, 
 textwindow2s(keywords(c2), 10,6,10,'(?i)\bGSRT\b|\bΓΓΕΤ\b|γενικ(?:ή|η) γραμματε(?:ί|ι)α (?:έ|ε)ρευνας και τεχνολογ(?:ί|ι)ας|GENERAL SECRETARIAT FOR RESEARCH AND TECHNOLOGY') 
 from pubs  where c2 is not null)  
-where var('gsri_unidentified') and 
+where var('gsri_unidentified') is not null and
 regexprmatches("(?i)greece|greek|foundation|grant|project|funded|hellenic|supported|acknowledge|\bgr\b|research|program|secretariat|γραμματε(?:ί|ι)α",prev||" "||middle||" "||next)  
 group by docid;
-
 
 create temp table output_table as
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1, docid, id, fundingclass1, grantid from (
@@ -217,6 +216,8 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min
             5 * regexpcountwords("china|shanghai|danish|nsfc|\bsnf\b|bulgarian|\bbnsf\b|norwegian|rustaveli|israel|\biran\b|shota|georgia|functionalization|manufacturing",j2s(prevpack,middle,nextpack))
        when fundingClass1="MESTD" then
             regexpcountwords("serbia|mestd|451_03_68",j2s(prevpacksmall,middle,nextpack))
+       when fundingClass1="SFRS" then
+            regexpcountwords('promis|\bsfrs\b|sciencefundrs|(?:\b|_|\d)'||normalizedacro||'(?:\b|_|\d)',j2s(prevpacksmall,middle,nextpack))
        when fundingClass1="GSRI" then
             regexpcountwords("gsrt|\bgsri\b",j2s(prevpacksmall,middle,nextpack))
        when fundingClass1="EC"/* fp7 confidence */ then
@@ -249,7 +250,8 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min
                             from   (setschema 'c1,c2' select * from  pubs where c2 is not null)) ,grants
                             where  (not regexprmatches( '(?:0|\D|\b)+(?:\d{8,})',middle) and not regexprmatches('(?:\D|\b)(?:\d{7})(?:\D|\b)',middle) and regexpr('(?:0|\D|\b)+(\d{5})',middle) = grantid and fundingclass1  in ('WT', 'EC') ) or ((not regexprmatches('(\d{6,}(?:\d|i\d{3}_?\b))|(jana\d{6,})', middle)) and not regexprmatches('(?:\D|\b)(?:\d{7})(?:\D|\b)',middle) 
                         and regexpr('(\d{6})',middle) = grantid and fundingclass1 in ('WT', 'EC')) or (regexprmatches('(?:(?:\D|\b)(?:\d{7})(?:\D|\b))',middle) and regexpr("(\d{7})",middle) = grantid and fundingclass1='NSF' ) 
-                        or ( regexpr("(\d{5,6})",middle) = grantid and fundingclass1='MESTD' ) or (regexpr("(\d{6})",middle) = grantid and fundingclass1='GSRI')
+                        or ( regexpr("(\d{5,6})",middle) = grantid and fundingclass1='MESTD' ) or (regexpr("(\d{6})",middle) = grantid and fundingclass1='GSRI') 
+                        or (regexpr("(\d{7})",middle) = grantid and fundingclass1='SFRS')
                         )
                       ) where confidence > 0.16) group by docid,id);
 
