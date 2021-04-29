@@ -15,18 +15,7 @@
         </configuration>
     </global>
 
-    <start to="generate-schema"/>
-
-    <action name="generate-schema">
-        <java>
-            <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
-            <arg>eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent</arg>
-            <arg>eu.dnetlib.iis.referenceextraction.patent.schemas.Patent</arg>
-            <capture-output/>
-        </java>
-        <ok to="producer"/>
-        <error to="fail"/>
-    </action>
+    <start to="producer"/>
 
     <action name="producer">
         <java>
@@ -112,12 +101,12 @@
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/document_patent/patent-actionset-id</arg>
             <arg>
-                -Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/document1_to_patent1.properties,
+                -Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/document2_to_patent2.properties,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent2_to_document2.properties,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/document1_to_patent1.properties,
                 /eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent1_to_document1.properties,
                 /eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/document2_to_patent1.properties,
-                /eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent1_to_document2.properties,
-                /eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/document2_to_patent2.properties,
-                /eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent2_to_document2.properties
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent1_to_document2.properties
             </arg>
         </java>
         <ok to="patent-entity-consumer"/>
@@ -130,8 +119,8 @@
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/entities_patent/patent-entity-actionset-id</arg>
             <arg>
-                -Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent1.properties,
-                /eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent2.properties
+                -Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent1.expectations,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/patent/default/output/patent2.expectations
             </arg>
         </java>
         <ok to="report-consumer"/>

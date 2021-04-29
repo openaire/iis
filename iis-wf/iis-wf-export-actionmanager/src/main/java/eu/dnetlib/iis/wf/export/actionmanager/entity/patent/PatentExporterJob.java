@@ -1,48 +1,18 @@
 package eu.dnetlib.iis.wf.export.actionmanager.entity.patent;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import eu.dnetlib.iis.common.utils.IteratorUtils;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.io.SequenceFile;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.common.collect.Lists;
-
 import eu.dnetlib.dhp.schema.action.AtomicAction;
-import eu.dnetlib.dhp.schema.oaf.Author;
-import eu.dnetlib.dhp.schema.oaf.Country;
-import eu.dnetlib.dhp.schema.oaf.DataInfo;
-import eu.dnetlib.dhp.schema.oaf.Field;
-import eu.dnetlib.dhp.schema.oaf.Instance;
-import eu.dnetlib.dhp.schema.oaf.KeyValue;
-import eu.dnetlib.dhp.schema.oaf.Publication;
-import eu.dnetlib.dhp.schema.oaf.Qualifier;
-import eu.dnetlib.dhp.schema.oaf.Relation;
-import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
+import eu.dnetlib.dhp.schema.oaf.*;
+import eu.dnetlib.dhp.schema.oaf.utils.IdentifierFactory;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
-import eu.dnetlib.iis.common.utils.ListUtils;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.common.utils.DateTimeUtils;
+import eu.dnetlib.iis.common.utils.IteratorUtils;
+import eu.dnetlib.iis.common.utils.ListUtils;
 import eu.dnetlib.iis.common.utils.RDDUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.Patent;
@@ -52,8 +22,24 @@ import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 import eu.dnetlib.iis.wf.export.actionmanager.entity.ConfidenceLevelUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.module.AlgorithmName;
 import eu.dnetlib.iis.wf.export.actionmanager.module.BuilderModuleHelper;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.SequenceFile;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import scala.Tuple2;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Patent entity and relations exporter reading {@link DocumentToPatent} avro records and exporting them as entity and relation actions.
@@ -61,7 +47,7 @@ import scala.Tuple2;
  * @author pjacewicz
  */
 public class PatentExporterJob {
-    
+
     private static final String EPO = "EPO";
     private static final String EUROPEAN_PATENT_OFFICE__PATSTAT = "European Patent Office/PATSTAT";
     private static final String CLASS_EPO_ID = "epo_id";
@@ -91,72 +77,12 @@ public class PatentExporterJob {
     private static final DateTimeFormatter PATENT_DATE_OF_COLLECTION_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
-    //------------------------ LOGIC --------------------------
-
-    public static void main(String[] args) throws IOException {
-        JobParameters params = new JobParameters();
-        JCommander jcommander = new JCommander(params);
-        jcommander.parse(args);
-
-        Configuration configuration = Job.getInstance().getConfiguration();
-        configuration.set(FileOutputFormat.COMPRESS, Boolean.TRUE.toString());
-        configuration.set(FileOutputFormat.COMPRESS_TYPE, SequenceFile.CompressionType.BLOCK.name());
-
-        try (JavaSparkContext sc = JavaSparkContextFactory.withConfAndKryo(new SparkConf())) {
-            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputRelationPath);
-            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputEntityPath);
-            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
-
-            Float trustLevelThreshold = ConfidenceLevelUtils.evaluateConfidenceLevelThreshold(params.trustLevelThreshold);
-
-            JavaRDD<DocumentToPatent> documentToPatents = avroLoader
-                    .loadJavaRDD(sc, params.inputDocumentToPatentPath, DocumentToPatent.class);
-            JavaRDD<Patent> patents = avroLoader
-                    .loadJavaRDD(sc, params.inputPatentPath, Patent.class);
-
-            JavaRDD<DocumentToPatent> documentToPatentsToExport =
-                    documentToPatentsToExport(documentToPatents, trustLevelThreshold);
-
-            JavaPairRDD<CharSequence, Patent> validPatentsById = patents
-                    .filter(PatentExporterJob::isValidPatent)
-                    .mapToPair(x -> new Tuple2<>(x.getApplnNr(), x))
-                    .cache();
-
-            JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds = documentToPatentsToExport
-                    .mapToPair(x -> new Tuple2<>(x.getApplnNr(), x))
-                    .join(validPatentsById)
-                    .map(x -> {
-                        DocumentToPatent documentToPatent = x._2()._1();
-                        Patent patent = x._2()._2();
-                        return new DocumentToPatentWithIdsToExport(x._2()._1(), documentIdToExport(documentToPatent.getDocumentId()),
-                                patentIdToExport(patent.getApplnAuth(), patent.getApplnNr()));
-                    })
-                    .cache();
-            
-            JavaPairRDD<Text, Text> relationsToExport = relationsToExport(documentToPatentsToExportWithIds);
-
-            RDDUtils.saveTextPairRDD(relationsToExport, numberOfOutputFiles, params.outputRelationPath, configuration);
-
-            String patentDateOfCollection = DateTimeUtils.format(
-                    LocalDateTime.parse(params.patentDateOfCollection, PATENT_DATE_OF_COLLECTION_FORMATTER));
-            JavaPairRDD<Text, Text> entitiesToExport =
-                    entitiesToExport(documentToPatentsToExportWithIds, validPatentsById, patentDateOfCollection,
-                            params.patentEpoUrlRoot);
-            
-            RDDUtils.saveTextPairRDD(entitiesToExport, numberOfOutputFiles, params.outputEntityPath, configuration);
-
-            counterReporter.report(sc, documentToPatentsToExportWithIds, params.outputReportPath);
-        }
-    }
-
-    //------------------------ PRIVATE --------------------------
-
     private static String buildInferenceProvenance() {
         return InfoSpaceConstants.SEMANTIC_CLASS_IIS + InfoSpaceConstants.INFERENCE_PROVENANCE_SEPARATOR + AlgorithmName.document_patent;
     }
 
     private static String buildRowPrefixDatasourceOpenaireEntityIdPrefixEpo() {
-        return appendMd5(PATENT_DATASOURCE_OPENAIRE_ID_PREFIX, EPO);
+        return PATENT_DATASOURCE_OPENAIRE_ID_PREFIX + DigestUtils.md5Hex(EPO);
     }
 
     private static Qualifier buildOafEntityResultMetadataResulttype() {
@@ -168,13 +94,13 @@ public class PatentExporterJob {
         return qualifier;
     }
 
-    private static Instance buildOafEntityResultInstance(Patent patent, String patentEpoUrlRoot, List<StructuredProperty> pids) {
+    private static Instance buildOafEntityResultInstance(Patent patent, String patentEpoUrlRoot, List<StructuredProperty> pid) {
         Instance instance = new Instance();
         instance.setInstancetype(buildOafEntityResultInstanceInstancetype());
         instance.setHostedby(buildOafEntityPatentKeyValue());
         instance.setCollectedfrom(buildOafEntityPatentKeyValue());
         instance.setUrl(Collections.singletonList(buildOafEntityResultInstanceUrl(patent, patentEpoUrlRoot)));
-        instance.setPid(pids);
+        instance.setAlternateIdentifier(pid);
         return instance;
     }
 
@@ -243,99 +169,152 @@ public class PatentExporterJob {
         return qualifier;
     }
 
-    private static JavaRDD<DocumentToPatent> documentToPatentsToExport(JavaRDD<DocumentToPatent> documentToPatents,
-                                                                       Float trustLevelThreshold) {
-        return documentToPatents
-                .filter(x -> isValidDocumentToPatent(x, trustLevelThreshold))
-                .groupBy(x -> new Tuple2<>(x.getDocumentId(), x.getApplnNr()))
-                .mapValues(xs -> IteratorUtils.toStream(xs.iterator()).reduce(PatentExporterJob::reduceByConfidenceLevel))
+    public static void main(String[] args) throws IOException {
+        JobParameters params = new JobParameters();
+        JCommander jcommander = new JCommander(params);
+        jcommander.parse(args);
+
+        try (JavaSparkContext sc = JavaSparkContextFactory.withConfAndKryo(new SparkConf())) {
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputRelationPath);
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputEntityPath);
+            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
+
+            final Float confidenceLevelThreshold = ConfidenceLevelUtils
+                    .evaluateConfidenceLevelThreshold(params.trustLevelThreshold);
+
+            JavaRDD<DocumentToPatent> relMetaRDD = avroLoader
+                    .loadJavaRDD(sc, params.inputDocumentToPatentPath, DocumentToPatent.class);
+            JavaRDD<Patent> entMetaRDD = avroLoader
+                    .loadJavaRDD(sc, params.inputPatentPath, Patent.class);
+
+            JavaPairRDD<CharSequence, DocumentToPatent> validRelMetaByApplnNrRDD = relMetaRDD
+                    .filter(x -> isRelationValidAndAboveThreshold(x, confidenceLevelThreshold))
+                    .mapToPair(x -> new Tuple2<>(x.getApplnNr(), x));
+
+            JavaPairRDD<CharSequence, Patent> validEntMetaByApplnNrRDD = entMetaRDD
+                    .filter(PatentExporterJob::isMetadataValid)
+                    .mapToPair(x -> new Tuple2<>(x.getApplnNr(), x));
+
+            JavaRDD<PatentExportMetadata> patentExportMetaRDD = validRelMetaByApplnNrRDD
+                    .join(validEntMetaByApplnNrRDD)
+                    .values()
+                    .map(x -> {
+                        DocumentToPatent relMeta = x._1();
+                        Patent entMeta = x._2();
+                        String documentId = generateDocumentId(relMeta);
+                        String patentId = generatePatentId(entMeta);
+                        return new PatentExportMetadata(relMeta, entMeta, documentId, patentId);
+                    });
+
+            JavaRDD<PatentExportMetadata> patentExportMetaDedupRDD = deduplicateByHigherConfidenceLevel(
+                    patentExportMetaRDD).cache();
+
+            Configuration configuration = sc.hadoopConfiguration();
+            configuration.set(FileOutputFormat.COMPRESS, Boolean.TRUE.toString());
+            configuration.set(FileOutputFormat.COMPRESS_TYPE, SequenceFile.CompressionType.BLOCK.name());
+
+            JavaPairRDD<Text, Text> relationsToExportRDD = relationsToExport(patentExportMetaDedupRDD);
+            RDDUtils.saveTextPairRDD(relationsToExportRDD, numberOfOutputFiles, params.outputRelationPath, configuration);
+
+            String patentDateOfCollection = DateTimeUtils.format(
+                    LocalDateTime.parse(params.patentDateOfCollection, PATENT_DATE_OF_COLLECTION_FORMATTER));
+            JavaPairRDD<Text, Text> entitiesToExportRDD = entitiesToExport(patentExportMetaDedupRDD,
+                    patentDateOfCollection, params.patentEpoUrlRoot);
+            RDDUtils.saveTextPairRDD(entitiesToExportRDD, numberOfOutputFiles, params.outputEntityPath, configuration);
+
+            counterReporter.report(sc, patentExportMetaDedupRDD, params.outputReportPath);
+        }
+    }
+
+    private static boolean isRelationValidAndAboveThreshold(DocumentToPatent relation, Float confidenceLevelThreshold) {
+        return ConfidenceLevelUtils.isValidConfidenceLevel(relation.getConfidenceLevel(), confidenceLevelThreshold);
+    }
+
+    private static boolean isMetadataValid(Patent meta) {
+        return StringUtils.isNotBlank(meta.getApplnTitle());
+    }
+
+    private static String generateDocumentId(DocumentToPatent relation) {
+        return relation.getDocumentId().toString();
+    }
+
+    private static String generatePatentId(Patent meta) {
+        return PATENT_RESULT_OPENAIRE_ID_PREFIX +
+                DigestUtils.md5Hex(meta.getApplnAuth().toString() + meta.getApplnNr().toString());
+    }
+
+    private static JavaRDD<PatentExportMetadata> deduplicateByHigherConfidenceLevel(JavaRDD<PatentExportMetadata> rdd) {
+        return rdd
+                .groupBy(x -> new Tuple2<>(x.getDocumentId(), x.getPatentId()))
+                .mapValues(xs -> IteratorUtils.toStream(xs.iterator()).reduce(PatentExporterJob::reduceByHigherConfidenceLevel))
                 .filter(x -> x._2.isPresent())
-                .mapValues(java.util.Optional::get)
+                .mapValues(Optional::get)
                 .values();
     }
 
-    private static Boolean isValidDocumentToPatent(DocumentToPatent documentToPatent, Float trustLevelThreshold) {
-        return ConfidenceLevelUtils.isValidConfidenceLevel(documentToPatent.getConfidenceLevel(), trustLevelThreshold);
-    }
-    
-    private static boolean isValidPatent(Patent patent) {
-        return StringUtils.isNotBlank(patent.getApplnTitle());
+    private static PatentExportMetadata reduceByHigherConfidenceLevel(PatentExportMetadata x, PatentExportMetadata y) {
+        return x.getDocumentToPatent().getConfidenceLevel() > y.getDocumentToPatent().getConfidenceLevel() ? x : y;
     }
 
-    private static DocumentToPatent reduceByConfidenceLevel(DocumentToPatent x, DocumentToPatent y) {
-        if (x.getConfidenceLevel() > y.getConfidenceLevel()) {
-            return x;
-        }
-        return y;
+    private static JavaPairRDD<Text, Text> relationsToExport(JavaRDD<PatentExportMetadata> rdd) {
+        return AtomicActionSerializationUtils
+                .mapActionToText(rdd
+                        .flatMap(x -> {
+                            String documentId = x.getDocumentId();
+                            String patentId = x.getPatentId();
+                            Float confidenceLevel = x.getDocumentToPatent().getConfidenceLevel();
+                            return buildRelationActions(documentId, patentId, confidenceLevel).iterator();
+                        })
+                );
     }
 
-    private static  JavaPairRDD<Text, Text> relationsToExport(
-            JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds) {
-        
-        JavaRDD<AtomicAction<Relation>> result = documentToPatentsToExportWithIds.flatMap(x -> {
-            DocumentToPatent documentToPatent = x.getDocumentToPatent();
-            String documentIdToExport = x.getDocumentIdToExport();
-            String patentIdToExport = x.getPatentIdToExport();
-            return buildRelationActions(documentToPatent, documentIdToExport, patentIdToExport).iterator();
-        });
-        
-        return AtomicActionSerializationUtils.mapActionToText(result);
-        
-    }
-    
-    
-
-    private static List<AtomicAction<Relation>> buildRelationActions(DocumentToPatent documentToPatent,
-                                                           String documentIdToExport,
-                                                           String patentIdToExport) {
-
+    private static List<AtomicAction<Relation>> buildRelationActions(String documentId, String patentId, Float confidenceLevel) {
         AtomicAction<Relation> forwardAction = new AtomicAction<>();
         forwardAction.setClazz(Relation.class);
-        forwardAction.setPayload(buildRelation(documentToPatent, documentIdToExport, patentIdToExport));
-        
+        forwardAction.setPayload(buildRelation(documentId, patentId, confidenceLevel));
+
         AtomicAction<Relation> reverseAction = new AtomicAction<>();
         reverseAction.setClazz(Relation.class);
-        reverseAction.setPayload(buildRelation(documentToPatent, patentIdToExport, documentIdToExport));
+        reverseAction.setPayload(buildRelation(patentId, documentId, confidenceLevel));
 
         return Arrays.asList(forwardAction, reverseAction);
     }
 
-    private static Relation buildRelation(DocumentToPatent documentToPatent, String source, String target) {
+    private static Relation buildRelation(String source, String target, Float confidenceLevel) {
         Relation relation = new Relation();
         relation.setRelType(OafConstants.REL_TYPE_RESULT_RESULT);
         relation.setSubRelType(OafConstants.SUBREL_TYPE_RELATIONSHIP);
         relation.setRelClass(OafConstants.REL_CLASS_ISRELATEDTO);
+
         relation.setSource(source);
         relation.setTarget(target);
-        relation.setDataInfo(BuilderModuleHelper.buildInferenceForConfidenceLevel(documentToPatent.getConfidenceLevel(),
-                INFERENCE_PROVENANCE));
+
+        relation.setDataInfo(BuilderModuleHelper.buildInferenceForConfidenceLevel(confidenceLevel, INFERENCE_PROVENANCE));
         relation.setLastupdatetimestamp(System.currentTimeMillis());
+
         return relation;
     }
 
-    private static JavaPairRDD<Text, Text> entitiesToExport(JavaRDD<DocumentToPatentWithIdsToExport> documentToPatentsToExportWithIds,
-                                                            JavaPairRDD<CharSequence, Patent> patentsById,
+    private static JavaPairRDD<Text, Text> entitiesToExport(JavaRDD<PatentExportMetadata> rdd,
                                                             String patentDateOfCollection,
                                                             String patentEpoUrlRoot) {
-        JavaRDD<AtomicAction<Publication>> result = documentToPatentsToExportWithIds
-                .mapToPair(x -> new Tuple2<>(x.getDocumentToPatent().getApplnNr(), x.getPatentIdToExport()))
+        JavaRDD<AtomicAction<Publication>> atomicActions = rdd
+                .mapToPair(x -> new Tuple2<>(x.getPatentId(), x.getPatent()))
                 .distinct()
-                .join(patentsById)
-                .values()
                 .map(x -> {
-                    String patentIdToExport = x._1();
+                    String patentId = x._1();
                     Patent patent = x._2();
-                    return buildEntityAction(patent, patentIdToExport, patentDateOfCollection, patentEpoUrlRoot);
+                    return buildEntityAction(patent, patentId, patentDateOfCollection, patentEpoUrlRoot);
                 });
 
-        return AtomicActionSerializationUtils.mapActionToText(result);
+        return AtomicActionSerializationUtils.mapActionToText(atomicActions);
     }
 
-    private static AtomicAction<Publication> buildEntityAction(Patent patent, String patentIdToExport,
-            String patentDateOfCollection, String patentEpoUrlRoot) {
+    private static AtomicAction<Publication> buildEntityAction(Patent patent, String patentId,
+                                                               String patentDateOfCollection, String patentEpoUrlRoot) {
         AtomicAction<Publication> action = new AtomicAction<>();
         action.setClazz(Publication.class);
-        action.setPayload(buildOafPublication(patent, patentIdToExport, patentDateOfCollection, patentEpoUrlRoot));
+        action.setPayload(buildOafInstance(patent, patentId, patentDateOfCollection, patentEpoUrlRoot));
         return action;
     }
 
@@ -346,22 +325,20 @@ public class PatentExporterJob {
         return pid;
     }
 
-    private static Publication buildOafPublication(Patent patent, String patentIdToExport, String patentDateOfCollection, String patentEpoUrlRoot) {
+    private static Publication buildOafInstance(Patent patent,
+                                                String patentId,
+                                                String patentDateOfCollection,
+                                                String patentEpoUrlRoot) {
         Publication result = new Publication();
-        result.setId(patentIdToExport);
+
         result.setLastupdatetimestamp(System.currentTimeMillis());
         result.setCollectedfrom(Collections.singletonList(OAF_ENTITY_COLLECTEDFROM));
-        List<StructuredProperty> pids = Lists.newArrayList();
-        pids.add(buildOafEntityPid(String.format("%s%s", patent.getApplnAuth(), patent.getApplnNr()), OAF_ENTITY_PID_QUALIFIER_CLASS_EPO_ID));
-        if (StringUtils.isNotBlank(patent.getApplnNrEpodoc())) {
-            pids.add(buildOafEntityPid(patent.getApplnNrEpodoc().toString(), OAF_ENTITY_PID_QUALIFIER_CLASS_EPO_NR_EPODOC));
-        }
-        result.setPid(pids);
+
         result.setDateofcollection(patentDateOfCollection);
         result.setDateoftransformation(patentDateOfCollection);
         result.setResulttype(OAF_ENTITY_RESULT_METADATA_RESULTTYPE);
         result.setDataInfo(OAF_ENTITY_DATAINFO);
-        
+
         if (StringUtils.isNotBlank(patent.getApplnTitle())) {
             result.setTitle(Collections.singletonList(buildOafEntityResultMetadataTitle(patent.getApplnTitle())));
         }
@@ -388,12 +365,18 @@ public class PatentExporterJob {
         if (Objects.nonNull(patent.getApplicantCountryCodes())) {
             result.setCountry(buildOafEntityResultMetadataCountries(patent.getApplicantCountryCodes()));
         }
-        
-        result.setInstance(Collections.singletonList(buildOafEntityResultInstance(patent, patentEpoUrlRoot, pids)));
+
+        List<StructuredProperty> pid = Lists.newArrayList();
+        pid.add(buildOafEntityPid(String.format("%s%s", patent.getApplnAuth(), patent.getApplnNr()), OAF_ENTITY_PID_QUALIFIER_CLASS_EPO_ID));
+        if (StringUtils.isNotBlank(patent.getApplnNrEpodoc())) {
+            pid.add(buildOafEntityPid(patent.getApplnNrEpodoc().toString(), OAF_ENTITY_PID_QUALIFIER_CLASS_EPO_NR_EPODOC));
+        }
+        result.setInstance(Collections.singletonList(buildOafEntityResultInstance(patent, patentEpoUrlRoot, pid)));
+
+        setId(result, patentId);
+
         return result;
     }
-
-
 
     private static StructuredProperty buildOafEntityResultMetadataTitle(CharSequence applnTitle) {
         StructuredProperty subject = new StructuredProperty();
@@ -406,14 +389,6 @@ public class PatentExporterJob {
         Field<String> result = new Field<>();
         result.setValue(applnAbstract.toString());
         return result;
-    }
-
-    private static String documentIdToExport(CharSequence documentId) {
-        return documentId.toString();
-    }
-
-    private static String patentIdToExport(CharSequence applnAuth, CharSequence applnNr) {
-        return appendMd5(PATENT_RESULT_OPENAIRE_ID_PREFIX, applnAuth.toString() + applnNr.toString());
     }
 
     private static List<StructuredProperty> buildOafEntityResultMetadataSubjects(List<CharSequence> ipcClassSymbols) {
@@ -481,8 +456,9 @@ public class PatentExporterJob {
         return country;
     }
 
-    private static String appendMd5(String prefix, String suffix) {
-        return prefix + DigestUtils.md5Hex(suffix);
+    private static void setId(Publication publication, String fallbackId) {
+        publication.setId(fallbackId);
+        publication.setId(IdentifierFactory.createIdentifier(publication));
     }
 
     @Parameters(separators = "=")
@@ -493,6 +469,15 @@ public class PatentExporterJob {
         @Parameter(names = "-inputPatentPath", required = true)
         private String inputPatentPath;
 
+        @Parameter(names = "-outputEntityPath", required = true)
+        private String outputEntityPath;
+
+        @Parameter(names = "-outputRelationPath", required = true)
+        private String outputRelationPath;
+
+        @Parameter(names = "-outputReportPath", required = true)
+        private String outputReportPath;
+
         @Parameter(names = "-trustLevelThreshold")
         private String trustLevelThreshold;
 
@@ -501,14 +486,5 @@ public class PatentExporterJob {
 
         @Parameter(names = "-patentEpoUrlRoot", required = true)
         private String patentEpoUrlRoot;
-
-        @Parameter(names = "-outputRelationPath", required = true)
-        private String outputRelationPath;
-
-        @Parameter(names = "-outputEntityPath", required = true)
-        private String outputEntityPath;
-
-        @Parameter(names = "-outputReportPath", required = true)
-        private String outputReportPath;
     }
 }
