@@ -2,6 +2,7 @@ package eu.dnetlib.iis.wf.importer.infospace;
 
 import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE;
 import static eu.dnetlib.iis.common.spark.SparkSessionSupport.*;
+import static eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceJobUtils.*;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -122,7 +123,6 @@ public class ImportInformationSpaceJob {
         conf.registerKryoClasses(OafModelUtils.provideOafClasses());
 
         runWithSparkSession(conf, params.isSparkSessionShared, session -> {
-            session = SparkSession.builder().config(conf).getOrCreate();
             JavaSparkContext sc = JavaSparkContext.fromSparkContext(session.sparkContext());
 
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputPath);
@@ -179,8 +179,10 @@ public class ImportInformationSpaceJob {
                     REL_TYPE_RESULT_PROJECT, SUBREL_TYPE_OUTCOME, REL_NAME_IS_PRODUCED_BY);
             JavaRDD<ProjectToOrganization> projOrgRelation = filterAndParseRelationToAvro(sourceRelation, dataInfoBasedApprover, projectOrganizationConverter,
                     REL_TYPE_PROJECT_ORGANIZATION, SUBREL_TYPE_PARTICIPATION, REL_NAME_HAS_PARTICIPANT);
-            JavaRDD<IdentifierMapping> dedupRelation = filterAndParseRelationToAvro(sourceRelation, dataInfoBasedApprover, deduplicationMappingConverter,
-                    REL_TYPE_RESULT_RESULT, SUBREL_TYPE_DEDUP, REL_NAME_MERGES);
+
+            JavaRDD<IdentifierMapping> dedupRelation = mapToObjectStoreId(filterAndParseRelationToAvro(
+                    sourceRelation, dataInfoBasedApprover, deduplicationMappingConverter, REL_TYPE_RESULT_RESULT, SUBREL_TYPE_DEDUP, REL_NAME_MERGES),
+                    sourceDataset, sourceOtherResearchProduct, sourcePublication, sourceSoftware, session);
 
             storeInOutput(sc, docMeta, dataset, project, organization, docProjRelation, projOrgRelation, dedupRelation, params);
         });
