@@ -10,10 +10,7 @@
     "CERIF",
     "DataCite"
   ],
-  "externalIdentifiers": {
-    "handle": "123456789/7",
-    "doi": "10.1007/978-3-642-35233-1_18"
-  },
+  "externalIdentifiers": null,
   "journal": null,
   "year": 2012,
   "publisher": null,
@@ -251,10 +248,7 @@
   "abstract": "The Lille score will be used to identify subjects with an increased risk of mortality (Lille score failures). The Lille score is a prognostic model combining six reproducible variables at Day 0 and Day 7 of steroid treatment. The Lille score used in this protocol is being used independent of steroid administration during the 7 days of evaluation. A Lille score >0.45 (Lille score failure) indicates that the subject is at substantially increased risk of 30- and 90-day mortality. Subjects with severe acute alcoholic hepatitis (sAAH) are often treated with steroids as soon as their diagnosis is confirmed. This study is to assess treatment with the ELAD System in subjects who have failed per the Lille criteria, independent of steroid administration. ELAD treatment is done continuously for up to 10 days in addition to standard of care treatment. The Control group (those randomized not to receive ELAD treatment) will also get standard of care treatment. Standard of care is defined as the usual",
   "language": "UNKNOWN",
   "keywords": null,
-  "externalIdentifiers": {
-    "euctr": "EUCTR2013-001884-21",
-    "nct": "NCT01829347"
-  },
+  "externalIdentifiers": null,
   "journal": null,
   "year": 2013,
   "publisher": "nct",
@@ -405,9 +399,7 @@
     "Cohort",
     "Surgery"
   ],
-  "externalIdentifiers": {
-    "doi": "10.1183/13993003.00282-2016"
-  },
+  "externalIdentifiers": null,
   "journal": "European Respiratory Journal",
   "year": 2016,
   "publisher": "European Respiratory Society (ERS)",
