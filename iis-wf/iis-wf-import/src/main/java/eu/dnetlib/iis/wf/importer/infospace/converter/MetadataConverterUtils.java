@@ -63,8 +63,8 @@ public abstract class MetadataConverterUtils {
     }
 
     /**
-     * Returns pid list constructed from a {@link Result}. Pid list is constructed from {@link Instance#pid} field if it's not empty.
-     * Otherwise it's constructed from {@link Instance#alternateIdentifier} field. In any other case an empty list is
+     * Returns pid list constructed from a {@link Result}. Pid list is constructed from {@link Instance#pid} fields if they're not empty.
+     * Otherwise it's constructed from {@link Instance#alternateIdentifier} fields. In any other case an empty list is
      * returned.
      */
     public static List<StructuredProperty> extractPid(Result result) {
