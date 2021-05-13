@@ -21,7 +21,11 @@ public class ImportInformationSpaceJobUtils {
     }
 
     /**
-     * Substitutes original ids with object store ids for records that extend {@link eu.dnetlib.dhp.schema.oaf.Result}.
+     * Substitutes original ids build from relations with object store ids build from {@link eu.dnetlib.dhp.schema.oaf.OafEntity#originalId}
+     * field for records that extend {@link eu.dnetlib.dhp.schema.oaf.Result}.
+     * <p>
+     * NOTE: this implementation servers as a temporary solution and should be unnecessary when the graph and object store
+     * will be using the same ids.
      *
      * @param dedupRelation              {@link IdentifierMapping} RDD containing mappings from deduplicated ids to original ids.
      * @param sourceDataset              {@link eu.dnetlib.dhp.schema.oaf.Dataset} RDD.
@@ -29,7 +33,8 @@ public class ImportInformationSpaceJobUtils {
      * @param sourcePublication          {@link eu.dnetlib.dhp.schema.oaf.Publication} RDD.
      * @param sourceSoftware             {@link eu.dnetlib.dhp.schema.oaf.Software} RDD.
      * @param spark                      Instance of SparkSession.
-     * @return An RDD of {@link IdentifierMapping} with {@link eu.dnetlib.dhp.schema.oaf.Result} records original ids substituted.
+     * @return An RDD of {@link IdentifierMapping} with original ids of {@link eu.dnetlib.dhp.schema.oaf.Result} records
+     * replaced.
      */
     public static JavaRDD<IdentifierMapping> mapToObjectStoreId(JavaRDD<IdentifierMapping> dedupRelation,
                                                                 JavaRDD<eu.dnetlib.dhp.schema.oaf.Dataset> sourceDataset,
