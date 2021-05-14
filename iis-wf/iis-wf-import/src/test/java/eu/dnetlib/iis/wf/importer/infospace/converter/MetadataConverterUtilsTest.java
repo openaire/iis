@@ -12,10 +12,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.time.Year;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -171,8 +168,8 @@ public class MetadataConverterUtilsTest {
         }
 
         @Test
-        @DisplayName("Pid list is returned for instance list of element without pid list and with alternate identifier list")
-        public void givenAResultWithInstanceOfElementWithoutPidListAndWithAlternateIdentifierList_whenPidListIsExtracted_thenAlternateIdentifierListIsReturned() {
+        @DisplayName("Pid list is returned for instance list of element with alternate identifier list")
+        public void givenAResultWithInstanceOfElementWithAlternateIdentifierList_whenPidListIsExtracted_thenPidListIsReturned() {
             StructuredProperty pid = mock(StructuredProperty.class);
             Instance instance = new Instance();
             instance.setAlternateIdentifier(Collections.singletonList(pid));
@@ -183,6 +180,24 @@ public class MetadataConverterUtilsTest {
 
             assertThat(pidList.size(), equalTo(1));
             assertThat(pidList, hasItem(pid));
+        }
+
+        @Test
+        @DisplayName("Pid list is returned for instance list of element with pid list and with alternate identifier list")
+        public void givenAResultWithInstanceOfElementWithPidListAndWithAlternateIdentifierList_whenPidListIsExtracted_thenUnionListIsReturned() {
+            StructuredProperty pid1 = mock(StructuredProperty.class);
+            StructuredProperty pid2 = mock(StructuredProperty.class);
+            Instance instance = new Instance();
+            instance.setPid(Arrays.asList(pid1, pid2));
+            instance.setAlternateIdentifier(Arrays.asList(pid1, pid2));
+            Result result = new Result();
+            result.setInstance(Collections.singletonList(instance));
+
+            List<StructuredProperty> pidList = MetadataConverterUtils.extractPid(result);
+
+            assertThat(pidList.size(), equalTo(2));
+            assertThat(pidList, hasItem(pid1));
+            assertThat(pidList, hasItem(pid2));
         }
     }
 }

@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Static class with metadata conversion utilities.
@@ -63,29 +64,23 @@ public abstract class MetadataConverterUtils {
     }
 
     /**
-     * Returns pid list constructed from a {@link Result}. Pid list is constructed from {@link Instance#pid} fields if they're not empty.
-     * Otherwise it's constructed from {@link Instance#alternateIdentifier} fields. In any other case an empty list is
-     * returned.
+     * Returns pid list constructed from a {@link Result#instance#pid} and {@link Result#instance#alternateIdentifier}
+     * fields with duplicates resolution.
      */
     public static List<StructuredProperty> extractPid(Result result) {
         if (Objects.isNull(result.getInstance())) {
             return Collections.emptyList();
         }
 
-        List<StructuredProperty> pid = result.getInstance().stream()
-                .map(x -> Optional.ofNullable(x.getPid()).map(Collection::stream))
-                .filter(Optional::isPresent)
-                .flatMap(Optional::get)
-                .collect(Collectors.toList());
-
-        if (CollectionUtils.isNotEmpty(pid)) {
-            return pid;
-        }
-
-        return result.getInstance().stream()
-                .map(x -> Optional.ofNullable(x.getAlternateIdentifier()).map(Collection::stream))
-                .filter(Optional::isPresent)
-                .flatMap(Optional::get)
+        return Stream.concat(result.getInstance().stream()
+                        .map(x -> Optional.ofNullable(x.getPid()).map(Collection::stream))
+                        .filter(Optional::isPresent)
+                        .flatMap(Optional::get),
+                result.getInstance().stream()
+                        .map(x -> Optional.ofNullable(x.getAlternateIdentifier()).map(Collection::stream))
+                        .filter(Optional::isPresent)
+                        .flatMap(Optional::get))
+                .distinct()
                 .collect(Collectors.toList());
     }
 }
