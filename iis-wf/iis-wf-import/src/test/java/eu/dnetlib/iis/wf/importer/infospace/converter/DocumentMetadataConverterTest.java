@@ -242,7 +242,7 @@ public class DocumentMetadataConverterTest {
             return subject;
         }).forEach(result.getSubject()::add);
 
-        result.setPid(Lists.newArrayList());
+        result.getInstance().forEach(instance -> instance.setPid(Lists.newArrayList()));
         EXT_IDENTIFIERS.entrySet().stream().map(entry -> {
             StructuredProperty pid = new StructuredProperty();
             pid.setValue(entry.getValue());
@@ -250,7 +250,7 @@ public class DocumentMetadataConverterTest {
             pidType.setClassid(entry.getKey());
             pid.setQualifier(pidType);
             return pid;
-        }).forEach(result.getPid()::add);
+        }).forEach(pid -> result.getInstance().forEach(instance -> instance.getPid().add(pid)));
         
         Journal journal = new Journal();
         journal.setName(JOURNAL);

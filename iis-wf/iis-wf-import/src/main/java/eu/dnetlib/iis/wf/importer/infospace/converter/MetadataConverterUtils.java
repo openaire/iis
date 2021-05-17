@@ -1,17 +1,19 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
-import java.time.Year;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import eu.dnetlib.dhp.schema.oaf.Instance;
+import eu.dnetlib.dhp.schema.oaf.Result;
+import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
+import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
-import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
+import java.time.Year;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Static class with metadata conversion utilities.
@@ -60,5 +62,25 @@ public abstract class MetadataConverterUtils {
             return null;
         }
     }
-    
+
+    /**
+     * Returns pid list constructed from a {@link Result#instance#pid} and {@link Result#instance#alternateIdentifier}
+     * fields with duplicates resolution.
+     */
+    public static List<StructuredProperty> extractPid(Result result) {
+        if (Objects.isNull(result.getInstance())) {
+            return Collections.emptyList();
+        }
+
+        return Stream.concat(result.getInstance().stream()
+                        .map(x -> Optional.ofNullable(x.getPid()).map(Collection::stream))
+                        .filter(Optional::isPresent)
+                        .flatMap(Optional::get),
+                result.getInstance().stream()
+                        .map(x -> Optional.ofNullable(x.getAlternateIdentifier()).map(Collection::stream))
+                        .filter(Optional::isPresent)
+                        .flatMap(Optional::get))
+                .distinct()
+                .collect(Collectors.toList());
+    }
 }

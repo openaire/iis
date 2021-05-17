@@ -38,8 +38,8 @@
 }
 {
   "id": "50|opentrials__::98053cee8d1792ba9c0889d5c4189cec",
-  "referenceType": "euctr",
-  "idForGivenType": "EUCTR2013-001884-21",
+  "referenceType": "unspecified",
+  "idForGivenType": "",
   "creatorNames": [
     "Bhamidimarri, Kalyan R",
     "Jalan, Rajiv",
@@ -75,8 +75,5 @@
   "publicationYear": "2013",
   "formats": null,
   "resourceTypeValue": "0037",
-  "alternateIdentifiers": {
-    "euctr": "EUCTR2013-001884-21",
-    "nct": "NCT01829347"
-  }
+  "alternateIdentifiers": null
 }

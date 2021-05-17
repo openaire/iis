@@ -1,35 +1,21 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
-import java.io.IOException;
-import java.time.Year;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-
 import com.google.common.base.Preconditions;
-
-import eu.dnetlib.dhp.schema.oaf.Field;
-import eu.dnetlib.dhp.schema.oaf.Instance;
-import eu.dnetlib.dhp.schema.oaf.Journal;
-import eu.dnetlib.dhp.schema.oaf.KeyValue;
-import eu.dnetlib.dhp.schema.oaf.OafEntity;
-import eu.dnetlib.dhp.schema.oaf.Publication;
-import eu.dnetlib.dhp.schema.oaf.Qualifier;
-import eu.dnetlib.dhp.schema.oaf.Result;
-import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
+import eu.dnetlib.dhp.schema.oaf.*;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.importer.schemas.Author;
 import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
 import eu.dnetlib.iis.importer.schemas.PublicationType;
 import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+
+import java.io.IOException;
+import java.time.Year;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * {@link Result} containing document details to {@link DocumentMetadata} converter.
@@ -193,10 +179,10 @@ public class DocumentMetadataConverter implements OafEntityToAvroConverter<Resul
      * Handles additional identifiers.
      * 
      */
-    private void handleAdditionalIds(OafEntity oafEntity, DocumentMetadata.Builder metaBuilder) {
-        // setting additional identifiers
-        if (CollectionUtils.isNotEmpty(oafEntity.getPid())) {
-            Map<CharSequence, CharSequence> additionalIds = oafEntity.getPid().stream()
+    private void handleAdditionalIds(Result result, DocumentMetadata.Builder metaBuilder) {
+        List<StructuredProperty> pid = MetadataConverterUtils.extractPid(result);
+        if (CollectionUtils.isNotEmpty(pid)) {
+            Map<CharSequence, CharSequence> additionalIds = pid.stream()
                     .filter(x -> StringUtils.isNotBlank(x.getQualifier().getClassid()))
                     .filter(x -> StringUtils.isNotBlank(x.getValue()))
                     .filter(x -> fieldApprover.approve(x.getDataInfo()))
