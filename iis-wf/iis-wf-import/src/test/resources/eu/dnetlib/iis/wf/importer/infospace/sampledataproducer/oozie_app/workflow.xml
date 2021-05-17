@@ -208,7 +208,7 @@
     </action>
 
     <fork name="forking">
-        <path start="consumer-dedupmapping" />
+        <path start="consumer-identifiermapping" />
         <path start="consumer-docproject" />
         <path start="consumer-document" />
         <path start="consumer-dataset" />
@@ -218,15 +218,15 @@
         <path start="consumer-report" />
     </fork>
 
-    <action name="consumer-dedupmapping">
+    <action name="consumer-identifiermapping">
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
-            <arg>-C{dedupmapping,
+            <arg>-C{identifiermapping,
                 eu.dnetlib.iis.common.schemas.IdentifierMapping,
-                eu/dnetlib/iis/wf/importer/infospace/output/dedupmapping.json}
+                eu/dnetlib/iis/wf/importer/infospace/output/identifiermapping.json}
             </arg>
-            <arg>-Idedupmapping=${workingDir}/imported/dedupmapping</arg>
+            <arg>-Iidentifiermapping=${workingDir}/imported/identifiermapping</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />
