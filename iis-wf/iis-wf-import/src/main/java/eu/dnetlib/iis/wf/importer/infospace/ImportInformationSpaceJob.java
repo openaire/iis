@@ -182,8 +182,8 @@ public class ImportInformationSpaceJob {
 
             JavaRDD<IdentifierMapping> dedupRelation = filterAndParseRelationToAvro(sourceRelation, dataInfoBasedApprover,
                     deduplicationMappingConverter, REL_TYPE_RESULT_RESULT, SUBREL_TYPE_DEDUP, REL_NAME_MERGES);
-            JavaRDD<IdentifierMapping> identifierMapping = produceObjectStoreId(dedupRelation, sourceDataset,
-                    sourceOtherResearchProduct, sourcePublication, sourceSoftware, session);
+            JavaRDD<IdentifierMapping> identifierMapping = produceObjectStoreId(sourceDataset, sourceOtherResearchProduct,
+                    sourcePublication, sourceSoftware, dedupRelation, session);
 
             storeInOutput(sc, docMeta, dataset, project, organization, docProjRelation, projOrgRelation, identifierMapping, params);
         });

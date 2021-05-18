@@ -32,81 +32,77 @@ public class ImportInformationSpaceJobUtilsTest extends TestWithSharedSparkSessi
     public class ProduceObjectStoreIdTest {
 
         @Test
-        @DisplayName("Dedup relations and result records produce object store ids")
-        public void givenDedupRelationsAndResultRecords_whenObjectStoreIdsAreProduced_thenProperIdentifierMappingsAreCreated() {
-            JavaRDD<IdentifierMapping> dedupRelation = jsc.parallelize(
-                    Arrays.asList(
-                            createIdentifierMapping("dataset-new-id-1", "dataset-original-id-1"),
-                            createIdentifierMapping("dataset-new-id-2", "dataset-original-id-2"),
-                            createIdentifierMapping("organization-new-id-1", "organization-original-id-1"),
-                            createIdentifierMapping("orp-new-id-1", "orp-original-id-1"),
-                            createIdentifierMapping("orp-new-id-2", "orp-original-id-2"),
-                            createIdentifierMapping("project-new-id-1", "project-original-id-1"),
-                            createIdentifierMapping("publication-new-id-1", "publication-original-id-1"),
-                            createIdentifierMapping("publication-new-id-2", "publication-original-id-2"),
-                            createIdentifierMapping("software-new-id-1", "software-original-id-1"),
-                            createIdentifierMapping("software-new-id-2", "software-original-id-2"))
-            );
-
+        @DisplayName("Result records and dedup relations produce object store ids")
+        public void givenResultRecordsAndDedupRelations_whenObjectStoreIdsAreProduced_thenProperIdentifierMappingsAreCreated() {
             JavaRDD<Dataset> sourceDataset = jsc.parallelize(
                     Arrays.asList(
                             createResultEntity(Dataset::new, "dataset-original-id-1",
-                                    "50|dataset-objectstore-id-1", "50|dataset-objectstore-id-1"),
-                            createResultEntity(Dataset::new, "dataset-new-id-3",
-                                    "50|dataset-objectstore-id-3", "50|dataset-objectstore-id-3"),
-                            createResultEntity(Dataset::new, "dataset-dedup-id-4",
-                                    "50|dataset-objectstore-id-4", "50|dataset-objectstore-id-4")
+                                    "50|dataset-objectstore-id-1", "50|dataset-objectstore-id-1", "dataset-objectstore-id"),
+                            createResultEntity(Dataset::new, "dataset-new-id-2",
+                                    "50|dataset-objectstore-id-2", "50|dataset-objectstore-id-2", "dataset-objectstore-id"),
+                            createResultEntity(Dataset::new, "dataset-dedup-id",
+                                    "dataset-objectstore-id", "dataset-objectstore-id")
                     ));
             JavaRDD<OtherResearchProduct> sourceOtherResearchProduct = jsc.parallelize(
                     Arrays.asList(
                             createResultEntity(OtherResearchProduct::new, "orp-original-id-1",
-                                    "50|orp-objectstore-id-1", "50|orp-objectstore-id-1"),
-                            createResultEntity(OtherResearchProduct::new, "orp-new-id-3",
-                                    "50|orp-objectstore-id-3", "50|orp-objectstore-id-3"),
-                            createResultEntity(OtherResearchProduct::new, "orp-dedup-id-4",
-                                    "50|orp-objectstore-id-4", "50|orp-objectstore-id-4")
+                                    "50|orp-objectstore-id-1", "50|orp-objectstore-id-1", "orp-objectstore-id"),
+                            createResultEntity(OtherResearchProduct::new, "orp-new-id-2",
+                                    "50|orp-objectstore-id-2", "50|orp-objectstore-id-2", "orp-objectstore-id"),
+                            createResultEntity(OtherResearchProduct::new, "orp-dedup-id",
+                                    "orp-objectstore-id", "orp-objectstore-id")
                     ));
             JavaRDD<Publication> sourcePublication = jsc.parallelize(
                     Arrays.asList(
                             createResultEntity(Publication::new, "publication-original-id-1",
-                                    "50|publication-objectstore-id-1", "50|publication-objectstore-id-1"),
-                            createResultEntity(Publication::new, "publication-new-id-3",
-                                    "50|publication-objectstore-id-3", "50|publication-objectstore-id-3"),
-                            createResultEntity(Publication::new, "publication-dedup-id-4",
-                                    "50|publication-objectstore-id-4", "50|publication-objectstore-id-4")
+                                    "50|publication-objectstore-id-1", "50|publication-objectstore-id-1", "publication-objectstore-id"),
+                            createResultEntity(Publication::new, "publication-new-id-2",
+                                    "50|publication-objectstore-id-2", "50|publication-objectstore-id-2", "publication-objectstore-id"),
+                            createResultEntity(Publication::new, "publication-dedup-id",
+                                    "publication-objectstore-id", "publication-objectstore-id")
                     ));
             JavaRDD<Software> sourceSoftware = jsc.parallelize(
                     Arrays.asList(
                             createResultEntity(Software::new, "software-original-id-1",
-                                    "50|software-objectstore-id-1", "50|software-objectstore-id-1"),
-                            createResultEntity(Software::new, "software-new-id-3",
-                                    "50|software-objectstore-id-3", "50|software-objectstore-id-3"),
-                            createResultEntity(Software::new, "software-dedup-id-4",
-                                    "50|software-objectstore-id-4", "50|software-objectstore-id-4")
+                                    "50|software-objectstore-id-1", "50|software-objectstore-id-1", "software-objectstore-id"),
+                            createResultEntity(Software::new, "software-new-id-2",
+                                    "50|software-objectstore-id-2", "50|software-objectstore-id-2", "software-objectstore-id"),
+                            createResultEntity(Software::new, "software-dedup-id",
+                                    "software-objectstore-id", "software-objectstore-id")
                     ));
 
-            List<IdentifierMapping> result = ImportInformationSpaceJobUtils.produceObjectStoreId(dedupRelation,
-                    sourceDataset,
+
+            JavaRDD<IdentifierMapping> dedupRelation = jsc.parallelize(
+                    Arrays.asList(
+                            createIdentifierMapping("dataset-new-id-1", "dataset-original-id-1"),
+                            createIdentifierMapping("dataset-new-id", "dataset-original-id"),
+                            createIdentifierMapping("organization-new-id", "organization-original-id"),
+                            createIdentifierMapping("orp-new-id-1", "orp-original-id-1"),
+                            createIdentifierMapping("orp-new-id", "orp-original-id"),
+                            createIdentifierMapping("project-new-id", "project-original-id"),
+                            createIdentifierMapping("publication-new-id-1", "publication-original-id-1"),
+                            createIdentifierMapping("publication-new-id", "publication-original-id"),
+                            createIdentifierMapping("software-new-id-1", "software-original-id-1"),
+                            createIdentifierMapping("software-new-id", "software-original-id"))
+            );
+
+
+            List<IdentifierMapping> result = ImportInformationSpaceJobUtils.produceObjectStoreId(sourceDataset,
                     sourceOtherResearchProduct,
                     sourcePublication,
                     sourceSoftware,
+                    dedupRelation,
                     spark()).collect();
 
-            assertThat(result.size(), equalTo(14));
+            assertThat(result.size(), equalTo(8));
             assertThat(result, hasItem(createIdentifierMapping("dataset-new-id-1", "50|dataset-objectstore-id-1")));
-            assertThat(result, hasItem(createIdentifierMapping("dataset-new-id-2", "dataset-original-id-2")));
-            assertThat(result, hasItem(createIdentifierMapping("dataset-new-id-3", "50|dataset-objectstore-id-3")));
-            assertThat(result, hasItem(createIdentifierMapping("organization-new-id-1", "organization-original-id-1")));
+            assertThat(result, hasItem(createIdentifierMapping("dataset-new-id-2", "50|dataset-objectstore-id-2")));
             assertThat(result, hasItem(createIdentifierMapping("orp-new-id-1", "50|orp-objectstore-id-1")));
-            assertThat(result, hasItem(createIdentifierMapping("orp-new-id-2", "orp-original-id-2")));
-            assertThat(result, hasItem(createIdentifierMapping("orp-new-id-3", "50|orp-objectstore-id-3")));
-            assertThat(result, hasItem(createIdentifierMapping("project-new-id-1", "project-original-id-1")));
+            assertThat(result, hasItem(createIdentifierMapping("orp-new-id-2", "50|orp-objectstore-id-2")));
             assertThat(result, hasItem(createIdentifierMapping("publication-new-id-1", "50|publication-objectstore-id-1")));
-            assertThat(result, hasItem(createIdentifierMapping("publication-new-id-2", "publication-original-id-2")));
-            assertThat(result, hasItem(createIdentifierMapping("publication-new-id-3", "50|publication-objectstore-id-3")));
+            assertThat(result, hasItem(createIdentifierMapping("publication-new-id-2", "50|publication-objectstore-id-2")));
             assertThat(result, hasItem(createIdentifierMapping("software-new-id-1", "50|software-objectstore-id-1")));
-            assertThat(result, hasItem(createIdentifierMapping("software-new-id-2", "software-original-id-2")));
-            assertThat(result, hasItem(createIdentifierMapping("software-new-id-3", "50|software-objectstore-id-3")));
+            assertThat(result, hasItem(createIdentifierMapping("software-new-id-2", "50|software-objectstore-id-2")));
         }
     }
 
