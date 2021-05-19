@@ -29,6 +29,12 @@ import static eu.dnetlib.iis.common.spark.SparkSessionSupport.runWithSparkSessio
 import static org.apache.spark.sql.functions.col;
 import static org.apache.spark.sql.functions.udf;
 
+/**
+ * Creates a {@link DocumentText} avro data store for Elsevier archives.
+ * <p>
+ * The job reads Elsevier zip archives and creates an avro data store with file as id and extracted acknowledge
+ * statement as text.
+ */
 public class ImportElsevierXmlContentJob {
 
     public static void main(String[] args) {
@@ -68,25 +74,15 @@ public class ImportElsevierXmlContentJob {
                             StructField$.MODULE$.apply("document", DataTypes.StringType, true, Metadata.empty())
                     )
             );
-
             Dataset<Row> df = spark.createDataFrame(rdd, schema);
-            df.printSchema();
-            df.show();
-            System.out.println("DEBUG: " + df.count());
 
             Dataset<Row> idAndTextDF = df
                     .select(col("id"),
                             get_xml_object_string("/*:document/*:article/*:body/*:acknowledgment/string()").apply(col("document")).as("text"))
                     .where(col("text").isNotNull().and(col("text").notEqual("")));
-            idAndTextDF.printSchema();
-            idAndTextDF.show();
-            System.out.println("DEBUG: " + idAndTextDF.count());
 
             Dataset<Row> documentTextDF = spark.createDataFrame(idAndTextDF.javaRDD(),
                     (StructType) SchemaConverters.toSqlType(DocumentText.SCHEMA$).dataType());
-            documentTextDF.printSchema();
-            documentTextDF.show();
-            System.out.println("DEBUG: " + documentTextDF.count());
 
             new AvroDataFrameWriter(documentTextDF).write(params.outputPath, DocumentText.SCHEMA$);
         });
