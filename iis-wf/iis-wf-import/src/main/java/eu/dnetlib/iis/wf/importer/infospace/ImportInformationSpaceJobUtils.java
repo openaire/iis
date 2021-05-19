@@ -52,14 +52,14 @@ public class ImportInformationSpaceJobUtils {
                 sourceSoftware.rdd(), Encoders.bean(eu.dnetlib.dhp.schema.oaf.Software.class));
 
         Column idIsNotDedup = not(col("id").like("%dedup%"));
-        Column idIsResultType = col("oid").like(InfoSpaceConstants.ROW_PREFIX_RESULT + "%");
+        Column oidIsResultType = col("oid").like(InfoSpaceConstants.ROW_PREFIX_RESULT + "%");
 
         Dataset<Row> resultIdMapDF = sourceDatasetDS.select(col("id"), explode(col("originalId")).as("oid"))
                 .union(sourceOtherResearchProductDS.select(col("id"), explode(col("originalId")).as("oid")))
                 .union(sourcePublicationDS.select(col("id"), explode(col("originalId")).as("oid")))
                 .union(sourceSoftwareDS.select(col("id"), explode(col("originalId")).as("oid")))
                 .where(idIsNotDedup)
-                .where(idIsResultType)
+                .where(oidIsResultType)
                 .distinct();
 
         Dataset<Row> dedupRelationDF = new AvroDatasetSupport(spark).toDF(
