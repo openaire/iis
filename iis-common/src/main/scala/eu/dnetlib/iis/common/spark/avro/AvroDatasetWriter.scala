@@ -23,6 +23,7 @@ class AvroDatasetWriter[T <: SpecificRecordBase](ds: Dataset[T]) extends Seriali
       .write
       .format("avro")
       .option("avroSchema", avroSchema.toString)
+      .option("compression", "uncompressed")
       .save(path)
   }
 }
