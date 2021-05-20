@@ -3,7 +3,6 @@ package eu.dnetlib.iis.common.spark.avro;
 import eu.dnetlib.iis.common.avro.Person;
 import eu.dnetlib.iis.common.spark.TestWithSharedSparkSession;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
-import org.apache.avro.Schema;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.avro.SchemaConverters;
@@ -40,7 +39,7 @@ class AvroDataFrameReaderTest extends TestWithSharedSparkSession {
         Dataset<Row> result = reader.read(inputDir.toString(),
                 (StructType) SchemaConverters.toSqlType(Person.SCHEMA$).dataType());
 
-        assertSchemasEqualIgnoringNullability(Person.SCHEMA$, result.schema());
+        assertEquals(SchemaConverters.toSqlType(Person.SCHEMA$).dataType(), result.schema());
         List<Row> rows = result.collectAsList();
         assertEquals(1, rows.size());
         Row row = rows.get(0);
@@ -58,16 +57,12 @@ class AvroDataFrameReaderTest extends TestWithSharedSparkSession {
 
         Dataset<Row> result = reader.read(inputDir.toString(), Person.SCHEMA$);
 
-        assertSchemasEqualIgnoringNullability(Person.SCHEMA$, result.schema());
+        assertEquals(SchemaConverters.toSqlType(Person.SCHEMA$).dataType(), result.schema());
         List<Row> rows = result.collectAsList();
         assertEquals(1, rows.size());
         Row row = rows.get(0);
         assertEquals(person.getId(), row.getAs("id"));
         assertEquals(person.getName(), row.getAs("name"));
         assertEquals(person.getAge(), row.getAs("age"));
-    }
-
-    private static void assertSchemasEqualIgnoringNullability(Schema avroSchema, StructType sqlSchema) {
-        assertEquals(SchemaConverters.toSqlType(avroSchema).dataType().asNullable(), sqlSchema.asNullable());
     }
 }

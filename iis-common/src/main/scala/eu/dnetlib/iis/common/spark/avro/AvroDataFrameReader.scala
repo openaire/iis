@@ -31,9 +31,10 @@ class AvroDataFrameReader(val spark: SparkSession) extends Serializable {
    * @return DataFrame with data read from given path.
    */
   def read(path: String, avroSchema: Schema): DataFrame = {
-    spark.read
+    val in = spark.read
       .format("avro")
       .option("avroSchema", avroSchema.toString)
       .load(path)
+    spark.createDataFrame(in.rdd, SchemaConverters.toSqlType(avroSchema).dataType.asInstanceOf[StructType])
   }
 }
