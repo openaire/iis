@@ -32,6 +32,7 @@ class AvroDataFrameWriter(df: DataFrame) extends Serializable {
       .write
       .format("avro")
       .option("avroSchema", avroSchema.toString)
+      .option("compression", "uncompressed")
       .save(path)
   }
 }
