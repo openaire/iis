@@ -565,8 +565,8 @@
                     <value>project</value>
                 </property>
                 <property>
-                    <name>metadataimport_output_name_dedup_mapping</name>
-                    <value>dedupmapping</value>
+                    <name>metadataimport_output_name_identifier_mapping</name>
+                    <value>identifiermapping</value>
                 </property>
                 <property>
                     <name>metadataimport_output_name_organization</name>

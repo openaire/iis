@@ -47,9 +47,9 @@
             <description>project output name</description>
         </property>
         <property>
-            <name>output_name_dedup_mapping</name>
-            <value>dedupmapping</value>
-            <description>deduplication mapping output name</description>
+            <name>output_name_identifier_mapping</name>
+            <value>identifiermapping</value>
+            <description>identifier mapping output name</description>
         </property>
         <property>
             <name>output_name_organization</name>
@@ -196,7 +196,7 @@
             <arg>-outputNameDatasetMeta=${output_name_dataset_meta}</arg>
             <arg>-outputNameDocumentProject=${output_name_document_project}</arg>
             <arg>-outputNameProject=${output_name_project}</arg>
-            <arg>-outputNameDedupMapping=${output_name_dedup_mapping}</arg>
+            <arg>-outputNameIdentifierMapping=${output_name_identifier_mapping}</arg>
             <arg>-outputNameOrganization=${output_name_organization}</arg>
             <arg>-outputNameProjectOrganization=${output_name_project_organization}</arg>
             <arg>-maxDescriptionLength=${max_description_length}</arg>

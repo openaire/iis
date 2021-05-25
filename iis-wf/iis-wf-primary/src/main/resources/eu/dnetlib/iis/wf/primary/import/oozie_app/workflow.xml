@@ -141,9 +141,9 @@
 			<description>metadata import person output subdirectory name</description>
 		</property>
 		<property>
-			<name>metadataimport_output_name_dedup_mapping</name>
-			<value>dedupmapping</value>
-			<description>metadata import deduplication mapping output subdirectory name</description>
+			<name>metadataimport_output_name_identifier_mapping</name>
+			<value>identifiermapping</value>
+			<description>metadata import identifier mapping output subdirectory name</description>
 		</property>
 		<property>
 			<name>metadataimport_output_name_organization</name>
@@ -290,8 +290,8 @@
                     <value>${metadataimport_output_name_person}</value>
                 </property>
                 <property>
-                    <name>output_name_dedup_mapping</name>
-                    <value>${metadataimport_output_name_dedup_mapping}</value>
+                    <name>output_name_identifier_mapping</name>
+                    <value>${metadataimport_output_name_identifier_mapping}</value>
                 </property>
                 <property>
                     <name>output_name_organization</name>
@@ -337,7 +337,7 @@
 			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
 			<arg>eu.dnetlib.iis.common.oozie.property.ConditionalPropertySetter</arg>
 			<arg>-Pcondition=${match_content_with_metadata eq "true"}</arg>
-			<arg>-PinCaseOfTrue=${output_metadataimport_root}/${metadataimport_output_name_dedup_mapping}</arg>
+			<arg>-PinCaseOfTrue=${output_metadataimport_root}/${metadataimport_output_name_identifier_mapping}</arg>
 			<arg>-PelseCase=$UNDEFINED$</arg>
 			<capture-output />
 		</java>
