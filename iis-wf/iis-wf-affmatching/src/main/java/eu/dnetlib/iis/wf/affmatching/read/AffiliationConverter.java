@@ -31,11 +31,9 @@ public class AffiliationConverter implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private BiFunction<Integer, ExtractedDocumentMetadata, Boolean> documentAcceptor =
-            (BiFunction<Integer, ExtractedDocumentMetadata, Boolean> & Serializable)
-                    (position, document) -> isAuthorAffiliation(position, document.getAuthors());
-    
-    
+    private DocumentAcceptor documentAcceptor = (position, document) ->
+            isAuthorAffiliation(position, document.getAuthors());
+
     //------------------------ LOGIC --------------------------
     
     
@@ -107,7 +105,11 @@ public class AffiliationConverter implements Serializable {
         
     }
 
-    public void setDocumentAcceptor(BiFunction<Integer, ExtractedDocumentMetadata, Boolean> documentAcceptor) {
+    public void setDocumentAcceptor(DocumentAcceptor documentAcceptor) {
         this.documentAcceptor = documentAcceptor;
     }
+
+    public interface DocumentAcceptor extends BiFunction<Integer, ExtractedDocumentMetadata, Boolean>, Serializable {
+    }
+
 }

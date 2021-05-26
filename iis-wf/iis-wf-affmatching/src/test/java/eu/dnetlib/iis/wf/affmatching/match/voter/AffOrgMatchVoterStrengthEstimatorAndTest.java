@@ -300,8 +300,7 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest extends TestWithSharedSpar
         // readers
         IisAffiliationReader affiliationReader = new IisAffiliationReader();
         AffiliationConverter affiliationConverter = new AffiliationConverter();
-        affiliationConverter.setDocumentAcceptor((BiFunction<Integer, ExtractedDocumentMetadata, Boolean> & Serializable)
-                (integer, extractedDocumentMetadata) -> true);
+        affiliationConverter.setDocumentAcceptor((position, extractedDocumentMetadata) -> true);
         affiliationReader.setAffiliationConverter(affiliationConverter);
         affMatchingService.setAffiliationReader(affiliationReader);
         affMatchingService.setOrganizationReader(new IisOrganizationReader());

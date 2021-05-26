@@ -23,6 +23,9 @@ import static org.apache.spark.sql.functions.udf;
 
 public class CitationRelationExporterJob {
 
+    private CitationRelationExporterJob() {
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(CitationRelationExporterJob.class);
 
     public static void main(String[] args) {

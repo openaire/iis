@@ -42,8 +42,8 @@ public abstract class FacadeContentRetrieverResponse<C> implements Serializable 
         return new TransientFailure<>(exception);
     }
 
-    public static class Success<C> extends FacadeContentRetrieverResponse<C> {
-        private C content;
+    public static final class Success<C> extends FacadeContentRetrieverResponse<C> {
+        private final C content;
 
         private Success(C content) {
             this.content = content;
@@ -61,7 +61,7 @@ public abstract class FacadeContentRetrieverResponse<C> implements Serializable 
     }
 
     public static abstract class Failure<C> extends FacadeContentRetrieverResponse<C> {
-        private Exception exception;
+        private final Exception exception;
 
         protected Failure(Exception exception) {
             this.exception = exception;
@@ -78,14 +78,14 @@ public abstract class FacadeContentRetrieverResponse<C> implements Serializable 
         }
     }
 
-    public static class PersistentFailure<C> extends Failure<C> {
+    public static final class PersistentFailure<C> extends Failure<C> {
 
         private PersistentFailure(Exception exception) {
             super(exception);
         }
     }
 
-    public static class TransientFailure<C> extends Failure<C> {
+    public static final class TransientFailure<C> extends Failure<C> {
 
         private TransientFailure(Exception exception) {
             super(exception);
