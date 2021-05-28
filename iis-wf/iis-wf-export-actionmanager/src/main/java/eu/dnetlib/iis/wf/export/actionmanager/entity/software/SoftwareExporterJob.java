@@ -48,6 +48,9 @@ import java.util.*;
  */
 public class SoftwareExporterJob {
 
+    private SoftwareExporterJob() {
+    }
+
     public static final String INFERENCE_PROVENANCE = InfoSpaceConstants.SEMANTIC_CLASS_IIS
             + InfoSpaceConstants.INFERENCE_PROVENANCE_SEPARATOR + AlgorithmName.document_software_url;
 
@@ -70,7 +73,7 @@ public class SoftwareExporterJob {
 
     private static final String SOFTWARE_TITLE_ALTERNATIVE_TEMPLATE = "{0} software on {1} in support of ''{2}''";
 
-    private static final int numberOfOutputFiles = 10;
+    private static final int NUMBER_OF_OUTPUT_FILES = 10;
 
     private static SparkAvroLoader avroLoader = new SparkAvroLoader();
 
@@ -155,10 +158,10 @@ public class SoftwareExporterJob {
             configuration.set(FileOutputFormat.COMPRESS_TYPE, SequenceFile.CompressionType.BLOCK.name());
 
             JavaPairRDD<Text, Text> relationsToExportRDD = relationsToExport(softwareExportMetaDedupRDD);
-            RDDUtils.saveTextPairRDD(relationsToExportRDD, numberOfOutputFiles, params.outputRelationPath, configuration);
+            RDDUtils.saveTextPairRDD(relationsToExportRDD, NUMBER_OF_OUTPUT_FILES, params.outputRelationPath, configuration);
 
             JavaPairRDD<Text, Text> entitiesToExportRDD = entitiesToExport(softwareExportMetaDedupRDD);
-            RDDUtils.saveTextPairRDD(entitiesToExportRDD, numberOfOutputFiles, params.outputEntityPath, configuration);
+            RDDUtils.saveTextPairRDD(entitiesToExportRDD, NUMBER_OF_OUTPUT_FILES, params.outputEntityPath, configuration);
 
             counterReporter.report(sc, softwareExportMetaDedupRDD, params.outputReportPath);
         }
@@ -172,9 +175,8 @@ public class SoftwareExporterJob {
     }
 
     private static boolean isRelationValid(DocumentToSoftwareUrlWithMeta source) {
-        return (source != null && StringUtils.isNotBlank(source.getSoftwareTitle()) &&
-                isRepositoryAllowed(source.getRepositoryName()) &&
-                (StringUtils.isNotBlank(source.getSoftwarePageURL()) || StringUtils.isNotBlank(source.getSoftwareUrl())));
+        return StringUtils.isNotBlank(source.getSoftwareTitle()) && isRepositoryAllowed(source.getRepositoryName()) &&
+                (StringUtils.isNotBlank(source.getSoftwarePageURL()) || StringUtils.isNotBlank(source.getSoftwareUrl()));
     }
 
     private static boolean isRepositoryAllowed(CharSequence softwareRepository) {

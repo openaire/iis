@@ -1,10 +1,8 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
-import eu.dnetlib.dhp.schema.oaf.Instance;
 import eu.dnetlib.dhp.schema.oaf.Result;
 import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
 import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 

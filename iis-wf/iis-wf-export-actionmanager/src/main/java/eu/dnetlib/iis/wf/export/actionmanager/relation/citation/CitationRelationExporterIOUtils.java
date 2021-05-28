@@ -21,7 +21,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class CitationRelationExporterIOUtils {
+public final class CitationRelationExporterIOUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(CitationRelationExporterIOUtils.class);
 
