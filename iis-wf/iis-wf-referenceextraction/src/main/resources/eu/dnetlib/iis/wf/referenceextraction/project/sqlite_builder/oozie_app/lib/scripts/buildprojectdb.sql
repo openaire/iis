@@ -5,7 +5,7 @@ update jsoninp set c1=regexpr('"jsonextrainfo":\s*"{}"',c1,'"jsonextrainfo":"{\"
 create table grants as select acronym,
      case when fundingclass1 = "HRZZ" and regexprmatches("\w{1,3}\-\d{2,4}\-\d{2,4}\-\d{4}",grantid) then grantid 
          else normalizedacro end as normalizedacro,
-     case when fundingclass1="FCT" then acronym 
+     case when fundingclass1="FCT" then regexpr("\s",acronym,"")
           when fundingclass1 = "HRZZ" and regexprmatches("\w{1,3}\-\d{2,4}\-\d{2,4}\-\d{4}",grantid) then regexpr("(\d{4})$",grantid)
           when fundingclass1 = "SNSF" then regexpr('0{0,1}(\d{5,6})$',grantid)
           when fundingclass1 = "INNOVIRIS" and grantid like "%anticipate%" then regexpr("\-ANTICIPATE\-",grantid,"-")
