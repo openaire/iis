@@ -1,9 +1,8 @@
 package eu.dnetlib.iis.common.spark.avro
 
-import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
 import org.apache.avro.Schema
 import org.apache.avro.specific.SpecificRecordBase
-import org.apache.spark.sql.{Dataset, Encoder, Encoders, SparkSession}
+import org.apache.spark.sql.{Dataset, SparkSession}
 
 /**
  * Support for reading avro datastores as datasets.
@@ -25,13 +24,6 @@ class AvroDatasetReader(val spark: SparkSession) extends Serializable {
    * @return Dataset with data read from given path.
    */
   def read[T <: SpecificRecordBase](path: String, avroSchema: Schema, clazz: Class[T]): Dataset[T] = {
-    implicit val encoder: Encoder[T] = Encoders.kryo(clazz)
-    val mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    spark.read
-      .format("avro")
-      .option("avroSchema", avroSchema.toString)
-      .load(path)
-      .toJSON
-      .map(json => mapper.readValue(json, clazz))
+    new AvroDataFrameSupport(spark).toDS(new AvroDataFrameReader(spark).read(path, avroSchema), clazz)
   }
 }

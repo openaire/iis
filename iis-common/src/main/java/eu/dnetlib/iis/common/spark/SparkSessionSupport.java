@@ -9,7 +9,7 @@ import java.util.function.Function;
 /**
  * SparkSession utility methods.
  */
-public class SparkSessionSupport {
+public final class SparkSessionSupport {
     private SparkSessionSupport() {
     }
 

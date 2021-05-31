@@ -98,8 +98,7 @@ public class AffMatchingDocOrgQualityTest {
         public AffiliationReader create() {
             IisAffiliationReader affiliationReader = new IisAffiliationReader();
             AffiliationConverter affiliationConverter = new AffiliationConverter();
-            affiliationConverter.setDocumentAcceptor((BiFunction<Integer, ExtractedDocumentMetadata, Boolean> & Serializable)
-                    (integer, extractedDocumentMetadata) -> true);
+            affiliationConverter.setDocumentAcceptor((position, extractedDocumentMetadata) -> true);
             affiliationReader.setAffiliationConverter(affiliationConverter);
             return affiliationReader;
         }

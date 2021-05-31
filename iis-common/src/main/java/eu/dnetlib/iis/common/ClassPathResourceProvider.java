@@ -14,7 +14,10 @@ import java.util.stream.Collectors;
 /**
  * Class with utility methods for providing resources on the classpath.
  */
-public class ClassPathResourceProvider {
+public final class ClassPathResourceProvider {
+
+    private ClassPathResourceProvider() {
+    }
 
     /**
      * Returns the path to resource on the classpath.

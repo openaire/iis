@@ -44,7 +44,7 @@ public class ImportInformationSpaceJobTest extends TestWithSharedSparkSession {
     private static final String OUTPUT_NAME_ORGANIZATION = "organzation";
     private static final String OUTPUT_NAME_DOC_PROJ = "doc-proj";
     private static final String OUTPUT_NAME_PROJ_ORG = "proj-org";
-    private static final String OUTPUT_NAME_DEDUP = "dedup";
+    private static final String OUTPUT_NAME_IDENTIFIER = "identifier";
     
     @BeforeEach
     public void beforeEach() {
@@ -101,7 +101,7 @@ public class ImportInformationSpaceJobTest extends TestWithSharedSparkSession {
                 "-outputNameDatasetMeta", OUTPUT_NAME_DATASET,
                 "-outputNameDocumentProject", OUTPUT_NAME_DOC_PROJ,
                 "-outputNameProject", OUTPUT_NAME_PROJECT,
-                "-outputNameDedupMapping", OUTPUT_NAME_DEDUP,
+                "-outputNameIdentifierMapping", OUTPUT_NAME_IDENTIFIER,
                 "-outputNameOrganization", OUTPUT_NAME_ORGANIZATION,
                 "-outputNameProjectOrganization", OUTPUT_NAME_PROJ_ORG,
                 "-maxDescriptionLength", "1000",
@@ -120,7 +120,7 @@ public class ImportInformationSpaceJobTest extends TestWithSharedSparkSession {
         String expectedOrganizationPath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/organization.json");
         String expectedDocProjectPath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/docproject.json");
         String expectedProjOrgPath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/project_organization.json");
-        String expectedDedupMappingPath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/dedupmapping.json");
+        String expectedIdentifierMappingPath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/identifiermapping.json");
         String expectedReportPath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/report.json");
         
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.resolve(OUTPUT_NAME_DOCMETA).toString(), expectedDocumentPath, DocumentMetadata.class);
@@ -129,7 +129,7 @@ public class ImportInformationSpaceJobTest extends TestWithSharedSparkSession {
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.resolve(OUTPUT_NAME_ORGANIZATION).toString(), expectedOrganizationPath, Organization.class);
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.resolve(OUTPUT_NAME_DOC_PROJ).toString(), expectedDocProjectPath, DocumentToProject.class);
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.resolve(OUTPUT_NAME_PROJ_ORG).toString(), expectedProjOrgPath, ProjectToOrganization.class);
-        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.resolve(OUTPUT_NAME_DEDUP).toString(), expectedDedupMappingPath, IdentifierMapping.class);
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.resolve(OUTPUT_NAME_IDENTIFIER).toString(), expectedIdentifierMappingPath, IdentifierMapping.class);
 
         assertEquals(1,
                 HdfsTestUtils.countFiles(new Configuration(), outputReportDir.toString(), DataStore.AVRO_FILE_EXT));

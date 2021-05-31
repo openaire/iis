@@ -7,9 +7,9 @@ import java.util.Objects;
 /**
  * Allows to convert confidence level to trust level and backwards.
  */
-public class ConfidenceAndTrustLevelConversionUtils {
-    private static final float confidenceToTrustConversionFactor = InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
-    private static final float trustToConfidenceConversionFactor = 1 / InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
+public final class ConfidenceAndTrustLevelConversionUtils {
+    private static final float CONFIDENCE_TO_TRUST_LEVEL_FACTOR = InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
+    private static final float TRUST_TO_CONFIDENCE_CONVERSION_FACTOR = 1 / InfoSpaceConstants.CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
 
     private ConfidenceAndTrustLevelConversionUtils() {
     }
@@ -34,7 +34,7 @@ public class ConfidenceAndTrustLevelConversionUtils {
      * @return float with corresponding trust level value.
      */
     public static float confidenceLevelToTrustLevel(float confidenceLevel) {
-        return confidenceLevel * confidenceToTrustConversionFactor;
+        return confidenceLevel * CONFIDENCE_TO_TRUST_LEVEL_FACTOR;
     }
 
     /**
@@ -57,7 +57,7 @@ public class ConfidenceAndTrustLevelConversionUtils {
      * @return float corresponding to confidence level value.
      */
     public static float trustLevelToConfidenceLevel(float trustLevel) {
-        return trustLevel * trustToConfidenceConversionFactor;
+        return trustLevel * TRUST_TO_CONFIDENCE_CONVERSION_FACTOR;
     }
 
 }

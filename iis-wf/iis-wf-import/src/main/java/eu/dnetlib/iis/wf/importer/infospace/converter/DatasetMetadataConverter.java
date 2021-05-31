@@ -1,26 +1,16 @@
 package eu.dnetlib.iis.wf.importer.infospace.converter;
 
-import java.time.Year;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import eu.dnetlib.dhp.schema.oaf.*;
+import eu.dnetlib.iis.importer.schemas.DataSetReference;
+import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import eu.dnetlib.dhp.schema.oaf.Author;
-import eu.dnetlib.dhp.schema.oaf.Dataset;
-import eu.dnetlib.dhp.schema.oaf.Field;
-import eu.dnetlib.dhp.schema.oaf.OafEntity;
-import eu.dnetlib.dhp.schema.oaf.Result;
-import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
-import eu.dnetlib.iis.importer.schemas.DataSetReference;
-import eu.dnetlib.iis.wf.importer.infospace.approver.FieldApprover;
+import java.time.Year;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * {@link Dataset} containing dataset details to {@link DataSetReference} converter.
@@ -150,9 +140,10 @@ public class DatasetMetadataConverter implements OafEntityToAvroConverter<Result
      * Handles additional identifiers.
      * 
      */
-    private void handleAdditionalIds(OafEntity oafEntity, DataSetReference.Builder metaBuilder) {
-        if (CollectionUtils.isNotEmpty(oafEntity.getPid())) {
-            List<StructuredProperty> filtered = oafEntity.getPid().stream()
+    private void handleAdditionalIds(Result result, DataSetReference.Builder metaBuilder) {
+        List<StructuredProperty> pid = MetadataConverterUtils.extractPid(result);
+        if (CollectionUtils.isNotEmpty(pid)) {
+            List<StructuredProperty> filtered = pid.stream()
                     .filter(x -> StringUtils.isNotBlank(x.getQualifier().getClassid()))
                     .filter(x -> StringUtils.isNotBlank(x.getValue()))
                     .filter(x -> fieldApprover.approve(x.getDataInfo()))

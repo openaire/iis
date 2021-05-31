@@ -18,12 +18,19 @@ pipeline {
                     withEnv(["JAVA_HOME=${ tool type: 'jdk', name: "$JDK_VERSION" }",
                              "PATH+MAVEN=${tool type: 'maven', name: "$MAVEN_VERSION"}/bin:${env.JAVA_HOME}/bin"]) {
                         withSonarQubeEnv('sonar.ceon.pl') {
+                            //NOTE: sonar scan is only done for master branch because current Sonar instance does not support branching
                             sh '''
-                                mvn clean package \
-                                    -DskipITs \
-                                    -Djava.net.preferIPv4Stack=true \
-                                    $SONAR_MAVEN_GOAL \
-                                    -Dsonar.host.url=$SONAR_HOST_URL
+                                if [ $GIT_BRANCH = "master" ]; then
+                                    mvn clean package \
+                                        -DskipITs \
+                                        -Djava.net.preferIPv4Stack=true \
+                                        $SONAR_MAVEN_GOAL \
+                                        -Dsonar.host.url=$SONAR_HOST_URL
+                                else
+                                    mvn clean package \
+                                        -DskipITs \
+                                        -Djava.net.preferIPv4Stack=true
+                                fi
                             '''
                         }
                     }

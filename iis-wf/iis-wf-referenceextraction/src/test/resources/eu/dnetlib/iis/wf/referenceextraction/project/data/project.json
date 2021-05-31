@@ -57,3 +57,5 @@
 {"id":"40|rsf_________::48e2a92bd382fec38e02988bd55008b4", "projectGrantId": "14-48-00043", "projectAcronym": null, "fundingClass": "RSF::", "jsonextrainfo": "{}"}
 {"id":"40|anr_________::96de9861ca6934ddf8b941f385b797e6", "projectGrantId": "10-LABX-0099", "projectAcronym": "TransferS", "fundingClass": "ANR::", "jsonextrainfo": "{}"}
 {"id":"40|innoviris___::ece14608b0fc1a2ae6b4e3ec6a90b5b1", "projectGrantId": "2015-ATTRACT-4", "projectAcronym": null, "fundingClass": "INNOVIRIS::ATTRACT", "jsonextrainfo": "{}"}
+{"id":"40|gsri________::e4ded3d6ac3a4b01b6b6fa1776ed1f3b", "projectGrantId": "unidentified", "projectAcronym": null, "fundingClass": "GSRI::", "jsonextrainfo": "{}"}
+{"id":"40|sfrs________::e782c6a2b66f476203a5b2e9a03d8034", "projectGrantId": "6066160", "projectAcronym": "Key2SM", "fundingClass": "SFRS::Promis", "jsonextrainfo": "{}"}

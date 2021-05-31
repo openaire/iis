@@ -2,6 +2,7 @@ package eu.dnetlib.iis.wf.importer.infospace;
 
 import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE;
 import static eu.dnetlib.iis.common.spark.SparkSessionSupport.*;
+import static eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceJobUtils.*;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -106,7 +107,7 @@ public class ImportInformationSpaceJob {
 
     private static final String COUNTER_READ_DOC_PROJ_REFERENCE = "import.infoSpace.docProjectReference";
     
-    private static final String COUNTER_READ_DOC_DEDUP_DOC_REFERENCE = "import.infoSpace.docDedupDocReference";
+    private static final String COUNTER_READ_DOC_IDENTIFIERMAPPING_DOC_REFERENCE = "import.infoSpace.docIdentifierMappingDocReference";
     
     private static final String COUNTER_READ_PROJ_ORG_REFERENCE = "import.infoSpace.projectOrganizationReference";
 
@@ -122,7 +123,6 @@ public class ImportInformationSpaceJob {
         conf.registerKryoClasses(OafModelUtils.provideOafClasses());
 
         runWithSparkSession(conf, params.isSparkSessionShared, session -> {
-            session = SparkSession.builder().config(conf).getOrCreate();
             JavaSparkContext sc = JavaSparkContext.fromSparkContext(session.sparkContext());
 
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputPath);
@@ -179,10 +179,11 @@ public class ImportInformationSpaceJob {
                     REL_TYPE_RESULT_PROJECT, SUBREL_TYPE_OUTCOME, REL_NAME_IS_PRODUCED_BY);
             JavaRDD<ProjectToOrganization> projOrgRelation = filterAndParseRelationToAvro(sourceRelation, dataInfoBasedApprover, projectOrganizationConverter,
                     REL_TYPE_PROJECT_ORGANIZATION, SUBREL_TYPE_PARTICIPATION, REL_NAME_HAS_PARTICIPANT);
-            JavaRDD<IdentifierMapping> dedupRelation = filterAndParseRelationToAvro(sourceRelation, dataInfoBasedApprover, deduplicationMappingConverter,
-                    REL_TYPE_RESULT_RESULT, SUBREL_TYPE_DEDUP, REL_NAME_MERGES);
 
-            storeInOutput(sc, docMeta, dataset, project, organization, docProjRelation, projOrgRelation, dedupRelation, params);
+            JavaRDD<IdentifierMapping> identifierMapping = produceGraphIdToObjectStoreIdMapping(sourceDataset, sourceOtherResearchProduct,
+                    sourcePublication, sourceSoftware, dataInfoBasedApprover, session);
+
+            storeInOutput(sc, docMeta, dataset, project, organization, docProjRelation, projOrgRelation, identifierMapping, params);
         });
     }
 
@@ -351,7 +352,7 @@ public class ImportInformationSpaceJob {
      */
     private static JavaRDD<ReportEntry> generateReportEntries(JavaSparkContext sparkContext, long docMetaCount,
             long datasetCount, long projectCount, long organizationCount, long docProjCount, long projOrgCount,
-            long dedupDocCount) {
+            long identifierMappingDocCount) {
         return sparkContext.parallelize(Lists.newArrayList(
                 ReportEntryFactory.createCounterReportEntry(COUNTER_READ_DOCMETADATA, docMetaCount),
                 ReportEntryFactory.createCounterReportEntry(COUNTER_READ_DATASET, datasetCount),
@@ -359,7 +360,7 @@ public class ImportInformationSpaceJob {
                 ReportEntryFactory.createCounterReportEntry(COUNTER_READ_ORGANIZATION, organizationCount),
                 ReportEntryFactory.createCounterReportEntry(COUNTER_READ_DOC_PROJ_REFERENCE, docProjCount),
                 ReportEntryFactory.createCounterReportEntry(COUNTER_READ_PROJ_ORG_REFERENCE, projOrgCount),
-                ReportEntryFactory.createCounterReportEntry(COUNTER_READ_DOC_DEDUP_DOC_REFERENCE, dedupDocCount)), 1);
+                ReportEntryFactory.createCounterReportEntry(COUNTER_READ_DOC_IDENTIFIERMAPPING_DOC_REFERENCE, identifierMappingDocCount)), 1);
     }
     
     /**
@@ -371,7 +372,7 @@ public class ImportInformationSpaceJob {
             JavaRDD<eu.dnetlib.iis.importer.schemas.Project> project,
             JavaRDD<eu.dnetlib.iis.importer.schemas.Organization> organization,
             JavaRDD<DocumentToProject> docProjResultRelation, JavaRDD<ProjectToOrganization> projOrgResultRelation,
-            JavaRDD<IdentifierMapping> dedupResultRelation, ImportInformationSpaceJobParameters jobParams) {
+            JavaRDD<IdentifierMapping> identifierMapping, ImportInformationSpaceJobParameters jobParams) {
 
         // caching before calculating counts and writing on HDFS
         docMeta.persist(CACHE_STORAGE_DEFAULT_LEVEL);
@@ -380,11 +381,11 @@ public class ImportInformationSpaceJob {
         organization.persist(CACHE_STORAGE_DEFAULT_LEVEL);
         docProjResultRelation.persist(CACHE_STORAGE_DEFAULT_LEVEL);
         projOrgResultRelation.persist(CACHE_STORAGE_DEFAULT_LEVEL);
-        dedupResultRelation.persist(CACHE_STORAGE_DEFAULT_LEVEL);
+        identifierMapping.persist(CACHE_STORAGE_DEFAULT_LEVEL);
         
         JavaRDD<ReportEntry> reports = generateReportEntries(sparkContext, docMeta.count(), dataset.count(),
                 project.count(), organization.count(), docProjResultRelation.count(), projOrgResultRelation.count(),
-                dedupResultRelation.count());
+                identifierMapping.count());
 
         avroSaver.saveJavaRDD(docMeta, eu.dnetlib.iis.importer.schemas.DocumentMetadata.SCHEMA$,
                 outputPathFor(jobParams.outputPath, jobParams.outputNameDocumentMeta));
@@ -398,8 +399,8 @@ public class ImportInformationSpaceJob {
                 outputPathFor(jobParams.outputPath, jobParams.outputNameDocumentProject));
         avroSaver.saveJavaRDD(projOrgResultRelation, ProjectToOrganization.SCHEMA$,
                 outputPathFor(jobParams.outputPath, jobParams.outputNameProjectOrganization));
-        avroSaver.saveJavaRDD(dedupResultRelation, IdentifierMapping.SCHEMA$,
-                outputPathFor(jobParams.outputPath, jobParams.outputNameDedupMapping));
+        avroSaver.saveJavaRDD(identifierMapping, IdentifierMapping.SCHEMA$,
+                outputPathFor(jobParams.outputPath, jobParams.outputNameIdentifierMapping));
 
         avroSaver.saveJavaRDD(reports, ReportEntry.SCHEMA$, jobParams.outputReportPath);
     }
@@ -447,8 +448,8 @@ public class ImportInformationSpaceJob {
         @Parameter(names = "-outputNameProject", required = true)
         private String outputNameProject;
         
-        @Parameter(names = "-outputNameDedupMapping", required = true)
-        private String outputNameDedupMapping;
+        @Parameter(names = "-outputNameIdentifierMapping", required = true)
+        private String outputNameIdentifierMapping;
         
         @Parameter(names = "-outputNameOrganization", required = true)
         private String outputNameOrganization;

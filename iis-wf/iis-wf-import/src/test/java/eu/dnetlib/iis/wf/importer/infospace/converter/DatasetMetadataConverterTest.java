@@ -240,9 +240,11 @@ public class DatasetMetadataConverterTest {
         
         addDescription(result, ABSTRACT);
 
-        if (result.getPid() == null) {
-            result.setPid(new ArrayList<>());
-        }
+        result.getInstance().forEach(instance -> {
+            if (instance.getPid() == null) {
+                instance.setPid(new ArrayList<>());
+            }
+        });
         
         extIdentifiers.entrySet().stream().map(entry -> {
             StructuredProperty structPid = new StructuredProperty();
@@ -252,9 +254,9 @@ public class DatasetMetadataConverterTest {
             structPid.setQualifier(pidQualifier);
             return structPid;
         }).forEach(pid -> {
-            result.getPid().add(pid);
+            result.getInstance().forEach(instance -> instance.getPid().add(pid));
             // testing for dealing with duplicates
-            result.getPid().add(pid);
+            result.getInstance().forEach(instance -> instance.getPid().add(pid));
         });
         
         Field<String> dateOfAcc = new Field<>();
