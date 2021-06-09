@@ -118,7 +118,7 @@
                 --conf spark.extraListeners=${spark1ExtraListeners}
                 --conf spark.sql.queryExecutionListeners=${spark1SqlQueryExecutionListeners}
                 --conf spark.yarn.historyServer.address=${spark1YarnHistoryServerAddress}
-                --conf spark.eventLog.dir="${nameNode}${spark1EventLogDir}"
+                --conf spark.eventLog.dir=${nameNode}${spark1EventLogDir}
             </spark-opts>
 
             <arg>-inputMetadata = ${input_metadata}</arg>
@@ -148,7 +148,7 @@
                 --conf spark.extraListeners=${spark1ExtraListeners}
                 --conf spark.sql.queryExecutionListeners=${spark1SqlQueryExecutionListeners}
                 --conf spark.yarn.historyServer.address=${spark1YarnHistoryServerAddress}
-                --conf spark.eventLog.dir="${nameNode}${spark1EventLogDir}"
+                --conf spark.eventLog.dir=${nameNode}${spark1EventLogDir}
             </spark-opts>
 
             <arg>-fullDocumentPath = ${workingDir}/documents_with_authors</arg>
@@ -179,7 +179,7 @@
                 --conf spark.extraListeners=${spark1ExtraListeners}
                 --conf spark.sql.queryExecutionListeners=${spark1SqlQueryExecutionListeners}
                 --conf spark.yarn.historyServer.address=${spark1YarnHistoryServerAddress}
-                --conf spark.eventLog.dir="${nameNode}${spark1EventLogDir}"
+                --conf spark.eventLog.dir=${nameNode}${spark1EventLogDir}
             </spark-opts>
 
             <arg>-input = ${workingDir}/matched_citations</arg>
