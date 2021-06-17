@@ -18,11 +18,11 @@ hidden var 'gsri_unidentified' from select id from grants where fundingclass1="G
 
 create temp table pubs as setschema 'c1,c2' select jsonpath(c1, '$.id', '$.text') from stdinput();
 
-create temp table matched_undefined_miur_only as select distinct docid, var('miur_unidentified') as id from (setschema 'docid,prev,middle,next'
+create temp table matched_undefined_miur_only as select distinct docid, var('miur_unidentified') as id, prev,middle,next from (setschema 'docid,prev,middle,next'
 select c1 as docid, textwindow2s(c2,10,1,10, '\b(?:RBSI\d{2}\w{4})\b') from (setschema 'c1,c2' select * from pubs where c2 is not null)) 
 where var('miur_unidentified') and (regexprmatches('\b(?:RBSI\d{2}\w{4})\b', middle));
 
-create temp table matched_undefined_wt_only as select distinct docid, var('wt_unidentified') as id from (setschema 'docid,prev,middle,next'
+create temp table matched_undefined_wt_only as select distinct docid, var('wt_unidentified') as id, prev,middle,next from (setschema 'docid,prev,middle,next'
 select c1 as docid, textwindow2s(c2,20,2,3, '(\bWel?lcome Trust\b|\bWT\b)') from (setschema 'c1,c2' select * from pubs where c2 is not null)) where var('wt_unidentified') and (regexprmatches('\bWel?lcome Trust\b', middle) or 
 regexpcountwords('(?:\bwell?come trust\b)|(?:(?:\bthis work was|financial(?:ly)?|partial(?:ly)?|partly|(?:gratefully\s)?acknowledges?)?\s?\b(?:support|fund|suppli?)(?:ed|ing)?\s(?:by|from|in part\s(?:by|from)|through)?\s?(?:a)?\s?(?:grant)?)|(?:(?:programme|project) grant)|(?:(?:under|through)?\s?(?:the)?\s(?:grants?|contract(?:\snumber)?)\b)|(?:\bprograms? of\b)|(?:\bgrants? of\b)|(?:\bin part by\b)|(?:\bthis work could not have been completed without\b)|(?:\bcontract\b)|(?:\backnowledgments?\b)', lower(prev||' '||middle||' '||next)) > 3);
 
@@ -279,8 +279,8 @@ select C1 from output_table
 union all
 select C1 from secondary_output_table
 union all
-select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', '') from matched_undefined_miur_only
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', prev||" "||middle||" "||next) from matched_undefined_miur_only
 union all
-select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', '') from matched_undefined_wt_only
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', prev||" "||middle||" "||next) from matched_undefined_wt_only
 union all
-select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', '') from matched_undefined_gsri;
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', prev||" "||middle||" "||next) from matched_undefined_gsri;
