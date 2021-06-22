@@ -110,7 +110,7 @@
    "documentId":"50|pub_______00::with_wt_unidentified_reference",
    "projectId":"40|wt__________::1e5e62235d094afd01cd56e65112fc63",
    "confidenceLevel":0.8,
-   "textsnippet":""
+   "textsnippet":"This work was funded by a Wellcome Trust Senior Research Fellowship"
 }
 {
    "documentId":"50|sharebioRxiv::ff9de1c352dcee69956d01e77149b708",
@@ -356,7 +356,7 @@
    "documentId": "50|core________::0d7edf561aaa3d6f182db0c03f3d31af",
    "projectId": "40|gsri________::e4ded3d6ac3a4b01b6b6fa1776ed1f3b",
    "confidenceLevel": 0.800000011920929, 
-   "textsnippet": ""
+   "textsnippet": "operation of the LHC and the CMS detector provided by the following funding agencies GSRT Greece "
 }
 {
    "documentId": "50|dedup_wf_001::aa44c1c383b40375595ca7b645a506a5",
