@@ -7,18 +7,22 @@ import static org.apache.spark.sql.functions.lit;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
-import org.apache.spark.sql.functions;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.google.common.collect.Lists;
 
-import eu.dnetlib.iis.common.schemas.IdentifierMapping;
+import eu.dnetlib.iis.common.InfoSpaceConstants;
+import eu.dnetlib.iis.common.java.io.HdfsUtils;
+import eu.dnetlib.iis.common.report.ReportEntryFactory;
+import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.spark.SparkConfHelper;
-import eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl;
 import eu.dnetlib.iis.common.spark.avro.AvroDataFrameSupport;
+import eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 
@@ -32,6 +36,8 @@ public class HiveBasedDocumentContentUrlImporterJob {
 
     private static SparkAvroSaver avroSaver = new SparkAvroSaver();
     
+    private static final String COUNTER_IMPORTED_RECORDS_TOTAL = "import.content.urls.fromAggregator";
+    
     public static void main(String[] args) throws Exception {
 
         HiveBasedDocumentContentUrlImporterJobParameters params = new HiveBasedDocumentContentUrlImporterJobParameters();
@@ -39,44 +45,35 @@ public class HiveBasedDocumentContentUrlImporterJob {
         jcommander.parse(args);
 
         SparkConf conf = SparkConfHelper.withKryo(new SparkConf());
-        // conf.registerKryoClasses(OafModelUtils.provideOafClasses());
         conf.set("hive.metastore.uris", params.hiveMetastoreUris);
         
-        SparkSession sparkSession = SparkSession.builder()
-                //.config(SparkConfHelper.withKryo(conf))
-                .config(conf)
-                .enableHiveSupport()
-                .getOrCreate();        
-        
-        // sparkSession.sql("show databases").show();
-        // sparkSession.sql("show tables").show();
-
-        // this shows "hive" so the hive is set properly, not in-memory due to the lack of hive libs on classpath - this is fine
-        // System.out.println("catalog impl: " + sparkSession.conf().get("spark.sql.catalogImplementation"));
-        
-        // just to debug, shows proper number for openaire_prod but 0 for pdfaggregation
-        sparkSession.sql("select id from openaire_prod_20210716.publication limit 10").show();
-        
-        // testing on a non empty table
-        Dataset<Row> pubsResult = sparkSession.sql("select id, originalid from openaire_prod_20210716.publication");
-        pubsResult.cache();
-        Dataset<Row> idResults = pubsResult.select(pubsResult.col("id"));
-        System.out.println("number of imported publication results: " + idResults.count());
-        idResults.write().csv(params.outputPath+"_csv_test");
-        // end of testing
-        
-        Dataset<Row> result = sparkSession.sql("select id, actual_url, mimetype, size, hash from " + params.inputTableName);
-        // number of imported records is 0;
-        System.out.println("number of imported results: " + result.count());
-        
-        JavaRDD<DocumentContentUrl> documentContentUrl = buildOutputRecord(result, sparkSession);
-        
-        avroSaver.saveJavaRDD(documentContentUrl, DocumentContentUrl.SCHEMA$, params.outputPath);
+        try (SparkSession sparkSession = SparkSession.builder().config(conf).enableHiveSupport().getOrCreate()) {
+            
+            HdfsUtils.remove(sparkSession.sparkContext().hadoopConfiguration(), params.outputPath);
+            HdfsUtils.remove(sparkSession.sparkContext().hadoopConfiguration(), params.outputReportPath);
+            
+            Dataset<Row> result = sparkSession.sql("select id, actual_url, mimetype, size, hash from " + params.inputTableName);
+            
+            JavaRDD<DocumentContentUrl> documentContentUrl = buildOutputRecord(result, sparkSession);
+            documentContentUrl.cache();
+            
+            JavaRDD<ReportEntry> reports = generateReportEntries(sparkSession, documentContentUrl.count()); 
+            
+            avroSaver.saveJavaRDD(documentContentUrl, DocumentContentUrl.SCHEMA$, params.outputPath);
+            avroSaver.saveJavaRDD(reports, ReportEntry.SCHEMA$, params.outputReportPath);
+        }
+    }
+    
+    private static JavaRDD<ReportEntry> generateReportEntries(SparkSession sparkSession, long recordsCount) {
+        return sparkSession.createDataset(
+                Lists.newArrayList(
+                        ReportEntryFactory.createCounterReportEntry(COUNTER_IMPORTED_RECORDS_TOTAL, recordsCount)),
+                Encoders.kryo(ReportEntry.class)).javaRDD();
     }
     
     private static JavaRDD<DocumentContentUrl> buildOutputRecord(Dataset<Row> source, SparkSession spark) {
         Dataset<Row> resultDs = source.select(
-                concat(lit("50|"), col("id")).as("id"),
+                concat(lit(InfoSpaceConstants.ROW_PREFIX_RESULT), col("id")).as("id"),
                 col("actual_url").as("url"),
                 col("mimetype").as("mimeType"),
                 col("size").cast("long").divide(1024).as("contentSizeKB"),

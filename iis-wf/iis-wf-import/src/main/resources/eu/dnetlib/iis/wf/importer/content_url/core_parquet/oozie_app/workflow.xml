@@ -1,4 +1,4 @@
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="importer_content_core_parquet">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="importer_content_core">
 
     <parameters>
         <property>
@@ -6,12 +6,8 @@
             <description>hive input table name</description>
         </property>
         <property>
-            <name>hive_warehouse_dir</name>
-            <value>/user/hive/warehouse</value>
-        </property>
-        <property>
             <name>hive_metastore_uris</name>
-            <value>thrift://iis-cdh5-test-m3.ocean.icm.edu.pl:9083</value>
+            <description>hive metastore locations</description>
         </property>
         <!--  -->
         <property>
@@ -24,7 +20,7 @@
         </property>
         <property>
             <name>output_report_relative_path</name>
-            <value>import_content_url_hive</value>
+            <value>import_content_url_from_aggregator</value>
             <description>directory for storing report (relative to output_report_root_path)</description>
         </property>
         <property>
@@ -88,7 +84,7 @@
         <spark xmlns="uri:oozie:spark-action:0.2">
             <master>yarn-cluster</master>
             <mode>cluster</mode>
-            <name>import-content-url</name>
+            <name>import-content-url_core</name>
             <class>eu.dnetlib.iis.wf.importer.content.HiveBasedDocumentContentUrlImporterJob</class>
             <jar>${oozieTopWfApplicationPath}/lib/iis-wf-import-${projectVersion}.jar</jar>
             <spark-opts>
@@ -99,7 +95,6 @@
                 --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
                 --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
                 --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
-                --conf spark.sql.warehouse.dir=${hive_warehouse_dir}
             </spark-opts>
             <arg>-inputTableName=${input_table_name}</arg>
             <arg>-hiveMetastoreUris=${hive_metastore_uris}</arg>
