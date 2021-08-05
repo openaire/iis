@@ -52,9 +52,9 @@ public class DocumentToDataSetActionBuilderModuleFactory extends AbstractActionB
         public List<AtomicAction<Relation>> build(DocumentToDataSet object) throws TrustLevelThresholdExceededException {
             return Arrays.asList(
                     createAction(object.getDocumentId().toString(), object.getDatasetId().toString(),
-                            object.getConfidenceLevel()),
+                            object.getConfidenceLevel(), OafConstants.REL_CLASS_REFERENCES),
                     createAction(object.getDatasetId().toString(), object.getDocumentId().toString(),
-                            object.getConfidenceLevel()));
+                            object.getConfidenceLevel(), OafConstants.REL_CLASS_IS_REFERENCED_BY));
         }
 
         // ------------------------ PRIVATE --------------------------
@@ -62,7 +62,8 @@ public class DocumentToDataSetActionBuilderModuleFactory extends AbstractActionB
         /**
          * Creates similarity related actions.
          */
-        private AtomicAction<Relation> createAction(String source, String target, float confidenceLevel) throws TrustLevelThresholdExceededException {
+        private AtomicAction<Relation> createAction(String source, String target, float confidenceLevel,
+                String relClass) throws TrustLevelThresholdExceededException {
             AtomicAction<Relation> action = new AtomicAction<>();
             action.setClazz(Relation.class);
 
@@ -70,8 +71,8 @@ public class DocumentToDataSetActionBuilderModuleFactory extends AbstractActionB
             relation.setSource(source);
             relation.setTarget(target);
             relation.setRelType(OafConstants.REL_TYPE_RESULT_RESULT);
-            relation.setSubRelType(OafConstants.SUBREL_TYPE_PUBLICATION_DATASET);
-            relation.setRelClass(OafConstants.REL_CLASS_ISRELATEDTO);
+            relation.setSubRelType(OafConstants.SUBREL_TYPE_RELATIONSHIP);
+            relation.setRelClass(relClass);
             relation.setDataInfo(buildInference(confidenceLevel));
             relation.setLastupdatetimestamp(System.currentTimeMillis());
             

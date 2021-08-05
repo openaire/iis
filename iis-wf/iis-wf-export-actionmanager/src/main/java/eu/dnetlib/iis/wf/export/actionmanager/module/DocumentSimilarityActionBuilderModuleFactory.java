@@ -14,6 +14,7 @@ import eu.dnetlib.dhp.schema.oaf.KeyValue;
 import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity;
+import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 
 /**
@@ -23,15 +24,8 @@ import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
  *
  */
 public class DocumentSimilarityActionBuilderModuleFactory extends AbstractActionBuilderFactory<DocumentSimilarity, Relation> {
+    
 
-    private static final String REL_TYPE = "resultResult";
-    
-    private static final String SUBREL_TYPE = "similarity";
-    
-    private static final String REL_CLASS_IS_AMONG_TOP_N = "isAmongTopNSimilarDocuments";
-    
-    private static final String REL_CLASS_HAS_AMONG_TOP_N = "hasAmongTopNSimilarDocuments";
-    
     private static final String REL_PROPERTY_SIMILARITY_LEVEL = "similarityLevel";
 
     
@@ -85,8 +79,8 @@ public class DocumentSimilarityActionBuilderModuleFactory extends AbstractAction
             } else {
                 String docId = object.getDocumentId().toString();
                 String otherDocId = object.getOtherDocumentId().toString();
-                return Arrays.asList(createAction(docId, otherDocId, object.getSimilarity(), REL_CLASS_HAS_AMONG_TOP_N),
-                        createAction(otherDocId, docId, object.getSimilarity(), REL_CLASS_IS_AMONG_TOP_N));
+                return Arrays.asList(createAction(docId, otherDocId, object.getSimilarity(), OafConstants.REL_CLASS_HAS_AMONG_TOP_N),
+                        createAction(otherDocId, docId, object.getSimilarity(), OafConstants.REL_CLASS_IS_AMONG_TOP_N));
             }
         }
 
@@ -102,8 +96,8 @@ public class DocumentSimilarityActionBuilderModuleFactory extends AbstractAction
             Relation relation = new Relation();
             relation.setSource(source);
             relation.setTarget(target);
-            relation.setRelType(REL_TYPE);
-            relation.setSubRelType(SUBREL_TYPE);
+            relation.setRelType(OafConstants.REL_TYPE_RESULT_RESULT);
+            relation.setSubRelType(OafConstants.SUBREL_TYPE_SIMILARITY);
             relation.setRelClass(relClass);
             relation.setDataInfo(buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
             relation.setLastupdatetimestamp(System.currentTimeMillis());
