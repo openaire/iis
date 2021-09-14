@@ -73,7 +73,7 @@ union all
 -- CHIST-ERA
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1, docid, id, fundingclass1, grantid from
 (setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(lower(keywords(c2))),10,2,10,"\bchist era\b") from pubs where c2 is not null), grants
-where (regexprmatches(lower(acronym), prev||" "||middle||" "||next) or grantid = "unidentified") and fundingclass1 = "CHIST-ERA"  group by docid, id
+where (regexprmatches("\b"||lower(acronym)||"\b", prev||" "||middle||" "||next) or grantid = "unidentified") and fundingclass1 = "CHIST-ERA"  group by docid, id
 
 union all
 
