@@ -70,6 +70,14 @@ regexprmatches("support|project|grant|fund|thanks|agreement|research|acknowledge
 --DFG
 
 union all
+-- CHIST-ERA
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1, docid, id, fundingclass1, grantid from
+(setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(lower(keywords(c2))),10,2,10,"\bchist era\b") from pubs where c2 is not null), grants
+where (regexprmatches("\b"||keywords(lower(acronym))||"\b", prev||" "||middle||" "||next) or grantid = "unidentified") and fundingclass1 = "CHIST-ERA"  group by docid, id
+
+union all
+
+
 -- Canadian funders
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', textsnippet) as C1, docid, id, fundingclass1, grantid
 from (
@@ -255,6 +263,7 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min
                         )
                       ) where confidence > 0.16) group by docid,id);
 
+delete from output_table where fundingClass1="CHIST-ERA" and grantid="unidentified" and docid in (select docid from output_table where grantid!="unidentified");
 delete from matched_undefined_miur_only where docid in (select docid from output_table where fundingClass1="MIUR");
 delete from matched_undefined_wt_only where docid in (select docid from output_table where fundingClass1="WT");
 delete from matched_undefined_gsri where docid in (select docid from output_table where fundingClass1="GSRI");

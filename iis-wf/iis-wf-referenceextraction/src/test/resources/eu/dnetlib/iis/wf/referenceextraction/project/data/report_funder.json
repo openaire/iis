@@ -9,6 +9,11 @@
   "value": "1"
 }
 {
+  "key": "processing.referenceExtraction.project.references.byfunder.chist-era",
+  "type": "COUNTER",
+  "value": "1"
+}
+{
   "key": "processing.referenceExtraction.project.references.byfunder.cihr",
   "type": "COUNTER",
   "value": "2"
@@ -116,5 +121,5 @@
 {
    "key": "processing.referenceExtraction.project.references.total",
    "type": "COUNTER",
-   "value": "61"
+   "value": "62"
 }
