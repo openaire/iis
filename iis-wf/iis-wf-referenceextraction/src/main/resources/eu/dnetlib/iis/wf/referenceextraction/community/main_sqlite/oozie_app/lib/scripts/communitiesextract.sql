@@ -55,6 +55,16 @@ setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("
 
 union all
 
+--EMBRC
+select jdict('documentId', docid, 'conceptId', conceptId, 'confidenceLevel', 0.5,'textsnippet',context) as C1 from (
+select docid, prev||" "||middle||" "||next as context, conceptId  from
+(setschema 'docid,prev,middle,next' select c1,
+textwindow2s(textnoreferences(c2),10,7,10,"\bEMBRC\b|\bEMO BON\b|\bEMBRIC\b|((?i)european marine biological laboratories)|((?i)european marine biological resource cen)|((?i)european marine omics biodiversity observation network)")
+from pubs where c2 is not null), grants where conceptLabel="EMBRC" and (regexprmatches("\bEMBRC\b|\bEMO BON\b|\bEMBRIC\b",prev||" "||middle||" "||next) or regexprmatches("((?i)european marine biological laboratories)|((?i)european marine biological resource cen)|((?i)european marine omics biodiversity observation network)",prev||" "||middle||" "||next))
+) group by docid
+
+union all
+
 -- DARIAH
 select jdict('documentId', docid, 'conceptId', conceptId, 'confidenceLevel', 0.5,'textsnippet',context) as C1 from (
 select docid, conceptId, conceptLabel, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||next as context
