@@ -6,7 +6,8 @@ import com.beust.jcommander.Parameters;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.spark.SparkConfHelper;
 import eu.dnetlib.iis.common.spark.SparkSessionSupport;
-import eu.dnetlib.iis.common.spark.avro.AvroDataFrameSupport;
+import eu.dnetlib.iis.common.spark.avro.AvroDataFrameReader;
+import eu.dnetlib.iis.common.spark.avro.AvroDataFrameWriter;
 import eu.dnetlib.iis.common.spark.pipe.PipeExecutionEnvironment;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.referenceextraction.springernature.bioentity.schemas.DocumentToBioEntity;
@@ -51,13 +52,12 @@ public class SpringerNatureBioEntityReferenceExtractionJob {
                             new SpringerNatureBioEntityReferenceExtractionPipeExecutionEnvironment(spark.sparkContext(),
                                     params.scriptsDir, params.bioEntityDbFile);
                     Dataset<Row> documentToBioEntity = runReferenceExtraction(spark, documentText, environment);
-
                     storeInOutput(spark, documentToBioEntity, params.outputDocumentToBioEntity);
                 });
     }
 
     private static Dataset<Row> readDocumentText(SparkSession spark, String inputDocumentText) {
-        return new AvroDataFrameSupport(spark).read(inputDocumentText, DocumentText.SCHEMA$);
+        return new AvroDataFrameReader(spark).read(inputDocumentText, DocumentText.SCHEMA$);
     }
 
 
@@ -81,7 +81,7 @@ public class SpringerNatureBioEntityReferenceExtractionJob {
     private static void storeInOutput(SparkSession spark,
                                       Dataset<Row> documentToBioEntity,
                                       String outputDocumentToBioEntity) {
-        new AvroDataFrameSupport(spark).write(documentToBioEntity, outputDocumentToBioEntity, DocumentToBioEntity.SCHEMA$);
+        new AvroDataFrameWriter(documentToBioEntity).write(outputDocumentToBioEntity, DocumentToBioEntity.SCHEMA$);
     }
 
     @Parameters(separators = "=")
