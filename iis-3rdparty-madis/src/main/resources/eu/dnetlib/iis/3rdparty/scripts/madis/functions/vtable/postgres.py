@@ -12,13 +12,13 @@ Examples:
 
 """
 
-import setpath
-import vtbase
+from . import setpath
+from . import vtbase
 import functions
-from types import NoneType
+NoneType = type(None)
 
-registered=True
-
+registered = True
+external_query = True
 class Postgres(vtbase.VT):
     def VTiter(self, *parsedArgs,**envars):
         from lib.pg8000 import DBAPI
@@ -84,10 +84,10 @@ class Postgres(vtbase.VT):
             yield [(c[0], typetrans.get(c[1], '')) for c in cur.description]
 
             for i in cur:
-                yield [unicode(c) if type(c) not in (long, int, float, str, unicode, NoneType, bool) else c for c in i]
+                yield [str(c) if type(c) not in (int, int, float, str, str, NoneType, bool) else c for c in i]
 
             cur.close()
-        except Exception, e:
+        except Exception as e:
             raise functions.OperatorError(__name__.rsplit('.')[-1], ' '.join(str(t) for t in e))
         
 def Source():
@@ -100,7 +100,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

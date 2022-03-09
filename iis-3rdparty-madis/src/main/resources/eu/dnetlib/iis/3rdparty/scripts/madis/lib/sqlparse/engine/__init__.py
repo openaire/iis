@@ -38,6 +38,7 @@ class FilterStack(object):
 
     def run(self, sql):
         stream = lexer.tokenize(sql)
+
         # Process token stream
         if self.preprocess:
             for filter_ in self.preprocess:

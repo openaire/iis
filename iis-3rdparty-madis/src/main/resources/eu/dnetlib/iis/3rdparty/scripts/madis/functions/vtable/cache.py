@@ -56,8 +56,7 @@ Examples:
 """
 
 registered=True
-
-import setpath
+from . import setpath
 import functions
 import apsw
 import itertools
@@ -86,8 +85,8 @@ def echocall(func):
         if 'tablename' in obj.__dict__:
             Extra=obj.tablename
         if functions.settings['vtdebug']:
-            print "Table %s:Before Calling %s.%s(%s)" %(Extra+str(obj),obj.__class__.__name__,func.__name__,','.join([repr(l) for l in args[1:]]+["%s=%s" %(k,repr(v)) for k,v in kw.items()]))
-            aftermsg="Table %s:After Calling %s.%s(%s)" %(Extra,obj.__class__.__name__,func.__name__,','.join([repr(l) for l in args[1:]]+["%s=%s" %(k,repr(v)) for k,v in kw.items()]))
+            print("Table %s:Before Calling %s.%s(%s)" %(Extra+str(obj),obj.__class__.__name__,func.__name__,','.join([repr(l) for l in args[1:]]+["%s=%s" %(k,repr(v)) for k,v in list(kw.items())])))
+            aftermsg="Table %s:After Calling %s.%s(%s)" %(Extra,obj.__class__.__name__,func.__name__,','.join([repr(l) for l in args[1:]]+["%s=%s" %(k,repr(v)) for k,v in list(kw.items())]))
         a=func(*args, **kw)
         if functions.settings['vtdebug']:
             pass
@@ -136,7 +135,7 @@ class LTable: ####Init means setschema and execstatus
         largs, kargs = [] ,dict()
         try:
             largs, kargs = argsparse.parse(args,boolargs,nonstringargs,needsescape)
-        except Exception,e:
+        except Exception as e:
             raise functions.MadisError(e)
         try:
             q=envars['db'].cursor().execute(kargs['query'])
@@ -171,7 +170,7 @@ class LTable: ####Init means setschema and execstatus
     @echocall
     def getschema(self):
         if functions.settings['tracing']:
-            print "VT schema:%s" %(self.schema)
+            print("VT schema:%s" %(self.schema))
         return self.schema
 
     @echocall
@@ -190,7 +189,6 @@ class LTable: ####Init means setschema and execstatus
 
         consname = json.dumps(newcons, separators=(',', ':')) + json.dumps(orderbys, separators=(',', ':'))
         self.consdict[consname] = (newcons, orderbys)
-
         cost = 0
 
         # Cost of scan
@@ -222,11 +220,11 @@ class Cursor:
         self.table=table
         self.eof=True
         self.pos=0
+        self.row=[]
         
-    @echocall #-- Commented out for speed reasons
+    # @echocall #-- Commented out for speed reasons
     def Filter(self, indexnum, indexname, constraintargs):
         self.eof=False
-
         constraints, orderbys = self.table.consdict[indexname]
 
         if self.table.lastcalculatedidx!=(constraints,orderbys):
@@ -241,7 +239,7 @@ class Cursor:
                 self.resultrows=iter(sorted(list(self.resultrows),key=operator.itemgetter(self.table.orderindex) ))
         
         try:
-            self.row=self.resultrows.next()
+            self.row=next(self.resultrows)
         except KeyboardInterrupt:
             raise
         except:
@@ -262,7 +260,7 @@ class Cursor:
 #    @echocall #-- Commented out for speed reasons
     def Next(self):
         try:
-            self.row=self.resultrows.next()
+            self.row=next(self.resultrows)
         except KeyboardInterrupt:
             raise         
         except:
@@ -279,13 +277,13 @@ class Cursor:
             self.table.orderindex=len(self.table.data[0])
             for o in reversed(orderbys):
                 self.table.data.sort(key=operator.itemgetter(o[0]),reverse=o[1])
-            self.table.data=[x+(y,) for x,y in itertools.izip(self.table.data,itertools.count())]
+            self.table.data=[x+(y,) for x,y in zip(self.table.data,itertools.count())]
 
         idxs=[x[0] for x in cons]
         self.table.kdindex=kdtree.kdtree(self.table.data, idxs)
 
 import re
-onlyalphnum=re.compile(ur'[a-zA-Z]\w*$')
+onlyalphnum=re.compile(r'[a-zA-Z]\w*$')
 
 def schemastr(tablename,colnames,typenames=None):
     stripedcolnames=[el if onlyalphnum.match(el) else '"'+el.replace('"','""')+'"' for el in colnames]
@@ -304,7 +302,7 @@ def unify(slist):
             eldict[s]+=1
         else:
             eldict[s]=1
-    for val,fr in eldict.items():
+    for val,fr in list(eldict.items()):
         if fr==1:
             del eldict[val]
     for val in eldict:
@@ -326,7 +324,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

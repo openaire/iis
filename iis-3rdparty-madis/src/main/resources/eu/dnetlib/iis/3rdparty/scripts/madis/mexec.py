@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 
 from optparse import OptionParser
-import functions
 import sys
 import apsw
 import madis
 import json
-import io
 
 def exitwitherror(txt):
     sys.stderr.write(txt+'\n')
@@ -45,7 +43,7 @@ def main():
     try:
         Connection=madis.functions.Connection(dbname, flags)
 
-    except Exception, e:
+    except Exception as e:
         exitwitherror("Error in opening DB: " + str(dbname) + "\nThe error was: " + str(e))
 
     flowname = None
@@ -62,8 +60,8 @@ def main():
         sys.exit(1)
 
     try:
-        f = io.open(flowname, mode='r', encoding='utf-8')
-    except Exception, e:
+        f = open(flowname,'r')
+    except Exception as e:
         exitwitherror("Error in opening SQL flow: " + str(e))
 
 
@@ -83,11 +81,11 @@ def main():
         try :
             for row in Connection.cursor().execute(statement):
                 if len(row) > 1:
-                    print(json.dumps(row, separators=(',',':'), ensure_ascii=False).encode('utf_8', 'replace'))
+                    print((json.dumps(row, separators=(',',':'), ensure_ascii=False)))
                 else:
-                    print(unicode(row[0]).encode('utf_8', 'replace'))
+                    print((str(row[0])))
             statement = ''
-        except Exception, e:
+        except Exception as e:
             exitwitherror("Error when executing query: \n"+statement+"\nThe error was: "+ str(e))
 
 

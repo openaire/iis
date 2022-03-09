@@ -39,13 +39,13 @@ Examples::
     1     | James | 10 | 2
     2     | Mark  | 7  | 3
 """
-import setpath
-import vtbase
+from . import setpath
+from . import vtbase
 import functions
 
 ### Classic stream iterator
 registered=True
-       
+
 class RowidVT(vtbase.VT):
     def VTiter(self, *parsedArgs, **envars):
         largs, dictargs = self.full_parse(parsedArgs)
@@ -85,7 +85,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

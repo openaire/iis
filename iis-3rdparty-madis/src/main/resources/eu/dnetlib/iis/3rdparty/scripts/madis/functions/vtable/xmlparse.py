@@ -202,11 +202,11 @@ Examples:
     row3val1 |
     row4val1 | row4val2
 """
-import vtbase
+from . import vtbase
 import functions
 import json
-import cStringIO as StringIO
-import StringIO as unicodeStringIO
+import io as StringIO
+import io as unicodeStringIO
 import re
 try:
     from collections import OrderedDict
@@ -248,7 +248,7 @@ def pathwithoutns(path):
 
 def itertext(elem):
     tag = elem.tag
-    if not isinstance(tag, basestring) and tag is not None:
+    if not isinstance(tag, str) and tag is not None:
         return
     if elem.text:
         yield elem.text
@@ -337,12 +337,12 @@ class rowobj():
 
 class jdictrowobj():
     def __init__(self, ns, subtreeroot=None):
-        self.rowdata=OrderedDict()
-        self.namespace=ns
-        if subtreeroot!=None:
-            self.root=[subtreeroot]
+        self.rowdata = OrderedDict()
+        self.namespace = ns
+        if subtreeroot is not None:
+            self.root = [subtreeroot]
         else:
-            self.root=[]
+            self.root = []
             
     def addtorow(self, xpath, data):
         if self.namespace:
@@ -351,23 +351,24 @@ class jdictrowobj():
             path=pathwithoutns(self.root+xpath)
 
         if path not in self.rowdata:
-            self.rowdata[path]=data
+            self.rowdata[path] = data
         else:
             if type(self.rowdata[path]) is list:
                 self.rowdata[path].append(data)
             else:
-                self.rowdata[path]=[self.rowdata[path], data]
+                self.rowdata[path] = (self.rowdata[path], data)
             return
 
-    def addtorowall(self, xpath, data, elem):
+    @staticmethod
+    def addtorowall(xpath, data, elem):
         return
     
     @property
     def row(self):
-        return [json.dumps(self.rowdata, separators=(',',':'), ensure_ascii=False)]
+        return [json.dumps(self.rowdata, separators=(',', ':'), ensure_ascii=False)]
 
     def resetrow(self):
-        self.rowdata=OrderedDict()
+        self.rowdata = OrderedDict()
 
 class schemaobj():
     def __init__(self):
@@ -425,10 +426,10 @@ class schemaobj():
     def getrelschema(self):
         relschema=[None]*(len(self.schema)+len(self.getall))
 
-        for x,y in self.schema.itervalues():
+        for x,y in self.schema.values():
             relschema[x]=(y, 'text')
 
-        for x,y in self.getall.itervalues():
+        for x,y in self.getall.values():
             relschema[x]=(y, 'text')
 
         return relschema
@@ -501,7 +502,7 @@ class XMLparse(vtbase.VT):
                         s.addtoschema(path)
                         
             elif type(jxp) is OrderedDict:
-                for k,v in jxp.iteritems():
+                for k,v in jxp.items():
                     path = k.split('/')
                     if path[0] == '':
                         path = path[1:]
@@ -578,24 +579,24 @@ class XMLparse(vtbase.VT):
             def __init__(self, connection, query, fast=False):
                 from lib import htmlentities as htmlentities
 
-                self.lastline=''
-                self.read=self.readstart
-                self.qiter=connection.cursor().execute(query)
-                self.fast=fast
-                self.htmlentities=htmlentities.entities.copy()
+                self.lastline = ''
+                self.qiter = connection.cursor().execute(query)
+                self.read = self.readstart
+                self.fast = fast
+                self.htmlentities = htmlentities.entities.copy()
                 del(self.htmlentities['lt'])
                 del(self.htmlentities['gt'])
 #                del(self.htmlentities['quot'])
 #                del(self.htmlentities['amp'])
                 self.forcedroottag='<xmlparce-forced-root-element>\n'
-                if self.fast==2:
-                    self.header=self.forcedroottag
+                if self.fast == 2:
+                    self.header = self.forcedroottag
                 else:
-                    self.header  ='<!DOCTYPE forceddoctype ['+''.join(['<!ENTITY '+x.strip(';')+' "'+str(v)+'">' for x,v in self.htmlentities.iteritems()])
+                    self.header ='<!DOCTYPE forceddoctype ['+''.join(['<!ENTITY '+x.strip(';')+' "'+str(v)+'">' for x,v in self.htmlentities.items()])
                     self.header +=']>\n'+self.forcedroottag
-                self.replacexmlheaders=re.compile(r'\<\?xml.+?(\<[\w\d:])', re.DOTALL| re.UNICODE)
-                self.finddatatag=re.compile(r'(\<[\w\d:])', re.DOTALL| re.UNICODE)
-                self.deldoctype=re.compile(r'\<!DOCTYPE[^>]+?\>', re.DOTALL| re.UNICODE)
+                self.replacexmlheaders = re.compile(r'\<\?xml.+?(\<[\w\d:])', re.DOTALL| re.UNICODE)
+                self.finddatatag = re.compile(r'(\<[\w\d:])', re.DOTALL| re.UNICODE)
+                self.deldoctype = re.compile(r'\<!DOCTYPE[^>]+?\>', re.DOTALL| re.UNICODE)
 
             def unescape(self, text):
                 return self.unescapere.sub(self.fixup, text)
@@ -604,83 +605,83 @@ class XMLparse(vtbase.VT):
                 self.read=self.readstart
 
             def readstart(self, n):
-                
-                def readline():
-                    i=self.qiter.next()[0]
-                    if i.endswith('\n'):
-                        return i
-                    else:
-                        return i+'\n'
 
-                self.lastline= readline()
-                line=self.lastline.strip()
-                longline=line
+                def readline():
+                    l = self.qiter.next()[0]
+                    if l.endswith('\n'):
+                        return l
+                    else:
+                        return l+'\n'
+
+                self.lastline = readline()
+                line = self.lastline.strip()
+                longline = line
 
                 while not self.finddatatag.search(line):
-                    line=readline()
-                    longline+=line
+                    line = readline()
+                    longline += line
 
                 if longline.find('<!E')!=-1:
                     # If xml entities exist in header
-                    self.lastline=self.finddatatag.sub(self.forcedroottag+r'\1', longline, 1)
+                    self.lastline = self.finddatatag.sub(self.forcedroottag+r'\1', longline, 1)
                 else:
-                    longline=self.deldoctype.sub('',longline)
-                    self.lastline=self.finddatatag.sub(self.header+r'\1', longline, 1)
+                    longline = self.deldoctype.sub('', longline)
+                    self.lastline = self.finddatatag.sub(self.header+r'\1', longline, 1)
 
                 if self.fast:
-                    if self.fast==2:
-                        self.read=self.readtailfast2
+                    if self.fast == 2:
+                        self.read = self.readtailfast2
                     else:
-                        self.read=self.readtailfast
-                    tmpline=self.lastline
-                    self.lastline='[In fast mode there is no lastline information available]'
+                        self.read = self.readtailfast
+                    tmpline = self.lastline
+                    self.lastline = '[In fast mode there is no lastline information available]'
                     return tmpline.encode('utf-8')
                 else:
-                    self.read=self.readtail
+                    self.read = self.readtail
 
-                return self.lastline.encode('utf-8')
+                return self.lastline.encode('utf8')
 
             def readtail(self, n):
-                line= self.qiter.next()[0].encode('utf-8')
+                line = self.qiter.next()[0].encode('utf8')
                 if line.startswith('<?'):
                     if line.startswith('<?xml'):
-                        longline=line
+                        longline = line
                         while not self.finddatatag.search(line):
-                            line= self.qiter.next()[0].encode('utf-8')
-                            longline+=line
-                        line=self.replacexmlheaders.sub(r'\1',longline,1)
+                            line = self.qiter.next()[0].encode('utf-8')
+                            longline += line
+                        line = self.replacexmlheaders.sub(r'\1', longline, 1)
                 if not line.endswith('\n'):
-                    line+='\n'
-                self.lastline=line
+                    line += '\n'
+                self.lastline = line
                 return line
 
             def readtailfast(self, n):
-                buffer=''
+                buf=''
                 try:
-                    while len(buffer)<n:
+                    while len(buf) < n:
                         line= self.qiter.next()[0]
                         if line.startswith('<?'):
                             if line.startswith('<?xml'):
-                                longline=line
+                                longline = line
                                 while not self.finddatatag.search(line):
-                                    line= self.qiter.next()[0]
+                                    line = self.qiter.next()[0]
                                     longline+=line
-                                line=self.replacexmlheaders.sub(r'\1',longline,1)
-                        buffer+=line
+                                line = self.replacexmlheaders.sub(r'\1',longline,1)
+                        buf += line
                 except StopIteration:
-                    if len(buffer)==0:
+                    if len(buf) == 0:
                         raise StopIteration
-                return buffer.encode('utf-8')
+                return buf.encode('utf8')
 
             def readtailfast2(self, n):
-                buffer=StringIO.StringIO()
+                buf = StringIO.StringIO()
                 try:
-                    while buffer.tell()<n:
-                        buffer.write(self.qiter.next()[0])
+                    while buf.tell()<n:
+                        buf.write(self.qiter.next()[0])
                 except StopIteration:
-                    if buffer.tell()==0:
+                    if buf.tell() == 0:
                         raise StopIteration
-                return buffer.getvalue().encode('utf-8')
+                return buf.getvalue().encode('utf8')
 
             def close(self):
                 self.qiter.close()
@@ -695,23 +696,23 @@ class XMLparse(vtbase.VT):
                 etreeparse=iter(etree.iterparse(rio, ("start", "end")))
                 capture=False
                 xpath=[]
-                addtorow=self.rowobj.addtorow
-                addtorowall=self.rowobj.addtorowall
-                resetrow=self.rowobj.resetrow
-                if self.subtreeroot==None:
-                    lmatchtag=lambda x,y:True
-                    clmatchtag=lambda x,y:False
-                    capture=True
+                addtorow = self.rowobj.addtorow
+                addtorowall = self.rowobj.addtorowall
+                resetrow = self.rowobj.resetrow
+                if self.subtreeroot is None:
+                    lmatchtag=lambda x, y:True
+                    clmatchtag=lambda x, y:False
+                    capture = True
                 else:
-                    lmatchtag=matchtag
-                    clmatchtag=matchtag
+                    lmatchtag = matchtag
+                    clmatchtag = matchtag
 
                 try:
                     treeroot = self.subtreeroot
                     root=etreeparse.next()[1]
 
                     for ev, el in etreeparse:
-                        if ev=='start':
+                        if ev[0] == 's':  # ev == 'start'
                             taglower = el.tag.lower()
                             if capture:
                                 xpath.append(taglower)
@@ -720,43 +721,43 @@ class XMLparse(vtbase.VT):
                                     resetrow()
                                     xpath = []
                             else:
-                                capture=lmatchtag(taglower, treeroot)
+                                capture = lmatchtag(taglower, treeroot)
 
                             if capture:
-                                if el.attrib!={}:
-                                    for k,v in el.attrib.iteritems():
+                                if el.attrib != {}:
+                                    for k, v in el.attrib.items():
                                         addtorow(xpath+[attribguard, k.lower()], v)
                         else:
                             if capture:
-                                addtorowall(xpath, '', el) # Add all subchildren ("*" op)
-                                if el.text!=None:
-                                    eltext=el.text.strip()
-                                    if eltext!='':
+                                addtorowall(xpath, '', el)  # Add all subchildren ("*" op)
+                                if el.text is not None:
+                                    eltext = el.text.strip()
+                                    if eltext != '':
                                         addtorow(xpath, eltext)
                                 if lmatchtag(el.tag.lower(), treeroot):
-                                    if treeroot==None:
-                                        if self.strict>=0 and len(self.rowobj.rowdata)!=0:
+                                    if treeroot is None:
+                                        if self.strict >= 0 and len(self.rowobj.rowdata) != 0:
                                             yield self.rowobj.row
                                     else:
-                                        capture=False
-                                        if self.strict>=0:
+                                        capture = False
+                                        if self.strict >= 0:
                                             yield self.rowobj.row
                                     resetrow()
                                     root.clear()
 
-                                if len(xpath)>0:
+                                if len(xpath) > 0:
                                     xpath.pop()
 
-                            else: # Else is needed for clear to not happen while a possible all (*) op is running
+                            else:  # Else is needed for clear to not happen while a possible all (*) op is running
                                 el.clear()
 
-                    etreeended=True
-                except etree.ParseError, e:
+                    etreeended = True
+                except etree.ParseError as e:
                     rio.restart()
                     resetrow()
-                    if self.strict>=1:
+                    if self.strict >= 1:
                         raise functions.OperatorError(__name__.rsplit('.')[-1], str(e)+'\n'+'Last input line was:\n'+rio.lastline)
-                    if self.strict==-1:
+                    if self.strict == -1:
                         yield [rio.lastline]
         finally:
             rio.close()
@@ -772,7 +773,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

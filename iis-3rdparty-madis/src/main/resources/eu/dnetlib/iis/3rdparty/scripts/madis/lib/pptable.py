@@ -1,4 +1,5 @@
-import cStringIO,operator
+import io,operator
+from functools import reduce
 
 def indent(rows, hasHeader=False, headerChar='-', delim=' | ', justify='left',
            separateRows=False, prefix='', postfix='', wrapfunc=lambda x:x):
@@ -19,22 +20,21 @@ def indent(rows, hasHeader=False, headerChar='-', delim=' | ', justify='left',
 
     logicalRows = [[row] for row in rows]
     # columns of physical rows
-    columns = map(None,*reduce(operator.add,logicalRows))
+    columns = list(*reduce(operator.add,logicalRows))
     # get the maximum of each column by the string length of its items
     maxWidths = [max([len(str(item)) for item in column]) for column in columns]
     rowSeparator = headerChar * (len(prefix) + len(postfix) + sum(maxWidths) + \
                                  len(delim)*(len(maxWidths)-1))
     # select the appropriate justify method
     justify = {'center':str.center, 'right':str.rjust, 'left':str.ljust}[justify.lower()]
-    output=cStringIO.StringIO()
-    if separateRows: print >> output, rowSeparator
+    output=io.StringIO()
+    if separateRows: print(rowSeparator, file=output)
     for physicalRows in logicalRows:
         for row in physicalRows:
-            print >> output, \
-                (prefix \
+            print((prefix \
                 + delim.join([justify(str(item),width) for (item,width) in zip(row,maxWidths)]) \
-                + postfix).rstrip()
-        if separateRows or hasHeader: print >> output, rowSeparator; hasHeader=False
+                + postfix).rstrip(), file=output)
+        if separateRows or hasHeader: print(rowSeparator, file=output); hasHeader=False
     return output.getvalue()
 
   
@@ -46,11 +46,11 @@ if __name__ == '__main__':
        Aristidis,Papageorgopoulos,28,Senior Reseacher'''
     rows = [row.strip().split(',')  for row in data.splitlines()]
 
-    print indent([labels]+rows, hasHeader=True)
+    print(indent([labels]+rows, hasHeader=True))
 
     data=[['0asdf'],[1]]
 
-    print indent(data, hasHeader=True)
+    print(indent(data, hasHeader=True))
     
     # output:
     #

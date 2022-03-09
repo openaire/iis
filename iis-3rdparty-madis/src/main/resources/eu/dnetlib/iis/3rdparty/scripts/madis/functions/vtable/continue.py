@@ -13,8 +13,8 @@ if the execution succeds or 0 if the execution fails
     0
 """
 
-import setpath          #for importing from project root directory  KEEP IT IN FIRST LINE
-from vtout import SourceNtoOne
+from . import setpath          #for importing from project root directory  KEEP IT IN FIRST LINE
+from .vtout import SourceNtoOne
 import functions
 
  #UNCOMMENT TO REGISTER THE N to 1 OPERATOR
@@ -38,7 +38,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

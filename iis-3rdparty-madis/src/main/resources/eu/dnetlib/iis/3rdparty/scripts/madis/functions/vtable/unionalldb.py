@@ -22,7 +22,7 @@ Usage examples:
   select * from (unionalldb start:1 end:4 'dbname');
 
 """
-import vtbase
+from . import vtbase
 import functions
 import apsw
 import os
@@ -50,7 +50,7 @@ class UnionAllDB(vtbase.VT):
         self.query=None
 
         self.start = 0
-        self.end = sys.maxint
+        self.end = sys.maxsize
 
         if 'start' in opts[1]:
             self.start = int(opts[1]['start'])
@@ -83,8 +83,8 @@ class UnionAllDB(vtbase.VT):
         self.part = self.start
         try:
             self.xcon=apsw.Connection(self.dbfile+'.' + str(self.part) + '.db', flags=apsw.SQLITE_OPEN_READONLY)
-        except Exception,e:
-            print e
+        except Exception as e:
+            print(e)
             raise functions.OperatorError(__name__.rsplit('.')[-1],"DB could not be opened")
 
         self.xcursor=self.xcon.cursor()
@@ -96,7 +96,7 @@ class UnionAllDB(vtbase.VT):
                 self.xcon = apsw.Connection(self.dbfile+'.' + str(self.part) + '.db', flags=apsw.SQLITE_OPEN_READONLY)
                 self.xcursor = self.xcon.cursor()
                 self.xexec =self.xcursor.execute(self.query)
-            except apsw.CantOpenError,e:
+            except apsw.CantOpenError as e:
                 raise StopIteration
 
             gc.disable()
@@ -116,7 +116,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

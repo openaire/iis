@@ -12,12 +12,13 @@ Examples:
 
 """
 
-import setpath
-import vtbase
+from . import setpath
+from . import vtbase
 import functions
-from types import NoneType
+NoneType = type(None)
 
-registered=True
+registered = True
+external_query = True
 
 class MySQL(vtbase.VT):
     def VTiter(self, *parsedArgs,**envars):
@@ -80,11 +81,11 @@ class MySQL(vtbase.VT):
                 yield [( c[0], typetrans.get(c[1], '') ) for c in desc]
 
             for i in cur:
-                yield [unicode(c) if type(c) not in (long, int, float, str, unicode, NoneType, bool) else c for c in i]
+                yield [str(c) if type(c) not in (int, int, float, str, str, NoneType, bool) else c for c in i]
 
         except (pymysql.err.InternalError, pymysql.err.ProgrammingError) as e:
             raise functions.OperatorError(__name__.rsplit('.')[-1], str(e[0]) +': ' + e[1])
-        except Exception, e:
+        except Exception as e:
             raise functions.OperatorError(__name__.rsplit('.')[-1], str(e))
         finally:
             try:
@@ -92,7 +93,6 @@ class MySQL(vtbase.VT):
             except:
                 pass
 
-        
 def Source():
     return vtbase.VTGenerator(MySQL)
 
@@ -103,7 +103,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

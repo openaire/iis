@@ -20,7 +20,7 @@ class ZipIter:
     def __iter__(self):
         return self
     def __getattr__(self, attr):
-        if self.__dict__.has_key(attr):
+        if attr in self.__dict__:
             return self.__dict__[attr]
         return getattr(self.f, attr)
 

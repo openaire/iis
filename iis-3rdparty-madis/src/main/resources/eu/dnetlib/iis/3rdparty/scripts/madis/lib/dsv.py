@@ -1,6 +1,6 @@
 import csv
 import codecs
-import cStringIO
+import io
 
 """
 Differences from csv.reader module
@@ -29,7 +29,7 @@ class Onedel:
         self.reader=reader
         self.big=big
         self.one=one
-    def next(self):
+    def __next__(self):
         return self.reader.next().replace(self.big,self.one)
     def __iter__(self):
         return self
@@ -57,19 +57,10 @@ class reader:
     def __init__(self,tsvfile,hasheader=False,dialect=SQLITE_DIALECT,encoding="utf_8",**kwds):
         self.hasheader=hasheader
         self.fast = False
-        if 'fast' in kwds:
-            self.fast = True
-            if 'delimiter' in kwds:
-                delimiter = kwds['delimiter']
-            else:
-                delimiter = ','
-            del kwds['fast']
-            self.reader = (unicode((r[:-1] if r[-1] == '\n' else r), 'utf_8').split(delimiter) for r in tsvfile)
+        if not hasheader:
+            self.reader=UnicodeReader(tsvfile,dialect,encoding,**kwds)
         else:
-            if not hasheader:
-                self.reader=UnicodeReader(tsvfile,dialect,encoding,**kwds)
-            else:
-                self.reader=UnicodeDictReader(tsvfile,dialect,encoding,**kwds)
+            self.reader=UnicodeDictReader(tsvfile,dialect,encoding,**kwds)
 
     def __iter__(self):
         return self.reader
@@ -92,7 +83,7 @@ class UTF8Recoder:
             return self.f
         return self
 
-    def next(self):
+    def __next__(self):
         return self.reader.next().encode("utf_8")
 
 class UnicodeReader:
@@ -110,16 +101,18 @@ class UnicodeReader:
             self.mdel=chr(30)
             self.big=kwds['delimiter']
             kwds['delimiter']=self.mdel
-            self.reader = csv.reader(Onedel(f,self.big,self.mdel), dialect=dialect, **kwds)
+            self.reader = csv.reader(codecs.iterdecode(Onedel(f,self.big,self.mdel), 'utf-8'),dialect=dialect, **kwds)
+            #self.reader = csv.reader(Onedel(f,self.big,self.mdel), dialect=dialect, **kwds)
             self.next = self.nextwithreplace
         else:
+            self.reader = csv.reader(codecs.iterdecode(f, 'utf-8'),dialect=dialect, **kwds)
             self.reader = csv.reader(f, dialect=dialect, **kwds)
 
-    def next(self):
-        return [unicode(s, "utf_8") for s in self.reader.next()]
+    def __next__(self):
+        return [s for s in next(self.reader)]
 
     def nextwithreplace(self):
-        return [unicode(s.replace(self.mdel,self.big), "utf_8") for s in self.reader.next()]
+        return [str(s.replace(self.mdel,self.big), "utf_8") for s in next(self.reader)]
 
     def __iter__(self):
         return self
@@ -149,20 +142,20 @@ class UnicodeDictReader:
 
     def __readheader(self):
         if not self.fields:
-            row = self.reader.next()
-            self.fields=[unicode(s, "utf_8") for s in row]
+            row = next(self.reader)
+            self.fields=[str(s, "utf_8") for s in row]
             
-    def next(self):
+    def __next__(self):
         if not self.fields:
             self.__readheader()
-        row = self.reader.next()
+        row = next(self.reader)
         rowdict=dict()
         if self.replace:
             for field,cell in zip(self.fields,row):
-                rowdict[field]=unicode(cell.replace(self.mdel,self.big), "utf_8")
+                rowdict[field]=str(cell.replace(self.mdel,self.big), "utf_8")
         else:
             for field,cell in zip(self.fields,row):
-                rowdict[field]=unicode(cell, "utf_8")
+                rowdict[field]=str(cell, "utf_8")
         
         return rowdict
 
@@ -176,11 +169,11 @@ class UnicodeDictReader:
 
 def anytouni(i):
     if i is None:
-        return u'null'
+        return 'null'
     if isinstance(i,str):
-        return unicode(i)
-    elif not isinstance(i,basestring):
-        return unicode(repr(i))
+        return str(i)
+    elif not isinstance(i,str):
+        return str(repr(i))
     else:
         return i
     return unirow
@@ -197,7 +190,7 @@ class UnicodeWriter:
 
     def __init__(self, f, dialect=csv.excel, encoding="utf_8", **kwds):
         # Redirect output to a queue
-        self.queue = cStringIO.StringIO()
+        self.queue = io.StringIO()
         self.writer = csv.writer(self.queue, dialect=dialect, **kwds)
         self.stream = f
         self.encoder = codecs.getincrementalencoder(encoding)()
@@ -225,14 +218,14 @@ def main():
     import sys
     import time    
     fname='partheaders.tsv'
-    print "Test file %s" %(fname)
-    print >> sys.stderr , time.strftime("%Y-%m-%d %H:%M:%S"),"\tBEGIN"
+    print("Test file %s" %(fname))
+    print(time.strftime("%Y-%m-%d %H:%M:%S"),"\tBEGIN", file=sys.stderr)
 
     with open('partheaders.tsv') as f:
         p=reader(f,hasheader=True)
         for line in p:
-            print line
-    print >> sys.stderr , time.strftime("%Y-%m-%d %H:%M:%S"),"\tEND"
+            print(line)
+    print(time.strftime("%Y-%m-%d %H:%M:%S"),"\tEND", file=sys.stderr)
 
 
 

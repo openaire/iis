@@ -15,7 +15,7 @@ Examples::
     stdinputline3
 """
 import sys
-import vtbase
+from . import vtbase
 
 registered=True
 
@@ -27,7 +27,7 @@ class StdInput(vtbase.VT):
             a = sys.stdin.readline()
             if not a:
                 break
-            yield (unicode(a.rstrip('\r\n'), 'utf_8'),)
+            yield (str(a.rstrip('\r\n')),)
 
 def Source():
     return vtbase.VTGenerator(StdInput)
@@ -38,7 +38,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

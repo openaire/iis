@@ -5,6 +5,7 @@ from lib import porter2 as porter
 import functions
 import unicodedata
 import itertools
+import imp
 
 # Increase regular expression cache
 try:
@@ -16,13 +17,13 @@ except:
 # like below. If you want to embed the UNICODE directive inside the
 # regular expression use:
 # (?u) like re.sub(ur'(?u)[\W\d]', ' ', o)
-delete_numbers_and_non_letters=re.compile(ur'[\W]',re.UNICODE)
-delete_non_letters=re.compile(ur'[\W]',re.UNICODE)
-delete_word_all=re.compile(ur'\w+\sall',re.UNICODE)
-delete_word_all_and_or=re.compile(ur'\w+\sall\s(?:and|or)',re.UNICODE)
-text_tokens = re.compile(ur'([\d.]+\b|\w+|\$[\d.]+)', re.UNICODE)
-strip_remove_newlines=re.compile(u'(?:\\s+$|^\\s+|(?<=[^\\s\\d\\w.;,!?])\n+)', re.UNICODE)
-reduce_spaces=re.compile(ur'\s+', re.UNICODE)
+delete_numbers_and_non_letters=re.compile(r'[\W]',re.UNICODE)
+delete_non_letters=re.compile(r'[\W]',re.UNICODE)
+delete_word_all=re.compile(r'\w+\sall',re.UNICODE)
+delete_word_all_and_or=re.compile(r'\w+\sall\s(?:and|or)',re.UNICODE)
+text_tokens = re.compile(r'([\d.]+\b|\w+|\$[\d.]+)', re.UNICODE)
+strip_remove_newlines=re.compile('(?:\\s+$|^\\s+|(?<=[^\\s\\d\\w.;,!?])\n+)', re.UNICODE)
+reduce_spaces=re.compile(r'\s+', re.UNICODE)
 cqlterms=('title', 'subject', 'person', 'enter', 'creator', 'isbn')
 replchars = re.compile(r'[\n\r]')
 
@@ -70,7 +71,7 @@ def textacknowledgments(txt,span = 10,maxlen = 3,pattern = r'(?:support)|(?:than
     results = []
     densities = []
 
-    for i in xrange(maxlen/2):
+    for i in range(maxlen//2):
         results.append(0)
     for i in reversedtext:
         count = sum(1 for m in re.finditer(pattern, i))
@@ -79,15 +80,15 @@ def textacknowledgments(txt,span = 10,maxlen = 3,pattern = r'(?:support)|(?:than
         else:
                 results.append(0)
 
-    for i in xrange(maxlen/2):
+    for i in range(maxlen//2):
         results.append(0)
 
     #print len(spanedorigtext), len(spanedstemtext), len(results), len(results)-maxlen/2 - maxlen/2
 
     out = 0
     temp = 0
-    for i in xrange(maxlen/2,len(results)-maxlen/2):
-        densities.append(sum(results[i-maxlen/2:i-maxlen/2+maxlen])*1.0/maxlen)
+    for i in range(maxlen//2,len(results)-maxlen//2):
+        densities.append(sum(results[i-maxlen//2:i-maxlen//2+maxlen])*1.0//maxlen)
 
     # for cnt, i in enumerate(spanedorigtext):
     #     print i, results[maxlen/2+cnt], densities[cnt]
@@ -106,7 +107,7 @@ def textacknowledgments(txt,span = 10,maxlen = 3,pattern = r'(?:support)|(?:than
             if (prev+1) != current:
                 paragraphsum.append(0)
                 paragraphs.append([])
-            paragraphsum[-1] += results[maxlen/2+current]
+            paragraphsum[-1] += results[maxlen//2+current]
             paragraphs[-1].append(line)
             prev = current
         current += 1
@@ -175,7 +176,7 @@ def textacknowledgmentsstem(txt,span = 10,maxlen = 3,pattern = r'(?:support)|(?:
     results = []
     densities = []
 
-    for i in xrange(maxlen/2):
+    for i in range(maxlen//2):
         results.append(0)
     for i in reversedtext:
         count = sum(1 for m in re.finditer(pattern, i))
@@ -184,11 +185,11 @@ def textacknowledgmentsstem(txt,span = 10,maxlen = 3,pattern = r'(?:support)|(?:
         else:
                 results.append(0)
 
-    for i in xrange(maxlen/2):
+    for i in range(maxlen//2):
         results.append(0)
 
-    for i in xrange(maxlen/2,len(results)-maxlen/2):
-        densities.append(sum(results[i-maxlen/2:i-maxlen/2+maxlen])*1.0/maxlen)
+    for i in range(maxlen//2,len(results)-maxlen//2):
+        densities.append(sum(results[i-maxlen//2:i-maxlen//2+maxlen])*1.0//maxlen)
 
     threshold = 1
 
@@ -253,7 +254,7 @@ def textacknowledgmentstara(txt, span=20, maxlen=7,
     results = []
     densities = []
 
-    for i in xrange(maxlen / 2):
+    for i in range(maxlen // 2):
         results.append(0)
     for i in reversedtext:
         count = sum(1 for m in re.finditer(pattern, i))
@@ -262,15 +263,15 @@ def textacknowledgmentstara(txt, span=20, maxlen=7,
         else:
             results.append(0)
 
-    for i in xrange(maxlen / 2):
+    for i in range(maxlen // 2):
         results.append(0)
 
     # print len(spanedorigtext), len(spanedstemtext), len(results), len(results)-maxlen/2 - maxlen/2
 
     out = 0
     temp = 0
-    for i in xrange(maxlen / 2, len(results) - maxlen / 2):
-        densities.append(sum(results[i - maxlen / 2:i - maxlen / 2 + maxlen]) * 1.0 / maxlen)
+    for i in range(maxlen // 2, len(results) - maxlen // 2):
+        densities.append(sum(results[i - maxlen // 2:i - maxlen // 2 + maxlen]) * 1.0 // maxlen)
 
     # for cnt, i in enumerate(spanedorigtext):
     #     print results[maxlen/2+cnt], densities[cnt], i
@@ -289,7 +290,7 @@ def textacknowledgmentstara(txt, span=20, maxlen=7,
             if (prev + 1) != current:
                 paragraphsum.append(0)
                 paragraphs.append([])
-            paragraphsum[-1] += results[maxlen / 2 + current]
+            paragraphsum[-1] += results[maxlen // 2 + current]
             paragraphs[-1].append(line)
             prev = current
         current += 1
@@ -323,7 +324,7 @@ if not ('.' in __name__):
     from functions import *
     testfunction()
     if __name__ == "__main__":
-        reload(sys)
+        imp.reload(sys)
         sys.setdefaultencoding('utf-8')
         import doctest
         doctest.testmod()

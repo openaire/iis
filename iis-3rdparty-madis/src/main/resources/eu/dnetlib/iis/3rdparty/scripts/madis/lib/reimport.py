@@ -131,7 +131,7 @@ def reimport(*modules):
     # don't get a chance to see our half-baked universe
     imp.acquire_lock()
     prevInterval = sys.getcheckinterval()
-    sys.setcheckinterval(min(sys.maxint, 0x7fffffff))
+    sys.setcheckinterval(min(sys.maxsize, 0x7fffffff))
     try:
 
         # Python will munge the parent package on import. Remember original value
@@ -160,7 +160,7 @@ def reimport(*modules):
                     if name not in sys.modules:
                         __import__(name)
 
-            except StandardError:
+            except Exception:
                 # Try to dissolve any newly import modules and revive the old ones
                 newNames = set(sys.modules) - prevNames
                 newNames = _package_depth_sort(newNames, True)
@@ -201,7 +201,7 @@ def reimport(*modules):
                 continue
             parents = _find_parent_importers(name, oldModule, newNames)
             pushSymbols[name] = parents
-        for name, parents in pushSymbols.iteritems():
+        for name, parents in pushSymbols.items():
             for parent in parents:
                 oldModule = oldModules[name]
                 newModule = sys.modules[name]
@@ -218,7 +218,7 @@ def reimport(*modules):
             if reimported:
                 try:
                     rejigger = reimported(old)
-                except StandardError:
+                except Exception:
                     # What else can we do? the callbacks must go on
                     # Note, this is same as __del__ behaviour. /shrug
                     traceback.print_exc()
@@ -247,9 +247,9 @@ def modified(path=None):
         path = os.path.normpath(path) + os.sep
 
     defaultTime = (_previous_scan_time, False)
-    pycExt = __debug__ and ".pyc" or ".pyo"
+    pycExt = __debug__ and ".bak" or ".bak"
 
-    for name, module in sys.modules.items():
+    for name, module in list(sys.modules.items()):
         filename = _is_code_module(module)
         if not filename:
             continue
@@ -307,7 +307,7 @@ def _find_exact_target(module):
     if actualModule is not None:
         name = module
     else:
-        for name, mod in sys.modules.iteritems():
+        for name, mod in sys.modules.items():
             if mod is module:
                 actualModule = module
                 break
@@ -333,7 +333,7 @@ def _find_reloading_modules(name):
     """Find all modules that will be reloaded from given name"""
     modules = [name]
     childNames = name + "."
-    for name in sys.modules.keys():
+    for name in list(sys.modules.keys()):
         if name.startswith(childNames) and _is_code_module(sys.modules[name]):
             modules.append(name)
     return modules
@@ -430,7 +430,7 @@ def _rejigger_module(old, new, ignores):
     # Get filename used by python code
     filename = new.__file__
 
-    for name, value in newVars.iteritems():
+    for name, value in newVars.items():
         if name in oldVars:
             oldValue = oldVars[name]
             if oldValue is value:
@@ -447,7 +447,7 @@ def _rejigger_module(old, new, ignores):
 
         setattr(old, name, value)
 
-    for name, value in oldVars.items():
+    for name, value in list(oldVars.items()):
         if name not in newVars:
             delattr(old, name)
             if _from_file(filename, value):
@@ -482,7 +482,7 @@ def _rejigger_class(old, new, ignores):
         ignoreAttrs.append("__slots__")
     ignoreAttrs = tuple(ignoreAttrs)
 
-    for name, value in newVars.iteritems():
+    for name, value in newVars.items():
         if name in ignoreAttrs:
             continue
 
@@ -499,7 +499,7 @@ def _rejigger_class(old, new, ignores):
 
         setattr(old, name, value)
 
-    for name, value in oldVars.items():
+    for name, value in list(oldVars.items()):
         if name not in newVars:
             delattr(old, name)
             _remove_refs(value, ignores)
@@ -511,10 +511,10 @@ def _rejigger_class(old, new, ignores):
 def _rejigger_func(old, new, ignores):
     """Mighty morphin power functions"""
     __internal_swaprefs_ignore__ = "rejigger_func"
-    old.func_code = new.func_code
-    old.func_doc = new.func_doc
-    old.func_defaults = new.func_defaults
-    old.func_dict = new.func_dict
+    old.__code__ = new.__code__
+    old.__doc__ = new.__doc__
+    old.__defaults__ = new.__defaults__
+    old.__dict__ = new.__dict__
     _swap_refs(old, new, ignores)
 
 
@@ -533,7 +533,7 @@ def _unimport(old, ignores):
 def _unimport_module(old, ignores):
     """Remove traces of a module"""
     __internal_swaprefs_ignore__ = "unimport_module"
-    oldValues = _safevars(old).values()
+    oldValues = list(_safevars(old).values())
     ignores += (id(oldValues),)
 
     # Get filename used by python code
@@ -560,7 +560,7 @@ def _unimport_module(old, ignores):
 def _unimport_class(old, ignores):
     """Remove traces of a class"""
     __internal_swaprefs_ignore__ = "unimport_class"
-    oldItems = _safevars(old).items()
+    oldItems = list(_safevars(old).items())
     ignores += (id(oldItems),)
 
     for name, value in oldItems:
@@ -668,7 +668,7 @@ def _swap_refs(old, new, ignores):
                         container[new] = container.pop(old)
                 except TypeError:  # Unhashable old value
                     pass
-                for k,v in container.iteritems():
+                for k,v in container.items():
                     if v is old:
                         container[k] = new
 
@@ -700,7 +700,7 @@ def _remove_refs(old, ignores):
     __internal_swaprefs_ignore__ = "remove_refs"
 
     # Ignore builtin immutables that keep no other references
-    if old is None or isinstance(old, (int, basestring, float, complex)):
+    if old is None or isinstance(old, (int, str, float, complex)):
         return
 
     deque, defaultdict = _bonus_containers()
@@ -729,7 +729,7 @@ def _remove_refs(old, ignores):
                     container.pop(old, None)
                 except TypeError:  # Unhashable old value
                     pass
-                for k,v in container.items():
+                for k,v in list(container.items()):
                     if v is old:
                         del container[k]
 

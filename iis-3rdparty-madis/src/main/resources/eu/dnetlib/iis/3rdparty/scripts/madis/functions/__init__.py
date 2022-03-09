@@ -2,11 +2,11 @@
 """
 VERSION = "1.9"
 
-import setpath
+from . import setpath
 import os.path
 import os
 import apsw
-import sqltransform
+from . import sqltransform
 import traceback
 import logging
 import re
@@ -25,7 +25,7 @@ except ImportError:
     # Python < 2.6
     def isgeneratorfunction(obj):
         return bool((inspect.isfunction(object) or inspect.ismethod(object)) and
-                    obj.func_code.co_flags & CO_GENERATOR)
+                    obj.__code__.co_flags & CO_GENERATOR)
 
 sys.setcheckinterval(1000)
 
@@ -44,7 +44,7 @@ try:
     if sqlite_version_split[0:3] >= [3,7,11]:
         VTCREATE = 'create virtual table if not exists temp.'
         SQLITEAFTER3711 = True
-except Exception, e:
+except Exception as e:
     VTCREATE = 'create virtual table if not exists temp.'
     SQLITEAFTER3711 = True
 
@@ -86,7 +86,7 @@ def mstr(s):
         return None
 
     try:
-        return unicode(s, 'utf-8', errors='replace')
+        return str(s, 'utf-8', errors='replace')
     except KeyboardInterrupt:
         raise
     except:
@@ -132,26 +132,27 @@ def echofunctionmember(func):
                 try:
                     lg = logging.LoggerAdapter(logging.getLogger(__name__),{ "flowname" : variables.flowname  })
                     if hasattr(lg.logger.parent.handlers[0],'baseFilename'):
-                        lg.info("%s(%s)" %(func.__name__,','.join(list([repr(el) for el in args[1:]])+["%s=%s" %(k,repr(v)) for k,v in kw.items()])))
+                        lg.info("%s(%s)" %(func.__name__,','.join(list([repr(el) for el in args[1:]])+["%s=%s" %(k,repr(v)) for k,v in list(kw.items())])))
                 except Exception:
                     pass
-            print "%s(%s)" %(func.__name__,','.join(list([repr(el)[:200]+('' if len(repr(el))<=200 else '...') for el in args[1:]])+["%s=%s" %(k,repr(v)) for k,v in kw.items()]))
+            print("%s(%s)" %(func.__name__,','.join(list([repr(el)[:200]+('' if len(repr(el))<=200 else '...') for el in args[1:]])+["%s=%s" %(k,repr(v)) for k,v in list(kw.items())])))
         return func(*args, **kw)
     return wrapper
 
 def iterwrapper(con, func, *args):
     global iterheader
     i=func(*args)
-    si=iterheader+str(i)
+    si=bytes(iterheader+str(i),"utf8")
     con.openiters[si]=i
-    return buffer(si)
+    return memoryview(si)
 
 def iterwrapperaggr(con, func, self):
     global iterheader
     i=func(self)
-    si=iterheader+str(i)
+    si = bytes(iterheader + str(i), "utf8")
     con.openiters[si]=i
-    return buffer(si)
+
+    return memoryview(si)
 
 class Cursor(object):
     def __init__(self,w):
@@ -162,14 +163,14 @@ class Cursor(object):
         self.__initialised=True #this should be last in init
         
     def __getattr__(self, attr):
-        if self.__dict__.has_key(attr):
+        if attr in self.__dict__:
             return self.__dict__[attr]
         return getattr(self.__wrapped, attr)
     
     def __setattr__(self, attr, value):
-        if self.__dict__.has_key(attr):
+        if attr in self.__dict__:
             return object.__setattr__(self, attr, value)
-        if not self.__dict__.has_key('_Cursor__initialised'):  # this test allows attributes to be set in the __init__ method
+        if '_Cursor__initialised' not in self.__dict__:  # this test allows attributes to be set in the __init__ method
             return object.__setattr__(self, attr, value)
         return setattr(self.__wrapped, attr, value)
 
@@ -177,9 +178,9 @@ class Cursor(object):
     def executetrace(self,statements,bindings=None):
         try:
             return self.__wrapped.execute(statements,bindings)
-        except Exception, e:
+        except Exception as e:
             try:  # avoid masking exception in recover statements
-                raise e, None, sys.exc_info()[2]
+                raise e.with_traceback(sys.exc_info()[2])
             finally:
                 try:
                     self.cleanupvts()
@@ -200,7 +201,7 @@ class Cursor(object):
             self.__query = statements
             return self.executetrace(statements,bindings)
         
-        svts=sqltransform.transform(statements, multiset_functions.keys(), functions['vtable'], functions['row'].keys(), substitute=functions['row']['subst'])
+        svts=sqltransform.transform(statements, list(multiset_functions.keys()), functions['vtable'], list(functions['row'].keys()), substitute=functions['row']['subst'])
         s=svts[0]
         try:
             if self.__vtables != []:
@@ -215,10 +216,10 @@ class Cursor(object):
                 createvirtualsql = VTCREATE+i[0]+ ' using ' + i[1] + "(" + i[2] + sep + "'automatic_vtable:1'" +")"
                 try:
                     self.executetrace(createvirtualsql)
-                except Exception, e:
+                except Exception as e:
                     strex = mstr(e)
                     if SQLITEAFTER3711 or type(e) != apsw.SQLError or strex.find('already exists')==-1 or strex.find(i[0])==-1:
-                        raise e, None, sys.exc_info()[2]
+                        raise e.with_traceback(sys.exc_info()[2])
                     else:
                         self.__permanentvtables[i[0]]=createvirtualsql
 
@@ -228,11 +229,11 @@ class Cursor(object):
                     self.__vtables.append(i[0])
             self.__query = s
             return self.executetrace(s, bindings)
-        except Exception, e:
+        except Exception as e:
             if settings['tracing']:
                 traceback.print_exc(limit=sys.getrecursionlimit())
             try:  # avoid masking exception in recover statements
-                raise e, None, sys.exc_info()[2]
+                raise e.with_traceback(sys.exc_info()[2])
             finally:
                 try:
                     self.cleanupvts()
@@ -251,7 +252,7 @@ class Cursor(object):
                 list(self.executetrace('create temp view temp.___schemaview as '+ self.__query + ';'))
                 schema = [(x[1], x[2]) for x in list(self.executetrace('pragma table_info(___schemaview);'))]
                 list(self.executetrace('drop view temp.___schemaview;'))
-            except Exception, e:
+            except Exception as e:
                 raise apsw.ExecutionCompleteError
             
         return schema
@@ -285,7 +286,7 @@ class Connection(apsw.Connection):
 
         def buststatementcache():
             c = self.cursor()
-            for i in xrange(110):
+            for i in range(110):
                 a = list(c.execute("select "+str(i)))
 
         plan = []
@@ -358,7 +359,6 @@ def register(connection=None):
     for module in rowfiles:
         moddict = row.__dict__[module]
         register_ops(moddict,connection)
-
     register_ops(vtable,connection)
 
     ## Register madis local functions (functionslocal)
@@ -448,6 +448,7 @@ def register_ops(module, connection):
 
 
     for f in module.__dict__:
+
         fobject = module.__dict__[f]
         if hasattr(fobject, 'registered') and type(fobject.registered).__name__ == 'bool' and fobject.registered == True:
             opname=f.lower()
@@ -460,6 +461,7 @@ def register_ops(module, connection):
                     raise MadisError("Extended SQLERROR: Function '"+module.__name__+'.'+opname+"' is a reserved SQL function")
 
             if type(fobject).__name__ == 'module':
+
                 if opexists(opname):
                     raise MadisError("Extended SQLERROR: Vtable '"+opname+"' name collision with other operator")
                 functions['vtable'][opname] = fobject
@@ -477,7 +479,8 @@ def register_ops(module, connection):
                 setattr(rowfuncs, opname, fobject)
                 connection.createscalarfunction(opname, fobject)
 
-            if type(fobject).__name__ == 'classobj':
+            if type(fobject).__name__ == 'type':
+
                 if opexists(opname):
                     raise MadisError("Extended SQLERROR: Aggregate operator '"+module.__name__+'.'+opname+"' name collision with other operator")
                 functions['aggregate'][opname] = fobject
@@ -528,9 +531,9 @@ def sql(sqlquery):
     e=test_cursor.execute(sqlquery.decode(output_encoding))
     try:
         desc=test_cursor.getdescription()
-        print pptable.indent([[x[0] for x in desc]]+[x for x in e], hasHeader=True),
+        print(pptable.indent([[x[0] for x in desc]]+[x for x in e], hasHeader=True), end=' ')
     except apsw.ExecutionCompleteError:
-        print '',
+        print('', end=' ')
     test_cursor.close()
 
 def table(tab, num=''):

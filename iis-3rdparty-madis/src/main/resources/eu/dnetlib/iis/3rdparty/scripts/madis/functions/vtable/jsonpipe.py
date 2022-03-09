@@ -36,7 +36,7 @@ Examples::
 
 
 import functions
-import vtbase
+from . import vtbase
 import itertools
 import json
 import subprocess
@@ -66,7 +66,7 @@ class JSONPipeVT(vtbase.VT):
         firstline = ''
 
         try:
-            firstline = pipeiter.next()
+            firstline = next(pipeiter)
         except StopIteration:
             yield (('C1', 'text'),)
             raise StopIteration
@@ -77,7 +77,7 @@ class JSONPipeVT(vtbase.VT):
         schemalinetype = type(schemaline)
 
         if schemalinetype == list:
-            for i in xrange(1, len(schemaline)+1):
+            for i in range(1, len(schemaline)+1):
                 namelist.append( ['C'+str(i), 'text'] )
             pipeiter = itertools.chain([firstline], self.fileiter)
         elif schemalinetype == dict:
@@ -108,7 +108,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

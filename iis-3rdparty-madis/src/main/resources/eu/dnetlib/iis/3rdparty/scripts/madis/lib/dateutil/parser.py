@@ -15,12 +15,12 @@ import sys
 import os
 
 try:
-    from cStringIO import StringIO
+    from io import StringIO
 except ImportError:
-    from StringIO import StringIO
+    from io import StringIO
 
-import relativedelta
-import tz
+from . import relativedelta
+from . import tz
 
 
 __all__ = ["parse", "parserinfo"]
@@ -39,7 +39,7 @@ __all__ = ["parse", "parserinfo"]
 class _timelex(object):
 
     def __init__(self, instream):
-        if isinstance(instream, basestring):
+        if isinstance(instream, str):
             instream = StringIO(instream)
         self.instream = instream
         self.wordchars = ('abcdfeghijklmnopqrstuvwxyz'
@@ -133,7 +133,7 @@ class _timelex(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         token = self.get_token()
         if token is None:
             raise StopIteration
@@ -155,7 +155,7 @@ class _resultbase(object):
         for attr in self.__slots__:
             value = getattr(self, attr)
             if value is not None:
-                l.append("%s=%s" % (attr, `value`))
+                l.append("%s=%s" % (attr, repr(value)))
         return "%s(%s)" % (classname, ", ".join(l))
 
     def __repr__(self):
@@ -300,7 +300,7 @@ class parser(object):
                                                       second=0, microsecond=0)
         res = self._parse(timestr, **kwargs)
         if res is None:
-            raise ValueError, "unknown string format"
+            raise ValueError("unknown string format")
         repl = {}
         for attr in ["year", "month", "day", "hour",
                      "minute", "second", "microsecond"]:
@@ -318,13 +318,13 @@ class parser(object):
                     tzdata = tzinfos.get(res.tzname)
                 if isinstance(tzdata, datetime.tzinfo):
                     tzinfo = tzdata
-                elif isinstance(tzdata, basestring):
+                elif isinstance(tzdata, str):
                     tzinfo = tz.tzstr(tzdata)
                 elif isinstance(tzdata, int):
                     tzinfo = tz.tzoffset(res.tzname, tzdata)
                 else:
-                    raise ValueError, "offset must be tzinfo subclass, " \
-                                      "tz string, or int offset"
+                    raise ValueError("offset must be tzinfo subclass, " \
+                                      "tz string, or int offset")
                 ret = ret.replace(tzinfo=tzinfo)
             elif res.tzname and res.tzname in time.tzname:
                 ret = ret.replace(tzinfo=tz.tzlocal())

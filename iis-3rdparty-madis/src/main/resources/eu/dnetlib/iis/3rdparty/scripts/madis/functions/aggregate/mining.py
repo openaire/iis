@@ -1,6 +1,6 @@
 import re
 import itertools
-import setpath
+from . import setpath
 import functions
 import lib.jopts as jopts
 from operator import itemgetter
@@ -19,7 +19,7 @@ def consumer(func):
     @wraps(func)
     def wrapper(*args,**kw):
         gen = func(*args, **kw)
-        gen.next()
+        next(gen)
         return gen
     return wrapper
 
@@ -123,7 +123,7 @@ class freqitemsets:
 
     def initargs(self, args):
         self.init=False
-        for i in xrange(1, len(args)):
+        for i in range(1, len(args)):
             v=re_params.match(args[i])
             if v is not None and v.groups()[0]!='' and v.groups()[1]!='' and i>0:
                 v=v.groups()
@@ -148,7 +148,7 @@ class freqitemsets:
         iterable=None
         iterpos=-1
 
-        for i in xrange(len(data)):
+        for i in range(len(data)):
             if hasattr(data[i],'__iter__')==True:
                 iterable=data[i]
                 iterpos=i
@@ -193,7 +193,7 @@ class freqitemsets:
 
     def cleanitemsets(self, minlength):
         newitemsets={}
-        for k,v in self.input.iteritems():
+        for k,v in self.input.items():
             itemset=tuple(i for i in k if i in self.passedkw)
             if self.compress==1:
                 esoteric_itemset=tuple(i for i in itemset if self.passedkw[i]==v)
@@ -226,7 +226,7 @@ class freqitemsets:
             inputkws=[]
             for kw in itms:
                 if len(kw)==0:
-                    print itms, args[0], len(args[0]), li
+                    print(itms, args[0], len(args[0]), li)
                 if kw not in self.kwcode:
                     self.kwcode[kw]=self.maxkwcode
                     self.codekw[self.maxkwcode]=kw
@@ -255,14 +255,14 @@ class freqitemsets:
             yield [self.maxlength, len(splist[1]), len(self.input), len(self.passedkw)]
 
         if not self.stats:
-            for its,v in sorted(splist[1].items(), key=itemgetter(1),reverse=True):
+            for its,v in sorted(list(splist[1].items()), key=itemgetter(1),reverse=True):
                 self.itemset_id+=1
                 for i in self.demultiplex( (self.itemset_id, len([self.codekw[i] for i in its]), v, [self.codekw[i] for i in its]) ):
                     yield i
 
         if self.maxlen==None:
             self.maxlen=self.maxlength
-        for l in xrange(2, min(self.maxlength+1, self.maxlen+1)):
+        for l in range(2, min(self.maxlength+1, self.maxlen+1)):
             splist.append({})
             self.belowthres={}
             self.overthres={}
@@ -281,7 +281,7 @@ class freqitemsets:
             icombs = itertools.combinations
             insertcomb = self.insertcombfreq
 
-            for k,v in self.input.iteritems():
+            for k,v in self.input.items():
                 for k in icombs(k,l):
                     insertit=True
                     for i1 in icombs(k, prevl):
@@ -299,7 +299,7 @@ class freqitemsets:
                 yield [self.maxlength, len(splist[l]), len(self.input), len(self.passedkw)]
 
             if not self.stats:
-                for its,v in sorted(splist[l].items(), key=itemgetter(1),reverse=True):
+                for its,v in sorted(list(splist[l].items()), key=itemgetter(1),reverse=True):
                     self.itemset_id+=1
                     for i in self.demultiplex( (self.itemset_id, len([self.codekw[i] for i in its]), v, [self.codekw[i] for i in its]) ):
                         yield i
@@ -339,23 +339,23 @@ class sampledistvals:
     def step(self, *args):
         if self.init:
             self.lenargs = len(args)
-            self.vals = a=[set() for i in xrange(self.lenargs-1)]
+            self.vals = a=[set() for i in range(self.lenargs-1)]
             self.init = False
 
-        for i in xrange(1, self.lenargs):
+        for i in range(1, self.lenargs):
             if len(self.vals[i-1])<args[0] and args[i] not in self.vals[i-1]:
                 self.vals[i-1].add(args[i])
 
     def final(self):
-        yield tuple(['C'+str(i) for i in xrange(1, self.lenargs)] )
+        yield tuple(['C'+str(i) for i in range(1, self.lenargs)] )
         yield [jopts.toj(list(i)) for i in self.vals]
 
-class sample:
+class samplegroup:
     """
 
-    .. function:: sample(sample_size, C1, C2, C3)
+    .. function:: samplegroup(sample_size, C1, C2, C3)
 
-    Sample returns a random sample_size set of rows.
+    Returns a random sample_size set of rows.
 
     >>> table1('''
     ... test1 2 3
@@ -364,38 +364,39 @@ class sample:
     ... test4 2 t
     ... ''')
 
-    >>> sql("select sample(2, a, b, c) from table1") # doctest: +ELLIPSIS
+    >>> sql("select samplegroup(2, a, b, c) from table1") # doctest: +ELLIPSIS
     C1    | C2 | C3
     ---------------
     ...
+
+    >>> sql("select samplegroup(2) from (select 5 where 5=6)") # doctest: +ELLIPSIS
+
     """
     registered=True
 
     def __init__(self):
         self.samplelist = []
         self.index = 0
+        self.random = random.randint
 
     def step(self, *args):
-        sample_count = args[0]
-
         # Generate the reservoir
-        if self.index < sample_count:
-            self.samplelist.append(args[1:])
+        if self.index < args[0]:
+            self.samplelist.append(args)
         else:
-            r = random.randint(0, self.index)
-            if r < sample_count:
-                self.samplelist[r] = args[1:]
+            r = self.random(0, self.index)
+            if r < args[0]:
+                self.samplelist[r] = args
 
         self.index += 1
 
-
     def final(self):
-        if len(self.samplelist) == []:
+        if self.samplelist == []:
             yield tuple(['C1'])
         else:
-            yield tuple(['C'+str(i) for i in xrange(1, len(self.samplelist[0]) + 1)] )
+            yield tuple(['C'+str(i) for i in range(1, len(self.samplelist[0]))] )
             for r in self.samplelist:
-                yield list(r)
+                yield list(r[1:])
 
 if not ('.' in __name__):
     """
@@ -403,7 +404,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

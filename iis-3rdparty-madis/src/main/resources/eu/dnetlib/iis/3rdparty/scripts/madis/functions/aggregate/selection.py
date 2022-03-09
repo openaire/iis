@@ -1,5 +1,5 @@
-import setpath
-import Queue
+from . import setpath
+import queue
 import functions
 
 __docformat__ = 'reStructuredText en'
@@ -60,7 +60,7 @@ class imax:
         if not self.size:
             try:
                 self.size=int(args[0])
-                self.topn=Queue.PriorityQueue(self.size)
+                self.topn=queue.PriorityQueue(self.size)
             except ValueError:
                 raise functions.OperatorError("imax","Wrong type in first argument")
 
@@ -85,7 +85,7 @@ class q2list:
         self.q=queue
     def __iter__(self):
         return self
-    def next(self):
+    def __next__(self):
         if self.q.empty():
             raise StopIteration
         a=self.q.get_nowait()
@@ -282,7 +282,7 @@ class groupdiff:
 
     def final(self):
         self.data[-1].append(self.repeat)
-        yield tuple(["compid"]+["C"+str(i) for i in xrange(1,self.size)]+["repetition"])
+        yield tuple(["compid"]+["C"+str(i) for i in range(1,self.size)]+["repetition"])
         for i in self.data:
             yield i
 
@@ -350,7 +350,7 @@ class ontop:
         if not self.size:
             try:
                 self.size=int(args[0])
-                self.topn=Queue.PriorityQueue(self.size)
+                self.topn=queue.PriorityQueue(self.size)
                 self.argnum = len(args)-2
             except ValueError:
                 raise functions.OperatorError("ontop","Wrong type in first argument")
@@ -373,7 +373,7 @@ class ontop:
             while not self.topn.empty():
                 output+=[self.topn.get_nowait()[1]]
 
-        yield tuple(["top"+str(i+1) for i in xrange(self.argnum)])
+        yield tuple(["top"+str(i+1) for i in range(self.argnum)])
 
         for el in reversed(output):
             yield el
@@ -385,7 +385,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":
