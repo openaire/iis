@@ -29,7 +29,7 @@ IF function returns normally 1 value is returned, else exeption is raised EXCEPT
 
 """
 
-import setpath
+from . import setpath
 from lib import argsparse
 import functions
 import logging
@@ -45,10 +45,11 @@ class doall(object):
         self.kargs=kargs
         self.returnalways=returnalways
         self.passconnection=passconnection
+
     def run(self):        
-        c=self.connection.cursor()
+        c = self.connection.cursor()
         try:
-            cexec = c.execute(self.query, parse = False)
+            cexec = c.execute(self.query, parse=False)
 
             try:
                 schema = c.getdescriptionsafe()
@@ -57,29 +58,29 @@ class doall(object):
         
             if self.passconnection:
                 try:
-                    self.func(cexec, schema,self.connection,*self.args,**self.kargs)
+                    self.func(cexec, schema, self.connection, *self.args, **self.kargs)
                 except apsw.AbortError:
-                    cexec = c.execute(self.query, parse = False)
-                    self.func(cexec, schema,self.connection,*self.args,**self.kargs)
+                    cexec = c.execute(self.query, parse=False)
+                    self.func(cexec, schema, self.connection, *self.args, **self.kargs)
             else:
                 try:
-                    self.func(cexec, schema,*self.args,**self.kargs)
+                    self.func(cexec, schema, *self.args, **self.kargs)
                 except apsw.AbortError:
-                    cexec = c.execute(self.query, parse = False)
-                    self.func(cexec, schema,*self.args,**self.kargs)
+                    cexec = c.execute(self.query, parse=False)
+                    self.func(cexec, schema, *self.args, **self.kargs)
 
-            ret=True
-        except Exception,e:
+            ret = True
+        except Exception as e:
             if functions.settings['logging']:
-                lg = logging.LoggerAdapter(logging.getLogger(__name__),{ "flowname" : functions.variables.flowname  })
+                lg = logging.LoggerAdapter(logging.getLogger(__name__), {"flowname": functions.variables.flowname})
                 lg.exception(e)
             if self.returnalways:
                 return False
             else:
                 if functions.settings['tracing']:
                     import traceback
-                    print "---Deep Execution traceback--"
-                    print traceback.print_exc()
+                    print("---Deep Execution traceback--")
+                    print(traceback.print_exc())
                 raise functions.MadisError(e)
         finally:            
             try:
@@ -89,7 +90,7 @@ class doall(object):
         return ret
 
 class SourceNtoOne:
-    def __init__(self,func,boolargs=None,nonstringargs=None,needsescape=None,notsplit=None,connectionhandler=False,retalways=False):
+    def __init__(self, func, boolargs=None, nonstringargs=None, needsescape=None, notsplit=None, connectionhandler=False, retalways=False):
         self.func=func
         if boolargs==None:
             self.boolargs=[]
@@ -119,7 +120,7 @@ def maincode(args,boolargs,nonstringargs,needsescape,notsplit,db,func,retalways,
     autostring='automatic_vtable'
     try:
         largs, kargs = argsparse.parse(args,boolargs,nonstringargs,needsescape,notsplit)
-    except Exception,e:
+    except Exception as e:
         raise functions.MadisError(e)
     if 'query' not in kargs:
         raise functions.OperatorError(func.__globals__['__name__'].rsplit('.')[-1],"needs query argument ")
@@ -174,7 +175,7 @@ class Cursor:
         return self.row[col]
 
     def Next(self):  
-        self.eof=True
+        self.eof = True
 
     def Close(self):
         pass

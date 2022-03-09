@@ -19,7 +19,7 @@ def gjsonFull(rows,titleslist,typelist): ###does not support date type
 
     import json
     response={"cols":[],"rows":[]}    
-    for name, type,num in zip(titleslist, typelist,xrange(len(titleslist))):
+    for name, type,num in zip(titleslist, typelist,range(len(titleslist))):
         id=latinnum(num+1)
         response["cols"]+=[{"id":id, "label":name,"type":type}]
     for row in rows:
@@ -87,7 +87,7 @@ def gjsonIter(rows,titleslist,typelist): ###does not support date type
     yield '{"cols": '
     header=[]
     first=True
-    for name, type,num in zip(titleslist, typelist,xrange(len(titleslist))):
+    for name, type,num in zip(titleslist, typelist,range(len(titleslist))):
         id=latinnum(num+1)
         header+=[{"id":id, "label":name,"type":type}]
     yield json.dumps(header,sort_keys=True)

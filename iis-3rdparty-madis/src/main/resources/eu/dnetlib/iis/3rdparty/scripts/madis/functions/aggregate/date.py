@@ -1,5 +1,5 @@
-import Queue
-import setpath
+import queue
+from . import setpath
 import functions
 import datetime
 from lib import iso8601
@@ -46,7 +46,7 @@ class mindtdiff:
     registered=True
 
     def __init__(self):
-        self.dates=Queue.PriorityQueue()
+        self.dates=queue.PriorityQueue()
 
     def step(self, *args):
         if not args:
@@ -113,7 +113,7 @@ class avgdtdiff:
     registered=True
 
     def __init__(self):
-        self.dates=Queue.PriorityQueue()
+        self.dates=queue.PriorityQueue()
 
     def step(self, *args):
         if not args:
@@ -260,7 +260,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

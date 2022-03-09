@@ -19,8 +19,8 @@ Examples:
     1
 """
 
-import setpath
-from vtout import SourceNtoOne
+from . import setpath
+from .vtout import SourceNtoOne
 import os
 import functions
 
@@ -41,11 +41,11 @@ def Clipout(diter, schema, *args, **kargs):
             exportheader=True
 
     if exportheader==True:
-        a.append(u'\t'.join([unicode(i[0]).replace('\t','    ').replace('\n',' ') for i in schema]).encode('utf_8', 'replace'))
+        a.append('\t'.join([str(i[0]).replace('\t','    ').replace('\n',' ') for i in schema]).encode('utf_8', 'replace'))
         exportheader=False
 
     for row in diter:
-        a.append(u'\t'.join([unicode(i).replace('\t','    ').replace('\n',' ') for i in row]).encode('utf_8', 'replace'))
+        a.append('\t'.join([str(i).replace('\t','    ').replace('\n',' ') for i in row]).encode('utf_8', 'replace'))
 
     if os.name == 'nt':
         clip.setcb(functions.mstr('\n'.join(a)))
@@ -61,7 +61,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

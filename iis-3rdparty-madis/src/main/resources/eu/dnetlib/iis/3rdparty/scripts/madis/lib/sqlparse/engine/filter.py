@@ -80,6 +80,7 @@ class StatementFilter(TokenFilter):
                 and ttype is not T.Comment.Single):
                 consume_ws = False
                 stmt.tokens = stmt_tokens
+
                 yield stmt
                 self._reset()
                 stmt = None
@@ -89,7 +90,10 @@ class StatementFilter(TokenFilter):
                 stmt_tokens = []
             splitlevel += self._change_splitlevel(ttype, value)
             # Append the token
+
             stmt_tokens.append(Token(ttype, value))
+
+
             # After appending the token
             if (splitlevel <= 0 and ttype is T.Punctuation
                 and value == ';'):

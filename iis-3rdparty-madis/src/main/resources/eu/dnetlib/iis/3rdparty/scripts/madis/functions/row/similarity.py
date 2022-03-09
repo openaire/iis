@@ -1,4 +1,4 @@
-import setpath
+from . import setpath
 import lib.jopts as jopts
 import functions
 import math
@@ -108,7 +108,7 @@ def jaccard(*args):
     try:
         r=jopts.fromj(args[0])
         s=jopts.fromj(args[1])
-    except Exception,e:
+    except Exception as e:
         raise functions.OperatorError("jaccard"," Wrong format arguments: %s" %(e))
     rset=set([tuple(x) if type(x)==list else x for x in r])
     sset=set([tuple(x) if type(x)==list else x for x in s])
@@ -161,7 +161,7 @@ def sorensendice(*args):
     try:
         r=jopts.fromj(args[0])
         s=jopts.fromj(args[1])
-    except Exception,e:
+    except Exception as e:
         raise functions.OperatorError("sorensendice"," Wrong format arguments: %s" %(e))
     rset=set([tuple(x) if type(x)==list else x for x in r])
     sset=set([tuple(x) if type(x)==list else x for x in s])
@@ -438,7 +438,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

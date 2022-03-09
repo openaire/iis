@@ -25,7 +25,7 @@ Examples:
     Operator OAIGET: <urlopen error [Errno -2] Name or service not known>
 
 """
-import vtbase
+from . import vtbase
 import functions
 import time
 
@@ -35,14 +35,14 @@ external_stream=True
 class oaiget(vtbase.VT):
     def VTiter(self, *parsedArgs, **envars):
 
-        import urllib2
+        import urllib.request, urllib.error, urllib.parse
         import re
 
         def buildURL(baseurl, opts):
-            return '?'.join([ baseurl, '&'.join([x+'='+unicode(y) for x,y in opts if y!=None]) ])
+            return '?'.join([ baseurl, '&'.join([x+'='+str(y) for x,y in opts if y!=None]) ])
 
         def buildopener():
-            o = urllib2.build_opener()
+            o = urllib.request.build_opener()
             o.addheaders = [
              ('Accept', '*/*'),
              ('Connection', 'Keep-Alive'),
@@ -67,7 +67,7 @@ class oaiget(vtbase.VT):
 
         del(opts['http'])
 
-        opts=list(opts.iteritems())
+        opts=list(opts.items())
 
         findrestoken=re.compile(r""">([^\s]+?)</resumptionToken>""", re.DOTALL| re.UNICODE)
 
@@ -86,7 +86,7 @@ class oaiget(vtbase.VT):
                         if t:
                             errorcount=0
                             resumptionToken=t.groups()[0]
-                    yield (unicode(i.rstrip("\n"), 'utf-8'),)
+                    yield (str(i.rstrip("\n"), 'utf-8'),)
                 if resumptionToken==None:
                     break
                 url=buildURL(baseurl, [(x,y) for x,y in opts if x=='verb']+[('resumptionToken', resumptionToken)])
@@ -95,7 +95,7 @@ class oaiget(vtbase.VT):
                 firsttime=False
             except KeyboardInterrupt:
                 raise           
-            except Exception,e:
+            except Exception as e:
                 if errorcount<10 and not firsttime:
                     time.sleep(2**errorcount)
                     errorcount+=1
@@ -117,7 +117,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

@@ -34,6 +34,7 @@ lm_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'LM')
 
 class _NGram:
     def __init__ (self, arg={}):
+
         t = type(arg)
         if t == type(""):
             self.addText(arg)
@@ -55,8 +56,8 @@ class _NGram:
         for word in words:
             word = '_' + word + '_'
             size = len(word)
-            for i in xrange(size):
-                for s in xrange(1, 5):
+            for i in range(size):
+                for s in range(1, 5):
                     sub = word[i:i + s]
                     ngrams[sub] = ngrams.get(sub, 0) + 1
 
@@ -100,6 +101,7 @@ import glob
 
 class NGram:
     def __init__ (self, folder=lm_path, ext='.lm', language_order=[]):
+
         self.language_order = language_order
         self.ngrams = dict()
         folder = os.path.join(folder, '*' + ext)
@@ -110,7 +112,7 @@ class NGram:
             count += 1
             lang = os.path.split(fname)[-1][:-size]
             ngrams = dict()
-            file = open(fname, 'r')
+            file = open(fname, 'r',  errors='replace')
 
             for line in file.readlines():
                 parts = line[:-1].split('\t ')
@@ -123,7 +125,7 @@ class NGram:
                 except:
                     raise ValueError("invalid language file %s line : %s" % (fname, parts))
 
-            if len(ngrams.keys()):
+            if len(list(ngrams.keys())):
                 self.ngrams[lang] = _NGram(ngrams)
 
             file.close()
@@ -134,7 +136,7 @@ class NGram:
     def classify (self, text):
         ngram = _NGram(text)
 
-        langs = self.ngrams.keys()
+        langs = list(self.ngrams.keys())
         r = langs.pop()
         min = self.ngrams[r].compare(ngram)
 
@@ -147,7 +149,7 @@ class NGram:
         return r
 
     def getLanguages(self):
-        return self.ngrams.keys()
+        return list(self.ngrams.keys())
 
 class Generate:
     def __init__ (self, folder, ext='.txt'):
@@ -170,7 +172,7 @@ class Generate:
             self.ngrams[lang] = n
 
     def save (self, folder, ext='.lm'):
-        for lang in self.ngrams.keys():
+        for lang in list(self.ngrams.keys()):
             fname = os.path.join(folder, lang + ext)
             file = open(fname, 'w')
             for v, k in self.ngrams[lang].sorted():
@@ -187,4 +189,4 @@ if __name__ == '__main__':
     text = sys.stdin.readline()
 
     l = NGram()
-    print l.classify(text)
+    print(l.classify(text))

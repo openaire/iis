@@ -26,8 +26,8 @@ Examples:
 
 """
 
-import setpath
-import vtbase
+from . import setpath
+from . import vtbase
 import functions
 
 registered=True
@@ -36,7 +36,7 @@ class Oracle(vtbase.VT):
     def VTiter(self, *parsedArgs,**envars):
         from lib import jaydebeapi
         import os
-        from types import NoneType
+        NoneType = type(None)
         try:
             import jpype
         except ImportError:
@@ -73,11 +73,11 @@ For this operator to work you'll need to:
                 row = cur.fetchone()
                 if not row:
                     break
-                yield [unicode(c) if type(c) not in (long, int, float, str, unicode, NoneType, bool) else c for c in row]
+                yield [str(c) if type(c) not in (int, int, float, str, str, NoneType, bool) else c for c in row]
 
             cur.close()
 
-        except Exception, e:
+        except Exception as e:
              raise functions.OperatorError(__name__.rsplit('.')[-1], ' '.join(str(t) for t in e))
 
 
@@ -91,7 +91,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

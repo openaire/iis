@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import setpath
+from . import setpath
 import sqlparse.sql
 import sqlparse
 import re
@@ -32,13 +32,13 @@ if __name__ != "__main__":
 
 #Parse comments for inline ops
 def opcomments(s):
-    if r'/**' not in unicode(s):
+    if r'/**' not in str(s):
         return []
 
     out = []
     constr_comm = None
     for i in s.tokens:
-        ui = unicode(i)
+        ui = str(i)
         if type(i) == sqlparse.sql.Comment:
             op = inlineop.match(ui)
             if op != None:
@@ -49,12 +49,12 @@ def opcomments(s):
             constr_comm += ui
 
         if type(i) == sqlparse.sql.Token:
-            if ui == u'/*':
+            if ui == '/*':
                 if constr_comm is not None:
                     constr_comm = None
                 else:
-                    constr_comm = u'/*'
-            elif ui == u'*/':
+                    constr_comm = '/*'
+            elif ui == '*/':
                 if constr_comm is not None:
                     op = inlineop.match(constr_comm)
                     if op != None:
@@ -65,7 +65,7 @@ def opcomments(s):
 
 #Top level transform (runs once)
 def transform(query, multiset_functions=None, vtables=[], row_functions=[], substitute=lambda x: x):
-    if type(query) not in (str, unicode):
+    if type(query) not in (str, str):
         return (query, [], [])
 
     s = query
@@ -80,9 +80,7 @@ def transform(query, multiset_functions=None, vtables=[], row_functions=[], subs
         enableInlineops = True
 
     out_vtables = []
-
     st = sqlparse.parse(subsquery)
-
     trans = Transclass(multiset_functions, vtables, row_functions)
     s_out = ''
     sqp = ('', [], [])
@@ -90,13 +88,13 @@ def transform(query, multiset_functions=None, vtables=[], row_functions=[], subs
 
     for s in st:
         # delete question mark
-        strs = re.match(r"(.*?);*\s*$", unicode(s), re.DOTALL | re.UNICODE).groups()[0]
+        strs = re.match(r"(.*?);*\s*$", str(s), re.DOTALL | re.UNICODE).groups()[0]
         st1 = sqlparse.parse(strs)
         if len(st1) > 0:
             if enableInlineops:
                 inlineops.append(opcomments(st1[0]))
             sqp = trans.rectransform(st1[0])
-            strs = unicode(sqp[0])
+            strs = str(sqp[0])
             s_out += strs
             s_out += ';'
 
@@ -130,9 +128,9 @@ class Transclass:
 
     #recursive transform
     def rectransform(self, s, s_orig=None):
-        if not (re.search(ur'(?i)(select|' + '|'.join([x for x in self.vtables]) + '|' + '|'.join(
-                self.multiset_functions) + '|' + '|'.join(self.row_functions) + ')', unicode(s), re.UNICODE)):
-            return unicode(s), [], self.direct_exec
+        if not (re.search(r'(?i)(select|' + '|'.join([x for x in self.vtables]) + '|' + '|'.join(
+                self.multiset_functions) + '|' + '|'.join(self.row_functions) + ')', str(s), re.UNICODE)):
+            return str(s), [], self.direct_exec
 
         out_vtables = []
 
@@ -141,9 +139,9 @@ class Transclass:
 
         query = None
 
-        #Expand functions with spaces between them and their parenthesis
+        # Expand functions with spaces between them and their parenthesis
         for t in s_orig.tokens:
-            tfm = re.match('(\w+)\s\(', unicode(t), re.UNICODE)
+            tfm = re.match('(\w+)\s\(', str(t), re.UNICODE)
             if isinstance(t, sqlparse.sql.Function) and tfm and (
                     tfm.groups()[0] in self.vtables or tfm.groups()[0] in self.row_functions):
                 tidx = s_orig.token_index(t)
@@ -151,10 +149,30 @@ class Transclass:
 
         fs = [x for x in expand_tokens(s)]
 
+        # Process external_query VTs
+        tmatch = re.match(r'\s*(\w+)\s+(.*|$)', str(s), re.DOTALL | re.UNICODE)
+        if tmatch is not None and tmatch.groups()[0].lower() in self.vtables:
+            op_for_inv = tmatch.groups()[0].lower()
+            if hasattr(self.vtables[op_for_inv], 'external_query'):
+                rest = tmatch.groups()[1]
+                op_for_inv = str(op_for_inv)
+                params, preposition, subq = break_inversion_subquery.match(rest).groups()
+                if subq != '':
+                    paramslist = [format_query(subq)]
+                else:
+                    paramslist = []
+                paramslist += [format_param(''.join(x)) for x in
+                               re.findall(r"'([^']*?)'|(\w+:[^\s]+)", params, re.UNICODE)]
+                inv_s = ','.join(paramslist)
+                vname = vt_name(op_for_inv)
+                self.direct_exec += [(op_for_inv, paramslist, subq)]
+                s_orig.tokens[s_orig.token_index(s.tokens[0]):s_orig.token_index(s.tokens[-1]) + 1] = [sqlparse.sql.Token(Token.Keyword, 'select * from ' + vname + ' ')]
+                return str(s), vt_distinct([(vname, op_for_inv, inv_s)]), self.direct_exec
+
         # Process internal parenthesis
         for t in fs:
             if type(t) is sqlparse.sql.Parenthesis:
-                subq = find_parenthesis.match(unicode(t))
+                subq = find_parenthesis.match(str(t))
                 if subq != None:
                     subq = subq.groups()[0]
                     t.tokens = sqlparse.parse(subq)[0].tokens
@@ -165,7 +183,7 @@ class Transclass:
         # Process Inversions
 
         #Process direct row inversion
-        t = re.match(r'\s*(\w+)(\s+.*|$)', unicode(s), re.DOTALL | re.UNICODE)
+        t = re.match(r'\s*(\w+)(\s+.*|$)', str(s), re.DOTALL | re.UNICODE)
         if t != None and t.groups()[0].lower() in self.row_functions:
             op_for_inv = t.groups()[0]
             rest = t.groups()[1]
@@ -185,20 +203,20 @@ class Transclass:
 
         fs = [x for x in expand_tokens(s)]
 
-        #Proccess vtable inversion
+        # Process vtable inversion
         for t in fs:
             if t.ttype == Token.Keyword.DML:
                 break
-            strt = unicode(t).lower()
+            strt = str(t).lower()
             if strt in self.vtables:
                 #print "FOUND INVERSION:", strt, fs
                 tindex = fs.index(t)
                 # Break if '.' exists before vtable
-                if tindex > 0 and unicode(fs[tindex - 1]) == '.':
+                if tindex > 0 and str(fs[tindex - 1]) == '.':
                     break
                 op_for_inv = strt
                 try:
-                    rest = ''.join([unicode(x) for x in fs[tindex + 1:]])
+                    rest = ''.join([str(x) for x in fs[tindex + 1:]])
                 except KeyboardInterrupt:
                     raise
                 except:
@@ -216,17 +234,16 @@ class Transclass:
                     paramslist += [format_param(''.join(x)) for x in
                                    re.findall(r"'([^']*?)'|(\w+:[^\s]+)", params, re.UNICODE)]
                     inv_s = ''.join(
-                        [unicode(x) for x in fs[:fs.index(t)]]) + 'SELECT * FROM ' + op_for_inv + '(' + ','.join(
+                        [str(x) for x in fs[:fs.index(t)]]) + 'SELECT * FROM ' + op_for_inv + '(' + ','.join(
                             paramslist) + ')'
                 else:
                     paramslist = [format_param(''.join(x)) for x in
                                   re.findall(r"'([^']*?)'|(\w+:[^\s]+)", params, re.UNICODE)]
                     inv_s = ''.join(
-                        [unicode(x) for x in fs[:fs.index(t)]]) + 'SELECT * FROM ' + op_for_inv + '(' + ','.join(
+                        [str(x) for x in fs[:fs.index(t)]]) + 'SELECT * FROM ' + op_for_inv + '(' + ','.join(
                             paramslist) + ') ' + subq
                 subs = sqlparse.parse(inv_s)[0]
                 self.direct_exec += [(op_for_inv, paramslist, orig_subq)]
-                #print self.direct_exec
                 s_orig.tokens[s_orig.token_index(s.tokens[0]):s_orig.token_index(s.tokens[-1]) + 1] = subs.tokens
                 s = subs
                 break
@@ -238,7 +255,7 @@ class Transclass:
             s_end = s.token_next_match(s.token_index(s_start), Token.Keyword, (
                 r'(?i)union', r'(?i)order', r'(?i)limit', r'(?i)intersect', r'(?i)except', r'(?i)having'), True)
             if len(s.tokens) < 3:
-                return unicode(s), vt_distinct(out_vtables), self.direct_exec
+                return str(s), vt_distinct(out_vtables), self.direct_exec
             if s_end is None:
                 if s.tokens[-1].value == ')':
                     s_end = s.tokens[-2]
@@ -246,13 +263,13 @@ class Transclass:
                     s_end = s.tokens[-1]
             else:
                 if s.token_index(s_end) + 1 >= len(s.tokens):
-                    raise functions.MadisError("'" + unicode(s_end).upper() + "' should be followed by something")
+                    raise functions.MadisError("'" + str(s_end).upper() + "' should be followed by something")
                 out_vtables += self.rectransform(
                     sqlparse.sql.Statement(s.tokens_between(s.tokens[s.token_index(s_end) + 1], s.tokens[-1])), s)[1]
                 s_end = s.tokens[s.token_index(s_end) - 1]
             query = sqlparse.sql.Statement(s.tokens_between(s_start, s_end))
         else:
-            return unicode(s), vt_distinct(out_vtables), self.direct_exec
+            return str(s), vt_distinct(out_vtables), self.direct_exec
 
         # find from and select_parameters range
         from_range = None
@@ -271,13 +288,13 @@ class Transclass:
                 from_range = sqlparse.sql.Statement(
                     query.tokens_between(query.tokens[query.token_index(from_start) + 1], from_end, exclude_end=True))
             for t in [x for x in expand_type(from_range, (sqlparse.sql.Identifier, sqlparse.sql.IdentifierList))]:
-                if unicode(t).lower() in ('group', 'order'):
+                if str(t).lower() in ('group', 'order'):
                     break
                 if type(t) is sqlparse.sql.Function:
-                    vname = vt_name(unicode(t))
+                    vname = vt_name(str(t))
                     fname = t.tokens[0].get_real_name().lower()
                     if fname in self.vtables:
-                        out_vtables += [(vname, fname, unicode(t.tokens[1])[1:-1])]
+                        out_vtables += [(vname, fname, str(t.tokens[1])[1:-1])]
                         t.tokens = [sqlparse.sql.Token(Token.Keyword, vname)]
                     else:
                         raise functions.MadisError("Virtual table '" + fname + "' does not exist")
@@ -292,35 +309,35 @@ class Transclass:
             if hasattr(t.tokens[0], 'get_real_name'):
                 fname = t.tokens[0].get_real_name()
             else:
-                fname = unicode(t.tokens[0])
+                fname = str(t.tokens[0])
             fname = fname.lower().strip()
             if fname in self.multiset_functions:
                 t = s_orig.group_tokens(sqlparse.sql.Parenthesis, s_orig.tokens_between(s_start, s_end))
-                vname = vt_name(unicode(t))
+                vname = vt_name(str(t))
                 out_vtables += [(vname, 'expand', format_query(t))]
                 s_orig.tokens[s_orig.token_index(t)] = sqlparse.sql.Token(Token.Keyword, 'select * from ' + vname + ' ')
                 break
 
-        return unicode(s), vt_distinct(out_vtables), self.direct_exec
+        return str(s), vt_distinct(out_vtables), self.direct_exec
 
 
 def vt_name(s):
-    tmp = re.sub(r'([^\w])', '_', 'vt_' + unicode(zlib.crc32(s.encode('utf-8'))), re.UNICODE)
+    tmp = re.sub(r'([^\w])', '_', 'vt_' + str(zlib.crc32(s.encode('utf-8'))), re.UNICODE)
     return re.sub(r'_+', '_', tmp, re.UNICODE)
 
 
 def format_query(s):
-    q = "'query:" + unicode(s).replace("'", "''") + "'"
+    q = "'query:" + str(s).replace("'", "''") + "'"
     q = q.replace('\n', ' ')
     return q
 
 
 def format_param(s):
-    return "'" + unicode(s).replace("'", "''") + "'"
+    return "'" + str(s).replace("'", "''") + "'"
 
 
 def format_identifiers(s):
-    return unicode(s).replace(' ', '').replace('\t', '')
+    return str(s).replace(' ', '').replace('\t', '')
 
 
 def flatten_with_type(inpt, clss):
@@ -373,7 +390,7 @@ def vt_distinct(vt):
             if not vtout[i[0]][-1] == False:
                 vtout[i[0]] = i
 
-    return vtout.values()
+    return list(vtout.values())
 
 
 if __name__ == "__main__":
@@ -489,10 +506,10 @@ where iplong>=ipfrom and iplong <=ipto;
     sql += [r"/** def lala():return 6 **/ "]
 
     for s in sql:
-        print "====== " + unicode(s) + " ==========="
+        print("====== " + str(s) + " ===========")
         a = transform(s, multiset_functions, vtables, row_functions)
-        print "Query In:", s
-        print "Query Out:", a[0].encode('utf-8')
-        print "Vtables:", a[1]
-        print "Direct exec:", a[2]
-        print "Inline Ops:", a[3]
+        print("Query In:", s)
+        print("Query Out:", a[0].encode('utf-8'))
+        print("Vtables:", a[1])
+        print("Direct exec:", a[2])
+        print("Inline Ops:", a[3])

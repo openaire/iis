@@ -1,6 +1,6 @@
-from gtable import gtablefileFull , gjsonfileFull ,gjsonFull
-from iterutils import peekable
-from sqlitetypes import typestoSqliteTypes
+from .gtable import gtablefileFull , gjsonfileFull ,gjsonFull
+from .iterutils import peekable
+from .sqlitetypes import typestoSqliteTypes
 import types
 
 
@@ -35,7 +35,7 @@ def vtoutpugtformat(out,diter,simplejson=True): #### TODO Work on types patttern
     if mustguess:
         samples=d.maxpeek(30)
         samplestats=dict()
-        for i in xrange(len(gtypes)):
+        for i in range(len(gtypes)):
             if gtypes[i]=="GUESS":
                 samplestats[i]={'string':False,"number":False}
         for row in unfold(samples):
@@ -68,7 +68,7 @@ def typeguessing(el): ####Oi upoloipoi typoi
 #    if type(el) not in types.StringTypes:
 #        print "Element is : --%s-- , Type is %s Type of element not string!!!!!!!!!!!!!" %(el,type(el))
 #        raise Exception
-    if type(el) not in types.StringTypes:
+    if type(el) not in (str,):
         el=str(el)
     if el.startswith("0") and not el.startswith("0."):
         return 'string'

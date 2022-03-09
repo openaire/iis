@@ -1,8 +1,12 @@
 """
 .. function:: exec(query:None,[path:None,variables])
 
-Executes the input query. Gets the first column of the returned result and executes its rows content supposing it is an sql statement. *Path* parameter sets the current working directory while executing the statements.
-*Variables* are named parameters that set variables in execution environment. For example *c:v* named parameter sets the variable *c* in the new environment, initialized with current variable's *v* value.
+Executes the input query. Gets the first column of the returned result and executes its rows content supposing it is an sql statement.
+
+*Path* parameter sets the current working directory while executing the statements.
+
+*Variables* are named parameters that set variables in execution environment. For example *c:v* named parameter
+sets the variable *c* in the new environment, initialized with current variable's *v* value.
 
 :Returned table schema:
     - *return_value* int
@@ -68,7 +72,7 @@ Nesting flows. Usage of *path* and variables parameters.
     ------------------------------------------------------------------------------
     create table %{tablename} as select * from getvars() where variable!='execdb';
 
-    >>> sql("select * from getvars() where variable!='execdb'")
+    >>> sql("select * from variables() where variable!='execdb'")
     variable | value
     ----------------
     flowname |
@@ -92,7 +96,7 @@ Nesting flows. Usage of *path* and variables parameters.
     c         | 5
     tablename | internaltable
 
-    >>> sql("select * from getvars() where variable!='execdb'")
+    >>> sql("select * from variables() where variable!='execdb'")
     variable | value
     ----------------
     flowname |
@@ -114,8 +118,9 @@ Test files:
 import copy
 import os.path
     
-import setpath          #for importing from project root directory  KEEP IT IN FIRST LINE
-from vtout import SourceNtoOne
+from . import setpath          #for importing from project root directory  KEEP IT IN FIRST LINE
+from .vtout import SourceNtoOne
+import apsw
 import functions
 import logging
 import datetime
@@ -125,119 +130,143 @@ import re
 import time
 import types
 
-comment_line=re.compile(r'/\*.*?\*/(.*)$')
-registered=True
+comment_line = re.compile(r'/\*.*?\*/(.*)$')
+registered = True
 
-def execflow(diter, schema, connection,*args,**kargs):
-    ignoreflag='ignorefail'
-
-    if functions.variables.execdb==None:
-        con=functions.Connection('')
+def filterlinecomment(s):
+    if re.match(r'\s*--', s, re.DOTALL|re.UNICODE):
+        return ''
     else:
-        con=functions.Connection(functions.variables.execdb)
+        return s
+
+def breakquery(q):
+    if len(q) > 1:
+        raise functions.OperatorError(__name__.rsplit('.')[-1], "Ambiguous query column, result has more than one columns")
+    st = ''
+    for row in q[0].splitlines():
+        strow = filterlinecomment(row)
+        if strow == '':
+            continue
+        if st != '':
+            st += '\n'+strow
+        else:
+            st += strow
+        if apsw.complete(st):
+            yield st
+            st = ''
+
+    if len(st) > 0 and not re.match(r'\s+$', st, re.DOTALL| re.UNICODE):
+        if len(st) > 35:
+            raise functions.OperatorError(__name__.rsplit('.')[-1], "Incomplete statement found : %s ... %s" % (st[:15], st[-15:]))
+        else:
+            raise functions.OperatorError(__name__.rsplit('.')[-1], "Incomplete statement found : %s" % (st,))
+
+def execflow(diter, schema, connection, *args, **kargs):
+    ignoreflag = 'ignorefail'
+
+    if functions.variables.execdb is None:
+        functions.variables.execdb = connection.filename
+    con = functions.Connection(functions.variables.execdb)
     
     functions.register(con)
-    oldvars=functions.variables
-    newvars=lambda :x
-    newpath=None
-    path=os.getcwd()
+    oldvars = functions.variables
+    newvars = lambda x: x
+    newpath = None
+    path = os.getcwd()
 
     if 'path' in kargs:
-        newpath=os.path.abspath(kargs['path'])
+        newpath = os.path.abspath(kargs['path'])
         del kargs['path']
         os.chdir(newpath)
 
-    newvars.execdb=functions.variables.execdb
-    newvars.flowname='notset'
+    newvars.execdb = functions.variables.execdb
+    newvars.flowname = 'notset'
     for v in args:
-        if hasattr(functions.variables,v):
-            newvars.__dict__[v]=functions.variables.__dict__[v]
+        if hasattr(functions.variables, v):
+            newvars.__dict__[v] = functions.variables.__dict__[v]
         else:
-            raise functions.OperatorError(__name__.rsplit('.')[-1],"Variable %s doen't exist" %(v))
-    for newv,oldv in kargs.items():
+            raise functions.OperatorError(__name__.rsplit('.')[-1], "Variable %s doesn't exist" % (v,))
+    for newv, oldv in list(kargs.items()):
         if hasattr(functions.variables,oldv):
             newvars.__dict__[newv]=functions.variables.__dict__[oldv]
         else:
-            raise functions.OperatorError(__name__.rsplit('.')[-1],"Variable %s doen't exist" %(oldv))
-    functions.variables=newvars
+            raise functions.OperatorError(__name__.rsplit('.')[-1], "Variable %s doen't exist" % (oldv,))
+    functions.variables = newvars
 
     if functions.settings['logging']:
         lg = logging.LoggerAdapter(logging.getLogger(__name__),{ "flowname" : functions.variables.flowname  })
         lg.info("############FLOW START###################")
-    before=datetime.datetime.now()
+    before = datetime.datetime.now()
 
+    query = ''
     try:
-
-        line=0
-        for query in diter:
-            
-            if len(query)>1:
-                raise functions.OperatorError(__name__.rsplit('.')[-1],"Ambiguous query column, result has more than one columns")
-            line+=1
-            if type(query[0]) not  in types.StringTypes:
-                raise functions.OperatorError(__name__.rsplit('.')[-1],"Content is not sql query")
-            #Skip empty queries or comment lines
-            query=query[0].strip()
-            if query.startswith("--"):
-                continue
-            cmatch=comment_line.match(query)
-            if query=='' or (cmatch!=None and cmatch.groups()[0]==''):
-                continue
-
-            if functions.settings['logging']:
-                lg = logging.LoggerAdapter(logging.getLogger(__name__),{ "flowname" : functions.variables.flowname  })
-                lg.info("STARTING: %s" %(query))
-            before=datetime.datetime.now()
-            c=con.cursor()
-            # check ignore flag
-            catchexception=False
-            if query.startswith(ignoreflag):
-                catchexception=True
-                query=query[len(ignoreflag):]
-            try:
-                for i in c.execute(query):
-                    pass
-            except Exception,e: #Cathing IGNORE FAIL EXCEPTION          
-                if catchexception:
-                    if functions.settings['logging']:
-                        lg = logging.LoggerAdapter(logging.getLogger(__name__),{ "flowname" : functions.variables.flowname  })
-                        lg.exception("Ignoring Exception: "+str(e))
+        line = 0
+        for t in diter:
+            for query in breakquery(t):
+                line += 1
+                if type(query) not in (str,):
+                    raise functions.OperatorError(__name__.rsplit('.')[-1], "Content is not sql query")
+                #Skip empty queries or comment lines
+                query = query.strip()
+                if query.startswith("--"):
                     continue
-                else:
-                    try:
-                        c.close()
-                        c=con.cursor()
-                        c.execute('rollback')
-                    except:
+                cmatch = comment_line.match(query)
+                if query == '' or (cmatch is not None and cmatch.groups()[0] == ''):
+                    continue
+
+                if functions.settings['logging']:
+                    lg = logging.LoggerAdapter(logging.getLogger(__name__),{ "flowname" : functions.variables.flowname  })
+                    lg.info("STARTING: %s" %(query))
+                before = datetime.datetime.now()
+                c = con.cursor()
+                # check ignore flag
+                catchexception = False
+                if query.startswith(ignoreflag):
+                    catchexception=True
+                    query = query[len(ignoreflag):]
+                try:
+                    for i in c.execute(query):
                         pass
-                    raise e
+                except Exception as e: #Cathing IGNORE FAIL EXCEPTION
+                    if catchexception:
+                        if functions.settings['logging']:
+                            lg = logging.LoggerAdapter(logging.getLogger(__name__),{ "flowname" : functions.variables.flowname  })
+                            lg.exception("Ignoring Exception: "+str(e))
+                        continue
+                    else:
+                        try:
+                            c.close()
+                            c = con.cursor()
+                            c.execute('rollback')
+                        except:
+                            pass
+                        raise e
 
-            if functions.settings['logging']:
-                lg = logging.LoggerAdapter(logging.getLogger(__name__),{ "flowname" : functions.variables.flowname  })
-                after=datetime.datetime.now()
-                tmdiff=after-before
-                duration="%s min. %s sec %s msec" %((int(tmdiff.days)*24*60+(int(tmdiff.seconds)/60),(int(tmdiff.seconds)%60),(int(tmdiff.microseconds)/1000)))
-                lg.info("FINISHED in %s: %s" %(duration,query))
-            c.close()
-
-    except Exception,e:
+                if functions.settings['logging']:
+                    lg = logging.LoggerAdapter(logging.getLogger(__name__),{ "flowname" : functions.variables.flowname  })
+                    after = datetime.datetime.now()
+                    tmdiff = after-before
+                    duration = "%s min. %s sec %s msec" % ((int(tmdiff.days)*24*60+(int(tmdiff.seconds)/60), (int(tmdiff.seconds)%60),(int(tmdiff.microseconds)/1000)))
+                    lg.info("FINISHED in %s: %s" % (duration, query))
+                c.close()
+    except Exception as e:
         if functions.settings['logging']:
             lg = logging.LoggerAdapter(logging.getLogger(__name__),{ "flowname" : functions.variables.flowname  })
             lg.exception(e)
-        raise functions.OperatorError(__name__.rsplit('.')[-1],"Error in statement no. %s query '%s':\n%s" %(line,query,str(e)))
+        raise functions.OperatorError(__name__.rsplit('.')[-1], "Error in statement no. %s query '%s':\n%s" % (line, query, str(e)))
     finally:
         try:
             con.close()
         except:
             pass
-        after=datetime.datetime.now()
-        tmdiff=after-before
-        fltm="Flow executed in %s min. %s sec %s msec" %((int(tmdiff.days)*24*60+(int(tmdiff.seconds)/60),(int(tmdiff.seconds)%60),(int(tmdiff.microseconds)/1000)))
+        after = datetime.datetime.now()
+        tmdiff = after-before
+        fltm = "Flow executed in %s min. %s sec %s msec" %((int(tmdiff.days)*24*60+(int(tmdiff.seconds)/60),(int(tmdiff.seconds)%60),(int(tmdiff.microseconds)/1000)))
         if functions.settings['logging']:
             lg = logging.LoggerAdapter(logging.getLogger(__name__),{ "flowname" : functions.variables.flowname  })
             lg.info(fltm)
             lg.info("#############FLOW END####################")
-        functions.variables=oldvars
+        functions.variables = oldvars
         if newpath:
             os.chdir(path)
 
@@ -251,7 +280,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":
@@ -259,4 +288,3 @@ if not ('.' in __name__):
         sys.setdefaultencoding('utf-8')
         import doctest
         doctest.testmod()
-        

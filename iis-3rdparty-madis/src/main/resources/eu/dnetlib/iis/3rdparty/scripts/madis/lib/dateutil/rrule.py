@@ -10,7 +10,7 @@ __license__ = "PSF License"
 import itertools
 import datetime
 import calendar
-import thread
+import _thread
 import sys
 
 __all__ = ["rrule", "rruleset", "rrulestr",
@@ -22,10 +22,10 @@ __all__ = ["rrule", "rruleset", "rrulestr",
 M366MASK = tuple([1]*31+[2]*29+[3]*31+[4]*30+[5]*31+[6]*30+
                  [7]*31+[8]*31+[9]*30+[10]*31+[11]*30+[12]*31+[1]*7)
 M365MASK = list(M366MASK)
-M29, M30, M31 = range(1,30), range(1,31), range(1,32)
+M29, M30, M31 = list(range(1,30)), list(range(1,31)), list(range(1,32))
 MDAY366MASK = tuple(M31+M29+M31+M30+M31+M30+M31+M31+M30+M31+M30+M31+M31[:7])
 MDAY365MASK = list(MDAY366MASK)
-M29, M30, M31 = range(-29,0), range(-30,0), range(-31,0)
+M29, M30, M31 = list(range(-29,0)), list(range(-30,0)), list(range(-31,0))
 NMDAY366MASK = tuple(M31+M29+M31+M30+M31+M30+M31+M31+M30+M31+M30+M31+M31[:7])
 NMDAY365MASK = list(NMDAY366MASK)
 M366RANGE = (0,31,60,91,121,152,182,213,244,274,305,335,366)
@@ -41,7 +41,7 @@ M365MASK = tuple(M365MASK)
  DAILY,
  HOURLY,
  MINUTELY,
- SECONDLY) = range(7)
+ SECONDLY) = list(range(7))
 
 # Imported on demand.
 easter = None
@@ -52,7 +52,7 @@ class weekday(object):
 
     def __init__(self, weekday, n=None):
         if n == 0:
-            raise ValueError, "Can't create weekday with n == 0"
+            raise ValueError("Can't create weekday with n == 0")
         self.weekday = weekday
         self.n = n
 
@@ -83,7 +83,7 @@ class rrulebase:
     def __init__(self, cache=False):
         if cache:
             self._cache = []
-            self._cache_lock = thread.allocate_lock()
+            self._cache_lock = _thread.allocate_lock()
             self._cache_gen  = self._iter()
             self._cache_complete = False
         else:
@@ -112,7 +112,7 @@ class rrulebase:
                     break
                 try:
                     for j in range(10):
-                        cache.append(gen.next())
+                        cache.append(next(gen))
                 except StopIteration:
                     self._cache_gen = gen = None
                     self._cache_complete = True
@@ -133,13 +133,13 @@ class rrulebase:
             else:
                 return list(itertools.islice(self,
                                              item.start or 0,
-                                             item.stop or sys.maxint,
+                                             item.stop or sys.maxsize,
                                              item.step or 1))
         elif item >= 0:
             gen = iter(self)
             try:
                 for i in range(item+1):
-                    res = gen.next()
+                    res = next(gen)
             except StopIteration:
                 raise IndexError
             return res
@@ -768,7 +768,7 @@ class _iterinfo(object):
         self.lastmonth = month
 
     def ydayset(self, year, month, day):
-        return range(self.yearlen), 0, self.yearlen
+        return list(range(self.yearlen)), 0, self.yearlen
 
     def mdayset(self, year, month, day):
         set = [None]*self.yearlen
@@ -833,7 +833,7 @@ class rruleset(rrulebase):
             self.genlist = genlist
             self.gen = gen
 
-        def next(self):
+        def __next__(self):
             try:
                 self.dt = self.gen()
             except StopIteration:
@@ -864,14 +864,14 @@ class rruleset(rrulebase):
     def _iter(self):
         rlist = []
         self._rdate.sort()
-        self._genitem(rlist, iter(self._rdate).next)
-        for gen in [iter(x).next for x in self._rrule]:
+        self._genitem(rlist, iter(self._rdate).__next__)
+        for gen in [iter(x).__next__ for x in self._rrule]:
             self._genitem(rlist, gen)
         rlist.sort()
         exlist = []
         self._exdate.sort()
-        self._genitem(exlist, iter(self._exdate).next)
-        for gen in [iter(x).next for x in self._exrule]:
+        self._genitem(exlist, iter(self._exdate).__next__)
+        for gen in [iter(x).__next__ for x in self._exrule]:
             self._genitem(exlist, gen)
         exlist.sort()
         lastdt = None
@@ -880,13 +880,13 @@ class rruleset(rrulebase):
             ritem = rlist[0]
             if not lastdt or lastdt != ritem.dt:
                 while exlist and exlist[0] < ritem:
-                    exlist[0].next()
+                    next(exlist[0])
                     exlist.sort()
                 if not exlist or ritem != exlist[0]:
                     total += 1
                     yield ritem.dt
                 lastdt = ritem.dt
-            ritem.next()
+            next(ritem)
             rlist.sort()
         self._len = total
 
@@ -932,7 +932,7 @@ class _rrulestr:
                                            ignoretz=kwargs.get("ignoretz"),
                                            tzinfos=kwargs.get("tzinfos"))
         except ValueError:
-            raise ValueError, "invalid until date"
+            raise ValueError("invalid until date")
 
     def _handle_WKST(self, rrkwargs, name, value, **kwargs):
         rrkwargs["wkst"] = self._weekday_map[value]
@@ -959,7 +959,7 @@ class _rrulestr:
         if line.find(':') != -1:
             name, value = line.split(':')
             if name != "RRULE":
-                raise ValueError, "unknown parameter name"
+                raise ValueError("unknown parameter name")
         else:
             value = line
         rrkwargs = {}
@@ -972,9 +972,9 @@ class _rrulestr:
                                                ignoretz=ignoretz,
                                                tzinfos=tzinfos)
             except AttributeError:
-                raise ValueError, "unknown parameter '%s'" % name
+                raise ValueError("unknown parameter '%s'" % name)
             except (KeyError, ValueError):
-                raise ValueError, "invalid '%s': %s" % (name, value)
+                raise ValueError("invalid '%s': %s" % (name, value))
         return rrule(dtstart=dtstart, cache=cache, **rrkwargs)
 
     def _parse_rfc(self, s,
@@ -991,7 +991,7 @@ class _rrulestr:
             unfold = True
         s = s.upper()
         if not s.strip():
-            raise ValueError, "empty string"
+            raise ValueError("empty string")
         if unfold:
             lines = s.splitlines()
             i = 0
@@ -1026,36 +1026,36 @@ class _rrulestr:
                     name, value = line.split(':', 1)
                 parms = name.split(';')
                 if not parms:
-                    raise ValueError, "empty property name"
+                    raise ValueError("empty property name")
                 name = parms[0]
                 parms = parms[1:]
                 if name == "RRULE":
                     for parm in parms:
-                        raise ValueError, "unsupported RRULE parm: "+parm
+                        raise ValueError("unsupported RRULE parm: "+parm)
                     rrulevals.append(value)
                 elif name == "RDATE":
                     for parm in parms:
                         if parm != "VALUE=DATE-TIME":
-                            raise ValueError, "unsupported RDATE parm: "+parm
+                            raise ValueError("unsupported RDATE parm: "+parm)
                     rdatevals.append(value)
                 elif name == "EXRULE":
                     for parm in parms:
-                        raise ValueError, "unsupported EXRULE parm: "+parm
+                        raise ValueError("unsupported EXRULE parm: "+parm)
                     exrulevals.append(value)
                 elif name == "EXDATE":
                     for parm in parms:
                         if parm != "VALUE=DATE-TIME":
-                            raise ValueError, "unsupported RDATE parm: "+parm
+                            raise ValueError("unsupported RDATE parm: "+parm)
                     exdatevals.append(value)
                 elif name == "DTSTART":
                     for parm in parms:
-                        raise ValueError, "unsupported DTSTART parm: "+parm
+                        raise ValueError("unsupported DTSTART parm: "+parm)
                     if not parser:
                         from dateutil import parser
                     dtstart = parser.parse(value, ignoretz=ignoretz,
                                            tzinfos=tzinfos)
                 else:
-                    raise ValueError, "unsupported property: "+name
+                    raise ValueError("unsupported property: "+name)
             if (forceset or len(rrulevals) > 1 or
                 rdatevals or exrulevals or exdatevals):
                 if not parser and (rdatevals or exdatevals):

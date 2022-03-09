@@ -1,7 +1,7 @@
-import setpath
+from . import setpath
 import re
 import datetime
-import StringIO
+import io
 from lib.dsv import writer, reader
 from lib import argsparse
 import functions
@@ -95,7 +95,7 @@ def strsplit(*args): ###splits the first arguments
     args=args[1:]
     try:
         largs, kargs = argsparse.parse(args,csvargs.boolargs,csvargs.nonstringargs,csvargs.needsescape)
-    except Exception,e:
+    except Exception as e:
         raise functions.MadisError(e)
     if 'dialect' not in kargs:
         kargs['dialect']=csvargs.defaultcsv()
@@ -104,20 +104,20 @@ def strsplit(*args): ###splits the first arguments
 
     if len(largs)>0:
         raise functions.OperatorError("strsplit","strsplit operator: Unknown argument %s" %(''.join(largs)))
-    f=StringIO.StringIO()
+    f=io.StringIO()
     
     f.write(arg.encode('utf-8'))
     f.seek(0)
     try:
         r=reader(f,**kargs)
-    except Exception,e:
+    except Exception as e:
         raise functions.MadisError(e)
     first=True
     
     for row in r:
         if first:
             first=False
-            yield tuple("C"+str(i) for i in xrange(1, len(row) + 1))
+            yield tuple("C"+str(i) for i in range(1, len(row) + 1))
         yield row
     if first:
         first=False
@@ -154,12 +154,11 @@ def strsplitv(*args): ###splits the first arguments
     """
     if len(args)<1:
         raise functions.OperatorError("strsplitv","strsplit operator: no input")
-
     arg=args[0]
     args=args[1:]
     try:
         largs, kargs = argsparse.parse(args,csvargs.boolargs,csvargs.nonstringargs,csvargs.needsescape)
-    except Exception,e:
+    except Exception as e:
         raise functions.MadisError(e)
     if 'dialect' not in kargs:
         kargs['dialect']=csvargs.defaultcsv()
@@ -168,14 +167,14 @@ def strsplitv(*args): ###splits the first arguments
 
     if len(largs)>0:
         raise functions.OperatorError("strsplitv","strsplit operator: Unknown argument %s" %(''.join(largs)))
-    f=StringIO.StringIO()
+    f=io.StringIO()
 
-    f.write(arg.encode('utf-8'))
+    f.write(arg)
     f.seek(0)
 
     try:
         r=reader(f,**kargs)
-    except Exception,e:
+    except Exception as e:
         raise functions.MadisError(e)
     first=True
 
@@ -189,7 +188,6 @@ def strsplitv(*args): ###splits the first arguments
         first=False
         yield ("C1",)
     f.close()
-
 strsplitv.registered=True
 
 def strjoin(*args):
@@ -223,7 +221,7 @@ def strjoin(*args):
         return None
     sargs=[]
     params=False
-    for i in xrange(len(args)):
+    for i in range(len(args)):
         if args[i]=='params':
             args=args[(i+1):]
             params=True
@@ -236,16 +234,16 @@ def strjoin(*args):
         else:
             largs=[]
             kargs=dict()
-    except Exception,e:
+    except Exception as e:
         raise functions.MadisError(e)
     if len(largs)>0:
         raise functions.OperatorError("strjoin","Unknown argument %s" %(''.join(largs)))
     if 'dialect' not in kargs:
         kargs['dialect']=csvargs.defaultcsv()
-    f=StringIO.StringIO()
+    f=io.StringIO()
     try:
         csvprinter=writer(f,**kargs)
-    except Exception,e:
+    except Exception as e:
         raise functions.MadisError(e)
     csvprinter.writerow(sargs)
     f.seek(0)
@@ -305,9 +303,9 @@ def dateformat(*args):
     try:
         dtobj=datetime.datetime.strptime(dt,fromf)
         ret=datetime.datetime.strftime(dtobj,tof)
-    except ValueError,e:
+    except ValueError as e:
         return None
-    except Exception,e:
+    except Exception as e:
         raise functions.OperatorError("dateformat",e)
     return ret
 
@@ -322,7 +320,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

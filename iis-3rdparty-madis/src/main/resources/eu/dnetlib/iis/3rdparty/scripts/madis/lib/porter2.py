@@ -305,6 +305,6 @@ def stem(word):
     return word
 
 if __name__ == '__main__':
-    print stem("fundamentally")
+    print(stem("fundamentally"))
 
  

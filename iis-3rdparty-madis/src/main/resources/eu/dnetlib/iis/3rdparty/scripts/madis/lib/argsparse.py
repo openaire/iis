@@ -1,5 +1,5 @@
 import re
-from unicodeops import unistr
+from .unicodeops import unistr
 
 
 def parse(args,boolargs=None,nonstringargs=None,needsescape=None,notsplit=None):
@@ -58,7 +58,7 @@ def unquote(p):
     return p
 
 
-re_params=re.compile(ur'^(?!\w:\\\w)(\w+):(.*)')
+re_params=re.compile(r'^(?!\w:\\\w)(\w+):(.*)')
 
 def parametrize(*args,**kargs):
     ps=[]

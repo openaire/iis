@@ -55,6 +55,8 @@ u'[]'
 [1, 2, 3]
 >>> elemfromj(1,None,3)
 [1, None, 3]
+>>> fromjsingle("[1,2]")
+[1, 2]
 """
 
 import json
@@ -68,9 +70,9 @@ def toj(l):
     if l==None:
         return l
     typel=type(l)
-    if typel==str or typel==unicode:
+    if typel==str or typel==str:
         if l=='':
-            return u''
+            return ''
         elif l[0]!='[' or l[-1]!=']':
             return l
         else:
@@ -81,15 +83,15 @@ def toj(l):
         lenl=len(l)
         if lenl==1:
             typel=type(l[0])
-            if typel==str or typel==unicode:
+            if typel==str or typel==str:
                 if l[0]=='':
-                    return u''
+                    return ''
                 elif  l[0][0]!='[' or l[0][-1]!=']':
                     return l[0]
             if typel==int or typel==float:
                 return l[0]
         if lenl==0:
-            return u'[]'
+            return '[]'
         return json.dumps(l, separators=(',',':'), ensure_ascii=False)
     return json.dumps(l, separators=(',',':'), ensure_ascii=False)
 
@@ -102,9 +104,9 @@ def fromjsingle(j):
     typej=type(j)
     if typej == int or typej == float:
         return j
-    if typej == str or typej == unicode:
+    if typej == str or typej == str:
         if j == '':
-            return u''
+            return ''
         if (j[0] == '[' and j[-1] == ']') or (j[0]=='{' and j[-1]=='}'):
             try:
                 return json.loads(j, object_pairs_hook = OrderedDict)
@@ -121,9 +123,9 @@ def fromj(*jargs):
         if typej==int or typej==float:
             fj+= [j]
             continue
-        if typej==str or typej==unicode:
+        if typej==str or typej==str:
             if j=='':
-                fj+= [u'']
+                fj+= ['']
                 continue
             if (j[0]=='[' and j[-1]==']'):
                 try:
@@ -156,9 +158,9 @@ def elemfromj(*jargs):
         if typej==int or typej==float:
             fj+= [j]
             continue
-        if typej==str or typej==unicode:
+        if typej==str or typej==str:
             if j=='':
-                fj+= [u'']
+                fj+= ['']
                 continue
             if j[0]=='[' and j[-1]==']':
                 try:

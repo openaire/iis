@@ -1,7 +1,9 @@
 __docformat__ = 'reStructuredText en'
 
+from . import setpath
 import lib.jopts as jopts
 import json
+from collections import OrderedDict
 
 try:
     from collections import OrderedDict
@@ -67,6 +69,64 @@ class jgroup:
             self.outgroup += (jopts.elemfromj(args[0]))
         else:
             self.outgroup.append(jopts.elemfromj(*args))
+
+    def final(self):
+        return jopts.toj(self.outgroup)
+
+
+class jdictgroup:
+    """
+    .. function:: jdictgroup(columns)
+
+    Groups columns of a group into a jdict.
+
+    Example:
+
+    >>> table1('''
+    ... word1   1
+    ... word2   1
+    ... word3   2
+    ... word4   2
+    ... ''')
+    >>> sql("select jdictgroup(a) from table1 group by b")
+    jdictgroup(a)
+    ---------------------------
+    {"word1":null,"word2":null}
+    {"word3":null,"word4":null}
+
+    >>> sql("select jdictgroup(a,b) from table1")
+    jdictgroup(a,b)
+    -----------------------------------------
+    {"word1":1,"word2":1,"word3":2,"word4":2}
+
+    >>> table2('''
+    ... [1,2]   1
+    ... [3,4]   1
+    ... [5,6]   2
+    ... [7,8]   2
+    ... ''')
+
+    >>> sql("select jdictgroup(a) from table2")
+    jdictgroup(a)
+    -----------------------------------------------------
+    {"[1,2]":null,"[3,4]":null,"[5,6]":null,"[7,8]":null}
+
+    >>> sql("select jdictgroup(a,b) from table2")
+    jdictgroup(a,b)
+    -----------------------------------------
+    {"[1,2]":1,"[3,4]":1,"[5,6]":2,"[7,8]":2}
+    """
+
+    registered = True #Value to define db operator
+
+    def __init__(self):
+        self.outgroup = OrderedDict()
+
+    def step(self, *args):
+        if len(args) == 1:
+            self.outgroup[args[0]] = None
+        else:
+            self.outgroup[args[0]] = jopts.fromjsingle(*args[1:])
 
     def final(self):
         return jopts.toj(self.outgroup)
@@ -185,7 +245,7 @@ class jdictgroupunion:
 
     def step(self, *args):
         for d in args:
-            for x, v in json.loads(d, object_pairs_hook=OrderedDict).iteritems():
+            for x, v in json.loads(d, object_pairs_hook=OrderedDict).items():
                 vlen = 1
                 if type(v) in (list, OrderedDict):
                     vlen = len(v)
@@ -234,7 +294,7 @@ class jgroupunionkeys:
             v = json.loads(arg)
             if not set(v).issubset(self.outgroup):
                 self.outgroupset.update(v)
-                self.outgroup.update([(k, None) for k in json.loads(arg, object_pairs_hook=OrderedDict).iterkeys()])
+                self.outgroup.update([(k, None) for k in json.loads(arg, object_pairs_hook=OrderedDict).keys()])
 
     def final(self):
         return jopts.toj(list(self.outgroup))
@@ -284,7 +344,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
 
     testfunction()

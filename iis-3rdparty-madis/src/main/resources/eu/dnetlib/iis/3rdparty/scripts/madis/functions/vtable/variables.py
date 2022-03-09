@@ -27,7 +27,7 @@ Examples:
 
 """
 
-import vtbase
+from . import vtbase
 import functions
 registered=True
 
@@ -49,7 +49,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

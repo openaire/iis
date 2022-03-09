@@ -2,6 +2,8 @@
 import re
 import functions
 
+
+
 apache_log_split=re.compile('^(\\S*) (\\S*) (\\S*) (\\[[^\\]]+\\]) \\"(\\w+) ([^"\\\\]*(?:\\\\.[^"\\\\]*)*) HTTP/([\\d.]+)\\" (\\S*) (\\S*) \\"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)\\" \\"([^\\"]*)\\"$', re.UNICODE)
 
 months = {
@@ -70,7 +72,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

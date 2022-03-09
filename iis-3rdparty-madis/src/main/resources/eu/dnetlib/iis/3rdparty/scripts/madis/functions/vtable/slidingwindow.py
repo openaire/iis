@@ -42,8 +42,8 @@ Examples::
 
 """
 
-import setpath
-import vtbase
+from . import setpath
+from . import vtbase
 import functions
 import gc
 from collections import deque
@@ -79,7 +79,7 @@ class SlidingWindow(vtbase.VT):
         wid=0
         window=deque([], int(dictargs['window']))
         while True:
-            window.append(c.next())
+            window.append(next(c))
             for r in window:
                 yield (wid,) + r
             wid+=1
@@ -93,7 +93,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

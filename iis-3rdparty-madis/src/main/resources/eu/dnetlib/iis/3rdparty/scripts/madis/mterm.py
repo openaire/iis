@@ -2,17 +2,9 @@
 
 import os
 import sys
+from importlib import reload
+from builtins import input
 
-# Workaround for MAC utf-8 encoding
-if sys.platform == 'darwin':
-    os.environ['LC_ALL']='en_US.UTF-8'
-    reload(sys)
-    sys.setdefaultencoding("utf-8")
-
-# Workaround for windows - DISABLED
-#try: import lib.winunicode
-#except ImportError: pass
-#else: del lib.winunicode
 
 import functions
 import re
@@ -21,10 +13,65 @@ import traceback
 import json
 import math
 import random
+import readline
+
+
+from os import environ
+
+
+class MyCompleter(object):  # Custom completer
+
+    def __init__(self, options):
+        self.options = sorted(options)
+
+    def complete(self, text, state):
+        if state == 0:  # on first trigger, build possible matches
+            if not text:
+                self.matches = self.options[:]
+            else:
+                self.matches = [s for s in self.options
+                                if s and s.startswith(text)]
+
+        # return match indexed by state
+        try:
+            return self.matches[state]
+        except IndexError:
+            return None
+
+    def display_matches(self, substitution, matches, longest_match_length):
+        line_buffer = readline.get_line_buffer()
+        columns = environ.get("COLUMNS", 80)
+
+        print()
+
+        tpl = "{:<" + str(int(max(map(len, matches)) * 1.2)) + "}"
+
+        buffer = ""
+        for match in matches:
+            match = tpl.format(match[len(substitution):])
+            if len(buffer + match) > columns:
+                print(buffer)
+                buffer = ""
+            buffer += match
+
+        if buffer:
+            print(buffer)
+
+        print("> ", end="")
+        print(line_buffer, end="")
+        sys.stdout.flush()
+
+
+
+
+
+
 
 pipedinput=not sys.stdin.isatty()
 errorexit = True
 nobuf = False
+
+
 
 if pipedinput:
     # If we get piped input use dummy readline
@@ -54,7 +101,8 @@ import csv
 
 try:
     if pipedinput:
-        raise 'go to except'
+        raise Exception('go to except')
+
     import lib.colorama as colorama
     from colorama import Fore, Back, Style
     colnums = True
@@ -83,6 +131,7 @@ class mtermoutput(csv.Dialect):
         self.lineterminator='\n'
 
 def createConnection(db):
+
     try:
         if 'SQLITE_OPEN_URI' in apsw.__dict__:
             connection = functions.Connection(db, flags=apsw.SQLITE_OPEN_READWRITE | apsw.SQLITE_OPEN_CREATE | apsw.SQLITE_OPEN_URI)
@@ -90,7 +139,8 @@ def createConnection(db):
             connection = functions.Connection(db)
         functions.register(connection)
         connection.enableloadextension(True)
-    except Exception, e:
+
+    except Exception as e:
         exitwitherror(e)
 
     # Change TEMP store to where the mterm is run from
@@ -104,14 +154,14 @@ def createConnection(db):
 
     return connection
 
+
+
 def reloadfunctions():
     global connection, automatic_reload, db
-
     if not automatic_reload:
         return
 
     modified=lib.reimport.modified()
-
     if len(modified)==0 or (modified==['__main__']):
         return
 
@@ -137,22 +187,22 @@ def raw_input_no_history(*args):
 
     if pipedinput:
         try:
-            input = raw_input()
+            input2 = input()
         except EOFError:
             connection.close()
             exit(0)
         return input
 
     try:
-        input = raw_input(*args)
+        input2 = input(*args)
     except:
         return None
-    if input!='':
+    if input2!='':
         try:
             readline.remove_history_item(readline.get_current_history_length()-1)
         except:
             pass
-    return input
+    return input2
 
 def update_tablelist():
     global alltables, alltablescompl, connection
@@ -168,12 +218,12 @@ def update_tablelist():
             cexec1 = cursor1.execute("select name from "+row[1]+".sqlite_master where type='table';")
 
         for row1 in cexec1:
-            tname=row1[0].lower().encode('ascii')
+            tname=row1[0].lower()
             if row[1] in ('main', 'temp'):
                 alltables.append(tname)
                 alltablescompl.append(tname)
             else:
-                dbtname=(row[1]+'.'+tname).lower().encode('ascii')
+                dbtname=(row[1]+'.'+tname).lower()
                 alltables.append(dbtname)
                 alltablescompl.append(dbtname)
                 if tname not in alltablescompl:
@@ -224,7 +274,7 @@ def approx_rowcount(t):
     if samplesize == 0:
         return 0
     step = idrange / samplesize
-    sample = range(random.randrange(0, step) + minrowid, maxrowid + 1, step)
+    sample = list(range(random.randrange(0, step) + minrowid, maxrowid + 1, step))
     samplesize = len(sample)
     samplehits = 0
     samplestep = 1
@@ -288,7 +338,7 @@ def update_cols_from_tables_in_text(t):
     _update_cols_from_tables_last_text=t
 
     stablesreg='|'.join( (x.replace('$','\$').replace('.', '\.') for x in sorted(alltablescompl, key=len, reverse=True)) )
-    foundtables=re.findall(r'[^a-zA-Z0-9_$]('+stablesreg+r')[,.\s)]', t+u' ')
+    foundtables=re.findall(r'[^a-zA-Z0-9_$]('+stablesreg+r')[,.\s)]', t+' ')
 
     for i in foundtables:
         update_cols_for_table(i)
@@ -299,7 +349,7 @@ def mcomplete(textin,state):
     number_of_kb_exceptions = 0
 
     def normalizename(col):
-        if re.match(ur'\.*[\w_$\d.]+\s*$', col,re.UNICODE):
+        if re.match(r'\.*[\w_$\d.]+\s*$', col,re.UNICODE):
             return col
         else:
             return "`"+col.lower()+"`"
@@ -308,7 +358,7 @@ def mcomplete(textin,state):
         maxcolchars=len(str(len(c)+1))
         formatstring='{:'+'>'+str(maxcolchars)+'}'
         o=[]
-        for num in xrange(len(c)):
+        for num in range(len(c)):
             o.append( formatstring.format(num+1)+'|'+c[num] )
         return o
 
@@ -343,8 +393,8 @@ def mcomplete(textin,state):
         completions=localtables
     # If completion starts at a string boundary, complete from local dir
     elif beforecompl!='' and beforecompl[-1] in ("'", '"'):
-        completions=os.listdir(os.getcwdu())
-        hits=[x for x in completions if x[:len(text)]==unicode(text)]
+        completions=os.listdir(os.getcwd())
+        hits=[x for x in completions if x[:len(text)]==str(text)]
         if state<len(hits):
             return hits[state]
         else: return
@@ -357,14 +407,14 @@ def mcomplete(textin,state):
         completions+=lastcols+colscompl
         completions+=sqlandmtermstatements+allfuncs+localtables
 
-    hits= [x.lower() for x in completions if x.lower()[:len(text)]==unicode(text.lower())]
+    hits= [x.lower() for x in completions if x.lower()[:len(text)]==str(text.lower())]
 
     update_cols_from_tables_in_text(linebuffer)
 
     if hits==[] and text.find('.')!=-1 and re.match(r'[\w\d._$]+', text):
         tablename=re.match(r'(.+)\.', text).groups()[0].lower()
         update_cols_for_table(tablename)
-        hits= [x.lower() for x in colscompl if x.lower()[:len(text)]==unicode(text.lower())]
+        hits= [x.lower() for x in colscompl if x.lower()[:len(text)]==str(text.lower())]
 
 
     # If completing something that looks like a table, complete only from cols
@@ -372,7 +422,7 @@ def mcomplete(textin,state):
         prepost=re.match(r'(.+\.)([^.]*)$', text)
         if prepost:
             prefix, text=prepost.groups()
-            hits= [x.lower() for x in lastcols+[y for y in colscompl if y.find('.')==-1] if x.lower()[:len(text)]==unicode(text.lower())]
+            hits= [x.lower() for x in lastcols+[y for y in colscompl if y.find('.')==-1] if x.lower()[:len(text)]==str(text.lower())]
             # Complete table.number
             if len(hits) == 0 and text.isdigit():
                 cols= get_table_cols(prefix[:-1])
@@ -463,7 +513,7 @@ def schemaprint(cols):
                 charspercolname=max((totalchars-colschars)/(len(cols)+1-i1)-5, mincolchars)
                 colschars+=min(len(i), charspercolname)+len(str(i1))+3
                 if len(i)>charspercolname and len(cols)>1:
-                    i=i[0:charspercolname-1]+'..'
+                    i=i[0:int(charspercolname)-1]+'..'
                 else:
                     i=i+' '
                 sys.stdout.write(Fore.RED+'['+Style.BRIGHT+str(i1)+Style.NORMAL+'|'+Style.RESET_ALL+i)
@@ -472,11 +522,10 @@ def schemaprint(cols):
 
 def printrow(row):
     global rawprinter, colnums
-
+    #print("lala",connection.openiters)
     if not colnums:
         rawprinter.writerow(row)
         return
-
     rowlen=len(row)
     i1=1
     for d in row:
@@ -488,8 +537,10 @@ def printrow(row):
         else:
             if i1!=1:
                 sys.stdout.write(Fore.RED+Style.BRIGHT+'|'+Style.RESET_ALL)
-        if type(d) in (int, float, long):
+        if type(d) in (int, float, int):
             d=str(d)
+        if isinstance(d,bytes):
+            d = d.decode('utf-8')
         elif d is None:
             d=Style.BRIGHT+'null'+Style.RESET_ALL
         try:
@@ -497,7 +548,8 @@ def printrow(row):
         except KeyboardInterrupt:
             raise
         except:
-            sys.stdout.write(d.encode('utf_8', 'replace'))
+
+            sys.stdout.write(d)
 
         i1+=1
     sys.stdout.write('\n')
@@ -505,20 +557,20 @@ def printrow(row):
 def printterm(*args, **kwargs):
     global pipedinput
 
-    msg=','.join([unicode(x) for x in args])
+    msg=','.join([str(x) for x in args])
 
     if not pipedinput:
         print(msg)
 
 def exitwitherror(*args):
-    msg=','.join([unicode(x) for x in args])
+    msg=','.join([str(x) for x in args])
 
     if errorexit:
-        print
+        print()
         sys.exit(msg)
     else:
-        print(json.dumps({"error":msg}, separators=(',',':'), ensure_ascii=False).encode('utf_8', 'replace'))
-        print
+        print((json.dumps({"error":msg}, separators=(',',':'), ensure_ascii=False)))
+        print()
         sys.stdout.flush()
 
 def process_args():
@@ -555,7 +607,8 @@ def process_args():
 
     connection = createConnection(db)
 
-    if db == '' or db == ':memory':
+
+    if db == '' or db == ':memory:':
         functions.variables.execdb = None
     else:
         functions.variables.execdb = str(os.path.abspath(os.path.expandvars(os.path.expanduser(os.path.normcase(db)))))
@@ -563,7 +616,7 @@ def process_args():
     # Found query in args
     if len(args)>2:
         st = ' '.join(args[2:])
-        st = st.decode(output_encoding)
+
 
         c = connection.cursor()
         try:
@@ -577,7 +630,8 @@ def process_args():
                 c.close()
             except:
                 pass
-        sys.exit()
+
+
 
 VERSION='1.0'
 mtermdetails="mTerm - version "+VERSION
@@ -611,6 +665,8 @@ if 'HOME' not in os.environ: # Windows systems
 
 histfile = os.path.join(os.environ["HOME"], ".mterm")
 
+
+
 automatic_reload=False
 if not pipedinput:
     try:
@@ -618,12 +674,16 @@ if not pipedinput:
     except IOError:
         pass
     import atexit
-    atexit.register(readline.write_history_file, histfile)
 
+    atexit.register(readline.write_history_file, histfile)
     automatic_reload=True
     readline.set_completer(mcomplete)
     readline.parse_and_bind("tab: complete")
     readline.set_completer_delims(' \t\n`!@#$^&*()=+[{]}|;:\'",<>?')
+
+
+
+
 
 separator = "|"
 allquote = False
@@ -631,8 +691,11 @@ beeping = False
 db = ""
 language, output_encoding = locale.getdefaultlocale()
 
+
+
 if output_encoding==None:
     output_encoding='UTF8'
+
 
 functions.variables.flowname='main'
 
@@ -643,7 +706,7 @@ process_args()
 sqlandmtermstatements=['select ', 'create ', 'where ', 'table ', 'group by ', 'drop ', 'order by ', 'index ', 'from ', 'alter ', 'limit ', 'delete ', '..',
     "attach database '", 'detach database ', 'distinct', 'exists ']
 dotcompletions=['.help ', '.colnums', '.schema ', '.functions ', '.tables', '.explain ', '.vacuum', '.queryplan ']
-allfuncs=functions.functions['vtable'].keys()+functions.functions['row'].keys()+functions.functions['aggregate'].keys()
+allfuncs=list(functions.functions['vtable'].keys())+list(functions.functions['row'].keys())+list(functions.functions['aggregate'].keys())
 alltables=[]
 alltablescompl=[]
 updated_tables=set()
@@ -654,20 +717,22 @@ colscompl=[]
 
 #Intro Message
 if not pipedinput:
-    print mtermdetails
-    print "running on Python: "+'.'.join([str(x) for x in sys.version_info[0:3]])+', APSW: '+apsw.apswversion()+', SQLite: '+apsw.sqlitelibversion(),
+    print(mtermdetails)
+    print("running on Python: "+'.'.join([str(x) for x in sys.version_info[0:3]])+', APSW: '+apsw.apswversion()+', SQLite: '+apsw.sqlitelibversion(), end=' ')
     try:
         sys.stdout.write(", madIS: "+functions.VERSION+'\n')
     except:
-        print
-    print intromessage
+        print()
+    print(intromessage)
 
 number_of_kb_exceptions=0
+
 while True:
+
     statement = raw_input_no_history("mterm> ")
     if statement==None:
         number_of_kb_exceptions+=1
-        print
+        print()
         if number_of_kb_exceptions<2:
             continue
         else:
@@ -675,11 +740,12 @@ while True:
             break
 
     #Skip comments
+    statement = str(statement)
     if statement.startswith('--'):
         continue
 
     number_of_kb_exceptions=0
-    statement=statement.decode(output_encoding)
+
     #scan for commands
     iscommand=re.match("\s*\.(?P<command>\w+)\s*(?P<argument>([\w\.]*))(?P<rest>.*)$", statement)
     validcommand=False
@@ -759,7 +825,7 @@ while True:
                     try:
                         l += DELIM + " cols:{:<4}".format(str(len(get_table_cols(i))))
                     except KeyboardInterrupt:
-                        print
+                        print()
                         break
                     except:
                         pass
@@ -767,7 +833,7 @@ while True:
                     try:
                         l += DELIM + " ~rows:" + sizeof_fmt(approx_rowcount(i))
                     except KeyboardInterrupt:
-                        print
+                        print()
                         break
                     except:
                         pass
@@ -777,6 +843,7 @@ while True:
                 statement = 'select * from '+argument+' limit 2;'
 
         elif 'select'.startswith(command):
+
             update_tablelist()
             argument = argument.rstrip('; ')
             if not argument:
@@ -833,19 +900,19 @@ while True:
         if validcommand:
             histstatement='.'+command+' '+argument+rest
             try:
-                readline.add_history(histstatement.encode('utf-8'))
+                readline.add_history(histstatement)
             except:
                 pass
 
     if statement:
+
         histstatement=statement
         while not apsw.complete(statement):
             more = raw_input_no_history('  ..> ')
             if more==None:
                 statement=None
                 break
-            more=more.decode(output_encoding)
-            statement = statement + '\n'.decode(output_encoding) + more
+            statement = statement + '\n' + more
             histstatement=histstatement+' '+more
 
         reloadfunctions()
@@ -855,22 +922,23 @@ while True:
             continue
         try:
             if not validcommand:
-                readline.add_history(histstatement.encode('utf-8'))
+                readline.add_history(histstatement)
         except:
             pass
+
 
         before = datetime.datetime.now()
         try:
             if queryplan:
                 cexec = connection.queryplan(statement)
-                desc = cexec.next()
+                desc = next(cexec)
             else:
                 cursor = connection.cursor()
                 cexec = cursor.execute(statement)
                 try:
                     desc = cursor.getdescriptionsafe()
                     lastcols[0:len(desc)] = [x for x, y in desc]
-                except apsw.ExecutionCompleteError, e:
+                except apsw.ExecutionCompleteError as e:
                     desc = []
 
             newcols=[x for x,y in desc]
@@ -883,16 +951,17 @@ while True:
                     printrow(row)
                     rownum+=1
             else:
-                print(json.dumps({"schema":desc}, separators=(',',':'), ensure_ascii=False).encode('utf_8', 'replace'))
+                print((json.dumps({"schema":desc}, separators=(',',':'), ensure_ascii=False)))
                 for row in cexec:
-                    print(json.dumps(row, separators=(',',':'), ensure_ascii=False).encode('utf_8', 'replace'))
+                    print((json.dumps(row, separators=(',',':'), ensure_ascii=False)))
                     if nobuf:
                         sys.stdout.flush()
-                print
+                print()
                 sys.stdout.flush()
 
             if not queryplan:
                 cursor.close()
+
 
             after=datetime.datetime.now()
             tmdiff=after-before
@@ -902,10 +971,10 @@ while True:
                 if rownum==0:
                     printterm( "Query executed in %s min. %s sec %s msec." %((int(tmdiff.days)*24*60+(int(tmdiff.seconds)/60),(int(tmdiff.seconds)%60),(int(tmdiff.microseconds)/1000))) )
                 else:
-                    print "Query executed and displayed %s"%(rownum),
-                    if rownum==1: print "row",
-                    else: print "rows",
-                    print "in %s min. %s sec %s msec." %((int(tmdiff.days)*24*60+(int(tmdiff.seconds)/60),(int(tmdiff.seconds)%60),(int(tmdiff.microseconds)/1000)))
+                    print("Query executed and displayed %s"%(rownum), end=' ')
+                    if rownum==1: print("row", end=' ')
+                    else: print("rows", end=' ')
+                    print("in %s min. %s sec %s msec." %((int(tmdiff.days)*24*60+(int(tmdiff.seconds)/60),(int(tmdiff.seconds)%60),(int(tmdiff.microseconds)/1000))))
             if beeping:
                 printterm('\a\a')
 
@@ -917,26 +986,26 @@ while True:
                 update_tablelist()
 
         except KeyboardInterrupt:
-            print
+            print()
             schemaprint(newcols)
             printterm("KeyboardInterrupt exception: Query execution stopped", exit=True)
             continue
-        except (apsw.SQLError, apsw.ConstraintError , functions.MadisError), e:
-            emsg=unicode(e)
+        except (apsw.SQLError, apsw.ConstraintError , functions.MadisError) as e:
+            emsg=str(e)
             if pipedinput:
                 exitwitherror(functions.mstr(emsg))
             else:
                 try:
-                    if u'Error:' in emsg:
-                        emsgsplit=emsg.split(u':')
-                        print Fore.RED+Style.BRIGHT+ emsgsplit[0] +u':'+Style.RESET_ALL+ u':'.join(emsgsplit[1:])
+                    if 'Error:' in emsg:
+                        emsgsplit=emsg.split(':')
+                        print(Fore.RED+Style.BRIGHT+ emsgsplit[0] +':'+Style.RESET_ALL+ ':'.join(emsgsplit[1:]))
                     else:
-                        print e
+                        print(e)
                 except:
-                    print e
+                    print(e)
 
             continue
-        except Exception, e:
+        except Exception as e:
             trlines = []
 
             for i in reversed(traceback.format_exc(limit=sys.getrecursionlimit()).splitlines()):
@@ -948,7 +1017,7 @@ while True:
             if pipedinput:
                 exitwitherror(functions.mstr(msg))
             else:
-                print msg
+                print(msg)
 
         finally:
             colorama.deinit()

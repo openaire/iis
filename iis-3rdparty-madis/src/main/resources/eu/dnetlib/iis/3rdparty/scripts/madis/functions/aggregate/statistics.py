@@ -1,9 +1,11 @@
-import setpath
+from . import setpath
 import functions
 import math
 from lib import iso8601
 import re
 import datetime
+from fractions import Fraction
+import json
 from fractions import Fraction
 
 
@@ -109,7 +111,7 @@ class modeop:
         if self.init==True:
             self.initargs(args)
 
-        if isinstance(args[0], basestring):
+        if isinstance(args[0], str):
             #For the case of textual dataset, values are converted to lowercase
             self.element = (args[0]).lower()
         else:
@@ -130,7 +132,7 @@ class modeop:
             frequency = {}
             # Build dictionary: key - data set values; item - data frequency.
             for x in self.sample:
-                if (x in frequency.keys()):
+                if (x in list(frequency.keys())):
                     frequency[x]+=1
                 else:
                     frequency[x]=1
@@ -242,7 +244,7 @@ class median:
         if self.init==True:
             self.initargs(args)
 
-        if not(isinstance(args[0], basestring)) and args[0]:
+        if not(isinstance(args[0], str)) and args[0]:
             self.counter +=1
             self.element = float((args[0]))
             self.sample.append(self.element)
@@ -517,11 +519,11 @@ class rangef:
 
     def initargs(self, args):
         self.init=False
-        if len(args)<>1:
+        if len(args)!=1:
             raise functions.OperatorError("rangef","Wrong number of arguments")
     
     def step(self, *args):
-        if not(isinstance(args[0], basestring)) and args[0]:
+        if not(isinstance(args[0], str)) and args[0]:
             self.sample.append(float(args[0]))
         
     def final(self):
@@ -582,7 +584,7 @@ class amean:
         if self.init==True:
             self.initargs(args)
 
-        if not(isinstance(args[0], basestring)) and args[0]:
+        if not(isinstance(args[0], str)) and args[0]:
             self.sample.append(float(args[0]))
             self.sum += float(args[0])
             self.counter+=1
@@ -641,14 +643,14 @@ class wamean:
 
     def initargs(self, args):
         self.init=False
-        if (len(args)<>2):
+        if (len(args)!=2):
             raise functions.OperatorError("wamean","Wrong number of arguments")
 
     def step(self, *args):
         if self.init==True:
             self.initargs(args)
 
-        if not(isinstance(args[0], basestring)) and args[0] and not(isinstance(args[1], basestring)) and args[1]:
+        if not(isinstance(args[0], str)) and args[0] and not(isinstance(args[1], str)) and args[1]:
             self.sum += args[0]*args[1]
             self.counter+=args[0]
 
@@ -761,7 +763,7 @@ class gmean:
     def step(self, *args):
         if self.init==True:
             self.initargs(args)
-        if not(isinstance(args[0], basestring)) and args[0]:
+        if not(isinstance(args[0], str)) and args[0]:
             if self.p<1 and args[0]<1:
                 raise functions.OperatorError("gmean","The specified type of mean applies only to positive numbers")
         # The easiest way to think of the geometric mean is that
@@ -935,7 +937,74 @@ class pearson:
             return 0
 
         return float((self.n*self.sXY-self.sX*self.sY)/d)
-   
+
+
+class fsum:
+    """
+    .. function:: fsum(X) -> json
+
+    Computes the sum using fractional computation. It return the result in json format
+
+    Examples:
+
+    >>> table1('''
+    ... 1
+    ... 2
+    ... 2
+    ... 10
+    ... ''')
+
+    >>> sql("select fsum(a) from table1")
+    fsum(a)
+    -------
+    [15, 1]
+
+    >>> table1('''
+    ... 0.99999999
+    ... 3.99999999
+    ... 0.78978989
+    ... 1.99999999
+    ... ''')
+
+    >>> sql("select fsum(a) from table1")
+    fsum(a)
+    -------------------------------------
+    [70164189421580937, 9007199254740992]
+    """
+
+    registered = True
+
+    def __init__(self):
+        self.init = True
+        self.x = Fraction(0.0)
+
+    def step(self, *args):
+        if self.init:
+            self.init = False
+            if not args:
+                raise functions.OperatorError("fsum","No arguments")
+
+        try:
+            if type(args[0]) in (int, float, int):
+                x = Fraction(args[0])
+            else:
+                try:
+                    json_object = json.loads(args[0])
+                    x = Fraction(json_object[0], json_object[1])
+                except ValueError as e:
+                    return
+        except KeyboardInterrupt:
+            raise
+        except:
+            return
+
+        self.x += x
+
+    def final(self):
+        return json.dumps([self.x.numerator, self.x.denominator])
+
+
+
 
 
 if not ('.' in __name__):
@@ -944,7 +1013,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

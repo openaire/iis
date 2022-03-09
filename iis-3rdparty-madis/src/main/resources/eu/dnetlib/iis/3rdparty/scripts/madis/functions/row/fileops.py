@@ -29,7 +29,42 @@ def fileextension(*args):
 
     return ret[1].lower()
 
-fileextension.registered=True
+fileextension.registered = True
+
+
+def filetext(*args):
+    """
+    .. function:: filetext(filename) -> text
+
+    Returns the contents of the file in a single value
+
+    Examples:
+
+    >>> sql("select filetext('testing/sales.tsv')") #doctest:+ELLIPSIS +NORMALIZE_WHITESPACE
+    filetext('testing/sales.tsv')
+    ----------------------------------
+    Cars        2010-01 Athens  200
+    Cars        2010-02 Athens  130
+    Bikes       2010-01 NY      10
+    Bikes       2010-02 NY      30
+    Cars        2010-01 NY      100
+    Cars        2010-02 NY      160
+    Cars        2010-01 Paris   70
+    Cars        2010-02 Paris   20
+    Bikes       2010-01 Paris   100
+    Bikes       2010-02 Paris   20
+    Boats       2010-01 Paris   200
+    """
+
+    try:
+        with open(args[0], "rU") as f:
+            data = f.read()
+    except ValueError:
+        return None
+    return data
+
+filetext.registered = True
+
 
 if not ('.' in __name__):
     """
@@ -37,7 +72,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

@@ -1,6 +1,6 @@
 __docformat__ = 'reStructuredText en'
 
-import setpath
+from . import setpath
 import json
 from hashlib import md5
 from binascii import b2a_base64
@@ -248,7 +248,7 @@ class graphpowerhash:
     def final(self):
         ncount=len(self.nodes)
 
-        for n,v in self.nodes.iteritems():
+        for n,v in self.nodes.items():
             v[1]=str(len(v[0]))+chr(31)+v[1]
 
         if ncount==1:
@@ -261,7 +261,7 @@ class graphpowerhash:
             maxdegree=0
             invdegree=0.0
 
-            for n,v in self.nodes.iteritems():
+            for n,v in self.nodes.items():
                 ndegree=len(v[0])
                 mindegree=min(mindegree, ndegree)
                 maxdegree=max(maxdegree, ndegree)
@@ -281,14 +281,14 @@ class graphpowerhash:
 
         nhashes={}
 
-        for n,v in self.nodes.iteritems():
+        for n,v in self.nodes.items():
             nhashes[n]=md5(str(v[1]+chr(30))).digest()
 
         if ncount>1:
-            for s in xrange(self.steps):
+            for s in range(self.steps):
                 nhashes1={}
                 nhashcount={}
-                for n, v in self.nodes.iteritems():
+                for n, v in self.nodes.items():
                     nhash=md5(v[1]+chr(30)+chr(30).join(sorted([nhashes[x]+chr(29)+y for x,y in v[0]]))).digest()
                     nhashes1[n]=nhash
                     if nhash in nhashcount:
@@ -397,7 +397,7 @@ class graphtodot:
             argslen-=1
 
         if argslen>4:
-            edgedetailslr=unicode(largs[4])
+            edgedetailslr=str(largs[4])
         else:
             edgedetailslr=None
 
@@ -422,34 +422,34 @@ class graphtodot:
             self.graphname=''
 
         if type(self.graphname) in (int, float):
-            self.graphname=u'g'+unicode(self.graphname)
+            self.graphname='g'+str(self.graphname)
         else:
-            self.graphname=unicode(self.graphname)
+            self.graphname=str(self.graphname)
         
-        dot=u''
+        dot=''
         if self.directed:
-            dot=u'di'
+            dot='di'
 
         if self.graphname==None:
             self.graphname='""'
 
-        dot+=u'graph '+self.graphname+u' {\n'
+        dot+='graph '+self.graphname+' {\n'
 
         digraph=False
         
-        for n,v in self.nodes.iteritems():
+        for n,v in self.nodes.items():
             if v[1]!=None:
-                dot+=json.dumps(unicode(n))+' [label="'+unicode(v[1]).replace('"',"'")+'"];\n'
+                dot+=json.dumps(str(n))+' [label="'+str(v[1]).replace('"',"'")+'"];\n'
             for e in v[0]:
-                dot+=json.dumps(unicode(n)) + ' '
+                dot+=json.dumps(str(n)) + ' '
                 if self.directed:
                     dot+='-> '
                 else:
                     dot+='-- '
-                dot += json.dumps(unicode(e[0]))
+                dot += json.dumps(str(e[0]))
                 if e[1]!=None:
-                    dot+=u' [label="'+unicode(e[1]).replace('"',"'")+'"]'
-                dot+=u';\n'
+                    dot+=' [label="'+str(e[1]).replace('"',"'")+'"]'
+                dot+=';\n'
 
         dot+='}'
 
@@ -517,7 +517,7 @@ class graphtotgf:
         largs=args
 
         if argslen>3:
-            edgedetailslr=unicode(largs[3])
+            edgedetailslr=str(largs[3])
         else:
             edgedetailslr=None
 
@@ -541,14 +541,14 @@ class graphtotgf:
         tgf=''
 
         def clearname(n):
-            return unicode(n).replace(' ','_').replace('"',"'")
+            return str(n).replace(' ','_').replace('"',"'")
 
-        for n,v in self.nodes.iteritems():
+        for n,v in self.nodes.items():
             tgf+=clearname(n) + ' ' + (clearname(v[1]) if v[1]!=None else '') +'\n'
 
         tgf+='#\n'
            
-        for n,v in self.nodes.iteritems():
+        for n,v in self.nodes.items():
             for e in v[0]:
                 tgf+=clearname(n)+ ' ' + clearname(e[0])+ ' '+ (clearname(e[1]) if e[1]!=None else '') + '\n'
 
@@ -625,7 +625,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

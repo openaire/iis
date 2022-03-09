@@ -1,6 +1,6 @@
-from HTMLParser import *
+from html.parser import *
 import re
-import Queue
+import queue
 
 
 piencodingRegExp = '.*encoding=\"([^\"]+)\"'
@@ -40,7 +40,7 @@ class TableHTMLParser(HTMLParser):
     def parse(self, s):
         "Parse the given string 's'."
         self.lines = []
-        self.feed(unicode(s,self.encoding))
+        self.feed(str(s,self.encoding))
         if self.columnsNumber==0 and self.lines!=[]:
             self.columnsNumber=len(self.lines[0])
         for el in self.lines:

@@ -1,6 +1,6 @@
 import re
 
-reduce_spaces=re.compile(ur'\s+', re.UNICODE)
+reduce_spaces=re.compile(r'\s+', re.UNICODE)
 
 def CreateStatement(description,tablename):
     names=[]
@@ -25,7 +25,7 @@ def unify(slist):
             eldict[s]+=1
         else:
             eldict[s]=1
-    for val,fr in eldict.items():
+    for val,fr in list(eldict.items()):
         if fr==1:
             del eldict[val]
     for val in eldict:
@@ -43,9 +43,14 @@ def unify(slist):
 onlyalphnum=re.compile('[a-zA-Z]\w*$')
 
 def schemastr(tablename,colnames,typenames=None):
-    stripedcolnames=['"'+el+'"' if onlyalphnum.match(el)
-                                else '"'+reduce_spaces.sub(' ', el.replace('\n','').replace('\t','')).strip().replace('"','""')+'"'
-                                for el in unify(colnames)]
+    if isinstance(colnames[0], bytes):
+        stripedcolnames = ['"'+el.decode('utf-8')+'"' if onlyalphnum.match(el.decode('utf-8'))
+                                    else '"'+reduce_spaces.sub(' ', el.decode('utf-8').replace('\n','').replace('\t','')).strip().replace('"','""')+'"'
+                                    for el in unify(colnames)]
+    else:
+        stripedcolnames = ['"' + el + '"' if onlyalphnum.match(el)
+                           else '"' + reduce_spaces.sub(' ', el.replace('\n', '').replace('\t','')).strip().replace('"', '""') + '"'
+                           for el in unify(colnames)]
     if not typenames:
         return "create table %s(%s)" %(tablename,','.join([c for c in stripedcolnames]))
     else:

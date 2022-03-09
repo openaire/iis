@@ -12,8 +12,8 @@ Examples::
 
 """
 
-import setpath
-import vtbase
+from . import setpath
+from . import vtbase
 import functions
 import apsw
 
@@ -30,14 +30,13 @@ class QueryPlan(vtbase.VT):
 
         def buststatementcache():
             c = connection.cursor()
-            for i in xrange(110):
+            for i in range(110):
                 a=list(c.execute("select "+str(i)))
 
         _, dictargs = self.full_parse(parsedArgs)
-        
+
         if 'query' not in dictargs:
             raise functions.OperatorError(__name__.rsplit('.')[-1]," needs query argument ")
-
         query=dictargs['query']
 
         connection = envars['db']
@@ -48,18 +47,15 @@ class QueryPlan(vtbase.VT):
         cursor = connection.cursor()
 
         cursor.setexectrace(lambda x,y,z:apsw.SQLITE_DENY)
-
         connection.setauthorizer(authorizer)
+
 
         cursor.execute(query)
 
         connection.setauthorizer(None)
-
         yield [('operation', 'text'), ('paramone', 'text'), ('paramtwo', 'text'), ('databasename', 'text'), ('triggerorview', 'text')]
-
         for r in plan:
             yield r
-    
     def destroy(self):
         pass
 
@@ -72,7 +68,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

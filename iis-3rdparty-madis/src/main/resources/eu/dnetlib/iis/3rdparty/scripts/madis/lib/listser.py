@@ -18,7 +18,7 @@ NAN = pack('f',float('nan'))
 
 def dumps(l):
     if type(l) != list:
-        raise ValueError, "Type not supported"
+        raise ValueError("Type not supported")
 
     st = ['=']
     stappend = st.append
@@ -30,7 +30,7 @@ def dumps(l):
             for x in v:
                 l1append(x)
                 stappend(str(len(x))+'s')
-        elif t is unicode:
+        elif t is str:
             for x in v:
                 v1=x.encode('utf8')
                 l1append(v1)
@@ -59,6 +59,6 @@ def loads(s):
 if __name__ == "__main__":
     #l1 = [1,3,4,"lala", "gaga", 5, "as" , None,None,u'asfdasdf', u'qwerqewr', 3,4,5,None, None, "LALAKIS"]
     l1 = ['lal',3]
-    print l1
+    print(l1)
     a=dumps(l1)
-    print loads(a)
+    print(loads(a))

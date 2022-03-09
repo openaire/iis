@@ -1,5 +1,5 @@
-import setpath
-import Queue
+from . import setpath
+import queue
 import functions
 from lib import iso8601
 from operator import itemgetter
@@ -59,15 +59,15 @@ class groupsum:
         try:
             group = self.groupsdict[groupkey]
             j = 0
-            for i in xrange(self.grouplen+1,self.numofargs):
+            for i in range(self.grouplen+1,self.numofargs):
                 group[j].append(args[i])
                 j += 1
         except KeyError:
             self.groupsdict[groupkey] = [[x] for x in args[self.grouplen+1:]]
 
     def final(self):
-        yield tuple('c'+str(i) for i in xrange(1,self.numofargs))
-        for groupkey, sumcols in self.groupsdict.iteritems():
+        yield tuple('c'+str(i) for i in range(1,self.numofargs))
+        for groupkey, sumcols in self.groupsdict.items():
             cols = list(groupkey)
             for col in sumcols:
                 try:
@@ -124,15 +124,15 @@ class groupmax:
         try:
             group = self.groupsdict[groupkey]
             j = 0
-            for i in xrange(self.grouplen+1,self.numofargs):
+            for i in range(self.grouplen+1,self.numofargs):
                 group[j].append(args[i])
                 j += 1
         except KeyError:
             self.groupsdict[groupkey] = [[x] for x in args[self.grouplen+1:]]
 
     def final(self):
-        yield tuple('c'+str(i) for i in xrange(1,self.numofargs))
-        for groupkey, sumcols in self.groupsdict.iteritems():
+        yield tuple('c'+str(i) for i in range(1,self.numofargs))
+        for groupkey, sumcols in self.groupsdict.items():
             cols = list(groupkey)
             for col in sumcols:
                 cols.append(max(col))
@@ -209,7 +209,7 @@ class condbreak:
         if size<=0:
             yield ("bgroupid","C1")
         else:
-            yield tuple(["bgroupid"]+["C"+str(i+1) for i in xrange(size-1)])
+            yield tuple(["bgroupid"]+["C"+str(i+1) for i in range(size-1)])
 
         counter=0
         for el in self.vals:
@@ -287,7 +287,7 @@ class datediffbreak:
         if len(args)<4:
             raise functions.OperatorError("datediffbreak","Wrong number of arguments")
         self.maxdiff=args[-1]
-        for i in xrange(len(args)):
+        for i in range(len(args)):
             if args[i]=='order':
                 self.position=i
                 self.maxdiff=args[i-1]
@@ -319,7 +319,7 @@ class datediffbreak:
             yield [None, None]
             return
 
-        yield tuple(["bgroupid"]+["C"+str(i) for i in xrange(1,size)])
+        yield tuple(["bgroupid"]+["C"+str(i) for i in range(1,size)])
 
         counter=0
         dt=None
@@ -415,7 +415,7 @@ class datediffnewsesid:
             yield [None, None, None]
             return
 
-        yield tuple(["bgroupid"]+["C"+str(i) for i in xrange(1,len(self.vals[0])-1)])
+        yield tuple(["bgroupid"]+["C"+str(i) for i in range(1,len(self.vals[0])-1)])
 
         counter=0
         if lenofvals!=1:
@@ -529,7 +529,7 @@ class datedifffilter:
             yield [None,None]
             return
 
-        yield tuple(["date"]+["C"+str(i) for i in xrange(1, len(self.vals[0]))])
+        yield tuple(["date"]+["C"+str(i) for i in range(1, len(self.vals[0]))])
 
         dt=None
         dtpos=0
@@ -630,7 +630,7 @@ class datediffgroup:
         if self.tablesize<=0:
             yield ("groupid","date","C1")
         else:
-            yield tuple(["groupid"]+["date"]+["C"+str(i+1) for i in xrange(self.tablesize-1)])
+            yield tuple(["groupid"]+["date"]+["C"+str(i+1) for i in range(self.tablesize-1)])
 
         dt=None
         dtpos=0
@@ -656,7 +656,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

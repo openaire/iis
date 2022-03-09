@@ -3,13 +3,12 @@ Basis code for
 OnetoN and NtoN operators
 """
 
-import setpath
+from . import setpath
 import functions
 import apsw
 from lib import argsparse
 
 from lib import schemaUtils
-
 
 # Decorator to extended a function by calling first another function with no arguments
 
@@ -20,7 +19,7 @@ def echocall(func):
             Extra=""
             if 'tablename' in obj.__dict__:
                 Extra=obj.tablename
-            print "Table %s:Before Calling %s.%s(%s)" %(Extra+str(obj),obj.__class__.__name__,func.__name__,','.join([repr(l) for l in args[1:]]+["%s=%s" %(k,repr(v)) for k,v in kw.items()]))
+            print("Table %s:Before Calling %s.%s(%s)" %(Extra+str(obj),obj.__class__.__name__,func.__name__,','.join([repr(l) for l in args[1:]]+["%s=%s" %(k,repr(v)) for k,v in list(kw.items())])))
 #            aftermsg="Table %s:After Calling %s.%s(%s)" %(Extra,obj.__class__.__name__,func.__name__,','.join([repr(l) for l in args[1:]]+["%s=%s" %(k,repr(v)) for k,v in kw.items()]))
         return func(*args, **kw)
     return wrapper
@@ -67,7 +66,7 @@ class emptyiter:
         pass
     def __iter__(self):
         return self
-    def next(self):
+    def __next__(self):
         raise StopIteration
     def close(self):
         pass
@@ -88,7 +87,7 @@ class LTable: ####Init means setschema and execstatus
         largs, kargs = [] ,dict()
         try:
             largs, kargs = argsparse.parse(args,boolargs,nonstringargs,needsescape,notsplit)
-        except Exception,e:
+        except Exception as e:
             raise #functions.MadisError(e)
         if self.autostring in kargs:
             del kargs[self.autostring]
@@ -101,9 +100,9 @@ class LTable: ####Init means setschema and execstatus
             self._setschema()
             if not self.auto and not self.staticschema:
                 if functions.settings['vtdebug']:
-                    print "Manual vtable creation:Closing Vtable iterator"
+                    print("Manual vtable creation:Closing Vtable iterator")
                 self.iter.close()
-        except (StopIteration,apsw.ExecutionCompleteError),e: ###
+        except (StopIteration,apsw.ExecutionCompleteError) as e: ###
             try:
                 raise functions.DynamicSchemaWithEmptyResultError(self.envars['modulename'])
             finally:
@@ -120,7 +119,7 @@ class LTable: ####Init means setschema and execstatus
     @echocall
     def getschema(self):
         if functions.settings['tracing']:
-            print 'VT_Schema: %s' %(self.schema)
+            print('VT_Schema: %s' %(self.schema))
         return self.schema
 
     @echocall
@@ -130,7 +129,7 @@ class LTable: ####Init means setschema and execstatus
     @echocall
     def Open(self):
         if self.delayedexception:
-            raise self.delayedexception[1], None, self.delayedexception[2] ### Re - raise Exception of Create
+            raise self.delayedexception[1].with_traceback(self.delayedexception[2]) ### Re - raise Exception of Create
         if self.first and self.auto and not self.staticschema:
             self.first=False
             return Cursor(self,self.iter)
@@ -156,7 +155,7 @@ class LTable: ####Init means setschema and execstatus
         if self.first and self.auto and not self.staticschema:
             self.iter.close()
             self.first=False
-        if self.vtable.__class__.__dict__.has_key('disconnect'):
+        if 'disconnect' in self.vtable.__class__.__dict__:
             self.vtable.disconnect()
     @echocall
     def Destroy(self):
@@ -166,20 +165,20 @@ class LTable: ####Init means setschema and execstatus
         if self.first and self.auto and not self.staticschema:
             self.iter.close()
         del self.tblist[self.tablename]
-        if self.vtable.__class__.__dict__.has_key('destroy'):
+        if 'destroy' in self.vtable.__class__.__dict__:
             self.vtable.destroy()
 
 
 
 # Represents a cursor
 class Cursor:
-    __slots__ = ("Next", "Close", "Column", "Rowid", "Eof", "pos", "row", "table", "eof", "iterNext", "iter")
+    __slots__ = ("Column", "Rowid", "Eof", "pos", "row", "table", "eof", "iterNext", "iter","tablename","firsttime")
 
     @echocall
     def __init__(self, table,iter):
         self.table=table
         self.iter=iter
-        self.iterNext = self.iter.next
+        self.iterNext = self.iter.__next__
         self.row=None
         self.tablename=table.tablename
         self.firsttime=True
@@ -195,7 +194,7 @@ class Cursor:
 
         if not self.firsttime:
             self.iter=self.table.reset(self.iter)
-            self.iterNext = self.iter.next
+            self.iterNext = self.iter.__next__
         self.firsttime=False
         self.Next()
 
@@ -223,6 +222,10 @@ class Cursor:
         except StopIteration:
             self.row=None
             self.eof=True
+        except Exception as e:
+            if str(e) == 'generator raised StopIteration':
+                self.row = None
+                self.eof = True
 
     @echocall
     def Close(self):
@@ -230,6 +233,7 @@ class Cursor:
             self.iter.close()
         except AttributeError:
             pass
+
 
 def unify(slist):
     if len(set(slist))==len(slist):
@@ -240,7 +244,7 @@ def unify(slist):
             eldict[s]+=1
         else:
             eldict[s]=1
-    for val,fr in eldict.items():
+    for val,fr in list(eldict.items()):
         if fr==1:
             del eldict[val]
     for val in eldict:
@@ -265,3 +269,4 @@ def schemastr(tablename,colnames,typenames=None):
     else:
         stripedtypenames=['' if el.lower()=="none" else el if onlyalphnum.match(el) else '"'+el.replace('"','""')+'"' for el in typenames]
         return "create table %s(%s)" %(tablename,','.join([str(c)+' '+str(t) for c,t in zip(unify(stripedcolnames),stripedtypenames)]))
+

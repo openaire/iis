@@ -56,7 +56,7 @@ With setschema functions preference column is casted as float.
 
 """
 from lib.sqlitetypes import typestoSqliteTypes
-import vtbase
+from . import vtbase
 import functions
 from lib.pyparsing import Word, alphas, alphanums, Optional, Group, delimitedList, quotedString , ParseBaseException
 
@@ -108,7 +108,7 @@ class SetSchema(vtbase.VT):
         execit=c.execute(query)
         qtypes=[str(v[1]) for v in c.getdescriptionsafe()]
 
-        for i in xrange(len(types)):
+        for i in range(len(types)):
             if types[i]=='' and i<len(qtypes) and qtypes[i]!='':
                 types[i]=qtypes[i]
 
@@ -142,7 +142,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

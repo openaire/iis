@@ -16,10 +16,10 @@ Examples:
     France  | 89.1                            | 2012 est. | 89.97                                     | 2012 est. | Europe
     
 """
-import setpath
+from . import setpath
 import functions
-import urllib2
-import vtbase
+import urllib.request, urllib.error, urllib.parse
+from . import vtbase
 from lib import TableHTMLParser
 
 registered=True
@@ -42,7 +42,7 @@ class WebTable(vtbase.VT):
     def VTiter(self,tableUrl, tableNum,**envars):
         tableiter = TableParse(tableUrl, tableNum)
 
-        samplerow = tableiter.next()
+        samplerow = next(tableiter)
 
         if type(samplerow) == tuple:
             yield [(header,'text') for header in samplerow]
@@ -63,8 +63,8 @@ class TableParse:
             txheaders = {
                 'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
             }
-            req = urllib2.Request(url, txdata, txheaders)
-            self.ufile = urllib2.urlopen(req)
+            req = urllib.request.Request(url, txdata, txheaders)
+            self.ufile = urllib.request.urlopen(req)
             headers = self.ufile.info()
         except Exception:
             raise functions.OperatorError(__name__.rsplit('.')[-1],"Cannot load url:'%s'" %(repr(url)))
@@ -73,11 +73,11 @@ class TableParse:
         self.iterator=linkiter(self.ufile,parser.parse)
     def __iter__(self):
         return self
-    def next(self):
+    def __next__(self):
         try:
-            current = self.iterator.next()
+            current = next(self.iterator)
             return current
-        except TableHTMLParser.HTMLParseError,e:            
+        except TableHTMLParser.HTMLParseError as e:            
             raise functions.OperatorError(__name__.rsplit('.')[-1],e)
 
         
@@ -102,7 +102,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

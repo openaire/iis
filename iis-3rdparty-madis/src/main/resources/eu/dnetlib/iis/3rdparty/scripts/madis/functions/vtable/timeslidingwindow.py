@@ -81,8 +81,8 @@ the moment, we assume that the data is ordered by the temporal column that
 
 """
 
-import setpath
-import vtbase
+from . import setpath
+from . import vtbase
 import functions
 from collections import deque
 import time
@@ -127,7 +127,7 @@ class TimeSlidingWindow(vtbase.VT):
 
         wid = 0
         secs = 0
-        row = c.next()
+        row = next(c)
         firstTime = int(time.mktime(parser.parse(row[timecolumn], fuzzy=True).timetuple()))
 
         head = {firstTime: [row]}
@@ -136,14 +136,14 @@ class TimeSlidingWindow(vtbase.VT):
             prev = row
 
             try:
-                row = c.next()
+                row = next(c)
             except StopIteration:
                 if wid == 0:
-                    for k in head.keys():
+                    for k in list(head.keys()):
                         for t in head[k]:
                             yield (wid,) + t
                     for rl in window:
-                        for k in rl.keys():
+                        for k in list(rl.keys()):
                             for t in rl[k]:
                                 yield (wid,) + t
                 break
@@ -161,28 +161,28 @@ class TimeSlidingWindow(vtbase.VT):
                 window.append(rowlist)
             else:
                 if wid == 0:
-                    for k in head.keys():
+                    for k in list(head.keys()):
                         for t in head[k]:
                             yield (wid,) + t
                     for rl in window:
-                        for k in rl.keys():
+                        for k in list(rl.keys()):
                             for t in rl[k]:
                                 yield (wid,) + t
                 while secs > firstTime + winlen and window:
                     try:
                         head = window.popleft()
-                        firstTime = head.keys()[0]
+                        firstTime = list(head.keys())[0]
                     except IndexError:
                         break
 
                 rowlist = {secs: [row]}
                 window.append(rowlist)
                 wid += 1
-                for k in head.keys():
+                for k in list(head.keys()):
                     for t in head[k]:
                         yield (wid,) + t
                 for rl in window:
-                    for k in rl.keys():
+                    for k in list(rl.keys()):
                         for t in rl[k]:
                             yield (wid,) + t
 
@@ -199,7 +199,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
 
     testfunction()

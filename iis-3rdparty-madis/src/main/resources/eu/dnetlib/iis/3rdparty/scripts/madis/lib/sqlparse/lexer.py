@@ -78,7 +78,7 @@ class LexerMeta(type):
 
             try:
                 rex = re.compile(tdef[0], rflags).match
-            except Exception, err:
+            except Exception as err:
                 raise ValueError(("uncompilable regex %r in state"
                                   " %r of %r: %s"
                                   % (tdef[0], state, cls, err)))
@@ -130,7 +130,7 @@ class LexerMeta(type):
         cls._tmpname = 0
         processed = cls._all_tokens[cls.__name__] = {}
         #tokendefs = tokendefs or cls.tokens[name]
-        for state in cls.tokens.keys():
+        for state in list(cls.tokens.keys()):
             cls._process_state(cls.tokens, processed, state)
         return processed
 
@@ -149,9 +149,7 @@ class LexerMeta(type):
 
 
 
-class Lexer:
-
-    __metaclass__ = LexerMeta
+class Lexer(metaclass=LexerMeta):
 
     encoding = 'utf-8'
     stripall = False
@@ -210,12 +208,12 @@ class Lexer:
         Also preprocess the text, i.e. expand tabs and strip it if
         wanted and applies registered filters.
         """
-        if not isinstance(text, unicode):
+        if not isinstance(text, str):
             if self.encoding == 'guess':
                 try:
                     text = text.decode('utf-8')
-                    if text.startswith(u'\ufeff'):
-                        text = text[len(u'\ufeff'):]
+                    if text.startswith('\ufeff'):
+                        text = text[len('\ufeff'):]
                 except UnicodeDecodeError:
                     text = text.decode('latin1')
             elif self.encoding == 'chardet':
@@ -302,7 +300,7 @@ class Lexer:
                         pos += 1
                         statestack = ['root']
                         statetokens = tokendefs['root']
-                        yield pos, Text, u'\n'
+                        yield pos, Text, '\n'
                         continue
                     yield pos, Error, text[pos]
                     pos += 1

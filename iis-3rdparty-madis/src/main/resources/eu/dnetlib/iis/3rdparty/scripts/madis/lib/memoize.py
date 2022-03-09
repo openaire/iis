@@ -18,13 +18,13 @@ if __name__ == "__main__":
 		return a+5
 
 	lala(5)
-	print lala.cache
+	print(lala.cache)
 	lala(15)
-	print lala.cache
+	print(lala.cache)
 	lala(20)
-	print lala.cache
+	print(lala.cache)
 	lala.reset()
-	print lala.cache
+	print(lala.cache)
 	lala(5)
-	print lala.cache
+	print(lala.cache)
 

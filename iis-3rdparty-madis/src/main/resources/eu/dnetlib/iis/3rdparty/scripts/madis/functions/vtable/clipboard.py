@@ -19,7 +19,7 @@ Examples:
     3    | Saint Kitts and Nevis | 185.00      | 2009 est.
 
 """
-import vtbase
+from . import vtbase
 
 registered=True
 external_stream=True
@@ -47,7 +47,7 @@ class clipboard(vtbase.VT):
     def VTiter(self, *parsedArgs, **envars):
         largs, dictargs = self.full_parse(parsedArgs)
         import lib.pyperclip as clip
-        data=unicode(clip.getcb(), 'utf_8')
+        data=str(clip.getcb(), 'utf_8')
 
         if data.count('\n')>=data.count('\r'):
             data=data.split('\n')
@@ -55,7 +55,7 @@ class clipboard(vtbase.VT):
             data=data.split('\r')
 
         #delete empty lines from the end
-        for i in xrange(len(data)-1,-1,-1):
+        for i in range(len(data)-1,-1,-1):
             if len(data[i])==0:
                 del data[i]
             else:
@@ -86,7 +86,7 @@ class clipboard(vtbase.VT):
                 delim = ' '
 
         if delim != None:
-            data=[i.split(delim) for i in data]
+            data=[[x.strip() for x in i.split(delim)] for i in data]
             self.schema = None
             header = False
 
@@ -104,9 +104,9 @@ class clipboard(vtbase.VT):
                 else:
                     count = self.count + 2
                     
-                self.schema=[('C'+str(i),'text') for i in xrange(1, count)]
+                self.schema=[('C'+str(i),'text') for i in range(1, count)]
         else:
-            data = [[r] for r in data]
+            data = [[r.strip()] for r in data]
 
         yield self.schema
 
@@ -123,7 +123,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":
