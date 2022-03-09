@@ -1,11 +1,12 @@
 # coding: utf-8
 
-import setpath
+from . import setpath
 import datetime
 from lib import porter2 as porter
 from lib.textcat import *
 
 classifier=NGram()
+
 
 def detectlang(*args):
 
@@ -129,7 +130,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

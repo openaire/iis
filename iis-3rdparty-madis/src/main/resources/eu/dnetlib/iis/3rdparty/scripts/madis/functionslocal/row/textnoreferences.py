@@ -2,6 +2,7 @@
 
 import re
 import json
+import imp
 
 
 def textnoreferences(txt,maxlen = 5,pattern = r'(\b|_)((1[5-9]\d{2,2})|(20\d{2,2}))(\b|_)' ):
@@ -69,7 +70,7 @@ def textnoreferences(txt,maxlen = 5,pattern = r'(\b|_)((1[5-9]\d{2,2})|(20\d{2,2
     results = []
     densities = []
 
-    for i in xrange(maxlen/2):
+    for i in range(maxlen//2):
         results.append(1)
     for i in reversedtext:
         if len(i)>10:
@@ -78,26 +79,26 @@ def textnoreferences(txt,maxlen = 5,pattern = r'(\b|_)((1[5-9]\d{2,2})|(20\d{2,2
             else:
                     results.append(0)
 
-    for i in xrange(maxlen/2):
+    for i in range(maxlen//2):
         results.append(0)
 
     out = 0
     temp = 0
-    for i in xrange(maxlen/2,len(results)-maxlen/2):
-        if i==maxlen/2 :
-            temp = sum(results[0:maxlen])*1.0/maxlen
+    for i in range(maxlen//2,len(results)-maxlen//2):
+        if i==maxlen//2 :
+            temp = sum(results[0:maxlen])*1.0//maxlen
         else:
             if out == results[i+maxlen/2]:
                 pass
             elif results[i+maxlen/2]:
-                temp = (temp*maxlen+1) *1.0 / maxlen
+                temp = (temp*maxlen+1) *1.0 // maxlen
             else:
-                temp = (temp*maxlen-1) *1.0 / maxlen
+                temp = (temp*maxlen-1) *1.0 // maxlen
         densities.append(temp)
         out = results[i-maxlen/2]
 
     try:
-        threshold =  sum(densities)/len(densities)
+        threshold =  sum(densities)//len(densities)
     except:
         threshold = 0
 
@@ -124,7 +125,7 @@ if not ('.' in __name__):
     from functions import *
     testfunction()
     if __name__ == "__main__":
-        reload(sys)
+        imp.reload(sys)
         sys.setdefaultencoding('utf-8')
         import doctest
         doctest.testmod()

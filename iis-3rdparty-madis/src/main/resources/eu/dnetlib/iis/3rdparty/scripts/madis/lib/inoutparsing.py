@@ -1,4 +1,4 @@
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import tempfile
 import csv
 import re
@@ -110,9 +110,9 @@ def inoutargsparse(args,kargs):
 def cacheurl(url,extraheaders):
     fd , fname =tempfile.mkstemp(suffix="kill.urlfetch")
     os.close(fd)
-    req=urllib2.Request(url,None,extraheaders)
+    req=urllib.request.Request(url,None,extraheaders)
     #urliter=urllib2.urlopen(url)
-    urliter=urllib2.urlopen(req)
+    urliter=urllib.request.urlopen(req)
     tmp=open(fname,"wb")
     for line in urliter:
         tmp.write(line)

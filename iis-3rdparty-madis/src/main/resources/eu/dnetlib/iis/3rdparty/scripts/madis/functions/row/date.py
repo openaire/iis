@@ -35,9 +35,9 @@ def cleantimezone(*args):
     d = args[0].replace('T',' ')
     tindex = d.find('+')
     mindex = d.rfind('-')
-    if tindex<>-1:
+    if tindex!=-1:
         return d[0:tindex]
-    elif mindex <>-1 and mindex>13:
+    elif mindex !=-1 and mindex>13:
         return d[0:mindex]
     else:
         return d;
@@ -229,7 +229,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

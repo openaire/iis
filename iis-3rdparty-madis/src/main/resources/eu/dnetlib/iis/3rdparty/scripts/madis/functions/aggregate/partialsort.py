@@ -41,13 +41,13 @@ class partialsort:
         if len(args)<2:
             raise functions.OperatorError("partialsort","Wrong number of arguments")
         if not self.sortnum:
-            self.sortnum = tuple(i for i in xrange(args[0]))
+            self.sortnum = tuple(i for i in range(args[0]))
         self.topn.append(args[1:])
         self.stepsnum+=1
         pass
 
     def final(self):
-        yield tuple('c'+str(i) for i in xrange(1,len(self.topn[0])+1))
+        yield tuple('c'+str(i) for i in range(1,len(self.topn[0])+1))
         self.topn.sort(key=operator.itemgetter(*self.sortnum))
         for el in self.topn:
             yield el
@@ -60,7 +60,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

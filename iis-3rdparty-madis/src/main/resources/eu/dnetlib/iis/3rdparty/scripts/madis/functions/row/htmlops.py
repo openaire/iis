@@ -1,8 +1,8 @@
 # coding: utf-8
 import urllib
 import re
-from htmlentitydefs import name2codepoint
-import urlparse
+from html.entities import name2codepoint
+import urllib.parse
 import os
 import mimetypes
 import xml.sax.saxutils

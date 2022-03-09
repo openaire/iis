@@ -26,8 +26,10 @@ def parse(sql):
 
     Returns a tuple of :class:`~sqlparse.sql.Statement` instances.
     """
+
     stack = engine.FilterStack()
     stack.full_analyze()
+    i = stack.run(sql)
     return tuple(stack.run(sql))
 
 
@@ -52,4 +54,4 @@ def split(sql):
     """
     stack = engine.FilterStack()
     stack.split_statements = True
-    return [unicode(stmt) for stmt in stack.run(sql)]
+    return [str(stmt) for stmt in stack.run(sql)]

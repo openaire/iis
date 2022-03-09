@@ -1,8 +1,6 @@
 # coding: utf-8
 
-import setpath
-import datetime
-
+from . import setpath
 import functions
 from string import Template
 
@@ -16,6 +14,12 @@ class myTemplate(Template):
       (?P<invalid>)              # Other ill-formed delimiter exprs
     )
     """%{'delim' : delimiter, 'id': Template.idpattern }
+
+
+def query(*args):
+    return args[0] + ';'
+
+query.registered = True
 
 
 def pyeval(*args):
@@ -113,10 +117,10 @@ def pyfun(*args):
 
     try:
         res=f(*args[1:])
-    except Exception, e:
+    except Exception as e:
         raise functions.OperatorError("pyfun",args[0]+": "+functions.mstr(e))
 
-    if res is None or type(res) in (int,float, str, unicode):
+    if res is None or type(res) in (int,float, str, str):
         return res
     else:    
         return repr(f(*args[1:]))
@@ -158,10 +162,10 @@ def pyfunerrtonul(*args):
 
     try:
         res=f(*args[1:])
-    except Exception, e:
+    except Exception as e:
         return None
 
-    if res is None or type(res) in (int,float, str, unicode):
+    if res is None or type(res) in (int,float, str, str):
         return res
     else:
         return repr(f(*args[1:]))
@@ -218,7 +222,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

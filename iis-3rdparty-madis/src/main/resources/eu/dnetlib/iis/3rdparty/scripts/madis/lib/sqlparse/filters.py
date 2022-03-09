@@ -30,7 +30,7 @@ class _CaseFilter(TokenFilter):
         if case is None:
             case = 'upper'
         assert case in ['lower', 'upper', 'capitalize']
-        self.convert = getattr(unicode, case)
+        self.convert = getattr(str, case)
 
     def process(self, stack, stream):
         for ttype, value in stream:
@@ -121,7 +121,7 @@ class ReindentFilter(Filter):
     def _get_offset(self, token):
         all_ = list(self._curr_stmt.flatten())
         idx = all_.index(token)
-        raw = ''.join(unicode(x) for x in all_[:idx+1])
+        raw = ''.join(str(x) for x in all_[:idx+1])
         line = raw.splitlines()[-1]
         # Now take current offset into account and return relative offset.
         full_offset = len(line)-(len(self.char*(self.width*self.indent)))

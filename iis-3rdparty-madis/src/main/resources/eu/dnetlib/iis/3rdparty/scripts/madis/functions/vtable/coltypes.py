@@ -32,8 +32,8 @@ Applying coltypes in the result of virtual table func:`typing` function in the s
     '10'   | text | '10'   | int
 """
 
-import setpath
-import vtbase
+from . import setpath
+from . import vtbase
 import functions
 
 registered=True
@@ -53,7 +53,7 @@ class ColTypes(vtbase.VT):
         cur=connection.cursor()
         execit=cur.execute(query, parse = False)
         try:
-            samplerow=execit.next()
+            samplerow=next(execit)
         except StopIteration:
             pass
 
@@ -73,7 +73,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

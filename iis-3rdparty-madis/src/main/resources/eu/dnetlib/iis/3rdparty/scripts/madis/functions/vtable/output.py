@@ -69,8 +69,8 @@ Examples:
 """
 import os.path
 
-import setpath
-from vtout import SourceNtoOne
+from . import setpath
+from .vtout import SourceNtoOne
 from lib.dsv import writer
 import gzip
 from lib.ziputils import ZipIter
@@ -82,22 +82,23 @@ import apsw
 import gc
 from collections import defaultdict
 
+
 registered=True
 
-def fileit(p,append=False):
+def fileit(p, append=False):
     if append:
         return open(p, "a", buffering=100000)
     return open(p, "w" , buffering=100000)
 
-def getoutput(p,append,compress,comptype):
+def getoutput(p, append,compress,comptype):
     source=p
     it=None
 
-    if compress and ( comptype=='zip'):
-        it=ZipIter(source,"w")
-    elif compress and ( comptype=='gzip' or comptype=='gz'):
-            itt=fileit(source+'.gz')
-            it=gzip.GzipFile(mode="w", compresslevel=6, fileobj=itt)
+    if compress and ( comptype == 'zip'):
+        it = ZipIter(source, "w")
+    elif compress and (comptype=='gzip' or comptype == 'gz'):
+            itt = fileit(source+'.gz')
+            it = gzip.GzipFile(mode="w", compresslevel=6, fileobj=itt)
     else:
         it=fileit(source,append)
     return it
@@ -144,6 +145,15 @@ def outputData(diter, schema, connection, *args, **formatArgs):
     if 'compressiontype' not in formatArgs:
         formatArgs['compressiontype']='gz'
 
+    orderby = None
+    if 'orderby' in formatArgs:
+        orderby = formatArgs['orderby']
+        del formatArgs['orderby']
+
+    if 'orderbydesc' in formatArgs:
+        orderby = formatArgs['orderbydesc'] + ' desc'
+        del formatArgs['orderbydesc']
+
     append=False
     if 'append' in formatArgs:
         append=formatArgs['append']
@@ -169,9 +179,9 @@ def outputData(diter, schema, connection, *args, **formatArgs):
 
             if 'split' in formatArgs:
                 def cjs():
-                    unikey = unicode(key)
+                    unikey = str(key)
                     t=open(os.path.join(fullpath, filename+'.'+unikey+ext), 'w')
-                    print >> t, je( {'schema':schema[1:]} )
+                    print(je( {'schema':schema[1:]} ), file=t)
                     splitkeys[unikey]=t
                     jsfiles[key]=t
                     # Case for number as key
@@ -185,7 +195,7 @@ def outputData(diter, schema, connection, *args, **formatArgs):
                 gc.disable()
                 for row in diter:
                     key=row[0]
-                    print >> splitkeys[key], je(row[1:])
+                    print(je(row[1:]), file=splitkeys[key])
                 gc.enable()
 
                 # Create other parts
@@ -196,22 +206,20 @@ def outputData(diter, schema, connection, *args, **formatArgs):
                     maxparts = 1
 
                 if maxparts > 1:
-                    for i in xrange(0, maxparts):
+                    for i in range(0, maxparts):
                         if i not in splitkeys:
                             key = i
                             tmp = splitkeys[key]
 
-                for f in jsfiles.values():
-                    if f != None:
+                for f in list(jsfiles.values()):
+                    if f is not None:
                         f.close()
             else:
-                fileIter.write( je( {'schema':schema} ) + '\n')
+                fileIter.write(je({'schema':schema}) + '\n')
 
-                gc.disable()
                 for row in diter:
-                    print >> fileIter, je(row)
-                gc.enable()
-                    
+                    print(je(row), file=fileIter)
+
         elif formatArgs['mode'] == 'csv':
             del formatArgs['mode']
             csvprinter = writer(fileIter, 'excel', **formatArgs)
@@ -228,7 +236,7 @@ def outputData(diter, schema, connection, *args, **formatArgs):
                 csvprinter.writerow([h[0] for h in schema])
 
             for row in diter:
-                csvprinter.writerow([x.replace('\t', '    ') if type(x) is str or type(x) is unicode else x for x in row])
+                csvprinter.writerow([x.replace('\t', '    ') if type(x) is str or type(x) is str else x for x in row])
 
         elif formatArgs['mode']=='gtable':
             vtoutpugtformat(fileIter,diter,simplejson=False)
@@ -241,17 +249,21 @@ def outputData(diter, schema, connection, *args, **formatArgs):
 
         elif formatArgs['mode']=='plain':
             for row in diter:
-                fileIter.write(((''.join([unicode(x) for x in row]))+'\n').encode('utf-8'))
+                fileIter.write(((''.join([str(x) for x in row]))+'\n').encode('utf-8'))
 
         elif formatArgs['mode']=='db':
             def createdb(where, tname, schema, page_size=16384):
-                c=apsw.Connection(where)
-                cursor=c.cursor()
+                c = apsw.Connection(where)
+                cursor = c.cursor()
                 list(cursor.execute('pragma page_size='+str(page_size)+';pragma cache_size=-1000;pragma legacy_file_format=false;pragma synchronous=0;pragma journal_mode=OFF;PRAGMA locking_mode = EXCLUSIVE'))
-                create_schema='create table '+tname+' ('
-                create_schema+='`'+unicode(schema[0][0])+'`'+ (' '+unicode(schema[0][1]) if schema[0][1]!=None else '')
+                if orderby:
+                    tname = '_' + tname
+                    create_schema='create temp table '+tname+'('
+                else:
+                    create_schema='create table '+tname+'('
+                create_schema+='`'+str(schema[0][0])+'`'+ (' '+str(schema[0][1]) if schema[0][1]!=None else '')
                 for colname, coltype in schema[1:]:
-                    create_schema+=',`'+unicode(colname)+'`'+ (' '+unicode(coltype) if coltype!=None else '')
+                    create_schema+=',`'+str(colname)+'`'+ (' '+str(coltype) if coltype!=None else '')
                 create_schema+='); begin exclusive;'
                 list(cursor.execute(create_schema))
                 insertquery="insert into "+tname+' values('+','.join(['?']*len(schema))+')'
@@ -267,7 +279,6 @@ def outputData(diter, schema, connection, *args, **formatArgs):
                 tablename=formatArgs['tablename']
 
             if 'split' in formatArgs:
-
                 maxparts = 0
                 try:
                     maxparts = int(formatArgs['split'])
@@ -278,7 +289,7 @@ def outputData(diter, schema, connection, *args, **formatArgs):
                 if maxparts == 0:
                     ns = lambda x:x
                     def cdb():
-                        unikey = unicode(key)
+                        unikey = str(key)
                         t=createdb(os.path.join(fullpath, filename+'.'+unikey+ext), tablename, schema[1:], page_size)
                         splitkeys[unikey]=t[1].execute
                         ns.insertqueryw = t[2]
@@ -297,42 +308,46 @@ def outputData(diter, schema, connection, *args, **formatArgs):
                         splitkeys[key](ns.insertqueryw, row[1:])
                     gc.enable()
 
-                    for c, cursor in dbcon.values():
+                    for c, cursor in list(dbcon.values()):
                         if c != None:
                             cursor.execute('commit')
                             c.close()
-                # Splitparts defined
                 else:
+                # Splitparts defined
                     cursors = []
                     dbcon = []
                     if "MSPW" in functions.apsw_version:
-                        prepedqueries = []
-                        for i in xrange(0,maxparts):
-                            t=createdb(os.path.join(fullpath, filename+'.'+str(i)+ext), tablename, schema[1:], page_size)
-                            cursors.append(t[1].executedirect)
-                            prepedqueries.append(t[1].prepare(t[2]))
+                        iters = []
+                        senders = []
+                        for i in range(0, maxparts):
+                            t = createdb(os.path.join(fullpath, filename+'.'+str(i)+ext), tablename, schema[1:], page_size)
+                            it = t[1].executesplit(t[2])
+                            iters.append(it)
+                            senders.append(it.send)
+                            it.send(None)
                             dbcon.append((t[0], t[1]))
+                        senders = tuple(senders)
 
-                        gc.disable()
                         for row in diter:
-                            row0 = row[0]
-                            cursors[row0](prepedqueries[row0], row[1:])
-                        gc.enable()
+                            senders[hash(row[0]) % maxparts](row)
 
+                        for it in iters:
+                            it.close()
                     else:
-                        for i in xrange(0,maxparts):
-                            t=createdb(os.path.join(fullpath, filename+'.'+str(i)+ext), tablename, schema[1:], page_size)
+                        for i in range(0, maxparts):
+                            t = createdb(os.path.join(fullpath, filename+'.'+str(i)+ext), tablename, schema[1:], page_size)
                             cursors.append(t[1].execute)
                             dbcon.append((t[0], t[1]))
                             insertqueryw = t[2]
+                        cursors = tuple(cursors)
 
-                        gc.disable()
                         for row in diter:
-                            cursors[row[0]](insertqueryw, row[1:])
-                        gc.enable()
+                            cursors[hash(row[0]) % maxparts](insertqueryw, row[1:])
 
                     for c, cursor in dbcon:
                         if c != None:
+                            if orderby:
+                                cursor.execute('pragma cache_size=-'+str(100000)+';create table '+tablename+' as select * from _'+tablename+' order by '+orderby)
                             cursor.execute('commit')
                             c.close()
             else:
@@ -348,7 +363,7 @@ def outputData(diter, schema, connection, *args, **formatArgs):
         else:
             raise functions.OperatorError(__name__.rsplit('.')[-1],"Unknown mode value")
 
-    except StopIteration,e:
+    except StopIteration as e:
         pass
 
     try:
@@ -370,7 +385,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

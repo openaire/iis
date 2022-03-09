@@ -27,7 +27,7 @@ def kdtree(data,cols=None):
 
     if not cols:
         try:
-            cols=range(len(data[0]))
+            cols=list(range(len(data[0])))
         except KeyboardInterrupt:
             raise           
         except:
@@ -102,7 +102,7 @@ def query(tree, constraints=None, consargs=None):
 
         if leftindex>treedatalen or (leftindex>=numberofdata and leftindex<treedatalen and treedata[leftindex]==None):
             passes=True
-            for i in xrange(k):
+            for i in range(k):
                 if not ranges[i][0]<=(NORMAL, row[columns[i]],0)<ranges[i][1]:
                     passes=False
                     break
@@ -166,50 +166,50 @@ def constrainttorange(constype, consarg):
             return [INFNEG, (NORMAL, consarg, LEFT)]
 
 if __name__ == "__main__":
-    print intersectranges([(NORMAL,5,LEFT),INFPOS], [(NORMAL,5,RIGHT), INFPOS])
-    print intersectranges([(NORMAL,5,LEFT),INFPOS], [(NORMAL,2,RIGHT), (NORMAL,7,RIGHT)])
-    print intersectranges([INFNEG,(NORMAL,5,LEFT)], [(NORMAL,2,RIGHT), (NORMAL,7,RIGHT)])
-    print intersectranges([INFNEG,(NORMAL,5,RIGHT)], [(NORMAL,5,LEFT), INFPOS])
-    print intersectranges([INFNEG,(NORMAL,'a',RIGHT)], [(NORMAL,'a',LEFT), INFPOS])
-    print intersectranges([INFNEG,(NORMAL,'a',LEFT)], [(NORMAL,'a',RIGHT), INFPOS])
-    print intersectranges([INFNEG,(NORMAL,'a',LEFT)], ENTIRERANGE)
-    print intersectranges([INFNEG,(NORMAL,0,LEFT)], ENTIRERANGE)
+    print(intersectranges([(NORMAL,5,LEFT),INFPOS], [(NORMAL,5,RIGHT), INFPOS]))
+    print(intersectranges([(NORMAL,5,LEFT),INFPOS], [(NORMAL,2,RIGHT), (NORMAL,7,RIGHT)]))
+    print(intersectranges([INFNEG,(NORMAL,5,LEFT)], [(NORMAL,2,RIGHT), (NORMAL,7,RIGHT)]))
+    print(intersectranges([INFNEG,(NORMAL,5,RIGHT)], [(NORMAL,5,LEFT), INFPOS]))
+    print(intersectranges([INFNEG,(NORMAL,'a',RIGHT)], [(NORMAL,'a',LEFT), INFPOS]))
+    print(intersectranges([INFNEG,(NORMAL,'a',LEFT)], [(NORMAL,'a',RIGHT), INFPOS]))
+    print(intersectranges([INFNEG,(NORMAL,'a',LEFT)], ENTIRERANGE))
+    print(intersectranges([INFNEG,(NORMAL,0,LEFT)], ENTIRERANGE))
 
-    print constrainttorange(CONSTRAINT_EQ, 2)
-    print constrainttorange(CONSTRAINT_LE, 0)
-    print constrainttorange(CONSTRAINT_GE, 0)
+    print(constrainttorange(CONSTRAINT_EQ, 2))
+    print(constrainttorange(CONSTRAINT_LE, 0))
+    print(constrainttorange(CONSTRAINT_GE, 0))
     r1=intersectranges(constrainttorange(CONSTRAINT_LE, 0), ENTIRERANGE)
-    print intersectranges(r1, constrainttorange(CONSTRAINT_GE, 0))
+    print(intersectranges(r1, constrainttorange(CONSTRAINT_GE, 0)))
 
-    print "----------------------"
+    print("----------------------")
     data=[[3],[2],[1],[4],[5],[5]]
-    print "DATA:",data
+    print("DATA:",data)
     ks1=kdtree(data)
-    print ks1.data
+    print(ks1.data)
 
-    print list(query(ks1))
+    print(list(query(ks1)))
 #    print query(ks1,[(0,CONSTRAINT_GE),(0,CONSTRAINT_LT)], [3,5]) ]
 #    print [data[i] for i in query(ks1,[(0,CONSTRAINT_GE),(0,CONSTRAINT_LE)], [3,5]) ]
 #    print [data[i] for i in query(ks1,[(0,CONSTRAINT_GT),(0,CONSTRAINT_LT)], [3,3]) ]
 #    print 'q',[data[i] for i in query(ks1,[(0,CONSTRAINT_EQ)], [3]) ]
 
     data=[(5, 3), (5, 2), (5, 1), (2, 3), (2, 2), (2, 1)]
-    print "DATA:",data
+    print("DATA:",data)
     ks1=kdtree(data,[1])
-    print "TREE:",ks1.data
-    print list(query(ks1))
+    print("TREE:",ks1.data)
+    print(list(query(ks1)))
 #    print [data[i] for i in query(ks1,[(0,CONSTRAINT_GE), (0,CONSTRAINT_LT)], [3,4])]
 #    print [data[i] for i in query(ks1,[(0,CONSTRAINT_GE), (1,CONSTRAINT_LT)], [3,4])]
 #    print [data[i] for i in query(ks1,[(0,CONSTRAINT_GE), (1,CONSTRAINT_LT)], [3,5])]
 
     #print list(query(ks1,[ (0,CONSTRAINT_GE),(1,CONSTRAINT_LE)], [3,4]))
-    print list(query(ks1,[ (1,CONSTRAINT_GE)], [2]))
+    print(list(query(ks1,[ (1,CONSTRAINT_GE)], [2])))
 
     data=[[5]]
-    print "DATA:",data
+    print("DATA:",data)
     ks1=kdtree(data)
-    print "TREE:",ks1.data
-    print list(query(ks1))
+    print("TREE:",ks1.data)
+    print(list(query(ks1)))
 #    print [data[i] for i in query(ks1,[(0,CONSTRAINT_GE), (0,CONSTRAINT_LT)], [3,4])]
 #    print [data[i] for i in query(ks1,[(0,CONSTRAINT_GE), (1,CONSTRAINT_LT)], [3,4])]
 #    print [data[i] for i in query(ks1,[(0,CONSTRAINT_GE), (1,CONSTRAINT_LT)], [3,5])]

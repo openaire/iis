@@ -1,11 +1,11 @@
 # coding: utf-8
-import setpath
+from . import setpath
 from gzip import zlib
 import subprocess
 import functions
 import time
-import urllib2
-import urllib
+import urllib.request, urllib.error, urllib.parse
+import urllib.request, urllib.parse, urllib.error
 from lib import jopts
 from functions.conf import domainExtraHeaders
 import lib.gzip32 as gzip
@@ -14,6 +14,8 @@ try:
 except ImportError:
     # Python 2.6
     from lib.collections26 import OrderedDict
+
+
 
 def gz(*args):
 
@@ -98,15 +100,15 @@ def urlrequest(*args):
 
     """
     try:
-        req = urllib2.Request(''.join((x for x in args if x != None)), None, domainExtraHeaders)
-        hreq = urllib2.urlopen(req)
+        req = urllib.request.Request(''.join((x.encode('utf-8') for x in args if x != None)), None, domainExtraHeaders)
+        hreq = urllib.request.urlopen(req)
 
-        if [1 for x,y in hreq.headers.items() if x.lower() in ('content-encoding', 'content-type') and y.lower().find('gzip')!=-1]:
+        if [1 for x,y in list(hreq.headers.items()) if x.lower() in ('content-encoding', 'content-type') and y.lower().find('gzip')!=-1]:
             hreq = gzip.GzipFile(fileobj=hreq)
 
-        return unicode(hreq.read(), 'utf-8', errors = 'replace')
+        return str(hreq.read(), 'utf-8', errors = 'replace')
 
-    except urllib2.HTTPError,e:
+    except (urllib.error.HTTPError, urllib.error.URLError) as e:
         if args[0] == None:
             return None
         else:
@@ -146,28 +148,28 @@ def urlrequestpost(*args):
 
     """
     try:
-        req = urllib2.Request(''.join((x for x in args[1:] if x != None)), None, domainExtraHeaders)
+        req = urllib.request.Request(''.join((x for x in args[1:] if x != None)), None, domainExtraHeaders)
 
         datain = jopts.fromjsingle(args[0])
 
         dataout = []
         if type(datain) == list:
-            for i in xrange(0, len(datain), 2):
+            for i in range(0, len(datain), 2):
                 dataout.append((datain[i].encode('utf_8'), datain[i+1].encode('utf_8')))
         else:
-            dataout = [( x.encode('utf_8'), y.encode('utf_8') ) for x,y in datain.items()]
+            dataout = [( x.encode('utf_8'), y.encode('utf_8') ) for x,y in list(datain.items())]
 
         if dataout == []:
             raise functions.OperatorError('urlrequestpost',"A list or dict should be provided")
 
-        hreq = urllib2.urlopen(req, urllib.urlencode(dataout))
+        hreq = urllib.request.urlopen(req, urllib.parse.urlencode(dataout))
 
-        if [1 for x,y in hreq.headers.items() if x.lower() in ('content-encoding', 'content-type') and y.lower().find('gzip')!=-1]:
+        if [1 for x,y in list(hreq.headers.items()) if x.lower() in ('content-encoding', 'content-type') and y.lower().find('gzip')!=-1]:
             hreq = gzip.GzipFile(fileobj=hreq)
 
-        return unicode(hreq.read(), 'utf-8', errors = 'replace')
+        return str(hreq.read(), 'utf-8', errors = 'replace')
 
-    except urllib2.HTTPError,e:
+    except urllib.error.HTTPError as e:
         if args[1] == None:
             return None
         else:
@@ -302,18 +304,18 @@ def execprogram(*args):
 
     outtext=errtext=''
     try:
-        p=subprocess.Popen([unicode(x) for x in args[1:] if x!=None], stdin=subprocess.PIPE if args[0]!=None else None, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p=subprocess.Popen([str(x) for x in args[1:] if x!=None], stdin=subprocess.PIPE if args[0]!=None else None, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if args[0]==None:
             outtext, errtext=p.communicate()
         else:
             val = args[0]
             valtype = type(val)
-            if valtype == unicode:
+            if valtype == str:
                 val = val.encode('utf-8')
             if valtype in (int,float):
                 val = str(val)
             outtext, errtext=p.communicate( val )
-    except Exception,e:
+    except Exception as e:
         raise functions.OperatorError('execprogram', functions.mstr(e))
 
     if p.returncode!=0:
@@ -323,7 +325,7 @@ def execprogram(*args):
             raise functions.OperatorError('execprogram', functions.mstr(errtext).strip())
 
     try:
-        outtext=unicode(outtext, 'utf-8')
+        outtext=str(outtext, 'utf-8')
     except KeyboardInterrupt:
         raise
     except:
@@ -365,7 +367,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

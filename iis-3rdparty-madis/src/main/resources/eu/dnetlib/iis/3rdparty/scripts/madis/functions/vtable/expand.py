@@ -73,8 +73,8 @@ Examples::
     Lila  | 74   | Lila  | 74   | Soula | 17
 """
 
-import setpath
-import vtbase
+from . import setpath
+from . import vtbase
 import functions
 import re
 from lib.sqlitetypes import getElementSqliteType
@@ -98,7 +98,7 @@ class Expand(vtbase.VT):
     def VTiter(self, *parsedArgs,**envars):
 
         def exprown(row):
-            for i in xrange(len(row)):
+            for i in range(len(row)):
                 iobj = row[i]
                 if type(iobj) is tuple:
                     for el in iobj[1]:
@@ -139,20 +139,19 @@ class Expand(vtbase.VT):
         ttypes=[]
 
         try:
-            row = c.next()
+            row = next(c)
         except StopIteration:
             yield schema
             return
 
         rowlen = len(row)
 
-        for i in xrange(rowlen):
+        for i in range(rowlen):
             obj = row[i]
-            if type(obj) is buffer and obj[:lenIH] == iterheader:
-                strobj = str(obj)
-                oiter=oiters[strobj]
+            if type(obj) is bytes and obj[:lenIH] == b'ITER\x1e':
+                oiter=oiters[obj]
                 try:
-                    first = oiter.next()
+                    first = next(oiter)
                 except StopIteration:
                     first = [None]
 
@@ -163,10 +162,10 @@ class Expand(vtbase.VT):
                         badschema = True
 
                     for i in first:
-                        if type(first) != tuple or type(i) not in (unicode, str) or i is None:
+                        if type(first) != tuple or type(i) not in (str, str) or i is None:
                             badschema = True
                             break
-                            
+
                     if badschema:
                         raise functions.OperatorError(__name__.rsplit('.')[-1],
                             "First yielded row of multirow functions, should contain the schema inside a Python tuple.\nExample:\n  yield ('C1', 'C2')")
@@ -176,8 +175,8 @@ class Expand(vtbase.VT):
                     if len(first) == 1:
                         nnames += [orignames[i]]
                     else:
-                        nnames += [orignames[i]+str(j) for j in xrange(1, len(first)+1)]
-                nrow += [(strobj, oiter)]
+                        nnames += [orignames[i]+str(j) for j in range(1, len(first)+1)]
+                nrow += [(obj, oiter)]
             else:
                 ttypes += [origtypes[i]]
                 nnames += [orignames[i]]
@@ -185,7 +184,7 @@ class Expand(vtbase.VT):
 
         firstbatch = exprown(nrow)
         try:
-            firstrow = firstbatch.next()
+            firstrow = next(firstbatch)
         except StopIteration:
             firstrow = None
 
@@ -193,15 +192,15 @@ class Expand(vtbase.VT):
             if v == 'GUESS':
                 try:
                     v = getElementSqliteType(firstrow[i])
-                except Exception, e:
+                except Exception as e:
                     v = 'text'
             types.append(v)
 
-        yield [(nnames[i], types[i]) for i in xrange(len(types))]
+        yield [(nnames[i], types[i]) for i in range(len(types))]
 
         if firstrow is not None:
             yield firstrow
-            
+
         for exp in firstbatch:
             yield exp
 
@@ -209,14 +208,15 @@ class Expand(vtbase.VT):
         for row in c:
             nrow = list(row)
 #            itercount = 0
-
-            for i in xrange(rowlen):
-                if type(nrow[i]) is buffer and nrow[i][:lenIH] == iterheader:
-                    striter = str(nrow[i])
-                    oiter = oiters[striter]
-                    oiter.next()
-                    nrow[i] = (striter, oiter)
-#                    itercount += 1
+            for i in range(rowlen):
+                if isinstance(nrow[i],bytes):
+                    nrow[i] = nrow[i].decode()
+                    if (nrow[i][:lenIH] == iterheader):
+                        striter = bytes(nrow[i], encoding="ascii")
+                        oiter = oiters[striter]
+                        next(oiter)
+                        nrow[i] = (striter, oiter)
+    #                    itercount += 1
 
             for exp in exprown(nrow):
                 yield exp
@@ -257,7 +257,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

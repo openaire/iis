@@ -80,8 +80,9 @@ Examples::
 
 """
 
-import vtbase
+from . import vtbase
 registered=True
+
 
 class RangeVT(vtbase.VT):
     def VTiter(self, *parsedArgs,**envars):
@@ -112,7 +113,7 @@ class RangeVT(vtbase.VT):
 
         yield [('C1', 'int')]
 
-        for i in xrange(fromv,tov,stepv):
+        for i in range(fromv,tov,stepv):
             yield [i]
 
 def Source():
@@ -124,7 +125,7 @@ if not ('.' in __name__):
     new function you create
     """
     import sys
-    import setpath
+    from . import setpath
     from functions import *
     testfunction()
     if __name__ == "__main__":

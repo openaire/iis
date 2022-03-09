@@ -647,7 +647,7 @@ def _test():
                 g = sys.stdout.buffer
             else:
                 if arg[-3:] != ".gz":
-                    print("filename doesn't end in .gz:", repr(arg))
+                    print(("filename doesn't end in .gz:", repr(arg)))
                     continue
                 f = open(arg, "rb")
                 g = open(arg[:-3], "wb")

@@ -24,7 +24,7 @@ import os
 import time
 import re
 import sys
-from types import NoneType
+NoneType = type(None)
 
 _jdbc_connect = None
 
@@ -470,7 +470,7 @@ def _java_to_py(java_method):
         return getattr(java_val, java_method)()
     return to_py
 
-_to_double = lambda x: getattr(x, 'doubleValue')()
+_to_double = lambda x: getattr(x, 'doubleValue', lambda: x)()
 _to_int = lambda x: getattr(x, 'intValue')()
 
 def _init_converters(types_map):

@@ -23,7 +23,7 @@ class Token(object):
         self.parent = None
 
     def __str__(self):
-        return unicode(self).encode('utf-8')
+        return self.value or ''
 
     def __repr__(self):
         short = self._get_repr_value()
@@ -35,15 +35,15 @@ class Token(object):
 
     def to_unicode(self):
         """Returns a unicode representation of this object."""
-        return unicode(self)
+        return str(self)
 
     def _get_repr_name(self):
         return str(self.ttype).split('.')[-1]
 
     def _get_repr_value(self):
-        raw = unicode(self)
+        raw = str(self)
         if len(raw) > 7:
-            short = raw[:6]+u'...'
+            short = raw[:6]+'...'
         else:
             short = raw
         return re.sub('\s+', ' ', short)
@@ -67,7 +67,7 @@ class Token(object):
         type_matched = self.ttype is ttype
         if not type_matched or values is None:
             return type_matched
-        if isinstance(values, basestring):
+        if isinstance(values, str):
             values = set([values])
         if regex:
             if self.ttype is T.Keyword:
@@ -136,10 +136,10 @@ class TokenList(Token):
         Token.__init__(self, None, None)
 
     def __unicode__(self):
-        return ''.join(unicode(x) for x in self.flatten())
+        return ''.join(str(x) for x in self.flatten())
 
     def __str__(self):
-        return unicode(self).encode('utf-8')
+        return ''.join(str(x) for x in self.flatten())
 
     def _get_repr_name(self):
         return self.__class__.__name__

@@ -1,6 +1,6 @@
 def getElementSqliteType(element):
     elemtype = type(element)
-    if elemtype is int or elemtype is long:
+    if elemtype is int or elemtype is int:
         return "integer"
     if elemtype is float:
         return "real"

@@ -104,7 +104,7 @@ def group_comparsion(tlist):
     def _parts_valid(token):
         return (token.ttype in (T.String.Symbol, T.Name, T.Number,
                                 T.Number.Integer, T.Literal)
-                or isinstance(token, (Identifier,)))
+                or isinstance(token, Identifier))
     _group_left_right(tlist, T.Operator.Comparsion, None, Comparsion,
                       check_left=_parts_valid, check_right=_parts_valid)
 
@@ -115,7 +115,9 @@ def group_case(tlist):
 
 
 def group_identifier(tlist):
+
     def _consume_cycle(tl, i):
+
         x = itertools.cycle((
             lambda y: (y.match(T.Punctuation, '.')
                        or y.ttype is T.Operator),
@@ -124,36 +126,44 @@ def group_identifier(tlist):
                                    T.Wildcard))
             ))
         for t in tl.tokens[i:]:
-            if x.next()(t):
+            if next(x)(t):
                 yield t
             else:
-                raise StopIteration
+                return
 
     # bottom up approach: group subgroups first
+
     [group_identifier(sgroup) for sgroup in tlist.get_sublists()
      if not isinstance(sgroup, Identifier)]
 
     # real processing
     idx = 0
     token = tlist.token_next_by_instance(idx, Function)
+
+
     if token is None:
         token = tlist.token_next_by_type(idx, (T.String.Symbol, T.Name))
+
+
     while token:
+
         identifier_tokens = [token]+list(
             _consume_cycle(tlist,
                            tlist.token_index(token)+1))
+
         if not (len(identifier_tokens) == 1
                 and isinstance(identifier_tokens[0], Function)):
             group = tlist.group_tokens(Identifier, identifier_tokens)
             idx = tlist.token_index(group)+1
         else:
             idx += 1
+
         token = tlist.token_next_by_instance(idx, Function)
         if token is None:
             token = tlist.token_next_by_type(idx, (T.String.Symbol, T.Name))
 
-
 def group_identifier_list(tlist):
+
     [group_identifier_list(sgroup) for sgroup in tlist.get_sublists()
      if not isinstance(sgroup, (Identifier, IdentifierList))]
     idx = 0
@@ -255,6 +265,7 @@ def group_aliased(tlist):
 
 
 def group_typecasts(tlist):
+
     _group_left_right(tlist, T.Punctuation, '::', Identifier)
 
 
@@ -275,6 +286,7 @@ def group_functions(tlist):
 
 
 def group(tlist):
+
     for func in [group_parenthesis,
                  group_functions,
                  group_comments,
@@ -289,4 +301,5 @@ def group(tlist):
                  group_identifier_list,
                  group_if,
                  group_for,]:
+
         func(tlist)
