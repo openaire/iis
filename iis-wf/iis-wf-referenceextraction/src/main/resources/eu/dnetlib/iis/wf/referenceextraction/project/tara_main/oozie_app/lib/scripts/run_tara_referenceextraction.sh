@@ -4,4 +4,4 @@
 # the dir should contain madis scripts in 'scripts' dir and projects db file as 'projects.db';
 
 set -o pipefail
-python scripts/madis/mexec.py -d projects.db -f scripts/taraextract.sql
+python3 scripts/madis/mexec.py -d projects.db -f scripts/taraextract.sql
