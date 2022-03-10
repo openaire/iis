@@ -15,6 +15,10 @@ hidden var 'nihnegatives' from select jmergeregexp(jgroup(word)) from (select * 
 hidden var 'miur_unidentified' from select id from grants where fundingclass1="MIUR" and grantid="unidentified" limit 1;
 hidden var 'wt_unidentified' from select id from grants where fundingclass1="WT" and grantid="unidentified" limit 1;
 hidden var 'gsri_unidentified' from select id from grants where fundingclass1="GSRI" and grantid="unidentified" limit 1;
+hidden var 'cihr_unidentified' from (select id from grants where fundingclass1="CIHR" and grantid="unidentified" limit 1);
+hidden var 'nserc_unidentified' from (select id from grants where fundingclass1="NSERC" and grantid="unidentified" limit 1);
+hidden var 'sshrc_unidentified' from (select id from grants where fundingclass1="SSHRC" and grantid="unidentified" limit 1);
+hidden var 'nrc_unidentified' from (select id from grants where fundingclass1="NRC" and grantid="unidentified" limit 1);
 
 create temp table pubs as setschema 'c1,c2' select jsonpath(c1, '$.id', '$.text') from stdinput();
 
@@ -33,6 +37,56 @@ from pubs  where c2 is not null)
 where var('gsri_unidentified') is not null and
 regexprmatches("(?i)greece|greek|foundation|grant|project|funded|hellenic|supported|acknowledge|\bgr\b|research|program|secretariat|γραμματε(?:ί|ι)α",prev||" "||middle||" "||next)  
 group by docid;
+
+create temp table intermediate_canadian_results as
+select docid, (prev||" "||middle||" "||next) as temp_textsnippet, (prev||" <<< "||middle||" >>> "||next) as textsnippet
+from (setschema 'docid,prev,middle,next' select c1, textwindow2s(filterstopwords(keywords(c2)), 15,1,15, "^(?:(?:(?:CIHR|IRSC)|(?:NSERC|CRSNG)|(?:SSHRC|CRSH|SSRCC))|(?i)(?:co(?:(?:un(?:cil|sel))|(?:nseil(?:s)?))|canad(?:a|ian)))$") from pubs where c2 is not null)
+where
+( /* Terms */
+    /* Acronyms */
+    regexprmatches("^(?:CIHR|(?:NSERC|CRSNG)|(?:SSHRC|SSRCC))$", middle)
+    or (
+        regexprmatches("^IRSC$", middle) /* This is the french acronym of CIHR. It also refers to some other organizations, so we search and exclude them. */
+        and not regexprmatches(".*(?:informal relationships social capital|interlocus sexual conflict|international (?:rosaceae|rosbreed) snp consortium|iranian (?:seismological|remote sensing) cent(?:er|re)).*", lower(prev||" "||next))
+    )
+    or (
+        regexprmatches("^CRSH$", middle) /* This is the french acronym of SSHRC. It also refers to some other organizations, so we search and exclude them. */
+        and not regexprmatches(".*(?:coalition restaurant health safety).*", lower(prev||" "||next))
+    )
+    or (/* Full-names */
+        (   /* Middle: "Council", "Counsel", "Conseil", "Conseils" --> NSERC/CRSNG, SSHRC/CRSH/SSRCC, NRC */
+            regexprmatches("^co(?:(?:un(?:cil|sel))|(?:nseil(?:s)?))$", lower(middle))
+            and (
+                -- The "middle" at the beginning of the fullname.
+                (   regexprmatches("^recherche(?:s)?(?:(?:\s(?:g(?:e|é)nie|science(?:s)?)(?:\s(?:humaines|naturel(?:les)?)?)?(?:\sg(?:e|é)nie)?)?)?\scanada.*", lower(next))    -- The term "canada" is put as mandatory here and below, as we get false-positives.
+                    or regexprmatches("^(?:social\sscience(?:s)?\shumanities\sresearch|national\srecherche(?:s)?)\scanada.*", lower(next))
+                )
+                or ( -- The "middle" at the end of the fullname.
+                    ( regexprmatches(".*(?:social|nat(?:ural|ional))\sscience(?:s)?\s(?:(?:engineering|humanities)(?:\sresearch)?|research)$", lower(prev))
+                        or regexprmatches(".*(?:humanities|national)\sresearch$", lower(prev))  -- Here we cover the full-name of NRC and a variation of SSHRC.
+                    )
+                    and (   -- Add this just to be more sure it's a "canadian" match..
+                            regexprmatches("^canada.*", lower(next))
+                            or regexprmatches(".*canada\s(?:social|nat(?:ural|ional)).*", lower(prev))
+                        )
+                    )
+                )
+            )
+            or (    /* Middle: "Canada", "Canadian" --> CIHR/IRSC */
+                regexprmatches("^canad(?:a|ian)$", lower(middle))   -- "Canadian" match for sure.
+                and ( -- The "middle" at the beginning of the fullname
+                    regexprmatches("^institute(?:s)?\shealth\sresearch.*", lower(next))
+                    or -- The "middle" at the end of the fullname
+                    regexprmatches(".*institut(?:(?:e)?(?:s)?)?\srecherche\ssant(?:e|é)$", lower(prev))
+                )
+            )
+        )
+    )
+and (   /* Relation */
+    regexprmatches(".*(?:fund|support|financ|proje[c]?t|grant|subvention|sponsor|parrain|souten|subsidiz|promot|acquir|acknowledg|administ|assist|donor|bailleur|g(?:e|é)n(?:e|é)rosit).*", lower(prev||" "||next))
+    or regexprmatches(".*(?:thank|gratefull|(?:re)?merci).*", lower(prev))
+)
+order by docid;  -- The multiple_canadian_funders-UDF is depending on the docid-ordered data.
 
 create temp table output_table as
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1, docid, id, fundingclass1, grantid from (
@@ -76,68 +130,11 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'text
 where (regexprmatches("\b"||keywords(lower(acronym))||"\b", prev||" "||middle||" "||next) or grantid = "unidentified") and fundingclass1 = "CHIST-ERA"  group by docid, id
 
 union all
-
-
 -- Canadian funders
-select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', textsnippet) as C1, docid, id, fundingclass1, grantid
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', textsnippet) as C1, docid, id, "Canadian", "unidentified"
 from (
-    select docid, case when regexprmatches(".*(?:(?:CIHR|IRSC)|(?i)(?:canad(?:ian|a) institute(?:s)? health research|institut(?:(?:e)?(?:s)?)? recherche sant(?:é|e) canada)).*", prev||" "||middle||" "||next) then (select id from grants where fundingclass1 = 'CIHR')
-                       when regexprmatches(".*(?:(?:NSERC|CRSNG)|(?i)(?:nat(?:ural|ional) science(?:s)?(?:\sengineering(?:\sresearch)?|\sresearch) co(?:u)?n(?:c|se)(?:i)?l|conseil(?:s)? recherche(?:s)? science(?:s)? naturel(?:les)?(?:\sg(?:e|é)nie)? canada)).*", prev||" "||middle||" "||next) then (select id from grants where fundingclass1 = 'NSERC')
-                       when regexprmatches(".*(?:(?:SSHRC|CRSH|SSRCC)|(?i)(?:social science(?:s)?|conseil(?:s)? recherche(?:s)?(?:\ssciences humaines)? canada|humanities\sresearch)).*", prev||" "||middle||" "||next) then (select id from grants where fundingclass1 = 'SSHRC')
-                       when regexprmatches(".*(?i)(?:(?:national research council|conseil(?:s)? national recherche(?:s)?)\scanada).*", prev||" "||middle||" "||next) then (select id from grants where fundingclass1 = 'NRC')
-                       else 'canadian_unspecified_id'
-                  end as id, "unidentified" as grantid, "Canadian" as fundingclass1, (prev||" <<< "||middle||" >>> "||next) as textsnippet
-    from
-        (setschema 'docid,prev,middle,next' select c1, textwindow2s(filterstopwords(keywords(c2)), 15,1,15, "^(?:(?:(?:CIHR|IRSC)|(?:NSERC|CRSNG)|(?:SSHRC|CRSH|SSRCC))|(?i)(?:co(?:(?:un(?:cil|sel))|(?:nseil(?:s)?))|canad(?:a|ian)))$") from pubs where c2 is not null)
-    where
-    ( /* Terms */
-        /* Acronyms */
-        regexprmatches("^(?:CIHR|(?:NSERC|CRSNG)|(?:SSHRC|SSRCC))$", middle)
-        or (
-            regexprmatches("^IRSC$", middle) /* This is the french acronym of CIHR. It also refers to some other organizations, so we search and exclude them. */
-            and not regexprmatches(".*(?:informal relationships social capital|interlocus sexual conflict|international (?:rosaceae|rosbreed) snp consortium|iranian (?:seismological|remote sensing) cent(?:er|re)).*", lower(prev||" "||next))
-        )
-        or (
-            regexprmatches("^CRSH$", middle) /* This is the french acronym of SSHRC. It also refers to some other organizations, so we search and exclude them. */
-            and not regexprmatches(".*(?:coalition restaurant health safety).*", lower(prev||" "||next))
-        )
-        or (/* Full-names */
-            (   /* Middle: "Council", "Counsel", "Conseil", "Conseils" --> NSERC/CRSNG, SSHRC/CRSH/SSRCC, NRC */
-                regexprmatches("^co(?:(?:un(?:cil|sel))|(?:nseil(?:s)?))$", lower(middle))
-                and (
-                    -- The "middle" at the beginning of the fullname.
-                    (   regexprmatches("^recherche(?:s)?(?:(?:\s(?:g(?:e|é)nie|science(?:s)?)(?:\s(?:humaines|naturel(?:les)?)?)?(?:\sg(?:e|é)nie)?)?)?\scanada.*", lower(next))    -- The term "canada" is put as mandatory here and below, as we get false-positives.
-                        or regexprmatches("^(?:social\sscience(?:s)?\shumanities\sresearch|national\srecherche(?:s)?)\scanada.*", lower(next))
-                    )
-                    or -- The "middle" at the end of the fullname.
-                    (
-                        ( regexprmatches(".*(?:social|nat(?:ural|ional))\sscience(?:s)?\s(?:(?:engineering|humanities)(?:\sresearch)?|research)$", lower(prev))
-                            or regexprmatches(".*(?:humanities|national)\sresearch$", lower(prev))  -- Here we cover the full-name of NRC and a variation of SSHRC.
-                        )
-                        and (   -- Add this just to be more sure it's a "canadian" match..
-                            regexprmatches("^canada.*", lower(next))
-                            or regexprmatches(".*canada\s(?:social|nat(?:ural|ional)).*", lower(prev))
-                        )
-                    )
-                )
-            )
-            or (    /* Middle: "Canada", "Canadian" --> CIHR/IRSC */
-                regexprmatches("^canad(?:a|ian)$", lower(middle))   -- "Canadian" match for sure.
-                and ( -- The "middle" at the beginning of the fullname
-                    regexprmatches("^institute(?:s)?\shealth\sresearch.*", lower(next))
-                    or -- The "middle" at the end of the fullname
-                    regexprmatches(".*institut(?:(?:e)?(?:s)?)?\srecherche\ssant(?:e|é)$", lower(prev))
-                )
-            )
-        )
-    )
-    and (   /* Relation */
-        regexprmatches(".*(?:fund|support|financ|proje(?:c)?t|grant|subvention|sponsor|parrain|souten|subsidiz|promot|acquir|acknowledg|administ|assist|donor|bailleur|g(?:e|é)n(?:e|é)rosit).*", lower(prev||" "||next))
-        or regexprmatches(".*(?:thank|gratefull|(?:re)?merci).*", lower(prev))
-    )
-)
-where id is not null
-group by docid, id
+      multiple_canadian_funders select *, var('cihr_unidentified'), var('nserc_unidentified'), var('sshrc_unidentified'), var('nrc_unidentified') from intermediate_canadian_results
+) group by docid, id
 
 
 union all
