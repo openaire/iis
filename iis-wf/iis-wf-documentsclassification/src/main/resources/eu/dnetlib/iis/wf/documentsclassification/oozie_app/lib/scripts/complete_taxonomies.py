@@ -8,4 +8,4 @@ for line in sys.stdin:
         for taxonomy in ['meshEuroPMCClasses', 'DDCClasses', 'WoSClasses', 'arXivClasses', 'ACMClasses']:
                 if not taxonomy in classes['classes']:
                         classes['classes'][taxonomy] = None
-        print json.dumps(classes)
+        print(json.dumps(classes))
