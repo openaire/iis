@@ -28,10 +28,10 @@ regexpcountwords('(?:\bwell?come trust\b)|(?:(?:\bthis work was|financial(?:ly)?
 
 create temp table matched_undefined_gsri as select c1 as docid, var('gsri_unidentified') as id, prev,middle,next from  
 (setschema 'c1, prev, middle, next' select c1, 
-textwindow2s(keywords(c2), 10,6,10,'(?i)\bGSRT\b|\bΓΓΕΤ\b|γενικ(?:ή|η) γραμματε(?:ί|ι)α (?:έ|ε)ρευνας και τεχνολογ(?:ί|ι)ας|GENERAL SECRETARIAT FOR RESEARCH AND TECHNOLOGY') 
+textwindow2s(keywords(c2), 10,6,10,'(?i)\bGSRT\b|\bΓΓΕΤ\b|(?:greek|general) secretariat (?:for|of) research|\bKRIPIS\b|γενικ(?:ή|η) γραμματε(?:ί|ι)α (?:έ|ε)ρευνας και τεχνολογ(?:ί|ι)ας|GENERAL SECRETARIAT (?:FOR|OF) RESEARCH AND TECHNOLOGY|GREEK SECRETARIAT (?:FOR|OF) RESEARCH') 
 from pubs  where c2 is not null)  
 where var('gsri_unidentified') is not null and
-regexprmatches("(?i)greece|greek|foundation|grant|project|funded|hellenic|supported|acknowledge|\bgr\b|research|program|secretariat|γραμματε(?:ί|ι)α",prev||" "||middle||" "||next)  
+regexprmatches("(?i)greece|greek|foundation|grant|project|\bpavet\b|funded|hellenic|supported|acknowledge|\bgr\b|research|program|secretariat|γραμματε(?:ί|ι)α",prev||" "||middle||" "||next)  
 group by docid;
 
 create temp table output_table as
