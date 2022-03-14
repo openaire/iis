@@ -27,7 +27,7 @@ except ImportError:
         return bool((inspect.isfunction(object) or inspect.ismethod(object)) and
                     obj.__code__.co_flags & CO_GENERATOR)
 
-sys.setcheckinterval(1000)
+#sys.setcheckinterval(1000)
 
 sqlite_version = apsw.sqlitelibversion()
 apsw_version = apsw.apswversion()

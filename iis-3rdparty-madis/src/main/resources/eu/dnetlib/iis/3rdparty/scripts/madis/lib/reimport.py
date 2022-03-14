@@ -130,8 +130,8 @@ def reimport(*modules):
     # Begin changing things. We "grab the GIL", so other threads
     # don't get a chance to see our half-baked universe
     imp.acquire_lock()
-    prevInterval = sys.getcheckinterval()
-    sys.setcheckinterval(min(sys.maxsize, 0x7fffffff))
+    #prevInterval = sys.getcheckinterval()
+    #sys.setcheckinterval(min(sys.maxsize, 0x7fffffff))
     try:
 
         # Python will munge the parent package on import. Remember original value
@@ -231,7 +231,7 @@ def reimport(*modules):
     finally:
         # Restore the GIL
         imp.release_lock()
-        sys.setcheckinterval(prevInterval)
+        #sys.setcheckinterval(prevInterval)
         time.sleep(0)
 
 
