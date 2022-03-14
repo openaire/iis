@@ -1,5 +1,6 @@
 {"key":"processing.referenceExtraction.community.references.byrootid.clarin", "type":"COUNTER", "value": "1"}
 {"key":"processing.referenceExtraction.community.references.byrootid.dariah", "type":"COUNTER", "value": "1"}
 {"key":"processing.referenceExtraction.community.references.byrootid.dh-ch", "type":"COUNTER", "value": "1"}
+{"key":"processing.referenceExtraction.community.references.byrootid.embrc", "type":"COUNTER", "value": "1"}
 {"key":"processing.referenceExtraction.community.references.byrootid.eric", "type":"COUNTER", "value": "1"}
 {"key":"processing.referenceExtraction.community.references.byrootid.fli", "type":"COUNTER", "value": "1"}

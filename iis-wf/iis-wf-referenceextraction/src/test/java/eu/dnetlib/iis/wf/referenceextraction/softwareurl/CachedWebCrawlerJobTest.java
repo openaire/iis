@@ -1,5 +1,26 @@
 package eu.dnetlib.iis.wf.referenceextraction.softwareurl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.apache.curator.test.TestingServer;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.ha.ZKFailoverController;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
 import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.SlowTest;
@@ -17,21 +38,9 @@ import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrl;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithSource;
-import org.apache.curator.test.TestingServer;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.ha.ZKFailoverController;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SlowTest
 public class CachedWebCrawlerJobTest {
@@ -177,10 +186,15 @@ public class CachedWebCrawlerJobTest {
         List<Fault> resultFaults = AvroTestUtils.readLocalAvroDataStore(outputFaultPath);
         assertEquals(2, resultFaults.size());
         assertEquals(DocumentNotFoundException.class.getName(), resultFaults.get(0).getCode().toString());
-        assertEquals("id-1", resultFaults.get(0).getInputObjectId().toString());
         assertEquals(DocumentNotFoundException.class.getName(), resultFaults.get(1).getCode().toString());
-        assertEquals("id-2", resultFaults.get(1).getInputObjectId().toString());
-
+        Set<String> expectedIds = new TreeSet<>();
+        expectedIds.add("id-1");
+        expectedIds.add("id-2");
+        Set<String> receivedIds = new TreeSet<>();
+        receivedIds.add(resultFaults.get(0).getInputObjectId().toString());
+        receivedIds.add(resultFaults.get(1).getInputObjectId().toString());
+        assertEquals(expectedIds, receivedIds);
+        
         // fault cache contents
         Path faultCacheLocation = DocumentTextCacheStorageUtils
                 .getCacheLocation(cacheRootDir, cacheId, CacheRecordType.fault);
@@ -225,9 +239,14 @@ public class CachedWebCrawlerJobTest {
         List<Fault> resultFaults = AvroTestUtils.readLocalAvroDataStore(outputFaultPath);
         assertEquals(2, resultFaults.size());
         assertEquals(DocumentNotFoundException.class.getName(), resultFaults.get(0).getCode().toString());
-        assertEquals("id-1", resultFaults.get(0).getInputObjectId().toString());
         assertEquals(DocumentNotFoundException.class.getName(), resultFaults.get(1).getCode().toString());
-        assertEquals("id-2", resultFaults.get(1).getInputObjectId().toString());
+        Set<String> expectedIds = new TreeSet<>();
+        expectedIds.add("id-1");
+        expectedIds.add("id-2");
+        Set<String> receivedIds = new TreeSet<>();
+        receivedIds.add(resultFaults.get(0).getInputObjectId().toString());
+        receivedIds.add(resultFaults.get(1).getInputObjectId().toString());
+        assertEquals(expectedIds, receivedIds);
 
         // evaluating cache contents
         String cacheId = cacheManager.getExistingCacheId(conf, cacheRootDir);

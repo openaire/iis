@@ -115,6 +115,9 @@ public class ReportMerger implements Process {
         
         JsonObject jsonReport = new JsonObject();
         
+        // sorting report entries in order to avoid entries order affecting the JSON structure
+        Collections.sort(reportEntries);
+        
         for (ReportEntry reportEntry : reportEntries) {
             reportEntryAppender.appendReportEntry(jsonReport, reportEntry);
         }
