@@ -19,7 +19,7 @@ class MyFun(vtbase.VT):
         cihr_regex = unicode(".*(?:(?:CIHR|IRSC)|(?i)(?:canad(?:ian|a) institute(?:s)? health research|institut(?:(?:e)?(?:s)?)? recherche sant(?:é|e) canada)).*", "utf_8")
         nserc_regex = unicode(".*(?:(?:NSERC|CRSNG)|(?i)(?:nat(?:ural|ional) science(?:s)?(?:\sengineering(?:\sresearch)?|\sresearch) co(?:u)?n(?:c|se)(?:i)?l|conseil(?:s)? recherche(?:s)? science(?:s)? naturel(?:les)?(?:\sg(?:e|é)nie)? canada)).*", "utf_8")
         sshrc_regex = unicode(".*(?:(?:SSHRC|CRSH|SSRCC)|(?i)(?:social science(?:s)?|conseil(?:s)? recherche(?:s)?(?:\ssciences humaines)? canada|humanities\sresearch)).*", "utf_8")
-        nrc_regex = unicode(".*(?i)(?:(?:national research council|conseil(?:s)? national recherche(?:s)?)\scanada).*", "utf_8")
+        nrc_regex = unicode(".*(?i)(?:national research council|conseil(?:s)? national recherche(?:s)?).*", "utf_8")
 
         cihr_unidentified = ''
         nserc_unidentified = ''
