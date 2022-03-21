@@ -37,20 +37,21 @@ pipeline {
 		}
 	    }
         }
-        stage('Sonar') {
-            agent {
-                docker {
-                    image dockerImage
-		    reuseNode true
-		    args dockerArgs(env)
-                }
-            }
-	    //NOTE: sonar scan is only done for master branch because current Sonar instance does not support branching
-	    when { branch 'master' }
-            steps {
-		sh 'mvn -B sonar:sonar -DskipTests -DskipITs -Dsonar.host.url=http://sonar.ceon.pl -Dsonar.login=${SONAR_TOKEN}'
-            }
-        }
+	//NOTE: Sonar step temporarily removed because the Sonar instance is unavailable
+        // stage('Sonar') {
+        //     agent {
+        //         docker {
+        //             image dockerImage
+	// 	    reuseNode true
+	// 	    args dockerArgs(env)
+        //         }
+        //     }
+	//     //NOTE: sonar scan is only done for master branch because current Sonar instance does not support branching
+	//     when { branch 'master' }
+        //     steps {
+	// 	sh 'mvn -B sonar:sonar -DskipTests -DskipITs -Dsonar.host.url=http://sonar.ceon.pl -Dsonar.login=${SONAR_TOKEN}'
+        //     }
+        // }
     }
 
     post {
