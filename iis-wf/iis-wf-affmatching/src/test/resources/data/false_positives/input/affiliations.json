@@ -1,0 +1,265 @@
+{
+    "id":"50|doi_dedup___::feb6ca890a59457f928bbc09063795b9",
+    "title":"irrelevant",
+    "abstract":null,
+    "language":null,
+    "keywords":null,
+    "externalIdentifiers":null,
+    "journal":null,
+    "year":null,
+    "publisher":null,
+    "references":null,
+    "authors": [
+        {"authorFullName": "author1", "affiliationPositions": [0]},
+        {"authorFullName": "author2", "affiliationPositions": [1]},
+        {"authorFullName": "author3", "affiliationPositions": [2]}
+    ],
+    "affiliations": [
+    {
+      "organization": "Plant Breeding and Genetics Section, School of Integrative Plant Science, Cornell University",
+      "countryName": "USA",
+      "countryCode": "US",
+      "address": "Ithaca, New York",
+      "rawText": "Plant Breeding and Genetics Section, School of Integrative Plant Science, Cornell University, Ithaca, New York, USA"
+    },
+    {
+      "organization": "VIB",
+      "countryName": "Belgium",
+      "countryCode": "BE",
+      "address": "Ghent",
+      "rawText": "VIB, Ghent, Belgium"
+    },
+    {
+      "organization": "Integrated Breeding Program (IBP), CIMMYT",
+      "countryName": "Mexico",
+      "countryCode": "MX",
+      "address": "Texcoco",
+      "rawText": "Integrated Breeding Program (IBP), CIMMYT, Texcoco, Mexico"
+    },
+    {
+      "organization": "Leibniz Institute of Plant Genetics and Crop Plant Research (IPK)",
+      "countryName": "Germany",
+      "countryCode": "DE",
+      "address": "Gatersleben",
+      "rawText": "Leibniz Institute of Plant Genetics and Crop Plant Research (IPK), Gatersleben, Germany"
+    },
+    {
+      "organization": "Boyce Thompson Institute",
+      "countryName": "USA",
+      "countryCode": "US",
+      "address": "Ithaca, NY",
+      "rawText": "Boyce Thompson Institute, Ithaca, NY, USA"
+    },
+    {
+      "organization": "International Potato Center (CIP)",
+      "countryName": "Peru",
+      "countryCode": "PE",
+      "address": "Lima",
+      "rawText": "International Potato Center (CIP), Lima, Peru"
+    },
+    {
+      "organization": "International Food Policy Research Institute (IFPRI)",
+      "countryName": "USA",
+      "countryCode": "US",
+      "address": "Washington DC",
+      "rawText": "International Food Policy Research Institute (IFPRI), Washington DC, USA"
+    },
+    {
+      "organization": "USDA ARS",
+      "countryName": "USA",
+      "countryCode": "US",
+      "address": "Ithaca, NY",
+      "rawText": "USDA ARS, Ithaca, NY, USA"
+    },
+    {
+      "organization": "International Rice Research Institute (IRRI)",
+      "countryName": "The Philippines",
+      "countryCode": null,
+      "address": "Los Baños, Laguna",
+      "rawText": "International Rice Research Institute (IRRI), Los Baños, Laguna, The Philippines"
+    },
+    {
+      "organization": "AGAP, Univ Montpellier, CIRAD, INRA, Montpellier SupAgro",
+      "countryName": "France",
+      "countryCode": "FR",
+      "address": "Montpellier",
+      "rawText": "AGAP, Univ Montpellier, CIRAD, INRA, Montpellier SupAgro, Montpellier, France"
+    },
+    {
+      "organization": "URGI, INRA, Université Paris-Saclay",
+      "countryName": "France",
+      "countryCode": "FR",
+      "address": "Versailles",
+      "rawText": "URGI, INRA, Université Paris-Saclay, Versailles, France"
+    },
+    {
+      "organization": "Instituto de Biologia Experimental e Technologica (iBET)",
+      "countryName": "Portugal",
+      "countryCode": "PT",
+      "address": "Oeiras",
+      "rawText": "Instituto de Biologia Experimental e Technologica (iBET), Oeiras, Portugal"
+    },
+    {
+      "organization": "USDA ARS",
+      "countryName": "USA",
+      "countryCode": "US",
+      "address": "Stuttgart, AR",
+      "rawText": "USDA ARS, Stuttgart, AR, USA"
+    },
+    {
+      "organization": "Department of Plant Breeding, Wageningen University & Research",
+      "countryName": "The Netherlands",
+      "countryCode": "NL",
+      "address": "Wageningen",
+      "rawText": "Department of Plant Breeding, Wageningen University & Research, Wageningen, The Netherlands"
+    },
+    {
+      "organization": "Institute of Biotechnology, Cornell University",
+      "countryName": "USA",
+      "countryCode": "US",
+      "address": "Ithaca, New York",
+      "rawText": "Institute of Biotechnology, Cornell University, Ithaca, New York, USA"
+    },
+    {
+      "organization": "Bioversity International",
+      "countryName": "France",
+      "countryCode": "FR",
+      "address": "Montpellier",
+      "rawText": "Bioversity International, Montpellier, France"
+    },
+    {
+      "organization": "Diversity Arrays Technology",
+      "countryName": "Australia",
+      "countryCode": "AU",
+      "address": "Bruce",
+      "rawText": "Diversity Arrays Technology, Bruce, Australia"
+    },
+    {
+      "organization": "DIADE, IRD, University of Montpellier",
+      "countryName": "France",
+      "countryCode": "FR",
+      "address": "Montpellier",
+      "rawText": "DIADE, IRD, University of Montpellier, Montpellier, France"
+    },
+    {
+      "organization": "College of Agricultural and Life Sciences, The University of Arizona",
+      "countryName": "USA",
+      "countryCode": "US",
+      "address": "Tucson, AZ",
+      "rawText": "College of Agricultural and Life Sciences, The University of Arizona, Tucson, AZ, USA"
+    },
+    {
+      "organization": "Information & Computational Sciences, The James Hutton Institute",
+      "countryName": "UK",
+      "countryCode": "UK",
+      "address": "Dundee",
+      "rawText": "Information & Computational Sciences, The James Hutton Institute, Dundee, UK"
+    },
+    {
+      "organization": "SRUC",
+      "countryName": "UK",
+      "countryCode": "UK",
+      "address": "Edinburgh",
+      "rawText": "SRUC, Edinburgh, UK"
+    },
+    {
+      "organization": "LeafNode Technology",
+      "countryName": "New Zealand",
+      "countryCode": "NZ",
+      "address": "Auckland",
+      "rawText": "LeafNode Technology, Auckland, New Zealand"
+    },
+    {
+      "organization": "MISTEA, INRA, Montpellier SupAgro, Universite de Montpellier",
+      "countryName": "France",
+      "countryCode": "FR",
+      "address": "Montpellier",
+      "rawText": "MISTEA, INRA, Montpellier SupAgro, Universite de Montpellier, Montpellier, France"
+    },
+    {
+      "organization": "John Innes Centre",
+      "countryName": "UK",
+      "countryCode": "UK",
+      "address": "Norwich Research Park, Norwich",
+      "rawText": "John Innes Centre, Norwich Research Park, Norwich, UK"
+    },
+    {
+      "organization": "International Crops Research Institute for the Semi-Arid Tropics (ICRISAT)",
+      "countryName": "India",
+      "countryCode": "IN",
+      "address": "Hyderabad",
+      "rawText": "International Crops Research Institute for the Semi-Arid Tropics (ICRISAT), Hyderabad, India"
+    },
+    {
+      "organization": "Department of Plant Pathology, Kansas State University",
+      "countryName": "USA",
+      "countryCode": "US",
+      "address": "Manhattan, KS",
+      "rawText": "Department of Plant Pathology, Kansas State University, Manhattan, KS, USA"
+    },
+    {
+      "organization": "INTERTRYP, Univ Montpellier",
+      "countryName": "France",
+      "countryCode": "FR",
+      "address": "CIRAD, IRD, Montpellier",
+      "rawText": "INTERTRYP, Univ Montpellier, CIRAD, IRD, Montpellier, France"
+    },
+    {
+      "organization": "Patranca E.I.R.L.",
+      "countryName": "Peru",
+      "countryCode": "PE",
+      "address": "Lima",
+      "rawText": "Patranca E.I.R.L., Lima, Peru"
+    },
+    {
+      "organization": "LeafNode Technology",
+      "countryName": "Argentina",
+      "countryCode": "AR",
+      "address": "Buenos Aires",
+      "rawText": "LeafNode Technology, Buenos Aires, Argentina"
+    },
+    {
+      "organization": "Wageningen University & Research",
+      "countryName": "The Netherlands",
+      "countryCode": "NL",
+      "address": "Biometris, Wageningen PB",
+      "rawText": "Wageningen University & Research, Biometris, Wageningen PB, The Netherlands"
+    }
+  	],
+    "volume":null,
+    "issue":null,
+    "pages":null,
+    "publicationTypeName":null,
+    "text":""
+}
+{
+    "id":"50|doi_dedup___::feb6ca890a59457f928bbc09063795b9",
+    "title":"irrelevant",
+    "abstract":null,
+    "language":null,
+    "keywords":null,
+    "externalIdentifiers":null,
+    "journal":null,
+    "year":null,
+    "publisher":null,
+    "references":null,
+    "authors": [
+        {"authorFullName": "author1", "affiliationPositions": [0]},
+        {"authorFullName": "author2", "affiliationPositions": [1]},
+        {"authorFullName": "author3", "affiliationPositions": [2]}
+    ],
+      "affiliations": [
+    {
+      "organization": "Rafael Abbeloos, Jan Erik Backlund, Martin Basterrechea Salido, Guillaume Bauchet, Omar Benites- Alfaro, et al.. BrAPI - an Application Programming Interface for Plant Breeding Applications.. Bioinformatics, Oxford University Press (OUP)",
+      "countryName": null,
+      "countryCode": null,
+      "address": "2019, 35 (20), pp.4147-4155. 10.1093/bioinformatics/btz190 . hal-02626802",
+      "rawText": "Rafael Abbeloos, Jan Erik Backlund, Martin Basterrechea Salido, Guillaume Bauchet, Omar Benites- Alfaro, et al.. BrAPI - an Application Programming Interface for Plant Breeding Applications.. Bioinformatics, Oxford University Press (OUP), 2019, 35 (20), pp.4147-4155. 10.1093/bioinformatics/btz190 . hal-02626802"
+    }
+    ],
+    "volume":null,
+    "issue":null,
+    "pages":null,
+    "publicationTypeName":null,
+    "text":""
+}
