@@ -33,7 +33,7 @@
         <pluginRepository>
             <id>iis-releases</id>
             <name>iis releases plugin repository</name>
-            <url>http://maven.ceon.pl/artifactory/iis-releases</url>
+            <url>https://maven.ceon.pl/artifactory/iis-releases</url>
             <layout>default</layout>
         </pluginRepository>
     </pluginRepositories>

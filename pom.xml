@@ -924,12 +924,12 @@
         <snapshotRepository>
             <id>iis-snapshots</id>
             <name>IIS Snapshots</name>
-            <url>http://maven.ceon.pl/artifactory/iis-snapshots/</url>
+            <url>https://maven.ceon.pl/artifactory/iis-snapshots/</url>
             <layout>default</layout>
         </snapshotRepository>
         <repository>
             <id>iis-releases</id>
-            <url>http://maven.ceon.pl/artifactory/iis-releases/</url>
+            <url>https://maven.ceon.pl/artifactory/iis-releases/</url>
         </repository>
     </distributionManagement>
 
