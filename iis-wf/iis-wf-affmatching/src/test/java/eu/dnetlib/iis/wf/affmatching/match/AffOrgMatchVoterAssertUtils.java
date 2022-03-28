@@ -102,22 +102,26 @@ class AffOrgMatchVoterAssertUtils {
         assertVoterGetOrgNamesFunction(voter, getOrgNamesFunctionClass);
     }
    
-    static void assertCommonAffOrgSectionWordsVoter(AffOrgMatchVoter voter, List<Character> expectedCharsToFilter, double expectedMinCommonWordsRatio,
-            double expectedMinWordSimilarity, int expectedWordToRemoveMaxLength, Class<? extends Function<AffMatchOrganization, List<String>>> getOrgNamesFunctionClass) {
+    static void assertCommonAffOrgSectionWordsVoter(AffOrgMatchVoter voter, List<Character> expectedCharsToFilter, 
+            double expectedMinWordSimilarity, int expectedWordToRemoveMaxLength, double expectedMinCommonWordsToAllAffWordsRatio, 
+            double expectedMinCommonWordsToAllOrgWordsRatio, Class<? extends Function<AffMatchOrganization, List<String>>> getOrgNamesFunctionClass) {
         
         assertTrue(voter instanceof CommonAffSectionWordsVoter);
         
         List<Character> charsToFilter = getInternalState(voter, "charsToFilter");
         assertEquals(expectedCharsToFilter, charsToFilter);
         
-        double minCommonWordsRatio = getInternalState(voter, "minCommonWordsRatio");
-        assertEquals(expectedMinCommonWordsRatio, minCommonWordsRatio, PRECISION);
-        
         double minWordSimilarity = getInternalState(getInternalState(voter, "commonSimilarWordCalculator"), "minWordSimilarity");
         assertEquals(expectedMinWordSimilarity, minWordSimilarity, PRECISION);
         
         int wordToRemoveMaxLength = getInternalState(voter, "wordToRemoveMaxLength");
         assertEquals(expectedWordToRemoveMaxLength, wordToRemoveMaxLength);
+        
+        double minCommonWordsToAllAffWordsRatio = getInternalState(voter, "minCommonWordsToAllAffWordsRatio");
+        assertEquals(expectedMinCommonWordsToAllAffWordsRatio, minCommonWordsToAllAffWordsRatio, PRECISION);
+        
+        double minCommonWordsToAllOrgWordsRatio = getInternalState(voter, "minCommonWordsToAllOrgWordsRatio");
+        assertEquals(expectedMinCommonWordsToAllOrgWordsRatio, minCommonWordsToAllOrgWordsRatio, PRECISION);
         
         assertVoterGetOrgNamesFunction(voter, getOrgNamesFunctionClass);
         

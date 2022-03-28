@@ -36,9 +36,13 @@ public class CommonAffSectionWordsVoter extends AbstractAffOrgMatchVoter {
     
     private final List<Character> charsToFilter;
     
-    private final double minCommonWordsRatio;
+    private final double minCommonWordsToAllAffWordsRatio;
+    
+    private final double minCommonWordsToAllOrgWordsRatio;
     
     private final int wordToRemoveMaxLength;
+    
+    private final int minNumberOfWordsInAffSection;
     
     private Function<AffMatchOrganization, List<String>> getOrgNamesFunction = new GetOrgNameFunction();
     
@@ -52,14 +56,21 @@ public class CommonAffSectionWordsVoter extends AbstractAffOrgMatchVoter {
      * @param wordToRemoveMaxLength - words with length equal or less than 
      *      this value will be filtered out before comparing words.
      *      Setting it to zero disables this feature.
-     * @param minFittingOrgWordsRatio - minimum ratio of {@link AffMatchAffiliation#getOrganizationName()}
+     * @param minCommonWordsToAllAffWordsRatio - minimum ratio of {@link AffMatchAffiliation#getOrganizationName()}
      *      section words that are also in {@link AffMatchOrganization#getName()}
      *      to all {@link AffMatchAffiliation#getOrganizationName()} section words.
      *      Value must be between (0,1].
+     * @param minCommonWordsToAllOrgWordsRatio - minimum ratio of {@link AffMatchAffiliation#getOrganizationName()}
+     *      section words that are also in {@link AffMatchOrganization#getName()}
+     *      to all {@link AffMatchOrganization#getName()} section words.
+     *      Value must be between (0,1].
+     * @param minNumberOfWordsInAffSection minimum number of words in {@link AffMatchAffiliation#getOrganizationName()} section 
+     *      to be considered as a potential match. 
      *
      * @see StringUtils#getJaroWinklerDistance(CharSequence, CharSequence)
      */
-    public CommonAffSectionWordsVoter(List<Character> charsToFilter, int wordToRemoveMaxLength, double minFittingOrgWordsRatio) {
+    public CommonAffSectionWordsVoter(List<Character> charsToFilter, int wordToRemoveMaxLength, double minCommonWordsToAllAffWordsRatio,
+            double minCommonWordsToAllOrgWordsRatio, int minNumberOfWordsInAffSection) {
         
         super();
         
@@ -67,13 +78,21 @@ public class CommonAffSectionWordsVoter extends AbstractAffOrgMatchVoter {
         
         Preconditions.checkArgument(wordToRemoveMaxLength >= 0);
         
-        Preconditions.checkArgument(minFittingOrgWordsRatio > 0 && minFittingOrgWordsRatio <= 1);
+        Preconditions.checkArgument(minCommonWordsToAllAffWordsRatio > 0 && minCommonWordsToAllAffWordsRatio <= 1);
+        
+        Preconditions.checkArgument(minCommonWordsToAllOrgWordsRatio > 0 && minCommonWordsToAllOrgWordsRatio <= 1);
+        
+        Preconditions.checkArgument(minNumberOfWordsInAffSection > 0);
         
         this.charsToFilter = charsToFilter;
         
         this.wordToRemoveMaxLength = wordToRemoveMaxLength;
         
-        this.minCommonWordsRatio = minFittingOrgWordsRatio;
+        this.minCommonWordsToAllAffWordsRatio = minCommonWordsToAllAffWordsRatio;
+        
+        this.minCommonWordsToAllOrgWordsRatio = minCommonWordsToAllOrgWordsRatio;
+        
+        this.minNumberOfWordsInAffSection = minNumberOfWordsInAffSection;
         
     }
     
@@ -125,7 +144,16 @@ public class CommonAffSectionWordsVoter extends AbstractAffOrgMatchVoter {
             
             List<String> affWords = ImmutableList.copyOf(StringUtils.split(filteredAffSectionName));
             
-            if (voteSectionMatch(affWords, orgWords)) {
+            if (affWords.size() < minNumberOfWordsInAffSection) {
+                continue;
+            }
+            
+            double similarWordsNumber = commonSimilarWordCalculator.calcSimilarWordNumber(affWords, orgWords);
+            double commonWordsToAllAffWordsRatio = similarWordsNumber / affWords.size();
+            double commonWordsToAllOrgWordsRatio = similarWordsNumber / orgWords.size();
+            
+            if (commonWordsToAllAffWordsRatio >= minCommonWordsToAllAffWordsRatio
+                    && commonWordsToAllOrgWordsRatio >= minCommonWordsToAllOrgWordsRatio) {
                 return true;
             }
         }
@@ -142,18 +170,6 @@ public class CommonAffSectionWordsVoter extends AbstractAffOrgMatchVoter {
     public void setGetOrgNamesFunction(Function<AffMatchOrganization, List<String>> getOrgNamesFunction) {
         this.getOrgNamesFunction = getOrgNamesFunction;
     }
-   
-
-    //------------------------ PRIVATE --------------------------
-    
-    private boolean voteSectionMatch(List<String> affSectionWords, List<String> orgWords) {
-        
-        double commonWordsRatio = commonSimilarWordCalculator.calcSimilarWordRatio(affSectionWords, orgWords); 
-        
-        
-        return commonWordsRatio >= minCommonWordsRatio;
-    }
-
 
     
     //------------------------ SETTERS --------------------------
@@ -171,7 +187,9 @@ public class CommonAffSectionWordsVoter extends AbstractAffOrgMatchVoter {
         return Objects.toStringHelper(this).add("matchStength", getMatchStrength())
                                            .add("charsToFilter", charsToFilter)
                                            .add("wordToRemoveMaxLength", wordToRemoveMaxLength)
-                                           .add("minFittingOrgWordsRatio", minCommonWordsRatio)
+                                           .add("minCommonWordsToAllAffWordsRatio", minCommonWordsToAllAffWordsRatio)
+                                           .add("minCommonWordsToAllOrgWordsRatio", minCommonWordsToAllOrgWordsRatio)
+                                           .add("minNumberOfWordsInAffSection", minNumberOfWordsInAffSection)
                                            .add("commonSimilarWordCalculator", commonSimilarWordCalculator)
                                            .add("getOrgNamesFunction", getOrgNamesFunction.getClass().getSimpleName())
                                            .toString();

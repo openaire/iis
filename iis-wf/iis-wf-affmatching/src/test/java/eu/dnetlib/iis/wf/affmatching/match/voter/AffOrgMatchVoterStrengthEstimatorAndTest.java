@@ -1,8 +1,43 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
+import static com.google.common.collect.ImmutableList.of;
+import static eu.dnetlib.iis.common.utils.AvroTestUtils.createLocalAvroDataStore;
+import static eu.dnetlib.iis.common.utils.JsonAvroTestUtils.readMultipleJsonDataStores;
+import static eu.dnetlib.iis.common.utils.JsonTestUtils.readJson;
+import static eu.dnetlib.iis.common.utils.JsonTestUtils.readMultipleJsons;
+import static eu.dnetlib.iis.wf.affmatching.AffMatchingResultPrinter.printFalsePositives;
+import static eu.dnetlib.iis.wf.affmatching.AffMatchingResultPrinter.printNotMatched;
+import static eu.dnetlib.iis.wf.affmatching.match.DocOrgRelationMatcherFactory.createDocOrgRelationMatcher;
+import static eu.dnetlib.iis.wf.affmatching.match.DocOrgRelationMatcherFactory.createDocOrgRelationMatcherVoters;
+import static eu.dnetlib.iis.wf.affmatching.match.FirstWordsHashBucketMatcherFactory.createNameFirstWordsHashBucketMatcher;
+import static eu.dnetlib.iis.wf.affmatching.match.FirstWordsHashBucketMatcherFactory.createNameFirstWordsHashBucketMatcherVoters;
+import static eu.dnetlib.iis.wf.affmatching.match.MainSectionHashBucketMatcherFactory.createAlternativeNameMainSectionHashBucketMatcher;
+import static eu.dnetlib.iis.wf.affmatching.match.MainSectionHashBucketMatcherFactory.createAlternativeNameMainSectionHashBucketMatcherVoters;
+import static eu.dnetlib.iis.wf.affmatching.match.MainSectionHashBucketMatcherFactory.createNameMainSectionHashBucketMatcher;
+import static eu.dnetlib.iis.wf.affmatching.match.MainSectionHashBucketMatcherFactory.createNameMainSectionHashBucketMatcherVoters;
+import static eu.dnetlib.iis.wf.affmatching.match.MainSectionHashBucketMatcherFactory.createShortNameMainSectionHashBucketMatcher;
+import static eu.dnetlib.iis.wf.affmatching.match.MainSectionHashBucketMatcherFactory.createShortNameMainSectionHashBucketMatcherVoters;
+import static java.util.stream.Collectors.toList;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.spark.TestWithSharedSparkContext;
 import eu.dnetlib.iis.importer.schemas.Organization;
@@ -20,36 +55,6 @@ import eu.dnetlib.iis.wf.affmatching.read.AffiliationConverter;
 import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.IisOrganizationReader;
 import eu.dnetlib.iis.wf.affmatching.write.SimpleAffMatchResultWriter;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.FileUtils;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Set;
-import java.util.function.BiFunction;
-
-import static com.google.common.collect.ImmutableList.of;
-import static eu.dnetlib.iis.common.utils.AvroTestUtils.createLocalAvroDataStore;
-import static eu.dnetlib.iis.common.utils.JsonAvroTestUtils.readMultipleJsonDataStores;
-import static eu.dnetlib.iis.common.utils.JsonTestUtils.readJson;
-import static eu.dnetlib.iis.common.utils.JsonTestUtils.readMultipleJsons;
-import static eu.dnetlib.iis.wf.affmatching.AffMatchingResultPrinter.printFalsePositives;
-import static eu.dnetlib.iis.wf.affmatching.AffMatchingResultPrinter.printNotMatched;
-import static eu.dnetlib.iis.wf.affmatching.match.DocOrgRelationMatcherFactory.createDocOrgRelationMatcher;
-import static eu.dnetlib.iis.wf.affmatching.match.DocOrgRelationMatcherFactory.createDocOrgRelationMatcherVoters;
-import static eu.dnetlib.iis.wf.affmatching.match.FirstWordsHashBucketMatcherFactory.createNameFirstWordsHashBucketMatcher;
-import static eu.dnetlib.iis.wf.affmatching.match.FirstWordsHashBucketMatcherFactory.createNameFirstWordsHashBucketMatcherVoters;
-import static eu.dnetlib.iis.wf.affmatching.match.MainSectionHashBucketMatcherFactory.*;
-import static java.util.stream.Collectors.toList;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * An {@link AffOrgMatchVoter} match strength estimator. <br/>

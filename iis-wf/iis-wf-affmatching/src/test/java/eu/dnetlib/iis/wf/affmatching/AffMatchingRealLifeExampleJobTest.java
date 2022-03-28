@@ -28,7 +28,7 @@ import java.util.List;
 * @author mhorst
 */
 @SlowTest
-public class AffMatchingFalsePositivesJobTest {
+public class AffMatchingRealLifeExampleJobTest {
     
     
     private SparkJobExecutor executor = new SparkJobExecutor();
@@ -75,20 +75,20 @@ public class AffMatchingFalsePositivesJobTest {
         // given
 
         String jsonInputOrgPath = ClassPathResourceProvider
-                .getResourcePath("data/false_positives/input/organizations.json");
+                .getResourcePath("data/reallife_example/input/organizations.json");
         String jsonInputAffPath = ClassPathResourceProvider
-                .getResourcePath("data/false_positives/input/affiliations.json");
+                .getResourcePath("data/reallife_example/input/affiliations.json");
         String jsonInputInferredDocProjPath = ClassPathResourceProvider
-                .getResourcePath("data/false_positives/input/docProjInferred.json");
+                .getResourcePath("data/reallife_example/input/docProjInferred.json");
         String jsonInputDocProjPath = ClassPathResourceProvider
-                .getResourcePath("data/false_positives/input/docProj.json");
+                .getResourcePath("data/reallife_example/input/docProj.json");
         String jsonInputProjOrgPath = ClassPathResourceProvider
-                .getResourcePath("data/false_positives/input/projOrg.json");
+                .getResourcePath("data/reallife_example/input/projOrg.json");
 
         String jsonOutputPath = ClassPathResourceProvider
-                .getResourcePath("data/false_positives/expectedOutput/matchedOrganizations.json");
+                .getResourcePath("data/reallife_example/expectedOutput/matchedOrganizations.json");
         String jsonOutputReportPath = ClassPathResourceProvider
-                .getResourcePath("data/false_positives/expectedOutput/report.json");
+                .getResourcePath("data/reallife_example/expectedOutput/report.json");
         
         
         AvroTestUtils.createLocalAvroDataStore(
@@ -145,7 +145,7 @@ public class AffMatchingFalsePositivesJobTest {
         
         // assert
         List<MatchedOrganization> matchedOrgs = AvroTestUtils.readLocalAvroDataStore(outputDirPath);
-        assertEquals(1, matchedOrgs.size());
+        assertEquals(0, matchedOrgs.size());
         
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputPath, MatchedOrganization.class);
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportPath, jsonOutputReportPath, ReportEntry.class);

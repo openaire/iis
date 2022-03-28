@@ -1,0 +1,60 @@
+{
+    "id":"50|doi_dedup___::feb6ca890a59457f928bbc09063795b9",
+    "title":"irrelevant",
+    "abstract":null,
+    "language":null,
+    "keywords":null,
+    "externalIdentifiers":null,
+    "journal":null,
+    "year":null,
+    "publisher":null,
+    "references":null,
+    "authors": [
+        {"authorFullName": "author3", "affiliationPositions": [0]}
+    ],
+    "affiliations": [
+    {
+      "organization": "MISTEA, INRA, Montpellier SupAgro, Universite de Montpellier",
+      "countryName": "xxx",
+      "countryCode": "xx",
+      "address": "xxx",
+      "rawText": "xxx"
+    }
+  	],
+    "volume":null,
+    "issue":null,
+    "pages":null,
+    "publicationTypeName":null,
+    "text":""
+}
+
+
+{
+    "id":"50|doi_dedup___::ab75c2e57e543b81486f5c69f5ee97b1",
+    "title":"irrelevant",
+    "abstract":null,
+    "language":null,
+    "keywords":null,
+    "externalIdentifiers":null,
+    "journal":null,
+    "year":null,
+    "publisher":null,
+    "references":null,
+    "authors": [
+        {"authorFullName": "author3", "affiliationPositions": [0,1,2,3,4,5,6,7,8,9]}
+    ],
+    "affiliations": [
+    {
+      "organization": "and Technology",
+      "countryName": "Spain",
+      "countryCode": "ES",
+      "address": "PRBB, 08003 Barcelona",
+      "rawText": "and Technology, PRBB, 08003 Barcelona, Spain"
+    }
+  ],
+    "volume":null,
+    "issue":null,
+    "pages":null,
+    "publicationTypeName":null,
+    "text":""
+}

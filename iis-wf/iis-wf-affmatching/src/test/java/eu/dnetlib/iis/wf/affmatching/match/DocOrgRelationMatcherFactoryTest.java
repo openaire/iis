@@ -141,9 +141,9 @@ public class DocOrgRelationMatcherFactoryTest {
         assertCommonWordsVoter(voters.get(12), ImmutableList.of(',', ';'), 0.7f, WITH_REGARD_TO_ORG_WORDS, 0.9f, 2, GetOrgAlternativeNamesFunction.class);
         
         
-        assertCommonAffOrgSectionWordsVoter(voters.get(13), ImmutableList.of(',', ';'), 0.8f, 0.85f, 1, GetOrgNameFunction.class);
+        assertCommonAffOrgSectionWordsVoter(voters.get(13), ImmutableList.of(',', ';'), 0.85f, 2, 0.81, 0.81, GetOrgNameFunction.class);
         
-        assertCommonAffOrgSectionWordsVoter(voters.get(14), ImmutableList.of(',', ';'), 0.8f, 0.85f, 1, GetOrgAlternativeNamesFunction.class);
+        assertCommonAffOrgSectionWordsVoter(voters.get(14), ImmutableList.of(',', ';'), 0.85f, 2, 0.81, 0.81, GetOrgAlternativeNamesFunction.class);
     }
    
 
