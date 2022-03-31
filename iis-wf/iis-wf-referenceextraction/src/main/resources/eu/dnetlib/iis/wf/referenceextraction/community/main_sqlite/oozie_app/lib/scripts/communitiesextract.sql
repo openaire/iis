@@ -89,7 +89,7 @@ or regexprmatches("\bRISIS\b|\bINRAE\b|CorTexT|\bLISIS\b",text)
 -- gate
 union all
 
-select id, "GATE" as ma, prev, middle, next   from (setschema 'id,text,prev,middle,next' select id, textwindow2s(text, 10,1,10, "\bGATE(?:\b|\d)|gatecloud|gate\.ac\.uk") from (setschema 'id,text' select c1,c2 from pubs)) 
+select id, "GATE" as ma, prev, middle, next   from (setschema 'id,prev,middle,next' select id, textwindow2s(text, 10,1,10, "\bGATE(?:\b|\d)|gatecloud|gate\.ac\.uk") from (setschema 'id,text' select c1,c2 from pubs)) 
 where regexprmatches("text mining|gatecloud|gate\.ac\.uk|\buima\b|classifier|semantic|\bnlp\b|text engineering|natural language|language engineering|information extraction|text analytics|cunningham|text process|architecture text|maynard|tablan|bontcheva|gate framework|tokenizer|tokeniser|sheffield|text annotation|language processing|\bnltk\b|treetagger|\byatea\b", lower(prev||" "||middle||" "||next))
 
 
