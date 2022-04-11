@@ -104,7 +104,7 @@ class AffOrgMatchVoterAssertUtils {
    
     static void assertCommonAffOrgSectionWordsVoter(AffOrgMatchVoter voter, List<Character> expectedCharsToFilter, 
             double expectedMinWordSimilarity, int expectedWordToRemoveMaxLength, double expectedMinCommonWordsToAllAffWordsRatio, 
-            double expectedMinCommonWordsToAllOrgWordsRatio, Class<? extends Function<AffMatchOrganization, List<String>>> getOrgNamesFunctionClass) {
+            int expectedMinNumberOfWordsInAffSection, Class<? extends Function<AffMatchOrganization, List<String>>> getOrgNamesFunctionClass) {
         
         assertTrue(voter instanceof CommonAffSectionWordsVoter);
         
@@ -120,8 +120,8 @@ class AffOrgMatchVoterAssertUtils {
         double minCommonWordsToAllAffWordsRatio = getInternalState(voter, "minCommonWordsToAllAffWordsRatio");
         assertEquals(expectedMinCommonWordsToAllAffWordsRatio, minCommonWordsToAllAffWordsRatio, PRECISION);
         
-        double minCommonWordsToAllOrgWordsRatio = getInternalState(voter, "minCommonWordsToAllOrgWordsRatio");
-        assertEquals(expectedMinCommonWordsToAllOrgWordsRatio, minCommonWordsToAllOrgWordsRatio, PRECISION);
+        int minNumberOfWordsInAffSection = getInternalState(voter, "minNumberOfWordsInAffSection");
+        assertEquals(expectedMinNumberOfWordsInAffSection, minNumberOfWordsInAffSection);
         
         assertVoterGetOrgNamesFunction(voter, getOrgNamesFunctionClass);
         

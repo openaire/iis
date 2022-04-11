@@ -39,7 +39,7 @@ public class CommonAffSectionWordsVoterTest {
     
     @InjectMocks
     private CommonAffSectionWordsVoter voter = new CommonAffSectionWordsVoter(CHARS_TO_FILTER, WORDS_TO_REMOVE_MAX_LENGTH, 
-            MIN_COMMON_WORDS_RATIO, MIN_COMMON_WORDS_RATIO, MIN_NUMBER_OF_WORDS_IN_AFF_SECTION);
+            MIN_COMMON_WORDS_RATIO, MIN_NUMBER_OF_WORDS_IN_AFF_SECTION);
     
     @Mock
     private OrganizationSectionsSplitter organizationSectionsSplitter;
@@ -76,7 +76,7 @@ public class CommonAffSectionWordsVoterTest {
         
         // execute
         assertThrows(NullPointerException.class, () ->
-                new CommonAffSectionWordsVoter(null, 2, 0.8, 0.8, 1));
+                new CommonAffSectionWordsVoter(null, 2, 0.8, 1));
     
     }
     
@@ -86,17 +86,7 @@ public class CommonAffSectionWordsVoterTest {
 
         // execute
         assertThrows(IllegalArgumentException.class, () ->
-                new CommonAffSectionWordsVoter(of(), -1, 0.8, 0.8, 1));
-        
-    }
-    
-    
-    @Test
-    public void constructor_TOO_HIGH_MIN_COMMON_WORDS_IN_ORG_RATIO() {
-        
-        // execute
-        assertThrows(IllegalArgumentException.class, () ->
-                new CommonAffSectionWordsVoter(of(), 2, 0.8, 1.1, 1));
+                new CommonAffSectionWordsVoter(of(), -1, 0.8, 1));
         
     }
     
@@ -105,26 +95,17 @@ public class CommonAffSectionWordsVoterTest {
         
         // execute
         assertThrows(IllegalArgumentException.class, () ->
-                new CommonAffSectionWordsVoter(of(), 2, 1.1, 0.8, 1));
+                new CommonAffSectionWordsVoter(of(), 2, 1.1, 1));
         
     }
     
-    
-    @Test
-    public void constructor_TOO_LOW_MIN_COMMON_WORDS_IN_ORG_RATIO() {
-        
-        // execute
-        assertThrows(IllegalArgumentException.class, () ->
-                new CommonAffSectionWordsVoter(of(), 2, 0.8, 0, 1));
-        
-    }
     
     @Test
     public void constructor_TOO_LOW_MIN_COMMON_WORDS_IN_AFF_RATIO() {
         
         // execute
         assertThrows(IllegalArgumentException.class, () ->
-                new CommonAffSectionWordsVoter(of(), 2, 0, 0.8, 1));
+                new CommonAffSectionWordsVoter(of(), 2, 0, 1));
         
     }
     
@@ -143,11 +124,11 @@ public class CommonAffSectionWordsVoterTest {
         whenFilterCharsThen("Universiti of Toronto", "Universiti Toronto");
         
         
-        when(commonSimilarWordCalculator.calcSimilarWordNumber(newArrayList("Chemistry", "Department"), newArrayList("University", "Toronto")))
-                                        .thenReturn(0);
+        when(commonSimilarWordCalculator.calcSimilarWordRatio(newArrayList("Chemistry", "Department"), newArrayList("University", "Toronto")))
+                                        .thenReturn(0d);
 
-        when(commonSimilarWordCalculator.calcSimilarWordNumber(newArrayList("Universiti", "Toronto"), newArrayList("University", "Toronto")))
-                                        .thenReturn(2);
+        when(commonSimilarWordCalculator.calcSimilarWordRatio(newArrayList("Universiti", "Toronto"), newArrayList("University", "Toronto")))
+                                        .thenReturn(1d);
 
         
         // execute & assert
@@ -175,18 +156,18 @@ public class CommonAffSectionWordsVoterTest {
         whenFilterCharsThen("University of Toronto", "University Toronto");
 
         
-        when(commonSimilarWordCalculator.calcSimilarWordNumber(newArrayList("Chemistry", "Department"), newArrayList("Technical", "University", "Poznan")))
-                                        .thenReturn(0);
+        when(commonSimilarWordCalculator.calcSimilarWordRatio(newArrayList("Chemistry", "Department"), newArrayList("Technical", "University", "Poznan")))
+                                        .thenReturn(0d);
 
-        when(commonSimilarWordCalculator.calcSimilarWordNumber(newArrayList("Universiti", "Toronto"), newArrayList("Technical", "University", "Poznan")))
-                                        .thenReturn(1);
+        when(commonSimilarWordCalculator.calcSimilarWordRatio(newArrayList("Universiti", "Toronto"), newArrayList("Technical", "University", "Poznan")))
+                                        .thenReturn(0.5d);
         
 
-        when(commonSimilarWordCalculator.calcSimilarWordNumber(newArrayList("Chemistry", "Department"), newArrayList("University", "Toronto")))
-                                        .thenReturn(0);
+        when(commonSimilarWordCalculator.calcSimilarWordRatio(newArrayList("Chemistry", "Department"), newArrayList("University", "Toronto")))
+                                        .thenReturn(0d);
 
-        when(commonSimilarWordCalculator.calcSimilarWordNumber(newArrayList("Universiti", "Toronto"), newArrayList("University", "Toronto")))
-                                        .thenReturn(2);
+        when(commonSimilarWordCalculator.calcSimilarWordRatio(newArrayList("Universiti", "Toronto"), newArrayList("University", "Toronto")))
+                                        .thenReturn(1d);
 
 
         // execute & assert
@@ -216,10 +197,10 @@ public class CommonAffSectionWordsVoterTest {
     }
     
     @Test
-    public void voteMatch_REAL_LIFE_EXAMPLE_TOO_LITLE_COMMON_WORDS_WITH_ORG_SECTION() {
+    public void voteMatch_REAL_LIFE_EXAMPLE_TOO_LITLE_WORDS_IN_AFF_SECTION() {
         
         // given the values taken from production setup
-        CommonAffSectionWordsVoter voter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 1, 0.81, 0.81, 1);
+        CommonAffSectionWordsVoter voter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 1, 0.81, 2);
         voter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.85));
         voter.setMatchStrength(0.966f);
         
@@ -233,10 +214,10 @@ public class CommonAffSectionWordsVoterTest {
     }
     
     @Test
-    public void voteMatch_REAL_LIFE_EXAMPLE_ENOUGH_COMMON_WORDS_TO_BOTH_AFF_SECTION_AND_ORG_NAME() {
+    public void voteMatch_REAL_LIFE_EXAMPLE_ENOUGH_COMMON_WORDS() {
         
         // given the values taken from production setup
-        CommonAffSectionWordsVoter voter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 1, 0.81, 0.01, 1);
+        CommonAffSectionWordsVoter voter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 1, 0.01, 1);
         voter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.85));
         voter.setMatchStrength(0.966f);
         
@@ -248,29 +229,12 @@ public class CommonAffSectionWordsVoterTest {
         // execute & assert
         assertTrue(voter.voteMatch(affiliation, organization));
     }
-    
-    @Test
-    public void voteMatch_REAL_LIFE_EXAMPLE_NOT_ENOUGH_COMMON_WORDS_IN_ORG_NAME() {
         
-        // given
-        CommonAffSectionWordsVoter voter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 1, 0.81, 0.81, 2);
-        voter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.85));
-        voter.setMatchStrength(0.966f);
-        
-        AffMatchAffiliation affiliation = new AffMatchAffiliation("DOC_ID", 1);
-        affiliation.setOrganizationName("mistea, inra, montpellier supagro, universite de montpellier");
-        AffMatchOrganization organization = new AffMatchOrganization("ORG_ID");
-        organization.setName("athena research and innovation center in information communication & knowledge technologies");
-        
-        // execute & assert
-        assertFalse(voter.voteMatch(affiliation, organization));
-    }
-    
     @Test
     public void voteMatch_REAL_LIFE_EXAMPLE_SIMILARITY_LEVEL_HIGH_ENOUGH_TO_AVOID_MATCHING() {
         
         // given
-        CommonAffSectionWordsVoter voter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 1, 0.81, 0.81, 1);
+        CommonAffSectionWordsVoter voter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 1, 0.81, 1);
         voter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.9));
         voter.setMatchStrength(0.966f);
         
@@ -287,7 +251,7 @@ public class CommonAffSectionWordsVoterTest {
     public void voteMatch_REAL_LIFE_EXAMPLE_MAX_LENGTH_OF_WORD_TO_REMOVE_ELIMINATES_POTENTIAL_MATCH() {
         
         // given
-        CommonAffSectionWordsVoter voter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 2, 0.81, 0.81, 1);
+        CommonAffSectionWordsVoter voter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 2, 0.81, 1);
         voter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.85));
         voter.setMatchStrength(0.966f);
         
@@ -300,22 +264,7 @@ public class CommonAffSectionWordsVoterTest {
         assertFalse(voter.voteMatch(affiliation, organization));
     }
     
-    @Test
-    public void voteMatch_REAL_LIFE_EXAMPLE_PERC_OF_MATCHED_WORDS_AGAINST_ORG_WORDS_COUNT_BELOW_THRESHOLD() {
-        
-        // given
-        CommonAffSectionWordsVoter voter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 2, 0.81, 0.3, 1);
-        voter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.85));
-        voter.setMatchStrength(0.966f);
-        
-        AffMatchAffiliation affiliation = new AffMatchAffiliation("DOC_ID", 1);
-        affiliation.setOrganizationName("and technology");
-        AffMatchOrganization organization = new AffMatchOrganization("ORG_ID");
-        organization.setName("athena research and innovation center in information communication & knowledge technologies");
-        
-        // execute & assert
-        assertFalse(voter.voteMatch(affiliation, organization));
-    }
+   
     
     //------------------------ PRIVATE --------------------------
     

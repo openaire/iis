@@ -26,6 +26,8 @@ public class CommonAffSectionWordsVoter extends AbstractAffOrgMatchVoter {
 
     private static final long serialVersionUID = 1L;
     
+    private static final String COUNTRY_CODE_UNKNOWN = "UNKNOWN";
+    
     
     private OrganizationSectionsSplitter organizationSectionsSplitter = new OrganizationSectionsSplitter();
     
@@ -37,8 +39,6 @@ public class CommonAffSectionWordsVoter extends AbstractAffOrgMatchVoter {
     private final List<Character> charsToFilter;
     
     private final double minCommonWordsToAllAffWordsRatio;
-    
-    private final double minCommonWordsToAllOrgWordsRatio;
     
     private final int wordToRemoveMaxLength;
     
@@ -60,17 +60,13 @@ public class CommonAffSectionWordsVoter extends AbstractAffOrgMatchVoter {
      *      section words that are also in {@link AffMatchOrganization#getName()}
      *      to all {@link AffMatchAffiliation#getOrganizationName()} section words.
      *      Value must be between (0,1].
-     * @param minCommonWordsToAllOrgWordsRatio - minimum ratio of {@link AffMatchAffiliation#getOrganizationName()}
-     *      section words that are also in {@link AffMatchOrganization#getName()}
-     *      to all {@link AffMatchOrganization#getName()} section words.
-     *      Value must be between (0,1].
      * @param minNumberOfWordsInAffSection minimum number of words in {@link AffMatchAffiliation#getOrganizationName()} section 
      *      to be considered as a potential match. 
      *
      * @see StringUtils#getJaroWinklerDistance(CharSequence, CharSequence)
      */
     public CommonAffSectionWordsVoter(List<Character> charsToFilter, int wordToRemoveMaxLength, double minCommonWordsToAllAffWordsRatio,
-            double minCommonWordsToAllOrgWordsRatio, int minNumberOfWordsInAffSection) {
+            int minNumberOfWordsInAffSection) {
         
         super();
         
@@ -80,8 +76,6 @@ public class CommonAffSectionWordsVoter extends AbstractAffOrgMatchVoter {
         
         Preconditions.checkArgument(minCommonWordsToAllAffWordsRatio > 0 && minCommonWordsToAllAffWordsRatio <= 1);
         
-        Preconditions.checkArgument(minCommonWordsToAllOrgWordsRatio > 0 && minCommonWordsToAllOrgWordsRatio <= 1);
-        
         Preconditions.checkArgument(minNumberOfWordsInAffSection > 0);
         
         this.charsToFilter = charsToFilter;
@@ -89,8 +83,6 @@ public class CommonAffSectionWordsVoter extends AbstractAffOrgMatchVoter {
         this.wordToRemoveMaxLength = wordToRemoveMaxLength;
         
         this.minCommonWordsToAllAffWordsRatio = minCommonWordsToAllAffWordsRatio;
-        
-        this.minCommonWordsToAllOrgWordsRatio = minCommonWordsToAllOrgWordsRatio;
         
         this.minNumberOfWordsInAffSection = minNumberOfWordsInAffSection;
         
@@ -109,6 +101,9 @@ public class CommonAffSectionWordsVoter extends AbstractAffOrgMatchVoter {
     @Override
     public boolean voteMatch(AffMatchAffiliation affiliation, AffMatchOrganization organization) {
         
+        if (isCountryCodeDefinedAndDifferent(affiliation, organization)) {
+            return false;
+        }
         
         List<String> affSections = organizationSectionsSplitter.splitToSections(affiliation.getOrganizationName());
         
@@ -131,7 +126,8 @@ public class CommonAffSectionWordsVoter extends AbstractAffOrgMatchVoter {
         return false;
     }
 
-
+    //------------------------ PRIVATE --------------------------
+    
     private boolean isAnyAffSectionInOrgWords(List<String> affSections, List<String> orgWords) {
         
         for (String affSection : affSections) {
@@ -148,19 +144,29 @@ public class CommonAffSectionWordsVoter extends AbstractAffOrgMatchVoter {
                 continue;
             }
             
-            double similarWordsNumber = commonSimilarWordCalculator.calcSimilarWordNumber(affWords, orgWords);
-            double commonWordsToAllAffWordsRatio = similarWordsNumber / affWords.size();
-            double commonWordsToAllOrgWordsRatio = similarWordsNumber / orgWords.size();
-            
-            if (commonWordsToAllAffWordsRatio >= minCommonWordsToAllAffWordsRatio
-                    && commonWordsToAllOrgWordsRatio >= minCommonWordsToAllOrgWordsRatio) {
+            if (voteSectionMatch(affWords, orgWords)) {
                 return true;
             }
         }
         
         return false;
     }
+
+    private boolean voteSectionMatch(List<String> affSectionWords, List<String> orgWords) {
+
+        double commonWordsRatio = commonSimilarWordCalculator.calcSimilarWordRatio(affSectionWords, orgWords); 
+
+
+        return commonWordsRatio >= minCommonWordsToAllAffWordsRatio;
+    }
     
+    private static boolean isCountryCodeDefinedAndDifferent(AffMatchAffiliation affiliation,
+            AffMatchOrganization organization) {
+        return StringUtils.isNotBlank(affiliation.getCountryCode())
+                && StringUtils.isNotBlank(organization.getCountryCode())
+                && !COUNTRY_CODE_UNKNOWN.equals(organization.getCountryCode().toUpperCase())
+                && !affiliation.getCountryCode().equals(organization.getCountryCode());
+    }
     
     //------------------------ SETTERS --------------------------
     
@@ -188,7 +194,6 @@ public class CommonAffSectionWordsVoter extends AbstractAffOrgMatchVoter {
                                            .add("charsToFilter", charsToFilter)
                                            .add("wordToRemoveMaxLength", wordToRemoveMaxLength)
                                            .add("minCommonWordsToAllAffWordsRatio", minCommonWordsToAllAffWordsRatio)
-                                           .add("minCommonWordsToAllOrgWordsRatio", minCommonWordsToAllOrgWordsRatio)
                                            .add("minNumberOfWordsInAffSection", minNumberOfWordsInAffSection)
                                            .add("commonSimilarWordCalculator", commonSimilarWordCalculator)
                                            .add("getOrgNamesFunction", getOrgNamesFunction.getClass().getSimpleName())
