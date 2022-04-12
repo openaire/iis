@@ -97,8 +97,8 @@ public class CitationsActionBuilderModuleFactoryTest extends AbstractActionBuild
         assertEquals(1, result.getExtraInfo().size());
         ExtraInfo extraInfo = result.getExtraInfo().get(0);
         assertNotNull(extraInfo);
-        assertEquals(ExtraInfoConstants.NAME_CITATIONS, extraInfo.getName());
-        assertEquals(ExtraInfoConstants.TYPOLOGY_CITATIONS, extraInfo.getTypology());
+        assertEquals(ExtraInfoConstants.NAME_REFERENCES, extraInfo.getName());
+        assertEquals(ExtraInfoConstants.TYPOLOGY_REFERENCES, extraInfo.getTypology());
         assertEquals(StaticConfigurationProvider.ACTION_TRUST_0_9, extraInfo.getTrust());
         assertEquals(((AbstractActionBuilderFactory<Citations, Result>) factory).buildInferenceProvenance(), extraInfo.getProvenance());
         assertEquals("value", extraInfo.getValue());

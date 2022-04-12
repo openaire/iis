@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
  */
 public class CitationsActionBuilderModuleFactory extends AbstractActionBuilderFactory<Citations, Result> {
 
-    private static final String EXTRA_INFO_NAME = ExtraInfoConstants.NAME_CITATIONS;
-    private static final String EXTRA_INFO_TYPOLOGY = ExtraInfoConstants.TYPOLOGY_CITATIONS;
+    private static final String EXTRA_INFO_NAME = ExtraInfoConstants.NAME_REFERENCES;
+    private static final String EXTRA_INFO_TYPOLOGY = ExtraInfoConstants.TYPOLOGY_REFERENCES;
 
     // ------------------------ CONSTRUCTORS --------------------------
 
