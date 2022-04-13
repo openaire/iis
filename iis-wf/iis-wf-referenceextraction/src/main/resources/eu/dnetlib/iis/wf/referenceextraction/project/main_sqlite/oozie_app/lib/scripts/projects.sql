@@ -32,6 +32,7 @@ textwindow2s(keywords(c2), 10,6,10,'(?i)\bGSRT\b|\bΓΓΕΤ\b|(?:greek|general) 
 from pubs  where c2 is not null)  
 where var('gsri_unidentified') is not null and
 regexprmatches("(?i)greece|greek|foundation|grant|project|\bpavet\b|funded|hellenic|supported|acknowledge|\bgr\b|research|program|secretariat|γραμματε(?:ί|ι)α",prev||" "||middle||" "||next)  
+and not (regexprmatches("(?i)spanish|\bmineco\b|\bspain\b",prev||" "||middle||" "||next) and not regexprmatches("(?i)hellenic|\bgreece\b|\bgreek\b",prev||" "||middle||" "||next) )
 group by docid;
 
 create temp table output_table as
