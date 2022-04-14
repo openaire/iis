@@ -77,7 +77,7 @@ setschema 'docid,prev,middle,next' select c1, textwindow2s(keywords(filterstopwo
 union all
 
 -- RISIS
-select jdict('documentId', id, 'conceptId', 'RISIS', 'confidenceLevel', 0.8, 'textsnippet', prev||" <<< "||middle||" >>> "||next) from
+select case when ma="RISIS_DATASET" then jdict('documentId', id, 'conceptId', 'RISIS_DATASET', 'confidenceLevel', 0.8, 'textsnippet', prev||" <<< "||middle||" >>> "||next) else jdict('documentId', id, 'conceptId', 'RISIS', 'confidenceLevel', 0.8, 'textsnippet', prev||" <<< "||middle||" >>> "||next) end from
 (
 select * from
 (
@@ -92,7 +92,18 @@ union all
 select id, "GATE" as ma, prev, middle, next   from (setschema 'id,prev,middle,next' select id, textwindow2s(text, 10,1,10, "\bGATE(?:\b|\d)|gatecloud|gate\.ac\.uk") from (setschema 'id,text' select c1,c2 from pubs)) 
 where regexprmatches("text mining|gatecloud|gate\.ac\.uk|\buima\b|classifier|semantic|\bnlp\b|text engineering|natural language|language engineering|information extraction|text analytics|cunningham|text process|architecture text|maynard|tablan|bontcheva|gate framework|tokenizer|tokeniser|sheffield|text annotation|language processing|\bnltk\b|treetagger|\byatea\b", lower(prev||" "||middle||" "||next))
 
+union all
+  
 
+select id, "RISIS_DATASET" as ma, prev, middle, next from (setschema 'id,prev,middle,next' select id, textwindow2s(text, 10,1,10, "\bCIB\b|\bCIB1\b|\bCIB2\b|\bCINNOB\b|\bCWTS\b|\bEUPRO\b|\bEU\-PRO\b|\bETER\b|\bSIPER\b|\bIFRIS\b|\bNATPRO\b|\bJOREP\b|\bMORE\b") from (setschema 'id,text' select c1,c2 from pubs)) 
+
+union all
+
+select id, "RISIS_DATASET" as ma, prev, middle, next from (setschema 'id,prev,middle,next' select id, textwindow2s(lower(text), 10,5,10, "\bcheetah\b|\bprofile\b|\beuropean tertiary education register\b|\bscience and innovation policy evaluations repository\b") from (setschema 'id,text' select c1,c2 from pubs)) 
+where (regexprmatches("\bcheetah\b", middle) and regexprmatches("\bfirms*\b", j2s(prev,middle,next))) or (regexprmatches("\bprofile\b", middle) and  regexprmatches("\bcareers|mobility|dataset\b", j2s(prev,middle,next)))
+or (not regexprmatches("\bcheetah\b", middle) and not regexprmatches("\bprofile\b", middle))
+    
+  
 union all
 
 select id, upper(regexpr("(orgreg|firmreg)",middle)) as ma, prev, middle, next from (setschema 'id,text,prev,middle,next' select id, text, textwindow2s(lower(text), 10,1,10, "\borgreg\b|\bfirmreg\b") from (setschema 'id,text' select c1,c2 from pubs)) 
