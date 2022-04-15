@@ -17,7 +17,8 @@ import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSectionsSplitter;
  * Match voter that checks if <br/>
  * the ratio of the common (same/ similar) words in one of the sections of {@link AffMatchAffiliation#getOrganizationName()} 
  * AND words in organization names in {@link AffMatchOrganization} WITH REGARD TO all the words in the the given affiliation section<br/>
- * IS GREATER than some expected value. 
+ * IS GREATER than some expected value. <br/>
+ * The vote is discarded if country codes are defined for both affiliation and organization are if they are different.
  *
  * 
  * @author madryk, Łukasz Dumiszewski

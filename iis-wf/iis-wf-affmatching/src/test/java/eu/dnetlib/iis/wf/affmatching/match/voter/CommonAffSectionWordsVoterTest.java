@@ -1,10 +1,15 @@
 package eu.dnetlib.iis.wf.affmatching.match.voter;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
-import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSectionsSplitter;
+import static com.google.common.collect.ImmutableList.of;
+import static com.google.common.collect.Lists.newArrayList;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.function.Function;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,13 +18,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-import java.util.function.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
-import static com.google.common.collect.ImmutableList.of;
-import static com.google.common.collect.Lists.newArrayList;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
+import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSectionsSplitter;
 
 /**
  * @author madryk, Łukasz Dumiszewski
@@ -195,78 +199,71 @@ public class CommonAffSectionWordsVoterTest {
 
         assertFalse(voter.voteMatch(affiliation, organization));
     }
-    
+
     @Test
-    public void voteMatch_REAL_LIFE_EXAMPLE_TOO_LITLE_WORDS_IN_AFF_SECTION() {
-        
-        // given the values taken from production setup
-        CommonAffSectionWordsVoter voter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 1, 0.81, 2);
-        voter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.85));
-        voter.setMatchStrength(0.966f);
-        
-        AffMatchAffiliation affiliation = new AffMatchAffiliation("DOC_ID", 1);
-        affiliation.setOrganizationName("mistea, inra, montpellier supagro, universite de montpellier");
-        AffMatchOrganization organization = new AffMatchOrganization("ORG_ID");
-        organization.setName("athena research and innovation center in information communication & knowledge technologies");
-        
-        // execute & assert
-        assertFalse(voter.voteMatch(affiliation, organization));
-    }
-    
-    @Test
-    public void voteMatch_REAL_LIFE_EXAMPLE_ENOUGH_COMMON_WORDS() {
-        
-        // given the values taken from production setup
-        CommonAffSectionWordsVoter voter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 1, 0.01, 1);
-        voter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.85));
-        voter.setMatchStrength(0.966f);
-        
-        AffMatchAffiliation affiliation = new AffMatchAffiliation("DOC_ID", 1);
-        affiliation.setOrganizationName("mistea, inra, montpellier supagro, universite de montpellier");
-        AffMatchOrganization organization = new AffMatchOrganization("ORG_ID");
-        organization.setName("athena research and innovation center in information communication & knowledge technologies");
-        
-        // execute & assert
-        assertTrue(voter.voteMatch(affiliation, organization));
-    }
-        
-    @Test
-    public void voteMatch_REAL_LIFE_EXAMPLE_SIMILARITY_LEVEL_HIGH_ENOUGH_TO_AVOID_MATCHING() {
+    public void voteMatch_REAL_LIFE_EXAMPLE_VOTE_MATCH_FALSE_POSITIVE() {
         
         // given
-        CommonAffSectionWordsVoter voter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 1, 0.81, 1);
-        voter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.9));
-        voter.setMatchStrength(0.966f);
-        
-        AffMatchAffiliation affiliation = new AffMatchAffiliation("DOC_ID", 1);
-        affiliation.setOrganizationName("mistea, inra, montpellier supagro, universite de montpellier");
-        AffMatchOrganization organization = new AffMatchOrganization("ORG_ID");
-        organization.setName("athena research and innovation center in information communication & knowledge technologies");
+        int wordToRemoveMaxLength = 1;
+        int minNumberOfWordsInAffSection = 1;
+        double minWordSimilarity = 0.85;
         
         // execute & assert
-        assertFalse(voter.voteMatch(affiliation, organization));
+        assertTrue(checkRealLifeExampleVote(wordToRemoveMaxLength, minNumberOfWordsInAffSection, minWordSimilarity));
+    }
+    
+    @Test
+    public void voteMatch_REAL_LIFE_EXAMPLE_VOTE_NO_MATCH_MAX_LENGTH_OF_WORD_ELIMINATES_ALL_CANDIDATES() {
+        
+        // given
+        int wordToRemoveMaxLength = 2;
+        int minNumberOfWordsInAffSection = 1;
+        double minWordSimilarity = 0.85;
+
+        // execute & assert
+        assertFalse(checkRealLifeExampleVote(wordToRemoveMaxLength, minNumberOfWordsInAffSection, minWordSimilarity));
+    }
+    
+    @Test
+    public void voteMatch_REAL_LIFE_EXAMPLE_VOTE_NO_MATCH_TOO_LITLE_WORDS_IN_AFF_SECTION() {
+        
+        // given
+        int wordToRemoveMaxLength = 1;
+        int minNumberOfWordsInAffSection = 2;
+        double minWordSimilarity = 0.85;
+        
+        // execute & assert
+        assertFalse(checkRealLifeExampleVote(wordToRemoveMaxLength, minNumberOfWordsInAffSection, minWordSimilarity));
     }
         
     @Test
-    public void voteMatch_REAL_LIFE_EXAMPLE_MAX_LENGTH_OF_WORD_TO_REMOVE_ELIMINATES_POTENTIAL_MATCH() {
+    public void voteMatch_REAL_LIFE_EXAMPLE_VOTE_NO_MATCH_SIMILARITY_LEVEL_NOT_HIGH_ENOUGH() {
         
         // given
-        CommonAffSectionWordsVoter voter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 2, 0.81, 1);
-        voter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.85));
-        voter.setMatchStrength(0.966f);
-        
-        AffMatchAffiliation affiliation = new AffMatchAffiliation("DOC_ID", 1);
-        affiliation.setOrganizationName("mistea, inra, montpellier supagro, universite de montpellier");
-        AffMatchOrganization organization = new AffMatchOrganization("ORG_ID");
-        organization.setName("athena research and innovation center in information communication & knowledge technologies");
+        int wordToRemoveMaxLength = 1;
+        int minNumberOfWordsInAffSection = 1;
+        double minWordSimilarity = 0.9;
         
         // execute & assert
-        assertFalse(voter.voteMatch(affiliation, organization));
+        assertFalse(checkRealLifeExampleVote(wordToRemoveMaxLength, minNumberOfWordsInAffSection, minWordSimilarity));
     }
-    
-   
     
     //------------------------ PRIVATE --------------------------
+    
+    private boolean checkRealLifeExampleVote(int wordToRemoveMaxLength, int minNumberOfWordsInAffSection, double minWordSimilarity) {
+        
+        CommonAffSectionWordsVoter voter = new CommonAffSectionWordsVoter(CHARS_TO_FILTER, wordToRemoveMaxLength,
+                MIN_COMMON_WORDS_RATIO, minNumberOfWordsInAffSection);
+        voter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(minWordSimilarity));
+
+        AffMatchAffiliation affiliation = new AffMatchAffiliation("DOC_ID", 1);
+        affiliation.setOrganizationName("mistea, inra, montpellier supagro, universite de montpellier");
+
+        AffMatchOrganization organization = new AffMatchOrganization("ORG_ID");
+        organization.setName("athena research and innovation center in information communication & knowledge technologies");
+        
+        return voter.voteMatch(affiliation, organization);
+    }
     
     private void resetOrgNames(String... orgNames) {
         Mockito.when(getOrgNamesFunction.apply(organization)).thenReturn(Lists.newArrayList(orgNames));
