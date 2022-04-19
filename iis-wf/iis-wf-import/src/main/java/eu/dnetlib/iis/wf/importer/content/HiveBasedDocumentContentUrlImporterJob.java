@@ -52,7 +52,8 @@ public class HiveBasedDocumentContentUrlImporterJob {
             HdfsUtils.remove(sparkSession.sparkContext().hadoopConfiguration(), params.outputPath);
             HdfsUtils.remove(sparkSession.sparkContext().hadoopConfiguration(), params.outputReportPath);
             
-            Dataset<Row> result = sparkSession.sql("select id, actual_url, mimetype, size, hash from " + params.inputTableName);
+            Dataset<Row> result = sparkSession.sql("select id, actual_url, mimetype, size, hash from "
+                    + params.inputTableName + " where actual_url is not null");
             
             JavaRDD<DocumentContentUrl> documentContentUrl = buildOutputRecord(result, sparkSession);
             documentContentUrl.cache();
