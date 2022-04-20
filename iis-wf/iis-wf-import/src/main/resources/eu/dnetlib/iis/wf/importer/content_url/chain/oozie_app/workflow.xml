@@ -228,7 +228,7 @@
 	
 	<decision name="decision-existence-filter">
         <switch>
-            <case to="content-url-dispatcher">${input_id eq "$UNDEFINED$"}</case>
+            <case to="content-url-dedup">${input_id eq "$UNDEFINED$"}</case>
             <default to="transformers_common_existencefilter"/>
         </switch>
     </decision>
