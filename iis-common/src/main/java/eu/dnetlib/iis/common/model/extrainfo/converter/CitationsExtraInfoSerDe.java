@@ -15,7 +15,7 @@ public class CitationsExtraInfoSerDe extends AbstractExtraInfoSerDe<SortedSet<Bl
 	public CitationsExtraInfoSerDe() {
 	    super();
 		getXstream().processAnnotations(BlobCitationEntry.class);
-		getXstream().alias("citations", SortedSet.class);
+		getXstream().alias("references", SortedSet.class);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -16,7 +16,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
  * @author mhorst
  *
  */
-@XStreamAlias("citation")
+@XStreamAlias("reference")
 public class BlobCitationEntry implements Comparable<BlobCitationEntry> {
 
 	/**
