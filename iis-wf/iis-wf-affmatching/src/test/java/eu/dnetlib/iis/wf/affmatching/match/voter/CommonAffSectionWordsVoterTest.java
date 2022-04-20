@@ -32,13 +32,13 @@ import eu.dnetlib.iis.wf.affmatching.orgsection.OrganizationSectionsSplitter;
 public class CommonAffSectionWordsVoterTest {
 
     
-    private double MIN_COMMON_WORDS_RATIO = 0.8;
+    private static double MIN_COMMON_WORDS_RATIO = 0.8;
     
-    private int WORDS_TO_REMOVE_MAX_LENGTH = 2;
+    private static int WORDS_TO_REMOVE_MAX_LENGTH = 2;
     
-    private int MIN_NUMBER_OF_WORDS_IN_AFF_SECTION = 1;
+    private static int MIN_NUMBER_OF_WORDS_IN_AFF_SECTION = 1;
     
-    private List<Character> CHARS_TO_FILTER = ImmutableList.of(',');
+    private static List<Character> CHARS_TO_FILTER = ImmutableList.of(',');
     
     
     @InjectMocks
@@ -204,63 +204,102 @@ public class CommonAffSectionWordsVoterTest {
     public void voteMatch_REAL_LIFE_EXAMPLE_VOTE_MATCH_FALSE_POSITIVE() {
         
         // given
+        String affCountryCode = null;
+        AffMatchAffiliation affiliation = generateRealLifeAffiliation(affCountryCode);
+        
+        String orgCountryCode = null;
+        AffMatchOrganization organization = generateRealLifeOrganization(orgCountryCode);
+        
         int wordToRemoveMaxLength = 1;
         int minNumberOfWordsInAffSection = 1;
         double minWordSimilarity = 0.85;
         
         // execute & assert
-        assertTrue(checkRealLifeExampleVote(wordToRemoveMaxLength, minNumberOfWordsInAffSection, minWordSimilarity));
-    }
-    
-    @Test
-    public void voteMatch_REAL_LIFE_EXAMPLE_VOTE_NO_MATCH_MAX_LENGTH_OF_WORD_ELIMINATES_ALL_CANDIDATES() {
-        
-        // given
-        int wordToRemoveMaxLength = 2;
-        int minNumberOfWordsInAffSection = 1;
-        double minWordSimilarity = 0.85;
-
-        // execute & assert
-        assertFalse(checkRealLifeExampleVote(wordToRemoveMaxLength, minNumberOfWordsInAffSection, minWordSimilarity));
+        assertTrue(checkVote(wordToRemoveMaxLength, minNumberOfWordsInAffSection, minWordSimilarity,
+                affiliation, organization));
     }
     
     @Test
     public void voteMatch_REAL_LIFE_EXAMPLE_VOTE_NO_MATCH_TOO_LITLE_WORDS_IN_AFF_SECTION() {
         
         // given
+        String affCountryCode = null;
+        AffMatchAffiliation affiliation = generateRealLifeAffiliation(affCountryCode);
+        
+        String orgCountryCode = null;
+        AffMatchOrganization organization = generateRealLifeOrganization(orgCountryCode);
+        
         int wordToRemoveMaxLength = 1;
         int minNumberOfWordsInAffSection = 2;
         double minWordSimilarity = 0.85;
         
         // execute & assert
-        assertFalse(checkRealLifeExampleVote(wordToRemoveMaxLength, minNumberOfWordsInAffSection, minWordSimilarity));
+        assertFalse(checkVote(wordToRemoveMaxLength, minNumberOfWordsInAffSection, minWordSimilarity,
+                affiliation, organization));
     }
         
     @Test
-    public void voteMatch_REAL_LIFE_EXAMPLE_VOTE_NO_MATCH_SIMILARITY_LEVEL_NOT_HIGH_ENOUGH() {
+    public void voteMatch_REAL_LIFE_EXAMPLE_VOTE_NO_MATCH_DIFFERENT_COUNTRY_CODE() {
         
         // given
+        String affCountryCode = "FR";
+        AffMatchAffiliation affiliation = generateRealLifeAffiliation(affCountryCode);
+        
+        String orgCountryCode = "GR";
+        AffMatchOrganization organization = generateRealLifeOrganization(orgCountryCode);
+        
         int wordToRemoveMaxLength = 1;
         int minNumberOfWordsInAffSection = 1;
-        double minWordSimilarity = 0.9;
+        double minWordSimilarity = 0.85;
         
         // execute & assert
-        assertFalse(checkRealLifeExampleVote(wordToRemoveMaxLength, minNumberOfWordsInAffSection, minWordSimilarity));
+        assertFalse(checkVote(wordToRemoveMaxLength, minNumberOfWordsInAffSection, minWordSimilarity,
+                affiliation, organization));
+    }
+    
+    @Test
+    public void voteMatch_REAL_LIFE_EXAMPLE_VOTE_MATCH_SAME_COUNTRY_CODE() {
+        
+        // given
+        String countryCode = "sharedCode";
+        AffMatchAffiliation affiliation = generateRealLifeAffiliation(countryCode);
+        AffMatchOrganization organization = generateRealLifeOrganization(countryCode);
+        
+        int wordToRemoveMaxLength = 1;
+        int minNumberOfWordsInAffSection = 1;
+        double minWordSimilarity = 0.85;
+        
+        // execute & assert
+        assertTrue(checkVote(wordToRemoveMaxLength, minNumberOfWordsInAffSection, minWordSimilarity,
+                affiliation, organization));
     }
     
     //------------------------ PRIVATE --------------------------
     
-    private boolean checkRealLifeExampleVote(int wordToRemoveMaxLength, int minNumberOfWordsInAffSection, double minWordSimilarity) {
+    private static AffMatchAffiliation generateRealLifeAffiliation(String countryCode) {
+        
+        AffMatchAffiliation affiliation = new AffMatchAffiliation("DOC_ID", 1);
+        affiliation.setOrganizationName("mistea, inra, montpellier supagro, universite de montpellier");
+        affiliation.setCountryCode(countryCode);
+        
+        return affiliation;
+    }
+    
+    private static AffMatchOrganization generateRealLifeOrganization(String countryCode) {
+        
+        AffMatchOrganization organization = new AffMatchOrganization("ORG_ID");
+        organization.setName("athena research and innovation center in information communication & knowledge technologies");
+        organization.setCountryCode(countryCode);
+        
+        return organization;
+    }
+    
+    private static boolean checkVote(int wordToRemoveMaxLength, int minNumberOfWordsInAffSection, double minWordSimilarity,
+            AffMatchAffiliation affiliation, AffMatchOrganization organization) {
         
         CommonAffSectionWordsVoter voter = new CommonAffSectionWordsVoter(CHARS_TO_FILTER, wordToRemoveMaxLength,
                 MIN_COMMON_WORDS_RATIO, minNumberOfWordsInAffSection);
         voter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(minWordSimilarity));
-
-        AffMatchAffiliation affiliation = new AffMatchAffiliation("DOC_ID", 1);
-        affiliation.setOrganizationName("mistea, inra, montpellier supagro, universite de montpellier");
-
-        AffMatchOrganization organization = new AffMatchOrganization("ORG_ID");
-        organization.setName("athena research and innovation center in information communication & knowledge technologies");
         
         return voter.voteMatch(affiliation, organization);
     }
