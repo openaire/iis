@@ -107,11 +107,11 @@ public final class DocOrgRelationMatcherFactory {
         commonOrgAlternativeNameWordsVoter.setMatchStrength(0.976f);
         
         
-        CommonAffSectionWordsVoter commonAffNameSectionWordsVoter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 1, 0.81);
+        CommonAffSectionWordsVoter commonAffNameSectionWordsVoter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 1, 0.81, 2);
         commonAffNameSectionWordsVoter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.85));
-        commonAffNameSectionWordsVoter.setMatchStrength(0.966f);
+        commonAffNameSectionWordsVoter.setMatchStrength(1);
         
-        CommonAffSectionWordsVoter commonAffAlternativeNameSectionWordsVoter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 1, 0.81);
+        CommonAffSectionWordsVoter commonAffAlternativeNameSectionWordsVoter = new CommonAffSectionWordsVoter(ImmutableList.of(',', ';'), 1, 0.81, 2);
         commonAffAlternativeNameSectionWordsVoter.setGetOrgNamesFunction(new GetOrgAlternativeNamesFunction());
         commonAffAlternativeNameSectionWordsVoter.setCommonSimilarWordCalculator(new CommonSimilarWordCalculator(0.85));
         commonAffAlternativeNameSectionWordsVoter.setMatchStrength(1);
