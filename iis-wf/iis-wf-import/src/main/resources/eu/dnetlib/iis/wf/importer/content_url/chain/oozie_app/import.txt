@@ -1,5 +1,5 @@
 ## This is a classpath-based import file (this header is required)
-import_content_url_core classpath eu/dnetlib/iis/wf/importer/content_url/core/oozie_app
+import_content_url_core classpath eu/dnetlib/iis/wf/importer/content_url/core_parquet/oozie_app
 import_content_url_dedup classpath eu/dnetlib/iis/wf/importer/content_url/dedup/oozie_app
 transformers_idreplacer classpath eu/dnetlib/iis/wf/transformers/idreplacer/oozie_app
 transformers_common_existencefilter classpath eu/dnetlib/iis/wf/transformers/common/existencefilter/oozie_app

@@ -3,24 +3,13 @@
 	<parameters>
 		<!-- input -->
         <property>
-            <name>objectstore_facade_factory_classname</name>
-            <value>eu.dnetlib.iis.wf.importer.facade.WebServiceObjectStoreFacadeFactory</value>
-            <description>ServiceFacadeFactory implementation class name producing eu.dnetlib.iis.wf.importer.facade.ObjectStoreFacade</description>
+            <name>input_table_name</name>
+            <description>hive input table name</description>
         </property>
-		<property>
-			<name>objectstore_service_location</name>
-			<description>object store service location to retrieve PDF/text contents from</description>
-		</property>
-		<property>
-			<name>approved_objectstores_csv</name>
-			<value>$UNDEFINED$</value>
-			<description>CSV of approved object stores</description>
-		</property>
-		<property>
-			<name>blacklisted_objectstores_csv</name>
-			<value>$UNDEFINED$</value>
-			<description>CSV of blacklisted object stores</description>
-		</property>
+        <property>
+            <name>hive_metastore_uris</name>
+            <description>hive metastore locations</description>
+        </property>
 		<property>
 			<name>mimetypes_pdf</name>
 			<description>pdf mime types</description>

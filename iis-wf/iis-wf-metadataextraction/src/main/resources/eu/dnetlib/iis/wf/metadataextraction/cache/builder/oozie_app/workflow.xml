@@ -20,15 +20,14 @@
             <value>import.metadataExtraction</value>
             <description>cache report properties prefix, to be set dynamically according to internal app_path</description>
         </property>
-        
-		<property>
-			<name>objectstore_service_location</name>
-			<description>object store service location required for content retrieval</description>
-		</property>
-		<property>
-			<name>approved_objectstores_csv</name>
-			<description>CSV list of object stores identifiers to be processed</description>
-		</property>
+        <property>
+            <name>input_table_name</name>
+            <description>hive input table name</description>
+        </property>
+        <property>
+            <name>hive_metastore_uris</name>
+            <description>hive metastore locations</description>
+        </property>
 		<property>
 			<name>mimetypes_pdf</name>
 			<value>pdf,application/pdf</value>
