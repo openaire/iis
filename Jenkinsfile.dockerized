@@ -11,8 +11,8 @@ pipeline {
 
     options {
         buildDiscarder(logRotator(numToKeepStr: '5'))
-        timeout time: 60, unit: 'MINUTES'
 	lock('iis-build')
+	timeout time: 60, unit: 'MINUTES'
     }
 
     environment {
