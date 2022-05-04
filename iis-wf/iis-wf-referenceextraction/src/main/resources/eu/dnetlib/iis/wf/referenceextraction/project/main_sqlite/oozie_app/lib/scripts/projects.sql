@@ -41,7 +41,9 @@ group by docid;
 
 create temp table intermediate_canadian_results as
 select docid, (prev||" "||middle||" "||next) as temp_textsnippet, (prev||" <<< "||middle||" >>> "||next) as textsnippet
-from (setschema 'docid,prev,middle,next' select c1, textwindow2s(filterstopwords(keywords(c2)), 15,1,15, "^(?:(?:(?:CIHR|IRSC)|(?:NSERC|CRSNG)|(?:SSHRC|CRSH|SSRCC))|(?i)(?:co(?:(?:un(?:cil|sel))|(?:nseil(?:s)?))|canad(?:a|ian)))$") from pubs where c2 is not null)
+from (setschema 'docid,prev,middle,next' select c1, textwindow2s(filterstopwords(keywords(c2)), 15,1,15, "^(?:(?:(?:CIHR|IRSC)|(?:NSERC|CRSNG)|(?:SSHRC|CRSH|SSRCC))|(?i)(?:co(?:(?:un(?:cil|sel))|(?:nseil(?:s)?))|canad(?:a|ian)))$")
+    from (select * from pubs where (var('cihr_unidentified') is not null or var('nserc_unidentified') is not null or var('sshrc_unidentified') is not null or var('nrc_unidentified') is not null))
+    where c2 is not null)
 where
 ( /* Terms */
     /* Acronyms */
