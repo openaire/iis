@@ -28,7 +28,7 @@ pipeline {
                 }
             }
             steps {
-		sh 'mvn -B clean install -DskipITs -Dmaven.test.failure.ignore'
+		sh 'mvn -B clean install -DskipITs -DotherExcludedGroups=SlowTest -Dmaven.test.failure.ignore'
             }
 	    post {
 		always {
@@ -49,7 +49,7 @@ pipeline {
 	    //NOTE: sonar scan is only done for master branch because current Sonar instance does not support branching
 	    when { branch 'master' }
             steps {
-		sh 'mvn -B sonar:sonar -DskipTests -DskipITs -Dsonar.host.url=http://sonar.ceon.pl -Dsonar.login=${SONAR_TOKEN}'
+		sh 'mvn -B sonar:sonar -DskipTests -Dsonar.host.url=http://sonar.ceon.pl -Dsonar.login=${SONAR_TOKEN}'
             }
         }
     }
