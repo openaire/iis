@@ -44,9 +44,6 @@ public class DocumentTextCacheStorageUtilsTest {
     private CacheMetadataManagingProcess cacheManager;
     
     @Mock
-    private Configuration hadoopConf;
-    
-    @Mock
     private JavaRDD<DocumentText> emptyPredefinedRdd;
     
     @Mock
@@ -137,6 +134,7 @@ public class DocumentTextCacheStorageUtilsTest {
         Path cacheRootDir = new Path("some/root/dir");
         int numberOfEmittedFiles = 2;
         String predefinedCacheId = "someCacheId";
+        Configuration hadoopConf = new Configuration();
         doReturn(predefinedCacheId).when(cacheManager).generateNewCacheId(hadoopConf, cacheRootDir);
         doReturn(toBeStoredRepartitionedEntities).when(toBeStoredEntities).repartition(numberOfEmittedFiles);
         doReturn(toBeStoredRepartitionedFaults).when(toBeStoredFaults).repartition(numberOfEmittedFiles);
@@ -164,8 +162,9 @@ public class DocumentTextCacheStorageUtilsTest {
         Path cacheRootDir = new Path("some/root/dir");
         int numberOfEmittedFiles = 2;
         String predefinedCacheId = "someCacheId";
+        Configuration hadoopConf = new Configuration();
+        hadoopConf.set(FileSystem.FS_DEFAULT_NAME_KEY, FileSystem.DEFAULT_FS);
         doReturn(predefinedCacheId).when(cacheManager).generateNewCacheId(hadoopConf, cacheRootDir);
-        doReturn(FileSystem.DEFAULT_FS).when(hadoopConf).get(FileSystem.FS_DEFAULT_NAME_KEY, FileSystem.DEFAULT_FS);
         doReturn(toBeStoredRepartitionedEntities).when(toBeStoredEntities).repartition(numberOfEmittedFiles);
         doReturn(toBeStoredRepartitionedFaults).when(toBeStoredFaults).repartition(numberOfEmittedFiles);
         doThrow(IOException.class).when(cacheManager).writeCacheId(hadoopConf, cacheRootDir, predefinedCacheId);
