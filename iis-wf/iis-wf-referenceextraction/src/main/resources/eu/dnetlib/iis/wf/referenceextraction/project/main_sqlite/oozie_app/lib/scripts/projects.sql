@@ -22,6 +22,14 @@ hidden var 'nrc_unidentified' from (select id from grants where fundingclass1="N
 
 create temp table pubs as setschema 'c1,c2' select jsonpath(c1, '$.id', '$.text') from stdinput();
 
+create temp table incaprojects as 
+select id, grantid, gid, jmergeregexp(terms) as terms, jlen(terms) as lt from 
+   (select id, grantid, s2j(keywords(regexpr("\d", terms, ""))) as terms, regexpr("\s+",gid,"\s*") as gid from 
+       (select id, grantid, regexpr("(\D+)",grantid) as terms, regexpr("\D([\d|\s]+)$",grantid) as gid from grants 
+        where fundingclass1 = "INCA" and gid is not null));
+    
+
+
 create temp table matched_undefined_miur_only as select distinct docid, var('miur_unidentified') as id, prev,middle,next from (setschema 'docid,prev,middle,next'
 select c1 as docid, textwindow2s(c2,10,1,10, '\b(?:RBSI\d{2}\w{4})\b') from (setschema 'c1,c2' select * from pubs where c2 is not null)) 
 where var('miur_unidentified') and (regexprmatches('\b(?:RBSI\d{2}\w{4})\b', middle));
@@ -125,6 +133,14 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'text
 where lower(regexpr("\b(\w{3}\s\d{1,4})\b",middle)) = grantid and
 regexprmatches("support|project|grant|fund|thanks|agreement|research|acknowledge|centre|center|nstitution|program|priority|dfg|german|dutch|deutche",lower(prev||" "||next)) group by docid, id
 --DFG
+
+union all
+--inca 
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1, docid, id, "INCA", grantid  from 
+    (select * from (setschema 'docid,prev,middle,next' select c1, textwindow2s(filterstopwords(c2), 10,2,5, "INCa\-\w+(?:\-|\s|$|\b)") from pubs where c2 is not null), incaprojects 
+         where regexprmatches("\b"||gid||"\b",j2s(prev,middle,next)) and (regexpcountuniquematches(lower(terms), lower(j2s(prev,middle,next))) = lt or regexpcountuniquematches(lower(terms), lower(j2s(prev,middle,next)))>1)) 
+group by docid,id
+
 
 union all
 -- CHIST-ERA
