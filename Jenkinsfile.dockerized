@@ -28,7 +28,12 @@ pipeline {
                 }
             }
             steps {
-		sh 'mvn -B clean install -DskipITs -DotherExcludedGroups=SlowTest -Dmaven.test.failure.ignore'
+		sh '''
+                    mvn -B clean install -DskipITs -DotherExcludedGroups=SlowTest \
+                        -Djunit.jupiter.testmethod.order.default=org.junit.jupiter.api.MethodOrderer\\$Random \
+                        -Djunit.jupiter.testclass.order.default=org.junit.jupiter.api.ClassOrderer\\$Random \
+                        -Dmaven.test.failure.ignore
+                    '''
             }
 	    post {
 		always {

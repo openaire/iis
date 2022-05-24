@@ -960,7 +960,7 @@
         <iis.spark.version>2.4.0.cloudera2</iis.spark.version>
         <iis.coansys.version>1.10</iis.coansys.version>
 
-        <junit.version>5.4.2</junit.version>
+        <junit.version>5.8.2</junit.version>
         <mockito.version>3.5.13</mockito.version>
 
         <otherExcludedGroups/>
