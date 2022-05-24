@@ -26,7 +26,7 @@ create temp table incaprojects as
 select id, grantid, gid, jmergeregexp(terms) as terms, jlen(terms) as lt from 
    (select id, grantid, s2j(keywords(regexpr("\d", terms, ""))) as terms, regexpr("\s+",gid,"\s*") as gid from 
        (select id, grantid, regexpr("(\D+)",grantid) as terms, regexpr("\D([\d|\s]+)$",grantid) as gid from grants 
-        where fundingclass1 = "INCA" and gid is not null));
+        where fundingclass1 = "INCa" and gid is not null));
     
 
 
@@ -136,7 +136,7 @@ regexprmatches("support|project|grant|fund|thanks|agreement|research|acknowledge
 
 union all
 --inca 
-select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1, docid, id, "INCA", grantid  from 
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1, docid, id, "INCa", grantid  from 
     (select * from (setschema 'docid,prev,middle,next' select c1, textwindow2s(filterstopwords(c2), 10,2,5, "INCa\-\w+(?:\-|\s|$|\b)") from pubs where c2 is not null), incaprojects 
          where regexprmatches("\b"||gid||"\b",j2s(prev,middle,next)) and (regexpcountuniquematches(lower(terms), lower(j2s(prev,middle,next))) = lt or regexpcountuniquematches(lower(terms), lower(j2s(prev,middle,next)))>1)) 
 group by docid,id
