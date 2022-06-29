@@ -94,7 +94,21 @@
             <name>import_infospace_graph_location</name>
             <description>local InformationSpace graph location</description>
         </property>
-        <!-- import content related -->
+        <!-- aggregation subsystem based import content related -->
+        <property>
+            <name>import_content_pdfaggregation_table_name</name>
+            <value>$UNDEFINED$</value>
+            <description>Hive table name which is a part of the PDF aggregation subsystem, 
+            defined in 'dbname.tablename' format to indicate both database and table.
+            This property value dictates the underlying importer module to be used: when set to $UNDEFINED$ value the old
+            ObjectStore based importer is activated otherwise PDF aggregation subsystem based importer is used.</description>
+        </property>
+        <property>
+            <name>import_content_pdfaggregation_hive_metastore_uris</name>
+            <value>$UNDEFINED$</value>
+            <description>URIs pointing to the hive metastore utilized by the PDF aggregation subsystem</description>
+        </property>
+        <!-- objectstore based import content related -->
         <property>
             <name>import_content_object_store_location</name>
             <value>$UNDEFINED$</value>
@@ -491,7 +505,16 @@
                     <name>project_concepts_context_ids_csv</name>
                     <value>${import_project_concepts_context_ids_csv}</value>
                 </property>
-                <!-- import content related -->
+                <!-- new aggregation subsystem based import content related -->
+                <property>
+                    <name>input_table_name</name>
+                    <value>${import_content_pdfaggregation_table_name}</value>
+                </property>
+                <property>
+                    <name>hive_metastore_uris</name>
+                    <value>${import_content_pdfaggregation_hive_metastore_uris}</value>
+                </property>
+                <!-- old objectstore based import content related -->
                 <property>
                     <name>objectstore_service_location</name>
                     <value>${import_content_object_store_location}</value>
@@ -500,6 +523,7 @@
                     <name>objectstore_s3_keystore_location</name>
                     <value>${import_content_objectstore_s3_keystore_location}</value>
                 </property>
+                
                 <property>
                     <name>objectstore_s3_endpoint</name>
                     <value>${import_content_objectstore_s3_endpoint}</value>

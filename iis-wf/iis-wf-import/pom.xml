@@ -132,6 +132,18 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-avro_2.11</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-hive_2.11</artifactId>
+            <exclusions>
+                <exclusion>
+                    <!-- unavailable dependency in cloudera repo -->
+                    <groupId>eigenbase</groupId>
+                    <artifactId>eigenbase-properties</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

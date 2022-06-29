@@ -6,6 +6,8 @@ import org.apache.spark.sql.SparkSession;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 
+import org.apache.spark.sql.SparkSession.Builder;
+
 import java.util.Objects;
 
 /**
@@ -15,7 +17,22 @@ import java.util.Objects;
 public class TestWithSharedSparkSession {
     private static SparkSession _spark;
     protected boolean initialized = false;
+    protected final boolean hiveSupportEnabled;
 
+    /**
+     * Default constructor with hive support in spark session disabled.
+     */
+    public TestWithSharedSparkSession() {
+        this(false);
+    }
+    
+    /**
+     * @param hiveSupportEnabled indicates whether hive support should be enabled in spark session
+     */
+    public TestWithSharedSparkSession(boolean hiveSupportEnabled) {
+        this.hiveSupportEnabled = hiveSupportEnabled;
+    }
+    
     public SparkSession spark() {
         return _spark;
     }
@@ -31,7 +48,11 @@ public class TestWithSharedSparkSession {
             conf.set("spark.driver.host", "localhost");
             conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
             conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
-            _spark = SparkSession.builder().config(conf).getOrCreate();
+            Builder builder = SparkSession.builder().config(conf);
+            if (hiveSupportEnabled) {
+                builder = builder.enableHiveSupport();
+            }
+            _spark = builder.getOrCreate();
         }
     }
 
