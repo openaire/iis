@@ -1,0 +1,5 @@
+{"key":"import.content.urls.bytype.pdf", "type":"COUNTER", "value": "1"}
+{"key":"import.content.urls.bytype.html", "type":"COUNTER", "value": "1"}
+{"key":"import.content.urls.bytype.jats", "type":"COUNTER", "value": "1"}
+{"key":"import.content.urls.bytype.wos", "type":"COUNTER", "value": "1"}
+{"key": "import.content.urls.fromAggregator", "type": "COUNTER", "value": "4"}

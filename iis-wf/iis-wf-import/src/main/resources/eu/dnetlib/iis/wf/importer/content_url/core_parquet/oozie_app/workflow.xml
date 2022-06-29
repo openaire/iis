@@ -1,4 +1,4 @@
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="importer_content_core">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="importer_content_core_parquet">
 
     <parameters>
         <property>

@@ -13,4 +13,11 @@ public class SparkSessionFactory {
                 .config(SparkConfHelper.withKryo(conf))
                 .getOrCreate();
     }
+    
+    public static SparkSession withHiveEnabledConfAndKryo(SparkConf conf) {
+        return SparkSession.builder()
+                .config(SparkConfHelper.withKryo(conf))
+                .enableHiveSupport()
+                .getOrCreate();
+    }
 }

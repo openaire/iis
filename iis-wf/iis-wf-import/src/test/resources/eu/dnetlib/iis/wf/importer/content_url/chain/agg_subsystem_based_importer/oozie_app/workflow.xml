@@ -1,5 +1,16 @@
 <?xml version="1.0"?>
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-importer_content_url_chain_sampletest">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-importer_content_url_chain_agg_subsystem_based_importer">
+
+    <parameters>
+        <property>
+            <name>localDbName</name>
+            <value>content_agg_test_db</value>
+        </property>
+        <property>
+            <name>localTableName</name>
+            <value>payload</value>
+        </property>
+    </parameters>
 
     <global>
         <job-tracker>${jobTracker}</job-tracker>
@@ -16,7 +27,19 @@
         </configuration>
     </global>
     
-	<start to="producer"/>
+	<start to="hive-producer"/>
+
+    <action name="hive-producer">
+        <hive2 xmlns="uri:oozie:hive2-action:0.1">
+            <!-- FIXME this property cannot be bound to any specific env at the level of workflow definition -->
+            <jdbc-url>jdbc:hive2://iis-cdh5-test-m3.ocean.icm.edu.pl:10000</jdbc-url>
+            <script>initdb.q</script>
+            <param>DB_NAME=${localDbName}</param>
+            <param>TABLE_NAME=${localTableName}</param>
+        </hive2>
+        <ok to="producer"/>
+        <error to="fail"/>
+    </action>
     
     <action name="producer">
         <java>
@@ -40,7 +63,7 @@
             <arg>-Oid_mapping=${workingDir}/producer/id_mapping</arg>
         </java>
         <ok to="import_content_url"/>
-        <error to="fail"/>
+        <error to="teardown-and-fail"/>
     </action>
     
     <action name="import_content_url">
@@ -49,16 +72,13 @@
             <propagate-configuration />
             <configuration>
                 <property>
-                    <name>objectstore_facade_factory_classname</name>
-                    <value>eu.dnetlib.iis.wf.importer.content.MockObjectStoreFacadeFactory</value>
+                    <name>input_table_name</name>
+                    <value>${localDbName}.${localTableName}</value>
                 </property>
                 <property>
-                    <name>objectstore_service_location</name>
-                    <value>$UNDEFINED$</value>
-                </property>
-                <property>
-                    <name>approved_objectstores_csv</name>
-                    <value>objectstore-id1</value>
+                    <!-- FIXME this property cannot be bound to any specific env at the level of workflow definition -->
+                    <name>hive_metastore_uris</name>
+                    <value>thrift://iis-cdh5-test-m3.ocean.icm.edu.pl:9083</value>
                 </property>
                 <property>
                     <name>mimetypes_pdf</name>
@@ -99,7 +119,7 @@
             </configuration>
         </sub-workflow>
         <ok to="consumer" />
-        <error to="fail" />
+        <error to="teardown-and-fail" />
     </action>
 
 	<action name="consumer">
@@ -129,18 +149,42 @@
             <arg>-Icontent_url_xml=${workingDir}/out/xmlpmc</arg>
         </java>
         <ok to="consumer-report" />
-        <error to="fail" />
+        <error to="teardown-and-fail" />
     </action>
 
     <action name="consumer-report">
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
-            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/importer/content_url/data/output/report.json}</arg>
+            <arg>-C{report,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/importer/content_url/data/output/report_from_agg_subsystem.json}</arg>
             <arg>-Ireport=${workingDir}/report/import_content_url</arg>
         </java>
-        <ok to="end" />
-        <error to="fail" />
+        <ok to="teardown-and-end" />
+        <error to="teardown-and-fail" />
+    </action>
+    
+    <action name="teardown-and-fail">
+        <hive2 xmlns="uri:oozie:hive2-action:0.1">
+            <!-- FIXME this property cannot be bound to any specific env at the level of workflow definition -->
+            <jdbc-url>jdbc:hive2://iis-cdh5-test-m3.ocean.icm.edu.pl:10000</jdbc-url>
+            <script>teardowndb.q</script>
+            <param>DB_NAME=${localDbName}</param>
+            <param>TABLE_NAME=${localTableName}</param>
+        </hive2>
+        <ok to="fail"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="teardown-and-end">
+        <hive2 xmlns="uri:oozie:hive2-action:0.1">
+            <!-- FIXME this property cannot be bound to any specific env at the level of workflow definition -->
+            <jdbc-url>jdbc:hive2://iis-cdh5-test-m3.ocean.icm.edu.pl:10000</jdbc-url>
+            <script>teardowndb.q</script>
+            <param>DB_NAME=${localDbName}</param>
+            <param>TABLE_NAME=${localTableName}</param>
+        </hive2>
+        <ok to="end"/>
+        <error to="fail"/>
     </action>
 
     <kill name="fail">

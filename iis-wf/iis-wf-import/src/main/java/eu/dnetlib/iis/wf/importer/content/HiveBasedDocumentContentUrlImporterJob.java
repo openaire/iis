@@ -1,9 +1,11 @@
 package eu.dnetlib.iis.wf.importer.content;
 
+import static eu.dnetlib.iis.common.spark.SparkSessionSupport.runWithHiveEnabledSparkSession;
 import static org.apache.spark.sql.functions.col;
 import static org.apache.spark.sql.functions.concat;
 import static org.apache.spark.sql.functions.lit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.sql.Dataset;
@@ -45,9 +47,11 @@ public class HiveBasedDocumentContentUrlImporterJob {
         jcommander.parse(args);
 
         SparkConf conf = SparkConfHelper.withKryo(new SparkConf());
-        conf.set("hive.metastore.uris", params.hiveMetastoreUris);
+        if (!StringUtils.isEmpty(params.hiveMetastoreUris)) {
+            conf.set("hive.metastore.uris", params.hiveMetastoreUris);    
+        }
         
-        try (SparkSession sparkSession = SparkSession.builder().config(conf).enableHiveSupport().getOrCreate()) {
+        runWithHiveEnabledSparkSession(conf, params.isSparkSessionShared, sparkSession -> {
             
             HdfsUtils.remove(sparkSession.sparkContext().hadoopConfiguration(), params.outputPath);
             HdfsUtils.remove(sparkSession.sparkContext().hadoopConfiguration(), params.outputReportPath);
@@ -62,7 +66,7 @@ public class HiveBasedDocumentContentUrlImporterJob {
             
             avroSaver.saveJavaRDD(documentContentUrl, DocumentContentUrl.SCHEMA$, params.outputPath);
             avroSaver.saveJavaRDD(reports, ReportEntry.SCHEMA$, params.outputReportPath);
-        }
+        });
     }
     
     private static JavaRDD<ReportEntry> generateReportEntries(SparkSession sparkSession, long recordsCount) {
@@ -85,6 +89,9 @@ public class HiveBasedDocumentContentUrlImporterJob {
     
     @Parameters(separators = "=")
     private static class HiveBasedDocumentContentUrlImporterJobParameters {
+        
+        @Parameter(names = "-sharedSparkSession")
+        private Boolean isSparkSessionShared = Boolean.FALSE;
         
         @Parameter(names = "-inputTableName", required = true)
         private String inputTableName;

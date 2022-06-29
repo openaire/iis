@@ -41,6 +41,7 @@
 		<!-- import content related -->
 		<property>
 			<name>objectstore_service_location</name>
+            <value>$UNDEFINED$</value>
 			<description>object store service location required for content retrieval</description>
 		</property>
 		<property>

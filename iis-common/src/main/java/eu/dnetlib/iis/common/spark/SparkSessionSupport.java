@@ -37,6 +37,24 @@ public final class SparkSessionSupport {
     }
 
     /**
+     * Runs a given job using SparkSession created using default builder and supplied SparkConf. Enables Hive support. 
+     * Stops SparkSession when SparkSession is shared e.g. created in tests. Allows to reuse SparkSession created externally.
+     *
+     * @param conf                 SparkConf instance
+     * @param isSparkSessionShared When true will not stop SparkSession
+     * @param job                  Job using constructed SparkSession
+     */
+    public static void runWithHiveEnabledSparkSession(SparkConf conf,
+                                           Boolean isSparkSessionShared,
+                                           Job job) {
+        runWithSparkSession(
+                SparkSessionFactory::withHiveEnabledConfAndKryo,
+                conf,
+                isSparkSessionShared,
+                job);
+    }
+    
+    /**
      * Runs a given job using SparkSession created using supplied builder and supplied SparkConf. Stops SparkSession
      * when SparkSession is shared e.g. created in tests. Allows to reuse SparkSession created externally.
      *
