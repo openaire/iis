@@ -2,6 +2,8 @@ package eu.dnetlib.iis.wf.importer.content;
 
 import eu.dnetlib.iis.common.AbstractOozieWorkflowTestCase;
 import eu.dnetlib.iis.common.OozieWorkflowTestConfiguration;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -19,8 +21,7 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
         testWorkflow("eu/dnetlib/iis/wf/importer/content_url/chain/objectstore_based_importer", wfConf);
     }
     
-    //@Test
-    //TODO reenable this test once Hive is installed on CI Test hadoop cluster
+    @Disabled("TODO reenable this test once Hive is installed on CI Test hadoop cluster")
     public void testImportContentUrlWorkflowWithHiveBasedAggregationSubsystemAsBackend() {
         OozieWorkflowTestConfiguration wfConf = new OozieWorkflowTestConfiguration();
         wfConf.setTimeoutInSeconds(1440);
