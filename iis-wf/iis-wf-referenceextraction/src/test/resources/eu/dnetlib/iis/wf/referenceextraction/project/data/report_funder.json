@@ -44,6 +44,11 @@
   "value": "2"
 }
 {
+  "key": "processing.referenceExtraction.project.references.byfunder.inca",
+  "type": "COUNTER",
+  "value": "1"
+}
+{
   "key": "processing.referenceExtraction.project.references.byfunder.innoviris",
   "type": "COUNTER",
   "value": "1"
@@ -126,5 +131,5 @@
 {
    "key": "processing.referenceExtraction.project.references.total",
    "type": "COUNTER",
-   "value": "63"
+   "value": "64"
 }
