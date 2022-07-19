@@ -243,6 +243,14 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min
        when fundingClass1="NSF" then
             regexpcountwords("\bnsf\b|national science foundation",j2s(prevpack,middle,nextpack)) - 
             5 * regexpcountwords("china|shanghai|danish|nsfc|\bsnf\b|bulgarian|\bbnsf\b|norwegian|rustaveli|israel|\biran\b|shota|georgia|functionalization|manufacturing",j2s(prevpack,middle,nextpack))
+       when fundingClass1="RCN" and
+            regexprmatches("norment|norway|\bnorweg|\brcn\b", j2s(prevpack,middle,nextpack)) 
+            and regexprmatches("research|\bproject|\bgrant|\bcontract\b|acknowledge|funded|funding|\bfund\b|www rcn org", j2s(prevpack,middle,nextpack)) 
+            and not (regexprmatches("europe|fp7|\berc\b|\bh2020\b",j2s(prevpack,middle)) and not regexprmatches("norment|norway|\bnorweg|\brcn\b",j2s(prevpack,middle))) 
+            and (regexpcountwithpositions("europe|fp7|\berc\b|\bh2020\b",j2s(prevpack,middle)) - regexpcountwithpositions("norment|norway|\bnorweg|\brcn\b",j2s(prevpack,middle))) <= 0
+            and not regexprmatches("fp7 funded project rcn", j2s(prevpack,middle,nextpack))
+            and not regexprmatches("tel_|fax_", prevpacksmall)
+            then 1 
        when fundingClass1="MESTD" then
             regexpcountwords("serbia|mestd|451_03_68",j2s(prevpacksmall,middle,nextpack))
        when fundingClass1="SFRS" then
@@ -278,7 +286,7 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min
                          select * from (setschema 'docid,prev1, prev2, prev3, prev4, prev5, prev6, prev7, prev8, prev9, prev10, prev11, prev12, prev13, prev14, prev15, middle, next1, next2, next3' select  c1 as docid ,textwindow(regexpr('(\b\S*?[^0-9\s_]\S*?\s_?)(\d{3})(\s)(\d{3})(_?\s\S*?[^0-9\s_]\S*?\b)',filterstopwords(normalizetext(lower(c2))),'\1\2\4\5'),15,3,'((?:(?:\b|\D)0|_|\b|\D)(?:\d{5}))|(((\D|\b)\d{6}(\D|\b)))|(?:(?:\D|\b)(?:\d{7})(?:\D|\b)) ' )
                             from   (setschema 'c1,c2' select * from  pubs where c2 is not null)) ,grants
                             where  (not regexprmatches( '(?:0|\D|\b)+(?:\d{8,})',middle) and not regexprmatches('(?:\D|\b)(?:\d{7})(?:\D|\b)',middle) and regexpr('(?:0|\D|\b)+(\d{5})',middle) = grantid and fundingclass1  in ('WT', 'EC') ) or ((not regexprmatches('(\d{6,}(?:\d|i\d{3}_?\b))|(jana\d{6,})', middle)) and not regexprmatches('(?:\D|\b)(?:\d{7})(?:\D|\b)',middle) 
-                        and regexpr('(\d{6})',middle) = grantid and fundingclass1 in ('WT', 'EC')) or (regexprmatches('(?:(?:\D|\b)(?:\d{7})(?:\D|\b))',middle) and regexpr("(\d{7})",middle) = grantid and fundingclass1='NSF' ) 
+                        and regexpr('(\d{6})',middle) = grantid and fundingclass1 in ('WT', 'EC','RCN')) or (regexprmatches('(?:(?:\D|\b)(?:\d{7})(?:\D|\b))',middle) and regexpr("(\d{7})",middle) = grantid and fundingclass1='NSF' ) 
                         or ( regexpr("(\d{5,6})",middle) = grantid and fundingclass1='MESTD' ) or (regexpr("(\d{6})",middle) = grantid and fundingclass1='GSRI') 
                         or (regexpr("(\d{7})",middle) = grantid and fundingclass1='SFRS')
                         )
@@ -290,7 +298,7 @@ delete from matched_undefined_wt_only where docid in (select docid from output_t
 delete from matched_undefined_gsri where docid in (select docid from output_table where fundingClass1="GSRI");
 
 delete from output_table where j2s(docid,id) in (select j2s(T.docid, T.id) from output_table S, output_table T where  S.docid = T.docid and S.id in (select id from grants where grantid in (select * from gold)) and T.id in (select id from grants where grantid in ("246686", "283595","643410")));
-
+delete from output_table where fundingclass1 = "EC" and j2s(docid, grantid) in (select j2s(docid, grantid) from output_table where fundingclass1 = "RCN");
 create temp table secondary_output_table as 
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', sqroot(min(1.49,confidence)/1.5), 'textsnippet', context) as C1, docid, id, fundingclass1, grantid, context from ( select docid,id,confidence, docid, id,  fundingclass1, grantid, context from ( select
 0.8 as confidence, docid, id, fundingclass1, grantid, context

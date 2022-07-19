@@ -89,6 +89,11 @@
   "value": "1"
 }
 {
+  "key": "processing.referenceExtraction.project.references.byfunder.rcn",
+  "type": "COUNTER",
+  "value": "1"
+}
+{
   "key": "processing.referenceExtraction.project.references.byfunder.rsf",
   "type": "COUNTER",
   "value": "1"
@@ -131,5 +136,5 @@
 {
    "key": "processing.referenceExtraction.project.references.total",
    "type": "COUNTER",
-   "value": "64"
+   "value": "65"
 }
