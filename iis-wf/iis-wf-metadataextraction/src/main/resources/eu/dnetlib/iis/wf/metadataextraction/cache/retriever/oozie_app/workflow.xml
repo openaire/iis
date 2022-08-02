@@ -11,9 +11,21 @@
         </property>
         <!-- import metadata related -->
         <property>
-            <name>hbase_dump_location</name>
+            <name>infospace_graph_location</name>
             <value>$UNDEFINED$</value>
-            <description>InformationSpace HBase dump location, usually points to remote cluster HDFS location. Required when ${match_content_with_metadata} is set to true.</description>
+            <description>information space graph HDFS location</description>
+        </property>
+        <property>
+            <name>inference_provenance_blacklist</name>
+            <value>iis::.*</value>
+        </property>
+        <property>
+            <name>input_table_name</name>
+            <description>hive input table name</description>
+        </property>
+        <property>
+            <name>hive_metastore_uris</name>
+            <description>hive metastore locations</description>
         </property>
         <property>
             <name>distcp_memory_mb</name>
@@ -30,21 +42,7 @@
             <value>$UNDEFINED$</value>
             <description>trust level threshold represented as float value, ignored when set to $UNDEFINED$ value</description>
         </property>
-        <property>
-            <name>merge_body_with_updates</name>
-            <value>false</value>
-            <description>flag indicating Oaf objects strored in body qualifier should be merged with Oaf objects stored in update qualifier</description>
-        </property>
         <!-- import content related -->
-        <property>
-            <name>objectstore_service_location</name>
-            <description>object store service location required for content retrieval</description>
-        </property>
-        <property>
-            <name>approved_objectstores_csv</name>
-            <value>$UNDEFINED$</value>
-            <description>CSV list of object stores identifiers to be processed</description>
-        </property>
         <property>
             <name>mimetypes_pdf</name>
             <value>pdf,application/pdf</value>
@@ -117,14 +115,14 @@
             <description>metadata import docmeta output subdirectory name</description>
         </property>
         <property>
-            <name>metadataimport_output_name_dedup_mapping</name>
-            <value>dedupmapping</value>
+            <name>metadataimport_output_name_identifier_mapping</name>
+            <value>identifiermapping</value>
             <description>metadata import deduplication mapping output subdirectory name</description>
         </property>
         <!-- output location -->
         <property>
-            <name>output_remote_location</name>
-            <description>remote cluster output location where plaintexts should be distcped</description>
+            <name>output_location</name>
+            <description>output location where plaintexts should be distcped</description>
         </property>
         <property>
             <name>output_report_root_path</name>
@@ -185,23 +183,12 @@
 
     <decision name="decision-match_content_with_metadata">
         <switch>
-            <case to="distcp_hbase_dump">${match_content_with_metadata eq "true"}</case>
+            <case to="import_infospace">${match_content_with_metadata eq "true"}</case>
             <default to="input_id_mapping-path-setter" />
         </switch>
     </decision>
 
-    <!-- importing hbase dump from remote cluster -->
-    <action name="distcp_hbase_dump">
-        <distcp xmlns="uri:oozie:distcp-action:0.2">
-            <arg>-Dmapreduce.map.memory.mb=${distcp_memory_mb}</arg>
-            <arg>-pb</arg>
-            <arg>${hbase_dump_location}</arg>
-            <arg>${nameNode}${workingDir}/hbase_dump</arg>
-        </distcp>
-        <ok to="import_infospace" />
-        <error to="fail" />
-    </action>
-
+    <!-- importing InformationSpace dump -->
     <action name="import_infospace">
         <sub-workflow>
             <app-path>${wf:appPath()}/import_infospace</app-path>
@@ -212,12 +199,8 @@
                     <value>${workingDir}/import_infospace/working_dir</value>
                 </property>
                 <property>
-                    <name>input</name>
-                    <value>${workingDir}/hbase_dump</value>
-                </property>
-                <property>
-                    <name>approved_columnfamilies_csv</name>
-                    <value>result,resultResult_dedup_merges</value>
+                    <name>input_root_path</name>
+                    <value>${infospace_graph_location}</value>
                 </property>
                 <property>
                     <name>output</name>
@@ -229,23 +212,16 @@
                     <value>${metadataimport_output_name_document_meta}</value>
                 </property>
                 <property>
-                    <name>output_name_dedup_mapping</name>
-                    <value>${metadataimport_output_name_dedup_mapping}</value>
+                    <name>output_name_identifier_mapping</name>
+                    <value>${metadataimport_output_name_identifier_mapping}</value>
                 </property>
                 <!-- all the other properties are autmatically propagated -->
             </configuration>
         </sub-workflow>
-        <ok to="purge_hbase_dump" />
-        <error to="fail" />
-    </action>
-
-    <action name="purge_hbase_dump">
-        <fs>
-            <delete path="${nameNode}${workingDir}/hbase_dump" />
-        </fs>
         <ok to="transformers-idextractor" />
         <error to="fail" />
     </action>
+
     <!-- end of importing InformationSpace -->
 
     <action name="transformers-idextractor">
@@ -276,7 +252,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.oozie.property.ConditionalPropertySetter</arg>
             <arg>-Pcondition=${match_content_with_metadata eq "true"}</arg>
-            <arg>-PinCaseOfTrue=${workingDir}/output_metadataimport_root/${metadataimport_output_name_dedup_mapping}</arg>
+            <arg>-PinCaseOfTrue=${workingDir}/output_metadataimport_root/${metadataimport_output_name_identifier_mapping}</arg>
             <arg>-PelseCase=$UNDEFINED$</arg>
             <capture-output />
         </java>
@@ -650,7 +626,7 @@
             <arg>-pb</arg>
             <arg>-overwrite</arg>
             <arg>${nameNode}${workingDir}/transformers_common_union_document_text/out</arg>
-            <arg>${output_remote_location}</arg>
+            <arg>${output_location}</arg>
         </distcp>
         <ok to="report-execution-times" />
         <error to="fail" />
