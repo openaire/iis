@@ -16,6 +16,10 @@
             <description>information space graph HDFS location</description>
         </property>
         <property>
+            <name>license_whitelist</name>
+            <value>OPEN</value>
+        </property>
+        <property>
             <name>inference_provenance_blacklist</name>
             <value>iis::.*</value>
         </property>
@@ -31,11 +35,6 @@
             <name>distcp_memory_mb</name>
             <value>6144</value>
             <description>memory for distcp action copying InfoSpace dump from remote cluster</description>
-        </property>
-        <property>
-            <name>inference_provenance_blacklist</name>
-            <value>iis::.*</value>
-            <description>list of blacklisted inference provenance which sould not be taken into account by importer, skipped when set to $UNDEFINED$</description>
         </property>
         <property>
             <name>trust_level_threshold</name>

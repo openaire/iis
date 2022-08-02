@@ -43,7 +43,9 @@ import eu.dnetlib.iis.importer.schemas.DataSetReference;
 import eu.dnetlib.iis.importer.schemas.DocumentMetadata;
 import eu.dnetlib.iis.importer.schemas.DocumentToProject;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
+import eu.dnetlib.iis.wf.importer.infospace.approver.ComplexApprover;
 import eu.dnetlib.iis.wf.importer.infospace.approver.DataInfoBasedApprover;
+import eu.dnetlib.iis.wf.importer.infospace.approver.LicenseBasedApprover;
 import eu.dnetlib.iis.wf.importer.infospace.approver.ResultApprover;
 import eu.dnetlib.iis.wf.importer.infospace.converter.DatasetMetadataConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.DeduplicationMappingConverter;
@@ -129,8 +131,11 @@ public class ImportInformationSpaceJob {
             HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
 
             // initializing Oaf model converters
-            DataInfoBasedApprover dataInfoBasedApprover = buildApprover(
+            DataInfoBasedApprover dataInfoBasedApprover = buildDataInfoBasedApprover(
                     params.skipDeletedByInference, params.trustLevelThreshold, params.inferenceProvenanceBlacklist);
+            LicenseBasedApprover licenseBasedApprover = buildLicenseBasedApprover(params.licenseWhitelist);
+            
+            ComplexApprover resultEntitiesApprover = new ComplexApprover(dataInfoBasedApprover, licenseBasedApprover);
 
             OafEntityToAvroConverter<Result, DocumentMetadata> documentConverter = new DocumentMetadataConverter(dataInfoBasedApprover);
             OafEntityToAvroConverter<Result, DataSetReference>  datasetConverter = new DatasetMetadataConverter(dataInfoBasedApprover);
@@ -163,11 +168,11 @@ public class ImportInformationSpaceJob {
             sourceRelation.persist(CACHE_STORAGE_DEFAULT_LEVEL);
 
             // handling entities
-            JavaRDD<eu.dnetlib.dhp.schema.oaf.Dataset> filteredDataset = sourceDataset.filter(dataInfoBasedApprover::approve);
+            JavaRDD<eu.dnetlib.dhp.schema.oaf.Dataset> filteredDataset = sourceDataset.filter(resultEntitiesApprover::approve);
             filteredDataset.persist(CACHE_STORAGE_DEFAULT_LEVEL);
 
             JavaRDD<eu.dnetlib.iis.importer.schemas.DocumentMetadata> docMeta = truncateAvro(parseToDocMetaAvro(filteredDataset,
-                    sourcePublication, sourceSoftware, sourceOtherResearchProduct, dataInfoBasedApprover, documentConverter),
+                    sourcePublication, sourceSoftware, sourceOtherResearchProduct, resultEntitiesApprover, documentConverter),
                     documentMetadataAvroTruncator);
             JavaRDD<eu.dnetlib.iis.importer.schemas.DataSetReference> dataset = truncateAvro(parseResultToAvro(filteredDataset,
                     datasetConverter), dataSetReferenceAvroTruncator);
@@ -303,11 +308,19 @@ public class ImportInformationSpaceJob {
     /**
      * Creates data approver.
      */
-    private static DataInfoBasedApprover buildApprover(String skipDeletedByInference, String trustLevelThreshold, String inferenceProvenanceBlacklist) {
+    private static DataInfoBasedApprover buildDataInfoBasedApprover(String skipDeletedByInference, String trustLevelThreshold, String inferenceProvenanceBlacklist) {
         Float trustLevelThresholdFloat = Optional.ofNullable(trustLevelThreshold)
                 .filter(x -> StringUtils.isNotBlank(x) && !UNDEFINED_NONEMPTY_VALUE.equals(x)).map(Float::parseFloat)
                 .orElse(null);
         return new DataInfoBasedApprover(inferenceProvenanceBlacklist, Boolean.parseBoolean(skipDeletedByInference), trustLevelThresholdFloat);
+    }
+    
+    private static LicenseBasedApprover buildLicenseBasedApprover(String licenseWhitelistCandidate) {
+    	String licenseWhitelistPattern = null;
+    	if (StringUtils.isNotBlank(licenseWhitelistCandidate) && !UNDEFINED_NONEMPTY_VALUE.equals(licenseWhitelistCandidate)) {
+    		licenseWhitelistPattern = licenseWhitelistCandidate;
+    	}
+    	return new LicenseBasedApprover(licenseWhitelistPattern);
     }
     
     /**
@@ -423,6 +436,9 @@ public class ImportInformationSpaceJob {
         
         @Parameter(names = "-inferenceProvenanceBlacklist", required = true)
         private String inferenceProvenanceBlacklist;
+        
+        @Parameter(names = "-licenseWhitelist", required = true)
+        private String licenseWhitelist;
         
         @Parameter(names = "-inputRootPath", required = true)
         private String inputRootPath;
