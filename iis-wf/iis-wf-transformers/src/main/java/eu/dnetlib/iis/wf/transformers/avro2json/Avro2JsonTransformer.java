@@ -3,8 +3,12 @@ package eu.dnetlib.iis.wf.transformers.avro2json;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+
+import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
@@ -32,12 +36,21 @@ public class Avro2JsonTransformer {
 
             SQLContext sqlContext = new SQLContext(sc);
             Dataset<Row> input = sqlContext.read().format("com.databricks.spark.avro").load(params.input);
-            input.write().json(params.output);
+            if (isCompressionSet(params.compressionMethod)) {
+                input.write().option("compression", params.compressionMethod).json(params.output);
+            } else {
+                input.write().json(params.output);
+            }
+            
         }
     }
     
     //------------------------ PRIVATE --------------------------
 
+    private static boolean isCompressionSet(String compressionMethod) {
+        return StringUtils.isNotBlank(compressionMethod) && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(compressionMethod);
+    }
+    
     @Parameters(separators = "=")
     private static class AvroToRdbTransformerJobParameters {
         
@@ -46,6 +59,9 @@ public class Avro2JsonTransformer {
         
         @Parameter(names = "-output", required = true)
         private String output;
+        
+        @Parameter(names = "-compressionMethod", required = false)
+        private String compressionMethod;
     }
 
 }

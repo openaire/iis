@@ -9,6 +9,11 @@
 			<name>output</name>
 			<description>output json datastore</description>
 		</property>
+		<property>
+			<name>compression_method</name>
+			<value>$UNDEFINED$</value>
+			<description>output JSON datastore compression method, disabled when set to $UNDEFINED$ value</description>
+		</property>
         <property>
             <name>sparkExecutorMemory</name>
             <description>memory for individual executor</description>
@@ -96,6 +101,7 @@
             </spark-opts>
             <arg>-input=${input}</arg>
             <arg>-output=${output}</arg>
+            <arg>-compressionMethod=${compression_method}</arg>
         </spark>
         
         <ok to="end"/>
