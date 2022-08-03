@@ -4,6 +4,7 @@ import_content_url classpath eu/dnetlib/iis/wf/importer/content_url/chain/oozie_
 import_plaintext classpath eu/dnetlib/iis/wf/importer/plaintext/oozie_app
 ingest_html_plaintext classpath eu/dnetlib/iis/wf/ingest/html/plaintext/oozie_app
 metadataextraction_cache classpath eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/oozie_app
+transformers_avro2json classpath eu/dnetlib/iis/wf/transformers/avro2json/oozie_app
 transformers_common_union classpath eu/dnetlib/iis/wf/transformers/common/union/oozie_app
 transformers_common_union3 classpath eu/dnetlib/iis/wf/transformers/common/union3/oozie_app
 transformers_idextractor classpath eu/dnetlib/iis/wf/transformers/importer/documentmetadata/idextractor/oozie_app

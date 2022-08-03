@@ -613,24 +613,34 @@
                 </property>
             </configuration>
         </sub-workflow>
-        <ok to="distcp_output" />
+        <ok to="generate_output" />
         <error to="fail" />
     </action>
     
-    <!-- TODO convert documenttext to desired format and update distcp input -->
-
-    <action name="distcp_output">
-        <distcp xmlns="uri:oozie:distcp-action:0.2">
-            <arg>-Dmapreduce.map.memory.mb=${distcp_memory_mb}</arg>
-            <arg>-pb</arg>
-            <arg>-overwrite</arg>
-            <arg>${nameNode}${workingDir}/transformers_common_union_document_text/out</arg>
-            <arg>${output_location}</arg>
-        </distcp>
+	
+	<action name="generate_output">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/transformers_avro2json</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/transformers_avro2json/working_dir</value>
+                </property>
+                <property>
+                    <name>input</name>
+                    <value>${workingDir}/transformers_common_union_document_text/out</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${output_location}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
         <ok to="report-execution-times" />
         <error to="fail" />
     </action>
-
+	
     <action name="report-execution-times">
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
