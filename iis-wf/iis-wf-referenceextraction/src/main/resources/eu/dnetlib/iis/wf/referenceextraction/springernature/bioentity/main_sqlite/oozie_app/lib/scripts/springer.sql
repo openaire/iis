@@ -1,20 +1,56 @@
 --https://github.com/johnfouf/iis/blob/przemyslawjacewicz_1215_bio_entities_integration/iis-wf/iis-wf-referenceextraction/src/main/resources/eu/dnetlib/iis/wf/referenceextraction/springernature/bioentity/main_sqlite/oozie_app/lib/scripts/springer.sql
 --attach database "../omirospubmed.db" as d1;
---create table mydata as select * from (setschema 'docid,text' select * from pmcfulltext);
+--create table mydata as select * from (setschema 'docid,text' select * from pmcfulltext );
 
+--*****************************************************************************************************************
+-- --For testing the results:
+-- cat pubs.json | python madis/src/mexec.py -f query.sql -d data.db >> result.json
+-- cat pubs.json | python ~/Desktop/openAIRE/madis2/src/mexec.py -f springerFromFouf_EL_v5.sql -d testingtotal2.db > results.json
+-- --Create pubs.json as follows:
+-- --a)
+
+--The ids of the documents I used are
+-- --1. ebi_ac_uk       PMC2945784, PMC3873028
+-- --2. flowRepository  PMC4238829, PMC3906045
+-- --4. ΕΒΙMetabolights PMC4419159, PMC4421934
+-- --5. NCBIassembly    PMC3878773, PMC3882889
+-- --6. NCBI PubChem    PMC4483656, PMC2703903
+-- --7. NCBI Taxonomy   PMC3742277, PMC3744899
+-- --8. NeuroMorpho     PMC4325909, PMC3324298
+-- --9. Biomodels       PMC2944785, PMC2950841
+-- --10. SRA            PMC2936537, PMC2938879
+-- --11.dbVar           PMC3740631, PMC3744852
+-- --12. ENA            PMC2933243, PMC2933595
+-- --13. EVA            PMC3874197, PMC3880420
+
+-- create table mydata as select * from (setschema 'id,text' select * from pmcfulltext where
+-- pmcid ='PMC2945784' or  pmcid ='PMC3873028' or  pmcid ='PMC4238829' or  pmcid ='PMC3906045' or
+-- pmcid ='PMC4419159' or pmcid ='PMC4421934' or  pmcid ='PMC3878773' or  pmcid ='PMC3882889' or
+-- pmcid ='PMC4483656' or pmcid ='PMC2703903' or pmcid ='PMC3742277' or pmcid ='PMC3744899' or
+-- pmcid ='PMC4325909' or pmcid ='PMC3324298' or pmcid ='PMC2944785' or pmcid ='PMC2950841' or
+-- pmcid ='PMC2936537' or pmcid ='PMC2938879' or pmcid ='PMC3740631' or pmcid ='PMC3744852' or
+-- pmcid ='PMC2933243' or pmcid ='PMC2933595' or pmcid ='PMC3874197' or pmcid ='PMC3880420');
+-- output 'pubs.txt' select jdict('id', id, 'text', text) from mydata;
+-- cp pubs.txt pubs.json
+-- --b)
+-- Create file pubs.json that contains: {"id":"123", "text":"some sample text"}
+
+
+--**************************************************************************************************************
 create temp table mydata as select * from (setschema 'docid,text' select jsonpath(c1,'$.id', '$.text') from stdinput());
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 -- arrayexpress
-hidden var 'arrayexpress_prefixes' from
-select jmergeregexp(jgroup(prefix))
-from ( select "\b"||regexpr("-",prefix,"[\s|\W|-|:|_|.]{0,1}")||'\d+' as prefix
-	 from ( select distinct c1 as prefix
-		from ( select regexpr("\d", Accession,"") as c1
-			from arrayexpress_experiments)));
-hidden var 'arrayexpress_negativePrefixes' from select 'EERAD|EBAIR';
+-- hidden var 'arrayexpress_prefixes' from
+-- select jmergeregexp(jgroup(prefix))
+-- from ( select "\b"||regexpr("-",prefix,"[\s|\W|-|:|_|.]{0,1}")||'\d+' as prefix
+-- 	 from ( select distinct c1 as prefix
+-- 		from ( select regexpr("\d", Accession,"") as c1
+-- 			from arrayexpress_experiments)));
+-- hidden var 'arrayexpress_negativePrefixes' from select 'EERAD|EBAIR';
 --ebi_ac_uk
 hidden var 'ebi_ac_uk_prefixes' from select '(?:(?:\b|[^A-Z])EGAD[\s|\W|-|:|_|.]{0,1}\d{6,})|(?:(?:\b|[^A-Z])EGAS[\s|\W|-|:|_|.]{0,1}\d{6,})';
+hidden var 'ebi_ac_uk_prefixes2' from select '(?:EGAD[\s|\W|-|:|_|.]{0,1}\d{6,})|(?:EGAS[\s|\W|-|:|_|.]{0,1}\d{6,})';
 hidden var 'ebi_ac_uk_negativeWords' from select 'ANR';
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 --dbVar
@@ -43,35 +79,35 @@ hidden var 'eva_prefixes' from select '(?:\bPRJEB\d+)|(?:\b[n|e]std\d+)';
 hidden var 'flowrep_prefixes' from select '(?:FR-FCM-\w{4})';
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 --EBIMetagenomics
-hidden var 'EBIMetagenomics_prefixes' from select '(?:MGYS\d+)'; 197
+hidden var 'EBIMetagenomics_prefixes' from select '(?:MGYS\d+)';
 --ΕΒΙMetabolights
-hidden var 'EBIMetabolights_prefixes' from select '(?:\bMTBL[S|C]\d+)'; 66
+hidden var 'EBIMetabolights_prefixes' from select '(?:\bMTBL[S|C]\d+)';
 --NCBIassembly
-hidden var 'NCBIassembly_prefixes' from select '(?:\bGC[A|F]_\d{9}\.\d+)'; 474
+hidden var 'NCBIassembly_prefixes' from select '(?:\bGC[A|F]_\d{9}\.\d+)';
 --NCBI PubChem BioAssay & NCBI PubChem Substance
-hidden var 'NCBIPubChem' from select '(?:pubchem\D+\d+)'; 87
+hidden var 'NCBIPubChem' from select '(?:pubchem\D+\d+)';
 --NCBI Taxonomy
-hidden var 'NCBITaxonomy_prefixes' from select '(?:wwwtax\.cgi\D+\d+)|(?:txid\d+)'; 162
+hidden var 'NCBITaxonomy_prefixes' from select '(?:wwwtax\.cgi\D+\d+)|(?:txid\d+)';
 --NeuroMorpho
-hidden var 'NeuroMorpho_prefixes' from select '(?:neuron_name=[\w+|-]+)|(?:NMO_\d{5,})'; 17
+hidden var 'NeuroMorpho_prefixes' from select '(?:neuron_name=[\w+|-]+)|(?:NMO_\d{5,})';
 --BioModels
-hidden var 'BioModels_prefixes' from select '(?:MODEL\d+)'; 119
+hidden var 'BioModels_prefixes' from select '(?:MODEL\d+)';
 hidden var 'BioModels_positivewords'from select '(?:ebi\.ac\.uk)|(?:biomodels?)';
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
---ArrayExpress ELENI
-select jdict('documentId', docid,	'entity', 'ArrayExpress','biomedicalId', regexpr("("||var('arrayexpress_prefixes')||")", middle), 'confidenceLevel', 0.8,'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
-from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('arrayexpress_prefixes')) from mydata)
-where regexprmatches("%{arrayexpress_negativePrefixes}",upper(middle)) = 0
-union all
- --ebi_ac_uk ELENI
- select jdict('documentId', docid,'entity', 'ebi_ac_uk', 'biomedicalId', regexpr("("||var('ebi_ac_uk_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+-- --ArrayExpress ELENI
+-- select jdict('documentId', docid,	'entity', 'ArrayExpress','biomedicalId', regexpr("("||var('arrayexpress_prefixes')||")", middle), 'confidenceLevel', 0.8,'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+-- from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('arrayexpress_prefixes')) from mydata)
+-- where regexprmatches("%{arrayexpress_negativePrefixes}",upper(middle)) = 0
+-- union all
+ --1. ebi_ac_uk ELENI
+ select jdict('documentId', docid,'entity', 'ebi_ac_uk', 'biomedicalId', regexpr("("||var('ebi_ac_uk_prefixes2')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
  from ( setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('ebi_ac_uk_prefixes'))  from mydata )
  where regexprmatches("%{ebi_ac_uk_negativeWords}",upper(prev||middle)) = 0
 union all
 -- dbSNP: EL 06/2022 (I need feedback from Harry)!!!!
 -- union all
--- flowRepository EL 06/2022
+-- 2. flowRepository EL 06/2022
 select jdict('documentId', docid, 'entity', "flowrepository", 'biomedicalId', regexpr("("||var('flowrep_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from ( select docid, prev, middle, next
         from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('flowrep_prefixes'))
@@ -79,54 +115,54 @@ from ( select docid, prev, middle, next
      )
 ------------------------------------------------------------------------------------------------------------------------------------------
 union all
--- EBIMetagenomics EL 06/2022
-select jdict('documentId', docid, 'entity', "EBImetagenomics", 'biomedicalId', regexpr("(\d+)", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+--3. EBIMetagenomics EL 06/2022
+select jdict('documentId', docid, 'entity', "EBImetagenomics", 'biomedicalId', regexpr("("||var('EBIMetagenomics_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from ( select docid, prev, middle, next
 	       from ( setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('EBIMetagenomics_prefixes'))
 	              from mydata )
 		 )
  union all
---ΕΒΙMetabolights EL 06/2022
-select jdict('documentId', docid, 'entity', "ΕΒΙmetabolights", 'biomedicalId', regexpr("(\d+)", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+--4. ΕΒΙMetabolights EL 06/2022
+select jdict('documentId', docid, 'entity', "ΕΒΙmetabolights", 'biomedicalId', regexpr("("||var('EBIMetabolights_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from ( select docid, prev, middle, next
 	       from ( setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('EBIMetabolights_prefixes'))
 	              from mydata )
 		 )
  union all
---NCBIassembly EL 06/2022
-select jdict('documentId', docid, 'entity', "NCBIassembly", 'biomedicalId', regexpr("(\d+)", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+--5. NCBIassembly EL 06/2022
+select jdict('documentId', docid, 'entity', "NCBIassembly", 'biomedicalId', regexpr("("||var('NCBIassembly_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from ( select docid, prev, middle, next
 	       from ( setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('NCBIassembly_prefixes'))
 	              from mydata )
 		 )
 union all
---NCBI PubChem BioAssay & NCBI PubChem Substance EL 06/2022
-select jdict('documentId', docid, 'entity', type, 'biomedicalId', regexpr("(\d+)", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+--6. NCBI PubChem BioAssay & NCBI PubChem Substance EL 06/2022
+select jdict('documentId', docid, 'entity', type, 'biomedicalId',  regexpr("(\d+)", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from (  select docid, prev, middle, next,
-				                   case when regexprmatches("bioassay|assay", lower(prev||" "||middle||" "||next)) = 1  then "NCBIPubChemBioassay"
-				                        when regexprmatches("substances?", lower(prev||" "||middle||" "||next)) = 1  then "NCBIPubChemBioSubstance" end as type
-				from ( setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('NCBIassembly_prefixes'))
+				      case when regexprmatches("bioassay|assay", lower(prev||" "||middle||" "||next)) = 1  then "NCBIPubChemBioassay"
+				           when regexprmatches("substances?", lower(prev||" "||middle||" "||next)) = 1  then "NCBIPubChemBioSubstance" end as type
+				from ( setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('NCBIPubChem'))
 							 from mydata )
 				where regexprmatches("bioassay|assay", lower(prev||" "||middle||" "||next)) = 1 or
 				     regexprmatches("substances?", lower(prev||" "||middle||" "||next)) = 1
 	 )
 union all
---NCBI Taxonomy EL 06/2022
-select jdict('documentId', docid, 'entity', "NCBITaxonomy", 'biomedicalId', regexpr("(\d+)", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+--7. NCBI Taxonomy EL 06/2022
+select jdict('documentId', docid, 'entity', "NCBITaxonomy", 'biomedicalId', regexpr("("||var('NCBITaxonomy_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from ( select docid, prev, middle, next
 	       from ( setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('NCBITaxonomy_prefixes'))
 	              from mydata )
 		 )
 union all
---NeuroMorpho EL 06/2022
-select jdict('documentId', docid, 'entity', "NeuroMorpho", 'biomedicalId', regexpr("(\d+)", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+--8. NeuroMorpho EL 06/2022
+select jdict('documentId', docid, 'entity', "NeuroMorpho", 'biomedicalId',regexpr("("||var('NeuroMorpho_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from ( select docid, prev, middle, next
 	       from ( setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('NeuroMorpho_prefixes'))
 	              from mydata )
 		 )
 union all
---BioModels EL 06/2022
- select jdict('documentId', docid, 'entity', "BioModels", 'biomedicalId', regexpr("(\d+)", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+--9. BioModels EL 06/2022
+ select jdict('documentId', docid, 'entity', "BioModels", 'biomedicalId', regexpr("("||var('BioModels_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
  from (select docid, prev, middle, next
          from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('BioModels_prefixes'))
                  from (select docid, text from mydata
@@ -142,7 +178,7 @@ union all
 union all
 --dbgap --Giannhs
 select jdict('documentId', docid, 'entity', 'DBGAP', 'biomedicalId', match, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1 from
-(select docid, jsplitv(regexprfindall(regexpr("(ph\w{7}\.\w\d\.p\w)",middle))) as match,  prev, middle, next from (setschema 'docid,prev,middle,next' select docid, textwindow2s(lower(regexpr("\n",text," ")), 10,1,5, "ph\w{7}\.\w\d\.p\w") from mydata) group by docid, match)
+(select docid,jsplitv(regexprfindall(regexpr("(ph\w{7}\.\w\d\.p\w)",middle))) as match,  prev, middle, next from (setschema 'docid,prev,middle,next' select docid, textwindow2s(lower(regexpr("\n",text," ")), 10,1,5, "ph\w{7}\.\w\d\.p\w") from mydata) group by docid, match)
 union all
 --chembl -- Giannhs
 select jdict('documentId', docid, 'entity', 'CHEMBL', 'biomedicalId', match, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1 from
@@ -151,32 +187,31 @@ select jdict('documentId', docid, 'entity', 'CHEMBL', 'biomedicalId', match, 'co
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --uniprot  Giannhs
-create temp table uniprot_results as select * from (
-setschema 'docid, uniprot, prev, middle, next' select docid, case when regexprmatches('uniprot', lower(text)) then 1 else 0 end as uniprot ,textwindow2s(keywords(text),10,1,10,"\b([A-Z])([A-Z]|\d){5}\b") from mydata), uniprots where
-middle = id;
-
-select jdict('documentId', docid, 'entity', 'uniprot','biomedicalId', id, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as res from uniprot_results where
-((regexprmatches("\b\swiss\b|uniprot|swiss prot|uni prot|sequence|protein",lower(prev||" "||middle||" "||next)) or (regexprmatches("accession",lower(prev||" "||middle||" "||next)) and uniprot))
-and not regexprmatches('\bFWF\b|\bARRS\b',(prev||" "||middle||" "||next))) group by docid, id
-union
-select jdict('documentId', docid, 'entity', 'uniprot','biomedicalId', id, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as res from uniprot_results where docid in (
-select  docid from uniprot_results where uniprot = 1 group by docid having count(*)>5) group by docid, id;
-
+-- create temp table uniprot_results as select * from (
+-- setschema 'docid, uniprot, prev, middle, next' select docid, case when regexprmatches('uniprot', lower(text)) then 1 else 0 end as uniprot ,textwindow2s(keywords(text),10,1,10,"\b([A-Z])([A-Z]|\d){5}\b") from mydata), uniprots where
+-- middle = id;
+--
+-- select jdict('documentId', docid, 'entity', 'uniprot','biomedicalId', id, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as res from uniprot_results where
+-- ((regexprmatches("\b\swiss\b|uniprot|swiss prot|uni prot|sequence|protein",lower(prev||" "||middle||" "||next)) or (regexprmatches("accession",lower(prev||" "||middle||" "||next)) and uniprot))
+-- and not regexprmatches('\bFWF\b|\bARRS\b',(prev||" "||middle||" "||next))) group by docid, id
+-- union
+-- select jdict('documentId', docid, 'entity', 'uniprot','biomedicalId', id, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as res from uniprot_results where docid in (
+-- select  docid from uniprot_results where uniprot = 1 group by docid having count(*)>5) group by docid, id;
+--
 
 ----------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------
 
 create temp table results_SRA_dbVar_ENA_EVA as
---SRA  ELENI
+--10. SRA  ELENI
 select docid as 'documentId',
        'SRA' as 'entity',
 			 regexpr('(?:(?:\b|[^A-Z])(SR[A|P|X|R|S|Z][:|-|_|.]{0,1}\d+))', middle) as 'biomedicalId',
 			 0.8 as 'confidenceLevel',
 			 prev, middle, next
 from ( setschema 'docid,prev,middle,next' select docid,textwindow2s(regexpr("\n",text," "), 10, 1, 10,'(?:(?:\b|[^A-Z])SR[A|P|X|R|S|Z][:|-|_|.]{0,1}\d{6})') from mydata)
-------------------------------------------------------------------------------------------------------------------------------------------------------
 union all
--- dbVar: EL 06/2022
+--11.  dbVar: EL 06/2022
 select docid as 'documentId',
        'dbVar' as 'entity',
 			 regexpr("("||var('dbvar_prefixes')||")", middle) as 'biomedicalId',
@@ -190,7 +225,7 @@ from ( select docid, prev, middle, next
         and length(regexpr("("||var('dbvar_prefixes2')||")", middle))>5
      )
 union all
--- ENA: EL 06/2022
+--12. ENA: EL 06/2022
 select docid as 'documentId',
        'ENA' as 'entity',
 			 regexpr("("||var('ena_prefixes')||")", middle) as 'biomedicalId',
@@ -207,7 +242,7 @@ where regexprmatches(var('ena_NegativeMiddle'), middle) = 0 and
       regexprmatches(var('ena_NegativeWordsPrev'), lower(prev)) = 0
 )
 union all
--- EVA EL 06/2022
+--13. EVA EL 06/2022
 select docid as 'documentId',
        'EVA' as 'entity',
 			 regexpr("("||var('eva_prefixes')||")", middle) as 'biomedicalId',
@@ -237,8 +272,6 @@ select * from  results_SRA_dbVar_ENA_EVA where documentId||biomedicalId||prev||m
         from (select * from results_SRA_dbVar_ENA_EVA group by documentId, entity, biomedicalId, prev, middle, next) --Distinct values
         group by documentId,biomedicalId, prev, middle, next)
 where size > 1) ;
-
-
 
 select jdict('documentId', documentId, 'entity', entity, 'biomedicalId', biomedicalId, 'confidenceLevel', 0.8, 'textsnippet',  (prev||" <<< "||middle||" >>> "||next)) as C1
 from (
