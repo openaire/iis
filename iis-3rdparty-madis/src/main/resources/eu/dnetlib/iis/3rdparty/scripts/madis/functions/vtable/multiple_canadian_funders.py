@@ -1,15 +1,17 @@
 # coding=utf-8  # We use non-ASCII, french chars inside the regexes.
-import vtbase
+from . import vtbase
 from functions.row.text import regexprmatches
+import importlib
 
 registered = True
 
 class CanadianVT(vtbase.VT):
 
-    cihr_regex = unicode(".*(?:(?:CIHR|IRSC)|(?i)(?:canad(?:ian|a) institute(?:s)? health research|institut(?:(?:e)?(?:s)?)? recherche sant(?:é|e) canada)).*", "utf_8")
-    nserc_regex = unicode(".*(?:(?:NSERC|CRSNG)|(?i)(?:nat(?:ural|ional) science(?:s)?(?:\sengineering(?:\sresearch)?|\sresearch) co(?:u)?n(?:c|se)(?:i)?l|conseil(?:s)? recherche(?:s)? science(?:s)? naturel(?:les)?(?:\sg(?:e|é)nie)? canada)).*", "utf_8")
-    sshrc_regex = unicode(".*(?:(?:SSHRC|CRSH|SSRCC)|(?i)(?:social science(?:s)?|conseil(?:s)? recherche(?:s)?(?:\ssciences humaines)? canada|humanities\sresearch)).*", "utf_8")
-    nrc_regex = unicode(".*(?i)(?:national research council|conseil(?:s)? national recherche(?:s)?).*", "utf_8")
+    # The following regexes are used to differentiate between the intermediate results, which are identified as "Canadian", but the exact funder is not assigned.
+    cihr_regex = ".*(?:\s(?:CIHR|IRSC)\s|(?i:(?:canad(?:ian|a) institute(?:s)? health research|institut(?:(?:e)?(?:s)?)? recherche sant(?:é|e) canada))).*"
+    nserc_regex = ".*(?:\s(?:NSERC|CRSNG)\s|(?i:(?:nat(?:ural|ional) science(?:s)?(?:\sengineering(?:\sresearch)?|\sresearch) co(?:u)?n(?:c|se)(?:i)?l|conseil(?:s)? recherche(?:s)? science(?:s)? naturel(?:les)?(?:\sg(?:e|é)nie)? canada))).*"
+    sshrc_regex = ".*(?:\s(?:SSHRC|CRSH|SSRCC)\s|(?i:(?:social science(?:s)?|conseil(?:s)? recherche(?:s)?(?:\ssciences humaines)? canada|humanities\sresearch))).*"
+    nrc_regex = ".*(?i:(?:national research council|conseil(?:s)? national recherche(?:s)?)).*"
 
 
     def VTiter(self, *parsedArgs, **envars):
@@ -150,7 +152,7 @@ if not ('.' in __name__):
 
     testfunction()
     if __name__ == "__main__":
-        reload(sys)
+        importlib.reload(sys)
         sys.setdefaultencoding('utf-8')
         import doctest
         doctest.testmod()
