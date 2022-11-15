@@ -106,7 +106,7 @@ def strsplit(*args): ###splits the first arguments
         raise functions.OperatorError("strsplit","strsplit operator: Unknown argument %s" %(''.join(largs)))
     f=io.StringIO()
     
-    f.write(arg.encode('utf-8'))
+    f.write(arg)
     f.seek(0)
     try:
         r=reader(f,**kargs)
