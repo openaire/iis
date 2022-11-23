@@ -178,7 +178,7 @@ union all
 union all
 --dbgap --Giannhs
 select jdict('documentId', docid, 'entity', 'DBGAP', 'biomedicalId', match, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1 from
-(select docid,jsplitv(regexprfindall(regexpr("(ph\w{7}\.\w\d\.p\w)",middle))) as match,  prev, middle, next from (setschema 'docid,prev,middle,next' select docid, textwindow2s(lower(regexpr("\n",text," ")), 10,1,5, "ph\w{7}\.\w\d\.p\w") from mydata) group by docid, match)
+(select docid,jsplitv(regexprfindall("(ph\w{7}\.\w\d\.p\w)",middle)) as match,  prev, middle, next from (setschema 'docid,prev,middle,next' select docid, textwindow2s(lower(regexpr("\n",text," ")), 10,1,5, "ph\w{7}\.\w\d\.p\w") from mydata) group by docid, match)
 union all
 --chembl -- Giannhs
 select jdict('documentId', docid, 'entity', 'CHEMBL', 'biomedicalId', match, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1 from
@@ -187,17 +187,17 @@ select jdict('documentId', docid, 'entity', 'CHEMBL', 'biomedicalId', match, 'co
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --uniprot  Giannhs
--- create temp table uniprot_results as select * from (
--- setschema 'docid, uniprot, prev, middle, next' select docid, case when regexprmatches('uniprot', lower(text)) then 1 else 0 end as uniprot ,textwindow2s(keywords(text),10,1,10,"\b([A-Z])([A-Z]|\d){5}\b") from mydata), uniprots where
--- middle = id;
---
--- select jdict('documentId', docid, 'entity', 'uniprot','biomedicalId', id, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as res from uniprot_results where
--- ((regexprmatches("\b\swiss\b|uniprot|swiss prot|uni prot|sequence|protein",lower(prev||" "||middle||" "||next)) or (regexprmatches("accession",lower(prev||" "||middle||" "||next)) and uniprot))
--- and not regexprmatches('\bFWF\b|\bARRS\b',(prev||" "||middle||" "||next))) group by docid, id
--- union
--- select jdict('documentId', docid, 'entity', 'uniprot','biomedicalId', id, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as res from uniprot_results where docid in (
--- select  docid from uniprot_results where uniprot = 1 group by docid having count(*)>5) group by docid, id;
---
+ create temp table uniprot_results as select * from (
+ setschema 'docid, uniprot, prev, middle, next' select docid, case when regexprmatches('uniprot', lower(text)) then 1 else 0 end as uniprot ,textwindow2s(keywords(text),10,1,10,"\b([A-Z])([A-Z]|\d){5}\b") from mydata), uniprots where
+ middle = id;
+
+ select jdict('documentId', docid, 'entity', 'uniprot','biomedicalId', id, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as res from uniprot_results where
+ ((regexprmatches("\b\swiss\b|uniprot|swiss prot|uni prot|sequence|protein",lower(prev||" "||middle||" "||next)) or (regexprmatches("accession",lower(prev||" "||middle||" "||next)) and uniprot))
+ and not regexprmatches('\bFWF\b|\bARRS\b',(prev||" "||middle||" "||next))) group by docid, id
+ union
+ select jdict('documentId', docid, 'entity', 'uniprot','biomedicalId', id, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as res from uniprot_results where docid in (
+ select  docid from uniprot_results where uniprot = 1 group by docid having count(*)>5) group by docid, id;
+
 
 ----------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------
