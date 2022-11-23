@@ -1,5 +1,5 @@
 drop table if exists grants;
-
+toggle tracing;
 create temp table jsoninp as select * from stdinput();
 update jsoninp set c1=regexpr('"jsonextrainfo":\s*"{}"',c1,'"jsonextrainfo":"{\"dossiernr\":\"\",\"NWOgebied\":\"\"}"');
 create table grants as select acronym,
