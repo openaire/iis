@@ -175,7 +175,7 @@ setschema 'docid,prev,middle,next' select c1 as docid,textwindow2s(c2,15,1,5,"(?
 (regexpr("(\d{3}\-\d{7}\-\d{4})",middle) = grantid and fundingclass1="MZOS" and regexprmatches("croatia|\bmses\b|\bmzos\b|ministry of science",lower(j2s(prev,middle,next))) ) or 
 (regexpr("(\d{4})",middle) = grantid and fundingclass1="HRZZ" and (regexprmatches(normalizedacro,j2s(prev,middle,next)) or regexprmatches("croatian science foundation|\bhrzz\b",lower(j2s(prev,middle,next)) )     ) )
 
-or  (fundingclass1="NWO" and case when regexpr("(\b(?:(?:(?:\w{2,3})(?:\.|\-)(?:\w{2,3})(?:\.|\-)(?:\w{2,3}))|(?:\d+))\b)",middle) is not null then  regexpr("\-",regexpr("(\b(?:(?:(?:\w{2,3})(?:\.|\-)(?:\w{2,3})(?:\.|\-)(?:\w{2,3}))|(?:\d+))\b)",middle),".")=nwo_opt1 else 0=nwo_opt1 end and ((
+or  (fundingclass1="NWO" and regexpr("\-",regexpr("(\b(?:(?:(?:\w{2,3})(?:\.|\-)(?:\w{2,3})(?:\.|\-)(?:\w{2,3}))|(?:\d+))\b)",middle),".")=nwo_opt1 and ((
  (regexprmatches("\bvici\b|\bvidi\b|dutch research council|\bveni\b|\bnwo\b|dutch|netherlands|\b"||lower(nwo_opt2)||"\b",lower(j2s(prev,middle,next)))) and not regexprmatches("^\d+$",nwo_opt1))
  or (regexprmatches("\bnwo\b|dutch research council",lower(j2s(prev,middle,next)))) ))
 
