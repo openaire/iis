@@ -15,7 +15,7 @@ create table grants as select acronym,
                                                 then comprspaces(lower(regexpr("\/(.+)",grantid)))
                                                 else grantid end
           else grantid end as grantid,
-     fundingclass1,fundingclass2,id,c1 as nwo_opt2,regexpr("\-",c2,".") as nwo_opt1,
+     fundingclass1,fundingclass2,id,c1 as nwo_opt2,case when c2 is not null then regexpr("\-",c2,".") else c2 end as nwo_opt1,
      case when c3='' then '_^' else c3 end as nih_orgname,
      c4 as nih_activity,c5 as nih_administeringic,
      case when c6='' then regexpr('0*(\d+)$', c7) else regexpr('0*(\d+)', c6) end as nih_serialnumber,
