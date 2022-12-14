@@ -133,7 +133,7 @@ public class ImportInformationSpaceJob {
             // initializing Oaf model converters
             DataInfoBasedApprover dataInfoBasedApprover = buildDataInfoBasedApprover(
                     params.skipDeletedByInference, params.trustLevelThreshold, params.inferenceProvenanceBlacklist);
-            LicenseBasedApprover licenseBasedApprover = buildLicenseBasedApprover(params.licenseWhitelist);
+            LicenseBasedApprover licenseBasedApprover = buildLicenseBasedApprover(params.accessRightWhitelist, params.licenseWhitelist);
             
             ComplexApprover resultEntitiesApprover = new ComplexApprover(dataInfoBasedApprover, licenseBasedApprover);
 
@@ -315,12 +315,17 @@ public class ImportInformationSpaceJob {
         return new DataInfoBasedApprover(inferenceProvenanceBlacklist, Boolean.parseBoolean(skipDeletedByInference), trustLevelThresholdFloat);
     }
     
-    private static LicenseBasedApprover buildLicenseBasedApprover(String licenseWhitelistCandidate) {
-    	String licenseWhitelistPattern = null;
+    private static LicenseBasedApprover buildLicenseBasedApprover(String accessRightWhitelistCandidate, String licenseWhitelistCandidate) {
+        String accessRightWhitelistPattern = null;
+        if (StringUtils.isNotBlank(accessRightWhitelistCandidate) && !UNDEFINED_NONEMPTY_VALUE.equals(accessRightWhitelistCandidate)) {
+            accessRightWhitelistPattern = accessRightWhitelistCandidate;
+        }
+
+        String licenseWhitelistPattern = null;
     	if (StringUtils.isNotBlank(licenseWhitelistCandidate) && !UNDEFINED_NONEMPTY_VALUE.equals(licenseWhitelistCandidate)) {
     		licenseWhitelistPattern = licenseWhitelistCandidate;
     	}
-    	return new LicenseBasedApprover(licenseWhitelistPattern);
+    	return new LicenseBasedApprover(accessRightWhitelistPattern, licenseWhitelistPattern);
     }
     
     /**
@@ -436,6 +441,9 @@ public class ImportInformationSpaceJob {
         
         @Parameter(names = "-inferenceProvenanceBlacklist", required = true)
         private String inferenceProvenanceBlacklist;
+        
+        @Parameter(names = "-accessRightWhitelist", required = true)
+        private String accessRightWhitelist;
         
         @Parameter(names = "-licenseWhitelist", required = true)
         private String licenseWhitelist;
