@@ -5,7 +5,9 @@ protocol IIS{
     record DocumentToBioEntity {
         string documentId;
         string entity;
-        string biomedicalId;
+        // string biomedicalId;
+        // allowing null value for the time being
+        union { null , string } biomedicalId = null;
         float confidenceLevel;
         union { null , string } textsnippet = null;
     }
