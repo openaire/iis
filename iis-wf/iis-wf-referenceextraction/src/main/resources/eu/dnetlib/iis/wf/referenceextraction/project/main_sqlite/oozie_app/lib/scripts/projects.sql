@@ -19,7 +19,7 @@ hidden var 'cihr_unidentified' from (select id from grants where fundingclass1="
 hidden var 'nserc_unidentified' from (select id from grants where fundingclass1="NSERC" and grantid="unidentified" limit 1);
 hidden var 'sshrc_unidentified' from (select id from grants where fundingclass1="SSHRC" and grantid="unidentified" limit 1);
 hidden var 'nrc_unidentified' from (select id from grants where fundingclass1="NRC" and grantid="unidentified" limit 1);
-
+hidden var 'inca_unidentified' from (select id from grants where fundingclass1="INCa" and grantid="unidentified" limit 1);
 create temp table pubs as setschema 'c1,c2' select jsonpath(c1, '$.id', '$.text') from stdinput();
 
 create temp table incaprojects as 
@@ -33,6 +33,13 @@ select id, grantid, gid, jmergeregexp(terms) as terms, jlen(terms) as lt from
 create temp table matched_undefined_miur_only as select distinct docid, var('miur_unidentified') as id, prev,middle,next from (setschema 'docid,prev,middle,next'
 select c1 as docid, textwindow2s(c2,10,1,10, '\b(?:RBSI\d{2}\w{4})\b') from (setschema 'c1,c2' select * from pubs where c2 is not null)) 
 where var('miur_unidentified') and (regexprmatches('\b(?:RBSI\d{2}\w{4})\b', middle));
+
+create temp table matched_undefined_inca_only as select distinct docid, var('inca_unidentified') as id, prev,middle,next from (setschema 'docid,prev,middle,next'
+select c1 as docid, textwindow2s(c2,15,4,10, '\bINCa|French National Cancer Institute') from (setschema 'c1,c2' select * from pubs where c2 is not null))
+where var('inca_unidentified') 
+and regexprmatches("fund|grant|inserm|dgos|support|project|fondation|program|financial|plbio|acknowledge|thank|award|finance|financ√©e|subvention|bourse|aide|soutien|remerci|recipient|\bprojet\b",lower(j2s(prev,middle,next))) 
+and not regexprmatches("instituto nacional câncer|brazil|janeiro|mexico|méxico|instituto nacional cancerología", lower(j2s(prev,middle,next))) 
+and not regexprmatches("incan(\D|\s)",lower(j2s(prev,middle,next)));
 
 create temp table matched_undefined_wt_only as select distinct docid, var('wt_unidentified') as id, prev,middle,next from (setschema 'docid,prev,middle,next'
 select c1 as docid, textwindow2s(c2,20,2,3, '(\bWel?lcome Trust\b|\bWT\b)') from (setschema 'c1,c2' select * from pubs where c2 is not null)) where var('wt_unidentified') and (regexprmatches('\bWel?lcome Trust\b', middle) or 
@@ -320,5 +327,7 @@ union all
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', prev||" "||middle||" "||next) from matched_undefined_miur_only
 union all
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', prev||" "||middle||" "||next) from matched_undefined_wt_only
+union all
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', prev||" "||middle||" "||next) from matched_undefined_inca_only
 union all
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', prev||" "||middle||" "||next) from matched_undefined_gsri;
