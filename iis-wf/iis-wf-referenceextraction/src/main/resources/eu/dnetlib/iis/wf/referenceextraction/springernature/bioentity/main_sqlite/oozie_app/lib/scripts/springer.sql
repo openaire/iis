@@ -4,7 +4,9 @@
 
 --*****************************************************************************************************************
 -- --For testing the results:
--- cat pubs.json | python madis/src/mexec.py -f query.sql -d data.db >> result.json
+
+-- cd /storage/eleni/openAIRE/05.Biomedical_Springer
+-- cat pubs.json | python madis/src/mexec.py -f query.sql -d data.db > result.json
 -- cat pubs.json | python ~/Desktop/openAIRE/madis2/src/mexec.py -f springerFromFouf_EL_v5.sql -d testingtotal2.db > results.json
 -- --Create pubs.json as follows:
 -- --a)
@@ -36,6 +38,11 @@
 -- Create file pubs.json that contains: {"id":"123", "text":"some sample text"}
 
 
+-- Ola ta data pubs_pmcfulltext.txt
+--create table mydata_pmcfulltext as select * from (setschema 'id,text' select * from pmcfulltext);
+--output 'pubs_pmcfulltext.txt' select jdict('id', id, 'text', text) from mydata_pmcfulltext;
+--rename -v 's/.txt/.json/' pubs_pmcfulltext.txt
+
 --**************************************************************************************************************
 create temp table mydata as select * from (setschema 'docid,text' select jsonpath(c1,'$.id', '$.text') from stdinput());
 
@@ -61,11 +68,7 @@ hidden var 'dbvar_middlePositiveWords' from select '\.ncbi\.nlm.|\.ensembl\.org|
 hidden var 'dbvar_negativeWords' from select '10\.\d+\/|chongqing|dna res|e-mail|social cognitive and affective neuroscience|soc\.? cogn\.? affect\.? neurosci\.?|mg|kg|j\.? hered\.?';
 --ENA
 hidden var 'ena_prefixes' from
-select '(?:\bPRJ[E|D|N][A-Z][0-9]+\b)|(?:\b[E|D|S]RP[0-9]{6,}\b)|\
-(?:\bSAM[E|D|N][A-Z]?[0-9]{4,}\b)|(?:\b[E|D|S]R[S|X|R|Z][0-9]{6,}\b)|(?:\bGCA_[0-9]{9}\.[0-9]+\b)|\
-(?:\b[A-Z]{1}[0-9]{5}\.[0-9]+\b)|(?:\b[A-Z]{2}[0-9]{6}\.[0-9]+\b)|(?:\b[A-Z]{2}[0-9]{8}\b)|\
-(?:\b[A-Z]{4}[0-9]{2}S?[0-9]{6,8}\b)|(?:\b[A-Z]{6}[0-9]{2}S?[0-9]{7,9}\b)|\
-(?:\b[A-Z]{3}[0-9]{5,7}\.[0-9]+\b)';
+select '(?:\bPRJ[E|D|N][A-Z][0-9]+\b)|(?:\b[E|D|S]RP[0-9]{6,}\b)|(?:\bSAM[E|D|N][A-Z]?[0-9]{4,}\b)|(?:\b[E|D|S]R[S|X|R|Z][0-9]{6,}\b)|(?:\bGCA_[0-9]{9}\.[0-9]+\b)|(?:\b[A-Z]{1}[0-9]{5}\.[0-9]+\b)|(?:\b[A-Z]{2}[0-9]{6}\.[0-9]+\b)|(?:\b[A-Z]{2}[0-9]{8}\b)|(?:\b[A-Z]{4}[0-9]{2}S?[0-9]{6,8}\b)|(?:\b[A-Z]{6}[0-9]{2}S?[0-9]{7,9}\b)|(?:\b[A-Z]{3}[0-9]{5,7}\.[0-9]+\b)';
 
 hidden var 'ena_prefixes_doi' from select '(\b10(\.\d+)+(\/\w+)?)';
 hidden var 'ena_NegativeWords' from select "(?:agriculture|environmental protection agency|\bepa\b|patent|\[pii\]|\bgrants?\b)";
@@ -89,7 +92,7 @@ hidden var 'NCBIPubChem' from select '(?:pubchem\D+\d+)';
 --NCBI Taxonomy
 hidden var 'NCBITaxonomy_prefixes' from select '(?:wwwtax\.cgi\D+\d+)|(?:txid\d+)';
 --NeuroMorpho
-hidden var 'NeuroMorpho_prefixes' from select '(?:neuron_name=[\w+|-]+)|(?:NMO_\d{5,})';
+hidden var 'NeuroMorpho_prefixes' from select '(?<=neuron_name=)[\w+|-]+|(?:NMO_\d{5,})';
 --BioModels
 hidden var 'BioModels_prefixes' from select '(?:MODEL\d+)';
 hidden var 'BioModels_positivewords'from select '(?:ebi\.ac\.uk)|(?:biomodels?)';
@@ -123,7 +126,7 @@ from ( select docid, prev, middle, next
 		 )
  union all
 --4. ΕΒΙMetabolights EL 06/2022
-select jdict('documentId', docid, 'entity', "ΕΒΙmetabolights", 'biomedicalId', regexpr("("||var('EBIMetabolights_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+select jdict('documentId', docid, 'entity', "EBImetabolights", 'biomedicalId', regexpr("("||var('EBIMetabolights_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from ( select docid, prev, middle, next
 	       from ( setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('EBIMetabolights_prefixes'))
 	              from mydata )
@@ -148,7 +151,7 @@ from (  select docid, prev, middle, next,
 	 )
 union all
 --7. NCBI Taxonomy EL 06/2022
-select jdict('documentId', docid, 'entity', "NCBITaxonomy", 'biomedicalId', regexpr("("||var('NCBITaxonomy_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+select jdict('documentId', docid, 'entity', "NCBITaxonomy", 'biomedicalId', regexpr("(\d+)", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from ( select docid, prev, middle, next
 	       from ( setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('NCBITaxonomy_prefixes'))
 	              from mydata )
@@ -178,7 +181,7 @@ union all
 union all
 --dbgap --Giannhs
 select jdict('documentId', docid, 'entity', 'DBGAP', 'biomedicalId', match, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1 from
-(select docid,jsplitv(regexprfindall("(ph\w{7}\.\w\d\.p\w)",middle)) as match,  prev, middle, next from (setschema 'docid,prev,middle,next' select docid, textwindow2s(lower(regexpr("\n",text," ")), 10,1,5, "ph\w{7}\.\w\d\.p\w") from mydata) group by docid, match)
+(select docid,jsplitv(regexprfindall("(ph\w{7}\.\w\d\.p\w)",middle)) as match, prev, middle, next from (setschema 'docid,prev,middle,next' select docid, textwindow2s(lower(regexpr("\n",text," ")), 10,1,5, "ph\w{7}\.\w\d\.p\w") from mydata) group by docid, match)
 union all
 --chembl -- Giannhs
 select jdict('documentId', docid, 'entity', 'CHEMBL', 'biomedicalId', match, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1 from
@@ -234,13 +237,14 @@ select docid as 'documentId',
 from ( select docid, prev, middle, next
 				from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('ena_prefixes'))
 			 					from (select docid, text from mydata ))
-where regexprmatches(var('ena_NegativeMiddle'), middle) = 0 and
-      regexprmatches(var('ena_prefixes_doi'), prev||" "||middle||" "||next) = 0 and
-      regexprmatches(var('ena_NegativeWords'), lower(prev||" "||middle||" "||next)) = 0 and
-      regexprmatches(var('ena_NegativeWordsForReferences'), lower(prev||" "||middle||" "||next)) = 0 and
-      regexprmatches(var('ena_NegativeWordsForReferences2'), lower(prev||" "||middle||" "||next)) = 0 and
-      regexprmatches(var('ena_NegativeWordsPrev'), lower(prev)) = 0
+      where regexprmatches(var('ena_NegativeMiddle'), middle) = 0 and
+            regexprmatches(var('ena_prefixes_doi'), prev||" "||middle||" "||next) = 0 and
+            regexprmatches(var('ena_NegativeWords'), lower(prev||" "||middle||" "||next)) = 0 and
+            regexprmatches(var('ena_NegativeWordsForReferences'), lower(prev||" "||middle||" "||next)) = 0 and
+            regexprmatches(var('ena_NegativeWordsForReferences2'), lower(prev||" "||middle||" "||next)) = 0 and
+            regexprmatches(var('ena_NegativeWordsPrev'), lower(prev)) = 0
 )
+where middle is not null
 union all
 --13. EVA EL 06/2022
 select docid as 'documentId',
@@ -275,19 +279,17 @@ where size > 1) ;
 
 select jdict('documentId', documentId, 'entity', entity, 'biomedicalId', biomedicalId, 'confidenceLevel', 0.8, 'textsnippet',  (prev||" <<< "||middle||" >>> "||next)) as C1
 from (
-select documentId, biomedicalId, prev, middle, next, entity
-from resultsduplicates
-where (
-      --if accession ID is embedded within a URL	choose the repository that owns the URL
-       regexprmatches("www\.[a-z|\/|\.|0-9]+", lower(prev||" "||middle||" "||next)) = 1
-      and regexprmatches(lower(entity), regexpr("(www\.[a-z|\/|\.|0-9]+)", lower(prev||" "||middle||" "||next))) = 1
-		  )
-or --choose repository based on accession ID	SRP/SRX/SRR/SRS --> SRA
-(regexprmatches("SR[P|X|R|S]", upper(middle)) = 1 and entity = 'SRA')
-or --choose repository based on accession ID	 ERP/ERX/ERR --> ENA
-(regexprmatches("ER[P|X|R]", upper(middle)) = 1 and entity = 'ENA')
-or --PRJEB accessions should be assigned to ENA
-(regexprmatches("PRJEB", upper(middle)) = 1 and entity = 'ENA')
-or
-(regexprmatches("dbvar|dgva", lower(prev||middle||next)) = 1 and entity = 'dbVar')
+        select documentId, biomedicalId, prev, middle, next, entity
+          from resultsduplicates
+          where ( --if accession ID is embedded within a URL	choose the repository that owns the URL
+                    regexprmatches("www\.[a-z|\/|\.|0-9]+", lower(prev||" "||middle||" "||next)) = 1
+                    and regexprmatches(lower(entity), regexpr("(www\.[a-z|\/|\.|0-9]+)", lower(prev||" "||middle||" "||next))) = 1 )
+                or --choose repository based on accession ID	SRP/SRX/SRR/SRS --> SRA
+                (regexprmatches("SR[P|X|R|S]", upper(middle)) = 1 and entity = 'SRA')
+                or --choose repository based on accession ID	 ERP/ERX/ERR --> ENA
+                (regexprmatches("ER[P|X|R]", upper(middle)) = 1 and entity = 'ENA')
+                or --PRJEB accessions should be assigned to ENA
+                (regexprmatches("PRJEB", upper(middle)) = 1 and entity = 'ENA')
+                or
+                (regexprmatches("dbvar|dgva", lower(prev||middle||next)) = 1 and entity = 'dbVar')
 );
