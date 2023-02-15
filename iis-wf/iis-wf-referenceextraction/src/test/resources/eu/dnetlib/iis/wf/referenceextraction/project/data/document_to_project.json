@@ -383,6 +383,18 @@
   "textsnippet": "work supported INCA (plbio 2010-216 <<< INCa-DGOS-Inserm 6046) >>> "
 }
 {
+  "documentId": "50|core_ac_uk__::2fea53c390909c2640b2d1a94d53c0a7",
+  "projectId": "40|inca________::1e5e62235d094afd01cd56e65112fc63",
+  "confidenceLevel": 0.8,
+  "textsnippet": "This work was supported by INCA (plbio 2010-216 and INCa-DGOS-Inserm 6046) "
+}
+{
+  "documentId": "50|arXiv_______::a343cdcd534d696dd93c7ee9d78b9be7",
+  "projectId": "40|inca________::1e5e62235d094afd01cd56e65112fc63",
+  "confidenceLevel": 0.8,
+  "textsnippet": "This study was supported by research funding from the French National Cancer Institute (INCa) "
+}
+{
   "documentId": "50|arXiv_______::006603fe0b5e0abfdc7fdc9b94c5ef16", 
   "projectId": "40|rcn_________::41236853b37a589c0c0c6ca9d178236a", 
   "confidenceLevel": 0.8164966, 
