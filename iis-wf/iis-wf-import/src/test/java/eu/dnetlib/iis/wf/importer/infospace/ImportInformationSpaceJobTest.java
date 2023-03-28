@@ -41,7 +41,8 @@ public class ImportInformationSpaceJobTest extends TestWithSharedSparkSession {
     private static final String OUTPUT_NAME_DOCMETA = "docmeta";
     private static final String OUTPUT_NAME_DATASET = "dataset";
     private static final String OUTPUT_NAME_PROJECT = "project";
-    private static final String OUTPUT_NAME_ORGANIZATION = "organzation";
+    private static final String OUTPUT_NAME_ORGANIZATION = "organization";
+    private static final String OUTPUT_NAME_SERVICE = "service";
     private static final String OUTPUT_NAME_DOC_PROJ = "doc-proj";
     private static final String OUTPUT_NAME_PROJ_ORG = "proj-org";
     private static final String OUTPUT_NAME_IDENTIFIER = "identifier";
@@ -72,6 +73,7 @@ public class ImportInformationSpaceJobTest extends TestWithSharedSparkSession {
         @SuppressWarnings("unchecked")
         Class<? extends Oaf> graphClasses[] = new Class[] {
                 eu.dnetlib.dhp.schema.oaf.Dataset.class,
+                eu.dnetlib.dhp.schema.oaf.Datasource.class,
                 eu.dnetlib.dhp.schema.oaf.Organization.class,
                 eu.dnetlib.dhp.schema.oaf.OtherResearchProduct.class,
                 eu.dnetlib.dhp.schema.oaf.Software.class,
@@ -103,6 +105,7 @@ public class ImportInformationSpaceJobTest extends TestWithSharedSparkSession {
                 "-outputNameProject", OUTPUT_NAME_PROJECT,
                 "-outputNameIdentifierMapping", OUTPUT_NAME_IDENTIFIER,
                 "-outputNameOrganization", OUTPUT_NAME_ORGANIZATION,
+                "-outputNameService", OUTPUT_NAME_SERVICE,
                 "-outputNameProjectOrganization", OUTPUT_NAME_PROJ_ORG,
                 "-maxDescriptionLength", "1000",
                 "-maxTitlesSize", "1",
@@ -118,6 +121,7 @@ public class ImportInformationSpaceJobTest extends TestWithSharedSparkSession {
         String expectedDatasetPath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/dataset.json");
         String expectedProjectPath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/project.json");
         String expectedOrganizationPath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/organization.json");
+        String expectedServicePath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/service.json");
         String expectedDocProjectPath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/docproject.json");
         String expectedProjOrgPath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/project_organization.json");
         String expectedIdentifierMappingPath = ClassPathResourceProvider.getResourcePath("eu/dnetlib/iis/wf/importer/infospace/output/identifiermapping.json");
@@ -127,6 +131,7 @@ public class ImportInformationSpaceJobTest extends TestWithSharedSparkSession {
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.resolve(OUTPUT_NAME_DATASET).toString(), expectedDatasetPath, DataSetReference.class);
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.resolve(OUTPUT_NAME_PROJECT).toString(), expectedProjectPath, Project.class);
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.resolve(OUTPUT_NAME_ORGANIZATION).toString(), expectedOrganizationPath, Organization.class);
+        AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.resolve(OUTPUT_NAME_SERVICE).toString(), expectedServicePath, Service.class);
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.resolve(OUTPUT_NAME_DOC_PROJ).toString(), expectedDocProjectPath, DocumentToProject.class);
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.resolve(OUTPUT_NAME_PROJ_ORG).toString(), expectedProjOrgPath, ProjectToOrganization.class);
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDir.resolve(OUTPUT_NAME_IDENTIFIER).toString(), expectedIdentifierMappingPath, IdentifierMapping.class);

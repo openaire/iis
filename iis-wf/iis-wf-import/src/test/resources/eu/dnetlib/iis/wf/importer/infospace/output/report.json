@@ -4,4 +4,5 @@
 {"key":"import.infoSpace.project", "type":"COUNTER", "value": "1"}
 {"key":"import.infoSpace.docIdentifierMappingDocReference", "type":"COUNTER", "value": "4"}
 {"key":"import.infoSpace.organization", "type":"COUNTER", "value": "1"}
+{"key":"import.infoSpace.service", "type":"COUNTER", "value": "1"}
 {"key":"import.infoSpace.projectOrganizationReference", "type":"COUNTER", "value": "1"}

@@ -1,0 +1,18 @@
+@namespace("eu.dnetlib.iis.importer.schemas")
+
+protocol IIS {
+
+    record Service {
+        
+        // InformationSpace service identifier
+        string id;
+        
+        // service name
+        union {null , string} name;
+        
+        // service url
+        union {null , string} url;
+    }
+    
+    
+}

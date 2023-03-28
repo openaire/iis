@@ -62,6 +62,11 @@
             <description>project-organization output name</description>
         </property>
         <property>
+            <name>output_name_service</name>
+            <value>service</value>
+            <description>service output name</description>
+        </property>
+        <property>
             <name>max_description_length</name>
             <value>100000</value>
             <description>max length of description field</description>
@@ -199,6 +204,7 @@
             <arg>-outputNameIdentifierMapping=${output_name_identifier_mapping}</arg>
             <arg>-outputNameOrganization=${output_name_organization}</arg>
             <arg>-outputNameProjectOrganization=${output_name_project_organization}</arg>
+            <arg>-outputNameService=${output_name_service}</arg>
             <arg>-maxDescriptionLength=${max_description_length}</arg>
             <arg>-maxTitlesSize=${max_titles_size}</arg>
             <arg>-maxTitleLength=${max_title_length}</arg>
