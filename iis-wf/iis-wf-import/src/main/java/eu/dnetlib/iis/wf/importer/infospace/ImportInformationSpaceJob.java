@@ -1,15 +1,12 @@
 package eu.dnetlib.iis.wf.importer.infospace;
 
 import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE;
-import static eu.dnetlib.iis.common.spark.SparkSessionSupport.*;
-import static eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceJobUtils.*;
+import static eu.dnetlib.iis.common.spark.SparkSessionSupport.runWithSparkSession;
+import static eu.dnetlib.iis.wf.importer.infospace.ImportInformationSpaceJobUtils.produceGraphIdToObjectStoreIdMapping;
 
 import java.util.Objects;
 import java.util.Optional;
 
-import eu.dnetlib.iis.wf.importer.infospace.truncator.AvroTruncator;
-import eu.dnetlib.iis.wf.importer.infospace.truncator.DataSetReferenceAvroTruncator;
-import eu.dnetlib.iis.wf.importer.infospace.truncator.DocumentMetadataAvroTruncator;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -46,7 +43,6 @@ import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.wf.importer.infospace.approver.DataInfoBasedApprover;
 import eu.dnetlib.iis.wf.importer.infospace.approver.ResultApprover;
 import eu.dnetlib.iis.wf.importer.infospace.converter.DatasetMetadataConverter;
-import eu.dnetlib.iis.wf.importer.infospace.converter.DeduplicationMappingConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.DocumentMetadataConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.DocumentToProjectRelationConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.OafEntityToAvroConverter;
@@ -54,6 +50,9 @@ import eu.dnetlib.iis.wf.importer.infospace.converter.OafRelToAvroConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.OrganizationConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectToOrganizationRelationConverter;
+import eu.dnetlib.iis.wf.importer.infospace.truncator.AvroTruncator;
+import eu.dnetlib.iis.wf.importer.infospace.truncator.DataSetReferenceAvroTruncator;
+import eu.dnetlib.iis.wf.importer.infospace.truncator.DocumentMetadataAvroTruncator;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 /**
@@ -139,7 +138,6 @@ public class ImportInformationSpaceJob {
 
             OafRelToAvroConverter<ProjectToOrganization> projectOrganizationConverter = new ProjectToOrganizationRelationConverter();
             OafRelToAvroConverter<DocumentToProject> docProjectConverter = new DocumentToProjectRelationConverter();
-            OafRelToAvroConverter<IdentifierMapping> deduplicationMappingConverter = new DeduplicationMappingConverter();
 
             DocumentMetadataAvroTruncator documentMetadataAvroTruncator = createDocumentMetadataAvroTruncator(params);
             DataSetReferenceAvroTruncator dataSetReferenceAvroTruncator = createDataSetReferenceAvroTruncator(params);
