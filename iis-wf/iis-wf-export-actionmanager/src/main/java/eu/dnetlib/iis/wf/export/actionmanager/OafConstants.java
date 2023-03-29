@@ -7,6 +7,7 @@ public class OafConstants {
     public static final String REL_TYPE_RESULT_RESULT = ModelConstants.RESULT_RESULT;
     public static final String REL_TYPE_RESULT_PROJECT = ModelConstants.RESULT_PROJECT;
     public static final String REL_TYPE_RESULT_ORGANIZATION = ModelConstants.RESULT_ORGANIZATION;
+    public static final String REL_TYPE_RESULT_DATASOURCE = "resultDatasource";
     
     public static final String SUBREL_TYPE_RELATIONSHIP = ModelConstants.RELATIONSHIP;
     public static final String SUBREL_TYPE_OUTCOME = ModelConstants.OUTCOME;

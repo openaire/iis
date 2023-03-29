@@ -37,6 +37,11 @@
                 eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_to_dataset.json}
             </arg>
             <arg>-Odocument_to_dataset=${workingDir}/producer/document_to_dataset</arg>
+            <arg>-C{document_to_datasource,
+                eu.dnetlib.iis.referenceextraction.datasource.schemas.DocumentToDatasource,
+                eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_to_datasource.json}
+            </arg>
+            <arg>-Odocument_to_datasource=${workingDir}/producer/document_to_datasource</arg>
             <arg>-C{document_to_project,
                 eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject,
                 eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_to_project.json}
@@ -109,6 +114,10 @@
                     <value>${workingDir}/producer/document_to_dataset</value>
                 </property>
                 <property>
+                    <name>input_document_to_datasource</name>
+                    <value>${workingDir}/producer/document_to_datasource</value>
+                </property>
+                <property>
                     <name>input_document_to_research_initiatives</name>
                     <value>${workingDir}/producer/document_to_research_initiatives</value>
                 </property>
@@ -162,6 +171,10 @@
                     <value>actionset-id</value>
                 </property>
                 <property>
+                    <name>action_set_id_document_referencedDatasources</name>
+                    <value>actionset-id</value>
+                </property>
+                <property>
                     <name>action_set_id_document_referencedDocuments</name>
                     <value>actionset-id</value>
                 </property>
@@ -211,6 +224,7 @@
         <path start="consumer-document_covid19" />
         <path start="consumer-document_similarity" />
         <path start="consumer-document_to_dataset" />
+        <path start="consumer-document_to_datasource" />
         <path start="consumer-document_to_project" />
         <path start="consumer-document_to_research_initiatives" />
         <path start="consumer-document_to_communities" />
@@ -279,6 +293,18 @@
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/document_referencedDatasets/actionset-id</arg>
             <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_dataset_1.properties,/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_dataset_2.properties
+            </arg>
+        </java>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
+
+    <action name="consumer-document_to_datasource">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
+            <arg>-Iseqfile=${workingDir}/output/document_referencedDatasources/actionset-id</arg>
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_datasource_1.properties,/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_datasource_2.properties
             </arg>
         </java>
         <ok to="joining" />
