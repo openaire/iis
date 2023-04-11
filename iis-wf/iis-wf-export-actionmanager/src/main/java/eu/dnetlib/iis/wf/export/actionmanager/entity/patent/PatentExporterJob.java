@@ -391,15 +391,15 @@ public class PatentExporterJob {
         return result;
     }
 
-    private static List<StructuredProperty> buildOafEntityResultMetadataSubjects(List<CharSequence> ipcClassSymbols) {
+    private static List<Subject> buildOafEntityResultMetadataSubjects(List<CharSequence> ipcClassSymbols) {
         return ipcClassSymbols.stream()
                 .filter(StringUtils::isNotBlank)
                 .map(PatentExporterJob::buildOafEntityResultMetadataSubject)
                 .collect(Collectors.toList());
     }
 
-    private static StructuredProperty buildOafEntityResultMetadataSubject(CharSequence ipcClassSymbol) {
-        StructuredProperty subject = new StructuredProperty();
+    private static Subject buildOafEntityResultMetadataSubject(CharSequence ipcClassSymbol) {
+    	Subject subject = new Subject();
         subject.setValue(ipcClassSymbol.toString());
         subject.setQualifier(OAF_ENTITY_RESULT_METADATA_SUBJECT_QUALIFIER);
         return subject;

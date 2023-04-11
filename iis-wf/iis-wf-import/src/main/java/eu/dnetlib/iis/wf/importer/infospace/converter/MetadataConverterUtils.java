@@ -30,7 +30,7 @@ public abstract class MetadataConverterUtils {
      * Does not accept null fieldApprover or source collection. Skips null and empty values stored in this collection.
      * 
      */
-    public static List<String> extractValues(Collection<StructuredProperty> source, FieldApprover fieldApprover) {
+    public static List<String> extractValues(Collection<? extends StructuredProperty> source, FieldApprover fieldApprover) {
         return source.stream()
                 .filter(x -> fieldApprover.approve(x.getDataInfo()))
                 .map(StructuredProperty::getValue)
