@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-referenceextraction_eoscservice_main_sampletest">
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
+	<start to="producer" />
+
+	<action name="producer">
+		<java>
+			<prepare>
+				<delete path="${nameNode}${workingDir}/producer" />
+				<mkdir path="${nameNode}${workingDir}/producer" />
+			</prepare>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+			<arg>-C{document_text, 
+				eu.dnetlib.iis.metadataextraction.schemas.DocumentText,
+				eu/dnetlib/iis/wf/referenceextraction/eoscservice/data/document_text.json}</arg>
+			<arg>-C{service, 
+				eu.dnetlib.iis.importer.schemas.Service,
+				eu/dnetlib/iis/wf/referenceextraction/eoscservice/data/service.json}</arg>
+			<arg>-Odocument_text=${workingDir}/producer/document_text</arg>
+			<arg>-Oservice=${workingDir}/producer/service</arg>
+		</java>
+		<ok to="referenceextraction_eoscservice" />
+		<error to="fail" />
+	</action>
+
+    <action name="referenceextraction_eoscservice">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/referenceextraction_eoscservice</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/referenceextraction_eoscservice/working_dir</value>
+                </property>
+                <property>
+                    <name>input_document_text</name>
+                    <value>${workingDir}/producer/document_text</value>
+                </property>
+                <property>
+                    <name>input_service</name>
+                    <value>${workingDir}/producer/service</value>
+                </property>
+                <property>
+                    <name>output_document_to_service</name>
+                    <value>${workingDir}/referenceextraction_eoscservice/output</value>
+                </property>
+                <property>
+                    <name>output_report_root_path</name>
+                    <value>${workingDir}/referenceextraction_eoscservice/report</value>
+                </property>
+                <property>
+		            <name>output_report_relative_path</name>
+		            <value>document_to_service</value>
+		        </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="consumer"/>
+        <error to="fail"/>
+    </action>
+
+	<action name="consumer">
+		<java>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+			<arg>-C{document_to_service,
+				eu.dnetlib.iis.referenceextraction.datasource.schemas.DocumentToDatasource,
+				eu/dnetlib/iis/wf/referenceextraction/eoscservice/data/document_to_service.json}</arg>
+            <arg>-C{report,
+                eu.dnetlib.iis.common.schemas.ReportEntry,
+                eu/dnetlib/iis/wf/referenceextraction/eoscservice/data/report.json}</arg>
+			<arg>-Idocument_to_service=${workingDir}/referenceextraction_eoscservice/output</arg>
+            <arg>-Ireport=${workingDir}/referenceextraction_eoscservice/report/document_to_service</arg>
+		</java>
+		<ok to="end" />
+		<error to="fail" />
+	</action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+        			[${wf:errorMessage(wf:lastErrorNode())}]
+        		</message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>
