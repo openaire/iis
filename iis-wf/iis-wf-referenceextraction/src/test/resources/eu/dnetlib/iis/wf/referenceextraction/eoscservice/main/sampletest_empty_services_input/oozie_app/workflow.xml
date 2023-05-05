@@ -58,7 +58,7 @@
                     <value>${workingDir}/producer/service</value>
                 </property>
                 <property>
-                    <name>output_document_to_service</name>
+                    <name>output_document_to_eoscservice</name>
                     <value>${workingDir}/referenceextraction_eoscservice/output</value>
                 </property>
                 <property>

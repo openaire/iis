@@ -156,6 +156,11 @@
 			<value>projectorg</value>
 			<description>metadata import project-organization output name</description>
 		</property>
+		<property>
+			<name>metadataimport_output_name_service</name>
+			<value>service</value>
+			<description>metadata import service output name</description>
+		</property>
 		<!-- output parameters -->
 		<property>
 			<name>output_extracted_document_metadata</name>
@@ -301,6 +306,10 @@
                 <property>
                     <name>output_name_project_organization</name>
                     <value>${metadataimport_output_name_project_organization}</value>
+                </property>
+                <property>
+                    <name>output_name_service</name>
+                    <value>${metadataimport_output_name_service}</value>
                 </property>
                 <!-- all the other properties are autmatically propagated -->
             </configuration>

@@ -11,8 +11,8 @@
 			<description>input services datastore with eu.dnetlib.iis.importer.schemas.Service avro records</description>
 		</property>
 		<property>
-			<name>output_document_to_service</name>
-			<description>output document to service</description>
+			<name>output_document_to_eoscservice</name>
+			<description>output document to EOSC service</description>
 		</property>
     </parameters>
 
@@ -59,8 +59,8 @@
                     <value>${workingDir}/services.db</value>
                 </property>
                 <property>
-                    <name>output_document_to_service</name>
-                    <value>${output_document_to_service}</value>
+                    <name>output_document_to_eoscservice</name>
+                    <value>${output_document_to_eoscservice}</value>
                 </property>
             </configuration>
         </sub-workflow>

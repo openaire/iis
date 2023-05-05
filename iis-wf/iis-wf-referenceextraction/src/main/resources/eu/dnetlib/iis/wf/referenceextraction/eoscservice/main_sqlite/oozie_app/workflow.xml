@@ -13,7 +13,7 @@
 			<description>input services SQLite DB path</description>
 		</property>
 		<property>
-			<name>output_document_to_service</name>
+			<name>output_document_to_eoscservice</name>
 			<description>output document to service</description>
 		</property>
 		<property>
@@ -22,7 +22,7 @@
         </property>
         <property>
             <name>output_report_relative_path</name>
-            <value>document_to_eosc_services</value>
+            <value>document_to_eoscservice</value>
             <description>directory for storing report (relative to output_report_root_path)</description>
         </property>
 	</parameters>
@@ -59,7 +59,7 @@
     <action name="main_sqlite">
         <map-reduce>
             <prepare>
-                <delete path="${nameNode}${output_document_to_service}"/>
+                <delete path="${nameNode}${output_document_to_eoscservice}"/>
             </prepare>
             <streaming>
                 <mapper>scripts/madis/mexec.py -d services.db -f scripts/eosc.sql</mapper>
@@ -92,7 +92,7 @@
 				<!-- OUTPUT -->
                 <property>
                     <name>mapreduce.output.fileoutputformat.outputdir</name>
-                    <value>${output_document_to_service}</value>
+                    <value>${output_document_to_eoscservice}</value>
                 </property>
                 
                 <property>

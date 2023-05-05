@@ -37,6 +37,10 @@
             <value>$UNDEFINED$</value>
         </property>
         <property>
+            <name>input_document_to_datasource</name>
+            <value>$UNDEFINED$</value>
+        </property>
+        <property>
             <name>input_document_to_software_url</name>
             <value>$UNDEFINED$</value>
         </property>
@@ -115,6 +119,11 @@
             <description>document_referencedDocuments action-set identifier of exported data</description>
         </property>
         <property>
+            <name>action_set_id_document_referencedDatasources</name>
+            <value>$UNDEFINED$</value>
+            <description>document_referencedDatasources action-set identifier of exported data</description>
+        </property>
+        <property>
             <name>action_set_id_document_research_initiative</name>
             <value>$UNDEFINED$</value>
             <description>document research initiative action-set identifier of exported data</description>
@@ -179,6 +188,11 @@
             <name>trust_level_threshold_document_referencedDatasets</name>
             <value>$UNDEFINED$</value>
             <description>document_referencedDatasets trust level threshold</description>
+        </property>
+        <property>
+            <name>trust_level_threshold_document_referencedDatasources</name>
+            <value>$UNDEFINED$</value>
+            <description>document_referencedDatasources trust level threshold</description>
         </property>
         <property>
             <name>trust_level_threshold_document_pdb</name>
