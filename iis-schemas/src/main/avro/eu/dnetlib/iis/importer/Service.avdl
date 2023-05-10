@@ -11,7 +11,7 @@ protocol IIS {
         union {null , string} name;
         
         // service url
-        union {null , string} url;
+        string url;
     }
     
     

@@ -65,12 +65,35 @@ public class ServiceConverterTest {
     }
 
     @Test
-    public void buildObject_name_and_website_null() throws Exception {
+    public void buildObject_website_null() throws Exception {
+        
+    	 //given
+    	String id = "someId";
+    	String serviceName = "Cermine";
+    	String serviceUrl = null;
+    	
+        eu.dnetlib.dhp.schema.oaf.Datasource datasource = createOafObject(
+        		id,
+        		createStringField(serviceName),
+                createStringField(serviceUrl));
+        
+        // execute 
+        
+        Service service = converter.convert(datasource);
+        
+        
+        // assert
+        
+        assertNull(service);
+    }
+    
+    @Test
+    public void buildObject_name_null() throws Exception {
         
     	 //given
     	String id = "someId";
     	String serviceName = null;
-    	String serviceUrl = null;
+    	String serviceUrl = "cermine.ceon.pl";
     	
         eu.dnetlib.dhp.schema.oaf.Datasource datasource = createOafObject(
         		id,
@@ -88,8 +111,9 @@ public class ServiceConverterTest {
         
         assertEquals(id, service.getId());
         assertNull(service.getName());
-        assertNull(service.getUrl());
+        assertEquals(serviceUrl, service.getUrl());
     }
+    
     
     @Test
     public void buildObject_not_a_service() throws Exception {

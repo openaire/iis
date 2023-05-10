@@ -52,19 +52,23 @@ public class ServiceConverter implements OafEntityToAvroConverter<eu.dnetlib.dhp
 		Service.Builder serviceBuilder = Service.newBuilder();
 
 		serviceBuilder.setId(datasource.getId());
-		serviceBuilder.setName(isStringFieldNotNull(datasource.getOfficialname()) ? datasource.getOfficialname().getValue() : null);
-		serviceBuilder.setUrl(isStringFieldNotNull(datasource.getWebsiteurl()) ? datasource.getWebsiteurl().getValue() : null);
+		serviceBuilder.setName(isStringFieldMissing(datasource.getOfficialname()) ? null : datasource.getOfficialname().getValue());
+		serviceBuilder.setUrl(datasource.getWebsiteurl().getValue());
 
 		return serviceBuilder.build();
 	}
 
 	// ------------------------ PRIVATE --------------------------
 
-	private static boolean isStringFieldNotNull(Field<String> field) {
-		return field != null && StringUtils.isNotBlank(field.getValue());
+	private static boolean isStringFieldMissing(Field<String> field) {
+		return field == null || StringUtils.isBlank(field.getValue());
 	}
 
 	private boolean isEligibleDatasource(eu.dnetlib.dhp.schema.oaf.Datasource datasource) {
+		if (isStringFieldMissing(datasource.getWebsiteurl())) {
+			return false;
+		}
+		
 		if (eligibleCollectedFromDatasourceId != null) {
 			for (KeyValue currentCollectedFrom : datasource.getCollectedfrom()) {
 				if (eligibleCollectedFromDatasourceId.equals(currentCollectedFrom.getKey())) {
