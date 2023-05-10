@@ -5,10 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import eu.dnetlib.dhp.schema.oaf.Field;
-import eu.dnetlib.dhp.schema.oaf.Qualifier;
+import eu.dnetlib.dhp.schema.oaf.KeyValue;
 import eu.dnetlib.iis.importer.schemas.Service;
 
 /**
@@ -17,7 +20,8 @@ import eu.dnetlib.iis.importer.schemas.Service;
 
 public class ServiceConverterTest {
 
-    private ServiceConverter converter = new ServiceConverter();
+	private static String eligibleCollectedFromDatasourceId = "eligible-ds-id";
+    private ServiceConverter converter = new ServiceConverter(eligibleCollectedFromDatasourceId);
     
     
     //------------------------ TESTS --------------------------
@@ -99,7 +103,7 @@ public class ServiceConverterTest {
         		id,
         		createStringField(serviceName),
                 createStringField(serviceUrl),
-                "non-service-type");
+                "other-ds-id");
         
         // execute 
         
@@ -115,18 +119,23 @@ public class ServiceConverterTest {
     
     private eu.dnetlib.dhp.schema.oaf.Datasource createOafObject(String id, Field<String> name, Field<String> websiteurl) {
 
-    	return createOafObject(id, name, websiteurl, ServiceConverter.EOSCTYPE_ID_SERVICE);
+    	return createOafObject(id, name, websiteurl, eligibleCollectedFromDatasourceId);
         
     }
-
     
-    private eu.dnetlib.dhp.schema.oaf.Datasource createOafObject(String id, Field<String> name, Field<String> websiteurl, String eoscTypeClassId) {
-        
+	private eu.dnetlib.dhp.schema.oaf.Datasource createOafObject(String id, Field<String> name,
+			Field<String> websiteurl, String collectedFromId) {
+    
         eu.dnetlib.dhp.schema.oaf.Datasource datasource = new eu.dnetlib.dhp.schema.oaf.Datasource();
-        Qualifier eoscType = new Qualifier();
-        eoscType.setClassid(eoscTypeClassId);
+
+        if (collectedFromId != null) {
+        	List<KeyValue> collectedFrom = new ArrayList<KeyValue>();
+        	KeyValue dsId = new KeyValue();
+        	dsId.setKey(collectedFromId);
+        	collectedFrom.add(dsId);
+        	datasource.setCollectedfrom(collectedFrom);
+        }
         
-        datasource.setEosctype(eoscType);
         datasource.setId(id);
         datasource.setOfficialname(name);
         datasource.setWebsiteurl(websiteurl);
@@ -135,13 +144,10 @@ public class ServiceConverterTest {
         
     }
 
-
-
     private Field<String> createStringField(String value) {
         Field<String> field = new Field<String>();
         field.setValue(value);
         return field;
     }
-    
     
 }

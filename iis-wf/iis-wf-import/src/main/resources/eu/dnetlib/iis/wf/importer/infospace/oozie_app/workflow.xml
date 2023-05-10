@@ -101,6 +101,10 @@
             <value>500</value>
             <description>max length of keyword field</description>
         </property>
+        <property>
+            <name>eligible_service_collectedfrom_datasourceid</name>
+            <description>data source identifier eligible services can be collected from</description>
+        </property>
         <!--  -->
         <property>
             <name>output</name>
@@ -212,6 +216,7 @@
             <arg>-maxAuthorFullnameLength=${max_author_fullname_length}</arg>
             <arg>-maxKeywordsSize=${max_keywords_size}</arg>
             <arg>-maxKeywordLength=${max_keyword_length}</arg>
+            <arg>-eligibleServiceCollectedFromDatasourceId=${eligible_service_collectedfrom_datasourceid}</arg>
 
         </spark>
         <ok to="end"/>

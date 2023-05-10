@@ -113,7 +113,8 @@ public class ImportInformationSpaceJobTest extends TestWithSharedSparkSession {
                 "-maxAuthorsSize", "25",
                 "-maxAuthorFullnameLength", "25",
                 "-maxKeywordsSize", "5",
-                "-maxKeywordLength", "15"
+                "-maxKeywordLength", "15",
+                "-eligibleServiceCollectedFromDatasourceId", "10|openaire____::2e06c1122c7df43765fdcf91080824fa"
         });
         
         // then

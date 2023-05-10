@@ -204,6 +204,10 @@
                     <value>15</value>
                 </property>
                 <property>
+                    <name>eligible_service_collectedfrom_datasourceid</name>
+                    <value>10|openaire____::2e06c1122c7df43765fdcf91080824fa</value>
+                </property>
+                <property>
                     <name>output</name>
                     <value>${workingDir}/imported</value>
                 </property>

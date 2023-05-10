@@ -100,11 +100,9 @@
                     <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.datasource.schemas.DocumentToDatasource']}</value>
                 </property>  
 
-				<!-- this one is requred due to the large amount of time taken 
-					by process storing plaintexts into the database -->
 				<property>
 					<name>mapreduce.task.timeout</name>
-					<value>7200000</value>
+					<value>14400000</value>
 				</property>
 				
 				<property>

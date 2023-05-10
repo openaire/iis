@@ -99,6 +99,10 @@
             <name>import_infospace_graph_location</name>
             <description>local InformationSpace graph location</description>
         </property>
+        <property>
+            <name>import_infospace_eligible_service_collectedfrom_datasourceid</name>
+            <description>data source identifier eligible services can be collected from</description>
+        </property>
         <!-- aggregation subsystem based import content related -->
         <property>
             <name>import_content_pdfaggregation_table_name</name>
@@ -510,6 +514,10 @@
                 <property>
                     <name>infospace_graph_location</name>
                     <value>${import_infospace_graph_location}</value>
+                </property>
+                <property>
+                    <name>infospace_eligible_service_collectedfrom_datasourceid</name>
+                    <value>${import_infospace_eligible_service_collectedfrom_datasourceid}</value>
                 </property>
                 <!-- project concept related -->
                 <property>

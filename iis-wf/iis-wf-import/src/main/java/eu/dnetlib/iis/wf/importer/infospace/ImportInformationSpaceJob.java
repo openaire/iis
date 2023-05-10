@@ -133,7 +133,11 @@ public class ImportInformationSpaceJob {
             OafEntityToAvroConverter<Result, DataSetReference>  datasetConverter = new DatasetMetadataConverter(dataInfoBasedApprover);
             OafEntityToAvroConverter<Organization, eu.dnetlib.iis.importer.schemas.Organization> organizationConverter = new OrganizationConverter();
             OafEntityToAvroConverter<Project, eu.dnetlib.iis.importer.schemas.Project> projectConverter = new ProjectConverter();
-            OafEntityToAvroConverter<Datasource, eu.dnetlib.iis.importer.schemas.Service> serviceConverter = new ServiceConverter();
+			OafEntityToAvroConverter<Datasource, eu.dnetlib.iis.importer.schemas.Service> serviceConverter = new ServiceConverter(
+					(StringUtils.isNotBlank(params.eligibleServiceCollectedFromDatasourceId)
+							&& !UNDEFINED_NONEMPTY_VALUE.equals(params.eligibleServiceCollectedFromDatasourceId)
+									? params.eligibleServiceCollectedFromDatasourceId
+									: null));
 
             OafRelToAvroConverter<ProjectToOrganization> projectOrganizationConverter = new ProjectToOrganizationRelationConverter();
             OafRelToAvroConverter<DocumentToProject> docProjectConverter = new DocumentToProjectRelationConverter();
@@ -484,6 +488,9 @@ public class ImportInformationSpaceJob {
 
         @Parameter(names = "-maxKeywordLength", required = true)
         private Integer maxKeywordLength;
+        
+        @Parameter(names = "-eligibleServiceCollectedFromDatasourceId", required = true)
+        private String eligibleServiceCollectedFromDatasourceId;
     }
     
 }

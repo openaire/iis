@@ -19,6 +19,10 @@
             <name>infospace_graph_location</name>
             <description>local InformationSpace graph location</description>
         </property>
+        <property>
+            <name>infospace_eligible_service_collectedfrom_datasourceid</name>
+            <description>data source identifier eligible services can be collected from</description>
+        </property>
 		<property>
 			<name>inference_provenance_blacklist</name>
 			<value>iis::.*</value>
@@ -269,6 +273,10 @@
                 <property>
                     <name>input_root_path</name>
                     <value>${infospace_graph_location}</value>
+                </property>
+                <property>
+                    <name>eligible_service_collectedfrom_datasourceid</name>
+                    <value>${infospace_eligible_service_collectedfrom_datasourceid}</value>
                 </property>
                 <property>
                     <name>output</name>
