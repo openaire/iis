@@ -47,6 +47,11 @@
             <description>flag indicating covid19 reference extraction should be enabled</description>
         </property>
         <property>
+            <name>active_referenceextraction_eoscservice</name>
+            <value>false</value>
+            <description>flag indicating EOSC service reference extraction should be enabled</description>
+        </property>
+        <property>
             <name>active_documentsclassification</name>
             <value>true</value>
             <description>flag indicating documents classification should be enabled</description>
@@ -102,6 +107,10 @@
         <property>
             <name>input_dataset</name>
             <description>input dataset directory</description>
+        </property>
+        <property>
+            <name>input_service</name>
+            <description>input service directory</description>
         </property>
         <property>
             <name>input_extracted_document_metadata</name>
@@ -405,6 +414,10 @@
             <description>covid19 reference extraction output directory</description>
         </property>
         <property>
+            <name>output_document_to_eoscservice</name>
+            <description>EOSC service reference extraction output directory</description>
+        </property>
+        <property>
             <name>output_document_to_software_url</name>
             <description>software url reference extraction output directory</description>
         </property>
@@ -601,6 +614,7 @@
         <path start="decision-referenceextraction_software_url" />
         <path start="decision-referenceextraction_patent" />
         <path start="decision-referenceextraction_covid19" />
+        <path start="decision-referenceextraction_eoscservice" />
     </fork>
 
     <!-- start of project reference extraction block -->
@@ -1484,6 +1498,60 @@
     </action>
     <!-- end of covid19 reference extraction block -->
 
+	<!-- start of EOSC service reference extraction block -->
+    <decision name="decision-referenceextraction_eoscservice">
+        <switch>
+            <case to="referenceextraction_eoscservice">${active_referenceextraction_eoscservice eq "true"}</case>
+            <default to="skip-referenceextraction_eoscservice" />
+        </switch>
+    </decision>
+
+    <action name="referenceextraction_eoscservice">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/referenceextraction_eoscservice</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/referenceextraction_eoscservice/working_dir</value>
+                </property>
+                <property>
+                    <name>input_document_text</name>
+                    <value>${workingDir}/transformers_common_union_document_text/out</value>
+                </property>
+                <property>
+                    <name>input_service</name>
+                    <value>${input_service}</value>
+                </property>
+                <property>
+                    <name>output_document_to_eoscservice</name>
+                    <value>${output_document_to_eoscservice}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
+
+    <action name="skip-referenceextraction_eoscservice">
+        <java>
+            <prepare>
+                <delete path="${nameNode}${output_document_to_eoscservice}" />
+                <mkdir path="${nameNode}${output_document_to_eoscservice}" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{referenceextraction_eoscservice,
+                eu.dnetlib.iis.referenceextraction.datasource.schemas.DocumentToDatasource,
+                eu/dnetlib/iis/common/data/empty.json}
+            </arg>
+            <arg>-Oreferenceextraction_eoscservice=${output_document_to_eoscservice}</arg>
+        </java>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
+    <!-- end of EOSC service reference extraction block -->
+
 
     <!-- start of documents classification part -->
     <decision name="decision-documentsclassification">
@@ -2069,6 +2137,7 @@
             <arg>-Preport.processing.referenceExtraction.researchInitiative.duration=referenceextraction_researchinitiative,referenceextraction_researchinitiative_wos,transformers_union_researchinitiatives,transformers_export_researchinitiatives</arg>
             <arg>-Preport.processing.referenceExtraction.community.duration=referenceextraction_community,transformers_export_communities</arg>
             <arg>-Preport.processing.referenceExtraction.covid-19.duration=referenceextraction_covid19,transformers_export_covid19</arg>
+            <arg>-Preport.processing.referenceExtraction.eoscservice.duration=referenceextraction_eoscservice</arg>
             <arg>-Preport.processing.referenceExtraction.softwareUrl.duration=referenceextraction_software_url</arg>
             <arg>-Preport.processing.referenceExtraction.patent.duration=referenceextraction_patent</arg>
             <arg>-Preport.processing.referenceExtraction.pdb.duration=referenceextraction_pdb,transformers_export_pdb</arg>

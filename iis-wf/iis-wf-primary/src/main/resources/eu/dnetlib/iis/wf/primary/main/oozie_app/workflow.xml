@@ -55,6 +55,11 @@
             <description>flag indicating covid19 reference extraction should be enabled</description>
         </property>
         <property>
+            <name>active_referenceextraction_eoscservice</name>
+            <value>false</value>
+            <description>flag indicating EOSC service reference extraction should be enabled</description>
+        </property>
+        <property>
             <name>active_documentsclassification</name>
             <value>false</value>
             <description>flag indicating documents classification should be enabled</description>
@@ -93,6 +98,10 @@
         <property>
             <name>import_infospace_graph_location</name>
             <description>local InformationSpace graph location</description>
+        </property>
+        <property>
+            <name>import_infospace_eligible_service_collectedfrom_datasourceid</name>
+            <description>data source identifier eligible services can be collected from</description>
         </property>
         <!-- aggregation subsystem based import content related -->
         <property>
@@ -254,6 +263,11 @@
             <description>document_referencedDocuments action-set identifier of exported data</description>
         </property>
         <property>
+            <name>export_action_set_id_document_referencedDatasources</name>
+            <value>$UNDEFINED$</value>
+            <description>document_referencedDatasources action-set identifier of exported data</description>
+        </property>
+        <property>
             <name>export_action_set_id_document_research_initiative</name>
             <value>$UNDEFINED$</value>
             <description>document research initiative action-set identifier of exported data</description>
@@ -339,6 +353,11 @@
             <name>export_trust_level_threshold_document_referencedDocuments</name>
             <value>$UNDEFINED$</value>
             <description>document_referencedDocuments trust level threshold</description>
+        </property>
+        <property>
+            <name>export_trust_level_threshold_document_referencedDatasources</name>
+            <value>$UNDEFINED$</value>
+            <description>document_referencedDatasources trust level threshold</description>
         </property>
         <!-- -->
         <property>
@@ -496,6 +515,10 @@
                     <name>infospace_graph_location</name>
                     <value>${import_infospace_graph_location}</value>
                 </property>
+                <property>
+                    <name>infospace_eligible_service_collectedfrom_datasourceid</name>
+                    <value>${import_infospace_eligible_service_collectedfrom_datasourceid}</value>
+                </property>
                 <!-- project concept related -->
                 <property>
                     <name>islookup_service_location</name>
@@ -600,6 +623,10 @@
                     <name>metadataimport_output_name_project_organization</name>
                     <value>projectorg</value>
                 </property>
+                <property>
+                    <name>metadataimport_output_name_service</name>
+                    <value>service</value>
+                </property>
                 <!-- output parameters -->
                 <property>
                     <name>output_extracted_document_metadata</name>
@@ -681,6 +708,10 @@
                     <value>${workingDir}/primary_import/metadataimport/dataset</value>
                 </property>
                 <property>
+                    <name>input_service</name>
+                    <value>${workingDir}/primary_import/metadataimport/service</value>
+                </property>
+                <property>
                     <name>input_extracted_document_metadata</name>
                     <value>${workingDir}/primary_import/extracted_document_metadata</value>
                 </property>
@@ -724,6 +755,10 @@
                 <property>
                     <name>output_document_to_covid19</name>
                     <value>${workingDir}/exported/document_to_covid19</value>
+                </property>
+                <property>
+                    <name>output_document_to_eoscservice</name>
+                    <value>${workingDir}/exported/document_to_eoscservice</value>
                 </property>
                 <property>
                     <name>output_document_to_software_url</name>
@@ -807,6 +842,10 @@
                     <value>${workingDir}/exported/document_to_covid19</value>
                 </property>
                 <property>
+                    <name>input_document_to_datasource</name>
+                    <value>${workingDir}/exported/document_to_eoscservice</value>
+                </property>
+                <property>
                     <name>input_document_to_software_url</name>
                     <value>${workingDir}/exported/document_to_software_url</value>
                 </property>
@@ -867,6 +906,10 @@
                 <property>
                     <name>action_set_id_document_referencedDocuments</name>
                     <value>${export_action_set_id_document_referencedDocuments}</value>
+                </property>
+                <property>
+                    <name>action_set_id_document_referencedDatasources</name>
+                    <value>${export_action_set_id_document_referencedDatasources}</value>
                 </property>
                 <property>
                     <name>action_set_id_document_research_initiative</name>
@@ -940,6 +983,10 @@
                 <property>
                     <name>trust_level_threshold_document_referencedDocuments</name>
                     <value>${export_trust_level_threshold_document_referencedDocuments}</value>
+                </property>
+                <property>
+                    <name>trust_level_threshold_document_referencedDatasources</name>
+                    <value>${export_trust_level_threshold_document_referencedDatasources}</value>
                 </property>
                 <property>
                     <name>documentssimilarity_threshold</name>

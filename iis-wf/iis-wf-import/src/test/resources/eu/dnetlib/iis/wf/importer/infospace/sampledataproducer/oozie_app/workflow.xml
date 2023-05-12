@@ -25,6 +25,7 @@
         <path start="copy_materialized_graph_json_resources_otherresearchproduct" />
         <path start="copy_materialized_graph_json_resources_software" />
         <path start="copy_materialized_graph_json_resources_relation" />
+        <path start="copy_materialized_graph_json_resources_datasource" />
     </fork>
     
     <action name="copy_materialized_graph_json_resources_publication">
@@ -132,6 +133,21 @@
         <error to="fail"/>
     </action>
     
+    <action name="copy_materialized_graph_json_resources_datasource">
+        <java>
+            <prepare>
+                <delete path="${nameNode}${workingDir}/input_graph/datasource" />
+                <mkdir path="${nameNode}${workingDir}/input_graph/datasource" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.ClassPathResourceToHdfsCopier</arg>
+            <arg>-PinputClasspathResource=eu/dnetlib/iis/wf/importer/infospace/input/graph/datasource.json</arg>
+            <arg>-PoutputHdfsFileLocation=${workingDir}/input_graph/datasource/data.json</arg>
+        </java>
+        <ok to="copy_materialized_graph_json_resources_join"/>
+        <error to="fail"/>
+    </action>
+    
     <join name="copy_materialized_graph_json_resources_join" to="importer" />
     
     <action name="importer">
@@ -188,6 +204,10 @@
                     <value>15</value>
                 </property>
                 <property>
+                    <name>eligible_service_collectedfrom_datasourceid</name>
+                    <value>10|openaire____::2e06c1122c7df43765fdcf91080824fa</value>
+                </property>
+                <property>
                     <name>output</name>
                     <value>${workingDir}/imported</value>
                 </property>
@@ -214,6 +234,7 @@
         <path start="consumer-dataset" />
         <path start="consumer-project" />
         <path start="consumer-organization" />
+        <path start="consumer-service" />
         <path start="consumer-projectorg" />
         <path start="consumer-report" />
     </fork>
@@ -297,6 +318,20 @@
                 eu/dnetlib/iis/wf/importer/infospace/output/organization.json}
             </arg>
             <arg>-Iorganization=${workingDir}/imported/organization</arg>
+        </java>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
+
+	<action name="consumer-service">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+            <arg>-C{service,
+                eu.dnetlib.iis.importer.schemas.Service,
+                eu/dnetlib/iis/wf/importer/infospace/output/service.json}
+            </arg>
+            <arg>-Iservice=${workingDir}/imported/service</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />

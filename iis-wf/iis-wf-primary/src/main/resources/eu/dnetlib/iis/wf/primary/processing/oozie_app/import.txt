@@ -10,6 +10,7 @@ referenceextraction_pdb classpath eu/dnetlib/iis/wf/referenceextraction/pdb/main
 referenceextraction_software_url classpath eu/dnetlib/iis/wf/referenceextraction/softwareurl/main/oozie_app
 referenceextraction_patent classpath eu/dnetlib/iis/wf/referenceextraction/patent/main/oozie_app
 referenceextraction_covid19 classpath eu/dnetlib/iis/wf/referenceextraction/covid19/main/oozie_app
+referenceextraction_eoscservice classpath eu/dnetlib/iis/wf/referenceextraction/eoscservice/main/oozie_app
 documentsclassification classpath eu/dnetlib/iis/wf/documentsclassification/oozie_app
 transformers_documentssimilarity classpath eu/dnetlib/iis/wf/documentssimilarity/input_transformer/oozie_app
 documentssimilarity_chain classpath eu/dnetlib/iis/wf/documentssimilarity/chain/oozie_app

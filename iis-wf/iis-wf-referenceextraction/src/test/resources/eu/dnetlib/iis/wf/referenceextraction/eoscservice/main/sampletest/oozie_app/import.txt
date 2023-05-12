@@ -1,0 +1,2 @@
+## This is a classpath-based import file (this header is required)
+referenceextraction_eoscservice classpath eu/dnetlib/iis/wf/referenceextraction/eoscservice/main/oozie_app

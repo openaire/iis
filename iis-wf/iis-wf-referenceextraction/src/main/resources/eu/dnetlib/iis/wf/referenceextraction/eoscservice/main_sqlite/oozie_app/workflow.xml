@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<!-- Note that documentation placed in comments in this file uses the
+"markdown" syntax (along with its way of dividing text into sections). -->
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="referenceextraction_eosc_services_main_sqlite">
+	
+	<parameters>
+		<property>
+			<name>input_document_text</name>
+			<description>input document text</description>
+		</property>
+		<property>
+			<name>input_service_db</name>
+			<description>input services SQLite DB path</description>
+		</property>
+		<property>
+			<name>output_document_to_eoscservice</name>
+			<description>output document to service</description>
+		</property>
+		<property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
+            <name>output_report_relative_path</name>
+            <value>document_to_eoscservice</value>
+            <description>directory for storing report (relative to output_report_root_path)</description>
+        </property>
+	</parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    
+	<start to="generate-schema" />
+
+	<action name="generate-schema">
+	    <java>
+	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
+	        <arg>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</arg>
+	        <arg>eu.dnetlib.iis.referenceextraction.datasource.schemas.DocumentToDatasource</arg>
+	        <capture-output />
+	    </java>
+	    <ok to="main_sqlite" />
+	    <error to="fail" />
+	</action>
+
+    <action name="main_sqlite">
+        <map-reduce>
+            <prepare>
+                <delete path="${nameNode}${output_document_to_eoscservice}"/>
+            </prepare>
+            <streaming>
+                <mapper>scripts/madis/mexec.py -d services.db -f scripts/eosc.sql</mapper>
+            </streaming>
+            <configuration>
+                <property>
+                    <name>mapred.output.format.class</name>
+                    <value>com.cloudera.science.avro.streaming.AvroAsJSONOutputFormat</value>
+                </property>
+                <property>
+                    <name>mapred.input.format.class</name>
+                    <value>com.cloudera.science.avro.streaming.AvroAsJSONInputFormat</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.reduces</name>
+                    <value>0</value>
+                </property>
+                
+                <!-- INPUT -->
+                <property>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
+                    <value>${input_document_text}</value>
+                </property>
+
+                <property>
+                    <name>input.schema.literal</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.DocumentText']}</value>
+                </property>
+
+				<!-- OUTPUT -->
+                <property>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
+                    <value>${output_document_to_eoscservice}</value>
+                </property>
+                
+                <property>
+                    <name>output.schema.literal</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.datasource.schemas.DocumentToDatasource']}</value>
+                </property>  
+
+				<property>
+					<name>mapreduce.task.timeout</name>
+					<value>14400000</value>
+				</property>
+				
+				<property>
+                    <name>oozie.action.external.stats.write</name>
+                    <value>true</value>
+                </property>
+            </configuration>
+            <file>${input_service_db}#services.db</file>
+        </map-reduce>
+        <ok to="report"/>
+        <error to="fail"/>
+    </action>
+    
+    <action name="report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
+            <arg>-Preport.processing.referenceExtraction.eoscservice.references=${hadoop:counters('main_sqlite')[RECORDS][MAP_OUT]}</arg>
+            <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+        			[${wf:errorMessage(wf:lastErrorNode())}]
+        		</message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

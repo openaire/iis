@@ -62,6 +62,11 @@
             <description>project-organization output name</description>
         </property>
         <property>
+            <name>output_name_service</name>
+            <value>service</value>
+            <description>service output name</description>
+        </property>
+        <property>
             <name>max_description_length</name>
             <value>100000</value>
             <description>max length of description field</description>
@@ -95,6 +100,10 @@
             <name>max_keyword_length</name>
             <value>500</value>
             <description>max length of keyword field</description>
+        </property>
+        <property>
+            <name>eligible_service_collectedfrom_datasourceid</name>
+            <description>data source identifier eligible services can be collected from</description>
         </property>
         <!--  -->
         <property>
@@ -199,6 +208,7 @@
             <arg>-outputNameIdentifierMapping=${output_name_identifier_mapping}</arg>
             <arg>-outputNameOrganization=${output_name_organization}</arg>
             <arg>-outputNameProjectOrganization=${output_name_project_organization}</arg>
+            <arg>-outputNameService=${output_name_service}</arg>
             <arg>-maxDescriptionLength=${max_description_length}</arg>
             <arg>-maxTitlesSize=${max_titles_size}</arg>
             <arg>-maxTitleLength=${max_title_length}</arg>
@@ -206,6 +216,7 @@
             <arg>-maxAuthorFullnameLength=${max_author_fullname_length}</arg>
             <arg>-maxKeywordsSize=${max_keywords_size}</arg>
             <arg>-maxKeywordLength=${max_keyword_length}</arg>
+            <arg>-eligibleServiceCollectedFromDatasourceId=${eligible_service_collectedfrom_datasourceid}</arg>
 
         </spark>
         <ok to="end"/>

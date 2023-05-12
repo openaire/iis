@@ -16,6 +16,7 @@ public enum AlgorithmName {
 	document_referencedProjects,
 	document_referencedDatasets,
 	document_referencedDocuments,
+	document_referencedDatasources,
 	document_research_initiative,
 	document_pdb,
 	document_software_url,
