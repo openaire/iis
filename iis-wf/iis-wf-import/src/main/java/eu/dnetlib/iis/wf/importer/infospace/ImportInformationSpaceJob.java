@@ -32,6 +32,7 @@ import eu.dnetlib.dhp.schema.oaf.Organization;
 import eu.dnetlib.dhp.schema.oaf.Project;
 import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.dhp.schema.oaf.Result;
+import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.IdentifierMapping;
@@ -134,10 +135,7 @@ public class ImportInformationSpaceJob {
             OafEntityToAvroConverter<Organization, eu.dnetlib.iis.importer.schemas.Organization> organizationConverter = new OrganizationConverter();
             OafEntityToAvroConverter<Project, eu.dnetlib.iis.importer.schemas.Project> projectConverter = new ProjectConverter();
 			OafEntityToAvroConverter<Datasource, eu.dnetlib.iis.importer.schemas.Service> serviceConverter = new ServiceConverter(
-					(StringUtils.isNotBlank(params.eligibleServiceCollectedFromDatasourceId)
-							&& !UNDEFINED_NONEMPTY_VALUE.equals(params.eligibleServiceCollectedFromDatasourceId)
-									? params.eligibleServiceCollectedFromDatasourceId
-									: null));
+					(WorkflowRuntimeParameters.getValueOrNullIfNotValid(params.eligibleServiceCollectedFromDatasourceId)));
 
             OafRelToAvroConverter<ProjectToOrganization> projectOrganizationConverter = new ProjectToOrganizationRelationConverter();
             OafRelToAvroConverter<DocumentToProject> docProjectConverter = new DocumentToProjectRelationConverter();

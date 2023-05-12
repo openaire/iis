@@ -60,7 +60,7 @@ public class DocumentToDatasourceActionBuilderModuleFactory extends AbstractActi
         // ------------------------ PRIVATE --------------------------
         
         /**
-         * Creates similarity related actions.
+         * Creates result-datasource relationship actions.
          */
         private AtomicAction<Relation> createAction(String source, String target, float confidenceLevel,
                 String relClass) throws TrustLevelThresholdExceededException {

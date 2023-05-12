@@ -23,6 +23,23 @@ public class WorkflowRuntimeParametersTest {
         configuration = new Configuration();
     }
     
+    @Test
+    public void testGetValueOrNullIfNotValidWithValid() throws Exception {
+    	// given
+    	String value = "some value";
+    	
+    	// assert
+    	assertEquals(value, WorkflowRuntimeParameters.getValueOrNullIfNotValid(value));
+    }
+    
+    @Test
+    public void testGetValueOrNullIfNotValidWithInvalid() throws Exception {
+    	// assert
+    	assertNull(WorkflowRuntimeParameters.getValueOrNullIfNotValid(" "));
+    	assertNull(WorkflowRuntimeParameters.getValueOrNullIfNotValid(""));
+    	assertNull(WorkflowRuntimeParameters.getValueOrNullIfNotValid(null));
+    	assertNull(WorkflowRuntimeParameters.getValueOrNullIfNotValid(WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE));
+    }
     
     @Test
     public void testGetParamValue() throws Exception {

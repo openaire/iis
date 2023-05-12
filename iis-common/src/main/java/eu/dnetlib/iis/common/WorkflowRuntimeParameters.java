@@ -29,16 +29,19 @@ public final class WorkflowRuntimeParameters {
     
     private WorkflowRuntimeParameters() {}
     
+    /**
+	 * Returns value provided at input if not blank and different than
+	 * {@link WorkflowRuntimeParameters#UNDEFINED_NONEMPTY_VALUE}, returns null otherwise.
+	 */
+    public static String getValueOrNullIfNotValid(String value) {
+		return (StringUtils.isNotBlank(value) && !UNDEFINED_NONEMPTY_VALUE.equals(value) ? value : null);
+    }
+    
 	/**
      * Retrieves parameter from hadoop context configuration when set to value different than {@link WorkflowRuntimeParameters#UNDEFINED_NONEMPTY_VALUE}.
      */
     public static String getParamValue(String paramName, Configuration configuration) {
-        String paramValue = configuration.get(paramName);
-        if (StringUtils.isNotBlank(paramValue) && !UNDEFINED_NONEMPTY_VALUE.equals(paramValue)) {
-            return paramValue;
-        } else {
-            return null;
-        }
+        return getValueOrNullIfNotValid(configuration.get(paramName));
     }
 	
     /**
@@ -79,12 +82,6 @@ public final class WorkflowRuntimeParameters {
      * @param parameters map of parameters
      */
     public static String getParamValueWithUndefinedCheck(String paramName, String defaultValue, Map<String, String> parameters) {
-        
-        String paramValue = parameters.get(paramName);
-        if (StringUtils.isNotBlank(paramValue) && !UNDEFINED_NONEMPTY_VALUE.equals(paramValue)) {
-            return paramValue;
-        } else {
-            return defaultValue;
-        }
+    	return getValueOrNullIfNotValid(parameters.get(paramName));
     }
 }
