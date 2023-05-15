@@ -108,6 +108,22 @@ public class WorkflowRuntimeParametersTest {
     }
     
     @Test
+    public void testGetParamValueWithoutFallback() throws Exception {
+        // given
+        String paramName = "paramName1";
+        String paramValue = "paramValue1";
+        String paramNameFallback = "paramNameMissing";
+        configuration.set(paramName, paramValue);
+        
+        // execute
+        String result = WorkflowRuntimeParameters.getParamValue(
+        		paramName, paramNameFallback, configuration);
+        
+        // assert
+        assertEquals(paramValue, result);
+    }
+    
+    @Test
     public void testGetParamValueWithFallback() throws Exception {
         // given
         String paramName = "paramName1";
@@ -138,6 +154,32 @@ public class WorkflowRuntimeParametersTest {
                 WorkflowRuntimeParameters.getParamValue(paramName, paramDefaultValue, parameters));
         assertEquals(paramDefaultValue, 
                 WorkflowRuntimeParameters.getParamValue(paramNameMissing, paramDefaultValue, parameters));
+    }
+    
+    @Test
+    public void testGetParamValueWithUndefinedCheckWithProperParamValue() {
+    	// given
+        String paramName = "paramName1";
+        String paramValue = "paramValue1";
+        String paramDefaultValue = "defaultValue";
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put(paramName, paramValue);
+        
+        // execute & assert
+        assertEquals(paramValue, 
+                WorkflowRuntimeParameters.getParamValueWithUndefinedCheck(paramName, paramDefaultValue, parameters));
+    }
+    
+    @Test
+    public void testGetParamValueWithUndefinedCheckWithUndefinedParamValue() {
+    	// given
+        String paramNameMissing = "paramNameMissing";
+        String paramDefaultValue = "defaultValue";
+        Map<String, String> parameters = new HashMap<>();
+        
+        // execute & assert
+        assertEquals(paramDefaultValue, 
+                WorkflowRuntimeParameters.getParamValueWithUndefinedCheck(paramNameMissing, paramDefaultValue, parameters));
     }
 
 }

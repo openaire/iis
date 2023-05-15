@@ -82,6 +82,7 @@ public final class WorkflowRuntimeParameters {
      * @param parameters map of parameters
      */
     public static String getParamValueWithUndefinedCheck(String paramName, String defaultValue, Map<String, String> parameters) {
-    	return getValueOrNullIfNotValid(parameters.get(paramName));
+		String resultCandidate = getValueOrNullIfNotValid(parameters.get(paramName));
+		return resultCandidate != null ? resultCandidate : defaultValue;
     }
 }
