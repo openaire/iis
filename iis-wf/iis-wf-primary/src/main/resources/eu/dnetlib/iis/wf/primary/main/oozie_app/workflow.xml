@@ -263,9 +263,9 @@
             <description>document_referencedDocuments action-set identifier of exported data</description>
         </property>
         <property>
-            <name>export_action_set_id_document_referencedDatasources</name>
+            <name>export_action_set_id_document_eoscServices</name>
             <value>$UNDEFINED$</value>
-            <description>document_referencedDatasources action-set identifier of exported data</description>
+            <description>document_eoscServices action-set identifier of exported data</description>
         </property>
         <property>
             <name>export_action_set_id_document_research_initiative</name>
@@ -355,9 +355,9 @@
             <description>document_referencedDocuments trust level threshold</description>
         </property>
         <property>
-            <name>export_trust_level_threshold_document_referencedDatasources</name>
+            <name>export_trust_level_threshold_document_eoscServices</name>
             <value>$UNDEFINED$</value>
-            <description>document_referencedDatasources trust level threshold</description>
+            <description>document_eoscServices trust level threshold</description>
         </property>
         <!-- -->
         <property>
@@ -908,8 +908,8 @@
                     <value>${export_action_set_id_document_referencedDocuments}</value>
                 </property>
                 <property>
-                    <name>action_set_id_document_referencedDatasources</name>
-                    <value>${export_action_set_id_document_referencedDatasources}</value>
+                    <name>action_set_id_document_eoscServices</name>
+                    <value>${export_action_set_id_document_eoscServices}</value>
                 </property>
                 <property>
                     <name>action_set_id_document_research_initiative</name>
@@ -985,8 +985,8 @@
                     <value>${export_trust_level_threshold_document_referencedDocuments}</value>
                 </property>
                 <property>
-                    <name>trust_level_threshold_document_referencedDatasources</name>
-                    <value>${export_trust_level_threshold_document_referencedDatasources}</value>
+                    <name>trust_level_threshold_document_eoscServices</name>
+                    <value>${export_trust_level_threshold_document_eoscServices}</value>
                 </property>
                 <property>
                     <name>documentssimilarity_threshold</name>

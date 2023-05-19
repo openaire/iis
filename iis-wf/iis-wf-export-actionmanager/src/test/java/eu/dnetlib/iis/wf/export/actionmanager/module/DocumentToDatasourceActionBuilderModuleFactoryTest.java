@@ -22,7 +22,7 @@ public class DocumentToDatasourceActionBuilderModuleFactoryTest extends Abstract
     // ----------------------- CONSTRUCTORS -------------------
     
     public DocumentToDatasourceActionBuilderModuleFactoryTest() throws Exception {
-        super(DocumentToDatasourceActionBuilderModuleFactory.class, AlgorithmName.document_referencedDatasources);
+        super(DocumentToDatasourceActionBuilderModuleFactory.class, AlgorithmName.document_eoscServices);
     }
 
     // ----------------------- TESTS --------------------------
@@ -57,8 +57,8 @@ public class DocumentToDatasourceActionBuilderModuleFactoryTest extends Abstract
         assertNotNull(action);
         assertEquals(Relation.class, action.getClazz());
         Expectations expectations = new Expectations(docId, datasourceId, matchStrength, 
-                OafConstants.REL_TYPE_RESULT_DATASOURCE, OafConstants.SUBREL_TYPE_RELATIONSHIP, 
-                OafConstants.REL_CLASS_REFERENCES);
+                OafConstants.REL_TYPE_RESULT_SERVICE, OafConstants.SUBREL_TYPE_RELATIONSHIP, 
+                OafConstants.REL_CLASS_ISRELATEDTO);
         assertOafRel(action.getPayload(), expectations);
         
 //      checking backward relation
@@ -67,7 +67,6 @@ public class DocumentToDatasourceActionBuilderModuleFactoryTest extends Abstract
         assertEquals(Relation.class, action.getClazz());
         expectations.setSource(datasourceId);
         expectations.setTarget(docId);
-        expectations.setRelationClass(OafConstants.REL_CLASS_IS_REFERENCED_BY);
         assertOafRel(action.getPayload(), expectations);
     }
     

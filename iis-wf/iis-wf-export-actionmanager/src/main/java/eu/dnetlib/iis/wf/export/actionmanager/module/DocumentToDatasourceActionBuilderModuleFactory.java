@@ -22,7 +22,7 @@ public class DocumentToDatasourceActionBuilderModuleFactory extends AbstractActi
     // ------------------------ CONSTRUCTORS --------------------------
     
     public DocumentToDatasourceActionBuilderModuleFactory() {
-        super(AlgorithmName.document_referencedDatasources);
+        super(AlgorithmName.document_eoscServices);
     }
     
     // ------------------------ LOGIC ---------------------------------
@@ -52,9 +52,9 @@ public class DocumentToDatasourceActionBuilderModuleFactory extends AbstractActi
         public List<AtomicAction<Relation>> build(DocumentToDatasource object) throws TrustLevelThresholdExceededException {
             return Arrays.asList(
                     createAction(object.getDocumentId().toString(), object.getDatasourceId().toString(),
-                            object.getConfidenceLevel(), OafConstants.REL_CLASS_REFERENCES),
+                            object.getConfidenceLevel(), OafConstants.REL_CLASS_ISRELATEDTO),
                     createAction(object.getDatasourceId().toString(), object.getDocumentId().toString(),
-                            object.getConfidenceLevel(), OafConstants.REL_CLASS_IS_REFERENCED_BY));
+                            object.getConfidenceLevel(), OafConstants.REL_CLASS_ISRELATEDTO));
         }
 
         // ------------------------ PRIVATE --------------------------
@@ -70,7 +70,7 @@ public class DocumentToDatasourceActionBuilderModuleFactory extends AbstractActi
             Relation relation = new Relation();
             relation.setSource(source);
             relation.setTarget(target);
-            relation.setRelType(OafConstants.REL_TYPE_RESULT_DATASOURCE);
+            relation.setRelType(OafConstants.REL_TYPE_RESULT_SERVICE);
             relation.setSubRelType(OafConstants.SUBREL_TYPE_RELATIONSHIP);
             relation.setRelClass(relClass);
             relation.setDataInfo(buildInference(confidenceLevel));

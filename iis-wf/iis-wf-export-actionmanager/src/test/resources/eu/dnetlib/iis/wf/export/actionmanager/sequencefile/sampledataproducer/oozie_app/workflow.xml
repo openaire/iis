@@ -171,7 +171,7 @@
                     <value>actionset-id</value>
                 </property>
                 <property>
-                    <name>action_set_id_document_referencedDatasources</name>
+                    <name>action_set_id_document_eoscServices</name>
                     <value>actionset-id</value>
                 </property>
                 <property>
@@ -303,7 +303,7 @@
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
-            <arg>-Iseqfile=${workingDir}/output/document_referencedDatasources/actionset-id</arg>
+            <arg>-Iseqfile=${workingDir}/output/document_eoscServices/actionset-id</arg>
             <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_datasource_1.properties,/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_datasource_2.properties
             </arg>
         </java>

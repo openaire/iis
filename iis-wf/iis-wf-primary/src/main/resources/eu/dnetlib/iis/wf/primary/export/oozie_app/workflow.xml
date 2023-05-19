@@ -119,9 +119,9 @@
             <description>document_referencedDocuments action-set identifier of exported data</description>
         </property>
         <property>
-            <name>action_set_id_document_referencedDatasources</name>
+            <name>action_set_id_document_eoscServices</name>
             <value>$UNDEFINED$</value>
-            <description>document_referencedDatasources action-set identifier of exported data</description>
+            <description>document_eoscServices action-set identifier of exported data</description>
         </property>
         <property>
             <name>action_set_id_document_research_initiative</name>
@@ -190,9 +190,9 @@
             <description>document_referencedDatasets trust level threshold</description>
         </property>
         <property>
-            <name>trust_level_threshold_document_referencedDatasources</name>
+            <name>trust_level_threshold_document_eoscServices</name>
             <value>$UNDEFINED$</value>
-            <description>document_referencedDatasources trust level threshold</description>
+            <description>document_eoscServices trust level threshold</description>
         </property>
         <property>
             <name>trust_level_threshold_document_pdb</name>

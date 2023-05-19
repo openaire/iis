@@ -84,9 +84,9 @@
             <description>document_referencedDatasets action-set identifier of exported data</description>
         </property>
         <property>
-            <name>action_set_id_document_referencedDatasources</name>
+            <name>action_set_id_document_eoscServices</name>
             <value>$UNDEFINED$</value>
-            <description>document_referencedDatasources action-set identifier of exported data</description>
+            <description>document_eoscServices action-set identifier of exported data</description>
         </property>
         <property>
             <name>action_set_id_document_referencedDocuments</name>
@@ -480,7 +480,7 @@
 	<action name="exporter-document-to-datasource">
         <map-reduce>
             <prepare>
-                <mkdir path="${nameNode}${output}/document_referencedDatasources" />
+                <mkdir path="${nameNode}${output}/document_eoscServices" />
             </prepare>
             <configuration>
                 <property>
@@ -497,7 +497,7 @@
                 </property>
                 <property>
                     <name>mapreduce.output.fileoutputformat.outputdir</name>
-                    <value>${output}/document_referencedDatasources/${action_set_id_document_referencedDatasources}</value>
+                    <value>${output}/document_eoscServices/${action_set_id_document_eoscServices}</value>
                 </property>
                 <!-- reducing input with large number of small files -->
                 <property>
