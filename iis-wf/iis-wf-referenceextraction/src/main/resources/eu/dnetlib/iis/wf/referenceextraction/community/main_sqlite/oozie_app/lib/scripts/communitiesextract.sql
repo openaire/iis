@@ -71,7 +71,7 @@ select docid, conceptId, conceptLabel, middle, prev||" "||middle||" "||next as c
 from (
 setschema 'docid,prev,middle,next' select c1, textwindow2s(keywords(filterstopwords(c2)),7,1,3, '5002550') from pubs where c2 is not null
 ), grants where conceptLabel="INSPIRED RIs" and regexprmatches("\bMIS|INSPIRED", context) 
-) group by docid;
+) group by docid
 
 
 union all
