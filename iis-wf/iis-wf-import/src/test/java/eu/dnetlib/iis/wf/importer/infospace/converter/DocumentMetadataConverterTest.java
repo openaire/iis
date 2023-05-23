@@ -237,7 +237,7 @@ public class DocumentMetadataConverterTest {
 
         result.setSubject(Lists.newArrayList());
         KEYWORDS.stream().map(keyword -> {
-            Subject subject = new Subject();
+            StructuredProperty subject = new StructuredProperty();
             subject.setValue(keyword);
             return subject;
         }).forEach(result.getSubject()::add);

@@ -9,7 +9,7 @@ import org.apache.hadoop.conf.Configuration;
 
 import eu.dnetlib.dhp.schema.oaf.Qualifier;
 import eu.dnetlib.dhp.schema.oaf.Result;
-import eu.dnetlib.dhp.schema.oaf.Subject;
+import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentClass;
 import eu.dnetlib.iis.documentsclassification.schemas.DocumentClasses;
@@ -61,7 +61,7 @@ public class DocumentToDocumentClassesActionBuilderModuleFactory extends Abstrac
         @Override
         protected Result convert(DocumentToDocumentClasses source) {
             if (source.getClasses() != null) {
-                List<Subject> classificationSubjects = convertClassesToOaf(
+                List<StructuredProperty> classificationSubjects = convertClassesToOaf(
                         source.getClasses());
                 if (CollectionUtils.isNotEmpty(classificationSubjects)) {
                     Result result = new Result();
@@ -79,8 +79,8 @@ public class DocumentToDocumentClassesActionBuilderModuleFactory extends Abstrac
 
         // ------------------------ PRIVATE --------------------------
         
-        private List<Subject> convertClassesToOaf(DocumentClasses source) {
-            List<Subject> list = new ArrayList<Subject>();
+        private List<StructuredProperty> convertClassesToOaf(DocumentClasses source) {
+            List<StructuredProperty> list = new ArrayList<StructuredProperty>();
             if (CollectionUtils.isNotEmpty(source.getArXivClasses())) {
                 list.addAll(convertClassesToOaf(source.getArXivClasses(),
                         InfoSpaceConstants.SEMANTIC_CLASS_TAXONOMIES_ARXIV));
@@ -104,11 +104,11 @@ public class DocumentToDocumentClassesActionBuilderModuleFactory extends Abstrac
             return list;
         }
 
-        private List<Subject> convertClassesToOaf(List<DocumentClass> source, String taxonomyName) {
-            List<Subject> results = new ArrayList<Subject>();
+        private List<StructuredProperty> convertClassesToOaf(List<DocumentClass> source, String taxonomyName) {
+            List<StructuredProperty> results = new ArrayList<StructuredProperty>();
             for (DocumentClass current : source) {
                 try {
-                	Subject result = convertClassToOaf(current, taxonomyName);
+                    StructuredProperty result = convertClassToOaf(current, taxonomyName);
                     if (result!=null) {
                         results.add(result);    
                     }
@@ -119,10 +119,10 @@ public class DocumentToDocumentClassesActionBuilderModuleFactory extends Abstrac
             return results;
         }
 
-        private Subject convertClassToOaf(DocumentClass source, String taxonomyName)
+        private StructuredProperty convertClassToOaf(DocumentClass source, String taxonomyName)
                         throws TrustLevelThresholdExceededException {
             if (source != null && CollectionUtils.isNotEmpty(source.getClassLabels())) {
-            	Subject structuredProperty = new Subject();
+                StructuredProperty structuredProperty = new StructuredProperty();
                 Qualifier qualifier = new Qualifier();
                 qualifier.setSchemeid(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_CLASSIFICATION_TAXONOMIES);
                 qualifier.setSchemename(InfoSpaceConstants.SEMANTIC_SCHEME_DNET_CLASSIFICATION_TAXONOMIES);

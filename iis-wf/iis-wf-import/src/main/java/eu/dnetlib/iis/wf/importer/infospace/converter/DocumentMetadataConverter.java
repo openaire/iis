@@ -145,7 +145,7 @@ public class DocumentMetadataConverter implements OafEntityToAvroConverter<Resul
             }
         }    
     }
-    private void handleKeywords(List<Subject> subjectList, DocumentMetadata.Builder metaBuilder) {
+    private void handleKeywords(List<StructuredProperty> subjectList, DocumentMetadata.Builder metaBuilder) {
         if (CollectionUtils.isNotEmpty(subjectList)) {
             // setting only selected subjects as keywords, skipping inferred data
             List<String> extractedKeywords = MetadataConverterUtils.extractValues(subjectList, fieldApprover);
