@@ -47,3 +47,10 @@
       {"name": "suggestedAcknowledgement", "value":""}
    ]
 }
+{  
+   "id":"inspired-ris",
+   "label":"INSPIRED RIs",
+   "params":[
+      {"name": "suggestedAcknowledgement", "value":""}
+   ]
+}

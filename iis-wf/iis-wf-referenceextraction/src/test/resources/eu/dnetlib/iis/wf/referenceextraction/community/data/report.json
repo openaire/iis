@@ -4,3 +4,4 @@
 {"key":"processing.referenceExtraction.community.references.byrootid.embrc", "type":"COUNTER", "value": "1"}
 {"key":"processing.referenceExtraction.community.references.byrootid.eric", "type":"COUNTER", "value": "1"}
 {"key":"processing.referenceExtraction.community.references.byrootid.fli", "type":"COUNTER", "value": "1"}
+{"key":"processing.referenceExtraction.community.references.byrootid.inspired-ris", "type":"COUNTER", "value": "1"}
