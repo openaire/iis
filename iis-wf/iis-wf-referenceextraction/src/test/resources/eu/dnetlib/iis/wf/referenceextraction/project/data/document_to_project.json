@@ -386,7 +386,7 @@
   "documentId": "50|core_ac_uk__::2fea53c390909c2640b2d1a94d53c0a7",
   "projectId": "40|inca________::1e5e62235d094afd01cd56e65112fc63",
   "confidenceLevel": 0.8,
-  "textsnippet": "This work was supported by INCA (plbio 2010-216 and INCa-DGOS-Inserm 6046) "
+  "textsnippet": "This work was supported by INCA (plbio 2010-216 and INCa-DGOS-Inserm 6046)"
 }
 {
   "documentId": "50|arXiv_______::a343cdcd534d696dd93c7ee9d78b9be7",
@@ -406,5 +406,11 @@
   "projectId": "40|corda_____he::ea43b41b48b3e7358e9da49bc3ba4ca6", 
   "confidenceLevel": 0.99666107, 
   "textsnippet": "        funding_ european research council erc advanced grant <<< 101055088 >>> _sp_  "
+}
+{
+  "documentId": "50|06cdd3ff4700::2ecc0ab7fe7b585190081d3623d34a30",
+  "projectId": "40|arc_________::820103bb21728d624a1836e5134e5712",
+  "confidenceLevel": 0.8,
+  "textsnippet": "former are sometimes referred to as classical pattern-avoiding permutations (PAPs).Supported by Australian Research Council grant <<< DE170100186. >>> ISSN 1365-8050"
 }
 
