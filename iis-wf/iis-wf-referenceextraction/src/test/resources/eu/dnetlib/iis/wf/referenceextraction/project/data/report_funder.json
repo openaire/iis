@@ -39,6 +39,11 @@
   "value": "23"
 }
 {
+  "key": "processing.referenceExtraction.project.references.byfunder.fct",
+  "type": "COUNTER",
+  "value": "1"
+}
+{
   "key": "processing.referenceExtraction.project.references.byfunder.fwf",
   "type": "COUNTER",
   "value": "1"
@@ -47,6 +52,16 @@
   "key": "processing.referenceExtraction.project.references.byfunder.gsri",
   "type": "COUNTER",
   "value": "2"
+}
+{
+  "key": "processing.referenceExtraction.project.references.byfunder.hrzz",
+  "type": "COUNTER",
+  "value": "1"
+}
+{
+  "key": "processing.referenceExtraction.project.references.byfunder.nhmrc",
+  "type": "COUNTER",
+  "value": "1"
 }
 {
   "key": "processing.referenceExtraction.project.references.byfunder.inca",
@@ -69,6 +84,11 @@
   "value": "1"
 }
 {
+  "key": "processing.referenceExtraction.project.references.byfunder.mzos",
+  "type": "COUNTER",
+  "value": "1"
+}
+{
   "key": "processing.referenceExtraction.project.references.byfunder.nih",
   "type": "COUNTER",
   "value": "1"
@@ -80,6 +100,11 @@
 }
 {
   "key": "processing.referenceExtraction.project.references.byfunder.nserc",
+  "type": "COUNTER",
+  "value": "1"
+}
+{
+  "key": "processing.referenceExtraction.project.references.byfunder.nsf",
   "type": "COUNTER",
   "value": "1"
 }
@@ -100,6 +125,11 @@
 }
 {
   "key": "processing.referenceExtraction.project.references.byfunder.rsf",
+  "type": "COUNTER",
+  "value": "1"
+}
+{
+  "key": "processing.referenceExtraction.project.references.byfunder.sfi",
   "type": "COUNTER",
   "value": "1"
 }
@@ -141,5 +171,5 @@
 {
    "key": "processing.referenceExtraction.project.references.total",
    "type": "COUNTER",
-   "value": "69"
+   "value": "75"
 }
