@@ -649,6 +649,13 @@
                 <artifactId>bcprov-jdk15on</artifactId>
                 <version>1.50</version>
             </dependency>
+            
+            <!-- #1412 fix, required when dealing with encrypted PDF files -->
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk15on</artifactId>
+                <version>1.50</version>
+            </dependency>
 
             <!-- Needed to run Avro-based map-reduce -->
             <dependency>
