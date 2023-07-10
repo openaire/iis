@@ -52,8 +52,6 @@ public class DocumentToDatasourceActionBuilderModuleFactory extends AbstractActi
         public List<AtomicAction<Relation>> build(DocumentToDatasource object) throws TrustLevelThresholdExceededException {
             return Arrays.asList(
                     createAction(object.getDocumentId().toString(), object.getDatasourceId().toString(),
-                            object.getConfidenceLevel(), OafConstants.REL_CLASS_ISRELATEDTO),
-                    createAction(object.getDatasourceId().toString(), object.getDocumentId().toString(),
                             object.getConfidenceLevel(), OafConstants.REL_CLASS_ISRELATEDTO));
         }
 

@@ -51,7 +51,7 @@ public class DocumentToDatasourceActionBuilderModuleFactoryTest extends Abstract
 
         // assert
         assertNotNull(actions);
-        assertEquals(2, actions.size());
+        assertEquals(1, actions.size());
 
         AtomicAction<Relation> action = actions.get(0);
         assertNotNull(action);
@@ -59,14 +59,6 @@ public class DocumentToDatasourceActionBuilderModuleFactoryTest extends Abstract
         Expectations expectations = new Expectations(docId, datasourceId, matchStrength, 
                 OafConstants.REL_TYPE_RESULT_SERVICE, OafConstants.SUBREL_TYPE_RELATIONSHIP, 
                 OafConstants.REL_CLASS_ISRELATEDTO);
-        assertOafRel(action.getPayload(), expectations);
-        
-//      checking backward relation
-        action = actions.get(1);
-        assertNotNull(action);
-        assertEquals(Relation.class, action.getClazz());
-        expectations.setSource(datasourceId);
-        expectations.setTarget(docId);
         assertOafRel(action.getPayload(), expectations);
     }
     
