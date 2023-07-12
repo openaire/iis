@@ -37,11 +37,11 @@
                 eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_to_dataset.json}
             </arg>
             <arg>-Odocument_to_dataset=${workingDir}/producer/document_to_dataset</arg>
-            <arg>-C{document_to_datasource,
-                eu.dnetlib.iis.referenceextraction.datasource.schemas.DocumentToDatasource,
-                eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_to_datasource.json}
+            <arg>-C{document_to_service,
+                eu.dnetlib.iis.referenceextraction.service.schemas.DocumentToService,
+                eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_to_service.json}
             </arg>
-            <arg>-Odocument_to_datasource=${workingDir}/producer/document_to_datasource</arg>
+            <arg>-Odocument_to_service=${workingDir}/producer/document_to_service</arg>
             <arg>-C{document_to_project,
                 eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject,
                 eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_to_project.json}
@@ -114,8 +114,8 @@
                     <value>${workingDir}/producer/document_to_dataset</value>
                 </property>
                 <property>
-                    <name>input_document_to_datasource</name>
-                    <value>${workingDir}/producer/document_to_datasource</value>
+                    <name>input_document_to_service</name>
+                    <value>${workingDir}/producer/document_to_service</value>
                 </property>
                 <property>
                     <name>input_document_to_research_initiatives</name>
@@ -224,7 +224,7 @@
         <path start="consumer-document_covid19" />
         <path start="consumer-document_similarity" />
         <path start="consumer-document_to_dataset" />
-        <path start="consumer-document_to_datasource" />
+        <path start="consumer-document_to_service" />
         <path start="consumer-document_to_project" />
         <path start="consumer-document_to_research_initiatives" />
         <path start="consumer-document_to_communities" />
@@ -299,12 +299,12 @@
         <error to="fail" />
     </action>
 
-    <action name="consumer-document_to_datasource">
+    <action name="consumer-document_to_service">
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/document_eoscServices/actionset-id</arg>
-            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_datasource.properties
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_service.properties
             </arg>
         </java>
         <ok to="joining" />

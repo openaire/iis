@@ -414,7 +414,7 @@
             <description>covid19 reference extraction output directory</description>
         </property>
         <property>
-            <name>output_document_to_eoscservice</name>
+            <name>output_document_to_service</name>
             <description>EOSC service reference extraction output directory</description>
         </property>
         <property>
@@ -614,7 +614,7 @@
         <path start="decision-referenceextraction_software_url" />
         <path start="decision-referenceextraction_patent" />
         <path start="decision-referenceextraction_covid19" />
-        <path start="decision-referenceextraction_eoscservice" />
+        <path start="decision-referenceextraction_service" />
     </fork>
 
     <!-- start of project reference extraction block -->
@@ -1499,21 +1499,21 @@
     <!-- end of covid19 reference extraction block -->
 
 	<!-- start of EOSC service reference extraction block -->
-    <decision name="decision-referenceextraction_eoscservice">
+    <decision name="decision-referenceextraction_service">
         <switch>
-            <case to="referenceextraction_eoscservice">${active_referenceextraction_eoscservice eq "true"}</case>
-            <default to="skip-referenceextraction_eoscservice" />
+            <case to="referenceextraction_service">${active_referenceextraction_eoscservice eq "true"}</case>
+            <default to="skip-referenceextraction_service" />
         </switch>
     </decision>
 
-    <action name="referenceextraction_eoscservice">
+    <action name="referenceextraction_service">
         <sub-workflow>
-            <app-path>${wf:appPath()}/referenceextraction_eoscservice</app-path>
+            <app-path>${wf:appPath()}/referenceextraction_service</app-path>
             <propagate-configuration />
             <configuration>
                 <property>
                     <name>workingDir</name>
-                    <value>${workingDir}/referenceextraction_eoscservice/working_dir</value>
+                    <value>${workingDir}/referenceextraction_service/working_dir</value>
                 </property>
                 <property>
                     <name>input_document_text</name>
@@ -1524,8 +1524,8 @@
                     <value>${input_service}</value>
                 </property>
                 <property>
-                    <name>output_document_to_eoscservice</name>
-                    <value>${output_document_to_eoscservice}</value>
+                    <name>output_document_to_service</name>
+                    <value>${output_document_to_service}</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -1533,19 +1533,19 @@
         <error to="fail" />
     </action>
 
-    <action name="skip-referenceextraction_eoscservice">
+    <action name="skip-referenceextraction_service">
         <java>
             <prepare>
-                <delete path="${nameNode}${output_document_to_eoscservice}" />
-                <mkdir path="${nameNode}${output_document_to_eoscservice}" />
+                <delete path="${nameNode}${output_document_to_service}" />
+                <mkdir path="${nameNode}${output_document_to_service}" />
             </prepare>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
-            <arg>-C{referenceextraction_eoscservice,
-                eu.dnetlib.iis.referenceextraction.datasource.schemas.DocumentToDatasource,
+            <arg>-C{referenceextraction_service,
+                eu.dnetlib.iis.referenceextraction.service.schemas.DocumentToService,
                 eu/dnetlib/iis/common/data/empty.json}
             </arg>
-            <arg>-Oreferenceextraction_eoscservice=${output_document_to_eoscservice}</arg>
+            <arg>-Oreferenceextraction_service=${output_document_to_service}</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />
@@ -2137,7 +2137,7 @@
             <arg>-Preport.processing.referenceExtraction.researchInitiative.duration=referenceextraction_researchinitiative,referenceextraction_researchinitiative_wos,transformers_union_researchinitiatives,transformers_export_researchinitiatives</arg>
             <arg>-Preport.processing.referenceExtraction.community.duration=referenceextraction_community,transformers_export_communities</arg>
             <arg>-Preport.processing.referenceExtraction.covid-19.duration=referenceextraction_covid19,transformers_export_covid19</arg>
-            <arg>-Preport.processing.referenceExtraction.eoscservice.duration=referenceextraction_eoscservice</arg>
+            <arg>-Preport.processing.referenceExtraction.service.duration=referenceextraction_service</arg>
             <arg>-Preport.processing.referenceExtraction.softwareUrl.duration=referenceextraction_software_url</arg>
             <arg>-Preport.processing.referenceExtraction.patent.duration=referenceextraction_patent</arg>
             <arg>-Preport.processing.referenceExtraction.pdb.duration=referenceextraction_pdb,transformers_export_pdb</arg>

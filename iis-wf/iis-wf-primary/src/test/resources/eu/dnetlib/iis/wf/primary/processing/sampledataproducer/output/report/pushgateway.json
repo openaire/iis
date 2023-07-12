@@ -43,8 +43,8 @@
 {"key":"processing.referenceExtraction.dataset.duration","type":"DURATION","value":"$(LONG_RANGE: [1000, 1500000])"}
 {"key":"processing.referenceExtraction.dataset.opentrials.references","type":"COUNTER","value":"0"}
 {"key":"processing.referenceExtraction.dataset.deduped.references","type":"COUNTER","value":"1"}
-{"key":"processing.referenceExtraction.eoscservice.references", "type":"COUNTER", "value": "1"}
-{"key":"processing.referenceExtraction.eoscservice.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 500000])"}
+{"key":"processing.referenceExtraction.service.references", "type":"COUNTER", "value": "1"}
+{"key":"processing.referenceExtraction.service.duration", "type": "DURATION", "value": "$(LONG_RANGE: [1000, 500000])"}
 {"key":"processing.referenceExtraction.patent.retrieval.fromCache.total", "type": "COUNTER", "value": "0"}
 {"key":"processing.referenceExtraction.patent.retrieval.processed.total","type":"COUNTER","value":"1"}
 {"key":"processing.referenceExtraction.patent.retrieval.processed.fault","type":"COUNTER","value": "0"}

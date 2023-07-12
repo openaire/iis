@@ -37,7 +37,7 @@
             <value>$UNDEFINED$</value>
         </property>
         <property>
-            <name>input_document_to_datasource</name>
+            <name>input_document_to_service</name>
             <value>$UNDEFINED$</value>
         </property>
         <property>

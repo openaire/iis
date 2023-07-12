@@ -383,8 +383,8 @@
                     <value>${workingDir}/exported/document_to_covid19</value>
                 </property>
                 <property>
-                    <name>output_document_to_eoscservice</name>
-                    <value>${workingDir}/exported/document_to_eoscservice</value>
+                    <name>output_document_to_service</name>
+                    <value>${workingDir}/exported/document_to_service</value>
                 </property>
 				<property>
 					<name>output_document_to_document_classes</name>
@@ -561,11 +561,11 @@
                 eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_covid19.json}
             </arg>
             <arg>-Idocument_to_covid19=${workingDir}/exported/document_to_covid19</arg>
-            <arg>-C{document_to_eoscservice,
-                eu.dnetlib.iis.referenceextraction.datasource.schemas.DocumentToDatasource,
-                eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_eoscservice.json}
+            <arg>-C{document_to_service,
+                eu.dnetlib.iis.referenceextraction.service.schemas.DocumentToService,
+                eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_service.json}
             </arg>
-            <arg>-Idocument_to_eoscservice=${workingDir}/exported/document_to_eoscservice</arg>
+            <arg>-Idocument_to_service=${workingDir}/exported/document_to_service</arg>
             <arg>-C{document_to_software_url_with_meta,
                 eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta,
                 eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_software_url_with_meta.json}
@@ -642,8 +642,8 @@
             <arg>-C{docCovid19Report,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_to_covid19.json}</arg>
             <arg>-IdocCovid19Report=${workingDir}/report/doc_covid19</arg>
             
-            <arg>-C{docEoscServiceReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_to_eoscservice.json}</arg>
-            <arg>-IdocEoscServiceReport=${workingDir}/report/document_to_eoscservice</arg>
+            <arg>-C{docServiceReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_to_service.json}</arg>
+            <arg>-IdocServiceReport=${workingDir}/report/document_to_service</arg>
             
             <arg>-C{documentClassificationReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_classification.json}</arg>
             <arg>-IdocumentClassificationReport=${workingDir}/report/document_classification</arg>

@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="referenceextraction_service_main">
+	
+	<parameters>
+		<property>
+			<name>input_document_text</name>
+			<description>input document text</description>
+		</property>
+		<property>
+			<name>input_service</name>
+			<description>input services datastore with eu.dnetlib.iis.importer.schemas.Service avro records</description>
+		</property>
+		<property>
+			<name>output_document_to_service</name>
+			<description>output document to EOSC service</description>
+		</property>
+    </parameters>
+
+	<start to="sqlite_builder" />
+
+    <action name="sqlite_builder">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/sqlite_builder</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/sqlite_builder/working_dir</value>
+                </property>
+                <property>
+                    <name>input_service</name>
+                    <value>${input_service}</value>
+                </property>
+                <property>
+                    <name>output_service_db</name>
+                    <value>${workingDir}/services.db</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="main_sqlite"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="main_sqlite">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/main_sqlite</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/main_sqlite/working_dir</value>
+                </property>
+                <property>
+                    <name>input_document_text</name>
+                    <value>${input_document_text}</value>
+                </property>
+                <property>
+                    <name>input_service_db</name>
+                    <value>${workingDir}/services.db</value>
+                </property>
+                <property>
+                    <name>output_document_to_service</name>
+                    <value>${output_document_to_service}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+
+    <end name="end"/>
+
+</workflow-app>

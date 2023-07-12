@@ -757,8 +757,8 @@
                     <value>${workingDir}/exported/document_to_covid19</value>
                 </property>
                 <property>
-                    <name>output_document_to_eoscservice</name>
-                    <value>${workingDir}/exported/document_to_eoscservice</value>
+                    <name>output_document_to_service</name>
+                    <value>${workingDir}/exported/document_to_service</value>
                 </property>
                 <property>
                     <name>output_document_to_software_url</name>
@@ -842,8 +842,8 @@
                     <value>${workingDir}/exported/document_to_covid19</value>
                 </property>
                 <property>
-                    <name>input_document_to_datasource</name>
-                    <value>${workingDir}/exported/document_to_eoscservice</value>
+                    <name>input_document_to_service</name>
+                    <value>${workingDir}/exported/document_to_service</value>
                 </property>
                 <property>
                     <name>input_document_to_software_url</name>
