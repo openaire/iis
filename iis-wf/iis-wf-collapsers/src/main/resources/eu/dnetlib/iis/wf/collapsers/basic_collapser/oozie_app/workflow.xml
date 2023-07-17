@@ -139,12 +139,6 @@
 
 				<!-- ## Schemas -->
 
-				<!-- ### Schema of the data ingested by the mapper. To be more precise, it's the schema of Avro data passed as template parameter of the AvroKey object passed to mapper -->
-				<property>
-					<name>avro.schema.input.key</name>
-					<value>${wf:actionData('generate-schema')[wf:conf('schema')]}</value>
-				</property>
-
 				<!-- ### Schemas of the data produced by the mapper -->
 
 				<!-- #### Schema of the key produced by the mapper. To be more precise, it's the schema of Avro data produced by the mapper and passed forward as template parameter of AvroKey object. -->

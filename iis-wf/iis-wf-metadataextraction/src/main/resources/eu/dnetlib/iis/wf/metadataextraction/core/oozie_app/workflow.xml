@@ -81,7 +81,6 @@
 	<action name="generate-schema">
 	    <java>
 	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
-	        <arg>eu.dnetlib.iis.importer.schemas.DocumentContent</arg>
 	        <arg>eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata</arg>
 	        <arg>eu.dnetlib.iis.audit.schemas.Fault</arg>
 	        <capture-output />
@@ -154,11 +153,6 @@
                 </property>
             
                 <!-- Standard stuff for our framework -->
-			    <property>
-					<name>avro.schema.input.key</name>
-					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.schemas.DocumentContent']}</value>
-				</property>
-                
                 <property>
 					<name>avro.mapreduce.multipleoutputs</name>
 					<value>${output_name_meta} ${output_name_fault}</value>

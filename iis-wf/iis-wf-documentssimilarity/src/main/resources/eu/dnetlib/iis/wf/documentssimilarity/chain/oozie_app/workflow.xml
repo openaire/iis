@@ -106,10 +106,6 @@
                     <name>param_converter_class</name>
                     <value>eu.dnetlib.iis.wf.documentssimilarity.converter.DocumentMetadataAvroToProtoBufConverter</value>
                 </property>
-                <property>
-                    <name>param_avro_input_class</name>
-                    <value>eu.dnetlib.iis.documentssimilarity.schemas.DocumentMetadata</value>
-                </property>
 			</configuration>
         </sub-workflow>
         <ok to="coansys" />

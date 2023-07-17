@@ -281,27 +281,7 @@
         </configuration>
     </global>
 
-    <start to="generate-schema" />
-
-    <!-- watch out for oozie.action.max.output.data limit set in oozie-site.xml it cannot be exceeded when capturing output of schemas generated as properties. When exceeded: either limit can be raised 
-        or multiple schema generating actions defined. -->
-    <action name="generate-schema">
-        <java>
-            <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator
-            </main-class>
-            <arg>eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject</arg>
-            <arg>eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet</arg>
-            <arg>eu.dnetlib.iis.referenceextraction.service.schemas.DocumentToService</arg>
-            <arg>eu.dnetlib.iis.export.schemas.DocumentToConceptIds</arg>
-            <arg>eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses</arg>
-            <arg>eu.dnetlib.iis.export.schemas.Citations</arg>
-            <arg>eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity</arg>
-            <arg>eu.dnetlib.iis.wf.affmatching.model.MatchedOrganizationWithProvenance</arg>
-            <capture-output />
-        </java>
-        <ok to="prepare" />
-        <error to="fail" />
-    </action>
+    <start to="prepare" />
 
     <action name="prepare">
         <fs>
@@ -423,10 +403,6 @@
                     <value>eu.dnetlib.iis.wf.export.actionmanager.module.DocumentToProjectActionBuilderModuleFactory</value>
                 </property>
                 <property>
-                    <name>avro.schema.input.key</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject']}</value>
-                </property>
-                <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${input_document_to_project}</value>
                 </property>
@@ -456,10 +432,6 @@
                     <value>eu.dnetlib.iis.wf.export.actionmanager.module.DocumentToDataSetActionBuilderModuleFactory</value>
                 </property>
                 <property>
-                    <name>avro.schema.input.key</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet']}</value>
-                </property>
-                <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${input_document_to_dataset}</value>
                 </property>
@@ -487,10 +459,6 @@
                 <property>
                     <name>export.action.builder.factory.classname</name>
                     <value>eu.dnetlib.iis.wf.export.actionmanager.module.DocumentToServiceActionBuilderModuleFactory</value>
-                </property>
-                <property>
-                    <name>avro.schema.input.key</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.service.schemas.DocumentToService']}</value>
                 </property>
                 <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
@@ -523,10 +491,6 @@
                     <value>eu.dnetlib.iis.wf.export.actionmanager.module.DocumentToProjectConceptsActionBuilderModuleFactory</value>
                 </property>
                 <property>
-                    <name>avro.schema.input.key</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.export.schemas.DocumentToConceptIds']}</value>
-                </property>
-                <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${input_document_to_project_concepts}</value>
                 </property>
@@ -549,10 +513,6 @@
                 <property>
                     <name>export.action.builder.factory.classname</name>
                     <value>eu.dnetlib.iis.wf.export.actionmanager.module.DocumentToConceptIdsActionBuilderModuleFactory</value>
-                </property>
-                <property>
-                    <name>avro.schema.input.key</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.export.schemas.DocumentToConceptIds']}</value>
                 </property>
                 <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
@@ -579,10 +539,6 @@
                     <value>eu.dnetlib.iis.wf.export.actionmanager.module.DocumentToCommunityActionBuilderModuleFactory</value>
                 </property>
                 <property>
-                    <name>avro.schema.input.key</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.export.schemas.DocumentToConceptIds']}</value>
-                </property>
-                <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${input_document_to_community}</value>
                 </property>
@@ -605,10 +561,6 @@
                 <property>
                     <name>export.action.builder.factory.classname</name>
                     <value>eu.dnetlib.iis.wf.export.actionmanager.module.DocumentToPdbActionBuilderModuleFactory</value>
-                </property>
-                <property>
-                    <name>avro.schema.input.key</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.export.schemas.DocumentToConceptIds']}</value>
                 </property>
                 <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
@@ -639,10 +591,6 @@
                     <value>eu.dnetlib.iis.wf.export.actionmanager.module.DocumentToCovid19ActionBuilderModuleFactory</value>
                 </property>
                 <property>
-                    <name>avro.schema.input.key</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.export.schemas.DocumentToConceptIds']}</value>
-                </property>
-                <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${input_document_to_covid19}</value>
                 </property>
@@ -665,10 +613,6 @@
                 <property>
                     <name>export.action.builder.factory.classname</name>
                     <value>eu.dnetlib.iis.wf.export.actionmanager.module.DocumentToDocumentClassesActionBuilderModuleFactory</value>
-                </property>
-                <property>
-                    <name>avro.schema.input.key</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.documentsclassification.schemas.DocumentToDocumentClasses']}</value>
                 </property>
                 <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
@@ -700,10 +644,6 @@
                     <value>eu.dnetlib.iis.wf.export.actionmanager.module.CitationsActionBuilderModuleFactory</value>
                 </property>
                 <property>
-                    <name>avro.schema.input.key</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.export.schemas.Citations']}</value>
-                </property>
-                <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${input_citations}</value>
                 </property>
@@ -726,10 +666,6 @@
                 <property>
                     <name>export.action.builder.factory.classname</name>
                     <value>eu.dnetlib.iis.wf.export.actionmanager.module.DocumentSimilarityActionBuilderModuleFactory</value>
-                </property>
-                <property>
-                    <name>avro.schema.input.key</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity']}</value>
                 </property>
                 <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
@@ -758,10 +694,6 @@
                 <property>
                     <name>export.action.builder.factory.classname</name>
                     <value>eu.dnetlib.iis.wf.export.actionmanager.module.MatchedOrganizationActionBuilderModuleFactory</value>
-                </property>
-                <property>
-                    <name>avro.schema.input.key</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.wf.affmatching.model.MatchedOrganizationWithProvenance']}</value>
                 </property>
                 <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>

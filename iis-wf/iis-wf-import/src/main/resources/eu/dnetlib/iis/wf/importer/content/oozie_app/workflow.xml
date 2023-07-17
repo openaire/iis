@@ -73,7 +73,6 @@
 	<action name="generate-schema">
 	    <java>
 	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
-	        <arg>eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl</arg>
 	        <arg>eu.dnetlib.iis.importer.schemas.DocumentContent</arg>
 	        <arg>org.apache.avro.Schema.Type.NULL</arg>
 	        <capture-output />
@@ -160,11 +159,6 @@
                     <name>mapreduce.input.fileinputformat.split.maxsize</name>
                     <value>${mapred_max_split_size}</value>
                 </property>
-
-				<property>
-					<name>avro.schema.input.key</name>
-					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl']}</value>
-				</property>
 
 				<property>
                     <name>avro.serialization.key.reader.schema</name>

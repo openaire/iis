@@ -105,11 +105,6 @@
                 </property>
             
                 <!-- Standard stuff for our framework -->
-
-                <property>
-					<name>avro.schema.input.key</name>
-					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.metadataextraction.schemas.DocumentText']}</value>
-				</property>
 				
                 <property>
                     <name>avro.serialization.key.reader.schema</name>

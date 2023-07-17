@@ -14,10 +14,6 @@
             <name>param_converter_class</name>
             <description>a class implementing AvroToProtoBufConverter</description>
         </property>
-        <property>
-            <name>param_avro_input_class</name>
-            <description>Avro input class</description>
-        </property>
 	</parameters>
     
     <global>
@@ -36,17 +32,7 @@
     </global>
     
     
-    <start to="generate-schema" />
-
-	<action name="generate-schema">
-	    <java>
-	        <main-class>eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator</main-class>
-	        <arg>${param_avro_input_class}</arg>
-	        <capture-output />
-	    </java>
-	    <ok to="converter" />
-	    <error to="fail" />
-	</action>
+    <start to="converter" />
 
     <action name="converter">
         <map-reduce>
@@ -115,12 +101,6 @@
                 <property>
                     <name>converter_class</name>
                     <value>${param_converter_class}</value>
-                </property>
-
-                <!-- ## Schemas -->
-                <property>
-                    <name>avro.schema.input.key</name>
-                    <value>${wf:actionData('generate-schema')[wf:conf('param_avro_input_class')]}</value>
                 </property>
 
                 <!-- ## Specification of the input and output data store -->

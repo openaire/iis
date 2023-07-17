@@ -447,10 +447,6 @@
 					<value>eu.dnetlib.iis.wf.importer.content.DocumentContentUrlDispatcher</value>
 				</property>
 				<property>
-					<name>avro.schema.input.key</name>
-					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl']}</value>
-				</property>
-				<property>
 					<name>mapreduce.input.fileinputformat.inputdir</name>
 					<value>${workingDir}/document_content_url_deduped/output</value>
 				</property>
