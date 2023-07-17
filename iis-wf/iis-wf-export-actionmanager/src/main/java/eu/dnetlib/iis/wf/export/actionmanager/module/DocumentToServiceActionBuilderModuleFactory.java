@@ -58,7 +58,7 @@ public class DocumentToServiceActionBuilderModuleFactory extends AbstractActionB
         // ------------------------ PRIVATE --------------------------
         
         /**
-         * Creates result-datasource relationship actions.
+         * Creates result-service relationship actions.
          */
         private AtomicAction<Relation> createAction(String source, String target, float confidenceLevel,
                 String relClass) throws TrustLevelThresholdExceededException {
