@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-documentssimilarity_avro_to_protobuf_sampletest">
+
+	<parameters>
+        <property>
+            <name>sparkExecutorMemory</name>
+            <description>memory for individual executor</description>
+        </property>
+        <property>
+            <name>sparkExecutorCores</name>
+            <description>number of cores used by single executor</description>
+        </property>
+        <property>
+            <name>sparkDriverMemory</name>
+            <description>memory for driver process</description>
+        </property>
+        <property>
+            <name>oozieActionShareLibForSpark2</name>
+            <description>oozie action sharelib for spark 2.*</description>
+        </property>
+        <property>
+            <name>spark2ExtraListeners</name>
+            <value>com.cloudera.spark.lineage.NavigatorAppListener</value>
+            <description>spark 2.* extra listeners classname</description>
+        </property>
+        <property>
+            <name>spark2SqlQueryExecutionListeners</name>
+            <value>com.cloudera.spark.lineage.NavigatorQueryListener</value>
+            <description>spark 2.* sql query execution listeners classname</description>
+        </property>
+        <property>
+            <name>spark2YarnHistoryServerAddress</name>
+            <description>spark 2.* yarn history server address</description>
+        </property>
+        <property>
+            <name>spark2EventLogDir</name>
+            <description>spark 2.* event log dir location</description>
+        </property>
+	</parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+            <property>
+                <name>oozie.action.sharelib.for.spark</name>
+                <value>${oozieActionShareLibForSpark2}</value>
+            </property>
+        </configuration>
+    </global>
+    
+    <start to="producer"/>
+
+    <action name="producer">
+        <java>
+			<prepare>
+				<delete path="${nameNode}${workingDir}/producer" />
+				<mkdir path="${nameNode}${workingDir}/producer" />
+			</prepare>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{person,
+            eu.dnetlib.iis.common.avro.Person,
+            eu/dnetlib/iis/wf/documentssimilarity/avro_to_protobuf/data/person.json}</arg>
+            <arg>-Operson=${workingDir}/producer/person</arg>
+        </java>
+        <ok to="avro_to_protobuf"/>
+        <error to="fail"/>
+    </action>
+    
+    <action name="avro_to_protobuf">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/avro_to_protobuf</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+					<name>input</name>
+					<value>${workingDir}/producer/person</value>
+                </property>
+                <property>
+					<name>output</name>
+					<value>${workingDir}/avro_to_protobuf/out</value>
+                </property>
+                <property>
+                    <name>param_converter_class</name>
+                    <value>eu.dnetlib.iis.wf.documentssimilarity.converter.PersonAvroToProtoBufConverter</value>
+                </property>
+			</configuration>            
+        </sub-workflow>
+		<ok to="proto-consumer"/>
+        <error to="fail"/>
+    </action>
+    
+    <action name="proto-consumer">
+        <spark xmlns="uri:oozie:spark-action:0.2">
+            <master>yarn-cluster</master>
+            <mode>cluster</mode>
+            <name>person_proto_consumer</name>
+            <class>eu.dnetlib.iis.wf.documentssimilarity.converter.PersonProtoConsumer</class>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-documentssimilarity-${projectVersion}.jar</jar>
+            <spark-opts>
+                --executor-memory=${sparkExecutorMemory}
+                --executor-cores=${sparkExecutorCores}
+                --driver-memory=${sparkDriverMemory}
+                --conf spark.extraListeners=${spark2ExtraListeners}
+                --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
+                --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
+                --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
+            </spark-opts>
+            <arg>-input=${workingDir}/avro_to_protobuf/out</arg>
+            <arg>-personId=1</arg>
+            <arg>-personName=John Doe</arg>
+            <arg>-personAge=30</arg>
+        </spark>
+        
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+		<message>Unfortunately, the workflow failed -- error message:
+			[${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+    <end name="end"/>
+    
+</workflow-app>
