@@ -51,6 +51,18 @@
             <classifier>hadoop2</classifier>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_2.11</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_2.11</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- It seems that this dependency is needed, if it is not here,
         running Oozie tests of Avro-based map-reduce ends up with
         "java.lang.NoClassDefFoundError" exception and statement that
@@ -86,5 +98,31 @@
             <artifactId>guava</artifactId>
         </dependency>
     </dependencies>
+    
+   <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.os72</groupId>
+                <artifactId>protoc-jar-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-protobuf-test-sources</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <protocVersion>2.5.0</protocVersion>
+                            <inputDirectories>
+                                <include>src/test/protobuf</include>
+                            </inputDirectories>
+                            <addSources>test</addSources>
+                            <outputDirectorySuffix>proto</outputDirectorySuffix>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

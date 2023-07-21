@@ -1,0 +1,9 @@
+option java_package = "eu.dnetlib.iis.documentssimilarity.protobuf";
+option java_outer_classname = "PersonProtos";
+
+
+message Person {
+  required int32 id = 1;
+  required string name = 2;
+  required int32 age = 3;
+}
