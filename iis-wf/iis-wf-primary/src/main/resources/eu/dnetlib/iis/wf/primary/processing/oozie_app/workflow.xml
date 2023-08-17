@@ -277,6 +277,11 @@
             <description>memory for individual executor</description>
         </property>
         <property>
+            <name>citationmatchingDirectSparkExecutorOverhead</name>
+            <value>2048</value>
+            <description>The amount of off heap memory (in megabytes) to be allocated for the executor</description>
+        </property>
+        <property>
             <name>citationmatchingDirectSparkExecutorCores</name>
             <value>${sparkExecutorCores}</value>
             <description>number of cores used by single executor</description>
@@ -1656,6 +1661,10 @@
                 <property>
                     <name>sparkExecutorMemory</name>
                     <value>${citationmatchingDirectSparkExecutorMemory}</value>
+                </property>
+                <property>
+                    <name>sparkExecutorOverhead</name>
+                    <value>${citationmatchingDirectSparkExecutorOverhead}</value>
                 </property>
                 <property>
                     <name>sparkExecutorCores</name>

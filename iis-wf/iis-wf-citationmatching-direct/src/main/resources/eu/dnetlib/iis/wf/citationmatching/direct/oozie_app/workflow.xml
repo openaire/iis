@@ -36,6 +36,10 @@
             <description>number of cores used by single executor</description>
         </property>
         <property>
+            <name>sparkExecutorOverhead</name>
+            <description>The amount of off heap memory (in megabytes) to be allocated for the executor</description>
+        </property>
+        <property>
             <name>oozieActionShareLibForSpark2</name>
             <description>oozie action sharelib for spark 2.*</description>
         </property>
@@ -93,6 +97,7 @@
                 --executor-memory=${sparkExecutorMemory}
                 --executor-cores=${sparkExecutorCores}
                 --driver-memory=${sparkDriverMemory}
+                --conf spark.yarn.executor.memoryOverhead=${sparkExecutorOverhead}
                 --conf spark.extraListeners=${spark2ExtraListeners}
                 --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
                 --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
