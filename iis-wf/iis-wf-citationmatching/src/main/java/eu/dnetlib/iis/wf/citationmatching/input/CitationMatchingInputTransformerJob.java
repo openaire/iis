@@ -1,5 +1,6 @@
 package eu.dnetlib.iis.wf.citationmatching.input;
 
+import java.io.IOException;
 import java.util.Collections;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +18,7 @@ import com.google.common.collect.Sets;
 import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.citations.schemas.Citation;
+import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
@@ -37,7 +39,7 @@ public class CitationMatchingInputTransformerJob {
     
     //------------------------ LOGIC --------------------------
     
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
         
         CitationMatchingInputTransformerJobParameters params = new CitationMatchingInputTransformerJobParameters();
         JCommander jcommander = new JCommander(params);
@@ -48,6 +50,8 @@ public class CitationMatchingInputTransformerJob {
         conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
         
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
+        	
+        	HdfsUtils.remove(sc.hadoopConfiguration(), params.output);
             
             JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> inputDocuments = avroLoader.loadJavaRDD(sc, params.inputMetadata, ExtractedDocumentMetadataMergedWithOriginal.class);
             

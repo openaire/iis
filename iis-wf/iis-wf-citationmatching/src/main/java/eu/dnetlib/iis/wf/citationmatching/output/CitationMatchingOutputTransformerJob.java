@@ -1,5 +1,7 @@
 package eu.dnetlib.iis.wf.citationmatching.output;
 
+import java.io.IOException;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -9,6 +11,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 import eu.dnetlib.iis.citationmatching.schemas.Citation;
+import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
@@ -30,7 +33,7 @@ public class CitationMatchingOutputTransformerJob {
     
     //------------------------ LOGIC --------------------------
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         
         CitationMatchingOutputTransformerJobParameters params = new CitationMatchingOutputTransformerJobParameters();
         JCommander jcommander = new JCommander(params);
@@ -41,6 +44,8 @@ public class CitationMatchingOutputTransformerJob {
         
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
             
+        	HdfsUtils.remove(sc.hadoopConfiguration(), params.output);
+        	
             JavaRDD<Citation> inputCitations = avroLoader.loadJavaRDD(sc, params.input, Citation.class);
             
             
