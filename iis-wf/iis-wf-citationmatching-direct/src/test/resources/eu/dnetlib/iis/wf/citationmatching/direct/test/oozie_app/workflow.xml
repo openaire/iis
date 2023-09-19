@@ -63,6 +63,10 @@
                     <value>${workingDir}/idmapping/PMC-ids.csv</value>
                 </property>
                 <property>
+                    <name>sparkExecutorOverhead</name>
+                    <value>512</value>
+                </property>
+                <property>
                     <name>output</name>
                     <value>${workingDir}/output/citation</value>
                 </property>
