@@ -321,36 +321,36 @@
 
             <dependency>
                 <groupId>org.apache.spark</groupId>
-                <artifactId>spark-core_2.11</artifactId>
+                <artifactId>spark-core_2.12</artifactId>
                 <version>${iis.spark.version}</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.spark</groupId>
-                <artifactId>spark-sql_2.11</artifactId>
+                <artifactId>spark-sql_2.12</artifactId>
                 <version>${iis.spark.version}</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.spark</groupId>
-                <artifactId>spark-avro_2.11</artifactId>
+                <artifactId>spark-avro_2.12</artifactId>
                 <version>${iis.spark.version}</version>
                 <scope>provided</scope>
             </dependency>
             
             <dependency>
                 <groupId>org.apache.spark</groupId>
-                <artifactId>spark-hive_2.11</artifactId>
+                <artifactId>spark-hive_2.12</artifactId>
                 <version>${iis.spark.version}</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>pl.edu.icm.spark-utils</groupId>
-                <artifactId>spark-utils_2.11</artifactId>
-                <version>1.0.1</version>
+                <artifactId>spark-utils_2.12</artifactId>
+                <version>1.0.2</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -1017,7 +1017,7 @@
         <iis.pig.version>0.12.0-${iis.cdh.version}</iis.pig.version>
         <iis.avro.version>1.7.6-${iis.cdh.version}</iis.avro.version>
         <iis.hadoop.version>2.6.0-${iis.cdh.version}</iis.hadoop.version>
-        <iis.spark.version>2.4.0.cloudera2</iis.spark.version>
+        <iis.spark.version>3.4.1</iis.spark.version>
         <iis.coansys.version>1.10</iis.coansys.version>
 
         <junit.version>5.8.2</junit.version>
