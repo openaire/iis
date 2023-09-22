@@ -66,22 +66,22 @@
 
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_2.11</artifactId>
+            <artifactId>spark-core_2.12</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_2.11</artifactId>
+            <artifactId>spark-sql_2.12</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-avro_2.11</artifactId>
+            <artifactId>spark-avro_2.12</artifactId>
         </dependency>
 
         <dependency>
             <groupId>pl.edu.icm.spark-utils</groupId>
-            <artifactId>spark-utils_2.11</artifactId>
+            <artifactId>spark-utils_2.12</artifactId>
         </dependency>
         
         <dependency>
