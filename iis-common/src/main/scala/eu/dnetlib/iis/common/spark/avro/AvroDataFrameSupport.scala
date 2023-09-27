@@ -26,9 +26,9 @@ class AvroDataFrameSupport(val spark: SparkSession) extends Serializable {
    * @tparam T Type of elements.
    * @return DataFrame containing data from the given list.
    */
-  def createDataFrame[T](data: java.util.List[T], avroSchema: Schema): DataFrame = {
-    createDataFrame(data.asScala, avroSchema)
-  }
+//  def createDataFrame[T](data: java.util.List[T], avroSchema: Schema): DataFrame = {
+//    createDataFrame(data.asScala, avroSchema)
+//  }
 
   /**
    * Creates a dataframe from a given collection.
@@ -38,13 +38,13 @@ class AvroDataFrameSupport(val spark: SparkSession) extends Serializable {
    * @tparam T Type of elements.
    * @return DataFrame containing data from the given seq.
    */
-  def createDataFrame[T](data: Seq[T], avroSchema: Schema): DataFrame = {
-    val rowSchema = SchemaConverters.toSqlType(avroSchema).dataType.asInstanceOf[StructType]
-    val encoder = RowEncoder.apply(rowSchema).resolveAndBind()
-    val deserializer = new AvroDeserializer(avroSchema, rowSchema)
-    val rows = data.map(record => encoder.fromRow(deserializer.deserialize(record).asInstanceOf[InternalRow]))
-    spark.createDataFrame(spark.sparkContext.parallelize(rows), rowSchema)
-  }
+//  def createDataFrame[T](data: Seq[T], avroSchema: Schema): DataFrame = {
+//    val rowSchema = SchemaConverters.toSqlType(avroSchema).dataType.asInstanceOf[StructType]
+//    val encoder = RowEncoder.apply(rowSchema).resolveAndBind()
+//    val deserializer = new AvroDeserializer(avroSchema, rowSchema)
+//    val rows = data.map(record => encoder.fromRow(deserializer.deserialize(record).asInstanceOf[InternalRow]))
+//    spark.createDataFrame(spark.sparkContext.parallelize(rows), rowSchema)
+//  }
 
   /**
    * Creates a dataset from given dataframe using kryo encoder.

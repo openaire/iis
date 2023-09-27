@@ -3,9 +3,11 @@ package eu.dnetlib.iis.wf.export.actionmanager.relation.citation;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.spark.avro.AvroDataFrameReader;
-import eu.dnetlib.iis.common.spark.avro.AvroDatasetWriter;
+import eu.dnetlib.iis.common.spark.avro.AvroDataFrameWriter;
 import eu.dnetlib.iis.common.utils.RDDUtils;
 import eu.dnetlib.iis.export.schemas.Citations;
+import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
+
 import org.apache.hadoop.io.Text;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.function.PairFunction;
@@ -24,7 +26,7 @@ import java.util.function.Function;
 public final class CitationRelationExporterIOUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(CitationRelationExporterIOUtils.class);
-
+    
     private CitationRelationExporterIOUtils() {
     }
 
@@ -80,14 +82,17 @@ public final class CitationRelationExporterIOUtils {
                 .mapToPair((PairFunction<Text, Text, Text>) content -> new Tuple2<>(new Text(), content));
     }
 
-    public static void storeReportEntries(SparkSession spark,
+    public static void storeReportEntries(SparkAvroSaver avroSaver,
                                           Dataset<ReportEntry> reportEntries,
                                           String outputReportPath) {
-        storeReportEntries(reportEntries, outputReportPath, (ds, path) ->
-                new AvroDatasetWriter<>(ds).write(path, ReportEntry.SCHEMA$));
+        storeReportEntries(avroSaver, reportEntries, outputReportPath, (ds, path) ->
+            // FIXME avoiding relying on writing Dataset<ReportEntry> which apparently is not easily achievable in spark3
+            // due to AvroDatasetSupport scala functions referring to classes which were made private in spark3
+            avroSaver.saveJavaRDD(ds.javaRDD(), ReportEntry.SCHEMA$, path));
+            // new AvroDataFrameWriter(ds).write(path, ReportEntry.SCHEMA$));
     }
 
-    public static void storeReportEntries(Dataset<ReportEntry> reportEntries,
+    public static void storeReportEntries(SparkAvroSaver avroSaver, Dataset<ReportEntry> reportEntries,
                                           String outputReportPath,
                                           BiConsumer<Dataset<ReportEntry>, String> writeFn) {
         logger.info("Storing report data in path {}.", outputReportPath);
