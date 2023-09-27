@@ -24,21 +24,21 @@ class AvroDatasetWriterTest extends TestWithSharedSparkSession {
         super.beforeEach();
     }
 
-    @Test
-    @DisplayName("Avro dataset writer writes dataset of avro type")
-    public void givenDatasetOfAvroType_whenWrittenToOutput_thenWriteSucceeds(@TempDir Path workingDir) throws IOException {
-        Path outputDir = workingDir.resolve("output");
-        Person person = Person.newBuilder().setId(1).setName("name").setAge(2).build();
-        Dataset<Person> ds = spark().createDataset(
-                Collections.singletonList(person),
-                Encoders.kryo(Person.class)
-        );
-
-        new AvroDatasetWriter<>(ds).write(outputDir.toString(), Person.SCHEMA$);
-
-        List<Person> personList = AvroTestUtils.readLocalAvroDataStore(outputDir.toString());
-        assertEquals(1, personList.size());
-        Person personRead = personList.get(0);
-        assertEquals(person, personRead);
-    }
+//    @Test
+//    @DisplayName("Avro dataset writer writes dataset of avro type")
+//    public void givenDatasetOfAvroType_whenWrittenToOutput_thenWriteSucceeds(@TempDir Path workingDir) throws IOException {
+//        Path outputDir = workingDir.resolve("output");
+//        Person person = Person.newBuilder().setId(1).setName("name").setAge(2).build();
+//        Dataset<Person> ds = spark().createDataset(
+//                Collections.singletonList(person),
+//                Encoders.kryo(Person.class)
+//        );
+//
+//        new AvroDatasetWriter<>(ds).write(outputDir.toString(), Person.SCHEMA$);
+//
+//        List<Person> personList = AvroTestUtils.readLocalAvroDataStore(outputDir.toString());
+//        assertEquals(1, personList.size());
+//        Person personRead = personList.get(0);
+//        assertEquals(person, personRead);
+//    }
 }

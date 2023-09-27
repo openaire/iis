@@ -23,20 +23,20 @@ class AvroDatasetSupport(val spark: SparkSession) extends Serializable {
    * @tparam T Type of objects in the dataset.
    * @return DataFrame of objects corresponding to records in the given dataset.
    */
-  def toDF[T <: SpecificRecordBase](ds: Dataset[T], avroSchema: Schema): DataFrame = {
-    val avroSchemaStr = avroSchema.toString
-    val rowSchema = SchemaConverters.toSqlType(avroSchema).dataType.asInstanceOf[StructType]
-    val encoder = RowEncoder(rowSchema).resolveAndBind()
-
-    object SerializationSupport extends Serializable {
-      @transient private lazy val deserializer = new AvroDeserializer(new Schema.Parser().parse(avroSchemaStr), rowSchema)
-      private val rows = ds.rdd.map(record => encoder.fromRow(deserializer.deserialize(record).asInstanceOf[InternalRow]))
-
-      def doToDF(): DataFrame = {
-        spark.createDataFrame(rows, rowSchema)
-      }
-    }
-
-    SerializationSupport.doToDF()
-  }
+//  def toDF[T <: SpecificRecordBase](ds: Dataset[T], avroSchema: Schema): DataFrame = {
+//    val avroSchemaStr = avroSchema.toString
+//    val rowSchema = SchemaConverters.toSqlType(avroSchema).dataType.asInstanceOf[StructType]
+//    val encoder = RowEncoder(rowSchema).resolveAndBind()
+//
+//    object SerializationSupport extends Serializable {
+//      @transient private lazy val deserializer = new AvroDeserializer(new Schema.Parser().parse(avroSchemaStr), rowSchema)
+//      private val rows = ds.rdd.map(record => encoder.fromRow(deserializer.deserialize(record).asInstanceOf[InternalRow]))
+//
+//      def doToDF(): DataFrame = {
+//        spark.createDataFrame(rows, rowSchema)
+//      }
+//    }
+//
+//    SerializationSupport.doToDF()
+//  }
 }

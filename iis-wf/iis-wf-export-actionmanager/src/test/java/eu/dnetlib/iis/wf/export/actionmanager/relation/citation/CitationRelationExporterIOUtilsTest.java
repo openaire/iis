@@ -1,7 +1,23 @@
 package eu.dnetlib.iis.wf.export.actionmanager.relation.citation;
 
-import eu.dnetlib.iis.common.schemas.ReportEntry;
-import eu.dnetlib.iis.common.spark.TestWithSharedSparkSession;
+import static eu.dnetlib.iis.wf.export.actionmanager.relation.citation.CitationRelationExporterIOUtils.clearOutput;
+import static eu.dnetlib.iis.wf.export.actionmanager.relation.citation.CitationRelationExporterIOUtils.readCitations;
+import static eu.dnetlib.iis.wf.export.actionmanager.relation.citation.CitationRelationExporterIOUtils.storeReportEntries;
+import static eu.dnetlib.iis.wf.export.actionmanager.relation.citation.CitationRelationExporterIOUtils.storeSerializedActions;
+import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import org.apache.hadoop.io.Text;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.sql.Dataset;
@@ -12,18 +28,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.common.spark.TestWithSharedSparkSession;
+import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 import scala.Tuple2;
-
-import java.util.Collections;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
-import static eu.dnetlib.iis.wf.export.actionmanager.relation.citation.CitationRelationExporterIOUtils.*;
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CitationRelationExporterIOUtilsTest extends TestWithSharedSparkSession {
@@ -70,12 +79,13 @@ class CitationRelationExporterIOUtilsTest extends TestWithSharedSparkSession {
     @Test
     @DisplayName("Report entries are stored in output")
     public void givenMockWriteFunction_whenReportEntriesAreStored_thenMockIsUsed() {
+        SparkAvroSaver avroSaver = mock(SparkAvroSaver.class);
         BiConsumer<Dataset<ReportEntry>, String> writeFn = mock(BiConsumer.class);
         Dataset<ReportEntry> repartitionedReportEntries = mock(Dataset.class);
         Dataset<ReportEntry> reportEntries = mock(Dataset.class);
         when(reportEntries.repartition(1)).thenReturn(repartitionedReportEntries);
 
-        storeReportEntries(reportEntries, "path/to/report", writeFn);
+        storeReportEntries(avroSaver, reportEntries, "path/to/report", writeFn);
 
         verify(writeFn, atLeastOnce()).accept(repartitionedReportEntries, "path/to/report");
     }
