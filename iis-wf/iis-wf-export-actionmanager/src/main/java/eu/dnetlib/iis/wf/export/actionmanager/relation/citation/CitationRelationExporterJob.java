@@ -6,6 +6,8 @@ import com.beust.jcommander.Parameters;
 import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.wf.export.actionmanager.entity.ConfidenceLevelUtils;
+import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
+
 import org.apache.hadoop.io.Text;
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Dataset;
@@ -22,13 +24,16 @@ import static eu.dnetlib.iis.wf.export.actionmanager.relation.citation.CitationR
 import static org.apache.spark.sql.functions.udf;
 
 public class CitationRelationExporterJob {
-
+    
+    private static final SparkAvroSaver avroSaver = new SparkAvroSaver();
+    
     private CitationRelationExporterJob() {
     }
 
     private static final Logger logger = LoggerFactory.getLogger(CitationRelationExporterJob.class);
 
     public static void main(String[] args) {
+
         JobParameters params = new JobParameters();
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
@@ -52,7 +57,7 @@ public class CitationRelationExporterJob {
             storeSerializedActions(spark, serializedActions, params.outputRelationPath);
 
             Dataset<ReportEntry> reportEntries = relationsToReportEntries(spark, relations);
-            storeReportEntries(spark, reportEntries, params.outputReportPath);
+            storeReportEntries(avroSaver, reportEntries, params.outputReportPath);
         });
     }
 

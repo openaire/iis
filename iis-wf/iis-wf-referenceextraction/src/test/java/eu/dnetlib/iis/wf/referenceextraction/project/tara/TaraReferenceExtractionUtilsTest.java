@@ -1,51 +1,48 @@
 package eu.dnetlib.iis.wf.referenceextraction.project.tara;
 
-import eu.dnetlib.iis.common.spark.TestWithSharedSparkSession;
-import eu.dnetlib.iis.common.spark.avro.AvroDataFrameSupport;
-import eu.dnetlib.iis.common.spark.pipe.PipeExecutionEnvironment;
-import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
-import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
-import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
-import eu.dnetlib.iis.transformers.metadatamerger.schemas.PublicationType;
-import org.apache.spark.SparkFiles;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
-import org.apache.spark.sql.RowFactory;
-import org.apache.spark.sql.avro.SchemaConverters;
-import org.junit.jupiter.api.Test;
+import static eu.dnetlib.iis.wf.referenceextraction.project.tara.TaraReferenceExtractionUtils.buildDocumentMetadata;
+import static eu.dnetlib.iis.wf.referenceextraction.project.tara.TaraReferenceExtractionUtils.runReferenceExtraction;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static eu.dnetlib.iis.wf.referenceextraction.project.tara.TaraReferenceExtractionUtils.buildDocumentMetadata;
-import static eu.dnetlib.iis.wf.referenceextraction.project.tara.TaraReferenceExtractionUtils.runReferenceExtraction;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import org.apache.spark.SparkFiles;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.RowFactory;
+import org.apache.spark.sql.avro.SchemaConverters;
+import org.apache.spark.sql.types.StructType;
+import org.junit.jupiter.api.Test;
+
+import eu.dnetlib.iis.common.spark.TestWithSharedSparkSession;
+import eu.dnetlib.iis.common.spark.pipe.PipeExecutionEnvironment;
+import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
+import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
+import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 
 public class TaraReferenceExtractionUtilsTest extends TestWithSharedSparkSession {
 
     @Test
     public void buildDocumentMetadataShouldRunProperly() {
         // given
-        AvroDataFrameSupport avroDataFrameSupport = new AvroDataFrameSupport(spark());
-        Dataset<Row> documentTextDF = avroDataFrameSupport.createDataFrame(
+        Dataset<Row> documentTextDF = createTextDataFrame(
                 Arrays.asList(
                         createDocumentText("docId-1", "text-1"),
                         createDocumentText("docId-2", "text-2")
-                ),
-                DocumentText.SCHEMA$);
-        Dataset<Row> extractedDocumentMetadataMergedWithOriginalDF = avroDataFrameSupport.createDataFrame(
+                ));
+        Dataset<Row> extractedDocumentMetadataMergedWithOriginalDF = createMetaDataFrame(
                 Arrays.asList(
-                        createExtractedDocumentMetadataMergedWithOriginal("docId-1"),
-                        createExtractedDocumentMetadataMergedWithOriginal("docId-a")
-                ),
-                ExtractedDocumentMetadataMergedWithOriginal.SCHEMA$);
+                		 createDocumentMetadata("docId-1")
+                ));
 
         // when
         Dataset<Row> resultDF = buildDocumentMetadata(documentTextDF, extractedDocumentMetadataMergedWithOriginalDF);
@@ -89,6 +86,20 @@ public class TaraReferenceExtractionUtilsTest extends TestWithSharedSparkSession
         assertForDocumentToProject(row, "docId-1", "projId-1", 1.0f);
     }
 
+    private Dataset<Row> createTextDataFrame(List<DocumentText> inputList) {
+    	List<Row> dataFrameList = new ArrayList<>(inputList.size());
+    	for (DocumentText input : inputList) {
+			dataFrameList.add(RowFactory.create(input.getId(), input.getText()));
+    	}
+    	return spark().createDataFrame(dataFrameList, 
+    			(StructType) SchemaConverters.toSqlType(DocumentText.SCHEMA$).dataType());
+    }
+    
+    private Dataset<Row> createMetaDataFrame(List<Row> inputList) {
+    	return spark().createDataFrame(inputList, 
+    			(StructType) SchemaConverters.toSqlType(ExtractedDocumentMetadataMergedWithOriginal.SCHEMA$).dataType());
+    }
+    
     private static DocumentText createDocumentText(String id, String text) {
         return DocumentText.newBuilder()
                 .setId(id)
@@ -96,15 +107,11 @@ public class TaraReferenceExtractionUtilsTest extends TestWithSharedSparkSession
                 .build();
     }
 
-    private static ExtractedDocumentMetadataMergedWithOriginal createExtractedDocumentMetadataMergedWithOriginal(String id) {
-        return ExtractedDocumentMetadataMergedWithOriginal.newBuilder()
-                .setId(id)
-                .setPublicationType(PublicationType.newBuilder().build())
-                .build();
+    private static Row createDocumentMetadata(String id) {
+        return createDocumentMetadata(id, null);
     }
 
-    private static Row createDocumentMetadata(String id,
-                                              String text) {
+    private static Row createDocumentMetadata(String id, String text) {
         return RowFactory.create(id, null, null, text);
     }
 

@@ -18,8 +18,8 @@ class AvroDatasetWriter[T <: SpecificRecordBase](ds: Dataset[T]) extends Seriali
    * @param path       Path to the data store.
    * @param avroSchema Avro schema of the records.
    */
-  def write(path: String, avroSchema: Schema): Unit = {
-    new AvroDataFrameWriter(new AvroDatasetSupport(ds.sparkSession).toDF(ds, avroSchema))
-      .write(path, avroSchema)
-  }
+//  def write(path: String, avroSchema: Schema): Unit = {
+//    new AvroDataFrameWriter(new AvroDatasetSupport(ds.sparkSession).toDF(ds, avroSchema))
+//      .write(path, avroSchema)
+//  }
 }
