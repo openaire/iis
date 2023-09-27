@@ -85,7 +85,7 @@
 
     <action name="citation-relation-exporter">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            <master>yarn-cluster</master>
+            <master>yarn</master>
             <mode>cluster</mode>
             <name>citation relation spark exporter</name>
             <class>eu.dnetlib.iis.wf.export.actionmanager.relation.citation.CitationRelationExporterJob</class>

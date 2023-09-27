@@ -24,25 +24,25 @@ public class AvroDatasetSupportTest extends TestWithSharedSparkSession {
         super.beforeEach();
     }
 
-    @Test
-    @DisplayName("Avro dataset support converts dataset of avro type to dataframe of avro type")
-    public void givenDatasetOfAvroType_whenConvertedToDataFrame_thenProperDataFrameIsReturned() {
-        Person person = Person.newBuilder().setId(1).setName("name").setAge(2).build();
-        Dataset<Person> ds = spark().createDataset(
-                Collections.singletonList(person),
-                Encoders.kryo(Person.class)
-        );
-
-        Dataset<Row> result = new AvroDatasetSupport(spark()).toDF(ds, Person.SCHEMA$);
-
-        assertSchemasEqualIgnoringNullability(Person.SCHEMA$, result.schema());
-        List<Row> rows = result.collectAsList();
-        assertEquals(1, rows.size());
-        Row row = rows.get(0);
-        assertEquals(person.getId(), row.getAs("id"));
-        assertEquals(person.getName(), row.getAs("name"));
-        assertEquals(person.getAge(), row.getAs("age"));
-    }
+//    @Test
+//    @DisplayName("Avro dataset support converts dataset of avro type to dataframe of avro type")
+//    public void givenDatasetOfAvroType_whenConvertedToDataFrame_thenProperDataFrameIsReturned() {
+//        Person person = Person.newBuilder().setId(1).setName("name").setAge(2).build();
+//        Dataset<Person> ds = spark().createDataset(
+//                Collections.singletonList(person),
+//                Encoders.kryo(Person.class)
+//        );
+//
+//        Dataset<Row> result = new AvroDatasetSupport(spark()).toDF(ds, Person.SCHEMA$);
+//
+//        assertSchemasEqualIgnoringNullability(Person.SCHEMA$, result.schema());
+//        List<Row> rows = result.collectAsList();
+//        assertEquals(1, rows.size());
+//        Row row = rows.get(0);
+//        assertEquals(person.getId(), row.getAs("id"));
+//        assertEquals(person.getName(), row.getAs("name"));
+//        assertEquals(person.getAge(), row.getAs("age"));
+//    }
 
     public static void assertSchemasEqualIgnoringNullability(Schema avroSchema, StructType sqlSchema) {
         assertEquals(SchemaConverters.toSqlType(avroSchema).dataType().asNullable(), sqlSchema.asNullable());

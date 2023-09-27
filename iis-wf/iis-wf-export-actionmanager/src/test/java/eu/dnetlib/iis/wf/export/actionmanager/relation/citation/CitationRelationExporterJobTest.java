@@ -1,5 +1,20 @@
 package eu.dnetlib.iis.wf.export.actionmanager.relation.citation;
 
+import static eu.dnetlib.iis.wf.export.actionmanager.relation.citation.Matchers.matchingAtomicAction;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.hadoop.io.Text;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
@@ -8,29 +23,13 @@ import eu.dnetlib.iis.common.java.io.HdfsTestUtils;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.spark.TestWithSharedSparkSession;
-import eu.dnetlib.iis.common.spark.avro.AvroDataFrameSupport;
 import eu.dnetlib.iis.common.spark.avro.AvroDataFrameWriter;
 import eu.dnetlib.iis.common.spark.avro.AvroDatasetReader;
 import eu.dnetlib.iis.export.schemas.Citations;
 import eu.dnetlib.iis.wf.export.actionmanager.AtomicActionDeserializationUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
 import eu.dnetlib.iis.wf.export.actionmanager.module.BuilderModuleHelper;
-import org.apache.avro.generic.GenericData;
-import org.apache.hadoop.io.Text;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import scala.Tuple2;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.List;
-
-import static eu.dnetlib.iis.wf.export.actionmanager.relation.citation.Matchers.matchingAtomicAction;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CitationRelationExporterJobTest extends TestWithSharedSparkSession {
 
@@ -39,17 +38,16 @@ class CitationRelationExporterJobTest extends TestWithSharedSparkSession {
     public void givenInputCitationsPath_whenRun_thenSerializedAtomicActionsAndReportsAreCreated(@TempDir Path rootInputPath,
                                                                                                 @TempDir Path rootOutputPath) throws IOException {
         List<Citations> citationsList = Collections.singletonList(
-                createCitations(
+                CitationRelationExporterTestUtils.createCitations(
                         "DocumentId",
                         Collections.singletonList(
                                 createCitationEntry("DestinationDocumentId", 1.0f)
                         ))
         );
         Path inputCitationsPath = rootInputPath.resolve("citations");
-        new AvroDataFrameWriter(
-                new AvroDataFrameSupport(spark()).createDataFrame(citationsList, Citations.SCHEMA$)).write(
-                inputCitationsPath.toString()
-        );
+
+        new AvroDataFrameWriter(CitationRelationExporterTestUtils.createDataFrame(spark(), citationsList)).write(inputCitationsPath.toString());
+        
         float trustLevelThreshold = 0.5f;
         Path outputRelationPath = rootOutputPath.resolve("output");
         Path outputReportPath = rootOutputPath.resolve("report");
@@ -91,16 +89,10 @@ class CitationRelationExporterJobTest extends TestWithSharedSparkSession {
         ));
     }
 
-    private static Citations createCitations(String documentId, List<CitationEntry> citationEntries) {
-        return Citations.newBuilder()
-                .setDocumentId(documentId)
-                .setCitations(new GenericData.Array<>(Citations.SCHEMA$.getField("citations").schema(), citationEntries))
-                .build();
-    }
-
     private static CitationEntry createCitationEntry(String destinationDocumentId, Float confidenceLevel) {
         return CitationEntry.newBuilder()
                 .setPosition(0)
+                .setRawText("irrelevant")
                 .setDestinationDocumentId(destinationDocumentId)
                 .setConfidenceLevel(confidenceLevel)
                 .setExternalDestinationDocumentIds(Collections.emptyMap())
