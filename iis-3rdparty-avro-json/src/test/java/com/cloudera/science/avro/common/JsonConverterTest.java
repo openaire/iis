@@ -1,6 +1,8 @@
 package com.cloudera.science.avro.common;
 
 import com.google.common.collect.ImmutableList;
+
+import org.apache.avro.JsonConverter;
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Type;
 import org.apache.avro.generic.GenericRecord;
