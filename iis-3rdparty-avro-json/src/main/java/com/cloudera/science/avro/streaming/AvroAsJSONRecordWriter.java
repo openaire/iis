@@ -16,13 +16,12 @@ package com.cloudera.science.avro.streaming;
 
 import java.io.IOException;
 
+import org.apache.avro.JsonConverter;
 import org.apache.avro.file.DataFileWriter;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.RecordWriter;
 import org.apache.hadoop.mapred.Reporter;
-
-import com.cloudera.science.avro.common.JsonConverter;
 
 public class AvroAsJSONRecordWriter implements RecordWriter<Text, Text> {
 

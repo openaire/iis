@@ -16,6 +16,7 @@ package com.cloudera.science.avro.streaming;
 
 import java.io.IOException;
 
+import org.apache.avro.JsonConverter;
 import org.apache.avro.Schema;
 import org.apache.avro.file.CodecFactory;
 import org.apache.avro.file.DataFileConstants;
@@ -32,7 +33,6 @@ import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.RecordWriter;
 import org.apache.hadoop.util.Progressable;
 
-import com.cloudera.science.avro.common.JsonConverter;
 import com.cloudera.science.avro.common.SchemaLoader;
 
 /**
