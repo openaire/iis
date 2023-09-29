@@ -3,7 +3,6 @@ package eu.dnetlib.iis.wf.export.actionmanager.relation.citation;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.spark.avro.AvroDataFrameReader;
-import eu.dnetlib.iis.common.spark.avro.AvroDataFrameWriter;
 import eu.dnetlib.iis.common.utils.RDDUtils;
 import eu.dnetlib.iis.export.schemas.Citations;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
@@ -86,10 +85,8 @@ public final class CitationRelationExporterIOUtils {
                                           Dataset<ReportEntry> reportEntries,
                                           String outputReportPath) {
         storeReportEntries(avroSaver, reportEntries, outputReportPath, (ds, path) ->
-            // FIXME avoiding relying on writing Dataset<ReportEntry> which apparently is not easily achievable in spark3
-            // due to AvroDatasetSupport scala functions referring to classes which were made private in spark3
-            avroSaver.saveJavaRDD(ds.javaRDD(), ReportEntry.SCHEMA$, path));
-            // new AvroDataFrameWriter(ds).write(path, ReportEntry.SCHEMA$));
+            //mh: due to changes in avro serialization model in spark3 relying on AvroSaver instead of writer storing Datasets
+            avroSaver.saveJavaRDD(ds.toJavaRDD(), ReportEntry.SCHEMA$, path));
     }
 
     public static void storeReportEntries(SparkAvroSaver avroSaver, Dataset<ReportEntry> reportEntries,

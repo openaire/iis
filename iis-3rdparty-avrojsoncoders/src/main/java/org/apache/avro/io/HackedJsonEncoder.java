@@ -20,6 +20,7 @@ package org.apache.avro.io;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.BitSet;
 
 import org.apache.avro.AvroTypeException;
@@ -196,8 +197,10 @@ public class HackedJsonEncoder extends ParsingEncoder implements Parser.ActionHa
 
   private void writeByteArray(byte[] bytes, int start, int len)
     throws IOException {
-    out.writeString(
-        new String(bytes, start, len, JsonDecoder.CHARSET));
+      out.writeString(
+//        mh: after upgrading avro version JsonDecoder.CHARSET got missing but the value used in that class was set to StandardCharsets.ISO_8859_1
+//        new String(bytes, start, len, JsonDecoder.CHARSET));
+          new String(bytes, start, len, StandardCharsets.ISO_8859_1));
   }
 
   @Override
