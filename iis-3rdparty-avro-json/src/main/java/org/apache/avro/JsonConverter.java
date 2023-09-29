@@ -12,7 +12,7 @@
  * the specific language governing permissions and limitations under the
  * License.
  */
-package com.cloudera.science.avro.common;
+package org.apache.avro;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,14 +21,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -119,26 +118,26 @@ private GenericRecord convert(Map<String, Object> raw, Schema schema)
           Object value = null;
           switch (fieldSchema.getType()) {
           case BOOLEAN:
-            value = defaultValue.getValueAsBoolean();
+            value = defaultValue.asBoolean();
             break;
           case DOUBLE:
-            value = defaultValue.getValueAsDouble();
+            value = defaultValue.asDouble();
             break;
           case FLOAT:
-            value = (float) defaultValue.getValueAsDouble();
+            value = (float) defaultValue.asDouble();
             break;
           case INT:
-            value = defaultValue.getValueAsInt();
+            value = defaultValue.asInt();
             break;
           case LONG:
-            value = defaultValue.getValueAsLong();
+            value = defaultValue.asLong();
             break;
           case STRING:
-            value = defaultValue.getValueAsText();
+            value = defaultValue.asText();
             break;
           case MAP:
             Map<String, Object> fieldMap = mapper.readValue(
-                defaultValue.getValueAsText(), Map.class);
+                defaultValue.asText(), Map.class);
             Map<String, Object> mvalue = Maps.newHashMap();
             for (Map.Entry<String, Object> e : fieldMap.entrySet()) {
               mvalue.put(e.getKey(),
@@ -148,7 +147,7 @@ private GenericRecord convert(Map<String, Object> raw, Schema schema)
             break;
           case ARRAY:
             List fieldArray = mapper.readValue(
-                defaultValue.getValueAsText(), List.class);
+                defaultValue.asText(), List.class);
             List lvalue = Lists.newArrayList();
             for (Object elem : fieldArray) {
               lvalue.add(typeConvert(elem, name, fieldSchema.getElementType()));
@@ -157,7 +156,7 @@ private GenericRecord convert(Map<String, Object> raw, Schema schema)
             break;
           case RECORD:
             Map<String, Object> fieldRec = mapper.readValue(
-                defaultValue.getValueAsText(), Map.class);
+                defaultValue.asText(), Map.class);
             value = convert(fieldRec, fieldSchema);
             break;
             default:

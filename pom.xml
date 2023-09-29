@@ -124,6 +124,28 @@
             <artifactId>log4j-slf4j-impl</artifactId>
             <version>2.19.0</version>
         </dependency>
+        
+        <!-- just to make sure all transitive dependencies of an old log4j are excluded -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.5</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <!-- this dep is required to align on slf4j-api version used by spark-core-2.12 -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.6</version>
+        </dependency>
 
         <!-- old log4j deps -->
         <!--
@@ -378,18 +400,34 @@
                 <groupId>pl.edu.icm.spark-utils</groupId>
                 <artifactId>spark-utils_2.12</artifactId>
                 <version>1.0.2</version>
-                <!-- FIXME not available in spark3 sharelib folder, commenting out until finishing running tests -->
+                <!-- FIXME not available in spark3 sharelib folder yet, commenting out until finishing the testing phase -->
                 <!--
                 <scope>provided</scope>
                 -->
             </dependency>
-
+            
             <!-- Avro dependencies -->
             <dependency>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro</artifactId>
-                <version>${iis.avro.version}</version>
+                <version>1.11.1</version>
+                <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>2.14.2</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- updated avro does not include dependency required by iis-3rdparty-avrojsoncoders -->
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-core-asl</artifactId>
+                <!-- this was the version used by older avro, we might want to upgrade it -->
+                <version>1.8.10</version>
+            </dependency>
+            
 
             <dependency>
                 <groupId>org.apache.avro</groupId>
