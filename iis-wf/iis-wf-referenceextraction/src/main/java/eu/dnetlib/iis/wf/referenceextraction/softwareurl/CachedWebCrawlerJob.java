@@ -99,7 +99,7 @@ public class CachedWebCrawlerJob {
 
             JavaPairRDD<CharSequence, Optional<DocumentText>> cacheByUrl = cachedSources
                     .mapToPair(x -> new Tuple2<>(x.getId(), Optional.of(x)))
-                    .union(cachedFaults.mapToPair(x -> new Tuple2<>(x.getInputObjectId(), Optional.empty())));
+                    .union(cachedFaults.mapToPair(x -> new Tuple2<CharSequence, Optional<DocumentText>>(x.getInputObjectId(), Optional.empty())));
             JavaPairRDD<CharSequence, DocumentToSoftwareUrl> inputByUrl = documentToSoftwareUrl
                     .mapToPair(x -> new Tuple2<>(x.getSoftwareUrl(), x));
             JavaPairRDD<CharSequence, Tuple2<DocumentToSoftwareUrl, Optional<Optional<DocumentText>>>> inputJoinedWithCache =

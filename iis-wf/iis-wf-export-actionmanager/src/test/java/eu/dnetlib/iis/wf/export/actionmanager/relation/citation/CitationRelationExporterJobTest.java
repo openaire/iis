@@ -46,7 +46,7 @@ class CitationRelationExporterJobTest extends TestWithSharedSparkSession {
         );
         Path inputCitationsPath = rootInputPath.resolve("citations");
 
-        new AvroDataFrameWriter(CitationRelationExporterTestUtils.createDataFrame(spark(), citationsList)).write(inputCitationsPath.toString());
+        new AvroDataFrameWriter(CitationRelationExporterTestUtils.createDataFrame(spark(), citationsList)).write(inputCitationsPath.toString(),Citations.SCHEMA$);
         
         float trustLevelThreshold = 0.5f;
         Path outputRelationPath = rootOutputPath.resolve("output");
