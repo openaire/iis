@@ -94,7 +94,7 @@ public class PatentMetadataRetrieverJob {
 
             JavaPairRDD<CharSequence, Optional<DocumentText>> cacheById = cachedSources
                     .mapToPair(x -> new Tuple2<>(x.getId(), Optional.of(x)))
-                    .union(cachedFaults.mapToPair(x -> new Tuple2<>(x.getInputObjectId(), Optional.empty())));
+                    .union(cachedFaults.mapToPair(x -> new Tuple2<CharSequence, Optional<DocumentText>>(x.getInputObjectId(), Optional.empty())));
             JavaPairRDD<CharSequence, ImportedPatent> inputById = importedPatents
                     .mapToPair(x -> new Tuple2<>(getId(x), x));
             JavaPairRDD<CharSequence, Tuple2<ImportedPatent, Optional<Optional<DocumentText>>>> inputJoinedWithCache =
