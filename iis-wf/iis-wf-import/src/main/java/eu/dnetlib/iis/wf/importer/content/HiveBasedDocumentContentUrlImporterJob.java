@@ -59,7 +59,7 @@ public class HiveBasedDocumentContentUrlImporterJob {
             Dataset<Row> result = sparkSession.sql("select id, location, mimetype, size, hash from "
                     + params.inputTableName + " where location is not null");
             
-            JavaRDD<DocumentContentUrl> documentContentUrl = buildOutputRecord(result, sparkSession);
+            JavaRDD<DocumentContentUrl> documentContentUrl = buildOutputRecord(result);
             documentContentUrl.cache();
             
             JavaRDD<ReportEntry> reports = generateReportEntries(sparkSession, documentContentUrl.count()); 
@@ -76,7 +76,7 @@ public class HiveBasedDocumentContentUrlImporterJob {
                 Encoders.kryo(ReportEntry.class)).javaRDD();
     }
     
-    private static JavaRDD<DocumentContentUrl> buildOutputRecord(Dataset<Row> source, SparkSession spark) {
+    private static JavaRDD<DocumentContentUrl> buildOutputRecord(Dataset<Row> source) {
         Dataset<Row> resultDs = source.select(
                 concat(lit(InfoSpaceConstants.ROW_PREFIX_RESULT), col("id")).as("id"),
                 col("location").as("url"),
@@ -84,7 +84,7 @@ public class HiveBasedDocumentContentUrlImporterJob {
                 col("size").cast("long").divide(1024).as("contentSizeKB"),
                 col("hash").as("contentChecksum")
                 );
-        return new AvroDataFrameSupport(spark).toDS(resultDs, DocumentContentUrl.class).toJavaRDD();
+        return AvroDataFrameSupport.toDS(resultDs, DocumentContentUrl.class).toJavaRDD();
     }
     
     @Parameters(separators = "=")

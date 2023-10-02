@@ -79,6 +79,6 @@ public class ImportInformationSpaceJobUtils {
                         col("oid").as("originalId")
                 );
 
-        return new AvroDataFrameSupport(spark).toDS(identifierMappingDF, IdentifierMapping.class).toJavaRDD();
+        return AvroDataFrameSupport.toDS(identifierMappingDF, IdentifierMapping.class).toJavaRDD();
     }
 }
