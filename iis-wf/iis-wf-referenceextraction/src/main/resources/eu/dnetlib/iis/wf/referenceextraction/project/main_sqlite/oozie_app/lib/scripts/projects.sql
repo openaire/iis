@@ -13,6 +13,7 @@ hidden var 'nihposfull' from select jmergeregexp(jgroup(word)) from (select * fr
 hidden var 'nihpositives' from select jmergeregexp(jgroup(word)) from (select * from nihpositives order by length(word) desc);
 hidden var 'nihnegatives' from select jmergeregexp(jgroup(word)) from (select * from nihnegatives order by length(word) desc);
 hidden var 'hfripos' from select  "(?:innovation project)|(?:multigold numbered)|(?:fellowship number)|(?:grant fellowship)|(?:innovation grant)|(?:scholarship code)|(?:technology gsrt)|(?:project number)|(?:faculty grant)|(?:hfri project)|(?:elidek grant)|(?:agreement no)|(?:funded grant)|(?:project no)|(?:hfri grant)|(?:gsrt grant)|(?:hfri fm17)|(?:hfri code)|(?:grant no)|(?:grant ga)|(?:ga hfri)";
+hidden var 'hfrineg' from select  "(?:\bekt\b)|(?:eliamep)|(?:\bforth\b)|(?:\bi.k.a.\b)|(?:\bipep\b)";
 hidden var 'miur_unidentified' from select id from grants where fundingclass1="MIUR" and grantid="unidentified" limit 1;
 hidden var 'wt_unidentified' from select id from grants where fundingclass1="WT" and grantid="unidentified" limit 1;
 hidden var 'gsri_unidentified' from select id from grants where fundingclass1="GSRI" and grantid="unidentified" limit 1;
@@ -32,8 +33,8 @@ select id, grantid, gid, jmergeregexp(terms) as terms, jlen(terms) as lt from
         where fundingclass1 = "INCa" and gid is not null));
 
 create temp table hfri_unidentified_only as select docid, var('hfri_unidentified') as id, prev, middle, next from (setschema 'docid,prev,middle,next' 
-   select c1 as docid, textwindow2s(c2, 10,2,10, "\bHFRI\b|Hellenic Foundation|Greek Foundation|ΕΛΙΔΕΚ|Ελληνικό Ίδρυμα") from ((setschema 'c1,c2' select * from pubs where c2 is not null))) 
-   where var('hfri_unidentified') and lower(j2s(prev,middle,next)) not like "%himalayan%" and regexprmatches("gsrt|greek|hellenic|innovation|research|grant|greece",lower(j2s(prev,middle,next)));
+   select c1 as docid, textwindow2s(lower(c2), 10,2,10, "\bhfri\b|hellenic foundation|greek foundation|ελιδεκ|ελληνικο ιδρυμα") from ((setschema 'c1,c2' select * from pubs where c2 is not null))) 
+   where var('hfri_unidentified') and lower(j2s(prev,middle,next)) not like "%himalayan%" and not regexprmatches(var('hfrineg'), lower(j2s(prev,middle,next))) and regexprmatches("gsrt|innovation|research|grant|greece",lower(j2s(prev,middle,next)));
 
 
 create temp table output_hfri as 
