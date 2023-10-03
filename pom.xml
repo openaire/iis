@@ -386,7 +386,10 @@
                 <groupId>org.apache.spark</groupId>
                 <artifactId>spark-avro_2.12</artifactId>
                 <version>${iis.spark.version}</version>
+                <!-- FIXME not available in spark3 sharelib folder yet, commenting out until finishing the testing phase -->
+                <!--
                 <scope>provided</scope>
+                -->
             </dependency>
             
             <dependency>
