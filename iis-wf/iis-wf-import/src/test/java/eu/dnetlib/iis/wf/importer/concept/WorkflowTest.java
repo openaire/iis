@@ -13,9 +13,16 @@ import org.junit.jupiter.api.Test;
 public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 
     @Test
-    public void testImportConceptWorkflow() {
+    public void testImportConceptWithISLookupServiceBasedWorkflow() {
         OozieWorkflowTestConfiguration wfConf = new OozieWorkflowTestConfiguration();
         wfConf.setTimeoutInSeconds(720);
-        testWorkflow("eu/dnetlib/iis/wf/importer/concept/sampletest", wfConf);
+        testWorkflow("eu/dnetlib/iis/wf/importer/concept/islookup", wfConf);
+    }
+    
+    @Test
+    public void testImportConceptWithContextStreamingServiceBasedWorkflow() {
+        OozieWorkflowTestConfiguration wfConf = new OozieWorkflowTestConfiguration();
+        wfConf.setTimeoutInSeconds(720);
+        testWorkflow("eu/dnetlib/iis/wf/importer/concept/contextservice", wfConf);
     }
 }

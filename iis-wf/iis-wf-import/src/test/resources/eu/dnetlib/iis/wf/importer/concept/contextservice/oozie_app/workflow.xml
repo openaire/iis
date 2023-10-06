@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-importer_concept_sampletest">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-importer_concept_contextservice_sampletest">
 
     <global>
         <job-tracker>${jobTracker}</job-tracker>
@@ -24,12 +24,12 @@
             <propagate-configuration />
             <configuration>
                 <property>
-                    <name>islookup_facade_factory_classname</name>
-                    <value>eu.dnetlib.iis.wf.importer.concept.MockISLookupFacadeFactory</value>
+                    <name>context_streaming_facade_factory_classname</name>
+                    <value>eu.dnetlib.iis.wf.importer.concept.MockContextStreamingFacadeFactory</value>
                 </property>
                 <property>
-                    <name>islookup_service_location</name>
-                    <value>$UNDEFINED$</value>
+                    <name>context_service_location</name>
+                    <value>dummyServiceLocation</value>
                 </property>
                 <property>
                     <name>context_ids_csv</name>

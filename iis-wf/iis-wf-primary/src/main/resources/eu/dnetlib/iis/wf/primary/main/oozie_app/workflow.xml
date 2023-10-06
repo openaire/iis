@@ -87,7 +87,13 @@
         <!-- import concepts related -->
         <property>
             <name>import_islookup_service_location</name>
+            <value>$UNDEFINED$</value>
             <description>IS Lookup service location</description>
+        </property>
+        <property>
+            <name>import_context_service_location</name>
+            <value>$UNDEFINED$</value>
+            <description>RESTful context service location</description>
         </property>
         <property>
             <name>import_project_concepts_context_ids_csv</name>
@@ -523,6 +529,10 @@
                 <property>
                     <name>islookup_service_location</name>
                     <value>${import_islookup_service_location}</value>
+                </property>
+                <property>
+                    <name>context_service_location</name>
+                    <value>${import_context_service_location}</value>
                 </property>
                 <property>
                     <name>project_concepts_context_ids_csv</name>

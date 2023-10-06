@@ -1,0 +1,43 @@
+[{
+  "id": "fet-fp7::open::301::284566",
+  "label": "Quantum Propagating Microwaves in Strongly Coupled Environments",
+  "params": [
+    {"name": "CD_PROJECT_NUMBER", "value":"284566"},
+    {"name": "CD_ACRONYM", "value":"PROMISCE"},
+    {"name": "CD_FRAMEWORK", "value":"FP7"}
+  ]
+},
+{
+  "id": "fet-fp7::open::301::284584",
+  "label": "Quantum Interferometry with Bose-Einstein Condensates",
+  "params": [
+    {"name": "CD_PROJECT_NUMBER", "value":"284584"},
+    {"name": "CD_FRAMEWORK", "value":"FP7"}
+  ]
+},
+{
+  "id": "fet-fp7::open::301",
+  "label": "Challenging current thinking",
+  "params": [
+    {"name": "CD_DIVNAME", "value":"7.A.SP1.03.19.01"},
+    {"name": "CD_ABBR", "value":"ICT-2011.9.1"},
+    {"name": "CD_PARENT_DIVNAME", "value":"7.A.SP1.03.19"},
+    {"name": "DUPLICATED_ENTRY", "value":"value1"},
+    {"name": "DUPLICATED_ENTRY", "value":"value2"}
+  ]
+},
+{
+  "id": "fet-fp7::open",
+  "label": "FET Open",
+  "params": [
+    {"name": "CD_DIVNAME", "value":"7.A.SP1.03.08"},
+    {"name": "CD_ABBR", "value":"ICT-2007.8.0"},
+    {"name": "CD_PARENT_DIVNAME", "value":"7.A.SP1.03", "unknown_param_field": null}
+  ]
+},
+{
+  "id": "fet-fp7",
+  "label": "FET",
+  "params": [],
+  "unknown_field": null
+}]
