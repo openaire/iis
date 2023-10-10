@@ -86,7 +86,7 @@
 	<action name="document_classification_job"> 
         <spark xmlns="uri:oozie:spark-action:0.2">
             
-            <master>yarn-cluster</master>
+            <master>yarn</master>
             
             <mode>cluster</mode>
             

@@ -76,7 +76,7 @@
                     <value>${oozieActionShareLibForSpark2}</value>
                 </property>
             </configuration>
-            <master>yarn-cluster</master>
+            <master>yarn</master>
             <mode>cluster</mode>
             <name>researchinitiative-input-metadata-transformer</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.researchinitiative.ResearchInitiativeReferenceExtractionInputTransformerJob</class>
@@ -107,7 +107,7 @@
                     <value>${oozieActionShareLibForSpark2}</value>
                 </property>
             </configuration>
-            <master>yarn-cluster</master>
+            <master>yarn</master>
             <mode>cluster</mode>
             <name>researchinitiative-concept-transformer</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.researchinitiative.ResearchInitiativeMetadataTransformerJob</class>

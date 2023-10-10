@@ -62,7 +62,7 @@
                 </property>
             </configuration>
 
-            <master>yarn-cluster</master>
+            <master>yarn</master>
             <mode>cluster</mode>
             <name>community-referenceextraction-input-transformer</name>
 

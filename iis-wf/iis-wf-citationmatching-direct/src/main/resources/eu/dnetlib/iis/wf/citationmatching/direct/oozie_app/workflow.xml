@@ -87,7 +87,7 @@
     <action name="citationmatchig-direct">
         <spark xmlns="uri:oozie:spark-action:0.2">
 
-            <master>yarn-cluster</master>
+            <master>yarn</master>
             <mode>cluster</mode>
             <name>citationmatching_direct</name>
             <class>eu.dnetlib.iis.wf.citationmatching.direct.CitationMatchingDirectJob</class>
