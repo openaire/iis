@@ -76,7 +76,7 @@
                     <value>${oozieActionShareLibForSpark2}</value>
                 </property>
             </configuration>
-            <master>yarn-cluster</master>
+            <master>yarn</master>
             <mode>cluster</mode>
             <name>referenceextraction_project_funding_report</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.project.ProjectFunderReportJob</class>

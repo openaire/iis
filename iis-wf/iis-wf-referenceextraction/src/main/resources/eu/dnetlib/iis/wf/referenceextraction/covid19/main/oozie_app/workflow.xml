@@ -93,7 +93,7 @@
                     <value>${oozieActionShareLibForSpark2}</value>
                 </property>
             </configuration>
-            <master>yarn-cluster</master>
+            <master>yarn</master>
             <mode>cluster</mode>
             <name>covid19-referenceextraction-input-transformer</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.covid19.input.Covid19ReferenceExtractionInputTransformerJob</class>
@@ -185,7 +185,7 @@
                     <value>${oozieActionShareLibForSpark2}</value>
                 </property>
             </configuration>
-            <master>yarn-cluster</master>
+            <master>yarn</master>
             <mode>cluster</mode>
             <name>covid19-referenceextraction-output-transformer</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.covid19.output.Covid19ToConceptIdTransformerJob</class>
