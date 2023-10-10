@@ -67,7 +67,7 @@
                 </property>
             </configuration>
 
-            <master>yarn-cluster</master>
+            <master>yarn</master>
             <mode>cluster</mode>
             <name>referenceextraction_root_conceptid_report</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.concept.RootConceptIdReportJob</class>

@@ -201,7 +201,7 @@
 
     <action name="cached-webcrawl">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            <master>yarn-cluster</master>
+            <master>yarn</master>
             <mode>cluster</mode>
             <name>referenceextraction_softwareurl_webcrawl</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.softwareurl.CachedWebCrawlerJob</class>
