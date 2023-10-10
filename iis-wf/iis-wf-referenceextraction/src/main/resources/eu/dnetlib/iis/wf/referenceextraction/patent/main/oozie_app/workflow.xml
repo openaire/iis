@@ -160,7 +160,7 @@
 
     <action name="input_transformer">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            <master>yarn-cluster</master>
+            <master>yarn</master>
             <mode>cluster</mode>
             <name>patent-referenceextraction-input-transformer</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.patent.input.PatentReferenceExtractionInputTransformerJob</class>
@@ -225,7 +225,7 @@
 
     <action name="metadata_retriever_input_transformer">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            <master>yarn-cluster</master>
+            <master>yarn</master>
             <mode>cluster</mode>
             <name>patent-metadata-retriever-input-transformer</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.patent.input.PatentMetadataRetrieverInputTransformerJob</class>
@@ -249,7 +249,7 @@
 
     <action name="metadata_retriever">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            <master>yarn-cluster</master>
+            <master>yarn</master>
             <mode>cluster</mode>
             <name>patent-metadata-retriever</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.patent.PatentMetadataRetrieverJob</class>
@@ -292,7 +292,7 @@
 
     <action name="metadata_extractor">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            <master>yarn-cluster</master>
+            <master>yarn</master>
             <mode>cluster</mode>
             <name>patent-metadata-extractor</name>
             <class>eu.dnetlib.iis.wf.referenceextraction.patent.PatentMetadataExtractorJob</class>

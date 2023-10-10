@@ -77,7 +77,7 @@
 
     <action name="patent-importer">
         <spark xmlns="uri:oozie:spark-action:0.2">
-            <master>yarn-cluster</master>
+            <master>yarn</master>
             <mode>cluster</mode>
             <name>import-patent</name>
             <class>eu.dnetlib.iis.wf.importer.patent.PatentReaderJob</class>
