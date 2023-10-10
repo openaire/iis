@@ -122,7 +122,7 @@
     <action name="affiliation-matching">
         <spark xmlns="uri:oozie:spark-action:0.2">
 
-            <master>yarn-cluster</master>
+            <master>yarn</master>
             <mode>cluster</mode>
             <name>Affiliation Matching</name>
             <class>eu.dnetlib.iis.wf.affmatching.AffMatchingJob</class>

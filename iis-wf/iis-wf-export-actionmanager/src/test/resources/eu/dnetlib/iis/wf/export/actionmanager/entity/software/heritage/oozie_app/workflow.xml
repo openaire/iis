@@ -103,8 +103,8 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/document_software_url/software-actionset-id</arg>
-            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/entity/software/heritage/output/document_to_software.properties,
-                /eu/dnetlib/iis/wf/export/actionmanager/entity/software/heritage/output/software_to_document.properties
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/entity/software/heritage/output/software_to_document.properties,
+                /eu/dnetlib/iis/wf/export/actionmanager/entity/software/heritage/output/document_to_software.properties
             </arg>
         </java>
         <ok to="report-consumer" />
