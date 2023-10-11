@@ -1,10 +1,10 @@
 package eu.dnetlib.iis.wf.importer.concept;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.wf.importer.facade.ContextNotFoundException;
 import eu.dnetlib.iis.wf.importer.facade.ContextStreamingFacade;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeFactory;
 
@@ -39,12 +39,11 @@ public class MockContextStreamingFacadeFactory implements ServiceFacadeFactory<C
         //------------------------ LOGIC --------------------------
 
         @Override
-        public InputStream getStream(String contextId) throws IOException {
+        public InputStream getStream(String contextId) throws ContextNotFoundException {
             if (supportedContextId.equals(contextId)) {
                 return ClassPathResourceProvider.getResourceInputStream(fetProfileLocation);
             } else {
-                // FIXME throw an appropriate exception instance!
-                throw new RuntimeException("context id unknown: " + contextId);            
+                throw new ContextNotFoundException(contextId);
             }
         }
 

@@ -1,12 +1,28 @@
 package eu.dnetlib.iis.wf.importer.concept;
 
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import eu.dnetlib.iis.common.java.PortBindings;
-import eu.dnetlib.iis.common.java.porttype.AvroPortType;
-import eu.dnetlib.iis.common.java.porttype.PortType;
-import eu.dnetlib.iis.importer.schemas.Concept;
-import eu.dnetlib.iis.wf.importer.concept.model.Context;
-import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeException;
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
+import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_FACADE_FACTORY_CLASS;
+import static eu.dnetlib.iis.wf.importer.VerificationUtils.verifyReport;
+import static eu.dnetlib.iis.wf.importer.concept.ISLookupServiceBasedConceptImporter.CONCEPT_COUNTER_NAME;
+import static eu.dnetlib.iis.wf.importer.concept.ISLookupServiceBasedConceptImporter.PARAM_IMPORT_CONTEXT_IDS_CSV;
+import static eu.dnetlib.iis.wf.importer.concept.ISLookupServiceBasedConceptImporter.PORT_OUT_CONCEPTS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.avro.file.DataFileWriter;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -22,19 +38,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.google.gson.Gson;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
-import static eu.dnetlib.iis.wf.importer.ImportWorkflowRuntimeParameters.IMPORT_FACADE_FACTORY_CLASS;
-import static eu.dnetlib.iis.wf.importer.VerificationUtils.verifyReport;
-import static eu.dnetlib.iis.wf.importer.concept.ISLookupServiceBasedConceptImporter.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.common.java.PortBindings;
+import eu.dnetlib.iis.common.java.porttype.AvroPortType;
+import eu.dnetlib.iis.common.java.porttype.PortType;
+import eu.dnetlib.iis.importer.schemas.Concept;
+import eu.dnetlib.iis.wf.importer.concept.model.Context;
+import eu.dnetlib.iis.wf.importer.facade.ContextStreamingException;
+import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeException;
 
 
 /**
@@ -141,10 +152,27 @@ public class RestfulEndpointBasedConceptImporterTest {
     }
     
     @Test
-    public void testRunUnrecognizedContext() {
+    public void testRunUnrecognizedContext() throws Exception {
         // given
-        // FIXME this test needs to be implemented once RESTful context API returns an appropriate HTTP error code 
-        fail("NIY");
+        this.parameters.put(PARAM_IMPORT_CONTEXT_IDS_CSV, "unrecognized-context-id");
+        
+        // execute
+        importer.run(portBindings, conf, parameters);
+        
+        // assert
+        verify(conceptWriter, never()).append(any());
+        verifyReport(0, CONCEPT_COUNTER_NAME);
+    }
+    
+    @Test
+    public void testRunReceivingUnexpectedException() throws Exception {
+        // given
+        
+        this.parameters.put(IMPORT_FACADE_FACTORY_CLASS, 
+                "eu.dnetlib.iis.wf.importer.concept.ExceptionThrowingContextStreamingFacadeFactory");
+        
+        // execute
+        assertThrows(ContextStreamingException.class, () -> importer.run(portBindings, conf, parameters));
     }
     
     @Test

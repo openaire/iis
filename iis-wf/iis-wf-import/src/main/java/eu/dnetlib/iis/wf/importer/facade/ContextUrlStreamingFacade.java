@@ -2,9 +2,9 @@ package eu.dnetlib.iis.wf.importer.facade;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 
 import org.apache.log4j.Logger;
 
@@ -42,23 +42,28 @@ public class ContextUrlStreamingFacade implements ContextStreamingFacade {
     //------------------------ LOGIC --------------------------
     
     @Override
-    public InputStream getStream(String contextId) throws IOException {
-        return getStreamWithTimeouts(contextId);
+    public InputStream getStream(String contextId) throws ContextNotFoundException, ContextStreamingException {
+        try {
+            log.info(String.format("setting timeouts for streaming service: read timeout (%s) and connect timeout (%s)", 
+                    this.readTimeout, this.connectionTimeout));
+            URL url = new URL(buildUrl(endpointLocation, contextId));
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setReadTimeout(this.readTimeout);
+            con.setConnectTimeout(this.connectionTimeout);
+            if (HttpURLConnection.HTTP_NOT_FOUND == con.getResponseCode()) {
+                throw new ContextNotFoundException(contextId);
+            } else {
+                return con.getInputStream();    
+            }    
+        } catch (IOException e) {
+            throw new ContextStreamingException(contextId, e);
+        }
+        
     }
 
     //------------------------ PRIVATE --------------------------
     
     private static String buildUrl(String endpointLocation, String contextId) {
         return endpointLocation + "/" + contextId;
-    }
-    
-    private InputStream getStreamWithTimeouts(String contextId) throws IOException {
-        log.info(String.format("setting timeouts for streaming service: read timeout (%s) and connect timeout (%s)", 
-                this.readTimeout, this.connectionTimeout));
-        URL url = new URL(buildUrl(endpointLocation, contextId));
-        URLConnection con = url.openConnection();
-        con.setReadTimeout(this.readTimeout);
-        con.setConnectTimeout(this.connectionTimeout);
-        return con.getInputStream();
     }
 }

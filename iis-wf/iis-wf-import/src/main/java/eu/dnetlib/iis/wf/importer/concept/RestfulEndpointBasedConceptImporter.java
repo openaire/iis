@@ -32,6 +32,7 @@ import eu.dnetlib.iis.common.java.porttype.PortType;
 import eu.dnetlib.iis.importer.schemas.Concept;
 import eu.dnetlib.iis.wf.importer.concept.model.Context;
 import eu.dnetlib.iis.wf.importer.concept.model.Param;
+import eu.dnetlib.iis.wf.importer.facade.ContextNotFoundException;
 import eu.dnetlib.iis.wf.importer.facade.ContextStreamingFacade;
 import eu.dnetlib.iis.wf.importer.facade.ServiceFacadeUtils;
 
@@ -105,9 +106,8 @@ public class RestfulEndpointBasedConceptImporter implements Process {
 
                             counters.increment(CONCEPT_COUNTER_NAME, (long) concepts.length);
                         }
-                    } catch (IOException e) {
-                        // FIXME stick to a specific exception or HTTP error code once RESTful context API returns an appropriate HTTP error code
-                        log.warn("error when retrieving context details for: " + contextId, e);
+                    } catch (ContextNotFoundException e) {
+                        log.warn("context not found: " + contextId, e);
                     }
                 }
             }
