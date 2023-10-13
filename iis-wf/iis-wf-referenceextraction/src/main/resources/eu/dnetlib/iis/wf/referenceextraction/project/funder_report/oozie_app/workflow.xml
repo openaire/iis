@@ -47,16 +47,6 @@
             <description>oozie action sharelib for spark 2.*</description>
         </property>
         <property>
-            <name>spark2ExtraListeners</name>
-            <value>com.cloudera.spark.lineage.NavigatorAppListener</value>
-            <description>spark 2.* extra listeners classname</description>
-        </property>
-        <property>
-            <name>spark2SqlQueryExecutionListeners</name>
-            <value>com.cloudera.spark.lineage.NavigatorQueryListener</value>
-            <description>spark 2.* sql query execution listeners classname</description>
-        </property>
-        <property>
             <name>spark2YarnHistoryServerAddress</name>
             <description>spark 2.* yarn history server address</description>
         </property>
@@ -86,8 +76,9 @@
                 --executor-memory=${sparkExecutorMemory}
                 --executor-cores=${sparkExecutorCores}
                 --driver-memory=${sparkDriverMemory}
-                --conf spark.extraListeners=${spark2ExtraListeners}
-                --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
+                --conf spark.extraListeners=
+                --conf spark.sql.queryExecutionListeners=
+                --conf spark.shuffle.useOldFetchProtocol=true
                 --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
                 --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
             </spark-opts>
