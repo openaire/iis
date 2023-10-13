@@ -39,6 +39,10 @@
 			<description>IS Lookup service location</description>
 		</property>
 		<property>
+            <name>context_service_location</name>
+            <description>RESTful context service location</description>
+        </property>
+		<property>
 			<name>project_concepts_context_ids_csv</name>
 			<description>comma separated list of concepts context identifiers to be picked by ISLookup</description>
 		</property>
@@ -247,6 +251,10 @@
 					<name>islookup_service_location</name>
 					<value>${islookup_service_location}</value>
 				</property>
+				<property>
+                    <name>context_service_location</name>
+                    <value>${context_service_location}</value>
+                </property>
 				<property>
 					<name>context_ids_csv</name>
 					<value>${project_concepts_context_ids_csv}</value>
