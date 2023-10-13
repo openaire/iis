@@ -23,7 +23,7 @@ public class MockContextStreamingFacadeFactory implements ServiceFacadeFactory<C
     
     @Override
     public ContextStreamingFacade instantiate(Map<String, String> parameters) {
-        return new MockISLookupFacade();
+        return new MockContextStreamingFacade();
     }
     
     //--------------- INNER CLASS -------------------
@@ -32,7 +32,7 @@ public class MockContextStreamingFacadeFactory implements ServiceFacadeFactory<C
      * ISLookup mock providing static concept profiles.
      *
      */
-    private static class MockISLookupFacade implements ContextStreamingFacade {
+    private static class MockContextStreamingFacade implements ContextStreamingFacade {
         
         
 

@@ -5,7 +5,6 @@ import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.DNET_SERVICE_CLIEN
 import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.DNET_SERVICE_CONNECTION_TIMEOUT_DEFAULT_VALUE;
 import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.DNET_SERVICE_READ_TIMEOUT_DEFAULT_VALUE;
 
-import java.net.MalformedURLException;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
@@ -26,16 +25,17 @@ public class ContextUrlStreamingFacadeFactory implements ServiceFacadeFactory<Co
     
     @Override
     public ContextStreamingFacade instantiate(Map<String, String> parameters) {
-        try {
-            Preconditions.checkArgument(parameters.containsKey(IMPORT_CONTEXT_STREAM_ENDPOINT_URL), 
-                    "unknown projects stream endpoint url, required parameter '%s' is missing!", IMPORT_CONTEXT_STREAM_ENDPOINT_URL);
-            
-            return new ContextUrlStreamingFacade(parameters.get(IMPORT_CONTEXT_STREAM_ENDPOINT_URL),
-                    Integer.parseInt(WorkflowRuntimeParameters.getParamValue(DNET_SERVICE_CLIENT_READ_TIMEOUT, DNET_SERVICE_READ_TIMEOUT_DEFAULT_VALUE, parameters)),
-                    Integer.parseInt(WorkflowRuntimeParameters.getParamValue(DNET_SERVICE_CLIENT_CONNECTION_TIMEOUT, DNET_SERVICE_CONNECTION_TIMEOUT_DEFAULT_VALUE, parameters)));
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
+
+        Preconditions.checkArgument(parameters.containsKey(IMPORT_CONTEXT_STREAM_ENDPOINT_URL),
+                "unknown projects stream endpoint url, required parameter '%s' is missing!",
+                IMPORT_CONTEXT_STREAM_ENDPOINT_URL);
+
+        return new ContextUrlStreamingFacade(parameters.get(IMPORT_CONTEXT_STREAM_ENDPOINT_URL),
+                Integer.parseInt(WorkflowRuntimeParameters.getParamValue(DNET_SERVICE_CLIENT_READ_TIMEOUT,
+                        DNET_SERVICE_READ_TIMEOUT_DEFAULT_VALUE, parameters)),
+                Integer.parseInt(WorkflowRuntimeParameters.getParamValue(DNET_SERVICE_CLIENT_CONNECTION_TIMEOUT,
+                        DNET_SERVICE_CONNECTION_TIMEOUT_DEFAULT_VALUE, parameters)));
+
     }
 
     

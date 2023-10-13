@@ -19,7 +19,7 @@ public class ExceptionThrowingContextStreamingFacadeFactory implements ServiceFa
     
     @Override
     public ContextStreamingFacade instantiate(Map<String, String> parameters) {
-        return new MockISLookupFacade();
+        return new ExceptionThrowingContextStreamingFacade();
     }
     
     //--------------- INNER CLASS -------------------
@@ -28,7 +28,7 @@ public class ExceptionThrowingContextStreamingFacadeFactory implements ServiceFa
      * ISLookup mock providing static concept profiles.
      *
      */
-    private static class MockISLookupFacade implements ContextStreamingFacade {
+    private static class ExceptionThrowingContextStreamingFacade implements ContextStreamingFacade {
         
         //------------------------ LOGIC --------------------------
         

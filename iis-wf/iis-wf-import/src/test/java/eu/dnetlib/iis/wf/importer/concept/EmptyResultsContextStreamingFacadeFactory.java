@@ -19,7 +19,7 @@ public class EmptyResultsContextStreamingFacadeFactory implements ServiceFacadeF
     
     @Override
     public ContextStreamingFacade instantiate(Map<String, String> parameters) {
-        return new MockISLookupFacade();
+        return new EmptyResultsContextStreamingFacade();
     }
     
     //--------------- INNER CLASS -------------------
@@ -28,7 +28,7 @@ public class EmptyResultsContextStreamingFacadeFactory implements ServiceFacadeF
      * ISLookup mock providing static concept profiles.
      *
      */
-    private static class MockISLookupFacade implements ContextStreamingFacade {
+    private static class EmptyResultsContextStreamingFacade implements ContextStreamingFacade {
         
         //------------------------ LOGIC --------------------------
         
