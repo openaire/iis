@@ -33,8 +33,8 @@ select id, grantid, gid, jmergeregexp(terms) as terms, jlen(terms) as lt from
         where fundingclass1 = "INCa" and gid is not null));
 
 create temp table hfri_unidentified_only as select docid, var('hfri_unidentified') as id, prev, middle, next from (setschema 'docid,prev,middle,next' 
-   select c1 as docid, textwindow2s(lower(c2), 10,2,10, "\bhfri\b|hellenic foundation|greek foundation|ελιδεκ|ελληνικο ιδρυμα") from ((setschema 'c1,c2' select * from pubs where c2 is not null))) 
-   where var('hfri_unidentified') and lower(j2s(prev,middle,next)) not like "%himalayan%" and not regexprmatches(var('hfrineg'), lower(j2s(prev,middle,next))) and regexprmatches("gsrt|innovation|research|grant|greece",lower(j2s(prev,middle,next)));
+   select c1 as docid, textwindow2s(filterstopwords(lower(c2)), 10,3,10, "\bhfri\b|h\.f\.r\.i\.|hellenic foundation research|greek foundation research|ελιδεκ|ελληνικο ιδρυμα ερευνας|ελληνικό ίδρυμα έρευνας|elidek") from ((setschema 'c1,c2' select * from pubs where c2 is not null))) 
+   where var('hfri_unidentified') and lower(j2s(prev,middle,next)) not like "%himalayan%" and not regexprmatches(var('hfrineg'), lower(j2s(prev,middle,next))) and regexprmatches("gsrt|greek|greece|hellenic",lower(j2s(prev,middle,next)));
 
 
 create temp table output_hfri as 
@@ -372,4 +372,4 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'text
 union all
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', prev||" "||middle||" "||next) from matched_undefined_gsri
 union all
-select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', prev||" "||middle||" "||next) from (select * from hfri_unidentified_only group by docid);
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', prev||" << "||middle||" >> "||next) from (select * from hfri_unidentified_only group by docid);
