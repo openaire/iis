@@ -352,7 +352,7 @@
         </property>
         <property>
             <name>textUnionBlockSize</name>
-            <value>32m</value>
+            <value>64m</value>
             <description>DocumentText datastore block size affecting number of tasks issued by each text mining module.
             Introduced to prevent long lasting tasks from occupying cluster resources for too long.</description>
         </property>
