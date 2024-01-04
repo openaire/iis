@@ -23,6 +23,7 @@ hidden var 'sshrc_unidentified' from (select id from grants where fundingclass1=
 hidden var 'nrc_unidentified' from (select id from grants where fundingclass1="NRC" and grantid="unidentified" limit 1);
 hidden var 'inca_unidentified' from (select id from grants where fundingclass1="INCa" and grantid="unidentified" limit 1);
 hidden var 'hfri_unidentified' from (select id from grants where fundingclass1="HFRI" and grantid="unidentified" limit 1);
+hidden var 'irc_unidentified' from (select id from grants where fundingclass1="IRC" and grantid="unidentified" limit 1);
 
 create  temp table pubs as setschema 'c1,c2' select jsonpath(c1, '$.id', '$.text') from stdinput();
 
@@ -55,6 +56,9 @@ create temp table matched_undefined_miur_only as select distinct docid, var('miu
 select c1 as docid, textwindow2s(c2,10,1,10, '\b(?:RBSI\d{2}\w{4})\b') from (setschema 'c1,c2' select * from pubs where c2 is not null)) 
 where var('miur_unidentified') and (regexprmatches('\b(?:RBSI\d{2}\w{4})\b', middle));
 
+create temp table matched_undefined_irc_only as select distinct docid, var('miur_unidentified') as id, prev,middle,next from (setschema 'docid,prev,middle,next'
+select c1 as docid, textwindow2s(keywords(comprspaces(lower(regexpr("\n",c2," ")))),10,3,10, 'irish research council') from (setschema 'c1,c2' select * from pubs where c2 is not null)) 
+where var('irc_unidentified');
 
 
 
@@ -371,5 +375,7 @@ union all
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', prev||" "||middle||" "||next) from matched_undefined_inca_only
 union all
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', prev||" "||middle||" "||next) from matched_undefined_gsri
+union all
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', prev||" "||middle||" "||next) from matched_undefined_irc_only
 union all
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', prev||" << "||middle||" >> "||next) from (select * from hfri_unidentified_only group by docid);
