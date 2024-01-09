@@ -56,7 +56,7 @@ create temp table matched_undefined_miur_only as select distinct docid, var('miu
 select c1 as docid, textwindow2s(c2,10,1,10, '\b(?:RBSI\d{2}\w{4})\b') from (setschema 'c1,c2' select * from pubs where c2 is not null)) 
 where var('miur_unidentified') and (regexprmatches('\b(?:RBSI\d{2}\w{4})\b', middle));
 
-create temp table matched_undefined_irc_only as select distinct docid, var('miur_unidentified') as id, prev,middle,next from (setschema 'docid,prev,middle,next'
+create temp table matched_undefined_irc_only as select distinct docid, var('irc_unidentified') as id, prev,middle,next from (setschema 'docid,prev,middle,next'
 select c1 as docid, textwindow2s(keywords(comprspaces(lower(regexpr("\n",c2," ")))),10,3,10, 'irish research council') from (setschema 'c1,c2' select * from pubs where c2 is not null)) 
 where var('irc_unidentified');
 
