@@ -386,7 +386,7 @@
   "documentId": "50|core_ac_uk__::2fea53c390909c2640b2d1a94d53c0a7",
   "projectId": "40|inca________::1e5e62235d094afd01cd56e65112fc63",
   "confidenceLevel": 0.8,
-  "textsnippet": "This work was supported by INCA (plbio 2010-216 and INCa-DGOS-Inserm 6046) "
+  "textsnippet": "This work was supported by INCA (plbio 2010-216 and INCa-DGOS-Inserm 6046)"
 }
 {
   "documentId": "50|arXiv_______::a343cdcd534d696dd93c7ee9d78b9be7",
@@ -454,4 +454,10 @@
   "projectId": "40|hfri________::644d89adeca811786cf72d7967ec9813",
   "confidenceLevel": 0.8,
   "textsnippet": "acknowledgments work supported hellenic foundation research innovation hfri project 789"
+}
+{
+  "documentId": "50|06cdd3ff4700::d5035b3bb468e4ea7b4d82073634d138", 
+  "projectId": "40|501100002081::1e5e62235d094afd01cd56e65112fc63", 
+  "confidenceLevel": 0.8, 
+  "textsnippet": "funded by a government of ireland postgraduate grant from the irish research council and subsequently supported by epsrc hubs for robotics and ai"
 }
