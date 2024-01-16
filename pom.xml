@@ -1088,7 +1088,7 @@
         <iis.pig.version>0.12.0-${iis.cdh.version}</iis.pig.version>
         <iis.avro.version>1.7.6-${iis.cdh.version}</iis.avro.version>
         <iis.hadoop.version>2.6.0-${iis.cdh.version}</iis.hadoop.version>
-        <iis.spark.version>3.4.1</iis.spark.version>
+        <iis.spark.version>3.4.2</iis.spark.version>
         <iis.coansys.version>1.10</iis.coansys.version>
 
         <junit.version>5.8.2</junit.version>
