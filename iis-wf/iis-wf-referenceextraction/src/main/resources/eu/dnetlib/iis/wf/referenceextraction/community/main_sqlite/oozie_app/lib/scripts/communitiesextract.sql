@@ -82,4 +82,37 @@ select docid, conceptId, conceptLabel, stripchars(middle,'.)(,[]') as middle, pr
 from (
 setschema 'docid,prev,middle,next' select c1, textwindow2s(keywords(filterstopwords(c2)),7,1,3, '\bDARIAH') from pubs where c2 is not null
 ), grants where conceptLabel="DARIAH EU" and (not regexprmatches("edariah",lower(middle)) and not regexprmatches("riyadh",lower(context)) )
-) group by docid;
+) group by docid
+
+union all
+
+-- RISIS
+select jdict('documentId', id, 'conceptId', 'RISIS', 'confidenceLevel', 0.8, 'textsnippet', prev||" <<< "||middle||" >>> "||next) from
+(
+select * from
+(
+-- cortext
+select id, "CORTEXT" as ma, prev, middle, next from (setschema 'id,text,prev,middle,next' select id, text, textwindow2s(lower(text), 10,1,10, "(?:\b|\W)cortext(?:\b|\d)") from (setschema 'id,text' select c1,c2 from pubs)) where 
+regexprmatches("cortext\.net|cortext\.org|www\.cortext\.|risis|ifris|text analysis|text mining|software|platform|plateforme|cortext manager|analysis|mining|nltk|github\.com\/cortext\/|corpus|\blisis\b|\b\inrae\b", prev||" "||middle||" "||next)
+or regexprmatches("\bRISIS\b|\bINRAE\b|CorTexT|\bLISIS\b",text)
+
+-- gate
+union all
+
+select id, "GATE" as ma, prev, middle, next   from (setschema 'id,prev,middle,next' select id, textwindow2s(text, 10,1,10, "\bGATE(?:\b|\d)|gatecloud|gate\.ac\.uk") from (setschema 'id,text' select c1,c2 from pubs)) 
+where regexprmatches("text mining|gatecloud|gate\.ac\.uk|\buima\b|classifier|semantic|\bnlp\b|text engineering|natural language|language engineering|information extraction|text analytics|cunningham|text process|architecture text|maynard|tablan|bontcheva|gate framework|tokenizer|tokeniser|sheffield|text annotation|language processing|\bnltk\b|treetagger|\byatea\b", lower(prev||" "||middle||" "||next))
+
+
+union all
+
+select id, upper(regexpr("(orgreg|firmreg)",middle)) as ma, prev, middle, next from (setschema 'id,text,prev,middle,next' select id, text, textwindow2s(lower(text), 10,1,10, "\borgreg\b|\bfirmreg\b") from (setschema 'id,text' select c1,c2 from pubs)) 
+where regexprmatches("\brisis\b", prev||" "||middle||" "||next) or regexprmatches("\bRISIS\b", text)
+
+
+
+union all
+
+select id, "RISIS" as ma, prev, middle, next from (setschema 'id,prev,middle,next' select id, textwindow2s(text, 10,1,10, "\bRISIS\b|\bRISIS1\b|\bRISIS2\b|\brisis\.eu\b") from (setschema 'id,text' select c1,c2 from pubs)) 
+where (regexprmatches("recherche|patent|grant|support|acknowledge|innovation|research", prev||" "||middle||" "||next) and not regexprmatches("risis\.eu",lower(middle)) )
+      or regexprmatches("risis\.eu",lower(middle))
+) group by id) ;
