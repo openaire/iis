@@ -40,4 +40,9 @@
   "confidenceLevel": 0.5,
   "textsnippet": "acknowledge support work project INSPIRED MIS 5002550 implemented Action Reinforcement"
 }
-
+{
+  "documentId": "50|doi_________::38502b081c386672f71750c99160e836",
+  "conceptId": "risis",
+  "confidenceLevel": 0.8,
+  "textsnippet": "Acknowledgements This work was supported by <<< RISIS2 >>> (Research Infrastructure for and Innovation Policy Studies)"
+}
