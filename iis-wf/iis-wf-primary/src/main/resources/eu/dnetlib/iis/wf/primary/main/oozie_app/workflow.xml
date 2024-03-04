@@ -742,10 +742,6 @@
                     <value>${workingDir}/exported/document_to_project</value>
                 </property>
                 <property>
-                    <name>output_document_to_project_concepts</name>
-                    <value>${workingDir}/exported/document_to_project_concepts</value>
-                </property>
-                <property>
                     <name>output_document_to_dataset</name>
                     <value>${workingDir}/exported/document_to_dataset</value>
                 </property>
@@ -826,10 +822,6 @@
                 <property>
                     <name>input_document_to_project</name>
                     <value>${workingDir}/exported/document_to_project</value>
-                </property>
-                <property>
-                    <name>input_document_to_project_concepts</name>
-                    <value>${workingDir}/exported/document_to_project_concepts</value>
                 </property>
                 <property>
                     <name>input_document_to_dataset</name>

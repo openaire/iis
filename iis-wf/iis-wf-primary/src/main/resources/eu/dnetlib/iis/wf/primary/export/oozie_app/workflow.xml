@@ -13,10 +13,6 @@
             <value>$UNDEFINED$</value>
         </property>
         <property>
-            <name>input_document_to_project_concepts</name>
-            <value>$UNDEFINED$</value>
-        </property>
-        <property>
             <name>input_document_to_dataset</name>
             <value>$UNDEFINED$</value>
         </property>

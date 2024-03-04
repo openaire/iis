@@ -47,11 +47,6 @@
                 eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_to_project.json}
             </arg>
             <arg>-Odocument_to_project=${workingDir}/producer/document_to_project</arg>
-            <arg>-C{document_to_project_concepts,
-                eu.dnetlib.iis.export.schemas.DocumentToConceptIds,
-                eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_to_project_concepts.json}
-            </arg>
-            <arg>-Odocument_to_project_concepts=${workingDir}/producer/document_to_project_concepts</arg>
             <arg>-C{document_to_research_initiatives,
                 eu.dnetlib.iis.export.schemas.DocumentToConceptIds,
                 eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_to_research_initiatives.json}
@@ -104,10 +99,6 @@
                 <property>
                     <name>input_document_to_project</name>
                     <value>${workingDir}/producer/document_to_project</value>
-                </property>
-                <property>
-                    <name>input_document_to_project_concepts</name>
-                    <value>${workingDir}/producer/document_to_project_concepts</value>
                 </property>
                 <property>
                     <name>input_document_to_dataset</name>
@@ -316,7 +307,7 @@
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/document_referencedProjects/actionset-id</arg>
-            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_project_concepts.properties,/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_project_1.properties,/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_project_2.properties
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_project_1.properties,/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_project_2.properties
             </arg>
         </java>
         <ok to="joining" />

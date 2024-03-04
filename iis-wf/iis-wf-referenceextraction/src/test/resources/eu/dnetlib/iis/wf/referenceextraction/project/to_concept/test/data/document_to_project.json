@@ -1,6 +1,0 @@
-{"documentId": "docId1", "projectId": "projId1", "confidenceLevel": 0.5, "textsnippet": null}
-{"documentId": "docId1", "projectId": "projId2", "confidenceLevel": 0.1, "textsnippet": null}
-{"documentId": "docId2", "projectId": "projId3", "confidenceLevel": 0.3, "textsnippet": null}
-{"documentId": "docId2", "projectId": "nonexistingProjId", "confidenceLevel": 0.1, "textsnippet": null}
-{"documentId": "docId2", "projectId": "noFetProjId", "confidenceLevel": 0.1, "textsnippet": null}
-{"documentId": "docId3", "projectId": "nonexistingProjId", "confidenceLevel": 0.1, "textsnippet": null}

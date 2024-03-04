@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-root_conceptid_report classpath eu/dnetlib/iis/wf/referenceextraction/concept/root_conceptid_report/oozie_app
