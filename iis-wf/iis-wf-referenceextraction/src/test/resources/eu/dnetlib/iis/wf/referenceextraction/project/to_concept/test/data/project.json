@@ -1,6 +1,0 @@
-{"id":"projId1","projectAcronym":"project 1","projectGrantId":"123456","fundingClass":"EC::FP7", "jsonextrainfo":"{}"}
-{"id":"projId2","projectAcronym":"project 2","projectGrantId":"654321","fundingClass":"EC::FP7", "jsonextrainfo":"{}"}
-{"id":"projId3","projectAcronym":"project 3","projectGrantId":"999999","fundingClass":"EC::FP7", "jsonextrainfo":"{}"}
-{"id":"projId4","projectAcronym":"project 4","projectGrantId":"999999","fundingClass":"OTHER::", "jsonextrainfo":"{}"}
-{"id":"projId5","projectAcronym":"project 5","projectGrantId":"999999","fundingClass":"NO_DELIMITER", "jsonextrainfo":"{}"}
-{"id":"noFetProjId","projectAcronym":"non fet project","projectGrantId":"000000","fundingClass":"EC::FP7", "jsonextrainfo":"{}"}
