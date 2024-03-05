@@ -57,7 +57,9 @@
 {
    "id": "risis", 
    "label": "RISIS", 
-   "params": []
+   "params":[
+      {"name": "suggestedAcknowledgement", "value":""}
+   ]
 }
 
 

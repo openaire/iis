@@ -87,7 +87,8 @@ setschema 'docid,prev,middle,next' select c1, textwindow2s(keywords(filterstopwo
 union all
 
 -- RISIS
-select jdict('documentId', id, 'conceptId', 'risis', 'confidenceLevel', 0.8, 'textsnippet', prev||" <<< "||middle||" >>> "||next) from
+select * from (
+  select jdict('documentId', id, 'conceptId', 'risis', 'confidenceLevel', 0.8, 'textsnippet', prev||" <<< "||middle||" >>> "||next) from
 (
 select * from
 (
@@ -115,4 +116,4 @@ union all
 select id, "risis" as ma, prev, middle, next from (setschema 'id,prev,middle,next' select id, textwindow2s(text, 10,1,10, "\bRISIS\b|\bRISIS1\b|\bRISIS2\b|\brisis\.eu\b") from (setschema 'id,text' select c1,c2 from pubs)) 
 where (regexprmatches("recherche|patent|grant|support|acknowledge|innovation|research", prev||" "||middle||" "||next) and not regexprmatches("risis\.eu",lower(middle)) )
       or regexprmatches("risis\.eu",lower(middle))
-) group by id) ;
+) group by id)) where "RISIS" in (select conceptLabel from grants) ;
