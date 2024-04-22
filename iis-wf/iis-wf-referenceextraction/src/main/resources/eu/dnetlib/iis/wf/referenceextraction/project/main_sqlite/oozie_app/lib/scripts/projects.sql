@@ -24,6 +24,8 @@ hidden var 'nrc_unidentified' from (select id from grants where fundingclass1="N
 hidden var 'inca_unidentified' from (select id from grants where fundingclass1="INCa" and grantid="unidentified" limit 1);
 hidden var 'hfri_unidentified' from (select id from grants where fundingclass1="HFRI" and grantid="unidentified" limit 1);
 hidden var 'irc_unidentified' from (select id from grants where fundingclass1="IRC" and grantid="unidentified" limit 1);
+hidden var 'hrb_unidentified' from (select id from grants where fundingclass1="HRB" and grantid="unidentified" limit 1);
+
 
 create  temp table pubs as setschema 'c1,c2' select jsonpath(c1, '$.id', '$.text') from stdinput();
 
@@ -37,6 +39,9 @@ create temp table hfri_unidentified_only as select docid, var('hfri_unidentified
    select c1 as docid, textwindow2s(filterstopwords(lower(c2)), 10,3,10, "\bhfri\b|h\.f\.r\.i\.|hellenic foundation research|greek foundation research|ελιδεκ|ελληνικο ιδρυμα ερευνας|ελληνικό ίδρυμα έρευνας|elidek") from ((setschema 'c1,c2' select * from pubs where c2 is not null))) 
    where var('hfri_unidentified') and lower(j2s(prev,middle,next)) not like "%himalayan%" and not regexprmatches(var('hfrineg'), lower(j2s(prev,middle,next))) and regexprmatches("gsrt|greek|greece|hellenic",lower(j2s(prev,middle,next)));
 
+create temp table hrb_unidentified_only as select docid, var('hrb_unidentified') as id, prev, middle, next from  (select c1 as docid, prev,middle,next from (setschema 'c1,prev,middle,next' select c1, textwindow2s(lower(c2),10,3,10,'health research board') from (setschema 'c1,c2' select * from pubs where c2 is not null)) 
+   where var('hrb_unidentified') and (regexprmatches("project|grant|fund|co-fund|award|received|recipient|acknowledg|support|fellow|student|scholar|partner|financ|assist|sponsor|endorse|contract|grateful|initiative|trial",j2s(prev,middle,next)) 
+   and not regexprmatches("commonwealth|public health research|industrial health research|\bihrb\b",j2s(prev,middle,next))));
 
 create temp table output_hfri as 
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', textsnippet_) as C1, docid, id from (
@@ -373,6 +378,8 @@ union all
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', prev||" "||middle||" "||next) from matched_undefined_wt_only
 union all
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', prev||" "||middle||" "||next) from matched_undefined_inca_only
+union all
+select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', prev||" "||middle||" "||next) from hrb_unidentified_only
 union all
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', prev||" "||middle||" "||next) from matched_undefined_gsri
 union all

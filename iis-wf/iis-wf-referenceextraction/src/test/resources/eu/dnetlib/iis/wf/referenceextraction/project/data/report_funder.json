@@ -59,6 +59,11 @@
   "value": "1"
 }
 {
+  "key": "processing.referenceExtraction.project.references.byfunder.hrb",
+  "type": "COUNTER",
+  "value": "1"
+}
+{
   "key": "processing.referenceExtraction.project.references.byfunder.hrzz",
   "type": "COUNTER",
   "value": "1"
@@ -181,5 +186,5 @@
 {
    "key": "processing.referenceExtraction.project.references.total",
    "type": "COUNTER",
-   "value": "77"
+   "value": "78"
 }
