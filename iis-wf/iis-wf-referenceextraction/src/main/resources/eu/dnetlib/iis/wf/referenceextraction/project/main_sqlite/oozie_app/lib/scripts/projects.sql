@@ -40,8 +40,8 @@ create temp table hfri_unidentified_only as select docid, var('hfri_unidentified
    where var('hfri_unidentified') and lower(j2s(prev,middle,next)) not like "%himalayan%" and not regexprmatches(var('hfrineg'), lower(j2s(prev,middle,next))) and regexprmatches("gsrt|greek|greece|hellenic",lower(j2s(prev,middle,next)));
 
 create temp table hrb_unidentified_only as select docid, var('hrb_unidentified') as id, prev, middle, next from  (select c1 as docid, prev,middle,next from (setschema 'c1,prev,middle,next' select c1, textwindow2s(lower(c2),10,3,10,'health research board') from (setschema 'c1,c2' select * from pubs where c2 is not null)) 
-   where regexprmatches("project|grant|fund|co-fund|award|received|recipient|acknowledg|support|fellow|student|scholar|partner|financ|assist|sponsor|endorse|contract|grateful|initiative|trial",j2s(prev,middle,next)) 
-   and not regexprmatches("commonwealth|public health research|industrial health research|\bihrb\b",j2s(prev,middle,next)));
+   where var('hrb_unidentified') and (regexprmatches("project|grant|fund|co-fund|award|received|recipient|acknowledg|support|fellow|student|scholar|partner|financ|assist|sponsor|endorse|contract|grateful|initiative|trial",j2s(prev,middle,next)) 
+   and not regexprmatches("commonwealth|public health research|industrial health research|\bihrb\b",j2s(prev,middle,next))));
 
 create temp table output_hfri as 
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', textsnippet_) as C1, docid, id from (
