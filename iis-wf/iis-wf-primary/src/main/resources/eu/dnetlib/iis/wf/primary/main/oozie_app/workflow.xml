@@ -158,7 +158,7 @@
         </property>
         <property>
             <name>import_content_mimetypes_xml_pmc</name>
-            <value>xml</value>
+            <value>xml,application/xml</value>
             <description>xml pmc types</description>
         </property>
         <property>

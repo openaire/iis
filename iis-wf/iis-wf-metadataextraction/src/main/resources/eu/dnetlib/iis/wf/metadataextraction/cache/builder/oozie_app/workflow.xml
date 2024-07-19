@@ -35,7 +35,7 @@
 		</property>
         <property>
             <name>mimetypes_xml_pmc</name>
-            <value>xml</value>
+            <value>xml,application/xml</value>
             <description>pdf mime types</description>
         </property>
 		<property>
