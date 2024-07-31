@@ -19,7 +19,7 @@
 -- --3.1 EBIMetagenomics (line 24)
 -- --3.2 ΕΒΙMetabolights  (line 47)                       PMC4419159, PMC4421934
 -- --3.3 NCBIassembly   (line 54)                         PMC3878773, PMC3882889
--- --3.4 NCBI PubChem    (lines 55,56,57)                 PMC4483656, PMC2703903
+-- --3.4 NCBI PubChem    (lines 55,56,57)
 -- --3.5 NCBI Taxonomy  (line 59)                         PMC3742277, PMC3744899
 -- --3.6 NeuroMorpho  (line 66)                           PMC4325909, PMC3324298
 -- --3.7 Biomodels (line 9)                               PMC2944785, PMC2950841
@@ -40,7 +40,7 @@
 -- --5.7 National Geoscience Data Centre (NERC Data Centres) (line 64)
 -- --5.8 UK Polar Data Centre (NERC Data Centres) (line 65)
 -- --5.9 NOAA National Centers for Environmental Information (line 67)
--- --6.1 Zebrafish  (line 95)                                      PMC3739779, PMC3750112
+-- -- 6.1 Zebrafish  (line 95)                                      PMC3739779, PMC3750112
 -- --6.2 Virtual Skeleton (line 91)                                                      --> 0 results @ Springer
 -- --6.3 VectorBase (line 90)
 -- --6.4 Protein Circular Dirchroism Data Bank (line 78)           PMC3493636, PMC4004220
@@ -56,10 +56,10 @@
 -- --6.14 Influenza Reseach Database (line 39)                                            --> 0 results @ Springer
 -- --6.15 Kinetic Models of Biological Systems (line 43)
 
--- --1.3. SRA (line 58)                                            PMC2936537, PMC2938879
+-- --1.3. SRA (line 58)                                           PMC2936537, PMC2938879
 -- --2.2.dbVar (line 20)                                          PMC3740631, PMC3744852
 -- --2.3. ENA (line 29)                                           PMC2933243, PMC2933595
--- --2.4. EVA (line 30)                                           PMC3874197, PMC3880420
+-- --2.4. EVA (line 30)                                           PMC4295026, PMC4295026
 -- --5.10 DGVa (line 16)
 
 --Giannis
@@ -76,7 +76,8 @@
 --   pmcid ='PMC3738164' or  pmcid ='PMC3749161' or
 --   pmcid ='PMC4419159' or  pmcid ='PMC4421934' or
 --   pmcid ='PMC3878773' or  pmcid ='PMC3882889' or
---   pmcid ='PMC4483656' or  pmcid ='PMC2703903' or
+--   pmcid ='PMC4249827' or  pmcid ='PMC3537644' or
+--   pmcid ='PMC4173839' or  pmcid ='PMC4026626' or
 --   pmcid ='PMC3742277' or  pmcid ='PMC3744899' or
 --   pmcid ='PMC4325909' or  pmcid ='PMC3324298' or
 --   pmcid ='PMC2944785' or  pmcid ='PMC2950841' or
@@ -103,9 +104,9 @@
 --  pmcid ='PMC2936537' or  pmcid ='PMC2938879' or
 --  pmcid ='PMC3740631' or  pmcid ='PMC3744852' or
 --  pmcid ='PMC2933243' or  pmcid ='PMC2933595' or
---  pmcid ='PMC3874197' or  pmcid ='PMC3880420'
+--  pmcid ='PMC4295026' or  pmcid ='PMC4295026'
 -- );
--- --
+-- -- --
 --  insert into mydata select "PMC0001","
 --   EBIMetagenomics:  my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text MGYS234234242 my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text
 --   Australian Ocean Data Network (AODN): by a Seabird conductivity cell associated with the SOMMA (metadata:  https://catalogue-imos.aodn.org.au/geonetwork/srv/eng/metadata.show?uuid=fa93c66e-0e56-7e1d-e043-08114f8c1b76 ). Precision and reproducibility for DIC and A T was
@@ -120,9 +121,12 @@
 --   SIBMAD my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text http://cds.u-strasbg.fr/cgi-bin/Dic-Simbad?AKARI-FIS-V1 my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text
 --   Influenza Reseach Database my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text https://www.bv-brc.org/view/Genome/582419.3 my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text
 --   Kinetic Models of Biological Systems my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text https://kimosys.org/repository/66 my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text
---  ";
--- output 'pubs.txt' select jdict('id', id, 'text', text) from mydata;
--- cp pubs.txt pubs.json
+--   PubchemBioassay my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text https://identifiers.org/pubchem.bioassay:1259428 my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text
+--   Pubchem Substance my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text (http://pubchem.ncbi.nlm.nih.gov/substance/313573313) my text my text my text my text my text my text my text my text my text my text my text my text my text my text my text.";
+
+
+-- output 'pubs_V4.txt' select jdict('id', id, 'text', text) from mydata;
+-- cp pubs_V4.txt pubs_V4.json
 -- --b)
 -- Create file pubs.json that contains: i
 
@@ -143,8 +147,8 @@ hidden var 'arrayexpress_prefixes' from select '((?:E|A)-(?:AFFY|AFMX|AGIL|ATMX|
 hidden var 'arrayexpress_negativePrefixes' from select 'EERAD|EBAIR';
 
 --European Genome-phenome Archive
-hidden var 'ebi_ac_uk_prefixes' from select '(?:(?:\b|[^A-Z])EGAD[\s|\W|-|:|_|.]{0,1}\d{6,})|(?:(?:\b|[^A-Z])EGAS[\s|\W|-|:|_|.]{0,1}\d{6,})';
-hidden var 'ebi_ac_uk_prefixes2' from select '(?:EGAD[\s|\W|-|:|_|.]{0,1}\d{6,})|(?:EGAS[\s|\W|-|:|_|.]{0,1}\d{6,})';
+hidden var 'ebi_ac_uk_prefixes' from select '(?:(?:\b|[^A-Z])EGAD[\s|\W|-|:|_|.]{0,1}\d{9,})|(?:(?:\b|[^A-Z])EGAS[\s|\W|-|:|_|.]{0,1}\d{9,})';
+hidden var 'ebi_ac_uk_prefixes2' from select '(?:EGAD[\s|\W|-|:|_|.]{0,1}\d{9,})|(?:EGAS[\s|\W|-|:|_|.]{0,1}\d{9,})';
 hidden var 'ebi_ac_uk_negativeWords' from select 'ANR';
 
 
@@ -153,21 +157,21 @@ hidden var 'ebi_ac_uk_negativeWords' from select 'ANR';
 --dbVar
 hidden var 'dbvar_prefixes' from select '(?:\b[n|e|d]std\d+)|(?:\b[n|e|d]sv\d+)|(?:\b[n|e|d]ssv\d+)';
 hidden var 'dbvar_prefixes2' from select '(?:[n|e|d]std\d+)|(?:[n|e|d]sv\d+)|(?:[n|e|d]ssv\d+)';
-hidden var 'dbvar_middleNegativeWords'from select 'https?:|pdf|mail|meeting|@|com|org|res:';
+hidden var 'dbvar_middleNegativeWords'from select 'https?:|pdf|mail|meeting|@|com|org|res:|\.gov|=|~|\besv100\b|\besv115\b|\bdssv08\b';
 hidden var 'dbvar_middlePositiveWords' from select '\.ncbi\.nlm.|\.ensembl\.org|\.genome\.wisc\.|snp';
-hidden var 'dbvar_negativeWords' from select '10\.\d+\/|chongqing|dna res|e-mail|social cognitive and affective neuroscience|soc\.? cogn\.? affect\.? neurosci\.?|mg|kg|j\.? hered\.?';
+hidden var 'dbvar_negativeWords' from select '10\.\d+\/|chongqing|dna res|e-mail|journal of heredity|scan|neurosc|mg|kg|j\.? hered\.?|astronomy|astrophysics';
 --ENA
 hidden var 'ena_prefixes' from
 select '(?:\bPRJ[E|D|N][A-Z][0-9]+\b)|(?:\b[E|D|S]RP[0-9]{6,}\b)|(?:\bSAM[E|D|N][A-Z]?[0-9]{4,}\b)|(?:\b[E|D|S]R[S|X|R|Z][0-9]{6,}\b)|(?:\bGCA_[0-9]{9}\.[0-9]+\b)|(?:\b[A-Z]{1}[0-9]{5}\.[0-9]+\b)|(?:\b[A-Z]{2}[0-9]{6}\.[0-9]+\b)|(?:\b[A-Z]{2}[0-9]{8}\b)|(?:\b[A-Z]{4}[0-9]{2}S?[0-9]{6,8}\b)|(?:\b[A-Z]{6}[0-9]{2}S?[0-9]{7,9}\b)|(?:\b[A-Z]{3}[0-9]{5,7}\.[0-9]+\b)';
 
 hidden var 'ena_prefixes_doi' from select '(\b10(\.\d+)+(\/\w+)?)';
-hidden var 'ena_NegativeWords' from select "(?:agriculture|environmental protection agency|\bepa\b|patent|\[pii\]|\bgrants?\b)";
+hidden var 'ena_NegativeWords' from select "(?:agriculture|environmental protection agency|physics|\bepa\b|patent|\[pii\]|\bgrants?\b)";
 hidden var 'ena_NegativeWordsForReferences' from select '\b(j|journal)\b (\b(\w+)\b )*\b\d{4}\b';
 hidden var 'ena_NegativeWordsForReferences2' from select '(?:(?:19\d{2,2})|(?:20\d{2,2})) \d{1,3} \d{1,3} \d{1,3}';
 hidden var 'ena_NegativeWordsPrev' from select "(?:\b(bio)?ethic(s|al)?\b|\bchangzhou\b|\bjiangsu\b|\bchinese\b|\bprotocols?\b)";
 hidden var 'ena_NegativeMiddle' from select "(?:\bMR\d+|\bNY\d+|\bPJ\d+|10\.\d*\/|doi|DOI)";
 --EVA
-hidden var 'eva_prefixes' from select '(?:\bPRJEB\d+)|(?:\b[n|e]std\d+)';
+hidden var 'eva_prefixes' from select '(?:\bPRJEB\d+)';
 --2.1 FlowRepository
 hidden var 'flowrep_prefixes' from select '(?:FR-FCM-\w{4})';
 --2.5 DNA DataBank of Japan
@@ -178,19 +182,22 @@ hidden var 'DNADatabankOfJapan_prefixes2' from select "\bDR[P|R|X|S|Z]\d{6}\b";
 ------------------------------------------------------------------------
 -------BATCH 3
 --3.1 EBIMetagenomics
-hidden var 'EBIMetagenomics_prefixes' from select '(?:MGYS\d+)';
+hidden var 'EBIMetagenomics_prefixes' from select '(?:MGYS\d{8}})';
 --3.2 ΕΒΙMetabolights
 hidden var 'EBIMetabolights_prefixes' from select '(?:\bMTBL[S|C]\d+)';
 --3.3 NCBIassembly
 hidden var 'NCBIassembly_prefixes' from select '(?:\bGC[A|F]_\d{9}\.\d+)';
---3.4 NCBI PubChem BioAssay & NCBI PubChem Substance
-hidden var 'NCBIPubChem' from select '(?:pubchem\D+\d+)';
+--3.4a NCBI PubChem BioAssay
+hidden var 'NCBIPubChemBioAssey' from select '(?:pubchem\.ncbi\.nlm\.nih\.gov\/bioassay\/\d+)|(?:identifiers\.org\/pubchem\.bioassay:\d+)|(?:pubchem\.ncbi\.nlm\.nih\.gov\/assay\/assay\.cgi\?aid=\d+)';
+--3.4b  NCBI PubChem Substance
+hidden var 'NCBIPubChemSubstance' from select'(?:pubchem\.ncbi\.nlm\.nih\.gov\/substance\/\d+)';
+
 --3.5 NCBI Taxonomy
 hidden var 'NCBITaxonomy_prefixes' from select '(?:wwwtax\.cgi\D+\d+)|(?:txid\d+)';
 --3.6 NeuroMorpho
 hidden var 'NeuroMorpho_prefixes' from select '(?<=neuron_name=)[\w+|-]+|(?:NMO_\d{5,})';
 --3.7 BioModels
-hidden var 'BioModels_prefixes' from select '(?:MODEL\d+)';
+hidden var 'BioModels_prefixes' from select '(?:MODEL\d{6,})';
 hidden var 'BioModels_positivewords'from select '(?:ebi\.ac\.uk)|(?:biomodels?)';
 --3.8 Database of Interacting Proteins
 hidden var 'DIP_prefixes1' from select "\bDIP\b|(?:i|I)nteractive (?:p|P)roteins";
@@ -198,21 +205,21 @@ hidden var 'DIP_prefixes2' from select "DIP(?: |-|:)\d{1,7}N\b";
 ------------------------------------------------------------------------
 -------BATCH 4
 --4.1 FlyBase
-hidden var 'FlyBase_prefixes' from select '(FB(?:ab|al|ba|cl|gg|gn|hh|im|ig|Ic|mc|ms|pp|rf|sf|sn|st|tc|te|ti|to|tp|tr|an)\d+)';
+hidden var 'FlyBase_prefixes' from select '(\bFB(?:ab|al|ba|cl|gg|gn|hh|im|ig|Ic|mc|ms|pp|rf|sf|sn|st|tc|te|ti|to|tp|tr|an)\d{5,}\b)';
 --4.2 Gene Expression Omnibus
-hidden var 'GEO_prefixes' from select '((?:GPL|GSM|GSE|GDS)\d+)';
+hidden var 'GEO_prefixes' from select '((?:GPL|GSM|GSE|GDS)\d+\b)';
 --4.3 IntAct
 hidden var 'intAct_prefixes' from select '(EBI-\d{5,})';
 --4.4 openfMRI
-hidden var 'openfMRI_prefixes' from select '(ds\d{6}[a-f]?)';
+hidden var 'openfMRI_prefixes3' from select "\bds\d{6}[a-f]?\b";
+hidden var 'openfMRI_prefixes1' from select "\bopen.?fmri\b";
 --4.5 OpenNeuro
-hidden var 'OpenNeuro_prefixes3' from select "\bds\d{6}\b";
-hidden var 'OpenNeuro_prefixes2' from select "10\.18112\/openneuro\.ds\d{6}";
-hidden var 'OpenNeuro_prefixes1' from select "\bopen.?neuro\b|\bopen.?fmri\b|10\.18112";
+hidden var 'OpenNeuro_prefixes3' from select "\bds\d{6}[a-f]?\b";
+hidden var 'OpenNeuro_prefixes1' from select "\bopen.?neuro\b|10\.18112";
 --4.6 Peptide Atlas
-hidden var 'peptideatlas_prefixes' from select '(PAp\d+)';
+hidden var 'peptideatlas_prefixes' from select '(PAp\d{8}\b)';
 --4.7 PRIDE Archive
-hidden var 'prideArchive_prefixes' from select '(PXD\d+)';
+hidden var 'prideArchive_prefixes' from select '(PXD\d{2,}\b)';
 
 ------------------------------------------------------------------------
 -------BATCH 5
@@ -224,27 +231,42 @@ hidden var 'XenBase_prefixes' from select 'XB-GENE-\d+';
 hidden var 'mousegenomeinformatics_prefixes' from select 'MGI:\d+';
 --5.4 Australian Ocean Data Network
 --https://catalogue-imos.aodn.org.au/geonetwork/srv/eng/metadata.show?uuid=ae86e2f5-eaaf-459e-a405-e654d85adb9c
-hidden var 'AODN_prefixes' from select 'catalogue-imos\.aodn\.org\.au.+=(.+)$';
+hidden var 'AODN_prefixes' from select 'catalogue-imos\.aodn\.org\.au.+=([a-z0-9-]+)';
+--catalogue-imos\.aodn\.org\.au.+=(.+)$
 --5.5 British Oceanographic Data Centre (NERC Data Centres)
 --https://www.bodc.ac.uk/data/documents/series/1620054/
 --https://www.bodc.ac.uk/data/bodc_database/nodb/data_collection/207/
 hidden var 'BODC_prefixes' from select 'www\.bodc\.ac\.uk\/data[a-z\/_]+(\d+).+$';
+--((?:www\.bodc\.ac\.uk\/data\/published_data_library\/catalogue\/10\.5285\/[a-z0-9-\s]+\/|
+--(?:www\.bodc\.ac\.uk\/data\/information_and_inventories\/edmed\/report\/\d+\/)
+--(?:www\.bodc\.ac\.uk\/data\/documents\/cruise\/\d+\/)
+--(?:www\.bodc\.ac\.uk\/data\/documents\/nodb\/\d+\/)
+--(?:www\.bodc\.ac\.uk\/data\/information_and_inventories\/cruise_inventory\/report\/\d+\/))
+-- https://www.bodc.ac.uk/data/published_data_library/catalogue/10.5285/89a3a6b8-7223-0b9c-e053-6c86abc0f15d/
+-- http://www.bodc.ac.uk/data/information_and_inventories/edmed/report/4806/
+-- https://www.bodc.ac.uk/data/documents/cruise/6722/
+-- www.bodc.ac.uk/data/documents/nodb/254628/
+-- https://www.bodc.ac.uk/data/information_and_inventories/cruise_inventory/report/9359/
+
 --5.6 Centre for Environmental Data Analysis (NERC Data Centres)
 --https://catalogue.ceda.ac.uk/uuid/8b5b67edc9c648189d27b6432bdad215
-hidden var 'CEDA_prefixes' from select 'catalogue\.ceda\.ac\.uk\/uuid\/(.+)$';
+hidden var 'CEDA_prefixes' from select 'catalogue\.ceda\.ac\.uk\/uuid\/([0-9a-z]{32})';
+--'catalogue\.ceda\.ac\.uk\/uuid\/(.+)$'
 --5.7 National Geoscience Data Centre (NERC Data Centres)
 --https://webapps.bgs.ac.uk/services/ngdc/accessions/index.html?simpleText=rock#item38088
-hidden var 'NGDC_prefixes' from select 'webapps\.bgs\.ac\.uk\/services\/ngdc\/accessions.+item(\d+)$';
+hidden var 'NGDC_prefixes' from select 'webapps\.bgs\.ac\.uk\/services\/ngdc\/accessions.+item(\d+)';
 --5.8 UK Polar Data Centre (NERC Data Centres)
 --https://data.bas.ac.uk/metadata.php?id=GB/NERC/BAS/PDC/00272
 hidden var 'BAS_prefixes' from select 'GB\/NERC\/BAS\/PDC\/(\d+)$';
 --5.9 NOAA National Centers for Environmental Information
 --https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00824
-hidden var 'NCEI_prefixes' from select 'www\.ncei\.noaa\.gov.+=gov\.noaa\.ncdc\:(.+)$';
+hidden var 'NCEI_prefixes' from select 'www\.ncei\.noaa\.gov.+=gov\.noaa\.ncdc\:(C\d+)';
+--'www\.ncei\.noaa\.gov.+=gov\.noaa\.ncdc\:(.+)$'
 ------------------------------------------------------------------------
 --BATCH 6
 --6.1 Zebrafish
-hidden var 'zebrafish_prefixes' from select 'ZDB-[A-Z]+-\d+-?\d+';
+hidden var 'zebrafish_prefixes' from select '\bZDB-[A-Z]+-\d+-?\d+';
+
 --6.2 Virtual Skeleton
 --To id einai apo 2 ews 886000 ara paw me url (https://www.smir.ch/Objects/262017)
 hidden var 'VirtualSkeleton_prefixes' from select 'smir\.ch\/Objects\/\d+';
@@ -263,14 +285,16 @@ hidden var 'NDAR_prefixes2' from '(?:NDARCOL\d+)';
               --PMC4240813  All of the HiSeq data from eight SSC samples have been submitted to the National Database for Autism Research (NDAR) [46] under collection ‘Wigler SSC autism exome families’ (project number: 1936).
               --PMC3651174  As a result, the current study included the following two collection IDs (along with submitters): NDARCOL0001356 (Bradley Peterson); and NDARCOL0001551 (Francisco Castellanos). The age and gender matched healthy subjects were selected from the Pediatric MRI Data Repository of NDAR, including 51 typically developing children (Table 1).
 --6.6 National Addiction & HIV Data Archive Program
---hidden var 'NAHDAP_prefixes1' from '(?:nahdap)|(?:national addiction & hiv data)';
+--hidden var 'NAHDAP_prefixes1' from '(?:nahdap)|(?:national addiction & hiv data)'
 hidden var 'NAHDAP_prefixes2' from 'NAHDAP\/studies\/\d+';
 --6.7 Archaeology Data Service
 hidden var 'ArchaeologyDataService_prefixes' from '(10\.5284\/\w+)|(?:archaeologydataservice\.ac\.uk\/archsearch\/record\?titleId=\d+)';
 hidden var 'ArchaeologyDataService_prefixes2' from '(?<=10\.5284\/)\w+|(?<==)\d+';
 --6.8 Australian Antarctic Data Centre
-hidden var 'AustralianAntarcticDataCentre_prefixes'  from '(10\.4225\/15\/\w+)|(10\.26179\/\w+)';
-hidden var 'AustralianAntarcticDataCentre_prefixes2' from '(?<=10\.4225\/15\/)\w+|(?<=10\.26179\/)\w+';
+hidden var 'AustralianAntarcticDataCentre_prefixes'  from '(10\.4225\/15\/\w+-?\w{0,})|(10\.26179\/\w+-?\w{0,})';
+-- '(10\.4225\/15\/\w+)|(10\.26179\/\w+)'
+hidden var 'AustralianAntarcticDataCentre_prefixes2' from '(?<=10\.4225\/15\/)\w+-?\w{0,}|(?<=10\.26179\/)\w+-?\w{0,}';
+--'(?<=10\.4225\/15\/)\w+|(?<=10\.26179\/)\w+'
       -- PMC3733920 This work was supported by the Australian Antarctic Division (ASAC 3095), www.aad.gov.au
       -- PMC4409151 The work was funded by the Australian Antarctic Division (www.aad.gov.au) for approved AAS project 4088.
       --            All relevant data are available within the paper, its Supporting Information files, and from the Australian Antarctic Data Centre under the DOI: http://dx.doi.org/10.4225/15/54752B4B845C7.
@@ -301,20 +325,21 @@ hidden var 'GenomeRNAi_prefixes2' from select '(GR\d{5}-(?:A|S|C)(?:-\d+)?)';
 hidden var 'Japanese_prefixes1' from '(?:japanese genotype-phenotype)|(?:ddbj)|(?:dna databank of japan)';
 hidden var 'Japanese_prefixes2' from 'JGA[A-Z]\d+';
 --6.12 Environmental Information Data Centre
-hidden var 'EnvironmentalInformationDataCentre_prefixes'  from '10\.5285\/[\w|-]+';
-hidden var 'EnvironmentalInformationDataCentre_prefixes2' from '(?<=10\.5285\/)[\w|-]+';
+--hidden var 'EnvironmentalInformationDataCentre_prefixes'  from '10\.5285\/[\w|-]+'
+hidden var 'EnvironmentalInformationDataCentre_prefixes' from '(?:10\.5285\/)((?:[a-z0-9-]{1,})+(?:[\s|-]?)(?:[a-z0-9-]{4,})){0,1}(?:(?:[A-Z0-9-]{1,})+(?:[\s|-]?)(?:[A-Z0-9-]{4,})){0,1}';
+--'(?<=10\.5285\/)[\w|-]+'
 --6.13 SIBMAD
 hidden var 'Sibmad_prefixes' from 'cds\.u-strasbg\.fr\/cgi-bin\/Dic-Simbad\?[\w|-]+';
 hidden var  'Sibmad_prefixes2' from '(?<=cds\.u-strasbg\.fr\/cgi-bin\/Dic-Simbad\?)[\w|-]+';
 --6.14 Influenza Reseach Database
 hidden var 'Influenza_prefixes' from  'www\.bv-brc\.org\/view\/Genome\/[\d|\.]+';
-hidden var 'Influenza_prefixes2' from  '(?<=www\.bv-brc\.org\/view\/Genome\/)[\d|\.]+';
+hidden var 'Influenza_prefixes2' from  'www\.bv-brc\.org\/view\/Genome\/([\d\.]+\d)';
 --6.15 Kinetic Models of Biological Systems
 hidden var 'KiMoSys_prefixes' from 'kimosys\.org\/repository\/\d+';
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 --1.1 ArrayExpress ELENI
-select jdict('documentId', docid,	'entity', 'ArrayExpress','biomedicalId', regexpr("("||var('arrayexpress_prefixes')||")", middle), 'confidenceLevel', 0.8,'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+select jdict('documentId', docid,	'entity', 'ArrayExpress','biomedicalId', regexpr(var('arrayexpress_prefixes'), middle), 'confidenceLevel', 0.8,'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from ( select docid,prev,middle,next
          from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('arrayexpress_prefixes')) from mydata)
         where regexprmatches("%{arrayexpress_negativePrefixes}",upper(middle)) = 0)
@@ -332,7 +357,6 @@ from ( select docid, prev, middle, next
         from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('flowrep_prefixes'))
                 from (select docid, text from mydata))
      )
-
 union all
 --2.5 DNA Databank of Japan
 select jdict('documentId', docid,'entity', 'DNA databank of Japan', 'biomedicalId', regexpr("("||var('DNADatabankOfJapan_prefixes2')||")", middle) , 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
@@ -341,14 +365,14 @@ from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n"
 ------------------------------------------------------------------------------------------------------------------------------------------
 union all
 --3.1 EBIMetagenomics EL 06/2022
-select jdict('documentId', docid, 'entity', "EBImetagenomics", 'biomedicalId', regexpr("("||var('EBIMetagenomics_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+select jdict('documentId', docid, 'entity', "EBIMetagenomics", 'biomedicalId', regexpr("("||var('EBIMetagenomics_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from ( select docid, prev, middle, next
 	       from ( setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('EBIMetagenomics_prefixes'))
 	              from mydata )
 		 )
  union all
 --3.2 ΕΒΙMetabolights EL 06/2022
-select jdict('documentId', docid, 'entity', "EBImetabolights", 'biomedicalId', regexpr("("||var('EBIMetabolights_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+select jdict('documentId', docid, 'entity', "EBIMetabolights", 'biomedicalId', regexpr("("||var('EBIMetabolights_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from ( select docid, prev, middle, next
 	       from ( setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('EBIMetabolights_prefixes'))
 	              from mydata )
@@ -361,30 +385,29 @@ from ( select docid, prev, middle, next
 	              from mydata )
 		 )
 union all
---3.4 NCBI PubChem BioAssay & NCBI PubChem Substance EL 06/2022
-select jdict('documentId', docid, 'entity', type, 'biomedicalId',  regexpr("(\d+)", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
-from (  select docid, prev, middle, next,
-				      case when regexprmatches("bioassay|assay", lower(prev||" "||middle||" "||next)) = 1  then "NCBIPubChemBioassay"
-				           when regexprmatches("substances?", lower(prev||" "||middle||" "||next)) = 1  then "NCBIPubChemBioSubstance" end as type
-				from ( setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('NCBIPubChem'))
-							 from mydata )
-				where regexprmatches("bioassay|assay", lower(prev||" "||middle||" "||next)) = 1 or
-				     regexprmatches("substances?", lower(prev||" "||middle||" "||next)) = 1
-	 )
+--3.4a NCBI PubChem BioAssay
+select jdict('documentId', docid, 'entity', "NCBIPubChemBioassay", 'biomedicalId',  regexpr("(\d+)", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+from (  setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('NCBIPubChemBioAssey'))
+				from mydata )
+union all
+--3.4b NCBI PubChem Substance
+select jdict('documentId', docid, 'entity', "NCBIPubChemSubstance", 'biomedicalId',  regexpr("(\d+)", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+from (  setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('NCBIPubChemSubstance'))
+				from mydata )
 union all
 --3.5 NCBI Taxonomy EL 06/2022
-select jdict('documentId', docid, 'entity', "NCBITaxonomy", 'biomedicalId', regexpr("(\d+)", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+select jdict('documentId', docid, 'entity', "NCBITaxonomy", 'biomedicalId', regexpr("id=?(\d+)", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from ( select docid, prev, middle, next
 	       from ( setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('NCBITaxonomy_prefixes'))
 	              from mydata )
-		 )
+        where    length(regexpr("id=?(\d+)", middle))>=3 or
+                (length(regexpr("id=?(\d+)", middle))<3 and regexprmatches("(?:wwwtax\.cgi\D+\d+)",middle))
+      )
 union all
 --3.6 NeuroMorpho EL 06/2022
 select jdict('documentId', docid, 'entity', "NeuroMorpho", 'biomedicalId',regexpr("("||var('NeuroMorpho_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
-from ( select docid, prev, middle, next
-	       from ( setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('NeuroMorpho_prefixes'))
-	              from mydata )
-		 )
+from ( setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('NeuroMorpho_prefixes'))
+	     from mydata )
 union all
 --3.7 BioModels EL 06/2022
  select jdict('documentId', docid, 'entity', "BioModels", 'biomedicalId', regexpr("("||var('BioModels_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
@@ -402,38 +425,36 @@ union all
 union all
 --3.8 Database of Interacting Proteins
 select  jdict('documentId', docid,'entity', 'Database of Interacting Proteins', 'biomedicalId', regexpr("("||var('DIP_prefixes2')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
- from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('DIP_prefixes2'))
+from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('DIP_prefixes2'))
           from (select docid, text from mydata where regexprmatches(var('DIP_prefixes1'), text) = 1))
 union all
 ------------------------------------------------------------------------------------------------------------------------------------------
 --4.1 FlyBase
-select jdict('documentId', docid, 'entity', "FlyBase", 'biomedicalId', regexpr("(\d+)", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
-from ( select docid, prev, middle, next
-        from ( setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('FlyBase_prefixes'))
-                from mydata)
-        where regexprmatches('([a-zA-Z]FB(?:ab|al|ba|cl|gg|gn|hh|im|ig|Ic|mc|ms|pp|rf|sf|sn|st|tc|te|ti|to|tp|tr|an)\d+)',middle) = 0)
+select jdict('documentId', docid, 'entity', "FlyBase", 'biomedicalId', regexpr(var('FlyBase_prefixes'), middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+from ( setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('FlyBase_prefixes'))
+      from mydata)
 union all
 --4.2 Gene Expression Omnibus
-select jdict('documentId', docid, 'entity', "Gene Expression Omnibus", 'biomedicalId', regexpr("("||var('GEO_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+select jdict('documentId', docid, 'entity', "Gene Expression Omnibus", 'biomedicalId', regexpr(var('GEO_prefixes'), middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from
 (select  docid, prev, middle, next
 from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('GEO_prefixes'))
-         from (select  docid, text from mydata))
-where ( regexprmatches('(?<!\w)GPL|(?<!\w)GSM|(?<!\w)GSE|(?<!\w)GDS',middle) = 1 and regexprmatches('license|licence|lizenz|gnu|depression|cognitive|uv illumination|imaging system|image analysis system|frequency|frequencies',lower(prev||' '||' '||middle||' '||next)) = 0
-        and regexprmatches('\bgds1\b|\bgds2\b|\bgds3\b|\bgds4\b|\bgds5\b|\bgds6\b|\bgds8000\b|\bgsm1800\b|\bgsm900\b',lower(middle)) = 0)
+          from mydata)
+where ( regexprmatches('(?<!\w)GPL|(?<!\w)GSM|(?<!\w)GSE|(?<!\w)GDS',middle) = 1 and
+regexprmatches('license|licence|lizenz|gnu|depression|cognitive|uv illumination|imaging system|image analysis system|frequency|frequencies|radiation|open source',lower(prev||' '||' '||middle||' '||next)) = 0
+         and regexprmatches('\bgds1\b|\bgds2\b|\bgds3\b|\bgds4\b|\bgds5\b|\bgds6\b|\bgds8000\b|\bgsm1800\b|\bgsm900\b',lower(middle)) = 0)
 or regexprmatches('ncbi\.nlm\.nih\.gov(\/projects)?\/geo',prev||middle||next) = 1)
 union all
 --4.3 IntAct
-select jdict('documentId', docid, 'entity', "IntAct", 'biomedicalId', regexpr("("||var('intAct_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+select jdict('documentId', docid, 'entity', "IntAct", 'biomedicalId', regexpr(var('intAct_prefixes'), middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('intAct_prefixes'))
          from (select docid, text from mydata))
-where regexprmatches('[a-zA-Z1-9]EBI-\d+',middle) = 0
+where regexprmatches('[a-zA-Z1-9]EBI-\d+',middle) = 0 and regexprmatches('NSF',prev||middle||next) = 0
 union all
 --4.4 openfMRI
-select jdict('documentId', docid, 'entity', "openfMRI", 'biomedicalId', regexpr("("||var('openfMRI_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
-from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('openfMRI_prefixes'))
-         from (select docid, text from mydata))
-where regexprmatches('[a-zA-Z1-9]ds\d{6}[a-f]?',middle) = 0 and regexprmatches('\.pdf|(10\.\d{4})',middle) = 0
+select jdict('documentId', docid,'entity', 'OpenfMRI', 'biomedicalId', regexpr("("||var('openfMRI_prefixes3')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+ from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('openfMRI_prefixes3'))
+          from (select docid, text from mydata where regexprmatches(var('openfMRI_prefixes1'), lower(text)) = 1))
 union all
 --4.5 OpenNeuro
 select jdict('documentId', docid,'entity', 'OpenNeuro', 'biomedicalId', regexpr("("||var('OpenNeuro_prefixes3')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
@@ -441,17 +462,17 @@ select jdict('documentId', docid,'entity', 'OpenNeuro', 'biomedicalId', regexpr(
           from (select docid, text from mydata where regexprmatches(var('OpenNeuro_prefixes1'), lower(text)) = 1))
 union all
 --4.6 Peptide Atlas
-select jdict('documentId', docid,'entity', 'Peptide Atlas', 'biomedicalId', regexpr("("||var('peptideatlas_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+select jdict('documentId', docid,'entity', 'Peptide Atlas', 'biomedicalId', regexpr(var('peptideatlas_prefixes'), middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('peptideatlas_prefixes'))
          from (select docid, text from mydata))
 where regexprmatches('(?<!\w)PAp\d+',middle) = 1
 union all
 --4.7 PRIDE Archive
-select jdict('documentId', docid,'entity', 'PRIDE Archive', 'biomedicalId', regexpr("("||var('prideArchive_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+select jdict('documentId', docid,'entity', 'PRIDE Archive', 'biomedicalId', regexpr(var('prideArchive_prefixes'), middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('prideArchive_prefixes'))
          from (select docid, text from mydata))
 where regexprmatches('(?<!\w)PXD\d+',middle) = 1
-------------------------------------------------------------------------------------------------------------------------------------------
+-- ------------------------------------------------------------------------------------------------------------------------------------------
 union all
 --5.1 Clinical Trials
 select jdict('documentId', docid,'entity', 'Clinical Trials', 'biomedicalId', regexpr("("||var('clinicaltrial_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
@@ -465,7 +486,7 @@ select jdict('documentId', docid,'entity', 'Xenbase', 'biomedicalId', regexpr("(
 from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('XenBase_prefixes')) from mydata)
 union all
 --5.3 Mouse Genome Informatics
-select jdict('documentId', docid,'entity', 'Mouse Genome Informatics', 'biomedicalId', regexpr("("||var('mousegenomeinformatics_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+select jdict('documentId', docid,'entity', 'Mouse Genome Informatics', 'biomedicalId', regexpr("("||"\d+"||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from (select docid, prev, middle, next
 from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('mousegenomeinformatics_prefixes')) from mydata)
 where regexprmatches('[A-Z1-9]MGI.\d',middle) = 0)
@@ -475,12 +496,17 @@ select jdict('documentId', docid,'entity', 'Australian Ocean Data Network (AODN)
 from (setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('AODN_prefixes')) from mydata)
 union all
 --5.5 British Oceanographic Data Centre (NERC Data Centres)
-select jdict('documentId', docid,'entity', 'British Oceanographic Data Centre (BODC)', 'biomedicalId', regexpr(var('BODC_prefixes'), middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+select jdict('documentId', docid,'entity', 'British Oceanographic Data Centre (BODC)', 'biomedicalId',
+                        case when regexprmatches('www\.bodc\.ac\.uk\/data\/published_data_library\/catalogue\/10\.5285', middle||next)
+                        then regexpr("(?:www\.bodc\.ac\.uk\/data\/published_data_library\/catalogue\/10\.5285\/([a-z0-9-‐\s]+)\/?)", middle||next)
+                        else regexpr("(\d+)", middle||next) end,
+'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from (setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('BODC_prefixes')) from mydata)
+where regexprmatches("\.pdf", middle) = 0
 union all
 --5.6 Centre for Environmental Data Analysis (NERC Data Centres)
 select jdict('documentId', docid,'entity', 'Centre for Environmental Data Analysis (CEDA)', 'biomedicalId', regexpr(var('CEDA_prefixes'), middle),  'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
-from (setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('CEDA_prefixes')) from mydata)
+from (setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text,""), 10, 1, 10, var('CEDA_prefixes')) from mydata) -- replace \n with ""
 union all
 --5.7 National Geoscience Data Centre (NERC Data Centres)
 select jdict('documentId', docid,'entity', 'National Geoscience Data Centre (NGDC)', 'biomedicalId', regexpr(var('NGDC_prefixes'), middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
@@ -498,6 +524,7 @@ union all
 --6.1 Zebrafish
 select jdict('documentId', docid,'entity', 'Zebrafish', 'biomedicalId', regexpr("("||var('zebrafish_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('zebrafish_prefixes')) from mydata)
+where regexprmatches('chinese',lower(prev||middle||next)) = 0
 union all
 --6.2 Virtual Skeleton
 select jdict('documentId', docid,'entity', 'Vitual Skeleton Database', 'biomedicalId', regexpr("("||"\d+"||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
@@ -530,6 +557,7 @@ union all
 --6.7 Archaeology Data Service
 select jdict('documentId', docid,'entity', 'Archaeology Data Service', 'biomedicalId',  regexpr("("||var("ArchaeologyDataService_prefixes2")||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from (setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('ArchaeologyDataService_prefixes')) from mydata)
+where length(regexpr("("||var("ArchaeologyDataService_prefixes2")||")", middle))>=7
 union all
 --6.8 Australian Antarctic Data Centre
 select jdict('documentId', docid,'entity', 'Australian Antarctic Data Centre', 'biomedicalId', regexpr("("||var('AustralianAntarcticDataCentre_prefixes2')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
@@ -540,7 +568,7 @@ select jdict('documentId', docid,'entity', 'caNanoLab', 'biomedicalId', regexpr(
 from (setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('caNanoLab_prefixes')) from mydata)
 union all
 --6.10 GenomeRNAi
-select jdict('documentId', docid,'entity', 'Genome RNai', 'biomedicalId', regexpr("("||var('GenomeRNAi_prefixes2')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+select jdict('documentId', docid,'entity', 'Genome RNai', 'biomedicalId', regexpr(var('GenomeRNAi_prefixes2'), middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('GenomeRNAi_prefixes2'))
          from (select docid, text from mydata where regexprmatches(var('GenomeRNAi_prefixes1'), lower(text)) = 1 )
       )
@@ -552,21 +580,21 @@ from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n"
       )
 union all
 --6.12 Environmental Information Data Centre
-select jdict('documentId', docid,'entity', 'Environmental Information Data Centre', 'biomedicalId',  regexpr("("||var("EnvironmentalInformationDataCentre_prefixes2")||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+select jdict('documentId', docid,'entity', 'Environmental Information Data Centre', 'biomedicalId',  regexpr(var("EnvironmentalInformationDataCentre_prefixes"), middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from (setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('EnvironmentalInformationDataCentre_prefixes')) from mydata)
+where length(middle>20)
 union all
 --6.13 SIBMAD Astronomical Database
 select jdict('documentId', docid,'entity', 'SIMBAD Astronomical Database', 'biomedicalId',  regexpr("("||var("Sibmad_prefixes2")||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from (setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('Sibmad_prefixes')) from mydata)
 union all
 --6.14 Influenza Reseach Database
-select jdict('documentId', docid,'entity', 'Influenza Reseach Database', 'biomedicalId',  regexpr("("||var("Influenza_prefixes2")||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+select jdict('documentId', docid,'entity', 'Influenza Reseach Database', 'biomedicalId',  regexpr(var("Influenza_prefixes2"), middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from (setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('Influenza_prefixes')) from mydata)
 union all
 --6.15 Kinetic Models of Biological Systems
 select jdict('documentId', docid,'entity', 'Kinetic Models of Biological Systems', 'biomedicalId', regexpr("("||"\d+"||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('KiMoSys_prefixes')) from mydata)
-
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 union all
 --dbgap --Giannhs
@@ -579,7 +607,7 @@ select jdict('documentId', docid, 'entity', 'CHEMBL', 'biomedicalId', match, 'co
 
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---uniprot  Giannhs
+-- --uniprot  Giannhs
  create temp table uniprot_results as select * from (
  setschema 'docid, uniprot, prev, middle, next' select docid, case when regexprmatches('uniprot', lower(text)) then 1 else 0 end as uniprot ,textwindow2s(keywords(text),10,1,10,"\b([A-Z])([A-Z]|\d){5}\b") from mydata), uniprots where
  middle = id;
@@ -594,6 +622,10 @@ select jdict('documentId', docid, 'entity', 'CHEMBL', 'biomedicalId', match, 'co
 ----------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------
 
+create temp table remove_ids_ENA as
+select * from  (file  header:t 'remove.tsv');
+
+
 create temp table results_SRA_dbVar_ENA_EVA as
 --1.3. SRA  ELENI
 select docid as 'documentId',
@@ -601,7 +633,8 @@ select docid as 'documentId',
 			 regexpr('(?:(?:\b|[^A-Z])(SR[A|P|X|R|S|Z][:|-|_|.]{0,1}\d+))', middle) as 'biomedicalId',
 			 0.8 as 'confidenceLevel',
 			 prev, middle, next
-from ( setschema 'docid,prev,middle,next' select docid,textwindow2s(regexpr("\n",text," "), 10, 1, 10,'(?:(?:\b|[^A-Z])SR[A|P|X|R|S|Z][:|-|_|.]{0,1}\d{6})') from mydata)
+from ( setschema 'docid,prev,middle,next' select docid,textwindow2s(regexpr("\n",text," "), 10, 1, 10,'(?:(?:\b|[^A-Z])SR[A|P|X|R|S|Z][:|-|_|.]{0,1}\d{6})') from mydata )
+where length(biomedicalId)<20
 union all
 --2.2.  dbVar: EL 06/2022
 select docid as 'documentId',
@@ -625,7 +658,7 @@ select docid as 'documentId',
 			prev, middle, next
 from ( select docid, prev, middle, next
 				from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('ena_prefixes'))
-			 					from (select docid, text from mydata ))
+			 					from (select docid, text from mydata where regexprmatches('\bembl\b|\bebi\b|european bioinformatics institute|european nucleotide archive|sequence read archive|\bena\b|uniprot|rnacentral|ebi metagenomics|ensembl|genome|arrayexpress|ncbi|gene|genomic|genbank|chromosome', lower(text)) = 1  ))
       where regexprmatches(var('ena_NegativeMiddle'), middle) = 0 and
             regexprmatches(var('ena_prefixes_doi'), prev||" "||middle||" "||next) = 0 and
             regexprmatches(var('ena_NegativeWords'), lower(prev||" "||middle||" "||next)) = 0 and
@@ -633,7 +666,7 @@ from ( select docid, prev, middle, next
             regexprmatches(var('ena_NegativeWordsForReferences2'), lower(prev||" "||middle||" "||next)) = 0 and
             regexprmatches(var('ena_NegativeWordsPrev'), lower(prev)) = 0
 )
-where middle is not null
+where middle is not null and middle not in (select * from remove_ids_ENA )
 union all
 --2.4. EVA EL 06/2022
 select docid as 'documentId',
