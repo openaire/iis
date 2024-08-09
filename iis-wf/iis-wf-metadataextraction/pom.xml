@@ -81,6 +81,11 @@
 		</dependency>
 
         <dependency>
+            <groupId>org.grobid</groupId>
+            <artifactId>grobid-core</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom</artifactId>
         </dependency>

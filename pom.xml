@@ -97,6 +97,11 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>grobid</id>
+            <name>GROBID DIY repo</name>
+            <url>https://grobid.s3.eu-west-1.amazonaws.com/repo/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -727,6 +732,12 @@
                 <groupId>io.prometheus</groupId>
                 <artifactId>simpleclient_pushgateway</artifactId>
                 <version>0.8.1</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.grobid</groupId>
+                <artifactId>grobid-core</artifactId>
+                <version>0.8.0</version>
             </dependency>
 
             <dependency>
