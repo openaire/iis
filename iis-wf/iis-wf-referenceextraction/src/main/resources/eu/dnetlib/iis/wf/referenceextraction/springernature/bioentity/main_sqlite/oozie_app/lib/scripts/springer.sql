@@ -4,10 +4,10 @@
 
 --*****************************************************************************************************************
 -- --For testing the results:
-
+-- Ι need this db:  /home/openaire/springer.db
 -- cd /storage/eleni/openAIRE/05.Biomedical_Springer
 -- cat pubs.json | python madis/src/mexec.py -f query.sql -d data.db > result.json
--- cat pubs.json | python ~/Desktop/openAIRE/madis2/src/mexec.py -f springerFromFouf_EL_v5.sql -d testingtotal2.db > results.json
+-- cat pubs.json | python ~/Desktop/openAIRE/madis2/src/mexec.py -f springerFromFouf_EL_v5.sql -d  /home/openaire/springer.db > results.json
 -- --Create pubs.json as follows:
 -- --a)
 
@@ -622,8 +622,8 @@ select jdict('documentId', docid, 'entity', 'CHEMBL', 'biomedicalId', match, 'co
 ----------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------
 
-create temp table remove_ids_ENA as
-select * from  (file  header:t 'remove.tsv');
+-- create temp table remove_ids_ENA as
+-- select * from  (file  header:t 'remove.tsv');
 
 
 create temp table results_SRA_dbVar_ENA_EVA as
