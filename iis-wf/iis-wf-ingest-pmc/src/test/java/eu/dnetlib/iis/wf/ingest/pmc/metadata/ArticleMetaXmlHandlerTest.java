@@ -1,22 +1,25 @@
 package eu.dnetlib.iis.wf.ingest.pmc.metadata;
 
-import com.google.common.collect.Maps;
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import eu.dnetlib.iis.ingest.pmc.metadata.schemas.Affiliation;
-import eu.dnetlib.iis.ingest.pmc.metadata.schemas.Author;
-import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.AssertExtractedDocumentMetadata.assertAffiliation;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.AssertExtractedDocumentMetadata.assertAuthor;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.io.File;
+import java.util.List;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.XMLReader;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.File;
-import java.util.List;
+import com.google.common.collect.Maps;
 
-import static eu.dnetlib.iis.wf.ingest.pmc.metadata.AssertExtractedDocumentMetadata.assertAffiliation;
-import static eu.dnetlib.iis.wf.ingest.pmc.metadata.AssertExtractedDocumentMetadata.assertAuthor;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.ingest.pmc.metadata.schemas.Affiliation;
+import eu.dnetlib.iis.ingest.pmc.metadata.schemas.Author;
+import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
 
 /**
  * @author madryk
@@ -189,6 +192,24 @@ public class ArticleMetaXmlHandlerTest {
         assertAuthor(authors.get(1), "González, Víctor");
         assertAuthor(authors.get(2), "Dávila, Guillermo");
         
+    }
+
+    @Test
+    public void testNestedContributorsFromSpringer() throws Exception {
+        // given
+        File xmlFile = new File(XML_BASE_PATH + "/nested_contributors_from_springer.xml");
+        
+        // execute
+        saxParser.parse(xmlFile, articleMetaXmlHandler);
+        ExtractedDocumentMetadata metadata = metaBuilder.build();
+        
+        // assert
+        
+        List<Author> authors = metadata.getAuthors();
+        assertEquals(2, authors.size());
+        
+        assertAuthor(authors.get(0), "Niemi, Mari E. K.", 0);
+        assertAuthor(authors.get(1), "Karjalainen, Juha", 1);
     }
     
 }

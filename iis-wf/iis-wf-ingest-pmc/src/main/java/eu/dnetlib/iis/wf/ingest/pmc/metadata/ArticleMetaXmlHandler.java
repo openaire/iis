@@ -132,7 +132,7 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
                 this.affiliationText.append(currentValue);
             }
             
-        } else if (currentAuthor != null) {
+        } else if (currentAuthor != null && hasAmongParents(parents, ELEM_NAME)) {
             this.authorText.append(currentValue);
         }
         
@@ -157,6 +157,9 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
             
         } else if (isElement(qName, ELEM_AFFILIATION)) {
             handleAffiliation();
+        } else if (isElement(qName, ELEM_CONTRIBUTOR_GROUP)) {
+            currentAuthors.addAll(currentAuthorsGroup);
+            currentAuthorsGroup.clear();
         } else if (isElement(qName, ELEM_CONTRIBUTOR) || hasAmongParents(parents, ELEM_CONTRIBUTOR)) {
             if (currentAuthor != null) { // currently handling a contributor which is an author
                 
@@ -167,17 +170,14 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
                     currentAuthor.setGivenNames(authorText.toString().trim());
                     authorText.setLength(0);
                 } else if (isElement(qName, ELEM_CONTRIBUTOR)) {
-                    currentAuthorsGroup.add(currentAuthor);
+                    if (StringUtils.isNotBlank(currentAuthor.getSurname()) || StringUtils.isNotBlank(currentAuthor.getGivenNames())) {
+                        currentAuthorsGroup.add(currentAuthor);
+                    }
                     authorText.setLength(0);
                     currentAuthor = null;
                 }
-                
             }
-        } else if (isElement(qName, ELEM_CONTRIBUTOR_GROUP)) {
-            currentAuthors.addAll(currentAuthorsGroup);
-            currentAuthorsGroup.clear();
         }
-        
     }
     
     @Override
@@ -232,21 +232,21 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
     }
     
     private void assignAuthorsForAffiliation(int currentAffiliationPosition) throws SAXException {
-        if (hasAmongParents(parents, ELEM_CONTRIBUTOR)) {
-            if (currentAuthor != null) {
-                currentAuthor.getAffiliationPos().add(currentAffiliationPosition);    
-            }
-        } else if (hasAmongParents(parents, ELEM_CONTRIBUTOR_GROUP)) {
-            for (JatsAuthor author : currentAuthorsGroup) {
-                author.getAffiliationPos().add(currentAffiliationPosition);
-            }
-        } else if (currentAffiliationId != null) {
+        if (currentAffiliationId != null) {
             for (JatsAuthor author : currentAuthors) {
                 for (String affRefId : author.getAffiliationRefId()) {
                     if (StringUtils.equals(currentAffiliationId, affRefId)) {
                         author.getAffiliationPos().add(currentAffiliationPosition);
                     }
                 }
+            }
+        } else if (hasAmongParents(parents, ELEM_CONTRIBUTOR)) {
+            if (currentAuthor != null) {
+                currentAuthor.getAffiliationPos().add(currentAffiliationPosition);    
+            }
+        } else if (hasAmongParents(parents, ELEM_CONTRIBUTOR_GROUP)) {
+            for (JatsAuthor author : currentAuthorsGroup) {
+                author.getAffiliationPos().add(currentAffiliationPosition);
             }
         }
     }
