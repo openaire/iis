@@ -2,16 +2,21 @@ package eu.dnetlib.iis.wf.ingest.pmc.metadata;
 
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ATTR_AFFILIATION_ID;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ATTR_AFFILIATION_XREF;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ATTR_CONTENT_TYPE;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ATTR_CONTRIBUTOR_TYPE;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ATTR_COUNTRY;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ATTR_VALUE_AUTHOR;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ATTR_XREF_ID;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ATTR_XREF_TYPE;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_ADDR_LINE;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_AFFILIATION;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_ARTICLE_ID;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_CONTRIBUTOR;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_CONTRIBUTOR_GROUP;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_COUNTRY;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_FPAGE;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_GIVEN_NAMES;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_INSTITUTION;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_LABEL;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_LPAGE;
 import static eu.dnetlib.iis.wf.ingest.pmc.metadata.JatsXmlConstants.ELEM_NAME;
@@ -57,6 +62,12 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
      */
     private static final int MAX_AFF_LENGTH = 3000;
     
+    private static final String INSTITUTION_CONTENT_TYPE_ORG_DIVISION_ATTR_VALUE = "org-division";
+    private static final String INSTITUTION_CONTENT_TYPE_ORG_NAME_ATTR_VALUE = "org-name";
+    private static final String INSTITUTION_ADDR_LINE_CONTENT_TYPE_STREET_ATTR_VALUE = "street";
+    private static final String INSTITUTION_ADDR_LINE_CONTENT_TYPE_POSTCODE_ATTR_VALUE = "postcode";
+    private static final String INSTITUTION_ADDR_LINE_CONTENT_TYPE_CITY_ATTR_VALUE = "city";
+    
     private Stack<String> parents;
     
     private final ExtractedDocumentMetadata.Builder builder;
@@ -69,7 +80,9 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
     private String currentArticleIdType;
     
     private final StringBuilder affiliationText = new StringBuilder();
+    private final JatsExtendedAffiliation currentExtendedAffiliation = new JatsExtendedAffiliation();
     private String currentAffiliationId;
+    private String currentAffFieldContentType;
     
     private final StringBuilder authorText = new StringBuilder();
     private JatsAuthor currentAuthor;
@@ -101,6 +114,11 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
         
         if (isElement(qName, ELEM_AFFILIATION)) {
             currentAffiliationId = attributes.getValue(ATTR_AFFILIATION_ID);
+        } else if (hasAmongParents(qName, ELEM_INSTITUTION, parents, ELEM_AFFILIATION) ||
+                isWithinElement(qName, ELEM_ADDR_LINE, parents, ELEM_AFFILIATION)) {
+            currentAffFieldContentType = attributes.getValue(ATTR_CONTENT_TYPE);
+        } else if (isWithinElement(qName, ELEM_COUNTRY, parents, ELEM_AFFILIATION)) {
+            currentExtendedAffiliation.setCountryCode(attributes.getValue(ATTR_COUNTRY));
         } else if (isElement(qName, ELEM_ARTICLE_ID)) {
             currentArticleIdType = attributes.getValue(PUB_ID_TYPE);
         } else if (isElement(qName, ELEM_CONTRIBUTOR)) {
@@ -116,7 +134,6 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
             }
         }
         
-        
         this.parents.push(qName);
     }
     
@@ -126,9 +143,33 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
         this.currentValue = new String(ch, start, length);
         
         if (hasAmongParents(parents, ELEM_AFFILIATION)) {
-            
+            // if one of the elements: ELEM_INSTITUTION, ELEM_ADDR_LINE, ELEM_COUNTRY was defined then processing extended affiliation coming from Springer
+            // otherwise processing raw affiliation text coming from PubMed or any other provider
+            if (hasAmongParents(parents, ELEM_INSTITUTION)) {
+                if (INSTITUTION_CONTENT_TYPE_ORG_DIVISION_ATTR_VALUE.equals(currentAffFieldContentType)) {
+                    this.currentExtendedAffiliation.appendToInstitutionOrgDivision(currentValue);
+                } else if (INSTITUTION_CONTENT_TYPE_ORG_NAME_ATTR_VALUE.equals(currentAffFieldContentType)) {
+                    this.currentExtendedAffiliation.appendToInstitutionOrgName(currentValue);
+                } else {
+                    // adding as an orgName if unknown/unspecified content type
+                    this.currentExtendedAffiliation.appendToInstitutionOrgName(currentValue);
+                }
+            } else if (hasAmongParents(parents, ELEM_ADDR_LINE)) {
+                if (INSTITUTION_ADDR_LINE_CONTENT_TYPE_STREET_ATTR_VALUE.equals(currentAffFieldContentType)) {
+                    this.currentExtendedAffiliation.appendToAddrLineStreet(currentValue);
+                } else if (INSTITUTION_ADDR_LINE_CONTENT_TYPE_POSTCODE_ATTR_VALUE.equals(currentAffFieldContentType)) {
+                    this.currentExtendedAffiliation.appendToAddrLinePostCode(currentValue);
+                }  else if (INSTITUTION_ADDR_LINE_CONTENT_TYPE_CITY_ATTR_VALUE.equals(currentAffFieldContentType)) {
+                    this.currentExtendedAffiliation.appendToAddrLineCity(currentValue);
+                } else {
+                 // adding as a city if unknown/unspecified content type
+                    this.currentExtendedAffiliation.appendToAddrLineCity(currentValue);
+                }
+            } else if (hasAmongParents(parents, ELEM_COUNTRY)) {
+                this.currentExtendedAffiliation.appendToCountryName(currentValue);
+            } else if (!hasAmongParents(parents, ELEM_LABEL) && !hasAmongParents(parents, ELEM_SUP)) {
+            // processing affiliation string as defined in PubMed (simple aff text, no structured elements
             // skipping affiliation position element
-            if (!hasAmongParents(parents, ELEM_LABEL) && !hasAmongParents(parents, ELEM_SUP)) {
                 this.affiliationText.append(currentValue);
             }
             
@@ -201,7 +242,10 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
     
     private void handleAffiliation() throws SAXException {
         
-        Affiliation currentAffiliation = buildAffiliation();
+        Affiliation currentAffiliation = currentExtendedAffiliation.getNumberOfFieldsSet() > 0
+                ? buildAffiliation(currentExtendedAffiliation)
+                : buildAffiliationFromText(affiliationText.toString());
+
         if (currentAffiliation != null) {
             int currentAffiliationPosition = builder.getAffiliations().size();
             builder.getAffiliations().add(currentAffiliation);
@@ -209,15 +253,59 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
         }
         
         affiliationText.setLength(0);
+        currentExtendedAffiliation.clear();
+        currentAffFieldContentType = null;
     }
     
-    private Affiliation buildAffiliation() throws SAXException {
+    private Affiliation buildAffiliation(JatsExtendedAffiliation extendedAffiliation) throws SAXException {
+        if (StringUtils.isNotBlank(extendedAffiliation.getInstitutionOrgName())) {
+            if (shouldBePostprocessed(extendedAffiliation)) {
+                //  getting through CERMINE parsing with the raw text to improve the coverage of recognized affiliation fields
+                return buildAffiliationFromText(extendedAffiliation.generateRawText());
+            } else {
+                Affiliation.Builder affBuilder = Affiliation.newBuilder();
+                String fullOrgName = extendedAffiliation.generateFullOrganizationName();
+                if (StringUtils.isNotBlank(fullOrgName)) {
+                    affBuilder.setOrganization(fullOrgName);
+                }
+                String fullAddress = extendedAffiliation.generateFullAddress();
+                if (StringUtils.isNotBlank(fullAddress)) {
+                    affBuilder.setAddress(fullAddress);
+                }
+                String countryCode = extendedAffiliation.getCountryCode();
+                if (StringUtils.isNotBlank(countryCode)) {
+                    affBuilder.setCountryCode(countryCode);
+                }
+                String countryName = extendedAffiliation.getCountryName();
+                if (StringUtils.isNotBlank(countryName)) {
+                    affBuilder.setCountryName(countryName);
+                }
+                String rawText = extendedAffiliation.generateRawText();
+                if (StringUtils.isNotBlank(rawText)) {
+                    affBuilder.setRawText(rawText);
+                }
+                return affBuilder.build();
+            }
+            
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * Checks if given affiliation should be supplemented with missing metadata. It is usually required when
+     * an affiliation was defined as organization name and address pair without any specifics regarding the country.
+     */
+    private static boolean shouldBePostprocessed(JatsExtendedAffiliation extendedAffiliation) {
+        return extendedAffiliation.getNumberOfFieldsSet() <= 2;
+    }
+
+    private Affiliation buildAffiliationFromText(String affiliationText) throws SAXException {
         
         try {
-            String affStr = this.affiliationText.toString();
-            if (StringUtils.isNotBlank(affStr) && affStr.length() <= MAX_AFF_LENGTH) {
+            if (StringUtils.isNotBlank(affiliationText) && affiliationText.length() <= MAX_AFF_LENGTH) {
                 CRFAffiliationParser affiliationParser = new CRFAffiliationParser();
-                Element parsedAffiliation = affiliationParser.parse(affStr);
+                Element parsedAffiliation = affiliationParser.parse(affiliationText);
                 if (parsedAffiliation!=null) {
                     CermineAffiliation cAff = cermineAffiliationBuilder.build(parsedAffiliation);
                     return cermineToIngestAffConverter.convert(cAff);

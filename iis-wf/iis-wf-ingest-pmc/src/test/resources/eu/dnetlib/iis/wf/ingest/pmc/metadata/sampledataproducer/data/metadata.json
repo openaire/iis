@@ -1187,11 +1187,11 @@
   ],
   "affiliations": [
     {
-      "organization": "Programa de Geno\u0301mica Evolutiva, Centro de Ciencias Geno\u0301micas, Universidad Nacional Auto\u0301noma de Me\u0301xicoApartado Postal 565-A, C.",
-      "countryName": "Me\u0301xico",
+      "organization": "Programa de Genómica Evolutiva, Centro de Ciencias Genómicas, Universidad Nacional Autónoma de México",
+      "countryName": "México",
       "countryCode": "MX",
-      "address": "P 62210, Cuernavaca, Morelos",
-      "rawText": "Programa de Geno\u0301mica Evolutiva, Centro de Ciencias Geno\u0301micas, Universidad Nacional Auto\u0301noma de Me\u0301xicoApartado Postal 565-A, C.P 62210, Cuernavaca, Morelos, Me\u0301xico"
+      "address": "Apartado Postal 565-A, C.P 62210, Cuernavaca, Morelos",
+      "rawText": "Programa de Genómica Evolutiva, Centro de Ciencias Genómicas, Universidad Nacional Autónoma de México, Apartado Postal 565-A, C.P 62210, Cuernavaca, Morelos, México"
     }
   ],
   "authors": [
