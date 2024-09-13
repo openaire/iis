@@ -1,5 +1,6 @@
 --For testing...
--- attach database "../06.Biomedical06/mydata.db" as d1;
+-- cd /storage/eleni/openAIRE/UKNR
+-- attach database "/storage/eleni/openAIRE/06.Biomedical06/mydata.db" as d1;
 -- create table mydata as select * from (setschema 'docid,text' select * from mydata where
 --              docid ='PMC2931525' or  docid ='PMC2933899' or
 --              docid ='PMC3737084' or  docid ='PMC3737070' );
@@ -13,19 +14,221 @@
 
 create temp table mydata as select * from (setschema 'docid,text' select jsonpath(c1,'$.id', '$.text') from stdinput());
 
-hidden var 'urls' from "www\.animalstudyregistry\.org|aspredicted\.org|www\.anzctr\.org\.au|ensaiosclinicos\.gov\.br|www\.chictr\.org\.cn|cris\.nih\.go\.kr\cris|euclinicaltrials\.eu|ctri\.nic\.in|clinicaltrials\.gov|rpcec\.sld\.cu|www\.onderzoekmetmensen\.nl|www\.clinicaltrialsregister\.eu|drks\.de|trialsearch\.who\.int|inplasy\.com|www\.crd\.york\.ac\.uk\/prospero|www\.isrctn\.com|itmctr\.ccebtcm\.org\.cn|www\.irct\.ir|rctportal\.niph\.go\.jp|www\.clinicaltrials\.jp|rctportal\.niph\.go\.jp|lbctr\.moph\.gov\.lb|osf\.io/search\?resourceType=Registration|pactr\.samrc\.ac\.za|ensayosclinicos-repec\.ins\.gob\.pe|preclinicaltrials\.eu|www\.researchregistry\.com|www\.slctr\.lk|thaiclinicaltrials\.org|ww\.umin\.ac\.jp";
+hidden var 'ASR' from "www\.animalstudyregistry\.org|\b10\.17590\/asr\.\d+\b";
+hidden var 'AsPredicted' from "aspredicted\.org|\bAsPredicted\s{0,1}#\d+\b";
+hidden var 'ANZCTR' from "www\.anzctr\.org\.au|\bACTRN:{0,1}\s{0,1}\d+p{0,1}\b";
+hidden var 'ReBec' from "ensaiosclinicos\.gov\.br|\bRBR-\d+[a-z0-9]+\b";
+hidden var 'ChiCTR' from "www\.chictr\.org\.cn|\bChiCTR\s{0,1}-{0,1}(?:TRC){0,1}-{0,1}\d+\b";
+hidden var 'CRiS' from "cris\.nih\.go\.kr\cris|\bKCT\s{0,1}\d{7}\b";
+hidden var 'CTIS' from "euclinicaltrials\.eu|\bEUCT\s{0,1}\d{4}-\d+-\d{2}-\d{2}\b";
+hidden var 'CTRI' from "ctri\.nic\.in|\bCTRI/\d{4}/\d{2}/\d+\b";
+hidden var 'CT_gov' from "clinicaltrials\.gov|\bNCT\s{0,1}\d+\b";
+hidden var 'RPCEC' from "rpcec\.sld\.cu|\bRPCEC\s{0,1}\d+\b";
+hidden var 'LTR' from "www\.onderzoekmetmensen\.nl|\bNL\s{0,1}\d+ ; NTR\s{0,1}\d+\b";
+hidden var 'EU_CTR' from "www\.clinicaltrialsregister\.eu";
+hidden var 'DRKS' from "drks\.de|\bDRKS\s{0,1}\d+\b";
+hidden var 'ICTRP' from "trialsearch\.who\.int|\bU\d{4}-\d{4}-\d{4}\b";
+hidden var 'INPLASY' from "inplasy\.com|\bINPLASY\s{0,1}\d+\b";
+hidden var 'PROSPERO' from "www\.crd\.york\.ac\.uk\/prospero|\bCRD\s{0,1}\d+\b";
+hidden var 'ISRCTN' from "www\.isrctn\.com|\bISRCTN\s{0,1}\d+\b";
+hidden var 'ITMCTR' from "itmctr\.ccebtcm\.org\.cn|\bITMCTR\s{0,1}\d+\b";
+hidden var 'IRCT' from "www\.irct\.ir|\bIRCT\s{0,1}\d+\b";
+hidden var 'JMACCT' from "rctportal\.niph\.go\.jp|\bJMA-IIA\s{0,1}\d+\b";
+hidden var 'JAPIC' from "www\.clinicaltrials\.jp|\bJapicCTI\s{0,1}-{0,1}\d+\b";
+hidden var 'jRCT' from "rctportal\.niph\.go\.jp|\bjRCTs{0,1}\s{0,1}\d+\b";
+hidden var 'LBCTR' from "lbctr\.moph\.gov\.lb|\bLBCTR\s{0,1}\d+\b";
+hidden var 'OSF' from "osf\.io/search\?resourceType=Registration";
+hidden var 'PACTR' from "pactr\.samrc\.ac\.za|\bPACTR\s{0,1}\d+\b";
+hidden var 'REPEC' from "ensayosclinicos-repec\.ins\.gob\.pe|\bPER-\d+-\d+\b";
+hidden var 'PCT' from "preclinicaltrials\.eu|\bPCTE\s{0,1}\d+\b";
+hidden var 'ResearchRegistry' from "www\.researchregistry\.com|\bresearchregistry\s{0,1}\d+\b";
+hidden var 'SLCTR' from "www\.slctr\.lk|\bSLCTR/\d{4}/\d+\b";
+hidden var 'TCTR' from "thaiclinicaltrials\.org|\bTCTR\s{0,1}\d+\b";
+hidden var 'UMIN' from "ww\.umin\.ac\.jp|\bUMIN\s{0,1}\d+\b";
 
-hidden var 'regexstatements' from
-"10\.17590\/asr\.\d+|AsPredicted\s{0,1}#\d+|ACTRN:{0,1}\s{0,1}\d+p{0,1}|RBR-\d+[a-z0-9]+|ChiCTR\s{0,1}-{0,1}(?:TRC){0,1}-{0,1}\d+|KCT\s{0,1}\d{7}|EUCT\s{0,1}\d{4}-\d+-\d{2}-\d{2}|CTRI/\d{4}/\d{2}/\d+|NCT\s{0,1}\d+|RPCEC\s{0,1}\d+|NL\s{0,1}\d+ ; NTR\s{0,1}\d+|\d{4}[-–]\d+-\d+|DRKS\s{0,1}\d+|U\d{4}-\d{4}-\d{4}|INPLASY\s{0,1}\d+|CRD\s{0,1}\d+|ISRCTN\s{0,1}\d+|ITMCTR\s{0,1}\d+|IRCT\s{0,1}\d+|JMA-IIA\s{0,1}\d+|JapicCTI\s{0,1}-{0,1}\d+|jRCTs{0,1}\s{0,1}\d+|LBCTR\s{0,1}\d+|PACTR\s{0,1}\d+|PER-\d+-\d+|PCTE\s{0,1}\d+|researchregistry\s{0,1}\d+|SLCTR/\d{4}/\d+|TCTR\s{0,1}\d+|UMIN\s{0,1}\d+";
 
-select jdict('query', 'a', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+select jdict('query', 'ASR', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
 from ( select docid, prev, middle, next
-        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('urls'))
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('ASR'))
                 from (select docid, text from mydata))
 )
 union all
-select jdict('query', 'b', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+select jdict('query', 'AsPredicted', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
 from ( select docid, prev, middle, next
-        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('regexstatements'))
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('AsPredicted'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'ANZCTR', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('ANZCTR'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'ReBec', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('ReBec'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'ChiCTR', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('ChiCTR'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'CRiS', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('CRiS'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'CTIS', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('CTIS'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'CTRI', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('CTRI'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'CT_gov', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('CT_gov'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'RPCEC', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('RPCEC'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'LTR', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('LTR'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'EU_CTR', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('EU_CTR'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'DRKS', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('DRKS'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'ICTRP', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('ICTRP'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'INPLASY', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('INPLASY'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'PROSPERO', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('PROSPERO'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'ISRCTN', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('ISRCTN'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'ITMCTR', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('ITMCTR'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'IRCT', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('IRCT'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'JMACCT', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('JMACCT'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'JAPIC', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('JAPIC'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'jRCT', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('jRCT'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'LBCTR', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('LBCTR'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'OSF', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('OSF'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'PACTR', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('PACTR'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'REPEC', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('REPEC'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'PCT', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('PCT'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'ResearchRegistry', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('ResearchRegistry'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'SLCTR', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('SLCTR'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'TCTR', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('TCTR'))
+                from (select docid, text from mydata))
+)
+union all
+select jdict('query', 'UMIN', 'documentId', docid, 'prev', prev, 'middle', middle, 'next', next)
+from ( select docid, prev, middle, next
+        from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('UMIN'))
                 from (select docid, text from mydata))
 );
