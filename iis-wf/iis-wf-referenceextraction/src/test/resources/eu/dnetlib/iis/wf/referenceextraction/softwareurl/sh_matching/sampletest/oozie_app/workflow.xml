@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-referenceextraction_softwareurl_sh_matching_sampletest">
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+	<start to="producer" />
+
+	<action name="producer">
+		<java>
+			<prepare>
+				<delete path="${nameNode}${workingDir}/producer" />
+				<mkdir path="${nameNode}${workingDir}/producer" />
+			</prepare>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+			<arg>-C{document_to_softwareurl_pre_matching,
+				eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlPreMatching,
+				eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/document_to_softwareurl_pre_matching.json}</arg>
+            <arg>-C{origins,
+                eu.dnetlib.iis.referenceextraction.softwareurl.schemas.SoftwareHeritageOrigin,
+                eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/sh_origins.json}</arg>
+			<arg>-Odocument_to_softwareurl_pre_matching=${workingDir}/producer/document_to_softwareurl_pre_matching</arg>
+            <arg>-Oorigins=${workingDir}/producer/origins</arg>
+		</java>
+		<ok to="referenceextraction_softwareurl_sh_matching" />
+		<error to="fail" />
+	</action>
+
+    <action name="referenceextraction_softwareurl_sh_matching">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/referenceextraction_softwareurl_sh_matching</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>input_document_to_software</name>
+                    <value>${workingDir}/producer/document_to_softwareurl_pre_matching</value>
+                </property>
+                <property>
+                    <name>input_softwareheritage_origins</name>
+                    <value>${workingDir}/producer/origins</value>
+                </property>
+                <property>
+                    <name>output_document_to_software</name>
+                    <value>${workingDir}/out</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="consumer"/>
+        <error to="fail"/>
+    </action>
+
+	<action name="consumer">
+		<java>
+			<main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+			<arg>eu.dnetlib.iis.common.java.jsonworkflownodes.TestingConsumer</arg>
+			<arg>-C{document_to_softwareurl,
+				eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta,
+				eu/dnetlib/iis/wf/referenceextraction/softwareurl/data/document_to_softwareurl_post_matching.json}</arg>
+			<arg>-Idocument_to_softwareurl=${workingDir}/out</arg>
+		</java>
+		<ok to="end" />
+		<error to="fail" />
+	</action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+        			[${wf:errorMessage(wf:lastErrorNode())}]
+        		</message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>
