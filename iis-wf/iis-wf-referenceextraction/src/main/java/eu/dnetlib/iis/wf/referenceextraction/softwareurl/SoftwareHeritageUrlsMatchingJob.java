@@ -22,7 +22,7 @@ import eu.dnetlib.iis.common.spark.avro.AvroDataFrameWriter;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlPreMatching;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.SoftwareHeritageOrigin;
-import eu.dnetlib.iis.wf.referenceextraction.project.tara.TaraReferenceExtractionIOUtils;
+import eu.dnetlib.iis.wf.referenceextraction.ReferenceExtractionIOUtils;
 
 
 /**
@@ -38,14 +38,16 @@ public class SoftwareHeritageUrlsMatchingJob {
     
     private static final Logger logger = LoggerFactory.getLogger(SoftwareHeritageUrlsMatchingJob.class);
 
+    //------------------------ LOGIC --------------------------
+    
     public static void main(String[] args) throws Exception {
         JobParameters params = new JobParameters();
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
 
         try (SparkSession spark = SparkSessionFactory.withConfAndKryo(new SparkConf())) {
-            // TODO move this IOUtils class to a shared package in this module
-            TaraReferenceExtractionIOUtils.clearOutput(spark, params.outputDocumentToSoftware);
+
+            ReferenceExtractionIOUtils.clearOutput(spark, params.outputDocumentToSoftware);
 
             AvroDataFrameReader avroDataFrameReader = new AvroDataFrameReader(spark);
             
@@ -79,11 +81,11 @@ public class SoftwareHeritageUrlsMatchingJob {
         }
     }
     
+    //------------------------ PRIVATE --------------------------
     
-    public static void storeInOutput(Dataset<Row> resultsToOutputDF, String outputDocumentToSoftware) {
+    private static void storeInOutput(Dataset<Row> resultsToOutputDF, String outputDocumentToSoftware) {
         logger.info("Storing output data in path {}.", outputDocumentToSoftware);
         new AvroDataFrameWriter(resultsToOutputDF).write(outputDocumentToSoftware, DocumentToSoftwareUrlWithMeta.SCHEMA$);
-        //writer.write(resultsToOutputDF, outputDocumentToSoftware, DocumentToSoftwareUrlWithMeta.SCHEMA$);
     }
     
     @Parameters(separators = "=")
