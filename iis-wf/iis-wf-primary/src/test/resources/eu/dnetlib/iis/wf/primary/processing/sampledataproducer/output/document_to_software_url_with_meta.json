@@ -5,7 +5,7 @@
   "softwareTitle": "madis", 
   "softwareDescription": "madIS - Extensible relational DB based on SQLite", 
   "softwarePageURL": "https://github.com/madgik/madis",
-  "SHUrl": "",
+  "SHUrl": null,
   "confidenceLevel": 0.8
 }
 {

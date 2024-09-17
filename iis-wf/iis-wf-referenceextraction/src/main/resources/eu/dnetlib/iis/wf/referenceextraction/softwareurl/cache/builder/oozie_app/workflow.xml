@@ -30,12 +30,8 @@
 			</description>
 		</property>
         <property>
-            <name>output_root</name>
-            <description>output directory holding software heritage origins SQLite database file and versioned subdirectory</description>
-        </property>
-        <property>
-            <name>origins_db_filename</name>
-            <description>output software heritage origins SQLite database filename</description>
+            <name>output</name>
+            <description>output directory holding software heritage origins encoded as SoftwareHeritageOrigin records</description>
         </property>
 	</parameters>
 
@@ -64,58 +60,12 @@
             <configuration>
                 <property>
                     <name>output</name>
-                    <value>${workingDir}/origins_importer/out</value>
+                    <value>${output}</value>
                 </property>
             </configuration>
         </sub-workflow>
-        <ok to="create-output-dir"/>
+        <ok to="end"/>
         <error to="fail"/>
-    </action>
-
-    <action name="create-output-dir">
-         <fs>
-            <delete path="${nameNode}${output_root}/${origins_db_filename}"/>
-            <mkdir path="${nameNode}${output_root}"/>
-        </fs>
-        <ok to="sqlite_builder"/>
-        <error to="fail"/>
-    </action>
-
-    <action name="sqlite_builder">
-        <sub-workflow>
-            <app-path>${wf:appPath()}/sqlite_builder</app-path>
-            <propagate-configuration />
-            <configuration>
-                <property>
-                    <name>input_softwareheritage_origins</name>
-                    <value>${workingDir}/origins_importer/out</value>
-                </property>
-                <property>
-                    <name>output_softwareheritage_origins_db</name>
-                    <value>${output_root}/${origins_db_filename}</value>
-                </property>
-            </configuration>
-        </sub-workflow>
-        <ok to="recreate-versioned-dir"/>
-        <error to="fail"/>
-    </action>
-    
-    <action name="recreate-versioned-dir">
-         <fs>
-            <delete path="${nameNode}${output_root}/${replaceAll(timestamp(), '(..)T(..):(..)Z$', '$1_$2-$3')}"/>
-            <mkdir path="${nameNode}${output_root}/${replaceAll(timestamp(), '(..)T(..):(..)Z$', '$1_$2-$3')}"/>
-        </fs>
-        <ok to="copy-versioned-db"/>
-        <error to="fail"/>
-    </action>
-    
-    <action name="copy-versioned-db">
-        <distcp xmlns="uri:oozie:distcp-action:0.2">
-            <arg>${nameNode}${output_root}/${origins_db_filename}</arg>
-            <arg>${nameNode}${output_root}/${replaceAll(timestamp(), "(..)T(..):(..)Z$", "$1_$2-$3")}/${origins_db_filename}</arg>
-        </distcp>
-        <ok to="end" />
-        <error to="fail" />
     </action>
     
     <kill name="fail">
