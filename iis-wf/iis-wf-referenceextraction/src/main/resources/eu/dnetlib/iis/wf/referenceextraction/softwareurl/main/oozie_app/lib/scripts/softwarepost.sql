@@ -38,11 +38,12 @@ create temp table extractedlinks as select extractedpartiallinks.id, extractedpa
 update extractedlinks set title = comprspaces(regexpr("\n",title," ")) where title is not null and title != "";
 update extractedlinks set cleanmatch = regexpr("http(s*):\/\/www\.github\.com",cleanmatch,"https://github.com") where cleanmatch is not null;
 update extractedlinks set cleanmatch = regexpr("http\:\/\/github\.com",cleanmatch,"https://github.com") where cleanmatch is not null;
-update extractedlinks set cleanmatch = lower(regexpr("\.git$",cleanmatch,"")) where cleanmatch is not null;
-update extractedlinks set cleanmatch = regexpr("(https://github.com/[^/]+/[^/]+)",cleanmatch) where cleanmatch like "https://github.com/%/%/%";
+update extractedlinks set cleanmatch = regexpr("\.git$",cleanmatch,"") where cleanmatch is not null;
+update extractedlinks set cleanmatch = regexpr("((?i)https://github.com/[^/]+/[^/]+)",cleanmatch) where cleanmatch like "https://github.com/%/%/%";
 update extractedlinks set description = comprspaces(regexpr("\n",description," ")) where description is not null and description != "";
 update extractedlinks set repo = comprspaces(regexpr("\n",repo," ")) where repo is not null and repo != "";
 update extractedlinks set title = regexpr("/([^/]+)$",cleanmatch) where title = "" or title is null;
+update extractedlinks set cleanmatch = lower(cleanmatch) where cleanmatch is not null;
 update extractedlinks set title = "" where title is null;
 
 
