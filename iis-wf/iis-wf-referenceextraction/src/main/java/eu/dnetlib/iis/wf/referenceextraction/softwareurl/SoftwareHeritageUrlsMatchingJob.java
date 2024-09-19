@@ -56,9 +56,11 @@ public class SoftwareHeritageUrlsMatchingJob {
             Dataset<Row> inputSoftwareHeritageOrigin = avroDataFrameReader.read(params.inputSoftwareHeritageOrigin,
                     SoftwareHeritageOrigin.SCHEMA$);
             
+            Dataset<Row> inputSoftwareHeritageOriginDistinct = inputSoftwareHeritageOrigin.distinct();
+            
             // Perform the left join on the cleanmatch (case-insensitive match)
-            Dataset<Row> joinedDF = inputDocumentToSoftware.join(inputSoftwareHeritageOrigin,
-                    lower(inputDocumentToSoftware.col("cleanmatch")).equalTo(lower(inputSoftwareHeritageOrigin.col("url"))),
+            Dataset<Row> joinedDF = inputDocumentToSoftware.join(inputSoftwareHeritageOriginDistinct,
+                    lower(inputDocumentToSoftware.col("cleanmatch")).equalTo(lower(inputSoftwareHeritageOriginDistinct.col("url"))),
                     "left_outer");
             
             // Add the new column "SHUrl" by concatenating the base URL and the link column
