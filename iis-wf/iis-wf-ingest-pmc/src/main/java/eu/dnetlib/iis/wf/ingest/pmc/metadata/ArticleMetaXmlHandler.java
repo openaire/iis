@@ -156,9 +156,13 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
                 } else {
                     // adding as an orgName if unknown/unspecified content type
                     // might need to add separator if wasInstitutionTagAlreadyClosedForAff and if separator is not already involved
-                    if (wasInstitutionTagAlreadyClosedForAff && isSeparatorNeeded(
-                            this.currentExtendedAffiliation.getInstitutionOrgName(), currentValue)) {
-                        this.currentExtendedAffiliation.appendToInstitutionOrgName(TOKEN_SEPARATOR);
+                    if (wasInstitutionTagAlreadyClosedForAff) {
+                        if (isSeparatorNeeded(this.currentExtendedAffiliation.getInstitutionOrgName(), currentValue)) {
+                            this.currentExtendedAffiliation.appendToInstitutionOrgName(TOKEN_SEPARATOR);
+                        }
+                        // need to unmark closed institution tag because of potentially long name
+                        // incoming in multiple subsequent characters() calls
+                        this.wasInstitutionTagAlreadyClosedForAff = false;
                     }
                     this.currentExtendedAffiliation.appendToInstitutionOrgName(currentValue);
                 }
