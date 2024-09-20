@@ -117,16 +117,66 @@ public class JatsXmlHandlerTest {
 
 		assertNotNull(meta.getAffiliations());
 		assertEquals(6, meta.getAffiliations().size());
-		// checking first affiliation
+		// checking all affiliations
 		assertEquals(
-				"Auditory Neuroscience Laboratory, www.brainvolts.northwestern.edu, Northwestern University Evanston, IL, USA",
+				"Auditory Neuroscience Laboratory, Northwestern University, Evanston, IL, USA",
 				meta.getAffiliations().get(0).getRawText());
 		assertEquals(
-				"Auditory Neuroscience Laboratory, www.brainvolts.northwestern.edu, Northwestern University Evanston",
+				"Auditory Neuroscience Laboratory, Northwestern University",
 				meta.getAffiliations().get(0).getOrganization());
 		assertEquals("USA", meta.getAffiliations().get(0).getCountryName());
 		assertEquals("US", meta.getAffiliations().get(0).getCountryCode());
-		assertEquals("IL", meta.getAffiliations().get(0).getAddress());
+		assertEquals("Evanston, IL", meta.getAffiliations().get(0).getAddress());
+		
+		assertEquals(
+                "Department of Communication Sciences, Northwestern University, Evanston, IL, USA",
+                meta.getAffiliations().get(1).getRawText());
+        assertEquals(
+                "Department of Communication Sciences, Northwestern University",
+                meta.getAffiliations().get(1).getOrganization());
+        assertEquals("USA", meta.getAffiliations().get(1).getCountryName());
+        assertEquals("US", meta.getAffiliations().get(1).getCountryCode());
+        assertEquals("Evanston, IL", meta.getAffiliations().get(1).getAddress());
+        
+        assertEquals(
+                "Neuroscience Program, Northwestern University, Evanston, IL, USA",
+                meta.getAffiliations().get(2).getRawText());
+        assertEquals(
+                "Neuroscience Program, Northwestern University",
+                meta.getAffiliations().get(2).getOrganization());
+        assertEquals("USA", meta.getAffiliations().get(2).getCountryName());
+        assertEquals("US", meta.getAffiliations().get(2).getCountryCode());
+        assertEquals("Evanston, IL", meta.getAffiliations().get(2).getAddress());
+        
+        assertEquals(
+                "Department of Neurobiology and Physiology, Northwestern University, Evanston, IL, USA",
+                meta.getAffiliations().get(3).getRawText());
+        assertEquals(
+                "Department of Neurobiology and Physiology, Northwestern University",
+                meta.getAffiliations().get(3).getOrganization());
+        assertEquals("USA", meta.getAffiliations().get(3).getCountryName());
+        assertEquals("US", meta.getAffiliations().get(3).getCountryCode());
+        assertEquals("Evanston, IL", meta.getAffiliations().get(3).getAddress());
+        
+        assertEquals(
+                "Department of Otolaryngology, Northwestern University, Chicago, IL, USA",
+                meta.getAffiliations().get(4).getRawText());
+        assertEquals(
+                "Department of Otolaryngology, Northwestern University",
+                meta.getAffiliations().get(4).getOrganization());
+        assertEquals("USA", meta.getAffiliations().get(4).getCountryName());
+        assertEquals("US", meta.getAffiliations().get(4).getCountryCode());
+        assertEquals("Chicago, IL", meta.getAffiliations().get(4).getAddress());
+        
+        assertEquals(
+                "Data Sense LLC, Chicago, IL, USA",
+                meta.getAffiliations().get(5).getRawText());
+        assertEquals(
+                "Data Sense LLC",
+                meta.getAffiliations().get(5).getOrganization());
+        assertEquals("USA", meta.getAffiliations().get(5).getCountryName());
+        assertEquals("US", meta.getAffiliations().get(5).getCountryCode());
+        assertEquals("Chicago, IL", meta.getAffiliations().get(5).getAddress());
 	}
 
 	@Test

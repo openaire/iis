@@ -62,6 +62,8 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
      */
     private static final int MAX_AFF_LENGTH = 3000;
     
+    private static final String TOKEN_SEPARATOR = ", ";
+    
     private static final String INSTITUTION_CONTENT_TYPE_ORG_DIVISION_ATTR_VALUE = "org-division";
     private static final String INSTITUTION_CONTENT_TYPE_ORG_NAME_ATTR_VALUE = "org-name";
     private static final String INSTITUTION_ADDR_LINE_CONTENT_TYPE_STREET_ATTR_VALUE = "street";
@@ -83,6 +85,7 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
     private final JatsExtendedAffiliation currentExtendedAffiliation = new JatsExtendedAffiliation();
     private String currentAffiliationId;
     private String currentAffFieldContentType;
+    private boolean wasInstitutionTagAlreadyClosedForAff = false;
     
     private final StringBuilder authorText = new StringBuilder();
     private JatsAuthor currentAuthor;
@@ -152,6 +155,11 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
                     this.currentExtendedAffiliation.appendToInstitutionOrgName(currentValue);
                 } else {
                     // adding as an orgName if unknown/unspecified content type
+                    // might need to add separator if wasInstitutionTagAlreadyClosedForAff and if separator is not already involved
+                    if (wasInstitutionTagAlreadyClosedForAff && isSeparatorNeeded(
+                            this.currentExtendedAffiliation.getInstitutionOrgName(), currentValue)) {
+                        this.currentExtendedAffiliation.appendToInstitutionOrgName(TOKEN_SEPARATOR);
+                    }
                     this.currentExtendedAffiliation.appendToInstitutionOrgName(currentValue);
                 }
             } else if (hasAmongParents(parents, ELEM_ADDR_LINE)) {
@@ -196,6 +204,9 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
             }
             builder.getPages().setEnd(this.currentValue.trim());
             
+        } else if (hasAmongParents(qName, ELEM_INSTITUTION, parents, ELEM_AFFILIATION)) {
+            // indicates there was already an instution tag for a given affiliation which may require adding a separator when missing
+            wasInstitutionTagAlreadyClosedForAff = true;
         } else if (isElement(qName, ELEM_AFFILIATION)) {
             handleAffiliation();
         } else if (isElement(qName, ELEM_CONTRIBUTOR_GROUP)) {
@@ -225,7 +236,7 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
     public void endDocument() throws SAXException {
         for (JatsAuthor pmcAuthor : currentAuthors) {
             Author author = Author.newBuilder()
-                    .setFullname(pmcAuthor.getSurname() + ", " + pmcAuthor.getGivenNames())
+                    .setFullname(pmcAuthor.getSurname() + TOKEN_SEPARATOR + pmcAuthor.getGivenNames())
                     .setAffiliationPositions(pmcAuthor.getAffiliationPos())
                     .build();
             builder.getAuthors().add(author);
@@ -239,6 +250,22 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
     
     
     //------------------------ PRIVATE --------------------------
+    
+    /**
+     * Checks if separator is needed when concatenating two strings 
+     * by verifying if any of two strings already contains separator.
+     */
+    private static boolean isSeparatorNeeded(String firstString, String secondString) {
+        if (StringUtils.isNotBlank(firstString) && StringUtils.isNotBlank(secondString)) {
+            if (firstString.trim().endsWith(",") || secondString.trim().startsWith(",")) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
     
     private void handleAffiliation() throws SAXException {
         
@@ -255,6 +282,7 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
         affiliationText.setLength(0);
         currentExtendedAffiliation.clear();
         currentAffFieldContentType = null;
+        wasInstitutionTagAlreadyClosedForAff = false;
     }
     
     private Affiliation buildAffiliation(JatsExtendedAffiliation extendedAffiliation) throws SAXException {
