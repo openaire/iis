@@ -163,10 +163,6 @@
 					<value>text/html</value>
 				</property>
 				<property>
-					<name>mimetypes_xml_pmc</name>
-					<value>xml</value>
-				</property>
-				<property>
 					<name>mimetypes_wos</name>
 					<value>file::WoS</value>
 				</property>
