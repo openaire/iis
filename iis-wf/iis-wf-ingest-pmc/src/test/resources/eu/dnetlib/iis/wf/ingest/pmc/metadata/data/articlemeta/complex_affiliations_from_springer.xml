@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ali="http://www.niso.org/schemas/ali/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="research-article" dtd-version="1.2" xml:lang="en">
+  <?properties open_access?>
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="publisher-id">3</journal-id>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="doi">10.1007/s00003-009-0510-5</article-id>
+      <title-group>
+        <article-title xml:lang="en">Safe cosmetics without animal testing? Contributions of the EU Project <italic toggle="yes">Sens-it-iv</italic></article-title>
+      </title-group>
+      <contrib-group>
+        <aff id="Aff1">
+          <label>Aff1</label>
+          <institution-wrap>
+            <institution-id institution-id-type="GRID">grid.429509.3</institution-id>
+            <institution-id institution-id-type="ISNI">0000000404914256</institution-id>
+            <institution content-type="org-name">Max-Planck-Institute for Immunobiology</institution>
+          </institution-wrap>
+          <addr-line content-type="street">Schillhof 5</addr-line>
+          <addr-line content-type="postcode">79110</addr-line>
+          <addr-line content-type="city">Freiburg</addr-line>
+          <country country="DE">Germany</country>
+        </aff>
+        <aff id="Aff2">
+          <label>Aff2</label>
+          <institution-wrap>
+            <institution-id institution-id-type="GRID">grid.4708.b</institution-id>
+            <institution-id institution-id-type="ISNI">0000000417572822</institution-id>
+            <institution content-type="org-division">Laboratory of Toxicology, Department of Pharmacological Sciences</institution>
+            <institution content-type="org-name">University of Milan</institution>
+          </institution-wrap>
+          <addr-line content-type="city">Milan</addr-line>
+        </aff>
+        <aff id="Aff4">
+          <label>Aff4</label>
+          <institution-wrap>
+            <institution-id institution-id-type="GRID">grid.4514.4</institution-id>
+            <institution-id institution-id-type="ISNI">0000000109302361</institution-id>
+          </institution-wrap>
+          <addr-line content-type="city">Lund</addr-line>
+          <country country="SE">Sweden</country>
+        </aff>
+        <aff id="Aff5">
+          <label>Aff5</label>
+          <institution-wrap>
+            <institution content-type="org-name">Proteome Sciences R&amp;D GmbH &amp; Co. KG</institution>
+          </institution-wrap>
+          <addr-line content-type="city">Frankfurt</addr-line>
+          <country country="DE">Germany</country>
+        </aff>
+        <aff id="Aff6">
+          <label>Aff6</label>
+          <institution-wrap>
+            <institution-id institution-id-type="GRID">grid.411778.c</institution-id>
+            <institution-id institution-id-type="ISNI">0000000121621728</institution-id>
+            <institution content-type="org-division">Department of Dermatology</institution>
+            <institution content-type="org-name">University Medical Centre</institution>
+          </institution-wrap>
+          <addr-line content-type="city">Mannheim</addr-line>
+          <country country="DE">Germany</country>
+        </aff>
+        <aff id="Aff8">
+          <label>Aff8</label>
+          <institution-wrap>
+            <institution-id institution-id-type="GRID">grid.10582.3e</institution-id>
+            <institution-id institution-id-type="ISNI">0000000403730797</institution-id>
+            <institution content-type="org-name">Novozymes AS</institution>
+          </institution-wrap>
+          <addr-line content-type="city">Bagsvaerd</addr-line>
+          <country country="DK">Denmark</country>
+        </aff>
+        <aff id="aff-taken-from-other-doc">
+            <institution>Programa de Gen&#x000f3;mica Evolutiva, Centro de Ciencias Gen&#x000f3;micas, Universidad Nacional Aut&#x000f3;noma de M&#x000e9;xico</institution>
+            <addr-line>Apartado Postal 565-A, C.P 62210, Cuernavaca, Morelos, M&#x000e9;xico</addr-line>    
+        </aff>
+      </contrib-group>
+    </article-meta>
+  </front>
+  <body>
+  </body>
+  <back>
+  </back>
+</article>

@@ -24,7 +24,9 @@ public final class JatsXmlConstants {
     protected static final String ELEM_SUP = "sup";
     protected static final String ELEM_COUNTRY = "country";
     protected static final String ELEM_INSTITUTION = "institution";
-    
+    protected static final String ELEM_ADDR_LINE = "addr-line";
+    protected static final String ATTR_CONTENT_TYPE = "content-type";
+    protected static final String ATTR_COUNTRY = "country";
     
 //  back citations
     protected static final String ELEM_REF_LIST = "ref-list";

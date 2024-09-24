@@ -1,22 +1,26 @@
 package eu.dnetlib.iis.wf.ingest.pmc.metadata;
 
-import com.google.common.collect.Maps;
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import eu.dnetlib.iis.ingest.pmc.metadata.schemas.Affiliation;
-import eu.dnetlib.iis.ingest.pmc.metadata.schemas.Author;
-import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.AssertExtractedDocumentMetadata.assertAffiliation;
+import static eu.dnetlib.iis.wf.ingest.pmc.metadata.AssertExtractedDocumentMetadata.assertAuthor;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.io.File;
+import java.util.List;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.XMLReader;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.File;
-import java.util.List;
+import com.google.common.collect.Maps;
 
-import static eu.dnetlib.iis.wf.ingest.pmc.metadata.AssertExtractedDocumentMetadata.assertAffiliation;
-import static eu.dnetlib.iis.wf.ingest.pmc.metadata.AssertExtractedDocumentMetadata.assertAuthor;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.ingest.pmc.metadata.schemas.Affiliation;
+import eu.dnetlib.iis.ingest.pmc.metadata.schemas.Author;
+import eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata;
 
 /**
  * @author madryk
@@ -189,6 +193,78 @@ public class ArticleMetaXmlHandlerTest {
         assertAuthor(authors.get(1), "González, Víctor");
         assertAuthor(authors.get(2), "Dávila, Guillermo");
         
+    }
+
+    @Test
+    public void testNestedContributorsFromSpringer() throws Exception {
+        // given
+        File xmlFile = new File(XML_BASE_PATH + "/nested_contributors_from_springer.xml");
+        
+        // execute
+        saxParser.parse(xmlFile, articleMetaXmlHandler);
+        ExtractedDocumentMetadata metadata = metaBuilder.build();
+        
+        // assert
+        
+        List<Author> authors = metadata.getAuthors();
+        assertEquals(2, authors.size());
+        
+        assertAuthor(authors.get(0), "Niemi, Mari E. K.", 0);
+        assertAuthor(authors.get(1), "Karjalainen, Juha", 1);
+    }
+    
+    @Test
+    public void testComplexAffiliationsFromSpringer() throws Exception {
+        // given
+        File xmlFile = new File(XML_BASE_PATH + "/complex_affiliations_from_springer.xml");
+        
+        // execute
+        saxParser.parse(xmlFile, articleMetaXmlHandler);
+        ExtractedDocumentMetadata metadata = metaBuilder.build();
+        
+        // assert
+        
+        List<Affiliation> affs = metadata.getAffiliations();
+        
+        assertEquals(6, affs.size());
+        
+        assertEquals("DE", affs.get(0).getCountryCode());
+        assertEquals("Germany", affs.get(0).getCountryName());
+        assertEquals("Max-Planck-Institute for Immunobiology", affs.get(0).getOrganization());
+        assertEquals("Schillhof 5, 79110 Freiburg", affs.get(0).getAddress());
+        assertEquals("Max-Planck-Institute for Immunobiology, Schillhof 5, 79110 Freiburg, Germany", affs.get(0).getRawText());
+        
+        assertNull(affs.get(1).getCountryCode());
+        assertNull(affs.get(1).getCountryName());
+        assertEquals("Laboratory of Toxicology, Department of Pharmacological Sciences, University of Milan", affs.get(1).getOrganization());
+        assertEquals("Milan", affs.get(1).getAddress());
+        assertEquals("Laboratory of Toxicology, Department of Pharmacological Sciences, University of Milan, Milan", affs.get(1).getRawText());
+        
+        assertEquals("DE", affs.get(2).getCountryCode());
+        assertEquals("Germany", affs.get(2).getCountryName());
+        assertEquals("Proteome Sciences R&D GmbH & Co. KG", affs.get(2).getOrganization());
+        assertEquals("Frankfurt", affs.get(2).getAddress());
+        assertEquals("Proteome Sciences R&D GmbH & Co. KG, Frankfurt, Germany", affs.get(2).getRawText());
+        
+        assertEquals("DE", affs.get(3).getCountryCode());
+        assertEquals("Germany", affs.get(3).getCountryName());
+        assertEquals("Department of Dermatology, University Medical Centre", affs.get(3).getOrganization());
+        assertEquals("Mannheim", affs.get(3).getAddress());
+        assertEquals("Department of Dermatology, University Medical Centre, Mannheim, Germany", affs.get(3).getRawText());
+        
+        assertEquals("DK", affs.get(4).getCountryCode());
+        assertEquals("Denmark", affs.get(4).getCountryName());
+        assertEquals("Novozymes AS", affs.get(4).getOrganization());
+        assertEquals("Bagsvaerd", affs.get(4).getAddress());
+        assertEquals("Novozymes AS, Bagsvaerd, Denmark", affs.get(4).getRawText());
+        
+        // this is a mixed case: having institution and addr-line elements but without any specific content-type, also country needs to be discovered
+        assertEquals("MX", affs.get(5).getCountryCode());
+        assertEquals("México", affs.get(5).getCountryName());
+        assertEquals("Programa de Genómica Evolutiva, Centro de Ciencias Genómicas, Universidad Nacional Autónoma de México", affs.get(5).getOrganization());
+        assertEquals("Apartado Postal 565-A, C.P 62210, Cuernavaca, Morelos", affs.get(5).getAddress());
+        assertEquals("Programa de Genómica Evolutiva, Centro de Ciencias Genómicas, Universidad Nacional Autónoma de México, Apartado Postal 565-A, C.P 62210, Cuernavaca, Morelos, México", affs.get(5).getRawText());
+
     }
     
 }
