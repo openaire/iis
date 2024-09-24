@@ -1,7 +1,6 @@
 package eu.dnetlib.iis.wf.ingest.pmc.metadata;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
@@ -39,7 +38,7 @@ public class JatsExtendedAffiliationTest {
         assertEquals("", aff.getAddrLinePostCode());
         assertEquals("", aff.getAddrLineCity());
         assertEquals("", aff.getCountryName());
-        assertNull(aff.getCountryCode());
+        assertEquals("", aff.getCountryCode());
         assertEquals(0, aff.getNumberOfFieldsSet());
     }
     

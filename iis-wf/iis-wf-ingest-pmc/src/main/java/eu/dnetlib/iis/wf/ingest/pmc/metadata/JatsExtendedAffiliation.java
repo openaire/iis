@@ -138,7 +138,7 @@ public class JatsExtendedAffiliation {
         addrLinePostCode = new StringBuilder();
         addrLineCity = new StringBuilder();
         countryName = new StringBuilder();
-        countryCode = null;
+        countryCode = "";
     }
     
     //------------------------ GETTERS --------------------------
