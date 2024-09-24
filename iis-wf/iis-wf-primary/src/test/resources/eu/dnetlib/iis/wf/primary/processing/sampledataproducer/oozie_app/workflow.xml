@@ -100,28 +100,9 @@
             <arg>-Osoftwareheritage_origins=${workingDir}/producer/softwareheritage_origins</arg>
 			<arg>-Opatent=${workingDir}/producer/patent</arg>
 		</java>
-		<ok to="softwareheritage_sqlite_builder" />
+		<ok to="document_text_producer" />
 		<error to="fail" />
 	</action>
-
-    <action name="softwareheritage_sqlite_builder">
-        <sub-workflow>
-            <app-path>${wf:appPath()}/referenceextraction_softwareurl_sqlite_builder</app-path>
-            <propagate-configuration />
-            <configuration>
-                <property>
-                    <name>input_softwareheritage_origins</name>
-                    <value>${workingDir}/producer/softwareheritage_origins</value>
-                </property>
-                <property>
-                    <name>output_softwareheritage_origins_db</name>
-                    <value>${workingDir}/origins.db</value>
-                </property>
-            </configuration>
-        </sub-workflow>
-        <ok to="document_text_producer"/>
-        <error to="fail"/>
-    </action>
 
 	<action name="document_text_producer">
 		<map-reduce>
@@ -326,8 +307,8 @@
 					<value>${workingDir}/producer/extracted_document_metadata</value>
 				</property>
                 <property>
-                    <name>input_softwareheritage_origins_db</name>
-                    <value>${workingDir}/origins.db</value>
+                    <name>input_softwareheritage_origins</name>
+                    <value>${workingDir}/producer/softwareheritage_origins</value>
                 </property>
 				<property>
 					<name>input_patent</name>

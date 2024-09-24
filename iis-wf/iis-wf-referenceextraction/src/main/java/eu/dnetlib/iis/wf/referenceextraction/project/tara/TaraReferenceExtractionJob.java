@@ -15,8 +15,8 @@ import org.apache.spark.sql.types.*;
 
 import java.util.Arrays;
 
-import static eu.dnetlib.iis.wf.referenceextraction.project.tara.TaraReferenceExtractionIOUtils.clearOutput;
-import static eu.dnetlib.iis.wf.referenceextraction.project.tara.TaraReferenceExtractionIOUtils.storeInOutput;
+import static eu.dnetlib.iis.wf.referenceextraction.ReferenceExtractionIOUtils.clearOutput;
+import static eu.dnetlib.iis.wf.referenceextraction.ReferenceExtractionIOUtils.storeInOutput;
 import static eu.dnetlib.iis.wf.referenceextraction.project.tara.TaraReferenceExtractionUtils.buildDocumentMetadata;
 import static eu.dnetlib.iis.wf.referenceextraction.project.tara.TaraReferenceExtractionUtils.runReferenceExtraction;
 

@@ -30,25 +30,25 @@ end as url,"" as SHUrl
 from metadata where repo = 'GitHub' or repo='SourceForge' or repo = 'Google Code' or repo = 'Bitbucket'));
 
 
-create temp table links3 as select id, regexpr("&gt",match1,"") as match1,match,repo,source from
-(select distinct id,regexpr("\W+$",match1,"") as match1,match,repo,source from (select id,jfilterempty(jset(regexpr("(http.+)",match))) as match1,match,repo,source from metadata));
+create temp table extractedpartiallinks as select id, regexpr("&gt",cleanmatch,"") as cleanmatch,match,repo from
+(select distinct id,regexpr("\W+$",cleanmatch,"") as cleanmatch,match,repo,source from (select id,jfilterempty(jset(regexpr("(http.+)",match))) as cleanmatch,match, repo,source from metadata));
+
+create temp table extractedlinks as select extractedpartiallinks.id, extractedpartiallinks.cleanmatch, extractedpartiallinks.match, extractedpartiallinks.repo, title, description, url  from extractedpartiallinks left join partial1 on extractedpartiallinks.id = partial1.id and extractedpartiallinks.match = partial1.match; 
+
+update extractedlinks set title = comprspaces(regexpr("\n",title," ")) where title is not null and title != "";
+update extractedlinks set cleanmatch = regexpr("http(s*):\/\/www\.github\.com",cleanmatch,"https://github.com") where cleanmatch is not null;
+update extractedlinks set cleanmatch = regexpr("http\:\/\/github\.com",cleanmatch,"https://github.com") where cleanmatch is not null;
+update extractedlinks set cleanmatch = regexpr("\.git$",cleanmatch,"") where cleanmatch is not null;
+update extractedlinks set cleanmatch = regexpr("((?i)https://github.com/[^/]+/[^/]+)",cleanmatch) where cleanmatch like "https://github.com/%/%/%";
+update extractedlinks set description = comprspaces(regexpr("\n",description," ")) where description is not null and description != "";
+update extractedlinks set repo = comprspaces(regexpr("\n",repo," ")) where repo is not null and repo != "";
+update extractedlinks set title = regexpr("/([^/]+)$",cleanmatch) where title = "" or title is null;
+update extractedlinks set cleanmatch = lower(cleanmatch) where cleanmatch is not null;
+update extractedlinks set title = "" where title is null;
 
 
-update links3 set match1 = regexpr("http(s*):\/\/www\.github\.com",match1,"https://github.com") where match1 is not null;
-update links3 set match1 = regexpr("http\:\/\/github\.com",match1,"https://github.com") where match1 is not null;
-update links3 set match1 = lower(regexpr("\.git$",match1,"")) where match1 is not null;
-update links3 set match1 = regexpr("(https://github.com/[^/]+/[^/]+)",match1) where match1 like "https://github.com/%/%/%";
+select jdict('documentId', id, 'softwareUrl', match,'repositoryName',repo, 'cleanmatch', cleanmatch,'softwareTitle',
+title,'softwareDescription',description, 'softwarePageURL',url,'confidenceLevel',0.8) from extractedlinks;
 
 
-create temp table matches as select links3.id,repo,links3.source,"https://archive.softwareheritage.org/browse/origin/"||originlink as match2,match from links3,links where links3.match1 = links.link;
-
-create temp table partial2 as select id, match, repo, regexpr("(\w+)$",match2) as title, "" as description,"" as url, match2 as SHUrl  from matches;
-
-update partial1 set SHUrl = (select SHUrl from partial2 where partial2.id||partial2.match=partial1.id||partial1.match) where partial1.id||partial1.match in (select partial2.id||partial2.match from partial2);
-insert into partial1 select * from partial2 where partial2.id||partial2.match not in (select partial2.id||partial1.match from partial1);
-update partial1 set title = (select comprspaces(title) from partial2 where partial2.match=partial1.match and title is not null and title != "") where title="" or title="null";
-update partial1 set title="" where title is null;
-
-
-select jdict('documentId', id, 'softwareUrl', match,'repositoryName',comprspaces(regexpr("\n",repo," ")),'softwareTitle',
-comprspaces(regexpr("\n",title," ")),'softwareDescription',comprspaces(regexpr("\n",description," ")),'softwarePageURL',url,'SHUrl',SHUrl,'confidenceLevel',0.8) from partial1;
+-- select extractedlinks.documentId,extractedlinks.repositoryName,extractedlinks.softwareUrl, extractedlinks.softwareTitle, extractedlinks.softwareDescription, extractedlinks.softwarePageURL, extractedlinks.confidenceLevel, "https://archive.softwareheritage.org/browse/origin/"||originlink as SHUrl from extractedlinks left join shlinks on extractedlinks.cleanmatch = lower(shlinks.link);

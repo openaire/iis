@@ -7,9 +7,8 @@
             <description>input document text</description>
         </property>
         <property>
-            <name>input_softwareheritage_origins_db</name>
-            <value>/cache/external-resources/software-heritage/origins.db</value>
-            <description>input software heritage origins SQLite DB path</description>
+            <name>input_softwareheritage_origins</name>
+            <description>input software heritage origins encoded as SoftwareHeritageOrigin records</description>
         </property>
         <property>
             <name>output</name>
@@ -132,7 +131,7 @@
             <arg>eu.dnetlib.iis.metadataextraction.schemas.DocumentText</arg>
             <arg>eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrl</arg>
             <arg>eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithSource</arg>
-            <arg>eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta</arg>
+            <arg>eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlPreMatching</arg>
             <capture-output />
         </java>
         <ok to="mining" />
@@ -248,7 +247,7 @@
             <streaming>
                 <!-- Here, we give the relative path to the script and pass it the parameters of the workflow node. The script is held in a directory having the same name as the workflow node. The parameters 
                     should be passed as **named** arguments. This convention of passing them as named arguments makes the code more readable/maintainable. -->
-                <mapper>scripts/madis/mexec.py -d origins.db -f scripts/softwarepost.sql</mapper>
+                <mapper>scripts/madis/mexec.py -f scripts/softwarepost.sql</mapper>
             </streaming>
             <configuration>
                 <!-- # Standard settings for our framework -->
@@ -281,12 +280,12 @@
                 <!-- OUTPUT -->
                 <property>
                     <name>mapreduce.output.fileoutputformat.outputdir</name>
-                    <value>${output}</value>
+                    <value>${workingDir}/referenceextraction_softwareurl_pre_matching</value>
                 </property>
 
                 <property>
                     <name>output.schema.literal</name>
-                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta']}</value>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlPreMatching']}</value>
                 </property>
 
                 <!-- this one is requred due to the large amount of time taken by process storing plaintexts into the database -->
@@ -295,11 +294,33 @@
                     <value>43200000</value>
                 </property>
             </configuration>
-            <file>${input_softwareheritage_origins_db}#origins.db</file>
 
         </map-reduce>
-        <ok to="end" />
+        <ok to="referenceextraction_softwareurl_sh_matching" />
         <error to="fail" />
+    </action>
+
+    <action name="referenceextraction_softwareurl_sh_matching">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/referenceextraction_softwareurl_sh_matching</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>input_document_to_software</name>
+                    <value>${workingDir}/referenceextraction_softwareurl_pre_matching</value>
+                </property>
+                <property>
+                    <name>input_softwareheritage_origins</name>
+                    <value>${input_softwareheritage_origins}</value>
+                </property>
+                <property>
+                    <name>output_document_to_software</name>
+                    <value>${output}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="end"/>
+        <error to="fail"/>
     </action>
 
     <kill name="fail">

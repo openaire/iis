@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.referenceextraction.project.tara;
+package eu.dnetlib.iis.wf.referenceextraction;
 
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.spark.avro.AvroDataFrameWriter;
@@ -13,11 +13,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class TaraReferenceExtractionIOUtils {
+public class ReferenceExtractionIOUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(TaraReferenceExtractionIOUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReferenceExtractionIOUtils.class);
 
-    private TaraReferenceExtractionIOUtils() {
+    private ReferenceExtractionIOUtils() {
     }
 
     public static void clearOutput(SparkSession spark,

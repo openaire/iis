@@ -1,2 +1,2 @@
 {"id":"id-1","text":"This is sample text containing link to madis library: https://github.com/madgik/madis This should be picked up by reference extraction algorithm."}
-{"id":"id-2","text":"This is sample text containing link to iis library: https://github.com/openaire/iis This should be picked up by reference extraction algorithm."}
+{"id":"id-2","text":"This is sample text containing link to iis library: https://github.com/openaire/IIS This should be picked up by reference extraction algorithm."}

@@ -24,4 +24,9 @@ public class SoftwareUrlRefExtractionWfTest extends AbstractOozieWorkflowTestCas
     public void testMainWorkflowEmptyInput() {
         testWorkflow("eu/dnetlib/iis/wf/referenceextraction/softwareurl/main/sampletest_empty_input");
     }
+    
+    @Test
+    public void testSoftwareHeritageMatchingJob() {
+        testWorkflow("eu/dnetlib/iis/wf/referenceextraction/softwareurl/sh_matching/sampletest");
+    }
 }

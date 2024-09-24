@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.referenceextraction.project.tara;
+package eu.dnetlib.iis.wf.referenceextraction;
 
 import eu.dnetlib.iis.common.spark.TestWithSharedSparkSession;
 import eu.dnetlib.iis.common.spark.avro.AvroDataFrameSupport;
@@ -13,12 +13,12 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import static eu.dnetlib.iis.wf.referenceextraction.project.tara.TaraReferenceExtractionIOUtils.*;
+import static eu.dnetlib.iis.wf.referenceextraction.ReferenceExtractionIOUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
-public class TaraReferenceExtractionIOUtilsTest extends TestWithSharedSparkSession {
+public class ReferenceExtractionIOUtilsTest extends TestWithSharedSparkSession {
 
     @Test
     public void clearOutputShouldRunProperly() throws IOException {

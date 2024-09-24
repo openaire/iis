@@ -35,28 +35,9 @@
 			<arg>-Odocument_text=${workingDir}/producer/document_text</arg>
             <arg>-Oorigins=${workingDir}/producer/origins</arg>
 		</java>
-		<ok to="referenceextraction_softwareurl_sqlite_builder" />
+		<ok to="referenceextraction_softwareurl" />
 		<error to="fail" />
 	</action>
-
-    <action name="referenceextraction_softwareurl_sqlite_builder">
-        <sub-workflow>
-            <app-path>${wf:appPath()}/referenceextraction_softwareurl_sqlite_builder</app-path>
-            <propagate-configuration />
-            <configuration>
-                <property>
-                    <name>input_softwareheritage_origins</name>
-                    <value>${workingDir}/producer/origins</value>
-                </property>
-                <property>
-                    <name>output_softwareheritage_origins_db</name>
-                    <value>${workingDir}/origins.db</value>
-                </property>
-            </configuration>
-        </sub-workflow>
-        <ok to="referenceextraction_softwareurl"/>
-        <error to="fail"/>
-    </action>
 
     <action name="referenceextraction_softwareurl">
         <sub-workflow>
@@ -77,8 +58,8 @@
                     <value>${workingDir}/referenceextraction_softwareurl/working_dir</value>
                 </property>
                 <property>
-                    <name>input_softwareheritage_origins_db</name>
-                    <value>${workingDir}/origins.db</value>
+                    <name>input_softwareheritage_origins</name>
+                    <value>${workingDir}/producer/origins</value>
                 </property>
                 <property>
                     <name>input_document_text</name>
