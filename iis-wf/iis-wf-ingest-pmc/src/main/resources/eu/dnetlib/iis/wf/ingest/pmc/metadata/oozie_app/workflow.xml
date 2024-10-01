@@ -36,6 +36,11 @@
             <value>$UNDEFINED$</value>
             <description>excluded identifiers list</description>
         </property>
+        <property>
+            <name>ingest_pmc_appmaster_memory_mb</name>
+            <value>2048</value>
+            <description>JATS ingester Application Master memory in megabytes</description>
+        </property>
 	</parameters>
 
 
@@ -75,6 +80,10 @@
 				<delete path="${nameNode}${output_root}" />
 			</prepare>
 			<configuration>
+                <property>
+                    <name>yarn.app.mapreduce.am.resource.mb</name>
+                    <value>${ingest_pmc_appmaster_memory_mb}</value>
+                </property>
 				<property>
 					<name>mapreduce.job.inputformat.class</name>
 					<value>org.apache.avro.mapreduce.AvroKeyInputFormat</value>

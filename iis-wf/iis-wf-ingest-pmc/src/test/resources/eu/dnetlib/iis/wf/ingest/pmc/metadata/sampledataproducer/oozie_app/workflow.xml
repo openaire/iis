@@ -44,6 +44,10 @@
             <propagate-configuration/>
             <configuration>
                 <property>
+                    <name>ingest_pmc_appmaster_memory_mb</name>
+                    <value>1024</value>
+                </property>
+                <property>
                     <name>workingDir</name>
                     <value>${workingDir}/ingest_pmc_metadata/working_dir</value>
                 </property>
