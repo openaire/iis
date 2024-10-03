@@ -18,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.SocketTimeoutException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -148,6 +149,7 @@ public class SoftwareHeritageOriginsImporter implements eu.dnetlib.iis.common.ja
                                     Thread.sleep(params.getDelayMillis());
                                     continue;
                                 } else {
+                                    log.error("exceeding the allowed number of retries: " + params.getMaxRetryCount() + "interrupting...");
                                     throw new RuntimeException(errMessage);    
                                 }
                             }
@@ -176,6 +178,18 @@ public class SoftwareHeritageOriginsImporter implements eu.dnetlib.iis.common.ja
                         }
 
                         getRequest = prepareNextRequest(httpResponse);
+                    } catch (SocketTimeoutException e) {
+                        if (retryCount < params.getMaxRetryCount()) {
+                            retryCount++;
+                            log.error("got timeout exception while accessing SH endpoint, number of retries left: "
+                                    + (params.getMaxRetryCount() - retryCount), e);
+                            Thread.sleep(params.getDelayMillis());
+                            continue;
+                        } else {
+                            log.error("exceeding the allowed number of retries: " + params.getMaxRetryCount()
+                                    + "interrupting...");
+                            throw e;
+                        }
                     }
                 }
 
