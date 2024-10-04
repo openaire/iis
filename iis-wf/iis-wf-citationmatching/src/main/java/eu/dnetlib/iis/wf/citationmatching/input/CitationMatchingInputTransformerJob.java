@@ -8,11 +8,12 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.Optional;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.google.common.base.Optional;
+
 import com.google.common.collect.Sets;
 
 import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
@@ -69,6 +70,7 @@ public class CitationMatchingInputTransformerJob {
                 
                 JavaPairRDD<CharSequence, Tuple2<ExtractedDocumentMetadataMergedWithOriginal, Optional<Iterable<Integer>>>> inputDocumentsJoinedWithMatchedCitations = pairedDocuments
                         .leftOuterJoin(groupedCitations);
+                
                 documents = inputDocumentsJoinedWithMatchedCitations
                         .map(x -> documentToCitationDocumentConverter.convert(x._2._1,
                                 x._2._2.isPresent() ? Sets.newHashSet(x._2._2.get()) : Collections.emptySet()));

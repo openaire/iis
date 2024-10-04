@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import scala.Tuple2;
 
+import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -92,7 +93,7 @@ public class ReferenceMetadataInputReaderTest {
                 .build();
 
 
-        Iterable<Tuple2<String, ReferenceMetadata>> retCitations = function.call(docMetadata);
+        Iterator<Tuple2<String, ReferenceMetadata>> retCitations = function.call(docMetadata);
 
 
         List<Tuple2<String, ReferenceMetadata>> retCitationsList = Lists.newArrayList(retCitations);

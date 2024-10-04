@@ -50,12 +50,12 @@ public class ReferenceMetadataInputConverter implements InputCitationConverter<S
                     
                     if (entity.rawText().get().length() > MAX_CITATION_LENGTH) {
                         log.error("RawText of citation " + inputCitation._1 + " exceeds length limit (" + MAX_CITATION_LENGTH + ").");
-                        return list;
+                        return list.iterator();
                     }
                     
                     list.add(new Tuple2<String, MatchableEntity>(inputCitation._1, entity));
                     
-                    return list;
+                    return list.iterator();
                 });
 
         return citationEntities;

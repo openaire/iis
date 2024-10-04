@@ -1,7 +1,6 @@
 package eu.dnetlib.iis.wf.citationmatching;
 
 import java.io.Serializable;
-import java.util.stream.Collectors;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -40,14 +39,11 @@ public class ReferenceMetadataInputReader implements InputCitationReader<String,
 
         JavaRDD<DocumentMetadata> fullDocuments = avroLoader.loadJavaRDD(sparkContext, inputCitationsPath, DocumentMetadata.class);
 
-        JavaPairRDD<String, ReferenceMetadata> references = fullDocuments
-                .flatMapToPair(fullDocument -> fullDocument.getReferences().stream()
-                        .map(reference -> new Tuple2<String, ReferenceMetadata>(
-                                buildCitationId(fullDocument.getId().toString(), reference),
-                                reference))
-                        .collect(Collectors.toList())
-                );
-
+        JavaPairRDD<String, ReferenceMetadata> references = fullDocuments.flatMapToPair(fullDocument -> {
+            return fullDocument.getReferences().stream().map(
+                    reference -> new Tuple2<>(buildCitationId(fullDocument.getId().toString(), reference), reference))
+                    .iterator();
+        });
 
         return references;
     }
