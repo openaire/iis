@@ -149,7 +149,7 @@ public class SoftwareHeritageOriginsImporter implements eu.dnetlib.iis.common.ja
                                     Thread.sleep(params.getDelayMillis());
                                     continue;
                                 } else {
-                                    log.error("exceeding the allowed number of retries: " + params.getMaxRetryCount() + "interrupting...");
+                                    log.error("exceeding the allowed number of retries: " + params.getMaxRetryCount() + ", interrupting...");
                                     throw new RuntimeException(errMessage);    
                                 }
                             }
@@ -181,13 +181,13 @@ public class SoftwareHeritageOriginsImporter implements eu.dnetlib.iis.common.ja
                     } catch (SocketTimeoutException e) {
                         if (retryCount < params.getMaxRetryCount()) {
                             retryCount++;
-                            log.error("got timeout exception while accessing SH endpoint, number of retries left: "
+                            log.warn("got timeout exception while accessing SH endpoint, number of retries left: "
                                     + (params.getMaxRetryCount() - retryCount), e);
                             Thread.sleep(params.getDelayMillis());
                             continue;
                         } else {
                             log.error("exceeding the allowed number of retries: " + params.getMaxRetryCount()
-                                    + "interrupting...");
+                                    + ", interrupting...");
                             throw e;
                         }
                     }
