@@ -24,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
+import java.net.SocketTimeoutException;
 import java.nio.file.Files;
 import java.util.*;
 
@@ -446,6 +447,60 @@ public class SoftwareHeritageOriginsImporterTest {
         assertNotNull(origins.get(0));
         assertEquals(entry.getUrl(), origins.get(0).getUrl());
         verifyReport(1, SoftwareHeritageOriginsImporter.COUNTER_NAME_TOTAL);
+    }
+    
+    @Test
+    public void testRunWithRetryBecauseOfTimeoutException() throws Exception {
+        // given
+        SoftwareHeritageOriginsImporter importer = initializeImporterParams("api/origins", "somehost.com", "https", "8080", "1");
+        this.parameters.put(IMPORT_SOFTWARE_HERITAGE_ENDPOINT_RATELIMIT_DELAY, "1");
+        this.parameters.put(IMPORT_SOFTWARE_HERITAGE_ENDPOINT_RETRY_COUNT, "1");
+        
+        CloseableHttpResponse httpResponse2 = mock(CloseableHttpResponse.class);
+        when(httpClient.execute(any(HttpHost.class), any(HttpGet.class))).thenThrow(SocketTimeoutException.class)
+                .thenReturn(httpResponse2);
+
+        Gson gson = new Gson();
+        SoftwareHeritageOriginEntry entry = buildSoftwareHeritageOriginEntry("someUrl1");
+        
+        //response
+        {
+            StatusLine statusLine = mock(StatusLine.class);
+            when(statusLine.getStatusCode()).thenReturn(200);
+            when(httpResponse2.getStatusLine()).thenReturn(statusLine);
+            
+            HttpEntity httpEntity = mock(HttpEntity.class);
+            when(httpResponse2.getEntity()).thenReturn(httpEntity);
+            
+            // preparing page contents
+            String pageContents = gson.toJson(new SoftwareHeritageOriginEntry[] {entry});
+            InputStream pageInputStream = new ByteArrayInputStream(pageContents.getBytes());
+            when(httpEntity.getContentLength()).thenReturn(Long.valueOf(pageContents.length()));
+            when(httpEntity.getContent()).thenReturn(pageInputStream);
+        }
+        // execute
+        importer.run(portBindings, conf, parameters);
+        
+        // assert
+        verify(originWriter, times(1)).append(originCaptor.capture());
+        List<SoftwareHeritageOrigin> origins = originCaptor.getAllValues();
+        assertEquals(1, origins.size());
+        assertNotNull(origins.get(0));
+        assertEquals(entry.getUrl(), origins.get(0).getUrl());
+        verifyReport(1, SoftwareHeritageOriginsImporter.COUNTER_NAME_TOTAL);
+    }
+    
+    @Test
+    public void testExceedTheAllowedRetriesAfterTimeoutException() throws Exception {
+        // given
+        SoftwareHeritageOriginsImporter importer = initializeImporterParams("api/origins", "somehost.com", "https", "8080", "1");
+        this.parameters.put(IMPORT_SOFTWARE_HERITAGE_ENDPOINT_RATELIMIT_DELAY, "1");
+        this.parameters.put(IMPORT_SOFTWARE_HERITAGE_ENDPOINT_RETRY_COUNT, "1");
+        
+        when(httpClient.execute(any(HttpHost.class), any(HttpGet.class))).thenThrow(SocketTimeoutException.class);
+        
+        // execute
+        assertThrows(SocketTimeoutException.class, () -> importer.run(portBindings, conf, parameters));
     }
     
     @Test
