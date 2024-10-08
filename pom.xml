@@ -486,6 +486,11 @@
                         <groupId>pl.edu.icm.spark-utils</groupId>
                         <artifactId>spark-utils</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <!-- conflicting scala binary versions -->
+                        <groupId>pl.edu.icm.coansys</groupId>
+                        <artifactId>ceon-scala-commons-lite</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
 
@@ -563,6 +568,19 @@
                 <artifactId>commons-collections4</artifactId>
                 <version>4.1</version>
             </dependency>
+            
+            <!--  git#1475 required by ceon-scala-commons-lite sources moved to IIS codebase  -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-math</artifactId>
+                <version>2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jsuereth</groupId>
+                <artifactId>scala-arm_2.11</artifactId>
+                <version>1.4</version>
+            </dependency>
+            <!-- -->
             
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>

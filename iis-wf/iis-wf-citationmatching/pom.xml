@@ -71,6 +71,18 @@
             <groupId>pl.edu.icm.coansys</groupId>
             <artifactId>citation-matching-core-code</artifactId>
         </dependency>
+        
+        <!-- git#1475 required by ceon-scala-commons-lite sources moved to IIS codebase  -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jsuereth</groupId>
+            <artifactId>scala-arm_2.11</artifactId>
+        </dependency>
+        <!-- -->        
 
         <dependency>
             <groupId>org.apache.hadoop</groupId>
@@ -109,6 +121,44 @@
             <groupId>pl.edu.icm.spark-utils</groupId>
             <artifactId>spark-utils_2.11</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>3.2.2</version>
+                <executions>
+                    <execution>
+                        <id>scala-compile-first</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>scala-test-compile</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <scala.version>2.11.12</scala.version>
+    </properties>
 </project>
