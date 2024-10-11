@@ -31,6 +31,17 @@
         </property>
 
         <property>
+            <name>citationMatchingSparkNetworkTimeout</name>
+            <value>600s</value>
+            <description>spark network timeout for citation matching jobs</description>
+        </property>
+        <property>
+            <name>citationMatchingSparkShuffleRegistrationTimeout</name>
+            <value>30000</value>
+            <description>spark shuffle service registration timeout for citation matching jobs</description>
+        </property>
+        
+        <property>
             <name>sparkDriverMemory</name>
             <description>memory for driver process</description>
         </property>
@@ -120,6 +131,8 @@
                 --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
                 --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
                 --conf spark.eventLog.dir="${nameNode}${spark2EventLogDir}"
+                --conf spark.network.timeout=${citationMatchingSparkNetworkTimeout}
+                --conf spark.shuffle.registration.timeout=${citationMatchingSparkShuffleRegistrationTimeout}
             </spark-opts>
 
             <arg>-inputMetadata = ${input_metadata}</arg>
@@ -150,6 +163,8 @@
                 --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
                 --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
                 --conf spark.eventLog.dir="${nameNode}${spark2EventLogDir}"
+                --conf spark.network.timeout=${citationMatchingSparkNetworkTimeout}
+                --conf spark.shuffle.registration.timeout=${citationMatchingSparkShuffleRegistrationTimeout}
             </spark-opts>
 
             <arg>-fullDocumentPath = ${workingDir}/documents_with_authors</arg>
@@ -181,6 +196,8 @@
                 --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
                 --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
                 --conf spark.eventLog.dir="${nameNode}${spark2EventLogDir}"
+                --conf spark.network.timeout=${citationMatchingSparkNetworkTimeout}
+                --conf spark.shuffle.registration.timeout=${citationMatchingSparkShuffleRegistrationTimeout}
             </spark-opts>
 
             <arg>-input = ${workingDir}/matched_citations</arg>
