@@ -67,13 +67,40 @@
             <artifactId>models</artifactId>
         </dependency>
 
+        <!-- start of deps copied from citation-matching-core-code and replacing this dependency -->
         <dependency>
             <groupId>pl.edu.icm.coansys</groupId>
-            <artifactId>citation-matching-core-code</artifactId>
+            <artifactId>commons</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>pl.edu.icm.cermine</groupId>
+            <artifactId>cermine-impl</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <!-- end of deps copied from citation-matching-core-code -->
+        
+        <!-- git#1475 start of deps copied from ceon-scala-commons-lite which is citation-matching-core-code transitive dependency -->
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>tw.edu.ntu.csie</groupId>
+            <artifactId>libsvm</artifactId>
         </dependency>
         
-        <!-- git#1475 required by ceon-scala-commons-lite sources moved to IIS codebase  -->
         <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        
+       <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math</artifactId>
         </dependency>
@@ -82,8 +109,8 @@
             <groupId>com.jsuereth</groupId>
             <artifactId>scala-arm_2.11</artifactId>
         </dependency>
-        <!-- -->        
-
+        <!-- end of deps copied from eon-scala-commons-lite -->
+        
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-mapreduce-client-core</artifactId>
