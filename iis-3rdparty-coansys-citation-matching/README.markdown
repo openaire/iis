@@ -1,6 +1,6 @@
 # About
 
-All the scala, java and resource files in this module stored within the pl/edu/icm/coansys/citations subdirectories were copied from the following CoAnSys repository locations:
+All the scala, java and resource files in this module stored within the pl/edu/icm/ subdirectories were copied from the following CoAnSys repository locations:
 
 https://github.com/CeON/CoAnSys/tree/master/citation-matching/citation-matching-coansys-code
 
