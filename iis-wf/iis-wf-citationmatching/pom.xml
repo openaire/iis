@@ -28,6 +28,12 @@
 
         <dependency>
             <groupId>eu.dnetlib.iis</groupId>
+            <artifactId>iis-3rdparty-coansys-citation-matching</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>eu.dnetlib.iis</groupId>
             <artifactId>iis-common</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
@@ -66,50 +72,6 @@
             <groupId>pl.edu.icm.coansys</groupId>
             <artifactId>models</artifactId>
         </dependency>
-
-        <!-- start of deps copied from citation-matching-core-code and replacing this dependency -->
-        <dependency>
-            <groupId>pl.edu.icm.coansys</groupId>
-            <artifactId>commons</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>pl.edu.icm.cermine</groupId>
-            <artifactId>cermine-impl</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        <!-- end of deps copied from citation-matching-core-code -->
-        
-        <!-- git#1475 start of deps copied from ceon-scala-commons-lite which is citation-matching-core-code transitive dependency -->
-        <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jdom</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>tw.edu.ntu.csie</groupId>
-            <artifactId>libsvm</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-        </dependency>
-        
-       <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.jsuereth</groupId>
-            <artifactId>scala-arm_2.11</artifactId>
-        </dependency>
-        <!-- end of deps copied from eon-scala-commons-lite -->
         
         <dependency>
             <groupId>org.apache.hadoop</groupId>
@@ -149,43 +111,6 @@
             <artifactId>spark-utils_2.11</artifactId>
         </dependency>
         
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>${scala.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>scala-maven-plugin</artifactId>
-                <version>3.2.2</version>
-                <executions>
-                    <execution>
-                        <id>scala-compile-first</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>scala-test-compile</id>
-                        <phase>process-test-resources</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
-    <properties>
-        <scala.version>2.11.12</scala.version>
-    </properties>
 </project>
