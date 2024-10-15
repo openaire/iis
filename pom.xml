@@ -21,6 +21,7 @@
     <modules>
         <module>iis-3rdparty-avro-json</module>
         <module>iis-3rdparty-avrojsoncoders</module>
+        <module>iis-3rdparty-coansys-citation-matching</module>
         <module>iis-3rdparty-madis</module>
         <module>iis-build</module>
         <module>iis-common</module>
