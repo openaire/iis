@@ -21,6 +21,7 @@
     <modules>
         <module>iis-3rdparty-avro-json</module>
         <module>iis-3rdparty-avrojsoncoders</module>
+        <module>iis-3rdparty-coansys-citation-matching</module>
         <module>iis-3rdparty-madis</module>
         <module>iis-build</module>
         <module>iis-common</module>
@@ -429,9 +430,30 @@
 
             <dependency>
                 <groupId>pl.edu.icm.coansys</groupId>
-                <artifactId>citation-matching-core-code</artifactId>
+                <artifactId>commons</artifactId>
                 <version>${iis.coansys.version}</version>
                 <exclusions>
+                    <exclusion>
+                        <groupId>org.mortbay.jetty</groupId>
+                        <artifactId>servlet-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.mortbay.jetty</groupId>
+                        <artifactId>jsp</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.mortbay.jetty</groupId>
+                        <artifactId>jsp-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>guava</artifactId>
+                        <groupId>com.google.guava</groupId>
+                    </exclusion>
+                    
                     <!-- unneeded cdh5 which should be provided-->
                     <exclusion>
                         <groupId>org.apache.avro</groupId>
@@ -488,6 +510,24 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+    
+            <!-- git#1475 orginially defined in ceon-scala-commons-lite now required by iis-wf-citationmatching -->
+            <dependency>
+                <groupId>tw.edu.ntu.csie</groupId>
+                <artifactId>libsvm</artifactId>
+                <version>3.17</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-math</artifactId>
+                <version>2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jsuereth</groupId>
+                <artifactId>scala-arm_2.11</artifactId>
+                <version>1.4</version>
+            </dependency>
+            <!-- -->
 
             <dependency>
                 <groupId>pl.edu.icm.coansys</groupId>
@@ -563,7 +603,7 @@
                 <artifactId>commons-collections4</artifactId>
                 <version>4.1</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>

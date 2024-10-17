@@ -17,6 +17,7 @@ import pl.edu.icm.coansys.citations.data.MatchableEntity;
 import scala.Option;
 import scala.Tuple2;
 
+import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -87,7 +88,7 @@ public class ReferenceMetadataInputConverterTest {
         doReturn(Option.apply("some raw text")).when(matchableEntity).rawText();
 
 
-        Iterable<Tuple2<String, MatchableEntity>> retConverted = function.call(new Tuple2<>("cit_id_3", referenceMetadata));
+        Iterator<Tuple2<String, MatchableEntity>> retConverted = function.call(new Tuple2<>("cit_id_3", referenceMetadata));
 
 
         List<Tuple2<String, MatchableEntity>> retConvertedList = Lists.newArrayList(retConverted);
@@ -105,7 +106,7 @@ public class ReferenceMetadataInputConverterTest {
         doReturn(Option.apply(StringUtils.repeat('a', 10001))).when(matchableEntity).rawText();
 
 
-        Iterable<Tuple2<String, MatchableEntity>> retConverted = function.call(new Tuple2<>("cit_id_3", referenceMetadata));
+        Iterator<Tuple2<String, MatchableEntity>> retConverted = function.call(new Tuple2<>("cit_id_3", referenceMetadata));
 
 
         List<Tuple2<String, MatchableEntity>> retConvertedList = Lists.newArrayList(retConverted);
