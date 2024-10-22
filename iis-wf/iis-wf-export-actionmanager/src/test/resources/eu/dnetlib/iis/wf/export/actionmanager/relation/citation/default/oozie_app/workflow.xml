@@ -64,6 +64,10 @@
                     <name>trust_level_threshold_document_referencedDocuments</name>
                     <value>0.5</value>
                 </property>
+                <property>
+                    <name>collectedfrom_value</name>
+                    <value>repo-id-1</value>
+                </property>
             </configuration>
         </sub-workflow>
         <ok to="consumer"/>

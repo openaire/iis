@@ -152,6 +152,10 @@
             <description>document to organization trust level threshold</description>
         </property>
         <property>
+            <name>collectedfrom_value</name>
+            <description>datasource identifier to be stored in Relation#collectedfrom[].value</description>
+        </property>
+        <property>
             <name>documentssimilarity_threshold</name>
             <value>$UNDEFINED$</value>
             <description>documents similarity threshold value below which similarity export is omitted</description>
@@ -273,6 +277,10 @@
             <property>
                 <name>export.trust.level.threshold.document_affiliations</name>
                 <value>${trust_level_threshold_matched_doc_organizations}</value>
+            </property>
+            <property>
+                <name>export.relation.collectedfrom.value</name>
+                <value>${collectedfrom_value}</value>
             </property>
         </configuration>
     </global>

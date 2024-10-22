@@ -45,6 +45,8 @@ public class SoftwareExporterJobTest {
     private String outputEntityPath;
     private String reportPath;
 
+    private static final String RELATION_COLLECTED_FROM_VALUE = "someRepo";
+    
     @BeforeEach
     public void before() {
         inputDocumentToSoftwareUrlPath = workingDir.resolve("software_exporter").resolve("input_software").toString();
@@ -160,6 +162,7 @@ public class SoftwareExporterJobTest {
                 .addArg("-inputDocumentToSoftwareUrlPath", inputDocumentToSoftwareUrlPath)
                 .addArg("-inputDocumentMetadataPath", inputDocumentMetadataPath)
                 .addArg("-trustLevelThreshold", trustLevelThreshold)
+                .addArg("-collectedFromValue", RELATION_COLLECTED_FROM_VALUE)
                 .addArg("-outputEntityPath", outputEntityPath)
                 .addArg("-outputRelationPath", outputRelationPath)
                 .addArg("-outputReportPath", reportPath)

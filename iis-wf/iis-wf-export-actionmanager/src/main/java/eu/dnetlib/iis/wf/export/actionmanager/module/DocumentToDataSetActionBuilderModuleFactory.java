@@ -1,5 +1,7 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
+import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_RELATION_COLLECTEDFROM_VALUE;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -7,6 +9,7 @@ import org.apache.hadoop.conf.Configuration;
 
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.Relation;
+import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.referenceextraction.dataset.schemas.DocumentToDataSet;
 import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
 
@@ -29,21 +32,23 @@ public class DocumentToDataSetActionBuilderModuleFactory extends AbstractActionB
 
     @Override
     public ActionBuilderModule<DocumentToDataSet, Relation> instantiate(Configuration config) {
-        return new DocumentToDataSetActionBuilderModule(provideTrustLevelThreshold(config));
+        return new DocumentToDataSetActionBuilderModule(provideTrustLevelThreshold(config), 
+                WorkflowRuntimeParameters.getParamValue(EXPORT_RELATION_COLLECTEDFROM_VALUE, config));
     }
 
     // ------------------------ INNER CLASS --------------------------
     
-    class DocumentToDataSetActionBuilderModule extends AbstractBuilderModule<DocumentToDataSet, Relation> {
+    class DocumentToDataSetActionBuilderModule extends AbstractRelationBuilderModule<DocumentToDataSet> {
 
         
         // ------------------------ CONSTRUCTORS --------------------------
         
         /**
          * @param trustLevelThreshold trust level threshold or null when all records should be exported
+         * @param collectedFromValue collectedFrom value to be set for relation
          */
-        public DocumentToDataSetActionBuilderModule(Float trustLevelThreshold) {
-            super(trustLevelThreshold, buildInferenceProvenance());
+        public DocumentToDataSetActionBuilderModule(Float trustLevelThreshold, String collectedFromValue) {
+            super(trustLevelThreshold, buildInferenceProvenance(), collectedFromValue);
         }
 
         // ------------------------ LOGIC --------------------------
@@ -64,21 +69,8 @@ public class DocumentToDataSetActionBuilderModuleFactory extends AbstractActionB
          */
         private AtomicAction<Relation> createAction(String source, String target, float confidenceLevel,
                 String relClass) throws TrustLevelThresholdExceededException {
-            AtomicAction<Relation> action = new AtomicAction<>();
-            action.setClazz(Relation.class);
-
-            Relation relation = new Relation();
-            relation.setSource(source);
-            relation.setTarget(target);
-            relation.setRelType(OafConstants.REL_TYPE_RESULT_RESULT);
-            relation.setSubRelType(OafConstants.SUBREL_TYPE_RELATIONSHIP);
-            relation.setRelClass(relClass);
-            relation.setDataInfo(buildInference(confidenceLevel));
-            relation.setLastupdatetimestamp(System.currentTimeMillis());
-            
-            action.setPayload(relation);
-            
-            return action;
+            return createAtomicActionWithRelation(source, target, OafConstants.REL_TYPE_RESULT_RESULT,
+                    OafConstants.SUBREL_TYPE_RELATIONSHIP, relClass, confidenceLevel);
         }
     }
 }

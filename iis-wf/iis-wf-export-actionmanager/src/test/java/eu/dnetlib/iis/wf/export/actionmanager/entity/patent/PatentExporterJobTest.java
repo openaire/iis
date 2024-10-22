@@ -54,6 +54,8 @@ public class PatentExporterJobTest {
 
     private static final String PATENT_DATE_OF_COLLECTION = "2019-11-20T23:59";
     private static final String PATENT_EPO_URL_ROOT = "https://register.epo.org/application?number=";
+    
+    private static final String RELATION_COLLECTED_FROM_VALUE = "someRepo";
 
     @BeforeEach
     public void before() {
@@ -153,6 +155,7 @@ public class PatentExporterJobTest {
                 .addArg("-inputDocumentToPatentPath", inputDocumentToPatentPath)
                 .addArg("-inputPatentPath", inputPatentPath)
                 .addArg("-trustLevelThreshold", trustLevelThreshold)
+                .addArg("-collectedFromValue", RELATION_COLLECTED_FROM_VALUE)
                 .addArg("-patentDateOfCollection", PATENT_DATE_OF_COLLECTION)
                 .addArg("-patentEpoUrlRoot", PATENT_EPO_URL_ROOT)
                 .addArg("-outputRelationPath", outputRelationPath)

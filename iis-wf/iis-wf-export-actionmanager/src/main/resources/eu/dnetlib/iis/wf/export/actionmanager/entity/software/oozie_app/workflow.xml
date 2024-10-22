@@ -27,6 +27,10 @@
             <description>document_software_url trust level threshold</description>
         </property>
         <property>
+            <name>collectedfrom_value</name>
+            <description>datasource identifier to be stored in Relation#collectedfrom[].value</description>
+        </property>
+        <property>
             <name>output_root_entities</name>
             <description>root directory for storing ${action_set_id_entity_software} subdirectories with exported actionset</description>
         </property>
@@ -120,6 +124,7 @@
             </spark-opts>
 
             <arg>-trustLevelThreshold=${trust_level_threshold_document_software_url}</arg>
+            <arg>-collectedFromValue=${collectedfrom_value}</arg>
 
             <arg>-inputDocumentToSoftwareUrlPath=${input_document_to_software_url}</arg>
             <arg>-inputDocumentMetadataPath=${input_document_metadata}</arg>
