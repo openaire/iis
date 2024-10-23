@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CitationRelationExporterJobTest extends TestWithSharedSparkSession {
 
-    private static final String RELATION_COLLECTED_FROM_VALUE = "someRepo";
+    private static final String RELATION_COLLECTED_FROM_KEY= "someRepo";
     
     @Test
     @DisplayName("Citation matching results are exported as atomic actions and report is generated")
@@ -62,7 +62,7 @@ class CitationRelationExporterJobTest extends TestWithSharedSparkSession {
                 "-outputRelationPath", outputRelationPath.toString(),
                 "-outputReportPath", outputReportPath.toString(),
                 "-trustLevelThreshold", Float.toString(trustLevelThreshold),
-                "-collectedFromValue", RELATION_COLLECTED_FROM_VALUE,
+                "-collectedFromKey", RELATION_COLLECTED_FROM_KEY,
         });
 
         List<AtomicAction<Relation>> atomicActions = spark().sparkContext().sequenceFile(outputRelationPath.toString(), Text.class, Text.class)
@@ -121,7 +121,7 @@ class CitationRelationExporterJobTest extends TestWithSharedSparkSession {
         return BuilderModuleHelper.createRelation(source, target, OafConstants.REL_TYPE_RESULT_RESULT,
                 OafConstants.SUBREL_TYPE_CITATION, relClass, BuilderModuleHelper.buildInferenceForConfidenceLevel(
                         confidenceLevel, "iis::document_referencedDocuments"),
-                RELATION_COLLECTED_FROM_VALUE);
+                RELATION_COLLECTED_FROM_KEY);
 
     }
 

@@ -9,7 +9,7 @@ public final class StaticConfigurationProvider {
 	
 	public static final String ACTION_TRUST_0_9 = "0.9";
 	
-	public static final String COLLECTED_FROM_KEY = "OpenAIRE";
+	public static final String COLLECTED_FROM_VALUE = "OpenAIRE";
 	
 	private StaticConfigurationProvider() {}
 	

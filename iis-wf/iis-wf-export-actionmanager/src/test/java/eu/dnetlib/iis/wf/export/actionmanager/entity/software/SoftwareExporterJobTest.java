@@ -45,7 +45,7 @@ public class SoftwareExporterJobTest {
     private String outputEntityPath;
     private String reportPath;
 
-    private static final String RELATION_COLLECTED_FROM_VALUE = "someRepo";
+    private static final String RELATION_COLLECTED_FROM_KEY = "someRepo";
     
     @BeforeEach
     public void before() {
@@ -162,7 +162,7 @@ public class SoftwareExporterJobTest {
                 .addArg("-inputDocumentToSoftwareUrlPath", inputDocumentToSoftwareUrlPath)
                 .addArg("-inputDocumentMetadataPath", inputDocumentMetadataPath)
                 .addArg("-trustLevelThreshold", trustLevelThreshold)
-                .addArg("-collectedFromValue", RELATION_COLLECTED_FROM_VALUE)
+                .addArg("-collectedFromKey", RELATION_COLLECTED_FROM_KEY)
                 .addArg("-outputEntityPath", outputEntityPath)
                 .addArg("-outputRelationPath", outputRelationPath)
                 .addArg("-outputReportPath", reportPath)

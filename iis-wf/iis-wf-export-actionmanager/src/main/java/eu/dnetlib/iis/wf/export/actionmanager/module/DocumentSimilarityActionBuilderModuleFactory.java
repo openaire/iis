@@ -1,7 +1,7 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
 import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_DOCUMENTSSIMILARITY_THRESHOLD;
-import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_RELATION_COLLECTEDFROM_VALUE;
+import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_RELATION_COLLECTEDFROM_KEY;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,7 +48,7 @@ public class DocumentSimilarityActionBuilderModuleFactory extends AbstractAction
             log.info("setting documents similarity exporter threshold to: " + similarityThreshold);
         }
         return new DocumentSimilarityActionBuilderModule(provideTrustLevelThreshold(config), similarityThreshold, 
-                WorkflowRuntimeParameters.getParamValue(EXPORT_RELATION_COLLECTEDFROM_VALUE, config));
+                WorkflowRuntimeParameters.getParamValue(EXPORT_RELATION_COLLECTEDFROM_KEY, config));
     }
     
     // ------------------------ INNER CLASS --------------------------
@@ -64,10 +64,10 @@ public class DocumentSimilarityActionBuilderModuleFactory extends AbstractAction
         /**
          * @param trustLevelThreshold trust level threshold or null when all records should be exported
          * @param similarityThreshold similarity threshold, skipped when null
-         * @param collectedFromValue collectedFrom value to be set for relation
+         * @param collectedFromKey collectedFrom key to be set for relation
          */
-        public DocumentSimilarityActionBuilderModule(Float trustLevelThreshold, Float similarityThreshold, String collectedFromValue) {
-            super(trustLevelThreshold, buildInferenceProvenance(), collectedFromValue);
+        public DocumentSimilarityActionBuilderModule(Float trustLevelThreshold, Float similarityThreshold, String collectedFromKey) {
+            super(trustLevelThreshold, buildInferenceProvenance(), collectedFromKey);
             this.similarityThreshold = similarityThreshold;
         }
 

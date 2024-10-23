@@ -23,7 +23,7 @@ import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
  */
 public class BuilderModuleHelperTest {
     
-    String collectedFromValue = "some-repo-id";
+    String collectedFromKey = "some-repo-id";
     String relType = "someRelType"; 
     String subRelType = "someSubRelType";
     String relClass = "someRelClass";
@@ -32,25 +32,25 @@ public class BuilderModuleHelperTest {
     String inferenceProvenance = "some-inference-provenance";
 
     @Test
-    public void testBuildCollectedFromValue() throws Exception {
+    public void testBuildCollectedFromKey() throws Exception {
         // execute
-        KeyValue result = BuilderModuleHelper.buildCollectedFromKeyValue(collectedFromValue);
+        KeyValue result = BuilderModuleHelper.buildCollectedFromKeyValue(collectedFromKey);
         
         // assert        
         assertNotNull(result);
-        assertEquals(StaticConfigurationProvider.COLLECTED_FROM_KEY, result.getKey());
-        assertEquals(collectedFromValue, result.getValue());
+        assertEquals(StaticConfigurationProvider.COLLECTED_FROM_VALUE, result.getValue());
+        assertEquals(collectedFromKey, result.getKey());
     }
     
     @Test
-    public void testBuildWithNullCollectedFromValue() throws Exception {
+    public void testBuildWithNullCollectedFromKey() throws Exception {
         // execute
         KeyValue result = BuilderModuleHelper.buildCollectedFromKeyValue(null);
         
         // assert
         assertNotNull(result);
-        assertEquals(StaticConfigurationProvider.COLLECTED_FROM_KEY, result.getKey());
-        assertNull(result.getValue());
+        assertEquals(StaticConfigurationProvider.COLLECTED_FROM_VALUE, result.getValue());
+        assertNull(result.getKey());
     }
     
     @Test
@@ -255,7 +255,7 @@ public class BuilderModuleHelperTest {
         
         // execute
         Relation result = BuilderModuleHelper.createRelation(source, target, relType, subRelType, relClass, properties,
-                dataInfo, collectedFromValue);
+                dataInfo, collectedFromKey);
         
         // assert        
         assertNotNull(result);
@@ -281,8 +281,8 @@ public class BuilderModuleHelperTest {
         
         assertNotNull(result.getCollectedfrom());
         assertEquals(1, result.getCollectedfrom().size());
-        assertEquals(StaticConfigurationProvider.COLLECTED_FROM_KEY, result.getCollectedfrom().get(0).getKey());
-        assertEquals(collectedFromValue, result.getCollectedfrom().get(0).getValue());
+        assertEquals(StaticConfigurationProvider.COLLECTED_FROM_VALUE, result.getCollectedfrom().get(0).getValue());
+        assertEquals(collectedFromKey, result.getCollectedfrom().get(0).getKey());
         
         assertNotNull(result.getLastupdatetimestamp());
     }

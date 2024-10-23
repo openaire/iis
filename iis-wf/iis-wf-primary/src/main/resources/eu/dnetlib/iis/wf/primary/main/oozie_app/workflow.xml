@@ -377,8 +377,8 @@
             <description>document to patent trust level threshold</description>
         </property>
         <property>
-            <name>export_relation_collectedfrom_value</name>
-            <description>datasource identifier to be stored in Relation#collectedfrom[].value</description>
+            <name>export_relation_collectedfrom_key</name>
+            <description>datasource identifier to be stored in Relation#collectedfrom[].key</description>
         </property>
         <property>
             <name>export_referenceextraction_pdb_url_root</name>
@@ -995,8 +995,8 @@
                     <value>${export_trust_level_threshold_document_eoscServices}</value>
                 </property>
                 <property>
-                    <name>collectedfrom_value</name>
-                    <value>${export_relation_collectedfrom_value}</value>
+                    <name>collectedfrom_key</name>
+                    <value>${export_relation_collectedfrom_key}</value>
                 </property>
                 <property>
                     <name>documentssimilarity_threshold</name>

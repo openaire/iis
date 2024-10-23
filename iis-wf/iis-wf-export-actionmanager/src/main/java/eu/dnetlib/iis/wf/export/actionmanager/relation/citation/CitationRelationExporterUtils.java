@@ -38,7 +38,7 @@ public class CitationRelationExporterUtils {
     }
 
     public static Dataset<Relation> processCitations(Dataset<Row> citations, UserDefinedFunction isValidConfidenceLevel,
-            final String collectedFromValue) {
+            final String collectedFromKey) {
         return documentIdAndCitationEntry(citations)
                 .select(
                         col("documentId"),
@@ -51,7 +51,7 @@ public class CitationRelationExporterUtils {
                 .groupBy(col("documentId"), col("destinationDocumentId"))
                 .agg(max(col("confidenceLevel")).as("confidenceLevel"))
                 .as(Encoders.bean(DocumentRelation.class))
-                .flatMap(toRelationFlatMapFn(collectedFromValue), Encoders.kryo(Relation.class));
+                .flatMap(toRelationFlatMapFn(collectedFromKey), Encoders.kryo(Relation.class));
     }
 
     private static Dataset<Row> documentIdAndCitationEntry(Dataset<Row> citations) {
@@ -60,27 +60,27 @@ public class CitationRelationExporterUtils {
                         explode(col("citations")).as("citationEntry"));
     }
 
-    private static FlatMapFunction<DocumentRelation, Relation> toRelationFlatMapFn(final String collectedFromValue) {
+    private static FlatMapFunction<DocumentRelation, Relation> toRelationFlatMapFn(final String collectedFromKey) {
         return (FlatMapFunction<DocumentRelation, Relation>) documentRelation -> {
             Relation forwardRelation = buildRelation(documentRelation.documentId,
                     documentRelation.destinationDocumentId,
                     OafConstants.REL_CLASS_CITES,
                     documentRelation.confidenceLevel,
-                    collectedFromValue);
+                    collectedFromKey);
             Relation backwardRelation = buildRelation(documentRelation.destinationDocumentId,
                     documentRelation.documentId,
                     OafConstants.REL_CLASS_ISCITEDBY,
                     documentRelation.confidenceLevel,
-                    collectedFromValue);
+                    collectedFromKey);
             return Stream.of(forwardRelation, backwardRelation).iterator();
         };
     }
 
-    private static Relation buildRelation(String source, String target, String relClass, Float confidenceLevel, String collectedFromValue) {
+    private static Relation buildRelation(String source, String target, String relClass, Float confidenceLevel, String collectedFromKey) {
         return BuilderModuleHelper.createRelation(source, target, OafConstants.REL_TYPE_RESULT_RESULT,
                 OafConstants.SUBREL_TYPE_CITATION, relClass,
                 BuilderModuleHelper.buildInferenceForConfidenceLevel(confidenceLevel, INFERENCE_PROVENANCE),
-                collectedFromValue);
+                collectedFromKey);
     }
 
     public static class DocumentRelation {

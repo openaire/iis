@@ -152,7 +152,7 @@
             <description>document to organization trust level threshold</description>
         </property>
         <property>
-            <name>collectedfrom_value</name>
+            <name>collectedfrom_key</name>
             <description>datasource identifier to be stored in Relation#collectedfrom[].value</description>
         </property>
         <property>
@@ -279,8 +279,8 @@
                 <value>${trust_level_threshold_matched_doc_organizations}</value>
             </property>
             <property>
-                <name>export.relation.collectedfrom.value</name>
-                <value>${collectedfrom_value}</value>
+                <name>export.relation.collectedfrom.key</name>
+                <value>${collectedfrom_key}</value>
             </property>
         </configuration>
     </global>

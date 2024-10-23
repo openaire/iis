@@ -37,7 +37,7 @@ public class CitationRelationExporterJob {
                 .evaluateConfidenceLevelThreshold(params.trustLevelThreshold);
         logger.info("Confidence level threshold to be used: {}.", confidenceLevelThreshold);
         
-        final String collectedFromValue = params.collectedFromValue;
+        final String collectedFromKey = params.collectedFromKey;
 
         runWithSparkSession(new SparkConf(), params.isSparkSessionShared, spark -> {
             clearOutput(spark, params.outputRelationPath, params.outputReportPath);
@@ -47,7 +47,7 @@ public class CitationRelationExporterJob {
             UserDefinedFunction isValidConfidenceLevel = udf((UDF1<Float, Boolean>) confidenceLevel ->
                             ConfidenceLevelUtils.isValidConfidenceLevel(confidenceLevel, confidenceLevelThreshold),
                     DataTypes.BooleanType);
-            Dataset<Relation> relations = processCitations(citations, isValidConfidenceLevel, collectedFromValue);
+            Dataset<Relation> relations = processCitations(citations, isValidConfidenceLevel, collectedFromKey);
             relations.cache();
 
             Dataset<Text> serializedActions = relationsToSerializedActions(relations);
@@ -75,7 +75,7 @@ public class CitationRelationExporterJob {
         @Parameter(names = "-trustLevelThreshold", required = true)
         private String trustLevelThreshold;
         
-        @Parameter(names = "-collectedFromValue", required = true)
-        private String collectedFromValue;
+        @Parameter(names = "-collectedFromKey", required = true)
+        private String collectedFromKey;
     }
 }

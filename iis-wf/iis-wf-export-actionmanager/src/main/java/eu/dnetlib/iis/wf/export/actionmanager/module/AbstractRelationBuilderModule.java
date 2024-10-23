@@ -19,15 +19,15 @@ import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 public abstract class AbstractRelationBuilderModule <S extends SpecificRecord> extends AbstractBuilderModule<S, Relation> {
 
     /**
-     * Value to be exported in {@link Relation}{@link #collectedFromValue}.
+     * Value to be exported in {@link Relation}{@link #collectedFromKey}.
      */
-    private final String collectedFromValue;
+    private final String collectedFromKey;
  
     // ------------------------ CONSTRUCTORS --------------------------
     
-    public AbstractRelationBuilderModule(Float trustLevelThreshold, String inferenceProvenance, String collectedFromValue) {
+    public AbstractRelationBuilderModule(Float trustLevelThreshold, String inferenceProvenance, String collectedFromKey) {
         super(trustLevelThreshold, inferenceProvenance);
-        this.collectedFromValue = collectedFromValue;
+        this.collectedFromKey = collectedFromKey;
     }
     
     // ----------------------------- LOGIC --------------------------------
@@ -51,7 +51,7 @@ public abstract class AbstractRelationBuilderModule <S extends SpecificRecord> e
         DataInfo dataInfo = confidenceLevel != null ? buildInference(confidenceLevel)
                 : buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9);
         return BuilderModuleHelper.createRelation(source, target, relType, subRelType, relClass,
-                properties, dataInfo, collectedFromValue);
+                properties, dataInfo, collectedFromKey);
     }
     
     /**

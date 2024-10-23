@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
-import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_RELATION_COLLECTEDFROM_VALUE;
+import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_RELATION_COLLECTEDFROM_KEY;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +34,7 @@ public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActio
     @Override
     public ActionBuilderModule<MatchedOrganizationWithProvenance, Relation> instantiate(Configuration config) {
         return new MatchedOrganizationActionBuilderModule(provideTrustLevelThreshold(config),
-                WorkflowRuntimeParameters.getParamValue(EXPORT_RELATION_COLLECTEDFROM_VALUE, config));
+                WorkflowRuntimeParameters.getParamValue(EXPORT_RELATION_COLLECTEDFROM_KEY, config));
     }
     
     // ------------------------ INNER CLASS ---------------------------------
@@ -50,10 +50,10 @@ public class MatchedOrganizationActionBuilderModuleFactory extends AbstractActio
         
         /**
          * @param trustLevelThreshold trust level threshold or null when all records should be exported
-         * @param collectedFromValue collectedFrom value to be set for relation
+         * @param collectedFromKey collectedFrom key to be set for relation
          */
-        public MatchedOrganizationActionBuilderModule(Float trustLevelThreshold, String collectedFromValue) {
-            super(trustLevelThreshold, buildInferenceProvenance(), collectedFromValue);
+        public MatchedOrganizationActionBuilderModule(Float trustLevelThreshold, String collectedFromKey) {
+            super(trustLevelThreshold, buildInferenceProvenance(), collectedFromKey);
         }
 
         // ------------------------ LOGIC ---------------------------------

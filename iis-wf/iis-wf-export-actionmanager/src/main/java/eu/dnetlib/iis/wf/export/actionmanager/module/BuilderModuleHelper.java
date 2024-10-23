@@ -37,11 +37,11 @@ public class BuilderModuleHelper {
      * @param subRelType      relation sub-type
      * @param relClass        relation class
      * @param dataInfo        {@link DataInfo} describing relation
-     * @param collectedFromValue relation collectedfrom value
+     * @param collectedFromKey relation collectedfrom key
      */
     public static Relation createRelation(String source, String target, String relType, String subRelType,
-            String relClass, DataInfo dataInfo, String collectedFromValue) {
-        return createRelation(source, target, relType, subRelType, relClass, null, dataInfo, collectedFromValue);
+            String relClass, DataInfo dataInfo, String collectedFromKey) {
+        return createRelation(source, target, relType, subRelType, relClass, null, dataInfo, collectedFromKey);
     }
     
     /**
@@ -54,10 +54,10 @@ public class BuilderModuleHelper {
      * @param relClass        relation class
      * @param properties      relation properties
      * @param dataInfo        {@link DataInfo} describing relation
-     * @param collectedFromValue relation collectedfrom value
+     * @param collectedFromKey relation collectedfrom key
      */
     public static Relation createRelation(String source, String target, String relType, String subRelType,
-            String relClass, List<KeyValue> properties, DataInfo dataInfo, String collectedFromValue) {
+            String relClass, List<KeyValue> properties, DataInfo dataInfo, String collectedFromKey) {
         Relation relation = new Relation();
         relation.setSource(source);
         relation.setTarget(target);
@@ -67,18 +67,18 @@ public class BuilderModuleHelper {
         relation.setProperties(properties);
         relation.setDataInfo(dataInfo);
         relation.setLastupdatetimestamp(System.currentTimeMillis());
-        relation.setCollectedfrom(Collections.singletonList(buildCollectedFromKeyValue(collectedFromValue)));
+        relation.setCollectedfrom(Collections.singletonList(buildCollectedFromKeyValue(collectedFromKey)));
         return relation;
     }
     
     /**
      * Returns {@link KeyValue} object with the predefined key and value provided as parameter.
-     * @param collectedFromValue value of {@link KeyValue} object
+     * @param collectedFromKey key of {@link KeyValue} object
      */
-    public static KeyValue buildCollectedFromKeyValue(String collectedFromValue) {
+    public static KeyValue buildCollectedFromKeyValue(String collectedFromKey) {
         KeyValue keyValue = new KeyValue();
-        keyValue.setKey(StaticConfigurationProvider.COLLECTED_FROM_KEY);
-        keyValue.setValue(collectedFromValue);
+        keyValue.setKey(collectedFromKey);
+        keyValue.setValue(StaticConfigurationProvider.COLLECTED_FROM_VALUE);
         return keyValue;
     }
     

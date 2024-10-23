@@ -1,6 +1,6 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
-import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_RELATION_COLLECTEDFROM_VALUE;
+import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_RELATION_COLLECTEDFROM_KEY;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,7 +33,7 @@ public class DocumentToServiceActionBuilderModuleFactory extends AbstractActionB
     @Override
     public ActionBuilderModule<DocumentToService, Relation> instantiate(Configuration config) {
         return new DocumentToServiceActionBuilderModule(provideTrustLevelThreshold(config),
-                WorkflowRuntimeParameters.getParamValue(EXPORT_RELATION_COLLECTEDFROM_VALUE, config));
+                WorkflowRuntimeParameters.getParamValue(EXPORT_RELATION_COLLECTEDFROM_KEY, config));
     }
 
     // ------------------------ INNER CLASS --------------------------
@@ -45,10 +45,10 @@ public class DocumentToServiceActionBuilderModuleFactory extends AbstractActionB
         
         /**
          * @param trustLevelThreshold trust level threshold or null when all records should be exported
-         * @param collectedFromValue collectedFrom value to be set for relation
+         * @param collectedFromKey collectedFrom key to be set for relation
          */
-        public DocumentToServiceActionBuilderModule(Float trustLevelThreshold, String collectedFromValue) {
-            super(trustLevelThreshold, buildInferenceProvenance(), collectedFromValue);
+        public DocumentToServiceActionBuilderModule(Float trustLevelThreshold, String collectedFromKey) {
+            super(trustLevelThreshold, buildInferenceProvenance(), collectedFromKey);
         }
 
         // ------------------------ LOGIC --------------------------
