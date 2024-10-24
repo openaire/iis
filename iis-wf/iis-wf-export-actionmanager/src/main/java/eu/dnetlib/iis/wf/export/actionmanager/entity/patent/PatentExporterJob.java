@@ -181,6 +181,7 @@ public class PatentExporterJob {
 
             final Float confidenceLevelThreshold = ConfidenceLevelUtils
                     .evaluateConfidenceLevelThreshold(params.trustLevelThreshold);
+            final String collectedFromKey = params.collectedFromKey;
 
             JavaRDD<DocumentToPatent> relMetaRDD = avroLoader
                     .loadJavaRDD(sc, params.inputDocumentToPatentPath, DocumentToPatent.class);
@@ -213,7 +214,7 @@ public class PatentExporterJob {
             configuration.set(FileOutputFormat.COMPRESS, Boolean.TRUE.toString());
             configuration.set(FileOutputFormat.COMPRESS_TYPE, SequenceFile.CompressionType.BLOCK.name());
 
-            JavaPairRDD<Text, Text> relationsToExportRDD = relationsToExport(patentExportMetaDedupRDD);
+            JavaPairRDD<Text, Text> relationsToExportRDD = relationsToExport(patentExportMetaDedupRDD, collectedFromKey);
             RDDUtils.saveTextPairRDD(relationsToExportRDD, numberOfOutputFiles, params.outputRelationPath, configuration);
 
             String patentDateOfCollection = DateTimeUtils.format(
@@ -256,43 +257,35 @@ public class PatentExporterJob {
         return x.getDocumentToPatent().getConfidenceLevel() > y.getDocumentToPatent().getConfidenceLevel() ? x : y;
     }
 
-    private static JavaPairRDD<Text, Text> relationsToExport(JavaRDD<PatentExportMetadata> rdd) {
+    private static JavaPairRDD<Text, Text> relationsToExport(JavaRDD<PatentExportMetadata> rdd, String collectedFromKey) {
         return AtomicActionSerializationUtils
                 .mapActionToText(rdd
                         .flatMap(x -> {
                             String documentId = x.getDocumentId();
                             String patentId = x.getPatentId();
                             Float confidenceLevel = x.getDocumentToPatent().getConfidenceLevel();
-                            return buildRelationActions(documentId, patentId, confidenceLevel).iterator();
+                            return buildRelationActions(documentId, patentId, confidenceLevel, collectedFromKey).iterator();
                         })
                 );
     }
 
-    private static List<AtomicAction<Relation>> buildRelationActions(String documentId, String patentId, Float confidenceLevel) {
+    private static List<AtomicAction<Relation>> buildRelationActions(String documentId, String patentId, Float confidenceLevel, String collectedFromKey) {
         AtomicAction<Relation> forwardAction = new AtomicAction<>();
         forwardAction.setClazz(Relation.class);
-        forwardAction.setPayload(buildRelation(documentId, patentId, confidenceLevel));
+        forwardAction.setPayload(buildRelation(documentId, patentId, confidenceLevel, collectedFromKey));
 
         AtomicAction<Relation> reverseAction = new AtomicAction<>();
         reverseAction.setClazz(Relation.class);
-        reverseAction.setPayload(buildRelation(patentId, documentId, confidenceLevel));
+        reverseAction.setPayload(buildRelation(patentId, documentId, confidenceLevel, collectedFromKey));
 
         return Arrays.asList(forwardAction, reverseAction);
     }
 
-    private static Relation buildRelation(String source, String target, Float confidenceLevel) {
-        Relation relation = new Relation();
-        relation.setRelType(OafConstants.REL_TYPE_RESULT_RESULT);
-        relation.setSubRelType(OafConstants.SUBREL_TYPE_RELATIONSHIP);
-        relation.setRelClass(OafConstants.REL_CLASS_ISRELATEDTO);
-
-        relation.setSource(source);
-        relation.setTarget(target);
-
-        relation.setDataInfo(BuilderModuleHelper.buildInferenceForConfidenceLevel(confidenceLevel, INFERENCE_PROVENANCE));
-        relation.setLastupdatetimestamp(System.currentTimeMillis());
-
-        return relation;
+    private static Relation buildRelation(String source, String target, Float confidenceLevel, String collectedFromKey) {
+        return BuilderModuleHelper.createRelation(source, target, OafConstants.REL_TYPE_RESULT_RESULT,
+                OafConstants.SUBREL_TYPE_RELATIONSHIP, OafConstants.REL_CLASS_ISRELATEDTO, 
+                BuilderModuleHelper.buildInferenceForConfidenceLevel(confidenceLevel, INFERENCE_PROVENANCE),
+                collectedFromKey);
     }
 
     private static JavaPairRDD<Text, Text> entitiesToExport(JavaRDD<PatentExportMetadata> rdd,
@@ -480,6 +473,9 @@ public class PatentExporterJob {
 
         @Parameter(names = "-trustLevelThreshold")
         private String trustLevelThreshold;
+        
+        @Parameter(names = "-collectedFromKey", required = true)
+        private String collectedFromKey;
 
         @Parameter(names = "-patentDateOfCollection", required = true)
         private String patentDateOfCollection;

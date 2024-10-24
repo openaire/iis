@@ -10,5 +10,7 @@ public final class ExportWorkflowRuntimeParameters {
 	
 	public static final String EXPORT_DOCUMENTSSIMILARITY_THRESHOLD = "export.documentssimilarity.threshold";
 	
+	public static final String EXPORT_RELATION_COLLECTEDFROM_KEY = "export.relation.collectedfrom.key";
+	
 	private ExportWorkflowRuntimeParameters() {}
 }

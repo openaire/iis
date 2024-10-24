@@ -1,11 +1,12 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
+import org.apache.avro.specific.SpecificRecord;
+
 import com.google.common.base.Preconditions;
+
 import eu.dnetlib.dhp.schema.oaf.DataInfo;
 import eu.dnetlib.dhp.schema.oaf.Oaf;
 import eu.dnetlib.iis.common.model.conversion.ConfidenceAndTrustLevelConversionUtils;
-import org.apache.avro.specific.SpecificRecord;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Abstract builder module.
@@ -58,24 +59,9 @@ public abstract class AbstractBuilderModule<S extends SpecificRecord, T extends 
      * @throws TrustLevelThresholdExceededException thrown when trust level threshold was exceeded
      */
     protected DataInfo buildInference(float confidenceLevel) throws TrustLevelThresholdExceededException {
-        return buildInference(confidenceLevel, null);
-    }
-    
-    /**
-     * Returns {@link DataInfo} with inference details. Confidence level will be normalized to trust level.
-     * 
-     * @param confidenceLevel confidence level which will be normalized to trust level
-     * @throws TrustLevelThresholdExceededException thrown when trust level threshold was exceeded
-     */
-    protected DataInfo buildInference(float confidenceLevel, String inferenceProvenance) throws TrustLevelThresholdExceededException {
         float currentTrustLevel = ConfidenceAndTrustLevelConversionUtils.confidenceLevelToTrustLevel(confidenceLevel);
         if (trustLevelThreshold == null || currentTrustLevel >= trustLevelThreshold) {
-            if (StringUtils.isNotBlank(inferenceProvenance)) {
-                return buildInferenceForTrustLevel(BuilderModuleHelper.getDecimalFormat().format(currentTrustLevel), 
-                        inferenceProvenance);
-            } else {
-                return buildInferenceForTrustLevel(BuilderModuleHelper.getDecimalFormat().format(currentTrustLevel));    
-            }
+            return buildInferenceForTrustLevel(BuilderModuleHelper.getDecimalFormat().format(currentTrustLevel));    
         } else {
             throw new TrustLevelThresholdExceededException();
         }
@@ -86,14 +72,6 @@ public abstract class AbstractBuilderModule<S extends SpecificRecord, T extends 
      * 
      */
     protected DataInfo buildInferenceForTrustLevel(String trustLevel) {
-        return buildInferenceForTrustLevel(trustLevel, inferenceProvenance);
-    }
-
-    /**
-     * Returns {@link DataInfo} with inference details.
-     * 
-     */
-    protected DataInfo buildInferenceForTrustLevel(String trustLevel, String inferenceProvenance) {
         return BuilderModuleHelper.buildInferenceForTrustLevel(trustLevel, inferenceProvenance);
     }
     

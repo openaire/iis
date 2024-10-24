@@ -37,8 +37,8 @@ public class CitationRelationExporterUtils {
     private CitationRelationExporterUtils() {
     }
 
-    public static Dataset<Relation> processCitations(Dataset<Row> citations,
-                                                     UserDefinedFunction isValidConfidenceLevel) {
+    public static Dataset<Relation> processCitations(Dataset<Row> citations, UserDefinedFunction isValidConfidenceLevel,
+            final String collectedFromKey) {
         return documentIdAndCitationEntry(citations)
                 .select(
                         col("documentId"),
@@ -51,7 +51,7 @@ public class CitationRelationExporterUtils {
                 .groupBy(col("documentId"), col("destinationDocumentId"))
                 .agg(max(col("confidenceLevel")).as("confidenceLevel"))
                 .as(Encoders.bean(DocumentRelation.class))
-                .flatMap(toRelationFlatMapFn(), Encoders.kryo(Relation.class));
+                .flatMap(toRelationFlatMapFn(collectedFromKey), Encoders.kryo(Relation.class));
     }
 
     private static Dataset<Row> documentIdAndCitationEntry(Dataset<Row> citations) {
@@ -60,30 +60,27 @@ public class CitationRelationExporterUtils {
                         explode(col("citations")).as("citationEntry"));
     }
 
-    private static FlatMapFunction<DocumentRelation, Relation> toRelationFlatMapFn() {
+    private static FlatMapFunction<DocumentRelation, Relation> toRelationFlatMapFn(final String collectedFromKey) {
         return (FlatMapFunction<DocumentRelation, Relation>) documentRelation -> {
             Relation forwardRelation = buildRelation(documentRelation.documentId,
                     documentRelation.destinationDocumentId,
                     OafConstants.REL_CLASS_CITES,
-                    documentRelation.confidenceLevel);
+                    documentRelation.confidenceLevel,
+                    collectedFromKey);
             Relation backwardRelation = buildRelation(documentRelation.destinationDocumentId,
                     documentRelation.documentId,
                     OafConstants.REL_CLASS_ISCITEDBY,
-                    documentRelation.confidenceLevel);
+                    documentRelation.confidenceLevel,
+                    collectedFromKey);
             return Stream.of(forwardRelation, backwardRelation).iterator();
         };
     }
 
-    private static Relation buildRelation(String source, String target, String relClass, Float confidenceLevel) {
-        Relation relation = new Relation();
-        relation.setRelType(OafConstants.REL_TYPE_RESULT_RESULT);
-        relation.setSubRelType(OafConstants.SUBREL_TYPE_CITATION);
-        relation.setRelClass(relClass);
-        relation.setSource(source);
-        relation.setTarget(target);
-        relation.setDataInfo(BuilderModuleHelper.buildInferenceForConfidenceLevel(confidenceLevel, INFERENCE_PROVENANCE));
-        relation.setLastupdatetimestamp(System.currentTimeMillis());
-        return relation;
+    private static Relation buildRelation(String source, String target, String relClass, Float confidenceLevel, String collectedFromKey) {
+        return BuilderModuleHelper.createRelation(source, target, OafConstants.REL_TYPE_RESULT_RESULT,
+                OafConstants.SUBREL_TYPE_CITATION, relClass,
+                BuilderModuleHelper.buildInferenceForConfidenceLevel(confidenceLevel, INFERENCE_PROVENANCE),
+                collectedFromKey);
     }
 
     public static class DocumentRelation {

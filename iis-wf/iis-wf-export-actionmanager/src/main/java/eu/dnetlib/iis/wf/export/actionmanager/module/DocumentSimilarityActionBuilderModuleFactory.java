@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.export.actionmanager.module;
 
 import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_DOCUMENTSSIMILARITY_THRESHOLD;
+import static eu.dnetlib.iis.wf.export.actionmanager.ExportWorkflowRuntimeParameters.EXPORT_RELATION_COLLECTEDFROM_KEY;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,7 +16,6 @@ import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.documentssimilarity.schemas.DocumentSimilarity;
 import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
-import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 
 /**
  * {@link DocumentSimilarity} based action builder module.
@@ -47,24 +47,27 @@ public class DocumentSimilarityActionBuilderModuleFactory extends AbstractAction
             similarityThreshold = Float.valueOf(thresholdStr);
             log.info("setting documents similarity exporter threshold to: " + similarityThreshold);
         }
-        return new DocumentSimilarityActionBuilderModule(provideTrustLevelThreshold(config), similarityThreshold);
+        return new DocumentSimilarityActionBuilderModule(provideTrustLevelThreshold(config), similarityThreshold, 
+                WorkflowRuntimeParameters.getParamValue(EXPORT_RELATION_COLLECTEDFROM_KEY, config));
     }
     
     // ------------------------ INNER CLASS --------------------------
 
-    class DocumentSimilarityActionBuilderModule extends AbstractBuilderModule<DocumentSimilarity, Relation> {
+    class DocumentSimilarityActionBuilderModule extends AbstractRelationBuilderModule<DocumentSimilarity> {
 
         
         private final Float similarityThreshold;
+
 
         // ------------------------ CONSTRUCTORS --------------------------
 
         /**
          * @param trustLevelThreshold trust level threshold or null when all records should be exported
          * @param similarityThreshold similarity threshold, skipped when null
+         * @param collectedFromKey collectedFrom key to be set for relation
          */
-        public DocumentSimilarityActionBuilderModule(Float trustLevelThreshold, Float similarityThreshold) {
-            super(trustLevelThreshold, buildInferenceProvenance());
+        public DocumentSimilarityActionBuilderModule(Float trustLevelThreshold, Float similarityThreshold, String collectedFromKey) {
+            super(trustLevelThreshold, buildInferenceProvenance(), collectedFromKey);
             this.similarityThreshold = similarityThreshold;
         }
 
@@ -90,20 +93,9 @@ public class DocumentSimilarityActionBuilderModuleFactory extends AbstractAction
          * Creates similarity related actions.
          */
         private AtomicAction<Relation> createAction(String source, String target, float score, String relClass) {
-            AtomicAction<Relation> action = new AtomicAction<>();
-            action.setClazz(Relation.class);
-            
-            Relation relation = new Relation();
-            relation.setSource(source);
-            relation.setTarget(target);
-            relation.setRelType(OafConstants.REL_TYPE_RESULT_RESULT);
-            relation.setSubRelType(OafConstants.SUBREL_TYPE_SIMILARITY);
-            relation.setRelClass(relClass);
-            relation.setDataInfo(buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9));
-            relation.setLastupdatetimestamp(System.currentTimeMillis());
-            relation.setProperties(Collections.singletonList(buildSimilarityLevel(score)));
-            action.setPayload(relation);
-            return action;
+            return createAtomicActionWithRelation(source, target, OafConstants.REL_TYPE_RESULT_RESULT,
+                    OafConstants.SUBREL_TYPE_SIMILARITY, relClass, 
+                    Collections.singletonList(buildSimilarityLevel(score)));
         }
 
         private KeyValue buildSimilarityLevel(float score) {

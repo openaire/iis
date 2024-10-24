@@ -215,6 +215,10 @@
             <value>$UNDEFINED$</value>
             <description>document_referencedDocuments trust level threshold</description>
         </property>
+        <property>
+            <name>collectedfrom_key</name>
+            <description>datasource identifier to be stored in Relation#collectedfrom[].key</description>
+        </property>
 
         <!-- -->
         <property>

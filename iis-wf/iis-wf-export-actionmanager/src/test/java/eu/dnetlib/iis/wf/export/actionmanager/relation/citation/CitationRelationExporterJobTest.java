@@ -34,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CitationRelationExporterJobTest extends TestWithSharedSparkSession {
 
+    private static final String RELATION_COLLECTED_FROM_KEY= "someRepo";
+    
     @Test
     @DisplayName("Citation matching results are exported as atomic actions and report is generated")
     public void givenInputCitationsPath_whenRun_thenSerializedAtomicActionsAndReportsAreCreated(@TempDir Path rootInputPath,
@@ -59,7 +61,8 @@ class CitationRelationExporterJobTest extends TestWithSharedSparkSession {
                 "-inputCitationsPath", inputCitationsPath.toString(),
                 "-outputRelationPath", outputRelationPath.toString(),
                 "-outputReportPath", outputReportPath.toString(),
-                "-trustLevelThreshold", Float.toString(trustLevelThreshold)
+                "-trustLevelThreshold", Float.toString(trustLevelThreshold),
+                "-collectedFromKey", RELATION_COLLECTED_FROM_KEY,
         });
 
         List<AtomicAction<Relation>> atomicActions = spark().sparkContext().sequenceFile(outputRelationPath.toString(), Text.class, Text.class)
@@ -115,15 +118,11 @@ class CitationRelationExporterJobTest extends TestWithSharedSparkSession {
     }
 
     private static Relation createRelation(String source, String target, String relClass, Float confidenceLevel) {
-        Relation relation = new Relation();
-        relation.setRelType(OafConstants.REL_TYPE_RESULT_RESULT);
-        relation.setSubRelType(OafConstants.SUBREL_TYPE_CITATION);
-        relation.setRelClass(relClass);
-        relation.setSource(source);
-        relation.setTarget(target);
-        relation.setDataInfo(BuilderModuleHelper.buildInferenceForConfidenceLevel(confidenceLevel,
-                "iis::document_referencedDocuments"));
-        return relation;
+        return BuilderModuleHelper.createRelation(source, target, OafConstants.REL_TYPE_RESULT_RESULT,
+                OafConstants.SUBREL_TYPE_CITATION, relClass, BuilderModuleHelper.buildInferenceForConfidenceLevel(
+                        confidenceLevel, "iis::document_referencedDocuments"),
+                RELATION_COLLECTED_FROM_KEY);
+
     }
 
 }

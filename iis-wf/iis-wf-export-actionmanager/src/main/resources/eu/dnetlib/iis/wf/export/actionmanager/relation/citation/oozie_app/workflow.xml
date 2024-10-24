@@ -25,6 +25,10 @@
             <name>trust_level_threshold_document_referencedDocuments</name>
             <description>trust level threshold of exported data</description>
         </property>
+        <property>
+            <name>collectedfrom_key</name>
+            <description>datasource identifier to be stored in Relation#collectedfrom[].key</description>
+        </property>
 
         <property>
             <name>sparkDriverMemory</name>
@@ -103,6 +107,7 @@
             <arg>-outputRelationPath=${output_root_relations}/${action_set_id_citation_relations}</arg>
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
             <arg>-trustLevelThreshold=${trust_level_threshold_document_referencedDocuments}</arg>
+            <arg>-collectedFromKey=${collectedfrom_key}</arg>
         </spark>
         <ok to="end"/>
         <error to="fail"/>

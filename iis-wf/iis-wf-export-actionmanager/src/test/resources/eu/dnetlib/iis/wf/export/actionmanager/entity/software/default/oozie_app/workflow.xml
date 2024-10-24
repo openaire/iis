@@ -66,6 +66,10 @@
                     <value>0.5</value>
                 </property>
                 <property>
+                    <name>collectedfrom_key</name>
+                    <value>repo-id-1</value>
+                </property>
+                <property>
                     <name>output_root_entities</name>
                     <value>${workingDir}/output/entities_software</value>
                 </property>

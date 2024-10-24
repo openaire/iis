@@ -32,6 +32,12 @@
             </description>
         </property>
         <property>
+            <name>collectedfrom_key</name>
+            <description>
+                datasource identifier to be stored in Relation#collectedfrom[].key
+            </description>
+        </property>
+        <property>
             <name>patent_date_of_collection</name>
             <description>
                 date of collection of patent file formatted as yyyy-MM-dd'T'HH:mm
@@ -150,6 +156,7 @@
             <arg>-inputDocumentToPatentPath=${input_document_to_patent}</arg>
             <arg>-inputPatentPath=${input_patent}</arg>
             <arg>-trustLevelThreshold=${trust_level_threshold_document_patent}</arg>
+            <arg>-collectedFromKey=${collectedfrom_key}</arg>
             <arg>-patentDateOfCollection=${patent_date_of_collection}</arg>
             <arg>-patentEpoUrlRoot=${patent_epo_url_root}</arg>
             <arg>-outputRelationPath=${output_root_relations}/${action_set_id_document_patent}</arg>

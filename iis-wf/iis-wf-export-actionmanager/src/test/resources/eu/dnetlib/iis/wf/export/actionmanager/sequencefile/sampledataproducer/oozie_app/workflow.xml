@@ -194,6 +194,10 @@
                     <value>0.2</value>
                 </property>
                 <property>
+                    <name>collectedfrom_key</name>
+                    <value>repo-id-1</value>
+                </property>
+                <property>
                     <name>referenceextraction_pdb_url_root</name>
                     <value>http://www.rcsb.org/pdb/explore/explore.do?structureId=</value>
                 </property>

@@ -38,9 +38,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CitationRelationExporterUtilsTest extends TestWithSharedSparkSession {
 
+    private static final String collectedFromKey = "somecollectedFromKey";
+    
     @Nested
     public class ProcessCitationsTest {
-
+        
         @Test
         @DisplayName("Processing returns empty dataset for input with empty citation entries")
         public void givenCitationsWithEmptyCitationEntries_whenProcessed_thenEmptyDataSetIsReturned() {
@@ -49,7 +51,7 @@ class CitationRelationExporterUtilsTest extends TestWithSharedSparkSession {
                     DataTypes.BooleanType);
 
             List<Relation> results = processCitations(avroDataFrameSupport.createDataFrame(Collections.emptyList(), Citations.SCHEMA$),
-                    isValidConfidenceLevel).collectAsList();
+                    isValidConfidenceLevel, collectedFromKey).collectAsList();
 
             assertTrue(results.isEmpty());
         }
@@ -67,7 +69,7 @@ class CitationRelationExporterUtilsTest extends TestWithSharedSparkSession {
             Dataset<Row> citationsDF = avroDataFrameSupport.createDataFrame(Collections.singletonList(citations),
                     Citations.SCHEMA$);
 
-            List<Relation> results = processCitations(citationsDF, isValidConfidenceLevel).collectAsList();
+            List<Relation> results = processCitations(citationsDF, isValidConfidenceLevel, collectedFromKey).collectAsList();
 
             assertTrue(results.isEmpty());
         }
@@ -85,7 +87,7 @@ class CitationRelationExporterUtilsTest extends TestWithSharedSparkSession {
             Dataset<Row> citationsDF = avroDataFrameSupport.createDataFrame(Collections.singletonList(citations),
                     Citations.SCHEMA$);
 
-            List<Relation> results = processCitations(citationsDF, isValidConfidenceLevel).collectAsList();
+            List<Relation> results = processCitations(citationsDF, isValidConfidenceLevel, collectedFromKey).collectAsList();
 
             assertTrue(results.isEmpty());
         }
@@ -103,7 +105,7 @@ class CitationRelationExporterUtilsTest extends TestWithSharedSparkSession {
             Dataset<Row> citationsDF = avroDataFrameSupport.createDataFrame(Collections.singletonList(citations),
                     Citations.SCHEMA$);
 
-            List<Relation> results = processCitations(citationsDF, isValidConfidenceLevel).collectAsList();
+            List<Relation> results = processCitations(citationsDF, isValidConfidenceLevel, collectedFromKey).collectAsList();
 
             assertTrue(results.isEmpty());
         }
@@ -122,7 +124,7 @@ class CitationRelationExporterUtilsTest extends TestWithSharedSparkSession {
             Dataset<Row> citationsDF = avroDataFrameSupport.createDataFrame(Collections.singletonList(citations),
                     Citations.SCHEMA$);
 
-            List<Relation> results = processCitations(citationsDF, isValidConfidenceLevel).collectAsList();
+            List<Relation> results = processCitations(citationsDF, isValidConfidenceLevel, collectedFromKey).collectAsList();
 
             assertEquals(2, results.size());
             assertThat(results, hasItem(matchingRelation(
@@ -180,14 +182,9 @@ class CitationRelationExporterUtilsTest extends TestWithSharedSparkSession {
     }
 
     private static Relation createRelation(String source, String target, String relClass, Float confidenceLevel) {
-        Relation relation = new Relation();
-        relation.setRelType(OafConstants.REL_TYPE_RESULT_RESULT);
-        relation.setSubRelType(OafConstants.SUBREL_TYPE_CITATION);
-        relation.setRelClass(relClass);
-        relation.setSource(source);
-        relation.setTarget(target);
-        relation.setDataInfo(BuilderModuleHelper.buildInferenceForConfidenceLevel(confidenceLevel,
-                "iis::document_referencedDocuments"));
-        return relation;
+        return BuilderModuleHelper.createRelation(source, target, OafConstants.REL_TYPE_RESULT_RESULT,
+                OafConstants.SUBREL_TYPE_CITATION, relClass, BuilderModuleHelper.buildInferenceForConfidenceLevel(
+                        confidenceLevel, "iis::document_referencedDocuments"),
+                collectedFromKey);
     }
 }

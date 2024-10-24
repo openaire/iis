@@ -123,6 +123,7 @@ public class SoftwareExporterJob {
 
             final Float confidenceLevelThreshold = ConfidenceLevelUtils
                     .evaluateConfidenceLevelThreshold(params.trustLevelThreshold);
+            final String collectedFromKey = params.collectedFromKey;
 
             JavaRDD<DocumentToSoftwareUrlWithMeta> relMetaRDD = avroLoader
                     .loadJavaRDD(sc, params.inputDocumentToSoftwareUrlPath, DocumentToSoftwareUrlWithMeta.class);
@@ -157,7 +158,7 @@ public class SoftwareExporterJob {
             configuration.set(FileOutputFormat.COMPRESS, Boolean.TRUE.toString());
             configuration.set(FileOutputFormat.COMPRESS_TYPE, SequenceFile.CompressionType.BLOCK.name());
 
-            JavaPairRDD<Text, Text> relationsToExportRDD = relationsToExport(softwareExportMetaDedupRDD);
+            JavaPairRDD<Text, Text> relationsToExportRDD = relationsToExport(softwareExportMetaDedupRDD, collectedFromKey);
             RDDUtils.saveTextPairRDD(relationsToExportRDD, NUMBER_OF_OUTPUT_FILES, params.outputRelationPath, configuration);
 
             JavaPairRDD<Text, Text> entitiesToExportRDD = entitiesToExport(softwareExportMetaDedupRDD);
@@ -215,43 +216,36 @@ public class SoftwareExporterJob {
                 y.getDocumentToSoftwareUrlWithMeta().getConfidenceLevel() ? x : y;
     }
 
-    private static JavaPairRDD<Text, Text> relationsToExport(JavaRDD<SoftwareExportMetadata> rdd) {
+    private static JavaPairRDD<Text, Text> relationsToExport(JavaRDD<SoftwareExportMetadata> rdd, String collectedFromKey) {
         return AtomicActionSerializationUtils
                 .mapActionToText(rdd
                         .flatMap(x -> {
                             String documentId = x.getDocumentId();
                             String softwareId = x.getSoftwareId();
                             Float confidenceLevel = x.getDocumentToSoftwareUrlWithMeta().getConfidenceLevel();
-                            return buildRelationActions(documentId, softwareId, confidenceLevel).iterator();
+                            return buildRelationActions(documentId, softwareId, confidenceLevel, collectedFromKey).iterator();
                         })
                 );
     }
 
-    private static List<AtomicAction<Relation>> buildRelationActions(String documentId, String softwareId, Float confidenceLevel) {
+    private static List<AtomicAction<Relation>> buildRelationActions(String documentId, String softwareId,
+            Float confidenceLevel, String collectedFromKey) {
         AtomicAction<Relation> forwardAction = new AtomicAction<>();
         forwardAction.setClazz(Relation.class);
-        forwardAction.setPayload(buildRelation(documentId, softwareId, confidenceLevel));
+        forwardAction.setPayload(buildRelation(documentId, softwareId, confidenceLevel, collectedFromKey));
 
         AtomicAction<Relation> reverseAction = new AtomicAction<>();
         reverseAction.setClazz(Relation.class);
-        reverseAction.setPayload(buildRelation(softwareId, documentId, confidenceLevel));
+        reverseAction.setPayload(buildRelation(softwareId, documentId, confidenceLevel, collectedFromKey));
 
         return Arrays.asList(forwardAction, reverseAction);
     }
 
-    private static Relation buildRelation(String source, String target, Float confidenceLevel) {
-        Relation relation = new Relation();
-        relation.setRelType(OafConstants.REL_TYPE_RESULT_RESULT);
-        relation.setSubRelType(OafConstants.SUBREL_TYPE_RELATIONSHIP);
-        relation.setRelClass(OafConstants.REL_CLASS_ISRELATEDTO);
-
-        relation.setSource(source);
-        relation.setTarget(target);
-
-        relation.setDataInfo(BuilderModuleHelper.buildInferenceForConfidenceLevel(confidenceLevel, INFERENCE_PROVENANCE));
-        relation.setLastupdatetimestamp(System.currentTimeMillis());
-
-        return relation;
+    private static Relation buildRelation(String source, String target, Float confidenceLevel, String collectedFromKey) {
+        return BuilderModuleHelper.createRelation(source, target, OafConstants.REL_TYPE_RESULT_RESULT,
+                OafConstants.SUBREL_TYPE_RELATIONSHIP, OafConstants.REL_CLASS_ISRELATEDTO, 
+                BuilderModuleHelper.buildInferenceForConfidenceLevel(confidenceLevel, INFERENCE_PROVENANCE),
+                collectedFromKey);
     }
 
     private static JavaPairRDD<Text, Text> entitiesToExport(JavaRDD<SoftwareExportMetadata> rdd) {
@@ -448,5 +442,8 @@ public class SoftwareExporterJob {
 
         @Parameter(names = "-trustLevelThreshold", required = false)
         private String trustLevelThreshold;
+        
+        @Parameter(names = "-collectedFromKey", required = true)
+        private String collectedFromKey;
     }
 }

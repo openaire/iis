@@ -66,6 +66,10 @@
                     <value>0.5</value>
                 </property>
                 <property>
+                    <name>collectedfrom_key</name>
+                    <value>repo-id-1</value>
+                </property>
+                <property>
                     <name>patent_date_of_collection</name>
                     <value>2019-11-20T23:59</value>
                 </property>
