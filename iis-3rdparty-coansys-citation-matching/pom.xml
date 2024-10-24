@@ -85,23 +85,23 @@
 
         <dependency>
             <groupId>com.jsuereth</groupId>
-            <artifactId>scala-arm_2.11</artifactId>
+            <artifactId>scala-arm_2.12</artifactId>
         </dependency>
         <!-- end of deps copied from eon-scala-commons-lite -->
         
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_2.11</artifactId>
+            <artifactId>spark-core_2.12</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_2.11</artifactId>
+            <artifactId>spark-sql_2.12</artifactId>
         </dependency>
 
         <dependency>
             <groupId>pl.edu.icm.spark-utils</groupId>
-            <artifactId>spark-utils_2.11</artifactId>
+            <artifactId>spark-utils_2.12</artifactId>
         </dependency>
         
         <dependency>
