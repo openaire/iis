@@ -66,7 +66,7 @@ public class SoftwareHeritageOriginsImporterJob {
     }
     
     private static JavaRDD<SoftwareHeritageOrigin> buildOutputRecord(Dataset<Row> source, SparkSession spark) {
-        return new AvroDataFrameSupport(spark).toDS(source, SoftwareHeritageOrigin.class).toJavaRDD();
+        return AvroDataFrameSupport.toDS(source, SoftwareHeritageOrigin.class).toJavaRDD();
     }
     
     @Parameters(separators = "=")
