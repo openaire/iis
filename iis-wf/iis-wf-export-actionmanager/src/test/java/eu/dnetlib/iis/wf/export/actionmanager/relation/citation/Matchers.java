@@ -37,29 +37,16 @@ public class Matchers {
     }
     
     private static boolean matchesCollectedFrom(List<KeyValue> source, List<KeyValue> target) {
-        if (source != null) {
-            if (target != null) {
-                if (source.size() == target.size()) {
-                    for (int i = 0; i < source.size(); i++) {
-                        if (!source.get(i).getKey().equals(target.get(i).getKey()) || 
-                                !source.get(i).getValue().equals(target.get(i).getValue())) {
-                            return false;
-                        }
-                    }
-                    return true;
-                } else {
+        if (source != null && target != null && source.size() == target.size()) {
+            for (int i = 0; i < source.size(); i++) {
+                if (!source.get(i).getKey().equals(target.get(i).getKey()) || 
+                        !source.get(i).getValue().equals(target.get(i).getValue())) {
                     return false;
                 }
-            } else {
-                return false;
             }
-        } else {
-            if (target == null) {
-                return true;
-            } else {
-                return false;
-            }
+            return true;
         }
+        return source == null && target == null;
     }
 
     public static Matcher<AtomicAction<Relation>> matchingAtomicAction(AtomicAction<Relation> atomicAction) {

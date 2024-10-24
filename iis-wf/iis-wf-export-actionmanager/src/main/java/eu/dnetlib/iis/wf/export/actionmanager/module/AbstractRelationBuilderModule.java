@@ -34,6 +34,23 @@ public abstract class AbstractRelationBuilderModule <S extends SpecificRecord> e
     
     /**
      * Creates {@link Relation} initialized with basic metadata.
+     *
+     * @param source          relation source
+     * @param target          relation target
+     * @param relType         relation type
+     * @param subRelType      relation sub-type
+     * @param relClass        relation class
+     * @param properties      relation properties
+     */
+    protected Relation createRelation(String source, String target, String relType, String subRelType, String relClass,
+            List<KeyValue> properties)  {
+        DataInfo dataInfo = buildInferenceForTrustLevel(StaticConfigurationProvider.ACTION_TRUST_0_9);
+        return BuilderModuleHelper.createRelation(source, target, relType, subRelType, relClass,
+                properties, dataInfo, collectedFromKey);
+    }
+
+    /**
+     * Creates {@link Relation} initialized with basic metadata.
      * 
      * @param source          relation source
      * @param target          relation target
@@ -76,30 +93,31 @@ public abstract class AbstractRelationBuilderModule <S extends SpecificRecord> e
      * @param relType relation type
      * @param subRelType relation sub-type
      * @param relClass relation class
-     * @param confidenceLevel confidence level to be used when calculating trust level
      * @param properties relation properties
      */
     protected AtomicAction<Relation> createAtomicActionWithRelation(String source, String target, String relType,
             String subRelType, String relClass, List<KeyValue> properties) {
         AtomicAction<Relation> action = new AtomicAction<>();
         action.setClazz(Relation.class);
-        try {
-            action.setPayload(createRelation(source, target, relType, subRelType, relClass, null, properties));
-        } catch (TrustLevelThresholdExceededException e) {
-            throw new RuntimeException(e);
-        }
+        action.setPayload(createRelation(source, target, relType, subRelType, relClass, properties));
         return action;
     }
     
     /**
      * Creates an {@link AtomicAction} with {@link Relation} payload.
-     * @param source relation source
-     * @param target relation target
-     * @param relType relation type
-     * @param subRelType relation sub-type
-     * @param relClass relation class
-     * @param properties relation properties
-     * @throws TrustLevelThresholdExceededException when trust level threshold exceeded
+     * 
+     * @param source          relation source
+     * @param target          relation target
+     * @param relType         relation type
+     * @param subRelType      relation sub-type
+     * @param relClass        relation class
+     * @param confidenceLevel an input for trust level calculation, trust level set
+     *                        to
+     *                        {@link StaticConfigurationProvider#ACTION_TRUST_0_9}
+     *                        when confidence level is null
+     * @param properties      relation properties
+     * @throws TrustLevelThresholdExceededException when trust level threshold
+     *                                              exceeded
      */
     protected AtomicAction<Relation> createAtomicActionWithRelation(String source, String target, String relType,
             String subRelType, String relClass, Float confidenceLevel, List<KeyValue> properties) throws TrustLevelThresholdExceededException {
