@@ -242,7 +242,7 @@
     <action name="postprocessing">
         <map-reduce>
             <prepare>
-                <delete path="${nameNode}${output}" />
+                <delete path="${nameNode}${workingDir}/referenceextraction_softwareurl_pre_matching" />
             </prepare>
             <streaming>
                 <!-- Here, we give the relative path to the script and pass it the parameters of the workflow node. The script is held in a directory having the same name as the workflow node. The parameters 
