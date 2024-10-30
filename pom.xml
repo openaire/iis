@@ -541,7 +541,7 @@
             <dependency>
                 <groupId>eu.dnetlib.dhp</groupId>
                 <artifactId>dhp-schemas</artifactId>
-                <version>[7.0.0, 8.0.0)</version>
+                <version>[9.0.0, 10.0.0)</version>
             </dependency>
 
             <dependency>
