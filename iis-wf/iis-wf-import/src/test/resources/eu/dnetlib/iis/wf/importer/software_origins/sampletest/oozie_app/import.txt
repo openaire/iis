@@ -1,0 +1,3 @@
+## This is a classpath-based import file (this header is required)
+import_software_origins classpath eu/dnetlib/iis/wf/importer/software_origins/oozie_app
+orc_input_producer classpath eu/dnetlib/iis/wf/importer/software_origins/orc_input_producer/oozie_app
