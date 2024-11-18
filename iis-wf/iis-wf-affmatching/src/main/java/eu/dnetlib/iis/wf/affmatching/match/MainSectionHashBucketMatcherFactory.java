@@ -114,8 +114,8 @@ public final class MainSectionHashBucketMatcherFactory {
         return ImmutableList.of(
                 createNameCountryStrictMatchVoter(1f, new GetOrgAlternativeNamesFunction()),
                 createNameStrictCountryLooseMatchVoter(1f, new GetOrgAlternativeNamesFunction()),
-                createSectionedNameStrictCountryLooseMatchVoter(1f, new GetOrgAlternativeNamesFunction()),
-                createSectionedNameLevenshteinCountryLooseMatchVoter(1f, new GetOrgAlternativeNamesFunction())
+                createSectionedNameStrictCountryLooseMatchVoter(0.987f, new GetOrgAlternativeNamesFunction()),
+                createSectionedNameLevenshteinCountryLooseMatchVoter(0.988f, new GetOrgAlternativeNamesFunction())
                 );
     }
     
