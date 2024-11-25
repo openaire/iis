@@ -70,6 +70,11 @@
             <description>interval between each executor's heartbeats to the driver</description>
         </property>
         <property>
+            <name>sparkDriverMaxResultSize</name>
+            <value>2g</value>
+            <description>limit of total size of serialized results of all partitions for each Spark action in bytes</description>
+        </property>
+        <property>
             <name>oozieActionShareLibForSpark2</name>
             <description>oozie action sharelib for spark 2.*</description>
         </property>
@@ -135,6 +140,7 @@
                 --conf spark.yarn.driver.memoryOverhead=${sparkDriverOverhead}
                 --conf spark.network.timeout=${sparkNetworkTimeout}
                 --conf spark.executor.heartbeatInterval=${sparkExecutorHeartbeatInterval}
+                --conf spark.driver.maxResultSize=${sparkDriverMaxResultSize}
                 --conf spark.extraListeners=${spark2ExtraListeners}
                 --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
                 --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
