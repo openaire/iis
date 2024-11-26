@@ -75,13 +75,12 @@ setschema 'docid,prev,middle,next' select c1, textwindow2s(keywords(filterstopwo
 
 -- NBFC
 union all
-select  jdict('documentId',docid, 'conceptId', 'nbfc', 'confidenceLevel', 0.8,'textsnippet',context) as c1 from (
-  select docid, prev||" "||middle||" "||next as context
+select  jdict('documentId',docid, 'conceptId', conceptId, 'confidenceLevel', 0.8,'textsnippet',context) as c1 from (
+  select docid, conceptId, conceptLabel, prev||" "||middle||" "||next as context
       from (
         setschema 'docid,prev,middle,next' select c1, textwindow2s(keywords(lower(c2)),7,4,3, 'national biodiversity future cent') from pubs where c2 is not null
-        )
+        ),grants where conceptLabel="Italian National Biodiversity Future Center"
        ) group by docid
-
 union all
 
 -- DARIAH
