@@ -61,6 +61,13 @@
       {"name": "suggestedAcknowledgement", "value":""}
    ]
 }
+{
+   "id": "nbfc", 
+   "label": "Italian National Biodiversity Future Center", 
+   "params":[
+      {"name": "suggestedAcknowledgement", "value":""}
+   ]
+}
 
 
 
