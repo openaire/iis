@@ -61,7 +61,7 @@
         </property>
         <property>
             <name>sparkNetworkTimeout</name>
-            <value>5m</value>
+            <value>600s</value>
             <description>default timeout for all network interactions</description>
         </property>
         <property>
