@@ -74,8 +74,8 @@ public final class MainSectionHashBucketMatcherFactory {
         return ImmutableList.of(
                 createNameCountryStrictMatchVoter(0.981f, new GetOrgNameFunction()),
                 createNameStrictCountryLooseMatchVoter(0.966f, new GetOrgNameFunction()),
-                createSectionedNameStrictCountryLooseMatchVoter(0.988f, new GetOrgNameFunction()),
-                createSectionedNameLevenshteinCountryLooseMatchVoter(0.983f, new GetOrgNameFunction()),
+                createSectionedNameStrictCountryLooseMatchVoter(0.978f, new GetOrgNameFunction()),
+                createSectionedNameLevenshteinCountryLooseMatchVoter(0.964f, new GetOrgNameFunction()),
                 createSectionedNameStrictCountryLooseMatchVoter(0.937f, new GetOrgShortNameFunction())
                 );
     }
@@ -151,7 +151,7 @@ public final class MainSectionHashBucketMatcherFactory {
         
         return ImmutableList.of(
                 createNameCountryStrictMatchVoter(1f, new GetOrgShortNameFunction()),
-                createNameStrictCountryLooseMatchVoter(0.758f, new GetOrgShortNameFunction())
+                createNameStrictCountryLooseMatchVoter(0.658f, new GetOrgShortNameFunction())
                 );
     }
   
