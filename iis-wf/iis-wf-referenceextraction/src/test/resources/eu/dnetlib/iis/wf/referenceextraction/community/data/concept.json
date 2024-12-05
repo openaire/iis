@@ -28,7 +28,7 @@
 }
 {  
    "id":"elixir-gr",
-   "label":"ELIXIR-GR",
+   "label":"ELIXIR GR",
    "params":[
       {"name": "suggestedAcknowledgement", "value":"currently irrelevant"}
    ]
