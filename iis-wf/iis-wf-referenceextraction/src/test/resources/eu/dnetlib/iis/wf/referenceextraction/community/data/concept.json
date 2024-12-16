@@ -13,8 +13,8 @@
    ]
 }
 {  
-   "id":"ee",
-   "label":"Environment and Economy",
+   "id":"sdsn-gr",
+   "label":"SDSN Greece",
    "params":[
       {"name": "suggestedAcknowledgement", "value":"currently irrelevant"}
    ]

@@ -30,7 +30,7 @@ select jdict('documentId', docid, 'conceptId', conceptId, 'confidenceLevel', 0.5
 select docid, conceptId, conceptLabel, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||next as context
 from (
   setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("\n", C2, " ")),20,2,10, '(?:\bSDSN\s)|(?:\bSDSN Greece\b)') from pubs where c2 is not null
-), grants where conceptLabel="Environment and Economy" and (regexprmatches('(?i)(?:unsdsn.org)|(?:unsdsn.gr)|(?:IDDRI)|(?:Sustainable Development)|(?:United Nations)|(?:SDGs)', context) or regexprmatches('(?:\bUN\b)',context))) group by docid
+), grants where conceptLabel="SDSN Greece" and (regexprmatches('(?i)(?:unsdsn.org)|(?:unsdsn.gr)|(?:IDDRI)|(?:Sustainable Development)|(?:United Nations)|(?:SDGs)', context) or regexprmatches('(?:\bUN\b)',context))) group by docid
 
 union all
 
