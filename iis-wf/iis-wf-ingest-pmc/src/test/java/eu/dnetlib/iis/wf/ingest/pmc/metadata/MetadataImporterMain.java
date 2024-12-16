@@ -2,6 +2,7 @@ package eu.dnetlib.iis.wf.ingest.pmc.metadata;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -14,6 +15,7 @@ import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.Encoder;
 import org.apache.avro.io.EncoderFactory;
 import org.apache.avro.specific.SpecificDatumWriter;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -29,28 +31,44 @@ public class MetadataImporterMain {
     
     private static final String encoding = "utf-8"; 
     
+    private static final String parsedFileSuffix = ".parsed.json";
+    
     public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException {
         if (args.length == 1) {
             if (StringUtils.isBlank(args[0])) {
                 throw new RuntimeException("No valid location provided!");
             }
             
-            ExtractedDocumentMetadata.Builder builder  = ExtractedDocumentMetadata.newBuilder();
-            builder.setId("");
-            builder.setText("");
-            extractMetadata(getFileContent(args[0]), builder);
-            
-            DatumWriter<ExtractedDocumentMetadata> writer = new SpecificDatumWriter<>(ExtractedDocumentMetadata.class);
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            Encoder jsonEncoder = EncoderFactory.get().jsonEncoder(ExtractedDocumentMetadata.getClassSchema(), stream);
-            writer.write(builder.build(), jsonEncoder);
-            jsonEncoder.flush();
-            System.out.println(new String(stream.toByteArray(), encoding));
+            File file = new File(args[0]);
+            if (file.isDirectory()) {
+                String[] fileLocs = file.list((dir, name) -> !name.endsWith(parsedFileSuffix));
+                for (String fileLoc : fileLocs) {
+                    processFile(new File(file, fileLoc).getAbsolutePath());
+                }
+            } else {
+                processFile(args[0]);
+            }
             
         } else {
             throw new RuntimeException("invalid number of input arguments: " + args.length 
                     + ", expecting a single argument with JATS XML file location!");
         }
+    }
+    
+    private static void processFile(String fileLocation) throws ParserConfigurationException, SAXException, IOException {
+        ExtractedDocumentMetadata.Builder builder  = ExtractedDocumentMetadata.newBuilder();
+        builder.setId("");
+        builder.setText("");
+        extractMetadata(getFileContent(fileLocation), builder);
+        
+        DatumWriter<ExtractedDocumentMetadata> writer = new SpecificDatumWriter<>(ExtractedDocumentMetadata.class);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        Encoder jsonEncoder = EncoderFactory.get().jsonEncoder(ExtractedDocumentMetadata.getClassSchema(), stream);
+        writer.write(builder.build(), jsonEncoder);
+        jsonEncoder.flush();
+        String fileContent = new String(stream.toByteArray(), encoding);
+        System.out.println(fileContent);
+        FileUtils.writeStringToFile(new File(fileLocation + parsedFileSuffix), fileContent, encoding);
     }
     
     /**
