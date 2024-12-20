@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ali="http://www.niso.org/schemas/ali/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="research-article" dtd-version="1.2" xml:lang="en">
+  <?properties open_access?>
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="publisher-id">3</journal-id>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="doi">10.1007/s00003-009-0510-5</article-id>
+      <title-group>
+        <article-title xml:lang="en">Safe cosmetics without animal testing? Contributions of the EU Project <italic toggle="yes">Sens-it-iv</italic></article-title>
+      </title-group>
+      <contrib-group>
+        <aff id="Aff1">
+          <label>Aff1</label>
+          <institution-wrap>
+            <institution-id institution-id-type="GRID">grid.429509.3</institution-id>
+            <institution-id institution-id-type="ISNI">0000000404914256</institution-id>
+            <institution content-type="org-name">Max-Planck-Institute for Immunobiology</institution>
+          </institution-wrap>
+          <addr-line content-type="street">Schillhof 5</addr-line>
+          <addr-line content-type="postcode">79110</addr-line>
+          <addr-line content-type="city">Freiburg</addr-line>
+          <country>Germany</country>
+        </aff>
+        <aff id="Aff8">
+          <label>Aff8</label>
+          <institution-wrap>
+            <institution-id institution-id-type="GRID">grid.10582.3e</institution-id>
+            <institution-id institution-id-type="ISNI">0000000403730797</institution-id>
+            <institution content-type="org-name">Novozymes AS</institution>
+          </institution-wrap>
+          <addr-line content-type="city">Bagsvaerd</addr-line>
+          <country>Denmark</country>
+        </aff>
+      </contrib-group>
+    </article-meta>
+  </front>
+  <body>
+  </body>
+  <back>
+  </back>
+</article>
