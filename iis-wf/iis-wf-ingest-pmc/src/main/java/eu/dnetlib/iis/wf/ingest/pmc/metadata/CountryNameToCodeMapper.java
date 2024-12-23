@@ -41,7 +41,7 @@ public class CountryNameToCodeMapper {
         countryNameToCodeMap = new HashMap<>();
         initializeDefaultCountryCodes();
         try {
-            loadAuxiliaryCountryCodesFromResourceFile(auxMappingResourceLocation);
+            loadAuxiliaryCountryCodesFromFile(auxMappingResourceLocation);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -88,7 +88,7 @@ public class CountryNameToCodeMapper {
      * @param auxMappingJsonFileLocation country name to code mappings json file classpath location
      * @throws IOException exception thrown when auxiliary mapping file could not be found
      */
-    private void loadAuxiliaryCountryCodesFromResourceFile(String auxMappingJsonFileLocation) throws IOException {
+    private void loadAuxiliaryCountryCodesFromFile(String auxMappingJsonFileLocation) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(auxMappingJsonFileLocation)) {
             if (inputStream != null) {
