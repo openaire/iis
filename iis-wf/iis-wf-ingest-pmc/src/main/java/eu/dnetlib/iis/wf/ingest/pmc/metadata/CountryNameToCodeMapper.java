@@ -5,19 +5,22 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
+import java.util.Map.Entry;
+
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
 
 /**
  * This is an utility class responsible for mapping country name to the ISO 3166-1 alpha-2 
  * country code by relying on a predefined set of mappings from {@link Locale} supplemented 
- * with auxiliary set of mappings explicitly defined in a property file.
+ * with auxiliary set of mappings explicitly defined in a JSON file.
  * 
  * @author mhorst
  */
 public class CountryNameToCodeMapper {
 
-    private static final String AUX_MAPPING_RESOURCE_LOCATION = "eu/dnetlib/iis/wf/ingest/pmc/metadata/auxiliary_country_name_to_code.properties";
+    private static final String AUX_MAPPING_FILE_LOCATION = "eu/dnetlib/iis/wf/ingest/pmc/metadata/auxiliary_country_name_to_code.json";
     
     private Map<String, String> countryNameToCodeMap;
 
@@ -27,7 +30,7 @@ public class CountryNameToCodeMapper {
      * Default constructor preparing mappings.
      */
     public CountryNameToCodeMapper() {
-        this(AUX_MAPPING_RESOURCE_LOCATION);
+        this(AUX_MAPPING_FILE_LOCATION);
     }
     
     /**
@@ -82,19 +85,19 @@ public class CountryNameToCodeMapper {
 
     /**
      * Loads auxiliary country name to country code mappings from classpath resource.
-     * @param auxMappingResourceLocation country name to code mappings resource file classpath location
+     * @param auxMappingJsonFileLocation country name to code mappings json file classpath location
      * @throws IOException exception thrown when auxiliary mapping file could not be found
      */
-    private void loadAuxiliaryCountryCodesFromResourceFile(String auxMappingResourceLocation) throws IOException {
-        Properties properties = new Properties();
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(auxMappingResourceLocation)) {
+    private void loadAuxiliaryCountryCodesFromResourceFile(String auxMappingJsonFileLocation) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(auxMappingJsonFileLocation)) {
             if (inputStream != null) {
-                properties.load(inputStream);
-                for (String key : properties.stringPropertyNames()) {
-                    countryNameToCodeMap.put(normaizeCountryName(key), properties.getProperty(key).trim());
+                Map<String,String> auxMappings = objectMapper.readValue(inputStream, new TypeReference<Map<String, String>>() {});
+                for (Entry<String, String> entry :auxMappings.entrySet()) {
+                    countryNameToCodeMap.put(normaizeCountryName(entry.getKey()), entry.getValue().trim());
                 }
             } else {
-                throw new IOException("Properties file not found: " + auxMappingResourceLocation);
+                throw new IOException("JSON file with country name to country code mappings not found: " + auxMappingJsonFileLocation);
             }
         }
     }
