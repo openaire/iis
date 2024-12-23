@@ -31,7 +31,7 @@
             <institution content-type="org-name">Novozymes AS</institution>
           </institution-wrap>
           <addr-line content-type="city">Bagsvaerd</addr-line>
-          <country>Denmark</country>
+          <country country="DK_from_XML">Denmark</country>
         </aff>
       </contrib-group>
     </article-meta>

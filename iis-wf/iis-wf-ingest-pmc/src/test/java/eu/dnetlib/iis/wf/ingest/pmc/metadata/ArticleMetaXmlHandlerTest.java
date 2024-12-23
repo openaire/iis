@@ -287,8 +287,9 @@ public class ArticleMetaXmlHandlerTest {
         assertEquals("Max-Planck-Institute for Immunobiology", affs.get(0).getOrganization());
         assertEquals("Schillhof 5, 79110 Freiburg", affs.get(0).getAddress());
         assertEquals("Max-Planck-Institute for Immunobiology, Schillhof 5, 79110 Freiburg, Germany", affs.get(0).getRawText());
-        
-        assertEquals("DK", affs.get(1).getCountryCode());
+
+        //this case is to prove the country code explicitly defined in source file has precedence over the inferred one 
+        assertEquals("DK_from_XML", affs.get(1).getCountryCode());
         assertEquals("Denmark", affs.get(1).getCountryName());
         assertEquals("Novozymes AS", affs.get(1).getOrganization());
         assertEquals("Bagsvaerd", affs.get(1).getAddress());
