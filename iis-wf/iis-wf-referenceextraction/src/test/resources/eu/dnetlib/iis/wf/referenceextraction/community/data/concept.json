@@ -6,7 +6,7 @@
    ]
 }
 {  
-   "id":"fli",
+   "id":"fli-irrelevant",
    "label":"France Life Imaging",
    "params":[
       {"name": "suggestedAcknowledgement", "value":"currently irrelevant"}
