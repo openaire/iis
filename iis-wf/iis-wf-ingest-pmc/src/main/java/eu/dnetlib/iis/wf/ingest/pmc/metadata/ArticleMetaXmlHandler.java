@@ -92,6 +92,7 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
     private final List<JatsAuthor> currentAuthorsGroup = Lists.newArrayList();
     private final List<JatsAuthor> currentAuthors = Lists.newArrayList();
     
+    private final CountryNameToCodeMapper countryNameToCodeMapper = new CountryNameToCodeMapper();
     
     //------------------------ CONSTRUCTOS --------------------------
     
@@ -311,6 +312,10 @@ public class ArticleMetaXmlHandler extends DefaultHandler implements ProcessingF
                 String countryName = extendedAffiliation.getCountryName();
                 if (StringUtils.isNotBlank(countryName)) {
                     affBuilder.setCountryName(countryName);
+                    if (!affBuilder.hasCountryCode()) {
+                        // inferring country code based on country name
+                        affBuilder.setCountryCode(countryNameToCodeMapper.getCountryCode(countryName));
+                    }
                 }
                 String rawText = extendedAffiliation.generateRawText();
                 if (StringUtils.isNotBlank(rawText)) {
