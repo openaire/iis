@@ -68,6 +68,12 @@
       {"name": "suggestedAcknowledgement", "value":""}
    ]
 }
-
-
-
+{
+   "id": "sdsn-gr", 
+   "label": "SDSN Greece", 
+   "params":[
+      {"name": "suggestedAcknowledgement", "value": "Supported by SDSN Greece"}, 
+      {"name": "suggestedAcknowledgement", "value": "Coordinated by SDSN Greece"}, 
+      {"name": "suggestedAcknowledgement", "value": "Funded by SDSN Greece"}
+   ]
+}

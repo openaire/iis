@@ -7,3 +7,4 @@
 {"key":"processing.referenceExtraction.community.references.byrootid.inspired-ris", "type":"COUNTER", "value": "1"}
 {"key":"processing.referenceExtraction.community.references.byrootid.nbfc", "type":"COUNTER", "value": "1"}
 {"key":"processing.referenceExtraction.community.references.byrootid.risis", "type":"COUNTER", "value": "1"}
+{"key":"processing.referenceExtraction.community.references.byrootid.sdsn-gr", "type":"COUNTER", "value": "1"}
