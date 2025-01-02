@@ -2,7 +2,7 @@ PRAGMA temp_store_directory = '.';
 
 create temp table pubs as setschema 'c1,c2' select jsonpath(c1, '$.id', '$.text') from stdinput();
 
-
+-- CLARIN
 select jsplitv('['||jdict('documentId', docid, 'conceptId', 'clarin', 'confidenceLevel', 0.5,'textsnippet',context)||','||jdict('documentId', docid, 'conceptId', 'dh-ch::subcommunity::2', 'confidenceLevel', 0.5,'textsnippet',context)||']') as C1 from (
 select docid, conceptId, conceptLabel, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||next as context
 from (
@@ -18,7 +18,8 @@ from (
 
 union all
 
-select jdict('documentId', docid, 'conceptId', conceptId, 'confidenceLevel', 0.5,'textsnippet',context) as C1 from (
+-- FLI/Neuroinformatics
+select jdict('documentId', docid, 'conceptId', 'neuroscience::subcommunity::1', 'confidenceLevel', 0.5,'textsnippet',context) as C1 from (
 select docid, conceptId, conceptLabel, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||next as context
 from (
   setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("\n", C2, " ")),1,3,1, '(?:\bFrance Life Imaging\b)|(?:\bFLI-IAM\b)') from pubs where c2 is not null
