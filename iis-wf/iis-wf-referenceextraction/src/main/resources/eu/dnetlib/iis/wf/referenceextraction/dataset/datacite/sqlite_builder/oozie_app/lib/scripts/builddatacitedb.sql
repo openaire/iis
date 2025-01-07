@@ -25,7 +25,8 @@ as select dsetID,doi,normalizetext(doi) as normaldoi,typegeneral from datac;
 create index dois_idx
 on dois(normaldoi, dsetID);
 
-
+--create  table triples  
+--as select doi,middle as words, comprspaces(j2s(prev,middle,next)) as title from (setschema 'doi, prev, middle, next' select doi,textwindow2s(c1,15,3,15) from datacite);
 -- triple creation
 create temp table triples 
 as select doi,middle as words, comprspaces(j2s(prev,middle,next)) as title from (setschema 'doi, prev, middle, next' select doi,textwindow2s(title,15,3,15) from datacite) group by doi, words, title;
@@ -33,7 +34,7 @@ as select doi,middle as words, comprspaces(j2s(prev,middle,next)) as title from 
 
 -- singularly distinguished titles
 create temp table uniquesplittitles 
-as select words,titles,dois from (select words,jgroup(title) as titles, jgroup(normalizetext(doi)) as dois ,count(distinct(doi)) as num from triples group by words) where num = 1;
+as select words,titles,dois from (select words,jgroup(title) as titles, jgroup(normalizetext(doi)) as dois from triples group by words having count(distinct(doi)) = 1);
 
 create temp table uniquetitleswithtriples 
 as select words,titles,dois from (select max(length(words)) as len,words,titles,dois from uniquesplittitles group by dois);
@@ -43,26 +44,24 @@ on uniquetitleswithtriples(words,titles,dois);
 
 delete from triples where normalizetext(doi) in (select dois as doi from uniquesplittitles group by doi);
 
-
 -- plurally distinguished titles
 create temp table splittitles 
-as select words,titles,dois from (select words,jgroup(title) as titles, jgroup(normalizetext(doi)) as dois ,count(distinct(doi)) as num from triples group by words) 
-where num <= (select * from (select jgroupuniquelimit(dois,n,(select count(distinct doi) from triples)/2) from (select jgroup(doi) as dois,count(doi) as n from triples group by words order by n asc)));
+as select words,titles,dois from (select words,jgroup(title) as titles, jgroup(normalizetext(doi)) as dois  from triples group by words having 
+count(distinct doi) <= (select * from (select jgroupuniquelimit(dois,n,(select count(distinct doi) from triples)/2) from (select jgroup(doi) as dois,count(doi) as n from triples group by words order by n asc))));
 
 delete from triples where normalizetext(doi) in (select doi from (select jsplitv(dois) as doi from splittitles) group by doi);
 
 insert into splittitles 
-select words,titles,dois from (select words,jgroup(title) as titles, jgroup(normalizetext(doi)) as dois ,count(distinct(doi)) as num from triples group by words) 
-where num <= (select * from (select jgroupuniquelimit(dois,n,(select count(distinct doi) from triples)/2) from (select jgroup(doi) as dois,count(doi) as n from triples group by words order by n asc)));
+select words,titles,dois from (select words,jgroup(title) as titles, jgroup(normalizetext(doi)) as dois from triples group by words having 
+count(distinct doi) <= (select * from (select jgroupuniquelimit(dois,n,(select count(distinct doi) from triples)/2) from (select jgroup(doi) as dois,count(doi) as n from triples group by words order by n asc))))   ;
 
 delete from triples where normalizetext(doi) in (select doi from (select jsplitv(dois) as doi from splittitles) group by doi);
 
 insert into splittitles
-select words,titles,dois from (select words,jgroup(title) as titles, jgroup(normalizetext(doi)) as dois ,count(distinct(doi)) as num from triples group by words);
+select words,titles,dois from (select words,jgroup(title) as titles, jgroup(normalizetext(doi)) as dois  from triples group by words);
 
 create temp table titleswithtriplesmaxwords 
 as select words,titles,dois from (select max(length(words)) as len,words,titles,dois from splittitles group by dois);
-
 
 -- DOI bag of words creation and normalization
 create temp table bagofwordsfordois 
@@ -75,7 +74,6 @@ update bagofwordsfordois
 set bag = jmergeregexp(jset(s2j(bag))) , publisher = jmergeregexp(jset(s2j(publisher))), creator = jmergeregexp(jset(s2j(creator)));
 
 create index bagofwords_index on bagofwordsfordois(doi1,title,bag,publisher,creator,generaltype);
-
 
 -- Connect singularly distinguished titles with their bag of words
 create temp table uniquetitleswithtriples_bagofwords 
