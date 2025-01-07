@@ -22,6 +22,8 @@ public class CountryNameToCodeMapper {
 
     private static final String AUX_MAPPING_FILE_LOCATION = "eu/dnetlib/iis/wf/ingest/pmc/metadata/auxiliary_country_name_to_code.json";
     
+    private static final String LOCALE_EN = "en";
+    
     private Map<String, String> countryNameToCodeMap;
 
     // ------------------------ CONSTRUCTORS ---------------------------------
@@ -77,10 +79,9 @@ public class CountryNameToCodeMapper {
      */
     private void initializeDefaultCountryCodes() {
         for (String isoCode : Locale.getISOCountries()) {
-            Locale l = new Locale(Locale.ENGLISH.getCountry(), isoCode);
-            countryNameToCodeMap.put(normaizeCountryName(l.getDisplayCountry()), isoCode);
+            Locale l = new Locale(LOCALE_EN, isoCode);
+            countryNameToCodeMap.put(normaizeCountryName(l.getDisplayCountry(l)), isoCode);
         }
-        
     }
 
     /**
