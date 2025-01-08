@@ -39,7 +39,7 @@ public class CountryNameToCodeMapperTest {
     @Test
     public void testGetCountryCode_WithAuxiliaryMappingOverridingDefaultMapping() {
         countryCodeMapper = new CountryNameToCodeMapper(
-                "eu/dnetlib/iis/wf/ingest/pmc/metadata/test_country_name_to_code.json");
+                "/eu/dnetlib/iis/wf/ingest/pmc/metadata/test_country_name_to_code.json");
         assertNull(countryCodeMapper.getCountryCode("USA"));
         assertEquals("POL", countryCodeMapper.getCountryCode("POLAND"));
     }
