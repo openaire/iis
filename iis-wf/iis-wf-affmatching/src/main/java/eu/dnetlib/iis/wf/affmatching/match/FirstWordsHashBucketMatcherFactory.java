@@ -74,14 +74,14 @@ public final class FirstWordsHashBucketMatcherFactory {
         
         
         CompositeMatchVoter commonAffOrgNameWordsVoter = new CompositeMatchVoter(ImmutableList.of(new CountryCodeLooseMatchVoter(), commonOrgNameWordsVoter, commonAffNameWordsVoter));
-        commonAffOrgNameWordsVoter.setMatchStrength(0.859f);
+        commonAffOrgNameWordsVoter.setMatchStrength(0.723f);
         
         return ImmutableList.of(
                 createNameCountryStrictMatchVoter(0.981f, new GetOrgNameFunction()),
                 createNameStrictCountryLooseMatchVoter(0.966f, new GetOrgNameFunction()),
-                createSectionedNameStrictCountryLooseMatchVoter(0.917f, new GetOrgNameFunction()),
-                createSectionedNameLevenshteinCountryLooseMatchVoter(0.910f, new GetOrgNameFunction()),
-                createSectionedNameStrictCountryLooseMatchVoter(0.882f, new GetOrgShortNameFunction()),
+                createSectionedNameStrictCountryLooseMatchVoter(0.815f, new GetOrgNameFunction()),
+                createSectionedNameLevenshteinCountryLooseMatchVoter(0.798f, new GetOrgNameFunction()),
+                createSectionedNameStrictCountryLooseMatchVoter(0.682f, new GetOrgShortNameFunction()),
                 commonAffOrgNameWordsVoter);
     }
     
