@@ -62,6 +62,6 @@ public class CountryNameToCodeMapperTest {
     @Test
     public void testInstantiate_MappingFileNotFound() {
         assertThrows(RuntimeException.class, () -> new CountryNameToCodeMapper(
-                "eu/dnetlib/iis/wf/ingest/pmc/metadata/non_existing.json"));
+                "/eu/dnetlib/iis/wf/ingest/pmc/metadata/non_existing.json"));
     }
 }
