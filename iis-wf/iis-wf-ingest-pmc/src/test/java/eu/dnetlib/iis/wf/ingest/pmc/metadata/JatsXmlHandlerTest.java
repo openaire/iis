@@ -180,6 +180,109 @@ public class JatsXmlHandlerTest {
 	}
 
 	@Test
+    public void testParsingJats23NestedInOAIWithArticleNamespace() throws Exception {
+        fileReader = ClassPathResourceProvider
+                .getResourceReader(xmlResourcesRootClassPath + "document_jats23_nested_in_oai_with_article_namespace.xml");
+        InputSource inputSource = new InputSource(fileReader);
+        saxParser.parse(inputSource, jatsXmlHandler);
+        ExtractedDocumentMetadata meta = metaBuilder.build();
+        assertEquals("research-article", meta.getEntityType());
+        assertEquals("Frontiers in Neuroscience", meta.getJournal());
+        assertEquals(1, meta.getExternalIdentifiers().size());
+        assertEquals("10.3389/fnins.2014.00351", meta.getExternalIdentifiers().get("doi"));
+        assertNull(meta.getPages());
+        assertNotNull(meta.getReferences());
+        assertEquals(130, meta.getReferences().size());
+        // checking first reference
+        assertEquals(1, meta.getReferences().get(0).getPosition().intValue());
+        assertEquals(
+                "Abrams D. A. Nicol T. Zecker S. Kraus N. (2009). "
+                        + "Abnormal cortical processing of the syllable rate of speech in poor readers. "
+                        + "J. Neurosci. 29, 7686–7693. 10.1523/JNEUROSCI.5242-08.2009 19535580",
+                meta.getReferences().get(0).getText());
+        ReferenceBasicMetadata basicMeta = meta.getReferences().get(0).getBasicMetadata();
+        assertEquals("Abnormal cortical processing of the syllable rate of speech in poor readers",
+                basicMeta.getTitle());
+        assertEquals(4, basicMeta.getAuthors().size());
+        assertEquals("Abrams, D. A.", basicMeta.getAuthors().get(0));
+        assertEquals("Nicol, T.", basicMeta.getAuthors().get(1));
+        assertEquals("Zecker, S.", basicMeta.getAuthors().get(2));
+        assertEquals("Kraus, N.", basicMeta.getAuthors().get(3));
+        assertEquals("7686", basicMeta.getPages().getStart());
+        assertEquals("7693", basicMeta.getPages().getEnd());
+        assertEquals("J. Neurosci", basicMeta.getSource());
+        assertEquals("29", basicMeta.getVolume());
+        assertEquals("2009", basicMeta.getYear());
+        assertNull(basicMeta.getIssue());
+        assertEquals(2, basicMeta.getExternalIds().size());
+        assertEquals("10.1523/JNEUROSCI.5242-08.2009", basicMeta.getExternalIds().get("doi"));
+        assertEquals("19535580", basicMeta.getExternalIds().get("pmid"));
+
+        assertNotNull(meta.getAffiliations());
+        assertEquals(6, meta.getAffiliations().size());
+        // checking all affiliations
+        assertEquals(
+                "Auditory Neuroscience Laboratory, Northwestern University, Evanston, IL, USA",
+                meta.getAffiliations().get(0).getRawText());
+        assertEquals(
+                "Auditory Neuroscience Laboratory, Northwestern University",
+                meta.getAffiliations().get(0).getOrganization());
+        assertEquals("USA", meta.getAffiliations().get(0).getCountryName());
+        assertEquals("US", meta.getAffiliations().get(0).getCountryCode());
+        assertEquals("Evanston, IL", meta.getAffiliations().get(0).getAddress());
+        
+        assertEquals(
+                "Department of Communication Sciences, Northwestern University, Evanston, IL, USA",
+                meta.getAffiliations().get(1).getRawText());
+        assertEquals(
+                "Department of Communication Sciences, Northwestern University",
+                meta.getAffiliations().get(1).getOrganization());
+        assertEquals("USA", meta.getAffiliations().get(1).getCountryName());
+        assertEquals("US", meta.getAffiliations().get(1).getCountryCode());
+        assertEquals("Evanston, IL", meta.getAffiliations().get(1).getAddress());
+        
+        assertEquals(
+                "Neuroscience Program, Northwestern University, Evanston, IL, USA",
+                meta.getAffiliations().get(2).getRawText());
+        assertEquals(
+                "Neuroscience Program, Northwestern University",
+                meta.getAffiliations().get(2).getOrganization());
+        assertEquals("USA", meta.getAffiliations().get(2).getCountryName());
+        assertEquals("US", meta.getAffiliations().get(2).getCountryCode());
+        assertEquals("Evanston, IL", meta.getAffiliations().get(2).getAddress());
+        
+        assertEquals(
+                "Department of Neurobiology and Physiology, Northwestern University, Evanston, IL, USA",
+                meta.getAffiliations().get(3).getRawText());
+        assertEquals(
+                "Department of Neurobiology and Physiology, Northwestern University",
+                meta.getAffiliations().get(3).getOrganization());
+        assertEquals("USA", meta.getAffiliations().get(3).getCountryName());
+        assertEquals("US", meta.getAffiliations().get(3).getCountryCode());
+        assertEquals("Evanston, IL", meta.getAffiliations().get(3).getAddress());
+        
+        assertEquals(
+                "Department of Otolaryngology, Northwestern University, Chicago, IL, USA",
+                meta.getAffiliations().get(4).getRawText());
+        assertEquals(
+                "Department of Otolaryngology, Northwestern University",
+                meta.getAffiliations().get(4).getOrganization());
+        assertEquals("USA", meta.getAffiliations().get(4).getCountryName());
+        assertEquals("US", meta.getAffiliations().get(4).getCountryCode());
+        assertEquals("Chicago, IL", meta.getAffiliations().get(4).getAddress());
+        
+        assertEquals(
+                "Data Sense LLC, Chicago, IL, USA",
+                meta.getAffiliations().get(5).getRawText());
+        assertEquals(
+                "Data Sense LLC",
+                meta.getAffiliations().get(5).getOrganization());
+        assertEquals("USA", meta.getAffiliations().get(5).getCountryName());
+        assertEquals("US", meta.getAffiliations().get(5).getCountryCode());
+        assertEquals("Chicago, IL", meta.getAffiliations().get(5).getAddress());
+    }
+	
+	@Test
 	public void testParsingLargeFile() throws Exception {
 		fileReader = ClassPathResourceProvider
 				.getResourceReader(xmlResourcesRootClassPath + "od_______908__365a50343d53774f68fa13800349d372.xml");

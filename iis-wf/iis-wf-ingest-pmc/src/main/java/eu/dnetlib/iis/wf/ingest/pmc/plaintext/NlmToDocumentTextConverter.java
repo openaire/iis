@@ -37,7 +37,7 @@ public final class NlmToDocumentTextConverter {
 	private static Element getArticleElement(Element source, Namespace oaiNamespace) {
 		Element metadata = source.getChild("metadata", oaiNamespace);
 		if (metadata != null) {
-			Element article = metadata.getChild("article");
+			Element article = metadata.getChild("article", null);
 			if (article != null) {
 				return article;
 			} else {
@@ -52,18 +52,18 @@ public final class NlmToDocumentTextConverter {
 	}
 
 	private static String getMetadataText(Element source) {
-		return source.getChild("front") == null ? null
-				: getText(source.getChild("front"), Lists.newArrayList("journal-meta", "article-meta", "abstract"));
+		return source.getChild("front", null) == null ? null
+				: getText(source.getChild("front", null), Lists.newArrayList("journal-meta", "article-meta", "abstract"));
 	}
 
 	private static String getBodyText(Element source) {
-		return source.getChild("body") == null ? null
-				: getText(source.getChild("body"), Lists.newArrayList("sec", "p", "title"));
+		return source.getChild("body", null) == null ? null
+				: getText(source.getChild("body", null), Lists.newArrayList("sec", "p", "title"));
 	}
 
 	private static String getReferencesText(Element source) {
-		return source.getChild("back") == null ? null
-				: "References\n" + getText(source.getChild("back"), Lists.newArrayList("ref"));
+		return source.getChild("back", null) == null ? null
+				: "References\n" + getText(source.getChild("back", null), Lists.newArrayList("ref"));
 	}
 
 	/**
