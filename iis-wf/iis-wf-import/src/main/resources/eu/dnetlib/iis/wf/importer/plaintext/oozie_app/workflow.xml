@@ -25,6 +25,10 @@
 			<value>100000</value>
 			<description>maximum input data split size, required by streaming version reading DocumentContentUrl to split input data into more chunks</description>
 		</property>
+        <property>
+            <name>plaintext_content_retriever_java_opts</name>
+            <value>-Xmx2g</value>
+        </property>
         <!-- S3 related -->
         <property>
             <name>objectstore_s3_keystore_location</name>
@@ -93,6 +97,10 @@
 				<delete path="${nameNode}${output}" />
 			</prepare>
 			<configuration>
+                <property>
+                    <name>mapreduce.map.java.opts</name>
+                    <value>${plaintext_content_retriever_java_opts}</value>
+                </property>
                 <!-- S3 content retrieval related -->
                 <property>
                     <name>hadoop.security.credential.provider.path</name>
